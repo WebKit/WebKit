@@ -26,8 +26,8 @@
 
 namespace WebCore {
 
-SVGTitleElement::SVGTitleElement(const QualifiedName& tagName, Document* doc)
-    : SVGStyledElement(tagName, doc)
+inline SVGTitleElement::SVGTitleElement(const QualifiedName& tagName, Document* document)
+    : SVGStyledElement(tagName, document)
 {
 }
 

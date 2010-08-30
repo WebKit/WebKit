@@ -33,8 +33,11 @@ namespace WebCore {
     public:
         static PassRefPtr<SVGRadialGradientElement> create(const QualifiedName&, Document*);
 
+        RadialGradientAttributes collectGradientProperties();
+        void calculateFocalCenterPointsAndRadius(const RadialGradientAttributes&, FloatPoint& focalPoint, FloatPoint& centerPoint, float& radius);
+
+    private:
         SVGRadialGradientElement(const QualifiedName&, Document*);
-        virtual ~SVGRadialGradientElement();
 
         virtual void parseMappedAttribute(Attribute*);
         virtual void svgAttributeChanged(const QualifiedName&);
@@ -42,10 +45,6 @@ namespace WebCore {
 
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
-        RadialGradientAttributes collectGradientProperties();
-        void calculateFocalCenterPointsAndRadius(const RadialGradientAttributes&, FloatPoint& focalPoint, FloatPoint& centerPoint, float& radius);
-
-    private:
         virtual bool selfHasRelativeLengths() const;
 
         DECLARE_ANIMATED_PROPERTY(SVGRadialGradientElement, SVGNames::cxAttr, SVGLength, Cx, cx)

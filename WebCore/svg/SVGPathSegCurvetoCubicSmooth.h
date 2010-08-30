@@ -31,7 +31,12 @@ namespace WebCore {
     class SVGPathSegCurvetoCubicSmooth : public SVGPathSeg {
     public:
         SVGPathSegCurvetoCubicSmooth(float x, float y, float x2, float y2)
-        : m_x(x), m_y(y), m_x2(x2), m_y2(y2) { }
+            : m_x(x)
+            , m_y(y)
+            , m_x2(x2)
+            , m_y2(y2)
+        {
+        }
 
         void setX(float x) { m_x = x; }
         float x() const { return m_x; }
@@ -56,22 +61,22 @@ namespace WebCore {
     public:
         static PassRefPtr<SVGPathSegCurvetoCubicSmoothAbs> create(float x, float y, float x2, float y2) { return adoptRef(new SVGPathSegCurvetoCubicSmoothAbs(x, y, x2, y2)); }
 
-        virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_CUBIC_SMOOTH_ABS; }
-        virtual String pathSegTypeAsLetter() const { return "S"; }
-
     private:
         SVGPathSegCurvetoCubicSmoothAbs(float x, float y, float x2, float y2);
+
+        virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_CUBIC_SMOOTH_ABS; }
+        virtual String pathSegTypeAsLetter() const { return "S"; }
     };
 
     class SVGPathSegCurvetoCubicSmoothRel : public SVGPathSegCurvetoCubicSmooth { 
     public:
         static PassRefPtr<SVGPathSegCurvetoCubicSmoothRel> create(float x, float y, float x2, float y2) { return adoptRef(new SVGPathSegCurvetoCubicSmoothRel(x, y, x2, y2)); }
 
-        virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_CUBIC_SMOOTH_REL; }
-        virtual String pathSegTypeAsLetter() const { return "s"; }
-
     private:
         SVGPathSegCurvetoCubicSmoothRel(float x, float y, float x2, float y2);
+
+        virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_CUBIC_SMOOTH_REL; }
+        virtual String pathSegTypeAsLetter() const { return "s"; }
     };
 
 } // namespace WebCore

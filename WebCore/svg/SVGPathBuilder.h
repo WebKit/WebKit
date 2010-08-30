@@ -36,18 +36,18 @@ public:
     SVGPathBuilder();
 
     void setCurrentPath(Path* path) { m_path = path; }
+
+private:
     virtual void incrementPathSegmentCount() { }
     virtual bool continueConsuming() { return true; }
     virtual void cleanup() { m_path = 0; }
 
-private:
     // Used in UnalteredParisng/NormalizedParsing modes.
     virtual void moveTo(const FloatPoint&, bool closed, PathCoordinateMode);
     virtual void lineTo(const FloatPoint&, PathCoordinateMode);
     virtual void curveToCubic(const FloatPoint&, const FloatPoint&, const FloatPoint&, PathCoordinateMode);
     virtual void closePath();
 
-private:
     // Only used in UnalteredParsing mode.
     virtual void lineToHorizontal(float, PathCoordinateMode) { ASSERT_NOT_REACHED(); }
     virtual void lineToVertical(float, PathCoordinateMode) { ASSERT_NOT_REACHED(); }

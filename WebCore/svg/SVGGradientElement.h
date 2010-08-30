@@ -34,20 +34,20 @@ namespace WebCore {
                                public SVGURIReference,
                                public SVGExternalResourcesRequired {
     public:
+        Vector<Gradient::ColorStop> buildStops();
+ 
+    protected:
         SVGGradientElement(const QualifiedName&, Document*);
-        virtual ~SVGGradientElement();
-
-        virtual bool needsPendingResourceHandling() const { return false; }
 
         virtual void parseMappedAttribute(Attribute*);
         virtual void svgAttributeChanged(const QualifiedName&);
         virtual void synchronizeProperty(const QualifiedName&);
 
+    private:
+        virtual bool needsPendingResourceHandling() const { return false; }
+
         virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
-        Vector<Gradient::ColorStop> buildStops();
- 
-    protected:
         DECLARE_ANIMATED_PROPERTY(SVGGradientElement, SVGNames::spreadMethodAttr, int, SpreadMethod, spreadMethod)
         DECLARE_ANIMATED_PROPERTY(SVGGradientElement, SVGNames::gradientUnitsAttr, int, GradientUnits, gradientUnits)
         DECLARE_ANIMATED_PROPERTY(SVGGradientElement, SVGNames::gradientTransformAttr, SVGTransformList*, GradientTransform, gradientTransform)

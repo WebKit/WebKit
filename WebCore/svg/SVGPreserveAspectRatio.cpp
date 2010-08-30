@@ -37,10 +37,6 @@ SVGPreserveAspectRatio::SVGPreserveAspectRatio()
     // FIXME: Should the two values default to UNKNOWN instead?
 }
 
-SVGPreserveAspectRatio::~SVGPreserveAspectRatio()
-{
-}
-
 void SVGPreserveAspectRatio::setAlign(unsigned short align)
 {
     m_align = align;

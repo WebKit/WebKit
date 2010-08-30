@@ -44,13 +44,6 @@ namespace WebCore {
                                 public SVGExternalResourcesRequired,
                                 public ElementTimeControl {
     public:
-        SVGAnimationElement(const QualifiedName&, Document*);
-        virtual ~SVGAnimationElement();
-
-        virtual void parseMappedAttribute(Attribute*);
-        virtual void attributeChanged(Attribute*, bool preserveDecls);
-        virtual void synchronizeProperty(const QualifiedName&);
-
         // SVGAnimationElement
         float getStartTime() const;
         float getCurrentTime() const;
@@ -65,6 +58,10 @@ namespace WebCore {
         static bool attributeIsCSS(const String& attributeName);
 
     protected:
+        SVGAnimationElement(const QualifiedName&, Document*);
+
+        virtual void parseMappedAttribute(Attribute*);
+
         enum CalcMode { CalcModeDiscrete, CalcModeLinear, CalcModePaced, CalcModeSpline };
         CalcMode calcMode() const;
         
@@ -93,6 +90,9 @@ namespace WebCore {
         virtual void endedActiveInterval();
         
     private:
+        virtual void attributeChanged(Attribute*, bool preserveDecls);
+        virtual void synchronizeProperty(const QualifiedName&);
+
         virtual bool calculateFromAndToValues(const String& fromString, const String& toString) = 0;
         virtual bool calculateFromAndByValues(const String& fromString, const String& byString) = 0;
         virtual void calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement) = 0;
@@ -105,7 +105,6 @@ namespace WebCore {
         void currentValuesFromKeyPoints(float percent, float& effectivePercent, String& from, String& to) const;
         float calculatePercentForSpline(float percent, unsigned splineIndex) const;
         
-    protected:
         // SVGExternalResourcesRequired
         DECLARE_ANIMATED_PROPERTY(SVGAnimationElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
 

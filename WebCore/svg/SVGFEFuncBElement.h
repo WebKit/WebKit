@@ -30,8 +30,8 @@ namespace WebCore {
     public:
         static PassRefPtr<SVGFEFuncBElement> create(const QualifiedName&, Document*);
 
+    private:
         SVGFEFuncBElement(const QualifiedName&, Document*);
-        virtual ~SVGFEFuncBElement();
     };
 
 } // namespace WebCore

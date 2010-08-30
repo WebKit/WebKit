@@ -32,17 +32,10 @@
 
 namespace WebCore {
 
-SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Document* doc)
-    : SVGStyledElement(tagName, doc)
-    , SVGTests()
-    , SVGLangSpace()
-    , SVGExternalResourcesRequired()
+SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Document* document)
+    : SVGStyledElement(tagName, document)
     , m_textLength(LengthModeOther)
     , m_lengthAdjust(LENGTHADJUST_SPACING)
-{
-}
-
-SVGTextContentElement::~SVGTextContentElement()
 {
 }
 

@@ -64,11 +64,6 @@ SVGStringList* SVGTests::systemLanguage() const
     return m_systemLanguage.get();
 }
 
-bool SVGTests::hasExtension(const String&) const
-{
-    return false;
-}
-
 bool SVGTests::isValid() const
 {
     ExceptionCode ec = 0;

@@ -32,6 +32,7 @@ namespace WebCore {
     public:
         static PassRefPtr<SVGAnimateColorElement> create(const QualifiedName&, Document*);
 
+    private:
         SVGAnimateColorElement(const QualifiedName&, Document*);
     };
 

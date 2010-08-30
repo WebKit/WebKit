@@ -31,10 +31,7 @@ namespace WebCore {
 
     class SVGLangSpace {
     public:
-        SVGLangSpace();
-        virtual ~SVGLangSpace();
-
-        const AtomicString& xmllang() const;
+        const AtomicString& xmllang() const { return m_lang; }
         void setXmllang(const AtomicString& xmlLang);
 
         const AtomicString& xmlspace() const;

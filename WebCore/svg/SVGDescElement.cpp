@@ -24,19 +24,14 @@
 
 namespace WebCore {
 
-SVGDescElement::SVGDescElement(const QualifiedName& tagName, Document *doc)
-    : SVGStyledElement(tagName, doc)
-    , SVGLangSpace()
+inline SVGDescElement::SVGDescElement(const QualifiedName& tagName, Document* document)
+    : SVGStyledElement(tagName, document)
 {
 }
 
 PassRefPtr<SVGDescElement> SVGDescElement::create(const QualifiedName& tagName, Document* document)
 {
     return new SVGDescElement(tagName, document);
-}
-
-SVGDescElement::~SVGDescElement()
-{
 }
 
 String SVGDescElement::description() const

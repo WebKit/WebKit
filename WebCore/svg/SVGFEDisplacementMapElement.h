@@ -30,16 +30,15 @@ class SVGFEDisplacementMapElement : public SVGFilterPrimitiveStandardAttributes 
 public:
     static PassRefPtr<SVGFEDisplacementMapElement> create(const QualifiedName&, Document*);
 
-    SVGFEDisplacementMapElement(const QualifiedName& tagName, Document*);
-    virtual ~SVGFEDisplacementMapElement();
-    
     static ChannelSelectorType stringToChannel(const String&);
+    
+private:
+    SVGFEDisplacementMapElement(const QualifiedName& tagName, Document*);
     
     virtual void parseMappedAttribute(Attribute*);
     virtual void synchronizeProperty(const QualifiedName&);
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*);
     
-private:
     DECLARE_ANIMATED_PROPERTY(SVGFEDisplacementMapElement, SVGNames::inAttr, String, In1, in1)
     DECLARE_ANIMATED_PROPERTY(SVGFEDisplacementMapElement, SVGNames::in2Attr, String, In2, in2)
     DECLARE_ANIMATED_PROPERTY(SVGFEDisplacementMapElement, SVGNames::xChannelSelectorAttr, int, XChannelSelector, xChannelSelector)

@@ -32,21 +32,17 @@
 
 namespace WebCore {
 
-SVGFESpecularLightingElement::SVGFESpecularLightingElement(const QualifiedName& tagName, Document* doc)
-    : SVGFilterPrimitiveStandardAttributes(tagName, doc)
-    , m_specularConstant(1.0f)
-    , m_specularExponent(1.0f)
-    , m_surfaceScale(1.0f)
+inline SVGFESpecularLightingElement::SVGFESpecularLightingElement(const QualifiedName& tagName, Document* document)
+    : SVGFilterPrimitiveStandardAttributes(tagName, document)
+    , m_specularConstant(1)
+    , m_specularExponent(1)
+    , m_surfaceScale(1)
 {
 }
 
 PassRefPtr<SVGFESpecularLightingElement> SVGFESpecularLightingElement::create(const QualifiedName& tagName, Document* document)
 {
     return new SVGFESpecularLightingElement(tagName, document);
-}
-
-SVGFESpecularLightingElement::~SVGFESpecularLightingElement()
-{
 }
 
 void SVGFESpecularLightingElement::parseMappedAttribute(Attribute* attr)

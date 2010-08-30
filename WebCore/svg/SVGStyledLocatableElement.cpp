@@ -30,13 +30,8 @@
 
 namespace WebCore {
 
-SVGStyledLocatableElement::SVGStyledLocatableElement(const QualifiedName& tagName, Document* doc)
-    : SVGLocatable()
-    , SVGStyledElement(tagName, doc)
-{
-}
-
-SVGStyledLocatableElement::~SVGStyledLocatableElement()
+SVGStyledLocatableElement::SVGStyledLocatableElement(const QualifiedName& tagName, Document* document)
+    : SVGStyledElement(tagName, document)
 {
 }
 

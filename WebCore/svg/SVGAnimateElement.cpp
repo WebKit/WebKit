@@ -36,8 +36,8 @@ using namespace std;
 
 namespace WebCore {
 
-SVGAnimateElement::SVGAnimateElement(const QualifiedName& tagName, Document* doc)
-    : SVGAnimationElement(tagName, doc)
+SVGAnimateElement::SVGAnimateElement(const QualifiedName& tagName, Document* document)
+    : SVGAnimationElement(tagName, document)
     , m_propertyType(StringProperty)
     , m_fromNumber(0)
     , m_toNumber(0)

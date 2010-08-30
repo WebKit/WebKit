@@ -36,8 +36,11 @@ namespace WebCore {
     public:
         static PassRefPtr<SVGScriptElement> create(const QualifiedName&, Document*, bool createdByParser);
 
+        String type() const;
+        void setType(const String&);
+
+    private:
         SVGScriptElement(const QualifiedName&, Document*, bool createdByParser);
-        virtual ~SVGScriptElement();
 
         virtual String scriptContent() const;
 
@@ -51,16 +54,12 @@ namespace WebCore {
         virtual bool isURLAttribute(Attribute*) const;
         virtual void finishParsingChildren();
 
-        String type() const;
-        void setType(const String&);
-
         virtual String scriptCharset() const;
 
         virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
         virtual bool shouldExecuteAsJavaScript() const;
 
-    protected:
         virtual bool haveLoadedRequiredResources();
 
         virtual String sourceAttributeValue() const;
@@ -75,14 +74,12 @@ namespace WebCore {
         virtual void dispatchLoadEvent();
         virtual void dispatchErrorEvent();
 
-    private:
         // SVGURIReference
         DECLARE_ANIMATED_PROPERTY(SVGScriptElement, XLinkNames::hrefAttr, String, Href, href)
 
         // SVGExternalResourcesRequired
         DECLARE_ANIMATED_PROPERTY(SVGScriptElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
 
-    private:
         ScriptElementData m_data;
         String m_type;
     };

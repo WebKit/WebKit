@@ -46,8 +46,8 @@ using namespace std;
 
 namespace WebCore {
 
-SVGAnimateTransformElement::SVGAnimateTransformElement(const QualifiedName& tagName, Document* doc)
-    : SVGAnimationElement(tagName, doc)
+inline SVGAnimateTransformElement::SVGAnimateTransformElement(const QualifiedName& tagName, Document* document)
+    : SVGAnimationElement(tagName, document)
     , m_type(SVGTransform::SVG_TRANSFORM_UNKNOWN)
     , m_baseIndexInTransformList(0)
 {
@@ -56,10 +56,6 @@ SVGAnimateTransformElement::SVGAnimateTransformElement(const QualifiedName& tagN
 PassRefPtr<SVGAnimateTransformElement> SVGAnimateTransformElement::create(const QualifiedName& tagName, Document* document)
 {
     return new SVGAnimateTransformElement(tagName, document);
-}
-
-SVGAnimateTransformElement::~SVGAnimateTransformElement()
-{
 }
 
 bool SVGAnimateTransformElement::hasValidTarget() const

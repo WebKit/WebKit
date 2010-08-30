@@ -25,8 +25,8 @@
 
 namespace WebCore {
 
-SVGFEPointLightElement::SVGFEPointLightElement(const QualifiedName& tagName, Document* doc)
-    : SVGFELightElement(tagName, doc)
+inline SVGFEPointLightElement::SVGFEPointLightElement(const QualifiedName& tagName, Document* document)
+    : SVGFELightElement(tagName, document)
 {
 }
 
@@ -35,14 +35,9 @@ PassRefPtr<SVGFEPointLightElement> SVGFEPointLightElement::create(const Qualifie
     return new SVGFEPointLightElement(tagName, document);
 }
 
-SVGFEPointLightElement::~SVGFEPointLightElement()
-{
-}
-
 PassRefPtr<LightSource> SVGFEPointLightElement::lightSource() const
 {
-    FloatPoint3D pos(x(), y(), z());
-    return PointLightSource::create(pos);
+    return PointLightSource::create(FloatPoint3D(x(), y(), z()));
 }
 
 }

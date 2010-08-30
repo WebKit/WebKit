@@ -38,11 +38,8 @@ using namespace std;
 
 namespace WebCore {
 
-SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document* doc)
-    : SVGStyledLocatableElement(tagName, doc)
-    , SVGTests()
-    , SVGLangSpace()
-    , SVGExternalResourcesRequired()
+inline SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document* document)
+    : SVGStyledLocatableElement(tagName, document)
     , m_maskUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
     , m_maskContentUnits(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
     , m_x(LengthModeWidth, "-10%")
@@ -57,10 +54,6 @@ SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document* doc)
 PassRefPtr<SVGMaskElement> SVGMaskElement::create(const QualifiedName& tagName, Document* document)
 {
     return new SVGMaskElement(tagName, document);
-}
-
-SVGMaskElement::~SVGMaskElement()
-{
 }
 
 void SVGMaskElement::parseMappedAttribute(Attribute* attr)

@@ -38,13 +38,14 @@ namespace WebCore {
     public:
         static PassRefPtr<SVGMaskElement> create(const QualifiedName&, Document*);
 
+        FloatRect maskBoundingBox(const FloatRect&) const;
+
+    private:
         SVGMaskElement(const QualifiedName&, Document*);
-        virtual ~SVGMaskElement();
 
         virtual bool isValid() const { return SVGTests::isValid(); }
         virtual bool needsPendingResourceHandling() const { return false; }
 
-        FloatRect maskBoundingBox(const FloatRect&) const;
         virtual void parseMappedAttribute(Attribute*);
         virtual void svgAttributeChanged(const QualifiedName&);
         virtual void synchronizeProperty(const QualifiedName&);
@@ -52,7 +53,6 @@ namespace WebCore {
 
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
-    private:
         virtual bool selfHasRelativeLengths() const;
 
         DECLARE_ANIMATED_PROPERTY(SVGMaskElement, SVGNames::maskUnitsAttr, int, MaskUnits, maskUnits)

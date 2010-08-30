@@ -29,20 +29,6 @@
 
 namespace WebCore {
 
-SVGZoomAndPan::SVGZoomAndPan()
-    : m_zoomAndPan(SVG_ZOOMANDPAN_MAGNIFY)
-{
-}
-
-SVGZoomAndPan::~SVGZoomAndPan()
-{
-}
-
-unsigned short SVGZoomAndPan::zoomAndPan() const
-{
-    return m_zoomAndPan;
-}
-
 void SVGZoomAndPan::setZoomAndPan(unsigned short zoomAndPan)
 {
     m_zoomAndPan = zoomAndPan;

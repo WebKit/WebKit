@@ -29,14 +29,15 @@ namespace WebCore {
 
     class SVGElementInstanceList : public RefCounted<SVGElementInstanceList> {
     public:
-        static PassRefPtr<SVGElementInstanceList> create(PassRefPtr<SVGElementInstance> rootInstance) { return adoptRef(new SVGElementInstanceList(rootInstance)); }
+        static PassRefPtr<SVGElementInstanceList> create(PassRefPtr<SVGElementInstance> root) { return adoptRef(new SVGElementInstanceList(root)); }
         virtual ~SVGElementInstanceList();
 
         unsigned length() const;
         SVGElementInstance* item(unsigned index);
 
     private:
-        SVGElementInstanceList(PassRefPtr<SVGElementInstance> rootInstance);
+        SVGElementInstanceList(PassRefPtr<SVGElementInstance>);
+
         RefPtr<SVGElementInstance> m_rootInstance;
     };
 

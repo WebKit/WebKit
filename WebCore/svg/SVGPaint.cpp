@@ -63,10 +63,6 @@ SVGPaint::SVGPaint(const String& uri, const Color& c)
     setUri(uri);
 }
 
-SVGPaint::~SVGPaint()
-{
-}
-
 SVGPaint* SVGPaint::defaultFill()
 {
     static SVGPaint* staticDefaultFill = create(Color::black).releaseRef();

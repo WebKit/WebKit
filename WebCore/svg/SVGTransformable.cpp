@@ -33,15 +33,6 @@
 
 namespace WebCore {
 
-SVGTransformable::SVGTransformable()
-    : SVGLocatable()
-{
-}
-
-SVGTransformable::~SVGTransformable()
-{
-}
-
 static int parseTransformParamList(const UChar*& ptr, const UChar* end, float* values, int required, int optional)
 {
     int optionalParams = 0, requiredParams = 0;

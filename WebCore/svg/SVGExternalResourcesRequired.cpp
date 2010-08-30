@@ -24,18 +24,8 @@
 #include "SVGExternalResourcesRequired.h"
 
 #include "Attr.h"
-#include "SVGElement.h"
-#include "SVGNames.h"
 
 namespace WebCore {
-
-SVGExternalResourcesRequired::SVGExternalResourcesRequired()
-{
-}
-
-SVGExternalResourcesRequired::~SVGExternalResourcesRequired()
-{
-}
 
 bool SVGExternalResourcesRequired::parseMappedAttribute(Attribute* attr)
 {

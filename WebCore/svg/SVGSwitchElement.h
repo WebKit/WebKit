@@ -35,8 +35,8 @@ namespace WebCore {
     public:
         static PassRefPtr<SVGSwitchElement> create(const QualifiedName&, Document*);
 
+    private:
         SVGSwitchElement(const QualifiedName&, Document*);
-        virtual ~SVGSwitchElement();
         
         virtual bool isValid() const { return SVGTests::isValid(); }
 
@@ -45,7 +45,6 @@ namespace WebCore {
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
         virtual void synchronizeProperty(const QualifiedName&);
 
-    private:
         // SVGExternalResourcesRequired
         DECLARE_ANIMATED_PROPERTY(SVGSwitchElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
     };

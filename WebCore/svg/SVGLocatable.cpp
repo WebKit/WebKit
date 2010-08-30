@@ -31,14 +31,6 @@
 
 namespace WebCore {
 
-SVGLocatable::SVGLocatable()
-{
-}
-
-SVGLocatable::~SVGLocatable()
-{
-}
-
 static bool isViewportElement(Node* node)
 {
     return (node->hasTagName(SVGNames::svgTag)

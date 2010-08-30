@@ -31,6 +31,7 @@ namespace WebCore {
     public:
         static PassRefPtr<SVGSetElement> create(const QualifiedName&, Document*);
 
+    private:
         SVGSetElement(const QualifiedName&, Document*);
     };
 

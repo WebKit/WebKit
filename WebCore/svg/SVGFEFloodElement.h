@@ -31,8 +31,8 @@ class SVGFEFloodElement : public SVGFilterPrimitiveStandardAttributes {
 public:
     static PassRefPtr<SVGFEFloodElement> create(const QualifiedName&, Document*);
 
+private:
     SVGFEFloodElement(const QualifiedName&, Document*);
-    virtual ~SVGFEFloodElement();
 
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*);
 };

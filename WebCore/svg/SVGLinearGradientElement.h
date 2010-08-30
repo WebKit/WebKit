@@ -33,8 +33,11 @@ namespace WebCore {
     public:
         static PassRefPtr<SVGLinearGradientElement> create(const QualifiedName&, Document*);
 
+        LinearGradientAttributes collectGradientProperties();
+        void calculateStartEndPoints(const LinearGradientAttributes&, FloatPoint& startPoint, FloatPoint& endPoint);
+
+    private:
         SVGLinearGradientElement(const QualifiedName&, Document*);
-        virtual ~SVGLinearGradientElement();
 
         virtual void parseMappedAttribute(Attribute*);
         virtual void svgAttributeChanged(const QualifiedName&);
@@ -42,10 +45,6 @@ namespace WebCore {
 
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
-        LinearGradientAttributes collectGradientProperties();
-        void calculateStartEndPoints(const LinearGradientAttributes&, FloatPoint& startPoint, FloatPoint& endPoint);
-
-    private:
         virtual bool selfHasRelativeLengths() const;
 
         DECLARE_ANIMATED_PROPERTY(SVGLinearGradientElement, SVGNames::x1Attr, SVGLength, X1, x1)

@@ -32,21 +32,14 @@
 
 namespace WebCore {
 
-SVGViewElement::SVGViewElement(const QualifiedName& tagName, Document* doc)
-    : SVGStyledElement(tagName, doc)
-    , SVGExternalResourcesRequired()
-    , SVGFitToViewBox()
-    , SVGZoomAndPan()
+inline SVGViewElement::SVGViewElement(const QualifiedName& tagName, Document* document)
+    : SVGStyledElement(tagName, document)
 {
 }
 
 PassRefPtr<SVGViewElement> SVGViewElement::create(const QualifiedName& tagName, Document* document)
 {
     return new SVGViewElement(tagName, document);
-}
-
-SVGViewElement::~SVGViewElement()
-{
 }
 
 SVGStringList* SVGViewElement::viewTarget() const

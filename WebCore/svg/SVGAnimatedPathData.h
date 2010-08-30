@@ -24,14 +24,13 @@
 #if ENABLE(SVG)
 
 namespace WebCore {
+
     class SVGPathSegList;
 
     class SVGAnimatedPathData {
     public:
-        SVGAnimatedPathData();
-        virtual ~SVGAnimatedPathData();
+        virtual ~SVGAnimatedPathData() { }
 
-        // 'SVGAnimatedPathData' functions
         virtual SVGPathSegList* pathSegList() const = 0;
         virtual SVGPathSegList* normalizedPathSegList() const = 0;
         virtual SVGPathSegList* animatedPathSegList() const = 0;

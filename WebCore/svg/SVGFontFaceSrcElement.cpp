@@ -33,8 +33,8 @@ namespace WebCore {
     
 using namespace SVGNames;
     
-SVGFontFaceSrcElement::SVGFontFaceSrcElement(const QualifiedName& tagName, Document* doc)
-    : SVGElement(tagName, doc)
+inline SVGFontFaceSrcElement::SVGFontFaceSrcElement(const QualifiedName& tagName, Document* document)
+    : SVGElement(tagName, document)
 {
 }
 

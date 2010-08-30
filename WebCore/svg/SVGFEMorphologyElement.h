@@ -33,16 +33,15 @@ class SVGFEMorphologyElement : public SVGFilterPrimitiveStandardAttributes {
 public:
     static PassRefPtr<SVGFEMorphologyElement> create(const QualifiedName&, Document*);
 
-    SVGFEMorphologyElement(const QualifiedName&, Document*);
-    virtual ~SVGFEMorphologyElement();
-
     void setRadius(float radiusX, float radiusY);
+
+private:
+    SVGFEMorphologyElement(const QualifiedName&, Document*);
 
     virtual void parseMappedAttribute(Attribute*);
     virtual void synchronizeProperty(const QualifiedName&);
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*);
 
-private:
     DECLARE_ANIMATED_PROPERTY(SVGFEMorphologyElement, SVGNames::inAttr, String, In1, in1)
     DECLARE_ANIMATED_PROPERTY(SVGFEMorphologyElement, SVGNames::operatorAttr, int, _operator, _operator)
     DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGFEMorphologyElement, SVGNames::radiusAttr, SVGRadiusXAttrIdentifier, float, RadiusX, radiusX)

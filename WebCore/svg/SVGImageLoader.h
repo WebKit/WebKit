@@ -30,8 +30,8 @@ namespace WebCore {
     class SVGImageLoader : public ImageLoader {
     public:
         SVGImageLoader(SVGImageElement*);
-        virtual ~SVGImageLoader();
 
+    private:
         virtual void dispatchLoadEvent();
         virtual String sourceURI(const AtomicString&) const;
     };

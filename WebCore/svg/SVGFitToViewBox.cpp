@@ -34,14 +34,6 @@
 
 namespace WebCore {
 
-SVGFitToViewBox::SVGFitToViewBox()
-{
-}
-
-SVGFitToViewBox::~SVGFitToViewBox()
-{
-}
-
 bool SVGFitToViewBox::parseViewBox(Document* doc, const String& s, FloatRect& viewBox)
 {
     const UChar* c = s.characters();

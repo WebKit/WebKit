@@ -30,10 +30,11 @@ namespace WebCore {
     class SVGFontFaceNameElement : public SVGElement {
     public:
         static PassRefPtr<SVGFontFaceNameElement> create(const QualifiedName&, Document*);
-
-        SVGFontFaceNameElement(const QualifiedName&, Document*);
         
         PassRefPtr<CSSFontFaceSrcValue> srcValue() const;
+
+    private:
+        SVGFontFaceNameElement(const QualifiedName&, Document*);
     };
 
 } // namespace WebCore

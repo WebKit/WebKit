@@ -31,11 +31,8 @@
 
 namespace WebCore {
 
-SVGRectElement::SVGRectElement(const QualifiedName& tagName, Document *doc)
-    : SVGStyledTransformableElement(tagName, doc)
-    , SVGTests()
-    , SVGLangSpace()
-    , SVGExternalResourcesRequired()
+inline SVGRectElement::SVGRectElement(const QualifiedName& tagName, Document* document)
+    : SVGStyledTransformableElement(tagName, document)
     , m_x(LengthModeWidth)
     , m_y(LengthModeHeight)
     , m_width(LengthModeWidth)
@@ -48,10 +45,6 @@ SVGRectElement::SVGRectElement(const QualifiedName& tagName, Document *doc)
 PassRefPtr<SVGRectElement> SVGRectElement::create(const QualifiedName& tagName, Document* document)
 {
     return new SVGRectElement(tagName, document);
-}
-
-SVGRectElement::~SVGRectElement()
-{
 }
 
 void SVGRectElement::parseMappedAttribute(Attribute* attr)

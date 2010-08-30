@@ -40,10 +40,6 @@ SVGDocument::SVGDocument(Frame* frame, const KURL& url)
 {
 }
 
-SVGDocument::~SVGDocument()
-{
-}
-
 SVGSVGElement* SVGDocument::rootElement() const
 {
     Element* elem = documentElement();

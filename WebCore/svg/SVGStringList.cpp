@@ -32,10 +32,6 @@ SVGStringList::SVGStringList(const QualifiedName& attributeName)
 {
 }
 
-SVGStringList::~SVGStringList()
-{
-}
-
 void SVGStringList::reset(const String& str)
 {
     ExceptionCode ec = 0;

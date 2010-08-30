@@ -32,10 +32,6 @@ SVGLengthList::SVGLengthList(const QualifiedName& attributeName)
 {
 }
 
-SVGLengthList::~SVGLengthList()
-{
-}
-
 void SVGLengthList::parse(const String& value, SVGLengthMode mode)
 {
     ExceptionCode ec = 0;

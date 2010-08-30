@@ -22,7 +22,8 @@
 #define SVGZoomAndPan_h
 
 #if ENABLE(SVG)
-#include "PlatformString.h"
+
+#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 
@@ -37,10 +38,10 @@ namespace WebCore {
             SVG_ZOOMANDPAN_MAGNIFY = 2
         };
 
-        SVGZoomAndPan();
-        virtual ~SVGZoomAndPan();
+        SVGZoomAndPan() : m_zoomAndPan(SVG_ZOOMANDPAN_MAGNIFY) { }
+        virtual ~SVGZoomAndPan() { }
 
-        unsigned short zoomAndPan() const;
+        unsigned short zoomAndPan() const { return m_zoomAndPan; }
         virtual void setZoomAndPan(unsigned short zoomAndPan);
 
         bool parseMappedAttribute(Attribute*);
@@ -55,4 +56,5 @@ namespace WebCore {
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
+
 #endif // SVGZoomAndPan_h

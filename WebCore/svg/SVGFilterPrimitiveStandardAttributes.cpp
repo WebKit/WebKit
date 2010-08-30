@@ -33,8 +33,8 @@
 
 namespace WebCore {
 
-SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes(const QualifiedName& tagName, Document* doc)
-    : SVGStyledElement(tagName, doc)
+SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes(const QualifiedName& tagName, Document* document)
+    : SVGStyledElement(tagName, document)
     , m_x(LengthModeWidth, "0%")
     , m_y(LengthModeHeight, "0%")
     , m_width(LengthModeWidth, "100%")
@@ -42,10 +42,6 @@ SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes(const
 {
     // Spec: If the x/y attribute is not specified, the effect is as if a value of "0%" were specified.
     // Spec: If the width/height attribute is not specified, the effect is as if a value of "100%" were specified.
-}
-
-SVGFilterPrimitiveStandardAttributes::~SVGFilterPrimitiveStandardAttributes()
-{
 }
 
 void SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(Attribute* attr)

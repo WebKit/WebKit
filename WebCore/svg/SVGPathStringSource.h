@@ -35,7 +35,8 @@ public:
         return adoptPtr(new SVGPathStringSource(string));
     }
 
-    virtual ~SVGPathStringSource();
+private:
+    SVGPathStringSource(const String&);
 
     virtual bool hasMoreData() const;
     virtual bool moveToNextToken();
@@ -52,8 +53,6 @@ public:
     virtual bool parseCurveToQuadraticSmoothSegment(FloatPoint&);
     virtual bool parseArcToSegment(float&, float&, float&, bool&, bool&, FloatPoint&);
 
-private:
-    SVGPathStringSource(const String&);
     String m_string;
 
     const UChar* m_current;

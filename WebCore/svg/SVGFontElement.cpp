@@ -40,8 +40,8 @@ namespace WebCore {
 
 using namespace SVGNames;
 
-SVGFontElement::SVGFontElement(const QualifiedName& tagName, Document* doc)
-    : SVGStyledElement(tagName, doc) 
+inline SVGFontElement::SVGFontElement(const QualifiedName& tagName, Document* document)
+    : SVGStyledElement(tagName, document) 
     , m_isGlyphCacheValid(false)
 {
 }
@@ -49,10 +49,6 @@ SVGFontElement::SVGFontElement(const QualifiedName& tagName, Document* doc)
 PassRefPtr<SVGFontElement> SVGFontElement::create(const QualifiedName& tagName, Document* document)
 {
     return new SVGFontElement(tagName, document);
-}
-
-SVGFontElement::~SVGFontElement()
-{
 }
 
 void SVGFontElement::synchronizeProperty(const QualifiedName& attrName)

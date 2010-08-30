@@ -29,8 +29,8 @@
 
 namespace WebCore {
 
-SVGTSpanElement::SVGTSpanElement(const QualifiedName& tagName, Document* doc)
-    : SVGTextPositioningElement(tagName, doc)
+inline SVGTSpanElement::SVGTSpanElement(const QualifiedName& tagName, Document* document)
+    : SVGTextPositioningElement(tagName, document)
 {
 }
 

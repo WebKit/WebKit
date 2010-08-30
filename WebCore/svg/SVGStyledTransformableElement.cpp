@@ -32,14 +32,9 @@
 
 namespace WebCore {
 
-SVGStyledTransformableElement::SVGStyledTransformableElement(const QualifiedName& tagName, Document* doc)
-    : SVGStyledLocatableElement(tagName, doc)
-    , SVGTransformable()
+SVGStyledTransformableElement::SVGStyledTransformableElement(const QualifiedName& tagName, Document* document)
+    : SVGStyledLocatableElement(tagName, document)
     , m_transform(SVGTransformList::create(SVGNames::transformAttr))
-{
-}
-
-SVGStyledTransformableElement::~SVGStyledTransformableElement()
 {
 }
 

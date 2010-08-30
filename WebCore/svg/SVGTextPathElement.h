@@ -52,8 +52,6 @@ namespace WebCore {
         };
 
         static PassRefPtr<SVGTextPathElement> create(const QualifiedName&, Document*);
-
-        virtual ~SVGTextPathElement();
  
     private:
         SVGTextPathElement(const QualifiedName&, Document*);

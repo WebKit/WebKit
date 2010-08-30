@@ -32,8 +32,6 @@ namespace WebCore {
     public:
         static PassRefPtr<SVGTextElement> create(const QualifiedName&, Document*);
 
-        virtual ~SVGTextElement();
-
         virtual SVGElement* nearestViewportElement() const;
         virtual SVGElement* farthestViewportElement() const;
 
@@ -44,6 +42,7 @@ namespace WebCore {
 
     private:
         SVGTextElement(const QualifiedName&, Document*);
+
         virtual void parseMappedAttribute(Attribute*);
 
         virtual AffineTransform* supplementalTransform();

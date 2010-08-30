@@ -36,15 +36,14 @@ namespace WebCore {
     public:
         static PassRefPtr<SVGSymbolElement> create(const QualifiedName&, Document*);
 
+    private:
         SVGSymbolElement(const QualifiedName&, Document*);
-        virtual ~SVGSymbolElement();
 
         virtual void parseMappedAttribute(Attribute*);
         virtual void svgAttributeChanged(const QualifiedName&);
         virtual void synchronizeProperty(const QualifiedName&);
         virtual bool rendererIsNeeded(RenderStyle*) { return false; }
 
-    private:
         virtual bool selfHasRelativeLengths() const;
 
         // SVGExternalResourcesRequired

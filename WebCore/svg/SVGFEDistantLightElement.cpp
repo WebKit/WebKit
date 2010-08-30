@@ -25,18 +25,14 @@
 
 namespace WebCore {
 
-SVGFEDistantLightElement::SVGFEDistantLightElement(const QualifiedName& tagName, Document* doc)
-    : SVGFELightElement(tagName, doc)
+inline SVGFEDistantLightElement::SVGFEDistantLightElement(const QualifiedName& tagName, Document* document)
+    : SVGFELightElement(tagName, document)
 {
 }
 
 PassRefPtr<SVGFEDistantLightElement> SVGFEDistantLightElement::create(const QualifiedName& tagName, Document* document)
 {
     return new SVGFEDistantLightElement(tagName, document);
-}
-
-SVGFEDistantLightElement::~SVGFEDistantLightElement()
-{
 }
 
 PassRefPtr<LightSource> SVGFEDistantLightElement::lightSource() const

@@ -24,10 +24,6 @@
 
 namespace WebCore {
 
-SVGPathStringBuilder::SVGPathStringBuilder()
-{
-}
-
 void SVGPathStringBuilder::moveTo(const FloatPoint& targetPoint, bool, PathCoordinateMode mode)
 {
     if (mode == AbsoluteCoordinates)

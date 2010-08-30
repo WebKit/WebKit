@@ -42,20 +42,8 @@ class SVGFilterElement : public SVGStyledElement,
 public:
     static PassRefPtr<SVGFilterElement> create(const QualifiedName&, Document*);
 
-    SVGFilterElement(const QualifiedName&, Document*);
-    virtual ~SVGFilterElement();
-
-    virtual bool needsPendingResourceHandling() const { return false; }
-
     void setFilterRes(unsigned long filterResX, unsigned long filterResY);
     FloatRect filterBoundingBox(const FloatRect&) const;
-
-    virtual void parseMappedAttribute(Attribute*);
-    virtual void svgAttributeChanged(const QualifiedName&);
-    virtual void synchronizeProperty(const QualifiedName&);
-    virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
-
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
     static void invalidateFilter(SVGElement* element)
     {
@@ -74,6 +62,17 @@ public:
     }
 
 private:
+    SVGFilterElement(const QualifiedName&, Document*);
+
+    virtual bool needsPendingResourceHandling() const { return false; }
+
+    virtual void parseMappedAttribute(Attribute*);
+    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void synchronizeProperty(const QualifiedName&);
+    virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
+
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+
     virtual bool selfHasRelativeLengths() const;
 
     DECLARE_ANIMATED_PROPERTY(SVGFilterElement, SVGNames::filterUnitsAttr, int, FilterUnits, filterUnits)

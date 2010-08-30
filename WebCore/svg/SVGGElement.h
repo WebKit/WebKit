@@ -36,10 +36,14 @@ namespace WebCore {
     public:
         static PassRefPtr<SVGGElement> create(const QualifiedName&, Document*);
 
-        SVGGElement(const QualifiedName&, Document*);
-        virtual ~SVGGElement();
-
         virtual bool isShadowTreeContainerElement() const { return false; }
+
+    protected:
+        SVGGElement(const QualifiedName&, Document*);
+
+        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+
+    private:
         virtual bool isValid() const { return SVGTests::isValid(); }
 
         virtual void parseMappedAttribute(Attribute*);
@@ -47,9 +51,7 @@ namespace WebCore {
         virtual void synchronizeProperty(const QualifiedName&);
 
         virtual bool rendererIsNeeded(RenderStyle*) { return true; }
-        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
-    private:
         // SVGExternalResourcesRequired
         DECLARE_ANIMATED_PROPERTY(SVGGElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
     };

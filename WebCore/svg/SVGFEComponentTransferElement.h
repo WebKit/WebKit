@@ -31,14 +31,13 @@ class SVGFEComponentTransferElement : public SVGFilterPrimitiveStandardAttribute
 public:
     static PassRefPtr<SVGFEComponentTransferElement> create(const QualifiedName&, Document*);
 
+private:
     SVGFEComponentTransferElement(const QualifiedName&, Document*);
-    virtual ~SVGFEComponentTransferElement();
 
     virtual void parseMappedAttribute(Attribute*);
     virtual void synchronizeProperty(const QualifiedName&);
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*);
 
-private:
     DECLARE_ANIMATED_PROPERTY(SVGFEComponentTransferElement, SVGNames::inAttr, String, In1, in1)
 };
 

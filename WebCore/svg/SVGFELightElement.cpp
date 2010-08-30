@@ -30,13 +30,9 @@
 
 namespace WebCore {
 
-SVGFELightElement::SVGFELightElement(const QualifiedName& tagName, Document* doc)
-    : SVGElement(tagName, doc)
-    , m_specularExponent(1.0f)
-{
-}
-
-SVGFELightElement::~SVGFELightElement()
+SVGFELightElement::SVGFELightElement(const QualifiedName& tagName, Document* document)
+    : SVGElement(tagName, document)
+    , m_specularExponent(1)
 {
 }
 

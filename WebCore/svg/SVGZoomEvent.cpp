@@ -31,10 +31,6 @@ SVGZoomEvent::SVGZoomEvent()
 {
 }
 
-SVGZoomEvent::~SVGZoomEvent()
-{
-}
-
 FloatRect SVGZoomEvent::zoomRectScreen() const
 {
     return m_zoomRectScreen;

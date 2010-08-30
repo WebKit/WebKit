@@ -32,10 +32,6 @@ SVGPathSegList::SVGPathSegList(const QualifiedName& attributeName)
 {
 }
 
-SVGPathSegList::~SVGPathSegList()
-{
-}
-
 }
 
 #endif // ENABLE(SVG)

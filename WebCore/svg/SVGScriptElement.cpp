@@ -31,10 +31,8 @@
 
 namespace WebCore {
 
-SVGScriptElement::SVGScriptElement(const QualifiedName& tagName, Document* document, bool createdByParser)
+inline SVGScriptElement::SVGScriptElement(const QualifiedName& tagName, Document* document, bool createdByParser)
     : SVGElement(tagName, document)
-    , SVGURIReference()
-    , SVGExternalResourcesRequired()
     , m_data(this, this)
 {
     m_data.setCreatedByParser(createdByParser);
@@ -43,10 +41,6 @@ SVGScriptElement::SVGScriptElement(const QualifiedName& tagName, Document* docum
 PassRefPtr<SVGScriptElement> SVGScriptElement::create(const QualifiedName& tagName, Document* document, bool createdByParser)
 {
     return new SVGScriptElement(tagName, document, createdByParser);
-}
-
-SVGScriptElement::~SVGScriptElement()
-{
 }
 
 String SVGScriptElement::scriptContent() const

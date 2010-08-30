@@ -43,9 +43,6 @@ public:
     virtual bool parseCurveToQuadraticSegment(FloatPoint&, FloatPoint&) = 0;
     virtual bool parseCurveToQuadraticSmoothSegment(FloatPoint&) = 0;
     virtual bool parseArcToSegment(float&, float&, float&, bool&, bool&, FloatPoint&) = 0;
-
-public:
-    SVGPathSource() { }
 };
 
 } // namespace WebCore

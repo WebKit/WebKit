@@ -32,10 +32,6 @@ SVGPointList::SVGPointList(const QualifiedName& attributeName)
 {
 }
 
-SVGPointList::~SVGPointList()
-{
-}
-
 String SVGPointList::valueAsString() const
 {
     String result;

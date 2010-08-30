@@ -42,8 +42,8 @@ namespace WebCore {
 char SVGFilterResXIdentifier[] = "SVGFilterResX";
 char SVGFilterResYIdentifier[] = "SVGFilterResY";
 
-SVGFilterElement::SVGFilterElement(const QualifiedName& tagName, Document* doc)
-    : SVGStyledElement(tagName, doc)
+inline SVGFilterElement::SVGFilterElement(const QualifiedName& tagName, Document* document)
+    : SVGStyledElement(tagName, document)
     , SVGURIReference()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
@@ -61,10 +61,6 @@ SVGFilterElement::SVGFilterElement(const QualifiedName& tagName, Document* doc)
 PassRefPtr<SVGFilterElement> SVGFilterElement::create(const QualifiedName& tagName, Document* document)
 {
     return new SVGFilterElement(tagName, document);
-}
-
-SVGFilterElement::~SVGFilterElement()
-{
 }
 
 void SVGFilterElement::setFilterRes(unsigned long filterResX, unsigned long filterResY)

@@ -1,3 +1,368 @@
+2010-08-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Make SVG constructors private to make sure callers all use create
+        https://bugs.webkit.org/show_bug.cgi?id=44872
+
+        Made as many members private and protected as possible, and got rid of many
+        unneeded empty constructor and destructor definitions, in some cases changing
+        a class to be non-polymorphic. Made some functions inline. Used the word document
+        instead of the abbreviation doc. Removed unneeded explicit base class
+        initialization in cases where it is no different from the default behavior.
+
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::SVGAElement):
+        (WebCore::SVGAElement::childShouldCreateRenderer):
+        * svg/SVGAElement.h:
+        * svg/SVGAltGlyphElement.cpp:
+        (WebCore::SVGAltGlyphElement::SVGAltGlyphElement):
+        * svg/SVGAltGlyphElement.h:
+        * svg/SVGAngle.cpp:
+        * svg/SVGAngle.h:
+        * svg/SVGAnimateColorElement.cpp:
+        (WebCore::SVGAnimateColorElement::SVGAnimateColorElement):
+        * svg/SVGAnimateColorElement.h:
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::SVGAnimateElement):
+        * svg/SVGAnimateElement.h:
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::SVGAnimateMotionElement):
+        * svg/SVGAnimateMotionElement.h:
+        * svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::SVGAnimateTransformElement):
+        * svg/SVGAnimateTransformElement.h:
+        * svg/SVGAnimatedPathData.cpp:
+        * svg/SVGAnimatedPathData.h:
+        * svg/SVGAnimatedPoints.cpp:
+        * svg/SVGAnimatedPoints.h:
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::SVGAnimationElement):
+        * svg/SVGAnimationElement.h:
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::SVGCircleElement):
+        * svg/SVGCircleElement.h:
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::SVGClipPathElement):
+        * svg/SVGClipPathElement.h:
+        * svg/SVGColor.cpp:
+        * svg/SVGColor.h:
+        * svg/SVGComponentTransferFunctionElement.cpp:
+        (WebCore::SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement):
+        * svg/SVGComponentTransferFunctionElement.h:
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::SVGCursorElement):
+        * svg/SVGCursorElement.h:
+        * svg/SVGDefsElement.cpp:
+        (WebCore::SVGDefsElement::SVGDefsElement):
+        * svg/SVGDefsElement.h:
+        * svg/SVGDescElement.cpp:
+        (WebCore::SVGDescElement::SVGDescElement):
+        * svg/SVGDescElement.h:
+        * svg/SVGDocument.cpp:
+        * svg/SVGDocument.h:
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::SVGDocumentExtensions):
+        (WebCore::SVGDocumentExtensions::reportWarning):
+        (WebCore::SVGDocumentExtensions::reportError):
+        * svg/SVGDocumentExtensions.h:
+        * svg/SVGElement.h:
+        * svg/SVGElementInstanceList.h:
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::SVGEllipseElement):
+        * svg/SVGEllipseElement.h:
+        * svg/SVGExternalResourcesRequired.cpp:
+        * svg/SVGExternalResourcesRequired.h:
+        * svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::SVGFEBlendElement):
+        * svg/SVGFEBlendElement.h:
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::SVGFEColorMatrixElement):
+        * svg/SVGFEColorMatrixElement.h:
+        * svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::SVGFEComponentTransferElement):
+        * svg/SVGFEComponentTransferElement.h:
+        * svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::SVGFECompositeElement):
+        * svg/SVGFECompositeElement.h:
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement):
+        * svg/SVGFEConvolveMatrixElement.h:
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement):
+        * svg/SVGFEDiffuseLightingElement.h:
+        * svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::SVGFEDisplacementMapElement):
+        * svg/SVGFEDisplacementMapElement.h:
+        * svg/SVGFEDistantLightElement.cpp:
+        (WebCore::SVGFEDistantLightElement::SVGFEDistantLightElement):
+        * svg/SVGFEDistantLightElement.h:
+        * svg/SVGFEFloodElement.cpp:
+        (WebCore::SVGFEFloodElement::SVGFEFloodElement):
+        * svg/SVGFEFloodElement.h:
+        * svg/SVGFEFuncAElement.cpp:
+        (WebCore::SVGFEFuncAElement::SVGFEFuncAElement):
+        * svg/SVGFEFuncAElement.h:
+        * svg/SVGFEFuncBElement.cpp:
+        (WebCore::SVGFEFuncBElement::SVGFEFuncBElement):
+        * svg/SVGFEFuncBElement.h:
+        * svg/SVGFEFuncGElement.cpp:
+        (WebCore::SVGFEFuncGElement::SVGFEFuncGElement):
+        * svg/SVGFEFuncGElement.h:
+        * svg/SVGFEFuncRElement.cpp:
+        (WebCore::SVGFEFuncRElement::SVGFEFuncRElement):
+        * svg/SVGFEFuncRElement.h:
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::SVGFEGaussianBlurElement):
+        * svg/SVGFEGaussianBlurElement.h:
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::SVGFEImageElement):
+        * svg/SVGFEImageElement.h:
+        * svg/SVGFELightElement.cpp:
+        (WebCore::SVGFELightElement::SVGFELightElement):
+        * svg/SVGFELightElement.h:
+        * svg/SVGFEMergeElement.cpp:
+        (WebCore::SVGFEMergeElement::SVGFEMergeElement):
+        * svg/SVGFEMergeElement.h:
+        * svg/SVGFEMergeNodeElement.cpp:
+        (WebCore::SVGFEMergeNodeElement::SVGFEMergeNodeElement):
+        * svg/SVGFEMergeNodeElement.h:
+        * svg/SVGFEMorphologyElement.cpp:
+        (WebCore::SVGFEMorphologyElement::SVGFEMorphologyElement):
+        * svg/SVGFEMorphologyElement.h:
+        * svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::SVGFEOffsetElement):
+        * svg/SVGFEOffsetElement.h:
+        * svg/SVGFEPointLightElement.cpp:
+        (WebCore::SVGFEPointLightElement::SVGFEPointLightElement):
+        (WebCore::SVGFEPointLightElement::lightSource):
+        * svg/SVGFEPointLightElement.h:
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::SVGFESpecularLightingElement):
+        * svg/SVGFESpecularLightingElement.h:
+        * svg/SVGFESpotLightElement.cpp:
+        (WebCore::SVGFESpotLightElement::SVGFESpotLightElement):
+        * svg/SVGFESpotLightElement.h:
+        * svg/SVGFETileElement.cpp:
+        (WebCore::SVGFETileElement::SVGFETileElement):
+        * svg/SVGFETileElement.h:
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::SVGFETurbulenceElement):
+        * svg/SVGFETurbulenceElement.h:
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::SVGFilterElement):
+        * svg/SVGFilterElement.h:
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes):
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        * svg/SVGFitToViewBox.cpp:
+        * svg/SVGFitToViewBox.h:
+        * svg/SVGFontData.cpp:
+        * svg/SVGFontData.h:
+        * svg/SVGFontElement.cpp:
+        (WebCore::SVGFontElement::SVGFontElement):
+        * svg/SVGFontElement.h:
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::SVGFontFaceElement):
+        * svg/SVGFontFaceElement.h:
+        * svg/SVGFontFaceFormatElement.cpp:
+        (WebCore::SVGFontFaceFormatElement::SVGFontFaceFormatElement):
+        * svg/SVGFontFaceFormatElement.h:
+        * svg/SVGFontFaceNameElement.cpp:
+        (WebCore::SVGFontFaceNameElement::SVGFontFaceNameElement):
+        * svg/SVGFontFaceNameElement.h:
+        * svg/SVGFontFaceSrcElement.cpp:
+        (WebCore::SVGFontFaceSrcElement::SVGFontFaceSrcElement):
+        * svg/SVGFontFaceSrcElement.h:
+        * svg/SVGFontFaceUriElement.cpp:
+        (WebCore::SVGFontFaceUriElement::SVGFontFaceUriElement):
+        * svg/SVGFontFaceUriElement.h:
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::SVGForeignObjectElement):
+        * svg/SVGForeignObjectElement.h:
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::SVGGElement):
+        * svg/SVGGElement.h:
+        * svg/SVGGlyphElement.cpp:
+        (WebCore::SVGGlyphElement::SVGGlyphElement):
+        * svg/SVGGlyphElement.h:
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::SVGGradientElement):
+        * svg/SVGGradientElement.h:
+        * svg/SVGHKernElement.cpp:
+        (WebCore::SVGHKernElement::SVGHKernElement):
+        * svg/SVGHKernElement.h:
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::SVGImageElement):
+        * svg/SVGImageElement.h:
+        * svg/SVGImageLoader.cpp:
+        * svg/SVGImageLoader.h:
+        * svg/SVGLangSpace.cpp:
+        * svg/SVGLangSpace.h:
+        * svg/SVGLengthList.cpp:
+        * svg/SVGLengthList.h:
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::SVGLineElement):
+        * svg/SVGLineElement.h:
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::SVGLinearGradientElement):
+        * svg/SVGLinearGradientElement.h:
+        * svg/SVGLocatable.cpp:
+        * svg/SVGLocatable.h:
+        * svg/SVGMPathElement.cpp:
+        (WebCore::SVGMPathElement::SVGMPathElement):
+        * svg/SVGMPathElement.h:
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::SVGMarkerElement):
+        * svg/SVGMarkerElement.h:
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::SVGMaskElement):
+        * svg/SVGMaskElement.h:
+        * svg/SVGMetadataElement.cpp:
+        (WebCore::SVGMetadataElement::SVGMetadataElement):
+        * svg/SVGMetadataElement.h:
+        * svg/SVGMissingGlyphElement.cpp:
+        (WebCore::SVGMissingGlyphElement::SVGMissingGlyphElement):
+        * svg/SVGMissingGlyphElement.h:
+        * svg/SVGNumberList.cpp:
+        * svg/SVGNumberList.h:
+        * svg/SVGPaint.cpp:
+        * svg/SVGPaint.h:
+        * svg/SVGParserUtilities.cpp:
+        (WebCore::genericParseNumber):
+        (WebCore::parseNumber):
+        * svg/SVGPathBlender.cpp:
+        * svg/SVGPathBlender.h:
+        * svg/SVGPathBuilder.h:
+        * svg/SVGPathByteStreamBuilder.h:
+        * svg/SVGPathByteStreamSource.cpp:
+        * svg/SVGPathByteStreamSource.h:
+        * svg/SVGPathConsumer.h:
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::SVGPathElement):
+        * svg/SVGPathElement.h:
+        * svg/SVGPathParser.cpp:
+        * svg/SVGPathParser.h:
+        * svg/SVGPathSeg.cpp:
+        * svg/SVGPathSeg.h:
+        * svg/SVGPathSegArc.h:
+        * svg/SVGPathSegClosePath.cpp:
+        * svg/SVGPathSegClosePath.h:
+        * svg/SVGPathSegCurvetoCubic.h:
+        * svg/SVGPathSegCurvetoCubicSmooth.h:
+        * svg/SVGPathSegCurvetoQuadratic.h:
+        * svg/SVGPathSegCurvetoQuadraticSmooth.h:
+        * svg/SVGPathSegLineto.h:
+        * svg/SVGPathSegLinetoHorizontal.h:
+        * svg/SVGPathSegLinetoVertical.h:
+        * svg/SVGPathSegList.cpp:
+        * svg/SVGPathSegList.h:
+        * svg/SVGPathSegListBuilder.h:
+        * svg/SVGPathSegListSource.cpp:
+        * svg/SVGPathSegListSource.h:
+        * svg/SVGPathSegMoveto.h:
+        * svg/SVGPathSource.h:
+        * svg/SVGPathStringBuilder.cpp:
+        * svg/SVGPathStringBuilder.h:
+        * svg/SVGPathStringSource.cpp:
+        * svg/SVGPathStringSource.h:
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::SVGPatternElement):
+        * svg/SVGPatternElement.h:
+        * svg/SVGPointList.cpp:
+        * svg/SVGPointList.h:
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::SVGPolyElement):
+        * svg/SVGPolyElement.h:
+        * svg/SVGPolygonElement.cpp:
+        (WebCore::SVGPolygonElement::SVGPolygonElement):
+        * svg/SVGPolygonElement.h:
+        * svg/SVGPolylineElement.cpp:
+        (WebCore::SVGPolylineElement::SVGPolylineElement):
+        * svg/SVGPolylineElement.h:
+        * svg/SVGPreserveAspectRatio.cpp:
+        * svg/SVGPreserveAspectRatio.h:
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::SVGRadialGradientElement):
+        * svg/SVGRadialGradientElement.h:
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::SVGRectElement):
+        * svg/SVGRectElement.h:
+        * svg/SVGSVGElement.h:
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::SVGScriptElement):
+        * svg/SVGScriptElement.h:
+        * svg/SVGSetElement.cpp:
+        (WebCore::SVGSetElement::SVGSetElement):
+        * svg/SVGSetElement.h:
+        * svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::SVGStopElement):
+        * svg/SVGStopElement.h:
+        * svg/SVGStringList.cpp:
+        * svg/SVGStringList.h:
+        * svg/SVGStylable.cpp:
+        * svg/SVGStylable.h:
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::SVGStyleElement):
+        * svg/SVGStyleElement.h:
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::SVGStyledElement):
+        * svg/SVGStyledElement.h:
+        * svg/SVGStyledLocatableElement.cpp:
+        (WebCore::SVGStyledLocatableElement::SVGStyledLocatableElement):
+        * svg/SVGStyledLocatableElement.h:
+        * svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::SVGStyledTransformableElement):
+        * svg/SVGStyledTransformableElement.h:
+        * svg/SVGSwitchElement.cpp:
+        (WebCore::SVGSwitchElement::SVGSwitchElement):
+        (WebCore::SVGSwitchElement::childShouldCreateRenderer):
+        * svg/SVGSwitchElement.h:
+        * svg/SVGSymbolElement.cpp:
+        (WebCore::SVGSymbolElement::SVGSymbolElement):
+        * svg/SVGSymbolElement.h:
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::SVGTRefElement):
+        * svg/SVGTRefElement.h:
+        * svg/SVGTSpanElement.cpp:
+        (WebCore::SVGTSpanElement::SVGTSpanElement):
+        * svg/SVGTests.cpp:
+        * svg/SVGTests.h:
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::SVGTextContentElement):
+        * svg/SVGTextContentElement.h:
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::SVGTextElement):
+        * svg/SVGTextElement.h:
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::SVGTextPathElement):
+        * svg/SVGTextPathElement.h:
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::SVGTextPositioningElement):
+        * svg/SVGTextPositioningElement.h:
+        * svg/SVGTitleElement.cpp:
+        (WebCore::SVGTitleElement::SVGTitleElement):
+        * svg/SVGTransform.cpp:
+        * svg/SVGTransform.h:
+        * svg/SVGTransformable.cpp:
+        * svg/SVGTransformable.h:
+        * svg/SVGURIReference.cpp:
+        * svg/SVGURIReference.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::SVGUseElement):
+        (WebCore::SVGUseElement::expandSymbolElementsInShadowTree):
+        * svg/SVGUseElement.h:
+        * svg/SVGViewElement.cpp:
+        (WebCore::SVGViewElement::SVGViewElement):
+        * svg/SVGViewElement.h:
+        * svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::SVGViewSpec):
+        * svg/SVGViewSpec.h:
+        * svg/SVGZoomAndPan.cpp:
+        * svg/SVGZoomAndPan.h:
+        * svg/SVGZoomEvent.cpp:
+        * svg/SVGZoomEvent.h:
+
 2010-08-30  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dan Bernstein.

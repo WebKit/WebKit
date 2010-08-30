@@ -46,14 +46,12 @@ public:
     virtual bool continueConsuming() = 0;
     virtual void cleanup() = 0;
 
-public:
     // Used in UnalteredParisng/NormalizedParsing modes.
     virtual void moveTo(const FloatPoint&, bool closed, PathCoordinateMode) = 0;
     virtual void lineTo(const FloatPoint&, PathCoordinateMode) = 0;
     virtual void curveToCubic(const FloatPoint&, const FloatPoint&, const FloatPoint&, PathCoordinateMode) = 0;
     virtual void closePath() = 0;
 
-public:
     // Only used in UnalteredParsing mode.
     virtual void lineToHorizontal(float, PathCoordinateMode) = 0;
     virtual void lineToVertical(float, PathCoordinateMode) = 0;
@@ -63,7 +61,6 @@ public:
     virtual void arcTo(float, float, float, bool largeArcFlag, bool sweepFlag, const FloatPoint&, PathCoordinateMode) = 0;
 
 protected:
-    SVGPathConsumer() { }
     virtual ~SVGPathConsumer() { }
 };
 

@@ -31,14 +31,13 @@ namespace WebCore {
     public:
         static PassRefPtr<SVGAnimateMotionElement> create(const QualifiedName&, Document*);
 
+    private:
         SVGAnimateMotionElement(const QualifiedName&, Document*);
-        virtual ~SVGAnimateMotionElement();
 
         virtual bool hasValidTarget() const;
 
         virtual void parseMappedAttribute(Attribute*);
         
-    private:
         virtual void resetToBaseValue(const String&);
         virtual bool calculateFromAndToValues(const String& fromString, const String& toString);
         virtual bool calculateFromAndByValues(const String& fromString, const String& byString);

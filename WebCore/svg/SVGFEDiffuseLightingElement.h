@@ -38,15 +38,14 @@ class SVGFEDiffuseLightingElement : public SVGFilterPrimitiveStandardAttributes 
 public:
     static PassRefPtr<SVGFEDiffuseLightingElement> create(const QualifiedName&, Document*);
 
+private:
     SVGFEDiffuseLightingElement(const QualifiedName&, Document*);
-    virtual ~SVGFEDiffuseLightingElement();
 
     virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual void synchronizeProperty(const QualifiedName&);
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*);
 
-private:
     DECLARE_ANIMATED_PROPERTY(SVGFEDiffuseLightingElement, SVGNames::inAttr, String, In1, in1)
     DECLARE_ANIMATED_PROPERTY(SVGFEDiffuseLightingElement, SVGNames::diffuseConstantAttr, float, DiffuseConstant, diffuseConstant)
     DECLARE_ANIMATED_PROPERTY(SVGFEDiffuseLightingElement, SVGNames::surfaceScaleAttr, float, SurfaceScale, surfaceScale)

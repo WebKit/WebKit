@@ -32,10 +32,10 @@ namespace WebCore {
     public:
         static PassRefPtr<SVGDescElement> create(const QualifiedName&, Document*);
 
-        SVGDescElement(const QualifiedName&, Document*);
-        virtual ~SVGDescElement();
-
         String description() const;
+
+    private:
+        SVGDescElement(const QualifiedName&, Document*);
 
         virtual bool rendererIsNeeded(RenderStyle*) { return false; }
     };

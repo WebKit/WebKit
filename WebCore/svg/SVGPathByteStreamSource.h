@@ -35,7 +35,8 @@ public:
         return adoptPtr(new SVGPathByteStreamSource(stream));
     }
 
-    virtual ~SVGPathByteStreamSource();
+private:
+    SVGPathByteStreamSource(SVGPathByteStream*);
 
     virtual bool hasMoreData() const;
     virtual bool moveToNextToken() { return true; }
@@ -51,9 +52,6 @@ public:
     virtual bool parseCurveToQuadraticSegment(FloatPoint&, FloatPoint&);
     virtual bool parseCurveToQuadraticSmoothSegment(FloatPoint&);
     virtual bool parseArcToSegment(float&, float&, float&, bool&, bool&, FloatPoint&);
-
-private:
-    SVGPathByteStreamSource(SVGPathByteStream*);
 
 #if COMPILER(MSVC)
 #pragma warning(disable: 4701)

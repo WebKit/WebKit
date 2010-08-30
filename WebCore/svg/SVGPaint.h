@@ -64,16 +64,12 @@ namespace WebCore {
             return adoptRef(new SVGPaint(uri, color));
         }
 
-        virtual ~SVGPaint();
-
         // 'SVGPaint' functions
         SVGPaintType paintType() const { return m_paintType; }
         String uri() const;
 
         void setUri(const String&);
         void setPaint(SVGPaintType, const String& uri, const String& rgbPaint, const String& iccPaint, ExceptionCode&);
-
-        virtual String cssText() const;
         
         static SVGPaint* defaultFill();
         static SVGPaint* defaultStroke();
@@ -89,6 +85,8 @@ namespace WebCore {
         SVGPaint(const String& uri, const Color& c);
 
         virtual bool isSVGPaint() const { return true; }
+
+        virtual String cssText() const;
 
         SVGPaintType m_paintType;
         String m_uri;

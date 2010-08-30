@@ -42,8 +42,8 @@ namespace WebCore {
     public:
         static PassRefPtr<SVGImageElement> create(const QualifiedName&, Document*);
 
+    private:
         SVGImageElement(const QualifiedName&, Document*);
-        virtual ~SVGImageElement();
         
         virtual bool isValid() const { return SVGTests::isValid(); }
 
@@ -59,10 +59,8 @@ namespace WebCore {
         virtual const QualifiedName& imageSourceAttributeName() const;       
         virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
-    protected:
         virtual bool haveLoadedRequiredResources();
 
-    private:
         virtual bool selfHasRelativeLengths() const;
         virtual void willMoveToNewOwnerDocument();
 

@@ -36,14 +36,13 @@ class SVGAnimateTransformElement : public SVGAnimationElement {
 public:
     static PassRefPtr<SVGAnimateTransformElement> create(const QualifiedName&, Document*);
 
+private:
     SVGAnimateTransformElement(const QualifiedName&, Document*);
-    virtual ~SVGAnimateTransformElement();
     
     virtual bool hasValidTarget() const;
 
     virtual void parseMappedAttribute(Attribute*);
 
-private:
     virtual void resetToBaseValue(const String&);
     virtual bool calculateFromAndToValues(const String& fromString, const String& toString);
     virtual bool calculateFromAndByValues(const String& fromString, const String& byString);

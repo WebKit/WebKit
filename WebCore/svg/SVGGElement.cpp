@@ -29,21 +29,14 @@
 
 namespace WebCore {
 
-SVGGElement::SVGGElement(const QualifiedName& tagName, Document* doc)
-    : SVGStyledTransformableElement(tagName, doc)
-    , SVGTests()
-    , SVGLangSpace()
-    , SVGExternalResourcesRequired()
+SVGGElement::SVGGElement(const QualifiedName& tagName, Document* document)
+    : SVGStyledTransformableElement(tagName, document)
 {
 }
 
 PassRefPtr<SVGGElement> SVGGElement::create(const QualifiedName& tagName, Document* document)
 {
     return new SVGGElement(tagName, document);
-}
-
-SVGGElement::~SVGGElement()
-{
 }
 
 void SVGGElement::parseMappedAttribute(Attribute* attr)

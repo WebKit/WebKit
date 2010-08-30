@@ -49,8 +49,6 @@ namespace WebCore {
 
         SVGDocumentExtensions* accessDocumentSVGExtensions() const;
 
-        virtual void parseMappedAttribute(Attribute*);
-
         virtual bool isStyled() const { return false; }
         virtual bool isStyledTransformable() const { return false; }
         virtual bool isStyledLocatable() const { return false; }
@@ -61,9 +59,6 @@ namespace WebCore {
 
         // For SVGTests
         virtual bool isValid() const { return true; }
-
-        virtual bool rendererIsNeeded(RenderStyle*) { return false; }
-        virtual bool childShouldCreateRenderer(Node*) const;
 
         virtual void svgAttributeChanged(const QualifiedName&) { }
         virtual void synchronizeProperty(const QualifiedName&) { }
@@ -84,15 +79,20 @@ namespace WebCore {
     protected:
         SVGElement(const QualifiedName&, Document*);
 
+        virtual void parseMappedAttribute(Attribute*);
+
         virtual void finishParsingChildren();
         virtual void insertedIntoDocument();
         virtual void attributeChanged(Attribute*, bool preserveDecls = false);
+        virtual bool childShouldCreateRenderer(Node*) const;
 
         SVGElementRareData* rareSVGData() const;
         SVGElementRareData* ensureRareSVGData();
 
     private:
         friend class SVGElementInstance;
+
+        virtual bool rendererIsNeeded(RenderStyle*) { return false; }
 
         virtual bool isSupported(StringImpl* feature, StringImpl* version) const;
 

@@ -50,13 +50,11 @@ enum SVGPathSegType {
     PathSegCurveToQuadraticSmoothRel = 19
 };
 
-class SVGPathElement;
-class SVGStyledElement;
 class QualifiedName;
 
 class SVGPathSeg : public RefCounted<SVGPathSeg> {
 public:
-    virtual ~SVGPathSeg();
+    virtual ~SVGPathSeg() { }
 
     // Forward declare these enums in the w3c naming scheme, for IDL generation
     enum {
@@ -83,28 +81,26 @@ public:
     };
 
 
-    virtual unsigned short pathSegType() const;
-    virtual String pathSegTypeAsLetter() const;
+    virtual unsigned short pathSegType() const = 0;
+    virtual String pathSegTypeAsLetter() const = 0;
 
     const QualifiedName& associatedAttributeName() const;
-    
-protected:
-    SVGPathSeg() { }
 };
 
 class SVGPathSegSingleCoord : public SVGPathSeg { 
 public:
-    SVGPathSegSingleCoord(float x, float y)
-        : m_x(x)
-        , m_y(y)
-    {
-    }
-
     void setX(float x) { m_x = x; }
     float x() const { return m_x; }
 
     void setY(float y) { m_y = y; }
     float y() const { return m_y; }
+
+protected:
+    SVGPathSegSingleCoord(float x, float y)
+        : m_x(x)
+        , m_y(y)
+    {
+    }
 
 private:
     float m_x;

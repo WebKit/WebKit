@@ -36,10 +36,6 @@ SVGFontData::SVGFontData(SVGFontFaceElement* fontFaceElement)
     ASSERT_ARG(fontFaceElement, fontFaceElement);
 }
 
-SVGFontData::~SVGFontData()
-{
-}
-
 } // namespace WebCore
 
 #endif

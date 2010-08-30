@@ -32,7 +32,6 @@ namespace WebCore {
     class SVGPointList : public SVGPODList<FloatPoint> {
     public:
         static PassRefPtr<SVGPointList> create(const QualifiedName& attributeName) { return adoptRef(new SVGPointList(attributeName)); }
-        virtual ~SVGPointList();
 
         String valueAsString() const;
 

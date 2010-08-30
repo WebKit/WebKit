@@ -30,19 +30,6 @@
 
 namespace WebCore {
 
-SVGLangSpace::SVGLangSpace()
-{
-}
-
-SVGLangSpace::~SVGLangSpace()
-{
-}
-
-const AtomicString& SVGLangSpace::xmllang() const
-{
-    return m_lang;
-}
-
 void SVGLangSpace::setXmllang(const AtomicString& xmlLang)
 {
     m_lang = xmlLang;

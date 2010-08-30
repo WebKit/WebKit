@@ -35,14 +35,13 @@ class SVGFESpecularLightingElement : public SVGFilterPrimitiveStandardAttributes
 public:
     static PassRefPtr<SVGFESpecularLightingElement> create(const QualifiedName&, Document*);
 
+private:
     SVGFESpecularLightingElement(const QualifiedName&, Document*);
-    virtual ~SVGFESpecularLightingElement();
     
     virtual void parseMappedAttribute(Attribute*);
     virtual void synchronizeProperty(const QualifiedName&);
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*);
 
-private:
     DECLARE_ANIMATED_PROPERTY(SVGFESpecularLightingElement, SVGNames::inAttr, String, In1, in1)
     DECLARE_ANIMATED_PROPERTY(SVGFESpecularLightingElement, SVGNames::specularConstantAttr, float, SpecularConstant, specularConstant)
     DECLARE_ANIMATED_PROPERTY(SVGFESpecularLightingElement, SVGNames::specularExponentAttr, float, SpecularExponent, specularExponent)

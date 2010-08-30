@@ -29,7 +29,6 @@ namespace WebCore {
     class SVGAngle {
     public:
         SVGAngle();
-        virtual ~SVGAngle();
 
         enum SVGAngleType {
             SVG_ANGLETYPE_UNKNOWN           = 0,
@@ -39,13 +38,13 @@ namespace WebCore {
             SVG_ANGLETYPE_GRAD              = 4
         };
 
-        SVGAngleType unitType() const;
+        SVGAngleType unitType() const { return m_unitType; }
 
         void setValue(float);
-        float value() const; 
+        float value() const { return m_value; }
 
         void setValueInSpecifiedUnits(float valueInSpecifiedUnits);
-        float valueInSpecifiedUnits() const;
+        float valueInSpecifiedUnits() const { return m_valueInSpecifiedUnits; }
 
         void setValueAsString(const String&);
         String valueAsString() const;

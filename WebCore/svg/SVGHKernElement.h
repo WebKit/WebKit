@@ -24,29 +24,22 @@
 
 #if ENABLE(SVG_FONTS)
 #include "SVGFontElement.h"
-#include "SVGParserUtilities.h"
-#include "SVGStyledElement.h"
-#include <wtf/Forward.h>
-
-#include <limits>
 
 namespace WebCore {
-
-    class SVGFontData;
 
     class SVGHKernElement : public SVGElement {
     public:
         static PassRefPtr<SVGHKernElement> create(const QualifiedName&, Document*);
 
+        void buildHorizontalKerningPair(KerningPairVector&);
+
+    private:
         SVGHKernElement(const QualifiedName&, Document*);
-        virtual ~SVGHKernElement();
 
         virtual void insertedIntoDocument();
         virtual void removedFromDocument();
 
         virtual bool rendererIsNeeded(RenderStyle*) { return false; }
-
-        void buildHorizontalKerningPair(KerningPairVector&);
     };
 
 } // namespace WebCore

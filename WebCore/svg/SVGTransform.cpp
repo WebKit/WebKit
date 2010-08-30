@@ -52,10 +52,6 @@ SVGTransform::SVGTransform(const AffineTransform& matrix)
 {
 }
 
-SVGTransform::~SVGTransform()
-{
-}
-
 bool SVGTransform::isValid()
 {
     return (m_type != SVG_TRANSFORM_UNKNOWN);

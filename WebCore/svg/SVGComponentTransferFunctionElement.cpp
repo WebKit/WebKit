@@ -30,17 +30,13 @@
 
 namespace WebCore {
 
-SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const QualifiedName& tagName, Document* doc)
-    : SVGElement(tagName, doc)
+SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const QualifiedName& tagName, Document* document)
+    : SVGElement(tagName, document)
     , m_type(FECOMPONENTTRANSFER_TYPE_UNKNOWN)
     , m_tableValues(SVGNumberList::create(SVGNames::tableValuesAttr))
-    , m_slope(1.0f)
-    , m_amplitude(1.0f)
-    , m_exponent(1.0f)
-{
-}
-
-SVGComponentTransferFunctionElement::~SVGComponentTransferFunctionElement()
+    , m_slope(1)
+    , m_amplitude(1)
+    , m_exponent(1)
 {
 }
 

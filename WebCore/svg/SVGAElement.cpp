@@ -45,22 +45,14 @@
 
 namespace WebCore {
 
-SVGAElement::SVGAElement(const QualifiedName& tagName, Document *doc)
-    : SVGStyledTransformableElement(tagName, doc)
-    , SVGURIReference()
-    , SVGTests()
-    , SVGLangSpace()
-    , SVGExternalResourcesRequired()
+inline SVGAElement::SVGAElement(const QualifiedName& tagName, Document* document)
+    : SVGStyledTransformableElement(tagName, document)
 {
 }
 
 PassRefPtr<SVGAElement> SVGAElement::create(const QualifiedName& tagName, Document* document)
 {
     return new SVGAElement(tagName, document);
-}
-
-SVGAElement::~SVGAElement()
-{
 }
 
 String SVGAElement::title() const
@@ -227,7 +219,7 @@ bool SVGAElement::childShouldCreateRenderer(Node* child) const
     if (child->hasTagName(SVGNames::aTag))
         return false;
     if (parent() && parent()->isSVGElement())
-        return static_cast<SVGElement*>(parent())->childShouldCreateRenderer(child);
+        return parent()->childShouldCreateRenderer(child);
 
     return SVGElement::childShouldCreateRenderer(child);
 }

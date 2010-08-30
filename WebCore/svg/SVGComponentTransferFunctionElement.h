@@ -31,14 +31,14 @@ namespace WebCore {
 
     class SVGComponentTransferFunctionElement : public SVGElement {
     public:
+        ComponentTransferFunction transferFunction() const;
+
+    protected:
         SVGComponentTransferFunctionElement(const QualifiedName&, Document*);
-        virtual ~SVGComponentTransferFunctionElement();
 
         virtual void parseMappedAttribute(Attribute*);
         virtual void synchronizeProperty(const QualifiedName&);
         
-        ComponentTransferFunction transferFunction() const;
-
     private:
         DECLARE_ANIMATED_PROPERTY(SVGComponentTransferFunctionElement, SVGNames::typeAttr, int, Type, type)
         DECLARE_ANIMATED_PROPERTY(SVGComponentTransferFunctionElement, SVGNames::tableValuesAttr, SVGNumberList*, TableValues, tableValues)

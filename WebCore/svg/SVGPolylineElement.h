@@ -30,8 +30,8 @@ namespace WebCore {
     public:
         static PassRefPtr<SVGPolylineElement> create(const QualifiedName&, Document*);
 
+    private:
         SVGPolylineElement(const QualifiedName&, Document*);
-        virtual ~SVGPolylineElement();
 
         virtual Path toPathData() const;
     };

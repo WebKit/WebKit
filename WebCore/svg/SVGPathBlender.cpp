@@ -34,10 +34,6 @@ SVGPathBlender::SVGPathBlender()
 {
 }
 
-SVGPathBlender::~SVGPathBlender()
-{
-}
-
 float SVGPathBlender::blendAnimatedFloat(float from, float to)
 {
     return (to - from) * m_progress + from;

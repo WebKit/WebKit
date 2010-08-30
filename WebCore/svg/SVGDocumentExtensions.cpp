@@ -40,8 +40,8 @@
 
 namespace WebCore {
 
-SVGDocumentExtensions::SVGDocumentExtensions(Document* doc)
-    : m_doc(doc)
+SVGDocumentExtensions::SVGDocumentExtensions(Document* document)
+    : m_document(document)
     , m_resourcesCache(new SVGResourcesCache)
 {
 }
@@ -148,12 +148,12 @@ static void reportMessage(Document* document, MessageLevel level, const String& 
 
 void SVGDocumentExtensions::reportWarning(const String& message)
 {
-    reportMessage(m_doc, WarningMessageLevel, "Warning: " + message);
+    reportMessage(m_document, WarningMessageLevel, "Warning: " + message);
 }
 
 void SVGDocumentExtensions::reportError(const String& message)
 {
-    reportMessage(m_doc, ErrorMessageLevel, "Error: " + message);
+    reportMessage(m_document, ErrorMessageLevel, "Error: " + message);
 }
 
 void SVGDocumentExtensions::addPendingResource(const AtomicString& id, SVGStyledElement* obj)

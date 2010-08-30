@@ -31,8 +31,7 @@ namespace WebCore {
 
     class SVGURIReference {
     public:
-        SVGURIReference();
-        virtual ~SVGURIReference();
+        virtual ~SVGURIReference() { }
 
         bool parseMappedAttribute(Attribute*);
         bool isKnownAttribute(const QualifiedName&);

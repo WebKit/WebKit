@@ -38,11 +38,8 @@ namespace WebCore {
 char SVGOrientTypeAttrIdentifier[] = "SVGOrientTypeAttr";
 char SVGOrientAngleAttrIdentifier[] = "SVGOrientAngleAttr";
 
-SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document* doc)
-    : SVGStyledElement(tagName, doc)
-    , SVGLangSpace()
-    , SVGExternalResourcesRequired()
-    , SVGFitToViewBox()
+SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document* document)
+    : SVGStyledElement(tagName, document)
     , m_refX(LengthModeWidth)
     , m_refY(LengthModeHeight)
     , m_markerWidth(LengthModeWidth, "3")
@@ -56,10 +53,6 @@ SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document* doc)
 PassRefPtr<SVGMarkerElement> SVGMarkerElement::create(const QualifiedName& tagName, Document* document)
 {
     return new SVGMarkerElement(tagName, document);
-}
-
-SVGMarkerElement::~SVGMarkerElement()
-{
 }
 
 AffineTransform SVGMarkerElement::viewBoxToViewTransform(float viewWidth, float viewHeight) const

@@ -32,8 +32,8 @@ namespace WebCore {
     public:
         static PassRefPtr<SVGTRefElement> create(const QualifiedName&, Document*);
 
+    private:
         SVGTRefElement(const QualifiedName&, Document*);
-        virtual ~SVGTRefElement();
 
         virtual void parseMappedAttribute(Attribute*);
         virtual void svgAttributeChanged(const QualifiedName&);
@@ -42,7 +42,6 @@ namespace WebCore {
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
         virtual bool childShouldCreateRenderer(Node*) const;
 
-    private:
         void updateReferencedText();
 
         // SVGURIReference

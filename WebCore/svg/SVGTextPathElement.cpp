@@ -34,9 +34,8 @@
 
 namespace WebCore {
 
-SVGTextPathElement::SVGTextPathElement(const QualifiedName& tagName, Document* doc)
-    : SVGTextContentElement(tagName, doc)
-    , SVGURIReference()
+inline SVGTextPathElement::SVGTextPathElement(const QualifiedName& tagName, Document* document)
+    : SVGTextContentElement(tagName, document)
     , m_startOffset(LengthModeOther)
     , m_method(SVG_TEXTPATH_METHODTYPE_ALIGN)
     , m_spacing(SVG_TEXTPATH_SPACINGTYPE_EXACT)
@@ -46,10 +45,6 @@ SVGTextPathElement::SVGTextPathElement(const QualifiedName& tagName, Document* d
 PassRefPtr<SVGTextPathElement> SVGTextPathElement::create(const QualifiedName& tagName, Document* document)
 {
     return new SVGTextPathElement(tagName, document);
-}
-
-SVGTextPathElement::~SVGTextPathElement()
-{
 }
 
 void SVGTextPathElement::parseMappedAttribute(Attribute* attr)

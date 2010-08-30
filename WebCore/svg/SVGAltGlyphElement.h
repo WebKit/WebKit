@@ -36,8 +36,6 @@ namespace WebCore {
     public:
         static PassRefPtr<SVGAltGlyphElement> create(const QualifiedName&, Document*);
 
-        virtual ~SVGAltGlyphElement();
-
         const AtomicString& glyphRef() const;
         void setGlyphRef(const AtomicString&, ExceptionCode&);
         const AtomicString& format() const;

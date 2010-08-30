@@ -31,20 +31,6 @@
 
 namespace WebCore {
 
-SVGPathSeg::~SVGPathSeg()
-{
-}
-
-unsigned short SVGPathSeg::pathSegType() const
-{
-    return PATHSEG_UNKNOWN;
-}
-
-String SVGPathSeg::pathSegTypeAsLetter() const
-{
-    return "";
-}
-
 const QualifiedName& SVGPathSeg::associatedAttributeName() const
 {
     return SVGNames::dAttr;

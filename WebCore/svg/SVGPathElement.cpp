@@ -44,21 +44,14 @@
 
 namespace WebCore {
 
-SVGPathElement::SVGPathElement(const QualifiedName& tagName, Document* doc)
-    : SVGStyledTransformableElement(tagName, doc)
-    , SVGTests()
-    , SVGLangSpace()
-    , SVGExternalResourcesRequired()
+inline SVGPathElement::SVGPathElement(const QualifiedName& tagName, Document* document)
+    : SVGStyledTransformableElement(tagName, document)
 {
 }
 
 PassRefPtr<SVGPathElement> SVGPathElement::create(const QualifiedName& tagName, Document* document)
 {
     return new SVGPathElement(tagName, document);
-}
-
-SVGPathElement::~SVGPathElement()
-{
 }
 
 float SVGPathElement::getTotalLength()

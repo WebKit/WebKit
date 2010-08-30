@@ -27,21 +27,14 @@
 
 namespace WebCore {
 
-SVGSymbolElement::SVGSymbolElement(const QualifiedName& tagName, Document* doc)
-    : SVGStyledElement(tagName, doc)
-    , SVGLangSpace()
-    , SVGExternalResourcesRequired()
-    , SVGFitToViewBox()
+inline SVGSymbolElement::SVGSymbolElement(const QualifiedName& tagName, Document* document)
+    : SVGStyledElement(tagName, document)
 {
 }
 
 PassRefPtr<SVGSymbolElement> SVGSymbolElement::create(const QualifiedName& tagName, Document* document)
 {
     return new SVGSymbolElement(tagName, document);
-}
-
-SVGSymbolElement::~SVGSymbolElement()
-{
 }
 
 void SVGSymbolElement::parseMappedAttribute(Attribute* attr)

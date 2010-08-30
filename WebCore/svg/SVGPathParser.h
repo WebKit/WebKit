@@ -37,7 +37,6 @@ namespace WebCore {
 class SVGPathParser : public Noncopyable {
 public:
     SVGPathParser();
-    ~SVGPathParser();
 
     bool parsePathDataFromSource(PathParsingMode pathParsingMode);
     void setCurrentConsumer(SVGPathConsumer* consumer) { m_consumer = consumer; }

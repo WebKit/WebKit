@@ -33,19 +33,20 @@ namespace WebCore {
 
     class SVGTests {
     public:
-        SVGTests();
-        virtual ~SVGTests();
-
         SVGStringList* requiredFeatures() const;
         SVGStringList* requiredExtensions() const;
         SVGStringList* systemLanguage() const;
 
-        bool hasExtension(const String&) const;
+        bool hasExtension(const String&) const { return false; }
 
         bool isValid() const;
         
         bool parseMappedAttribute(Attribute*);
         bool isKnownAttribute(const QualifiedName&);
+
+    protected:
+        SVGTests();
+        ~SVGTests();
 
     private:
         mutable RefPtr<SVGStringList> m_features;

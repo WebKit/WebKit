@@ -50,6 +50,7 @@ namespace WebCore {
     class SVGPathSegCurvetoCubicSmoothRel;
     class SVGPathSegCurvetoQuadraticSmoothAbs;
     class SVGPathSegCurvetoQuadraticSmoothRel;
+
     class SVGPathElement : public SVGStyledTransformableElement,
                            public SVGTests,
                            public SVGLangSpace,
@@ -57,11 +58,7 @@ namespace WebCore {
                            public SVGAnimatedPathData {
     public:
         static PassRefPtr<SVGPathElement> create(const QualifiedName&, Document*);
-
-        SVGPathElement(const QualifiedName&, Document*);
-        virtual ~SVGPathElement();
         
-        virtual bool isValid() const { return SVGTests::isValid(); }
         float getTotalLength();
         FloatPoint getPointAtLength(float distance);
         unsigned long getPathSegAtLength(float distance);
@@ -92,15 +89,19 @@ namespace WebCore {
         virtual SVGPathSegList* animatedPathSegList() const;
         virtual SVGPathSegList* animatedNormalizedPathSegList() const;
 
+        virtual Path toPathData() const;
+
+    private:
+        SVGPathElement(const QualifiedName&, Document*);
+
+        virtual bool isValid() const { return SVGTests::isValid(); }
+
         virtual void parseMappedAttribute(Attribute*);
         virtual void svgAttributeChanged(const QualifiedName&);
         virtual void synchronizeProperty(const QualifiedName&);
 
-        virtual Path toPathData() const;
-
         virtual bool supportsMarkers() const { return true; }
 
-    private:
         mutable RefPtr<SVGPathSegList> m_pathSegList;
 
         DECLARE_ANIMATED_PROPERTY(SVGPathElement, SVGNames::pathLengthAttr, float, PathLength, pathLength)

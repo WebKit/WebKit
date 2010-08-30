@@ -33,8 +33,7 @@ class SVGElement;
 
 class SVGLocatable {
 public:
-    SVGLocatable();
-    virtual ~SVGLocatable();
+    virtual ~SVGLocatable() { }
 
     // 'SVGLocatable' functions
     virtual SVGElement* nearestViewportElement() const = 0;

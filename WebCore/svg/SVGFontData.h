@@ -28,7 +28,7 @@ namespace WebCore {
 class SVGFontData : public Noncopyable {
 public:
     SVGFontData(SVGFontFaceElement*);
-    virtual ~SVGFontData();
+    virtual ~SVGFontData() { }
 
     SVGFontFaceElement* svgFontFaceElement() const { return m_svgFontFaceElement; }
 

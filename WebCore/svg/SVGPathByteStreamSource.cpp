@@ -32,10 +32,6 @@ SVGPathByteStreamSource::SVGPathByteStreamSource(SVGPathByteStream* stream)
     m_streamEnd = stream->end();
 }
 
-SVGPathByteStreamSource::~SVGPathByteStreamSource()
-{
-}
-
 bool SVGPathByteStreamSource::hasMoreData() const
 {
     return m_streamCurrent < m_streamEnd;

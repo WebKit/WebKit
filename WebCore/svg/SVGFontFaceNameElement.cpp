@@ -27,8 +27,8 @@
 
 namespace WebCore {
     
-SVGFontFaceNameElement::SVGFontFaceNameElement(const QualifiedName& tagName, Document* doc)
-    : SVGElement(tagName, doc)
+inline SVGFontFaceNameElement::SVGFontFaceNameElement(const QualifiedName& tagName, Document* document)
+    : SVGElement(tagName, document)
 {
 }
 

@@ -29,21 +29,19 @@ namespace WebCore {
 
 class SVGPathStringBuilder : public SVGPathConsumer {
 public:
-    SVGPathStringBuilder();
-
-    virtual void cleanup() { m_stringBuilder.clear(); }
-    virtual void incrementPathSegmentCount() { }
-    virtual bool continueConsuming() { return true; }
     String result() { return m_stringBuilder.toString(ConcatAddingSpacesBetweenIndividualStrings); }
 
 private:
+    virtual void cleanup() { m_stringBuilder.clear(); }
+    virtual void incrementPathSegmentCount() { }
+    virtual bool continueConsuming() { return true; }
+
     // Used in UnalteredParsing/NormalizedParsing modes.
     virtual void moveTo(const FloatPoint&, bool closed, PathCoordinateMode);
     virtual void lineTo(const FloatPoint&, PathCoordinateMode);
     virtual void curveToCubic(const FloatPoint&, const FloatPoint&, const FloatPoint&, PathCoordinateMode);
     virtual void closePath();
 
-private:
     // Only used in UnalteredParsing mode.
     virtual void lineToHorizontal(float, PathCoordinateMode);
     virtual void lineToVertical(float, PathCoordinateMode);

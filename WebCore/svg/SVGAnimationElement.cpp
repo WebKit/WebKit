@@ -52,15 +52,9 @@ using namespace std;
 
 namespace WebCore {
     
-SVGAnimationElement::SVGAnimationElement(const QualifiedName& tagName, Document* doc)
-    : SVGSMILElement(tagName, doc)
-    , SVGTests()
-    , SVGExternalResourcesRequired() 
+SVGAnimationElement::SVGAnimationElement(const QualifiedName& tagName, Document* document)
+    : SVGSMILElement(tagName, document)
     , m_animationValid(false)
-{
-}
-
-SVGAnimationElement::~SVGAnimationElement()
 {
 }
 

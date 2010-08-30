@@ -34,10 +34,6 @@ SVGPathStringSource::SVGPathStringSource(const String& string)
     ASSERT(!string.isEmpty());
 }
 
-SVGPathStringSource::~SVGPathStringSource()
-{
-}
-
 bool SVGPathStringSource::hasMoreData() const
 {
     return m_current < m_end;

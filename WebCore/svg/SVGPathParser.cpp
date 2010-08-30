@@ -38,10 +38,6 @@ SVGPathParser::SVGPathParser()
 {
 }
 
-SVGPathParser::~SVGPathParser()
-{
-}
-
 void SVGPathParser::parseClosePathSegment()
 {
     // Reset m_currentPoint for the next path.

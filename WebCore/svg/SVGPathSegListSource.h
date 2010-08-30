@@ -37,7 +37,8 @@ public:
         return adoptPtr(new SVGPathSegListSource(pathSegList));
     }
 
-    virtual ~SVGPathSegListSource();
+private:
+    SVGPathSegListSource(SVGPathSegList*);
 
     virtual bool hasMoreData() const;
     virtual bool moveToNextToken() { return true; }
@@ -53,9 +54,6 @@ public:
     virtual bool parseCurveToQuadraticSegment(FloatPoint&, FloatPoint&);
     virtual bool parseCurveToQuadraticSmoothSegment(FloatPoint&);
     virtual bool parseArcToSegment(float&, float&, float&, bool&, bool&, FloatPoint&);
-
-private:
-    SVGPathSegListSource(SVGPathSegList*);
 
     SVGPathSegList* m_pathSegList;
     RefPtr<SVGPathSeg> m_segment;

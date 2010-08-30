@@ -44,8 +44,7 @@ namespace WebCore {
         SVGTransform();
         SVGTransform(SVGTransformType);
         explicit SVGTransform(const AffineTransform&);
-        virtual ~SVGTransform();
-               
+
         SVGTransformType type() const;
 
         AffineTransform matrix() const;

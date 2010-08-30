@@ -34,11 +34,10 @@
 
 namespace WebCore {
 
-/* We use this generic _parseNumber function to allow the Path parsing code to work 
- * at a higher precision internally, without any unnecessary runtime cost or code
- * complexity
- */    
-template <typename FloatType> static bool _parseNumber(const UChar*& ptr, const UChar* end, FloatType& number, bool skip)
+// We use this generic parseNumber function to allow the Path parsing code to work 
+// at a higher precision internally, without any unnecessary runtime cost or code
+// complexity.
+template <typename FloatType> static bool genericParseNumber(const UChar*& ptr, const UChar* end, FloatType& number, bool skip)
 {
     int exponent;
     FloatType integer, decimal, frac;
@@ -127,7 +126,7 @@ template <typename FloatType> static bool _parseNumber(const UChar*& ptr, const 
 
 bool parseNumber(const UChar*& ptr, const UChar* end, float& number, bool skip) 
 {
-    return _parseNumber(ptr, end, number, skip);
+    return genericParseNumber(ptr, end, number, skip);
 }
 
 // only used to parse largeArcFlag and sweepFlag which must be a "0" or "1"

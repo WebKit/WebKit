@@ -30,9 +30,8 @@ namespace WebCore {
     class SVGLengthList : public SVGPODList<SVGLength> {
     public:
         static PassRefPtr<SVGLengthList> create(const QualifiedName& attributeName) { return adoptRef(new SVGLengthList(attributeName)); }
-        virtual ~SVGLengthList();
 
-        void parse(const String& value, SVGLengthMode mode);
+        void parse(const String& value, SVGLengthMode);
  
         String valueAsString() const;
 

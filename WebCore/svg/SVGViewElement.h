@@ -37,8 +37,6 @@ namespace WebCore {
     public:
         static PassRefPtr<SVGViewElement> create(const QualifiedName&, Document*);
 
-        virtual ~SVGViewElement();
-
         SVGStringList* viewTarget() const;
 
     private:

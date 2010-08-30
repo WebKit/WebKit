@@ -34,6 +34,18 @@ class SVGStyleElement : public SVGElement
 public:
     static PassRefPtr<SVGStyleElement> create(const QualifiedName&, Document*, bool createdByParser);
 
+    StyleSheet* sheet();
+
+    virtual const AtomicString& type() const;
+    void setType(const AtomicString&, ExceptionCode&);
+
+    virtual const AtomicString& media() const;
+    void setMedia(const AtomicString&, ExceptionCode&);
+
+    virtual String title() const;
+    void setTitle(const AtomicString&, ExceptionCode&);
+
+private:
     SVGStyleElement(const QualifiedName&, Document*, bool createdByParser);
 
     virtual void parseMappedAttribute(Attribute*);
@@ -45,17 +57,6 @@ public:
 
     virtual bool isLoading() const { return StyleElement::isLoading(); }
     virtual bool sheetLoaded() { return StyleElement::sheetLoaded(document()); }
-
-    virtual const AtomicString& type() const;
-    void setType(const AtomicString&, ExceptionCode&);
-
-    virtual const AtomicString& media() const;
-    void setMedia(const AtomicString&, ExceptionCode&);
-
-    virtual String title() const;
-    void setTitle(const AtomicString&, ExceptionCode&);
-
-    StyleSheet* sheet();
 };
 
 } // namespace WebCore

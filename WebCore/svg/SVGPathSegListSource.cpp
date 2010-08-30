@@ -39,10 +39,6 @@ SVGPathSegListSource::SVGPathSegListSource(SVGPathSegList* pathSegList)
     m_itemEnd = m_pathSegList->numberOfItems();
 }
 
-SVGPathSegListSource::~SVGPathSegListSource()
-{
-}
-
 bool SVGPathSegListSource::hasMoreData() const
 {
     return m_itemCurrent < m_itemEnd;

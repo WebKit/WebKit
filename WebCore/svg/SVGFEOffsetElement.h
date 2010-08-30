@@ -31,15 +31,14 @@ class SVGFEOffsetElement : public SVGFilterPrimitiveStandardAttributes {
 public:
     static PassRefPtr<SVGFEOffsetElement> create(const QualifiedName&, Document*);
 
+private:
     SVGFEOffsetElement(const QualifiedName&, Document*);
-    virtual ~SVGFEOffsetElement();
 
     virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual void synchronizeProperty(const QualifiedName&);
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*);
 
-private:
     DECLARE_ANIMATED_PROPERTY(SVGFEOffsetElement, SVGNames::inAttr, String, In1, in1)
     DECLARE_ANIMATED_PROPERTY(SVGFEOffsetElement, SVGNames::dxAttr, float, Dx, dx)
     DECLARE_ANIMATED_PROPERTY(SVGFEOffsetElement, SVGNames::dyAttr, float, Dy, dy)

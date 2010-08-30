@@ -61,7 +61,7 @@ public:
     SVGResourcesCache* resourcesCache() const { return m_resourcesCache.get(); }
 
 private:
-    Document* m_doc; // weak reference
+    Document* m_document; // weak reference
     HashSet<SVGSVGElement*> m_timeContainers; // For SVG 1.2 support this will need to be made more general.
     HashMap<AtomicString, RenderSVGResourceContainer*> m_resources;
     HashMap<AtomicString, HashSet<SVGStyledElement*>*> m_pendingResources;

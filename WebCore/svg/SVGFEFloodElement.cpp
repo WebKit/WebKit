@@ -29,18 +29,14 @@
 
 namespace WebCore {
 
-SVGFEFloodElement::SVGFEFloodElement(const QualifiedName& tagName, Document* doc)
-    : SVGFilterPrimitiveStandardAttributes(tagName, doc)
+inline SVGFEFloodElement::SVGFEFloodElement(const QualifiedName& tagName, Document* document)
+    : SVGFilterPrimitiveStandardAttributes(tagName, document)
 {
 }
 
 PassRefPtr<SVGFEFloodElement> SVGFEFloodElement::create(const QualifiedName& tagName, Document* document)
 {
     return new SVGFEFloodElement(tagName, document);
-}
-
-SVGFEFloodElement::~SVGFEFloodElement()
-{
 }
 
 PassRefPtr<FilterEffect> SVGFEFloodElement::build(SVGFilterBuilder*)

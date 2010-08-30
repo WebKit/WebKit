@@ -34,16 +34,8 @@
 
 namespace WebCore {
 
-SVGPolyElement::SVGPolyElement(const QualifiedName& tagName, Document* doc)
-    : SVGStyledTransformableElement(tagName, doc)
-    , SVGTests()
-    , SVGLangSpace()
-    , SVGExternalResourcesRequired()
-    , SVGAnimatedPoints()
-{
-}
-
-SVGPolyElement::~SVGPolyElement()
+SVGPolyElement::SVGPolyElement(const QualifiedName& tagName, Document* document)
+    : SVGStyledTransformableElement(tagName, document)
 {
 }
 

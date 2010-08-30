@@ -38,16 +38,10 @@
 
 namespace WebCore {
 
-SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document* doc)
-    : SVGStyledElement(tagName, doc)
-    , SVGURIReference()
-    , SVGExternalResourcesRequired()
+SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document* document)
+    : SVGStyledElement(tagName, document)
     , m_gradientUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
     , m_gradientTransform(SVGTransformList::create(SVGNames::gradientTransformAttr))
-{
-}
-
-SVGGradientElement::~SVGGradientElement()
 {
 }
 

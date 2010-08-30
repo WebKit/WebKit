@@ -29,12 +29,10 @@ namespace WebCore {
 
     class CSSValue;
     class CSSStyleDeclaration;
-    class QualifiedName;
 
     class SVGStylable {
     public:
-        SVGStylable();
-        virtual ~SVGStylable();
+        virtual ~SVGStylable() { }
 
         virtual CSSStyleDeclaration* style() = 0;
         virtual PassRefPtr<CSSValue> getPresentationAttribute(const String&) = 0;

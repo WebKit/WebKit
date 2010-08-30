@@ -36,8 +36,7 @@ namespace WebCore {
     // FIXME: When implementing animVal support, make sure that animVal==baseVal for externalResourcesRequired
     class SVGExternalResourcesRequired {
     public:
-        SVGExternalResourcesRequired();
-        virtual ~SVGExternalResourcesRequired();
+        virtual ~SVGExternalResourcesRequired() { }
 
         bool parseMappedAttribute(Attribute*);
         bool isKnownAttribute(const QualifiedName&);

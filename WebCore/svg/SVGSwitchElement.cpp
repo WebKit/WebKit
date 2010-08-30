@@ -27,11 +27,8 @@
 
 namespace WebCore {
 
-SVGSwitchElement::SVGSwitchElement(const QualifiedName& tagName, Document* doc)
-    : SVGStyledTransformableElement(tagName, doc)
-    , SVGTests()
-    , SVGLangSpace()
-    , SVGExternalResourcesRequired()
+inline SVGSwitchElement::SVGSwitchElement(const QualifiedName& tagName, Document* document)
+    : SVGStyledTransformableElement(tagName, document)
 {
 }
 
@@ -40,12 +37,11 @@ PassRefPtr<SVGSwitchElement> SVGSwitchElement::create(const QualifiedName& tagNa
     return new SVGSwitchElement(tagName, document);
 }
 
-SVGSwitchElement::~SVGSwitchElement()
-{
-}
-
 bool SVGSwitchElement::childShouldCreateRenderer(Node* child) const
 {
+    // FIXME: This function does not do what the comment below implies it does.
+    // It will create a renderer for any valid SVG element children, not just the first one.
+
     for (Node* n = firstChild(); n != 0; n = n->nextSibling()) {
         if (n->isSVGElement()) {
             SVGElement* element = static_cast<SVGElement*>(n);

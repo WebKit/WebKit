@@ -30,11 +30,8 @@
 
 namespace WebCore {
 
-SVGCursorElement::SVGCursorElement(const QualifiedName& tagName, Document* doc)
-    : SVGElement(tagName, doc)
-    , SVGTests()
-    , SVGExternalResourcesRequired()
-    , SVGURIReference()
+inline SVGCursorElement::SVGCursorElement(const QualifiedName& tagName, Document* document)
+    : SVGElement(tagName, document)
     , m_x(LengthModeWidth)
     , m_y(LengthModeHeight)
 {

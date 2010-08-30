@@ -33,11 +33,6 @@ class AffineTransform;
 class SVGStyledTransformableElement : public SVGStyledLocatableElement,
                                       public SVGTransformable {
 public:
-    SVGStyledTransformableElement(const QualifiedName&, Document*);
-    virtual ~SVGStyledTransformableElement();
-    
-    virtual bool isStyledTransformable() const { return true; }
-
     virtual AffineTransform getCTM(StyleUpdateStrategy = AllowStyleUpdate) const;
     virtual AffineTransform getScreenCTM(StyleUpdateStrategy = AllowStyleUpdate) const;
     virtual SVGElement* nearestViewportElement() const;
@@ -49,8 +44,6 @@ public:
 
     virtual FloatRect getBBox(StyleUpdateStrategy = AllowStyleUpdate) const;
 
-    virtual void parseMappedAttribute(Attribute*);
-    virtual void synchronizeProperty(const QualifiedName&);
     bool isKnownAttribute(const QualifiedName&);
 
     // "base class" methods for all the elements which render as paths
@@ -59,9 +52,16 @@ public:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
 protected:
+    SVGStyledTransformableElement(const QualifiedName&, Document*);
+
+    virtual void parseMappedAttribute(Attribute*);
+    virtual void synchronizeProperty(const QualifiedName&);
+
     DECLARE_ANIMATED_PROPERTY(SVGStyledTransformableElement, SVGNames::transformAttr, SVGTransformList*, Transform, transform)
 
 private:
+    virtual bool isStyledTransformable() const { return true; }
+
     // Used by <animateMotion>
     OwnPtr<AffineTransform> m_supplementalTransform;
 };

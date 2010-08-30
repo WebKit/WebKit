@@ -32,10 +32,6 @@ SVGNumberList::SVGNumberList(const QualifiedName& attributeName)
 {
 }
 
-SVGNumberList::~SVGNumberList()
-{
-}
-
 void SVGNumberList::parse(const String& value)
 {
     ExceptionCode ec = 0;

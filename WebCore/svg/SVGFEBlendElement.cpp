@@ -27,8 +27,8 @@
 
 namespace WebCore {
 
-SVGFEBlendElement::SVGFEBlendElement(const QualifiedName& tagName, Document* doc)
-    : SVGFilterPrimitiveStandardAttributes(tagName, doc)
+inline SVGFEBlendElement::SVGFEBlendElement(const QualifiedName& tagName, Document* document)
+    : SVGFilterPrimitiveStandardAttributes(tagName, document)
     , m_mode(FEBLEND_MODE_NORMAL)
 {
 }
@@ -36,10 +36,6 @@ SVGFEBlendElement::SVGFEBlendElement(const QualifiedName& tagName, Document* doc
 PassRefPtr<SVGFEBlendElement> SVGFEBlendElement::create(const QualifiedName& tagName, Document* document)
 {
     return new SVGFEBlendElement(tagName, document);
-}
-
-SVGFEBlendElement::~SVGFEBlendElement()
-{
 }
 
 void SVGFEBlendElement::parseMappedAttribute(Attribute* attr)

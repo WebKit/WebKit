@@ -32,19 +32,14 @@
 
 namespace WebCore {
 
-SVGTRefElement::SVGTRefElement(const QualifiedName& tagName, Document* doc)
-    : SVGTextPositioningElement(tagName, doc)
-    , SVGURIReference()
+inline SVGTRefElement::SVGTRefElement(const QualifiedName& tagName, Document* document)
+    : SVGTextPositioningElement(tagName, document)
 {
 }
 
 PassRefPtr<SVGTRefElement> SVGTRefElement::create(const QualifiedName& tagName, Document* document)
 {
     return new SVGTRefElement(tagName, document);
-}
-
-SVGTRefElement::~SVGTRefElement()
-{
 }
 
 void SVGTRefElement::updateReferencedText()

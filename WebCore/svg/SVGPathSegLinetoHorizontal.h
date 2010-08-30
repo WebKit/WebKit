@@ -43,22 +43,22 @@ namespace WebCore {
     public:
         static PassRefPtr<SVGPathSegLinetoHorizontalAbs> create(float x) { return adoptRef(new SVGPathSegLinetoHorizontalAbs(x)); }
 
-        virtual unsigned short pathSegType() const { return PATHSEG_LINETO_HORIZONTAL_ABS; }
-        virtual String pathSegTypeAsLetter() const { return "H"; }
-
     private:
         SVGPathSegLinetoHorizontalAbs(float x);
+
+        virtual unsigned short pathSegType() const { return PATHSEG_LINETO_HORIZONTAL_ABS; }
+        virtual String pathSegTypeAsLetter() const { return "H"; }
     };
 
     class SVGPathSegLinetoHorizontalRel : public SVGPathSegLinetoHorizontal {
     public:
         static PassRefPtr<SVGPathSegLinetoHorizontalRel> create(float x) { return adoptRef(new SVGPathSegLinetoHorizontalRel(x)); }
 
-        virtual unsigned short pathSegType() const { return PATHSEG_LINETO_HORIZONTAL_REL; }
-        virtual String pathSegTypeAsLetter() const { return "h"; }
-
     private:
         SVGPathSegLinetoHorizontalRel(float x);
+
+        virtual unsigned short pathSegType() const { return PATHSEG_LINETO_HORIZONTAL_REL; }
+        virtual String pathSegTypeAsLetter() const { return "h"; }
     };
 
 } // namespace WebCore

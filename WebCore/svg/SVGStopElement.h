@@ -31,16 +31,15 @@ namespace WebCore {
     public:
         static PassRefPtr<SVGStopElement> create(const QualifiedName&, Document*);
 
+        Color stopColorIncludingOpacity() const;
+
+    private:
         SVGStopElement(const QualifiedName&, Document*);
-        virtual ~SVGStopElement();
 
         virtual void parseMappedAttribute(Attribute*);
         virtual void svgAttributeChanged(const QualifiedName&);
         virtual void synchronizeProperty(const QualifiedName&);
 
-        Color stopColorIncludingOpacity() const;
-
-    private:
         virtual bool isGradientStop() const { return true; }
 
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);

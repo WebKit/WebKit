@@ -36,13 +36,14 @@ namespace WebCore {
                             public SVGExternalResourcesRequired,
                             public SVGAnimatedPoints {
     public:
-        SVGPolyElement(const QualifiedName&, Document*);
-        virtual ~SVGPolyElement();
-        
-        virtual bool isValid() const { return SVGTests::isValid(); }
-
         virtual SVGPointList* points() const;
         virtual SVGPointList* animatedPoints() const;
+
+    protected:
+        SVGPolyElement(const QualifiedName&, Document*);
+
+    private:
+        virtual bool isValid() const { return SVGTests::isValid(); }
 
         virtual void parseMappedAttribute(Attribute*); 
         virtual void svgAttributeChanged(const QualifiedName&);
@@ -50,7 +51,6 @@ namespace WebCore {
 
         virtual bool supportsMarkers() const { return true; }
 
-    private:
         // SVGExternalResourcesRequired
         DECLARE_ANIMATED_PROPERTY(SVGPolyElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
 

@@ -35,10 +35,6 @@ SVGImageLoader::SVGImageLoader(SVGImageElement* node)
 {
 }
 
-SVGImageLoader::~SVGImageLoader()
-{
-}
-
 void SVGImageLoader::dispatchLoadEvent()
 {
     if (image()->errorOccurred())

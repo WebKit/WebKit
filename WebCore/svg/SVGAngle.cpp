@@ -34,23 +34,9 @@ SVGAngle::SVGAngle()
 {
 }
 
-SVGAngle::~SVGAngle()
-{
-}
-
-SVGAngle::SVGAngleType SVGAngle::unitType() const
-{
-    return m_unitType;
-}
-
 void SVGAngle::setValue(float value)
 {
     m_value = value;
-}
-
-float SVGAngle::value() const
-{
-    return m_value;
 }
 
 // calc m_value
@@ -68,11 +54,6 @@ void SVGAngle::setValueInSpecifiedUnits(float valueInSpecifiedUnits)
 {
     m_valueInSpecifiedUnits = valueInSpecifiedUnits;
     calculate();
-}
-
-float SVGAngle::valueInSpecifiedUnits() const
-{
-    return m_valueInSpecifiedUnits;
 }
 
 void SVGAngle::setValueAsString(const String& s)

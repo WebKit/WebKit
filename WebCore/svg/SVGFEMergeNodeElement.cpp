@@ -27,18 +27,14 @@
 
 namespace WebCore {
 
-SVGFEMergeNodeElement::SVGFEMergeNodeElement(const QualifiedName& tagName, Document* doc)
-    : SVGElement(tagName, doc)
+inline SVGFEMergeNodeElement::SVGFEMergeNodeElement(const QualifiedName& tagName, Document* document)
+    : SVGElement(tagName, document)
 {
 }
 
 PassRefPtr<SVGFEMergeNodeElement> SVGFEMergeNodeElement::create(const QualifiedName& tagName, Document* document)
 {
     return new SVGFEMergeNodeElement(tagName, document);
-}
-
-SVGFEMergeNodeElement::~SVGFEMergeNodeElement()
-{
 }
 
 void SVGFEMergeNodeElement::parseMappedAttribute(Attribute* attr)

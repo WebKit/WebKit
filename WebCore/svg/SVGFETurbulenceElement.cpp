@@ -31,8 +31,8 @@ namespace WebCore {
 char SVGBaseFrequencyXIdentifier[] = "SVGBaseFrequencyX";
 char SVGBaseFrequencyYIdentifier[] = "SVGBaseFrequencyY";
 
-SVGFETurbulenceElement::SVGFETurbulenceElement(const QualifiedName& tagName, Document* doc)
-    : SVGFilterPrimitiveStandardAttributes(tagName, doc)
+inline SVGFETurbulenceElement::SVGFETurbulenceElement(const QualifiedName& tagName, Document* document)
+    : SVGFilterPrimitiveStandardAttributes(tagName, document)
     , m_numOctaves(1)
     , m_stitchTiles(SVG_STITCHTYPE_NOSTITCH)
     , m_type(FETURBULENCE_TYPE_TURBULENCE)
@@ -42,10 +42,6 @@ SVGFETurbulenceElement::SVGFETurbulenceElement(const QualifiedName& tagName, Doc
 PassRefPtr<SVGFETurbulenceElement> SVGFETurbulenceElement::create(const QualifiedName& tagName, Document* document)
 {
     return new SVGFETurbulenceElement(tagName, document);
-}
-
-SVGFETurbulenceElement::~SVGFETurbulenceElement()
-{
 }
 
 void SVGFETurbulenceElement::parseMappedAttribute(Attribute* attr)

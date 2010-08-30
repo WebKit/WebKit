@@ -24,7 +24,7 @@
 
 namespace WebCore {
     
-SVGSetElement::SVGSetElement(const QualifiedName& tagName, Document* document)
+inline SVGSetElement::SVGSetElement(const QualifiedName& tagName, Document* document)
     : SVGAnimateElement(tagName, document)
 {
 }

@@ -37,11 +37,13 @@ namespace WebCore {
     public:
         static PassRefPtr<SVGCursorElement> create(const QualifiedName&, Document*);
 
-        SVGCursorElement(const QualifiedName&, Document*);
         virtual ~SVGCursorElement();
 
         void addClient(SVGElement*);
         void removeClient(SVGElement*);
+
+    private:
+        SVGCursorElement(const QualifiedName&, Document*);
 
         virtual bool isValid() const { return SVGTests::isValid(); }
 
@@ -51,7 +53,6 @@ namespace WebCore {
 
         virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
-    private:
         DECLARE_ANIMATED_PROPERTY(SVGCursorElement, SVGNames::xAttr, SVGLength, X, x)
         DECLARE_ANIMATED_PROPERTY(SVGCursorElement, SVGNames::yAttr, SVGLength, Y, y)
 

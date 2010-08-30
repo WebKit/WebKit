@@ -32,17 +32,13 @@
 
 namespace WebCore {
 
-SVGTextPositioningElement::SVGTextPositioningElement(const QualifiedName& tagName, Document* doc)
-    : SVGTextContentElement(tagName, doc)
+SVGTextPositioningElement::SVGTextPositioningElement(const QualifiedName& tagName, Document* document)
+    : SVGTextContentElement(tagName, document)
     , m_x(SVGLengthList::create(SVGNames::xAttr))
     , m_y(SVGLengthList::create(SVGNames::yAttr))
     , m_dx(SVGLengthList::create(SVGNames::dxAttr))
     , m_dy(SVGLengthList::create(SVGNames::dyAttr))
     , m_rotate(SVGNumberList::create(SVGNames::rotateAttr))
-{
-}
-
-SVGTextPositioningElement::~SVGTextPositioningElement()
 {
 }
 

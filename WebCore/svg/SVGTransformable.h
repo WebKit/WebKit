@@ -35,9 +35,6 @@ class QualifiedName;
 
 class SVGTransformable : virtual public SVGLocatable {
 public:
-    SVGTransformable();
-    virtual ~SVGTransformable();
-
     enum TransformParsingMode {
         ClearList,
         DoNotClearList

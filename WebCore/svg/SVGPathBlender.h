@@ -30,7 +30,6 @@ namespace WebCore {
 class SVGPathBlender : public Noncopyable {
 public:
     SVGPathBlender();
-    ~SVGPathBlender();
 
     bool blendAnimatedPath(float, SVGPathSource*, SVGPathSource*, SVGPathConsumer*);
     void cleanup();
