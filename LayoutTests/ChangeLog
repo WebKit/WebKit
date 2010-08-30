@@ -1,3 +1,9 @@
+2010-08-29  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed Chromium test expectation change for r66282.
+
+        * platform/chromium-win/inspector/console-format-expected.txt: Added.
+
 2010-08-29  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

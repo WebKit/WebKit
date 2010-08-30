@@ -1,0 +1,99 @@
+CONSOLE MESSAGE: line 12: Message format number %i, %d and %f
+CONSOLE MESSAGE: line 13: Message %s for %s
+CONSOLE MESSAGE: line 14: Object %o
+CONSOLE MESSAGE: line 20: test,test2,,,test4
+CONSOLE MESSAGE: line 21: %o
+CONSOLE MESSAGE: line 22: %O
+CONSOLE MESSAGE: line 60: /^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i
+CONSOLE MESSAGE: line 61: /^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i
+CONSOLE MESSAGE: line 60: /foo\\bar\sbaz/i
+CONSOLE MESSAGE: line 61: /foo\\bar\sbaz/i
+CONSOLE MESSAGE: line 60: test
+CONSOLE MESSAGE: line 61: test
+CONSOLE MESSAGE: line 60: test named "test"
+CONSOLE MESSAGE: line 61: test named "test"
+CONSOLE MESSAGE: line 60: Error
+CONSOLE MESSAGE: line 61: Error
+CONSOLE MESSAGE: line 60: [object HTMLBodyElement]
+CONSOLE MESSAGE: line 61: [object HTMLBodyElement]
+CONSOLE MESSAGE: line 60: function () { return 1; }
+CONSOLE MESSAGE: line 61: function () { return 1; }
+CONSOLE MESSAGE: line 60: function () {
+        return 2;
+    }
+CONSOLE MESSAGE: line 61: function () {
+        return 2;
+    }
+CONSOLE MESSAGE: line 60: 0.12
+CONSOLE MESSAGE: line 61: 0.12
+CONSOLE MESSAGE: line 60: http://webkit.org/
+CONSOLE MESSAGE: line 61: http://webkit.org/
+CONSOLE MESSAGE: line 60: null
+CONSOLE MESSAGE: line 61: 
+CONSOLE MESSAGE: line 60: undefined
+CONSOLE MESSAGE: line 61: 
+CONSOLE MESSAGE: line 60: [object Attr]
+CONSOLE MESSAGE: line 61: [object Attr]
+CONSOLE MESSAGE: line 60: [object Attr]
+CONSOLE MESSAGE: line 61: [object Attr]
+CONSOLE MESSAGE: line 60: [object Attr]
+CONSOLE MESSAGE: line 61: [object Attr]
+Tests that console logging dumps proper messages.
+
+console-format.html:12Message format number 1, 2 and 3.5
+console-format.html:13Message format for string
+console-format.html:14Object Object
+console-format.html:20["test", "test2", undefined, undefined, "test4"]
+console-format.html:21["test", "test2", undefined, undefined, "test4"]
+console-format.html:22Array[5]
+console-format.html:60/^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i
+console-format.html:61[/^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i]
+/^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i
+console-format.html:60/foo\\bar\sbaz/i
+console-format.html:61[/foo\\bar\sbaz/i]
+/foo\\bar\sbaz/i
+console-format.html:60test
+console-format.html:61["test"]
+"test"
+console-format.html:60test named "test"
+console-format.html:61["test named "test""]
+"test named "test""
+console-format.html:60Error
+console-format.html:61[Error]
+Error
+console-format.html:60<body onload="onload()">…</body>
+console-format.html:61[<body onload="onload()">…</body>]
+<body onload="onload()">…</body>
+console-format.html:60function () { return 1; }
+console-format.html:61[function () { return 1; }]
+function () { return 1; }
+console-format.html:60function () {
+        return 2;
+    }
+console-format.html:61[function () {
+        return 2;
+    }]
+function () {
+        return 2;
+    }
+console-format.html:600.12
+console-format.html:61[0.12]
+0.12
+console-format.html:60http://webkit.org/
+console-format.html:61["http://webkit.org/"]
+"http://webkit.org/"
+console-format.html:60null
+console-format.html:61[null]
+null
+console-format.html:60undefined
+console-format.html:61[undefined]
+undefined
+console-format.html:60attr=""
+console-format.html:61[attr=""]
+attr=""
+console-format.html:60attr="value"
+console-format.html:61[attr="value"]
+attr="value"
+console-format.html:60id="x"
+console-format.html:61[id="x"]
+id="x"
