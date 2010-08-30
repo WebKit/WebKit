@@ -639,7 +639,7 @@ bool DateComponents::setMillisecondsSinceEpochForWeek(double ms)
             m_year++;
             m_week = 1;
         }
-        if (m_year > maximumYear || m_year == maximumYear && m_week > maximumWeekInMaximumYear)
+        if (m_year > maximumYear || (m_year == maximumYear && m_week > maximumWeekInMaximumYear))
             return false;
     }
     m_type = Week;
