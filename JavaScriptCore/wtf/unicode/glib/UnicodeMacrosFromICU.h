@@ -27,6 +27,7 @@
 
 // some defines from ICU
 
+#define U_IS_BMP(c) ((UChar32)(c)<=0xffff)
 #define U16_IS_LEAD(c) (((c)&0xfffffc00)==0xd800)
 #define U16_IS_TRAIL(c) (((c)&0xfffffc00)==0xdc00)
 #define U16_SURROGATE_OFFSET ((0xd800<<10UL)+0xdc00-0x10000)

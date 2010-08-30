@@ -1,3 +1,11 @@
+2010-08-29  Darin Adler  <darin@apple.com>
+
+        Fix Qt build.
+
+        * wtf/unicode/glib/UnicodeMacrosFromICU.h: Added U_IS_BMP.
+        * wtf/unicode/qt4/UnicodeQt4.h: Ditto.
+        * wtf/unicode/wince/UnicodeWince.h: Ditto.
+
 2010-08-29  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Kent Tamura.
