@@ -1,4 +1,4 @@
-# From WebKit svn r55658 (WebCore/html/HTMLTagNames.in)
+# From WebKit svn r66165 (WebCore/html/HTMLTagNames.in)
 a
 abbr
 acronym
@@ -12,6 +12,7 @@ b
 base
 basefont
 bdo
+bgsound
 big
 blockquote
 body
@@ -24,12 +25,14 @@ cite
 code
 col
 colgroup
+command
 datagrid
 datalist
 dcell
 dcol
 dd
 del
+details
 dfn
 dir
 div
@@ -39,6 +42,8 @@ dt
 em
 embed
 fieldset
+figcaption
+figure
 font
 footer
 form
@@ -52,6 +57,7 @@ h5
 h6
 head
 header
+hgroup
 hr
 html
 i
@@ -70,9 +76,11 @@ li
 link
 listing
 map
+mark
 marquee
 menu
 meta
+meter
 nav
 nobr
 noembed
@@ -88,6 +96,7 @@ p
 param
 plaintext
 pre
+progress
 q
 rp
 rt
@@ -104,6 +113,7 @@ strike
 strong
 style
 sub
+summary
 sup
 table
 tbody
@@ -114,6 +124,7 @@ th
 thead
 title
 tr
+track
 tt
 u
 ul

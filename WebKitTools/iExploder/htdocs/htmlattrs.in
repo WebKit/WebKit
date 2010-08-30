@@ -1,4 +1,4 @@
-# From WebKit svn r55658 (WebCore/html/HTMLAttributeNames.in)
+# From WebKit svn r66165 (WebCore/html/HTMLAttributeNames.in)
 abbr
 accept
 accept_charset
@@ -20,6 +20,7 @@ aria-expanded
 aria-flowto
 aria-grabbed
 aria-haspopup
+aria-help
 aria-hidden
 aria-label
 aria-labeledby
@@ -38,6 +39,7 @@ aria-valuemax
 aria-valuemin
 aria-valuenow
 aria-valuetext
+async
 autocomplete
 autofocus
 autoplay
@@ -94,6 +96,7 @@ frameborder
 headers
 height
 hidden
+high
 href
 hreflang
 hspace
@@ -113,6 +116,7 @@ longdesc
 loop
 loopend
 loopstart
+low
 lowsrc
 manifest
 marginheight
@@ -136,6 +140,7 @@ onbeforecopy
 onbeforecut
 onbeforeload
 onbeforepaste
+onbeforeprocess
 onbeforeunload
 onblur
 oncanplay
@@ -158,6 +163,8 @@ onemptied
 onended
 onerror
 onfocus
+onfocusin
+onfocusout
 onhashchange
 oninput
 oninvalid
@@ -212,6 +219,7 @@ onwebkitanimationstart
 onwebkitbeginfullscreen
 onwebkitendfullscreen
 onwebkittransitionend
+optimum
 pattern
 placeholder
 playcount
@@ -244,6 +252,7 @@ size
 sortable
 sortdirection
 span
+speech
 spellcheck
 src
 standby
@@ -268,6 +277,7 @@ version
 viewsource
 vlink
 vspace
+webkitdirectory
 width
 wrap
 

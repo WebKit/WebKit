@@ -1,4 +1,4 @@
-# From WebKit svn r55658 (WebCore/css/CSSPropertyNames.in)
+# From WebKit svn r66165 (WebCore/css/CSSPropertyNames.in)
 -webkit-animation
 -webkit-animation-delay
 -webkit-animation-direction
@@ -14,11 +14,18 @@
 -webkit-background-composite
 -webkit-background-origin
 -webkit-background-size
--webkit-binding
+-webkit-border-end
+-webkit-border-end-color
+-webkit-border-end-style
+-webkit-border-end-width
 -webkit-border-fit
 -webkit-border-horizontal-spacing
 -webkit-border-image
 -webkit-border-radius
+-webkit-border-start
+-webkit-border-start-color
+-webkit-border-start-style
+-webkit-border-start-width
 -webkit-border-vertical-spacing
 -webkit-box-align
 -webkit-box-direction
@@ -41,15 +48,20 @@
 -webkit-column-rule-color
 -webkit-column-rule-style
 -webkit-column-rule-width
+-webkit-column-span
 -webkit-column-width
 -webkit-columns
 -webkit-font-size-delta
 -webkit-font-smoothing
 -webkit-highlight
+-webkit-hyphenate-character
+-webkit-hyphenate-locale
+-webkit-hyphens
 -webkit-line-break
 -webkit-line-clamp
 -webkit-margin-bottom-collapse
 -webkit-margin-collapse
+-webkit-margin-end
 -webkit-margin-start
 -webkit-margin-top-collapse
 -webkit-marquee
@@ -74,6 +86,7 @@
 -webkit-mask-size
 -webkit-match-nearest-mail-blockquote-color
 -webkit-nbsp-mode
+-webkit-padding-end
 -webkit-padding-start
 -webkit-perspective
 -webkit-perspective-origin
@@ -260,6 +273,9 @@ column-space-distribution
 column-span
 column-width
 column-width-policy
+
+# Removed from WebKit between r53119 and r66165
+-webkit-binding
 
 # Removed from WebKit between r44660 and r53119
 -webkit-border-bottom-left-radius

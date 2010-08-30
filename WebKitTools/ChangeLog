@@ -2,6 +2,20 @@
 
         Reviewed by Darin Adler.
 
+        [iExploder] Add new CSS Properties and HTML Attributes
+        https://bugs.webkit.org/show_bug.cgi?id=44746
+
+        Updated the files with the update-iexploder-cssproperties script
+        and manually readded the -webkit-binding CSS Property to the list.
+
+        * iExploder/htdocs/cssproperties.in:
+        * iExploder/htdocs/htmlattrs.in:
+        * iExploder/htdocs/htmltags.in:
+
+2010-08-26  Holger Hans Peter Freyther  <holger@moiji-mobile.com>
+
+        Reviewed by Darin Adler.
+
         Fix Coverage build after the addition of ANGLE
         https://bugs.webkit.org/show_bug.cgi?id=44744
 
