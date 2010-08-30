@@ -1,3 +1,14 @@
+2010-08-30  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix with Blob Support
+
+        [EFL] Build break with Blob support
+        https://bugs.webkit.org/show_bug.cgi?id=44858
+
+        No new features added, so no new tests.
+
+        * CMakeLists.txt:
+
 2010-08-30  Andras Becsi  <abecsi@webkit.org>
 
         Unreviewed trivial fix.

@@ -1563,6 +1563,14 @@ SET(WebCore_SOURCES
     xml/XSLTUnicodeSort.cpp
 )
 
+IF (ENABLE_BLOB)
+    LIST(APPEND WebCore_SOURCES
+        fileapi/FileReader.cpp
+        fileapi/FileThread.cpp
+        fileapi/FileStreamProxy.cpp
+        platform/FileStream.cpp
+    )
+ENDIF ()
 
 IF (ENABLE_DATABASE)
     LIST(APPEND WebCore_SOURCES
