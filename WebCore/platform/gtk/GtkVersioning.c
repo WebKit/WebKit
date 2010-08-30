@@ -59,3 +59,11 @@ GdkDevice *getDefaultGDKPointerDevice(GdkWindow* window)
 #endif // GTK_API_VERSION_2
 }
 
+#if !GTK_CHECK_VERSION(2, 17, 3)
+static void gdk_window_get_root_coords(GdkWindow* window, gint x, gint y, gint* rootX, gint* rootY)
+{
+    gdk_window_get_root_origin(window, rootX, rootY);
+    *rootX = *rootX + x;
+    *rootY = *rootY + y;
+}
+#endif

@@ -88,37 +88,6 @@ static void sendOrQueueEvent(GdkEvent*, bool = true);
 static void dispatchEvent(GdkEvent* event);
 static guint getStateFlags();
 
-#if !GTK_CHECK_VERSION(2, 17, 3)
-static void gdk_window_get_root_coords(GdkWindow* window, gint x, gint y, gint* rootX, gint* rootY)
-{
-    gdk_window_get_root_origin(window, rootX, rootY);
-    *rootX = *rootX + x;
-    *rootY = *rootY + y;
-}
-#endif
-
-#if !GTK_CHECK_VERSION(2, 14, 0)
-static GdkWindow* gtk_widget_get_window(GtkWidget* widget)
-{
-    g_return_val_if_fail(GTK_IS_WIDGET(widget), 0);
-    return widget->window;
-}
-#endif
-
-#if !GTK_CHECK_VERSION(2, 21, 2)
-static GdkDragAction gdk_drag_context_get_selected_action(GdkDragContext* context)
-{
-    g_return_val_if_fail(GDK_IS_DRAG_CONTEXT(context), static_cast<GdkDragAction>(0));
-    return context->action;
-}
-
-static GdkDragAction gdk_drag_context_get_actions(GdkDragContext* context)
-{
-    g_return_val_if_fail(GDK_IS_DRAG_CONTEXT(context), GDK_ACTION_DEFAULT);
-    return context->actions;
-}
-#endif
-
 static JSValueRef getDragModeCallback(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
 {
     return JSValueMakeBoolean(context, dragMode);

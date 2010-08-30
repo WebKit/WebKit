@@ -1,3 +1,15 @@
+2010-08-30  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        Fixed compilation error, now that we have included the
+        GtkVersioning.h we have to remove some version dependent code from
+        EventSender.
+
+        * platform/gtk/GtkVersioning.c:
+        (gdk_window_get_root_coords):
+        * platform/gtk/GtkVersioning.h:
+
 2010-08-30  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.

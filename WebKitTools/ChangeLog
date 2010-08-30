@@ -1,5 +1,15 @@
 2010-08-30  Alejandro G. Castro  <alex@igalia.com>
 
+        Reviewed by Xan Lopez.
+
+        Fixed compilation error, now that we have included the
+        GtkVersioning.h we have to remove some version dependent code from
+        EventSender.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+
+2010-08-30  Alejandro G. Castro  <alex@igalia.com>
+
         Reviewed by Martin Robinson.
 
         [Gtk] gdk_display_get_core_pointer and gdk_device_get_core_pointer

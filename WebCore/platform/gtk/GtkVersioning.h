@@ -54,6 +54,10 @@ G_BEGIN_DECLS
 #define gtk_widget_set_allocation(widget, alloc) ((widget)->allocation = *(alloc))
 #endif // GTK_CHECK_VERSION(2, 18, 0)
 
+#if !GTK_CHECK_VERSION(2, 17, 3)
+static void gdk_window_get_root_coords(GdkWindow* window, gint x, gint y, gint* rootX, gint* rootY);
+#endif //GTK_CHECK_VERSION(2, 17, 3)
+
 #if !GTK_CHECK_VERSION(2, 14, 0)
 #define gtk_widget_get_window(widget) (widget)->window
 #define gtk_adjustment_get_value(adj) (adj)->value
