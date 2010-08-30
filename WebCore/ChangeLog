@@ -1,3 +1,12 @@
+2010-08-29  Marc-Antoine Ruel  <maruel@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Move more common settings to webcore_prerequisites
+        https://bugs.webkit.org/show_bug.cgi?id=44812
+
+        * WebCore.gyp/WebCore.gyp:
+
 2010-08-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej Stachowiak.
