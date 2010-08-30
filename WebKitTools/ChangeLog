@@ -1,3 +1,18 @@
+2010-08-30  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Add new window menu to MiniBrowser
+
+        Implement newWindow function and add a menu item for opening new window in MiniBrowser.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::BrowserWindow):
+        (BrowserWindow::newWindow):
+        * MiniBrowser/qt/BrowserWindow.h:
+        * MiniBrowser/qt/main.cpp:
+        (main):
+
 2010-08-29  James Robinson  <jamesr@chromium.org>
 
         Reviewed by David Levin.

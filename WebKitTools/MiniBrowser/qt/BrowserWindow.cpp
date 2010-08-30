@@ -79,10 +79,13 @@ QGraphicsWKView* BrowserView::view() const
 
 BrowserWindow::BrowserWindow()
 {
+    setAttribute(Qt::WA_DeleteOnClose);
+
     m_menu = new QMenuBar();
     m_browser = new BrowserView();
     m_addressBar = new QLineEdit();
 
+    m_menu->addAction("New Window", this, SLOT(newWindow()));
     m_menu->addAction("Quit", this, SLOT(close()));
 
     m_browser->setFocus(Qt::OtherFocusReason);
@@ -109,6 +112,15 @@ void BrowserWindow::load(const QString& url)
 {
     m_addressBar->setText(url);
     m_browser->load(QUrl(url));
+}
+
+BrowserWindow* BrowserWindow::newWindow(const QString& url)
+{
+    BrowserWindow* window = new BrowserWindow();
+    window->resize(960, 640);
+    window->show();
+    window->load(url);
+    return window;
 }
 
 void BrowserWindow::changeLocation()

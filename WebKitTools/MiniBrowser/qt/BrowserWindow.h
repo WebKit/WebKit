@@ -62,6 +62,9 @@ public:
     ~BrowserWindow();
     void load(const QString& url);
 
+public slots:
+    BrowserWindow* newWindow(const QString& url = "about:blank");
+
 protected slots:
     void changeLocation();
     void loadProgress(int progress);
