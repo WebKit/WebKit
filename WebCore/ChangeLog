@@ -1,3 +1,18 @@
+2010-08-30  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=44801 Crash in 
+        RenderMathMLSubSup::layout()
+        -and corresponding-
+        <rdar://problem/8325203>
+
+        Null-check m_scripts. It is null-checked everywhere else in the 
+        class and can legitimately be null.
+
+        * mathml/RenderMathMLSubSup.cpp:
+        (WebCore::RenderMathMLSubSup::layout):
+
 2010-08-30  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.

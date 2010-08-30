@@ -162,7 +162,7 @@ void RenderMathMLSubSup::layout()
                     maxHeight = height;
                 current = current->nextSibling();
             }
-            int heightDiff = (m_scripts->offsetHeight() - maxHeight) / 2;
+            int heightDiff = m_scripts ? (m_scripts->offsetHeight() - maxHeight) / 2 : 0;
             if (heightDiff < 0) 
                 heightDiff = 0;
             base->style()->setMarginTop(Length(heightDiff, Fixed));
