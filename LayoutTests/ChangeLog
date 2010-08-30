@@ -1,5 +1,13 @@
 2010-08-30  Yuzo Fujishima  <yuzo@google.com>
 
+        Unreviewed Chromium test expectation change.
+
+        * platform/chromium-linux/fast/lists/li-values-expected.txt: Added.
+        * platform/chromium-win/fast/lists/li-values-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
+2010-08-30  Yuzo Fujishima  <yuzo@google.com>
+
         Unreviewed Chromium test expectation change for r66359.
 
         * platform/chromium-linux/http/tests/security/xssAuditor/javascript-link-HTML-entities-null-char-expected.txt: Added.

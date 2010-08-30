@@ -3033,7 +3033,7 @@ BUG42691 : fast/lists/list-style-type-dynamic-change.html = TEXT
 BUG42691 : fast/lists/w3-css3-list-styles-alphabetic.html = TEXT
 BUG42691 : fast/lists/w3-css3-list-styles-numeric.html = TEXT
 BUG42691 : fast/lists/w3-list-styles.html = TEXT
-BUG42691 : fast/lists/li-values.html = TIMEOUT
+BUG42691 MAC : fast/lists/li-values.html = TIMEOUT
 
 // Webkit patch http://trac.webkit.org/changeset/64323 modify the test
 // Need to change chromium TestNetscape plugin.
