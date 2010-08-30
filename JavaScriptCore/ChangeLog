@@ -1,3 +1,24 @@
+2010-08-30  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Refactor number parsing in the lexer
+        https://bugs.webkit.org/show_bug.cgi?id=44104
+
+        Number parsing was full of gotos, and needed a complete
+        redesign to remove them (Only one remained). Furthermore
+        integer arithmetic is empolyed for fast cases (= small
+        integer numbers).
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer::parseHex):
+        (JSC::Lexer::parseOctal):
+        (JSC::Lexer::parseDecimal):
+        (JSC::Lexer::parseNumberAfterDecimalPoint):
+        (JSC::Lexer::parseNumberAfterExponentIndicator):
+        (JSC::Lexer::lex):
+        * parser/Lexer.h:
+
 2010-08-29  Darin Adler  <darin@apple.com>
 
         Fix Qt build.

@@ -535,6 +535,146 @@ ALWAYS_INLINE bool Lexer::parseString(JSTokenData* lvalp)
     return true;
 }
 
+ALWAYS_INLINE void Lexer::parseHex(double& returnValue)
+{
+    // Optimization: most hexadecimal values fit into 4 bytes.
+    uint32_t hexValue = 0;
+    int maximumDigits = 7;
+
+    // Shift out the 'x' prefix.
+    shift();
+
+    do {
+        hexValue = (hexValue << 4) + toASCIIHexValue(m_current);
+        shift();
+        --maximumDigits;
+    } while (isASCIIHexDigit(m_current) && maximumDigits >= 0);
+
+    if (maximumDigits >= 0) {
+        returnValue = hexValue;
+        return;
+    }
+
+    // No more place in the hexValue buffer.
+    // The values are shifted out and placed into the m_buffer8 vector.
+    for (int i = 0; i < 8; ++i) {
+         int digit = hexValue >> 28;
+         if (digit < 10)
+             record8(digit + '0');
+         else
+             record8(digit - 10 + 'a');
+         hexValue <<= 4;
+    }
+
+    while (isASCIIHexDigit(m_current)) {
+        record8(m_current);
+        shift();
+    }
+
+    returnValue = parseIntOverflow(m_buffer8.data(), m_buffer8.size(), 16);
+}
+
+ALWAYS_INLINE bool Lexer::parseOctal(double& returnValue)
+{
+    // Optimization: most octal values fit into 4 bytes.
+    uint32_t octalValue = 0;
+    int maximumDigits = 9;
+    // Temporary buffer for the digits. Makes easier
+    // to reconstruct the input characters when needed.
+    char digits[10];
+
+    do {
+        octalValue = octalValue * 8 + (m_current - '0');
+        digits[maximumDigits] = m_current;
+        shift();
+        --maximumDigits;
+    } while (isASCIIOctalDigit(m_current) && maximumDigits >= 0);
+
+    if (!isASCIIDigit(m_current) && maximumDigits >= 0) {
+        returnValue = octalValue;
+        return true;
+    }
+
+    for (int i = 9; i > maximumDigits; --i)
+         record8(digits[i]);
+
+    while (isASCIIOctalDigit(m_current)) {
+        record8(m_current);
+        shift();
+    }
+
+    if (isASCIIDigit(m_current))
+        return false;
+
+    returnValue = parseIntOverflow(m_buffer8.data(), m_buffer8.size(), 8);
+    return true;
+}
+
+ALWAYS_INLINE bool Lexer::parseDecimal(double& returnValue)
+{
+    // Optimization: most decimal values fit into 4 bytes.
+    uint32_t decimalValue = 0;
+
+    // Since parseOctal may be executed before parseDecimal,
+    // the m_buffer8 may hold ascii digits.
+    if (!m_buffer8.size()) {
+        int maximumDigits = 9;
+        // Temporary buffer for the digits. Makes easier
+        // to reconstruct the input characters when needed.
+        char digits[10];
+
+        do {
+            decimalValue = decimalValue * 10 + (m_current - '0');
+            digits[maximumDigits] = m_current;
+            shift();
+            --maximumDigits;
+        } while (isASCIIDigit(m_current) && maximumDigits >= 0);
+
+        if (maximumDigits >= 0 && m_current != '.' && (m_current | 0x20) != 'e') {
+            returnValue = decimalValue;
+            return true;
+        }
+
+        for (int i = 9; i > maximumDigits; --i)
+            record8(digits[i]);
+    }
+
+    while (isASCIIDigit(m_current)) {
+        record8(m_current);
+        shift();
+    }
+
+    return false;
+}
+
+ALWAYS_INLINE void Lexer::parseNumberAfterDecimalPoint()
+{
+    record8('.');
+    while (isASCIIDigit(m_current)) {
+        record8(m_current);
+        shift();
+    }
+}
+
+ALWAYS_INLINE bool Lexer::parseNumberAfterExponentIndicator()
+{
+    record8('e');
+    shift();
+    if (m_current == '+' || m_current == '-') {
+        record8(m_current);
+        shift();
+    }
+
+    if (!isASCIIDigit(m_current))
+        return false;
+
+    do {
+        record8(m_current);
+        shift();
+    } while (isASCIIDigit(m_current));
+    return true;
+}
+
 JSTokenType Lexer::lex(JSTokenData* lvalp, JSTokenInfo* llocp, LexType lexType)
 {
     ASSERT(!m_error);
@@ -750,14 +890,6 @@ start:
         }
         token = BITOR;
         break;
-    case CharacterDot:
-        shift();
-        if (isASCIIDigit(m_current)) {
-            record8('.');
-            goto inNumberAfterDecimalPoint;
-        }
-        token = DOT;
-        break;
     case CharacterOpenParen:
         token = OPENPAREN;
         shift();
@@ -806,10 +938,50 @@ start:
         shift();
         token = CLOSEBRACE;
         break;
+    case CharacterDot:
+        shift();
+        if (!isASCIIDigit(m_current)) {
+            token = DOT;
+            break;
+        }
+        goto inNumberAfterDecimalPoint;
     case CharacterZero:
-        goto startNumberWithZeroDigit;
+        shift();
+        if ((m_current | 0x20) == 'x' && isASCIIHexDigit(peek(1))) {
+            parseHex(lvalp->doubleValue);
+            token = NUMBER;
+        } else {
+            record8('0');
+            if (isASCIIOctalDigit(m_current)) {
+                if (parseOctal(lvalp->doubleValue))
+                    token = NUMBER;
+            }
+        }
+        // Fall through into CharacterNumber
     case CharacterNumber:
-        goto startNumber;
+        if (LIKELY(token != NUMBER)) {
+            if (!parseDecimal(lvalp->doubleValue)) {
+                if (m_current == '.') {
+                    shift();
+inNumberAfterDecimalPoint:
+                    parseNumberAfterDecimalPoint();
+                }
+                if ((m_current | 0x20) == 'e')
+                    if (!parseNumberAfterExponentIndicator())
+                        goto returnError;
+                // Null-terminate string for strtod.
+                m_buffer8.append('\0');
+                lvalp->doubleValue = WTF::strtod(m_buffer8.data(), 0);
+            }
+            token = NUMBER;
+        }
+
+        // No identifiers allowed directly after numeric literal, e.g. "3in" is bad.
+        if (UNLIKELY(isIdentStart(m_current)))
+            goto returnError;
+        m_buffer8.resize(0);
+        m_delimited = false;
+        break;
     case CharacterQuote:
         if (UNLIKELY(!parseString(lvalp)))
             goto returnError;
@@ -876,140 +1048,6 @@ inMultiLineComment:
     }
     shift();
     goto start;
-
-startNumberWithZeroDigit:
-    shift();
-    if ((m_current | 0x20) == 'x' && isASCIIHexDigit(peek(1))) {
-        shift();
-        goto inHex;
-    }
-    if (m_current == '.') {
-        record8('0');
-        record8('.');
-        shift();
-        goto inNumberAfterDecimalPoint;
-    }
-    if ((m_current | 0x20) == 'e') {
-        record8('0');
-        record8('e');
-        shift();
-        goto inExponentIndicator;
-    }
-    if (isASCIIOctalDigit(m_current))
-        goto inOctal;
-    if (isASCIIDigit(m_current))
-        goto startNumber;
-    lvalp->doubleValue = 0;
-    goto doneNumeric;
-
-inNumberAfterDecimalPoint:
-    while (isASCIIDigit(m_current)) {
-        record8(m_current);
-        shift();
-    }
-    if ((m_current | 0x20) == 'e') {
-        record8('e');
-        shift();
-        goto inExponentIndicator;
-    }
-    goto doneNumber;
-
-inExponentIndicator:
-    if (m_current == '+' || m_current == '-') {
-        record8(m_current);
-        shift();
-    }
-    if (!isASCIIDigit(m_current))
-        goto returnError;
-    do {
-        record8(m_current);
-        shift();
-    } while (isASCIIDigit(m_current));
-    goto doneNumber;
-
-inOctal: {
-    do {
-        record8(m_current);
-        shift();
-    } while (isASCIIOctalDigit(m_current));
-    if (isASCIIDigit(m_current))
-        goto startNumber;
-
-    double dval = 0;
-
-    const char* end = m_buffer8.end();
-    for (const char* p = m_buffer8.data(); p < end; ++p) {
-        dval *= 8;
-        dval += *p - '0';
-    }
-    if (dval >= mantissaOverflowLowerBound)
-        dval = parseIntOverflow(m_buffer8.data(), end - m_buffer8.data(), 8);
-
-    m_buffer8.resize(0);
-
-    lvalp->doubleValue = dval;
-    goto doneNumeric;
-}
-
-inHex: {
-    do {
-        record8(m_current);
-        shift();
-    } while (isASCIIHexDigit(m_current));
-
-    double dval = 0;
-
-    const char* end = m_buffer8.end();
-    for (const char* p = m_buffer8.data(); p < end; ++p) {
-        dval *= 16;
-        dval += toASCIIHexValue(*p);
-    }
-    if (dval >= mantissaOverflowLowerBound)
-        dval = parseIntOverflow(m_buffer8.data(), end - m_buffer8.data(), 16);
-
-    m_buffer8.resize(0);
-
-    lvalp->doubleValue = dval;
-    goto doneNumeric;
-}
-
-startNumber:
-    record8(m_current);
-    shift();
-    while (isASCIIDigit(m_current)) {
-        record8(m_current);
-        shift();
-    }
-    if (m_current == '.') {
-        record8('.');
-        shift();
-        goto inNumberAfterDecimalPoint;
-    }
-    if ((m_current | 0x20) == 'e') {
-        record8('e');
-        shift();
-        goto inExponentIndicator;
-    }
-
-    // Fall through into doneNumber.
-
-doneNumber:
-    // Null-terminate string for strtod.
-    m_buffer8.append('\0');
-    lvalp->doubleValue = WTF::strtod(m_buffer8.data(), 0);
-    m_buffer8.resize(0);
-
-    // Fall through into doneNumeric.
-
-doneNumeric:
-    // No identifiers allowed directly after numeric literal, e.g. "3in" is bad.
-    if (UNLIKELY(isIdentStart(m_current)))
-        goto returnError;
-
-    m_atLineStart = false;
-    m_delimited = false;
-    token = NUMBER;
-    goto returnToken;
 
 doneSemicolon:
     token = SEMICOLON;
