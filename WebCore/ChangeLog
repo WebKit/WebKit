@@ -1,3 +1,48 @@
+2010-08-30  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add DOMFileSystem implementation to support Entry manipulation operations
+        https://bugs.webkit.org/show_bug.cgi?id=44732
+
+        No new tests; tests will be added later.
+
+        * storage/DOMFileSystem.cpp:
+        (WebCore::DOMFileSystem::root):
+        (WebCore::checkValidityForForCopyOrMove): Added.
+        (WebCore::DOMFileSystem::getMetadata): Added.
+        (WebCore::DOMFileSystem::move): Added.
+        (WebCore::DOMFileSystem::copy): Added.
+        (WebCore::DOMFileSystem::remove): Added.
+        (WebCore::DOMFileSystem::getParent): Added.
+        (WebCore::DOMFileSystem::getFile): Added.
+        (WebCore::DOMFileSystem::getDirectory): Added.
+        (WebCore::DOMFileSystem::readDirectory): Added.
+        * storage/DirectoryEntry.cpp:
+        (WebCore::DirectoryEntry::getFile): Added implementation.
+        (WebCore::DirectoryEntry::getDirectory): Added implementation.
+        * storage/DirectoryReader.cpp:
+        (WebCore::DirectoryReader::DirectoryReader): Added implementation.
+        (WebCore::DirectoryReader::readEntries): Added implementation.
+        * storage/DirectoryReader.h:
+        * storage/Entry.cpp:
+        (WebCore::Entry::getMetadata): Added implementation.
+        (WebCore::Entry::moveTo): Added implementation.
+        (WebCore::Entry::copyTo): Added implementation.
+        (WebCore::Entry::remove): Added implementation.
+        (WebCore::Entry::getParent): Added implementation.
+        * storage/Entry.h:
+        * storage/FileEntry.h:
+
+        Added a helper template to schedule callbacks.
+        * storage/DOMFileSystem.h:
+        (WebCore::DOMFileSystem::DispatchCallbackTask): Added to schedule callbacks.
+        (WebCore::DOMFileSystem::scheduleCallback): Added to schedule callbacks.
+
+        Changed to fire callbacks asynchronously.
+        * storage/LocalFileSystem.cpp:
+        (WebCore::LocalFileSystem::requestFileSystem):
+
 2010-08-30  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Xan Lopez.

@@ -56,7 +56,7 @@ private:
     DirectoryReader(PassRefPtr<DOMFileSystem> fileSystem, const String& path);
 
     RefPtr<DOMFileSystem> m_fileSystem;
-    String m_path;
+    String m_fullPath;
 };
 
 } // namespace

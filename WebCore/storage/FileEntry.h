@@ -34,9 +34,6 @@
 #if ENABLE(FILE_SYSTEM)
 
 #include "Entry.h"
-#include "PlatformString.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -44,14 +41,14 @@ class DOMFileSystem;
 
 class FileEntry : public Entry {
 public:
-    static PassRefPtr<FileEntry> create(PassRefPtr<DOMFileSystem> fileSystem, const String& fullPath)
+    static PassRefPtr<FileEntry> create(DOMFileSystem* fileSystem, const String& fullPath)
     {
         return adoptRef(new FileEntry(fileSystem, fullPath));
     }
     virtual bool isFile() const { return true; }
 
 private:
-    FileEntry(PassRefPtr<DOMFileSystem> fileSystem, const String& fullPath);
+    FileEntry(DOMFileSystem* fileSystem, const String& fullPath);
 };
 
 } // namespace

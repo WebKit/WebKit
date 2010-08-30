@@ -34,6 +34,7 @@
 #if ENABLE(FILE_SYSTEM)
 
 #include "PlatformString.h"
+#include "Timer.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -41,7 +42,7 @@ namespace WebCore {
 class AsyncFileSystem;
 class AsyncFileSystemCallbacks;
 
-// This class provides async interface for platform-specific DOMFileSystem implementation. Note that all the methods take canonicalized virtual paths.
+// This class provides async interface for platform-specific file system implementation.  Note that all the methods take platform paths.
 class AsyncFileSystem : public Noncopyable {
 public:
     virtual ~AsyncFileSystem() { }

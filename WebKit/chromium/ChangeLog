@@ -1,3 +1,23 @@
+2010-08-30  Kinuko Yasuda  <kinuko@chromium.osrc>
+
+        Reviewed by Darin Fisher.
+
+        Add DOMFileSystem implementation to support Entry manipulation operations
+        https://bugs.webkit.org/show_bug.cgi?id=44732
+
+        Fixed virtual-path / platform-path conversion timing. (The conversion needs to be done before calling AsyncFileSystem methods to support cross-filesystem operations.)
+
+        * src/AsyncFileSystemChromium.cpp:
+        (WebCore::AsyncFileSystemChromium::move):
+        (WebCore::AsyncFileSystemChromium::copy):
+        (WebCore::AsyncFileSystemChromium::remove):
+        (WebCore::AsyncFileSystemChromium::readMetadata):
+        (WebCore::AsyncFileSystemChromium::createFile):
+        (WebCore::AsyncFileSystemChromium::createDirectory):
+        (WebCore::AsyncFileSystemChromium::fileExists):
+        (WebCore::AsyncFileSystemChromium::directoryExists):
+        (WebCore::AsyncFileSystemChromium::readDirectory):
+
 2010-08-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r66198.

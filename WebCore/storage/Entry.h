@@ -54,22 +54,21 @@ public:
     const String& fullPath() const { return m_fullPath; }
     const String& name() const { return m_name; }
 
-    DOMFileSystem* filesystem() const { return m_fileSystem.get(); }
+    DOMFileSystem* filesystem() const { return m_fileSystem; }
 
     virtual void getMetadata(PassRefPtr<MetadataCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0);
-
-    virtual void moveTo(PassRefPtr<Entry> parent, const String& name = String(), PassRefPtr<EntryCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0);
-    virtual void copyTo(PassRefPtr<Entry> parent, const String& name = String(), PassRefPtr<EntryCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0);
-    virtual void remove(PassRefPtr<VoidCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0);
-    virtual void getParent(PassRefPtr<EntryCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0);
+    virtual void moveTo(PassRefPtr<Entry> parent, const String& name = String(), PassRefPtr<EntryCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0) const;
+    virtual void copyTo(PassRefPtr<Entry> parent, const String& name = String(), PassRefPtr<EntryCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0) const;
+    virtual void remove(PassRefPtr<VoidCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0) const;
+    virtual void getParent(PassRefPtr<EntryCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0) const;
 
     virtual String toURI(const String& mimeType = String());
 
 protected:
-    Entry(PassRefPtr<DOMFileSystem> fileSystem, const String& fullPath);
+    Entry(DOMFileSystem* fileSystem, const String& fullPath);
 
-    RefPtr<DOMFileSystem> m_fileSystem;
-    String m_fullPath; // virtual path
+    DOMFileSystem* m_fileSystem;
+    String m_fullPath;
     String m_name;
 };
 

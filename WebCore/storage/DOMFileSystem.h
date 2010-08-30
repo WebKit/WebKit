@@ -37,13 +37,19 @@
 #include "AsyncFileSystem.h"
 #include "Flags.h"
 #include "PlatformString.h"
+#include "ScriptExecutionContext.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class DirectoryEntry;
-class ScriptExecutionContext;
+class Entry;
+class EntryCallback;
+class EntriesCallback;
+class ErrorCallback;
+class MetadataCallback;
+class VoidCallback;
 
 class DOMFileSystem : public RefCounted<DOMFileSystem>, public ActiveDOMObject {
 public:
@@ -62,12 +68,56 @@ public:
     virtual bool hasPendingActivity() const;
     virtual void contextDestroyed();
 
+    // Actual FileSystem API implementations.  All the validity checks on virtual paths are done at DOMFileSystem level.
+    void getMetadata(const Entry* entry, PassRefPtr<MetadataCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback);
+    void move(const Entry* src, PassRefPtr<Entry> parent, const String& name, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);
+    void copy(const Entry* src, PassRefPtr<Entry> parent, const String& name, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);
+    void remove(const Entry* entry, PassRefPtr<VoidCallback>, PassRefPtr<ErrorCallback>);
+    void getParent(const Entry* entry, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);
+    void getFile(const Entry* base, const String& path, PassRefPtr<Flags>, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);
+    void getDirectory(const Entry* base, const String& path, PassRefPtr<Flags>, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);
+    void readDirectory(const String& path, PassRefPtr<EntriesCallback>, PassRefPtr<ErrorCallback>);
+
+    // Schedule a callback. This should not cross threads (should be called on the same context thread).
+    template <typename CB, typename CBArg>
+    static void scheduleCallback(ScriptExecutionContext*, PassRefPtr<CB>, PassRefPtr<CBArg>);
+
 private:
     DOMFileSystem(ScriptExecutionContext*, const String& name, PassOwnPtr<AsyncFileSystem>);
+
+    AsyncFileSystem* asyncFileSystem() const { return m_asyncFileSystem.get(); }
+
+    // A helper template to schedule a callback task.
+    // FIXME: move this to a more generic place.
+    template <typename CB, typename CBArg>
+    class DispatchCallbackTask : public ScriptExecutionContext::Task {
+    public:
+        DispatchCallbackTask(PassRefPtr<CB> callback, PassRefPtr<CBArg> arg)
+            : m_callback(callback)
+            , m_callbackArg(arg)
+        {
+        }
+
+        virtual void performTask(ScriptExecutionContext*)
+        {
+            m_callback->handleEvent(m_callbackArg.get());
+        }
+
+    private:
+        RefPtr<CB> m_callback;
+        RefPtr<CBArg> m_callbackArg;
+    };
 
     String m_name;
     mutable OwnPtr<AsyncFileSystem> m_asyncFileSystem;
 };
+
+template <typename CB, typename CBArg>
+void DOMFileSystem::scheduleCallback(ScriptExecutionContext* scriptExecutionContext, PassRefPtr<CB> callback, PassRefPtr<CBArg> arg)
+{
+    ASSERT(scriptExecutionContext->isContextThread());
+    scriptExecutionContext->postTask(new DispatchCallbackTask<CB, CBArg>(callback, arg));
+}
 
 } // namespace
 

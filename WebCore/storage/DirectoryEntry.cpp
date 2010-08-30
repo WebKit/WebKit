@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-DirectoryEntry::DirectoryEntry(PassRefPtr<DOMFileSystem> fileSystem, const String& fullPath)
+DirectoryEntry::DirectoryEntry(DOMFileSystem* fileSystem, const String& fullPath)
     : Entry(fileSystem, fullPath)
 {
 }
@@ -49,16 +49,14 @@ PassRefPtr<DirectoryReader> DirectoryEntry::createReader()
     return DirectoryReader::create(m_fileSystem, m_fullPath);
 }
 
-void DirectoryEntry::getFile(const String&, PassRefPtr<Flags>, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>)
+void DirectoryEntry::getFile(const String& path, PassRefPtr<Flags> flags, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
-    // FIXME: to be implemented.
-    ASSERT_NOT_REACHED();
+    m_fileSystem->getFile(this, path, flags, successCallback, errorCallback);
 }
 
-void DirectoryEntry::getDirectory(const String&, PassRefPtr<Flags>, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>)
+void DirectoryEntry::getDirectory(const String& path, PassRefPtr<Flags> flags, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
-    // FIXME: to be implemented.
-    ASSERT_NOT_REACHED();
+    m_fileSystem->getDirectory(this, path, flags, successCallback, errorCallback);
 }
 
 } // namespace
