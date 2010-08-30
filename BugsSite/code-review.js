@@ -1,6 +1,4 @@
 (function() {
-  var kDeleteImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAA3NCSVQICAjb4U/gAAAAn1BMVEX////4YmT/dnnyTE//dnn9bnH6am34YmT3XWD2WVv2VVjsOj3oMDLlJyrjICL2VVjzUVTwR0ruPT/iHB72WVvwR0rzUVT/h4r/gob/foH/eXv/dnn/cnT9bnH/bG76am3/Zmb6ZGf4YmT3XWD/WFv2WVv/VFf2VVj0TVDyTE/2SkzwR0rvREfuQUPuPT/sOj3rNDboMDLnLTDlJyrjICIhCpwnAAAANXRSTlMAESIiMzMzMzMzMzMzMzNERERERHd3qv///////////////////////////////////////0mgXpwAAAAJcEhZcwAAHngAAB54AcurAx8AAAAYdEVYdFNvZnR3YXJlAEFkb2JlIEZpcmV3b3Jrc0+zH04AAACVSURBVBiVbczXFoIwDAbguHGi4mqbWugQZInj/Z9NSuXAhblJvuTkB+jV4NeHY9e9g+/M2KSxFKdRY0JwWltxoo72gvRMxcxTgqrM/Qp2QWmdt+kRJ5SyzgCGao09zw3TN8yWnSNEfo3LVWdTPJIwqdbWCyN5XABUeZi+NvViG0trgHeRPgM77O6l+/04A+zb9AD+1Bf6lg3jQQJJTgAAAABJRU5ErkJggg==';
-
   function determineAttachmentID() {
     try {
       return /id=(\d+)/.exec(window.location.search)[1]
@@ -67,17 +65,17 @@
 
   function addCommentField() {
     var id = $(this).attr('data-comment-for');
-    if (!id)
+    if (!id) {
       id = this.id;
+      $(this).addClass('commentContext');
+    }
     var line = $('#' + id);
     if (line.attr('data-has-comment'))
       return;
-    if (!window.getSelection().isCollapsed)
-      return; // If there's a selection, we assume the user wants to copy the text.
     line.attr('data-has-comment', 'true');
-    var comment_block = $('<div class="comment"><div class="actions"><img class="delete" src="' + kDeleteImage + '"></div><textarea data-comment-for="' + id + '"></textarea></div>');
+
+    var comment_block = $('<div class="comment"><textarea data-comment-for="' + id + '"></textarea><div class="actions"><button class="delete">Delete</button></div></div>');
     insertCommentFor(line, comment_block);
-    comment_block.each(hoverify);
     comment_block.children('textarea').focus();
   }
 
@@ -96,9 +94,9 @@
   }
 
   $(document).ready(function() {
-    $('.Line').each(idify).each(hoverify).click(addCommentField);
+    $('.Line').each(idify).each(hoverify).dblclick(addCommentField);
     $(previous_comments).each(displayPreviousComments);
-    $(document.body).prepend('<div id="toolbar"><button id="post_comments">Prepare comments</button></div>');
+    $(document.body).prepend('<div id="toolbar"><div class="actions"><button id="post_comments">Prepare comments</button></div><div class="help">Double-click a line to add a comment.</div></div>');
     $(document.body).prepend('<div id="comment_form" class="inactive"><div class="winter"></div><div class="lightbox"><iframe src="attachment.cgi?id=' + attachment_id + '&action=reviewform"></iframe></div></div>');
   });
 
@@ -108,25 +106,72 @@
   });
 
   $('.comment .delete').live('click', function() {
-    var line_id = $(this).parentsUntil('.comment').next().attr('data-comment-for');
+    var line_id = $(this).parentsUntil('.comment').parent().find('textarea').attr('data-comment-for');
     delete current_comment[line_id];
     var line = $('#' + line_id)
     findCommentBlockFor(line).remove();
     line.removeAttr('data-has-comment');
+    trimCommentContextToBefore(line);
+  });
+
+  function contextLinesFor(line) {
+    var context = [];
+    while (line.hasClass('commentContext')) {
+      $.merge(context, line);
+      line = line.prev();
+    }
+    return $(context.reverse());
+  }
+
+  function trimCommentContextToBefore(line) {
+    while (line.hasClass('commentContext') && line.attr('data-has-comment') != 'true') {
+      line.removeClass('commentContext');
+      line = line.prev();
+    }
+  }
+
+  function tryToExpandCommentContextTo(line) {
+    var context_line = line;
+    while (context_line.length != 0) {
+      context_line = context_line.next();
+      if (context_line.hasClass('commentContext'))
+        break;
+    }
+    if (context_line.length == 0)
+      return; // No comment context to expand.
+    line.addClass('commentContext').nextUntil('.commentContext').addClass('commentContext');
+  }
+
+  $('.lineNumber').live('click', function() {
+    var line = $(this).parent();
+    if (line.hasClass('commentContext'))
+      trimCommentContextToBefore(line.prev());
+    else
+      tryToExpandCommentContextTo(line);
   });
 
   function contextSnippetFor(line) {
-    var file_name = line.parent().prev().text();
+    var snippets = []
+    contextLinesFor(line).each(function() {
+      var action = ' ';
+      if ($(this).hasClass('add'))
+        action = '+';
+      else if ($(this).hasClass('remove'))
+        action = '-';
+      var text = $(this).children('.text').text();
+      snippets.push('> ' + action + text);
+    });
+    return snippets.join('\n');
+  }
+
+  function fileNameFor(line) {
+    return line.parentsUntil('.FileDiff').parent().find('h1').text();
+  }
+
+  function snippetFor(line) {
+    var file_name = fileNameFor(line);
     var line_number = line.hasClass('remove') ? line.children('.from').text() : line.children('.to').text();
-
-    var action = ' ';
-    if (line.hasClass('add'))
-      action = '+';
-    else if (line.hasClass('remove'))
-      action = '-';
-
-    var text = line.children('.text').text();
-    return '> ' + file_name + ':' + line_number + '\n> ' + action + text;
+    return '> ' + file_name + ':' + line_number + '\n' + contextSnippetFor(line);
   }
 
   $('#comment_form .winter').live('click', function() {
@@ -138,7 +183,7 @@
     forEachLine(function(line) {
       if (line.attr('data-has-comment') != 'true')
         return;
-      var snippet = contextSnippetFor(line);
+      var snippet = snippetFor(line);
       var comment = findCommentBlockFor(line).children('textarea').val();
       if (comment == '')
         return;

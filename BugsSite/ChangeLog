@@ -1,3 +1,21 @@
+2010-08-30  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [review tool] Let reviewer select how much context to show in snippet
+        https://bugs.webkit.org/show_bug.cgi?id=44905
+
+        We now highlight the context for a comment in yellow on the left (where
+        the line numbers are).  Clicking a line number expands or contracts the
+        amount of context, as appropriate.  Informal user testing indicates
+        that we might want to support drag as well.
+
+        This patch also changes the "open a comment box here" action to
+        double-click to avoid issues with mis-clicks.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
 2010-08-29  Adam Barth  <abarth@webkit.org>
 
         Attempt to make Sam's life easier by not opening a comment text field

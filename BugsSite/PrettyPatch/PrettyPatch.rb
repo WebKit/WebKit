@@ -203,17 +203,6 @@ h1 :hover {
   height: 6em;
 }
 
-.comment .actions {
-  position: absolute;
-  right: 3px;
-  top: 3px;
-  display: none;
-}
-
-.hot .actions {
-  display: block;
-}
-
 .reply {
   font-family: sans-serif;
   float: right;
@@ -231,13 +220,16 @@ body {
 
 #toolbar {
   position: fixed;
-  text-align: right;
   padding: 5px;
   bottom: 0;
   left: 0;
   right: 0;
   border-top: 1px solid #ddd;
   background-color: #eee;
+}
+
+#toolbar .actions {
+  float: right;
 }
 
 .winter {
@@ -267,6 +259,15 @@ body {
 .lightbox iframe {
   width: 100%;
   height: 100%;
+}
+
+help {
+ color: gray;
+ font-style: italic;
+}
+
+.commentContext .lineNumber {
+  background-color: yellow;
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
