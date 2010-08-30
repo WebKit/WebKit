@@ -1,5 +1,11 @@
 2010-08-30  Adam Barth  <abarth@webkit.org>
 
+        Attempt to fix the Qt build.
+
+        * WebCore.pri:
+
+2010-08-30  Adam Barth  <abarth@webkit.org>
+
         Attempt to fix Chromium build.
 
         * WebCore.gyp/WebCore.gyp:

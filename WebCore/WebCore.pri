@@ -147,8 +147,13 @@ IDL_BINDINGS += \
     dom/WebKitAnimationEvent.idl \
     dom/WebKitTransitionEvent.idl \
     dom/WheelEvent.idl \
-    html/Blob.idl \
-    html/BlobBuilder.idl \
+    fileapi/Blob.idl \
+    fileapi/BlobBuilder.idl \
+    fileapi/File.idl \
+    fileapi/FileError.idl \
+    fileapi/FileList.idl \
+    fileapi/FileReader.idl \
+    fileapi/FileWriter.idl \
     html/canvas/ArrayBufferView.idl \
     html/canvas/ArrayBuffer.idl \
     html/canvas/Int8Array.idl \
@@ -175,11 +180,6 @@ IDL_BINDINGS += \
     html/DataGridColumn.idl \
     html/DataGridColumnList.idl \
     html/DOMFormData.idl \
-    html/File.idl \
-    html/FileError.idl \
-    html/FileList.idl \
-    html/FileReader.idl \
-    html/FileWriter.idl \
     html/HTMLAllCollection.idl \
     html/HTMLAudioElement.idl \
     html/HTMLAnchorElement.idl \
@@ -546,7 +546,7 @@ addExtraCompiler(cssvalues)
 idl.output = $${WC_GENERATED_SOURCES_DIR}/JS${QMAKE_FILE_BASE}.cpp
 idl.input = IDL_BINDINGS
 idl.wkScript = $$PWD/bindings/scripts/generate-bindings.pl
-idl.commands = perl -I$$PWD/bindings/scripts $$idl.wkScript --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" --generator JS --include $$PWD/dom --include $$PWD/html --include $$PWD/xml --include $$PWD/svg --outputDir $$WC_GENERATED_SOURCES_DIR --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME}
+idl.commands = perl -I$$PWD/bindings/scripts $$idl.wkScript --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" --generator JS --include $$PWD/dom --include $$PWD/fileapi --include $$PWD/html --include $$PWD/xml --include $$PWD/svg --outputDir $$WC_GENERATED_SOURCES_DIR --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME}
 idl.depends = $$PWD/bindings/scripts/CodeGenerator.pm \
               $$PWD/bindings/scripts/CodeGeneratorJS.pm \
               $$PWD/bindings/scripts/IDLParser.pm \
