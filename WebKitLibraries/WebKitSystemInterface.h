@@ -201,6 +201,7 @@ float WKQTMovieMaxTimeLoaded(QTMovie* movie);
 float WKQTMovieMaxTimeSeekable(QTMovie* movie);
 NSString *WKQTMovieMaxTimeLoadedChangeNotification(void);
 void WKQTMovieViewSetDrawSynchronously(QTMovieView* view, BOOL sync);
+void WKQTMovieDisableComponent(uint32_t[5]);
 
 CFStringRef WKCopyFoundationCacheDirectory(void);
 

@@ -1,3 +1,22 @@
+2010-08-27  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        text/plain non-video files cause <video> to hang (while reading them?)
+        https://bugs.webkit.org/show_bug.cgi?id=44212
+        
+        Disable all the QuickTime components which ingest .txt files.
+
+        New tests: 
+        * http/tests/media/video-served-as-text.html: Added.
+        * http/tests/media/text-served-as-text.html: Added.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::createQTMovie): Disable all four text
+            'eat' components.
+        * platform/mac/WebCoreSystemInterface.h: Add wkQTMovieDisableComponent.
+        * platform/mac/WebCoreSystemInterface.mm: Add wkQTMovieDisableComponent.
+
 2010-08-30  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Simon Hausmann.

@@ -1,3 +1,21 @@
+2010-08-27  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        text/plain non-video files cause <video> to hang (while reading them?)
+        https://bugs.webkit.org/show_bug.cgi?id=44212
+        
+        Added two new tests: video-served-as-text.html and
+        text-served-as-text.html.  The second checks that a text file does not
+        generates an error when loaded by a <video> element. The first checks
+        that media served as text/plain still loads without errors.
+
+        * http/tests/media/resources/test.txt: Added.
+        * http/tests/media/text-served-as-text-expected.txt: Added.
+        * http/tests/media/text-served-as-text.html: Added.
+        * http/tests/media/video-served-as-text-expected.txt: Added.
+        * http/tests/media/video-served-as-text.html: Added.
+
 2010-08-30  Evan Martin  <evan@chromium.org>
 
         Unreviewed, updating Chromium expectations.
@@ -764,6 +782,17 @@
 
         * http/tests/media/resources/test.mp4: Added property svn:mime-type.
         * http/tests/media/resources/test.ogv: Added property svn:mime-type.
+
+2010-08-27  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        text/plain non-video files cause <video> to hang (while reading them?)
+        https://bugs.webkit.org/show_bug.cgi?id=44212
+        
+        Test that HTMLVideoElements cannot load movies served as plain text.
+
+        * http/tests/media/video-served-as-text.html: Added.
 
 2010-08-27  Jer Noble  <jer.noble@apple.com>
 

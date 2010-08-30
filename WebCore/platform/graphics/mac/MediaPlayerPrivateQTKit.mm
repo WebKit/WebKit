@@ -263,6 +263,17 @@ void MediaPlayerPrivate::createQTMovie(const String& url)
 
 void MediaPlayerPrivate::createQTMovie(NSURL *url, NSDictionary *movieAttributes)
 {
+    // We must disable components each time we open a movie because we cannot guarantee
+    // that the QTKitServer process hasn't disappeared on us:
+    uint32_t componentsToDisable[4][5] = {
+        {'eat ', 'TEXT', 'text', 0, 0},
+        {'eat ', 'TXT ', 'text', 0, 0},    
+        {'eat ', 'utxt', 'text', 0, 0},  
+        {'eat ', 'TEXT', 'tx3g', 0, 0},  
+    };
+    for (size_t i = 0; i < sizeof(componentsToDisable)/sizeof(componentsToDisable[0]); ++i) 
+         wkQTMovieDisableComponent(componentsToDisable[i]);
+
     [[NSNotificationCenter defaultCenter] removeObserver:m_objcObserver.get()];
     
     bool recreating = false;

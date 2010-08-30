@@ -1,3 +1,16 @@
+2010-08-27  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        text/plain non-video files cause <video> to hang (while reading them?)
+        https://bugs.webkit.org/show_bug.cgi?id=44212
+        
+        Add the new WebKitSystemInterface function WKQTMovieDisableComponent to
+        the initialization routine.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Initialize WKQTMovieDisableComponent.
+
 2010-08-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r66198.

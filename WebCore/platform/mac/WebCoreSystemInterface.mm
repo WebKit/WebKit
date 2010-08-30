@@ -56,6 +56,7 @@ void (*wkGetWheelEventDeltas)(NSEvent*, float* deltaX, float* deltaY, BOOL* cont
 void (*wkPopupMenu)(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*);
 unsigned (*wkQTIncludeOnlyModernMediaFileTypes)(void);
 int (*wkQTMovieDataRate)(QTMovie*);
+void (*wkQTMovieDisableComponent)(uint32_t[5]);
 float (*wkQTMovieMaxTimeLoaded)(QTMovie*);
 NSString *(*wkQTMovieMaxTimeLoadedChangeNotification)(void);
 float (*wkQTMovieMaxTimeSeekable)(QTMovie*);
