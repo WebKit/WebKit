@@ -1,3 +1,12 @@
+2010-08-30  Evan Martin  <evan@chromium.org>
+
+        Unreviewed, updating Chromium expectations.
+
+        Simplify some obsolete test expectations based on looking at their
+        current behavior on the dashboard.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-08-30  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.

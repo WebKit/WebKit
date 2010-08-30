@@ -272,7 +272,7 @@ WONTFIX : fast/canvas/canvas-gradient-addStop-error.html = FAIL
 // these tests will always fail.
 // TODO(ericroman): can the following 2 tests be removed from this list, since they pass?
 WONTFIX : fast/events/keydown-1.html = FAIL
-WONTFIX LINUX WIN : fast/events/option-tab.html = FAIL CRASH
+WONTFIX LINUX WIN : fast/events/option-tab.html = FAIL
 
 // Chrome does not support WebArchives.
 BUG10395 WONTFIX SKIP : webarchive = FAIL PASS
@@ -419,15 +419,9 @@ WONTFIX : storage/domstorage/sessionstorage/private-browsing-affects-storage.htm
 
 // These tests propagate auth credentials back to the renderer, which we
 // don't want to do.
-WONTFIX BUG21840 MAC LINUX DEBUG : http/tests/loading/basic-auth-resend-wrong-credentials.html = FAIL
-WONTFIX BUG21840 LINUX RELEASE : http/tests/loading/basic-auth-resend-wrong-credentials.html = FAIL
-WONTFIX BUG21840 SLOW WIN RELEASE : http/tests/loading/basic-auth-resend-wrong-credentials.html = FAIL
-WONTFIX BUG21840 WIN DEBUG : http/tests/loading/basic-auth-resend-wrong-credentials.html = FAIL CRASH
-WONTFIX BUG21840 MAC RELEASE : http/tests/loading/basic-auth-resend-wrong-credentials.html = FAIL TIMEOUT
-
-WONTFIX BUG21840 LINUX : http/tests/loading/basic-credentials-sent-automatically.html = FAIL CRASH
-WONTFIX BUG21840 WIN : http/tests/loading/basic-credentials-sent-automatically.html = FAIL TIMEOUT
-WONTFIX BUG21840 MAC : http/tests/loading/basic-credentials-sent-automatically.html = FAIL
+WONTFIX BUG21840 MAC LINUX : http/tests/loading/basic-auth-resend-wrong-credentials.html = FAIL
+WONTFIX BUG21840 WIN : http/tests/loading/basic-auth-resend-wrong-credentials.html = FAIL TIMEOUT
+WONTFIX BUG21840 : http/tests/loading/basic-credentials-sent-automatically.html = FAIL
 
 // This checks the IDN behavior of WebKit/WebKit on Mac, not WebKit/WebCore or
 // WebKit/JavaScriptCore. Chrome doesn't use WebKit/WebKit, and Chrome's IDN
@@ -549,29 +543,22 @@ BUG10270 : fast/dom/frame-loading-via-document-write.html = FAIL
 // -----------------------------------------------------------------
 // LIGHTTPD
 // -----------------------------------------------------------------
-// This are failing for different reasons under our new lighttpd configuration
-// TODO(deanm): Address all of these via lighttpd if possible, otherwise fork.
-// Maybe flaky and need to be forked?
+// This are failing for different reasons under our lighttpd configuration.
+// (Note that lighttpd is only used on Windows at this point.)
 
 // LightTPD doesn't accept unknown HTTP methods
 BUG30536 SKIP : http/tests/xmlhttprequest/methods-lower-case.html = TIMEOUT CRASH
-BUG30536 DEBUG : http/tests/xmlhttprequest/methods-async.html = TIMEOUT TEXT
-BUG30536 LINUX MAC RELEASE : http/tests/xmlhttprequest/methods-async.html = TIMEOUT TEXT
-BUG30536 WIN RELEASE : http/tests/xmlhttprequest/methods-async.html = TIMEOUT TEXT
+BUG30536 LINUX MAC : http/tests/xmlhttprequest/methods-async.html = TEXT
+BUG30536 WIN       : http/tests/xmlhttprequest/methods-async.html = TIMEOUT
 BUG30536 WIN SLOW : http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-invalidation-by-method.html = FAIL
 // LightTPD doesn't accept unknown HTTP methods and passes CGIs a Content-Type
 // even when a request didn't send the header.
 BUG30536 WIN SLOW : http/tests/xmlhttprequest/methods.html = FAIL
-BUG30536 LINUX : http/tests/xmlhttprequest/methods.html = FAIL
-BUG30536 MAC : http/tests/xmlhttprequest/methods.html = FAIL TIMEOUT
 // Webkit 50667:50696 (Lighttpd related?)
 BUG30536 WIN : http/tests/xmlhttprequest/xmlhttprequest-setrequestheader-no-value.html = TEXT
 
 // Another lighttpd quirk.
 BUG8941 WIN SLOW : http/tests/xmlhttprequest/web-apps/013.html = FAIL
-BUG8941 LINUX SLOW : http/tests/xmlhttprequest/web-apps/013.html = PASS
-BUG8941 MAC DEBUG SLOW : http/tests/xmlhttprequest/web-apps/013.html = FAIL
-BUG8941 MAC RELEASE SLOW : http/tests/xmlhttprequest/web-apps/013.html = PASS
 BUG8941 WIN : http/tests/xmlhttprequest/web-apps/012.html = FAIL
 
 // -----------------------------------------------------------------
