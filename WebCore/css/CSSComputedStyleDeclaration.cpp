@@ -692,6 +692,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyBackgroundColor:
             return CSSPrimitiveValue::createColor(m_allowVisitedStyle? style->visitedDependentColor(CSSPropertyBackgroundColor).rgb() : style->backgroundColor().rgb());
         case CSSPropertyBackgroundImage:
+            // FIXME: Broken for multiple backgrounds. https://bugs.webkit.org/show_bug.cgi?id=44853
             if (style->backgroundImage())
                 return style->backgroundImage()->cssValue();
             return CSSPrimitiveValue::createIdentifier(CSSValueNone);
@@ -838,7 +839,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             if (cursors && cursors->size() > 0) {
                 list = CSSValueList::createCommaSeparated();
                 for (unsigned i = 0; i < cursors->size(); ++i)
-                    list->append(CSSPrimitiveValue::create((*cursors)[i].image()->url(), CSSPrimitiveValue::CSS_URI));
+                    list->append((*cursors)[i].image()->cssValue());
             }
             RefPtr<CSSValue> value = CSSPrimitiveValue::create(style->cursor());
             if (list) {

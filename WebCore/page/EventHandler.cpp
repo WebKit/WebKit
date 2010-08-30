@@ -66,6 +66,7 @@
 #include "Scrollbar.h"
 #include "SelectionController.h"
 #include "Settings.h"
+#include "StyleCachedImage.h"
 #include "TextEvent.h"
 #include "TextIterator.h"
 #include "UserGestureIndicator.h"
@@ -1076,10 +1077,13 @@ Cursor EventHandler::selectCursor(const MouseEventWithHitTestResults& event, Scr
     if (style && style->cursors()) {
         const CursorList* cursors = style->cursors();
         for (unsigned i = 0; i < cursors->size(); ++i) {
-            const CachedImage* cimage = (*cursors)[i].image();
-            IntPoint hotSpot = (*cursors)[i].hotSpot();
+            const CachedImage* cimage = 0;
+            StyleImage* image = (*cursors)[i].image();
+            if (image->isCachedImage())
+                cimage = static_cast<StyleCachedImage*>(image)->cachedImage();
             if (!cimage)
                 continue;
+            IntPoint hotSpot = (*cursors)[i].hotSpot();
             // Limit the size of cursors so that they cannot be used to cover UI elements in chrome.
             IntSize size = cimage->image()->size();
             if (size.width() > 128 || size.height() > 128)

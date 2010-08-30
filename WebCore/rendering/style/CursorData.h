@@ -25,15 +25,14 @@
 #ifndef CursorData_h
 #define CursorData_h
 
-#include "CachedImage.h"
-#include "CachedResourceHandle.h"
 #include "IntPoint.h"
+#include "StyleImage.h"
 
 namespace WebCore {
 
 class CursorData {
 public:
-    CursorData(CachedImage* image, const IntPoint& hotSpot)
+    CursorData(PassRefPtr<StyleImage> image, const IntPoint& hotSpot)
         : m_image(image)
         , m_hotSpot(hotSpot)
     {
@@ -49,11 +48,13 @@ public:
         return !(*this == o);
     }
 
-    const CachedImage* image() const { return m_image.get(); }    
+    StyleImage* image() const { return m_image.get(); }    
+    void setImage(PassRefPtr<StyleImage> image) { m_image = image; }    
+
     const IntPoint& hotSpot() const { return m_hotSpot; }
     
 private:
-    CachedResourceHandle<CachedImage> m_image;
+    RefPtr<StyleImage> m_image;
     IntPoint m_hotSpot; // for CSS3 support
 };
 

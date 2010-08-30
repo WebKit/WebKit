@@ -35,7 +35,6 @@
 #include "CSSPropertyNames.h"
 #include "CSSReflectionDirection.h"
 #include "CSSValueList.h"
-#include "CachedImage.h"
 #include "CollapsedBorderValue.h"
 #include "Color.h"
 #include "ColorSpace.h"
@@ -103,7 +102,6 @@ using std::max;
 
 class CSSStyleSelector;
 class CSSValueList;
-class CachedImage;
 class Pair;
 class StyleImage;
 
@@ -902,7 +900,7 @@ public:
     void setCounterReset(short v) { SET_VAR(rareNonInheritedData, m_counterReset, v) }
 
     void setListStyleType(EListStyleType v) { inherited_flags._list_style_type = v; }
-    void setListStyleImage(StyleImage* v) { if (inherited->list_style_image != v) inherited.access()->list_style_image = v; }
+    void setListStyleImage(PassRefPtr<StyleImage> v) { if (inherited->list_style_image != v) inherited.access()->list_style_image = v; }
     void setListStylePosition(EListStylePosition v) { inherited_flags._list_style_position = v; }
 
     void resetMargin() { SET_VAR(surround, margin, LengthBox(Fixed)) }
@@ -919,7 +917,7 @@ public:
     void setPaddingRight(Length v) { SET_VAR(surround, padding.m_right, v) }
 
     void setCursor(ECursor c) { inherited_flags._cursor_style = c; }
-    void addCursor(CachedImage*, const IntPoint& = IntPoint());
+    void addCursor(PassRefPtr<StyleImage>, const IntPoint& hotSpot = IntPoint());
     void setCursorList(PassRefPtr<CursorList>);
     void clearCursorList();
 

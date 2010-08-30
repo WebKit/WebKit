@@ -3529,11 +3529,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                     CSSCursorImageValue* image = static_cast<CSSCursorImageValue*>(primitiveValue);
                     if (image->updateIfSVGCursorIsUsed(m_element)) // Elements with SVG cursors are not allowed to share style.
                         m_style->setUnique();
-                    // FIXME: Temporary clumsiness to pass off a CachedImage to an API that will eventually convert to using
-                    // StyleImage. Should also be fixed to use StylePendingImage at the same time.
-                    RefPtr<StyleCachedImage> styleCachedImage(image->cachedImage(m_element->document()->docLoader()));
-                    if (styleCachedImage)
-                        m_style->addCursor(styleCachedImage->cachedImage(), image->hotSpot());
+                    m_style->addCursor(cachedOrPendingFromValue(CSSPropertyCursor, image), image->hotSpot());
                 } else if (type == CSSPrimitiveValue::CSS_IDENT)
                     m_style->setCursor(*primitiveValue);
             }
@@ -6733,6 +6729,7 @@ void CSSStyleSelector::loadPendingImages()
                 }
                 break;
             }
+
             case CSSPropertyContent: {
                 for (ContentData* contentData = const_cast<ContentData*>(m_style->contentData()); contentData; contentData = contentData->next()) {
                     if (contentData->isImage() && contentData->image()->isPendingImage()) {
@@ -6742,9 +6739,19 @@ void CSSStyleSelector::loadPendingImages()
                 }
                 break;
             }
-            case CSSPropertyCursor:
-                // Cursor doesn't use StylePendingImage yet.
+
+            case CSSPropertyCursor: {
+                if (CursorList* cursorList = m_style->cursors()) {
+                    for (size_t i = 0; i < cursorList->size(); ++i) {
+                        CursorData& currentCursor = (*cursorList)[i];
+                        if (currentCursor.image()->isPendingImage()) {
+                            CSSImageValue* imageValue = static_cast<StylePendingImage*>(currentCursor.image())->cssImageValue();
+                            currentCursor.setImage(imageValue->cachedImage(docLoader));
+                        }
+                    }
+                }
                 break;
+            }
 
             case CSSPropertyListStyleImage: {
                 if (m_style->listStyleImage() && m_style->listStyleImage()->isPendingImage()) {

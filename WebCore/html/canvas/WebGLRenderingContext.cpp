@@ -29,6 +29,7 @@
 
 #include "WebGLRenderingContext.h"
 
+#include "CachedImage.h"
 #include "CanvasPixelArray.h"
 #include "CheckedInt.h"
 #include "Console.h"

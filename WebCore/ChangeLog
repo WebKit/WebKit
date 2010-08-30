@@ -807,6 +807,37 @@
 
         Reviewed by Darin Adler.
 
+        Fix RenderStyle::addCursor to use a StyleImage, not a CachedImage
+        https://bugs.webkit.org/show_bug.cgi?id=44719
+        
+        Modernize the CSS cursor code to use a StyleImage, rather
+        than a CachedImage in the CursorData, and handle the loading
+        of pending images for the cursor property.
+
+        Covered by manual tests in WebCore/manual-tests
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::loadPendingImages):
+        * html/canvas/WebGLRenderingContext.cpp:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectCursor):
+        * rendering/style/CursorData.h:
+        (WebCore::CursorData::CursorData):
+        (WebCore::CursorData::image):
+        (WebCore::CursorData::setImage):
+        * rendering/style/CursorList.h:
+        (WebCore::CursorList::operator[]):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::addCursor):
+        * rendering/style/RenderStyle.h:
+
+2010-08-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
         When properties are missing from animation keyframes, interpolate between those keyframes that specify them
         https://bugs.webkit.org/show_bug.cgi?id=40794
         

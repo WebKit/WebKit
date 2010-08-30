@@ -24,7 +24,6 @@
 
 #include "CSSPropertyNames.h"
 #include "CSSStyleSelector.h"
-#include "CachedImage.h"
 #include "FontSelector.h"
 #include "RenderArena.h"
 #include "RenderObject.h"
@@ -550,7 +549,7 @@ void RenderStyle::setClip(Length top, Length right, Length bottom, Length left)
     data->clip.m_left = left;
 }
 
-void RenderStyle::addCursor(CachedImage* image, const IntPoint& hotSpot)
+void RenderStyle::addCursor(PassRefPtr<StyleImage> image, const IntPoint& hotSpot)
 {
     if (!rareInheritedData.access()->cursorData)
         rareInheritedData.access()->cursorData = CursorList::create();
