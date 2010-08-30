@@ -715,9 +715,9 @@ WebInspector.close = function(event)
     InspectorFrontendHost.closeWindow();
 }
 
-WebInspector.disconnectFromBackend = function()
+WebInspector.inspectedPageDestroyed = function()
 {
-    InspectorFrontendHost.disconnectFromBackend();
+    WebInspector.close();
 }
 
 WebInspector.documentMouseOver = function(event)

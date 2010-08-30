@@ -93,7 +93,6 @@ public:
     
     virtual void bringToFront();
     virtual void closeWindow();
-    virtual void disconnectFromBackend();
     
     virtual void attachWindow();
     virtual void detachWindow();
@@ -107,7 +106,7 @@ private:
     void closeWindowWithoutNotifications();
     void showWindowWithoutNotifications();
 
-    void destroyInspectorView(bool notifyInspectorController);
+    void destroyInspectorView();
 
     void updateWindowTitle();
 

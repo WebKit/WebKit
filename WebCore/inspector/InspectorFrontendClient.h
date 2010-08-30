@@ -53,7 +53,6 @@ public:
 
     virtual void bringToFront() = 0;
     virtual void closeWindow() = 0;
-    virtual void disconnectFromBackend() = 0;
 
     virtual void requestAttachWindow() = 0;
     virtual void requestDetachWindow() = 0;

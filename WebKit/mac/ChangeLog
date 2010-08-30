@@ -1,3 +1,17 @@
+2010-08-30  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r66198.
+        http://trac.webkit.org/changeset/66198
+        https://bugs.webkit.org/show_bug.cgi?id=44856
+
+        It made tests crash on Qt bot (Requested by Ossy_ on #webkit).
+
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorFrontendClient::closeWindow):
+        (-[WebInspectorWindowController windowShouldClose:]):
+        (-[WebInspectorWindowController destroyInspectorView]):
+
 2010-08-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
