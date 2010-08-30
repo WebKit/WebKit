@@ -1,3 +1,16 @@
+2010-08-30  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Update LayoutTest for file inputs to show "pass" for fakepath
+        https://bugs.webkit.org/show_bug.cgi?id=44882
+
+        As requested by Alexey.
+
+        * editing/pasteboard/file-input-files-access-expected.txt:
+        * editing/pasteboard/script-tests/file-input-files-access.js:
+        (draggingPathsShouldResultInFiles):
+
 2010-08-30  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Simon Hausmann.

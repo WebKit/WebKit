@@ -45,7 +45,7 @@ function draggingPathsShouldResultInFiles(pathsArray, filesArray)
 {
     dragFilesOntoInput(pathsArray);
     // WebKit seems to always take the first file in the dragged list as .value:
-    shouldBeEqualToString("fileInput.value", filesArray[0] ? filesArray[0]['name'] : '');
+    shouldBeEqualToString("fileInput.value", filesArray[0] ? "C:\\fakepath\\" + filesArray[0]['name'] : '');
     filesShouldBe(filesArray);
 }
 

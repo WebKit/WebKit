@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Dragging a single (non-existant) file to a file input control:
-FAIL fileInput.value should be DRTFakeFile. Was C:\fakepath\DRTFakeFile.
+PASS fileInput.value is "C:\\fakepath\\DRTFakeFile"
 PASS fileInput.files.length is 1
 PASS fileInput.files[0].name is "DRTFakeFile"
 PASS fileInput.files[0].type is ""
@@ -12,7 +12,7 @@ PASS fileInput.files[0].size is 0
 PASS fileInput.files[0].fileName is "DRTFakeFile"
 PASS fileInput.files[0].fileSize is 0
 Dragging a real file to a file input control:
-FAIL fileInput.value should be apple.gif. Was C:\fakepath\apple.gif.
+PASS fileInput.value is "C:\\fakepath\\apple.gif"
 PASS fileInput.files.length is 1
 PASS fileInput.files[0].name is "apple.gif"
 PASS fileInput.files[0].type is "image/gif"
@@ -34,7 +34,7 @@ Dragging a directory and a file onto a single-file input control:
 FAIL fileInput.value should be . Was C:\fakepath\directory-for-dragging.
 FAIL fileInput.files.length should be 0. Was 1.
 Dragging two files to a multi-file input control:
-FAIL fileInput.value should be apple.gif. Was C:\fakepath\apple.gif.
+PASS fileInput.value is "C:\\fakepath\\apple.gif"
 PASS fileInput.files.length is 2
 PASS fileInput.files[0].name is "apple.gif"
 PASS fileInput.files[0].type is "image/gif"
