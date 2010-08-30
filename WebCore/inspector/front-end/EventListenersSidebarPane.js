@@ -196,7 +196,7 @@ WebInspector.EventListenerBar.prototype = {
                 properties.push(new WebInspector.RemoteObjectProperty("node", nodeObject));
 
             for (var propertyName in this.eventListener) {
-                var value = WebInspector.RemoteObject.fromPrimitiveValue(value);
+                var value = WebInspector.RemoteObject.fromPrimitiveValue(this.eventListener[propertyName]);
                 properties.push(new WebInspector.RemoteObjectProperty(propertyName, value));
             }
             this.updateProperties(properties);
