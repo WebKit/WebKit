@@ -191,7 +191,7 @@ WEBCORE_INCLUDEPATH = \
     $$PWD/dom \
     $$PWD/dom/default \
     $$PWD/editing \
-    $$PWD/filepai \
+    $$PWD/fileapi \
     $$PWD/history \
     $$PWD/html \
     $$PWD/html/canvas \

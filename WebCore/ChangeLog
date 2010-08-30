@@ -1,5 +1,11 @@
 2010-08-30  Adam Barth  <abarth@webkit.org>
 
+        Fix silly typo that breaks the build.
+
+        * WebCore.pro:
+
+2010-08-30  Adam Barth  <abarth@webkit.org>
+
         Attempt to fix the Qt build.
 
         * WebCore.pri:
