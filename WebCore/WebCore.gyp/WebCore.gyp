@@ -211,6 +211,7 @@
     ],
 
     'conditions': [
+      # TODO(maruel): Move it in its own project or generate it anyway?
       ['enable_svg!=0', {
         'bindings_idl_files': [
           '<@(webcore_svg_bindings_idl_files)',
@@ -367,6 +368,7 @@
             '<@(_inputs)'
           ],
           'conditions': [
+            # TODO(maruel): Move it in its own project or generate it anyway?
             ['enable_svg!=0', {
               'inputs': [
                 '../css/SVGCSSPropertyNames.in',
@@ -392,6 +394,7 @@
             '<@(_inputs)'
           ],
           'conditions': [
+            # TODO(maruel): Move it in its own project or generate it anyway?
             ['enable_svg!=0', {
               'inputs': [
                 '../css/SVGCSSValueKeywords.in',
@@ -771,6 +774,7 @@
             }],
           ],
         }],
+        # TODO(maruel): Move it in its own project or generate it anyway?
         ['enable_svg!=0', {
           'sources': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit/SVGElementFactory.cpp',
@@ -971,11 +975,27 @@
       ],
     },
     {
-      # TODO: To be the remaining, there must be other sibbling projects.
-      # Will be done in a separate change to keep the diff simpler.
+      'target_name': 'webcore_svg',
+      'type': '<(library)',
+      'dependencies': [
+        'webcore_prerequisites',
+      ],
+      'sources': [
+        '<@(webcore_files)',
+      ],
+      'sources/': [
+        ['exclude', '.*'],
+        ['include', 'svg/'],
+        ['include', 'css/svg/'],
+        ['include', 'rendering/style/SVG'],
+        ['include', 'rendering/RenderSVG'],
+        ['include', 'rendering/SVG'],
+        ['exclude', 'svg/SVGAllInOne\\.cpp$'],
+      ],
+    },
+    {
       'target_name': 'webcore_remaining',
       'type': '<(library)',
-      'msvs_guid': '1C16337B-ACF3-4D03-AA90-851C5B5EADA6',
       'dependencies': [
         'webcore_prerequisites',
       ],
@@ -1018,6 +1038,13 @@
         ['exclude', 'storage/OriginUsageRecord.cpp'],
         ['exclude', 'storage/OriginUsageRecord.h'],
         ['exclude', 'storage/SQLTransactionClient.cpp'],
+
+        # Exclude SVG.
+        ['exclude', 'svg/'],
+        ['exclude', 'css/svg/'],
+        ['exclude', 'rendering/style/SVG'],
+        ['exclude', 'rendering/RenderSVG'],
+        ['exclude', 'rendering/SVG'],
       ],
       'sources!': [
         # A few things can't be excluded by patterns.  List them individually.
@@ -1108,20 +1135,6 @@
         ],
       },
       'conditions': [
-        ['enable_svg!=0', {
-          'sources/': [
-            ['exclude', 'svg/[^/]+\\.cpp$'],
-            ['include', 'svg/SVGAllInOne\\.cpp$'],
-          ],
-        }, {  # svg disabled
-          'sources/': [
-            ['exclude', 'svg/'],
-            ['exclude', 'css/svg/'],
-            ['exclude', 'rendering/style/SVG'],
-            ['exclude', 'rendering/RenderSVG'],
-            ['exclude', 'rendering/SVG'],
-          ],
-        }],
         ['OS=="linux" or OS=="freebsd"', {
           'sources': [
             '../platform/graphics/chromium/VDMXParser.cpp',
@@ -1334,6 +1347,11 @@
           'direct_dependent_settings': {
             'include_dirs+++': ['../dom'],
           },
+        }],
+        ['enable_svg!=0', {
+          'dependencies': [
+            'webcore_svg',
+          ],
         }],
       ],
     },

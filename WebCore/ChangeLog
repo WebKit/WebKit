@@ -1,3 +1,13 @@
+2010-08-30  Marc-Antoine Ruel  <maruel@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Split webcore_svg off webcore_remaining. webcore_svg contains all svg
+        sources files.
+        https://bugs.webkit.org/show_bug.cgi?id=44840
+
+        * WebCore.gyp/WebCore.gyp:
+
 2010-08-13  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.
