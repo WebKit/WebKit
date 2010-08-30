@@ -11,6 +11,8 @@ function valueAsDateFor(stringValue) {
 function setValueAsDateAndGetValue(year, month, day) {
     var date = new Date();
     date.setTime(Date.UTC(year, month, day));
+    if (year < 100)
+        date.setUTCFullYear(year);
     input.valueAsDate = date;
     return input.value;
 }
@@ -25,8 +27,9 @@ shouldBe('setValueAsDateAndGetValue(1970, 0, 1)', '"1970-01-01"');
 shouldBe('setValueAsDateAndGetValue(2009, 11, 31)', '"2009-12-31"');
 shouldBe('setValueAsDateAndGetValue(10000, 0, 1)', '"10000-01-01"');
 
-shouldBe('setValueAsDateAndGetValue(794, 9, 22)', '""');
-shouldBe('setValueAsDateAndGetValue(1582, 8, 30)', '""');
+shouldBe('setValueAsDateAndGetValue(-1, 0, 1)', '""');
+shouldBe('setValueAsDateAndGetValue(0, 11, 31)', '""');
+shouldBe('setValueAsDateAndGetValue(1, 0, 1)', '"0001-01-01"');
 shouldBe('setValueAsDateAndGetValue(1582, 9, 15)', '"1582-10-15"');
 shouldBe('setValueAsDateAndGetValue(1582, 9, 31)', '"1582-10-31"');
 shouldBe('setValueAsDateAndGetValue(275760, 8, 13)', '"275760-09-13"');

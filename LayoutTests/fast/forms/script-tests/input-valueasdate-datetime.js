@@ -11,6 +11,8 @@ function valueAsDateFor(stringValue) {
 function setValueAsDateAndGetValue(year, month, day, hour, minute, second, msec) {
     var date = new Date();
     date.setTime(Date.UTC(year, month, day, hour, minute, second, msec));
+    if (year < 100)
+        date.setUTCFullYear(year);
     input.valueAsDate = date;
     return input.value;
 }
@@ -25,9 +27,9 @@ shouldBe('setValueAsDateAndGetValue(1970, 0, 1, 10, 1, 0, 100)', '"1970-01-01T10
 shouldBe('setValueAsDateAndGetValue(2009, 11, 31, 23, 59, 59, 999)', '"2009-12-31T23:59:59.999Z"');
 shouldBe('setValueAsDateAndGetValue(10000, 0, 1, 12, 0, 1, 0)', '"10000-01-01T12:00:01Z"');
 
-shouldBe('setValueAsDateAndGetValue(794, 9, 22, 0, 0, 0, 0)', '""');
-shouldBe('setValueAsDateAndGetValue(1582, 9, 14, 23, 59, 59, 999)', '""');
-shouldBe('setValueAsDateAndGetValue(1582, 9, 15, 0, 0, 0, 0)', '"1582-10-15T00:00Z"');
+shouldBe('setValueAsDateAndGetValue(-1, 9, 22, 0, 0, 0, 0)', '""');
+shouldBe('setValueAsDateAndGetValue(0, 11, 31, 23, 59, 59, 999)', '""');
+shouldBe('setValueAsDateAndGetValue(1, 0, 1, 0, 0, 0, 0)', '"0001-01-01T00:00Z"');
 shouldBe('setValueAsDateAndGetValue(275760, 8, 13, 0, 0, 0, 0)', '"275760-09-13T00:00Z"');
 shouldBe('setValueAsDateAndGetValue(275760, 8, 13, 0, 0, 0, 1)', '""'); // Date of JavaScript can't represent this.
 

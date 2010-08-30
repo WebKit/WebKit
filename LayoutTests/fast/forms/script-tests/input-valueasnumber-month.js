@@ -26,12 +26,12 @@ shouldBe('input.valueAsNumber = 0; input.value', '"1970-01"');
 shouldBe('setValueAsNumberAndGetValue(2009, 12)', '"2009-12"');
 shouldBe('setValueAsNumberAndGetValue(10000, 1)', '"10000-01"');
 
-shouldBe('setValueAsNumberAndGetValue(794, 9)', '""');
-shouldBe('setValueAsNumberAndGetValue(1582, 9)', '""');
-shouldBe('setValueAsNumberAndGetValue(1582, 10)', '"1582-10"');
-shouldBe('setValueAsNumberAndGetValue(1582, 11)', '"1582-11"');
+shouldBe('setValueAsNumberAndGetValue(-1, 1)', '""');
+shouldBe('setValueAsNumberAndGetValue(0, 12)', '""');
+shouldBe('setValueAsNumberAndGetValue(1, 1)', '"0001-01"');
+shouldBe('setValueAsNumberAndGetValue(1, 2)', '"0001-02"');
 shouldBe('setValueAsNumberAndGetValue(275760, 9)', '"275760-09"');
-shouldBe('setValueAsNumberAndGetValue(2147483647, 12)', '"2147483647-12"');
+shouldBe('setValueAsNumberAndGetValue(275760, 10)', '""');
 
 // Date.UTC() of V8 throws an exception for the following value though JavaScriptCore doesn't.
 // shouldBe('setValueAsNumberAndGetValue(275760, 8, 14)', '"275760-09"');

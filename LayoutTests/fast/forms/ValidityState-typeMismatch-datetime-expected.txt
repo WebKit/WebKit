@@ -10,11 +10,12 @@ PASS "2009-09-07T16:49:31.1Z" is a correct valid datetime string.
 PASS "2009-09-07T16:49:31.12Z" is a correct valid datetime string.
 PASS "2009-09-07T16:49:31.123Z" is a correct valid datetime string.
 PASS "2009-09-07T16:49:31.1234567890Z" is a correct valid datetime string.
-PASS "2147483647-12-31T23:59:59.999Z" is a correct valid datetime string.
-PASS "1582-10-15T00:00:00.000Z" is a correct valid datetime string.
-PASS "1582-10-15T00:00:00.000+00:00" is a correct valid datetime string.
-PASS "1582-10-15T01:30+01:30" is a correct valid datetime string.
-PASS "1582-10-15T00:00+01:00" is a correct valid datetime string.
+PASS "275760-09-12T23:59:59.999Z" is a correct valid datetime string.
+PASS "275760-09-13T00:00:00.000Z" is a correct valid datetime string.
+PASS "0001-01-01T00:00:00.000Z" is a correct valid datetime string.
+PASS "0001-01-01T00:00:00.000+00:00" is a correct valid datetime string.
+PASS "0001-01-01T01:30+01:30" is a correct valid datetime string.
+PASS "0001-01-01T00:00+01:00" is a correct valid datetime string.
 PASS " 2009-09-07T16:49Z " is a correct invalid datetime string.
 PASS "2009-09-07T16:49z" is a correct invalid datetime string.
 PASS "2009-09-07t16:49Z" is a correct invalid datetime string.
@@ -30,7 +31,7 @@ PASS "2009-09-07T16:49-23" is a correct invalid datetime string.
 PASS "2009-09-07T16:49-23:" is a correct invalid datetime string.
 PASS "2009-09-07T16:49-24:00" is a correct invalid datetime string.
 PASS "2009-09-07T16:49-23:60" is a correct invalid datetime string.
-PASS "1582-10-14T23:59:59Z" is a correct invalid datetime string.
+PASS "0000-12-31T23:59:59Z" is a correct invalid datetime string.
 PASS "2147483647-12-31T23:59-00:01" is a correct invalid datetime string.
 PASS "2147483648-01-01T00:00:00Z" is a correct invalid datetime string.
 PASS successfullyParsed is true

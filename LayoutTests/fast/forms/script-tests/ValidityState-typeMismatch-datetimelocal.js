@@ -32,8 +32,8 @@ shouldBeValid('2009-09-07T16:49:31.1');
 shouldBeValid('2009-09-07T16:49:31.12');
 shouldBeValid('2009-09-07T16:49:31.123');
 shouldBeValid('2009-09-07T16:49:31.1234567890');
-shouldBeValid('2147483647-12-31T23:59:59.999');
-shouldBeValid('1582-10-15T00:00:00.000');
+shouldBeValid('275760-09-13T00:00:00.000');
+shouldBeValid('0001-01-01T00:00:00.000');
 
 // Invalid values
 shouldBeInvalid(' 2009-09-07T16:49 ');
@@ -42,7 +42,7 @@ shouldBeInvalid('2009-09-07 16:49');
 shouldBeInvalid('2009/09/07T16:49');
 shouldBeInvalid('a');
 shouldBeInvalid('-1-09-07T16:49');
-shouldBeInvalid('1582-10-14T23:59:59');
-shouldBeInvalid('2147483648-01-01T00:00:00');
+shouldBeInvalid('0000-12-31T23:59:59.999');
+shouldBeInvalid('275760-09-13T00:00:00.001');
 
 var successfullyParsed = true;

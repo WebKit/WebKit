@@ -9,7 +9,11 @@ function valueAsNumberFor(stringValue) {
 }
 
 function setValueAsNumberAndGetValue(year, month, day, hour, minute, second, msec) {
-    input.valueAsNumber = Date.UTC(year, month, day, hour, minute, second, msec);
+    var date = new Date();
+    date.setTime(Date.UTC(year, month, day, hour, minute, second, msec));
+    if (year < 100)
+        date.setUTCFullYear(year);
+    input.valueAsNumber = date.getTime();
     return input.value;
 }
 
@@ -23,13 +27,11 @@ shouldBe('setValueAsNumberAndGetValue(1970, 0, 1, 10, 1, 0, 100)', '"1970-01-01T
 shouldBe('setValueAsNumberAndGetValue(2009, 11, 31, 23, 59, 59, 999)', '"2009-12-31T23:59:59.999Z"');
 shouldBe('setValueAsNumberAndGetValue(10000, 0, 1, 12, 0, 1, 0)', '"10000-01-01T12:00:01Z"');
 
-shouldBe('setValueAsNumberAndGetValue(794, 9, 22, 0, 0, 0, 0)', '""');
-shouldBe('setValueAsNumberAndGetValue(1582, 9, 14, 23, 59, 59, 999)', '""');
-shouldBe('setValueAsNumberAndGetValue(1582, 9, 15, 0, 0, 0, 0)', '"1582-10-15T00:00Z"');
+shouldBe('setValueAsNumberAndGetValue(-1, 0, 1, 0, 0, 0, 0)', '""');
+shouldBe('setValueAsNumberAndGetValue(0, 11, 31, 23, 59, 59, 999)', '""');
+shouldBe('setValueAsNumberAndGetValue(1, 0, 1, 0, 0, 0, 0)', '"0001-01-01T00:00Z"');
 shouldBe('setValueAsNumberAndGetValue(275760, 8, 12, 0, 0, 0, 1)', '"275760-09-12T00:00:00.001Z"');
 shouldBe('setValueAsNumberAndGetValue(275760, 8, 13, 0, 0, 0, 0)', '"275760-09-13T00:00Z"');
-// Date.UTC() of V8 throws an exception for the following value though JavaScriptCore doesn't.
-// shouldBe('setValueAsNumberAndGetValue(275760, 8, 13, 0, 0, 0, 1)', '"275760-09-13T00:00:00.001Z"');
 
 debug('Tests to set invalid values to valueAsNumber:');
 shouldBe('input.value = ""; input.valueAsNumber = null; input.value', '"1970-01-01T00:00Z"');
@@ -39,6 +41,7 @@ shouldThrow('input.valueAsNumber = Number.NaN', '"Error: NOT_SUPPORTED_ERR: DOM 
 shouldThrow('input.valueAsNumber = Infinity', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
 shouldThrow('input.valueAsNumber = Number.POSITIVE_INFINITY', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
 shouldThrow('input.valueAsNumber = Number.NEGATIVE_INFINITY', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
+shouldThrow('input.valueAsNumber = Date.UTC(275760, 8, 13, 0, 0, 0, 1)', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
 
 debug('Step attribute value and string representation:');
 // If the step attribute value is 1 second and the second part is 0, we should show the second part.

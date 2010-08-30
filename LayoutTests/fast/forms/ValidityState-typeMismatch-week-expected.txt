@@ -4,9 +4,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS "" is a correct valid week string.
+PASS "0001-W01" is a correct valid week string.
 PASS "1583-W01" is a correct valid week string.
 PASS "9999-W52" is a correct valid week string.
-PASS "2147483647-W52" is a correct valid week string.
+PASS "275760-W37" is a correct valid week string.
 PASS "2009-W01" is a correct valid week string.
 PASS "2004-W53" is a correct valid week string.
 PASS "2003-W52" is a correct valid week string.
@@ -18,8 +19,9 @@ PASS "2009-W1" is a correct invalid week string.
 PASS "2009-W001" is a correct invalid week string.
 PASS "a" is a correct invalid week string.
 PASS "-1-W09" is a correct invalid week string.
-PASS "1582-W52" is a correct invalid week string.
+PASS "0000-W52" is a correct invalid week string.
 PASS "2147483648-W01" is a correct invalid week string.
+PASS "275760-W38" is a correct invalid week string.
 PASS "2009-W00" is a correct invalid week string.
 PASS "2009-W-1" is a correct invalid week string.
 PASS "2004-W54" is a correct invalid week string.

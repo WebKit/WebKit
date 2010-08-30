@@ -41,10 +41,15 @@ using namespace std;
 
 namespace WebCore {
 
-// The oldest day of Gregorian Calendar is 1582-10-15. We don't support dates older than it.
-static const int gregorianStartYear = 1582;
-static const int gregorianStartMonth = 9; // This is October, since months are 0 based.
-static const int gregorianStartDay = 15;
+// HTML5 uses ISO-8601 format with year >= 1. Gregorian calendar started in
+// 1582. However, we need to support 0001-01-01 in Gregorian calendar rule.
+static const int minimumYear = 1;
+// Date in ECMAScript can't represent dates later than 275760-09-13T00:00Z.
+// So, we have the same upper limit in HTML5 dates.
+static const int maximumYear = 275760;
+static const int maximumMonthInMaximumYear = 8; // This is September, since months are 0 based.
+static const int maximumDayInMaximumMonth = 13;
+static const int maximumWeekInMaximumYear = 37; // The week of 275760-09-13
 
 static const int daysInMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
@@ -134,19 +139,47 @@ bool DateComponents::parseYear(const UChar* src, unsigned length, unsigned start
     int year;
     if (!toInt(src, length, start, digitsLength, year))
         return false;
-    // No support for years before Gregorian calendar.
-    if (year < gregorianStartYear)
+    if (year < minimumYear || year > maximumYear)
         return false;
     m_year = year;
     end = start + digitsLength;
     return true;
 }
 
-static bool beforeGregorianStartDate(int year, int month, int monthDay)
+static bool withinHTMLDateLimits(int year, int month)
 {
-    return year < gregorianStartYear
-        || (year == gregorianStartYear && month < gregorianStartMonth)
-        || (year == gregorianStartYear && month == gregorianStartMonth && monthDay < gregorianStartDay);
+    if (year < minimumYear)
+        return false;
+    if (year < maximumYear)
+        return true;
+    return month <= maximumMonthInMaximumYear;
+}
+
+static bool withinHTMLDateLimits(int year, int month, int monthDay)
+{
+    if (year < minimumYear)
+        return false;
+    if (year < maximumYear)
+        return true;
+    if (month < maximumMonthInMaximumYear)
+        return true;
+    return monthDay <= maximumDayInMaximumMonth;
+}
+
+static bool withinHTMLDateLimits(int year, int month, int monthDay, int hour, int minute, int second, int millisecond)
+{
+    if (year < minimumYear)
+        return false;
+    if (year < maximumYear)
+        return true;
+    if (month < maximumMonthInMaximumYear)
+        return true;
+    if (monthDay < maximumDayInMaximumMonth)
+        return true;
+    if (monthDay > maximumDayInMaximumMonth)
+        return false;
+    // (year, month, monthDay) = (maximumYear, maximumMonthInMaximumYear, maximumDayInMaximumMonth)
+    return !hour && !minute && !second && !millisecond;
 }
 
 bool DateComponents::addDay(int dayDiff)
@@ -167,12 +200,12 @@ bool DateComponents::addDay(int dayDiff)
                 if (month >= 12) { // month is 0-origin.
                     month = 0;
                     ++year;
-                    if (year < 0) // Check for overflow.
-                        return false;
                 }
                 maxDay = maxDayOfMonth(year, month);
             }
         }
+        if (!withinHTMLDateLimits(year, month, day))
+            return false;
         m_year = year;
         m_month = month;
     } else if (day < 1) {
@@ -189,11 +222,14 @@ bool DateComponents::addDay(int dayDiff)
                 }
                 day = maxDayOfMonth(year, month);
             }
-            if (beforeGregorianStartDate(year, month, day))
-                return false;
         }
+        if (!withinHTMLDateLimits(year, month, day))
+            return false;
         m_year = year;
         m_month = month;
+    } else {
+        if (!withinHTMLDateLimits(m_year, m_month, day))
+            return false;
     }
     m_monthDay = day;
     return true;
@@ -201,8 +237,12 @@ bool DateComponents::addDay(int dayDiff)
 
 bool DateComponents::addMinute(int minute)
 {
+    // This function is used to adjust timezone offset. So m_year, m_month,
+    // m_monthDay have values between the lower and higher limits.
+    ASSERT(withinHTMLDateLimits(m_year, m_month, m_monthDay));
+
     int carry;
-    // min can be negative or greater than 59.
+    // minute can be negative or greater than 59.
     minute += m_minute;
     if (minute > 59) {
         carry = minute / 60;
@@ -213,6 +253,8 @@ bool DateComponents::addMinute(int minute)
         carry = -carry;
         ASSERT(minute >= 0 && minute <= 59);
     } else {
+        if (!withinHTMLDateLimits(m_year, m_month, m_monthDay, m_hour, minute, m_second, m_millisecond))
+            return false;
         m_minute = minute;
         return true;
     }
@@ -227,11 +269,15 @@ bool DateComponents::addMinute(int minute)
         carry = -carry;
         ASSERT(hour >= 0 && hour <= 23);
     } else {
+        if (!withinHTMLDateLimits(m_year, m_month, m_monthDay, hour, minute, m_second, m_millisecond))
+            return false;
         m_minute = minute;
         m_hour = hour;
         return true;
     }
     if (!addDay(carry))
+        return false;
+    if (!withinHTMLDateLimits(m_year, m_month, m_monthDay, hour, minute, m_second, m_millisecond))
         return false;
     m_minute = minute;
     m_hour = hour;
@@ -298,8 +344,7 @@ bool DateComponents::parseMonth(const UChar* src, unsigned length, unsigned star
     if (!toInt(src, length, index, 2, month) || month < 1 || month > 12)
         return false;
     --month;
-    // No support for months before Gregorian calendar.
-    if (beforeGregorianStartDate(m_year, month, gregorianStartDay))
+    if (!withinHTMLDateLimits(m_year, month))
         return false;
     m_month = month;
     end = index + 2;
@@ -323,8 +368,7 @@ bool DateComponents::parseDate(const UChar* src, unsigned length, unsigned start
     int day;
     if (!toInt(src, length, index, 2, day) || day < 1 || day > maxDayOfMonth(m_year, m_month))
         return false;
-    // No support for dates before Gregorian calendar.
-    if (m_year == gregorianStartYear && m_month == gregorianStartMonth && day < gregorianStartDay)
+    if (!withinHTMLDateLimits(m_year, m_month, day))
         return false;
     m_monthDay = day;
     end = index + 2;
@@ -352,8 +396,7 @@ bool DateComponents::parseWeek(const UChar* src, unsigned length, unsigned start
     int week;
     if (!toInt(src, length, index, 2, week) || week < 1 || week > maxWeekNumberInYear())
         return false;
-    // No support for years older than or equals to Gregorian calendar start year.
-    if (m_year <= gregorianStartYear)
+    if (m_year == maximumYear && week > maximumWeekInMaximumYear)
         return false;
     m_week = week;
     end = index + 2;
@@ -429,6 +472,8 @@ bool DateComponents::parseDateTimeLocal(const UChar* src, unsigned length, unsig
     ++index;
     if (!parseTime(src, length, index, end))
         return false;
+    if (!withinHTMLDateLimits(m_year, m_month, m_monthDay, m_hour, m_minute, m_second, m_millisecond))
+        return false;
     m_type = DateTimeLocal;
     return true;
 }
@@ -447,6 +492,8 @@ bool DateComponents::parseDateTime(const UChar* src, unsigned length, unsigned s
     if (!parseTime(src, length, index, index))
         return false;
     if (!parseTimeZone(src, length, index, end))
+        return false;
+    if (!withinHTMLDateLimits(m_year, m_month, m_monthDay, m_hour, m_minute, m_second, m_millisecond))
         return false;
     m_type = DateTime;
     return true;
@@ -485,7 +532,7 @@ bool DateComponents::setMillisecondsSinceEpochForDate(double ms)
         return false;
     if (!setMillisecondsSinceEpochForDateInternal(round(ms)))
         return false;
-    if (beforeGregorianStartDate(m_year, m_month, m_monthDay))
+    if (!withinHTMLDateLimits(m_year, m_month, m_monthDay))
         return false;
     m_type = Date;
     return true;
@@ -500,7 +547,7 @@ bool DateComponents::setMillisecondsSinceEpochForDateTime(double ms)
     setMillisecondsSinceMidnightInternal(positiveFmod(ms, msPerDay));
     if (!setMillisecondsSinceEpochForDateInternal(ms))
         return false;
-    if (beforeGregorianStartDate(m_year, m_month, m_monthDay))
+    if (!withinHTMLDateLimits(m_year, m_month, m_monthDay, m_hour, m_minute, m_second, m_millisecond))
         return false;
     m_type = DateTime;
     return true;
@@ -522,8 +569,7 @@ bool DateComponents::setMillisecondsSinceEpochForMonth(double ms)
         return false;
     if (!setMillisecondsSinceEpochForDateInternal(round(ms)))
         return false;
-    // Ignore m_monthDay updated by setMillisecondsSinceEpochForDateInternal().
-    if (beforeGregorianStartDate(m_year, m_month, gregorianStartDay))
+    if (!withinHTMLDateLimits(m_year, m_month))
         return false;
     m_type = Month;
     return true;
@@ -546,11 +592,11 @@ bool DateComponents::setMonthsSinceEpoch(double months)
     months = round(months);
     double doubleMonth = positiveFmod(months, 12);
     double doubleYear = 1970 + (months - doubleMonth) / 12;
-    if (doubleYear < gregorianStartYear || numeric_limits<int>::max() < doubleYear)
+    if (doubleYear < minimumYear || maximumYear < doubleYear)
         return false;
     int year = static_cast<int>(doubleYear);
     int month = static_cast<int>(doubleMonth);
-    if (beforeGregorianStartDate(year, month, gregorianStartDay))
+    if (!withinHTMLDateLimits(year, month))
         return false;
     m_year = year;
     m_month = month;
@@ -576,8 +622,7 @@ bool DateComponents::setMillisecondsSinceEpochForWeek(double ms)
     ms = round(ms);
 
     m_year = msToYear(ms);
-    // We don't support gregorianStartYear. Week numbers are undefined in that year.
-    if (m_year <= gregorianStartYear)
+    if (m_year < minimumYear || m_year > maximumYear)
         return false;
 
     int yearDay = dayInYear(ms, m_year);
@@ -585,7 +630,7 @@ bool DateComponents::setMillisecondsSinceEpochForWeek(double ms)
     if (yearDay < offset) {
         // The day belongs to the last week of the previous year.
         m_year--;
-        if (m_year <= gregorianStartYear)
+        if (m_year <= minimumYear)
             return false;
         m_week = maxWeekNumberInYear();
     } else {
@@ -594,6 +639,8 @@ bool DateComponents::setMillisecondsSinceEpochForWeek(double ms)
             m_year++;
             m_week = 1;
         }
+        if (m_year > maximumYear || m_year == maximumYear && m_week > maximumWeekInMaximumYear)
+            return false;
     }
     m_type = Week;
     return true;

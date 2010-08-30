@@ -48,7 +48,7 @@ checkNotOverflow('2010-01-27', '2010-01-27');
 checkNotOverflow('2010-01-27', '2010-01-28');
 checkNotOverflow('2010-01-27', '2011-01-26');
 checkNotOverflow('foo', '2011-01-26');
-checkNotOverflow('2010-01-27', '1000-01-01'); // Too small max value.
+checkNotOverflow('2010-01-27', '0000-01-01'); // Too small max value.
 
 // Overflow cases
 checkOverflow('2010-01-27', '2010-01-26');
@@ -69,7 +69,7 @@ checkNotOverflow('2010-01-27T12:34Z', '2010-01-27T12:34Z');
 checkNotOverflow('2010-01-27T12:34Z', '2010-01-27T12:34:56Z');
 checkNotOverflow('2010-01-27T12:34Z', '2011-01-26T12:34Z');
 checkNotOverflow('foo', '2011-01-26T12:34Z');
-checkNotOverflow('2010-01-27T12:34Z', '1000-01-01T00:00Z'); // Too small max value.
+checkNotOverflow('2010-01-27T12:34Z', '0000-01-01T00:00Z'); // Too small max value.
 
 // Overflow cases
 checkOverflow('2010-01-27T12:34Z', '2010-01-26T12:33:59.999Z');
@@ -90,7 +90,7 @@ checkNotOverflow('2010-01-27T12:34', '2010-01-27T12:34');
 checkNotOverflow('2010-01-27T12:34', '2010-01-27T12:34:56');
 checkNotOverflow('2010-01-27T12:34', '2011-01-26T12:34');
 checkNotOverflow('foo', '2011-01-26T12:34');
-checkNotOverflow('2010-01-27T12:34', '1000-01-01T00:00'); // Too small max value.
+checkNotOverflow('2010-01-27T12:34', '0000-01-01T00:00'); // Too small max value.
 
 // Overflow cases
 checkOverflow('2010-01-27T12:34', '2010-01-26T12:33:59.999');
@@ -111,7 +111,7 @@ checkNotOverflow('2010-01', '2010-01');
 checkNotOverflow('2010-01', '2010-02');
 checkNotOverflow('2010-01', '2011-01');
 checkNotOverflow('foo', '2011-01');
-checkNotOverflow('2010-01', '1000-01'); // Too small max value.
+checkNotOverflow('2010-01', '0000-01'); // Too small max value.
 
 // Overflow cases
 checkOverflow('2010-01', '2009-12');
@@ -175,9 +175,10 @@ checkNotOverflow('2010-W01', '2010-W01');
 checkNotOverflow('2010-W01', '2010-W02');
 checkNotOverflow('2010-W01', '2011-W01');
 checkNotOverflow('foo', '2011-W01');
-checkNotOverflow('2010-W01', '1582-W01'); // Too small max value.
+checkNotOverflow('2010-W01', '0000-W01'); // Invalid max value.
 
 // Overflow cases
+checkOverflow('2010-W01', '1582-W01');
 checkOverflow('2010-W01', '2009-W12');
 checkOverflow('9999-W01', '2010-W12');
 input.min = '2010-W02';  // value < min && value > max

@@ -14,7 +14,7 @@ PASS The value "2010-01-27" doesn't overflow the maximum value "2010-01-27".
 PASS The value "2010-01-27" doesn't overflow the maximum value "2010-01-28".
 PASS The value "2010-01-27" doesn't overflow the maximum value "2011-01-26".
 PASS The value "foo" doesn't overflow the maximum value "2011-01-26".
-PASS The value "2010-01-27" doesn't overflow the maximum value "1000-01-01".
+PASS The value "2010-01-27" doesn't overflow the maximum value "0000-01-01".
 PASS The value "2010-01-27" overflows the maximum value "2010-01-26".
 PASS The value "9999-01-01" overflows the maximum value "2010-12-31".
 PASS The value "2010-01-27" overflows the maximum value "2010-01-26".
@@ -27,7 +27,7 @@ PASS The value "2010-01-27T12:34Z" doesn't overflow the maximum value "2010-01-2
 PASS The value "2010-01-27T12:34Z" doesn't overflow the maximum value "2010-01-27T12:34:56Z".
 PASS The value "2010-01-27T12:34Z" doesn't overflow the maximum value "2011-01-26T12:34Z".
 PASS The value "foo" doesn't overflow the maximum value "2011-01-26T12:34Z".
-PASS The value "2010-01-27T12:34Z" doesn't overflow the maximum value "1000-01-01T00:00Z".
+PASS The value "2010-01-27T12:34Z" doesn't overflow the maximum value "0000-01-01T00:00Z".
 PASS The value "2010-01-27T12:34Z" overflows the maximum value "2010-01-26T12:33:59.999Z".
 PASS The value "9999-01-01T23:59Z" overflows the maximum value "2010-12-31T00:00Z".
 PASS The value "2010-01-27T12:34Z" overflows the maximum value "2010-01-26T12:34Z".
@@ -40,7 +40,7 @@ PASS The value "2010-01-27T12:34" doesn't overflow the maximum value "2010-01-27
 PASS The value "2010-01-27T12:34" doesn't overflow the maximum value "2010-01-27T12:34:56".
 PASS The value "2010-01-27T12:34" doesn't overflow the maximum value "2011-01-26T12:34".
 PASS The value "foo" doesn't overflow the maximum value "2011-01-26T12:34".
-PASS The value "2010-01-27T12:34" doesn't overflow the maximum value "1000-01-01T00:00".
+PASS The value "2010-01-27T12:34" doesn't overflow the maximum value "0000-01-01T00:00".
 PASS The value "2010-01-27T12:34" overflows the maximum value "2010-01-26T12:33:59.999".
 PASS The value "9999-01-01T23:59" overflows the maximum value "2010-12-31T00:00".
 PASS The value "2010-01-27T12:34" overflows the maximum value "2010-01-26T12:34".
@@ -53,7 +53,7 @@ PASS The value "2010-01" doesn't overflow the maximum value "2010-01".
 PASS The value "2010-01" doesn't overflow the maximum value "2010-02".
 PASS The value "2010-01" doesn't overflow the maximum value "2011-01".
 PASS The value "foo" doesn't overflow the maximum value "2011-01".
-PASS The value "2010-01" doesn't overflow the maximum value "1000-01".
+PASS The value "2010-01" doesn't overflow the maximum value "0000-01".
 PASS The value "2010-01" overflows the maximum value "2009-12".
 PASS The value "9999-01" overflows the maximum value "2010-12".
 PASS The value "2010-01" overflows the maximum value "2009-12".
@@ -93,7 +93,8 @@ PASS The value "2010-W01" doesn't overflow the maximum value "2010-W01".
 PASS The value "2010-W01" doesn't overflow the maximum value "2010-W02".
 PASS The value "2010-W01" doesn't overflow the maximum value "2011-W01".
 PASS The value "foo" doesn't overflow the maximum value "2011-W01".
-PASS The value "2010-W01" doesn't overflow the maximum value "1582-W01".
+PASS The value "2010-W01" doesn't overflow the maximum value "0000-W01".
+PASS The value "2010-W01" overflows the maximum value "1582-W01".
 PASS The value "2010-W01" overflows the maximum value "2009-W12".
 PASS The value "9999-W01" overflows the maximum value "2010-W12".
 PASS The value "2010-W01" overflows the maximum value "2009-W50".

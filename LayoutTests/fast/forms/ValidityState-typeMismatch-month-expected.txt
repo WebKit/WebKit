@@ -4,9 +4,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS "" is a correct valid month string.
-PASS "1582-10" is a correct valid month string.
+PASS "0001-01" is a correct valid month string.
 PASS "9999-12" is a correct valid month string.
-PASS "2147483647-12" is a correct valid month string.
+PASS "275760-09" is a correct valid month string.
 PASS "2009-01" is a correct valid month string.
 PASS "2009-02" is a correct valid month string.
 PASS "2009-03" is a correct valid month string.
@@ -22,9 +22,9 @@ PASS "2009-12" is a correct valid month string.
 PASS " 2009-09 " is a correct invalid month string.
 PASS "a" is a correct invalid month string.
 PASS "-1-09" is a correct invalid month string.
-PASS "1581-10" is a correct invalid month string.
-PASS "1582-09" is a correct invalid month string.
+PASS "0000-12" is a correct invalid month string.
 PASS "2147483648-12" is a correct invalid month string.
+PASS "275760-10" is a correct invalid month string.
 PASS "2009/09" is a correct invalid month string.
 PASS "200909" is a correct invalid month string.
 PASS "2009--2" is a correct invalid month string.

@@ -6,8 +6,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS "" is a correct valid date string.
 PASS "2009-09-07" is a correct valid date string.
 PASS "9999-12-31" is a correct valid date string.
-PASS "2147483647-12-31" is a correct valid date string.
+PASS "275760-09-13" is a correct valid date string.
 PASS "1582-10-15" is a correct valid date string.
+PASS "0001-01-01" is a correct valid date string.
 PASS "2009-01-31" is a correct valid date string.
 PASS "2009-02-28" is a correct valid date string.
 PASS "2009-03-31" is a correct valid date string.
@@ -25,15 +26,15 @@ PASS "2000-02-29" is a correct valid date string.
 PASS " 2009-09-07 " is a correct invalid date string.
 PASS "a" is a correct invalid date string.
 PASS "-1-09-07" is a correct invalid date string.
-PASS "1581-09-07" is a correct invalid date string.
-PASS "1582-10-14" is a correct invalid date string.
+PASS "0000-12-31" is a correct invalid date string.
+PASS "0000-01-01" is a correct invalid date string.
+PASS "275760-09-14" is a correct invalid date string.
 PASS "2147483648-12-31" is a correct invalid date string.
 PASS "2009/09/07" is a correct invalid date string.
 PASS "20090907" is a correct invalid date string.
 PASS "2009--2-07" is a correct invalid date string.
 PASS "2009-00-07" is a correct invalid date string.
 PASS "2009-13-07" is a correct invalid date string.
-PASS "1582-09-30" is a correct invalid date string.
 PASS "2009-xx-30" is a correct invalid date string.
 PASS "2009-01-32" is a correct invalid date string.
 PASS "2009-02-29" is a correct invalid date string.

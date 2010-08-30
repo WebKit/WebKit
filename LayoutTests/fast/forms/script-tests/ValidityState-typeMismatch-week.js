@@ -26,9 +26,10 @@ function shouldBeInvalid(value)
 
 // Valid values
 shouldBeValid('');
+shouldBeValid('0001-W01');
 shouldBeValid('1583-W01');
 shouldBeValid('9999-W52');
-shouldBeValid('2147483647-W52');
+shouldBeValid('275760-W37');
 shouldBeValid('2009-W01');
 shouldBeValid('2004-W53');  // 2004 started on Thursday.
 shouldBeValid('2003-W52');  // 2003 started on Wednesday, but wasn't a leap year.
@@ -42,8 +43,9 @@ shouldBeInvalid('2009-W1');
 shouldBeInvalid('2009-W001');
 shouldBeInvalid('a');
 shouldBeInvalid('-1-W09');
-shouldBeInvalid('1582-W52');
+shouldBeInvalid('0000-W52');
 shouldBeInvalid('2147483648-W01');
+shouldBeInvalid('275760-W38');
 shouldBeInvalid('2009-W00');
 shouldBeInvalid('2009-W-1');
 shouldBeInvalid('2004-W54');  // 2004 started on Thursday.

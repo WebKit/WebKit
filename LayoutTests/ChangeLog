@@ -1,3 +1,45 @@
+2010-08-29  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Change lower and higher limits of date/datetime/datetime-local/month/week types
+        https://bugs.webkit.org/show_bug.cgi?id=39737
+
+        Update tests and test results for the new DateComponents behavior.
+
+        * fast/forms/ValidityState-rangeOverflow-expected.txt:
+        * fast/forms/ValidityState-stepMismatch-expected.txt:
+        * fast/forms/ValidityState-typeMismatch-date-expected.txt:
+        * fast/forms/ValidityState-typeMismatch-datetime-expected.txt:
+        * fast/forms/ValidityState-typeMismatch-datetimelocal-expected.txt:
+        * fast/forms/ValidityState-typeMismatch-month-expected.txt:
+        * fast/forms/ValidityState-typeMismatch-week-expected.txt:
+        * fast/forms/input-valueasdate-date-expected.txt:
+        * fast/forms/input-valueasdate-datetime-expected.txt:
+        * fast/forms/input-valueasdate-month-expected.txt:
+        * fast/forms/input-valueasdate-week-expected.txt:
+        * fast/forms/input-valueasnumber-date-expected.txt:
+        * fast/forms/input-valueasnumber-datetime-expected.txt:
+        * fast/forms/input-valueasnumber-datetimelocal-expected.txt:
+        * fast/forms/input-valueasnumber-month-expected.txt:
+        * fast/forms/input-valueasnumber-week-expected.txt:
+        * fast/forms/script-tests/ValidityState-rangeOverflow.js:
+        * fast/forms/script-tests/ValidityState-stepMismatch.js:
+        * fast/forms/script-tests/ValidityState-typeMismatch-date.js:
+        * fast/forms/script-tests/ValidityState-typeMismatch-datetime.js:
+        * fast/forms/script-tests/ValidityState-typeMismatch-datetimelocal.js:
+        * fast/forms/script-tests/ValidityState-typeMismatch-month.js:
+        * fast/forms/script-tests/ValidityState-typeMismatch-week.js:
+        * fast/forms/script-tests/input-valueasdate-date.js:
+        * fast/forms/script-tests/input-valueasdate-datetime.js:
+        * fast/forms/script-tests/input-valueasdate-month.js:
+        * fast/forms/script-tests/input-valueasdate-week.js:
+        * fast/forms/script-tests/input-valueasnumber-date.js:
+        * fast/forms/script-tests/input-valueasnumber-datetime.js:
+        * fast/forms/script-tests/input-valueasnumber-datetimelocal.js:
+        * fast/forms/script-tests/input-valueasnumber-month.js:
+        * fast/forms/script-tests/input-valueasnumber-week.js:
+
 2010-08-29  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed Chromium test expectation change for r66296.

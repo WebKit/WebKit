@@ -1,3 +1,54 @@
+2010-08-29  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Change lower and higher limits of date/datetime/datetime-local/month/week types
+        https://bugs.webkit.org/show_bug.cgi?id=39737
+
+        According to the latest draft of HTML5, ISO-8601 dates in HTML5
+        should support A.D.0001 in Gregorian calendar though Gregorian
+        calendar started in 1582. So, we change the lower limits of
+        date&time types to 0001-01-01T00:00.
+
+        We also introduce the common higher limit, 275760-09-13T00:00. It
+        is the higher limit of Date type of ECMAScript.
+
+        * html/DateComponents.cpp:
+        (WebCore::DateComponents::parseYear):
+         Rejects years less than A.D.1 and years greater than 275760.
+        (WebCore::withinHTMLDateLimits):
+         Helper functions to check lower and higher limits.
+        (WebCore::DateComponents::addDay):
+         - Remove an overflow check. 'year' can't be so large number because
+           parseYear() rejects such numbers.
+         - Add withinHTMLDateLimits() calls.
+        (WebCore::DateComponents::addMinute):
+         - Add an assertion for the base date.
+         - Add withinHTMLDateLimits() calls.
+        (WebCore::DateComponents::parseMonth):
+         Add withinHTMLDateLimits() call.
+        (WebCore::DateComponents::parseDate): ditto.
+        (WebCore::DateComponents::parseWeek): ditto.
+        (WebCore::DateComponents::parseDateTimeLocal): ditto.
+        (WebCore::DateComponents::parseDateTime): ditto.
+        (WebCore::DateComponents::setMillisecondsSinceEpochForDate): ditto.
+        (WebCore::DateComponents::setMillisecondsSinceEpochForDateTime): ditto.
+        (WebCore::DateComponents::setMillisecondsSinceEpochForMonth): ditto.
+        (WebCore::DateComponents::setMonthsSinceEpoch):
+         Add year range check and withinHTMLDateLimits() call.
+        (WebCore::DateComponents::setMillisecondsSinceEpochForWeek):
+         Add year range check and week range check.
+        * html/DateComponents.h:
+         Update minimum/maximum constant values.
+        (WebCore::DateComponents::minimumDate):
+        (WebCore::DateComponents::minimumDateTime):
+        (WebCore::DateComponents::minimumMonth):
+        (WebCore::DateComponents::minimumWeek):
+        (WebCore::DateComponents::maximumDate):
+        (WebCore::DateComponents::maximumDateTime):
+        (WebCore::DateComponents::maximumMonth):
+        (WebCore::DateComponents::maximumWeek):
+
 2010-08-29  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Kent Tamura.

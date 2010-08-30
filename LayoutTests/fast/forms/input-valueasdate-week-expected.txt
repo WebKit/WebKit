@@ -12,6 +12,7 @@ PASS valueAsDateFor("2010-W01").getTime() is Date.UTC(2010, 0, 4)
 PASS valueAsDateFor("2005-W01").getTime() is Date.UTC(2005, 0, 3)
 PASS valueAsDateFor("2006-W01").getTime() is Date.UTC(2006, 0, 2)
 Various January 1st:
+PASS setValueAsDateAndGetValue(1, 0, 1) is "0001-W01"
 PASS setValueAsDateAndGetValue(2007, 0, 1) is "2007-W01"
 PASS setValueAsDateAndGetValue(2008, 0, 1) is "2008-W01"
 PASS setValueAsDateAndGetValue(2003, 0, 1) is "2003-W01"
@@ -26,13 +27,9 @@ PASS setValueAsDateAndGetValue(2010, 0, 10) is "2010-W01"
 PASS setValueAsDateAndGetValue(2010, 0, 11) is "2010-W02"
 PASS setValueAsDateAndGetValue(2010, 0, 17) is "2010-W02"
 PASS setValueAsDateAndGetValue(2010, 11, 31) is "2010-W52"
-Around Gregorian calendar starting year:
-PASS setValueAsDateAndGetValue(1582, 9, 14) is ""
-PASS setValueAsDateAndGetValue(1582, 9, 15) is ""
-PASS setValueAsDateAndGetValue(1582, 11, 31) is ""
-PASS setValueAsDateAndGetValue(1583, 0, 1) is ""
-PASS setValueAsDateAndGetValue(1583, 0, 2) is ""
-PASS setValueAsDateAndGetValue(1583, 0, 3) is "1583-W01"
+Around the minimum value:
+PASS setValueAsDateAndGetValue(0, 11, 31) is ""
+PASS setValueAsDateAndGetValue(0, 0, 1) is ""
 PASS successfullyParsed is true
 
 TEST COMPLETE

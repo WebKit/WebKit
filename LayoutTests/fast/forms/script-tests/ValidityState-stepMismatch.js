@@ -52,8 +52,10 @@ shouldBeTrue('stepMismatchFor("2010-02-09T12:34:55Z", "0.333", "2010-02-09T12:34
 shouldBeFalse('stepMismatchFor("2010-02-09T12:34:55.001Z", "0.333", "2010-02-09T12:34:56Z")');
 shouldBeFalse('stepMismatchFor("2010-02-09T12:34Z", "86400", "2010-02-08T12:34Z")');
 shouldBeTrue('stepMismatchFor("2010-02-09T12:34:56Z", "86400", "2010-02-08T12:34Z")');
-shouldBeTrue('stepMismatchFor("275760-09-13T00:00Z", "3", "275760-09-13T23:50:50Z")');
-shouldBeFalse('stepMismatchFor("275760-09-13T00:00Z", "2", "275760-09-13T23:50:50Z")');
+shouldBeTrue('stepMismatchFor("275760-09-13T00:00Z", "3", "275760-09-12T23:59:50Z")');
+shouldBeFalse('stepMismatchFor("275760-09-13T00:00Z", "2", "275760-09-12T23:59:50Z")');
+shouldBeTrue('stepMismatchFor("0001-01-01T00:00Z", "3", "0001-01-11T00:00:02Z")');
+shouldBeFalse('stepMismatchFor("0001-01-01T00:00Z", "2", "0001-01-11T00:00:02Z")');
 debug('Implicit step base');
 shouldBeFalse('stepMismatchFor("1970-01-01T12:34Z", "120", null)');
 shouldBeTrue('stepMismatchFor("1970-01-01T12:35Z", "120", null)');
@@ -82,8 +84,10 @@ shouldBeTrue('stepMismatchFor("2010-02-09T12:34:55", "0.333", "2010-02-09T12:34:
 shouldBeFalse('stepMismatchFor("2010-02-09T12:34:55.001", "0.333", "2010-02-09T12:34:56")');
 shouldBeFalse('stepMismatchFor("2010-02-09T12:34", "86400", "2010-02-08T12:34")');
 shouldBeTrue('stepMismatchFor("2010-02-09T12:34:56", "86400", "2010-02-08T12:34")');
-shouldBeTrue('stepMismatchFor("275760-09-13T00:00", "3", "275760-09-13T23:50:50")');
-shouldBeFalse('stepMismatchFor("275760-09-13T00:00", "2", "275760-09-13T23:50:50")');
+shouldBeTrue('stepMismatchFor("275760-09-13T00:00", "3", "275760-09-12T23:59:50")');
+shouldBeFalse('stepMismatchFor("275760-09-13T00:00", "2", "275760-09-12T23:59:50")');
+shouldBeTrue('stepMismatchFor("0001-01-01T00:00", "3", "0001-01-11T00:00:02")');
+shouldBeFalse('stepMismatchFor("0001-01-01T00:00", "2", "0001-01-11T00:00:02")');
 debug('Implicit step base');
 shouldBeFalse('stepMismatchFor("1970-01-01T12:34", "120", null)');
 shouldBeTrue('stepMismatchFor("1970-01-01T12:35", "120", null)');

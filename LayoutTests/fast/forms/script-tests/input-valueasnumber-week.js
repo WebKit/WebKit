@@ -9,7 +9,11 @@ function valueAsNumberFor(stringValue) {
 }
 
 function setValueAsNumberAndGetValue(year, month, day) {
-    input.valueAsNumber = Date.UTC(year, month, day);
+    var date = new Date();
+    date.setTime(Date.UTC(year, month, day));
+    if (year < 100)
+        date.setUTCFullYear(year);
+    input.valueAsNumber = date.getTime();
     return input.value;
 }
 
@@ -46,15 +50,11 @@ shouldBe('setValueAsNumberAndGetValue(2010, 0, 11)', '"2010-W02"');
 shouldBe('setValueAsNumberAndGetValue(2010, 0, 17)', '"2010-W02"');
 shouldBe('setValueAsNumberAndGetValue(2010, 11, 31)', '"2010-W52"');
 
-debug('Around Gregorian calendar starting year:');
-// Gregorian calendar started in 1582. We don't support that year.
-shouldBe('setValueAsNumberAndGetValue(1582, 9, 14)', '""');
-shouldBe('setValueAsNumberAndGetValue(1582, 9, 15)', '""');
-shouldBe('setValueAsNumberAndGetValue(1582, 11, 31)', '""');
-// January 1st is Saturday. W01 starts on January 3rd.
-shouldBe('setValueAsNumberAndGetValue(1583, 0, 1)', '""');
-shouldBe('setValueAsNumberAndGetValue(1583, 0, 2)', '""');
-shouldBe('setValueAsNumberAndGetValue(1583, 0, 3)', '"1583-W01"');
+debug('Around the minimum/maximum values:');
+shouldBe('setValueAsNumberAndGetValue(0, 11, 31)', '""');
+shouldBe('setValueAsNumberAndGetValue(1, 0, 1)', '"0001-W01"');
+shouldBe('setValueAsNumberAndGetValue(275760, 8, 8)', '"275760-W37"');
+shouldBe('setValueAsNumberAndGetValue(275760, 8, 13)', '"275760-W37"');
 
 debug('Tests to set invalid values to valueAsNumber:');
 shouldBe('input.value = ""; input.valueAsNumber = null; input.value', '"1970-W01"');
@@ -64,5 +64,6 @@ shouldThrow('input.valueAsNumber = Number.NaN', '"Error: NOT_SUPPORTED_ERR: DOM 
 shouldThrow('input.valueAsNumber = Infinity', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
 shouldThrow('input.valueAsNumber = Number.POSITIVE_INFINITY', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
 shouldThrow('input.valueAsNumber = Number.NEGATIVE_INFINITY', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
+shouldThrow('input.valueAsNumber = Date.UTC(275760, 8, 14)', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
 
 var successfullyParsed = true;
