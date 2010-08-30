@@ -1,5 +1,16 @@
 2010-08-29  Kent Tamura  <tkent@chromium.org>
 
+        Reviewed by Darin Adler.
+
+        Introduce isValidValue(const String&) of HTMLInputElement and HTMLTextAreaElement
+        https://bugs.webkit.org/show_bug.cgi?id=43537
+
+        * public/WebInputElement.h:
+        * src/WebInputElement.cpp:
+        (WebKit::WebInputElement::isValidValue):
+
+2010-08-29  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         [DRT/Chromium] Remove dependency to base/keyboard_codes.h

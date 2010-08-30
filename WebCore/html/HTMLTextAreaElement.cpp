@@ -382,16 +382,21 @@ void HTMLTextAreaElement::setMaxLength(int newValue, ExceptionCode& ec)
         setAttribute(maxlengthAttr, String::number(newValue));
 }
 
-bool HTMLTextAreaElement::tooLong() const
+bool HTMLTextAreaElement::tooLong(const String& value, NeedsToCheckDirtyFlag check) const
 {
     // Return false for the default value even if it is longer than maxLength.
-    if (!m_isDirty)
+    if (check == CheckDirtyFlag && !m_isDirty)
         return false;
 
     int max = maxLength();
     if (max < 0)
         return false;
-    return numGraphemeClusters(value()) > static_cast<unsigned>(max);
+    return numGraphemeClusters(value) > static_cast<unsigned>(max);
+}
+
+bool HTMLTextAreaElement::isValidValue(const String& candidate) const
+{
+    return !valueMissing(candidate) && !tooLong(candidate, IgnoreDirtyFlag);
 }
 
 void HTMLTextAreaElement::accessKeyAction(bool)

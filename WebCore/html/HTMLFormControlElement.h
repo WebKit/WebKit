@@ -88,9 +88,6 @@ public:
     // This must be called when a validation constraint or control value is changed.
     void setNeedsValidityCheck();
     void setCustomValidity(const String&);
-    virtual bool valueMissing() const { return false; }
-    virtual bool patternMismatch() const { return false; }
-    virtual bool tooLong() const { return false; }
 
     void formDestroyed() { m_form = 0; }
 
@@ -175,6 +172,9 @@ private:
 // FIXME: Give this class its own header file.
 class HTMLTextFormControlElement : public HTMLFormControlElementWithState {
 public:
+    // Common flag for HTMLInputElement::tooLong() and HTMLTextAreaElement::tooLong().
+    enum NeedsToCheckDirtyFlag {CheckDirtyFlag, IgnoreDirtyFlag};
+
     virtual ~HTMLTextFormControlElement();
 
     String strippedPlaceholder() const;

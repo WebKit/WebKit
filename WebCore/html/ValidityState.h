@@ -43,10 +43,10 @@ public:
 
     void setCustomErrorMessage(const String&);
 
-    bool valueMissing() const { return m_control->valueMissing(); }
+    bool valueMissing() const;
     bool typeMismatch() const;
-    bool patternMismatch() const { return m_control->patternMismatch(); }
-    bool tooLong() const { return m_control->tooLong(); }
+    bool patternMismatch() const;
+    bool tooLong() const;
     bool rangeUnderflow() const;
     bool rangeOverflow() const;
     bool stepMismatch() const;

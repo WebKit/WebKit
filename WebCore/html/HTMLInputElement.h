@@ -75,8 +75,13 @@ public:
     bool autoComplete() const;
 
     // For ValidityState
-    bool rangeUnderflow() const;
-    bool rangeOverflow() const;
+    bool typeMismatch(const String&) const;
+    // valueMissing() ignores the specified string value for CHECKBOX and RADIO.
+    bool valueMissing(const String&) const;
+    bool patternMismatch(const String&) const;
+    bool tooLong(const String&, NeedsToCheckDirtyFlag) const;
+    bool rangeUnderflow(const String&) const;
+    bool rangeOverflow(const String&) const;
     // Returns the minimum value for type=date, number, or range.  Don't call this for other types.
     double minimum() const;
     // Returns the maximum value for type=date, number, or range.  Don't call this for other types.
@@ -86,7 +91,8 @@ public:
     // Returns false if there is no "allowed value step."
     bool getAllowedValueStep(double*) const;
     // For ValidityState.
-    bool stepMismatch() const;
+    bool stepMismatch(const String&) const;
+
     // Implementations of HTMLInputElement::stepUp() and stepDown().
     void stepUp(int, ExceptionCode&);
     void stepDown(int, ExceptionCode&);
@@ -124,6 +130,9 @@ public:
     virtual String value() const;
     virtual void setValue(const String&, bool sendChangeEvent = false);
     virtual void setValueForUser(const String&);
+    // Checks if the specified string would be a valid value.
+    // We should not call this for types with no string value such as CHECKBOX and RADIO.
+    bool isValidValue(const String&) const;
 
     virtual const String& suggestedValue() const;
     void setSuggestedValue(const String&);
@@ -232,10 +241,6 @@ private:
     virtual bool isIndeterminate() const { return indeterminate(); }
     
     virtual bool isTextFormControl() const { return isTextField(); }
-
-    virtual bool valueMissing() const;
-    virtual bool patternMismatch() const;
-    virtual bool tooLong() const;
 
     virtual bool hasSpinButton() const { return m_type == NUMBER || m_type == DATE || m_type == DATETIME || m_type == DATETIMELOCAL || m_type == MONTH || m_type == TIME || m_type == WEEK; }
     virtual bool canTriggerImplicitSubmission() const { return isTextField(); }

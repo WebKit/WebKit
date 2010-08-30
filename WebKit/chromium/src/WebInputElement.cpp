@@ -140,6 +140,11 @@ int WebInputElement::selectionEnd()
     return unwrap<HTMLInputElement>()->selectionEnd();
 }
 
+bool WebInputElement::isValidValue(const WebString& value) const
+{
+    return constUnwrap<HTMLInputElement>()->isValidValue(value);
+}
+
 WebInputElement::WebInputElement(const PassRefPtr<HTMLInputElement>& elem)
     : WebFormControlElement(elem)
 {

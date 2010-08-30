@@ -2,6 +2,47 @@
 
         Reviewed by Darin Adler.
 
+        Introduce isValidValue(const String&) of HTMLInputElement and HTMLTextAreaElement
+        https://bugs.webkit.org/show_bug.cgi?id=43537
+
+        isValidValue() is useful for browser implementations to propose
+        form field values without breaking form validity.
+        No new tests because these functions are not exposed to JavaScript.
+
+        * html/HTMLFormControlElement.h:
+        (WebCore::HTMLTextFormControlElement::):
+         Remove virtual valueMissing(), patternMismatch(), and tooLong().
+        * html/HTMLInputElement.cpp:
+        (WebCore::isValidColorString): Moved from ValidityState.
+        (WebCore::isValidEmailAddress): ditto.
+        (WebCore::HTMLInputElement::isValidValue): Added.
+        (WebCore::HTMLInputElement::typeMismatch): Add a String parameter.
+        (WebCore::HTMLInputElement::valueMissing): Add a String parameter.
+        (WebCore::HTMLInputElement::patternMismatch): Add a String parameter.
+        (WebCore::HTMLInputElement::tooLong): Add String and NeedsToCheckDirtyFlag parameters.
+        (WebCore::HTMLInputElement::rangeUnderflow): Add a String parameter.
+        (WebCore::HTMLInputElement::rangeOverflow): Add a String parameter.
+        (WebCore::HTMLInputElement::stepMismatch): Add a String parameter.
+        * html/HTMLInputElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::tooLong): Add String and NeedsToCheckDirtyFlag parameters.
+        (WebCore::HTMLTextAreaElement::isValidValue): Added.
+        * html/HTMLTextAreaElement.h:
+        (WebCore::HTMLTextAreaElement::valueMissing):
+        * html/ValidityState.cpp:
+        (WebCore::ValidityState::valueMissing): Calls valueMissing() of HTMLInputElement or HTMLTextAreaElement.
+        (WebCore::ValidityState::typeMismatch): Passes value() to HTMLInputElement::typeMismatch().
+        (WebCore::ValidityState::patternMismatch): Calls patternMismatch() of HTMLInputElement.
+        (WebCore::ValidityState::tooLong): Calls valueMissing() of HTMLInputElement or HTMLTextAreaElement.
+        (WebCore::ValidityState::rangeUnderflow): Passes value() to HTMLInputElement::rangeUnderflow().
+        (WebCore::ValidityState::rangeOverflow): Passes value() to HTMLInputElement::rangeUnderflow().
+        (WebCore::ValidityState::stepMismatch): Passes value() to HTMLInputElement::stepMismatch().
+        * html/ValidityState.h:
+
+2010-08-29  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
         Change lower and higher limits of date/datetime/datetime-local/month/week types
         https://bugs.webkit.org/show_bug.cgi?id=39737
 
