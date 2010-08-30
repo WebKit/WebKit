@@ -1,5 +1,11 @@
 2010-08-30  Adam Barth  <abarth@webkit.org>
 
+        Move AsyncImageResizer back to html to fix Chromium build.
+
+        * WebCore.gypi:
+
+2010-08-30  Adam Barth  <abarth@webkit.org>
+
         Fix silly typo that breaks the build.
 
         * WebCore.pro:
