@@ -1,5 +1,11 @@
 2010-08-29  Yuzo Fujishima  <yuzo@google.com>
 
+        Unreviewed Chromium test expectation change for r66296.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-08-29  Yuzo Fujishima  <yuzo@google.com>
+
         Unreviewed Chromium test expectation change.
 
         * platform/chromium/test_expectations.txt:

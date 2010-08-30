@@ -3182,6 +3182,7 @@ BUG53073 LINUX : svg/custom/clip-path-units-changes.svg = TEXT
 
 // Need to implement LayoutTestController::markerTextForListItem()
 BUG53289 WIN MAC LINUX : fast/lists/w3-css3-list-styles-fallback-style.html = TEXT
+BUG53289 : fast/lists/w3-css3-list-styles-symbolic.html = TEXT
 
 // Failing after r66144
 BUG53546 LINUX : userscripts/user-script-audio-document.html = TEXT
