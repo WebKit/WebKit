@@ -1,5 +1,11 @@
 2010-08-30  Martin Robinson  <mrobinson@igalia.com>
 
+        Build fix. Add the new fileapi directory to the IDL vpath.
+
+        * GNUmakefile.am:
+
+2010-08-30  Martin Robinson  <mrobinson@igalia.com>
+
         Reviewed by Xan Lopez.
 
         [GTK] WebKit DOM bindings build should not depend on output GNUMakefile

@@ -4546,18 +4546,19 @@ IDL_PATH := \
     $(WebCore)/bindings/js \
     $(WebCore)/css \
     $(WebCore)/dom \
+    $(WebCore)/fileapi \
     $(WebCore)/html \
     $(WebCore)/html/canvas \
     $(WebCore)/inspector \
     $(WebCore)/loader/appcache \
     $(WebCore)/notifications \
     $(WebCore)/page \
+    $(WebCore)/plugins \
     $(WebCore)/storage \
     $(WebCore)/svg \
-    $(WebCore)/xml \
-    $(WebCore)/plugins \
     $(WebCore)/websockets \
-    $(WebCore)/workers
+    $(WebCore)/workers \
+    $(WebCore)/xml
 
 vpath %.idl = $(IDL_PATH)
 
