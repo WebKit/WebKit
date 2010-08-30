@@ -1,3 +1,16 @@
+2010-08-29  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by David Levin.
+
+        Make failing the download step fail the build
+        https://bugs.webkit.org/show_bug.cgi?id=44298
+
+        If the download step fails on a test bot, this ensures that
+        the build goes red instead of only the download step going red
+        and the overall build staying green.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+
 2010-08-29  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
