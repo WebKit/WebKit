@@ -1,3 +1,14 @@
+2010-08-13  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43960
+        [Chromium] styled scroll bar on the window is painted badly.
+        
+        * platform/chromium/test_expectations.txt: Skips at this time and will rebaseline shortly.
+        * platform/mac/Skipped: Mac doesn't suffer from the problem.
+        * scrollbars/custom-scrollbar-with-incomplete-style.html: Added.
+
 2010-08-30  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

@@ -3215,3 +3215,6 @@ BUGWK44797 : fullscreen = FAIL
 // Started at http://trac.webkit.org/changeset/66318/
 BUG53796 : fast/js/array-splice.html = TEXT
 
+// Need rebasline to pick the results.
+BUG47946 WIN LINUX MAC : scrollbars/custom-scrollbar-with-incomplete-style.html = MISSING
+

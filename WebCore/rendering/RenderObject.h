@@ -383,14 +383,7 @@ public:
     
     bool hasBoxDecorations() const { return m_paintBackground; }
     bool mustRepaintBackgroundOrBorder() const;
-    bool hasBackground() const
-    {
-        Color color = style()->visitedDependentColor(CSSPropertyBackgroundColor);
-        if (color.isValid() && color.alpha() > 0)
-            return true;
-        return style()->hasBackgroundImage();
-    }
-
+    bool hasBackground() const { return style()->hasBackground(); }
     bool needsLayout() const { return m_needsLayout || m_normalChildNeedsLayout || m_posChildNeedsLayout || m_needsPositionedMovementLayout; }
     bool selfNeedsLayout() const { return m_needsLayout; }
     bool needsPositionedMovementLayout() const { return m_needsPositionedMovementLayout; }

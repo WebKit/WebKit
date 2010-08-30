@@ -27,6 +27,7 @@
 #include "RenderScrollbar.h"
 
 #include "Frame.h"
+#include "FrameView.h"
 #include "RenderPart.h"
 #include "RenderScrollbarPart.h"
 #include "RenderScrollbarTheme.h"
@@ -150,6 +151,14 @@ PassRefPtr<RenderStyle> RenderScrollbar::getScrollbarPseudoStyle(ScrollbarPart p
     RefPtr<RenderStyle> result = owningRenderer()->getUncachedPseudoStyle(pseudoId, owningRenderer()->style());
     s_styleResolvePart = NoPart;
     s_styleResolveScrollbar = 0;
+
+    // Scrollbars for root frames should always have background color 
+    // unless explicitly specified as transparent. So we force it.
+    // This is because WebKit assumes scrollbar to be always painted and missing background
+    // causes visual artifact like non-repainted dirty region.
+    if (result && m_owningFrame && m_owningFrame->view() && !m_owningFrame->view()->isTransparent() && !result->hasBackground())
+        result->setBackgroundColor(Color::white);
+
     return result;
 }
 
