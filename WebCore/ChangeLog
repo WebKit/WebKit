@@ -1,3 +1,23 @@
+2010-08-30  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Chris Marrin.
+
+        Expose Vector3 and associated operations
+        https://bugs.webkit.org/show_bug.cgi?id=44666
+
+        Rolling out earlier patch exposing Vector3 class in
+        TransformationMatrix.h. A different approach will be taken under
+        another bug.
+
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::v3Length):
+        (WebCore::v3Scale):
+        (WebCore::v3Dot):
+        (WebCore::v3Combine):
+        (WebCore::v3Cross):
+        (WebCore::decompose):
+        * platform/graphics/transforms/TransformationMatrix.ha:
+
 2010-08-30  Jer Noble  <jer.noble@apple.com>
 
         Build fix; Unreviewed.

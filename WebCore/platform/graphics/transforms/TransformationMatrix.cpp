@@ -71,6 +71,7 @@ namespace WebCore {
 // opposite operations. So we have to be VERY careful when we change them.
 
 typedef double Vector4[4];
+typedef double Vector3[3];
 
 const double SMALL_NUMBER = 1.e-8;
 
@@ -253,6 +254,44 @@ static void v4MulPointByMatrix(const Vector4 p, const TransformationMatrix::Matr
                 (p[2] * m[2][3]) + (p[3] * m[3][3]);
 }
 
+static double v3Length(Vector3 a)
+{
+    return sqrt((a[0] * a[0]) + (a[1] * a[1]) + (a[2] * a[2]));
+}
+
+static void v3Scale(Vector3 v, double desiredLength) 
+{
+    double len = v3Length(v);
+    if (len != 0) {
+        double l = desiredLength / len;
+        v[0] *= l;
+        v[1] *= l;
+        v[2] *= l;
+    }
+}
+
+static double v3Dot(const Vector3 a, const Vector3 b) 
+{
+    return (a[0] * b[0]) + (a[1] * b[1]) + (a[2] * b[2]);
+}
+
+// Make a linear combination of two vectors and return the result.
+// result = (a * ascl) + (b * bscl)
+static void v3Combine(const Vector3 a, const Vector3 b, Vector3 result, double ascl, double bscl)
+{
+    result[0] = (ascl * a[0]) + (bscl * b[0]);
+    result[1] = (ascl * a[1]) + (bscl * b[1]);
+    result[2] = (ascl * a[2]) + (bscl * b[2]);
+}
+
+// Return the cross product result = a cross b */
+static void v3Cross(const Vector3 a, const Vector3 b, Vector3 result)
+{
+    result[0] = (a[1] * b[2]) - (a[2] * b[1]);
+    result[1] = (a[2] * b[0]) - (a[0] * b[2]);
+    result[2] = (a[0] * b[1]) - (a[1] * b[0]);
+}
+
 static bool decompose(const TransformationMatrix::Matrix4& mat, TransformationMatrix::DecomposedType& result)
 {
     TransformationMatrix::Matrix4 localMatrix;
@@ -330,35 +369,35 @@ static bool decompose(const TransformationMatrix::Matrix4& mat, TransformationMa
     }
 
     // Compute X scale factor and normalize first row.
-    result.scaleX = row[0].length();
-    row[0].scaleTo(1.0);
+    result.scaleX = v3Length(row[0]);
+    v3Scale(row[0], 1.0);
 
     // Compute XY shear factor and make 2nd row orthogonal to 1st.
-    result.skewXY = row[0].dot(row[1]);
-    row[1].combine(row[1], row[0], 1.0, -result.skewXY);
+    result.skewXY = v3Dot(row[0], row[1]);
+    v3Combine(row[1], row[0], row[1], 1.0, -result.skewXY);
 
     // Now, compute Y scale and normalize 2nd row.
-    result.scaleY = row[1].length();
-    row[1].scaleTo(1.0);
+    result.scaleY = v3Length(row[1]);
+    v3Scale(row[1], 1.0);
     result.skewXY /= result.scaleY;
 
     // Compute XZ and YZ shears, orthogonalize 3rd row.
-    result.skewXZ = row[0].dot(row[2]);
-    row[2].combine(row[2], row[0], 1.0, -result.skewXZ);
-    result.skewYZ = row[1].dot(row[2]);
-    row[2].combine(row[2], row[1], 1.0, -result.skewYZ);
+    result.skewXZ = v3Dot(row[0], row[2]);
+    v3Combine(row[2], row[0], row[2], 1.0, -result.skewXZ);
+    result.skewYZ = v3Dot(row[1], row[2]);
+    v3Combine(row[2], row[1], row[2], 1.0, -result.skewYZ);
 
     // Next, get Z scale and normalize 3rd row.
-    result.scaleZ = row[2].length();
-    row[2].scaleTo(1.0);
+    result.scaleZ = v3Length(row[2]);
+    v3Scale(row[2], 1.0);
     result.skewXZ /= result.scaleZ;
     result.skewYZ /= result.scaleZ;
  
     // At this point, the matrix (in rows[]) is orthonormal.
     // Check for a coordinate system flip.  If the determinant
     // is -1, then negate the matrix and the scaling factors.
-    pdum3.cross(row[1], row[2]);
-    if (row[0].dot(pdum3) < 0) {
+    v3Cross(row[1], row[2], pdum3);
+    if (v3Dot(row[0], pdum3) < 0) {
         for (i = 0; i < 3; i++) {
             result.scaleX *= -1;
             row[i][0] *= -1;
