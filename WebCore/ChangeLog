@@ -1,3 +1,9 @@
+2010-08-30  Adam Barth  <abarth@webkit.org>
+
+        Attempt to fix Chromium build.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2010-08-29  Adam Barth  <abarth@webkit.org>
 
         Rubber-stamped by Maciej Stachowiak.

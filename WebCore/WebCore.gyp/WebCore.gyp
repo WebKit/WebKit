@@ -119,6 +119,7 @@
       '../dom',
       '../dom/default',
       '../editing',
+      '../fileapi',
       '../history',
       '../html',
       '../html/canvas',
@@ -661,6 +662,7 @@
             'generator_include_dirs': [
               '--include', '../css',
               '--include', '../dom',
+              '--include', '../fileapi',
               '--include', '../html',
               '--include', '../notifications',
               '--include', '../page',
