@@ -3,6 +3,8 @@
         Reviewed by Kent Tamura.
 
         Rename webcore to 'webcore_remaining'.
+        https://bugs.webkit.org/show_bug.cgi?id=44796
+
         Create a meta-target webcore that inherits from every webcore_XXX targets. (Currently 1)
         Move direct_dependent_settings and export_dependent_settings from webcore_remaining to webcore
 
