@@ -1,3 +1,13 @@
+2010-08-29  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Remove dependency to base/keyboard_codes.h
+        https://bugs.webkit.org/show_bug.cgi?id=44847
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+         Use webkit_support::VKEY_* instead of base::VKEY_*.
+
 2010-08-29  Darin Adler  <darin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=40589
