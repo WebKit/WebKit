@@ -1,3 +1,22 @@
+2010-08-30  Mikołaj Małecki  <m.malecki@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen
+
+        [EFL] Added initial setting to turn on offline pages.
+        https://bugs.webkit.org/show_bug.cgi?id=44239
+
+        * ewk/ewk_main.cpp: Torn off non-EFL init to _ewk_init_body
+        (ewk_init): Changed non-EFL init to call _ewk_init_body
+        (_ewk_init_body): Moved internal init here and added cache directory path setting.
+        * ewk/ewk_view.cpp: Added new config items: offline_app_cache and cache_directory
+        (_ewk_view_priv_new): creating cache_directory string
+        (_ewk_view_priv_del): deleting cache_directory string
+        (ewk_view_setting_offline_app_cache_get):
+        (ewk_view_setting_offline_app_cache_set):
+        (ewk_view_setting_cache_directory_get):
+        (ewk_view_setting_cache_directory_set):
+        * ewk/ewk_view.h: added offline_app_cache and cache_directory props to ewk API
+
 2010-08-26  Miroslaw Szymanski  <miroslaw.s@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -21,6 +21,7 @@
 #include "config.h"
 #include "ewk_main.h"
 
+#include "appcache/ApplicationCacheStorage.h"
 #include "EWebKit.h"
 #include "Logging.h"
 #include "PageCache.h"
@@ -36,6 +37,7 @@
 #include <Eina.h>
 #include <Evas.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 
 #if ENABLE(GLIB_SUPPORT)
 #include <glib-object.h>
@@ -55,6 +57,8 @@
 
 static int _ewk_init_count = 0;
 int _ewk_log_dom = -1;
+
+static Eina_Bool _ewk_init_body(void);
 
 int ewk_init(void)
 {
@@ -90,44 +94,7 @@ int ewk_init(void)
         goto error_edje;
     }
 
-#if ENABLE(GLIB_SUPPORT)
-    g_type_init();
-
-    if (!g_thread_supported())
-        g_thread_init(0);
-
-#ifdef ENABLE_GTK_PLUGINS_SUPPORT
-    gdk_threads_init();
-    if (!gtk_init_check(0, 0))
-        WRN("Could not initialize GTK support.");
-#endif
-
-    if (!ecore_main_loop_glib_integrate())
-        WRN("Ecore was not compiled with GLib support, some plugins will not "
-            "work (ie: Adobe Flash)");
-#endif
-
-    JSC::initializeThreading();
-    WTF::initializeMainThread();
-    WebCore::InitializeLoggingChannelsIfNecessary();
-
-    // Page cache capacity (in pages). Comment from Mac port:
-    // (Research indicates that value / page drops substantially after 3 pages.)
-    // FIXME: Expose this with an API and/or calculate based on available resources
-    WebCore::pageCache()->setCapacity(3);
-    WebCore::PageGroup::setShouldTrackVisitedLinks(true);
-
-    // set default location of web database path
-    ewk_settings_web_database_path_set(getenv("HOME"));
-
-    // TODO: this should move to WebCore, already reported to webkit-gtk folks:
-#ifdef WTF_USE_SOUP
-    if (1) {
-        SoupSession* session = WebCore::ResourceHandle::defaultSession();
-        soup_session_add_feature_by_type(session, SOUP_TYPE_CONTENT_SNIFFER);
-        soup_session_add_feature_by_type(session, SOUP_TYPE_CONTENT_DECODER);
-    }
-#endif
+    _ewk_init_body();
 
     return ++_ewk_init_count;
 
@@ -160,5 +127,66 @@ int ewk_shutdown(void)
     eina_shutdown();
 
     return 0;
+}
+
+Eina_Bool _ewk_init_body(void)
+{
+
+#if ENABLE(GLIB_SUPPORT)
+    g_type_init();
+
+    if (!g_thread_supported())
+        g_thread_init(0);
+
+#ifdef ENABLE_GTK_PLUGINS_SUPPORT
+    gdk_threads_init();
+    if (!gtk_init_check(0, 0))
+        WRN("Could not initialize GTK support.");
+#endif
+
+    if (!ecore_main_loop_glib_integrate())
+        WRN("Ecore was not compiled with GLib support, some plugins will not "
+            "work (ie: Adobe Flash)");
+#endif
+
+    JSC::initializeThreading();
+    WTF::initializeMainThread();
+    WebCore::InitializeLoggingChannelsIfNecessary();
+
+    // Page cache capacity (in pages). Comment from Mac port:
+    // (Research indicates that value / page drops substantially after 3 pages.)
+    // FIXME: Expose this with an API and/or calculate based on available resources
+    WebCore::pageCache()->setCapacity(3);
+    WebCore::PageGroup::setShouldTrackVisitedLinks(true);
+
+    // set default location of web database path and appcache dir
+    const char* home = getenv("HOME");
+    if (!home) // don't forget about the homeless
+        home = "/tmp"; // this directory must always exist
+
+    // anyway, check it first
+    struct stat state;
+    if (stat(home, &state) == -1) {
+        // Exit now - otherwise you may have some crash later
+        int errnowas = errno;
+        CRITICAL("Can't access HOME dir (or /tmp) - no place to save databases: %s", strerror(errnowas));
+        return EINA_FALSE;
+    }
+
+    WTF::String wkdir = WTF::String(home) + "/.webkit";
+    ewk_settings_web_database_path_set(wkdir.utf8().data());
+
+    WebCore::cacheStorage().setCacheDirectory(wkdir);
+
+    // TODO: this should move to WebCore, already reported to webkit-gtk folks:
+#ifdef WTF_USE_SOUP
+    if (1) {
+        SoupSession* session = WebCore::ResourceHandle::defaultSession();
+        soup_session_add_feature_by_type(session, SOUP_TYPE_CONTENT_SNIFFER);
+        soup_session_add_feature_by_type(session, SOUP_TYPE_CONTENT_DECODER);
+    }
+#endif
+
+    return EINA_TRUE;
 }
 

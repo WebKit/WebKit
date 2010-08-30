@@ -22,6 +22,7 @@
 #include "config.h"
 #include "ewk_view.h"
 
+#include "appcache/ApplicationCacheStorage.h"
 #include "ChromeClientEfl.h"
 #include "ContextMenuClientEfl.h"
 #include "ContextMenuController.h"
@@ -88,6 +89,7 @@ struct _Ewk_View_Private_Data {
         const char* user_stylesheet;
         const char* encoding_default;
         const char* encoding_custom;
+        const char* cache_directory;
         int font_minimum_size;
         int font_minimum_logical_size;
         int font_default_size;
@@ -109,6 +111,7 @@ struct _Ewk_View_Private_Data {
         Eina_Bool caret_browsing:1;
         Eina_Bool spatial_navigation:1;
         Eina_Bool local_storage:1;
+        Eina_Bool offline_app_cache: 1;
         struct {
             float w;
             float h;
@@ -561,6 +564,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* sd)
     priv->page_settings->setJavaScriptEnabled(true);
     priv->page_settings->setPluginsEnabled(true);
     priv->page_settings->setLocalStorageEnabled(true);
+    priv->page_settings->setOfflineWebApplicationCacheEnabled(true);
 
     url = priv->page_settings->userStyleSheetLocation();
     priv->settings.user_stylesheet = eina_stringshare_add(url.prettyURL().utf8().data());
@@ -568,6 +572,9 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* sd)
     priv->settings.encoding_default = eina_stringshare_add
         (priv->page_settings->defaultTextEncodingName().utf8().data());
     priv->settings.encoding_custom = 0;
+
+    priv->settings.cache_directory = eina_stringshare_add
+        (WebCore::cacheStorage().cacheDirectory().utf8().data());
 
     priv->settings.font_minimum_size = priv->page_settings->minimumFontSize();
     priv->settings.font_minimum_logical_size = priv->page_settings->minimumLogicalFontSize();
@@ -597,6 +604,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* sd)
     priv->settings.private_browsing = priv->page_settings->privateBrowsingEnabled();
     priv->settings.caret_browsing = priv->page_settings->caretBrowsingEnabled();
     priv->settings.local_storage = priv->page_settings->localStorageEnabled();
+    priv->settings.offline_app_cache = true; // XXX no function to read setting; this keeps the original setting
 
     // Since there's no scale separated from zooming in webkit-efl, this functionality of
     // viewport meta tag is implemented using zoom. When scale zoom is supported by webkit-efl,
@@ -643,6 +651,7 @@ static void _ewk_view_priv_del(Ewk_View_Private_Data* priv)
     eina_stringshare_del(priv->settings.user_stylesheet);
     eina_stringshare_del(priv->settings.encoding_default);
     eina_stringshare_del(priv->settings.encoding_custom);
+    eina_stringshare_del(priv->settings.cache_directory);
     eina_stringshare_del(priv->settings.font_standard);
     eina_stringshare_del(priv->settings.font_cursive);
     eina_stringshare_del(priv->settings.font_monospace);
@@ -2390,6 +2399,26 @@ Eina_Bool ewk_view_setting_private_browsing_set(Evas_Object* o, Eina_Bool enable
     return EINA_TRUE;
 }
 
+Eina_Bool ewk_view_setting_offline_app_cache_get(const Evas_Object* o)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
+    return priv->settings.offline_app_cache;
+}
+
+Eina_Bool ewk_view_setting_offline_app_cache_set(Evas_Object* o, Eina_Bool enable)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
+    enable = !!enable;
+    if (priv->settings.offline_app_cache != enable) {
+        priv->page_settings->setOfflineWebApplicationCacheEnabled(enable);
+        priv->settings.offline_app_cache = enable;
+    }
+    return EINA_TRUE;
+}
+
+
 Eina_Bool ewk_view_setting_caret_browsing_get(const Evas_Object* o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -2467,6 +2496,22 @@ Eina_Bool ewk_view_setting_encoding_default_set(Evas_Object* o, const char* enco
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     if (eina_stringshare_replace(&priv->settings.encoding_default, encoding))
         priv->page_settings->setDefaultTextEncodingName(WTF::String::fromUTF8(encoding));
+    return EINA_TRUE;
+}
+
+const char* ewk_view_setting_cache_directory_get(const Evas_Object* o)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
+    return priv->settings.cache_directory;
+}
+
+Eina_Bool ewk_view_setting_cache_directory_set(Evas_Object* o, const char* path)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
+    if (eina_stringshare_replace(&priv->settings.cache_directory, path))
+        WebCore::cacheStorage().setCacheDirectory(WTF::String::fromUTF8(path));
     return EINA_TRUE;
 }
 
