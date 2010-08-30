@@ -166,6 +166,8 @@ void WorkQueue::platformInvalidate()
     MutexLocker locker(m_eventSourcesMutex);
     ASSERT(m_eventSources.isEmpty());
 #endif
+
+    dispatch_release(m_dispatchQueue);
 }
 
 #else /* !HAVE(DISPATCH_H) */
