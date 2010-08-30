@@ -240,6 +240,9 @@ void QTMoviePrivate::createMovieController()
     m_movieController = NewMovieController(m_movie, &bounds, flags);
     if (!m_movieController)
         return;
+
+    // Disable automatic looping.
+    MCDoAction(m_movieController, mcActionSetLooping, 0);
 }
 
 void QTMoviePrivate::cacheMovieScale()

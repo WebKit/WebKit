@@ -3271,6 +3271,9 @@ media/media-captions.html
 # https://bugs.webkit.org/show_bug.cgi?id=33541 - Need platform specific results
 media/video-poster-scale.html
 
+# Test specific to QuickTime media engine
+media/video-does-not-loop.html
+
 # Tests in plugins/ directory
 #   Tests failing
 plugins/embed-attributes-setting.html

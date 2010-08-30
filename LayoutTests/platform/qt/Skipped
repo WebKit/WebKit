@@ -730,6 +730,9 @@ media/video-zoom.html
 # Video size reported as 0,0 due to how size-hints are reported by QtMultimedia
 media/video-poster-delayed.html
 
+# Test specific to QuickTime media engine
+media/video-does-not-loop.html
+
 # ============================================================================= #
 # Crashing tests due to re-enabled Phonon support in Buildbot's Qt              #
 # Skip these until a proper solution for the Phonon related crashes found.      #

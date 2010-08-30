@@ -82,6 +82,7 @@ SOFT_LINK_POINTER(QTKit, QTMediaTypeSound, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMediaTypeText, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMediaTypeVideo, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieAskUnresolvedDataRefsAttribute, NSString *)
+SOFT_LINK_POINTER(QTKit, QTMovieLoopsAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieDataSizeAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieDidEndNotification, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieHasVideoAttribute, NSString *)
@@ -118,6 +119,7 @@ SOFT_LINK_POINTER(QTKit, QTMovieApertureModeAttribute, NSString *)
 #define QTMediaTypeText getQTMediaTypeText()
 #define QTMediaTypeVideo getQTMediaTypeVideo()
 #define QTMovieAskUnresolvedDataRefsAttribute getQTMovieAskUnresolvedDataRefsAttribute()
+#define QTMovieLoopsAttribute getQTMovieLoopsAttribute()
 #define QTMovieDataSizeAttribute getQTMovieDataSizeAttribute()
 #define QTMovieDidEndNotification getQTMovieDidEndNotification()
 #define QTMovieHasVideoAttribute getQTMovieHasVideoAttribute()
@@ -247,6 +249,7 @@ void MediaPlayerPrivate::createQTMovie(const String& url)
                        [NSNumber numberWithBool:YES], QTMoviePreventExternalURLLinksAttribute,
                        [NSNumber numberWithBool:YES], QTSecurityPolicyNoCrossSiteAttribute,
                        [NSNumber numberWithBool:NO], QTMovieAskUnresolvedDataRefsAttribute,
+                       [NSNumber numberWithBool:NO], QTMovieLoopsAttribute,
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
                        [NSNumber numberWithBool:YES], @"QTMovieOpenForPlaybackAttribute",
 #endif

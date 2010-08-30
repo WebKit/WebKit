@@ -1,3 +1,17 @@
+2010-08-30  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Disable automatic looping
+        https://bugs.webkit.org/show_bug.cgi?id=44844
+
+        * media/content/silence-loop.mov: Added.
+        * media/video-does-not-loop-expected.txt: Added.
+        * media/video-does-not-loop.html: Added.
+        * platform/chromium/test_expectations.txt: Skip new test.
+        * platform/gtk/Skipped: Ditto.
+        * platform/qt/Skipped: Ditto.
+
 2010-08-30  Martin Robinson  <mrobinson@igalia.com>
 
         Adding layout and pixel results in preparation for landing GTK+ shadow performance improvements.

@@ -1,3 +1,18 @@
+2010-08-30  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Disable automatic looping
+        https://bugs.webkit.org/show_bug.cgi?id=44844
+
+        Test: media/video-does-not-loop.html
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::createQTMovie): Disable QuickTime automatic looping.
+
+        * platform/graphics/win/QTMovie.cpp:
+        (QTMoviePrivate::createMovieController): Ditto.
+
 2010-08-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

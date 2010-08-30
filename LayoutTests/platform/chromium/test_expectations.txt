@@ -3215,3 +3215,5 @@ BUG53796 : fast/js/array-splice.html = TEXT
 // Need rebasline to pick the results.
 BUG47946 WIN LINUX MAC : scrollbars/custom-scrollbar-with-incomplete-style.html = MISSING
 
+// Doesn't apply to Chromium (QuickTime-specific behavior)
+WONTFIX SKIP : media/video-does-not-loop.html = TIMEOUT
