@@ -44,6 +44,11 @@ SVGLineElement::SVGLineElement(const QualifiedName& tagName, Document* doc)
 {
 }
 
+PassRefPtr<SVGLineElement> SVGLineElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGLineElement(tagName, document);
+}
+
 SVGLineElement::~SVGLineElement()
 {
 }

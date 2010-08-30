@@ -33,6 +33,11 @@ SVGFEBlendElement::SVGFEBlendElement(const QualifiedName& tagName, Document* doc
 {
 }
 
+PassRefPtr<SVGFEBlendElement> SVGFEBlendElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGFEBlendElement(tagName, document);
+}
+
 SVGFEBlendElement::~SVGFEBlendElement()
 {
 }

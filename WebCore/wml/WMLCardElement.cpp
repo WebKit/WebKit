@@ -55,6 +55,11 @@ WMLCardElement::WMLCardElement(const QualifiedName& tagName, Document* doc)
     ASSERT(hasTagName(cardTag));
 }
 
+PassRefPtr<WMLCardElement> WMLCardElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new WMLCardElement(tagName, document);
+}
+
 WMLCardElement::~WMLCardElement()
 {
 }

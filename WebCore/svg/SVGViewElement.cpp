@@ -40,6 +40,11 @@ SVGViewElement::SVGViewElement(const QualifiedName& tagName, Document* doc)
 {
 }
 
+PassRefPtr<SVGViewElement> SVGViewElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGViewElement(tagName, document);
+}
+
 SVGViewElement::~SVGViewElement()
 {
 }

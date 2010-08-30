@@ -45,6 +45,11 @@ SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement(const QualifiedName& tagN
 {
 }
 
+PassRefPtr<SVGFEConvolveMatrixElement> SVGFEConvolveMatrixElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGFEConvolveMatrixElement(tagName, document);
+}
+
 SVGFEConvolveMatrixElement::~SVGFEConvolveMatrixElement()
 {
 }

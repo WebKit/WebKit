@@ -33,6 +33,8 @@ namespace WebCore {
 
     class SVGFontFaceElement : public SVGElement {
     public:
+        static PassRefPtr<SVGFontFaceElement> create(const QualifiedName&, Document*);
+
         SVGFontFaceElement(const QualifiedName&, Document*);
         virtual ~SVGFontFaceElement();
 

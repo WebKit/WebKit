@@ -35,6 +35,8 @@ namespace WebCore {
                              public SVGExternalResourcesRequired,
                              public SVGURIReference {
     public:
+        static PassRefPtr<SVGCursorElement> create(const QualifiedName&, Document*);
+
         SVGCursorElement(const QualifiedName&, Document*);
         virtual ~SVGCursorElement();
 

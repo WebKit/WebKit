@@ -49,6 +49,11 @@ SVGLinearGradientElement::SVGLinearGradientElement(const QualifiedName& tagName,
     // Spec: If the x2 attribute is not specified, the effect is as if a value of "100%" were specified.
 }
 
+PassRefPtr<SVGLinearGradientElement> SVGLinearGradientElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGLinearGradientElement(tagName, document);
+}
+
 SVGLinearGradientElement::~SVGLinearGradientElement()
 {
 }

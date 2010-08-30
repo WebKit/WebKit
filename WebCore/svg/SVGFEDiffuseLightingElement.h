@@ -36,6 +36,8 @@ class SVGColor;
 
 class SVGFEDiffuseLightingElement : public SVGFilterPrimitiveStandardAttributes {
 public:
+    static PassRefPtr<SVGFEDiffuseLightingElement> create(const QualifiedName&, Document*);
+
     SVGFEDiffuseLightingElement(const QualifiedName&, Document*);
     virtual ~SVGFEDiffuseLightingElement();
 

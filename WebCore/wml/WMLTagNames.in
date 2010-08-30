@@ -2,34 +2,34 @@ namespace="WML"
 namespaceURI="http://www.wapforum.org/DTD/wml_1.1.xml"
 guardFactoryWith="ENABLE(WML)"
 
-a createWithNew
-access createWithNew
-anchor createWithNew
-br interfaceName=WMLBRElement, createWithNew
-card createWithNew
-do createWithNew
-fieldset interfaceName=WMLFieldSetElement, createWithNew
-go createWithNew
+a
+access
+anchor
+br interfaceName=WMLBRElement
+card
+do
+fieldset interfaceName=WMLFieldSetElement
+go
 head interfaceName=WMLElement
-img interfaceName=WMLImageElement, createWithNew
-input createWithNew
+img interfaceName=WMLImageElement
+input
 #if 0
 # Note: 'insertedLegend' is not an official WML element - internal purpose only!
 #endif
-insertedLegend interfaceName=WMLInsertedLegendElement, createWithNew
-meta createWithNew
-noop createWithNew
-onevent interfaceName=WMLOnEventElement, createWithNew
-optgroup interfaceName=WMLOptGroupElement, createWithNew
-option createWithNew
-p createWithNew
-postfield createWithNew
-prev createWithNew
-refresh createWithNew
-select createWithNew
-setvar createWithNew
-table createWithNew
+insertedLegend interfaceName=WMLInsertedLegendElement
+meta
+noop
+onevent interfaceName=WMLOnEventElement
+optgroup interfaceName=WMLOptGroupElement
+option
+p
+postfield
+prev
+refresh
+select
+setvar
+table
 td interfaceName=WMLElement
-template createWithNew
-timer createWithNew
+template
+timer
 tr interfaceName=WMLElement

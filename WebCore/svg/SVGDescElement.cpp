@@ -30,6 +30,11 @@ SVGDescElement::SVGDescElement(const QualifiedName& tagName, Document *doc)
 {
 }
 
+PassRefPtr<SVGDescElement> SVGDescElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGDescElement(tagName, document);
+}
+
 SVGDescElement::~SVGDescElement()
 {
 }

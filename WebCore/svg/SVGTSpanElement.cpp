@@ -34,8 +34,9 @@ SVGTSpanElement::SVGTSpanElement(const QualifiedName& tagName, Document* doc)
 {
 }
 
-SVGTSpanElement::~SVGTSpanElement()
+PassRefPtr<SVGTSpanElement> SVGTSpanElement::create(const QualifiedName& tagName, Document* document)
 {
+    return new SVGTSpanElement(tagName, document);
 }
 
 bool SVGTSpanElement::childShouldCreateRenderer(Node* child) const

@@ -34,6 +34,11 @@ SVGFontFaceFormatElement::SVGFontFaceFormatElement(const QualifiedName& tagName,
 {
 }
 
+PassRefPtr<SVGFontFaceFormatElement> SVGFontFaceFormatElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGFontFaceFormatElement(tagName, document);
+}
+
 void SVGFontFaceFormatElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     SVGElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);

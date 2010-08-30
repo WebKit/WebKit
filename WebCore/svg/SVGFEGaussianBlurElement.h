@@ -32,6 +32,8 @@ extern char SVGStdDeviationYAttrIdentifier[];
 
 class SVGFEGaussianBlurElement : public SVGFilterPrimitiveStandardAttributes {
 public:
+    static PassRefPtr<SVGFEGaussianBlurElement> create(const QualifiedName&, Document*);
+
     SVGFEGaussianBlurElement(const QualifiedName&, Document*);
     virtual ~SVGFEGaussianBlurElement();
 

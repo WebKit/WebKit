@@ -33,6 +33,8 @@ class WMLPostfieldElement;
 
 class WMLGoElement : public WMLTaskElement {
 public:
+    static PassRefPtr<WMLGoElement> create(const QualifiedName&, Document*);
+
     WMLGoElement(const QualifiedName& tagName, Document*);
 
     void registerPostfieldElement(WMLPostfieldElement*);

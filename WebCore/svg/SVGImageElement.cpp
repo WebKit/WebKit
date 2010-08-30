@@ -50,6 +50,11 @@ SVGImageElement::SVGImageElement(const QualifiedName& tagName, Document* doc)
 {
 }
 
+PassRefPtr<SVGImageElement> SVGImageElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGImageElement(tagName, document);
+}
+
 SVGImageElement::~SVGImageElement()
 {
 }

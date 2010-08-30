@@ -54,6 +54,11 @@ SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document* doc)
     // Spec: If the width/height attribute is not specified, the effect is as if a value of "120%" were specified.
 }
 
+PassRefPtr<SVGMaskElement> SVGMaskElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGMaskElement(tagName, document);
+}
+
 SVGMaskElement::~SVGMaskElement()
 {
 }

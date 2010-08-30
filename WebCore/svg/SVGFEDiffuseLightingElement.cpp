@@ -42,6 +42,11 @@ SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement(const QualifiedName& ta
 {
 }
 
+PassRefPtr<SVGFEDiffuseLightingElement> SVGFEDiffuseLightingElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGFEDiffuseLightingElement(tagName, document);
+}
+
 SVGFEDiffuseLightingElement::~SVGFEDiffuseLightingElement()
 {
 }

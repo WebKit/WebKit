@@ -34,6 +34,11 @@ SVGFECompositeElement::SVGFECompositeElement(const QualifiedName& tagName, Docum
 {
 }
 
+PassRefPtr<SVGFECompositeElement> SVGFECompositeElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGFECompositeElement(tagName, document);
+}
+
 SVGFECompositeElement::~SVGFECompositeElement()
 {
 }

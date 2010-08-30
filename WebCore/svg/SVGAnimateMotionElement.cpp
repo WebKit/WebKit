@@ -47,6 +47,11 @@ SVGAnimateMotionElement::SVGAnimateMotionElement(const QualifiedName& tagName, D
 {
 }
 
+PassRefPtr<SVGAnimateMotionElement> SVGAnimateMotionElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGAnimateMotionElement(tagName, document);
+}
+
 SVGAnimateMotionElement::~SVGAnimateMotionElement()
 {
 }

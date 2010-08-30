@@ -32,8 +32,10 @@ namespace WebCore {
 
     class SVGFontFaceUriElement : public SVGElement, public CachedResourceClient {
     public:
+        static PassRefPtr<SVGFontFaceUriElement> create(const QualifiedName&, Document*);
+
         SVGFontFaceUriElement(const QualifiedName&, Document*);
-        ~SVGFontFaceUriElement();
+        virtual ~SVGFontFaceUriElement();
         
         PassRefPtr<CSSFontFaceSrcValue> srcValue() const;
 

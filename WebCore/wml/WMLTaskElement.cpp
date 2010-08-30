@@ -39,6 +39,11 @@ WMLTaskElement::WMLTaskElement(const QualifiedName& tagName, Document* doc)
 {
 }
 
+PassRefPtr<WMLTaskElement> WMLTaskElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new WMLTaskElement(tagName, document);
+}
+
 WMLTaskElement::~WMLTaskElement()
 {
 }

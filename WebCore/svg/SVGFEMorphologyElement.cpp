@@ -37,6 +37,11 @@ SVGFEMorphologyElement::SVGFEMorphologyElement(const QualifiedName& tagName, Doc
 {
 }
 
+PassRefPtr<SVGFEMorphologyElement> SVGFEMorphologyElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGFEMorphologyElement(tagName, document);
+}
+
 SVGFEMorphologyElement::~SVGFEMorphologyElement()
 {
 }

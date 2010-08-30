@@ -40,6 +40,11 @@ WMLAnchorElement::WMLAnchorElement(const QualifiedName& tagName, Document* doc)
     setIsLink();
 }
 
+PassRefPtr<WMLAnchorElement> WMLAnchorElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new WMLAnchorElement(tagName, document);
+}
+
 WMLAnchorElement::~WMLAnchorElement()
 {
 }

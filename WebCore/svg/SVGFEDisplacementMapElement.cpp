@@ -33,6 +33,11 @@ SVGFEDisplacementMapElement::SVGFEDisplacementMapElement(const QualifiedName& ta
 {
 }
 
+PassRefPtr<SVGFEDisplacementMapElement> SVGFEDisplacementMapElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGFEDisplacementMapElement(tagName, document);
+}
+
 SVGFEDisplacementMapElement::~SVGFEDisplacementMapElement()
 {
 }

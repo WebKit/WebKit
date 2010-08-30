@@ -28,6 +28,8 @@ namespace WebCore {
 
 class WMLPrevElement : public WMLTaskElement {
 public:
+    static PassRefPtr<WMLPrevElement> create(const QualifiedName&, Document*);
+
     WMLPrevElement(const QualifiedName& tagName, Document*);
     virtual ~WMLPrevElement();
 

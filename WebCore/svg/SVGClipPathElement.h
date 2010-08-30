@@ -35,6 +35,8 @@ class SVGClipPathElement : public SVGStyledTransformableElement,
                            public SVGLangSpace,
                            public SVGExternalResourcesRequired {
 public:
+    static PassRefPtr<SVGClipPathElement> create(const QualifiedName&, Document*);
+
     SVGClipPathElement(const QualifiedName&, Document*);
     virtual ~SVGClipPathElement();
 

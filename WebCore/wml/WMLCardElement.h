@@ -33,6 +33,8 @@ class WMLTimerElement;
 
 class WMLCardElement : public WMLElement, public WMLEventHandlingElement {
 public:
+    static PassRefPtr<WMLCardElement> create(const QualifiedName& tagName, Document*);
+
     WMLCardElement(const QualifiedName&, Document*);
     virtual ~WMLCardElement();
 

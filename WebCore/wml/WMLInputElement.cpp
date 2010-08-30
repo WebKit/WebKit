@@ -45,6 +45,11 @@ WMLInputElement::WMLInputElement(const QualifiedName& tagName, Document* doc)
 {
 }
 
+PassRefPtr<WMLInputElement> WMLInputElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new WMLInputElement(tagName, document);
+}
+
 WMLInputElement::~WMLInputElement()
 {
     if (m_isPasswordField)

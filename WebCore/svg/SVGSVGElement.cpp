@@ -78,6 +78,11 @@ SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document* doc)
     doc->registerForDocumentActivationCallbacks(this);
 }
 
+PassRefPtr<SVGSVGElement> SVGSVGElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGSVGElement(tagName, document);
+}
+
 SVGSVGElement::~SVGSVGElement()
 {
     document()->unregisterForDocumentActivationCallbacks(this);

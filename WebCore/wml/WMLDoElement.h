@@ -30,6 +30,8 @@ class WMLTaskElement;
 
 class WMLDoElement : public WMLElement {
 public:
+    static PassRefPtr<WMLDoElement> create(const QualifiedName& tagName, Document*);
+
     WMLDoElement(const QualifiedName& tagName, Document*);
 
     virtual void defaultEventHandler(Event*);

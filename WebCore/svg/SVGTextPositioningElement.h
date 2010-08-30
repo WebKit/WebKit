@@ -30,16 +30,17 @@ namespace WebCore {
 
     class SVGTextPositioningElement : public SVGTextContentElement {
     public:
-        SVGTextPositioningElement(const QualifiedName&, Document*);
         virtual ~SVGTextPositioningElement();
 
         virtual void parseMappedAttribute(Attribute*);
         virtual void svgAttributeChanged(const QualifiedName&);
         virtual void synchronizeProperty(const QualifiedName&);
 
+    protected:
+        SVGTextPositioningElement(const QualifiedName&, Document*);
+
         bool isKnownAttribute(const QualifiedName&);
 
-    private:
         virtual bool selfHasRelativeLengths() const;
 
         DECLARE_ANIMATED_PROPERTY(SVGTextPositioningElement, SVGNames::xAttr, SVGLengthList*, X, x)

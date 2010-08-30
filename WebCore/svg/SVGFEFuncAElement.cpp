@@ -30,6 +30,11 @@ SVGFEFuncAElement::SVGFEFuncAElement(const QualifiedName& tagName, Document* doc
 {
 }
 
+PassRefPtr<SVGFEFuncAElement> SVGFEFuncAElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGFEFuncAElement(tagName, document);
+}
+
 SVGFEFuncAElement::~SVGFEFuncAElement()
 {
 }

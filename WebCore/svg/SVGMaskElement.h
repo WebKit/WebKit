@@ -36,6 +36,8 @@ namespace WebCore {
                            public SVGLangSpace,
                            public SVGExternalResourcesRequired {
     public:
+        static PassRefPtr<SVGMaskElement> create(const QualifiedName&, Document*);
+
         SVGMaskElement(const QualifiedName&, Document*);
         virtual ~SVGMaskElement();
 

@@ -31,6 +31,8 @@ class FormDataList;
 
 class WMLInputElement : public WMLFormControlElement, public InputElement {
 public:
+    static PassRefPtr<WMLInputElement> create(const QualifiedName&, Document*);
+
     WMLInputElement(const QualifiedName& tagName, Document*);
     virtual ~WMLInputElement();
 

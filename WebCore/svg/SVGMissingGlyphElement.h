@@ -26,6 +26,8 @@
 namespace WebCore {
     class SVGMissingGlyphElement : public SVGStyledElement {
     public:
+        static PassRefPtr<SVGMissingGlyphElement> create(const QualifiedName&, Document*);
+
         SVGMissingGlyphElement(const QualifiedName&, Document*);
 
         virtual bool rendererIsNeeded(RenderStyle*) { return false; }

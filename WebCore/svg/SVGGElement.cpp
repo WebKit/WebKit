@@ -37,6 +37,11 @@ SVGGElement::SVGGElement(const QualifiedName& tagName, Document* doc)
 {
 }
 
+PassRefPtr<SVGGElement> SVGGElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGGElement(tagName, document);
+}
+
 SVGGElement::~SVGGElement()
 {
 }

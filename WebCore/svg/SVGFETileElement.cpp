@@ -33,6 +33,11 @@ SVGFETileElement::SVGFETileElement(const QualifiedName& tagName, Document* doc)
 {
 }
 
+PassRefPtr<SVGFETileElement> SVGFETileElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGFETileElement(tagName, document);
+}
+
 SVGFETileElement::~SVGFETileElement()
 {
 }

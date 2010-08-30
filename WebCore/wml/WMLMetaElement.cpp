@@ -34,6 +34,11 @@ WMLMetaElement::WMLMetaElement(const QualifiedName& tagName, Document* doc)
 {
 }
 
+PassRefPtr<WMLMetaElement> WMLMetaElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new WMLMetaElement(tagName, document);
+}
+
 WMLMetaElement::~WMLMetaElement()
 {
 }

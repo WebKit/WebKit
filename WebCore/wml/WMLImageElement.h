@@ -29,6 +29,8 @@ namespace WebCore {
 
 class WMLImageElement : public WMLElement {
 public:
+    static PassRefPtr<WMLImageElement> create(const QualifiedName&, Document*);
+
     WMLImageElement(const QualifiedName& tagName, Document*);
     virtual ~WMLImageElement();
 

@@ -36,6 +36,11 @@ SVGFEColorMatrixElement::SVGFEColorMatrixElement(const QualifiedName& tagName, D
 {
 }
 
+PassRefPtr<SVGFEColorMatrixElement> SVGFEColorMatrixElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGFEColorMatrixElement(tagName, document);
+}
+
 SVGFEColorMatrixElement::~SVGFEColorMatrixElement()
 {
 }

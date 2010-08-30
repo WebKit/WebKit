@@ -34,15 +34,17 @@ class SVGFontData;
 
 class SVGVKernElement : public SVGElement {
 public:
+    static PassRefPtr<SVGVKernElement> create(const QualifiedName&, Document*);
+
+    void buildVerticalKerningPair(KerningPairVector&);
+
+private:
     SVGVKernElement(const QualifiedName&, Document*);
-    virtual ~SVGVKernElement();
 
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
 
     virtual bool rendererIsNeeded(RenderStyle*) { return false; }
-
-    void buildVerticalKerningPair(KerningPairVector&);
 };
 
 } // namespace WebCore

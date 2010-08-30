@@ -28,6 +28,8 @@ namespace WebCore {
     
 class SVGFEDisplacementMapElement : public SVGFilterPrimitiveStandardAttributes {
 public:
+    static PassRefPtr<SVGFEDisplacementMapElement> create(const QualifiedName&, Document*);
+
     SVGFEDisplacementMapElement(const QualifiedName& tagName, Document*);
     virtual ~SVGFEDisplacementMapElement();
     

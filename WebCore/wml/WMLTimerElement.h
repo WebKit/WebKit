@@ -31,6 +31,8 @@ class WMLCardElement;
 
 class WMLTimerElement : public WMLElement {
 public:
+    static PassRefPtr<WMLTimerElement> create(const QualifiedName&, Document*);
+
     WMLTimerElement(const QualifiedName& tagName, Document*);
 
     virtual void parseMappedAttribute(Attribute*);

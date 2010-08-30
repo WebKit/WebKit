@@ -31,6 +31,8 @@ extern char SVGRadiusYAttrIdentifier[];
 
 class SVGFEMorphologyElement : public SVGFilterPrimitiveStandardAttributes {
 public:
+    static PassRefPtr<SVGFEMorphologyElement> create(const QualifiedName&, Document*);
+
     SVGFEMorphologyElement(const QualifiedName&, Document*);
     virtual ~SVGFEMorphologyElement();
 

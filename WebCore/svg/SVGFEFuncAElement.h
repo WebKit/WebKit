@@ -25,8 +25,11 @@
 #include "SVGComponentTransferFunctionElement.h"
 
 namespace WebCore {
+
     class SVGFEFuncAElement : public SVGComponentTransferFunctionElement {
     public:
+        static PassRefPtr<SVGFEFuncAElement> create(const QualifiedName&, Document*);
+
         SVGFEFuncAElement(const QualifiedName&, Document*);
         virtual ~SVGFEFuncAElement();
     };

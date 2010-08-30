@@ -45,6 +45,11 @@ SVGRectElement::SVGRectElement(const QualifiedName& tagName, Document *doc)
 {
 }
 
+PassRefPtr<SVGRectElement> SVGRectElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGRectElement(tagName, document);
+}
+
 SVGRectElement::~SVGRectElement()
 {
 }

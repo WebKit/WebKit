@@ -35,6 +35,11 @@ SVGDefsElement::SVGDefsElement(const QualifiedName& tagName, Document* doc)
 {
 }
 
+PassRefPtr<SVGDefsElement> SVGDefsElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGDefsElement(tagName, document);
+}
+
 SVGDefsElement::~SVGDefsElement()
 {
 }

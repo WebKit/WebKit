@@ -43,6 +43,11 @@ SVGClipPathElement::SVGClipPathElement(const QualifiedName& tagName, Document* d
 {
 }
 
+PassRefPtr<SVGClipPathElement> SVGClipPathElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGClipPathElement(tagName, document);
+}
+
 SVGClipPathElement::~SVGClipPathElement()
 {
 }

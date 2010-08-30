@@ -30,6 +30,8 @@ class HTMLCollection;
 
 class WMLTableElement : public WMLElement {
 public:
+    static PassRefPtr<WMLTableElement> create(const QualifiedName&, Document*);
+
     WMLTableElement(const QualifiedName& tagName, Document*);
     virtual ~WMLTableElement();
 

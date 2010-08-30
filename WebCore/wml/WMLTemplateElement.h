@@ -29,6 +29,8 @@ namespace WebCore {
 
 class WMLTemplateElement : public WMLElement, public WMLEventHandlingElement {
 public:
+    static PassRefPtr<WMLTemplateElement> create(const QualifiedName&, Document*);
+
     WMLTemplateElement(const QualifiedName&, Document*);
     virtual ~WMLTemplateElement();
 

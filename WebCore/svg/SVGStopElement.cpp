@@ -38,6 +38,11 @@ SVGStopElement::SVGStopElement(const QualifiedName& tagName, Document* doc)
 {
 }
 
+PassRefPtr<SVGStopElement> SVGStopElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGStopElement(tagName, document);
+}
+
 SVGStopElement::~SVGStopElement()
 {
 }

@@ -53,6 +53,8 @@ public:
         SVG_MARKER_ORIENT_ANGLE      = 2
     };
 
+    static PassRefPtr<SVGMarkerElement> create(const QualifiedName&, Document*);
+
     SVGMarkerElement(const QualifiedName&, Document*);
     virtual ~SVGMarkerElement();
 

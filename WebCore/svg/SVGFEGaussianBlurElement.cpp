@@ -37,6 +37,11 @@ SVGFEGaussianBlurElement::SVGFEGaussianBlurElement(const QualifiedName& tagName,
 {
 }
 
+PassRefPtr<SVGFEGaussianBlurElement> SVGFEGaussianBlurElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGFEGaussianBlurElement(tagName, document);
+}
+
 SVGFEGaussianBlurElement::~SVGFEGaussianBlurElement()
 {
 }

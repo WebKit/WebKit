@@ -53,6 +53,11 @@ SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document* doc)
     // Spec: If the markerWidth/markerHeight attribute is not specified, the effect is as if a value of "3" were specified.
 }
 
+PassRefPtr<SVGMarkerElement> SVGMarkerElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGMarkerElement(tagName, document);
+}
+
 SVGMarkerElement::~SVGMarkerElement()
 {
 }

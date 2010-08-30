@@ -32,6 +32,11 @@ SVGFEOffsetElement::SVGFEOffsetElement(const QualifiedName& tagName, Document* d
 {
 }
 
+PassRefPtr<SVGFEOffsetElement> SVGFEOffsetElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGFEOffsetElement(tagName, document);
+}
+
 SVGFEOffsetElement::~SVGFEOffsetElement()
 {
 }

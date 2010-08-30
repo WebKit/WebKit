@@ -70,6 +70,11 @@ SVGUseElement::SVGUseElement(const QualifiedName& tagName, Document* doc)
 {
 }
 
+PassRefPtr<SVGUseElement> SVGUseElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGUseElement(tagName, document);
+}
+
 SVGUseElement::~SVGUseElement()
 {
 }

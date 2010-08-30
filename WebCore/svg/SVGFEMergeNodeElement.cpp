@@ -32,6 +32,11 @@ SVGFEMergeNodeElement::SVGFEMergeNodeElement(const QualifiedName& tagName, Docum
 {
 }
 
+PassRefPtr<SVGFEMergeNodeElement> SVGFEMergeNodeElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGFEMergeNodeElement(tagName, document);
+}
+
 SVGFEMergeNodeElement::~SVGFEMergeNodeElement()
 {
 }

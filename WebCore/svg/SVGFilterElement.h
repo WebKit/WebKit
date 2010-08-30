@@ -40,6 +40,8 @@ class SVGFilterElement : public SVGStyledElement,
                          public SVGLangSpace,
                          public SVGExternalResourcesRequired {
 public:
+    static PassRefPtr<SVGFilterElement> create(const QualifiedName&, Document*);
+
     SVGFilterElement(const QualifiedName&, Document*);
     virtual ~SVGFilterElement();
 

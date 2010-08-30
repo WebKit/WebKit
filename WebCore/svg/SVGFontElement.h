@@ -50,9 +50,12 @@ struct SVGKerningPair {
 typedef Vector<SVGKerningPair> KerningPairVector;
 
 class SVGMissingGlyphElement;    
+
 class SVGFontElement : public SVGStyledElement
                      , public SVGExternalResourcesRequired {
 public:
+    static PassRefPtr<SVGFontElement> create(const QualifiedName&, Document*);
+
     SVGFontElement(const QualifiedName&, Document*);
     virtual ~SVGFontElement();
 

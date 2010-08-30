@@ -51,6 +51,11 @@ SVGRadialGradientElement::SVGRadialGradientElement(const QualifiedName& tagName,
     // Spec: If the cx/cy/r attribute is not specified, the effect is as if a value of "50%" were specified.
 }
 
+PassRefPtr<SVGRadialGradientElement> SVGRadialGradientElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGRadialGradientElement(tagName, document);
+}
+
 SVGRadialGradientElement::~SVGRadialGradientElement()
 {
 }

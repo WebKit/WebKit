@@ -29,6 +29,8 @@ namespace WebCore {
 
 class SVGFEComponentTransferElement : public SVGFilterPrimitiveStandardAttributes {
 public:
+    static PassRefPtr<SVGFEComponentTransferElement> create(const QualifiedName&, Document*);
+
     SVGFEComponentTransferElement(const QualifiedName&, Document*);
     virtual ~SVGFEComponentTransferElement();
 

@@ -28,6 +28,8 @@ namespace WebCore {
 
 class WMLAccessElement : public WMLElement {
 public:
+    static PassRefPtr<WMLAccessElement> create(const QualifiedName& tagName, Document*);
+
     WMLAccessElement(const QualifiedName& tagName, Document*);
 
     virtual void parseMappedAttribute(Attribute*);

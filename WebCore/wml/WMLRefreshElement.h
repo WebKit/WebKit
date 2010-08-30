@@ -28,6 +28,8 @@ namespace WebCore {
 
 class WMLRefreshElement : public WMLTaskElement {
 public:
+    static PassRefPtr<WMLRefreshElement> create(const QualifiedName&, Document*);
+
     WMLRefreshElement(const QualifiedName& tagName, Document*);
     virtual ~WMLRefreshElement();
 

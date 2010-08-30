@@ -43,6 +43,11 @@ WMLTemplateElement::~WMLTemplateElement()
 {
 }
 
+PassRefPtr<WMLTemplateElement> WMLTemplateElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new WMLTemplateElement(tagName, document);
+}
+
 void WMLTemplateElement::parseMappedAttribute(Attribute* attr)
 {
     WMLIntrinsicEventType eventType = WMLIntrinsicEventUnknown;

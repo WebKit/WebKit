@@ -53,6 +53,11 @@ SVGAnimateTransformElement::SVGAnimateTransformElement(const QualifiedName& tagN
 {
 }
 
+PassRefPtr<SVGAnimateTransformElement> SVGAnimateTransformElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGAnimateTransformElement(tagName, document);
+}
+
 SVGAnimateTransformElement::~SVGAnimateTransformElement()
 {
 }

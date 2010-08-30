@@ -33,6 +33,8 @@ extern char SVGKernelUnitLengthYIdentifier[];
 
 class SVGFESpecularLightingElement : public SVGFilterPrimitiveStandardAttributes {
 public:
+    static PassRefPtr<SVGFESpecularLightingElement> create(const QualifiedName&, Document*);
+
     SVGFESpecularLightingElement(const QualifiedName&, Document*);
     virtual ~SVGFESpecularLightingElement();
     

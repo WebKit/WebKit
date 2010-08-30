@@ -28,6 +28,8 @@ namespace WebCore {
 
 class WMLNoopElement : public WMLElement {
 public:
+    static PassRefPtr<WMLNoopElement> create(const QualifiedName&, Document*);
+
     WMLNoopElement(const QualifiedName& tagName, Document*);
     virtual ~WMLNoopElement();
 

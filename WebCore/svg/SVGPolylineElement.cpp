@@ -32,6 +32,11 @@ SVGPolylineElement::SVGPolylineElement(const QualifiedName& tagName, Document* d
 {
 }
 
+PassRefPtr<SVGPolylineElement> SVGPolylineElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGPolylineElement(tagName, document);
+}
+
 SVGPolylineElement::~SVGPolylineElement()
 {
 }

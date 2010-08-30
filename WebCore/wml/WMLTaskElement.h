@@ -33,6 +33,8 @@ class WMLSetvarElement;
 
 class WMLTaskElement : public WMLElement {
 public:
+    static PassRefPtr<WMLTaskElement> create(const QualifiedName& tagName, Document*);
+
     WMLTaskElement(const QualifiedName& tagName, Document*);
     virtual ~WMLTaskElement();
 

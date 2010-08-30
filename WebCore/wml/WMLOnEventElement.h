@@ -31,6 +31,8 @@ class WMLTaskElement;
 
 class WMLOnEventElement : public WMLElement {
 public:
+    static PassRefPtr<WMLOnEventElement> create(const QualifiedName&, Document*);
+
     WMLOnEventElement(const QualifiedName& tagName, Document*);
 
     virtual void parseMappedAttribute(Attribute*);

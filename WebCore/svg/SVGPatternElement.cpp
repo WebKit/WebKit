@@ -66,6 +66,11 @@ SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Document* doc
 {
 }
 
+PassRefPtr<SVGPatternElement> SVGPatternElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGPatternElement(tagName, document);
+}
+
 SVGPatternElement::~SVGPatternElement()
 {
 }

@@ -37,6 +37,11 @@ WMLRefreshElement::WMLRefreshElement(const QualifiedName& tagName, Document* doc
 {
 }
 
+PassRefPtr<WMLRefreshElement> WMLRefreshElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new WMLRefreshElement(tagName, document);
+}
+
 WMLRefreshElement::~WMLRefreshElement()
 {
 }

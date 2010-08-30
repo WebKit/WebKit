@@ -54,6 +54,11 @@ SVGAElement::SVGAElement(const QualifiedName& tagName, Document *doc)
 {
 }
 
+PassRefPtr<SVGAElement> SVGAElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGAElement(tagName, document);
+}
+
 SVGAElement::~SVGAElement()
 {
 }

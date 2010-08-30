@@ -28,6 +28,8 @@ namespace WebCore {
 
 class WMLMetaElement : public WMLElement {
 public:
+    static PassRefPtr<WMLMetaElement> create(const QualifiedName&, Document*);
+
     WMLMetaElement(const QualifiedName& tagName, Document*);
     virtual ~WMLMetaElement();
 

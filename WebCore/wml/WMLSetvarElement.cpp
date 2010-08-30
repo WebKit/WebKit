@@ -36,6 +36,11 @@ WMLSetvarElement::WMLSetvarElement(const QualifiedName& tagName, Document* doc)
 {
 }
 
+PassRefPtr<WMLSetvarElement> WMLSetvarElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new WMLSetvarElement(tagName, document);
+}
+
 WMLSetvarElement::~WMLSetvarElement()
 {
 }

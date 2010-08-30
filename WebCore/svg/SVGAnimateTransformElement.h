@@ -34,6 +34,8 @@ class AffineTransform;
 
 class SVGAnimateTransformElement : public SVGAnimationElement {
 public:
+    static PassRefPtr<SVGAnimateTransformElement> create(const QualifiedName&, Document*);
+
     SVGAnimateTransformElement(const QualifiedName&, Document*);
     virtual ~SVGAnimateTransformElement();
     

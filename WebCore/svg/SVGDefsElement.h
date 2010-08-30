@@ -34,6 +34,8 @@ namespace WebCore {
                            public SVGLangSpace,
                            public SVGExternalResourcesRequired {
     public:
+        static PassRefPtr<SVGDefsElement> create(const QualifiedName&, Document*);
+
         SVGDefsElement(const QualifiedName&, Document*);
         virtual ~SVGDefsElement();
 

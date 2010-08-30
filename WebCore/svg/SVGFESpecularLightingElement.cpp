@@ -40,6 +40,11 @@ SVGFESpecularLightingElement::SVGFESpecularLightingElement(const QualifiedName& 
 {
 }
 
+PassRefPtr<SVGFESpecularLightingElement> SVGFESpecularLightingElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGFESpecularLightingElement(tagName, document);
+}
+
 SVGFESpecularLightingElement::~SVGFESpecularLightingElement()
 {
 }

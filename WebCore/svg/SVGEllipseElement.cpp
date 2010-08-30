@@ -44,6 +44,11 @@ SVGEllipseElement::SVGEllipseElement(const QualifiedName& tagName, Document* doc
 {
 }    
 
+PassRefPtr<SVGEllipseElement> SVGEllipseElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGEllipseElement(tagName, document);
+}
+
 SVGEllipseElement::~SVGEllipseElement()
 {
 }

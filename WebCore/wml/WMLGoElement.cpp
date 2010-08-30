@@ -50,6 +50,11 @@ WMLGoElement::WMLGoElement(const QualifiedName& tagName, Document* doc)
 {
 }
  
+PassRefPtr<WMLGoElement> WMLGoElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new WMLGoElement(tagName, document);
+}
+
 void WMLGoElement::registerPostfieldElement(WMLPostfieldElement* postfield)
 {
     ASSERT(m_postfieldElements.find(postfield) == WTF::notFound);

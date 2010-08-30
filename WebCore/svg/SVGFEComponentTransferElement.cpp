@@ -38,6 +38,11 @@ SVGFEComponentTransferElement::SVGFEComponentTransferElement(const QualifiedName
 {
 }
 
+PassRefPtr<SVGFEComponentTransferElement> SVGFEComponentTransferElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGFEComponentTransferElement(tagName, document);
+}
+
 SVGFEComponentTransferElement::~SVGFEComponentTransferElement()
 {
 }

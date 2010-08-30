@@ -29,6 +29,8 @@ namespace WebCore {
 
     class SVGStopElement : public SVGStyledElement {
     public:
+        static PassRefPtr<SVGStopElement> create(const QualifiedName&, Document*);
+
         SVGStopElement(const QualifiedName&, Document*);
         virtual ~SVGStopElement();
 

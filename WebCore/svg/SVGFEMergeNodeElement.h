@@ -29,6 +29,8 @@ namespace WebCore {
 
     class SVGFEMergeNodeElement : public SVGElement {
     public:
+        static PassRefPtr<SVGFEMergeNodeElement> create(const QualifiedName&, Document*);
+
         SVGFEMergeNodeElement(const QualifiedName&, Document*);
         virtual ~SVGFEMergeNodeElement();
 

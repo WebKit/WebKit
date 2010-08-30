@@ -128,7 +128,6 @@ sub defaultTagPropertyHash
     return (
         'constructorNeedsCreatedByParser' => 0,
         'constructorNeedsFormElement' => 0,
-        'createWithNew' => 0,
         'interfaceName' => defaultInterfaceName($_[0]),
         # By default, the JSInterfaceName is the same as the interfaceName.
         'JSInterfaceName' => defaultInterfaceName($_[0]),
@@ -317,16 +316,8 @@ END
 ;
     }
 
-    my $newPrefix = "";
-    my $createSuffix = "::create";
-
-    if ($enabledTags{$tagName}{createWithNew}) {
-        $newPrefix = "new ";
-        $createSuffix = "";
-    }
-
     # Call the constructor with the right parameters.
-    print F "    return $newPrefix$interfaceName${createSuffix}($constructorTagName, document";
+    print F "    return ${interfaceName}::create($constructorTagName, document";
     print F ", formElement" if $enabledTags{$tagName}{constructorNeedsFormElement};
     print F ", createdByParser" if $enabledTags{$tagName}{constructorNeedsCreatedByParser};
     print F ");\n}\n\n";

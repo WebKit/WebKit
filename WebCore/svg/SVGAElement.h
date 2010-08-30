@@ -23,6 +23,7 @@
 #define SVGAElement_h
 
 #if ENABLE(SVG)
+
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
 #include "SVGStyledTransformableElement.h"
@@ -37,8 +38,12 @@ namespace WebCore {
                         public SVGLangSpace,
                         public SVGExternalResourcesRequired {
     public:
-        SVGAElement(const QualifiedName&, Document*);
+        static PassRefPtr<SVGAElement> create(const QualifiedName&, Document*);
+
         virtual ~SVGAElement();
+
+    private:
+        SVGAElement(const QualifiedName&, Document*);
 
         virtual bool isValid() const { return SVGTests::isValid(); }
         
@@ -59,7 +64,6 @@ namespace WebCore {
 
         virtual bool childShouldCreateRenderer(Node*) const;
 
-    private:
         DECLARE_ANIMATED_PROPERTY(SVGAElement, SVGNames::targetAttr, String, Target, target)
 
         // SVGURIReference
@@ -72,4 +76,5 @@ namespace WebCore {
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
+
 #endif // SVGAElement_h

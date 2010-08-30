@@ -51,6 +51,11 @@ WMLAElement::WMLAElement(const QualifiedName& tagName, Document* doc)
 {
 }
 
+PassRefPtr<WMLAElement> WMLAElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new WMLAElement(tagName, document);
+}
+
 void WMLAElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == HTMLNames::hrefAttr) {

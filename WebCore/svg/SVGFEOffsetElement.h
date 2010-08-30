@@ -29,6 +29,8 @@ namespace WebCore {
 
 class SVGFEOffsetElement : public SVGFilterPrimitiveStandardAttributes {
 public:
+    static PassRefPtr<SVGFEOffsetElement> create(const QualifiedName&, Document*);
+
     SVGFEOffsetElement(const QualifiedName&, Document*);
     virtual ~SVGFEOffsetElement();
 

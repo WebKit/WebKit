@@ -33,6 +33,8 @@ namespace WebCore {
 
 class WMLAElement : public WMLElement {
 public:
+    static PassRefPtr<WMLAElement> create(const QualifiedName& tagName, Document*);
+
     WMLAElement(const QualifiedName& tagName, Document*);
 
     virtual bool supportsFocus() const;

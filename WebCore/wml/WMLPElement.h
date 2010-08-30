@@ -31,6 +31,8 @@ namespace WebCore {
 
 class WMLPElement : public WMLElement {
 public:
+    static PassRefPtr<WMLPElement> create(const QualifiedName&, Document*);
+
     WMLPElement(const QualifiedName& tagName, Document*);
 
     virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;

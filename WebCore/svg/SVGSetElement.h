@@ -25,9 +25,12 @@
 #include "SVGAnimateElement.h"
 
 namespace WebCore {
+
     // SVGAnimateElement implements superset of the functionality.
     class SVGSetElement : public SVGAnimateElement {
     public:
+        static PassRefPtr<SVGSetElement> create(const QualifiedName&, Document*);
+
         SVGSetElement(const QualifiedName&, Document*);
     };
 

@@ -46,6 +46,11 @@ SVGFontElement::SVGFontElement(const QualifiedName& tagName, Document* doc)
 {
 }
 
+PassRefPtr<SVGFontElement> SVGFontElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGFontElement(tagName, document);
+}
+
 SVGFontElement::~SVGFontElement()
 {
 }

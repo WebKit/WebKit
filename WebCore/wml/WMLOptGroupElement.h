@@ -29,6 +29,8 @@ namespace WebCore {
 
 class WMLOptGroupElement : public WMLFormControlElement, public OptionGroupElement {
 public:
+    static PassRefPtr<WMLOptGroupElement> create(const QualifiedName&, Document*);
+
     WMLOptGroupElement(const QualifiedName& tagName, Document*);
     virtual ~WMLOptGroupElement();
 

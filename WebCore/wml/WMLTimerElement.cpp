@@ -42,6 +42,11 @@ WMLTimerElement::WMLTimerElement(const QualifiedName& tagName, Document* doc)
 {
 }
 
+PassRefPtr<WMLTimerElement> WMLTimerElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new WMLTimerElement(tagName, document);
+}
+
 void WMLTimerElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == HTMLNames::nameAttr)

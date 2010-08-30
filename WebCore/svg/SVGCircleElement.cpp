@@ -43,6 +43,11 @@ SVGCircleElement::SVGCircleElement(const QualifiedName& tagName, Document* doc)
 {
 }
 
+PassRefPtr<SVGCircleElement> SVGCircleElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGCircleElement(tagName, document);
+}
+
 SVGCircleElement::~SVGCircleElement()
 {
 }

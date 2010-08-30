@@ -43,6 +43,11 @@ SVGTextPathElement::SVGTextPathElement(const QualifiedName& tagName, Document* d
 {
 }
 
+PassRefPtr<SVGTextPathElement> SVGTextPathElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGTextPathElement(tagName, document);
+}
+
 SVGTextPathElement::~SVGTextPathElement()
 {
 }

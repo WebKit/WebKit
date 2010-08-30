@@ -38,6 +38,8 @@ enum SVGStitchOptions {
 
 class SVGFETurbulenceElement : public SVGFilterPrimitiveStandardAttributes {
 public:
+    static PassRefPtr<SVGFETurbulenceElement> create(const QualifiedName&, Document*);
+
     SVGFETurbulenceElement(const QualifiedName&, Document*);
     virtual ~SVGFETurbulenceElement();
 

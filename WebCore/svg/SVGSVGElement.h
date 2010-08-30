@@ -45,6 +45,8 @@ namespace WebCore {
                           public SVGFitToViewBox,
                           public SVGZoomAndPan {
     public:
+        static PassRefPtr<SVGSVGElement> create(const QualifiedName&, Document*);
+
         SVGSVGElement(const QualifiedName&, Document*);
         virtual ~SVGSVGElement();
 

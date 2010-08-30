@@ -28,6 +28,8 @@ namespace WebCore {
 
 class WMLPostfieldElement : public WMLElement {
 public:
+    static PassRefPtr<WMLPostfieldElement> create(const QualifiedName&, Document*);
+
     WMLPostfieldElement(const QualifiedName& tagName, Document*);
 
     virtual void insertedIntoDocument();

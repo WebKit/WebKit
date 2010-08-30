@@ -39,6 +39,11 @@ SVGFETurbulenceElement::SVGFETurbulenceElement(const QualifiedName& tagName, Doc
 {
 }
 
+PassRefPtr<SVGFETurbulenceElement> SVGFETurbulenceElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGFETurbulenceElement(tagName, document);
+}
+
 SVGFETurbulenceElement::~SVGFETurbulenceElement()
 {
 }

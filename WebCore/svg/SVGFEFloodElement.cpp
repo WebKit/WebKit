@@ -34,6 +34,11 @@ SVGFEFloodElement::SVGFEFloodElement(const QualifiedName& tagName, Document* doc
 {
 }
 
+PassRefPtr<SVGFEFloodElement> SVGFEFloodElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGFEFloodElement(tagName, document);
+}
+
 SVGFEFloodElement::~SVGFEFloodElement()
 {
 }

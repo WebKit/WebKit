@@ -30,6 +30,11 @@ SVGFEPointLightElement::SVGFEPointLightElement(const QualifiedName& tagName, Doc
 {
 }
 
+PassRefPtr<SVGFEPointLightElement> SVGFEPointLightElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGFEPointLightElement(tagName, document);
+}
+
 SVGFEPointLightElement::~SVGFEPointLightElement()
 {
 }

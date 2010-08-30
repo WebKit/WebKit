@@ -32,6 +32,11 @@ SVGMPathElement::SVGMPathElement(const QualifiedName& qname, Document* doc)
 {
 }
 
+PassRefPtr<SVGMPathElement> SVGMPathElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGMPathElement(tagName, document);
+}
+
 SVGMPathElement::~SVGMPathElement()
 {
 }

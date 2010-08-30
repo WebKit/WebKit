@@ -40,6 +40,8 @@ class SVGFEImageElement : public SVGFilterPrimitiveStandardAttributes,
                           public SVGExternalResourcesRequired,
                           public CachedResourceClient {
 public:
+    static PassRefPtr<SVGFEImageElement> create(const QualifiedName&, Document*);
+
     SVGFEImageElement(const QualifiedName&, Document*);
     virtual ~SVGFEImageElement();
 

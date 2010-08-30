@@ -28,6 +28,8 @@ namespace WebCore {
 
 class WMLInsertedLegendElement : public WMLElement {
 public:
+    static PassRefPtr<WMLInsertedLegendElement> create(const QualifiedName&, Document*);
+
     WMLInsertedLegendElement(const QualifiedName& tagName, Document*);
     virtual ~WMLInsertedLegendElement();
 };

@@ -40,6 +40,8 @@ namespace WebCore {
                             public SVGExternalResourcesRequired,
                             public SVGURIReference {
     public:
+        static PassRefPtr<SVGImageElement> create(const QualifiedName&, Document*);
+
         SVGImageElement(const QualifiedName&, Document*);
         virtual ~SVGImageElement();
         

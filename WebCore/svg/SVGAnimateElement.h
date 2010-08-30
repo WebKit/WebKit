@@ -35,6 +35,8 @@ namespace WebCore {
 
     class SVGAnimateElement : public SVGAnimationElement {
     public:
+        static PassRefPtr<SVGAnimateElement> create(const QualifiedName&, Document*);
+
         SVGAnimateElement(const QualifiedName&, Document*);
         virtual ~SVGAnimateElement();
     

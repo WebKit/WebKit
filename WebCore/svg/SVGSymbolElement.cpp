@@ -35,6 +35,11 @@ SVGSymbolElement::SVGSymbolElement(const QualifiedName& tagName, Document* doc)
 {
 }
 
+PassRefPtr<SVGSymbolElement> SVGSymbolElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGSymbolElement(tagName, document);
+}
+
 SVGSymbolElement::~SVGSymbolElement()
 {
 }

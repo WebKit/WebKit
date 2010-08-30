@@ -38,6 +38,11 @@ SVGAltGlyphElement::SVGAltGlyphElement(const QualifiedName& tagName, Document* d
 {
 }
 
+PassRefPtr<SVGAltGlyphElement> SVGAltGlyphElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGAltGlyphElement(tagName, document);
+}
+
 SVGAltGlyphElement::~SVGAltGlyphElement()
 {
 }

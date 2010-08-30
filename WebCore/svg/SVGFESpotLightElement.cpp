@@ -30,6 +30,11 @@ SVGFESpotLightElement::SVGFESpotLightElement(const QualifiedName& tagName, Docum
 {
 }
 
+PassRefPtr<SVGFESpotLightElement> SVGFESpotLightElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGFESpotLightElement(tagName, document);
+}
+
 SVGFESpotLightElement::~SVGFESpotLightElement()
 {
 }

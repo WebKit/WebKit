@@ -52,6 +52,11 @@ SVGPathElement::SVGPathElement(const QualifiedName& tagName, Document* doc)
 {
 }
 
+PassRefPtr<SVGPathElement> SVGPathElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGPathElement(tagName, document);
+}
+
 SVGPathElement::~SVGPathElement()
 {
 }

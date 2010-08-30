@@ -31,6 +31,8 @@ namespace WebCore {
 
     class SVGLinearGradientElement : public SVGGradientElement {
     public:
+        static PassRefPtr<SVGLinearGradientElement> create(const QualifiedName&, Document*);
+
         SVGLinearGradientElement(const QualifiedName&, Document*);
         virtual ~SVGLinearGradientElement();
 

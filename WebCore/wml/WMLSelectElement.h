@@ -29,6 +29,8 @@ namespace WebCore {
 
 class WMLSelectElement : public WMLFormControlElement, public SelectElement {
 public:
+    static PassRefPtr<WMLSelectElement> create(const QualifiedName&, Document*);
+
     WMLSelectElement(const QualifiedName&, Document*);
     virtual ~WMLSelectElement();
 

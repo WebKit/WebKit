@@ -30,6 +30,11 @@ SVGFEDistantLightElement::SVGFEDistantLightElement(const QualifiedName& tagName,
 {
 }
 
+PassRefPtr<SVGFEDistantLightElement> SVGFEDistantLightElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGFEDistantLightElement(tagName, document);
+}
+
 SVGFEDistantLightElement::~SVGFEDistantLightElement()
 {
 }

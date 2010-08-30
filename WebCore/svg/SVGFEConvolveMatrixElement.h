@@ -29,6 +29,8 @@ namespace WebCore {
 
 class SVGFEConvolveMatrixElement : public SVGFilterPrimitiveStandardAttributes {
 public:
+    static PassRefPtr<SVGFEConvolveMatrixElement> create(const QualifiedName&, Document*);
+
     SVGFEConvolveMatrixElement(const QualifiedName&, Document*);
     virtual ~SVGFEConvolveMatrixElement();
 

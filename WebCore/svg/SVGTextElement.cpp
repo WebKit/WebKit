@@ -42,6 +42,11 @@ SVGTextElement::SVGTextElement(const QualifiedName& tagName, Document* doc)
 {
 }
 
+PassRefPtr<SVGTextElement> SVGTextElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGTextElement(tagName, document);
+}
+
 SVGTextElement::~SVGTextElement()
 {
 }

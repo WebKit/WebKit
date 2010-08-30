@@ -28,6 +28,8 @@
 namespace WebCore {
 class SVGFEBlendElement : public SVGFilterPrimitiveStandardAttributes {
 public:
+    static PassRefPtr<SVGFEBlendElement> create(const QualifiedName&, Document*);
+
     SVGFEBlendElement(const QualifiedName&, Document*);
     virtual ~SVGFEBlendElement();
 

@@ -30,6 +30,8 @@ class WMLTaskElement;
 
 class WMLAnchorElement : public WMLAElement {
 public:
+    static PassRefPtr<WMLAnchorElement> create(const QualifiedName& tagName, Document*);
+
     WMLAnchorElement(const QualifiedName& tagName, Document*);
     virtual ~WMLAnchorElement();
 

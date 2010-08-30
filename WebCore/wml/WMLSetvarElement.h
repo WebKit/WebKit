@@ -28,6 +28,8 @@ namespace WebCore {
 
 class WMLSetvarElement : public WMLElement {
 public:
+    static PassRefPtr<WMLSetvarElement> create(const QualifiedName&, Document*);
+
     WMLSetvarElement(const QualifiedName& tagName, Document*);
     virtual ~WMLSetvarElement();
 

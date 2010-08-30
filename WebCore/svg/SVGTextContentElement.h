@@ -42,7 +42,6 @@ namespace WebCore {
             LENGTHADJUST_SPACINGANDGLYPHS   = 2
         };
 
-        SVGTextContentElement(const QualifiedName&, Document*);
         virtual ~SVGTextContentElement();
         
         virtual bool isValid() const { return SVGTests::isValid(); }
@@ -64,6 +63,8 @@ namespace WebCore {
         bool isKnownAttribute(const QualifiedName&);
 
     protected:
+        SVGTextContentElement(const QualifiedName&, Document*);
+
         virtual bool selfHasRelativeLengths() const;
 
     private:
