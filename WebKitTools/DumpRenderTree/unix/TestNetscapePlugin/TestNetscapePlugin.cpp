@@ -267,7 +267,33 @@ webkit_test_plugin_handle_event(NPP instance, void* event)
         return 0;
 
     XEvent* evt = static_cast<XEvent*>(event);
-    pluginLog(instance, "event %d", evt->type);
+
+    switch (evt->type) {
+        case ButtonRelease:
+            pluginLog(instance, "mouseUp at (%d, %d)", evt->xbutton.x, evt->xbutton.y);
+            break;
+        case ButtonPress:
+            pluginLog(instance, "mouseDown at (%d, %d)", evt->xbutton.x, evt->xbutton.y);
+            break;
+        case KeyRelease:
+            pluginLog(instance, "keyUp '%c'", evt->xkey.keycode);
+            break;
+        case KeyPress:
+            pluginLog(instance, "keyDown '%c'", evt->xkey.keycode);
+            break;
+        case MotionNotify:
+        case EnterNotify:
+        case LeaveNotify:
+            break;
+        case FocusIn:
+            pluginLog(instance, "getFocusEvent");
+            break;
+        case FocusOut:
+            pluginLog(instance, "loseFocusEvent");
+            break;
+        default:
+            pluginLog(instance, "event %d", evt->type);
+    }
 
     return 0;
 }

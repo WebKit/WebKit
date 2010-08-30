@@ -4,6 +4,7 @@
 <p>This test checks if a plug-in can receive keyboard events sent from eventSender. This is a test for <a href="https://bugs.webkit.org/show_bug.cgi?id=34936">Bug 34936</a>.</p>
 <script>
 
+    plg.windowedPlugin = false;
     plg.eventLoggingEnabled = true;
 
     if (!window.layoutTestController) {

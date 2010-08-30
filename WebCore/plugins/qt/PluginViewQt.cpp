@@ -154,6 +154,13 @@ void PluginView::setFocus(bool focused)
     } else {
         Widget::setFocus(focused);
     }
+    if (!m_isWindowed) {
+      XEvent npEvent;
+      initXEvent(&npEvent);
+      npEvent.type = (focused) ? 9 : 10; // ints as Qt unsets FocusIn and FocusOut
+      if (!dispatchNPEvent(npEvent))
+          LOG(Events, "PluginView::setFocus(%d): Focus event not accepted", focused);
+    }
 }
 
 void PluginView::show()
@@ -374,6 +381,17 @@ void setXKeyEventSpecificFields(XEvent* xEvent, KeyboardEvent* event)
     xEvent->xkey.time = event->timeStamp();
     xEvent->xkey.state = qKeyEvent->nativeModifiers();
     xEvent->xkey.keycode = qKeyEvent->nativeScanCode();
+
+    // We may not have a nativeScanCode() if the key event is from DRT's eventsender. In that
+    // case just populate the XEvent's keycode with the Qt platform-independent keycode. The only
+    // place this keycode will be used is in webkit_test_plugin_handle_event().
+    if (QWebPagePrivate::drtRun && !xEvent->xkey.keycode) {
+        if (!qKeyEvent->text().isEmpty())
+            xEvent->xkey.keycode = int(qKeyEvent->text().at(0).unicode() + qKeyEvent->modifiers());
+        else if (qKeyEvent->key() && (qKeyEvent->key() != Qt::Key_unknown))
+            xEvent->xkey.keycode = int(qKeyEvent->key() + qKeyEvent->modifiers());
+    }
+
     xEvent->xkey.same_screen = true;
 
     // NOTE: As the XEvents sent to the plug-in are synthesized and there is not a native window

@@ -1,3 +1,27 @@
+2010-08-30  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        allow ports with windowed plugins to support windowless plugin tests
+
+        https://bugs.webkit.org/show_bug.cgi?id=40730
+
+        Ports that implement plugins windowed by default need to have a way of
+        supporting plugin tests that assume the plugin is windowless. Add this
+        feature to the tests and support it in the webkit test plugin. Also
+        add mouse and keyboard event logging to the webkit-test plugin on Unix.
+
+        Unskip the following tests on Qt:
+
+        plugins/mouse-events.html
+        plugins/keyboard-events.html
+        plugins/mouse-events-fixedpos.html
+
+        * platform/qt/Skipped:
+        * plugins/keyboard-events.html:
+        * plugins/mouse-events-fixedpos.html:
+        * plugins/mouse-events.html:
+
 2010-08-30  Evan Martin  <evan@chromium.org>
 
         Unreviewed, updating Chromium expectations.
