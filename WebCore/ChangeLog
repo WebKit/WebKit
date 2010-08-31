@@ -1,3 +1,27 @@
+2010-08-31  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=44828 FrameView 
+        should make more calls to postLayoutTasks() using the timer
+        -and corresponding-
+        <rdar://problem/8064938>
+
+        This change only allows synchronous calls to postLayoutTasks() if 
+        we are not already in a synchronous call to postLayoutTasks(). 
+        Furthermore, it de-couples the notion of "the post layout timer 
+        should fire" from m_postLayoutTasksTimer.isActive(), instead using 
+        a boolean to track the need to use the timer.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::~FrameView):
+        (WebCore::FrameView::reset):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::unscheduleRelayout):
+        (WebCore::FrameView::performPostLayoutTasks):
+        * page/FrameView.h:
+
 2010-08-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
