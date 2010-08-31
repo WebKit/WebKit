@@ -1,3 +1,15 @@
+2010-08-31  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed build fix.
+
+        [EFL] Build break for r66456
+        https://bugs.webkit.org/post_bug.cgi
+
+        Replace firstRectsForMarkers with renderedRectsForMarkers.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_text_matches_nth_pos_get):
+
 2010-08-30  Kamil Blank  <k.blank@samsung.com>
 
         Reviewed by Adam Barth.

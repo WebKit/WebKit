@@ -853,7 +853,7 @@ Eina_Bool ewk_frame_text_matches_nth_pos_get(Evas_Object* o, int n, int* x, int*
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, EINA_FALSE);
 
-    Vector<WebCore::IntRect> intRects = sd->frame->document()->markers()->firstRectsForMarkers(WebCore::DocumentMarker::TextMatch);
+    Vector<WebCore::IntRect> intRects = sd->frame->document()->markers()->renderedRectsForMarkers(WebCore::DocumentMarker::TextMatch);
 
     /* remove useless values */
     std::remove_if(intRects.begin(), intRects.end(), _ewk_frame_rect_is_negative_value);
