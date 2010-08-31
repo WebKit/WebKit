@@ -1,3 +1,25 @@
+2010-08-30  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed test expectation update.
+
+        Update Chromium test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=44859
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-80-t-expected.checksum: Removed. Test expectation was wrong.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-80-t-expected.png: Ditto.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-turb-01-f-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-turb-01-f-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-turb-02-f-expected.checksum: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-turb-02-f-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-80-t-expected.checksum: Removed.
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-80-t-expected.png: Removed.
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-turb-01-f-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-turb-01-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-turb-02-f-expected.checksum: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-turb-02-f-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-turb-02-f-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-08-30  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, updating Chromium expectations.
