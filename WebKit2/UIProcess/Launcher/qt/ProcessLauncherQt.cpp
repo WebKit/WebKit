@@ -37,6 +37,7 @@
 
 #include <QApplication>
 #include <QDebug>
+#include <QFile>
 #include <QLocalServer>
 #include <QProcess>
 
@@ -65,7 +66,15 @@ private:
 
 void ProcessLauncherHelper::launch(WebKit::ProcessLauncher* launcher)
 {
-    QString program("QtWebProcess " + m_server.serverName());
+    QString applicationPath = "%1 %2";
+
+    if (QFile::exists(QCoreApplication::applicationDirPath() + "/QtWebProcess")) {
+        applicationPath = applicationPath.arg(QCoreApplication::applicationDirPath() + "/QtWebProcess");
+    } else {
+        applicationPath = applicationPath.arg("QtWebProcess");
+    }
+
+    QString program(applicationPath.arg(m_server.serverName()));
 
     QProcess* webProcess = new QProcess();
     webProcess->setProcessChannelMode(QProcess::ForwardedChannels);

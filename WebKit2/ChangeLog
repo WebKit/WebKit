@@ -1,3 +1,13 @@
+2010-08-31  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Determine application path of MiniBrowser at runtime and use that path
+        for QtWebProcess if the executable exists in that path.
+
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        (WebKit::ProcessLauncherHelper::launch):
+
 2010-08-31  Zoltan Horvath  <zoltan@webkit.org>
 
         Build fix after r66448 on WebKit2.
