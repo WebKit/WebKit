@@ -1,3 +1,38 @@
+2010-08-31  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] ScrollbarThemeGtk should respond to theme changes
+        https://bugs.webkit.org/show_bug.cgi?id=44782
+
+        Scrollbar is currently written with the assumption that scrollbars never change
+        thickness. In GTK+ changing the current theme can alter scrollbar thickness. This
+        change manually resizes interior frame scrollbar widgets when the GTK+ theme changes.
+        Since we are now tracking style changes, we may also cache theme properties to avoid
+        having to call moz_gtk_get_scrollbar_metrics repeatedly during rendering.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::gtkScrollbar): Added accessor for the Mozilla theming code's
+        scrollbar widget. We access it here, because RenderThemGtk takes care of initializing
+        the Mozilla code.
+        * platform/gtk/RenderThemeGtk.h: Added accessor declaration.
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::ScrollbarThemeGtk::ScrollbarThemeGtk): Update the style property cache during construction.
+        (WebCore::ScrollbarThemeGtk::registerScrollbar): Track all interior frame scrollbars.
+        (WebCore::ScrollbarThemeGtk::unregisterScrollbar): Ditto.
+        (WebCore::ScrollbarThemeGtk::updateThemeProperties): Added this method which updates the style cache.
+        (WebCore::gtkStyleSetCallback): Added this signal handler for when the style changes.
+        (WebCore::ScrollbarThemeGtk::backButtonRect): Use the style cache instead of calling moz_gtk_get_scrollbar_metrics.
+        (WebCore::ScrollbarThemeGtk::forwardButtonRect): Ditto.
+        (WebCore::ScrollbarThemeGtk::trackRect): Ditto.
+        (WebCore::ScrollbarThemeGtk::paintTrackBackground): Ditto.
+        (WebCore::ScrollbarThemeGtk::thumbRect): Ditto.
+        (WebCore::ScrollbarThemeGtk::paint): Ditto.
+        (WebCore::ScrollbarThemeGtk::scrollbarThickness): Ditto.
+        (WebCore::ScrollbarThemeGtk::buttonSize): Ditto.
+        (WebCore::ScrollbarThemeGtk::minimumThumbLength): Ditto.
+        * platform/gtk/ScrollbarThemeGtk.h: Added new method declarations.
+
 2010-08-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders Carlsson.

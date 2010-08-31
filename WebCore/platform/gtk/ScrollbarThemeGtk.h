@@ -34,6 +34,7 @@ class Scrollbar;
 
 class ScrollbarThemeGtk : public ScrollbarThemeComposite {
 public:
+    ScrollbarThemeGtk();
     virtual ~ScrollbarThemeGtk();
 
     virtual bool hasButtons(Scrollbar*) { return true; }
@@ -56,7 +57,17 @@ public:
     // TODO: These are the default GTK+ values. At some point we should pull these from the theme itself.
     virtual double initialAutoscrollTimerDelay() { return 0.20; }
     virtual double autoscrollTimerDelay() { return 0.02; }
+    void updateThemeProperties();
+    void registerScrollbar(Scrollbar*);
+    void unregisterScrollbar(Scrollbar*);
 
+protected:
+    int m_thumbFatness;
+    int m_troughBorderWidth;
+    int m_stepperSize;
+    int m_stepperSpacing;
+    int m_minThumbLength;
+    bool m_troughUnderSteppers;
 };
 
 }

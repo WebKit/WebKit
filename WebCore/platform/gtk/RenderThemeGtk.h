@@ -85,6 +85,8 @@ public:
 
     bool paintMozillaGtkWidget(GtkThemeWidgetType, GraphicsContext*, const IntRect&, GtkWidgetState*, int flags, GtkTextDirection = GTK_TEXT_DIR_NONE);
 
+    GtkWidget* gtkScrollbar();
+
 protected:
     virtual bool paintCheckbox(RenderObject* o, const PaintInfo& i, const IntRect& r);
     virtual void setCheckboxSize(RenderStyle* style) const;
