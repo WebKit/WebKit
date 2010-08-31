@@ -1,3 +1,18 @@
+2010-08-31  Chao-ying Fu  <fu@mips.com>
+
+        Reviewed by Oliver Hunt.
+
+        Support emit_op_mod() for MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=42855
+
+        This patch uses MIPS div instructions for op_mod to improve performance.
+
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::div):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_mod):
+        (JSC::JIT::emitSlow_op_mod):
+
 2010-08-31  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Darin Adler.
