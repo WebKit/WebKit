@@ -333,7 +333,7 @@ void IDBObjectStoreBackendImpl::openCursor(PassRefPtr<IDBKeyRange> range, unsign
 
     OwnPtr<SQLiteStatement> query = adoptPtr(new SQLiteStatement(sqliteDatabase(), sql));
     bool ok = query->prepare() == SQLResultOk;
-    ASSERT(ok); // FIXME: Better error handling?
+    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
 
     int currentColumn = 1;
     if (range->flags() & IDBKeyRange::LEFT_BOUND || range->flags() == IDBKeyRange::SINGLE)

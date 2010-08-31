@@ -1,3 +1,10 @@
+2010-08-31  Jeremy Orlow  <jorlow@chromium.org>
+
+        Build fix.
+
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::openCursor):
+
 2010-08-24  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.
