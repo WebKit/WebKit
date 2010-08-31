@@ -8,5 +8,3 @@ WONTFIX : failures/expected/missing_image.html = MISSING PASS
 WONTFIX : failures/expected/missing_text.html = MISSING PASS
 WONTFIX : failures/expected/text.html = TEXT
 WONTFIX : failures/expected/timeout.html = TIMEOUT
-WONTFIX SKIP : failures/expected/keyboard.html = CRASH
-WONTFIX SKIP : failures/expected/exception.html = CRASH

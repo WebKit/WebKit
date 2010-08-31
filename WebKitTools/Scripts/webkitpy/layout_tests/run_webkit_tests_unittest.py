@@ -41,7 +41,6 @@ import threading
 import unittest
 
 from webkitpy.common import array_stream
-from webkitpy.common.system import outputcapture
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.layout_tests.layout_package import dump_render_tree_thread
@@ -49,139 +48,75 @@ from webkitpy.layout_tests.layout_package import dump_render_tree_thread
 from webkitpy.thirdparty.mock import Mock
 
 
-def passing_run(args=[], port_obj=None, record_results=False,
+def passing_run(args, port_obj=None, record_results=False,
                 tests_included=False):
-    new_args = ['--print', 'nothing']
-    if not '--platform' in args:
-        new_args.extend(['--platform', 'test'])
-    if not record_results:
-        new_args.append('--no-record-results')
-    new_args.extend(args)
+    args.extend(['--print', 'nothing'])
     if not tests_included:
         # We use the glob to test that globbing works.
-        new_args.extend(['passes', 'failures/expected/*'])
-    options, parsed_args = run_webkit_tests.parse_args(new_args)
+        args.extend(['passes', 'failures/expected/*'])
+    if not record_results:
+        args.append('--no-record-results')
+    options, args = run_webkit_tests.parse_args(args)
     if port_obj is None:
         port_obj = port.get(options.platform, options)
-    res = run_webkit_tests.run(port_obj, options, parsed_args)
+    res = run_webkit_tests.run(port_obj, options, args)
     return res == 0
 
 
-def logging_run(args=[], tests_included=False):
-    new_args = ['--no-record-results']
-    if not '--platform' in args:
-        new_args.extend(['--platform', 'test'])
-    if args:
-        new_args.extend(args)
+def logging_run(args, tests_included=False):
+    args.extend(['--no-record-results'])
     if not tests_included:
-        new_args.extend(['passes', 'failures/expected/*'])
-    options, parsed_args = run_webkit_tests.parse_args(new_args)
+        args.extend(['passes', 'failures/expected/*'])
+    options, args = run_webkit_tests.parse_args(args)
     port_obj = port.get(options.platform, options)
     buildbot_output = array_stream.ArrayStream()
     regular_output = array_stream.ArrayStream()
-    res = run_webkit_tests.run(port_obj, options, parsed_args,
+    res = run_webkit_tests.run(port_obj, options, args,
                                buildbot_output=buildbot_output,
                                regular_output=regular_output)
     return (res, buildbot_output, regular_output)
 
 
 class MainTest(unittest.TestCase):
-    def test_basic(self):
-        self.assertTrue(passing_run())
-
-    def test_batch_size(self):
-        # FIXME: verify # of tests run
-        self.assertTrue(passing_run(['--batch-size', '2']))
-
-    def test_child_process_1(self):
-        (res, buildbot_output, regular_output) = logging_run(
-             ['--print', 'config', '--child-processes', '1'])
-        self.assertTrue('Running one DumpRenderTree\n'
-                        in regular_output.get())
-
-    def test_child_processes_2(self):
-        (res, buildbot_output, regular_output) = logging_run(
-             ['--print', 'config', '--child-processes', '2'])
-        self.assertTrue('Running 2 DumpRenderTrees in parallel\n'
-                        in regular_output.get())
-
-    def test_exception_raised(self):
-        self.assertRaises(ValueError, logging_run,
-            ['failures/expected/exception.html'], tests_included=True)
-
-    def test_full_results_html(self):
-        # FIXME: verify html?
-        self.assertTrue(passing_run(['--full-results-html']))
-
-    def test_help_printing(self):
-        res, out, err = logging_run(['--help-printing'])
-        self.assertEqual(res, 0)
-        self.assertTrue(out.empty())
-        self.assertFalse(err.empty())
-
-    def test_keyboard_interrupt(self):
-        # Note that this also tests running a test marked as SKIP if
-        # you specify it explicitly.
-        self.assertRaises(KeyboardInterrupt, passing_run,
-            ['failures/expected/keyboard.html'], tests_included=True)
-
-    def test_last_results(self):
-        passing_run(['--clobber-old-results'], record_results=True)
-        (res, buildbot_output, regular_output) = logging_run(
-            ['--print-last-failures'])
-        self.assertEqual(regular_output.get(), ['\n\n'])
-        self.assertEqual(buildbot_output.get(), [])
-
-    def test_lint_test_files(self):
-        # FIXME:  add errors?
-        res, out, err = logging_run(['--lint-test-files'], tests_included=True)
-        self.assertEqual(res, 0)
-        self.assertTrue(out.empty())
-        self.assertTrue(any(['lint succeeded' in msg for msg in err.get()]))
-
-    def test_no_tests_found(self):
-        res, out, err = logging_run(['resources'], tests_included=True)
-        self.assertEqual(res, -1)
-        self.assertTrue(out.empty())
-        self.assertTrue('No tests to run.\n' in err.get())
-
-    def test_no_tests_found_2(self):
-        res, out, err = logging_run(['foo'], tests_included=True)
-        self.assertEqual(res, -1)
-        self.assertTrue(out.empty())
-        self.assertTrue('No tests to run.\n' in err.get())
-
-    def test_randomize_order(self):
-        # FIXME: verify order was shuffled
-        self.assertTrue(passing_run(['--randomize-order']))
-
-    def test_run_chunk(self):
-        # FIXME: verify # of tests run
-        self.assertTrue(passing_run(['--run-chunk', '1:4']))
-
-    def test_run_force(self):
-        # This raises an exception because we run
-        # failures/expected/exception.html, which is normally SKIPped.
-        self.assertRaises(ValueError, logging_run, ['--force'])
-
-    def test_run_part(self):
-        # FIXME: verify # of tests run
-        self.assertTrue(passing_run(['--run-part', '1:2']))
-
-    def test_run_singly(self):
-        self.assertTrue(passing_run(['--run-singly']))
-
-    def test_single_file(self):
-        # FIXME: verify # of tests run
-        self.assertTrue(passing_run(['passes/text.html'], tests_included=True))
+    def test_fast(self):
+        self.assertTrue(passing_run(['--platform', 'test']))
+        self.assertTrue(passing_run(['--platform', 'test', '--run-singly']))
+        self.assertTrue(passing_run(['--platform', 'test',
+                                     'passes/text.html'], tests_included=True))
 
     def test_unexpected_failures(self):
         # Run tests including the unexpected failures.
-        res, out, err = logging_run(tests_included=True)
-        self.assertEqual(res, 1)
-        self.assertFalse(out.empty())
-        self.assertFalse(err.empty())
+        self.assertFalse(passing_run(['--platform', 'test'],
+                         tests_included=True))
 
+    def test_one_child_process(self):
+        (res, buildbot_output, regular_output) = logging_run(
+             ['--platform', 'test', '--print', 'config', '--child-processes',
+              '1'])
+        self.assertTrue('Running one DumpRenderTree\n'
+                        in regular_output.get())
+
+    def test_two_child_processes(self):
+        (res, buildbot_output, regular_output) = logging_run(
+             ['--platform', 'test', '--print', 'config', '--child-processes',
+              '2'])
+        self.assertTrue('Running 2 DumpRenderTrees in parallel\n'
+                        in regular_output.get())
+
+    def test_last_results(self):
+        passing_run(['--platform', 'test'], record_results=True)
+        (res, buildbot_output, regular_output) = logging_run(
+            ['--platform', 'test', '--print-last-failures'])
+        self.assertEqual(regular_output.get(), ['\n\n'])
+        self.assertEqual(buildbot_output.get(), [])
+
+    def test_no_tests_found(self):
+        self.assertRaises(SystemExit, logging_run,
+                          ['--platform', 'test', 'resources'],
+                          tests_included=True)
+        self.assertRaises(SystemExit, logging_run,
+                          ['--platform', 'test', 'foo'],
+                          tests_included=True)
 
 def _mocked_open(original_open, file_list):
     def _wrapper(name, mode, encoding):
@@ -209,7 +144,7 @@ class RebaselineTest(unittest.TestCase):
             # is missing, update the expected generic location.
             file_list = []
             codecs.open = _mocked_open(original_open, file_list)
-            passing_run(['--pixel-tests',
+            passing_run(['--platform', 'test', '--pixel-tests',
                          '--reset-results',
                          'passes/image.html',
                          'failures/expected/missing_image.html'],
@@ -230,7 +165,7 @@ class RebaselineTest(unittest.TestCase):
             # is mssing, then create a new expectation in the platform dir.
             file_list = []
             codecs.open = _mocked_open(original_open, file_list)
-            passing_run(['--pixel-tests',
+            passing_run(['--platform', 'test', '--pixel-tests',
                          '--new-baseline',
                          'passes/image.html',
                          'failures/expected/missing_image.html'],
@@ -273,7 +208,6 @@ class DryrunTest(unittest.TestCase):
         if sys.platform != "darwin":
             return
 
-        self.assertTrue(passing_run(['--platform', 'test']))
         self.assertTrue(passing_run(['--platform', 'dryrun',
                                      'fast/html']))
         self.assertTrue(passing_run(['--platform', 'dryrun-mac',
@@ -289,11 +223,6 @@ class TestThread(dump_render_tree_thread.WatchableThread):
         self._timeout_queue = Queue.Queue()
 
     def run(self):
-        self._covered_run()
-
-    def _covered_run(self):
-        # FIXME: this is a separate routine to work around a bug
-        # in coverage: see http://bitbucket.org/ned/coveragepy/issue/85.
         self._thread_id = thread.get_ident()
         try:
             self._started_queue.put('')
@@ -355,11 +284,8 @@ class WaitForThreadsToFinishTest(unittest.TestCase):
         self.assertTrue(interrupted)
 
     def test_timeout(self):
-        oc = outputcapture.OutputCapture()
-        oc.capture_output()
         interrupted = self.run_one_thread('Timeout')
         self.assertFalse(interrupted)
-        oc.restore_output()
 
     def test_exception(self):
         self.assertRaises(ValueError, self.run_one_thread, 'Exception')
@@ -367,8 +293,6 @@ class WaitForThreadsToFinishTest(unittest.TestCase):
 
 class StandaloneFunctionsTest(unittest.TestCase):
     def test_log_wedged_thread(self):
-        oc = outputcapture.OutputCapture()
-        oc.capture_output()
         logger = run_webkit_tests._log
         astream = array_stream.ArrayStream()
         handler = TestHandler(astream)
@@ -386,7 +310,6 @@ class StandaloneFunctionsTest(unittest.TestCase):
 
         self.assertFalse(astream.empty())
         self.assertFalse(child_thread.isAlive())
-        oc.restore_output()
 
     def test_find_thread_stack(self):
         id, stack = sys._current_frames().items()[0]

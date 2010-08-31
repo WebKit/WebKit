@@ -169,11 +169,6 @@ class SingleTestThread(threading.Thread):
         self._output_dir = output_dir
 
     def run(self):
-        self._covered_run()
-
-    def _covered_run(self):
-        # FIXME: this is a separate routine to work around a bug
-        # in coverage: see http://bitbucket.org/ned/coveragepy/issue/85.
         test_info = self._test_info
         driver = self._port.create_driver(self._image_path, self._shell_args)
         driver.start()
@@ -292,11 +287,6 @@ class TestShellThread(WatchableThread):
     def run(self):
         """Delegate main work to a helper method and watch for uncaught
         exceptions."""
-        self._covered_run()
-
-    def _covered_run(self):
-        # FIXME: this is a separate routine to work around a bug
-        # in coverage: see http://bitbucket.org/ned/coveragepy/issue/85.
         self._thread_id = thread.get_ident()
         self._start_time = time.time()
         self._num_tests = 0
@@ -313,9 +303,9 @@ class TestShellThread(WatchableThread):
             self._exception_info = sys.exc_info()
             self._stop_time = time.time()
             # Re-raise it and die.
-            _log.error('%s dying, exception raised: %s' % (self.getName(),
+            _log.error('%s dying: %s' % (self.getName(),
                        self._exception_info))
-
+            raise
         self._stop_time = time.time()
 
     def run_in_main_thread(self, test_runner, result_summary):
@@ -331,8 +321,14 @@ class TestShellThread(WatchableThread):
 
         If test_runner is not None, then we call test_runner.UpdateSummary()
         with the results of each test."""
-        batch_size = self._options.batch_size
+        batch_size = 0
         batch_count = 0
+        if self._options.batch_size:
+            try:
+                batch_size = int(self._options.batch_size)
+            except:
+                _log.info("Ignoring invalid batch size '%s'" %
+                          self._options.batch_size)
 
         # Append tests we're running to the existing tests_run.txt file.
         # This is created in run_webkit_tests.py:_PrepareListsAndPrintOutput.

@@ -106,11 +106,12 @@ class TestInfo:
         self._image_hash = None
 
     def _read_image_hash(self):
-        if not os.path.exists(self._expected_hash_path):
-            return None
-
-        with codecs.open(self._expected_hash_path, "r", "ascii") as hash_file:
-            return hash_file.read()
+        try:
+            with codecs.open(self._expected_hash_path, "r", "ascii") as hash_file:
+                return hash_file.read()
+        except IOError, e:
+            if errno.ENOENT != e.errno:
+                raise
 
     def image_hash(self):
         # Read the image_hash lazily to reduce startup time.
@@ -335,8 +336,8 @@ class TestRunner:
         self._printer.print_expected("Found:  %d tests" %
                                      (len(self._test_files)))
         if not num_all_test_files:
-            _log.critical('No tests to run.')
-            return None
+            _log.critical("No tests to run.")
+            sys.exit(1)
 
         skipped = set()
         if num_all_test_files > 1 and not self._options.force:
@@ -725,11 +726,8 @@ class TestRunner:
         Return:
           The number of unexpected results (0 == success)
         """
-        # gather_test_files() must have been called first to initialize us.
-        # If we didn't find any files to test, we've errored out already in
-        # prepare_lists_and_print_output().
-        assert(len(self._test_files))
-
+        if not self._test_files:
+            return 0
         start_time = time.time()
 
         if self.needs_http():
@@ -1424,8 +1422,6 @@ def run(port_obj, options, args, regular_output=sys.stderr,
 
     printer.print_update("Preparing tests ...")
     result_summary = test_runner.prepare_lists_and_print_output()
-    if not result_summary:
-        return -1
 
     port_obj.setup_test_run()
 
@@ -1436,8 +1432,6 @@ def run(port_obj, options, args, regular_output=sys.stderr,
     num_unexpected_results = test_runner.run(result_summary)
 
     port_obj.stop_helper()
-
-    printer.cleanup()
 
     _log.debug("Exit status: %d" % num_unexpected_results)
     return num_unexpected_results
@@ -1603,7 +1597,7 @@ def parse_args(args=None):
         #   Restart DumpRenderTree every n tests (default: 1000)
         optparse.make_option("--batch-size",
             help=("Run a the tests in batches (n), after every n tests, "
-                  "DumpRenderTree is relaunched."), type="int", default=0),
+                  "DumpRenderTree is relaunched.")),
         # old-run-webkit-tests calls --run-singly: -1|--singly
         # Isolate each test case run (implies --nthly 1 --verbose)
         optparse.make_option("--run-singly", action="store_true",
