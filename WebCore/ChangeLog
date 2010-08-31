@@ -1,3 +1,14 @@
+2010-08-31  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Improve BlobBuilder to combine adjacent strings.
+        https://bugs.webkit.org/post_bug.cgi
+
+        * fileapi/BlobBuilder.cpp:
+        (WebCore::addTwoCStrings):
+        (WebCore::BlobBuilder::append):
+
 2010-08-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Simon Fraser.

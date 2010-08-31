@@ -57,6 +57,20 @@ static CString convertToCString(const String& text, const String& endingType, Ex
     return CString();
 }
 
+static CString addTwoCStrings(const CString& a, const CString& b)
+{
+    if (a.isNull() && b.isNull())
+        return CString();
+
+    char* q;
+    CString result = CString::newUninitialized(a.length() + b.length(), q);
+    if (a.length())
+        memcpy(q, a.data(), a.length());
+    if (b.length())
+        memcpy(q + a.length(), b.data(), b.length());
+    return result;
+}
+
 BlobBuilder::BlobBuilder()
     : m_size(0)
 {
@@ -69,7 +83,12 @@ bool BlobBuilder::append(const String& text, const String& endingType, Exception
         return false;
 
     m_size += cstr.length();
-    m_items.append(BlobDataItem(cstr));
+
+    // If the last item is a string, concatenate it with current string.
+    if (!m_items.isEmpty() && m_items[m_items.size() - 1].type == BlobDataItem::Data)
+        m_items[m_items.size() - 1].data = addTwoCStrings(m_items[m_items.size() - 1].data, cstr);
+    else
+        m_items.append(BlobDataItem(cstr));
     return true;
 }
 
