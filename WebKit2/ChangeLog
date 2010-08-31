@@ -1,5 +1,12 @@
 2010-08-30  Sam Weinig  <sam@webkit.org>
 
+        Try and fix the WebKit2 buildbot.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Add missing initialization of QTMovieDisableComponent.
+
+2010-08-30  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Add URLRequest API for WebKit2
