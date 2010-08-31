@@ -546,15 +546,8 @@ IF (ENABLE_SVG)
 ENDIF()
 
 SET(WebCore_SOURCES
-    ${DERIVED_SOURCES_DIR}/HTMLElementFactory.cpp
     ${DERIVED_SOURCES_DIR}/HTMLEntityTable.cpp
-    ${DERIVED_SOURCES_DIR}/HTMLNames.cpp
-    ${DERIVED_SOURCES_DIR}/JSHTMLElementWrapperFactory.cpp
-    ${DERIVED_SOURCES_DIR}/MathMLElementFactory.cpp
-    ${DERIVED_SOURCES_DIR}/MathMLNames.cpp
     ${DERIVED_SOURCES_DIR}/UserAgentStyleSheetsData.cpp
-    ${DERIVED_SOURCES_DIR}/XMLNames.cpp
-    ${DERIVED_SOURCES_DIR}/XMLNSNames.cpp
     ${DERIVED_SOURCES_DIR}/InspectorBackendDispatcher.cpp
     ${DERIVED_SOURCES_DIR}/JSWebSocket.cpp
 
@@ -1588,10 +1581,6 @@ ENDIF ()
 
 IF (ENABLE_SVG)
     LIST(APPEND WebCore_SOURCES
-        ${DERIVED_SOURCES_DIR}/JSSVGElementWrapperFactory.cpp
-        ${DERIVED_SOURCES_DIR}/SVGElementFactory.cpp
-        ${DERIVED_SOURCES_DIR}/SVGNames.cpp
-        ${DERIVED_SOURCES_DIR}/XLinkNames.cpp
         bindings/js/JSSVGElementInstanceCustom.cpp
         bindings/js/JSSVGLengthCustom.cpp
         bindings/js/JSSVGMatrixCustom.cpp
@@ -1832,8 +1821,6 @@ ENDIF()
 
 IF (ENABLE_WML)
     LIST(APPEND WebCore_SOURCES
-        ${DERIVED_SOURCES_DIR}/WMLElementFactory.cpp
-        ${DERIVED_SOURCES_DIR}/WMLNames.cpp
         wml/WMLAElement.cpp
         wml/WMLAccessElement.cpp
         wml/WMLAnchorElement.cpp
@@ -1925,13 +1912,43 @@ ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSParser.cpp tokenizer.cpp)
 ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/HTMLTreeBuilder.cpp MathMLNames.cpp)
 ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSStyleSelector.cpp UserAgentStyleSheetsData.cpp UserAgentStyleSheets.h)
 
-GENERATE_DOM_NAMES_FACTORY(HTML ${WEBCORE_DIR}/html/HTMLTagNames.in ${WEBCORE_DIR}/html/HTMLAttributeNames.in "${HTML_FEATURES}")
-GENERATE_DOM_NAMES_FACTORY(MathML ${WEBCORE_DIR}/mathml/mathtags.in ${WEBCORE_DIR}/mathml/mathattrs.in "${MATHML_FEATURES}")
-GENERATE_DOM_NAMES_FACTORY(SVG ${WEBCORE_DIR}/svg/svgtags.in ${WEBCORE_DIR}/svg/svgattrs.in "${SVG_FEATURES}")
-GENERATE_DOM_NAMES_FACTORY(WML ${WEBCORE_DIR}/wml/WMLTagNames.in ${WEBCORE_DIR}/wml/WMLAttributeNames.in "${WML_FEATURES}")
-GENERATE_DOM_NAMES_ONLY(XLink ${WEBCORE_DIR}/svg/xlinkattrs.in)
-GENERATE_DOM_NAMES_ONLY(XMLNS ${WEBCORE_DIR}/xml/xmlnsattrs.in)
-GENERATE_DOM_NAMES_ONLY(XML ${WEBCORE_DIR}/xml/xmlattrs.in)
+
+GENERATE_DOM_NAMES(HTML ${WEBCORE_DIR}/html/HTMLAttributeNames.in ${WEBCORE_DIR}/html/HTMLTagNames.in "${HTML_FEATURES}")
+LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/HTMLNames.cpp ${DERIVED_SOURCES_DIR}/HTMLElementFactory.cpp ${DERIVED_SOURCES_DIR}/JSHTMLElementWrapperFactory.cpp)
+
+
+GENERATE_DOM_NAMES(MathML ${WEBCORE_DIR}/mathml/mathattrs.in ${WEBCORE_DIR}/mathml/mathtags.in "${MATHML_FEATURES}")
+LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/MathMLNames.cpp)
+IF (ENABLE_MATHML)
+    LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/MathMLElementFactory.cpp ${DERIVED_SOURCES_DIR}/JSMathMLElementWrapperFactory.cpp)
+ENDIF ()
+
+
+GENERATE_DOM_NAMES(SVG ${WEBCORE_DIR}/svg/svgattrs.in ${WEBCORE_DIR}/svg/svgtags.in "${SVG_FEATURES}")
+LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/SVGNames.cpp)
+IF (ENABLE_SVG)
+    LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/SVGElementFactory.cpp ${DERIVED_SOURCES_DIR}/JSSVGElementWrapperFactory.cpp)
+ENDIF ()
+
+
+GENERATE_DOM_NAMES(WML ${WEBCORE_DIR}/wml/WMLAttributeNames.in ${WEBCORE_DIR}/wml/WMLTagNames.in "${WML_FEATURES}")
+LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/WMLNames.cpp)
+IF (ENABLE_WML)
+    LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/WMLElementFactory.cpp ${DERIVED_SOURCES_DIR}/JSWMLElementWrapperFactory.cpp)
+ENDIF ()
+
+
+GENERATE_DOM_NAMES(XLink ${WEBCORE_DIR}/svg/xlinkattrs.in)
+LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/XLinkNames.cpp)
+
+
+GENERATE_DOM_NAMES(XMLNS ${WEBCORE_DIR}/xml/xmlnsattrs.in)
+LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/XMLNSNames.cpp)
+
+
+GENERATE_DOM_NAMES(XML ${WEBCORE_DIR}/xml/xmlattrs.in)
+LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/XMLNames.cpp)
+
 
 SET(WebCore_LIBRARIES
     ${JavaScriptCore_LIBRARY_NAME}
