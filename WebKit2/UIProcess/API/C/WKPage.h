@@ -61,6 +61,7 @@ typedef void (*WKPageDidStartProvisionalLoadForFrameCallback)(WKPageRef page, WK
 typedef void (*WKPageDidReceiveServerRedirectForProvisionalLoadForFrameCallback)(WKPageRef page, WKFrameRef frame, const void *clientInfo);
 typedef void (*WKPageDidFailProvisionalLoadWithErrorForFrameCallback)(WKPageRef page, WKFrameRef frame, const void *clientInfo); // FIXME: Add WKErrorRef.
 typedef void (*WKPageDidCommitLoadForFrameCallback)(WKPageRef page, WKFrameRef frame, const void *clientInfo);
+typedef void (*WKPageDidFinishDocumentLoadForFrameCallback)(WKPageRef page, WKFrameRef frame, const void *clientInfo);
 typedef void (*WKPageDidFinishLoadForFrameCallback)(WKPageRef page, WKFrameRef frame, const void *clientInfo);
 typedef void (*WKPageDidFailLoadWithErrorForFrameCallback)(WKPageRef page, WKFrameRef frame, const void *clientInfo); // FIXME: Add WKErrorRef.
 typedef void (*WKPageDidReceiveTitleForFrameCallback)(WKPageRef page, WKStringRef title, WKFrameRef frame, const void *clientInfo);
@@ -87,6 +88,7 @@ struct WKPageLoaderClient {
     WKPageDidReceiveServerRedirectForProvisionalLoadForFrameCallback    didReceiveServerRedirectForProvisionalLoadForFrame;
     WKPageDidFailProvisionalLoadWithErrorForFrameCallback               didFailProvisionalLoadWithErrorForFrame;
     WKPageDidCommitLoadForFrameCallback                                 didCommitLoadForFrame;
+    WKPageDidFinishDocumentLoadForFrameCallback                         didFinishDocumentLoadForFrame;
     WKPageDidFinishLoadForFrameCallback                                 didFinishLoadForFrame;
     WKPageDidFailLoadWithErrorForFrameCallback                          didFailLoadWithErrorForFrame;
     WKPageDidReceiveTitleForFrameCallback                               didReceiveTitleForFrame;

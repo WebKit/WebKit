@@ -50,6 +50,7 @@ enum Kind {
     DidCreateSubFrame,
     DidFailLoadForFrame,
     DidFailProvisionalLoadForFrame,
+    DidFinishDocumentLoadForFrame,
     DidFinishLoadForFrame,
     DidFinishProgress,
     DidFirstLayoutForFrame,

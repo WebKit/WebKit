@@ -172,6 +172,11 @@ static void didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, const void *
     [(BrowserWindowController *)clientInfo didCommitLoadForFrame:frame];
 }
 
+static void didFinishDocumentLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
+{
+    LOG(@"didFinishDocumentLoadForFrame");
+}
+
 static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
 {
     LOG(@"didFinishLoadForFrame");
@@ -379,6 +384,7 @@ static WKStringRef runJavaScriptPrompt(WKPageRef page, WKStringRef message, WKSt
         didReceiveServerRedirectForProvisionalLoadForFrame,
         didFailProvisionalLoadWithErrorForFrame,
         didCommitLoadForFrame,
+        didFinishDocumentLoadForFrame,
         didFinishLoadForFrame,
         didFailLoadWithErrorForFrame,
         didReceiveTitleForFrame,

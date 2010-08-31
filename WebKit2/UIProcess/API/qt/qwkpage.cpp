@@ -225,6 +225,7 @@ QWKPage::QWKPage(WKPageNamespaceRef namespaceRef)
         qt_wk_didReceiveServerRedirectForProvisionalLoadForFrame,
         qt_wk_didFailProvisionalLoadWithErrorForFrame,
         qt_wk_didCommitLoadForFrame,
+        qt_wk_didFinishDocumentLoadForFrame,
         qt_wk_didFinishLoadForFrame,
         qt_wk_didFailLoadWithErrorForFrame,
         qt_wk_didReceiveTitleForFrame,

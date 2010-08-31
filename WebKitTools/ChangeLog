@@ -1,3 +1,18 @@
+2010-08-30  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add missing parts of didFinishDocumentLoadForFrame
+        https://bugs.webkit.org/show_bug.cgi?id=44913
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (didFinishDocumentLoadForFrame): Added
+        (-[BrowserWindowController awakeFromNib]): Updated struct
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage): Rearranged function ptr
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize): Updated struct
+
 2010-08-30  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Unreviewed: Add myself to the list of Committers.

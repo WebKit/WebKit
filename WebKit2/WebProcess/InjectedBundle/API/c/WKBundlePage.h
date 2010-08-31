@@ -53,6 +53,7 @@ typedef void (*WKBundlePageDidStartProvisionalLoadForFrameCallback)(WKBundlePage
 typedef void (*WKBundlePageDidReceiveServerRedirectForProvisionalLoadForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo);
 typedef void (*WKBundlePageDidFailProvisionalLoadWithErrorForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo); // FIXME: Add WKErrorRef.
 typedef void (*WKBundlePageDidCommitLoadForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo);
+typedef void (*WKBundlePageDidDocumentFinishLoadForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo);
 typedef void (*WKBundlePageDidFinishLoadForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo);
 typedef void (*WKBundlePageDidFailLoadWithErrorForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo); // FIXME: Add WKErrorRef.
 typedef void (*WKBundlePageDidReceiveTitleForFrameCallback)(WKBundlePageRef page, WKStringRef title, WKBundleFrameRef frame, const void *clientInfo);
@@ -73,6 +74,7 @@ struct WKBundlePageLoaderClient {
     WKBundlePageDidReceiveServerRedirectForProvisionalLoadForFrameCallback    didReceiveServerRedirectForProvisionalLoadForFrame;
     WKBundlePageDidFailProvisionalLoadWithErrorForFrameCallback         didFailProvisionalLoadWithErrorForFrame;
     WKBundlePageDidCommitLoadForFrameCallback                           didCommitLoadForFrame;
+    WKBundlePageDidFinishDocumentLoadForFrameCallback                   didFinishDocumentLoadForFrame;
     WKBundlePageDidFinishLoadForFrameCallback                           didFinishLoadForFrame;
     WKBundlePageDidFailLoadWithErrorForFrameCallback                    didFailLoadWithErrorForFrame;
     WKBundlePageDidReceiveTitleForFrameCallback                         didReceiveTitleForFrame;
@@ -80,7 +82,6 @@ struct WKBundlePageLoaderClient {
     WKBundlePageDidCancelClientRedirectForFrameCallback                 didCancelClientRedirectForFrame;
     WKBundlePageWillPerformClientRedirectForFrameCallback               willPerformClientRedirectForFrame;
     WKBundlePageDidChangeLocationWithinPageForFrameCallback             didChangeLocationWithinPageForFrame;
-    WKBundlePageDidFinishDocumentLoadForFrameCallback                   didFinishDocumentLoadForFrame;
     WKBundlePageDidHandleOnloadEventsForFrameCallback                   didHandleOnloadEventsForFrame;
     WKBundlePageDidDisplayInsecureContentForFrameCallback               didDisplayInsecureContentForFrame;
     WKBundlePageDidRunInsecureContentForFrameCallback                   didRunInsecureContentForFrame;

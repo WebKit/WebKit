@@ -1,3 +1,28 @@
+2010-08-30  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add missing parts of didFinishDocumentLoadForFrame
+        https://bugs.webkit.org/show_bug.cgi?id=44913
+
+        * Shared/CoreIPCSupport/WebPageProxyMessageKinds.h: Added new kind
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::QWKPage): Updated struct
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::didFinishDocumentLoadForFrame): Added
+        * UIProcess/WebLoaderClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessage): Added case for WebPageProxyMessage::DidFinishDocumentLoadForFrame
+        (WebKit::WebPageProxy::didFinishDocumentLoadForFrame): Added
+        * UIProcess/WebPageProxy.h:
+
+        Just rearranging existing code in these:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::didFinishDocumentLoadForFrame):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+
 2010-08-30  Sam Weinig  <sam@webkit.org>
 
         Try and fix the WebKit2 buildbot.

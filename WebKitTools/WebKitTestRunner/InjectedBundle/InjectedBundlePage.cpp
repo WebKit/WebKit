@@ -100,6 +100,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         didReceiveServerRedirectForProvisionalLoadForFrame,
         didFailProvisionalLoadWithErrorForFrame,
         didCommitLoadForFrame,
+        didFinishDocumentLoadForFrame,
         didFinishLoadForFrame,
         didFailLoadWithErrorForFrame,
         didReceiveTitleForFrame,
@@ -107,7 +108,6 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         didCancelClientRedirectForFrame,
         willPerformClientRedirectForFrame,
         didChangeLocationWithinPageForFrame,
-        didFinishDocumentLoadForFrame,
         didHandleOnloadEventsForFrame,
         didDisplayInsecureContentForFrame,
         didRunInsecureContentForFrame

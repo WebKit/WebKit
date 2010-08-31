@@ -186,6 +186,7 @@ private:
     void didReceiveServerRedirectForProvisionalLoadForFrame(WebFrameProxy*);
     void didFailProvisionalLoadForFrame(WebFrameProxy*);
     void didCommitLoadForFrame(WebFrameProxy*);
+    void didFinishDocumentLoadForFrame(WebFrameProxy*);
     void didFinishLoadForFrame(WebFrameProxy*);
     void didFailLoadForFrame(WebFrameProxy*);
     void didReceiveTitleForFrame(WebFrameProxy*, const WTF::String&);

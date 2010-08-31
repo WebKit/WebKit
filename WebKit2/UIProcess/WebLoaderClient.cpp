@@ -67,6 +67,12 @@ void WebLoaderClient::didCommitLoadForFrame(WebPageProxy* page, WebFrameProxy* f
         m_pageLoaderClient.didCommitLoadForFrame(toRef(page), toRef(frame), m_pageLoaderClient.clientInfo);
 }
 
+void WebLoaderClient::didFinishDocumentLoadForFrame(WebPageProxy* page, WebFrameProxy* frame)
+{
+    if (m_pageLoaderClient.didFinishDocumentLoadForFrame)
+        m_pageLoaderClient.didFinishDocumentLoadForFrame(toRef(page), toRef(frame), m_pageLoaderClient.clientInfo);
+}
+
 void WebLoaderClient::didFinishLoadForFrame(WebPageProxy* page, WebFrameProxy* frame)
 {
     if (m_pageLoaderClient.didFinishLoadForFrame)

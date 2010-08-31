@@ -44,6 +44,7 @@ public:
     void didReceiveServerRedirectForProvisionalLoadForFrame(WebPage*, WebFrame*);
     void didFailProvisionalLoadWithErrorForFrame(WebPage*, WebFrame*);
     void didCommitLoadForFrame(WebPage*, WebFrame*);
+    void didFinishDocumentLoadForFrame(WebPage*, WebFrame*);
     void didFinishLoadForFrame(WebPage*, WebFrame*);
     void didFailLoadWithErrorForFrame(WebPage*, WebFrame*);
     void didReceiveTitleForFrame(WebPage*, const WTF::String&, WebFrame*);
@@ -51,7 +52,6 @@ public:
     void didCancelClientRedirectForFrame(WebPage*, WebFrame*);
     void willPerformClientRedirectForFrame(WebPage*, WebFrame*, const WTF::String& url, double delay, double date);
     void didChangeLocationWithinPageForFrame(WebPage*, WebFrame*);
-    void didFinishDocumentLoadForFrame(WebPage*, WebFrame*);
     void didHandleOnloadEventsForFrame(WebPage*, WebFrame*);
     void didDisplayInsecureContentForFrame(WebPage*, WebFrame*);
     void didRunInsecureContentForFrame(WebPage*, WebFrame*);

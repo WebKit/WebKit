@@ -171,6 +171,7 @@ void TestController::initialize(int argc, const char* argv[])
         0,
         0,
         0,
+        0,
         didFinishLoadForFrame,
         0,
         0,
