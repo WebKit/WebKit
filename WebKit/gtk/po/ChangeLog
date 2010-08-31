@@ -1,3 +1,32 @@
+2010-08-31  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Refreshed all po files with the latest potfile.
+
+        * cs.po:
+        * de.po:
+        * en_GB.po:
+        * es.po:
+        * et.po:
+        * gl.po:
+        * gu.po:
+        * he.po:
+        * it.po:
+        * lt.po:
+        * lv.po:
+        * nb.po:
+        * nl.po:
+        * pa.po:
+        * pt.po:
+        * pt_BR.po:
+        * ru.po:
+        * sl.po:
+        * sr.po:
+        * sr@latin.po:
+        * sv.po:
+        * uk.po:
+        * vi.po:
+        * zh_CN.po:
+
 2010-08-31  Jorge González  <aloriel@gmail.com>
 
         Reviewed by Gustavo Noronha.

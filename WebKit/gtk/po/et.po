@@ -11,793 +11,1135 @@ msgid ""
 msgstr ""
 "Project-Id-Version: webkit 1.1.22\n"
 "Report-Msgid-Bugs-To: http://bugs.webkit.org/\n"
-"POT-Creation-Date: 2010-02-16 15:01-0200\n"
+"POT-Creation-Date: 2010-08-31 15:58-0300\n"
 "PO-Revision-Date: 2010-02-23 14:25+0300\n"
 "Last-Translator: Priit Laes <rene87@hot.ee>\n"
 "Language-Team: Estonian <gnome-et@linux.ee>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: et\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp:569
 msgid "Upload File"
 msgstr "Faili valimine"
 
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:61
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:143
 msgid "Input _Methods"
 msgstr "Sisestus_meetodid"
 
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:78
 msgid "LRM _Left-to-right mark"
 msgstr "LRM _Vasakult paremale märk"
 
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:79
 msgid "RLM _Right-to-left mark"
 msgstr "RLM _Paremalt vasakule märk"
 
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:80
 msgid "LRE Left-to-right _embedding"
 msgstr "LRE Va_sakult paremale põimimine"
 
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:81
 msgid "RLE Right-to-left e_mbedding"
 msgstr "RLE Pa_remalt vasakule põimimine"
 
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:82
 msgid "LRO Left-to-right _override"
 msgstr "LRO Vasakult paremale ü_lekirjutamine"
 
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:83
 msgid "RLO Right-to-left o_verride"
 msgstr "RLO Paremalt vasakule üle_kirjutamine"
 
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:84
 msgid "PDF _Pop directional formatting"
 msgstr "PDF _Suundvormindus"
 
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:85
 msgid "ZWS _Zero width space"
 msgstr "ZWS _Null-laiusega tühik"
 
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:86
 msgid "ZWJ Zero width _joiner"
 msgstr "ZWJ Null-laiusega ü_hendaja"
 
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:87
 msgid "ZWNJ Zero width _non-joiner"
 msgstr "ZWJ Null-laiusega _mitteühendaja"
 
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:109
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:138
 msgid "_Insert Unicode Control Character"
 msgstr "L_isa Unicode'i juhtmärk"
 
+#: WebKit/gtk/WebCoreSupport/FullscreenVideoController.cpp:385
+msgid "Play"
+msgstr ""
+
+#: WebKit/gtk/WebCoreSupport/FullscreenVideoController.cpp:387
+#, fuzzy
+msgid "Pause"
+msgstr "paus"
+
+#: WebKit/gtk/WebCoreSupport/FullscreenVideoController.cpp:533
+msgid "Play / Pause"
+msgstr ""
+
+#: WebKit/gtk/WebCoreSupport/FullscreenVideoController.cpp:533
+msgid "Play or pause the media"
+msgstr ""
+
+#: WebKit/gtk/WebCoreSupport/FullscreenVideoController.cpp:541
+msgid "Time:"
+msgstr ""
+
+#: WebKit/gtk/WebCoreSupport/FullscreenVideoController.cpp:565
+#, fuzzy
+msgid "Exit Fullscreen"
+msgstr "täisekraan"
+
+#: WebKit/gtk/WebCoreSupport/FullscreenVideoController.cpp:565
+#, fuzzy
+msgid "Exit from fullscreen mode"
+msgstr "Filmi esitamine täisekraanvaates"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:272
 msgid "Network Request"
 msgstr "Võrgupäring"
 
+#: WebKit/gtk/webkit/webkitdownload.cpp:273
 msgid "The network request for the URI that should be downloaded"
 msgstr "Võrgupäring allalaaditavale URI-le"
 
+#: WebKit/gtk/webkit/webkitdownload.cpp:287
 msgid "Network Response"
 msgstr "Võrgu vastus"
 
+#: WebKit/gtk/webkit/webkitdownload.cpp:288
 msgid "The network response for the URI that should be downloaded"
 msgstr "Võrgu vastus allalaaditavale URI-le"
 
+#: WebKit/gtk/webkit/webkitdownload.cpp:302
 msgid "Destination URI"
 msgstr "Sihtkoha URI"
 
+#: WebKit/gtk/webkit/webkitdownload.cpp:303
 msgid "The destination URI where to save the file"
 msgstr "Salvestatava faili sihtkoha URI"
 
+#: WebKit/gtk/webkit/webkitdownload.cpp:317
 msgid "Suggested Filename"
 msgstr "Soovitatav failinimi"
 
+#: WebKit/gtk/webkit/webkitdownload.cpp:318
 msgid "The filename suggested as default when saving"
 msgstr "Salvestamisel pakutav vaikimisi failinimi"
 
+#: WebKit/gtk/webkit/webkitdownload.cpp:335
 msgid "Progress"
 msgstr "Edenemine"
 
+#: WebKit/gtk/webkit/webkitdownload.cpp:336
 msgid "Determines the current progress of the download"
 msgstr "Tagastab allalaadimise edenemise"
 
+#: WebKit/gtk/webkit/webkitdownload.cpp:349
 msgid "Status"
 msgstr "Olek"
 
+#: WebKit/gtk/webkit/webkitdownload.cpp:350
 msgid "Determines the current status of the download"
 msgstr "Tagastab allalaadimise oleku"
 
+#: WebKit/gtk/webkit/webkitdownload.cpp:365
 msgid "Current Size"
 msgstr "Hetkesuurus"
 
+#: WebKit/gtk/webkit/webkitdownload.cpp:366
 msgid "The length of the data already downloaded"
 msgstr "Allalaetud andmete maht"
 
+#: WebKit/gtk/webkit/webkitdownload.cpp:380
 msgid "Total Size"
 msgstr "Kogusuurus"
 
+#: WebKit/gtk/webkit/webkitdownload.cpp:381
 msgid "The total size of the file"
 msgstr "Faili kogusuurus"
 
+#: WebKit/gtk/webkit/webkitdownload.cpp:532
 msgid "User cancelled the download"
 msgstr "Allalaadimine katkestatud kasutaja poolt"
 
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:249
 #, c-format
 msgid "A username and password are being requested by the site %s"
 msgstr "Saidi %s poolt küsitakse kasutajanime ja parooli"
 
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:279
+msgid "Server message:"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:292
 msgid "Username:"
 msgstr "Kasutajanimi:"
 
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:294
 msgid "Password:"
 msgstr "Parool:"
 
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:303
 msgid "_Remember password"
 msgstr "_Parooli meeldejätmine"
 
+#: WebKit/gtk/webkit/webkitwebframe.cpp:301
 msgid "Name"
 msgstr "Nimi"
 
+#: WebKit/gtk/webkit/webkitwebframe.cpp:302
 msgid "The name of the frame"
 msgstr "Raami nimi"
 
+#: WebKit/gtk/webkit/webkitwebframe.cpp:308
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:146
+#: WebKit/gtk/webkit/webkitwebview.cpp:2639
 msgid "Title"
 msgstr "Pealkiri"
 
+#: WebKit/gtk/webkit/webkitwebframe.cpp:309
 msgid "The document title of the frame"
 msgstr "Raami dokumendi pealkiri"
 
+#: WebKit/gtk/webkit/webkitwebframe.cpp:315
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:178
+#: WebKit/gtk/webkit/webkitwebview.cpp:2653
 msgid "URI"
 msgstr "URI"
 
+#: WebKit/gtk/webkit/webkitwebframe.cpp:316
 msgid "The current URI of the contents displayed by the frame"
 msgstr "Raami sisu aktiivne URI"
 
+#: WebKit/gtk/webkit/webkitwebframe.cpp:347
 msgid "Horizontal Scrollbar Policy"
 msgstr "Horisontaalse kerimisriba kasutusreegel"
 
+#: WebKit/gtk/webkit/webkitwebframe.cpp:348
 msgid ""
 "Determines the current policy for the horizontal scrollbar of the frame."
 msgstr "Määrab raami horisontaalse kerimisriba kasutusreeglid."
 
+#: WebKit/gtk/webkit/webkitwebframe.cpp:365
 msgid "Vertical Scrollbar Policy"
 msgstr "Vertikaalse kerimisriba reegel"
 
+#: WebKit/gtk/webkit/webkitwebframe.cpp:366
 msgid "Determines the current policy for the vertical scrollbar of the frame."
 msgstr "Määrab raami vertikaalse kerimisriba kasutusreeglid."
 
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:147
 msgid "The title of the history item"
 msgstr "Ajalookirje pealkiri"
 
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:162
 msgid "Alternate Title"
 msgstr "Alternatiivne pealkiri"
 
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:163
 msgid "The alternate title of the history item"
 msgstr "Ajalookirje alternatiivne pealkiri"
 
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:179
 msgid "The URI of the history item"
 msgstr "Ajalookirje URI"
 
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:194
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:173
 msgid "Original URI"
 msgstr "Algne URI"
 
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:195
 msgid "The original URI of the history item"
 msgstr "Ajalookirje algne URI"
 
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:210
 msgid "Last visited Time"
 msgstr "Viimase külastuse aeg"
 
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:211
 msgid "The time at which the history item was last visited"
 msgstr "Ajalookirje viimase külastuse aeg"
 
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:269
 msgid "Web View"
 msgstr "Veebivaade"
 
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:270
 msgid "The Web View that renders the Web Inspector itself"
 msgstr "Veebiinspektorit esitav veebivaade"
 
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:283
 msgid "Inspected URI"
 msgstr "Inspekteeritav URI"
 
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:284
 msgid "The URI that is currently being inspected"
 msgstr "Hetkel inspekteeritav URI"
 
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:300
 msgid "Enable JavaScript profiling"
 msgstr "Luba JavaScript'i profileerimine"
 
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:301
 msgid "Profile the executed JavaScript."
 msgstr "Käivitatava JavaScript'i profileerimine."
 
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:316
 msgid "Enable Timeline profiling"
 msgstr "Luba ajatelje profileerimine"
 
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:317
 msgid "Profile the WebCore instrumentation."
 msgstr "WebCore'i jälgimisvihjete profileerimine"
 
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:158
 msgid "Reason"
 msgstr "Põhjus"
 
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:159
 msgid "The reason why this navigation is occurring"
 msgstr "Navigeerimistegevuse esilekutsumise põhjus"
 
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:174
 msgid "The URI that was requested as the target for the navigation"
 msgstr ""
 
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:188
 msgid "Button"
 msgstr "Nupp"
 
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:189
 msgid "The button used to click"
 msgstr "Klõpsamiseks kasutatud nupp"
 
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:204
 msgid "Modifier state"
 msgstr "Muuteklahvi olek"
 
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:205
 msgid "A bitmask representing the state of the modifier keys"
 msgstr "Muuteklahvide olekut esindav bitimask"
 
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:220
 msgid "Target frame"
 msgstr "Sihtraam"
 
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:221
 msgid "The target frame for the navigation"
 msgstr "Navigeerimise sihtraam"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:241
 msgid "Default Encoding"
 msgstr "Vaikimisi kodeering"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:242
 msgid "The default encoding used to display text."
 msgstr "Vaikimisi kasutatav kodeering teksti kuvamiseks."
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:250
 msgid "Cursive Font Family"
 msgstr "Kursiivne kirjaperekond"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:251
 msgid "The default Cursive font family used to display text."
 msgstr "Teksti kuvamiseks kasutatav vaikimisi kursiivne kirjaperekond."
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:259
 msgid "Default Font Family"
 msgstr "Vaikimisi kirjaperekond"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:260
 msgid "The default font family used to display text."
 msgstr "Teksti kuvamiseks kasutatav vaikimisi kirjaperekond."
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:268
 msgid "Fantasy Font Family"
 msgstr "Erikujuline kirjaperekond"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:269
 msgid "The default Fantasy font family used to display text."
 msgstr "Teksti kuvamiseks kasutatav vaikimisi erikujuline kirjaperekond."
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:277
 msgid "Monospace Font Family"
 msgstr "Püsisammuga kirjaperekond"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:278
 msgid "The default font family used to display monospace text."
 msgstr "Teksti kuvamiseks kasutatav vaikimisi püsisammuga kirjaperekond."
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:286
 msgid "Sans Serif Font Family"
 msgstr "Seriifideta kirjaperekond"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:287
 msgid "The default Sans Serif font family used to display text."
 msgstr "Teksti kuvamiseks kasutatav vaikimisi seriifideta kirjaperekond."
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:295
 msgid "Serif Font Family"
 msgstr "Seriifidega kirjaperekond"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:296
 msgid "The default Serif font family used to display text."
 msgstr "Teksti kuvamiseks kasutatav vaikimisi seriifidega kirjaperekond."
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:304
 msgid "Default Font Size"
 msgstr "Vaikimisi kirjasuurus"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:305
 msgid "The default font size used to display text."
 msgstr "Vaikimisi kirjasuurus teksti kuvamiseks."
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:313
 msgid "Default Monospace Font Size"
 msgstr "Vaikimisi püsisammuga kirja suurus"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:314
 msgid "The default font size used to display monospace text."
 msgstr "Vaikimisi kirjasuurus püsisammuga teksti kuvamiseks."
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:322
 msgid "Minimum Font Size"
 msgstr "Väikseim kirjasuurus"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:323
 msgid "The minimum font size used to display text."
 msgstr "Väikseim kirjasuurus teksti kuvamiseks."
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:331
 msgid "Minimum Logical Font Size"
 msgstr "Väikseim loogilise kirjatüübi kirjasuurus"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:332
 msgid "The minimum logical font size used to display text."
 msgstr "Väikseim loogilise kirjatüübi kirjasuurus teksti kuvamiseks."
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:351
 msgid "Enforce 96 DPI"
 msgstr "Lahutusvõime jõuga 96 DPI"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:352
 msgid "Enforce a resolution of 96 DPI"
 msgstr "Pealesunnitud ekraanilahutus on 96 DPI"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:360
 msgid "Auto Load Images"
 msgstr "Automaatne piltide laadimine"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:361
 msgid "Load images automatically."
 msgstr "Pildid laaditakse automaatselt."
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:369
 msgid "Auto Shrink Images"
 msgstr "Piltide automaatne vähendamine"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:370
 msgid "Automatically shrink standalone images to fit."
 msgstr "Pildid vähendatakse automaatselt sobivaks."
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:378
 msgid "Print Backgrounds"
 msgstr "Tausta printimine"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:379
 msgid "Whether background images should be printed."
 msgstr "Kas printimisel kaasatakse taustapildid või mitte."
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:387
 msgid "Enable Scripts"
 msgstr "Skriptide lubamine"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:388
 msgid "Enable embedded scripting languages."
 msgstr "Manus-skriptikeelte lubamine."
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:396
 msgid "Enable Plugins"
 msgstr "Pluginate lubamine"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:397
 msgid "Enable embedded plugin objects."
 msgstr "Põimitud plugina objektide lubamine."
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:405
 msgid "Resizable Text Areas"
 msgstr "Muudetav tekstiväljade suurus"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:406
 msgid "Whether text areas are resizable."
 msgstr "Kas teksiväljade suurus on muudetav."
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:413
 msgid "User Stylesheet URI"
 msgstr "Kasutaja laaditabeli URI"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:414
 msgid "The URI of a stylesheet that is applied to every page."
 msgstr "Igale lehele rakendatava laaditabeli URI."
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:429
 msgid "Zoom Stepping Value"
 msgstr "Suurenduse samm"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:430
 msgid "The value by which the zoom level is changed when zooming in or out."
 msgstr "Suurenduse muutumise samm suurendamisel ja vähendamisel."
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:448
 msgid "Enable Developer Extras"
 msgstr "Arendaja lisade lubamine"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:449
 msgid "Enables special extensions that help developers"
 msgstr "Arendajaile mõeldud erilaienduste lubamine"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:469
 msgid "Enable Private Browsing"
 msgstr "Privaatns sirvimise lubamine"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:470
 msgid "Enables private browsing mode"
 msgstr "Privaatse sirvimisrežiimi lubamine"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:485
 msgid "Enable Spell Checking"
 msgstr "Õigekirjakontrolli lubamine"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:486
 msgid "Enables spell checking while typing"
 msgstr "Lubab trükkimisel kontrollida õigekirja"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:509
 msgid "Languages to use for spell checking"
 msgstr "Õigekirjakontrollis kasutatavad keeled"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:510
 msgid "Comma separated list of languages to use for spell checking"
 msgstr ""
 "Komadega eraldatud loend õigekirja kontrollimisel kasutatavatest keeltest"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:524
 msgid "Enable Caret Browsing"
 msgstr "Kursoriga sirvimine lubatud"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:525
 msgid "Whether to enable accesibility enhanced keyboard navigation"
 msgstr "Kas lubada klaviatuurihõlbustused navigeerimiseks"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:540
 msgid "Enable HTML5 Database"
 msgstr "HTML5 andmebaasitoe lubamine"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:541
 msgid "Whether to enable HTML5 database support"
 msgstr "Kas lubada HTML5 andmebaasi tugi"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:556
 msgid "Enable HTML5 Local Storage"
 msgstr "HTML5 kohaliku salvesti lubamine"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:557
 msgid "Whether to enable HTML5 Local Storage support"
 msgstr "Kas lubada HTML5 kohaliku salvesti tugi"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:571
 msgid "Enable XSS Auditor"
 msgstr "XSS audiitori lubamine"
 
-msgid "Whether to enable teh XSS auditor"
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:572
+#, fuzzy
+msgid "Whether to enable the XSS auditor"
 msgstr "Kas lubada XSS audiitor"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:590
+msgid "Enable Spatial Navigation"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:591
+#, fuzzy
+msgid "Whether to enable Spatial Navigation"
+msgstr "Kas lubada XSS audiitor"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:608
 msgid "User Agent"
 msgstr "Sirvija identiteet"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:609
 msgid "The User-Agent string used by WebKitGtk"
 msgstr "WebKitGtk poolt kasutatav identiteet"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:624
 msgid "JavaScript can open windows automatically"
 msgstr "JavaScript tohib aknaid automaatselt avada"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:625
 msgid "Whether JavaScript can open windows automatically"
 msgstr "Kas JavaScript tohib aknaid automaatselt avada või mitte"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:639
+msgid "JavaScript can access Clipboard"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:640
+#, fuzzy
+msgid "Whether JavaScript can access Clipboard"
+msgstr "Kas JavaScript tohib aknaid automaatselt avada või mitte"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:656
 msgid "Enable offline web application cache"
 msgstr "Ühenduseta veebirakenduste vahemälu lubamine"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:657
 msgid "Whether to enable offline web application cache"
 msgstr "Kas lubada ühenduseta veebirakenduste vahemälu"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:684
 msgid "Editing behavior"
 msgstr "Redigeerimisrežiimis käitumine"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:685
 msgid "The behavior mode to use in editing mode"
 msgstr "Redigeerimisrežiimis kasutatava käitumisrežiim"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:701
 msgid "Enable universal access from file URIs"
 msgstr "Faili URI-dele üleüldise ligipääsu lubamine"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:702
 msgid "Whether to allow universal access from file URIs"
 msgstr "Kas lubada faili URI-dele üleüldine ligipääs"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:717
 msgid "Enable DOM paste"
 msgstr "DOM-põhise asetamise lubamine"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:718
 msgid "Whether to enable DOM paste"
 msgstr "Kas lubada DOM-põhine asetamine"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:736
 msgid "Tab key cycles through elements"
 msgstr "Tabulaator liigub elementide vahel"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:737
 msgid "Whether the tab key cycles through elements on the page."
 msgstr "Kas tabulaatoriga liigutakse lehe elementide vahel või mitte."
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:757
 msgid "Enable Default Context Menu"
 msgstr "Vaikimisi kontekstimenüü lubamine"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:758
 msgid ""
 "Enables the handling of right-clicks for the creation of the default context "
 "menu"
 msgstr "Lubab parem-klõpsudel vaikimisi kontekstimenüüd luua"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:778
 msgid "Enable Site Specific Quirks"
 msgstr "Lehepõhiste ümbernurgalahenduste lubamine"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:779
 msgid "Enables the site-specific compatibility workarounds"
 msgstr "Lubab kasutada lehepõhiseid ümbernurgalahendusi"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:801
 msgid "Enable page cache"
 msgstr "Lehtede vahemälu lubamine"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:802
 msgid "Whether the page cache should be used"
 msgstr "Kas kasutada lehtede vahemälu"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:822
 msgid "Auto Resize Window"
 msgstr "Akna suuruse automaatne muutmine"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:823
 msgid "Automatically resize the toplevel window when a page requests it"
 msgstr "Automaatne ülemtaseme akna suuruse muutmine lehepoolsel päringul"
 
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:855
+#, fuzzy
+msgid "Enable Java Applet"
+msgstr "Luba JavaScript'i profileerimine"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:856
+msgid "Whether Java Applet support through <applet> should be enabled"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2640
 msgid "Returns the @web_view's document title"
 msgstr "Tagastab @web_view dokumendi pealkirja"
 
+#: WebKit/gtk/webkit/webkitwebview.cpp:2654
 msgid "Returns the current URI of the contents displayed by the @web_view"
 msgstr "Tagastab @web_view-s kuvatava sisu aktiivse URI"
 
+#: WebKit/gtk/webkit/webkitwebview.cpp:2667
 msgid "Copy target list"
 msgstr "Kopeerimisoperatsiooni sihtkohtade loend"
 
+#: WebKit/gtk/webkit/webkitwebview.cpp:2668
 msgid "The list of targets this web view supports for clipboard copying"
 msgstr ""
 
+#: WebKit/gtk/webkit/webkitwebview.cpp:2681
 msgid "Paste target list"
 msgstr "Asetusoperatsiooni sihtkohtade loend"
 
+#: WebKit/gtk/webkit/webkitwebview.cpp:2682
 msgid "The list of targets this web view supports for clipboard pasting"
 msgstr ""
 
+#: WebKit/gtk/webkit/webkitwebview.cpp:2688
 msgid "Settings"
 msgstr "Seaded"
 
+#: WebKit/gtk/webkit/webkitwebview.cpp:2689
 msgid "An associated WebKitWebSettings instance"
 msgstr ""
 
+#: WebKit/gtk/webkit/webkitwebview.cpp:2702
 msgid "Web Inspector"
 msgstr "Veebiinspektor"
 
+#: WebKit/gtk/webkit/webkitwebview.cpp:2703
 msgid "The associated WebKitWebInspector instance"
 msgstr ""
 
+#: WebKit/gtk/webkit/webkitwebview.cpp:2723
 msgid "Editable"
 msgstr "Redigeeritav"
 
+#: WebKit/gtk/webkit/webkitwebview.cpp:2724
 msgid "Whether content can be modified by the user"
 msgstr "Kas sisu on kasutaja poolt muudetav või mitte"
 
+#: WebKit/gtk/webkit/webkitwebview.cpp:2730
 msgid "Transparent"
 msgstr "Läbipaistvus"
 
+#: WebKit/gtk/webkit/webkitwebview.cpp:2731
 msgid "Whether content has a transparent background"
 msgstr "Kas sisul on läbipaistev taust või mitte"
 
+#: WebKit/gtk/webkit/webkitwebview.cpp:2744
 msgid "Zoom level"
 msgstr "Suurendusaste"
 
+#: WebKit/gtk/webkit/webkitwebview.cpp:2745
 msgid "The level of zoom of the content"
 msgstr "Sisu suurendusaste"
 
+#: WebKit/gtk/webkit/webkitwebview.cpp:2760
 msgid "Full content zoom"
 msgstr ""
 
+#: WebKit/gtk/webkit/webkitwebview.cpp:2761
 msgid "Whether the full content is scaled when zooming"
 msgstr ""
 
+#: WebKit/gtk/webkit/webkitwebview.cpp:2774
 msgid "Encoding"
 msgstr "Kodeering"
 
+#: WebKit/gtk/webkit/webkitwebview.cpp:2775
 msgid "The default encoding of the web view"
 msgstr "Vaikimisi kodeering veebivaate jaoks"
 
+#: WebKit/gtk/webkit/webkitwebview.cpp:2788
 msgid "Custom Encoding"
 msgstr "Kohandatud kodeering"
 
+#: WebKit/gtk/webkit/webkitwebview.cpp:2789
 msgid "The custom encoding of the web view"
 msgstr "Kohandatud kodeering veebivaate jaoks"
 
+#: WebKit/gtk/webkit/webkitwebview.cpp:2841
 msgid "Icon URI"
 msgstr "Ikooni URI"
 
+#: WebKit/gtk/webkit/webkitwebview.cpp:2842
 msgid "The URI for the favicon for the #WebKitWebView."
 msgstr "Veebilehe tunnusikooni URI #WebKitWebView jaoks."
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:55
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:60
 msgid "Submit"
 msgstr "Saada"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:65
 msgid "Reset"
 msgstr "Taasta"
 
-msgid "_Searchable Index"
-msgstr "_Otsitav indeks"
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:70
+msgid "This is a searchable index. Enter search keywords: "
+msgstr ""
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:75
 msgid "Choose File"
 msgstr "Vali fail"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:80
 msgid "(None)"
 msgstr "(Puudub)"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:85
 msgid "Open Link in New _Window"
 msgstr "Ava link _uues aknas"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:90
 msgid "_Download Linked File"
 msgstr "Salvesta _link"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:95
 msgid "Copy Link Loc_ation"
 msgstr "K_opeeri lingi asukoht"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:100
 msgid "Open _Image in New Window"
 msgstr "Ava _pilt uues aknas"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:105
 msgid "Sa_ve Image As"
 msgstr "_Salvesta pilt"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:110
 msgid "Cop_y Image"
 msgstr "_Kopeeri pilt"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:115
 msgid "Open _Frame in New Window"
 msgstr "Ava _raam uues aknas"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:166
 msgid "_Reload"
 msgstr "_Laadi uuesti"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:183
 msgid "No Guesses Found"
 msgstr "Vastavusi ei leitud"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:188
 msgid "_Ignore Spelling"
 msgstr "_Eira õigekirja"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:193
 msgid "_Learn Spelling"
 msgstr "Õ_pi õigekirja"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:198
 msgid "_Search the Web"
 msgstr "_Otsi veebist"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:203
 msgid "_Look Up in Dictionary"
 msgstr "_Otsi sõnaraamatust"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:208
 msgid "_Open Link"
 msgstr "_Ava link"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:213
 msgid "Ignore _Grammar"
 msgstr "Eira _grammatikat"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:218
 msgid "Spelling and _Grammar"
 msgstr "Õigekiri ja _grammatika"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:223
 msgid "_Show Spelling and Grammar"
 msgstr "_Näita õigakirja ja grammatikat"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:223
 msgid "_Hide Spelling and Grammar"
 msgstr "_Peida õigakiri ja grammatika"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:228
 msgid "_Check Document Now"
 msgstr "_Kontrolli dokumenti"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:233
 msgid "Check Spelling While _Typing"
 msgstr "Õigekirjakontroll _sisestamise ajal"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:238
 msgid "Check _Grammar With Spelling"
 msgstr "Õigekirja ja _grammatika kontrollimine"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:243
 msgid "_Font"
 msgstr "_Kirjatüüp"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:266
 msgid "_Outline"
 msgstr "_Kontuur"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:271
 msgid "Inspect _Element"
 msgstr "Uuri _elementi"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:276
 msgid "No recent searches"
 msgstr "Hiljutised otsingud puuduvad"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:281
 msgid "Recent searches"
 msgstr "Hiljutised otsingud"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:286
 msgid "_Clear recent searches"
 msgstr "_Kustuta hiljutised otsingud"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:291
 msgid "term"
 msgstr "termin"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:296
 msgid "definition"
 msgstr "definitsoon"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:301
 msgid "press"
 msgstr "vajuta"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:306
 msgid "select"
 msgstr "vali"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:311
 msgid "activate"
 msgstr "aktiveeri"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:316
 msgid "uncheck"
 msgstr ""
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:321
 msgid "check"
 msgstr "kontrolli"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:326
 msgid "jump"
 msgstr "hüppa"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:341
+msgid "Missing Plug-in"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:347
+msgid "Plug-in Failure"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:353
 msgid " files"
 msgstr " faili"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:358
 msgid "Unknown"
 msgstr "Tundmatu"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:375
 msgid "Loading..."
 msgstr "Laadimine..."
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:380
 msgid "Live Broadcast"
 msgstr "Otseülekanne"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:386
 msgid "audio element controller"
 msgstr "helielemendi juhtija"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:388
 msgid "video element controller"
 msgstr "videoelemendi juhtija"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:390
 msgid "mute"
 msgstr "vaigista"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:392
 msgid "unmute"
 msgstr "taasta heli"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:394
 msgid "play"
 msgstr "esita"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:396
 msgid "pause"
 msgstr "paus"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:398
 msgid "movie time"
 msgstr "filmi aeg"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:400
 msgid "timeline slider thumb"
 msgstr ""
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:402
 msgid "back 30 seconds"
 msgstr "30 sekundit tagasi"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:404
 msgid "return to realtime"
 msgstr "tagasta reaalajas"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:406
 msgid "elapsed time"
 msgstr "aega kulunud"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:408
 msgid "remaining time"
 msgstr "aega jäänud"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:410
 msgid "status"
 msgstr "olek"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:412
 msgid "fullscreen"
 msgstr "täisekraan"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:414
 msgid "fast forward"
 msgstr "edasikerimine"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:416
 msgid "fast reverse"
 msgstr "tagasikerimine"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:418
 msgid "show closed captions"
 msgstr ""
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:420
 msgid "hide closed captions"
 msgstr ""
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:429
 msgid "audio element playback controls and status display"
 msgstr ""
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:431
 msgid "video element playback controls and status display"
 msgstr ""
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:433
 msgid "mute audio tracks"
 msgstr "helide vaigistamine"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:435
 msgid "unmute audio tracks"
 msgstr "helide taastamine"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:437
 msgid "begin playback"
 msgstr "esitamise alustamine"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:439
 msgid "pause playback"
 msgstr "esitamise paus"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:441
 msgid "movie time scrubber"
 msgstr ""
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:443
 msgid "movie time scrubber thumb"
 msgstr ""
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:445
 msgid "seek movie back 30 seconds"
 msgstr "filmi kerimine 30 sekundit tagasi"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:447
 msgid "return streaming movie to real time"
 msgstr "filmi voogedastamine reaalajas"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:449
 msgid "current movie time in seconds"
 msgstr "filmi kestus sekundites"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:451
 msgid "number of seconds of movie remaining"
 msgstr "filmi lõpuni jäänud sekundite arv"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:453
 msgid "current movie status"
 msgstr "filmi olek"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:455
 msgid "seek quickly back"
 msgstr "kiire tagasikerimine"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:457
 msgid "seek quickly forward"
 msgstr "kiire edasikerimine"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:459
 msgid "Play movie in fullscreen mode"
 msgstr "Filmi esitamine täisekraanvaates"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:461
 msgid "start displaying closed captions"
 msgstr "alusta suletud alapealkirjade näitamist"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:463
 msgid "stop displaying closed captions"
 msgstr "lõpeta suletud alapealkirjade näitamine"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:472
 msgid "indefinite time"
 msgstr "umbmäärane aeg"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:502
 msgid "value missing"
 msgstr "puuduv väärtus"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:508
 msgid "type mismatch"
 msgstr "tüübi sobimatus"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:513
 msgid "pattern mismatch"
 msgstr "mustri sobimatus"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:518
 msgid "too long"
 msgstr "liiga pikk"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:523
 msgid "range underflow"
 msgstr "vahemiku alatäitumus"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:528
 msgid "range overflow"
 msgstr "vahemiku ületäitumus"
 
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:533
 msgid "step mismatch"
 msgstr "astme sobimatus"
+
+#~ msgid "_Searchable Index"
+#~ msgstr "_Otsitav indeks"
