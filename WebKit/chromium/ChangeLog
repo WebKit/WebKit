@@ -1,3 +1,18 @@
+2010-08-30  Nat Duca  <nduca@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [chromium] Accelerated Compositing: Artifacts/blink when enabling compositor.
+        https://bugs.webkit.org/show_bug.cgi?id=44196
+
+        If accelerated compositing enables after a page loads, the dirtied
+        portion of the screen will be only a subset of the full screen,
+        leading to artefacts. Avoid these artefacts by invalidating the
+        visible content rect on compositor initialization.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+
 2010-08-30  Kinuko Yasuda  <kinuko@chromium.osrc>
 
         Reviewed by Darin Fisher.

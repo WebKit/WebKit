@@ -2117,9 +2117,13 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
 
     if (active) {
         m_layerRenderer = LayerRendererChromium::create(getOnscreenGLES2Context());
-        if (m_layerRenderer->hardwareCompositing())
+        if (m_layerRenderer->hardwareCompositing()) {
             m_isAcceleratedCompositingActive = true;
-        else {
+            
+            // Force a redraw the entire view so that the compositor gets the entire view,
+            // rather than just the currently-dirty subset.
+            m_client->didInvalidateRect(IntRect(0, 0, m_size.width, m_size.height));
+        } else {
             m_layerRenderer.clear();
             m_isAcceleratedCompositingActive = false;
         }
