@@ -31,17 +31,23 @@
 #include "config.h"
 #include "NotificationPresenter.h"
 
-#include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
-
+#include "base/task.h" // FIXME: Remove this
 #include "googleurl/src/gurl.h"
 #include "public/WebNotification.h"
 #include "public/WebNotificationPermissionCallback.h"
 #include "public/WebSecurityOrigin.h"
 #include "public/WebString.h"
 #include "public/WebURL.h"
+#include "webkit/support/webkit_support.h"
+#include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 using namespace WebKit;
+
+static void deferredDisplayDispatch(WebNotification notification)
+{
+    notification.dispatchDisplayEvent();
+}
 
 void NotificationPresenter::grantPermission(const WebString& origin)
 {
@@ -79,7 +85,7 @@ bool NotificationPresenter::show(const WebNotification& notification)
     }
 
     WebNotification eventTarget(notification);
-    eventTarget.dispatchDisplayEvent();
+    webkit_support::PostTaskFromHere(NewRunnableFunction(&deferredDisplayDispatch, eventTarget));
     return true;
 }
 

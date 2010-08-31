@@ -287,7 +287,6 @@ BUG_DRT WIN MAC LINUX : fast/dynamic/window-resize-scrollbars-test.html = IMAGE+
 BUG_DRT WIN : fast/events/show-modal-dialog-onblur-onfocus.html = TEXT
 BUG_DRT WIN : fast/harness/show-modal-dialog.html = TEXT
 BUG_DRT WIN : fast/lists/001.html = CRASH
-BUG_DRT WIN MAC LINUX : fast/notifications/notifications-display-close-events.html = TIMEOUT
 BUG_DRT WIN : fast/text/stripNullFromText.html = IMAGE+TEXT
 BUG_DRT WIN MAC LINUX : http/tests/incremental/slow-utf8-text.pl = MISSING
 BUG_DRT WIN : plugins/embed-attributes-setting.html = TEXT

@@ -1,3 +1,17 @@
+2010-08-30  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix fast/notifications/notifications-display-close-events.html failure
+        https://bugs.webkit.org/show_bug.cgi?id=44585
+
+        Apply http://crrev.com/48893. We should dispatch display events
+        asynchronously.
+
+        * DumpRenderTree/chromium/NotificationPresenter.cpp:
+        (deferredDisplayDispatch):
+        (NotificationPresenter::show):
+
 2010-08-30  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Simon Hausmann.
