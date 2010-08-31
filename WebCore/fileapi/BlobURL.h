@@ -41,6 +41,7 @@ class BlobURL {
 public:
     static KURL createURL(ScriptExecutionContext*);
     static KURL getOrigin(const KURL&);
+    static String getIdentifier(const KURL& url);
 };
 
 }

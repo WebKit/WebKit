@@ -28,10 +28,9 @@
 
 namespace WebCore {
 
-class BlobItem;
 class Document;
+class FormDataList;
 class TextEncoding;
-typedef Vector<RefPtr<BlobItem> > BlobItemList;
 
 class FormDataElement {
 public:
@@ -62,11 +61,6 @@ public:
 #endif
     String m_generatedFilename;
     bool m_shouldGenerateFile;
-
-#if ENABLE(BLOB)
-    static const long long toEndOfFile;
-    static const double doNotCheckFileChange;
-#endif
 };
 
 inline bool operator==(const FormDataElement& a, const FormDataElement& b)
@@ -101,15 +95,14 @@ public:
     static PassRefPtr<FormData> create(const void*, size_t);
     static PassRefPtr<FormData> create(const CString&);
     static PassRefPtr<FormData> create(const Vector<char>&);
-    static PassRefPtr<FormData> create(const BlobItemList&, const TextEncoding&);
-    static PassRefPtr<FormData> createMultiPart(const BlobItemList&, const TextEncoding&, Document*);
+    static PassRefPtr<FormData> create(const FormDataList&, const TextEncoding&);
+    static PassRefPtr<FormData> createMultiPart(const FormDataList&, const TextEncoding&, Document*);
     PassRefPtr<FormData> copy() const;
     PassRefPtr<FormData> deepCopy() const;
     ~FormData();
 
     void appendData(const void* data, size_t);
-    void appendItems(const BlobItemList&);
-    void appendFile(const String& filename, bool shouldGenerateFile = false);
+    void appendFile(const String& filePath, bool shouldGenerateFile = false);
 #if ENABLE(BLOB)
     void appendFileRange(const String& filename, long long start, long long length, double expectedModificationTime, bool shouldGenerateFile = false);
     void appendBlob(const KURL& blobURL);
@@ -137,8 +130,7 @@ private:
     FormData();
     FormData(const FormData&);
 
-    void appendItem(const BlobItem*, bool shouldGenerateFile);
-    void appendKeyValuePairItems(const BlobItemList&, const TextEncoding&, bool isMultiPartForm, Document*);
+    void appendKeyValuePairItems(const FormDataList&, const TextEncoding&, bool isMultiPartForm, Document*);
 
     Vector<FormDataElement> m_elements;
 

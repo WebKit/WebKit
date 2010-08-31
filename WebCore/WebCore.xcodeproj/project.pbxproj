@@ -2388,8 +2388,6 @@
 		89686CA0122244A00076EAA4 /* DOMFilePath.h in Headers */ = {isa = PBXBuildFile; fileRef = 89686C9E122244A00076EAA4 /* DOMFilePath.h */; };
 		898783D312232A13003AABDA /* LocalFileSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 898783D112232A13003AABDA /* LocalFileSystem.cpp */; };
 		898783D412232A13003AABDA /* LocalFileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 898783D212232A13003AABDA /* LocalFileSystem.h */; };
-		8988E10E11A3508B00DB732E /* BlobItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8988E10C11A3508B00DB732E /* BlobItem.cpp */; };
-		8988E10F11A3508B00DB732E /* BlobItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 8988E10D11A3508B00DB732E /* BlobItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		899ABC261215E4A300F9F219 /* DirectoryEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 899ABC201215E4A300F9F219 /* DirectoryEntry.cpp */; };
 		899ABC271215E4A300F9F219 /* DirectoryEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 899ABC211215E4A300F9F219 /* DirectoryEntry.h */; };
 		899ABC291215E4A300F9F219 /* DirectoryReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 899ABC231215E4A300F9F219 /* DirectoryReader.cpp */; };
@@ -8289,8 +8287,6 @@
 		897A2D92120003760082740C /* JSFlags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFlags.h; sourceTree = "<group>"; };
 		898783D112232A13003AABDA /* LocalFileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocalFileSystem.cpp; sourceTree = "<group>"; };
 		898783D212232A13003AABDA /* LocalFileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalFileSystem.h; sourceTree = "<group>"; };
-		8988E10C11A3508B00DB732E /* BlobItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlobItem.cpp; sourceTree = "<group>"; };
-		8988E10D11A3508B00DB732E /* BlobItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobItem.h; sourceTree = "<group>"; };
 		899ABC201215E4A300F9F219 /* DirectoryEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectoryEntry.cpp; sourceTree = "<group>"; };
 		899ABC211215E4A300F9F219 /* DirectoryEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectoryEntry.h; sourceTree = "<group>"; };
 		899ABC221215E4A300F9F219 /* DirectoryEntry.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DirectoryEntry.idl; sourceTree = "<group>"; };
@@ -16656,8 +16652,6 @@
 				89D08D9D12228451001241DF /* AsyncFileSystem.h */,
 				89D08D9E12228451001241DF /* AsyncFileSystemCallbacks.h */,
 				51E1ECB10C91C55600DC255B /* AutodrainedPool.h */,
-				8988E10C11A3508B00DB732E /* BlobItem.cpp */,
-				8988E10D11A3508B00DB732E /* BlobItem.h */,
 				BCC8CFCA0986CD2400140BF2 /* ColorData.gperf */,
 				41D015C90F4B5C71004A662F /* ContentType.cpp */,
 				41D015C80F4B5C71004A662F /* ContentType.h */,
@@ -17771,7 +17765,6 @@
 				BCE789861120E7A60060ECE5 /* BidiRun.h in Headers */,
 				938192050F87E1EC00D5352A /* BinaryPropertyList.h in Headers */,
 				A89943280B42338800D7C802 /* BitmapImage.h in Headers */,
-				8988E10F11A3508B00DB732E /* BlobItem.h in Headers */,
 				93F199BE08245E59001E9ABC /* BlockExceptions.h in Headers */,
 				BC5EB5E10E81BE8700B25965 /* BorderData.h in Headers */,
 				BC5EB5DB0E81B7EA00B25965 /* BorderValue.h in Headers */,
@@ -20795,7 +20788,6 @@
 				BCE7898B1120E8020060ECE5 /* BidiRun.cpp in Sources */,
 				938192030F87E1E600D5352A /* BinaryPropertyList.cpp in Sources */,
 				A89943290B42338800D7C802 /* BitmapImage.cpp in Sources */,
-				8988E10E11A3508B00DB732E /* BlobItem.cpp in Sources */,
 				93F19AE108245E59001E9ABC /* BlockExceptions.mm in Sources */,
 				BCEA4854097D93020094C9E4 /* break_lines.cpp in Sources */,
 				93309DDA099E64920056E581 /* BreakBlockquoteCommand.cpp in Sources */,

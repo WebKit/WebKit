@@ -31,7 +31,7 @@
 #ifndef Blob_h
 #define Blob_h
 
-#include "BlobItem.h"
+#include "BlobData.h"
 #include "KURL.h"
 #include "PlatformString.h"
 #include <wtf/PassOwnPtr.h>
@@ -41,15 +41,13 @@
 
 namespace WebCore {
 
-class BlobData;
 class ScriptExecutionContext;
 
 class Blob : public RefCounted<Blob> {
 public:
-    // FIXME: To be removed when we switch to using BlobData.
-    static PassRefPtr<Blob> create(ScriptExecutionContext* scriptExecutionContext, const String& type, const BlobItemList& items)
+    static PassRefPtr<Blob> create(ScriptExecutionContext* scriptExecutionContext, PassOwnPtr<BlobData> blobData, long long size)
     {
-        return adoptRef(new Blob(scriptExecutionContext, type, items));
+        return adoptRef(new Blob(scriptExecutionContext, blobData, size));
     }
 
     // For deserialization.
@@ -63,38 +61,25 @@ public:
     void contextDestroyed();
 
     const KURL& url() const { return m_url; }
-    unsigned long long size() const;
     const String& type() const { return m_type; }
+
+    virtual unsigned long long size() const { return static_cast<unsigned long long>(m_size); }
     virtual bool isFile() const { return false; }
-
-    // FIXME: To be removed when we switch to using BlobData.
-    const String& path() const;
-
-    // FIXME: To be removed when we switch to using BlobData.
-    const BlobItemList& items() const { return m_items; }
 
 #if ENABLE(BLOB)
     PassRefPtr<Blob> slice(ScriptExecutionContext*, long long start, long long length, const String& contentType = String()) const;
 #endif
 
 protected:
-    // FIXME: To be removed when we switch to using BlobData.
-    Blob(ScriptExecutionContext*, const String& type, const BlobItemList&);
-    Blob(ScriptExecutionContext*, const PassRefPtr<BlobItem>&);
-    Blob(ScriptExecutionContext*, const String& path);
-
     Blob(ScriptExecutionContext*, PassOwnPtr<BlobData>, long long size);
 
     // For deserialization.
     Blob(ScriptExecutionContext*, const KURL& srcURL, const String& type, long long size);
 
-    // FIXME: To be removed when we switch to using BlobData.
-    BlobItemList m_items;
-
     // This is an internal URL referring to the blob data associated with this object.
     // It is only used by FileReader to read the blob data via loading from the blob URL resource.
     KURL m_url;
-
+    
     ScriptExecutionContext* m_scriptExecutionContext;
     String m_type;
     long long m_size;

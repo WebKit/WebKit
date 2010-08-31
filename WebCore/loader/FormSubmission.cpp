@@ -162,10 +162,10 @@ PassRefPtr<FormSubmission> FormSubmission::create(HTMLFormElement* form, const A
     String boundary;
 
     if (isMultiPartForm) {
-        formData = FormData::createMultiPart(domFormData->items(), domFormData->encoding(), document);
+        formData = FormData::createMultiPart(*(static_cast<FormDataList*>(domFormData.get())), domFormData->encoding(), document);
         boundary = formData->boundary().data();
     } else {
-        formData = FormData::create(domFormData->items(), domFormData->encoding());
+        formData = FormData::create(*(static_cast<FormDataList*>(domFormData.get())), domFormData->encoding());
         if (attributes.method() == PostMethod && isMailtoForm) {
             // Convert the form data into a string that we put into the URL.
             appendMailtoPostFormDataToURL(actionURL, *formData, encodingType);

@@ -23997,14 +23997,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\BlobItem.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\BlobItem.h"
-				>
-			</File>
-			<File
 				RelativePath="..\platform\ContentType.cpp"
 				>
 			</File>

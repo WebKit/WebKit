@@ -1,3 +1,101 @@
+2010-08-30  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Switch the Blob implementation to using the blob data registration model
+        https://bugs.webkit.org/show_bug.cgi?id=44389
+
+        Tests: fast/files/read-blob-async.html
+               fast/files/read-file-async.html
+
+        With this switch, File/Blob/BlobBuilder are changed to register the blob
+        data. FileReader is changed to route through loading the blob resource.
+        FormData is also updated to take BlobData. The WebKit mac implementation
+        is updated to resolve the blob references in the BlobData.
+
+        * CMakeLists.txt: Update the project file to remove BlobItem.*.
+        * GNUmakefile.am: Update the project file to remove BlobItem.*.
+        * WebCore.gypi: Update the project file to remove BlobItem.*.
+        * WebCore.pro: Update the project file to remove BlobItem.*.
+        * WebCore.vcproj/WebCore.vcproj: Update the project file to remove BlobItem.*.
+        * WebCore.xcodeproj/project.pbxproj: Update the project file to remove BlobItem.*.
+        * fileapi/Blob.cpp: Switch to using BlobData.
+        (WebCore::Blob::Blob):
+        (WebCore::Blob::slice):
+        * fileapi/Blob.h: Switch to using BlobData.
+        (WebCore::Blob::create):
+        (WebCore::Blob::size):
+        (WebCore::Blob::isFile):
+        * fileapi/BlobBuilder.cpp: Switch to using BlobData.
+        (WebCore::BlobBuilder::BlobBuilder):
+        (WebCore::BlobBuilder::append):
+        (WebCore::BlobBuilder::getBlob):
+        * fileapi/BlobBuilder.h: Switch to using BlobData.
+        * fileapi/BlobURL.cpp: Add a new helper method used in FormData.
+        (WebCore::BlobURL::getIdentifier):
+        * fileapi/BlobURL.h:
+        * fileapi/File.cpp: Switch to using BlobData.
+        (WebCore::createBlobDataForFile):
+        (WebCore::File::File):
+        (WebCore::File::size):
+        (WebCore::File::captureSnapshot):
+        * fileapi/File.h: Switch to using BlobData.
+        (WebCore::File::create):
+        (WebCore::File::path):
+        (WebCore::File::name):
+        (WebCore::File::webkitRelativePath):
+        * fileapi/FileReader.cpp: Change the reading to route through blob resource loading.
+        (WebCore::FileReader::FileReader):
+        (WebCore::FileReader::readAsBinaryString):
+        (WebCore::FileReader::readAsText):
+        (WebCore::FileReader::readAsDataURL):
+        (WebCore::delayedStart):
+        (WebCore::FileReader::readInternal):
+        (WebCore::FileReader::terminate):
+        (WebCore::FileReader::start):
+        (WebCore::FileReader::didReceiveResponse):
+        (WebCore::FileReader::didReceiveData):
+        (WebCore::FileReader::didFinishLoading):
+        (WebCore::FileReader::didFail):
+        (WebCore::FileReader::failed):
+        (WebCore::FileReader::httpStatusCodeToExceptionCode):
+        (WebCore::FileReader::result):
+        (WebCore::FileReader::convertToDataURL):
+        * fileapi/FileReader.h:
+        * html/FormDataList.cpp: Account to BlobData change.
+        (WebCore::FormDataList::appendString):
+        (WebCore::FormDataList::appendBlob):
+        * html/FormDataList.h: Account to BlobData change.
+        (WebCore::FormDataList::appendBlob):
+        (WebCore::FormDataList::Item::Item):
+        (WebCore::FormDataList::Item::data):
+        (WebCore::FormDataList::Item::blob):
+        (WebCore::FormDataList::items):
+        * loader/FormSubmission.cpp: Account to BlobData change.
+        (WebCore::FormSubmission::create):
+        * platform/BlobItem.cpp: Removed.
+        * platform/BlobItem.h: Removed.
+        * platform/network/BlobRegistryImpl.cpp: Add the implementations for resource loading.
+        (WebCore::BlobRegistryImpl::createResourceHandle):
+        (WebCore::BlobRegistryImpl::loadResourceSynchronously):
+        * platform/network/BlobResourceHandle.cpp: Fix a bug that the ref is not added.
+        (WebCore::BlobResourceHandle::BlobResourceHandle):
+        * platform/network/FormData.cpp: Account to BlobData change.
+        (WebCore::FormData::create):
+        (WebCore::FormData::createMultiPart):
+        (WebCore::FormData::deepCopy):
+        (WebCore::FormData::appendFile):
+        (WebCore::FormData::appendKeyValuePairItems):
+        * platform/network/FormData.h: Account to BlobData change.
+        * platform/network/mac/FormDataStreamMac.mm: Resolve blob references in the form data.
+        (WebCore::closeCurrentStream):
+        (WebCore::advanceCurrentStream):
+        (WebCore::formCreate):
+        (WebCore::formRead):
+        (WebCore::setHTTPBody):
+        * xml/XMLHttpRequest.cpp: Account to BlobData change.
+        (WebCore::XMLHttpRequest::send):
+
 2010-08-30  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, rolling out r66418.

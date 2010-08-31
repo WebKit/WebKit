@@ -36,10 +36,10 @@
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "FileError.h"
-#include "FileStreamClient.h"
 #include "PlatformString.h"
 #include "ScriptString.h"
 #include "TextEncoding.h"
+#include "ThreadableLoaderClient.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -48,12 +48,11 @@
 namespace WebCore {
 
 class Blob;
-class File;
-class FileStreamProxy;
 class ScriptExecutionContext;
 class TextResourceDecoder;
+class ThreadableLoader;
 
-class FileReader : public RefCounted<FileReader>, public ActiveDOMObject, public EventTarget, public FileStreamClient {
+class FileReader : public RefCounted<FileReader>, public ActiveDOMObject, public EventTarget, public ThreadableLoaderClient {
 public:
     static PassRefPtr<FileReader> create(ScriptExecutionContext* context)
     {
@@ -70,12 +69,18 @@ public:
 
     void readAsBinaryString(Blob*);
     void readAsText(Blob*, const String& encoding = "");
-    void readAsDataURL(File*);
+    void readAsDataURL(Blob*);
     void abort();
+
+    void start();
 
     ReadyState readyState() const;
     PassRefPtr<FileError> error() { return m_error; }
     const ScriptString& result();
+
+    // Helper methods, also used by FileReaderSync.
+    static ExceptionCode httpStatusCodeToExceptionCode(int httpStatusCode);
+    static void convertToDataURL(const Vector<char>& rawData, const String& fileType, ScriptString& result);
 
     // ActiveDOMObject
     virtual bool canSuspend() const;
@@ -86,11 +91,11 @@ public:
     virtual FileReader* toFileReader() { return this; }
     virtual ScriptExecutionContext* scriptExecutionContext() const { return ActiveDOMObject::scriptExecutionContext(); }
 
-    // FileStreamClient
-    virtual void didStart();
-    virtual void didGetSize(long long);
-    virtual void didOpen(bool);
-    virtual void didRead(int);
+    // ThreadableLoaderClient
+    virtual void didReceiveResponse(const ResourceResponse&);
+    virtual void didReceiveData(const char*, int);
+    virtual void didFinishLoading(unsigned long identifier);
+    virtual void didFail(const ResourceError&);
 
     using RefCounted<FileReader>::ref;
     using RefCounted<FileReader>::deref;
@@ -126,16 +131,16 @@ private:
 
     void terminate();
     void readInternal(Blob*, ReadType);
+    void failed(int httpStatusCode);
+    void fireErrorEvent(int httpStatusCode);
     void fireEvent(const AtomicString& type);
     void convertToText();
     void convertToDataURL();
-    void didFinish();
-    void didFail(ExceptionCode);
 
     InternalState m_state;
     EventTargetData m_eventTargetData;
 
-    RefPtr<Blob> m_fileBlob;
+    RefPtr<Blob> m_blob;
     ReadType m_readType;
     TextEncoding m_encoding;
 
@@ -157,8 +162,7 @@ private:
     // Needed to create data URL.
     String m_fileType;
 
-    RefPtr<FileStreamProxy> m_streamProxy;
-    Vector<char> m_buffer;
+    RefPtr<ThreadableLoader> m_loader;
     RefPtr<FileError> m_error;
     long long m_bytesLoaded;
     long long m_totalBytes;

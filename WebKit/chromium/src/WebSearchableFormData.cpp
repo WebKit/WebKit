@@ -187,7 +187,7 @@ bool HasSuitableTextElement(const HTMLFormElement* form, Vector<char>* encodedSt
       if (!formElement->appendFormData(dataList, false))
           continue;
 
-      const BlobItemList& items = dataList.items();
+      const Vector<FormDataList::Item>& items = dataList.items();
       if (isTextElement && !items.isEmpty()) {
           if (textElement) {
               // The auto-complete bar only knows how to fill in one value.
@@ -196,22 +196,20 @@ bool HasSuitableTextElement(const HTMLFormElement* form, Vector<char>* encodedSt
           }
           textElement = static_cast<HTMLInputElement*>(formElement);
       }
-      for (BlobItemList::const_iterator j(items.begin()); j != items.end(); ++j) {
-          const StringBlobItem* item = (*j)->toStringBlobItem();
-          ASSERT(item);
+      for (Vector<FormDataList::Item>::const_iterator j(items.begin()); j != items.end(); ++j) {
           // Handle ISINDEX / <input name=isindex> specially, but only if it's
           // the first entry.
-          if (!encodedString->isEmpty() || item->cstr() != "isindex") {
+          if (!encodedString->isEmpty() || j->data() != "isindex") {
               if (!encodedString->isEmpty())
                   encodedString->append('&');
-              FormDataBuilder::encodeStringAsFormData(*encodedString, item->cstr());
+              FormDataBuilder::encodeStringAsFormData(*encodedString, j->data());
               encodedString->append('=');
           }
           ++j;
           if (formElement == textElement)
               encodedString->append("{searchTerms}", 13);
           else
-              FormDataBuilder::encodeStringAsFormData(*encodedString, item->cstr());
+              FormDataBuilder::encodeStringAsFormData(*encodedString, j->data());
       }
     }
 

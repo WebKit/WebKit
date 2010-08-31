@@ -1219,7 +1219,6 @@ SET(WebCore_SOURCES
 
     platform/Arena.cpp
     platform/AsyncFileSystem.cpp
-    platform/BlobItem.cpp
     platform/ContentType.cpp
     platform/ContextMenu.cpp
     platform/CrossThreadCopier.cpp

@@ -31,6 +31,7 @@
 #import "config.h"
 #import "FormDataStreamMac.h"
 
+#import "BlobRegistryImpl.h"
 #import "FileSystem.h"
 #import "FormData.h"
 #import "ResourceHandle.h"
@@ -141,7 +142,7 @@ static void closeCurrentStream(FormStreamFields *form)
         CFRelease(form->currentStream);
         form->currentStream = NULL;
 #if ENABLE(BLOB)
-        form->currentStreamRangeLength = FormDataElement::toEndOfFile;
+        form->currentStreamRangeLength = BlobDataItem::toEndOfFile;
 #endif
     }
     if (form->currentData) {
@@ -169,7 +170,7 @@ static bool advanceCurrentStream(FormStreamFields* form)
     } else {
 #if ENABLE(BLOB)
         // Check if the file has been changed or not if required.
-        if (nextInput.m_expectedFileModificationTime != FormDataElement::doNotCheckFileChange) {
+        if (nextInput.m_expectedFileModificationTime != BlobDataItem::doNotCheckFileChange) {
             time_t fileModificationTime;
             if (!getFileModificationTime(nextInput.m_filename, fileModificationTime) || fileModificationTime != static_cast<time_t>(nextInput.m_expectedFileModificationTime))
                 return false;
@@ -225,7 +226,7 @@ static void* formCreate(CFReadStreamRef stream, void* context)
     FormStreamFields* newInfo = new FormStreamFields;
     newInfo->currentStream = NULL;
 #if ENABLE(BLOB)
-    newInfo->currentStreamRangeLength = FormDataElement::toEndOfFile;
+    newInfo->currentStreamRangeLength = BlobDataItem::toEndOfFile;
 #endif
     newInfo->currentData = 0;
     newInfo->formStream = stream; // Don't retain. That would create a reference cycle.
@@ -273,7 +274,7 @@ static CFIndex formRead(CFReadStreamRef stream, UInt8* buffer, CFIndex bufferLen
     while (form->currentStream) {
         CFIndex bytesToRead = bufferLength;
 #if ENABLE(BLOB)
-        if (form->currentStreamRangeLength != FormDataElement::toEndOfFile && form->currentStreamRangeLength < bytesToRead)
+        if (form->currentStreamRangeLength != BlobDataItem::toEndOfFile && form->currentStreamRangeLength < bytesToRead)
             bytesToRead = static_cast<CFIndex>(form->currentStreamRangeLength);
 #endif
         CFIndex bytesRead = CFReadStreamRead(form->currentStream, buffer, bytesToRead);
@@ -286,7 +287,7 @@ static CFIndex formRead(CFReadStreamRef stream, UInt8* buffer, CFIndex bufferLen
             *atEOF = FALSE;
             form->bytesSent += bytesRead;
 #if ENABLE(BLOB)
-            if (form->currentStreamRangeLength != FormDataElement::toEndOfFile)
+            if (form->currentStreamRangeLength != BlobDataItem::toEndOfFile)
                 form->currentStreamRangeLength -= bytesRead;
 #endif
 
@@ -394,6 +395,49 @@ void setHTTPBody(NSMutableURLRequest *request, PassRefPtr<FormData> formData)
         }
     }
 
+#if ENABLE(BLOB)
+    // Check if there is a blob in the form data.
+    bool hasBlob = false;
+    for (size_t i = 0; i < count; ++i) {
+        const FormDataElement& element = formData->elements()[i];
+        if (element.m_type == FormDataElement::encodedBlob) {
+            hasBlob = true;
+            break;
+        }
+    }
+
+    // If yes, we have to resolve all the blob references and regenerate the form data with only data and file types.
+    if (hasBlob) {
+        RefPtr<FormData> newFormData = FormData::create();
+        newFormData->setAlwaysStream(formData->alwaysStream());
+        newFormData->setIdentifier(formData->identifier());
+        for (size_t i = 0; i < count; ++i) {
+            const FormDataElement& element = formData->elements()[i];
+            if (element.m_type == FormDataElement::data)
+                newFormData->appendData(element.m_data.data(), element.m_data.size());
+            else if (element.m_type == FormDataElement::encodedFile)
+                newFormData->appendFile(element.m_filename, element.m_shouldGenerateFile);
+            else {
+                ASSERT(element.m_type == FormDataElement::encodedBlob);
+                RefPtr<BlobStorageData> blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(KURL(ParsedURLString, element.m_blobURL));
+                if (blobData) {
+                    for (size_t j = 0; j < blobData->items().size(); ++j) {
+                        const BlobDataItem& blobItem = blobData->items()[j];
+                        if (blobItem.type == BlobDataItem::Data) {
+                            newFormData->appendData(blobItem.data.data() + static_cast<int>(blobItem.offset), static_cast<int>(blobItem.length));
+                        } else {
+                            ASSERT(blobItem.type == BlobDataItem::File);
+                            newFormData->appendFileRange(blobItem.path, blobItem.offset, blobItem.length, blobItem.expectedModificationTime);
+                        }
+                    }
+                }
+            }
+        }
+        formData = newFormData;
+        count = formData->elements().size();
+    }
+#endif
+
     // Precompute the content length so NSURLConnection doesn't use chunked mode.
     long long length = 0;
     for (size_t i = 0; i < count; ++i) {
@@ -403,7 +447,7 @@ void setHTTPBody(NSMutableURLRequest *request, PassRefPtr<FormData> formData)
         else {
 #if ENABLE(BLOB)
             // If we're sending the file range, use the existing range length for now. We will detect if the file has been changed right before we read the file and abort the operation if necessary.
-            if (element.m_fileLength != FormDataElement::toEndOfFile) {
+            if (element.m_fileLength != BlobDataItem::toEndOfFile) {
                 length += element.m_fileLength;
                 continue;
             }

@@ -27,10 +27,14 @@
 #define File_h
 
 #include "Blob.h"
+#include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
+
+class KURL;
+class ScriptExecutionContext;
 
 class File : public Blob {
 public:
@@ -40,9 +44,9 @@ public:
     }
 
     // For deserialization.
-    static PassRefPtr<File> create(ScriptExecutionContext* scriptExecutionContext, const String& path, const KURL& url, const String& type)
+    static PassRefPtr<File> create(ScriptExecutionContext* scriptExecutionContext, const String& path, const KURL& srcURL, const String& type)
     {
-        return adoptRef(new File(scriptExecutionContext, path, url, type));
+        return adoptRef(new File(scriptExecutionContext, path, srcURL, type));
     }
 
 #if ENABLE(DIRECTORY_UPLOAD)
@@ -52,13 +56,18 @@ public:
     }
 #endif
 
+    virtual unsigned long long size() const;
     virtual bool isFile() const { return true; }
 
-    const String& name() const;
+    const String& path() const { return m_path; }
+    const String& name() const { return m_name; }
 #if ENABLE(DIRECTORY_UPLOAD)
     // Returns the relative path of this file in the context of a directory selection.
-    const String& webkitRelativePath() const;
+    const String& webkitRelativePath() const { return m_relativePath; }
 #endif
+
+    // Note that this involves synchronous file operation. Think twice before calling this function.
+    void captureSnapshot(long long& snapshotSize, double& snapshotModificationTime) const;
 
     // FIXME: obsolete attributes. To be removed.
     const String& fileName() const { return name(); }
@@ -66,15 +75,19 @@ public:
 
 private:
     File(ScriptExecutionContext*, const String& path);
-
+    
     // For deserialization.
-    File(ScriptExecutionContext*, const String& path, const KURL&, const String& type);
+    File(ScriptExecutionContext*, const String& path, const KURL& srcURL, const String& type);
 
 #if ENABLE(DIRECTORY_UPLOAD)
     File(ScriptExecutionContext*, const String& relativePath, const String& path);
 #endif
 
-    void Init();
+    String m_path;
+    String m_name;
+#if ENABLE(DIRECTORY_UPLOAD)
+    String m_relativePath;
+#endif
 };
 
 } // namespace WebCore

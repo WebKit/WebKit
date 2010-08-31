@@ -30,6 +30,20 @@ namespace WebCore {
 
 class FormDataList {
 public:
+    class Item {
+    public:
+        Item() { }
+        Item(const WTF::CString& data) : m_data(data) { }
+        Item(PassRefPtr<Blob> blob) : m_blob(blob) { }
+
+        const WTF::CString& data() const { return m_data; }
+        Blob* blob() const { return m_blob.get(); }
+
+    private:
+        WTF::CString m_data;
+        RefPtr<Blob> m_blob;
+    };
+
     FormDataList(const TextEncoding&);
 
     void appendData(const String& key, const String& value)
@@ -47,17 +61,22 @@ public:
         appendString(key);
         appendString(String::number(value));
     }
-    void appendBlob(const String& key, PassRefPtr<Blob>);
+    void appendBlob(const String& key, PassRefPtr<Blob> blob)
+    {
+        appendString(key);
+        appendBlob(blob);
+    }
 
-    const BlobItemList& items() const { return m_items; }
+    const Vector<Item>& items() const { return m_items; }
     const TextEncoding& encoding() const { return m_encoding; }
 
 private:
     void appendString(const CString&);
     void appendString(const String&);
+    void appendBlob(PassRefPtr<Blob>);
 
     TextEncoding m_encoding;
-    BlobItemList m_items;
+    Vector<Item> m_items;
 };
 
 } // namespace WebCore

@@ -877,7 +877,6 @@ SOURCES += \
     platform/animation/AnimationList.cpp \
     platform/Arena.cpp \
     platform/AsyncFileSystem.cpp \
-    platform/BlobItem.cpp \
     platform/text/Base64.cpp \
     platform/text/BidiContext.cpp \
     platform/text/Hyphenation.cpp \
@@ -1682,7 +1681,6 @@ HEADERS += \
     platform/AsyncFileStream.h \
     platform/AsyncFileSystem.h \
     platform/AsyncFileSystemCallbacks.h \
-    platform/BlobItem.h \
     platform/ContentType.h \
     platform/ContextMenu.h \
     platform/CrossThreadCopier.h \

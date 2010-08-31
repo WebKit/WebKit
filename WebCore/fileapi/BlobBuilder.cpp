@@ -34,6 +34,7 @@
 
 #include "Blob.h"
 #include "ExceptionCode.h"
+#include "File.h"
 #include "LineEnding.h"
 #include "TextEncoding.h"
 #include <wtf/text/AtomicString.h>
@@ -56,13 +57,19 @@ static CString convertToCString(const String& text, const String& endingType, Ex
     return CString();
 }
 
+BlobBuilder::BlobBuilder()
+    : m_size(0)
+{
+}
+
 bool BlobBuilder::append(const String& text, const String& endingType, ExceptionCode& ec)
 {
     CString cstr = convertToCString(text, endingType, ec);
     if (ec)
         return false;
 
-    m_items.append(StringBlobItem::create(cstr));
+    m_size += cstr.length();
+    m_items.append(BlobDataItem(cstr));
     return true;
 }
 
@@ -73,17 +80,37 @@ bool BlobBuilder::append(const String& text, ExceptionCode& ec)
 
 bool BlobBuilder::append(PassRefPtr<Blob> blob)
 {
-    if (blob) {
-        for (size_t i = 0; i < blob->items().size(); ++i)
-            m_items.append(blob->items()[i]);
-        return true;
+    if (blob->isFile()) {
+        // If the blob is file that is not snapshoted, capture the snapshot now.
+        // FIXME: This involves synchronous file operation. We need to figure out how to make it asynchronous.
+        File* file = static_cast<File*>(blob.get());
+        long long snapshotSize;
+        double snapshotModificationTime;
+        file->captureSnapshot(snapshotSize, snapshotModificationTime);
+
+        m_size += snapshotSize;
+        m_items.append(BlobDataItem(file->path(), 0, snapshotSize, snapshotModificationTime));
+    } else {
+        long long blobSize = static_cast<long long>(blob->size());
+        m_size += blobSize;
+        m_items.append(BlobDataItem(blob->url(), 0, blobSize));
     }
-    return false;
+    return true;
 }
 
-PassRefPtr<Blob> BlobBuilder::getBlob(ScriptExecutionContext* scriptExecutionContext, const String& contentType) const
+PassRefPtr<Blob> BlobBuilder::getBlob(ScriptExecutionContext* scriptExecutionContext, const String& contentType)
 {
-    return Blob::create(scriptExecutionContext, contentType, m_items);
+    OwnPtr<BlobData> blobData = BlobData::create();
+    blobData->setContentType(contentType);
+    blobData->swapItems(m_items);
+
+    RefPtr<Blob> blob = Blob::create(scriptExecutionContext, blobData.release(), m_size);
+
+    // After creating a blob from the current blob data, we do not need to keep the data around any more. Instead, we only
+    // need to keep a reference to the URL of the blob just created.
+    m_items.append(BlobDataItem(blob->url(), 0, m_size));
+
+    return blob;
 }
 
 } // namespace WebCore

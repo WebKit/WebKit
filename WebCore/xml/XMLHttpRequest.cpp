@@ -522,7 +522,7 @@ void XMLHttpRequest::send(Blob* body, ExceptionCode& ec)
         // FIXME: Should we set a Content-Type if one is not set.
         // FIXME: add support for uploading bundles.
         m_requestEntityBody = FormData::create();
-        m_requestEntityBody->appendItems(body->items());
+        m_requestEntityBody->appendBlob(body->url());
     }
 
     createRequest(ec);
@@ -534,7 +534,7 @@ void XMLHttpRequest::send(DOMFormData* body, ExceptionCode& ec)
         return;
 
     if (m_method != "GET" && m_method != "HEAD" && m_url.protocolInHTTPFamily()) {
-        m_requestEntityBody = FormData::createMultiPart(body->items(), body->encoding(), document());
+        m_requestEntityBody = FormData::createMultiPart(*(static_cast<FormDataList*>(body)), body->encoding(), document());
 
         // We need to ask the client to provide the generated file names if needed. When FormData fills the element
         // for the file, it could set a flag to use the generated file name, i.e. a package file on Mac.

@@ -33,20 +33,17 @@ FormDataList::FormDataList(const TextEncoding& c)
 void FormDataList::appendString(const String& s)
 {
     CString cstr = m_encoding.encode(s.characters(), s.length(), EntitiesForUnencodables);
-    m_items.append(StringBlobItem::create(normalizeLineEndingsToCRLF(cstr)));
+    m_items.append(normalizeLineEndingsToCRLF(cstr));
 }
 
 void FormDataList::appendString(const CString& s)
 {
-    m_items.append(StringBlobItem::create(s));
+    m_items.append(s);
 }
 
-void FormDataList::appendBlob(const String& key, PassRefPtr<Blob> blob)
+void FormDataList::appendBlob(PassRefPtr<Blob> blob)
 {
-    appendString(key);
-    const BlobItemList& items = blob->items();
-    for (size_t i = 0; i < items.size(); ++i)
-        m_items.append(items.at(i));
+    m_items.append(blob);
 }
 
 } // namespace

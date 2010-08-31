@@ -26,52 +26,69 @@
 #include "config.h"
 #include "File.h"
 
-#include "BlobData.h"
+#include "BlobRegistry.h"
 #include "FileSystem.h"
 #include "MIMETypeRegistry.h"
 
 namespace WebCore {
 
-File::File(ScriptExecutionContext* scriptExecutionContext, const String& path)
-    : Blob(scriptExecutionContext, path)
+static PassOwnPtr<BlobData> createBlobDataForFile(const String& path)
 {
-    Init();
+    String type;
+    int index = path.reverseFind('.');
+    if (index != -1)
+        type = MIMETypeRegistry::getMIMETypeForExtension(path.substring(index + 1));
+
+    OwnPtr<BlobData> blobData = BlobData::create();
+    blobData->setContentType(type);
+    blobData->appendFile(path);
+    return blobData.release();
+}
+
+File::File(ScriptExecutionContext* scriptExecutionContext, const String& path)
+    : Blob(scriptExecutionContext, createBlobDataForFile(path), -1)
+    , m_path(path)
+    , m_name(pathGetFileName(path))
+{
 }
 
 File::File(ScriptExecutionContext* scriptExecutionContext, const String& path, const KURL& url, const String& type)
-    : Blob(scriptExecutionContext, url, type, BlobDataItem::toEndOfFile)
+    : Blob(scriptExecutionContext, url, type, -1)
+    , m_path(path)
 {
-    // FIXME: To be removed when we switch to using BlobData.
-     m_items.append(FileBlobItem::create(path));
+    m_name = pathGetFileName(path);
 }
 
 #if ENABLE(DIRECTORY_UPLOAD)
-File::File(ScriptExecutionContext* scriptExecutionContext, const String& relativePath, const String& filePath)
-    : Blob(scriptExecutionContext, FileBlobItem::create(filePath, relativePath))
+File::File(ScriptExecutionContext* scriptExecutionContext, const String& relativePath, const String& path)
+    : Blob(scriptExecutionContext, createBlobDataForFile(path), -1)
+    , m_path(path)
+    , m_relativePath(relativePath)
 {
-    Init();
 }
 #endif
 
-void File::Init()
+unsigned long long File::size() const
 {
-    // We don't use MIMETypeRegistry::getMIMETypeForPath() because it returns "application/octet-stream" upon failure.
-    const String& fileName = name();
-    size_t index = fileName.reverseFind('.');
-    if (index != notFound)
-        m_type = MIMETypeRegistry::getMIMETypeForExtension(fileName.substring(index + 1));
+    // FIXME: JavaScript cannot represent sizes as large as unsigned long long, we need to
+    // come up with an exception to throw if file size is not representable.
+    long long size;
+    if (!getFileSize(m_path, size))
+        return 0;
+    return static_cast<unsigned long long>(size);
 }
 
-const String& File::name() const
+void File::captureSnapshot(long long& snapshotSize, double& snapshotModificationTime) const
 {
-    return items().at(0)->toFileBlobItem()->name();
+    // Obtains a snapshot of the file by capturing its current size and modification time. This is used when we slice a file for the first time.
+    // If we fail to retrieve the size or modification time, probably due to that the file has been deleted, 0 size is returned.
+    // FIXME: Combine getFileSize and getFileModificationTime into one file system call.
+    time_t modificationTime;
+    if (!getFileSize(m_path, snapshotSize) || !getFileModificationTime(m_path, modificationTime)) {
+        snapshotSize = 0;
+        snapshotModificationTime = 0;
+    } else
+        snapshotModificationTime = modificationTime;
 }
-
-#if ENABLE(DIRECTORY_UPLOAD)
-const String& File::webkitRelativePath() const
-{
-    return items().at(0)->toFileBlobItem()->relativePath();
-}
-#endif
 
 } // namespace WebCore

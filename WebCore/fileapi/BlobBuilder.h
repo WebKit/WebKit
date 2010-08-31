@@ -31,14 +31,18 @@
 #ifndef BlobBuilder_h
 #define BlobBuilder_h
 
-#include "BlobItem.h"
+#include "BlobData.h"
+#include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
 class Blob;
 class ScriptExecutionContext;
+class TextEncoding;
 
 typedef int ExceptionCode;
 
@@ -50,10 +54,13 @@ public:
     bool append(const String& text, ExceptionCode&);
     bool append(const String& text, const String& ending, ExceptionCode&);
 
-    PassRefPtr<Blob> getBlob(ScriptExecutionContext*, const String& contentType = String()) const;
+    PassRefPtr<Blob> getBlob(ScriptExecutionContext*, const String& contentType = String());
 
 private:
-    BlobItemList m_items;
+    BlobBuilder();
+
+    long long m_size;
+    BlobDataItemList m_items;
 };
 
 } // namespace WebCore

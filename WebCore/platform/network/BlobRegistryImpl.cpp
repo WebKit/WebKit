@@ -32,6 +32,7 @@
 
 #include "BlobRegistryImpl.h"
 
+#include "BlobResourceHandle.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"
 #include "ResourceLoader.h"
@@ -60,22 +61,21 @@ bool BlobRegistryImpl::shouldLoadResource(const ResourceRequest& request) const
     return true;
 }
 
-PassRefPtr<ResourceHandle> BlobRegistryImpl::createResourceHandle(const ResourceRequest& request, ResourceHandleClient*)
+PassRefPtr<ResourceHandle> BlobRegistryImpl::createResourceHandle(const ResourceRequest& request, ResourceHandleClient* client)
 {
     if (!shouldLoadResource(request))
         return 0;
 
-    // FIXME: To be implemented.
-    return 0;
+    return BlobResourceHandle::create(m_blobs.get(request.url().string()), request, client);
 }
 
-bool BlobRegistryImpl::loadResourceSynchronously(const ResourceRequest& request, ResourceError&, ResourceResponse&, Vector<char>&)
+bool BlobRegistryImpl::loadResourceSynchronously(const ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     if (!shouldLoadResource(request))
         return false;
 
-    // FIXME: To be implemented.
-    return false;
+    BlobResourceHandle::loadResourceSynchronously(m_blobs.get(request.url().string()), request, error, response, data);
+    return true;
 }
 
 void BlobRegistryImpl::appendStorageItems(BlobStorageData* blobStorageData, const BlobDataItemList& items)

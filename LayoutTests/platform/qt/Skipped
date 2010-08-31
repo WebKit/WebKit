@@ -781,7 +781,8 @@ http/tests/security/isolatedWorld/world-reuse.html
 
 # Missing eventSender.beginDragWithFiles()
 fast/dom/Window/window-postmessage-clone-frames.html
-fast/files/file-reader.html
+fast/files/read-blob-async.html
+fast/files/read-file-async.html
 
 # Missing layoutTestController.setAlwaysAcceptCookies()
 http/tests/plugins/third-party-cookie-accept-policy.html

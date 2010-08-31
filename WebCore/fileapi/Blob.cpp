@@ -31,51 +31,19 @@
 #include "config.h"
 #include "Blob.h"
 
-#include "BlobData.h"
-#include "BlobItem.h"
 #include "BlobURL.h"
-#include "FileSystem.h"
+#include "File.h"
 #include "ScriptExecutionContext.h"
 #include "ThreadableBlobRegistry.h"
 
 namespace WebCore {
-
-// FIXME: To be removed when we switch to using BlobData.
-Blob::Blob(ScriptExecutionContext* scriptExecutionContext, const String& type, const BlobItemList& items)
-    : m_scriptExecutionContext(scriptExecutionContext)
-    , m_type(type)
-    , m_size(0)
-{
-    m_scriptExecutionContext->addBlob(this);
-    for (size_t i = 0; i < items.size(); ++i)
-        m_items.append(items[i]);
-}
-
-// FIXME: To be removed when we switch to using BlobData.
-Blob::Blob(ScriptExecutionContext* scriptExecutionContext, const PassRefPtr<BlobItem>& item)
-    : m_scriptExecutionContext(scriptExecutionContext)
-    , m_size(0)
-{
-    m_scriptExecutionContext->addBlob(this);
-    m_items.append(item);
-}
-
-// FIXME: To be removed when we switch to using BlobData.
-Blob::Blob(ScriptExecutionContext* scriptExecutionContext, const String& path)
-    : m_scriptExecutionContext(scriptExecutionContext)
-    , m_size(0)
-{
-    m_scriptExecutionContext->addBlob(this);
-    // Note: this doesn't initialize the type unlike File(path).
-    m_items.append(FileBlobItem::create(path));
-}
 
 Blob::Blob(ScriptExecutionContext* scriptExecutionContext, PassOwnPtr<BlobData> blobData, long long size)
     : m_scriptExecutionContext(scriptExecutionContext)
     , m_type(blobData->contentType())
     , m_size(size)
 {
-    ASSERT(blobData.get() && !blobData->items().isEmpty());
+    ASSERT(blobData);
 
     m_scriptExecutionContext->addBlob(this);
 
@@ -89,11 +57,7 @@ Blob::Blob(ScriptExecutionContext* scriptExecutionContext, const KURL& srcURL, c
     , m_type(type)
     , m_size(size)
 {
-    m_scriptExecutionContext->addBlob(this);
-
-    // FIXME: To be removed when we switch to using BlobData.
-    if (srcURL.isEmpty())
-        return;
+   m_scriptExecutionContext->addBlob(this);
 
     // Create a new internal URL and register it with the same blob data as the source URL.
     m_url = BlobURL::createURL(scriptExecutionContext);
@@ -118,50 +82,42 @@ void Blob::contextDestroyed()
     m_scriptExecutionContext = 0;
 }
 
-unsigned long long Blob::size() const
-{
-    // FIXME: JavaScript cannot represent sizes as large as unsigned long long, we need to
-    // come up with an exception to throw if file size is not represetable.
-    unsigned long long size = 0;
-    for (size_t i = 0; i < m_items.size(); ++i)
-        size += m_items[i]->size();
-    return size;
-}
-
-// FIXME: To be removed when we switch to using BlobData.
-const String& Blob::path() const
-{
-    ASSERT(m_items.size() == 1 && m_items[0]->toFileBlobItem());
-    return m_items[0]->toFileBlobItem()->path();
-}
-
 #if ENABLE(BLOB)
 PassRefPtr<Blob> Blob::slice(ScriptExecutionContext* scriptExecutionContext, long long start, long long length, const String& contentType) const
 {
+    // When we slice a file for the first time, we obtain a snapshot of the file by capturing its current size and modification time.
+    // The modification time will be used to verify if the file has been changed or not, when the underlying data are accessed.
+    long long size;
+    double modificationTime;
+    if (isFile())
+        // FIXME: This involves synchronous file operation. We need to figure out how to make it asynchronous.
+        static_cast<const File*>(this)->captureSnapshot(size, modificationTime);
+    else {
+        ASSERT(m_size != -1);
+        size = m_size;
+    }
+
+    // Clamp the range if it exceeds the size limit.
     if (start < 0)
         start = 0;
     if (length < 0)
         length = 0;
 
-    // Clamp the range if it exceeds the size limit.
-    unsigned long long totalSize = size();
-    if (static_cast<unsigned long long>(start) > totalSize) {
+    if (start >= size) {
         start = 0;
         length = 0;
-    } else if (static_cast<unsigned long long>(start + length) > totalSize)
-        length = totalSize - start;
+    } else if (start + length > size)
+        length = size - start;
 
-    size_t i = 0;
-    BlobItemList items;
-    for (; i < m_items.size() && static_cast<unsigned long long>(start) >= m_items[i]->size(); ++i)
-        start -= m_items[i]->size();
-    for (; length > 0 && i < m_items.size(); ++i) {
-        items.append(m_items[i]->slice(start, length));
-        length -= items.last()->size();
-        start = 0;
-    }
-    return Blob::create(scriptExecutionContext, contentType, items);
+    OwnPtr<BlobData> blobData = BlobData::create();
+    blobData->setContentType(contentType);
+    if (isFile())
+        blobData->appendFile(static_cast<const File*>(this)->path(), start, length, modificationTime);
+    else
+        blobData->appendBlob(m_url, start, length);
+
+    return Blob::create(scriptExecutionContext, blobData.release(), length);
 }
-#endif // ENABLE(BLOB)
+#endif
 
 } // namespace WebCore

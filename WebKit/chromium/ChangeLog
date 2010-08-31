@@ -1,3 +1,13 @@
+2010-08-31  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Switch the Blob implementation to using the blob data registration model
+        https://bugs.webkit.org/show_bug.cgi?id=44389
+
+        * src/WebSearchableFormData.cpp:
+        (WebCore::HasSuitableTextElement):
+
 2010-08-30  Nat Duca  <nduca@chromium.org>
 
         Reviewed by Adam Barth.

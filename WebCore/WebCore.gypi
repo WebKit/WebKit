@@ -3054,8 +3054,6 @@
             'platform/AsyncFileSystem.h',
             'platform/AsyncFileSystemCallbacks.h',
             'platform/AutodrainedPool.h',
-            'platform/BlobItem.cpp',
-            'platform/BlobItem.h',
             'platform/ContentType.cpp',
             'platform/ContentType.h',
             'platform/ContextMenu.cpp',

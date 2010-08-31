@@ -22,22 +22,20 @@
 
 #include "FormData.h"
 
-#include "BlobItem.h"
+#include "BlobData.h"
+#include "BlobURL.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
+#include "File.h"
 #include "FileSystem.h"
 #include "FormDataBuilder.h"
+#include "FormDataList.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "TextEncoding.h"
 
 namespace WebCore {
-
-#if ENABLE(BLOB)
-const long long FormDataElement::toEndOfFile = -1;
-const double FormDataElement::doNotCheckFileChange = 0;
-#endif
 
 inline FormData::FormData()
     : m_identifier(0)
@@ -99,17 +97,17 @@ PassRefPtr<FormData> FormData::create(const Vector<char>& vector)
     return result.release();
 }
 
-PassRefPtr<FormData> FormData::create(const BlobItemList& items, const TextEncoding& encoding)
+PassRefPtr<FormData> FormData::create(const FormDataList& list, const TextEncoding& encoding)
 {
     RefPtr<FormData> result = create();
-    result->appendKeyValuePairItems(items, encoding, false, 0);
+    result->appendKeyValuePairItems(list, encoding, false, 0);
     return result.release();
 }
 
-PassRefPtr<FormData> FormData::createMultiPart(const BlobItemList& items, const TextEncoding& encoding, Document* document)
+PassRefPtr<FormData> FormData::createMultiPart(const FormDataList& list, const TextEncoding& encoding, Document* document)
 {
     RefPtr<FormData> result = create();
-    result->appendKeyValuePairItems(items, encoding, true, document);
+    result->appendKeyValuePairItems(list, encoding, true, document);
     return result.release();
 }
 
@@ -162,42 +160,10 @@ void FormData::appendData(const void* data, size_t size)
 void FormData::appendFile(const String& filename, bool shouldGenerateFile)
 {
 #if ENABLE(BLOB)
-    m_elements.append(FormDataElement(filename, 0, FormDataElement::toEndOfFile, FormDataElement::doNotCheckFileChange, shouldGenerateFile));
+    m_elements.append(FormDataElement(filename, 0, BlobDataItem::toEndOfFile, BlobDataItem::doNotCheckFileChange, shouldGenerateFile));
 #else
     m_elements.append(FormDataElement(filename, shouldGenerateFile));
 #endif
-}
-
-void FormData::appendItems(const BlobItemList& items)
-{
-    for (BlobItemList::const_iterator iter(items.begin()); iter != items.end(); ++iter)
-        appendItem(iter->get(), false);
-}
-
-void FormData::appendItem(const BlobItem* item, bool shouldGenerateFile)
-{
-    const DataBlobItem* dataItem = item->toDataBlobItem();
-    if (dataItem) {
-        appendData(dataItem->data(), static_cast<size_t>(dataItem->size()));
-        return;
-    }
-
-    const FileBlobItem* fileItem = item->toFileBlobItem();
-    ASSERT(fileItem);
-    if (fileItem->path().isEmpty()) {
-        // If the path is empty do not add the item.
-        return;
-    }
-
-#if ENABLE(BLOB)
-    const FileRangeBlobItem* fileRangeItem = item->toFileRangeBlobItem();
-    if (fileRangeItem) {
-        appendFileRange(fileItem->path(), fileRangeItem->start(), fileRangeItem->size(), fileRangeItem->snapshotModificationTime(), shouldGenerateFile);
-        return;
-    }
-#endif
-
-    appendFile(fileItem->path(), shouldGenerateFile);
 }
 
 #if ENABLE(BLOB)
@@ -212,80 +178,82 @@ void FormData::appendBlob(const KURL& blobURL)
 }
 #endif
 
-void FormData::appendKeyValuePairItems(const BlobItemList& items, const TextEncoding& encoding, bool isMultiPartForm, Document* document)
+void FormData::appendKeyValuePairItems(const FormDataList& list, const TextEncoding& encoding, bool isMultiPartForm, Document* document)
 {
     if (isMultiPartForm)
         m_boundary = FormDataBuilder::generateUniqueBoundaryString();
 
     Vector<char> encodedData;
 
+    const Vector<FormDataList::Item>& items = list.items();
     size_t formDataListSize = items.size();
     ASSERT(!(formDataListSize % 2));
     for (size_t i = 0; i < formDataListSize; i += 2) {
-        const StringBlobItem* key = items[i]->toStringBlobItem();
-        const BlobItem* value = items[i + 1].get();
-        ASSERT(key);
+        const FormDataList::Item& key = items[i];
+        const FormDataList::Item& value = items[i + 1];
         if (isMultiPartForm) {
             Vector<char> header;
-            FormDataBuilder::beginMultiPartHeader(header, m_boundary.data(), key->cstr());
+            FormDataBuilder::beginMultiPartHeader(header, m_boundary.data(), key.data());
 
             bool shouldGenerateFile = false;
-            // If the current type is FILE, then we also need to include the filename
-            const FileBlobItem* fileItem = value->toFileBlobItem();
-            if (fileItem) {
-                const String& path = fileItem->path();
 
-#if ENABLE(DIRECTORY_UPLOAD)
-                String fileName = !fileItem->relativePath().isEmpty() ? fileItem->relativePath() : fileItem->name();
+            // If the current type is blob, then we also need to include the filename
+            if (value.blob()) {
+                String name;
+                if (value.blob()->isFile()) {
+                    // For file blob, use the filename (or relative path if it is present) as the name.
+                    File* file = static_cast<File*>(value.blob());
+#if ENABLE(DIRECTORY_UPLOAD)                
+                    name = file->webkitRelativePath().isEmpty() ? file->name() : file->webkitRelativePath();
 #else
-                String fileName = fileItem->name();
-#endif
+                    name = file->name();
+#endif                    
 
-                // Let the application specify a filename if it's going to generate a replacement file for the upload.
-                if (!path.isEmpty()) {
+                    // Let the application specify a filename if it's going to generate a replacement file for the upload.
                     if (Page* page = document->page()) {
                         String generatedFileName;
-                        shouldGenerateFile = page->chrome()->client()->shouldReplaceWithGeneratedFileForUpload(path, generatedFileName);
+                        shouldGenerateFile = page->chrome()->client()->shouldReplaceWithGeneratedFileForUpload(file->path(), generatedFileName);
                         if (shouldGenerateFile)
-                            fileName = generatedFileName;
+                            name = generatedFileName;
                     }
+                } else {
+                    // For non-file blob, use the identifier part of the URL as the name.
+                    name = "Blob" + BlobURL::getIdentifier(value.blob()->url());
+                    name = name.replace("-", ""); // For safety, remove '-' from the filename since some servers may not like it.
                 }
 
                 // We have to include the filename=".." part in the header, even if the filename is empty
-                FormDataBuilder::addFilenameToMultiPartHeader(header, encoding, fileName);
+                FormDataBuilder::addFilenameToMultiPartHeader(header, encoding, name);
 
-                // If the item is sliced from a file, do not add the content type.
-#if ENABLE(BLOB)
-                if (!fileName.isEmpty() && !value->toFileRangeBlobItem()) {
-#else
-                if (!fileName.isEmpty()) {
-#endif
-                    // FIXME: The MIMETypeRegistry function's name makes it sound like it takes a path,
-                    // not just a basename. But filename is not the path. But note that it's not safe to
-                    // just use path instead since in the generated-file case it will not reflect the
-                    // MIME type of the generated file.
-                    String mimeType = MIMETypeRegistry::getMIMETypeForPath(fileName);
-                    if (!mimeType.isEmpty())
-                        FormDataBuilder::addContentTypeToMultiPartHeader(header, mimeType.latin1());
-                }
+                // Add the content type if it is available.
+                if (value.blob()->type().isEmpty())
+                    FormDataBuilder::addContentTypeToMultiPartHeader(header, value.blob()->type().latin1());
             }
 
             FormDataBuilder::finishMultiPartHeader(header);
 
             // Append body
             appendData(header.data(), header.size());
-            appendItem(value, shouldGenerateFile);
+            if (value.blob()) {
+                if (value.blob()->isFile()) {
+                    // Do not add the file if the path is empty.
+                    if (!static_cast<File*>(value.blob())->path().isEmpty())
+                        appendFile(static_cast<File*>(value.blob())->path(), shouldGenerateFile);
+                }
+#if ENABLE(BLOB)
+                else
+                    appendBlob(value.blob()->url());
+#endif
+            } else
+                appendData(value.data().data(), value.data().length());
             appendData("\r\n", 2);
         } else {
             // Omit the name "isindex" if it's the first form data element.
             // FIXME: Why is this a good rule? Is this obsolete now?
-            const StringBlobItem* stringValue = value->toStringBlobItem();
-            if (!stringValue)
-                continue;
-            if (encodedData.isEmpty() && key->cstr() == "isindex")
-                FormDataBuilder::encodeStringAsFormData(encodedData, stringValue->cstr());
+            if (encodedData.isEmpty() && key.data() == "isindex")
+                FormDataBuilder::encodeStringAsFormData(encodedData, value.data());
             else
-                FormDataBuilder::addKeyValuePairAsFormData(encodedData, key->cstr(), stringValue->cstr());
+                FormDataBuilder::addKeyValuePairAsFormData(encodedData, key.data(), value.data());
         }
     }
 

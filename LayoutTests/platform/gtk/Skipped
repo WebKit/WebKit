@@ -3146,7 +3146,8 @@ http/tests/local/blob/send-sliced-data-blob.html
 http/tests/local/formdata/send-form-data.html
 http/tests/local/formdata/send-form-data-with-sliced-file.html
 http/tests/local/formdata/upload-events.html
-fast/files/file-reader.html
+fast/files/read-blob-async.html
+fast/files/read-file-async.html
 http/tests/media/video-play-stall-seek.html
 http/tests/media/video-play-stall.html
 http/tests/media/video-seekable-stall.html
