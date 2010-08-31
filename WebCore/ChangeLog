@@ -15,6 +15,35 @@
 
 2010-08-30  Jian Li  <jianli@chromium.org>
 
+        Try to fix break again.
+
+        * fileapi/ThreadableBlobRegistry.cpp:
+        (WebCore::ThreadableBlobRegistry::registerBlobURL):
+        (WebCore::ThreadableBlobRegistry::unregisterBlobURL):
+
+2010-08-30  Jian Li  <jianli@chromium.org>
+
+        Fix another build break. Also fix directory upload test break.
+
+        * fileapi/File.cpp:
+        (WebCore::File::File):
+        * fileapi/ThreadableBlobRegistry.cpp:
+
+2010-08-30  Jian Li  <jianli@chromium.org>
+
+        Fix build break.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+
+2010-08-30  Jian Li  <jianli@chromium.org>
+
+        Fix qt/gtk build break.
+
+        * platform/network/BlobRegistryImpl.cpp:
+
+2010-08-30  Jian Li  <jianli@chromium.org>
+
         Reviewed by Darin Fisher.
 
         Switch the Blob implementation to using the blob data registration model
