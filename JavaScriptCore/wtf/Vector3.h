@@ -26,12 +26,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Vector3_h
-#define Vector3_h
+#ifndef WTF_Vector3_h
+#define WTF_Vector3_h
 
 #include <math.h>
 
-namespace WebCore {
+namespace WTF {
 
 class Vector3 {
 public:
@@ -133,6 +133,6 @@ inline double distance(const Vector3& v1, const Vector3& v2)
     return (v1 - v2).abs();
 }
 
-} // WebCore
+} // WTF
 
-#endif // Vector3_h
+#endif // WTF_Vector3_h

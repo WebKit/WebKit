@@ -26,13 +26,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Complex_h
-#define Complex_h
+#ifndef WTF_Complex_h
+#define WTF_Complex_h
 
 #include <complex>
 #include <wtf/MathExtras.h>
 
-namespace WebCore {
+namespace WTF {
 
 typedef std::complex<double> Complex;
 
@@ -41,6 +41,6 @@ inline Complex complexFromMagnitudePhase(double magnitude, double phase)
     return Complex(magnitude * cos(phase), magnitude * sin(phase));
 }
 
-} // namespace WebCore
+} // namespace WTF
 
-#endif // Complex_h
+#endif // WTF_Complex_h

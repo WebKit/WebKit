@@ -1,3 +1,13 @@
+2010-08-30  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Fix namespace for wtf/Complex.h and wtf/Vector3.h
+        https://bugs.webkit.org/show_bug.cgi?id=44892
+
+        * wtf/Complex.h:
+        * wtf/Vector3.h:
+
 2010-08-30  Andy Estes  <aestes@apple.com>
 
         Reviewed by Eric Carlson.
