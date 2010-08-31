@@ -98,7 +98,10 @@ static inline unsigned getCPUTime()
     return GETUPTIMEMS();
 #else
     // FIXME: We should return the time the current thread has spent executing.
-    return currentTime() * 1000;
+
+    // use a relative time from first call in order to avoid an overflow
+    static double firstTime = currentTime();
+    return (currentTime() - firstTime) * 1000;
 #endif
 }
 
