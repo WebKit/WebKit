@@ -1,3 +1,15 @@
+2010-08-31  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44956, paginate block-level replaced elements.
+       <rdar://problem/8000991> Images with display:block get split between columns or pages
+
+        Added fast/multicol/paginate-block-replaced.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintChildren):
+
 2010-08-31  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

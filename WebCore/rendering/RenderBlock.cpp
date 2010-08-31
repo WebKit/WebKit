@@ -2105,8 +2105,12 @@ void RenderBlock::paintChildren(PaintInfo& paintInfo, int tx, int ty)
     PaintInfo info(paintInfo);
     info.phase = newPhase;
     info.updatePaintingRootForChildren(this);
+    
+    RenderView* renderView = view();
+    bool usePrintRect = !renderView->printRect().isEmpty() && !document()->settings()->paginateDuringLayoutEnabled();
+    
     bool checkPageBreaks = document()->paginated() && !document()->settings()->paginateDuringLayoutEnabled();
-    bool checkColumnBreaks = !checkPageBreaks && !view()->printRect().isEmpty() && !document()->settings()->paginateDuringLayoutEnabled();
+    bool checkColumnBreaks = !checkPageBreaks && usePrintRect;
 
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {        
         // Check for page-break-before: always, and if it's set, break and bail.
@@ -2116,6 +2120,17 @@ void RenderBlock::paintChildren(PaintInfo& paintInfo, int tx, int ty)
             && (ty + child->y()) < paintInfo.rect.bottom()) {
             view()->setBestTruncatedAt(ty + child->y(), this, true);
             return;
+        }
+
+        if (child->isReplaced() && usePrintRect && child->height() <= renderView->printRect().height()) {
+            // Paginate block-level replaced elements.
+            if (ty + child->y() + child->height() > renderView->printRect().bottom()) {
+                if (ty + child->y() < renderView->truncatedAt())
+                    renderView->setBestTruncatedAt(ty + child->y(), child);
+                // If we were able to truncate, don't paint.
+                if (ty + child->y() >= renderView->truncatedAt())
+                    break;
+            }
         }
 
         if (!child->hasSelfPaintingLayer() && !child->isFloating())

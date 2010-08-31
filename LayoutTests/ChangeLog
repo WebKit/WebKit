@@ -1,3 +1,14 @@
+2010-08-31  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44956, paginate block-level replaced elements.
+
+        * fast/multicol/paginate-block-replaced.html: Added.
+        * platform/mac/fast/multicol/paginate-block-replaced-expected.checksum: Added.
+        * platform/mac/fast/multicol/paginate-block-replaced-expected.png: Added.
+        * platform/mac/fast/multicol/paginate-block-replaced-expected.txt: Added.
+
 2010-08-31  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, unskip fixed test for the GTK port.
