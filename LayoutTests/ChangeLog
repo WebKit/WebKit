@@ -1,3 +1,13 @@
+2010-08-31  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Local frame loads should check against origin (not referrer)
+        https://bugs.webkit.org/show_bug.cgi?id=44888
+
+        * fast/frames/iframe-no-src-local-origin-allow-expected.txt: Added.
+        * fast/frames/iframe-no-src-local-origin-allow.html: Added.
+
 2010-08-25  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
