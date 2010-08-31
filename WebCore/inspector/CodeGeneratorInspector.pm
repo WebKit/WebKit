@@ -316,7 +316,6 @@ sub generateBackendFunction
         push(@function, "");
         push(@function, "    RefPtr<InspectorObject> argumentsContainer;");
         push(@function, "    if (!(argumentsContainer = requestMessageObject->getObject(\"arguments\"))) {");
-        push(@function, "        ASSERT_NOT_REACHED();");
         push(@function, "        protocolErrors->pushString(String::format(\"Error: arguments object was not found.\"));");
         push(@function, "    } else {");
         push(@function, "        InspectorObject::const_iterator argumentsEndIterator = argumentsContainer->end();");
@@ -330,11 +329,9 @@ sub generateBackendFunction
             push(@function, "");
             push(@function, "        InspectorObject::const_iterator ${name}ValueIterator = argumentsContainer->find(\"$name\");");
             push(@function, "        if (${name}ValueIterator == argumentsEndIterator) {");
-            push(@function, "            ASSERT_NOT_REACHED();");
             push(@function, "            protocolErrors->pushString(String::format(\"Error: Argument '%s' with type '%s' was not found.\", \"$name\", \"$JSONType\"));");
             push(@function, "        } else {");
             push(@function, "            if (!${name}ValueIterator->second->as$JSONType(&$name)) {");
-            push(@function, "                ASSERT_NOT_REACHED();");
             push(@function, "                protocolErrors->pushString(String::format(\"Error: Argument '%s' has wrong type. It should be '%s'.\", \"$name\", \"$JSONType\"));");
             push(@function, "            }");
             push(@function, "        }");
@@ -417,48 +414,41 @@ $mapEntries
 
     RefPtr<InspectorValue> parsedMessage = InspectorValue::parseJSON(message);
     if (!parsedMessage) {
-        ASSERT_NOT_REACHED();
         reportProtocolError(callId, "dispatch", "Error: Invalid message format. Message should be in JSON format.");
         return;
     }
 
     RefPtr<InspectorObject> messageObject = parsedMessage->asObject();
     if (!messageObject) {
-        ASSERT_NOT_REACHED();
         reportProtocolError(callId, "dispatch", "Error: Invalid message format. The message should be a JSONified object.");
         return;
     }
 
     RefPtr<InspectorValue> commandValue = messageObject->get("command");
     if (!commandValue) {
-        ASSERT_NOT_REACHED();
         reportProtocolError(callId, "dispatch", "Error: Invalid message format. 'command' property wasn't found.");
         return;
     }
 
     String command;
     if (!commandValue->asString(&command)) {
-        ASSERT_NOT_REACHED();
         reportProtocolError(callId, "dispatch", "Error: Invalid message format. The type of 'command' property should be string.");
         return;
     }
 
     RefPtr<InspectorValue> callIdValue = messageObject->get("seq");
     if (!callIdValue) {
-        ASSERT_NOT_REACHED();
         reportProtocolError(callId, command.utf8().data(), "Error: Invalid message format. 'seq' property was not found in the request.");
         return;
     }
 
     if (!callIdValue->asNumber(&callId)) {
-        ASSERT_NOT_REACHED();
         reportProtocolError(callId, command.utf8().data(), "Error: Invalid message format. the type of 'seq' property should be number.");
         return;
     }
 
     HashMap<String, CallHandler>::iterator it = dispatchMap.find(command);
     if (it == dispatchMap.end()) {
-        ASSERT_NOT_REACHED();
         reportProtocolError(callId, "dispatch", String::format("Error: Invalid command was received. '%s' wasn't found.", command.utf8().data()));
         return;
     }
@@ -533,14 +523,25 @@ WebInspector.InspectorBackendStub.prototype = {
         var request = JSON.parse(args.shift());
 
         for (var key in request.arguments) {
+            if (args.length === 0) {
+                console.error("Protocol Error: Invalid number of arguments for 'InspectorBackend.%s' call. It should have the next arguments '%s'.", request.command, JSON.stringify(request.arguments));
+                return;
+            }
             var value = args.shift();
-            if (typeof value !== request.arguments[key])
-                throw("Invalid type of property " + key + ". It should be '" + request.arguments[key] + "' but it is '" + typeof value + "'." );
+            if (typeof value !== request.arguments[key]) {
+                console.error("Protocol Error: Invalid type of argument '%s' for 'InspectorBackend.%s' call. It should be '%s' but it is '%s'.", key, request.command, request.arguments[key], typeof value);
+                return;
+            }
             request.arguments[key] = value;
         }
 
-        if (args.length === 1 && typeof args[0] === "function")
+        if (args.length === 1) {
+            if (typeof args[0] !== "function") {
+                console.error("Protocol Error: Optional callback argument for 'InspectorBackend.%s' call should be a function but its type is '%s'.", request.command, typeof args[0]);
+                return;
+            }
             request.seq = WebInspector.Callback.wrap(args[0]);
+        }
 
         var message = JSON.stringify(request);
         InspectorFrontendHost.sendMessageToBackend(message);

@@ -1,3 +1,23 @@
+2010-08-30  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Joseph Pecoraro.
+
+        WebInspector: it'd be better to introduce inspector API related tests.
+
+        As far as we have some kind of API for Inspector
+        it'd be better to have API related tests. This is the test
+        for API wrappers. These wrappers are tracking the types of arguments
+        of API functions.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44875
+
+        Test: inspector/protocol-error.html
+
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/front-end/inspector.js:
+        (WebInspector_syncDispatch):
+        (WebInspector.reportProtocolError):
+
 2010-08-31  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r66484.

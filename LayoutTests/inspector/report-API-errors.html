@@ -1,0 +1,32 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script>
+
+function test()
+{
+    function callback()
+    {
+        InspectorTest.addResult(String.sprintf.apply(this, arguments));
+    }
+
+    InspectorTest._addSniffer(console, "error", callback, true);
+
+    InspectorBackend.enableResourceTracking(1, callback);
+    InspectorBackend.enableResourceTracking();
+    InspectorBackend.enableResourceTracking(true, "not a function");
+    WebInspector_syncDispatch('{"type": "event", "domain": "dom", "event": "something-strange", "data": {}}');
+
+    InspectorTest.completeTest();
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that InspectorBackendStub is catching incorrect arguments.
+</p>
+
+</body>
+</html>

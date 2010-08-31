@@ -651,8 +651,8 @@ WebInspector_syncDispatch = function(message)
     }
 
     if (messageObject.type === "event") {
-        if (!messageObject.event in WebInspector) {
-            console.error("Attempted to dispatch unimplemented WebInspector method: %s", messageObject.event);
+        if (!(messageObject.event in WebInspector)) {
+            console.error("Protocol Error: Attempted to dispatch an unimplemented WebInspector method '%s'", messageObject.event);
             return;
         }
         WebInspector[messageObject.event].apply(WebInspector, arguments);
@@ -666,7 +666,7 @@ WebInspector.dispatchMessageFromBackend = function(messageObject)
 
 WebInspector.reportProtocolError = function(messageObject)
 {
-    console.error("Error: InspectorBackend request with seq = " + messageObject.seq + " failed.");
+    console.error("Protocol Error: InspectorBackend request with seq = %d failed.", messageObject.seq);
     for (var error in messageObject.errors)
         console.error("    " + error);
     WebInspector.removeResponseCallbackEntry(messageObject.seq);
