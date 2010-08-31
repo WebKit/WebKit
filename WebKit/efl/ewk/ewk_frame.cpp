@@ -1687,12 +1687,6 @@ void ewk_frame_did_perform_first_navigation(Evas_Object *o)
  */
 void ewk_frame_view_state_save(Evas_Object *o, WebCore::HistoryItem* item)
 {
-    const char *title = ewk_frame_title_get(o);
-    const char *uri = ewk_frame_uri_get(o);
-
-    item->setTitle(WTF::String::fromUTF8(title));
-    item->setURLString(WTF::String::fromUTF8(uri));
-
     evas_object_smart_callback_call(o, "state,save", 0);
 }
 

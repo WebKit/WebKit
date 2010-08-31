@@ -1,3 +1,15 @@
+2010-08-30  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Adam Barth.
+
+        [EFL]Url of HistoryItem was broken for special character like korean
+        https://bugs.webkit.org/show_bug.cgi?id=44495
+
+        Remove unnecessary code. This makes a bug with complicated URL.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_view_state_save):
+
 2010-08-30  Mikołaj Małecki  <m.malecki@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen
