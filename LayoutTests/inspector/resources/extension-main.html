@@ -1,15 +1,15 @@
 <html>
 <head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
 <script type="text/javascript">
-function log(message)
+function output(message)
 {
-    webInspector.inspectedWindow.evaluate("log(unescape('" + escape(message) + "'));");
+    webInspector.inspectedWindow.evaluate("output(unescape('" + escape(message) + "'));");
 }
 
-log("Started extension.");
+output("Started extension.");
 </script>
 
-<script src="../../http/tests/inspector/inspector-test.js"></script>
 <script src="extension-main.js"></script>
 </head>
 </html>

@@ -1,0 +1,32 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="extensions-test.js"></script>
+<script src="audits-tests2.js"></script>
+<script src="extensions-audits-tests.js"></script>
+
+<script type="text/javascript">
+
+function extension_testAuditsAPI(nextTest)
+{
+    function onStartAuditCategory(results)
+    {
+        output("category.onAuditStarted fired, results dump follows:");
+        dumpObject(results);
+        var node = results.createResult("Subtree");
+        dumpObject(node);
+        results.done();
+    }
+    var category = webInspector.audits.addCategory("Extension audits", 20);
+    category.onAuditStarted.addListener(onStartAuditCategory);
+    output("Added audit category, result dump follows:");
+    dumpObject(category);
+    extension_runAudits(nextTest);
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests audits support in WebInspector Extensions API</p>
+</body>
+</html>

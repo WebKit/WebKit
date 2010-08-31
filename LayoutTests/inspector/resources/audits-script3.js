@@ -1,3 +1,0 @@
-function foo3()
-{
-}

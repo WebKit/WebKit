@@ -11,10 +11,10 @@ function fetchTests()
 
 function runTests()
 {
-    log("Running tests...");
+    output("Running tests...");
     var tests = [];
     for (var symbol in this) {
-        if (/^extension_test/.exec(symbol) && typeof this[symbol] === "function")
+        if (/^extension_test/.test(symbol) && typeof this[symbol] === "function")
             tests.push(symbol);
     }
     tests = tests.sort();
@@ -26,17 +26,17 @@ function runTests()
 
 function onTestsDone()
 {
-    log("All tests done.");
-    webInspector.inspectedWindow.evaluate("done();");
+    output("All tests done.");
+    top.postMessage("extension-tests-done","*");
 }
 
 function runTest(test, name)
 {
-    log("RUNNING TEST: " + name);
+    output("RUNNING TEST: " + name);
     try {
         test();
     } catch (e) {
-        log(name + ": " + e);
+        output(name + ": " + e);
     }
 }
 
@@ -54,13 +54,6 @@ function bind(func, thisObject)
 {
     var args = Array.prototype.slice.call(arguments, 2);
     return function() { return func.apply(thisObject, args.concat(Array.prototype.slice.call(arguments, 0))); };
-}
-
-// dumpObject() needs output(), so implement it via log().
-
-function output(msg)
-{
-    log(msg);
 }
 
 fetchTests();

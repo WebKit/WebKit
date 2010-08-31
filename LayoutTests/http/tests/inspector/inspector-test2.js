@@ -32,6 +32,21 @@ InspectorTest.reloadPage = function(callback)
     InspectorTest._addSniffer(WebInspector, "reset", callback);
 };
 
+InspectorTest.enableResourceTracking = function(callback)
+{
+    if (WebInspector.panels.resources.resourceTrackingEnabled)
+        callback();
+    else {
+        InspectorTest._addSniffer(WebInspector, "reset", callback);
+        InspectorBackend.enableResourceTracking(false);
+    }
+}
+
+InspectorTest.disableResourceTracking = function()
+{
+    InspectorBackend.disableResourceTracking(false);
+}
+
 InspectorTest.findDOMNode = function(root, filter, callback)
 {
     var found = false;
@@ -118,8 +133,13 @@ function runTest()
         InspectorTest = {};
         InspectorTest.completeTestCallId = completeTestCallId;
 
-        for (var i = 0; i < initializationFunctions.length; ++i)
-            initializationFunctions[i]();
+        for (var i = 0; i < initializationFunctions.length; ++i) {
+            try {
+                initializationFunctions[i]();
+            } catch (e) {
+                console.error("Exception in test initialization: " + e);
+            }
+        }
 
         WebInspector.showPanel("elements");
         testFunction();

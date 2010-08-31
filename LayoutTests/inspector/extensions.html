@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
 <script src="extensions-test.js"></script>
 <script type="text/javascript">
 
@@ -28,7 +28,7 @@ function extension_testGetAllResources(nextTest)
         var resources = result.sort(compareResources);
 
         for (var i = 0; i < resources.length; ++i)
-            log("resource: " + resources[i].har.request.url.replace(/.*((\/[^/]*){3}$)/,"...$1"));
+            output("resource: " + resources[i].har.request.url.replace(/.*((\/[^/]*){3}$)/,"...$1"));
     }
     webInspector.resources.getAll(callbackAndNextTest(onResource, nextTest));
 }
@@ -37,7 +37,7 @@ function extension_testGetInvalidResource(nextTest)
 {
     function onResource(result)
     {
-        log("Attempted to retrieve invalid resource: " + JSON.stringify(result));
+        output("Attempted to retrieve invalid resource: " + JSON.stringify(result));
     }
     webInspector.resources.get(2128506, callbackAndNextTest(onResource, nextTest));
 }
@@ -46,18 +46,18 @@ function extension_testCreatePanel(nextTest)
 {
     function onPanelCreated(panel)
     {
-        log("Panel created");
+        output("Panel created");
         dumpObject(panel);
     }
     webInspector.panels.create("Test Panel", "extension-panel.html", "extension-panel.png", callbackAndNextTest(onPanelCreated, nextTest));
-    log("done createPanel");
+    output("done createPanel");
 }
 
 function extension_testCreateSidebar(nextTest)
 {
     function onSidebarCreated(sidebar)
     {
-        log("Sidebar created");
+        output("Sidebar created");
         dumpObject(sidebar);
     }
     webInspector.panels.scripts.createSidebarPane("Test Sidebar", "extension-sidebar.html", callbackAndNextTest(onSidebarCreated, nextTest));
@@ -67,7 +67,7 @@ function extension_testResourceNotification(nextTest)
 {
     function onResourceFinished(resource)
     {
-        log("Resource finished: " + resource.har.request.url.replace(/.*((\/[^/]*){3}$)/,"...$1"));
+        output("Resource finished: " + resource.har.request.url.replace(/.*((\/[^/]*){3}$)/,"...$1"));
     }
 
     webInspector.resources.onFinished.addListener(callbackAndNextTest(onResourceFinished, nextTest));
@@ -76,12 +76,12 @@ function extension_testResourceNotification(nextTest)
 
 function extension_onEvaluate(result)
 {
-    log("Evaluate: " + result.value + "(exception: " + result.isException + ")");
+    output("Evaluate: " + result.value + "(exception: " + result.isException + ")");
 }
 
 </script>
 </head>
-<body onload="onload()">
+<body onload="runTest()">
 <p>Tests WebInspector extension API</p>
 </body>
 </html>

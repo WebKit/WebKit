@@ -27,11 +27,11 @@ Evaluate: TypeError: JSON.stringify cannot serialize cyclic structures.(exceptio
 RUNNING TEST: extension_testEvalOk
 Evaluate: {"str":"foo","num":42}(exception: undefined)
 RUNNING TEST: extension_testGetAllResources
-resource: .../tests/inspector/inspector-test.js
+resource: .../tests/inspector/inspector-test2.js
 resource: .../LayoutTests/inspector/extensions-test.js
 resource: .../LayoutTests/inspector/extensions.html
 RUNNING TEST: extension_testGetInvalidResource
-Attempted to retrieve invalid resource: {"code":"E_NOTFOUND","description":"Object not found (%s)","details":[2128506],"isError":true}
+Attempted to retrieve invalid resource: {"code":"E_NOTFOUND","description":"Object not found: %s","details":[2128506],"isError":true}
 RUNNING TEST: extension_testResourceNotification
 Resource finished: .../inspector/resources/extension-main.html
 All tests done.

@@ -3,29 +3,6 @@ function log(message)
     output(message);
 }
 
-function frontend_initializeExtension(url)
-{
-    if (WebInspector.panels.resources.resourceTrackingEnabled)
-        WebInspector.addExtensions([{ startPage: url }]);
-    else
-        InspectorBackend.enableResourceTracking(false);
-}
-
-function doit()
-{
-    var extensionURL = location.href.replace(/\/[^/]*$/, "/resources/extension-main.html");
-    evaluateInWebInspector("frontend_initializeExtension('" + extensionURL + "')");
-}
-
-function done()
-{
-    function callback()
-    {
-        notifyDone();
-    }
-    evaluateInWebInspector("InspectorBackend.disableResourceTracking(false);", callback);
-}
-
 function extensionFunctions()
 {
     var functions = "";
@@ -35,4 +12,44 @@ function extensionFunctions()
             functions += window[symbol].toString();
     }
     return functions;
+}
+
+var initialize_ExtensionsTest = function()
+{
+
+InspectorTest.dispatchOnMessage = function(messageId, callback)
+{
+    function onMessage(event)
+    {
+        if (event.data === messageId) {
+            window.removeEventListener("message", onMessage, false);
+            callback();
+        }
+    }
+    window.addEventListener("message", onMessage, false);
+}
+
+InspectorTest.runExtensionTests = function()
+{
+    function addExtension(callback)
+    {
+        InjectedScriptAccess.getDefault().evaluate("location.href", "console", function(result) {
+            var extensionURL = result.description.replace(/\/[^/]*$/, "/resources/extension-main.html");
+            WebInspector.addExtensions([{ startPage: extensionURL }]);
+            if (callback)
+                callback();
+        });
+    } 
+    InspectorTest.dispatchOnMessage("extension-tests-done", function() {
+        InspectorTest.disableResourceTracking();
+        InspectorTest.completeTest();
+    });
+    InspectorTest.enableResourceTracking(addExtension);
+}
+
+}
+
+var test = function()
+{
+    InspectorTest.runExtensionTests();
 }
