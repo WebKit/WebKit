@@ -1,3 +1,20 @@
+2010-08-31  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        audio engine: add FFTConvolver class
+        https://bugs.webkit.org/show_bug.cgi?id=34907
+
+        No new tests since audio API is not yet implemented.
+
+        * platform/audio: Added.
+        * platform/audio/FFTConvolver.cpp: Added.
+        (WebCore::FFTConvolver::FFTConvolver):
+        (WebCore::FFTConvolver::process):
+        (WebCore::FFTConvolver::reset):
+        * platform/audio/FFTConvolver.h: Added.
+        (WebCore::FFTConvolver::fftSize):
+
 2010-08-31  Jian Li  <jianli@chromium.org>
 
         Reviewed by Darin Fisher and David Levin.
