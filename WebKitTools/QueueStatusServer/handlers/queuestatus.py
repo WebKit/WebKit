@@ -49,7 +49,7 @@ class QueueStatus(webapp.RequestHandler):
 
     def get(self, queue_name):
         work_items = WorkItems.all().filter("queue_name =", queue_name).get()
-        statuses = queuestatus.QueueStatus.all().filter("queue_name =", queue_name).order("-date").fetch(6)
+        statuses = queuestatus.QueueStatus.all().filter("queue_name =", queue_name).order("-date").fetch(15)
         template_values = {
             "display_queue_name": display_name_for_queue(queue_name),
             "work_item_rows": self._rows_for_work_items(work_items),

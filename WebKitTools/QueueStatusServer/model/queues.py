@@ -33,7 +33,6 @@ queues = [
     "commit-queue",
     "style-queue",
     "chromium-ews",
-    "cr-win-ews",
     "qt-ews",
     "gtk-ews",
     "mac-ews",

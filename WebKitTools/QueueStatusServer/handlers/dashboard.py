@@ -43,7 +43,6 @@ class Dashboard(webapp.RequestHandler):
     _queues_to_display = [
         ["Style", "style-queue"],
         ["Cr-Linux", "chromium-ews"],
-        ["Cr-Win", "cr-win-ews"],
         ["Qt", "qt-ews"],
         ["Gtk", "gtk-ews"],
         ["Mac", "mac-ews"],
