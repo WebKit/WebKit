@@ -1,3 +1,21 @@
+2010-08-31  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [V8] Custom binding for "dataset"
+        https://bugs.webkit.org/show_bug.cgi?id=44930
+
+        * WebCore.gyp/WebCore.gyp: Remove the exclusion of DOMStringMap.idl.
+        * WebCore.gypi: Add V8DOMStringMapCustom.cpp.
+        * bindings/v8/custom/V8DOMStringMapCustom.cpp: Added.
+        (WebCore::V8DOMStringMap::namedPropertyQuery):
+        (WebCore::V8DOMStringMap::namedPropertyGetter):
+        (WebCore::V8DOMStringMap::namedPropertyEnumerator):
+        (WebCore::V8DOMStringMap::namedPropertyDeleter):
+        (WebCore::V8DOMStringMap::namedPropertySetter):
+        * dom/Element.idl: Remove V8 exclusion.
+        * page/DOMWindow.idl: ditto.
+
 2010-08-31  Jian Li  <jianli@chromium.org>
 
         Fix chromium build break.

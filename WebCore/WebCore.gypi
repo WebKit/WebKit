@@ -754,6 +754,7 @@
             'bindings/v8/custom/V8DeviceOrientationEventCustom.cpp',
             'bindings/v8/custom/V8DocumentLocationCustom.cpp',
             'bindings/v8/custom/V8DOMFormDataCustom.cpp',
+            'bindings/v8/custom/V8DOMStringMapCustom.cpp',
             'bindings/v8/custom/V8DOMWindowCustom.cpp',
             'bindings/v8/custom/V8DocumentCustom.cpp',
             'bindings/v8/custom/V8ElementCustom.cpp',

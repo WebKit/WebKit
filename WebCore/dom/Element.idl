@@ -100,9 +100,7 @@ module core {
         NodeList getElementsByClassName(in DOMString name);
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-#if !defined(V8_BINDING) || !V8_BINDING
         readonly attribute DOMStringMap dataset;
-#endif
 #endif
 
         // NodeSelector - Selector API

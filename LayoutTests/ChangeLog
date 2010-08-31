@@ -1,3 +1,13 @@
+2010-08-31  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [V8] Custom binding for "dataset"
+        https://bugs.webkit.org/show_bug.cgi?id=44930
+
+        * platform/chromium/test_expectations.txt:
+         Remove dataset.html and dataset-xhtml.xhtml.
+
 2010-08-31  Jian Li  <jianli@chromium.org>
 
         Update chromium test result.

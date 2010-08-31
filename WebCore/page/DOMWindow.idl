@@ -464,9 +464,7 @@ module window {
         attribute [Conditional=3D_CANVAS,EnabledAtRuntime] WebGLRenderingContextConstructor WebGLRenderingContext;
         attribute TextMetricsConstructor TextMetrics;
 
-#if !defined(V8_BINDING) || !V8_BINDING
         attribute DOMStringMapConstructor DOMStringMap;
-#endif
 
         attribute [JSCCustomGetter,Conditional=3D_CANVAS,EnabledAtRuntime] ArrayBufferConstructor ArrayBuffer; // Usable with new operator
         attribute [JSCCustomGetter,Conditional=3D_CANVAS,EnabledAtRuntime] Int8ArrayConstructor Int8Array; // Usable with new operator

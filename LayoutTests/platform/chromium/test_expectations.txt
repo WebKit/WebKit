@@ -2764,10 +2764,6 @@ BUGWK41311 WIN LINUX : fast/borders/borderRadiusDouble07.html = IMAGE
 BUGWK41311 WIN LINUX : fast/borders/borderRadiusDouble08.html = IMAGE
 BUGWK41311 WIN LINUX : fast/borders/borderRadiusDouble09.html = IMAGE
 
-// v8 bindings for dataset need to be implemented.
-BUG48133 :  fast/dom/dataset-xhtml.xhtml = TEXT
-BUG48133 :  fast/dom/dataset.html = TEXT
-
 // Flaky tests.
 BUG44345 LINUX : svg/zoom/text/zoom-hixie-mixed-009.xml = IMAGE PASS
 BUG44346 LINUX : svg/zoom/page/zoom-hixie-mixed-009.xml = IMAGE PASS
