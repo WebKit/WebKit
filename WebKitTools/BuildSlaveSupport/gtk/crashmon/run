@@ -1,0 +1,74 @@
+#! /bin/bash
+#
+# Copyright (C) 2010 Igalia S.L. All rights reserved.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with this library; see the file COPYING.LIB.  If not, write to
+# the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+# Boston, MA 02110-1301, USA.
+
+exec 2>&1
+
+: ${BUILDBOT_CONFIG:=/etc/daemontools-buildbot.conf}
+
+# Read configuration file
+[ -r "${BUILDBOT_CONFIG}" ] && . "${BUILDBOT_CONFIG}"
+
+: ${buildbot_user:=${USER:-${LOGNAME}}}
+: ${crashmon_output:=''}
+
+# Expand all "env_*" environment variables
+for varname in ${!env_*} ; do
+	eval "export ${varname#env_}=\${${varname}}"
+done
+
+
+if [ ! -d "${crashmon_output}" ]
+then
+	if ! [ "${crashmon_output}" ]
+	then
+		echo "Dump directory '${crashmon_output}' does not exist (sleeping)"
+	fi
+	sleep $(( 60 * 60 * 4 ))
+	exit 111
+fi
+
+
+if ! [ "${buildbot_bits}" ]
+then
+	# Guess bits (32/64) from uname -m
+	machine=$(uname -m)
+	case ${machine} in
+		x86_64 | amd64 | ia64 | ppc64)
+			buildbot_bits="64" ;;
+		*)
+			buildbot_bits="32" ;;
+	esac
+fi
+
+: ${crashmon_bin_path:="${buildbot_path}/gtk-linux-${buildbot_bits}-debug/build/WebKitBuild/Debug/Programs"}
+
+
+cd "${crashmon_output}"
+exec /usr/bin/env -           \
+		PATH="${PATH}"             \
+		SHELL="/bin/bash"           \
+		USER="${buildbot_user}"      \
+		arch="${buildbot_bits}"       \
+		LOGNAME="${buildbot_user}"     \
+		coredir="${crashmon_output}"    \
+		HOME="/home/${buildbot_user}"    \
+		mailto="${crashmon_mailto:-''}"   \
+		programpath="${crashmon_bin_path}" \
+	/usr/bin/setuidgid "${buildbot_user}" "$(pwd)/crashmon"
+

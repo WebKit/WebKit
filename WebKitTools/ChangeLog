@@ -1,3 +1,29 @@
+2010-08-31  Adrian Perez  <aperez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        Support scripts to run Buildbot slaves under daemontools (gtk related)
+        https://bugs.webkit.org/show_bug.cgi?id=40053
+
+        * BuildSlaveSupport/gtk: Added.
+        * BuildSlaveSupport/gtk/README: Added.
+        * BuildSlaveSupport/gtk/buildbot: Added.
+        * BuildSlaveSupport/gtk/buildbot/log: Added.
+        * BuildSlaveSupport/gtk/buildbot/log/run: Added.
+        * BuildSlaveSupport/gtk/buildbot/run: Added.
+        * BuildSlaveSupport/gtk/crashmon: Added.
+        * BuildSlaveSupport/gtk/crashmon/crashmon: Added.
+        * BuildSlaveSupport/gtk/crashmon/log: Added.
+        * BuildSlaveSupport/gtk/crashmon/log/run: Added.
+        * BuildSlaveSupport/gtk/crashmon/run: Added.
+        * BuildSlaveSupport/gtk/daemontools-buildbot.conf: Added.
+        * BuildSlaveSupport/gtk/pulseaudio: Added.
+        * BuildSlaveSupport/gtk/pulseaudio/run: Added.
+        * BuildSlaveSupport/gtk/xvfb: Added.
+        * BuildSlaveSupport/gtk/xvfb/log: Added.
+        * BuildSlaveSupport/gtk/xvfb/log/run: Added.
+        * BuildSlaveSupport/gtk/xvfb/run: Added.
+
 2010-08-27  John Gregg  <johnnyg@google.com>
 
         Reviewed by David Levin.
