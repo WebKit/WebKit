@@ -1,3 +1,13 @@
+2010-08-31  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r66484.
+        http://trac.webkit.org/changeset/66484
+        https://bugs.webkit.org/show_bug.cgi?id=44966
+
+        Broke EFL build (Requested by acidx on #webkit).
+
+        * CMakeLists.txt:
+
 2010-08-31  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Tony Chang.
