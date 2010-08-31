@@ -1,3 +1,11 @@
+2010-08-31  Steve Falkenburg  <sfalken@apple.com>
+
+        Rubber stamped by Sam Weinig.
+
+        Remove library directive from def file to fix Debug_All build.
+
+        * win/WebKit2.def:
+
 2010-08-31  Adam Roben  <aroben@apple.com>
 
         Handle WM_PRINTCLIENT in WebKit2 on Windows

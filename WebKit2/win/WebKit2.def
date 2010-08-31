@@ -1,5 +1,3 @@
-LIBRARY	"WebKit"
-
 EXPORTS
         DllGetClassObject   PRIVATE
         DllCanUnloadNow     PRIVATE
