@@ -32,8 +32,23 @@
 int main(int argc, char** argv) {
     QApplication app(argc, argv);
 
-    BrowserWindow* window = new BrowserWindow();
-    window->newWindow("http://www.google.com");
+    QStringList args = QApplication::arguments();
+    QStringList urls = args;
+    urls.removeAt(0);
+
+    if (urls.isEmpty()) {
+        QString defaultUrl = QString("file://%1/%2").arg(QDir::homePath()).arg(QLatin1String("index.html"));
+        if (QDir(defaultUrl).exists())
+            urls.append(defaultUrl);
+        else
+            urls.append("http://www.google.com");
+    }
+
+    BrowserWindow* window = 0;
+    foreach (QString url, urls) {
+        window = new BrowserWindow();
+        window->newWindow(url);
+    }
 
     app.exec();
 

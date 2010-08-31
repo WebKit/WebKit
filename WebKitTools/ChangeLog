@@ -1,3 +1,15 @@
+2010-08-31  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Read command line arguments and open them as URLs in new windows
+        https://bugs.webkit.org/show_bug.cgi?id=44944
+
+        Extend MiniBrowser to accept command line arguments and open them as URLs in new browser windows.
+
+        * MiniBrowser/qt/main.cpp:
+        (main):
+
 2010-08-31  Adrian Perez  <aperez@igalia.com>
 
         Reviewed by Martin Robinson.
