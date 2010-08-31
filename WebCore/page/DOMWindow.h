@@ -90,6 +90,7 @@ namespace WebCore {
         virtual DOMWindow* toDOMWindow() { return this; }
         virtual ScriptExecutionContext* scriptExecutionContext() const;
 
+        bool printDeferred() const { return m_printDeferred; }
         Frame* frame() const { return m_frame; }
         void disconnectFrame();
 
@@ -397,6 +398,7 @@ namespace WebCore {
         RefPtr<SecurityOrigin> m_securityOrigin;
         KURL m_url;
 
+        bool m_printDeferred;
         Frame* m_frame;
         mutable RefPtr<Screen> m_screen;
         mutable RefPtr<DOMSelection> m_selection;

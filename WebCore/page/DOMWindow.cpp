@@ -379,7 +379,8 @@ bool DOMWindow::canShowModalDialogNow(const Frame* frame)
 }
 
 DOMWindow::DOMWindow(Frame* frame)
-    : m_frame(frame)
+    : m_printDeferred(false),
+      m_frame(frame)
 {
 }
 
@@ -861,6 +862,11 @@ void DOMWindow::print()
     if (!page)
         return;
 
+    if (m_frame->loader()->isLoading()) {
+        m_printDeferred = true;
+        return;
+    }
+    m_printDeferred = false;
     page->chrome()->print(m_frame);
 }
 

@@ -2166,6 +2166,10 @@ void FrameLoader::finishedLoading()
     dl->setPrimaryLoadComplete(true);
     m_client->dispatchDidLoadMainResource(dl.get());
     checkLoadComplete();
+
+    DOMWindow* window = m_frame->existingDOMWindow();
+    if (window && window->printDeferred())
+        window->print();
 }
 
 bool FrameLoader::isHostedByObjectElement() const
