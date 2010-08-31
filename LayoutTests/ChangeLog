@@ -1,3 +1,11 @@
+2010-08-30  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, rebaseline plugins/mouse-event.html on chromium win/linux
+        after http://trac.webkit.org/changeset/66408.
+
+        * platform/chromium-linux/plugins/mouse-events-expected.txt:
+        * platform/chromium-win/plugins/mouse-events-expected.txt:
+
 2010-08-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Adele Peterson.
