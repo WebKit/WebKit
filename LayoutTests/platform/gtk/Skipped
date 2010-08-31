@@ -5477,10 +5477,6 @@ fast/loader/stateobjects/replacestate-in-iframe.html
 # for a real fix.
 editing/selection/extend-after-mouse-selection.html
 
-# Fails on Debug bots
-# https://bugs.webkit.org/show_bug.cgi?id=33027
-fast/parser/xml-declaration-missing-ending-mark.html
-
 editing/deleting/non-smart-delete.html
 fast/repaint/no-caret-repaint-in-non-content-editable-element.html
 fast/runin/generated2.html

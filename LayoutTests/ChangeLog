@@ -1,3 +1,12 @@
+2010-08-31  Philippe Normand  <pnormand@igalia.com>
+
+        Rubber-stamped by Xan Lopez.
+
+        fast/parser/xml-declaration-missing-ending-mark.html crashed on Gtk bot
+        https://bugs.webkit.org/show_bug.cgi?id=33027
+
+        * platform/gtk/Skipped: Unskip now passing test.
+
 2010-08-30  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.
