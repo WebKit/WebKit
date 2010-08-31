@@ -269,9 +269,15 @@ body {
 .commentContext .lineNumber {
   background-color: yellow;
 }
+
+.selected .lineNumber {
+  background-color: #69F;
+  border-bottom-color: #69F;
+  border-right-color: #69F;
+}
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
-<script src="code-review.js"></script> 
+<script src="code-review.js?version=3"></script> 
 EOF
 
     def self.revisionOrDescription(string)

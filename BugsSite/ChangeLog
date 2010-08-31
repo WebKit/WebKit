@@ -1,3 +1,15 @@
+2010-08-31  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [reviewtool] Allow reviewer to select lines of context by dragging over the line numbers
+        https://bugs.webkit.org/show_bug.cgi?id=44936
+
+        * PrettyPatch/PrettyPatch.rb:
+            - Add a version number to bust through bugs.webkit.org's aggressive
+              cacheing.
+        * code-review.js:
+
 2010-08-30  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

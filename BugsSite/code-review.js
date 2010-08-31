@@ -63,20 +63,22 @@
     findCommentPositionFor(line).after(block);
   }
 
-  function addCommentField() {
-    var id = $(this).attr('data-comment-for');
-    if (!id) {
-      id = this.id;
-      $(this).addClass('commentContext');
-    }
-    var line = $('#' + id);
+  function addCommentFor(line) {
     if (line.attr('data-has-comment'))
       return;
     line.attr('data-has-comment', 'true');
+    line.addClass('commentContext');
 
-    var comment_block = $('<div class="comment"><textarea data-comment-for="' + id + '"></textarea><div class="actions"><button class="delete">Delete</button></div></div>');
+    var comment_block = $('<div class="comment"><textarea data-comment-for="' + line.attr('id') + '"></textarea><div class="actions"><button class="delete">Delete</button></div></div>');
     insertCommentFor(line, comment_block);
     comment_block.children('textarea').focus();
+  }
+
+  function addCommentField() {
+    var id = $(this).attr('data-comment-for');
+    if (!id)
+      id = this.id;
+    addCommentFor($('#' + id));
   }
 
   function displayPreviousComments() {
@@ -130,25 +132,47 @@
     }
   }
 
-  function tryToExpandCommentContextTo(line) {
-    var context_line = line;
-    while (context_line.length != 0) {
-      context_line = context_line.next();
-      if (context_line.hasClass('commentContext'))
-        break;
-    }
-    if (context_line.length == 0)
-      return; // No comment context to expand.
-    line.addClass('commentContext').nextUntil('.commentContext').addClass('commentContext');
+  var in_drag_select = false;
+
+  function stopDragSelect() {
+    $('.selected').removeClass('selected');
+    in_drag_select = false;
   }
 
   $('.lineNumber').live('click', function() {
     var line = $(this).parent();
     if (line.hasClass('commentContext'))
       trimCommentContextToBefore(line.prev());
-    else
-      tryToExpandCommentContextTo(line);
+  }).live('mousedown', function() {
+    in_drag_select = true;
+    $(this).parent().addClass('selected');
+    event.preventDefault();
   });
+  
+  $('.Line').live('mouseenter', function() {
+    if (!in_drag_select)
+      return;
+
+    var before = $(this).prevUntil('.selected')
+    if (before.prev().hasClass('selected'))
+      before.addClass('selected');
+
+    var after = $(this).nextUntil('.selected')
+    if (after.next().hasClass('selected'))
+      after.addClass('selected');
+
+    $(this).addClass('selected');
+  }).live('mouseup', function() {
+    if (!in_drag_select)
+      return;
+    var selected = $('.selected');
+    var should_add_comment = !selected.last().next().hasClass('commentContext');
+    selected.addClass('commentContext');
+    if (should_add_comment)
+      addCommentFor(selected.last());
+  });
+
+  $('.DiffSection').live('mouseleave', stopDragSelect).live('mouseup', stopDragSelect);
 
   function contextSnippetFor(line) {
     var snippets = []
