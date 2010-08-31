@@ -292,3 +292,60 @@
 |   <body>
 |     <p>
 |     <summary>
+
+#data
+<!doctype html><form><table><form>
+#errors
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <form>
+|       <table>
+
+#data
+<!doctype html><table><form><form>
+#errors
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <form>
+
+#data
+<!doctype html><table><form></table><form>
+#errors
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <form>
+
+#data
+<!doctype html><svg><foreignObject><p>
+#errors
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|       <svg foreignObject>
+|         <p>
+
+#data
+<!doctype html><svg><title>abc
+#errors
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|       <svg title>
+|         "abc"
