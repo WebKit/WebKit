@@ -236,7 +236,13 @@ bool SecurityOrigin::canRequest(const KURL& url) const
         return false;
 
     RefPtr<SecurityOrigin> targetOrigin = SecurityOrigin::create(url);
-    if (targetOrigin->isUnique())
+
+    bool doUniqueOriginCheck = true;
+#if ENABLE(BLOB)
+    // For blob scheme, we want to ignore this check.
+    doUniqueOriginCheck = !url.protocolIs("blob");
+#endif
+    if (doUniqueOriginCheck && targetOrigin->isUnique())
         return false;
 
     // We call isSameSchemeHostPort here instead of canAccess because we want

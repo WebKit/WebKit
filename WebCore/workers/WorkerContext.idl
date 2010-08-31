@@ -101,6 +101,8 @@ module threads {
         attribute BlobBuilderConstructor BlobBuilder;
         attribute FileReaderConstructor FileReader;
         attribute FileReaderSyncConstructor FileReaderSync;
+        DOMString createBlobURL(in Blob blob);
+        void revokeBlobURL(in DOMString blobURL);
 #endif
     };
 

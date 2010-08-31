@@ -1,0 +1,8 @@
+
+Test that XMLHttpRequest GET succeeds.
+Hello
+Test that XMLHttpRequest POST fails.
+Received exception 101: NETWORK_ERR
+
+DONE
+

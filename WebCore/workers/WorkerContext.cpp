@@ -43,6 +43,7 @@
 #include "Event.h"
 #include "EventException.h"
 #include "InspectorController.h"
+#include "KURL.h"
 #include "MessagePort.h"
 #include "NotImplemented.h"
 #include "ScriptSourceCode.h"
@@ -321,6 +322,18 @@ EventTargetData* WorkerContext::ensureEventTargetData()
 {
     return &m_eventTargetData;
 }
+
+#if ENABLE(BLOB)
+String WorkerContext::createBlobURL(Blob* blob)
+{
+    return scriptExecutionContext()->createPublicBlobURL(blob).string();
+}
+
+void WorkerContext::revokeBlobURL(const String& blobURLString)
+{
+    scriptExecutionContext()->revokePublicBlobURL(KURL(ParsedURLString, blobURLString));
+}
+#endif
 
 } // namespace WebCore
 
