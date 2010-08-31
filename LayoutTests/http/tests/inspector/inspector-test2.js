@@ -166,11 +166,30 @@ function didEvaluateForTestInFrontend(callId, result)
     }, 0);
 }
 
+function dump(data)
+{
+    if (typeof data === "string") {
+        output(data);
+        return;
+    }
+
+    if (typeof data === "object") {
+        dumpObject(data);
+        return;
+    }
+
+    if (typeof data === "array") {
+        for (var i = 0; i < result.length; ++i)
+            dump(result[i]);
+        return;
+    }
+}
+
 function dumpArray(result)
 {
     if (result instanceof Array) {
         for (var i = 0; i < result.length; ++i)
-            output(result[i]);
+            dump(result[i]);
     } else
         output(result);
 }

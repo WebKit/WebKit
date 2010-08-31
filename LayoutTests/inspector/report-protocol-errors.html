@@ -1,0 +1,47 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script>
+
+function test()
+{
+    var messages = [
+        'some wrong string',
+        '{}',
+        '{"command":1}',
+        '{"command":"test"}',
+        '{"seq":"not a number","command":"test"}',
+        '{"seq":1,"command":"test"}',
+        '{"seq":2,"command":"getResourceContent"}',
+        '{"seq":3,"command":"getResourceContent","arguments":[]}',
+        '{"seq":4,"command":"getResourceContent","arguments":{}}',
+        '{"seq":5,"command":"getResourceContent","arguments":{"identifier":"not a number"}}',
+        '{"seq":6,"command":"removeBreakpoint","arguments":{}}',
+        '{"seq":7,"command":"removeBreakpoint","arguments":{"sourceID":"someSourceId","lineNumber":0}}',
+
+    ];
+    var numberOfReports = 0;
+
+    function callback(message)
+    {
+        InspectorTest.addResult(message);
+
+        if (++numberOfReports === messages.length)
+            InspectorTest.completeTest();
+    }
+
+    InspectorTest._addSniffer(WebInspector, "reportProtocolError", callback, true);
+    for (var message in messages)
+        InspectorFrontendHost.sendMessageToBackend(messages[message]);
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that InspectorBackendDispatcher is catching incorrect messages.
+</p>
+
+</body>
+</html>

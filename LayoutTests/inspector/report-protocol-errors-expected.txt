@@ -1,0 +1,89 @@
+Tests that InspectorBackendDispatcher is catching incorrect messages.
+
+{
+    seq : 0
+    success : false
+    errors : {
+        0 : "Protocol Error: Invalid message format. Message should be in JSON format."
+    }
+}
+{
+    seq : 0
+    success : false
+    errors : {
+        0 : "Protocol Error: Invalid message format. 'command' property wasn't found."
+    }
+}
+{
+    seq : 0
+    success : false
+    errors : {
+        0 : "Protocol Error: Invalid message format. The type of 'command' property should be string."
+    }
+}
+{
+    seq : 0
+    success : false
+    errors : {
+        0 : "Protocol Error: Invalid message format. 'seq' property was not found in the request."
+    }
+}
+{
+    seq : 0
+    success : false
+    errors : {
+        0 : "Protocol Error: Invalid message format. The type of 'seq' property should be number."
+    }
+}
+{
+    seq : 1
+    success : false
+    errors : {
+        0 : "Protocol Error: Invalid command was received. 'test' wasn't found."
+    }
+}
+{
+    seq : 2
+    success : false
+    errors : {
+        0 : "Protocol Error: 'arguments' property with type 'object' was not found."
+    }
+}
+{
+    seq : 3
+    success : false
+    errors : {
+        0 : "Protocol Error: 'arguments' property with type 'object' was not found."
+    }
+}
+{
+    seq : 4
+    success : false
+    errors : {
+        0 : "Protocol Error: Argument 'identifier' with type 'Number' was not found."
+    }
+}
+{
+    seq : 5
+    success : false
+    errors : {
+        0 : "Protocol Error: Argument 'identifier' has wrong type. It should be 'Number'."
+    }
+}
+{
+    seq : 6
+    success : false
+    errors : {
+        0 : "Protocol Error: Debug handler is not available."
+        1 : "Protocol Error: Argument 'sourceID' with type 'String' was not found."
+        2 : "Protocol Error: Argument 'lineNumber' with type 'Number' was not found."
+    }
+}
+{
+    seq : 7
+    success : false
+    errors : {
+        0 : "Protocol Error: Debug handler is not available."
+    }
+}
+

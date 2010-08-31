@@ -211,7 +211,7 @@ sub GenerateInterface
     $backendJSStubName = $className . "BackendStub";
     my @backendHead;
     push(@backendHead, "    ${backendClassName}(InspectorController* inspectorController) : m_inspectorController(inspectorController) { }");
-    push(@backendHead, "    void reportProtocolError(const long callId, const String& method, const String& errorText) const;");
+    push(@backendHead, "    void reportProtocolError(const long callId, const String& errorText) const;");
     push(@backendHead, "    void dispatch(const String& message);");
     push(@backendHead, "    static bool getCommandName(const String& message, String* result);");
     $backendConstructor = join("\n", @backendHead);
@@ -306,7 +306,7 @@ sub generateBackendFunction
     my $domainAccessor = $typeTransform{$domain}->{"domainAccessor"};
     $backendTypes{$domain} = 1;
     push(@function, "    if (!$domainAccessor)");
-    push(@function, "        protocolErrors->pushString(String::format(\"Error: %s handler is not available.\", \"$domain\"));");
+    push(@function, "        protocolErrors->pushString(String::format(\"Protocol Error: %s handler is not available.\", \"$domain\"));");
     push(@function, "");
 
     if (scalar(@inArgs)) {
@@ -316,7 +316,7 @@ sub generateBackendFunction
         push(@function, "");
         push(@function, "    RefPtr<InspectorObject> argumentsContainer;");
         push(@function, "    if (!(argumentsContainer = requestMessageObject->getObject(\"arguments\"))) {");
-        push(@function, "        protocolErrors->pushString(String::format(\"Error: arguments object was not found.\"));");
+        push(@function, "        protocolErrors->pushString(String::format(\"Protocol Error: 'arguments' property with type 'object' was not found.\"));");
         push(@function, "    } else {");
         push(@function, "        InspectorObject::const_iterator argumentsEndIterator = argumentsContainer->end();");
 
@@ -329,10 +329,10 @@ sub generateBackendFunction
             push(@function, "");
             push(@function, "        InspectorObject::const_iterator ${name}ValueIterator = argumentsContainer->find(\"$name\");");
             push(@function, "        if (${name}ValueIterator == argumentsEndIterator) {");
-            push(@function, "            protocolErrors->pushString(String::format(\"Error: Argument '%s' with type '%s' was not found.\", \"$name\", \"$JSONType\"));");
+            push(@function, "            protocolErrors->pushString(String::format(\"Protocol Error: Argument '%s' with type '%s' was not found.\", \"$name\", \"$JSONType\"));");
             push(@function, "        } else {");
             push(@function, "            if (!${name}ValueIterator->second->as$JSONType(&$name)) {");
-            push(@function, "                protocolErrors->pushString(String::format(\"Error: Argument '%s' has wrong type. It should be '%s'.\", \"$name\", \"$JSONType\"));");
+            push(@function, "                protocolErrors->pushString(String::format(\"Protocol Error: Argument '%s' has wrong type. It should be '%s'.\", \"$name\", \"$JSONType\"));");
             push(@function, "            }");
             push(@function, "        }");
         }
@@ -375,13 +375,10 @@ sub generateBackendReportProtocolError
 {
     my $reportProtocolError = << "EOF";
 
-void ${backendClassName}::reportProtocolError(const long callId, const String& method, const String& errorText) const
+void ${backendClassName}::reportProtocolError(const long callId, const String& errorText) const
 {
     RefPtr<InspectorObject> message = InspectorObject::create();
     message->setNumber("seq", callId);
-    message->setString("type", "error");
-    message->setString("domain", "inspectorProtocol");
-    message->setString("command", method);
     message->setBoolean("success", false);
     RefPtr<InspectorArray> errors = InspectorArray::create();
     errors->pushString(errorText);
@@ -414,42 +411,42 @@ $mapEntries
 
     RefPtr<InspectorValue> parsedMessage = InspectorValue::parseJSON(message);
     if (!parsedMessage) {
-        reportProtocolError(callId, "dispatch", "Error: Invalid message format. Message should be in JSON format.");
+        reportProtocolError(callId, "Protocol Error: Invalid message format. Message should be in JSON format.");
         return;
     }
 
     RefPtr<InspectorObject> messageObject = parsedMessage->asObject();
     if (!messageObject) {
-        reportProtocolError(callId, "dispatch", "Error: Invalid message format. The message should be a JSONified object.");
+        reportProtocolError(callId, "Protocol Error: Invalid message format. The message should be a JSONified object.");
         return;
     }
 
     RefPtr<InspectorValue> commandValue = messageObject->get("command");
     if (!commandValue) {
-        reportProtocolError(callId, "dispatch", "Error: Invalid message format. 'command' property wasn't found.");
+        reportProtocolError(callId, "Protocol Error: Invalid message format. 'command' property wasn't found.");
         return;
     }
 
     String command;
     if (!commandValue->asString(&command)) {
-        reportProtocolError(callId, "dispatch", "Error: Invalid message format. The type of 'command' property should be string.");
+        reportProtocolError(callId, "Protocol Error: Invalid message format. The type of 'command' property should be string.");
         return;
     }
 
     RefPtr<InspectorValue> callIdValue = messageObject->get("seq");
     if (!callIdValue) {
-        reportProtocolError(callId, command.utf8().data(), "Error: Invalid message format. 'seq' property was not found in the request.");
+        reportProtocolError(callId, "Protocol Error: Invalid message format. 'seq' property was not found in the request.");
         return;
     }
 
     if (!callIdValue->asNumber(&callId)) {
-        reportProtocolError(callId, command.utf8().data(), "Error: Invalid message format. the type of 'seq' property should be number.");
+        reportProtocolError(callId, "Protocol Error: Invalid message format. The type of 'seq' property should be number.");
         return;
     }
 
     HashMap<String, CallHandler>::iterator it = dispatchMap.find(command);
     if (it == dispatchMap.end()) {
-        reportProtocolError(callId, "dispatch", String::format("Error: Invalid command was received. '%s' wasn't found.", command.utf8().data()));
+        reportProtocolError(callId, String::format("Protocol Error: Invalid command was received. '%s' wasn't found.", command.utf8().data()));
         return;
     }
 

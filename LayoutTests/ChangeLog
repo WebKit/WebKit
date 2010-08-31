@@ -1,3 +1,23 @@
+2010-08-31  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        WebInspector: The parser of Inspector protocol messages should be covered by a test.
+
+        The inspector protocol is based on messages in JSON format.
+        Each message should be a JSON object with a number of properties.
+        InspectorBackendDispatcher is parsing these messages and should be
+        able to detect wrong formatted messages.
+        It has these functionality but no tests for it.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44947
+
+        * http/tests/inspector/inspector-test2.js:
+        (dump):
+        (dumpArray):
+        * inspector/report-protocol-errors-expected.txt: Added.
+        * inspector/report-protocol-errors.html: Added.
+
 2010-08-31  Tony Chang  <tony@chromium.org>
 
         Unreviewed, updating chromium test_expectations.txt.
