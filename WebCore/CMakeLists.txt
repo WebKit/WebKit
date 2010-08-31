@@ -1146,21 +1146,6 @@ SET(WebCore_SOURCES
     loader/icon/PageURLRecord.cpp
     loader/loader.cpp
 
-    mathml/MathMLElement.cpp
-    mathml/MathMLInlineContainerElement.cpp
-    mathml/MathMLMathElement.cpp
-    mathml/MathMLTextElement.cpp
-    mathml/RenderMathMLBlock.cpp
-    mathml/RenderMathMLFenced.cpp
-    mathml/RenderMathMLFraction.cpp
-    mathml/RenderMathMLMath.cpp
-    mathml/RenderMathMLOperator.cpp
-    mathml/RenderMathMLRoot.cpp
-    mathml/RenderMathMLRow.cpp
-    mathml/RenderMathMLSquareRoot.cpp
-    mathml/RenderMathMLSubSup.cpp
-    mathml/RenderMathMLUnderOver.cpp
-
     page/BarInfo.cpp
     page/Chrome.cpp
     page/Console.cpp
@@ -1576,6 +1561,25 @@ IF (ENABLE_DATABASE)
         platform/sql/SQLiteFileSystem.cpp
         platform/sql/SQLiteStatement.cpp
         platform/sql/SQLiteTransaction.cpp
+    )
+ENDIF ()
+
+IF (ENABLE_MATHML)
+    LIST(APPEND WebCore_SOURCES
+        mathml/MathMLElement.cpp
+        mathml/MathMLInlineContainerElement.cpp
+        mathml/MathMLMathElement.cpp
+        mathml/MathMLTextElement.cpp
+        mathml/RenderMathMLBlock.cpp
+        mathml/RenderMathMLFenced.cpp
+        mathml/RenderMathMLFraction.cpp
+        mathml/RenderMathMLMath.cpp
+        mathml/RenderMathMLOperator.cpp
+        mathml/RenderMathMLRoot.cpp
+        mathml/RenderMathMLRow.cpp
+        mathml/RenderMathMLSquareRoot.cpp
+        mathml/RenderMathMLSubSup.cpp
+        mathml/RenderMathMLUnderOver.cpp
     )
 ENDIF ()
 
