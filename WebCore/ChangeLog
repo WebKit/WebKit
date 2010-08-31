@@ -1,3 +1,12 @@
+2010-08-30  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Stop using a QuickDraw function that was only used for debugging purposes.
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::pathFromFont):
+
 2010-08-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

@@ -101,11 +101,11 @@ static NSString *webFallbackFontFamily(void)
 }
 
 #if !ERROR_DISABLED
-#ifdef __LP64__
+#if defined(__LP64__) || (!defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD))
 static NSString* pathFromFont(NSFont*)
 {
-    // FMGetATSFontRefFromFont is not available in 64-bit. As pathFromFont is only used for debugging
-    // purposes, returning nil is acceptable.
+    // FMGetATSFontRefFromFont is not available. As pathFromFont is only used for debugging purposes,
+    // returning nil is acceptable.
     return nil;
 }
 #else
