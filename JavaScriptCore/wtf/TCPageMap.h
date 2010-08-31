@@ -72,7 +72,7 @@ class TCMalloc_PageMap1 {
 
   // Ensure that the map contains initialized entries "x .. x+n-1".
   // Returns true if successful, false if we could not allocate memory.
-  bool Ensure(Number x, size_t n) {
+  bool Ensure(Number, size_t) {
     // Nothing to do since flat array was allocate at start
     return true;
   }

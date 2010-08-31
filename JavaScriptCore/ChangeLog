@@ -1,3 +1,13 @@
+2010-08-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::scavenge): Replaced somewhat-quirky code that
+        mixed types with code that uses size_t.
+
+        * wtf/TCPageMap.h: Removed names of unused arguments to avoid warning.
+
 2010-08-31  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
