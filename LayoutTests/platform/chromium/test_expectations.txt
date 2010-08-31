@@ -622,7 +622,6 @@ BUG8630 WIN LINUX RELEASE : fast/reflections/inline-crash.html = FAIL
 BUG8630 LINUX WIN DEBUG : fast/reflections/inline-crash.html = FAIL
 BUG8630 WIN LINUX : fast/text/font-initial.html = FAIL
 BUG8630 LINUX : svg/custom/use-detach.svg = FAIL PASS
-BUG18772 LINUX : fast/backgrounds/001.html = FAIL
 
 // Need a setAuthorAndUserStylesEnabled method in
 // layoutTestController. Now we have preference to enable/disable user
