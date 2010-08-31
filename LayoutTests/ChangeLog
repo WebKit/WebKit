@@ -1,3 +1,21 @@
+2010-08-31  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] incorrect baseline for fast/css/font-face-implicit-local-font
+        https://bugs.webkit.org/show_bug.cgi?id=44893
+
+        The test is verifying that the CSS unicode-range: property is correctly
+        modifying the font for a substring of text.  The checked-in image shows
+        the wrong font.
+
+        Also, update the comment in test_expectations to reflect this
+        information.
+
+        * platform/chromium-linux/fast/css/font-face-implicit-local-font-expected.checksum: Removed.
+        * platform/chromium-linux/fast/css/font-face-implicit-local-font-expected.png: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2010-08-31  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Nate Chapin.

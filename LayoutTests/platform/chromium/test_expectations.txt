@@ -778,8 +778,7 @@ BUG33099 : media/video-timeupdate-reverse-play.html = TIMEOUT
 // We haven't implemented video preloading and it passing is a false positive.
 BUG16482 : media/video-preload.html = PASS FAIL
 
-// We don't support dynamic fonts on Linux.
-// Once we have the sandbox working, we should re-evaluate this.
+// Does not display courier for the letters, as the test requests.
 BUG10278 LINUX : fast/css/font-face-implicit-local-font.html = FAIL
 BUG10278 LINUX : fast/css/font-face-unicode-range.html = FAIL
 
