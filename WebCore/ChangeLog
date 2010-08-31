@@ -1,3 +1,25 @@
+2010-08-31  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Stale document crashes at multiple URLs (with new parser)
+        https://bugs.webkit.org/show_bug.cgi?id=44885
+
+        We're not supposed to load resources in detached documents.  According
+        to several locations I examined, it's the job of the caller of
+        DocLoader to check this invariant.  Like most code dealing with
+        detached documents, this check isn't overly consistent.  At some point,
+        we'll need to rationalize all the different patterns here.  However, at
+        this point, this patch appears correct because it matches what we do
+        for <link rel="stylesheet">.
+
+        Test: fast/dom/HTMLLinkElement/prefetch-detached.html
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::requestLinkPrefetch):
+
 2010-08-31  Jian Li  <jianli@chromium.org>
 
         Reviewed by David Levin.

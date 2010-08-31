@@ -193,7 +193,7 @@ void HTMLLinkElement::process()
         ResourceHandle::prepareForURL(m_url);
 
 #if ENABLE(LINK_PREFETCH)
-    if (m_relAttribute.m_isLinkPrefetch && m_url.isValid())
+    if (m_relAttribute.m_isLinkPrefetch && m_url.isValid() && document()->frame())
         document()->docLoader()->requestLinkPrefetch(m_url);
 #endif
 

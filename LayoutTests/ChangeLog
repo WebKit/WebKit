@@ -1,3 +1,16 @@
+2010-08-31  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Stale document crashes at multiple URLs (with new parser)
+        https://bugs.webkit.org/show_bug.cgi?id=44885
+
+        Test what happens when you insert a link prefetch element into a
+        detached document.
+
+        * fast/dom/HTMLLinkElement/prefetch-detached-expected.txt: Added.
+        * fast/dom/HTMLLinkElement/prefetch-detached.html: Added.
+
 2010-08-31  Jian Li  <jianli@chromium.org>
 
         Reviewed by David Levin.
