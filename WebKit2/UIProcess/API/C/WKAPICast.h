@@ -157,6 +157,20 @@ inline WKURLRef toCopiedURLRef(const WTF::String& string)
     return toRef(webURL.release().releaseRef());
 }
 
+inline WTF::String toWTFString(WKStringRef stringRef)
+{
+    if (!stringRef)
+        return WTF::String();
+    return toWK(stringRef)->string();
+}
+
+inline WTF::String toWTFString(WKURLRef urlRef)
+{
+    if (!urlRef)
+        return WTF::String();
+    return toWK(urlRef)->string();
+}
+
 /* Enum conversions */
 
 inline WKTypeID toRef(WebKit::APIObject::Type type)

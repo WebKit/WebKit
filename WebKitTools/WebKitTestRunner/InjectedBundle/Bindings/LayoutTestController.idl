@@ -61,6 +61,10 @@ module WTR {
         // Animation testing.
         int numberOfActiveAnimations();
         boolean pauseAnimationAtTimeOnElementWithId(in DOMString animationName, in double time, in DOMString elementId);
+
+        // UserContent testing.
+        void addUserScript(in DOMString source, in boolean runAtStart, in boolean allFrames);
+        void addUserStyleSheet(in DOMString source, in boolean allFrames);
     };
 
 }

@@ -133,6 +133,8 @@ void InjectedBundle::beginTesting()
     WKBundleSetShouldTrackVisitedLinks(m_bundle, false);
     WKBundleRemoveAllVisitedLinks(m_bundle);
 
+    WKBundleRemoveAllUserContent(m_bundle);
+
     m_mainPage->reset();
 }
 

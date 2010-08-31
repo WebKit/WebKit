@@ -32,6 +32,7 @@
 #include <WebKit2/WKBundleFrame.h>
 #include <WebKit2/WKBundleFramePrivate.h>
 #include <WebKit2/WKBundlePagePrivate.h>
+#include <WebKit2/WKBundleScriptWorld.h>
 #include <WebKit2/WKBundlePrivate.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WebKit2.h>
@@ -161,6 +162,25 @@ bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(JSStringRef anima
     // FIXME: If this is needed only for the main frame, then why is the function on WKBundleFrame instead of WKBundlePage?
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
     return WKBundleFramePauseAnimationOnElementWithId(mainFrame, toWK(animationName).get(), toWK(elementId).get(), time);
+}
+
+void LayoutTestController::addUserScript(JSStringRef source, bool runAtStart, bool allFrames)
+{
+    WKRetainPtr<WKStringRef> sourceWK = toWK(source);
+    WKRetainPtr<WKBundleScriptWorldRef> scriptWorld(AdoptWK, WKBundleScriptWorldCreateWorld());
+
+    WKBundleAddUserScript(InjectedBundle::shared().bundle(), scriptWorld.get(), sourceWK.get(), 0, 0, 0,
+        (runAtStart ? kWKInjectAtDocumentStart : kWKInjectAtDocumentEnd),
+        (allFrames ? kWKInjectInAllFrames : kWKInjectInTopFrameOnly));
+}
+
+void LayoutTestController::addUserStyleSheet(JSStringRef source, bool allFrames)
+{
+    WKRetainPtr<WKStringRef> sourceWK = toWK(source);
+    WKRetainPtr<WKBundleScriptWorldRef> scriptWorld(AdoptWK, WKBundleScriptWorldCreateWorld());
+
+    WKBundleAddUserStyleSheet(InjectedBundle::shared().bundle(), scriptWorld.get(), sourceWK.get(), 0, 0, 0,
+        (allFrames ? kWKInjectInAllFrames : kWKInjectInTopFrameOnly));
 }
 
 void LayoutTestController::keepWebHistory()

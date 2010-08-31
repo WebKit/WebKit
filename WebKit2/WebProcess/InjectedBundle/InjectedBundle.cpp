@@ -199,6 +199,9 @@ void InjectedBundle::removeAllVisitedLinks()
 
 static PassOwnPtr<Vector<String> > toStringVector(ImmutableArray* patterns)
 {
+    if (!patterns)
+        return 0;
+
     size_t size =  patterns->size();
     if (!size)
         return 0;

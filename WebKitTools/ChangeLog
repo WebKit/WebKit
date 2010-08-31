@@ -1,3 +1,21 @@
+2010-08-31  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        WebKitTestRunner needs layoutTestController.addUserStyleSheet
+        https://bugs.webkit.org/show_bug.cgi?id=42680
+
+        WebKitTestRunner needs layoutTestController.addUserScript
+        https://bugs.webkit.org/show_bug.cgi?id=42681
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::addUserScript):
+        (WTR::LayoutTestController::addUserStyleSheet):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+
 2010-08-31  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, rolling out r66542.

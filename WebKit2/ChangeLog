@@ -1,3 +1,27 @@
+2010-08-31  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        WebKitTestRunner needs layoutTestController.addUserStyleSheet
+        https://bugs.webkit.org/show_bug.cgi?id=42680
+
+        WebKitTestRunner needs layoutTestController.addUserScript
+        https://bugs.webkit.org/show_bug.cgi?id=42681
+
+        Improve UserContent APIs to allow passing null in the same places
+        the WebKit1 API allowed. Add convenience function toWTFString to do
+        WKStringRef conversion with correct null string behavior.
+
+        * UIProcess/API/C/WKAPICast.h:
+        (toWTFString):
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleAddUserScript):
+        (WKBundleAddUserStyleSheet):
+        (WKBundleRemoveUserScript):
+        (WKBundleRemoveUserStyleSheet):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::toStringVector):
+
 2010-08-31  Steve Falkenburg  <sfalken@apple.com>
 
         Rubber stamped by Sam Weinig.

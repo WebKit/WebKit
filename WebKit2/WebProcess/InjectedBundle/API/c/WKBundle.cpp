@@ -80,22 +80,22 @@ size_t WKBundleGetJavaScriptObjectsCount(WKBundleRef bundleRef)
 
 void WKBundleAddUserScript(WKBundleRef bundleRef, WKBundleScriptWorldRef scriptWorldRef, WKStringRef sourceRef, WKURLRef urlRef, WKArrayRef whitelistRef, WKArrayRef blacklistRef, WKUserScriptInjectionTime injectionTimeRef, WKUserContentInjectedFrames injectedFramesRef)
 {
-    toWK(bundleRef)->addUserScript(toWK(scriptWorldRef), toWK(sourceRef)->string(), toWK(urlRef)->string(), toWK(whitelistRef), toWK(blacklistRef), toUserScriptInjectionTime(injectionTimeRef), toUserContentInjectedFrames(injectedFramesRef));
+    toWK(bundleRef)->addUserScript(toWK(scriptWorldRef), toWTFString(sourceRef), toWTFString(urlRef), toWK(whitelistRef), toWK(blacklistRef), toUserScriptInjectionTime(injectionTimeRef), toUserContentInjectedFrames(injectedFramesRef));
 }
 
 void WKBundleAddUserStyleSheet(WKBundleRef bundleRef, WKBundleScriptWorldRef scriptWorldRef, WKStringRef sourceRef, WKURLRef urlRef, WKArrayRef whitelistRef, WKArrayRef blacklistRef, WKUserContentInjectedFrames injectedFramesRef)
 {
-    toWK(bundleRef)->addUserStyleSheet(toWK(scriptWorldRef), toWK(sourceRef)->string(), toWK(urlRef)->string(), toWK(whitelistRef), toWK(blacklistRef), toUserContentInjectedFrames(injectedFramesRef));
+    toWK(bundleRef)->addUserStyleSheet(toWK(scriptWorldRef), toWTFString(sourceRef), toWTFString(urlRef), toWK(whitelistRef), toWK(blacklistRef), toUserContentInjectedFrames(injectedFramesRef));
 }
 
 void WKBundleRemoveUserScript(WKBundleRef bundleRef, WKBundleScriptWorldRef scriptWorldRef, WKURLRef urlRef)
 {
-    toWK(bundleRef)->removeUserScript(toWK(scriptWorldRef), toWK(urlRef)->string());
+    toWK(bundleRef)->removeUserScript(toWK(scriptWorldRef), toWTFString(urlRef));
 }
 
 void WKBundleRemoveUserStyleSheet(WKBundleRef bundleRef, WKBundleScriptWorldRef scriptWorldRef, WKURLRef urlRef)
 {
-    toWK(bundleRef)->removeUserStyleSheet(toWK(scriptWorldRef), toWK(urlRef)->string());
+    toWK(bundleRef)->removeUserStyleSheet(toWK(scriptWorldRef), toWTFString(urlRef));
 }
 
 void WKBundleRemoveUserScripts(WKBundleRef bundleRef, WKBundleScriptWorldRef scriptWorldRef)

@@ -1752,26 +1752,6 @@ http/tests/security/local-user-CSS-from-remote.html
 # <https://bugs.webkit.org/show_bug.cgi?id=42679> 
 platform/mac/fast/loader/user-stylesheet-fast-path.html
 
-# WebKitTestRunner needs layoutTestController.addUserStyleSheet
-# <https://bugs.webkit.org/show_bug.cgi?id=42680>
-printing/page-rule-selection.html
-userscripts/mixed-case-stylesheet.html
-userscripts/simple-stylesheet.html
-userscripts/user-style-all-frames.html
-userscripts/user-style-top-frame-only.html
-
-# WebKitTestRunner needs layoutTestController.addUserScript
-# <https://bugs.webkit.org/show_bug.cgi?id=42681>
-userscripts/script-not-run-for-fragments.html
-userscripts/script-run-at-end.html
-userscripts/script-run-at-start.html
-userscripts/user-script-all-frames.html
-userscripts/user-script-top-frame-only.html
-userscripts/user-script-audio-document.html
-userscripts/user-script-image-document.html
-userscripts/user-script-plugin-document.html
-userscripts/user-script-video-document.html
-
 # WebKitTestRunner needs layoutTestController.setPOSIXLocale
 # <https://bugs.webkit.org/show_bug.cgi?id=42682>
 fast/css/opacity-float.html
@@ -1970,6 +1950,9 @@ editing/selection/doubleclick-inline-first-last-contenteditable.html
 # WebKitTestRunner needs layoutTestController.suspendAnimations
 animations/suspend-resume-animation.html
 
+# WebKitTestRunner needs layoutTestController.pageProperty
+printing/page-rule-selection.html
+
 # WebKitTestRunner gets confused by location.href redirects.
 plugins/attach-during-destroy.html
 plugins/destroy-reentry.html
@@ -2162,6 +2145,14 @@ storage/domstorage/localstorage/window-open.html
 storage/domstorage/sessionstorage/window-open.html
 http/tests/security/popup-blocked-from-fake-event.html
 http/tests/security/popup-blocked-from-window-open.html
+
+# Unexplained failures that were formerly in the layoutTestController.addUserScript list.
+userscripts/script-not-run-for-fragments.html
+userscripts/script-run-at-start.html
+userscripts/user-script-image-document.html
+userscripts/user-script-plugin-document.html
+userscripts/user-script-audio-document.html
+userscripts/user-script-video-document.html
 
 # Unexplained failures that were formerly in the "unsafe access" list.
 http/tests/security/cross-frame-access-child-explicit-domain.html
