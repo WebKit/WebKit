@@ -1,3 +1,14 @@
+2010-08-31  Kjartan Maraas  <kmaraas@gnome.org>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        WebKitGTK+ translation needed
+        https://bugzilla.gnome.org/show_bug.cgi?id=610099
+
+        Initial Norwegian (bokmal) translation.
+
+        * nb.po: Added.
+
 2010-08-19  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
