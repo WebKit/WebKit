@@ -40,6 +40,7 @@ namespace WebCore {
 
     class BarInfo;
     class BeforeUnloadEvent;
+    class Blob;
     class CSSRuleList;
     class CSSStyleDeclaration;
     class Console;
