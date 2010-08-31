@@ -1071,21 +1071,27 @@ void Node::checkSetPrefix(const AtomicString& prefix, ExceptionCode& ec)
     // Attribute-specific checks are in Attr::setPrefix().
 }
 
-bool Node::canReplaceChild(Node* newChild, Node*)
+static bool isChildTypeAllowed(Node* newParent, Node* child)
 {
-    if (newChild->nodeType() != DOCUMENT_FRAGMENT_NODE) {
-        if (!childTypeAllowed(newChild->nodeType()))
+    if (child->nodeType() != Node::DOCUMENT_FRAGMENT_NODE) {
+        if (!newParent->childTypeAllowed(child->nodeType()))
             return false;
-    } else {
-        for (Node *n = newChild->firstChild(); n; n = n->nextSibling()) {
-            if (!childTypeAllowed(n->nodeType())) 
-                return false;
-        }
     }
+    
+    for (Node *n = child->firstChild(); n; n = n->nextSibling()) {
+        if (!newParent->childTypeAllowed(n->nodeType()))
+            return false;
+    }
+
     return true;
 }
 
-void Node::checkReplaceChild(Node* newChild, Node* oldChild, ExceptionCode& ec)
+bool Node::canReplaceChild(Node* newChild, Node*)
+{
+    return isChildTypeAllowed(this, newChild);
+}
+
+static void checkAcceptChild(Node* newParent, Node* newChild, ExceptionCode& ec)
 {
     // Perform error checking as required by spec for adding a new child. Used by replaceChild().
     
@@ -1096,113 +1102,69 @@ void Node::checkReplaceChild(Node* newChild, Node* oldChild, ExceptionCode& ec)
     }
     
     // NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly
-    if (isReadOnlyNode()) {
+    if (newParent->isReadOnlyNode()) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
-    
-    bool shouldAdoptChild = false;
     
     // WRONG_DOCUMENT_ERR: Raised if newChild was created from a different document than the one that
     // created this node.
     // We assume that if newChild is a DocumentFragment, all children are created from the same document
     // as the fragment itself (otherwise they could not have been added as children)
-    if (newChild->document() != document()) {
+    if (newChild->document() != newParent->document() && newChild->inDocument()) {
         // but if the child is not in a document yet then loosen the
         // restriction, so that e.g. creating an element with the Option()
         // constructor and then adding it to a different document works,
         // as it does in Mozilla and Mac IE.
-        if (!newChild->inDocument()) {
-            shouldAdoptChild = true;
-        } else {
-            ec = WRONG_DOCUMENT_ERR;
-            return;
-        }
+        ec = WRONG_DOCUMENT_ERR;
+        return;
     }
     
     // HIERARCHY_REQUEST_ERR: Raised if this node is of a type that does not allow children of the type of the
     // newChild node, or if the node to append is one of this node's ancestors.
-    
+
     // check for ancestor/same node
-    if (newChild == this || isDescendantOf(newChild)) {
+    if (newChild == newParent || newParent->isDescendantOf(newChild)) {
         ec = HIERARCHY_REQUEST_ERR;
         return;
     }
-    
+}
+
+static void transferOwnerDocument(Document* newDocument, Node* root)
+{
+    // FIXME: To match Gecko, we should do this for nodes that are already in the document as well.
+    if (root->document() != newDocument && !root->inDocument()) {
+        for (Node* node = root; node; node = node->traverseNextNode(root))
+            node->setDocument(newDocument);
+    }
+}
+
+void Node::checkReplaceChild(Node* newChild, Node* oldChild, ExceptionCode& ec)
+{
+    checkAcceptChild(this, newChild, ec);
+    if (ec)
+        return;
+
     if (!canReplaceChild(newChild, oldChild)) {
         ec = HIERARCHY_REQUEST_ERR;
         return;
     }
-       
-    // change the document pointer of newChild and all of its children to be the new document
-    if (shouldAdoptChild)
-        for (Node* node = newChild; node; node = node->traverseNextNode(newChild))
-            node->setDocument(document());
+
+    transferOwnerDocument(document(), newChild);
 }
 
 void Node::checkAddChild(Node *newChild, ExceptionCode& ec)
 {
-    // Perform error checking as required by spec for adding a new child. Used by appendChild() and insertBefore().
-
-    // Not mentioned in spec: throw NOT_FOUND_ERR if newChild is null
-    if (!newChild) {
-        ec = NOT_FOUND_ERR;
+    checkAcceptChild(this, newChild, ec);
+    if (ec)
         return;
-    }
-
-    // NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly
-    if (isReadOnlyNode()) {
-        ec = NO_MODIFICATION_ALLOWED_ERR;
-        return;
-    }
-
-    bool shouldAdoptChild = false;
-
-    // WRONG_DOCUMENT_ERR: Raised if newChild was created from a different document than the one that
-    // created this node.
-    // We assume that if newChild is a DocumentFragment, all children are created from the same document
-    // as the fragment itself (otherwise they could not have been added as children)
-    if (newChild->document() != document()) {
-        // but if the child is not in a document yet then loosen the
-        // restriction, so that e.g. creating an element with the Option()
-        // constructor and then adding it to a different document works,
-        // as it does in Mozilla and Mac IE.
-        if (!newChild->inDocument()) {
-            shouldAdoptChild = true;
-        } else {
-            ec = WRONG_DOCUMENT_ERR;
-            return;
-        }
-    }
-
-    // HIERARCHY_REQUEST_ERR: Raised if this node is of a type that does not allow children of the type of the
-    // newChild node, or if the node to append is one of this node's ancestors.
-
-    // check for ancestor/same node
-    if (newChild == this || isDescendantOf(newChild)) {
+    
+    if (!isChildTypeAllowed(this, newChild)) {
         ec = HIERARCHY_REQUEST_ERR;
         return;
     }
-    
-    if (newChild->nodeType() != DOCUMENT_FRAGMENT_NODE) {
-        if (!childTypeAllowed(newChild->nodeType())) {
-            ec = HIERARCHY_REQUEST_ERR;
-            return;
-        }
-    }
-    else {
-        for (Node *n = newChild->firstChild(); n; n = n->nextSibling()) {
-            if (!childTypeAllowed(n->nodeType())) {
-                ec = HIERARCHY_REQUEST_ERR;
-                return;
-            }
-        }
-    }
-    
-    // change the document pointer of newChild and all of its children to be the new document
-    if (shouldAdoptChild)
-        for (Node* node = newChild; node; node = node->traverseNextNode(newChild))
-            node->setDocument(document());
+
+    transferOwnerDocument(document(), newChild);
 }
 
 bool Node::isDescendantOf(const Node *other) const

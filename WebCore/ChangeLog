@@ -1,3 +1,21 @@
+2010-08-31  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        deduplicate code from Node::checkReplaceChild and Node::checkAddChild
+        https://bugs.webkit.org/show_bug.cgi?id=44962
+
+        Remove duplicate code in preparation for fixing https://bugs.webkit.org/show_bug.cgi?id=19524
+        No new tests since there is no change in functionality.
+
+        * dom/Node.cpp:
+        (WebCore::isChildTypeAllowed):
+        (WebCore::Node::canReplaceChild):
+        (WebCore::checkAcceptChild):
+        (WebCore::transferOwnerDocument):
+        (WebCore::Node::checkReplaceChild):
+        (WebCore::Node::checkAddChild):
+
 2010-08-30  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
