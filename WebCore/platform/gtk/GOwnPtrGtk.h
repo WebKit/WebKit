@@ -22,9 +22,6 @@
 
 #include "GOwnPtr.h"
 
-typedef union _GdkEvent GdkEvent;
-typedef struct _GtkIconInfo GtkIconInfo;
-
 namespace WTF {
 
 template <> void freeOwnedGPtr<GdkEvent>(GdkEvent*);

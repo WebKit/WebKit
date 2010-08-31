@@ -27,10 +27,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 
-typedef struct _GdkPixbuf GdkPixbuf;
-typedef struct _GdkDragContext GdkDragContext;
-typedef struct _GtkClipboard GtkClipboard;
-
 namespace WebCore {
 
 class DataObjectGtk : public RefCounted<DataObjectGtk> {

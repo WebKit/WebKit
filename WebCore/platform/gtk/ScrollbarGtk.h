@@ -29,8 +29,6 @@
 #include "Scrollbar.h"
 #include <wtf/PassRefPtr.h>
 
-typedef struct _GtkAdjustment GtkAdjustment;
-
 namespace WebCore {
 
 class ScrollbarGtk : public Scrollbar {

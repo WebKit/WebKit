@@ -31,8 +31,6 @@
 #include "Clipboard.h"
 #include "DataObjectGtk.h"
 
-typedef struct _GtkClipboard GtkClipboard;
-
 namespace WebCore {
     class CachedImage;
     class Frame;

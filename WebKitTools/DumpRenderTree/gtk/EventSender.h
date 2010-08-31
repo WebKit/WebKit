@@ -32,10 +32,6 @@
 
 typedef const struct OpaqueJSContext* JSContextRef;
 typedef struct OpaqueJSValue* JSObjectRef;
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GdkDragContext GdkDragContext;
-typedef void* gpointer;
-typedef int gboolean;
 
 JSObjectRef makeEventSender(JSContextRef context, bool isTopFrame);
 void replaySavedEvents();

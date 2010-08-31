@@ -2,6 +2,20 @@
 
         Reviewed by Gustavo Noronha Silva.
 
+        [GTK] Isolate all GTK+ typedefs into one file
+        https://bugs.webkit.org/show_bug.cgi?id=44900
+
+        * GNUmakefile.am: Add GtkTypedefs.h to the source lists.
+        * wtf/Platform.h: #include GtkTypedefs.h for the GTK+ build.
+        * wtf/ThreadingPrimitives.h: Remove GTK+ typedefs.
+        * wtf/gobject/GOwnPtr.h: Ditto.
+        * wtf/gobject/GRefPtr.h: Ditto.
+        * wtf/gtk/GtkTypedefs.h: Added.
+
+2010-08-31  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
         [GTK] Fix 'make dist' in preparation of the 1.3.3 release
         https://bugs.webkit.org/show_bug.cgi?id=44978
 

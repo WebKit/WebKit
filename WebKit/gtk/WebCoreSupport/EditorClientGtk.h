@@ -39,8 +39,6 @@
 #include <wtf/gobject/GRefPtr.h>
 
 typedef struct _WebKitWebView WebKitWebView;
-typedef struct _GtkWidget GtkWidget;
-typedef char gchar;
 
 namespace WebCore {
 class Frame;

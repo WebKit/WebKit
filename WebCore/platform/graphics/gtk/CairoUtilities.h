@@ -26,8 +26,6 @@
 #ifndef CairoUtilities_h
 #define CairoUtilities_h
 
-typedef struct _cairo_surface cairo_surface_t;
-typedef struct _GdkPixbuf GdkPixbuf;
 GdkPixbuf* cairoImageSurfaceToGdkPixbuf(cairo_surface_t* surface);
 
 #endif // CairoUtilities_h

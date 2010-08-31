@@ -32,13 +32,6 @@
 
 #include "Frame.h"
 
-typedef struct _GtkClipboard GtkClipboard;
-typedef struct _GtkTargetList GtkTargetList;
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkSelectionData GtkSelectionData;
-typedef struct _GdkDragContext GdkDragContext;
-typedef struct _GdkAtom* GdkAtom;
-
 namespace WebCore {
 
 class DataObjectGtk;

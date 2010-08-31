@@ -45,8 +45,6 @@
 #include <pthread.h>
 #elif PLATFORM(GTK)
 #include "GOwnPtr.h"
-typedef struct _GMutex GMutex;
-typedef struct _GCond GCond;
 #endif
 
 #if PLATFORM(QT)

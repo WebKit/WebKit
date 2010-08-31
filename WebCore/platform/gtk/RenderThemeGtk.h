@@ -32,19 +32,6 @@
 #include "gtkdrawing.h"
 #include "RenderTheme.h"
 
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkStyle GtkStyle;
-typedef struct _GtkContainer GtkContainer;
-#ifdef GTK_API_VERSION_2
-typedef struct _GdkRectangle GdkRectangle;
-#else
-typedef struct _cairo_rectangle_int cairo_rectangle_int_t;
-typedef cairo_rectangle_int_t GdkRectangle;
-#endif
-typedef struct _GdkDrawable GdkDrawable;
-typedef struct _GtkBorder GtkBorder;
-typedef struct _GtkThemeParts GtkThemeParts;
-
 namespace WebCore {
 
 class RenderThemeGtk : public RenderTheme {

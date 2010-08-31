@@ -46,10 +46,7 @@
 
 #include <gdk/gdkprivate.h>
 #include "gtkdrawing.h"
-
-#include "Assertions.h"
 #include "GtkVersioning.h"
-
 #include <math.h>
 #include <string.h>
 

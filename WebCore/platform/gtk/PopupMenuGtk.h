@@ -29,10 +29,6 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
-typedef struct _GtkMenu GtkMenu;
-typedef struct _GtkMenuItem GtkMenuItem;
-typedef struct _GtkWidget GtkWidget;
-
 namespace WebCore {
 
 class FrameView;

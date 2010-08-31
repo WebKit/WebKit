@@ -1,3 +1,12 @@
+2010-08-31  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Isolate all GTK+ typedefs into one file
+        https://bugs.webkit.org/show_bug.cgi?id=44900
+
+        * DumpRenderTree/gtk/EventSender.h: Remove GTK+ typedefs.
+
 2010-08-31  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

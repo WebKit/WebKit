@@ -27,13 +27,6 @@
 #include "HTMLMediaElement.h"
 #include <wtf/RefPtr.h>
 
-typedef struct _GtkObject GtkObject;
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkAction GtkAction;
-typedef struct _GdkCursor GdkCursor;
-typedef struct _GdkEventConfigure GdkEventConfigure;
-
-
 class FullscreenVideoController : public Noncopyable {
 public:
     FullscreenVideoController();
