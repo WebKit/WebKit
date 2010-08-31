@@ -1,3 +1,14 @@
+2010-08-31  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Remove unused canReferToParentFrameEncoding() function from FrameLoader.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=44895
+
+        No new tests; no behavior changed.
+
+        * loader/FrameLoader.cpp:
+
 2010-08-31  Jeremy Orlow  <jorlow@chromium.org>
 
         Build fix.
