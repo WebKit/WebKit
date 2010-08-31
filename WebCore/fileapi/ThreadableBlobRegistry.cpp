@@ -30,6 +30,8 @@
 
 #include "config.h"
 
+#if ENABLE(BLOB)
+
 #include "ThreadableBlobRegistry.h"
 
 #include "BlobData.h"
@@ -94,3 +96,5 @@ void ThreadableBlobRegistry::unregisterBlobURL(ScriptExecutionContext* scriptExe
 }
 
 } // namespace WebCore
+
+#endif // ENABL(BLOB)

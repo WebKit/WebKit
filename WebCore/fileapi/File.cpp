@@ -65,6 +65,7 @@ File::File(ScriptExecutionContext* scriptExecutionContext, const String& relativ
     , m_path(path)
     , m_relativePath(relativePath)
 {
+    m_name = pathGetFileName(path);
 }
 #endif
 
