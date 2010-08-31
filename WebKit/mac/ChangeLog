@@ -1,3 +1,15 @@
+2010-08-30  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8369736> WebKit build fails.
+
+        Temporarily add some extra includes in order to get things building again until <rdar://problem/8374711> is addressed.
+
+        * Carbon/HIViewAdapter.m:
+        * Carbon/HIWebView.mm:
+        * Plugins/WebNetscapePluginView.mm:
+
 2010-08-30  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.

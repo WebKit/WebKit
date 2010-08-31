@@ -33,6 +33,12 @@
 #import "WebNSObjectExtras.h"
 #import <wtf/Assertions.h>
 
+// FIXME: Remove this when we have a solution for <rdar://problem/8374711>.
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#define __LP64__ 0
+#include <QD/QuickdrawPriv.h>
+#endif
+
 static void SetViewNeedsDisplay(HIViewRef inView, RgnHandle inRegion, Boolean inNeedsDisplay);
 
 #define WATCH_INVALIDATION 0
