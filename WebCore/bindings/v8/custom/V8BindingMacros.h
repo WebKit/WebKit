@@ -38,12 +38,11 @@
     }
 
 #define STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(type, var, value) \
-    type var;                                                   \
-    {                                                           \
-        v8::Local<v8::Value> v8Value = (value);                 \
-        v8::TryCatch block;                                     \
-        (value)->ToString();                                    \
-        if (block.HasCaught())                                  \
-            return block.ReThrow();                             \
-        var = v8Value;                                          \
-    }
+    type var(value);                                            \
+    if (!var.prepare())                                         \
+        return v8::Undefined();
+
+#define STRING_TO_V8PARAMETER_EXCEPTION_BLOCK_VOID(type, var, value) \
+    type var(value);                                                 \
+    if (!var.prepare())                                              \
+        return;

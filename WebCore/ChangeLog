@@ -1,3 +1,34 @@
+2010-08-31  Anton Muhin  <antonm@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [v8] More correct and faster error handling when converting v8 objects to various WebCore strings
+        https://bugs.webkit.org/show_bug.cgi?id=44678
+
+        Split v8 object conversion into two phase: 1st, which can throw an exception, and
+        2nd, which must always succeed.  That allows to report correctly the case when exception
+        happens.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::int32ToWebCoreString):
+        (WebCore::v8NonStringValueToWebCoreString):
+        * bindings/v8/V8Binding.h:
+        (WebCore::V8ParameterBase::operator String):
+        (WebCore::V8ParameterBase::operator AtomicString):
+        (WebCore::V8ParameterBase::V8ParameterBase):
+        (WebCore::V8ParameterBase::prepareBase):
+        (WebCore::V8ParameterBase::object):
+        (WebCore::V8ParameterBase::setString):
+        (WebCore::V8ParameterBase::toString):
+        (WebCore::):
+        (WebCore::::prepare):
+        * bindings/v8/custom/V8BindingMacros.h:
+        * bindings/v8/custom/V8DeviceMotionEventCustom.cpp:
+        (WebCore::V8DeviceMotionEvent::initDeviceMotionEventCallback):
+        * bindings/v8/cstom/V8DeviceOrientationEventCustom.cpp:
+        (WebCore::V8DeviceMotionEvent::initDeviceOrientationEventCallback):
+
 2010-08-30  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Joseph Pecoraro.

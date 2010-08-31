@@ -762,8 +762,11 @@ END
         }
 
         if ($useExceptions) {
-            push(@implContentDecls, "    $nativeType v = ");
-            push(@implContentDecls, "$getterString;\n");
+            if ($nativeType =~ /^V8Parameter/) {
+              push(@implContentDecls, "    " . ConvertToV8Parameter($attribute->signature, $nativeType, "v", $getterString) . ";\n");
+            } else {
+              push(@implContentDecls, "    $nativeType v = $getterString;\n");
+            }
             push(@implContentDecls, GenerateSetDOMException("    "));
             $result = "v";
             $result .= ".release()" if (IsRefPtrType($returnType));
@@ -830,6 +833,8 @@ sub GenerateNormalAttrSetter
     my $implClassName = shift;
     my $interfaceName = shift;
 
+    $implIncludes{"V8BindingMacros.h"} = 1;
+
     my $attrExt = $attribute->signature->extendedAttributes;
 
     my $conditionalString = GenerateConditionalString($attribute->signature);
@@ -890,7 +895,12 @@ END
             push(@implContentDecls, "        return;\n");
         }
     } else {
-        push(@implContentDecls, "    $nativeType v = " . JSValueToNative($attribute->signature, "value") . ";\n");
+        my $value = JSValueToNative($attribute->signature, "value");
+        if ($nativeType =~ /^V8Parameter/) {
+          push(@implContentDecls, "    " . ConvertToV8Parameter($attribute->signature, $nativeType, "v", $value, "VOID") . "\n");
+        } else {
+          push(@implContentDecls, "    $nativeType v = $value;\n");
+        }
     }
 
     my $result = "v";
@@ -1236,13 +1246,7 @@ END
             push(@implContentDecls, "    }\n");
         } elsif ($nativeType =~ /^V8Parameter/) {
             my $value = JSValueToNative($parameter, "args[$paramIndex]", BasicTypeCanFailConversion($parameter) ?  "${parameterName}Ok" : undef);
-            if ($parameter->type eq "DOMString") {
-                $implIncludes{"V8BindingMacros.h"} = 1;
-                push(@implContentDecls, "    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK($nativeType, $parameterName, $value);\n");
-            } else {
-                # Don't know how to properly check for conversion exceptions when $parameter->type is "DOMUserData"
-                push(@implContentDecls, "    $nativeType $parameterName = $value;\n");
-            }
+            push(@implContentDecls, "    " . ConvertToV8Parameter($parameter, $nativeType, $parameterName, $value) . "\n");
         } else {
             $implIncludes{"V8BindingMacros.h"} = 1;
             # For functions with "StrictTypeChecking", if an input parameter's type does not match the signature,
@@ -3314,6 +3318,25 @@ sub GetCallbackClassName
 
     return "V8CustomVoidCallback" if $interfaceName eq "VoidCallback";
     return "V8$interfaceName";
+}
+
+sub ConvertToV8Parameter
+{
+    my $signature = shift;
+    my $nativeType = shift;
+    my $variableName = shift;
+    my $value = shift;
+    my $suffix = shift;
+
+    die "Wrong native type passed: $nativeType" unless $nativeType =~ /^V8Parameter/;
+    if ($signature->type eq "DOMString") {
+      my $macro = "STRING_TO_V8PARAMETER_EXCEPTION_BLOCK";
+      $macro .= "_$suffix" if $suffix;
+      return "$macro($nativeType, $variableName, $value);"
+    } else {
+      # Don't know how to properly check for conversion exceptions when $parameter->type is "DOMUserData"
+      return "$nativeType $variableName($value, true);";
+    }
 }
 
 sub DebugPrint

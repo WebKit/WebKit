@@ -368,27 +368,33 @@ StringType v8StringToWebCoreString(v8::Handle<v8::String> v8String, ExternalMode
 template String v8StringToWebCoreString<String>(v8::Handle<v8::String>, ExternalMode);
 template AtomicString v8StringToWebCoreString<AtomicString>(v8::Handle<v8::String>, ExternalMode);
 
+String int32ToWebCoreString(int value)
+{
+    // Caching of small strings below is not thread safe: newly constructed AtomicString
+    // are not safely published.
+    ASSERT(WTF::isMainThread());
+
+    // Most numbers used are <= 100. Even if they aren't used there's very little cost in using the space.
+    const int kLowNumbers = 100;
+    static AtomicString lowNumbers[kLowNumbers + 1];
+    String webCoreString;
+    if (0 <= value && value <= kLowNumbers) {
+        webCoreString = lowNumbers[value];
+        if (!webCoreString) {
+            AtomicString valueString = AtomicString(String::number(value));
+            lowNumbers[value] = valueString;
+            webCoreString = valueString;
+        }
+    } else
+        webCoreString = String::number(value);
+    return webCoreString;
+}
 
 String v8NonStringValueToWebCoreString(v8::Handle<v8::Value> object)
 {
     ASSERT(!object->IsString());
-    if (object->IsInt32()) {
-        int value = object->Int32Value();
-        // Most numbers used are <= 100. Even if they aren't used there's very little in using the space.
-        const int kLowNumbers = 100;
-        static AtomicString lowNumbers[kLowNumbers + 1];
-        String webCoreString;
-        if (0 <= value && value <= kLowNumbers) {
-            webCoreString = lowNumbers[value];
-            if (!webCoreString) {
-                AtomicString valueString = AtomicString(String::number(value));
-                lowNumbers[value] = valueString;
-                webCoreString = valueString;
-            }
-        } else
-            webCoreString = String::number(value);
-        return webCoreString;
-    }
+    if (object->IsInt32())
+        return int32ToWebCoreString(object->Int32Value());
 
     v8::TryCatch block;
     v8::Handle<v8::String> v8String = object->ToString();

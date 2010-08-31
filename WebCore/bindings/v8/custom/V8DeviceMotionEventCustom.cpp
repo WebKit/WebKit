@@ -30,6 +30,7 @@
 
 #include "DeviceMotionData.h"
 #include "V8Binding.h"
+#include "V8BindingMacros.h"
 #include "V8Proxy.h"
 
 #include <v8.h>
@@ -110,7 +111,7 @@ v8::Handle<v8::Value> V8DeviceMotionEvent::intervalAccessorGetter(v8::Local<v8::
 v8::Handle<v8::Value> V8DeviceMotionEvent::initDeviceMotionEventCallback(const v8::Arguments& args)
 {
     DeviceMotionEvent* imp = V8DeviceMotionEvent::toNative(args.Holder());
-    V8Parameter<> type = args[0];
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, type, args[0]);
     bool bubbles = args[1]->BooleanValue();
     bool cancelable = args[2]->BooleanValue();
     // If any of the parameters are null or undefined, mark them as not provided.
