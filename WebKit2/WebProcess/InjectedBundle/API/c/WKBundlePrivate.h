@@ -64,6 +64,9 @@ WK_EXPORT void WKBundleRemoveUserScripts(WKBundleRef bundle, WKBundleScriptWorld
 WK_EXPORT void WKBundleRemoveUserStyleSheets(WKBundleRef bundle, WKBundleScriptWorldRef scriptWorld);
 WK_EXPORT void WKBundleRemoveAllUserContent(WKBundleRef bundle);
 
+// Will make WebProcess ignore this preference until a preferences change notification, only for WebKitTestRunner use.
+WK_EXPORT void WKBundleOverrideXSSAuditorEnabledForTestRunner(WKBundleRef bundle, bool enabled);
+
 #ifdef __cplusplus
 }
 #endif

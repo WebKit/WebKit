@@ -70,6 +70,9 @@ public:
     void setLocalStorageEnabled(bool);
     bool localStorageEnabled() const;
 
+    void setXSSAuditorEnabled(bool);
+    bool xssAuditorEnabled() const;
+
     void setFontSmoothingLevel(FontSmoothingLevel);
     FontSmoothingLevel fontSmoothingLevel() const;
 

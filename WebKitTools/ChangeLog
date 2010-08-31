@@ -1,3 +1,20 @@
+2010-08-31  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42195
+        <rdar://problem/8186761> WebKitTestRunner needs to support layoutTestController.setXSSAuditorEnabled
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp: (WTR::LayoutTestController::setXSSAuditorEnabled):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        Added setXSSAuditorEnabled, calling through to an WKBundle private method. Calling this method
+        makes WebProcess use a different value for this preference than UIProcess thinks it uses.
+
+        * WebKitTestRunner/TestController.cpp: (WTR::TestController::resetStateToConsistentValues):
+        Reset xssAuditorEnabled. Even though the value doesn't change, this calls through to WebProcess,
+        which forgets its override.
+
 2010-08-31  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Gavin Barraclough.

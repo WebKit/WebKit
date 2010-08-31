@@ -112,3 +112,8 @@ void WKBundleRemoveAllUserContent(WKBundleRef bundleRef)
 {
     toWK(bundleRef)->removeAllUserContent();
 }
+
+void WKBundleOverrideXSSAuditorEnabledForTestRunner(WKBundleRef bundleRef, bool enabled)
+{
+    toWK(bundleRef)->overrideXSSAuditorEnabledForTestRunner(enabled);
+}

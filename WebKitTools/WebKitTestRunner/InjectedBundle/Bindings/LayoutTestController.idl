@@ -44,6 +44,7 @@ module WTR {
         void setAcceptsEditing(in boolean value);
         void setCanOpenWindows(in boolean value);
         void setCloseRemainingWindowsWhenComplete(in boolean value);
+        void setXSSAuditorEnabled(in boolean value);
         unsigned long windowCount();
 
         // Special DOM functions.

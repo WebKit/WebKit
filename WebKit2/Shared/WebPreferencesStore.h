@@ -43,6 +43,7 @@ struct WebPreferencesStore {
         encoder->encode(pluginsEnabled);
         encoder->encode(offlineWebApplicationCacheEnabled);
         encoder->encode(localStorageEnabled);
+        encoder->encode(xssAuditorEnabled);
         encoder->encode(fontSmoothingLevel);
         encoder->encode(minimumFontSize);
         encoder->encode(minimumLogicalFontSize);
@@ -56,48 +57,17 @@ struct WebPreferencesStore {
         encoder->encode(serifFontFamily);
     }
 
-    static bool decode(CoreIPC::ArgumentDecoder* decoder, WebPreferencesStore& s)
-    {
-        if (!decoder->decode(s.javaScriptEnabled))
-            return false;
-        if (!decoder->decode(s.loadsImagesAutomatically))
-            return false;
-        if (!decoder->decode(s.pluginsEnabled))
-            return false;
-        if (!decoder->decode(s.offlineWebApplicationCacheEnabled))
-            return false;
-        if (!decoder->decode(s.localStorageEnabled))
-            return false;
-        if (!decoder->decode(s.fontSmoothingLevel))
-            return false;
-        if (!decoder->decode(s.minimumFontSize))
-            return false;
-        if (!decoder->decode(s.minimumLogicalFontSize))
-            return false;
-        if (!decoder->decode(s.defaultFontSize))
-            return false;
-        if (!decoder->decode(s.defaultFixedFontSize))
-            return false;
-        if (!decoder->decode(s.standardFontFamily))
-            return false;
-        if (!decoder->decode(s.cursiveFontFamily))
-            return false;
-        if (!decoder->decode(s.fantasyFontFamily))
-            return false;
-        if (!decoder->decode(s.fixedFontFamily))
-            return false;
-        if (!decoder->decode(s.sansSerifFontFamily))
-            return false;
-        if (!decoder->decode(s.serifFontFamily))
-            return false;
-        return true;
-    }
+    static bool decode(CoreIPC::ArgumentDecoder*, WebPreferencesStore&);
+
+    static void overrideXSSAuditorEnabledForTestRunner(bool);
+    static void removeTestRunnerOverrides();
 
     bool javaScriptEnabled;
     bool loadsImagesAutomatically;
     bool pluginsEnabled;
     bool offlineWebApplicationCacheEnabled;
     bool localStorageEnabled;
+    bool xssAuditorEnabled;
 
     uint32_t fontSmoothingLevel;
 

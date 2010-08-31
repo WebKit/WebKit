@@ -198,6 +198,7 @@ void TestController::resetStateToConsistentValues()
     WKPreferencesRef preferences = WKContextGetPreferences(m_context.get());
     WKPreferencesSetOfflineWebApplicationCacheEnabled(preferences, true);
     WKPreferencesSetFontSmoothingLevel(preferences, kWKFontSmoothingLevelNoSubpixelAntiAliasing);
+    WKPreferencesSetXSSAuditorEnabled(preferences, false);
 
     m_mainWebView->focus();
 

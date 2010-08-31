@@ -62,6 +62,7 @@ public:
     void setAcceptsEditing(bool value) { m_shouldAllowEditing = value; }
     void setCanOpenWindows(bool);
     void setCloseRemainingWindowsWhenComplete(bool value) { m_shouldCloseExtraWindows = value; }
+    void setXSSAuditorEnabled(bool);
     unsigned windowCount();
 
     // Special DOM functions.

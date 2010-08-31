@@ -1,3 +1,50 @@
+2010-08-31  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42195
+        <rdar://problem/8186761> WebKitTestRunner needs to support layoutTestController.setXSSAuditorEnabled
+
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::WebPreferencesStore::WebPreferencesStore): Initialize xssAuditorEnabled.
+        (WebKit::WebPreferencesStore::decode): Moved from header, added xssAuditorEnabled.
+        (WebKit::WebPreferencesStore::encode): Ditto.
+        (WebKit::WebPreferencesStore::overrideXSSAuditorEnabledForTestRunner): Set an override, so
+        that decoding a WebPreferencesStore in the process will give the override result. WebProcess
+        doesn't hold to WebPreferencesStore, so there are no existing ones to patch.
+        (WebKit::WebPreferencesStore::removeTestRunnerOverrides): Remove the override.
+
+        * Shared/WebPreferencesStore.h: Added xssAuditorEnabled.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetXSSAuditorEnabled):
+        (WKPreferencesGetXSSAuditorEnabled):
+        * UIProcess/API/C/WKPreferences.h:
+        Added an API method to change xssAuditorEnabled preference.
+
+        * UIProcess/WebPageProxy.cpp: (WebKit::WebPageProxy::preferencesDidChange): Added a comment
+        explaining how making this method smarter could affect WebKitTestRunner.
+
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::setXSSAuditorEnabled):
+        (WebKit::WebPreferences::xssAuditorEnabled):
+        * UIProcess/WebPreferences.h:
+        Implemented xssAuditorEnabled preference accessors.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp: (WKBundleOverrideXSSAuditorEnabledForTestRunner):
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        Added a private methods to temporarily change xssAuditor setting from an injected bundle,
+        not notifying UIProcess about the change.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp: (WebKit::InjectedBundle::overrideXSSAuditorEnabledForTestRunner):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        Change the setting in existing pages, and override it for future ones.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Take xssAuditorEnabled from preferences store.
+        (WebKit::WebPage::preferencesDidChange): If preferences change, forget our override. This only
+        happens in WKRT when the next test begins.
+
 2010-08-31  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Gavin Barraclough.

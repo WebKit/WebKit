@@ -34,11 +34,14 @@
 #include "WebContextMessageKinds.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
+#include "WebPreferencesStore.h"
 #include "WebProcess.h"
 #include <JavaScriptCore/JSLock.h>
 #include <WebCore/GCController.h>
 #include <WebCore/JSDOMWindow.h>
+#include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
+#include <WebCore/Settings.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
 
@@ -196,6 +199,19 @@ void InjectedBundle::removeAllVisitedLinks()
 {
     PageGroup::removeAllVisitedLinks();
 }
+
+void InjectedBundle::overrideXSSAuditorEnabledForTestRunner(bool enabled)
+{
+    // Override the preference for all future pages.
+    WebPreferencesStore::overrideXSSAuditorEnabledForTestRunner(enabled);
+
+    // Change the setting for existing ones.
+    const HashSet<Page*>& pages = WebProcess::sharedPageGroup()->pages();
+
+    for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)
+        (*iter)->settings()->setXSSAuditorEnabled(enabled);
+}
+
 
 static PassOwnPtr<Vector<String> > toStringVector(ImmutableArray* patterns)
 {

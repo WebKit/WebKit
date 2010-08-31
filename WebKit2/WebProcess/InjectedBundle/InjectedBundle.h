@@ -75,6 +75,7 @@ public:
     void setShouldTrackVisitedLinks(bool);
     void removeAllVisitedLinks();
     void activateMacFontAscentHack();
+    void overrideXSSAuditorEnabledForTestRunner(bool enabled);
 
     // UserContent API
     void addUserScript(InjectedBundleScriptWorld*, const String& source, const String& url, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserScriptInjectionTime, WebCore::UserContentInjectedFrames);
