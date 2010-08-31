@@ -30,8 +30,6 @@
 
 #include "config.h"
 
-#if ENABLE(BLOB)
-
 #include "ThreadableBlobRegistry.h"
 
 #include "BlobData.h"
@@ -44,6 +42,8 @@
 #include "WorkerThread.h"
 
 namespace WebCore {
+
+#if ENABLE(BLOB)
 
 static void postTaskToMainThread(ScriptExecutionContext* scriptExecutionContext, PassOwnPtr<ScriptExecutionContext::Task> task)
 {
@@ -95,6 +95,19 @@ void ThreadableBlobRegistry::unregisterBlobURL(ScriptExecutionContext* scriptExe
         unregisterBlobURLTask(scriptExecutionContext, url);
 }
 
-} // namespace WebCore
+#else
 
+void ThreadableBlobRegistry::registerBlobURL(ScriptExecutionContext*, const KURL&, PassOwnPtr<BlobData>)
+{
+}
+
+void ThreadableBlobRegistry::registerBlobURL(ScriptExecutionContext*, const KURL&, const KURL&)
+{
+}
+
+void ThreadableBlobRegistry::unregisterBlobURL(ScriptExecutionContext*, const KURL&)
+{
+}
 #endif // ENABL(BLOB)
+
+} // namespace WebCore
