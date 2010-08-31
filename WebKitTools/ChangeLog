@@ -1,3 +1,10 @@
+2010-08-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/check-for-global-initializers: Add a file that ends up having global initializers
+        in a debug build when built with certain compilers.
+
 2010-08-31  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

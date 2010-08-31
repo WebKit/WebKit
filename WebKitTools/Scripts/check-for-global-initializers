@@ -105,18 +105,19 @@ for my $file (sort @files) {
                 next if $shortName eq "nodes.o";
             }
             if ($target eq "WebCore") {
+                next if $shortName eq "BidiRun.o";
                 next if $shortName eq "CachedPage.o";
                 next if $shortName eq "CachedResource.o";
+                next if $shortName eq "FEGaussianBlur.o";
                 next if $shortName eq "Frame.o";
                 next if $shortName eq "JSCustomSQLTransactionCallback.o";
                 next if $shortName eq "JSLazyEventListener.o";
                 next if $shortName eq "Node.o";
                 next if $shortName eq "Page.o";
                 next if $shortName eq "Range.o";
-                next if $shortName eq "BidiRun.o";
                 next if $shortName eq "RenderObject.o";
-                next if $shortName eq "SubresourceLoader.o";
                 next if $shortName eq "SVGElementInstance.o";
+                next if $shortName eq "SubresourceLoader.o";
                 next if $shortName eq "XMLHttpRequest.o";
             }
             if ($target eq "WebKit") {
