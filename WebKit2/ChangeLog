@@ -1,3 +1,78 @@
+2010-08-27  Adam Roben  <aroben@apple.com>
+
+        Use the Windows thread pool instead of a dedicated thread for
+        WorkQueue on Windows
+
+        WorkQueue now uses ::RegisterWaitForSingleObject to find out when work
+        items need to be executed. This causes Windows to wait on the objects
+        on a thread pool wait thread, and then to spawn a thread pool worker
+        thread when an object is signaled. This is more efficient than using
+        our own dedicated thread to perform the wait and the work because
+        multiple WorkQueues (and even other parts of WebKit or other modules)
+        can all share the same wait thread and worker thread pool.
+
+        Each time WorkQueue::m_performWorkEvent or any handle in
+        WorkQueue::m_handles is signaled, a worker thread will be spawned.
+        To maintain WorkQueue's serial nature, only one worker thread is
+        allowed to perform work items at a time. (The worker thread that is
+        actually performing work items is called the queue's "work thread".)
+        To accomplish this, worker threads must register as the queue's work
+        thread before performing work items.
+        WorkQueue::m_isWorkThreadRegistered is used as an atomic guard to make
+        sure that only one worker thread is registered at a time.
+        
+        Fixes <http://webkit.org/b/43150> <rdar://problem/8247280>.
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/WorkQueue.h:
+          - Added the WorkItemWin class, which is used to wrap WorkItems for
+            WorkQueue's Windows implementation
+          - Changed m_workItemQueue and m_handles to hold
+            RefPtr<WorkItemWin>s
+          - Replaced "work queue thread"-related members with new members that
+            handle our thread pool code
+
+        * Platform/win/WorkQueueWin.cpp:
+        (WorkQueue::WorkItemWin::WorkItemWin):
+        (WorkQueue::WorkItemWin::create):
+        Added simple constructor/creator.
+
+        (WorkQueue::handleCallback): Added. This function is called whenever a
+        handle in WorkQueue::m_handles is signaled. We add the WorkItemWin
+        that corresponds to the handle (passed via the context parameter) to
+        the work item queue, then try to register as the work thread and
+        perform any queued work. If another thread is already registered as
+        the work thread, we just exit and let that thread handle the work we
+        queued.
+        (WorkQueue::registerHandle): Changed to wrap the WorkItem in a
+        WorkItemWin, and to use ::RegisterWaitForSingleObject to wait on the
+        handle.
+        (WorkQueue::eventCallback): Added. This function is called whenever
+        m_performWorkEvent is signaled. We try to register as the work thread
+        and perfom any queued work. If another thread is already registered as
+        the work thread, we just exit and let that thread handle the work.
+        (WorkQueue::performWorkOnRegisteredWorkThread): Added. Performs any
+        queued work in a loop until either the queue becomes invalid or no
+        work is left to perform. Unregisters as the work thread before exiting
+        so that other threads can perform work in the future.
+        (WorkQueue::platformInitialize): Added initialization of
+        m_isWorkThreadRegistered. Replaced code to spawn the old work queue
+        thread with a call to ::RegisterWaitForSingleObject so that a worker
+        thread from the thread pool will be spawned when m_performWorkEvent is
+        signaled.
+        (WorkQueue::tryRegisterAsWorkThread): Added. Attempts an atomic
+        compare-and-swap to change m_isWorkThreadRegistered from 0 to 1. If
+        sucessful, we return true to indicate that this thread is now
+        registered as the work thread.
+        (WorkQueue::unregisterAsWorkThread): Added. Uses an atomic
+        compare-and-swap to change m_isWorkThreadRegistered back from 1 to 0.
+        (WorkQueue::scheduleWork): Changed to wrap the WorkItem in a
+        WorkItemWin. Also added an optimization to avoid signaling
+        m_performWorkEvent when a work thread is already performing work, as
+        it will pick up the item we just queued without us having to do
+        anything.
+
 2010-08-31  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Antonio Gomes.

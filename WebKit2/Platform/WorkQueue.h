@@ -35,6 +35,7 @@
 #include "WorkItem.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
@@ -92,19 +93,36 @@ private:
     dispatch_queue_t m_dispatchQueue;
 #endif
 #elif PLATFORM(WIN)
-    static void* workQueueThreadBody(void*);
-    void workQueueThreadBody();
-    void performWork();
+    class WorkItemWin : public RefCounted<WorkItemWin> {
+    public:
+        static PassRefPtr<WorkItemWin> create(PassOwnPtr<WorkItem>, WorkQueue*);
 
-    ThreadIdentifier m_workQueueThread;
+        WorkItem* item() const { return m_item.get(); }
+        WorkQueue* queue() const { return m_queue; }
+
+    private:
+        WorkItemWin(PassOwnPtr<WorkItem>, WorkQueue*);
+
+        OwnPtr<WorkItem> m_item;
+        WorkQueue* m_queue;
+    };
+
+    static void CALLBACK handleCallback(void* context, BOOLEAN timerOrWaitFired);
+    static void CALLBACK eventCallback(void* context, BOOLEAN timerOrWaitFired);
+
+    bool tryRegisterAsWorkThread();
+    void unregisterAsWorkThread();
+    void performWorkOnRegisteredWorkThread();
 
     HANDLE m_performWorkEvent;
 
+    volatile LONG m_isWorkThreadRegistered;
+
     Mutex m_workItemQueueLock;
-    Vector<WorkItem*> m_workItemQueue;
+    Vector<RefPtr<WorkItemWin> > m_workItemQueue;
 
     Mutex m_handlesLock;
-    HashMap<HANDLE, WorkItem*> m_handles;
+    HashMap<HANDLE, RefPtr<WorkItemWin> > m_handles;
 #elif PLATFORM(QT)
     class WorkItemQt;
     HashMap<QObject*, WorkItemQt*> m_signalListeners;
