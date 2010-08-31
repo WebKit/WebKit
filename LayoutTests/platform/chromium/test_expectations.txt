@@ -2538,9 +2538,6 @@ BUGWK37297 : fast/history/sibling-visited-test.html = TEXT
 BUGWK36983 MAC : fast/canvas/webgl/null-object-behaviour.html = TEXT
 BUGWK36983 MAC : fast/canvas/webgl/uniform-location.html = TEXT
 
-// Caused by premultiplying alphas in CG image decoding.
-BUG44566 MAC : fast/canvas/webgl/gl-teximage.html = TEXT
-
 // Added in http://trac.webkit.org/changeset/57476. Fails in Chromium because
 // LayoutTestController::computedStyleWithVisitedInfo() is missing.
 BUG41206 : fast/history/multiple-classes-visited.html = TEXT TIMEOUT

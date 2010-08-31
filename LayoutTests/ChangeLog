@@ -1,3 +1,14 @@
+2010-08-25  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Passing premultiplyAlpha=false to tex{Sub}Image2D loses information (cg)
+        https://bugs.webkit.org/show_bug.cgi?id=44566
+
+        * fast/canvas/webgl/gl-teximage-expected.txt: Fix a typo in the file.
+        * platform/chromium/test_expectations.txt: Re-enable gl-teximage.html test.
+        * platform/mac/Skipped: Ditto.
+
 2010-08-31  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Adam Roben.

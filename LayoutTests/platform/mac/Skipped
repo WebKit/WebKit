@@ -296,9 +296,6 @@ animations/play-state.html
 # https://bugs.webkit.org/show_bug.cgi?id=43332
 inspector/dom-breakpoints.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=44566
-fast/canvas/webgl/gl-teximage.html
-
 # Safari doesn't allow to customize outermost scrollbars.
 # https://bugs.webkit.org/show_bug.cgi?id=43960
 scrollbars/custom-scrollbar-with-incomplete-style.html
