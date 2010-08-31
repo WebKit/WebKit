@@ -47,18 +47,27 @@ PassRefPtr<IDBKeyRange> IDBKeyRange::only(PassRefPtr<IDBKey> prpValue)
 
 PassRefPtr<IDBKeyRange> IDBKeyRange::leftBound(PassRefPtr<IDBKey> bound, bool open)
 {
-    return IDBKeyRange::create(bound, IDBKey::create(), open ? IDBKeyRange::LEFT_OPEN : IDBKeyRange::LEFT_BOUND);
+    unsigned short flags = IDBKeyRange::LEFT_BOUND;
+    if (open)
+        flags |= IDBKeyRange::LEFT_OPEN;
+    return IDBKeyRange::create(bound, IDBKey::create(), flags);
 }
 
 PassRefPtr<IDBKeyRange> IDBKeyRange::rightBound(PassRefPtr<IDBKey> bound, bool open)
 {
-    return IDBKeyRange::create(IDBKey::create(), bound, open ? IDBKeyRange::RIGHT_OPEN : IDBKeyRange::RIGHT_BOUND);
+    unsigned short flags = IDBKeyRange::RIGHT_BOUND;
+    if (open)
+        flags |= IDBKeyRange::RIGHT_OPEN;
+    return IDBKeyRange::create(IDBKey::create(), bound, flags);
 }
 
 PassRefPtr<IDBKeyRange> IDBKeyRange::bound(PassRefPtr<IDBKey> left, PassRefPtr<IDBKey> right, bool openLeft, bool openRight)
 {
-    unsigned short flags = openLeft ? IDBKeyRange::LEFT_OPEN : IDBKeyRange::LEFT_BOUND;
-    flags |= openRight ? IDBKeyRange::RIGHT_OPEN : IDBKeyRange::RIGHT_BOUND;
+    unsigned short flags = IDBKeyRange::LEFT_BOUND | IDBKeyRange::RIGHT_BOUND;
+    if (openLeft)
+        flags |= IDBKeyRange::LEFT_OPEN;
+    if (openRight)
+        flags |= IDBKeyRange::RIGHT_OPEN;
     return IDBKeyRange::create(left, right, flags);
 }
 

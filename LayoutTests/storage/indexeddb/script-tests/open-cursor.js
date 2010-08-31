@@ -7,7 +7,6 @@ function emptyCursorSuccess()
     debug("Empty cursor opened successfully.")
     verifySuccessEvent(event);
     // FIXME: check that we can iterate the cursor.
-    shouldBe("event.result", "null");
     done();
 }
 

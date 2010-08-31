@@ -15,7 +15,7 @@ function checkLeftBoundKeyRange(value, open)
     keyRange = evalAndLog("IDBKeyRange.leftBound(" + value + "," + open + ")");
     shouldBe("keyRange.left", "" + value);
     shouldBeNull("keyRange.right");
-    shouldBe("keyRange.flags", open ? "keyRange.LEFT_OPEN" : "keyRange.LEFT_BOUND");
+    shouldBe("keyRange.flags", open ? "keyRange.LEFT_OPEN | keyRange.LEFT_BOUND" : "keyRange.LEFT_BOUND");
 }
 
 function checkRightBoundKeyRange(value, open)
@@ -23,7 +23,7 @@ function checkRightBoundKeyRange(value, open)
     keyRange = evalAndLog("IDBKeyRange.rightBound(" + value + "," + open + ")");
     shouldBe("keyRange.right", "" + value);
     shouldBeNull("keyRange.left");
-    shouldBe("keyRange.flags", open ? "keyRange.RIGHT_OPEN" : "keyRange.RIGHT_BOUND");
+    shouldBe("keyRange.flags", open ? "keyRange.RIGHT_OPEN | keyRange.RIGHT_BOUND" : "keyRange.RIGHT_BOUND");
 }
 
 function checkBoundKeyRange(left, right, openLeft, openRight)
@@ -32,9 +32,9 @@ function checkBoundKeyRange(left, right, openLeft, openRight)
     shouldBe("keyRange.left", "" + left);
     shouldBe("keyRange.right", "" + right);
     leftFlags = keyRange.flags & (keyRange.LEFT_OPEN | keyRange.LEFT_BOUND);
-    shouldBe("leftFlags", openLeft ? "keyRange.LEFT_OPEN" : "keyRange.LEFT_BOUND");
+    shouldBe("leftFlags", openLeft ? "keyRange.LEFT_OPEN | keyRange.LEFT_BOUND" : "keyRange.LEFT_BOUND");
     rightFlags = keyRange.flags & (keyRange.RIGHT_OPEN | keyRange.RIGHT_BOUND);
-    shouldBe("rightFlags", openRight ? "keyRange.RIGHT_OPEN" : "keyRange.RIGHT_BOUND");
+    shouldBe("rightFlags", openRight ? "keyRange.RIGHT_OPEN | keyRange.RIGHT_BOUND" : "keyRange.RIGHT_BOUND");
 }
 
 function test()

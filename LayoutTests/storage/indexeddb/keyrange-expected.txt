@@ -14,7 +14,7 @@ PASS keyRange.flags is keyRange.SINGLE
 IDBKeyRange.leftBound(10,true)
 PASS keyRange.left is 10
 PASS keyRange.right is null
-PASS keyRange.flags is keyRange.LEFT_OPEN
+PASS keyRange.flags is keyRange.LEFT_OPEN | keyRange.LEFT_BOUND
 IDBKeyRange.leftBound(11,false)
 PASS keyRange.left is 11
 PASS keyRange.right is null
@@ -26,7 +26,7 @@ PASS keyRange.flags is keyRange.LEFT_BOUND
 IDBKeyRange.leftBound('aa',true)
 PASS keyRange.left is 'aa'
 PASS keyRange.right is null
-PASS keyRange.flags is keyRange.LEFT_OPEN
+PASS keyRange.flags is keyRange.LEFT_OPEN | keyRange.LEFT_BOUND
 IDBKeyRange.leftBound('ab',false)
 PASS keyRange.left is 'ab'
 PASS keyRange.right is null
@@ -38,7 +38,7 @@ PASS keyRange.flags is keyRange.LEFT_BOUND
 IDBKeyRange.rightBound(20,true)
 PASS keyRange.right is 20
 PASS keyRange.left is null
-PASS keyRange.flags is keyRange.RIGHT_OPEN
+PASS keyRange.flags is keyRange.RIGHT_OPEN | keyRange.RIGHT_BOUND
 IDBKeyRange.rightBound(21,false)
 PASS keyRange.right is 21
 PASS keyRange.left is null
@@ -50,7 +50,7 @@ PASS keyRange.flags is keyRange.RIGHT_BOUND
 IDBKeyRange.rightBound('ba',true)
 PASS keyRange.right is 'ba'
 PASS keyRange.left is null
-PASS keyRange.flags is keyRange.RIGHT_OPEN
+PASS keyRange.flags is keyRange.RIGHT_OPEN | keyRange.RIGHT_BOUND
 IDBKeyRange.rightBound('bb',false)
 PASS keyRange.right is 'bb'
 PASS keyRange.left is null
@@ -73,17 +73,17 @@ IDBKeyRange.bound(32,42,false,true)
 PASS keyRange.left is 32
 PASS keyRange.right is 42
 PASS leftFlags is keyRange.LEFT_BOUND
-PASS rightFlags is keyRange.RIGHT_OPEN
+PASS rightFlags is keyRange.RIGHT_OPEN | keyRange.RIGHT_BOUND
 IDBKeyRange.bound(33,43,true,false)
 PASS keyRange.left is 33
 PASS keyRange.right is 43
-PASS leftFlags is keyRange.LEFT_OPEN
+PASS leftFlags is keyRange.LEFT_OPEN | keyRange.LEFT_BOUND
 PASS rightFlags is keyRange.RIGHT_BOUND
 IDBKeyRange.bound(34,44,true,true)
 PASS keyRange.left is 34
 PASS keyRange.right is 44
-PASS leftFlags is keyRange.LEFT_OPEN
-PASS rightFlags is keyRange.RIGHT_OPEN
+PASS leftFlags is keyRange.LEFT_OPEN | keyRange.LEFT_BOUND
+PASS rightFlags is keyRange.RIGHT_OPEN | keyRange.RIGHT_BOUND
 IDBKeyRange.bound('aaa','aba',false,false)
 PASS keyRange.left is 'aaa'
 PASS keyRange.right is 'aba'
@@ -103,17 +103,17 @@ IDBKeyRange.bound('aad','abd',false,true)
 PASS keyRange.left is 'aad'
 PASS keyRange.right is 'abd'
 PASS leftFlags is keyRange.LEFT_BOUND
-PASS rightFlags is keyRange.RIGHT_OPEN
+PASS rightFlags is keyRange.RIGHT_OPEN | keyRange.RIGHT_BOUND
 IDBKeyRange.bound('aae','abe',true,false)
 PASS keyRange.left is 'aae'
 PASS keyRange.right is 'abe'
-PASS leftFlags is keyRange.LEFT_OPEN
+PASS leftFlags is keyRange.LEFT_OPEN | keyRange.LEFT_BOUND
 PASS rightFlags is keyRange.RIGHT_BOUND
 IDBKeyRange.bound('aaf','abf',true,true)
 PASS keyRange.left is 'aaf'
 PASS keyRange.right is 'abf'
-PASS leftFlags is keyRange.LEFT_OPEN
-PASS rightFlags is keyRange.RIGHT_OPEN
+PASS leftFlags is keyRange.LEFT_OPEN | keyRange.LEFT_BOUND
+PASS rightFlags is keyRange.RIGHT_OPEN | keyRange.RIGHT_BOUND
 PASS successfullyParsed is true
 
 TEST COMPLETE

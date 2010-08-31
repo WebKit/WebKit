@@ -265,23 +265,89 @@ void IDBObjectStoreBackendImpl::removeIndex(const String& name, PassRefPtr<IDBCa
     callbacks->onSuccess();
 }
 
-void IDBObjectStoreBackendImpl::openCursor(PassRefPtr<IDBKeyRange> range, unsigned short direction, PassRefPtr<IDBCallbacks> callbacks)
+static String leftCursorWhereFragment(IDBKey::Type type, String comparisonOperator)
 {
-    // FIXME: Fully implement.
+    switch (type) {
+    case IDBKey::StringType:
+        return "? " + comparisonOperator + " keyString  AND  ";
+    // FIXME: Implement date.
+    case IDBKey::NumberType:
+        return "(? " + comparisonOperator + " keyNumber  OR  NOT keyString IS NULL  OR  NOT keyDate IS NULL)  AND  ";
+    case IDBKey::NullType:
+        if (comparisonOperator == "<")
+            return "NOT(keyString IS NULL  AND  keyDate IS NULL  AND  keyNumber IS NULL)  AND  ";
+        return ""; // If it's =, the upper bound half will do the constraining. If it's <=, then that's a no-op.
+    }
+    ASSERT_NOT_REACHED();
+    return "";
+}
 
-    RefPtr<IDBKey> key = range->left();
-    SQLiteStatement query(sqliteDatabase(), "SELECT id, value FROM ObjectStoreData " + whereClause(key->type()));
-    bool ok = query.prepare() == SQLResultOk;
-    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
+static String rightCursorWhereFragment(IDBKey::Type type, String comparisonOperator)
+{
+    switch (type) {
+    case IDBKey::StringType:
+        return "(keyString " + comparisonOperator + " ?  OR  keyString IS NULL)  AND  ";
+    // FIXME: Implement date.
+    case IDBKey::NumberType:
+        return "(keyNumber " + comparisonOperator + " ? OR keyNumber IS NULL)  AND  keyString IS NULL  AND  keyDate IS NULL  AND  ";
+    case IDBKey::NullType:
+        if (comparisonOperator == "<")
+            return "0 != 0  AND  ";
+        return "keyString IS NULL  AND  keyDate IS NULL  AND  keyNumber IS NULL  AND  ";
+    }
+    ASSERT_NOT_REACHED();
+    return "";
+}
 
-    bindWhereClause(query, m_id, key.get());
-    if (query.step() != SQLResultRow) {
+void IDBObjectStoreBackendImpl::openCursor(PassRefPtr<IDBKeyRange> range, unsigned short tmpDirection, PassRefPtr<IDBCallbacks> callbacks)
+{
+    String lowerEquality;
+    if (range->flags() & IDBKeyRange::LEFT_OPEN)
+        lowerEquality = "<";
+    else if (range->flags() & IDBKeyRange::LEFT_BOUND)
+        lowerEquality = "<=";
+    else
+        lowerEquality = "=";
+
+    String upperEquality;
+    if (range->flags() & IDBKeyRange::RIGHT_OPEN)
+        upperEquality = "<";
+    else if (range->flags() & IDBKeyRange::RIGHT_BOUND)
+        upperEquality = "<=";
+    else
+        upperEquality = "=";
+
+    // If you change the order of this select, you'll need to change it in IDBCursorBackendImpl.cpp as well.
+    String sql = "SELECT id, keyString, keyDate, keyNumber, value FROM ObjectStoreData WHERE ";
+    if (range->flags() & IDBKeyRange::LEFT_BOUND || range->flags() == IDBKeyRange::SINGLE)
+        sql += leftCursorWhereFragment(range->left()->type(), lowerEquality);
+    if (range->flags() & IDBKeyRange::RIGHT_BOUND || range->flags() == IDBKeyRange::SINGLE)
+        sql += rightCursorWhereFragment(range->right()->type(), upperEquality);
+    sql += "objectStoreId = ? ORDER BY ";
+
+    IDBCursor::Direction direction = static_cast<IDBCursor::Direction>(tmpDirection);
+    if (direction == IDBCursor::NEXT || direction == IDBCursor::NEXT_NO_DUPLICATE)
+        sql += "keyString, keyDate, keyNumber";
+    else
+        sql += "keyString DESC, keyDate DESC, keyNumber DESC";
+
+    OwnPtr<SQLiteStatement> query = adoptPtr(new SQLiteStatement(sqliteDatabase(), sql));
+    bool ok = query->prepare() == SQLResultOk;
+    ASSERT(ok); // FIXME: Better error handling?
+
+    int currentColumn = 1;
+    if (range->flags() & IDBKeyRange::LEFT_BOUND || range->flags() == IDBKeyRange::SINGLE)
+        currentColumn += bindKey(*query, currentColumn, range->left().get());
+    if (range->flags() & IDBKeyRange::RIGHT_BOUND || range->flags() == IDBKeyRange::SINGLE)
+        currentColumn += bindKey(*query, currentColumn, range->right().get());
+    query->bindInt64(currentColumn, m_id);
+
+    if (query->step() != SQLResultRow) {
         callbacks->onSuccess();
         return;
     }
 
-    RefPtr<SerializedScriptValue> value = SerializedScriptValue::createFromWire(query.getColumnText(1));
-    RefPtr<IDBCursorBackendInterface> cursor = IDBCursorBackendImpl::create(this, range, static_cast<IDBCursor::Direction>(direction), key.release(), value.release());
+    RefPtr<IDBCursorBackendInterface> cursor = IDBCursorBackendImpl::create(this, range, direction, query.release());
     callbacks->onSuccess(cursor.release());
 }
 

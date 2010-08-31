@@ -71,6 +71,8 @@ public:
         return m_number;
     }
 
+    bool isEqual(IDBKey* other);
+
 private:
     IDBKey();
     explicit IDBKey(int32_t);

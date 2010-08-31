@@ -57,7 +57,7 @@ WebIDBKey WebIDBCursorImpl::key() const
 
 WebSerializedScriptValue WebIDBCursorImpl::value() const
 {
-    return m_idbCursorBackend->value()->serializedScriptValue();
+    return m_idbCursorBackend->value();
 }
 
 void WebIDBCursorImpl::update(const WebSerializedScriptValue& value, WebIDBCallbacks* callbacks)

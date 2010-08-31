@@ -96,7 +96,6 @@ PASS 'abort' in event.target is true
 PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
-PASS event.result is null
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -53,6 +53,25 @@ IDBKey::~IDBKey()
 {
 }
 
+bool IDBKey::isEqual(IDBKey* other)
+{
+    if (!other || other->m_type != m_type)
+        return false;
+
+    switch (m_type) {
+    case StringType:
+        return other->m_string == m_string;
+    // FIXME: Implement dates.
+    case NumberType:
+        return other->m_number == m_number;
+    case NullType:
+        return true;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 } // namespace WebCore
 
 #endif
