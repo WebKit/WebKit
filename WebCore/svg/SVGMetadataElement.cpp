@@ -31,7 +31,7 @@ inline SVGMetadataElement::SVGMetadataElement(const QualifiedName& tagName, Docu
 
 PassRefPtr<SVGMetadataElement> SVGMetadataElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGMetadataElement(tagName, document);
+    return adoptRef(new SVGMetadataElement(tagName, document));
 }
 
 }

@@ -58,7 +58,7 @@ inline SVGFontFaceElement::SVGFontFaceElement(const QualifiedName& tagName, Docu
 
 PassRefPtr<SVGFontFaceElement> SVGFontFaceElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGFontFaceElement(tagName, document);
+    return adoptRef(new SVGFontFaceElement(tagName, document));
 }
 
 static int cssPropertyIdForSVGAttributeName(const QualifiedName& attrName)

@@ -26,17 +26,20 @@
 #include "FloatSize.h"
 #include "RenderObject.h"
 #include "SVGNames.h"
+#include "SVGUseElement.h"
 
 namespace WebCore {
 
 // SVGShadowTreeContainerElement
+
 SVGShadowTreeContainerElement::SVGShadowTreeContainerElement(Document* document)
     : SVGGElement(SVGNames::gTag, document)
 {
 }
-    
-SVGShadowTreeContainerElement::~SVGShadowTreeContainerElement()
+
+PassRefPtr<SVGShadowTreeContainerElement> SVGShadowTreeContainerElement::create(Document* document)
 {
+    return adoptRef(new SVGShadowTreeContainerElement(document));
 }
 
 FloatSize SVGShadowTreeContainerElement::containerTranslation() const
@@ -45,15 +48,17 @@ FloatSize SVGShadowTreeContainerElement::containerTranslation() const
 }
 
 // SVGShadowTreeRootElement
-SVGShadowTreeRootElement::SVGShadowTreeRootElement(Document* document, Element* shadowParent)
+
+inline SVGShadowTreeRootElement::SVGShadowTreeRootElement(Document* document, SVGUseElement* shadowParent)
     : SVGShadowTreeContainerElement(document)
     , m_shadowParent(shadowParent)
 {
     setInDocument();
 }
 
-SVGShadowTreeRootElement::~SVGShadowTreeRootElement()
+PassRefPtr<SVGShadowTreeRootElement> SVGShadowTreeRootElement::create(Document* document, SVGUseElement* shadowParent)
 {
+    return adoptRef(new SVGShadowTreeRootElement(document, shadowParent));
 }
 
 void SVGShadowTreeRootElement::attachElement(PassRefPtr<RenderStyle> style, RenderArena* arena)

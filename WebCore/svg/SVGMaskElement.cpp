@@ -53,7 +53,7 @@ inline SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document* do
 
 PassRefPtr<SVGMaskElement> SVGMaskElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGMaskElement(tagName, document);
+    return adoptRef(new SVGMaskElement(tagName, document));
 }
 
 void SVGMaskElement::parseMappedAttribute(Attribute* attr)

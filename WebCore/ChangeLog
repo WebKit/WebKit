@@ -1,3 +1,267 @@
+2010-08-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Make DOM classes start with a reference count of 1, like all other RefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=28068
+
+        * dom/Document.cpp:
+        (WebCore::Document::accessSVGExtensions): Use adoptPtr instead of set.
+
+        * dom/Document.h: Removed initialRefCount in Node constructor. It's always 1 now.
+
+        * dom/Node.h: Removed CreateWithZeroRefCountFlag, CreateStyledElementZeroRefCount,
+        CreateSVGElementZeroRefCount, and initialRefCount.
+
+        * platform/TreeShared.h: Removed initialRefCount argument. It's always 1 now.
+
+        * rendering/RenderSVGShadowTreeRootContainer.cpp:
+        (WebCore::RenderSVGShadowTreeRootContainer::updateFromElement): Use create
+        instead of new.
+
+        * rendering/SVGResources.h: Inherit from Noncopyable.
+
+        * rendering/SVGResourcesCache.cpp:
+        (WebCore::SVGResourcesCache::~SVGResourcesCache): Removed unneeded special
+        case code.
+
+        * rendering/SVGShadowTreeElements.cpp:
+        (WebCore::SVGShadowTreeContainerElement::create): Added.
+        (WebCore::SVGShadowTreeRootElement::SVGShadowTreeRootElement): Made argument
+        type more specific.
+        (WebCore::SVGShadowTreeRootElement::create): Added.
+        * rendering/SVGShadowTreeElements.h: Added create functions, and made the
+        argument type more specific.
+
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::SVGDocumentExtensions): Use adoptPtr.
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged): Use adoptPtr instead of set.
+
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::SVGElement): Use CreateSVGElement instead of
+        CreateSVGElementZeroRefCount.
+        (WebCore::SVGElement::create): Use adoptRef.
+
+        * wml/WMLElement.cpp:
+        (WebCore::WMLElement::WMLElement): Use CreateStyledElement instead of
+        CreateStyledElementZeroRefCount.
+        (WebCore::WMLElement::create): Use adoptRef.
+
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::create):
+        * svg/SVGAltGlyphElement.cpp:
+        (WebCore::SVGAltGlyphElement::create):
+        * svg/SVGAnimateColorElement.cpp:
+        (WebCore::SVGAnimateColorElement::create):
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::create):
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::create):
+        * svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::create):
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::create):
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::create):
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::create):
+        * svg/SVGDefsElement.cpp:
+        (WebCore::SVGDefsElement::create):
+        * svg/SVGDescElement.cpp:
+        (WebCore::SVGDescElement::create):
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::create):
+        * svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::create):
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::create):
+        * svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::create):
+        * svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::create):
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::create):
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::create):
+        * svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::create):
+        * svg/SVGFEDistantLightElement.cpp:
+        (WebCore::SVGFEDistantLightElement::create):
+        * svg/SVGFEFloodElement.cpp:
+        (WebCore::SVGFEFloodElement::create):
+        * svg/SVGFEFuncAElement.cpp:
+        (WebCore::SVGFEFuncAElement::create):
+        * svg/SVGFEFuncBElement.cpp:
+        (WebCore::SVGFEFuncBElement::create):
+        * svg/SVGFEFuncGElement.cpp:
+        (WebCore::SVGFEFuncGElement::create):
+        * svg/SVGFEFuncRElement.cpp:
+        (WebCore::SVGFEFuncRElement::create):
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::create):
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::create):
+        * svg/SVGFEMergeElement.cpp:
+        (WebCore::SVGFEMergeElement::create):
+        * svg/SVGFEMergeNodeElement.cpp:
+        (WebCore::SVGFEMergeNodeElement::create):
+        * svg/SVGFEMorphologyElement.cpp:
+        (WebCore::SVGFEMorphologyElement::create):
+        * svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::create):
+        * svg/SVGFEPointLightElement.cpp:
+        (WebCore::SVGFEPointLightElement::create):
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::create):
+        * svg/SVGFESpotLightElement.cpp:
+        (WebCore::SVGFESpotLightElement::create):
+        * svg/SVGFETileElement.cpp:
+        (WebCore::SVGFETileElement::create):
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::create):
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::create):
+        * svg/SVGFontElement.cpp:
+        (WebCore::SVGFontElement::create):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::create):
+        * svg/SVGFontFaceFormatElement.cpp:
+        (WebCore::SVGFontFaceFormatElement::create):
+        * svg/SVGFontFaceNameElement.cpp:
+        (WebCore::SVGFontFaceNameElement::create):
+        * svg/SVGFontFaceSrcElement.cpp:
+        (WebCore::SVGFontFaceSrcElement::create):
+        * svg/SVGFontFaceUriElement.cpp:
+        (WebCore::SVGFontFaceUriElement::create):
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::create):
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::create):
+        * svg/SVGGlyphElement.cpp:
+        (WebCore::SVGGlyphElement::create):
+        * svg/SVGHKernElement.cpp:
+        (WebCore::SVGHKernElement::create):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::create):
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::create):
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::create):
+        * svg/SVGMPathElement.cpp:
+        (WebCore::SVGMPathElement::create):
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::create):
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::create):
+        * svg/SVGMetadataElement.cpp:
+        (WebCore::SVGMetadataElement::create):
+        * svg/SVGMissingGlyphElement.cpp:
+        (WebCore::SVGMissingGlyphElement::create):
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::create):
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::create):
+        * svg/SVGPolygonElement.cpp:
+        (WebCore::SVGPolygonElement::create):
+        * svg/SVGPolylineElement.cpp:
+        (WebCore::SVGPolylineElement::create):
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::create):
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::create):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::create):
+        (WebCore::SVGSVGElement::currentView):
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::create):
+        * svg/SVGSetElement.cpp:
+        (WebCore::SVGSetElement::create):
+        * svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::create):
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::create):
+        * svg/SVGSwitchElement.cpp:
+        (WebCore::SVGSwitchElement::create):
+        * svg/SVGSymbolElement.cpp:
+        (WebCore::SVGSymbolElement::create):
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::create):
+        * svg/SVGTSpanElement.cpp:
+        (WebCore::SVGTSpanElement::create):
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::create):
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::create):
+        * svg/SVGTitleElement.cpp:
+        (WebCore::SVGTitleElement::create):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::create):
+        (WebCore::SVGUseElement::expandUseElementsInShadowTree):
+        * svg/SVGVKernElement.cpp:
+        (WebCore::SVGVKernElement::create):
+        * svg/SVGViewElement.cpp:
+        (WebCore::SVGViewElement::create):
+        * wml/WMLAElement.cpp:
+        (WebCore::WMLAElement::create):
+        * wml/WMLAccessElement.cpp:
+        (WebCore::WMLAccessElement::create):
+        * wml/WMLAnchorElement.cpp:
+        (WebCore::WMLAnchorElement::create):
+        * wml/WMLBRElement.cpp:
+        (WebCore::WMLBRElement::create):
+        * wml/WMLCardElement.cpp:
+        (WebCore::WMLCardElement::create):
+        * wml/WMLDoElement.cpp:
+        (WebCore::WMLDoElement::create):
+        * wml/WMLDocument.h:
+        (WebCore::WMLDocument::create):
+        * wml/WMLFieldSetElement.cpp:
+        (WebCore::WMLFieldSetElement::create):
+        * wml/WMLFormControlElement.cpp:
+        (WebCore::WMLFormControlElement::create):
+        * wml/WMLGoElement.cpp:
+        (WebCore::WMLGoElement::create):
+        * wml/WMLImageElement.cpp:
+        (WebCore::WMLImageElement::create):
+        * wml/WMLInputElement.cpp:
+        (WebCore::WMLInputElement::create):
+        * wml/WMLInsertedLegendElement.cpp:
+        (WebCore::WMLInsertedLegendElement::create):
+        * wml/WMLIntrinsicEvent.cpp:
+        (WebCore::WMLIntrinsicEvent::create):
+        * wml/WMLMetaElement.cpp:
+        (WebCore::WMLMetaElement::create):
+        * wml/WMLNoopElement.cpp:
+        (WebCore::WMLNoopElement::create):
+        * wml/WMLOnEventElement.cpp:
+        (WebCore::WMLOnEventElement::create):
+        * wml/WMLOptGroupElement.cpp:
+        (WebCore::WMLOptGroupElement::create):
+        * wml/WMLOptionElement.cpp:
+        (WebCore::WMLOptionElement::create):
+        * wml/WMLPElement.cpp:
+        (WebCore::WMLPElement::create):
+        * wml/WMLPostfieldElement.cpp:
+        (WebCore::WMLPostfieldElement::create):
+        * wml/WMLPrevElement.cpp:
+        (WebCore::WMLPrevElement::create):
+        * wml/WMLRefreshElement.cpp:
+        (WebCore::WMLRefreshElement::create):
+        * wml/WMLSelectElement.cpp:
+        (WebCore::WMLSelectElement::create):
+        * wml/WMLSetvarElement.cpp:
+        (WebCore::WMLSetvarElement::create):
+        * wml/WMLTableElement.cpp:
+        (WebCore::WMLTableElement::create):
+        * wml/WMLTaskElement.cpp:
+        (WebCore::WMLTaskElement::create):
+        * wml/WMLTemplateElement.cpp:
+        (WebCore::WMLTemplateElement::create):
+        * wml/WMLTimerElement.cpp:
+        (WebCore::WMLTimerElement::create):
+        Use adoptRef.
+
 2010-08-31  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Nate Chapin.

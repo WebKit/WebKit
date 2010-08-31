@@ -42,7 +42,7 @@ inline SVGFESpecularLightingElement::SVGFESpecularLightingElement(const Qualifie
 
 PassRefPtr<SVGFESpecularLightingElement> SVGFESpecularLightingElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGFESpecularLightingElement(tagName, document);
+    return adoptRef(new SVGFESpecularLightingElement(tagName, document));
 }
 
 void SVGFESpecularLightingElement::parseMappedAttribute(Attribute* attr)

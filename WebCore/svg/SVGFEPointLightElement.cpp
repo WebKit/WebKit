@@ -32,7 +32,7 @@ inline SVGFEPointLightElement::SVGFEPointLightElement(const QualifiedName& tagNa
 
 PassRefPtr<SVGFEPointLightElement> SVGFEPointLightElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGFEPointLightElement(tagName, document);
+    return adoptRef(new SVGFEPointLightElement(tagName, document));
 }
 
 PassRefPtr<LightSource> SVGFEPointLightElement::lightSource() const

@@ -32,7 +32,7 @@ inline SVGAnimateColorElement::SVGAnimateColorElement(const QualifiedName& tagNa
 
 PassRefPtr<SVGAnimateColorElement> SVGAnimateColorElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGAnimateColorElement(tagName, document);
+    return adoptRef(new SVGAnimateColorElement(tagName, document));
 }
 
 }

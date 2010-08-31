@@ -49,7 +49,7 @@ inline SVGAnimateMotionElement::SVGAnimateMotionElement(const QualifiedName& tag
 
 PassRefPtr<SVGAnimateMotionElement> SVGAnimateMotionElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGAnimateMotionElement(tagName, document);
+    return adoptRef(new SVGAnimateMotionElement(tagName, document));
 }
 
 bool SVGAnimateMotionElement::hasValidTarget() const

@@ -35,7 +35,7 @@ inline SVGFEBlendElement::SVGFEBlendElement(const QualifiedName& tagName, Docume
 
 PassRefPtr<SVGFEBlendElement> SVGFEBlendElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGFEBlendElement(tagName, document);
+    return adoptRef(new SVGFEBlendElement(tagName, document));
 }
 
 void SVGFEBlendElement::parseMappedAttribute(Attribute* attr)

@@ -53,7 +53,7 @@ WMLDoElement::WMLDoElement(const QualifiedName& tagName, Document* doc)
 
 PassRefPtr<WMLDoElement> WMLDoElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new WMLDoElement(tagName, document);
+    return adoptRef(new WMLDoElement(tagName, document));
 }
 
 void WMLDoElement::defaultEventHandler(Event* event)

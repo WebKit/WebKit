@@ -48,7 +48,7 @@ inline SVGImageElement::SVGImageElement(const QualifiedName& tagName, Document* 
 
 PassRefPtr<SVGImageElement> SVGImageElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGImageElement(tagName, document);
+    return adoptRef(new SVGImageElement(tagName, document));
 }
 
 void SVGImageElement::parseMappedAttribute(Attribute* attr)

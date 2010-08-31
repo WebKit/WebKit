@@ -35,7 +35,7 @@ inline SVGFETileElement::SVGFETileElement(const QualifiedName& tagName, Document
 
 PassRefPtr<SVGFETileElement> SVGFETileElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGFETileElement(tagName, document);
+    return adoptRef(new SVGFETileElement(tagName, document));
 }
 
 void SVGFETileElement::parseMappedAttribute(Attribute* attr)

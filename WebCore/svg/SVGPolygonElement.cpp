@@ -34,7 +34,7 @@ inline SVGPolygonElement::SVGPolygonElement(const QualifiedName& tagName, Docume
 
 PassRefPtr<SVGPolygonElement> SVGPolygonElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGPolygonElement(tagName, document);
+    return adoptRef(new SVGPolygonElement(tagName, document));
 }
 
 Path SVGPolygonElement::toPathData() const

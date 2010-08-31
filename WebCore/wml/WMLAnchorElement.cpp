@@ -42,7 +42,7 @@ WMLAnchorElement::WMLAnchorElement(const QualifiedName& tagName, Document* doc)
 
 PassRefPtr<WMLAnchorElement> WMLAnchorElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new WMLAnchorElement(tagName, document);
+    return adoptRef(new WMLAnchorElement(tagName, document));
 }
 
 WMLAnchorElement::~WMLAnchorElement()

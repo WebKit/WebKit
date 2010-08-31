@@ -44,7 +44,7 @@ inline SVGGlyphElement::SVGGlyphElement(const QualifiedName& tagName, Document* 
 
 PassRefPtr<SVGGlyphElement> SVGGlyphElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGGlyphElement(tagName, document);
+    return adoptRef(new SVGGlyphElement(tagName, document));
 }
 
 void SVGGlyphElement::invalidateGlyphCache()

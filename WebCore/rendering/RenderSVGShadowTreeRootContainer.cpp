@@ -53,7 +53,7 @@ void RenderSVGShadowTreeRootContainer::updateFromElement()
     SVGUseElement* useElement = static_cast<SVGUseElement*>(node());
     if (!m_shadowRoot) {
         ASSERT(!m_recreateTree);
-        m_shadowRoot = new SVGShadowTreeRootElement(document(), useElement);
+        m_shadowRoot = SVGShadowTreeRootElement::create(document(), useElement);
         useElement->buildPendingResource();
     }
 

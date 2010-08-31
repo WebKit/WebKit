@@ -34,7 +34,7 @@ inline SVGSwitchElement::SVGSwitchElement(const QualifiedName& tagName, Document
 
 PassRefPtr<SVGSwitchElement> SVGSwitchElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGSwitchElement(tagName, document);
+    return adoptRef(new SVGSwitchElement(tagName, document));
 }
 
 bool SVGSwitchElement::childShouldCreateRenderer(Node* child) const

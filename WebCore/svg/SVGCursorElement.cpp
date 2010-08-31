@@ -39,7 +39,7 @@ inline SVGCursorElement::SVGCursorElement(const QualifiedName& tagName, Document
 
 PassRefPtr<SVGCursorElement> SVGCursorElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGCursorElement(tagName, document);
+    return adoptRef(new SVGCursorElement(tagName, document));
 }
 
 SVGCursorElement::~SVGCursorElement()

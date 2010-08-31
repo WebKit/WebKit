@@ -34,7 +34,7 @@ inline SVGPolylineElement::SVGPolylineElement(const QualifiedName& tagName, Docu
 
 PassRefPtr<SVGPolylineElement> SVGPolylineElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGPolylineElement(tagName, document);
+    return adoptRef(new SVGPolylineElement(tagName, document));
 }
 
 Path SVGPolylineElement::toPathData() const

@@ -42,7 +42,7 @@ inline SVGClipPathElement::SVGClipPathElement(const QualifiedName& tagName, Docu
 
 PassRefPtr<SVGClipPathElement> SVGClipPathElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGClipPathElement(tagName, document);
+    return adoptRef(new SVGClipPathElement(tagName, document));
 }
 
 void SVGClipPathElement::parseMappedAttribute(Attribute* attr)

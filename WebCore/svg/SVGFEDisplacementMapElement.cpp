@@ -35,7 +35,7 @@ inline SVGFEDisplacementMapElement::SVGFEDisplacementMapElement(const QualifiedN
 
 PassRefPtr<SVGFEDisplacementMapElement> SVGFEDisplacementMapElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGFEDisplacementMapElement(tagName, document);
+    return adoptRef(new SVGFEDisplacementMapElement(tagName, document));
 }
 
 ChannelSelectorType SVGFEDisplacementMapElement::stringToChannel(const String& key)

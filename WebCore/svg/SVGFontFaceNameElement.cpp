@@ -34,7 +34,7 @@ inline SVGFontFaceNameElement::SVGFontFaceNameElement(const QualifiedName& tagNa
 
 PassRefPtr<SVGFontFaceNameElement> SVGFontFaceNameElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGFontFaceNameElement(tagName, document);
+    return adoptRef(new SVGFontFaceNameElement(tagName, document));
 }
 
 PassRefPtr<CSSFontFaceSrcValue> SVGFontFaceNameElement::srcValue() const

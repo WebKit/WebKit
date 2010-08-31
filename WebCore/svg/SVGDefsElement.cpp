@@ -34,7 +34,7 @@ inline SVGDefsElement::SVGDefsElement(const QualifiedName& tagName, Document* do
 
 PassRefPtr<SVGDefsElement> SVGDefsElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGDefsElement(tagName, document);
+    return adoptRef(new SVGDefsElement(tagName, document));
 }
 
 bool SVGDefsElement::isValid() const

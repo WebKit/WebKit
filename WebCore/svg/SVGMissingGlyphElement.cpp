@@ -31,7 +31,7 @@ inline SVGMissingGlyphElement::SVGMissingGlyphElement(const QualifiedName& tagNa
 
 PassRefPtr<SVGMissingGlyphElement> SVGMissingGlyphElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGMissingGlyphElement(tagName, document);
+    return adoptRef(new SVGMissingGlyphElement(tagName, document));
 }
 
 }

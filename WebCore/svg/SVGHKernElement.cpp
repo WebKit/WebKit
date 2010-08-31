@@ -42,7 +42,7 @@ inline SVGHKernElement::SVGHKernElement(const QualifiedName& tagName, Document* 
 
 PassRefPtr<SVGHKernElement> SVGHKernElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGHKernElement(tagName, document);
+    return adoptRef(new SVGHKernElement(tagName, document));
 }
 
 void SVGHKernElement::insertedIntoDocument()

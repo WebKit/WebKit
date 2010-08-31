@@ -44,7 +44,7 @@ inline SVGRectElement::SVGRectElement(const QualifiedName& tagName, Document* do
 
 PassRefPtr<SVGRectElement> SVGRectElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGRectElement(tagName, document);
+    return adoptRef(new SVGRectElement(tagName, document));
 }
 
 void SVGRectElement::parseMappedAttribute(Attribute* attr)

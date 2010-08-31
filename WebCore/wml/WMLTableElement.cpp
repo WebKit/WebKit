@@ -47,7 +47,7 @@ WMLTableElement::WMLTableElement(const QualifiedName& tagName, Document* doc)
 
 PassRefPtr<WMLTableElement> WMLTableElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new WMLTableElement(tagName, document);
+    return adoptRef(new WMLTableElement(tagName, document));
 }
 
 WMLTableElement::~WMLTableElement()

@@ -44,7 +44,7 @@ inline SVGTextElement::SVGTextElement(const QualifiedName& tagName, Document* do
 
 PassRefPtr<SVGTextElement> SVGTextElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGTextElement(tagName, document);
+    return adoptRef(new SVGTextElement(tagName, document));
 }
 
 void SVGTextElement::parseMappedAttribute(Attribute* attr)

@@ -43,7 +43,7 @@ inline SVGLineElement::SVGLineElement(const QualifiedName& tagName, Document* do
 
 PassRefPtr<SVGLineElement> SVGLineElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGLineElement(tagName, document);
+    return adoptRef(new SVGLineElement(tagName, document));
 }
 
 void SVGLineElement::parseMappedAttribute(Attribute* attr)

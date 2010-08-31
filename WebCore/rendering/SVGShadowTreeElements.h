@@ -27,13 +27,11 @@
 namespace WebCore {
 
 class FloatSize;
+class SVGUseElement;
 
 class SVGShadowTreeContainerElement : public SVGGElement {
 public:
-    SVGShadowTreeContainerElement(Document*);
-    virtual ~SVGShadowTreeContainerElement();
-
-    virtual bool isShadowTreeContainerElement() const { return true; }
+    static PassRefPtr<SVGShadowTreeContainerElement> create(Document*);
 
     FloatSize containerTranslation() const;
     void setContainerOffset(const SVGLength& x, const SVGLength& y)
@@ -42,22 +40,29 @@ public:
         m_yOffset = y;
     }
 
+protected:
+    SVGShadowTreeContainerElement(Document*);
+
 private:
+    virtual bool isShadowTreeContainerElement() const { return true; }
+
     SVGLength m_xOffset;
     SVGLength m_yOffset;
 };
 
 class SVGShadowTreeRootElement : public SVGShadowTreeContainerElement {
 public:
-    SVGShadowTreeRootElement(Document*, Element* shadowParent);
-    virtual ~SVGShadowTreeRootElement();
-
-    virtual bool isShadowNode() const { return m_shadowParent; }
-    virtual ContainerNode* shadowParentNode() { return m_shadowParent; }
+    static PassRefPtr<SVGShadowTreeRootElement> create(Document*, SVGUseElement* shadowParent);
 
     void attachElement(PassRefPtr<RenderStyle>, RenderArena*);
 
+    virtual ContainerNode* shadowParentNode() { return m_shadowParent; }
+
 private:
+    SVGShadowTreeRootElement(Document*, SVGUseElement* shadowParent);
+
+    virtual bool isShadowNode() const { return m_shadowParent; }
+
     ContainerNode* m_shadowParent;
 };
 

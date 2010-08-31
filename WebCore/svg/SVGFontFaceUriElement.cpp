@@ -43,7 +43,7 @@ inline SVGFontFaceUriElement::SVGFontFaceUriElement(const QualifiedName& tagName
 
 PassRefPtr<SVGFontFaceUriElement> SVGFontFaceUriElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGFontFaceUriElement(tagName, document);
+    return adoptRef(new SVGFontFaceUriElement(tagName, document));
 }
 
 SVGFontFaceUriElement::~SVGFontFaceUriElement()

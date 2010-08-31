@@ -31,7 +31,7 @@ inline SVGDescElement::SVGDescElement(const QualifiedName& tagName, Document* do
 
 PassRefPtr<SVGDescElement> SVGDescElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGDescElement(tagName, document);
+    return adoptRef(new SVGDescElement(tagName, document));
 }
 
 String SVGDescElement::description() const

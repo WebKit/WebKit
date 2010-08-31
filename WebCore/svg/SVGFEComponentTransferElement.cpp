@@ -40,7 +40,7 @@ inline SVGFEComponentTransferElement::SVGFEComponentTransferElement(const Qualif
 
 PassRefPtr<SVGFEComponentTransferElement> SVGFEComponentTransferElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGFEComponentTransferElement(tagName, document);
+    return adoptRef(new SVGFEComponentTransferElement(tagName, document));
 }
 
 void SVGFEComponentTransferElement::parseMappedAttribute(Attribute* attr)

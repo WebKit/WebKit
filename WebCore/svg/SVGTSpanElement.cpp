@@ -36,7 +36,7 @@ inline SVGTSpanElement::SVGTSpanElement(const QualifiedName& tagName, Document* 
 
 PassRefPtr<SVGTSpanElement> SVGTSpanElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGTSpanElement(tagName, document);
+    return adoptRef(new SVGTSpanElement(tagName, document));
 }
 
 bool SVGTSpanElement::childShouldCreateRenderer(Node* child) const

@@ -42,7 +42,7 @@ inline SVGStyleElement::SVGStyleElement(const QualifiedName& tagName, Document* 
 
 PassRefPtr<SVGStyleElement> SVGStyleElement::create(const QualifiedName& tagName, Document* document, bool createdByParser)
 {
-    return new SVGStyleElement(tagName, document, createdByParser);
+    return adoptRef(new SVGStyleElement(tagName, document, createdByParser));
 }
 
 const AtomicString& SVGStyleElement::type() const

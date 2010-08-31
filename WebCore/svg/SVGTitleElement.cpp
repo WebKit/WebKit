@@ -33,7 +33,7 @@ inline SVGTitleElement::SVGTitleElement(const QualifiedName& tagName, Document* 
 
 PassRefPtr<SVGTitleElement> SVGTitleElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGTitleElement(tagName, document);
+    return adoptRef(new SVGTitleElement(tagName, document));
 }
 
 void SVGTitleElement::insertedIntoDocument()

@@ -80,7 +80,7 @@ SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document* doc)
 
 PassRefPtr<SVGSVGElement> SVGSVGElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGSVGElement(tagName, document);
+    return adoptRef(new SVGSVGElement(tagName, document));
 }
 
 SVGSVGElement::~SVGSVGElement()
@@ -186,8 +186,7 @@ void SVGSVGElement::setUseCurrentView(bool currentView)
 SVGViewSpec* SVGSVGElement::currentView() const
 {
     if (!m_viewSpec)
-        m_viewSpec.set(new SVGViewSpec(this));
-
+        m_viewSpec = adoptPtr(new SVGViewSpec(this));
     return m_viewSpec.get();
 }
 

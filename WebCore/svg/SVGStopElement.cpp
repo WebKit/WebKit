@@ -40,7 +40,7 @@ inline SVGStopElement::SVGStopElement(const QualifiedName& tagName, Document* do
 
 PassRefPtr<SVGStopElement> SVGStopElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGStopElement(tagName, document);
+    return adoptRef(new SVGStopElement(tagName, document));
 }
 
 void SVGStopElement::parseMappedAttribute(Attribute* attr)

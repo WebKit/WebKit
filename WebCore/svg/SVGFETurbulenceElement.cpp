@@ -41,7 +41,7 @@ inline SVGFETurbulenceElement::SVGFETurbulenceElement(const QualifiedName& tagNa
 
 PassRefPtr<SVGFETurbulenceElement> SVGFETurbulenceElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGFETurbulenceElement(tagName, document);
+    return adoptRef(new SVGFETurbulenceElement(tagName, document));
 }
 
 void SVGFETurbulenceElement::parseMappedAttribute(Attribute* attr)

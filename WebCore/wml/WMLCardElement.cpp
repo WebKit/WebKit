@@ -57,7 +57,7 @@ WMLCardElement::WMLCardElement(const QualifiedName& tagName, Document* doc)
 
 PassRefPtr<WMLCardElement> WMLCardElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new WMLCardElement(tagName, document);
+    return adoptRef(new WMLCardElement(tagName, document));
 }
 
 WMLCardElement::~WMLCardElement()

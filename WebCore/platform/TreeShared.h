@@ -34,11 +34,11 @@ template<typename T> void adopted(TreeShared<T>*);
 
 template<typename T> class TreeShared : public Noncopyable {
 public:
-    TreeShared(int initialRefCount = 1)
-        : m_refCount(initialRefCount)
+    TreeShared()
+        : m_refCount(1)
         , m_parent(0)
 #ifndef NDEBUG
-        , m_adoptionIsRequired(initialRefCount == 1)
+        , m_adoptionIsRequired(true)
 #endif
     {
         ASSERT(isMainThread());

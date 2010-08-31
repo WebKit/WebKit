@@ -39,7 +39,7 @@ WMLAccessElement::WMLAccessElement(const QualifiedName& tagName, Document* doc)
 
 PassRefPtr<WMLAccessElement> WMLAccessElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new WMLAccessElement(tagName, document);
+    return adoptRef(new WMLAccessElement(tagName, document));
 }
 
 void WMLAccessElement::parseMappedAttribute(Attribute* attr)

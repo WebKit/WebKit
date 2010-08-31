@@ -42,7 +42,7 @@ WMLOptGroupElement::WMLOptGroupElement(const QualifiedName& tagName, Document* d
 
 PassRefPtr<WMLOptGroupElement> WMLOptGroupElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new WMLOptGroupElement(tagName, document);
+    return adoptRef(new WMLOptGroupElement(tagName, document));
 }
 
 WMLOptGroupElement::~WMLOptGroupElement()

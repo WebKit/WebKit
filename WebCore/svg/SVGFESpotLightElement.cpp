@@ -32,7 +32,7 @@ inline SVGFESpotLightElement::SVGFESpotLightElement(const QualifiedName& tagName
 
 PassRefPtr<SVGFESpotLightElement> SVGFESpotLightElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGFESpotLightElement(tagName, document);
+    return adoptRef(new SVGFESpotLightElement(tagName, document));
 }
 
 PassRefPtr<LightSource> SVGFESpotLightElement::lightSource() const

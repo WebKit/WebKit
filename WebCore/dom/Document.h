@@ -1319,8 +1319,7 @@ inline bool Node::isDocumentNode() const
 
 // here because it uses a Document method but we really want to inline it
 inline Node::Node(Document* document, ConstructionType type)
-    : TreeShared<ContainerNode>(initialRefCount(type))
-    , m_document(document)
+    : m_document(document)
     , m_previous(0)
     , m_next(0)
     , m_renderer(0)

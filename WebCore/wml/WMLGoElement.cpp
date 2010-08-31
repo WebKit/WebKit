@@ -52,7 +52,7 @@ WMLGoElement::WMLGoElement(const QualifiedName& tagName, Document* doc)
  
 PassRefPtr<WMLGoElement> WMLGoElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new WMLGoElement(tagName, document);
+    return adoptRef(new WMLGoElement(tagName, document));
 }
 
 void WMLGoElement::registerPostfieldElement(WMLPostfieldElement* postfield)

@@ -45,7 +45,7 @@ WMLPElement::WMLPElement(const QualifiedName& tagName, Document* doc)
 
 PassRefPtr<WMLPElement> WMLPElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new WMLPElement(tagName, document);
+    return adoptRef(new WMLPElement(tagName, document));
 }
 
 bool WMLPElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const

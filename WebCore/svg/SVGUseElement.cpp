@@ -68,7 +68,7 @@ inline SVGUseElement::SVGUseElement(const QualifiedName& tagName, Document* docu
 
 PassRefPtr<SVGUseElement> SVGUseElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGUseElement(tagName, document);
+    return adoptRef(new SVGUseElement(tagName, document));
 }
 
 SVGElementInstance* SVGUseElement::instanceRoot() const
@@ -795,7 +795,7 @@ void SVGUseElement::expandUseElementsInShadowTree(SVGShadowTreeRootElement* shad
 
         // Don't ASSERT(target) here, it may be "pending", too.
         // Setup sub-shadow tree root node
-        RefPtr<SVGShadowTreeContainerElement> cloneParent = new SVGShadowTreeContainerElement(document());
+        RefPtr<SVGShadowTreeContainerElement> cloneParent = SVGShadowTreeContainerElement::create(document());
 
         // Spec: In the generated content, the 'use' will be replaced by 'g', where all attributes from the
         // 'use' element except for x, y, width, height and xlink:href are transferred to the generated 'g' element.

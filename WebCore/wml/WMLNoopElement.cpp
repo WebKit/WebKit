@@ -38,7 +38,7 @@ WMLNoopElement::WMLNoopElement(const QualifiedName& tagName, Document* doc)
 
 PassRefPtr<WMLNoopElement> WMLNoopElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new WMLNoopElement(tagName, document);
+    return adoptRef(new WMLNoopElement(tagName, document));
 }
 
 WMLNoopElement::~WMLNoopElement()

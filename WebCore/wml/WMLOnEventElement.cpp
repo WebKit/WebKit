@@ -43,7 +43,7 @@ WMLOnEventElement::WMLOnEventElement(const QualifiedName& tagName, Document* doc
 
 PassRefPtr<WMLOnEventElement> WMLOnEventElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new WMLOnEventElement(tagName, document);
+    return adoptRef(new WMLOnEventElement(tagName, document));
 }
 
 void WMLOnEventElement::parseMappedAttribute(Attribute* attr)

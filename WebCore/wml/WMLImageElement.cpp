@@ -45,7 +45,7 @@ WMLImageElement::WMLImageElement(const QualifiedName& tagName, Document* doc)
 
 PassRefPtr<WMLImageElement> WMLImageElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new WMLImageElement(tagName, document);
+    return adoptRef(new WMLImageElement(tagName, document));
 }
 
 WMLImageElement::~WMLImageElement()

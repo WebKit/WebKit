@@ -39,7 +39,7 @@ inline SVGFEGaussianBlurElement::SVGFEGaussianBlurElement(const QualifiedName& t
 
 PassRefPtr<SVGFEGaussianBlurElement> SVGFEGaussianBlurElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGFEGaussianBlurElement(tagName, document);
+    return adoptRef(new SVGFEGaussianBlurElement(tagName, document));
 }
 
 void SVGFEGaussianBlurElement::setStdDeviation(float, float)

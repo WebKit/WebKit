@@ -32,7 +32,7 @@ inline SVGFEFuncRElement::SVGFEFuncRElement(const QualifiedName& tagName, Docume
 
 PassRefPtr<SVGFEFuncRElement> SVGFEFuncRElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGFEFuncRElement(tagName, document);
+    return adoptRef(new SVGFEFuncRElement(tagName, document));
 }
 
 }

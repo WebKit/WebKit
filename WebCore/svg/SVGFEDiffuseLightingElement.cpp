@@ -44,7 +44,7 @@ inline SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement(const QualifiedN
 
 PassRefPtr<SVGFEDiffuseLightingElement> SVGFEDiffuseLightingElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGFEDiffuseLightingElement(tagName, document);
+    return adoptRef(new SVGFEDiffuseLightingElement(tagName, document));
 }
 
 void SVGFEDiffuseLightingElement::parseMappedAttribute(Attribute* attr)

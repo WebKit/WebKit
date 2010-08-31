@@ -39,7 +39,7 @@ inline SVGTRefElement::SVGTRefElement(const QualifiedName& tagName, Document* do
 
 PassRefPtr<SVGTRefElement> SVGTRefElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGTRefElement(tagName, document);
+    return adoptRef(new SVGTRefElement(tagName, document));
 }
 
 void SVGTRefElement::updateReferencedText()

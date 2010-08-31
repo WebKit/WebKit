@@ -41,7 +41,7 @@ WMLFieldSetElement::WMLFieldSetElement(const QualifiedName& tagName, Document* d
 
 PassRefPtr<WMLFieldSetElement> WMLFieldSetElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new WMLFieldSetElement(tagName, document);
+    return adoptRef(new WMLFieldSetElement(tagName, document));
 }
 
 WMLFieldSetElement::~WMLFieldSetElement()

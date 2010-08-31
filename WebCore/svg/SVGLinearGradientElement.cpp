@@ -51,7 +51,7 @@ inline SVGLinearGradientElement::SVGLinearGradientElement(const QualifiedName& t
 
 PassRefPtr<SVGLinearGradientElement> SVGLinearGradientElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGLinearGradientElement(tagName, document);
+    return adoptRef(new SVGLinearGradientElement(tagName, document));
 }
 
 void SVGLinearGradientElement::parseMappedAttribute(Attribute* attr)

@@ -38,7 +38,7 @@ inline SVGFEColorMatrixElement::SVGFEColorMatrixElement(const QualifiedName& tag
 
 PassRefPtr<SVGFEColorMatrixElement> SVGFEColorMatrixElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGFEColorMatrixElement(tagName, document);
+    return adoptRef(new SVGFEColorMatrixElement(tagName, document));
 }
 
 void SVGFEColorMatrixElement::parseMappedAttribute(Attribute* attr)

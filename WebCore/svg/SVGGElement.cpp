@@ -36,7 +36,7 @@ SVGGElement::SVGGElement(const QualifiedName& tagName, Document* document)
 
 PassRefPtr<SVGGElement> SVGGElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGGElement(tagName, document);
+    return adoptRef(new SVGGElement(tagName, document));
 }
 
 void SVGGElement::parseMappedAttribute(Attribute* attr)

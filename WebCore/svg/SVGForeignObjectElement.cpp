@@ -44,7 +44,7 @@ SVGForeignObjectElement::SVGForeignObjectElement(const QualifiedName& tagName, D
 
 PassRefPtr<SVGForeignObjectElement> SVGForeignObjectElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGForeignObjectElement(tagName, document);
+    return adoptRef(new SVGForeignObjectElement(tagName, document));
 }
 
 void SVGForeignObjectElement::parseMappedAttribute(Attribute* attr)

@@ -34,7 +34,7 @@ inline SVGFEMergeElement::SVGFEMergeElement(const QualifiedName& tagName, Docume
 
 PassRefPtr<SVGFEMergeElement> SVGFEMergeElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGFEMergeElement(tagName, document);
+    return adoptRef(new SVGFEMergeElement(tagName, document));
 }
 
 PassRefPtr<FilterEffect> SVGFEMergeElement::build(SVGFilterBuilder* filterBuilder)

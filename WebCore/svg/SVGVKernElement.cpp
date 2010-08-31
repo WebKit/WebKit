@@ -40,7 +40,7 @@ inline SVGVKernElement::SVGVKernElement(const QualifiedName& tagName, Document* 
 
 PassRefPtr<SVGVKernElement> SVGVKernElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGVKernElement(tagName, document);
+    return adoptRef(new SVGVKernElement(tagName, document));
 }
 
 void SVGVKernElement::insertedIntoDocument()

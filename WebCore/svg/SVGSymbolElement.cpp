@@ -34,7 +34,7 @@ inline SVGSymbolElement::SVGSymbolElement(const QualifiedName& tagName, Document
 
 PassRefPtr<SVGSymbolElement> SVGSymbolElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGSymbolElement(tagName, document);
+    return adoptRef(new SVGSymbolElement(tagName, document));
 }
 
 void SVGSymbolElement::parseMappedAttribute(Attribute* attr)

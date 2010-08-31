@@ -44,7 +44,7 @@ inline SVGTextPathElement::SVGTextPathElement(const QualifiedName& tagName, Docu
 
 PassRefPtr<SVGTextPathElement> SVGTextPathElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGTextPathElement(tagName, document);
+    return adoptRef(new SVGTextPathElement(tagName, document));
 }
 
 void SVGTextPathElement::parseMappedAttribute(Attribute* attr)

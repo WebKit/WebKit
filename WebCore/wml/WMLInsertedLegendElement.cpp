@@ -32,7 +32,7 @@ WMLInsertedLegendElement::WMLInsertedLegendElement(const QualifiedName& tagName,
 
 PassRefPtr<WMLInsertedLegendElement> WMLInsertedLegendElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new WMLInsertedLegendElement(tagName, document);
+    return adoptRef(new WMLInsertedLegendElement(tagName, document));
 }
 
 WMLInsertedLegendElement::~WMLInsertedLegendElement()

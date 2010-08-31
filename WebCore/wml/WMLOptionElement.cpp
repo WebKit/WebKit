@@ -41,7 +41,7 @@ WMLOptionElement::WMLOptionElement(const QualifiedName& tagName, Document* doc)
 
 PassRefPtr<WMLOptionElement> WMLOptionElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new WMLOptionElement(tagName, document);
+    return adoptRef(new WMLOptionElement(tagName, document));
 }
 
 WMLOptionElement::~WMLOptionElement()

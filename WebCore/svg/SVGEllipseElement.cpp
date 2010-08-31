@@ -43,7 +43,7 @@ inline SVGEllipseElement::SVGEllipseElement(const QualifiedName& tagName, Docume
 
 PassRefPtr<SVGEllipseElement> SVGEllipseElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGEllipseElement(tagName, document);
+    return adoptRef(new SVGEllipseElement(tagName, document));
 }
 
 void SVGEllipseElement::parseMappedAttribute(Attribute* attr)

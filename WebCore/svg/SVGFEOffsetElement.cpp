@@ -34,7 +34,7 @@ inline SVGFEOffsetElement::SVGFEOffsetElement(const QualifiedName& tagName, Docu
 
 PassRefPtr<SVGFEOffsetElement> SVGFEOffsetElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGFEOffsetElement(tagName, document);
+    return adoptRef(new SVGFEOffsetElement(tagName, document));
 }
 
 void SVGFEOffsetElement::parseMappedAttribute(Attribute* attr)

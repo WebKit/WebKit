@@ -42,7 +42,7 @@ inline SVGCircleElement::SVGCircleElement(const QualifiedName& tagName, Document
 
 PassRefPtr<SVGCircleElement> SVGCircleElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGCircleElement(tagName, document);
+    return adoptRef(new SVGCircleElement(tagName, document));
 }
 
 void SVGCircleElement::parseMappedAttribute(Attribute* attr)

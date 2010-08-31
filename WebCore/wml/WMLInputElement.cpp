@@ -47,7 +47,7 @@ WMLInputElement::WMLInputElement(const QualifiedName& tagName, Document* doc)
 
 PassRefPtr<WMLInputElement> WMLInputElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new WMLInputElement(tagName, document);
+    return adoptRef(new WMLInputElement(tagName, document));
 }
 
 WMLInputElement::~WMLInputElement()

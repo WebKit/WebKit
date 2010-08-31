@@ -37,7 +37,7 @@ WMLFormControlElement::WMLFormControlElement(const QualifiedName& tagName, Docum
 
 PassRefPtr<WMLFormControlElement> WMLFormControlElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new WMLFormControlElement(tagName, document);
+    return adoptRef(new WMLFormControlElement(tagName, document));
 }
 
 WMLFormControlElement::~WMLFormControlElement()

@@ -36,7 +36,7 @@ inline SVGFECompositeElement::SVGFECompositeElement(const QualifiedName& tagName
 
 PassRefPtr<SVGFECompositeElement> SVGFECompositeElement::create(const QualifiedName& tagName, Document* document)
 {
-    return new SVGFECompositeElement(tagName, document);
+    return adoptRef(new SVGFECompositeElement(tagName, document));
 }
 
 void SVGFECompositeElement::parseMappedAttribute(Attribute* attr)

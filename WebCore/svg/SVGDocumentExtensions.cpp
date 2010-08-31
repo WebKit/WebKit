@@ -42,7 +42,7 @@ namespace WebCore {
 
 SVGDocumentExtensions::SVGDocumentExtensions(Document* document)
     : m_document(document)
-    , m_resourcesCache(new SVGResourcesCache)
+    , m_resourcesCache(adoptPtr(new SVGResourcesCache))
 {
 }
 
