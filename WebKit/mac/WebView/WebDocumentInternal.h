@@ -62,6 +62,7 @@
 - (void)setMarkedTextMatchesAreHighlighted:(BOOL)newValue;
 - (BOOL)markedTextMatchesAreHighlighted;
 - (WebNSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag limit:(WebNSUInteger)limit;
+- (WebNSUInteger)countMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag limit:(WebNSUInteger)limit markMatches:(BOOL)markMatches;
 - (void)unmarkAllTextMatches;
 - (NSArray *)rectsForTextMatches;
 @end

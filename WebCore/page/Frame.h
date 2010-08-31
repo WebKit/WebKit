@@ -207,7 +207,7 @@ namespace WebCore {
 
         RenderStyle* styleForSelectionStart(Node*& nodeToRemove) const;
 
-        unsigned markAllMatchesForText(const String&, bool caseFlag, unsigned limit);
+        unsigned countMatchesForText(const String&, bool caseFlag, unsigned limit, bool markMatches);
         bool markedTextMatchesAreHighlighted() const;
         void setMarkedTextMatchesAreHighlighted(bool flag);
 

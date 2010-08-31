@@ -180,6 +180,7 @@ typedef enum {
 // These methods are still in flux; don't rely on them yet.
 - (BOOL)canMarkAllTextMatches;
 - (WebNSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(WebNSUInteger)limit;
+- (WebNSUInteger)countMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(WebNSUInteger)limit markMatches:(BOOL)markMatches;
 - (void)unmarkAllTextMatches;
 - (NSArray *)rectsForTextMatches;
 

@@ -4375,15 +4375,21 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
 
 - (NSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(NSUInteger)limit
 {
+    return [self countMatchesForText:string caseSensitive:caseFlag highlight:highlight limit:limit markMatches:YES];
+}
+
+- (NSUInteger)countMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(NSUInteger)limit markMatches:(BOOL)markMatches
+{
     WebFrame *frame = [self mainFrame];
     unsigned matchCount = 0;
     do {
         id <WebDocumentView> view = [[frame frameView] documentView];
         if ([view conformsToProtocol:@protocol(WebMultipleTextMatches)]) {
-            [(NSView <WebMultipleTextMatches>*)view  setMarkedTextMatchesAreHighlighted:highlight];
+            if (markMatches)
+                [(NSView <WebMultipleTextMatches>*)view setMarkedTextMatchesAreHighlighted:highlight];
         
             ASSERT(limit == 0 || matchCount < limit);
-            matchCount += [(NSView <WebMultipleTextMatches>*)view markAllMatchesForText:string caseSensitive:caseFlag limit:limit == 0 ? 0 : limit - matchCount];
+            matchCount += [(NSView <WebMultipleTextMatches>*)view countMatchesForText:string caseSensitive:caseFlag limit:limit == 0 ? 0 : limit - matchCount markMatches:markMatches];
 
             // Stop looking if we've reached the limit. A limit of 0 means no limit.
             if (limit > 0 && matchCount >= limit)

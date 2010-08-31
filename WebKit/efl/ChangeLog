@@ -1,3 +1,14 @@
+2010-08-31  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Add ability to count text matches without marking
+        https://bugs.webkit.org/show_bug.cgi?id=43996
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_text_matches_mark): Switched to call
+        countMatchesForText() instead of markAllMatchesForText().
+
 2010-08-31  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed build fix.

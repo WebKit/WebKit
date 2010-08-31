@@ -6202,10 +6202,15 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (NSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag limit:(NSUInteger)limit
 {
+    return [self countMatchesForText:string caseSensitive:caseFlag limit:limit markMatches:YES];
+}
+
+- (NSUInteger)countMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag limit:(NSUInteger)limit markMatches:(BOOL)markMatches
+{
     Frame* coreFrame = core([self _frame]);
     if (!coreFrame)
         return 0;
-    return coreFrame->markAllMatchesForText(string, caseFlag, limit);
+    return coreFrame->countMatchesForText(string, caseFlag, limit, markMatches);
 }
 
 - (void)setMarkedTextMatchesAreHighlighted:(BOOL)newValue

@@ -1,3 +1,27 @@
+2010-08-31  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Add ability to count text matches without marking
+        https://bugs.webkit.org/show_bug.cgi?id=43996
+
+        Safari needs to be able to count text matches without triggering lots of repainting.
+        Rename markAllMatchesForText: to countMatchesForText: and add a markMatches:
+        parameter.  For backwards compatibility markAllMatchesForText: calls
+        countMatchesForText: and passes YES for markMatches:.
+
+        * WebView/WebDocumentInternal.h:
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView markAllMatchesForText:caseSensitive:limit:]):
+        (-[WebHTMLView countMatchesForText:caseSensitive:limit:markMatches:]):
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView markAllMatchesForText:caseSensitive:limit:]):
+        (-[WebPDFView countMatchesForText:caseSensitive:limit:markMatches:]):
+        * WebView/WebView.mm:
+        (-[WebView markAllMatchesForText:caseSensitive:highlight:limit:]):
+        (-[WebView countMatchesForText:caseSensitive:highlight:limit:markMatches:]):
+        * WebView/WebViewPrivate.h:
+
 2010-08-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders Carlsson.

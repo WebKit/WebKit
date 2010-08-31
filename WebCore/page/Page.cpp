@@ -526,7 +526,7 @@ unsigned int Page::markAllMatchesForText(const String& target, TextCaseSensitivi
     Frame* frame = mainFrame();
     do {
         frame->setMarkedTextMatchesAreHighlighted(shouldHighlight);
-        matches += frame->markAllMatchesForText(target, caseSensitivity == TextCaseSensitive, (limit == 0) ? 0 : (limit - matches));
+        matches += frame->countMatchesForText(target, caseSensitivity == TextCaseSensitive, (limit == 0) ? 0 : (limit - matches), true);
         frame = incrementFrame(frame, true, false);
     } while (frame);
 

@@ -628,6 +628,11 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 
 - (NSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag limit:(NSUInteger)limit
 {
+    return [self countMatchesForText:string caseSensitive:caseFlag limit:limit markMatches:YES];
+}
+
+- (NSUInteger)countMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag limit:(NSUInteger)limit markMatches:(BOOL)markMatches
+{
     PDFSelection *previousMatch = nil;
     PDFSelection *nextMatch = nil;
     NSMutableArray *matches = [[NSMutableArray alloc] initWithCapacity:limit];
