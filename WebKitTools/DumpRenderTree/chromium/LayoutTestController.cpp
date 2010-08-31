@@ -139,6 +139,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("numberOfPages", &LayoutTestController::numberOfPages);
     bindMethod("dumpSelectionRect", &LayoutTestController::dumpSelectionRect);
     bindMethod("grantDesktopNotificationPermission", &LayoutTestController::grantDesktopNotificationPermission);
+    bindMethod("simulateDesktopNotificationClick", &LayoutTestController::simulateDesktopNotificationClick);
 
     // The following are stubs.
     bindMethod("dumpAsWebArchive", &LayoutTestController::dumpAsWebArchive);
@@ -940,6 +941,18 @@ void LayoutTestController::grantDesktopNotificationPermission(const CppArgumentL
     }
     m_shell->notificationPresenter()->grantPermission(cppVariantToWebString(arguments[0]));
     result->set(true);
+}
+
+void LayoutTestController::simulateDesktopNotificationClick(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() != 1 || !arguments[0].isString()) {
+        result->set(false);
+        return;
+    }
+    if (m_shell->notificationPresenter()->simulateClick(cppVariantToWebString(arguments[0])))
+        result->set(true);
+    else
+        result->set(false);
 }
 
 //

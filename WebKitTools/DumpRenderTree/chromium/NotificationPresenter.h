@@ -31,6 +31,7 @@
 #ifndef NotificationPresenter_h
 #define NotificationPresenter_h
 
+#include "public/WebNotification.h"
 #include "public/WebNotificationPresenter.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -47,6 +48,9 @@ public:
     // Called by the LayoutTestController to simulate a user granting permission.
     void grantPermission(const WebKit::WebString& origin);
 
+    // Called by the LayoutTestController to simulate a user clicking on a notification.
+    bool simulateClick(const WebKit::WebString& notificationIdentifier);
+
     // WebKit::WebNotificationPresenter interface
     virtual bool show(const WebKit::WebNotification&);
     virtual void cancel(const WebKit::WebNotification&);
@@ -62,6 +66,9 @@ private:
 
     // Set of allowed origins.
     HashSet<WTF::String> m_allowedOrigins;
+
+    // Map of active notifications.
+    HashMap<WTF::String, WebKit::WebNotification> m_activeNotifications;
 
     // Map of active replacement IDs to the titles of those notifications
     HashMap<WTF::String, WTF::String> m_replacements;

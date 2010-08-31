@@ -41,6 +41,7 @@ module threads {
         attribute EventListener ondisplay;
         attribute EventListener onerror;
         attribute EventListener onclose;
+        attribute EventListener onclick;
 
         attribute DOMString dir;
         attribute DOMString replaceId;

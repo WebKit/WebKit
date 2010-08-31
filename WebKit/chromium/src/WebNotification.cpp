@@ -138,6 +138,12 @@ void WebNotification::dispatchCloseEvent(bool /* byUser */)
     m_private->dispatchEvent(event.release());
 }
 
+void WebNotification::dispatchClickEvent()
+{
+    RefPtr<Event> event = Event::create(eventNames().clickEvent, false, true);
+    m_private->dispatchEvent(event.release());
+}
+
 WebNotification::WebNotification(const WTF::PassRefPtr<Notification>& notification)
     : m_private(static_cast<WebNotificationPrivate*>(notification.releaseRef()))
 {

@@ -1,3 +1,14 @@
+2010-08-27  John Gregg  <johnnyg@google.com>
+
+        Reviewed by David Levin.
+
+        Notifications should support a click event
+        https://bugs.webkit.org/show_bug.cgi?id=44800
+
+        * fast/notifications/notifications-click-event-expected.txt: Added.
+        * fast/notifications/notifications-click-event.html: Added.
+        * platform/qt/Skipped:
+
 2010-08-31  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed.

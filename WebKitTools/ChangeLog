@@ -1,3 +1,24 @@
+2010-08-27  John Gregg  <johnnyg@google.com>
+
+        Reviewed by David Levin.
+
+        Notifications should support a click event.
+        Adds necessary hooks to chromium's DRT so that clicks on desktop notifications
+        can be simulated during a layout test.  Requires storing a list of active
+        notifications so that they can be referred to later for clicking.
+        https://bugs.webkit.org/show_bug.cgi?id=44800
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::simulateDesktopNotificationClick):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/chromium/NotificationPresenter.cpp:
+        (NotificationPresenter::simulateClick):
+        (NotificationPresenter::show):
+        (NotificationPresenter::cancel):
+        (NotificationPresenter::objectDestroyed):
+        * DumpRenderTree/chromium/NotificationPresenter.h:
+
 2010-08-30  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Darin Adler.
