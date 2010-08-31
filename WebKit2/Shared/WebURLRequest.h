@@ -23,60 +23,49 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIObject_h
-#define APIObject_h
+#ifndef WebURLRequest_h
+#define WebURLRequest_h
 
-#include <wtf/RefCounted.h>
+#include "APIObject.h"
+#include <WebCore/ResourceRequest.h>
+#include <wtf/Forward.h>
+
+#if PLATFORM(MAC)
+typedef NSURLRequest* PlatformRequest;
+#elif PLATFORM(WIN)
+typedef CFURLRequestRef PlatformRequest;
+#else
+typedef void* PlatformRequest;
+#endif
 
 namespace WebKit {
 
-class APIObject : public RefCounted<APIObject> {
+class WebURLRequest : public APIObject {
 public:
-    enum Type {
-        // Base types
-        TypeArray,
-        TypeData,
-        TypeDictionary,
-        TypeError,
-        TypeString,
-        TypeURL,
-        TypeURLRequest,
-        
-        // UIProcess types
-        TypeBackForwardList,
-        TypeBackForwardListItem,
-        TypeContext,
-        TypeFormSubmissionListener,
-        TypeFrame,
-        TypeFramePolicyListener,
-        TypeNavigationData,
-        TypePage,
-        TypePageNamespace,
-        TypePreferences,
+    static const Type APIType = TypeURLRequest;
 
-        // Bundle types
-        TypeBundle,
-        TypeBundleFrame,
-        TypeBundlePage,
-        TypeBundleScriptWorld,
-        TypeBundleNodeHandle,
-
-        // Platform specific
-        TypeView
-    };
-
-    virtual ~APIObject()
+    static PassRefPtr<WebURLRequest> create(const WebCore::KURL& url)
     {
+        return adoptRef(new WebURLRequest(url));
     }
 
-    virtual Type type() const = 0;
-
-protected:
-    APIObject()
+    static PassRefPtr<WebURLRequest> create(PlatformRequest platformRequest)
     {
+        return adoptRef(new WebURLRequest(platformRequest));
     }
+
+    PlatformRequest platformRequest() const;
+    const WebCore::ResourceRequest& resourceRequest() const { return m_request; }
+
+private:
+    explicit WebURLRequest(const WebCore::KURL&);
+    explicit WebURLRequest(PlatformRequest);
+
+    virtual Type type() const { return APIType; }
+
+    WebCore::ResourceRequest m_request;
 };
 
 } // namespace WebKit
 
-#endif // APIObject_h
+#endif // WebURLRequest_h

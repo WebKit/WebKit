@@ -237,7 +237,12 @@ void WebPage::sendClose()
 
 void WebPage::loadURL(const String& url)
 {
-    m_mainFrame->coreFrame()->loader()->load(ResourceRequest(KURL(KURL(), url)), false);
+    loadURLRequest(ResourceRequest(KURL(KURL(), url)));
+}
+
+void WebPage::loadURLRequest(const ResourceRequest& request)
+{
+    m_mainFrame->coreFrame()->loader()->load(request, false);
 }
 
 void WebPage::stopLoading()
@@ -602,6 +607,14 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
                 return;
             
             loadURL(url);
+            return;
+        }
+        case WebPageMessage::LoadURLRequest: {
+            ResourceRequest request;
+            if (!arguments->decode(request))
+                return;
+            
+            loadURLRequest(request);
             return;
         }
         case WebPageMessage::StopLoading:

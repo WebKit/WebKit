@@ -43,6 +43,7 @@
 #include "WebProcessManager.h"
 #include "WebProcessMessageKinds.h"
 #include "WebProcessProxy.h"
+#include "WebURLRequest.h"
 
 #include "WKContextPrivate.h"
 #include <stdio.h>
@@ -212,7 +213,18 @@ void WebPageProxy::loadURL(const String& url)
         puts("loadURL called with a dead WebProcess");
         revive();
     }
+
     process()->send(WebPageMessage::LoadURL, m_pageID, CoreIPC::In(url));
+}
+
+void WebPageProxy::loadURLRequest(WebURLRequest* urlRequest)
+{
+    if (!isValid()) {
+        puts("loadURLRequest called with a dead WebProcess");
+        revive();
+    }
+
+    process()->send(WebPageMessage::LoadURLRequest, m_pageID, CoreIPC::In(urlRequest->resourceRequest()));
 }
 
 void WebPageProxy::stopLoading()

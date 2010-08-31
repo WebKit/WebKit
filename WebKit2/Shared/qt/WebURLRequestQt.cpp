@@ -23,60 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIObject_h
-#define APIObject_h
-
-#include <wtf/RefCounted.h>
+#include "WebURLRequest.h"
 
 namespace WebKit {
 
-class APIObject : public RefCounted<APIObject> {
-public:
-    enum Type {
-        // Base types
-        TypeArray,
-        TypeData,
-        TypeDictionary,
-        TypeError,
-        TypeString,
-        TypeURL,
-        TypeURLRequest,
-        
-        // UIProcess types
-        TypeBackForwardList,
-        TypeBackForwardListItem,
-        TypeContext,
-        TypeFormSubmissionListener,
-        TypeFrame,
-        TypeFramePolicyListener,
-        TypeNavigationData,
-        TypePage,
-        TypePageNamespace,
-        TypePreferences,
+WebURLRequest::WebURLRequest(PlatformRequest)
+{
+    ASSERT_NOT_REACHED();
+}
 
-        // Bundle types
-        TypeBundle,
-        TypeBundleFrame,
-        TypeBundlePage,
-        TypeBundleScriptWorld,
-        TypeBundleNodeHandle,
-
-        // Platform specific
-        TypeView
-    };
-
-    virtual ~APIObject()
-    {
-    }
-
-    virtual Type type() const = 0;
-
-protected:
-    APIObject()
-    {
-    }
-};
+PlatformRequest WebURLRequest::platformRequest() const
+{
+    ASSERT_NOT_REACHED();
+    return 0;
+}
 
 } // namespace WebKit
-
-#endif // APIObject_h

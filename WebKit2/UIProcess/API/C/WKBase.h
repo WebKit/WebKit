@@ -51,6 +51,8 @@ typedef struct OpaqueWKPageNamespace* WKPageNamespaceRef;
 typedef struct OpaqueWKPreferences* WKPreferencesRef;
 typedef struct OpaqueWKString* WKStringRef;
 typedef struct OpaqueWKURL* WKURLRef;
+typedef struct OpaqueWKURLRequest* WKURLRequestRef;
+typedef struct OpaqueWKURLResponse* WKURLResponseRef;
 
 #undef WK_EXPORT
 #if defined(WK_NO_EXPORT)

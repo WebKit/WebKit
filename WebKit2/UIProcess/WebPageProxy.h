@@ -69,6 +69,7 @@ class WebKeyboardEvent;
 class WebMouseEvent;
 class WebPageNamespace;
 class WebProcessProxy;
+class WebURLRequest;
 class WebWheelEvent;
 struct WebNavigationDataStore;
 
@@ -107,6 +108,8 @@ public:
     bool isClosed() const { return m_closed; }
 
     void loadURL(const WTF::String&);
+    void loadURLRequest(WebURLRequest*);
+
     void stopLoading();
     void reload(bool reloadFromOrigin);
 

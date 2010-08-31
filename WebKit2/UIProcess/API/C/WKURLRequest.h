@@ -23,60 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIObject_h
-#define APIObject_h
+#ifndef WKURLRequest_h
+#define WKURLRequest_h
 
-#include <wtf/RefCounted.h>
+#include <WebKit2/WKBase.h>
 
-namespace WebKit {
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-class APIObject : public RefCounted<APIObject> {
-public:
-    enum Type {
-        // Base types
-        TypeArray,
-        TypeData,
-        TypeDictionary,
-        TypeError,
-        TypeString,
-        TypeURL,
-        TypeURLRequest,
-        
-        // UIProcess types
-        TypeBackForwardList,
-        TypeBackForwardListItem,
-        TypeContext,
-        TypeFormSubmissionListener,
-        TypeFrame,
-        TypeFramePolicyListener,
-        TypeNavigationData,
-        TypePage,
-        TypePageNamespace,
-        TypePreferences,
+WK_EXPORT WKTypeID WKURLRequestGetTypeID();
 
-        // Bundle types
-        TypeBundle,
-        TypeBundleFrame,
-        TypeBundlePage,
-        TypeBundleScriptWorld,
-        TypeBundleNodeHandle,
+#ifdef __cplusplus
+}
+#endif
 
-        // Platform specific
-        TypeView
-    };
-
-    virtual ~APIObject()
-    {
-    }
-
-    virtual Type type() const = 0;
-
-protected:
-    APIObject()
-    {
-    }
-};
-
-} // namespace WebKit
-
-#endif // APIObject_h
+#endif /* WKURLRequest_h */

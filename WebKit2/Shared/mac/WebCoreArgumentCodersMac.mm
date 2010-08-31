@@ -23,60 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIObject_h
-#define APIObject_h
+#include "WebCoreArgumentCoders.h"
 
-#include <wtf/RefCounted.h>
+namespace CoreIPC {
 
-namespace WebKit {
+void encodeResourceRequest(ArgumentEncoder* encoder, const WebCore::ResourceRequest& resourceRequest)
+{
+    NSURLRequest *nsURLRequest = resourceRequest.nsURLRequest();
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:nsURLRequest];
 
-class APIObject : public RefCounted<APIObject> {
-public:
-    enum Type {
-        // Base types
-        TypeArray,
-        TypeData,
-        TypeDictionary,
-        TypeError,
-        TypeString,
-        TypeURL,
-        TypeURLRequest,
-        
-        // UIProcess types
-        TypeBackForwardList,
-        TypeBackForwardListItem,
-        TypeContext,
-        TypeFormSubmissionListener,
-        TypeFrame,
-        TypeFramePolicyListener,
-        TypeNavigationData,
-        TypePage,
-        TypePageNamespace,
-        TypePreferences,
+    encoder->encodeBytes(static_cast<const uint8_t*>([data bytes]), [data length]);
+}
 
-        // Bundle types
-        TypeBundle,
-        TypeBundleFrame,
-        TypeBundlePage,
-        TypeBundleScriptWorld,
-        TypeBundleNodeHandle,
+bool decodeResourceRequest(ArgumentDecoder* decoder, WebCore::ResourceRequest& resourceRequest)
+{
+    Vector<uint8_t> bytes;
+    if (!decoder->decodeBytes(bytes))
+        return false;
 
-        // Platform specific
-        TypeView
-    };
+    NSData *nsData = [[NSData alloc] initWithBytesNoCopy:bytes.data() length:bytes.size() freeWhenDone:NO];
+    NSURLRequest *nsURLRequest = [NSKeyedUnarchiver unarchiveObjectWithData:nsData];
+    if (!nsURLRequest)
+        return false;
 
-    virtual ~APIObject()
-    {
-    }
+    resourceRequest = WebCore::ResourceRequest(nsURLRequest);
 
-    virtual Type type() const = 0;
+    return true;
+}
 
-protected:
-    APIObject()
-    {
-    }
-};
-
-} // namespace WebKit
-
-#endif // APIObject_h
+} // namespace CoreIPC

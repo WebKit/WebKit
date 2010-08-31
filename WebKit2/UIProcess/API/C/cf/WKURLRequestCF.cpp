@@ -23,60 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIObject_h
-#define APIObject_h
+#include "WKURLRequestCF.h"
 
-#include <wtf/RefCounted.h>
+#include "WKAPICast.h"
+#include "WebURLRequest.h"
 
-namespace WebKit {
+using namespace WebKit;
 
-class APIObject : public RefCounted<APIObject> {
-public:
-    enum Type {
-        // Base types
-        TypeArray,
-        TypeData,
-        TypeDictionary,
-        TypeError,
-        TypeString,
-        TypeURL,
-        TypeURLRequest,
-        
-        // UIProcess types
-        TypeBackForwardList,
-        TypeBackForwardListItem,
-        TypeContext,
-        TypeFormSubmissionListener,
-        TypeFrame,
-        TypeFramePolicyListener,
-        TypeNavigationData,
-        TypePage,
-        TypePageNamespace,
-        TypePreferences,
+WKURLRequestRef WKURLRequestCreateWithCFURLRequest(CFURLRequestRef urlRequest)
+{
+    CFURLRequestRef copiedURLRequest = CFURLRequestCreateCopy(kCFAllocatorDefault, urlRequest);
+    RefPtr<WebURLRequest> request = WebURLRequest::create(copiedURLRequest);
+    return toRef(request.release().releaseRef());
+}
 
-        // Bundle types
-        TypeBundle,
-        TypeBundleFrame,
-        TypeBundlePage,
-        TypeBundleScriptWorld,
-        TypeBundleNodeHandle,
-
-        // Platform specific
-        TypeView
-    };
-
-    virtual ~APIObject()
-    {
-    }
-
-    virtual Type type() const = 0;
-
-protected:
-    APIObject()
-    {
-    }
-};
-
-} // namespace WebKit
-
-#endif // APIObject_h
+CFURLRequestRef WKURLRequestCopyCFURLRequest(CFAllocatorRef alloc, WKURLRequestRef urlRequest)
+{
+    return CFURLRequestCreateCopy(alloc, toWK(urlRequest)->platformRequest());
+}

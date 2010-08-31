@@ -41,6 +41,7 @@ enum Kind {
     GoToBackForwardItem,
     KeyEvent,
     LoadURL,
+    LoadURLRequest,
     MouseEvent,
     PreferencesDidChange,
     Reload,

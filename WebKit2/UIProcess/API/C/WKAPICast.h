@@ -53,7 +53,8 @@ class WebNavigationData;
 class WebPageNamespace;
 class WebPageProxy;
 class WebPreferences;
-class WebString;
+class WebURLRequest;
+class WebURLResponse;
 
 template<typename APIType> struct APITypeInfo { };
 template<> struct APITypeInfo<WKTypeRef>                        { typedef APIObject* ImplType; };
@@ -72,6 +73,8 @@ template<> struct APITypeInfo<WKPageRef>                        { typedef WebPag
 template<> struct APITypeInfo<WKPreferencesRef>                 { typedef WebPreferences* ImplType; };
 template<> struct APITypeInfo<WKStringRef>                      { typedef WebString* ImplType; };
 template<> struct APITypeInfo<WKURLRef>                         { typedef WebURL* ImplType; };
+template<> struct APITypeInfo<WKURLRequestRef>                  { typedef WebURLRequest* ImplType; };
+template<> struct APITypeInfo<WKURLResponseRef>                 { typedef WebURLResponse* ImplType; };
 
 
 template<typename ImplType> struct ImplTypeInfo { };
@@ -92,6 +95,8 @@ template<> struct ImplTypeInfo<WebPageProxy*>                   { typedef WKPage
 template<> struct ImplTypeInfo<WebPreferences*>                 { typedef WKPreferencesRef APIType; };
 template<> struct ImplTypeInfo<WebString*>                      { typedef WKStringRef APIType; };
 template<> struct ImplTypeInfo<WebURL*>                         { typedef WKURLRef APIType; };
+template<> struct ImplTypeInfo<WebURLRequest*>                  { typedef WKURLRequestRef APIType; };
+template<> struct ImplTypeInfo<WebURLResponse*>                 { typedef WKURLResponseRef APIType; };
 
 
 template<typename ImplType, typename APIType = typename ImplTypeInfo<ImplType*>::APIType>

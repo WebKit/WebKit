@@ -1,3 +1,75 @@
+2010-08-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add URLRequest API for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=44910
+
+        Add WebURLRequest class and WKURLRequestRef C API to go with it. Right now,
+        instance of WKURLRequestRef are manipulated via platform types, a la the
+        WKStringRef and WKURLRef types.
+
+        - Pipes WKPageLoadURLRequest through to the WebProcess.
+
+        * Shared/APIObject.h:
+        * Shared/CoreIPCSupport/WebPageMessageKinds.h:
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebURLRequest.cpp: Added.
+        (WebKit::WebURLRequest::WebURLRequest):
+        * Shared/WebURLRequest.h: Added.
+        (WebKit::WebURLRequest::create):
+        (WebKit::WebURLRequest::resourceRequest):
+        (WebKit::WebURLRequest::type):
+        * Shared/mac/WebCoreArgumentCodersMac.mm: Added.
+        (CoreIPC::encodeResourceRequest):
+        (CoreIPC::decodeResourceRequest):
+        * Shared/mac/WebURLRequestMac.mm: Added.
+        (WebKit::WebURLRequest::WebURLRequest):
+        (WebKit::WebURLRequest::platformRequest):
+        * Shared/qt/WebCoreArgumentCodersQt.cpp: Added.
+        (CoreIPC::encodeResourceRequest):
+        (CoreIPC::decodeResourceRequest):
+        * Shared/qt/WebURLRequestQt.cpp: Added.
+        (WebKit::WebURLRequest::WebURLRequest):
+        (WebKit::WebURLRequest::platformRequest):
+        * Shared/win/WebCoreArgumentCodersWin.cpp: Added.
+        (CoreIPC::encodeResourceRequest):
+        (CoreIPC::decodeResourceRequest):
+        * Shared/win/WebURLRequestWin.cpp: Added.
+        (WebKit::WebURLRequest::WebURLRequest):
+        (WebKit::WebURLRequest::platformRequest):
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKBase.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageLoadURLRequest):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/C/WKURLRequest.cpp: Added.
+        (WKURLRequestGetTypeID):
+        * UIProcess/API/C/WKURLRequest.h: Added.
+        * UIProcess/API/C/WebKit2.h:
+        * UIProcess/API/C/cf/WKURLRequestCF.cpp: Added.
+        (WKURLRequestCreateWithCFURLRequest):
+        (WKURLRequestCopyCFURLRequest):
+        * UIProcess/API/C/cf/WKURLRequestCF.h: Added.
+        * UIProcess/API/C/mac: Added.
+        * UIProcess/API/C/mac/WKURLRequestNS.h: Added.
+        * UIProcess/API/C/mac/WKURLRequestNS.mm: Added.
+        (WKURLRequestCreateWithNSURLRequest):
+        (WKURLRequestCopyNSURLRequest):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadURL):
+        (WebKit::WebPageProxy::loadURLRequest):
+        * UIProcess/WebPageProxy.h:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadURL):
+        (WebKit::WebPage::loadURLRequest):
+        (WebKit::WebPage::didReceiveMessage):
+        * WebProcess/WebPage/WebPage.h:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.make:
+
 2010-08-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

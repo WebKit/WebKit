@@ -34,6 +34,8 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PluginData.h>
+#include <WebCore/ResourceRequest.h>
+#include <WebCore/ResourceResponse.h>
 #include <wtf/text/WTFString.h>
 
 namespace CoreIPC {
@@ -136,6 +138,22 @@ template<> struct ArgumentCoder<WebCore::Cursor> {
     }
 };
 #endif
+
+// These two functions are implemented in a platform specific manner.
+void encodeResourceRequest(ArgumentEncoder*, const WebCore::ResourceRequest&);
+bool decodeResourceRequest(ArgumentDecoder*, WebCore::ResourceRequest&);
+
+template<> struct ArgumentCoder<WebCore::ResourceRequest> {
+    static void encode(ArgumentEncoder* encoder, const WebCore::ResourceRequest& resourceRequest)
+    {
+        encodeResourceRequest(encoder, resourceRequest);
+    }
+    
+    static bool decode(ArgumentDecoder* decoder, WebCore::ResourceRequest& resourceRequest)
+    {
+        return decodeResourceRequest(decoder, resourceRequest);
+    }
+};
 
 } // namespace CoreIPC
 

@@ -52,6 +52,11 @@ void WKPageLoadURL(WKPageRef pageRef, WKURLRef URLRef)
     toWK(pageRef)->loadURL(toWK(URLRef)->string());
 }
 
+void WKPageLoadURLRequest(WKPageRef pageRef, WKURLRequestRef urlRequestRef)
+{
+    toWK(pageRef)->loadURLRequest(toWK(urlRequestRef));    
+}
+
 void WKPageStopLoading(WKPageRef pageRef)
 {
     toWK(pageRef)->stopLoading();

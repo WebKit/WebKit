@@ -23,60 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIObject_h
-#define APIObject_h
+#include "WebCoreArgumentCoders.h"
 
-#include <wtf/RefCounted.h>
+#include "NotImplemented.h"
 
-namespace WebKit {
+namespace CoreIPC {
 
-class APIObject : public RefCounted<APIObject> {
-public:
-    enum Type {
-        // Base types
-        TypeArray,
-        TypeData,
-        TypeDictionary,
-        TypeError,
-        TypeString,
-        TypeURL,
-        TypeURLRequest,
-        
-        // UIProcess types
-        TypeBackForwardList,
-        TypeBackForwardListItem,
-        TypeContext,
-        TypeFormSubmissionListener,
-        TypeFrame,
-        TypeFramePolicyListener,
-        TypeNavigationData,
-        TypePage,
-        TypePageNamespace,
-        TypePreferences,
+void encodeResourceRequest(ArgumentEncoder* encoder, const WebCore::ResourceRequest& resourceRequest)
+{
+    notImplemented();
+}
 
-        // Bundle types
-        TypeBundle,
-        TypeBundleFrame,
-        TypeBundlePage,
-        TypeBundleScriptWorld,
-        TypeBundleNodeHandle,
+bool decodeResourceRequest(ArgumentDecoder* decoder, WebCore::ResourceRequest& resourceRequest)
+{
+    notImplemented();
+    return false;
+}
 
-        // Platform specific
-        TypeView
-    };
-
-    virtual ~APIObject()
-    {
-    }
-
-    virtual Type type() const = 0;
-
-protected:
-    APIObject()
-    {
-    }
-};
-
-} // namespace WebKit
-
-#endif // APIObject_h
+} // namespace CoreIPC
