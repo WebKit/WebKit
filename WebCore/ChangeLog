@@ -1,3 +1,36 @@
+2010-08-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        queryCommandValue("BackColor") returns rgb(0,0,0) for elements with transparent background
+        https://bugs.webkit.org/show_bug.cgi?id=21680
+
+        The bug was caused by WebKit's using the computed style to obtain the background color,
+        which is rgba(0,0,0,0) for nodes with transparent background color. While this is correct
+        in the accordance to CSS2 because background-color is not inherited by default,
+        it is not desirable for editing purposes where the background color in effect is expected.
+
+        Modified valueStyle in EditorCommand.cpp to call Editor::selectionStartCSSPropertyValue,
+        instead of Frame::selectionStartStylePropertyValue, which traverses common ancestors of
+        the selected range or caret to retrieve the effective background color of the selected region
+        instead of the background color at the start of the selection.
+        This takes effect when the original background color is transparent or the selection is range
+        (to avoid picking up the background color only present at the start of paragraph).
+
+        Removed selectionStartStylePropertyValue and migrated it to Editor::selectionStartCSSPropertyValue.
+
+        Test: editing/execCommand/query-command-value-background-color.html
+
+        * editing/Editor.cpp:
+        (WebCore::hasTransparentBackgroundColor): Checks whether the specified style's background color is transparent or not.
+        (WebCore::Editor::selectionStartCSSPropertyValue): Migrated the contents of selectionStartStylePropertyValue and
+          added the special case for background color.
+        * editing/Editor.h: Added the prototype for selectionStartCSSPropertyValue.
+        * editing/EditorCommand.cpp:
+        (WebCore::valueStyle): Calls Editor::selectionStartCSSPropertyValue.
+        * page/Frame.cpp: Removed selectionStartStylePropertyValue.
+        * page/Frame.h: Ditto.
+
 2010-08-30  Lei Zhang  <thestig@chromium.org>
 
         Reviewed by Shinichiro Hamaji.

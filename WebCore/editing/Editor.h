@@ -119,6 +119,7 @@ public:
     void respondToChangedContents(const VisibleSelection& endingSelection);
 
     TriState selectionHasStyle(CSSStyleDeclaration*) const;
+    String selectionStartCSSPropertyValue(int propertyID);
     const SimpleFontData* fontForSelection(bool&) const;
     WritingDirection textDirectionForSelection(bool&) const;
     

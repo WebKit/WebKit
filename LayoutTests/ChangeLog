@@ -1,3 +1,16 @@
+2010-08-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        queryCommandValue("BackColor") returns rgb(0,0,0) for elements with transparent background
+        https://bugs.webkit.org/show_bug.cgi?id=21680
+
+        Tests queryCommandValue("BackColor") on various cases, especially the cases where
+        the background color of the selected node is transparent but that of its ancestor has a color.
+
+        * editing/execCommand/query-command-value-background-color-expected.txt: Added.
+        * editing/execCommand/query-command-value-background-color.html: Added.
+
 2010-08-30  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Adam Barth.

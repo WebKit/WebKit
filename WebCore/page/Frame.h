@@ -197,7 +197,6 @@ namespace WebCore {
         void setMark(const VisibleSelection&);
 
         void computeAndSetTypingStyle(CSSStyleDeclaration* , EditAction = EditActionUnspecified);
-        String selectionStartStylePropertyValue(int stylePropertyID) const;
         void applyEditingStyleToBodyElement() const;
         void applyEditingStyleToElement(Element*) const;
 

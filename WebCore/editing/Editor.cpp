@@ -918,6 +918,56 @@ TriState Editor::selectionHasStyle(CSSStyleDeclaration* style) const
 
     return state;
 }
+
+static bool hasTransparentBackgroundColor(CSSStyleDeclaration* style)
+{
+    RefPtr<CSSValue> cssValue = style->getPropertyCSSValue(CSSPropertyBackgroundColor);
+    if (!cssValue)
+        return true;
+
+    if (!cssValue->isPrimitiveValue())
+        return false;
+    CSSPrimitiveValue* value = static_cast<CSSPrimitiveValue*>(cssValue.get());
+
+    if (value->primitiveType() == CSSPrimitiveValue::CSS_RGBCOLOR)
+        return !alphaChannel(value->getRGBA32Value());
+
+    return value->getIdent() == CSSValueTransparent;
+}
+
+String Editor::selectionStartCSSPropertyValue(int propertyID)
+{
+    Node* nodeToRemove;
+    RefPtr<CSSStyleDeclaration> selectionStyle = m_frame->selectionComputedStyle(nodeToRemove);
+    if (!selectionStyle)
+        return String();
+
+    String value = selectionStyle->getPropertyValue(propertyID);
+
+    if (nodeToRemove) {
+        ExceptionCode ec = 0;
+        nodeToRemove->remove(ec);
+        ASSERT(!ec);
+    }
+
+    // If background color is transparent, traverse parent nodes until we hit a different value or document root
+    // Also, if the selection is a range, ignore the background color at the start of selection,
+    // and find the background color of the common ancestor.
+    if (propertyID == CSSPropertyBackgroundColor && (m_frame->selection()->isRange() || hasTransparentBackgroundColor(selectionStyle.get()))) {
+        RefPtr<Range> range(m_frame->selection()->toNormalizedRange());
+        ExceptionCode ec = 0;
+        Node* ancestor = range->commonAncestorContainer(ec);
+        ASSERT(ancestor);
+        do {
+            selectionStyle = computedStyle(ancestor);
+            ancestor = ancestor->parentNode();
+        } while (hasTransparentBackgroundColor(selectionStyle.get()));
+        value = selectionStyle->getPropertyValue(CSSPropertyBackgroundColor);
+    }
+
+    return value;
+}
+
 void Editor::indent()
 {
     applyCommand(IndentOutdentCommand::create(m_frame->document(), IndentOutdentCommand::Indent));

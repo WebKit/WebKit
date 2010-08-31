@@ -770,24 +770,6 @@ void Frame::computeAndSetTypingStyle(CSSStyleDeclaration *style, EditAction edit
     m_typingStyle = mutableStyle.release();
 }
 
-String Frame::selectionStartStylePropertyValue(int stylePropertyID) const
-{
-    Node *nodeToRemove;
-    RefPtr<CSSStyleDeclaration> selectionStyle = selectionComputedStyle(nodeToRemove);
-    if (!selectionStyle)
-        return String();
-
-    String value = selectionStyle->getPropertyValue(stylePropertyID);
-
-    if (nodeToRemove) {
-        ExceptionCode ec = 0;
-        nodeToRemove->remove(ec);
-        ASSERT(!ec);
-    }
-
-    return value;
-}
-
 PassRefPtr<CSSComputedStyleDeclaration> Frame::selectionComputedStyle(Node*& nodeToRemove) const
 {
     nodeToRemove = 0;
