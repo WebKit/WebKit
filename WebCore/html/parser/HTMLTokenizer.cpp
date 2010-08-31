@@ -67,6 +67,12 @@ inline void advanceStringAndASSERTIgnoringCase(SegmentedString& source, const ch
         source.advanceAndASSERTIgnoringCase(*expectedCharacters++);
 }
 
+inline void advanceStringAndASSERT(SegmentedString& source, const char* expectedCharacters)
+{
+    while (*expectedCharacters)
+        source.advanceAndASSERT(*expectedCharacters++);
+}
+
 inline bool vectorEqualsString(const Vector<UChar, 32>& vector, const String& string)
 {
     if (vector.size() != string.length())
@@ -113,6 +119,7 @@ void HTMLTokenizer::reset()
     m_lineNumber = 0;
     m_skipLeadingNewLineForListing = false;
     m_forceNullCharacterReplacement = false;
+    m_shouldAllowCDATA = false;
     m_additionalAllowedCharacter = '\0';
 }
 
@@ -1111,6 +1118,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
     BEGIN_STATE(MarkupDeclarationOpenState) {
         DEFINE_STATIC_LOCAL(String, dashDashString, ("--"));
         DEFINE_STATIC_LOCAL(String, doctypeString, ("doctype"));
+        DEFINE_STATIC_LOCAL(String, cdataString, ("[CDATA["));
         if (cc == '-') {
             SegmentedString::LookAheadResult result = source.lookAhead(dashDashString);
             if (result == SegmentedString::DidMatch) {
@@ -1127,10 +1135,14 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
                 SWITCH_TO(DOCTYPEState);
             } else if (result == SegmentedString::NotEnoughCharacters)
                 return haveBufferedCharacterToken();
+        } else if (cc == '[' && shouldAllowCDATA()) {
+            SegmentedString::LookAheadResult result = source.lookAhead(cdataString);
+            if (result == SegmentedString::DidMatch) {
+                advanceStringAndASSERT(source, "[CDATA[");
+                SWITCH_TO(CDATASectionState);
+            } else if (result == SegmentedString::NotEnoughCharacters)
+                return haveBufferedCharacterToken();
         }
-        notImplemented();
-        // FIXME: We're still missing the bits about the insertion mode being in foreign content:
-        // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#markup-declaration-open-state
         parseError();
         RECONSUME_IN(BogusCommentState);
     }
@@ -1605,9 +1617,34 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
     END_STATE()
 
     BEGIN_STATE(CDATASectionState) {
-        notImplemented();
-        ADVANCE_TO(CDATASectionState);
-        // FIXME: Handle EOF properly.
+        if (cc == ']')
+            ADVANCE_TO(CDATASectionRightSquareBracketState);
+        else if (cc == InputStreamPreprocessor::endOfFileMarker)
+            RECONSUME_IN(DataState);
+        else {
+            bufferCharacter(cc);
+            ADVANCE_TO(CDATASectionState);
+        }
+    }
+    END_STATE()
+
+    BEGIN_STATE(CDATASectionRightSquareBracketState) {
+        if (cc == ']')
+            ADVANCE_TO(CDATASectionDoubleRightSquareBracketState);
+        else {
+            bufferCharacter(']');
+            RECONSUME_IN(CDATASectionState);
+        }
+    }
+
+    BEGIN_STATE(CDATASectionDoubleRightSquareBracketState) {
+        if (cc == '>')
+            ADVANCE_TO(DataState);
+        else {
+            bufferCharacter(']');
+            bufferCharacter(']');
+            RECONSUME_IN(CDATASectionState);
+        }
     }
     END_STATE()
 

@@ -501,6 +501,7 @@ void HTMLTreeBuilder::constructTreeFromToken(HTMLToken& rawToken)
     // the U+0000 characters into replacement characters has compatibility
     // problems.
     m_tokenizer->setForceNullCharacterReplacement(m_insertionMode == TextMode || m_insertionMode == InForeignContentMode);
+    m_tokenizer->setShouldAllowCDATA(m_insertionMode == InForeignContentMode && m_tree.currentElement()->namespaceURI() != xhtmlNamespaceURI);
 }
 
 void HTMLTreeBuilder::processToken(AtomicHTMLToken& token)

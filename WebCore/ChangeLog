@@ -2,6 +2,26 @@
 
         Reviewed by Eric Seidel.
 
+        Implement CDATASection state for the HTMLTokenizer
+        https://bugs.webkit.org/show_bug.cgi?id=44923
+
+        In the spec, this state refers back to the HTMLTreeBuilder from the
+        HTMLTokenizer.  Rather that introduce that (backwards) dependencies, we
+        have the tree builder set a bit on the tokenizer.
+
+        * html/parser/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::reset):
+        (WebCore::HTMLTokenizer::nextToken):
+        * html/parser/HTMLTokenizer.h:
+        (WebCore::HTMLTokenizer::shouldAllowCDATA):
+        (WebCore::HTMLTokenizer::setShouldAllowCDATA):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::constructTreeFromToken):
+
+2010-08-30  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Enable HTML5lib's test_innerHTML01.dat
         https://bugs.webkit.org/show_bug.cgi?id=44919
 

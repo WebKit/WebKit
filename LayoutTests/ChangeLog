@@ -2,6 +2,17 @@
 
         Reviewed by Eric Seidel.
 
+        Implement CDATASection state for the HTMLTokenizer
+        https://bugs.webkit.org/show_bug.cgi?id=44923
+
+        Large test progression.
+
+        * html5lib/runner-expected.txt:
+
+2010-08-30  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Enable HTML5lib's test_innerHTML01.dat
         https://bugs.webkit.org/show_bug.cgi?id=44919
 

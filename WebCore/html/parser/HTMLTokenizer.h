@@ -114,6 +114,9 @@ public:
         AfterDOCTYPESystemIdentifierState,
         BogusDOCTYPEState,
         CDATASectionState,
+        // These CDATA states are not in the HTML5 spec, but we use them internally.
+        CDATASectionRightSquareBracketState,
+        CDATASectionDoubleRightSquareBracketState,
     };
 
     static PassOwnPtr<HTMLTokenizer> create() { return adoptPtr(new HTMLTokenizer); }
@@ -138,6 +141,9 @@ public:
 
     bool forceNullCharacterReplacement() const { return m_forceNullCharacterReplacement; }
     void setForceNullCharacterReplacement(bool value) { m_forceNullCharacterReplacement = value; }
+
+    bool shouldAllowCDATA() const { return m_shouldAllowCDATA; }
+    void setShouldAllowCDATA(bool value) { m_shouldAllowCDATA = value; }
 
     bool shouldSkipNullCharacters() const
     {
@@ -270,6 +276,7 @@ private:
 
     bool m_skipLeadingNewLineForListing;
     bool m_forceNullCharacterReplacement;
+    bool m_shouldAllowCDATA;
 
     // http://www.whatwg.org/specs/web-apps/current-work/#temporary-buffer
     Vector<UChar, 32> m_temporaryBuffer;
