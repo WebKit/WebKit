@@ -1,3 +1,11 @@
+2010-08-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix 32-bit WebKit2 build.
+
+        * WebCore.exp.in:
+
 2010-08-31  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Darin Fisher.
