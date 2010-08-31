@@ -1,3 +1,9 @@
+2010-08-30  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Unreviewed: Add myself to the list of Committers.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-08-30  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Adam Barth.
