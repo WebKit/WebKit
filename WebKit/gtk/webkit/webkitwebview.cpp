@@ -3352,7 +3352,7 @@ void webkit_web_view_set_maintains_back_forward_list(WebKitWebView* webView, gbo
  * webkit_web_view_get_back_forward_list:
  * @web_view: a #WebKitWebView
  *
- * Obtains the #WebKitBackForwardList associated with the given #WebKitWebView. The
+ * Obtains the #WebKitWebBackForwardList associated with the given #WebKitWebView. The
  * #WebKitWebBackForwardList is owned by the #WebKitWebView.
  *
  * Return value: (transfer none): the #WebKitWebBackForwardList

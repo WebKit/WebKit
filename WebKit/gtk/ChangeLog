@@ -1,3 +1,9 @@
+2010-08-31  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed. Minor documentation typo fix.
+
+        * webkit/webkitwebview.cpp:
+
 2010-08-30  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.
