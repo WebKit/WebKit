@@ -5,24 +5,23 @@ msgid ""
 msgstr ""
 "Project-Id-Version: webkit 1.1.4\n"
 "Report-Msgid-Bugs-To: http://bugs.webkit.org/\n"
-"POT-Creation-Date: 2010-08-31 15:58-0300\n"
+"POT-Creation-Date: 2009-04-09 19:09-0300\n"
 "PO-Revision-Date: 2010-03-07 19:37+0200\n"
 "Last-Translator: Peteris Krisjanis <pecisk@gmail.com>\n"
 "Language-Team: Latviešu <lata-l10n@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
 "X-Generator: Lokalize 1.0\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : "
 "2);\n"
 
-#: WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp:569
+#: WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp:425
 msgid "Upload File"
 msgstr "Augšupielādēt failu"
 
 #: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:61
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:143
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:139
 msgid "Input _Methods"
 msgstr "Ievades _metodes"
 
@@ -67,1088 +66,639 @@ msgid "ZWNJ Zero width _non-joiner"
 msgstr "ZWNJ Nulle ar _nesavienojumu"
 
 #: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:109
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:138
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:134
 msgid "_Insert Unicode Control Character"
 msgstr "_Ievietot Unicode kontroles rakstzīmi"
 
-#: WebKit/gtk/WebCoreSupport/FullscreenVideoController.cpp:385
-msgid "Play"
-msgstr ""
-
-#: WebKit/gtk/WebCoreSupport/FullscreenVideoController.cpp:387
-msgid "Pause"
-msgstr ""
-
-#: WebKit/gtk/WebCoreSupport/FullscreenVideoController.cpp:533
-msgid "Play / Pause"
-msgstr ""
-
-#: WebKit/gtk/WebCoreSupport/FullscreenVideoController.cpp:533
-msgid "Play or pause the media"
-msgstr ""
-
-#: WebKit/gtk/WebCoreSupport/FullscreenVideoController.cpp:541
-msgid "Time:"
-msgstr ""
-
-#: WebKit/gtk/WebCoreSupport/FullscreenVideoController.cpp:565
-msgid "Exit Fullscreen"
-msgstr ""
-
-#: WebKit/gtk/WebCoreSupport/FullscreenVideoController.cpp:565
-msgid "Exit from fullscreen mode"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitdownload.cpp:272
+#: WebKit/gtk/webkit/webkitdownload.cpp:250
 msgid "Network Request"
 msgstr "Tīkla pieprasījums"
 
-#: WebKit/gtk/webkit/webkitdownload.cpp:273
+#: WebKit/gtk/webkit/webkitdownload.cpp:251
 msgid "The network request for the URI that should be downloaded"
 msgstr "URI, kuru vajadzētu lejupielādēt, tīkla pieprasījums"
 
-#: WebKit/gtk/webkit/webkitdownload.cpp:287
-#, fuzzy
-msgid "Network Response"
-msgstr "Tīkla pieprasījums"
-
-#: WebKit/gtk/webkit/webkitdownload.cpp:288
-#, fuzzy
-msgid "The network response for the URI that should be downloaded"
-msgstr "URI, kuru vajadzētu lejupielādēt, tīkla pieprasījums"
-
-#: WebKit/gtk/webkit/webkitdownload.cpp:302
+#: WebKit/gtk/webkit/webkitdownload.cpp:265
 msgid "Destination URI"
 msgstr "Mērķa URI"
 
-#: WebKit/gtk/webkit/webkitdownload.cpp:303
+#: WebKit/gtk/webkit/webkitdownload.cpp:266
 msgid "The destination URI where to save the file"
 msgstr "Mērķa URI, kur saglabāt failu"
 
-#: WebKit/gtk/webkit/webkitdownload.cpp:317
+#: WebKit/gtk/webkit/webkitdownload.cpp:280
 msgid "Suggested Filename"
 msgstr "Ieteiktais faila nosaukums"
 
-#: WebKit/gtk/webkit/webkitdownload.cpp:318
+#: WebKit/gtk/webkit/webkitdownload.cpp:281
 msgid "The filename suggested as default when saving"
 msgstr "Noklusēti ieteiktais faila nosaukums saglabājot"
 
-#: WebKit/gtk/webkit/webkitdownload.cpp:335
+#: WebKit/gtk/webkit/webkitdownload.cpp:294
 msgid "Progress"
 msgstr "Progress"
 
-#: WebKit/gtk/webkit/webkitdownload.cpp:336
+#: WebKit/gtk/webkit/webkitdownload.cpp:295
 msgid "Determines the current progress of the download"
 msgstr "Nosaka lejupielādes pašreizējo progresu"
 
-#: WebKit/gtk/webkit/webkitdownload.cpp:349
+#: WebKit/gtk/webkit/webkitdownload.cpp:308
 msgid "Status"
 msgstr "Statuss"
 
-#: WebKit/gtk/webkit/webkitdownload.cpp:350
+#: WebKit/gtk/webkit/webkitdownload.cpp:309
 msgid "Determines the current status of the download"
 msgstr "Nosaka lejupielādes pašreizējo statusu"
 
-#: WebKit/gtk/webkit/webkitdownload.cpp:365
+#: WebKit/gtk/webkit/webkitdownload.cpp:324
 msgid "Current Size"
 msgstr "Pašreizējais izmērs"
 
-#: WebKit/gtk/webkit/webkitdownload.cpp:366
+#: WebKit/gtk/webkit/webkitdownload.cpp:325
 msgid "The length of the data already downloaded"
 msgstr "Jau lejupielādēto datu apjoms"
 
-#: WebKit/gtk/webkit/webkitdownload.cpp:380
+#: WebKit/gtk/webkit/webkitdownload.cpp:339
 msgid "Total Size"
 msgstr "Galīgais izmērs"
 
-#: WebKit/gtk/webkit/webkitdownload.cpp:381
+#: WebKit/gtk/webkit/webkitdownload.cpp:340
 msgid "The total size of the file"
 msgstr "Galīgais faila izmērs"
 
-#: WebKit/gtk/webkit/webkitdownload.cpp:532
+#: WebKit/gtk/webkit/webkitdownload.cpp:469
 msgid "User cancelled the download"
 msgstr "Lietotājs atcēla lejupielādi"
 
-#: WebKit/gtk/webkit/webkitsoupauthdialog.c:249
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:244
 #, c-format
 msgid "A username and password are being requested by the site %s"
 msgstr "Lietotājvārds un parole, ko pieprasa vietne %s"
 
-#: WebKit/gtk/webkit/webkitsoupauthdialog.c:279
-msgid "Server message:"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitsoupauthdialog.c:292
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:269
 msgid "Username:"
 msgstr "Lietotājvārds:"
 
-#: WebKit/gtk/webkit/webkitsoupauthdialog.c:294
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:271
 msgid "Password:"
 msgstr "Parole:"
 
-#: WebKit/gtk/webkit/webkitsoupauthdialog.c:303
-#, fuzzy
-msgid "_Remember password"
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:281
+msgid "Remember password"
 msgstr "Atcerēties paroli"
 
-#: WebKit/gtk/webkit/webkitwebframe.cpp:301
+#: WebKit/gtk/webkit/webkitwebframe.cpp:211
 msgid "Name"
 msgstr "Nosaukums"
 
-#: WebKit/gtk/webkit/webkitwebframe.cpp:302
+#: WebKit/gtk/webkit/webkitwebframe.cpp:212
 msgid "The name of the frame"
 msgstr "Rāmja nosaukums"
 
-#: WebKit/gtk/webkit/webkitwebframe.cpp:308
-#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:146
-#: WebKit/gtk/webkit/webkitwebview.cpp:2639
+#: WebKit/gtk/webkit/webkitwebframe.cpp:218
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:154
+#: WebKit/gtk/webkit/webkitwebview.cpp:1715
 msgid "Title"
 msgstr "Virsraksts"
 
-#: WebKit/gtk/webkit/webkitwebframe.cpp:309
+#: WebKit/gtk/webkit/webkitwebframe.cpp:219
 msgid "The document title of the frame"
 msgstr "Rāmja dokumenta virsraksts"
 
-#: WebKit/gtk/webkit/webkitwebframe.cpp:315
-#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:178
-#: WebKit/gtk/webkit/webkitwebview.cpp:2653
+#: WebKit/gtk/webkit/webkitwebframe.cpp:225
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:186
+#: WebKit/gtk/webkit/webkitwebview.cpp:1729
 msgid "URI"
 msgstr "URI"
 
-#: WebKit/gtk/webkit/webkitwebframe.cpp:316
+#: WebKit/gtk/webkit/webkitwebframe.cpp:226
 msgid "The current URI of the contents displayed by the frame"
 msgstr "Pašreizējais rāmī attēlotā satura URI"
 
-#: WebKit/gtk/webkit/webkitwebframe.cpp:347
-msgid "Horizontal Scrollbar Policy"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebframe.cpp:348
-#, fuzzy
-msgid ""
-"Determines the current policy for the horizontal scrollbar of the frame."
-msgstr "Nosaka lejupielādes pašreizējo progresu"
-
-#: WebKit/gtk/webkit/webkitwebframe.cpp:365
-msgid "Vertical Scrollbar Policy"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebframe.cpp:366
-#, fuzzy
-msgid "Determines the current policy for the vertical scrollbar of the frame."
-msgstr "Nosaka lejupielādes pašreizējo progresu"
-
-#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:147
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:155
 msgid "The title of the history item"
 msgstr "Vēstures ieraksta virsraksts"
 
-#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:162
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:170
 msgid "Alternate Title"
 msgstr "Alternatīvais virsraksts"
 
-#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:163
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:171
 msgid "The alternate title of the history item"
 msgstr "Vēstures ieraksta alternatīvais virsraksts"
 
-#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:179
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:187
 msgid "The URI of the history item"
 msgstr "Vēstures ieraksta URI"
 
-#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:194
-#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:173
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:202
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:167
 msgid "Original URI"
 msgstr "Oriģinālais URI"
 
-#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:195
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:203
 msgid "The original URI of the history item"
 msgstr "Vēstures ieraksta oriģinālais URI"
 
-#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:210
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:218
 msgid "Last visited Time"
 msgstr "Pēdējā apmeklējuma laiks"
 
-#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:211
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:219
 msgid "The time at which the history item was last visited"
 msgstr "Laiks, kad pēdējo reizi vēstures ieraksts tika apmeklēts"
 
-#: WebKit/gtk/webkit/webkitwebinspector.cpp:269
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:260
 msgid "Web View"
 msgstr "Tīmekļa skats"
 
-#: WebKit/gtk/webkit/webkitwebinspector.cpp:270
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:261
 msgid "The Web View that renders the Web Inspector itself"
 msgstr "Tīmekļa skats, kas renderē pašu tīmekļa inspektoru"
 
-#: WebKit/gtk/webkit/webkitwebinspector.cpp:283
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:274
 msgid "Inspected URI"
 msgstr "Inspektētais URI"
 
-#: WebKit/gtk/webkit/webkitwebinspector.cpp:284
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:275
 msgid "The URI that is currently being inspected"
 msgstr "URI, kuru pašreiz inspektē"
 
-#: WebKit/gtk/webkit/webkitwebinspector.cpp:300
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:291
 msgid "Enable JavaScript profiling"
 msgstr "Ieslēgt JavaScript profilēšanu"
 
-#: WebKit/gtk/webkit/webkitwebinspector.cpp:301
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:292
 msgid "Profile the executed JavaScript."
 msgstr "Profilēt izpildīto JavaScript kodu."
 
-#: WebKit/gtk/webkit/webkitwebinspector.cpp:316
-#, fuzzy
-msgid "Enable Timeline profiling"
-msgstr "Ieslēgt JavaScript profilēšanu"
-
-#: WebKit/gtk/webkit/webkitwebinspector.cpp:317
-msgid "Profile the WebCore instrumentation."
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:158
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:152
 msgid "Reason"
 msgstr "Iemesls"
 
-#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:159
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:153
 msgid "The reason why this navigation is occurring"
 msgstr "Iemesls, kāpēc šī navigācija notiek"
 
-#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:174
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:168
 msgid "The URI that was requested as the target for the navigation"
 msgstr "URI, kas tika pieprasīta kā navigācijas mērķis"
 
-#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:188
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:180
 msgid "Button"
 msgstr "Poga"
 
-#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:189
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:181
 msgid "The button used to click"
 msgstr "Poga, ko noklikšķināt"
 
-#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:204
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:196
 msgid "Modifier state"
 msgstr "Modifīcētāja stāvoklis"
 
-#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:205
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:197
 msgid "A bitmask representing the state of the modifier keys"
 msgstr ""
 "Lubiņš stāsta, ka nodokļu slogs Latvijā ir pārāk liels, turklāt valsts no "
 "uzņēmuma prasa, lai tas būtu konkurētspējīgs. Viņš uzskata, ka, samazinot "
 "nodokļus, uzņēmēju aktivitāte palielinātos un augtu arī konkurētspēja."
 
-#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:220
-#, fuzzy
-msgid "Target frame"
-msgstr "Rāmja nosaukums"
-
-#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:221
-#, fuzzy
-msgid "The target frame for the navigation"
-msgstr "URI, kas tika pieprasīta kā navigācijas mērķis"
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:241
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:129
 msgid "Default Encoding"
 msgstr "Noklusētais kodējums"
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:242
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:130
 msgid "The default encoding used to display text."
 msgstr "Noklusētais kodējums, ko izmanto teksta attēlošanai."
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:250
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:138
 msgid "Cursive Font Family"
 msgstr "Cursive fontu ģimene"
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:251
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:139
 msgid "The default Cursive font family used to display text."
 msgstr "Noklusētā Cursive fontu ģimene, ko izmanto teksta attēlošanai."
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:259
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:147
 msgid "Default Font Family"
 msgstr "Noklusētā fontu ģimene"
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:260
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:148
 msgid "The default font family used to display text."
 msgstr "Noklusētā fontu ģimene, ko izmanto teksta attēlošanai."
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:268
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:156
 msgid "Fantasy Font Family"
 msgstr "Fantasy fontu ģimene"
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:269
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:157
 msgid "The default Fantasy font family used to display text."
 msgstr "Noklusētā Fantasy fontu ģimene, ko izmanto teksta attēlošanai."
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:277
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:165
 msgid "Monospace Font Family"
 msgstr "Monospace fontu ģimene"
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:278
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:166
 msgid "The default font family used to display monospace text."
 msgstr "Noklusētā fontu ģimene, ko izmanto monospace teksta attēlošanai."
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:286
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:174
 msgid "Sans Serif Font Family"
 msgstr "Sans Serif fontu ģimene"
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:287
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:175
 msgid "The default Sans Serif font family used to display text."
 msgstr "Noklusētā Sans Serif fontu ģimene, ko izmanto teksta attēlošanai."
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:295
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:183
 msgid "Serif Font Family"
 msgstr "Serif fontu ģimene"
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:296
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:184
 msgid "The default Serif font family used to display text."
 msgstr "Noklusētā Serif fontu ģimene, ko izmanto teksta attēlošanai."
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:304
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:192
 msgid "Default Font Size"
 msgstr "Noklusētais fontu izmērs"
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:305
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:193
 msgid "The default font size used to display text."
 msgstr "Noklusētais fontu izmērs, kuru izmantot teksta attēlošanā."
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:313
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:201
 msgid "Default Monospace Font Size"
 msgstr "Noklusētais Monospace fontu izmērs"
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:314
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:202
 msgid "The default font size used to display monospace text."
 msgstr "Noklusētais fonta izmērs monospace teksta attēlošanai."
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:322
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:210
 msgid "Minimum Font Size"
 msgstr "Minimālais fontu izmērs"
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:323
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:211
 msgid "The minimum font size used to display text."
 msgstr "Minimālais fonta izmērs teksta attēlošanai."
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:331
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:219
 msgid "Minimum Logical Font Size"
 msgstr "Minimālais loģiskais fontu izmērs"
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:332
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:220
 msgid "The minimum logical font size used to display text."
 msgstr "Minimālais loģiskais fontu izmērs teksta attēlošanai."
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:351
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:239
 msgid "Enforce 96 DPI"
 msgstr "Forsēt 96 DPI"
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:352
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:240
 msgid "Enforce a resolution of 96 DPI"
 msgstr "Forsēt 96 DPI izšķirtspēju"
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:360
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:248
 msgid "Auto Load Images"
 msgstr "Automātiska attēlu ielāde"
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:361
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:249
 msgid "Load images automatically."
 msgstr "Ielādēt attēlus automātiski."
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:369
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:257
 msgid "Auto Shrink Images"
 msgstr "Automātiski samazināt attēlus"
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:370
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:258
 msgid "Automatically shrink standalone images to fit."
 msgstr ""
 "Automātiski samazināt atsevišķi parādītus attēlus, lai tie ietilptu logā."
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:378
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:266
 msgid "Print Backgrounds"
 msgstr "Drukāt fonus"
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:379
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:267
 msgid "Whether background images should be printed."
 msgstr "Vai fona attēlus vajadzētu drukāt."
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:387
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:275
 msgid "Enable Scripts"
 msgstr "Aktivizēt skriptus"
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:388
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:276
 msgid "Enable embedded scripting languages."
 msgstr "Aktivizēt iegultās skriptēšanas valodas."
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:396
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:284
 msgid "Enable Plugins"
 msgstr "Aktivizēt spraudņus"
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:397
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:285
 msgid "Enable embedded plugin objects."
 msgstr "Aktivizēt iegultos spraudņu objektus."
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:405
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:293
 msgid "Resizable Text Areas"
 msgstr "Teksta lauki ar maināmu izmēru"
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:406
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:294
 msgid "Whether text areas are resizable."
 msgstr "Vai teksta lauki ir ar maināmu izmēru"
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:413
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:301
 msgid "User Stylesheet URI"
 msgstr "Lietotāja stila lapas URI"
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:414
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:302
 msgid "The URI of a stylesheet that is applied to every page."
 msgstr "Stila lapas URI, kuru pielietot katrai lapai."
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:429
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:317
 msgid "Zoom Stepping Value"
 msgstr "Mērogošanas pakāpes vērtība"
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:430
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:318
 msgid "The value by which the zoom level is changed when zooming in or out."
 msgstr ""
-"Vērtība, par kuru mēroga līmenis tiek izmainīts palielinot vai samazinot to."
+"Vērtība, par kuru mēroga līmenis tiek izmainīts palielinot vai samazinot "
+"to."
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:448
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:336
 msgid "Enable Developer Extras"
 msgstr "Aktivizēt izstrādātāja ekstras"
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:449
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:337
 msgid "Enables special extensions that help developers"
 msgstr "Aktivizē speciālus paplašinājumus, kas palīdz izstrādātājiem"
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:469
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:357
 msgid "Enable Private Browsing"
 msgstr "Aktivizēt privāto pārlūkošanu"
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:470
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:358
 msgid "Enables private browsing mode"
 msgstr "Aktivizē privātās pārlūkošanas režīmu"
 
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:485
-msgid "Enable Spell Checking"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:486
-#, fuzzy
-msgid "Enables spell checking while typing"
-msgstr "Pārbaudīt pareizrakstību _rakstot"
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:509
-msgid "Languages to use for spell checking"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:510
-msgid "Comma separated list of languages to use for spell checking"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:524
-#, fuzzy
-msgid "Enable Caret Browsing"
-msgstr "Aktivizēt privāto pārlūkošanu"
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:525
-msgid "Whether to enable accesibility enhanced keyboard navigation"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:540
-msgid "Enable HTML5 Database"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:541
-msgid "Whether to enable HTML5 database support"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:556
-msgid "Enable HTML5 Local Storage"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:557
-msgid "Whether to enable HTML5 Local Storage support"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:571
-#, fuzzy
-msgid "Enable XSS Auditor"
-msgstr "Aktivizēt skriptus"
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:572
-msgid "Whether to enable the XSS auditor"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:590
-msgid "Enable Spatial Navigation"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:591
-msgid "Whether to enable Spatial Navigation"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:608
-msgid "User Agent"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:609
-msgid "The User-Agent string used by WebKitGtk"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:624
-msgid "JavaScript can open windows automatically"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:625
-msgid "Whether JavaScript can open windows automatically"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:639
-msgid "JavaScript can access Clipboard"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:640
-msgid "Whether JavaScript can access Clipboard"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:656
-msgid "Enable offline web application cache"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:657
-msgid "Whether to enable offline web application cache"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:684
-msgid "Editing behavior"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:685
-msgid "The behavior mode to use in editing mode"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:701
-msgid "Enable universal access from file URIs"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:702
-msgid "Whether to allow universal access from file URIs"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:717
-#, fuzzy
-msgid "Enable DOM paste"
-msgstr "Aktivizēt skriptus"
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:718
-msgid "Whether to enable DOM paste"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:736
-msgid "Tab key cycles through elements"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:737
-msgid "Whether the tab key cycles through elements on the page."
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:757
-msgid "Enable Default Context Menu"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:758
-msgid ""
-"Enables the handling of right-clicks for the creation of the default context "
-"menu"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:778
-msgid "Enable Site Specific Quirks"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:779
-msgid "Enables the site-specific compatibility workarounds"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:801
-msgid "Enable page cache"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:802
-#, fuzzy
-msgid "Whether the page cache should be used"
-msgstr "Vai fona attēlus vajadzētu drukāt."
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:822
-msgid "Auto Resize Window"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:823
-msgid "Automatically resize the toplevel window when a page requests it"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:855
-#, fuzzy
-msgid "Enable Java Applet"
-msgstr "Ieslēgt JavaScript profilēšanu"
-
-#: WebKit/gtk/webkit/webkitwebsettings.cpp:856
-msgid "Whether Java Applet support through <applet> should be enabled"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebview.cpp:2640
+#: WebKit/gtk/webkit/webkitwebview.cpp:1716
 msgid "Returns the @web_view's document title"
 msgstr "Atgriež @web_view dokumenta virsrakstu"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:2654
+#: WebKit/gtk/webkit/webkitwebview.cpp:1730
 msgid "Returns the current URI of the contents displayed by the @web_view"
 msgstr "Atgriež pašreizējo satura, kas attēlos @web_view, URI"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:2667
+#: WebKit/gtk/webkit/webkitwebview.cpp:1743
 msgid "Copy target list"
 msgstr "Kopēt mērķu sarakstu"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:2668
+#: WebKit/gtk/webkit/webkitwebview.cpp:1744
 msgid "The list of targets this web view supports for clipboard copying"
-msgstr "Mērķu saraksts, ko šis tīmekļa skats atbalsta starpliktuves kopēšanai"
+msgstr ""
+"Mērķu saraksts, ko šis tīmekļa skats atbalsta starpliktuves kopēšanai"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:2681
+#: WebKit/gtk/webkit/webkitwebview.cpp:1757
 msgid "Paste target list"
 msgstr "Ielikt mērķu sarakstu"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:2682
+#: WebKit/gtk/webkit/webkitwebview.cpp:1758
 msgid "The list of targets this web view supports for clipboard pasting"
-msgstr "Mērķu saraksts, ko šis tīmekļa skats atbalsta starpliktuves kopēšanai"
+msgstr ""
+"Mērķu saraksts, ko šis tīmekļa skats atbalsta starpliktuves kopēšanai"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:2688
+#: WebKit/gtk/webkit/webkitwebview.cpp:1764
 msgid "Settings"
 msgstr "Iestatījumi"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:2689
+#: WebKit/gtk/webkit/webkitwebview.cpp:1765
 msgid "An associated WebKitWebSettings instance"
 msgstr "Saistītā WebKitWebSettings instance"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:2702
+#: WebKit/gtk/webkit/webkitwebview.cpp:1778
 msgid "Web Inspector"
 msgstr "Tīmekļa inspektors"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:2703
+#: WebKit/gtk/webkit/webkitwebview.cpp:1779
 msgid "The associated WebKitWebInspector instance"
 msgstr "Saistītā WebKitInspector instance"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:2723
+#: WebKit/gtk/webkit/webkitwebview.cpp:1799
 msgid "Editable"
 msgstr "Rediģējams"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:2724
+#: WebKit/gtk/webkit/webkitwebview.cpp:1800
 msgid "Whether content can be modified by the user"
 msgstr "Vai lietotājs var mainīt saturu"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:2730
+#: WebKit/gtk/webkit/webkitwebview.cpp:1806
 msgid "Transparent"
 msgstr "Caurspīdīgs"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:2731
+#: WebKit/gtk/webkit/webkitwebview.cpp:1807
 msgid "Whether content has a transparent background"
 msgstr "Vai saturam ir caurspīdīgs fons"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:2744
+#: WebKit/gtk/webkit/webkitwebview.cpp:1820
 msgid "Zoom level"
 msgstr "Mērogojuma līmenis"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:2745
+#: WebKit/gtk/webkit/webkitwebview.cpp:1821
 msgid "The level of zoom of the content"
 msgstr "Satura mērogojuma līmenis"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:2760
+#: WebKit/gtk/webkit/webkitwebview.cpp:1836
 msgid "Full content zoom"
 msgstr "Visa satura mērogojums"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:2761
+#: WebKit/gtk/webkit/webkitwebview.cpp:1837
 msgid "Whether the full content is scaled when zooming"
 msgstr "Vai viss saturs tiek mērogots"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:2774
+#: WebKit/gtk/webkit/webkitwebview.cpp:1850
 msgid "Encoding"
 msgstr "Kodējums"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:2775
+#: WebKit/gtk/webkit/webkitwebview.cpp:1851
 msgid "The default encoding of the web view"
 msgstr "Tīmekļa skata noklusētais kodējums"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:2788
+#: WebKit/gtk/webkit/webkitwebview.cpp:1864
 msgid "Custom Encoding"
 msgstr "Izvēlēts kodējums"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:2789
+#: WebKit/gtk/webkit/webkitwebview.cpp:1865
 msgid "The custom encoding of the web view"
 msgstr "Tīmekļa skata izvēlētais kodējums"
 
-#: WebKit/gtk/webkit/webkitwebview.cpp:2841
-msgid "Icon URI"
-msgstr ""
-
-#: WebKit/gtk/webkit/webkitwebview.cpp:2842
-msgid "The URI for the favicon for the #WebKitWebView."
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:55
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:60
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:51
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:56
 msgid "Submit"
 msgstr "Pieteikt"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:65
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:61
 msgid "Reset"
 msgstr "Pārstatīt"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:70
-msgid "This is a searchable index. Enter search keywords: "
-msgstr ""
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:66
+msgid "_Searchable Index"
+msgstr "_Meklējumu indekss"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:75
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:71
 msgid "Choose File"
 msgstr "Izvēlieties failu"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:80
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:76
 msgid "(None)"
 msgstr "(Nekas)"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:85
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:81
 msgid "Open Link in New _Window"
 msgstr "Atvērt saiti jau_nā logā"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:90
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:86
 msgid "_Download Linked File"
 msgstr "_Lejupielādēt saitēto failu"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:95
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:91
 msgid "Copy Link Loc_ation"
 msgstr "Kopēt saites lokā_ciju"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:100
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:96
 msgid "Open _Image in New Window"
 msgstr "Atvērt _attēlu jaunā logā"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:105
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:101
 msgid "Sa_ve Image As"
 msgstr "Sa_glabāt attēlu kā"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:110
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:106
 msgid "Cop_y Image"
 msgstr "Kopē_t attēlu"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:115
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:111
 msgid "Open _Frame in New Window"
 msgstr "Atvērt _rāmi jaunā logā"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:166
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:162
 msgid "_Reload"
 msgstr "_Pārlādēt"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:183
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:179
 msgid "No Guesses Found"
 msgstr "Nav neviena minējuma"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:188
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:184
 msgid "_Ignore Spelling"
 msgstr "_Ignorēt pareizrakstību"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:193
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:189
 msgid "_Learn Spelling"
 msgstr "_Iemācīties pareizrakstību"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:198
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:194
 msgid "_Search the Web"
 msgstr "_Meklēt tīmeklī"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:203
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:199
 msgid "_Look Up in Dictionary"
 msgstr "_Uzmeklēt vārdnīcā"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:208
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:204
 msgid "_Open Link"
 msgstr "_Atvērt saiti"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:213
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:209
 msgid "Ignore _Grammar"
 msgstr "Ignorēt _gramatiku"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:218
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:214
 msgid "Spelling and _Grammar"
 msgstr "Pareizrakstība un _gramatika"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:223
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:219
 msgid "_Show Spelling and Grammar"
 msgstr "_Rādīt pareizrakstību un gramatiku"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:223
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:219
 msgid "_Hide Spelling and Grammar"
 msgstr "_Slēpt pareizrakstību un gramatiku"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:228
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:224
 msgid "_Check Document Now"
 msgstr "_Pārbaudīt dokumentu tagad"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:233
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:229
 msgid "Check Spelling While _Typing"
 msgstr "Pārbaudīt pareizrakstību _rakstot"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:238
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:234
 msgid "Check _Grammar With Spelling"
 msgstr "Pārbaudīt _gramatiku kopā ar pareizrakstību"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:243
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:239
 msgid "_Font"
 msgstr "_Fonts"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:266
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:262
 msgid "_Outline"
 msgstr "_Kopskats"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:271
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:267
 msgid "Inspect _Element"
 msgstr "Inspektēt _elementu"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:276
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:272
 msgid "No recent searches"
 msgstr "Nav nesen veiktu meklēšanu"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:281
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:277
 msgid "Recent searches"
 msgstr "Nesen veiktās meklēšanas"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:286
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:282
 msgid "_Clear recent searches"
 msgstr "_Attīrīt nesen veiktās meklēšanas"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:291
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:287
 msgid "term"
 msgstr "termins"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:296
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:292
 msgid "definition"
 msgstr "definīcija"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:301
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:297
 msgid "press"
 msgstr "spiest"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:306
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:302
 msgid "select"
 msgstr "izvēlēties"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:311
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:307
 msgid "activate"
 msgstr "aktivizēt"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:316
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:312
 msgid "uncheck"
 msgstr "neatzīmēt"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:321
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:317
 msgid "check"
 msgstr "atzīmēt"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:326
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:322
 msgid "jump"
 msgstr "lekt"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:341
-msgid "Missing Plug-in"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:347
-msgid "Plug-in Failure"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:353
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:328
 msgid " files"
 msgstr " faili"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:358
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:333
 msgid "Unknown"
 msgstr "Nezināms"
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:375
-msgid "Loading..."
-msgstr ""
 
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:380
-msgid "Live Broadcast"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:386
-msgid "audio element controller"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:388
-msgid "video element controller"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:390
-msgid "mute"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:392
-msgid "unmute"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:394
-msgid "play"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:396
-msgid "pause"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:398
-msgid "movie time"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:400
-msgid "timeline slider thumb"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:402
-msgid "back 30 seconds"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:404
-msgid "return to realtime"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:406
-msgid "elapsed time"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:408
-msgid "remaining time"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:410
-#, fuzzy
-msgid "status"
-msgstr "Statuss"
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:412
-msgid "fullscreen"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:414
-msgid "fast forward"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:416
-msgid "fast reverse"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:418
-msgid "show closed captions"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:420
-msgid "hide closed captions"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:429
-msgid "audio element playback controls and status display"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:431
-msgid "video element playback controls and status display"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:433
-msgid "mute audio tracks"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:435
-msgid "unmute audio tracks"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:437
-msgid "begin playback"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:439
-msgid "pause playback"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:441
-msgid "movie time scrubber"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:443
-msgid "movie time scrubber thumb"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:445
-msgid "seek movie back 30 seconds"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:447
-msgid "return streaming movie to real time"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:449
-msgid "current movie time in seconds"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:451
-msgid "number of seconds of movie remaining"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:453
-msgid "current movie status"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:455
-msgid "seek quickly back"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:457
-msgid "seek quickly forward"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:459
-msgid "Play movie in fullscreen mode"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:461
-msgid "start displaying closed captions"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:463
-msgid "stop displaying closed captions"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:472
-#, fuzzy
-msgid "indefinite time"
-msgstr "definīcija"
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:502
-msgid "value missing"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:508
-msgid "type mismatch"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:513
-msgid "pattern mismatch"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:518
-msgid "too long"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:523
-msgid "range underflow"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:528
-msgid "range overflow"
-msgstr ""
-
-#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:533
-msgid "step mismatch"
-msgstr ""
-
-#~ msgid "_Searchable Index"
-#~ msgstr "_Meklējumu indekss"
