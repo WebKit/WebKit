@@ -1,3 +1,17 @@
+2010-08-31  Adam Roben  <aroben@apple.com>
+
+        Handle WM_PRINTCLIENT in WebKit2 on Windows
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::wndProc): Call through to onPrintClientEvent when we
+        get a WM_PRINTCLIENT message.
+        (WebKit::WebView::onPrintClientEvent): Added. Paints the entire view
+        into the HDC provided by Windows.
+
+        * UIProcess/win/WebView.h: Added onPrintClientEvent.
+
 2010-08-27  Adam Roben  <aroben@apple.com>
 
         Don't send messages to the injected bundle if the web process has
