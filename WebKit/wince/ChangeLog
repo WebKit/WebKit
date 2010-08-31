@@ -2,6 +2,69 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        Add EditorClientWinCE
+        https://bugs.webkit.org/show_bug.cgi?id=44822
+
+        * WebCoreSupport/EditorClientWinCE.cpp: Added.
+        (WebKit::EditorClient::EditorClient):
+        (WebKit::EditorClient::~EditorClient):
+        (WebKit::EditorClient::setInputMethodState):
+        (WebKit::EditorClient::shouldDeleteRange):
+        (WebKit::EditorClient::shouldShowDeleteInterface):
+        (WebKit::EditorClient::isContinuousSpellCheckingEnabled):
+        (WebKit::EditorClient::isGrammarCheckingEnabled):
+        (WebKit::EditorClient::spellCheckerDocumentTag):
+        (WebKit::EditorClient::shouldBeginEditing):
+        (WebKit::EditorClient::shouldEndEditing):
+        (WebKit::EditorClient::shouldInsertText):
+        (WebKit::EditorClient::shouldChangeSelectedRange):
+        (WebKit::EditorClient::shouldApplyStyle):
+        (WebKit::EditorClient::shouldMoveRangeAfterDelete):
+        (WebKit::EditorClient::didBeginEditing):
+        (WebKit::EditorClient::respondToChangedContents):
+        (WebKit::EditorClient::respondToChangedSelection):
+        (WebKit::EditorClient::didEndEditing):
+        (WebKit::EditorClient::didWriteSelectionToPasteboard):
+        (WebKit::EditorClient::didSetSelectionTypesForPasteboard):
+        (WebKit::EditorClient::isEditable):
+        (WebKit::EditorClient::registerCommandForUndo):
+        (WebKit::EditorClient::registerCommandForRedo):
+        (WebKit::EditorClient::clearUndoRedoOperations):
+        (WebKit::EditorClient::canUndo):
+        (WebKit::EditorClient::canRedo):
+        (WebKit::EditorClient::undo):
+        (WebKit::EditorClient::redo):
+        (WebKit::EditorClient::shouldInsertNode):
+        (WebKit::EditorClient::pageDestroyed):
+        (WebKit::EditorClient::smartInsertDeleteEnabled):
+        (WebKit::EditorClient::isSelectTrailingWhitespaceEnabled):
+        (WebKit::EditorClient::toggleContinuousSpellChecking):
+        (WebKit::EditorClient::toggleGrammarChecking):
+        (WebKit::EditorClient::handleKeyboardEvent):
+        (WebKit::EditorClient::handleInputMethodKeydown):
+        (WebKit::EditorClient::textFieldDidBeginEditing):
+        (WebKit::EditorClient::textFieldDidEndEditing):
+        (WebKit::EditorClient::textDidChangeInTextField):
+        (WebKit::EditorClient::doTextFieldCommandFromEvent):
+        (WebKit::EditorClient::textWillBeDeletedInTextField):
+        (WebKit::EditorClient::textDidChangeInTextArea):
+        (WebKit::EditorClient::ignoreWordInSpellDocument):
+        (WebKit::EditorClient::learnWord):
+        (WebKit::EditorClient::checkSpellingOfString):
+        (WebKit::EditorClient::getAutoCorrectSuggestionForMisspelledWord):
+        (WebKit::EditorClient::checkGrammarOfString):
+        (WebKit::EditorClient::updateSpellingUIWithGrammarString):
+        (WebKit::EditorClient::updateSpellingUIWithMisspelledWord):
+        (WebKit::EditorClient::showSpellingUI):
+        (WebKit::EditorClient::spellingUIIsShowing):
+        (WebKit::EditorClient::getGuessesForWord):
+        (WebKit::EditorClient::willSetInputMethodState):
+        * WebCoreSupport/EditorClientWinCE.h: Added.
+
+2010-08-31  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         Add DragClientWinCE
         https://bugs.webkit.org/show_bug.cgi?id=44821
 
