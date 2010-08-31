@@ -31,7 +31,8 @@
 module html {
     interface [
         Conditional=BLOB|FILE_WRITER,
-        DontCheckEnums
+        DontCheckEnums,
+        NoStaticTables
     ] FileError {
 #if !defined(LANGUAGE_OBJECTIVE_C)
         const unsigned short NO_MODIFICATION_ALLOWED_ERR = 7;

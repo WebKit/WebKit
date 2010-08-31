@@ -162,6 +162,7 @@ WONTFIX SKIP : fast/regex/test1.html = PASS
 
 // We use worker_uitests to run workers tests. Don't run them in test_shell.
 WONTFIX SKIP : fast/workers = PASS TIMEOUT FAIL
+WONTFIX SKIP : fast/files/workers = PASS TIMEOUT FAIL
 WONTFIX SKIP : http/tests/workers = PASS TIMEOUT FAIL
 WONTFIX SKIP : http/tests/xmlhttprequest/workers = PASS TIMEOUT FAIL
 WONTFIX SKIP : http/tests/eventsource/workers = PASS TIMEOUT FAIL

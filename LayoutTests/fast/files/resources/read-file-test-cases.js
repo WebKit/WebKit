@@ -26,8 +26,6 @@ function runNextTest(testFiles)
         self[testCases[testIndex - 1]](testFiles);
     } else {
         log("DONE");
-        if (window && window.layoutTestController)
-            layoutTestController.notifyDone();
     }
 }
 
@@ -129,8 +127,14 @@ function testReadingUTF8EncodedFileAsDataURL(testFiles)
 
 function testMultipleReads(testFiles)
 {
+    // This test case is only available for async reading.
+    if (!isReadAsAsync()) {
+        runNextTest(testFiles);
+        return;
+    }
+
     log("Test calling multiple read methods and only last one is processed");
-    var reader = createReader();
+    var reader = createReaderAsync();
     reader.readAsBinaryString(testFiles['UTF8-file']);
     reader.readAsText(testFiles['UTF8-file']);
     reader.readAsDataURL(testFiles['UTF8-file']);

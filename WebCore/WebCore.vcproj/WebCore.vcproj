@@ -4877,6 +4877,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSFileException.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSFileException.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSFileList.cpp"
 				>
 				<FileConfiguration
@@ -4986,6 +4994,14 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSFileReader.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSFileReaderSync.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSFileReaderSync.h"
 				>
 			</File>
 			<File
@@ -37109,6 +37125,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\fileapi\FileException.h"
+				>
+			</File>
+			<File
 				RelativePath="..\fileapi\FileList.cpp"
 				>
 			</File>
@@ -37122,6 +37142,14 @@
 			</File>
 			<File
 				RelativePath="..\fileapi\FileReader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\FileReaderSync.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\FileReaderSync.h"
 				>
 			</File>
 			<File

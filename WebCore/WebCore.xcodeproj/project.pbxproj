@@ -717,6 +717,13 @@
 		2EDEF1F6121B0EFC00726DB2 /* BlobRegistryImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EDEF1F0121B0EFC00726DB2 /* BlobRegistryImpl.cpp */; };
 		2EDEF1F7121B0EFC00726DB2 /* BlobRegistryImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EDEF1F1121B0EFC00726DB2 /* BlobRegistryImpl.h */; };
 		2EDEF1F8121B0EFC00726DB2 /* BlobStorageData.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EDEF1F2121B0EFC00726DB2 /* BlobStorageData.h */; };
+		2EDF369C122C94B4002F7D4E /* FileReaderSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EDF369A122C94B4002F7D4E /* FileReaderSync.cpp */; };
+		2EDF369D122C94B4002F7D4E /* FileReaderSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EDF369B122C94B4002F7D4E /* FileReaderSync.h */; };
+		2EDF369F122C94C8002F7D4E /* FileException.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EDF369E122C94C8002F7D4E /* FileException.h */; };
+		2EDF37C4122C95CA002F7D4E /* JSFileException.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EDF37C3122C95CA002F7D4E /* JSFileException.h */; };
+		2EDF37C6122C95DF002F7D4E /* JSFileException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EDF37C5122C95DF002F7D4E /* JSFileException.cpp */; };
+		2EDF37C9122C95F2002F7D4E /* JSFileReaderSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EDF37C7122C95F2002F7D4E /* JSFileReaderSync.cpp */; };
+		2EDF37CA122C95F2002F7D4E /* JSFileReaderSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EDF37C8122C95F2002F7D4E /* JSFileReaderSync.h */; };
 		2EF1BFEA121C9F4200C27627 /* FileStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EF1BFE8121C9F4200C27627 /* FileStream.cpp */; };
 		2EF1BFEB121C9F4200C27627 /* FileStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EF1BFE9121C9F4200C27627 /* FileStream.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2EF1BFF7121CB0BD00C27627 /* AsyncFileStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EF1BFF6121CB0BD00C27627 /* AsyncFileStream.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6553,6 +6560,13 @@
 		2EDEF1F0121B0EFC00726DB2 /* BlobRegistryImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlobRegistryImpl.cpp; sourceTree = "<group>"; };
 		2EDEF1F1121B0EFC00726DB2 /* BlobRegistryImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobRegistryImpl.h; sourceTree = "<group>"; };
 		2EDEF1F2121B0EFC00726DB2 /* BlobStorageData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobStorageData.h; sourceTree = "<group>"; };
+		2EDF369A122C94B4002F7D4E /* FileReaderSync.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileReaderSync.cpp; path = fileapi/FileReaderSync.cpp; sourceTree = "<group>"; };
+		2EDF369B122C94B4002F7D4E /* FileReaderSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileReaderSync.h; path = fileapi/FileReaderSync.h; sourceTree = "<group>"; };
+		2EDF369E122C94C8002F7D4E /* FileException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileException.h; path = fileapi/FileException.h; sourceTree = "<group>"; };
+		2EDF37C3122C95CA002F7D4E /* JSFileException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFileException.h; sourceTree = "<group>"; };
+		2EDF37C5122C95DF002F7D4E /* JSFileException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileException.cpp; sourceTree = "<group>"; };
+		2EDF37C7122C95F2002F7D4E /* JSFileReaderSync.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileReaderSync.cpp; sourceTree = "<group>"; };
+		2EDF37C8122C95F2002F7D4E /* JSFileReaderSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFileReaderSync.h; sourceTree = "<group>"; };
 		2EF1BFE8121C9F4200C27627 /* FileStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileStream.cpp; sourceTree = "<group>"; };
 		2EF1BFE9121C9F4200C27627 /* FileStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileStream.h; sourceTree = "<group>"; };
 		2EF1BFF6121CB0BD00C27627 /* AsyncFileStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncFileStream.h; sourceTree = "<group>"; };
@@ -14336,10 +14350,13 @@
 				976D6C61122B8A3D001FD1F7 /* File.cpp */,
 				976D6C62122B8A3D001FD1F7 /* File.h */,
 				976D6C64122B8A3D001FD1F7 /* FileError.h */,
+				2EDF369E122C94C8002F7D4E /* FileException.h */,
 				976D6C66122B8A3D001FD1F7 /* FileList.cpp */,
 				976D6C67122B8A3D001FD1F7 /* FileList.h */,
 				976D6C69122B8A3D001FD1F7 /* FileReader.cpp */,
 				976D6C6A122B8A3D001FD1F7 /* FileReader.h */,
+				2EDF369A122C94B4002F7D4E /* FileReaderSync.cpp */,
+				2EDF369B122C94B4002F7D4E /* FileReaderSync.h */,
 				976D6C6C122B8A3D001FD1F7 /* FileStreamProxy.cpp */,
 				976D6C6D122B8A3D001FD1F7 /* FileStreamProxy.h */,
 				976D6C6E122B8A3D001FD1F7 /* FileThread.cpp */,
@@ -14462,10 +14479,14 @@
 				BC00F0110E0A189500FD04E3 /* JSFile.h */,
 				2E3BC0C8117D3E0800B9409A /* JSFileError.cpp */,
 				2E3BC0C9117D3E0800B9409A /* JSFileError.h */,
+				2EDF37C5122C95DF002F7D4E /* JSFileException.cpp */,
+				2EDF37C3122C95CA002F7D4E /* JSFileException.h */,
 				BC00F0120E0A189500FD04E3 /* JSFileList.cpp */,
 				BC00F0130E0A189500FD04E3 /* JSFileList.h */,
 				2E94F439119207DA00B7F75D /* JSFileReader.cpp */,
 				2E94F43A119207DA00B7F75D /* JSFileReader.h */,
+				2EDF37C7122C95F2002F7D4E /* JSFileReaderSync.cpp */,
+				2EDF37C8122C95F2002F7D4E /* JSFileReaderSync.h */,
 				46DA844B1224A0710060D006 /* JSFileWriter.cpp */,
 				46DA844C1224A0710060D006 /* JSFileWriter.h */,
 				49EECEF4105070C400099FAB /* JSFloat32Array.cpp */,
@@ -20425,6 +20446,10 @@
 				976D6C91122B8A3D001FD1F7 /* FileWriter.h in Headers */,
 				976D6C93122B8A3D001FD1F7 /* FileWriterClient.h in Headers */,
 				976D6C95122B8A3D001FD1F7 /* ThreadableBlobRegistry.h in Headers */,
+				2EDF369D122C94B4002F7D4E /* FileReaderSync.h in Headers */,
+				2EDF369F122C94C8002F7D4E /* FileException.h in Headers */,
+				2EDF37C4122C95CA002F7D4E /* JSFileException.h in Headers */,
+				2EDF37CA122C95F2002F7D4E /* JSFileReaderSync.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -22885,6 +22910,9 @@
 				976D6C8D122B8A3D001FD1F7 /* FileThread.cpp in Sources */,
 				976D6C90122B8A3D001FD1F7 /* FileWriter.cpp in Sources */,
 				976D6C94122B8A3D001FD1F7 /* ThreadableBlobRegistry.cpp in Sources */,
+				2EDF369C122C94B4002F7D4E /* FileReaderSync.cpp in Sources */,
+				2EDF37C6122C95DF002F7D4E /* JSFileException.cpp in Sources */,
+				2EDF37C9122C95F2002F7D4E /* JSFileReaderSync.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

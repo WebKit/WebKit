@@ -152,9 +152,11 @@ DOM_CLASSES = \
     EventTarget \
     File \
     FileEntry \
+    FileException \
     FileError \
     FileList \
     FileReader \
+    FileReaderSync \
     FileWriter \
     FileSystemCallback \
     Flags \

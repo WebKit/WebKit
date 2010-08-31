@@ -1,3 +1,34 @@
+2010-08-31  Jian Li  <jianli@chromium.org>
+
+        Reviewed by David Levin.
+
+        Support FileReaderSync in workers.
+        https://bugs.webkit.org/show_bug.cgi?id=44657
+
+        Also add FileException interface and make Blob/File/FileError useable in
+        workers.
+
+        Tests: fast/files/workers/worker-read-blob-async.html
+               fast/files/workers/worker-read-blob-sync.html
+               fast/files/workers/worker-read-file-async.html
+               fast/files/workers/worker-read-file-sync.html
+
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * fileapi/Blob.idl: Added NoStaticTables attribute.
+        * fileapi/File.idl: Added NoStaticTables attribute.
+        * fileapi/FileError.idl: Added NoStaticTables attribute.
+        * fileapi/FileException.h: Added.
+        * fileapi/FileException.idl: Added.
+        * fileapi/FileReaderSync.cpp: Added.
+        * fileapi/FileReaderSync.h: Added.
+        * fileapi/FileReaderSync.idl: Added.
+        * workers/WorkerContext.idl: Expose FileReaderSync and BlodBuilder in workers.
+
 2010-08-30  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.

@@ -23,8 +23,6 @@ function runNextTest(testFiles)
         self[testCases[testIndex - 1]](testFiles);
     } else {
         log("DONE");
-        if (window && window.layoutTestController)
-            layoutTestController.notifyDone();
     }
 }
 

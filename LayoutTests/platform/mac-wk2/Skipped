@@ -366,6 +366,7 @@ fast/events/window-events-capture.html
 fast/events/zoom-dblclick.html
 fast/files/read-blob-async.html
 fast/files/read-file-async.html
+fast/files/workers
 fast/forms/25153.html
 fast/forms/access-key.html
 fast/forms/button-enter-click.html

@@ -9,25 +9,92 @@ function buildBlob(items, builder)
     return builder.getBlob();
 }
 
+// Reads a blob either asynchronously or synchronously.
 function readBlobAsBinaryString(testFiles, blob)
 {
-    var reader = createReader(testFiles);
-    reader.readAsBinaryString(blob)
+    if (isReadAsAsync())
+        _readBlobAsBinaryStringAsync(testFiles, blob);
+    else
+        _readBlobAsBinaryStringSync(testFiles, blob);
 }
 
 function readBlobAsText(testFiles, blob, encoding)
 {
-    var reader = createReader(testFiles);
-    reader.readAsText(blob, encoding)
+    if (isReadAsAsync())
+        _readBlobAsTextAsync(testFiles, blob, encoding);
+    else
+        _readBlobAsTextSync(testFiles, blob, encoding);
 }
 
 function readBlobAsDataURL(testFiles, blob)
 {
-    var reader = createReader(testFiles);
+    if (isReadAsAsync())
+        _readBlobAsDataURLAsync(testFiles, blob);
+    else
+        _readBlobAsDataURLSync(testFiles, blob);
+}
+
+// Reads a blob asynchronously.
+function _readBlobAsBinaryStringAsync(testFiles, blob)
+{
+    var reader = createReaderAsync(testFiles);
+    reader.readAsBinaryString(blob)
+}
+
+function _readBlobAsTextAsync(testFiles, blob, encoding)
+{
+    var reader = createReaderAsync(testFiles);
+    reader.readAsText(blob, encoding)
+}
+
+function _readBlobAsDataURLAsync(testFiles, blob)
+{
+    var reader = createReaderAsync(testFiles);
     reader.readAsDataURL(blob)
 }
 
-function createReader(testFiles)
+// Reads a blob synchronously.
+function _readBlobAsBinaryStringSync(testFiles, blob)
+{
+    var reader = createReaderSync();
+    try {
+        var result = reader.readAsBinaryString(blob);
+        log(result);
+    } catch (error) {
+        log("Received exception " + error.code + ": " + error.name);
+    }
+
+    runNextTest(testFiles);
+}
+
+function _readBlobAsTextSync(testFiles, blob, encoding)
+{
+    var reader = createReaderSync();
+    try {
+        var result = reader.readAsText(blob, encoding);
+        log(result);
+    } catch (error) {
+        log("Received exception " + error.code + ": " + error.name);
+    }
+
+    runNextTest(testFiles);
+}
+
+function _readBlobAsDataURLSync(testFiles, blob)
+{
+    var reader = createReaderSync();
+    try {
+        var result = reader.readAsDataURL(blob);
+        log(result);
+    } catch (error) {
+        log("Received exception " + error.code + ": " + error.name);
+    }
+
+    runNextTest(testFiles);
+}
+
+// Creates a reader for asynchronous reading.
+function createReaderAsync(testFiles)
 {
     var reader = new FileReader();
 
@@ -39,6 +106,12 @@ function createReader(testFiles)
 
     log("readyState: " + reader.readyState);
     return reader;
+}
+
+// Creates a reader for synchronous reading.
+function createReaderSync()
+{
+    return new FileReaderSync();
 }
 
 function logEvent(event)

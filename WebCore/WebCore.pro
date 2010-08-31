@@ -626,6 +626,7 @@ SOURCES += \
     fileapi/File.cpp \
     fileapi/FileList.cpp \
     fileapi/FileReader.cpp \
+    fileapi/FileReaderSync.cpp \
     fileapi/FileStreamProxy.cpp \
     fileapi/FileThread.cpp \
     fileapi/FileWriter.cpp \
@@ -1405,8 +1406,10 @@ HEADERS += \
     fileapi/BlobURL.h \
     fileapi/File.h \
     fileapi/FileError.h \
+    fileapi/FileException.h \
     fileapi/FileList.h \
     fileapi/FileReader.h \
+    fileapi/FileReaderSync.h \
     fileapi/FileStreamProxy.h \
     fileapi/FileThread.h \
     fileapi/FileThreadTask.h \

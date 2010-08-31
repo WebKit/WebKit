@@ -1,6 +1,10 @@
 function log(message)
 {
     document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
+    if (message == "DONE") {
+        if (window && window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
 }
 
 function onInputFileChange(testFileInfoList)
@@ -19,4 +23,24 @@ function runTests(testFileInfoList)
     eventSender.beginDragWithFiles(pathsOnly);
     eventSender.mouseMoveTo(10, 10);
     eventSender.mouseUp();
+}
+
+function startWorker(testFiles, workerScriptURL)
+{
+    var worker = new Worker(workerScriptURL);
+    worker.onmessage = function(event)
+    {
+        log(event.data);
+        if (event.data == "DONE") {
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }
+    }
+    worker.onerror = function(event)
+    {
+        log("Received error from worker: " + event.message);
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+    worker.postMessage(testFiles);
 }

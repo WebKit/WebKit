@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,19 +28,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module html {
+#ifndef FileException_h
+#define FileException_h
 
-    interface [
-        NoStaticTables
-    ] Blob {
-        readonly attribute unsigned long long size;
-        readonly attribute DOMString type;
+#if ENABLE(BLOB) || ENABLE(FILE_WRITER)
 
-#if !defined(LANGUAGE_OBJECTIVE_C)
-#if defined(ENABLE_BLOB) && ENABLE_BLOB
-        [CallWith=ScriptExecutionContext] Blob slice(in long long start, in long long length, in [Optional, ConvertUndefinedOrNullToNullString] DOMString contentType);
-#endif
-#endif
+#include "ExceptionBase.h"
+
+namespace WebCore {
+
+class FileException : public ExceptionBase {
+public:
+    static PassRefPtr<FileException> create(const ExceptionCodeDescription& description)
+    {
+        return adoptRef(new FileException(description));
+    }
+
+    static const int FileExceptionOffset = 100;
+    static const int FileExceptionMax = 199;
+
+    enum EventExceptionCode {
+        UNSPECIFIED_EVENT_TYPE_ERR = FileExceptionOffset
     };
 
-}
+private:
+    FileException(const ExceptionCodeDescription& description)
+        : ExceptionBase(description)
+    {
+    }
+};
+
+} // namespace WebCore
+
+#endif // ENABLE(BLOB) || ENABLE(FILE_WRITER)
+
+#endif // FileException_h
+

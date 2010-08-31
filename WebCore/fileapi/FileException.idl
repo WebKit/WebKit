@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,18 +29,27 @@
  */
 
 module html {
-
     interface [
+        Conditional=BLOB|FILE_WRITER,
+        DontCheckEnums,
         NoStaticTables
-    ] Blob {
-        readonly attribute unsigned long long size;
-        readonly attribute DOMString type;
+    ] FileException {
 
-#if !defined(LANGUAGE_OBJECTIVE_C)
-#if defined(ENABLE_BLOB) && ENABLE_BLOB
-        [CallWith=ScriptExecutionContext] Blob slice(in long long start, in long long length, in [Optional, ConvertUndefinedOrNullToNullString] DOMString contentType);
+        readonly attribute unsigned short   code;
+        readonly attribute DOMString        name;
+        readonly attribute DOMString        message;
+
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+        // Override in a Mozilla compatible format
+        [DontEnum] DOMString toString();
 #endif
-#endif
+
+        // FileExceptionCode
+        const unsigned short NOT_FOUND_ERR = 8;
+        const unsigned short SECURITY_ERR = 18;
+        const unsigned short ABORT_ERR = 20;
+
+        const unsigned short NOT_READABLE_ERR = 24;
+        const unsigned short ENCODING_ERR = 26;
     };
-
 }

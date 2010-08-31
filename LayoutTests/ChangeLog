@@ -1,3 +1,54 @@
+2010-08-31  Jian Li  <jianli@chromium.org>
+
+        Reviewed by David Levin.
+
+        Support FileReaderSync in workers.
+        https://bugs.webkit.org/show_bug.cgi?id=44657
+
+        Added 4 test files to test FileReaderSync in workers.
+
+        * fast/files/read-blob-async.html:
+        * fast/files/read-file-async.html:
+        * fast/files/resources/read-common.js:
+        (readBlobAsBinaryString):
+        (readBlobAsText):
+        (readBlobAsDataURL):
+        (_readBlobAsBinaryStringAsync):
+        (_readBlobAsTextAsync):
+        (_readBlobAsDataURLAsync):
+        (_readBlobAsBinaryStringSync):
+        (_readBlobAsTextSync):
+        (_readBlobAsDataURLSync):
+        (createReaderSync):
+        * fast/files/resources/read-blob-test-cases.js:
+        (runNextTest):
+        * fast/files/resources/read-file-test-cases.js:
+        (runNextTest):
+        (testMultipleReads):
+        * fast/files/resources/setup-for-read-common.js:
+        (log):
+        (startWorker.worker.onmessage):
+        (startWorker.worker.onerror):
+        (startWorker):
+        * fast/files/workers/resources/worker-read-blob-async.js: Added.
+        * fast/files/workers/resources/worker-read-blob-sync.js: Added.
+        * fast/files/workers/resources/worker-read-common.js: Added.
+        * fast/files/workers/resources/worker-read-file-async.js: Added.
+        * fast/files/workers/resources/worker-read-file-sync.js: Added.
+        * fast/files/workers/worker-read-blob-async-expected.txt: Added.
+        * fast/files/workers/worker-read-blob-async.html: Added.
+        * fast/files/workers/worker-read-blob-sync-expected.txt: Added.
+        * fast/files/workers/worker-read-blob-sync.html: Added.
+        * fast/files/workers/worker-read-file-async-expected.txt: Added.
+        * fast/files/workers/worker-read-file-async.html: Added.
+        * fast/files/workers/worker-read-file-sync-expected.txt: Added.
+        * fast/files/workers/worker-read-file-sync.html: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2010-08-30  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.

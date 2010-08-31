@@ -1,0 +1,32 @@
+
+Received files in worker
+Test reading a blob containing non-existent file
+Received exception 8: NOT_FOUND_ERR
+Test reading a blob containing existent and non-existent file
+Received exception 8: NOT_FOUND_ERR
+Test reading a blob containing empty file
+
+Test reading a blob containing empty text
+
+Test reading a blob containing empty files and empty texts
+
+Test reading a blob containing single file
+Hello
+Test reading a blob containing single text
+First
+Test reading a blob containing sliced file
+onder
+Test reading a blob containing sliced text
+irst
+Test reading a blob containing multiple files
+HelloWonderfulWorld
+Test reading a blob containing multiple texts
+FirstSecondThird
+Test reading a hybrid blob
+FirstHelloSecondWonderfulWorldThird
+Test reading a sliced hybrid blob
+lloSecondWon
+Test reading a triple-sliced hybrid blob
+ondWonderfulWorldThirdFooloSec
+DONE
+

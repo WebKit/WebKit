@@ -27,7 +27,8 @@ module html {
 
     interface [
         GenerateNativeConverter,
-        GenerateToJS
+        GenerateToJS,
+        NoStaticTables
     ] File : Blob {
         readonly attribute DOMString name;
 #if defined(ENABLE_DIRECTORY_UPLOAD) && ENABLE_DIRECTORY_UPLOAD
