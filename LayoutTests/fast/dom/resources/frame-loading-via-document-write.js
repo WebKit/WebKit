@@ -16,12 +16,3 @@ function didImageLoad()
         result.innerHTML = "Image loaded.";
     }
 }
-
-function lastTest()
-{
-    didImageLoad();
-
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
-}
-

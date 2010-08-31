@@ -1,5 +1,4 @@
 # <rdar://problem/5313536> frame-loading-via-document-write.html sometimes fails on Leopard
-fast/dom/frame-loading-via-document-write.html
 http/tests/security/frame-loading-via-document-write.html
 
 # <rdar://problem/5686552> svg/css/glyph-orientation-rounding-test.xhtml sometimes fails

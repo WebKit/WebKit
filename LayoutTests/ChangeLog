@@ -1,3 +1,21 @@
+2010-08-31  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        fast/dom/frame-loading-via-document-write.html fails on Chromium and is otherwise flaky
+        https://bugs.webkit.org/show_bug.cgi?id=44894
+
+        Detect all frames loading more reliably (add a counter to count down when each of
+        the three frames has loaded). Install onload handler on images instead of the document
+        to not tickle bug 29615.
+
+        * fast/dom/frame-loading-via-document-write.html:
+        * fast/dom/resources/frame-loading-via-document-write.js:
+        (didImageLoad):
+        * platform/chromium/test_expectations.txt:
+        * platform/mac-leopard/Skipped:
+        * platform/mac-snowleopard/Skipped:
+
 2010-08-27  John Gregg  <johnnyg@google.com>
 
         Reviewed by David Levin.

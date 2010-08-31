@@ -533,14 +533,6 @@ WONTFIX SKIP : transforms/3d = FAIL
 // Also skipped by Apple on Windows (rdar://problem/5015941)
 BUG20404 : editing/execCommand/copy-without-selection.html = FAIL
 
-// This is a faulty test and need to change so it works on Windows.
-// onload race condition due to poorly designed test.
-// Works fine when run stand-alone.  Not needed for Beta.
-// Also skipped by Apple on Windows, due to intermittent failure
-// (rdar://5313536)
-// started WIN only, since r30442 fails on all platforms
-BUG10270 : fast/dom/frame-loading-via-document-write.html = FAIL
-
 // -----------------------------------------------------------------
 // LIGHTTPD
 // -----------------------------------------------------------------
