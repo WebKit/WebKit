@@ -99,7 +99,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 
 %}
 
-%expect 55
+%expect 56
 
 %nonassoc LOWEST_PREC
 
@@ -202,6 +202,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %type <relation> combinator
 
 %type <rule> charset
+%type <rule> ignored_charset
 %type <rule> ruleset
 %type <rule> media
 %type <rule> import
@@ -390,6 +391,13 @@ charset:
   }
 ;
 
+ignored_charset:
+    CHARSET_SYM maybe_space STRING maybe_space ';' {
+        // Ignore any @charset rule not at the beginning of the style sheet.
+        $$ = 0;
+    }
+;
+
 rule_list:
    /* empty */
  | rule_list rule maybe_sgml {
@@ -414,6 +422,7 @@ rule:
     valid_rule {
         static_cast<CSSParser*>(parser)->m_hadSyntacticallyValidCSSRule = true;
     }
+  | ignored_charset
   | invalid_rule
   | invalid_at
   ;
