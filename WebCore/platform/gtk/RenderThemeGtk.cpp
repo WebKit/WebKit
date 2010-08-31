@@ -38,6 +38,7 @@
 #include "RenderBox.h"
 #include "RenderObject.h"
 #include "Scrollbar.h"
+#include "TimeRanges.h"
 #include "UserAgentStyleSheets.h"
 #include "gtkdrawing.h"
 #include <gdk/gdk.h>
@@ -805,33 +806,48 @@ bool RenderThemeGtk::paintMediaSliderTrack(RenderObject* o, const PaintInfo& pai
         return false;
 
     // Draw the buffered ranges. This code is highly inspired from
-    // Chrome.
-    // FIXME: Draw multiple ranges if there are multiple buffered
-    // ranges. The current implementation of the player is always
-    // buffering a single range anyway.
-    IntRect bufferedRect = r;
-    bufferedRect.inflate(-style->borderLeftWidth());
-    bufferedRect.setWidth((bufferedRect.width() * mediaElement->percentLoaded()));
+    // Chrome for the gradient code.
+    float mediaDuration = mediaElement->duration();
+    RefPtr<TimeRanges> timeRanges = mediaElement->buffered();
+    IntRect trackRect = r;
+    int totalWidth = trackRect.width();
 
-    // Don't bother drawing an empty area.
-    if (bufferedRect.isEmpty())
-        return false;
-
-    IntPoint sliderTopLeft = bufferedRect.location();
-    IntPoint sliderTopRight = sliderTopLeft;
-    sliderTopRight.move(0, bufferedRect.height());
-
-    RefPtr<Gradient> gradient = Gradient::create(sliderTopLeft, sliderTopRight);
-    Color startColor = m_panelColor;
-    gradient->addColorStop(0.0, startColor);
-    gradient->addColorStop(1.0, Color(startColor.red() / 2, startColor.green() / 2, startColor.blue() / 2, startColor.alpha()));
-
+    trackRect.inflate(-style->borderLeftWidth());
     context->save();
     context->setStrokeStyle(NoStroke);
-    context->setFillGradient(gradient);
-    context->fillRect(bufferedRect);
-    context->restore();
 
+    for (unsigned index = 0; index < timeRanges->length(); ++index) {
+        ExceptionCode ignoredException;
+        float start = timeRanges->start(index, ignoredException);
+        float end = timeRanges->end(index, ignoredException);
+        int width = ((end - start) * totalWidth) / mediaDuration;
+        IntRect rangeRect;
+        if (!index) {
+            rangeRect = trackRect;
+            rangeRect.setWidth(width);
+        } else {
+            rangeRect.setLocation(IntPoint((start * totalWidth) / mediaDuration, trackRect.y()));
+            rangeRect.setSize(IntSize(width, trackRect.height()));
+        }
+
+        // Don't bother drawing empty range.
+        if (rangeRect.isEmpty())
+            continue;
+
+        IntPoint sliderTopLeft = rangeRect.location();
+        IntPoint sliderTopRight = sliderTopLeft;
+        sliderTopRight.move(0, rangeRect.height());
+
+        RefPtr<Gradient> gradient = Gradient::create(sliderTopLeft, sliderTopRight);
+        Color startColor = m_panelColor;
+        gradient->addColorStop(0.0, startColor);
+        gradient->addColorStop(1.0, Color(startColor.red() / 2, startColor.green() / 2, startColor.blue() / 2, startColor.alpha()));
+
+        context->setFillGradient(gradient);
+        context->fillRect(rangeRect);
+    }
+
+    context->restore();
     return false;
 }
 

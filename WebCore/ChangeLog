@@ -1,3 +1,17 @@
+2010-08-30  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Buffered ranges drawing support
+        https://bugs.webkit.org/show_bug.cgi?id=44869
+
+        Refactored the media slider track painting code to support
+        multiple buffered ranges painting. This change introduces no
+        functional regression.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::paintMediaSliderTrack):
+
 2010-08-30  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.
