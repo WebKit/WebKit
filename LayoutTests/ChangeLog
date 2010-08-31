@@ -1,3 +1,9 @@
+2010-08-31  Jian Li  <jianli@chromium.org>
+
+        Update chromium test result.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-08-31  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

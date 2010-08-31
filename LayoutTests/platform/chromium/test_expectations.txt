@@ -3179,4 +3179,4 @@ BUG47946 WIN LINUX MAC : scrollbars/custom-scrollbar-with-incomplete-style.html 
 WONTFIX SKIP : media/video-does-not-loop.html = TIMEOUT
 
 // Need rebaseline
-BUGJIANLI : files/apply-blob-url-to-img.html = FAIL
+BUGJIANLI : fast/files/apply-blob-url-to-img.html = IMAGE+TEXT
