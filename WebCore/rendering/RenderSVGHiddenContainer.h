@@ -47,8 +47,11 @@ namespace WebCore {
 
         virtual void paint(PaintInfo&, int parentX, int parentY);
         
-        virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject*) { return IntRect(); }
+        virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
         virtual void absoluteQuads(Vector<FloatQuad>&);
+
+        virtual FloatRect objectBoundingBox() const;
+        virtual FloatRect repaintRectInLocalCoordinates() const;
 
         virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
     };

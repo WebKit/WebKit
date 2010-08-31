@@ -1,3 +1,72 @@
+2010-08-30  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, rolling out r66418.
+        http://trac.webkit.org/changeset/66418
+        https://bugs.webkit.org/show_bug.cgi?id=44896
+
+        Adam tried to roll this out with:
+        https://bugs.webkit.org/show_bug.cgi?id=44924
+        but we hit a commit-queue edgecase and it failed, trying again.
+
+        Causing test failures on multiple bots
+
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::layout):
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::setNeedsBoundariesUpdate):
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::removeChildNode):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::layout):
+        (WebCore::RenderPath::paint):
+        (WebCore::RenderPath::styleWillChange):
+        * rendering/RenderPath.h:
+        (WebCore::RenderPath::setNeedsBoundariesUpdate):
+        * rendering/RenderSVGBlock.cpp:
+        * rendering/RenderSVGBlock.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::RenderSVGContainer):
+        (WebCore::RenderSVGContainer::layout):
+        (WebCore::RenderSVGContainer::paint):
+        (WebCore::RenderSVGContainer::objectBoundingBox):
+        (WebCore::RenderSVGContainer::strokeBoundingBox):
+        (WebCore::RenderSVGContainer::repaintRectInLocalCoordinates):
+        * rendering/RenderSVGContainer.h:
+        (WebCore::RenderSVGContainer::calculateLocalTransform):
+        * rendering/RenderSVGGradientStop.h:
+        * rendering/RenderSVGHiddenContainer.cpp:
+        (WebCore::RenderSVGHiddenContainer::clippedOverflowRectForRepaint):
+        (WebCore::RenderSVGHiddenContainer::objectBoundingBox):
+        (WebCore::RenderSVGHiddenContainer::repaintRectInLocalCoordinates):
+        * rendering/RenderSVGHiddenContainer.h:
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::layout):
+        * rendering/RenderSVGImage.h:
+        * rendering/RenderSVGInline.cpp:
+        * rendering/RenderSVGInline.h:
+        * rendering/RenderSVGModelObject.cpp:
+        * rendering/RenderSVGModelObject.h:
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::RenderSVGRoot):
+        (WebCore::RenderSVGRoot::layout):
+        (WebCore::RenderSVGRoot::objectBoundingBox):
+        (WebCore::RenderSVGRoot::strokeBoundingBox):
+        (WebCore::RenderSVGRoot::repaintRectInLocalCoordinates):
+        * rendering/RenderSVGRoot.h:
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+        * rendering/RenderSVGTransformableContainer.cpp:
+        (WebCore::RenderSVGTransformableContainer::calculateLocalTransform):
+        * rendering/RenderSVGTransformableContainer.h:
+        * rendering/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::calcViewport):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::computeContainerBoundingBox):
+        * rendering/SVGRenderSupport.h:
+        * rendering/style/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::diff):
+
 2010-08-30  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

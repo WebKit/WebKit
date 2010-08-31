@@ -46,7 +46,6 @@ public:
     // https://bugs.webkit.org/show_bug.cgi?id=20400
     virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject*) { return IntRect(); }
     virtual FloatRect objectBoundingBox() const { return FloatRect(); }
-    virtual FloatRect strokeBoundingBox() const { return FloatRect(); }
     virtual FloatRect repaintRectInLocalCoordinates() const { return FloatRect(); }
 
 protected:
