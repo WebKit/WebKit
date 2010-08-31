@@ -1,3 +1,10 @@
+2010-08-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        * WebInspector/WebInspectorFrontend.mm:
+        (-[WebInspectorFrontend initWithFrontendClient:]): Remove a stray semicolon.
+
 2010-08-30  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.

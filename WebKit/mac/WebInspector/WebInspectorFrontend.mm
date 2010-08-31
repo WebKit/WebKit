@@ -29,7 +29,7 @@
 
 @implementation WebInspectorFrontend
 
-- (id)initWithFrontendClient:(WebInspectorFrontendClient *)frontendClient;
+- (id)initWithFrontendClient:(WebInspectorFrontendClient *)frontendClient
 {
     if (!(self = [super init]))
         return nil;
