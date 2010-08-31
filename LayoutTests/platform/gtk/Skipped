@@ -5353,10 +5353,6 @@ fast/profiler/dead-time.html
 # Fails on and off (more often fails) on the release bot
 media/event-attributes.html
 
-# Fails intermitently. Work-in-progress fix, see:
-# https://bugs.webkit.org/show_bug.cgi?id=33671
-media/video-loop.html
-
 # GTK+ does not have layoutTestController.setWillSendRequestClearHeader.
 http/tests/security/no-referrer.html
 
