@@ -30,6 +30,7 @@
 #include "CachedImage.h"
 #include "ChromiumBridge.h"
 #include "ChromiumDataObject.h"
+#include "ChromiumDataObjectNew.h"
 #include "ClipboardUtilitiesChromium.h"
 #include "Document.h"
 #include "DragData.h"
