@@ -57,7 +57,7 @@ static CString convertToCString(const String& text, const String& endingType, Ex
     return CString();
 }
 
-static CString addTwoCStrings(const CString& a, const CString& b)
+static CString concatenateTwoCStrings(const CString& a, const CString& b)
 {
     if (a.isNull() && b.isNull())
         return CString();
@@ -86,7 +86,7 @@ bool BlobBuilder::append(const String& text, const String& endingType, Exception
 
     // If the last item is a string, concatenate it with current string.
     if (!m_items.isEmpty() && m_items[m_items.size() - 1].type == BlobDataItem::Data)
-        m_items[m_items.size() - 1].data = addTwoCStrings(m_items[m_items.size() - 1].data, cstr);
+        m_items[m_items.size() - 1].data = concatenateTwoCStrings(m_items[m_items.size() - 1].data, cstr);
     else
         m_items.append(BlobDataItem(cstr));
     return true;

@@ -1,5 +1,15 @@
 2010-08-31  Jian Li  <jianli@chromium.org>
 
+        Rubber-stamped by David Levin.
+
+        Rename addTwoCStrings to concatenateTwoCStrings.
+
+        * fileapi/BlobBuilder.cpp:
+        (WebCore::concatenateTwoCStrings):
+        (WebCore::BlobBuilder::append):
+
+2010-08-31  Jian Li  <jianli@chromium.org>
+
         Reviewed by Darin Fisher.
 
         Improve BlobBuilder to combine adjacent strings.
