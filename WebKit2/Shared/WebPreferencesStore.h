@@ -36,27 +36,7 @@ namespace WebKit {
 struct WebPreferencesStore {
     WebPreferencesStore();
 
-    void encode(CoreIPC::ArgumentEncoder* encoder) const
-    {
-        encoder->encode(javaScriptEnabled);
-        encoder->encode(loadsImagesAutomatically);
-        encoder->encode(pluginsEnabled);
-        encoder->encode(offlineWebApplicationCacheEnabled);
-        encoder->encode(localStorageEnabled);
-        encoder->encode(xssAuditorEnabled);
-        encoder->encode(fontSmoothingLevel);
-        encoder->encode(minimumFontSize);
-        encoder->encode(minimumLogicalFontSize);
-        encoder->encode(defaultFontSize);
-        encoder->encode(defaultFixedFontSize);
-        encoder->encode(standardFontFamily);
-        encoder->encode(cursiveFontFamily);
-        encoder->encode(fantasyFontFamily);
-        encoder->encode(fixedFontFamily);
-        encoder->encode(sansSerifFontFamily);
-        encoder->encode(serifFontFamily);
-    }
-
+    void encode(CoreIPC::ArgumentEncoder* encoder) const;
     static bool decode(CoreIPC::ArgumentDecoder*, WebPreferencesStore&);
 
     static void overrideXSSAuditorEnabledForTestRunner(bool);
