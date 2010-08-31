@@ -1,3 +1,12 @@
+2010-08-31  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Attempt to fix flakiness of inspector extensions API audits tests on Qt.
+        Synchronize last output() with signalling test completion.
+
+        * inspector/resources/extension-main.html:
+        * inspector/resources/extension-main.js:
+        (onTestsDone):
+
 2010-08-31  Philippe Normand  <pnormand@igalia.com>
 
         Rubber-stamped by Xan Lopez.

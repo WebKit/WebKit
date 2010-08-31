@@ -2,9 +2,9 @@
 <head>
 <script src="../../http/tests/inspector/inspector-test.js"></script>
 <script type="text/javascript">
-function output(message)
+function output(message, callback)
 {
-    webInspector.inspectedWindow.evaluate("output(unescape('" + escape(message) + "'));");
+    webInspector.inspectedWindow.evaluate("output(unescape('" + escape(message) + "'));", callback);
 }
 
 output("Started extension.");

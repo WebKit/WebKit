@@ -26,8 +26,9 @@ function runTests()
 
 function onTestsDone()
 {
-    output("All tests done.");
-    top.postMessage("extension-tests-done","*");
+    output("All tests done.", function() {
+        top.postMessage("extension-tests-done","*");
+    });
 }
 
 function runTest(test, name)
