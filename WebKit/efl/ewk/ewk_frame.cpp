@@ -44,14 +44,15 @@
 #include "ScriptValue.h"
 #include "SharedBuffer.h"
 #include "SubstituteData.h"
-#include "ZoomMode.h"
 #include "WindowsKeyboardCodes.h"
+#include "ZoomMode.h"
 #include "ewk_private.h"
-#include <wtf/text/CString.h>
 
 #include <Eina.h>
 #include <Evas.h>
+#include <algorithm>
 #include <eina_safety_checks.h>
+#include <wtf/text/CString.h>
 
 static const char EWK_FRAME_TYPE_STR[] = "EWK_Frame";
 
@@ -818,6 +819,55 @@ Eina_Bool ewk_frame_text_matches_highlight_get(const Evas_Object* o)
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, EINA_FALSE);
     return sd->frame->markedTextMatchesAreHighlighted();
+}
+
+/** 
+ * Comparison function used by ewk_frame_text_matches_nth_pos_get
+ */
+static bool _ewk_frame_rect_cmp_less_than(const WebCore::IntRect& i, const WebCore::IntRect& j)
+{
+    return (i.y() < j.y() || (i.y() == j.y() && i.x() < j.x()));
+}   
+    
+/**
+ * Predicate used by ewk_frame_text_matches_nth_pos_get
+ */
+static bool _ewk_frame_rect_is_negative_value(const WebCore::IntRect& i)
+{
+    return (i.x() < 0 || i.y() < 0);
+}
+
+/**
+ * Get x, y position of n-th text match in frame
+ *
+ * @param o frame object where matches are highlighted.
+ * @param n index of element 
+ * @param x where to return x position. May be @c NULL. 
+ * @param y where to return y position. May be @c NULL.
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE for failure - when no matches found or 
+ *         n bigger than search results.
+ */
+Eina_Bool ewk_frame_text_matches_nth_pos_get(Evas_Object* o, int n, int* x, int* y)
+{
+    EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, EINA_FALSE);
+
+    Vector<WebCore::IntRect> intRects = sd->frame->document()->markers()->firstRectsForMarkers(WebCore::DocumentMarker::TextMatch);
+
+    /* remove useless values */
+    std::remove_if(intRects.begin(), intRects.end(), _ewk_frame_rect_is_negative_value);
+
+    if (intRects.isEmpty() || n > intRects.size())
+      return EINA_FALSE;
+
+    std::sort(intRects.begin(), intRects.end(), _ewk_frame_rect_cmp_less_than);
+
+    if (x)
+      *x = intRects[n - 1].x();
+    if (y)
+      *y = intRects[n - 1].y();
+    return EINA_TRUE;
 }
 
 /**
