@@ -1,3 +1,14 @@
+2010-08-31  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Implementing LayoutTestController::markerTextForListItem() in Chromium's DRT.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::markerTextForListItem):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+
 2010-08-31  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Ojan Vafai.

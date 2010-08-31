@@ -36,8 +36,10 @@
 #include "TestShell.h"
 #include "WebViewHost.h"
 #include "public/WebAnimationController.h"
+#include "public/WebBindings.h"
 #include "public/WebConsoleMessage.h"
 #include "public/WebDocument.h"
+#include "public/WebElement.h"
 #include "public/WebFrame.h"
 #include "public/WebGeolocationServiceMock.h"
 #include "public/WebInputElement.h"
@@ -179,6 +181,8 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setMockGeolocationError", &LayoutTestController::setMockGeolocationError);
     bindMethod("abortModal", &LayoutTestController::abortModal);
     bindMethod("setMockSpeechInputResult", &LayoutTestController::setMockSpeechInputResult);
+
+    bindMethod("markerTextForListItem", &LayoutTestController::markerTextForListItem);
 
     // The fallback method is called when an unknown method is invoked.
     bindFallbackMethod(&LayoutTestController::fallbackMethod);
@@ -1440,4 +1444,13 @@ WebKit::WebSpeechInputController* LayoutTestController::speechInputController(We
     if (!m_speechInputControllerMock.get())
         m_speechInputControllerMock.set(WebSpeechInputControllerMock::create(listener));
     return m_speechInputControllerMock.get();
+}
+
+void LayoutTestController::markerTextForListItem(const CppArgumentList& args, CppVariant* result)
+{
+    WebElement element;
+    if (!WebBindings::getElement(args[0].value.objectValue, &element))
+        result->setNull();
+    else
+        result->set(element.document().frame()->markerTextForListItem(element).utf8());
 }
