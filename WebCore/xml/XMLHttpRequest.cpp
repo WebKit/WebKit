@@ -32,6 +32,7 @@
 #include "EventException.h"
 #include "EventListener.h"
 #include "EventNames.h"
+#include "File.h"
 #include "HTTPParsers.h"
 #include "InspectorController.h"
 #include "InspectorTimelineAgent.h"
@@ -522,7 +523,12 @@ void XMLHttpRequest::send(Blob* body, ExceptionCode& ec)
         // FIXME: Should we set a Content-Type if one is not set.
         // FIXME: add support for uploading bundles.
         m_requestEntityBody = FormData::create();
-        m_requestEntityBody->appendBlob(body->url());
+        if (body->isFile())
+            m_requestEntityBody->appendFile(static_cast<File*>(body)->path());
+#if ENABLE(BLOB)
+        else
+            m_requestEntityBody->appendBlob(body->url());
+#endif
     }
 
     createRequest(ec);
