@@ -194,6 +194,14 @@ h1 :hover {
   background-color: #ffd;
 }
 
+.author {
+  font-style: italic;
+}
+
+.focused {
+  border: 1px solid blue;
+}
+
 .comment {
   position: relative;
 }
@@ -201,17 +209,6 @@ h1 :hover {
 .comment textarea {
   width: 100%;
   height: 6em;
-}
-
-.reply {
-  font-family: sans-serif;
-  float: right;
-  color: #999;
-  display: none;
-}
-
-.hot .reply {
-  display: block;
 }
 
 body {
@@ -230,6 +227,10 @@ body {
 
 #toolbar .actions {
   float: right;
+}
+
+#toolbar .commentStatus {
+  font-style:italic
 }
 
 .winter {
@@ -277,7 +278,7 @@ body {
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
-<script src="code-review.js?version=4"></script> 
+<script src="code-review.js?version=5"></script> 
 EOF
 
     def self.revisionOrDescription(string)

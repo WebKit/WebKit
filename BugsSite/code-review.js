@@ -14,7 +14,6 @@
   if (!attachment_id)
     return;
 
-  var current_comment = {}
   var next_line_id = 0;
 
   function idForLine(number) {
@@ -82,15 +81,16 @@
 
   var files = {}
 
-  function addPreviousComment(line, comment_text) {
+  function addPreviousComment(line, author, comment_text) {
     var comment_block = $('<div data-comment-for="' + line.attr('id') + '" class="previous_comment"></div>');
-    comment_block.text(comment_text).prepend('<div class="reply">Click to reply</div>');
-    comment_block.each(hoverify).click(addCommentField);
+    var author_block = $('<div class="author"></div>').text(author + ':');
+    comment_block.text(comment_text).prepend(author_block).each(hoverify).click(addCommentField);
     insertCommentFor(line, comment_block);
   }
 
   function displayPreviousComments(comments) {
     for (var i = 0; i < comments.length; ++i) {
+      var author = comments[i].author;
       var file_name = comments[i].file_name;
       var line_number = comments[i].line_number;
       var comment_text = comments[i].comment_text;
@@ -110,12 +110,18 @@
         if ($(this).text() != line_number)
           return;
         var line = $(this).parent();
-        addPreviousComment(line, comment_text);
+        addPreviousComment(line, author, comment_text);
       });
     }
+    if (comments.length == 0)
+      return;
+    descriptor = comments.length + ' comment';
+    if (comments.length > 1)
+      descriptor += 's';
+    $('#toolbar .commentStatus').text('This patch has ' + descriptor + '.  Scroll through them with the "n" and "p" keys.');
   }
 
-  function scanForComments(text) {
+  function scanForComments(author, text) {
     var comments = []
     var lines = text.split('\n');
     for (var i = 0; i < lines.length; ++i) {
@@ -134,8 +140,10 @@
         comment_lines.push(lines[i]);
         ++i;
       }
+      --i; // Decrement i because the for loop will increment it again in a second.
       var comment_text = comment_lines.join('\n');
       comments.push({
+        'author': author,
         'file_name': file_name,
         'line_number': line_number,
         'comment_text': comment_text
@@ -154,7 +162,7 @@
           var text = $(this).find('.bz_comment_text').text();
           var comment_marker = '(From update of attachment ' + attachment_id + ' .details.)';
           if (text.match(comment_marker))
-            $.merge(comments, scanForComments(text));
+            $.merge(comments, scanForComments(author, text));
         });
         displayPreviousComments(comments);
       });
@@ -172,22 +180,60 @@
   $(document).ready(function() {
     crawlDiff();
     fetchHistory();
-    $(document.body).prepend('<div id="toolbar"><div class="actions"><button id="post_comments">Prepare comments</button></div><div class="help">Double-click a line to add a comment.</div></div>');
+    $(document.body).prepend('<div id="toolbar"><div class="actions"><button id="post_comments">Prepare comments</button></div><span class="commentStatus"></span> <span class="help">Double-click a line to add a comment.</span></div>');
     $(document.body).prepend('<div id="comment_form" class="inactive"><div class="winter"></div><div class="lightbox"><iframe src="attachment.cgi?id=' + attachment_id + '&action=reviewform"></iframe></div></div>');
-  });
-
-  $('.comment textarea').live('keydown', function() {
-    var line_id = $(this).attr('data-comment-for');
-    current_comment[line_id] = $(this).val();
   });
 
   $('.comment .delete').live('click', function() {
     var line_id = $(this).parentsUntil('.comment').parent().find('textarea').attr('data-comment-for');
-    delete current_comment[line_id];
     var line = $('#' + line_id)
     findCommentBlockFor(line).remove();
     line.removeAttr('data-has-comment');
     trimCommentContextToBefore(line);
+  });
+
+  function focusOn(comment) {
+    $('.focused').removeClass('focused');
+    if (comment.length == 0)
+      return;
+    $(document).scrollTop(comment.addClass('focused').position().top - window.innerHeight/2);
+  }
+
+  function focusNextComment() {
+    var comments = $('.previous_comment');
+    if (comments.length == 0)
+      return;
+    var index = comments.index($('.focused'));
+    // Notice that -1 gets mapped to 0.
+    focusOn($(comments.get(index + 1)));
+  }
+
+  function focusPreviousComment() {
+    var comments = $('.previous_comment');
+    if (comments.length == 0)
+      return;
+    var index = comments.index($('.focused'));
+    if (index == -1)
+      index = comments.length;
+    if (index == 0) {
+      focusOn([]);
+      return;
+    }
+    focusOn($(comments.get(index - 1)));
+  }
+
+  var kCharCodeForN = 'n'.charCodeAt(0);
+  var kCharCodeForP = 'p'.charCodeAt(0);
+
+  $('body').live('keypress', function() {
+    // FIXME: There's got to be a better way to avoid seeing these keypress
+    // events.
+    if (event.target.nodeName == 'TEXTAREA')
+      return;
+    if (event.charCode == kCharCodeForN)
+      focusNextComment();
+    else if (event.charCode == kCharCodeForP)
+      focusPreviousComment();
   });
 
   function contextLinesFor(line) {
@@ -289,6 +335,8 @@
     });
     $('#comment_form').removeClass('inactive');
     var comment = comments_in_context.join('\n\n');
+    if (comment != '')
+      comment = 'View in context: ' + window.location + '\n\n' + comment;
     $('#comment_form').find('iframe').contents().find('#comment').val(comment);
   });
 })();
