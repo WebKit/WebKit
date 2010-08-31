@@ -1,3 +1,15 @@
+2010-08-31  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, updating chromium test_expectations.txt.
+
+        * platform/chromium-linux/fast/multicol/paginate-block-replaced-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/paginate-block-replaced-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/paginate-block-replaced-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/paginate-block-replaced-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/paginate-block-replaced-expected.png: Added.
+        * platform/chromium-win/fast/multicol/paginate-block-replaced-expected.txt: Added.
+        * platform/chromium/test_expectations.txt: Mark notifications-click-event.html as failing and rebase paginate-block-replaced on linux/win.
+
 2010-08-30  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Joseph Pecoraro.

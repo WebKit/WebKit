@@ -3155,3 +3155,8 @@ WONTFIX SKIP : media/video-does-not-loop.html = TIMEOUT
 
 // Need rebaseline
 BUGJIANLI : fast/files/apply-blob-url-to-img.html = IMAGE+TEXT
+
+// Passes in Chromium DRT.
+BUGWK44961 : fast/notifications/notifications-click-event.html = TIMEOUT
+
+BUGWK44967 MAC : fast/multicol/paginate-block-replaced.html = IMAGE
