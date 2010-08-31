@@ -126,8 +126,8 @@ def print_options():
     ]
 
 
-def configure_logging(options, meter):
-    """Configures the logging system."""
+def _configure_logging(options, meter):
+    """Configures the logging system. Return the previous handler, if any."""
     log_fmt = '%(message)s'
     log_datefmt = '%y%m%d %H:%M:%S'
     log_level = logging.INFO
@@ -136,9 +136,23 @@ def configure_logging(options, meter):
                    '%(message)s')
         log_level = logging.DEBUG
 
-    logging.basicConfig(level=log_level, format=log_fmt,
-                        datefmt=log_datefmt, stream=meter)
+    root = logging.getLogger()
+    handler = logging.StreamHandler(meter)
+    handler.setFormatter(logging.Formatter(log_fmt, None))
+    if not root.handlers:
+        old_handler = None
+        root.addHandler(handler)
+    else:
+        old_handler = root.handlers[0]
+        root.handlers[0] = handler
+    root.setLevel(log_level)
+    return old_handler
 
+
+def _restore_logging(handler):
+    root = logging.getLogger()
+    if root and root.handlers[0]:
+        root.handlers[0] = handler
 
 def parse_print_options(print_options, verbose, child_processes,
                         is_fully_parallel):
@@ -237,10 +251,19 @@ class Printer(object):
 
         self._meter = metered_stream.MeteredStream(options.verbose,
                                                    regular_output)
-        configure_logging(self._options, self._meter)
+        self._old_handler = _configure_logging(self._options, self._meter)
 
         self.switches = parse_print_options(options.print_options,
             options.verbose, child_processes, is_fully_parallel)
+
+    def cleanup(self):
+        """Restore logging configuration to its initial settings."""
+        _restore_logging(self._old_handler)
+        self._old_handler = None
+
+    def __del__(self):
+        if self._old_handler:
+            _restore_logging(self._old_handler)
 
     # These two routines just hide the implmentation of the switches.
     def disabled(self, option):

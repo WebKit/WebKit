@@ -37,6 +37,7 @@ import unittest
 import logging
 
 from webkitpy.common import array_stream
+from webkitpy.common.system import logtesting
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests.layout_package import printing
 from webkitpy.layout_tests.layout_package import dump_render_tree_thread
@@ -53,25 +54,24 @@ def get_options(args):
 
 class TestUtilityFunctions(unittest.TestCase):
     def test_configure_logging(self):
-        # FIXME: We need to figure out how to reset the basic logger.
-        # FIXME: If other testing classes call logging.basicConfig() then
-        # FIXME: these calls become no-ops and we can't control the
-        # FIXME: configuration to test things properly.
         options, args = get_options([])
         stream = array_stream.ArrayStream()
-        printing.configure_logging(options, stream)
+        handler = printing._configure_logging(options, stream)
         logging.info("this should be logged")
-        # self.assertFalse(stream.empty())
+        self.assertFalse(stream.empty())
 
         stream.reset()
         logging.debug("this should not be logged")
-        # self.assertTrue(stream.empty())
+        self.assertTrue(stream.empty())
+
+        printing._restore_logging(handler)
 
         stream.reset()
         options, args = get_options(['--verbose'])
-        printing.configure_logging(options, stream)
+        handler = printing._configure_logging(options, stream)
         logging.debug("this should be logged")
-        # self.assertFalse(stream.empty())
+        self.assertFalse(stream.empty())
+        printing._restore_logging(handler)
 
     def test_print_options(self):
         options, args = get_options([])
@@ -421,11 +421,12 @@ class  Testprinter(unittest.TestCase):
         self.assertFalse(err.empty())
         self.assertTrue(out.empty())
 
-    def test_write(self):
+    def test_write_nothing(self):
         printer, err, out = self.get_printer(['--print', 'nothing'])
         printer.write("foo")
         self.assertTrue(err.empty())
 
+    def test_write_misc(self):
         printer, err, out = self.get_printer(['--print', 'misc'])
         printer.write("foo")
         self.assertFalse(err.empty())
@@ -433,6 +434,7 @@ class  Testprinter(unittest.TestCase):
         printer.write("foo", "config")
         self.assertTrue(err.empty())
 
+    def test_write_everything(self):
         printer, err, out = self.get_printer(['--print', 'everything'])
         printer.write("foo")
         self.assertFalse(err.empty())
@@ -440,11 +442,10 @@ class  Testprinter(unittest.TestCase):
         printer.write("foo", "config")
         self.assertFalse(err.empty())
 
-        # FIXME: this should be logged somewhere, but it actually
-        # disappears into the ether in the logging subsystem.
+    def test_write_verbose(self):
         printer, err, out = self.get_printer(['--verbose'])
         printer.write("foo")
-        self.assertTrue(err.empty())
+        self.assertTrue(not err.empty() and "foo" in err.get()[0])
         self.assertTrue(out.empty())
 
     def test_print_unexpected_results(self):

@@ -327,7 +327,6 @@ class Port(object):
         if not self._webkit_base_dir:
             abspath = os.path.abspath(__file__)
             self._webkit_base_dir = abspath[0:abspath.find('WebKitTools')]
-            _log.debug("Using WebKit root: %s" % self._webkit_base_dir)
 
         return os.path.join(self._webkit_base_dir, *comps)
 
