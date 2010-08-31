@@ -313,7 +313,7 @@ void WebContext::preferencesDidChange()
 
 void WebContext::postMessageToInjectedBundle(const String& messageName, APIObject* messageBody)
 {
-    if (!m_process)
+    if (!hasValidProcess())
         return;
 
     // FIXME: We should consider returning false from this function if the messageBody cannot

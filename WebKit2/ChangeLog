@@ -1,5 +1,19 @@
 2010-08-27  Adam Roben  <aroben@apple.com>
 
+        Don't send messages to the injected bundle if the web process has
+        exited
+
+        Fixes <http://webkit.org/b/43046> <rdar://problem/8239455> Crash in
+        WKContextPostMessageToInjectedBundle if the web process has exited
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::postMessageToInjectedBundle): Only send messages
+        when we have a valid web process.
+
+2010-08-27  Adam Roben  <aroben@apple.com>
+
         Use the Windows thread pool instead of a dedicated thread for
         WorkQueue on Windows
 
