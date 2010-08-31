@@ -1,3 +1,16 @@
+2010-08-30  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Enable HTML5lib's test_innerHTML01.dat
+        https://bugs.webkit.org/show_bug.cgi?id=44919
+
+        These tests provoked two branches that we hadn't implemented yet.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+
 2010-08-30  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.

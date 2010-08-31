@@ -507,6 +507,8 @@ Expected:
 |   <body>
 |     <svg svg>
 |       "<!--svg-->"
+resources/tests_innerHTML_1.dat: PASS
+
 resources/webkit01.dat: PASS
 
 resources/webkit02.dat: PASS

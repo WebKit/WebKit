@@ -2,6 +2,18 @@
 
         Reviewed by Eric Seidel.
 
+        Enable HTML5lib's test_innerHTML01.dat
+        https://bugs.webkit.org/show_bug.cgi?id=44919
+
+        Enable these tests now that they don't ASSERT.  Yay!  They pass.  :)
+
+        * html5lib/runner-expected.txt:
+        * html5lib/runner.html:
+
+2010-08-30  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Import new tests from HTML5lib
         https://bugs.webkit.org/show_bug.cgi?id=44912
 

@@ -1488,7 +1488,10 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             || token.name() == keygenTag
             || token.name() == textareaTag) {
             parseError(token);
-            notImplemented(); // fragment case
+            if (!m_tree.openElements()->inTableScope(selectTag)) {
+                ASSERT(isParsingFragment());
+                return;
+            }
             AtomicHTMLToken endSelect(HTMLToken::EndTag, selectTag.localName());
             processEndTag(endSelect);
             processStartTag(token);
@@ -2358,7 +2361,11 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
             return;
         }
         if (token.name() == selectTag) {
-            notImplemented(); // fragment case
+            if (!m_tree.openElements()->inTableScope(token.name())) {
+                ASSERT(isParsingFragment());
+                parseError(token);
+                return;
+            }
             m_tree.openElements()->popUntilPopped(selectTag.localName());
             resetInsertionModeAppropriately();
             return;
