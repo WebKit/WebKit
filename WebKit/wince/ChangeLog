@@ -1,3 +1,24 @@
+2010-08-31  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add ContextMenuClientWinCE
+        https://bugs.webkit.org/show_bug.cgi?id=44820
+
+        * WebCoreSupport/ContextMenuClientWinCE.cpp: Added.
+        (WebKit::ContextMenuClient::ContextMenuClient):
+        (WebKit::ContextMenuClient::contextMenuDestroyed):
+        (WebKit::ContextMenuClient::getCustomMenuFromDefaultItems):
+        (WebKit::ContextMenuClient::contextMenuItemSelected):
+        (WebKit::ContextMenuClient::downloadURL):
+        (WebKit::ContextMenuClient::copyImageToClipboard):
+        (WebKit::ContextMenuClient::searchWithGoogle):
+        (WebKit::ContextMenuClient::lookUpInDictionary):
+        (WebKit::ContextMenuClient::speak):
+        (WebKit::ContextMenuClient::stopSpeaking):
+        (WebKit::ContextMenuClient::isSpeaking):
+        * WebCoreSupport/ContextMenuClientWinCE.h: Added.
+
 2010-08-28  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Adam Roben.
