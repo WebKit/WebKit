@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<body>
+<input type="file" name="file" id="file" onchange="onInputFileChange()">
+<pre id='console'></pre>
+
+<script>
+function log(message)
+{
+    document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
+}
+
+function onInputFileChange(file)
+{
+    var file = document.getElementById("file").files[0];
+    var fileURL = window.createBlobURL(file);
+
+    log("Test that XMLHttpRequest GET succeeds.");
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", fileURL, false);
+    xhr.send();
+    log(xhr.responseText);
+
+    log("Test that XMLHttpRequest POST fails.");
+    xhr = new XMLHttpRequest();
+    xhr.open("POST", fileURL, false);
+    try {
+        xhr.send();
+    } catch (error) {
+        log("Received exception " + error.code + ": " + error.name);
+    }
+    log(xhr.responseText);
+
+    log("DONE");
+    if (layoutTestController.notifyDone)
+        layoutTestController.notifyDone();
+}
+
+function runTests()
+{
+    eventSender.beginDragWithFiles(['resources/UTF8.txt']);
+    eventSender.mouseMoveTo(10, 10);
+    eventSender.mouseUp();
+}
+
+if (window.eventSender) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    window.onload = runTests;
+}
+</script>
+</body>
+</html>

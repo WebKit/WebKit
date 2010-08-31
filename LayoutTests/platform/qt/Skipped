@@ -783,6 +783,8 @@ http/tests/security/isolatedWorld/world-reuse.html
 fast/dom/Window/window-postmessage-clone-frames.html
 fast/files/read-blob-async.html
 fast/files/read-file-async.html
+fast/files/apply-blob-url-to-img.html
+fast/files/apply-blob-url-to-xhr.html
 fast/files/workers
 
 # Missing layoutTestController.setAlwaysAcceptCookies()

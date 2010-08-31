@@ -55,7 +55,11 @@ for (var name in protoPropertySet)
     protoPropertyNames.push(name);
 protoPropertyNames.sort();
 
-for (var i = 0; i < protoPropertyNames.length; ++i)
+for (var i = 0; i < protoPropertyNames.length; ++i) {
+    // Ignore these properties because they do not exist in all implementations.
+    if (protoPropertyNames[i] == "createBlobURL" || protoPropertyNames[i] == "revokeBlobURL")
+        continue;
     shouldBeUndefined("Object.getOwnPropertyDescriptor(window, '" + protoPropertyNames[i] + "')");
+}
 
 var successfullyParsed = true;

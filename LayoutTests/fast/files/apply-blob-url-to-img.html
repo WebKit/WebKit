@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+<input type="file" name="file" id="file" onchange="onInputFileChange()">
+<img id='imgToReplace' src=''>
+<pre id='console'></pre>
+
+<script>
+function onInputFileChange(file)
+{
+    var file = document.getElementById("file").files[0];
+    document.getElementById('imgToReplace').src = window.createBlobURL(file);
+}
+
+function runTests()
+{
+    eventSender.beginDragWithFiles(['resources/abe.png']);
+    eventSender.mouseMoveTo(10, 10);
+    eventSender.mouseUp();
+}
+
+if (window.eventSender) {
+    window.onload = runTests;
+}
+</script>
+</body>
+</html>

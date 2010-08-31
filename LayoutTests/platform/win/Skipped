@@ -197,6 +197,8 @@ fast/events/drag-file-crash.html
 fast/dom/Window/window-postmessage-clone.html
 fast/files/read-blob-async.html
 fast/files/read-file-async.html
+fast/files/apply-blob-url-to-img.html
+fast/files/apply-blob-url-to-xhr.html
 fast/files/workers
 
 # Need to add functionality to DumpRenderTree to test IDN <rdar://problem/5301954>

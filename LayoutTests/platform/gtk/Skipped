@@ -3148,6 +3148,8 @@ http/tests/local/formdata/send-form-data-with-sliced-file.html
 http/tests/local/formdata/upload-events.html
 fast/files/read-blob-async.html
 fast/files/read-file-async.html
+fast/files/apply-blob-url-to-img.html
+fast/files/apply-blob-url-to-xhr.html
 fast/files/workers
 http/tests/media/video-play-stall-seek.html
 http/tests/media/video-play-stall.html

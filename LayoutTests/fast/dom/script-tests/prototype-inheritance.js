@@ -21,6 +21,7 @@ var skippedProperties = [
     "FileError", "FileReader",
     "indexedDB", "IDBKeyRange",
     "showModalDialog",
+    "createBlobURL", "revokeBlobURL",
     // Ignore this property because it only appears in debug builds.
     "jscprint"
 ];

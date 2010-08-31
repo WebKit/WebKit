@@ -63,6 +63,7 @@
 #include "IDBKeyRange.h"
 #include "InspectorController.h"
 #include "InspectorTimelineAgent.h"
+#include "KURL.h"
 #include "Location.h"
 #include "StyleMedia.h"
 #include "MessageEvent.h"
@@ -1570,5 +1571,17 @@ EventTargetData* DOMWindow::ensureEventTargetData()
 {
     return &m_eventTargetData;
 }
+
+#if ENABLE(BLOB)
+String DOMWindow::createBlobURL(Blob* blob)
+{
+    return scriptExecutionContext()->createPublicBlobURL(blob).string();
+}
+
+void DOMWindow::revokeBlobURL(const String& blobURLString)
+{
+    scriptExecutionContext()->revokePublicBlobURL(KURL(ParsedURLString, blobURLString));
+}
+#endif
 
 } // namespace WebCore

@@ -743,6 +743,11 @@ module window {
 
         attribute [Conditional=BLOB] BlobBuilderConstructor BlobBuilder;
 
+#if defined(ENABLE_BLOB) && ENABLE_BLOB
+        DOMString createBlobURL(in Blob blob);
+        void revokeBlobURL(in DOMString blobURL);
+#endif
+
 #endif // defined(LANGUAGE_JAVASCRIPT)
 
 #if defined(V8_BINDING) && V8_BINDING
