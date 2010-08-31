@@ -1,3 +1,27 @@
+2010-08-31  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Update in-test expectations to account for HTML5 parsing changes
+        https://bugs.webkit.org/show_bug.cgi?id=44889
+
+        We've already updated the -expected.txt files for these tests to
+        account for the behavior changes with the HTML5 parser.  This patch
+        updates the redundant "in-test" expectations so that the results say
+        "PASS" instead of "FAIL".
+
+        * fast/forms/datalist-nonoption-child.html:
+        * fast/forms/state-restore-to-non-edited-controls-expected.txt:
+        * fast/forms/state-restore-to-non-edited-controls.html:
+        * fast/parser/fragment-parser-expected.txt:
+        * fast/parser/residual-style-close-across-n-blocks-expected.txt:
+        * fast/parser/residual-style-close-across-n-blocks.html:
+        * fast/parser/script-tests/fragment-parser.js:
+        * http/tests/misc/isindex-formdata-expected.txt:
+        * http/tests/misc/isindex-formdata.html:
+        * http/tests/misc/isindex-with-no-form-base-href-expected.txt:
+        * http/tests/misc/resources/isindex-with-no-form-base-href.html:
+
 2010-08-31  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Tony Chang.

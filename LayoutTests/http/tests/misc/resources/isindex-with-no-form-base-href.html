@@ -11,7 +11,7 @@ function test()
 {
     var forms = document.getElementsByTagName('form');
     if (forms.length != 1 || forms[0].action != 'http://localhost:8000/misc/resources/isindex-with-no-form-base-href-submit.html') {
-        log('FAIL: could not find form with expected action');
+        log('Could not find form with expected action');
         if (window.layoutTestController)
             layoutTestController.notifyDone();
     }

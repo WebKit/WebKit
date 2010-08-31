@@ -22,8 +22,7 @@ datalist = document.getElementById('dl2');
 shouldBe('datalist.firstChild.nodeName', '"B"');
 
 datalist = document.getElementById('dl3');
-// <div> tag should be ignored.
-shouldBe('datalist.firstChild.nodeName', '"#text"');
+shouldBe('datalist.firstChild.nodeName', '"DIV"');
 
 var successfullyParsed = true;
 </script>

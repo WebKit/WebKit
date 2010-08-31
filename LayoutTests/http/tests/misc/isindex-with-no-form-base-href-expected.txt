@@ -3,7 +3,7 @@
 --------
 Frame: '<!--framePath //<!--frame0-->-->'
 --------
-FAIL: could not find form with expected action
+Could not find form with expected action
 This page tests that we correctly put the value of an <isindex> element into the form data.
 
 If you are running this test by hand, press the enter/return key on your keyboard to submit.

@@ -5,7 +5,7 @@ PASS document.getElementById("hidden").value is "2"
 PASS document.getElementById("image").value is "2"
 PASS document.getElementById("reset").value is "2"
 PASS document.getElementById("submit1").value is "2"
-FAIL document.getElementById("text1").value should be edit. Was 2.
+PASS document.getElementById("text1").value is "2"
 PASS document.getElementById("text2").value is "2"
 PASS document.getElementById("textarea").value is "2"
 
