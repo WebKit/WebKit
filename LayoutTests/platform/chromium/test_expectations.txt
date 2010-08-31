@@ -2408,10 +2408,6 @@ BUG32949 WIN LINUX MAC : fast/dom/Window/invalid-protocol.html = TEXT
 
 BUG21852 DEFER SKIP LINUX WIN : fast/canvas/webgl = CRASH
 
-// Disabled until we get history.{back,forward,go} changed to always be
-// asynchronously again.
-BUG33350 : fast/dom/location-hash.html = TEXT
-
 // WebKit roll 53941 -> 54015
 BUG33358 WIN LINUX : fast/dom/Window/window-postmessage-clone-frames.html = TEXT
 

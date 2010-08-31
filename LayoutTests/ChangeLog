@@ -1,3 +1,20 @@
+2010-08-30  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        HISTORY_ALWAYS_ASYNC should be removed (history should always be async)
+        https://bugs.webkit.org/show_bug.cgi?id=44315
+
+        Add test that checks history.back() asynchronous behavior. Modifies
+        location-hash.html to not assume synchronous traversal and removes it
+        from the Chromium test expectations, since it passes there now too.
+
+        * fast/dom/location-hash-expected.txt:
+        * fast/dom/location-hash.html:
+        * fast/history/history-traversal-is-asynchronous-expected.txt: Added.
+        * fast/history/history-traversal-is-asynchronous.html: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-08-30  Jian Li  <jianli@chromium.org>
 
         Reviewed by Darin Fisher.

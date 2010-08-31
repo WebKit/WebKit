@@ -45,21 +45,32 @@
             shouldBe('window.history.length == originalHistoryLength + 2', true);
             break;        
         case 3:
+            shouldBe('window.location.hash', '#bar');
+            shouldBe("window.location == originalLocation + '#bar'", true);
             window.history.back();
+            // history.back() is asychronous, location should be unchanged
+            shouldBe('window.location.hash', '#bar');
+            shouldBe("window.location == originalLocation + '#bar'", true);
+            break;
+        case 4:
+            shouldBe('window.location.hash', '#foo');
+            shouldBe("window.location == originalLocation + '#foo'", true);
+            window.history.back();
+            // history.back() is asychronous, location should be unchanged
             shouldBe('window.location.hash', '#foo');
             shouldBe("window.location == originalLocation + '#foo'", true);
             break;
-        case 4:
-            window.history.back();
+        case 5:
+            shouldBe('window.location.hash', '');
+            shouldBe("window.location == originalLocation", true);
+            window.history.forward();
+            // history.forward() is asychronous, location should be unchanged
             shouldBe('window.location.hash', '');
             shouldBe("window.location == originalLocation", true);
             break;
-        case 5:
-            window.history.forward();
+        case 6:
             shouldBe('window.location.hash', '#foo');
             shouldBe("window.location == originalLocation + '#foo'", true);
-            break;
-        case 6:
             window.location.hash = '';
             if (numErrors == 0)
                 print("SUCCESS!", "green")
@@ -73,7 +84,10 @@
         }
         
         state ++;
-        step();
+        
+        // Do the step in a timeout to give asynchornous history.back/forward()
+        // calls a chance to run.
+        setTimeout(step, 0);
     }
         
     function runTests() {

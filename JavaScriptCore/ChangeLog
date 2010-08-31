@@ -1,3 +1,14 @@
+2010-08-30  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        HISTORY_ALWAYS_ASYNC should be removed (history should always be async)
+        https://bugs.webkit.org/show_bug.cgi?id=44315
+
+        Remove ENABLE_HISTORY_ALWAYS_ASYNC #define.
+
+        * wtf/Platform.h: 
+
 2010-08-30  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.
