@@ -1304,15 +1304,20 @@ webcore_sources += \
 	WebCore/fileapi/File.cpp \
 	WebCore/fileapi/File.h \
 	WebCore/fileapi/FileError.h \
+	WebCore/fileapi/FileException.h \
 	WebCore/fileapi/FileList.cpp \
 	WebCore/fileapi/FileList.h \
 	WebCore/fileapi/FileReader.cpp \
 	WebCore/fileapi/FileReader.h \
+	WebCore/fileapi/FileReaderSync.cpp \
+	WebCore/fileapi/FileReaderSync.h \
 	WebCore/fileapi/FileStreamProxy.cpp \
 	WebCore/fileapi/FileStreamProxy.h \
 	WebCore/fileapi/FileThread.cpp \
 	WebCore/fileapi/FileThread.h \
 	WebCore/fileapi/FileThreadTask.h \
+	WebCore/fileapi/ThreadableBlobRegistry.cpp \
+	WebCore/fileapi/ThreadableBlobRegistry.h \
 	WebCore/history/BackForwardController.cpp \
 	WebCore/history/BackForwardController.h \
 	WebCore/history/BackForwardControllerClient.h \
@@ -1545,6 +1550,7 @@ webcore_sources += \
 	WebCore/html/parser/HTMLEntityParser.h \
 	WebCore/html/parser/HTMLEntitySearch.cpp \
 	WebCore/html/parser/HTMLEntitySearch.h \
+	WebCore/html/parser/HTMLEntityTable.h \
 	WebCore/html/parser/HTMLFormattingElementList.cpp \
 	WebCore/html/parser/HTMLFormattingElementList.h \
 	WebCore/html/parser/HTMLParserScheduler.cpp \
@@ -1561,8 +1567,6 @@ webcore_sources += \
 	WebCore/html/parser/HTMLTreeBuilder.h \
 	WebCore/html/parser/HTMLViewSourceParser.cpp \
 	WebCore/html/parser/HTMLViewSourceParser.h \
-	WebCore/fileapi/ThreadableBlobRegistry.cpp \
-	WebCore/fileapi/ThreadableBlobRegistry.h \
 	WebCore/html/ValidityState.cpp \
 	WebCore/html/ValidityState.h \
 	WebCore/html/VoidCallback.h \
@@ -2125,7 +2129,6 @@ webcore_sources += \
 	WebCore/platform/network/ResourceRequestBase.h \
 	WebCore/platform/network/ResourceResponseBase.cpp \
 	WebCore/platform/network/ResourceResponseBase.h \
-	WebCore/platform/text/AtomicStringImpl.h \
 	WebCore/platform/text/Base64.cpp \
 	WebCore/platform/text/Base64.h \
 	WebCore/platform/text/BidiContext.cpp \
@@ -2146,8 +2149,6 @@ webcore_sources += \
 	WebCore/platform/text/StringBuffer.h \
 	WebCore/platform/text/StringBuilder.cpp \
 	WebCore/platform/text/StringBuilder.h \
-	WebCore/platform/text/StringHash.h \
-	WebCore/platform/text/StringImpl.h \
 	WebCore/platform/text/SuffixTree.h \
 	WebCore/platform/text/TextBoundaries.h \
 	WebCore/platform/text/TextBoundaries.cpp \
@@ -2788,7 +2789,6 @@ webcore_sources += \
 	WebCore/storage/DatabaseTracker.cpp \
 	WebCore/storage/DatabaseTracker.h \
 	WebCore/storage/DatabaseTrackerClient.h \
-	WebCore/storage/IDBKey.h \
 	WebCore/storage/OriginQuotaManager.cpp \
 	WebCore/storage/OriginQuotaManager.h \
 	WebCore/storage/OriginUsageRecord.cpp \
@@ -2888,47 +2888,50 @@ webcore_sources += \
 	WebCore/storage/IDBAny.cpp \
 	WebCore/storage/IDBAny.h \
 	WebCore/storage/IDBCallbacks.h \
-	WebCore/storage/IDBDatabase.cpp \
-	WebCore/storage/IDBCursor.h \
-	WebCore/storage/IDBCursor.cpp \
 	WebCore/storage/IDBCursorBackendImpl.cpp \
 	WebCore/storage/IDBCursorBackendImpl.h \
 	WebCore/storage/IDBCursorBackendInterface.h \
-	WebCore/storage/IDBDatabase.h \
+	WebCore/storage/IDBCursor.cpp \
+	WebCore/storage/IDBCursor.h \
 	WebCore/storage/IDBDatabaseBackendImpl.cpp \
 	WebCore/storage/IDBDatabaseBackendImpl.h \
 	WebCore/storage/IDBDatabaseBackendInterface.h \
+	WebCore/storage/IDBDatabase.cpp \
 	WebCore/storage/IDBDatabaseError.h \
 	WebCore/storage/IDBDatabaseException.h \
+	WebCore/storage/IDBDatabase.h \
 	WebCore/storage/IDBErrorEvent.cpp \
 	WebCore/storage/IDBErrorEvent.h \
 	WebCore/storage/IDBEvent.cpp \
 	WebCore/storage/IDBEvent.h \
-	WebCore/storage/IDBFactory.cpp \
-	WebCore/storage/IDBFactory.h \
-	WebCore/storage/IDBFactoryBackendInterface.cpp \
-	WebCore/storage/IDBFactoryBackendInterface.h \
 	WebCore/storage/IDBFactoryBackendImpl.cpp \
 	WebCore/storage/IDBFactoryBackendImpl.h
-	WebCore/storage/IDBIndex.cpp \
-	WebCore/storage/IDBIndex.h \
-	WebCore/storage/IDBIndexBackendInterface.h \
+	WebCore/storage/IDBFactoryBackendInterface.cpp \
+	WebCore/storage/IDBFactoryBackendInterface.h \
+	WebCore/storage/IDBFactory.cpp \
+	WebCore/storage/IDBFactory.h \
 	WebCore/storage/IDBIndexBackendImpl.cpp \
 	WebCore/storage/IDBIndexBackendImpl.h \
+	WebCore/storage/IDBIndexBackendInterface.h \
+	WebCore/storage/IDBIndexBackendInterface.h \
+	WebCore/storage/IDBIndex.cpp \
+	WebCore/storage/IDBIndex.h \
+	WebCore/storage/IDBKey.h \
 	WebCore/storage/IDBKeyRange.cpp \
 	WebCore/storage/IDBKeyRange.h \
-	WebCore/storage/IDBObjectStore.cpp \
-	WebCore/storage/IDBObjectStore.h \
 	WebCore/storage/IDBObjectStoreBackendImpl.cpp \
 	WebCore/storage/IDBObjectStoreBackendImpl.h \
 	WebCore/storage/IDBObjectStoreBackendInterface.h \
+	WebCore/storage/IDBObjectStoreBackendInterface.h \
+	WebCore/storage/IDBObjectStore.cpp \
+	WebCore/storage/IDBObjectStore.h \
 	WebCore/storage/IDBRequest.cpp \
 	WebCore/storage/IDBRequest.h \
 	WebCore/storage/IDBSuccessEvent.cpp \
 	WebCore/storage/IDBSuccessEvent.h \
+	WebCore/storage/IDBTransactionBackendInterface.h \
 	WebCore/storage/IDBTransaction.cpp \
-	WebCore/storage/IDBTransaction.h \
-	WebCore/storage/IDBTransactionBackendInterface.h
+	WebCore/storage/IDBTransaction.h
 endif # END ENABLE_INDEXED_DATABASE
 
 # ----
@@ -4444,10 +4447,10 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSFileWriter.h
 
 webcore_sources += \
-	WebCore/html/AsyncFileWriter.h \
-	WebCore/html/FileWriter.cpp \
-	WebCore/html/FileWriter.h \
-	WebCore/html/FileWriterClient.h
+	WebCore/fileapi/AsyncFileWriter.h \
+	WebCore/fileapi/FileWriterClient.h \
+	WebCore/fileapi/FileWriter.cpp \
+	WebCore/fileapi/FileWriter.h
 
 endif  # END ENABLE_FILE_WRITER
 
@@ -4569,6 +4572,7 @@ DerivedSources/WebCore/JS%.cpp: %.idl $(SCRIPTS_BINDINGS) $(WebCore)/bindings/sc
 EXTRA_DIST += \
 	$(shell ls $(srcdir)/WebCore/css/*.idl) \
 	$(shell ls $(srcdir)/WebCore/dom/*.idl) \
+	$(shell ls $(srcdir)/WebCore/fileapi/*.idl) \
 	$(shell ls $(srcdir)/WebCore/html/canvas/*.idl) \
 	$(shell ls $(srcdir)/WebCore/html/*.idl) \
 	$(shell ls $(srcdir)/WebCore/inspector/*.idl) \
@@ -4613,6 +4617,8 @@ EXTRA_DIST += \
 	WebCore/html/DocTypeStrings.gperf \
 	WebCore/html/HTMLAttributeNames.in \
 	WebCore/html/HTMLTagNames.in \
+	WebCore/html/parser/create-html-entity-table \
+	WebCore/html/parser/HTMLEntityNames.in \
 	WebCore/icu/LICENSE \
 	WebCore/inspector/CodeGeneratorInspector.pm \
 	WebCore/LICENSE-APPLE \

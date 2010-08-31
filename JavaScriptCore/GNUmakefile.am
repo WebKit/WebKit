@@ -389,6 +389,7 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/SmallStrings.cpp \
 	JavaScriptCore/runtime/SmallStrings.h \
 	JavaScriptCore/runtime/StringBuilder.h \
+	JavaScriptCore/runtime/StringConcatenate.h \
 	JavaScriptCore/runtime/StringConstructor.cpp \
 	JavaScriptCore/runtime/StringConstructor.h \
 	JavaScriptCore/runtime/StringObject.cpp \
@@ -408,7 +409,6 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/Tracing.h \
 	JavaScriptCore/runtime/UString.cpp \
 	JavaScriptCore/runtime/UString.h \
-	JavaScriptCore/runtime/UStringImpl.h \
 	JavaScriptCore/runtime/WeakGCMap.h \
 	JavaScriptCore/runtime/WeakGCPtr.h \
 	JavaScriptCore/runtime/WeakRandom.h \
@@ -427,6 +427,7 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/CurrentTime.h \
 	JavaScriptCore/wtf/DateMath.cpp \
 	JavaScriptCore/wtf/DateMath.h \
+	JavaScriptCore/wtf/DecimalNumber.h \
 	JavaScriptCore/wtf/Deque.h \
 	JavaScriptCore/wtf/DisallowCType.h \
 	JavaScriptCore/wtf/dtoa.cpp \
