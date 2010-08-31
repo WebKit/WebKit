@@ -572,9 +572,8 @@ BUG20521 LINUX WIN : fast/text/atsui-rtl-override-selection.html = FAIL
 // This test checks that we hack around a bug in helvetica.  We fail to.
 BUG20519 LINUX WIN : fast/text/wide-zero-width-space.html = FAIL
 
-// More missing international text overides, not needed for Beta.
-// Capitalization results match Safari, even if "not fully correct"
-BUG20547 LINUX WIN : fast/text/capitalize-boundaries.html = FAIL
+// There's a missing glyph box in "full-time".
+BUG20547 WIN : fast/text/capitalize-boundaries.html = FAIL
 
 // Different button line-heights, our behavior looks wrong.
 BUG20551 LINUX WIN : fast/replaced/table-percent-height.html = FAIL
