@@ -29,7 +29,7 @@
 namespace WebCore {
 PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy, Frame*)
 {
-    return new ClipboardEfl(policy, false);
+    return ClipboardEfl::create(policy, false);
 }
 
 PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy, DragData*, Frame*)
