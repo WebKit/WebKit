@@ -90,8 +90,6 @@ interface IWebFramePrivate : IUnknown
     HRESULT pauseAnimation([in] BSTR animationName, [in] IDOMNode* node, [in] double secondsFromNow, [out, retval] BOOL* animationWasRunning);
     HRESULT pauseTransition([in] BSTR propertyName, [in] IDOMNode* node, [in] double secondsFromNow, [out, retval] BOOL* transitionWasRunning);
     HRESULT numberOfActiveAnimations([out, retval] UINT* number);
-    HRESULT suspendAnimations();
-    HRESULT resumeAnimations();
 
     HRESULT isDisplayingStandaloneImage([out, retval] BOOL* result);
 
@@ -116,4 +114,7 @@ interface IWebFramePrivate : IUnknown
     HRESULT paintScrollViewRectToContextAtPoint([in] RECT rect, [in] POINT pt, [in] OLE_HANDLE deviceContext);
 
     HRESULT renderTreeAsExternalRepresentation([in] BOOL forPrinting, [out, retval] BSTR* result);
+
+    HRESULT suspendAnimations();
+    HRESULT resumeAnimations();
 }

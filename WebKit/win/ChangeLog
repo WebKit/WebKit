@@ -1,3 +1,18 @@
+2010-08-30  Adam Roben  <aroben@apple.com>
+
+        Fix crash on launch on Windows due to changing IWebFramePrivate's
+        vtable
+
+        This regressed in r65107.
+
+        Fixes <http://webkit.org/b/44755>.
+
+        Rubber-stamped by Jon Honeycutt.
+
+        * Interfaces/IWebFramePrivate.idl: Moved suspendAnimations and
+        resumeAnimations to the end of the interface so that the vtable will
+        match what Safari expects.
+
 2010-08-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r66198.
