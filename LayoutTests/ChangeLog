@@ -1,3 +1,10 @@
+2010-08-31  Jian Li  <jianli@chromium.org>
+
+        Skip fast/files/apply-blob-url-to-img.html for now until finding out
+        how to generate the right result.
+
+        * platform/mac/Skipped:
+
 2010-08-31  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Adam Barth.
