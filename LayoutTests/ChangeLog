@@ -1,3 +1,29 @@
+2010-08-31  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Remove passing tests from Chromium's test_expectations.txt
+        https://bugs.webkit.org/show_bug.cgi?id=44906
+
+        Remove test expectations from Chromium's test_expectations.txt that are
+        incorrect (the tests now pass).
+        
+        fast/events/special-key-events-in-input-text.html
+            fixed by http://crrev.com/57503
+
+        fast/events/tabindex-focus-chain.html
+            fixed by http://trac.webkit.org/changeset/66311
+
+        fast/forms/tabs-with-modifiers.html
+            fixed by http://trac.webkit.org/changeset/65748
+
+        editing/selection/drag-in-iframe.html
+            fixed by http://trac.webkit.org/changeset/66269/ (appeared twice in
+            the file)
+
+        * platform/chromium/drt_expectations.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-08-31  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Attempt to fix flakiness of inspector extensions API audits tests on Qt.

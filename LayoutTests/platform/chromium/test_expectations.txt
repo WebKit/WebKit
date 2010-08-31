@@ -1879,7 +1879,6 @@ BUG9798 SLOW LINUX RELEASE : transitions/transition-timing-function.html = PASS
 // This test definitely times out (i.e. is not just slow).
 BUG9798 WIN RELEASE : http/tests/xmlhttprequest/small-chunks-response-text.html = PASS TIMEOUT
 BUG9798 LINUX DEBUG : fast/multicol/float-multicol.html = IMAGE PASS
-BUG9798 MAC RELEASE : editing/selection/drag-in-iframe.html = FAIL PASS
 BUG9798 LINUX : svg/custom/use-property-changes-through-svg-dom.svg = FAIL
 BUG9798 LINUX : svg/custom/js-update-transform-changes.svg = FAIL
 // Occasionally times out. Not just slow.
@@ -2832,7 +2831,6 @@ BUG48737 WIN LINUX MAC SKIP : ietestcenter/Javascript/15.4.4.15-3-8.html = TIMEO
 
 // Broken prior to r62921.
 BUG48696 WIN LINUX : fast/forms/focus2.html = CRASH
-BUG48696 WIN LINUX MAC : fast/forms/tabs-with-modifiers.html = CRASH
 
 BUG49029 WIN LINUX MAC : fast/js/object-literal-syntax.html = TEXT
 
@@ -3017,9 +3015,6 @@ BUG50969 : fast/events/keydown-numpad-keys.html = TEXT
 // See crbug.com/50637.
 BUG50637 : fast/dom/prototype-inheritance.html = FAIL
 
-// This test needs a test_shell change.
-BUG51036 : fast/events/special-key-events-in-input-text.html = FAIL
-
 // Application Cache Quotas
 BUGWK43459 : http/tests/appcache/origin-quota.html = TEXT MISSING
 
@@ -3118,7 +3113,6 @@ BUG52810 WIN LINUX : fast/forms/listbox-selection.html = TEXT
 
 // Tests are failing after http://trac.webkit.org/changeset/65681/
 // due to pixel results not having a caret visible.
-BUGWK44290 WIN LINUX : editing/selection/drag-in-iframe.html = IMAGE
 BUGWK44290 WIN MAC : fast/forms/input-text-scroll-left-on-blur.html = IMAGE
 
 // Clip paths aren't working after http://trac.webkit.org/changeset/65729
@@ -3137,9 +3131,6 @@ BUG53073 LINUX : svg/custom/clip-path-units-changes.svg = TEXT
 // Failing after r66144
 BUG53546 LINUX : userscripts/user-script-audio-document.html = TEXT
 BUG53546 LINUX : userscripts/user-script-video-document.html = TEXT
-
-// Crashing after r66111.
-BUG53547 MAC WIN LINUX : fast/events/tabindex-focus-chain.html = CRASH
 
 // Added in r66135, failing since then.
 BUG53548 MAC WIN LINUX : fast/js/parser-xml-close-comment.html = TEXT
