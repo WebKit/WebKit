@@ -200,20 +200,6 @@ bool isSpecialNode(Node* node)
         || tagName == xmpTag;
 }
 
-// http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#scoping
-// and isScopeMarker in HTMLElementStack.cpp
-bool isScopingTag(const AtomicString& tagName)
-{
-    return tagName == appletTag
-        || tagName == captionTag
-        || tagName == SVGNames::foreignObjectTag
-        || tagName == htmlTag
-        || tagName == marqueeTag
-        || tagName == objectTag
-        || tagName == tableTag
-        || isTableCellContextTag(tagName);
-}
-
 bool isNonAnchorNonNobrFormattingTag(const AtomicString& tagName)
 {
     return tagName == bTag
@@ -667,11 +653,6 @@ void mapLoweredLocalNameToName(PrefixedNameToQualifiedNameMap* map, QualifiedNam
         if (loweredLocalName != localName)
             map->add(loweredLocalName, name);
     }
-}
-
-void addName(PrefixedNameToQualifiedNameMap* map, const QualifiedName& name)
-{
-    map->add(name.localName().lower(), name);
 }
 
 void adjustSVGTagNameCase(AtomicHTMLToken& token)

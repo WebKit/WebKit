@@ -522,7 +522,7 @@ void TextIterator::handleTextBox()
     }
     String str = renderer->text();
     unsigned start = m_offset;
-    unsigned end = (m_node == m_endContainer) ? m_endOffset : UINT_MAX;
+    unsigned end = (m_node == m_endContainer) ? static_cast<unsigned>(m_endOffset) : UINT_MAX;
     while (m_textBox) {
         unsigned textBoxStart = m_textBox->start();
         unsigned runStart = max(textBoxStart, start);

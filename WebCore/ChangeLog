@@ -1,3 +1,16 @@
+2010-08-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::handleTextBox):
+        Added a cast so we can mix int and unsigned in a single ?: expression.
+        This warns with clang, but strangely not with gcc.
+
+        * html/parser/HTMLTreeBuilder.cpp: Removed unused functions.
+        The clang compiler notices and complains about these. If we need them
+        later we should use Subversion to bring them back.
+
 2010-08-31  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Simon Fraser.
