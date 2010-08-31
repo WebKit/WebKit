@@ -3,7 +3,7 @@
         Reviewed by Darin Fisher.
 
         Improve BlobBuilder to combine adjacent strings.
-        https://bugs.webkit.org/post_bug.cgi
+        https://bugs.webkit.org/show_bug.cgi?id=44884
 
         * fileapi/BlobBuilder.cpp:
         (WebCore::addTwoCStrings):
