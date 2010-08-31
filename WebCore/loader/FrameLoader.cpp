@@ -2645,17 +2645,19 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadTyp
             request.setCachePolicy(documentLoader()->originalRequest().cachePolicy());
         else
             request.setCachePolicy(UseProtocolCachePolicy);
-    } else if (loadType == FrameLoadTypeReload) {
-        request.setCachePolicy(ReloadIgnoringCacheData);
-        request.setHTTPHeaderField("Cache-Control", "max-age=0");
-    } else if (loadType == FrameLoadTypeReloadFromOrigin) {
-        request.setCachePolicy(ReloadIgnoringCacheData);
-        request.setHTTPHeaderField("Cache-Control", "no-cache");
-        request.setHTTPHeaderField("Pragma", "no-cache");
-    } else if (request.isConditional())
+    } else if (loadType == FrameLoadTypeReload || loadType == FrameLoadTypeReloadFromOrigin || request.isConditional())
         request.setCachePolicy(ReloadIgnoringCacheData);
     else if (isBackForwardLoadType(loadType) && m_stateMachine.committedFirstRealDocumentLoad() && !request.url().protocolIs("https"))
         request.setCachePolicy(ReturnCacheDataElseLoad);
+        
+    if (request.cachePolicy() == ReloadIgnoringCacheData) {
+        if (loadType == FrameLoadTypeReload)
+            request.setHTTPHeaderField("Cache-Control", "max-age=0");
+        else if (loadType == FrameLoadTypeReloadFromOrigin) {
+            request.setHTTPHeaderField("Cache-Control", "no-cache");
+            request.setHTTPHeaderField("Pragma", "no-cache");
+        }
+    }
     
     if (mainResource)
         request.setHTTPAccept(defaultAcceptHeader);
