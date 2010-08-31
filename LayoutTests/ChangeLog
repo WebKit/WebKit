@@ -1,3 +1,11 @@
+2010-08-30  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, updating Chromium expectations.
+
+        * platform/chromium-win/fast/lists/w3-css3-list-styles-numeric-expected.checksum: Removed.
+        * platform/chromium-win/fast/lists/w3-css3-list-styles-numeric-expected.png: Removed.
+        * platform/chromium-win/fast/lists/w3-css3-list-styles-numeric-expected.txt: Removed.
+
 2010-08-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
