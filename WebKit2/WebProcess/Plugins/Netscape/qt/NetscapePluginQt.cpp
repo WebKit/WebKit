@@ -47,7 +47,7 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
 
 NPEvent toNP(const WebMouseEvent& event)
 {
-    NPEvent npEvent;
+    NPEvent npEvent = NPEvent();
 
     notImplemented();
 

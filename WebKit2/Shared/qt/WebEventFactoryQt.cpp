@@ -173,7 +173,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(QKeyEvent* event)
 WebTouchEvent WebEventFactory::createWebTouchEvent(QTouchEvent* event)
 {
     WebEvent::Type type  = webEventTypeForEvent(event);
-    WebPlatformTouchPoint::TouchPointState state;
+    WebPlatformTouchPoint::TouchPointState state = static_cast<WebPlatformTouchPoint::TouchPointState>(0);
     unsigned int id;
     WebEvent::Modifiers modifiers   = modifiersForEvent(event->modifiers());
     double timestamp                = WTF::currentTime();
@@ -195,6 +195,9 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(QTouchEvent* event)
             break;
         case Qt::TouchPointStationary: 
             state = WebPlatformTouchPoint::TouchStationary; 
+            break;
+        default:
+            ASSERT_NOT_REACHED();
             break;
         }
 

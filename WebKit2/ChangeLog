@@ -1,3 +1,18 @@
+2010-08-31  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Fix warnings in WebKit2 directory
+        https://bugs.webkit.org/show_bug.cgi?id=44593
+
+        * Platform/CoreIPC/qt/ConnectionQt.cpp: Mark unused variables for compiler.
+        (CoreIPC::Connection::readyReadHandler):
+        (CoreIPC::Connection::sendOutgoingMessage):
+        * Shared/qt/WebEventFactoryQt.cpp:
+        (WebKit::WebEventFactory::createWebTouchEvent): Initialize state variable. Default case added.
+        * WebProcess/Plugins/Netscape/qt/NetscapePluginQt.cpp:
+        (WebKit::toNP): Return initialized NPEvent.
+
 2010-08-31  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Antonio Gomes.

@@ -59,7 +59,7 @@ void Connection::readyReadHandler()
     while (m_socket->bytesAvailable()) {
         if (!m_currentMessageSize) {
             size_t numberOfBytesRead = m_socket->read(reinterpret_cast<char*>(m_readBuffer.data()), sizeof(size_t));
-            ASSERT(numberOfBytesRead);
+            ASSERT_UNUSED(numberOfBytesRead, numberOfBytesRead);
             m_currentMessageSize = *reinterpret_cast<size_t*>(m_readBuffer.data());
         }
 
@@ -71,7 +71,7 @@ void Connection::readyReadHandler()
         }
 
         size_t numberOfBytesRead = m_socket->read(reinterpret_cast<char*>(m_readBuffer.data()), m_currentMessageSize);
-        ASSERT(numberOfBytesRead);
+        ASSERT_UNUSED(numberOfBytesRead, numberOfBytesRead);
 
         // The messageID is encoded at the end of the buffer.
         size_t realBufferSize = m_currentMessageSize - sizeof(MessageID);
@@ -125,7 +125,7 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEnc
 
     qint64 bytesWritten = m_socket->write(reinterpret_cast<char*>(arguments->buffer()), arguments->bufferSize());
 
-    ASSERT(bytesWritten == arguments->bufferSize());
+    ASSERT_UNUSED(bytesWritten, bytesWritten == arguments->bufferSize());
     return true;
 }
 
