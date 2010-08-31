@@ -1,3 +1,20 @@
+2010-08-30  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r66156): Sites using AppleConnect for authentication fail to log in.
+        https://bugs.webkit.org/show_bug.cgi?id=44865
+
+        After http://trac.webkit.org/changeset/66156, sites using the AppleConnect plug-in
+        for authentication fail to log in. This is due to a bug in AppleConnect that r66156
+        exposed, but since this will have a significant impact on users of WebKit nightly
+        builds, a plugin-specific hack should be added while the underlying issue is being
+        addressed.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createPlugin): Convert plug-in parameter names to lowercase
+        if the plugin is of type 'application/x-snkp'.
+
 2010-08-27  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.

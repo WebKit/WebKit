@@ -1576,8 +1576,20 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLP
     NSURL *baseURL = document->baseURL();
     NSURL *pluginURL = url;
     
+    // <rdar://problem/8366089>: AppleConnect has a bug where it does not
+    // understand the parameter names specified in the <object> element that
+    // embeds its plug-in. This site-specific hack works around the issue by
+    // converting the parameter names to lowercase before passing them to the
+    // plug-in.
+    Frame* frame = core(m_webFrame.get());
+    NSMutableArray *attributeKeys = kit(paramNames);
+    if (frame && frame->settings()->needsSiteSpecificQuirks() && equalIgnoringCase(mimeType, "application/x-snkp")) {
+        for (NSUInteger i = 0; i < [attributeKeys count]; ++i)
+            [attributeKeys replaceObjectAtIndex:i withObject:[[attributeKeys objectAtIndex:i] lowercaseString]];
+    }
+    
     if ([[webView UIDelegate] respondsToSelector:selector]) {
-        NSMutableDictionary *attributes = [[NSMutableDictionary alloc] initWithObjects:kit(paramValues) forKeys:kit(paramNames)];
+        NSMutableDictionary *attributes = [[NSMutableDictionary alloc] initWithObjects:kit(paramValues) forKeys:attributeKeys];
         NSDictionary *arguments = [[NSDictionary alloc] initWithObjectsAndKeys:
             attributes, WebPlugInAttributesKey,
             [NSNumber numberWithInt:loadManually ? WebPlugInModeFull : WebPlugInModeEmbed], WebPlugInModeKey,
@@ -1620,7 +1632,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLP
 
     if (pluginPackage) {
         if ([pluginPackage isKindOfClass:[WebPluginPackage class]])
-            view = pluginView(m_webFrame.get(), (WebPluginPackage *)pluginPackage, kit(paramNames), kit(paramValues), baseURL, kit(element), loadManually);
+            view = pluginView(m_webFrame.get(), (WebPluginPackage *)pluginPackage, attributeKeys, kit(paramValues), baseURL, kit(element), loadManually);
             
 #if ENABLE(NETSCAPE_PLUGIN_API)
         else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
@@ -1630,7 +1642,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLP
                 URL:pluginURL
                 baseURL:baseURL
                 MIMEType:MIMEType
-                attributeKeys:kit(paramNames)
+                attributeKeys:attributeKeys
                 attributeValues:kit(paramValues)
                 loadManually:loadManually
                 element:element] autorelease];

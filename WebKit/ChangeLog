@@ -1,3 +1,11 @@
+2010-08-30  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add 'application/x-snkp' to StringsNotToBeLocalized.txt.
+
+        * StringsNotToBeLocalized.txt:
+
 2010-08-20  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Unreviewed build fix.

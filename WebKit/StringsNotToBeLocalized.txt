@@ -540,6 +540,7 @@
 "application/rss+xml"
 "application/x-apple-msg-attachment"
 "application/x-java-applet"
+"application/x-snkp"
 "application/x-webarchive"
 "application/xhtml+xml"
 "attributeKeys"
