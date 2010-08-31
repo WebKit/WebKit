@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,45 +33,30 @@
 
 namespace WebCore {
 
+inline ArchiveResource::ArchiveResource(PassRefPtr<SharedBuffer> data, const KURL& url, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse& response)
+    : SubstituteResource(url, response, data)
+    , m_mimeType(mimeType)
+    , m_textEncoding(textEncoding)
+    , m_frameName(frameName)
+    , m_shouldIgnoreWhenUnarchiving(false)
+{
+}
+
+PassRefPtr<ArchiveResource> ArchiveResource::create(PassRefPtr<SharedBuffer> data, const KURL& url, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse& response)
+{
+    if (!data)
+        return 0;
+    if (response.isNull()) {
+        unsigned dataSize = data->size();
+        return adoptRef(new ArchiveResource(data, url, mimeType, textEncoding, frameName,
+            ResourceResponse(url, mimeType, dataSize, textEncoding, String())));
+    }
+    return adoptRef(new ArchiveResource(data, url, mimeType, textEncoding, frameName, response));
+}
+
 PassRefPtr<ArchiveResource> ArchiveResource::create(PassRefPtr<SharedBuffer> data, const KURL& url, const ResourceResponse& response)
 {
-    return data ? adoptRef(new ArchiveResource(data, url, response)) : 0;
-}
-
-PassRefPtr<ArchiveResource> ArchiveResource::create(PassRefPtr<SharedBuffer> data, const KURL& url, const String& mimeType, const String& textEncoding, const String& frameName)
-{
-    return data ? adoptRef(new ArchiveResource(data, url, mimeType, textEncoding, frameName)) : 0;
-}
-
-PassRefPtr<ArchiveResource> ArchiveResource::create(PassRefPtr<SharedBuffer> data, const KURL& url, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse& resourceResponse)
-{
-    return data ? adoptRef(new ArchiveResource(data, url, mimeType, textEncoding, frameName, resourceResponse)) : 0;
-}
-
-ArchiveResource::ArchiveResource(PassRefPtr<SharedBuffer> data, const KURL& url, const ResourceResponse& response)
-    : SubstituteResource(url, response, data)
-    , m_mimeType(response.mimeType())
-    , m_textEncoding(response.textEncodingName())
-    , m_shouldIgnoreWhenUnarchiving(false)
-{
-}
-
-ArchiveResource::ArchiveResource(PassRefPtr<SharedBuffer> data, const KURL& url, const String& mimeType, const String& textEncoding, const String& frameName)
-    : SubstituteResource(url, ResourceResponse(url, mimeType, data ? data->size() : 0, textEncoding, String()), data)
-    , m_mimeType(mimeType)
-    , m_textEncoding(textEncoding)
-    , m_frameName(frameName)
-    , m_shouldIgnoreWhenUnarchiving(false)
-{
-}
-
-ArchiveResource::ArchiveResource(PassRefPtr<SharedBuffer> data, const KURL& url, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse& response)
-    : SubstituteResource(url, response.isNull() ? ResourceResponse(url, mimeType, data ? data->size() : 0, textEncoding, String()) : response, data)
-    , m_mimeType(mimeType)
-    , m_textEncoding(textEncoding)
-    , m_frameName(frameName)
-    , m_shouldIgnoreWhenUnarchiving(false)
-{
+    return create(data, url, response.mimeType(), response.textEncodingName(), String(), response);
 }
 
 }

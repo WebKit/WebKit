@@ -76,7 +76,7 @@ function runTest()
 				<key>URL</key>
 				<string>file:///LayoutTests/webarchive/resources/favicon.ico</string>
 				<key>expectedContentLength</key>
-				<integer>0</integer>
+				<integer>1150</integer>
 				<key>textEncodingName</key>
 				<string></string>
 			</dict>

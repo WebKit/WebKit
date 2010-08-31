@@ -1,3 +1,18 @@
+2010-08-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Web archives are created with a size of 0 due to PassRefPtr mistake
+        https://bugs.webkit.org/show_bug.cgi?id=44984
+        rdar://problem/8042283
+
+        * loader/archive/ArchiveResource.cpp:
+        (WebCore::ArchiveResource::ArchiveResource): Merge the three constructors into one.
+        (WebCore::ArchiveResource::create): Merge the two create functions into one, and
+        fix the logic so there is no use of a PassRefPtr after it has been passed.
+        * loader/archive/ArchiveResource.h: Use default arguments instead of overloading
+        to cut down from three create functions to two. Remove two of the constructors.
+
 2010-08-31  Jian Li  <jianli@chromium.org>
 
         Reviewed by David Levin.
