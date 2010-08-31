@@ -559,17 +559,10 @@ MediaPlayer::SupportsType MediaPlayer::supportsType(ContentType contentType)
     String type = contentType.type().lower();
     String typeCodecs = contentType.parameter(codecs());
 
-    // 4.8.10.3 MIME types - In the absence of a specification to the contrary, the MIME type "application/octet-stream" 
-    // when used with parameters, e.g. "application/octet-stream;codecs=theora", is a type that the user agent knows 
-    // it cannot render.
-    if (type == applicationOctetStream()) {
-        if (!typeCodecs.isEmpty())
-            return IsNotSupported;
-        
-        // The MIME type "application/octet-stream" with no parameters is never a type that the user agent knows it 
-        // cannot render.
-        return MayBeSupported;
-    }
+    // 4.8.10.3 MIME types - The canPlayType(type) method must return the empty string if type is a type that the 
+    // user agent knows it cannot render or is the type "application/octet-stream"
+    if (type == applicationOctetStream())
+        return IsNotSupported;
 
     MediaPlayerFactory* engine = chooseBestEngineForTypeAndCodecs(type, typeCodecs);
     if (!engine)

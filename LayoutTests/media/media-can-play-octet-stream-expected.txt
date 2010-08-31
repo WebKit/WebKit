@@ -1,12 +1,12 @@
 Test HTMLMediaElement canPlayType() method with "application/octet-stream".
 
 ++ Test with <video> element.
-EXPECTED (mediaElement.canPlayType('APPLICATION/octet-stream') == 'maybe') OK
+EXPECTED (mediaElement.canPlayType('APPLICATION/octet-stream') == '') OK
 EXPECTED (mediaElement.canPlayType('application/octet-stream;codecs=theora') == '') OK
 EXPECTED (mediaElement.canPlayType('application/octet-stream;codecs=mp4') == '') OK
 
 ++ Test with <audio> element.
-EXPECTED (mediaElement.canPlayType('APPLICATION/octet-stream') == 'maybe') OK
+EXPECTED (mediaElement.canPlayType('APPLICATION/octet-stream') == '') OK
 EXPECTED (mediaElement.canPlayType('application/octet-stream;codecs=theora') == '') OK
 EXPECTED (mediaElement.canPlayType('application/octet-stream;codecs=mp4') == '') OK
 END OF TEST

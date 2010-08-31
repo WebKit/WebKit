@@ -1,3 +1,13 @@
+2010-08-31  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        canPlayType("application/octet-stream") must return ""
+        https://bugs.webkit.org/show_bug.cgi?id=44985
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::supportsType): Always return IsNotSupported for application/octet-stream
+
 2010-08-31  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

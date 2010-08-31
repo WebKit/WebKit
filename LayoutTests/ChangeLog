@@ -1,3 +1,13 @@
+2010-08-31  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        canPlayType("application/octet-stream") must return ""
+        https://bugs.webkit.org/show_bug.cgi?id=44985
+
+        * media/media-can-play-octet-stream-expected.txt:
+        * media/media-can-play-octet-stream.html:
+
 2010-08-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders Carlsson.
