@@ -1,4 +1,19 @@
 ================
+WebKitGTK+ 1.3.4
+================
+
+What's new in WebKitGTK+ 1.3.4?
+
+  - Fixes to compile with latest GTK+ changes.
+  - File reader/writer APIs are now enabled.
+  - The javascript JIT is now enabled by default on ARM.
+  - Clipboard data is no longer lost when the process exists.
+  - Image DnD support.
+  - GSettings support to save/restore Web Inspector settings.
+  - Fullscreen support for HTML5 media player.
+  - Many other bugfixes.
+
+================
 WebKitGTK+ 1.3.3
 ================
 

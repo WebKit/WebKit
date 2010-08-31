@@ -1,5 +1,14 @@
 2010-08-31  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Reviewed by Martin Robinson.
+
+        Preparations for the 1.3.4 release.
+
+        * NEWS:
+        * docs/webkitgtk-docs.sgml:
+
+2010-08-31  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Unreviewed. Minor documentation typo fix.
 
         * webkit/webkitwebview.cpp:
