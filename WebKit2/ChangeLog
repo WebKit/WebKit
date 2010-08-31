@@ -1,3 +1,14 @@
+2010-08-31  Zoltan Horvath  <zoltan@webkit.org>
+
+        Build fix after r66448 on WebKit2.
+
+        [Qt] qt_wk_didFinishDocumentLoadForFrame needs to be implemented 
+        https://bugs.webkit.org/show_bug.cgi?id=44934
+
+        * UIProcess/API/qt/ClientImpl.cpp:
+        (qt_wk_didFinishDocumentLoadForFrame):
+        * UIProcess/API/qt/ClientImpl.h:
+
 2010-08-30  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Darin Adler.
