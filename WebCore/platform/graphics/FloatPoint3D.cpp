@@ -21,20 +21,26 @@
 
 #include "config.h"
 
-#include <math.h>
 #include "FloatPoint3D.h"
+
+#include <math.h>
 
 namespace WebCore {
 
 void FloatPoint3D::normalize()
 {
-    float length = sqrtf(m_x * m_x + m_y * m_y + m_z * m_z);
+    float tempLength = length();
 
-    if (length != 0) {
-        m_x /= length;
-        m_y /= length;
-        m_z /= length;
+    if (tempLength) {
+        m_x /= tempLength;
+        m_y /= tempLength;
+        m_z /= tempLength;
     }
+}
+
+float FloatPoint3D::length() const
+{
+    return sqrtf(lengthSquared());
 }
 
 } // namespace WebCore

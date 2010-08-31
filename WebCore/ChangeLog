@@ -1,3 +1,31 @@
+2010-08-31  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Simon Fraser.
+
+        Add cross product and arithmetic operations to FloatPoint3D
+        https://bugs.webkit.org/show_bug.cgi?id=44970
+
+        Added set, move, and scale operations similar to FloatPoint's,
+        addition and subtraction operators, length, lengthSquared and
+        cross product. These changes have been tested with new code to be
+        added later.
+
+        * platform/graphics/FloatPoint3D.cpp:
+        (WebCore::FloatPoint3D::normalize):
+        (WebCore::FloatPoint3D::length):
+        * platform/graphics/FloatPoint3D.h:
+        (WebCore::FloatPoint3D::set):
+        (WebCore::FloatPoint3D::move):
+        (WebCore::FloatPoint3D::scale):
+        (WebCore::FloatPoint3D::dot):
+        (WebCore::FloatPoint3D::cross):
+        (WebCore::FloatPoint3D::lengthSquared):
+        (WebCore::operator +=):
+        (WebCore::operator -=):
+        (WebCore::operator+):
+        (WebCore::operator-):
+        (WebCore::operator*):
+
 2010-08-31  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
