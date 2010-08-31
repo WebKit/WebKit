@@ -1,15 +1,15 @@
 # translation of webkit.po to Español
 # This file is put in the public domain.
-# Jorge González <jorgegonz@svn.gnome.org>, 2010.
+# Jorge González González <aloriel@gmail.com>, 2010.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: webkit\n"
 "Report-Msgid-Bugs-To: http://bugs.webkit.org/\n"
 "POT-Creation-Date: 2010-02-25 15:53-0300\n"
-"PO-Revision-Date: 2010-05-01 11:18+0200\n"
-"Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
-"Language-Team: Español <gnome-es-list@gnome.org>\n"
+"PO-Revision-Date: 2010-08-22 12:03+0200\n"
+"Last-Translator: Jorge González González <aloriel@gmail.com>\n"
+"Language-Team: Spanish <es@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -267,7 +267,7 @@ msgstr "Perfilar el JavaScript ejecutado."
 
 #: WebKit/gtk/webkit/webkitwebinspector.cpp:315
 msgid "Enable Timeline profiling"
-msgstr ""
+msgstr "Activar perfilado de tiempo"
 
 #: WebKit/gtk/webkit/webkitwebinspector.cpp:316
 msgid "Profile the WebCore instrumentation."
@@ -512,11 +512,12 @@ msgstr ""
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:520
 msgid "Enable Caret Browsing"
-msgstr ""
+msgstr "Activar navegación por cursor"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:521
 msgid "Whether to enable accesibility enhanced keyboard navigation"
 msgstr ""
+"Indica si activar la mejora de accesibilidad para navegación por teclado"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:536
 msgid "Enable HTML5 Database"
@@ -528,11 +529,11 @@ msgstr "Indica si se debe activar el soporte para la base de datos de HTML5"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:552
 msgid "Enable HTML5 Local Storage"
-msgstr ""
+msgstr "Activar almacén local de HTML5"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:553
 msgid "Whether to enable HTML5 Local Storage support"
-msgstr ""
+msgstr "Indica si activar el soporte de almacén local de HTML5"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:567
 msgid "Enable XSS Auditor"
@@ -552,19 +553,19 @@ msgstr ""
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:602
 msgid "JavaScript can open windows automatically"
-msgstr ""
+msgstr "JavaScript puede abrir ventanas automáticamente"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:603
 msgid "Whether JavaScript can open windows automatically"
-msgstr ""
+msgstr "Indica si JavaScript puede abrir ventanas automáticamente"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:618
 msgid "Enable offline web application cache"
-msgstr ""
+msgstr "Activar la caché de aplicación fuera de línea"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:619
 msgid "Whether to enable offline web application cache"
-msgstr ""
+msgstr "Indica si activar la caché de aplicación web fuera de línea"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:646
 msgid "Editing behavior"
@@ -631,6 +632,8 @@ msgstr "Autoredimensionar ventana"
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:785
 msgid "Automatically resize the toplevel window when a page requests it"
 msgstr ""
+"Redimensionar automáticamente la ventana de nivel superior cuando una página "
+"lo solicita"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:817
 msgid "Enable Java Applet"
@@ -740,7 +743,7 @@ msgstr "Icono de URI"
 
 #: WebKit/gtk/webkit/webkitwebview.cpp:2521
 msgid "The URI for the favicon for the #WebKitWebView."
-msgstr ""
+msgstr "El URI para el icono favorito para #WebKitWebView."
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:55
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:60
@@ -935,7 +938,7 @@ msgstr "silenciar"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:381
 msgid "unmute"
-msgstr ""
+msgstr "dar voz"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:383
 msgid "play"
@@ -1011,11 +1014,11 @@ msgstr ""
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:426
 msgid "begin playback"
-msgstr ""
+msgstr "comenzar la reproducción"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:428
 msgid "pause playback"
-msgstr ""
+msgstr "pausar la reproducción"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:430
 msgid "movie time scrubber"
@@ -1039,7 +1042,7 @@ msgstr ""
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:440
 msgid "number of seconds of movie remaining"
-msgstr ""
+msgstr "número de segundos restantes de la película"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:442
 msgid "current movie status"
