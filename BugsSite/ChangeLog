@@ -2,6 +2,24 @@
 
         Reviewed by Eric Seidel.
 
+        [reviewtool] Show previous comments inline in diff
+        https://bugs.webkit.org/show_bug.cgi?id=44977
+
+        This patch adds basic support for showing previous comments inline in
+        the diff.  We crawl the bugs.webkit.org comments about this attachment
+        and extract comments related to specific lines.  We then show the
+        comments inline in the diff.
+
+        This part of the tool needs a bunch of polish, but this at least is a
+        starting point for further work.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2010-08-31  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         [reviewtool] Allow reviewer to select lines of context by dragging over the line numbers
         https://bugs.webkit.org/show_bug.cgi?id=44936
 

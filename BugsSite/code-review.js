@@ -14,7 +14,6 @@
   if (!attachment_id)
     return;
 
-  var previous_comments = [];
   var current_comment = {}
   var next_line_id = 0;
 
@@ -81,23 +80,98 @@
     addCommentFor($('#' + id));
   }
 
-  function displayPreviousComments() {
-    comment_collection = this;
-    forEachLine(function(line) {
-      var line_id = line.attr('id');
-      var comment = comment_collection[line_id];
-      if (comment) {
-        var comment_block = $('<div data-comment-for="' + line_id + '" class="previous_comment"></div>');
-        comment_block.text(comment).prepend('<div class="reply">Click to reply</div>');
-        comment_block.each(hoverify).click(addCommentField);
-        insertCommentFor(line, comment_block);
+  var files = {}
+
+  function addPreviousComment(line, comment_text) {
+    var comment_block = $('<div data-comment-for="' + line.attr('id') + '" class="previous_comment"></div>');
+    comment_block.text(comment_text).prepend('<div class="reply">Click to reply</div>');
+    comment_block.each(hoverify).click(addCommentField);
+    insertCommentFor(line, comment_block);
+  }
+
+  function displayPreviousComments(comments) {
+    for (var i = 0; i < comments.length; ++i) {
+      var file_name = comments[i].file_name;
+      var line_number = comments[i].line_number;
+      var comment_text = comments[i].comment_text;
+
+      var file = files[file_name];
+
+      var query = '.Line .to';
+      if (line_number[0] == '-') {
+        // The line_number represent a removal.  We need to adjust the query to
+        // look at the "from" lines.
+        query = '.Line .from';
+        // Trim off the '-' control character.
+        line_number = line_number.substr(1);
       }
+
+      $(file).find(query).each(function() {
+        if ($(this).text() != line_number)
+          return;
+        var line = $(this).parent();
+        addPreviousComment(line, comment_text);
+      });
+    }
+  }
+
+  function scanForComments(text) {
+    var comments = []
+    var lines = text.split('\n');
+    for (var i = 0; i < lines.length; ++i) {
+      var parts = lines[i].match(/^([> ]+)([^:]+):(-?\d+)$/);
+      if (!parts)
+        continue;
+      var quote_markers = parts[1];
+      var file_name = parts[2];
+      var line_number = parts[3];
+      if (!file_name in files)
+        continue;
+      while (i < lines.length && lines[i].length > 0 && lines[i][0] == '>')
+        ++i;
+      var comment_lines = [];
+      while (i < lines.length && (lines[i].length == 0 || lines[i][0] != '>')) {
+        comment_lines.push(lines[i]);
+        ++i;
+      }
+      var comment_text = comment_lines.join('\n');
+      comments.push({
+        'file_name': file_name,
+        'line_number': line_number,
+        'comment_text': comment_text
+      });
+    }
+    return comments;
+  }
+
+  function fetchHistory() {
+    $.get('attachment.cgi?id=' + attachment_id + '&action=edit', function(data) {
+      var bug_id = /Attachment \d+ Details for Bug (\d+)/.exec(data)[1];
+      $.get('show_bug.cgi?id=' + bug_id, function(data) {
+        var comments = [];
+        $(data).find('.bz_comment').each(function() {
+          var author = $(this).find('.email').text();
+          var text = $(this).find('.bz_comment_text').text();
+          var comment_marker = '(From update of attachment ' + attachment_id + ' .details.)';
+          if (text.match(comment_marker))
+            $.merge(comments, scanForComments(text));
+        });
+        displayPreviousComments(comments);
+      });
+    });
+  }
+
+  function crawlDiff() {
+    $('.Line').each(idify).each(hoverify).dblclick(addCommentField);
+    $('.FileDiff').each(function() {
+      var file_name = $(this).children('h1').text();
+      files[file_name] = this;
     });
   }
 
   $(document).ready(function() {
-    $('.Line').each(idify).each(hoverify).dblclick(addCommentField);
-    $(previous_comments).each(displayPreviousComments);
+    crawlDiff();
+    fetchHistory();
     $(document.body).prepend('<div id="toolbar"><div class="actions"><button id="post_comments">Prepare comments</button></div><div class="help">Double-click a line to add a comment.</div></div>');
     $(document.body).prepend('<div id="comment_form" class="inactive"><div class="winter"></div><div class="lightbox"><iframe src="attachment.cgi?id=' + attachment_id + '&action=reviewform"></iframe></div></div>');
   });
@@ -194,7 +268,7 @@
 
   function snippetFor(line) {
     var file_name = fileNameFor(line);
-    var line_number = line.hasClass('remove') ? line.children('.from').text() : line.children('.to').text();
+    var line_number = line.hasClass('remove') ? '-' + line.children('.from').text() : line.children('.to').text();
     return '> ' + file_name + ':' + line_number + '\n' + contextSnippetFor(line);
   }
 
@@ -215,7 +289,6 @@
     });
     $('#comment_form').removeClass('inactive');
     var comment = comments_in_context.join('\n\n');
-    console.log(comment);
     $('#comment_form').find('iframe').contents().find('#comment').val(comment);
   });
 })();
