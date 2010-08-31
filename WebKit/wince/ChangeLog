@@ -2,6 +2,23 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        Add DragClientWinCE
+        https://bugs.webkit.org/show_bug.cgi?id=44821
+
+        * WebCoreSupport/DragClientWinCE.cpp: Added.
+        (WebKit::DragClient::willPerformDragDestinationAction):
+        (WebKit::DragClient::willPerformDragSourceAction):
+        (WebKit::DragClient::actionMaskForDrag):
+        (WebKit::DragClient::dragSourceActionMaskForPoint):
+        (WebKit::DragClient::startDrag):
+        (WebKit::DragClient::createDragImageForLink):
+        (WebKit::DragClient::dragControllerDestroyed):
+        * WebCoreSupport/DragClientWinCE.h: Added.
+
+2010-08-31  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         Add ContextMenuClientWinCE
         https://bugs.webkit.org/show_bug.cgi?id=44820
 
