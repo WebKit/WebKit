@@ -40,7 +40,6 @@ PassRefPtr<WebGLTexture> WebGLTexture::create(WebGLRenderingContext* ctx)
 
 WebGLTexture::WebGLTexture(WebGLRenderingContext* ctx)
     : WebGLObject(ctx)
-    , cubeMapRWrapModeInitialized(false)
     , m_target(0)
     , m_minFilter(GraphicsContext3D::NEAREST_MIPMAP_LINEAR)
     , m_magFilter(GraphicsContext3D::LINEAR)

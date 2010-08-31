@@ -40,16 +40,6 @@ public:
 
     static PassRefPtr<WebGLTexture> create(WebGLRenderingContext*);
 
-    bool isCubeMapRWrapModeInitialized()
-    {
-        return cubeMapRWrapModeInitialized;
-    }
-
-    void setCubeMapRWrapModeInitialized(bool initialized)
-    {
-        cubeMapRWrapModeInitialized = initialized;
-    }
-
     void setTarget(unsigned long target, int maxLevel);
     void setParameteri(unsigned long pname, int param);
     void setParameterf(unsigned long pname, float param);
@@ -82,8 +72,6 @@ private:
     void update();
 
     int mapTargetToIndex(unsigned long);
-
-    bool cubeMapRWrapModeInitialized;
 
     unsigned long m_target;
 

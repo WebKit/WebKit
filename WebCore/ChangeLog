@@ -1,3 +1,16 @@
+2010-08-30  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        [Chromium] bindTexture(TEXTURE_CUBE_MAP) shouldn't generate errors with valid cubemap texture
+        https://bugs.webkit.org/show_bug.cgi?id=44922
+
+        * html/canvas/WebGLRenderingContext.cpp: Remove TEXTURE_WRAP_R code.
+        (WebCore::WebGLRenderingContext::bindTexture):
+        * html/canvas/WebGLTexture.cpp: Remove the code for tracking TEXTURE_WRAP_R.
+        (WebCore::WebGLTexture::WebGLTexture):
+        * html/canvas/WebGLTexture.h: Ditto.
+
 2010-08-31  Jian Li  <jianli@chromium.org>
 
         Rubber-stamped by David Levin.

@@ -311,23 +311,14 @@ void WebGLRenderingContext::bindTexture(unsigned long target, WebGLTexture* text
     if (texture)
         texture->setTarget(target, maxLevel);
 
-    // FIXME: do we want to do this on all platforms?
-#if PLATFORM(CHROMIUM)
-    // FIXME: GL_TEXTURE_WRAP_R isn't exposed in the OpenGL ES 2.0
-    // API. On desktop OpenGL implementations it seems necessary to
-    // set this wrap mode to GL_CLAMP_TO_EDGE to get correct behavior
-    // of cube maps.
-    if (texture) {
-        if (target == GraphicsContext3D::TEXTURE_CUBE_MAP) {
-            if (!texture->isCubeMapRWrapModeInitialized()) {
-                static const int textureWrapR = 0x8072;
-                texParameteri(GraphicsContext3D::TEXTURE_CUBE_MAP, textureWrapR, GraphicsContext3D::CLAMP_TO_EDGE);
-                texture->setCubeMapRWrapModeInitialized(true);
-            }
-        } else
-            texture->setCubeMapRWrapModeInitialized(false);
-    }
-#endif
+    // Note: previously we used to automatically set the TEXTURE_WRAP_R
+    // repeat mode to CLAMP_TO_EDGE for cube map textures, because OpenGL
+    // ES 2.0 doesn't expose this flag (a bug in the specification) and
+    // otherwise the application has no control over the seams in this
+    // dimension. However, it appears that supporting this properly on all
+    // platforms is fairly involved (will require a HashMap from texture ID
+    // in all ports), and we have not had any complaints, so the logic has
+    // been removed.
 
     cleanupAfterGraphicsCall(false);
 }
