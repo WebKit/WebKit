@@ -41,8 +41,8 @@ public:
     RenderPath(SVGStyledTransformableElement*);
 
     const Path& path() const { return m_path; }
-    void setNeedsBoundariesUpdate() { m_needsBoundariesUpdate = true; }
     void setNeedsPathUpdate() { m_needsPathUpdate = true; }
+    virtual void setNeedsBoundariesUpdate() { m_needsBoundariesUpdate = true; }
     virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }
 
 private:
@@ -63,7 +63,6 @@ private:
     virtual void addFocusRingRects(Vector<IntRect>&, int tx, int ty);
 
     virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
-    virtual void styleWillChange(StyleDifference, const RenderStyle*);
 
     FloatRect calculateMarkerBoundsIfNeeded();
     void updateCachedBoundaries();

@@ -57,9 +57,11 @@ void RenderSVGImage::layout()
     LayoutRepainter repainter(*this, m_everHadLayout && checkForRepaintDuringLayout());
     SVGImageElement* image = static_cast<SVGImageElement*>(node());
 
+    bool updateCachedBoundariesInParents = false;
     if (m_needsTransformUpdate) {
         m_localTransform = image->animatedLocalTransform();
         m_needsTransformUpdate = false;
+        updateCachedBoundariesInParents = true;
     }
 
     // minimum height
@@ -69,12 +71,20 @@ void RenderSVGImage::layout()
     calcHeight();
 
     // FIXME: Optimize caching the repaint rects.
+    FloatRect oldBoundaries = m_localBounds;
     m_localBounds = FloatRect(image->x().value(image), image->y().value(image), image->width().value(image), image->height().value(image));
     m_cachedLocalRepaintRect = FloatRect();
+
+    if (!updateCachedBoundariesInParents)
+        updateCachedBoundariesInParents = oldBoundaries != m_localBounds;
 
     // Invalidate all resources of this client if our layout changed.
     if (m_everHadLayout && selfNeedsLayout())
         SVGResourcesCache::clientLayoutChanged(this);
+
+    // If our bounds changed, notify the parents.
+    if (updateCachedBoundariesInParents)
+        RenderImage::setNeedsBoundariesUpdate();
 
     repainter.repaintAfterLayout();
     setNeedsLayout(false);

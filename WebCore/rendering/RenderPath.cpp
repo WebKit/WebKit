@@ -101,27 +101,38 @@ void RenderPath::layout()
     LayoutRepainter repainter(*this, m_everHadLayout && checkForRepaintDuringLayout());
     SVGStyledTransformableElement* element = static_cast<SVGStyledTransformableElement*>(node());
 
+    bool updateCachedBoundariesInParents = false;
+
     bool needsPathUpdate = m_needsPathUpdate;
     if (needsPathUpdate) {
         m_path = element->toPathData();
         m_needsPathUpdate = false;
+        updateCachedBoundariesInParents = true;
     }
 
     if (m_needsTransformUpdate) {
         m_localTransform = element->animatedLocalTransform();
         m_needsTransformUpdate = false;
+        updateCachedBoundariesInParents = true;
     }
+
+    if (m_needsBoundariesUpdate)
+        updateCachedBoundariesInParents = true;
 
     // Invalidate all resources of this client if our layout changed.
     if (m_everHadLayout && selfNeedsLayout())
         SVGResourcesCache::clientLayoutChanged(this);
 
     // At this point LayoutRepainter already grabbed the old bounds,
-    // recalculate them now so repaintAfterLayout() uses the new bounds
+    // recalculate them now so repaintAfterLayout() uses the new bounds.
     if (needsPathUpdate || m_needsBoundariesUpdate) {
         updateCachedBoundaries();
         m_needsBoundariesUpdate = false;
     }
+
+    // If our bounds changed, notify the parents.
+    if (updateCachedBoundariesInParents)
+        RenderSVGModelObject::setNeedsBoundariesUpdate();
 
     repainter.repaintAfterLayout();
     setNeedsLayout(false);
@@ -172,8 +183,7 @@ void RenderPath::paint(PaintInfo& paintInfo, int, int)
         return;
 
     FloatRect boundingBox = repaintRectInLocalCoordinates();
-    FloatRect nonLocalBoundingBox = m_localTransform.mapRect(boundingBox);
-    if (!nonLocalBoundingBox.intersects(paintInfo.rect))
+    if (!SVGRenderSupport::paintInfoIntersectsRepaintRect(boundingBox, m_localTransform, paintInfo))
         return;
 
     PaintInfo childPaintInfo(paintInfo);
@@ -268,13 +278,6 @@ FloatRect RenderPath::calculateMarkerBoundsIfNeeded()
         return FloatRect();
 
     return m_markerLayoutInfo.calculateBoundaries(markerStart, markerMid, markerEnd, svgStyle->strokeWidth().value(svgElement), m_path);
-}
-
-void RenderPath::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
-{
-    if (diff == StyleDifferenceLayout)
-        setNeedsBoundariesUpdate();
-    RenderSVGModelObject::styleWillChange(diff, newStyle);
 }
 
 void RenderPath::updateCachedBoundaries()

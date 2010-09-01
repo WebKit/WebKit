@@ -161,32 +161,31 @@ void SVGRenderSupport::finishRenderSVGContent(RenderObject* object, PaintInfo& p
         paintInfo.context->endTransparencyLayer();
 }
 
-FloatRect SVGRenderSupport::computeContainerBoundingBox(const RenderObject* container, ContainerBoundingBoxMode mode)
+void SVGRenderSupport::computeContainerBoundingBoxes(const RenderObject* container, FloatRect& objectBoundingBox, FloatRect& strokeBoundingBox, FloatRect& repaintBoundingBox)
 {
-    FloatRect boundingBox;
-
     for (RenderObject* current = container->firstChild(); current; current = current->nextSibling()) {
         if (current->isSVGHiddenContainer())
             continue;
 
-        FloatRect childBoundingBox;
-
-        switch (mode) {
-        case ObjectBoundingBox:
-            childBoundingBox = current->objectBoundingBox();
-            break;
-        case StrokeBoundingBox:
-            childBoundingBox = current->strokeBoundingBox();
-            break;
-        case RepaintBoundingBox:
-            childBoundingBox = current->repaintRectInLocalCoordinates();
-            break;
+        const AffineTransform& transform = current->localToParentTransform();
+        if (transform.isIdentity()) {
+            objectBoundingBox.unite(current->objectBoundingBox());
+            strokeBoundingBox.unite(current->strokeBoundingBox());
+            repaintBoundingBox.unite(current->repaintRectInLocalCoordinates());
+        } else {
+            objectBoundingBox.unite(transform.mapRect(current->objectBoundingBox()));
+            strokeBoundingBox.unite(transform.mapRect(current->strokeBoundingBox()));
+            repaintBoundingBox.unite(transform.mapRect(current->repaintRectInLocalCoordinates()));
         }
-
-        boundingBox.unite(current->localToParentTransform().mapRect(childBoundingBox));
     }
+}
 
-    return boundingBox;
+bool SVGRenderSupport::paintInfoIntersectsRepaintRect(const FloatRect& localRepaintRect, const AffineTransform& localTransform, const PaintInfo& paintInfo)
+{
+    if (localTransform.isIdentity())
+        return localRepaintRect.intersects(paintInfo.rect);
+
+    return localTransform.mapRect(localRepaintRect).intersects(paintInfo.rect);
 }
 
 const RenderSVGRoot* SVGRenderSupport::findTreeRootObject(const RenderObject* start)

@@ -1,3 +1,68 @@
+2010-09-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Add culling to RenderSVGContainer
+        https://bugs.webkit.org/show_bug.cgi?id=44896
+
+        Cache object/strokeBoundingBox and repaintRectInLocalCoordinates() in RenderSVGContainer & RenderSVGRoot, just like it's done in RenderPath.
+        Propagate boundary changes up the render tree, in layout phase, in order to notify parents that they should update their cached boundaries.
+
+        This is a huge speed benefit when interacting with an already layouted document, as there's no need anymore to traverse all children
+        of any container or <svg> element, just to retrieve the repaint rect.
+
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::layout): Propagate boundary changes to parent, if neeeded.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setNeedsBoundariesUpdate): Ditto.
+        * rendering/RenderObject.h:
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::removeChildNode): Ditto.
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::layout): Ditto.
+        (WebCore::RenderPath::paint): Use new helper function to intersect the paintInfo.rect with the repaintRectInLocalCoordinates().
+        * rendering/RenderPath.h: Remove styleWillChange(), it's in RenderSVGModelObject now.
+        (WebCore::RenderPath::setNeedsBoundariesUpdate): Mark as virtual, just like in RenderObject.
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::RenderSVGContainer): Initialize m_needsBoundariesUpdate to true.
+        (WebCore::RenderSVGContainer::layout): Only update cached boundaries, if needed, once by traversing the child tree.
+        (WebCore::RenderSVGContainer::paint): Use new helper function to intersect the paintInfo.rect with the repaintRectInLocalCoordinates().
+        (WebCore::RenderSVGContainer::updateCachedBoundaries): Ask children for their boundaries, and cache them.
+        * rendering/RenderSVGContainer.h:
+        (WebCore::RenderSVGContainer::setNeedsBoundariesUpdate): Set m_needsBoundariesUpdate when called.
+        (WebCore::RenderSVGContainer::objectBoundingBox): Inlined, just returns a member variable now.
+        (WebCore::RenderSVGContainer::strokeBoundingBox): Ditto.
+        (WebCore::RenderSVGContainer::repaintRectInLocalCoordinates): Ditto.
+        (WebCore::RenderSVGContainer::calculateLocalTransform): Changed to return a boolean, wheter the transform was modified.
+        * rendering/RenderSVGGradientStop.h:
+        (WebCore::RenderSVGGradientStop::strokeBoundingBox): Add missing default implementation, return just FloatRect().
+        * rendering/RenderSVGHiddenContainer.cpp: Remove repaintRectInLocalCoordinates() override, it's now needed for painting markers.
+        * rendering/RenderSVGHiddenContainer.h:
+        (WebCore::RenderSVGHiddenContainer::clippedOverflowRectForRepaint): Inlined, returning IntRect().
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::layout): Propagate boundary changes to parent, if neeeded.
+        * rendering/RenderSVGRoot.cpp: Cache boundaries here as well, just like in RenderSVGContainer.
+        (WebCore::RenderSVGRoot::RenderSVGRoot):
+        (WebCore::RenderSVGRoot::layout):
+        (WebCore::RenderSVGRoot::updateCachedBoundaries):
+        * rendering/RenderSVGRoot.h:
+        (WebCore::RenderSVGRoot::setNeedsBoundariesUpdate):
+        (WebCore::RenderSVGRoot::setNeedsTransformUpdate):
+        (WebCore::RenderSVGRoot::objectBoundingBox):
+        (WebCore::RenderSVGRoot::strokeBoundingBox):
+        (WebCore::RenderSVGRoot::repaintRectInLocalCoordinates):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout): Propagate boundary changes to parent, if neeeded.
+        * rendering/RenderSVGTransformableContainer.cpp:
+        (WebCore::RenderSVGTransformableContainer::calculateLocalTransform): Return true, if the localTransform changed.
+        * rendering/RenderSVGTransformableContainer.h:
+        * rendering/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::calcViewport): Propagate boundary changes to parent, if neeeded.
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::computeContainerBoundingBoxes): Helper function calculating object/strokeBoundingBox and repaintRectInLocalCoordinates in one shot.
+        (WebCore::SVGRenderSupport::paintInfoIntersectsRepaintRect): Moved from RenderPath to share the culling functionality.
+        * rendering/SVGRenderSupport.h:
+
 2010-09-01  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Reviewed by Laszlo Gombos.

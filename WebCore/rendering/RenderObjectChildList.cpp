@@ -98,6 +98,11 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
 
         if (oldChild->isPositioned() && owner->childrenInline())
             owner->dirtyLinesFromChangedChild(oldChild);
+
+#if ENABLE(SVG)
+        // Update cached boundaries in SVG renderers, if a child is removed.
+        owner->setNeedsBoundariesUpdate();
+#endif
     }
     
     // If oldChild is the start or end of the selection, then clear the selection to

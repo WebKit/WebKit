@@ -35,7 +35,7 @@ RenderSVGTransformableContainer::RenderSVGTransformableContainer(SVGStyledTransf
 {
 }
 
-void RenderSVGTransformableContainer::calculateLocalTransform()
+bool RenderSVGTransformableContainer::calculateLocalTransform()
 {
     SVGStyledTransformableElement* element = static_cast<SVGStyledTransformableElement*>(node());
 
@@ -46,17 +46,18 @@ void RenderSVGTransformableContainer::calculateLocalTransform()
     }
 
     if (!element->hasTagName(SVGNames::gTag) || !static_cast<SVGGElement*>(element)->isShadowTreeContainerElement())
-        return;
+        return needsUpdate;
 
     FloatSize translation = static_cast<SVGShadowTreeContainerElement*>(element)->containerTranslation();
     if (translation.width() == 0 && translation.height() == 0)
-        return;
+        return needsUpdate;
 
     // FIXME: Could optimize this case for use to avoid refetching the animatedLocalTransform() here, if only the containerTranslation() changed.
     if (!needsUpdate)
         m_localTransform = element->animatedLocalTransform();
 
     m_localTransform.translate(translation.width(), translation.height());
+    return true;
 }
 
 }
