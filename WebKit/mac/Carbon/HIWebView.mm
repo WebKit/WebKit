@@ -356,7 +356,7 @@ Draw( HIWebView* inView, RgnHandle limitRgn, CGContextRef inContext )
 
     NSView <WebDocumentView> *documentView = [[[inView->fWebView mainFrame] frameView] documentView];
     if ([documentView isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView *)documentView _web_layoutIfNeededRecursive];
+        [(WebHTMLView *)documentView _web_updateLayoutAndStyleIfNeededRecursive];
 
     if ( inView->fIsComposited )
         [inView->fWebView displayIfNeededInRect: *(NSRect*)&hiRect];

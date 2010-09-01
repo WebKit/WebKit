@@ -1,3 +1,15 @@
+2010-08-31  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44863, disentangle style recalc from layout, so that
+        the former can occur in more places without having to do the latter.
+
+        * WebFrame.cpp:
+        (WebFrame::paintDocumentRectToContext):
+        * WebView.cpp:
+        (WebView::updateBackingStore):
+
 2010-08-30  Adam Roben  <aroben@apple.com>
 
         Fix crash on launch on Windows due to changing IWebFramePrivate's

@@ -443,7 +443,6 @@ struct WebHTMLViewInterpretKeyEventsParameters {
 @interface WebHTMLViewPrivate : NSObject {
 @public
     BOOL closed;
-    BOOL needsToApplyStyles;
     BOOL ignoringMouseDraggedEvents;
     BOOL printing;
     BOOL avoidingPrintOrphan;
@@ -1290,7 +1289,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 - (void)_propagateDirtyRectsToOpaqueAncestors
 {
     if (![[self _webView] drawsBackground])
-        [self _web_layoutIfNeededRecursive];
+        [self _web_updateLayoutAndStyleIfNeededRecursive];
     [super _propagateDirtyRectsToOpaqueAncestors];
 }
 
@@ -1302,7 +1301,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     // So check if the dataSource is nil before calling [self _isTopHTMLView], this can be removed
     // once the FIXME in _isTopHTMLView is fixed.
     if (_private->dataSource && [self _isTopHTMLView])
-        [self _web_layoutIfNeededRecursive];
+        [self _web_updateLayoutAndStyleIfNeededRecursive];
     [super viewWillDraw];
 }
 
@@ -1320,7 +1319,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
             [self _web_setPrintingModeRecursive];
 #ifndef BUILDING_ON_TIGER
         else
-            [self _web_layoutIfNeededRecursive];
+            [self _web_updateLayoutAndStyleIfNeededRecursive];
 #endif
     } else if (wasInPrintingMode)
         [self _web_clearPrintingModeRecursive];
@@ -1336,12 +1335,12 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
         [self getRectsBeingDrawn:0 count:&rectCount];
         if (rectCount) {
             LOG_ERROR("View needs layout. Either -viewWillDraw wasn't called or layout was invalidated during the display operation. Performing layout now.");
-            [self _web_layoutIfNeededRecursive];
+            [self _web_updateLayoutAndStyleIfNeededRecursive];
         }
     }
 #else
     // Because Tiger does not have viewWillDraw we need to do layout here.
-    [self _web_layoutIfNeededRecursive];
+    [self _web_updateLayoutAndStyleIfNeededRecursive];
     [_subviews makeObjectsPerformSelector:@selector(_propagateDirtyRectsToOpaqueAncestors)];
 #endif
 
@@ -1373,7 +1372,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
                 [self _web_setPrintingModeRecursive];
 #ifndef BUILDING_ON_TIGER
             else
-                [self _web_layoutIfNeededRecursive];
+                [self _web_updateLayoutAndStyleIfNeededRecursive];
 #endif
         } else if (wasInPrintingMode)
             [self _web_clearPrintingModeRecursive];
@@ -1383,7 +1382,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
         // Because Tiger does not have viewWillDraw we need to do layout here.
         NSRect boundsBeforeLayout = [self bounds];
         if (!NSIsEmptyRect(visRect))
-            [self _web_layoutIfNeededRecursive];
+            [self _web_updateLayoutAndStyleIfNeededRecursive];
 
         // If layout changes the view's bounds, then we need to recompute the visRect.
         // That's because the visRect passed to us was based on the bounds at the time
@@ -1416,7 +1415,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 {
 #ifdef BUILDING_ON_TIGER 
     // Because Tiger does not have viewWillDraw we need to do layout here.
-    [self _web_layoutIfNeededRecursive];
+    [self _web_updateLayoutAndStyleIfNeededRecursive];
 #endif
 
     [self _setAsideSubviews];
@@ -3117,37 +3116,23 @@ WEBCORE_COMMAND(yankAndSelect)
 
 - (void)reapplyStyles
 {
-    if (!_private->needsToApplyStyles)
-        return;
-    
 #ifdef LOG_TIMES
     double start = CFAbsoluteTimeGetCurrent();
 #endif
 
-    if (Frame* coreFrame = core([self _frame])) {
-        if (FrameView* coreView = coreFrame->view())
-            coreView->setMediaType(_private->printing ? "print" : "screen");
-        if (Document* document = coreFrame->document()) {
-            document->setPaginatedForScreen(_private->paginateScreenContent);
-            document->setPrinting(_private->printing);
-        }
-        coreFrame->reapplyStyles();
-    }
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->document()->styleSelectorChanged(RecalcStyleImmediately);
     
 #ifdef LOG_TIMES        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
     LOG(Timing, "%s apply style seconds = %f", [self URL], thisTime);
 #endif
-
-    _private->needsToApplyStyles = NO;
 }
 
 // Do a layout, but set up a new fixed width for the purposes of doing printing layout.
 // minPageWidth==0 implies a non-printing layout
 - (void)layoutToMinimumPageWidth:(float)minPageWidth height:(float)minPageHeight maximumPageWidth:(float)maxPageWidth adjustingViewSize:(BOOL)adjustViewSize
-{
-    [self reapplyStyles];
-    
+{    
     if (![self _needsLayout])
         return;
 
@@ -3308,7 +3293,13 @@ WEBCORE_COMMAND(yankAndSelect)
 - (void)setNeedsToApplyStyles: (BOOL)flag
 {
     LOG(View, "%@ setNeedsToApplyStyles:%@", self, flag ? @"YES" : @"NO");
-    _private->needsToApplyStyles = flag;
+    if (!flag)
+        return; // There's no way to say you don't need a style recalc.
+    if (Frame* frame = core([self _frame])) {
+        if (frame->document() && frame->document()->inPageCache())
+            return;
+        frame->document()->scheduleForcedStyleRecalc();
+    }
 }
 
 - (void)drawSingleRect:(NSRect)rect
@@ -3883,7 +3874,18 @@ static BOOL isInPasswordField(Frame* coreFrame)
     _private->paginateScreenContent = paginateScreenContent;
     if (!printing && !paginateScreenContent)
         _private->avoidingPrintOrphan = NO;
-    [self setNeedsToApplyStyles:YES];
+    
+    Frame* coreFrame = core([self _frame]);
+    if (coreFrame) {
+        if (FrameView* coreView = coreFrame->view())
+            coreView->setMediaType(_private->printing ? "print" : "screen");
+        if (Document* document = coreFrame->document()) {
+            document->setPaginatedForScreen(_private->paginateScreenContent);
+            document->setPrinting(_private->printing);
+            document->styleSelectorChanged(RecalcStyleImmediately);
+        }
+    }
+
     [self setNeedsLayout:YES];
     [self layoutToMinimumPageWidth:minPageWidth height:minPageHeight maximumPageWidth:maxPageWidth adjustingViewSize:adjustViewSize];
     if (!printing) {
@@ -5507,31 +5509,16 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 {
     ASSERT(!_private->subviewsSetAside);
 
-    if (_private->needsToApplyStyles || [self _needsLayout])
+    if ([self _needsLayout])
         [self layout];
 }
 
-- (void)_web_layoutIfNeededRecursive
+- (void)_web_updateLayoutAndStyleIfNeededRecursive
 {
-    [self _layoutIfNeeded];
-
-#ifndef NDEBUG
-    _private->enumeratingSubviews = YES;
-#endif
-
-    NSMutableArray *descendantWebHTMLViews = [[NSMutableArray alloc] init];
-
-    [self _web_addDescendantWebHTMLViewsToArray:descendantWebHTMLViews];
-
-    unsigned count = [descendantWebHTMLViews count];
-    for (unsigned i = 0; i < count; ++i)
-        [[descendantWebHTMLViews objectAtIndex:i] _layoutIfNeeded];
-
-    [descendantWebHTMLViews release];
-
-#ifndef NDEBUG
-    _private->enumeratingSubviews = NO;
-#endif
+    WebFrame *webFrame = [self _frame];
+    Frame* coreFrame = core(webFrame);
+    if (coreFrame && coreFrame->view())
+        coreFrame->view()->updateLayoutAndStyleIfNeededRecursive();
 }
 
 - (void) _destroyAllWebPlugins

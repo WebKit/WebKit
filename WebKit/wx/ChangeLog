@@ -1,3 +1,13 @@
+2010-08-31  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44863, disentangle style recalc from layout, so that
+        the former can occur in more places without having to do the latter.
+
+        * WebView.cpp:
+        (wxWebView::OnPaint):
+
 2010-08-28  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix after parseMode -> compatibilityMode rename.

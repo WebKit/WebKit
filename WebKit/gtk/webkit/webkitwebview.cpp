@@ -519,7 +519,7 @@ static gboolean webkit_web_view_expose_event(GtkWidget* widget, GdkEventExpose* 
 
     Frame* frame = core(webView)->mainFrame();
     if (frame->contentRenderer() && frame->view()) {
-        frame->view()->layoutIfNeededRecursive();
+        frame->view()->updateLayoutAndStyleIfNeededRecursive();
 
         cairo_t* cr = gdk_cairo_create(event->window);
         GraphicsContext ctx(cr);

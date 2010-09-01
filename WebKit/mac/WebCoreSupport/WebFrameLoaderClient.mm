@@ -241,8 +241,6 @@ bool WebFrameLoaderClient::hasHTMLView() const
 void WebFrameLoaderClient::forceLayout()
 {
     NSView <WebDocumentView> *view = [m_webFrame->_private->webFrameView documentView];
-    if ([view isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView *)view setNeedsToApplyStyles:YES];
     [view setNeedsLayout:YES];
     [view layout];
 }

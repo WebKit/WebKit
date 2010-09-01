@@ -910,7 +910,7 @@ void WebView::updateBackingStore(FrameView* frameView, HDC dc, bool backingStore
         // Do a layout first so that everything we render to the backing store is always current.
         if (Frame* coreFrame = core(m_mainFrame))
             if (FrameView* view = coreFrame->view())
-                view->layoutIfNeededRecursive();
+                view->updateLayoutAndStyleIfNeededRecursive();
 
         Vector<IntRect> paintRects;
         if (!backingStoreCompletelyDirty && m_backingStoreDirtyRegion) {

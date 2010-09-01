@@ -164,10 +164,6 @@ namespace WebCore {
         void clearTimers();
         static void clearTimers(FrameView*, Document*);
 
-        void setNeedsReapplyStyles();
-        bool needsReapplyStyles() const;
-        void reapplyStyles();
-
         String documentTypeString() const;
 
         // This method -- and the corresponding list of former DOM windows --
@@ -328,7 +324,6 @@ namespace WebCore {
 
         bool m_highlightTextMatches;
         bool m_inViewSourceMode;
-        bool m_needsReapplyStyles;
         bool m_isDisconnected;
         bool m_excludeFromTextSearch;
 
@@ -395,11 +390,6 @@ namespace WebCore {
         ASSERT(!s.end().node() || s.end().node()->document() == document());
 
         m_mark = s;
-    }
-
-    inline bool Frame::needsReapplyStyles() const
-    {
-        return m_needsReapplyStyles;
     }
 
     inline CSSMutableStyleDeclaration* Frame::typingStyle() const

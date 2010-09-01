@@ -842,7 +842,7 @@ static bool shouldEnableLoadDeferring()
 {
     Frame* frame = [self _mainCoreFrame];
     if (frame && frame->view())
-        frame->view()->layoutIfNeededRecursive();
+        frame->view()->updateLayoutAndStyleIfNeededRecursive();
 }
 
 #endif

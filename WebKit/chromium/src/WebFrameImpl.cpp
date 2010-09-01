@@ -1816,7 +1816,7 @@ void WebFrameImpl::layout()
     // layout this frame
     FrameView* view = m_frame->view();
     if (view)
-        view->layoutIfNeededRecursive();
+        view->updateLayoutAndStyleIfNeededRecursive();
 }
 
 void WebFrameImpl::paintWithContext(GraphicsContext& gc, const WebRect& rect)

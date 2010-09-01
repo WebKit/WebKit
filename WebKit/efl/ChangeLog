@@ -1,3 +1,13 @@
+2010-08-31  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44863, disentangle style recalc from layout, so that
+        the former can occur in more places without having to do the latter.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_layout_if_needed_recursive):
+
 2010-08-31  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

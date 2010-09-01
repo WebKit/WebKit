@@ -1,3 +1,33 @@
+2010-08-31  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44863, disentangle style recalc from layout, so that
+        the former can occur in more places without having to do the latter.
+
+        Eliminate Mac-specific code for style re-application and recursive layout/style updating in 
+        favor of the cross-platform code that all the other ports use.
+
+        * Carbon/HIWebView.mm:
+        (Draw):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::forceLayout):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _propagateDirtyRectsToOpaqueAncestors]):
+        (-[WebHTMLView viewWillDraw]):
+        (-[WebHTMLView _recursiveDisplayRectIfNeededIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:topView:]):
+        (-[WebHTMLView _recursiveDisplayAllDirtyWithLockFocus:visRect:]):
+        (-[WebHTMLView _recursive:displayRectIgnoringOpacity:inContext:topView:]):
+        (-[WebHTMLView reapplyStyles]):
+        (-[WebHTMLView layoutToMinimumPageWidth:height:maximumPageWidth:adjustingViewSize:]):
+        (-[WebHTMLView setNeedsToApplyStyles:]):
+        (-[WebHTMLView _setPrinting:minimumPageWidth:height:maximumPageWidth:adjustViewSize:paginateScreenContent:]):
+        (-[WebHTMLView _layoutIfNeeded]):
+        (-[WebHTMLView _web_updateLayoutAndStyleIfNeededRecursive]):
+        * WebView/WebHTMLViewInternal.h:
+        * WebView/WebView.mm:
+        (-[WebView _viewWillDrawInternal]):
+
 2010-08-31  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

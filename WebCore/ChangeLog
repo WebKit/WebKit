@@ -1,3 +1,49 @@
+2010-08-31  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44863, disentangle style recalc from layout, so that
+        the former can occur in more places without having to do the latter.
+
+        * WebCore.exp.in:
+        * page/FocusController.cpp:
+        (WebCore::FocusController::setActive):
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        * page/Frame.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::enterCompositingMode):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::needsLayout):
+        (WebCore::FrameView::updateLayoutAndStyleIfNeededRecursive):
+        * page/FrameView.h:
+        * page/Page.cpp:
+        (WebCore::Page::scheduleForcedStyleRecalcForAllPages):
+        * page/Page.h:
+        * page/Settings.cpp:
+        (WebCore::setNeedsRecalcStyleInAllFrames):
+        (WebCore::setLoadsImagesAutomaticallyInAllFrames):
+        (WebCore::Settings::setStandardFontFamily):
+        (WebCore::Settings::setFixedFontFamily):
+        (WebCore::Settings::setSerifFontFamily):
+        (WebCore::Settings::setSansSerifFontFamily):
+        (WebCore::Settings::setCursiveFontFamily):
+        (WebCore::Settings::setFantasyFontFamily):
+        (WebCore::Settings::setMinimumFontSize):
+        (WebCore::Settings::setMinimumLogicalFontSize):
+        (WebCore::Settings::setDefaultFontSize):
+        (WebCore::Settings::setDefaultFixedFontSize):
+        (WebCore::Settings::setLoadsImagesAutomatically):
+        (WebCore::Settings::setTextAreasAreResizable):
+        (WebCore::Settings::setAuthorAndUserStylesEnabled):
+        (WebCore::Settings::setFontRenderingMode):
+        (WebCore::Settings::setZoomMode):
+        (WebCore::Settings::setAcceleratedCompositingEnabled):
+        (WebCore::Settings::setShowDebugBorders):
+        (WebCore::Settings::setShowRepaintCounter):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::platformColorsDidChange):
+
 2010-08-31  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Dimitri Glazkov.

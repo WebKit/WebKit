@@ -340,7 +340,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::paintDocumentRectToContext(
         return E_FAIL;
 
     // We can't paint with a layout still pending.
-    view->layoutIfNeededRecursive();
+    view->updateLayoutAndStyleIfNeededRecursive();
 
     HDC dc = reinterpret_cast<HDC>(static_cast<ULONG64>(deviceContext));
     GraphicsContext gc(dc);

@@ -146,7 +146,6 @@ inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoader
 #endif
     , m_highlightTextMatches(false)
     , m_inViewSourceMode(false)
-    , m_needsReapplyStyles(false)
     , m_isDisconnected(false)
     , m_excludeFromTextSearch(false)
 {
@@ -628,40 +627,6 @@ void Frame::setPrinting(bool printing, const FloatSize& pageSize, float maximumS
 
     for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
         child->setPrinting(printing, pageSize, maximumShrinkRatio, shouldAdjustViewSize);
-}
-
-void Frame::setNeedsReapplyStyles()
-{
-    // When the frame is not showing web content, it doesn't make sense to apply styles.
-    // If we tried, we'd end up doing things with the document, but the document, if one
-    // exists, is not currently shown and should be in the page cache.
-    if (!m_loader.client()->hasHTMLView())
-        return;
-
-    if (m_needsReapplyStyles)
-        return;
-
-    m_needsReapplyStyles = true;
-
-    // FrameView's "layout" timer includes reapplyStyles, so despite its
-    // name, it's what we want to call here.
-    if (view())
-        view()->scheduleRelayout();
-}
-
-void Frame::reapplyStyles()
-{
-    m_needsReapplyStyles = false;
-
-    // FIXME: This call doesn't really make sense in a function called reapplyStyles.
-    // We should probably eventually move it into its own function.
-    m_doc->docLoader()->setAutoLoadImages(m_page && m_page->settings()->loadsImagesAutomatically());
-
-    // FIXME: It's not entirely clear why the following is needed.
-    // The document automatically does this as required when you set the style sheet.
-    // But we had problems when this code was removed. Details are in
-    // <http://bugs.webkit.org/show_bug.cgi?id=8079>.
-    m_doc->styleSelectorChanged(RecalcStyleImmediately);
 }
 
 void Frame::injectUserScripts(UserScriptInjectionTime injectionTime)

@@ -59,7 +59,7 @@ namespace WebCore {
 #endif
 - (WebCore::CachedImage*)promisedDragTIFFDataSource;
 - (void)setPromisedDragTIFFDataSource:(WebCore::CachedImage*)source;
-- (void)_web_layoutIfNeededRecursive;
+- (void)_web_updateLayoutAndStyleIfNeededRecursive;
 - (void)_destroyAllWebPlugins;
 - (BOOL)_needsLayout;
 

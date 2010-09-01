@@ -277,7 +277,7 @@ void WebPage::goToBackForwardItem(uint64_t backForwardItemID)
 void WebPage::layoutIfNeeded()
 {
     if (m_mainFrame->coreFrame()->view())
-        m_mainFrame->coreFrame()->view()->layoutIfNeededRecursive();
+        m_mainFrame->coreFrame()->view()->updateLayoutAndStyleIfNeededRecursive();
 }
 
 void WebPage::setSize(const WebCore::IntSize& viewSize)

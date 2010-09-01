@@ -644,7 +644,7 @@ void FocusController::setActive(bool active)
 
     if (FrameView* view = m_page->mainFrame()->view()) {
         if (!view->platformWidget()) {
-            view->layoutIfNeededRecursive();
+            view->updateLayoutAndStyleIfNeededRecursive();
             view->updateControlTints();
         }
     }

@@ -2850,7 +2850,7 @@ void ewk_view_layout_if_needed_recursive(Ewk_View_Private_Data* priv)
         ERR("no main frame view");
         return;
     }
-    v->layoutIfNeededRecursive();
+    v->updateLayoutAndStyleIfNeededRecursive();
 }
 
 void ewk_view_scrolls_process(Ewk_View_Smart_Data* sd)

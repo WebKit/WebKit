@@ -406,14 +406,14 @@ void Page::initGroup()
     m_group = m_singlePageGroup.get();
 }
 
-void Page::setNeedsReapplyStyles()
+void Page::scheduleForcedStyleRecalcForAllPages()
 {
     if (!allPages)
         return;
     HashSet<Page*>::iterator end = allPages->end();
     for (HashSet<Page*>::iterator it = allPages->begin(); it != end; ++it)
         for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext())
-            frame->setNeedsReapplyStyles();
+            frame->document()->scheduleForcedStyleRecalc();
 }
 
 void Page::refreshPlugins(bool reload)
