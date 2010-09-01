@@ -27,9 +27,9 @@
 #define ImmutableArray_h
 
 #include "APIObject.h"
-#include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebKit {
 
@@ -47,28 +47,27 @@ public:
     {
         return adoptRef(new ImmutableArray(entries, size));
     }
-    static PassRefPtr<ImmutableArray> adopt(PassOwnArrayPtr<APIObject*> entries, size_t size)
+    static PassRefPtr<ImmutableArray> adopt(Vector<APIObject*>& entries)
     {
-        return adoptRef(new ImmutableArray(entries, size));
+        return adoptRef(new ImmutableArray(entries));
     }
 
     ~ImmutableArray();
 
     template<typename T>
-    T* at(size_t i) { ASSERT(i < m_size); if (m_entries[i]->type() != T::APIType) return 0; return static_cast<T*>(m_entries[i]); }
+    T* at(size_t i) { if (m_entries[i]->type() != T::APIType) return 0; return static_cast<T*>(m_entries[i]); }
 
-    APIObject* at(size_t i) { ASSERT(i < m_size); return m_entries[i]; }
-    size_t size() { return m_size; }
+    APIObject* at(size_t i) { return m_entries[i]; }
+    size_t size() { return m_entries.size(); }
 
-private:
+protected:
     ImmutableArray();
     ImmutableArray(APIObject** entries, size_t size);
-    ImmutableArray(PassOwnArrayPtr<APIObject*> entries, size_t size);
+    ImmutableArray(Vector<APIObject*>& entries);
 
     virtual Type type() const { return APIType; }
 
-    OwnArrayPtr<APIObject*> m_entries;
-    size_t m_size;
+    Vector<APIObject*> m_entries;
 };
 
 } // namespace WebKit

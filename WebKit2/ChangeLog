@@ -1,5 +1,39 @@
 2010-09-01  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by John Sullivan.
+
+        Change ImmutableArray to be backed by a Vector
+        https://bugs.webkit.org/show_bug.cgi?id=45064
+
+        Change ImmutableArray to be backed by a Vector to work toward having 
+        a mutable subclass and to improve the API when working with it in WebKit2
+        itself.
+
+        - Also remove WKArrayCreateAdoptingValues which was confusing and unused.
+
+        * Shared/ImmutableArray.cpp:
+        (WebKit::ImmutableArray::ImmutableArray):
+        (WebKit::ImmutableArray::~ImmutableArray):
+        * Shared/ImmutableArray.h:
+        (WebKit::ImmutableArray::adopt):
+        (WebKit::ImmutableArray::at):
+        (WebKit::ImmutableArray::size):
+        * Shared/ImmutableDictionary.cpp:
+        (WebKit::ImmutableDictionary::keys):
+        * UIProcess/API/C/WKArray.cpp:
+        * UIProcess/API/C/WKArray.h:
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::backListAsImmutableArrayWithLimit):
+        (WebKit::WebBackForwardList::forwardListAsImmutableArrayWithLimit):
+        * UIProcess/WebContext.cpp:
+        (WebKit::PostMessageEncoder::PostMessageDecoder::decode):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::PostMessageEncoder::PostMessageDecoder::decode):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::childFrames):
+
+2010-09-01  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Add URLResponse API for WebKit2

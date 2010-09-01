@@ -41,12 +41,6 @@ WKArrayRef WKArrayCreate(WKTypeRef* values, size_t numberOfValues)
     return toRef(array.release().releaseRef());
 }
 
-WKArrayRef WKArrayCreateAdoptingValues(WKTypeRef* values, size_t numberOfValues)
-{
-    RefPtr<ImmutableArray> array = ImmutableArray::adopt(reinterpret_cast<APIObject**>(values), numberOfValues);
-    return toRef(array.release().releaseRef());
-}
-
 WKTypeRef WKArrayGetItemAtIndex(WKArrayRef arrayRef, size_t index)
 {
     return toWK(arrayRef)->at(index);

@@ -28,30 +28,23 @@
 namespace WebKit {
 
 ImmutableArray::ImmutableArray()
-    : m_entries(0)
-    , m_size(0)
 {
 }
 
 ImmutableArray::ImmutableArray(APIObject** entries, size_t size)
-    : m_entries(adoptArrayPtr(new APIObject*[size]))
-    , m_size(size)
+    : m_entries(size)
 {
-    memcpy(m_entries.get(), entries, m_size);
+    memcpy(m_entries.data(), entries, size);
 }
 
-ImmutableArray::ImmutableArray(PassOwnArrayPtr<APIObject*> entries, size_t size)
-    : m_entries(entries)
-    , m_size(size)
+ImmutableArray::ImmutableArray(Vector<APIObject*>& entries)
 {
+    m_entries.swap(entries);
 }
 
 ImmutableArray::~ImmutableArray()
 {
-    if (!m_entries)
-        return;
-
-    for (size_t i = 0; i < m_size; ++i)
+    for (size_t i = 0; i < m_entries.size(); ++i)
         m_entries[i]->deref();
 }
 

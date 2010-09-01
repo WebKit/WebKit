@@ -173,15 +173,17 @@ PassRefPtr<ImmutableArray> WebBackForwardList::backListAsImmutableArrayWithLimit
     if (!size)
         return ImmutableArray::create();
 
-    OwnArrayPtr<APIObject*> array = adoptArrayPtr(new APIObject*[size]);
+    Vector<APIObject*> vector;
+    vector.reserveInitialCapacity(size);
+
     ASSERT(backListSize >= size);
-    for (unsigned i = backListSize - size, j = 0; i < backListSize; ++i, ++j) {
+    for (unsigned i = backListSize - size; i < backListSize; ++i) {
         APIObject* item = m_entries[i].get();
         item->ref();
-        array[j] = item;
+        vector.uncheckedAppend(item);
     }
 
-    return ImmutableArray::adopt(array.release(), size);
+    return ImmutableArray::adopt(vector);
 }
 
 PassRefPtr<ImmutableArray> WebBackForwardList::forwardListAsImmutableArrayWithLimit(unsigned limit)
@@ -190,16 +192,18 @@ PassRefPtr<ImmutableArray> WebBackForwardList::forwardListAsImmutableArrayWithLi
     if (!size)
         return ImmutableArray::create();
 
-    OwnArrayPtr<APIObject*> array = adoptArrayPtr(new APIObject*[size]);
+    Vector<APIObject*> vector;
+    vector.reserveInitialCapacity(size);
+
     unsigned last = m_current + size;
     ASSERT(last < m_entries.size());
-    for (unsigned i = m_current + 1, j = 0; i <= last; ++i, ++j) {
+    for (unsigned i = m_current + 1; i <= last; ++i) {
         APIObject* item = m_entries[i].get();
         item->ref();
-        array[j] = item;
+        vector.uncheckedAppend(item);
     }
 
-    return ImmutableArray::adopt(array.release(), size);
+    return ImmutableArray::adopt(vector);
 }
 
 } // namespace WebKit

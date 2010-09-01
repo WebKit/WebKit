@@ -127,16 +127,16 @@ public:
             if (!decoder->decode(size))
                 return false;
 
-            OwnArrayPtr<APIObject*> array = adoptArrayPtr(new APIObject*[size]);
+            Vector<APIObject*> vector;
             for (size_t i = 0; i < size; ++i) {
                 APIObject* element;
                 PostMessageDecoder messageCoder(&element);
                 if (!decoder->decode(messageCoder))
                     return false;
-                array[i] = element;
+                vector.append(element);
             }
 
-            *(coder.m_root) = ImmutableArray::adopt(array.release(), size).leakRef();
+            *(coder.m_root) = ImmutableArray::adopt(vector).leakRef();
             break;
         }
         case APIObject::TypeString: {
