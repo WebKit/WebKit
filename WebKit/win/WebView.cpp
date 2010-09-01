@@ -2193,6 +2193,7 @@ LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam,
             break;
         case WM_MOUSEACTIVATE:
             webView->setMouseActivated(true);
+            handled = false;
             break;
         case WM_GETDLGCODE: {
             COMPtr<IWebUIDelegate> uiDelegate;
