@@ -1,3 +1,15 @@
+2010-08-31  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Adam Barth.
+
+        [BREWMP] Add PLATFORM(BREWMP) guard to PluginViewNone
+        https://bugs.webkit.org/show_bug.cgi?id=44768
+
+        Build fix. Add PLATFORM(BREWMP) guard to add dummy PluginView::privateBrowsingStateChanged
+        and PluginView::setJavaScriptPaused.
+
+        * plugins/PluginViewNone.cpp:
+
 2010-08-31  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Adam Barth.
