@@ -1,3 +1,18 @@
+2010-08-27  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GStreamer] ImageGStreamer doesn't need to hold a Cairo surface
+        https://bugs.webkit.org/show_bug.cgi?id=44757
+
+        Pass the cairo surface to the BitmapImage constructor which will
+        handle its life-cycle.
+
+        * platform/graphics/gstreamer/ImageGStreamer.h:
+        * platform/graphics/gstreamer/ImageGStreamerCairo.cpp:
+        (ImageGStreamer::ImageGStreamer):
+        (ImageGStreamer::~ImageGStreamer):
+
 2010-08-30  Patrick Gansterer  <paroga@paroga.com>
 
          Reviewed by Dirk Schulze.

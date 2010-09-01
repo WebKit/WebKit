@@ -49,13 +49,12 @@ PassRefPtr<ImageGStreamer> ImageGStreamer::createImage(GstBuffer* buffer)
 
 ImageGStreamer::ImageGStreamer(GstBuffer*& buffer, IntSize size, cairo_format_t& cairoFormat)
     : m_image(0)
-    , m_surface(0)
 {
-    m_surface = cairo_image_surface_create_for_data(GST_BUFFER_DATA(buffer), cairoFormat,
+    cairo_surface_t* surface = cairo_image_surface_create_for_data(GST_BUFFER_DATA(buffer), cairoFormat,
                                                     size.width(), size.height(),
                                                     cairo_format_stride_for_width(cairoFormat, size.width()));
-    ASSERT(cairo_surface_status(m_surface) == CAIRO_STATUS_SUCCESS);
-    m_image = BitmapImage::create(m_surface);
+    ASSERT(cairo_surface_status(surface) == CAIRO_STATUS_SUCCESS);
+    m_image = BitmapImage::create(surface);
 }
 
 ImageGStreamer::~ImageGStreamer()
@@ -64,9 +63,4 @@ ImageGStreamer::~ImageGStreamer()
         m_image.clear();
 
     m_image = 0;
-
-    if (m_surface && cairo_surface_get_reference_count(m_surface))
-        cairo_surface_destroy(m_surface);
-
-    m_surface = 0;
 }
