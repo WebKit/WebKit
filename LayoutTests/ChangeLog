@@ -1,3 +1,15 @@
+2010-08-31  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, update pngs where the checksum is correct, but the png doesn't match.
+
+        * platform/chromium-linux/fast/dom/attr_dead_doc-expected.png:
+        * platform/chromium-linux/fast/frames/content-opacity-1-expected.png:
+        * platform/chromium-linux/fast/frames/content-opacity-2-expected.png:
+        * platform/chromium-linux/fast/frames/iframe-text-contents-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug137388-1-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug137388-3-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug50695-2-expected.png:
+
 2010-08-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
