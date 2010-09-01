@@ -4984,6 +4984,7 @@ tables/mozilla_expected_failures/other/test4.html
 #  Tests failing because of missing resource load delegate callbacks.
 webarchive/loading/test-loading-archive.html
 webarchive/loading/mainresource-null-mimetype-crash.html
+webarchive/loading/missing-data.html
 
 #   Tests generating new results
 webarchive/adopt-attribute-styled-body-webarchive.html

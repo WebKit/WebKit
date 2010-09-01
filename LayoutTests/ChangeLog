@@ -1,3 +1,10 @@
+2010-08-31  Darin Adler  <darin@apple.com>
+
+        Fix gtk bot.
+
+        * platform/gtk/Skipped: Skip the webarchive/loading/missing-data.html for the same reason
+        the nearly identical webarchive/loading/mainresource-null-mimetype-crash.html is skipped.
+
 2010-08-31  Tony Chang  <tony@chromium.org>
 
         Unreviewed, update pngs where the checksum is correct, but the png doesn't match.
