@@ -1,3 +1,14 @@
+2010-08-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Null-deref when decoding web archive with no data key in LegacyWebArchive::createResource
+        https://bugs.webkit.org/show_bug.cgi?id=45000
+
+        * webarchive/loading/missing-data-expected.txt: Added.
+        * webarchive/loading/missing-data.html: Added.
+        * webarchive/loading/resources/missing-data.webarchive: Added.
+
 2010-08-31  Tony Chang  <tony@chromium.org>
 
         Unreviewed.  Add pngs for chromium linux results that have checksums.
