@@ -1,3 +1,16 @@
+2010-08-31  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] Add WebKitClient::callOnMainThreadWithDelay()
+        https://bugs.webkit.org/show_bug.cgi?id=45016
+
+        It is required to remove base/task.h and base/timer.h dependency
+        from DRT/Chromium.
+
+        * public/WebKitClient.h:
+        (WebKit::WebKitClient::callOnMainThreadWithDelay): Added.
+
 2010-08-31  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Jian Li.
