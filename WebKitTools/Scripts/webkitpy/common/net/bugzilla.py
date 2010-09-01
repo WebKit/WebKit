@@ -518,6 +518,8 @@ class Bugzilla(object):
     def fetch_bug_dictionary(self, bug_id):
         try:
             return self._parse_bug_page(self._fetch_bug_page(bug_id))
+        except KeyboardInterrupt:
+            raise
         except:
             self.authenticate()
             return self._parse_bug_page(self._fetch_bug_page(bug_id))

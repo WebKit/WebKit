@@ -1,3 +1,12 @@
+2010-08-31  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
+
+        Reviewed by Adam Barth.
+
+        Allow Ctrl+C inside Bugzilla::fetch_bug_dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=44789
+
+        * Scripts/webkitpy/common/net/bugzilla.py:
+
 2010-08-31  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Adam Barth.
