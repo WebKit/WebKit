@@ -956,13 +956,13 @@ String Editor::selectionStartCSSPropertyValue(int propertyID)
     if (propertyID == CSSPropertyBackgroundColor && (m_frame->selection()->isRange() || hasTransparentBackgroundColor(selectionStyle.get()))) {
         RefPtr<Range> range(m_frame->selection()->toNormalizedRange());
         ExceptionCode ec = 0;
-        Node* ancestor = range->commonAncestorContainer(ec);
-        ASSERT(ancestor);
-        do {
+        for (Node* ancestor = range->commonAncestorContainer(ec); ancestor; ancestor = ancestor->parentNode()) {
             selectionStyle = computedStyle(ancestor);
-            ancestor = ancestor->parentNode();
-        } while (hasTransparentBackgroundColor(selectionStyle.get()));
-        value = selectionStyle->getPropertyValue(CSSPropertyBackgroundColor);
+            if (!hasTransparentBackgroundColor(selectionStyle.get())) {
+                value = selectionStyle->getPropertyValue(CSSPropertyBackgroundColor);
+                break;
+            }
+        }
     }
 
     return value;

@@ -1,3 +1,16 @@
+2010-09-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        REGRESSION(r66431): WebCore::Editor::selectionStartCSSPropertyValue crashes if no background color is specified
+        https://bugs.webkit.org/show_bug.cgi?id=45068
+
+        Added a test to ensure WebKit doesn't crash when backColor is queried on a node without any ancestors
+        with a background color.
+
+        * editing/execCommand/backcolor-crash-expected.txt: Added.
+        * editing/execCommand/backcolor-crash.html: Added.
+
 2010-08-31  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.
