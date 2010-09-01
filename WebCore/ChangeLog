@@ -1,5 +1,11 @@
 2010-09-01  Kinuko Yasuda  <kinuko@chromium.org>
 
+        Unreviewed; another build fix.
+
+        * WebCore.pri:
+
+2010-09-01  Kinuko Yasuda  <kinuko@chromium.org>
+
         Unreviewed; qt build fix.
 
         * CMakeLists.txt:

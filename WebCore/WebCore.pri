@@ -149,11 +149,24 @@ IDL_BINDINGS += \
     dom/WheelEvent.idl \
     fileapi/Blob.idl \
     fileapi/BlobBuilder.idl \
+    fileapi/DirectoryEntry.idl \
+    fileapi/DirectoryReader.idl \
+    fileapi/DOMFileSystem.idl \
+    fileapi/EntriesCallback.idl \
+    fileapi/Entry.idl \
+    fileapi/EntryArray.idl \
+    fileapi/EntryCallback.idl \
+    fileapi/ErrorCallback.idl \
     fileapi/File.idl \
-    fileapi/FileError.idl \
     fileapi/FileList.idl \
     fileapi/FileReader.idl \
     fileapi/FileWriter.idl \
+    fileapi/FileEntry.idl \
+    fileapi/FileError.idl \
+    fileapi/FileSystemCallback.idl \
+    fileapi/Flags.idl \
+    fileapi/Metadata.idl \
+    fileapi/MetadataCallback.idl \
     html/canvas/ArrayBufferView.idl \
     html/canvas/ArrayBuffer.idl \
     html/canvas/Int8Array.idl \
@@ -292,17 +305,6 @@ IDL_BINDINGS += \
     storage/Database.idl \
     storage/DatabaseCallback.idl \
     storage/DatabaseSync.idl \
-    storage/DirectoryEntry.idl \
-    storage/DirectoryReader.idl \
-    storage/DOMFileSystem.idl \
-    storage/EntriesCallback.idl \
-    storage/Entry.idl \
-    storage/EntryArray.idl \
-    storage/EntryCallback.idl \
-    storage/ErrorCallback.idl \
-    storage/FileEntry.idl \
-    storage/FileSystemCallback.idl \
-    storage/Flags.idl \
     storage/IDBAny.idl \
     storage/IDBCursor.idl \
     storage/IDBDatabaseError.idl \
@@ -318,8 +320,6 @@ IDL_BINDINGS += \
     storage/IDBRequest.idl \
     storage/IDBSuccessEvent.idl \
     storage/IDBTransaction.idl \
-    storage/Metadata.idl \
-    storage/MetadataCallback.idl \
     storage/Storage.idl \
     storage/StorageEvent.idl \
     storage/SQLError.idl \
