@@ -1,3 +1,21 @@
+2010-08-31  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit should not accept PDFs as video.
+        https://bugs.webkit.org/show_bug.cgi?id=45013
+        
+        QuickTime will accept a PDF as the source for a movie, and happily
+        convert that PDF into a .mov.  WebKit should disable the eat and grip
+        PDF components which allow this.
+
+        Test: http/tests/media/pdf-served-as-pdf.html
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::createQTMovie): Add PDF eat and grip
+        components to the components which are disabled before opening a 
+        QTMovie.
+
 2010-09-01  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Darin Adler.

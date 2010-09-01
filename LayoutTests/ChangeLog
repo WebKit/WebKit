@@ -1,3 +1,18 @@
+2010-08-31  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit should not accept PDFs as video.
+        https://bugs.webkit.org/show_bug.cgi?id=45013
+        
+        Added a new test, similar to the text-served-as-text.html test, which
+        expects an error thrown when a PDF is set as the source of a <video>
+        element.
+
+        * http/tests/media/pdf-served-as-pdf-expected.txt: Added.
+        * http/tests/media/pdf-served-as-pdf.html: Added.
+        * http/tests/media/resources/test.pdf: Added.
+
 2010-09-01  Tony Chang  <tony@chromium.org>
 
         Unreviewed, updating a chromium baseline, the only difference is in

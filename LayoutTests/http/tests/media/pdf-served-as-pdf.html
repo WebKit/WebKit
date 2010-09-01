@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>PDF file served as 'application/pdf'</title>
+        <script src=../../../media/video-test.js></script>
+        <script>
+            function loadedmetadata(evt) 
+            {
+                logResult(false, "loaded PDF file served as PDF");
+                endTest();
+            }
+
+            function error(evt)
+            {
+                logResult(true, "failed trying to load PDF file served as PDF");
+                endTest();
+            }
+
+            function start() 
+            {
+                findMediaElement();
+
+                waitForEvent('loadedmetadata', loadedmetadata);
+                waitForEvent("error", error);
+                waitForEvent("loadstart");
+                testExpected("video.error", null);
+
+                var movie = "resources/test.pdf";
+                video.src = "http://127.0.0.1:8000/media/video-throttled-load.cgi?name=" + movie + "&throttle=99999&type=application/pdf";
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <video controls></video>
+    </body>
+</html>

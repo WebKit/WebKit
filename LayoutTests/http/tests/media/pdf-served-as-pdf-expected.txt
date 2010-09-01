@@ -1,0 +1,6 @@
+EXPECTED (video.error == 'null') OK
+EVENT(loadstart)
+EVENT(error)
+failed trying to load PDF file served as PDF OK
+END OF TEST
+
