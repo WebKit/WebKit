@@ -1,3 +1,72 @@
+2010-09-01  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: move debugger tests to the new test harness
+        https://bugs.webkit.org/show_bug.cgi?id=44939
+
+        * http/tests/inspector/debugger-test.js: Removed.
+        * http/tests/inspector/debugger-test2.js:
+        (initialize_DebuggerTest.InspectorTest.startDebuggerTest.startTest):
+        (initialize_DebuggerTest.InspectorTest.startDebuggerTest):
+        (initialize_DebuggerTest.InspectorTest.completeDebuggerTest.disableDebugger):
+        (initialize_DebuggerTest.InspectorTest.runTestFunctionAndWaitUntilPaused):
+        (initialize_DebuggerTest.InspectorTest.waitUntilPaused):
+        (initialize_DebuggerTest.InspectorTest.waitUntilResumed):
+        (initialize_DebuggerTest.InspectorTest.resumeExecution):
+        (initialize_DebuggerTest.InspectorTest.captureStackTrace):
+        (initialize_DebuggerTest.InspectorTest._pausedScript):
+        (initialize_DebuggerTest.InspectorTest._resumedScript):
+        (initialize_DebuggerTest.InspectorTest.waitUntilCurrentSourceFrameIsLoaded):
+        (initialize_DebuggerTest.InspectorTest._showScriptSource):
+        (initialize_DebuggerTest.InspectorTest.expandProperties.expandNextPath):
+        (initialize_DebuggerTest.InspectorTest.expandProperties):
+        (initialize_DebuggerTest.InspectorTest._expandProperty):
+        (initialize_DebuggerTest.InspectorTest._findChildPropertyTreeElement):
+        (initialize_DebuggerTest):
+        * http/tests/inspector/inspector-test2.js:
+        (initialize_InspectorTest.InspectorTest.completeTest):
+        (initialize_InspectorTest.InspectorTest.evaluateInPage):
+        (initialize_InspectorTest.InspectorTest.addResult.addResultToPage):
+        (initialize_InspectorTest.InspectorTest.addResult):
+        (initialize_InspectorTest.InspectorTest.addObject):
+        (initialize_InspectorTest.InspectorTest.reloadPage):
+        (initialize_InspectorTest.InspectorTest.pageReloaded):
+        (initialize_InspectorTest.InspectorTest.runAfterPendingDispatches):
+        (initialize_InspectorTest.InspectorTest.enableResourceTracking):
+        (initialize_InspectorTest.InspectorTest.disableResourceTracking):
+        (initialize_InspectorTest.InspectorTest._addSniffer):
+        (runTest.runTestInFrontend):
+        (runTest):
+        (didEvaluateForTestInFrontend):
+        * inspector/debugger-breakpoints-not-activated-on-reload.html:
+        * inspector/debugger-cyclic-ref-expected.txt:
+        * inspector/debugger-cyclic-ref.html:
+        * inspector/debugger-eval-while-paused-expected.txt:
+        * inspector/debugger-eval-while-paused.html:
+        * inspector/debugger-no-nested-pause-expected.txt:
+        * inspector/debugger-no-nested-pause.html:
+        * inspector/debugger-pause-in-eval-script-expected.txt:
+        * inspector/debugger-pause-in-eval-script.html:
+        * inspector/debugger-pause-on-debugger-statement-expected.txt:
+        * inspector/debugger-pause-on-debugger-statement.html:
+        * inspector/debugger-proto-property-expected.txt:
+        * inspector/debugger-proto-property.html:
+        * inspector/debugger-step-in-expected.txt:
+        * inspector/debugger-step-in.html:
+        * inspector/debugger-step-out-expected.txt:
+        * inspector/debugger-step-out.html:
+        * inspector/debugger-step-over-expected.txt:
+        * inspector/debugger-step-over.html:
+        * inspector/dom-breakpoints-expected.txt:
+        * inspector/dom-breakpoints.html:
+        * inspector/extensions-api-expected.txt:
+        * inspector/extensions-audits-api-expected.txt:
+        * inspector/extensions-audits-expected.txt:
+        * inspector/extensions-expected.txt:
+        * inspector/report-protocol-errors.html:
+        * platform/chromium/inspector/debugger-step-in-expected.txt:
+
 2010-09-01  Anton Muhin <antonm@chromium.org>
 
         Unreviewed, updating expected results for Chromium.

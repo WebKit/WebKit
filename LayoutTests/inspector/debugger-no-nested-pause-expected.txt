@@ -5,6 +5,6 @@ Set timer for test function.
 Script execution paused.
 Set timer for test function.
 testFunction.invocationCount = 2
-Resumed script execution.
-Disabled debugger.
+Script execution resumed.
+Debugger was disabled.
 

@@ -1,108 +1,54 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
-<script src="../http/tests/inspector/debugger-test.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/debugger-test2.js"></script>
 <script>
 
-function C() {
+function C()
+{
 }
+
 C.prototype = {
     m: function() { }
 }
 
-function testFunction() {
+function testFunction()
+{
     var o = new C();
     var d = document.documentElement;
     debugger;
-    notifyDone();
 }
 
-function doit()
+var test = function()
 {
-    evaluateInWebInspector("frontend_testProtoPropertyOnPause", dumpArray);
-}
+    InspectorTest.startDebuggerTest(step1);
 
-function frontend_testProtoPropertyOnPause(testController)
-{
-    testController.waitUntilDone();
-
-    WebInspector.showPanel("scripts");
-    frontend_ensureDebuggerEnabled(debuggerWasEnabledCallback);
-
-    function debuggerWasEnabledCallback()
+    function step1()
     {
-        testController.results.push("Debugger was enabled.");
-        frontend_evaluateInConsole("setTimeout(testFunction, 0)", function(result)
-        {
-            testController.results.push("Set timer for test function.");
-        });
+        InspectorTest.runTestFunctionAndWaitUntilPaused(step2);
     }
 
-    frontend_addSniffer(WebInspector, "pausedScript", function(callFrames)
+    function step2(callFrames)
     {
-        testController.results.push("Script execution paused.");
         var sections = WebInspector.currentPanel.sidebarPanes.scopechain.sections;
         var localScope = sections[0].propertiesTreeOutline;
         var properties = [
             localScope, ["o", "__proto__", "__proto__"],
             localScope, ["d", "__proto__", "__proto__", "__proto__", "__proto__", "__proto__"]
         ];
-        frontend_expandProperties(testController, properties, frontend_completeDebuggerTest.bind(null, testController));
-    });
-}
+        InspectorTest.expandProperties(properties, step3);
+    }
 
-function frontend_expandProperties(testController, properties, callback)
-{
-    var index = 0;
-    function expandNextPath()
+    function step3()
     {
-        if (index === properties.length) {
-            callback();
-            return;
-        }
-        var parentTreeElement = properties[index++];
-        var path = properties[index++];
-        frontend_expandProperty(testController, parentTreeElement, path, 0, expandNextPath);
-    }
-    testController.runAfterPendingDispatches(expandNextPath);
-}
-
-function frontend_expandProperty(testController, parentTreeElement, path, pathIndex, callback)
-{
-    if (pathIndex === path.length) {
-        testController.results.push("Expanded property: " + path.join("."));
-        callback();
-        return;
-    }
-    var name = path[pathIndex++];
-    var propertyTreeElement = frontend_findChildPropertyTreeElement(parentTreeElement, name);
-    if (!propertyTreeElement) {
-       testController.results.push("Failed to expand property: " + path.slice(0, pathIndex).join("."));
-       testController.notifyDone();
-       return;
-    }
-    propertyTreeElement.expand();
-    testController.runAfterPendingDispatches(function()
-    {
-        frontend_expandProperty(testController, propertyTreeElement, path, pathIndex, callback);
-    });
-}
-
-function frontend_findChildPropertyTreeElement(parent, childName)
-{
-    var children = parent.children;
-    for (var i = 0; i < children.length; i++) {
-        var treeElement = children[i];
-        var property = treeElement.property;
-        if (property.name === childName)
-            return treeElement;
+        InspectorTest.completeDebuggerTest();
     }
 }
 
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 Tests that object's __proto__ property is present in object properties section when
 script is paused on a breakpoint.<a href="https://bugs.webkit.org/show_bug.cgi?id=41214">Bug 41214</a>

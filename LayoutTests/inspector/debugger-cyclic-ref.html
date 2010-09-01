@@ -1,7 +1,7 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
-<script src="../http/tests/inspector/debugger-test.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/debugger-test2.js"></script>
 <script>
 
 Object.prototype.cyclicRef = Object.prototype;
@@ -10,41 +10,27 @@ function testFunction()
 {
     var o = new Object();
     debugger;
-    notifyDone();
 }
 
-function doit()
+var test = function()
 {
-    evaluateInWebInspector("frontend_testDebugObjectWithCyclicRef", dumpArray);
-}
+    InspectorTest.startDebuggerTest(step1);
 
-function frontend_testDebugObjectWithCyclicRef(testController)
-{
-    testController.waitUntilDone();
-
-    WebInspector.showPanel("scripts");
-    frontend_ensureDebuggerEnabled(debuggerWasEnabledCallback);
-
-    function debuggerWasEnabledCallback()
+    function step1()
     {
-        testController.results.push("Debugger was enabled.");
-        frontend_evaluateInConsole("setTimeout(testFunction, 0)", function(result)
-        {
-            testController.results.push("Set timer for test function.");
-        });
+        InspectorTest.runTestFunctionAndWaitUntilPaused(step2);
     }
 
-    frontend_addSniffer(WebInspector, "pausedScript", function(callFrames)
+    function step2()
     {
-        testController.results.push("Script execution paused.");
-        frontend_completeDebuggerTest(testController);
-    });
+        InspectorTest.completeDebuggerTest();
+    }
 }
 
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 Tests that debugging a page where Object prototype has a cyclic reference won't
 crash the browser.<a href="https://bugs.webkit.org/show_bug.cgi?id=43558">Bug 43558</a>

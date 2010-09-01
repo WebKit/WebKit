@@ -1,68 +1,60 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
-<script src="../http/tests/inspector/debugger-test.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/debugger-test2.js"></script>
 <script>
 
 var globalVar = { b: 1 };
 
-function slave(x) {
+function slave(x)
+{
     var y = 20;
     debugger;
-    notifyDone();
 }
 
-function testFunction() {
-    var localObject = {a: 300};
+function testFunction()
+{
+    var localObject = { a: 300 };
     slave(4000);
 }
 
-function doit()
+var test = function()
 {
-    evaluateInWebInspector("frontend_testPauseOnDebuggerStatement", dumpArray);
-}
+    InspectorTest.startDebuggerTest(step1);
 
-function frontend_testPauseOnDebuggerStatement(testController)
-{
-    testController.waitUntilDone();
-
-    WebInspector.showPanel("scripts");
-    frontend_ensureDebuggerEnabled(debuggerWasEnabledCallback);
-
-    function debuggerWasEnabledCallback()
+    function step1()
     {
-        testController.results.push("Debugger was enabled.");
-        frontend_evaluateInConsole("setTimeout(testFunction, 0)", function(result)
-        {
-            testController.results.push("Set timer for test function.");
-        });
+        InspectorTest.runTestFunctionAndWaitUntilPaused(step2);
     }
 
-    frontend_addSniffer(WebInspector, "pausedScript", function(callFrames)
+    function step2(callFrames)
     {
-        testController.results.push("Script execution paused.");
-        frontend_evaluateInConsole("x + y + globalVar.b", function(result)
-        {
-            testController.results.push("Evaluated script on the top frame: " + result);
-            WebInspector.panels.scripts.sidebarPanes.callstack.selectedCallFrame = callFrames[1];
-            testController.runAfterPendingDispatches(testEvalInCallingFrame);
-        });
+        InspectorTest.evaluateInConsole("x + y + globalVar.b", step3.bind(null, callFrames));
+    }
 
-        function testEvalInCallingFrame()
-        {
-            frontend_evaluateInConsole("localObject.a + globalVar.b", function(result)
-            {
-                testController.results.push("Evaluated script on the calling frame: " + result);
-                frontend_completeDebuggerTest(testController);
-            });
-        }
-    });
+    function step3(callFrames, result)
+    {
+        InspectorTest.addResult("Evaluated script on the top frame: " + result);
+        WebInspector.panels.scripts.sidebarPanes.callstack.selectedCallFrame = callFrames[1];
+        InspectorTest.runAfterPendingDispatches(step4);
+    }
+
+    function step4()
+    {
+        InspectorTest.evaluateInConsole("localObject.a + globalVar.b", step5);
+    }
+
+    function step5(result)
+    {
+        InspectorTest.addResult("Evaluated script on the calling frame: " + result);
+        InspectorTest.completeDebuggerTest();
+    }
 }
 
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 Tests that evaluation in console works fine when script is paused. It also checks that
 stack and global variables are accessible from the console.

@@ -3,6 +3,6 @@ Tests that debugger will stop on "debugger" statement.
 Debugger was enabled.
 Set timer for test function.
 Script execution paused.
-Resumed script execution.
-Disabled debugger.
+Script execution resumed.
+Debugger was disabled.
 

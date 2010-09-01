@@ -41,11 +41,11 @@ var test = function()
         InspectorTest.waitUntilPaused(step3.bind(null, node));
     }
 
-    function step3(node)
+    function step3(node, callFrames)
     {
+        InspectorTest.addResult("line: " + callFrames[0].line + ", function: " + callFrames[0].functionName);
         WebInspector.domBreakpointManager.removeBreakpointsForNode(node);
-        InspectorTest.resumeExecution();
-        findDOMNodeById("d1", step4);
+        InspectorTest.resumeExecution(findDOMNodeById.bind(null, "d1", step4));
     }
 
     function step4(node)
@@ -57,11 +57,11 @@ var test = function()
         InspectorTest.waitUntilPaused(step5.bind(null, node));
     }
 
-    function step5(node)
+    function step5(node, callFrames)
     {
+        InspectorTest.addResult("line: " + callFrames[0].line + ", function: " + callFrames[0].functionName);
         WebInspector.domBreakpointManager.removeBreakpointsForNode(node);
-        InspectorTest.resumeExecution();
-        findDOMNodeById("d1", step6);
+        InspectorTest.resumeExecution(findDOMNodeById.bind(null, "d1", step6));
     }
 
     function step6(node)
@@ -73,8 +73,9 @@ var test = function()
         InspectorTest.waitUntilPaused(step7.bind(null, node));
     }
 
-    function step7(node)
+    function step7(node, callFrames)
     {
+        InspectorTest.addResult("line: " + callFrames[0].line + ", function: " + callFrames[0].functionName);
         WebInspector.domBreakpointManager.removeBreakpointsForNode(node);
         InspectorTest.completeDebuggerTest();
     }

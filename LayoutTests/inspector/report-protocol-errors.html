@@ -24,7 +24,8 @@ function test()
 
     function callback(message)
     {
-        InspectorTest.addResult(message);
+        if (numberOfReports < messages.length)
+            InspectorTest.addObject(message);
 
         if (++numberOfReports === messages.length)
             InspectorTest.completeTest();

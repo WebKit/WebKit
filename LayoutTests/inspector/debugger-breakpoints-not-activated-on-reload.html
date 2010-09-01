@@ -14,29 +14,27 @@ var test = function()
     var testName = WebInspector.mainResource.url;
     testName = testName.substring(testName.lastIndexOf('/') + 1);
 
-    WebInspector.showPanel("scripts");
-    InspectorTest.startDebuggerTest(startDebuggerTestCallback);
+    InspectorTest.startDebuggerTest(step1);
 
-    function startDebuggerTestCallback()
+    function step1()
     {
-        InspectorTest.showScriptSource(testName, showScriptSourceCallback);
+        InspectorTest.showScriptSource(testName, step2);
     }
 
-    function showScriptSourceCallback(view)
+    function step2()
     {
         InspectorTest.addResult("Main resource was shown.");
-        view._addBreakpoint(8);
+        WebInspector.panels.scripts.visibleView._addBreakpoint(8);
         WebInspector.panels.scripts.toggleBreakpointsButton.element.click();
-        InspectorTest.reloadPage(reloadPageCallback);
+        InspectorTest.reloadPage(step3);
     }
 
-    function reloadPageCallback()
+    function step3()
     {
-        InspectorTest.addResult("Page reloaded.");
-        InspectorTest.showScriptSource(testName, showScriptSourceAfterReloadCallback);
+        InspectorTest.showScriptSource(testName, step4);
     }
 
-    function showScriptSourceAfterReloadCallback(view)
+    function step4()
     {
         InspectorTest.addResult("Main resource was shown.");
         if (!WebInspector.panels.scripts.breakpointsActivated)

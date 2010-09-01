@@ -1,64 +1,43 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
-<script src="../http/tests/inspector/debugger-test.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/debugger-test2.js"></script>
 <script>
 
 function testFunction()
 {
     testFunction.invocationCount++;
     debugger;
-    if (testFunction.didExitFromNestedCall)
-        notifyDone();
-    testFunction.didExitFromNestedCall = true;
 }
+
 testFunction.invocationCount = 0;
 
-function doit()
+var test = function()
 {
-    evaluateInWebInspector("frontend_testNoNestedPause", dumpArray);
-}
+    InspectorTest.startDebuggerTest(step1);
 
-function frontend_testNoNestedPause(testController)
-{
-    testController.waitUntilDone();
-
-    WebInspector.showPanel("scripts");
-    frontend_ensureDebuggerEnabled(debuggerWasEnabledCallback);
-
-    function debuggerWasEnabledCallback()
+    function step1()
     {
-        testController.results.push("Debugger was enabled.");
-        frontend_evaluateInConsole("setTimeout(testFunction, 0)", function(result)
-        {
-            testController.results.push("Set timer for test function.");
-        });
+        InspectorTest.runTestFunctionAndWaitUntilPaused(step2);
     }
 
-    var paused = false;
-    frontend_addSniffer(WebInspector, "pausedScript", function(callFrames)
+    function step2()
     {
-        if (paused) {
-            testController.results.push("Script execution paused second time.");
-            testController.notifyDone();
-            return;
-        }
-        paused = true;
-        testController.results.push("Script execution paused.");
+        InspectorTest.evaluateInConsole("testFunction(); testFunction.invocationCount", step3);
+        InspectorTest.addResult("Set timer for test function.");
+    }
 
-        testController.results.push("Set timer for test function.");
-        frontend_evaluateInConsole("testFunction(); testFunction.invocationCount", function(result)
-        {
-            testController.results.push("testFunction.invocationCount = " + result);
-            frontend_completeDebuggerTest(testController);
-        });
-    });
+    function step3(result)
+    {
+        InspectorTest.addResult("testFunction.invocationCount = " + result);
+        InspectorTest.completeDebuggerTest();
+    }
 }
 
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 Tests that debugger will skip breakpoint hit when script execution is already paused. <a href="https://bugs.webkit.org/show_bug.cgi?id=41768">See bug</a>
 </p>

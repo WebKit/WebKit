@@ -1,59 +1,47 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
-<script src="../http/tests/inspector/debugger-test.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/debugger-test2.js"></script>
 <script>
 
-function d() {
+function d()
+{
     var i = 10;
 }
 
-function testFunction() {
+function testFunction()
+{
     debugger;
     d();
-    notifyDone();
 }
 
-function doit()
+var test = function()
 {
-    evaluateInWebInspector("frontend_testStepIn", dumpArray);
-}
+    InspectorTest.startDebuggerTest(step1);
 
-function frontend_testStepIn(testController)
-{
-    testController.waitUntilDone();
-
-    WebInspector.showPanel("scripts");
-    frontend_ensureDebuggerEnabled(debuggerWasEnabledCallback);
-
-    function debuggerWasEnabledCallback()
+    function step1()
     {
-        testController.results.push("Debugger was enabled.");
-        frontend_evaluateInConsole("setTimeout(testFunction, 0)", function(result)
-        {
-            testController.results.push("Set timer for test function.");
-        });
+        InspectorTest.runTestFunctionAndWaitUntilPaused(step2);
     }
 
     var stepCount = 0;
-    frontend_addSniffer(WebInspector, "pausedScript", function(callFrames)
+    function step2(callFrames)
     {
-        testController.results.push("Script execution paused.");
-        frontend_captureStackTrace(callFrames, testController);
-        if (stepCount == 2)
-            frontend_completeDebuggerTest(testController);
-        else {
-            testController.results.push("Stepping into...");
+        InspectorTest.captureStackTrace(callFrames);
+        if (stepCount < 2) {
+            InspectorTest.addResult("Stepping into...");
             document.getElementById("scripts-step-into").click();
-        }
+            InspectorTest.waitUntilResumed(InspectorTest.waitUntilPaused.bind(InspectorTest, step2));
+        } else
+            InspectorTest.completeDebuggerTest();
         stepCount++;
-    }, true);
+    }
 }
 
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 Tests "step in" functionality in debugger.
 </p>

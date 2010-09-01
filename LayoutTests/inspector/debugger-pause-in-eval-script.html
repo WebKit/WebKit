@@ -1,63 +1,42 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
-<script src="../http/tests/inspector/debugger-test.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/debugger-test2.js"></script>
 <script>
 
-function doit()
+
+var test = function()
 {
-    evaluateInWebInspector("frontend_testPauseOnDebuggerStatement", dumpArray);
-}
-
-function frontend_testPauseOnDebuggerStatement(testController)
-{
-    testController.waitUntilDone();
-
-    WebInspector.showPanel("scripts");
-
     var scriptToEvaluate = "function testFunction() {\n" +
                            "    debugger;\n" +
-                           "    notifyDone();\n" +
                            "}\n" +
                            "setTimeout(testFunction, 0);\n";
-    function debuggerWasEnabledCallback()
-    {
-        testController.results.push("Debugger was enabled.");
 
-        frontend_evaluateInConsole(scriptToEvaluate,
-        function(result)
-        {
-            testController.results.push("Evaluated script in console.");
-        });
+    InspectorTest.startDebuggerTest(step1);
+
+    function step1()
+    {
+        InspectorTest.evaluateInConsole(scriptToEvaluate, InspectorTest.addResult.bind(InspectorTest, "Evaluated script in console."));
+        InspectorTest.waitUntilPaused(step2);
     }
 
-    frontend_ensureDebuggerEnabled(debuggerWasEnabledCallback);
-
-    frontend_addSniffer(WebInspector, "pausedScript", function(callFrames)
+    function step2()
     {
-        testController.results.push("Script execution paused.");
-        frontend_checkExecutionLineWhenSourceFrameIsLoaded(testController, frontend_completeDebuggerTest.bind(null, testController));
-    });
-}
+        InspectorTest.waitUntilCurrentSourceFrameIsLoaded(step3);
+    }
 
-function frontend_checkExecutionLineWhenSourceFrameIsLoaded(testController, callback)
-{
-    var sourceFrame = WebInspector.currentPanel.visibleView.sourceFrame;
-    if (sourceFrame._loaded) {
-        testController.results.push("Execution line number: " + sourceFrame.executionLine);
-        testController.results.push("Execution line text: " + sourceFrame._textModel.line(sourceFrame.executionLine - 1));
-        callback();
-    } else {
-        frontend_addSniffer(sourceFrame, "setContent", function() {
-            frontend_checkExecutionLineWhenSourceFrameIsLoaded(testController, callback);
-        });
+    function step3(sourceFrame)
+    {
+        InspectorTest.addResult("Execution line number: " + sourceFrame.executionLine);
+        InspectorTest.addResult("Execution line text: " + sourceFrame._textModel.line(sourceFrame.executionLine - 1));
+        InspectorTest.completeDebuggerTest();
     }
 }
 
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 Tests that debugger will stop on "debugger" statement in a function that was added
 to the inspected page via evaluation in Web Inspector console.<a href="https://bugs.webkit.org/show_bug.cgi?id=41058">Bug 41058</a>

@@ -1,5 +1,6 @@
 Tests public interface of WebInspector Extensions API
 
+Page reloaded.
 Started extension.
 Running tests...
 RUNNING TEST: extension_testAPI

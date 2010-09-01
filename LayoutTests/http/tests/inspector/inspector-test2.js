@@ -1,10 +1,11 @@
-var initialize_InspectorTest = (function() {
+var initialize_InspectorTest = function() {
 
 var results = [];
+var resultsSynchronized = false;
 
 InspectorTest.completeTest = function()
 {
-    InspectorBackend.didEvaluateForTestInFrontend(InspectorTest.completeTestCallId, JSON.stringify(results));
+    InspectorBackend.didEvaluateForTestInFrontend(InspectorTest.completeTestCallId, "");
 };
 
 InspectorTest.evaluateInConsole = function(code, callback)
@@ -21,15 +22,70 @@ InspectorTest.evaluateInConsole = function(code, callback)
         });
 };
 
+InspectorTest.evaluateInPage = function(code, callback)
+{
+    InjectedScriptAccess.getDefault().evaluate(code, "console", callback || function() {});
+};
+
 InspectorTest.addResult = function(text)
 {
     results.push(text);
+    if (resultsSynchronized)
+        addResultToPage(text);
+    else {
+        for (var i = 0; i < results.length; ++i)
+            addResultToPage(results[i]);
+        resultsSynchronized = true;
+    }
+
+    function addResultToPage(text)
+    {
+        InspectorTest.evaluateInPage("output(unescape('" + escape(text) + "'))");
+    }
+};
+
+InspectorTest.addObject = function(object, nondeterministicProps, prefix, firstLinePrefix)
+{
+    prefix = prefix || "";
+    firstLinePrefix = firstLinePrefix || prefix;
+    InspectorTest.addResult(firstLinePrefix + "{");
+    for (var prop in object) {
+        if (!object.hasOwnProperty(prop))
+            continue;
+        var prefixWithName = prefix + "    " + prop + " : ";
+        var propValue = object[prop];
+        if (nondeterministicProps && prop in nondeterministicProps)
+            InspectorTest.addResult(prefixWithName + "<" + typeof propValue + ">");
+        else if (typeof propValue === "object")
+            InspectorTest.addObject(propValue, nondeterministicProps, prefix + "    ", prefixWithName);
+        else if (typeof propValue === "string")
+            InspectorTest.addResult(prefixWithName + "\"" + propValue + "\"");
+        else
+            InspectorTest.addResult(prefixWithName + propValue);
+    }
+    InspectorTest.addResult(prefix + "}");
 };
 
 InspectorTest.reloadPage = function(callback)
 {
+    InspectorTest._reloadPageCallback = callback;
     InspectorBackend.reloadPage();
-    InspectorTest._addSniffer(WebInspector, "reset", callback);
+};
+
+InspectorTest.pageReloaded = function()
+{
+    resultsSynchronized = false;
+    InspectorTest.addResult("Page reloaded.");
+    if (InspectorTest._reloadPageCallback) {
+        var callback = InspectorTest._reloadPageCallback;
+        delete InspectorTest._reloadPageCallback;
+        callback();
+    }
+};
+
+InspectorTest.runAfterPendingDispatches = function(callback)
+{
+    WebInspector.TestController.prototype.runAfterPendingDispatches(callback);
 };
 
 InspectorTest.enableResourceTracking = function(callback)
@@ -37,15 +93,15 @@ InspectorTest.enableResourceTracking = function(callback)
     if (WebInspector.panels.resources.resourceTrackingEnabled)
         callback();
     else {
-        InspectorTest._addSniffer(WebInspector, "reset", callback);
+        InspectorTest._reloadPageCallback = callback;
         InspectorBackend.enableResourceTracking(false);
     }
-}
+};
 
 InspectorTest.disableResourceTracking = function()
 {
     InspectorBackend.disableResourceTracking(false);
-}
+};
 
 InspectorTest.findDOMNode = function(root, filter, callback)
 {
@@ -110,9 +166,9 @@ InspectorTest._addSniffer = function(receiver, methodName, override, opt_sticky)
         }
         return result;
     };
-}
+};
 
-});
+};
 
 var runTestCallId = 0;
 var completeTestCallId = 1;
@@ -127,8 +183,10 @@ function runTest()
 
     function runTestInFrontend(initializationFunctions, testFunction, completeTestCallId)
     {
-        if (window.InspectorTest)
+        if (window.InspectorTest) {
+            InspectorTest.pageReloaded();
             return;
+        }
 
         InspectorTest = {};
         InspectorTest.completeTestCallId = completeTestCallId;
@@ -155,63 +213,14 @@ function runTest()
     layoutTestController.evaluateInWebInspector(runTestCallId, toEvaluate);
 }
 
-function didEvaluateForTestInFrontend(callId, result)
+function didEvaluateForTestInFrontend(callId)
 {
     if (callId !== completeTestCallId)
         return;
-    dumpArray(JSON.parse(result));
     layoutTestController.closeWebInspector();
     setTimeout(function() {
         layoutTestController.notifyDone();
     }, 0);
-}
-
-function dump(data)
-{
-    if (typeof data === "string") {
-        output(data);
-        return;
-    }
-
-    if (typeof data === "object") {
-        dumpObject(data);
-        return;
-    }
-
-    if (typeof data === "array") {
-        for (var i = 0; i < result.length; ++i)
-            dump(result[i]);
-        return;
-    }
-}
-
-function dumpArray(result)
-{
-    if (result instanceof Array) {
-        for (var i = 0; i < result.length; ++i)
-            dump(result[i]);
-    } else
-        output(result);
-}
-
-function dumpObject(object, nondeterministicProps, prefix, firstLinePrefix)
-{
-    prefix = prefix || "";
-    firstLinePrefix = firstLinePrefix || prefix;
-    output(firstLinePrefix + "{");
-    for (var prop in object) {
-        var prefixWithName = prefix + "    " + prop + " : ";
-        var propValue = object[prop];
-        if (nondeterministicProps && prop in nondeterministicProps)
-            output(prefixWithName + "<" + typeof propValue + ">");
-        else if (typeof propValue === "object")
-            dumpObject(propValue, nondeterministicProps, prefix + "    ", prefixWithName);
-        else if (typeof propValue === "string")
-            output(prefixWithName + "\"" + propValue + "\"");
-        else
-            output(prefixWithName + propValue);
-    }
-    output(prefix + "}");
 }
 
 function output(text)

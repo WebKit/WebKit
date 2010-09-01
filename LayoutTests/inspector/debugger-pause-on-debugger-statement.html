@@ -1,46 +1,33 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
-<script src="../http/tests/inspector/debugger-test.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/debugger-test2.js"></script>
 <script>
 
-function testFunction() {
+function testFunction()
+{
     debugger;
-    notifyDone();
 }
 
-function doit()
+var test = function()
 {
-    evaluateInWebInspector("frontend_testPauseOnDebuggerStatement", dumpArray);
-}
+    InspectorTest.startDebuggerTest(step1);
 
-function frontend_testPauseOnDebuggerStatement(testController)
-{
-    testController.waitUntilDone();
-
-    WebInspector.showPanel("scripts");
-    frontend_ensureDebuggerEnabled(debuggerWasEnabledCallback);
-
-    function debuggerWasEnabledCallback()
+    function step1()
     {
-        testController.results.push("Debugger was enabled.");
-        frontend_evaluateInConsole("setTimeout(testFunction, 0)", function(result)
-        {
-            testController.results.push("Set timer for test function.");
-        });
+        InspectorTest.runTestFunctionAndWaitUntilPaused(step2);
     }
 
-    frontend_addSniffer(WebInspector, "pausedScript", function(callFrames)
+    function step2()
     {
-        testController.results.push("Script execution paused.");
-        frontend_completeDebuggerTest(testController);
-    });
+        InspectorTest.completeDebuggerTest();
+    }
 }
 
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 Tests that debugger will stop on "debugger" statement.
 </p>

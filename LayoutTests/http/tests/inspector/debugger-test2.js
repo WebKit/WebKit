@@ -2,6 +2,8 @@ var initialize_DebuggerTest = function() {
 
 InspectorTest.startDebuggerTest = function(callback)
 {
+    WebInspector.showPanel("scripts");
+
     if (WebInspector.panels.scripts._debuggerEnabled)
         startTest();
     else {
@@ -12,9 +14,11 @@ InspectorTest.startDebuggerTest = function(callback)
     function startTest()
     {
         InspectorTest.addResult("Debugger was enabled.");
+        InspectorTest._addSniffer(WebInspector, "pausedScript", InspectorTest._pausedScript, true);
+        InspectorTest._addSniffer(WebInspector, "resumedScript", InspectorTest._resumedScript, true);
         callback();
     }
-}
+};
 
 InspectorTest.completeDebuggerTest = function()
 {
@@ -23,13 +27,16 @@ InspectorTest.completeDebuggerTest = function()
     if (!scriptsPanel.breakpointsActivated)
         scriptsPanel.toggleBreakpointsButton.element.click();
 
-    InspectorTest.resumeExecution();
+    InspectorTest.resumeExecution(disableDebugger);
 
-    if (!scriptsPanel._debuggerEnabled)
-        completeTest();
-    else {
-        InspectorTest._addSniffer(WebInspector, "debuggerWasDisabled", completeTest);
-        scriptsPanel._toggleDebugging(false);
+    function disableDebugger()
+    {
+        if (!scriptsPanel._debuggerEnabled)
+            completeTest();
+        else {
+            InspectorTest._addSniffer(WebInspector, "debuggerWasDisabled", completeTest);
+            scriptsPanel._toggleDebugging(false);
+        }
     }
 
     function completeTest()
@@ -39,21 +46,69 @@ InspectorTest.completeDebuggerTest = function()
     }
 };
 
-InspectorTest.waitUntilPaused = function(callback)
+InspectorTest.runTestFunctionAndWaitUntilPaused = function(callback)
 {
-    InspectorTest._addSniffer(WebInspector, "pausedScript", pausedScript);
-
-    function pausedScript(callFrames)
-    {
-        InspectorTest.addResult("Paused at line " + callFrames[0].line + " in " + callFrames[0].functionName);
-        callback(callFrames);
-    }
+    InspectorTest.evaluateInConsole("setTimeout(testFunction, 0)");
+    InspectorTest.addResult("Set timer for test function.");
+    InspectorTest.waitUntilPaused(callback);
 };
 
-InspectorTest.resumeExecution = function()
+InspectorTest.waitUntilPaused = function(callback)
+{
+    if (InspectorTest._callFrames)
+        callback(InspectorTest._callFrames);
+    else
+        InspectorTest._waitUntilPausedCallback = callback;
+};
+
+InspectorTest.waitUntilResumed = function(callback)
+{
+    if (!InspectorTest._callFrames)
+        callback();
+    else
+        InspectorTest._waitUntilResumedCallback = callback;
+};
+
+InspectorTest.resumeExecution = function(callback)
 {
     if (WebInspector.panels.scripts.paused)
         WebInspector.panels.scripts._togglePause();
+    if (callback)
+        InspectorTest.waitUntilResumed(callback);
+};
+
+InspectorTest.captureStackTrace = function(callFrames)
+{
+    InspectorTest.addResult("Call stack:");
+    for (var i = 0; i < callFrames.length; i++) {
+        var frame = callFrames[i];
+        var scriptOrResource = WebInspector.panels.scripts._sourceIDMap[frame.sourceID];
+        var url = scriptOrResource && WebInspector.displayNameForURL(scriptOrResource.sourceURL || scriptOrResource.url);
+        var s = "    " + i + ") " + frame.functionName + " (" + url + ":" + frame.line + ")";
+        InspectorTest.addResult(s);
+    }
+};
+
+InspectorTest._pausedScript = function(callFrames)
+{
+    InspectorTest.addResult("Script execution paused.");
+    InspectorTest._callFrames = callFrames;
+    if (InspectorTest._waitUntilPausedCallback) {
+        var callback = InspectorTest._waitUntilPausedCallback;
+        delete InspectorTest._waitUntilPausedCallback;
+        callback(InspectorTest._callFrames);
+    }
+}
+
+InspectorTest._resumedScript = function()
+{
+    InspectorTest.addResult("Script execution resumed.");
+    delete InspectorTest._callFrames;
+    if (InspectorTest._waitUntilResumedCallback) {
+        var callback = InspectorTest._waitUntilResumedCallback;
+        delete InspectorTest._waitUntilResumedCallback;
+        callback();
+    }
 };
 
 InspectorTest.showScriptSource = function(scriptName, callback)
@@ -62,6 +117,15 @@ InspectorTest.showScriptSource = function(scriptName, callback)
         InspectorTest._showScriptSource(scriptName, callback);
     else
         InspectorTest._addSniffer(WebInspector, "parsedScriptSource", InspectorTest.showScriptSource.bind(InspectorTest, scriptName, callback));
+};
+
+InspectorTest.waitUntilCurrentSourceFrameIsLoaded = function(callback)
+{
+    var sourceFrame = WebInspector.currentPanel.visibleView.sourceFrame;
+    if (sourceFrame._loaded)
+        callback(sourceFrame);
+    else
+        InspectorTest._addSniffer(sourceFrame, "setContent", callback.bind(null, sourceFrame));
 };
 
 InspectorTest._scriptsAreParsed = function(scripts)
@@ -106,12 +170,52 @@ InspectorTest._showScriptSource = function(scriptName, callback)
         scriptsPanel._showScriptOrResource(scriptResource);
     }
 
-    var view = scriptsPanel.visibleView;
-    callback = callback.bind(null, view);
-    if (!view.sourceFrame._loaded)
-        InspectorTest._addSniffer(view.sourceFrame, "setContent", callback);
-    else
-        callback();
+    InspectorTest.waitUntilCurrentSourceFrameIsLoaded(callback);
 };
 
-}
+InspectorTest.expandProperties = function(properties, callback)
+{
+    var index = 0;
+    function expandNextPath()
+    {
+        if (index === properties.length) {
+            callback();
+            return;
+        }
+        var parentTreeElement = properties[index++];
+        var path = properties[index++];
+        InspectorTest._expandProperty(parentTreeElement, path, 0, expandNextPath);
+    }
+    InspectorTest.runAfterPendingDispatches(expandNextPath);
+};
+
+InspectorTest._expandProperty = function(parentTreeElement, path, pathIndex, callback)
+{
+    if (pathIndex === path.length) {
+        InspectorTest.addResult("Expanded property: " + path.join("."));
+        callback();
+        return;
+    }
+    var name = path[pathIndex++];
+    var propertyTreeElement = InspectorTest._findChildPropertyTreeElement(parentTreeElement, name);
+    if (!propertyTreeElement) {
+       InspectorTest.addResult("Failed to expand property: " + path.slice(0, pathIndex).join("."));
+       InspectorTest.completeDebuggerTest();
+       return;
+    }
+    propertyTreeElement.expand();
+    InspectorTest.runAfterPendingDispatches(InspectorTest._expandProperty.bind(InspectorTest, propertyTreeElement, path, pathIndex, callback));
+};
+
+InspectorTest._findChildPropertyTreeElement = function(parent, childName)
+{
+    var children = parent.children;
+    for (var i = 0; i < children.length; i++) {
+        var treeElement = children[i];
+        var property = treeElement.property;
+        if (property.name === childName)
+            return treeElement;
+    }
+};
+
+};

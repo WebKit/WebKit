@@ -4,15 +4,18 @@ Debugger was enabled.
 Set timer for test function.
 Script execution paused.
 Call stack:
-    0) testFunction (debugger-step-in.html:12)
+    0) testFunction (debugger-step-in.html:14)
 Stepping into...
+Script execution resumed.
 Script execution paused.
 Call stack:
-    0) testFunction (debugger-step-in.html:13)
+    0) testFunction (debugger-step-in.html:15)
 Stepping into...
+Script execution resumed.
 Script execution paused.
 Call stack:
-    0) d (debugger-step-in.html:8)
-    1) testFunction (debugger-step-in.html:13)
-Resumed script execution.
-Disabled debugger.
+    0) d (debugger-step-in.html:9)
+    1) testFunction (debugger-step-in.html:15)
+Script execution resumed.
+Debugger was disabled.
+

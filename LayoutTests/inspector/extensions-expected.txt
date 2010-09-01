@@ -1,5 +1,6 @@
 Tests WebInspector extension API
 
+Page reloaded.
 Started extension.
 Running tests...
 RUNNING TEST: extension_testCreatePanel

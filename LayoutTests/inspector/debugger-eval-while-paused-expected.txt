@@ -5,6 +5,6 @@ Set timer for test function.
 Script execution paused.
 Evaluated script on the top frame: 4021
 Evaluated script on the calling frame: 301
-Resumed script execution.
-Disabled debugger.
+Script execution resumed.
+Debugger was disabled.
 

@@ -4,18 +4,20 @@ Debugger was enabled.
 Set timer for test function.
 Script execution paused.
 Call stack:
-    0) d (debugger-step-over.html:12)
-    1) testFunction (debugger-step-over.html:17)
-Stepping over...
-Script execution paused.
-Call stack:
-    0) d (debugger-step-over.html:13)
-    1) testFunction (debugger-step-over.html:17)
-Stepping over...
-Script execution paused.
-Call stack:
     0) d (debugger-step-over.html:14)
-    1) testFunction (debugger-step-over.html:17)
-Resumed script execution.
-Disabled debugger.
+    1) testFunction (debugger-step-over.html:20)
+Stepping over...
+Script execution resumed.
+Script execution paused.
+Call stack:
+    0) d (debugger-step-over.html:15)
+    1) testFunction (debugger-step-over.html:20)
+Stepping over...
+Script execution resumed.
+Script execution paused.
+Call stack:
+    0) d (debugger-step-over.html:16)
+    1) testFunction (debugger-step-over.html:20)
+Script execution resumed.
+Debugger was disabled.
 

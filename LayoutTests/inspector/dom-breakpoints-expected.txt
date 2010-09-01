@@ -3,12 +3,18 @@ Tests DOM breakpoints. Bug 42886
 Debugger was enabled.
 Found dom node d0.
 Set subtree modified DOM breakpoint on d0.
-Paused at line 11 in appendElement
+Script execution paused.
+line: 11, function: appendElement
+Script execution resumed.
 Found dom node d1.
 Set attribute modified DOM breakpoint on d1.
-Paused at line 17 in modifyAttribute
+Script execution paused.
+line: 17, function: modifyAttribute
+Script execution resumed.
 Found dom node d1.
 Set node removed DOM breakpoint on d1.
-Paused at line 23 in removeElement
+Script execution paused.
+line: 23, function: removeElement
+Script execution resumed.
 Debugger was disabled.
 
