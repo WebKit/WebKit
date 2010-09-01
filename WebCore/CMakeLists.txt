@@ -339,17 +339,6 @@ SET(WebCore_IDL_FILES
     storage/Database.idl
     storage/DatabaseCallback.idl
     storage/DatabaseSync.idl
-    storage/DirectoryEntry.idl
-    storage/DirectoryReader.idl
-    storage/DOMFileSystem.idl
-    storage/EntriesCallback.idl
-    storage/Entry.idl
-    storage/EntryArray.idl
-    storage/EntryCallback.idl
-    storage/ErrorCallback.idl
-    storage/FileEntry.idl
-    storage/FileSystemCallback.idl
-    storage/Flags.idl
     storage/IDBAny.idl
     storage/IDBCursor.idl
     storage/IDBDatabaseError.idl
@@ -365,8 +354,6 @@ SET(WebCore_IDL_FILES
     storage/IDBRequest.idl
     storage/IDBSuccessEvent.idl
     storage/IDBTransaction.idl
-    storage/Metadata.idl
-    storage/MetadataCallback.idl
     storage/SQLError.idl
     storage/SQLException.idl
     storage/SQLResultSet.idl
@@ -1585,6 +1572,21 @@ if (ENABLE_FILE_SYSTEM)
         fileapi/FileSystemCallbacks.cpp
         fileapi/LocalFileSystem.cpp
         platform/AsyncFileSystem.cpp
+    )
+    LIST(APPEND WebCore_IDL_FILES
+        fileapi/DirectoryEntry.idl
+        fileapi/DirectoryReader.idl
+        fileapi/DOMFileSystem.idl
+        fileapi/EntriesCallback.idl
+        fileapi/Entry.idl
+        fileapi/EntryArray.idl
+        fileapi/EntryCallback.idl
+        fileapi/ErrorCallback.idl
+        fileapi/FileEntry.idl
+        fileapi/FileSystemCallback.idl
+        fileapi/Flags.idl
+        fileapi/Metadata.idl
+        fileapi/MetadataCallback.idl
     )
 ENDIF ()
 

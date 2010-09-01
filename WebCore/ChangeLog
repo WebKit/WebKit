@@ -1,3 +1,9 @@
+2010-09-01  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Unreviewed; qt build fix.
+
+        * CMakeLists.txt:
+
 2010-08-31  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Adam Barth.
