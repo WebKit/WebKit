@@ -1,3 +1,12 @@
+2010-09-01  Matthew Willis  <lilmatt@flock.com>
+
+        Reviewed by Joseph Pecoraro.
+
+        Fix failing test: inspector/console-format.html (regression from r66616)
+        https://bugs.webkit.org/show_bug.cgi?id=45067
+
+        * inspector/console-format-expected.txt:
+
 2010-09-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Dimitri Glazkov.

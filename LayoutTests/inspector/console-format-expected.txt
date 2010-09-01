@@ -12,8 +12,8 @@ CONSOLE MESSAGE: line 60: test
 CONSOLE MESSAGE: line 61: test
 CONSOLE MESSAGE: line 60: test named "test"
 CONSOLE MESSAGE: line 61: test named "test"
-CONSOLE MESSAGE: line 60: Error: Unknown error
-CONSOLE MESSAGE: line 61: Error: Unknown error
+CONSOLE MESSAGE: line 60: Error: 
+CONSOLE MESSAGE: line 61: Error: 
 CONSOLE MESSAGE: line 60: [object HTMLBodyElement]
 CONSOLE MESSAGE: line 61: [object HTMLBodyElement]
 CONSOLE MESSAGE: line 60: function () { return 1; }
@@ -58,9 +58,9 @@ console-format.html:61["test"]
 console-format.html:60test named "test"
 console-format.html:61["test named "test""]
 "test named "test""
-console-format.html:60Error: Unknown error
-console-format.html:61[Error: Unknown error]
-Error: Unknown error
+console-format.html:60Error: 
+console-format.html:61[Error: ]
+Error: 
 console-format.html:60<body onload="onload()">…</body>
 console-format.html:61[<body onload="onload()">…</body>]
 <body onload="onload()">…</body>
