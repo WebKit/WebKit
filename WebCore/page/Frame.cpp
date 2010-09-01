@@ -1516,7 +1516,7 @@ void Frame::tiledBackingStorePaintBegin()
 {
     if (!m_view)
         return;
-    m_view->layoutIfNeededRecursive();
+    m_view->updateLayoutAndStyleIfNeededRecursive();
     m_view->flushDeferredRepaints();
 }
 
