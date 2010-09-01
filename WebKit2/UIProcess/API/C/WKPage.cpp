@@ -155,26 +155,30 @@ void WKPageRestoreFromSessionState(WKPageRef pageRef, WKDataRef sessionStateData
 
 void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClient* wkClient)
 {
-    if (wkClient && !wkClient->version)
-        toWK(pageRef)->initializeLoaderClient(wkClient);
+    if (wkClient && wkClient->version)
+        return;
+    toWK(pageRef)->initializeLoaderClient(wkClient);
 }
 
 void WKPageSetPagePolicyClient(WKPageRef pageRef, const WKPagePolicyClient* wkClient)
 {
-    if (wkClient && !wkClient->version)
-        toWK(pageRef)->initializePolicyClient(wkClient);
+    if (wkClient && wkClient->version)
+        return;
+    toWK(pageRef)->initializePolicyClient(wkClient);
 }
 
 void WKPageSetPageFormClient(WKPageRef pageRef, const WKPageFormClient* wkClient)
 {
-    if (wkClient && !wkClient->version)
-        toWK(pageRef)->initializeFormClient(wkClient);
+    if (wkClient && wkClient->version)
+        return;
+    toWK(pageRef)->initializeFormClient(wkClient);
 }
 
 void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClient * wkClient)
 {
-    if (wkClient && !wkClient->version)
-        toWK(pageRef)->initializeUIClient(wkClient);
+    if (wkClient && wkClient->version)
+        return;
+    toWK(pageRef)->initializeUIClient(wkClient);
 }
 
 void WKPageRunJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRef, void* context, WKPageRunJavaScriptFunction callback)

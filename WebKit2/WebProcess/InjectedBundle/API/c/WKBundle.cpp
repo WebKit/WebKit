@@ -39,8 +39,9 @@ WKTypeID WKBundleGetTypeID()
 
 void WKBundleSetClient(WKBundleRef bundleRef, WKBundleClient * wkClient)
 {
-    if (wkClient && !wkClient->version)
-        toWK(bundleRef)->initializeClient(wkClient);
+    if (wkClient && wkClient->version)
+        return;
+    toWK(bundleRef)->initializeClient(wkClient);
 }
 
 void WKBundlePostMessage(WKBundleRef bundleRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef)

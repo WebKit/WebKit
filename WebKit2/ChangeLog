@@ -1,3 +1,47 @@
+2010-08-31  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Crash when closing a page with a form field when using WebKit2.
+
+        Reviewed by Anders Carlsson.
+
+        The crash came from accessing a BundlePageFormClient that had been
+        destroyed. The client was intended to be cleared by a call to
+        WKBundlePageSetFormClient, but a null check there caused it not to be
+        cleared.
+
+        I fixed this and all of the other WK "set client" functions.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetInjectedBundleClient):
+        Return early if the caller passed a client with a version not equal to
+        0.
+        (WKContextSetHistoryClient):
+        Ditto.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient):
+        Ditto.
+        (WKPageSetPagePolicyClient):
+        Ditto.
+        (WKPageSetPageFormClient):
+        Ditto.
+        (WKPageSetPageUIClient):
+        Ditto.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetClient):
+        Ditto.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSetEditorClient):
+        Ditto.
+        (WKBundlePageSetFormClient):
+        Ditto.
+        (WKBundlePageSetLoaderClient):
+        Ditto.
+        (WKBundlePageSetUIClient):
+        Ditto.
+
 2010-08-31  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix.

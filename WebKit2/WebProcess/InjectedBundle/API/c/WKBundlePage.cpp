@@ -39,26 +39,30 @@ WKTypeID WKBundlePageGetTypeID()
 
 void WKBundlePageSetEditorClient(WKBundlePageRef pageRef, WKBundlePageEditorClient* wkClient)
 {
-    if (wkClient && !wkClient->version)
-        toWK(pageRef)->initializeInjectedBundleEditorClient(wkClient);
+    if (wkClient && wkClient->version)
+        return;
+    toWK(pageRef)->initializeInjectedBundleEditorClient(wkClient);
 }
 
 void WKBundlePageSetFormClient(WKBundlePageRef pageRef, WKBundlePageFormClient* wkClient)
 {
-    if (wkClient && !wkClient->version)
-        toWK(pageRef)->initializeInjectedBundleFormClient(wkClient);
+    if (wkClient && wkClient->version)
+        return;
+    toWK(pageRef)->initializeInjectedBundleFormClient(wkClient);
 }
 
 void WKBundlePageSetLoaderClient(WKBundlePageRef pageRef, WKBundlePageLoaderClient* wkClient)
 {
-    if (wkClient && !wkClient->version)
-        toWK(pageRef)->initializeInjectedBundleLoaderClient(wkClient);
+    if (wkClient && wkClient->version)
+        return;
+    toWK(pageRef)->initializeInjectedBundleLoaderClient(wkClient);
 }
 
 void WKBundlePageSetUIClient(WKBundlePageRef pageRef, WKBundlePageUIClient* wkClient)
 {
-    if (wkClient && !wkClient->version)
-        toWK(pageRef)->initializeInjectedBundleUIClient(wkClient);
+    if (wkClient && wkClient->version)
+        return;
+    toWK(pageRef)->initializeInjectedBundleUIClient(wkClient);
 }
 
 WKBundleFrameRef WKBundlePageGetMainFrame(WKBundlePageRef pageRef)
