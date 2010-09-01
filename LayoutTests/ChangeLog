@@ -2,6 +2,12 @@
 
         Unreviewed, test expectation update.
 
+        * platform/chromium/drt_expectations.txt: Remove a duplicated expectation.
+
+2010-08-31  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
         * platform/chromium/drt_expectations.txt: Add recent failures.
 
 2010-08-31  Justin Garcia  <justin.garcia@apple.com>

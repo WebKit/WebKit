@@ -330,7 +330,6 @@ BUG_DRT LINUX : fast/text/international/danda-space.html = IMAGE+TEXT
 BUG_DRT LINUX : fast/text/international/hindi-spacing.html = IMAGE+TEXT
 BUG_DRT LINUX : fast/text/international/hindi-whitespace.html = IMAGE+TEXT
 BUG_DRT LINUX : fast/text/international/thai-baht-space.html = IMAGE+TEXT
-BUG_DRT LINUX : fast/text/international/thai-line-breaks.html = IMAGE+TEXT
 BUG_DRT LINUX : fast/text/international/wrap-CJK-001.html = IMAGE
 BUG_DRT LINUX : http/tests/multipart/invalid-image-data.html = IMAGE
 BUG_DRT LINUX : platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle.html = IMAGE+TEXT
