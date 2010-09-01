@@ -1,3 +1,11 @@
+2010-09-01  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Remove obsolete include path from DumpRenderTree.pro
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+
 2010-09-01  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Reviewed by Laszlo Gombos.
