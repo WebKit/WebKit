@@ -29,11 +29,17 @@
 
 #include "FloatConversion.h"
 #include "IntSize.h"
+#include <math.h>
 
 namespace WebCore {
 
 FloatSize::FloatSize(const IntSize& size) : m_width(size.width()), m_height(size.height())
 {
+}
+
+float FloatSize::diagonalLength() const
+{
+    return sqrtf(diagonalLengthSquared());
 }
 
 FloatSize FloatSize::narrowPrecision(double width, double height)

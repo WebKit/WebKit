@@ -80,6 +80,11 @@ public:
 
     void setX(float x) { m_x = x; }
     void setY(float y) { m_y = y; }
+    void set(float x, float y)
+    {
+        m_x = x;
+        m_y = y;
+    }
     void move(float dx, float dy)
     {
         m_x += dx;
@@ -89,6 +94,19 @@ public:
     {
         m_x *= sx;
         m_y *= sy;
+    }
+
+    void normalize();
+
+    float dot(const FloatPoint& a) const
+    {
+        return m_x * a.x() + m_y * a.y();
+    }
+
+    float length() const;
+    float lengthSquared() const
+    {
+        return m_x * m_x + m_y * m_y;
     }
 
 #if PLATFORM(CG)
@@ -171,6 +189,12 @@ inline bool operator==(const FloatPoint& a, const FloatPoint& b)
 inline bool operator!=(const FloatPoint& a, const FloatPoint& b)
 {
     return a.x() != b.x() || a.y() != b.y();
+}
+
+inline float operator*(const FloatPoint& a, const FloatPoint& b)
+{
+    // dot product
+    return a.dot(b);
 }
 
 inline IntPoint roundedIntPoint(const FloatPoint& p)

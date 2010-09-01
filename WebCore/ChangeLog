@@ -1,3 +1,28 @@
+2010-08-31  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Chris Marrin.
+
+        Add length and related operations to FloatPoint and FloatSize
+        https://bugs.webkit.org/show_bug.cgi?id=44994
+
+        Added length and squared length operations to both FloatPoint and
+        FloatSize, and added set(x, y), dot and normalize operations to
+        FloatPoint. These changes have been tested with new code to be
+        added later.
+
+        * platform/graphics/FloatPoint.cpp:
+        (WebCore::FloatPoint::normalize):
+        (WebCore::FloatPoint::length):
+        * platform/graphics/FloatPoint.h:
+        (WebCore::FloatPoint::set):
+        (WebCore::FloatPoint::dot):
+        (WebCore::FloatPoint::lengthSquared):
+        (WebCore::operator*):
+        * platform/graphics/FloatSize.cpp:
+        (WebCore::FloatSize::diagonalLength):
+        * platform/graphics/FloatSize.h:
+        (WebCore::FloatSize::diagonalLengthSquared):
+
 2010-08-31  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
