@@ -1,0 +1,128 @@
+layer at (0,0) size 1188x585
+  RenderView at (0,0) size 800x585
+layer at (0,0) size 1188x585
+  RenderBlock {HTML} at (0,0) size 800x585
+    RenderBody {BODY} at (8,8) size 784x569
+layer at (8,8) size 1180x502
+  RenderBlock {DIV} at (0,0) size 784x404 [border: (2px solid #000000)]
+    RenderText {#text} at (2,2) size 104x19
+      text run at (2,2) width 104: "This is some text."
+    RenderBR {BR} at (106,17) size 0x0
+    RenderText {#text} at (2,22) size 104x19
+      text run at (2,22) width 104: "This is some text."
+    RenderBR {BR} at (106,37) size 0x0
+    RenderText {#text} at (2,42) size 104x19
+      text run at (2,42) width 104: "This is some text."
+    RenderBR {BR} at (106,57) size 0x0
+    RenderText {#text} at (2,62) size 104x19
+      text run at (2,62) width 104: "This is some text."
+    RenderBR {BR} at (106,77) size 0x0
+    RenderText {#text} at (2,82) size 104x19
+      text run at (2,82) width 104: "This is some text."
+    RenderBR {BR} at (106,97) size 0x0
+    RenderText {#text} at (2,102) size 104x19
+      text run at (2,102) width 104: "This is some text."
+    RenderBR {BR} at (106,117) size 0x0
+    RenderText {#text} at (2,122) size 104x19
+      text run at (2,122) width 104: "This is some text."
+    RenderBR {BR} at (106,137) size 0x0
+    RenderText {#text} at (2,142) size 104x19
+      text run at (2,142) width 104: "This is some text."
+    RenderBR {BR} at (106,157) size 0x0
+    RenderText {#text} at (2,162) size 104x19
+      text run at (2,162) width 104: "This is some text."
+    RenderBR {BR} at (106,177) size 0x0
+    RenderText {#text} at (2,182) size 104x19
+      text run at (2,182) width 104: "This is some text."
+    RenderBR {BR} at (106,197) size 0x0
+    RenderImage {IMG} at (2,202) size 250x300 [bgcolor=#008000]
+    RenderText {#text} at (252,202) size 104x19
+      text run at (252,202) width 104: "This is some text."
+    RenderBR {BR} at (356,217) size 0x0
+    RenderText {#text} at (252,222) size 104x19
+      text run at (252,222) width 104: "This is some text."
+    RenderBR {BR} at (356,237) size 0x0
+    RenderText {#text} at (252,242) size 104x19
+      text run at (252,242) width 104: "This is some text."
+    RenderBR {BR} at (356,257) size 0x0
+    RenderText {#text} at (252,262) size 104x19
+      text run at (252,262) width 104: "This is some text."
+    RenderBR {BR} at (356,277) size 0x0
+    RenderText {#text} at (252,282) size 104x19
+      text run at (252,282) width 104: "This is some text."
+    RenderBR {BR} at (356,297) size 0x0
+    RenderText {#text} at (252,302) size 104x19
+      text run at (252,302) width 104: "This is some text."
+    RenderBR {BR} at (356,317) size 0x0
+    RenderText {#text} at (252,322) size 104x19
+      text run at (252,322) width 104: "This is some text."
+    RenderBR {BR} at (356,337) size 0x0
+    RenderText {#text} at (252,342) size 104x19
+      text run at (252,342) width 104: "This is some text."
+    RenderBR {BR} at (356,357) size 0x0
+    RenderText {#text} at (252,362) size 104x19
+      text run at (252,362) width 104: "This is some text."
+    RenderBR {BR} at (356,377) size 0x0
+    RenderText {#text} at (252,382) size 104x19
+      text run at (252,382) width 104: "This is some text."
+    RenderBR {BR} at (356,397) size 0x0
+    RenderText {#text} at (252,402) size 104x19
+      text run at (252,402) width 104: "This is some text."
+    RenderBR {BR} at (356,417) size 0x0
+    RenderText {#text} at (252,422) size 104x19
+      text run at (252,422) width 104: "This is some text."
+    RenderBR {BR} at (356,437) size 0x0
+    RenderText {#text} at (252,442) size 104x19
+      text run at (252,442) width 104: "This is some text."
+    RenderBR {BR} at (356,457) size 0x0
+    RenderText {#text} at (252,462) size 104x19
+      text run at (252,462) width 104: "This is some text."
+    RenderBR {BR} at (356,477) size 0x0
+    RenderText {#text} at (252,482) size 104x19
+      text run at (252,482) width 104: "This is some text."
+    RenderBR {BR} at (356,497) size 0x0
+    RenderText {#text} at (2,502) size 104x19
+      text run at (2,502) width 104: "This is some text."
+    RenderBR {BR} at (106,517) size 0x0
+    RenderText {#text} at (2,522) size 104x19
+      text run at (2,522) width 104: "This is some text."
+    RenderBR {BR} at (106,537) size 0x0
+    RenderText {#text} at (2,542) size 104x19
+      text run at (2,542) width 104: "This is some text."
+    RenderBR {BR} at (106,557) size 0x0
+    RenderText {#text} at (2,562) size 104x19
+      text run at (2,562) width 104: "This is some text."
+    RenderBR {BR} at (106,577) size 0x0
+    RenderText {#text} at (2,582) size 104x19
+      text run at (2,582) width 104: "This is some text."
+    RenderBR {BR} at (106,597) size 0x0
+    RenderText {#text} at (2,602) size 104x19
+      text run at (2,602) width 104: "This is some text."
+    RenderBR {BR} at (106,617) size 0x0
+    RenderText {#text} at (2,622) size 104x19
+      text run at (2,622) width 104: "This is some text."
+    RenderBR {BR} at (106,637) size 0x0
+    RenderText {#text} at (2,642) size 104x19
+      text run at (2,642) width 104: "This is some text."
+    RenderBR {BR} at (106,657) size 0x0
+    RenderText {#text} at (2,662) size 104x19
+      text run at (2,662) width 104: "This is some text."
+    RenderBR {BR} at (106,677) size 0x0
+    RenderText {#text} at (2,682) size 104x19
+      text run at (2,682) width 104: "This is some text."
+    RenderBR {BR} at (106,697) size 0x0
+    RenderText {#text} at (2,702) size 104x19
+      text run at (2,702) width 104: "This is some text."
+    RenderBR {BR} at (106,717) size 0x0
+    RenderText {#text} at (2,722) size 104x19
+      text run at (2,722) width 104: "This is some text."
+    RenderBR {BR} at (106,737) size 0x0
+    RenderText {#text} at (2,742) size 104x19
+      text run at (2,742) width 104: "This is some text."
+    RenderBR {BR} at (106,757) size 0x0
+    RenderText {#text} at (2,762) size 104x19
+      text run at (2,762) width 104: "This is some text."
+    RenderBR {BR} at (106,777) size 0x0
+    RenderText {#text} at (2,782) size 104x19
+      text run at (2,782) width 104: "This is some text."
+    RenderBR {BR} at (106,797) size 0x0
