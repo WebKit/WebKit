@@ -1197,7 +1197,7 @@ BUG10381 LINUX DEBUG : svg/W3C-SVG-1.1/animate-elem-03-t.svg = FAIL
 // (there are a few others marked w/ multiple status like this in other parts of
 // the file, but they were left there as the comments in those areas are valid.)
 BUG10384 MAC SLOW : fast/dom/Window/new-window-opener.html = FAIL
-BUG10384 MAC : fast/forms/focus2.html = FAIL CRASH
+
 
 BUG10399 MAC : fast/encoding/char-encoding-mac.html = FAIL
 
@@ -2809,9 +2809,6 @@ BUG48737 WIN LINUX MAC SKIP : ietestcenter/Javascript/15.4.4.15-3-14.html = TIME
 BUG48737 WIN LINUX MAC SKIP : ietestcenter/Javascript/15.4.4.15-3-29.html = TIMEOUT
 BUG48737 WIN LINUX MAC SKIP : ietestcenter/Javascript/15.4.4.15-3-8.html = TIMEOUT
 
-// Broken prior to r62921.
-BUG48696 WIN LINUX : fast/forms/focus2.html = CRASH
-
 BUG49029 WIN LINUX MAC : fast/js/object-literal-syntax.html = TEXT
 
 BUG48859 WIN : fast/inline/continuation-outlines-with-layers-2.html = IMAGE+TEXT
@@ -3152,3 +3149,6 @@ BUGWK44967 MAC : fast/multicol/float-paginate.html = IMAGE
 // New tests in r66523 and r66516
 BUGWK44996 WIN : inspector/report-API-errors.html = TEXT
 BUGWK44996 WIN : inspector/report-protocol-errors.html = TEXT
+
+// Not focusing an anchor when tab is pressed.
+BUGWK45061 : fast/forms/focus2.html = FAIL
