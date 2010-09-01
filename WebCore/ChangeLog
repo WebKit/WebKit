@@ -1,3 +1,30 @@
+2010-09-01  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] very slow page scrolling on big -webkit-box-shadow areas
+        https://bugs.webkit.org/show_bug.cgi?id=39582
+
+        Add a new drawTiledShadow method to render a big shadow doing
+        tiling of parts of a smaller shadow. We create the minimum shadow
+        required to get the tiles we will use to render the real shadow
+        and we use drawPattern with those tiles to create the shadow.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::drawPathShadow):
+        (WebCore::drawBorderlessRectShadow):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::applyPlatformShadow):
+        (WebCore::GraphicsContext::createShadowMask):
+        (WebCore::getPhase):
+        (WebCore::GraphicsContext::drawTiledShadow):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::BitmapImage::draw):
+
 2010-09-01  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.

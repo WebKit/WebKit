@@ -113,7 +113,7 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
             cairo_restore(shadowCr);
         }
         cairo_translate(cr, 0.0, -extents.height);
-        context->createPlatformShadow(shadowBuffer.release(), shadowColor, shadowRect, radius);
+        context->applyPlatformShadow(shadowBuffer.release(), shadowColor, shadowRect, radius);
 #else
         cairo_translate(cr, shadowOffset.width(), shadowOffset.height());
         cairo_show_glyphs(cr, glyphs, numGlyphs);

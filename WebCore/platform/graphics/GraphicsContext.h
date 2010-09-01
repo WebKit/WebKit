@@ -40,6 +40,7 @@
 #if PLATFORM(CG)
 typedef struct CGContext PlatformGraphicsContext;
 #elif PLATFORM(CAIRO)
+#include "PlatformRefPtrCairo.h"
 typedef struct _cairo PlatformGraphicsContext;
 #elif PLATFORM(OPENVG)
 namespace WebCore {
@@ -297,8 +298,11 @@ namespace WebCore {
         void setAlpha(float);
 #if PLATFORM(CAIRO)
         float getAlpha();
-        void createPlatformShadow(PassOwnPtr<ImageBuffer> buffer, const Color& shadowColor, const FloatRect& shadowRect, float radius);
+        void applyPlatformShadow(PassOwnPtr<ImageBuffer> buffer, const Color& shadowColor, const FloatRect& shadowRect, float radius);
+        PlatformRefPtr<cairo_surface_t> createShadowMask(PassOwnPtr<ImageBuffer>, const FloatRect&, float radius);
+
         static void calculateShadowBufferDimensions(IntSize& shadowBufferSize, FloatRect& shadowRect, float& radius, const FloatRect& sourceRect, const FloatSize& shadowOffset, float shadowBlur);
+        void drawTiledShadow(const IntRect& rect, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius, ColorSpace colorSpace);
 #endif
 
         void setCompositeOperation(CompositeOperator);
