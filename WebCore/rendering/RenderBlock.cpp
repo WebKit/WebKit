@@ -3529,7 +3529,7 @@ void RenderBlock::clearFloats()
 int RenderBlock::addOverhangingFloats(RenderBlock* child, int xoff, int yoff, bool makeChildPaintOtherFloats)
 {
     // Prevent floats from being added to the canvas by the root element, e.g., <html>.
-    if (child->hasOverflowClip() || !child->containsFloats() || child->isRoot())
+    if (child->hasOverflowClip() || !child->containsFloats() || child->isRoot() || child->hasColumns())
         return 0;
 
     int lowestFloatBottom = 0;

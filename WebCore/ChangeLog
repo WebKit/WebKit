@@ -1,3 +1,15 @@
+2010-09-01  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein and Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44963, overhanging floats aren't positioned properly when they occur
+        in multi-column layout.  Don't let floats overhang in multi-column blocks, since they are part of the column layout.
+        
+        fast/multicol/float-pagination-failure now succeeds, so will rename and move it.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addOverhangingFloats):
+
 2010-08-31  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Simon Fraser.

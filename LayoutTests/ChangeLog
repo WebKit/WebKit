@@ -1,3 +1,19 @@
+2010-09-01  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein and Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44963, rename the float-paginate-failure test since it now
+        succeeds.
+
+        * fast/multicol/float-paginate-failure.html: Removed.
+        * fast/multicol/float-paginate.html: Added.
+        * platform/mac/fast/multicol/float-paginate-expected.checksum: Added.
+        * platform/mac/fast/multicol/float-paginate-expected.png: Added.
+        * platform/mac/fast/multicol/float-paginate-expected.txt: Added.
+        * platform/mac/fast/multicol/float-paginate-failure-expected.checksum: Removed.
+        * platform/mac/fast/multicol/float-paginate-failure-expected.png: Removed.
+        * platform/mac/fast/multicol/float-paginate-failure-expected.txt: Removed.
+
 2010-09-01  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.
