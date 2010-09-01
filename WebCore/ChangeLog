@@ -1,3 +1,33 @@
+2010-08-31  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Unfork Chromium's FontPlatformDataChromiumMac.mm.
+
+        Modified FontPlatformDataCocoa to provide hooks needed by Chromium.
+        Moved Chromium's mechanics for OOP font loading to CrossProcessFontLoading.mm.
+        Added ::create() function to MemoryActivatedFont to match new guidelines for
+        RefCounted<> classes.
+
+        Not possible to test due to sandbox interaction.
+
+        * WebCore.gypi: Update files for chromium build.
+        * platform/graphics/chromium/CrossProcessFontLoading.h: Added.
+        (WebCore::MemoryActivatedFont::cgFont):
+        (WebCore::MemoryActivatedFont::atsFontRef):
+        * platform/graphics/chromium/CrossProcessFontLoading.mm: Added.
+        (WebCore::MemoryActivatedFont::create):
+        (WebCore::MemoryActivatedFont::MemoryActivatedFont):
+        (WebCore::MemoryActivatedFont::~MemoryActivatedFont):
+        (WebCore::FontPlatformData::loadFont):
+        * platform/graphics/chromium/FontPlatformDataChromiumMac.mm: Removed.
+        * platform/graphics/cocoa/FontPlatformData.h:
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::loadFont):
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::operator=):
+        (WebCore::FontPlatformData::setFont):
+
 2010-08-31  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Adam Barth.

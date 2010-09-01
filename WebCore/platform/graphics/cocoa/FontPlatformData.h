@@ -42,7 +42,13 @@ typedef const struct __CTFont* CTFontRef;
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
 
+#if PLATFORM(CHROMIUM) && OS(DARWIN)
+#include "CrossProcessFontLoading.h"  
+#endif
+
+
 typedef UInt32 ATSUFontID;
+typedef UInt32 ATSFontRef;
 
 namespace WebCore {
 
@@ -133,6 +139,15 @@ class FontPlatformData {
 
 private:
     static NSFont *hashTableDeletedFontValue() { return reinterpret_cast<NSFont *>(-1); }
+    
+    // Load various data about the font specified by |nsFont| with the size fontSize into the following output paramters:
+    // Note: Callers should always take into account that for the Chromium port, |outNSFont| isn't necessarily the same
+    // font as |nsFont|.  This because the sandbox may block loading of the original font.
+    // * outNSFont - The font that was actually loaded, for the Chromium port this may be different than nsFont.
+    // The caller is responsible for calling CFRelease() on this parameter when done with it.
+    // * cgFont - CGFontRef representing the input font at the specified point size.
+    // * fontID - ID of loaded font.
+    void loadFont(NSFont* nsFont, float fontSize, NSFont*& outNSFont, CGFontRef& cgFont, ATSUFontID& fontID);
 
     NSFont *m_font;
 
@@ -147,8 +162,12 @@ private:
 #endif
 
     bool m_isColorBitmapFont;
+    
+#if PLATFORM(CHROMIUM) && OS(DARWIN)
+    RefPtr<MemoryActivatedFont> m_inMemoryFont;
+#endif
 };
 
-}
+} // namespace WebCore
 
 #endif

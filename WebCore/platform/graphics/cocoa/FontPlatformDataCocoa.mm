@@ -2,6 +2,7 @@
  * This file is part of the internal font implementation.
  *
  * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (c) 2010 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,11 +30,27 @@
 
 namespace WebCore {
 
+#if PLATFORM(MAC)
+void FontPlatformData::loadFont(NSFont* nsFont, float, NSFont*& outNSFont, CGFontRef& cgFont, ATSUFontID& fontID)
+{
+    outNSFont = nsFont;
+#ifndef BUILDING_ON_TIGER
+    cgFont = CTFontCopyGraphicsFont(toCTFontRef(nsFont), 0);
+    fontID = CTFontGetPlatformFont(toCTFontRef(nsFont), 0);
+#else
+    cgFont = wkGetCGFontFromNSFont(nsFont);
+    fontID = wkGetNSFontATSUFontId(nsFont);
+#endif
+}
+#endif  // PLATFORM(MAC)
+
 FontPlatformData::FontPlatformData(NSFont *nsFont, bool syntheticBold, bool syntheticOblique)
     : m_syntheticBold(syntheticBold)
     , m_syntheticOblique(syntheticOblique)
     , m_font(nsFont)
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    // FIXME: Chromium: The following code isn't correct for the Chromium port since the sandbox might
+    // have blocked font loading, in which case we'll only have the real loaded font file after the call to loadFont().
     , m_isColorBitmapFont(CTFontGetSymbolicTraits(toCTFontRef(nsFont)) & kCTFontColorGlyphsTrait)
 #else
     , m_isColorBitmapFont(false)
@@ -41,14 +58,18 @@ FontPlatformData::FontPlatformData(NSFont *nsFont, bool syntheticBold, bool synt
 {
     ASSERT_ARG(nsFont, nsFont);
 
-    CFRetain(nsFont);
     m_size = [nsFont pointSize];
+    
+    CGFontRef cgFont = 0;
+    loadFont(nsFont, m_size, m_font, cgFont, m_atsuFontID);
+    
+    if (m_font)
+        CFRetain(m_font);
+
 #ifndef BUILDING_ON_TIGER
-    m_cgFont.adoptCF(CTFontCopyGraphicsFont(toCTFontRef(nsFont), 0));
-    m_atsuFontID = CTFontGetPlatformFont(toCTFontRef(nsFont), 0);
+    m_cgFont.adoptCF(cgFont);
 #else
-    m_cgFont = wkGetCGFontFromNSFont(nsFont);
-    m_atsuFontID = wkGetNSFontATSUFontId(nsFont);
+    m_cgFont = cgFont;
 #endif
 }
 
@@ -64,6 +85,9 @@ FontPlatformData::FontPlatformData(const FontPlatformData& f)
     m_isColorBitmapFont = f.m_isColorBitmapFont;
 #if USE(CORE_TEXT)
     m_CTFont = f.m_CTFont;
+#endif
+#if PLATFORM(CHROMIUM) && OS(DARWIN)
+    m_inMemoryFont = f.m_inMemoryFont;
 #endif
 }
 
@@ -91,6 +115,9 @@ const FontPlatformData& FontPlatformData::operator=(const FontPlatformData& f)
 #if USE(CORE_TEXT)
     m_CTFont = f.m_CTFont;
 #endif
+#if PLATFORM(CHROMIUM) && OS(DARWIN)
+    m_inMemoryFont = f.m_inMemoryFont;
+#endif
     return *this;
 }
 
@@ -107,15 +134,28 @@ void FontPlatformData::setFont(NSFont *font)
         CFRelease(m_font);
     m_font = font;
     m_size = [font pointSize];
+    
+    CGFontRef cgFont = 0;
+    NSFont* loadedFont = 0;
+    loadFont(m_font, m_size, loadedFont, cgFont, m_atsuFontID);
+    
+#if PLATFORM(CHROMIUM) && OS(DARWIN)
+    // If loadFont replaced m_font with a fallback font, then release the
+    // previous font to counter the retain above. Then retain the new font.
+    if (loadedFont != m_font) {
+        CFRelease(m_font);
+        CFRetain(loadedFont);
+        m_font = loadedFont;
+    }
+#endif
+    
 #ifndef BUILDING_ON_TIGER
-    m_cgFont.adoptCF(CTFontCopyGraphicsFont(toCTFontRef(font), 0));
-    m_atsuFontID = CTFontGetPlatformFont(toCTFontRef(font), 0);
+    m_cgFont.adoptCF(cgFont);
 #else
-    m_cgFont = wkGetCGFontFromNSFont(font);
-    m_atsuFontID = wkGetNSFontATSUFontId(font);
+    m_cgFont = cgFont;
 #endif
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    m_isColorBitmapFont = CTFontGetSymbolicTraits(toCTFontRef(font)) & kCTFontColorGlyphsTrait;
+    m_isColorBitmapFont = CTFontGetSymbolicTraits(toCTFontRef(m_font)) & kCTFontColorGlyphsTrait;
 #endif
 #if USE(CORE_TEXT)
     m_CTFont = 0;
