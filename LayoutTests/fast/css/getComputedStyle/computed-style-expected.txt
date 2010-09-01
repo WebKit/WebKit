@@ -66,7 +66,7 @@ position: static;
 resize: none;
 right: auto;
 table-layout: auto;
-text-align: auto;
+text-align: -webkit-auto;
 text-decoration: none;
 text-indent: 0px;
 text-shadow: none;

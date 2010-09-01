@@ -146,7 +146,7 @@ rect: style.getPropertyValue(right) : auto
 rect: style.getPropertyCSSValue(right) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(table-layout) : auto
 rect: style.getPropertyCSSValue(table-layout) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(text-align) : auto
+rect: style.getPropertyValue(text-align) : -webkit-auto
 rect: style.getPropertyCSSValue(text-align) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(text-decoration) : none
 rect: style.getPropertyCSSValue(text-decoration) : [object CSSPrimitiveValue]
@@ -566,7 +566,7 @@ g: style.getPropertyValue(right) : auto
 g: style.getPropertyCSSValue(right) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(table-layout) : auto
 g: style.getPropertyCSSValue(table-layout) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(text-align) : auto
+g: style.getPropertyValue(text-align) : -webkit-auto
 g: style.getPropertyCSSValue(text-align) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(text-decoration) : none
 g: style.getPropertyCSSValue(text-decoration) : [object CSSPrimitiveValue]

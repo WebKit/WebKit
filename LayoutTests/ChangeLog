@@ -1,3 +1,12 @@
+2010-09-01  Justin Garcia  <justin.garcia@apple.com>
+
+        Unreviewed, updating expected results for recent check-in.
+
+        * editing/execCommand/5770834-1-expected.txt:
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2010-08-31  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.

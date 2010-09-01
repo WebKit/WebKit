@@ -2,6 +2,6 @@ This tests for a crash when removing format from two paragraphs that are inside 
 
 
 <div style="text-align: right;">
-<div style="text-align: auto;">foo<br><div style="text-align: auto;">bar</div></div>
+<div style="text-align: -webkit-auto;">foo<br>bar</div>
 </div>
 
