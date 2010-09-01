@@ -1,3 +1,19 @@
+2010-09-01  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector, Extension API: Panel.onSelectionChanged event is never fired
+        Added command line API to the lexical context of code evaluated by webInspector.inspectedWindow.evaluate()
+        Fixed webInspector.inspectedWindow.evaluate() to return object rather than its stringified representation
+        https://bugs.webkit.org/show_bug.cgi?id=44957
+
+        Test: inspector/extensions-eval.html
+
+        * inspector/front-end/ExtensionAPI.js:
+        (WebInspector.injectedExtensionAPI.InspectedWindow.prototype.evaluate):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._onEvaluateOnInspectedPage):
+
 2010-08-27  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Xan Lopez.

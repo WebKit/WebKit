@@ -1,0 +1,19 @@
+Tests WebInspector extension API
+
+Page reloaded.
+Started extension.
+Running tests...
+RUNNING TEST: extension_testEvalConsoleAPI
+Evaluate: "function" (exception: undefined)
+RUNNING TEST: extension_testEvalDefinesGlobalSymbols
+Evaluate: {"func":"function","variable":42} (exception: undefined)
+RUNNING TEST: extension_testEvalFailed
+Evaluate: "TypeError: JSON.stringify cannot serialize cyclic structures." (exception: true)
+RUNNING TEST: extension_testEvalOk
+Evaluate: {"str":"foo","num":42} (exception: undefined)
+RUNNING TEST: extension_testEvalStatement
+Evaluate: 0 (exception: undefined)
+RUNNING TEST: extension_testEvalUndefined
+Evaluate: undefined (exception: undefined)
+All tests done.
+

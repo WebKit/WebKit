@@ -6,16 +6,6 @@
 
 window.inspectedValue = { str: "foo", num: 42 };
 
-function extension_testEvalOk(nextTest)
-{
-    webInspector.inspectedWindow.evaluate("inspectedValue", callbackAndNextTest(extension_onEvaluate, nextTest));
-}
-
-function extension_testEvalFailed(nextTest)
-{
-    webInspector.inspectedWindow.evaluate("document.body", callbackAndNextTest(extension_onEvaluate, nextTest));
-}
-
 function extension_testGetAllResources(nextTest)
 {
     function compareResources(a, b)
@@ -72,11 +62,6 @@ function extension_testResourceNotification(nextTest)
 
     webInspector.resources.onFinished.addListener(callbackAndNextTest(onResourceFinished, nextTest));
     webInspector.inspectedWindow.evaluate("var xhr = new XMLHttpRequest(); xhr.open('GET', '" + location.href + "', false); xhr.send(null);");
-}
-
-function extension_onEvaluate(result)
-{
-    output("Evaluate: " + result.value + "(exception: " + result.isException + ")");
 }
 
 </script>

@@ -1,0 +1,23 @@
+CONSOLE MESSAGE: line 663: [object HTMLParagraphElement]
+Tests WebInspector extension API
+
+Page reloaded.
+Started extension.
+Running tests...
+RUNNING TEST: extension_testOnResourceFinished
+Got callback, arguments dump follows:
+{
+    0 : {
+        id : <number>
+        type : 7
+        har : <object>
+    }
+}
+RUNNING TEST: extension_testOnSelectionChanged
+Got callback, arguments dump follows:
+{
+    0 : "DOMNode"
+    1 : undefined
+}
+All tests done.
+

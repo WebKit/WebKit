@@ -72,6 +72,11 @@ WebInspector.Panel.prototype = {
         return this._toolbarItem;
     },
 
+    get name()
+    {
+        return this._panelName;
+    },
+
     show: function()
     {
         WebInspector.View.prototype.show.call(this);

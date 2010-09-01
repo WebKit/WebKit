@@ -2,8 +2,7 @@ function fetchTests()
 {
     function callback(result)
     {
-         var functions = JSON.parse(result.value);
-         window.eval(functions);
+         window.eval(result.value);
          runTests();
     }
     webInspector.inspectedWindow.evaluate("extensionFunctions()", callback);

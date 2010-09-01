@@ -23,10 +23,6 @@ Sidebar created
     setHeight : <function>
     setExpanded : <function>
 }
-RUNNING TEST: extension_testEvalFailed
-Evaluate: TypeError: JSON.stringify cannot serialize cyclic structures.(exception: true)
-RUNNING TEST: extension_testEvalOk
-Evaluate: {"str":"foo","num":42}(exception: undefined)
 RUNNING TEST: extension_testGetAllResources
 resource: .../tests/inspector/inspector-test2.js
 resource: .../LayoutTests/inspector/extensions-test.js

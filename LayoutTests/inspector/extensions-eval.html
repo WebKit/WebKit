@@ -1,0 +1,51 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="extensions-test.js"></script>
+<script type="text/javascript">
+
+window.inspectedValue = { str: "foo", num: 42 };
+
+function extension_testEvalOk(nextTest)
+{
+    webInspector.inspectedWindow.evaluate("inspectedValue", callbackAndNextTest(extension_onEvaluate, nextTest));
+}
+
+function extension_testEvalFailed(nextTest)
+{
+    webInspector.inspectedWindow.evaluate("document.body", callbackAndNextTest(extension_onEvaluate, nextTest));
+}
+
+function extension_testEvalDefinesGlobalSymbols(nextTest)
+{
+    webInspector.inspectedWindow.evaluate("function extensionFunc() {}");
+    webInspector.inspectedWindow.evaluate("extensionVar = 42;");
+    webInspector.inspectedWindow.evaluate("({ func: typeof window.extensionFunc, variable: window.extensionVar })", callbackAndNextTest(extension_onEvaluate, nextTest));
+}
+
+function extension_testEvalStatement(nextTest)
+{
+    webInspector.inspectedWindow.evaluate("var x = 3; while (--x); x", callbackAndNextTest(extension_onEvaluate, nextTest));
+}
+
+function extension_testEvalUndefined(nextTest)
+{
+    webInspector.inspectedWindow.evaluate("undefined", callbackAndNextTest(extension_onEvaluate, nextTest));
+}
+
+function extension_testEvalConsoleAPI(nextTest)
+{
+    webInspector.inspectedWindow.evaluate("typeof inspect", callbackAndNextTest(extension_onEvaluate, nextTest));
+}
+
+function extension_onEvaluate(result)
+{
+    output("Evaluate: " + JSON.stringify(result.value) + " (exception: " + result.isException + ")");
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests WebInspector extension API</p>
+</body>
+</html>

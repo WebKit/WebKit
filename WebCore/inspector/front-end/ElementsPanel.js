@@ -58,7 +58,7 @@ WebInspector.ElementsPanel = function()
 
         if (this._focusedDOMNode) {
             InspectorBackend.addInspectedNode(this._focusedDOMNode.id);
-            WebInspector.extensionServer.notifyObjectSelected(this.name, "DOMNode");
+            WebInspector.extensionServer.notifyObjectSelected(this.panel.name, "DOMNode");
         }
     };
 

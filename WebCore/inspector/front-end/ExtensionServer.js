@@ -210,7 +210,6 @@ WebInspector.ExtensionServer.prototype = {
 
     _onEvaluateOnInspectedPage: function(message, port)
     {
-        var escapedMessage = escape(message.expression);
         function callback(resultPayload)
         {
             var resultObject = WebInspector.RemoteObject.fromPayload(resultPayload);
@@ -220,7 +219,10 @@ WebInspector.ExtensionServer.prototype = {
             result.value = resultObject.description;
             this._dispatchCallback(message.requestId, port, result);
         }
-        InjectedScriptAccess.getDefault().evaluate("(function() { var a = window.eval(unescape(\"" + escapedMessage + "\")); return JSON.stringify(a); })();", "", callback.bind(this));
+        var evalExpression = "JSON.stringify(eval('" +
+            "with (window.console._commandLineAPI) with (window) {' + unescape('" + escape(message.expression) +
+            "') + '}'));";
+        InjectedScriptAccess.getDefault().evaluate(evalExpression, callback.bind(this));
     },
 
     _onRevealAndSelect: function(message)

@@ -202,6 +202,8 @@ WONTFIX SKIP : inspector/extensions.html = FAIL
 WONTFIX SKIP : inspector/extensions-api.html = FAIL
 WONTFIX SKIP : inspector/extensions-audits.html = FAIL
 WONTFIX SKIP : inspector/extensions-audits-api.html = FAIL
+WONTFIX SKIP : inspector/extensions-events.html = FAIL
+WONTFIX SKIP : inspector/extensions-eval.html = FAIL
 
 // Implement java testing harness.
 BUG36681 DEFER SKIP : java = TEXT
