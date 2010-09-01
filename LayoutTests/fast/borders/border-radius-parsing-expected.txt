@@ -28,4 +28,36 @@ Testing border-radius: / 10px 20px 30px 40px;
 SUCCESS
 Testing border-radius: 10px / 20px 30px 40px;
 SUCCESS
+Testing border-radius: 10%;
+SUCCESS
+Testing border-radius: 10% 20%;
+SUCCESS
+Testing -webkit-border-radius: 10% 20%;
+SUCCESS
+Testing border-radius: 10% 20% 30%;
+SUCCESS
+Testing border-radius: 10% 20% 30% 40%;
+SUCCESS
+Testing border-radius: 10% 20% 30% 40% 50%;
+SUCCESS
+Testing border-radius: 10% 20% 30% 40% / 15%;
+SUCCESS
+Testing border-radius: 10% 20% 30% 40% / 15% 25%;
+SUCCESS
+Testing border-radius: 10% 20% 30% 40% / 15% 25% 35%;
+SUCCESS
+Testing border-radius: 10% 20% 30% 40% / 15% 25% 35% 45%;
+SUCCESS
+Testing border-radius: 10% 20% 30% 40% / 15% 25% 35% 45% 55%;
+SUCCESS
+Testing border-radius: 10% 20% 30% 40% / 15% 25% 35% 45% /;
+SUCCESS
+Testing border-radius: 10% 20% 30% 40% / / 25% 35% 45%;
+SUCCESS
+Testing border-radius: / 10% 20% 30% 40%;
+SUCCESS
+Testing border-radius: 10% / 20% 30% 40%;
+SUCCESS
+Testing border-radius: 10% 20px;
+SUCCESS
 

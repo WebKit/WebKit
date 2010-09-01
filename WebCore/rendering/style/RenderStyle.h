@@ -393,10 +393,10 @@ public:
 
     const NinePieceImage& borderImage() const { return surround->border.image(); }
 
-    const IntSize& borderTopLeftRadius() const { return surround->border.topLeft(); }
-    const IntSize& borderTopRightRadius() const { return surround->border.topRight(); }
-    const IntSize& borderBottomLeftRadius() const { return surround->border.bottomLeft(); }
-    const IntSize& borderBottomRightRadius() const { return surround->border.bottomRight(); }
+    const LengthSize& borderTopLeftRadius() const { return surround->border.topLeft(); }
+    const LengthSize& borderTopRightRadius() const { return surround->border.topRight(); }
+    const LengthSize& borderBottomLeftRadius() const { return surround->border.bottomLeft(); }
+    const LengthSize& borderBottomRightRadius() const { return surround->border.bottomRight(); }
     bool hasBorderRadius() const { return surround->border.hasBorderRadius(); }
 
     unsigned short borderLeftWidth() const { return surround->border.borderLeftWidth(); }
@@ -774,18 +774,23 @@ public:
     
     void setBorderImage(const NinePieceImage& b) { SET_VAR(surround, border.m_image, b) }
 
-    void setBorderTopLeftRadius(const IntSize& s) { SET_VAR(surround, border.m_topLeft, s) }
-    void setBorderTopRightRadius(const IntSize& s) { SET_VAR(surround, border.m_topRight, s) }
-    void setBorderBottomLeftRadius(const IntSize& s) { SET_VAR(surround, border.m_bottomLeft, s) }
-    void setBorderBottomRightRadius(const IntSize& s) { SET_VAR(surround, border.m_bottomRight, s) }
+    void setBorderTopLeftRadius(const LengthSize& s) { SET_VAR(surround, border.m_topLeft, s) }
+    void setBorderTopRightRadius(const LengthSize& s) { SET_VAR(surround, border.m_topRight, s) }
+    void setBorderBottomLeftRadius(const LengthSize& s) { SET_VAR(surround, border.m_bottomLeft, s) }
+    void setBorderBottomRightRadius(const LengthSize& s) { SET_VAR(surround, border.m_bottomRight, s) }
 
-    void setBorderRadius(const IntSize& s)
+    void setBorderRadius(const LengthSize& s)
     {
         setBorderTopLeftRadius(s);
         setBorderTopRightRadius(s);
         setBorderBottomLeftRadius(s);
         setBorderBottomRightRadius(s);
     }
+    void setBorderRadius(const IntSize& s)
+    {
+        setBorderRadius(LengthSize(Length(s.width(), Fixed), Length(s.height(), Fixed)));
+    }
+
     
     void getBorderRadiiForRect(const IntRect&, IntSize& topLeft, IntSize& topRight, IntSize& bottomLeft, IntSize& bottomRight) const;
     void getInnerBorderRadiiForRectWithBorderWidths(const IntRect&, unsigned short topWidth, 
@@ -1117,7 +1122,7 @@ public:
     static bool initialBorderCollapse() { return false; }
     static EBorderStyle initialBorderStyle() { return BNONE; }
     static NinePieceImage initialNinePieceImage() { return NinePieceImage(); }
-    static IntSize initialBorderRadius() { return IntSize(0, 0); }
+    static LengthSize initialBorderRadius() { return LengthSize(Length(0, Fixed), Length(0, Fixed)); }
     static ECaptionSide initialCaptionSide() { return CAPTOP; }
     static EClear initialClear() { return CNONE; }
     static TextDirection initialDirection() { return LTR; }

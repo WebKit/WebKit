@@ -329,9 +329,6 @@ int CSSPrimitiveValue::computeLengthInt(RenderStyle* style, RenderStyle* rootSty
     return static_cast<int>(result);
 }
 
-const int intMaxForLength = 0x7ffffff; // max value for a 28-bit int
-const int intMinForLength = (-0x7ffffff - 1); // min value for a 28-bit int
-
 // Lengths expect an int that is only 28-bits, so we have to check for a different overflow.
 int CSSPrimitiveValue::computeLengthIntForLength(RenderStyle* style, RenderStyle* rootStyle)
 {

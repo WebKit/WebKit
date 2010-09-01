@@ -1,3 +1,48 @@
+2010-09-01  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Support for Percentage Values in border-radius
+        https://bugs.webkit.org/show_bug.cgi?id=38354
+
+        Support percentage values on the border-radius family
+        of CSS properties.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::getBorderRadiusCornerValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseBorderRadius):
+        * css/CSSPrimitiveValue.cpp:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::ensurePropertyMap):
+        * platform/Length.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded):
+        * rendering/style/BorderData.h:
+        (WebCore::BorderData::BorderData):
+        (WebCore::BorderData::hasBorderRadius):
+        (WebCore::BorderData::topLeft):
+        (WebCore::BorderData::topRight):
+        (WebCore::BorderData::bottomLeft):
+        (WebCore::BorderData::bottomRight):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::getBorderRadiiForRect):
+        (WebCore::RenderStyle::getInnerBorderRadiiForRectWithBorderWidths):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::borderTopLeftRadius):
+        (WebCore::InheritedFlags::borderTopRightRadius):
+        (WebCore::InheritedFlags::borderBottomLeftRadius):
+        (WebCore::InheritedFlags::borderBottomRightRadius):
+        (WebCore::InheritedFlags::setBorderTopLeftRadius):
+        (WebCore::InheritedFlags::setBorderTopRightRadius):
+        (WebCore::InheritedFlags::setBorderBottomLeftRadius):
+        (WebCore::InheritedFlags::setBorderBottomRightRadius):
+        (WebCore::InheritedFlags::setBorderRadius):
+        (WebCore::InheritedFlags::initialBorderRadius):
+
 2010-09-01  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -4765,17 +4765,26 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         if (!pair)
             return;
 
-        int width = pair->first()->computeLengthInt(style(), m_rootElementStyle, zoomFactor);
-        int height = pair->second()->computeLengthInt(style(), m_rootElementStyle,  zoomFactor);
+        Length radiusWidth;
+        Length radiusHeight;
+        if (pair->first()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+            radiusWidth = Length(pair->first()->getDoubleValue(), Percent);
+        else
+            radiusWidth = Length(max(intMinForLength, min(intMaxForLength, pair->first()->computeLengthInt(style(), m_rootElementStyle, zoomFactor))), Fixed);
+        if (pair->second()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+            radiusHeight = Length(pair->second()->getDoubleValue(), Percent);
+        else
+            radiusHeight = Length(max(intMinForLength, min(intMaxForLength, pair->second()->computeLengthInt(style(), m_rootElementStyle, zoomFactor))), Fixed);
+        int width = radiusWidth.rawValue();
+        int height = radiusHeight.rawValue();
         if (width < 0 || height < 0)
             return;
-
         if (width == 0)
-            height = 0; // Null out the other value.
+            radiusHeight = radiusWidth; // Null out the other value.
         else if (height == 0)
-            width = 0; // Null out the other value.
+            radiusWidth = radiusHeight; // Null out the other value.
 
-        IntSize size(width, height);
+        LengthSize size(radiusWidth, radiusHeight);
         switch (id) {
             case CSSPropertyBorderTopLeftRadius:
                 m_style->setBorderTopLeftRadius(size);

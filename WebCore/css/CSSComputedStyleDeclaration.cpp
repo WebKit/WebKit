@@ -384,14 +384,22 @@ PassRefPtr<CSSPrimitiveValue> CSSComputedStyleDeclaration::currentColorOrValidCo
     return CSSPrimitiveValue::createColor(color.rgb());
 }
 
-static PassRefPtr<CSSValue> getBorderRadiusCornerValue(IntSize radius)
+static PassRefPtr<CSSValue> getBorderRadiusCornerValue(LengthSize radius)
 {
-    if (radius.width() == radius.height())
-        return CSSPrimitiveValue::create(radius.width(), CSSPrimitiveValue::CSS_PX);
-
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-    list->append(CSSPrimitiveValue::create(radius.width(), CSSPrimitiveValue::CSS_PX));
-    list->append(CSSPrimitiveValue::create(radius.height(), CSSPrimitiveValue::CSS_PX));
+    if (radius.width() == radius.height()) {
+        if (radius.width().type() == Percent)
+            return CSSPrimitiveValue::create(radius.width().percent(), CSSPrimitiveValue::CSS_PERCENTAGE);
+        return CSSPrimitiveValue::create(radius.width().value(), CSSPrimitiveValue::CSS_PX);
+    }
+    if (radius.width().type() == Percent)
+        list->append(CSSPrimitiveValue::create(radius.width().percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
+    else
+        list->append(CSSPrimitiveValue::create(radius.width().value(), CSSPrimitiveValue::CSS_PX));
+    if (radius.height().type() == Percent)
+        list->append(CSSPrimitiveValue::create(radius.height().percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
+    else
+        list->append(CSSPrimitiveValue::create(radius.height().value(), CSSPrimitiveValue::CSS_PX));
     return list.release();
 }
 

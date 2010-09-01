@@ -1,3 +1,16 @@
+2010-09-01  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Support for Percentage Values in border-radius
+        https://bugs.webkit.org/show_bug.cgi?id=38354
+
+        Adjust existing test to test percentages as well as
+        mixing fixed values with percentages.
+
+        * fast/borders/border-radius-parsing-expected.txt:
+        * fast/borders/border-radius-parsing.html:
+
 2010-09-01  Tony Chang  <tony@chromium.org>
 
         Unreviewed, add chromium win/linux baselines for fast/multicol/float-paginate.html.

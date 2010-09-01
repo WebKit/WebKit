@@ -738,21 +738,22 @@ static void constrainCornerRadiiForRect(const IntRect& r, IntSize& topLeft, IntS
 
 void RenderStyle::getBorderRadiiForRect(const IntRect& r, IntSize& topLeft, IntSize& topRight, IntSize& bottomLeft, IntSize& bottomRight) const
 {
-    topLeft = surround->border.topLeft();
-    topRight = surround->border.topRight();
+    topLeft = IntSize(surround->border.topLeft().width().calcValue(r.width()), surround->border.topLeft().height().calcValue(r.height()));
+    topRight = IntSize(surround->border.topRight().width().calcValue(r.width()), surround->border.topRight().height().calcValue(r.height()));
     
-    bottomLeft = surround->border.bottomLeft();
-    bottomRight = surround->border.bottomRight();
+    bottomLeft = IntSize(surround->border.bottomLeft().width().calcValue(r.width()), surround->border.bottomLeft().height().calcValue(r.height()));
+    bottomRight = IntSize(surround->border.bottomRight().width().calcValue(r.width()), surround->border.bottomRight().height().calcValue(r.height()));
 
     constrainCornerRadiiForRect(r, topLeft, topRight, bottomLeft, bottomRight);
 }
 
 void RenderStyle::getInnerBorderRadiiForRectWithBorderWidths(const IntRect& innerRect, unsigned short topWidth, unsigned short bottomWidth, unsigned short leftWidth, unsigned short rightWidth, IntSize& innerTopLeft, IntSize& innerTopRight, IntSize& innerBottomLeft, IntSize& innerBottomRight) const
 {
-    innerTopLeft = surround->border.topLeft();
-    innerTopRight = surround->border.topRight();
-    innerBottomLeft = surround->border.bottomLeft();
-    innerBottomRight = surround->border.bottomRight();
+    innerTopLeft = IntSize(surround->border.topLeft().width().calcValue(innerRect.width()), surround->border.topLeft().height().calcValue(innerRect.height()));
+    innerTopRight = IntSize(surround->border.topRight().width().calcValue(innerRect.width()), surround->border.topRight().height().calcValue(innerRect.height()));
+    innerBottomLeft = IntSize(surround->border.bottomLeft().width().calcValue(innerRect.width()), surround->border.bottomLeft().height().calcValue(innerRect.height()));
+    innerBottomRight = IntSize(surround->border.bottomRight().width().calcValue(innerRect.width()), surround->border.bottomRight().height().calcValue(innerRect.height()));
+
 
     innerTopLeft.setWidth(max(0, innerTopLeft.width() - leftWidth));
     innerTopLeft.setHeight(max(0, innerTopLeft.height() - topWidth));

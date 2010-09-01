@@ -47,4 +47,20 @@
     testBorderRadiusValue("border-radius", "10px 20px 30px 40px / / 25px 35px 45px", ["0px", "0px", "0px", "0px"]);
     testBorderRadiusValue("border-radius", "/ 10px 20px 30px 40px", ["0px", "0px", "0px", "0px"]);
     testBorderRadiusValue("border-radius", "10px / 20px 30px 40px", ["10px 20px", "10px 30px", "10px 40px", "10px 30px"]);
+    testBorderRadiusValue("border-radius", "10%", ["10%", "10%", "10%", "10%"]);
+    testBorderRadiusValue("border-radius", "10% 20%", ["10%", "20%", "10%", "20%"]);
+    testBorderRadiusValue("-webkit-border-radius", "10% 20%", ["10% 20%", "10% 20%", "10% 20%", "10% 20%"]);
+    testBorderRadiusValue("border-radius", "10% 20% 30%", ["10%", "20%", "30%", "20%"]);
+    testBorderRadiusValue("border-radius", "10% 20% 30% 40%", ["10%", "20%", "30%", "40%"]);
+    testBorderRadiusValue("border-radius", "10% 20% 30% 40% 50%", ["0px", "0px", "0px", "0px"]);
+    testBorderRadiusValue("border-radius", "10% 20% 30% 40% / 15%", ["10% 15%", "20% 15%", "30% 15%", "40% 15%"]);
+    testBorderRadiusValue("border-radius", "10% 20% 30% 40% / 15% 25%", ["10% 15%", "20% 25%", "30% 15%", "40% 25%"]);
+    testBorderRadiusValue("border-radius", "10% 20% 30% 40% / 15% 25% 35%", ["10% 15%", "20% 25%", "30% 35%", "40% 25%"]);
+    testBorderRadiusValue("border-radius", "10% 20% 30% 40% / 15% 25% 35% 45%", ["10% 15%", "20% 25%", "30% 35%", "40% 45%"]);
+    testBorderRadiusValue("border-radius", "10% 20% 30% 40% / 15% 25% 35% 45% 55%", ["0px", "0px", "0px", "0px"]);
+    testBorderRadiusValue("border-radius", "10% 20% 30% 40% / 15% 25% 35% 45% /", ["0px", "0px", "0px", "0px"]);
+    testBorderRadiusValue("border-radius", "10% 20% 30% 40% / / 25% 35% 45%", ["0px", "0px", "0px", "0px"]);
+    testBorderRadiusValue("border-radius", "/ 10% 20% 30% 40%", ["0px", "0px", "0px", "0px"]);
+    testBorderRadiusValue("border-radius", "10% / 20% 30% 40%", ["10% 20%", "10% 30%", "10% 40%", "10% 30%"]);
+    testBorderRadiusValue("border-radius", "10% 20px", ["10%", "20px", "10%", "20px"]);
 </script>

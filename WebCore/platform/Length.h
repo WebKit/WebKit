@@ -30,6 +30,8 @@ namespace WebCore {
 
 const int undefinedLength = -1;
 const int percentScaleFactor = 128;
+const int intMaxForLength = 0x7ffffff; // max value for a 28-bit int
+const int intMinForLength = (-0x7ffffff - 1); // min value for a 28-bit int
 
 enum LengthType { Auto, Relative, Percent, Fixed, Static, Intrinsic, MinIntrinsic };
 
