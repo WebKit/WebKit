@@ -1,3 +1,35 @@
+2010-09-01  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] QWebPage::allowGeolocationRequest should be async API
+        https://bugs.webkit.org/show_bug.cgi?id=41364
+
+        Provides a new async API for geolocation permission. Using
+        Notification API approach from qtwebkit. GeolocationPermissionClientQt 
+        maintains list of pending requests from WebCore and intimates them
+        when client either allowes/denies the request. Also implements
+        ChromeClientQt::cancelGeolocationPermissionRequestForFrame.  
+
+        * Api/qwebpage.cpp:
+        (QWebPage::setUserPermission):
+        * Api/qwebpage.h:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::requestGeolocationPermissionForFrame):
+        (WebCore::ChromeClientQt::cancelGeolocationPermissionRequestForFrame):
+        * WebCoreSupport/ChromeClientQt.h:
+        * WebCoreSupport/GeolocationPermissionClientQt.cpp: Added.
+        (WebCore::GeolocationPermissionClientQt::geolocationPermissionClient):
+        (WebCore::GeolocationPermissionClientQt::GeolocationPermissionClientQt):
+        (WebCore::GeolocationPermissionClientQt::~GeolocationPermissionClientQt):
+        (WebCore::GeolocationPermissionClientQt::requestGeolocationPermissionForFrame):
+        (WebCore::GeolocationPermissionClientQt::cancelGeolocationPermissionRequestForFrame):
+        (WebCore::GeolocationPermissionClientQt::setPermission):
+        * WebCoreSupport/GeolocationPermissionClientQt.h: Added.
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (JSTestPage::requestPermission):
+        (tst_QWebPage::geolocationRequestJS):
+
 2010-08-31  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.

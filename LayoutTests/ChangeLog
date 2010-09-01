@@ -1,3 +1,14 @@
+2010-09-01  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] QWebPage::allowGeolocationRequest should be async API
+        https://bugs.webkit.org/show_bug.cgi?id=41364
+
+        Enable all geolocation delayed permission layout test for Qt port
+
+        * platform/qt/Skipped:
+
 2010-09-01  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

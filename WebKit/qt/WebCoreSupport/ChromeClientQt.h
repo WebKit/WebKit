@@ -168,7 +168,7 @@ namespace WebCore {
         virtual void scrollRectIntoView(const IntRect&, const ScrollView*) const {}
 
         virtual void requestGeolocationPermissionForFrame(Frame*, Geolocation*);
-        virtual void cancelGeolocationPermissionRequestForFrame(Frame*, Geolocation*) { }
+        virtual void cancelGeolocationPermissionRequestForFrame(Frame*, Geolocation*);
 
         virtual bool selectItemWritingDirectionIsNatural();
         virtual PassRefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const;

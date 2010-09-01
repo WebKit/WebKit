@@ -1,3 +1,30 @@
+2010-09-01  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] QWebPage::allowGeolocationRequest should be async API
+        https://bugs.webkit.org/show_bug.cgi?id=41364
+
+        Implements new async API for geolocation permission similar to
+        Notification. WebPage maintains list of geolocation permission request
+        QtWebkit and set's when LayoutTestController gets the access from test JS
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::WebPage::WebPage):
+        (WebCore::WebPage::resetSettings):
+        (WebCore::WebPage::requestPermission):
+        (WebCore::WebPage::cancelPermission):
+        (WebCore::WebPage::permissionSet):
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::processLine):
+        (WebCore::DumpRenderTree::geolocationPermissionSet):
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::reset):
+        (LayoutTestController::setGeolocationPermission):
+        (LayoutTestController::setGeolocationPermissionCommon):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+
 2010-09-01  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Antti Koivisto.

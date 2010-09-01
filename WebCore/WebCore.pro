@@ -2219,6 +2219,7 @@ HEADERS += \
     $$PWD/../WebKit/qt/WebCoreSupport/QtFallbackWebPopup.h \
     $$PWD/../WebKit/qt/WebCoreSupport/FrameLoaderClientQt.h \
     $$PWD/../WebKit/qt/WebCoreSupport/FrameNetworkingContextQt.h \
+    $$PWD/../WebKit/qt/WebCoreSupport/GeolocationPermissionClientQt.h \
     $$PWD/../WebKit/qt/WebCoreSupport/NotificationPresenterClientQt.h \
     $$PWD/../WebKit/qt/WebCoreSupport/PageClientQt.h \
     $$PWD/../WebKit/qt/WebCoreSupport/QtPlatformPlugin.h \
@@ -2311,6 +2312,7 @@ SOURCES += \
     ../WebKit/qt/WebCoreSupport/EditCommandQt.cpp \
     ../WebKit/qt/WebCoreSupport/FrameLoaderClientQt.cpp \
     ../WebKit/qt/WebCoreSupport/FrameNetworkingContextQt.cpp \
+    ../WebKit/qt/WebCoreSupport/GeolocationPermissionClientQt.cpp \
     ../WebKit/qt/WebCoreSupport/InspectorClientQt.cpp \
     ../WebKit/qt/WebCoreSupport/NotificationPresenterClientQt.cpp \
     ../WebKit/qt/WebCoreSupport/PageClientQt.cpp \

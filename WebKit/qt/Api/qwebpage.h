@@ -57,6 +57,7 @@ namespace WebCore {
     class InspectorClientQt;
     class InspectorFrontendClientQt;
     class NotificationPresenterClientQt;
+    class GeolocationPermissionClientQt;
     class ResourceHandle;
     class HitTestResult;
     class QNetworkReplyHandler;
@@ -202,7 +203,8 @@ public:
     };
 
     enum PermissionDomain {
-        NotificationsPermissionDomain
+        NotificationsPermissionDomain,
+        GeolocationPermissionDomain
     };
 
     class ViewportHints {
@@ -351,7 +353,6 @@ public:
 
 public Q_SLOTS:
     bool shouldInterruptJavaScript();
-    bool allowGeolocationRequest(QWebFrame *frame);
 
 Q_SIGNALS:
     void loadStarted();
@@ -424,6 +425,7 @@ private:
     friend class WebCore::InspectorClientQt;
     friend class WebCore::InspectorFrontendClientQt;
     friend class WebCore::NotificationPresenterClientQt;
+    friend class WebCore::GeolocationPermissionClientQt;
     friend class WebCore::ResourceHandle;
     friend class WebCore::QNetworkReplyHandler;
     friend class DumpRenderTreeSupportQt;
