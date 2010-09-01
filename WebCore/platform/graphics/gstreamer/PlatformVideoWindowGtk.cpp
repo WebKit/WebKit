@@ -20,6 +20,7 @@
 #include "config.h"
 #include "PlatformVideoWindow.h"
 
+#include <gtk/gtk.h>
 #ifdef GDK_WINDOWING_X11
 #include <gdk/gdkx.h> // for GDK_WINDOW_XID
 #endif

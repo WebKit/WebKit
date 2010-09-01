@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Igalia S.L
+ * Copyright (C) 2010 Samsung Electronics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,34 +17,19 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef PlatformVideoWindow_h
-#define PlatformVideoWindow_h
+#include "config.h"
+#include "PlatformVideoWindow.h"
 
-#if ENABLE(VIDEO)
+#include "NotImplemented.h"
 
-#include "Widget.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+using namespace WebCore;
 
-namespace WebCore {
-
-class PlatformVideoWindow : public RefCounted<PlatformVideoWindow> {
-    public:
-        static PassRefPtr<PlatformVideoWindow> createWindow() { return adoptRef(new PlatformVideoWindow()); }
-
-        PlatformVideoWindow();
-        ~PlatformVideoWindow();
-
-        PlatformWidget window() const { return m_window; }
-        unsigned long videoWindowId() const { return m_videoWindowId; }
-
-    private:
-        unsigned long m_videoWindowId;
-        PlatformWidget m_videoWindow;
-        PlatformWidget m_window;
-    };
+PlatformVideoWindow::PlatformVideoWindow()
+{
+    notImplemented();
 }
 
-#endif
-
-#endif
+PlatformVideoWindow::~PlatformVideoWindow()
+{
+    notImplemented();
+}

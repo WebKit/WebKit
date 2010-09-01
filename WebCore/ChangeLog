@@ -1,3 +1,21 @@
+2010-08-31  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Martin Robinson.
+
+        [EFL] Add PlatformVideoWindowEfl.cpp for WebKit EFL
+        https://bugs.webkit.org/show_bug.cgi?id=44508
+
+        Add PlatformVideoWindowEfl.cpp in order to use gstreamer by 
+        WebKit EFL.
+
+        * platform/graphics/gstreamer/PlatformVideoWindow.h:
+        (WebCore::PlatformVideoWindow::window):
+        (WebCore::PlatformVideoWindow::videoWindowId):
+        * platform/graphics/gstreamer/PlatformVideoWindowEfl.cpp: Added.
+        (PlatformVideoWindow::PlatformVideoWindow):
+        (PlatformVideoWindow::~PlatformVideoWindow):
+        * platform/graphics/gstreamer/PlatformVideoWindowGtk.cpp: Include <gtk/gtk.h> directly.
+
 2010-08-31  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
