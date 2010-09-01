@@ -1,5 +1,13 @@
 2010-09-01  Tony Chang  <tony@chromium.org>
 
+        Unreviewed, updating a chromium baseline, the only difference is in
+        the anti-aliasing of the rounded border (a result of r66615).
+
+        * platform/chromium-win/fast/borders/border-radius-huge-assert-expected.checksum:
+        * platform/chromium-win/fast/borders/border-radius-huge-assert-expected.png:
+
+2010-09-01  Tony Chang  <tony@chromium.org>
+
         Unreviewed, updating chromium test expectations.
 
         * platform/chromium-mac/fast/js/kde/RegExp-expected.txt: Rebaseline
