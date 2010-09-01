@@ -877,7 +877,6 @@ SOURCES += \
     platform/animation/Animation.cpp \
     platform/animation/AnimationList.cpp \
     platform/Arena.cpp \
-    platform/AsyncFileSystem.cpp \
     platform/text/Base64.cpp \
     platform/text/BidiContext.cpp \
     platform/text/Hyphenation.cpp \
@@ -1682,8 +1681,6 @@ HEADERS += \
     platform/animation/AnimationList.h \
     platform/Arena.h \
     platform/AsyncFileStream.h \
-    platform/AsyncFileSystem.h \
-    platform/AsyncFileSystemCallbacks.h \
     platform/ContentType.h \
     platform/ContextMenu.h \
     platform/CrossThreadCopier.h \
@@ -2608,34 +2605,37 @@ contains(DEFINES, ENABLE_DOM_STORAGE=1) {
 
 contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
     HEADERS += \
-        storage/DirectoryEntry.h \
-        storage/DirectoryReader.h \
-        storage/DOMFilePath.h \
-        storage/DOMFileSystem.h \
-        storage/EntriesCallback.h \
-        storage/Entry.h \
-        storage/EntryArray.h \
-        storage/EntryCallback.h \
-        storage/ErrorCallback.h \
-        storage/FileEntry.h \
-        storage/FileSystemCallback.h \
-        storage/FileSystemCallbacks.h \
-        storage/FileWriterCallback.h \
-        storage/Flags.h \
-        storage/LocalFileSystem.h \
-        storage/Metadata.h \
-        storage/MetadataCallback.h
+        fileapi/DirectoryEntry.h \
+        fileapi/DirectoryReader.h \
+        fileapi/DOMFilePath.h \
+        fileapi/DOMFileSystem.h \
+        fileapi/EntriesCallback.h \
+        fileapi/Entry.h \
+        fileapi/EntryArray.h \
+        fileapi/EntryCallback.h \
+        fileapi/ErrorCallback.h \
+        fileapi/FileEntry.h \
+        fileapi/FileSystemCallback.h \
+        fileapi/FileSystemCallbacks.h \
+        fileapi/FileWriterCallback.h \
+        fileapi/Flags.h \
+        fileapi/LocalFileSystem.h \
+        fileapi/Metadata.h \
+        fileapi/MetadataCallback.h \
+        platform/AsyncFileSystem.h \
+        platform/AsyncFileSystemCallbacks.h
 
     SOURCES += \
-        storage/DirectoryEntry.cpp \
-        storage/DirectoryReader.cpp \
-        storage/DOMFilePath.cpp \
-        storage/DOMFileSystem.cpp \
-        storage/Entry.cpp \
-        storage/EntryArray.cpp \
-        storage/FileEntry.cpp \
-        storage/FileSystemCallbacks.cpp \
-        storage/LocalFileSystem.cpp
+        fileapi/DirectoryEntry.cpp \
+        fileapi/DirectoryReader.cpp \
+        fileapi/DOMFilePath.cpp \
+        fileapi/DOMFileSystem.cpp \
+        fileapi/Entry.cpp \
+        fileapi/EntryArray.cpp \
+        fileapi/FileEntry.cpp \
+        fileapi/FileSystemCallbacks.cpp \
+        fileapi/LocalFileSystem.cpp \
+        platform/AsyncFileSystem.cpp
 }
 
 contains(DEFINES, ENABLE_ICONDATABASE=1) {

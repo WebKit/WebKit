@@ -1196,7 +1196,6 @@ SET(WebCore_SOURCES
     page/animation/KeyframeAnimation.cpp
 
     platform/Arena.cpp
-    platform/AsyncFileSystem.cpp
     platform/ContentType.cpp
     platform/ContextMenu.cpp
     platform/CrossThreadCopier.cpp
@@ -1443,14 +1442,6 @@ SET(WebCore_SOURCES
     storage/DatabaseTask.cpp
     storage/DatabaseThread.cpp
     storage/DatabaseTracker.cpp
-    storage/DirectoryEntry.cpp
-    storage/DirectoryReader.cpp
-    storage/DOMFilePath.cpp
-    storage/DOMFileSystem.cpp
-    storage/Entry.cpp
-    storage/EntryArray.cpp
-    storage/FileEntry.cpp
-    storage/FileSystemCallbacks.cpp
     storage/IDBAny.cpp
     storage/IDBDatabase.cpp
     storage/IDBDatabaseBackendImpl.cpp
@@ -1469,7 +1460,6 @@ SET(WebCore_SOURCES
     storage/IDBFactory.cpp
     storage/IDBFactoryBackendInterface.cpp
     storage/IDBFactoryBackendImpl.cpp
-    storage/LocalFileSystem.cpp
     storage/LocalStorageTask.cpp
     storage/LocalStorageThread.cpp
     storage/OriginQuotaManager.cpp
@@ -1580,6 +1570,21 @@ IF (ENABLE_MATHML)
         mathml/RenderMathMLSquareRoot.cpp
         mathml/RenderMathMLSubSup.cpp
         mathml/RenderMathMLUnderOver.cpp
+    )
+ENDIF ()
+
+if (ENABLE_FILE_SYSTEM)
+    LIST(APPEND WebCore_SOURCES
+        fileapi/DirectoryEntry.cpp
+        fileapi/DirectoryReader.cpp
+        fileapi/DOMFilePath.cpp
+        fileapi/DOMFileSystem.cpp
+        fileapi/Entry.cpp
+        fileapi/EntryArray.cpp
+        fileapi/FileEntry.cpp
+        fileapi/FileSystemCallbacks.cpp
+        fileapi/LocalFileSystem.cpp
+        platform/AsyncFileSystem.cpp
     )
 ENDIF ()
 

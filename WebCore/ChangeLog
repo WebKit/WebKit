@@ -1,3 +1,57 @@
+2010-08-31  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Move FileSystem related files from WebCore/html to WebCore/fileapi.
+        https://bugs.webkit.org/show_bug.cgi?id=44925
+
+        No new tests; there should be no functional changes.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * fileapi/DOMFilePath.cpp: Renamed from WebCore/storage/DOMFilePath.cpp.
+        * fileapi/DOMFilePath.h: Renamed from WebCore/storage/DOMFilePath.h.
+        * fileapi/DOMFileSystem.cpp: Renamed from WebCore/storage/DOMFileSystem.cpp.
+        * fileapi/DOMFileSystem.h: Renamed from WebCore/storage/DOMFileSystem.h.
+        * fileapi/DOMFileSystem.idl: Renamed from WebCore/storage/DOMFileSystem.idl.
+        * fileapi/DirectoryEntry.cpp: Renamed from WebCore/storage/DirectoryEntry.cpp.
+        * fileapi/DirectoryEntry.h: Renamed from WebCore/storage/DirectoryEntry.h.
+        * fileapi/DirectoryEntry.idl: Renamed from WebCore/storage/DirectoryEntry.idl.
+        * fileapi/DirectoryReader.cpp: Renamed from WebCore/storage/DirectoryReader.cpp.
+        * fileapi/DirectoryReader.h: Renamed from WebCore/storage/DirectoryReader.h.
+        * fileapi/DirectoryReader.idl: Renamed from WebCore/storage/DirectoryReader.idl.
+        * fileapi/EntriesCallback.h: Renamed from WebCore/storage/EntriesCallback.h.
+        * fileapi/EntriesCallback.idl: Renamed from WebCore/storage/EntriesCallback.idl.
+        * fileapi/Entry.cpp: Renamed from WebCore/storage/Entry.cpp.
+        * fileapi/Entry.h: Renamed from WebCore/storage/Entry.h.
+        * fileapi/Entry.idl: Renamed from WebCore/storage/Entry.idl.
+        * fileapi/EntryArray.cpp: Renamed from WebCore/storage/EntryArray.cpp.
+        * fileapi/EntryArray.h: Renamed from WebCore/storage/EntryArray.h.
+        * fileapi/EntryArray.idl: Renamed from WebCore/storage/EntryArray.idl.
+        * fileapi/EntryCallback.h: Renamed from WebCore/storage/EntryCallback.h.
+        * fileapi/EntryCallback.idl: Renamed from WebCore/storage/EntryCallback.idl.
+        * fileapi/ErrorCallback.h: Renamed from WebCore/storage/ErrorCallback.h.
+        * fileapi/ErrorCallback.idl: Renamed from WebCore/storage/ErrorCallback.idl.
+        * fileapi/FileEntry.cpp: Renamed from WebCore/storage/FileEntry.cpp.
+        * fileapi/FileEntry.h: Renamed from WebCore/storage/FileEntry.h.
+        * fileapi/FileEntry.idl: Renamed from WebCore/storage/FileEntry.idl.
+        * fileapi/FileSystemCallback.h: Renamed from WebCore/storage/FileSystemCallback.h.
+        * fileapi/FileSystemCallback.idl: Renamed from WebCore/storage/FileSystemCallback.idl.
+        * fileapi/FileSystemCallbacks.cpp: Renamed from WebCore/storage/FileSystemCallbacks.cpp.
+        * fileapi/FileSystemCallbacks.h: Renamed from WebCore/storage/FileSystemCallbacks.h.
+        * fileapi/Flags.h: Renamed from WebCore/storage/Flags.h.
+        * fileapi/Flags.idl: Renamed from WebCore/storage/Flags.idl.
+        * fileapi/LocalFileSystem.cpp: Renamed from WebCore/storage/LocalFileSystem.cpp.
+        * fileapi/LocalFileSystem.h: Renamed from WebCore/storage/LocalFileSystem.h.
+        * fileapi/Metadata.h: Renamed from WebCore/storage/Metadata.h.
+        * fileapi/Metadata.idl: Renamed from WebCore/storage/Metadata.idl.
+        * fileapi/MetadataCallback.h: Renamed from WebCore/storage/MetadataCallback.h.
+        * fileapi/MetadataCallback.idl: Renamed from WebCore/storage/MetadataCallback.idl.
+
 2010-08-31  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

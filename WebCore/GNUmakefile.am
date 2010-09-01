@@ -3026,29 +3026,31 @@ webcore_built_sources += \
        DerivedSources/WebCore/JSMetadataCallback.h
 
 webcore_sources += \
-       WebCore/storage/DirectoryEntry.cpp \
-       WebCore/storage/DirectoryEntry.h \
-       WebCore/storage/DirectoryReader.cpp \
-       WebCore/storage/DirectoryReader.h \
-       WebCore/storage/DOMFilePath.cpp \
-       WebCore/storage/DOMFilePath.h \
-       WebCore/storage/DOMFileSystem.cpp \
-       WebCore/storage/DOMFileSystem.h \
-       WebCore/storage/EntriesCallback.h \
-       WebCore/storage/Entry.cpp \
-       WebCore/storage/Entry.h \
-       WebCore/storage/EntryArray.cpp \
-       WebCore/storage/EntryArray.h \
-       WebCore/storage/EntryCallback.h \
-       WebCore/storage/ErrorCallback.h \
-       WebCore/storage/FileEntry.cpp \
-       WebCore/storage/FileEntry.h \
-       WebCore/storage/FileSystemCallback.h \
-       WebCore/storage/FileSystemCallbacks.cpp \
-       WebCore/storage/FileSystemCallbacks.h \
-       WebCore/storage/Flags.h \
-       WebCore/storage/Metadata.h \
-       WebCore/storage/MetadataCallback.h
+       WebCore/fileapi/DirectoryEntry.cpp \
+       WebCore/fileapi/DirectoryEntry.h \
+       WebCore/fileapi/DirectoryReader.cpp \
+       WebCore/fileapi/DirectoryReader.h \
+       WebCore/fileapi/DOMFilePath.cpp \
+       WebCore/fileapi/DOMFilePath.h \
+       WebCore/fileapi/DOMFileSystem.cpp \
+       WebCore/fileapi/DOMFileSystem.h \
+       WebCore/fileapi/EntriesCallback.h \
+       WebCore/fileapi/Entry.cpp \
+       WebCore/fileapi/Entry.h \
+       WebCore/fileapi/EntryArray.cpp \
+       WebCore/fileapi/EntryArray.h \
+       WebCore/fileapi/EntryCallback.h \
+       WebCore/fileapi/ErrorCallback.h \
+       WebCore/fileapi/FileEntry.cpp \
+       WebCore/fileapi/FileEntry.h \
+       WebCore/fileapi/FileSystemCallback.h \
+       WebCore/fileapi/FileSystemCallbacks.cpp \
+       WebCore/fileapi/FileSystemCallbacks.h \
+       WebCore/fileapi/Flags.h \
+       WebCore/fileapi/LocalFileSystem.cpp \
+       WebCore/fileapi/LocalFileSystem.h \
+       WebCore/fileapi/Metadata.h \
+       WebCore/fileapi/MetadataCallback.h
 
 endif # END ENABLE_FILE_SYSTEM
 

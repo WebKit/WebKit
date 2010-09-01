@@ -37113,11 +37113,79 @@
 				>
 			</File>
 			<File
+				RelativePath="..\fileapi\DirectoryEntry.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\DirectoryEntry.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\DirectoryReader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\DirectoryReader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\DOMFilePath.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\DOMFilePath.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\DOMFileSystem.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\DOMFileSystem.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\EntriesCallback.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\Entry.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\Entry.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\EntryArray.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\EntryArray.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\EntryCallback.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\ErrorCallback.h"
+				>
+			</File>
+			<File
 				RelativePath="..\fileapi\File.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\fileapi\File.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\FileEntry.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\FileEntry.h"
 				>
 			</File>
 			<File
@@ -37161,6 +37229,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\fileapi\FileSystemCallback.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\FileSystemCallbacks.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\FileSystemCallbacks.h"
+				>
+			</File>
+			<File
 				RelativePath="..\fileapi\FileThread.cpp"
 				>
 			</File>
@@ -37182,6 +37262,34 @@
 			</File>
 			<File
 				RelativePath="..\fileapi\FileWriterClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\Flags.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\LocalFileSystem.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\LocalFileSystem.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\Metadata.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\MetadataCallback.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\ThreadableBlobRegistry.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\ThreadableBlobRegistry.h"
 				>
 			</File>
 			<File
@@ -41814,14 +41922,6 @@
 			</File>
 			<File
 				RelativePath="..\html\StepRange.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\ThreadableBlobRegistry.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\ThreadableBlobRegistry.h"
 				>
 			</File>
 			<File
@@ -51237,90 +51337,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\storage\DirectoryEntry.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\DirectoryEntry.h"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\DirectoryReader.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\DirectoryReader.h"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\DOMFilePath.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\DOMFilePath.h"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\DOMFileSystem.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\DOMFileSystem.h"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\EntriesCallback.h"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\Entry.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\Entry.h"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\EntryArray.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\EntryArray.h"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\EntryCallback.h"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\ErrorCallback.h"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\FileEntry.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\FileEntry.h"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\FileSystemCallback.h"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\FileSystemCallbacks.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\FileSystemCallbacks.h"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\Flags.h"
-				>
-			</File>
-			<File
 				RelativePath="..\storage\IDBAny.cpp"
 				>
 			</File>
@@ -51501,14 +51517,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\storage\LocalFileSystem.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\LocalFileSystem.h"
-				>
-			</File>
-			<File
 				RelativePath="..\storage\LocalStorageTask.cpp"
 				>
 			</File>
@@ -51522,14 +51530,6 @@
 			</File>
 			<File
 				RelativePath="..\storage\LocalStorageThread.h"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\Metadata.h"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\MetadataCallback.h"
 				>
 			</File>
 			<File
