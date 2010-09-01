@@ -196,6 +196,13 @@ void RenderSVGRoot::destroy()
     RenderBox::destroy();
 }
 
+void RenderSVGRoot::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
+{
+    if (diff == StyleDifferenceLayout)
+        setNeedsBoundariesUpdate();
+    RenderBox::styleWillChange(diff, newStyle);
+}
+
 void RenderSVGRoot::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBox::styleDidChange(diff, oldStyle);

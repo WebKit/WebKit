@@ -99,6 +99,13 @@ void RenderSVGInline::destroy()
     RenderInline::destroy();
 }
 
+void RenderSVGInline::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
+{
+    if (diff == StyleDifferenceLayout)
+        setNeedsBoundariesUpdate();
+    RenderInline::styleWillChange(diff, newStyle);
+}
+
 void RenderSVGInline::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderInline::styleDidChange(diff, oldStyle);

@@ -162,6 +162,10 @@ StyleDifference SVGRenderStyle::diff(const SVGRenderStyle* other) const
         || svg_inherited_flags._joinStyle != other->svg_inherited_flags._joinStyle)
         return StyleDifferenceLayout;
 
+    // Shadow changes require relayouts, as they affect the repaint rects.
+    if (shadowSVG != other->shadowSVG)
+        return StyleDifferenceLayout;
+
     // Some stroke properties, requires relayouts, as the cached stroke boundaries need to be recalculated.
     if (stroke != other->stroke) {
         if (stroke->width != other->stroke->width
@@ -177,10 +181,6 @@ StyleDifference SVGRenderStyle::diff(const SVGRenderStyle* other) const
     }
 
     // NOTE: All comparisions below may only return StyleDifferenceRepaint
-
-    // Shadow changes need to cause repaints.
-    if (shadowSVG != other->shadowSVG)
-        return StyleDifferenceRepaint;
 
     // Painting related properties only need repaints. 
     if (miscNotEqual) {
