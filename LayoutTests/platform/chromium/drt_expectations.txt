@@ -19,6 +19,16 @@ BUG_DRT WIN MAC : fast/speech/input-appearance-speechbutton.html = IMAGE
 BUG_DRT LINUX : fast/speech/input-appearance-searchandspeech.html = MISSING
 BUG_DRT LINUX : fast/speech/input-appearance-speechbutton.html = MISSING
 
+// Blob-related failures
+BUG_DRT MAC LINUX : fast/files/read-blob-async.html = TEXT
+BUG_DRT MAC LINUX : fast/files/read-file-async.html = TEXT
+BUG_DRT MAC LINUX : http/tests/local/blob/send-data-blob.html = TEXT
+BUG_DRT MAC LINUX : http/tests/local/blob/send-hybrid-blob.html = TEXT
+BUG_DRT MAC LINUX : http/tests/local/blob/send-sliced-data-blob.html = TEXT
+BUG_DRT MAC LINUX : http/tests/local/send-sliced-dragged-file.html = TEXT
+BUG_DRT MAC LINUX : fast/files/apply-blob-url-to-xhr.html = TIMEOUT
+BUG_DRT MAC : http/tests/local/formdata/send-form-data-with-sliced-file.html = TEXT
+
 BUG48431 WIN MAC LINUX : plugins/geturlnotify-during-document-teardown.html = TEXT
 BUG48431 WIN MAC LINUX : plugins/open-and-close-window-with-plugin.html = TEXT
 
@@ -263,6 +273,8 @@ BUG_DRT MAC : fast/canvas/webgl/texture-npot.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/texture-transparent-pixels-initialized.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/triangle.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/viewport-unchanged-upon-resize.html = TEXT PASS
+BUG_DRT MAC : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE+TEXT
+BUG_DRT MAC : fast/canvas/webgl/css-webkit-canvas.html = IMAGE+TEXT
 
 // Misc.
 BUG_DRT MAC : fast/backgrounds/solid-color-context-restore.html = IMAGE
@@ -344,6 +356,28 @@ BUG_DRT WIN : http/tests/loading/preload-img-test.html = TEXT TIMEOUT PASS
 BUG_DRT MAC LINUX : http/tests/misc/slow-loading-image-in-pattern.html = IMAGE PASS
 BUG_DRT WIN MAC : fast/dom/Geolocation/delayed-permission-allowed-for-multiple-requests.html = TIMEOUT
 BUG_DRT : platform/chromium/accessibility/children-changed-notification.html = PASS
+BUG_DRT LINUX : fast/images/animated-svg-as-image.html = IMAGE
+BUG_DRT LINUX : fast/text/international/thai-line-breaks.html = IMAGE
+BUG_DRT LINUX : svg/W3C-SVG-1.1/pservers-grad-07-b.svg = IMAGE
+BUG_DRT LINUX : svg/W3C-SVG-1.1/struct-frag-02-t.svg = IMAGE
+BUG_DRT LINUX : svg/W3C-SVG-1.1/text-text-01-b.svg = IMAGE
+BUG_DRT LINUX : svg/batik/text/textFeatures.svg = IMAGE
+BUG_DRT LINUX : svg/batik/text/textLayout.svg = IMAGE
+BUG_DRT LINUX : svg/custom/js-late-clipPath-and-object-creation.svg = IMAGE
+BUG_DRT LINUX : svg/custom/js-late-clipPath-creation.svg = IMAGE
+BUG_DRT LINUX : svg/custom/js-late-gradient-creation.svg = IMAGE
+BUG_DRT LINUX : svg/text/select-textLength-spacingAndGlyphs-squeeze-1.svg = IMAGE
+BUG_DRT LINUX : svg/text/select-textLength-spacingAndGlyphs-squeeze-2.svg = IMAGE
+BUG_DRT LINUX : svg/text/select-textLength-spacingAndGlyphs-squeeze-3.svg = IMAGE
+BUG_DRT LINUX : svg/text/select-textLength-spacingAndGlyphs-squeeze-4.svg = IMAGE
+BUG_DRT LINUX : svg/text/select-textLength-spacingAndGlyphs-stretch-1.svg = IMAGE
+BUG_DRT LINUX : svg/text/select-textLength-spacingAndGlyphs-stretch-2.svg = IMAGE
+BUG_DRT LINUX : svg/text/select-textLength-spacingAndGlyphs-stretch-3.svg = IMAGE
+BUG_DRT LINUX : svg/text/select-textLength-spacingAndGlyphs-stretch-4.svg = IMAGE
+BUG_DRT LINUX : svg/text/text-text-01-b.svg = IMAGE
+BUG_DRT LINUX : transforms/2d/transform-borderbox.html = IMAGE
+BUG_DRT LINUX : http/tests/multipart/multipart-wait-before-boundary.html = TIMEOUT
+BUG_DRT LINUX : http/tests/multipart/stop-crash.html = TIMEOUT
 
 // Windows failures from the new build slave (some may be Vista/XP diffs)
 BUG_DRT WIN : css2.1/t0805-c5519-brdr-r-01-e.html = IMAGE+TEXT
