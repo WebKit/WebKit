@@ -376,7 +376,7 @@ String int32ToWebCoreString(int value)
 
     // Most numbers used are <= 100. Even if they aren't used there's very little cost in using the space.
     const int kLowNumbers = 100;
-    static AtomicString lowNumbers[kLowNumbers + 1];
+    DEFINE_STATIC_LOCAL(Vector<AtomicString>, lowNumbers, (kLowNumbers + 1));
     String webCoreString;
     if (0 <= value && value <= kLowNumbers) {
         webCoreString = lowNumbers[value];
