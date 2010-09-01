@@ -214,21 +214,33 @@ void DOMSelection::collapse(Node* node, int offset, ExceptionCode& ec)
     m_frame->selection()->moveTo(VisiblePosition(node, offset, DOWNSTREAM));
 }
 
-void DOMSelection::collapseToEnd()
+void DOMSelection::collapseToEnd(ExceptionCode& ec)
 {
     if (!m_frame)
         return;
 
     const VisibleSelection& selection = m_frame->selection()->selection();
+
+    if (selection.isNone()) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
     m_frame->selection()->moveTo(VisiblePosition(selection.end(), DOWNSTREAM));
 }
 
-void DOMSelection::collapseToStart()
+void DOMSelection::collapseToStart(ExceptionCode& ec)
 {
     if (!m_frame)
         return;
 
     const VisibleSelection& selection = m_frame->selection()->selection();
+
+    if (selection.isNone()) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
     m_frame->selection()->moveTo(VisiblePosition(selection.start(), DOWNSTREAM));
 }
 

@@ -1,3 +1,18 @@
+2010-09-01  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        DOM Selection: collapseToStart() and collapseToEnd() should throw INVALID_STATE_ERR if there's no selection
+        https://bugs.webkit.org/show_bug.cgi?id=44598
+
+        Spec links:
+        http://www.whatwg.org/specs/web-apps/current-work/#dom-selection-collapsetostart
+        http://www.whatwg.org/specs/web-apps/current-work/#dom-selection-collapsetoend
+
+        * fast/dom/Selection/collapseToX-empty-selection-expected.txt: Added.
+        * fast/dom/Selection/collapseToX-empty-selection.html: Added.
+        * fast/dom/Selection/script-tests/collapseToX-empty-selection.js: Added.
+
 2010-09-01  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed, updating expected results for r66581.

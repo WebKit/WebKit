@@ -42,8 +42,10 @@ module window {
 
         void collapse(in Node node, in long index)
             raises(DOMException);
-        void collapseToEnd();
-        void collapseToStart();
+        void collapseToEnd()
+            raises(DOMException);
+        void collapseToStart()
+            raises(DOMException);
 
         void deleteFromDocument();
         boolean containsNode(in Node node, in boolean allowPartial);
