@@ -1,3 +1,59 @@
+2010-08-31  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] Implement Readable/Writable versions of ChromiumDataObjectNew
+        https://bugs.webkit.org/show_bug.cgi?id=44917
+
+        This is the second of several patches to update Chromium to support
+        arbitrary data types in event.dataTransfer.
+        ReadableDataObject simply calls through to several Chromium IPCs to
+        retrieve the appropriate data.
+        WritableDataObject ostensibly buffers arbitrary data internally until
+        a call is made to flush the data to the platform-specific abstraction;
+        unfortunately, a special exception is currently made for pasteboard
+        handling due to how it is handled in WebCore.
+
+        No new tests.
+
+        * WebCore.gypi:
+        * platform/chromium/ChromiumDataObjectNew.h: Removed.
+        * platform/chromium/ClipboardChromium.cpp:
+        * platform/chromium/ClipboardMimeTypes.cpp: Added.
+        * platform/chromium/ClipboardMimeTypes.h: Added.
+        * platform/chromium/ReadableDataObject.cpp: Added.
+        (WebCore::clipboardBuffer):
+        (WebCore::ReadableDataObject::create):
+        (WebCore::ReadableDataObject::ReadableDataObject):
+        (WebCore::ReadableDataObject::hasData):
+        (WebCore::ReadableDataObject::types):
+        (WebCore::ReadableDataObject::getData):
+        (WebCore::ReadableDataObject::getURL):
+        (WebCore::ReadableDataObject::getHTML):
+        (WebCore::ReadableDataObject::hasFilenames):
+        (WebCore::ReadableDataObject::filenames):
+        (WebCore::ReadableDataObject::ensureTypeCacheInitialized):
+        * platform/chromium/ReadableDataObject.h: Added.
+        * platform/chromium/WritableDataObject.cpp: Added.
+        (WebCore::WritableDataObject::create):
+        (WebCore::WritableDataObject::WritableDataObject):
+        (WebCore::WritableDataObject::clearData):
+        (WebCore::WritableDataObject::clearAllExceptFiles):
+        (WebCore::WritableDataObject::clearAll):
+        (WebCore::WritableDataObject::setData):
+        (WebCore::WritableDataObject::setURL):
+        (WebCore::WritableDataObject::setHTML):
+        (WebCore::WritableDataObject::dataMap):
+        (WebCore::WritableDataObject::urlTitle):
+        (WebCore::WritableDataObject::htmlBaseURL):
+        (WebCore::WritableDataObject::fileExtension):
+        (WebCore::WritableDataObject::fileContentFilename):
+        (WebCore::WritableDataObject::fileContent):
+        (WebCore::WritableDataObject::setFileExtension):
+        (WebCore::WritableDataObject::setFileContentFilename):
+        (WebCore::WritableDataObject::setFileContent):
+        * platform/chromium/WritableDataObject.h: Added.
+
 2010-08-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
