@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderFrameSet {FRAMESET} at (0,0) size 800x600 [border: (1px solid #000000)]
+      RenderFrame {FRAME} at (0,0) size 500x600
+        layer at (0,0) size 500x600
+          RenderView at (0,0) size 500x600
+        layer at (0,0) size 500x600
+          RenderBlock {HTML} at (0,0) size 500x600
+            RenderBody {BODY} at (1,8) size 498x584
+              RenderText {#text} at (0,0) size 374x20
+                text run at (0,0) width 374: "escape(window.frameElement.name)='left' (should be 'left')"
+      RenderFrame {FRAME} at (501,0) size 299x600
+        layer at (0,0) size 299x600
+          RenderView at (0,0) size 299x600
+        layer at (0,0) size 299x600
+          RenderBlock {HTML} at (0,0) size 299x600
+            RenderBody {BODY} at (8,8) size 283x584
+              RenderText {#text} at (0,0) size 249x40
+                text run at (0,0) width 249: "escape(window.frameElement.name)=''"
+                text run at (0,20) width 81: "(should be '')"

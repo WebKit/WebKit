@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderFrameSet {FRAMESET} at (0,0) size 800x600
+      RenderFrame {FRAME} at (0,0) size 800x600
+        layer at (0,0) size 800x600
+          RenderView at (0,0) size 800x600
+        layer at (0,0) size 800x600
+          RenderBlock {HTML} at (0,0) size 800x600
+            RenderBody {BODY} at (8,8) size 784x579
+              RenderBlock {P} at (0,0) size 784x20
+                RenderText {#text} at (0,0) size 607x20
+                  text run at (0,0) width 607: "This test checks whether a frame element's 'src' attribute is a complete, rather than relative, URL."
+              RenderBlock {PRE} at (0,36) size 784x16
+                RenderText {#text} at (0,0) size 624x15
+                  text run at (0,0) width 624: "PASS: Frame 'src' attribute should include 'LayoutTests/fast/frames' and does."
+      RenderFrame {FRAME} at (0,0) size 0x0
+        layer at (0,0) size 8x8
+          RenderView at (0,0) size 0x0
+        layer at (0,0) size 8x8
+          RenderBlock {HTML} at (0,0) size 0x8
+            RenderBody {BODY} at (8,8) size 0x0

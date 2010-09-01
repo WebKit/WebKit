@@ -1,3 +1,53 @@
+2010-09-01  Martin Robinson  <mrobinson@igalia.com>
+
+        Add baselines and unskip non-failing tests in preparation for
+        landing scrollbar theme changes.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/fast/dynamic/window-resize-scrollbars-test-expected.checksum: Added.
+        * platform/gtk/fast/dynamic/window-resize-scrollbars-test-expected.png: Added.
+        * platform/gtk/fast/dynamic/window-resize-scrollbars-test-expected.txt: Added.
+        * platform/gtk/fast/dynamic/window-scrollbars-test-expected.checksum: Added.
+        * platform/gtk/fast/dynamic/window-scrollbars-test-expected.png: Added.
+        * platform/gtk/fast/dynamic/window-scrollbars-test-expected.txt: Added.
+        * platform/gtk/fast/events/attempt-scroll-with-no-scrollbars-expected.txt: Added.
+        * platform/gtk/fast/frames/001-expected.txt: Added.
+        * platform/gtk/fast/frames/002-expected.txt: Copied from LayoutTests/platform/mac/fast/frames/002-expected.txt.
+        * platform/gtk/fast/frames/calculate-fixed-expected.txt: Copied from LayoutTests/platform/qt/fast/frames/calculate-fixed-expected.txt.
+        * platform/gtk/fast/frames/calculate-order-expected.txt: Copied from LayoutTests/platform/qt/fast/frames/calculate-order-expected.txt.
+        * platform/gtk/fast/frames/calculate-percentage-expected.txt: Copied from LayoutTests/platform/qt/fast/frames/calculate-percentage-expected.txt.
+        * platform/gtk/fast/frames/calculate-relative-expected.txt: Copied from LayoutTests/platform/qt/fast/frames/calculate-relative-expected.txt.
+        * platform/gtk/fast/frames/calculate-round-expected.txt: Copied from LayoutTests/platform/mac/fast/frames/calculate-round-expected.txt.
+        * platform/gtk/fast/frames/content-opacity-1-expected.txt: Copied from LayoutTests/platform/mac/fast/frames/content-opacity-1-expected.txt.
+        * platform/gtk/fast/frames/content-opacity-2-expected.txt: Copied from LayoutTests/platform/mac/fast/frames/content-opacity-2-expected.txt.
+        * platform/gtk/fast/frames/contentWindow_Frame-expected.txt: Added.
+        * platform/gtk/fast/frames/contentWindow_iFrame-expected.txt: Added.
+        * platform/gtk/fast/frames/empty-cols-attribute-expected.txt: Copied from LayoutTests/platform/mac/fast/frames/empty-cols-attribute-expected.txt.
+        * platform/gtk/fast/frames/empty-frame-src-expected.txt: Copied from LayoutTests/platform/mac/fast/frames/empty-frame-src-expected.txt.
+        * platform/gtk/fast/frames/frame-element-name-expected.txt: Added.
+        * platform/gtk/fast/frames/frame-navigation-expected.txt: Added.
+        * platform/gtk/fast/frames/frame-scrolling-attribute-expected.checksum: Added.
+        * platform/gtk/fast/frames/frame-scrolling-attribute-expected.png: Added.
+        * platform/gtk/fast/frames/frame-scrolling-attribute-expected.txt: Added.
+        * platform/gtk/fast/frames/frame-set-whitespace-attributes-expected.txt: Copied from LayoutTests/platform/mac/fast/frames/frame-set-whitespace-attributes-expected.txt.
+        * platform/gtk/fast/frames/frame-src-attribute-expected.txt: Added.
+        * platform/gtk/fast/frames/frameElement-frame-expected.txt: Added.
+        * platform/gtk/fast/frames/frameElement-iframe-expected.txt: Added.
+        * platform/gtk/fast/frames/frameset-style-recalc-expected.txt: Added.
+        * platform/gtk/fast/frames/iframe-option-crash-expected.txt: Added.
+        * platform/gtk/fast/frames/iframe-scrolling-attribute-expected.checksum: Added.
+        * platform/gtk/fast/frames/iframe-scrolling-attribute-expected.png: Added.
+        * platform/gtk/fast/frames/iframe-scrolling-attribute-expected.txt: Added.
+        * platform/gtk/fast/frames/iframe-text-contents-expected.txt: Copied from LayoutTests/platform/mac/fast/frames/iframe-text-contents-expected.txt.
+        * platform/gtk/fast/frames/iframe-with-frameborder-expected.txt: Added.
+        * platform/gtk/fast/frames/inline-object-inside-frameset-expected.txt: Added.
+        * platform/gtk/fast/frames/invalid-expected.txt: Copied from LayoutTests/platform/qt/fast/frames/invalid-expected.txt.
+        * platform/gtk/fast/frames/no-frame-borders-expected.txt: Copied from LayoutTests/platform/mac/fast/frames/no-frame-borders-expected.txt.
+        * platform/gtk/fast/frames/onlyCommentInIFrame-expected.txt: Added.
+        * platform/gtk/fast/frames/valid-expected.txt: Copied from LayoutTests/platform/qt/fast/frames/valid-expected.txt.
+        * platform/gtk/fast/frames/viewsource-attribute-expected.txt: Added.
+        * platform/gtk/fast/frames/viewsource-on-image-file-expected.txt: Added.
+
 2010-09-01  Anton Muhin  <antonm@chromium.org>
 
         Unreviewed fix to update test expectations to recent SVG changes.
