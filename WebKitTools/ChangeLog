@@ -1,3 +1,14 @@
+2010-09-01  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        [Qt] Auto-generate WebKit2 forwarding headers
+        https://bugs.webkit.org/show_bug.cgi?id=44692
+
+        * MiniBrowser/qt/BrowserWindow.h: use source style includes
+        * MiniBrowser/qt/MiniBrowser.pro: add missing include paths
+        * Scripts/enumerate-included-framework-headers: Removed.
+
 2010-08-31  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
 
         Reviewed by Adam Barth.

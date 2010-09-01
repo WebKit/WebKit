@@ -1,3 +1,14 @@
+2010-09-01  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        [Qt] Auto-generate WebKit2 forwarding headers
+        https://bugs.webkit.org/show_bug.cgi?id=44692
+
+        * DerivedSources.pro: let the generate-forwarding-headers.pl
+        script generate forwarding headers.
+        * generate-forwarding-headers.pl: Added.
+
 2010-08-31  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
