@@ -1,3 +1,9 @@
+2010-09-01  Anton Muhin  <antonm@chromium.org>
+
+        Unreviewed fix to update test expectations to recent SVG changes.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-01  'Anton Muhin'  <antonm@chromium.org>
 
         Unreviewed expectations fix.

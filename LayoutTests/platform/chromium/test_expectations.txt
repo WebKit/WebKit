@@ -840,7 +840,7 @@ BUG8763 LINUX WIN MAC : svg/custom/use-on-g-containing-foreignObject-and-image.s
 // We show reduced version of the entire SVN image rather than an image
 BUG23463 MAC : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE
 BUG23463 WIN LINUX : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE+TEXT TEXT
-BUG23463 WIN LINUX : svg/W3C-SVG-1.1/struct-use-01-t.svg = IMAGE+TEXT PASS
+BUG23463 WIN LINUX : svg/W3C-SVG-1.1/struct-use-01-t.svg = IMAGE IMAGE+TEXT PASS
 BUG23463 WIN LINUX : svg/W3C-SVG-1.1/struct-image-02-b.svg = IMAGE+TEXT
 
 // Merge 39744:39829 - regression
