@@ -1,3 +1,10 @@
+2010-09-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, updating expected results for r66581.
+
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+
 2010-09-01  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Darin Adler.
