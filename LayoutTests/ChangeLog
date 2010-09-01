@@ -1,3 +1,19 @@
+2010-08-31  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40947
+        <rdar://problem/8124723> REGRESSION (r57544): XMLHttpRequest POSTed multipart/form-data
+        wrongfully gets a charset appended
+
+        * http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers-expected.txt:
+        * http/tests/xmlhttprequest/request-encoding2.html:
+        Updated tests that has wrong expectations.
+
+        * http/tests/xmlhttprequest/post-with-boundary-expected.txt: Added.
+        * http/tests/xmlhttprequest/post-with-boundary.html: Added.
+        Added a new test, sending a valid multipart form with boundary.
+
 2010-08-31  Darin Adler  <darin@apple.com>
 
         Fix gtk bot.

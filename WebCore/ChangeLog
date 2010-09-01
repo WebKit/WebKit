@@ -1,3 +1,18 @@
+2010-08-31  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40947
+        <rdar://problem/8124723> REGRESSION (r57544): XMLHttpRequest POSTed multipart/form-data
+        wrongfully gets a charset appended
+
+        Test: http/tests/xmlhttprequest/post-with-boundary.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::replaceCharsetInMediaType): Changed to only set charset if it was already present,
+        and never append.
+        (WebCore::XMLHttpRequest::send): Updated for replaceCharsetInMediaType renaming.
+
 2010-08-31  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Tony Chang.
