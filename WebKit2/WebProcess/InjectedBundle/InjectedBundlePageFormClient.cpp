@@ -59,7 +59,7 @@ void InjectedBundlePageFormClient::textFieldDidBeginEditing(WebPage* page, WebCo
 
 void InjectedBundlePageFormClient::textFieldDidEndEditing(WebPage* page, WebCore::HTMLInputElement* inputElement, WebFrame* frame)
 {
-    if (!m_client.textFieldDidBeginEditing)
+    if (!m_client.textFieldDidEndEditing)
         return;
 
     RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(inputElement);
@@ -68,7 +68,7 @@ void InjectedBundlePageFormClient::textFieldDidEndEditing(WebPage* page, WebCore
 
 void InjectedBundlePageFormClient::textDidChangeInTextField(WebPage* page, WebCore::HTMLInputElement* inputElement, WebFrame* frame)
 {
-    if (!m_client.textFieldDidBeginEditing)
+    if (!m_client.textDidChangeInTextField)
         return;
 
     RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(inputElement);
@@ -77,7 +77,7 @@ void InjectedBundlePageFormClient::textDidChangeInTextField(WebPage* page, WebCo
 
 void InjectedBundlePageFormClient::textDidChangeInTextArea(WebPage* page, WebCore::HTMLTextAreaElement* textAreaElement, WebFrame* frame)
 {
-    if (!m_client.textFieldDidBeginEditing)
+    if (!m_client.textDidChangeInTextArea)
         return;
 
     RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(textAreaElement);

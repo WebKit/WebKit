@@ -1,5 +1,19 @@
 2010-08-31  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        Fix some copy/paste errors.
+
+        Reviewed by Steve Falkenburg.
+
+        * WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp:
+        (WebKit::InjectedBundlePageFormClient::textFieldDidEndEditing):
+        Null check the correct callback.
+        (WebKit::InjectedBundlePageFormClient::textDidChangeInTextField):
+        Ditto.
+        (WebKit::InjectedBundlePageFormClient::textDidChangeInTextArea):
+        Ditto.
+
+2010-08-31  Jon Honeycutt  <jhoneycutt@apple.com>
+
         Crash when closing a page with a form field when using WebKit2.
 
         Reviewed by Anders Carlsson.
