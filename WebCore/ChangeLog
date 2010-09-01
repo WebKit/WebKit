@@ -1,3 +1,16 @@
+2010-08-31  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Adam Barth.
+
+        [GTK] warning: unused variable "queryResult"
+        https://bugs.webkit.org/show_bug.cgi?id=44998
+
+        No new tests as functionality has not changed.
+
+        * platform/graphics/gstreamer/GStreamerGWorld.cpp:
+        (WebCore::GStreamerGWorld::enterFullscreen): Move queryResult within the gstreamer
+        version guards, where it is used.
+
 2010-08-31  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Adam Roben.
