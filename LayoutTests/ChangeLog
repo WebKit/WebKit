@@ -2,6 +2,20 @@
 
         Unreviewed, updating expected results for Chromium.
 
+        * platform/chromium-linux/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt
+        * platform/chromium-linux/fast/css/getComputedStyle/computed-style-expected.txt
+        * platform/chromium-linux/svg/css/getComputedStyle-basic-expected.txt
+        * platform/chromium-mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt
+        * platform/chromium-mac/fast/css/getComputedStyle/computed-style-expected.txt
+        * platform/chromium-mac/svg/css/getComputedStyle-basic-expected.txt
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-expected.txt
+        * platform/chromium-win/svg/css/getComputedStyle-basic-expected.txt
+
+2010-09-01  Anton Muhin <antonm@chromium.org>
+
+        Unreviewed, updating expected results for Chromium.
+
 2010-09-01  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
