@@ -272,4 +272,20 @@ bool WebRuntimeFeatures::isXHRResponseBlobEnabled()
 #endif
 }
 
+void WebRuntimeFeatures::enableFileSystem(bool enable)
+{
+#if ENABLE(FILE_SYSTEM)
+    RuntimeEnabledFeatures::setFileSystemEnabled(enable);
+#endif
+}
+
+bool WebRuntimeFeatures::isFileSystemEnabled()
+{
+#if ENABLE(FILE_SYSTEM)
+    return RuntimeEnabledFeatures::fileSystemEnabled();
+#else
+    return false;
+#endif
+}
+
 } // namespace WebKit

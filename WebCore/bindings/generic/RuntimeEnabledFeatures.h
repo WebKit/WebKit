@@ -135,6 +135,12 @@ public:
     static bool asBlobEnabled()  { return isXHRResponseBlobEnabled; }
 #endif
 
+#if ENABLE(FILE_SYSTEM)
+    static bool fileSystemEnabled() { return isFileSystemEnabled; }
+    static void setFileSystemEnabled(bool isEnabled) { isFileSystemEnabled = isEnabled; }
+    static bool requestFileSystemEnabled() { return isFileSystemEnabled; }
+#endif
+
 private:
     // Never instantiate.
     RuntimeEnabledFeatures() { }
@@ -153,6 +159,10 @@ private:
     static bool isSpeechInputEnabled;
 #if ENABLE(XHR_RESPONSE_BLOB)
     static bool isXHRResponseBlobEnabled;
+#endif
+
+#if ENABLE(FILE_SYSTEM)
+    static bool isFileSystemEnabled;
 #endif
 };
 

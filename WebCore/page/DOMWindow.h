@@ -49,14 +49,17 @@ namespace WebCore {
     class DatabaseCallback;
     class Document;
     class Element;
+    class ErrorCallback;
     class Event;
     class EventListener;
+    class FileSystemCallback;
     class FloatRect;
     class Frame;
     class History;
     class IDBFactory;
     class IDBKeyRange;
     class InspectorTimelineAgent;
+    class LocalFileSystem;
     class Location;
     class StyleMedia;
     class Navigator;
@@ -236,6 +239,15 @@ namespace WebCore {
 #if ENABLE(INDEXED_DATABASE)
         IDBFactory* indexedDB() const;
         IDBKeyRange* iDBKeyRange() const;
+#endif
+
+#if ENABLE(FILE_SYSTEM)
+        // They are placed here and in all capital letters to enforce compile-time enum checking.
+        enum FileSystemType {
+            TEMPORARY,
+            PERSISTENT,
+        };
+        void requestFileSystem(int type, long long size, PassRefPtr<FileSystemCallback>, PassRefPtr<ErrorCallback>);
 #endif
 
         void postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray*, const String& targetOrigin, DOMWindow* source, ExceptionCode&);
@@ -434,6 +446,9 @@ namespace WebCore {
 #if ENABLE(INDEXED_DATABASE)
         mutable RefPtr<IDBFactory> m_idbFactory;
         mutable RefPtr<IDBKeyRange> m_idbKeyRange;
+#endif
+#if ENABLE(FILE_SYSTEM)
+        RefPtr<LocalFileSystem> m_localFileSystem;
 #endif
 
         EventTargetData m_eventTargetData;

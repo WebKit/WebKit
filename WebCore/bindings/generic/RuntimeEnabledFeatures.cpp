@@ -55,6 +55,10 @@ bool RuntimeEnabledFeatures::isSpeechInputEnabled = true;
 bool RuntimeEnabledFeatures::isXHRResponseBlobEnabled = false;
 #endif
 
+#if ENABLE(FILE_SYSTEM)
+bool RuntimeEnabledFeatures::isFileSystemEnabled = false;
+#endif
+
 #if ENABLE(VIDEO)
 
 bool RuntimeEnabledFeatures::audioEnabled()

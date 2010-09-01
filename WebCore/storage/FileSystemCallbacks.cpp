@@ -34,6 +34,7 @@
 #if ENABLE(FILE_SYSTEM)
 
 #include "AsyncFileSystem.h"
+#include "DOMFilePath.h"
 #include "DOMFileSystem.h"
 #include "DirectoryEntry.h"
 #include "EntriesCallback.h"
@@ -132,14 +133,17 @@ EntriesCallbacks::EntriesCallbacks(PassRefPtr<EntriesCallback> successCallback, 
 
 void EntriesCallbacks::didReadDirectoryEntry(const String& name, bool isDirectory)
 {
+    if (!m_entries)
+        m_entries = EntryArray::create();
     if (isDirectory)
-        m_entries->append(DirectoryEntry::create(m_fileSystem, m_basePath + "/" + name));
+        m_entries->append(DirectoryEntry::create(m_fileSystem, DOMFilePath::append(m_basePath, name)));
     else
-        m_entries->append(FileEntry::create(m_fileSystem, m_basePath + "/" + name));
+        m_entries->append(FileEntry::create(m_fileSystem, DOMFilePath::append(m_basePath, name)));
 }
 
 void EntriesCallbacks::didReadDirectoryEntries(bool hasMore)
 {
+    ASSERT(m_entries);
     if (m_successCallback) {
         m_successCallback->handleEvent(m_entries.get());
         m_entries->clear();

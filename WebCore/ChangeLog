@@ -1,3 +1,27 @@
+2010-08-31  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Jian Li.
+
+        Add LocalFileSystem.requestFileSystem interface to DOMWindow
+        https://bugs.webkit.org/show_bug.cgi?id=44734
+
+        No new tests; tests will be added later.
+
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::fileSystemEnabled):
+        (WebCore::RuntimeEnabledFeatures::setFileSystemEnabled):
+        (WebCore::RuntimeEnabledFeatures::requestFileSystemEnabled):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::requestFileSystem):
+        * page/DOMWindow.h:
+        (WebCore::DOMWindow::):
+        * page/DOMWindow.idl:
+        * page/Settings.cpp:
+        (WebCore::Settings::setFileSystemRootPath):
+        * page/Settings.h:
+        (WebCore::Settings::fileSystemRootPath):
+
 2010-08-31  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Adam Barth.

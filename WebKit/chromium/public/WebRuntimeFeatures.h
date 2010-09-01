@@ -89,6 +89,9 @@ public:
     WEBKIT_API static void enableXHRResponseBlob(bool);
     WEBKIT_API static bool isXHRResponseBlobEnabled();
 
+    WEBKIT_API static void enableFileSystem(bool);
+    WEBKIT_API static bool isFileSystemEnabled();
+
 private:
     WebRuntimeFeatures();
 };

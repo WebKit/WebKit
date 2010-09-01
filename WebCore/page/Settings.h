@@ -239,7 +239,10 @@ namespace WebCore {
 
         void setLocalStorageDatabasePath(const String&);
         const String& localStorageDatabasePath() const { return m_localStorageDatabasePath; }
-        
+
+        void setFileSystemRootPath(const String&);
+        const String& fileSystemRootPath() const { return m_fileSystemRootPath; }
+
         void setApplicationChromeMode(bool);
         bool inApplicationChromeMode() const { return m_inApplicationChromeMode; }
 
@@ -328,10 +331,11 @@ namespace WebCore {
 
     private:
         Page* m_page;
-        
+
         String m_defaultTextEncodingName;
         String m_ftpDirectoryTemplatePath;
         String m_localStorageDatabasePath;
+        String m_fileSystemRootPath;
         KURL m_userStyleSheetLocation;
         AtomicString m_standardFontFamily;
         AtomicString m_fixedFontFamily;
@@ -412,7 +416,7 @@ namespace WebCore {
 #endif
         bool m_memoryInfoEnabled: 1;
         bool m_interactiveFormValidation: 1;
-    
+
 #if USE(SAFARI_THEME)
         static bool gShouldPaintNativeControls;
 #endif

@@ -1,3 +1,15 @@
+2010-08-31  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Jian Li.
+
+        Add LocalFileSystem.requestFileSystem interface to DOMWindow
+        https://bugs.webkit.org/show_bug.cgi?id=44734
+
+        * public/WebRuntimeFeatures.h:
+        * src/WebRuntimeFeatures.cpp:
+        (WebKit::WebRuntimeFeatures::enableFileSystem):
+        (WebKit::WebRuntimeFeatures::isFileSystemEnabled):
+
 2010-08-24  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.

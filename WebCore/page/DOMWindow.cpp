@@ -88,6 +88,15 @@
 #include <wtf/MathExtras.h>
 #include <wtf/text/CString.h>
 
+#if ENABLE(FILE_SYSTEM)
+#include "AsyncFileSystem.h"
+#include "DOMFileSystem.h"
+#include "ErrorCallback.h"
+#include "FileError.h"
+#include "FileSystemCallback.h"
+#include "LocalFileSystem.h"
+#endif
+
 using std::min;
 using std::max;
 
@@ -719,6 +728,35 @@ IDBKeyRange* DOMWindow::iDBKeyRange() const
 
     return m_idbKeyRange.get();
 }
+#endif
+
+#if ENABLE(FILE_SYSTEM)
+void DOMWindow::requestFileSystem(int type, long long size, PassRefPtr<FileSystemCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+{
+    Document* document = this->document();
+    if (!document)
+        return;
+
+    if (!m_localFileSystem) {
+        // FIXME: See if access is allowed.
+
+        Page* page = document->page();
+        if (!page) {
+            DOMFileSystem::scheduleCallback(document, errorCallback, FileError::create(INVALID_STATE_ERR));
+            return;
+        }
+
+        // FIXME: Get the quota settings as well.
+        String path = page->settings()->fileSystemRootPath();
+        m_localFileSystem = LocalFileSystem::create(path);
+    }
+
+    m_localFileSystem->requestFileSystem(document, static_cast<AsyncFileSystem::Type>(type), size, successCallback, errorCallback);
+}
+
+COMPILE_ASSERT(int(DOMWindow::TEMPORARY) == int(AsyncFileSystem::Temporary), enum_mismatch);
+COMPILE_ASSERT(int(DOMWindow::PERSISTENT) == int(AsyncFileSystem::Persistent), enum_mismatch);
+
 #endif
 
 void DOMWindow::postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort* port, const String& targetOrigin, DOMWindow* source, ExceptionCode& ec)
