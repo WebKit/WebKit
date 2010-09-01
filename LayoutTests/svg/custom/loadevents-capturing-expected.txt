@@ -1,4 +1,3 @@
-
 This tests that load dispatching works when there are no
 direct listeners, but there are capturing event listeners on an ancestor. Bug 16447
 Passed

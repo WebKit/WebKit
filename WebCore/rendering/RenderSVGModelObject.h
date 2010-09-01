@@ -39,7 +39,7 @@
 namespace WebCore {
 
 // Most renderers in the SVG rendering tree will inherit from this class
-// but not all. (e.g. RenderSVGForeignObject, RenderSVGBlock, RenderSVGImage) thus methods
+// but not all. (e.g. RenderSVGForeignObject, RenderSVGBlock) thus methods
 // required by SVG renders need to be declared on RenderObject, but shared
 // logic can go in this class or in SVGRenderSupport.
 

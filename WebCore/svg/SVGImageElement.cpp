@@ -26,6 +26,7 @@
 
 #include "Attribute.h"
 #include "CSSPropertyNames.h"
+#include "RenderImageResource.h"
 #include "RenderSVGImage.h"
 #include "RenderSVGResource.h"
 #include "SVGDocument.h"

@@ -1,3 +1,27 @@
+2010-09-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        RenderImage::imageChanged invalidates wrong area
+        https://bugs.webkit.org/show_bug.cgi?id=43779
+
+        Rebaseline SVG image dumpAsText() tests.
+        A newline is gone from each of the results, after switching from RenderImage to RenderSVGModelObject in RenderSVGImage.
+
+        * svg/custom/loadevents-capturing-expected.txt:
+        * svg/custom/loadevents-externalresourcesrequired-expected.txt:
+        * svg/custom/loadevents-normal-expected.txt:
+        * svg/dynamic-updates/SVGImageElement-dom-height-attr-expected.txt:
+        * svg/dynamic-updates/SVGImageElement-dom-preserveAspectRatio-attr-expected.txt:
+        * svg/dynamic-updates/SVGImageElement-dom-width-attr-expected.txt:
+        * svg/dynamic-updates/SVGImageElement-dom-x-attr-expected.txt:
+        * svg/dynamic-updates/SVGImageElement-dom-y-attr-expected.txt:
+        * svg/dynamic-updates/SVGImageElement-svgdom-height-prop-expected.txt:
+        * svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop-expected.txt:
+        * svg/dynamic-updates/SVGImageElement-svgdom-width-prop-expected.txt:
+        * svg/dynamic-updates/SVGImageElement-svgdom-x-prop-expected.txt:
+        * svg/dynamic-updates/SVGImageElement-svgdom-y-prop-expected.txt:
+
 2010-09-01  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Reviewed by Laszlo Gombos.

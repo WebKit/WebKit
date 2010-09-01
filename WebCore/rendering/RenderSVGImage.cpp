@@ -5,6 +5,7 @@
     Copyright (C) 2007, 2008, 2009 Rob Buis <buis@kde.org>
     Copyright (C) 2009, Google, Inc.
     Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
+    Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -32,6 +33,7 @@
 #include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "PointerEventsHitRules.h"
+#include "RenderImageResource.h"
 #include "RenderLayer.h"
 #include "RenderSVGResourceContainer.h"
 #include "RenderSVGResourceFilter.h"
@@ -44,10 +46,16 @@
 namespace WebCore {
 
 RenderSVGImage::RenderSVGImage(SVGImageElement* impl)
-    : RenderImage(impl)
+    : RenderSVGModelObject(impl)
     , m_needsTransformUpdate(true)
+    , m_imageResource(RenderImageResource::create())
 {
-    setImageResource(RenderImageResource::create());
+    m_imageResource->initialize(this);
+}
+
+RenderSVGImage::~RenderSVGImage()
+{
+    m_imageResource->shutdown();
 }
 
 void RenderSVGImage::layout()
@@ -64,12 +72,6 @@ void RenderSVGImage::layout()
         updateCachedBoundariesInParents = true;
     }
 
-    // minimum height
-    setHeight(imageResource()->errorOccurred() ? intrinsicSize().height() : 0);
-
-    calcWidth();
-    calcHeight();
-
     // FIXME: Optimize caching the repaint rects.
     FloatRect oldBoundaries = m_localBounds;
     m_localBounds = FloatRect(image->x().value(image), image->y().value(image), image->width().value(image), image->height().value(image));
@@ -84,7 +86,7 @@ void RenderSVGImage::layout()
 
     // If our bounds changed, notify the parents.
     if (updateCachedBoundariesInParents)
-        RenderImage::setNeedsBoundariesUpdate();
+        RenderSVGModelObject::setNeedsBoundariesUpdate();
 
     repainter.repaintAfterLayout();
     setNeedsLayout(false);
@@ -92,58 +94,43 @@ void RenderSVGImage::layout()
 
 void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
 {
-    if (paintInfo.context->paintingDisabled() || style()->visibility() == HIDDEN)
+    if (paintInfo.context->paintingDisabled() || style()->visibility() == HIDDEN || !m_imageResource->hasImage())
         return;
 
-    paintInfo.context->save();
-    paintInfo.context->concatCTM(localToParentTransform());
+    FloatRect boundingBox = repaintRectInLocalCoordinates();
+    if (!SVGRenderSupport::paintInfoIntersectsRepaintRect(boundingBox, m_localTransform, paintInfo))
+        return;
 
-    if (paintInfo.phase == PaintPhaseForeground) {
-        PaintInfo savedInfo(paintInfo);
+    PaintInfo childPaintInfo(paintInfo);
+    bool drawsOutline = style()->outlineWidth() && (childPaintInfo.phase == PaintPhaseOutline || childPaintInfo.phase == PaintPhaseSelfOutline);
+    if (drawsOutline || childPaintInfo.phase == PaintPhaseForeground) {
+        childPaintInfo.context->save();
+        childPaintInfo.applyTransform(m_localTransform);
 
-        if (SVGRenderSupport::prepareToRenderSVGContent(this, paintInfo)) {
-            Image* image = imageResource()->image();
-            FloatRect destRect = m_localBounds;
-            FloatRect srcRect(0, 0, image->width(), image->height());
+        if (childPaintInfo.phase == PaintPhaseForeground) {
+            PaintInfo savedInfo(childPaintInfo);
 
-            SVGImageElement* imageElt = static_cast<SVGImageElement*>(node());
-            if (imageElt->preserveAspectRatio().align() != SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_NONE)
-                imageElt->preserveAspectRatio().transformRect(destRect, srcRect);
+            if (SVGRenderSupport::prepareToRenderSVGContent(this, childPaintInfo)) {
+                Image* image = m_imageResource->image();
+                FloatRect destRect = m_localBounds;
+                FloatRect srcRect(0, 0, image->width(), image->height());
 
-            paintInfo.context->drawImage(image, DeviceColorSpace, destRect, srcRect);
+                SVGImageElement* imageElement = static_cast<SVGImageElement*>(node());
+                if (imageElement->preserveAspectRatio().align() != SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_NONE)
+                    imageElement->preserveAspectRatio().transformRect(destRect, srcRect);
+
+                childPaintInfo.context->drawImage(image, DeviceColorSpace, destRect, srcRect);
+            }
+
+            SVGRenderSupport::finishRenderSVGContent(this, childPaintInfo, savedInfo.context);
         }
-        SVGRenderSupport::finishRenderSVGContent(this, paintInfo, savedInfo.context);
+
+        if (drawsOutline)
+            paintOutline(childPaintInfo.context, static_cast<int>(boundingBox.x()), static_cast<int>(boundingBox.y()),
+                static_cast<int>(boundingBox.width()), static_cast<int>(boundingBox.height()));
+        
+        childPaintInfo.context->restore();
     }
-
-    if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth())
-        paintOutline(paintInfo.context, 0, 0, width(), height());
-
-    paintInfo.context->restore();
-}
-
-void RenderSVGImage::destroy()
-{
-    SVGResourcesCache::clientDestroyed(this);
-    RenderImage::destroy();
-}
-
-void RenderSVGImage::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
-{
-    if (diff == StyleDifferenceLayout)
-        setNeedsBoundariesUpdate();
-    RenderImage::styleWillChange(diff, newStyle);
-}
-
-void RenderSVGImage::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
-{
-    RenderImage::styleDidChange(diff, oldStyle);
-    SVGResourcesCache::clientStyleChanged(this, diff, style());
-}
-
-void RenderSVGImage::updateFromElement()
-{
-    RenderImage::updateFromElement();
-    SVGResourcesCache::clientUpdatedFromElement(this, style());
 }
 
 bool RenderSVGImage::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)
@@ -171,12 +158,6 @@ bool RenderSVGImage::nodeAtFloatPoint(const HitTestRequest& request, HitTestResu
     return false;
 }
 
-bool RenderSVGImage::nodeAtPoint(const HitTestRequest&, HitTestResult&, int, int, int, int, HitTestAction)
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 FloatRect RenderSVGImage::repaintRectInLocalCoordinates() const
 {
     // If we already have a cached repaint rect, return that
@@ -189,10 +170,8 @@ FloatRect RenderSVGImage::repaintRectInLocalCoordinates() const
     return m_cachedLocalRepaintRect;
 }
 
-void RenderSVGImage::imageChanged(WrappedImagePtr image, const IntRect* rect)
+void RenderSVGImage::imageChanged(WrappedImagePtr, const IntRect*)
 {
-    RenderImage::imageChanged(image, rect);
-
     // The image resource defaults to nullImage until the resource arrives.
     // This empty image may be cached by SVG resources which must be invalidated.
     if (SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(this))
@@ -204,21 +183,6 @@ void RenderSVGImage::imageChanged(WrappedImagePtr image, const IntRect* rect)
     repaint();
 }
 
-IntRect RenderSVGImage::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
-{
-    return SVGRenderSupport::clippedOverflowRectForRepaint(this, repaintContainer);
-}
-
-void RenderSVGImage::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed)
-{
-    SVGRenderSupport::computeRectForRepaint(this, repaintContainer, repaintRect, fixed);
-}
-
-void RenderSVGImage::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed , bool useTransforms, TransformState& transformState) const
-{
-    SVGRenderSupport::mapLocalToContainer(this, repaintContainer, fixed, useTransforms, transformState);
-}
-
 void RenderSVGImage::addFocusRingRects(Vector<IntRect>& rects, int, int)
 {
     // this is called from paint() after the localTransform has already been applied
@@ -227,17 +191,6 @@ void RenderSVGImage::addFocusRingRects(Vector<IntRect>& rects, int, int)
         rects.append(contentRect);
 }
 
-void RenderSVGImage::absoluteRects(Vector<IntRect>&, int, int)
-{
-    // This code path should never be taken for SVG, as we're assuming useTransforms=true everywhere, absoluteQuads should be used.
-    ASSERT_NOT_REACHED();
-}
-
-void RenderSVGImage::absoluteQuads(Vector<FloatQuad>& quads)
-{
-    quads.append(localToAbsoluteQuad(strokeBoundingBox()));
-}
-
-}
+} // namespace WebCore
 
 #endif // ENABLE(SVG)
