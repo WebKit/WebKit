@@ -1,3 +1,14 @@
+2010-09-01  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        WebInspector: disable inspector tests on mac-wk2.
+        The tests should be skipped until https://bugs.webkit.org/show_bug.cgi?id=42318 get fixed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44975
+
+        * platform/mac-wk2/Skipped:
+
 2010-09-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed, updating expected results for r66581.

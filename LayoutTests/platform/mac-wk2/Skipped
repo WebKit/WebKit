@@ -1072,73 +1072,9 @@ platform/mac/editing/pasteboard/text-precomposed.html
 # <https://bugs.webkit.org/show_bug.cgi?id=42319>
 # Need Web Inspector in WebKit2
 # <https://bugs.webkit.org/show_bug.cgi?id=42318>
-http/tests/inspector-enabled/console-log-before-frame-navigation.html
-http/tests/inspector/change-iframe-src.html
-http/tests/inspector/console-resource-errors.html
-http/tests/inspector/console-xhr-logging.html
-http/tests/inspector/inspect-iframe-from-different-domain.html
-http/tests/inspector/resource-har-conversion.html
-http/tests/inspector/resource-parameters.html
-inspector/audits-panel-functional.html
-inspector/console-assert.html
-inspector/console-clear.html
-inspector/console-command-clear.html
-inspector/console-dir-global.html
-inspector/console-dir.html
-inspector/console-dirxml.html
-inspector/console-eval-global.html
-inspector/console-eval.html
-inspector/console-format-collections.html
-inspector/console-format.html
-inspector/console-log-before-inspector-open.html
-inspector/console-log-syntax-error.html
-inspector/console-tests.html
-inspector/console-trace.html
-inspector/cookie-resource-match.html
-inspector/debugger-breakpoints-not-activated-on-reload.html
-inspector/debugger-cyclic-ref.html
-inspector/debugger-eval-while-paused.html
-inspector/debugger-no-nested-pause.html
-inspector/debugger-pause-in-eval-script.html
-inspector/debugger-pause-on-debugger-statement.html
-inspector/debugger-proto-property.html
-inspector/debugger-step-in.html
-inspector/debugger-step-out.html
-inspector/debugger-step-over.html
-inspector/elements-img-tooltip.html
-inspector/elements-panel-limited-children.html
-inspector/elements-panel-rewrite-href.html
-inspector/elements-panel-search.html
-inspector/elements-panel-selection-on-refresh.html
-inspector/elements-panel-structure.html
-inspector/elements-panel-styles.html
-inspector/elements-panel-xhtml-structure.xhtml
-inspector/evaluate-in-frontend.html
-inspector/extensions-api.html
-inspector/extensions.html
-inspector/inspected-objects-not-overriden.html
-inspector/styles-computed-trace.html
-inspector/styles-disable-inherited.html
-inspector/styles-disable-then-delete.html
-inspector/styles-disable-then-enable.html
-inspector/styles-iframe.html
-inspector/styles-source-lines-inline.html
-inspector/styles-source-lines.html
-inspector/styles-source-offsets.html
-inspector/syntax-highlight-css.html
-inspector/syntax-highlight-html.html
-inspector/syntax-highlight-javascript.html
-inspector/timeline-enum-stability.html
-inspector/timeline-event-dispatch.html
-inspector/timeline-layout.html
-inspector/timeline-mark-timeline.html
-inspector/timeline-network-resource.html
-inspector/timeline-paint.html
-inspector/timeline-parse-html.html
-inspector/timeline-recalculate-styles.html
-inspector/timeline-script-tag-1.html
-inspector/timeline-script-tag-2.html
-inspector/timeline-trivial.html
+http/tests/inspector-enabled
+http/tests/inspector
+inspector
 
 # WebKitTestRunner needs to support layoutTestController.dumpBackForwardList
 # <https://bugs.webkit.org/show_bug.cgi?id=42322>
