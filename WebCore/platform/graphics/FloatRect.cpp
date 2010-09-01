@@ -76,10 +76,7 @@ void FloatRect::intersect(const FloatRect& other)
         b = 0;
     }
 
-    m_location.setX(l);
-    m_location.setY(t);
-    m_size.setWidth(r - l);
-    m_size.setHeight(b - t);
+    setLocationAndSizeFromEdges(l, t, r, b);
 }
 
 void FloatRect::unite(const FloatRect& other)
@@ -97,10 +94,7 @@ void FloatRect::unite(const FloatRect& other)
     float r = max(right(), other.right());
     float b = max(bottom(), other.bottom());
 
-    m_location.setX(l);
-    m_location.setY(t);
-    m_size.setWidth(r - l);
-    m_size.setHeight(b - t);
+    setLocationAndSizeFromEdges(l, t, r, b);
 }
 
 void FloatRect::scale(float sx, float sy)
@@ -109,6 +103,65 @@ void FloatRect::scale(float sx, float sy)
     m_location.setY(y() * sy);
     m_size.setWidth(width() * sx);
     m_size.setHeight(height() * sy);
+}
+
+void FloatRect::fitToPoints(const FloatPoint& p0, const FloatPoint& p1)
+{
+    float left = min(p0.x(), p1.x());
+    float top = min(p0.y(), p1.y());
+    float right = max(p0.x(), p1.x());
+    float bottom = max(p0.y(), p1.y());
+
+    setLocationAndSizeFromEdges(left, top, right, bottom);
+}
+
+namespace {
+// Helpers for 3- and 4-way max and min.
+
+template <typename T>
+T min3(const T& v1, const T& v2, const T& v3)
+{
+    return min(min(v1, v2), v3);
+}
+
+template <typename T>
+T max3(const T& v1, const T& v2, const T& v3)
+{
+    return max(max(v1, v2), v3);
+}
+
+template <typename T>
+T min4(const T& v1, const T& v2, const T& v3, const T& v4)
+{
+    return min(min(v1, v2), min(v3, v4));
+}
+
+template <typename T>
+T max4(const T& v1, const T& v2, const T& v3, const T& v4)
+{
+    return max(max(v1, v2), max(v3, v4));
+}
+
+} // anonymous namespace
+
+void FloatRect::fitToPoints(const FloatPoint& p0, const FloatPoint& p1, const FloatPoint& p2)
+{
+    float left = min3(p0.x(), p1.x(), p2.x());
+    float top = min3(p0.y(), p1.y(), p2.y());
+    float right = max3(p0.x(), p1.x(), p2.x());
+    float bottom = max3(p0.y(), p1.y(), p2.y());
+
+    setLocationAndSizeFromEdges(left, top, right, bottom);
+}
+
+void FloatRect::fitToPoints(const FloatPoint& p0, const FloatPoint& p1, const FloatPoint& p2, const FloatPoint& p3)
+{
+    float left = min4(p0.x(), p1.x(), p2.x(), p3.x());
+    float top = min4(p0.y(), p1.y(), p2.y(), p3.y());
+    float right = max4(p0.x(), p1.x(), p2.x(), p3.x());
+    float bottom = max4(p0.y(), p1.y(), p2.y(), p3.y());
+
+    setLocationAndSizeFromEdges(left, top, right, bottom);
 }
 
 static inline int safeFloatToInt(float x)

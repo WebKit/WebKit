@@ -1,3 +1,27 @@
+2010-08-31  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Simon Fraser.
+
+        Add helpers to FloatRect to compute bounding box from points
+        https://bugs.webkit.org/show_bug.cgi?id=45015
+
+        Added fitToPoints, including a few overloaded variants for the
+        cases of two, three and four points. I opted not to add a
+        generalized version taking const FloatRect* or Vector<FloatRect>
+        at the present time because for my own purposes they are
+        unnecessary, and the specific versions can be more tightly coded.
+        Also added left() and top() for symmetry with right() and bottom().
+        These changes have been tested with new code to be added later.
+
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::FloatRect::intersect):
+        (WebCore::FloatRect::unite):
+        (WebCore::FloatRect::fitToPoints):
+        * platform/graphics/FloatRect.h:
+        (WebCore::FloatRect::left):
+        (WebCore::FloatRect::top):
+        (WebCore::FloatRect::setLocationAndSizeFromEdges):
+
 2010-09-01  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Dimitri Glazkov.
