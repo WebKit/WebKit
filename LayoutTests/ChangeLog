@@ -1,3 +1,11 @@
+2010-09-01  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed, updating expected results for r66581.
+
+        * editing/pasteboard/onpaste-text-html-expected.txt:
+        * fast/events/ondrop-text-html-expected.txt:
+        * platform/gtk/svg/css/getComputedStyle-basic-expected.txt:
+
 2010-09-01  Justin Garcia  <justin.garcia@apple.com>
 
         Unreviewed, updating expected results for recent check-in.
