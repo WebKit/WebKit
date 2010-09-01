@@ -1,3 +1,24 @@
+2010-09-01  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] very slow page scrolling on big -webkit-box-shadow areas
+        https://bugs.webkit.org/show_bug.cgi?id=39582
+
+        Add a new drawTiledShadow method to render a big shadow doing
+        tiling of parts of a smaller shadow. We create the minimum shadow
+        required to get the tiles we will use to render the real shadow
+        and we use drawPattern with those tiles to create the shadow.
+
+        Pixel tests added.
+
+        * platform/gtk/fast/box-shadow/basic-shadows-expected.checksum:
+        * platform/gtk/fast/box-shadow/basic-shadows-expected.png:
+        * platform/gtk/fast/css/shadow-multiple-expected.checksum:
+        * platform/gtk/fast/css/shadow-multiple-expected.png:
+        * platform/gtk/svg/css/stars-with-shadow-expected.checksum:
+        * platform/gtk/svg/css/stars-with-shadow-expected.png:
+
 2010-09-01  Martin Robinson  <mrobinson@igalia.com>
 
         Updating one more baseline, which seems to differ on the bots.
