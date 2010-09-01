@@ -1,3 +1,13 @@
+2010-08-31  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44915
+        Need to handle CSSValueAuto in CSSPrimitiveValue::operator ETextAlign()
+
+        * fast/css/text-align-webkit-auto-expected.txt: Added.
+        * fast/css/text-align-webkit-auto.html: Added.
+
 2010-08-31  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Adam Barth.
