@@ -1,3 +1,15 @@
+2010-08-31  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Refinement to previous checkin for pagination of block-level replaced elements.  Don't bother to
+        paginate floating block-level replaced elements for now.
+
+        Added fast/multicol/float-pagination-failure.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintChildren):
+
 2010-08-31  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Jian Li.
