@@ -28,9 +28,9 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (0,0) size 324x26
                     text run at (0,0) width 324: "This page contains the following errors:"
                 RenderBlock {div} at (18,64) size 684x14
-                  RenderText {#text} at (0,0) size 329x14
-                    text run at (0,0) width 329: "error on line 1 at column 15: Document is empty"
-                    text run at (329,0) width 0: " "
+                  RenderText {#text} at (0,0) size 490x14
+                    text run at (0,0) width 490: "error on line 1 at column 15: Extra content at the end of the document"
+                    text run at (490,0) width 0: " "
                 RenderBlock {h3} at (18,96) size 684x26
                   RenderText {#text} at (0,0) size 429x26
                     text run at (0,0) width 429: "Below is a rendering of the page up to the first error."

@@ -1,5 +1,11 @@
 2010-09-01  Martin Robinson  <mrobinson@igalia.com>
 
+        Updating one more baseline, which seems to differ on the bots.
+
+        * platform/gtk/fast/frames/onlyCommentInIFrame-expected.txt:
+
+2010-09-01  Martin Robinson  <mrobinson@igalia.com>
+
         Add baselines and unskip non-failing tests in preparation for
         landing scrollbar theme changes.
 
