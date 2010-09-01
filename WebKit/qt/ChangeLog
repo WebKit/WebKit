@@ -2,6 +2,19 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        [Qt] tst_QWebPage::originatingObjectInNetworkRequests() fails on trunk
+        https://bugs.webkit.org/show_bug.cgi?id=45001
+
+        Fix the test, we should not use data encoded URL since we are not
+        setting an URL but setting the substituteData directly.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::originatingObjectInNetworkRequests):
+
+2010-08-31  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         JSC TimeoutChecker::didTimeOut overflows on ARM
         https://bugs.webkit.org/show_bug.cgi?id=38538
 

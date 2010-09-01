@@ -2025,7 +2025,7 @@ void tst_QWebPage::originatingObjectInNetworkRequests()
     m_page->setNetworkAccessManager(networkManager);
     networkManager->requests.clear();
 
-    m_view->setHtml(QString("data:text/html,<frameset cols=\"25%,75%\"><frame src=\"data:text/html,"
+    m_view->setHtml(QString("<frameset cols=\"25%,75%\"><frame src=\"data:text/html,"
                             "<head><meta http-equiv='refresh' content='1'></head>foo \">"
                             "<frame src=\"data:text/html,bar\"></frameset>"), QUrl());
     QVERIFY(::waitForSignal(m_view, SIGNAL(loadFinished(bool))));
