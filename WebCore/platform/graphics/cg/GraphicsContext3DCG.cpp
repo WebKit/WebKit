@@ -140,7 +140,15 @@ bool GraphicsContext3D::getImageData(Image* image,
         return false;
     const UInt8* rgba = CFDataGetBytePtr(pixelData.get());
     outputVector.resize(width * height * 4);
-    bool rt = packPixels(rgba, srcDataFormat, width, height, 0,
+    unsigned int srcUnpackAlignment = 0;
+    size_t bytesPerRow = CGImageGetBytesPerRow(cgImage);
+    unsigned int padding = bytesPerRow - componentsPerPixel * width;
+    if (padding) {
+        srcUnpackAlignment = padding + 1;
+        while (bytesPerRow % srcUnpackAlignment)
+            ++srcUnpackAlignment;
+    }
+    bool rt = packPixels(rgba, srcDataFormat, width, height, srcUnpackAlignment,
                          format, type, neededAlphaOp, outputVector.data());
     return rt;
 }

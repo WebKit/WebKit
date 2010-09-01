@@ -3165,7 +3165,3 @@ BUGWK44967 MAC : fast/multicol/paginate-block-replaced.html = IMAGE
 // New tests in r66523 and r66516
 BUGWK44996 WIN : inspector/report-API-errors.html = TEXT
 BUGWK44996 WIN : inspector/report-protocol-errors.html = TEXT
-
-// Failing after r44997
-BUGWK44997 MAC : fast/canvas/webgl/gl-teximage.html = TEXT
-BUGWK44997 MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-image.html = TEXT
