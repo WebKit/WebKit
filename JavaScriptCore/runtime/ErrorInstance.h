@@ -35,7 +35,7 @@ namespace JSC {
         static ErrorInstance* create(ExecState* exec, NonNullPassRefPtr<Structure>, JSValue message);
 
     protected:
-        explicit ErrorInstance(NonNullPassRefPtr<Structure>);
+        explicit ErrorInstance(JSGlobalData*, NonNullPassRefPtr<Structure>);
         explicit ErrorInstance(JSGlobalData*, NonNullPassRefPtr<Structure>, const UString&);
     };
 

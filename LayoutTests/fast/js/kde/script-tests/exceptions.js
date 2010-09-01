@@ -1,9 +1,9 @@
-function shouldBe(a, b, c)
+function kdeShouldBe(a, b, c)
 {
   if ( a == b )
-   debug(c+" .......... PASS");
+   debug(c+" .......... Passed");
   else
-   debug(c+" .......... FAIL");
+   debug(c+" .......... Failed");
 }
 
 function testThrow()
@@ -14,7 +14,7 @@ function testThrow()
   } catch (e) {
     caught = true;
   }
-  shouldBe(caught, true, "testing throw()");
+  kdeShouldBe(caught, true, "testing throw()");
 }
 
 // same as above but lacking a semicolon after throw
@@ -26,7 +26,7 @@ function testThrow2()
   } catch (e) {
     caught = true;
   }
-  shouldBe(caught, true, "testing throw()");
+  kdeShouldBe(caught, true, "testing throw()");
 }
 
 function testReferenceError()
@@ -40,7 +40,7 @@ function testReferenceError()
     err = e.name;
   }
   // test err
-  shouldBe(caught, true, "ReferenceError");
+  kdeShouldBe(caught, true, "ReferenceError");
 }
 
 function testFunctionErrorHelper()
@@ -56,7 +56,7 @@ function testFunctionError()
   } catch (e) {
     caught = true;
   }
-  shouldBe(caught, true, "error propagation in functions");
+  kdeShouldBe(caught, true, "error propagation in functions");
 }
 
 function testMathFunctionError()
@@ -70,7 +70,7 @@ function testMathFunctionError()
   } finally {
     debug("finally");
   }
-  shouldBe(caught, true, "Math() error");
+  kdeShouldBe(caught, true, "Math() error");
 }
 
 function testWhileAbortion()
@@ -91,7 +91,7 @@ function testWhileAbortion()
   } catch (e) {
     caught++;
   }
-  shouldBe(caught, 2, "Abort while() on error");
+  kdeShouldBe(caught, 2, "Abort while() on error");
 }
 
 debug("Except a lot of errors. They should all be caught and lead to PASS");

@@ -1,3 +1,17 @@
+2010-09-01  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Oliver Hunt.
+
+        Ecma-262 15.11.1.1 states that if the argument is undefined then an
+        Error object's message property should be set to the empty string.
+
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::ErrorInstance):
+        (JSC::ErrorInstance::create):
+        * runtime/ErrorInstance.h:
+        * runtime/ErrorPrototype.cpp:
+        (JSC::ErrorPrototype::ErrorPrototype):
+
 2010-08-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders Carlsson.

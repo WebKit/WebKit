@@ -48,10 +48,10 @@ PASS RegExp.$3 is '200'
 PASS RegExp.$5 is '150'
 PASS RegExp.$7 is '15'
 PASS ''.match(/((\d+)(px)* (\d+)(px)* (\d+)(px)* (\d+)(px)*)/) is null
-FAIL RegExp.$1 should be . Was 100.
-FAIL RegExp.$3 should be . Was 200.
-FAIL RegExp.$5 should be . Was 150.
-FAIL RegExp.$7 should be . Was 15.
+PASS RegExp.$1 is '100'
+PASS RegExp.$3 is '200'
+PASS RegExp.$5 is '150'
+PASS RegExp.$7 is '15'
 PASS 'faure@kde.org'.match(invalidChars) == null is true
 PASS 'faure-kde@kde.org'.match(invalidChars) == null is false
 PASS 'test1test2'.replace('test','X') is 'X1test2'

@@ -1,3 +1,41 @@
+2010-09-01  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Oliver Hunt.
+
+        Fix three tests in fast/js/kde are failing; fix them.
+
+        exceptions.js:
+            This is failing because it redefines the method 'should be'.
+            Rename the test's version of this method.
+
+        RegExp.js:
+            This tests erroneously expects a failed match to update the
+            cached results on the RegExp object; these are only updated
+            on a successful match.
+
+        evil-n.js:
+            This test erroneously expects the message property of a newly
+            constructed Error with no arguments to be undefined; the ECMA
+            262-5 spec requires this to be "". Two sputnik tests contain
+            the same error (the sputnik tests is actually testing 262-3
+            compatibility, which is not what we're interested in).
+
+        * fast/js/kde/RegExp-expected.txt:
+        * fast/js/kde/evil-n-expected.txt:
+        * fast/js/kde/exceptions-expected.txt:
+        * fast/js/kde/script-tests/RegExp.js:
+        * fast/js/kde/script-tests/evil-n.js:
+        * fast/js/kde/script-tests/exceptions.js:
+        (kdeShouldBe):
+        (testThrow):
+        (testThrow2):
+        (testReferenceError):
+        (testFunctionError):
+        (testMathFunctionError):
+        (testWhileAbortion):
+        * fast/js/sputnik/Conformance/15_Native_Objects/15.11_Error/15.11.1/S15.11.1.1_A1_T1.html:
+        * fast/js/sputnik/Conformance/15_Native_Objects/15.11_Error/15.11.2/S15.11.2.1_A1_T1.html:
+
 2010-09-01  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Darin Adler.

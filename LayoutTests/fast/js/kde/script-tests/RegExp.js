@@ -66,10 +66,11 @@ shouldBe("RegExp.$3","'200'");
 shouldBe("RegExp.$5","'150'");
 shouldBe("RegExp.$7","'15'");
 shouldBe("''.match(/\((\\d+)(px)* (\\d+)(px)* (\\d+)(px)* (\\d+)(px)*\)/)","null");
-shouldBe("RegExp.$1","''");
-shouldBe("RegExp.$3","''");
-shouldBe("RegExp.$5","''");
-shouldBe("RegExp.$7","''");
+// After a failed match, cached results on the RegExp object are unchanged.
+shouldBe("RegExp.$1","'100'");
+shouldBe("RegExp.$3","'200'");
+shouldBe("RegExp.$5","'150'");
+shouldBe("RegExp.$7","'15'");
 
 var invalidChars = /[^@\.\w]/g; // #47092
 shouldBe("'faure@kde.org'.match(invalidChars) == null", "true");

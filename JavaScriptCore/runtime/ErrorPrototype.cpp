@@ -36,7 +36,7 @@ static EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(ExecState*);
 
 // ECMA 15.9.4
 ErrorPrototype::ErrorPrototype(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, Structure* prototypeFunctionStructure)
-    : ErrorInstance(&exec->globalData(), structure, "Unknown error")
+    : ErrorInstance(&exec->globalData(), structure)
 {
     // The constructor will be added later in ErrorConstructor's constructor
 

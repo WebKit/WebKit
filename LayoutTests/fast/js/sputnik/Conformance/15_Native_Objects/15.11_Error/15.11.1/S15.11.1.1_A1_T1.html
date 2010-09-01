@@ -99,8 +99,8 @@ if(err2.message!=="msg2"){
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 var err3=otherScope();
-if(err3.hasOwnProperty('message')){
-  testFailed('#3: function otherScope(msg){return Error(msg);} var err3=otherScope(); err3.hasOwnProperty("message"). Actual: '+err3.message);
+if(err3.message !== ""){
+  testFailed('#3: function otherScope(msg){return Error(msg);} var err3=otherScope(); err3.message === "". Actual: '+err3.message);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

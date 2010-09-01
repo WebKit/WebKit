@@ -4,15 +4,15 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Except a lot of errors. They should all be caught and lead to PASS
-testing throw() .......... PASS
-testing throw() .......... PASS
-ReferenceError .......... PASS
-error propagation in functions .......... PASS
+testing throw() .......... Passed
+testing throw() .......... Passed
+ReferenceError .......... Passed
+error propagation in functions .......... Passed
 catch
 finally
-Math() error .......... PASS
-Abort while() on error .......... PASS
-undefined .......... FAIL
+Math() error .......... Passed
+Abort while() on error .......... Passed
+PASS successfullyParsed is true
 
 TEST COMPLETE
 
