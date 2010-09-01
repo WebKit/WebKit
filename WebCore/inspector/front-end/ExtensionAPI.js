@@ -371,7 +371,7 @@ InspectedWindow.prototype = {
                 result.value = result.value === "undefined" ? undefined : JSON.parse(result.value);
             callback(result);
         }
-        return extensionServer.sendRequest({ command: "evaluateOnInspectedPage", expression: expression }, callbackWrapper);
+        return extensionServer.sendRequest({ command: "evaluateOnInspectedPage", expression: expression }, callback && callbackWrapper);
     }
 }
 

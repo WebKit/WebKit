@@ -1,3 +1,13 @@
+2010-09-01  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: webInspector.inspectedWindow.evaluate() should not fail if not passed callback.
+        https://bugs.webkit.org/show_bug.cgi?id=45037
+
+        * inspector/front-end/ExtensionAPI.js:
+        (WebInspector.injectedExtensionAPI.InspectedWindow.prototype.evaluate):
+
 2010-09-01  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein and Simon Fraser.
