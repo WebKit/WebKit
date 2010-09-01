@@ -1,3 +1,15 @@
+2010-09-01  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, add chromium win/linux baselines for fast/multicol/float-paginate.html.
+
+        * platform/chromium-linux/fast/multicol/float-paginate-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/float-paginate-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/float-paginate-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/float-paginate-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/float-paginate-expected.png: Added.
+        * platform/chromium-win/fast/multicol/float-paginate-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-09-01  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein and Simon Fraser.
