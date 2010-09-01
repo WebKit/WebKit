@@ -35,7 +35,6 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/ResourceRequest.h>
-#include <WebCore/ResourceResponse.h>
 #include <wtf/text/WTFString.h>
 
 namespace CoreIPC {

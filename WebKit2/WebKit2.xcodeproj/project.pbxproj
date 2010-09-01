@@ -227,6 +227,13 @@
 		BC8780FC1161C2B800CC2768 /* PlatformProcessIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8780FB1161C2B800CC2768 /* PlatformProcessIdentifier.h */; };
 		BC87DFAA1018101400564216 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BC87DFA91018101400564216 /* libicucore.dylib */; };
 		BC8A501511765F5600757573 /* WKRetainPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8A501411765F5600757573 /* WKRetainPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC90A1D2122DD55E00CC8C50 /* WebURLResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = BC90A1D0122DD55E00CC8C50 /* WebURLResponse.h */; };
+		BC90A1D3122DD55E00CC8C50 /* WebURLResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC90A1D1122DD55E00CC8C50 /* WebURLResponse.cpp */; };
+		BC90A1D7122DD66A00CC8C50 /* WebURLResponseMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC90A1D5122DD66A00CC8C50 /* WebURLResponseMac.mm */; };
+		BC90A1DC122DD89800CC8C50 /* WKURLResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = BC90A1DA122DD89800CC8C50 /* WKURLResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BC90A1DD122DD89800CC8C50 /* WKURLResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC90A1DB122DD89800CC8C50 /* WKURLResponse.cpp */; };
+		BC90A1E0122DD8EE00CC8C50 /* WKURLResponseNS.h in Headers */ = {isa = PBXBuildFile; fileRef = BC90A1DE122DD8EE00CC8C50 /* WKURLResponseNS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BC90A1E1122DD8EE00CC8C50 /* WKURLResponseNS.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC90A1DF122DD8EE00CC8C50 /* WKURLResponseNS.mm */; };
 		BC963D6B113DD19200574BE2 /* WebPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC963D6A113DD19200574BE2 /* WebPage.cpp */; };
 		BC963D6E113DD1A500574BE2 /* WebPageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC963D6D113DD1A500574BE2 /* WebPageMac.mm */; };
 		BC9B38A110F538BE00443A15 /* WebFrameProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9B389F10F538BE00443A15 /* WebFrameProxy.h */; };
@@ -579,6 +586,13 @@
 		BC87DFA91018101400564216 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = /usr/lib/libicucore.dylib; sourceTree = "<absolute>"; };
 		BC8A501011765AF700757573 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = WebProcess/Info.plist; sourceTree = "<group>"; };
 		BC8A501411765F5600757573 /* WKRetainPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKRetainPtr.h; sourceTree = "<group>"; };
+		BC90A1D0122DD55E00CC8C50 /* WebURLResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebURLResponse.h; sourceTree = "<group>"; };
+		BC90A1D1122DD55E00CC8C50 /* WebURLResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebURLResponse.cpp; sourceTree = "<group>"; };
+		BC90A1D5122DD66A00CC8C50 /* WebURLResponseMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebURLResponseMac.mm; sourceTree = "<group>"; };
+		BC90A1DA122DD89800CC8C50 /* WKURLResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKURLResponse.h; sourceTree = "<group>"; };
+		BC90A1DB122DD89800CC8C50 /* WKURLResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKURLResponse.cpp; sourceTree = "<group>"; };
+		BC90A1DE122DD8EE00CC8C50 /* WKURLResponseNS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKURLResponseNS.h; sourceTree = "<group>"; };
+		BC90A1DF122DD8EE00CC8C50 /* WKURLResponseNS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKURLResponseNS.mm; sourceTree = "<group>"; };
 		BC963D6A113DD19200574BE2 /* WebPage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPage.cpp; sourceTree = "<group>"; };
 		BC963D6D113DD1A500574BE2 /* WebPageMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPageMac.mm; sourceTree = "<group>"; };
 		BC9B389F10F538BE00443A15 /* WebFrameProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFrameProxy.h; sourceTree = "<group>"; };
@@ -892,6 +906,8 @@
 				BCDB86C01200FB97007254BE /* WebURL.h */,
 				BCE2315C122C30CA00D5C35A /* WebURLRequest.cpp */,
 				BCE2315B122C30CA00D5C35A /* WebURLRequest.h */,
+				BC90A1D1122DD55E00CC8C50 /* WebURLResponse.cpp */,
+				BC90A1D0122DD55E00CC8C50 /* WebURLResponse.h */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -1129,6 +1145,8 @@
 				BC20EBB2116EEF7A00094A50 /* WKURL.h */,
 				BCE231C6122C492300D5C35A /* WKURLRequest.cpp */,
 				BCE231C5122C492300D5C35A /* WKURLRequest.h */,
+				BC90A1DB122DD89800CC8C50 /* WKURLResponse.cpp */,
+				BC90A1DA122DD89800CC8C50 /* WKURLResponse.h */,
 			);
 			path = C;
 			sourceTree = "<group>";
@@ -1185,6 +1203,7 @@
 				BC111B5B112F629800337BAB /* WebEventFactory.h */,
 				BC111B5C112F629800337BAB /* WebEventFactory.mm */,
 				BCE231C0122C466E00D5C35A /* WebURLRequestMac.mm */,
+				BC90A1D5122DD66A00CC8C50 /* WebURLResponseMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -1366,6 +1385,8 @@
 			children = (
 				BCE23277122C71AC00D5C35A /* WKURLRequestNS.h */,
 				BCE23278122C71AC00D5C35A /* WKURLRequestNS.mm */,
+				BC90A1DE122DD8EE00CC8C50 /* WKURLResponseNS.h */,
+				BC90A1DF122DD8EE00CC8C50 /* WKURLResponseNS.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -1532,6 +1553,9 @@
 				BCE2315D122C30CA00D5C35A /* WebURLRequest.h in Headers */,
 				BCE231C7122C492300D5C35A /* WKURLRequest.h in Headers */,
 				BCE23279122C71AC00D5C35A /* WKURLRequestNS.h in Headers */,
+				BC90A1D2122DD55E00CC8C50 /* WebURLResponse.h in Headers */,
+				BC90A1DC122DD89800CC8C50 /* WKURLResponse.h in Headers */,
+				BC90A1E0122DD8EE00CC8C50 /* WKURLResponseNS.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1760,6 +1784,10 @@
 				BCE231C8122C492300D5C35A /* WKURLRequest.cpp in Sources */,
 				BCE23263122C6CF300D5C35A /* WebCoreArgumentCodersMac.mm in Sources */,
 				BCE2327A122C71AC00D5C35A /* WKURLRequestNS.mm in Sources */,
+				BC90A1D3122DD55E00CC8C50 /* WebURLResponse.cpp in Sources */,
+				BC90A1D7122DD66A00CC8C50 /* WebURLResponseMac.mm in Sources */,
+				BC90A1DD122DD89800CC8C50 /* WKURLResponse.cpp in Sources */,
+				BC90A1E1122DD8EE00CC8C50 /* WKURLResponseNS.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

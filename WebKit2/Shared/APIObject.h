@@ -41,6 +41,7 @@ public:
         TypeString,
         TypeURL,
         TypeURLRequest,
+        TypeURLResponse,
         
         // UIProcess types
         TypeBackForwardList,

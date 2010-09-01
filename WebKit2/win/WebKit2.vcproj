@@ -480,6 +480,14 @@
 				RelativePath="..\Shared\WebURLRequest.h"
 				>
 			</File>
+			<File
+				RelativePath="..\Shared\WebURLResponse.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\WebURLResponse.h"
+				>
+			</File>
 			<Filter
 				Name="CoreIPCSupport"
 				>
@@ -541,6 +549,10 @@
 				</File>
 				<File
 					RelativePath="..\Shared\win\WebURLRequestWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\win\WebURLResponseWin.cpp"
 					>
 				</File>
 			</Filter>
@@ -1386,6 +1398,14 @@
 						RelativePath="..\UIProcess\API\C\WKURLRequest.h"
 						>
 					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKURLResponse.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKURLResponse.h"
+						>
+					</File>
 					<Filter
 						Name="cf"
 						>
@@ -1411,6 +1431,14 @@
 						</File>
 						<File
 							RelativePath="..\UIProcess\API\C\cf\WKURLRequestCF.h"
+							>
+						</File>
+						<File
+							RelativePath="..\UIProcess\API\C\cf\WKURLResponseCF.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\UIProcess\API\C\cf\WKURLResponseCF.h"
 							>
 						</File>
 					</Filter>

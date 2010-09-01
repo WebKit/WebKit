@@ -23,39 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebCoreArgumentCoders.h"
+#include "WKURLResponseCF.h"
 
-namespace CoreIPC {
+#include "WKAPICast.h"
+#include "WebURLResponse.h"
 
-static void encodeWithNSKeyedArchiver(ArgumentEncoder* encoder, id rootObject)
+using namespace WebKit;
+
+WKURLResponseRef WKURLResponseCreateWithCFURLResponse(CFURLResponseRef urlResponse)
 {
-    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:rootObject];
-    encoder->encodeBytes(static_cast<const uint8_t*>([data bytes]), [data length]);
+    CFURLResponseRef copiedURLResponse = CFURLResponseCreateCopy(kCFAllocatorDefault, urlResponse);
+    RefPtr<WebURLResponse> response = WebURLResponse::create(copiedURLResponse);
+    return toRef(response.release().releaseRef());
 }
 
-static id decodeWithNSKeyedArchiver(ArgumentDecoder* decoder)
+CFURLResponseRef WKURLResponseCopyCFURLResponse(CFAllocatorRef alloc, WKURLResponseRef urlResponse)
 {
-    Vector<uint8_t> bytes;
-    if (!decoder->decodeBytes(bytes))
-        return nil;
-
-    RetainPtr<NSData> nsData(AdoptNS, [[NSData alloc] initWithBytesNoCopy:bytes.data() length:bytes.size() freeWhenDone:NO]);
-    return [NSKeyedUnarchiver unarchiveObjectWithData:nsData.get()];
+    return CFURLResponseCreateCopy(alloc, toWK(urlResponse)->platformResponse());
 }
-
-void encodeResourceRequest(ArgumentEncoder* encoder, const WebCore::ResourceRequest& resourceRequest)
-{
-    encodeWithNSKeyedArchiver(encoder, resourceRequest.nsURLRequest());
-}
-
-bool decodeResourceRequest(ArgumentDecoder* decoder, WebCore::ResourceRequest& resourceRequest)
-{
-    NSURLRequest *nsURLRequest = decodeWithNSKeyedArchiver(decoder);
-    if (!nsURLRequest)
-        return false;
-
-    resourceRequest = WebCore::ResourceRequest(nsURLRequest);
-    return true;
-}
-
-} // namespace CoreIPC

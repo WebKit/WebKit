@@ -166,6 +166,7 @@ HEADERS += \
     Shared/WebNavigationDataStore.h \
     Shared/WebPreferencesStore.h \
     Shared/WebURLRequest.h \
+    Shared/WebURLResponse.h \
     UIProcess/API/cpp/WKRetainPtr.h \
     UIProcess/API/cpp/qt/WKStringQt.h \
     UIProcess/API/cpp/qt/WKURLQt.h \
@@ -185,6 +186,7 @@ HEADERS += \
     UIProcess/API/C/WKType.h \
     UIProcess/API/C/WKURL.h \
     UIProcess/API/C/WKURLRequest.h \
+    UIProcess/API/C/WKURLResponse.h \
     UIProcess/API/qt/qgraphicswkview.h \
     UIProcess/API/qt/qwkpage.h \
     UIProcess/API/qt/qwkpage_p.h \
@@ -269,10 +271,12 @@ SOURCES += \
     Shared/WebEventConversion.cpp \
     Shared/WebPreferencesStore.cpp \
     Shared/WebURLRequest.cpp \
+    Shared/WebURLResponse.cpp \
     Shared/qt/UpdateChunk.cpp \
     Shared/qt/WebEventFactoryQt.cpp \
     Shared/qt/WebCoreArgumentCodersQt.cpp \
     Shared/qt/WebURLRequestQt.cpp \
+    Shared/qt/WebURLResponseQt.cpp \
     UIProcess/API/C/WKContext.cpp \
     UIProcess/API/C/WKFrame.cpp \
     UIProcess/API/C/WKFramePolicyListener.cpp \
@@ -284,6 +288,7 @@ SOURCES += \
     UIProcess/API/C/WKType.cpp \
     UIProcess/API/C/WKURL.cpp \
     UIProcess/API/C/WKURLRequest.cpp \
+    UIProcess/API/C/WKURLResponse.cpp \
     UIProcess/API/qt/ClientImpl.cpp \
     UIProcess/API/qt/qgraphicswkview.cpp \
     UIProcess/API/qt/qwkpage.cpp \

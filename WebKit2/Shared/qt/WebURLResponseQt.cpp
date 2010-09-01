@@ -23,39 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebCoreArgumentCoders.h"
+#include "WebURLResponse.h"
 
-namespace CoreIPC {
+namespace WebKit {
 
-static void encodeWithNSKeyedArchiver(ArgumentEncoder* encoder, id rootObject)
+WebURLResponse::WebURLResponse(PlatformResponse)
 {
-    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:rootObject];
-    encoder->encodeBytes(static_cast<const uint8_t*>([data bytes]), [data length]);
+    ASSERT_NOT_REACHED();
 }
 
-static id decodeWithNSKeyedArchiver(ArgumentDecoder* decoder)
+PlatformResponse WebURLResponse::platformResponse() const
 {
-    Vector<uint8_t> bytes;
-    if (!decoder->decodeBytes(bytes))
-        return nil;
-
-    RetainPtr<NSData> nsData(AdoptNS, [[NSData alloc] initWithBytesNoCopy:bytes.data() length:bytes.size() freeWhenDone:NO]);
-    return [NSKeyedUnarchiver unarchiveObjectWithData:nsData.get()];
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
-void encodeResourceRequest(ArgumentEncoder* encoder, const WebCore::ResourceRequest& resourceRequest)
-{
-    encodeWithNSKeyedArchiver(encoder, resourceRequest.nsURLRequest());
-}
-
-bool decodeResourceRequest(ArgumentDecoder* decoder, WebCore::ResourceRequest& resourceRequest)
-{
-    NSURLRequest *nsURLRequest = decodeWithNSKeyedArchiver(decoder);
-    if (!nsURLRequest)
-        return false;
-
-    resourceRequest = WebCore::ResourceRequest(nsURLRequest);
-    return true;
-}
-
-} // namespace CoreIPC
+} // namespace WebKit

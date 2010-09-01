@@ -1,3 +1,54 @@
+2010-09-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add URLResponse API for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=45062
+
+        Add WebURLResponse class and WKURLResponseRef C API to go with it. Right now,
+        instance of WKURLResponseRef are manipulated via platform types just like
+        WKURLRequestRef.
+
+        This just adds the type and conversion functions, no uses yet.
+
+        * Shared/APIObject.h:
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebURLResponse.cpp: Added.
+        (WebKit::WebURLResponse::WebURLResponse):
+        * Shared/WebURLResponse.h: Added.
+        (WebKit::WebURLResponse::create):
+        (WebKit::WebURLResponse::resourceResponse):
+        (WebKit::WebURLResponse::type):
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (CoreIPC::encodeWithNSKeyedArchiver):
+        (CoreIPC::decodeWithNSKeyedArchiver):
+        (CoreIPC::encodeResourceRequest):
+        (CoreIPC::decodeResourceRequest):
+        * Shared/mac/WebURLResponseMac.mm: Added.
+        (WebKit::WebURLResponse::WebURLResponse):
+        (WebKit::WebURLResponse::platformResponse):
+        * Shared/qt/WebURLResponseQt.cpp: Added.
+        (WebKit::WebURLResponse::WebURLResponse):
+        (WebKit::WebURLResponse::platformResponse):
+        * Shared/win/WebURLResponseWin.cpp: Added.
+        (WebKit::WebURLResponse::WebURLResponse):
+        (WebKit::WebURLResponse::platformResponse):
+        * UIProcess/API/C/WKURLResponse.cpp: Added.
+        (WKURLResponseGetTypeID):
+        * UIProcess/API/C/WKURLResponse.h: Added.
+        * UIProcess/API/C/cf/WKURLResponseCF.cpp: Added.
+        (WKURLResponseCreateWithCFURLResponse):
+        (WKURLResponseCopyCFURLResponse):
+        * UIProcess/API/C/cf/WKURLResponseCF.h: Added.
+        * UIProcess/API/C/mac/WKURLResponseNS.h: Added.
+        * UIProcess/API/C/mac/WKURLResponseNS.mm: Added.
+        (WKURLResponseCreateWithNSURLResponse):
+        (WKURLResponseCopyNSURLResponse):
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.make:
+
 2010-09-01  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Antti Koivisto.

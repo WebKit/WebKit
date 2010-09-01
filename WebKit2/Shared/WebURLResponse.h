@@ -23,39 +23,49 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebCoreArgumentCoders.h"
+#ifndef WebURLResponse_h
+#define WebURLResponse_h
 
-namespace CoreIPC {
+#include "APIObject.h"
+#include <WebCore/ResourceResponse.h>
+#include <wtf/Forward.h>
 
-static void encodeWithNSKeyedArchiver(ArgumentEncoder* encoder, id rootObject)
-{
-    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:rootObject];
-    encoder->encodeBytes(static_cast<const uint8_t*>([data bytes]), [data length]);
-}
+#if PLATFORM(MAC)
+typedef NSURLResponse* PlatformResponse;
+#elif PLATFORM(WIN)
+typedef CFURLResponseRef PlatformResponse;
+#else
+typedef void* PlatformResponse;
+#endif
 
-static id decodeWithNSKeyedArchiver(ArgumentDecoder* decoder)
-{
-    Vector<uint8_t> bytes;
-    if (!decoder->decodeBytes(bytes))
-        return nil;
+namespace WebKit {
 
-    RetainPtr<NSData> nsData(AdoptNS, [[NSData alloc] initWithBytesNoCopy:bytes.data() length:bytes.size() freeWhenDone:NO]);
-    return [NSKeyedUnarchiver unarchiveObjectWithData:nsData.get()];
-}
+class WebURLResponse : public APIObject {
+public:
+    static const Type APIType = TypeURLResponse;
 
-void encodeResourceRequest(ArgumentEncoder* encoder, const WebCore::ResourceRequest& resourceRequest)
-{
-    encodeWithNSKeyedArchiver(encoder, resourceRequest.nsURLRequest());
-}
+    static PassRefPtr<WebURLResponse> create(const WebCore::ResourceResponse& response)
+    {
+        return adoptRef(new WebURLResponse(response));
+    }
 
-bool decodeResourceRequest(ArgumentDecoder* decoder, WebCore::ResourceRequest& resourceRequest)
-{
-    NSURLRequest *nsURLRequest = decodeWithNSKeyedArchiver(decoder);
-    if (!nsURLRequest)
-        return false;
+    static PassRefPtr<WebURLResponse> create(PlatformResponse platformResponse)
+    {
+        return adoptRef(new WebURLResponse(platformResponse));
+    }
 
-    resourceRequest = WebCore::ResourceRequest(nsURLRequest);
-    return true;
-}
+    PlatformResponse platformResponse() const;
+    const WebCore::ResourceResponse& resourceResponse() const { return m_response; }
 
-} // namespace CoreIPC
+private:
+    explicit WebURLResponse(const WebCore::ResourceResponse&);
+    explicit WebURLResponse(PlatformResponse);
+
+    virtual Type type() const { return APIType; }
+
+    WebCore::ResourceResponse m_response;
+};
+
+} // namespace WebKit
+
+#endif // WebURLResponse_h
