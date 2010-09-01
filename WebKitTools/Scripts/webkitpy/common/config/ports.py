@@ -49,6 +49,7 @@ class WebKitPort(object):
             "mac": MacPort,
             "win": WinPort,
             "qt": QtPort,
+            "efl": EflPort,
         }
         default_port = {
             "Windows": WinPort,
@@ -173,6 +174,24 @@ class QtPort(WebKitPort):
     def build_webkit_command(cls, build_style=None):
         command = WebKitPort.build_webkit_command(build_style=build_style)
         command.append("--qt")
+        command.append(WebKitPort.makeArgs())
+        return command
+
+
+class EflPort(WebKitPort):
+
+    @classmethod
+    def name(cls):
+        return "Efl"
+
+    @classmethod
+    def flag(cls):
+        return "--port=efl"
+
+    @classmethod
+    def build_webkit_command(cls, build_style=None):
+        command = WebKitPort.build_webkit_command(build_style=build_style)
+        command.append("--efl")
         command.append(WebKitPort.makeArgs())
         return command
 

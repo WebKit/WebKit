@@ -75,6 +75,9 @@ class EarlyWarningSytemTest(QueuesTest):
     def test_gtk_ews(self):
         self._test_ews(GtkEWS())
 
+    def test_efl_ews(self):
+        self._test_ews(EflEWS())
+
     def test_mac_ews(self):
         ews = MacEWS()
         expected_stderr = self._default_expected_stderr(ews)

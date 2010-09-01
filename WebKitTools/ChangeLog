@@ -1,3 +1,18 @@
+2010-08-31  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Adam Barth.
+
+        ews: Add support for EFL-EWS
+        https://bugs.webkit.org/show_bug.cgi?id=44982
+
+        * QueueStatusServer/model/queues.py: Add "efl-ews" to queues list.
+        * Scripts/webkitpy/common/config/ports.py: Define a EflPort class
+        and add it to the ports dict.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py: Define a
+        EflEWS class.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py: Add
+        a test case for the EFL EWS.
+
 2010-08-31  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Sam Weinig.

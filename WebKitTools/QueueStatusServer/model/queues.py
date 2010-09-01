@@ -37,6 +37,7 @@ queues = [
     "gtk-ews",
     "mac-ews",
     "win-ews",
+    "efl-ews",
 ]
 
 

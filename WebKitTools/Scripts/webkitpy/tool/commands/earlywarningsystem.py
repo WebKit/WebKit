@@ -109,6 +109,16 @@ class GtkEWS(AbstractEarlyWarningSystem):
     ]
 
 
+class EflEWS(AbstractEarlyWarningSystem):
+    name = "efl-ews"
+    port_name = "efl"
+    watchers = AbstractEarlyWarningSystem.watchers + [
+        "leandro@profusion.mobi",
+        "antognolli@profusion.mobi",
+        "lucas.demarchi@profusion.mobi",
+    ]
+
+
 class QtEWS(AbstractEarlyWarningSystem):
     name = "qt-ews"
     port_name = "qt"
