@@ -1,3 +1,14 @@
+2010-09-01  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Allow the web process to load frameworks other than WebKit2.framework from the build directory
+        when running engineering builds.
+
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMain): Pass the path containing WebKit2.framework to the sandbox rather than
+        the path of the WebKit2.framework itself.
+
 2010-09-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by John Sullivan.

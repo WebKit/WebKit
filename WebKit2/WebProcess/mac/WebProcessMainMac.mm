@@ -59,7 +59,7 @@ int WebProcessMain(CommandLine* commandLine)
 
 #if ENABLE(WEB_PROCESS_SANDBOX)
     char* errorBuf;
-    const char* frameworkPath = [[[NSBundle bundleForClass:[WKView class]] bundlePath] UTF8String];
+    const char* frameworkPath = [[[[NSBundle bundleForClass:[WKView class]] bundlePath] stringByDeletingLastPathComponent] UTF8String];
     const char* profilePath = [[[NSBundle mainBundle] pathForResource:@"com.apple.WebProcess" ofType:@"sb"] UTF8String];
     const char* const sandboxParam[] = { "webkit2_framework_path", frameworkPath, NULL };
 
