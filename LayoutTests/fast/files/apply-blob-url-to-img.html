@@ -6,10 +6,27 @@
 <pre id='console'></pre>
 
 <script>
-function onInputFileChange(file)
+function log(message)
+{
+    document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
+}
+
+function onInputFileChange()
 {
     var file = document.getElementById("file").files[0];
-    document.getElementById('imgToReplace').src = window.createBlobURL(file);
+    var img = document.getElementById('imgToReplace');
+    log("Old image: " + img.width + " x " + img.height);
+    img.onload = onImgLoad;
+    img.src = window.createBlobURL(file);
+}
+
+function onImgLoad()
+{
+    var img = document.getElementById('imgToReplace');
+    log("New image: " + img.width + " x " + img.height);
+    log("DONE");
+    if (layoutTestController.notifyDone)
+        layoutTestController.notifyDone();
 }
 
 function runTests()
@@ -20,6 +37,8 @@ function runTests()
 }
 
 if (window.eventSender) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
     window.onload = runTests;
 }
 </script>

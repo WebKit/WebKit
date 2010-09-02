@@ -10,26 +10,33 @@ function log(message)
     document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
 }
 
-function onInputFileChange(file)
+function sendXMLHttpRequest(method, url)
+{
+    var xhr = new XMLHttpRequest();
+    xhr.open(method, url, false);
+    try {
+        xhr.send();
+        log("Status: " + xhr.status);
+        log("Response: " + xhr.responseText);
+    } catch (error) {
+        log("Received exception " + error.code + ": " + error.name);
+    }
+}
+
+function onInputFileChange()
 {
     var file = document.getElementById("file").files[0];
     var fileURL = window.createBlobURL(file);
 
     log("Test that XMLHttpRequest GET succeeds.");
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", fileURL, false);
-    xhr.send();
-    log(xhr.responseText);
+    sendXMLHttpRequest("GET", fileURL);
 
     log("Test that XMLHttpRequest POST fails.");
-    xhr = new XMLHttpRequest();
-    xhr.open("POST", fileURL, false);
-    try {
-        xhr.send();
-    } catch (error) {
-        log("Received exception " + error.code + ": " + error.name);
-    }
-    log(xhr.responseText);
+    sendXMLHttpRequest("POST", fileURL);
+
+    log("Test that XMLHttpRequest GET fails after the blob URL is revoked.");
+    window.revokeBlobURL(fileURL);
+    sendXMLHttpRequest("GET", fileURL);
 
     log("DONE");
     if (layoutTestController.notifyDone)

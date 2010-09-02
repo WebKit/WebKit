@@ -1,8 +1,11 @@
 
 Test that XMLHttpRequest GET succeeds.
-Hello
+Status: 200
+Response: Hello
 Test that XMLHttpRequest POST fails.
 Received exception 101: NETWORK_ERR
-
+Test that XMLHttpRequest GET fails after the blob URL is revoked.
+Status: 404
+Response: 
 DONE
 
