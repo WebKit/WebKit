@@ -727,6 +727,9 @@ media/video-poster-delayed.html
 # Test specific to QuickTime media engine
 media/video-does-not-loop.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=45093
+media/media-can-play-mpeg4-video.html
+
 # ============================================================================= #
 # Crashing tests due to re-enabled Phonon support in Buildbot's Qt              #
 # Skip these until a proper solution for the Phonon related crashes found.      #
