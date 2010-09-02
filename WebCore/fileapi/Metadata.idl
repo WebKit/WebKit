@@ -32,6 +32,6 @@ module storage {
     interface [
         Conditional=FILE_SYSTEM
     ] Metadata {
-        readonly attribute double modificationTime;
+        readonly attribute Date modificationTime;
     };
 }

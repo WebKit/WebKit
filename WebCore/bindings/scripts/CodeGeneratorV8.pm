@@ -3059,7 +3059,8 @@ my %non_wrapper_types = (
     'EventTarget' => 1,
     'NodeFilter' => 1,
     'EventListener' => 1,
-    'IDBKey' => 1
+    'IDBKey' => 1,
+    'Date' => 1
 );
 
 

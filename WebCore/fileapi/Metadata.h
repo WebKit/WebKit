@@ -43,7 +43,9 @@ public:
     {
         return adoptRef(new Metadata(modificationTime));
     }
-    double modificationTime() const { return m_modificationTime; }
+
+    // Needs to return epoch time in milliseconds for Date.
+    double modificationTime() const { return m_modificationTime * 1000.0; }
 
 private:
     Metadata(double modificationTime)
