@@ -26,8 +26,11 @@
 #include "PluginObject.h"
 
 #include "PluginTest.h"
-
 #include <string>
+
+#if !defined(NP_NO_CARBON) && defined(QD_HEADERS_ARE_PRIVATE) && QD_HEADERS_ARE_PRIVATE
+extern "C" void GlobalToLocal(Point*);
+#endif
 
 using namespace std;
 

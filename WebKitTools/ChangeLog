@@ -1,3 +1,11 @@
+2010-09-01  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Fix TestNetscapePlugIn to compile without access to QuickDraw private headers.
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+
 2010-09-01  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.
