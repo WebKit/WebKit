@@ -1,3 +1,19 @@
+2010-09-01  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Implement PluginInfoStore for UNIX
+        https://bugs.webkit.org/show_bug.cgi?id=45038
+
+        This implementation is generally just reusing the logic in WebCore since
+        there is no way to get informations from a UNIX plugin without loading it
+        - in contrast to mac bundles and windows dll-s.
+        * UIProcess/Plugins/qt/PluginInfoStoreQt.cpp:
+        (WebKit::PluginInfoStore::pluginsDirectories):
+        (WebKit::PluginInfoStore::pluginPathsInDirectory):
+        (WebKit::PluginInfoStore::getPluginInfo):
+        (WebKit::PluginInfoStore::shouldUsePlugin):
+
 2010-09-01  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

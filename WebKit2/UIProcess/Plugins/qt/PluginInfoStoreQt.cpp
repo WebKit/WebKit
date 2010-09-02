@@ -23,9 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// Note: this file is only for UNIX. On other platforms we can reuse the native implementation.
+
 #include "PluginInfoStore.h"
 
-#include "NotImplemented.h"
+#include "PluginDatabase.h"
+#include "PluginPackage.h"
 
 using namespace WebCore;
 
@@ -33,26 +36,57 @@ namespace WebKit {
 
 Vector<String> PluginInfoStore::pluginsDirectories()
 {
-    notImplemented();
-    return Vector<String>();
+    return PluginDatabase::defaultPluginDirectories();
 }
 
 Vector<String> PluginInfoStore::pluginPathsInDirectory(const String& directory)
 {
-    notImplemented();
-    return Vector<String>();
+    Vector<String> result;
+    Vector<String> pluginPaths = listDirectory(directory, String("*.so"));
+    Vector<String>::const_iterator end = pluginPaths.end();
+    for (Vector<String>::const_iterator it = pluginPaths.begin(); it != end; ++it) {
+        if (fileExists(*it))
+            result.append(*it);
+    }
+
+    return result;
 }
 
 bool PluginInfoStore::getPluginInfo(const String& pluginPath, Plugin& plugin)
 {
-    notImplemented();
-    return false;
+    // We are loading the plugin here since it does not seem to be a standardized way to
+    // get the needed informations from a UNIX plugin without loading it.
+
+    RefPtr<PluginPackage> package = PluginPackage::createPackage(pluginPath, 0 /*lastModified*/);
+    if (!package)
+        return false;
+
+    plugin.path = pluginPath;
+    plugin.info.desc = package->description();
+    plugin.info.file = package->fileName();
+
+    const MIMEToDescriptionsMap& descriptions = package->mimeToDescriptions();
+    const MIMEToExtensionsMap& extensions = package->mimeToExtensions();
+    Vector<MimeClassInfo> mimes(descriptions.size());
+    MIMEToDescriptionsMap::const_iterator descEnd = descriptions.end();
+    unsigned i = 0;
+    for (MIMEToDescriptionsMap::const_iterator it = descriptions.begin(); it != descEnd; ++it) {
+        MimeClassInfo& mime = mimes[i++];
+        mime.type = it->first;
+        mime.desc = it->second;
+        MIMEToExtensionsMap::const_iterator extensionIt = extensions.find(it->first);
+        ASSERT(extensionIt != extensions.end());
+        mime.extensions = extensionIt->second;
+    }
+
+    package->unload();
+    return true;
 }
 
 bool PluginInfoStore::shouldUsePlugin(const Plugin& plugin, const Vector<Plugin>& loadedPlugins)
 {
-    notImplemented();
-    return false;
+    // We do not do any black-listing presently.
+    return true;
 }
 
 } // namespace WebKit
