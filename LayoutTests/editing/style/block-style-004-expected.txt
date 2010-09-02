@@ -1,0 +1,10 @@
+You should see one "x" followed by two blank lines, then one more "x". The blank lines in between the characters should be the same height. The second must be the same height as the first. See: <rdar://problem/3959727> REGRESSION (Mail): Style not preserved on blank lines
+x
+
+
+x
+execInsertParagraphCommand: <div id="test" class="editing">x</div><div id="test" class="editing"><br></div>
+execInsertParagraphCommand: <div id="test" class="editing">x</div><div id="test" class="editing"><br></div><div id="test" class="editing"><br></div>
+execTypeCharacterCommand: <div id="test" class="editing">x</div><div id="test" class="editing"><br></div><div id="test" class="editing">x</div>
+execFontSizeCommand: <div id="test" class="editing"><span class="Apple-style-span" style="font-size: -webkit-xxx-large;">x</span></div><div id="test" class="editing"><span class="Apple-style-span" style="font-size: -webkit-xxx-large;"><br></span></div><div id="test" class="editing"><span class="Apple-style-span" style="font-size: -webkit-xxx-large;">x</span></div>
+execInsertParagraphCommand: <div id="test" class="editing"><span class="Apple-style-span" style="font-size: -webkit-xxx-large;">x</span></div><div id="test" class="editing"><span class="Apple-style-span" style="font-size: -webkit-xxx-large;"><br></span></div><div id="test" class="editing"><span class="Apple-style-span" style="font-size: -webkit-xxx-large;"><br></span></div><div id="test" class="editing"><span class="Apple-style-span" style="font-size: -webkit-xxx-large;">x</span></div>

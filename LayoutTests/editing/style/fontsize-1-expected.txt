@@ -1,0 +1,56 @@
+This test execCommand('FontSize', ...).  You should see 'small' 'medium' and 'large' below in every increasing font sizes.
+
+initial:
+| 
+
+fontsize 2:
+| 
+
+type small:
+| <span>
+|   class="Apple-style-span"
+|   style="font-size: small;"
+|   "small<#selection-caret>"
+
+fontsize 4:
+| <span>
+|   class="Apple-style-span"
+|   style="font-size: small;"
+|   "small<#selection-caret>"
+
+type medium:
+| <span>
+|   class="Apple-style-span"
+|   style="font-size: small;"
+|   "small"
+| <span>
+|   class="Apple-style-span"
+|   style="font-size: large;"
+|   "medium<#selection-caret>"
+
+fontsize 6:
+| <span>
+|   class="Apple-style-span"
+|   style="font-size: small;"
+|   "small"
+| <span>
+|   class="Apple-style-span"
+|   style="font-size: large;"
+|   "medium<#selection-caret>"
+
+type large:
+| <span>
+|   class="Apple-style-span"
+|   style="font-size: small;"
+|   "small"
+| <span>
+|   class="Apple-style-span"
+|   style="font-size: large;"
+|   "medium"
+| <span>
+|   class="Apple-style-span"
+|   style="font-size: xx-large;"
+|   "large<#selection-caret>"
+
+console:
+| 

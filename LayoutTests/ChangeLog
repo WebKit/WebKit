@@ -1,3 +1,55 @@
+2010-09-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        dumpAsText/Markup conversion: editing/style/block-style-004.html through block-style-006.html and editing/style/fontsize-1.html
+        https://bugs.webkit.org/show_bug.cgi?id=45050
+
+        * editing/style/block-style-004-expected.txt: Added.
+        * editing/style/block-style-004.html:
+        * editing/style/block-style-005.html:
+        * editing/style/block-style-006.html:
+        * editing/style/fontsize-1.html:
+        * platform/chromium-linux/editing/style/block-style-004-expected.checksum: Removed.
+        * platform/chromium-linux/editing/style/block-style-004-expected.png: Removed.
+        * platform/chromium-linux/editing/style/block-style-005-expected.checksum: Removed.
+        * platform/chromium-linux/editing/style/block-style-005-expected.png: Removed.
+        * platform/chromium-linux/editing/style/block-style-006-expected.checksum: Removed.
+        * platform/chromium-linux/editing/style/block-style-006-expected.png: Removed.
+        * platform/chromium-linux/editing/style/fontsize-1-expected.checksum: Removed.
+        * platform/chromium-linux/editing/style/fontsize-1-expected.png: Removed.
+        * platform/chromium-win/editing/style/block-style-004-expected.checksum: Removed.
+        * platform/chromium-win/editing/style/block-style-004-expected.png: Removed.
+        * platform/chromium-win/editing/style/block-style-004-expected.txt: Removed.
+        * platform/chromium-win/editing/style/block-style-005-expected.checksum: Removed.
+        * platform/chromium-win/editing/style/block-style-005-expected.png: Removed.
+        * platform/chromium-win/editing/style/block-style-005-expected.txt: Removed.
+        * platform/chromium-win/editing/style/block-style-006-expected.checksum: Removed.
+        * platform/chromium-win/editing/style/block-style-006-expected.png: Removed.
+        * platform/chromium-win/editing/style/block-style-006-expected.txt: Removed.
+        * platform/chromium-win/editing/style/fontsize-1-expected.checksum: Removed.
+        * platform/chromium-win/editing/style/fontsize-1-expected.png: Removed.
+        * platform/chromium-win/editing/style/fontsize-1-expected.txt: Removed.
+        * platform/gtk/editing/style/fontsize-1-expected.txt: Removed.
+        * platform/mac-leopard/editing/style/fontsize-1-expected.checksum: Removed.
+        * platform/mac-leopard/editing/style/fontsize-1-expected.png: Removed.
+        * platform/mac/editing/style/block-style-004-expected.checksum: Removed.
+        * platform/mac/editing/style/block-style-004-expected.png: Removed.
+        * platform/mac/editing/style/block-style-004-expected.txt: Removed.
+        * platform/mac/editing/style/block-style-005-expected.checksum: Removed.
+        * platform/mac/editing/style/block-style-005-expected.png: Removed.
+        * platform/mac/editing/style/block-style-005-expected.txt: Removed.
+        * platform/mac/editing/style/block-style-006-expected.checksum: Removed.
+        * platform/mac/editing/style/block-style-006-expected.png: Removed.
+        * platform/mac/editing/style/block-style-006-expected.txt: Removed.
+        * platform/mac/editing/style/fontsize-1-expected.checksum: Removed.
+        * platform/mac/editing/style/fontsize-1-expected.png: Removed.
+        * platform/mac/editing/style/fontsize-1-expected.txt: Removed.
+        * platform/qt/editing/style/block-style-004-expected.txt: Removed.
+        * platform/qt/editing/style/block-style-005-expected.txt: Removed.
+        * platform/qt/editing/style/block-style-006-expected.txt: Removed.
+        * platform/qt/editing/style/fontsize-1-expected.txt: Removed.
+
 2010-09-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r66671.
