@@ -49,13 +49,6 @@
                 # for copying them to resource dir, and for generating 'devtools.html' file.
                 'devtools_files': [
                     '<@(devtools_css_files)',
-                    '../../WebKit/chromium/v8/tools/codemap.js',
-                    '../../WebKit/chromium/v8/tools/consarray.js',
-                    '../../WebKit/chromium/v8/tools/csvparser.js',
-                    '../../WebKit/chromium/v8/tools/logreader.js',
-                    '../../WebKit/chromium/v8/tools/profile.js',
-                    '../../WebKit/chromium/v8/tools/profile_view.js',
-                    '../../WebKit/chromium/v8/tools/splaytree.js',
                     '<@(devtools_js_files)',
                 ],
             },{
@@ -64,13 +57,6 @@
 
                 'devtools_files': [
                     '<@(devtools_css_files)',
-                    '../../../../v8/tools/codemap.js',
-                    '../../../../v8/tools/consarray.js',
-                    '../../../../v8/tools/csvparser.js',
-                    '../../../../v8/tools/logreader.js',
-                    '../../../../v8/tools/profile.js',
-                    '../../../../v8/tools/profile_view.js',
-                    '../../../../v8/tools/splaytree.js',
                     '<@(devtools_js_files)',
                 ],
             }],

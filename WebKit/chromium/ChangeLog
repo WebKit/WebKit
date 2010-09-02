@@ -1,3 +1,13 @@
+2010-09-01  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Remove dependency on JS files for V8 logs processing.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45045
+
+        * WebKit.gyp:
+
 2010-09-01  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, rolling out r66576.
