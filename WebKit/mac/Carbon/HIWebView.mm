@@ -32,16 +32,11 @@
 
 #import "CarbonWindowAdapter.h"
 #import "HIViewAdapter.h"
+#import "QuickDrawCompatibility.h"
 #import "WebHTMLViewInternal.h"
 #import "WebKit.h"
 #import <WebKitSystemInterface.h>
 #import <objc/objc-runtime.h>
-
-// FIXME: Remove this when we have a solution for <rdar://problem/8374711>.
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-#define __LP64__ 0
-#include <QD/QuickdrawPriv.h>
-#endif
 
 @interface NSWindow (AppKitSecretsHIWebViewKnows)
 - (void)_removeWindowRef;

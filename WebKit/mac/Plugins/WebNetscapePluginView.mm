@@ -30,6 +30,7 @@
 
 #import "WebNetscapePluginView.h"
 
+#import "QuickDrawCompatibility.h"
 #import "WebDataSourceInternal.h"
 #import "WebDefaultUIDelegate.h"
 #import "WebFrameInternal.h" 
@@ -79,14 +80,6 @@
 #import <wtf/Assertions.h>
 #import <wtf/Threading.h>
 #import <wtf/text/CString.h>
-
-// FIXME: Remove this when we have a solution for <rdar://problem/8374711>.
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-#ifndef __LP64__
-#define __LP64__ 0
-#endif
-#include <QD/QuickdrawPriv.h>
-#endif
 
 #define LoginWindowDidSwitchFromUserNotification    @"WebLoginWindowDidSwitchFromUserNotification"
 #define LoginWindowDidSwitchToUserNotification      @"WebLoginWindowDidSwitchToUserNotification"

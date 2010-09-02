@@ -1,3 +1,14 @@
+2010-09-01  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Adam Roben.
+
+        <rdar://problem/8374711> WebKit needs to compile without access to QuickDraw private headers.
+
+        * Carbon/HIViewAdapter.m:
+        * Carbon/HIWebView.mm:
+        * Misc/QuickDrawCompatibility.h: Added.
+        * Plugins/WebNetscapePluginView.mm:
+
 2010-08-31  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
