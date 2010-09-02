@@ -44,8 +44,18 @@ function lastPathComponent()
     return window.location.href.split('/').pop();
 }
 
-function statePopped()
+var beganTest = false;
+
+onpopstate = function(event)
 {
+    // The first time popstate fires, it's because the page has finished loading.
+    // Only then can we begin the test.
+    if (!beganTest) {
+        beganTest = true;
+        runTest();
+        return;
+    }
+
     log("State popped with event " + event.state + " (type " + typeof event.state + ") and last path component " + lastPathComponent());
     if (event.state != "OriginalEntry")
         setTimeout("history.back();", 0);
@@ -53,13 +63,13 @@ function statePopped()
         layoutTestController.notifyDone();
 }
 
-function hashChanged()
+onhashchange = function()
 {
     log("Hash change fired and last path component is " + lastPathComponent());
 }
 
 </script>
-<body onload="runTest();" onpopstate="statePopped();" onhashchange="hashChanged();">
+<body>
 <pre>
 This test pushes a series of state objects with different URLs and fragment identifiers meant to test the hashChange event as states are popped.
 </pre><br>

@@ -22,8 +22,18 @@ function runTest()
     history.back();
 }
 
-function statePopped()
+var beganTest = false;
+
+onpopstate = function(event)
 {
+    // The first time popstate fires, it's because the page has finished loading.
+    // Only then can we begin the test.
+    if (!beganTest) {
+        beganTest = true;
+        runTest();
+        return;
+    }
+
     log("State popped - " + event.state + " (type " + typeof event.state + ")");
     if (event.state == "OriginalHistoryItem")
         history.forward();
@@ -32,7 +42,7 @@ function statePopped()
 }
 
 </script>
-<body onload="runTest();" onpopstate="statePopped();">
+<body>
 <pre>
 This test does the following:
 -Makes a call to replaceState()

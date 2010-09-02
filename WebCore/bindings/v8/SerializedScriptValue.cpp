@@ -1096,6 +1096,12 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::create()
     return adoptRef(new SerializedScriptValue());
 }
 
+SerializedScriptValue* SerializedScriptValue::nullValue() 
+{
+    DEFINE_STATIC_LOCAL(RefPtr<SerializedScriptValue>, nullValue, (SerializedScriptValue::create()));
+    return nullValue.get();
+}
+
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::release()
 {
     RefPtr<SerializedScriptValue> result = adoptRef(new SerializedScriptValue(m_data, WireData));

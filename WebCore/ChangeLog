@@ -1,3 +1,36 @@
+2010-09-01  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Brady Eidson.
+
+        popstate event is not fired until document opts in by calling pushstate.
+        https://bugs.webkit.org/show_bug.cgi?id=41372
+
+        Fire popstate even when we don't have a state object when a page is 
+        loaded (for both regular loads and those from the page cache). Also
+        fire popstate when doing in-document navigation via fragment changes.
+        This is consistent with both Gecko and recent the HTML5 spec change:
+        http://html5.org/tools/web-apps-tracker?from=5376&to=5377
+
+        Tests: fast/loader/stateobjects/popstate-fires-on-history-traversal.html
+               fast/loader/stateobjects/popstate-fires-with-page-cache.html
+
+        * bindings/js/SerializedScriptValue.cpp:
+        * bindings/js/SerializedScriptValue.h:
+        (WebCore::SerializedScriptValue::create):
+        * bindings/v8/SerializedScriptValue.cpp:
+        * bindings/v8/SerializedScriptValue.h:
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+        * dom/Document.h:
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadInSameDocument):
+        (WebCore::FrameLoader::transitionToCommitted):
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::pushState):
+        (WebCore::HistoryController::replaceState):
+
 2010-09-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Dimitri Glazkov.

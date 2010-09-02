@@ -32,7 +32,7 @@ function runThirdStageOfTest()
     alert("Final stage of test loaded");
 }
 
-function loaded()
+function runTest()
 {
     alert("LOADED");
     if (!sessionStorage.stage)
@@ -43,8 +43,20 @@ function loaded()
         runThirdStageOfTest();
 }
 
+var beganTest = false;
+
 function statePopped()
 {
+    // The first time popstate fires, it's because the page has finished loading.
+    // Only then can we begin the test.
+    if (!beganTest) {
+        beganTest = true;
+        runTest();
+        // Continue with the handler if we've already began the test.
+        if (!sessionStorage.stage)
+            return;
+    }
+    
     alert("State popped - " + event.state + " (type " + typeof event.state + ")");
 
     // FIXME: Once the popstate and hashchange events fire asynchronously, we
@@ -79,7 +91,7 @@ function hashChanged()
 }
 
 </script>
-<body onload="loaded();" onpopstate="statePopped();" onhashchange="hashChanged();" onunload="/* disable page cache */">
+<body onpopstate="statePopped();" onhashchange="hashChanged();" onunload="/* disable page cache */">
 <pre>
 This test:
 -Builds up a list of state object entries with fragment URLs.

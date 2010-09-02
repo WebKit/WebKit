@@ -1,3 +1,36 @@
+2010-09-01  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Brady Eidson.
+
+        popstate event is not fired until document opts in by calling pushstate.
+        https://bugs.webkit.org/show_bug.cgi?id=41372
+
+        Add two tests to check how often popstate is being fired (for both
+        fragment changes and page changes, especially with the page cache
+        enabled).
+
+        Update existing state object tests to handle popstate being fired for
+        the page being navigated to (right after onload).
+
+        * fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.html:
+        * fast/loader/stateobjects/document-destroyed-navigate-back.html:
+        * fast/loader/stateobjects/popstate-after-load-complete-addeventlistener.html:
+        * fast/loader/stateobjects/popstate-after-load-complete-body-attribute.html:
+        * fast/loader/stateobjects/popstate-after-load-complete-body-inline-attribute.html:
+        * fast/loader/stateobjects/popstate-after-load-complete-window-attribute.html:
+        * fast/loader/stateobjects/popstate-fires-on-history-traversal-expected.txt: Added.
+        * fast/loader/stateobjects/popstate-fires-on-history-traversal.html: Added.
+        * fast/loader/stateobjects/popstate-fires-with-page-cache-expected.txt: Added.
+        * fast/loader/stateobjects/popstate-fires-with-page-cache.html: Added.
+        * fast/loader/stateobjects/pushstate-object-types.html:
+        * fast/loader/stateobjects/pushstate-then-replacestate.html:
+        * fast/loader/stateobjects/pushstate-with-fragment-urls-and-hashchange.html:
+        * fast/loader/stateobjects/replacestate-in-iframe.html:
+        * fast/loader/stateobjects/replacestate-then-pushstate.html:
+        * fast/loader/stateobjects/resources/popstate-fires-with-page-cache-1.html: Added.
+        * fast/loader/stateobjects/resources/popstate-fires-with-page-cache-2.html: Added.
+        * fast/loader/stateobjects/resources/replacestate-in-iframe-window-child.html:
+
 2010-09-01  Matthew Willis  <lilmatt@flock.com>
 
         Reviewed by Joseph Pecoraro.

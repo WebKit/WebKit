@@ -10,11 +10,12 @@ if (window.layoutTestController) {
 
 function log(txt)
 {
-    document.getElementById("logger").innerText += txt + "\n";
+    document.getElementById("logger").appendChild(document.createTextNode(txt + "\n"));
 }
-    
+
 function runTest()
 {
+    beganTest = true;
     history.replaceState("FirstEntry", "Initial entry");
     history.pushState(undefined, "undefined entry");
     history.pushState(null, "null entry");
@@ -39,10 +40,20 @@ history.pushState([FileList], "FileList entry");
     history.back();
 }
 
-function statePopped()
+var beganTest = false;
+
+onpopstate = function(event)
 {
+    // The first time popstate fires, it's because the page has finished loading.
+    // Only then can we begin the test.
+    if (!beganTest) {
+        beganTest = true;
+        runTest();
+        return;
+    }
+    
     if (event.state instanceof Date)
-        log("State popped - " + event.state * 1 + " (type " + typeof event.state + ")");
+        log("State popped - " + event.state.getTime()  + " (type " + typeof event.state + ")");
     else
         log("State popped - " + event.state + " (type " + typeof event.state + ")");
 
@@ -54,10 +65,10 @@ function statePopped()
 }
 
 </script>
-<body onload="runTest();" onpopstate="statePopped();">
-<pre id="someelement">
+<body>
+<p>
 This test calls pushState with state objects of all the different object types supported by the HTML5 "internal structured cloning algorithm" and makes sure the events contain the expected objects when the states are popped.
-</pre><br>
+</p>
 <pre id="logger"></pre>
 </body>
 </html>

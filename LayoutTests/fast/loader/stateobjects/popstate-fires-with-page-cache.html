@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<body>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css" type="text/css">
+<script src="../../js/resources/js-test-pre.js"></script>
+<div id="description"></div>
+<pre id="console"></pre>
+<script>
+description('Tests that popstate events fire when navigating between pages (and history entries created via pushState) that are in the page cache.');
+
+var testWindow;
+
+onload = function()
+{
+    if (window.layoutTestController) {
+        layoutTestController.setCanOpenWindows();
+        layoutTestController.overridePreference('WebKitUsesPageCachePreferenceKey', 1);
+    }
+    testWindow = window.open('resources/popstate-fires-with-page-cache-1.html');
+    if (!testWindow)
+        testFailed('Could not open test window');
+}
+
+var testWindowPopstateFireCount = 0;
+
+function onTestWindowPopState(event)
+{
+    debug('popstate fired with state ' + event.state);
+    testWindowPopstateFireCount++;
+    
+    switch (testWindowPopstateFireCount) {
+        case 1:
+            debug('pushState with new state object for page 1');
+            testWindow.history.pushState('newState');
+            debug('going to page 2');
+            // Set the location in a timeout to generate a history entry
+            setTimeout(function() {testWindow.location.href = 'resources/popstate-fires-with-page-cache-2.html';}, 0);            
+            break;            
+        case 2:
+            debug('going back to page 1 with new state object');
+            setTimeout(function() {testWindow.history.back();}, 0);
+            break;
+        case 3:
+            debug('going back to page 1 in initial state');
+            setTimeout(function() {testWindow.history.back();}, 0);
+            break;
+        case 4:
+            testWindow.close();
+            finishJSTest();        
+            break;
+        default:
+            testFailed('unexpected pop state event state');
+            break;            
+    }
+}
+
+var successfullyParsed = true;
+var jsTestIsAsync = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</html>

@@ -33,6 +33,7 @@
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
+#include "HistoryItem.h"
 #include "Logging.h"
 #include "PageTransitionEvent.h"
 #include <wtf/text/CString.h>
@@ -106,6 +107,10 @@ void CachedFrameBase::restore()
         m_childFrames[i]->open();
 
     m_document->enqueuePageshowEvent(PageshowEventPersisted);
+    
+    HistoryItem* historyItem = frame->loader()->history()->currentItem();
+    m_document->enqueuePopstateEvent(historyItem && historyItem->stateObject() ? historyItem->stateObject() : SerializedScriptValue::nullValue());
+    
 #if ENABLE(TOUCH_EVENTS)
     if (m_document->hasListenerType(Document::TOUCH_LISTENER))
         m_document->page()->chrome()->client()->needTouchEvents(true);

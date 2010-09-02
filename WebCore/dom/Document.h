@@ -85,7 +85,6 @@ class HTMLFrameOwnerElement;
 class HTMLHeadElement;
 class HTMLInputElement;
 class HTMLMapElement;
-class HistoryItem;
 class HitTestRequest;
 class HitTestResult;
 class InspectorTimelineAgent;
@@ -990,6 +989,7 @@ public:
     void enqueueEvent(PassRefPtr<Event>);
     void enqueuePageshowEvent(PageshowEventPersistence);
     void enqueueHashchangeEvent(const String& oldURL, const String& newURL);
+    void enqueuePopstateEvent(PassRefPtr<SerializedScriptValue> stateObject);
 
     void addMediaCanStartListener(MediaCanStartListener*);
     void removeMediaCanStartListener(MediaCanStartListener*);
@@ -1058,7 +1058,6 @@ private:
 
     void createStyleSelector();
 
-    void enqueuePopstateEvent(PassRefPtr<SerializedScriptValue> stateObject);
     void pendingEventTimerFired(Timer<Document>*);
 
     PassRefPtr<NodeList> handleZeroPadding(const HitTestRequest&, HitTestResult&) const;

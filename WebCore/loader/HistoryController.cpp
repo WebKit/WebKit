@@ -657,12 +657,6 @@ void HistoryController::pushState(PassRefPtr<SerializedScriptValue> stateObject,
     m_currentItem->setStateObject(stateObject);
     m_currentItem->setURLString(urlString);
 
-    // Create a null state object for the previous HistoryItem so that we will
-    // generate a popstate event when navigating back to it.
-    // FIXME: http://webkit.org/b/41372 implies that we shouldn't need this.
-    if (!m_previousItem->stateObject())
-        m_previousItem->setStateObject(SerializedScriptValue::create());
-
     page->backForwardList()->addItem(topItem.release());
 }
 

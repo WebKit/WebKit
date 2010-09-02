@@ -31,7 +31,7 @@ function runThirdStageOfTest()
     alert("Final stage of test loaded");
 }
 
-function loaded()
+function runTest()
 {
     if (!sessionStorage.stage) {
         // Location changes need to happen outside the onload handler to generate history entries.
@@ -42,8 +42,20 @@ function loaded()
         runThirdStageOfTest();
 }
 
+var beganTest = false;
+
 function statePopped()
 {
+    // The first time popstate fires, it's because the page has finished loading.
+    // Only then can we begin the test.
+    if (!beganTest) {
+        beganTest = true;
+        runTest();
+        // Continue with the handler if we've already began the test.
+        if (!sessionStorage.stage)
+            return;
+    }
+    
     alert("State popped - " + event.state + " (type " + typeof event.state + ")");
     if (event.state == "FirstEntry") {
         history.replaceState("FirstEntryWillLaterBeReactivated", null, "?FirstEntryWillLaterBeReactivated");
@@ -62,7 +74,7 @@ function statePopped()
 }
 
 </script>
-<body onload="loaded();" onpopstate="statePopped();" onunload="/* disable page cache */">
+<body onpopstate="statePopped();" onunload="/* disable page cache */">
 <pre>
 This test:
 -Builds up a list of state object entries with fragment URLs.

@@ -213,6 +213,8 @@ namespace WebCore {
         {
             return adoptRef(new SerializedScriptValue(SerializedScriptValueData()));
         }
+        
+        static SerializedScriptValue* nullValue();
 
         PassRefPtr<SerializedScriptValue> release()
         {

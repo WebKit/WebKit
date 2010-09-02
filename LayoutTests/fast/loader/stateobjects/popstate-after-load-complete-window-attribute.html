@@ -20,8 +20,18 @@ function runTest()
     history.back();
 }
 
+var beganTest = false;
+
 function statePopped()
 {
+    // The first time popstate fires, it's because the page has finished loading.
+    // Only then can we begin the test.
+    if (!beganTest) {
+        beganTest = true;
+        runTest();
+        return;
+    }
+
     log("State popped - " + event.state + " (type " + typeof event.state + ")");
     if (event.state == null)
         history.forward();
@@ -32,7 +42,7 @@ function statePopped()
 window.onpopstate = statePopped;
 
 </script>
-<body onload="runTest();">
+<body>
 <pre>
 This test does the following:
 -Uses window.onpopstate to add a popstate handler
