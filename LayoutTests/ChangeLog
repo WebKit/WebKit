@@ -1,3 +1,18 @@
+2010-09-01  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        DOM Selection: collapse() and selectAllChildren() should throw WRONG_DOCUMENT_ERR if node belongs to other document
+        https://bugs.webkit.org/show_bug.cgi?id=44595
+
+        Spec links:
+        http://www.whatwg.org/specs/web-apps/current-work/#dom-selection-collapse
+        http://www.whatwg.org/specs/web-apps/current-work/#dom-selection-selectallchildren
+
+        * fast/dom/Selection/script-tests/wrong-document-err.js: Added.
+        * fast/dom/Selection/wrong-document-err-expected.txt: Added.
+        * fast/dom/Selection/wrong-document-err.html: Added.
+
 2010-09-02  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Adam Barth.
