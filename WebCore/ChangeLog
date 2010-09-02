@@ -1,3 +1,40 @@
+2010-09-02  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Remove m_URL from FrameLoader and instead depend on Document's url.
+        FrameLoader::url() will be removed in a later patch.
+
+        http://bugs.webkit.org/show_bug.cgi?id=41165
+
+        No new tests, since this predominantly a refactor. Updating
+        fast/dom/early-frame-url.html.
+
+        * WebCore.exp.in:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::updateURLForPushOrReplaceState):
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::begin):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::iconURL):
+        (WebCore::FrameLoader::didOpenURL):
+        (WebCore::FrameLoader::didExplicitOpen):
+        (WebCore::FrameLoader::receivedFirstData):
+        (WebCore::FrameLoader::url):
+        (WebCore::FrameLoader::setOutgoingReferrer):
+        (WebCore::FrameLoader::startIconLoader):
+        (WebCore::FrameLoader::commitIconURLToIconDatabase):
+        (WebCore::FrameLoader::finishedParsing):
+        (WebCore::FrameLoader::checkIfDisplayInsecureContent):
+        (WebCore::FrameLoader::checkIfRunInsecureContent):
+        (WebCore::FrameLoader::updateFirstPartyForCookies):
+        (WebCore::FrameLoader::loadInSameDocument):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::open):
+        (WebCore::FrameLoader::shouldScrollToAnchor):
+        * loader/FrameLoader.h:
+
 2010-09-01  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Adam Barth.

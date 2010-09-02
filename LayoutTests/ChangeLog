@@ -1,3 +1,15 @@
+2010-09-02  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Update a test that busy-waits when it shouldn't and therefore makes
+        assumptions about the initialization sequence of Document::url() that
+        are no longer valid.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41165.
+
+        * fast/dom/resources/a.html:
+
 2010-09-01  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Adam Barth.

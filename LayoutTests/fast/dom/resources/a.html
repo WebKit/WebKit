@@ -1,9 +1,12 @@
 <HTML>
 <HEAD>
 <SCRIPT>
-function writeDot()
+function checkURL()
 {
-    while(!parent.frames[1].document.URL) { }
+    if (!parent.frames[1].document.URL)
+        setTimeout(checkURL, 0);
+    else if (window.layoutTestController)
+        layoutTestController.notifyDone();
 }
 </SCRIPT>
 </HEAD>
@@ -11,10 +14,8 @@ function writeDot()
 This test checks whether document.URL is initially set to an empty
 value or "about:blank" for frames. The right answer is
 "about:blank". If it is empty, then this test will hang.
-	<script>
-	writeDot();
-	if (window.layoutTestController)
-	    layoutTestController.notifyDone();
-	</script>
+<script>
+    checkURL();
+</script>
 </BODY>
 </HTML>
