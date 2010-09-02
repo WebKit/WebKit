@@ -1,3 +1,14 @@
+2010-09-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add WTFURL to the JavaScriptCore build on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=45075
+
+        Building code is good.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2010-09-02  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Oliver Hunt.
