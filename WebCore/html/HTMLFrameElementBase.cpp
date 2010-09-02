@@ -37,6 +37,7 @@
 #include "HTMLNames.h"
 #include "KURL.h"
 #include "Page.h"
+#include "RenderEmbeddedObject.h"
 #include "RenderFrame.h"
 #include "ScriptController.h"
 #include "ScriptEventListener.h"
@@ -210,10 +211,10 @@ void HTMLFrameElementBase::attach()
     setRemainsAliveOnRemovalFromTree(false);
 
     HTMLFrameOwnerElement::attach();
-    
-    if (RenderPart* renderPart = toRenderPart(renderer())) {
+
+    if (RenderPart* part = renderPart()) {
         if (Frame* frame = contentFrame())
-            renderPart->setWidget(frame->view());
+            part->setWidget(frame->view());
     }
 }
 
@@ -257,20 +258,20 @@ bool HTMLFrameElementBase::isURLAttribute(Attribute *attr) const
 
 int HTMLFrameElementBase::width() const
 {
-    if (!renderer())
+    if (!renderBox())
         return 0;
-    
+
     document()->updateLayoutIgnorePendingStylesheets();
-    return toRenderBox(renderer())->width();
+    return renderBox()->width();
 }
 
 int HTMLFrameElementBase::height() const
 {
-    if (!renderer())
+    if (!renderBox())
         return 0;
-    
+
     document()->updateLayoutIgnorePendingStylesheets();
-    return toRenderBox(renderer())->height();
+    return renderBox()->height();
 }
 
 void HTMLFrameElementBase::setRemainsAliveOnRemovalFromTree(bool value)

@@ -24,6 +24,7 @@
 #include "DOMWindow.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "RenderPart.h"
 
 #if ENABLE(SVG)
 #include "ExceptionCode.h"
@@ -37,6 +38,15 @@ HTMLFrameOwnerElement::HTMLFrameOwnerElement(const QualifiedName& tagName, Docum
     , m_contentFrame(0)
     , m_sandboxFlags(SandboxNone)
 {
+}
+
+RenderPart* HTMLFrameOwnerElement::renderPart() const
+{
+    // HTMLObjectElement and HTMLEmbedElement may return arbitrary renderers
+    // when using fallback content.
+    if (!renderer() || !renderer()->isRenderPart())
+        return 0;
+    return toRenderPart(renderer());
 }
 
 void HTMLFrameOwnerElement::willRemove()

@@ -63,16 +63,6 @@ SubframeLoader::SubframeLoader(Frame* frame)
 {
 }
 
-static HTMLPlugInElement* toPlugInElement(Node* node)
-{
-    if (!node)
-        return 0;
-
-    ASSERT(node->hasTagName(objectTag) || node->hasTagName(embedTag) || node->hasTagName(appletTag));
-
-    return static_cast<HTMLPlugInElement*>(node);
-}
-
 void SubframeLoader::clear()
 {
     m_containsPlugins = false;
@@ -99,7 +89,7 @@ bool SubframeLoader::requestFrame(HTMLFrameOwnerElement* ownerElement, const Str
     return true;
 }
 
-bool SubframeLoader::requestObject(RenderEmbeddedObject* renderer, const String& url, const AtomicString& frameName,
+bool SubframeLoader::requestObject(HTMLPlugInElement* ownerElement, const String& url, const AtomicString& frameName,
     const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
     if (url.isEmpty() && mimeType.isEmpty())
@@ -109,6 +99,12 @@ bool SubframeLoader::requestObject(RenderEmbeddedObject* renderer, const String&
         // It is unsafe to honor the request for this object.
         return false;
     }
+
+    // FIXME: None of this code should use renderers!
+    RenderEmbeddedObject* renderer = ownerElement->renderEmbeddedObject();
+    ASSERT(renderer);
+    if (!renderer)
+        return false;
 
     KURL completedURL;
     if (!url.isEmpty())
@@ -126,18 +122,18 @@ bool SubframeLoader::requestObject(RenderEmbeddedObject* renderer, const String&
             return false;
         if (m_frame->document() && m_frame->document()->securityOrigin()->isSandboxed(SandboxPlugins))
             return false;
-        return loadPlugin(renderer, completedURL, mimeType, paramNames, paramValues, useFallback);
-    }
 
-    ASSERT(renderer->node()->hasTagName(objectTag) || renderer->node()->hasTagName(embedTag));
-    HTMLPlugInElement* element = static_cast<HTMLPlugInElement*>(renderer->node());
+        ASSERT(ownerElement->hasTagName(objectTag) || ownerElement->hasTagName(embedTag));
+        HTMLPlugInElement* pluginElement = static_cast<HTMLPlugInElement*>(ownerElement);
+
+        return loadPlugin(pluginElement, completedURL, mimeType, paramNames, paramValues, useFallback);
+    }
 
     // If the plug-in element already contains a subframe, loadOrRedirectSubframe will re-use it. Otherwise,
     // it will create a new frame and set it as the RenderPart's widget, causing what was previously 
     // in the widget to be torn down.
-    return loadOrRedirectSubframe(element, completedURL, frameName, true, true);
+    return loadOrRedirectSubframe(ownerElement, completedURL, frameName, true, true);
 }
-
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 PassRefPtr<Widget> SubframeLoader::loadMediaPlayerProxyPlugin(Node* node, const KURL& url,
@@ -304,7 +300,6 @@ bool SubframeLoader::allowPlugins(ReasonForCallingAllowPlugins reason)
     return allowed;
 }
 
-
 bool SubframeLoader::shouldUsePlugin(const KURL& url, const String& mimeType, bool hasFallback, bool& useFallback)
 {
     if (m_frame->loader()->client()->shouldUsePluginDocument(mimeType)) {
@@ -327,37 +322,46 @@ bool SubframeLoader::shouldUsePlugin(const KURL& url, const String& mimeType, bo
     useFallback = objectType == ObjectContentNone && hasFallback;
     return objectType == ObjectContentNone || objectType == ObjectContentNetscapePlugin || objectType == ObjectContentOtherPlugin;
 }
-  
-bool SubframeLoader::loadPlugin(RenderEmbeddedObject* renderer, const KURL& url, const String& mimeType, 
+
+Document* SubframeLoader::document() const
+{
+    return m_frame->document();
+}
+
+bool SubframeLoader::loadPlugin(HTMLPlugInElement* pluginElement, const KURL& url, const String& mimeType,
     const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback)
 {
-    RefPtr<Widget> widget;
+    RenderEmbeddedObject* renderer = pluginElement->renderEmbeddedObject();
 
-    if (renderer && !useFallback) {
-        HTMLPlugInElement* element = toPlugInElement(renderer->node());
+    // FIXME: This code should not depend on renderer!
+    if (!renderer || useFallback)
+        return false;
 
-        if (!SecurityOrigin::canLoad(url, String(), m_frame->document())) {
-            FrameLoader::reportLocalLoadFailed(m_frame, url.string());
-            return false;
-        }
-
-        m_frame->loader()->checkIfRunInsecureContent(m_frame->document()->securityOrigin(), url);
-
-        widget = m_frame->loader()->client()->createPlugin(IntSize(renderer->contentWidth(), renderer->contentHeight()),
-                                        element, url, paramNames, paramValues, mimeType,
-                                        m_frame->document()->isPluginDocument() && !m_containsPlugins);
-        if (widget) {
-            renderer->setWidget(widget);
-            m_containsPlugins = true;
-
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-            renderer->node()->setNeedsStyleRecalc(SyntheticStyleChange);
-#endif
-        } else
-            renderer->setShowsMissingPluginIndicator();
+    if (!SecurityOrigin::canLoad(url, String(), document())) {
+        FrameLoader::reportLocalLoadFailed(m_frame, url.string());
+        return false;
     }
 
-    return widget;
+    FrameLoader* frameLoader = m_frame->loader();
+    frameLoader->checkIfRunInsecureContent(document()->securityOrigin(), url);
+
+    IntSize contentSize(renderer->contentWidth(), renderer->contentHeight());
+    bool loadManually = document()->isPluginDocument() && !m_containsPlugins;
+    RefPtr<Widget> widget = frameLoader->client()->createPlugin(contentSize,
+        pluginElement, url, paramNames, paramValues, mimeType, loadManually);
+
+    if (!widget) {
+        renderer->setShowsMissingPluginIndicator();
+        return false;
+    }
+
+    renderer->setWidget(widget);
+    m_containsPlugins = true;
+
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    pluginElement->setNeedsStyleRecalc(SyntheticStyleChange);
+#endif
+    return true;
 }
 
 KURL SubframeLoader::completeURL(const String& url) const

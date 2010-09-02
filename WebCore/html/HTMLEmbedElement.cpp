@@ -186,8 +186,8 @@ void HTMLEmbedElement::attach()
 void HTMLEmbedElement::updateWidget()
 {
     document()->updateStyleIfNeeded();
-    if (m_needWidgetUpdate && renderer() && !isImageType())
-        toRenderEmbeddedObject(renderer())->updateWidget(true);
+    if (m_needWidgetUpdate && renderEmbeddedObject() && !isImageType())
+        renderEmbeddedObject()->updateWidget(true);
 }
 
 void HTMLEmbedElement::insertedIntoDocument()

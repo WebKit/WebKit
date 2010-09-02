@@ -1,3 +1,60 @@
+2010-09-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Remove rendering types from SubframeLoader and split RenderEmbeddedObject::updateWidget in preparation for moving to DOM
+        https://bugs.webkit.org/show_bug.cgi?id=45007
+
+        This is just moving around code (and attempting to make it more sane).
+        I also tried to use more specific types where possible.
+        The SubframeLoader no longer uses any rendering types in its API.
+
+        I split RenderEmbeddedObject::updateWidget into a bunch of functions.
+        It was obvious before, but now super-obvious after the split that these
+        new functions do not belong in RenderEmbeddedObject.  Instead they
+        need to be moved to their respective DOM classes.  I've added FIXMEs
+        next to each of the functions which should be moved, but I've not moved
+        any of the logic out of RenderEmbeddedObject.cpp yet in an effort to
+        keep this patch as simple as possible.
+
+        No functional change, thus no tests.
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::updateWidget):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::attach):
+        (WebCore::HTMLFrameElementBase::width):
+        (WebCore::HTMLFrameElementBase::height):
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::renderPart):
+        * html/HTMLFrameOwnerElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::renderWidgetForJSBindings):
+        (WebCore::HTMLObjectElement::createRenderer):
+        (WebCore::HTMLObjectElement::updateWidget):
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::renderEmbeddedObject):
+        * html/HTMLPlugInElement.h:
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::appendBytes):
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::requestObject):
+        (WebCore::SubframeLoader::document):
+        (WebCore::SubframeLoader::loadPlugin):
+        * loader/SubframeLoader.h:
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::isNetscapePlugin):
+        (WebCore::hasFallbackContent):
+        (WebCore::parametersFromObject):
+        (WebCore::updateWidgetForObjectElement):
+        (WebCore::parametersFromEmbed):
+        (WebCore::updateWidgetForEmbedElement):
+        (WebCore::updateWidgetForMediaElement):
+        (WebCore::RenderEmbeddedObject::updateWidget):
+        * rendering/RenderEmbeddedObject.h:
+        (WebCore::RenderEmbeddedObject::setHasFallbackContent):
+        * rendering/RenderLayerCompositor.h:
+
 2010-09-01  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Jian Li.

@@ -155,6 +155,7 @@ public:
     // their parent document.
     bool shouldPropagateCompositingToEnclosingIFrame() const;
 
+    // FIXME: This should be a RenderIFrame*
     HTMLFrameOwnerElement* enclosingIFrameElement() const;
 
     static RenderLayerCompositor* iframeContentsCompositor(RenderIFrame*);

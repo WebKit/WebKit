@@ -81,6 +81,15 @@ void HTMLPlugInElement::detach()
     HTMLFrameOwnerElement::detach();
 }
 
+RenderEmbeddedObject* HTMLPlugInElement::renderEmbeddedObject() const
+{
+    // HTMLObjectElement and HTMLEmbedElement may return arbitrary renderers
+    // when using fallback content.
+    if (!renderer() || !renderer()->isEmbeddedObject())
+        return 0;
+    return toRenderEmbeddedObject(renderer());
+}
+
 PassScriptInstance HTMLPlugInElement::getInstance() const
 {
     Frame* frame = document()->frame();

@@ -40,16 +40,17 @@
 
 namespace WebCore {
 
+class Document;
 class Frame;
 class FrameLoaderClient;
 class HTMLAppletElement;
 class HTMLFrameOwnerElement;
+class HTMLPlugInElement;
 class IntSize;
 class KURL;
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 class Node;
 #endif
-class RenderEmbeddedObject;
 class Widget;
 
 // This is a slight misnomer. It handles the higher level logic of loading both subframes and plugins.
@@ -60,10 +61,12 @@ public:
     void clear();
 
     bool requestFrame(HTMLFrameOwnerElement*, const String& url, const AtomicString& frameName, bool lockHistory = true, bool lockBackForwardList = true);    
-    bool requestObject(RenderEmbeddedObject*, const String& url, const AtomicString& frameName,
+    bool requestObject(HTMLPlugInElement*, const String& url, const AtomicString& frameName,
         const String& serviceType, const Vector<String>& paramNames, const Vector<String>& paramValues);
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    // FIXME: This should take Element* instead of Node*, or better yet the
+    // specific type of Element which this code depends on.
     PassRefPtr<Widget> loadMediaPlayerProxyPlugin(Node*, const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues);
 #endif
 
@@ -76,10 +79,12 @@ public:
 private:
     Frame* loadOrRedirectSubframe(HTMLFrameOwnerElement*, const KURL&, const AtomicString& frameName, bool lockHistory, bool lockBackForwardList);
     Frame* loadSubframe(HTMLFrameOwnerElement*, const KURL&, const String& name, const String& referrer);
-    bool loadPlugin(RenderEmbeddedObject*, const KURL&, const String& mimeType,
+    bool loadPlugin(HTMLPlugInElement*, const KURL&, const String& mimeType,
         const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback);
 
     bool shouldUsePlugin(const KURL&, const String& mimeType, bool hasFallback, bool& useFallback);
+
+    Document* document() const;
 
     bool m_containsPlugins;
     Frame* m_frame;

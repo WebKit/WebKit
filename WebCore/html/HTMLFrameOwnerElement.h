@@ -28,6 +28,7 @@ namespace WebCore {
 
 class DOMWindow;
 class Frame;
+class RenderPart;
 
 #if ENABLE(SVG)
 class SVGDocument;
@@ -40,6 +41,11 @@ public:
     Frame* contentFrame() const { return m_contentFrame; }
     DOMWindow* contentWindow() const;
     Document* contentDocument() const;
+
+    // Most subclasses use RenderPart (either RenderEmbeddedObject or RenderIFrame)
+    // except for HTMLObjectElement and HTMLEmbedElement which may return any
+    // RenderObject when using fallback content.
+    RenderPart* renderPart() const;
 
 #if ENABLE(SVG)
     SVGDocument* getSVGDocument(ExceptionCode&) const;
