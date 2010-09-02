@@ -433,6 +433,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\MutableDictionary.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\MutableDictionary.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\NotImplemented.h"
 				>
 			</File>
@@ -1336,6 +1344,14 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKMutableArray.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKMutableDictionary.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKMutableDictionary.h"
 						>
 					</File>
 					<File

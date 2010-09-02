@@ -23,34 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKit2_h
-#define WebKit2_h
+#include "WKMutableDictionary.h"
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKType.h>
+#include "MutableDictionary.h"
+#include "WKAPICast.h"
 
-#include <WebKit2/WKArray.h>
-#include <WebKit2/WKBackForwardList.h>
-#include <WebKit2/WKBackForwardListItem.h>
-#include <WebKit2/WKContext.h>
-#include <WebKit2/WKData.h>
-#include <WebKit2/WKError.h>
-#include <WebKit2/WKFormSubmissionListener.h>
-#include <WebKit2/WKFrame.h>
-#include <WebKit2/WKFramePolicyListener.h>
-#include <WebKit2/WKMutableArray.h>
-#include <WebKit2/WKMutableDictionary.h>
-#include <WebKit2/WKNavigationData.h>
-#include <WebKit2/WKPage.h>
-#include <WebKit2/WKPageNamespace.h>
-#include <WebKit2/WKPreferences.h>
-#include <WebKit2/WKString.h>
-#include <WebKit2/WKURL.h>
-#include <WebKit2/WKURLRequest.h>
-#include <WebKit2/WKURLResponse.h>
+using namespace WebKit;
 
-#if !__APPLE__ || __OBJC__
-#include <WebKit2/WKView.h>
-#endif
+WKMutableDictionaryRef WKMutableDictionaryCreate()
+{
+    RefPtr<MutableDictionary> dictionary = MutableDictionary::create();
+    return toRef(dictionary.release().releaseRef());
+}
 
-#endif /* WebKit2_h */
+bool WKDictionaryIsMutable(WKMutableDictionaryRef dictionaryRef)
+{
+    return toWK(dictionaryRef)->isMutable();
+}
+
+bool WKDictionaryAddItem(WKMutableDictionaryRef dictionaryRef, WKStringRef keyRef, WKTypeRef itemRef)
+{
+    return toWK(dictionaryRef)->add(toWK(keyRef)->string(), toWK(itemRef));
+}
+
+bool WKDictionarySetItem(WKMutableDictionaryRef dictionaryRef, WKStringRef keyRef, WKTypeRef itemRef)
+{
+    return toWK(dictionaryRef)->set(toWK(keyRef)->string(), toWK(itemRef));
+}

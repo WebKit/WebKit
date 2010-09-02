@@ -159,6 +159,7 @@ HEADERS += \
     Shared/ImmutableArray.h \
     Shared/ImmutableDictionary.h \
     Shared/MutableArray.h \
+    Shared/MutableDictionary.h \
     Shared/NotImplemented.h \
     Shared/qt/WebEventFactoryQt.h \
     Shared/VisitedLinkTable.h \
@@ -269,6 +270,7 @@ SOURCES += \
     Shared/ImmutableArray.cpp \
     Shared/ImmutableDictionary.cpp \
     Shared/MutableArray.cpp \
+    Shared/MutableDictionary.cpp \
     Shared/VisitedLinkTable.cpp \
     Shared/WebEventConversion.cpp \
     Shared/WebPreferencesStore.cpp \

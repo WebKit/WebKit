@@ -38,11 +38,13 @@ typedef const void* WKTypeRef;
 typedef const struct OpaqueWKArray* WKArrayRef;
 typedef struct OpaqueWKArray* WKMutableArrayRef;
 
+typedef const struct OpaqueWKDictionary* WKDictionaryRef;
+typedef struct OpaqueWKDictionary* WKMutableDictionaryRef;
+
 typedef const struct OpaqueWKBackForwardList* WKBackForwardListRef;
 typedef const struct OpaqueWKBackForwardListItem* WKBackForwardListItemRef;
 typedef const struct OpaqueWKContext* WKContextRef;
 typedef const struct OpaqueWKData* WKDataRef;
-typedef const struct OpaqueWKDictionary* WKDictionaryRef;
 typedef const struct OpaqueWKError* WKErrorRef;
 typedef const struct OpaqueWKFormSubmissionListener* WKFormSubmissionListenerRef;
 typedef const struct OpaqueWKFrame* WKFrameRef;

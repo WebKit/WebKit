@@ -43,6 +43,7 @@ namespace WebKit {
 class ImmutableArray;
 class ImmutableDictionary;
 class MutableArray;
+class MutableDictionary;
 class WebBackForwardList;
 class WebBackForwardListItem;
 class WebContext;
@@ -69,6 +70,7 @@ template<> struct APITypeInfo<WKFormSubmissionListenerRef>      { typedef WebFor
 template<> struct APITypeInfo<WKFramePolicyListenerRef>         { typedef WebFramePolicyListenerProxy* ImplType; };
 template<> struct APITypeInfo<WKFrameRef>                       { typedef WebFrameProxy* ImplType; };
 template<> struct APITypeInfo<WKMutableArrayRef>                { typedef MutableArray* ImplType; };
+template<> struct APITypeInfo<WKMutableDictionaryRef>           { typedef MutableDictionary* ImplType; };
 template<> struct APITypeInfo<WKNavigationDataRef>              { typedef WebNavigationData* ImplType; };
 template<> struct APITypeInfo<WKPageNamespaceRef>               { typedef WebPageNamespace* ImplType; };
 template<> struct APITypeInfo<WKPageRef>                        { typedef WebPageProxy* ImplType; };
@@ -85,6 +87,7 @@ template<> struct ImplTypeInfo<APIObject*>                      { typedef WKType
 template<> struct ImplTypeInfo<ImmutableArray*>                 { typedef WKArrayRef APIType; };
 template<> struct ImplTypeInfo<ImmutableDictionary*>            { typedef WKDictionaryRef APIType; };
 template<> struct ImplTypeInfo<MutableArray*>                   { typedef WKMutableArrayRef APIType; };
+template<> struct ImplTypeInfo<MutableDictionary*>              { typedef WKMutableDictionaryRef APIType; };
 template<> struct ImplTypeInfo<WebBackForwardList*>             { typedef WKBackForwardListRef APIType; };
 template<> struct ImplTypeInfo<WebBackForwardListItem*>         { typedef WKBackForwardListItemRef APIType; };
 template<> struct ImplTypeInfo<WebContext*>                     { typedef WKContextRef APIType; };
@@ -124,6 +127,7 @@ private:
 template<typename T>
 inline typename WebKit::APITypeInfo<T>::ImplType toWK(T t)
 {
+    // An example of the conversions that take place:
     // const struct OpaqueWKArray* -> const struct OpaqueWKArray -> struct OpaqueWKArray -> struct OpaqueWKArray* -> ImmutableArray*
     
     typedef typename WTF::RemovePointer<T>::Type PotentiallyConstValueType;

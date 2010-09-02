@@ -1,3 +1,39 @@
+2010-09-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add WKMutableDictionary API for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=45117
+
+        Add WKMutableDictionary API that inherits from WKDictionaryRef
+        the same way WKMutableArrayRef inherits from WKArrayRef.
+
+        * Shared/ImmutableDictionary.h:
+        (WebKit::ImmutableDictionary::get):
+        (WebKit::ImmutableDictionary::isMutable):
+        * Shared/MutableDictionary.cpp: Added.
+        (WebKit::MutableDictionary::MutableDictionary):
+        (WebKit::MutableDictionary::~MutableDictionary):
+        (WebKit::MutableDictionary::add):
+        (WebKit::MutableDictionary::set):
+        * Shared/MutableDictionary.h: Added.
+        (WebKit::MutableDictionary::create):
+        (WebKit::MutableDictionary::isMutable):
+        * UIProcess/API/C/WKAPICast.h:
+        (toWK):
+        * UIProcess/API/C/WKBase.h:
+        * UIProcess/API/C/WKMutableDictionary.cpp: Added.
+        (WKMutableDictionaryCreate):
+        (WKDictionaryIsMutable):
+        (WKDictionaryAddItem):
+        (WKDictionarySetItem):
+        * UIProcess/API/C/WKMutableDictionary.h: Added.
+        * UIProcess/API/C/WebKit2.h:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.make:
+
 2010-09-02  Jessie Berlin  <jberlin@apple.com>
 
         Windows build fix. Unreviewed.
