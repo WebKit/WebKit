@@ -110,7 +110,7 @@ private:
 
 class PostMessageDecoder {
 public:
-    PostMessageDecoder(APIObject** root)
+    PostMessageDecoder(RefPtr<APIObject>& root)
         : m_root(root)
     {
     }
@@ -127,30 +127,30 @@ public:
             if (!decoder->decode(size))
                 return false;
 
-            Vector<APIObject*> vector;
+            Vector<RefPtr<APIObject> > vector;
             for (size_t i = 0; i < size; ++i) {
-                APIObject* element;
-                PostMessageDecoder messageCoder(&element);
+                RefPtr<APIObject> element;
+                PostMessageDecoder messageCoder(element);
                 if (!decoder->decode(messageCoder))
                     return false;
-                vector.append(element);
+                vector.append(element.release());
             }
 
-            *(coder.m_root) = ImmutableArray::adopt(vector).leakRef();
+            coder.m_root = ImmutableArray::adopt(vector);
             break;
         }
         case APIObject::TypeString: {
             String string;
             if (!decoder->decode(string))
                 return false;
-            *(coder.m_root) = WebString::create(string).leakRef();
+            coder.m_root = WebString::create(string);
             break;
         }
         case APIObject::TypePage: {
             uint64_t pageID;
             if (!decoder->decode(pageID))
                 return false;
-            *(coder.m_root) = WebProcess::shared().webPage(pageID);
+            coder.m_root = WebProcess::shared().webPage(pageID);
             break;
         }
         default:
@@ -161,7 +161,7 @@ public:
     }
 
 private:
-    APIObject** m_root;
+    RefPtr<APIObject>& m_root;
 };
 
 }
@@ -305,17 +305,13 @@ void InjectedBundle::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC:
 {
     switch (messageID.get<InjectedBundleMessage::Kind>()) {
         case InjectedBundleMessage::PostMessage: {
-            String messageName;
-            // FIXME: This should be a RefPtr<APIObject>
-            APIObject* messageBody = 0;
-            PostMessageDecoder messageCoder(&messageBody);
+            String messageName;            
+            RefPtr<APIObject> messageBody;
+            PostMessageDecoder messageCoder(messageBody);
             if (!arguments->decode(CoreIPC::Out(messageName, messageCoder)))
                 return;
 
-            didReceiveMessage(messageName, messageBody);
-
-            messageBody->deref();
-
+            didReceiveMessage(messageName, messageBody.get());
             return;
         }
     }

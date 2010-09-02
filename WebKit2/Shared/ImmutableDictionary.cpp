@@ -48,13 +48,13 @@ PassRefPtr<ImmutableArray> ImmutableDictionary::keys() const
     if (m_map.isEmpty())
         return ImmutableArray::create();
 
-    Vector<APIObject*> vector;
+    Vector<RefPtr<APIObject> > vector;
     vector.reserveInitialCapacity(m_map.size());
 
     MapType::const_iterator::Keys it = m_map.begin().keys();
     MapType::const_iterator::Keys end = m_map.end().keys();
     for (; it != end; ++it)
-        vector.uncheckedAppend(WebString::create(*it).releaseRef());
+        vector.uncheckedAppend(WebString::create(*it));
 
     return ImmutableArray::adopt(vector);
 }

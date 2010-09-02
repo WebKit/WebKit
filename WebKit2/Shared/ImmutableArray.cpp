@@ -34,18 +34,17 @@ ImmutableArray::ImmutableArray()
 ImmutableArray::ImmutableArray(APIObject** entries, size_t size)
     : m_entries(size)
 {
-    memcpy(m_entries.data(), entries, size);
+    for (size_t i = 0; i < size; ++i)
+        m_entries[i] = entries[i];
 }
 
-ImmutableArray::ImmutableArray(Vector<APIObject*>& entries)
+ImmutableArray::ImmutableArray(Vector<RefPtr<APIObject> >& entries)
 {
     m_entries.swap(entries);
 }
 
 ImmutableArray::~ImmutableArray()
 {
-    for (size_t i = 0; i < m_entries.size(); ++i)
-        m_entries[i]->deref();
 }
 
 } // namespace WebKit

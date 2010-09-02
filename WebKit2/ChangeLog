@@ -2,6 +2,52 @@
 
         Reviewed by Anders Carlsson.
 
+        Simplify ownership semantics of some WebKit2 types
+        https://bugs.webkit.org/show_bug.cgi?id=45120
+
+        - Make ImmutableArray and MutableArray use a Vector<RefPtr<APIObject> > and
+          therefore ref any items it takes in.
+        - Make the PostMessageDecoder operate on a RefPtr<APIObject>& to avoid the odd
+          leaking semantics.
+
+        * Shared/ImmutableArray.cpp:
+        (WebKit::ImmutableArray::ImmutableArray): This constructor now uses a for-loop
+        instead of memcpy to ref each item.
+        (WebKit::ImmutableArray::~ImmutableArray): No longer necessary to manually deref.
+        * Shared/ImmutableArray.h:
+        (WebKit::ImmutableArray::adopt):
+        (WebKit::ImmutableArray::at):
+        Changes to accommodate entries being changed to a Vector<RefPtr<APIObject> >.
+
+        * Shared/ImmutableDictionary.cpp:
+        (WebKit::ImmutableDictionary::keys):
+        Build a Vector<RefPtr<APIObject> >.
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::backListAsImmutableArrayWithLimit):
+        (WebKit::WebBackForwardList::forwardListAsImmutableArrayWithLimit):
+        Ditto.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::PostMessageEncoder::PostMessageDecoder::PostMessageDecoder):
+        (WebKit::PostMessageEncoder::PostMessageDecoder::decode):
+        (WebKit::WebContext::didReceiveMessage):
+        APIObject>& to avoid the odd leaking semantics.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::PostMessageEncoder::PostMessageDecoder::PostMessageDecoder):
+        (WebKit::PostMessageEncoder::PostMessageDecoder::decode):
+        (WebKit::InjectedBundle::didReceiveMessage):
+        Ditto.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::childFrames):
+        Build a Vector<RefPtr<APIObject> >.
+
+2010-09-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Add WKMutableDictionary API for WebKit2
         https://bugs.webkit.org/show_bug.cgi?id=45117
 

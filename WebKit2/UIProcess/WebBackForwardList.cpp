@@ -173,15 +173,12 @@ PassRefPtr<ImmutableArray> WebBackForwardList::backListAsImmutableArrayWithLimit
     if (!size)
         return ImmutableArray::create();
 
-    Vector<APIObject*> vector;
+    Vector<RefPtr<APIObject> > vector;
     vector.reserveInitialCapacity(size);
 
     ASSERT(backListSize >= size);
-    for (unsigned i = backListSize - size; i < backListSize; ++i) {
-        APIObject* item = m_entries[i].get();
-        item->ref();
-        vector.uncheckedAppend(item);
-    }
+    for (unsigned i = backListSize - size; i < backListSize; ++i)
+        vector.uncheckedAppend(m_entries[i].get());
 
     return ImmutableArray::adopt(vector);
 }
@@ -192,16 +189,13 @@ PassRefPtr<ImmutableArray> WebBackForwardList::forwardListAsImmutableArrayWithLi
     if (!size)
         return ImmutableArray::create();
 
-    Vector<APIObject*> vector;
+    Vector<RefPtr<APIObject> > vector;
     vector.reserveInitialCapacity(size);
 
     unsigned last = m_current + size;
     ASSERT(last < m_entries.size());
-    for (unsigned i = m_current + 1; i <= last; ++i) {
-        APIObject* item = m_entries[i].get();
-        item->ref();
-        vector.uncheckedAppend(item);
-    }
+    for (unsigned i = m_current + 1; i <= last; ++i)
+        vector.uncheckedAppend(m_entries[i].get());
 
     return ImmutableArray::adopt(vector);
 }
