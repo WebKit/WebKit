@@ -1423,6 +1423,28 @@ RenderStyle* Element::computedStyle(PseudoId pseudoElementSpecifier)
     return pseudoElementSpecifier ? data->m_computedStyle->getCachedPseudoStyle(pseudoElementSpecifier) : data->m_computedStyle.get();
 }
 
+AtomicString Element::computeInheritedLanguage() const
+{
+    const Node* n = this;
+    AtomicString value;
+    // The language property is inherited, so we iterate over the parents to find the first language.
+    while (n && value.isNull()) {
+        if (n->isElementNode()) {
+            // Spec: xml:lang takes precedence -- http://www.w3.org/TR/xhtml1/#C_7
+            value = static_cast<const Element*>(n)->fastGetAttribute(XMLNames::langAttr);
+            if (value.isNull())
+                value = static_cast<const Element*>(n)->fastGetAttribute(HTMLNames::langAttr);
+        } else if (n->isDocumentNode()) {
+            // checking the MIME content-language
+            value = static_cast<const Document*>(n)->contentLanguage();
+        }
+
+        n = n->parent();
+    }
+
+    return value;
+}
+
 void Element::cancelFocusAppearanceUpdate()
 {
     if (hasRareData())

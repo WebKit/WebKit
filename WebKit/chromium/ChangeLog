@@ -1,3 +1,15 @@
+2010-09-02  Ilya Sherman  <isherman@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Exposing computing an element's inherited language, per the DOM, in the
+        Chromium API -- primarily for use with autofill i18n.
+        https://bugs.webkit.org/show_bug.cgi?id=44803
+
+        * public/WebElement.h:
+        * src/WebElement.cpp:
+        (WebKit::WebElement::computeInheritedLanguage):
+
 2010-09-01  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

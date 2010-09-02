@@ -1,3 +1,19 @@
+2010-09-02  Ilya Sherman  <isherman@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Decompose computing an element's inherited language, expose this
+        capability to clients (in particular, for Chromium).
+        https://bugs.webkit.org/show_bug.cgi?id=44803
+
+        No new tests -- just refactoring + exposing code.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        * dom/Element.cpp:
+        (WebCore::Element::computeInheritedLang):
+        * dom/Element.h:
+
 2010-08-31  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Carlson.
