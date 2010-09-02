@@ -1,3 +1,22 @@
+2010-09-02  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        WebInspector: Timeline instrumentation code can crash browser.
+
+        Steps:
+        1) load the site
+        2) open inspector
+        3) start timeline recording
+        4) reload inspected page
+        got NPE
+
+        https://bugs.webkit.org/show_bug.cgi?id=45098
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didReceiveResponse):
+        (WebCore::ResourceLoader::didReceiveData):
+
 2010-09-02  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.
