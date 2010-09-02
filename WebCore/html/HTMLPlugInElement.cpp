@@ -177,9 +177,4 @@ NPObject* HTMLPlugInElement::getNPObject()
 
 #endif /* ENABLE(NETSCAPE_PLUGIN_API) */
 
-void HTMLPlugInElement::updateWidgetCallback(Node* n)
-{
-    static_cast<HTMLPlugInElement*>(n)->updateWidget();
-}
-
 }

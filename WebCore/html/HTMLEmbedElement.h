@@ -38,17 +38,13 @@ private:
     virtual void parseMappedAttribute(Attribute*);
 
     virtual void attach();
-    virtual bool canLazyAttach() { return false; }
     virtual bool rendererIsNeeded(RenderStyle*);
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
     virtual void attributeChanged(Attribute*, bool preserveDecls = false);
     
     virtual bool isURLAttribute(Attribute*) const;
     virtual const QualifiedName& imageSourceAttributeName() const;
-
-    virtual void updateWidget();
 
     virtual RenderWidget* renderWidgetForJSBindings() const;
 

@@ -44,13 +44,22 @@ protected:
 
     bool isImageType();
 
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+
+    static void updateWidgetCallback(Node*);
+
     OwnPtr<HTMLImageLoader> m_imageLoader;
     String m_serviceType;
     String m_url;
 
 private:
+    virtual bool canLazyAttach() { return false; }
+
     virtual void willMoveToNewOwnerDocument();
 
+    void updateWidget();
+    virtual bool useFallbackContent() const { return false; }
+    
     bool m_needsWidgetUpdate;
 };
 

@@ -27,6 +27,7 @@
 #include "HTMLImageLoader.h"
 #include "Image.h"
 #include "RenderEmbeddedObject.h"
+#include "RenderImage.h"
 
 namespace WebCore {
 
@@ -58,11 +59,38 @@ bool HTMLPlugInImageElement::isImageType()
     return Image::supportsType(m_serviceType);
 }
 
+RenderObject* HTMLPlugInImageElement::createRenderer(RenderArena* arena, RenderStyle* style)
+{
+    // Fallback content breaks the DOM->Renderer class relationship of this
+    // class and all superclasses because createObject won't necessarily
+    // return a RenderEmbeddedObject, RenderPart or even RenderWidget.
+    if (useFallbackContent())
+        return RenderObject::createObject(this, style);
+    if (isImageType()) {
+        RenderImage* image = new (arena) RenderImage(this);
+        image->setImageResource(RenderImageResource::create());
+        return image;
+    }
+    return new (arena) RenderEmbeddedObject(this);
+}
+
+void HTMLPlugInImageElement::updateWidget()
+{
+    document()->updateStyleIfNeeded();
+    if (needsWidgetUpdate() && renderEmbeddedObject() && !useFallbackContent() && !isImageType())
+        renderEmbeddedObject()->updateWidget(true);
+}
+
 void HTMLPlugInImageElement::willMoveToNewOwnerDocument()
 {
     if (m_imageLoader)
         m_imageLoader->elementWillMoveToNewOwnerDocument();
     HTMLPlugInElement::willMoveToNewOwnerDocument();
+}
+
+void HTMLPlugInImageElement::updateWidgetCallback(Node* n)
+{
+    static_cast<HTMLPlugInImageElement*>(n)->updateWidget();
 }
 
 } // namespace WebCore

@@ -151,16 +151,6 @@ bool HTMLEmbedElement::rendererIsNeeded(RenderStyle* style)
     return HTMLPlugInImageElement::rendererIsNeeded(style);
 }
 
-RenderObject* HTMLEmbedElement::createRenderer(RenderArena* arena, RenderStyle*)
-{
-    if (isImageType()) {
-        RenderImage* image = new (arena) RenderImage(this);
-        image->setImageResource(RenderImageResource::create());
-        return image;
-    }
-    return new (arena) RenderEmbeddedObject(this);
-}
-
 void HTMLEmbedElement::attach()
 {
     setNeedsWidgetUpdate(true);
@@ -180,13 +170,6 @@ void HTMLEmbedElement::attach()
         if (renderer())
             toRenderImage(renderer())->imageResource()->setCachedImage(m_imageLoader->image());
     }
-}
-
-void HTMLEmbedElement::updateWidget()
-{
-    document()->updateStyleIfNeeded();
-    if (needsWidgetUpdate() && renderEmbeddedObject() && !isImageType())
-        renderEmbeddedObject()->updateWidget(true);
 }
 
 void HTMLEmbedElement::insertedIntoDocument()
