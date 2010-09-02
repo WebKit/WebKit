@@ -100,7 +100,7 @@ class Base(unittest.TestCase):
         return """
 BUG_TEST : failures/expected/text.html = TEXT
 BUG_TEST WONTFIX SKIP : failures/expected/crash.html = CRASH
-BUG_TEST REBASELINE : failure/expected/missing_image.html = MISSING
+BUG_TEST REBASELINE : failures/expected/missing_image.html = MISSING
 BUG_TEST WONTFIX : failures/expected/image_checksum.html = IMAGE
 BUG_TEST WONTFIX WIN : failures/expected/image.html = IMAGE
 """
@@ -252,6 +252,13 @@ BUG_TEST : failures/expected/text.html = IMAGE""")
             self.get_basic_expectations(), """
 BUG_TEST : failures/expected/text.html = TEXT
 BUG_TEST : failures/expected/text.html = IMAGE""")
+
+    def test_semantic_missing_file(self):
+        # This should log a non-fatal error.
+        self.parse_exp('BUG_TEST : missing_file.html = TEXT')
+        self.assertEqual(
+            len(self._exp._expected_failures.get_non_fatal_errors()), 1)
+
 
     def test_overrides(self):
         self.parse_exp(self.get_basic_expectations(), """

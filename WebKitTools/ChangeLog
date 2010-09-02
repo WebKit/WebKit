@@ -1,3 +1,35 @@
+2010-09-01  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Land a patched version of r66542 - change TestRunner to have an
+        separate cleanup method and fix the ordering of cleanup between
+        TestRunner and the printing module, and then wrap everything in a
+        try/finally block to ensure reliable cleanup without needing to
+        rely on stuff happening in the destructor of the TestRunner.
+
+        Also refactor run_webkit_tests.run() to be much smaller and cleaner
+        by creating a bunch of helper methods and moving more stuff into
+        the TestRunner class.
+
+        This fixes the crash at the end of the linux test run of
+        new-run-webkit-tests (and undoes the rollout in 66547).
+
+        https://bugs.webkit.org/show_bug.cgi?id=44902
+
+        * Scripts/webkitpy/layout_tests/data/failures/expected/exception.html: Added.
+        * Scripts/webkitpy/layout_tests/data/failures/expected/keyboard.html: Added.
+        * Scripts/webkitpy/layout_tests/data/passes/error-expected.txt: Added.
+        * Scripts/webkitpy/layout_tests/data/passes/error.html: Added.
+        * Scripts/webkitpy/layout_tests/data/platform/test/test_expectations.txt:
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+        * Scripts/webkitpy/layout_tests/layout_package/printing.py:
+        * Scripts/webkitpy/layout_tests/layout_package/printing_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2010-09-01  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Adam Roben.

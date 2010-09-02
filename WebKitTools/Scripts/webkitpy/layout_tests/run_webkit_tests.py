@@ -75,7 +75,6 @@ from test_types import image_diff
 from test_types import text_diff
 from test_types import test_type_base
 
-from webkitpy.common.system.executive import Executive
 from webkitpy.thirdparty import simplejson
 
 import port
@@ -106,12 +105,11 @@ class TestInfo:
         self._image_hash = None
 
     def _read_image_hash(self):
-        try:
-            with codecs.open(self._expected_hash_path, "r", "ascii") as hash_file:
-                return hash_file.read()
-        except IOError, e:
-            if errno.ENOENT != e.errno:
-                raise
+        if not os.path.exists(self._expected_hash_path):
+            return None
+
+        with codecs.open(self._expected_hash_path, "r", "ascii") as hash_file:
+            return hash_file.read()
 
     def image_hash(self):
         # Read the image_hash lazily to reduce startup time.
@@ -273,34 +271,41 @@ class TestRunner:
         #        options.results_directory, use_tls=True, port=9323)
 
         # a list of TestType objects
-        self._test_types = []
+        self._test_types = [text_diff.TestTextDiff]
+        if options.pixel_tests:
+            self._test_types.append(image_diff.ImageDiff)
 
         # a set of test files, and the same tests as a list
         self._test_files = set()
         self._test_files_list = None
         self._result_queue = Queue.Queue()
-
         self._retrying = False
 
-        # Hack for dumping threads on the bots
-        self._last_thread_dump = None
-
-    def __del__(self):
-        _log.debug("flushing stdout")
-        sys.stdout.flush()
-        _log.debug("flushing stderr")
-        sys.stderr.flush()
-        _log.debug("stopping http server")
-        self._port.stop_http_server()
-        _log.debug("stopping websocket server")
-        self._port.stop_websocket_server()
-
-    def gather_file_paths(self, paths):
+    def collect_tests(self, args, last_unexpected_results):
         """Find all the files to test.
 
         Args:
-          paths: a list of globs to use instead of the defaults."""
+          args: list of test arguments from the command line
+          last_unexpected_results: list of unexpected results to retest, if any
+
+        """
+        paths = [arg for arg in args if arg and arg != '']
+        paths += last_unexpected_results
+        if self._options.test_list:
+            paths += read_test_files(self._options.test_list)
         self._test_files = test_files.gather_test_files(self._port, paths)
+
+    def lint(self):
+        # Creating the expecations for each platform/configuration pair does
+        # all the test list parsing and ensures it's correct syntax (e.g. no
+        # dupes).
+        for platform_name in self._port.test_platform_names():
+            self.parse_expectations(platform_name, is_debug_mode=True)
+            self.parse_expectations(platform_name, is_debug_mode=False)
+        self._printer.write("")
+        _log.info("If there are no fail messages, errors or exceptions, "
+                  "then the lint succeeded.")
+        return 0
 
     def parse_expectations(self, test_platform_name, is_debug_mode):
         """Parse the expectations from the test_list files and return a data
@@ -336,8 +341,8 @@ class TestRunner:
         self._printer.print_expected("Found:  %d tests" %
                                      (len(self._test_files)))
         if not num_all_test_files:
-            _log.critical("No tests to run.")
-            sys.exit(1)
+            _log.critical('No tests to run.')
+            return None
 
         skipped = set()
         if num_all_test_files > 1 and not self._options.force:
@@ -467,10 +472,6 @@ class TestRunner:
         self._printer.print_expected('')
 
         return result_summary
-
-    def add_test_type(self, test_type):
-        """Add a TestType to the TestRunner."""
-        self._test_types.append(test_type)
 
     def _get_dir_for_test_file(self, test_file):
         """Returns the highest-level directory by which to shard the given
@@ -643,7 +644,7 @@ class TestRunner:
         """
         # FIXME: We should use webkitpy.tool.grammar.pluralize here.
         plural = ""
-        if self._options.child_processes > 1:
+        if not self._is_single_threaded():
             plural = "s"
         self._printer.print_update('Starting %s%s ...' %
                                    (self._port.driver_name(), plural))
@@ -714,6 +715,49 @@ class TestRunner:
         """Returns whether the test runner needs an HTTP server."""
         return self._contains_tests(self.HTTP_SUBDIR)
 
+    def set_up_run(self):
+        """Configures the system to be ready to run tests.
+
+        Returns a ResultSummary object if we should continue to run tests,
+        or None if we should abort.
+
+        """
+        # This must be started before we check the system dependencies,
+        # since the helper may do things to make the setup correct.
+        self._printer.print_update("Starting helper ...")
+        self._port.start_helper()
+
+        # Check that the system dependencies (themes, fonts, ...) are correct.
+        if not self._options.nocheck_sys_deps:
+            self._printer.print_update("Checking system dependencies ...")
+            if not self._port.check_sys_deps(self.needs_http()):
+                self._port.stop_helper()
+                return None
+
+        if self._options.clobber_old_results:
+            self._clobber_old_results()
+
+        # Create the output directory if it doesn't already exist.
+        self._port.maybe_make_directory(self._options.results_directory)
+
+        self._port.setup_test_run()
+
+        self._printer.print_update("Preparing tests ...")
+        result_summary = self.prepare_lists_and_print_output()
+        if not result_summary:
+            return None
+
+        if self.needs_http():
+            self._printer.print_update('Starting HTTP server ...')
+            self._port.start_http_server()
+
+        if self._contains_tests(self.WEBSOCKET_SUBDIR):
+            self._printer.print_update('Starting WebSocket server ...')
+            self._port.start_websocket_server()
+            # self._websocket_secure_server.Start()
+
+        return result_summary
+
     def run(self, result_summary):
         """Run all our tests on all our test files.
 
@@ -726,19 +770,12 @@ class TestRunner:
         Return:
           The number of unexpected results (0 == success)
         """
-        if not self._test_files:
-            return 0
+        # gather_test_files() must have been called first to initialize us.
+        # If we didn't find any files to test, we've errored out already in
+        # prepare_lists_and_print_output().
+        assert(len(self._test_files))
+
         start_time = time.time()
-
-        if self.needs_http():
-            self._printer.print_update('Starting HTTP server ...')
-
-            self._port.start_http_server()
-
-        if self._contains_tests(self.WEBSOCKET_SUBDIR):
-            self._printer.print_update('Starting WebSocket server ...')
-            self._port.start_websocket_server()
-            # self._websocket_secure_server.Start()
 
         keyboard_interrupted, thread_timings, test_timings, \
             individual_test_timings = (
@@ -801,6 +838,20 @@ class TestRunner:
         # bot red for those.
         return unexpected_results['num_regressions']
 
+    def clean_up_run(self):
+        """Restores the system after we're done running tests."""
+
+        _log.debug("flushing stdout")
+        sys.stdout.flush()
+        _log.debug("flushing stderr")
+        sys.stderr.flush()
+        _log.debug("stopping http server")
+        self._port.stop_http_server()
+        _log.debug("stopping websocket server")
+        self._port.stop_websocket_server()
+        _log.debug("stopping helper")
+        self._port.stop_helper()
+
     def update_summary(self, result_summary):
         """Update the summary and print results with any completed tests."""
         while True:
@@ -818,6 +869,20 @@ class TestRunner:
             self._printer.print_test_result(result, expected, exp_str, got_str)
             self._printer.print_progress(result_summary, self._retrying,
                                          self._test_files_list)
+
+    def _clobber_old_results(self):
+        # Just clobber the actual test results directories since the other
+        # files in the results directory are explicitly used for cross-run
+        # tracking.
+        self._printer.print_update("Clobbering old results in %s" %
+                                   self._options.results_directory)
+        layout_tests_dir = self._port.layout_tests_dir()
+        possible_dirs = os.listdir(layout_tests_dir)
+        for dirname in possible_dirs:
+            if os.path.isdir(os.path.join(layout_tests_dir, dirname)):
+                shutil.rmtree(os.path.join(self._options.results_directory,
+                                           dirname),
+                              ignore_errors=True)
 
     def _get_failures(self, result_summary, include_crashes):
         """Filters a dict of results and returns only the failures.
@@ -910,6 +975,33 @@ class TestRunner:
             return
 
         _log.info("JSON files uploaded.")
+
+    def _print_config(self):
+        """Prints the configuration for the test run."""
+        p = self._printer
+        p.print_config("Using port '%s'" % self._port.name())
+        p.print_config("Placing test results in %s" %
+                       self._options.results_directory)
+        if self._options.new_baseline:
+            p.print_config("Placing new baselines in %s" %
+                           self._port.baseline_path())
+        p.print_config("Using %s build" % self._options.configuration)
+        if self._options.pixel_tests:
+            p.print_config("Pixel tests enabled")
+        else:
+            p.print_config("Pixel tests disabled")
+
+        p.print_config("Regular timeout: %s, slow test timeout: %s" %
+                       (self._options.time_out_ms,
+                        self._options.slow_time_out_ms))
+
+        if self._is_single_threaded():
+            p.print_config("Running one %s" % self._port.driver_name())
+        else:
+            p.print_config("Running %s %ss in parallel" %
+                           (self._options.child_processes,
+                            self._port.driver_name()))
+        p.print_config("")
 
     def _print_expected_results_of_type(self, result_summary,
                                         result_type, result_type_str):
@@ -1266,12 +1358,12 @@ def read_test_files(files):
     return tests
 
 
-def run(port_obj, options, args, regular_output=sys.stderr,
+def run(port, options, args, regular_output=sys.stderr,
         buildbot_output=sys.stdout):
     """Run the tests.
 
     Args:
-      port_obj: Port object for port-specific behavior
+      port: Port object for port-specific behavior
       options: a dictionary of command line options
       args: a list of sub directories or files to test
       regular_output: a stream-like object that we can send logging/debug
@@ -1281,24 +1373,61 @@ def run(port_obj, options, args, regular_output=sys.stderr,
     Returns:
       the number of unexpected results that occurred, or -1 if there is an
           error.
-    """
 
-    # Configure the printing subsystem for printing output, logging debug
-    # info, and tracing tests.
+    """
+    _set_up_derived_options(port, options)
+
+    printer = printing.Printer(port, options, regular_output, buildbot_output,
+        int(options.child_processes), options.experimental_fully_parallel)
+    if options.help_printing:
+        printer.help_printing()
+        printer.cleanup()
+        return 0
+
+    last_unexpected_results = _gather_unexpected_results(options)
+    if options.print_last_failures:
+        printer.write("\n".join(last_unexpected_results) + "\n")
+        printer.cleanup()
+        return 0
+
+    # We wrap any parts of the run that are slow or likely to raise exceptions
+    # in a try/finally to ensure that we clean up the logging configuration.
+    num_unexpected_results = -1
+    try:
+        test_runner = TestRunner(port, options, printer)
+        test_runner._print_config()
+
+        printer.print_update("Collecting tests ...")
+        test_runner.collect_tests(args, last_unexpected_results)
+
+        printer.print_update("Parsing expectations ...")
+        if options.lint_test_files:
+            return test_runner.lint()
+        test_runner.parse_expectations(port.test_platform_name(),
+                                       options.configuration == 'Debug')
+
+        printer.print_update("Checking build ...")
+        if not port.check_build(test_runner.needs_http()):
+            return -1
+
+        result_summary = test_runner.set_up_run()
+        if result_summary:
+            num_unexpected_results = test_runner.run(result_summary)
+            test_runner.clean_up_run()
+            _log.debug("Testing completed, Exit status: %d" %
+                       num_unexpected_results)
+    finally:
+        printer.cleanup()
+
+    return num_unexpected_results
+
+
+def _set_up_derived_options(port_obj, options):
+    """Sets the options values that depend on other options values."""
 
     if not options.child_processes:
         # FIXME: Investigate perf/flakiness impact of using cpu_count + 1.
-        options.child_processes = port_obj.default_child_processes()
-
-    printer = printing.Printer(port_obj, options, regular_output=regular_output,
-        buildbot_output=buildbot_output,
-        child_processes=int(options.child_processes),
-        is_fully_parallel=options.experimental_fully_parallel)
-    if options.help_printing:
-        printer.help_printing()
-        return 0
-
-    executive = Executive()
+        options.child_processes = str(port_obj.default_child_processes())
 
     if not options.configuration:
         options.configuration = port_obj.default_configuration()
@@ -1318,30 +1447,6 @@ def run(port_obj, options, args, regular_output=sys.stderr,
         # Debug or Release.
         options.results_directory = port_obj.results_directory()
 
-    last_unexpected_results = []
-    if options.print_last_failures or options.retest_last_failures:
-        unexpected_results_filename = os.path.join(
-           options.results_directory, "unexpected_results.json")
-        with codecs.open(unexpected_results_filename, "r", "utf-8") as file:
-            results = simplejson.load(file)
-        last_unexpected_results = results['tests'].keys()
-        if options.print_last_failures:
-            printer.write("\n".join(last_unexpected_results) + "\n")
-            return 0
-
-    if options.clobber_old_results:
-        # Just clobber the actual test results directories since the other
-        # files in the results directory are explicitly used for cross-run
-        # tracking.
-        printer.print_update("Clobbering old results in %s" %
-                             options.results_directory)
-        layout_tests_dir = port_obj.layout_tests_dir()
-        possible_dirs = os.listdir(layout_tests_dir)
-        for dirname in possible_dirs:
-            if os.path.isdir(os.path.join(layout_tests_dir, dirname)):
-                shutil.rmtree(os.path.join(options.results_directory, dirname),
-                              ignore_errors=True)
-
     if not options.time_out_ms:
         if options.configuration == "Debug":
             options.time_out_ms = str(2 * TestRunner.DEFAULT_TEST_TIMEOUT_MS)
@@ -1349,92 +1454,18 @@ def run(port_obj, options, args, regular_output=sys.stderr,
             options.time_out_ms = str(TestRunner.DEFAULT_TEST_TIMEOUT_MS)
 
     options.slow_time_out_ms = str(5 * int(options.time_out_ms))
-    printer.print_config("Regular timeout: %s, slow test timeout: %s" %
-                   (options.time_out_ms, options.slow_time_out_ms))
 
-    if int(options.child_processes) == 1:
-        printer.print_config("Running one %s" % port_obj.driver_name())
-    else:
-        printer.print_config("Running %s %ss in parallel" % (
-                       options.child_processes, port_obj.driver_name()))
 
-    # Include all tests if none are specified.
-    new_args = []
-    for arg in args:
-        if arg and arg != '':
-            new_args.append(arg)
-
-    paths = new_args
-    if not paths:
-        paths = []
-    paths += last_unexpected_results
-    if options.test_list:
-        paths += read_test_files(options.test_list)
-
-    # Create the output directory if it doesn't already exist.
-    port_obj.maybe_make_directory(options.results_directory)
-    printer.print_update("Collecting tests ...")
-
-    test_runner = TestRunner(port_obj, options, printer)
-    test_runner.gather_file_paths(paths)
-
-    if options.lint_test_files:
-        # Creating the expecations for each platform/configuration pair does
-        # all the test list parsing and ensures it's correct syntax (e.g. no
-        # dupes).
-        for platform_name in port_obj.test_platform_names():
-            test_runner.parse_expectations(platform_name, is_debug_mode=True)
-            test_runner.parse_expectations(platform_name, is_debug_mode=False)
-        printer.write("")
-        _log.info("If there are no fail messages, errors or exceptions, "
-                  "then the lint succeeded.")
-        return 0
-
-    printer.print_config("Using port '%s'" % port_obj.name())
-    printer.print_config("Placing test results in %s" %
-                         options.results_directory)
-    if options.new_baseline:
-        printer.print_config("Placing new baselines in %s" %
-                             port_obj.baseline_path())
-    printer.print_config("Using %s build" % options.configuration)
-    if options.pixel_tests:
-        printer.print_config("Pixel tests enabled")
-    else:
-        printer.print_config("Pixel tests disabled")
-    printer.print_config("")
-
-    printer.print_update("Parsing expectations ...")
-    test_runner.parse_expectations(port_obj.test_platform_name(),
-                                   options.configuration == 'Debug')
-
-    printer.print_update("Checking build ...")
-    if not port_obj.check_build(test_runner.needs_http()):
-        return -1
-
-    printer.print_update("Starting helper ...")
-    port_obj.start_helper()
-
-    # Check that the system dependencies (themes, fonts, ...) are correct.
-    if not options.nocheck_sys_deps:
-        printer.print_update("Checking system dependencies ...")
-        if not port_obj.check_sys_deps(test_runner.needs_http()):
-            return -1
-
-    printer.print_update("Preparing tests ...")
-    result_summary = test_runner.prepare_lists_and_print_output()
-
-    port_obj.setup_test_run()
-
-    test_runner.add_test_type(text_diff.TestTextDiff)
-    if options.pixel_tests:
-        test_runner.add_test_type(image_diff.ImageDiff)
-
-    num_unexpected_results = test_runner.run(result_summary)
-
-    port_obj.stop_helper()
-
-    _log.debug("Exit status: %d" % num_unexpected_results)
-    return num_unexpected_results
+def _gather_unexpected_results(options):
+    """Returns the unexpected results from the previous run, if any."""
+    last_unexpected_results = []
+    if options.print_last_failures or options.retest_last_failures:
+        unexpected_results_filename = os.path.join(
+        options.results_directory, "unexpected_results.json")
+        with codecs.open(unexpected_results_filename, "r", "utf-8") as file:
+            results = simplejson.load(file)
+        last_unexpected_results = results['tests'].keys()
+    return last_unexpected_results
 
 
 def _compat_shim_callback(option, opt_str, value, parser):
@@ -1597,7 +1628,7 @@ def parse_args(args=None):
         #   Restart DumpRenderTree every n tests (default: 1000)
         optparse.make_option("--batch-size",
             help=("Run a the tests in batches (n), after every n tests, "
-                  "DumpRenderTree is relaunched.")),
+                  "DumpRenderTree is relaunched."), type="int", default=0),
         # old-run-webkit-tests calls --run-singly: -1|--singly
         # Isolate each test case run (implies --nthly 1 --verbose)
         optparse.make_option("--run-singly", action="store_true",

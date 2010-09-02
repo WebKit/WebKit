@@ -151,7 +151,10 @@ class TestDriver(base.Driver):
     def run_test(self, uri, timeoutms, image_hash):
         basename = uri[(uri.rfind("/") + 1):uri.rfind(".html")]
 
-        error = ''
+        if 'error' in basename:
+            error = basename + "_error\n"
+        else:
+            error = ''
         checksum = None
         # There are four currently supported types of tests: text, image,
         # image hash (checksum), and stderr output. The fake output
@@ -170,10 +173,13 @@ class TestDriver(base.Driver):
         # will allow us to see if any results get crossed by the rest of the
         # program.
         if 'failures' in uri:
+            if 'keyboard' in basename:
+                raise KeyboardInterrupt
+            if 'exception' in basename:
+                raise ValueError('exception from ' + basename)
+
             crash = 'crash' in basename
             timeout = 'timeout' in basename
-            if 'error' in basename:
-                error = basename + "_error\n"
             if 'text' in basename:
                 output = basename + '_failed-txt\n'
             else:

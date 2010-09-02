@@ -126,19 +126,6 @@ def print_options():
     ]
 
 
-def configure_logging(options, meter):
-    """Configures the logging system."""
-    log_fmt = '%(message)s'
-    log_datefmt = '%y%m%d %H:%M:%S'
-    log_level = logging.INFO
-    if options.verbose:
-        log_fmt = ('%(asctime)s %(filename)s:%(lineno)-4d %(levelname)s '
-                   '%(message)s')
-        log_level = logging.DEBUG
-
-    logging.basicConfig(level=log_level, format=log_fmt,
-                        datefmt=log_datefmt, stream=meter)
-
 
 def parse_print_options(print_options, verbose, child_processes,
                         is_fully_parallel):
@@ -190,6 +177,28 @@ def parse_print_options(print_options, verbose, child_processes,
     return switches
 
 
+def _configure_logging(stream, verbose):
+    log_fmt = '%(message)s'
+    log_datefmt = '%y%m%d %H:%M:%S'
+    log_level = logging.INFO
+    if verbose:
+        log_fmt = ('%(asctime)s %(filename)s:%(lineno)-4d %(levelname)s '
+                '%(message)s')
+        log_level = logging.DEBUG
+
+    root = logging.getLogger()
+    handler = logging.StreamHandler(stream)
+    handler.setFormatter(logging.Formatter(log_fmt, None))
+    root.addHandler(handler)
+    root.setLevel(log_level)
+    return handler
+
+
+def _restore_logging(handler_to_remove):
+    root = logging.getLogger()
+    root.handlers.remove(handler_to_remove)
+
+
 class Printer(object):
     """Class handling all non-debug-logging printing done by run-webkit-tests.
 
@@ -237,12 +246,22 @@ class Printer(object):
 
         self._meter = metered_stream.MeteredStream(options.verbose,
                                                    regular_output)
-        configure_logging(self._options, self._meter)
+        self._logging_handler = _configure_logging(self._meter,
+            options.verbose)
 
         self.switches = parse_print_options(options.print_options,
             options.verbose, child_processes, is_fully_parallel)
 
-    # These two routines just hide the implmentation of the switches.
+    def cleanup(self):
+        """Restore logging configuration to its initial settings."""
+        if self._logging_handler:
+            _restore_logging(self._logging_handler)
+            self._logging_handler = None
+
+    def __del__(self):
+        self.cleanup()
+
+    # These two routines just hide the implementation of the switches.
     def disabled(self, option):
         return not option in self.switches
 

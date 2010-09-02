@@ -34,7 +34,6 @@ import optparse
 import pdb
 import sys
 import unittest
-import logging
 
 from webkitpy.common.array_stream import ArrayStream
 from webkitpy.layout_tests.layout_package import metered_stream
@@ -97,13 +96,19 @@ class TestMeteredStream(unittest.TestCase):
         m.write("foo")
         self.assertEquals(a.get(), ['foo'])
 
+        import logging
+        b = ArrayStream()
+        logger = logging.getLogger()
+        handler = logging.StreamHandler(b)
+        logger.addHandler(handler)
         m.update("bar")
-        # FIXME: figure out how to test that this went to the logger. Is this
-        # good enough?
+        logger.handlers.remove(handler)
         self.assertEquals(a.get(), ['foo'])
+        self.assertEquals(b.get(), ['bar\n'])
 
         m.progress("dropped")
         self.assertEquals(a.get(), ['foo'])
+        self.assertEquals(b.get(), ['bar\n'])
 
 
 if __name__ == '__main__':
