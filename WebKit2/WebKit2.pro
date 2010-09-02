@@ -162,6 +162,7 @@ HEADERS += \
     Shared/MutableDictionary.h \
     Shared/NotImplemented.h \
     Shared/qt/WebEventFactoryQt.h \
+    Shared/UserMessageCoders.h \
     Shared/VisitedLinkTable.h \
     Shared/WebEventConversion.h \
     Shared/WebEvent.h \
@@ -204,6 +205,7 @@ HEADERS += \
     UIProcess/VisitedLinkProvider.h \
     UIProcess/WebContext.h \
     UIProcess/WebContextInjectedBundleClient.h \
+    UIProcess/WebContextUserMessageCoders.h \
     UIProcess/WebFormClient.h \
     UIProcess/WebFormSubmissionListenerProxy.h \
     UIProcess/WebFrameListenerProxy.h \
@@ -226,6 +228,7 @@ HEADERS += \
     WebProcess/InjectedBundle/InjectedBundlePageFormClient.h \
     WebProcess/InjectedBundle/InjectedBundlePageUIClient.h \
     WebProcess/InjectedBundle/InjectedBundleScriptWorld.h \
+    WebProcess/InjectedBundle/InjectedBundleUserMessageCoders.h \
     WebProcess/Plugins/JSNPObject.h \
     WebProcess/Plugins/JSNPMethod.h \
     WebProcess/Plugins/NPJSObject.h \

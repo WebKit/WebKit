@@ -29,6 +29,7 @@
 #include "InjectedBundleMessageKinds.h"
 #include "RunLoop.h"
 #include "WebContextMessageKinds.h"
+#include "WebContextUserMessageCoders.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPageNamespace.h"
 #include "WebPreferences.h"
@@ -49,123 +50,6 @@
 using namespace WebCore;
 
 namespace WebKit {
-
-namespace {
-
-// FIXME: We should try to abstract out the shared logic from these and
-// and the PostMessageEncoder/PostMessageDecoders in InjectedBundle.cpp into
-// a shared baseclass.
-
-// Encodes postMessage messages from the UIProcess -> InjectedBundle
-
-//   - Array -> Array
-//   - String -> String
-//   - Page -> BundlePage
-
-class PostMessageEncoder {
-public:
-    PostMessageEncoder(APIObject* root) 
-        : m_root(root)
-    {
-    }
-
-    void encode(CoreIPC::ArgumentEncoder* encoder) const 
-    {
-        APIObject::Type type = m_root->type();
-        encoder->encode(static_cast<uint32_t>(type));
-        switch (type) {
-        case APIObject::TypeArray: {
-            ImmutableArray* array = static_cast<ImmutableArray*>(m_root);
-            encoder->encode(static_cast<uint64_t>(array->size()));
-            for (size_t i = 0; i < array->size(); ++i)
-                encoder->encode(PostMessageEncoder(array->at(i)));
-            break;
-        }
-        case APIObject::TypeString: {
-            WebString* string = static_cast<WebString*>(m_root);
-            encoder->encode(string->string());
-            break;
-        }
-        case APIObject::TypePage: {
-            WebPageProxy* page = static_cast<WebPageProxy*>(m_root);
-            encoder->encode(page->pageID());
-            break;
-        }
-        default:
-            ASSERT_NOT_REACHED();
-            break;
-        }
-    }
-
-private:
-    APIObject* m_root;
-};
-
-// Decodes postMessage messages going from the InjectedBundle -> UIProcess 
-
-//   - Array -> Array
-//   - String -> String
-//   - BundlePage -> Page
-
-class PostMessageDecoder {
-public:
-    PostMessageDecoder(RefPtr<APIObject>& root, WebContext* context)
-        : m_root(root)
-        , m_context(context)
-    {
-    }
-
-    static bool decode(CoreIPC::ArgumentDecoder* decoder, PostMessageDecoder& coder)
-    {
-        uint32_t type;
-        if (!decoder->decode(type))
-            return false;
-
-        switch (type) {
-        case APIObject::TypeArray: {
-            uint64_t size;
-            if (!decoder->decode(size))
-                return false;
-            
-            Vector<RefPtr<APIObject> > vector;
-            for (size_t i = 0; i < size; ++i) {
-                RefPtr<APIObject> element;
-                PostMessageDecoder messageCoder(element, coder.m_context);
-                if (!decoder->decode(messageCoder))
-                    return false;
-                vector.append(element.release());
-            }
-
-            coder.m_root = ImmutableArray::adopt(vector);
-            break;
-        }
-        case APIObject::TypeString: {
-            String string;
-            if (!decoder->decode(string))
-                return false;
-            coder.m_root = WebString::create(string);
-            break;
-        }
-        case APIObject::TypeBundlePage: {
-            uint64_t pageID;
-            if (!decoder->decode(pageID))
-                return false;
-            coder.m_root = coder.m_context->process()->webPage(pageID);
-            break;
-        }
-        default:
-            return false;
-        }
-
-        return true;
-    }
-
-private:
-    RefPtr<APIObject>& m_root;
-    WebContext* m_context;
-};
-
-}
 
 #ifndef NDEBUG
 static WTF::RefCountedLeakCounter webContextCounter("WebContext");
@@ -318,7 +202,7 @@ void WebContext::postMessageToInjectedBundle(const String& messageName, APIObjec
 
     // FIXME: We should consider returning false from this function if the messageBody cannot
     // be encoded.
-    m_process->send(InjectedBundleMessage::PostMessage, 0, CoreIPC::In(messageName, PostMessageEncoder(messageBody)));
+    m_process->send(InjectedBundleMessage::PostMessage, 0, CoreIPC::In(messageName, WebContextUserMessageEncoder(messageBody)));
 }
 
 // InjectedBundle client
@@ -407,8 +291,8 @@ void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         case WebContextMessage::PostMessage: {
             String messageName;
             RefPtr<APIObject> messageBody;
-            PostMessageDecoder messageCoder(messageBody, this);
-            if (!arguments->decode(CoreIPC::Out(messageName, messageCoder)))
+            WebContextUserMessageDecoder messageDecoder(messageBody, this);
+            if (!arguments->decode(CoreIPC::Out(messageName, messageDecoder)))
                 return;
 
             didReceiveMessageFromInjectedBundle(messageName, messageBody.get());

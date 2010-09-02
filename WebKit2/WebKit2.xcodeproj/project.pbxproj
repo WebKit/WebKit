@@ -255,6 +255,9 @@
 		BCB0AEEA122F53E300B1341E /* MutableDictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB0AEE8122F53E300B1341E /* MutableDictionary.cpp */; };
 		BCB0AF3512301DFB00B1341E /* WKMutableDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB0AF3312301DFB00B1341E /* WKMutableDictionary.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BCB0AF3612301DFB00B1341E /* WKMutableDictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB0AF3412301DFB00B1341E /* WKMutableDictionary.cpp */; };
+		BCB0B0DC12305A2500B1341E /* WebContextUserMessageCoders.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB0B0DB12305A2500B1341E /* WebContextUserMessageCoders.h */; };
+		BCB0B0DE12305A8C00B1341E /* InjectedBundleUserMessageCoders.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB0B0DD12305A8C00B1341E /* InjectedBundleUserMessageCoders.h */; };
+		BCB0B0E012305AB100B1341E /* UserMessageCoders.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB0B0DF12305AB100B1341E /* UserMessageCoders.h */; };
 		BCB28CC0120233D9007D99BC /* InjectedBundleMessageKinds.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB28CBF120233D9007D99BC /* InjectedBundleMessageKinds.h */; };
 		BCB63478116BF10600603215 /* WebKit2.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB63477116BF10600603215 /* WebKit2.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BCB7346E11CEE3FF00EC5002 /* WebProcessProxyMessageKinds.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB7346D11CEE3FF00EC5002 /* WebProcessProxyMessageKinds.h */; };
@@ -618,6 +621,9 @@
 		BCB0AEE8122F53E300B1341E /* MutableDictionary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MutableDictionary.cpp; sourceTree = "<group>"; };
 		BCB0AF3312301DFB00B1341E /* WKMutableDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKMutableDictionary.h; sourceTree = "<group>"; };
 		BCB0AF3412301DFB00B1341E /* WKMutableDictionary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKMutableDictionary.cpp; sourceTree = "<group>"; };
+		BCB0B0DB12305A2500B1341E /* WebContextUserMessageCoders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextUserMessageCoders.h; sourceTree = "<group>"; };
+		BCB0B0DD12305A8C00B1341E /* InjectedBundleUserMessageCoders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleUserMessageCoders.h; sourceTree = "<group>"; };
+		BCB0B0DF12305AB100B1341E /* UserMessageCoders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserMessageCoders.h; sourceTree = "<group>"; };
 		BCB28CBF120233D9007D99BC /* InjectedBundleMessageKinds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleMessageKinds.h; sourceTree = "<group>"; };
 		BCB63477116BF10600603215 /* WebKit2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKit2.h; sourceTree = "<group>"; };
 		BCB7346D11CEE3FF00EC5002 /* WebProcessProxyMessageKinds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessProxyMessageKinds.h; sourceTree = "<group>"; };
@@ -911,6 +917,7 @@
 				BCB0AEE8122F53E300B1341E /* MutableDictionary.cpp */,
 				BCB0AEE7122F53E300B1341E /* MutableDictionary.h */,
 				BCC57161115ADB42001CCAF9 /* NotImplemented.h */,
+				BCB0B0DF12305AB100B1341E /* UserMessageCoders.h */,
 				1A0F29C9120B37160053D1B9 /* VisitedLinkTable.cpp */,
 				1A0F29CA120B37160053D1B9 /* VisitedLinkTable.h */,
 				BC1DD7B1114DC396005ADAF3 /* WebCoreArgumentCoders.h */,
@@ -1073,6 +1080,7 @@
 				BCB9E2411120DACA00A137E0 /* WebContext.h */,
 				BCDE059A11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.cpp */,
 				BCDE059911CDA8AE00E41AF1 /* WebContextInjectedBundleClient.h */,
+				BCB0B0DB12305A2500B1341E /* WebContextUserMessageCoders.h */,
 				BCE4694F1214E6CB000B98EB /* WebFormClient.cpp */,
 				BCE469501214E6CB000B98EB /* WebFormClient.h */,
 				BCE469511214E6CB000B98EB /* WebFormSubmissionListenerProxy.cpp */,
@@ -1265,6 +1273,7 @@
 				BCA8C6AE11E3C08700812FB7 /* InjectedBundlePageUIClient.h */,
 				BC14DF76120B5B7900826C0C /* InjectedBundleScriptWorld.cpp */,
 				BC14DF75120B5B7900826C0C /* InjectedBundleScriptWorld.h */,
+				BCB0B0DD12305A8C00B1341E /* InjectedBundleUserMessageCoders.h */,
 			);
 			path = InjectedBundle;
 			sourceTree = "<group>";
@@ -1584,6 +1593,9 @@
 				BCB0AD34122F285800B1341E /* MutableArray.h in Headers */,
 				BCB0AEE9122F53E300B1341E /* MutableDictionary.h in Headers */,
 				BCB0AF3512301DFB00B1341E /* WKMutableDictionary.h in Headers */,
+				BCB0B0DC12305A2500B1341E /* WebContextUserMessageCoders.h in Headers */,
+				BCB0B0DE12305A8C00B1341E /* InjectedBundleUserMessageCoders.h in Headers */,
+				BCB0B0E012305AB100B1341E /* UserMessageCoders.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

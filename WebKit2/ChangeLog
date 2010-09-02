@@ -2,6 +2,43 @@
 
         Reviewed by Anders Carlsson.
 
+        Share the common parts of UserMessage coding between both processes.
+        https://bugs.webkit.org/show_bug.cgi?id=45139
+
+        Add base classes UserMessageEncoder and UserMessageDecoder which implement
+        encoding/decoding of ImmutableArray and String (soon to be others as well, such
+        as ImmutableDictionary, Data, etc.) and add derived classes which implement the
+        process specific bits such as Page -> BundlePage conversion.
+
+        * Shared/UserMessageCoders.h: Copied from WebProcess/InjectedBundle/InjectedBundle.cpp.
+        (WebKit::UserMessageEncoder::baseEncode):
+        (WebKit::UserMessageEncoder::UserMessageEncoder):
+        (WebKit::UserMessageDecoder::baseDecode):
+        (WebKit::UserMessageDecoder::UserMessageDecoder):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::postMessageToInjectedBundle):
+        (WebKit::WebContext::didReceiveMessage):
+        * UIProcess/WebContextUserMessageCoders.h: Copied from UIProcess/WebContext.cpp.
+        (WebKit::WebContextUserMessageEncoder::WebContextUserMessageEncoder):
+        (WebKit::WebContextUserMessageEncoder::encode):
+        (WebKit::WebContextUserMessageDecoder::WebContextUserMessageDecoder):
+        (WebKit::WebContextUserMessageDecoder::decode):
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::postMessage):
+        (WebKit::InjectedBundle::didReceiveMessage):
+        * WebProcess/InjectedBundle/InjectedBundleUserMessageCoders.h: Copied from WebProcess/InjectedBundle/InjectedBundle.cpp.
+        (WebKit::InjectedBundleUserMessageEncoder::InjectedBundleUserMessageEncoder):
+        (WebKit::InjectedBundleUserMessageEncoder::encode):
+        (WebKit::InjectedBundleUserMessageDecoder::InjectedBundleUserMessageDecoder):
+        (WebKit::InjectedBundleUserMessageDecoder::decode):
+        * win/WebKit2.vcproj:
+
+2010-09-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Simplify ownership semantics of some WebKit2 types
         https://bugs.webkit.org/show_bug.cgi?id=45120
 

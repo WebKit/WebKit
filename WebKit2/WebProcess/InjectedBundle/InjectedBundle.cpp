@@ -29,6 +29,7 @@
 #include "ImmutableArray.h"
 #include "InjectedBundleMessageKinds.h"
 #include "InjectedBundleScriptWorld.h"
+#include "InjectedBundleUserMessageCoders.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WebContextMessageKinds.h"
@@ -49,122 +50,6 @@ using namespace WebCore;
 using namespace JSC;
 
 namespace WebKit {
-
-namespace {
-
-// FIXME: We should try to abstract out the shared logic from these and
-// and the PostMessageEncoder/PostMessageDecoders in WebContext.cpp into
-// a shared baseclass.
-
-// Encodes postMessage messages from the InjectedBundle -> UIProcess
-
-//   - Array -> Array
-//   - String -> String
-//   - BundlePage -> Page
-
-class PostMessageEncoder {
-public:
-    PostMessageEncoder(APIObject* root) 
-        : m_root(root)
-    {
-    }
-
-    void encode(CoreIPC::ArgumentEncoder* encoder) const 
-    {
-        APIObject::Type type = m_root->type();
-        encoder->encode(static_cast<uint32_t>(type));
-        switch (type) {
-        case APIObject::TypeArray: {
-            ImmutableArray* array = static_cast<ImmutableArray*>(m_root);
-            encoder->encode(static_cast<uint64_t>(array->size()));
-            for (size_t i = 0; i < array->size(); ++i)
-                encoder->encode(PostMessageEncoder(array->at(i)));
-            break;
-        }
-        case APIObject::TypeString: {
-            WebString* string = static_cast<WebString*>(m_root);
-            encoder->encode(string->string());
-            break;
-        }
-        case APIObject::TypeBundlePage: {
-            WebPage* page = static_cast<WebPage*>(m_root);
-            encoder->encode(page->pageID());
-            break;
-        }
-        default:
-            ASSERT_NOT_REACHED();
-            break;
-        }
-    }
-
-private:
-    APIObject* m_root;
-};
-
-
-// Decodes postMessage messages going from the UIProcess -> InjectedBundle
-
-//   - Array -> Array
-//   - String -> String
-//   - Page -> BundlePage
-
-class PostMessageDecoder {
-public:
-    PostMessageDecoder(RefPtr<APIObject>& root)
-        : m_root(root)
-    {
-    }
-
-    static bool decode(CoreIPC::ArgumentDecoder* decoder, PostMessageDecoder& coder)
-    {
-        uint32_t type;
-        if (!decoder->decode(type))
-            return false;
-
-        switch (type) {
-        case APIObject::TypeArray: {
-            uint64_t size;
-            if (!decoder->decode(size))
-                return false;
-
-            Vector<RefPtr<APIObject> > vector;
-            for (size_t i = 0; i < size; ++i) {
-                RefPtr<APIObject> element;
-                PostMessageDecoder messageCoder(element);
-                if (!decoder->decode(messageCoder))
-                    return false;
-                vector.append(element.release());
-            }
-
-            coder.m_root = ImmutableArray::adopt(vector);
-            break;
-        }
-        case APIObject::TypeString: {
-            String string;
-            if (!decoder->decode(string))
-                return false;
-            coder.m_root = WebString::create(string);
-            break;
-        }
-        case APIObject::TypePage: {
-            uint64_t pageID;
-            if (!decoder->decode(pageID))
-                return false;
-            coder.m_root = WebProcess::shared().webPage(pageID);
-            break;
-        }
-        default:
-            return false;
-        }
-
-        return true;
-    }
-
-private:
-    RefPtr<APIObject>& m_root;
-};
-
-}
 
 InjectedBundle::InjectedBundle(const String& path)
     : m_path(path)
@@ -187,7 +72,7 @@ void InjectedBundle::initializeClient(WKBundleClient* client)
 
 void InjectedBundle::postMessage(const String& messageName, APIObject* messageBody)
 {
-    WebProcess::shared().connection()->send(WebContextMessage::PostMessage, 0, CoreIPC::In(messageName, PostMessageEncoder(messageBody)));
+    WebProcess::shared().connection()->send(WebContextMessage::PostMessage, 0, CoreIPC::In(messageName, InjectedBundleUserMessageEncoder(messageBody)));
 }
 
 void InjectedBundle::setShouldTrackVisitedLinks(bool shouldTrackVisitedLinks)
@@ -307,8 +192,8 @@ void InjectedBundle::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC:
         case InjectedBundleMessage::PostMessage: {
             String messageName;            
             RefPtr<APIObject> messageBody;
-            PostMessageDecoder messageCoder(messageBody);
-            if (!arguments->decode(CoreIPC::Out(messageName, messageCoder)))
+            InjectedBundleUserMessageDecoder messageDecoder(messageBody);
+            if (!arguments->decode(CoreIPC::Out(messageName, messageDecoder)))
                 return;
 
             didReceiveMessage(messageName, messageBody.get());

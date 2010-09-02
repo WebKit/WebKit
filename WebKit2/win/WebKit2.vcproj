@@ -445,6 +445,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\UserMessageCoders.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\VisitedLinkTable.cpp"
 				>
 			</File>
@@ -803,6 +807,10 @@
 					RelativePath="..\WebProcess\InjectedBundle\InjectedBundleScriptWorld.h"
 					>
 				</File>
+				<File
+					RelativePath="..\WebProcess\InjectedBundle\InjectedBundleUserMessageCoders.h"
+					>
+				</File>
 				<Filter
 					Name="API"
 					>
@@ -1098,6 +1106,10 @@
 			</File>
 			<File
 				RelativePath="..\UIProcess\WebContextInjectedBundleClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebContextUserMessageCoders.h"
 				>
 			</File>
 			<File
