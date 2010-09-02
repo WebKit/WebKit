@@ -33,6 +33,7 @@ using namespace JSC;
 #include "NodeInfo.h"
 #include "ASTBuilder.h"
 #include <wtf/HashFunctions.h>
+#include <wtf/WTFThreadData.h>
 #include <utility>
 
 using namespace std;
@@ -220,12 +221,7 @@ JSParser::JSParser(Lexer* lexer, JSGlobalData* globalData, SourceProvider* provi
     , m_nonLHSCount(0)
     , m_syntaxAlreadyValidated(provider->isValid())
 {
-    m_endAddress = *(globalData->stackGuards);
-    if (!m_endAddress) {
-        char sample = 0;
-        m_endAddress = &sample - kMaxParserStackUsage;
-        *(globalData->stackGuards) = m_endAddress;
-    }
+    m_endAddress = wtfThreadData().approximatedStackStart() - kMaxParserStackUsage;
     next();
     m_lexer->setLastLineNumber(tokenLine());
 }

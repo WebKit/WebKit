@@ -227,7 +227,6 @@ namespace JSC {
 #endif
 
         CachedTranscendentalFunction<sin> cachedSin;
-        WTF::ThreadSpecific<char*> stackGuards;
 
         void resetDateCache();
 

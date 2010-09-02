@@ -112,6 +112,11 @@ public:
     }
 #endif
 
+    char* approximatedStackStart() const
+    {
+        return m_approximatedStackStart;
+    }
+
 private:
     AtomicStringTable* m_atomicStringTable;
     AtomicStringTableDestructor m_atomicStringTableDestructor;
@@ -128,6 +133,8 @@ private:
 #endif
     friend WTFThreadData& wtfThreadData();
     friend class AtomicStringTable;
+
+    char* m_approximatedStackStart;
 };
 
 inline WTFThreadData& wtfThreadData()

@@ -43,6 +43,8 @@ WTFThreadData::WTFThreadData()
     , m_currentIdentifierTable(m_defaultIdentifierTable)
 #endif
 {
+    char sample = 0;
+    m_approximatedStackStart = &sample;
 }
 
 WTFThreadData::~WTFThreadData()

@@ -1,3 +1,26 @@
+2010-09-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43230
+        <rdar://problem/8254215> REGRESSION: Memory leak within JSParser::JSParser
+
+        One can't delete a ThreadSpecific object that has data in it. It's not even possible to
+        enumerate data objects in all threads, much less destroy them from a thread that's destroying
+        the ThreadSpecific.
+
+        * parser/JSParser.cpp:
+        (JSC::JSParser::JSParser):
+        * runtime/JSGlobalData.h: 
+        * wtf/WTFThreadData.cpp:
+        (WTF::WTFThreadData::WTFThreadData):
+        * wtf/WTFThreadData.h:
+        (WTF::WTFThreadData::approximatedStackStart):
+        Moved stack guard tracking from JSGlobalData to WTFThreadData.
+
+        * wtf/ThreadSpecific.h: Made destructor unimplemented. It's dangerous, and we probably won't
+        ever face a situation where we'd want to delete a ThreadSpecific object.
+
 2010-09-01  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Oliver Hunt.
