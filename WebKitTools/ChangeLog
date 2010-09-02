@@ -1,3 +1,21 @@
+2010-09-02  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Implement [continuous]MouseScrollBy() on Chromium, and partly on GTK.
+        https://bugs.webkit.org/show_bug.cgi?id=45073
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::EventSender):
+        (EventSender::mouseScrollBy):
+        (EventSender::continuousMouseScrollBy):
+        (EventSender::sendCurrentTouchEvent):
+        (EventSender::handleMouseWheel):
+        * DumpRenderTree/chromium/EventSender.h:
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (mouseScrollByCallback):
+        (continuousMouseScrollByCallback):
+
 2010-09-01  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.

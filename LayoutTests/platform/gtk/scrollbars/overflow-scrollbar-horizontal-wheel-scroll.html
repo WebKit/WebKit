@@ -88,7 +88,7 @@ if (window.eventSender) {
     var x = overflow.offsetLeft + overflow.offsetWidth - 50;
     var y = overflow.offsetTop + overflow.offsetHeight - 50;
     eventSender.mouseMoveTo(x, y);
-    eventSender.mouseWheelTo(0, 1);
+    eventSender.mouseScrollBy(0, -1);
 
     if (overflow.scrollTop != 40 || overflow.scrollLeft != 0)
         failed();
@@ -97,7 +97,7 @@ if (window.eventSender) {
     var x = overflow.offsetLeft + overflow.offsetWidth - 50;
     var y = overflow.offsetTop + overflow.offsetHeight - 6;
     eventSender.mouseMoveTo(x, y);
-    eventSender.mouseWheelTo(0, 1);
+    eventSender.mouseScrollBy(0, -1);
 
     if (overflow.scrollTop != 40 || overflow.scrollLeft != 40)
         failed();
@@ -106,7 +106,7 @@ if (window.eventSender) {
     var x = overflow.offsetLeft + overflow.offsetWidth - 6;
     var y = overflow.offsetTop + overflow.offsetHeight - 50;
     eventSender.mouseMoveTo(x, y);
-    eventSender.mouseWheelTo(0, 1);
+    eventSender.mouseScrollBy(0, -1);
 
     if (overflow.scrollTop != 80 || overflow.scrollLeft != 40)
         failed();
@@ -117,7 +117,7 @@ if (window.eventSender) {
     var x = styled.offsetLeft + styled.offsetWidth - 50;
     var y = styled.offsetTop + styled.offsetHeight - 50;
     eventSender.mouseMoveTo(x, y);
-    eventSender.mouseWheelTo(0, 1);
+    eventSender.mouseScrollBy(0, -1);
 
     if (styled.scrollTop != 40 || styled.scrollLeft != 0)
         failed();
@@ -126,7 +126,7 @@ if (window.eventSender) {
     var x = styled.offsetLeft + styled.offsetWidth - 50;
     var y = styled.offsetTop + styled.offsetHeight - 6;
     eventSender.mouseMoveTo(x, y);
-    eventSender.mouseWheelTo(0, 1);
+    eventSender.mouseScrollBy(0, -1);
 
     if (styled.scrollTop != 40 || styled.scrollLeft != 40)
         failed();
@@ -135,7 +135,7 @@ if (window.eventSender) {
     var x = styled.offsetLeft + styled.offsetWidth - 6;
     var y = styled.offsetTop + styled.offsetHeight - 50;
     eventSender.mouseMoveTo(x, y);
-    eventSender.mouseWheelTo(0, 1);
+    eventSender.mouseScrollBy(0, -1);
 
     if (styled.scrollTop != 80 || styled.scrollLeft != 40)
         failed();

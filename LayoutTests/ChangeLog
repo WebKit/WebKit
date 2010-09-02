@@ -1,3 +1,13 @@
+2010-09-02  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Implement [continuous]MouseScrollBy() on Chromium, and partly on GTK.
+        https://bugs.webkit.org/show_bug.cgi?id=45073
+
+        * platform/chromium/test_expectations.txt: Unskip tests that should now pass.
+        * platform/gtk/scrollbars/overflow-scrollbar-horizontal-wheel-scroll.html: Convert mouseWheelTo() to mouseScrollBy().
+
 2010-09-01  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

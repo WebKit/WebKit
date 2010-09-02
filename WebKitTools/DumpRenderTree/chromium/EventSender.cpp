@@ -255,7 +255,6 @@ EventSender::EventSender(TestShell* shell)
     bindMethod("mouseUp", &EventSender::mouseUp);
     bindMethod("contextClick", &EventSender::contextClick);
     bindMethod("mouseMoveTo", &EventSender::mouseMoveTo);
-    bindMethod("mouseWheelTo", &EventSender::mouseWheelTo);
     bindMethod("leapForward", &EventSender::leapForward);
     bindMethod("keyDown", &EventSender::keyDown);
     bindMethod("dispatchMessage", &EventSender::dispatchMessage);
@@ -266,6 +265,8 @@ EventSender::EventSender(TestShell* shell)
     bindMethod("textZoomOut", &EventSender::textZoomOut);
     bindMethod("zoomPageIn", &EventSender::zoomPageIn);
     bindMethod("zoomPageOut", &EventSender::zoomPageOut);
+    bindMethod("mouseScrollBy", &EventSender::mouseScrollBy);
+    bindMethod("continuousMouseScrollBy", &EventSender::continuousMouseScrollBy);
     bindMethod("scheduleAsynchronousClick", &EventSender::scheduleAsynchronousClick);
     bindMethod("beginDragWithFiles", &EventSender::beginDragWithFiles);
     bindMethod("addTouchPoint", &EventSender::addTouchPoint);
@@ -470,32 +471,6 @@ void EventSender::mouseMoveTo(const CppArgumentList& arguments, CppVariant* resu
         initMouseEvent(WebInputEvent::MouseMove, pressedButton, mousePos, &event);
         doMouseMove(event);
     }
-}
-
-void EventSender::mouseWheelTo(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-
-    if (arguments.size() < 2 || !arguments[0].isNumber() || !arguments[1].isNumber())
-        return;
-
-    // Force a layout here just to make sure every position has been
-    // determined before we send events (as well as all the other methods
-    // that send an event do). The layout test calling this
-    // (scrollbars/overflow-scrollbar-horizontal-wheel-scroll.html, only one
-    // for now) does not rely on this though.
-    webview()->layout();
-
-    int horizontal = arguments[0].toInt32();
-    int vertical = arguments[1].toInt32();
-
-    WebMouseWheelEvent event;
-    initMouseEvent(WebInputEvent::MouseWheel, pressedButton, lastMousePos, &event);
-    event.wheelTicksX = static_cast<float>(horizontal);
-    event.wheelTicksY = static_cast<float>(vertical);
-    event.deltaX = -horizontal * scrollbarPixelsPerTick;
-    event.deltaY = -vertical * scrollbarPixelsPerTick;
-    webview()->handleInputEvent(event);
 }
 
 void EventSender::doMouseMove(const WebMouseEvent& e)
@@ -714,6 +689,16 @@ void EventSender::zoomPageOut(const CppArgumentList&, CppVariant* result)
     result->setNull();
 }
 
+void EventSender::mouseScrollBy(const CppArgumentList& arguments, CppVariant* result)
+{
+    handleMouseWheel(arguments, result, false);
+}
+
+void EventSender::continuousMouseScrollBy(const CppArgumentList& arguments, CppVariant* result)
+{
+    handleMouseWheel(arguments, result, true);
+}
+
 void EventSender::replaySavedEvents()
 {
     replayingSavedEvents = true;
@@ -887,6 +872,34 @@ void EventSender::sendCurrentTouchEvent(const WebInputEvent::Type type)
         } else
             touchPoint->state = WebTouchPoint::StateStationary;
     }
+}
+
+void EventSender::handleMouseWheel(const CppArgumentList& arguments, CppVariant* result, bool continuous)
+{
+    result->setNull();
+
+    if (arguments.size() < 2 || !arguments[0].isNumber() || !arguments[1].isNumber())
+        return;
+
+    // Force a layout here just to make sure every position has been
+    // determined before we send events (as well as all the other methods
+    // that send an event do).
+    webview()->layout();
+
+    int horizontal = arguments[0].toInt32();
+    int vertical = arguments[1].toInt32();
+
+    WebMouseWheelEvent event;
+    initMouseEvent(WebInputEvent::MouseWheel, pressedButton, lastMousePos, &event);
+    event.wheelTicksX = static_cast<float>(horizontal);
+    event.wheelTicksY = static_cast<float>(vertical);
+    event.deltaX = event.wheelTicksX;
+    event.deltaY = event.wheelTicksY;
+    if (!continuous) {
+        event.deltaX *= scrollbarPixelsPerTick;
+        event.deltaY *= scrollbarPixelsPerTick;
+    }
+    webview()->handleInputEvent(event);
 }
 
 void EventSender::touchEnd(const CppArgumentList&, CppVariant* result)

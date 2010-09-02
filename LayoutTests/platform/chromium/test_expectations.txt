@@ -2476,10 +2476,6 @@ BUG_JIANLI MAC : fast/forms/select-style.html = IMAGE PASS
 BUG38375 : plugins/npruntime/round-trip-npobject.html = TEXT
 BUG38376 WIN : editing/deleting/5390681-2.html = IMAGE+TEXT
 
-// WebKit roll 56004 -> 56026
-BUG38278 : fast/events/continuous-platform-wheelevent-in-scrolling-div.html = TIMEOUT
-BUG38278 : fast/events/platform-wheelevent-in-scrolling-div.html = TIMEOUT
-
 // The touch targeting logic was recently changed.
 BUG36415 : fast/events/touch/touch-target.html = TEXT
 
