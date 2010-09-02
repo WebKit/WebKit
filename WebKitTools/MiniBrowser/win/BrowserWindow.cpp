@@ -70,6 +70,10 @@ LRESULT BrowserWindow::wndProc(HWND window, UINT message, WPARAM wParam, LPARAM 
     bool handled = true;
 
     switch (message) {
+    case WM_ERASEBKGND:
+        lResult = 1;
+        break;
+
     case WM_COMMAND:
         lResult = onCommand(LOWORD(wParam), handled);
         break;

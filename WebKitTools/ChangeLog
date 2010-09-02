@@ -1,3 +1,13 @@
+2010-08-31  Adam Roben  <aroben@apple.com>
+
+        Fix flashiness when resizing the browser window on Windows
+
+        Reviewed by Sam Weinig.
+
+        * MiniBrowser/win/BrowserWindow.cpp:
+        (BrowserWindow::wndProc): Override WM_ERASEBKGND so Windows won't
+        periodically fill the window with white.
+
 2010-09-02  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Dimitri Glazkov.
