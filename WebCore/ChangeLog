@@ -1,5 +1,17 @@
 2010-09-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r66655.
+        http://trac.webkit.org/changeset/66655
+        https://bugs.webkit.org/show_bug.cgi?id=45104
+
+        broke some editing tests (Requested by kling on #webkit).
+
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::collapse):
+        (WebCore::DOMSelection::selectAllChildren):
+
+2010-09-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r66649.
         http://trac.webkit.org/changeset/66649
         https://bugs.webkit.org/show_bug.cgi?id=45103
