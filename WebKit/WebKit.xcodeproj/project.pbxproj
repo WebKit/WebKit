@@ -111,6 +111,15 @@
 		51FDC4D30B0AF5C100F84EB3 /* WebHistoryItemPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FDC4D20B0AF5C100F84EB3 /* WebHistoryItemPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5241ADF50B1BC48A004012BD /* WebCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 5241ADF30B1BC48A004012BD /* WebCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5241ADF60B1BC48A004012BD /* WebCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5241ADF40B1BC48A004012BD /* WebCache.mm */; };
+		598AD91A1201CEC900ABAE4E /* WebDeviceOrientationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 598AD9191201CEC900ABAE4E /* WebDeviceOrientationClient.h */; };
+		598AD91E1201CECF00ABAE4E /* WebDeviceOrientationClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 598AD91D1201CECF00ABAE4E /* WebDeviceOrientationClient.mm */; };
+		598AD9201201CF0700ABAE4E /* WebDeviceOrientation.h in Headers */ = {isa = PBXBuildFile; fileRef = 598AD91F1201CF0700ABAE4E /* WebDeviceOrientation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		598AD9221201CF1000ABAE4E /* WebDeviceOrientation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 598AD9211201CF1000ABAE4E /* WebDeviceOrientation.mm */; };
+		598AD9241201CF1900ABAE4E /* WebDeviceOrientationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 598AD9231201CF1900ABAE4E /* WebDeviceOrientationInternal.h */; };
+		598AD9261201CF2500ABAE4E /* WebDeviceOrientationProviderMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 598AD9251201CF2500ABAE4E /* WebDeviceOrientationProviderMock.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		598AD9281201CF3200ABAE4E /* WebDeviceOrientationProviderMock.mm in Sources */ = {isa = PBXBuildFile; fileRef = 598AD9271201CF3200ABAE4E /* WebDeviceOrientationProviderMock.mm */; };
+		598AD92A1201CF3B00ABAE4E /* WebDeviceOrientationProviderMockInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 598AD9291201CF3B00ABAE4E /* WebDeviceOrientationProviderMockInternal.h */; };
+		598ADA461202275000ABAE4E /* WebDeviceOrientationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 598ADA451202275000ABAE4E /* WebDeviceOrientationProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5D7BF8140C2A1D90008CE06D /* WebInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D7BF8120C2A1D90008CE06D /* WebInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5D7BF8150C2A1D90008CE06D /* WebInspector.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5D7BF8130C2A1D90008CE06D /* WebInspector.mm */; };
 		5DE83A7A0D0F7F9400CAD12A /* WebJavaScriptTextInputPanel.nib in Resources */ = {isa = PBXBuildFile; fileRef = 5DE83A740D0F7F9400CAD12A /* WebJavaScriptTextInputPanel.nib */; };
@@ -523,6 +532,15 @@
 		51FDC4D20B0AF5C100F84EB3 /* WebHistoryItemPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebHistoryItemPrivate.h; sourceTree = "<group>"; };
 		5241ADF30B1BC48A004012BD /* WebCache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCache.h; sourceTree = "<group>"; };
 		5241ADF40B1BC48A004012BD /* WebCache.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCache.mm; sourceTree = "<group>"; };
+		598AD9191201CEC900ABAE4E /* WebDeviceOrientationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationClient.h; sourceTree = "<group>"; };
+		598AD91D1201CECF00ABAE4E /* WebDeviceOrientationClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDeviceOrientationClient.mm; sourceTree = "<group>"; };
+		598AD91F1201CF0700ABAE4E /* WebDeviceOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientation.h; sourceTree = "<group>"; };
+		598AD9211201CF1000ABAE4E /* WebDeviceOrientation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDeviceOrientation.mm; sourceTree = "<group>"; };
+		598AD9231201CF1900ABAE4E /* WebDeviceOrientationInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationInternal.h; sourceTree = "<group>"; };
+		598AD9251201CF2500ABAE4E /* WebDeviceOrientationProviderMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationProviderMock.h; sourceTree = "<group>"; };
+		598AD9271201CF3200ABAE4E /* WebDeviceOrientationProviderMock.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDeviceOrientationProviderMock.mm; sourceTree = "<group>"; };
+		598AD9291201CF3B00ABAE4E /* WebDeviceOrientationProviderMockInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationProviderMockInternal.h; sourceTree = "<group>"; };
+		598ADA451202275000ABAE4E /* WebDeviceOrientationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationProvider.h; sourceTree = "<group>"; };
 		5D7BF8120C2A1D90008CE06D /* WebInspector.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebInspector.h; sourceTree = "<group>"; };
 		5D7BF8130C2A1D90008CE06D /* WebInspector.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspector.mm; sourceTree = "<group>"; };
 		5DE83A750D0F7F9400CAD12A /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/WebJavaScriptTextInputPanel.nib; sourceTree = SOURCE_ROOT; };
@@ -1124,6 +1142,13 @@
 		9C7CABBB0190A37C0ECA16EA /* WebView */ = {
 			isa = PBXGroup;
 			children = (
+				598ADA451202275000ABAE4E /* WebDeviceOrientationProvider.h */,
+				598AD9291201CF3B00ABAE4E /* WebDeviceOrientationProviderMockInternal.h */,
+				598AD9271201CF3200ABAE4E /* WebDeviceOrientationProviderMock.mm */,
+				598AD9251201CF2500ABAE4E /* WebDeviceOrientationProviderMock.h */,
+				598AD9231201CF1900ABAE4E /* WebDeviceOrientationInternal.h */,
+				598AD9211201CF1000ABAE4E /* WebDeviceOrientation.mm */,
+				598AD91F1201CF0700ABAE4E /* WebDeviceOrientation.h */,
 				F52CA6BD02DF9D0F018635CA /* HTML */,
 				51E94C0706C02CA300A9B09E /* PDF */,
 				8373435A0624EE0D00F3B289 /* WebArchive.h */,
@@ -1249,6 +1274,8 @@
 		F5B36B400281DE87018635CB /* WebCoreSupport */ = {
 			isa = PBXGroup;
 			children = (
+				598AD91D1201CECF00ABAE4E /* WebDeviceOrientationClient.mm */,
+				598AD9191201CEC900ABAE4E /* WebDeviceOrientationClient.h */,
 				B68049710FFBCEC1009F7F62 /* WebApplicationCache.h */,
 				B68049720FFBCEC1009F7F62 /* WebApplicationCache.mm */,
 				A5DEFC1111D5344B00885273 /* WebApplicationCacheQuotaManager.h */,
@@ -1589,6 +1616,12 @@
 				A57E2F24120749E600048DF3 /* WebQuotaManager.h in Headers */,
 				B804176F1217A83100466BAE /* WebInspectorFrontend.h in Headers */,
 				9391F275121B38BD00EBF7E8 /* WebFrameNetworkingContext.h in Headers */,
+				598AD91A1201CEC900ABAE4E /* WebDeviceOrientationClient.h in Headers */,
+				598AD9201201CF0700ABAE4E /* WebDeviceOrientation.h in Headers */,
+				598AD9241201CF1900ABAE4E /* WebDeviceOrientationInternal.h in Headers */,
+				598AD9261201CF2500ABAE4E /* WebDeviceOrientationProviderMock.h in Headers */,
+				598AD92A1201CF3B00ABAE4E /* WebDeviceOrientationProviderMockInternal.h in Headers */,
+				598ADA461202275000ABAE4E /* WebDeviceOrientationProvider.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1952,6 +1985,9 @@
 				A5DEFC1411D5344B00885273 /* WebApplicationCacheQuotaManager.mm in Sources */,
 				B80417701217A83100466BAE /* WebInspectorFrontend.mm in Sources */,
 				9391F276121B38BD00EBF7E8 /* WebFrameNetworkingContext.mm in Sources */,
+				598AD91E1201CECF00ABAE4E /* WebDeviceOrientationClient.mm in Sources */,
+				598AD9221201CF1000ABAE4E /* WebDeviceOrientation.mm in Sources */,
+				598AD9281201CF3200ABAE4E /* WebDeviceOrientationProviderMock.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

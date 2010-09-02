@@ -45,9 +45,11 @@
 #import <WebKit/WebApplicationCache.h>
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebCoreStatistics.h>
+#import <WebKit/WebDOMOperationsPrivate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDatabaseManagerPrivate.h>
-#import <WebKit/WebDOMOperationsPrivate.h>
+#import <WebKit/WebDeviceOrientation.h>
+#import <WebKit/WebDeviceOrientationProviderMock.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebGeolocationPosition.h>
@@ -336,9 +338,11 @@ void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(bool forbidd
 
 void LayoutTestController::setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
 {
-    // FIXME: Implement for DeviceOrientation layout tests.
-    // See https://bugs.webkit.org/show_bug.cgi?id=30335.
-
+    // DumpRenderTree configured the WebView to use WebDeviceOrientationProviderMock.
+    id<WebDeviceOrientationProvider> provider = [[mainFrame webView] _deviceOrientationProvider];
+    WebDeviceOrientationProviderMock* mockProvider = static_cast<WebDeviceOrientationProviderMock*>(provider);
+    WebDeviceOrientation* orientation = [[WebDeviceOrientation alloc] initWithCanProvideAlpha:canProvideAlpha alpha:alpha canProvideBeta:canProvideBeta beta:beta canProvideGamma:canProvideGamma gamma:gamma];
+    [mockProvider setOrientation:orientation];
 }
 
 void LayoutTestController::setMockGeolocationPosition(double latitude, double longitude, double accuracy)

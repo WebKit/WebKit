@@ -62,6 +62,7 @@
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDatabaseManagerPrivate.h>
 #import <WebKit/WebDocumentPrivate.h>
+#import <WebKit/WebDeviceOrientationProviderMock.h>
 #import <WebKit/WebEditingDelegate.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHTMLRepresentationInternal.h>
@@ -292,6 +293,7 @@ WebView *createWebViewAndOffscreenWindow()
     [webView setEditingDelegate:editingDelegate];
     [webView setResourceLoadDelegate:resourceLoadDelegate];
     [webView _setGeolocationProvider:[MockGeolocationProvider shared]];
+    [webView _setDeviceOrientationProvider:[[WebDeviceOrientationProviderMock alloc] init]];
 
     // Register the same schemes that Safari does
     [WebView registerURLSchemeAsLocal:@"feed"];

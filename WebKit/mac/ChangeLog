@@ -1,3 +1,61 @@
+2010-09-02  Steve Block  <steveblock@google.com>
+
+        Reviewed by Adam Barth.
+
+        Hook up LayoutTestController.setMockDeviceOrientation() on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=43181
+
+        This patch hooks up the mock device orientation client on Mac for use
+        in DumpRenderTree.
+
+        The patch adds a new WebDeviceOrientationClient for Mac. This client acts
+        as a proxy to either a real or mock device orientation provider, both of
+        which implement a new WebDeviceOrientationProvider interface.
+
+        The provider is created by the embedder and passed to the WebView, from
+        where WebDeviceOrientationClient can access it.
+
+        The mock provider, WebDeviceOrientationProviderMock, is a wrapper around
+        the existing WebCore mock.
+
+        * WebCoreSupport/WebDeviceOrientationClient.h: Added.
+        * WebCoreSupport/WebDeviceOrientationClient.mm: Added.
+        (WebDeviceOrientationClient::WebDeviceOrientationClient):
+        (WebDeviceOrientationClient::setController):
+        (WebDeviceOrientationClient::startUpdating):
+        (WebDeviceOrientationClient::stopUpdating):
+        (WebDeviceOrientationClient::lastOrientation):
+        * WebKit.exp:
+        * WebView/WebDeviceOrientation.h: Added.
+        * WebView/WebDeviceOrientation.mm: Added.
+        (-[WebDeviceOrientation initWithCoreDeviceOrientation:WebCore::]):
+        (core):
+        (-[WebDeviceOrientation initWithCanProvideAlpha:alpha:canProvideBeta:beta:canProvideGamma:gamma:]):
+        (-[WebDeviceOrientation dealloc]):
+        * WebView/WebDeviceOrientationInternal.h: Added.
+        * WebView/WebDeviceOrientationProvider.h: Added.
+        * WebView/WebDeviceOrientationProviderMock.h: Added.
+        * WebView/WebDeviceOrientationProviderMock.mm: Added.
+        (-[WebDeviceOrientationProviderMockInternal setOrientation:]):
+        (-[WebDeviceOrientationProviderMockInternal setController:]):
+        (-[WebDeviceOrientationProviderMockInternal startUpdating]):
+        (-[WebDeviceOrientationProviderMockInternal stopUpdating]):
+        (-[WebDeviceOrientationProviderMockInternal lastOrientation]):
+        (-[WebDeviceOrientationProviderMock init]):
+        (-[WebDeviceOrientationProviderMock dealloc]):
+        (-[WebDeviceOrientationProviderMock setOrientation:]):
+        (-[WebDeviceOrientationProviderMock setController:]):
+        (-[WebDeviceOrientationProviderMock startUpdating]):
+        (-[WebDeviceOrientationProviderMock stopUpdating]):
+        (-[WebDeviceOrientationProviderMock lastOrientation]):
+        * WebView/WebDeviceOrientationProviderMockInternal.h: Added.
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:]):
+        (-[WebView _setDeviceOrientationProvider:]):
+        (-[WebView _deviceOrientationProvider]):
+        * WebView/WebViewData.h:
+        * WebView/WebViewPrivate.h:
+
 2010-09-01  Jia Pu  <jpu@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -1,3 +1,15 @@
+2010-09-02  Steve Block  <steveblock@google.com>
+
+        Reviewed by Adam Barth.
+
+        Hook up LayoutTestController.setMockDeviceOrientation() on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=43181
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setMockDeviceOrientation):
+
 2010-08-31  Adam Roben  <aroben@apple.com>
 
         Fix flashiness when resizing the browser window on Windows

@@ -47,6 +47,8 @@
 #import "WebDefaultPolicyDelegate.h"
 #import "WebDefaultUIDelegate.h"
 #import "WebDelegateImplementationCaching.h"
+#import "WebDeviceOrientationClient.h"
+#import "WebDeviceOrientationProvider.h"
 #import "WebDocument.h"
 #import "WebDocumentInternal.h"
 #import "WebDownload.h"
@@ -682,6 +684,9 @@ static bool shouldEnableLoadDeferring()
     pageClients.pluginHalterClient = new WebPluginHalterClient(self);
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
     pageClients.geolocationControllerClient = new WebGeolocationControllerClient(self);
+#endif
+#if ENABLE(DEVICE_ORIENTATION)
+    pageClients.deviceOrientationClient = new WebDeviceOrientationClient(self);
 #endif
     _private->page = new Page(pageClients);
 
@@ -5880,6 +5885,23 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
 }
 #endif
 
+
+@end
+
+@implementation WebView (WebViewDeviceOrientation)
+
+- (void)_setDeviceOrientationProvider:(id<WebDeviceOrientationProvider>)deviceOrientationProvider
+{
+    if (_private)
+        _private->m_deviceOrientationProvider = deviceOrientationProvider;
+}
+
+- (id<WebDeviceOrientationProvider>)_deviceOrientationProvider
+{
+    if (_private)
+        return _private->m_deviceOrientationProvider;
+    return nil;
+}
 
 @end
 
