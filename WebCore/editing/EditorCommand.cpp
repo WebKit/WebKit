@@ -1069,6 +1069,14 @@ static bool executeYankAndSelect(Frame* frame, Event*, EditorCommandSource, cons
     return true;
 }
 
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+static bool executeCancelOperation(Frame* frame, Event*, EditorCommandSource, const String&)
+{
+    frame->editor()->handleCancelOperation();
+    return true;
+}
+#endif
+
 // Supported functions
 
 static bool supported(Frame*, EditorCommandSource)
@@ -1455,6 +1463,9 @@ static const CommandMap& createCommandMap()
         { "Unselect", { executeUnselect, supported, enabledVisibleSelection, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "Yank", { executeYank, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "YankAndSelect", { executeYankAndSelect, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+        { "CancelOperation", { executeCancelOperation, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+#endif
     };
 
     // These unsupported commands are listed here since they appear in the Microsoft

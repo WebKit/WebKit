@@ -774,7 +774,7 @@ void GraphicsContext::drawLineForText(const IntPoint& origin, int width, bool pr
 #include "DrawErrorUnderline.h"
 #endif
 
-void GraphicsContext::drawLineForMisspellingOrBadGrammar(const IntPoint& origin, int width, bool grammar)
+void GraphicsContext::drawLineForTextChecking(const IntPoint& origin, int width, TextCheckingLineStyle style)
 {
     if (paintingDisabled())
         return;
@@ -782,12 +782,17 @@ void GraphicsContext::drawLineForMisspellingOrBadGrammar(const IntPoint& origin,
     cairo_t* cr = m_data->cr;
     cairo_save(cr);
 
-    // Convention is green for grammar, red for spelling
-    // These need to become configurable
-    if (grammar)
-        cairo_set_source_rgb(cr, 0, 1, 0);
-    else
+    switch (style) {
+    case TextCheckingSpellingLineStyle:
         cairo_set_source_rgb(cr, 1, 0, 0);
+        break;
+    case TextCheckingGrammarLineStyle:
+        cairo_set_source_rgb(cr, 0, 1, 0);
+        break;
+    default:
+        cairo_restore(cr);
+        return;
+    }
 
 #if PLATFORM(GTK)
     // We ignore most of the provided constants in favour of the platform style

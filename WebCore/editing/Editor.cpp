@@ -1053,11 +1053,16 @@ Editor::Editor(Frame* frame)
     // This is off by default, since most editors want this behavior (this matches IE but not FF).
     , m_shouldStyleWithCSS(false)
     , m_killRing(adoptPtr(new KillRing))
-{ 
+    , m_correctionPanelTimer(this, &Editor::correctionPanelTimerFired)
+{
 }
 
 Editor::~Editor()
 {
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    if (client())
+        client()->dismissCorrectionPanel(true);
+#endif
 }
 
 void Editor::clear()
@@ -2351,22 +2356,29 @@ bool Editor::spellingPanelIsShowing()
 void Editor::markMisspellingsAfterTypingToPosition(const VisiblePosition &p)
 {
 #if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
-    bool markSpelling = isContinuousSpellCheckingEnabled();
-    bool markGrammar = markSpelling && isGrammarCheckingEnabled();
-    bool performTextCheckingReplacements = isAutomaticQuoteSubstitutionEnabled() 
-                                        || isAutomaticLinkDetectionEnabled()
-                                        || isAutomaticDashSubstitutionEnabled()
-                                        || isAutomaticTextReplacementEnabled()
-                                        || (markSpelling && isAutomaticSpellingCorrectionEnabled());
-    if (!markSpelling && !performTextCheckingReplacements)
+    TextCheckingOptions textCheckingOptions = 0;
+    if (isContinuousSpellCheckingEnabled())
+        textCheckingOptions |= MarkSpelling;
+
+    if (isAutomaticQuoteSubstitutionEnabled()
+        || isAutomaticLinkDetectionEnabled()
+        || isAutomaticDashSubstitutionEnabled()
+        || isAutomaticTextReplacementEnabled()
+        || ((textCheckingOptions & MarkSpelling) && isAutomaticSpellingCorrectionEnabled()))
+        textCheckingOptions |= PerformReplacement;
+
+    if (!textCheckingOptions & (MarkSpelling | PerformReplacement))
         return;
-    
+
+    if (isGrammarCheckingEnabled())
+        textCheckingOptions |= MarkGrammar;
+
     VisibleSelection adjacentWords = VisibleSelection(startOfWord(p, LeftWordIfOnBoundary), endOfWord(p, RightWordIfOnBoundary));
-    if (markGrammar) {
+    if (textCheckingOptions & MarkGrammar) {
         VisibleSelection selectedSentence = VisibleSelection(startOfSentence(p), endOfSentence(p));
-        markAllMisspellingsAndBadGrammarInRanges(true, adjacentWords.toNormalizedRange().get(), true, selectedSentence.toNormalizedRange().get(), performTextCheckingReplacements);
+        markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, adjacentWords.toNormalizedRange().get(), selectedSentence.toNormalizedRange().get());
     } else {
-        markAllMisspellingsAndBadGrammarInRanges(markSpelling, adjacentWords.toNormalizedRange().get(), false, adjacentWords.toNormalizedRange().get(), performTextCheckingReplacements);
+        markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, adjacentWords.toNormalizedRange().get(), adjacentWords.toNormalizedRange().get());
     }
 #else
     if (!isContinuousSpellCheckingEnabled())
@@ -2510,13 +2522,18 @@ static inline bool isAmbiguousBoundaryCharacter(UChar character)
     return character == '\'' || character == rightSingleQuotationMark || character == hebrewPunctuationGershayim;
 }
 
-void Editor::markAllMisspellingsAndBadGrammarInRanges(bool markSpelling, Range* spellingRange, bool markGrammar, Range* grammarRange, bool performTextCheckingReplacements)
+void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCheckingOptions, Range* spellingRange, Range* grammarRange)
 {
+    bool shouldMarkSpelling = textCheckingOptions & MarkSpelling;
+    bool shouldMarkGrammar = textCheckingOptions & MarkGrammar;
+    bool shouldPerformReplacement = textCheckingOptions & PerformReplacement;
+    bool shouldShowCorrectionPanel = textCheckingOptions & ShowCorrectionPanel;
+
     // This function is called with selections already expanded to word boundaries.
     ExceptionCode ec = 0;
-    if (!client() || !spellingRange || (markGrammar && !grammarRange))
+    if (!client() || !spellingRange || (shouldMarkGrammar && !grammarRange))
         return;
-    
+
     // If we're not in an editable node, bail.
     Node* editableNode = spellingRange->startContainer();
     if (!editableNode || !editableNode->isContentEditable())
@@ -2539,8 +2556,8 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(bool markSpelling, Range* 
     bool adjustSelectionForParagraphBoundaries = false;
     String paragraphString;
     RefPtr<Range> paragraphRange;
-    
-    if (markGrammar) {
+
+    if (shouldMarkGrammar) {
         // The spelling range should be contained in the paragraph-aligned extension of the grammar range.
         paragraphRange = paragraphAlignedRangeForRange(grammarRange, grammarRangeStartOffset, paragraphString);
         RefPtr<Range> offsetAsRange = Range::create(paragraphRange->startContainer(ec)->document(), paragraphRange->startPosition(), spellingRange->startPosition());
@@ -2551,10 +2568,10 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(bool markSpelling, Range* 
     }
     spellingRangeEndOffset = spellingRangeStartOffset + TextIterator::rangeLength(spellingRange);
     paragraphLength = paragraphString.length();
-    if (paragraphLength <= 0 || (spellingRangeStartOffset >= spellingRangeEndOffset && (!markGrammar || grammarRangeStartOffset >= grammarRangeEndOffset)))
+    if (paragraphLength <= 0 || (spellingRangeStartOffset >= spellingRangeEndOffset && (!shouldMarkGrammar || grammarRangeStartOffset >= grammarRangeEndOffset)))
         return;
-    
-    if (performTextCheckingReplacements) {
+
+    if (shouldPerformReplacement) {
         if (m_frame->selection()->selectionType() == VisibleSelection::CaretSelection) {
             // Attempt to save the caret position so we can restore it later if needed
             RefPtr<Range> offsetAsRange = Range::create(paragraphRange->startContainer(ec)->document(), paragraphRange->startPosition(), paragraphRange->startPosition());
@@ -2570,14 +2587,16 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(bool markSpelling, Range* 
             }
         }
     }
-    
+
     Vector<TextCheckingResult> results;
     uint64_t checkingTypes = 0;
-    if (markSpelling)
+    if (shouldMarkSpelling)
         checkingTypes |= TextCheckingTypeSpelling;
-    if (markGrammar)
+    if (shouldMarkGrammar)
         checkingTypes |= TextCheckingTypeGrammar;
-    if (performTextCheckingReplacements) {
+    if (shouldShowCorrectionPanel)
+        checkingTypes |= TextCheckingTypeCorrection;
+    if (shouldPerformReplacement) {
         if (isAutomaticLinkDetectionEnabled())
             checkingTypes |= TextCheckingTypeLink;
         if (isAutomaticQuoteSubstitutionEnabled())
@@ -2586,20 +2605,26 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(bool markSpelling, Range* 
             checkingTypes |= TextCheckingTypeDash;
         if (isAutomaticTextReplacementEnabled())
             checkingTypes |= TextCheckingTypeReplacement;
-        if (markSpelling && isAutomaticSpellingCorrectionEnabled())
+        if (shouldMarkSpelling && isAutomaticSpellingCorrectionEnabled())
             checkingTypes |= TextCheckingTypeCorrection;
     }
     client()->checkTextOfParagraph(paragraphString.characters(), paragraphLength, checkingTypes, results);
-    
+
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    // If this checking is only for showing correction panel, we shouldn't bother to mark misspellings.
+    if (shouldShowCorrectionPanel)
+        shouldMarkSpelling = false;
+#endif
+
     for (unsigned i = 0; i < results.size(); i++) {
         const TextCheckingResult* result = &results[i];
         int resultLocation = result->location + offsetDueToReplacement;
         int resultLength = result->length;
-        if (markSpelling && result->type == TextCheckingTypeSpelling && resultLocation >= spellingRangeStartOffset && resultLocation + resultLength <= spellingRangeEndOffset) {
+        if (shouldMarkSpelling && result->type == TextCheckingTypeSpelling && resultLocation >= spellingRangeStartOffset && resultLocation + resultLength <= spellingRangeEndOffset) {
             ASSERT(resultLength > 0 && resultLocation >= 0);
             RefPtr<Range> misspellingRange = TextIterator::subrange(spellingRange, resultLocation - spellingRangeStartOffset, resultLength);
             misspellingRange->startContainer(ec)->document()->markers()->addMarker(misspellingRange.get(), DocumentMarker::Spelling);
-        } else if (markGrammar && result->type == TextCheckingTypeGrammar && resultLocation < grammarRangeEndOffset && resultLocation + resultLength > grammarRangeStartOffset) {
+        } else if (shouldMarkGrammar && result->type == TextCheckingTypeGrammar && resultLocation < grammarRangeEndOffset && resultLocation + resultLength > grammarRangeStartOffset) {
             ASSERT(resultLength > 0 && resultLocation >= 0);
             for (unsigned j = 0; j < result->details.size(); j++) {
                 const GrammarDetail* detail = &result->details[j];
@@ -2609,7 +2634,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(bool markSpelling, Range* 
                     grammarRange->startContainer(ec)->document()->markers()->addMarker(badGrammarRange.get(), DocumentMarker::Grammar, detail->userDescription);
                 }
             }
-        } else if (performTextCheckingReplacements && resultLocation + resultLength <= spellingRangeEndOffset && resultLocation + resultLength >= spellingRangeStartOffset
+        } else if ((shouldPerformReplacement || shouldShowCorrectionPanel) && resultLocation + resultLength <= spellingRangeEndOffset && resultLocation + resultLength >= spellingRangeStartOffset
                     && (result->type == TextCheckingTypeLink
                     || result->type == TextCheckingTypeQuote
                     || result->type == TextCheckingTypeDash
@@ -2640,7 +2665,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(bool markSpelling, Range* 
                 size_t markerCount = markers.size();
                 for (size_t i = 0; i < markerCount; ++i) {
                     const DocumentMarker& marker = markers[i];
-                    if (marker.type == DocumentMarker::Replacement && static_cast<int>(marker.startOffset) < endOffset && static_cast<int>(marker.endOffset) > startOffset) {
+                    if ((marker.type == DocumentMarker::Replacement || marker.type == DocumentMarker::RejectedCorrection) && static_cast<int>(marker.startOffset) < endOffset && static_cast<int>(marker.endOffset) > startOffset) {
                         doReplacement = false;
                         break;
                     }
@@ -2648,7 +2673,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(bool markSpelling, Range* 
                         break;
                 }
             }
-            if (doReplacement && selectionToReplace != m_frame->selection()->selection()) {
+            if (doReplacement && !shouldShowCorrectionPanel && selectionToReplace != m_frame->selection()->selection()) {
                 if (m_frame->shouldChangeSelection(selectionToReplace)) {
                     m_frame->selection()->setSelection(selectionToReplace);
                     selectionChanged = true;
@@ -2656,30 +2681,52 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(bool markSpelling, Range* 
                     doReplacement = false;
                 }
             }
+
+            String replacedString;
             if (doReplacement) {
                 if (result->type == TextCheckingTypeLink) {
                     restoreSelectionAfterChange = false;
                     if (canEditRichly())
                         applyCommand(CreateLinkCommand::create(m_frame->document(), result->replacement));
                 } else if (canEdit() && shouldInsertText(result->replacement, rangeToReplace.get(), EditorInsertActionTyped)) {
-                    String replacedString;
                     if (result->type == TextCheckingTypeCorrection)
                         replacedString = plainText(rangeToReplace.get());
-                    replaceSelectionWithText(result->replacement, false, false);
-                    spellingRangeEndOffset += replacementLength - resultLength;
-                    offsetDueToReplacement += replacementLength - resultLength;
-                    if (resultLocation < selectionOffset)
-                        selectionOffset += replacementLength - resultLength;
-                    if (result->type == TextCheckingTypeCorrection) {
-                        // Add a marker so that corrections can easily be undone and won't be re-corrected.
-                        RefPtr<Range> replacedRange = TextIterator::subrange(paragraphRange.get(), resultLocation, replacementLength);
-                        replacedRange->startContainer()->document()->markers()->addMarker(replacedRange.get(), DocumentMarker::Replacement, replacedString);
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+                    if (shouldShowCorrectionPanel && resultLocation + resultLength == spellingRangeEndOffset && result->type == TextCheckingTypeCorrection) {
+                        // We only show the correction panel on the last word.
+                        Vector<FloatQuad> textQuads;
+                        rangeToReplace->textQuads(textQuads);
+                        Vector<FloatQuad>::const_iterator end = textQuads.end();
+                        FloatRect totalBoundingBox;
+                        for (Vector<FloatQuad>::const_iterator it = textQuads.begin(); it < end; ++it)
+                            totalBoundingBox.unite(it->boundingBox());
+                        m_rangeToBeReplacedByCorrection = rangeToReplace;
+                        m_stringToBeReplacedByCorrection = replacedString;
+                        client()->showCorrectionPanel(totalBoundingBox, m_stringToBeReplacedByCorrection, result->replacement, this);
+                        doReplacement = false;
+                    }
+#endif
+                    if (doReplacement) {
+                        replaceSelectionWithText(result->replacement, false, false);
+                        spellingRangeEndOffset += replacementLength - resultLength;
+                        offsetDueToReplacement += replacementLength - resultLength;
+                        if (resultLocation < selectionOffset)
+                            selectionOffset += replacementLength - resultLength;
+                        if (result->type == TextCheckingTypeCorrection) {
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+                            if (client())
+                                client()->dismissCorrectionPanel(true);
+#endif
+                            // Add a marker so that corrections can easily be undone and won't be re-corrected.
+                            RefPtr<Range> replacedRange = TextIterator::subrange(paragraphRange.get(), resultLocation, replacementLength);
+                            replacedRange->startContainer()->document()->markers()->addMarker(replacedRange.get(), DocumentMarker::Replacement, replacedString);
+                        }
                     }
                 }
             }
         }
     }
-    
+
     if (selectionChanged) {
         // Restore the caret position if we have made any replacements
         setEnd(paragraphRange.get(), endOfParagraph(startOfNextParagraph(paragraphRange->startPosition())));
@@ -2721,12 +2768,54 @@ void Editor::markMisspellingsAndBadGrammar(const VisibleSelection& spellingSelec
 #if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
     if (!isContinuousSpellCheckingEnabled())
         return;
-    markAllMisspellingsAndBadGrammarInRanges(true, spellingSelection.toNormalizedRange().get(), markGrammar && isGrammarCheckingEnabled(), grammarSelection.toNormalizedRange().get(), false);
+    TextCheckingOptions textCheckingOptions = MarkSpelling;
+    if (markGrammar && isGrammarCheckingEnabled())
+        textCheckingOptions |= MarkGrammar;
+    markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, spellingSelection.toNormalizedRange().get(), grammarSelection.toNormalizedRange().get());
 #else
     RefPtr<Range> firstMisspellingRange;
     markMisspellings(spellingSelection, firstMisspellingRange);
     if (markGrammar)
         markBadGrammar(grammarSelection);
+#endif
+}
+
+void Editor::correctionPanelTimerFired(Timer<Editor>*)
+{
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    VisibleSelection selection(frame()->selection()->selection());
+    VisiblePosition start(selection.start(), selection.affinity());
+    VisiblePosition p = startOfWord(start, LeftWordIfOnBoundary);
+    VisibleSelection adjacentWords = VisibleSelection(p, start);
+    markAllMisspellingsAndBadGrammarInRanges(MarkSpelling | ShowCorrectionPanel, adjacentWords.toNormalizedRange().get(), 0);
+#endif
+}
+
+void Editor::handleRejectedCorrection()
+{
+    Range* replacedRange = m_rangeToBeReplacedByCorrection.get();
+    if (!replacedRange || m_frame->document() != replacedRange->ownerDocument())
+        return;
+
+    replacedRange->startContainer()->document()->markers()->addMarker(replacedRange, DocumentMarker::RejectedCorrection, m_stringToBeReplacedByCorrection);
+}
+
+void Editor::startCorrectionPanelTimer()
+{
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    static const double correctionPanelTimerInterval = 0.3;
+    if (client())
+        client()->dismissCorrectionPanel(true);
+    if (isAutomaticSpellingCorrectionEnabled())
+        m_correctionPanelTimer.startOneShot(correctionPanelTimerInterval);
+#endif
+}
+
+void Editor::handleCancelOperation()
+{
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    if (client())
+        client()->dismissCorrectionPanel(false);
 #endif
 }
 

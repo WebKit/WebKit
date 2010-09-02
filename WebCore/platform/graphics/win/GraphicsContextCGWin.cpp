@@ -176,9 +176,12 @@ static const Color& grammarPatternColor() {
     return grammarColor;
 }
 
-void GraphicsContext::drawLineForMisspellingOrBadGrammar(const IntPoint& point, int width, bool grammar)
+void GraphicsContext::drawLineForTextChecking(const IntPoint& point, int width, TextCheckingLineStyle style)
 {
     if (paintingDisabled())
+        return;
+
+    if (style != TextCheckingSpellingLineStyle && style != TextCheckingGrammarLineStyle)
         return;
 
     // These are the same for misspelling or bad grammar
@@ -201,7 +204,7 @@ void GraphicsContext::drawLineForMisspellingOrBadGrammar(const IntPoint& point, 
     CGContextRef context = platformContext();
     CGContextSaveGState(context);
 
-    const Color& patternColor = grammar ? grammarPatternColor() : spellingPatternColor();
+    const Color& patternColor = style == TextCheckingGrammarLineStyle ? grammarPatternColor() : spellingPatternColor();
     setCGStrokeColor(context, patternColor);
 
     wkSetPatternPhaseInUserSpace(context, point);

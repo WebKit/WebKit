@@ -768,6 +768,21 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, int tx, int ty, in
         context->clearShadow();
 }
 
+static GraphicsContext::TextCheckingLineStyle textCheckingLineStyleForMarkerType(DocumentMarker::MarkerType markerType)
+{
+    switch (markerType) {
+    case DocumentMarker::Spelling:
+        return GraphicsContext::TextCheckingSpellingLineStyle;
+    case DocumentMarker::Grammar:
+        return GraphicsContext::TextCheckingGrammarLineStyle;
+    case DocumentMarker::Replacement:
+        return GraphicsContext::TextCheckingReplacementLineStyle;
+    default:
+        ASSERT_NOT_REACHED();
+        return GraphicsContext::TextCheckingSpellingLineStyle;
+    }
+}
+
 void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, int tx, int ty, const DocumentMarker& marker, RenderStyle* style, const Font& font, bool grammar)
 {
     // Never print spelling/grammar markers (5327887)
@@ -831,7 +846,7 @@ void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, int tx, in
         // In larger fonts, though, place the underline up near the baseline to prevent a big gap.
         underlineOffset = baseline + 2;
     }
-    pt->drawLineForMisspellingOrBadGrammar(IntPoint(tx + m_x + start, ty + m_y + underlineOffset), width, grammar);
+    pt->drawLineForTextChecking(IntPoint(tx + m_x + start, ty + m_y + underlineOffset), width, textCheckingLineStyleForMarkerType(marker.type));
 }
 
 void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, int tx, int ty, const DocumentMarker& marker, RenderStyle* style, const Font& font)
@@ -898,10 +913,10 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, int tx, int ty, Re
             case DocumentMarker::Grammar:
             case DocumentMarker::Spelling:
             case DocumentMarker::Replacement:
+            case DocumentMarker::RejectedCorrection:
                 if (background)
                     continue;
                 break;
-                
             case DocumentMarker::TextMatch:
                 if (!background)
                     continue;
@@ -933,6 +948,9 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, int tx, int ty, Re
                 break;
             case DocumentMarker::Replacement:
                 computeRectForReplacementMarker(tx, ty, marker, style, font);
+                paintSpellingOrGrammarMarker(pt, tx, ty, marker, style, font, false);
+                break;
+            case DocumentMarker::RejectedCorrection:
                 break;
             default:
                 ASSERT_NOT_REACHED();

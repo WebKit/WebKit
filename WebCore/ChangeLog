@@ -1,3 +1,101 @@
+2010-09-01  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add support for autocorrection UI on Mac OS X.
+        https://bugs.webkit.org/show_bug.cgi?id=44958
+        <rdar://problem/7299621>
+
+        Several new member methods are added to EditorClient for communication
+        between WebCore and WebKit. A new handler, executeCancelOperation(), is
+        added to EditorCommand.cpp so that WebCore can intercept the ESC key event
+        to dismiss autocorrection UI. A new DocumentMarker value, RejectedCorrection,
+        is added to keep track of the corrections that user has rejected, so that it
+        will not be suggested again later. The autocorrection is driven by a timer.
+        Every time the editor inserts a new letter, the timer is reset. If the timer
+        fires, it means neither has user entered any new letter for current word, nor
+        has he entered whitespace or punctuation to complete the word. In this case,
+        we query for autocorrection.
+
+        * WebCore.exp.in: Updated
+
+        * dom/DocumentMarker.h: Added RejectedCorrection to indicate word on which user
+          has rejected autocorrection.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::Editor): Initialize autocorrection timer.
+        (WebCore::Editor::~Editor): Make sure autocorrection UI is dismissed before
+          destroying Editor object.
+        (WebCore::Editor::markMisspellingsAfterTypingToPosition): Adopted new signature
+          of markAllMisspellingsAndBadGrammarInRanges().
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges): Consolidated all
+          boolean arguments into one bitfield. This improves readability and allows us to
+          pass in a bit to indicate whether we want to show autocorrection UI. Also added
+          code to show autocorrection UI if it is necessary.
+        (WebCore::Editor::markMisspellingsAndBadGrammar): Adopted new signature of
+          markAllMisspellingsAndBadGrammarInRanges().
+        (WebCore::Editor::correctionPanelTimerFired): Check to see if we should show
+          autocorrection UI when user pauses during typing.
+        (WebCore::Editor::handleRejectedCorrection): Update user dictionary when an autocorrection is rejected.
+        (WebCore::Editor::startCorrectionPanelTimer): Start autocorrection timer.
+        (WebCore::Editor::handleCancelOperation): Dismiss autocorrection UI when ESC key is pressed.
+
+        * editing/Editor.h: Added autocorrection related member methods and variables.
+
+        * editing/EditorCommand.cpp:
+        (WebCore::executeCancelOperation): Handle ESC key event. Dismiss autocorrection UI.
+        (WebCore::createCommandMap): Updated for executeCancelOperation().
+
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::markMisspellingsAfterTyping): Reset autocorrection timer after insertion.
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyEditorClient::showCorrectionPanel): Dummy implementation.
+        (WebCore::EmptyEditorClient::dismissCorrectionPanel): Ditto
+
+        * page/EditorClient.h: Added methods for communication between WebCore and WebKit regarding autocorrection.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::respondToChangedSelection): Remove Replacement marker where we used to only remove Spelling
+          mark, because whenever we need to remove spelling underline we also should remove autocorrection underline.
+
+        * platform/graphics/GraphicsContext.h: Added enum TextCheckingLineStyle to specify the underline
+          for different type of text checking result. Replaced drawLineForMisspellingOrBadGrammar() with
+          drawLineForTextChecking(), which allows autocorrection to have different indication from misspelling
+          and grammatical error.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawLineForTextChecking): Replaced drawLineForMisspellingOrBadGrammar() with drawLineForTextChecking().
+
+        * platform/graphics/haiku/GraphicsContextHaiku.cpp:
+        (WebCore::GraphicsContext::drawLineForTextChecking): Ditto
+
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawLineForTextChecking): Ditto
+
+        * platform/graphics/openvg/GraphicsContextOpenVG.cpp:
+        (WebCore::GraphicsContext::drawLineForTextChecking): Ditto
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::drawLineForTextChecking): Ditto
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::drawLineForTextChecking): Ditto
+
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::drawLineForTextChecking): Ditto
+
+        * platform/graphics/wince/GraphicsContextWince.cpp:
+        (WebCore::GraphicsContext::drawLineForTextChecking): Ditto
+
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::drawLineForTextChecking): Ditto
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::textCheckingLineStyleForMarkerType): Return line style for a given document marker type.
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker):  Replaced drawLineForMisspellingOrBadGrammar() with drawLineForTextChecking().
+        (WebCore::InlineTextBox::paintDocumentMarkers): Handle new marker value, RejectedCorrection.
+
 2010-09-01  Kinuko Yasuda  <kinuko@google.com>
 
         Reviewed by Adam Barth.

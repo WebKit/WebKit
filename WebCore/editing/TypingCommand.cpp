@@ -307,6 +307,10 @@ void TypingCommand::markMisspellingsAfterTyping()
         VisiblePosition p2 = startOfWord(start, LeftWordIfOnBoundary);
         if (p1 != p2)
             document()->frame()->editor()->markMisspellingsAfterTypingToPosition(p1);
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+        else
+            document()->frame()->editor()->startCorrectionPanelTimer();
+#endif
     }
 }
 

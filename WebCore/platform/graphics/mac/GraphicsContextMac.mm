@@ -119,7 +119,7 @@ static NSColor* createPatternColor(NSString* name, NSColor* defaultColor, bool& 
 }
 
 // WebKit on Mac is a standard platform component, so it must use the standard platform artwork for underline.
-void GraphicsContext::drawLineForMisspellingOrBadGrammar(const IntPoint& point, int width, bool grammar)
+void GraphicsContext::drawLineForTextChecking(const IntPoint& point, int width, TextCheckingLineStyle style)
 {
     if (paintingDisabled())
         return;
@@ -127,23 +127,41 @@ void GraphicsContext::drawLineForMisspellingOrBadGrammar(const IntPoint& point, 
     // These are the same for misspelling or bad grammar.
     int patternHeight = cMisspellingLineThickness;
     int patternWidth = cMisspellingLinePatternWidth;
- 
+
     bool usingDot;
     NSColor *patternColor;
-    if (grammar) {
-        // Constants for grammar pattern color.
-        static bool usingDotForGrammar = false;
-        DEFINE_STATIC_LOCAL(RetainPtr<NSColor>, grammarPatternColor, (createPatternColor(@"GrammarDot", [NSColor greenColor], usingDotForGrammar)));
-        
-        usingDot = usingDotForGrammar;
-        patternColor = grammarPatternColor.get();
-    } else {
-        // Constants for spelling pattern color.
-        static bool usingDotForSpelling = false;
-        DEFINE_STATIC_LOCAL(RetainPtr<NSColor>, spellingPatternColor, (createPatternColor(@"SpellingDot", [NSColor redColor], usingDotForSpelling)));
-        
-        usingDot = usingDotForSpelling;
-        patternColor = spellingPatternColor.get();
+    switch (style) {
+        case TextCheckingSpellingLineStyle:
+        {
+            // Constants for spelling pattern color.
+            static bool usingDotForSpelling = false;
+            DEFINE_STATIC_LOCAL(RetainPtr<NSColor>, spellingPatternColor, (createPatternColor(@"SpellingDot", [NSColor redColor], usingDotForSpelling)));
+            usingDot = usingDotForSpelling;
+            patternColor = spellingPatternColor.get();
+            break;
+        }
+        case TextCheckingGrammarLineStyle:
+        {
+            // Constants for grammar pattern color.
+            static bool usingDotForGrammar = false;
+            DEFINE_STATIC_LOCAL(RetainPtr<NSColor>, grammarPatternColor, (createPatternColor(@"GrammarDot", [NSColor greenColor], usingDotForGrammar)));
+            usingDot = usingDotForGrammar;
+            patternColor = grammarPatternColor.get();
+            break;
+        }
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+        case TextCheckingReplacementLineStyle:
+        {
+            // Constants for spelling pattern color.
+            static bool usingDotForSpelling = false;
+            DEFINE_STATIC_LOCAL(RetainPtr<NSColor>, spellingPatternColor, (createPatternColor(@"CorrectionDot", [NSColor blueColor], usingDotForSpelling)));
+            usingDot = usingDotForSpelling;
+            patternColor = spellingPatternColor.get();
+            break;
+        }
+#endif
+        default:
+            return;
     }
 
     // Make sure to draw only complete dots.

@@ -615,9 +615,7 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     platformContext()->canvas()->drawPoints(SkCanvas::kLines_PointMode, 2, pts, paint);
 }
 
-void GraphicsContext::drawLineForMisspellingOrBadGrammar(const IntPoint& pt,
-                                                         int width,
-                                                         bool grammar)
+void GraphicsContext::drawLineForTextChecking(const IntPoint& pt, int width, TextCheckingLineStyle style)
 {
     if (paintingDisabled())
         return;

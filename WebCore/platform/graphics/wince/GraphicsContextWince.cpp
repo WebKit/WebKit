@@ -1062,7 +1062,7 @@ void GraphicsContext::drawLineForText(const IntPoint& origin, int width, bool pr
     setStrokeStyle(oldStyle);
 }
 
-void GraphicsContext::drawLineForMisspellingOrBadGrammar(const IntPoint&, int width, bool grammar)
+void GraphicsContext::drawLineForTextChecking(const IntPoint&, int width, TextCheckingLineStyle style)
 {
     notImplemented();
 }

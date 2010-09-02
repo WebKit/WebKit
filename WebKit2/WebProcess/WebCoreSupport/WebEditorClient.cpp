@@ -469,4 +469,16 @@ void WebEditorClient::setInputMethodState(bool)
     notImplemented();
 }
 
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+void WebEditorClient::showCorrectionPanel(const WebCore::FloatRect& boundingBoxOfReplacedString, const WTF::String& replacedString, const WTF::String& replacementString, WebCore::Editor*)
+{
+    notImplemented();
+}
+
+void WebEditorClient::dismissCorrectionPanel(bool correctionAccepted)
+{
+    notImplemented();
+}
+#endif
+
 } // namespace WebKit

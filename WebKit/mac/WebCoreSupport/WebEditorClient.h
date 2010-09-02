@@ -27,6 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <WebCore/Editor.h>
 #import <WebCore/EditorClient.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Forward.h>
@@ -38,7 +39,7 @@
 class WebEditorClient : public WebCore::EditorClient {
 public:
     WebEditorClient(WebView *);
-    
+    virtual ~WebEditorClient();
     virtual void pageDestroyed();
 
     virtual bool isGrammarCheckingEnabled();
@@ -129,12 +130,19 @@ public:
     virtual void getGuessesForWord(const WTF::String&, WTF::Vector<WTF::String>& guesses);
     virtual void willSetInputMethodState();
     virtual void setInputMethodState(bool enabled);
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    virtual void showCorrectionPanel(const WebCore::FloatRect& boundingBoxOfReplacedString, const WTF::String& replacedString, const WTF::String& replacementString, WebCore::Editor*);
+    virtual void dismissCorrectionPanel(bool correctionAccepted);
+#endif
 private:
     void registerCommandForUndoOrRedo(PassRefPtr<WebCore::EditCommand>, bool isRedo);
     WebEditorClient();
-    
+
     WebView *m_webView;
     RetainPtr<WebEditorUndoTarget> m_undoTarget;
-    
     bool m_haveUndoRedoOperations;
+
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    NSInteger m_correctionPanelTag;
+#endif
 };

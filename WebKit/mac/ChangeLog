@@ -1,3 +1,24 @@
+2010-09-01  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add support for autocorrection UI on Mac OS X.
+        https://bugs.webkit.org/show_bug.cgi?id=44958
+        <rdar://problem/7299621>
+
+        See detailed high level description in WebCore/ChangeLog.
+
+        * WebCoreSupport/WebEditorClient.h: Added new member methods declared in
+          EditorClient. Added m_correctionPanelTag to store the ID of current autocorrection UI object.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::WebEditorClient): Initialize m_correctionPanelTag.
+        (WebEditorClient::~WebEditorClient): Make sure the autocorrection UI is
+          dismissed before destroying the object.
+        (WebEditorClient::respondToChangedSelection): Dismiss autocorrection UI whenever the selection changes.
+        (WebEditorClient::showCorrectionPanel): Show autocorrection UI.
+        (WebEditorClient::dismissCorrectionPanel): Dismiss autocorrection UI.
+
 2010-09-01  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Adam Roben.

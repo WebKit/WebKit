@@ -64,6 +64,9 @@
 #import <runtime/InitializeThreading.h>
 #import <wtf/PassRefPtr.h>
 #import <wtf/Threading.h>
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#import <AppKit/NSTextChecker.h>
+#endif
 
 using namespace WebCore;
 using namespace WTF;
@@ -171,7 +174,17 @@ WebEditorClient::WebEditorClient(WebView *webView)
     : m_webView(webView)
     , m_undoTarget([[[WebEditorUndoTarget alloc] init] autorelease])
     , m_haveUndoRedoOperations(false)
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    , m_correctionPanelTag(-1)
+#endif
 {
+}
+
+WebEditorClient::~WebEditorClient()
+{
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    dismissCorrectionPanel(true);
+#endif
 }
 
 bool WebEditorClient::isContinuousSpellCheckingEnabled()
@@ -285,6 +298,10 @@ void WebEditorClient::respondToChangedContents()
 void WebEditorClient::respondToChangedSelection()
 {
     [m_webView _selectionChanged];
+
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    dismissCorrectionPanel(true);
+#endif
 
     // FIXME: This quirk is needed due to <rdar://problem/5009625> - We can phase it out once Aperture can adopt the new behavior on their end
     if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_APERTURE_QUIRK) && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Aperture"])
@@ -789,6 +806,35 @@ void WebEditorClient::updateSpellingUIWithGrammarString(const String& badGrammar
     [[NSSpellChecker sharedSpellChecker] updateSpellingPanelWithGrammarString:badGrammarPhrase detail:grammarDetailDict];
 #endif
 }
+
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+void WebEditorClient::showCorrectionPanel(const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, Editor* editor) {
+    dismissCorrectionPanel(true);
+
+    NSRect boundingBoxAsNSRect = boundingBoxOfReplacedString;
+    NSRect webViewFrame = m_webView.frame;
+    boundingBoxAsNSRect.origin.y = webViewFrame.size.height-NSMaxY(boundingBoxAsNSRect);
+
+    // Need to explicitly use these local NSString objects, because the C++ references may be invalidated by the time the block below is executed.
+    NSString *replacedStringAsNSString = replacedString;
+    NSString *replacementStringAsNSString = replacementString;
+
+    m_correctionPanelTag = [[NSSpellChecker sharedSpellChecker] showCorrection:replacementStringAsNSString forStringInRect:boundingBoxAsNSRect view:m_webView completionHandler:^(BOOL accepted) {
+        if (!accepted) {
+            [[NSSpellChecker sharedSpellChecker] recordResponse:NSCorrectionResponseRejected toCorrection:replacementStringAsNSString forWord:replacedStringAsNSString language:nil inSpellDocumentWithTag:[m_webView spellCheckerDocumentTag]];
+            editor->handleRejectedCorrection();
+        }
+    }];
+}
+
+void WebEditorClient::dismissCorrectionPanel(bool correctionAccepted)
+{
+    if (m_correctionPanelTag >= 0) {
+        [[NSSpellChecker sharedSpellChecker] dismissCorrection:m_correctionPanelTag acceptCorrection:correctionAccepted];
+        m_correctionPanelTag = -1;
+    }
+}
+#endif
 
 void WebEditorClient::updateSpellingUIWithMisspelledWord(const String& misspelledWord)
 {

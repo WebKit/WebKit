@@ -1414,8 +1414,10 @@ void Frame::respondToChangedSelection(const VisibleSelection& oldSelection, bool
 
         // This only erases markers that are in the first unit (word or sentence) of the selection.
         // Perhaps peculiar, but it matches AppKit.
-        if (RefPtr<Range> wordRange = newAdjacentWords.toNormalizedRange())
+        if (RefPtr<Range> wordRange = newAdjacentWords.toNormalizedRange()) {
             document()->markers()->removeMarkers(wordRange.get(), DocumentMarker::Spelling);
+            document()->markers()->removeMarkers(wordRange.get(), DocumentMarker::Replacement);
+        }
         if (RefPtr<Range> sentenceRange = newSelectedSentence.toNormalizedRange())
             document()->markers()->removeMarkers(sentenceRange.get(), DocumentMarker::Grammar);
     }

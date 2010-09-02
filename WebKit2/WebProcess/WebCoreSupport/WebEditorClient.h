@@ -39,12 +39,12 @@ public:
     {
     }
 
-private:    
+private:
     virtual void pageDestroyed();
-    
+
     virtual bool shouldDeleteRange(WebCore::Range*);
     virtual bool shouldShowDeleteInterface(WebCore::HTMLElement*);
-    virtual bool smartInsertDeleteEnabled(); 
+    virtual bool smartInsertDeleteEnabled();
     virtual bool isSelectTrailingWhitespaceEnabled();
     virtual bool isContinuousSpellCheckingEnabled();
     virtual void toggleContinuousSpellChecking();
@@ -131,7 +131,10 @@ private:
     virtual void getGuessesForWord(const WTF::String&, Vector<WTF::String>& guesses);
     virtual void willSetInputMethodState();
     virtual void setInputMethodState(bool enabled);
-
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    virtual void showCorrectionPanel(const WebCore::FloatRect& boundingBoxOfReplacedString, const WTF::String& replacedString, const WTF::String& replacementString, WebCore::Editor*);
+    virtual void dismissCorrectionPanel(bool correctionAccepted);
+#endif
     WebPage* m_page;
 };
 

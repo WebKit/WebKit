@@ -1,3 +1,19 @@
+2010-09-01  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add support for autocorrection UI on Mac OS X.
+        https://bugs.webkit.org/show_bug.cgi?id=44958
+        <rdar://problem/7299621>
+
+        See detailed high level description in WebCore/ChangeLog.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::showCorrectionPanel): Dummy implementation.
+        (WebKit::WebEditorClient::dismissCorrectionPanel): Ditto
+
+        * WebProcess/WebCoreSupport/WebEditorClient.h: Added new methods declared in base class.
+
 2010-09-01  Sam Weinig  <sam@webkit.org>
 
         Fix the build.
