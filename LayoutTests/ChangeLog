@@ -1,3 +1,16 @@
+2010-08-31  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Carlson.
+
+        [GStreamer] can't play m4v videos
+        https://bugs.webkit.org/show_bug.cgi?id=44951
+
+        Test similar to media-can-play-mpeg-audio.html but for videos. For
+        now only m4v and mp4 types are tested.
+
+        * media/media-can-play-mpeg4-video-expected.txt: Added.
+        * media/media-can-play-mpeg4-video.html: Added.
+
 2010-09-01  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Chris Marrin.

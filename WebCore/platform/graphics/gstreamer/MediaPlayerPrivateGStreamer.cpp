@@ -1239,6 +1239,7 @@ static HashSet<String> mimeTypeCache()
         for (GList* iterator = factories; iterator; iterator = iterator->next) {
             GstTypeFindFactory* factory = GST_TYPE_FIND_FACTORY(iterator->data);
             GstCaps* caps = gst_type_find_factory_get_caps(factory);
+            gchar** extensions;
 
             if (!caps)
                 continue;
@@ -1315,6 +1316,16 @@ static HashSet<String> mimeTypeCache()
                         cache.add(String(name));
 
                     g_strfreev(mimetype);
+                }
+
+                // As a last resort try some special cases depending
+                // on the file extensions registered with the typefind
+                // factory.
+                if (!cached && (extensions = gst_type_find_factory_get_extensions(factory))) {
+                    for (int index = 0; extensions[index]; index++) {
+                        if (g_str_equal(extensions[index], "m4v"))
+                            cache.add(String("video/x-m4v"));
+                    }
                 }
             }
         }

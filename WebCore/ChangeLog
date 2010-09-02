@@ -1,3 +1,18 @@
+2010-08-31  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Carlson.
+
+        [GStreamer] can't play m4v videos
+        https://bugs.webkit.org/show_bug.cgi?id=44951
+
+        Fixed registration of the m4v media type in the hashtable used by
+        the player to report if it supports a given media type.
+
+        Test: media/media-can-play-mpeg4-video.html
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mimeTypeCache):
+
 2010-09-01  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.
