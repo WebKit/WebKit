@@ -116,11 +116,13 @@ WebInspector.HAREntry.prototype = {
 
     _buildPostData: function()
     {
-        return {
+        var res = {
             mimeType: this._resource.requestHeaderValue("Content-Type"),
-            params: this._buildParameters(this._resource.formParameters),
             text: this._resource.requestFormData
         };
+        if (this._resource.formParameters)
+           res.params = this._buildParameters(this._resource.formParameters);
+        return res;
     },
 
     _buildParameters: function(parameters)

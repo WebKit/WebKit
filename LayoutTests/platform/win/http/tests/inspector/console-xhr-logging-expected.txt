@@ -1,0 +1,26 @@
+CONSOLE MESSAGE: line 11: enabled
+CONSOLE MESSAGE: line 40: sending a %s request to %s
+CONSOLE MESSAGE: line 40: sending a %s request to %s
+CONSOLE MESSAGE: line 40: sending a %s request to %s
+CONSOLE MESSAGE: line 21: disabled
+CONSOLE MESSAGE: line 40: sending a %s request to %s
+CONSOLE MESSAGE: line 40: sending a %s request to %s
+CONSOLE MESSAGE: line 40: sending a %s request to %s
+Tests that XMLHttpRequest Logging works when Enabled and doesn't show logs when Disabled.
+
+console-xhr-logging.html:11enabled
+console-xhr-logging.html:40sending a GET request to resources/xhr-exists.html
+XHR finished loading: "http://127.0.0.1:8000/inspector/resources/xhr-exists.html".
+console-xhr-logging.html:40sending a GET request to resources/xhr-does-not-exist.html
+resources/xhr-does-not-exist.htmlFailed to load resource: the server responded with a status of 404 (Not Found)
+XHR finished loading: "http://127.0.0.1:8000/inspector/resources/xhr-does-not-exist.html".
+console-xhr-logging.html:40sending a POST request to resources/xhr-exists.html
+resources/xhr-exists.htmlFailed to load resource: the server responded with a status of 405 (Method Not Allowed)
+XHR finished loading: "http://127.0.0.1:8000/inspector/resources/xhr-exists.html".
+console-xhr-logging.html:21disabled
+console-xhr-logging.html:40sending a GET request to resources/xhr-exists.html
+console-xhr-logging.html:40sending a GET request to resources/xhr-does-not-exist.html
+resources/xhr-does-not-exist.htmlFailed to load resource: the server responded with a status of 404 (Not Found)
+console-xhr-logging.html:40sending a POST request to resources/xhr-exists.html
+resources/xhr-exists.htmlFailed to load resource: the server responded with a status of 405 (Method Not Allowed)
+

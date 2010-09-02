@@ -24,6 +24,7 @@ Tests that resources panel shows form data parameters.
         }
         postData : {
             mimeType : "application/x-www-form-urlencoded"
+            text : "formParam1=formValue1&formParam2="
             params : {
                 0 : {
                     name : "formParam1"
@@ -34,7 +35,6 @@ Tests that resources panel shows form data parameters.
                     value : ""
                 }
             }
-            text : "formParam1=formValue1&formParam2="
         }
     }
     response : {

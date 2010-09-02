@@ -1,3 +1,23 @@
+2010-09-02  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: HAR converter fails on POST requests with non-form content type.
+        Migrated HAR tests to inspector-test2.js, enabled resource tracking, added test for XHR POST request.
+        https://bugs.webkit.org/show_bug.cgi?id=45109
+
+        * http/tests/inspector/resource-har-conversion-expected.txt:
+        * http/tests/inspector/resource-har-conversion.html:
+        * http/tests/inspector/resource-parameters-expected.txt:
+        * http/tests/inspector/resource-test2.js: Added.
+        (initialize_ResourceTest.InspectorTest.resourceURLComparer):
+        (initialize_ResourceTest):
+        * platform/chromium-win/http/tests/inspector/resource-parameters-expected.txt:
+        * platform/chromium-win/http/tests/inspector/resource-har-conversion-expected.txt: Added.
+        * platform/win/http/tests/inspector/console-xhr-logging-expected.txt: Added.
+        * platform/win/http/tests/inspector/resource-har-conversion-expected.txt: Added.
+        * platform/win/http/tests/inspector/resource-parameters-expected.txt:
+
 2010-09-02  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Dimitri Glazkov.

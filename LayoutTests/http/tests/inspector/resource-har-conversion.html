@@ -1,37 +1,43 @@
 <html>
 <head>
-<script src="inspector-test.js"></script>
-<script src="resource-tests.js"></script>
+<script src="resource-test2.js"></script>
+<script src="inspector-test2.js"></script>
 
 <script>
-function doit()
-{
-    dumpResources();
-}
 
-function dumpResources() {
-    function callback(result)
+var test = function()
+{
+    function getHAR(id)
     {
-        dumpObject(result.sort(resourceURLComparer), HARNondeterministicProperties);
-        notifyDone();
+        return new WebInspector.HAREntry(WebInspector.resources[id]).build();
     }
 
-    evaluateInWebInspector("frontend_dumpResources", callback);
+    InspectorTest.enableResourceTracking(function() {
+        InjectedScriptAccess.getDefault().evaluate("doXHR()", "console", function() {
+            var resources = Object.keys(WebInspector.resources).map(getHAR).sort(InspectorTest.resourceURLComparer);
+            InspectorTest.addObject(resources, InspectorTest.HARNondeterministicProperties);
+            InspectorTest.disableResourceTracking();
+            InspectorTest.completeTest();
+        });
+    });
 }
 
-// Frontend functions.
+// Make a POST requests to see we handle non-post form data well.
 
-function frontend_dumpResources()
+function doXHR()
 {
-    var result = [];
-    for (var resource in WebInspector.resources)
-        result.push(new WebInspector.HAREntry(WebInspector.resources[resource]).build());
-    return result;
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "resources/xhr-does-not-exist.html", false);
+    xhr.setRequestHeader("Content-Type", "text/xml");
+    xhr.send("<xml></xml>");
 }
+
 </script>
+
+
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 Tests conversion of Inspector's resource representation into HAR format.
 </p>

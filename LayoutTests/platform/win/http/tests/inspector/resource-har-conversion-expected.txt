@@ -121,12 +121,12 @@ Page reloaded.
             statusText : "Not Found"
             headers : <object>
             content : {
-                size : 355
+                size : 305
                 mimeType : "text/html"
             }
             redirectURL : ""
             headersSize : -1
-            bodySize : 355
+            bodySize : 305
         }
         timings : {
             blocked : -1
