@@ -1,8 +1,9 @@
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpEditingCallbacks();
-</script>
-<script>
+    layoutTestController.dumpAsText();
+}
+
 function log(str) {
     var li = document.createElement("li");
     li.appendChild(document.createTextNode(str));

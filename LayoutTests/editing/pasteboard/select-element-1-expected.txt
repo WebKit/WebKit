@@ -20,39 +20,11 @@ EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range fr
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 1 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 473x18
-          text run at (0,0) width 253: "This tests copy/paste of select elements. "
-          text run at (253,0) width 220: "All the options should be included."
-      RenderBlock {DIV} at (0,34) size 784x13
-        RenderInline {FONT} at (0,0) size 0x18
-          RenderInline {SPAN} at (0,0) size 0x13
-            RenderBR {BR} at (0,0) size 0x13
-      RenderBlock {DIV} at (0,47) size 784x22
-        RenderMenuList {SELECT} at (2,2) size 62x18 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (0,0) size 62x18
-            RenderText at (8,2) size 22x13
-              text run at (8,2) width 22: "One"
-      RenderBlock {UL} at (0,85) size 784x72
-        RenderListItem {LI} at (40,0) size 744x18
-          RenderListMarker at (-17,0) size 7x18: bullet
-          RenderText {#text} at (0,0) size 43x18
-            text run at (0,0) width 43: "Passed"
-        RenderListItem {LI} at (40,18) size 744x18
-          RenderListMarker at (-17,0) size 7x18: bullet
-          RenderText {#text} at (0,0) size 43x18
-            text run at (0,0) width 43: "Passed"
-        RenderListItem {LI} at (40,36) size 744x18
-          RenderListMarker at (-17,0) size 7x18: bullet
-          RenderText {#text} at (0,0) size 43x18
-            text run at (0,0) width 43: "Passed"
-        RenderListItem {LI} at (40,54) size 744x18
-          RenderListMarker at (-17,0) size 7x18: bullet
-          RenderText {#text} at (0,0) size 43x18
-            text run at (0,0) width 43: "Passed"
-caret: position 7 of child 0 {SELECT} of child 4 {DIV} of body
+This tests copy/paste of select elements. All the options should be included.
+
+
+
+Passed
+Passed
+Passed
+Passed
