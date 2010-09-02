@@ -1,3 +1,12 @@
+2010-09-02  Adam Langley  <agl@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [chromium] fix memory corruption in Khmer rendering.
+
+        * fast/text/khmer-crash-expected.txt: Added.
+        * fast/text/khmer-crash.html: Added.
+
 2010-09-02  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, add two failing tests (http/tests/inspector/console-xhr-logging.html and http/tests/inspector/resource-har-conversion.html) to platform/chromium/test_expectations.txt.

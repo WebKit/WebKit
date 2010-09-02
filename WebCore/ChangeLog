@@ -1,3 +1,29 @@
+2010-09-02  Adam Langley  <agl@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [chromium] fix memory corruption in Khmer rendering.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44960
+
+        Test: fast/text/khmer-crash.html
+
+        * platform/graphics/chromium/FontLinux.cpp:
+        (WebCore::TextRunWalker::shapeGlyphs):
+          The Khmer shaper has a bug where it would request larger output
+          buffers, but request a zero increase in size. Because of this we add
+          one to the requested size.
+        (WebCore::TextRunWalker::setGlyphXPositions):
+          The Khmer shaper is outputing cluster logs which suggest that some
+          output glyphs appear from nowhere (i.e. have no input codepoints). I
+          don't know Khmer, so maybe that's correct, but it broke the
+          assumptions of this code, causing a read out-of-bounds.
+        * platform/graphics/chromium/HarfbuzzSkia.cpp:
+        (WebCore::stringToGlyphs):
+          The Harfbuzz interfaces aren't documented, but it appears that the
+          output array to stringToGlyphs isn't sized and that Harfbuzz expects
+          us to detect when the input is too long.
+
 2010-09-02  Adam Roben  <aroben@apple.com>
 
         Fill the scroll corner with white when shouldPaintCustomScrollbars is
