@@ -48,6 +48,8 @@ var context = {};  // Used by WebCore's inspector routines.
     Preferences.domBreakpointsEnabled = true;
 })();
 
+var devtools = devtools || {};
+
 devtools.domContentLoaded = function()
 {
     WebInspector.setAttachedWindow(WebInspector.queryParamsObject.docked === "true");
