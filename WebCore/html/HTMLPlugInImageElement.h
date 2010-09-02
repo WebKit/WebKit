@@ -38,23 +38,24 @@ public:
     void setNeedsWidgetUpdate(bool needsWidgetUpdate) { m_needsWidgetUpdate = needsWidgetUpdate; }
 
     RenderEmbeddedObject* renderEmbeddedObject() const;
-    
+
 protected:
-    HTMLPlugInImageElement(const QualifiedName& tagName, Document*);
+    HTMLPlugInImageElement(const QualifiedName& tagName, Document*, bool createdByParser);
 
     bool isImageType();
-
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-
-    static void updateWidgetCallback(Node*);
 
     OwnPtr<HTMLImageLoader> m_imageLoader;
     String m_serviceType;
     String m_url;
 
+    static void updateWidgetCallback(Node*);
+    virtual void detach();
+
 private:
     virtual bool canLazyAttach() { return false; }
-
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    
+    virtual void finishParsingChildren();
     virtual void willMoveToNewOwnerDocument();
 
     void updateWidget();

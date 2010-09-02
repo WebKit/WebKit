@@ -48,8 +48,6 @@ private:
 
     virtual void attach();
     virtual bool rendererIsNeeded(RenderStyle*);
-    virtual void finishParsingChildren();
-    virtual void detach();
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
     

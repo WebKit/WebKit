@@ -43,7 +43,7 @@ div
 dl interfaceName=HTMLDListElement
 dt interfaceName=HTMLElement
 em interfaceName=HTMLElement
-embed
+embed constructorNeedsCreatedByParser
 fieldset interfaceName=HTMLFieldSetElement, constructorNeedsFormElement
 figcaption interfaceName=HTMLElement
 figure interfaceName=HTMLElement

@@ -25,6 +25,36 @@
         This pushes more of HTMLObjectElement code down into
         HTMLPlugInImageElement so that it can be shared with HTMLEmbedElement.
 
+        This patch was originally written in one piece and reviewed by Dimitri.
+        I'm landing it as four separate changes for easier readability and less
+        chance of regression.
+
+        No functional change, thus no tests.
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::HTMLEmbedElement):
+        (WebCore::HTMLEmbedElement::create):
+        * html/HTMLEmbedElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::HTMLObjectElement):
+        * html/HTMLObjectElement.h:
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::HTMLPlugInImageElement):
+        (WebCore::HTMLPlugInImageElement::detach):
+        (WebCore::HTMLPlugInImageElement::finishParsingChildren):
+        * html/HTMLPlugInImageElement.h:
+        * html/HTMLTagNames.in:
+
+2010-09-02  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Share more code between HTMLObjectElement and HTMLEmbedElement
+        https://bugs.webkit.org/show_bug.cgi?id=45054
+
+        This pushes more of HTMLObjectElement code down into
+        HTMLPlugInImageElement so that it can be shared with HTMLEmbedElement.
+
         I also moved a little code from HTMLPluginElement to HTMLPlugInImageElement
         since HTMLAppletElement does not need to share this same widget update logic.
         This is a small correction from the previous change.

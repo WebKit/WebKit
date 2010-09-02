@@ -29,10 +29,10 @@ namespace WebCore {
 
 class HTMLEmbedElement : public HTMLPlugInImageElement {
 public:
-    static PassRefPtr<HTMLEmbedElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<HTMLEmbedElement> create(const QualifiedName&, Document*, bool createdByParser);
 
 private:
-    HTMLEmbedElement(const QualifiedName&, Document*);
+    HTMLEmbedElement(const QualifiedName&, Document*, bool createdByParser);
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(Attribute*);

@@ -46,13 +46,10 @@ namespace WebCore {
 using namespace HTMLNames;
 
 inline HTMLObjectElement::HTMLObjectElement(const QualifiedName& tagName, Document* document, bool createdByParser) 
-    : HTMLPlugInImageElement(tagName, document)
+    : HTMLPlugInImageElement(tagName, document, createdByParser)
     , m_docNamedItem(true)
     , m_useFallbackContent(false)
 {
-    // HTMLObjectElement tries to delay updating its widget while parsing until
-    // after all of its children are parsed.
-    setNeedsWidgetUpdate(!createdByParser);
     ASSERT(hasTagName(objectTag));
 }
 
@@ -145,24 +142,6 @@ void HTMLObjectElement::attach()
             m_imageLoader = adoptPtr(new HTMLImageLoader(this));
         m_imageLoader->updateFromElement();
     }
-}
-
-void HTMLObjectElement::finishParsingChildren()
-{
-    HTMLPlugInImageElement::finishParsingChildren();
-    if (!useFallbackContent()) {
-        setNeedsWidgetUpdate(true);
-        if (inDocument())
-            setNeedsStyleRecalc();
-    }
-}
-
-void HTMLObjectElement::detach()
-{
-    if (attached() && renderer() && !useFallbackContent())
-        // Update the widget the next time we attach (detaching destroys the plugin).
-        setNeedsWidgetUpdate(true);
-    HTMLPlugInImageElement::detach();
 }
 
 void HTMLObjectElement::insertedIntoDocument()

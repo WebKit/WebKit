@@ -40,7 +40,6 @@
 #include "HTMLNames.h"
 #include "HTMLPlugInImageElement.h"
 #include "MIMETypeRegistry.h"
-#include "Node.h"
 #include "Page.h"
 #include "PluginData.h"
 #include "RenderEmbeddedObject.h"
