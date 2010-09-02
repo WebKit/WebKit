@@ -1,3 +1,11 @@
+2010-09-02  Andreas Kling  <andreas.kling@nokia.com>
+
+        Unreviewed, forgot to add the new layout test in last commit.
+
+        * fast/dom/Selection/script-tests/wrong-document-err.js: Added.
+        * fast/dom/Selection/wrong-document-err-expected.txt: Added.
+        * fast/dom/Selection/wrong-document-err.html: Added.
+
 2010-09-01  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Darin Adler.
