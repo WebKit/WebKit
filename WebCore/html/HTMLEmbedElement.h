@@ -31,8 +31,6 @@ class HTMLEmbedElement : public HTMLPlugInImageElement {
 public:
     static PassRefPtr<HTMLEmbedElement> create(const QualifiedName&, Document*);
 
-    void setNeedWidgetUpdate(bool needWidgetUpdate) { m_needWidgetUpdate = needWidgetUpdate; }
-
 private:
     HTMLEmbedElement(const QualifiedName&, Document*);
 
@@ -55,8 +53,6 @@ private:
     virtual RenderWidget* renderWidgetForJSBindings() const;
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
-
-    bool m_needWidgetUpdate;
 };
 
 }

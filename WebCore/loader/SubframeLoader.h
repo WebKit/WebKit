@@ -45,7 +45,7 @@ class Frame;
 class FrameLoaderClient;
 class HTMLAppletElement;
 class HTMLFrameOwnerElement;
-class HTMLPlugInElement;
+class HTMLPlugInImageElement;
 class IntSize;
 class KURL;
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
@@ -61,7 +61,7 @@ public:
     void clear();
 
     bool requestFrame(HTMLFrameOwnerElement*, const String& url, const AtomicString& frameName, bool lockHistory = true, bool lockBackForwardList = true);    
-    bool requestObject(HTMLPlugInElement*, const String& url, const AtomicString& frameName,
+    bool requestObject(HTMLPlugInImageElement*, const String& url, const AtomicString& frameName,
         const String& serviceType, const Vector<String>& paramNames, const Vector<String>& paramValues);
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
@@ -79,7 +79,7 @@ public:
 private:
     Frame* loadOrRedirectSubframe(HTMLFrameOwnerElement*, const KURL&, const AtomicString& frameName, bool lockHistory, bool lockBackForwardList);
     Frame* loadSubframe(HTMLFrameOwnerElement*, const KURL&, const String& name, const String& referrer);
-    bool loadPlugin(HTMLPlugInElement*, const KURL&, const String& mimeType,
+    bool loadPlugin(HTMLPlugInImageElement*, const KURL&, const String& mimeType,
         const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback);
 
     bool shouldUsePlugin(const KURL&, const String& mimeType, bool hasFallback, bool& useFallback);

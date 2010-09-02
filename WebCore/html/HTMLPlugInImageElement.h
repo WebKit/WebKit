@@ -28,11 +28,17 @@ namespace WebCore {
 
 class HTMLImageLoader;
 
+// Base class for HTMLObjectElement and HTMLEmbedElement
 class HTMLPlugInImageElement : public HTMLPlugInElement {
 public:
     const String& serviceType() const { return m_serviceType; }
     const String& url() const { return m_url; }
 
+    bool needsWidgetUpdate() const { return m_needsWidgetUpdate; }
+    void setNeedsWidgetUpdate(bool needsWidgetUpdate) { m_needsWidgetUpdate = needsWidgetUpdate; }
+
+    RenderEmbeddedObject* renderEmbeddedObject() const;
+    
 protected:
     HTMLPlugInImageElement(const QualifiedName& tagName, Document*);
 
@@ -44,6 +50,8 @@ protected:
 
 private:
     virtual void willMoveToNewOwnerDocument();
+
+    bool m_needsWidgetUpdate;
 };
 
 } // namespace WebCore

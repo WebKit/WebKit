@@ -51,8 +51,6 @@ public:
     bool isCapturingMouseEvents() const { return m_isCapturingMouseEvents; }
     void setIsCapturingMouseEvents(bool capturing) { m_isCapturingMouseEvents = capturing; }
 
-    RenderEmbeddedObject* renderEmbeddedObject() const;
-
 protected:
     HTMLPlugInElement(const QualifiedName& tagName, Document*);
 

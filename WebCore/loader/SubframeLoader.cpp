@@ -38,7 +38,7 @@
 #include "HTMLAppletElement.h"
 #include "HTMLFrameElementBase.h"
 #include "HTMLNames.h"
-#include "HTMLPlugInElement.h"
+#include "HTMLPlugInImageElement.h"
 #include "MIMETypeRegistry.h"
 #include "Node.h"
 #include "Page.h"
@@ -89,7 +89,7 @@ bool SubframeLoader::requestFrame(HTMLFrameOwnerElement* ownerElement, const Str
     return true;
 }
 
-bool SubframeLoader::requestObject(HTMLPlugInElement* ownerElement, const String& url, const AtomicString& frameName,
+bool SubframeLoader::requestObject(HTMLPlugInImageElement* ownerElement, const String& url, const AtomicString& frameName,
     const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
     if (url.isEmpty() && mimeType.isEmpty())
@@ -124,7 +124,7 @@ bool SubframeLoader::requestObject(HTMLPlugInElement* ownerElement, const String
             return false;
 
         ASSERT(ownerElement->hasTagName(objectTag) || ownerElement->hasTagName(embedTag));
-        HTMLPlugInElement* pluginElement = static_cast<HTMLPlugInElement*>(ownerElement);
+        HTMLPlugInImageElement* pluginElement = static_cast<HTMLPlugInImageElement*>(ownerElement);
 
         return loadPlugin(pluginElement, completedURL, mimeType, paramNames, paramValues, useFallback);
     }
@@ -328,7 +328,7 @@ Document* SubframeLoader::document() const
     return m_frame->document();
 }
 
-bool SubframeLoader::loadPlugin(HTMLPlugInElement* pluginElement, const KURL& url, const String& mimeType,
+bool SubframeLoader::loadPlugin(HTMLPlugInImageElement* pluginElement, const KURL& url, const String& mimeType,
     const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback)
 {
     RenderEmbeddedObject* renderer = pluginElement->renderEmbeddedObject();

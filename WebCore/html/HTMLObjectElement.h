@@ -31,8 +31,6 @@ class HTMLObjectElement : public HTMLPlugInImageElement {
 public:
     static PassRefPtr<HTMLObjectElement> create(const QualifiedName&, Document*, bool createdByParser);
 
-    void setNeedWidgetUpdate(bool needWidgetUpdate) { m_needWidgetUpdate = needWidgetUpdate; }
-
     void renderFallbackContent();
 
     bool isDocNamedItem() const { return m_docNamedItem; }
@@ -74,7 +72,6 @@ private:
     AtomicString m_id;
     String m_classId;
     bool m_docNamedItem : 1;
-    bool m_needWidgetUpdate : 1;
     bool m_useFallbackContent : 1;
 };
 
