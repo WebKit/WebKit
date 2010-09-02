@@ -1,3 +1,13 @@
+2010-09-02  Matthew Willis  <lilmatt@flock.com>
+
+        Reviewed by Eric Seidel.
+
+        Attempt to fix flaxy test that contains setTimeout() by adding
+        layoutTestController.waitUntilDone() and ...notifyDone()
+        https://bugs.webkit.org/show_bug.cgi?id=45097
+
+        * fast/css/disabled-author-styles.html:
+
 2010-09-02  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
