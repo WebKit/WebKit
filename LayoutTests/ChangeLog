@@ -1,3 +1,9 @@
+2010-09-02  Jian Li  <jianli@chromium.org>
+
+        Skip one time-out test for now.
+
+        * platform/mac/Skipped:
+
 2010-09-02  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed. Flag a few flaky tests:
