@@ -1,3 +1,18 @@
+2010-09-01  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Question mark QuickTime icon when navigating to this MP3 file
+        https://bugs.webkit.org/show_bug.cgi?id=44846
+
+        Do not disable 'tmet' movie tracks, they carry meta data.
+
+        No DRT test because I am not sure it is possible to have one of these tracks in 
+        non-streaming movie. I will add a test later if I figure out how to create a movie.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::disableUnsupportedTracks):
+
 2010-09-01  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Dimitri Glazkov.

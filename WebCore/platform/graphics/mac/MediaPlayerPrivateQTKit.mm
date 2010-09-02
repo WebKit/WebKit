@@ -1408,6 +1408,7 @@ void MediaPlayerPrivate::disableUnsupportedTracks()
         allowedTrackTypes->add("sdsm"); // MPEG-4 scene description stream
         allowedTrackTypes->add("tmcd"); // timecode
         allowedTrackTypes->add("tc64"); // timcode-64
+        allowedTrackTypes->add("tmet"); // timed metadata
     }
     
     NSArray *tracks = [m_qtMovie.get() tracks];
