@@ -1,0 +1,6 @@
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+FAIL
+<script defer src="data:text/javascript,document.writeln(1); document.write('<script src=\'data:text/javascript,document.writeln(2)\'></script>');"></script>

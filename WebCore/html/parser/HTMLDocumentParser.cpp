@@ -142,6 +142,28 @@ void HTMLDocumentParser::stopParsing()
     m_parserScheduler.clear(); // Deleting the scheduler will clear any timers.
 }
 
+// This kicks off "Once the user agent stops parsing" as described by:
+// http://www.whatwg.org/specs/web-apps/current-work/multipage/the-end.html#the-end
+void HTMLDocumentParser::prepareToStopParsing()
+{
+    ASSERT(!hasInsertionPoint());
+
+    // pumpTokenizer can cause this parser to be detached from the Document,
+    // but we need to ensure it isn't deleted yet.
+    RefPtr<HTMLDocumentParser> protect(this);
+
+    // FIXME: Set the current document readiness to "interactive".
+
+    // NOTE: This pump should only ever emit buffered character tokens,
+    // so ForceSynchronous vs. AllowYield should be meaningless.
+    pumpTokenizerIfPossible(ForceSynchronous);
+
+    DocumentParser::prepareToStopParsing();
+    if (m_scriptRunner && !m_scriptRunner->executeScriptsWaitingForParsing())
+        return;
+    end();
+}
+
 bool HTMLDocumentParser::processingData() const
 {
     return isScheduledForResume() || inWrite();
@@ -149,7 +171,7 @@ bool HTMLDocumentParser::processingData() const
 
 void HTMLDocumentParser::pumpTokenizerIfPossible(SynchronousMode mode)
 {
-    if (m_parserStopped || m_treeBuilder->isPaused())
+    if (isStopped() || m_treeBuilder->isPaused())
         return;
 
     // Once a resume is scheduled, HTMLParserScheduler controls when we next pump.
@@ -193,8 +215,7 @@ bool HTMLDocumentParser::runScriptsForPausedTreeBuilder()
 
 void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
 {
-    ASSERT(!isDetached());
-    ASSERT(!m_parserStopped);
+    ASSERT(!isStopped());
     ASSERT(!m_treeBuilder->isPaused());
     ASSERT(!isScheduledForResume());
     // ASSERT that this object is both attached to the Document and protected.
@@ -214,7 +235,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
         m_token.clear();
 
         // JavaScript may have stopped or detached the parser.
-        if (isDetached() || m_parserStopped)
+        if (isStopped())
             return;
 
         // The parser will pause itself when waiting on a script to load or run.
@@ -226,7 +247,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
         m_treeBuilder->setPaused(!shouldContinueParsing);
 
         // JavaScript may have stopped or detached the parser.
-        if (isDetached() || m_parserStopped)
+        if (isStopped())
             return;
 
         if (!shouldContinueParsing)
@@ -275,7 +296,7 @@ bool HTMLDocumentParser::hasInsertionPoint()
 
 void HTMLDocumentParser::insert(const SegmentedString& source)
 {
-    if (m_parserStopped)
+    if (isStopped())
         return;
 
     // pumpTokenizer can cause this parser to be detached from the Document,
@@ -296,7 +317,7 @@ void HTMLDocumentParser::insert(const SegmentedString& source)
 
 void HTMLDocumentParser::append(const SegmentedString& source)
 {
-    if (m_parserStopped)
+    if (isStopped())
         return;
 
     // pumpTokenizer can cause this parser to be detached from the Document,
@@ -328,14 +349,6 @@ void HTMLDocumentParser::end()
     ASSERT(!isDetached());
     ASSERT(!isScheduledForResume());
 
-    // pumpTokenizer can cause this parser to be detached from the Document,
-    // but we need to ensure it isn't deleted yet.
-    RefPtr<HTMLDocumentParser> protect(this);
-
-    // NOTE: This pump should only ever emit buffered character tokens,
-    // so ForceSynchronous vs. AllowYield should be meaningless.
-    pumpTokenizerIfPossible(ForceSynchronous);
-
     // Informs the the rest of WebCore that parsing is really finished (and deletes this).
     m_treeBuilder->finished();
 }
@@ -349,7 +362,7 @@ void HTMLDocumentParser::attemptToEnd()
         m_endWasDelayed = true;
         return;
     }
-    end();
+    prepareToStopParsing();
 }
 
 void HTMLDocumentParser::endIfDelayed()
@@ -362,7 +375,7 @@ void HTMLDocumentParser::endIfDelayed()
         return;
 
     m_endWasDelayed = false;
-    end();
+    prepareToStopParsing();
 }
 
 void HTMLDocumentParser::finish()
@@ -447,6 +460,11 @@ bool HTMLDocumentParser::shouldLoadExternalScriptFromSrc(const AtomicString& src
 
 void HTMLDocumentParser::notifyFinished(CachedResource* cachedResource)
 {
+    if (isStopping()) {
+        prepareToStopParsing();
+        return;
+    }
+
     // pumpTokenizer can cause this parser to be detached from the Document,
     // but we need to ensure it isn't deleted yet.
     RefPtr<HTMLDocumentParser> protect(this);

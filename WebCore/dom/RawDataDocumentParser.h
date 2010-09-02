@@ -39,7 +39,7 @@ protected:
 
     virtual void finish()
     {
-        if (!m_parserStopped && !isDetached())
+        if (!isStopped())
             document()->finishedParsing();
     }
 

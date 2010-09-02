@@ -1,3 +1,72 @@
+2010-09-01  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Support <script defer> as specified by HTML5
+        https://bugs.webkit.org/show_bug.cgi?id=40934
+
+        Tests: fast/dom/HTMLScriptElement/defer-double-defer-write.html
+               fast/dom/HTMLScriptElement/defer-double-write.html
+               fast/dom/HTMLScriptElement/defer-inline-script.html
+               fast/dom/HTMLScriptElement/defer-onbeforeload.html
+               fast/dom/HTMLScriptElement/defer-script-invalid-url.html
+               fast/dom/HTMLScriptElement/defer-write.html
+               fast/dom/HTMLScriptElement/two-defer-writes.html
+               http/tests/misc/script-defer-after-slow-stylesheet.html
+               http/tests/misc/script-defer.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::open): Allow implicit open for writes() while executing deferred scripts.
+        * dom/DocumentParser.cpp:
+        (WebCore::DocumentParser::DocumentParser):
+        (WebCore::DocumentParser::startParsing):
+        (WebCore::DocumentParser::prepareToStopParsing): If called when stopped or detached, it shouldn't reset to stopping.
+        (WebCore::DocumentParser::stopParsing):
+        (WebCore::DocumentParser::detach):
+        * dom/DocumentParser.h:
+        (WebCore::DocumentParser::isParsing):
+        (WebCore::DocumentParser::isActive):
+        (WebCore::DocumentParser::isStopping):
+        (WebCore::DocumentParser::isDetached):
+        * dom/RawDataDocumentParser.h:
+        (WebCore::RawDataDocumentParser::finish):
+        * dom/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::append):
+        (WebCore::XMLDocumentParser::exitText):
+        * dom/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::doWrite):
+        (WebCore::XMLDocumentParser::startElementNs):
+        (WebCore::XMLDocumentParser::endElementNs):
+        (WebCore::XMLDocumentParser::characters):
+        (WebCore::XMLDocumentParser::error):
+        (WebCore::XMLDocumentParser::processingInstruction):
+        (WebCore::XMLDocumentParser::cdataBlock):
+        (WebCore::XMLDocumentParser::comment):
+        (WebCore::XMLDocumentParser::internalSubset):
+        (WebCore::XMLDocumentParser::initializeParserContext):
+        (WebCore::XMLDocumentParser::doEnd):
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::prepareToStopParsing):
+        (WebCore::HTMLDocumentParser::pumpTokenizerIfPossible):
+        (WebCore::HTMLDocumentParser::pumpTokenizer):
+        (WebCore::HTMLDocumentParser::insert):
+        (WebCore::HTMLDocumentParser::append):
+        (WebCore::HTMLDocumentParser::end):
+        (WebCore::HTMLDocumentParser::attemptToEnd):
+        (WebCore::HTMLDocumentParser::endIfDelayed):
+        (WebCore::HTMLDocumentParser::notifyFinished):
+        * html/parser/HTMLDocumentParser.h:
+        * html/parser/HTMLScriptRunner.cpp:
+        (WebCore::HTMLScriptRunner::~HTMLScriptRunner):
+        (WebCore::HTMLScriptRunner::executeParsingBlockingScript):
+        (WebCore::HTMLScriptRunner::executePendingScriptAndDispatchEvent):
+        (WebCore::HTMLScriptRunner::executeScriptsWaitingForParsing):
+        (WebCore::HTMLScriptRunner::requestDeferredScript):
+        (WebCore::HTMLScriptRunner::runScript):
+        * html/parser/HTMLScriptRunner.h:
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageDocumentParser::finish):
+
 2010-09-02  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.

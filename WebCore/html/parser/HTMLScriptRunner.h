@@ -27,6 +27,7 @@
 #define HTMLScriptRunner_h
 
 #include "PendingScript.h"
+#include <wtf/Deque.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 
@@ -56,6 +57,7 @@ public:
     bool executeScriptsWaitingForLoad(CachedResource*);
     bool hasScriptsWaitingForStylesheets() const { return m_hasScriptsWaitingForStylesheets; }
     bool executeScriptsWaitingForStylesheets();
+    bool executeScriptsWaitingForParsing();
 
     bool isExecutingScript() const { return !!m_scriptNestingLevel; }
 
@@ -71,6 +73,7 @@ private:
     bool executeParsingBlockingScripts();
 
     void requestParsingBlockingScript(Element*);
+    void requestDeferredScript(Element*);
     bool requestPendingScript(PendingScript&, Element*) const;
 
     void runScript(Element*, int startingLineNumber);
@@ -84,6 +87,7 @@ private:
     Document* m_document;
     HTMLScriptRunnerHost* m_host;
     PendingScript m_parsingBlockingScript;
+    Deque<PendingScript> m_scriptsToExecuteAfterParsing; // http://www.whatwg.org/specs/web-apps/current-work/#list-of-scripts-that-will-execute-when-the-document-has-finished-parsing
     unsigned m_scriptNestingLevel;
 
     // We only want stylesheet loads to trigger script execution if script
