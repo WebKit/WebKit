@@ -486,7 +486,7 @@ bool TParseContext::constructorErrorCheck(int line, TIntermNode* node, TFunction
     }
     
     if (constType)
-        type->changeQualifier(EvqConst);
+        type->setQualifier(EvqConst);
 
     if (type->isArray() && type->getArraySize() != function.getParamCount()) {
         error(line, "array constructor needs one argument per array element", "constructor", "");
@@ -586,14 +586,14 @@ bool TParseContext::samplerErrorCheck(int line, const TPublicType& pType, const 
 {
     if (pType.type == EbtStruct) {
         if (containsSampler(*pType.userDef)) {
-            error(line, reason, TType::getBasicString(pType.type), "(structure contains a sampler)");
+            error(line, reason, getBasicString(pType.type), "(structure contains a sampler)");
         
             return true;
         }
         
         return false;
     } else if (IsSampler(pType.type)) {
-        error(line, reason, TType::getBasicString(pType.type), "");
+        error(line, reason, getBasicString(pType.type), "");
 
         return true;
     }
@@ -879,9 +879,9 @@ bool TParseContext::paramErrorCheck(int line, TQualifier qualifier, TQualifier p
     }
 
     if (qualifier == EvqConst)
-        type->changeQualifier(EvqConstReadOnly);
+        type->setQualifier(EvqConstReadOnly);
     else
-        type->changeQualifier(paramQualifier);
+        type->setQualifier(paramQualifier);
 
     return false;
 }
@@ -913,21 +913,24 @@ bool TParseContext::extensionErrorCheck(int line, const char* extension)
 //
 const TFunction* TParseContext::findFunction(int line, TFunction* call, bool *builtIn)
 {
-    const TSymbol* symbol = symbolTable.find(call->getMangledName(), builtIn);
+    // First find by unmangled name to check whether the function name has been
+    // hidden by a variable name or struct typename.
+    const TSymbol* symbol = symbolTable.find(call->getName(), builtIn);
+    if (symbol == 0) {
+        symbol = symbolTable.find(call->getMangledName(), builtIn);
+    }
 
-    if (symbol == 0) {        
+    if (symbol == 0) {
         error(line, "no matching overloaded function found", call->getName().c_str(), "");
         return 0;
     }
 
-    if (! symbol->isFunction()) {
+    if (!symbol->isFunction()) {
         error(line, "function name expected", call->getName().c_str(), "");
         return 0;
     }
-    
-    const TFunction* function = static_cast<const TFunction*>(symbol);
-    
-    return function;
+
+    return static_cast<const TFunction*>(symbol);
 }
 
 //
@@ -973,13 +976,13 @@ bool TParseContext::executeInitializer(TSourceLoc line, TString& identifier, TPu
     if (qualifier == EvqConst) {
         if (qualifier != initializer->getType().getQualifier()) {
             error(line, " assigning non-constant to", "=", "'%s'", variable->getType().getCompleteString().c_str());
-            variable->getType().changeQualifier(EvqTemporary);
+            variable->getType().setQualifier(EvqTemporary);
             return true;
         }
         if (type != initializer->getType()) {
             error(line, " non-matching types for const initializer ", 
                 variable->getType().getQualifierString(), "");
-            variable->getType().changeQualifier(EvqTemporary);
+            variable->getType().setQualifier(EvqTemporary);
             return true;
         }
         if (initializer->getAsConstantUnion()) { 
@@ -998,7 +1001,7 @@ bool TParseContext::executeInitializer(TSourceLoc line, TString& identifier, TPu
             variable->shareConstPointer(constArray);
         } else {
             error(line, " cannot assign to", "=", "'%s'", variable->getType().getCompleteString().c_str());
-            variable->getType().changeQualifier(EvqTemporary);
+            variable->getType().setQualifier(EvqTemporary);
             return true;
         }
     }
@@ -1049,7 +1052,7 @@ TIntermTyped* TParseContext::addConstructor(TIntermNode* node, const TType* type
 
     TIntermAggregate* aggrNode = node->getAsAggregate();
     
-    TTypeList::iterator memberTypes;
+    TTypeList::const_iterator memberTypes;
     if (op == EOpConstructStruct)
         memberTypes = type->getStruct()->begin();
     
@@ -1347,7 +1350,7 @@ TIntermTyped* TParseContext::addConstArrayNode(int index, TIntermTyped* node, TS
 //
 TIntermTyped* TParseContext::addConstStruct(TString& identifier, TIntermTyped* node, TSourceLoc line)
 {
-    TTypeList* fields = node->getType().getStruct();
+    const TTypeList* fields = node->getType().getStruct();
     TIntermTyped *typedNode;
     int instanceSize = 0;
     unsigned int index = 0;
@@ -1410,6 +1413,20 @@ bool InitializeParseContextIndex()
     return true;
 }
 
+bool FreeParseContextIndex()
+{
+    OS_TLSIndex tlsiIndex = GlobalParseContextIndex;
+
+    if (GlobalParseContextIndex == OS_INVALID_TLS_INDEX) {
+        assert(0 && "FreeParseContextIndex(): Parse Context index not initalised");
+        return false;
+    }
+
+    GlobalParseContextIndex = OS_INVALID_TLS_INDEX;
+
+    return OS_FreeTLSIndex(tlsiIndex);
+}
+
 bool InitializeGlobalParseContext()
 {
     if (GlobalParseContextIndex == OS_INVALID_TLS_INDEX) {
@@ -1435,17 +1452,6 @@ bool InitializeGlobalParseContext()
     return true;
 }
 
-TParseContextPointer& GetGlobalParseContext()
-{
-    //
-    // Minimal error checking for speed
-    //
-
-    TThreadParseContext *lpParseContext = static_cast<TThreadParseContext *>(OS_GetTLSValue(GlobalParseContextIndex));
-
-    return lpParseContext->lpGlobalParseContext;
-}
-
 bool FreeParseContext()
 {
     if (GlobalParseContextIndex == OS_INVALID_TLS_INDEX) {
@@ -1460,16 +1466,14 @@ bool FreeParseContext()
     return true;
 }
 
-bool FreeParseContextIndex()
+TParseContextPointer& GetGlobalParseContext()
 {
-    OS_TLSIndex tlsiIndex = GlobalParseContextIndex;
+    //
+    // Minimal error checking for speed
+    //
 
-    if (GlobalParseContextIndex == OS_INVALID_TLS_INDEX) {
-        assert(0 && "FreeParseContextIndex(): Parse Context index not initalised");
-        return false;
-    }
+    TThreadParseContext *lpParseContext = static_cast<TThreadParseContext *>(OS_GetTLSValue(GlobalParseContextIndex));
 
-    GlobalParseContextIndex = OS_INVALID_TLS_INDEX;
-
-    return OS_FreeTLSIndex(tlsiIndex);
+    return lpParseContext->lpGlobalParseContext;
 }
+

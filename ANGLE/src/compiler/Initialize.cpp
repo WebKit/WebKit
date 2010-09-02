@@ -472,15 +472,15 @@ static TString BuiltInConstants(const TBuiltInResource &resources)
 {
     TStringStream s;
 
-    s << "const int gl_MaxVertexAttribs = " << resources.maxVertexAttribs << ";";
-    s << "const int gl_MaxVertexUniformVectors = " << resources.maxVertexUniformVectors << ";";
+    s << "const int gl_MaxVertexAttribs = " << resources.MaxVertexAttribs << ";";
+    s << "const int gl_MaxVertexUniformVectors = " << resources.MaxVertexUniformVectors << ";";
 
-    s << "const int gl_MaxVaryingVectors = " << resources.maxVaryingVectors << ";";
-    s << "const int gl_MaxVertexTextureImageUnits = " << resources.maxVertexTextureImageUnits << ";";
-    s << "const int gl_MaxCombinedTextureImageUnits = " << resources.maxCombinedTextureImageUnits << ";";
-    s << "const int gl_MaxTextureImageUnits = " << resources.maxTextureImageUnits << ";";
-    s << "const int gl_MaxFragmentUniformVectors = " << resources.maxFragmentUniformVectors << ";";
-    s << "const int gl_MaxDrawBuffers = " << resources.maxDrawBuffers << ";";
+    s << "const int gl_MaxVaryingVectors = " << resources.MaxVaryingVectors << ";";
+    s << "const int gl_MaxVertexTextureImageUnits = " << resources.MaxVertexTextureImageUnits << ";";
+    s << "const int gl_MaxCombinedTextureImageUnits = " << resources.MaxCombinedTextureImageUnits << ";";
+    s << "const int gl_MaxTextureImageUnits = " << resources.MaxTextureImageUnits << ";";
+    s << "const int gl_MaxFragmentUniformVectors = " << resources.MaxFragmentUniformVectors << ";";
+    s << "const int gl_MaxDrawBuffers = " << resources.MaxDrawBuffers << ";";
 
     return s.str();
 }
@@ -607,7 +607,7 @@ void IdentifyBuiltIns(EShLanguage language, EShSpec spec, const TBuiltInResource
     case EShLangFragment: {
             // Set up gl_FragData.  The array size.
             TType fragData(EbtFloat, EbpMedium, EvqFragColor,   4, false, true);
-            fragData.setArraySize(resources.maxDrawBuffers);
+            fragData.setArraySize(resources.MaxDrawBuffers);
             symbolTable.insert(*new TVariable(NewPoolTString("gl_FragData"),    fragData));
         }
         break;

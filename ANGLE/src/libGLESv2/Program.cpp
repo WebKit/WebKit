@@ -45,7 +45,7 @@ UniformLocation::UniformLocation(const std::string &name, unsigned int element, 
 {
 }
 
-Program::Program()
+Program::Program(ResourceManager *manager, GLuint handle) : mResourceManager(manager), mHandle(handle)
 {
     mFragmentShader = NULL;
     mVertexShader = NULL;
@@ -62,6 +62,8 @@ Program::Program()
 
     mDeleteStatus = false;
 
+    mRefCount = 0;
+
     mSerial = issueSerial();
 }
 
@@ -71,12 +73,12 @@ Program::~Program()
 
     if (mVertexShader != NULL)
     {
-        mVertexShader->detach();
+        mVertexShader->release();
     }
 
     if (mFragmentShader != NULL)
     {
-        mFragmentShader->detach();
+        mFragmentShader->release();
     }
 }
 
@@ -90,7 +92,7 @@ bool Program::attachShader(Shader *shader)
         }
 
         mVertexShader = (VertexShader*)shader;
-        mVertexShader->attach();
+        mVertexShader->addRef();
     }
     else if (shader->getType() == GL_FRAGMENT_SHADER)
     {
@@ -100,7 +102,7 @@ bool Program::attachShader(Shader *shader)
         }
 
         mFragmentShader = (FragmentShader*)shader;
-        mFragmentShader->attach();
+        mFragmentShader->addRef();
     }
     else UNREACHABLE();
 
@@ -116,7 +118,7 @@ bool Program::detachShader(Shader *shader)
             return false;
         }
 
-        mVertexShader->detach();
+        mVertexShader->release();
         mVertexShader = NULL;
     }
     else if (shader->getType() == GL_FRAGMENT_SHADER)
@@ -126,7 +128,7 @@ bool Program::detachShader(Shader *shader)
             return false;
         }
 
-        mFragmentShader->detach();
+        mFragmentShader->release();
         mFragmentShader = NULL;
     }
     else UNREACHABLE();
@@ -1195,6 +1197,10 @@ bool Program::linkVaryings()
         }
     }
 
+    Context *context = getContext();
+    bool sm3 = context->supportsShaderModel3();
+    std::string varyingSemantic = (sm3 ? "COLOR" : "TEXCOORD");
+
     mVertexHLSL += "struct VS_INPUT\n"
                    "{\n";
 
@@ -1228,12 +1234,17 @@ bool Program::linkVaryings()
     {
         int registerSize = packing[r][3] ? 4 : (packing[r][2] ? 3 : (packing[r][1] ? 2 : 1));
 
-        mVertexHLSL += "    float" + str(registerSize) + " v" + str(r) + " : TEXCOORD" + str(r) + ";\n";
+        mVertexHLSL += "    float" + str(registerSize) + " v" + str(r) + " : " + varyingSemantic + str(r) + ";\n";
     }
 
     if (mFragmentShader->mUsesFragCoord)
     {
-        mVertexHLSL += "    float4 gl_FragCoord : TEXCOORD" + str(registers) + ";\n";
+        mVertexHLSL += "    float4 gl_FragCoord : " + varyingSemantic + str(registers) + ";\n";
+    }
+
+    if (mVertexShader->mUsesPointSize && sm3)
+    {
+        mVertexHLSL += "    float gl_PointSize : PSIZE;\n";
     }
 
     mVertexHLSL += "};\n"
@@ -1261,6 +1272,11 @@ bool Program::linkVaryings()
                    "    output.gl_Position.y = -(gl_Position.y - dx_HalfPixelSize.y * gl_Position.w);\n"
                    "    output.gl_Position.z = (gl_Position.z + gl_Position.w) * 0.5;\n"
                    "    output.gl_Position.w = gl_Position.w;\n";
+
+    if (mVertexShader->mUsesPointSize && sm3)
+    {
+        mVertexHLSL += "    output.gl_PointSize = clamp(gl_PointSize, 1.0, " + str((int)ALIASED_POINT_SIZE_RANGE_MAX_SM3) + ");\n";
+    }
 
     if (mFragmentShader->mUsesFragCoord)
     {
@@ -1345,7 +1361,7 @@ bool Program::linkVaryings()
                 for (int j = 0; j < rows; j++)
                 {
                     std::string n = str(varying->reg + i * rows + j);
-                    mPixelHLSL += "    float4 v" + n + " : TEXCOORD" + n + ";\n";
+                    mPixelHLSL += "    float4 v" + n + " : " + varyingSemantic + n + ";\n";
                 }
             }
         }
@@ -1354,9 +1370,14 @@ bool Program::linkVaryings()
 
     if (mFragmentShader->mUsesFragCoord)
     {
-        mPixelHLSL += "    float4 gl_FragCoord : TEXCOORD" + str(registers) + ";\n";
+        mPixelHLSL += "    float4 gl_FragCoord : " + varyingSemantic + str(registers) + ";\n";
     }
-        
+
+    if (mFragmentShader->mUsesPointCoord && sm3)
+    {
+        mPixelHLSL += "    float2 gl_PointCoord : TEXCOORD0;\n";
+    }
+
     if (mFragmentShader->mUsesFrontFacing)
     {
         mPixelHLSL += "    float vFace : VFACE;\n";
@@ -1375,10 +1396,15 @@ bool Program::linkVaryings()
     if (mFragmentShader->mUsesFragCoord)
     {
         mPixelHLSL += "    float rhw = 1.0 / input.gl_FragCoord.w;\n"
-                      "    gl_FragCoord.x = (input.gl_FragCoord.x * rhw) * dx_Window.x + dx_Window.z;\n"
-                      "    gl_FragCoord.y = (input.gl_FragCoord.y * rhw) * dx_Window.y + dx_Window.w;\n"
+                      "    gl_FragCoord.x = (input.gl_FragCoord.x * rhw) * dx_Viewport.x + dx_Viewport.z;\n"
+                      "    gl_FragCoord.y = (input.gl_FragCoord.y * rhw) * dx_Viewport.y + dx_Viewport.w;\n"
                       "    gl_FragCoord.z = (input.gl_FragCoord.z * rhw) * dx_Depth.x + dx_Depth.y;\n"
                       "    gl_FragCoord.w = rhw;\n";
+    }
+
+    if (mFragmentShader->mUsesPointCoord && sm3)
+    {
+        mPixelHLSL += "    gl_PointCoord = float2(input.gl_PointCoord.x, 1.0 - input.gl_PointCoord.y);\n";
     }
 
     if (mFragmentShader->mUsesFrontFacing)
@@ -1447,10 +1473,6 @@ void Program::link()
         return;
     }
 
-    Context *context = getContext();
-    const char *vertexProfile = context->getVertexShaderProfile();
-    const char *pixelProfile = context->getPixelShaderProfile();
-
     mPixelHLSL = mFragmentShader->getHLSL();
     mVertexHLSL = mVertexShader->getHLSL();
 
@@ -1458,6 +1480,10 @@ void Program::link()
     {
         return;
     }
+
+    Context *context = getContext();
+    const char *vertexProfile = context->supportsShaderModel3() ? "vs_3_0" : "vs_2_0";
+    const char *pixelProfile = context->supportsShaderModel3() ? "ps_3_0" : "ps_2_0";
 
     ID3DXBuffer *vertexBinary = compileToBinary(mVertexHLSL.c_str(), vertexProfile, &mConstantTableVS);
     ID3DXBuffer *pixelBinary = compileToBinary(mPixelHLSL.c_str(), pixelProfile, &mConstantTablePS);
@@ -1503,7 +1529,7 @@ void Program::link()
             mDepthRangeFarLocation = getUniformLocation("gl_DepthRange.far", true);
             mDepthRangeDiffLocation = getUniformLocation("gl_DepthRange.diff", true);
             mDxDepthLocation = getUniformLocation("dx_Depth", true);
-            mDxWindowLocation = getUniformLocation("dx_Window", true);
+            mDxViewportLocation = getUniformLocation("dx_Viewport", true);
             mDxHalfPixelSizeLocation = getUniformLocation("dx_HalfPixelSize", true);
             mDxFrontCCWLocation = getUniformLocation("dx_FrontCCW", true);
             mDxPointsOrLinesLocation = getUniformLocation("dx_PointsOrLines", true);
@@ -2355,13 +2381,13 @@ void Program::unlink(bool destroy)
     {
         if (mFragmentShader)
         {
-            mFragmentShader->detach();
+            mFragmentShader->release();
             mFragmentShader = NULL;
         }
 
         if (mVertexShader)
         {
-            mVertexShader->detach();
+            mVertexShader->release();
             mVertexShader = NULL;
         }
     }
@@ -2412,7 +2438,7 @@ void Program::unlink(bool destroy)
     mDepthRangeNearLocation = -1;
     mDepthRangeFarLocation = -1;
     mDxDepthLocation = -1;
-    mDxWindowLocation = -1;
+    mDxViewportLocation = -1;
     mDxHalfPixelSizeLocation = -1;
     mDxFrontCCWLocation = -1;
     mDxPointsOrLinesLocation = -1;
@@ -2436,6 +2462,26 @@ bool Program::isLinked()
 bool Program::isValidated() const 
 {
     return mValidated;
+}
+
+void Program::release()
+{
+    mRefCount--;
+
+    if (mRefCount == 0 && mDeleteStatus)
+    {
+        mResourceManager->deleteProgram(mHandle);
+    }
+}
+
+void Program::addRef()
+{
+    mRefCount++;
+}
+
+unsigned int Program::getRefCount() const
+{
+    return mRefCount;
 }
 
 unsigned int Program::getSerial() const
@@ -2737,9 +2783,9 @@ GLint Program::getDxDepthLocation() const
     return mDxDepthLocation;
 }
 
-GLint Program::getDxWindowLocation() const
+GLint Program::getDxViewportLocation() const
 {
-    return mDxWindowLocation;
+    return mDxViewportLocation;
 }
 
 GLint Program::getDxHalfPixelSizeLocation() const

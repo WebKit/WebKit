@@ -76,7 +76,7 @@ public:
     TType& getType() { return type; }    
     const TType& getType() const { return type; }
     bool isUserType() const { return userType; }
-    void changeQualifier(TQualifier qualifier) { type.changeQualifier(qualifier); }
+    void setQualifier(TQualifier qualifier) { type.setQualifier(qualifier); }
     void updateArrayInformationType(TType *t) { arrayInformationType = t; }
     TType* getArrayInformationType() { return arrayInformationType; }
 

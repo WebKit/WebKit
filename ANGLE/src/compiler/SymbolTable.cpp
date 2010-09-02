@@ -65,7 +65,7 @@ int TType::getStructSize() const
     }
 
     if (structureSize == 0)
-        for (TTypeList::iterator tl = getStruct()->begin(); tl != getStruct()->end(); tl++)
+        for (TTypeList::const_iterator tl = getStruct()->begin(); tl != getStruct()->end(); tl++)
             structureSize += ((*tl).type)->getObjectSize();
 
     return structureSize;

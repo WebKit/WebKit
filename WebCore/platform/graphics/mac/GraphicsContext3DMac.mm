@@ -31,7 +31,6 @@
 
 #import "BlockExceptions.h"
 
-#include "ANGLE/ResourceLimits.h"
 #include "ArrayBuffer.h"
 #include "ArrayBufferView.h"
 #include "WebGLObject.h"
@@ -186,23 +185,23 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
 
     TBuiltInResource ANGLEResources;
 
-    ANGLEResources.maxVertexAttribs = 0;
-    getIntegerv(GraphicsContext3D::MAX_VERTEX_ATTRIBS, &ANGLEResources.maxVertexAttribs);
-    ANGLEResources.maxVertexUniformVectors = 0;
-    getIntegerv(GraphicsContext3D::MAX_VERTEX_UNIFORM_VECTORS, &ANGLEResources.maxVertexUniformVectors);
-    ANGLEResources.maxVaryingVectors = 0;
-    getIntegerv(GraphicsContext3D::MAX_VARYING_VECTORS, &ANGLEResources.maxVaryingVectors);
-    ANGLEResources.maxVertexTextureImageUnits = 0;
-    getIntegerv(GraphicsContext3D::MAX_VERTEX_TEXTURE_IMAGE_UNITS, &ANGLEResources.maxVertexTextureImageUnits);
-    ANGLEResources.maxCombinedTextureImageUnits = 0;
-    getIntegerv(GraphicsContext3D::MAX_COMBINED_TEXTURE_IMAGE_UNITS, &ANGLEResources.maxCombinedTextureImageUnits);
-    ANGLEResources.maxTextureImageUnits = 0;
-    getIntegerv(GraphicsContext3D::MAX_TEXTURE_IMAGE_UNITS, &ANGLEResources.maxTextureImageUnits);
-    ANGLEResources.maxFragmentUniformVectors = 0;
-    getIntegerv(GraphicsContext3D::MAX_FRAGMENT_UNIFORM_VECTORS, &ANGLEResources.maxFragmentUniformVectors);
+    ANGLEResources.MaxVertexAttribs = 0;
+    getIntegerv(GraphicsContext3D::MAX_VERTEX_ATTRIBS, &ANGLEResources.MaxVertexAttribs);
+    ANGLEResources.MaxVertexUniformVectors = 0;
+    getIntegerv(GraphicsContext3D::MAX_VERTEX_UNIFORM_VECTORS, &ANGLEResources.MaxVertexUniformVectors);
+    ANGLEResources.MaxVaryingVectors = 0;
+    getIntegerv(GraphicsContext3D::MAX_VARYING_VECTORS, &ANGLEResources.MaxVaryingVectors);
+    ANGLEResources.MaxVertexTextureImageUnits = 0;
+    getIntegerv(GraphicsContext3D::MAX_VERTEX_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxVertexTextureImageUnits);
+    ANGLEResources.MaxCombinedTextureImageUnits = 0;
+    getIntegerv(GraphicsContext3D::MAX_COMBINED_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxCombinedTextureImageUnits);
+    ANGLEResources.MaxTextureImageUnits = 0;
+    getIntegerv(GraphicsContext3D::MAX_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxTextureImageUnits);
+    ANGLEResources.MaxFragmentUniformVectors = 0;
+    getIntegerv(GraphicsContext3D::MAX_FRAGMENT_UNIFORM_VECTORS, &ANGLEResources.MaxFragmentUniformVectors);
 
     // Always set to 1 for OpenGL ES.
-    ANGLEResources.maxDrawBuffers = 1;
+    ANGLEResources.MaxDrawBuffers = 1;
     
     m_compiler.setResources(ANGLEResources);
     

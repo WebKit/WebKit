@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="d3d9.lib"
+				AdditionalDependencies="dxguid.lib"
 				LinkIncremental="2"
 				ModuleDefinitionFile="libEGL.def"
 				GenerateDebugInformation="true"
@@ -140,7 +140,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="d3d9.lib"
+				AdditionalDependencies="dxguid.lib"
 				LinkIncremental="1"
 				ModuleDefinitionFile="libEGL.def"
 				GenerateDebugInformation="true"

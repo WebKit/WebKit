@@ -203,8 +203,10 @@ public:
     POOL_ALLOCATOR_NEW_DELETE(GlobalPoolAllocator)
 
     TIntermNode() : line(0) {}
-    virtual TSourceLoc getLine() const { return line; }
-    virtual void setLine(TSourceLoc l) { line = l; }
+
+    TSourceLoc getLine() const { return line; }
+    void setLine(TSourceLoc l) { line = l; }
+
     virtual void traverse(TIntermTraverser*) = 0;
     virtual TIntermTyped* getAsTyped() { return 0; }
     virtual TIntermConstantUnion* getAsConstantUnion() { return 0; }
@@ -215,6 +217,7 @@ public:
     virtual TIntermSymbol* getAsSymbolNode() { return 0; }
     virtual TIntermLoop* getAsLoopNode() { return 0; }
     virtual ~TIntermNode() { }
+
 protected:
     TSourceLoc line;
 };
@@ -233,22 +236,23 @@ struct TIntermNodePair {
 class TIntermTyped : public TIntermNode {
 public:
     TIntermTyped(const TType& t) : type(t)  { }
-    virtual TIntermTyped* getAsTyped()         { return this; }
-    virtual void setType(const TType& t) { type = t; }
-    virtual const TType& getType() const { return type; }
-    virtual TType* getTypePointer() { return &type; }
+    virtual TIntermTyped* getAsTyped() { return this; }
 
-    virtual TBasicType getBasicType() const { return type.getBasicType(); }
-    virtual TQualifier getQualifier() const { return type.getQualifier(); }
-    virtual TPrecision getPrecision() const { return type.getPrecision(); }
-    virtual int getNominalSize() const { return type.getNominalSize(); }
-    virtual int getSize() const { return type.getInstanceSize(); }
-    virtual bool isMatrix() const { return type.isMatrix(); }
-    virtual bool isArray()  const { return type.isArray(); }
-    virtual bool isVector() const { return type.isVector(); }
-    virtual bool isScalar() const { return type.isScalar(); }
-    const char* getBasicString()      const { return type.getBasicString(); }
-    const char* getQualifierString()  const { return type.getQualifierString(); }
+    void setType(const TType& t) { type = t; }
+    const TType& getType() const { return type; }
+    TType* getTypePointer() { return &type; }
+
+    TBasicType getBasicType() const { return type.getBasicType(); }
+    TQualifier getQualifier() const { return type.getQualifier(); }
+    TPrecision getPrecision() const { return type.getPrecision(); }
+    int getNominalSize() const { return type.getNominalSize(); }
+    
+    bool isMatrix() const { return type.isMatrix(); }
+    bool isArray()  const { return type.isArray(); }
+    bool isVector() const { return type.isVector(); }
+    bool isScalar() const { return type.isScalar(); }
+    const char* getBasicString() const { return type.getBasicString(); }
+    const char* getQualifierString() const { return type.getQualifierString(); }
     TString getCompleteString() const { return type.getCompleteString(); }
 
 protected:
@@ -266,13 +270,16 @@ public:
             test(aTest),
             terminal(aTerminal),
             first(testFirst) { }
+
     virtual TIntermLoop* getAsLoopNode() { return this; }
     virtual void traverse(TIntermTraverser*);
+
     TIntermNode *getInit() { return init; }
     TIntermNode *getBody() { return body; }
     TIntermTyped *getTest() { return test; }
     TIntermTyped *getTerminal() { return terminal; }
     bool testFirst() { return first; }
+
 protected:
     TIntermNode *init;
     TIntermNode *body;       // code to loop over
@@ -289,9 +296,12 @@ public:
     TIntermBranch(TOperator op, TIntermTyped* e) :
             flowOp(op),
             expression(e) { }
+
     virtual void traverse(TIntermTraverser*);
+
     TOperator getFlowOp() { return flowOp; }
     TIntermTyped* getExpression() { return expression; }
+
 protected:
     TOperator flowOp;
     TIntermTyped* expression;  // non-zero except for "return exp;" statements
@@ -307,10 +317,13 @@ public:
     // it is essential to use "symbol = sym" to assign to symbol
     TIntermSymbol(int i, const TString& sym, const TType& t) : 
             TIntermTyped(t), id(i)  { symbol = sym;} 
-    virtual int getId() const { return id; }
-    virtual const TString& getSymbol() const { return symbol;  }
+
+    int getId() const { return id; }
+    const TString& getSymbol() const { return symbol; }
+
     virtual void traverse(TIntermTraverser*);
     virtual TIntermSymbol* getAsSymbolNode() { return this; }
+
 protected:
     int id;
     TString symbol;
@@ -319,11 +332,15 @@ protected:
 class TIntermConstantUnion : public TIntermTyped {
 public:
     TIntermConstantUnion(ConstantUnion *unionPointer, const TType& t) : TIntermTyped(t), unionArrayPointer(unionPointer) { }
+
     ConstantUnion* getUnionArrayPointer() const { return unionArrayPointer; }
     void setUnionArrayPointer(ConstantUnion *c) { unionArrayPointer = c; }
+
     virtual TIntermConstantUnion* getAsConstantUnion()  { return this; }
-    virtual void traverse(TIntermTraverser* );
-    virtual TIntermTyped* fold(TOperator, TIntermTyped*, TInfoSink&);
+    virtual void traverse(TIntermTraverser*);
+
+    TIntermTyped* fold(TOperator, TIntermTyped*, TInfoSink&);
+
 protected:
     ConstantUnion *unionArrayPointer;
 };
@@ -334,9 +351,11 @@ protected:
 class TIntermOperator : public TIntermTyped {
 public:
     TOperator getOp() const { return op; }
+    void setOp(TOperator o) { op = o; }
+
     bool modifiesState() const;
     bool isConstructor() const;
-    virtual bool promote(TInfoSink&) { return true; }
+
 protected:
     TIntermOperator(TOperator o) : TIntermTyped(TType(EbtFloat, EbpUndefined)), op(o) {}
     TIntermOperator(TOperator o, TType& t) : TIntermTyped(t), op(o) {}   
@@ -349,13 +368,16 @@ protected:
 class TIntermBinary : public TIntermOperator {
 public:
     TIntermBinary(TOperator o) : TIntermOperator(o) {}
-    virtual void traverse(TIntermTraverser*);
-    virtual void setLeft(TIntermTyped* n) { left = n; }
-    virtual void setRight(TIntermTyped* n) { right = n; }
-    virtual TIntermTyped* getLeft() const { return left; }
-    virtual TIntermTyped* getRight() const { return right; }
+
     virtual TIntermBinary* getAsBinaryNode() { return this; }
-    virtual bool promote(TInfoSink&);
+    virtual void traverse(TIntermTraverser*);
+
+    void setLeft(TIntermTyped* n) { left = n; }
+    void setRight(TIntermTyped* n) { right = n; }
+    TIntermTyped* getLeft() const { return left; }
+    TIntermTyped* getRight() const { return right; }
+    bool promote(TInfoSink&);
+
 protected:
     TIntermTyped* left;
     TIntermTyped* right;
@@ -368,11 +390,14 @@ class TIntermUnary : public TIntermOperator {
 public:
     TIntermUnary(TOperator o, TType& t) : TIntermOperator(o, t), operand(0) {}
     TIntermUnary(TOperator o) : TIntermOperator(o), operand(0) {}
+
     virtual void traverse(TIntermTraverser*);
-    virtual void setOperand(TIntermTyped* o) { operand = o; }
-    virtual TIntermTyped* getOperand() { return operand; }
     virtual TIntermUnary* getAsUnaryNode() { return this; }
-    virtual bool promote(TInfoSink&);
+
+    void setOperand(TIntermTyped* o) { operand = o; }
+    TIntermTyped* getOperand() { return operand; }    
+    bool promote(TInfoSink&);
+
 protected:
     TIntermTyped* operand;
 };
@@ -387,21 +412,24 @@ public:
     TIntermAggregate() : TIntermOperator(EOpNull), userDefined(false), pragmaTable(0) { }
     TIntermAggregate(TOperator o) : TIntermOperator(o), pragmaTable(0) { }
     ~TIntermAggregate() { delete pragmaTable; }
+
     virtual TIntermAggregate* getAsAggregate() { return this; }
-    virtual void setOperator(TOperator o) { op = o; }
-    virtual TIntermSequence& getSequence() { return sequence; }
-    virtual void setName(const TString& n) { name = n; }
-    virtual const TString& getName() const { return name; }
     virtual void traverse(TIntermTraverser*);
-    virtual void setUserDefined() { userDefined = true; }
-    virtual bool isUserDefined() { return userDefined; }
-    virtual TQualifierList& getQualifier() { return qualifier; }
+
+    TIntermSequence& getSequence() { return sequence; }
+    void setName(const TString& n) { name = n; }
+    const TString& getName() const { return name; }
+
+    void setUserDefined() { userDefined = true; }
+    bool isUserDefined() { return userDefined; }
+    TQualifierList& getQualifier() { return qualifier; }
     void setOptimize(bool o) { optimize = o; }
-    void setDebug(bool d) { debug = d; }
     bool getOptimize() { return optimize; }
+    void setDebug(bool d) { debug = d; }
     bool getDebug() { return debug; }
     void addToPragmaTable(const TPragmaTable& pTable);
     const TPragmaTable& getPragmaTable() const { return *pragmaTable; }
+
 protected:
     TIntermAggregate(const TIntermAggregate&); // disallow copy constructor
     TIntermAggregate& operator=(const TIntermAggregate&); // disallow assignment operator
@@ -423,12 +451,15 @@ public:
             TIntermTyped(TType(EbtVoid, EbpUndefined)), condition(cond), trueBlock(trueB), falseBlock(falseB) {}
     TIntermSelection(TIntermTyped* cond, TIntermNode* trueB, TIntermNode* falseB, const TType& type) :
             TIntermTyped(type), condition(cond), trueBlock(trueB), falseBlock(falseB) {}
+
     virtual void traverse(TIntermTraverser*);
+
     bool usesTernaryOperator() const { return getBasicType() != EbtVoid; }
-    virtual TIntermNode* getCondition() const { return condition; }
-    virtual TIntermNode* getTrueBlock() const { return trueBlock; }
-    virtual TIntermNode* getFalseBlock() const { return falseBlock; }
-    virtual TIntermSelection* getAsSelectionNode() { return this; }
+    TIntermNode* getCondition() const { return condition; }
+    TIntermNode* getTrueBlock() const { return trueBlock; }
+    TIntermNode* getFalseBlock() const { return falseBlock; }
+    TIntermSelection* getAsSelectionNode() { return this; }
+
 protected:
     TIntermTyped* condition;
     TIntermNode* trueBlock;

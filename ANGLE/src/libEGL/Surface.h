@@ -25,7 +25,7 @@ class Config;
 class Surface
 {
   public:
-    Surface(Display *display, IDirect3DSwapChain9 *swapChain, IDirect3DSurface9* depthStencil, const egl::Config *config);
+    Surface(Display *display, const egl::Config *config, HWND window);
 
     ~Surface();
 
@@ -42,20 +42,25 @@ class Surface
     DISALLOW_COPY_AND_ASSIGN(Surface);
 
     Display *const mDisplay;
-    IDirect3DSwapChain9 *const mSwapChain;
+    IDirect3DSwapChain9 *mSwapChain;
     IDirect3DSurface9 *mBackBuffer;
     IDirect3DSurface9 *mRenderTarget;
     IDirect3DSurface9 *mDepthStencil;
     IDirect3DTexture9 *mFlipTexture;
 
-    void applyFlipState(IDirect3DDevice9 *device, IDirect3DTexture9 *source);
+    void resetSwapChain();
+    bool checkForWindowResize();
+
+    void applyFlipState(IDirect3DDevice9 *device);
     void restoreState(IDirect3DDevice9 *device);
-    void writeRecordableFlipState(IDirect3DDevice9 *device, IDirect3DTexture9 *source);
+    void writeRecordableFlipState(IDirect3DDevice9 *device);
+    void releaseRecordedState(IDirect3DDevice9 *device);
     IDirect3DStateBlock9 *mFlipState;
     IDirect3DStateBlock9 *mPreFlipState;
     IDirect3DSurface9 *mPreFlipBackBuffer;
     IDirect3DSurface9 *mPreFlipDepthStencil;
 
+    const HWND mWindow;            // Window that the surface is created for.
     const egl::Config *mConfig;    // EGL config surface was created with
     EGLint mHeight;                // Height of surface
     EGLint mWidth;                 // Width of surface

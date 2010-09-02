@@ -11,6 +11,7 @@
 
 #define GL_APICALL
 #include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
 #include <d3d9.h>
 
 namespace gl
@@ -28,6 +29,9 @@ int AllocateFirstFreeBits(unsigned int *bits, unsigned int allocationSize, unsig
 
 int ComputePixelSize(GLenum format, GLenum type);
 GLsizei ComputePitch(GLsizei width, GLenum format, GLenum type, GLint alignment);
+GLsizei ComputeCompressedPitch(GLsizei width, GLenum format);
+GLsizei ComputeCompressedSize(GLsizei width, GLsizei height, GLenum format);
+bool IsCompressed(GLenum format);
 bool IsCubemapTextureTarget(GLenum target);
 bool IsTextureTarget(GLenum target);
 bool CheckTextureFormatType(GLenum format, GLenum type);
@@ -56,6 +60,8 @@ unsigned int GetStencilSize(D3DFORMAT stencilFormat);
 bool ConvertPrimitiveType(GLenum primitiveType, GLsizei primitiveCount,
                           D3DPRIMITIVETYPE *d3dPrimitiveType, int *d3dPrimitiveCount);
 D3DFORMAT ConvertRenderbufferFormat(GLenum format);
+D3DMULTISAMPLE_TYPE GetMultisampleTypeFromSamples(GLsizei samples);
+GLsizei GetSamplesFromMultisampleType(D3DMULTISAMPLE_TYPE type);
 
 }
 

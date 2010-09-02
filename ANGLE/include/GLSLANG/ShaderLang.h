@@ -6,8 +6,6 @@
 #ifndef _COMPILER_INTERFACE_INCLUDED_
 #define _COMPILER_INTERFACE_INCLUDED_
 
-#include "ResourceLimits.h"
-
 //
 // This is the platform independent interface between an OGL driver
 // and the shading language compiler.
@@ -19,10 +17,12 @@ extern "C" {
 //
 // Driver must call this first, once, before doing any other
 // compiler operations.
+// If the function succeeds, the return value is nonzero, else zero.
 //
 int ShInitialize();
 //
 // Driver should call this at shutdown.
+// If the function succeeds, the return value is nonzero, else zero.
 //
 int ShFinalize();
 //
@@ -42,6 +42,32 @@ typedef enum {
     EShSpecGLES2,
     EShSpecWebGL,
 } EShSpec;
+
+//
+// Implementation dependent built-in resources (constants and extensions).
+// The names for these resources has been obtained by stripping gl_/GL_.
+//
+typedef struct
+{
+    // Constants.
+    int MaxVertexAttribs;
+    int MaxVertexUniformVectors;
+    int MaxVaryingVectors;
+    int MaxVertexTextureImageUnits;
+    int MaxCombinedTextureImageUnits;
+    int MaxTextureImageUnits;
+    int MaxFragmentUniformVectors;
+    int MaxDrawBuffers;
+
+    // Extensions.
+    // Set to 1 to enable the extension, else 0.
+    int OES_standard_derivatives;
+} TBuiltInResource;
+
+//
+// Initialize built-in resources with minimum expected values.
+//
+void ShInitBuiltInResource(TBuiltInResource* resources);
 
 //
 // Optimization level for the compiler.

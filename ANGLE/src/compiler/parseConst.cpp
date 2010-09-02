@@ -12,23 +12,31 @@
 //
 class TConstTraverser : public TIntermTraverser {
 public:
-    TConstTraverser(ConstantUnion* cUnion, bool singleConstParam, TOperator constructType, TInfoSink& sink, TSymbolTable& symTable, TType& t) : unionArray(cUnion), type(t),
-        constructorType(constructType), singleConstantParam(singleConstParam), infoSink(sink), symbolTable(symTable), error(false), isMatrix(false), matrixSize(0)
-	{
-		index = 0;
-	}
+    TConstTraverser(ConstantUnion* cUnion, bool singleConstParam, TOperator constructType, TInfoSink& sink, TSymbolTable& symTable, TType& t)
+        : error(false),
+          index(0),
+          unionArray(cUnion),
+          type(t),
+          constructorType(constructType),
+          singleConstantParam(singleConstParam),
+          infoSink(sink),
+          symbolTable(symTable),
+          size(0),
+          isMatrix(false),
+          matrixSize(0) {
+    }
 
-	bool error;
+    bool error;
 
 protected:
-	void visitSymbol(TIntermSymbol*);
-	void visitConstantUnion(TIntermConstantUnion*);
-	bool visitBinary(Visit visit, TIntermBinary*);
-	bool visitUnary(Visit visit, TIntermUnary*);
-	bool visitSelection(Visit visit, TIntermSelection*);
-	bool visitAggregate(Visit visit, TIntermAggregate*);
-	bool visitLoop(Visit visit, TIntermLoop*);
-	bool visitBranch(Visit visit, TIntermBranch*);
+    void visitSymbol(TIntermSymbol*);
+    void visitConstantUnion(TIntermConstantUnion*);
+    bool visitBinary(Visit visit, TIntermBinary*);
+    bool visitUnary(Visit visit, TIntermUnary*);
+    bool visitSelection(Visit visit, TIntermSelection*);
+    bool visitAggregate(Visit visit, TIntermAggregate*);
+    bool visitLoop(Visit visit, TIntermLoop*);
+    bool visitBranch(Visit visit, TIntermBranch*);
 
     int index;
     ConstantUnion *unionArray;

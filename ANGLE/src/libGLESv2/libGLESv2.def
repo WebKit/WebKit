@@ -144,11 +144,13 @@ EXPORTS
     glViewport                      @142
 
     ; Extensions
-    glTexImage3DOES					@143
+    glTexImage3DOES                 @143
+    glBlitFramebufferANGLE          @149
+    glRenderbufferStorageMultisampleANGLE @150
     
     ; EGL dependencies
-    glCreateContext					@144 NONAME
-    glDestroyContext				@145 NONAME
-    glMakeCurrent					@146 NONAME
-    glGetCurrentContext				@147 NONAME
+    glCreateContext                 @144 NONAME
+    glDestroyContext                @145 NONAME
+    glMakeCurrent                   @146 NONAME
+    glGetCurrentContext             @147 NONAME
     glGetProcAddress                @148 NONAME

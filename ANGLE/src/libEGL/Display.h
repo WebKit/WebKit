@@ -43,7 +43,7 @@ class Display
     bool getConfigAttrib(EGLConfig config, EGLint attribute, EGLint *value);
 
     egl::Surface *createWindowSurface(HWND window, EGLConfig config);
-    EGLContext createContext(EGLConfig configHandle);
+    EGLContext createContext(EGLConfig configHandle, const gl::Context *shareContext);
 
     void destroySurface(egl::Surface *surface);
     void destroyContext(gl::Context *context);
@@ -60,16 +60,22 @@ class Display
 
     virtual IDirect3DDevice9 *getDevice();
     virtual D3DCAPS9 getDeviceCaps();
+    virtual void getMultiSampleSupport(D3DFORMAT format, bool *multiSampleArray);
+    virtual bool getCompressedTextureSupport();
 
   private:
     DISALLOW_COPY_AND_ASSIGN(Display);
     const HDC mDc;
 
+    HMODULE mD3d9Module;
+    
     UINT mAdapter;
     D3DDEVTYPE mDeviceType;
-    IDirect3D9 *mD3d9;
+    IDirect3D9 *mD3d9;  // Always valid after successful initialization.
+    IDirect3D9Ex *mD3d9ex;  // Might be null if D3D9Ex is not supported.
     IDirect3DDevice9 *mDevice;
     D3DCAPS9 mDeviceCaps;
+    HWND mDeviceWindow;
 
     bool mSceneStarted;
     GLint mSwapInterval;
@@ -84,6 +90,8 @@ class Display
 
     typedef std::set<gl::Context*> ContextSet;
     ContextSet mContextSet;
+
+    bool createDevice();
 };
 }
 

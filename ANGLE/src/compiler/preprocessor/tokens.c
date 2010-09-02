@@ -1,8 +1,3 @@
-//
-// Copyright (c) 2002-2010 The ANGLE Project Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-//
 /****************************************************************************\
 Copyright (c) 2002, NVIDIA Corporation.
 
@@ -210,7 +205,7 @@ void DeleteTokenStream(TokenStream *pTok)
 void RecordToken(TokenStream *pTok, int token, yystypepp * yylvalpp)
 {
     const char *s;
-    unsigned char *str=NULL;
+    char *str=NULL;
 
     if (token > 256)
         lAddByte(pTok, (unsigned char)((token & 0x7f) + 0x80));

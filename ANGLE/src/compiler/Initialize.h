@@ -7,8 +7,6 @@
 #ifndef _INITIALIZE_INCLUDED_
 #define _INITIALIZE_INCLUDED_
 
-#include "GLSLANG/ResourceLimits.h"
-
 #include "compiler/Common.h"
 #include "compiler/ShHandle.h"
 #include "compiler/SymbolTable.h"

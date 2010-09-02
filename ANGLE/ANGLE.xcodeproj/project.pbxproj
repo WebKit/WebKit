@@ -35,7 +35,6 @@
 		FB39D2B11200F35A00088E69 /* UnfoldSelect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB39D26D1200F35A00088E69 /* UnfoldSelect.cpp */; };
 		FB39D7231201032000088E69 /* glslang.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB39D7201201032000088E69 /* glslang.cpp */; };
 		FB39D7241201032000088E69 /* glslang_tab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB39D7221201032000088E69 /* glslang_tab.cpp */; };
-		FB39D76D120110FC00088E69 /* ResourceLimits.h in Headers */ = {isa = PBXBuildFile; fileRef = FB39D2BE1200F3E600088E69 /* ResourceLimits.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FB39D76E120110FC00088E69 /* ShaderLang.h in Headers */ = {isa = PBXBuildFile; fileRef = FB39D2BF1200F3E600088E69 /* ShaderLang.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
@@ -177,7 +176,6 @@
 		FB39D26D1200F35A00088E69 /* UnfoldSelect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnfoldSelect.cpp; sourceTree = "<group>"; };
 		FB39D26E1200F35A00088E69 /* UnfoldSelect.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = UnfoldSelect.h; sourceTree = "<group>"; };
 		FB39D26F1200F35A00088E69 /* unistd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unistd.h; sourceTree = "<group>"; };
-		FB39D2BE1200F3E600088E69 /* ResourceLimits.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = ResourceLimits.h; sourceTree = "<group>"; };
 		FB39D2BF1200F3E600088E69 /* ShaderLang.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = ShaderLang.h; sourceTree = "<group>"; };
 		FB39D7201201032000088E69 /* glslang.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glslang.cpp; path = DerivedSources/ANGLE/glslang.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB39D7211201032000088E69 /* glslang_tab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glslang_tab.h; path = DerivedSources/ANGLE/glslang_tab.h; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -413,7 +411,6 @@
 		FB39D2BD1200F3E600088E69 /* GLSLANG */ = {
 			isa = PBXGroup;
 			children = (
-				FB39D2BE1200F3E600088E69 /* ResourceLimits.h */,
 				FB39D2BF1200F3E600088E69 /* ShaderLang.h */,
 			);
 			name = GLSLANG;
@@ -427,7 +424,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FB39D76D120110FC00088E69 /* ResourceLimits.h in Headers */,
 				FB39D76E120110FC00088E69 /* ShaderLang.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -461,7 +457,6 @@
 			isa = PBXProject;
 			buildConfigurationList = FB39D0731200ED9200088E69 /* Build configuration list for PBXProject "ANGLE" */;
 			compatibilityVersion = "Xcode 2.4";
-			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,

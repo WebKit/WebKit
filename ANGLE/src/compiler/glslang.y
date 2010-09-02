@@ -38,7 +38,7 @@ compiler/tools. Remove it when we can exclusively use the newer version.
 #define parseContext ((TParseContext*)(parseContextLocal))
 #define YYLEX_PARAM parseContextLocal
 #define YY_DECL int yylex(YYSTYPE* pyylval, void* parseContextLocal)
-extern void yyerror(char*);
+extern void yyerror(const char*);
 
 #define FRAG_VERT_ONLY(S, L) {                                                  \
     if (parseContext->language != EShLangFragment &&                             \
@@ -311,7 +311,7 @@ postfix_expression
                 $$->setType(TType($1->getBasicType(), $1->getPrecision(), EvqTemporary, $1->getNominalSize(), $1->isMatrix()));
 
             if ($1->getType().getQualifier() == EvqConst)
-                $$->getTypePointer()->changeQualifier(EvqConst);
+                $$->getTypePointer()->setQualifier(EvqConst);
         } else if ($1->isMatrix() && $1->getType().getQualifier() == EvqConst)
             $$->setType(TType($1->getBasicType(), $1->getPrecision(), EvqConst, $1->getNominalSize()));
         else if ($1->isMatrix())
@@ -389,7 +389,7 @@ postfix_expression
             }
         } else if ($1->getBasicType() == EbtStruct) {
             bool fieldFound = false;
-            TTypeList* fields = $1->getType().getStruct();
+            const TTypeList* fields = $1->getType().getStruct();
             if (fields == 0) {
                 parseContext->error($2.line, "structure has no fields", "Internal Error", "");
                 parseContext->recover();
@@ -413,7 +413,7 @@ postfix_expression
                             $$->setType(*(*fields)[i].type);
                             // change the qualifier of the return type, not of the structure field
                             // as the structure definition is shared between various structures.
-                            $$->getTypePointer()->changeQualifier(EvqConst);
+                            $$->getTypePointer()->setQualifier(EvqConst);
                         }
                     } else {
                         ConstantUnion *unionArray = new ConstantUnion[1];
@@ -673,7 +673,7 @@ function_identifier
                 break;
             }
             if (op == EOpNull) {
-                parseContext->error($1.line, "cannot construct this type", TType::getBasicString($1.type), "");
+                parseContext->error($1.line, "cannot construct this type", getBasicString($1.type), "");
                 parseContext->recover();
                 $1.type = EbtFloat;
                 op = EOpConstructFloat;
@@ -1007,12 +1007,12 @@ declaration
             }
         }
         
-        prototype->setOperator(EOpPrototype);
+        prototype->setOp(EOpPrototype);
         $$ = prototype;
     }
     | init_declarator_list SEMICOLON {
         if ($1.intermAggregate)
-            $1.intermAggregate->setOperator(EOpDeclaration);
+            $1.intermAggregate->setOp(EOpDeclaration);
         $$ = $1.intermAggregate;
     }
     | PRECISION precision_qualifier type_specifier_no_prec SEMICOLON {
@@ -1795,19 +1795,24 @@ struct_declaration
         }
         for (unsigned int i = 0; i < $$->size(); ++i) {
             //
-            // Careful not to replace already know aspects of type, like array-ness
+            // Careful not to replace already known aspects of type, like array-ness
             //
-            (*$$)[i].type->setType($1.type, $1.size, $1.matrix, $1.userDef);
+            TType* type = (*$$)[i].type;
+            type->setBasicType($1.type);
+            type->setNominalSize($1.size);
+            type->setMatrix($1.matrix);
 
             // don't allow arrays of arrays
-            if ((*$$)[i].type->isArray()) {
+            if (type->isArray()) {
                 if (parseContext->arrayTypeErrorCheck($1.line, $1))
                     parseContext->recover();
             }
             if ($1.array)
-                (*$$)[i].type->setArraySize($1.arraySize);
-            if ($1.userDef)
-                (*$$)[i].type->setTypeName($1.userDef->getTypeName());
+                type->setArraySize($1.arraySize);
+            if ($1.userDef) {
+                type->setStruct($1.userDef->getStruct());
+                type->setTypeName($1.userDef->getTypeName());
+            }
         }
     }
     ;
@@ -1873,7 +1878,7 @@ compound_statement
     : LEFT_BRACE RIGHT_BRACE { $$ = 0; }
     | LEFT_BRACE { parseContext->symbolTable.push(); } statement_list { parseContext->symbolTable.pop(); } RIGHT_BRACE {
         if ($3 != 0)
-            $3->setOperator(EOpSequence);
+            $3->setOp(EOpSequence);
         $$ = $3;
     }
     ;
@@ -1890,7 +1895,7 @@ compound_statement_no_new_scope
     }
     | LEFT_BRACE statement_list RIGHT_BRACE {
         if ($2)
-            $2->setOperator(EOpSequence);
+            $2->setOp(EOpSequence);
         $$ = $2;
     }
     ;

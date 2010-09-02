@@ -1,3 +1,13 @@
+2010-09-01  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Roll ANGLE under webkit to r402
+        https://bugs.webkit.org/show_bug.cgi?id=45004
+
+        * platform/graphics/mac/GraphicsContext3DMac.mm: Update the code to use newer ANGLE interface.
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+
 2010-09-02  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

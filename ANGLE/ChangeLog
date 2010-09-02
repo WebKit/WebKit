@@ -1,3 +1,461 @@
+2010-09-01  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Roll ANGLE under webkit to r402
+        https://bugs.webkit.org/show_bug.cgi?id=45004
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * include/GLES2/gl2ext.h:
+        * include/GLSLANG/ResourceLimits.h: Removed.
+        * include/GLSLANG/ShaderLang.h:
+        * src/compiler/BaseTypes.h:
+        (getPrecisionString):
+        (getBasicString):
+        (IsSampler):
+        (getQualifierString):
+        * src/compiler/Initialize.cpp:
+        (BuiltInConstants):
+        (IdentifyBuiltIns):
+        * src/compiler/Initialize.h:
+        * src/compiler/InitializeDll.cpp:
+        (InitProcess):
+        (DetachProcess):
+        (InitThread):
+        (DetachThread):
+        * src/compiler/InitializeDll.h:
+        * src/compiler/InitializeParseContext.h:
+        * src/compiler/Intermediate.cpp:
+        (GetHigherPrecision):
+        (TIntermediate::addBinaryMath):
+        (TIntermediate::setAggregateOperator):
+        (TIntermediate::addComma):
+        (TIntermediate::postProcess):
+        (TIntermBinary::promote):
+        (CompareStruct):
+        * src/compiler/OutputGLSL.cpp:
+        (TOutputGLSL::writeFunctionParameters):
+        (TOutputGLSL::visitUnary):
+        (TOutputGLSL::visitBranch):
+        * src/compiler/OutputHLSL.cpp:
+        (sh::OutputHLSL::header):
+        (sh::OutputHLSL::visitBinary):
+        (sh::OutputHLSL::visitAggregate):
+        (sh::OutputHLSL::handleExcessiveLoop):
+        (sh::OutputHLSL::addConstructor):
+        * src/compiler/ParseHelper.cpp:
+        (TParseContext::constructorErrorCheck):
+        (TParseContext::samplerErrorCheck):
+        (TParseContext::paramErrorCheck):
+        (TParseContext::findFunction):
+        (TParseContext::executeInitializer):
+        (TParseContext::addConstructor):
+        (TParseContext::addConstStruct):
+        (FreeParseContextIndex):
+        (GetGlobalParseContext):
+        * src/compiler/PoolAlloc.h:
+        (TPoolAllocator::tHeader::tHeader):
+        (pool_allocator::allocate):
+        (pool_allocator::deallocate):
+        * src/compiler/ShaderLang.cpp:
+        (ShInitialize):
+        (ShFinalize):
+        (ShInitBuiltInResource):
+        * src/compiler/SymbolTable.cpp:
+        (TType::getStructSize):
+        * src/compiler/SymbolTable.h:
+        (TVariable::setQualifier):
+        * src/compiler/Types.h:
+        (TType::TType):
+        (TType::getBasicType):
+        (TType::setBasicType):
+        (TType::getPrecision):
+        (TType::setPrecision):
+        (TType::getQualifier):
+        (TType::setQualifier):
+        (TType::getNominalSize):
+        (TType::setNominalSize):
+        (TType::isMatrix):
+        (TType::setMatrix):
+        (TType::isArray):
+        (TType::getArraySize):
+        (TType::setArraySize):
+        (TType::getMaxArraySize):
+        (TType::setMaxArraySize):
+        (TType::clearArrayness):
+        (TType::setArrayInformationType):
+        (TType::getArrayInformationType):
+        (TType::isVector):
+        (TType::isScalar):
+        (TType::setStruct):
+        (TType::getTypeName):
+        (TType::setTypeName):
+        (TType::isField):
+        (TType::getFieldName):
+        (TType::setFieldName):
+        (TType::getBasicString):
+        (TType::getPrecisionString):
+        (TType::getQualifierString):
+        * src/compiler/glslang.l:
+        * src/compiler/glslang.y:
+        * src/compiler/intermediate.h:
+        (TIntermNode::getLine):
+        (TIntermNode::setLine):
+        (TIntermTyped::getAsTyped):
+        (TIntermTyped::setType):
+        (TIntermTyped::getType):
+        (TIntermTyped::getTypePointer):
+        (TIntermTyped::getBasicType):
+        (TIntermTyped::getQualifier):
+        (TIntermTyped::getPrecision):
+        (TIntermTyped::getNominalSize):
+        (TIntermTyped::isMatrix):
+        (TIntermTyped::isArray):
+        (TIntermTyped::isVector):
+        (TIntermTyped::isScalar):
+        (TIntermTyped::getBasicString):
+        (TIntermTyped::getQualifierString):
+        (TIntermSymbol::getId):
+        (TIntermSymbol::getSymbol):
+        (TIntermOperator::setOp):
+        (TIntermBinary::setLeft):
+        (TIntermBinary::setRight):
+        (TIntermBinary::getLeft):
+        (TIntermBinary::getRight):
+        (TIntermUnary::setOperand):
+        (TIntermUnary::getOperand):
+        (TIntermAggregate::getAsAggregate):
+        (TIntermAggregate::getSequence):
+        (TIntermAggregate::setName):
+        (TIntermAggregate::getName):
+        (TIntermAggregate::setUserDefined):
+        (TIntermAggregate::isUserDefined):
+        (TIntermAggregate::getQualifier):
+        (TIntermAggregate::setOptimize):
+        (TIntermAggregate::setDebug):
+        (TIntermSelection::getCondition):
+        (TIntermSelection::getTrueBlock):
+        (TIntermSelection::getFalseBlock):
+        (TIntermSelection::getAsSelectionNode):
+        * src/compiler/parseConst.cpp:
+        (TConstTraverser::TConstTraverser):
+        * src/compiler/preprocessor/atom.c:
+        (InitAtomTable):
+        * src/compiler/preprocessor/atom.h:
+        * src/compiler/preprocessor/compile.h:
+        * src/compiler/preprocessor/cpp.c:
+        * src/compiler/preprocessor/cpp.h:
+        * src/compiler/preprocessor/cppstruct.c:
+        * src/compiler/preprocessor/memory.c:
+        * src/compiler/preprocessor/memory.h:
+        * src/compiler/preprocessor/parser.h:
+        * src/compiler/preprocessor/preprocess.h:
+        * src/compiler/preprocessor/scanner.c:
+        * src/compiler/preprocessor/scanner.h:
+        * src/compiler/preprocessor/slglobals.h:
+        * src/compiler/preprocessor/symbols.c:
+        (NewSymbol):
+        * src/compiler/preprocessor/symbols.h:
+        * src/compiler/preprocessor/tokens.c:
+        (RecordToken):
+        * src/compiler/preprocessor/tokens.h:
+        * src/libEGL/Display.cpp:
+        (egl::Display::Display):
+        (egl::Display::initialize):
+        (egl::Display::terminate):
+        (egl::Display::createDevice):
+        (egl::Display::createWindowSurface):
+        (egl::Display::createContext):
+        (egl::Display::getMultiSampleSupport):
+        (egl::Display::getCompressedTextureSupport):
+        * src/libEGL/Display.h:
+        * src/libEGL/Surface.cpp:
+        (egl::Surface::Surface):
+        (egl::Surface::resetSwapChain):
+        (egl::Surface::getWindowHandle):
+        (egl::Surface::writeRecordableFlipState):
+        (egl::Surface::applyFlipState):
+        (egl::Surface::releaseRecordedState):
+        (egl::Surface::checkForWindowResize):
+        (egl::Surface::swap):
+        * src/libEGL/Surface.h:
+        * src/libEGL/libEGL.cpp:
+        * src/libEGL/libEGL.vcproj:
+        * src/libGLESv2/Blit.cpp:
+        (gl::Blit::setVertexShader):
+        (gl::Blit::setPixelShader):
+        (gl::Blit::setFormatConvertShaders):
+        * src/libGLESv2/Buffer.cpp:
+        (gl::Buffer::Buffer):
+        * src/libGLESv2/Buffer.h:
+        * src/libGLESv2/Context.cpp:
+        (gl::Context::Context):
+        (gl::Context::~Context):
+        (gl::Context::makeCurrent):
+        (gl::Context::markAllStateDirty):
+        (gl::Context::getReadFramebufferHandle):
+        (gl::Context::getDrawFramebufferHandle):
+        (gl::Context::getRenderbufferHandle):
+        (gl::Context::getArrayBufferHandle):
+        (gl::Context::setVertexAttribState):
+        (gl::Context::createBuffer):
+        (gl::Context::createProgram):
+        (gl::Context::createShader):
+        (gl::Context::createTexture):
+        (gl::Context::createRenderbuffer):
+        (gl::Context::deleteBuffer):
+        (gl::Context::deleteShader):
+        (gl::Context::deleteProgram):
+        (gl::Context::deleteTexture):
+        (gl::Context::deleteRenderbuffer):
+        (gl::Context::getBuffer):
+        (gl::Context::getShader):
+        (gl::Context::getProgram):
+        (gl::Context::getTexture):
+        (gl::Context::getRenderbuffer):
+        (gl::Context::getReadFramebuffer):
+        (gl::Context::getDrawFramebuffer):
+        (gl::Context::bindArrayBuffer):
+        (gl::Context::bindElementArrayBuffer):
+        (gl::Context::bindTexture2D):
+        (gl::Context::bindTextureCubeMap):
+        (gl::Context::bindReadFramebuffer):
+        (gl::Context::bindDrawFramebuffer):
+        (gl::Context::bindRenderbuffer):
+        (gl::Context::useProgram):
+        (gl::Context::setFramebufferZero):
+        (gl::Context::setRenderbufferStorage):
+        (gl::Context::getFramebuffer):
+        (gl::Context::getArrayBuffer):
+        (gl::Context::getElementArrayBuffer):
+        (gl::Context::getCurrentProgram):
+        (gl::Context::getTexture2D):
+        (gl::Context::getTextureCubeMap):
+        (gl::Context::getSamplerTexture):
+        (gl::Context::getFloatv):
+        (gl::Context::getIntegerv):
+        (gl::Context::getQueryParameterInfo):
+        (gl::Context::applyRenderTarget):
+        (gl::Context::applyState):
+        (gl::Context::applyIndexBuffer):
+        (gl::Context::readPixels):
+        (gl::Context::clear):
+        (gl::Context::finish):
+        (gl::Context::flush):
+        (gl::Context::supportsShaderModel3):
+        (gl::Context::getMaxSupportedSamples):
+        (gl::Context::getNearestSupportedSamples):
+        (gl::Context::supportsCompressedTextures):
+        (gl::Context::detachBuffer):
+        (gl::Context::detachTexture):
+        (gl::Context::detachFramebuffer):
+        (gl::Context::detachRenderbuffer):
+        (gl::Context::getIncompleteTexture):
+        (gl::Context::initExtensionString):
+        (gl::Context::blitFramebuffer):
+        * src/libGLESv2/Context.h:
+        (gl::AttributeState::AttributeState):
+        * src/libGLESv2/Framebuffer.cpp:
+        (gl::Framebuffer::Framebuffer):
+        (gl::Framebuffer::~Framebuffer):
+        (gl::Framebuffer::lookupRenderbuffer):
+        (gl::Framebuffer::setColorbuffer):
+        (gl::Framebuffer::setDepthbuffer):
+        (gl::Framebuffer::setStencilbuffer):
+        (gl::Framebuffer::detachTexture):
+        (gl::Framebuffer::detachRenderbuffer):
+        (gl::Framebuffer::getRenderTargetSerial):
+        (gl::Framebuffer::getRenderTarget):
+        (gl::Framebuffer::getDepthStencil):
+        (gl::Framebuffer::getDepthbufferSerial):
+        (gl::Framebuffer::getStencilbufferSerial):
+        (gl::Framebuffer::getColorbuffer):
+        (gl::Framebuffer::getDepthbuffer):
+        (gl::Framebuffer::getStencilbuffer):
+        (gl::Framebuffer::getColorbufferHandle):
+        (gl::Framebuffer::getDepthbufferHandle):
+        (gl::Framebuffer::getStencilbufferHandle):
+        (gl::Framebuffer::hasStencil):
+        (gl::Framebuffer::isMultisample):
+        (gl::Framebuffer::completeness):
+        (gl::DefaultFramebuffer::DefaultFramebuffer):
+        (gl::Framebuffer::getSamples):
+        (gl::DefaultFramebuffer::completeness):
+        * src/libGLESv2/Framebuffer.h:
+        * src/libGLESv2/Program.cpp:
+        (gl::Program::Program):
+        (gl::Program::~Program):
+        (gl::Program::attachShader):
+        (gl::Program::detachShader):
+        (gl::Program::linkVaryings):
+        (gl::Program::link):
+        (gl::Program::unlink):
+        (gl::Program::release):
+        (gl::Program::addRef):
+        (gl::Program::getRefCount):
+        (gl::Program::getDxViewportLocation):
+        * src/libGLESv2/Program.h:
+        * src/libGLESv2/RefCountObject.cpp: Added.
+        (gl::RefCountObject::RefCountObject):
+        (gl::RefCountObject::~RefCountObject):
+        (gl::RefCountObject::addRef):
+        (gl::RefCountObject::release):
+        (gl::RefCountObjectBindingPointer::set):
+        * src/libGLESv2/RefCountObject.h: Added.
+        (gl::RefCountObject::id):
+        (gl::RefCountObjectBindingPointer::RefCountObjectBindingPointer):
+        (gl::RefCountObjectBindingPointer::~RefCountObjectBindingPointer):
+        (gl::RefCountObjectBindingPointer::get):
+        (gl::RefCountObjectBindingPointer::id):
+        (gl::RefCountObjectBindingPointer::operator ! ):
+        (gl::BindingPointer::set):
+        (gl::BindingPointer::get):
+        (gl::BindingPointer::operator -> ):
+        * src/libGLESv2/Renderbuffer.cpp:
+        (gl::Renderbuffer::Renderbuffer):
+        (gl::Renderbuffer::~Renderbuffer):
+        (gl::Renderbuffer::isColorbuffer):
+        (gl::Renderbuffer::isDepthbuffer):
+        (gl::Renderbuffer::isStencilbuffer):
+        (gl::Renderbuffer::getRenderTarget):
+        (gl::Renderbuffer::getDepthStencil):
+        (gl::Renderbuffer::getWidth):
+        (gl::Renderbuffer::getHeight):
+        (gl::Renderbuffer::getFormat):
+        (gl::Renderbuffer::getD3DFormat):
+        (gl::Renderbuffer::getSerial):
+        (gl::Renderbuffer::setStorage):
+        (gl::RenderbufferStorage::RenderbufferStorage):
+        (gl::RenderbufferStorage::~RenderbufferStorage):
+        (gl::RenderbufferStorage::isColorbuffer):
+        (gl::RenderbufferStorage::isDepthbuffer):
+        (gl::RenderbufferStorage::isStencilbuffer):
+        (gl::RenderbufferStorage::getRenderTarget):
+        (gl::RenderbufferStorage::getDepthStencil):
+        (gl::RenderbufferStorage::getWidth):
+        (gl::RenderbufferStorage::getHeight):
+        (gl::RenderbufferStorage::setSize):
+        (gl::RenderbufferStorage::getFormat):
+        (gl::RenderbufferStorage::getD3DFormat):
+        (gl::RenderbufferStorage::getSamples):
+        (gl::RenderbufferStorage::getSerial):
+        (gl::RenderbufferStorage::issueSerial):
+        (gl::Colorbuffer::Colorbuffer):
+        (gl::Colorbuffer::isColorbuffer):
+        (gl::Colorbuffer::getRedSize):
+        (gl::Colorbuffer::getGreenSize):
+        (gl::Colorbuffer::getBlueSize):
+        (gl::Colorbuffer::getAlphaSize):
+        (gl::DepthStencilbuffer::DepthStencilbuffer):
+        (gl::DepthStencilbuffer::~DepthStencilbuffer):
+        (gl::DepthStencilbuffer::isDepthbuffer):
+        (gl::DepthStencilbuffer::isStencilbuffer):
+        (gl::DepthStencilbuffer::getDepthSize):
+        (gl::DepthStencilbuffer::getStencilSize):
+        (gl::DepthStencilbuffer::getDepthStencil):
+        (gl::Depthbuffer::Depthbuffer):
+        (gl::Depthbuffer::~Depthbuffer):
+        (gl::Depthbuffer::isDepthbuffer):
+        (gl::Depthbuffer::isStencilbuffer):
+        (gl::Stencilbuffer::Stencilbuffer):
+        (gl::Stencilbuffer::~Stencilbuffer):
+        (gl::Stencilbuffer::isDepthbuffer):
+        (gl::Stencilbuffer::isStencilbuffer):
+        * src/libGLESv2/Renderbuffer.h:
+        (gl::Renderbuffer::getStorage):
+        * src/libGLESv2/ResourceManager.cpp: Added.
+        (gl::ResourceManager::ResourceManager):
+        (gl::ResourceManager::~ResourceManager):
+        (gl::ResourceManager::addRef):
+        (gl::ResourceManager::release):
+        (gl::ResourceManager::createBuffer):
+        (gl::ResourceManager::createShader):
+        (gl::ResourceManager::createProgram):
+        (gl::ResourceManager::createTexture):
+        (gl::ResourceManager::createRenderbuffer):
+        (gl::ResourceManager::deleteBuffer):
+        (gl::ResourceManager::deleteShader):
+        (gl::ResourceManager::deleteProgram):
+        (gl::ResourceManager::deleteTexture):
+        (gl::ResourceManager::deleteRenderbuffer):
+        (gl::ResourceManager::getBuffer):
+        (gl::ResourceManager::getShader):
+        (gl::ResourceManager::getTexture):
+        (gl::ResourceManager::getProgram):
+        (gl::ResourceManager::getRenderbuffer):
+        (gl::ResourceManager::setRenderbuffer):
+        (gl::ResourceManager::checkBufferAllocation):
+        (gl::ResourceManager::checkTextureAllocation):
+        (gl::ResourceManager::checkRenderbufferAllocation):
+        * src/libGLESv2/ResourceManager.h: Added.
+        * src/libGLESv2/Shader.cpp:
+        (gl::Shader::Shader):
+        (gl::Shader::addRef):
+        (gl::Shader::release):
+        (gl::Shader::getRefCount):
+        (gl::Shader::parseVaryings):
+        (gl::VertexShader::VertexShader):
+        (gl::FragmentShader::FragmentShader):
+        * src/libGLESv2/Shader.h:
+        * src/libGLESv2/Texture.cpp:
+        (gl::Texture::Image::Image):
+        (gl::Texture::Texture):
+        (gl::Texture::getBlitter):
+        (gl::Texture::selectFormat):
+        (gl::Texture::loadImageData):
+        (gl::Texture::loadAlphaImageData):
+        (gl::Texture::loadLuminanceImageData):
+        (gl::Texture::loadLuminanceAlphaImageData):
+        (gl::Texture::loadRGBUByteImageData):
+        (gl::Texture::loadRGB565ImageData):
+        (gl::Texture::loadRGBAUByteImageData):
+        (gl::Texture::loadRGBA4444ImageData):
+        (gl::Texture::loadRGBA5551ImageData):
+        (gl::Texture::loadBGRAImageData):
+        (gl::Texture::createSurface):
+        (gl::Texture::setImage):
+        (gl::Texture::setCompressedImage):
+        (gl::Texture::subImage):
+        (gl::Texture::subImageCompressed):
+        (gl::Texture2D::Texture2D):
+        (gl::Texture2D::getFormat):
+        (gl::Texture2D::setCompressedImage):
+        (gl::Texture2D::subImage):
+        (gl::Texture2D::subImageCompressed):
+        (gl::Texture2D::copyImage):
+        (gl::Texture2D::copySubImage):
+        (gl::Texture2D::isCompressed):
+        (gl::Texture2D::getColorbuffer):
+        (gl::TextureCubeMap::TextureCubeMap):
+        (gl::TextureCubeMap::getFormat):
+        (gl::TextureCubeMap::setCompressedImage):
+        (gl::TextureCubeMap::subImage):
+        (gl::TextureCubeMap::subImageCompressed):
+        (gl::TextureCubeMap::isCompressed):
+        (gl::TextureCubeMap::copyImage):
+        (gl::TextureCubeMap::copySubImage):
+        (gl::TextureCubeMap::getColorbuffer):
+        (gl::Texture::TextureColorbufferProxy::addRef):
+        (gl::Texture::TextureColorbufferProxy::release):
+        (gl::Texture::TextureColorbufferProxy::getWidth):
+        (gl::Texture::TextureColorbufferProxy::getHeight):
+        (gl::Texture::TextureColorbufferProxy::getFormat):
+        * src/libGLESv2/Texture.h:
+        * src/libGLESv2/libGLESv2.cpp:
+        * src/libGLESv2/libGLESv2.def:
+        * src/libGLESv2/libGLESv2.vcproj:
+        * src/libGLESv2/main.h:
+        * src/libGLESv2/utilities.cpp:
+        (gl::ComputeCompressedPitch):
+        (gl::ComputeCompressedSize):
+        (gl::IsCompressed):
+        (gl::ComputePixelSize):
+        (gl::CheckTextureFormatType):
+        (es2dx::ConvertRenderbufferFormat):
+        (es2dx::GetSamplesFromMultisampleType):
+        (es2dx::GetMultisampleTypeFromSamples):
+        * src/libGLESv2/utilities.h:
+
 2010-08-17  Chris Marrin  <cmarrin@apple.com>
 
         Unreviewed.
