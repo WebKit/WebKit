@@ -1,5 +1,18 @@
 2010-09-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r66656.
+        http://trac.webkit.org/changeset/66656
+        https://bugs.webkit.org/show_bug.cgi?id=45105
+
+        won't pass after 66655 rollout (Requested by kling on
+        #webkit).
+
+        * fast/dom/Selection/script-tests/wrong-document-err.js: Removed.
+        * fast/dom/Selection/wrong-document-err-expected.txt: Removed.
+        * fast/dom/Selection/wrong-document-err.html: Removed.
+
+2010-09-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r66649.
         http://trac.webkit.org/changeset/66649
         https://bugs.webkit.org/show_bug.cgi?id=45103
