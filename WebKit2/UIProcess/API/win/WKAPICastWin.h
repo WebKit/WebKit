@@ -36,7 +36,7 @@ namespace WebKit {
 
 inline WebKit::WebView* toWK(WKViewRef v)
 {
-    return reinterpret_cast<WebKit::WebView*>(v);
+    return reinterpret_cast<WebKit::WebView*>(const_cast<OpaqueWKView*>(v));
 }
 
 inline WKViewRef toRef(WebKit::WebView* v)

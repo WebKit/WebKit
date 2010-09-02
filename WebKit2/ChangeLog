@@ -1,3 +1,11 @@
+2010-09-02  Jessie Berlin  <jberlin@apple.com>
+
+        Windows build fix. Unreviewed.
+
+        * UIProcess/API/win/WKAPICastWin.h:
+        (toWK):
+        * UIProcess/API/win/WKBaseWin.h:
+
 2010-09-01  Jia Pu  <jpu@apple.com>
 
         Reviewed by Dan Bernstein.

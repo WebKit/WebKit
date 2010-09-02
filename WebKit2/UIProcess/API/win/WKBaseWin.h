@@ -30,6 +30,6 @@
 #error "Please #include \"WKBase.h\" instead of this file directly."
 #endif
 
-typedef struct OpaqueWKView* WKViewRef;
+typedef const struct OpaqueWKView* WKViewRef;
 
 #endif /* WKBaseWin_h */
