@@ -1,3 +1,17 @@
+2010-09-02  Adam Roben  <aroben@apple.com>
+
+        Fill the scroll corner with white when shouldPaintCustomScrollbars is
+        false
+
+        Previously we were only filling with white when
+        shouldPaintCustomScrollbars was true but the ChromeClient didn't paint
+        any custom scrollbars.
+
+        Reviewed by Sam Weinig.
+
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::ScrollbarThemeComposite::paintScrollCorner):
+
 2010-09-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r66671.
