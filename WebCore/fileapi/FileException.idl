@@ -45,10 +45,14 @@ module html {
 #endif
 
         // FileExceptionCode
+        const unsigned short NO_MODIFICATION_ALLOWED_ERR = 7;
         const unsigned short NOT_FOUND_ERR = 8;
+        const unsigned short INVALID_STATE_ERR = 11;
+        const unsigned short SYNTAX_ERR = 12;
+        const unsigned short INVALID_MODIFICATION_ERR = 13;
         const unsigned short SECURITY_ERR = 18;
         const unsigned short ABORT_ERR = 20;
-
+        const unsigned short QUOTA_EXCEEDED_ERR = 22;
         const unsigned short NOT_READABLE_ERR = 24;
         const unsigned short ENCODING_ERR = 26;
     };
