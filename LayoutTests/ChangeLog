@@ -1,3 +1,9 @@
+2010-09-02  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, add two failing tests (http/tests/inspector/console-xhr-logging.html and http/tests/inspector/resource-har-conversion.html) to platform/chromium/test_expectations.txt.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.
