@@ -28,7 +28,8 @@ import os, sys
 def main():
     tasksToKill = ["DumpRenderTree.exe", "DumpRenderTree_debug.exe", "testapi.exe", "testapi_debug.exe",
                 "svn.exe", "httpd.exe", "cl.exe", "link.exe", "midl.exe", "devenv.exe", "perl.exe",
-                "imagediff.exe", "imagediff_debug.exe", "jsc.exe", "jsc_debug.exe"]
+                "imagediff.exe", "imagediff_debug.exe", "jsc.exe", "jsc_debug.exe", "WebKit2WebProcess.exe",
+                "WebKit2WebProcess_debug.exe", "WebKitTestRunner.exe", "WebKitTestRunner_debug.exe"]
 
     for task in tasksToKill:
         os.system("taskkill /f /im " + task)

@@ -1,3 +1,12 @@
+2010-09-01  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Have kill-old-processes kill debug and release variants of WebKit2WebWebProcess
+        and WebKitTestRunner.
+
+        * BuildSlaveSupport/win/kill-old-processes:
+
 2010-09-01  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
 
         Reviewed by Antonio Gomes.
