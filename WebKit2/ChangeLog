@@ -1,5 +1,23 @@
 2010-09-01  Sam Weinig  <sam@webkit.org>
 
+        Fix the build.
+
+        As with CF, const struct OpaqueType* should be the default type
+        so that const_casts are not necessary in user code.
+
+        * UIProcess/API/C/WKArray.cpp:
+        (WKArrayCreate):
+        * UIProcess/API/C/WKBase.h:
+        * UIProcess/API/C/WKType.cpp:
+        (WKGetTypeID):
+        (WKRetain):
+        (WKRelease):
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+        (toWK):
+        * WebProcess/InjectedBundle/API/c/WKBundleBase.h:
+
+2010-09-01  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Adam Roben.
 
         Add mutable array API to WebKit2

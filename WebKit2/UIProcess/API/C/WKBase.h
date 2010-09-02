@@ -33,28 +33,28 @@
 #endif
 
 typedef uint32_t WKTypeID;
-typedef void* WKTypeRef;
+typedef const void* WKTypeRef;
 
 typedef const struct OpaqueWKArray* WKArrayRef;
 typedef struct OpaqueWKArray* WKMutableArrayRef;
 
-typedef struct OpaqueWKBackForwardList* WKBackForwardListRef;
-typedef struct OpaqueWKBackForwardListItem* WKBackForwardListItemRef;
-typedef struct OpaqueWKContext* WKContextRef;
-typedef struct OpaqueWKData* WKDataRef;
-typedef struct OpaqueWKDictionary* WKDictionaryRef;
-typedef struct OpaqueWKError* WKErrorRef;
-typedef struct OpaqueWKFormSubmissionListener* WKFormSubmissionListenerRef;
-typedef struct OpaqueWKFrame* WKFrameRef;
-typedef struct OpaqueWKFramePolicyListener* WKFramePolicyListenerRef;
-typedef struct OpaqueWKNavigationData* WKNavigationDataRef;
-typedef struct OpaqueWKPage* WKPageRef;
-typedef struct OpaqueWKPageNamespace* WKPageNamespaceRef;
-typedef struct OpaqueWKPreferences* WKPreferencesRef;
-typedef struct OpaqueWKString* WKStringRef;
-typedef struct OpaqueWKURL* WKURLRef;
-typedef struct OpaqueWKURLRequest* WKURLRequestRef;
-typedef struct OpaqueWKURLResponse* WKURLResponseRef;
+typedef const struct OpaqueWKBackForwardList* WKBackForwardListRef;
+typedef const struct OpaqueWKBackForwardListItem* WKBackForwardListItemRef;
+typedef const struct OpaqueWKContext* WKContextRef;
+typedef const struct OpaqueWKData* WKDataRef;
+typedef const struct OpaqueWKDictionary* WKDictionaryRef;
+typedef const struct OpaqueWKError* WKErrorRef;
+typedef const struct OpaqueWKFormSubmissionListener* WKFormSubmissionListenerRef;
+typedef const struct OpaqueWKFrame* WKFrameRef;
+typedef const struct OpaqueWKFramePolicyListener* WKFramePolicyListenerRef;
+typedef const struct OpaqueWKNavigationData* WKNavigationDataRef;
+typedef const struct OpaqueWKPage* WKPageRef;
+typedef const struct OpaqueWKPageNamespace* WKPageNamespaceRef;
+typedef const struct OpaqueWKPreferences* WKPreferencesRef;
+typedef const struct OpaqueWKString* WKStringRef;
+typedef const struct OpaqueWKURL* WKURLRef;
+typedef const struct OpaqueWKURLRequest* WKURLRequestRef;
+typedef const struct OpaqueWKURLResponse* WKURLResponseRef;
 
 #undef WK_EXPORT
 #if defined(WK_NO_EXPORT)

@@ -77,7 +77,10 @@ template<> struct BundleImplTypeInfo<WebCore::Range*>                   { typede
 template<typename T>
 inline typename WebKit::BundleAPITypeInfo<T>::ImplType toWK(T t)
 {
-    return reinterpret_cast<typename WebKit::BundleAPITypeInfo<T>::ImplType>(t);
+    typedef typename WTF::RemovePointer<T>::Type PotentiallyConstValueType;
+    typedef typename WTF::RemoveConst<PotentiallyConstValueType>::Type NonConstValueType;
+
+    return reinterpret_cast<typename WebKit::BundleAPITypeInfo<T>::ImplType>(const_cast<NonConstValueType*>(t));
 }
 
 template<typename T>

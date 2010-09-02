@@ -37,7 +37,7 @@ WKTypeID WKArrayGetTypeID()
 
 WKArrayRef WKArrayCreate(WKTypeRef* values, size_t numberOfValues)
 {
-    RefPtr<ImmutableArray> array = ImmutableArray::create(reinterpret_cast<APIObject**>(values), numberOfValues);
+    RefPtr<ImmutableArray> array = ImmutableArray::create(reinterpret_cast<APIObject**>(const_cast<void**>(values)), numberOfValues);
     return toRef(array.release().releaseRef());
 }
 

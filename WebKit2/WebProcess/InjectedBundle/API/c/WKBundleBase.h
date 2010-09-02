@@ -26,15 +26,15 @@
 #ifndef WKBundleBase_h
 #define WKBundleBase_h
 
-typedef struct OpaqueWKBundle* WKBundleRef;
-typedef struct OpaqueWKBundleFrame* WKBundleFrameRef;
-typedef struct OpaqueWKBundleNodeHandle* WKBundleNodeHandleRef;
-typedef struct OpaqueWKBundlePage* WKBundlePageRef;
-typedef struct OpaqueWKBundleScriptWorld* WKBundleScriptWorldRef;
+typedef const struct OpaqueWKBundle* WKBundleRef;
+typedef const struct OpaqueWKBundleFrame* WKBundleFrameRef;
+typedef const struct OpaqueWKBundleNodeHandle* WKBundleNodeHandleRef;
+typedef const struct OpaqueWKBundlePage* WKBundlePageRef;
+typedef const struct OpaqueWKBundleScriptWorld* WKBundleScriptWorldRef;
 
-typedef struct OpaqueWKBundleDOMCSSStyleDeclaration* WKBundleCSSStyleDeclarationRef;
-typedef struct OpaqueWKBundleNode* WKBundleNodeRef;
-typedef struct OpaqueWKBundleRange* WKBundleRangeRef;
+typedef const struct OpaqueWKBundleDOMCSSStyleDeclaration* WKBundleCSSStyleDeclarationRef;
+typedef const struct OpaqueWKBundleNode* WKBundleNodeRef;
+typedef const struct OpaqueWKBundleRange* WKBundleRangeRef;
 
 #undef WK_EXPORT
 #if defined(WK_NO_EXPORT)
