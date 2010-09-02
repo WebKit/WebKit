@@ -31,7 +31,7 @@
 namespace WebCore {
 
 DocumentParser::DocumentParser(Document* document)
-    : m_state(ParsingState)
+    : m_parserStopped(false)
     , m_document(document)
 {
     ASSERT(document);
@@ -45,25 +45,8 @@ DocumentParser::~DocumentParser()
     ASSERT(!m_document);
 }
 
-void DocumentParser::startParsing()
-{
-    m_state = ParsingState;
-}
-
-void DocumentParser::prepareToStopParsing()
-{
-    if (m_state == ParsingState)
-        m_state = StoppingState;
-}
-
-void DocumentParser::stopParsing()
-{
-    m_state = StoppedState;
-}
-
 void DocumentParser::detach()
 {
-    m_state = DetachedState;
     m_document = 0;
 }
 

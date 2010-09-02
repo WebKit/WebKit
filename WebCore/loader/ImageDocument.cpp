@@ -138,7 +138,7 @@ void ImageDocumentParser::appendBytes(DocumentWriter*, const char*, int, bool)
 
 void ImageDocumentParser::finish()
 {
-    if (!isStopped() && document()->imageElement()) {
+    if (!m_parserStopped && document()->imageElement()) {
         CachedImage* cachedImage = document()->cachedImage();
         RefPtr<SharedBuffer> data = document()->frame()->loader()->documentLoader()->mainResourceData();
 

@@ -660,7 +660,7 @@ void XMLDocumentParser::doWrite(const String& parseString)
 
         // JavaScript (which may be run under the xmlParseChunk callstack) may
         // cause the parser to be stopped or detached.
-        if (isStopped())
+        if (isDetached() || m_parserStopped)
             return;
     }
 
@@ -733,7 +733,7 @@ static inline void handleElementAttributes(Element* newElement, const xmlChar** 
 void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlChar* xmlPrefix, const xmlChar* xmlURI, int nb_namespaces,
                                   const xmlChar** libxmlNamespaces, int nb_attributes, int nb_defaulted, const xmlChar** libxmlAttributes)
 {
-    if (isStopped())
+    if (m_parserStopped)
         return;
 
     if (m_parserPaused) {
@@ -822,7 +822,7 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
 
 void XMLDocumentParser::endElementNs()
 {
-    if (isStopped())
+    if (m_parserStopped)
         return;
 
     if (m_parserPaused) {
@@ -906,7 +906,7 @@ void XMLDocumentParser::endElementNs()
 
 void XMLDocumentParser::characters(const xmlChar* s, int len)
 {
-    if (isStopped())
+    if (m_parserStopped)
         return;
 
     if (m_parserPaused) {
@@ -921,7 +921,7 @@ void XMLDocumentParser::characters(const xmlChar* s, int len)
 
 void XMLDocumentParser::error(ErrorType type, const char* message, va_list args)
 {
-    if (isStopped())
+    if (m_parserStopped)
         return;
 
 #if COMPILER(MSVC) || COMPILER(RVCT)
@@ -945,7 +945,7 @@ void XMLDocumentParser::error(ErrorType type, const char* message, va_list args)
 
 void XMLDocumentParser::processingInstruction(const xmlChar* target, const xmlChar* data)
 {
-    if (isStopped())
+    if (m_parserStopped)
         return;
 
     if (m_parserPaused) {
@@ -979,7 +979,7 @@ void XMLDocumentParser::processingInstruction(const xmlChar* target, const xmlCh
 
 void XMLDocumentParser::cdataBlock(const xmlChar* s, int len)
 {
-    if (isStopped())
+    if (m_parserStopped)
         return;
 
     if (m_parserPaused) {
@@ -997,7 +997,7 @@ void XMLDocumentParser::cdataBlock(const xmlChar* s, int len)
 
 void XMLDocumentParser::comment(const xmlChar* s)
 {
-    if (isStopped())
+    if (m_parserStopped)
         return;
 
     if (m_parserPaused) {
@@ -1034,7 +1034,7 @@ void XMLDocumentParser::endDocument()
 
 void XMLDocumentParser::internalSubset(const xmlChar* name, const xmlChar* externalID, const xmlChar* systemID)
 {
-    if (isStopped())
+    if (m_parserStopped)
         return;
 
     if (m_parserPaused) {
@@ -1294,7 +1294,7 @@ void XMLDocumentParser::initializeParserContext(const char* chunk)
     sax.ignorableWhitespace = ignorableWhitespaceHandler;
     sax.entityDecl = xmlSAX2EntityDecl;
     sax.initialized = XML_SAX2_MAGIC;
-    DocumentParser::startParsing();
+    m_parserStopped = false;
     m_sawError = false;
     m_sawXSLTransform = false;
     m_sawFirstElement = false;
@@ -1318,11 +1318,11 @@ void XMLDocumentParser::doEnd()
         document()->setParsing(false); // Make the doc think it's done, so it will apply xsl sheets.
         document()->styleSelectorChanged(RecalcStyleImmediately);
         document()->setParsing(true);
-        DocumentParser::stopParsing();
+        m_parserStopped = true;
     }
 #endif
 
-    if (isStopped())
+    if (m_parserStopped)
         return;
 
     if (m_context) {

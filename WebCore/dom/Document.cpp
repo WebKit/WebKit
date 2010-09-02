@@ -1823,7 +1823,7 @@ void Document::open(Document* ownerDocument)
 
     if (m_frame) {
         ScriptableDocumentParser* parser = scriptableDocumentParser();
-        if (m_frame->loader()->isLoadingMainResource() || (parser && parser->isParsing() && parser->isExecutingScript()))
+        if (m_frame->loader()->isLoadingMainResource() || (parser && parser->isExecutingScript()))
             return;
 
         if (m_frame->loader()->state() == FrameStateProvisional)

@@ -75,12 +75,6 @@ HTMLScriptRunner::~HTMLScriptRunner()
     // FIXME: Should we be passed a "done loading/parsing" callback sooner than destruction?
     if (m_parsingBlockingScript.cachedScript() && m_parsingBlockingScript.watchingForLoad())
         stopWatchingForLoad(m_parsingBlockingScript);
-
-    while (!m_scriptsToExecuteAfterParsing.isEmpty()) {
-        PendingScript pendingScript = m_scriptsToExecuteAfterParsing.takeFirst();
-        if (pendingScript.cachedScript() && pendingScript.watchingForLoad())
-            stopWatchingForLoad(pendingScript);
-    }
 }
 
 void HTMLScriptRunner::detach()
@@ -135,6 +129,10 @@ void HTMLScriptRunner::executeParsingBlockingScript()
     ASSERT(m_document->haveStylesheetsLoaded());
     ASSERT(isPendingScriptReady(m_parsingBlockingScript));
 
+    // Stop watching loads before executeScript to prevent recursion if the script reloads itself.
+    if (m_parsingBlockingScript.cachedScript() && m_parsingBlockingScript.watchingForLoad())
+        stopWatchingForLoad(m_parsingBlockingScript);
+
     InsertionPointRecord insertionPointRecord(m_host->inputStream());
     executePendingScriptAndDispatchEvent(m_parsingBlockingScript);
 }
@@ -143,10 +141,6 @@ void HTMLScriptRunner::executePendingScriptAndDispatchEvent(PendingScript& pendi
 {
     bool errorOccurred = false;
     ScriptSourceCode sourceCode = sourceFromPendingScript(pendingScript, errorOccurred);
-
-    // Stop watching loads before executeScript to prevent recursion if the script reloads itself.
-    if (pendingScript.cachedScript() && pendingScript.watchingForLoad())
-        stopWatchingForLoad(pendingScript);
 
     // Clear the pending script before possible rentrancy from executeScript()
     RefPtr<Element> scriptElement = pendingScript.releaseElementAndClear();
@@ -244,24 +238,6 @@ bool HTMLScriptRunner::executeScriptsWaitingForStylesheets()
     return executeParsingBlockingScripts();
 }
 
-bool HTMLScriptRunner::executeScriptsWaitingForParsing()
-{
-    while (!m_scriptsToExecuteAfterParsing.isEmpty()) {
-        ASSERT(!m_scriptNestingLevel);
-        ASSERT(!haveParsingBlockingScript());
-        ASSERT(m_scriptsToExecuteAfterParsing.first().cachedScript());
-        if (!m_scriptsToExecuteAfterParsing.first().cachedScript()->isLoaded()) {
-            watchForLoad(m_scriptsToExecuteAfterParsing.first());
-            return false;
-        }
-        PendingScript first = m_scriptsToExecuteAfterParsing.takeFirst();
-        executePendingScriptAndDispatchEvent(first);
-        if (!m_document)
-            return false;
-    }
-    return true;
-}
-
 void HTMLScriptRunner::requestParsingBlockingScript(Element* element)
 {
     if (!requestPendingScript(m_parsingBlockingScript, element))
@@ -274,16 +250,6 @@ void HTMLScriptRunner::requestParsingBlockingScript(Element* element)
     // if possible before returning control to the parser.
     if (!m_parsingBlockingScript.cachedScript()->isLoaded())
         watchForLoad(m_parsingBlockingScript);
-}
-
-void HTMLScriptRunner::requestDeferredScript(Element* element)
-{
-    PendingScript pendingScript;
-    if (!requestPendingScript(pendingScript, element))
-        return;
-
-    ASSERT(pendingScript.cachedScript());
-    m_scriptsToExecuteAfterParsing.append(pendingScript);
 }
 
 bool HTMLScriptRunner::requestPendingScript(PendingScript& pendingScript, Element* script) const
@@ -321,11 +287,8 @@ void HTMLScriptRunner::runScript(Element* script, int startingLineNumber)
         notImplemented(); // event for support
 
         if (script->hasAttribute(srcAttr)) {
-            // FIXME: Handle async.
-            if (script->hasAttribute(deferAttr))
-                requestDeferredScript(script);
-            else
-                requestParsingBlockingScript(script);
+            // FIXME: Handle defer and async
+            requestParsingBlockingScript(script);
         } else {
             // FIXME: We do not block inline <script> tags on stylesheets to match the
             // old parser for now.  When we do, the ASSERT below should be added.
