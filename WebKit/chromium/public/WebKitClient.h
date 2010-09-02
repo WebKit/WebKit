@@ -260,7 +260,6 @@ public:
 
     // Callable from a background WebKit thread.
     virtual void callOnMainThread(void (*func)(void*), void* context) { }
-    virtual void callOnMainThreadWithDelay(void (*func)(void*), void* context, long long delayMilliseconds) { }
 
     // WebGL --------------------------------------------------------------
 

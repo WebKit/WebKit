@@ -1,3 +1,13 @@
+2010-09-01  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, rolling out r66576.
+        http://trac.webkit.org/changeset/66576
+        https://bugs.webkit.org/show_bug.cgi?id=45016
+
+        This change is not needed.
+
+        * public/WebKitClient.h:
+
 2010-08-31  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
