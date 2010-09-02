@@ -11,19 +11,19 @@ Page reloaded.
             url : "http://127.0.0.1:8000/inspector/inspector-test2.js"
             headers : <object>
             headersSize : -1
-            bodySize : -1
+            bodySize : <number>
         }
         response : {
             status : 304
             statusText : "Not Modified"
             headers : <object>
             content : {
-                size : 0
+                size : <number>
                 mimeType : "application/x-javascript"
             }
             redirectURL : ""
             headersSize : -1
-            bodySize : 0
+            bodySize : <number>
         }
         timings : {
             blocked : -1
@@ -44,19 +44,19 @@ Page reloaded.
             url : "http://127.0.0.1:8000/inspector/resource-har-conversion.html"
             headers : <object>
             headersSize : -1
-            bodySize : -1
+            bodySize : <number>
         }
         response : {
             status : 200
             statusText : "OK"
             headers : <object>
             content : {
-                size : 1137
+                size : <number>
                 mimeType : "text/html"
             }
             redirectURL : ""
             headersSize : -1
-            bodySize : 1137
+            bodySize : <number>
         }
         timings : {
             blocked : -1
@@ -77,19 +77,19 @@ Page reloaded.
             url : "http://127.0.0.1:8000/inspector/resource-test2.js"
             headers : <object>
             headersSize : -1
-            bodySize : -1
+            bodySize : <number>
         }
         response : {
             status : 304
             statusText : "Not Modified"
             headers : <object>
             content : {
-                size : 0
+                size : <number>
                 mimeType : "application/x-javascript"
             }
             redirectURL : ""
             headersSize : -1
-            bodySize : 0
+            bodySize : <number>
         }
         timings : {
             blocked : -1
@@ -110,7 +110,7 @@ Page reloaded.
             url : "http://127.0.0.1:8000/inspector/resources/xhr-does-not-exist.html"
             headers : <object>
             headersSize : -1
-            bodySize : -1
+            bodySize : <number>
             postData : {
                 mimeType : "text/xml"
                 text : "<xml></xml>"
@@ -121,12 +121,12 @@ Page reloaded.
             statusText : "Not Found"
             headers : <object>
             content : {
-                size : 355
+                size : <number>
                 mimeType : "text/html"
             }
             redirectURL : ""
             headersSize : -1
-            bodySize : 355
+            bodySize : <number>
         }
         timings : {
             blocked : -1

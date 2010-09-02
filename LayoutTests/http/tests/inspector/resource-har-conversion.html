@@ -15,7 +15,7 @@ var test = function()
     InspectorTest.enableResourceTracking(function() {
         InjectedScriptAccess.getDefault().evaluate("doXHR()", "console", function() {
             var resources = Object.keys(WebInspector.resources).map(getHAR).sort(InspectorTest.resourceURLComparer);
-            InspectorTest.addObject(resources, InspectorTest.HARNondeterministicProperties);
+            InspectorTest.addObject(resources, InspectorTest.HARNondeterministicPropertiesWithSize);
             InspectorTest.disableResourceTracking();
             InspectorTest.completeTest();
         });

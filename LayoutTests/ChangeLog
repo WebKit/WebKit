@@ -1,3 +1,16 @@
+2010-09-02  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed test fix.
+        Add size & bodySize to list of non-deterministic fields for HAR tests, as those tend to vary by platform
+        in error responses.
+        Remove platform-specific expectations that were previously added because of this.
+
+        * http/tests/inspector/resource-har-conversion-expected.txt:
+        * http/tests/inspector/resource-har-conversion.html:
+        * http/tests/inspector/resource-test2.js:
+        * platform/chromium-win/inspector/resource-har-conversion-expected.txt: Removed.
+        * platform/win/http/tests/inspector/resource-har-conversion-expected.txt: Removed.
+
 2010-09-02  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.
