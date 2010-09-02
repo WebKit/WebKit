@@ -1,3 +1,24 @@
+2010-09-02  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit should not accept PDFs as video.
+        https://bugs.webkit.org/show_bug.cgi?id=45013
+
+        The code in MediaPlayerPrivate::createQTMovie has been re-arranged.
+        First, the component disabling is done only once. In 64-bit QTKit will
+        store the list of disabled components and disable them once QTKitServer
+        starts, so there is no need to disable them repeatedly.  However,
+        because of a bug in 64-bit QTKit, additional requests of the exact same
+        component description will be ignored if QTKitServer is not yet running.
+        To work around this, we must provide the exact component flags for each
+        eat/PDF and grip/PDF component we wish to disable.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::disableComponentsOnce): Added.
+        (WebCore::MediaPlayerPrivate::createQTMovie): Moved the component
+            disabling code into disableComponentsOnce.
+
 2010-09-02  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK build fix.

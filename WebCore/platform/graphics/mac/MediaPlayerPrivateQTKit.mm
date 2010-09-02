@@ -261,25 +261,40 @@ void MediaPlayerPrivate::createQTMovie(const String& url)
     createQTMovie(cocoaURL, movieAttributes);
 }
 
-void MediaPlayerPrivate::createQTMovie(NSURL *url, NSDictionary *movieAttributes)
+static void disableComponentsOnce()
 {
-    // We must disable components each time we open a movie because we cannot guarantee
-    // that the QTKitServer process hasn't disappeared on us.  eat/PDF and grip/PDF 
-    // components must be disabled twice since they are registered twice with different
-    // flags:
-    uint32_t componentsToDisable[9][5] = {
+    static bool sComponentsDisabled = false;
+    if (sComponentsDisabled)
+        return;
+    sComponentsDisabled = true;
+
+    // eat/PDF and grip/PDF components must be disabled twice since they are registered twice
+    // with different flags.  However, there is currently a bug in 64-bit QTKit (<rdar://problem/8378237>)
+    // which causes subsequent disable component requests of exactly the same type to be ignored if
+    // QTKitServer has not yet started.  As a result, we must pass in exactly the flags we want to
+    // disable per component.  As a failsafe, if in the future these flags change, we will disable the
+    // PDF components for a third time with a wildcard flags field:
+    uint32_t componentsToDisable[11][5] = {
         {'eat ', 'TEXT', 'text', 0, 0},
         {'eat ', 'TXT ', 'text', 0, 0},    
         {'eat ', 'utxt', 'text', 0, 0},  
         {'eat ', 'TEXT', 'tx3g', 0, 0},  
+        {'eat ', 'PDF ', 'vide', 0x44802, 0},
+        {'eat ', 'PDF ', 'vide', 0x45802, 0},
         {'eat ', 'PDF ', 'vide', 0, 0},  
-        {'eat ', 'PDF ', 'vide', 0, 0},  
-        {'grip', 'PDF ', 'appl', 0, 0},  
+        {'grip', 'PDF ', 'appl', 0x844a00, 0},
+        {'grip', 'PDF ', 'appl', 0x845a00, 0},
         {'grip', 'PDF ', 'appl', 0, 0},  
         {'imdc', 'pdf ', 'appl', 0, 0},  
     };
+
     for (size_t i = 0; i < sizeof(componentsToDisable)/sizeof(componentsToDisable[0]); ++i) 
-         wkQTMovieDisableComponent(componentsToDisable[i]);
+        wkQTMovieDisableComponent(componentsToDisable[i]);
+}
+
+void MediaPlayerPrivate::createQTMovie(NSURL *url, NSDictionary *movieAttributes)
+{
+    disableComponentsOnce();
 
     [[NSNotificationCenter defaultCenter] removeObserver:m_objcObserver.get()];
     
