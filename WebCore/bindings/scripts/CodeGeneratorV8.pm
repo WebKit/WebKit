@@ -3331,12 +3331,12 @@ sub ConvertToV8Parameter
 
     die "Wrong native type passed: $nativeType" unless $nativeType =~ /^V8Parameter/;
     if ($signature->type eq "DOMString") {
-      my $macro = "STRING_TO_V8PARAMETER_EXCEPTION_BLOCK";
-      $macro .= "_$suffix" if $suffix;
-      return "$macro($nativeType, $variableName, $value);"
+        my $macro = "STRING_TO_V8PARAMETER_EXCEPTION_BLOCK";
+        $macro .= "_$suffix" if $suffix;
+        return "$macro($nativeType, $variableName, $value);"
     } else {
-      # Don't know how to properly check for conversion exceptions when $parameter->type is "DOMUserData"
-      return "$nativeType $variableName($value, true);";
+        # Don't know how to properly check for conversion exceptions when $parameter->type is "DOMUserData"
+        return "$nativeType $variableName($value, true);";
     }
 }
 

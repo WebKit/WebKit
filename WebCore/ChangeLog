@@ -1,3 +1,12 @@
+2010-09-02  Anton Muhin  <antonm@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Fix indentation.
+        https://bugs.webkit.org/show_bug.cgi?id=44678
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+
 2010-09-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r66655.
