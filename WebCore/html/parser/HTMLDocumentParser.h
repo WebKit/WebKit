@@ -81,6 +81,7 @@ private:
     virtual void append(const SegmentedString&);
     virtual bool finishWasCalled();
     virtual bool processingData() const;
+    virtual void prepareToStopParsing();
     virtual void stopParsing();
     virtual bool isWaitingForScripts() const;
     virtual bool isExecutingScript() const;

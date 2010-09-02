@@ -132,7 +132,7 @@ void XMLDocumentParser::append(const SegmentedString& s)
     if (m_sawXSLTransform || !m_sawFirstElement)
         m_originalSourceForTransform += parseString;
 
-    if (isDetached() || m_parserStopped || m_sawXSLTransform)
+    if (isStopped() || m_sawXSLTransform)
         return;
 
     if (m_parserPaused) {
@@ -190,7 +190,7 @@ static inline String toString(const xmlChar* str, unsigned len)
 
 void XMLDocumentParser::exitText()
 {
-    if (m_parserStopped)
+    if (isStopped())
         return;
 
     if (!m_currentNode || !m_currentNode->isTextNode())

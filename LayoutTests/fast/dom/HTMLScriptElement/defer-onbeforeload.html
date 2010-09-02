@@ -1,0 +1,14 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+Checks that deferred scripts fire onbeforeload immediately and that it is cancellable.
+<div id="console"></div>
+<script src="resources/shouldnotexecute.js" onbeforeload="debug('cancelled onbeforeload defer'); return false;" defer></script>
+<script src="resources/defer.js" onbeforeload="debug('onbeforeload defer'); return true;" defer></script>
+<script src="resources/external.js" onbeforeload="debug('onbeforeload external'); return true;"></script>
+</body>
+</html>

@@ -1,3 +1,39 @@
+2010-09-02  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Support <script defer> as specified by HTML5
+        https://bugs.webkit.org/show_bug.cgi?id=40934
+
+        * fast/dom/HTMLScriptElement/defer-double-defer-write-expected.txt: Added.
+        * fast/dom/HTMLScriptElement/defer-double-defer-write.html: Added. Tests that a write of a deferred script from a deferred script will execute when the document is closed. The explicit close is necessary because this is a script created parser.
+        * fast/dom/HTMLScriptElement/defer-double-write-expected.txt: Added.
+        * fast/dom/HTMLScriptElement/defer-double-write.html: Added. Tests that a script block written from a deferred script will write into the new document.
+        * fast/dom/HTMLScriptElement/defer-inline-script-expected.txt: Added.
+        * fast/dom/HTMLScriptElement/defer-inline-script.html: Added. Tests that inline scripts are not deferred. This is consistent with HTML5 and inconsistent with IE.
+        * fast/dom/HTMLScriptElement/defer-onbeforeload-expected.txt: Added.
+        * fast/dom/HTMLScriptElement/defer-onbeforeload.html: Added. Tests that the beforeload event is fired immediately and is cancellable.
+        * fast/dom/HTMLScriptElement/defer-script-invalid-url-expected.txt: Added.
+        * fast/dom/HTMLScriptElement/defer-script-invalid-url.html: Added. Tests that deferred scripts with invalid URLs are ignored and that subsequent deferred scripts will be run.
+        * fast/dom/HTMLScriptElement/defer-write-expected.txt: Added.
+        * fast/dom/HTMLScriptElement/defer-write.html: Added. Tests that a basic write from a deferred script blows away the document.
+        * fast/dom/HTMLScriptElement/resources/defer.js: Added.
+        * fast/dom/HTMLScriptElement/resources/external.js: Added.
+        * fast/dom/HTMLScriptElement/resources/shouldnotexecute.js: Added.
+        * fast/dom/HTMLScriptElement/shouldnotexecute.js: Added.
+        * fast/dom/HTMLScriptElement/two-defer-writes-expected.txt: Added.
+        * fast/dom/HTMLScriptElement/two-defer-writes.html: Added. Tests that when a document.write from the first deferred script blows away the document, subsequent deferred scripts are not executed.
+        * http/tests/misc/resources/defer-script.js: Added.
+        * http/tests/misc/resources/external-script.js: Added.
+        * http/tests/misc/resources/script-debug-body-background.js: Added.
+        * http/tests/misc/resources/script-write-slow-stylesheet.js: Added.
+        * http/tests/misc/resources/slow-defer-script.cgi: Added.
+        * http/tests/misc/resources/slow-stylesheet.cgi: Added.
+        * http/tests/misc/script-defer-after-slow-stylesheet-expected.txt: Added.
+        * http/tests/misc/script-defer-after-slow-stylesheet.html: Added. Tests that deferred scripts respect blocking stylesheets.
+        * http/tests/misc/script-defer-expected.txt: Added.
+        * http/tests/misc/script-defer.html: Added. Tests basic ordering of deferred scripts.
+
 2010-09-02  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skipping new failing media test.

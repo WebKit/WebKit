@@ -57,12 +57,29 @@ public:
 
     // FIXME: processingData() is only used by DocumentLoader::isLoadingInAPISense
     // and is very unclear as to what it actually means.  The LegacyHTMLDocumentParser
-    // used to implements it.
+    // used to implement it.
     virtual bool processingData() const { return false; }
 
     // document() will return 0 after detach() is called.
     Document* document() const { ASSERT(m_document); return m_document; }
-    bool isDetached() const { return !m_document; }
+
+    bool isParsing() const { return m_state == ParsingState; }
+    bool isStopping() const { return m_state == StoppingState; }
+    bool isStopped() const { return m_state >= StoppedState; }
+    bool isDetached() const { return m_state == DetachedState; }
+
+    // FIXME: Is this necessary? Does XMLDocumentParserLibxml2 really need to set this?
+    virtual void startParsing();
+
+    // prepareToStop() is used when the EOF token is encountered and parsing is to be
+    // stopped normally.
+    virtual void prepareToStopParsing();
+
+    // stopParsing() is used when a load is canceled/stopped.
+    // stopParsing() is currently different from detach(), but shouldn't be.
+    // It should NOT be ok to call any methods on DocumentParser after either
+    // detach() or stopParsing() but right now only detach() will ASSERT.
+    virtual void stopParsing();
 
     // Document is expected to detach the parser before releasing its ref.
     // After detach, m_document is cleared.  The parser will unwind its
@@ -71,22 +88,18 @@ public:
     // detach is called.
     virtual void detach();
 
-    // stopParsing() is used when a load is canceled/stopped.
-    // stopParsing() is currently different from detach(), but shouldn't be.
-    // It should NOT be ok to call any methods on DocumentParser after either
-    // detach() or stopParsing() but right now only detach() will ASSERT.
-    virtual void stopParsing() { m_parserStopped = true; }
-
 protected:
     DocumentParser(Document*);
 
-    // The parser has buffers, so parsing may continue even after
-    // it stops receiving data. We use m_parserStopped to stop the parser
-    // even when it has buffered data.
-    // FIXME: m_document = 0 could be changed to mean "parser stopped".
-    bool m_parserStopped;
-
 private:
+    enum ParserState {
+        ParsingState,
+        StoppingState,
+        StoppedState,
+        DetachedState
+    };
+    ParserState m_state;
+
     // Every DocumentParser needs a pointer back to the document.
     // m_document will be 0 after the parser is stopped.
     Document* m_document;
