@@ -151,27 +151,6 @@ bool HTMLEmbedElement::rendererIsNeeded(RenderStyle* style)
     return HTMLPlugInImageElement::rendererIsNeeded(style);
 }
 
-void HTMLEmbedElement::attach()
-{
-    setNeedsWidgetUpdate(true);
-
-    bool isImage = isImageType();
-
-    if (!isImage)
-        queuePostAttachCallback(&HTMLPlugInImageElement::updateWidgetCallback, this);
-
-    HTMLPlugInImageElement::attach();
-
-    if (isImage && renderer()) {
-        if (!m_imageLoader)
-            m_imageLoader = adoptPtr(new HTMLImageLoader(this));
-        m_imageLoader->updateFromElement();
-
-        if (renderer())
-            toRenderImage(renderer())->imageResource()->setCachedImage(m_imageLoader->image());
-    }
-}
-
 void HTMLEmbedElement::insertedIntoDocument()
 {
     if (document()->isHTMLDocument())

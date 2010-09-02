@@ -1,3 +1,40 @@
+2010-09-02  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Share more code between HTMLObjectElement and HTMLEmbedElement
+        https://bugs.webkit.org/show_bug.cgi?id=45054
+
+        This pushes more of HTMLObjectElement code down into
+        HTMLPlugInImageElement so that it can be shared with
+        HTMLEmbedElement.
+
+        The most notable changes are:
+        - HTMLEmbedElement now "delays" updating the widget until
+          all of its children are parsed (this matches HTMLObjectElement).
+          However, since HTMLEmbedElement can't have children, this is actually
+          no delay.
+        - useFallbackContent is now virtual, allowing HTMLEmbedElement and
+          HTMLObjectElement to share the same code paths, and the <embed>
+          case to just always return false for useFallbackContent().
+
+        This is the final (fourth) part of this change.
+
+        No functional change, thus no tests.
+
+        * html/HTMLEmbedElement.cpp:
+        * html/HTMLEmbedElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::rendererIsNeeded):
+        * html/HTMLObjectElement.h:
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::HTMLPlugInImageElement):
+        (WebCore::HTMLPlugInImageElement::recalcStyle):
+        (WebCore::HTMLPlugInImageElement::attach):
+        (WebCore::HTMLPlugInImageElement::detach):
+        (WebCore::HTMLPlugInImageElement::finishParsingChildren):
+        * html/HTMLPlugInImageElement.h:
+
 2010-09-02  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

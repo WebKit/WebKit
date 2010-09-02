@@ -117,6 +117,7 @@ void HTMLObjectElement::parseMappedAttribute(Attribute* attr)
 
 bool HTMLObjectElement::rendererIsNeeded(RenderStyle* style)
 {
+    // FIXME: This check should not be needed, detached documents never render!
     Frame* frame = document()->frame();
     if (!frame)
         return false;
@@ -126,22 +127,6 @@ bool HTMLObjectElement::rendererIsNeeded(RenderStyle* style)
     // for the object element.
     bool isGearsPlugin = equalIgnoringCase(getAttribute(typeAttr), "application/x-googlegears");
     return isGearsPlugin || HTMLPlugInImageElement::rendererIsNeeded(style);
-}
-
-void HTMLObjectElement::attach()
-{
-    bool isImage = isImageType();
-
-    if (!isImage)
-        queuePostAttachCallback(&HTMLPlugInImageElement::updateWidgetCallback, this);
-
-    HTMLPlugInImageElement::attach();
-
-    if (isImage && renderer() && !useFallbackContent()) {
-        if (!m_imageLoader)
-            m_imageLoader = adoptPtr(new HTMLImageLoader(this));
-        m_imageLoader->updateFromElement();
-    }
 }
 
 void HTMLObjectElement::insertedIntoDocument()
@@ -164,15 +149,6 @@ void HTMLObjectElement::removedFromDocument()
     }
 
     HTMLPlugInImageElement::removedFromDocument();
-}
-
-void HTMLObjectElement::recalcStyle(StyleChange ch)
-{
-    if (!useFallbackContent() && needsWidgetUpdate() && renderer() && !isImageType()) {
-        detach();
-        attach();
-    }
-    HTMLPlugInImageElement::recalcStyle(ch);
 }
 
 void HTMLObjectElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

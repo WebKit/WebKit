@@ -37,7 +37,7 @@ HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Doc
     // widget updates until after all children are parsed.  For HTMLEmbedElement
     // this delay is unnecessary, but it is simpler to make both classes share
     // the same codepath in this class.
-    , m_needsWidgetUpdate(!createdByParser)    
+    , m_needsWidgetUpdate(!createdByParser)
 {
 }
 
@@ -78,8 +78,37 @@ RenderObject* HTMLPlugInImageElement::createRenderer(RenderArena* arena, RenderS
     return new (arena) RenderEmbeddedObject(this);
 }
 
+void HTMLPlugInImageElement::recalcStyle(StyleChange ch)
+{
+    // FIXME: Why is this necessary?  Manual re-attach is almost always wrong.
+    if (!useFallbackContent() && needsWidgetUpdate() && renderer() && !isImageType()) {
+        detach();
+        attach();
+    }
+    HTMLPlugInElement::recalcStyle(ch);
+}
+
+void HTMLPlugInImageElement::attach()
+{
+    bool isImage = isImageType();
+    
+    if (!isImage)
+        queuePostAttachCallback(&HTMLPlugInImageElement::updateWidgetCallback, this);
+
+    HTMLPlugInElement::attach();
+
+    if (isImage && renderer() && !useFallbackContent()) {
+        if (!m_imageLoader)
+            m_imageLoader = adoptPtr(new HTMLImageLoader(this));
+        m_imageLoader->updateFromElement();
+    }
+}
+    
 void HTMLPlugInImageElement::detach()
 {
+    // FIXME: Because of the insanity that is HTMLObjectElement::recalcStyle,
+    // we can end up detaching during an attach() call, before we even have a
+    // renderer.  In that case, don't mark the widget for update.
     if (attached() && renderer() && !useFallbackContent())
         // Update the widget the next time we attach (detaching destroys the plugin).
         setNeedsWidgetUpdate(true);
@@ -96,11 +125,12 @@ void HTMLPlugInImageElement::updateWidget()
 void HTMLPlugInImageElement::finishParsingChildren()
 {
     HTMLPlugInElement::finishParsingChildren();
-    if (!useFallbackContent()) {
-        setNeedsWidgetUpdate(true);
-        if (inDocument())
-            setNeedsStyleRecalc();
-    }
+    if (useFallbackContent())
+        return;
+    
+    setNeedsWidgetUpdate(true);
+    if (inDocument())
+        setNeedsStyleRecalc();    
 }
 
 void HTMLPlugInImageElement::willMoveToNewOwnerDocument()
