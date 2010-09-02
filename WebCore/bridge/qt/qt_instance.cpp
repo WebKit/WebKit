@@ -192,34 +192,6 @@ void QtInstance::markAggregate(MarkStack& markStack)
         if (val)
             markStack.append(val);
     }
-    foreach (QtField* field, m_fields.values()) {
-        bool mark = false;
-        if (field->fieldType() == QtField::MetaProperty)
-            mark = true;
-        else if (field->fieldType() == QtField::DynamicProperty) {
-            if (m_object && m_object->dynamicPropertyNames().indexOf(field->name()) >= 0)
-                mark = true;
-        } else if (m_object) {
-            QList<QObject*> children = m_object->children();
-            for (int index = 0; index < children.count(); ++index) {
-                QObject* child = children.at(index);
-                if (child->objectName().toLatin1() == field->name()) {
-                    mark = true;
-                    break;
-                }
-            }
-        }
-        if (mark) {
-            if (RefPtr<RootObject> ro = rootObject()) {
-                JSGlobalObject* globalobj = ro->globalObject();
-                if (globalobj) {
-                    ExecState* exec = globalobj->globalExec();
-                    JSValue val = field->valueFromInstance(exec, this);
-                    markStack.append(val);
-                }
-            }
-        }
-    }
 }
 
 void QtInstance::begin()

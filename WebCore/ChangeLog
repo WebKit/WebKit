@@ -1,3 +1,15 @@
+2010-09-02  Andreas Kling  <andreas.kling@nokia.com>
+
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt] REGRESSION(r62898): tst_QWebFrame crashing
+        https://bugs.webkit.org/show_bug.cgi?id=43039
+
+        Rolling out the offending change <http://trac.webkit.org/changeset/62898>
+
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtInstance::markAggregate):
+
 2010-09-02  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Tony Chang.
