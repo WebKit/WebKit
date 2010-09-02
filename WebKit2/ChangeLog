@@ -2,6 +2,26 @@
 
         Reviewed by Anders Carlsson.
 
+        Add ability to send WKDictionaryRefs via post message.
+        https://bugs.webkit.org/show_bug.cgi?id=45151
+
+        * Shared/ImmutableDictionary.cpp:
+        (WebKit::ImmutableDictionary::ImmutableDictionary):
+        * Shared/ImmutableDictionary.h:
+        (WebKit::ImmutableDictionary::adopt): Remove tag, it wasn't doing anything.
+        (WebKit::ImmutableDictionary::isMutable):
+        (WebKit::ImmutableDictionary::map): Add accessor of internal
+        map for encoder.
+
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode):
+        (WebKit::UserMessageDecoder::baseDecode):
+        Add encoder/decoder.
+
+2010-09-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Share the common parts of UserMessage coding between both processes.
         https://bugs.webkit.org/show_bug.cgi?id=45139
 

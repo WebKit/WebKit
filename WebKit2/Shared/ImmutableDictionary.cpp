@@ -34,7 +34,7 @@ ImmutableDictionary::ImmutableDictionary()
 {
 }
 
-ImmutableDictionary::ImmutableDictionary(MapType& map, AdoptTag)
+ImmutableDictionary::ImmutableDictionary(MapType& map)
 {
     m_map.swap(map);
 }
