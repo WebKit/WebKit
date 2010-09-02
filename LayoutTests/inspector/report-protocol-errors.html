@@ -22,7 +22,7 @@ function test()
     ];
     var numberOfReports = 0;
 
-    function callback(message)
+    WebInspector.reportProtocolError = function(message)
     {
         if (numberOfReports < messages.length)
             InspectorTest.addObject(message);
@@ -31,9 +31,12 @@ function test()
             InspectorTest.completeTest();
     }
 
-    InspectorTest._addSniffer(WebInspector, "reportProtocolError", callback, true);
-    for (var message in messages)
-        InspectorFrontendHost.sendMessageToBackend(messages[message]);
+    function fire() {
+        for (var i = 0; i < messages.length; ++i)
+            InspectorFrontendHost.sendMessageToBackend(messages[i]);
+    }
+
+    InspectorBackend.disableDebugger(true, fire);
 }
 
 </script>

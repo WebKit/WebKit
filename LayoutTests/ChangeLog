@@ -1,3 +1,25 @@
+2010-09-01  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        WebInspector: protocol related Inspector's tests are failing in Chromium.
+
+        The expectation is different because Chromium tests use test_shell.
+        1) a lot of console messages automaticaly published by test_shell;
+        2) debugger was enabled by default;
+        3) for (i in an_array) produces some garbage.
+
+        The solution:
+        1) override reportProtocolError and console.error functions;
+        2) debugger was explicitly disabled;
+        3) just fixed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44996
+
+        * inspector/report-API-errors.html:
+        * inspector/report-protocol-errors.html:
+        * LayoutTests/platform/chromium/test_expectations.txt
+
 2010-09-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r66656.
