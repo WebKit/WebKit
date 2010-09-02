@@ -1,3 +1,10 @@
+2010-09-02  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, update chromium test expectations.
+
+        * platform/chromium/fast/events/continuous-platform-wheelevent-in-scrolling-div-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-09-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Kent Tamura.

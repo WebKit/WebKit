@@ -1,0 +1,5 @@
+PASS event.wheelDeltaY is window.expectedScrollTop*-120
+PASS event.wheelDeltaX is window.expectedScrollLeft*-120
+PASS event.wheelDelta is window.expectedScrollTop*-120
+PASS div.scrollTop is window.expectedScrollTop
+PASS div.scrollLeft is window.expectedScrollLeft

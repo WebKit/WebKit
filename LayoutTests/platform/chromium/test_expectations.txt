@@ -3122,10 +3122,6 @@ BUGWK44909 MAC : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
 // Full Screen JS API is not yet enabled.
 BUGWK44797 : fullscreen = FAIL
 
-// As Array.splice() error return value, JSC uses [] while V8 uses undefined.
-// Started at http://trac.webkit.org/changeset/66318/
-BUG53796 : fast/js/array-splice.html = TEXT
-
 // Need rebasline to pick the results.
 BUG47946 WIN LINUX MAC : scrollbars/custom-scrollbar-with-incomplete-style.html = MISSING
 
