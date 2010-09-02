@@ -23,55 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ImmutableArray_h
-#define ImmutableArray_h
+#ifndef WKMutableArray_h
+#define WKMutableArray_h
 
-#include "APIObject.h"
-#include <wtf/PassOwnArrayPtr.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/Vector.h>
+#include <WebKit2/WKBase.h>
 
-namespace WebKit {
+#ifndef __cplusplus
+#include <stdbool.h>
+#endif
 
-// ImmutableArray - An immutable array type suitable for vending to an API.
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-class ImmutableArray : public APIObject {
-public:
-    static const Type APIType = TypeArray;
+WK_EXPORT WKMutableArrayRef WKMutableArrayCreate();
 
-    static PassRefPtr<ImmutableArray> create()
-    {
-        return adoptRef(new ImmutableArray);
-    }
-    static PassRefPtr<ImmutableArray> create(APIObject** entries, size_t size)
-    {
-        return adoptRef(new ImmutableArray(entries, size));
-    }
-    static PassRefPtr<ImmutableArray> adopt(Vector<APIObject*>& entries)
-    {
-        return adoptRef(new ImmutableArray(entries));
-    }
+WK_EXPORT bool WKArrayIsMutable(WKArrayRef array);
 
-    ~ImmutableArray();
+WK_EXPORT void WKArrayAppendItem(WKMutableArrayRef array, WKTypeRef item);
 
-    template<typename T>
-    T* at(size_t i) { if (m_entries[i]->type() != T::APIType) return 0; return static_cast<T*>(m_entries[i]); }
+#ifdef __cplusplus
+}
+#endif
 
-    APIObject* at(size_t i) { return m_entries[i]; }
-    size_t size() { return m_entries.size(); }
-
-    virtual bool isMutable() { return false; }
-
-protected:
-    ImmutableArray();
-    ImmutableArray(APIObject** entries, size_t size);
-    ImmutableArray(Vector<APIObject*>& entries);
-
-    virtual Type type() const { return APIType; }
-
-    Vector<APIObject*> m_entries;
-};
-
-} // namespace WebKit
-
-#endif // ImmutableArray_h
+#endif /* WKMutableArray_h */

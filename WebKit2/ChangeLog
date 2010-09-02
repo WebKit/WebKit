@@ -1,3 +1,49 @@
+2010-09-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Add mutable array API to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=45082
+
+        Add a mutable API to WebKit2 called WKMutableArrayRef. Make it "inherit" from 
+        WKArrayRef in the same way JSObjectRef can inherit from JSValueRef in the JSC
+        API, by abusing the c type system (WKArrayRef is defined as a const version of
+        WKMutableArrayRef). Add very basic mutable API to go along with it.
+
+        * Shared/ImmutableArray.h:
+        (WebKit::ImmutableArray::isMutable):
+        Add ability to ask it an array is mutable.
+
+        * Shared/MutableArray.cpp: Added.
+        (WebKit::MutableArray::MutableArray):
+        (WebKit::MutableArray::~MutableArray):
+        (WebKit::MutableArray::append):
+        * Shared/MutableArray.h: Added.
+        (WebKit::MutableArray::create):
+        (WebKit::MutableArray::isMutable):
+        Sketch out the mutable array interface.
+
+        * UIProcess/API/C/WKAPICast.h:
+        (toWK):
+        Now that the opaque types can be const, use template magic to const_cast
+        it away.
+
+        * UIProcess/API/C/WKBase.h:
+        Add new type and re-type WKArrayRef as const.
+
+        * UIProcess/API/C/WKMutableArray.cpp: Added.
+        (WKMutableArrayCreate):
+        (WKArrayIsMutable):
+        (WKArrayAppendItem):
+        * UIProcess/API/C/WKMutableArray.h: Added.
+        Fill in basic API.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.make:
+        Add files.
+
 2010-09-01  Balazs Kelemen  <kb@inf.u-szeged.hu>
 
         Reviewed by Kenneth Rohde Christiansen.

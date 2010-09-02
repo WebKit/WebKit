@@ -23,55 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ImmutableArray_h
-#define ImmutableArray_h
-
-#include "APIObject.h"
-#include <wtf/PassOwnArrayPtr.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/Vector.h>
+#include "MutableArray.h"
 
 namespace WebKit {
 
-// ImmutableArray - An immutable array type suitable for vending to an API.
+MutableArray::MutableArray()
+{
+}
 
-class ImmutableArray : public APIObject {
-public:
-    static const Type APIType = TypeArray;
+MutableArray::~MutableArray()
+{
+}
 
-    static PassRefPtr<ImmutableArray> create()
-    {
-        return adoptRef(new ImmutableArray);
-    }
-    static PassRefPtr<ImmutableArray> create(APIObject** entries, size_t size)
-    {
-        return adoptRef(new ImmutableArray(entries, size));
-    }
-    static PassRefPtr<ImmutableArray> adopt(Vector<APIObject*>& entries)
-    {
-        return adoptRef(new ImmutableArray(entries));
-    }
-
-    ~ImmutableArray();
-
-    template<typename T>
-    T* at(size_t i) { if (m_entries[i]->type() != T::APIType) return 0; return static_cast<T*>(m_entries[i]); }
-
-    APIObject* at(size_t i) { return m_entries[i]; }
-    size_t size() { return m_entries.size(); }
-
-    virtual bool isMutable() { return false; }
-
-protected:
-    ImmutableArray();
-    ImmutableArray(APIObject** entries, size_t size);
-    ImmutableArray(Vector<APIObject*>& entries);
-
-    virtual Type type() const { return APIType; }
-
-    Vector<APIObject*> m_entries;
-};
+void MutableArray::append(APIObject* item)
+{
+    m_entries.append(item);
+}
 
 } // namespace WebKit
-
-#endif // ImmutableArray_h

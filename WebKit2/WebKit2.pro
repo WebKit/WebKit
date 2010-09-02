@@ -158,6 +158,7 @@ HEADERS += \
     Shared/DrawingAreaBase.h \
     Shared/ImmutableArray.h \
     Shared/ImmutableDictionary.h \
+    Shared/MutableArray.h \
     Shared/NotImplemented.h \
     Shared/qt/WebEventFactoryQt.h \
     Shared/VisitedLinkTable.h \
@@ -267,6 +268,7 @@ SOURCES += \
     Shared/DrawingAreaBase.cpp \
     Shared/ImmutableArray.cpp \
     Shared/ImmutableDictionary.cpp \
+    Shared/MutableArray.cpp \
     Shared/VisitedLinkTable.cpp \
     Shared/WebEventConversion.cpp \
     Shared/WebPreferencesStore.cpp \

@@ -35,7 +35,9 @@
 typedef uint32_t WKTypeID;
 typedef void* WKTypeRef;
 
-typedef struct OpaqueWKArray* WKArrayRef;
+typedef const struct OpaqueWKArray* WKArrayRef;
+typedef struct OpaqueWKArray* WKMutableArrayRef;
+
 typedef struct OpaqueWKBackForwardList* WKBackForwardListRef;
 typedef struct OpaqueWKBackForwardListItem* WKBackForwardListItemRef;
 typedef struct OpaqueWKContext* WKContextRef;

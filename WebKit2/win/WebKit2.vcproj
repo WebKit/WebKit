@@ -425,6 +425,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\MutableArray.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\MutableArray.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\NotImplemented.h"
 				>
 			</File>
@@ -1320,6 +1328,14 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKFramePolicyListener.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKMutableArray.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKMutableArray.h"
 						>
 					</File>
 					<File
