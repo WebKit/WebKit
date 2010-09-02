@@ -461,3 +461,6 @@ BUG_DRT WIN : tables/mozilla/bugs/bug96334.html = IMAGE
 BUG_DRT WIN : tables/mozilla/core/margins.html = IMAGE
 BUG_DRT WIN : tables/mozilla/dom/tableDom.html = IMAGE
 BUG_DRT WIN : transforms/2d/zoom-menulist.html = IMAGE
+
+// Tests that pass under the DRT only
+BUG_DRT : animations/suspend-resume-animation.html = PASS

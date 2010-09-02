@@ -1,3 +1,17 @@
+2010-09-01  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Chris Marrin.
+
+        animations/suspend-resume-animation.html does not pass when accelerated compositing is off
+        https://bugs.webkit.org/show_bug.cgi?id=45057
+
+        animations/suspend-resume-animation.html now passes with the Chromium DRT
+        (it still fails with test_shell, since that doesn't have the suspend/resumeAnimations
+        API implemented)
+
+        * platform/chromium/drt_expectations.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-09-01  Matthew Willis  <lilmatt@flock.com>
 
         Reviewed by Alexey Proskuryakov.

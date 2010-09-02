@@ -1114,7 +1114,7 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
                     } else {
                         bool started = startAnimation(beginAnimationUpdateTime() - m_startTime);
                         m_compAnim->animationController()->addToStartTimeResponseWaitList(this, started);
-                        m_isAccelerated = !started;
+                        m_isAccelerated = started;
                     }
                 }
                 break;

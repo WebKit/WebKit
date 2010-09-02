@@ -1,3 +1,17 @@
+2010-09-01  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Chris Marrin.
+
+        animations/suspend-resume-animation.html does not pass when accelerated compositing is off
+        https://bugs.webkit.org/show_bug.cgi?id=45057
+
+        Fix incorrect logic when resuming the animation (KeyframeAnimation::startAnimation
+        and RenderLayerBacking::startAnimation return true when running an accelerated
+        animation).
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::updateStateMachine):
+
 2010-09-01  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.
