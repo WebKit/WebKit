@@ -122,9 +122,10 @@ bool GStreamerGWorld::enterFullscreen()
         return true;
     }
 #else
-    // GStreamer < 0.10.30 doesn't set the query result correctly.
+    // GStreamer < 0.10.30 doesn't set the query result correctly, so
+    // just ignore it to avoid a compilation warning.
     // See https://bugzilla.gnome.org/show_bug.cgi?id=620490.
-    UNUSED_PARAM(queryResult);
+    (void) queryResult;
 #endif
 
     GstFormat format;

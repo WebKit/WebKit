@@ -1,3 +1,10 @@
+2010-09-02  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK build fix.
+
+        * platform/graphics/gstreamer/GStreamerGWorld.cpp:
+        (WebCore::GStreamerGWorld::enterFullscreen):
+
 2010-09-02  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Dimitri Glazkov.
