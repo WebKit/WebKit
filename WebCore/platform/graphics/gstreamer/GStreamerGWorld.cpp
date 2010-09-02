@@ -113,15 +113,18 @@ bool GStreamerGWorld::enterFullscreen()
     // the new tee branch downstream.
 
     GstQuery* query = gst_query_new_segment(GST_FORMAT_TIME);
-
-    // See https://bugzilla.gnome.org/show_bug.cgi?id=620490.
-#if GST_CHECK_VERSION(0, 10, 30)
     gboolean queryResult = gst_element_query(m_pipeline, query);
+
+#if GST_CHECK_VERSION(0, 10, 30)
     if (!queryResult) {
         gst_query_unref(query);
         gst_object_unref(GST_OBJECT(srcPad));
         return true;
     }
+#else
+    // GStreamer < 0.10.30 doesn't set the query result correctly.
+    // See https://bugzilla.gnome.org/show_bug.cgi?id=620490.
+    UNUSED_PARAM(queryResult);
 #endif
 
     GstFormat format;

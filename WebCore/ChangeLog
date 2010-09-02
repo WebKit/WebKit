@@ -1,3 +1,16 @@
+2010-09-01  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] warning: unused variable "queryResult"
+        https://bugs.webkit.org/show_bug.cgi?id=44998
+
+        Fix the misbehavior introduced in r66573. The gst_element_query()
+        call needs to be done whatever the GStreamer version used.
+
+        * platform/graphics/gstreamer/GStreamerGWorld.cpp:
+        (WebCore::GStreamerGWorld::enterFullscreen):
+
 2010-09-01  Jia Pu  <jpu@apple.com>
 
         Reviewed by Dan Bernstein.
