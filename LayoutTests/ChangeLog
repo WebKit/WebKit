@@ -1,3 +1,15 @@
+2010-09-01  Matthew Willis  <lilmatt@flock.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add tests to ensure any h1-h6 element can close any other h1-h6 element.
+        https://bugs.webkit.org/show_bug.cgi?id=15136
+        <rdar://problem/5762882>
+
+        * fast/html/numbered-header-element-expected.txt: Added.
+        * fast/html/numbered-header-element.html: Added.
+        * fast/html/script-tests/numbered-header-element.js: Added.
+
 2010-09-01  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Brady Eidson.
