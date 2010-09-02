@@ -241,16 +241,6 @@ HTMLFormElement* closestFormAncestor(Element* element)
     return 0;
 }
 
-// FIXME: This belongs on ContainerNode, where it could avoid the double ref
-// by directly releasing into the Vector.  Such an implementation would need to
-// be careful not to send mutation events.
-void takeChildrenFromNode(ContainerNode* container, Vector<RefPtr<Node> >& children)
-{
-    for (Node* child = container->firstChild(); child; child = child->nextSibling())
-        children.append(child);
-    container->removeAllChildren();
-}
-
 } // namespace
 
 class HTMLTreeBuilder::ExternalCharacterTokenBuffer : public Noncopyable {
@@ -432,15 +422,7 @@ void HTMLTreeBuilder::FragmentParsingContext::finished()
     ContainerNode* root = m_dummyDocumentForFragmentParsing.get();
     if (m_contextElement)
         root = m_dummyDocumentForFragmentParsing->documentElement();
-    Vector<RefPtr<Node> > children;
-    takeChildrenFromNode(root, children);
-    for (unsigned i = 0; i < children.size(); ++i) {
-        ExceptionCode ec = 0;
-        // FIXME: We need a parser-safe (no events) version of adoptNode.
-        RefPtr<Node> child = m_fragment->document()->adoptNode(children[i].release(), ec);
-        ASSERT(!ec);
-        m_fragment->parserAddChild(child.release());
-    }
+    m_fragment->takeAllChildrenFrom(root);
 }
 
 HTMLTreeBuilder::FragmentParsingContext::~FragmentParsingContext()

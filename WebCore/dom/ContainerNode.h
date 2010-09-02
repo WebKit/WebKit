@@ -75,6 +75,7 @@ public:
     virtual bool removeChildren();
 
     void removeAllChildren();
+    void takeAllChildrenFrom(ContainerNode*);
 
     void cloneChildNodes(ContainerNode* clone);
     
