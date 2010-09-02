@@ -417,7 +417,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
 
     m_frame = frame;
 
-    if (!url.isEmpty() || (frame && !frame->loader()->stateMachine()->creatingInitialEmptyDocument()))
+    if (frame || !url.isEmpty())
         setURL(url);
 
     m_axObjectCache = 0;
@@ -4424,8 +4424,9 @@ void Document::updateURLForPushOrReplaceState(const KURL& url)
     if (!f)
         return;
 
+    // FIXME: Eliminate this redundancy.
     setURL(url);
-    f->loader()->setOutgoingReferrer(url);
+    f->loader()->setURL(url);
     f->loader()->documentLoader()->replaceRequestURLForSameDocumentNavigation(url);
 }
 

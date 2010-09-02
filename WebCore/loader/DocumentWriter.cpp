@@ -126,7 +126,7 @@ void DocumentWriter::begin(const KURL& url, bool dispatch, SecurityOrigin* origi
     if (resetScripting)
         m_frame->script()->updatePlatformScriptObjects();
 
-    m_frame->loader()->setOutgoingReferrer(url);
+    m_frame->loader()->setURL(url);
     m_frame->setDocument(document);
 
     if (m_decoder)
