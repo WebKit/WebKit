@@ -1,3 +1,19 @@
+2010-09-03  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, remove svn:executable flag from images and css files.
+
+        * src/js/Images/segmentChromium.png: Removed property svn:executable.
+        * src/js/Images/segmentHoverChromium.png: Removed property svn:executable.
+        * src/js/Images/segmentHoverEndChromium.png: Removed property svn:executable.
+        * src/js/Images/segmentSelectedChromium.png: Removed property svn:executable.
+        * src/js/Images/segmentSelectedEndChromium.png: Removed property svn:executable.
+        * src/js/Images/statusbarBackgroundChromium.png: Removed property svn:executable.
+        * src/js/Images/statusbarBottomBackgroundChromium.png: Removed property svn:executable.
+        * src/js/Images/statusbarButtonsChromium.png: Removed property svn:executable.
+        * src/js/Images/statusbarMenuButtonChromium.png: Removed property svn:executable.
+        * src/js/Images/statusbarMenuButtonSelectedChromium.png: Removed property svn:executable.
+        * src/js/devTools.css: Removed property svn:executable.
+
 2010-09-03  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Chris Marrin.
