@@ -38,7 +38,7 @@ extern "C" {
 
 WK_EXPORT WKMutableDictionaryRef WKMutableDictionaryCreate();
 
-WK_EXPORT bool WKDictionaryIsMutable(WKMutableDictionaryRef dictionary);
+WK_EXPORT bool WKDictionaryIsMutable(WKDictionaryRef dictionary);
 
 WK_EXPORT bool WKDictionaryAddItem(WKMutableDictionaryRef dictionary, WKStringRef key, WKTypeRef item);
 WK_EXPORT bool WKDictionarySetItem(WKMutableDictionaryRef dictionary, WKStringRef key, WKTypeRef item);

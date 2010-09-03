@@ -1,3 +1,14 @@
+2010-09-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Change WKDictionaryIsMutable to take a WKDictionaryRef instead of a WKMutableDictionaryRef.
+        If the type is already states it is mutable, there would be no reason for the check.
+
+        * UIProcess/API/C/WKMutableDictionary.cpp:
+        (WKDictionaryIsMutable):
+        * UIProcess/API/C/WKMutableDictionary.h:
+
 2010-09-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
