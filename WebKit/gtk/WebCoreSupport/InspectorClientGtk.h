@@ -80,7 +80,7 @@ namespace WebKit {
 
         void disconnectInspectorClient() { m_inspectorClient = 0; }
 
-        void destroyInspectorWindow();
+        void destroyInspectorWindow(bool notifyInspectorController);
 
         virtual WTF::String localizedStringsURL();
 
@@ -88,6 +88,7 @@ namespace WebKit {
 
         virtual void bringToFront();
         virtual void closeWindow();
+        virtual void disconnectFromBackend();
 
         virtual void attachWindow();
         virtual void detachWindow();

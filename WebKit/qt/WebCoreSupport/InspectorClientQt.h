@@ -41,6 +41,7 @@ class QWebPage;
 class QWebView;
 
 namespace WebCore {
+class InspectorFrontendClientQt;
 class Node;
 class Page;
 
@@ -65,6 +66,7 @@ public:
 private:
     QWebPage* m_inspectedWebPage;
     QWebPage* m_frontendWebPage;
+    InspectorFrontendClientQt* m_frontendClient;
 };
 
 class InspectorFrontendClientQt : public InspectorFrontendClientLocal {
@@ -79,6 +81,7 @@ public:
 
     virtual void bringToFront();
     virtual void closeWindow();
+    virtual void disconnectFromBackend();
 
     virtual void attachWindow();
     virtual void detachWindow();
@@ -87,8 +90,11 @@ public:
 
     virtual void inspectedURLChanged(const String& newURL);
 
+    void inspectorClientDestroyed();
+
 private:
     void updateWindowTitle();
+    void destroyInspectorView(bool notifyInspectorController);
     QWebPage* m_inspectedWebPage;
     OwnPtr<QWebView> m_inspectorView;
     QString m_inspectedURL;

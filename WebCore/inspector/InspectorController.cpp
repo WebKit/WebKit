@@ -198,7 +198,7 @@ InspectorController::~InspectorController()
 void InspectorController::inspectedPageDestroyed()
 {
     if (m_frontend)
-        m_frontend->inspectedPageDestroyed();
+        m_frontend->disconnectFromBackend();
 
     hideHighlight();
 
@@ -537,7 +537,8 @@ void InspectorController::close()
 {
     if (!m_frontend)
         return;
-    m_frontend->close();
+    m_frontend->disconnectFromBackend();
+    disconnectFrontend();
 }
 
 void InspectorController::disconnectFrontend()

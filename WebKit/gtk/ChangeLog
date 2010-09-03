@@ -1,3 +1,17 @@
+2010-09-02  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        REGRESSION: Crash occurs at objc_msgSend when closing a window that is displaying the web inspector
+        https://bugs.webkit.org/show_bug.cgi?id=44230
+
+        * WebCoreSupport/InspectorClientGtk.cpp:
+        (WebKit::notifyWebViewDestroyed):
+        (WebKit::InspectorFrontendClient::destroyInspectorWindow):
+        (WebKit::InspectorFrontendClient::closeWindow):
+        (WebKit::InspectorFrontendClient::disconnectFromBackend):
+        * WebCoreSupport/InspectorClientGtk.h:
+
 2010-08-31  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.

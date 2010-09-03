@@ -1,3 +1,25 @@
+2010-09-02  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        REGRESSION: Crash occurs at objc_msgSend when closing a window that is displaying the web inspector
+        https://bugs.webkit.org/show_bug.cgi?id=44230
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::inspectedPageDestroyed):
+        (WebCore::InspectorController::close):
+        * inspector/InspectorFrontendClient.h:
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::disconnectFromBackend): don't try to notify InspectorController
+        that frontend closes if InspectorController triggered the action.
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.idl:
+        * inspector/front-end/InspectorFrontendHostStub.js:
+        (.WebInspector.InspectorFrontendHostStub.prototype.disconnectFromBackend):
+        * inspector/front-end/inspector.js:
+        (WebInspector.disconnectFromBackend):
+
 2010-09-03  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed-by Simon Hausmann.
