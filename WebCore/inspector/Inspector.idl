@@ -161,7 +161,7 @@ module core {
         [handler=Controller] void addScriptToEvaluateOnLoad(in String scriptSource);
         [handler=Controller] void removeAllScriptsToEvaluateOnLoad();
 
-        [handler=DOM] void getChildNodes(in long nodeId);
+        [handler=DOM] void getChildNodes(in long nodeId, out Array nodes);
         [handler=DOM] void setAttribute(in long elementId, in String name, in String value, out boolean success);
         [handler=DOM] void removeAttribute(in long elementId, in String name, out boolean success);
         [handler=DOM] void setTextNodeValue(in long nodeId, in String value, out boolean success);

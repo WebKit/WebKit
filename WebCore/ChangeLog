@@ -1,3 +1,29 @@
+2010-09-03  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: cleanup inspector api. getChildNodes should return array of child nodes as an output value.
+
+        The current implementation of the inspector api has some unnecessary complexity. 
+        As example WebInspector is requesting child nodes of a node by getChildNodes
+        but DOM agent is actually pushing the child nodes via setChildNodes event call and
+        send back an empty response message.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45172
+
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/Inspector.idl:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getChildNodesArray):
+        (WebCore::InspectorDOMAgent::pushChildNodesToFrontend):
+        (WebCore::InspectorDOMAgent::getChildNodes):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent.prototype.getChildNodesAsync.mycallback):
+        (WebInspector.DOMAgent.prototype.getChildNodesAsync):
+        * inspector/front-end/WorkersSidebarPane.js:
+        (WebInspector.WorkersSidebarPane.prototype.reset):
+
 2010-09-03  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

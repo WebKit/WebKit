@@ -341,7 +341,9 @@ WebInspector.DOMAgent.prototype = {
             callback(children);
             return;
         }
-        function mycallback() {
+        function mycallback(nodes) {
+            parent._setChildrenPayload(nodes);
+            WebInspector.domAgent._bindNodes(parent.children);
             callback(parent.children);
         }
         InspectorBackend.getChildNodes(parent.id, mycallback);
