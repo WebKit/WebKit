@@ -1,3 +1,12 @@
+2010-08-31  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        IDBCursor.continue() should reuse the .openCursor's IDBRequest object
+        https://bugs.webkit.org/show_bug.cgi?id=44953
+
+        * storage/indexeddb/objectstore-cursor.html:
+
 2010-09-03  Anton Muhin  <antonm@chromium.org>
 
         Unreviewed fix, updating Chromium's exectations.

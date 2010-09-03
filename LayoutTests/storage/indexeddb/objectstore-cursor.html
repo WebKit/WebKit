@@ -195,10 +195,7 @@ function cursorIteration()
     window.expectedIndex = ascending ? expectedIndex+1 : expectedIndex-1;
     testWithinBounds();
 
-    request = event.result.continue();
-    // FIXME: The spec says we should not return an IDBRequest and instead re-use the original request.
-    request.onsuccess = cursorIteration;
-    request.onerror = unexpectedErrorCallback;
+    event.result.continue();
 }
  
 openDatabase(); // The first step.

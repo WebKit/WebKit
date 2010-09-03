@@ -1,3 +1,14 @@
+2010-08-31  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        IDBCursor.continue() should reuse the .openCursor's IDBRequest object
+        https://bugs.webkit.org/show_bug.cgi?id=44953
+
+        * src/WebIDBCallbacksImpl.cpp:
+        (WebCore::WebIDBCallbacksImpl::onError):
+        (WebCore::WebIDBCallbacksImpl::onSuccess):
+
 2010-09-02  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

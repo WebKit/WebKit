@@ -31,7 +31,6 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Threading.h>
 
 namespace WebCore {
 
@@ -43,7 +42,7 @@ class IDBRequest;
 class ScriptExecutionContext;
 class SerializedScriptValue;
 
-class IDBCursor : public ThreadSafeShared<IDBCursor> {
+class IDBCursor : public RefCounted<IDBCursor> {
 public:
     enum Direction {
         NEXT = 0,
@@ -51,24 +50,25 @@ public:
         PREV = 2,
         PREV_NO_DUPLICATE = 3,
     };
-    static PassRefPtr<IDBCursor> create(PassRefPtr<IDBCursorBackendInterface> backend)
+    static PassRefPtr<IDBCursor> create(PassRefPtr<IDBCursorBackendInterface> backend, IDBRequest* request)
     {
-        return adoptRef(new IDBCursor(backend));
+        return adoptRef(new IDBCursor(backend, request));
     }
-    virtual ~IDBCursor();
+    ~IDBCursor();
 
     // Implement the IDL
-    virtual unsigned short direction() const;
-    virtual PassRefPtr<IDBKey> key() const;
-    virtual PassRefPtr<IDBAny> value() const;
-    virtual PassRefPtr<IDBRequest> update(ScriptExecutionContext*, PassRefPtr<SerializedScriptValue>);
-    virtual PassRefPtr<IDBRequest> continueFunction(ScriptExecutionContext*, PassRefPtr<IDBKey> = 0);
-    virtual PassRefPtr<IDBRequest> remove(ScriptExecutionContext*);
+    unsigned short direction() const;
+    PassRefPtr<IDBKey> key() const;
+    PassRefPtr<IDBAny> value() const;
+    PassRefPtr<IDBRequest> update(ScriptExecutionContext*, PassRefPtr<SerializedScriptValue>);
+    void continueFunction(PassRefPtr<IDBKey> = 0);
+    PassRefPtr<IDBRequest> remove(ScriptExecutionContext*);
 
 private:
-    explicit IDBCursor(PassRefPtr<IDBCursorBackendInterface>);
+    explicit IDBCursor(PassRefPtr<IDBCursorBackendInterface>, IDBRequest*);
 
     RefPtr<IDBCursorBackendInterface> m_backend;
+    RefPtr<IDBRequest> m_request;
 };
 
 } // namespace WebCore

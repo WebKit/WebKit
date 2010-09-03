@@ -1,3 +1,41 @@
+2010-08-31  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        IDBCursor.continue() should reuse the .openCursor's IDBRequest object
+        https://bugs.webkit.org/show_bug.cgi?id=44953
+
+        This is to match the spec. This requires a modification to IDBRequest so
+        that multiple events can be queued up.
+
+        Note that the initial state for IDBRequest was removed from the spec.
+
+        Test: modified existing test to verify new behavior.
+
+        * storage/IDBAny.cpp:
+        (WebCore::IDBAny::createInvalid):
+        (WebCore::IDBAny::createNull):
+        (WebCore::IDBAny::setNull):
+        * storage/IDBAny.h:
+        (WebCore::IDBAny::create):
+        * storage/IDBCursor.cpp:
+        (WebCore::IDBCursor::IDBCursor):
+        (WebCore::IDBCursor::continueFunction):
+        * storage/IDBCursor.h:
+        (WebCore::IDBCursor::create):
+        * storage/IDBCursor.idl:
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::IDBRequest):
+        (WebCore::IDBRequest::~IDBRequest):
+        (WebCore::IDBRequest::resetReadyState):
+        (WebCore::IDBRequest::onError):
+        (WebCore::IDBRequest::onSuccess):
+        (WebCore::IDBRequest::abort):
+        (WebCore::IDBRequest::timerFired):
+        (WebCore::IDBRequest::scheduleEvent):
+        * storage/IDBRequest.h:
+        * storage/IDBRequest.idl:
+
 2010-09-03  Bharathwaaj Srinivasan  <bharathwaaj.s@gmail.com>
 
         Reviewed by Xan Lopez.

@@ -57,49 +57,41 @@ WebIDBCallbacksImpl::~WebIDBCallbacksImpl()
 void WebIDBCallbacksImpl::onError(const WebKit::WebIDBDatabaseError& error)
 {
     m_callbacks->onError(error);
-    m_callbacks.clear();
 }
 
 void WebIDBCallbacksImpl::onSuccess()
 {
     m_callbacks->onSuccess();
-    m_callbacks.clear();
 }
 
 void WebIDBCallbacksImpl::onSuccess(WebKit::WebIDBCursor* cursor)
 {
     m_callbacks->onSuccess(IDBCursorBackendProxy::create(cursor));
-    m_callbacks.clear();
 }
 
 void WebIDBCallbacksImpl::onSuccess(WebKit::WebIDBDatabase* webKitInstance)
 {
     m_callbacks->onSuccess(IDBDatabaseProxy::create(webKitInstance));
-    m_callbacks.clear();
 }
 
 void WebIDBCallbacksImpl::onSuccess(const WebKit::WebIDBKey& key)
 {
     m_callbacks->onSuccess(key);
-    m_callbacks.clear();
 }
 
 void WebIDBCallbacksImpl::onSuccess(WebKit::WebIDBIndex* webKitInstance)
 {
     m_callbacks->onSuccess(IDBIndexBackendProxy::create(webKitInstance));
-    m_callbacks.clear();
 }
 
 void WebIDBCallbacksImpl::onSuccess(WebKit::WebIDBObjectStore* webKitInstance)
 {
     m_callbacks->onSuccess(IDBObjectStoreProxy::create(webKitInstance));
-    m_callbacks.clear();
 }
 
 void WebIDBCallbacksImpl::onSuccess(const WebKit::WebSerializedScriptValue& serializedScriptValue)
 {
     m_callbacks->onSuccess(serializedScriptValue);
-    m_callbacks.clear();
 }
 
 } // namespace WebCore

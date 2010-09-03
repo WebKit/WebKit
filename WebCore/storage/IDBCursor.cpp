@@ -38,8 +38,9 @@
 
 namespace WebCore {
 
-IDBCursor::IDBCursor(PassRefPtr<IDBCursorBackendInterface> backend)
+IDBCursor::IDBCursor(PassRefPtr<IDBCursorBackendInterface> backend, IDBRequest* request)
     : m_backend(backend)
+    , m_request(request)
 {
 }
 
@@ -69,11 +70,13 @@ PassRefPtr<IDBRequest> IDBCursor::update(ScriptExecutionContext* context, PassRe
     return request.release();
 }
 
-PassRefPtr<IDBRequest> IDBCursor::continueFunction(ScriptExecutionContext* context, PassRefPtr<IDBKey> key)
+void IDBCursor::continueFunction(PassRefPtr<IDBKey> key)
 {
-    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this));
-    m_backend->continueFunction(key, request);
-    return request.release();
+    // FIXME: We're not using the context from when continue was called, which means the callback
+    //        will be on the original context openCursor was called on. Is this right?
+    if (m_request->resetReadyState())
+        m_backend->continueFunction(key, m_request);
+    // FIXME: Else throw?
 }
 
 PassRefPtr<IDBRequest> IDBCursor::remove(ScriptExecutionContext* context)

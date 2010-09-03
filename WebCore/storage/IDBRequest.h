@@ -38,6 +38,7 @@
 #include "IDBAny.h"
 #include "IDBCallbacks.h"
 #include "Timer.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -49,15 +50,14 @@ public:
     // Defined in the IDL
     void abort();
     enum ReadyState {
-        INITIAL = 0,
         LOADING = 1,
         DONE = 2
     };
     unsigned short readyState() const { return m_readyState; }
-    PassRefPtr<IDBDatabaseError> error() const { return m_error; }
-    PassRefPtr<IDBAny> result() { return m_result; }
     DEFINE_ATTRIBUTE_EVENT_LISTENER(success);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
+
+    bool resetReadyState();
 
     // IDBCallbacks
     virtual void onError(PassRefPtr<IDBDatabaseError>);
@@ -83,7 +83,7 @@ private:
     IDBRequest(ScriptExecutionContext*, PassRefPtr<IDBAny> source);
 
     void timerFired(Timer<IDBRequest>*);
-    void onEventCommon();
+    void scheduleEvent(PassRefPtr<IDBAny> result, PassRefPtr<IDBDatabaseError>);
 
     // EventTarget
     virtual void refEventTarget() { ref(); }
@@ -93,8 +93,11 @@ private:
 
     RefPtr<IDBAny> m_source;
 
-    RefPtr<IDBAny> m_result;
-    RefPtr<IDBDatabaseError> m_error;
+    struct PendingEvent {
+        RefPtr<IDBAny> m_result;
+        RefPtr<IDBDatabaseError> m_error;
+    };
+    Vector<PendingEvent> m_pendingEvents;
 
     // Used to fire events asynchronously.
     Timer<IDBRequest> m_timer;
