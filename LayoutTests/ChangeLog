@@ -2,6 +2,14 @@
 
         Unreviewed.
 
+        Updateing chromium test_expectations for flaky http/tests/security/xssAuditor/dom-write-innerHTML.html.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-09-02  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed.
+
         Updateing chromium test_expectations for flaky editing/selection/extend-selection.html.
 
         * platform/chromium/test_expectations.txt:

@@ -3153,6 +3153,7 @@ BUG54330 MAC : fast/forms/input-spinbutton-capturing.html = TEXT
 BUG54331 MAC : fast/forms/input-number-events.html = TEXT
 BUG54333 WIN LINUX : fast/replaced/embed-display-none.html = PASS TIMEOUT
 BUG54334 LINUX : media/video-timeupdate-during-playback.html = PASS TIMEOUT
+BUG54348 LINUX : http/tests/security/xssAuditor/dom-write-innerHTML.html = PASS TEXT
 
 // Regressed in r66689
 BUGTONY LINUX : fast/text/atsui-spacing-features.html = IMAGE+TEXT
