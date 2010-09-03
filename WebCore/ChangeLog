@@ -1,3 +1,25 @@
+2010-09-03  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r66732.
+        http://trac.webkit.org/changeset/66732
+        https://bugs.webkit.org/show_bug.cgi?id=45195
+
+        the patch is not matched with general publish/subscribe scheme
+        implemented in the Inspector API (Requested by loislo on
+        #webkit).
+
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/Inspector.idl:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::pushChildNodesToFrontend):
+        (WebCore::InspectorDOMAgent::getChildNodes):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent.prototype.getChildNodesAsync.mycallback):
+        (WebInspector.DOMAgent.prototype.getChildNodesAsync):
+        * inspector/front-end/WorkersSidebarPane.js:
+        (WebInspector.WorkersSidebarPane.prototype.reset):
+
 2010-09-03  James Robinson  <jamesr@chromium.org>
 
         [chromium] Compile fixes for 66746

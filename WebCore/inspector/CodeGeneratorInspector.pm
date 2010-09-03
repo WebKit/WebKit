@@ -537,8 +537,8 @@ WebInspector.InspectorBackendStub.prototype = {
                 console.error("Protocol Error: Optional callback argument for 'InspectorBackend.%s' call should be a function but its type is '%s'.", request.command, typeof args[0]);
                 return;
             }
+            request.seq = WebInspector.Callback.wrap(args[0]);
         }
-        request.seq = WebInspector.Callback.wrap(args[0] ? args[0] : function() { });
 
         var message = JSON.stringify(request);
         InspectorFrontendHost.sendMessageToBackend(message);

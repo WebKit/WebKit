@@ -99,7 +99,7 @@ namespace WebCore {
         virtual bool operator==(const EventListener& other);
 
         // Methods called from the frontend for DOM nodes inspection.
-        void getChildNodes(long nodeId, RefPtr<InspectorArray>* nodes);
+        void getChildNodes(long nodeId);
         void setAttribute(long elementId, const String& name, const String& value, bool* success);
         void removeAttribute(long elementId, const String& name, bool* success);
         void removeNode(long nodeId, long* outNodeId);
@@ -148,7 +148,6 @@ namespace WebCore {
         void copyNode(long nodeId);
 
     private:
-        PassRefPtr<InspectorArray> getChildNodesArray(long nodeId);
         static CSSStyleSheet* getParentStyleSheet(CSSStyleDeclaration*);
         void startListening(Document* document);
         void stopListening(Document* document);

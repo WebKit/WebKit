@@ -354,26 +354,18 @@ bool InspectorDOMAgent::pushDocumentToFrontend()
     return true;
 }
 
-PassRefPtr<InspectorArray> InspectorDOMAgent::getChildNodesArray(long nodeId)
+void InspectorDOMAgent::pushChildNodesToFrontend(long nodeId)
 {
     Node* node = nodeForId(nodeId);
     if (!node || (node->nodeType() != Node::ELEMENT_NODE && node->nodeType() != Node::DOCUMENT_NODE && node->nodeType() != Node::DOCUMENT_FRAGMENT_NODE))
-        return 0;
-
-    NodeToIdMap* nodeMap = m_idToNodesMap.get(nodeId);
-    return buildArrayForContainerChildren(node, 1, nodeMap);
-}
-
-void InspectorDOMAgent::pushChildNodesToFrontend(long nodeId)
-{
+        return;
     if (m_childrenRequested.contains(nodeId))
         return;
 
-    PassRefPtr<InspectorArray> nodes = getChildNodesArray(nodeId);
-    if (nodes) {
-        m_frontend->setChildNodes(nodeId, nodes);
-        m_childrenRequested.add(nodeId);
-    }
+    NodeToIdMap* nodeMap = m_idToNodesMap.get(nodeId);
+    RefPtr<InspectorArray> children = buildArrayForContainerChildren(node, 1, nodeMap);
+    m_childrenRequested.add(nodeId);
+    m_frontend->setChildNodes(nodeId, children.release());
 }
 
 long InspectorDOMAgent::inspectedNode(unsigned long num)
@@ -404,12 +396,9 @@ Node* InspectorDOMAgent::nodeForId(long id)
     return 0;
 }
 
-void InspectorDOMAgent::getChildNodes(long nodeId, RefPtr<InspectorArray>* nodes)
+void InspectorDOMAgent::getChildNodes(long nodeId)
 {
-    PassRefPtr<InspectorArray> childNodes = getChildNodesArray(nodeId);
-    if (childNodes)
-        *nodes = childNodes;
-    m_childrenRequested.add(nodeId);
+    pushChildNodesToFrontend(nodeId);
 }
 
 long InspectorDOMAgent::pushNodePathToFrontend(Node* nodeToPush)
