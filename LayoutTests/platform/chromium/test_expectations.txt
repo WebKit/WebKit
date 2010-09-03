@@ -3147,10 +3147,6 @@ BUGWK44996 WIN : inspector/report-protocol-errors.html = TEXT
 // Not focusing an anchor when tab is pressed.
 BUGWK45061 : fast/forms/focus2.html = FAIL
 
-// Failing after r66669
-BUGWK66669 WIN : http/tests/inspector/console-xhr-logging.html = TEXT
-BUGWK66669 WIN : http/tests/inspector/resource-har-conversion.html = TEXT
-
 // Flaky tests
 BUG54329 MAC : fast/forms/select-baseline.html = IMAGE
 BUG54330 MAC : fast/forms/input-spinbutton-capturing.html = TEXT

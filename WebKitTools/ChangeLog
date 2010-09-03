@@ -1,3 +1,13 @@
+2010-09-03  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        http/tests/inspector/console-xhr-logging.html and http/tests/inspector/resource-har-conversion.html are failing on chromium win bot
+        Changed MIME type for .js to application/x-javascript for consistency with apache used on other platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=45137
+
+        * Scripts/webkitpy/layout_tests/port/lighttpd.conf:
+
 2010-09-03  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
 
         Reviewed by Eric Seidel.

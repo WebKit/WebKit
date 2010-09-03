@@ -41,7 +41,7 @@ function frontend_enableResourceTracking(testController)
 
 function frontend_dumpFormData(testController)
 {
-    var resource = WebInspector.resourceURLMap["http://localhost:8000/inspector/resources/resource-form-data-receiver-iframe.html?queryParam1=queryValue1&queryParam2="];
+    var resource = WebInspector.resourceURLMap["http://localhost:8000/inspector/resources/post-target.cgi?queryParam1=queryValue1&queryParam2="];
 
     InspectorBackend.disableResourceTracking(false);
 
@@ -58,7 +58,7 @@ function frontend_dumpFormData(testController)
 <p>
 Tests that resources panel shows form data parameters.
 </p>
-<form target="target-iframe" method="POST" action="http://localhost:8000/inspector/resources/resource-form-data-receiver-iframe.html?queryParam1=queryValue1&queryParam2=">
+<form target="target-iframe" method="POST" action="http://localhost:8000/inspector/resources/post-target.cgi?queryParam1=queryValue1&queryParam2=">
 <input name="formParam1" value="formValue1">
 <input name="formParam2">
 <input id="submit" type="submit">

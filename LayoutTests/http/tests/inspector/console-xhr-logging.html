@@ -31,7 +31,7 @@ function makeRequests()
     // 2. Page that doesn't exist.
     requestHelper("GET", "resources/xhr-does-not-exist.html");
     // 3. POST to a page.
-    requestHelper("POST", "resources/xhr-exists.html");
+    requestHelper("POST", "resources/post-target.cgi");
 }
 
 function requestHelper(method, url)

@@ -27,7 +27,7 @@ var test = function()
 function doXHR()
 {
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", "resources/xhr-does-not-exist.html", false);
+    xhr.open("POST", "resources/post-target.cgi", false);
     xhr.setRequestHeader("Content-Type", "text/xml");
     xhr.send("<xml></xml>");
 }

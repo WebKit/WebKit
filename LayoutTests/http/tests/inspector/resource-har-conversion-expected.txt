@@ -107,7 +107,7 @@ Page reloaded.
         time : <number>
         request : {
             method : "POST"
-            url : "http://127.0.0.1:8000/inspector/resources/xhr-does-not-exist.html"
+            url : "http://127.0.0.1:8000/inspector/resources/post-target.cgi"
             headers : <object>
             headersSize : -1
             bodySize : <number>
@@ -117,12 +117,12 @@ Page reloaded.
             }
         }
         response : {
-            status : 404
-            statusText : "Not Found"
+            status : 200
+            statusText : "OK"
             headers : <object>
             content : {
                 size : <number>
-                mimeType : "text/html"
+                mimeType : "application/xml"
             }
             redirectURL : ""
             headersSize : -1

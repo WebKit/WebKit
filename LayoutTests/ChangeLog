@@ -1,3 +1,25 @@
+2010-09-03  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        http/tests/inspector/console-xhr-logging.html and http/tests/inspector/resource-har-conversion.html are failing on chromium win bot
+        Use CGI as target for POST request to prevent HTTP 405 on certain platforms.
+        Changed MIME type for .js to application/x-javascript in lighttpd.conf for
+        consistency with apache used on other platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=45137
+
+        * http/tests/inspector/console-xhr-logging-expected.txt:
+        * http/tests/inspector/console-xhr-logging.html:
+        * http/tests/inspector/resource-har-conversion-expected.txt:
+        * http/tests/inspector/resource-har-conversion.html:
+        * http/tests/inspector/resource-parameters-expected.txt:
+        * http/tests/inspector/resource-parameters.html:
+        * http/tests/inspector/resources/post-target.cgi: Added.
+        * platform/chromium-win/http/tests/inspector/resource-parameters-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/win/http/tests/inspector/console-xhr-logging-expected.txt: Removed.
+        * platform/win/http/tests/inspector/resource-parameters-expected.txt: Removed.
+
 2010-09-03  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

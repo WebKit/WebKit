@@ -14,11 +14,11 @@ XHR finished loading: "http://127.0.0.1:8000/inspector/resources/xhr-exists.html
 console-xhr-logging.html:40sending a GET request to resources/xhr-does-not-exist.html
 resources/xhr-does-not-exist.htmlFailed to load resource: the server responded with a status of 404 (Not Found)
 XHR finished loading: "http://127.0.0.1:8000/inspector/resources/xhr-does-not-exist.html".
-console-xhr-logging.html:40sending a POST request to resources/xhr-exists.html
-XHR finished loading: "http://127.0.0.1:8000/inspector/resources/xhr-exists.html".
+console-xhr-logging.html:40sending a POST request to resources/post-target.cgi
+XHR finished loading: "http://127.0.0.1:8000/inspector/resources/post-target.cgi".
 console-xhr-logging.html:21disabled
 console-xhr-logging.html:40sending a GET request to resources/xhr-exists.html
 console-xhr-logging.html:40sending a GET request to resources/xhr-does-not-exist.html
 resources/xhr-does-not-exist.htmlFailed to load resource: the server responded with a status of 404 (Not Found)
-console-xhr-logging.html:40sending a POST request to resources/xhr-exists.html
+console-xhr-logging.html:40sending a POST request to resources/post-target.cgi
 
