@@ -1,7 +1,10 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 PROJECT(WebKit)
 
-IF (NOT CMAKE_BUILD_TYPE)
+# Set a default build type if and only if user did not define one as command
+# line options and he did not give custom CFLAGS or CXXFLAGS. Otherwise, flags
+# from default build type would overwrite user-defined ones.
+IF (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_C_FLAGS AND NOT CMAKE_CXX_FLAGS)
     SET(CMAKE_BUILD_TYPE Release)
 ENDIF ()
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")

@@ -2,6 +2,20 @@
 
         Reviewed by Antonio Gomes.
 
+        [EFL] Do not override custom compile flags
+        https://bugs.webkit.org/show_bug.cgi?id=45125
+
+        Set a default build type if and only if user did not define one as
+        command line options and he did not give custom CFLAGS or CXXFLAGS.
+        Otherwise, flags from default build type would override user-defined
+        ones.
+
+        * CMakeLists.txt:
+
+2010-09-02  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
         [EFL] Fix double addition of -fPIC
         https://bugs.webkit.org/show_bug.cgi?id=45122
 
