@@ -144,12 +144,12 @@ void SharedGraphicsContext3D::texParameteri(unsigned target, unsigned pname, int
 
 int SharedGraphicsContext3D::texImage2D(unsigned target, unsigned level, unsigned internalformat, unsigned width, unsigned height, unsigned border, unsigned format, unsigned type, void* pixels)
 {
-    m_context->texImage2D(target, level, internalformat, width, height, border, format, type, pixels);
+    return m_context->texImage2D(target, level, internalformat, width, height, border, format, type, pixels);
 }
 
 int SharedGraphicsContext3D::texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset, unsigned width, unsigned height, unsigned format, unsigned type, void* pixels)
 {
-    m_context->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
+    return m_context->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
 }
 
 void SharedGraphicsContext3D::readPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type, void* data)

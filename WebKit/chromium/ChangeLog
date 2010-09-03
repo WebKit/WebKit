@@ -1,3 +1,10 @@
+2010-09-03  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Compile fixes for 66746.
+
+        * src/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3DInternal::paintRenderingResultsToCanvas):
+
 2010-09-03  Tony Chang  <tony@chromium.org>
 
         Unreviewed, remove svn:executable flag from images and css files.

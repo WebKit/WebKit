@@ -1,3 +1,11 @@
+2010-09-03  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Compile fixes for 66746
+
+        * platform/graphics/gpu/SharedGraphicsContext3D.cpp:
+        (WebCore::SharedGraphicsContext3D::texImage2D):
+        (WebCore::SharedGraphicsContext3D::texSubImage2D):
+
 2010-09-03  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.
