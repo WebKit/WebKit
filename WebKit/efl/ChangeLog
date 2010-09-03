@@ -1,3 +1,15 @@
+2010-09-03  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Install default theme
+        https://bugs.webkit.org/show_bug.cgi?id=45154
+
+        Since a theme is needed in order to create a new browser, install the
+        default one to serve as example and fall-back.
+
+        * CMakeListsEfl.txt:
+
 2010-09-02  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Antonio Gomes.
