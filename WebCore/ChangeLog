@@ -1,3 +1,28 @@
+2010-09-03  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Add audio distance effect files
+        https://bugs.webkit.org/show_bug.cgi?id=44705
+
+        No new tests since audio API is not yet implemented.
+
+        * platform/audio/Distance.cpp: Added.
+        (WebCore::DistanceEffect::DistanceEffect):
+        (WebCore::DistanceEffect::gain):
+        (WebCore::DistanceEffect::linearGain):
+        (WebCore::DistanceEffect::inverseGain):
+        (WebCore::DistanceEffect::exponentialGain):
+        * platform/audio/Distance.h: Added.
+        (WebCore::DistanceEffect::model):
+        (WebCore::DistanceEffect::setModel):
+        (WebCore::DistanceEffect::setRefDistance):
+        (WebCore::DistanceEffect::setMaxDistance):
+        (WebCore::DistanceEffect::setRolloffFactor):
+        (WebCore::DistanceEffect::refDistance):
+        (WebCore::DistanceEffect::maxDistance):
+        (WebCore::DistanceEffect::rolloffFactor):
+
 2010-09-03  Johnny Ding  <jnd@chromium.org>
 
         Reviewed by Adam Barth.
