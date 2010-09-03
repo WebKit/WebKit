@@ -1,5 +1,33 @@
 2010-09-03  Chris Rogers  <crogers@google.com>
 
+        Reviewed by Kenneth Russell.
+
+        Add AudioListener files
+        https://bugs.webkit.org/show_bug.cgi?id=45006
+
+        No new tests since audio API is not yet implemented.
+
+        * webaudio: Added.
+        * webaudio/AudioListener.cpp: Added.
+        (WebCore::AudioListener::AudioListener):
+        * webaudio/AudioListener.h: Added.
+        (WebCore::AudioListener::create):
+        (WebCore::AudioListener::setPosition):
+        (WebCore::AudioListener::position):
+        (WebCore::AudioListener::setOrientation):
+        (WebCore::AudioListener::orientation):
+        (WebCore::AudioListener::setUpVector):
+        (WebCore::AudioListener::upVector):
+        (WebCore::AudioListener::setVelocity):
+        (WebCore::AudioListener::velocity):
+        (WebCore::AudioListener::setDopplerFactor):
+        (WebCore::AudioListener::dopplerFactor):
+        (WebCore::AudioListener::setSpeedOfSound):
+        (WebCore::AudioListener::speedOfSound):
+        * webaudio/AudioListener.idl: Added.
+
+2010-09-03  Chris Rogers  <crogers@google.com>
+
         Unreviewed
 
         Add WebCore/webaudio and WebCore/platform/audio/mac directories in preparation for landing reviewed patches
