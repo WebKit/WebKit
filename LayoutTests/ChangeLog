@@ -1,3 +1,27 @@
+2010-09-03  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        SVG atlas map slider doesn't work properly
+        https://bugs.webkit.org/show_bug.cgi?id=45107
+
+        * platform/mac/svg/custom/mouse-move-on-svg-container-expected.checksum: Added.
+        * platform/mac/svg/custom/mouse-move-on-svg-container-expected.png: Added.
+        * platform/mac/svg/custom/mouse-move-on-svg-container-expected.txt: Added.
+        * platform/mac/svg/custom/mouse-move-on-svg-container-standalone-expected.checksum: Added.
+        * platform/mac/svg/custom/mouse-move-on-svg-container-standalone-expected.png: Added.
+        * platform/mac/svg/custom/mouse-move-on-svg-container-standalone-expected.txt: Added.
+        * platform/mac/svg/custom/mouse-move-on-svg-root-expected.checksum: Added.
+        * platform/mac/svg/custom/mouse-move-on-svg-root-expected.png: Added.
+        * platform/mac/svg/custom/mouse-move-on-svg-root-expected.txt: Added.
+        * platform/mac/svg/custom/mouse-move-on-svg-root-standalone-expected.checksum: Added.
+        * platform/mac/svg/custom/mouse-move-on-svg-root-standalone-expected.png: Added.
+        * platform/mac/svg/custom/mouse-move-on-svg-root-standalone-expected.txt: Added.
+        * svg/custom/mouse-move-on-svg-container-standalone.svg: Added.
+        * svg/custom/mouse-move-on-svg-container.xhtml: Added.
+        * svg/custom/mouse-move-on-svg-root-standalone.svg: Added.
+        * svg/custom/mouse-move-on-svg-root.xhtml: Added.
+
 2010-09-03  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
