@@ -2595,7 +2595,8 @@ BUG42895 : media/audio-only-video-intrinsic-size.html = TIMEOUT
 BUG42895 : media/media-document-audio-size.html = TIMEOUT
 BUGYAAR MAC : svg/custom/dominant-baseline-hanging.svg = MISSING
 
-BUG39855 SLOW DEBUG : editing/selection/extend-selection.html = PASS TIMEOUT
+BUG39855 SLOW DEBUG : editing/selection/extend-selection.html = PASS
+BUG39855 LINUX RELEASE : editing/selection/extend-selection.html = PASS TIMEOUT
 
 // Failing a few times, flak dashboard seems to agree.
 BUG41973 MAC : svg/text/text-text-05-t.svg = IMAGE PASS

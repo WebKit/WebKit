@@ -1,3 +1,11 @@
+2010-09-02  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed.
+
+        Updateing chromium test_expectations for flaky editing/selection/extend-selection.html.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-02  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Darin Adler.
