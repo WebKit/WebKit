@@ -28,12 +28,14 @@
 
 import os
 
+from webkitpy.common.checkout.scm import CheckoutNeedsUpdate
 from webkitpy.common.net.bugzilla import Attachment
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.queues import *
 from webkitpy.tool.commands.queuestest import QueuesTest
+from webkitpy.tool.commands.stepsequence import StepSequence
 from webkitpy.tool.mocktool import MockTool, MockSCM
 
 
@@ -133,6 +135,16 @@ class AbstractReviewQueueTest(CommandsTest):
         self.assertFalse(queue.is_terminal_status("Foo"))
 
 
+class NeedsUpdateSequence(StepSequence):
+    def _run(self, tool, options, state):
+        raise CheckoutNeedsUpdate([], 1, "", None)
+
+
+class AlwaysCommitQueueTool(object):
+    def command_by_name(self, name):
+        return CommitQueue
+
+
 class CommitQueueTest(QueuesTest):
     def test_commit_queue(self):
         expected_stderr = {
@@ -225,6 +237,20 @@ MOCK: update_work_items: commit-queue [106, 197]
         queue = CommitQueue()
         attachments.sort(queue._patch_cmp)
         self.assertEqual(attachments, expected_sort)
+
+    def test_auto_retry(self):
+        queue = CommitQueue()
+        options = Mock()
+        options.parent_command = "commit-queue"
+        tool = AlwaysCommitQueueTool()
+        sequence = NeedsUpdateSequence(None)
+
+        expected_stderr = "Commit failed because the checkout is out of date.  Please update and try again.\n"
+        OutputCapture().assert_outputs(self, sequence.run_and_handle_errors, [tool, options], expected_exception=TryAgain, expected_stderr=expected_stderr)
+
+        self.assertEquals(options.update, True)
+        self.assertEquals(options.build, False)
+        self.assertEquals(options.test, False)
 
 
 class RietveldUploadQueueTest(QueuesTest):

@@ -38,7 +38,7 @@ import urllib2
 from datetime import date, datetime, timedelta
 from webkitpy.common.config.committers import CommitterList
 from webkitpy.common.system.deprecated_logging import log, error
-from webkitpy.scm import Git
+from webkitpy.common.checkout.scm import Git
 
 # WebKit includes a built copy of BeautifulSoup in Scripts/webkitpy
 # so this import should always succeed.

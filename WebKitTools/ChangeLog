@@ -1,3 +1,19 @@
+2010-09-02  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add a unit test for commit-queue retries
+        https://bugs.webkit.org/show_bug.cgi?id=45162
+
+        I think commit-queue retries are not correctly avoiding
+        build and test on retries.  So I started testing the code.
+        Unfortunately this test did not find the bug.  But now
+        that we have the test we might as well keep it.
+        I also fixed a broken import in validate-committer-lists.
+
+        * Scripts/validate-committer-lists:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
 2010-09-02  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
