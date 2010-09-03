@@ -1,3 +1,15 @@
+2010-09-02  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Adler.
+        https://bugs.webkit.org/show_bug.cgi?id=37830
+
+        Fix an ordering issue in this test.  The isSuccessfullyParsed
+        function is not defined until the onload event, so avoid running
+        the script body until this point.
+
+        * fast/events/touch/script-tests/send-oncancel-event.js:
+        (window.onload):
+
 2010-09-02  Tony Chang  <tony@chromium.org>
 
         Unreviewed, updating chromium test_expectations for a failure

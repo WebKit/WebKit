@@ -20,13 +20,15 @@ function touchcancelHandler() {
 if (window.layoutTestController)
     window.layoutTestController.waitUntilDone();
 
-if (window.eventSender) {
-    document.addEventListener("touchcancel", touchcancelHandler, false);
-    eventSender.addTouchPoint(touchX, touchY);
-    eventSender.touchStart();
-    eventSender.cancelTouchPoint(0);
-    eventSender.touchCancel();
-} else
-    debug("This test requires DumpRenderTree.");
+window.onload = function() {
+    if (window.eventSender) {
+        document.addEventListener("touchcancel", touchcancelHandler, false);
+        eventSender.addTouchPoint(touchX, touchY);
+        eventSender.touchStart();
+        eventSender.cancelTouchPoint(0);
+        eventSender.touchCancel();
+    } else
+        debug("This test requires DumpRenderTree.");
+}
 
 var successfullyParsed = true;
