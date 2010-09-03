@@ -28,6 +28,7 @@
 
 #if ENABLE(MATHML)
 
+#include "CharacterNames.h"
 #include "RenderMathMLBlock.h"
 
 namespace WebCore {
@@ -65,9 +66,17 @@ inline const RenderMathMLOperator* toRenderMathMLOperator(const RenderMathMLBloc
     ASSERT(!block || block->isRenderMathMLOperator());
     return static_cast<const RenderMathMLOperator*>(block);
 }
+
+inline UChar convertHyphenMinusToMinusSign(UChar glyph)
+{
+    // When rendered as a mathematical operator, minus glyph should be larger.
+    if (glyph == hyphenMinus)
+        return minusSign;
     
+    return glyph;
 }
 
+}
 
 #endif // ENABLE(MATHML)
 #endif // RenderMathMLOperator_h

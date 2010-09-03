@@ -1,3 +1,15 @@
+2010-09-02  François Sausset  <sausset@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        MathML mo element should render "hyphen-minus" as "minus sign" (Unicode glyph names).
+        https://bugs.webkit.org/show_bug.cgi?id=43629
+
+        * mathml/presentation/mo.xhtml:
+        * platform/mac/mathml/presentation/mo-expected.checksum:
+        * platform/mac/mathml/presentation/mo-expected.png:
+        * platform/mac/mathml/presentation/mo-expected.txt:
+
 2010-09-02  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.

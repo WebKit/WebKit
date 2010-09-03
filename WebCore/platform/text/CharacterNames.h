@@ -52,6 +52,7 @@ const UChar leftSingleQuotationMark = 0x2018;
 const UChar leftToRightEmbed = 0x202A;
 const UChar leftToRightMark = 0x200E;
 const UChar leftToRightOverride = 0x202D;
+const UChar minusSign = 0x2212;
 const UChar newlineCharacter = 0x000A;
 const UChar noBreakSpace = 0x00A0;
 const UChar objectReplacementCharacter = 0xFFFC;
