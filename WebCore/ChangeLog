@@ -1,3 +1,17 @@
+2010-09-02  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Unreviewed, updating binding-tests expectations (for changeset 66521).
+
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::stringAttrAttrSetter):
+        (WebCore::TestObjInternal::reflectedStringAttrAttrSetter):
+        (WebCore::TestObjInternal::reflectedURLAttrAttrSetter):
+        (WebCore::TestObjInternal::reflectedNonEmptyURLAttrAttrSetter):
+        (WebCore::TestObjInternal::reflectedCustomURLAttrAttrSetter):
+        (WebCore::TestObjInternal::reflectedCustomNonEmptyURLAttrAttrSetter):
+        (WebCore::TestObjInternal::stringAttrWithGetterExceptionAttrSetter):
+        (WebCore::TestObjInternal::stringAttrWithSetterExceptionAttrSetter):
+
 2010-09-02  Adam Langley  <agl@chromium.org>
 
         Reviewed by Adam Barth.
