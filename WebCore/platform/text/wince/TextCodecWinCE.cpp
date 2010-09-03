@@ -24,7 +24,6 @@
 #include "config.h"
 #include "TextCodecWinCE.h"
 
-#include "ce_textcodecs.h"
 #include "FontCache.h"
 #include "PlatformString.h"
 #include <mlang.h>
@@ -43,7 +42,6 @@ struct CharsetInfo {
     String m_friendlyName;
     UINT m_codePage;
     Vector<CString> m_aliases;
-    bool m_usesNativeCodec;
 };
 
 class LanguageManager {
@@ -82,45 +80,8 @@ static LanguageManager& languageManager()
     return lm;
 }
 
-static void addCharset(UINT codePage, const char* charsetName, const wchar_t* friendlyName, const char* charsetAliases, bool nativeSupport = false)
-{
-    CharsetInfo info;
-    info.m_codePage = codePage;
-    info.m_name = charsetName;
-    info.m_friendlyName = friendlyName;
-    info.m_usesNativeCodec = nativeSupport;
-    const char* begin = charsetAliases;
-    for (;;) {
-        const char* end = strchr(begin, '|');
-        CString alias = end ? CString(begin, end - begin) : begin;
-        if (alias.length())
-            info.m_aliases.append(alias);
-        if (!end)
-            break;
-        begin = end + 1;
-    }
-    knownCharsets().set(info.m_name.data(), info);
-    if (codePage != CP_ACP)
-        codePageCharsets().set(codePage, info.m_name);
-}
-
 LanguageManager::LanguageManager()
 {
-    // 437, 708, 709, 710, 720, 737, 775, 850, 852
-    addCharset(932,     "SHIFT_JIS", L"Japanese (SHIFT_JIS)",        "shift_jis");
-    addCharset(936,     "GBK",       L"Chinese Simplified (GBK)",    "gbk|gb2312");
-    addCharset(949,     "KSC5601",   L"Korean (KSC5601)",            "ks_c_5601-1987|ksc5601|euc-kr|euckr|x-euc-kr");
-    addCharset(950,     "BIG5",      L"Chinese Traditional (BIG5)",  "big5");
-    addCharset(1361,    "JOHAB",     L"Korean (Johab)",              "johab|korean.johab");
-    addCharset(51932,   "EUC-JP",    L"Japanese (EUC)",              "euc-jp|eucjp|x-euc-jp", true);
-    addCharset(874,     "CP874",     L"Thai (Windows)",              "cp874|windows-874", true);
-    addCharset(CP_ACP,  "TIS620",    L"Thai (TIS 620)",              "tis620|ISO-8859-11|ISO-IR-166|TIS-620|TIS620-0TIS620.2529-1|TIS620.2533-0|TIS620.2533-1|thai8", true);
-    addCharset(CP_ACP,  "MACTHAI",   L"Thai (Mac OS)",               "macthai|x-mac-thai|mac-thai", true);
-    supportedCharsets().add("EUC-JP");
-    supportedCharsets().add("CP874");
-    supportedCharsets().add("TIS620");
-    supportedCharsets().add("MACTHAI");
-
     IEnumCodePage* enumInterface;
     IMultiLanguage* mli = FontCache::getMultiLanguageInterface();
     if (mli && S_OK == mli->EnumCodePages(MIMECONTF_BROWSER, &enumInterface)) {
@@ -148,7 +109,6 @@ LanguageManager::LanguageManager()
                 info.m_aliases.append(name);
                 info.m_aliases.append(String(cpInfo.wszHeaderCharset).latin1());
                 info.m_aliases.append(String(cpInfo.wszBodyCharset).latin1());
-                info.m_usesNativeCodec = false;
                 String cpName = String::format("cp%d", cpInfo.uiCodePage);
                 info.m_aliases.append(cpName.latin1());
                 supportedCharsets().add(i->second.data());
@@ -265,52 +225,6 @@ static void decode(Vector<UChar, 8192>& result, const char* encodingName, const 
             codePage = CP_UTF8;
         else
             codePage = CP_ACP;
-    } else {
-        codePage = i->second.m_codePage;
-        if (i->second.m_usesNativeCodec) {
-            typedef int (*FuncEucMbToWc)(wchar_t *pwc, const unsigned char *s, int n);
-            FuncEucMbToWc encMbToWc = 0;
-            if (!strcmp(encodingName, "EUC-JP"))
-                encMbToWc = TextCodecsCE::euc_jp_mbtowc;
-            else if (!strcmp(encodingName, "CP874"))
-                encMbToWc = TextCodecsCE::cp874_mbtowc;
-            else if (!strcmp(encodingName, "TIS620"))
-                encMbToWc = TextCodecsCE::tis620_mbtowc;
-            else if (!strcmp(encodingName, "MACTHAI"))
-                encMbToWc = TextCodecsCE::mac_thai_mbtowc;
-
-            if (encMbToWc) {
-                const char* const srcStart = bytes;
-                const char* const srcEnd = bytes + length;
-                int lastSize = result.size();
-                result.resize(lastSize + length);
-                for (;;) {
-                    UChar* dst = result.data() + lastSize;
-                    const UChar* const dstEnd = result.data() + result.size();
-                    for (; dst < dstEnd && bytes < srcEnd; ++dst) {
-                        int numberEncoded = encMbToWc(dst, (const unsigned char*)bytes, srcEnd - bytes);
-                        if (numberEncoded >= 0)
-                            bytes += numberEncoded;
-                        else {
-                            if (numberEncoded == RET_ILSEQ)
-                                sawInvalidChar = true;
-                            break;
-                        }
-                    }
-                    if (bytes == srcEnd || dst != dstEnd) {
-                        *left = srcEnd - bytes;
-                        result.resize(dst - result.data());
-                        return;
-                    }
-                    lastSize = result.size();
-                    result.resize(result.size() + 256);
-                }
-            } else {
-                *left = 0;
-                result.append(bytes, length);
-                return;
-            }
-        }
     }
 
     DWORD flags = getCodePageFlags(codePage);

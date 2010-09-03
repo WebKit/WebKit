@@ -1,3 +1,17 @@
+2010-09-03  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Adam Roben.
+
+        [WINCE] Remove usage of ce_textcodecs.h
+        https://bugs.webkit.org/show_bug.cgi?id=45169
+
+        ce_textcodecs.h was a non public header for (not required)
+        additonal codecs in the original Torch Mobile port.
+
+        * platform/text/wince/TextCodecWinCE.cpp:
+        (WebCore::LanguageManager::LanguageManager):
+        (WebCore::decode):
+
 2010-09-03  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.
