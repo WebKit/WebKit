@@ -27,8 +27,11 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#include "RenderLayerBacking.h"
+
 #include "AnimationController.h"
 #include "CanvasRenderingContext.h"
+#include "CanvasRenderingContext2D.h"
 #include "CSSPropertyNames.h"
 #include "CSSStyleSelector.h"
 #include "FrameView.h"
@@ -51,8 +54,7 @@
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "Settings.h"
-
-#include "RenderLayerBacking.h"
+#include "WebGLRenderingContext.h"
 
 using namespace std;
 
@@ -258,9 +260,8 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
     else if (isAcceleratedCanvas(renderer())) {
         HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(renderer()->node());
         if (CanvasRenderingContext* context = canvas->renderingContext())
-            if (context->graphicsContext3D())
-                if (PlatformLayer* pl = context->graphicsContext3D()->platformLayer())
-                    m_graphicsLayer->setContentsToCanvas(pl);
+            m_graphicsLayer->setContentsToCanvas(context->platformLayer());
+        layerConfigChanged = true;
     }
 #endif
 

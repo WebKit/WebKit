@@ -47,6 +47,7 @@
 #include "SkRect.h"
 #include "SkShader.h"
 #include "SkiaUtils.h"
+#include "Texture.h"
 
 #include "skia/ext/image_operations.h"
 #include "skia/ext/platform_canvas.h"

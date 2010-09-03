@@ -63,6 +63,7 @@ public:
 
     virtual bool is3d() const { return true; }
     virtual bool isAccelerated() const { return true; }
+    virtual bool paintsIntoCanvasBuffer() const;
 
     void activeTexture(unsigned long texture, ExceptionCode& ec);
     void attachShader(WebGLProgram*, WebGLShader*, ExceptionCode& ec);
@@ -277,7 +278,10 @@ public:
 
     void viewport(long x, long y, unsigned long width, unsigned long height);
 
-    virtual GraphicsContext3D* graphicsContext3D() const { return m_context.get(); }
+    GraphicsContext3D* graphicsContext3D() const { return m_context.get(); }
+#if USE(ACCELERATED_COMPOSITING)
+    virtual PlatformLayer* platformLayer() const { return m_context->platformLayer(); }
+#endif
 
     void reshape(int width, int height);
 

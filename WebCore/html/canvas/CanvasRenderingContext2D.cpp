@@ -59,8 +59,12 @@
 #include "TextMetrics.h"
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
+#include "Chrome.h"
+#include "ChromeClient.h"
+#include "DrawingBuffer.h"
 #include "FrameView.h"
 #include "GraphicsContext3D.h"
+#include "SharedGraphicsContext3D.h"
 #if USE(ACCELERATED_COMPOSITING)
 #include "RenderLayer.h"
 #endif
@@ -124,17 +128,11 @@ CanvasRenderingContext2D::CanvasRenderingContext2D(HTMLCanvasElement* canvas, bo
         return;
     if (!p->settings()->accelerated2dCanvasEnabled())
         return;
-    if (FrameView* view = canvas->document()->view()) {
-        if (ScrollView* rootView = view->root()) {
-            if (HostWindow* hostWindow = rootView->hostWindow()) {
-                // Set up our context
-                GraphicsContext3D::Attributes attr;
-                attr.stencil = true;
-                m_context3D = GraphicsContext3D::create(attr, hostWindow);
-                if (m_context3D)
-                    if (GraphicsContext* c = drawingContext())
-                        c->setGraphicsContext3D(m_context3D.get(), IntSize(canvas->width(), canvas->height()));
-            }
+    m_context3D = p->chrome()->client()->getSharedGraphicsContext3D();
+    if (m_context3D) {
+        if (GraphicsContext* c = drawingContext()) {
+            m_drawingBuffer = DrawingBuffer::create(m_context3D.get(), IntSize(canvas->width(), canvas->height()));
+            c->setSharedGraphicsContext3D(m_context3D.get(), m_drawingBuffer.get(), IntSize(canvas->width(), canvas->height()));
         }
     }
 #endif
@@ -153,6 +151,16 @@ bool CanvasRenderingContext2D::isAccelerated() const
 #endif
 }
 
+bool CanvasRenderingContext2D::paintsIntoCanvasBuffer() const
+{
+#if ENABLE(ACCELERATED_2D_CANVAS)
+    if (m_context3D)
+        return m_context3D->paintsIntoCanvasBuffer();
+#endif
+    return true;
+}
+
+
 void CanvasRenderingContext2D::reset()
 {
     m_stateStack.resize(1);
@@ -160,8 +168,10 @@ void CanvasRenderingContext2D::reset()
     m_path.clear();
 #if ENABLE(ACCELERATED_2D_CANVAS)
     if (m_context3D) {
-        if (GraphicsContext* c = drawingContext())
-            c->setGraphicsContext3D(m_context3D.get(), IntSize(canvas()->width(), canvas()->height()));
+        if (GraphicsContext* c = drawingContext()) {
+            m_drawingBuffer->reset(IntSize(canvas()->width(), canvas()->height()));
+            c->setSharedGraphicsContext3D(m_context3D.get(), m_drawingBuffer.get(), IntSize(canvas()->width(), canvas()->height()));
+        }
     }
 #endif
 }
@@ -1504,7 +1514,7 @@ void CanvasRenderingContext2D::didDraw(const FloatRect& r, unsigned options)
 #if ENABLE(ACCELERATED_2D_CANVAS) && USE(ACCELERATED_COMPOSITING)
     // If we are drawing to hardware and we have a composited layer, just call rendererContentChanged().
     RenderBox* renderBox = canvas()->renderBox();
-    if (m_context3D && renderBox && renderBox->hasLayer() && renderBox->layer()->hasAcceleratedCompositing())
+    if (isAccelerated() && renderBox && renderBox->hasLayer() && renderBox->layer()->hasAcceleratedCompositing())
         renderBox->layer()->rendererContentChanged();
     else
 #endif
@@ -1876,5 +1886,12 @@ void CanvasRenderingContext2D::paintRenderingResultsToCanvas()
         c->syncSoftwareCanvas();
 #endif
 }
+
+#if ENABLE(ACCELERATED_2D_CANVAS) && USE(ACCELERATED_COMPOSITING)
+PlatformLayer* CanvasRenderingContext2D::platformLayer() const
+{
+    return m_drawingBuffer->platformLayer();
+}
+#endif
 
 } // namespace WebCore

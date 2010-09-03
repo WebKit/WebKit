@@ -32,10 +32,12 @@
 
 #include "GLES2Canvas.h"
 
+#include "DrawingBuffer.h"
 #include "FloatRect.h"
 #include "GraphicsContext3D.h"
 #include "IntRect.h"
 #include "PlatformString.h"
+#include "SharedGraphicsContext3D.h"
 #include "SolidFillShader.h"
 #include "TexShader.h"
 #include "Texture.h"
@@ -61,37 +63,35 @@ struct GLES2Canvas::State {
     AffineTransform m_ctm;
 };
 
-GLES2Canvas::GLES2Canvas(GraphicsContext3D* context, const IntSize& size)
-    : m_context(context)
+GLES2Canvas::GLES2Canvas(SharedGraphicsContext3D* context, DrawingBuffer* drawingBuffer, const IntSize& size)
+    : m_size(size)
+    , m_context(context)
+    , m_drawingBuffer(drawingBuffer)
     , m_state(0)
-    , m_quadVertices(0)
-    , m_solidFillShader(SolidFillShader::create(context))
-    , m_texShader(TexShader::create(context))
 {
     m_flipMatrix.translate(-1.0f, 1.0f);
     m_flipMatrix.scale(2.0f / size.width(), -2.0f / size.height());
 
-    m_context->reshape(size.width(), size.height());
-    m_context->viewport(0, 0, size.width(), size.height());
-
     m_stateStack.append(State());
     m_state = &m_stateStack.last();
-
-    // Force the source over composite mode to be applied.
-    m_lastCompositeOp = CompositeClear;
-    applyCompositeOperator(CompositeSourceOver);
 }
 
 GLES2Canvas::~GLES2Canvas()
 {
-    m_context->deleteBuffer(m_quadVertices);
+}
+
+void GLES2Canvas::bindFramebuffer()
+{
+    m_drawingBuffer->bind();
 }
 
 void GLES2Canvas::clearRect(const FloatRect& rect)
 {
+    bindFramebuffer();
     if (m_state->m_ctm.isIdentity()) {
-        m_context->scissor(rect.x(), rect.y(), rect.width(), rect.height());
+        m_context->scissor(rect);
         m_context->enable(GraphicsContext3D::SCISSOR_TEST);
+        m_context->clearColor(Color(RGBA32(0)));
         m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT);
         m_context->disable(GraphicsContext3D::SCISSOR_TEST);
     } else {
@@ -104,16 +104,17 @@ void GLES2Canvas::clearRect(const FloatRect& rect)
 
 void GLES2Canvas::fillRect(const FloatRect& rect, const Color& color, ColorSpace colorSpace)
 {
-    applyCompositeOperator(m_state->m_compositeOp);
-
-    m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, getQuadVertices());
+    m_context->applyCompositeOperator(m_state->m_compositeOp);
+    m_context->useQuadVertices();
 
     AffineTransform matrix(m_flipMatrix);
     matrix.multLeft(m_state->m_ctm);
     matrix.translate(rect.x(), rect.y());
     matrix.scale(rect.width(), rect.height());
-    m_solidFillShader->use(matrix, color);
 
+    m_context->useFillSolidProgram(matrix, color);
+
+    bindFramebuffer();
     m_context->drawArrays(GraphicsContext3D::TRIANGLE_STRIP, 0, 4);
 }
 
@@ -165,20 +166,32 @@ void GLES2Canvas::restore()
     m_state = &m_stateStack.last();
 }
 
+void GLES2Canvas::drawTexturedRect(unsigned texture, const IntSize& textureSize, const FloatRect& srcRect, const FloatRect& dstRect, ColorSpace colorSpace, CompositeOperator compositeOp)
+{
+    m_context->applyCompositeOperator(compositeOp);
+
+    m_context->useQuadVertices();
+    m_context->setActiveTexture(GraphicsContext3D::TEXTURE0);
+
+    m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, texture);
+
+    drawQuad(textureSize, srcRect, dstRect, m_state->m_ctm, m_state->m_alpha);
+}
+
 void GLES2Canvas::drawTexturedRect(Texture* texture, const FloatRect& srcRect, const FloatRect& dstRect, ColorSpace colorSpace, CompositeOperator compositeOp)
 {
     drawTexturedRect(texture, srcRect, dstRect, m_state->m_ctm, m_state->m_alpha, colorSpace, compositeOp);
 }
 
+
 void GLES2Canvas::drawTexturedRect(Texture* texture, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform& transform, float alpha, ColorSpace colorSpace, CompositeOperator compositeOp)
 {
-    applyCompositeOperator(compositeOp);
-
-    m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, getQuadVertices());
-    checkGLError("glBindBuffer");
-
+    m_context->applyCompositeOperator(compositeOp);
     const TilingData& tiles = texture->tiles();
     IntRect tileIdxRect = tiles.overlappedTileIndices(srcRect);
+
+    m_context->useQuadVertices();
+    m_context->setActiveTexture(GraphicsContext3D::TEXTURE0);
 
     for (int y = tileIdxRect.y(); y <= tileIdxRect.bottom(); y++) {
         for (int x = tileIdxRect.x(); x <= tileIdxRect.right(); x++)
@@ -193,7 +206,6 @@ void GLES2Canvas::drawTexturedRectTile(Texture* texture, int tile, const FloatRe
 
     const TilingData& tiles = texture->tiles();
 
-    m_context->activeTexture(GraphicsContext3D::TEXTURE0);
     texture->bindTile(tile);
 
     FloatRect srcRectClippedInTileSpace;
@@ -202,18 +214,24 @@ void GLES2Canvas::drawTexturedRectTile(Texture* texture, int tile, const FloatRe
 
     IntRect tileBoundsWithBorder = tiles.tileBoundsWithBorder(tile);
 
+    drawQuad(tileBoundsWithBorder.size(), srcRectClippedInTileSpace, dstRectIntersected, transform, alpha);
+}
+
+void GLES2Canvas::drawQuad(const IntSize& textureSize, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform& transform, float alpha)
+{
     AffineTransform matrix(m_flipMatrix);
     matrix.multLeft(transform);
-    matrix.translate(dstRectIntersected.x(), dstRectIntersected.y());
-    matrix.scale(dstRectIntersected.width(), dstRectIntersected.height());
+    matrix.translate(dstRect.x(), dstRect.y());
+    matrix.scale(dstRect.width(), dstRect.height());
 
     AffineTransform texMatrix;
-    texMatrix.scale(1.0f / tileBoundsWithBorder.width(), 1.0f / tileBoundsWithBorder.height());
-    texMatrix.translate(srcRectClippedInTileSpace.x(), srcRectClippedInTileSpace.y());
-    texMatrix.scale(srcRectClippedInTileSpace.width(), srcRectClippedInTileSpace.height());
+    texMatrix.scale(1.0f / textureSize.width(), 1.0f / textureSize.height());
+    texMatrix.translate(srcRect.x(), srcRect.y());
+    texMatrix.scale(srcRect.width(), srcRect.height());
 
-    m_texShader->use(matrix, texMatrix, 0, alpha);
+    bindFramebuffer();
 
+    m_context->useTextureProgram(matrix, texMatrix, alpha);
     m_context->drawArrays(GraphicsContext3D::TRIANGLE_STRIP, 0, 4);
     checkGLError("glDrawArrays");
 }
@@ -223,98 +241,14 @@ void GLES2Canvas::setCompositeOperation(CompositeOperator op)
     m_state->m_compositeOp = op;
 }
 
-void GLES2Canvas::applyCompositeOperator(CompositeOperator op)
-{
-    if (op == m_lastCompositeOp)
-        return;
-
-    switch (op) {
-    case CompositeClear:
-        m_context->enable(GraphicsContext3D::BLEND);
-        m_context->blendFunc(GraphicsContext3D::ZERO, GraphicsContext3D::ZERO);
-        break;
-    case CompositeCopy:
-        m_context->disable(GraphicsContext3D::BLEND);
-        break;
-    case CompositeSourceOver:
-        m_context->enable(GraphicsContext3D::BLEND);
-        m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA);
-        break;
-    case CompositeSourceIn:
-        m_context->enable(GraphicsContext3D::BLEND);
-        m_context->blendFunc(GraphicsContext3D::DST_ALPHA, GraphicsContext3D::ZERO);
-        break;
-    case CompositeSourceOut:
-        m_context->enable(GraphicsContext3D::BLEND);
-        m_context->blendFunc(GraphicsContext3D::ONE_MINUS_DST_ALPHA, GraphicsContext3D::ZERO);
-        break;
-    case CompositeSourceAtop:
-        m_context->enable(GraphicsContext3D::BLEND);
-        m_context->blendFunc(GraphicsContext3D::DST_ALPHA, GraphicsContext3D::ONE_MINUS_SRC_ALPHA);
-        break;
-    case CompositeDestinationOver:
-        m_context->enable(GraphicsContext3D::BLEND);
-        m_context->blendFunc(GraphicsContext3D::ONE_MINUS_DST_ALPHA, GraphicsContext3D::ONE);
-        break;
-    case CompositeDestinationIn:
-        m_context->enable(GraphicsContext3D::BLEND);
-        m_context->blendFunc(GraphicsContext3D::ZERO, GraphicsContext3D::SRC_ALPHA);
-        break;
-    case CompositeDestinationOut:
-        m_context->enable(GraphicsContext3D::BLEND);
-        m_context->blendFunc(GraphicsContext3D::ZERO, GraphicsContext3D::ONE_MINUS_SRC_ALPHA);
-        break;
-    case CompositeDestinationAtop:
-        m_context->enable(GraphicsContext3D::BLEND);
-        m_context->blendFunc(GraphicsContext3D::ONE_MINUS_DST_ALPHA, GraphicsContext3D::SRC_ALPHA);
-        break;
-    case CompositeXOR:
-        m_context->enable(GraphicsContext3D::BLEND);
-        m_context->blendFunc(GraphicsContext3D::ONE_MINUS_DST_ALPHA, GraphicsContext3D::ONE_MINUS_SRC_ALPHA);
-        break;
-    case CompositePlusDarker:
-    case CompositeHighlight:
-        // unsupported
-        m_context->disable(GraphicsContext3D::BLEND);
-        break;
-    case CompositePlusLighter:
-        m_context->enable(GraphicsContext3D::BLEND);
-        m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE);
-        break;
-    }
-    m_lastCompositeOp = op;
-}
-
-unsigned GLES2Canvas::getQuadVertices()
-{
-    if (!m_quadVertices) {
-        float vertices[] = { 0.0f, 0.0f, 1.0f,
-                             1.0f, 0.0f, 1.0f,
-                             0.0f, 1.0f, 1.0f,
-                             1.0f, 1.0f, 1.0f };
-        m_quadVertices = m_context->createBuffer();
-        m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_quadVertices);
-        m_context->bufferData(GraphicsContext3D::ARRAY_BUFFER, sizeof(vertices), vertices, GraphicsContext3D::STATIC_DRAW);
-    }
-    return m_quadVertices;
-}
-
 Texture* GLES2Canvas::createTexture(NativeImagePtr ptr, Texture::Format format, int width, int height)
 {
-    PassRefPtr<Texture> texture = m_textures.get(ptr);
-    if (texture)
-        return texture.get();
-
-    texture = Texture::create(m_context, format, width, height);
-    Texture* t = texture.get();
-    m_textures.set(ptr, texture);
-    return t;
+    return m_context->createTexture(ptr, format, width, height);
 }
 
 Texture* GLES2Canvas::getTexture(NativeImagePtr ptr)
 {
-    PassRefPtr<Texture> texture = m_textures.get(ptr);
-    return texture ? texture.get() : 0;
+    return m_context->getTexture(ptr);
 }
 
 void GLES2Canvas::checkGLError(const char* header)

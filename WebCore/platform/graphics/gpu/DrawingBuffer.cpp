@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (c) 2010, Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,52 +28,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 
-#ifndef CanvasLayerChromium_h
-#define CanvasLayerChromium_h
+#include "DrawingBuffer.h"
 
-#if USE(ACCELERATED_COMPOSITING)
-
-#include "LayerChromium.h"
+#include "GraphicsContext3D.h"
+#include "SharedGraphicsContext3D.h"
 
 namespace WebCore {
 
-// Base class for WebGL and accelerated 2d canvases.
-class CanvasLayerChromium : public LayerChromium {
-public:
-    virtual ~CanvasLayerChromium();
-
-    virtual void draw();
-
-    class SharedValues {
-    public:
-        SharedValues();
-        ~SharedValues();
-
-        unsigned canvasShaderProgram() const { return m_canvasShaderProgram; }
-        int shaderSamplerLocation() const { return m_shaderSamplerLocation; }
-        int shaderMatrixLocation() const { return m_shaderMatrixLocation; }
-        int shaderAlphaLocation() const { return m_shaderAlphaLocation; }
-        bool initialized() const { return m_initialized; }
-
-    private:
-        unsigned m_canvasShaderProgram;
-        int m_shaderSamplerLocation;
-        int m_shaderMatrixLocation;
-        int m_shaderAlphaLocation;
-        bool m_initialized;
-    };
-
-protected:
-    explicit CanvasLayerChromium(GraphicsLayerChromium* owner);
-    bool m_textureChanged;
-    unsigned m_textureId;
-
-private:
-    static unsigned m_shaderProgramId;
-};
-
+PassOwnPtr<DrawingBuffer> DrawingBuffer::create(SharedGraphicsContext3D* context, const IntSize& size)
+{
+    unsigned framebuffer = context->createFramebuffer();
+    ASSERT(framebuffer);
+    if (!framebuffer)
+        return 0;
+    return adoptPtr(new DrawingBuffer(context, size, framebuffer));
 }
-#endif // USE(ACCELERATED_COMPOSITING)
 
-#endif // CanvasLayerChromium_h
+void DrawingBuffer::bind()
+{
+    m_context->bindFramebuffer(m_framebuffer);
+    m_context->setViewport(m_size);
+}
+
+void DrawingBuffer::setWillPublishCallback(PassOwnPtr<WillPublishCallback> callback)
+{
+    m_callback = callback;
+}
+
+} // namespace WebCore

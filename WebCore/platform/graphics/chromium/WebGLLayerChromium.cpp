@@ -28,52 +28,58 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#ifndef CanvasLayerChromium_h
-#define CanvasLayerChromium_h
+#include "config.h"
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "LayerChromium.h"
+#include "WebGLLayerChromium.h"
+
+#include "GraphicsContext3D.h"
+#include "LayerRendererChromium.h"
+#include <GLES2/gl2.h>
 
 namespace WebCore {
 
-// Base class for WebGL and accelerated 2d canvases.
-class CanvasLayerChromium : public LayerChromium {
-public:
-    virtual ~CanvasLayerChromium();
+PassRefPtr<WebGLLayerChromium> WebGLLayerChromium::create(GraphicsLayerChromium* owner)
+{
+    return adoptRef(new WebGLLayerChromium(owner));
+}
 
-    virtual void draw();
+WebGLLayerChromium::WebGLLayerChromium(GraphicsLayerChromium* owner)
+    : CanvasLayerChromium(owner)
+    , m_context(0)
+{
+}
 
-    class SharedValues {
-    public:
-        SharedValues();
-        ~SharedValues();
+void WebGLLayerChromium::updateContents()
+{
+    ASSERT(m_context);
+    if (m_textureChanged) {
+        glBindTexture(GL_TEXTURE_2D, m_textureId);
+        // Set the min-mag filters to linear and wrap modes to GL_CLAMP_TO_EDGE
+        // to get around NPOT texture limitations of GLES.
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        m_textureChanged = false;
+    }
+    // Update the contents of the texture used by the compositor.
+    if (m_contentsDirty) {
+        m_context->prepareTexture();
+        m_contentsDirty = false;
+    }
+}
 
-        unsigned canvasShaderProgram() const { return m_canvasShaderProgram; }
-        int shaderSamplerLocation() const { return m_shaderSamplerLocation; }
-        int shaderMatrixLocation() const { return m_shaderMatrixLocation; }
-        int shaderAlphaLocation() const { return m_shaderAlphaLocation; }
-        bool initialized() const { return m_initialized; }
+void WebGLLayerChromium::setContext(const GraphicsContext3D* context)
+{
+    m_context = const_cast<GraphicsContext3D*>(context);
 
-    private:
-        unsigned m_canvasShaderProgram;
-        int m_shaderSamplerLocation;
-        int m_shaderMatrixLocation;
-        int m_shaderAlphaLocation;
-        bool m_initialized;
-    };
-
-protected:
-    explicit CanvasLayerChromium(GraphicsLayerChromium* owner);
-    bool m_textureChanged;
-    unsigned m_textureId;
-
-private:
-    static unsigned m_shaderProgramId;
-};
+    unsigned int textureId = m_context->platformTexture();
+    if (textureId != m_textureId)
+        m_textureChanged = true;
+    m_textureId = textureId;
+}
 
 }
 #endif // USE(ACCELERATED_COMPOSITING)
-
-#endif // CanvasLayerChromium_h

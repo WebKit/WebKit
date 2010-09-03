@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (c) 2010, Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,52 +28,53 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef DrawingBuffer_h
+#define DrawingBuffer_h
 
-#ifndef CanvasLayerChromium_h
-#define CanvasLayerChromium_h
+#include "GraphicsLayer.h"
+#include "IntSize.h"
 
-#if USE(ACCELERATED_COMPOSITING)
-
-#include "LayerChromium.h"
+#include <wtf/Noncopyable.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
-// Base class for WebGL and accelerated 2d canvases.
-class CanvasLayerChromium : public LayerChromium {
+class SharedGraphicsContext3D;
+
+struct DrawingBufferInternal;
+
+// Manages a rendering target (framebuffer + attachment) for a canvas.  Can publish its rendering
+// results to a PlatformLayer for compositing.
+class DrawingBuffer : public Noncopyable {
 public:
-    virtual ~CanvasLayerChromium();
+    static PassOwnPtr<DrawingBuffer> create(SharedGraphicsContext3D*, const IntSize&);
+    ~DrawingBuffer();
 
-    virtual void draw();
+    void reset(const IntSize&);
+    PlatformLayer* platformLayer();
 
-    class SharedValues {
+    void bind();
+    void publishToPlatformLayer();
+    IntSize size() const { return m_size; }
+
+    class WillPublishCallback : public Noncopyable {
     public:
-        SharedValues();
-        ~SharedValues();
-
-        unsigned canvasShaderProgram() const { return m_canvasShaderProgram; }
-        int shaderSamplerLocation() const { return m_shaderSamplerLocation; }
-        int shaderMatrixLocation() const { return m_shaderMatrixLocation; }
-        int shaderAlphaLocation() const { return m_shaderAlphaLocation; }
-        bool initialized() const { return m_initialized; }
-
-    private:
-        unsigned m_canvasShaderProgram;
-        int m_shaderSamplerLocation;
-        int m_shaderMatrixLocation;
-        int m_shaderAlphaLocation;
-        bool m_initialized;
+        virtual void willPublish() = 0;
     };
 
-protected:
-    explicit CanvasLayerChromium(GraphicsLayerChromium* owner);
-    bool m_textureChanged;
-    unsigned m_textureId;
-
+    void setWillPublishCallback(PassOwnPtr<WillPublishCallback>);
 private:
-    static unsigned m_shaderProgramId;
+    DrawingBuffer(SharedGraphicsContext3D*, const IntSize&, unsigned framebuffer);
+
+    SharedGraphicsContext3D* m_context;
+    IntSize m_size;
+    unsigned m_framebuffer;
+
+    OwnPtr<WillPublishCallback> m_callback;
+    OwnPtr<DrawingBufferInternal> m_internal;
 };
 
-}
-#endif // USE(ACCELERATED_COMPOSITING)
+} // namespace WebCore
 
-#endif // CanvasLayerChromium_h
+#endif // DrawingBuffer_h

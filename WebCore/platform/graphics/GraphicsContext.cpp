@@ -571,6 +571,17 @@ void GraphicsContext::setPlatformStrokeStyle(const StrokeStyle&)
 }
 #endif
 
+#if !PLATFORM(SKIA)
+void GraphicsContext::setSharedGraphicsContext3D(SharedGraphicsContext3D*, DrawingBuffer*, const IntSize&)
+{
+}
+
+void GraphicsContext::syncSoftwareCanvas()
+{
+}
+#endif
+
+
 void GraphicsContext::adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, const StrokeStyle& penStyle)
 {
     // For odd widths, we add in 0.5 to the appropriate x/y so that the float arithmetic
@@ -599,15 +610,5 @@ void GraphicsContext::adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2
         }
     }
 }
-
-#if !PLATFORM(SKIA)
-void GraphicsContext::setGraphicsContext3D(GraphicsContext3D*, const IntSize&)
-{
-}
-
-void GraphicsContext::syncSoftwareCanvas()
-{
-}
-#endif
 
 }

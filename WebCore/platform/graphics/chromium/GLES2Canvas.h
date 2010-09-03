@@ -45,16 +45,14 @@
 namespace WebCore {
 
 class Color;
+class DrawingBuffer;
 class FloatRect;
 class GraphicsContext3D;
-class SolidFillShader;
-class TexShader;
-
-typedef HashMap<NativeImagePtr, RefPtr<Texture> > TextureHashMap;
+class SharedGraphicsContext3D;
 
 class GLES2Canvas : public Noncopyable {
 public:
-    GLES2Canvas(GraphicsContext3D*, const IntSize&);
+    GLES2Canvas(SharedGraphicsContext3D*, DrawingBuffer*, const IntSize&);
     ~GLES2Canvas();
 
     void fillRect(const FloatRect&, const Color&, ColorSpace);
@@ -74,28 +72,33 @@ public:
     // non-standard functions
     // These are not standard GraphicsContext functions, and should be pushed
     // down into a PlatformContextGLES2 at some point.
+    void drawTexturedRect(unsigned texture, const IntSize& textureSize, const FloatRect& srcRect, const FloatRect& dstRect, ColorSpace, CompositeOperator);
     void drawTexturedRect(Texture*, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform&, float alpha, ColorSpace, CompositeOperator);
     void drawTexturedRect(Texture*, const FloatRect& srcRect, const FloatRect& dstRect, ColorSpace, CompositeOperator);
-    GraphicsContext3D* context() { return m_context; }
     Texture* createTexture(NativeImagePtr, Texture::Format, int width, int height);
     Texture* getTexture(NativeImagePtr);
 
+    SharedGraphicsContext3D* context() const { return m_context; }
+
+    void bindFramebuffer();
+
+    DrawingBuffer* drawingBuffer() const { return m_drawingBuffer; }
+
 private:
     void drawTexturedRectTile(Texture* texture, int tile, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform&, float alpha);
+    void drawQuad(const IntSize& textureSize, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform&, float alpha);
     void applyCompositeOperator(CompositeOperator);
     void checkGLError(const char* header);
-    unsigned getQuadVertices();
 
-    GraphicsContext3D* m_context;
+    IntSize m_size;
+
+    SharedGraphicsContext3D* m_context;
+    DrawingBuffer* m_drawingBuffer;
+
     struct State;
     WTF::Vector<State> m_stateStack;
     State* m_state;
-    unsigned m_quadVertices;
-    OwnPtr<SolidFillShader> m_solidFillShader;
-    OwnPtr<TexShader> m_texShader;
     AffineTransform m_flipMatrix;
-    TextureHashMap m_textures;
-    CompositeOperator m_lastCompositeOp; // This is the one last set, not necessarily the one in the state stack.
 };
 
 }

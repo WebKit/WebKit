@@ -33,12 +33,13 @@
 #include "PlatformContextSkia.h"
 
 #include "AffineTransform.h"
-#include "CanvasLayerChromium.h"
+#include "DrawingBuffer.h"
 #include "GLES2Canvas.h"
 #include "GraphicsContext.h"
 #include "GraphicsContext3D.h"
 #include "ImageBuffer.h"
 #include "NativeImageSkia.h"
+#include "SharedGraphicsContext3D.h"
 #include "SkiaUtils.h"
 #include "Texture.h"
 #include "TilingData.h"
@@ -216,12 +217,8 @@ PlatformContextSkia::PlatformContextSkia(skia::PlatformCanvas* canvas)
 
 PlatformContextSkia::~PlatformContextSkia()
 {
-#if USE(ACCELERATED_COMPOSITING)
-    if (m_gpuCanvas) {
-        CanvasLayerChromium* layer = static_cast<CanvasLayerChromium*>(m_gpuCanvas->context()->platformLayer());
-        layer->setPrepareTextureCallback(0);
-    }
-#endif
+    if (m_gpuCanvas)
+        m_gpuCanvas->drawingBuffer()->setWillPublishCallback(0);
 }
 
 void PlatformContextSkia::setCanvas(skia::PlatformCanvas* canvas)
@@ -678,33 +675,33 @@ void PlatformContextSkia::applyAntiAliasedClipPaths(WTF::Vector<SkPath>& paths)
     m_canvas->restore();
 }
 
-#if USE(ACCELERATED_COMPOSITING)
-class PrepareTextureCallbackImpl : public CanvasLayerChromium::PrepareTextureCallback {
+class WillPublishCallbackImpl : public DrawingBuffer::WillPublishCallback {
 public:
-    static PassOwnPtr<PrepareTextureCallbackImpl> create(PlatformContextSkia* pcs)
+    static PassOwnPtr<WillPublishCallback> create(PlatformContextSkia* pcs)
     {
-        return new PrepareTextureCallbackImpl(pcs);
+        return adoptPtr(new WillPublishCallbackImpl(pcs));
     }
 
-    virtual void willPrepareTexture()
+    virtual void willPublish()
     {
         m_pcs->prepareForHardwareDraw();
     }
+
 private:
-    explicit PrepareTextureCallbackImpl(PlatformContextSkia* pcs) : m_pcs(pcs) {}
+    explicit WillPublishCallbackImpl(PlatformContextSkia* pcs)
+        : m_pcs(pcs)
+    {
+    }
+
     PlatformContextSkia* m_pcs;
 };
-#endif
 
-void PlatformContextSkia::setGraphicsContext3D(GraphicsContext3D* context, const WebCore::IntSize& size)
+void PlatformContextSkia::setSharedGraphicsContext3D(SharedGraphicsContext3D* context, DrawingBuffer* drawingBuffer, const WebCore::IntSize& size)
 {
     m_useGPU = true;
-    m_gpuCanvas = new GLES2Canvas(context, size);
+    m_gpuCanvas = new GLES2Canvas(context, drawingBuffer, size);
     m_uploadTexture.clear();
-#if USE(ACCELERATED_COMPOSITING)
-    CanvasLayerChromium* layer = static_cast<CanvasLayerChromium*>(context->platformLayer());
-    layer->setPrepareTextureCallback(PrepareTextureCallbackImpl::create(this));
-#endif
+    drawingBuffer->setWillPublishCallback(WillPublishCallbackImpl::create(this));
 }
 
 void PlatformContextSkia::prepareForSoftwareDraw() const
@@ -784,9 +781,9 @@ void PlatformContextSkia::uploadSoftwareToHardware(CompositeOperator op) const
 {
     const SkBitmap& bitmap = m_canvas->getDevice()->accessBitmap(false);
     SkAutoLockPixels lock(bitmap);
-    GraphicsContext3D* context = m_gpuCanvas->context();
+    SharedGraphicsContext3D* context = m_gpuCanvas->context();
     if (!m_uploadTexture || m_uploadTexture->tiles().totalSizeX() < bitmap.width() || m_uploadTexture->tiles().totalSizeY() < bitmap.height())
-        m_uploadTexture = Texture::create(context, Texture::BGRA8, bitmap.width(), bitmap.height());
+        m_uploadTexture = context->createTexture(Texture::BGRA8, bitmap.width(), bitmap.height());
     m_uploadTexture->load(bitmap.getPixels());
     IntRect rect(0, 0, bitmap.width(), bitmap.height());
     AffineTransform identity;
@@ -799,7 +796,8 @@ void PlatformContextSkia::readbackHardwareToSoftware() const
     SkAutoLockPixels lock(bitmap);
     int width = bitmap.width(), height = bitmap.height();
     OwnArrayPtr<uint32_t> buf(new uint32_t[width]);
-    GraphicsContext3D* context = m_gpuCanvas->context();
+    SharedGraphicsContext3D* context = m_gpuCanvas->context();
+    m_gpuCanvas->bindFramebuffer();
     // Flips the image vertically.
     for (int y = 0; y < height; ++y) {
         uint32_t* pixels = bitmap.getAddr32(0, y);

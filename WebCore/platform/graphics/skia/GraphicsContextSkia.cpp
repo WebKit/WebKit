@@ -1240,14 +1240,14 @@ void GraphicsContext::translate(float w, float h)
                                            WebCoreFloatToSkScalar(h));
 }
 
-void GraphicsContext::setGraphicsContext3D(GraphicsContext3D* context3D, const IntSize& size)
-{
-    platformContext()->setGraphicsContext3D(context3D, size);
-}
-
 void GraphicsContext::syncSoftwareCanvas()
 {
     platformContext()->syncSoftwareCanvas();
+}
+
+void GraphicsContext::setSharedGraphicsContext3D(SharedGraphicsContext3D* context, DrawingBuffer* framebuffer, const IntSize& size)
+{
+    platformContext()->setSharedGraphicsContext3D(context, framebuffer, size);
 }
 
 }  // namespace WebCore

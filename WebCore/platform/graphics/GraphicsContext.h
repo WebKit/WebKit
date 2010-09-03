@@ -123,16 +123,17 @@ namespace WebCore {
     const int cMisspellingLinePatternGapWidth = 1;
 
     class AffineTransform;
+    class DrawingBuffer;
     class Font;
     class Generator;
     class Gradient;
-    class GraphicsContext3D;
     class GraphicsContextPlatformPrivate;
     class GraphicsContextPrivate;
     class ImageBuffer;
     class KURL;
     class Path;
     class Pattern;
+    class SharedGraphicsContext3D;
     class TextRun;
 
     // These bits can be ORed together for a total of 8 possible text drawing modes.
@@ -421,7 +422,7 @@ namespace WebCore {
         pattern getHaikuStrokeStyle();
 #endif
 
-        void setGraphicsContext3D(GraphicsContext3D*, const IntSize&);
+        void setSharedGraphicsContext3D(SharedGraphicsContext3D*, DrawingBuffer*, const IntSize&);
         void syncSoftwareCanvas();
 
     private:

@@ -25,9 +25,6 @@
 
 #include "config.h"
 #include "CanvasRenderingContext.h"
-#if ENABLE(ACCELERATED_2D_CANVAS) || ENABLE(3D_CANVAS)
-#include "GraphicsContext3D.h"
-#endif
 #include "HTMLCanvasElement.h"
 
 namespace WebCore {
@@ -45,15 +42,6 @@ void CanvasRenderingContext::ref()
 void CanvasRenderingContext::deref()
 {
     m_canvas->deref(); 
-}
-
-bool CanvasRenderingContext::paintsIntoCanvasBuffer() const
-{
-#if ENABLE(ACCELERATED_2D_CANVAS) || ENABLE(3D_CANVAS)
-    if (GraphicsContext3D* context3D = graphicsContext3D())
-        return context3D->paintsIntoCanvasBuffer();
-#endif
-    return true;
 }
 
 } // namespace WebCore

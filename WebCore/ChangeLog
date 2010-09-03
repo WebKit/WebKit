@@ -1,3 +1,152 @@
+2010-09-03  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Chris Marrin.
+
+        Multiple accelerated 2D canvases should be able to use the same GraphicsContext3D
+        https://bugs.webkit.org/show_bug.cgi?id=44926
+
+        This allows many accelerated 2d canvases to render using a single underlying GraphicsContext3D.
+        It introduces a new class SharedGraphicsContext3D that manages several callers.  This class could
+        also cache the current state to avoid issuing redundant calls, although in this first cut it doesn't.
+        The SharedGraphicsContext3D is provided through the ChromeClient so that its lifetime can be tied to that
+        of the platform-specific compositor infrastructure.
+
+        Accelerated 2d canvases maintain a reference to a SharedGraphicsContext3D and have ownership of a CanvasFramebuffer,
+        which represents the canvas's rendering target.  The compositing layer for an accelerated 2d canvas is
+        aware only of the canvas's CanvasFramebuffer.  This means that WebGL and 2d canvases are no longer treated
+        as the same time of layer by the compositor.
+
+        Covered by existing canvas tests.
+
+        * WebCore.gypi:
+        * html/canvas/CanvasRenderingContext.cpp:
+        * html/canvas/CanvasRenderingContext.h:
+        (WebCore::CanvasRenderingContext::paintsIntoCanvasBuffer):
+        (WebCore::CanvasRenderingContext::platformLayer):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::CanvasRenderingContext2D):
+        (WebCore::CanvasRenderingContext2D::paintsIntoCanvasBuffer):
+        (WebCore::CanvasRenderingContext2D::reset):
+        (WebCore::CanvasRenderingContext2D::didDraw):
+        (WebCore::CanvasRenderingContext2D::platformLayer):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::paintsIntoCanvasBuffer):
+        * html/canvas/WebGLRenderingContext.h:
+        (WebCore::WebGLRenderingContext::graphicsContext3D):
+        (WebCore::WebGLRenderingContext::platformLayer):
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::attachRootGraphicsLayer):
+        (WebCore::EmptyChromeClient::setNeedsOneShotDrawingSynchronization):
+        (WebCore::EmptyChromeClient::scheduleCompositingLayerSync):
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::getSharedGraphicsContext3D):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::setSharedGraphicsContext3D):
+        (WebCore::GraphicsContext::syncSoftwareCanvas):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp: Added.
+        (WebCore::Canvas2DLayerChromium::create):
+        (WebCore::Canvas2DLayerChromium::Canvas2DLayerChromium):
+        (WebCore::Canvas2DLayerChromium::~Canvas2DLayerChromium):
+        (WebCore::Canvas2DLayerChromium::updateContents):
+        (WebCore::Canvas2DLayerChromium::setTextureChanged):
+        (WebCore::Canvas2DLayerChromium::textureId):
+        * platform/graphics/chromium/Canvas2DLayerChromium.h: Added.
+        (WebCore::Canvas2DLayerChromium::drawsContent):
+        * platform/graphics/chromium/CanvasLayerChromium.cpp:
+        (WebCore::CanvasLayerChromium::CanvasLayerChromium):
+        (WebCore::CanvasLayerChromium::~CanvasLayerChromium):
+        (WebCore::CanvasLayerChromium::draw):
+        * platform/graphics/chromium/CanvasLayerChromium.h:
+        * platform/graphics/chromium/DrawingBufferChromium.cpp: Added.
+        (WebCore::generateColorTexture):
+        (WebCore::DrawingBuffer::DrawingBuffer):
+        (WebCore::DrawingBuffer::~DrawingBuffer):
+        (WebCore::DrawingBuffer::publishToPlatformLayer):
+        (WebCore::DrawingBuffer::reset):
+        (WebCore::DrawingBuffer::platformLayer):
+        * platform/graphics/chromium/GLES2Canvas.cpp:
+        (WebCore::GLES2Canvas::GLES2Canvas):
+        (WebCore::GLES2Canvas::~GLES2Canvas):
+        (WebCore::GLES2Canvas::bindFramebuffer):
+        (WebCore::GLES2Canvas::clearRect):
+        (WebCore::GLES2Canvas::fillRect):
+        (WebCore::GLES2Canvas::drawTexturedRect):
+        (WebCore::GLES2Canvas::drawTexturedRectTile):
+        (WebCore::GLES2Canvas::drawQuad):
+        (WebCore::GLES2Canvas::createTexture):
+        (WebCore::GLES2Canvas::getTexture):
+        * platform/graphics/chromium/GLES2Canvas.h:
+        (WebCore::GLES2Canvas::context):
+        (WebCore::GLES2Canvas::drawingBuffer):
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::setContentsToCanvas):
+        * platform/graphics/chromium/GraphicsLayerChromium.h:
+        * platform/graphics/chromium/WebGLLayerChromium.cpp: Added.
+        (WebCore::WebGLLayerChromium::create):
+        (WebCore::WebGLLayerChromium::WebGLLayerChromium):
+        (WebCore::WebGLLayerChromium::updateContents):
+        (WebCore::WebGLLayerChromium::setContext):
+        * platform/graphics/chromium/WebGLLayerChromium.h: Added.
+        (WebCore::WebGLLayerChromium::drawsContent):
+        * platform/graphics/gpu/DrawingBuffer.cpp: Added.
+        (WebCore::DrawingBuffer::create):
+        (WebCore::DrawingBuffer::bind):
+        (WebCore::DrawingBuffer::setWillPublishCallback):
+        * platform/graphics/gpu/DrawingBuffer.h: Added.
+        (WebCore::DrawingBuffer::size):
+        * platform/graphics/gpu/SharedGraphicsContext3D.cpp: Added.
+        (WebCore::SharedGraphicsContext3D::create):
+        (WebCore::SharedGraphicsContext3D::SharedGraphicsContext3D):
+        (WebCore::SharedGraphicsContext3D::~SharedGraphicsContext3D):
+        (WebCore::SharedGraphicsContext3D::makeContextCurrent):
+        (WebCore::SharedGraphicsContext3D::scissor):
+        (WebCore::SharedGraphicsContext3D::enable):
+        (WebCore::SharedGraphicsContext3D::disable):
+        (WebCore::SharedGraphicsContext3D::clearColor):
+        (WebCore::SharedGraphicsContext3D::clear):
+        (WebCore::SharedGraphicsContext3D::drawArrays):
+        (WebCore::SharedGraphicsContext3D::getError):
+        (WebCore::SharedGraphicsContext3D::getIntegerv):
+        (WebCore::SharedGraphicsContext3D::createFramebuffer):
+        (WebCore::SharedGraphicsContext3D::createTexture):
+        (WebCore::SharedGraphicsContext3D::deleteFramebuffer):
+        (WebCore::SharedGraphicsContext3D::deleteTexture):
+        (WebCore::SharedGraphicsContext3D::framebufferTexture2D):
+        (WebCore::SharedGraphicsContext3D::texParameteri):
+        (WebCore::SharedGraphicsContext3D::texImage2D):
+        (WebCore::SharedGraphicsContext3D::texSubImage2D):
+        (WebCore::SharedGraphicsContext3D::readPixels):
+        (WebCore::SharedGraphicsContext3D::supportsBGRA):
+        (WebCore::SharedGraphicsContext3D::getTexture):
+        (WebCore::SharedGraphicsContext3D::applyCompositeOperator):
+        (WebCore::SharedGraphicsContext3D::useQuadVertices):
+        (WebCore::SharedGraphicsContext3D::setActiveTexture):
+        (WebCore::SharedGraphicsContext3D::bindTexture):
+        (WebCore::SharedGraphicsContext3D::useFillSolidProgram):
+        (WebCore::SharedGraphicsContext3D::useTextureProgram):
+        (WebCore::SharedGraphicsContext3D::bindFramebuffer):
+        (WebCore::SharedGraphicsContext3D::setViewport):
+        (WebCore::SharedGraphicsContext3D::paintsIntoCanvasBuffer):
+        * platform/graphics/gpu/SharedGraphicsContext3D.h: Added.
+        * platform/graphics/gpu/Texture.cpp:
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::syncSoftwareCanvas):
+        (WebCore::GraphicsContext::setSharedGraphicsContext3D):
+        * platform/graphics/skia/ImageSkia.cpp:
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::~PlatformContextSkia):
+        (WebCore::WillPublishCallbackImpl::create):
+        (WebCore::WillPublishCallbackImpl::willPublish):
+        (WebCore::WillPublishCallbackImpl::WillPublishCallbackImpl):
+        (WebCore::PlatformContextSkia::setSharedGraphicsContext3D):
+        (WebCore::PlatformContextSkia::uploadSoftwareToHardware):
+        (WebCore::PlatformContextSkia::readbackHardwareToSoftware):
+        * platform/graphics/skia/PlatformContextSkia.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration):
+
 2010-09-03  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.

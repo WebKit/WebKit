@@ -1,3 +1,24 @@
+2010-09-03  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Chris Marrin.
+
+        Multiple accelerated 2D canvases should be able to use the same GraphicsContext3D
+        https://bugs.webkit.org/show_bug.cgi?id=44926
+
+        Adds a SharedContext3D to WebViewImpl. The SharedContext3D has to live on WebViewImpl to be
+        tied to the lifetime of the compositor context.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::getSharedGraphicsContext3D):
+        * src/ChromeClientImpl.h:
+        * src/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3DInternal::initialize):
+        (WebCore::GraphicsContext3DInternal::platformLayer):
+        (WebCore::GraphicsContext3D::platformLayer):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::getSharedGraphicsContext3D):
+        * src/WebViewImpl.h:
+
 2010-08-31  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.

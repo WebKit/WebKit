@@ -34,11 +34,11 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "LayerRendererChromium.h"
 
-#include "CanvasLayerChromium.h"
-#include "ContentLayerChromium.h"
+#include "Canvas2DLayerChromium.h"
 #include "GLES2Context.h"
 #include "LayerChromium.h"
 #include "NotImplemented.h"
+#include "WebGLLayerChromium.h"
 #if PLATFORM(SKIA)
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"

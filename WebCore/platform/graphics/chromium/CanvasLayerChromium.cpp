@@ -34,11 +34,13 @@
 
 #include "CanvasLayerChromium.h"
 
-#include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
+
 #include <GLES2/gl2.h>
 
 namespace WebCore {
+
+unsigned CanvasLayerChromium::m_shaderProgramId = 0;
 
 CanvasLayerChromium::SharedValues::SharedValues()
     : m_canvasShaderProgram(0)
@@ -93,49 +95,15 @@ CanvasLayerChromium::SharedValues::~SharedValues()
         GLC(glDeleteProgram(m_canvasShaderProgram));
 }
 
-PassRefPtr<CanvasLayerChromium> CanvasLayerChromium::create(GraphicsLayerChromium* owner)
-{
-    return adoptRef(new CanvasLayerChromium(owner));
-}
-
 CanvasLayerChromium::CanvasLayerChromium(GraphicsLayerChromium* owner)
     : LayerChromium(owner)
-    , m_context(0)
+    , m_textureChanged(true)
     , m_textureId(0)
-    , m_textureChanged(false)
 {
 }
 
-void CanvasLayerChromium::updateContents()
+CanvasLayerChromium::~CanvasLayerChromium()
 {
-    ASSERT(m_context);
-    if (m_textureChanged) {
-        glBindTexture(GL_TEXTURE_2D, m_textureId);
-        // Set the min-mag filters to linear and wrap modes to GL_CLAMP_TO_EDGE
-        // to get around NPOT texture limitations of GLES.
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        m_textureChanged = false;
-    }
-    // Update the contents of the texture used by the compositor.
-    if (m_contentsDirty) {
-        if (m_prepareTextureCallback)
-            m_prepareTextureCallback->willPrepareTexture();
-        m_context->prepareTexture();
-        m_contentsDirty = false;
-    }
-}
-
-void CanvasLayerChromium::setContext(const GraphicsContext3D* context)
-{
-    m_context = const_cast<GraphicsContext3D*>(context);
-
-    unsigned int textureId = m_context->platformTexture();
-    if (textureId != m_textureId)
-        m_textureChanged = true;
-    m_textureId = textureId;
 }
 
 void CanvasLayerChromium::draw()
@@ -150,6 +118,7 @@ void CanvasLayerChromium::draw()
     drawTexturedQuad(layerRenderer()->projectionMatrix(), drawTransform(),
                      bounds().width(), bounds().height(), drawOpacity(),
                      sv->shaderMatrixLocation(), sv->shaderAlphaLocation());
+
 }
 
 }

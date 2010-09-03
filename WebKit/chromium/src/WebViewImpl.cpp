@@ -58,6 +58,7 @@
 #include "GLES2Context.h"
 #include "GLES2ContextInternal.h"
 #include "GraphicsContext.h"
+#include "GraphicsContext3D.h"
 #include "HTMLInputElement.h"
 #include "HTMLMediaElement.h"
 #include "HitTestResult.h"
@@ -86,6 +87,7 @@
 #include "SecurityOrigin.h"
 #include "SelectionController.h"
 #include "Settings.h"
+#include "SharedGraphicsContext3D.h"
 #include "Timer.h"
 #include "TypingCommand.h"
 #include "UserGestureIndicator.h"
@@ -2215,14 +2217,15 @@ PassOwnPtr<GLES2Context> WebViewImpl::getOnscreenGLES2Context()
     return GLES2Context::create(GLES2ContextInternal::create(gles2Context(), false));
 }
 
-PassOwnPtr<GLES2Context> WebViewImpl::getOffscreenGLES2Context()
+SharedGraphicsContext3D* WebViewImpl::getSharedGraphicsContext3D()
 {
-    WebGLES2Context* context = webKitClient()->createGLES2Context();
-    if (!context)
-        return 0;
-    if (!context->initialize(0, gles2Context()))
-        return 0;
-    return GLES2Context::create(GLES2ContextInternal::create(context, true));
+    if (!m_sharedContext3D) {
+        GraphicsContext3D::Attributes attr;
+        OwnPtr<GraphicsContext3D> context = GraphicsContext3D::create(attr, m_page->chrome());
+        m_sharedContext3D = SharedGraphicsContext3D::create(context.release());
+    }
+
+    return m_sharedContext3D.get();
 }
 
 // Returns the GLES2 context associated with this View. If one doesn't exist

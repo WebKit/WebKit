@@ -329,10 +329,10 @@ public:
     // Offscreen contexts render offscreen but can share resources with the
     // onscreen context and thus can be composited.
     PassOwnPtr<WebCore::GLES2Context> getOnscreenGLES2Context();
-    PassOwnPtr<WebCore::GLES2Context> getOffscreenGLES2Context();
 
     // Returns an onscreen context
     virtual WebGLES2Context* gles2Context();
+    virtual WebCore::SharedGraphicsContext3D* getSharedGraphicsContext3D();
 
     WebCore::PopupContainer* selectPopup() const { return m_selectPopup.get(); }
 
@@ -520,6 +520,8 @@ private:
 #endif
 
     OwnPtr<WebGLES2Context> m_gles2Context;
+
+    RefPtr<WebCore::SharedGraphicsContext3D> m_sharedContext3D;
 
     OwnPtr<DeviceOrientationClientProxy> m_deviceOrientationClientProxy;
 };

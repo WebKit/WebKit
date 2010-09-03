@@ -170,6 +170,11 @@ void WebGLRenderingContext::paintRenderingResultsToCanvas()
     m_context->paintRenderingResultsToCanvas(this);
 }
 
+bool WebGLRenderingContext::paintsIntoCanvasBuffer() const
+{
+    return m_context->paintsIntoCanvasBuffer();
+}
+
 void WebGLRenderingContext::reshape(int width, int height)
 {
     if (m_needsUpdate) {

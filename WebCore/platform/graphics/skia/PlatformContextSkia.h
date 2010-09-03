@@ -35,7 +35,6 @@
 #include "Noncopyable.h"
 
 #include "SkDashPathEffect.h"
-#include "SkDeque.h"
 #include "SkDrawLooper.h"
 #include "SkPaint.h"
 #include "SkPath.h"
@@ -46,9 +45,10 @@
 namespace WebCore {
 
 enum CompositeOperator;
+class DrawingBuffer;
 class GLES2Canvas;
-class Texture;
 class GraphicsContext3D;
+class Texture;
 
 // This class holds the platform-specific state for GraphicsContext. We put
 // most of our Skia wrappers on this class. In theory, a lot of this stuff could
@@ -181,7 +181,7 @@ public:
     void clearImageResamplingHint();
     bool hasImageResamplingHint() const;
     bool useGPU() { return m_useGPU; }
-    void setGraphicsContext3D(GraphicsContext3D*, const IntSize&);
+    void setSharedGraphicsContext3D(SharedGraphicsContext3D*, DrawingBuffer*, const IntSize&);
     GLES2Canvas* gpuCanvas() const { return m_gpuCanvas.get(); }
 
     // Call these before making a call that manipulates the underlying

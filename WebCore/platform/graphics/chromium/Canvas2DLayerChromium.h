@@ -29,51 +29,36 @@
  */
 
 
-#ifndef CanvasLayerChromium_h
-#define CanvasLayerChromium_h
+#ifndef Canvas2DLayerChromium_h
+#define Canvas2DLayerChromium_h
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "LayerChromium.h"
+#include "CanvasLayerChromium.h"
 
 namespace WebCore {
 
-// Base class for WebGL and accelerated 2d canvases.
-class CanvasLayerChromium : public LayerChromium {
+class DrawingBuffer;
+
+// A layer containing an accelerated 2d canvas
+class Canvas2DLayerChromium : public CanvasLayerChromium {
 public:
-    virtual ~CanvasLayerChromium();
+    static PassRefPtr<Canvas2DLayerChromium> create(DrawingBuffer*, GraphicsLayerChromium* owner);
+    virtual ~Canvas2DLayerChromium();
+    virtual bool drawsContent() { return true; }
+    virtual void updateContents();
 
-    virtual void draw();
-
-    class SharedValues {
-    public:
-        SharedValues();
-        ~SharedValues();
-
-        unsigned canvasShaderProgram() const { return m_canvasShaderProgram; }
-        int shaderSamplerLocation() const { return m_shaderSamplerLocation; }
-        int shaderMatrixLocation() const { return m_shaderMatrixLocation; }
-        int shaderAlphaLocation() const { return m_shaderAlphaLocation; }
-        bool initialized() const { return m_initialized; }
-
-    private:
-        unsigned m_canvasShaderProgram;
-        int m_shaderSamplerLocation;
-        int m_shaderMatrixLocation;
-        int m_shaderAlphaLocation;
-        bool m_initialized;
-    };
-
-protected:
-    explicit CanvasLayerChromium(GraphicsLayerChromium* owner);
-    bool m_textureChanged;
-    unsigned m_textureId;
+    void setTextureChanged();
+    unsigned textureId() const;
 
 private:
+    explicit Canvas2DLayerChromium(DrawingBuffer*, GraphicsLayerChromium* owner);
+    DrawingBuffer* m_drawingBuffer;
+
     static unsigned m_shaderProgramId;
 };
 
 }
 #endif // USE(ACCELERATED_COMPOSITING)
 
-#endif // CanvasLayerChromium_h
+#endif
