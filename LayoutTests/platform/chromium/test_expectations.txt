@@ -3158,3 +3158,6 @@ BUGWK45184 WIN : inspector/elements-panel-xhtml-structure.xhtml = TIMEOUT
 
 // New test in r66743
 BUGWK25086 LINUX : editing/style/push-down-implicit-styles-around-list.html = TEXT
+
+// New test in r66740
+BUGWK45193 LINUX : fast/text/decomposed-after-stacked-diacritics.html = TEXT

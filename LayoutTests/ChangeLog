@@ -2,6 +2,14 @@
 
         Unreviewed.
 
+        Add failing test (in Chromium Linux) fast/text/decomposed-after-stacked-diacritics.html to test_expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-09-03  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed.
+
         Add failing test (chromium linux) editing/style/push-down-implicit-styles-around-list.html to test_expectations.
 
         * platform/chromium/test_expectations.txt:
