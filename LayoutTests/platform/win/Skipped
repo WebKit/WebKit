@@ -878,6 +878,10 @@ canvas/philip
 # https://bugs.webkit.org/show_bug.cgi?id=39104
 editing/spelling/context-menu-suggestions.html
 
+# textInputController.hasSpellingMarkers() is not implemented.
+editing/spelling/spelling-contenteditable.html
+editing/spelling/spelling-textarea.html
+
 # IndexedDB is not yet enabled.
 storage/indexeddb
 

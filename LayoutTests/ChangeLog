@@ -1,3 +1,24 @@
+2010-09-03  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Adds textInputController.hasSpellingMarker() to avoid using pixel tests for spellchecking tests
+        and implements it for Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=41832
+
+        * editing/spelling/spelling-contenteditable-expected.txt: Added the expected result for
+        spelling-contenteditable.html.
+        * editing/spelling/spelling-contenteditable.html: Added a text test of spellcheker APIs
+        for contenteditable <div> elements.
+        * editing/spelling/spelling-textarea-expected.txt: Added the expected result for spelling-textarea.html.
+        * editing/spelling/spelling-textarea.html: Added a text test of spellchecker APIs
+        for <textarea> elements.
+        * platform/chromium/test_expectations.txt: Skipped the new tests because
+        textInputController.hasSpelingMarker() is not implemented.
+        * platform/gtk/Skipped: ditto.
+        * platform/qt/Skipped: ditto.
+        * platform/win/Skipped: ditto.
+
 2010-09-03  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, updated GTK baselines of a mathml test.

@@ -1,3 +1,16 @@
+2010-09-03  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Adds textInputController.hasSpellingMarker() to avoid using pixel tests for spellchecking tests
+        and implements it for Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=41832
+
+        * WebView/WebFrame.mm: Implemented [WebFrame hasSpellingMarker:length:].
+        (spellingNode):
+        (-[WebFrame hasSpellingMarker:length:]):
+        * WebView/WebFramePrivate.h: Added [WebFrame hasSpellingMarker:length:] so TextInputController can use it.
+
 2010-09-02  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

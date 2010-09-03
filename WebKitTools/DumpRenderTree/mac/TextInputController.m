@@ -33,6 +33,7 @@
 #import <AppKit/NSInputManager.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebFrame.h>
+#import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebScriptObject.h>
@@ -169,7 +170,8 @@
             || aSelector == @selector(characterIndexForPointX:Y:)
             || aSelector == @selector(validAttributesForMarkedText)
             || aSelector == @selector(attributedStringWithString:)
-            || aSelector == @selector(setInputMethodHandler:))
+            || aSelector == @selector(setInputMethodHandler:)
+            || aSelector == @selector(hasSpellingMarker:length:))
         return NO;
     return YES;
 }
@@ -194,6 +196,8 @@
         return @"makeAttributedString"; // just a factory method, doesn't call into NSTextInput
     else if (aSelector == @selector(setInputMethodHandler:))
         return @"setInputMethodHandler"; 
+    else if (aSelector == @selector(hasSpellingMarker:length:))
+        return @"hasSpellingMarker";
 
     return nil;
 }
@@ -425,6 +429,11 @@
     
     inputMethodView = nil;    
     return YES;
+}
+
+- (BOOL)hasSpellingMarker:(int)from length:(int)length
+{
+    return [[webView mainFrame] hasSpellingMarker:from length:length];
 }
 
 @end

@@ -1366,6 +1366,40 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return coreFrame->layerTreeAsText();
 }
 
+static Node* spellingNode(Frame* coreFrame)
+{
+    Node* focusedNode = coreFrame->document()->focusedNode();
+    if (!focusedNode || !focusedNode->renderer())
+        return 0;
+
+    for (const RenderObject* renderer = focusedNode->renderer(); renderer; renderer = renderer->childAt(0)) {
+        if (renderer->isText())
+            return renderer->node();
+    }
+    return 0;
+}
+
+- (BOOL)hasSpellingMarker:(int)from length:(int)length
+{
+    Frame* coreFrame = _private->coreFrame;
+    if (!coreFrame)
+        return NO;
+
+    Node* node = spellingNode(coreFrame);
+    if (!node)
+        return NO;
+
+    unsigned int startOffset = static_cast<unsigned int>(from);
+    unsigned int endOffset = static_cast<unsigned int>(from + length);
+    Vector<DocumentMarker> markers = coreFrame->document()->markers()->markersForNode(node);
+    for (size_t i = 0; i < markers.size(); ++i) {
+        DocumentMarker marker = markers[i];
+        if (marker.startOffset <= startOffset && endOffset <= marker.endOffset && marker.type == DocumentMarker::Spelling)
+            return YES;
+    }
+    return NO;
+}
+
 @end
 
 @implementation WebFrame

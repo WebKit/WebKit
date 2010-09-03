@@ -1,0 +1,39 @@
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js" language="javascript" type="text/javascript"></script>
+<script src=../editing.js language="javascript" type="text/javascript"></script>
+<title>Editing Test</title> 
+</head> 
+<body>
+<p id="description"></p>
+<textarea id="test" cols="80" rows="10"></textarea>
+<div id="console"></div>
+<script language="javascript" type="text/javascript">
+description('This tests we can write text tests for spellcheckers. To test manually, type \'zz \' in the &lt;textarea&gt; element and see they are marked as misspelled.');
+
+function logResult(result) {
+    if (result)
+        testPassed('\'zz\' is marked as misspelled.');
+    else
+        testPassed('\'zz\' is not marked as misspelled.');
+}
+
+if (window.layoutTestController) {
+    // Type the test text 'zz '.
+    document.getElementById('test').focus();
+    typeCharacterCommand('z');
+    typeCharacterCommand('z');
+    typeCharacterCommand(' ');
+
+    // Test the above 'zz' is marked as misspelled. We test it only on platforms that implement
+    // textInputController.hasSpellingMarker() to avoid exceptions.
+    if (textInputController && textInputController.hasSpellingMarker)
+        logResult(textInputController.hasSpellingMarker(0, 2));
+}
+
+var successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

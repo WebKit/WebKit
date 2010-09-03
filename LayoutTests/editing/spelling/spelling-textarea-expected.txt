@@ -1,0 +1,11 @@
+This tests we can write text tests for spellcheckers. To test manually, type 'zz ' in the <textarea> element and see they are marked as misspelled.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+PASS 'zz' is marked as misspelled.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

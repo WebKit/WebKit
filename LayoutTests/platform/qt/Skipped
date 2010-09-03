@@ -2297,6 +2297,10 @@ editing/spelling/spelling-linebreak.html
 editing/spelling/spellcheck-attribute.html
 editing/spelling/spelling.html
 
+# textInputController.hasSpellingMarkers() is not implemented.
+editing/spelling/spelling-contenteditable.html
+editing/spelling/spelling-textarea.html
+
 # ============================================================================= #
 # failing editing/style tests
 # ============================================================================= #
