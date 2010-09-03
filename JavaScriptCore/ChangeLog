@@ -1,3 +1,21 @@
+2010-09-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45135
+        <rdar://problem/7823714> TCMalloc_PageHeap doesn't hold a mutex while manipulating shared data
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::initializeScavenger): Make sure to create a non-recursive mutex
+        regardless of platform default, so that we can assert that it's held (this is for platforms
+        that don't have libdispatch).
+        (WTF::TCMalloc_PageHeap::signalScavenger): Assert that the mutex is held, so we can look
+        at m_scavengeThreadActive. For platforms that have libdispatch, assert that pageheap_lock
+        is held.
+        (WTF::TCMalloc_PageHeap::periodicScavenge): Make sure that pageheap_lock is held before
+        manipulating m_scavengeThreadActive. Otherwise, there is an obvious race condition, and we
+        can make unbalanced calls to dispatch_resume().
+
 2010-09-03  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Martin Robinson.

@@ -1492,11 +1492,23 @@ void TCMalloc_PageHeap::init()
 
 void TCMalloc_PageHeap::initializeScavenger()
 {
-  pthread_mutex_init(&m_scavengeMutex, 0);
-  pthread_cond_init(&m_scavengeCondition, 0);
-  m_scavengeThreadActive = true;
-  pthread_t thread;
-  pthread_create(&thread, 0, runScavengerThread, this);
+    // Create a non-recursive mutex.
+#if PTHREAD_MUTEX_NORMAL == PTHREAD_MUTEX_DEFAULT
+    pthread_mutex_init(&m_scavengeMutex, 0);
+#else
+    pthread_mutexattr_t attr;
+    pthread_mutexattr_init(&attr);
+    pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_NORMAL);
+
+    pthread_mutex_init(&m_scavengeMutex, &attr);
+
+    pthread_mutexattr_destroy(&attr);
+#endif
+
+    pthread_cond_init(&m_scavengeCondition, 0);
+    m_scavengeThreadActive = true;
+    pthread_t thread;
+    pthread_create(&thread, 0, runScavengerThread, this);
 }
 
 void* TCMalloc_PageHeap::runScavengerThread(void* context)
@@ -1510,8 +1522,10 @@ void* TCMalloc_PageHeap::runScavengerThread(void* context)
 
 ALWAYS_INLINE void TCMalloc_PageHeap::signalScavenger()
 {
-  if (!m_scavengeThreadActive && shouldScavenge())
-    pthread_cond_signal(&m_scavengeCondition);
+    // m_scavengeMutex should be held before accessing m_scavengeThreadActive.
+    ASSERT(pthread_mutex_trylock(m_scavengeMutex));
+    if (!m_scavengeThreadActive && shouldScavenge())
+        pthread_cond_signal(&m_scavengeCondition);
 }
 
 #else // !HAVE(DISPATCH_H)
@@ -1528,10 +1542,11 @@ void TCMalloc_PageHeap::initializeScavenger()
 
 ALWAYS_INLINE void TCMalloc_PageHeap::signalScavenger()
 {
-  if (!m_scavengingScheduled && shouldScavenge()) {
-    m_scavengingScheduled = true;
-    dispatch_resume(m_scavengeTimer);
-  }
+    ASSERT(IsHeld(pageheap_lock));
+    if (!m_scavengingScheduled && shouldScavenge()) {
+        m_scavengingScheduled = true;
+        dispatch_resume(m_scavengeTimer);
+    }
 }
 
 #endif
@@ -2397,15 +2412,13 @@ void TCMalloc_PageHeap::scavengerThread()
 
 void TCMalloc_PageHeap::periodicScavenge()
 {
-  {
     SpinLockHolder h(&pageheap_lock);
     pageheap->scavenge();
-  }
 
-  if (!shouldScavenge()) {
-    m_scavengingScheduled = false;
-    dispatch_suspend(m_scavengeTimer);
-  }
+    if (!shouldScavenge()) {
+        m_scavengingScheduled = false;
+        dispatch_suspend(m_scavengeTimer);
+    }
 }
 #endif // HAVE(DISPATCH_H)
 
