@@ -1,3 +1,11 @@
+2010-09-03  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed.
+
+        Add flaky test inspector/dom-breakpoints.html to test_expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-03  Jian Li  <jianli@chromium.org>
 
         Reviewed by Darin Adler.
