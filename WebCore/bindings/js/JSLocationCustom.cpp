@@ -27,8 +27,6 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "JSBinding.h"
-#include "JSBindingState.h"
 #include "JSDOMBinding.h"
 #include "JSDOMWindowCustom.h"
 #include "KURL.h"
@@ -188,8 +186,12 @@ void JSLocation::defineGetter(ExecState* exec, const Identifier& propertyName, J
 
 static void navigateIfAllowed(ExecState* exec, Frame* frame, const KURL& url, bool lockHistory, bool lockBackForwardList)
 {
-    JSBindingState state(exec);
-    JSBinding::Frame::navigateIfAllowed(&state, frame, url, lockHistory, lockBackForwardList);
+    Frame* lexicalFrame = toLexicalFrame(exec);
+    if (!lexicalFrame)
+        return;
+
+    if (!protocolIsJavaScript(url) || allowsAccessFromFrame(exec, frame))
+        frame->redirectScheduler()->scheduleLocationChange(url.string(), lexicalFrame->loader()->outgoingReferrer(), lockHistory, lockBackForwardList, processingUserGesture());
 }
 
 void JSLocation::setHref(ExecState* exec, JSValue value)
@@ -301,8 +303,18 @@ void JSLocation::setHash(ExecState* exec, JSValue value)
 
 JSValue JSLocation::replace(ExecState* exec)
 {
-    JSBindingState state(exec);
-    JSBinding::Location::replace(&state, impl(), ustringToString(exec->argument(0).toString(exec)));
+    Frame* frame = impl()->frame();
+    if (!frame)
+        return jsUndefined();
+
+    KURL url = completeURL(exec, ustringToString(exec->argument(0).toString(exec)));
+    if (url.isNull())
+        return jsUndefined();
+
+    if (!shouldAllowNavigation(exec, frame))
+        return jsUndefined();
+
+    navigateIfAllowed(exec, frame, url, true, true);
     return jsUndefined();
 }
 

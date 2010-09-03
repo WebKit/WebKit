@@ -9,7 +9,6 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/accessibility \
 	-I$(srcdir)/WebCore/bindings/generic \
 	-I$(srcdir)/WebCore/bindings/js \
-	-I$(srcdir)/WebCore/bindings/js/specialization \
 	-I$(srcdir)/WebCore/bindings/gobject \
 	-I$(srcdir)/WebCore/bridge \
 	-I$(srcdir)/WebCore/bridge/c \
@@ -624,12 +623,6 @@ webcore_sources += \
 	WebCore/accessibility/AccessibilityTableRow.h \
 	WebCore/bindings/generic/ActiveDOMCallback.cpp \
 	WebCore/bindings/generic/ActiveDOMCallback.h \
-	WebCore/bindings/generic/BindingFrame.h \
-	WebCore/bindings/generic/BindingLocation.h \
-	WebCore/bindings/generic/BindingSecurity.h \
-	WebCore/bindings/generic/BindingSecurityBase.cpp \
-	WebCore/bindings/generic/BindingSecurityBase.h \
-	WebCore/bindings/generic/GenericBinding.h \
 	WebCore/bindings/generic/RuntimeEnabledFeatures.cpp \
 	WebCore/bindings/generic/RuntimeEnabledFeatures.h \
 	WebCore/bindings/js/CachedScriptSourceProvider.h \
@@ -803,8 +796,6 @@ webcore_sources += \
 	WebCore/bindings/js/SerializedScriptValue.h \
 	WebCore/bindings/js/StringSourceProvider.h \
 	WebCore/bindings/js/WebCoreJSClientData.h \
-	WebCore/bindings/js/specialization/JSBindingState.cpp \
-	WebCore/bindings/js/specialization/JSBindingState.h \
 	WebCore/bindings/ScriptControllerBase.cpp \
 	WebCore/bindings/ScriptControllerBase.h \
 	WebCore/bridge/Bridge.h \

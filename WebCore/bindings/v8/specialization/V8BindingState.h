@@ -60,9 +60,6 @@ public:
 
     bool processingUserGesture();
 
-    // FIXME: This should be shared in BindingSecurity
-    bool allowsAccessFromFrame(Frame*);
-
 private:
     explicit State() {}
     ~State();

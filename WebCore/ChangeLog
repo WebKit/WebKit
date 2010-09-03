@@ -1,3 +1,44 @@
+2010-09-03  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r66770.
+        http://trac.webkit.org/changeset/66770
+        https://bugs.webkit.org/show_bug.cgi?id=45200
+
+        Broke Windows in a way I can't figure out now to fix
+        (Requested by abarth on #webkit).
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/generic/BindingDOMWindow.h:
+        (WebCore::::completeURL):
+        * bindings/generic/BindingFrame.h: Removed.
+        * bindings/generic/BindingLocation.h: Removed.
+        * bindings/generic/GenericBinding.h:
+        * bindings/js/JSBinding.h: Removed.
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::shouldAllowNavigation):
+        (WebCore::toLexicalFrame):
+        (WebCore::toDynamicFrame):
+        (WebCore::processingUserGesture):
+        (WebCore::completeURL):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::navigateIfAllowed):
+        (WebCore::JSLocation::replace):
+        * bindings/js/specialization/JSBindingState.cpp: Removed.
+        * bindings/js/specialization/JSBindingState.h: Removed.
+        * bindings/v8/V8Binding.h:
+        * bindings/v8/V8Utilities.cpp:
+        (WebCore::completeURL):
+        (WebCore::navigateIfAllowed):
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        (WebCore::V8Location::replaceCallback):
+        * bindings/v8/specialization/V8BindingState.cpp:
+        * bindings/v8/specialization/V8BindingState.h:
+
 2010-09-03  Jian Li  <jianli@chromium.org>
 
         Reviewed by Darin Adler.

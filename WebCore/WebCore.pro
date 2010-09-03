@@ -184,7 +184,6 @@ WEBCORE_INCLUDEPATH = \
     $$PWD/bindings \
     $$PWD/bindings/generic \
     $$PWD/bindings/js \
-    $$PWD/bindings/js/specialization \
     $$PWD/bridge \
     $$PWD/bridge/c \
     $$PWD/bridge/jsc \
@@ -393,7 +392,6 @@ SOURCES += \
     bindings/js/ScriptValue.cpp \
     bindings/js/ScheduledAction.cpp \
     bindings/js/SerializedScriptValue.cpp \
-    bindings/js/specialization/JSBindingState.cpp \
     bindings/ScriptControllerBase.cpp \
     bridge/IdentifierRep.cpp \
     bridge/NP_jsobject.cpp \

@@ -65,6 +65,9 @@ public:
                                     const String& frameName,
                                     const WindowFeatures& rawFeatures);
 
+    // FIXME: There should be a place for generic binding utilities.
+    static KURL completeURL(State<Binding>*, const String& relativeURL);
+
 private:
     // Horizontal and vertical offset, from the parent content area,
     // around newly opened popups that don't specify a location.
@@ -263,6 +266,18 @@ WebCore::DOMWindow* BindingDOMWindow<Binding>::open(State<Binding>* state,
         return 0;
 
     return frame->domWindow();
+}
+
+template <class Binding>
+KURL BindingDOMWindow<Binding>::completeURL(State<Binding>* state,
+                                            const String& relativeURL)
+{
+    // For historical reasons, we need to complete the URL using the
+    // dynamic frame.
+    Frame* frame = state->getFirstFrame();
+    if (!frame)
+        return KURL();
+    return frame->loader()->completeURL(relativeURL);
 }
 
 } // namespace WebCore

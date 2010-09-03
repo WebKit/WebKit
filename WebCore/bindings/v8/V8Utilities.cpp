@@ -38,6 +38,7 @@
 #include "ScriptExecutionContext.h"
 #include "ScriptState.h"
 #include "V8Binding.h"
+#include "V8BindingDOMWindow.h" // FIXME: remove when completeURL moves
 #include "V8BindingState.h"
 #include "V8Proxy.h"
 #include "WorkerContext.h"
@@ -111,12 +112,16 @@ bool shouldAllowNavigation(Frame* frame)
 
 KURL completeURL(const String& relativeURL)
 {
-    return completeURL(V8BindingState::Only(), relativeURL);
+    return V8BindingDOMWindow::completeURL(V8BindingState::Only(), relativeURL);
 }
 
 void navigateIfAllowed(Frame* frame, const KURL& url, bool lockHistory, bool lockBackForwardList)
 {
-    return V8Binding::Frame::navigateIfAllowed(V8BindingState::Only(), frame, url, lockHistory, lockBackForwardList);
+    Frame* callingOrEntered = callingOrEnteredFrame();
+    if (!callingOrEntered)
+        return;
+    if (!protocolIsJavaScript(url) || ScriptController::isSafeScript(frame))
+        frame->redirectScheduler()->scheduleLocationChange(url.string(), callingOrEntered->loader()->outgoingReferrer(), lockHistory, lockBackForwardList, processingUserGesture());
 }
 
 ScriptExecutionContext* getScriptExecutionContext()
