@@ -1,3 +1,18 @@
+2010-09-02  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Fix double addition of -fPIC
+        https://bugs.webkit.org/show_bug.cgi?id=45122
+
+         When SHARED_CORE=ON, -fPIC is automatically added because all
+         libraries are dynamic. Only when static libraries are built that
+         -fPIC needs to be manually inserted (because the final library,
+         libewebkit.so, is dynamic).
+
+        * cmake/OptionsCommon.cmake: Remove -fPIC flag.
+        * cmake/WebKitHelpers.cmake: Add -fPIC flags iff SHARED_CORE=ON.
+
 2010-09-01  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Antonio Gomes.

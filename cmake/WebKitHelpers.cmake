@@ -19,7 +19,7 @@ MACRO(WEBKIT_SET_EXTRA_COMPILER_FLAGS _target)
             COMPILE_FLAGS "-fno-exceptions -fstrict-aliasing ${OLD_COMPILE_FLAGS}")
     ELSE ()
         SET_TARGET_PROPERTIES (${_target} PROPERTIES
-            COMPILE_FLAGS "-fno-exceptions -fstrict-aliasing -fvisibility=hidden ${OLD_COMPILE_FLAGS}")
+            COMPILE_FLAGS "-fPIC -fno-exceptions -fstrict-aliasing -fvisibility=hidden ${OLD_COMPILE_FLAGS}")
     ENDIF ()
     UNSET(OLD_COMPILE_FLAGS)
   ENDIF ()
