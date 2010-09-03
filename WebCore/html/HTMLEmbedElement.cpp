@@ -137,6 +137,7 @@ void HTMLEmbedElement::parametersForPlugin(Vector<String>& paramNames, Vector<St
 // moved down into HTMLPluginImageElement.cpp
 void HTMLEmbedElement::updateWidget(bool onlyCreateNonNetscapePlugins)
 {
+    ASSERT(!renderEmbeddedObject()->pluginCrashedOrWasMissing());
     // FIXME: We should ASSERT(needsWidgetUpdate()), but currently
     // FrameView::updateWidget() calls updateWidget(false) without checking if
     // the widget actually needs updating!

@@ -36,7 +36,8 @@ public:
     RenderEmbeddedObject(Element*);
     virtual ~RenderEmbeddedObject();
 
-    void updateWidget(bool onlyCreateNonNetscapePlugins);
+    bool pluginCrashedOrWasMissing() const;
+    
     void setShowsMissingPluginIndicator();
     void setShowsCrashedPluginIndicator();
     bool showsMissingPluginIndicator() const { return m_showsMissingPluginIndicator; }

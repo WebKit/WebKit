@@ -159,8 +159,15 @@ void HTMLPlugInImageElement::detach()
 void HTMLPlugInImageElement::updateWidgetIfNecessary()
 {
     document()->updateStyleIfNeeded();
-    if (needsWidgetUpdate() && renderEmbeddedObject() && !useFallbackContent() && !isImageType())
-        renderEmbeddedObject()->updateWidget(true);
+
+    if (!needsWidgetUpdate() || useFallbackContent() || isImageType())
+        return;
+
+    if (!renderEmbeddedObject() || renderEmbeddedObject()->pluginCrashedOrWasMissing())
+        return;
+
+    // True indicates that this code path should only create non-netscape plugins (no clue why).
+    updateWidget(true);
 }
 
 void HTMLPlugInImageElement::finishParsingChildren()

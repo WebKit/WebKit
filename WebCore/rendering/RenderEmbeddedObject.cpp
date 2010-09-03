@@ -102,30 +102,6 @@ bool RenderEmbeddedObject::allowsAcceleratedCompositing() const
 }
 #endif
 
-// FIXME: This should be moved into FrameView (the only caller)
-void RenderEmbeddedObject::updateWidget(bool onlyCreateNonNetscapePlugins)
-{
-    if (!m_replacementText.isNull() || !node()) // Check the node in case destroy() has been called.
-        return;
-
-    // The calls to SubframeLoader::requestObject within this function can result in a plug-in being initialized.
-    // This can run cause arbitrary JavaScript to run and may result in this RenderObject being detached from
-    // the render tree and destroyed, causing a crash like <rdar://problem/6954546>.  By extending our lifetime
-    // artifically to ensure that we remain alive for the duration of plug-in initialization.
-    RenderWidgetProtector protector(this);
-
-    if (node()->hasTagName(objectTag))
-        static_cast<HTMLObjectElement*>(node())->updateWidget(onlyCreateNonNetscapePlugins);
-    else if (node()->hasTagName(embedTag))
-        static_cast<HTMLEmbedElement*>(node())->updateWidget(onlyCreateNonNetscapePlugins);
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)        
-    else if (node()->hasTagName(videoTag) || node()->hasTagName(audioTag))
-        static_cast<HTMLMediaElement*>(node())->updateWidget(onlyCreateNonNetscapePlugins);
-#endif
-    else
-        ASSERT_NOT_REACHED();
-}
-
 void RenderEmbeddedObject::setShowsMissingPluginIndicator()
 {
     ASSERT(m_replacementText.isEmpty());
@@ -139,6 +115,11 @@ void RenderEmbeddedObject::setShowsCrashedPluginIndicator()
     m_replacementText = crashedPluginText();
 }
 
+bool RenderEmbeddedObject::pluginCrashedOrWasMissing() const
+{
+    return !m_replacementText.isNull();
+}
+    
 void RenderEmbeddedObject::setMissingPluginIndicatorIsPressed(bool pressed)
 {
     if (m_missingPluginIndicatorIsPressed == pressed)
@@ -150,7 +131,7 @@ void RenderEmbeddedObject::setMissingPluginIndicatorIsPressed(bool pressed)
 
 void RenderEmbeddedObject::paint(PaintInfo& paintInfo, int tx, int ty)
 {
-    if (!m_replacementText.isNull()) {
+    if (pluginCrashedOrWasMissing()) {
         RenderReplaced::paint(paintInfo, tx, ty);
         return;
     }
@@ -160,7 +141,7 @@ void RenderEmbeddedObject::paint(PaintInfo& paintInfo, int tx, int ty)
 
 void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
 {
-    if (!m_replacementText)
+    if (pluginCrashedOrWasMissing())
         return;
 
     if (paintInfo.phase == PaintPhaseSelection)

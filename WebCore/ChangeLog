@@ -2,6 +2,44 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Move updateWidget into FrameView from RenderEmbeddedObject
+        https://bugs.webkit.org/show_bug.cgi?id=45065
+
+        I also made updateWidget() virtual on HTMLPlugInImageElement.
+        I'm not yet sure that updateWidget belongs on HTMLElement since
+        I'm not sure that HTMLMediaElement's use of the updateWidget
+        infrastructure is correct.
+
+        I also got rid of the strange !m_replacementText.isEmpty() checks
+        by making a pluginCrashedOrWasMissing() call which seems to embody
+        the idea behind that check and hides the screwy details.
+
+        I noticed a couple methods on HTMLPlugInImageElement were public
+        which did not need to be.  Fixed.
+
+        No functional change, thus no tests.
+
+        * html/HTMLEmbedElement.h:
+        * html/HTMLObjectElement.h:
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::updateWidgetIfNecessary):
+        * html/HTMLPlugInImageElement.h:
+        (WebCore::HTMLPlugInImageElement::serviceType):
+        (WebCore::HTMLPlugInImageElement::url):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateWidget):
+        (WebCore::FrameView::updateWidgets):
+        * page/FrameView.h:
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::pluginCrashedOrWasMissing):
+        (WebCore::RenderEmbeddedObject::paint):
+        (WebCore::RenderEmbeddedObject::paintReplaced):
+        * rendering/RenderEmbeddedObject.h:
+
+2010-09-02  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
         Move updateWidget implementations into the DOM
         https://bugs.webkit.org/show_bug.cgi?id=45058
 
