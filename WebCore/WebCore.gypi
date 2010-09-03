@@ -2341,6 +2341,8 @@
             'platform/graphics/filters/SourceAlpha.h',
             'platform/graphics/filters/SourceGraphic.cpp',
             'platform/graphics/filters/SourceGraphic.h',
+            'platform/graphics/gpu/PODArena.h',
+            'platform/graphics/gpu/PODRedBlackTree.h',
             'platform/graphics/gpu/Shader.cpp',
             'platform/graphics/gpu/Shader.h',
             'platform/graphics/gpu/SolidFillShader.cpp',

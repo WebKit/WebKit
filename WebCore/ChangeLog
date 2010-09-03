@@ -1,3 +1,87 @@
+2010-09-02  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Add red-black tree capable of holding plain old data (POD)
+        https://bugs.webkit.org/show_bug.cgi?id=45059
+
+        Adding an augmentable red-black tree capable of holding Plain Old
+        Data (POD), or classes bottoming out into only POD, and an
+        associated PODArena. Note that the PODArena will be used by other
+        classes to allocate temporary structures, which is why it is not
+        just an implementation detail of the red-black tree.
+
+        These classes are being placed under WebCore/platform/graphics/gpu
+        for the time being. If they are generalized to hold even data
+        types which internally perform dynamic memory allocation, we may
+        consider moving them to WTF in the future.
+
+        Unit tests for the PODRedBlackTree will be integrated separately
+        under bug 45060.
+
+        * WebCore.gypi:
+        * platform/graphics/gpu/PODArena.h: Added.
+        (WebCore::PODArena::Allocator::~Allocator):
+        (WebCore::PODArena::FastMallocAllocator::create):
+        (WebCore::PODArena::FastMallocAllocator::allocate):
+        (WebCore::PODArena::FastMallocAllocator::free):
+        (WebCore::PODArena::FastMallocAllocator::FastMallocAllocator):
+        (WebCore::PODArena::create):
+        (WebCore::PODArena::allocateObject):
+        (WebCore::PODArena::~PODArena):
+        (WebCore::PODArena::PODArena):
+        (WebCore::PODArena::minAlignment):
+        (WebCore::PODArena::roundUp):
+        (WebCore::PODArena::Chunk::Chunk):
+        (WebCore::PODArena::Chunk::~Chunk):
+        (WebCore::PODArena::Chunk::allocate):
+        * platform/graphics/gpu/PODRedBlackTree.h: Added.
+        (WebCore::PODRedBlackTree::Visitor::~Visitor):
+        (WebCore::PODRedBlackTree::PODRedBlackTree):
+        (WebCore::PODRedBlackTree::~PODRedBlackTree):
+        (WebCore::PODRedBlackTree::add):
+        (WebCore::PODRedBlackTree::remove):
+        (WebCore::PODRedBlackTree::contains):
+        (WebCore::PODRedBlackTree::visitInorder):
+        (WebCore::PODRedBlackTree::size):
+        (WebCore::PODRedBlackTree::setNeedsFullOrderingComparisons):
+        (WebCore::PODRedBlackTree::checkInvariants):
+        (WebCore::PODRedBlackTree::dump):
+        (WebCore::PODRedBlackTree::setVerboseDebugging):
+        (WebCore::PODRedBlackTree::Node::Node):
+        (WebCore::PODRedBlackTree::Node::~Node):
+        (WebCore::PODRedBlackTree::Node::color):
+        (WebCore::PODRedBlackTree::Node::setColor):
+        (WebCore::PODRedBlackTree::Node::data):
+        (WebCore::PODRedBlackTree::Node::copyFrom):
+        (WebCore::PODRedBlackTree::Node::left):
+        (WebCore::PODRedBlackTree::Node::setLeft):
+        (WebCore::PODRedBlackTree::Node::right):
+        (WebCore::PODRedBlackTree::Node::setRight):
+        (WebCore::PODRedBlackTree::Node::parent):
+        (WebCore::PODRedBlackTree::Node::setParent):
+        (WebCore::PODRedBlackTree::root):
+        (WebCore::PODRedBlackTree::updateNode):
+        (WebCore::PODRedBlackTree::treeSearch):
+        (WebCore::PODRedBlackTree::treeSearchNormal):
+        (WebCore::PODRedBlackTree::treeSearchFullComparisons):
+        (WebCore::PODRedBlackTree::treeInsert):
+        (WebCore::PODRedBlackTree::treeSuccessor):
+        (WebCore::PODRedBlackTree::treeMinimum):
+        (WebCore::PODRedBlackTree::propagateUpdates):
+        (WebCore::PODRedBlackTree::leftRotate):
+        (WebCore::PODRedBlackTree::rightRotate):
+        (WebCore::PODRedBlackTree::insertNode):
+        (WebCore::PODRedBlackTree::deleteFixup):
+        (WebCore::PODRedBlackTree::deleteNode):
+        (WebCore::PODRedBlackTree::visitInorderImpl):
+        (WebCore::PODRedBlackTree::Counter::Counter):
+        (WebCore::PODRedBlackTree::Counter::visit):
+        (WebCore::PODRedBlackTree::Counter::count):
+        (WebCore::PODRedBlackTree::checkInvariantsFromNode):
+        (WebCore::PODRedBlackTree::logIfVerbose):
+        (WebCore::PODRedBlackTree::dumpFromNode):
+
 2010-09-02  Rafael Antognolli  <antognolli@profusion.mobi>
 
         Reviewed by Martin Robinson.
