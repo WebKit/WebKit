@@ -636,7 +636,7 @@ class Port(object):
             return self._pretty_patch_error_html
 
     def _webkit_build_directory(self, args):
-        args = [self.script_path("webkit-build-directory")] + args
+        args = ["perl", self.script_path("webkit-build-directory")] + args
         return self._executive.run_command(args).rstrip()
 
     def _configuration_file_path(self):

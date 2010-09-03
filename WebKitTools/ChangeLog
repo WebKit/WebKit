@@ -1,3 +1,13 @@
+2010-09-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix reading configuraiton in NWRT to work on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=45180
+
+        * Scripts/webkitpy/layout_tests/port/base.py: Added 'perl' argument, because Windows doesn't know what to do
+            with the file otherwise.
+
 2010-09-03  Chris Rogers  <crogers@google.com>
 
         Unreviewed
