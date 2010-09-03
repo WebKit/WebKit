@@ -1,5 +1,13 @@
 2010-09-03  Zhenyao Mo  <zmo@google.com>
 
+        Uneviewed.
+
+        Add TIMEOUT test inspector/elements-panel-xhtml-structure.xhtml to chromium test_expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-09-03  Zhenyao Mo  <zmo@google.com>
+
         Unreviewed.
 
         Rebaseline after r66731.
