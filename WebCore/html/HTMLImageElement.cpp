@@ -267,10 +267,8 @@ int HTMLImageElement::width(bool ignorePendingStylesheets) const
             return width;
 
         // if the image is available, use its width
-        if (m_imageLoader.image()) {
-            float zoomFactor = document()->view() ? document()->view()->pageZoomFactor() : 1.0f;
-            return m_imageLoader.image()->imageSize(zoomFactor).width();
-        }
+        if (m_imageLoader.image())
+            return m_imageLoader.image()->imageSize(1.0f).width();
     }
 
     if (ignorePendingStylesheets)
@@ -278,7 +276,8 @@ int HTMLImageElement::width(bool ignorePendingStylesheets) const
     else
         document()->updateLayout();
 
-    return renderBox() ? renderBox()->contentWidth() : 0;
+    RenderBox* box = renderBox();
+    return box ? adjustForAbsoluteZoom(box->contentWidth(), box) : 0;
 }
 
 int HTMLImageElement::height(bool ignorePendingStylesheets) const
@@ -291,10 +290,8 @@ int HTMLImageElement::height(bool ignorePendingStylesheets) const
             return height;
 
         // if the image is available, use its height
-        if (m_imageLoader.image()) {
-            float zoomFactor = document()->view() ? document()->view()->pageZoomFactor() : 1.0f;
-            return m_imageLoader.image()->imageSize(zoomFactor).height();
-        }
+        if (m_imageLoader.image())
+            return m_imageLoader.image()->imageSize(1.0f).height();
     }
 
     if (ignorePendingStylesheets)
@@ -302,7 +299,8 @@ int HTMLImageElement::height(bool ignorePendingStylesheets) const
     else
         document()->updateLayout();
 
-    return renderBox() ? renderBox()->contentHeight() : 0;
+    RenderBox* box = renderBox();
+    return box ? adjustForAbsoluteZoom(box->contentHeight(), box) : 0;
 }
 
 int HTMLImageElement::naturalWidth() const

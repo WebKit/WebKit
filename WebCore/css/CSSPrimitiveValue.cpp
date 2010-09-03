@@ -305,82 +305,34 @@ void CSSPrimitiveValue::cleanup()
 
 int CSSPrimitiveValue::computeLengthInt(RenderStyle* style, RenderStyle* rootStyle)
 {
-    double result = computeLengthDouble(style, rootStyle);
-
-    // This conversion is imprecise, often resulting in values of, e.g., 44.99998.  We
-    // need to go ahead and round if we're really close to the next integer value.
-    result += result < 0 ? -0.01 : +0.01;
-
-    if (result > INT_MAX || result < INT_MIN)
-        return 0;
-    return static_cast<int>(result);
+    return roundForImpreciseConversion<int, INT_MAX, INT_MIN>(computeLengthDouble(style, rootStyle));
 }
 
 int CSSPrimitiveValue::computeLengthInt(RenderStyle* style, RenderStyle* rootStyle, double multiplier)
 {
-    double result = computeLengthDouble(style, rootStyle, multiplier);
-
-    // This conversion is imprecise, often resulting in values of, e.g., 44.99998.  We
-    // need to go ahead and round if we're really close to the next integer value.
-    result += result < 0 ? -0.01 : +0.01;
-
-    if (result > INT_MAX || result < INT_MIN)
-        return 0;
-    return static_cast<int>(result);
+    return roundForImpreciseConversion<int, INT_MAX, INT_MIN>(computeLengthDouble(style, rootStyle, multiplier));
 }
 
-// Lengths expect an int that is only 28-bits, so we have to check for a different overflow.
+// Lengths expect an int that is only 28-bits, so we have to check for a
+// different overflow.
 int CSSPrimitiveValue::computeLengthIntForLength(RenderStyle* style, RenderStyle* rootStyle)
 {
-    double result = computeLengthDouble(style, rootStyle);
-
-    // This conversion is imprecise, often resulting in values of, e.g., 44.99998.  We
-    // need to go ahead and round if we're really close to the next integer value.
-    result += result < 0 ? -0.01 : +0.01;
-
-    if (result > intMaxForLength || result < intMinForLength)
-        return 0;
-    return static_cast<int>(result);
+    return roundForImpreciseConversion<int, intMaxForLength, intMinForLength>(computeLengthDouble(style, rootStyle));
 }
 
-// Lengths expect an int that is only 28-bits, so we have to check for a different overflow.
 int CSSPrimitiveValue::computeLengthIntForLength(RenderStyle* style, RenderStyle* rootStyle, double multiplier)
 {
-    double result = computeLengthDouble(style, rootStyle, multiplier);
-
-    // This conversion is imprecise, often resulting in values of, e.g., 44.99998.  We
-    // need to go ahead and round if we're really close to the next integer value.
-    result += result < 0 ? -0.01 : +0.01;
-
-    if (result > intMaxForLength || result < intMinForLength)
-        return 0;
-    return static_cast<int>(result);
+    return roundForImpreciseConversion<int, intMaxForLength, intMinForLength>(computeLengthDouble(style, rootStyle, multiplier));
 }
 
 short CSSPrimitiveValue::computeLengthShort(RenderStyle* style, RenderStyle* rootStyle)
 {
-    double result = computeLengthDouble(style, rootStyle);
-
-    // This conversion is imprecise, often resulting in values of, e.g., 44.99998.  We
-    // need to go ahead and round if we're really close to the next integer value.
-    result += result < 0 ? -0.01 : +0.01;
-
-    if (result > SHRT_MAX || result < SHRT_MIN)
-        return 0;
-    return static_cast<short>(result);
+    return roundForImpreciseConversion<short, SHRT_MAX, SHRT_MIN>(computeLengthDouble(style, rootStyle));
 }
 
 short CSSPrimitiveValue::computeLengthShort(RenderStyle* style, RenderStyle* rootStyle, double multiplier)
 {
-    double result = computeLengthDouble(style, rootStyle, multiplier);
-
-    // This conversion is imprecise, often resulting in values of, e.g., 44.99998.  We
-    // need to go ahead and round if we're really close to the next integer value.
-    result += result < 0 ? -0.01 : +0.01;
-
-    if (result > SHRT_MAX || result < SHRT_MIN)
-        return 0;
-    return static_cast<short>(result);
+    return roundForImpreciseConversion<short, SHRT_MAX, SHRT_MIN>(computeLengthDouble(style, rootStyle, multiplier));
 }
 
 float CSSPrimitiveValue::computeLengthFloat(RenderStyle* style, RenderStyle* rootStyle, bool computingFontSize)

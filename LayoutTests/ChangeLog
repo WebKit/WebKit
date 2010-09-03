@@ -1,3 +1,14 @@
+2010-09-03  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Simon Fraser.
+
+        Report correct (unzoomed) image sizes for zoomed images.
+        https://bugs.webkit.org/show_bug.cgi?id=42089
+
+        * fast/images/resources/oval.png: Added.
+        * fast/images/zoomed-img-size-expected.txt: Added.
+        * fast/images/zoomed-img-size.html: Added.
+
 2010-09-03  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed.

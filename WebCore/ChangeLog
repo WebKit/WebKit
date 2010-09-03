@@ -1,3 +1,26 @@
+2010-09-03  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Simon Fraser.
+
+        Report correct (unzoomed) image sizes for zoomed images.
+        https://bugs.webkit.org/show_bug.cgi?id=42089
+
+        Test: fast/images/zoomed-img-size.html
+
+        * css/CSSPrimitiveValue.cpp: Factor rounding code out to a templatized function so it can be shared.
+        (WebCore::CSSPrimitiveValue::computeLengthInt):
+        (WebCore::CSSPrimitiveValue::computeLengthIntForLength):
+        (WebCore::CSSPrimitiveValue::computeLengthShort):
+        * css/CSSPrimitiveValue.h: Factor rounding code out to a templatized function so it can be shared.
+        (WebCore::roundForImpreciseConversion):
+        * html/HTMLImageElement.cpp: Report unzoomed size to script that queries an image's width or height.
+        (WebCore::HTMLImageElement::width):
+        (WebCore::HTMLImageElement::height):
+        * loader/ImageDocument.cpp: Report unzoomed size in the page title when viewing a standalone image.
+        (WebCore::ImageDocumentParser::finish):
+        * rendering/RenderObject.h: Use shared rounding code from CSSPrimitiveValue to compensate for inexactness in zoomed sizes.
+        (WebCore::adjustForAbsoluteZoom):
+
 2010-09-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r66770.
