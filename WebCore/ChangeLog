@@ -1,3 +1,36 @@
+2010-09-03  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Cleanup after r66117 - extract heap snapshot
+        view styles into a dedicated .css
+
+        https://bugs.webkit.org/show_bug.cgi?id=45178
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/heapProfiler.css: Added.
+        (.heap-snapshot-sidebar-tree-item .icon):
+        (.heap-snapshot-sidebar-tree-item.small .icon):
+        (.heap-snapshot-view):
+        (.heap-snapshot-view.visible):
+        (.heap-snapshot-view .data-grid):
+        (.heap-snapshot-view .data-grid th.count-column):
+        (.heap-snapshot-view .data-grid td.count-column):
+        (.heap-snapshot-view .data-grid th.size-column):
+        (.heap-snapshot-view .data-grid td.size-column):
+        (.heap-snapshot-view .data-grid th.countDelta-column):
+        (.heap-snapshot-view .data-grid td.countDelta-column):
+        (.heap-snapshot-view .data-grid th.sizeDelta-column):
+        (.heap-snapshot-view .data-grid td.sizeDelta-column):
+        (#heap-snapshot-summary-container):
+        (.heap-snapshot-summary):
+        (.heap-snapshot-summary canvas.summary-graph):
+        (.heap-snapshot-summary-label):
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.html:
+
 2010-09-03  Zaheer Ahmad <zaheer.mot@gmail.com>
 
         Reviewed by Darin Adler.

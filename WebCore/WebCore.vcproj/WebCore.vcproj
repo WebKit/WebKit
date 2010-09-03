@@ -52256,6 +52256,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\heapProfiler.css"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\HeapSnapshotView.js"
 					>
 				</File>

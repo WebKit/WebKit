@@ -106,6 +106,7 @@
     <file>WelcomeView.js</file>
     <file>WorkersSidebarPane.js</file>
     <file>audits.css</file>
+    <file>heapProfiler.css</file>
     <file>helpScreen.css</file>
     <file>inspector.css</file>
     <file>inspectorSyntaxHighlight.css</file>

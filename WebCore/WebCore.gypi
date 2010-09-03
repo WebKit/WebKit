@@ -4279,6 +4279,7 @@
             'inspector/front-end/WelcomeView.js',
             'inspector/front-end/WorkersSidebarPane.js',
             'inspector/front-end/audits.css',
+            'inspector/front-end/heapProfiler.css',
             'inspector/front-end/helpScreen.css',
             'inspector/front-end/inspector.css',
             'inspector/front-end/inspectorSyntaxHighlight.css',
