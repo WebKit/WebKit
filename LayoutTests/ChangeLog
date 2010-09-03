@@ -1,3 +1,12 @@
+2010-09-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        Fixed a test committed in r66743.
+
+        * editing/style/script-tests/push-down-implicit-styles-around-list.js:
+        (selectLastWord):
+
 2010-09-03  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Anders Carlsson.
