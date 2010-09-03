@@ -691,6 +691,10 @@ class Port(object):
         """Returns the full path to the test driver (DumpRenderTree)."""
         raise NotImplementedError('Port.path_to_driver')
 
+    def _path_to_webcore_library(self):
+        """Returns the full path to a built copy of WebCore."""
+        raise NotImplementedError('Port.path_to_webcore_library')
+
     def _path_to_helper(self):
         """Returns the full path to the layout_test_helper binary, which
         is used to help configure the system for the test run, or None

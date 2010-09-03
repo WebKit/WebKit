@@ -1,3 +1,15 @@
+2010-09-03  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
+
+        Reviewed by Eric Seidel.
+
+        Add feature detection support to NRWT.
+        https://bugs.webkit.org/show_bug.cgi?id=41842
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py: Added.
+
 2010-09-03  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Kent Tamura.

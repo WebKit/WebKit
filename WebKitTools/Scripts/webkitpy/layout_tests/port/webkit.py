@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2010 Gabor Rapcsanyi <rgabor@inf.u-szeged.hu>, University of Szeged
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -41,6 +42,7 @@ import signal
 import sys
 import time
 import webbrowser
+import operator
 
 from webkitpy.common.system.executive import Executive
 
@@ -217,6 +219,66 @@ class WebKitPort(base.Port):
             "platform/win",
         ]
 
+    def _runtime_feature_list(self):
+        """Return the supported features of DRT. If a port doesn't support
+        this DRT switch, it has to override this method to return None"""
+        driver_path = self._path_to_driver()
+        feature_list = ' '.join(os.popen(driver_path + " --print-supported-features 2>&1").readlines())
+        if "SupportedFeatures:" in feature_list:
+            return feature_list
+        return None
+
+    def _supported_symbol_list(self):
+        """Return the supported symbols of WebCore."""
+        webcore_library_path = self._path_to_webcore_library()
+        if not webcore_library_path:
+            return None
+        symbol_list = ' '.join(os.popen("nm " + webcore_library_path).readlines())
+        return symbol_list
+
+    def _directories_for_features(self):
+        """Return the supported feature dictionary. The keys are the
+        features and the values are the directories in lists."""
+        directories_for_features = {
+            "Accelerated Compositing": ["compositing"],
+            "3D Rendering": ["animations/3d", "transforms/3d"],
+        }
+        return directories_for_features
+
+    def _directories_for_symbols(self):
+        """Return the supported feature dictionary. The keys are the
+        symbols and the values are the directories in lists."""
+        directories_for_symbol = {
+            "MathMLElement": ["mathml"],
+            "GraphicsLayer": ["compositing"],
+            "WebCoreHas3DRendering": ["animations/3d", "transforms/3d"],
+            "WebGLShader": ["fast/canvas/webgl"],
+            "WMLElement": ["http/tests/wml", "fast/wml", "wml"],
+            "parseWCSSInputProperty": ["fast/wcss"],
+            "isXHTMLMPDocument": ["fast/xhtmlmp"],
+        }
+        return directories_for_symbol
+
+    def _skipped_tests_for_unsupported_features(self):
+        """Return the directories of unsupported tests. Search for the
+        symbols in the symbol_list, if found add the corresponding
+        directories to the skipped directory list."""
+        feature_list = self._runtime_feature_list()
+        directories = self._directories_for_features()
+
+        # if DRT feature detection not supported
+        if not feature_list:
+            feature_list = self._supported_symbol_list()
+            directories = self._directories_for_symbols()
+
+        if not feature_list:
+            return []
+
+        skipped_directories = [directories[feature]
+                              for feature in directories.keys()
+                              if feature not in feature_list]
+        return reduce(operator.add, skipped_directories)
+
     def _tests_for_disabled_features(self):
         # FIXME: This should use the feature detection from
         # webkitperl/features.pm to match run-webkit-tests.
@@ -238,7 +300,8 @@ class WebKitPort(base.Port):
             "http/tests/webarchive",
             "svg/custom/image-with-prefix-in-webarchive.svg",
         ]
-        return disabled_feature_tests + webarchive_tests
+        unsupported_feature_tests = self._skipped_tests_for_unsupported_features()
+        return disabled_feature_tests + webarchive_tests + unsupported_feature_tests
 
     def _tests_from_skipped_file(self, skipped_file):
         tests_to_skip = []
@@ -305,6 +368,9 @@ class WebKitPort(base.Port):
 
     def _path_to_driver(self):
         return self._build_path('DumpRenderTree')
+
+    def _path_to_webcore_library(self):
+        return None
 
     def _path_to_helper(self):
         return None
