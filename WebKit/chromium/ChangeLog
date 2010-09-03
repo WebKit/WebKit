@@ -1,5 +1,11 @@
 2010-09-03  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Add one more include to fix the mac compile.
+
+        * src/GraphicsContext3D.cpp:
+
+2010-09-03  James Robinson  <jamesr@chromium.org>
+
         [chromium] Compile fixes for 66746.
 
         * src/GraphicsContext3D.cpp:

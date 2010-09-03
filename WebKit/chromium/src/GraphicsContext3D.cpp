@@ -55,6 +55,7 @@
 
 #if PLATFORM(CG)
 #include "GraphicsContext.h"
+#include "WebGLRenderingContext.h"
 #include <CoreGraphics/CGContext.h>
 #include <CoreGraphics/CGImage.h>
 #endif
