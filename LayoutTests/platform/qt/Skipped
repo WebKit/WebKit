@@ -5451,3 +5451,6 @@ http/tests/local/blob/send-data-blob.html
 
 # Full Screen support is not yet enabled.
 fullscreen/
+
+# https://bugs.webkit.org/show_bug.cgi?id=45194
+fast/text/decomposed-after-stacked-diacritics.html
