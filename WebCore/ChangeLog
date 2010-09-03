@@ -1,3 +1,15 @@
+2010-09-03  Bharathwaaj Srinivasan  <bharathwaaj.s@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        Initialize keyboard events before passing plugins.
+        https://bugs.webkit.org/show_bug.cgi?id=44771
+
+        No new tests needed since this is a trivial fix.
+
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::handleKeyboardEvent):
+
 2010-09-03  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Fix Qt compilation.

@@ -299,6 +299,7 @@ void PluginView::handleKeyboardEvent(KeyboardEvent* event)
 
     NPEvent xEvent;
 #if defined(XP_UNIX)
+    initXEvent(&xEvent);
     GdkEventKey* gdkEvent = event->keyEvent()->gdkEventKey();
 
     xEvent.type = (event->type() == eventNames().keydownEvent) ? 2 : 3; // KeyPress/Release get unset somewhere
