@@ -1,3 +1,12 @@
+2010-09-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Fix warning in wtf/ByteArray.h
+        https://bugs.webkit.org/show_bug.cgi?id=44672
+
+        * wtf/ByteArray.h: Use maximal sized array for MSVC and unsized array for other compilers.
+
 2010-09-02  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -26,7 +26,9 @@
 #ifndef ByteArray_h
 #define ByteArray_h
 
+#include <limits.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/Platform.h>
 #include <wtf/RefCounted.h>
 
 namespace WTF {
@@ -86,7 +88,14 @@ namespace WTF {
         {
         }
         size_t m_size;
-        unsigned char m_data[sizeof(size_t)];
+// MSVC can't handle correctly unsized array.
+// warning C4200: nonstandard extension used : zero-sized array in struct/union
+// Cannot generate copy-ctor or copy-assignment operator when UDT contains a zero-sized array
+#if COMPILER(MSVC)
+        unsigned char m_data[INT_MAX];
+#else
+        unsigned char m_data[];
+#endif
     };
 }
 
