@@ -1,3 +1,16 @@
+2010-09-03  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        play-state.html and suspend-resume-animaton.html now pass on Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=45158
+
+        Two animation tests now pass reliably with both test_shell and Chromium
+        DRT due to r66641 and http://crrev.com/58369.
+
+        * platform/chromium/drt_expectations.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-09-03  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.

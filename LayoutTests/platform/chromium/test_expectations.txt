@@ -96,7 +96,6 @@ BUG24182 WIN DEBUG SLOW: inspector/console-dirxml.html = PASS
 BUG24182 DEBUG SLOW : fast/dom/Window/window-function-frame-getter-precedence.html = PASS
 BUG24182 SLOW DEBUG : fast/frames/frame-limit.html = PASS
 BUG24182 SLOW : http/tests/cache/subresource-failover-to-network.html = PASS
-BUG24182 SLOW : animations/play-state.html = PASS TEXT
 
 // Usually <1s in release, ~1s in debug, but occasionally >5s in release.
 BUG27335 WIN RELEASE : plugins/embed-attributes-setting.html = PASS TIMEOUT
@@ -3014,10 +3013,6 @@ BUG51416 : fast/dom/DeviceMotion/window-property.html = TEXT
 
 // Slow test introduced in r64817
 BUG51571 WIN : http/tests/misc/bad-charset-alias.html = TIMEOUT
-
-// test_shell doesn't expose LayoutTestController::suspend/ResumeAnimations.
-// Will pass once we've switched to the Chromium DRT.
-WONTFIX SKIP: animations/suspend-resume-animation.html = TEXT
 
 // Probably rebaseline, but want to make sure before doing so
 BUGJAPHET WIN : svg/custom/resource-invalidate-on-target-update.svg = IMAGE
