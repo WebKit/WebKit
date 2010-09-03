@@ -1,3 +1,13 @@
+2010-09-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/8392655> REGRESSION (r57215): Decomposed diacritics render incorrectly when preceded by stacked diacritics
+        https://bugs.webkit.org/show_bug.cgi?id=45182
+
+        * fast/text/decomposed-after-stacked-diacritics-expected.txt: Added.
+        * fast/text/decomposed-after-stacked-diacritics.html: Added.
+
 2010-09-03  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Tony Chang.
