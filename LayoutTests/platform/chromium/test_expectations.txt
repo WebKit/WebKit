@@ -3155,3 +3155,6 @@ BUGTONY LINUX : fast/text/atsui-spacing-features.html = IMAGE+TEXT
 
 // Regressed in r66732
 BUGWK45184 WIN : inspector/elements-panel-xhtml-structure.xhtml = TIMEOUT
+
+// New test in r66743
+BUGWK25086 LINUX : editing/style/push-down-implicit-styles-around-list.html = TEXT
