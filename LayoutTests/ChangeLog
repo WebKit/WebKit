@@ -1,3 +1,9 @@
+2010-09-02  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, update test expectation.
+
+        * platform/chromium/drt_expectations.txt:
+
 2010-09-02  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed.
