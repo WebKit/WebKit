@@ -215,6 +215,13 @@ void PluginPackage::determineQuirks(const String& mimeType)
         m_quirks.add(PluginQuirkThrottleWMUserPlusOneMessages);
         m_quirks.add(PluginQuirkFlashURLNotifyBug);
     }
+
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    // Passing a 32-bit depth pixmap to NPAPI plugins is too inefficient. Instead, pass a X Pixmap
+    // that has same depth as the screen depth since graphics operations are optimized
+    // for this depth.
+    m_quirks.add(PluginQuirkRequiresDefaultScreenDepth);
+#endif
 }
 #endif
 

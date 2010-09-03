@@ -1,3 +1,16 @@
+2010-09-03  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed-by Simon Hausmann.
+
+        Passing a 32-bit depth X pixmap to NPAPI windowless plugins is too inefficient. 
+        Instead, pass a X Pixmap that has same depth as the screen depth since graphics 
+        operations are optimized for this depth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45167
+
+        * plugins/PluginPackage.cpp:
+        (WebCore::PluginPackage::determineQuirks):
+
 2010-09-02  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Kent Tamura.
