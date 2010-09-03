@@ -33,6 +33,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
+#include "HTMLParamElement.h"
 #include "MIMETypeRegistry.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderImage.h"
@@ -113,6 +114,126 @@ void HTMLObjectElement::parseMappedAttribute(Attribute* attr)
         HTMLPlugInImageElement::parseMappedAttribute(attr);
     } else
         HTMLPlugInImageElement::parseMappedAttribute(attr);
+}
+
+typedef HashMap<String, String, CaseFoldingHash> ClassIdToTypeMap;
+
+static ClassIdToTypeMap* createClassIdToTypeMap()
+{
+    ClassIdToTypeMap* map = new ClassIdToTypeMap;
+    map->add("clsid:D27CDB6E-AE6D-11CF-96B8-444553540000", "application/x-shockwave-flash");
+    map->add("clsid:CFCDAA03-8BE4-11CF-B84B-0020AFBBCCFA", "audio/x-pn-realaudio-plugin");
+    map->add("clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B", "video/quicktime");
+    map->add("clsid:166B1BCA-3F9C-11CF-8075-444553540000", "application/x-director");
+    map->add("clsid:6BF52A52-394A-11D3-B153-00C04F79FAA6", "application/x-mplayer2");
+    map->add("clsid:22D6F312-B0F6-11D0-94AB-0080C74C7E95", "application/x-mplayer2");
+    return map;
+}
+
+static String serviceTypeForClassId(const String& classId)
+{
+    // Return early if classId is empty (since we won't do anything below).
+    // Furthermore, if classId is null, calling get() below will crash.
+    if (classId.isEmpty())
+        return String();
+    
+    static ClassIdToTypeMap* map = createClassIdToTypeMap();
+    return map->get(classId);
+}
+
+static void mapDataParamToSrc(Vector<String>* paramNames, Vector<String>* paramValues)
+{
+    // Some plugins don't understand the "data" attribute of the OBJECT tag (i.e. Real and WMP
+    // require "src" attribute).
+    int srcIndex = -1, dataIndex = -1;
+    for (unsigned int i = 0; i < paramNames->size(); ++i) {
+        if (equalIgnoringCase((*paramNames)[i], "src"))
+            srcIndex = i;
+        else if (equalIgnoringCase((*paramNames)[i], "data"))
+            dataIndex = i;
+    }
+    
+    if (srcIndex == -1 && dataIndex != -1) {
+        paramNames->append("src");
+        paramValues->append((*paramValues)[dataIndex]);
+    }
+}
+
+// FIXME: This function should not deal with url or serviceType!
+void HTMLObjectElement::parametersForPlugin(Vector<String>& paramNames, Vector<String>& paramValues, String& url, String& serviceType)
+{
+    HashSet<StringImpl*, CaseFoldingHash> uniqueParamNames;
+    
+    // Scan the PARAM children and store their name/value pairs.
+    // Get the URL and type from the params if we don't already have them.
+    for (Node* child = firstChild(); child; child = child->nextSibling()) {
+        if (!child->hasTagName(paramTag))
+            continue;
+
+        HTMLParamElement* p = static_cast<HTMLParamElement*>(child);
+        String name = p->name();
+        if (name.isEmpty())
+            continue;
+
+        uniqueParamNames.add(name.impl());
+        paramNames.append(p->name());
+        paramValues.append(p->value());
+
+        // FIXME: url adjustment does not belong in this function.
+        if (url.isEmpty() && (equalIgnoringCase(name, "src") || equalIgnoringCase(name, "movie") || equalIgnoringCase(name, "code") || equalIgnoringCase(name, "url")))
+            url = deprecatedParseURL(p->value());
+        // FIXME: serviceType calculation does not belong in this function.
+        if (serviceType.isEmpty() && equalIgnoringCase(name, "type")) {
+            serviceType = p->value();
+            size_t pos = serviceType.find(";");
+            if (pos != notFound)
+                serviceType = serviceType.left(pos);
+        }
+    }
+    
+    // When OBJECT is used for an applet via Sun's Java plugin, the CODEBASE attribute in the tag
+    // points to the Java plugin itself (an ActiveX component) while the actual applet CODEBASE is
+    // in a PARAM tag. See <http://java.sun.com/products/plugin/1.2/docs/tags.html>. This means
+    // we have to explicitly suppress the tag's CODEBASE attribute if there is none in a PARAM,
+    // else our Java plugin will misinterpret it. [4004531]
+    String codebase;
+    if (MIMETypeRegistry::isJavaAppletMIMEType(serviceType)) {
+        codebase = "codebase";
+        uniqueParamNames.add(codebase.impl()); // pretend we found it in a PARAM already
+    }
+    
+    // Turn the attributes of the <object> element into arrays, but don't override <param> values.
+    NamedNodeMap* attributes = this->attributes(true);
+    if (attributes) {
+        for (unsigned i = 0; i < attributes->length(); ++i) {
+            Attribute* it = attributes->attributeItem(i);
+            const AtomicString& name = it->name().localName();
+            if (!uniqueParamNames.contains(name.impl())) {
+                paramNames.append(name.string());
+                paramValues.append(it->value().string());
+            }
+        }
+    }
+    
+    mapDataParamToSrc(&paramNames, &paramValues);
+    
+    // If we still don't have a type, try to map from a specific CLASSID to a type.
+    if (serviceType.isEmpty())
+        serviceType = serviceTypeForClassId(classId());
+}
+
+    
+bool HTMLObjectElement::hasFallbackContent() const
+{
+    for (Node* child = firstChild(); child; child = child->nextSibling()) {
+        // Ignore whitespace-only text, and <param> tags, any other content is fallback content.
+        if (child->isTextNode()) {
+            if (!static_cast<Text*>(child)->containsOnlyWhitespace())
+                return true;
+        } else if (!child->hasTagName(paramTag))
+            return true;
+    }
+    return false;
 }
 
 bool HTMLObjectElement::rendererIsNeeded(RenderStyle* style)

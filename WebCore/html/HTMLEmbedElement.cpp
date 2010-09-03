@@ -120,6 +120,19 @@ void HTMLEmbedElement::parseMappedAttribute(Attribute* attr)
         HTMLPlugInImageElement::parseMappedAttribute(attr);
 }
 
+void HTMLEmbedElement::parametersForPlugin(Vector<String>& paramNames, Vector<String>& paramValues)
+{
+    NamedNodeMap* attributes = this->attributes(true);
+    if (!attributes)
+        return;
+
+    for (unsigned i = 0; i < attributes->length(); ++i) {
+        Attribute* it = attributes->attributeItem(i);
+        paramNames.append(it->localName());
+        paramValues.append(it->value());
+    }
+}
+
 bool HTMLEmbedElement::rendererIsNeeded(RenderStyle* style)
 {
     if (isImageType())

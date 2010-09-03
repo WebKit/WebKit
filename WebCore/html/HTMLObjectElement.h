@@ -39,7 +39,12 @@ public:
 
     bool containsJavaApplet() const;
 
+    bool hasFallbackContent() const;
     virtual bool useFallbackContent() const { return m_useFallbackContent; }
+
+    // FIXME: This function should not deal with url or serviceType
+    // so that we can better share code between <object> and <embed>.
+    void parametersForPlugin(Vector<String>& paramNames, Vector<String>& paramValues, String& url, String& serviceType);
 
 private:
     HTMLObjectElement(const QualifiedName&, Document*, bool createdByParser);

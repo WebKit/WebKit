@@ -1,3 +1,48 @@
+2010-09-02  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Move more code from RenderEmbeddedObject into the DOM
+        https://bugs.webkit.org/show_bug.cgi?id=45055
+
+        No logic changes here, just taking the code which
+        I ripped out of RenderEmbeddedObject::updateWidget
+        into static methods before and moving it into
+        the applicable DOM classes.
+
+        HTMLObjectElement::parametersForPlugin does too much
+        but in order to fix it I may need to add a PluginParameters
+        class so we can ask things about the parameters. <object>
+        needs to get multiple bits of information out of its parameters
+        array.  Right now it does it all in one walk.  In order to share
+        code with HTMLEmbedElement, we need the "generate the params array"
+        code to be separate from the "make advanced <object> specific decision
+        from the params array".  But that will need to be in a later patch.
+
+        No functional changes, thus no tests.
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::parametersForPlugin):
+        * html/HTMLEmbedElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::createClassIdToTypeMap):
+        (WebCore::serviceTypeForClassId):
+        (WebCore::mapDataParamToSrc):
+        (WebCore::HTMLObjectElement::parametersForPlugin):
+        (WebCore::HTMLObjectElement::hasFallbackContent):
+        * html/HTMLObjectElement.h:
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::allowedToLoadFrameURL):
+        (WebCore::HTMLPlugInImageElement::wouldLoadAsNetscapePlugin):
+        (WebCore::HTMLPlugInImageElement::detach): 
+        (WebCore::HTMLPlugInImageElement::updateWidgetIfNecessary):
+        (WebCore::HTMLPlugInImageElement::updateWidgetCallback):
+        * html/HTMLPlugInImageElement.h:
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::updateWidgetForObjectElement):
+        (WebCore::updateWidgetForEmbedElement):
+        (WebCore::RenderEmbeddedObject::updateWidget):
+
 2010-09-02  François Sausset  <sausset@gmail.com>
 
         Reviewed by Darin Adler.

@@ -31,6 +31,8 @@ class HTMLEmbedElement : public HTMLPlugInImageElement {
 public:
     static PassRefPtr<HTMLEmbedElement> create(const QualifiedName&, Document*, bool createdByParser);
 
+    void parametersForPlugin(Vector<String>& paramNames, Vector<String>& paramValues);
+
 private:
     HTMLEmbedElement(const QualifiedName&, Document*, bool createdByParser);
 
