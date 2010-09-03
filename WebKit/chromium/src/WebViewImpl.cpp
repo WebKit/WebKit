@@ -265,6 +265,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client, WebDevToolsAgentClient* devTools
 #if USE(ACCELERATED_COMPOSITING)
     , m_layerRenderer(0)
     , m_isAcceleratedCompositingActive(false)
+    , m_compositorCreationFailed(false)
 #endif
 #if ENABLE(INPUT_SPEECH)
     , m_speechInputClient(client)
@@ -969,6 +970,7 @@ void WebViewImpl::paint(WebCanvas* canvas, const WebRect& rect)
         IntRect contentRect = view->visibleContentRect(false);
 
         // Ask the layer compositor to redraw all the layers.
+        ASSERT(m_layerRenderer->hardwareCompositing());
         m_layerRenderer->drawLayers(rect, visibleRect, contentRect, IntPoint(view->scrollX(), view->scrollY()));
     }
 #endif
@@ -2105,6 +2107,11 @@ bool WebViewImpl::tabsToLinks() const
 }
 
 #if USE(ACCELERATED_COMPOSITING)
+bool WebViewImpl::allowsAcceleratedCompositing()
+{
+    return !m_compositorCreationFailed;
+}
+
 void WebViewImpl::setRootGraphicsLayer(WebCore::PlatformLayer* layer)
 {
     setIsAcceleratedCompositingActive(layer ? true : false);
@@ -2119,15 +2126,15 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
 
     if (active) {
         m_layerRenderer = LayerRendererChromium::create(getOnscreenGLES2Context());
-        if (m_layerRenderer->hardwareCompositing()) {
+        if (m_layerRenderer) {
             m_isAcceleratedCompositingActive = true;
             
             // Force a redraw the entire view so that the compositor gets the entire view,
             // rather than just the currently-dirty subset.
             m_client->didInvalidateRect(IntRect(0, 0, m_size.width, m_size.height));
         } else {
-            m_layerRenderer.clear();
             m_isAcceleratedCompositingActive = false;
+            m_compositorCreationFailed = true;
         }
     } else {
         m_layerRenderer = 0;
@@ -2214,7 +2221,10 @@ void WebViewImpl::setRootLayerNeedsDisplay()
 
 PassOwnPtr<GLES2Context> WebViewImpl::getOnscreenGLES2Context()
 {
-    return GLES2Context::create(GLES2ContextInternal::create(gles2Context(), false));
+    WebGLES2Context* context = gles2Context();
+    if (!context)
+        return 0;
+    return GLES2Context::create(GLES2ContextInternal::create(context, false));
 }
 
 SharedGraphicsContext3D* WebViewImpl::getSharedGraphicsContext3D()

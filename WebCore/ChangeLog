@@ -1,3 +1,21 @@
+2010-09-02  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Gracefully switch over to software compositing if the accelerated
+        compositor fails to initialize. LayerRendererChromium::create() will now return 0
+        if the GLES2Context passed to it is NULL or the LayerRendererChromium failed to initialize
+        hardware rendering.
+        https://bugs.webkit.org/show_bug.cgi?id=45124
+        
+        Tested by forcing the creation of the gles2 context to fail and loading pages that normally trigger
+        the compositor.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::create):
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::makeContextCurrent):
+
 2010-09-03  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Simon Fraser.

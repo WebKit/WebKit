@@ -324,6 +324,7 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
     void setRootLayerNeedsDisplay();
     void setRootGraphicsLayer(WebCore::PlatformLayer*);
+    bool allowsAcceleratedCompositing();
 #endif
     // Onscreen contexts display to the screen associated with this view.
     // Offscreen contexts render offscreen but can share resources with the
@@ -512,6 +513,7 @@ private:
 #if USE(ACCELERATED_COMPOSITING)
     OwnPtr<WebCore::LayerRendererChromium> m_layerRenderer;
     bool m_isAcceleratedCompositingActive;
+    bool m_compositorCreationFailed;
 #endif
     static const WebInputEvent* m_currentInputEvent;
 

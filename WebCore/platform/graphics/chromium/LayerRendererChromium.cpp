@@ -77,7 +77,14 @@ static inline bool compareLayerZ(const LayerChromium* a, const LayerChromium* b)
 
 PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(PassOwnPtr<GLES2Context> gles2Context)
 {
-    return new LayerRendererChromium(gles2Context);
+    if (!gles2Context)
+        return 0;
+
+    OwnPtr<LayerRendererChromium> layerRenderer(new LayerRendererChromium(gles2Context));
+    if (!layerRenderer->hardwareCompositing())
+        return 0;
+
+    return layerRenderer.release();
 }
 
 LayerRendererChromium::LayerRendererChromium(PassOwnPtr<GLES2Context> gles2Context)
@@ -91,7 +98,7 @@ LayerRendererChromium::LayerRendererChromium(PassOwnPtr<GLES2Context> gles2Conte
     , m_currentShader(0)
     , m_gles2Context(gles2Context)
 {
-    m_hardwareCompositing = (m_gles2Context && initializeSharedObjects());
+    m_hardwareCompositing = initializeSharedObjects();
 }
 
 LayerRendererChromium::~LayerRendererChromium()

@@ -1,3 +1,24 @@
+2010-09-02  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Revert to software compositing if the accelerated
+        compositor fails to initialize. If we tried to initialize the compositor
+        for this WebView and failed, next time the associated chrome client is
+        asked whether it can do accelerated compositing it will return false.
+        https://bugs.webkit.org/show_bug.cgi?id=45124
+        
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::allowsAcceleratedCompositing):
+        * src/ChromeClientImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::paint):
+        (WebKit::WebViewImpl::allowsAcceleratedCompositing):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit::WebViewImpl::getOnscreenGLES2Context):
+        * src/WebViewImpl.h:
+
 2010-09-03  James Robinson  <jamesr@chromium.org>
 
         [chromium] Add one more include to fix the mac compile.
