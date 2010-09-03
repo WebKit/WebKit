@@ -11,13 +11,20 @@ layer at (0,0) size 800x251
             RenderBlock {mo} at (0,0) size 12x12
               RenderText {mo} at (0,0) size 12x13
                 text run at (0,0) width 12: "\x{2211}"
-        RenderText {#text} at (74,0) size 64x20
-          text run at (74,0) width 64: " operator: "
-        RenderBlock {math} at (138,5) size 14x16
+        RenderText {#text} at (74,0) size 72x20
+          text run at (74,0) width 72: " , operator: "
+        RenderBlock {math} at (146,5) size 14x16
           RenderBlock {mo} at (1,0) size 12x12
             RenderBlock {mo} at (0,0) size 12x12
               RenderText {mo} at (0,0) size 12x13
                 text run at (0,0) width 12: "B"
+        RenderText {#text} at (160,0) size 114x20
+          text run at (160,0) width 114: " , minus operator: "
+        RenderBlock {math} at (274,5) size 14x16
+          RenderBlock {mo} at (1,0) size 12x12
+            RenderBlock {mo} at (0,0) size 12x12
+              RenderText {mo} at (0,0) size 12x13
+                text run at (0,0) width 12: "\x{2212}"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,37) size 784x20
         RenderText {#text} at (0,0) size 60x20
@@ -27,13 +34,20 @@ layer at (0,0) size 800x251
             RenderBlock {mo} at (0,0) size 16x16
               RenderText {mo} at (0,0) size 16x17
                 text run at (0,0) width 16: "\x{2211}"
-        RenderText {#text} at (78,0) size 64x20
-          text run at (78,0) width 64: " operator: "
-        RenderBlock {math} at (142,2) size 18x16
+        RenderText {#text} at (78,0) size 72x20
+          text run at (78,0) width 72: " , operator: "
+        RenderBlock {math} at (150,2) size 18x16
           RenderBlock {mo} at (1,0) size 16x16
             RenderBlock {mo} at (0,0) size 16x16
               RenderText {mo} at (0,0) size 16x17
                 text run at (0,0) width 16: "B"
+        RenderText {#text} at (168,0) size 114x20
+          text run at (168,0) width 114: " , minus operator: "
+        RenderBlock {math} at (282,2) size 18x16
+          RenderBlock {mo} at (1,0) size 16x16
+            RenderBlock {mo} at (0,0) size 16x16
+              RenderText {mo} at (0,0) size 16x17
+                text run at (0,0) width 16: "\x{2212}"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,73) size 784x25
         RenderText {#text} at (0,5) size 60x20
@@ -43,13 +57,20 @@ layer at (0,0) size 800x251
             RenderBlock {mo} at (1,0) size 24x24
               RenderText {mo} at (0,0) size 24x25
                 text run at (0,0) width 24: "\x{2211}"
-        RenderText {#text} at (88,5) size 64x20
-          text run at (88,5) width 64: " operator: "
-        RenderBlock {math} at (152,0) size 28x24
+        RenderText {#text} at (88,5) size 72x20
+          text run at (88,5) width 72: " , operator: "
+        RenderBlock {math} at (160,0) size 28x24
           RenderBlock {mo} at (1,0) size 26x24
             RenderBlock {mo} at (1,0) size 24x24
               RenderText {mo} at (0,0) size 24x25
-                text run at (0,0) width 24: "\x{2211}"
+                text run at (0,0) width 24: "B"
+        RenderText {#text} at (188,5) size 114x20
+          text run at (188,5) width 114: " , minus operator: "
+        RenderBlock {math} at (302,0) size 28x24
+          RenderBlock {mo} at (1,0) size 26x24
+            RenderBlock {mo} at (1,0) size 24x24
+              RenderText {mo} at (0,0) size 24x25
+                text run at (0,0) width 24: "\x{2212}"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,114) size 784x26
         RenderText {#text} at (0,3) size 60x20
@@ -67,9 +88,9 @@ layer at (0,0) size 800x251
             RenderBlock {mo} at (1,0) size 24x24
               RenderText {mo} at (0,0) size 24x25
                 text run at (0,0) width 24: "\x{2211}"
-        RenderText {#text} at (116,3) size 64x20
-          text run at (116,3) width 64: " operator: "
-        RenderBlock {math} at (180,0) size 56x26
+        RenderText {#text} at (116,3) size 72x20
+          text run at (116,3) width 72: " , operator: "
+        RenderBlock {math} at (188,0) size 56x26
           RenderBlock {mo} at (1,2) size 12x20
             RenderBlock {mo} at (0,0) size 12x20
               RenderText {mo} at (0,8) size 12x13
@@ -82,6 +103,21 @@ layer at (0,0) size 800x251
             RenderBlock {mo} at (1,0) size 24x24
               RenderText {mo} at (0,0) size 24x25
                 text run at (0,0) width 24: "B"
+        RenderText {#text} at (244,3) size 114x20
+          text run at (244,3) width 114: " , minus operator: "
+        RenderBlock {math} at (358,0) size 56x26
+          RenderBlock {mo} at (1,2) size 12x20
+            RenderBlock {mo} at (0,0) size 12x20
+              RenderText {mo} at (0,8) size 12x13
+                text run at (0,8) width 12: "\x{2212}"
+          RenderBlock {mo} at (13,1) size 16x22
+            RenderBlock {mo} at (0,0) size 16x22
+              RenderText {mo} at (0,6) size 16x17
+                text run at (0,6) width 16: "\x{2212}"
+          RenderBlock {mo} at (29,0) size 26x24
+            RenderBlock {mo} at (1,0) size 24x24
+              RenderText {mo} at (0,0) size 24x25
+                text run at (0,0) width 24: "\x{2212}"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,156) size 784x63
         RenderText {#text} at (0,21) size 60x20
