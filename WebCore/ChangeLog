@@ -2,6 +2,44 @@
 
         Reviewed by Kenneth Russell.
 
+        Initial patch for audio engine: AudioBus and helper classes
+        https://bugs.webkit.org/show_bug.cgi?id=34452
+
+        No new tests since audio API is not yet implemented.
+
+        * platform/audio/AudioBus.cpp: Added.
+        (WebCore::AudioBus::AudioBus):
+        (WebCore::AudioBus::setChannelMemory):
+        (WebCore::AudioBus::zero):
+        (WebCore::AudioBus::channelByType):
+        (WebCore::AudioBus::topologyMatches):
+        (WebCore::AudioBus::createBufferFromRange):
+        (WebCore::AudioBus::maxAbsValue):
+        (WebCore::AudioBus::normalize):
+        (WebCore::AudioBus::scale):
+        (WebCore::AudioBus::copyFrom):
+        (WebCore::AudioBus::sumFrom):
+        (WebCore::AudioBus::processWithGainFromMonoStereo):
+        (WebCore::AudioBus::processWithGainFrom):
+        (WebCore::AudioBus::copyWithGainFrom):
+        (WebCore::AudioBus::sumWithGainFrom):
+        * platform/audio/AudioBus.h: Added.
+        (WebCore::AudioBus::numberOfChannels):
+        (WebCore::AudioBus::channel):
+        (WebCore::AudioBus::length):
+        (WebCore::AudioBus::sampleRate):
+        (WebCore::AudioBus::setSampleRate):
+        (WebCore::AudioBus::setGain):
+        (WebCore::AudioBus::gain):
+        (WebCore::AudioBus::reset):
+        (WebCore::AudioBus::AudioBus):
+        * platform/audio/AudioSourceProvider.h: Added.
+        (WebCore::AudioSourceProvider::~AudioSourceProvider):
+
+2010-09-03  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
         Add Panner files
         https://bugs.webkit.org/show_bug.cgi?id=45076
 
