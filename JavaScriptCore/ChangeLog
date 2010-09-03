@@ -2,6 +2,34 @@
 
         Reviewed by Eric Seidel.
 
+        Add ParsedURL and URLString to WTFURL API
+        https://bugs.webkit.org/show_bug.cgi?id=45078
+
+        Currently there's no actual URL parsing going on, but this patch is a
+        start to sketching out the API.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/url/api/ParsedURL.cpp: Added.
+        (WTF::ParsedURL::ParsedURL):
+        (WTF::ParsedURL::scheme):
+        (WTF::ParsedURL::username):
+        (WTF::ParsedURL::password):
+        (WTF::ParsedURL::host):
+        (WTF::ParsedURL::port):
+        (WTF::ParsedURL::path):
+        (WTF::ParsedURL::query):
+        (WTF::ParsedURL::fragment):
+        (WTF::ParsedURL::segment):
+        * wtf/url/api/ParsedURL.h: Added.
+        (WTF::ParsedURL::spec):
+        * wtf/url/api/URLString.h: Added.
+        (WTF::URLString::URLString):
+        (WTF::URLString::string):
+
+2010-09-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Add WTFURL to the JavaScriptCore build on Mac
         https://bugs.webkit.org/show_bug.cgi?id=45075
 
