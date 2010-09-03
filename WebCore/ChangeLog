@@ -1,3 +1,25 @@
+2010-09-03  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        audio engine: add AudioChannel files
+        https://bugs.webkit.org/show_bug.cgi?id=44921
+
+        No new tests since audio API is not yet implemented.
+
+        * platform/audio/AudioChannel.cpp: Added.
+        (WebCore::AudioChannel::scale):
+        (WebCore::AudioChannel::copyFrom):
+        (WebCore::AudioChannel::copyFromRange):
+        (WebCore::AudioChannel::sumFrom):
+        (WebCore::AudioChannel::maxAbsValue):
+        * platform/audio/AudioChannel.h: Added.
+        (WebCore::AudioChannel::AudioChannel):
+        (WebCore::AudioChannel::set):
+        (WebCore::AudioChannel::length):
+        (WebCore::AudioChannel::data):
+        (WebCore::AudioChannel::zero):
+
 2010-09-03  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Adam Roben.
