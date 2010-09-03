@@ -1,3 +1,30 @@
+2010-09-03  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed.
+
+        Rebaseline after r66731.
+
+        * platform/chromium-linux/svg/custom/mouse-move-on-svg-container-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/mouse-move-on-svg-container-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/mouse-move-on-svg-container-standalone-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/mouse-move-on-svg-container-standalone-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/mouse-move-on-svg-root-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/mouse-move-on-svg-root-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/mouse-move-on-svg-root-standalone-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/mouse-move-on-svg-root-standalone-expected.txt: Added.
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-container-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-container-expected.png: Added.
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-container-expected.txt: Added.
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-container-standalone-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-container-standalone-expected.png: Added.
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-container-standalone-expected.txt: Added.
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-root-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-root-expected.png: Added.
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-root-expected.txt: Added.
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-root-standalone-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-root-standalone-expected.png: Added.
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-root-standalone-expected.txt: Added.
+
 2010-09-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Kent Tamura.
