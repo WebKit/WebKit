@@ -1,3 +1,27 @@
+2010-09-02  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Martin Robinson.
+
+        [Cairo] Remove glib dependency (caused by use of GOwnPtr)
+        https://bugs.webkit.org/show_bug.cgi?id=45053
+
+        Use OwnPtr instead of GOwnPtr to keep track of Fc* references
+        in FontCacheCairo.cpp.
+
+        No features added, so no new tests.
+
+        * CMakeListsEfl.txt: Updating build system to look for GOwnPtrCairo.*
+        * GNUmakefile.am: Ditto.
+        * platform/graphics/cairo/FontCacheCairo.cpp: Using OwnPtr instead of GOwnPtr.
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/graphics/cairo/GOwnPtrCairo.cpp: Removed.
+        * platform/graphics/cairo/GOwnPtrCairo.h: Removed.
+        * platform/graphics/cairo/OwnPtrCairo.cpp: Added.
+        (WTF::FcPattern):
+        (WTF::FcObjectSet):
+        (WTF::FcFontSet):
+        * platform/graphics/cairo/OwnPtrCairo.h: Added.
+
 2010-09-02  Kinuko Yasuda  <kinuko@chromium.org>
 
         Unreviewed, updating binding-tests expectations (for changeset 66521).

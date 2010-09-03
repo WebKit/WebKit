@@ -2449,8 +2449,8 @@ webcoregtk_sources += \
 	WebCore/platform/graphics/cairo/FontCairo.cpp \
 	WebCore/platform/graphics/cairo/FontCustomPlatformData.h \
 	WebCore/platform/graphics/cairo/FontPlatformData.h \
-	WebCore/platform/graphics/cairo/GOwnPtrCairo.cpp \
-	WebCore/platform/graphics/cairo/GOwnPtrCairo.h \
+	WebCore/platform/graphics/cairo/OwnPtrCairo.cpp \
+	WebCore/platform/graphics/cairo/OwnPtrCairo.h \
 	WebCore/platform/graphics/cairo/GradientCairo.cpp \
 	WebCore/platform/graphics/cairo/GraphicsContextCairo.cpp \
 	WebCore/platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h \

@@ -17,25 +17,34 @@
  *  Boston, MA 02110-1301 USA
  */
 
-#ifndef GOwnPtrCairo_h
-#define GOwnPtrCairo_h
-
-#include "GOwnPtr.h"
+#include "config.h"
+#include "OwnPtrCairo.h"
 
 #if defined(USE_FREETYPE)
-typedef struct _FcPattern FcPattern;
-typedef struct _FcObjectSet FcObjectSet;
-typedef struct _FcFontSet FcFontSet;
+#include <cairo-ft.h>
+#include <fontconfig/fcfreetype.h>
 #endif
 
 namespace WTF {
 
 #if defined(USE_FREETYPE)
-template <> void freeOwnedGPtr<FcPattern>(FcPattern*);
-template <> void freeOwnedGPtr<FcObjectSet>(FcObjectSet*);
-template <> void freeOwnedGPtr<FcFontSet>(FcFontSet*);
+template <> void deleteOwnedPtr<FcPattern>(FcPattern* ptr)
+{
+    if (ptr)
+        FcPatternDestroy(ptr);
+}
+
+template <> void deleteOwnedPtr<FcObjectSet>(FcObjectSet* ptr)
+{
+    if (ptr)
+        FcObjectSetDestroy(ptr);
+}
+
+template <> void deleteOwnedPtr<FcFontSet>(FcFontSet* ptr)
+{
+    if (ptr)
+        FcFontSetDestroy(ptr);
+}
 #endif
 
 } // namespace WTF
-
-#endif

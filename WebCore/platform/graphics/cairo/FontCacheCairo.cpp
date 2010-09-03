@@ -23,7 +23,7 @@
 
 #include "CString.h"
 #include "Font.h"
-#include "GOwnPtrCairo.h"
+#include "OwnPtrCairo.h"
 #include "SimpleFontData.h"
 #include <wtf/Assertions.h>
 
@@ -115,15 +115,15 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
     CString familyNameString = family.string().utf8();
     const char* fcfamily = familyNameString.data();
 
-    GOwnPtr<FcPattern> pattern(FcPatternCreate());
+    OwnPtr<FcPattern> pattern(FcPatternCreate());
     if (!FcPatternAddString(pattern.get(), FC_FAMILY, reinterpret_cast<const FcChar8*>(fcfamily)))
         return 0;
 
-    GOwnPtr<FcObjectSet> objectSet(FcObjectSetCreate());
+    OwnPtr<FcObjectSet> objectSet(FcObjectSetCreate());
     if (!FcObjectSetAdd(objectSet.get(), FC_FAMILY))
         return 0;
 
-    GOwnPtr<FcFontSet> fontSet(FcFontList(0, pattern.get(), objectSet.get()));
+    OwnPtr<FcFontSet> fontSet(FcFontList(0, pattern.get(), objectSet.get()));
 
     if (!fontSet)
         return 0;
