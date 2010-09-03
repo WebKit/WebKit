@@ -236,6 +236,52 @@ bool HTMLObjectElement::hasFallbackContent() const
     return false;
 }
 
+// FIXME: This should be unified with HTMLEmbedElement::updateWidget and
+// moved down into HTMLPluginImageElement.cpp
+void HTMLObjectElement::updateWidget(bool onlyCreateNonNetscapePlugins)
+{
+    // FIXME: We should ASSERT(needsWidgetUpdate()), but currently
+    // FrameView::updateWidget() calls updateWidget(false) without checking if
+    // the widget actually needs updating!
+    setNeedsWidgetUpdate(false);
+    // FIXME: This should ASSERT isFinishedParsingChildren() instead.
+    if (!isFinishedParsingChildren())
+        return;
+
+    String url = this->url();
+    String serviceType = this->serviceType();
+
+    // FIXME: These should be joined into a PluginParameters class.
+    Vector<String> paramNames;
+    Vector<String> paramValues;
+    parametersForPlugin(paramNames, paramValues, url, serviceType);
+
+    // Note: url is modified above by parametersForPlugin.
+    if (!allowedToLoadFrameURL(url))
+        return;
+
+    bool fallbackContent = hasFallbackContent();
+    renderEmbeddedObject()->setHasFallbackContent(fallbackContent);
+
+    if (onlyCreateNonNetscapePlugins && wouldLoadAsNetscapePlugin(url, serviceType))
+        return;
+
+    bool beforeLoadAllowedLoad = dispatchBeforeLoadEvent(url);
+
+    // beforeload events can modify the DOM, potentially causing
+    // RenderWidget::destroy() to be called.  Ensure we haven't been
+    // destroyed before continuing.
+    // FIXME: Should this render fallback content?
+    if (!renderer())
+        return;
+
+    SubframeLoader* loader = document()->frame()->loader()->subframeLoader();
+    bool success = beforeLoadAllowedLoad && loader->requestObject(this, url, getAttribute(nameAttr), serviceType, paramNames, paramValues);
+
+    if (!success && fallbackContent)
+        renderFallbackContent();
+}
+
 bool HTMLObjectElement::rendererIsNeeded(RenderStyle* style)
 {
     // FIXME: This check should not be needed, detached documents never render!

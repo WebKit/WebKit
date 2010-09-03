@@ -101,95 +101,8 @@ bool RenderEmbeddedObject::allowsAcceleratedCompositing() const
     return widget() && widget()->isPluginViewBase() && static_cast<PluginViewBase*>(widget())->platformLayer();
 }
 #endif
-    
-// FIXME: This belongs on HTMLObjectElement, HTMLPluginElement or HTMLFrameOwnerElement.
-static void updateWidgetForObjectElement(HTMLObjectElement* objectElement, bool onlyCreateNonNetscapePlugins)
-{
-    // FIXME: We should ASSERT(objectElement->needsWidgetUpdate()), but currently
-    // FrameView::updateWidget() calls updateWidget(false) without checking if
-    // the widget actually needs updating!
-    objectElement->setNeedsWidgetUpdate(false);
-    // FIXME: This should ASSERT isFinishedParsingChildren() instead.
-    if (!objectElement->isFinishedParsingChildren())
-        return;
 
-    String url = objectElement->url();
-    String serviceType = objectElement->serviceType();
-
-    Vector<String> paramNames;
-    Vector<String> paramValues;
-    objectElement->parametersForPlugin(paramNames, paramValues, url, serviceType);
-
-    // Note: url is modified above by parametersForPlugin.
-    if (!objectElement->allowedToLoadFrameURL(url))
-        return;
-
-    bool fallbackContent = objectElement->hasFallbackContent();
-    objectElement->renderEmbeddedObject()->setHasFallbackContent(fallbackContent);
-
-    if (onlyCreateNonNetscapePlugins && objectElement->wouldLoadAsNetscapePlugin(url, serviceType))
-        return;
-
-    bool beforeLoadAllowedLoad = objectElement->dispatchBeforeLoadEvent(url);
-
-    // beforeload events can modify the DOM, potentially causing
-    // RenderWidget::destroy() to be called.  Ensure we haven't been
-    // destroyed before continuing.
-    // FIXME: Should this render fallback content?
-    if (!objectElement->renderer())
-        return;
-
-    SubframeLoader* loader = objectElement->document()->frame()->loader()->subframeLoader();
-    bool success = beforeLoadAllowedLoad && loader->requestObject(objectElement, url, objectElement->getAttribute(nameAttr), serviceType, paramNames, paramValues);
-
-    if (!success && fallbackContent)
-        objectElement->renderFallbackContent();
-}
-
-// FIXME: This belongs on HTMLEmbedElement, HTMLPluginElement or HTMLFrameOwnerElement.
-static void updateWidgetForEmbedElement(HTMLEmbedElement* embedElement, bool onlyCreateNonNetscapePlugins)
-{
-    // FIXME: We should ASSERT(embedElement->needsWidgetUpdate()), but currently
-    // FrameView::updateWidget() calls updateWidget(false) without checking if
-    // the widget actually needs updating!
-    embedElement->setNeedsWidgetUpdate(false);
-
-    String url = embedElement->url();
-    String serviceType = embedElement->serviceType();
-    if (url.isEmpty() && serviceType.isEmpty())
-        return;
-    if (!embedElement->allowedToLoadFrameURL(url))
-        return;
-
-    if (onlyCreateNonNetscapePlugins && embedElement->wouldLoadAsNetscapePlugin(url, serviceType))
-        return;
-
-    Vector<String> paramNames;
-    Vector<String> paramValues;
-    embedElement->parametersForPlugin(paramNames, paramValues);
-
-    if (!embedElement->dispatchBeforeLoadEvent(url))
-        return;
-
-    SubframeLoader* loader = embedElement->document()->frame()->loader()->subframeLoader();
-    // FIXME: beforeLoad could have detached the renderer!  Just like in the <object> case above.
-    loader->requestObject(embedElement, url, embedElement->getAttribute(nameAttr), serviceType, paramNames, paramValues);
-}
-
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-// FIXME: This belongs on HTMLMediaElement.
-static void updateWidgetForMediaElement(HTMLMediaElement* mediaElement, bool ignored)
-{
-    Vector<String> paramNames;
-    Vector<String> paramValues;
-    KURL kurl;
-
-    mediaElement->getPluginProxyParams(kurl, paramNames, paramValues);
-    mediaElement->setNeedWidgetUpdate(false);
-    frame->loader()->subframeLoader()->loadMediaPlayerProxyPlugin(mediaElement, kurl, paramNames, paramValues);
-}
-#endif
-
+// FIXME: This should be moved into FrameView (the only caller)
 void RenderEmbeddedObject::updateWidget(bool onlyCreateNonNetscapePlugins)
 {
     if (!m_replacementText.isNull() || !node()) // Check the node in case destroy() has been called.
@@ -201,18 +114,13 @@ void RenderEmbeddedObject::updateWidget(bool onlyCreateNonNetscapePlugins)
     // artifically to ensure that we remain alive for the duration of plug-in initialization.
     RenderWidgetProtector protector(this);
 
-    if (node()->hasTagName(objectTag)) {
-        HTMLObjectElement* objectElement = static_cast<HTMLObjectElement*>(node());
-        updateWidgetForObjectElement(objectElement, onlyCreateNonNetscapePlugins);
-    } else if (node()->hasTagName(embedTag)) {
-        HTMLEmbedElement* embedElement = static_cast<HTMLEmbedElement*>(node());
-        updateWidgetForEmbedElement(embedElement, onlyCreateNonNetscapePlugins);
-    }
+    if (node()->hasTagName(objectTag))
+        static_cast<HTMLObjectElement*>(node())->updateWidget(onlyCreateNonNetscapePlugins);
+    else if (node()->hasTagName(embedTag))
+        static_cast<HTMLEmbedElement*>(node())->updateWidget(onlyCreateNonNetscapePlugins);
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)        
-    else if (node()->hasTagName(videoTag) || node()->hasTagName(audioTag)) {
-        HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(node());
-        updateWidgetForMediaElement(mediaElement, onlyCreateNonNetscapePlugins);
-    }
+    else if (node()->hasTagName(videoTag) || node()->hasTagName(audioTag))
+        static_cast<HTMLMediaElement*>(node())->updateWidget(onlyCreateNonNetscapePlugins);
 #endif
     else
         ASSERT_NOT_REACHED();

@@ -2,6 +2,50 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Move updateWidget implementations into the DOM
+        https://bugs.webkit.org/show_bug.cgi?id=45058
+
+        Unfortunately it's not yet possible to share an updateWidget
+        implementation between <embed> and <object>.  That would amount to
+        (positive) functional changes for <embed> which I'd will separate
+        into a later patch.  I will also have to untangle <object>'s <param>
+        walk from its url/serviceType calculations.
+
+        However after this patch it's slap-you-across-the-face obvious that
+        RenderEmbeddedObject::updateWidget was the wrong place for this code.
+        RenderEmbeddedObject::updateWidget still exists, but only as a
+        pseudo-virtual-method dispatcher.  Unless we add updateWidget() to
+        HTMLElement, we won't be able to use real virtual dispatch.
+
+        I may need to consider making "having a widget" a has-a relationship
+        with some sort of WidgetContainer object which Media and Plugin can
+        share.  Or its also possible that Media's use of the widget code here
+        is just wrong.  Certainly now that updateWidget was moved into HTMLMediaElement
+        it becomes obvious that HTMLMediaElement has duplicate code for updating widgets.
+
+        No functional changes, thus no tests.
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::updateWidget):
+        * html/HTMLEmbedElement.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updateWidget):
+        * html/HTMLMediaElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::updateWidget):
+        * html/HTMLObjectElement.h:
+        (WebCore::HTMLObjectElement::useFallbackContent):
+        * html/HTMLPlugInImageElement.h:
+        (WebCore::HTMLPlugInImageElement::needsWidgetUpdate):
+        (WebCore::HTMLPlugInImageElement::setNeedsWidgetUpdate):
+        * loader/FrameLoader.cpp:
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::updateWidget):
+
+2010-09-02  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
         Move more code from RenderEmbeddedObject into the DOM
         https://bugs.webkit.org/show_bug.cgi?id=45055
 

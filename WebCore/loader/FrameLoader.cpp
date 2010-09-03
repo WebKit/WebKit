@@ -1042,6 +1042,7 @@ void FrameLoader::setOpener(Frame* opener)
     }
 }
 
+// FIXME: This does not belong in FrameLoader!
 void FrameLoader::handleFallbackContent()
 {
     HTMLFrameOwnerElement* owner = m_frame->ownerElement();

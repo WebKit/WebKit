@@ -31,7 +31,7 @@ class HTMLEmbedElement : public HTMLPlugInImageElement {
 public:
     static PassRefPtr<HTMLEmbedElement> create(const QualifiedName&, Document*, bool createdByParser);
 
-    void parametersForPlugin(Vector<String>& paramNames, Vector<String>& paramValues);
+    void updateWidget(bool onlyCreateNonNetscapePlugins);
 
 private:
     HTMLEmbedElement(const QualifiedName&, Document*, bool createdByParser);
@@ -50,6 +50,8 @@ private:
     virtual RenderWidget* renderWidgetForJSBindings() const;
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
+
+    void parametersForPlugin(Vector<String>& paramNames, Vector<String>& paramValues);
 };
 
 }

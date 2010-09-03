@@ -2010,6 +2010,20 @@ void HTMLMediaElement::createMediaPlayerProxy()
     if (m_proxyWidget)
         m_needWidgetUpdate = false;
 }
+
+void HTMLMediaElement::updateWidget(bool)
+{
+    mediaElement->setNeedWidgetUpdate(false);
+
+    Vector<String> paramNames;
+    Vector<String> paramValues;
+    KURL kurl;
+    
+    mediaElement->getPluginProxyParams(kurl, paramNames, paramValues);
+    SubframeLoader* loader = document()->frame()->loader()->subframeLoader();
+    loader->loadMediaPlayerProxyPlugin(mediaElement, kurl, paramNames, paramValues);
+}
+
 #endif // ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 
 void HTMLMediaElement::enterFullscreen()
