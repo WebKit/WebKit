@@ -36,7 +36,6 @@
 #include "InspectorCSSStore.h"
 #include "InspectorValues.h"
 #include "NodeList.h"
-#include "ScriptState.h"
 #include "Timer.h"
 
 #include <wtf/Deque.h>
@@ -114,6 +113,9 @@ namespace WebCore {
         void searchCanceled();
         void setDOMBreakpoint(long nodeId, long type);
         void removeDOMBreakpoint(long nodeId, long type);
+        bool shouldBreakOnNodeInsertion(Node* node, Node* parent, PassRefPtr<InspectorValue>* details);
+        bool shouldBreakOnNodeRemoval(Node* node, PassRefPtr<InspectorValue>* details);
+        bool shouldBreakOnAttributeModification(Element* element, PassRefPtr<InspectorValue>* details);
 
         // Methods called from the frontend for CSS styles inspection.
         void getStyles(long nodeId, bool authorOnly, RefPtr<InspectorValue>* styles);
@@ -160,7 +162,7 @@ namespace WebCore {
         bool pushDocumentToFrontend();
 
         bool hasBreakpoint(Node* node, long type);
-        bool pauseOnBreakpoint();
+        PassRefPtr<InspectorObject> createBreakpoint(Node* node, long type);
         void updateSubtreeBreakpoints(Node* root, uint32_t rootMask, bool value);
 
         PassRefPtr<InspectorObject> buildObjectForAttributeStyles(Element* element);
@@ -217,8 +219,6 @@ namespace WebCore {
         HashSet<RefPtr<Node> > m_searchResults;
         Vector<long> m_inspectedNodes;
         HashMap<Node*, uint32_t> m_breakpoints;
-
-        static InspectorDOMAgent* s_domAgentOnBreakpoint;
     };
 
 #endif

@@ -89,10 +89,10 @@ InspectorTest.captureStackTrace = function(callFrames)
     }
 };
 
-InspectorTest._pausedScript = function(callFrames)
+InspectorTest._pausedScript = function(details)
 {
     InspectorTest.addResult("Script execution paused.");
-    InspectorTest._callFrames = callFrames;
+    InspectorTest._callFrames = details.callFrames;
     if (InspectorTest._waitUntilPausedCallback) {
         var callback = InspectorTest._waitUntilPausedCallback;
         delete InspectorTest._waitUntilPausedCallback;

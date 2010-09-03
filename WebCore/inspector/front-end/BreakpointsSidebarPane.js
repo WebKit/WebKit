@@ -106,7 +106,7 @@ WebInspector.BreakpointItem = function(breakpoint)
     this._element.appendChild(checkboxElement);
 
     this._breakpoint.addEventListener("enable-changed", this._enableChanged, this);
-    this._breakpoint.addEventListener("removed", this._removed, this);
+    this._breakpoint.addEventListener("removed", this.dispatchEventToListeners.bind(this, "removed"));
 }
 
 WebInspector.BreakpointItem.prototype = {
@@ -128,15 +128,10 @@ WebInspector.BreakpointItem.prototype = {
         event.stopPropagation();
     },
 
-    _enableChanged: function()
+    _enableChanged: function(event)
     {
         var checkbox = this._element.firstChild;
         checkbox.checked = this._breakpoint.enabled;
-    },
-
-    _removed: function()
-    {
-        this.dispatchEventToListeners("removed");
     }
 }
 

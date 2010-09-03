@@ -1,3 +1,62 @@
+2010-09-03  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: provide more information to front-end when breaking on DOM event
+        https://bugs.webkit.org/show_bug.cgi?id=44679
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertBefore):
+        (WebCore::ContainerNode::parserInsertBefore):
+        (WebCore::ContainerNode::replaceChild):
+        (WebCore::ContainerNode::appendChild):
+        (WebCore::ContainerNode::parserAddChild):
+        (WebCore::notifyChildInserted):
+        (WebCore::dispatchChildRemovalEvents):
+        * dom/Element.cpp:
+        (WebCore::Element::setAttribute):
+        (WebCore::Element::removeAttribute):
+        * inspector/Inspector.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::willInsertDOMNodeImpl):
+        (WebCore::InspectorController::didInsertDOMNodeImpl):
+        (WebCore::InspectorController::willRemoveDOMNodeImpl):
+        (WebCore::InspectorController::didRemoveDOMNodeImpl):
+        (WebCore::InspectorController::willModifyDOMAttrImpl):
+        (WebCore::InspectorController::didModifyDOMAttrImpl):
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::willInsertDOMNode):
+        (WebCore::InspectorController::didInsertDOMNode):
+        (WebCore::InspectorController::willRemoveDOMNode):
+        (WebCore::InspectorController::willModifyDOMAttr):
+        (WebCore::InspectorController::didModifyDOMAttr):
+        (WebCore::InspectorController::inspectorControllerForNode):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::~InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::shouldBreakOnNodeInsertion):
+        (WebCore::InspectorDOMAgent::shouldBreakOnNodeRemoval):
+        (WebCore::InspectorDOMAgent::shouldBreakOnAttributeModification):
+        (WebCore::InspectorDOMAgent::didInsertDOMNode):
+        (WebCore::InspectorDOMAgent::didRemoveDOMNode):
+        (WebCore::InspectorDOMAgent::didModifyDOMAttr):
+        (WebCore::InspectorDOMAgent::createBreakpoint):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::InspectorDebuggerAgent):
+        (WebCore::InspectorDebuggerAgent::~InspectorDebuggerAgent):
+        (WebCore::InspectorDebuggerAgent::didPause):
+        (WebCore::InspectorDebuggerAgent::breakProgram):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorValues.h:
+        (WebCore::InspectorValue::isNull):
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.BreakpointItem):
+        (WebInspector.BreakpointItem.prototype._enableChanged):
+        * inspector/front-end/Script.js:
+        (WebInspector.Script.prototype.get linesCount):
+        * inspector/front-end/inspector.js:
+        (WebInspector.pausedScript):
+
 2010-08-31  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.

@@ -1,3 +1,13 @@
+2010-09-03  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: provide more information to front-end when breaking on DOM event
+        https://bugs.webkit.org/show_bug.cgi?id=44679
+
+        * http/tests/inspector/debugger-test2.js:
+        (initialize_DebuggerTest.InspectorTest._pausedScript):
+
 2010-09-03  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.

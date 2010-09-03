@@ -64,7 +64,6 @@
 #include "PlatformString.h"
 #include "RenderStyle.h"
 #include "RenderStyleConstants.h"
-#include "ScriptDebugServer.h"
 #include "ScriptEventListener.h"
 #include "StyleSheetList.h"
 #include "Text.h"
@@ -210,8 +209,6 @@ const int domBreakpointDerivedTypeShift = 16;
 
 }
 
-InspectorDOMAgent* InspectorDOMAgent::s_domAgentOnBreakpoint = 0;
-
 InspectorDOMAgent::InspectorDOMAgent(InspectorCSSStore* cssStore, InspectorFrontend* frontend)
     : EventListener(InspectorDOMAgentType)
     , m_cssStore(cssStore)
@@ -224,9 +221,6 @@ InspectorDOMAgent::InspectorDOMAgent(InspectorCSSStore* cssStore, InspectorFront
 InspectorDOMAgent::~InspectorDOMAgent()
 {
     reset();
-
-    if (this == s_domAgentOnBreakpoint)
-        s_domAgentOnBreakpoint = 0;
 }
 
 void InspectorDOMAgent::reset()
@@ -780,6 +774,42 @@ void InspectorDOMAgent::removeDOMBreakpoint(long nodeId, long type)
     }
 }
 
+bool InspectorDOMAgent::shouldBreakOnNodeInsertion(Node*, Node* parent, PassRefPtr<InspectorValue>* details)
+{
+    if (!hasBreakpoint(parent, SubtreeModified))
+        return false;
+    RefPtr<InspectorObject> detailsObject = InspectorObject::create();
+    detailsObject->setObject("breakpoint", createBreakpoint(parent, SubtreeModified));
+    *details = detailsObject;
+    return true;
+}
+
+bool InspectorDOMAgent::shouldBreakOnNodeRemoval(Node* node, PassRefPtr<InspectorValue>* details)
+{
+    bool hasNodeRemovedBreakpoint = hasBreakpoint(node, NodeRemoved);
+    bool hasAnyBreakpoint = hasNodeRemovedBreakpoint || hasBreakpoint(innerParentNode(node), SubtreeModified);
+    if (!hasAnyBreakpoint)
+        return false;
+
+    RefPtr<InspectorObject> detailsObject = InspectorObject::create();
+    if (hasNodeRemovedBreakpoint)
+        detailsObject->setObject("breakpoint", createBreakpoint(node, NodeRemoved));
+    else
+        detailsObject->setObject("breakpoint", createBreakpoint(innerParentNode(node), SubtreeModified));
+    *details = detailsObject;
+    return true;
+}
+
+bool InspectorDOMAgent::shouldBreakOnAttributeModification(Element* element, PassRefPtr<InspectorValue>* details)
+{
+    if (!hasBreakpoint(element, AttributeModified))
+        return false;
+    RefPtr<InspectorObject> detailsObject = InspectorObject::create();
+    detailsObject->setObject("breakpoint", createBreakpoint(element, AttributeModified));
+    *details = detailsObject;
+    return true;
+}
+
 String InspectorDOMAgent::documentURLString(Document* document) const
 {
     if (!document || document->url().isNull())
@@ -985,12 +1015,7 @@ void InspectorDOMAgent::didInsertDOMNode(Node* node)
         return;
 
     if (m_breakpoints.size()) {
-        Node* parent = innerParentNode(node);
-        if (hasBreakpoint(parent, SubtreeModified)) {
-            if (!pauseOnBreakpoint())
-                return;
-        }
-        uint32_t mask = m_breakpoints.get(parent);
+        uint32_t mask = m_breakpoints.get(innerParentNode(node));
         uint32_t inheritableTypesMask = (mask | (mask >> domBreakpointDerivedTypeShift)) & inheritableDOMBreakpointTypesMask;
         if (inheritableTypesMask)
             updateSubtreeBreakpoints(node, inheritableTypesMask, true);
@@ -1023,10 +1048,6 @@ void InspectorDOMAgent::didRemoveDOMNode(Node* node)
         return;
 
     if (m_breakpoints.size()) {
-        if (hasBreakpoint(node, NodeRemoved) || hasBreakpoint(innerParentNode(node), SubtreeModified)) {
-            if (!pauseOnBreakpoint())
-                return;
-        }
         // Remove subtree breakpoints.
         m_breakpoints.remove(node);
         Vector<Node*> stack(1, innerFirstChild(node));
@@ -1063,12 +1084,24 @@ void InspectorDOMAgent::didModifyDOMAttr(Element* element)
     if (!id)
         return;
 
-    if (hasBreakpoint(element, AttributeModified)) {
-        if (!pauseOnBreakpoint())
-            return;
-    }
-
     m_frontend->attributesUpdated(id, buildArrayForElementAttributes(element));
+}
+
+PassRefPtr<InspectorObject> InspectorDOMAgent::createBreakpoint(Node* node, long type)
+{
+    RefPtr<InspectorObject> breakpoint = InspectorObject::create();
+
+    // Find breakpoint owner.
+    while (!(m_breakpoints.get(node) & (1 << type))) {
+        node = innerParentNode(node);
+        ASSERT(node);
+    }
+    long nodeId = m_documentNodeToIdMap.get(node);
+    ASSERT(nodeId);
+
+    breakpoint->setNumber("nodeId", nodeId);
+    breakpoint->setNumber("type", type);
+    return breakpoint.release();
 }
 
 bool InspectorDOMAgent::hasBreakpoint(Node* node, long type)
@@ -1076,19 +1109,6 @@ bool InspectorDOMAgent::hasBreakpoint(Node* node, long type)
     uint32_t rootBit = 1 << type;
     uint32_t derivedBit = rootBit << domBreakpointDerivedTypeShift;
     return m_breakpoints.get(node) & (rootBit | derivedBit);
-}
-
-bool InspectorDOMAgent::pauseOnBreakpoint()
-{
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    s_domAgentOnBreakpoint = this;
-    ScriptDebugServer::shared().breakProgram();
-    bool deleted = !s_domAgentOnBreakpoint;
-    s_domAgentOnBreakpoint = 0;
-    return !deleted;
-#else
-    return true;
-#endif
 }
 
 void InspectorDOMAgent::updateSubtreeBreakpoints(Node* node, uint32_t rootMask, bool set)

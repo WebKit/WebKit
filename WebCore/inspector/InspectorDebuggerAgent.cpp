@@ -56,11 +56,14 @@ PassOwnPtr<InspectorDebuggerAgent> InspectorDebuggerAgent::create(InspectorContr
     return agent.release();
 }
 
+InspectorDebuggerAgent* InspectorDebuggerAgent::s_debuggerAgentOnBreakpoint = 0;
+
 InspectorDebuggerAgent::InspectorDebuggerAgent(InspectorController* inspectorController, InspectorFrontend* frontend)
     : m_inspectorController(inspectorController)
     , m_frontend(frontend)
     , m_pausedScriptState(0)
     , m_breakpointsLoaded(false)
+    , m_breakProgramReason(InspectorValue::null())
 {
 }
 
@@ -68,6 +71,9 @@ InspectorDebuggerAgent::~InspectorDebuggerAgent()
 {
     ScriptDebugServer::shared().removeListener(this, m_inspectorController->inspectedPage());
     m_pausedScriptState = 0;
+
+    if (this == s_debuggerAgentOnBreakpoint)
+        s_debuggerAgentOnBreakpoint = 0;
 }
 
 bool InspectorDebuggerAgent::isDebuggerAlwaysEnabled()
@@ -282,15 +288,31 @@ void InspectorDebuggerAgent::failedToParseSource(const String& url, const String
 void InspectorDebuggerAgent::didPause(ScriptState* scriptState)
 {
     ASSERT(scriptState && !m_pausedScriptState);
+    ASSERT(m_breakProgramReason);
     m_pausedScriptState = scriptState;
-    RefPtr<InspectorValue> callFrames = currentCallFrames();
-    m_frontend->pausedScript(callFrames.get());
+    RefPtr<InspectorObject> details = InspectorObject::create();
+    details->setValue("callFrames", currentCallFrames());
+    details->setValue("reason", m_breakProgramReason);
+    m_frontend->pausedScript(details);
 }
 
 void InspectorDebuggerAgent::didContinue()
 {
     m_pausedScriptState = 0;
     m_frontend->resumedScript();
+}
+
+void InspectorDebuggerAgent::breakProgram(PassRefPtr<InspectorValue> reason)
+{
+    s_debuggerAgentOnBreakpoint = this;
+    m_breakProgramReason = reason;
+
+    ScriptDebugServer::shared().breakProgram();
+    if (!s_debuggerAgentOnBreakpoint)
+        return;
+
+    s_debuggerAgentOnBreakpoint = 0;
+    m_breakProgramReason = InspectorValue::null();
 }
 
 } // namespace WebCore

@@ -72,7 +72,7 @@ module core {
         [notify] void debuggerWasDisabled();
         [notify] void failedToParseScriptSource(out String url, out String data, out int firstLine, out int errorLine, out String errorMessage);
         [notify] void parsedScriptSource(out String sourceID, out String url, out String data, out int firstLine, out int scriptWorldType);
-        [notify] void pausedScript(out Value callFrames);
+        [notify] void pausedScript(out Object details);
         [notify] void profilerWasEnabled();
         [notify] void profilerWasDisabled();
         [notify] void restoredBreakpoint(out String sourceID, out String url, out int line, out boolean enabled, out String condition);

@@ -59,11 +59,12 @@
 #include "InspectorBackendDispatcher.h"
 #include "InspectorCSSStore.h"
 #include "InspectorClient.h"
-#include "InspectorFrontend.h"
-#include "InspectorFrontendClient.h"
+#include "InspectorDOMAgent.h"
 #include "InspectorDOMStorageResource.h"
 #include "InspectorDatabaseResource.h"
 #include "InspectorDebuggerAgent.h"
+#include "InspectorFrontend.h"
+#include "InspectorFrontendClient.h"
 #include "InspectorProfilerAgent.h"
 #include "InspectorResource.h"
 #include "InspectorStorageAgent.h"
@@ -1843,6 +1844,58 @@ void InspectorController::reloadPage()
 {
     m_inspectedPage->mainFrame()->redirectScheduler()->scheduleRefresh(true);
 }
+
+void InspectorController::willInsertDOMNodeImpl(Node* node, Node* parent)
+{
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    if (!m_debuggerAgent || !m_domAgent)
+        return;
+    PassRefPtr<InspectorValue> details;
+    if (m_domAgent->shouldBreakOnNodeInsertion(node, parent, &details))
+        m_debuggerAgent->breakProgram(details);
+#endif
+}
+
+void InspectorController::didInsertDOMNodeImpl(Node* node)
+{
+    if (m_domAgent)
+        m_domAgent->didInsertDOMNode(node);
+}
+
+void InspectorController::willRemoveDOMNodeImpl(Node* node)
+{
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    if (!m_debuggerAgent || !m_domAgent)
+        return;
+    PassRefPtr<InspectorValue> details;
+    if (m_domAgent->shouldBreakOnNodeRemoval(node, &details))
+        m_debuggerAgent->breakProgram(details);
+#endif
+}
+
+void InspectorController::didRemoveDOMNodeImpl(Node* node)
+{
+    if (m_domAgent)
+        m_domAgent->didRemoveDOMNode(node);
+}
+
+void InspectorController::willModifyDOMAttrImpl(Element* element)
+{
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    if (!m_debuggerAgent || !m_domAgent)
+        return;
+    PassRefPtr<InspectorValue> details;
+    if (m_domAgent->shouldBreakOnAttributeModification(element, &details))
+        m_debuggerAgent->breakProgram(details);
+#endif
+}
+
+void InspectorController::didModifyDOMAttrImpl(Element* element)
+{
+    if (m_domAgent)
+        m_domAgent->didModifyDOMAttr(element);
+}
+
 
 } // namespace WebCore
 
