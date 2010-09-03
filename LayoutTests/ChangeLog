@@ -1,3 +1,24 @@
+2010-09-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        Can't unbold bolded list item when list is surrounded by <b> tag
+        https://bugs.webkit.org/show_bug.cgi?id=25086
+
+        Added a regression test for the bug because the bug has been fixed by http://trac.webkit.org/changeset/66324.
+        The test ensures WebKit removes implicitly styled element such as b around list element
+        when style is toggled inside the list.
+
+        * editing/style/push-down-implicit-styles-around-list-expected.txt: Added.
+        * editing/style/push-down-implicit-styles-around-list.html: Added.
+        * editing/style/script-tests/push-down-implicit-styles-around-list.js: Added.
+        (testSingleToggle):
+        (selectAll):
+        (selectTest):
+        (selectFirstWord):
+        (selectSecondWord):
+        (selectLastTwoWords):
+
 2010-09-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.
