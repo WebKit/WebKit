@@ -45,11 +45,6 @@ public:
     // text are returned via the listener interface.
     virtual bool startRecognition(int requestId, const WebRect&)
     {
-        return startRecognition(requestId);
-    }
-    // FIXME: Remove this once chromium has picked up this change.
-    virtual bool startRecognition(int)
-    {
         WEBKIT_ASSERT_NOT_REACHED();
         return false;
     }
