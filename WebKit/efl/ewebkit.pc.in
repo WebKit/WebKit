@@ -9,4 +9,4 @@ Version: @PROJECT_VERSION@
 Requires: cairo evas ecore
 Libs: -L${libdir} -lewebkit @EXTRA_EWEBKIT_LINK@
 Libs.private: @LIBS_PRIVATE@
-Cflags: -I${includedir}/EWebKit
+Cflags: -I${includedir}/@WebKit_LIBRARY_NAME@-@PROJECT_VERSION_MAJOR@
