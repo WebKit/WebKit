@@ -2,6 +2,12 @@
 
         Unreviewed, test expectation update.
 
+        * platform/chromium/drt_expectations.txt: Remove another duplicate.
+
+2010-09-02  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
         * platform/chromium/drt_expectations.txt:
           Remove a duplicated entry I made in the prior commit.
 

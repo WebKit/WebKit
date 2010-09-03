@@ -380,7 +380,6 @@ BUG_DRT LINUX : http/tests/multipart/stop-crash.html = TIMEOUT
 BUG_DRT WIN MAC LINUX : media/media-can-play-mpeg4-video.html = TEXT
 BUG_DRT WIN MAC LINUX : fast/loader/stateobjects/pushstate-clears-forward-history.html = CRASH
 BUG_DRT WIN : http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html = CRASH
-BUG_DRT WIN MAC LINUX : fast/js/array-splice.html = TEXT
 // 66% crash rate
 BUG_DRT WIN : fast/js/date-preserve-milliseconds.html = CRASH PASS
 
