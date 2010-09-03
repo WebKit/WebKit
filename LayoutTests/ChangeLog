@@ -1,3 +1,11 @@
+2010-09-03  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed.
+
+        Clean up the outdated entries in test_expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Tony Chang.

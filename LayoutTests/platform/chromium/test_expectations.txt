@@ -2448,8 +2448,6 @@ BUG36966 : fast/loader/about-blank-hash-kept.html = FAIL
 BUG37463 MAC DEBUG : svg/custom/transform-ignore-after-invalid.svg = PASS CRASH
 
 // Bugs that went unreported when we upstreamed run_webkit_tests
-// New test, added http://trac.webkit.org/changeset/55737
-BUG37896 : fast/events/remove-child-onscroll.html = TIMEOUT
 // This one may be an actual regression! Started being flaky after
 // http://trac.webkit.org/log/?verbose=on&rev=55742&stop_rev=55710
 BUG37896 LINUX : fast/events/standalone-image-drag-to-editable.html = IMAGE IMAGE+TEXT PASS TEXT
@@ -2563,9 +2561,6 @@ BUG42696 : http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.ht
 
 // Started failing at r57969
 BUG8729 MAC : http/tests/multipart/invalid-image-data.html = IMAGE
-
-// Started failing at r58058
-BUGWK38020 WIN LINUX MAC : fast/events/touch/send-oncancel-event.html = TEXT
 
 // Started failing at r58152
 BUGWK38038 WIN LINUX MAC : fast/url/file-http-base.html = TEXT
@@ -3023,28 +3018,10 @@ BUG51854 WIN SLOW : http/tests/storage/callbacks-are-called-in-correct-context.h
 
 // Regressions from r65229
 BUGWK43912 WIN LINUX : svg/W3C-SVG-1.1/masking-intro-01-f.svg = IMAGE
-BUGWK43912 WIN : svg/W3C-SVG-1.1/masking-mask-01-b.svg = IMAGE
-BUGWK43912 LINUX RELEASE : svg/W3C-SVG-1.1/masking-mask-01-b.svg = IMAGE
 BUGWK43912 WIN LINUX : svg/batik/masking/maskRegions.svg = IMAGE
-BUGWK43912 WIN LINUX : svg/css/circle-in-mask-with-shadow.svg = IMAGE
-BUGWK43912 WIN LINUX : svg/css/mask-with-shadow.svg = IMAGE
 BUGWK43912 WIN LINUX : svg/custom/grayscale-gradient-mask.svg = IMAGE
-BUGWK43912 WIN LINUX : svg/custom/js-late-mask-and-object-creation.svg = IMAGE
-BUGWK43912 WIN LINUX : svg/custom/js-late-mask-creation.svg = IMAGE
-BUGWK43912 WIN LINUX : svg/custom/mask-changes.svg = IMAGE
-//BUG43496 LINUX : svg/custom/mask-changes.svg = IMAGE PASS
-BUGWK43912 WIN LINUX : svg/custom/mask-child-changes.svg = IMAGE
-BUGWK43912 WIN LINUX : svg/custom/mask-colorspace.svg = IMAGE
-BUGWK43912 WIN LINUX : svg/custom/mask-on-multiple-objects.svg = IMAGE
-BUGWK43912 WIN LINUX : svg/custom/mask-with-all-units.svg = IMAGE
-BUGWK43912 WIN LINUX : svg/custom/mask-with-default-value.svg = IMAGE
 BUGWK43912 WIN LINUX : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
 BUGWK43912 WIN LINUX : svg/custom/absolute-sized-content-with-resources.xhtml = IMAGE
-
-// Same symptoms, failing as of r65449
-BUGWK43912 : svg/W3C-SVG-1.1/filters-color-01-b.svg = IMAGE
-BUGWK43912 : svg/W3C-SVG-1.1/filters-composite-02-b.svg = IMAGE
-BUGWK43912 : svg/W3C-SVG-1.1/filters-offset-01-b.svg = IMAGE
 
 // Times out frequently since the test was added
 BUG52017 MAC LINUX : http/tests/misc/isindex-with-no-form.html = PASS TIMEOUT
