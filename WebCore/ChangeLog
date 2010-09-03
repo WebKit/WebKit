@@ -1,3 +1,13 @@
+2010-09-03  Zaheer Ahmad <zaheer.mot@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        [GTK] compilation issue with JSTimeRanges when video turned off
+        https://bugs.webkit.org/show_bug.cgi?id=44249
+
+        Move the JSTimeRanges outside ENABLE_VIDEO in GNUMakefile.am
+        * WebCore/GNUMakefile.am
+
 2010-09-03  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

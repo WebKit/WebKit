@@ -391,6 +391,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSHTMLUListElement.h \
 	DerivedSources/WebCore/JSHTMLVideoElement.cpp \
 	DerivedSources/WebCore/JSHTMLVideoElement.h \
+	DerivedSources/WebCore/JSTimeRanges.cpp \
+	DerivedSources/WebCore/JSTimeRanges.h \
 	DerivedSources/WebCore/JSImageData.cpp \
 	DerivedSources/WebCore/JSImageData.h \
 	DerivedSources/WebCore/JSInjectedScriptHost.cpp \
@@ -3133,10 +3135,6 @@ webcore_cppflags += -DENABLE_VIDEO=1
 if ENABLE_DEBUG
 webcore_cppflags += -DGST_DISABLE_DEPRECATED
 endif # END ENABLE_DEBUG
-
-webcore_built_sources += \
-	DerivedSources/WebCore/JSTimeRanges.cpp \
-	DerivedSources/WebCore/JSTimeRanges.h
 
 webcore_sources += \
 	WebCore/bindings/js/JSAudioConstructor.cpp \
