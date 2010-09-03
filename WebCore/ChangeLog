@@ -1,3 +1,14 @@
+2010-09-02  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Kent Tamura.
+
+        Add ENABLE(DATABASE) guard to DatabaseAuthorizer.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=45152
+
+        DatabaseAuthorizer is used only with ENABLE(DATABASE).
+
+        * storage/DatabaseAuthorizer.cpp:
+
 2010-09-02  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
