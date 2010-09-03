@@ -1,3 +1,15 @@
+2010-09-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [Chromium] Make sure that the width of the menu list is always constant under layout tests.
+        https://bugs.webkit.org/show_bug.cgi?id=45196
+
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::menuListButtonWidth): Added.
+        (WebCore::RenderThemeChromiumWin::paintMenuList): Use menuListButtonWidth instead of always
+          querying system metrics.
+
 2010-09-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r66732.

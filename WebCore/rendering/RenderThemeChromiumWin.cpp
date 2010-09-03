@@ -56,6 +56,10 @@
 
 namespace WebCore {
 
+// The standard width for the menu list drop-down button when run under
+// layout test mode. Use the value that's currently captured in most baselines.
+static const int kStandardMenuListButtonWidth = 17;
+
 namespace {
 class ThemePainter {
 public:
@@ -437,6 +441,12 @@ bool RenderThemeChromiumWin::paintSliderThumb(RenderObject* o, const PaintInfo& 
     return paintSliderTrack(o, i, r);
 }
 
+static int menuListButtonWidth()
+{
+    static int width = ChromiumBridge::layoutTestMode() ? kStandardMenuListButtonWidth : GetSystemMetrics(SM_CXVSCROLL);
+    return width;
+}
+
 // Used to paint unstyled menulists (i.e. with the default border)
 bool RenderThemeChromiumWin::paintMenuList(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
@@ -461,7 +471,7 @@ bool RenderThemeChromiumWin::paintMenuList(RenderObject* o, const PaintInfo& i, 
     // Take padding and border into account.  If the MenuList is smaller than
     // the size of a button, make sure to shrink it appropriately and not put
     // its x position to the left of the menulist.
-    const int buttonWidth = GetSystemMetrics(SM_CXVSCROLL);
+    const int buttonWidth = menuListButtonWidth();
     int spacingLeft = borderLeft + box->paddingLeft();
     int spacingRight = borderRight + box->paddingRight();
     int spacingTop = borderTop + box->paddingTop();
