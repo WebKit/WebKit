@@ -1,3 +1,12 @@
+2010-09-03  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Dialog separators are gone in GTK+ 3.x.
+
+        * webkit/webkitsoupauthdialog.c:
+        (show_auth_dialog):
+
 2010-09-02  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -213,7 +213,9 @@ static void show_auth_dialog(WebKitAuthData* authData, const char* login, const 
                            NULL);
 
     /* Set the dialog up with HIG properties */
+#ifdef GTK_API_VERSION_2
     gtk_dialog_set_has_separator(dialog, FALSE);
+#endif
     gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
     gtk_box_set_spacing(GTK_BOX(gtk_dialog_get_content_area(dialog)), 2); /* 2 * 5 + 2 = 12 */
     gtk_container_set_border_width(GTK_CONTAINER(gtk_dialog_get_action_area(dialog)), 5);
