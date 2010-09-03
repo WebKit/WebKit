@@ -442,7 +442,7 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/gobject/GOwnPtr.h \
 	JavaScriptCore/wtf/gobject/GRefPtr.cpp \
 	JavaScriptCore/wtf/gobject/GRefPtr.h \
-	JavaScriptCore/wtf/gtk/GtkTypedefs.h \
+	JavaScriptCore/wtf/gobject/GTypedefs.h \
 	JavaScriptCore/wtf/gtk/MainThreadGtk.cpp \
 	JavaScriptCore/wtf/gtk/ThreadingGtk.cpp \
 	JavaScriptCore/wtf/HashCountedSet.h \

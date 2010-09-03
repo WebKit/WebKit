@@ -1,3 +1,23 @@
+2010-09-03  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Martin Robinson.
+
+        [EFL] Regression (66531) Build break with Glib Support
+        https://bugs.webkit.org/show_bug.cgi?id=45011
+
+        Move GtkTypedefs.h to GTypedefs.h and let it inside gobject directory
+        since when glib is enabled, EFL port needs it, too.
+
+        * CMakeListsEfl.txt: Include gobject directory to find new header
+        file.
+        * GNUmakefile.am: Ditto.
+        * wtf/CMakeListsEfl.txt: Ditto.
+        * wtf/Platform.h: Include header if port is EFL and glib support is
+        enabled.
+        * wtf/gtk/GtkTypedefs.h: Removed.
+        * wtf/gobject/GTypedefs.h: Added. Sections specific to GTK are now
+        guarded by PLATFORM(GTK).
+
 2010-09-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Simon Hausmann.

@@ -36,7 +36,6 @@ typedef unsigned long gulong;
 typedef unsigned short gushort;
 typedef void* gpointer;
 
-typedef struct _cairo_surface cairo_surface_t;
 typedef struct _GCond GCond;
 typedef struct _GDir GDir;
 typedef struct _GdkAtom* GdkAtom;
@@ -51,6 +50,14 @@ typedef struct _GHashTable GHashTable;
 typedef struct _GList GList;
 typedef struct _GMutex GMutex;
 typedef struct _GPatternSpec GPatternSpec;
+typedef struct _GVariant GVariant;
+typedef union _GdkEvent GdkEvent;
+
+#if PLATFORM(CAIRO)
+typedef struct _cairo_surface cairo_surface_t;
+#endif
+
+#if PLATFORM(GTK)
 typedef struct _GtkAction GtkAction;
 typedef struct _GtkAdjustment GtkAdjustment;
 typedef struct _GtkBorder GtkBorder;
@@ -65,8 +72,6 @@ typedef struct _GtkStyle GtkStyle;
 typedef struct _GtkTargetList GtkTargetList;
 typedef struct _GtkThemeParts GtkThemeParts;
 typedef struct _GtkWidget GtkWidget;
-typedef struct _GVariant GVariant;
-typedef union _GdkEvent GdkEvent;
 
 #ifdef GTK_API_VERSION_2
 typedef struct _GdkRectangle GdkRectangle;
@@ -77,4 +82,5 @@ typedef cairo_rectangle_int_t GdkRectangle;
 
 #endif
 
+#endif
 #endif /* GtkTypedefs_h */

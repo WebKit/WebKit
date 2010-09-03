@@ -1117,8 +1117,8 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #define ENABLE_BRANCH_COMPACTION 1
 #endif
 
-#if PLATFORM(GTK)
-#include "GtkTypedefs.h"
+#if PLATFORM(GTK) || (PLATFORM(EFL) && ENABLE(GLIB_SUPPORT))
+#include "GTypedefs.h"
 #endif
 
 #endif /* WTF_Platform_h */
