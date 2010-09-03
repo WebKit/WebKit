@@ -84,4 +84,9 @@ bool State<V8Binding>::processingUserGesture()
     return ScriptController::processingUserGesture();
 }
 
+bool State<V8Binding>::allowsAccessFromFrame(Frame* frame)
+{
+    return ScriptController::isSafeScript(frame);
+}
+
 } // namespace WebCore

@@ -2837,6 +2837,15 @@
 		A59E3C1F11580F510072928E /* KeyEventIPhone.mm in Sources */ = {isa = PBXBuildFile; fileRef = A59E3C1D11580F510072928E /* KeyEventIPhone.mm */; };
 		A5AFB34F115151A700B045CB /* StepRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5AFB34D115151A700B045CB /* StepRange.cpp */; };
 		A5AFB350115151A700B045CB /* StepRange.h in Headers */ = {isa = PBXBuildFile; fileRef = A5AFB34E115151A700B045CB /* StepRange.h */; };
+		A622A8EE122C442A00A785B3 /* JSBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = A622A8ED122C442A00A785B3 /* JSBinding.h */; };
+		A622A8F2122C444500A785B3 /* JSBindingState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A622A8F0122C444500A785B3 /* JSBindingState.cpp */; };
+		A622A8F3122C444500A785B3 /* JSBindingState.h in Headers */ = {isa = PBXBuildFile; fileRef = A622A8F1122C444500A785B3 /* JSBindingState.h */; };
+		A622A8FA122C44A600A785B3 /* BindingLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = A622A8F4122C44A600A785B3 /* BindingLocation.h */; };
+		A622A8FB122C44A600A785B3 /* BindingSecurity.h in Headers */ = {isa = PBXBuildFile; fileRef = A622A8F5122C44A600A785B3 /* BindingSecurity.h */; };
+		A622A8FC122C44A600A785B3 /* BindingSecurityBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A622A8F6122C44A600A785B3 /* BindingSecurityBase.cpp */; };
+		A622A8FD122C44A600A785B3 /* BindingSecurityBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A622A8F7122C44A600A785B3 /* BindingSecurityBase.h */; };
+		A622A8FE122C44A600A785B3 /* BindingUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = A622A8F8122C44A600A785B3 /* BindingUtilities.h */; };
+		A622A8FF122C44A600A785B3 /* GenericBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = A622A8F9122C44A600A785B3 /* GenericBinding.h */; };
 		A718760E0B2A120100A16ECE /* DragActions.h in Headers */ = {isa = PBXBuildFile; fileRef = A718760D0B2A120100A16ECE /* DragActions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A71878900B2D04AC00A16ECE /* DragControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */; };
 		A7352C190B1BB89D00A986D0 /* RenderSVGBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7352C170B1BB89D00A986D0 /* RenderSVGBlock.cpp */; };
@@ -8707,6 +8716,15 @@
 		A5AFB34E115151A700B045CB /* StepRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StepRange.h; sourceTree = "<group>"; };
 		A5C974CF11485FF10066F2AB /* KeyEventCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyEventCocoa.h; path = cocoa/KeyEventCocoa.h; sourceTree = "<group>"; };
 		A5C974D011485FF10066F2AB /* KeyEventCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = KeyEventCocoa.mm; path = cocoa/KeyEventCocoa.mm; sourceTree = "<group>"; };
+		A622A8ED122C442A00A785B3 /* JSBinding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBinding.h; sourceTree = "<group>"; };
+		A622A8F0122C444500A785B3 /* JSBindingState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBindingState.cpp; sourceTree = "<group>"; };
+		A622A8F1122C444500A785B3 /* JSBindingState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBindingState.h; sourceTree = "<group>"; };
+		A622A8F4122C44A600A785B3 /* BindingLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BindingLocation.h; path = generic/BindingLocation.h; sourceTree = "<group>"; };
+		A622A8F5122C44A600A785B3 /* BindingSecurity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BindingSecurity.h; path = generic/BindingSecurity.h; sourceTree = "<group>"; };
+		A622A8F6122C44A600A785B3 /* BindingSecurityBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BindingSecurityBase.cpp; path = generic/BindingSecurityBase.cpp; sourceTree = "<group>"; };
+		A622A8F7122C44A600A785B3 /* BindingSecurityBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BindingSecurityBase.h; path = generic/BindingSecurityBase.h; sourceTree = "<group>"; };
+		A622A8F8122C44A600A785B3 /* BindingUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BindingUtilities.h; path = generic/BindingUtilities.h; sourceTree = "<group>"; };
+		A622A8F9122C44A600A785B3 /* GenericBinding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GenericBinding.h; path = generic/GenericBinding.h; sourceTree = "<group>"; };
 		A718760D0B2A120100A16ECE /* DragActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragActions.h; sourceTree = "<group>"; };
 		A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragControllerMac.mm; sourceTree = "<group>"; };
 		A71A70C911AFB02000989D6D /* HTMLMeterElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLMeterElement.idl; sourceTree = "<group>"; };
@@ -14452,6 +14470,15 @@
 			name = cocoa;
 			sourceTree = "<group>";
 		};
+		A622A8EF122C444500A785B3 /* specialization */ = {
+			isa = PBXGroup;
+			children = (
+				A622A8F0122C444500A785B3 /* JSBindingState.cpp */,
+				A622A8F1122C444500A785B3 /* JSBindingState.h */,
+			);
+			path = specialization;
+			sourceTree = "<group>";
+		};
 		A75E8B7F0E1DE2B0007F2481 /* filters */ = {
 			isa = PBXGroup;
 			children = (
@@ -16069,6 +16096,12 @@
 			children = (
 				B5D31DF811CF610B009F22B4 /* ActiveDOMCallback.cpp */,
 				B5D31DF911CF610B009F22B4 /* ActiveDOMCallback.h */,
+				A622A8F4122C44A600A785B3 /* BindingLocation.h */,
+				A622A8F5122C44A600A785B3 /* BindingSecurity.h */,
+				A622A8F6122C44A600A785B3 /* BindingSecurityBase.cpp */,
+				A622A8F7122C44A600A785B3 /* BindingSecurityBase.h */,
+				A622A8F8122C44A600A785B3 /* BindingUtilities.h */,
+				A622A8F9122C44A600A785B3 /* GenericBinding.h */,
 			);
 			name = generic;
 			sourceTree = "<group>";
@@ -16108,6 +16141,7 @@
 				BCCE58A71061E82F008FB35A /* Callback Objects */,
 				BCCE58B41061E925008FB35A /* Constructors */,
 				BC4EDEF70C08F414007EDD49 /* Custom */,
+				A622A8EF122C444500A785B3 /* specialization */,
 				14DFB33F0A7DF7630018F769 /* Derived Sources */,
 				BCD533630ED6848900887468 /* CachedScriptSourceProvider.h */,
 				93F8B3060A300FEA00F61AB8 /* CodeGeneratorJS.pm */,
@@ -16121,6 +16155,7 @@
 				C585A66111D4FAC5004C3E4B /* IDBBindingUtilities.h */,
 				1C81BA030E97348300266E07 /* JavaScriptCallFrame.cpp */,
 				1C81BA040E97348300266E07 /* JavaScriptCallFrame.h */,
+				A622A8ED122C442A00A785B3 /* JSBinding.h */,
 				BC53DAC411432FD9000D817E /* JSDebugWrapperSet.cpp */,
 				BC53DAC111432EEE000D817E /* JSDebugWrapperSet.h */,
 				93B70D4709EB0C7C009D8468 /* JSDOMBinding.cpp */,
@@ -20432,6 +20467,13 @@
 				898785B9122CA2A7003AABDA /* JSMetadataCallback.h in Headers */,
 				898785F1122E1E87003AABDA /* JSFileException.h in Headers */,
 				898785F5122E1EAC003AABDA /* JSFileReaderSync.h in Headers */,
+				A622A8EE122C442A00A785B3 /* JSBinding.h in Headers */,
+				A622A8F3122C444500A785B3 /* JSBindingState.h in Headers */,
+				A622A8FA122C44A600A785B3 /* BindingLocation.h in Headers */,
+				A622A8FB122C44A600A785B3 /* BindingSecurity.h in Headers */,
+				A622A8FD122C44A600A785B3 /* BindingSecurityBase.h in Headers */,
+				A622A8FE122C44A600A785B3 /* BindingUtilities.h in Headers */,
+				A622A8FF122C44A600A785B3 /* GenericBinding.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -22895,6 +22937,8 @@
 				898785B8122CA2A7003AABDA /* JSMetadataCallback.cpp in Sources */,
 				898785F0122E1E87003AABDA /* JSFileException.cpp in Sources */,
 				898785F4122E1EAC003AABDA /* JSFileReaderSync.cpp in Sources */,
+				A622A8F2122C444500A785B3 /* JSBindingState.cpp in Sources */,
+				A622A8FC122C44A600A785B3 /* BindingSecurityBase.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

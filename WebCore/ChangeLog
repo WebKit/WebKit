@@ -1,3 +1,55 @@
+2010-09-03  Dominic Cooney  <dominicc@google.com>
+
+        Reviewed by Adam Barth.
+
+        Moves location.replace bindings logic into bindings/generic and
+        instantiates it for JSC and V8.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44891
+
+        Covered by existing location.replace tests.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/generic/BindingDOMWindow.h:
+        (WebCore::::createWindow):
+        (WebCore::::open):
+        * bindings/generic/BindingFrame.h: Added.
+        (WebCore::::navigateIfAllowed):
+        * bindings/generic/BindingLocation.h: Added.
+        (WebCore::::replace):
+        * bindings/generic/GenericBinding.h:
+        (WebCore::completeURL):
+        * bindings/js/JSBinding.h: Added.
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::shouldAllowNavigation):
+        (WebCore::toLexicalFrame):
+        (WebCore::toDynamicFrame):
+        (WebCore::processingUserGesture):
+        (WebCore::completeURL):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::navigateIfAllowed):
+        (WebCore::JSLocation::replace):
+        * bindings/js/specialization/JSBindingState.cpp: Added.
+        (WebCore::::getActiveFrame):
+        (WebCore::::getFirstFrame):
+        (WebCore::::processingUserGesture):
+        (WebCore::::allowsAccessFromFrame):
+        * bindings/js/specialization/JSBindingState.h: Added.
+        * bindings/v8/V8Binding.h:
+        * bindings/v8/V8Utilities.cpp:
+        (WebCore::completeURL):
+        (WebCore::navigateIfAllowed):
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        (WebCore::V8Location::replaceCallback):
+        * bindings/v8/specialization/V8BindingState.cpp:
+        (WebCore::::allowsAccessFromFrame):
+        * bindings/v8/specialization/V8BindingState.h:
+
 2010-09-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Tony Chang.

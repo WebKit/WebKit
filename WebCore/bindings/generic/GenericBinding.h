@@ -31,6 +31,9 @@
 #ifndef GenericBinding_h
 #define GenericBinding_h
 
+#include "Frame.h"
+#include "FrameLoader.h"
+
 namespace WebCore {
 
 // Used to instantiate binding templates for any methods shared among all
@@ -46,6 +49,17 @@ template <>
 class State<GenericBinding> {
     // Any methods shared across bindings can go here.
 };
+
+template <class Binding>
+KURL completeURL(State<Binding>* state, const String& relativeURL)
+{
+    // For historical reasons, we need to complete the URL using the
+    // dynamic frame.
+    Frame* frame = state->getFirstFrame();
+    if (!frame)
+        return KURL();
+    return frame->loader()->completeURL(relativeURL);
+}
 
 }
 
