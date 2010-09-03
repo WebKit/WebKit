@@ -128,8 +128,8 @@ void HTMLEmbedElement::parametersForPlugin(Vector<String>& paramNames, Vector<St
 
     for (unsigned i = 0; i < attributes->length(); ++i) {
         Attribute* it = attributes->attributeItem(i);
-        paramNames.append(it->localName());
-        paramValues.append(it->value());
+        paramNames.append(it->localName().string());
+        paramValues.append(it->value().string());
     }
 }
 

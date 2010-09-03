@@ -1,3 +1,10 @@
+2010-09-03  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Fix Qt compilation.
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::parametersForPlugin):
+
 2010-09-03  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Kent Tamura.
