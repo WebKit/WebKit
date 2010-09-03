@@ -5,19 +5,19 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS bold on first word of <b><ul><li><b>a</b></li></ul></b> yields <ul><li>a</li></ul>
 PASS bold on first word of <b><ul><li>hello</li><li>world</li></ul></b> yields <ul><li>hello</li><li style="font-weight: bold; ">world</li></ul>
-PASS bold on second word of <ul><li>hello</li><li style="font-weight: bold; ">world</li></ul> yields <ul><li>hello</li><li>world</li></ul>
+PASS bold on last word of <ul><li>hello</li><li style="font-weight: bold; ">world</li></ul> yields <ul><li>hello</li><li>world</li></ul>
 PASS bold on first word of <b><ul><li>hello world</li><li>webkit</li></ul></b> yields <ul><li>hello<b> world</b></li><li style="font-weight: bold; ">webkit</li></ul>
 PASS italic on first word of <i><ul><li><i>a</i></li></ul></i> yields <ul><li>a</li></ul>
 PASS italic on first word of <i><ul><li>hello</li><li>world</li></ul></i> yields <ul><li>hello</li><li style="font-style: italic; ">world</li></ul>
-PASS italic on second word of <ul><li>hello</li><li style="font-style: italic; ">world</li></ul> yields <ul><li>hello</li><li>world</li></ul>
+PASS italic on last word of <ul><li>hello</li><li style="font-style: italic; ">world</li></ul> yields <ul><li>hello</li><li>world</li></ul>
 PASS italic on first word of <i><ul><li>hello world</li><li>webkit</li></ul></i> yields <ul><li>hello<i> world</i></li><li style="font-style: italic; ">webkit</li></ul>
 PASS underline on first word of <u><ul><li><u>a</u></li></ul></u> yields <ul><li>a</li></ul>
 PASS underline on first word of <u><ul><li>hello</li><li>world</li></ul></u> yields <ul><li>hello</li><li style="text-decoration: underline; ">world</li></ul>
-PASS underline on second word of <ul><li>hello</li><li style="text-decoration: underline; ">world</li></ul> yields <ul><li>hello</li><li>world</li></ul>
+PASS underline on last word of <ul><li>hello</li><li style="text-decoration: underline; ">world</li></ul> yields <ul><li>hello</li><li>world</li></ul>
 PASS underline on first word of <u><ul><li>hello world</li><li>webkit</li></ul></u> yields <ul><li>hello<u> world</u></li><li style="text-decoration: underline; ">webkit</li></ul>
 PASS strikethrough on first word of <s><ul><li><s>a</s></li></ul></s> yields <ul><li>a</li></ul>
 PASS strikethrough on first word of <s><ul><li>hello</li><li>world</li></ul></s> yields <ul><li>hello</li><li style="text-decoration: line-through; ">world</li></ul>
-PASS strikethrough on second word of <ul><li>hello</li><li style="text-decoration: line-through; ">world</li></ul> yields <ul><li>hello</li><li>world</li></ul>
+PASS strikethrough on last word of <ul><li>hello</li><li style="text-decoration: line-through; ">world</li></ul> yields <ul><li>hello</li><li>world</li></ul>
 PASS strikethrough on first word of <s><ul><li>hello world</li><li>webkit</li></ul></s> yields <ul><li>hello<s> world</s></li><li style="text-decoration: line-through; ">webkit</li></ul>
 PASS successfullyParsed is true
 

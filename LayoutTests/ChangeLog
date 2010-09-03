@@ -1,5 +1,13 @@
 2010-09-03  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed.
+
+        Added new expected result that wasn't committed in r66764.
+
+        * editing/style/push-down-implicit-styles-around-list-expected.txt:
+
+2010-09-03  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed by Tony Chang.
 
         Fixed a test committed in r66743.
