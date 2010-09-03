@@ -67,8 +67,7 @@ using namespace WebKit;
 using namespace std;
 
 LayoutTestController::LayoutTestController(TestShell* shell)
-    : m_timeoutFactory(this)
-    , m_shell(shell)
+    : m_shell(shell)
     , m_workQueue(this)
 {
 
@@ -207,10 +206,9 @@ void LayoutTestController::WorkQueue::processWorkSoon()
 
     if (!m_queue.isEmpty()) {
         // We delay processing queued work to avoid recursion problems.
-        m_timer.Start(base::TimeDelta(), this, &WorkQueue::processWork);
-    } else if (!m_controller->m_waitUntilDone) {
+        postTask(new WorkQueueTask(this));
+    } else if (!m_controller->m_waitUntilDone)
         m_controller->m_shell->testFinished();
-    }
 }
 
 void LayoutTestController::WorkQueue::processWork()
@@ -320,11 +318,8 @@ void LayoutTestController::setAcceptsEditing(const CppArgumentList& arguments, C
 
 void LayoutTestController::waitUntilDone(const CppArgumentList&, CppVariant* result)
 {
-    if (!webkit_support::BeingDebugged()) {
-        webkit_support::PostDelayedTaskFromHere(
-            m_timeoutFactory.NewRunnableMethod(&LayoutTestController::notifyDoneTimedOut),
-            m_shell->layoutTestTimeout());
-    }
+    if (!webkit_support::BeingDebugged())
+        postDelayedTask(new NotifyDoneTimedOutTask(this), m_shell->layoutTestTimeout());
     m_waitUntilDone = true;
     result->setNull();
 }
@@ -332,15 +327,10 @@ void LayoutTestController::waitUntilDone(const CppArgumentList&, CppVariant* res
 void LayoutTestController::notifyDone(const CppArgumentList&, CppVariant* result)
 {
     // Test didn't timeout. Kill the timeout timer.
-    m_timeoutFactory.RevokeAll();
+    m_taskList.revokeAll();
 
     completeNotifyDone(false);
     result->setNull();
-}
-
-void LayoutTestController::notifyDoneTimedOut()
-{
-    completeNotifyDone(true);
 }
 
 void LayoutTestController::completeNotifyDone(bool isTimeout)
@@ -521,7 +511,7 @@ void LayoutTestController::reset()
     else
         m_closeRemainingWindows = true;
     m_workQueue.reset();
-    m_timeoutFactory.RevokeAll();
+    m_taskList.revokeAll();
 }
 
 void LayoutTestController::locationChangeDone()

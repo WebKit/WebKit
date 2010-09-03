@@ -38,7 +38,7 @@
 #define EventSender_h
 
 #include "CppBoundClass.h"
-#include "base/task.h"
+#include "Task.h"
 #include "public/WebDragOperation.h"
 #include "public/WebInputEvent.h"
 #include "public/WebPoint.h"
@@ -108,6 +108,8 @@ public:
     CppVariant wmSysDeadChar;
 #endif
 
+    TaskList* taskList() { return &m_taskList; }
+
 private:
     // Returns the test shell's webview.
     WebKit::WebView* webview();
@@ -141,7 +143,7 @@ private:
     // Handle a request to send a wheel event.
     void handleMouseWheel(const CppArgumentList&, CppVariant*, bool continuous);
 
-    ScopedRunnableMethodFactory<EventSender> m_methodFactory;
+    TaskList m_taskList;
 
     // Non-owning pointer.  The EventSender is owned by the TestShell.
     TestShell* m_shell;

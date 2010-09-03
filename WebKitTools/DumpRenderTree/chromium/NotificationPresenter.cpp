@@ -31,14 +31,14 @@
 #include "config.h"
 #include "NotificationPresenter.h"
 
-#include "base/task.h" // FIXME: Remove this
 #include "googleurl/src/gurl.h"
+#include "public/WebKit.h"
+#include "public/WebKitClient.h"
 #include "public/WebNotification.h"
 #include "public/WebNotificationPermissionCallback.h"
 #include "public/WebSecurityOrigin.h"
 #include "public/WebString.h"
 #include "public/WebURL.h"
-#include "webkit/support/webkit_support.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -51,9 +51,11 @@ static WebString identifierForNotification(const WebNotification& notification)
     return notification.title();
 }
 
-static void deferredDisplayDispatch(WebNotification notification)
+static void deferredDisplayDispatch(void* context)
 {
-    notification.dispatchDisplayEvent();
+    WebNotification* notification = static_cast<WebNotification*>(context);
+    notification->dispatchDisplayEvent();
+    delete notification;
 }
 
 void NotificationPresenter::grantPermission(const WebString& origin)
@@ -105,8 +107,7 @@ bool NotificationPresenter::show(const WebNotification& notification)
     WTF::String id(identifier.data(), identifier.length());
     m_activeNotifications.set(id, notification);
 
-    WebNotification eventTarget(notification);
-    webkit_support::PostTaskFromHere(NewRunnableFunction(&deferredDisplayDispatch, eventTarget));
+    webKitClient()->callOnMainThread(deferredDisplayDispatch, new WebNotification(notification));
     return true;
 }
 

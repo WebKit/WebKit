@@ -244,8 +244,7 @@ enum KeyLocationCode {
 };
 
 EventSender::EventSender(TestShell* shell)
-    : m_methodFactory(this)
-    , m_shell(shell)
+    : m_shell(shell)
 {
     // Initialize the map that associates methods of this class with the names
     // they will use when called by JavaScript.  The actual binding of those
@@ -322,7 +321,7 @@ void EventSender::reset()
     timeOffsetMs = 0;
     touchModifiers = 0;
     touchPoints.clear();
-    m_methodFactory.RevokeAll();
+    m_taskList.revokeAll();
 }
 
 WebView* EventSender::webview()
@@ -750,14 +749,29 @@ void EventSender::contextClick(const CppArgumentList& arguments, CppVariant* res
     pressedButton = WebMouseEvent::ButtonNone;
 }
 
+class MouseDownTask: public MethodTask<EventSender> {
+public:
+    MouseDownTask(EventSender* obj, const CppArgumentList& arg)
+        : MethodTask<EventSender>(obj), m_arguments(arg) {}
+    virtual void runIfValid() { m_object->mouseDown(m_arguments, 0); }
+private:
+    CppArgumentList m_arguments;
+};
+
+class MouseUpTask: public MethodTask<EventSender> {
+public:
+    MouseUpTask(EventSender* obj, const CppArgumentList& arg)
+        : MethodTask<EventSender>(obj), m_arguments(arg) {}
+    virtual void runIfValid() { m_object->mouseUp(m_arguments, 0); }
+private:
+    CppArgumentList m_arguments;
+};
+
 void EventSender::scheduleAsynchronousClick(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
-
-    webkit_support::PostTaskFromHere(m_methodFactory.NewRunnableMethod(
-            &EventSender::mouseDown, arguments, static_cast<CppVariant*>(0)));
-    webkit_support::PostTaskFromHere(m_methodFactory.NewRunnableMethod(
-            &EventSender::mouseUp, arguments, static_cast<CppVariant*>(0)));
+    postTask(new MouseDownTask(this, arguments));
+    postTask(new MouseUpTask(this, arguments));
 }
 
 void EventSender::beginDragWithFiles(const CppArgumentList& arguments, CppVariant* result)

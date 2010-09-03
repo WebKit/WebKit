@@ -42,7 +42,7 @@
 #define LayoutTestController_h
 
 #include "CppBoundClass.h"
-#include "base/timer.h" // FIXME: Remove this.
+#include "Task.h"
 #include "public/WebString.h"
 #include "public/WebURL.h"
 #include <wtf/Deque.h>
@@ -116,7 +116,6 @@ public:
     // to delay the completion of the test until notifyDone is called.
     void waitUntilDone(const CppArgumentList&, CppVariant*);
     void notifyDone(const CppArgumentList&, CppVariant*);
-    void notifyDoneTimedOut();
 
     // Methods for adding actions to the work queue.  Used in conjunction with
     // waitUntilDone/notifyDone above.
@@ -360,6 +359,8 @@ public:
         virtual bool run(TestShell* shell) = 0;
     };
 
+    TaskList* taskList() { return &m_taskList; }
+
 private:
     friend class WorkItem;
     friend class WorkQueue;
@@ -379,11 +380,17 @@ private:
 
         void setFrozen(bool frozen) { m_frozen = frozen; }
         bool isEmpty() { return m_queue.isEmpty(); }
+        TaskList* taskList() { return &m_taskList; }
 
     private:
         void processWork();
+        class WorkQueueTask: public MethodTask<WorkQueue> {
+        public:
+            WorkQueueTask(WorkQueue* object): MethodTask<WorkQueue>(object) {}
+            virtual void runIfValid() { m_object->processWork(); }
+        };
 
-        base::OneShotTimer<WorkQueue> m_timer;
+        TaskList m_taskList;
         Deque<WorkItem*> m_queue;
         bool m_frozen;
         LayoutTestController* m_controller;
@@ -396,6 +403,12 @@ private:
 
     void logErrorToConsole(const std::string&);
     void completeNotifyDone(bool isTimeout);
+    class NotifyDoneTimedOutTask: public MethodTask<LayoutTestController> {
+    public:
+        NotifyDoneTimedOutTask(LayoutTestController* object): MethodTask<LayoutTestController>(object) {}
+        virtual void runIfValid() { m_object->completeNotifyDone(true); }
+    };
+
 
     bool pauseAnimationAtTimeOnElementWithId(const WebKit::WebString& animationName, double time, const WebKit::WebString& elementId);
     bool pauseTransitionAtTimeOnElementWithId(const WebKit::WebString& propertyName, double time, const WebKit::WebString& elementId);
@@ -405,7 +418,7 @@ private:
     void resumeAnimations();
 
     // Used for test timeouts.
-    ScopedRunnableMethodFactory<LayoutTestController> m_timeoutFactory;
+    TaskList m_taskList;
 
     // Non-owning pointer.  The LayoutTestController is owned by the host.
     TestShell* m_shell;

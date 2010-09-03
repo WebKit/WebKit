@@ -45,8 +45,7 @@
 using namespace WebKit;
 
 DRTDevToolsClient::DRTDevToolsClient(DRTDevToolsAgent* agent, WebView* webView)
-    : m_callMethodFactory(this)
-    , m_drtDevToolsAgent(agent)
+    : m_drtDevToolsAgent(agent)
     , m_webView(webView)
 {
     m_webDevToolsFrontend.set(WebDevToolsFrontend::create(m_webView,
@@ -59,14 +58,14 @@ DRTDevToolsClient::~DRTDevToolsClient()
 {
     // There is a chance that the page will be destroyed at detach step of
     // m_drtDevToolsAgent and we should clean pending requests a bit earlier.
-    m_callMethodFactory.RevokeAll();
+    m_taskList.revokeAll();
     if (m_drtDevToolsAgent)
         m_drtDevToolsAgent->detach();
 }
 
 void DRTDevToolsClient::reset()
 {
-    m_callMethodFactory.RevokeAll();
+    m_taskList.revokeAll();
 }
 
 void DRTDevToolsClient::sendFrontendLoaded() {
@@ -107,8 +106,7 @@ void DRTDevToolsClient::undockWindow()
 
 void DRTDevToolsClient::asyncCall(const DRTDevToolsCallArgs& args)
 {
-    webkit_support::PostTaskFromHere(
-        m_callMethodFactory.NewRunnableMethod(&DRTDevToolsClient::call, args));
+    postTask(new AsyncCallTask(this, args));
 }
 
 void DRTDevToolsClient::call(const DRTDevToolsCallArgs& args)

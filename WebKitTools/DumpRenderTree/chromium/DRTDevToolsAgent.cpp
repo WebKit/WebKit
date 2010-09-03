@@ -43,8 +43,7 @@
 using namespace WebKit;
 
 DRTDevToolsAgent::DRTDevToolsAgent()
-    : m_callMethodFactory(this)
-    , m_drtDevToolsClient(0)
+    : m_drtDevToolsClient(0)
     , m_webView(0)
 {
     static int devToolsAgentCounter = 0;
@@ -56,7 +55,7 @@ DRTDevToolsAgent::DRTDevToolsAgent()
 
 void DRTDevToolsAgent::reset()
 {
-    m_callMethodFactory.RevokeAll();
+    m_taskList.revokeAll();
 }
 
 void DRTDevToolsAgent::setWebView(WebView* webView)
@@ -89,10 +88,9 @@ WebDevToolsAgentClient::WebKitClientMessageLoop* DRTDevToolsAgent::createClientM
     return webkit_support::CreateDevToolsMessageLoop();
 }
 
-void DRTDevToolsAgent::asyncCall(const DRTDevToolsCallArgs &args)
+void DRTDevToolsAgent::asyncCall(const DRTDevToolsCallArgs& args)
 {
-    webkit_support::PostTaskFromHere(
-        m_callMethodFactory.NewRunnableMethod(&DRTDevToolsAgent::call, args));
+    postTask(new AsyncCallTask(this, args));
 }
 
 void DRTDevToolsAgent::call(const DRTDevToolsCallArgs &args)
@@ -137,9 +135,9 @@ void DRTDevToolsAgent::detach()
     m_drtDevToolsClient = 0;
 }
 
-void DRTDevToolsAgent::frontendLoaded() {
-    webkit_support::PostTaskFromHere(
-        m_callMethodFactory.NewRunnableMethod(&DRTDevToolsAgent::delayedFrontendLoaded));
+void DRTDevToolsAgent::frontendLoaded()
+{
+    postTask(new DelayedFrontendLoadedTask(this));
 }
 
 bool DRTDevToolsAgent::setTimelineProfilingEnabled(bool enabled)

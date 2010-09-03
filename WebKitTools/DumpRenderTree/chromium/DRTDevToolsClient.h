@@ -31,7 +31,8 @@
 #ifndef DRTDevToolsClient_h
 #define DRTDevToolsClient_h
 
-#include "base/task.h" // FIXME: remove this
+#include "DRTDevToolsCallArgs.h"
+#include "Task.h"
 #include "public/WebDevToolsFrontendClient.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
@@ -45,7 +46,6 @@ class WebView;
 
 } // namespace WebKit
 
-class DRTDevToolsCallArgs;
 class DRTDevToolsAgent;
 
 class DRTDevToolsClient : public WebKit::WebDevToolsFrontendClient
@@ -68,11 +68,20 @@ public:
     void asyncCall(const DRTDevToolsCallArgs&);
 
     void allMessagesProcessed();
+    TaskList* taskList() { return &m_taskList; }
 
  private:
     void call(const DRTDevToolsCallArgs&);
+    class AsyncCallTask: public MethodTask<DRTDevToolsClient> {
+    public:
+        AsyncCallTask(DRTDevToolsClient* object, const DRTDevToolsCallArgs& args)
+            : MethodTask<DRTDevToolsClient>(object), m_args(args) {}
+        virtual void runIfValid() { m_object->call(m_args); }
+    private:
+        DRTDevToolsCallArgs m_args;
+    };
 
-    ScopedRunnableMethodFactory<DRTDevToolsClient> m_callMethodFactory;
+    TaskList m_taskList;
     WebKit::WebView* m_webView;
     DRTDevToolsAgent* m_drtDevToolsAgent;
     WTF::OwnPtr<WebKit::WebDevToolsFrontend> m_webDevToolsFrontend;

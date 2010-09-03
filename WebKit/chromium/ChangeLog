@@ -1,3 +1,13 @@
+2010-09-02  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Remove dependency to base/task.h and base/timer.h
+        https://bugs.webkit.org/show_bug.cgi?id=45091
+
+        * DEPS: Roll Chromium revision to 58277 in order to have
+        webkit_support::PostDelayedTask().
+
 2010-09-02  Ilya Sherman  <isherman@google.com>
 
         Reviewed by Eric Seidel.

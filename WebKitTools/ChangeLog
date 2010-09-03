@@ -1,3 +1,50 @@
+2010-09-02  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Remove dependency to base/task.h and base/timer.h
+        https://bugs.webkit.org/show_bug.cgi?id=45091
+
+        Task.{cpp,h} introduces a simpler version of Chromium
+        base/task.h. It doesn't have TupleN and Method.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+         Add Task.cpp and Task.h
+        * DumpRenderTree/chromium/DRTDevToolsAgent.cpp:
+        (DRTDevToolsAgent::DRTDevToolsAgent):
+        (DRTDevToolsAgent::reset):
+        (DRTDevToolsAgent::asyncCall):
+        (DRTDevToolsAgent::frontendLoaded):
+        * DumpRenderTree/chromium/DRTDevToolsAgent.h:
+        (DRTDevToolsAgent::taskList): Added to use MethodTask<T>.
+        * DumpRenderTree/chromium/DRTDevToolsClient.cpp:
+        (DRTDevToolsClient::DRTDevToolsClient):
+        (DRTDevToolsClient::~DRTDevToolsClient):
+        (DRTDevToolsClient::reset):
+        (DRTDevToolsClient::asyncCall):
+        * DumpRenderTree/chromium/DRTDevToolsClient.h:
+        (DRTDevToolsClient::taskList): Added to use MethodTask<T>.
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::EventSender):
+        (EventSender::reset):
+        (EventSender::scheduleAsynchronousClick):
+        * DumpRenderTree/chromium/EventSender.h:
+        (EventSender::taskList): Added to use MethodTask<T>.
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::WorkQueue::processWorkSoon):
+        (LayoutTestController::waitUntilDone):
+        (LayoutTestController::notifyDone):
+        (LayoutTestController::reset):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        (LayoutTestController::taskList): Added to use MethodTask<T>.
+        (LayoutTestController::WorkQueue::taskList): Added to use MethodTask<T>.
+        * DumpRenderTree/chromium/NotificationPresenter.cpp:
+        (deferredDisplayDispatch):
+        (NotificationPresenter::show):
+        * DumpRenderTree/chromium/Task.cpp: Added.
+        * DumpRenderTree/chromium/Task.h: Added.
+
 2010-09-02  Steve Block  <steveblock@google.com>
 
         Reviewed by Adam Barth.
