@@ -1,3 +1,19 @@
+2010-09-03  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Fix and beef up IndexedDB layout test
+        https://bugs.webkit.org/show_bug.cgi?id=45035
+
+        Implement some fixmes and such.
+
+        * storage/indexeddb/database-basics-expected.txt:
+        * storage/indexeddb/script-tests/database-basics.js:
+        (openSuccess):
+        (setVersionAgain):
+        (createObjectStore):
+        (checkObjectStore):
+
 2010-08-31  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.

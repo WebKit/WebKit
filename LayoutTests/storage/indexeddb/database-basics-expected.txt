@@ -23,11 +23,6 @@ PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
 db = event.result
-PASS db.name is "name"
-PASS db.objectStores is []
-PASS db.objectStores.length is 0
-PASS db.objectStores.contains('') is false
-
 Testing setVersion.
 db.setVersion("version a")
 PASS 'onsuccess' in result is true
@@ -36,6 +31,18 @@ PASS 'abort' in result is true
 PASS 'readyState' in result is true
 An event should fire shortly...
 
+Success event fired:
+PASS 'result' in event is true
+PASS 'code' in event is false
+PASS 'message' in event is false
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'abort' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
 db.setVersion("version b")
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
@@ -43,8 +50,47 @@ PASS 'abort' in result is true
 PASS 'readyState' in result is true
 An event should fire shortly...
 
+Success event fired:
+PASS 'result' in event is true
+PASS 'code' in event is false
+PASS 'message' in event is false
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'abort' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
 PASS db.version is "version b"
+PASS db.name is "name"
+PASS db.objectStores is []
+PASS db.objectStores.length is 0
+PASS db.objectStores.contains('') is false
+db.createObjectStore("test123")
+PASS 'onsuccess' in result is true
+PASS 'onerror' in result is true
+PASS 'abort' in result is true
+PASS 'readyState' in result is true
+An event should fire shortly...
+
+Success event fired:
+PASS 'result' in event is true
+PASS 'code' in event is false
+PASS 'message' in event is false
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'abort' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+PASS db.objectStores is ['test123']
+PASS db.objectStores.length is 1
+PASS db.objectStores.contains('') is false
+PASS db.objectStores.contains('test456') is false
+PASS db.objectStores.contains('test123') is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
