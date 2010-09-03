@@ -1,3 +1,12 @@
+2010-09-03  Adam Roben  <aroben@apple.com>
+
+        Attempt to fixing Windows nightlies again
+
+        The fix in r66438 should be sufficient, but we have to touch
+        WebKit.idl to force that change to be picked up by the build.
+
+        * Interfaces/WebKit.idl: Touched this file to force a build.
+
 2010-09-02  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by PavelFeldman.
