@@ -21,7 +21,7 @@ foreach ($_FILES as $key => $value) {
             $content = fread($fp, $file['size']);
             fclose($fp);
         }
-        $values[] = $key . '=' . $file['name'] . ':' . $content;
+        $values[] = $key . '=' . $file['name'] . ':' . $file['type'] . ':' . $content;
     }
 }
 

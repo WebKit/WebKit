@@ -6,11 +6,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Sending FormData containing one sliced file with empty name:
 
 Sending FormData containing one sliced file:
-file=Blob:23456
+file=Blob::23456
 Sending FormData containing one string and one sliced file:
-string1=foo&file1=Blob:23456
+string1=foo&file1=Blob::23456
 Sending FormData containing two strings and two sliced files:
-string1=foo&string2=bar&file1=Blob:23456&file2=Blob:45
+string1=foo&string2=bar&file1=Blob::23456&file2=Blob::45
 PASS successfullyParsed is true
 
 TEST COMPLETE

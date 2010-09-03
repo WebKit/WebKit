@@ -10,11 +10,11 @@ Sending FormData containing one file with empty name:
 Sending FormData containing one string:
 string=foo
 Sending FormData containing one file:
-file=file-for-drag-to-send.txt:1234567890
+file=file-for-drag-to-send.txt:text/plain:1234567890
 Sending FormData containing one string and one file:
-string1=foo&file1=file-for-drag-to-send.txt:1234567890
+string1=foo&file1=file-for-drag-to-send.txt:text/plain:1234567890
 Sending FormData containing two strings and two files:
-string1=foo&string2=bar&file1=file-for-drag-to-send.txt:1234567890&file2=file-for-drag-to-send.txt:1234567890
+string1=foo&string2=bar&file1=file-for-drag-to-send.txt:text/plain:1234567890&file2=file-for-drag-to-send.txt:text/plain:1234567890
 PASS successfullyParsed is true
 
 TEST COMPLETE

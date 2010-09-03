@@ -226,7 +226,7 @@ void FormData::appendKeyValuePairItems(const FormDataList& list, const TextEncod
                 FormDataBuilder::addFilenameToMultiPartHeader(header, encoding, name);
 
                 // Add the content type if it is available.
-                if (value.blob()->type().isEmpty())
+                if (!value.blob()->type().isEmpty())
                     FormDataBuilder::addContentTypeToMultiPartHeader(header, value.blob()->type().latin1());
             }
 
