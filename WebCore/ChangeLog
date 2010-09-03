@@ -1,3 +1,40 @@
+2010-09-02  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: persist DOM breakpoints between page reloads
+        https://bugs.webkit.org/show_bug.cgi?id=44837
+
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.DOMBreakpointItem):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode.prototype.path):
+        (WebInspector.DOMNode.prototype.setBreakpoint):
+        (WebInspector.DOMNode.prototype.hasBreakpoint):
+        (WebInspector.DOMNode.prototype.removeBreakpoint):
+        (WebInspector.DOMNode.prototype.removeBreakpoints):
+        (WebInspector.DOMAgent.prototype._setDocument):
+        (WebInspector.DOMAgent.prototype._childNodeRemoved):
+        (WebInspector.DOMAgent.prototype._removeBreakpoints):
+        (WebInspector.DOMBreakpointManager):
+        (WebInspector.DOMBreakpointManager.prototype.setBreakpoint):
+        (WebInspector.DOMBreakpointManager.prototype.removeBreakpointsForNode):
+        (WebInspector.DOMBreakpointManager.prototype._breakpointRemoved):
+        (WebInspector.DOMBreakpointManager.prototype.restoreBreakpoints.restoreBreakpointsForNode):
+        (WebInspector.DOMBreakpointManager.prototype.restoreBreakpoints):
+        (WebInspector.DOMBreakpoint):
+        (WebInspector.DOMBreakpoint.prototype.get nodeId):
+        (WebInspector.DOMBreakpoint.prototype.get type):
+        (WebInspector.DOMBreakpoint.prototype.set enabled):
+        (WebInspector.DOMBreakpoint.prototype.remove):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.reset):
+        (WebInspector.ElementsPanel.prototype.setDocument):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._populateTagContextMenu):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._showPopup.showObjectPopup):
+
 2010-09-02  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Dimitri Glazkov.

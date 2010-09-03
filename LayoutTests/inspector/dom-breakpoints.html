@@ -27,6 +27,8 @@ var test = function()
 {
     InspectorTest.startDebuggerTest(step1);
 
+    var d0, d1;
+
     function step1()
     {
         findDOMNodeById("d0", step2);
@@ -34,49 +36,74 @@ var test = function()
 
     function step2(node)
     {
-        InspectorTest.addResult("Found dom node d0.");
-        WebInspector.domBreakpointManager.setBreakpoint(node, WebInspector.DOMBreakpoint.Types.SubtreeModified);
+        d0 = node;
+        InspectorTest.addResult("Test that 'Subtree Modified' breakpoint is hit when appending child.");
+        d0.setBreakpoint(WebInspector.DOMBreakpoint.Types.SubtreeModified);
         InspectorTest.addResult("Set subtree modified DOM breakpoint on d0.");
         InspectorTest.evaluateInConsole("appendElement('d0', 'd1')");
-        InspectorTest.waitUntilPaused(step3.bind(null, node));
+        InspectorTest.addResult("Append d1 to d0.");
+        InspectorTest.waitUntilPaused(step3);
     }
 
-    function step3(node, callFrames)
+    function step3(callFrames)
     {
         InspectorTest.addResult("line: " + callFrames[0].line + ", function: " + callFrames[0].functionName);
-        WebInspector.domBreakpointManager.removeBreakpointsForNode(node);
+        d0.removeBreakpoint(WebInspector.DOMBreakpoint.Types.SubtreeModified);
         InspectorTest.resumeExecution(findDOMNodeById.bind(null, "d1", step4));
     }
 
     function step4(node)
     {
-        InspectorTest.addResult("Found dom node d1.");
-        WebInspector.domBreakpointManager.setBreakpoint(node, WebInspector.DOMBreakpoint.Types.AttributeModified);
+        d1 = node;
+        InspectorTest.addResult("Test that 'Attribute Modified' breakpoint is hit when modifying attribute.");
+        d1.setBreakpoint(WebInspector.DOMBreakpoint.Types.AttributeModified);
         InspectorTest.addResult("Set attribute modified DOM breakpoint on d1.");
         InspectorTest.evaluateInConsole("modifyAttribute('d1', 'className', 'foo')");
-        InspectorTest.waitUntilPaused(step5.bind(null, node));
+        InspectorTest.addResult("Modify d1 className.");
+        InspectorTest.waitUntilPaused(step5);
     }
 
-    function step5(node, callFrames)
+    function step5(callFrames)
     {
         InspectorTest.addResult("line: " + callFrames[0].line + ", function: " + callFrames[0].functionName);
-        WebInspector.domBreakpointManager.removeBreakpointsForNode(node);
-        InspectorTest.resumeExecution(findDOMNodeById.bind(null, "d1", step6));
+        d1.removeBreakpoint(WebInspector.DOMBreakpoint.Types.AttributeModified);
+        InspectorTest.resumeExecution(step6);
     }
 
-    function step6(node)
+    function step6()
     {
-        InspectorTest.addResult("Found dom node d1.");
-        WebInspector.domBreakpointManager.setBreakpoint(node, WebInspector.DOMBreakpoint.Types.NodeRemoved);
+        InspectorTest.addResult("Test that 'Node Removed' breakpoint is hit when removing a node.");
+        d1.setBreakpoint(WebInspector.DOMBreakpoint.Types.NodeRemoved);
         InspectorTest.addResult("Set node removed DOM breakpoint on d1.");
         InspectorTest.evaluateInConsole("removeElement('d1')");
-        InspectorTest.waitUntilPaused(step7.bind(null, node));
+        InspectorTest.addResult("Remove d1.");
+        InspectorTest.waitUntilPaused(step7);
     }
 
-    function step7(node, callFrames)
+    function step7(callFrames)
     {
         InspectorTest.addResult("line: " + callFrames[0].line + ", function: " + callFrames[0].functionName);
-        WebInspector.domBreakpointManager.removeBreakpointsForNode(node);
+        InspectorTest.resumeExecution(step8);
+    }
+
+    function step8()
+    {
+        InspectorTest.addResult("Test that DOM breakpoints are persisted between page reloads.");
+        d0.setBreakpoint(WebInspector.DOMBreakpoint.Types.SubtreeModified);
+        InspectorTest.addResult("Set subtree modified DOM breakpoint on d0.");
+        InspectorTest.reloadPage(step9);
+    }
+
+    function step9()
+    {
+        InspectorTest.evaluateInConsole("appendElement('d0', 'd1')");
+        InspectorTest.addResult("Append d1 to d0.");
+        InspectorTest.waitUntilPaused(step10);
+    }
+
+    function step10(callFrames)
+    {
+        InspectorTest.addResult("line: " + callFrames[0].line + ", function: " + callFrames[0].functionName);
         InspectorTest.completeDebuggerTest();
     }
 

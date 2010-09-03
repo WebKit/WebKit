@@ -143,6 +143,40 @@ WebInspector.DOMNode.prototype = {
         this.ownerDocument._domAgent.removeAttributeAsync(this, name, callback);
     },
 
+    path: function()
+    {
+        var path = [];
+        var node = this;
+        while (node && "index" in node && node.nodeName.length) {
+            path.push([node.index, node.nodeName]);
+            node = node.parentNode;
+        }
+        path.reverse();
+        return path.join(",");
+    },
+
+    setBreakpoint: function(type)
+    {
+        return WebInspector.domBreakpointManager.setBreakpoint(this.id, type, true, this.path());
+    },
+
+    hasBreakpoint: function(type)
+    {
+        return !!WebInspector.domBreakpointManager.findBreakpoint(this.id, type);
+    },
+
+    removeBreakpoint: function(type)
+    {
+        var breakpoint = WebInspector.domBreakpointManager.findBreakpoint(this.id, type);
+        if (breakpoint)
+            breakpoint.remove();
+    },
+
+    removeBreakpoints: function()
+    {
+        WebInspector.domBreakpointManager.removeBreakpointsForNode(this.id);
+    },
+
     _setAttributesPayload: function(attrs)
     {
         this.attributes = [];
@@ -362,6 +396,7 @@ WebInspector.DOMAgent.prototype = {
             this.document = new WebInspector.DOMDocument(this, this._window, payload);
             this._idToDOMNode[payload.id] = this.document;
             this._bindNodes(this.document.children);
+            WebInspector.domBreakpointManager.restoreBreakpoints();
         } else
             this.document = null;
         WebInspector.panels.elements.setDocument(this.document);
@@ -418,7 +453,17 @@ WebInspector.DOMAgent.prototype = {
         var event = { target : node, relatedNode : parent };
         this.document._fireDomEvent("DOMNodeRemoved", event);
         delete this._idToDOMNode[nodeId];
-    }
+        this._removeBreakpoints(node);
+    },
+
+    _removeBreakpoints: function(node)
+    {
+        node.removeBreakpoints();
+        if (!node.children)
+            return;
+        for (var i = 0; i < node.children.length; ++i)
+            this._removeBreakpoints(node.children[i]);
+     }
 }
 
 WebInspector.ApplicationCache = {}
@@ -679,19 +724,23 @@ WebInspector.childNodeRemoved = function()
 WebInspector.DOMBreakpointManager = function()
 {
     this._breakpoints = {};
+    this._pathCache = {};
 }
 
 WebInspector.DOMBreakpointManager.prototype = {
-    setBreakpoint: function(node, type)
+    setBreakpoint: function(nodeId, type, enabled, path)
     {
-        if (!(node.id in this._breakpoints))
-            this._breakpoints[node.id] = {};
-        else if (type in this._breakpoints[node.id])
+        if (!(nodeId in this._breakpoints))
+            this._breakpoints[nodeId] = {};
+        else if (type in this._breakpoints[nodeId])
             return;
 
-        var breakpoint = new WebInspector.DOMBreakpoint(node, type);
-        this._breakpoints[node.id][type] = breakpoint;
+        var breakpoint = new WebInspector.DOMBreakpoint(nodeId, type, enabled);
+        this._breakpoints[nodeId][type] = breakpoint;
         breakpoint.addEventListener("removed", this._breakpointRemoved, this);
+
+        if (!(nodeId in this._pathCache))
+            this._pathCache[nodeId] = path;
 
         this.dispatchEventToListeners("dom-breakpoint-added", breakpoint);
     },
@@ -703,9 +752,9 @@ WebInspector.DOMBreakpointManager.prototype = {
             return nodeBreakpoints[type];
     },
 
-    removeBreakpointsForNode: function(node)
+    removeBreakpointsForNode: function(nodeId)
     {
-        var nodeBreakpoints = this._breakpoints[node.id];
+        var nodeBreakpoints = this._breakpoints[nodeId];
         for (var type in nodeBreakpoints)
             nodeBreakpoints[type].remove();
     },
@@ -714,23 +763,49 @@ WebInspector.DOMBreakpointManager.prototype = {
     {
         var breakpoint = event.target;
 
-        var nodeBreakpoints = this._breakpoints[breakpoint.node.id];
+        var nodeBreakpoints = this._breakpoints[breakpoint.nodeId];
         delete nodeBreakpoints[breakpoint.type];
         for (var type in nodeBreakpoints)
             return;
-        delete this._breakpoints[breakpoint.node.id];
+
+        delete this._breakpoints[breakpoint.nodeId];
+        delete this._pathCache[breakpoint.nodeId];
+    },
+
+    restoreBreakpoints: function()
+    {
+        var breakpoints = this._breakpoints;
+        this._breakpoints = {};
+        var pathCache = this._pathCache;
+        this._pathCache = {};
+
+        for (var oldNodeId in breakpoints) {
+            var path = pathCache[oldNodeId];
+            InspectorBackend.pushNodeByPathToFrontend(path, restoreBreakpointsForNode.bind(this, breakpoints[oldNodeId], path));
+        }
+
+        function restoreBreakpointsForNode(nodeBreakpoints, path, nodeId)
+        {
+            if (!nodeId)
+                return;
+            for (var type in nodeBreakpoints) {
+                var breakpoint = nodeBreakpoints[type];
+                this.setBreakpoint(nodeId, breakpoint.type, breakpoint.enabled, path);
+            }
+        }
     }
 }
 
 WebInspector.DOMBreakpointManager.prototype.__proto__ = WebInspector.Object.prototype;
 
-WebInspector.DOMBreakpoint = function(node, type)
+WebInspector.DOMBreakpoint = function(nodeId, type, enabled)
 {
-    this.node = node;
-    this.type = type;
-    this._enabled = true;
+    this._nodeId = nodeId;
+    this._type = type;
+    this._enabled = enabled;
 
-    InspectorBackend.setDOMBreakpoint(this.node.id, this.type);
+    if (this.enabled)
+        InspectorBackend.setDOMBreakpoint(this.nodeId, this.type);
 }
 
 WebInspector.DOMBreakpoint.Types = {
@@ -762,6 +837,16 @@ WebInspector.DOMBreakpoint.contextMenuLabelForType = function(type)
 }
 
 WebInspector.DOMBreakpoint.prototype = {
+    get nodeId()
+    {
+        return this._nodeId;
+    },
+
+    get type()
+    {
+        return this._type;
+    },
+
     get enabled()
     {
         return this._enabled;
@@ -773,18 +858,18 @@ WebInspector.DOMBreakpoint.prototype = {
             return;
 
         this._enabled = enabled;
-        if (this._enabled)
-            InspectorBackend.setDOMBreakpoint(this.node.id, this.type);
+        if (this.enabled)
+            InspectorBackend.setDOMBreakpoint(this.nodeId, this.type);
         else
-            InspectorBackend.removeDOMBreakpoint(this.node.id, this.type);
+            InspectorBackend.removeDOMBreakpoint(this.nodeId, this.type);
 
         this.dispatchEventToListeners("enable-changed");
     },
 
     remove: function()
     {
-        if (this._enabled)
-            InspectorBackend.removeDOMBreakpoint(this.node.id, this.type);
+        if (this.enabled)
+            InspectorBackend.removeDOMBreakpoint(this.nodeId, this.type);
         this.dispatchEventToListeners("removed");
     }
 }

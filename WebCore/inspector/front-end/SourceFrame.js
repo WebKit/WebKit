@@ -598,9 +598,11 @@ WebInspector.SourceFrame.prototype = {
             var popupContentElement = null;
             if (result.type !== "object" && result.type !== "node" && result.type !== "array") {
                 popupContentElement = document.createElement("span");
-                popupContentElement.className = "monospace";
+                popupContentElement.className = "monospace console-formatted-" + result.type;
                 popupContentElement.style.whiteSpace = "pre";
                 popupContentElement.textContent = result.description;
+                if (result.type === "string")
+                    popupContentElement.textContent = "\"" + popupContentElement.textContent + "\"";
                 this._popup = new WebInspector.Popover(popupContentElement);
                 this._popup.show(element);
             } else {

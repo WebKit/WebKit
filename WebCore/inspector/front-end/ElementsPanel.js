@@ -159,16 +159,8 @@ WebInspector.ElementsPanel.prototype = {
 
     reset: function()
     {
-        if (this.focusedDOMNode) {
-            this._selectedPathOnReset = [];
-            var node = this.focusedDOMNode;
-            while ("index" in node && node.nodeName && node.nodeName.length) {
-                this._selectedPathOnReset.push(node.nodeName);
-                this._selectedPathOnReset.push(node.index);
-                node = node.parentNode;
-            }
-            this._selectedPathOnReset.reverse();
-        }
+        if (this.focusedDOMNode)
+            this._selectedPathOnReset = this.focusedDOMNode.path();
 
         this.rootDOMNode = null;
         this.focusedDOMNode = null;
@@ -225,7 +217,7 @@ WebInspector.ElementsPanel.prototype = {
         }
 
         if (this._selectedPathOnReset)
-            InspectorBackend.pushNodeByPathToFrontend(this._selectedPathOnReset.join(","), selectLastSelectedNode.bind(this));
+            InspectorBackend.pushNodeByPathToFrontend(this._selectedPathOnReset, selectLastSelectedNode.bind(this));
         else
             selectNode.call(this);
         delete this._selectedPathOnReset;

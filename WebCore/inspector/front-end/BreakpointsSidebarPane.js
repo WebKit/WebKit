@@ -188,7 +188,8 @@ WebInspector.DOMBreakpointItem = function(breakpoint)
 {
     WebInspector.BreakpointItem.call(this, breakpoint);
 
-    var link = WebInspector.panels.elements.linkifyNodeReference(this._breakpoint.node);
+    var node = WebInspector.domAgent.nodeForId(this._breakpoint.nodeId);
+    var link = WebInspector.panels.elements.linkifyNodeReference(node);
     this._element.appendChild(link);
 
     var type = WebInspector.DOMBreakpoint.labelForType(this._breakpoint.type);

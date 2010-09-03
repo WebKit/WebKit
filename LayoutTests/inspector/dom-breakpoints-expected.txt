@@ -1,20 +1,30 @@
 Tests DOM breakpoints. Bug 42886
 
 Debugger was enabled.
-Found dom node d0.
+Test that 'Subtree Modified' breakpoint is hit when appending child.
 Set subtree modified DOM breakpoint on d0.
+Append d1 to d0.
 Script execution paused.
 line: 11, function: appendElement
 Script execution resumed.
-Found dom node d1.
+Test that 'Attribute Modified' breakpoint is hit when modifying attribute.
 Set attribute modified DOM breakpoint on d1.
+Modify d1 className.
 Script execution paused.
 line: 17, function: modifyAttribute
 Script execution resumed.
-Found dom node d1.
+Test that 'Node Removed' breakpoint is hit when removing a node.
 Set node removed DOM breakpoint on d1.
+Remove d1.
 Script execution paused.
 line: 23, function: removeElement
+Script execution resumed.
+Test that DOM breakpoints are persisted between page reloads.
+Set subtree modified DOM breakpoint on d0.
+Page reloaded.
+Append d1 to d0.
+Script execution paused.
+line: 11, function: appendElement
 Script execution resumed.
 Debugger was disabled.
 

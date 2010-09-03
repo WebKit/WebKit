@@ -765,15 +765,17 @@ WebInspector.ElementsTreeElement.prototype = {
         if (Preferences.domBreakpointsEnabled) {
             // Add debbuging-related actions
             contextMenu.appendSeparator();
-            for (var type in WebInspector.DOMBreakpoint.Types) {
-                var typeId = WebInspector.DOMBreakpoint.Types[type];
-                var label = WebInspector.DOMBreakpoint.contextMenuLabelForType(typeId);
-                var breakpoint = WebInspector.domBreakpointManager.findBreakpoint(this.representedObject.id, typeId);
-                if (!breakpoint)
-                    var handler = WebInspector.domBreakpointManager.setBreakpoint.bind(WebInspector.domBreakpointManager, this.representedObject, typeId);
+
+            var node = this.representedObject;
+            for (var key in WebInspector.DOMBreakpoint.Types) {
+                var type = WebInspector.DOMBreakpoint.Types[key];
+                var label = WebInspector.DOMBreakpoint.contextMenuLabelForType(type);
+                var hasBreakpoint = node.hasBreakpoint(type);
+                if (!hasBreakpoint)
+                    var handler = node.setBreakpoint.bind(node, type);
                 else
-                    var handler = breakpoint.remove.bind(breakpoint);
-                contextMenu.appendCheckboxItem(label, handler, !!breakpoint);
+                    var handler = node.removeBreakpoint.bind(node, type);
+                contextMenu.appendCheckboxItem(label, handler, hasBreakpoint);
             }
         }
     },

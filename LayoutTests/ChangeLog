@@ -1,3 +1,13 @@
+2010-09-02  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: add page reload test to dom-breakpoints.html
+        https://bugs.webkit.org/show_bug.cgi?id=44837
+
+        * inspector/dom-breakpoints-expected.txt:
+        * inspector/dom-breakpoints.html:
+
 2010-09-02  François Sausset  <sausset@gmail.com>
 
         Reviewed by Darin Adler.
