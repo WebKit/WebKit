@@ -27,12 +27,17 @@
 #include "ParsedURL.h"
 
 #include "URLComponent.h"
+#include "URLParser.h"
 
 namespace WTF {
 
 ParsedURL::ParsedURL(const URLString& spec)
     : m_spec(spec)
 {
+    // FIXME: Handle non-standard URLs.
+    if (spec.string().isEmpty())
+        return;
+    URLParser<UChar>::parseStandardURL(spec.string().characters(), spec.string().length(), m_segments);
 }
 
 String ParsedURL::scheme() const
