@@ -4380,11 +4380,17 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
 
 - (NSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(NSUInteger)limit
 {
+    if (_private->closed)
+        return 0;
+
     return [self countMatchesForText:string caseSensitive:caseFlag highlight:highlight limit:limit markMatches:YES];
 }
 
 - (NSUInteger)countMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(NSUInteger)limit markMatches:(BOOL)markMatches
 {
+    if (_private->closed)
+        return 0;
+
     WebFrame *frame = [self mainFrame];
     unsigned matchCount = 0;
     do {
@@ -4409,6 +4415,9 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
 
 - (void)unmarkAllTextMatches
 {
+    if (_private->closed)
+        return;
+
     WebFrame *frame = [self mainFrame];
     do {
         id <WebDocumentView> view = [[frame frameView] documentView];
@@ -4421,6 +4430,9 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
 
 - (NSArray *)rectsForTextMatches
 {
+    if (_private->closed)
+        return [NSArray array];
+
     NSMutableArray *result = [NSMutableArray array];
     WebFrame *frame = [self mainFrame];
     do {
