@@ -172,16 +172,19 @@ private:
 
 class ScheduledFormSubmission : public ScheduledNavigation {
 public:
-    ScheduledFormSubmission(PassRefPtr<FormSubmission> submission, bool lockBackForwardList, bool duringLoad)
+    ScheduledFormSubmission(PassRefPtr<FormSubmission> submission, bool lockBackForwardList, bool duringLoad, bool wasUserGesture)
         : ScheduledNavigation(0, submission->lockHistory(), lockBackForwardList, duringLoad, true)
         , m_submission(submission)
         , m_haveToldClient(false)
+        , m_wasUserGesture(wasUserGesture)
     {
         ASSERT(m_submission->state());
     }
 
     virtual void fire(Frame* frame)
     {
+        UserGestureIndicator gestureIndicator(m_wasUserGesture ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
+
         // The submitForm function will find a target frame before using the redirection timer.
         // Now that the timer has fired, we need to repeat the security check which normally is done when
         // selecting a target, in case conditions have changed. Other code paths avoid this by targeting
@@ -211,6 +214,7 @@ public:
 private:
     RefPtr<FormSubmission> m_submission;
     bool m_haveToldClient;
+    bool m_wasUserGesture;
 };
 
 RedirectScheduler::RedirectScheduler(Frame* frame)
@@ -311,10 +315,10 @@ void RedirectScheduler::scheduleFormSubmission(PassRefPtr<FormSubmission> submis
     // If this is a child frame and the form submission was triggered by a script, lock the back/forward list
     // to match IE and Opera.
     // See https://bugs.webkit.org/show_bug.cgi?id=32383 for the original motivation for this.
+    bool isUserGesture = m_frame->loader()->isProcessingUserGesture();
+    bool lockBackForwardList = mustLockBackForwardList(m_frame, isUserGesture) || (submission->state()->formSubmissionTrigger() == SubmittedByJavaScript && m_frame->tree()->parent());
 
-    bool lockBackForwardList = mustLockBackForwardList(m_frame, UserGestureIndicator::processingUserGesture()) || (submission->state()->formSubmissionTrigger() == SubmittedByJavaScript && m_frame->tree()->parent());
-
-    schedule(adoptPtr(new ScheduledFormSubmission(submission, lockBackForwardList, duringLoad)));
+    schedule(adoptPtr(new ScheduledFormSubmission(submission, lockBackForwardList, duringLoad, isUserGesture)));
 }
 
 void RedirectScheduler::scheduleRefresh(bool wasUserGesture)
