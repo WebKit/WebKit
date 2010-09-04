@@ -698,10 +698,17 @@ private:
 
 void PlatformContextSkia::setSharedGraphicsContext3D(SharedGraphicsContext3D* context, DrawingBuffer* drawingBuffer, const WebCore::IntSize& size)
 {
-    m_useGPU = true;
-    m_gpuCanvas = new GLES2Canvas(context, drawingBuffer, size);
-    m_uploadTexture.clear();
-    drawingBuffer->setWillPublishCallback(WillPublishCallbackImpl::create(this));
+    if (context && drawingBuffer) {
+        m_useGPU = true;
+        m_gpuCanvas = new GLES2Canvas(context, drawingBuffer, size);
+        m_uploadTexture.clear();
+        drawingBuffer->setWillPublishCallback(WillPublishCallbackImpl::create(this));
+    } else {
+        syncSoftwareCanvas();
+        m_uploadTexture.clear();
+        m_gpuCanvas.clear();
+        m_useGPU = false;
+    }
 }
 
 void PlatformContextSkia::prepareForSoftwareDraw() const

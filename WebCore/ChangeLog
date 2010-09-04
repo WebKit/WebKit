@@ -1,3 +1,21 @@
+2010-09-03  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Force 2d canvases to be rendered in software when the composite operation isn't source-over
+        https://bugs.webkit.org/show_bug.cgi?id=45216
+
+        The current accelerated 2d canvas implementation is very slow for composite operations other
+        than the default.  This patch forces a canvas to be rendered in software if any other operation
+        is set until we accelerate the rest.
+
+        Tested by any of the fast/canvas tests that use a non-default globalCompositeOperation.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setGlobalCompositeOperation):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::setSharedGraphicsContext3D):
+
 2010-09-03  Paul Sawaya  <psawaya@apple.com>
 
         Reviewed by Chris Marrin.

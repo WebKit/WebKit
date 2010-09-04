@@ -441,6 +441,15 @@ void CanvasRenderingContext2D::setGlobalCompositeOperation(const String& operati
     if (!c)
         return;
     c->setCompositeOperation(op);
+#if ENABLE(ACCELERATED_2D_CANVAS)
+    if (isAccelerated() && op != CompositeSourceOver) {
+        c->setSharedGraphicsContext3D(0, 0, IntSize());
+        m_drawingBuffer.clear();
+        m_context3D.clear();
+        // Mark as needing a style recalc so our compositing layer can be removed.
+        canvas()->setNeedsStyleRecalc(SyntheticStyleChange);
+    }
+#endif
 }
 
 void CanvasRenderingContext2D::scale(float sx, float sy)
