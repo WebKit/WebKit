@@ -372,7 +372,7 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext,
                       int numGlyphs,
                       const FloatPoint& point) const
 {
-    gc->platformContext()->prepareForSoftwareDraw();
+    graphicsContext->platformContext()->prepareForSoftwareDraw();
 
     SkColor color = graphicsContext->platformContext()->effectiveFillColor();
     unsigned char alpha = SkColorGetA(color);

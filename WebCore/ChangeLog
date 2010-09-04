@@ -1,3 +1,11 @@
+2010-09-03  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, Chromium build fix. Fix breakage on Windows after
+        r66787 / https://bugs.webkit.org/show_bug.cgi?id=45223 .
+
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::Font::drawGlyphs):
+
 2010-09-03  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.
