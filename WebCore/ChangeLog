@@ -1,3 +1,55 @@
+2010-09-03  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Add thirdparty directory and incorporate GLU tessellator
+        https://bugs.webkit.org/show_bug.cgi?id=44707
+
+        This directory is intended to contain copies of third-party libraries used
+        by WebCore, in particular those which may require some modification in
+        order to incorporate.
+
+        No tests at this time; these sources are being added in preparation for
+        incorporating other code which uses them, at which point the code will be
+        exercised and testable.
+
+        * thirdparty: Added.
+        * thirdparty/README.txt: Added.
+        * thirdparty/glu: Added.
+        * thirdparty/glu/LICENSE.txt: Added.
+        * thirdparty/glu/README.webkit: Added.
+        * thirdparty/glu/gluos.h: Added.
+        * thirdparty/glu/internal_glu.h: Added.
+        * thirdparty/glu/libtess: Added.
+        * thirdparty/glu/libtess/GNUmakefile: Added.
+        * thirdparty/glu/libtess/Imakefile: Added.
+        * thirdparty/glu/libtess/README: Added.
+        * thirdparty/glu/libtess/alg-outline: Added.
+        * thirdparty/glu/libtess/dict-list.h: Added.
+        * thirdparty/glu/libtess/dict.c: Added.
+        * thirdparty/glu/libtess/dict.h: Added.
+        * thirdparty/glu/libtess/geom.c: Added.
+        * thirdparty/glu/libtess/geom.h: Added.
+        * thirdparty/glu/libtess/memalloc.c: Added.
+        * thirdparty/glu/libtess/memalloc.h: Added.
+        * thirdparty/glu/libtess/mesh.c: Added.
+        * thirdparty/glu/libtess/mesh.h: Added.
+        * thirdparty/glu/libtess/normal.c: Added.
+        * thirdparty/glu/libtess/normal.h: Added.
+        * thirdparty/glu/libtess/priorityq-heap.c: Added.
+        * thirdparty/glu/libtess/priorityq-heap.h: Added.
+        * thirdparty/glu/libtess/priorityq-sort.h: Added.
+        * thirdparty/glu/libtess/priorityq.c: Added.
+        * thirdparty/glu/libtess/priorityq.h: Added.
+        * thirdparty/glu/libtess/render.c: Added.
+        * thirdparty/glu/libtess/render.h: Added.
+        * thirdparty/glu/libtess/sweep.c: Added.
+        * thirdparty/glu/libtess/sweep.h: Added.
+        * thirdparty/glu/libtess/tess.c: Added.
+        * thirdparty/glu/libtess/tess.h: Added.
+        * thirdparty/glu/libtess/tessmono.c: Added.
+        * thirdparty/glu/libtess/tessmono.h: Added.
+
 2010-09-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r66781.
