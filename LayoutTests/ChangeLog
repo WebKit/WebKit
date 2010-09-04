@@ -1,3 +1,15 @@
+2010-09-03  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed.
+
+        Cleanup outdated entries in test_expectations.
+
+        BUGWK44996 WIN : inspector/report-API-errors.html = TEXT
+        BUGWK44996 WIN : inspector/report-protocol-errors.html = TEXT
+        BUGWK45184 WIN : inspector/elements-panel-xhtml-structure.xhtml = TIMEOUT
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-03  Peter Kasting  <pkasting@google.com>
 
         Not reviewed, attempted layout test fix.

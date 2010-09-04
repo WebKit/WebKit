@@ -3112,10 +3112,6 @@ BUGWK44961 : fast/notifications/notifications-click-event.html = TIMEOUT
 BUGWK44967 MAC : fast/multicol/paginate-block-replaced.html = IMAGE
 BUGWK44967 MAC : fast/multicol/float-paginate.html = IMAGE
 
-// New tests in r66523 and r66516
-BUGWK44996 WIN : inspector/report-API-errors.html = TEXT
-BUGWK44996 WIN : inspector/report-protocol-errors.html = TEXT
-
 // Not focusing an anchor when tab is pressed.
 BUGWK45061 : fast/forms/focus2.html = FAIL
 
@@ -3129,9 +3125,6 @@ BUG54348 LINUX : http/tests/security/xssAuditor/dom-write-innerHTML.html = PASS 
 
 // Regressed in r66689
 BUGTONY LINUX : fast/text/atsui-spacing-features.html = IMAGE+TEXT
-
-// Regressed in r66732
-BUGWK45184 WIN : inspector/elements-panel-xhtml-structure.xhtml = TIMEOUT
 
 // New test in r66740
 BUGWK45193 LINUX : fast/text/decomposed-after-stacked-diacritics.html = TEXT
