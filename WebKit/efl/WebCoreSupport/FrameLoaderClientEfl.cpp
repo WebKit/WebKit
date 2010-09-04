@@ -39,6 +39,7 @@
 #include "EWebKit.h"
 #include "FormState.h"
 #include "FrameLoader.h"
+#include "FrameNetworkingContext.h"
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "HTMLFormElement.h"
@@ -943,6 +944,11 @@ void FrameLoaderClientEfl::transitionToCommittedForNewPage()
 
     if (m_frame == ewk_view_frame_main_get(m_view))
         ewk_view_frame_main_cleared(m_view);
+}
+
+PassRefPtr<FrameNetworkingContext> FrameLoaderClientEfl::createNetworkingContext()
+{
+    return FrameNetworkingContext::create(core(m_webFrame.get()));
 }
 
 }

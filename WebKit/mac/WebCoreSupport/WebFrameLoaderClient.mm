@@ -47,6 +47,7 @@
 #import "WebFormDelegate.h"
 #import "WebFrameInternal.h"
 #import "WebFrameLoadDelegate.h"
+#import "WebFrameNetworkingContext.h"
 #import "WebFrameViewInternal.h"
 #import "WebHTMLRepresentationPrivate.h"
 #import "WebHTMLViewInternal.h"
@@ -1902,6 +1903,11 @@ void WebFrameLoaderClient::didPerformFirstNavigation() const
     WebPreferences *preferences = [[m_webFrame.get() webView] preferences];
     if ([preferences automaticallyDetectsCacheModel] && [preferences cacheModel] < WebCacheModelDocumentBrowser)
         [preferences setCacheModel:WebCacheModelDocumentBrowser];
+}
+
+PassRefPtr<FrameNetworkingContext> WebFrameLoaderClient::createNetworkingContext()
+{
+    return WebFrameNetworkingContext::create(core(m_webFrame.get()));
 }
 
 #if ENABLE(JAVA_BRIDGE)

@@ -52,6 +52,7 @@ namespace WebCore {
     class FormState;
     class Frame;
     class FrameLoader;
+    class FrameNetworkingContext;
     class HistoryItem;
     class HTMLAppletElement;
     class HTMLFormElement;
@@ -282,6 +283,8 @@ namespace WebCore {
         virtual void didNotAllowScript() { }
         // This callback is similar, but for plugins.
         virtual void didNotAllowPlugins() { }
+
+        virtual PassRefPtr<FrameNetworkingContext> createNetworkingContext() = 0;
     };
 
 } // namespace WebCore

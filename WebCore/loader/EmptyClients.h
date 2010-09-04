@@ -40,6 +40,7 @@
 #include "FloatRect.h"
 #include "FocusDirection.h"
 #include "FrameLoaderClient.h"
+#include "FrameNetworkingContext.h"
 #include "InspectorClient.h"
 #include "PluginHalterClient.h"
 #include "PopupMenu.h"
@@ -366,6 +367,7 @@ public:
     virtual bool shouldCacheResponse(DocumentLoader*, unsigned long, const ResourceResponse&, const unsigned char*, unsigned long long) { return true; }
 #endif
 
+    virtual PassRefPtr<FrameNetworkingContext> createNetworkingContext() { return PassRefPtr<FrameNetworkingContext>(); }
 };
 
 class EmptyEditorClient : public EditorClient, public Noncopyable {

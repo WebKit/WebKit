@@ -17,34 +17,27 @@
     Boston, MA 02110-1301, USA.
 */
 
-#import "WebFrameNetworkingContext.h"
+#ifndef WebFrameNetworkingContext_h
+#define WebFrameNetworkingContext_h
 
-#import <WebCore/Page.h>
-#import <WebCore/ResourceError.h>
-#import <WebCore/Settings.h>
+#include <WebCore/FrameNetworkingContext.h>
 
-using namespace WebCore;
+namespace WebCore {
 
-namespace WebKit {
+class WebFrameNetworkingContext : public FrameNetworkingContext {
+public:
+    static PassRefPtr<WebFrameNetworkingContext> create(Frame*);
 
-bool WebFrameNetworkingContext::needsSiteSpecificQuirks() const
-{
-    return frame() && frame()->settings() && frame()->settings()->needsSiteSpecificQuirks();
-}
+private:
+    WebFrameNetworkingContext(Frame*);
 
-bool WebFrameNetworkingContext::localFileContentSniffingEnabled() const
-{
-    return frame() && frame()->settings() && frame()->settings()->localFileContentSniffingEnabled();
-}
+    virtual QObject* originatingObject() const;
+    virtual QNetworkAccessManager* networkAccessManager() const;
 
-SchedulePairHashSet* WebFrameNetworkingContext::scheduledRunLoopPairs() const
-{
-    return frame() && frame()->page() ? frame()->page()->scheduledRunLoopPairs() : 0;
-}
-
-ResourceError WebFrameNetworkingContext::blockedError(const ResourceRequest& request) const
-{
-    return frame()->loader()->blockedError(request);
-}
+    QObject* m_originatingObject;
+    QNetworkAccessManager* m_networkAccessManager;
+};
 
 }
+
+#endif // WebFrameNetworkingContext_h

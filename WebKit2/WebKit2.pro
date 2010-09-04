@@ -123,6 +123,7 @@ INCLUDEPATH = \
     WebProcess/Plugins \
     WebProcess/Plugins/Netscape \
     WebProcess/WebCoreSupport \
+    WebProcess/WebCoreSupport/qt \
     WebProcess/WebPage \
     $$INCLUDEPATH
 
@@ -250,6 +251,7 @@ HEADERS += \
     WebProcess/WebCoreSupport/WebInspectorClient.h \
     WebProcess/WebCoreSupport/WebPopupMenu.h \
     WebProcess/WebCoreSupport/WebSearchPopupMenu.h \
+    WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.h \
     WebProcess/WebPage/ChunkedUpdateDrawingArea.h \
     WebProcess/WebPage/DrawingArea.h \
     WebProcess/WebPage/WebFrame.h \
@@ -358,6 +360,7 @@ SOURCES += \
     WebProcess/WebCoreSupport/WebPopupMenu.cpp \
     WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp \
     WebProcess/WebCoreSupport/qt/WebErrorsQt.cpp \
+    WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.cpp \
     WebProcess/WebPage/ChunkedUpdateDrawingArea.cpp \
     WebProcess/WebPage/DrawingArea.cpp \
     WebProcess/WebPage/WebFrame.cpp \

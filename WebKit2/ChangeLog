@@ -1,3 +1,34 @@
+2010-09-03  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        Reviewed by Darin Adler.
+
+        Add NetworkingContext to avoid layer violations
+        https://bugs.webkit.org/show_bug.cgi?id=42292
+
+        Add FrameNetworkingContext implementation.
+
+        * WebKit2.pro:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createNetworkingContext):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        (WebKit::WebFrameNetworkingContext::needsSiteSpecificQuirks):
+        (WebKit::WebFrameNetworkingContext::localFileContentSniffingEnabled):
+        (WebKit::WebFrameNetworkingContext::scheduledRunLoopPairs):
+        (WebKit::WebFrameNetworkingContext::blockedError):
+        * WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.cpp: Added.
+        (WebCore::WebFrameNetworkingContext::WebFrameNetworkingContext):
+        (WebCore::WebFrameNetworkingContext::create):
+        (WebCore::WebFrameNetworkingContext::originatingObject):
+        (WebCore::WebFrameNetworkingContext::networkAccessManager):
+        * WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.h: Added.
+        * WebProcess/WebCoreSupport/win/WebFrameNetworkingContext.cpp: Added.
+        * WebProcess/WebCoreSupport/win/WebFrameNetworkingContext.h: Added.
+        (WebFrameNetworkingContext::create):
+        (WebFrameNetworkingContext::WebFrameNetworkingContext):
+        * win/WebKit2.vcproj:
+        * win/WebKit2Common.vsprops:
+
 2010-09-03  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

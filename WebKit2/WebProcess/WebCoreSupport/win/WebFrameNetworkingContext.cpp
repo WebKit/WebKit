@@ -16,35 +16,5 @@
     the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
     Boston, MA 02110-1301, USA.
 */
-
-#import "WebFrameNetworkingContext.h"
-
-#import <WebCore/Page.h>
-#import <WebCore/ResourceError.h>
-#import <WebCore/Settings.h>
-
-using namespace WebCore;
-
-namespace WebKit {
-
-bool WebFrameNetworkingContext::needsSiteSpecificQuirks() const
-{
-    return frame() && frame()->settings() && frame()->settings()->needsSiteSpecificQuirks();
-}
-
-bool WebFrameNetworkingContext::localFileContentSniffingEnabled() const
-{
-    return frame() && frame()->settings() && frame()->settings()->localFileContentSniffingEnabled();
-}
-
-SchedulePairHashSet* WebFrameNetworkingContext::scheduledRunLoopPairs() const
-{
-    return frame() && frame()->page() ? frame()->page()->scheduledRunLoopPairs() : 0;
-}
-
-ResourceError WebFrameNetworkingContext::blockedError(const ResourceRequest& request) const
-{
-    return frame()->loader()->blockedError(request);
-}
-
-}
+// Checking this file in empty to get the build system work out of the way.
+// Will put the code in here later.

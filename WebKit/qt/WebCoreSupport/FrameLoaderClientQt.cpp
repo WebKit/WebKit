@@ -35,6 +35,7 @@
 #include "CSSPropertyNames.h"
 #include "FormState.h"
 #include "FrameLoaderClientQt.h"
+#include "FrameNetworkingContextQt.h"
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "DocumentLoader.h"
@@ -204,6 +205,7 @@ void FrameLoaderClientQt::setFrame(QWebFrame* webFrame, Frame* frame)
 {
     m_webFrame = webFrame;
     m_frame = frame;
+
     if (!m_webFrame || !m_webFrame->page()) {
         qWarning("FrameLoaderClientQt::setFrame frame without Page!");
         return;
@@ -1517,6 +1519,11 @@ String FrameLoaderClientQt::overrideMediaType() const
 QString FrameLoaderClientQt::chooseFile(const QString& oldFile)
 {
     return webFrame()->page()->chooseFile(webFrame(), oldFile);
+}
+
+PassRefPtr<FrameNetworkingContext> FrameLoaderClientQt::createNetworkingContext()
+{
+    return FrameNetworkingContextQt::create(m_frame, m_webFrame, m_webFrame->page()->networkAccessManager());
 }
 
 }

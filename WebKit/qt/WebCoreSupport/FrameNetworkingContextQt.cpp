@@ -17,5 +17,35 @@
     Boston, MA 02110-1301, USA.
 */
 
-// Checking this file in empty to get the build system work out of the way.
-// Will put the code in here later.
+#include "config.h"
+
+#include "FrameNetworkingContextQt.h"
+
+#include <QNetworkAccessManager>
+#include <QObject>
+
+namespace WebCore {
+
+FrameNetworkingContextQt::FrameNetworkingContextQt(Frame* frame, QObject* originatingObject, QNetworkAccessManager* networkAccessManager)
+    : FrameNetworkingContext(frame)
+    , m_originatingObject(originatingObject)
+    , m_networkAccessManager(networkAccessManager)
+{
+}
+
+PassRefPtr<FrameNetworkingContextQt> FrameNetworkingContextQt::create(Frame* frame, QObject* originatingObject, QNetworkAccessManager* networkAccessManager)
+{
+    return adoptRef(new FrameNetworkingContextQt(frame, originatingObject, networkAccessManager));
+}
+
+QObject* FrameNetworkingContextQt::originatingObject() const
+{
+    return m_originatingObject;
+}
+
+QNetworkAccessManager* FrameNetworkingContextQt::networkAccessManager() const
+{
+    return m_networkAccessManager;
+}
+
+}

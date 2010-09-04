@@ -35,6 +35,7 @@
 #include "WebErrors.h"
 #include "WebEvent.h"
 #include "WebFrame.h"
+#include "WebFrameNetworkingContext.h"
 #include "WebNavigationDataStore.h"
 #include "WebPage.h"
 #include "WebPageProxyMessageKinds.h"
@@ -1048,6 +1049,11 @@ bool WebFrameLoaderClient::shouldUsePluginDocument(const String& /*mimeType*/) c
 {
     notImplemented();
     return false;
+}
+
+PassRefPtr<FrameNetworkingContext> WebFrameLoaderClient::createNetworkingContext()
+{
+    return WebFrameNetworkingContext::create(m_frame->coreFrame());
 }
 
 } // namespace WebKit

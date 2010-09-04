@@ -17,34 +17,28 @@
     Boston, MA 02110-1301, USA.
 */
 
-#import "WebFrameNetworkingContext.h"
+#ifndef WebFrameNetworkingContext_h
+#define WebFrameNetworkingContext_h
 
-#import <WebCore/Page.h>
-#import <WebCore/ResourceError.h>
-#import <WebCore/Settings.h>
+#include <WebCore/FrameNetworkingContext.h>
 
-using namespace WebCore;
+class WebFrameNetworkingContext : public WebCore::FrameNetworkingContext {
+public:
+    static PassRefPtr<WebFrameNetworkingContext> create(WebCore::Frame*)
+    {
+        return 0;
+    }
 
-namespace WebKit {
+private:
+    WebFrameNetworkingContext(WebCore::Frame* frame)
+        : WebCore::FrameNetworkingContext(frame)
+    {
+    }
 
-bool WebFrameNetworkingContext::needsSiteSpecificQuirks() const
-{
-    return frame() && frame()->settings() && frame()->settings()->needsSiteSpecificQuirks();
-}
+    virtual WTF::String userAgent() const;
+    virtual WTF::String referrer() const;
 
-bool WebFrameNetworkingContext::localFileContentSniffingEnabled() const
-{
-    return frame() && frame()->settings() && frame()->settings()->localFileContentSniffingEnabled();
-}
+    WTF::String m_userAgent;
+};
 
-SchedulePairHashSet* WebFrameNetworkingContext::scheduledRunLoopPairs() const
-{
-    return frame() && frame()->page() ? frame()->page()->scheduledRunLoopPairs() : 0;
-}
-
-ResourceError WebFrameNetworkingContext::blockedError(const ResourceRequest& request) const
-{
-    return frame()->loader()->blockedError(request);
-}
-
-}
+#endif // WebFrameNetworkingContext_h

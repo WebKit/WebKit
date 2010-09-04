@@ -1,3 +1,32 @@
+2010-09-03  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        Reviewed by Darin Adler.
+
+        Add NetworkingContext to avoid layer violations
+        https://bugs.webkit.org/show_bug.cgi?id=42292
+
+        Create and provide access to NetworkingContext in FrameLoader.
+
+        In the WebKit layer we added specific implementations of FrameNetworkingContext
+        so each port's FrameLoaderClient can add any port specific information to NetworkingContext
+        The NetworkingContext is, therefore, created by a FrameLoaderClient and stored
+        in the FrameLoader for each frame created. People must always use it
+        by calling FrameLoader::networkingContext() and never through their FrameLoaderClient.
+        The lifetime cycle of NetworkingContext is kept by a RefPtr, so the object is RefCounted.
+
+        It is still a preparation to NetworkingContext to be activated and
+        work for all ports.
+
+        * WebCore.exp.in:
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::createNetworkingContext):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::~FrameLoader):
+        (WebCore::FrameLoader::init):
+        (WebCore::FrameLoader::networkingContext):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+
 2010-09-03  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Darin Adler.

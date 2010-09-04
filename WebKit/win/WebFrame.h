@@ -343,6 +343,8 @@ public:
 
     virtual void registerForIconNotification(bool listen);
 
+    virtual PassRefPtr<WebCore::FrameNetworkingContext> createNetworkingContext();
+
     // WebFrame
     PassRefPtr<WebCore::Frame> init(IWebView*, WebCore::Page*, WebCore::HTMLFrameOwnerElement*);
     WebCore::Frame* impl();

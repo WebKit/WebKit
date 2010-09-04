@@ -17,5 +17,23 @@
     Boston, MA 02110-1301, USA.
 */
 
-// Checking this file in empty to get the build system work out of the way.
-// Will put the code in here later.
+#include "config.h"
+
+#include "WebFrameNetworkingContext.h"
+
+using namespace WebCore;
+
+PassRefPtr<WebFrameNetworkingContext> WebFrameNetworkingContext::create(Frame* frame, const String& userAgent)
+{
+    return adoptRef(new WebFrameNetworkingContext(frame, userAgent));
+}
+
+String WebFrameNetworkingContext::userAgent() const
+{
+    return m_userAgent;
+}
+
+String WebFrameNetworkingContext::referrer() const
+{
+    return frame()->loader()->referrer();
+}

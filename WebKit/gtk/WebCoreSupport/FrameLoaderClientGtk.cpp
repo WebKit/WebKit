@@ -32,6 +32,7 @@
 #include "DocumentLoaderGtk.h"
 #include "FormState.h"
 #include "FrameLoader.h"
+#include "FrameNetworkingContextGtk.h"
 #include "FrameView.h"
 #include "FrameTree.h"
 #include "GOwnPtr.h"
@@ -1191,6 +1192,11 @@ void FrameLoaderClient::transitionToCommittedForNewPage()
         return;
 
     postCommitFrameViewSetup(m_frame, frame->view(), true);
+}
+
+PassRefPtr<FrameNetworkingContext> FrameLoaderClient::createNetworkingContext()
+{
+    return FrameNetworkingContextGtk::create(core(m_frame));
 }
 
 }

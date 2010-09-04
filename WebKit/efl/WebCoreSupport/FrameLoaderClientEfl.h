@@ -202,6 +202,8 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
 
     virtual bool canCachePage() const;
     virtual void download(ResourceHandle*, const ResourceRequest&, const ResourceRequest&, const ResourceResponse&);
+
+    virtual PassRefPtr<WebCore::FrameNetworkingContext> createNetworkingContext();
  private:
     Evas_Object *m_view;
     Evas_Object *m_frame;

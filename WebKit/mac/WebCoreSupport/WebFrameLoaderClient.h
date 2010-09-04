@@ -228,6 +228,8 @@ private:
     
     virtual bool canCachePage() const;
     
+    virtual PassRefPtr<WebCore::FrameNetworkingContext> createNetworkingContext();
+
     RetainPtr<WebFrame> m_webFrame;
 
     RetainPtr<WebFramePolicyListener> m_policyListener;

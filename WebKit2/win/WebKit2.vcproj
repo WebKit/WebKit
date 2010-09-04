@@ -690,6 +690,14 @@
 						RelativePath="..\WebProcess\WebCoreSupport\win\WebErrorsWin.cpp"
 						>
 					</File>
+					<File
+						RelativePath="..\WebProcess\WebCoreSupport\win\WebFrameNetworkingContext.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\WebProcess\WebCoreSupport\win\WebFrameNetworkingContext.h"
+						>
+					</File>
 				</Filter>
 			</Filter>
 			<Filter

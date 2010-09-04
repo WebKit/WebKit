@@ -58,6 +58,7 @@
 #include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoaderClient.h"
+#include "FrameNetworkingContext.h"
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "HTMLAnchorElement.h"
@@ -216,6 +217,9 @@ FrameLoader::~FrameLoader()
         (*it)->loader()->m_opener = 0;
         
     m_client->frameLoaderDestroyed();
+
+    if (m_networkingContext)
+        m_networkingContext->invalidate();
 }
 
 void FrameLoader::init()
@@ -236,6 +240,8 @@ void FrameLoader::init()
     m_frame->document()->cancelParsing();
     m_stateMachine.advanceTo(FrameLoaderStateMachine::DisplayingInitialEmptyDocument);
     m_didCallImplicitClose = true;
+
+    m_networkingContext = m_client->createNetworkingContext();
 }
 
 void FrameLoader::setDefersLoading(bool defers)
@@ -3445,6 +3451,11 @@ void FrameLoader::tellClientAboutPastMemoryCacheLoads()
         ResourceRequest request(resource->url());
         m_client->dispatchDidLoadResourceFromMemoryCache(m_documentLoader.get(), request, resource->response(), resource->encodedSize());
     }
+}
+
+NetworkingContext* FrameLoader::networkingContext() const
+{
+    return m_networkingContext.get();
 }
 
 bool FrameLoaderClient::hasHTMLView() const
