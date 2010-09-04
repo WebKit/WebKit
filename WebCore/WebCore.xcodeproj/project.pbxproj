@@ -5369,7 +5369,6 @@
 		FABE72FE1059C21100D999DD /* MathMLNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FABE72FC1059C21100D999DD /* MathMLNames.cpp */; };
 		FAC12CC41120DA6900DACC36 /* RenderMathMLSubSup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC12CC21120DA6900DACC36 /* RenderMathMLSubSup.cpp */; };
 		FAC12CC51120DA6900DACC36 /* RenderMathMLSubSup.h in Headers */ = {isa = PBXBuildFile; fileRef = FAC12CC31120DA6900DACC36 /* RenderMathMLSubSup.h */; };
-		FB58CB79122F153800878851 /* GraphicsContext3DOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB58CAEA1228586500878851 /* GraphicsContext3DOpenGL.cpp */; };
 		FE6FD4880F676E5700092873 /* Coordinates.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6FD4850F676E5700092873 /* Coordinates.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE6FD48D0F676E9300092873 /* JSCoordinates.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE6FD48B0F676E9300092873 /* JSCoordinates.cpp */; };
 		FE6FD48E0F676E9300092873 /* JSCoordinates.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6FD48C0F676E9300092873 /* JSCoordinates.h */; };
@@ -11241,7 +11240,6 @@
 		FABE72FC1059C21100D999DD /* MathMLNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLNames.cpp; sourceTree = "<group>"; };
 		FAC12CC21120DA6900DACC36 /* RenderMathMLSubSup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMathMLSubSup.cpp; sourceTree = "<group>"; };
 		FAC12CC31120DA6900DACC36 /* RenderMathMLSubSup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMathMLSubSup.h; sourceTree = "<group>"; };
-		FB58CAEA1228586500878851 /* GraphicsContext3DOpenGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContext3DOpenGL.cpp; sourceTree = "<group>"; };
 		FE49EF970DC51462004266E1 /* DashboardSupportCSSPropertyNames.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DashboardSupportCSSPropertyNames.in; sourceTree = "<group>"; };
 		FE6FD4850F676E5700092873 /* Coordinates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Coordinates.h; sourceTree = "<group>"; };
 		FE6FD4860F676E5700092873 /* Coordinates.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Coordinates.idl; sourceTree = "<group>"; };
@@ -15913,7 +15911,6 @@
 				B2A015930AF6CD53006BCE0E /* GraphicsContext.h */,
 				6E21C6BF1126338500A7BE02 /* GraphicsContext3D.cpp */,
 				49C7B9FB1042D3650009D447 /* GraphicsContext3D.h */,
-				FB58CAEA1228586500878851 /* GraphicsContext3DOpenGL.cpp */,
 				A88FE3330E5EEE87008D8C0F /* GraphicsContextPrivate.h */,
 				0F580B090F12A2690051D689 /* GraphicsLayer.cpp */,
 				0F580B0A0F12A2690051D689 /* GraphicsLayer.h */,
@@ -20494,7 +20491,6 @@
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
 			compatibilityVersion = "Xcode 2.4";
-			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -22899,7 +22895,6 @@
 				898785B8122CA2A7003AABDA /* JSMetadataCallback.cpp in Sources */,
 				898785F0122E1E87003AABDA /* JSFileException.cpp in Sources */,
 				898785F4122E1EAC003AABDA /* JSFileReaderSync.cpp in Sources */,
-				FB58CB79122F153800878851 /* GraphicsContext3DOpenGL.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -2599,7 +2599,6 @@
             'platform/graphics/GraphicsContext.cpp',
             'platform/graphics/GraphicsContext.h',
             'platform/graphics/GraphicsContext3D.cpp',
-            'platform/graphics/GraphicsContext3DOpenGL.cpp',
             'platform/graphics/GraphicsContext3D.h',
             'platform/graphics/GraphicsContextPrivate.h',
             'platform/graphics/GraphicsLayer.cpp',
