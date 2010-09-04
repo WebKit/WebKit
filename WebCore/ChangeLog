@@ -1,3 +1,44 @@
+2010-09-03  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Add interval tree capable of holding plain old data (POD)
+        https://bugs.webkit.org/show_bug.cgi?id=45160
+
+        Adding an interval tree currently capable of holding types which
+        do not require their destructors to be called. POD is a slight
+        misnomer which will be corrected soon, hopefully by removing this
+        restriction.
+
+        This class is based on the augmentable property of the red/black
+        tree integrated under bug 45059.
+
+        Unit tests for the PODIntervalTree will be integrated separately
+        under bug 45161.
+
+        * WebCore.gypi:
+        * platform/graphics/gpu/PODInterval.h: Added.
+        (WebCore::PODInterval::PODInterval):
+        (WebCore::PODInterval::low):
+        (WebCore::PODInterval::high):
+        (WebCore::PODInterval::data):
+        (WebCore::PODInterval::overlaps):
+        (WebCore::PODInterval::operator<):
+        (WebCore::PODInterval::operator==):
+        (WebCore::PODInterval::maxHigh):
+        (WebCore::PODInterval::setMaxHigh):
+        (WebCore::PODInterval::toString):
+        * platform/graphics/gpu/PODIntervalTree.h: Added.
+        (WebCore::PODIntervalTree::PODIntervalTree):
+        (WebCore::PODIntervalTree::allOverlaps):
+        (WebCore::PODIntervalTree::createInterval):
+        (WebCore::PODIntervalTree::checkInvariants):
+        (WebCore::PODIntervalTree::init):
+        (WebCore::PODIntervalTree::searchForOverlapsFrom):
+        (WebCore::PODIntervalTree::updateNode):
+        (WebCore::PODIntervalTree::checkInvariantsFromNode):
+        (WebCore::valueToString):
+
 2010-09-02  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Darin Fisher.

@@ -2349,6 +2349,8 @@
             'platform/graphics/gpu/DrawingBuffer.cpp',
             'platform/graphics/gpu/DrawingBuffer.h',
             'platform/graphics/gpu/PODArena.h',
+            'platform/graphics/gpu/PODInterval.h',
+            'platform/graphics/gpu/PODIntervalTree.h',
             'platform/graphics/gpu/PODRedBlackTree.h',
             'platform/graphics/gpu/SharedGraphicsContext3D.cpp',
             'platform/graphics/gpu/SharedGraphicsContext3D.h',
