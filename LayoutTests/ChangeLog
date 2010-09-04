@@ -1,3 +1,12 @@
+2010-09-04  Steve Block  <steveblock@google.com>
+
+        Unreviewed.
+
+        Remove platform/android/Skipped which was erroneously added in
+        http://trac.webkit.org/changeset/66251. Android does not use a Skipped list.
+
+        * platform/android/Skipped: Removed.
+
 2010-09-03  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed.
