@@ -100,6 +100,8 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
         y += SkFloatToScalar(adv[i].height());
     }
 
+    gc->platformContext()->prepareForSoftwareDraw();
+
     SkCanvas* canvas = gc->platformContext()->canvas();
     int textMode = gc->platformContext()->getTextDrawingMode();
     bool haveMultipleLayers = isCanvasMultiLayered(canvas);

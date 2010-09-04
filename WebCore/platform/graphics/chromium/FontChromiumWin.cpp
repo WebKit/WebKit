@@ -372,6 +372,8 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext,
                       int numGlyphs,
                       const FloatPoint& point) const
 {
+    gc->platformContext()->prepareForSoftwareDraw();
+
     SkColor color = graphicsContext->platformContext()->effectiveFillColor();
     unsigned char alpha = SkColorGetA(color);
     // Skip 100% transparent text; no need to draw anything.
