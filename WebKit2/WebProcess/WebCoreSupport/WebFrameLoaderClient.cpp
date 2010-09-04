@@ -28,6 +28,7 @@
 #define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
 #include "NotImplemented.h"
 
+#include "InjectedBundleUserMessageCoders.h"
 #include "NetscapePlugin.h"
 #include "PluginView.h"
 #include "WebCoreArgumentCoders.h"
@@ -502,20 +503,32 @@ void WebFrameLoaderClient::dispatchUnableToImplementPolicy(const ResourceError&)
     notImplemented();
 }
 
-void WebFrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction function, PassRefPtr<FormState> formState)
+void WebFrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction function, PassRefPtr<FormState> prpFormState)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
         return;
 
     // FIXME: Pass more of the form state.
+    RefPtr<FormState> formState = prpFormState;
+    
+    HTMLFormElement* form = formState->form();
+    WebFrame* sourceFrame = static_cast<WebFrameLoaderClient*>(formState->sourceFrame()->loader()->client())->webFrame();    
+    const Vector<std::pair<String, String> >& values = formState->textFieldValues();
+
+    RefPtr<APIObject> userData;
+    webPage->injectedBundleFormClient().willSubmitForm(webPage, form, m_frame, sourceFrame, values, userData);
+
 
     uint64_t listenerID = m_frame->setUpPolicyListener(function);
 
-    WebFrame* sourceFrame = static_cast<WebFrameLoaderClient*>(formState->sourceFrame()->loader()->client())->webFrame();    
-
-    WebProcess::shared().connection()->send(WebPageProxyMessage::WillSubmitForm, webPage->pageID(),
-                                            CoreIPC::In(m_frame->frameID(), sourceFrame->frameID(), formState->textFieldValues(), listenerID));
+    if (userData) {
+        WebProcess::shared().connection()->send(WebPageProxyMessage::WillSubmitFormWithUserData, webPage->pageID(),
+                                                CoreIPC::In(m_frame->frameID(), sourceFrame->frameID(), values, listenerID, InjectedBundleUserMessageEncoder(userData.get())));
+    } else {
+        WebProcess::shared().connection()->send(WebPageProxyMessage::WillSubmitForm, webPage->pageID(),
+                                                CoreIPC::In(m_frame->frameID(), sourceFrame->frameID(), values, listenerID));
+    }
 }
 
 void WebFrameLoaderClient::dispatchDidLoadMainResource(DocumentLoader*)

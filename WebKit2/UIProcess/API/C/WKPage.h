@@ -124,7 +124,7 @@ struct WKPagePolicyClient {
 typedef struct WKPagePolicyClient WKPagePolicyClient;
 
 // Form Client.
-typedef void (*WKPageWillSubmitFormCallback)(WKPageRef page, WKFrameRef frame, WKFrameRef sourceFrame, WKDictionaryRef values, WKFormSubmissionListenerRef listener, const void* clientInfo);
+typedef void (*WKPageWillSubmitFormCallback)(WKPageRef page, WKFrameRef frame, WKFrameRef sourceFrame, WKDictionaryRef values, WKTypeRef userData, WKFormSubmissionListenerRef listener, const void* clientInfo);
 
 struct WKPageFormClient {
     int                                                                 version;

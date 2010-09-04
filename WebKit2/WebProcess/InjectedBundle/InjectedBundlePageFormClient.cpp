@@ -25,9 +25,11 @@
 
 #include "InjectedBundlePageFormClient.h"
 
+#include "ImmutableDictionary.h"
 #include "InjectedBundleNodeHandle.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
+#include <WebCore/HTMLFormElement.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLTextAreaElement.h>
 
@@ -48,7 +50,7 @@ void InjectedBundlePageFormClient::initialize(WKBundlePageFormClient* client)
         memset(&m_client, 0, sizeof(m_client));
 }
 
-void InjectedBundlePageFormClient::textFieldDidBeginEditing(WebPage* page, WebCore::HTMLInputElement* inputElement, WebFrame* frame)
+void InjectedBundlePageFormClient::textFieldDidBeginEditing(WebPage* page, HTMLInputElement* inputElement, WebFrame* frame)
 {
     if (!m_client.textFieldDidBeginEditing)
         return;
@@ -57,7 +59,7 @@ void InjectedBundlePageFormClient::textFieldDidBeginEditing(WebPage* page, WebCo
     m_client.textFieldDidBeginEditing(toRef(page), toRef(nodeHandle.get()), toRef(frame), m_client.clientInfo);
 }
 
-void InjectedBundlePageFormClient::textFieldDidEndEditing(WebPage* page, WebCore::HTMLInputElement* inputElement, WebFrame* frame)
+void InjectedBundlePageFormClient::textFieldDidEndEditing(WebPage* page, HTMLInputElement* inputElement, WebFrame* frame)
 {
     if (!m_client.textFieldDidEndEditing)
         return;
@@ -66,7 +68,7 @@ void InjectedBundlePageFormClient::textFieldDidEndEditing(WebPage* page, WebCore
     m_client.textFieldDidEndEditing(toRef(page), toRef(nodeHandle.get()), toRef(frame), m_client.clientInfo);
 }
 
-void InjectedBundlePageFormClient::textDidChangeInTextField(WebPage* page, WebCore::HTMLInputElement* inputElement, WebFrame* frame)
+void InjectedBundlePageFormClient::textDidChangeInTextField(WebPage* page, HTMLInputElement* inputElement, WebFrame* frame)
 {
     if (!m_client.textDidChangeInTextField)
         return;
@@ -75,13 +77,30 @@ void InjectedBundlePageFormClient::textDidChangeInTextField(WebPage* page, WebCo
     m_client.textDidChangeInTextField(toRef(page), toRef(nodeHandle.get()), toRef(frame), m_client.clientInfo);
 }
 
-void InjectedBundlePageFormClient::textDidChangeInTextArea(WebPage* page, WebCore::HTMLTextAreaElement* textAreaElement, WebFrame* frame)
+void InjectedBundlePageFormClient::textDidChangeInTextArea(WebPage* page, HTMLTextAreaElement* textAreaElement, WebFrame* frame)
 {
     if (!m_client.textDidChangeInTextArea)
         return;
 
     RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(textAreaElement);
     m_client.textDidChangeInTextArea(toRef(page), toRef(nodeHandle.get()), toRef(frame), m_client.clientInfo);
+}
+
+void InjectedBundlePageFormClient::willSubmitForm(WebPage* page, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<String, String> >& values, RefPtr<APIObject>& userData)
+{
+    if (!m_client.willSubmitForm)
+        return;
+
+    RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(formElement);
+
+    ImmutableDictionary::MapType map;
+    for (size_t i = 0; i < values.size(); ++i)
+        map.set(values[i].first, WebString::create(values[i].second));
+    RefPtr<ImmutableDictionary> textFieldsMap = ImmutableDictionary::adopt(map);
+
+    WKTypeRef userDataToPass = 0;
+    m_client.willSubmitForm(toRef(page), toRef(nodeHandle.get()), toRef(frame), toRef(sourceFrame), toRef(textFieldsMap.get()), &userDataToPass, m_client.clientInfo);
+    userData = adoptRef(toWK(userDataToPass));
 }
 
 } // namespace WebKit

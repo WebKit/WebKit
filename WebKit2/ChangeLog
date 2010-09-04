@@ -1,5 +1,46 @@
 2010-09-03  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Adam Barth.
+
+        Add ability to send UserData to willSubmitForm
+        https://bugs.webkit.org/show_bug.cgi?id=45222
+
+        - Adds a willSubmitForm callback to the BundlePageFormClient with an out
+          parameter WKTypeRef* parameter.
+        - That out parameter gets serialized and then passed to the PageFormClient's
+          willSubmitForm, which now has WKTypeRef parameter.
+
+        - Temporarily adds a new WillSubmitFormWithUserData message kind. This will
+          be replaced by the ability to explicitly serialize null as a UserMessage.
+
+        * Platform/CoreIPC/Arguments.h:
+        (CoreIPC::Arguments6::Arguments6):
+        (CoreIPC::Arguments6::encode):
+        (CoreIPC::Arguments6::decode):
+        (CoreIPC::In):
+        (CoreIPC::Out):
+        * Shared/CoreIPCSupport/WebPageProxyMessageKinds.h:
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebFormClient.cpp:
+        (WebKit::WebFormClient::willSubmitForm):
+        * UIProcess/WebFormClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessage):
+        (WebKit::WebPageProxy::willSubmitForm):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp:
+        (WebKit::InjectedBundlePageFormClient::textFieldDidBeginEditing):
+        (WebKit::InjectedBundlePageFormClient::textFieldDidEndEditing):
+        (WebKit::InjectedBundlePageFormClient::textDidChangeInTextField):
+        (WebKit::InjectedBundlePageFormClient::textDidChangeInTextArea):
+        (WebKit::InjectedBundlePageFormClient::willSubmitForm):
+        * WebProcess/InjectedBundle/InjectedBundlePageFormClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchWillSubmitForm):
+
+2010-09-03  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Gavin Barraclough.
 
         Change WKDictionaryIsMutable to take a WKDictionaryRef instead of a WKMutableDictionaryRef.

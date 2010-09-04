@@ -200,7 +200,7 @@ private:
     void decidePolicyForNewWindowAction(WebFrameProxy*, WebCore::NavigationType navigationType, WebEvent::Modifiers modifiers, const WTF::String& url, uint64_t listenerID);
     void decidePolicyForMIMEType(WebFrameProxy*, const WTF::String& MIMEType, const WTF::String& url, uint64_t listenerID);
 
-    void willSubmitForm(WebFrameProxy* frame, WebFrameProxy* frameSource, Vector<std::pair<WTF::String, WTF::String> >& textFieldValues, uint64_t listenerID);
+    void willSubmitForm(WebFrameProxy* frame, WebFrameProxy* frameSource, Vector<std::pair<WTF::String, WTF::String> >& textFieldValues, APIObject* userData, uint64_t listenerID);
 
     PassRefPtr<WebPageProxy> createNewPage();
     void showPage();

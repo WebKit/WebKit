@@ -228,6 +228,42 @@ template<typename T1, typename T2, typename T3, typename T4, typename T5> Argume
     return Arguments5<T1&, T2&, T3&, T4&, T5&>(t1, t2, t3, t4, t5);
 }
 
+template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6> class Arguments6 : Arguments5<T1, T2, T3, T4, T5> {
+public:
+    Arguments6(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6)
+        : Arguments5<T1, T2, T3, T4, T5>(t1, t2, t3, t4, t5)
+        , m_value(t6)
+    {
+    }
+
+    void encode(ArgumentEncoder* encoder) const
+    {
+        Arguments5<T1, T2, T3, T4, T5>::encode(encoder);
+        encoder->encode(m_value);
+    }
+    
+    static bool decode(ArgumentDecoder* decoder, Arguments6<T1, T2, T3, T4, T5, T6>& result)
+    {
+        if (!Arguments5<T1, T2, T3, T4, T5>::decode(decoder, result))
+            return false;
+        
+        return decoder->decode(result.m_value);
+    }
+
+private:
+    T6 m_value;
+};
+
+template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6> Arguments6<const T1&, const T2&, const T3&, const T4&, const T5&, const T6&> In(const T1& t1, const T2& t2, const T3 &t3, const T4& t4, const T5& t5, const T6& t6)
+{
+    return Arguments6<const T1&, const T2&, const T3&, const T4&, const T5&, const T6&>(t1, t2, t3, t4, t5, t6);
+}
+
+template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6> Arguments6<T1&, T2&, T3&, T4&, T5&, T6&> Out(T1& t1, T2& t2, T3& t3, T4& t4, T5& t5, T6& t6)
+{
+    return Arguments6<T1&, T2&, T3&, T4&, T5&, T6&>(t1, t2, t3, t4, t5, t6);
+}
+
 } // namespace CoreIPC
 
 #endif // Arguments_h
