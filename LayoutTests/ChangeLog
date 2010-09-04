@@ -1,5 +1,14 @@
 2010-09-03  Peter Kasting  <pkasting@google.com>
 
+        Not reviewed, attempted layout test fix.
+
+        Report correct (unzoomed) image sizes for zoomed images.
+        https://bugs.webkit.org/show_bug.cgi?id=42089
+
+        * fast/images/resources/oval.png: Tweak to try to avoid cryptic ImageIO errors.
+
+2010-09-03  Peter Kasting  <pkasting@google.com>
+
         Reviewed by Simon Fraser.
 
         Report correct (unzoomed) image sizes for zoomed images.
