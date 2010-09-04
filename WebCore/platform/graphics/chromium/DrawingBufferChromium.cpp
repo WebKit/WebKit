@@ -79,6 +79,8 @@ DrawingBuffer::DrawingBuffer(SharedGraphicsContext3D* context, const IntSize& si
 
 DrawingBuffer::~DrawingBuffer()
 {
+    if (m_internal->platformLayer)
+        m_internal->platformLayer->setDrawingBuffer(0);
     m_context->deleteFramebuffer(m_framebuffer);
 }
 

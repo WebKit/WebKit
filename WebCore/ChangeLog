@@ -1,3 +1,21 @@
+2010-09-03  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Null out Canvas2DLayerChromium's back reference to DrawingBuffer on destruction
+        https://bugs.webkit.org/show_bug.cgi?id=45187
+
+        Canvas2DLayerChromium keeps a back reference to a DrawingBuffer.  This has to be a raw pointer
+        because the DrawingBuffer holds a RefPtr to the Canvas2DLayerChromium.  Since the layer can
+        outlive the buffer, this back reference has to be explicitly cleared when the DrawingBuffer
+        is destroyed.
+
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::setDrawingBuffer):
+        * platform/graphics/chromium/Canvas2DLayerChromium.h:
+        * platform/graphics/chromium/DrawingBufferChromium.cpp:
+        (WebCore::DrawingBuffer::~DrawingBuffer):
+
 2010-09-03  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Darin Fisher.
