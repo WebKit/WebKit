@@ -119,4 +119,9 @@ PlatformLayer* DrawingBuffer::platformLayer()
     return m_internal->platformLayer.get();
 }
 
+unsigned DrawingBuffer::getRenderingResultsAsTexture()
+{
+    return m_internal->offscreenColorTexture;
+}
+
 }

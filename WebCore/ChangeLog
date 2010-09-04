@@ -391,6 +391,29 @@
 
 2010-09-03  James Robinson  <jamesr@chromium.org>
 
+        Reviewed by Darin Fisher.
+
+        [chromium] Implement ImageBufferSkia::draw on the GPU when possible
+        https://bugs.webkit.org/show_bug.cgi?id=45207
+
+        When drawing from an ImageBuffer into a GraphicsContext, attempt to do the
+        draw in hardware when possible.  This is how canvas 2d's drawImage(canvas, ...)
+        is implemented.  Adds new API to DrawingBuffer to request a texture containing
+        the DrawingBuffer's current rendering results.
+
+        Test: covered fast/canvas/drawImage.html and all other tests that draw from one
+        2d canvas into another.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        * platform/graphics/chromium/DrawingBufferChromium.cpp:
+        (WebCore::DrawingBuffer::getRenderingResultsAsTexture):
+        * platform/graphics/gpu/DrawingBuffer.h:
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::draw):
+
+2010-09-03  James Robinson  <jamesr@chromium.org>
+
         Reviewed by Kenneth Russell.
 
         [chromium] Null out Canvas2DLayerChromium's back reference to DrawingBuffer on destruction

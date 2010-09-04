@@ -36,10 +36,12 @@
 #include "Base64.h"
 #include "BitmapImage.h"
 #include "BitmapImageSingleFrameSkia.h"
+#include "DrawingBuffer.h"
+#include "GLES2Canvas.h"
 #include "GraphicsContext.h"
 #include "ImageData.h"
-#include "PlatformContextSkia.h"
 #include "PNGImageEncoder.h"
+#include "PlatformContextSkia.h"
 #include "SkColorPriv.h"
 #include "SkiaUtils.h"
 
@@ -108,6 +110,16 @@ void ImageBuffer::clip(GraphicsContext* context, const FloatRect& rect) const
 void ImageBuffer::draw(GraphicsContext* context, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,
                        CompositeOperator op, bool useLowQualityScale)
 {
+    if (m_data.m_platformContext.useGPU() && context->platformContext()->useGPU()) {
+        DrawingBuffer* sourceDrawingBuffer = m_data.m_platformContext.gpuCanvas()->drawingBuffer();
+        unsigned sourceTexture = sourceDrawingBuffer->getRenderingResultsAsTexture();
+        FloatRect destRectFlipped(destRect);
+        destRectFlipped.setY(destRect.y() + destRect.height());
+        destRectFlipped.setHeight(-destRect.height());
+        context->platformContext()->gpuCanvas()->drawTexturedRect(sourceTexture, m_size, srcRect, destRectFlipped, styleColorSpace, op);
+        return;
+    }
+
     RefPtr<Image> image = BitmapImageSingleFrameSkia::create(*m_data.m_platformContext.bitmap(), context == m_context);
     context->drawImage(image.get(), styleColorSpace, destRect, srcRect, op, useLowQualityScale);
 }

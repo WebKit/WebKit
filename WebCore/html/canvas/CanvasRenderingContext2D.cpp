@@ -1288,7 +1288,16 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* sourceCanvas, const 
     if (!sourceCanvas->originClean())
         canvas()->setOriginTainted();
 
+#if ENABLE(ACCELERATED_2D_CANVAS)
+    // If we're drawing from one accelerated canvas 2d to another, avoid calling sourceCanvas->makeRenderingResultsAvailable()
+    // as that will do a readback to software.
+    CanvasRenderingContext* sourceContext = sourceCanvas->renderingContext();
+    // FIXME: Implement an accelerated path for drawing from a WebGL canvas to a 2d canvas when possible.
+    if (!isAccelerated() || !sourceContext || !sourceContext->isAccelerated() || !sourceContext->is2d())
+        sourceCanvas->makeRenderingResultsAvailable();
+#else
     sourceCanvas->makeRenderingResultsAvailable();
+#endif
 
     c->drawImageBuffer(buffer, DeviceColorSpace, destRect, sourceRect, state().m_globalComposite);
     didDraw(destRect);
