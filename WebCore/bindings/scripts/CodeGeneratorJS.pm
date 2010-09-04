@@ -1134,9 +1134,14 @@ sub GenerateParametersCheckExpression
         # For DOMString, Null, Undefined and any Object are accepted too, as
         # these are acceptable values for a DOMString argument (any Object can
         # be converted to a string via .toString).
-        push(@andExpression, "(${value}.isNull() || ${value}.isUndefined() || ${value}.isString() || ${value}.isObject())") if $codeGenerator->IsStringType($type);
-        push(@andExpression, "(${value}.isNull() || (${value}.isObject() && asObject(${value})->inherits(&JS${type}::s_info)))") unless IsNativeType($type);
-
+        if ($codeGenerator->IsStringType($type)) {
+            push(@andExpression, "(${value}.isNull() || ${value}.isUndefined() || ${value}.isString() || ${value}.isObject())");
+        } elsif ($parameter->extendedAttributes->{"Callback"}) {
+            # For Callbacks only checks if the value is null or object.
+            push(@andExpression, "(${value}.isNull() || ${value}.isObject())");
+        } elsif (!IsNativeType($type)) {
+            push(@andExpression, "(${value}.isNull() || (${value}.isObject() && asObject(${value})->inherits(&JS${type}::s_info)))");
+        }
         $parameterIndex++;
     }
     my $res = join(" && ", @andExpression);

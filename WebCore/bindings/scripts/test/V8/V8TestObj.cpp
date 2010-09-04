@@ -975,6 +975,17 @@ static v8::Handle<v8::Value> overloadedMethod4Callback(const v8::Arguments& args
     return v8::Handle<v8::Value>();
 }
 
+static v8::Handle<v8::Value> overloadedMethod5Callback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.overloadedMethod5");
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    if (args.Length() <= 0 || !args[0]->IsObject())
+        return throwError(TYPE_MISMATCH_ERR);
+    RefPtr<TestCallback> callback = V8TestCallback::create(args[0], getScriptExecutionContext());
+    imp->overloadedMethod(callback);
+    return v8::Handle<v8::Value>();
+}
+
 static v8::Handle<v8::Value> overloadedMethodCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.overloadedMethod");
@@ -986,6 +997,8 @@ static v8::Handle<v8::Value> overloadedMethodCallback(const v8::Arguments& args)
         return overloadedMethod3Callback(args);
     if (args.Length() == 1)
         return overloadedMethod4Callback(args);
+    if ((args.Length() == 1 && (args[0]->IsNull() || args[0]->IsObject())))
+        return overloadedMethod5Callback(args);
     V8Proxy::throwTypeError();
     return notHandledByInterceptor();
 }

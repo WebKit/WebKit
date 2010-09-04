@@ -135,6 +135,7 @@ module test {
         void    overloadedMethod(in TestObj objArg, in [Optional] long intArg);
         void    overloadedMethod(in DOMString strArg);
         void    overloadedMethod(in long intArg);
+        void    overloadedMethod(in [Callback] TestCallback callback);
 #endif
 
         // ObjectiveC reserved words.
