@@ -1,5 +1,15 @@
 2010-09-04  Justin Schuh  <jschuh@chromium.org>
 
+        Unreviewed. Build fix.
+
+        Updated platform test to account for xml parser differences
+
+        * platform/mac-leopard/svg/custom/use-invalid-style-expected.txt: Added.
+        * platform/qt/svg/custom/use-invalid-style-expected.txt: Added.
+        * svg/custom/use-invalid-style-expected.txt:
+
+2010-09-04  Justin Schuh  <jschuh@chromium.org>
+
         Reviewed by Nikolas Zimmermann.
 
         Check for premature deletion of svg use shadow style element
