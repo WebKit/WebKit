@@ -1,3 +1,17 @@
+2010-09-04  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Prevent premature deletion of svg use shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=43260
+
+        Test: svg/custom/use-invalid-style.svg
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::insertedIntoDocument):
+        (WebCore::SVGUseElement::removedFromDocument):
+        (WebCore::SVGUseElement::detach):
+
 2010-09-03  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Darin Adler.

@@ -1,3 +1,13 @@
+2010-09-04  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Check for premature deletion of svg use shadow style element
+        https://bugs.webkit.org/show_bug.cgi?id=43260
+
+        * svg/custom/use-invalid-style-expected.txt: Added.
+        * svg/custom/use-invalid-style.svg: Added.
+
 2010-09-04  Steve Block  <steveblock@google.com>
 
         Unreviewed.

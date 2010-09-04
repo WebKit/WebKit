@@ -1,0 +1,7 @@
+This page contains the following errors:
+
+error on line 10 at column 88: Opening and ending tag mismatch: junk line 0 and svg
+Below is a rendering of the page up to the first error.
+
+This should not crash, but display an error document.
+

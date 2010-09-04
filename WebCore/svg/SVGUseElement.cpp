@@ -44,6 +44,7 @@
 #include "SVGShadowTreeElements.h"
 #include "SVGSymbolElement.h"
 #include "XLinkNames.h"
+#include "XMLDocumentParser.h"
 #include "XMLSerializer.h"
 
 // Dump SVGElementInstance object tree - useful to debug instanceRoot problems
@@ -120,14 +121,14 @@ void SVGUseElement::insertedIntoDocument()
 {
     // This functions exists to assure assumptions made in the code regarding SVGElementInstance creation/destruction are satisfied.
     SVGStyledTransformableElement::insertedIntoDocument();
-    ASSERT(!m_targetElementInstance);
+    ASSERT(!m_targetElementInstance || ((document()->isSVGDocument() || document()->isXHTMLDocument()) && !static_cast<XMLDocumentParser*>(document()->parser())->wellFormed()));
     ASSERT(!m_isPendingResource);
 }
 
 void SVGUseElement::removedFromDocument()
 {
-    m_targetElementInstance = 0;
     SVGStyledTransformableElement::removedFromDocument();
+    m_targetElementInstance = 0;
 }
 
 void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
@@ -608,8 +609,8 @@ void SVGUseElement::attach()
 
 void SVGUseElement::detach()
 {
-    m_targetElementInstance = 0;
     SVGStyledTransformableElement::detach();
+    m_targetElementInstance = 0;
 }
 
 static bool isDirectReference(Node* n)
