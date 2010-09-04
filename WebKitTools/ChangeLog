@@ -1,3 +1,49 @@
+2010-09-04  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Move test browser to WebKitTools directory
+        https://bugs.webkit.org/show_bug.cgi?id=45212
+
+        Follow other ports like QT and GTK which moved the test browser to
+        WebKitTools directory.
+
+        * CMakeListsEfl.txt: Added.
+        * EWebLauncher/main.c: Added.
+        (print_history):
+        (zoom_level_set):
+        (on_ecore_evas_resize):
+        (title_set):
+        (viewport_set):
+        (on_title_changed):
+        (on_progress):
+        (on_load_finished):
+        (on_toolbars_visible_set):
+        (on_toolbars_visible_get):
+        (on_statusbar_visible_set):
+        (on_statusbar_visible_get):
+        (on_scrollbars_visible_set):
+        (on_scrollbars_visible_get):
+        (on_menubar_visible_set):
+        (on_menubar_visible_get):
+        (on_tooltip_text_set):
+        (on_inputmethod_changed):
+        (on_viewport_changed):
+        (on_mouse_down):
+        (on_focus_out):
+        (on_focus_in):
+        (on_resized):
+        (on_key_down):
+        (on_browser_del):
+        (on_closeWindow):
+        (quit):
+        (browserCreate):
+        (browserDestroy):
+        (closeWindow):
+        (main_signal_exit):
+        (findThemePath):
+        (main):
+
 2010-09-03  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Adam Roben.

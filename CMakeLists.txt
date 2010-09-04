@@ -12,6 +12,7 @@ SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 SET(JAVASCRIPTCORE_DIR "${CMAKE_SOURCE_DIR}/JavaScriptCore")
 SET(WEBCORE_DIR "${CMAKE_SOURCE_DIR}/WebCore")
 SET(WEBKIT_DIR "${CMAKE_SOURCE_DIR}/WebKit")
+SET(WEBKITTOOLS_DIR "${CMAKE_SOURCE_DIR}/WebKitTools")
 SET(DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/DerivedSources")
 
 INCLUDE(WebKitMacros)
@@ -105,6 +106,11 @@ INCLUDE(WebKitPackaging)
 ADD_SUBDIRECTORY(JavaScriptCore)
 ADD_SUBDIRECTORY(WebCore)
 ADD_SUBDIRECTORY(WebKit)
+
+# -----------------------------------------------------------------------------
+# Add test browser if exists
+# -----------------------------------------------------------------------------
+INCLUDE_IF_EXISTS(${WEBKITTOOLS_DIR}/CMakeLists${PORT}.txt)
 
 # -----------------------------------------------------------------------------
 # Set compiler flags for all targets
