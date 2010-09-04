@@ -1,7 +1,9 @@
 # We should keep the tests listed in the same order as they appear in the output.
 # This makes it easier to look for differences on the actual output and
 # what the skip list contains.
-# Also, no grouping should occur. Every test for itself.
+# Also, no grouping should occur. Every test for itself. An exception is when
+# an entire directory of tests is to be skipped due to the feature being
+# unsupported.
 #
 # You can get a list of actual failed/timed out/crashed/new tests by piping
 # the output of running the tests to this command:
@@ -1085,13 +1087,8 @@ fast/dom/client-width-height-quirks.html
 fast/dom/client-width-height.html
 fast/dom/cssTarget-crash.html
 fast/dom/frame-loading-via-document-write.html
-fast/dom/DeviceMotion/create-event.html
-fast/dom/DeviceMotion/optional-event-properties.html
-fast/dom/DeviceMotion/window-property.html
-fast/dom/DeviceOrientation/basic-operation.html
-fast/dom/DeviceOrientation/create-event.html
-fast/dom/DeviceOrientation/optional-event-properties.html
-fast/dom/DeviceOrientation/window-property.html
+fast/dom/DeviceMotion
+fast/dom/DeviceOrientation
 fast/dom/Geolocation/callback-exception.html
 fast/dom/Geolocation/delayed-permission-allowed.html
 fast/dom/Geolocation/delayed-permission-denied.html

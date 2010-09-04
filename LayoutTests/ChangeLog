@@ -1,3 +1,16 @@
+2010-09-04  Steve Block  <steveblock@google.com>
+
+        Reviewed by Martin Robinson.
+
+        GTK Skipped list should allow a directory to be listed when a feature is not supported
+        https://bugs.webkit.org/show_bug.cgi?id=45229
+
+        This change updates the comment in the GTK Skipped list to make this
+        clear and applies the new policy for the DeviceOrientation and
+        DeviceMotion tests.
+
+        * platform/gtk/Skipped:
+
 2010-09-04  Justin Schuh  <jschuh@chromium.org>
 
         Unreviewed. Build fix.
