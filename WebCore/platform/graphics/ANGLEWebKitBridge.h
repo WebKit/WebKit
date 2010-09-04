@@ -38,6 +38,7 @@ enum ANGLEShaderType {
     SHADER_TYPE_FRAGMENT = EShLangFragment
 };
 
+
 class ANGLEWebKitBridge {
 public:
 
