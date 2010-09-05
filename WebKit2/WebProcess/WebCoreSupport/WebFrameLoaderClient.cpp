@@ -523,13 +523,8 @@ void WebFrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction function, 
 
     uint64_t listenerID = m_frame->setUpPolicyListener(function);
 
-    if (userData) {
-        WebProcess::shared().connection()->send(WebPageProxyMessage::WillSubmitFormWithUserData, webPage->pageID(),
-                                                CoreIPC::In(m_frame->frameID(), sourceFrame->frameID(), values, listenerID, InjectedBundleUserMessageEncoder(userData.get())));
-    } else {
-        WebProcess::shared().connection()->send(WebPageProxyMessage::WillSubmitForm, webPage->pageID(),
-                                                CoreIPC::In(m_frame->frameID(), sourceFrame->frameID(), values, listenerID));
-    }
+    WebProcess::shared().connection()->send(WebPageProxyMessage::WillSubmitForm, webPage->pageID(),
+                                            CoreIPC::In(m_frame->frameID(), sourceFrame->frameID(), values, listenerID, InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 void WebFrameLoaderClient::dispatchDidLoadMainResource(DocumentLoader*)

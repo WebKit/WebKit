@@ -67,7 +67,6 @@ enum Kind {
     SetToolTip,
     TakeFocus,
     WillSubmitForm,
-    WillSubmitFormWithUserData,
     
     BackForwardAddItem,
     BackForwardGoToItem,

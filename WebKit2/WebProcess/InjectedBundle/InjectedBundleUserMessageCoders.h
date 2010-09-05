@@ -43,9 +43,7 @@ public:
 
     void encode(CoreIPC::ArgumentEncoder* encoder) const 
     {
-        APIObject::Type type = m_root->type();
-        encoder->encode(static_cast<uint32_t>(type));
-        
+        APIObject::Type type = APIObject::TypeNull;
         if (baseEncode(encoder, type))
             return;
 
@@ -81,15 +79,11 @@ public:
 
     static bool decode(CoreIPC::ArgumentDecoder* decoder, InjectedBundleUserMessageDecoder& coder)
     {
-        uint32_t type;
-        if (!decoder->decode(type))
+        APIObject::Type type = APIObject::TypeNull;
+        if (!Base::baseDecode(decoder, coder, type))
             return false;
 
-        if (!Base::baseDecode(decoder, coder, static_cast<APIObject::Type>(type)))
-            return false;
-
-        // If the base created something in root, we are done.
-        if (coder.m_root)
+        if (coder.m_root || type == APIObject::TypeNull)
             return true;
 
         switch (type) {

@@ -576,19 +576,7 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
             uint64_t sourceFrameID;
             Vector<std::pair<String, String> > textFieldValues;
             uint64_t listenerID;
-            if (!arguments->decode(CoreIPC::Out(frameID, sourceFrameID, textFieldValues, listenerID)))
-                return;
 
-            APIObject* noUserData = 0;
-            willSubmitForm(process()->webFrame(frameID), process()->webFrame(sourceFrameID), textFieldValues, noUserData, listenerID);
-            break;
-        }
-        case WebPageProxyMessage::WillSubmitFormWithUserData: {
-            uint64_t frameID;
-            uint64_t sourceFrameID;
-            Vector<std::pair<String, String> > textFieldValues;
-            uint64_t listenerID;
-            
             RefPtr<APIObject> userData;
             WebContextUserMessageDecoder messageDecoder(userData, pageNamespace()->context());
 
@@ -598,7 +586,6 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
             willSubmitForm(process()->webFrame(frameID), process()->webFrame(sourceFrameID), textFieldValues, userData.get(), listenerID);
             break;
         }
-        
         case WebPageProxyMessage::DidRunJavaScriptInMainFrame: {
             String resultString;
             uint64_t callbackID;

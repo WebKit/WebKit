@@ -32,6 +32,7 @@
 
 namespace WebKit {
 
+//   - Null -> Null
 //   - Array -> Array
 //   - Dictionary -> Dictionary
 //   - String -> String
@@ -39,8 +40,16 @@ namespace WebKit {
 template<typename Owner>
 class UserMessageEncoder {
 public:
-    bool baseEncode(CoreIPC::ArgumentEncoder* encoder, APIObject::Type type) const 
+    bool baseEncode(CoreIPC::ArgumentEncoder* encoder, APIObject::Type& type) const 
     {
+        if (!m_root) {
+            encoder->encodeUInt32(APIObject::TypeNull);
+            return true;
+        }
+
+        type = m_root->type();
+        encoder->encodeUInt32(type);
+
         switch (type) {
         case APIObject::TypeArray: {
             ImmutableArray* array = static_cast<ImmutableArray*>(m_root);
@@ -85,6 +94,7 @@ protected:
 
 
 // Handles
+//   - Null -> Null
 //   - Array -> Array
 //   - Dictionary -> Dictionary
 //   - String -> String
@@ -92,8 +102,14 @@ protected:
 template<typename Owner>
 class UserMessageDecoder {
 public:
-    static bool baseDecode(CoreIPC::ArgumentDecoder* decoder, Owner& coder, APIObject::Type type)
+    static bool baseDecode(CoreIPC::ArgumentDecoder* decoder, Owner& coder, APIObject::Type& type)
     {
+        uint32_t typeAsUInt32;
+        if (!decoder->decode(typeAsUInt32))
+            return false;
+
+        type = static_cast<APIObject::Type>(typeAsUInt32);
+
         switch (type) {
         case APIObject::TypeArray: {
             uint64_t size;
