@@ -138,6 +138,10 @@ module test {
         void    overloadedMethod(in [Callback] TestCallback callback);
 #endif
 
+        // Class methods within JavaScript (like what's used for IDBKeyRange).
+        [ClassMethod] void classMethod();
+        [ClassMethod] long classMethodWithOptional(in [Optional] long arg);
+
         // ObjectiveC reserved words.
         readonly attribute long      description;
         attribute long               id;

@@ -1,0 +1,35 @@
+Test IndexedDB's constants.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS IDBKeyRange.SINGLE is 0
+PASS IDBKeyRange.LEFT_OPEN is 1
+PASS IDBKeyRange.RIGHT_OPEN is 2
+PASS IDBKeyRange.LEFT_BOUND is 4
+PASS IDBKeyRange.RIGHT_BOUND is 8
+PASS IDBDatabaseException.UNKNOWN_ERR is 0
+PASS IDBDatabaseException.NON_TRANSIENT_ERR is 1
+PASS IDBDatabaseException.NOT_FOUND_ERR is 2
+PASS IDBDatabaseException.CONSTRAINT_ERR is 3
+PASS IDBDatabaseException.DATA_ERR is 4
+PASS IDBDatabaseException.NOT_ALLOWED_ERR is 5
+PASS IDBDatabaseException.SERIAL_ERR is 11
+PASS IDBDatabaseException.RECOVERABLE_ERR is 21
+PASS IDBDatabaseException.TRANSIENT_ERR is 31
+PASS IDBDatabaseException.TIMEOUT_ERR is 32
+PASS IDBDatabaseException.DEADLOCK_ERR is 33
+PASS IDBRequest.LOADING is 1
+PASS IDBRequest.DONE is 2
+PASS IDBCursor.NEXT is 0
+PASS IDBCursor.NEXT_NO_DUPLICATE is 1
+PASS IDBCursor.PREV is 2
+PASS IDBCursor.PREV_NO_DUPLICATE is 3
+PASS IDBTransaction.READ_WRITE is 0
+PASS IDBTransaction.READ_ONLY is 1
+PASS IDBTransaction.SNAPSHOT_READ is 2
+PASS IDBTransaction.VERSION_CHANGE is 3
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

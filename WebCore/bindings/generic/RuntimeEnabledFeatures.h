@@ -56,7 +56,19 @@ public:
 
     static void setIndexedDBEnabled(bool isEnabled) { isIndexedDBEnabled = isEnabled; }
     static bool indexedDBEnabled() { return isIndexedDBEnabled; }
-    static bool iDBKeyRangeEnabled() { return indexedDBEnabled(); }
+    static bool iDBCursorEnabled() { return isIndexedDBEnabled; }
+    static bool iDBDatabaseEnabled() { return isIndexedDBEnabled; }
+    static bool iDBDatabaseErrorEnabled() { return isIndexedDBEnabled; }
+    static bool iDBDatabaseExceptionEnabled() { return isIndexedDBEnabled; }
+    static bool iDBErrorEventEnabled() { return isIndexedDBEnabled; }
+    static bool iDBEventEnabled() { return isIndexedDBEnabled; }
+    static bool iDBFactoryEnabled() { return isIndexedDBEnabled; }
+    static bool iDBIndexEnabled() { return isIndexedDBEnabled; }
+    static bool iDBKeyRangeEnabled() { return isIndexedDBEnabled; }
+    static bool iDBObjectStoreEnabled() { return isIndexedDBEnabled; }
+    static bool iDBRequestEnabled() { return isIndexedDBEnabled; }
+    static bool iDBSuccessEventEnabled() { return isIndexedDBEnabled; }
+    static bool iDBTransactionEnabled() { return isIndexedDBEnabled; }
 
 #if ENABLE(VIDEO)
     static bool audioEnabled();

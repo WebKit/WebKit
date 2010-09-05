@@ -1150,7 +1150,7 @@ END
         push(@implContentDecls, "    V8SVGPODTypeWrapper<$nativeClassName>* impWrapper = V8SVGPODTypeWrapper<$nativeClassName>::toNative(args.Holder());\n");
         push(@implContentDecls, "    $nativeClassName impInstance = *impWrapper;\n");
         push(@implContentDecls, "    $nativeClassName* imp = &impInstance;\n");
-    } else {
+    } elsif (!$function->signature->extendedAttributes->{"ClassMethod"}) {
         push(@implContentDecls, <<END);
     ${implClassName}* imp = V8${implClassName}::toNative(args.Holder());
 END
@@ -1771,6 +1771,9 @@ sub GenerateImplementation
         if ($attrExt->{"V8OnInstance"}) {
             next;
         }
+        if ($attrExt->{"ClassMethod"}) {
+            next;
+        }
         if ($attrExt->{"EnabledAtRuntime"} || RequiresCustomSignature($function) || $attrExt->{"V8DoNotCheckSignature"}) {
             next;
         }
@@ -1956,6 +1959,9 @@ END
         if ($attrExt->{"V8OnInstance"}) {
             $template = "instance";
         }
+        if ($attrExt->{"ClassMethod"}) {
+            $template = "desc";
+        }
 
         my $conditional = "";
         if ($attrExt->{"EnabledAtRuntime"}) {
@@ -1991,7 +1997,7 @@ END
       }
 
       my $signature = "defaultSignature";
-      if ($attrExt->{"V8DoNotCheckSignature"}) {
+      if ($attrExt->{"V8DoNotCheckSignature"} || $attrExt->{"ClassMethod"}) {
           $signature = "v8::Local<v8::Signature>()";
       }
 
@@ -2562,6 +2568,10 @@ sub GenerateFunctionCallString()
 
     if ($copyFirst) {
         $functionString = "result.${name}(";
+    }
+
+    if ($function->signature->extendedAttributes->{"ClassMethod"}) {
+        $functionString = "${implClassName}::${name}(";
     }
 
     my $returnsListItemPodType = 0;

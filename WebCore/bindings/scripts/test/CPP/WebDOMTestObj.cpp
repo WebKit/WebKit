@@ -749,6 +749,22 @@ void WebDOMTestObj::methodWithNonOptionalArgAndTwoOptionalArgs(int nonOpt, int o
     impl()->methodWithNonOptionalArgAndTwoOptionalArgs(nonOpt, opt1, opt2);
 }
 
+void WebDOMTestObj::classMethod()
+{
+    if (!impl())
+        return;
+
+    impl()->classMethod();
+}
+
+int WebDOMTestObj::classMethodWithOptional(int arg)
+{
+    if (!impl())
+        return 0;
+
+    return impl()->classMethodWithOptional(arg);
+}
+
 WebCore::TestObj* toWebCore(const WebDOMTestObj& wrapper)
 {
     return wrapper.impl();

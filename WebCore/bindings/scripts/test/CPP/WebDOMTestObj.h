@@ -150,6 +150,8 @@ public:
     void methodWithOptionalArg(int opt);
     void methodWithNonOptionalArgAndOptionalArg(int nonOpt, int opt);
     void methodWithNonOptionalArgAndTwoOptionalArgs(int nonOpt, int opt1, int opt2);
+    void classMethod();
+    int classMethodWithOptional(int arg);
 
     WebCore::TestObj* impl() const;
 

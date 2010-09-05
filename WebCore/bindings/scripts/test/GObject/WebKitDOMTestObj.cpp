@@ -364,6 +364,25 @@ webkit_dom_test_obj_method_with_non_optional_arg_and_two_optional_args(WebKitDOM
     item->methodWithNonOptionalArgAndTwoOptionalArgs(non_opt, opt1, opt2);
 }
 
+void
+webkit_dom_test_obj_class_method(WebKitDOMTestObj* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(self);
+    WebCore::TestObj * item = WebKit::core(self);
+    item->classMethod();
+}
+
+glong
+webkit_dom_test_obj_class_method_with_optional(WebKitDOMTestObj* self, glong arg)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(self, 0);
+    WebCore::TestObj * item = WebKit::core(self);
+    glong res = item->classMethodWithOptional(arg);
+    return res;
+}
+
 glong
 webkit_dom_test_obj_get_read_only_int_attr(WebKitDOMTestObj* self)
 {

@@ -124,6 +124,12 @@ webkit_dom_test_obj_method_with_non_optional_arg_and_optional_arg(WebKitDOMTestO
 WEBKIT_API void
 webkit_dom_test_obj_method_with_non_optional_arg_and_two_optional_args(WebKitDOMTestObj* self, glong non_opt, glong opt1, glong opt2);
 
+WEBKIT_API void
+webkit_dom_test_obj_class_method(WebKitDOMTestObj* self);
+
+WEBKIT_API glong
+webkit_dom_test_obj_class_method_with_optional(WebKitDOMTestObj* self, glong arg);
+
 WEBKIT_API glong
 webkit_dom_test_obj_get_read_only_int_attr(WebKitDOMTestObj* self);
 

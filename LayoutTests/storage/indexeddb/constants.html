@@ -1,0 +1,58 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test IndexedDB's constants.");
+if (window.layoutTestController) 
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    shouldBe("IDBKeyRange.SINGLE", "0");
+    shouldBe("IDBKeyRange.LEFT_OPEN", "1");
+    shouldBe("IDBKeyRange.RIGHT_OPEN", "2");
+    shouldBe("IDBKeyRange.LEFT_BOUND", "4");
+    shouldBe("IDBKeyRange.RIGHT_BOUND", "8");
+
+    shouldBe("IDBDatabaseException.UNKNOWN_ERR", "0");
+    shouldBe("IDBDatabaseException.NON_TRANSIENT_ERR", "1");
+    shouldBe("IDBDatabaseException.NOT_FOUND_ERR", "2");
+    shouldBe("IDBDatabaseException.CONSTRAINT_ERR", "3");
+    shouldBe("IDBDatabaseException.DATA_ERR", "4");
+    shouldBe("IDBDatabaseException.NOT_ALLOWED_ERR", "5");
+    shouldBe("IDBDatabaseException.SERIAL_ERR", "11");
+    shouldBe("IDBDatabaseException.RECOVERABLE_ERR", "21");
+    shouldBe("IDBDatabaseException.TRANSIENT_ERR", "31");
+    shouldBe("IDBDatabaseException.TIMEOUT_ERR", "32");
+    shouldBe("IDBDatabaseException.DEADLOCK_ERR", "33");
+
+    shouldBe("IDBRequest.LOADING", "1");
+    shouldBe("IDBRequest.DONE", "2");
+
+    shouldBe("IDBCursor.NEXT", "0");
+    shouldBe("IDBCursor.NEXT_NO_DUPLICATE", "1");
+    shouldBe("IDBCursor.PREV", "2");
+    shouldBe("IDBCursor.PREV_NO_DUPLICATE", "3");
+
+    shouldBe("IDBTransaction.READ_WRITE", "0");
+    shouldBe("IDBTransaction.READ_ONLY", "1");
+    shouldBe("IDBTransaction.SNAPSHOT_READ", "2");
+    shouldBe("IDBTransaction.VERSION_CHANGE", "3");
+}
+
+test();
+
+var successfullyParsed = true;
+done();
+
+</script>
+</body>
+</html>

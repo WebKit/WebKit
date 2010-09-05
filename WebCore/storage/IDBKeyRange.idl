@@ -39,10 +39,11 @@ module storage {
         readonly attribute IDBKey right;
         readonly attribute unsigned short flags;
 
-        IDBKeyRange only(in IDBKey value);
-        IDBKeyRange leftBound(in IDBKey bound, in [Optional] boolean open);
-        IDBKeyRange rightBound(in IDBKey bound, in [Optional] boolean open);
-        IDBKeyRange bound(in IDBKey left, in IDBKey right, in [Optional] boolean openLeft, in [Optional] boolean openRight);
+        // FIXME: Make ClassMethod work for JSC as well.
+        [ClassMethod] IDBKeyRange only(in IDBKey value);
+        [ClassMethod] IDBKeyRange leftBound(in IDBKey bound, in [Optional] boolean open);
+        [ClassMethod] IDBKeyRange rightBound(in IDBKey bound, in [Optional] boolean open);
+        [ClassMethod] IDBKeyRange bound(in IDBKey left, in IDBKey right, in [Optional] boolean openLeft, in [Optional] boolean openRight);
     };
 
 }

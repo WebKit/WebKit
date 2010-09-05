@@ -57,7 +57,6 @@ namespace WebCore {
     class Frame;
     class History;
     class IDBFactory;
-    class IDBKeyRange;
     class InspectorTimelineAgent;
     class LocalFileSystem;
     class Location;
@@ -238,7 +237,6 @@ namespace WebCore {
 
 #if ENABLE(INDEXED_DATABASE)
         IDBFactory* indexedDB() const;
-        IDBKeyRange* iDBKeyRange() const;
 #endif
 
 #if ENABLE(FILE_SYSTEM)
@@ -445,7 +443,6 @@ namespace WebCore {
 #endif
 #if ENABLE(INDEXED_DATABASE)
         mutable RefPtr<IDBFactory> m_idbFactory;
-        mutable RefPtr<IDBKeyRange> m_idbKeyRange;
 #endif
 #if ENABLE(FILE_SYSTEM)
         RefPtr<LocalFileSystem> m_localFileSystem;

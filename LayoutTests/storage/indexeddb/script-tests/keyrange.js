@@ -39,6 +39,37 @@ function checkBoundKeyRange(left, right, openLeft, openRight)
 
 function test()
 {
+    shouldBeTrue("'SINGLE' in IDBKeyRange");
+    shouldBeTrue("'LEFT_OPEN' in IDBKeyRange");
+    shouldBeTrue("'RIGHT_OPEN' in IDBKeyRange");
+    shouldBeTrue("'LEFT_BOUND' in IDBKeyRange");
+    shouldBeTrue("'RIGHT_BOUND' in IDBKeyRange");
+    shouldBeFalse("'left' in IDBKeyRange");
+    shouldBeFalse("'right' in IDBKeyRange");
+    shouldBeFalse("'flags' in IDBKeyRange");
+    shouldBeTrue("'only' in IDBKeyRange");
+    shouldBeTrue("'leftBound' in IDBKeyRange");
+    shouldBeTrue("'rightBound' in IDBKeyRange");
+    shouldBeTrue("'bound' in IDBKeyRange");
+
+    debug("");
+
+    var instance = evalAndLog("instance = IDBKeyRange.only(1)");
+    shouldBeTrue("'SINGLE' in instance");
+    shouldBeTrue("'LEFT_OPEN' in instance");
+    shouldBeTrue("'RIGHT_OPEN' in instance");
+    shouldBeTrue("'LEFT_BOUND' in instance");
+    shouldBeTrue("'RIGHT_BOUND' in instance");
+    shouldBeTrue("'left' in instance");
+    shouldBeTrue("'right' in instance");
+    shouldBeTrue("'flags' in instance");
+    shouldBeFalse("'only' in instance");
+    shouldBeFalse("'leftBound' in instance");
+    shouldBeFalse("'rightBound' in instance");
+    shouldBeFalse("'bound' in instance");
+
+    debug("");
+
     checkSingleKeyRange(1);
     checkSingleKeyRange("'a'");
 
@@ -68,6 +99,7 @@ function test()
     checkBoundKeyRange("'aad'", "'abd'", false, true);
     checkBoundKeyRange("'aae'", "'abe'", true, false);
     checkBoundKeyRange("'aaf'", "'abf'", true, true);
+
 }
 
 test();

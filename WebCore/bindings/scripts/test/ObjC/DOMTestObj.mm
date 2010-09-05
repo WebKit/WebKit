@@ -634,6 +634,18 @@
     IMPL->methodWithNonOptionalArgAndTwoOptionalArgs(nonOpt, opt1, opt2);
 }
 
+- (void)classMethod
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->classMethod();
+}
+
+- (int)classMethodWithOptional:(int)arg
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->classMethodWithOptional(arg);
+}
+
 @end
 
 WebCore::TestObj* core(DOMTestObj *wrapper)

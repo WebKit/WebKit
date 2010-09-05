@@ -177,7 +177,7 @@ bool JSTestObjConstructor::getOwnPropertyDescriptor(ExecState* exec, const Ident
 #define THUNK_GENERATOR(generator)
 #endif
 
-static const HashTableValue JSTestObjPrototypeTableValues[45] =
+static const HashTableValue JSTestObjPrototypeTableValues[47] =
 {
     { "CONST_VALUE_0", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_0), (intptr_t)0 THUNK_GENERATOR(0) },
     { "CONST_VALUE_1", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_1), (intptr_t)0 THUNK_GENERATOR(0) },
@@ -223,6 +223,8 @@ static const HashTableValue JSTestObjPrototypeTableValues[45] =
     { "methodWithNonCallbackArgAndCallbackArg", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg), (intptr_t)2 THUNK_GENERATOR(0) },
     { "methodWithCallbackAndOptionalArg", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArg), (intptr_t)1 THUNK_GENERATOR(0) },
     { "overloadedMethod", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionOverloadedMethod), (intptr_t)2 THUNK_GENERATOR(0) },
+    { "classMethod", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionClassMethod), (intptr_t)0 THUNK_GENERATOR(0) },
+    { "classMethodWithOptional", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionClassMethodWithOptional), (intptr_t)1 THUNK_GENERATOR(0) },
     { 0, 0, 0, 0 THUNK_GENERATOR(0) }
 };
 
@@ -1445,6 +1447,42 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(ExecStat
     if ((exec->argumentCount() == 1 && (exec->argument(0).isNull() || exec->argument(0).isObject())))
         return jsTestObjPrototypeFunctionOverloadedMethod5(exec);
     return throwVMTypeError(exec);
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethod(ExecState* exec)
+{
+    JSValue thisValue = exec->hostThisValue();
+    if (!thisValue.inherits(&JSTestObj::s_info))
+        return throwVMTypeError(exec);
+    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
+    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+
+    imp->classMethod();
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithOptional(ExecState* exec)
+{
+    JSValue thisValue = exec->hostThisValue();
+    if (!thisValue.inherits(&JSTestObj::s_info))
+        return throwVMTypeError(exec);
+    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
+    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+
+    int argsCount = exec->argumentCount();
+    if (argsCount <= 0) {
+
+        JSC::JSValue result = jsNumber(exec, imp->classMethodWithOptional());
+        return JSValue::encode(result);
+    }
+
+    int arg = exec->argument(0).toInt32(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+
+    JSC::JSValue result = jsNumber(exec, imp->classMethodWithOptional(arg));
+    return JSValue::encode(result);
 }
 
 // Constant getters

@@ -3,6 +3,33 @@ Test IndexedDB's KeyRange.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS 'SINGLE' in IDBKeyRange is true
+PASS 'LEFT_OPEN' in IDBKeyRange is true
+PASS 'RIGHT_OPEN' in IDBKeyRange is true
+PASS 'LEFT_BOUND' in IDBKeyRange is true
+PASS 'RIGHT_BOUND' in IDBKeyRange is true
+PASS 'left' in IDBKeyRange is false
+PASS 'right' in IDBKeyRange is false
+PASS 'flags' in IDBKeyRange is false
+PASS 'only' in IDBKeyRange is true
+PASS 'leftBound' in IDBKeyRange is true
+PASS 'rightBound' in IDBKeyRange is true
+PASS 'bound' in IDBKeyRange is true
+
+instance = IDBKeyRange.only(1)
+PASS 'SINGLE' in instance is true
+PASS 'LEFT_OPEN' in instance is true
+PASS 'RIGHT_OPEN' in instance is true
+PASS 'LEFT_BOUND' in instance is true
+PASS 'RIGHT_BOUND' in instance is true
+PASS 'left' in instance is true
+PASS 'right' in instance is true
+PASS 'flags' in instance is true
+PASS 'only' in instance is false
+PASS 'leftBound' in instance is false
+PASS 'rightBound' in instance is false
+PASS 'bound' in instance is false
+
 IDBKeyRange.only(1)
 PASS keyRange.left is 1
 PASS keyRange.right is 1
@@ -117,3 +144,4 @@ PASS rightFlags is keyRange.RIGHT_OPEN | keyRange.RIGHT_BOUND
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

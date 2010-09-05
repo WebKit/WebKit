@@ -174,7 +174,20 @@ module window {
 #endif
 #if defined(ENABLE_INDEXED_DATABASE) && ENABLE_INDEXED_DATABASE
         readonly attribute [EnabledAtRuntime] IDBFactory indexedDB;
-        readonly attribute [EnabledAtRuntime] IDBKeyRange IDBKeyRange;
+
+        attribute [EnabledAtRuntime] IDBCursorConstructor IDBCursor;
+        attribute [EnabledAtRuntime] IDBDatabaseConstructor IDBDatabase;
+        attribute [EnabledAtRuntime] IDBDatabaseErrorConstructor IDBDatabaseError;
+        attribute [EnabledAtRuntime] IDBDatabaseExceptionConstructor IDBDatabaseException;
+        attribute [EnabledAtRuntime] IDBErrorEventConstructor IDBErrorEvent;
+        attribute [EnabledAtRuntime] IDBEventConstructor IDBEvent;
+        attribute [EnabledAtRuntime] IDBFactoryConstructor IDBFactory;
+        attribute [EnabledAtRuntime] IDBIndexConstructor IDBIndex;
+        attribute [EnabledAtRuntime] IDBKeyRangeConstructor IDBKeyRange;
+        attribute [EnabledAtRuntime] IDBObjectStoreConstructor IDBObjectStore;
+        attribute [EnabledAtRuntime] IDBRequestConstructor IDBRequest;
+        attribute [EnabledAtRuntime] IDBSuccessEventConstructor IDBSuccessEvent;
+        attribute [EnabledAtRuntime] IDBTransactionConstructor IDBTransaction;
 #endif
 #if defined(ENABLE_FILE_SYSTEM) && ENABLE_FILE_SYSTEM
         const unsigned short TEMPORARY = 0;

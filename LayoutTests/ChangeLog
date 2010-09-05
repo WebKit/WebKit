@@ -1,3 +1,21 @@
+2010-09-05  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Add IndexedDB objects' constructors to window
+        https://bugs.webkit.org/show_bug.cgi?id=44599
+
+        Beef up keyRange test to verify we're actualy operating
+        on the interface rather than an instance.
+
+        Add a test to verify the constants.
+
+        * storage/indexeddb/constants.html:
+        * storage/indexeddb/constants-expected.txt:
+        * storage/indexeddb/keyrange-expected.txt:
+        * storage/indexeddb/script-tests/keyrange.js:
+        ():
+
 2010-09-05  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Antonio Gomes.

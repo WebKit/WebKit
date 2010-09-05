@@ -1,3 +1,78 @@
+2010-09-05  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Add the concept of class methods to bindings (for IndexedDB's IDBKeyRange).
+        https://bugs.webkit.org/show_bug.cgi?id=45044
+
+        IndexedDB's IDBKeyRange has what, in other languages, are called class
+        methods. In javaScript terms, these are methods only accessible from their
+        constructor and not instances. This change adds such support to V8. There
+        are already other features required for IndexedDB that JSC doesn't yet
+        support, so I'll add this to the list of todo items in the master bug
+        for that.
+
+        The bindings tests cover this. My next patch will change WebCore to use
+        this and it'll have associated layout tests.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/scripts/test/CPP/WebDOMTestObj.cpp:
+        (WebDOMTestObj::classMethod):
+        (WebDOMTestObj::classMethodWithOptional):
+        * bindings/scripts/test/CPP/WebDOMTestObj.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_class_method):
+        (webkit_dom_test_obj_class_method_with_optional):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionStaticMethod):
+        (WebCore::jsTestObjPrototypeFunctionStaticMethodWithOptional):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        (-[DOMTestObj classMethod]):
+        (-[DOMTestObj classMethodWithOptional:]):
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::classMethodCallback):
+        (WebCore::TestObjInternal::classMethodWithOptionalCallback):
+        (WebCore::ConfigureV8TestObjTemplate):
+        * storage/IDBKeyRange.idl:
+
+2010-09-05  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Add IndexedDB objects' constructors to window
+        https://bugs.webkit.org/show_bug.cgi?id=44599
+
+        Also add a forgotten constant to IDBTransaction, and
+        change IDBKeyRange over to using the V8Static attribute
+        so it actually behaves as it's supposed to.
+
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::iDBCursorEnabled):
+        (WebCore::RuntimeEnabledFeatures::iDBDatabaseEnabled):
+        (WebCore::RuntimeEnabledFeatures::iDBDatabaseErrorEnabled):
+        (WebCore::RuntimeEnabledFeatures::iDBDatabaseExceptionEnabled):
+        (WebCore::RuntimeEnabledFeatures::iDBErrorEventEnabled):
+        (WebCore::RuntimeEnabledFeatures::iDBEventEnabled):
+        (WebCore::RuntimeEnabledFeatures::iDBFactoryEnabled):
+        (WebCore::RuntimeEnabledFeatures::iDBIndexEnabled):
+        (WebCore::RuntimeEnabledFeatures::iDBKeyRangeEnabled):
+        (WebCore::RuntimeEnabledFeatures::iDBObjectStoreEnabled):
+        (WebCore::RuntimeEnabledFeatures::iDBRequestEnabled):
+        (WebCore::RuntimeEnabledFeatures::iDBSuccessEventEnabled):
+        (WebCore::RuntimeEnabledFeatures::iDBTransactionEnabled):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::clear):
+        (WebCore::DOMWindow::indexedDB):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        * storage/IDBKeyRange.idl:
+        * storage/IDBTransaction.h:
+        * storage/IDBTransaction.idl:
+
 2010-09-04  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Nikolas Zimmermann.
