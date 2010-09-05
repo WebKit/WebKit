@@ -1,3 +1,11 @@
+2010-09-05  Andreas Kling  <andreas.kling@nokia.com>
+
+        Rubber-stamped by Daniel Bates.
+
+        Adding myself as reviewer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-09-04  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Martin Robinson.
