@@ -1,3 +1,17 @@
+2010-09-05  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] utf8 encoding of console() messages
+
+        Unskip:
+        http/tests/security/xssAuditor/embed-tag-null-char.html
+        http/tests/security/xssAuditor/object-embed-tag-null-char.html
+
+        https://bugs.webkit.org/show_bug.cgi?id=45240
+
+        * platform/qt/Skipped:
+
 2010-09-04  Steve Block  <steveblock@google.com>
 
         Reviewed by Martin Robinson.

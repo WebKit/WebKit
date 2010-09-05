@@ -1,3 +1,20 @@
+2010-09-05  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] utf8 encoding of console() messages
+
+        http/tests/security/xssAuditor/embed-tag-null-char.html
+        http/tests/security/xssAuditor/object-embed-tag-null-char.html
+
+        both fail because ChromeClientQt::addMessageToConsole() is
+        casting String to QString rather than String::utf8().data()
+
+        https://bugs.webkit.org/show_bug.cgi?id=45240
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::addMessageToConsole):
+
 2010-09-03  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Darin Adler.
