@@ -58,6 +58,24 @@ END
 },
 {
     # New test
+    diffName => "'Merged' change",
+    inputText => <<'END',
+   Merged /trunk/Makefile:r33020
+END
+    expectedReturn => ["/trunk/Makefile:r33020", undef],
+    expectedNextLine => undef,
+},
+{
+    # New test
+    diffName => "'Reverse-merged' change",
+    inputText => <<'END',
+   Reverse-merged /trunk/Makefile:r33020
+END
+    expectedReturn => ["/trunk/Makefile:r33020", undef],
+    expectedNextLine => undef,
+},
+{
+    # New test
     diffName => "single-line '-' change followed by empty line with Unix line endings",
     inputText => <<'END',
    - *
@@ -151,6 +169,47 @@ multiple lines.
 END
     expectedReturn => ["A\nlong sentence that spans\nmultiple lines.", "   + Another\n"],
     expectedNextLine => "long sentence that spans\n",
+},
+{
+    # New test
+    diffName => "'Reverse-merged' change followed by 'Merge' change",
+    inputText => <<'END',
+   Reverse-merged /trunk/Makefile:r33020
+   Merged /trunk/Makefile:r41697
+END
+    expectedReturn => ["/trunk/Makefile:r33020", "   Merged /trunk/Makefile:r41697\n"],
+    expectedNextLine => undef,
+},
+{
+    # New test
+    diffName => "'Merged' change followed by 'Merge' change",
+    inputText => <<'END',
+   Merged /trunk/Makefile:r33020
+   Merged /trunk/Makefile.shared:r58350
+END
+    expectedReturn => ["/trunk/Makefile:r33020", "   Merged /trunk/Makefile.shared:r58350\n"],
+    expectedNextLine => undef,
+},
+{
+    # New test
+    diffName => "'Reverse-merged' change followed by 'Reverse-merged' change",
+    inputText => <<'END',
+   Reverse-merged /trunk/Makefile:r33020
+   Reverse-merged /trunk/Makefile.shared:r58350
+END
+    expectedReturn => ["/trunk/Makefile:r33020", "   Reverse-merged /trunk/Makefile.shared:r58350\n"],
+    expectedNextLine => undef,
+},
+{
+    # New test
+    diffName => "'Reverse-merged' change followed by 'Reverse-merged' change followed by 'Merged' change",
+    inputText => <<'END',
+   Reverse-merged /trunk/Makefile:r33020
+   Reverse-merged /trunk/Makefile.shared:r58350
+   Merged /trunk/ChangeLog:r64190
+END
+    expectedReturn => ["/trunk/Makefile:r33020", "   Reverse-merged /trunk/Makefile.shared:r58350\n"],
+    expectedNextLine => "   Merged /trunk/ChangeLog:r64190\n",
 },
 );
 

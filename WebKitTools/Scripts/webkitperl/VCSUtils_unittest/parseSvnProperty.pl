@@ -73,9 +73,75 @@ END
 undef],
     expectedNextLine => undef,
 },
+{
+    # New test
+    diffName => "simple: add svn:mergeinfo",
+    inputText => <<'END',
+Added: svn:mergeinfo
+   Merged /trunk/Makefile:r33020
+END
+    expectedReturn => [
+{
+    name => "svn:mergeinfo",
+    propertyChangeDelta => 1,
+    value => "/trunk/Makefile:r33020",
+},
+undef],
+    expectedNextLine => undef,
+},
+{
+    # New test
+    diffName => "simple: delete svn:mergeinfo",
+    inputText => <<'END',
+Deleted: svn:mergeinfo
+   Reverse-merged /trunk/Makefile:r33020
+END
+    expectedReturn => [
+{
+    name => "svn:mergeinfo",
+    propertyChangeDelta => -1,
+    value => "/trunk/Makefile:r33020",
+},
+undef],
+    expectedNextLine => undef,
+},
+{
+    # New test
+    diffName => "simple: modified svn:mergeinfo",
+    inputText => <<'END',
+Modified: svn:mergeinfo
+   Reverse-merged /trunk/Makefile:r33020
+   Merged /trunk/Makefile:r41697
+END
+    expectedReturn => [
+{
+    name => "svn:mergeinfo",
+    propertyChangeDelta => 1,
+    value => "/trunk/Makefile:r41697",
+},
+undef],
+    expectedNextLine => undef,
+},
 ####
 # Using SVN 1.4 syntax
 ##
+{
+    # New test
+    diffName => "simple: modified svn:mergeinfo using SVN 1.4 syntax",
+    inputText => <<'END',
+Name: svn:mergeinfo
+   Reverse-merged /trunk/Makefile:r33020
+   Merged /trunk/Makefile:r41697
+END
+    expectedReturn => [
+{
+    name => "svn:mergeinfo",
+    propertyChangeDelta => 1,
+    value => "/trunk/Makefile:r41697",
+},
+undef],
+    expectedNextLine => undef,
+},
 {
     # New test
     diffName => "simple: delete svn:executable using SVN 1.4 syntax",
@@ -458,6 +524,40 @@ END
 },
 "Added: svn:executable\n"],
     expectedNextLine => "   + *\n",
+},
+{
+    # New test
+    diffName => "'Merged' change followed by 'Merged' change",
+    inputText => <<'END',
+Added: svn:mergeinfo
+   Merged /trunk/Makefile:r33020
+   Merged /trunk/Makefile.shared:r58350
+END
+    expectedReturn => [
+{
+    name => "svn:mergeinfo",
+    propertyChangeDelta => 1,
+    value => "/trunk/Makefile.shared:r58350",
+},
+undef],
+    expectedNextLine => undef,
+},
+{
+    # New test
+    diffName => "'Reverse-merged' change followed by 'Reverse-merged' change",
+    inputText => <<'END',
+Deleted: svn:mergeinfo
+   Reverse-merged /trunk/Makefile:r33020
+   Reverse-merged /trunk/Makefile.shared:r58350
+END
+    expectedReturn => [
+{
+    name => "svn:mergeinfo",
+    propertyChangeDelta => -1,
+    value => "/trunk/Makefile.shared:r58350",
+},
+undef],
+    expectedNextLine => undef,
 },
 ####
 # Property values with trailing new lines.

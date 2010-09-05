@@ -60,6 +60,55 @@ undef],
 },
 {
     # New test
+    diffName => "simple: add svn:mergeinfo",
+    inputText => <<'END',
+Property changes on: Makefile
+___________________________________________________________________
+Added: svn:mergeinfo
+   Merged /trunk/Makefile:r33020
+END
+    expectedReturn => [
+{
+    propertyPath => "Makefile",
+},
+undef],
+    expectedNextLine => undef,
+},
+{
+    # New test
+    diffName => "simple: delete svn:mergeinfo",
+    inputText => <<'END',
+Property changes on: Makefile
+___________________________________________________________________
+Deleted: svn:mergeinfo
+   Reverse-merged /trunk/Makefile:r33020
+END
+    expectedReturn => [
+{
+    propertyPath => "Makefile",
+},
+undef],
+    expectedNextLine => undef,
+},
+{
+    # New test
+    diffName => "simple: modified svn:mergeinfo",
+    inputText => <<'END',
+Property changes on: Makefile
+___________________________________________________________________
+Modified: svn:mergeinfo
+   Reverse-merged /trunk/Makefile:r33020
+   Merged /trunk/Makefile:r41697
+END
+    expectedReturn => [
+{
+    propertyPath => "Makefile",
+},
+undef],
+    expectedNextLine => undef,
+},
+{
+    # New test
     diffName => "simple: delete svn:executable",
     inputText => <<'END',
 Property changes on: FileA

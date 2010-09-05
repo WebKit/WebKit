@@ -1,3 +1,45 @@
+2010-09-04  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Martin Robinson.
+
+        Teach svn-apply/unapply about svn:mergeinfo
+        https://bugs.webkit.org/show_bug.cgi?id=45236
+
+        Recognize the svn:mergeinfo property and ignore it for now.
+
+        Currently, svn-apply/unapply recognize only '+' and '-'
+        property changes within a diff. We should add support
+        to recognize "Merged" and "Reverse-merged" changes as well.
+        Because svn:mergeinfo is metadata that is used only by SVN
+        and tends to be error-prone and/or nuisance (*), we will ignore
+        it for now.
+        (*) See "Parting Thoughts" of <http://www.collab.net/community/subversion/articles/merge-info.html>.
+
+        * Scripts/VCSUtils.pm:
+          - Modified parseSvnProperty() to recognize "Merged" and
+            "Reverse-merged" as the start of a property value.
+        * Scripts/webkitperl/VCSUtils_unittest/parseSvnDiffFooter.pl:
+          - Added the following unit tests:
+            "simple: add svn:mergeinfo"
+            "simple: delete svn:mergeinfo"
+            "simple: modified svn:mergeinfo"
+        * Scripts/webkitperl/VCSUtils_unittest/parseSvnProperty.pl:
+          - Added the following unit tests:
+            "simple: add svn:mergeinfo"
+            "simple: delete svn:mergeinfo"
+            "simple: modified svn:mergeinfo"
+            "simple: modified svn:mergeinfo using SVN 1.4 syntax"
+            "'Merged' change followed by 'Merged' change"
+            "'Reverse-merged' change followed by 'Reverse-merged' change"
+        * Scripts/webkitperl/VCSUtils_unittest/parseSvnPropertyValue.pl:
+          - Added the following unit tests:
+            "'Merged' change"
+            "'Reverse-merged' change"
+            "'Reverse-merged' change followed by 'Merge' change"
+            "'Merged' change followed by 'Merge' change"
+            "'Reverse-merged' change followed by 'Reverse-merged' change"
+            "'Reverse-merged' change followed by 'Reverse-merged' change followed by 'Merged' change"
+
 2010-09-04  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.

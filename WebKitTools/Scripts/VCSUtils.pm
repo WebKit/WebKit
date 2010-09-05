@@ -94,7 +94,7 @@ my $gitDiffStartRegEx = qr#^diff --git (\w/)?(.+) (\w/)?([^\r\n]+)#;
 my $svnDiffStartRegEx = qr#^Index: ([^\r\n]+)#;
 my $svnPropertiesStartRegEx = qr#^Property changes on: ([^\r\n]+)#; # $1 is normally the same as the index path.
 my $svnPropertyStartRegEx = qr#^(Modified|Name|Added|Deleted): ([^\r\n]+)#; # $2 is the name of the property.
-my $svnPropertyValueStartRegEx = qr#^   (\+|-) ([^\r\n]+)#; # $2 is the start of the property's value (which may span multiple lines).
+my $svnPropertyValueStartRegEx = qr#^   (\+|-|Merged|Reverse-merged) ([^\r\n]+)#; # $2 is the start of the property's value (which may span multiple lines).
 
 # This method is for portability. Return the system-appropriate exit
 # status of a child process.
@@ -1037,9 +1037,9 @@ sub parseSvnProperty($$)
     }
 
     my $propertyChangeDelta;
-    if ($propertyValueType eq '+') {
+    if ($propertyValueType eq "+" || $propertyValueType eq "Merged") {
         $propertyChangeDelta = 1;
-    } elsif ($propertyValueType eq '-') {
+    } elsif ($propertyValueType eq "-" || $propertyValueType eq "Reverse-merged") {
         $propertyChangeDelta = -1;
     } else {
         die("Not reached.");
@@ -1093,7 +1093,7 @@ sub parseSvnPropertyValue($$)
         $propertyValue = $2; # Does not include the end-of-line character(s).
         $eol = $POSTMATCH;
     } else {
-        die("Failed to find property value beginning with '+' or '-': \"$_\".");
+        die("Failed to find property value beginning with '+', '-', 'Merged', or 'Reverse-merged': \"$_\".");
     }
 
     while (<$fileHandle>) {
