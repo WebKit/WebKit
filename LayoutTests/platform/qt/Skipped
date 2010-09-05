@@ -181,6 +181,11 @@ http/tests/security/frameNavigation/not-opener.html
 # missing origin header
 http/tests/security/originHeader/origin-header-for-empty.html
 
+# Possibly related to https://bugs.webkit.org/show_bug.cgi?id=35263
+# are we utf-encoding a string twice over?
+http/tests/security/xssAuditor/embed-tag-null-char.html
+http/tests/security/xssAuditor/object-embed-tag-null-char.html
+
 # Disabled HTTP subdirs for now, needs investigation.
 http/tests/media
 http/tests/wml
