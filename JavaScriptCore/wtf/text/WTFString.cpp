@@ -335,7 +335,7 @@ String String::format(const char *format, ...)
 
     va_end(args);
 
-    return buffer;
+    return StringImpl::create(buffer.constData(), buffer.length());
 
 #elif OS(WINCE)
     va_list args;

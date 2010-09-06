@@ -1,3 +1,24 @@
+2010-09-06  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] utf8 encoding of console() messages
+
+        Unskip:
+        http/tests/security/xssAuditor/embed-tag-null-char.html
+        http/tests/security/xssAuditor/object-embed-tag-null-char.html
+
+        Both tests failed because Qt's implementation of String::format()
+        is casting a utf8 result to String, which assumes latin1 in
+        its constructor. So instead of casting a QString to a String, use
+        StringImpl::create() instead. Unfortunately, this involves a lot
+        of extra casts but the end result is correct.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45240
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::format):
+
 2010-09-03  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
