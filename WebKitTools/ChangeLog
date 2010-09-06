@@ -1,3 +1,21 @@
+2010-09-06  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] EventSender should support modifier keys with mouseDown and mouseUp events
+        https://bugs.webkit.org/show_bug.cgi?id=45235
+
+        Add support for interpreting the modifier key arguments to the mouseDown and mouseUp
+        methods of the EventSender.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (prepareMouseButtonEvent): Allow passing in a modifier bitmask, which will be OR'd
+        with the current modifiers.
+        (contextClickCallback): Always send no modifiers when preparing the mouse event.
+        (gdkModifersFromJSValue): Added, converts a JSValue array into a GDK modifier bitmask.
+        (mouseDownCallback): Send in the requested modifiers to prepareMouseButtonEvent.
+        (mouseUpCallback): Ditto.
+
 2010-09-05  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Adam Barth.

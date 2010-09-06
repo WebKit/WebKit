@@ -1,5 +1,14 @@
 2010-09-06  Martin Robinson  <mrobinson@igalia.com>
 
+        Reviewed by Xan Lopez.
+
+        [GTK] EventSender should support modifier keys with mouseDown and mouseUp events
+        https://bugs.webkit.org/show_bug.cgi?id=45235
+
+        * platform/gtk/Skipped: Unskip a test which is now passing.
+
+2010-09-06  Martin Robinson  <mrobinson@igalia.com>
+
         Reviewed by Antonio Gomes.
 
         Convert editing/selection/shift-click.html to use setEditingBehavior

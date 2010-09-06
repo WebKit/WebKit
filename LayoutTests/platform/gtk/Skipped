@@ -5562,9 +5562,6 @@ inspector/timeline-parse-html.html
 # https://bugs.webkit.org/show_bug.cgi?id=38569
 http/tests/workers/text-encoding.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=38656
-editing/selection/shift-click.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=31302
 fast/css/font-face-woff.html 
 
