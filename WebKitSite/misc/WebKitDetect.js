@@ -101,7 +101,7 @@ WebKitDetect.versionIsAtLeast = function versionIsAtLeast(minimumString)
 
 WebKitDetect.isMobile = function isMobile()
 {
-    return WebKitDetect.isWebKit() && RegExp(" Mobile/").test(navigator.userAgent);
+    return WebKitDetect.isWebKit() && RegExp(" Mobile\\b").test(navigator.userAgent);
 }
 
 WebKitDetect.mobileDevice = function mobileDevice()

@@ -1,3 +1,18 @@
+2010-09-06  Robin Qiu  <robin.qiu@torchmobile.com.cn>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43982
+        This js file seems to be a popular script for detecting mobile WebKit but
+        it has a flaw that makes it fail on Android and BlackBerry.  
+
+        The issue is that it looks for "Mobile/" but Android and BlackBerry
+        use "Mobile" with no numbering after it.
+        Changed RegExp pattern " Mobile/" to " Mobile\\b".
+
+        * misc/WebKitDetect.js:
+        (WebKitDetect.isMobile):
+
 2010-08-27  Darin Adler  <darin@apple.com>
 
         * coding/RefPtr.html: Minor revision, improve clarity and mention some
