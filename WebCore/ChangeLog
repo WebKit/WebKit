@@ -1,3 +1,16 @@
+2010-09-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Dirk Schulze.
+
+        [WML] Use RenderImageResource in WMLImageElement.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=44952
+
+        The hasImage() and setCachedImage() were moved to RenderImageResource class. 
+        So, WML also should use the functions from RenderImageResource.
+
+        * wml/WMLImageElement.cpp:
+        (WebCore::WMLImageElement::attach):
+
 2010-08-26  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.
