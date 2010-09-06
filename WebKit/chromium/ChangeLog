@@ -1,3 +1,15 @@
+2010-09-06  Jonathan Dixon  <joth@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Add new interface and empty impl. as precursor to bug 45112
+        https://bugs.webkit.org/show_bug.cgi?id=45257
+
+        * public/WebGeolocationServiceBridge.h:
+        (WebKit::WebGeolocationServiceBridge::~WebGeolocationServiceBridge):
+        * src/WebGeolocationServiceBridgeImpl.cpp:
+        (WebKit::WebGeolocationServiceBridgeImpl::onWebGeolocationServiceDestroyed):
+
 2010-09-06  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

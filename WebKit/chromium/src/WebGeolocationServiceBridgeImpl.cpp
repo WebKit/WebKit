@@ -79,6 +79,7 @@ public:
     virtual void setIsAllowed(bool allowed);
     virtual void setLastPosition(double latitude, double longitude, bool providesAltitude, double altitude, double accuracy, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed, long long timestamp);
     virtual void setLastError(int errorCode, const WebString& message);
+    virtual void onWebGeolocationServiceDestroyed();
 
 private:
     WebViewClient* getWebViewClient();
@@ -174,6 +175,10 @@ WebViewClient* WebGeolocationServiceBridgeImpl::getWebViewClient()
     WebKit::ChromeClientImpl* chromeClientImpl = static_cast<WebKit::ChromeClientImpl*>(frame->page()->chrome()->client());
     WebKit::WebViewClient* webViewClient = chromeClientImpl->webView()->client();
     return webViewClient;
+}
+
+void WebGeolocationServiceBridgeImpl::onWebGeolocationServiceDestroyed()
+{
 }
 
 } // namespace WebKit

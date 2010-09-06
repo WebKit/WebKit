@@ -47,6 +47,10 @@ public:
     virtual void setIsAllowed(bool allowed) = 0;
     virtual void setLastPosition(double latitude, double longitude, bool providesAltitude, double altitude, double accuracy, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed, long long timestamp) = 0;
     virtual void setLastError(int errorCode, const WebString& message) = 0;
+    virtual void onWebGeolocationServiceDestroyed() = 0;
+
+protected:
+    virtual ~WebGeolocationServiceBridge() {}
 };
 
 } // namespace WebKit
