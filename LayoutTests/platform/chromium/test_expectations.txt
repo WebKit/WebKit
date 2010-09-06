@@ -850,6 +850,22 @@ BUG10284 MAC : svg/custom/path-bad-data.svg = FAIL
 // (wrong baseline was committed). No idea about when it really started to fail.
 BUG52692 WIN LINUX : svg/W3C-SVG-1.1/animate-elem-80-t.svg = IMAGE+TEXT
 
+// New in WK r65880, some probably just need rebaselining, others have real diffs
+BUGWK44514 : svg/clip-path/clip-in-mask-objectBoundingBox.svg = IMAGE
+BUGWK44514 : svg/clip-path/clip-in-mask-userSpaceOnUse.svg = IMAGE
+BUGWK44514 : svg/clip-path/clip-in-mask.svg = IMAGE
+BUGWK44514 : svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg = IMAGE+TEXT
+BUGWK44514 : svg/clip-path/deep-nested-clip-in-mask-panning.svg = IMAGE+TEXT
+BUGWK44514 : svg/clip-path/deep-nested-clip-in-mask.svg = IMAGE+TEXT
+BUGWK44514 : svg/clip-path/nested-clip-in-mask-image-based-clipping.svg = IMAGE
+BUGWK44514 : svg/clip-path/nested-clip-in-mask-path-and-image-based-clipping.svg = IMAGE
+BUGWK44514 : svg/clip-path/nested-clip-in-mask-path-based-clipping.svg = IMAGE
+// Rebaselined in WK r65874, Linux has missing lines
+BUGWK44514 LINUX WIN : svg/custom/missing-xlink.svg = TEXT
+// Also fail since WK roll 65859:65885
+BUGWK44514 MAC : fast/backgrounds/svg-as-background-6.html = IMAGE
+BUGWK44514 MAC : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
+
 // -----------------------------------------------------------------
 // End SVG Regressions
 // -----------------------------------------------------------------

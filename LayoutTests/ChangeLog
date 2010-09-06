@@ -1,3 +1,9 @@
+2010-09-06  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Unreviewed: upstream Chromium SVG test_expectations
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-06  Adam Barth  <abarth@webkit.org>
 
         Update expected results to match change in test.  Qt's behavior is
