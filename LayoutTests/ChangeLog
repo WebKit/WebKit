@@ -1,3 +1,15 @@
+2010-09-06  Shane Stephens  <shanestephens@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Crash] <animateMotion> element directly inside <symbol> element causes crash when referenced by <use>
+        https://bugs.webkit.org/show_bug.cgi?id=44750
+
+        Added test case to demonstrate crash bug.
+
+        * svg/dom/symbol-embeddedAnimation-expected.txt: Added.
+        * svg/dom/symbol-embeddedAnimation.svg: Added.
+
 2010-09-06  Martin Robinson  <mrobinson@igalia.com>
 
         Unskip a couple of plugin tests which are now passing.
