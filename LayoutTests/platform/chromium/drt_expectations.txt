@@ -20,7 +20,7 @@ BUG_DRT LINUX : fast/speech/input-appearance-searchandspeech.html = MISSING
 BUG_DRT LINUX : fast/speech/input-appearance-speechbutton.html = MISSING
 
 // Blob-related failures
-BUG_DRT WIN LINUX : fast/files/apply-blob-url-to-img.html = TIMEOUT
+BUG_DRT WIN MAC LINUX : fast/files/apply-blob-url-to-img.html = TIMEOUT
 BUG_DRT WIN MAC LINUX : fast/files/apply-blob-url-to-xhr.html = TEXT
 BUG_DRT WIN MAC LINUX : fast/files/read-blob-async.html = TEXT
 BUG_DRT WIN MAC LINUX : fast/files/read-file-async.html = TEXT
@@ -41,12 +41,15 @@ BUG_DRT WIN DEBUG SLOW : inspector = PASS
 
 
 // WebGL tests sometimes fail only on the buildbot.
+BUG_DRT MAC : fast/canvas/webgl/bad-arguments-test.html = TEXT
 BUG_DRT MAC : fast/canvas/webgl/buffer-bind-test.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/buffer-data-array-buffer.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/canvas-test.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/context-attributes.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/copy-tex-image-and-sub-image-2d.html = TEXT PASS
+BUG_DRT MAC : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE+TEXT
+BUG_DRT MAC : fast/canvas/webgl/css-webkit-canvas.html = IMAGE+TEXT
 BUG_DRT MAC : fast/canvas/webgl/draw-arrays-out-of-bounds.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/draw-elements-out-of-bounds.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/error-reporting.html = TEXT PASS
@@ -91,8 +94,6 @@ BUG_DRT MAC : fast/canvas/webgl/texture-npot.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/texture-transparent-pixels-initialized.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/triangle.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/viewport-unchanged-upon-resize.html = TEXT PASS
-BUG_DRT MAC : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE+TEXT
-BUG_DRT MAC : fast/canvas/webgl/css-webkit-canvas.html = IMAGE+TEXT
 
 // Misc.
 BUG_DRT MAC : fast/backgrounds/solid-color-context-restore.html = IMAGE
@@ -120,7 +121,6 @@ BUG_DRT WIN : plugins/embed-attributes-setting.html = TEXT
 BUG_DRT WIN : plugins/embed-attributes-style.html = IMAGE
 BUG_DRT LINUX : plugins/embed-attributes-style.html = IMAGE+TEXT
 BUG_DRT WIN MAC LINUX : storage/domstorage/quota.html = TEXT
-BUG_DRT WIN MAC LINUX : svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop.html = IMAGE+TEXT
 BUG_DRT WIN MAC LINUX : userscripts/user-script-top-frame-only.html = TEXT
 BUG_DRT MAC : fast/events/standalone-image-drag-to-editable.html = IMAGE+TEXT
 BUG_DRT LINUX : editing/pasteboard/drag-image-in-about-blank-frame.html = CRASH
@@ -154,6 +154,7 @@ BUG_DRT LINUX : svg/W3C-SVG-1.1/pservers-grad-13-b.svg = IMAGE
 BUG_DRT LINUX : svg/batik/text/verticalText.svg = IMAGE+TEXT
 BUG_DRT LINUX : svg/custom/pattern-excessive-malloc.svg = IMAGE PASS
 BUG_DRT LINUX : svg/custom/radial-gradient-with-outstanding-focalPoint.svg = IMAGE
+BUG_DRT LINUX : svg/dynamic-updates/SVGFEDiffuseLightingElement-lighting-color-css-prop.html = IMAGE
 BUG_DRT LINUX : svg/hixie/perf/001.xml = TEXT
 BUG_DRT LINUX : svg/hixie/perf/002.xml = TEXT
 BUG_DRT LINUX : svg/zoom/page/zoom-coords-viewattr-01-b.svg = IMAGE

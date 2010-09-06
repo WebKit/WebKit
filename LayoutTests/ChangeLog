@@ -2,6 +2,12 @@
 
         Unreviewed, test expectation update.
 
+        * platform/chromium/drt_expectations.txt: Apply recent failures.
+
+2010-09-05  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
         Add svg/dynamic-update/ image results for Chromium-win and Chromium-linux.
 
         * platform/chromium-linux/svg/dynamic-updates/SVGCircleElement-dom-cx-attr-expected.checksum: Added.
