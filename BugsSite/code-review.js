@@ -73,7 +73,9 @@
 
     var comment_block = $('<div class="comment"><textarea data-comment-for="' + line.attr('id') + '"></textarea><div class="actions"><button class="ok">Ok</button><button class="cancel">Cancel</button></div></div>');
     insertCommentFor(line, comment_block);
-    comment_block.children('textarea').focus();
+    comment_block.hide().slideDown('fast', function() {
+      $(this).children('textarea').focus();
+    });
   }
 
   function addCommentField() {
@@ -192,9 +194,11 @@
   function cancelComment() {
     var line_id = $(this).parentsUntil('.comment').parent().find('textarea').attr('data-comment-for');
     var line = $('#' + line_id)
-    findCommentBlockFor(line).remove();
-    line.removeAttr('data-has-comment');
-    trimCommentContextToBefore(line);
+    findCommentBlockFor(line).slideUp('fast', function() {
+      $(this).remove();
+      line.removeAttr('data-has-comment');
+      trimCommentContextToBefore(line);
+    });
   }
 
   function unfreezeComment() {
