@@ -739,6 +739,7 @@
                         'tests/KeyboardTest.cpp',
                         'tests/KURLTest.cpp',
                         'tests/PODArenaTest.cpp',
+                        'tests/PODIntervalTreeTest.cpp',
                         'tests/PODRedBlackTreeTest.cpp',
                         'tests/RunAllTests.cpp',
                         'tests/TilingDataTest.cpp',
