@@ -96,6 +96,8 @@ static WebKitWebHistoryItem* prevTestBFItem = NULL;
 
 const unsigned historyItemIndent = 8;
 
+static void runTest(const string& testPathOrURL);
+
 static bool shouldLogFrameLoadDelegates(const string& pathOrURL)
 {
     return pathOrURL.find("loading/") != string::npos;
@@ -128,10 +130,12 @@ static void appendString(gchar*& target, gchar* string)
     g_free(oldString);
 }
 
-#if PLATFORM(X11)
 static void initializeFonts()
 {
+#if PLATFORM(X11)
     static int numFonts = -1;
+
+    FcInit();
 
     // Some tests may add or remove fonts via the @font-face rule.
     // If that happens, font config should be re-created to suppress any unwanted change.
@@ -160,8 +164,8 @@ static void initializeFonts()
 
     appFontSet = FcConfigGetFonts(config, FcSetApplication);
     numFonts = appFontSet->nfont;
-}
 #endif
+}
 
 static gchar* dumpFramesAsText(WebKitWebFrame* frame)
 {
@@ -357,6 +361,50 @@ static void resetDefaultsToConsistentValues()
     setlocale(LC_ALL, "");
 }
 
+static bool useLongRunningServerMode(int argc, char *argv[])
+{
+    // This assumes you've already called getopt_long
+    return (argc == optind+1 && !strcmp(argv[optind], "-"));
+}
+
+static void runTestingServerLoop()
+{
+    // When DumpRenderTree runs in server mode, we just wait around for file names
+    // to be passed to us and read each in turn, passing the results back to the client
+    char filenameBuffer[2048];
+    while (fgets(filenameBuffer, sizeof(filenameBuffer), stdin)) {
+        char* newLineCharacter = strchr(filenameBuffer, '\n');
+        if (newLineCharacter)
+            *newLineCharacter = '\0';
+
+        if (!strlen(filenameBuffer))
+            continue;
+
+        runTest(filenameBuffer);
+    }
+}
+
+static void initializeGlobalsFromCommandLineOptions(int argc, char *argv[])
+{
+    struct option options[] = {
+        {"notree", no_argument, &dumpTree, false},
+        {"pixel-tests", no_argument, &dumpPixels, true},
+        {"tree", no_argument, &dumpTree, true},
+        {NULL, 0, NULL, 0}
+    };
+    
+    int option;
+    while ((option = getopt_long(argc, (char * const *)argv, "", options, NULL)) != -1) {
+        switch (option) {
+        case '?': // unknown or ambiguous option
+        case ':': // missing argument
+            exit(1);
+            break;
+        }
+    }
+}
+
+
 void dump()
 {
     invalidateAnyPreviousWaitToDumpWatchdog();
@@ -516,9 +564,7 @@ static void runTest(const string& testPathOrURL)
     if (prevTestBFItem)
         g_object_ref(prevTestBFItem);
 
-#if PLATFORM(X11)
     initializeFonts();
-#endif
 
     // Focus the web view before loading the test to avoid focusing problems
     gtk_widget_grab_focus(GTK_WIDGET(webView));
@@ -941,26 +987,8 @@ int main(int argc, char* argv[])
     // We squelch all debug messages sent to the logger.
     g_log_set_default_handler(logHandler, 0);
 
-#if PLATFORM(X11)
-    FcInit();
+    initializeGlobalsFromCommandLineOptions(argc, argv);
     initializeFonts();
-#endif
-
-    struct option options[] = {
-        {"notree", no_argument, &dumpTree, false},
-        {"pixel-tests", no_argument, &dumpPixels, true},
-        {"tree", no_argument, &dumpTree, true},
-        {NULL, 0, NULL, 0}
-    };
-
-    int option;
-    while ((option = getopt_long(argc, (char* const*)argv, "", options, NULL)) != -1)
-        switch (option) {
-            case '?':   // unknown or ambiguous option
-            case ':':   // missing argument
-                exit(1);
-                break;
-        }
 
     window = gtk_window_new(GTK_WINDOW_POPUP);
     container = GTK_WIDGET(gtk_scrolled_window_new(NULL, NULL));
@@ -980,19 +1008,9 @@ int main(int argc, char* argv[])
     gcController = new GCController();
     axController = new AccessibilityController();
 
-    if (argc == optind+1 && strcmp(argv[optind], "-") == 0) {
-        char filenameBuffer[2048];
+    if (useLongRunningServerMode(argc, argv)) {
         printSeparators = true;
-        while (fgets(filenameBuffer, sizeof(filenameBuffer), stdin)) {
-            char* newLineCharacter = strchr(filenameBuffer, '\n');
-            if (newLineCharacter)
-                *newLineCharacter = '\0';
-
-            if (strlen(filenameBuffer) == 0)
-                continue;
-
-            runTest(filenameBuffer);
-        }
+        runTestingServerLoop();
     } else {
         printSeparators = (optind < argc-1 || (dumpPixels && dumpTree));
         for (int i = optind; i != argc; ++i)

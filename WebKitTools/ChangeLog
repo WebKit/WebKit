@@ -2,6 +2,22 @@
 
         Reviewed by Xan Lopez.
 
+        [GTK] Small code cleanup in DumpRenderTreeGtk.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=45213
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (initializeFonts): Made this function do nothing for non-X11 platforms, so we don't
+        have to surround the invocation with #ifdefs.
+        (useLongRunningServerMode): Added.
+        (runTestingServerLoop): Added.
+        (initializeGlobalsFromCommandLineOptions): Added.
+        (runTest): Removed ifdefs.
+        (main): Use new helper functions.
+
+2010-09-06  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
         [GTK] EventSender should support modifier keys with mouseDown and mouseUp events
         https://bugs.webkit.org/show_bug.cgi?id=45235
 
