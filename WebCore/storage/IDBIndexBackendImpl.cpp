@@ -30,7 +30,7 @@
 
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBObjectStoreBackendImpl.h"
-#include "SQLiteDatabase.h"
+#include "SQLiteStatement.h"
 
 namespace WebCore {
 
@@ -45,6 +45,31 @@ IDBIndexBackendImpl::IDBIndexBackendImpl(IDBObjectStoreBackendImpl* objectStore,
 
 IDBIndexBackendImpl::~IDBIndexBackendImpl()
 {
+}
+
+static String whereClause(IDBKey* key)
+{
+    return "WHERE indexId = ?  AND  " + key->whereSyntax();
+}
+
+static void bindWhereClause(SQLiteStatement& query, int64_t id, IDBKey* key)
+{
+    query.bindInt64(1, id);
+    key->bind(query, 2);
+}
+
+bool IDBIndexBackendImpl::addingKeyAllowed(IDBKey* key)
+{
+    if (!m_unique)
+        return true;
+
+    SQLiteStatement query(sqliteDatabase(), "SELECT id FROM IndexData " + whereClause(key));
+    bool ok = query.prepare() == SQLResultOk;
+    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
+    bindWhereClause(query, m_id, key);
+    bool existingValue = query.step() == SQLResultRow;
+
+    return !existingValue;
 }
 
 SQLiteDatabase& IDBIndexBackendImpl::sqliteDatabase() const

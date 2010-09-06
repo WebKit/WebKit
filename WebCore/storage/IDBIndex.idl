@@ -28,11 +28,16 @@ module storage {
     interface [
         Conditional=INDEXED_DATABASE
     ] IDBIndex {
-        // FIXME: Complete this file.
-
         readonly attribute DOMString name;
+        // FIXME: Add "storeName".
         readonly attribute DOMString keyPath;
         readonly attribute boolean unique;
+
+        // FIXME: Implement.
+        //IDBRequest openObjectCursor(in [Optional] IDBKeyRange range, in [Optional] unsigned short direction) raises (DOMException);
+        //IDBRequest openCursor(in [Optional] IDBKeyRange range, in [Optional] unsigned short direction) raises (DOMException);
+        //IDBRequest getObject(in IDBKey key) raises (DOMException);
+        //IDBRequest get(in IDBKey key) raises (DOMException);
     };
 
 }

@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+class SQLiteStatement;
+
 // FIXME: Add dates.
 class IDBKey : public RefCounted<IDBKey> {
 public:
@@ -72,6 +74,9 @@ public:
     }
 
     bool isEqual(IDBKey* other);
+    String whereSyntax() const;
+    int bind(SQLiteStatement& query, int column) const;
+    void bindWithNulls(SQLiteStatement& query, int baseColumn) const;
 
 private:
     IDBKey();

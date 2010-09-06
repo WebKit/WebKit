@@ -1,3 +1,49 @@
+2010-08-26  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Add index insertion support to IndexedDB.
+        https://bugs.webkit.org/show_bug.cgi?id=44695
+
+        Whenever you insert an item into an ObjectStore, it should use all
+        indexes' key paths to insert corresponding entries into each index.
+        Also data should be deleted out of the index when it goes away.
+
+        Not much testing yet since there's no way to directly observe indexes.
+        More will be in next patch.
+
+        * storage/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::removeObjectStore):
+        * storage/IDBFactoryBackendImpl.cpp:
+        (WebCore::createTables):
+        * storage/IDBIndex.idl:
+        * storage/IDBIndexBackendImpl.cpp:
+        (WebCore::whereClause):
+        (WebCore::bindWhereClause):
+        (WebCore::IDBIndexBackendImpl::addingKeyAllowed):
+        * storage/IDBIndexBackendImpl.h:
+        (WebCore::IDBIndexBackendImpl::id):
+        * storage/IDBKey.cpp:
+        (WebCore::IDBKey::whereSyntax):
+        (WebCore::IDBKey::bind):
+        (WebCore::IDBKey::bindWithNulls):
+        * storage/IDBKey.h:
+        * storage/IDBObjectStore.idl:
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::whereClause):
+        (WebCore::bindWhereClause):
+        (WebCore::IDBObjectStoreBackendImpl::get):
+        (WebCore::fetchKeyFromKeyPath):
+        (WebCore::putObjectStoreData):
+        (WebCore::putIndexData):
+        (WebCore::IDBObjectStoreBackendImpl::put):
+        (WebCore::IDBObjectStoreBackendImpl::remove):
+        (WebCore::IDBObjectStoreBackendImpl::createIndex):
+        (WebCore::doDelete):
+        (WebCore::IDBObjectStoreBackendImpl::removeIndex):
+        (WebCore::IDBObjectStoreBackendImpl::openCursor):
+        * storage/IDBObjectStoreBackendImpl.h:
+
 2010-09-06  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Adam Barth.

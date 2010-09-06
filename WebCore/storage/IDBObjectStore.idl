@@ -28,10 +28,8 @@ module storage {
     interface [
         Conditional=INDEXED_DATABASE
     ] IDBObjectStore {
+        // FIXME: Many of these should raise on certain errors.
         [CallWith=ScriptExecutionContext] IDBRequest get(in IDBKey key);        
-        // FIXME: Come to concensus re getAll.
-        // FIXME: SerializedScriptValue raises an exception if you pass in something that can't be serialized.
-        //        We need to instead "raise" this error via an error callback.
         [CallWith=ScriptExecutionContext] IDBRequest add(in SerializedScriptValue value, in [Optional] IDBKey key);
         [CallWith=ScriptExecutionContext] IDBRequest put(in SerializedScriptValue value, in [Optional] IDBKey key);
         [CallWith=ScriptExecutionContext] IDBRequest remove(in IDBKey key);

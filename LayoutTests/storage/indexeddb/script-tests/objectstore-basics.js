@@ -35,9 +35,21 @@ function createSuccess()
     shouldBeNull("store.keyPath");
     shouldBe("storeNames.contains('storeName')", "true");
     shouldBe("storeNames.length", "1");
-    // FIXME: test store.indexNames, as well as all object store's methods.
+    // FIXME: test all of object store's methods.
 
-    result = evalAndLog("store.add('value', 'key')");
+    result = evalAndLog("event.result.createIndex('indexName', 'x')");
+    verifyResult(result);
+    result.onsuccess = addIndexSuccess;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function addIndexSuccess()
+{
+    debug("addIndexSuccess():");
+    verifySuccessEvent(event);
+    shouldBeTrue("event.source.indexNames.contains('indexName')");
+
+    result = evalAndLog("event.source.add({x: 'value'}, 'key')");
     verifyResult(result);
     result.onsuccess = addSuccess;
     result.onerror = unexpectedErrorCallback;
@@ -60,7 +72,7 @@ function getSuccess()
 {
     debug("getSuccess():");
     verifySuccessEvent(event);
-    shouldBeEqualToString("event.result", "value");
+    shouldBeEqualToString("event.result.x", "value");
     var store = evalAndLog("store = event.source");
 
     result = evalAndLog("store.remove('key')");

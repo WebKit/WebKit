@@ -1,3 +1,15 @@
+2010-08-26  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Add index insertion support to IndexedDB.
+        https://bugs.webkit.org/show_bug.cgi?id=44695
+
+        Add asserts on the [] operator.
+
+        * public/WebVector.h:
+        (WebKit::WebVector::operator[]):
+
 2010-09-06  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Adam Barth.

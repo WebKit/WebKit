@@ -1,3 +1,16 @@
+2010-08-26  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Add index insertion support to IndexedDB.
+        https://bugs.webkit.org/show_bug.cgi?id=44695
+
+        * storage/indexeddb/objectstore-basics-expected.txt:
+        * storage/indexeddb/script-tests/objectstore-basics.js:
+        (createSuccess):
+        (addIndexSuccess):
+        (getSuccess):
+
 2010-09-06  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skipping a crashing media test.

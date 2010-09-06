@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "SQLiteStatement.h"
 #include "SerializedScriptValue.h"
 
 namespace WebCore {
@@ -70,6 +71,63 @@ bool IDBKey::isEqual(IDBKey* other)
 
     ASSERT_NOT_REACHED();
     return false;
+}
+
+String IDBKey::whereSyntax() const
+{
+    switch (m_type) {
+    case IDBKey::StringType:
+        return "keyString = ?";
+    case IDBKey::NumberType:
+        return "keyNumber = ?";
+    // FIXME: Implement date.
+    case IDBKey::NullType:
+        return "keyString IS NULL  AND  keyDate IS NULL  AND  keyNumber IS NULL";
+    }
+
+    ASSERT_NOT_REACHED();
+    return "";
+}
+
+// Returns the number of items bound.
+int IDBKey::bind(SQLiteStatement& query, int column) const
+{
+    switch (m_type) {
+    case IDBKey::StringType:
+        query.bindText(column, m_string);
+        return 1;
+    case IDBKey::NumberType:
+        query.bindInt(column, m_number);
+        return 1;
+    case IDBKey::NullType:
+        return 0;
+    }
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+void IDBKey::bindWithNulls(SQLiteStatement& query, int baseColumn) const
+{
+    switch (m_type) {
+    case IDBKey::StringType:
+        query.bindText(baseColumn + 0, m_string);
+        query.bindNull(baseColumn + 1);
+        query.bindNull(baseColumn + 2);
+        break;
+    case IDBKey::NumberType:
+        query.bindNull(baseColumn + 0);
+        query.bindNull(baseColumn + 1);
+        query.bindInt(baseColumn + 2, m_number);
+        break;
+    case IDBKey::NullType:
+        query.bindNull(baseColumn + 0);
+        query.bindNull(baseColumn + 1);
+        query.bindNull(baseColumn + 2);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
 }
 
 } // namespace WebCore

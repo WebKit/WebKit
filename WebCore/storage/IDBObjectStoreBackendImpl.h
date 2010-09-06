@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class IDBDatabaseBackendImpl;
+class IDBIndexBackendImpl;
 class SQLiteDatabase;
 
 class IDBObjectStoreBackendImpl : public IDBObjectStoreBackendInterface {
@@ -75,7 +76,7 @@ private:
     String m_keyPath;
     bool m_autoIncrement;
 
-    typedef HashMap<String, RefPtr<IDBIndexBackendInterface> > IndexMap;
+    typedef HashMap<String, RefPtr<IDBIndexBackendImpl> > IndexMap;
     IndexMap m_indexes;
 };
 
