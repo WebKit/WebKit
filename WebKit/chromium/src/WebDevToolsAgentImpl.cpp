@@ -239,11 +239,6 @@ void WebDevToolsAgentImpl::didClearWindowObject(WebFrameImpl* webframe)
     DebuggerAgentManager::setHostId(webframe, m_hostId);
 }
 
-void WebDevToolsAgentImpl::forceRepaint()
-{
-    m_client->forceRepaint();
-}
-
 void WebDevToolsAgentImpl::dispatchOnInspectorBackend(const WebString& message)
 {
     inspectorController()->inspectorBackendDispatcher()->dispatch(message);

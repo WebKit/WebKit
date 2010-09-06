@@ -44,9 +44,6 @@ public:
     virtual void sendDebuggerOutput(const WebString&) { }
     virtual void sendDispatchToAPU(const WebString&) { }
 
-    // Invalidates widget which leads to the repaint.
-    virtual void forceRepaint() { }
-
     // Returns the identifier of the entity hosting this agent.
     virtual int hostIdentifier() { return -1; }
 

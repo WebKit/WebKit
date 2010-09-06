@@ -60,7 +60,6 @@ DebuggerAgentImpl::~DebuggerAgentImpl()
 void DebuggerAgentImpl::debuggerOutput(const String& command)
 {
     m_webdevtoolsAgentClient->sendDebuggerOutput(command);
-    m_webdevtoolsAgent->forceRepaint();
 }
 
 WebCore::Page* DebuggerAgentImpl::page()

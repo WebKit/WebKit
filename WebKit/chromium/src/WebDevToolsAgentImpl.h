@@ -99,8 +99,6 @@ public:
     virtual void timelineProfilerWasStopped();
     virtual bool sendMessageToFrontend(const WTF::String&);
 
-    void forceRepaint();
-
     int hostId() { return m_hostId; }
 
 private:

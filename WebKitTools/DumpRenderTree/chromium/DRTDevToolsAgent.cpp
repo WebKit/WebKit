@@ -69,10 +69,6 @@ void DRTDevToolsAgent::sendMessageToInspectorFrontend(const WebKit::WebString& d
          m_drtDevToolsClient->asyncCall(DRTDevToolsCallArgs(data));
 }
 
-void DRTDevToolsAgent::forceRepaint()
-{
-}
-
 void DRTDevToolsAgent::runtimePropertyChanged(const WebKit::WebString& name, const WebKit::WebString& value)
 {
     // FIXME: Implement.

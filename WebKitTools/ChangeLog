@@ -1,3 +1,13 @@
+2010-09-05  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Joseph Pecoraro.
+
+        Web Inspector: remove WebDevToolsAgentClient::forceRepaint which is not used
+        https://bugs.webkit.org/show_bug.cgi?id=45179
+
+        * DumpRenderTree/chromium/DRTDevToolsAgent.cpp:
+        * DumpRenderTree/chromium/DRTDevToolsAgent.h:
+
 2010-09-05  Andreas Kling  <andreas.kling@nokia.com>
 
         Rubber-stamped by Daniel Bates.

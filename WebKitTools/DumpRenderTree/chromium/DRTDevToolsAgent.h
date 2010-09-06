@@ -61,7 +61,6 @@ public:
     // WebDevToolsAgentClient implementation.
     virtual void sendMessageToInspectorFrontend(const WebKit::WebString&);
     virtual int hostIdentifier() { return m_routingID; }
-    virtual void forceRepaint();
     virtual void runtimePropertyChanged(const WebKit::WebString& name, const WebKit::WebString& value);
     virtual WebKit::WebCString debuggerScriptSource();
     virtual WebKitClientMessageLoop* createClientMessageLoop();
