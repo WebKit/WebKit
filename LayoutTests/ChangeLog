@@ -1,3 +1,14 @@
+2010-09-06  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Provide Keyboard Events to Windowless plugins
+        https://bugs.webkit.org/show_bug.cgi?id=44613
+
+        Unskip passing test.
+
+        * platform/gtk/Skipped:
+
 2010-09-06  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
