@@ -1,3 +1,19 @@
+2010-09-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [reviewtool] Add an "ok" button that collapses review comments
+        https://bugs.webkit.org/show_bug.cgi?id=45255
+
+        Many folks (including myself) are too trigger-happy with the "delete"
+        button that we end up deleting perfectly good review comments.  This
+        patch adds an "ok" button to absorb these clicks (and renames "delete"
+        to "cancel").  When you click the ok button, the comment becomes
+        non-editable and the box shrinks to fit the text.  You can click the
+        text to get back to the editable version.
+
+        * code-review.js:
+
 2010-08-31  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -67,7 +67,7 @@
     line.attr('data-has-comment', 'true');
     line.addClass('commentContext');
 
-    var comment_block = $('<div class="comment"><textarea data-comment-for="' + line.attr('id') + '"></textarea><div class="actions"><button class="delete">Delete</button></div></div>');
+    var comment_block = $('<div class="comment"><textarea data-comment-for="' + line.attr('id') + '"></textarea><div class="actions"><button class="ok">Ok</button><button class="cancel">Cancel</button></div></div>');
     insertCommentFor(line, comment_block);
     comment_block.children('textarea').focus();
   }
@@ -184,12 +184,24 @@
     $(document.body).prepend('<div id="comment_form" class="inactive"><div class="winter"></div><div class="lightbox"><iframe src="attachment.cgi?id=' + attachment_id + '&action=reviewform"></iframe></div></div>');
   });
 
-  $('.comment .delete').live('click', function() {
+  $('.comment .cancel').live('click', function() {
     var line_id = $(this).parentsUntil('.comment').parent().find('textarea').attr('data-comment-for');
     var line = $('#' + line_id)
     findCommentBlockFor(line).remove();
     line.removeAttr('data-has-comment');
     trimCommentContextToBefore(line);
+  });
+
+  $('.comment .ok').live('click', function() {
+    var comment_textarea = $(this).parentsUntil('.comment').parent().find('textarea');
+    var line_id = comment_textarea.attr('data-comment-for');
+    var line = $('#' + line_id)
+    findCommentBlockFor(line).hide().after($('<div class="frozen-comment"></div>').text(comment_textarea.val()));
+  });
+
+  $('.frozen-comment').live('click', function() {
+    $(this).prev().show();
+    $(this).remove();
   });
 
   function focusOn(comment) {
