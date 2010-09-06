@@ -1,3 +1,26 @@
+2010-09-06  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] ScrollbarThemeGtk should support secondary steppers
+        https://bugs.webkit.org/show_bug.cgi?id=44791
+
+        Add support to ScrollbarThemeGtk for drawing alternate steppers. Adjust
+        the algorithms for calculating forward and back button rects, if they
+        are active in the theme. Expose this information via GtkScrollbarMetrics.
+
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::ScrollbarThemeGtk::updateThemeProperties): Access the secondary stepper properties
+        of GtkScrollbarMetrics when updating the style cache.
+        (WebCore::ScrollbarThemeGtk::backButtonRect): Account for alternate steppers.
+        (WebCore::ScrollbarThemeGtk::forwardButtonRect): Ditto.
+        (WebCore::ScrollbarThemeGtk::trackRect): Ditto.
+        (WebCore::ScrollbarThemeGtk::paintButton): Ditto.
+        * platform/gtk/ScrollbarThemeGtk.h:
+        * platform/gtk/gtk2drawing.c: Expose whether or not the style uses alternate steppers
+        via GtkScrollbarMetrics.
+        * platform/gtk/gtkdrawing.h: Added fields to GtkScrollbarMetrics.
+
 2010-09-06  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Adam Barth.
