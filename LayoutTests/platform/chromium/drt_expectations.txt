@@ -20,7 +20,7 @@ BUG_DRT LINUX : fast/speech/input-appearance-searchandspeech.html = MISSING
 BUG_DRT LINUX : fast/speech/input-appearance-speechbutton.html = MISSING
 
 // Blob-related failures
-BUG_DRT WIN MAC LINUX : fast/files/apply-blob-url-to-img.html = TIMEOUT
+BUG_DRT WIN LINUX : fast/files/apply-blob-url-to-img.html = TIMEOUT
 BUG_DRT WIN MAC LINUX : fast/files/apply-blob-url-to-xhr.html = TEXT
 BUG_DRT WIN MAC LINUX : fast/files/read-blob-async.html = TEXT
 BUG_DRT WIN MAC LINUX : fast/files/read-file-async.html = TEXT
