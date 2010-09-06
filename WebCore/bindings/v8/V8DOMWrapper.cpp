@@ -329,9 +329,8 @@ bool V8DOMWrapper::isWrapperOfType(v8::Handle<v8::Value> value, WrapperTypeInfo*
     return typeInfo == type;
 }
 
-v8::Handle<v8::Object> V8DOMWrapper::getWrapper(Node* node)
+v8::Handle<v8::Object> V8DOMWrapper::getWrapperSlow(Node* node)
 {
-    ASSERT(WTF::isMainThread());
     V8IsolatedContext* context = V8IsolatedContext::getEntered();
     if (LIKELY(!context)) {
         v8::Persistent<v8::Object>* wrapper = node->wrapper();
@@ -339,7 +338,6 @@ v8::Handle<v8::Object> V8DOMWrapper::getWrapper(Node* node)
             return v8::Handle<v8::Object>();
         return *wrapper;
     }
-
     DOMNodeMapping& domNodeMap = context->world()->domDataStore()->domNodeMap();
     return domNodeMap.get(node);
 }

@@ -130,7 +130,7 @@ v8::Handle<v8::Value> V8Node::appendChildCallback(const v8::Arguments& args)
     return v8::Null();
 }
 
-v8::Handle<v8::Value> toV8(Node* impl, bool forceNewObject)
+v8::Handle<v8::Value> toV8Slow(Node* impl, bool forceNewObject)
 {
     if (!impl)
         return v8::Null();

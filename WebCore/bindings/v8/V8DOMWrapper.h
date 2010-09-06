@@ -33,6 +33,7 @@
 
 #include "Document.h"
 #include "Event.h"
+#include "IsolatedWorld.h"
 #include "Node.h"
 #include "NodeFilter.h"
 #include "PlatformString.h"
@@ -130,7 +131,19 @@ namespace WebCore {
 
         static v8::Local<v8::Object> instantiateV8Object(V8Proxy* proxy, WrapperTypeInfo*, void* impl);
 
-        static v8::Handle<v8::Object> getWrapper(Node*);
+        static v8::Handle<v8::Object> getWrapper(Node* node)
+        {
+            ASSERT(WTF::isMainThread());
+            if (LIKELY(!IsolatedWorld::count())) {
+                v8::Persistent<v8::Object>* wrapper = node->wrapper();
+                if (wrapper)
+                    return *wrapper;
+            }
+            return getWrapperSlow(node);
+        }
+
+    private:
+        static v8::Handle<v8::Object> getWrapperSlow(Node*);
     };
 
 }

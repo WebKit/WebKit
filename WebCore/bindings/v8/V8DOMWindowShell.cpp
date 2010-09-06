@@ -242,11 +242,11 @@ void V8DOMWindowShell::clearForNavigation()
 // the frame. However, a new inner window is created for the new page.
 // If there are JS code holds a closure to the old inner window,
 // it won't be able to reach the outer window via its global object.
-void V8DOMWindowShell::initContextIfNeeded()
+bool V8DOMWindowShell::initContextIfNeeded()
 {
     // Bail out if the context has already been initialized.
     if (!m_context.IsEmpty())
-        return;
+        return false;
 
     // Create a handle scope for all local handles.
     v8::HandleScope handleScope;
@@ -273,7 +273,7 @@ void V8DOMWindowShell::initContextIfNeeded()
 
     m_context = createNewContext(m_global, 0);
     if (m_context.IsEmpty())
-        return;
+        return false;
 
     v8::Local<v8::Context> v8Context = v8::Local<v8::Context>::New(m_context);
     v8::Context::Scope contextScope(v8Context);
@@ -284,7 +284,7 @@ void V8DOMWindowShell::initContextIfNeeded()
         // Bail out if allocation of the first global objects fails.
         if (m_global.IsEmpty()) {
             disposeContextHandles();
-            return;
+            return false;
         }
 #ifndef NDEBUG
         V8GCController::registerGlobalHandle(PROXY, this, m_global);
@@ -293,12 +293,12 @@ void V8DOMWindowShell::initContextIfNeeded()
 
     if (!installHiddenObjectPrototype(v8Context)) {
         disposeContextHandles();
-        return;
+        return false;
     }
 
     if (!installDOMWindow(v8Context, m_frame->domWindow())) {
         disposeContextHandles();
-        return;
+        return false;
     }
 
     updateDocument();
@@ -310,6 +310,8 @@ void V8DOMWindowShell::initContextIfNeeded()
     // FIXME: This is wrong. We should actually do this for the proper world once
     // we do isolated worlds the WebCore way.
     m_frame->loader()->dispatchDidClearWindowObjectInWorld(0);
+
+    return true;
 }
 
 v8::Persistent<v8::Context> V8DOMWindowShell::createNewContext(v8::Handle<v8::Object> global, int extensionGroup)
