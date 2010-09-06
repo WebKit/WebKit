@@ -1029,7 +1029,8 @@ TestSuite.prototype._waitForScriptPause = function(expectations, callback)
     test.addSniffer(
         WebInspector,
         "pausedScript",
-        function(callFrames) {
+        function(details) {
+            var callFrames = details.callFrames;
             var functionsOnStack = [];
             for (var i = 0; i < callFrames.length; i++)
                 functionsOnStack.push(callFrames[i].functionName);

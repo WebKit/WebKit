@@ -1,3 +1,13 @@
+2010-09-06  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: fix chromium devtools tests
+        https://bugs.webkit.org/show_bug.cgi?id=45258
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype._waitForScriptPause):
+
 2010-08-26  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.
