@@ -290,9 +290,13 @@ body {
 .previousComment, .frozenComment {
   border: inset 1px; padding: 5px;
 }
+
+.comment button {
+  width: 6em;
+}
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
-<script src="code-review.js?version=5"></script> 
+<script src="code-review.js?version=6"></script> 
 EOF
 
     def self.revisionOrDescription(string)

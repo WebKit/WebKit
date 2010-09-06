@@ -1,5 +1,12 @@
 2010-09-06  Adam Barth  <abarth@webkit.org>
 
+        Small UI tweak to the reviewtool.  Make the Ok/Cancel buttons a bit
+        bigger.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2010-09-06  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         [reviewtool] Add a quick animation for opening/closing comment boxes
