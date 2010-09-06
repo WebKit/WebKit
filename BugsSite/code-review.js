@@ -184,16 +184,22 @@
     $(document.body).prepend('<div id="comment_form" class="inactive"><div class="winter"></div><div class="lightbox"><iframe src="attachment.cgi?id=' + attachment_id + '&action=reviewform"></iframe></div></div>');
   });
 
-  $('.comment .cancel').live('click', function() {
+  function cancelComment() {
     var line_id = $(this).parentsUntil('.comment').parent().find('textarea').attr('data-comment-for');
     var line = $('#' + line_id)
     findCommentBlockFor(line).remove();
     line.removeAttr('data-has-comment');
     trimCommentContextToBefore(line);
-  });
+  }
+
+  $('.comment .cancel').live('click', cancelComment);
 
   $('.comment .ok').live('click', function() {
     var comment_textarea = $(this).parentsUntil('.comment').parent().find('textarea');
+    if (comment_textarea.val().trim() == '') {
+      cancelComment.call(this);
+      return;
+    }
     var line_id = comment_textarea.attr('data-comment-for');
     var line = $('#' + line_id)
     findCommentBlockFor(line).hide().after($('<div class="frozen-comment"></div>').text(comment_textarea.val()));

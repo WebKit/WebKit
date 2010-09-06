@@ -1,5 +1,13 @@
 2010-09-06  Adam Barth  <abarth@webkit.org>
 
+        [reviewtool] Tweak the ok button to cancel the comment if the comment
+        is empty.  Previously we would get into a bad state where a line had a
+        comment but there was no longer any way to access it.
+
+        * code-review.js:
+
+2010-09-06  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         [reviewtool] Add an "ok" button that collapses review comments
