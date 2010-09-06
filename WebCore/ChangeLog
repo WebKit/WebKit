@@ -1,3 +1,16 @@
+2010-09-06  Xan Lopez  <xlopez@igalia.com>
+
+        Rubber-stamped by Tor Arne Vestbø.
+
+        WebCore already generates a focus-{out,in} events on its setFocus
+        method, there's no need to duplicate it here. Previously this was
+        needed because we were not catching all possible names of focus
+        events in PluginView::handleEvent and were missing the ones
+        WebCore does, but this has been fixed in r66827.
+
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::setFocus):
+
 2010-09-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r66823.

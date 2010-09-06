@@ -154,13 +154,6 @@ void PluginView::setFocus(bool focused)
     } else {
         Widget::setFocus(focused);
     }
-    if (!m_isWindowed) {
-      XEvent npEvent;
-      initXEvent(&npEvent);
-      npEvent.type = (focused) ? 9 : 10; // ints as Qt unsets FocusIn and FocusOut
-      if (!dispatchNPEvent(npEvent))
-          LOG(Events, "PluginView::setFocus(%d): Focus event not accepted", focused);
-    }
 }
 
 void PluginView::show()
