@@ -1,3 +1,22 @@
+2010-09-05  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Add unit tests for red-black tree and (POD) arena
+        https://bugs.webkit.org/show_bug.cgi?id=45060
+
+        * WebKit.gyp:
+        * tests/PODArenaTest.cpp: Added.
+        (WebCore::TestClass1::TestClass2::TestClass2):
+        (WebCore::TEST_F):
+        * tests/PODRedBlackTreeTest.cpp: Added.
+        (WebCore::TEST):
+        * tests/TreeTestHelpers.cpp: Added.
+        (WebCore::TreeTestHelpers::generateSeed):
+        (WebCore::TreeTestHelpers::initRandom):
+        (WebCore::TreeTestHelpers::nextRandom):
+        * tests/TreeTestHelpers.h: Added.
+
 2010-09-03  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Darin Adler.

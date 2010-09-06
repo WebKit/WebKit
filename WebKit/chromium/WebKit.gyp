@@ -738,8 +738,12 @@
                         'tests/IDBKeyPathTest.cpp',
                         'tests/KeyboardTest.cpp',
                         'tests/KURLTest.cpp',
+                        'tests/PODArenaTest.cpp',
+                        'tests/PODRedBlackTreeTest.cpp',
                         'tests/RunAllTests.cpp',
                         'tests/TilingDataTest.cpp',
+                        'tests/TreeTestHelpers.cpp',
+                        'tests/TreeTestHelpers.h',
                     ],
                     'conditions': [
                         ['OS=="win"', {
