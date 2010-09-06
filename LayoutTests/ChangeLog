@@ -1,3 +1,9 @@
+2010-09-06  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed build fix.
+
+        * inspector/report-API-errors.html:
+
 2010-09-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r66823.
