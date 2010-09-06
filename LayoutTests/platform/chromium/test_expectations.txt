@@ -2358,7 +2358,7 @@ BUG32018 DEBUG : websocket/tests/simple-stress.html = PASS TEXT TIMEOUT
 BUG31803 MAC LINUX : editing/inserting/12882.html = IMAGE PASS
 
 // from http://trac.webkit.org/changeset/53086
-BUG32153 : svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop.html = TEXT
+BUG32153 : svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop.html = IMAGE+TEXT
 
 // a bunch of tests broken before the flakiness fix, i will deal with these
 // after the major flakiness goes away

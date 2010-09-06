@@ -211,11 +211,11 @@ BUG50197 WIN LINUX : svg/dynamic-updates/SVGFESpotLightElement-svgdom-specularEx
 BUG50197 WIN LINUX : svg/dynamic-updates/SVGFESpotLightElement-svgdom-x-prop.html = IMAGE
 BUG50197 WIN LINUX : svg/dynamic-updates/SVGFESpotLightElement-svgdom-y-prop.html = IMAGE
 BUG50197 WIN LINUX : svg/dynamic-updates/SVGFESpotLightElement-svgdom-z-prop.html = IMAGE
-BUG50197 WIN MAC LINUX : svg/dynamic-updates/SVGFEDiffuseLightingElement-lighting-color-css-prop.html = IMAGE
-BUG50197 WIN MAC LINUX : svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop.html = IMAGE
-BUG50197 WIN MAC LINUX : svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientTransform-prop.html = IMAGE
-BUG50197 WIN MAC LINUX : svg/dynamic-updates/SVGPatternElement-svgdom-patternTransform-prop.html = IMAGE
-BUG50197 WIN MAC LINUX : svg/dynamic-updates/SVGRadialGradientElement-svgdom-gradientTransform-prop.html = IMAGE
+BUG50197 WIN LINUX : svg/dynamic-updates/SVGFEDiffuseLightingElement-lighting-color-css-prop.html = IMAGE
+BUG50197 WIN LINUX : svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop.html = IMAGE
+BUG50197 WIN LINUX : svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientTransform-prop.html = IMAGE
+BUG50197 WIN LINUX : svg/dynamic-updates/SVGPatternElement-svgdom-patternTransform-prop.html = IMAGE
+BUG50197 WIN LINUX : svg/dynamic-updates/SVGRadialGradientElement-svgdom-gradientTransform-prop.html = IMAGE
 
 // Need to implement something?
 BUG_DRT WIN : http/tests/inspector-enabled/console-log-before-frame-navigation.html = CRASH
