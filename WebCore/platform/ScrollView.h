@@ -40,6 +40,7 @@
 #endif
 
 #if PLATFORM(GTK)
+#include "GRefPtrGtk.h"
 typedef struct _GtkAdjustment GtkAdjustment;
 #endif
 
@@ -333,9 +334,11 @@ private:
 #if PLATFORM(GTK)
 public:
     void setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj, bool resetValues = true);
-    GtkAdjustment* m_horizontalAdjustment;
-    GtkAdjustment* m_verticalAdjustment;
     void setScrollOffset(const IntSize& offset) { m_scrollOffset = offset; }
+
+private:
+    PlatformRefPtr<GtkAdjustment> m_horizontalAdjustment;
+    PlatformRefPtr<GtkAdjustment> m_verticalAdjustment;
 #endif
 
 #if PLATFORM(WX)

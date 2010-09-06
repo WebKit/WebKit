@@ -1,3 +1,52 @@
+2010-09-06  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] ScrollbarThemeGtk should be enabled for interior frame scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=45046
+
+        Make interior frame scrollbars "fully-fake," which means they do not rely
+        at all on GTK+ for painting or behavior, but instead are typical WebCore
+        scrollbars drawn according to the GTK+ theme. Move ScrollbarGtk to
+        MainFrameScrollbarGtk and remove all logic in that file dealing with interior
+        frame scrollbars.
+
+        No new tests, as this is already covered by pixel tests for scrollbars,
+        which were added in r66605.
+
+        * GNUmakefile.am: Update sources list.
+        * platform/ScrollView.h: Change the adjustment members to be smart pointers.
+        * platform/Scrollbar.cpp: Enable THUMB_POSITION_AFFECTS_BUTTONS for GTK+ as well.
+        * platform/gtk/MainFrameScrollbarGtk.cpp: Added.
+        (MainFrameScrollbarGtk::create): Create a MainFrameScrollbarGtk instead of ScrollbarGtk.
+        (MainFrameScrollbarGtk::MainFrameScrollbarGtk):
+        (MainFrameScrollbarGtk::~MainFrameScrollbarGtk):
+        (MainFrameScrollbarGtk::attachAdjustment):
+        (MainFrameScrollbarGtk::detachAdjustment):
+        (MainFrameScrollbarGtk::updateThumbPosition):
+        (MainFrameScrollbarGtk::updateThumbProportion):
+        (MainFrameScrollbarGtk::gtkValueChanged):
+        (MainFrameScrollbarGtk::paint):
+        * platform/gtk/MainFrameScrollbarGtk.h: Added.
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::platformInit): Remove unnecessary initialization
+        because of smart pointer change.
+        (WebCore::ScrollView::createScrollbar): Instead of creating ScrollbarGtk for
+        interior frame scrollbars, create a normal WebCore scrollbar.
+        (WebCore::ScrollView::setGtkAdjustments): Added an extra assert which ensures
+        that this method is never called with a non-null adjustment on an interior frame
+        scrollbar.
+        (WebCore::ScrollView::platformAddChild): Remove logic for interior frame scrollbars.
+        (WebCore::ScrollView::platformRemoveChild): Remove logic for interior frame scrollbars.
+        (WebCore::ScrollView::visibleContentRect): Use a more accurate guard for detecting
+        transitionary states when accessing parent widgets. Explcitly guard against interior
+        frame ScrollView's trying to determine size based on parent widgets.
+        (WebCore::ScrollView::setScrollbarModes): This method was out of sync with the one
+        it copy-and-pasted from. Update it and change the logic to do the right thing for
+        interior frame scrollbars.
+        * platform/gtk/ScrollbarGtk.cpp: Removed.
+        * platform/gtk/ScrollbarGtk.h: Removed.
+
 2010-09-06  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Nikolas Zimmermann.

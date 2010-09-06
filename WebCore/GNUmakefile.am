@@ -2503,6 +2503,8 @@ webcoregtk_sources += \
 	WebCore/platform/gtk/Language.cpp \
 	WebCore/platform/gtk/LocalizedStringsGtk.cpp \
 	WebCore/platform/gtk/LoggingGtk.cpp \
+	WebCore/platform/gtk/MainFrameScrollbarGtk.cpp \
+	WebCore/platform/gtk/MainFrameScrollbarGtk.h \
 	WebCore/platform/gtk/MIMETypeRegistryGtk.cpp \
 	WebCore/platform/gtk/MouseEventGtk.cpp \
 	WebCore/platform/gtk/PasteboardGtk.cpp \
@@ -2513,8 +2515,6 @@ webcoregtk_sources += \
 	WebCore/platform/gtk/PopupMenuGtk.h \
 	WebCore/platform/gtk/RenderThemeGtk.cpp \
 	WebCore/platform/gtk/RenderThemeGtk.h \
-	WebCore/platform/gtk/ScrollbarGtk.cpp \
-	WebCore/platform/gtk/ScrollbarGtk.h \
 	WebCore/platform/gtk/ScrollbarThemeGtk.cpp \
 	WebCore/platform/gtk/ScrollbarThemeGtk.h \
 	WebCore/platform/gtk/ScrollViewGtk.cpp \
