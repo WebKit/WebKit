@@ -505,7 +505,7 @@ private:
         }
 
         writeLittleEndian<uint32_t>(m_buffer, str.length());
-        if (!writeLittleEndian<uint16_t>(m_buffer, str.characters(), str.length()))
+        if (!writeLittleEndian<uint16_t>(m_buffer, reinterpret_cast<const uint16_t*>(str.characters()), str.length()))
             fail();
     }
 

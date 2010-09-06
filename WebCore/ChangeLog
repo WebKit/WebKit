@@ -5,6 +5,13 @@
         * bindings/js/SerializedScriptValue.cpp:
         (WebCore::CloneSerializer::write):
 
+2010-09-06  Oliver Hunt  <oliver@apple.com>
+
+        Windows build fix
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::write):
+
 2010-09-05  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam Weinig.
