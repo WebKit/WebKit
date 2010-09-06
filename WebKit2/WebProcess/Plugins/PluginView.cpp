@@ -515,7 +515,7 @@ void PluginView::performFrameLoadURLRequest(URLRequest* request)
         return;
 
     // Check if this is URL can be loaded.
-    if (!SecurityOrigin::canLoad(request->request().url(), String(), m_pluginElement->document())) {
+    if (!SecurityOrigin::canDisplay(request->request().url(), String(), m_pluginElement->document())) {
         // We can't load the request, send back a reply to the plug-in.
         m_plugin->frameDidFail(request->requestID(), false);
         return;

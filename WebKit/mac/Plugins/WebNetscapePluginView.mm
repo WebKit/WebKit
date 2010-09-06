@@ -1728,7 +1728,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             return NPERR_INVALID_PARAM;
         }
     } else {
-        if (!SecurityOrigin::canLoad(URL, String(), core([self webFrame])->document()))
+        if (!SecurityOrigin::canDisplay(URL, String(), core([self webFrame])->document()))
             return NPERR_GENERIC_ERROR;
     }
         

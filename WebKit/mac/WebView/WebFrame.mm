@@ -1282,7 +1282,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
     if (!_private->coreFrame)
         return YES;
-    return SecurityOrigin::canLoad(URL, String(), _private->coreFrame->document());
+    return SecurityOrigin::canDisplay(URL, String(), _private->coreFrame->document());
 }
 
 - (NSString *)_stringByEvaluatingJavaScriptFromString:(NSString *)string withGlobalObject:(JSObjectRef)globalObjectRef inScriptWorld:(WebScriptWorld *)world

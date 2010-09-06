@@ -84,10 +84,11 @@ public:
     // drawing an image onto an HTML canvas element with the drawImage API.
     bool taintsCanvas(const KURL&) const;
 
-    // Returns true for any non-local URL. If document parameter is supplied,
-    // its local load policy dictates, otherwise if referrer is non-empty and
-    // represents a local file, then the local load is allowed.
-    static bool canLoad(const KURL&, const String& referrer, Document* document);
+    // Returns true if |document| can display content from the given URL (e.g.,
+    // in an iframe or as an image). For example, web sites generally cannot
+    // display content from the user's files system. If |document| is 0,
+    // |referrer| is used to make this determination.
+    static bool canDisplay(const KURL&, const String& referrer, Document* document);
 
     // Returns true if this SecurityOrigin can load local resources, such
     // as images, iframes, and style sheets, and can link to local URLs.

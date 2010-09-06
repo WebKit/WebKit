@@ -1261,7 +1261,7 @@ void FrameLoader::loadFrameRequest(const FrameLoadRequest& request, bool lockHis
 
     ASSERT(frame()->document());
     if (SchemeRegistry::shouldTreatURLAsLocal(url.string()) && !isFeedWithNestedProtocolInHTTPFamily(url)) {
-        if (!SecurityOrigin::canLoad(url, String(), frame()->document()) && !SecurityOrigin::canLoad(url, referrer, 0)) {
+        if (!SecurityOrigin::canDisplay(url, String(), frame()->document()) && !SecurityOrigin::canDisplay(url, referrer, 0)) {
             FrameLoader::reportLocalLoadFailed(m_frame, url.string());
             return;
         }

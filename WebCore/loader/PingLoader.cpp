@@ -42,7 +42,7 @@ namespace WebCore {
 
 void PingLoader::loadImage(Frame* frame, const KURL& url)
 {
-    if (SecurityOrigin::restrictAccessToLocal() && !SecurityOrigin::canLoad(url, String(), frame->document())) {
+    if (SecurityOrigin::restrictAccessToLocal() && !SecurityOrigin::canDisplay(url, String(), frame->document())) {
         FrameLoader::reportLocalLoadFailed(frame, url);
         return;
     }

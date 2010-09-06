@@ -284,7 +284,7 @@ bool SecurityOrigin::isAccessWhiteListed(const SecurityOrigin* targetOrigin) con
     return false;
 }
   
-bool SecurityOrigin::canLoad(const KURL& url, const String& referrer, Document* document)
+bool SecurityOrigin::canDisplay(const KURL& url, const String& referrer, Document* document)
 {
 #if ENABLE(BLOB)
     if (url.protocolIs("blob") && document) {
