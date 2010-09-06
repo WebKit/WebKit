@@ -1,3 +1,11 @@
+2010-09-06  Justin Schuh  <jschuh@chromium.org>
+
+        Unreviewed. Build fix.
+
+        Update test expectations for Chromium Mac.
+
+        * platform/chromium-mac/svg/custom/use-invalid-style-expected.txt: Added.
+
 2010-09-06  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Adam Barth.
