@@ -465,9 +465,10 @@ private:
     {
         writeLittleEndian(m_buffer, i);
     }
-    void write(UChar ch)
+    
+    void write(uint16_t ch)
     {
-        writeLittleEndian(m_buffer, static_cast<uint16_t>(ch));
+        writeLittleEndian(m_buffer, ch);
     }
 
     void writeStringIndex(unsigned i)
