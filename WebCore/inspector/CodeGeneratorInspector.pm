@@ -533,7 +533,7 @@ WebInspector.InspectorBackendStub.prototype = {
         }
 
         if (args.length === 1) {
-            if (typeof args[0] !== "function") {
+            if (typeof args[0] !== "function" && typeof args[0] !== "undefined") {
                 console.error("Protocol Error: Optional callback argument for 'InspectorBackend.%s' call should be a function but its type is '%s'.", request.command, typeof args[0]);
                 return;
             }

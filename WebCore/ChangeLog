@@ -1,3 +1,16 @@
+2010-09-06  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        WebInspector: it'd be nice to be able to pass undefined argument as a callback to InspectorBackend functions.
+
+        There are some places where callback is passing via some wrapper. In that case sendMessageToBackend
+        will be called with additional argument for callback but with undefined value.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45265
+
+        * inspector/CodeGeneratorInspector.pm:
+
 2010-09-06  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Dirk Schulze.
