@@ -1,3 +1,13 @@
+2010-09-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        Web Inspector: Tests crash on Qt bots revealed by r66720
+        https://bugs.webkit.org/show_bug.cgi?id=45256
+
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (WebCore::InspectorClientQt::InspectorClientQt): m_frontendClient must be initialized by constructor
+
 2010-09-06  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Attempt to fix random test crashes after r66720.
