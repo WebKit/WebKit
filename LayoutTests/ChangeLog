@@ -1,3 +1,13 @@
+2010-08-31  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Joseph Pecoraro.
+
+        Web Inspector: browser crashes on attempt to evaluate "alert(1)" while staying on a breakpoint
+        https://bugs.webkit.org/show_bug.cgi?id=44943
+
+        * inspector/debugger-suspend-active-dom-objects-expected.txt: Added.
+        * inspector/debugger-suspend-active-dom-objects.html: Added.
+
 2010-09-05  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Adam Barth.

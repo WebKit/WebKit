@@ -1,0 +1,45 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/debugger-test2.js"></script>
+<script>
+
+function testFunction() {
+    setTimeout("void 0", 0); // Create a timer that will be suspended on a breakpoint.
+    debugger;
+}
+
+function test()
+{
+    WebInspector.showPanel("scripts");
+    InspectorTest.startDebuggerTest(startDebuggerTestCallback);
+
+    function startDebuggerTestCallback()
+    {
+        InspectorTest.evaluateInConsole("setTimeout(testFunction, 0)", function(result) {
+            InspectorTest.addResult("Set timer for test function.");
+        });
+
+        InspectorTest.waitUntilPaused(function(callFrames) {
+            InspectorTest.evaluateInConsole("alert(1)", function(result) {
+                InspectorTest.addResult("Shown alert while staying on a breakpoint.");
+                InspectorTest.completeDebuggerTest();
+            });
+        });
+    }
+
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that browser won't crash if user evaluates something in the console
+that would suspend active dom objects (e.g. if user attempts to show an alert)
+when script execution is paused on a breakpoint and all active dom objects
+are already suspended.
+</p>
+
+</body>
+</html>
