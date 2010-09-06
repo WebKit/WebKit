@@ -54,7 +54,7 @@ public:
 
 private:
     MessageWorkerContextTask(PassRefPtr<SerializedScriptValue> message, PassOwnPtr<MessagePortChannelArray> channels)
-        : m_message(message->release())
+        : m_message(message)
         , m_channels(channels)
     {
     }
@@ -82,7 +82,7 @@ public:
 
 private:
     MessageWorkerTask(PassRefPtr<SerializedScriptValue> message, PassOwnPtr<MessagePortChannelArray> channels, WorkerMessagingProxy* messagingProxy)
-        : m_message(message->release())
+        : m_message(message)
         , m_channels(channels)
         , m_messagingProxy(messagingProxy)
     {

@@ -36,6 +36,8 @@
 #include "JSFile.h"
 #include "JSFileList.h"
 #include "JSImageData.h"
+#include "SharedBuffer.h"
+#include <limits>
 #include <JavaScriptCore/APICast.h>
 #include <runtime/DateInstance.h>
 #include <runtime/Error.h>
@@ -47,474 +49,112 @@
 #include <wtf/Vector.h>
 
 using namespace JSC;
+using namespace std;
+
+#if CPU(BIG_ENDIAN) || CPU(MIDDLE_ENDIAN)
+#define ASSUME_LITTLE_ENDIAN 0
+#else
+#define ASSUME_LITTLE_ENDIAN 1
+#endif
 
 namespace WebCore {
 
-class SerializedObject : public SharedSerializedData
-{
-public:
-    typedef Vector<RefPtr<StringImpl> > PropertyNameList;
-    typedef Vector<SerializedScriptValueData> ValueList;
-
-    void set(const Identifier& propertyName, const SerializedScriptValueData& value)
-    {
-        ASSERT(m_names.size() == m_values.size());
-        m_names.append(identifierToString(propertyName).crossThreadString().impl());
-        m_values.append(value);
-    }
-
-    PropertyNameList& names() { return m_names; }
-
-    ValueList& values() { return m_values; }
-
-    static PassRefPtr<SerializedObject> create()
-    {
-        return adoptRef(new SerializedObject);
-    }
-
-    void clear()
-    {
-        m_names.clear();
-        m_values.clear();
-    }
-
-private:
-    SerializedObject() { }
-    PropertyNameList m_names;
-    ValueList m_values;
-};
-
-class SerializedArray : public SharedSerializedData
-{
-    typedef HashMap<unsigned, SerializedScriptValueData, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned> > SparseMap;
-public:
-    void setIndex(unsigned index, const SerializedScriptValueData& value)
-    {
-        ASSERT(index < m_length);
-        if (index == m_compactStorage.size())
-            m_compactStorage.append(value);
-        else
-            m_sparseStorage.set(index, value);
-    }
-
-    bool canDoFastRead(unsigned index) const
-    {
-        ASSERT(index < m_length);
-        return index < m_compactStorage.size();
-    }
-
-    const SerializedScriptValueData& getIndex(unsigned index)
-    {
-        ASSERT(index < m_compactStorage.size());
-        return m_compactStorage[index];
-    }
-
-    SerializedScriptValueData getSparseIndex(unsigned index, bool& hasIndex)
-    {
-        ASSERT(index >= m_compactStorage.size());
-        ASSERT(index < m_length);
-        SparseMap::iterator iter = m_sparseStorage.find(index);
-        if (iter == m_sparseStorage.end()) {
-            hasIndex = false;
-            return SerializedScriptValueData();
-        }
-        hasIndex = true;
-        return iter->second;
-    }
-
-    unsigned length() const
-    {
-        return m_length;
-    }
-
-    static PassRefPtr<SerializedArray> create(unsigned length)
-    {
-        return adoptRef(new SerializedArray(length));
-    }
-
-    void clear()
-    {
-        m_compactStorage.clear();
-        m_sparseStorage.clear();
-        m_length = 0;
-    }
-private:
-    SerializedArray(unsigned length)
-        : m_length(length)
-    {
-    }
-
-    Vector<SerializedScriptValueData> m_compactStorage;
-    SparseMap m_sparseStorage;
-    unsigned m_length;
-};
-
-class SerializedBlob : public SharedSerializedData {
-public:
-    static PassRefPtr<SerializedBlob> create(const Blob* blob)
-    {
-        return adoptRef(new SerializedBlob(blob));
-    }
-
-    const KURL& url() const { return m_url; }
-    const String& type() const { return m_type; }
-    unsigned long long size() const { return m_size; }
-
-private:
-    SerializedBlob(const Blob* blob)
-        : m_url(blob->url().copy())
-        , m_type(blob->type().crossThreadString())
-        , m_size(blob->size())
-    {
-    }
-
-    KURL m_url;
-    String m_type;
-    unsigned long long m_size;
-};
-
-class SerializedFile : public SharedSerializedData {
-public:
-    static PassRefPtr<SerializedFile> create(const File* file)
-    {
-        return adoptRef(new SerializedFile(file));
-    }
-
-    const String& path() const { return m_path; }
-    const KURL& url() const { return m_url; }
-    const String& type() const { return m_type; }
-
-private:
-    SerializedFile(const File* file)
-        : m_path(file->path().crossThreadString())
-        , m_url(file->url().copy())
-        , m_type(file->type().crossThreadString())
-    {
-    }
-
-    String m_path;
-    KURL m_url;
-    String m_type;
-};
-
-class SerializedFileList : public SharedSerializedData {
-public:
-    struct FileData {
-        String path;
-        KURL url;
-        String type;
-    };
-
-    static PassRefPtr<SerializedFileList> create(const FileList* list)
-    {
-        return adoptRef(new SerializedFileList(list));
-    }
-
-    unsigned length() const { return m_files.size(); }
-    const FileData& item(unsigned idx) { return m_files[idx]; }
-
-private:
-    SerializedFileList(const FileList* list)
-    {
-        unsigned length = list->length();
-        m_files.reserveCapacity(length);
-        for (unsigned i = 0; i < length; i++) {
-            File* file = list->item(i);
-            FileData fileData;
-            fileData.path = file->path().crossThreadString();
-            fileData.url = file->url().copy();
-            fileData.type = file->type().crossThreadString();
-            m_files.append(fileData);
-        }
-    }
-
-    Vector<FileData> m_files;
-};
-
-class SerializedImageData : public SharedSerializedData {
-public:
-    static PassRefPtr<SerializedImageData> create(const ImageData* imageData)
-    {
-        return adoptRef(new SerializedImageData(imageData));
-    }
-    
-    unsigned width() const { return m_width; }
-    unsigned height() const { return m_height; }
-    WTF::ByteArray* data() const { return m_storage.get(); }
-private:
-    SerializedImageData(const ImageData* imageData)
-        : m_width(imageData->width())
-        , m_height(imageData->height())
-    {
-        WTF::ByteArray* array = imageData->data()->data();
-        m_storage = WTF::ByteArray::create(array->length());
-        memcpy(m_storage->data(), array->data(), array->length());
-    }
-    unsigned m_width;
-    unsigned m_height;
-    RefPtr<WTF::ByteArray> m_storage;
-};
-
-SerializedScriptValueData::SerializedScriptValueData(RefPtr<SerializedObject> data)
-    : m_type(ObjectType)
-    , m_sharedData(data)
-{
-}
-
-SerializedScriptValueData::SerializedScriptValueData(RefPtr<SerializedArray> data)
-    : m_type(ArrayType)
-    , m_sharedData(data)
-{
-}
-
-SerializedScriptValueData::SerializedScriptValueData(const FileList* fileList)
-    : m_type(FileListType)
-    , m_sharedData(SerializedFileList::create(fileList))
-{
-}
-
-SerializedScriptValueData::SerializedScriptValueData(const ImageData* imageData)
-    : m_type(ImageDataType)
-    , m_sharedData(SerializedImageData::create(imageData))
-{
-}
-
-SerializedScriptValueData::SerializedScriptValueData(const Blob* blob)
-    : m_type(BlobType)
-    , m_sharedData(SerializedBlob::create(blob))
-{
-}
-
-SerializedScriptValueData::SerializedScriptValueData(const File* file)
-    : m_type(FileType)
-    , m_sharedData(SerializedFile::create(file))
-{
-}
-
-SerializedArray* SharedSerializedData::asArray()
-{
-    return static_cast<SerializedArray*>(this);
-}
-
-SerializedObject* SharedSerializedData::asObject()
-{
-    return static_cast<SerializedObject*>(this);
-}
-
-SerializedBlob* SharedSerializedData::asBlob()
-{
-    return static_cast<SerializedBlob*>(this);
-}
-
-SerializedFile* SharedSerializedData::asFile()
-{
-    return static_cast<SerializedFile*>(this);
-}
-
-SerializedFileList* SharedSerializedData::asFileList()
-{
-    return static_cast<SerializedFileList*>(this);
-}
-
-SerializedImageData* SharedSerializedData::asImageData()
-{
-    return static_cast<SerializedImageData*>(this);
-}
-
 static const unsigned maximumFilterRecursion = 40000;
+
 enum WalkerState { StateUnknown, ArrayStartState, ArrayStartVisitMember, ArrayEndVisitMember,
     ObjectStartState, ObjectStartVisitMember, ObjectEndVisitMember };
-template <typename TreeWalker> typename TreeWalker::OutputType walk(TreeWalker& context, typename TreeWalker::InputType in)
-{
-    typedef typename TreeWalker::InputObject InputObject;
-    typedef typename TreeWalker::InputArray InputArray;
-    typedef typename TreeWalker::OutputObject OutputObject;
-    typedef typename TreeWalker::OutputArray OutputArray;
-    typedef typename TreeWalker::InputType InputType;
-    typedef typename TreeWalker::OutputType OutputType;
-    typedef typename TreeWalker::PropertyList PropertyList;
 
-    Vector<uint32_t, 16> indexStack;
-    Vector<uint32_t, 16> lengthStack;
-    Vector<PropertyList, 16> propertyStack;
-    Vector<InputObject, 16> inputObjectStack;
-    Vector<InputArray, 16> inputArrayStack;
-    Vector<OutputObject, 16> outputObjectStack;
-    Vector<OutputArray, 16> outputArrayStack;
-    Vector<WalkerState, 16> stateStack;
-    WalkerState state = StateUnknown;
-    InputType inValue = in;
-    OutputType outValue = context.null();
+// These can't be reordered, and any new types must be added to the end of the list
+enum SerializationTag {
+    ArrayTag = 1,
+    ObjectTag = 2,
+    UndefinedTag = 3,
+    NullTag = 4,
+    IntTag = 5,
+    ZeroTag = 6,
+    OneTag = 7,
+    FalseTag = 8,
+    TrueTag = 9,
+    DoubleTag = 10,
+    DateTag = 11,
+    FileTag = 12,
+    FileListTag = 13,
+    ImageDataTag = 14,
+    BlobTag = 15,
+    StringTag = 16,
+    EmptyStringTag = 17,
+    ErrorTag = 255
+};
 
-    unsigned tickCount = context.ticksUntilNextCheck();
-    while (1) {
-        switch (state) {
-            arrayStartState:
-            case ArrayStartState: {
-                ASSERT(context.isArray(inValue));
-                if (inputObjectStack.size() + inputArrayStack.size() > maximumFilterRecursion) {
-                    context.throwStackOverflow();
-                    return context.null();
-                }
 
-                InputArray inArray = context.asInputArray(inValue);
-                unsigned length = context.length(inArray);
-                OutputArray outArray = context.createOutputArray(length);
-                if (!context.startArray(inArray, outArray))
-                    return context.null();
-                inputArrayStack.append(inArray);
-                outputArrayStack.append(outArray);
-                indexStack.append(0);
-                lengthStack.append(length);
-                // fallthrough
-            }
-            arrayStartVisitMember:
-            case ArrayStartVisitMember: {
-                if (!--tickCount) {
-                    if (context.didTimeOut()) {
-                        context.throwInterruptedException();
-                        return context.null();
-                    }
-                    tickCount = context.ticksUntilNextCheck();
-                }
+static const unsigned int CurrentVersion = 1;
+static const unsigned int TerminatorTag = 0xFFFFFFFF;
+static const unsigned int StringPoolTag = 0xFFFFFFFE;
 
-                InputArray array = inputArrayStack.last();
-                uint32_t index = indexStack.last();
-                if (index == lengthStack.last()) {
-                    InputArray inArray = inputArrayStack.last();
-                    OutputArray outArray = outputArrayStack.last();
-                    context.endArray(inArray, outArray);
-                    outValue = outArray;
-                    inputArrayStack.removeLast();
-                    outputArrayStack.removeLast();
-                    indexStack.removeLast();
-                    lengthStack.removeLast();
-                    break;
-                }
-                if (context.canDoFastRead(array, index))
-                    inValue = context.getIndex(array, index);
-                else {
-                    bool hasIndex = false;
-                    inValue = context.getSparseIndex(array, index, hasIndex);
-                    if (!hasIndex) {
-                        indexStack.last()++;
-                        goto arrayStartVisitMember;
-                    }
-                }
+/*
+ * Object serialization is performed according to the following grammar, all tags
+ * are recorded as a single uint8_t.
+ *
+ * IndexType (used for StringData's constant pool) is the sized unsigned integer type
+ * required to represent the maximum index in the constant pool.
+ *
+ * SerializedValue :- <CurrentVersion:uint32_t> Value
+ * Value :- Array | Object | Terminal
+ *
+ * Array :-
+ *     ArrayTag <length:uint32_t>(<index:uint32_t><value:Value>)* TerminatorTag
+ *
+ * Object :-
+ *     ObjectTag (<name:StringData><value:Value>)* TerminatorTag
+ *
+ * Terminal :-
+ *      UndefinedTag
+ *    | NullTag
+ *    | IntTag <value:int32_t>
+ *    | ZeroTag
+ *    | OneTag
+ *    | DoubleTag <value:double>
+ *    | DateTag <value:double>
+ *    | String
+ *    | EmptyStringTag
+ *    | File
+ *    | FileList
+ *    | ImageData
+ *    | Blob
+ *
+ * String :-
+ *      EmptyStringTag
+ *      StringTag StringData
+ *
+ * StringData :-
+ *      StringPoolTag <cpIndex:IndexType>
+ *      (not (TerminatorTag | StringPoolTag))<length:uint32_t><characters:UChar{length}> // Added to constant pool when seen, string length 0xFFFFFFFF is disallowed
+ *
+ * File :-
+ *    FileTag FileData
+ *
+ * FileData :-
+ *    <path:StringData> <url:StringData> <type:StringData>
+ *
+ * FileList :-
+ *    FileListTag <length:uint32_t>(<file:FileData>){length}
+ *
+ * ImageData :-
+ *    ImageDataTag <width:uint32_t><height:uint32_t><length:uint32_t><data:uint8_t{length}>
+ *
+ * Blob :-
+ *    BlobTag <url:StringData><type:StringData><size:long long>
+ *
+ */
 
-                if (OutputType transformed = context.convertIfTerminal(inValue))
-                    outValue = transformed;
-                else {
-                    stateStack.append(ArrayEndVisitMember);
-                    goto stateUnknown;
-                }
-                // fallthrough
-            }
-            case ArrayEndVisitMember: {
-                OutputArray outArray = outputArrayStack.last();
-                context.putProperty(outArray, indexStack.last(), outValue);
-                indexStack.last()++;
-                goto arrayStartVisitMember;
-            }
-            objectStartState:
-            case ObjectStartState: {
-                ASSERT(context.isObject(inValue));
-                if (inputObjectStack.size() + inputArrayStack.size() > maximumFilterRecursion) {
-                    context.throwStackOverflow();
-                    return context.null();
-                }
-                InputObject inObject = context.asInputObject(inValue);
-                OutputObject outObject = context.createOutputObject();
-                if (!context.startObject(inObject, outObject))
-                    return context.null();
-                inputObjectStack.append(inObject);
-                outputObjectStack.append(outObject);
-                indexStack.append(0);
-                context.getPropertyNames(inObject, propertyStack);
-                // fallthrough
-            }
-            objectStartVisitMember:
-            case ObjectStartVisitMember: {
-                if (!--tickCount) {
-                    if (context.didTimeOut()) {
-                        context.throwInterruptedException();
-                        return context.null();
-                    }
-                    tickCount = context.ticksUntilNextCheck();
-                }
-
-                InputObject object = inputObjectStack.last();
-                uint32_t index = indexStack.last();
-                PropertyList& properties = propertyStack.last();
-                if (index == properties.size()) {
-                    InputObject inObject = inputObjectStack.last();
-                    OutputObject outObject = outputObjectStack.last();
-                    context.endObject(inObject, outObject);
-                    outValue = outObject;
-                    inputObjectStack.removeLast();
-                    outputObjectStack.removeLast();
-                    indexStack.removeLast();
-                    propertyStack.removeLast();
-                    break;
-                }
-                inValue = context.getProperty(object, properties[index], index);
-
-                if (context.shouldTerminate())
-                    return context.null();
-
-                if (OutputType transformed = context.convertIfTerminal(inValue))
-                    outValue = transformed;
-                else {
-                    stateStack.append(ObjectEndVisitMember);
-                    goto stateUnknown;
-                }
-                // fallthrough
-            }
-            case ObjectEndVisitMember: {
-                context.putProperty(outputObjectStack.last(), propertyStack.last()[indexStack.last()], outValue);
-                if (context.shouldTerminate())
-                    return context.null();
-
-                indexStack.last()++;
-                goto objectStartVisitMember;
-            }
-            stateUnknown:
-            case StateUnknown:
-                if (OutputType transformed = context.convertIfTerminal(inValue)) {
-                    outValue = transformed;
-                    break;
-                }
-                if (context.isArray(inValue))
-                    goto arrayStartState;
-                goto objectStartState;
-        }
-        if (stateStack.isEmpty())
-            break;
-
-        state = stateStack.last();
-        stateStack.removeLast();
-
-        if (!--tickCount) {
-            if (context.didTimeOut()) {
-                context.throwInterruptedException();
-                return context.null();
-            }
-            tickCount = context.ticksUntilNextCheck();
-        }
-    }
-    return outValue;
-}
-
-struct BaseWalker {
-    BaseWalker(ExecState* exec)
+class CloneBase {
+protected:
+    CloneBase(ExecState* exec)
         : m_exec(exec)
+        , m_failed(false)
         , m_timeoutChecker(exec->globalData().timeoutChecker)
     {
-        m_timeoutChecker.reset();
     }
-    ExecState* m_exec;
-    TimeoutChecker m_timeoutChecker;
-    MarkedArgumentBuffer m_gcBuffer;
 
     bool shouldTerminate()
     {
@@ -540,23 +180,49 @@ struct BaseWalker {
     {
         throwError(m_exec, createInterruptedExecutionException(&m_exec->globalData()));
     }
-};
 
-struct SerializingTreeWalker : public BaseWalker {
-    typedef JSValue InputType;
-    typedef JSArray* InputArray;
-    typedef JSObject* InputObject;
-    typedef SerializedScriptValueData OutputType;
-    typedef RefPtr<SerializedArray> OutputArray;
-    typedef RefPtr<SerializedObject> OutputObject;
-    typedef PropertyNameArray PropertyList;
-
-    SerializingTreeWalker(ExecState* exec)
-        : BaseWalker(exec)
+    void fail()
     {
+        ASSERT_NOT_REACHED();
+        m_failed = true;
     }
 
-    OutputType null() { return SerializedScriptValueData(); }
+    ExecState* m_exec;
+    bool m_failed;
+    TimeoutChecker m_timeoutChecker;
+    MarkedArgumentBuffer m_gcBuffer;
+};
+
+class CloneSerializer : CloneBase {
+public:
+    static bool serialize(ExecState* exec, JSValue value, Vector<uint8_t>& out)
+    {
+        CloneSerializer serializer(exec, out);
+        return serializer.serialize(value);
+    }
+
+    static bool serialize(String s, Vector<uint8_t>& out)
+    {
+        writeLittleEndian(out, CurrentVersion);
+        if (s.isEmpty()) {
+            writeLittleEndian<uint8_t>(out, EmptyStringTag);
+            return true;
+        }
+        writeLittleEndian<uint8_t>(out, StringTag);
+        writeLittleEndian(out, s.length());
+        return writeLittleEndian(out, s.impl()->characters(), s.length());
+    }
+
+private:
+    CloneSerializer(ExecState* exec, Vector<uint8_t>& out)
+        : CloneBase(exec)
+        , m_buffer(out)
+        , m_emptyIdentifier(exec, UString("", 0))
+    {
+        write(CurrentVersion);
+    }
+
+    bool serialize(JSValue in);
 
     bool isArray(JSValue value)
     {
@@ -566,52 +232,49 @@ struct SerializingTreeWalker : public BaseWalker {
         return isJSArray(&m_exec->globalData(), object) || object->inherits(&JSArray::info);
     }
 
-    bool isObject(JSValue value)
+    bool startObject(JSObject* object)
     {
-        return value.isObject();
+        // Cycle detection
+        if (!m_cycleDetector.add(object).second) {
+            throwError(m_exec, createTypeError(m_exec, "Cannot post cyclic structures."));
+            return false;
+        }
+        m_gcBuffer.append(object);
+        write(ObjectTag);
+        return true;
     }
 
-    JSArray* asInputArray(JSValue value)
+
+    bool startArray(JSArray* array)
     {
-        return asArray(value);
+        // Cycle detection
+        if (!m_cycleDetector.add(array).second) {
+            throwError(m_exec, createTypeError(m_exec, "Cannot post cyclic structures."));
+            return false;
+        }
+        m_gcBuffer.append(array);
+        unsigned length = array->length();
+        write(ArrayTag);
+        write(length);
+        return true;
     }
 
-    JSObject* asInputObject(JSValue value)
+    void endObject(JSObject* object)
     {
-        return asObject(value);
+        write(TerminatorTag);
+        m_cycleDetector.remove(object);
+        m_gcBuffer.removeLast();
     }
 
-    PassRefPtr<SerializedArray> createOutputArray(unsigned length)
+    JSValue getSparseIndex(JSArray* array, unsigned propertyName, bool& hasIndex)
     {
-        return SerializedArray::create(length);
-    }
-
-    PassRefPtr<SerializedObject> createOutputObject()
-    {
-        return SerializedObject::create();
-    }
-
-    uint32_t length(JSValue array)
-    {
-        ASSERT(array.isObject());
-        JSObject* object = asObject(array);
-        return object->get(m_exec, m_exec->propertyNames().length).toUInt32(m_exec);
-    }
-
-    bool canDoFastRead(JSArray* array, unsigned index)
-    {
-        return isJSArray(&m_exec->globalData(), array) && array->canGetIndex(index);
-    }
-
-    JSValue getIndex(JSArray* array, unsigned index)
-    {
-        return array->getIndex(index);
-    }
-
-    JSValue getSparseIndex(JSObject* object, unsigned propertyName, bool& hasIndex)
-    {
-        PropertySlot slot(object);
-        if (object->getOwnPropertySlot(m_exec, propertyName, slot)) {
+        PropertySlot slot(array);
+        if (isJSArray(&m_exec->globalData(), array)) {
+            if (array->JSArray::getOwnPropertySlot(m_exec, propertyName, slot)) {
+                hasIndex = true;
+                return slot.getValue(m_exec, propertyName);
+            }
+        } else if (array->getOwnPropertySlot(m_exec, propertyName, slot)) {
             hasIndex = true;
             return slot.getValue(m_exec, propertyName);
         }
@@ -619,449 +282,981 @@ struct SerializingTreeWalker : public BaseWalker {
         return jsNull();
     }
 
-    JSValue getProperty(JSObject* object, const Identifier& propertyName, unsigned)
+    JSValue getProperty(JSObject* object, const Identifier& propertyName)
     {
         PropertySlot slot(object);
         if (object->getOwnPropertySlot(m_exec, propertyName, slot))
             return slot.getValue(m_exec, propertyName);
-        return jsNull();
+        return JSValue();
     }
 
-    SerializedScriptValueData convertIfTerminal(JSValue value)
+    void dumpImmediate(JSValue value)
     {
-        if (!value.isCell())
-            return SerializedScriptValueData(value);
+        if (value.isNull())
+            write(NullTag);
+        else if (value.isUndefined())
+            write(UndefinedTag);
+        else if (value.isNumber()) {
+            if (value.isInt32()) {
+                if (!value.asInt32())
+                    write(ZeroTag);
+                else if (value.asInt32() == 1)
+                    write(OneTag);
+                else {
+                    write(IntTag);
+                    write(static_cast<uint32_t>(value.asInt32()));
+                }
+            } else {
+                write(DoubleTag);
+                write(value.asDouble());
+            }
+        } else if (value.isBoolean()) {
+            if (value.isTrue())
+                write(TrueTag);
+            else
+                write(FalseTag);
+        }
+    }
 
-        if (value.isString())
-            return SerializedScriptValueData(ustringToString(asString(value)->value(m_exec)));
+    void dumpString(UString str)
+    {
+        if (str.isEmpty())
+            write(EmptyStringTag);
+        else {
+            write(StringTag);
+            write(str);
+        }
+    }
 
-        if (value.isNumber())
-            return SerializedScriptValueData(SerializedScriptValueData::NumberType, value.uncheckedGetNumber());
+    bool dumpIfTerminal(JSValue value)
+    {
+        if (!value.isCell()) {
+            dumpImmediate(value);
+            return true;
+        }
 
-        if (value.isObject() && asObject(value)->inherits(&DateInstance::info))
-            return SerializedScriptValueData(SerializedScriptValueData::DateType, asDateInstance(value)->internalNumber());
+        if (value.isString()) {
+            UString str = asString(value)->value(m_exec);
+            dumpString(str);
+            return true;
+        }
+
+        if (value.isNumber()) {
+            write(DoubleTag);
+            write(value.uncheckedGetNumber());
+            return true;
+        }
+
+        if (value.isObject() && asObject(value)->inherits(&DateInstance::info)) {
+            write(DateTag);
+            write(asDateInstance(value)->internalNumber());
+            return true;
+        }
 
         if (isArray(value))
-            return SerializedScriptValueData();
+            return false;
 
         if (value.isObject()) {
             JSObject* obj = asObject(value);
-            if (obj->inherits(&JSFile::s_info))
-                return SerializedScriptValueData(toFile(obj));
-            if (obj->inherits(&JSBlob::s_info))
-                return SerializedScriptValueData(toBlob(obj));
-            if (obj->inherits(&JSFileList::s_info))
-                return SerializedScriptValueData(toFileList(obj));
-            if (obj->inherits(&JSImageData::s_info))
-                return SerializedScriptValueData(toImageData(obj));
-                
+            if (obj->inherits(&JSFile::s_info)) {
+                write(FileTag);
+                write(toFile(obj));
+                return true;
+            }
+            if (obj->inherits(&JSFileList::s_info)) {
+                FileList* list = toFileList(obj);
+                write(FileListTag);
+                unsigned length = list->length();
+                write(length);
+                for (unsigned i = 0; i < length; i++)
+                    write(list->item(i));
+                return true;
+            }
+            if (obj->inherits(&JSBlob::s_info)) {
+                write(BlobTag);
+                Blob* blob = toBlob(obj);
+                write(blob->url());
+                write(blob->type());
+                write(blob->size());
+                return true;
+            }
+            if (obj->inherits(&JSImageData::s_info)) {
+                ImageData* data = toImageData(obj);
+                write(ImageDataTag);
+                write(data->width());
+                write(data->height());
+                write(data->data()->length());
+                write(data->data()->data()->data(), data->data()->length());
+                return true;
+            }
+
             CallData unusedData;
             if (getCallData(value, unusedData) == CallTypeNone)
-                return SerializedScriptValueData();
+                return false;
         }
         // Any other types are expected to serialize as null.
-        return SerializedScriptValueData(jsNull());
-    }
-
-    void getPropertyNames(JSObject* object, Vector<PropertyNameArray, 16>& propertyStack)
-    {
-        propertyStack.append(PropertyNameArray(m_exec));
-        object->getOwnPropertyNames(m_exec, propertyStack.last());
-    }
-
-    void putProperty(RefPtr<SerializedArray> array, unsigned propertyName, const SerializedScriptValueData& value)
-    {
-        array->setIndex(propertyName, value);
-    }
-
-    void putProperty(RefPtr<SerializedObject> object, const Identifier& propertyName, const SerializedScriptValueData& value)
-    {
-        object->set(propertyName, value);
-    }
-
-    bool startArray(JSArray* inArray, RefPtr<SerializedArray>)
-    {
-        // Cycle detection
-        if (!m_cycleDetector.add(inArray).second) {
-            throwError(m_exec, createTypeError(m_exec, "Cannot post cyclic structures."));
-            return false;
-        }
-        m_gcBuffer.append(inArray);
+        write(NullTag);
         return true;
     }
 
-    void endArray(JSArray* inArray, RefPtr<SerializedArray>)
+    void write(SerializationTag tag)
     {
-        m_cycleDetector.remove(inArray);
-        m_gcBuffer.removeLast();
+        writeLittleEndian<uint8_t>(m_buffer, static_cast<uint8_t>(tag));
     }
 
-    bool startObject(JSObject* inObject, RefPtr<SerializedObject>)
+    void write(uint8_t c)
     {
-        // Cycle detection
-        if (!m_cycleDetector.add(inObject).second) {
-            throwError(m_exec, createTypeError(m_exec, "Cannot post cyclic structures."));
-            return false;
+        writeLittleEndian(m_buffer, c);
+    }
+
+#if ASSUME_LITTLE_ENDIAN
+    template <typename T> static void writeLittleEndian(Vector<uint8_t>& buffer, T value)
+    {
+        if (sizeof(T) == 1)
+            buffer.append(value);
+        else
+            buffer.append(reinterpret_cast<uint8_t*>(&value), sizeof(value));
+    }
+#else
+    template <typename T> static void writeLittleEndian(Vector<uint8_t>& buffer, T value)
+    {
+        for (unsigned i = 0; i < sizeof(T); i++) {
+            buffer.append(value & 0xFF);
+            value >>= 8;
         }
-        m_gcBuffer.append(inObject);
+    }
+#endif
+
+    template <typename T> static bool writeLittleEndian(Vector<uint8_t>& buffer, const T* values, uint32_t length)
+    {
+        if (length > numeric_limits<uint32_t>::max() / sizeof(T))
+            return false;
+
+#if ASSUME_LITTLE_ENDIAN
+        buffer.append(reinterpret_cast<const uint8_t*>(values), length * sizeof(T));
+#else
+        for (unsigned i = 0; i < length; i++) {
+            T value = values[i];
+            for (unsigned j = 0; j < sizeof(T); j++) {
+                buffer.append(static_cast<uint8_t>(value & 0xFF));
+                value >>= 8;
+            }
+        }
+#endif
         return true;
     }
 
-    void endObject(JSObject* inObject, RefPtr<SerializedObject>)
+    void write(uint32_t i)
     {
-        m_cycleDetector.remove(inObject);
-        m_gcBuffer.removeLast();
+        writeLittleEndian(m_buffer, i);
+    }
+
+    void write(double d)
+    {
+        union {
+            double d;
+            int64_t i;
+        } u;
+        u.d = d;
+        writeLittleEndian(m_buffer, u.i);
+    }
+
+    void write(unsigned long long i)
+    {
+        writeLittleEndian(m_buffer, i);
+    }
+    void write(UChar ch)
+    {
+        writeLittleEndian(m_buffer, static_cast<uint16_t>(ch));
+    }
+
+    void writeStringIndex(unsigned i)
+    {
+        if (m_constantPool.size() <= 0xFF)
+            write(static_cast<uint8_t>(i));
+        else if (m_constantPool.size() <= 0xFFFF)
+            write(static_cast<uint16_t>(i));
+        else
+            write(static_cast<uint32_t>(i));
+    }
+
+    void write(const Identifier& ident)
+    {
+        UString str = ident.ustring();
+        pair<ConstantPool::iterator, bool> iter = m_constantPool.add(str.impl(), m_constantPool.size());
+        if (!iter.second) {
+            write(StringPoolTag);
+            writeStringIndex(iter.first->second);
+            return;
+        }
+
+        // This condition is unlikely to happen as they would imply an ~8gb
+        // string but we should guard against it anyway
+        if (str.length() >= StringPoolTag) {
+            fail();
+            return;
+        }
+
+        // Guard against overflow
+        if (str.length() > (numeric_limits<uint32_t>::max() - sizeof(uint32_t)) / sizeof(UChar)) {
+            fail();
+            return;
+        }
+
+        writeLittleEndian<uint32_t>(m_buffer, str.length());
+        if (!writeLittleEndian<uint16_t>(m_buffer, str.characters(), str.length()))
+            fail();
+    }
+
+    void write(const UString& str)
+    {
+        if (str.isNull())
+            write(m_emptyIdentifier);
+        else
+            write(Identifier(m_exec, str));
+    }
+
+    void write(const String& str)
+    {
+        if (str.isEmpty())
+            write(m_emptyIdentifier);
+        else
+            write(Identifier(m_exec, str.impl()));
+    }
+
+    void write(const File* file)
+    {
+        write(file->path());
+        write(file->url());
+        write(file->type());
+    }
+
+    void write(const uint8_t* data, unsigned length)
+    {
+        m_buffer.append(data, length);
+    }
+
+    Vector<uint8_t>& m_buffer;
+    HashSet<JSObject*> m_cycleDetector;
+    typedef HashMap<RefPtr<StringImpl>, uint32_t, IdentifierRepHash> ConstantPool;
+    ConstantPool m_constantPool;
+    Identifier m_emptyIdentifier;
+};
+
+bool CloneSerializer::serialize(JSValue in)
+{
+    Vector<uint32_t, 16> indexStack;
+    Vector<uint32_t, 16> lengthStack;
+    Vector<PropertyNameArray, 16> propertyStack;
+    Vector<JSObject*, 16> inputObjectStack;
+    Vector<JSArray*, 16> inputArrayStack;
+    Vector<WalkerState, 16> stateStack;
+    WalkerState state = StateUnknown;
+    JSValue inValue = in;
+    unsigned tickCount = ticksUntilNextCheck();
+    while (1) {
+        switch (state) {
+            arrayStartState:
+            case ArrayStartState: {
+                ASSERT(isArray(inValue));
+                if (inputObjectStack.size() + inputArrayStack.size() > maximumFilterRecursion) {
+                    throwStackOverflow();
+                    return false;
+                }
+
+                JSArray* inArray = asArray(inValue);
+                unsigned length = inArray->length();
+                if (!startArray(inArray))
+                    return false;
+                inputArrayStack.append(inArray);
+                indexStack.append(0);
+                lengthStack.append(length);
+                // fallthrough
+            }
+            arrayStartVisitMember:
+            case ArrayStartVisitMember: {
+                if (!--tickCount) {
+                    if (didTimeOut()) {
+                        throwInterruptedException();
+                        return false;
+                    }
+                    tickCount = ticksUntilNextCheck();
+                }
+
+                JSArray* array = inputArrayStack.last();
+                uint32_t index = indexStack.last();
+                if (index == lengthStack.last()) {
+                    endObject(array);
+                    inputArrayStack.removeLast();
+                    indexStack.removeLast();
+                    lengthStack.removeLast();
+                    break;
+                }
+                if (array->canGetIndex(index))
+                    inValue = array->getIndex(index);
+                else {
+                    bool hasIndex = false;
+                    inValue = getSparseIndex(array, index, hasIndex);
+                    if (!hasIndex) {
+                        indexStack.last()++;
+                        goto arrayStartVisitMember;
+                    }
+                }
+
+                write(index);
+                if (dumpIfTerminal(inValue)) {
+                    indexStack.last()++;
+                    goto arrayStartVisitMember;
+                }
+                stateStack.append(ArrayEndVisitMember);
+                goto stateUnknown;
+            }
+            case ArrayEndVisitMember: {
+                indexStack.last()++;
+                goto arrayStartVisitMember;
+            }
+            objectStartState:
+            case ObjectStartState: {
+                ASSERT(inValue.isObject());
+                if (inputObjectStack.size() + inputArrayStack.size() > maximumFilterRecursion) {
+                    throwStackOverflow();
+                    return false;
+                }
+                JSObject* inObject = asObject(inValue);
+                if (!startObject(inObject))
+                    return false;
+                inputObjectStack.append(inObject);
+                indexStack.append(0);
+                propertyStack.append(PropertyNameArray(m_exec));
+                inObject->getOwnPropertyNames(m_exec, propertyStack.last());
+                // fallthrough
+            }
+            objectStartVisitMember:
+            case ObjectStartVisitMember: {
+                if (!--tickCount) {
+                    if (didTimeOut()) {
+                        throwInterruptedException();
+                        return false;
+                    }
+                    tickCount = ticksUntilNextCheck();
+                }
+
+                JSObject* object = inputObjectStack.last();
+                uint32_t index = indexStack.last();
+                PropertyNameArray& properties = propertyStack.last();
+                if (index == properties.size()) {
+                    endObject(object);
+                    inputObjectStack.removeLast();
+                    indexStack.removeLast();
+                    propertyStack.removeLast();
+                    break;
+                }
+                inValue = getProperty(object, properties[index]);
+                if (shouldTerminate())
+                    return false;
+
+                if (!inValue) {
+                    // Property was removed during serialisation
+                    indexStack.last()++;
+                    goto objectStartVisitMember;
+                }
+                write(properties[index]);
+
+                if (shouldTerminate())
+                    return false;
+
+                if (!dumpIfTerminal(inValue)) {
+                    stateStack.append(ObjectEndVisitMember);
+                    goto stateUnknown;
+                }
+                // fallthrough
+            }
+            case ObjectEndVisitMember: {
+                if (shouldTerminate())
+                    return false;
+
+                indexStack.last()++;
+                goto objectStartVisitMember;
+            }
+            stateUnknown:
+            case StateUnknown:
+                if (dumpIfTerminal(inValue))
+                    break;
+
+                if (isArray(inValue))
+                    goto arrayStartState;
+                goto objectStartState;
+        }
+        if (stateStack.isEmpty())
+            break;
+
+        state = stateStack.last();
+        stateStack.removeLast();
+
+        if (!--tickCount) {
+            if (didTimeOut()) {
+                throwInterruptedException();
+                return false;
+            }
+            tickCount = ticksUntilNextCheck();
+        }
+    }
+    if (m_failed)
+        return false;
+
+    return true;
+}
+
+class CloneDeserializer : CloneBase {
+public:
+    static String deserializeString(const Vector<uint8_t>& buffer)
+    {
+        const uint8_t* ptr = buffer.begin();
+        const uint8_t* end = buffer.end();
+        uint32_t version;
+        if (!readLittleEndian(ptr, end, version) || version > CurrentVersion)
+            return String();
+        uint8_t tag;
+        if (!readLittleEndian(ptr, end, tag) || tag != StringTag)
+            return String();
+        uint32_t length;
+        if (!readLittleEndian(ptr, end, length) || length >= StringPoolTag)
+            return String();
+        UString str;
+        if (!readString(ptr, end, str, length))
+            return String();
+        return String(str.impl());
+    }
+
+    static JSValue deserialize(ExecState* exec, JSGlobalObject* globalObject, const Vector<uint8_t>& buffer)
+    {
+        if (!buffer.size())
+            return jsNull();
+        CloneDeserializer deserializer(exec, globalObject, buffer);
+        if (!deserializer.isValid()) {
+            deserializer.throwValidationError();
+            return JSValue();
+        }
+        return deserializer.deserialize();
     }
 
 private:
-    HashSet<JSObject*> m_cycleDetector;
-};
-
-SerializedScriptValueData SerializedScriptValueData::serialize(ExecState* exec, JSValue inValue)
-{
-    SerializingTreeWalker context(exec);
-    return walk<SerializingTreeWalker>(context, inValue);
-}
-
-
-struct DeserializingTreeWalker : public BaseWalker {
-    typedef SerializedScriptValueData InputType;
-    typedef RefPtr<SerializedArray> InputArray;
-    typedef RefPtr<SerializedObject> InputObject;
-    typedef JSValue OutputType;
-    typedef JSArray* OutputArray;
-    typedef JSObject* OutputObject;
-    typedef SerializedObject::PropertyNameList PropertyList;
-
-    DeserializingTreeWalker(ExecState* exec, JSGlobalObject* globalObject, bool mustCopy)
-        : BaseWalker(exec)
+    CloneDeserializer(ExecState* exec, JSGlobalObject* globalObject, const Vector<uint8_t>& buffer)
+        : CloneBase(exec)
         , m_globalObject(globalObject)
         , m_isDOMGlobalObject(globalObject->inherits(&JSDOMGlobalObject::s_info))
-        , m_mustCopy(mustCopy)
+        , m_ptr(buffer.data())
+        , m_end(buffer.data() + buffer.size())
+        , m_version(0xFFFFFFFF)
     {
+        if (!read(m_version))
+            m_version = 0xFFFFFFFF;
     }
 
-    OutputType null() { return jsNull(); }
+    JSValue deserialize();
 
-    bool isArray(const SerializedScriptValueData& value)
+    void throwValidationError()
     {
-        return value.type() == SerializedScriptValueData::ArrayType;
+        throwError(m_exec, createTypeError(m_exec, "Unable to deserialize data."));
     }
 
-    bool isObject(const SerializedScriptValueData& value)
-    {
-        return value.type() == SerializedScriptValueData::ObjectType;
-    }
+    bool isValid() const { return m_version <= CurrentVersion; }
 
-    SerializedArray* asInputArray(const SerializedScriptValueData& value)
+    template <typename T> bool readLittleEndian(T& value)
     {
-        return value.asArray();
-    }
-
-    SerializedObject* asInputObject(const SerializedScriptValueData& value)
-    {
-        return value.asObject();
-    }
-
-    JSArray* createOutputArray(unsigned length)
-    {
-        JSArray* array = constructEmptyArray(m_exec, m_globalObject);
-        array->setLength(length);
-        return array;
-    }
-
-    JSObject* createOutputObject()
-    {
-        return constructEmptyObject(m_exec, m_globalObject);
-    }
-
-    uint32_t length(RefPtr<SerializedArray> array)
-    {
-        return array->length();
-    }
-
-    bool canDoFastRead(RefPtr<SerializedArray> array, unsigned index)
-    {
-        return array->canDoFastRead(index);
-    }
-
-    SerializedScriptValueData getIndex(RefPtr<SerializedArray> array, unsigned index)
-    {
-        return array->getIndex(index);
-    }
-
-    SerializedScriptValueData getSparseIndex(RefPtr<SerializedArray> array, unsigned propertyName, bool& hasIndex)
-    {
-        return array->getSparseIndex(propertyName, hasIndex);
-    }
-
-    SerializedScriptValueData getProperty(RefPtr<SerializedObject> object, const RefPtr<StringImpl>& propertyName, unsigned propertyIndex)
-    {
-        ASSERT(object->names()[propertyIndex] == propertyName);
-        UNUSED_PARAM(propertyName);
-        return object->values()[propertyIndex];
-    }
-
-    JSValue convertIfTerminal(SerializedScriptValueData& value)
-    {
-        switch (value.type()) {
-            case SerializedScriptValueData::ArrayType:
-            case SerializedScriptValueData::ObjectType:
-                return JSValue();
-            case SerializedScriptValueData::StringType:
-                return jsString(m_exec, value.asString().crossThreadString());
-            case SerializedScriptValueData::ImmediateType:
-                return value.asImmediate();
-            case SerializedScriptValueData::NumberType:
-                return jsNumber(m_exec, value.asDouble());
-            case SerializedScriptValueData::DateType:
-                return new (m_exec) DateInstance(m_exec, m_globalObject->dateStructure(), value.asDouble());
-            case SerializedScriptValueData::BlobType: {
-                if (!m_isDOMGlobalObject)
-                    return jsNull();
-                SerializedBlob* serializedBlob = value.asBlob();
-                ScriptExecutionContext* scriptExecutionContext = static_cast<JSDOMGlobalObject*>(m_exec->lexicalGlobalObject())->scriptExecutionContext();
-                ASSERT(scriptExecutionContext);
-                return toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_globalObject), Blob::create(scriptExecutionContext, serializedBlob->url(), serializedBlob->type(), serializedBlob->size()));
-            }
-            case SerializedScriptValueData::FileType: {
-                if (!m_isDOMGlobalObject)
-                    return jsNull();
-                SerializedFile* serializedFile = value.asFile();
-                ScriptExecutionContext* scriptExecutionContext = static_cast<JSDOMGlobalObject*>(m_exec->lexicalGlobalObject())->scriptExecutionContext();
-                ASSERT(scriptExecutionContext);
-                return toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_globalObject), File::create(scriptExecutionContext, serializedFile->path(), serializedFile->url(), serializedFile->type()));
-            }
-            case SerializedScriptValueData::FileListType: {
-                if (!m_isDOMGlobalObject)
-                    return jsNull();
-                RefPtr<FileList> result = FileList::create();
-                SerializedFileList* serializedFileList = value.asFileList();
-                unsigned length = serializedFileList->length();
-                ScriptExecutionContext* scriptExecutionContext = static_cast<JSDOMGlobalObject*>(m_exec->lexicalGlobalObject())->scriptExecutionContext();
-                ASSERT(scriptExecutionContext);
-                for (unsigned i = 0; i < length; i++) {
-                    const SerializedFileList::FileData& fileData = serializedFileList->item(i);
-                    result->append(File::create(scriptExecutionContext, fileData.path, fileData.url, fileData.type));
-                }
-                return toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_globalObject), result.get());
-            }
-            case SerializedScriptValueData::ImageDataType: {
-                if (!m_isDOMGlobalObject)
-                    return jsNull();
-                SerializedImageData* serializedImageData = value.asImageData();
-                RefPtr<ImageData> result = ImageData::create(serializedImageData->width(), serializedImageData->height());
-                memcpy(result->data()->data()->data(), serializedImageData->data()->data(), serializedImageData->data()->length());
-                return toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_globalObject), result.get());
-            }
-            case SerializedScriptValueData::EmptyType:
-                ASSERT_NOT_REACHED();
-                return jsNull();
+        if (m_failed || !readLittleEndian(m_ptr, m_end, value)) {
+            fail();
+            return false;
         }
-        ASSERT_NOT_REACHED();
-        return jsNull();
-    }
-
-    void getPropertyNames(RefPtr<SerializedObject> object, Vector<SerializedObject::PropertyNameList, 16>& properties)
-    {
-        properties.append(object->names());
-    }
-
-    void putProperty(JSArray* array, unsigned propertyName, JSValue value)
-    {
-        array->put(m_exec, propertyName, value);
-    }
-
-    void putProperty(JSObject* object, const RefPtr<StringImpl> propertyName, JSValue value)
-    {
-        object->putDirect(Identifier(m_exec, stringToUString(String(propertyName))), value);
-    }
-
-    bool startArray(RefPtr<SerializedArray>, JSArray* outArray)
-    {
-        m_gcBuffer.append(outArray);
         return true;
     }
-    void endArray(RefPtr<SerializedArray>, JSArray*)
+#if ASSUME_LITTLE_ENDIAN
+    template <typename T> static bool readLittleEndian(const uint8_t*& ptr, const uint8_t* end, T& value)
     {
-        m_gcBuffer.removeLast();
-    }
-    bool startObject(RefPtr<SerializedObject>, JSObject* outObject)
-    {
-        m_gcBuffer.append(outObject);
+        if (ptr > end - sizeof(value))
+            return false;
+
+        if (sizeof(T) == 1)
+            value = *ptr++;
+        else {
+            value = *reinterpret_cast<const T*>(ptr);
+            ptr += sizeof(T);
+        }
         return true;
     }
-    void endObject(RefPtr<SerializedObject>, JSObject*)
+#else
+    template <typename T> static bool readLittleEndian(const uint8_t*& ptr, const uint8_t* end, T& value)
     {
-        m_gcBuffer.removeLast();
+        if (ptr > end - sizeof(value))
+            return false;
+
+        if (sizeof(T) == 1)
+            value = *ptr++;
+        else {
+            value = 0;
+            for (unsigned i = 0; i < sizeof(T); i++)
+                value += ((T)*ptr++) << (i * 8);
+        }
+        return true;
+    }
+#endif
+
+    bool read(uint32_t& i)
+    {
+        return readLittleEndian(i);
     }
 
-private:
-    void* operator new(size_t);
+    bool read(int32_t& i)
+    {
+        return readLittleEndian(*reinterpret_cast<uint32_t*>(&i));
+    }
+
+    bool read(uint16_t& i)
+    {
+        return readLittleEndian(i);
+    }
+
+    bool read(uint8_t& i)
+    {
+        return readLittleEndian(i);
+    }
+
+    bool read(double& d)
+    {
+        union {
+            double d;
+            uint64_t i64;
+        } u;
+        if (!readLittleEndian(u.i64))
+            return false;
+        d = u.d;
+        return true;
+    }
+
+    bool read(unsigned long long& i)
+    {
+        return readLittleEndian(i);
+    }
+
+    bool readStringIndex(uint32_t& i)
+    {
+        if (m_constantPool.size() <= 0xFF) {
+            uint8_t i8;
+            if (!read(i8))
+                return false;
+            i = i8;
+            return true;
+        }
+        if (m_constantPool.size() <= 0xFFFF) {
+            uint16_t i16;
+            if (!read(i16))
+                return false;
+            i = i16;
+            return true;
+        }
+        return read(i);
+    }
+
+    static bool readString(const uint8_t*& ptr, const uint8_t* end, UString& str, unsigned length)
+    {
+        if (length >= numeric_limits<int32_t>::max() / sizeof(UChar))
+            return false;
+
+        unsigned size = length * sizeof(UChar);
+        if ((end - ptr) < static_cast<int>(size))
+            return false;
+
+#if ASSUME_LITTLE_ENDIAN
+        str = UString(reinterpret_cast<const UChar*>(ptr), length);
+        ptr += length * sizeof(UChar);
+#else
+        Vector<UChar> buffer;
+        buffer.reserveCapacity(length);
+        for (unsigned i = 0; i < length; i++) {
+            uint16_t ch;
+            readLittleEndian(ptr, end, ch);
+            buffer.append(ch);
+        }
+        str = UString::adopt(buffer);
+#endif
+        return true;
+    }
+
+    bool readStringData(Identifier& ident)
+    {
+        bool scratch;
+        return readStringData(ident, scratch);
+    }
+
+    bool readStringData(Identifier& ident, bool& wasTerminator)
+    {
+        if (m_failed)
+            return false;
+        uint32_t length = 0;
+        if (!read(length))
+            return false;
+        if (length == TerminatorTag) {
+            wasTerminator = true;
+            return false;
+        }
+        if (length == StringPoolTag) {
+            unsigned index = 0;
+            if (!readStringIndex(index)) {
+                fail();
+                return false;
+            }
+            if (index >= m_constantPool.size()) {
+                fail();
+                return false;
+            }
+            ident = m_constantPool[index];
+            return true;
+        }
+        UString str;
+        if (!readString(m_ptr, m_end, str, length)) {
+            fail();
+            return false;
+        }
+        ident = Identifier(m_exec, str);
+        m_constantPool.append(ident);
+        return true;
+    }
+
+    SerializationTag readTag()
+    {
+        if (m_ptr >= m_end)
+            return ErrorTag;
+        return static_cast<SerializationTag>(*m_ptr++);
+    }
+
+    void putProperty(JSArray* array, unsigned index, JSValue value)
+    {
+        if (array->canSetIndex(index))
+            array->setIndex(index, value);
+        else
+            array->put(m_exec, index, value);
+    }
+
+    void putProperty(JSObject* object, Identifier& property, JSValue value)
+    {
+        object->putDirect(property, value);
+    }
+
+    bool readFile(RefPtr<File>& file)
+    {
+        Identifier path;
+        if (!readStringData(path))
+            return 0;
+        Identifier url;
+        if (!readStringData(url))
+            return 0;
+        Identifier type;
+        if (!readStringData(type))
+            return 0;
+        if (m_isDOMGlobalObject) {
+            ScriptExecutionContext* scriptExecutionContext = static_cast<JSDOMGlobalObject*>(m_exec->lexicalGlobalObject())->scriptExecutionContext();
+            file = File::create(scriptExecutionContext, String(path.ustring().impl()), KURL(KURL(), String(url.ustring().impl())), String(type.ustring().impl()));
+        }
+        return true;
+    }
+
+    JSValue readTerminal()
+    {
+        SerializationTag tag = readTag();
+        switch (tag) {
+        case UndefinedTag:
+            return jsUndefined();
+        case NullTag:
+            return jsNull();
+        case IntTag: {
+            int32_t i;
+            if (!read(i))
+                return JSValue();
+            return jsNumber(m_exec, i);
+        }
+        case ZeroTag:
+            return jsNumber(m_exec, 0);
+        case OneTag:
+            return jsNumber(m_exec, 1);
+        case FalseTag:
+            return jsBoolean(false);
+        case TrueTag:
+            return jsBoolean(true);
+        case DoubleTag: {
+            double d;
+            if (!read(d))
+                return JSValue();
+            return jsNumber(m_exec, d);
+        }
+        case DateTag: {
+            double d;
+            if (!read(d))
+                return JSValue();
+            return new (m_exec) DateInstance(m_exec, m_globalObject->dateStructure(), d);
+        }
+        case FileTag: {
+            RefPtr<File> file;
+            if (!readFile(file))
+                return JSValue();
+            if (!m_isDOMGlobalObject)
+                return jsNull();
+            return toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_globalObject), file.get());
+        }
+        case FileListTag: {
+            unsigned length = 0;
+            if (!read(length))
+                return JSValue();
+            RefPtr<FileList> result = FileList::create();
+            for (unsigned i = 0; i < length; i++) {
+                RefPtr<File> file;
+                if (!readFile(file))
+                    return JSValue();
+                if (m_isDOMGlobalObject)
+                    result->append(file.get());
+            }
+            if (!m_isDOMGlobalObject)
+                return jsNull();
+            return toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_globalObject), result.get());
+        }
+        case ImageDataTag: {
+            uint32_t width;
+            if (!read(width))
+                return JSValue();
+            uint32_t height;
+            if (!read(height))
+                return JSValue();
+            uint32_t length;
+            if (!read(length))
+                return JSValue();
+            if (m_end < ((uint8_t*)0) + length || m_ptr > m_end - length) {
+                fail();
+                return JSValue();
+            }
+            if (!m_isDOMGlobalObject) {
+                m_ptr += length;
+                return jsNull();
+            }
+            RefPtr<ImageData> result = ImageData::create(width, height);
+            memcpy(result->data()->data()->data(), m_ptr, length);
+            m_ptr += length;
+            return toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_globalObject), result.get());
+        }
+        case BlobTag: {
+            Identifier url;
+            if (!readStringData(url))
+                return JSValue();
+            Identifier type;
+            if (!readStringData(type))
+                return JSValue();
+            unsigned long long size = 0;
+            if (!read(size))
+                return JSValue();
+            if (!m_isDOMGlobalObject)
+                return jsNull();
+            ScriptExecutionContext* scriptExecutionContext = static_cast<JSDOMGlobalObject*>(m_exec->lexicalGlobalObject())->scriptExecutionContext();
+            ASSERT(scriptExecutionContext);
+            return toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_globalObject), Blob::create(scriptExecutionContext, KURL(KURL(), url.ustring().impl()), String(type.ustring().impl()), size));
+        }
+        case StringTag: {
+            Identifier ident;
+            if (!readStringData(ident))
+                return JSValue();
+            return jsString(m_exec, ident.ustring());
+        }
+        case EmptyStringTag:
+            return jsEmptyString(&m_exec->globalData());
+        default:
+            m_ptr--; // Push the tag back
+            return JSValue();
+        }
+    }
+
     JSGlobalObject* m_globalObject;
     bool m_isDOMGlobalObject;
-    bool m_mustCopy;
+    const uint8_t* m_ptr;
+    const uint8_t* m_end;
+    unsigned m_version;
+    Vector<Identifier> m_constantPool;
 };
 
-JSValue SerializedScriptValueData::deserialize(ExecState* exec, JSGlobalObject* global, bool mustCopy) const
+JSValue CloneDeserializer::deserialize()
 {
-    DeserializingTreeWalker context(exec, global, mustCopy);
-    return walk<DeserializingTreeWalker>(context, *this);
-}
+    Vector<uint32_t, 16> indexStack;
+    Vector<Identifier, 16> propertyNameStack;
+    Vector<JSObject*, 16> outputObjectStack;
+    Vector<JSArray*, 16> outputArrayStack;
+    Vector<WalkerState, 16> stateStack;
+    WalkerState state = StateUnknown;
+    JSValue outValue;
 
-struct TeardownTreeWalker {
-    typedef SerializedScriptValueData InputType;
-    typedef RefPtr<SerializedArray> InputArray;
-    typedef RefPtr<SerializedObject> InputObject;
-    typedef bool OutputType;
-    typedef bool OutputArray;
-    typedef bool OutputObject;
-    typedef SerializedObject::PropertyNameList PropertyList;
-
-    bool shouldTerminate()
-    {
-        return false;
-    }
-
-    unsigned ticksUntilNextCheck()
-    {
-        return 0xFFFFFFFF;
-    }
-
-    bool didTimeOut()
-    {
-        return false;
-    }
-
-    void throwStackOverflow()
-    {
-    }
-
-    void throwInterruptedException()
-    {
-    }
-
-    bool null() { return false; }
-
-    bool isArray(const SerializedScriptValueData& value)
-    {
-        return value.type() == SerializedScriptValueData::ArrayType;
-    }
-
-    bool isObject(const SerializedScriptValueData& value)
-    {
-        return value.type() == SerializedScriptValueData::ObjectType;
-    }
-
-    SerializedArray* asInputArray(const SerializedScriptValueData& value)
-    {
-        return value.asArray();
-    }
-
-    SerializedObject* asInputObject(const SerializedScriptValueData& value)
-    {
-        return value.asObject();
-    }
-
-    bool createOutputArray(unsigned)
-    {
-        return false;
-    }
-
-    bool createOutputObject()
-    {
-        return false;
-    }
-
-    uint32_t length(RefPtr<SerializedArray> array)
-    {
-        return array->length();
-    }
-
-    bool canDoFastRead(RefPtr<SerializedArray> array, unsigned index)
-    {
-        return array->canDoFastRead(index);
-    }
-
-    SerializedScriptValueData getIndex(RefPtr<SerializedArray> array, unsigned index)
-    {
-        return array->getIndex(index);
-    }
-
-    SerializedScriptValueData getSparseIndex(RefPtr<SerializedArray> array, unsigned propertyName, bool& hasIndex)
-    {
-        return array->getSparseIndex(propertyName, hasIndex);
-    }
-
-    SerializedScriptValueData getProperty(RefPtr<SerializedObject> object, const RefPtr<StringImpl>& propertyName, unsigned propertyIndex)
-    {
-        ASSERT(object->names()[propertyIndex] == propertyName);
-        UNUSED_PARAM(propertyName);
-        return object->values()[propertyIndex];
-    }
-
-    bool convertIfTerminal(SerializedScriptValueData& value)
-    {
-        switch (value.type()) {
-            case SerializedScriptValueData::ArrayType:
-            case SerializedScriptValueData::ObjectType:
-                return false;
-            case SerializedScriptValueData::StringType:
-            case SerializedScriptValueData::ImmediateType:
-            case SerializedScriptValueData::NumberType:
-            case SerializedScriptValueData::DateType:
-            case SerializedScriptValueData::EmptyType:
-            case SerializedScriptValueData::BlobType:
-            case SerializedScriptValueData::FileType:
-            case SerializedScriptValueData::FileListType:
-            case SerializedScriptValueData::ImageDataType:
-                return true;
+    unsigned tickCount = ticksUntilNextCheck();
+    while (1) {
+        switch (state) {
+        arrayStartState:
+        case ArrayStartState: {
+            uint32_t length;
+            if (!read(length)) {
+                fail();
+                goto error;
+            }
+            JSArray* outArray = constructEmptyArray(m_exec, m_globalObject);
+            outArray->setLength(length);
+            m_gcBuffer.append(outArray);
+            outputArrayStack.append(outArray);
+            // fallthrough
         }
-        ASSERT_NOT_REACHED();
-        return true;
-    }
+        arrayStartVisitMember:
+        case ArrayStartVisitMember: {
+            if (!--tickCount) {
+                if (didTimeOut()) {
+                    throwInterruptedException();
+                    return JSValue();
+                }
+                tickCount = ticksUntilNextCheck();
+            }
 
-    void getPropertyNames(RefPtr<SerializedObject> object, Vector<SerializedObject::PropertyNameList, 16>& properties)
-    {
-        properties.append(object->names());
-    }
+            uint32_t index;
+            if (!read(index)) {
+                fail();
+                goto error;
+            }
+            if (index == TerminatorTag) {
+                JSArray* outArray = outputArrayStack.last();
+                m_gcBuffer.removeLast();
+                outValue = outArray;
+                outputArrayStack.removeLast();
+                break;
+            }
 
-    void putProperty(bool, unsigned, bool)
-    {
-    }
+            if (JSValue terminal = readTerminal()) {
+                putProperty(outputArrayStack.last(), index, terminal);
+                goto arrayStartVisitMember;
+            }
+            if (m_failed)
+                goto error;
+            indexStack.append(index);
+            stateStack.append(ArrayEndVisitMember);
+            goto stateUnknown;
+        }
+        case ArrayEndVisitMember: {
+            JSArray* outArray = outputArrayStack.last();
+            putProperty(outArray, indexStack.last(), outValue);
+            indexStack.removeLast();
+            goto arrayStartVisitMember;
+        }
+        objectStartState:
+        case ObjectStartState: {
+            if (outputObjectStack.size() + outputArrayStack.size() > maximumFilterRecursion) {
+                throwStackOverflow();
+                return JSValue();
+            }
+            JSObject* outObject = constructEmptyObject(m_exec, m_globalObject);
+            m_gcBuffer.append(outObject);
+            outputObjectStack.append(outObject);
+            // fallthrough
+        }
+        objectStartVisitMember:
+        case ObjectStartVisitMember: {
+            if (!--tickCount) {
+                if (didTimeOut()) {
+                    throwInterruptedException();
+                    return JSValue();
+                }
+                tickCount = ticksUntilNextCheck();
+            }
 
-    void putProperty(bool, const RefPtr<StringImpl>&, bool)
-    {
-    }
+            Identifier ident;
+            bool wasTerminator = false;
+            if (!readStringData(ident, wasTerminator)) {
+                if (!wasTerminator)
+                    goto error;
+                JSObject* outObject = outputObjectStack.last();
+                m_gcBuffer.removeLast();
+                outValue = outObject;
+                outputObjectStack.removeLast();
+                break;
+            }
 
-    bool startArray(RefPtr<SerializedArray>, bool)
-    {
-        return true;
-    }
-    void endArray(RefPtr<SerializedArray> array, bool)
-    {
-        array->clear();
-    }
-    bool startObject(RefPtr<SerializedObject>, bool)
-    {
-        return true;
-    }
-    void endObject(RefPtr<SerializedObject> object, bool)
-    {
-        object->clear();
-    }
-};
+            if (JSValue terminal = readTerminal()) {
+                putProperty(outputObjectStack.last(), ident, terminal);
+                goto objectStartVisitMember;
+            }
+            stateStack.append(ObjectEndVisitMember);
+            propertyNameStack.append(ident);
+            goto stateUnknown;
+        }
+        case ObjectEndVisitMember: {
+            putProperty(outputObjectStack.last(), propertyNameStack.last(), outValue);
+            propertyNameStack.removeLast();
+            goto objectStartVisitMember;
+        }
+        stateUnknown:
+        case StateUnknown:
+            if (JSValue terminal = readTerminal()) {
+                outValue = terminal;
+                break;
+            }
+            SerializationTag tag = readTag();
+            if (tag == ArrayTag)
+                goto arrayStartState;
+            if (tag == ObjectTag)
+                goto objectStartState;
+            goto error;
+        }
+        if (stateStack.isEmpty())
+            break;
 
-void SerializedScriptValueData::tearDownSerializedData()
-{
-    if (m_sharedData && m_sharedData->refCount() > 1)
-        return;
-    TeardownTreeWalker context;
-    walk<TeardownTreeWalker>(context, *this);
+        state = stateStack.last();
+        stateStack.removeLast();
+
+        if (!--tickCount) {
+            if (didTimeOut()) {
+                throwInterruptedException();
+                return JSValue();
+            }
+            tickCount = ticksUntilNextCheck();
+        }
+    }
+    ASSERT(outValue);
+    ASSERT(!m_failed);
+    return outValue;
+error:
+    fail();
+    throwValidationError();
+    return JSValue();
 }
+
+
 
 SerializedScriptValue::~SerializedScriptValue()
 {
+}
+
+SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>& buffer)
+{
+    m_data.swap(buffer);
+}
+
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(ExecState* exec, JSValue value)
+{
+    Vector<uint8_t> buffer;
+    if (!CloneSerializer::serialize(exec, value, buffer))
+        return 0;
+    return adoptRef(new SerializedScriptValue(buffer));
+}
+
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::create()
+{
+    Vector<uint8_t> buffer;
+    return adoptRef(new SerializedScriptValue(buffer));
+}
+
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(String string)
+{
+    Vector<uint8_t> buffer;
+    if (!CloneSerializer::serialize(string, buffer))
+        return 0;
+    return adoptRef(new SerializedScriptValue(buffer));
 }
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(JSContextRef originContext, JSValueRef apiValue, JSValueRef* exception)
@@ -1076,14 +1271,18 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(JSContextRef ori
         exec->clearException();
         return 0;
     }
-    
+    ASSERT(serializedValue);
     return serializedValue;
 }
 
-SerializedScriptValue* SerializedScriptValue::nullValue() 
+String SerializedScriptValue::toString()
 {
-    DEFINE_STATIC_LOCAL(RefPtr<SerializedScriptValue>, nullValue, (SerializedScriptValue::create()));
-    return nullValue.get();
+    return CloneDeserializer::deserializeString(m_data);
+}
+
+JSValue SerializedScriptValue::deserialize(ExecState* exec, JSGlobalObject* globalObject)
+{
+    return CloneDeserializer::deserialize(exec, globalObject, m_data);
 }
 
 JSValueRef SerializedScriptValue::deserialize(JSContextRef destinationContext, JSValueRef* exception)
@@ -1097,7 +1296,14 @@ JSValueRef SerializedScriptValue::deserialize(JSContextRef destinationContext, J
         exec->clearException();
         return 0;
     }
+    ASSERT(value);
     return toRef(exec, value);
+}
+
+SerializedScriptValue* SerializedScriptValue::nullValue()
+{
+    DEFINE_STATIC_LOCAL(RefPtr<SerializedScriptValue>, emptyValue, (SerializedScriptValue::create()));
+    return emptyValue.get();
 }
 
 }

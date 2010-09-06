@@ -1,3 +1,16 @@
+2010-09-05  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        SerializedScriptValue needs to use a flat storage mechanism
+        https://bugs.webkit.org/show_bug.cgi?id=45244
+
+        Add a few more test cases to cover the new branches in the
+        rewritten serialization logic.
+
+        * fast/dom/Window/window-postmessage-clone-expected.txt:
+        * fast/dom/Window/window-postmessage-clone.html:
+
 2010-09-06  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Nikolas Zimmermann.

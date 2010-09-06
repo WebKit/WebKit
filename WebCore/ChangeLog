@@ -1,3 +1,63 @@
+2010-09-05  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        SerializedScriptValue needs to use a flat storage mechanism
+        https://bugs.webkit.org/show_bug.cgi?id=45244
+
+        Rewrite the old tree to tree serialization logic to use
+        flat storage.  Unfortunately this basically required a
+        complete rewrite.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneBase::CloneBase):
+        (WebCore::CloneBase::shouldTerminate):
+        (WebCore::CloneBase::ticksUntilNextCheck):
+        (WebCore::CloneBase::didTimeOut):
+        (WebCore::CloneBase::throwStackOverflow):
+        (WebCore::CloneBase::throwInterruptedException):
+        (WebCore::CloneBase::fail):
+        (WebCore::CloneSerializer::serialize):
+        (WebCore::CloneSerializer::CloneSerializer):
+        (WebCore::CloneSerializer::isArray):
+        (WebCore::CloneSerializer::startObject):
+        (WebCore::CloneSerializer::startArray):
+        (WebCore::CloneSerializer::endObject):
+        (WebCore::CloneSerializer::getSparseIndex):
+        (WebCore::CloneSerializer::getProperty):
+        (WebCore::CloneSerializer::dumpImmediate):
+        (WebCore::CloneSerializer::dumpString):
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        (WebCore::CloneSerializer::write):
+        (WebCore::CloneSerializer::writeLittleEndian):
+        (WebCore::CloneSerializer::writeStringIndex):
+        (WebCore::CloneDeserializer::deserializeString):
+        (WebCore::CloneDeserializer::deserialize):
+        (WebCore::CloneDeserializer::CloneDeserializer):
+        (WebCore::CloneDeserializer::throwValidationError):
+        (WebCore::CloneDeserializer::isValid):
+        (WebCore::CloneDeserializer::readLittleEndian):
+        (WebCore::CloneDeserializer::read):
+        (WebCore::CloneDeserializer::readStringIndex):
+        (WebCore::CloneDeserializer::readString):
+        (WebCore::CloneDeserializer::readStringData):
+        (WebCore::CloneDeserializer::readTag):
+        (WebCore::CloneDeserializer::putProperty):
+        (WebCore::CloneDeserializer::readFile):
+        (WebCore::CloneDeserializer::readTerminal):
+        (WebCore::SerializedScriptValue::~SerializedScriptValue):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        (WebCore::SerializedScriptValue::create):
+        (WebCore::SerializedScriptValue::toString):
+        (WebCore::SerializedScriptValue::deserialize):
+        (WebCore::SerializedScriptValue::nullValue):
+        * bindings/js/SerializedScriptValue.h:
+        * dom/MessagePortChannel.cpp:
+        (WebCore::MessagePortChannel::EventData::EventData):
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::MessageWorkerContextTask::MessageWorkerContextTask):
+        (WebCore::MessageWorkerTask::MessageWorkerTask):
+
 2010-09-06  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

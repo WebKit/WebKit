@@ -1,3 +1,14 @@
+2010-09-05  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        SerializedScriptValue needs to use a flat storage mechanism
+        https://bugs.webkit.org/show_bug.cgi?id=45244
+
+        Export JSArray::put
+
+        * JavaScriptCore.exp:
+
 2010-09-06  Chao-ying Fu  <fu@mips.com>
 
         Reviewed by Oliver Hunt.
