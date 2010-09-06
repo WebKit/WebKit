@@ -163,6 +163,9 @@ public:
     // That is committed size for Windows and virtual memory size for POSIX
     virtual size_t memoryUsageMB() { return 0; }
 
+    // Same as above, but always returns actual value, without any caches.
+    virtual size_t actualMemoryUsageMB() { return 0; }
+
 
     // Message Ports -------------------------------------------------------
 
