@@ -72,6 +72,7 @@ private:
 class InspectorFrontendClientQt : public InspectorFrontendClientLocal {
 public:
     InspectorFrontendClientQt(QWebPage* inspectedWebPage, PassOwnPtr<QWebView> inspectorView, InspectorClientQt* inspectorClient);
+    virtual ~InspectorFrontendClientQt();
 
     virtual void frontendLoaded();
 

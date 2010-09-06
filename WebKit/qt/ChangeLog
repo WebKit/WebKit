@@ -1,3 +1,11 @@
+2010-09-06  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Attempt to fix random test crashes after r66720.
+
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (WebCore::InspectorFrontendClientQt::~InspectorFrontendClientQt):
+        * WebCoreSupport/InspectorClientQt.h:
+
 2010-09-05  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r66801.

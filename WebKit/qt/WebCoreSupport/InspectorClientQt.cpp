@@ -254,6 +254,13 @@ InspectorFrontendClientQt::InspectorFrontendClientQt(QWebPage* inspectedWebPage,
 {
 }
 
+InspectorFrontendClientQt::~InspectorFrontendClientQt()
+{
+    ASSERT(m_destroyingInspectorView);
+    if (m_inspectorClient)
+        m_inspectorClient->releaseFrontendPage();
+}
+
 void InspectorFrontendClientQt::frontendLoaded()
 {
     InspectorFrontendClientLocal::frontendLoaded();
