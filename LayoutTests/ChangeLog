@@ -1,3 +1,11 @@
+2010-09-06  Adam Barth  <abarth@webkit.org>
+
+        Update expected results to match change in test.  Qt's behavior is
+        unchanged.  It's just the redundant expectations in the test that are
+        changing.
+
+        * platform/qt/fast/events/continuous-platform-wheelevent-in-scrolling-div-expected.txt:
+
 2010-08-31  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Joseph Pecoraro.
