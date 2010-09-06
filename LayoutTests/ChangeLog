@@ -1,3 +1,12 @@
+2010-09-06  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skipping a crashing media test.
+
+        [GStreamer] multiple <video> elements + PulseAudio are crash-prone
+        https://bugs.webkit.org/show_bug.cgi?id=44235
+
+        * platform/gtk/Skipped: Skip media/controls-styling.html
+
 2010-09-06  Roland Steiner  <rolandsteiner@chromium.org>
 
         Unreviewed: upstream Chromium SVG test_expectations

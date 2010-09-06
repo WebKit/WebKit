@@ -5802,6 +5802,7 @@ media/video-layer-crash.html
 media/video-zoom-controls.html
 media/adopt-node-crash.html
 media/video-transformed.html
+media/controls-styling.html
 
 # Need to implement inner-spin-button or outer-spin-button
 fast/forms/input-appearance-spinbutton-disabled-readonly.html
