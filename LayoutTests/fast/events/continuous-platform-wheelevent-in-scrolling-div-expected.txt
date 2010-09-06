@@ -1,6 +1,6 @@
-FAIL event.wheelDeltaY should be -24000. Was -600.
-FAIL event.wheelDeltaX should be -12000. Was -300.
-FAIL event.wheelDelta should be -24000. Was -600.
+PASS event.wheelDeltaY is window.expectedScrollTop*-3
+PASS event.wheelDeltaX is window.expectedScrollLeft*-3
+PASS event.wheelDelta is window.expectedScrollTop*-3
 PASS div.scrollTop is window.expectedScrollTop
 PASS div.scrollLeft is window.expectedScrollLeft
 

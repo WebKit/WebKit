@@ -1,3 +1,13 @@
+2010-09-05  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Adam Barth.
+
+        Make Chromium/Mac generate continuous mousewheel events with the same wheelDelta values as Safari/Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=45155
+
+        * src/mac/WebInputEventFactory.mm:
+        (WebKit::WebInputEventFactory::mouseWheelEvent):
+
 2010-09-05  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Joseph Pecoraro.

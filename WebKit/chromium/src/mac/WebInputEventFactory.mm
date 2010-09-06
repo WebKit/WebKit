@@ -1178,22 +1178,19 @@ WebMouseWheelEvent WebInputEventFactory::mouseWheelEvent(NSEvent* event, NSView*
     // the point delta data instead, since we cannot distinguish trackpad data
     // from data from any other continuous device.
 
+    // Conversion between wheel delta amounts and number of pixels to scroll.
+    static const double scrollbarPixelsPerCocoaTick = 40.0;
+
     if (CGEventGetIntegerValueField(cgEvent, kCGScrollWheelEventIsContinuous)) {
-        result.wheelTicksY = result.deltaY =
-            CGEventGetIntegerValueField(cgEvent, kCGScrollWheelEventPointDeltaAxis1);
-        result.wheelTicksX = result.deltaX =
-            CGEventGetIntegerValueField(cgEvent, kCGScrollWheelEventPointDeltaAxis2);
+        result.deltaX = CGEventGetIntegerValueField(cgEvent, kCGScrollWheelEventPointDeltaAxis2);
+        result.deltaY = CGEventGetIntegerValueField(cgEvent, kCGScrollWheelEventPointDeltaAxis1);
+        result.wheelTicksX = result.deltaX / scrollbarPixelsPerCocoaTick;
+        result.wheelTicksY = result.deltaY / scrollbarPixelsPerCocoaTick;
     } else {
-        result.wheelTicksY =
-            CGEventGetIntegerValueField(cgEvent, kCGScrollWheelEventDeltaAxis1);
-        result.wheelTicksX =
-            CGEventGetIntegerValueField(cgEvent, kCGScrollWheelEventDeltaAxis2);
-
-        // Convert wheel delta amount to a number of pixels to scroll.
-        static const double scrollbarPixelsPerCocoaTick = 40.0;
-
         result.deltaX = [event deltaX] * scrollbarPixelsPerCocoaTick;
         result.deltaY = [event deltaY] * scrollbarPixelsPerCocoaTick;
+        result.wheelTicksY = CGEventGetIntegerValueField(cgEvent, kCGScrollWheelEventDeltaAxis1);
+        result.wheelTicksX = CGEventGetIntegerValueField(cgEvent, kCGScrollWheelEventDeltaAxis2);
     }
 
     result.timeStampSeconds = [event timestamp];

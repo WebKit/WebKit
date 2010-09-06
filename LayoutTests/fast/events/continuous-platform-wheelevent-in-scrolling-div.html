@@ -39,13 +39,13 @@
             function mousewheelHandler(e)
             {
                 event = e;
-                shouldBe("event.wheelDeltaY", "window.expectedScrollTop*-120");
-                shouldBe("event.wheelDeltaX", "window.expectedScrollLeft*-120");
+                shouldBe("event.wheelDeltaY", "window.expectedScrollTop*-3");
+                shouldBe("event.wheelDeltaX", "window.expectedScrollLeft*-3");
 
                 if (e.wheelDeltaY)
-                    shouldBe("event.wheelDelta", "window.expectedScrollTop*-120");
+                    shouldBe("event.wheelDelta", "window.expectedScrollTop*-3");
                 else
-                    shouldBe("event.wheelDelta", "window.expectedScrollLeft*-120");
+                    shouldBe("event.wheelDelta", "window.expectedScrollLeft*-3");
             }
         </script>
     </head>
