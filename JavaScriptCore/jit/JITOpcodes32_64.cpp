@@ -244,6 +244,37 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
 
     restoreReturnAddressBeforeReturn(regT3);
 
+#elif CPU(MIPS)
+    // Load caller frame's scope chain into this callframe so that whatever we call can
+    // get to its global data.
+    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT0);
+    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1, regT0);
+    emitPutToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+
+    preserveReturnAddressAfterCall(regT3); // Callee preserved
+    emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
+
+    // Calling convention:      f(a0, a1, a2, a3);
+    // Host function signature: f(ExecState*);
+
+    // Allocate stack space for 16 bytes (8-byte aligned)
+    // 16 bytes (unused) for 4 arguments
+    subPtr(Imm32(16), stackPointerRegister);
+
+    // Setup arg0
+    move(callFrameRegister, MIPSRegisters::a0);
+
+    // Call
+    emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, MIPSRegisters::a2);
+    loadPtr(Address(MIPSRegisters::a2, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
+    move(regT0, callFrameRegister); // Eagerly restore caller frame register to avoid loading from stack.
+    call(Address(regT2, executableOffsetToFunction));
+
+    // Restore stack space
+    addPtr(Imm32(16), stackPointerRegister);
+
+    restoreReturnAddressBeforeReturn(regT3);
+
 #elif ENABLE(JIT_OPTIMIZE_NATIVE_CALL)
 #error "JIT_OPTIMIZE_NATIVE_CALL not yet supported on this platform."
 #else
@@ -324,6 +355,39 @@ JIT::CodePtr JIT::privateCompileCTINativeCall(PassRefPtr<ExecutablePool> executa
 
     // call the function
     nativeCall = call();
+
+    restoreReturnAddressBeforeReturn(regT3);
+
+#elif CPU(MIPS)
+    // Load caller frame's scope chain into this callframe so that whatever we call can
+    // get to its global data.
+    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT0);
+    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1, regT0);
+    emitPutToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+
+    preserveReturnAddressAfterCall(regT3); // Callee preserved
+    emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
+
+    // Calling convention:      f(a0, a1, a2, a3);
+    // Host function signature: f(ExecState*);
+
+    // Allocate stack space for 16 bytes (8-byte aligned)
+    // 16 bytes (unused) for 4 arguments
+    subPtr(Imm32(16), stackPointerRegister);
+
+    // Setup arg0
+    move(callFrameRegister, MIPSRegisters::a0);
+
+    // Call
+    emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, MIPSRegisters::a2);
+    loadPtr(Address(MIPSRegisters::a2, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
+    move(regT0, callFrameRegister); // Eagerly restore caller frame register to avoid loading from stack.
+    
+    // call the function
+    nativeCall = call();
+
+    // Restore stack space
+    addPtr(Imm32(16), stackPointerRegister);
 
     restoreReturnAddressBeforeReturn(regT3);
 

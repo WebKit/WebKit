@@ -448,6 +448,52 @@ namespace JSC {
         // sequencePutById
         static const int sequencePutByIdInstructionSpace = 36;
         static const int sequencePutByIdConstantSpace = 4;
+#elif CPU(MIPS)
+#if WTF_MIPS_ISA(1)
+        static const int patchOffsetPutByIdStructure = 16;
+        static const int patchOffsetPutByIdExternalLoad = 48;
+        static const int patchLengthPutByIdExternalLoad = 20;
+        static const int patchOffsetPutByIdPropertyMapOffset1 = 68;
+        static const int patchOffsetPutByIdPropertyMapOffset2 = 84;
+        static const int patchOffsetGetByIdStructure = 16;
+        static const int patchOffsetGetByIdBranchToSlowCase = 48;
+        static const int patchOffsetGetByIdExternalLoad = 48;
+        static const int patchLengthGetByIdExternalLoad = 20;
+        static const int patchOffsetGetByIdPropertyMapOffset1 = 68;
+        static const int patchOffsetGetByIdPropertyMapOffset2 = 88;
+        static const int patchOffsetGetByIdPutResult = 108;
+#if ENABLE(OPCODE_SAMPLING)
+        #error "OPCODE_SAMPLING is not yet supported"
+#else
+        static const int patchOffsetGetByIdSlowCaseCall = 44;
+#endif
+        static const int patchOffsetOpCallCompareToJump = 32;
+        static const int patchOffsetMethodCheckProtoObj = 32;
+        static const int patchOffsetMethodCheckProtoStruct = 56;
+        static const int patchOffsetMethodCheckPutFunction = 88;
+#else // WTF_MIPS_ISA(1)
+        static const int patchOffsetPutByIdStructure = 12;
+        static const int patchOffsetPutByIdExternalLoad = 44;
+        static const int patchLengthPutByIdExternalLoad = 16;
+        static const int patchOffsetPutByIdPropertyMapOffset1 = 60;
+        static const int patchOffsetPutByIdPropertyMapOffset2 = 76;
+        static const int patchOffsetGetByIdStructure = 12;
+        static const int patchOffsetGetByIdBranchToSlowCase = 44;
+        static const int patchOffsetGetByIdExternalLoad = 44;
+        static const int patchLengthGetByIdExternalLoad = 16;
+        static const int patchOffsetGetByIdPropertyMapOffset1 = 60;
+        static const int patchOffsetGetByIdPropertyMapOffset2 = 76;
+        static const int patchOffsetGetByIdPutResult = 92;
+#if ENABLE(OPCODE_SAMPLING)
+        #error "OPCODE_SAMPLING is not yet supported"
+#else
+        static const int patchOffsetGetByIdSlowCaseCall = 44;
+#endif
+        static const int patchOffsetOpCallCompareToJump = 32;
+        static const int patchOffsetMethodCheckProtoObj = 32;
+        static const int patchOffsetMethodCheckProtoStruct = 52;
+        static const int patchOffsetMethodCheckPutFunction = 84;
+#endif
 #else
 #error "JSVALUE32_64 not supported on this platform."
 #endif

@@ -1,3 +1,37 @@
+2010-09-06  Chao-ying Fu  <fu@mips.com>
+
+        Reviewed by Oliver Hunt.
+
+        Support JSVALUE32_64 on MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=43999
+
+        Add missing functions to support JSVALUE32_64 on MIPS.
+        Remove JSVALUE32 as the default for MIPS.
+
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::divd):
+        (JSC::MIPSAssembler::mthc1):
+        (JSC::MIPSAssembler::cvtwd):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::neg32):
+        (JSC::MacroAssemblerMIPS::branchOr32):
+        (JSC::MacroAssemblerMIPS::set8):
+        (JSC::MacroAssemblerMIPS::loadDouble):
+        (JSC::MacroAssemblerMIPS::divDouble):
+        (JSC::MacroAssemblerMIPS::convertInt32ToDouble):
+        (JSC::MacroAssemblerMIPS::branchDouble):
+        (JSC::MacroAssemblerMIPS::branchConvertDoubleToInt32):
+        (JSC::MacroAssemblerMIPS::zeroDouble):
+        * jit/JIT.h:
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTINativeCall):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::JITThunks):
+        * jit/JITStubs.h:
+        * wtf/Platform.h:
+
 2010-09-06  Robert Hogan  <robert@webkit.org>
 
         Unreviewed, compile fix.

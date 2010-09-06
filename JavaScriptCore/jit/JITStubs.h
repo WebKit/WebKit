@@ -204,8 +204,12 @@ namespace JSC {
 #endif // COMPILER(MSVC)
 #elif CPU(MIPS)
     struct JITStackFrame {
-        void* reserved; // Unused
+        JITStubArg reserved; // Unused
         JITStubArg args[6];
+
+#if USE(JSVALUE32_64)
+        void* padding; // Make the overall stack length 8-byte aligned.
+#endif
 
         void* preservedGP; // store GP when using PIC code
         void* preservedS0;

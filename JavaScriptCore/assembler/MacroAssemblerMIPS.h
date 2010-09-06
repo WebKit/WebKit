@@ -281,6 +281,11 @@ public:
         }
     }
 
+    void neg32(RegisterID srcDest)
+    {
+        m_assembler.subu(srcDest, MIPSRegisters::zero, srcDest);
+    }
+
     void not32(RegisterID srcDest)
     {
         m_assembler.nor(srcDest, srcDest, MIPSRegisters::zero);
@@ -618,11 +623,6 @@ public:
         m_assembler.lw(dest, addrTempRegister, 0);
         m_fixedWidth = false;
         return label;
-    }
-
-    Label loadPtrWithAddressOffsetPatch(Address address, RegisterID dest)
-    {
-        return loadPtrWithPatchToLEA(address, dest);
     }
 
     /* Need to use zero-extened load half-word for load16.  */
@@ -1302,6 +1302,27 @@ public:
         return branchSub32(cond, immTempRegister, dest);
     }
 
+    Jump branchOr32(Condition cond, RegisterID src, RegisterID dest)
+    {
+        ASSERT((cond == Signed) || (cond == Zero) || (cond == NonZero));
+        if (cond == Signed) {
+            or32(src, dest);
+            // Check if dest is negative.
+            m_assembler.slt(cmpTempRegister, dest, MIPSRegisters::zero);
+            return branchNotEqual(cmpTempRegister, MIPSRegisters::zero);
+        }
+        if (cond == Zero) {
+            or32(src, dest);
+            return branchEqual(dest, MIPSRegisters::zero);
+        }
+        if (cond == NonZero) {
+            or32(src, dest);
+            return branchNotEqual(dest, MIPSRegisters::zero);
+        }
+        ASSERT(0);
+        return Jump();
+    }
+
     // Miscellaneous operations:
 
     void breakpoint()
@@ -1349,6 +1370,17 @@ public:
     {
         m_assembler.jr(MIPSRegisters::ra);
         m_assembler.nop();
+    }
+
+    void set8(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
+    {
+        set32(cond, left, right, dest);
+    }
+
+    void set8(Condition cond, RegisterID left, Imm32 right, RegisterID dest)
+    {
+        move(right, immTempRegister);
+        set32(cond, left, immTempRegister, dest);
     }
 
     void set32(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
@@ -1546,6 +1578,28 @@ public:
 #endif
     }
 
+    void loadDouble(const void* address, FPRegisterID dest)
+    {
+#if WTF_MIPS_ISA(1)
+        /*
+            li          addrTemp, address
+            lwc1        dest, 0(addrTemp)
+            lwc1        dest+1, 4(addrTemp)
+         */
+        move(ImmPtr(address), addrTempRegister);
+        m_assembler.lwc1(dest, addrTempRegister, 0);
+        m_assembler.lwc1(FPRegisterID(dest + 1), addrTempRegister, 4);
+#else
+        /*
+            li          addrTemp, address
+            ldc1        dest, 0(addrTemp)
+        */
+        move(ImmPtr(address), addrTempRegister);
+        m_assembler.ldc1(dest, addrTempRegister, 0);
+#endif
+    }
+
+
     void storeDouble(FPRegisterID src, ImplicitAddress address)
     {
 #if WTF_MIPS_ISA(1)
@@ -1609,9 +1663,28 @@ public:
         m_assembler.muld(dest, dest, fpTempRegister);
     }
 
+    void divDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        m_assembler.divd(dest, dest, src);
+    }
+
     void convertInt32ToDouble(RegisterID src, FPRegisterID dest)
     {
         m_assembler.mtc1(src, fpTempRegister);
+        m_assembler.cvtdw(dest, fpTempRegister);
+    }
+
+    void convertInt32ToDouble(Address src, FPRegisterID dest)
+    {
+        load32(src, dataTempRegister);
+        m_assembler.mtc1(dataTempRegister, fpTempRegister);
+        m_assembler.cvtdw(dest, fpTempRegister);
+    }
+
+    void convertInt32ToDouble(AbsoluteAddress src, FPRegisterID dest)
+    {
+        load32(src.m_ptr, dataTempRegister);
+        m_assembler.mtc1(dataTempRegister, fpTempRegister);
         m_assembler.cvtdw(dest, fpTempRegister);
     }
 
@@ -1667,7 +1740,7 @@ public:
             return branchTrue();
         }
         if (cond == DoubleNotEqual) {
-            m_assembler.ceqd(left, right);
+            m_assembler.cueqd(left, right);
             return branchFalse(); // false
         }
         if (cond == DoubleGreaterThan) {
@@ -1689,6 +1762,10 @@ public:
         if (cond == DoubleEqualOrUnordered) {
             m_assembler.cueqd(left, right);
             return branchTrue();
+        }
+        if (cond == DoubleNotEqualOrUnordered) {
+            m_assembler.ceqd(left, right);
+            return branchFalse(); // false
         }
         if (cond == DoubleGreaterThanOrUnordered) {
             m_assembler.coled(left, right);
@@ -1720,6 +1797,34 @@ public:
         m_assembler.truncwd(fpTempRegister, src);
         m_assembler.mfc1(dest, fpTempRegister);
         return branch32(Equal, dest, Imm32(0x7fffffff));
+    }
+
+    // Convert 'src' to an integer, and places the resulting 'dest'.
+    // If the result is not representable as a 32 bit value, branch.
+    // May also branch for some values that are representable in 32 bits
+    // (specifically, in this case, 0).
+    void branchConvertDoubleToInt32(FPRegisterID src, RegisterID dest, JumpList& failureCases, FPRegisterID fpTemp)
+    {
+        m_assembler.cvtwd(fpTempRegister, src);
+        m_assembler.mfc1(dest, fpTempRegister);
+
+        // If the result is zero, it might have been -0.0, and the double comparison won't catch this!
+        failureCases.append(branch32(Equal, dest, MIPSRegisters::zero));
+
+        // Convert the integer result back to float & compare to the original value - if not equal or unordered (NaN) then jump.
+        convertInt32ToDouble(dest, fpTemp);
+        failureCases.append(branchDouble(DoubleNotEqualOrUnordered, fpTemp, src));
+    }
+
+    void zeroDouble(FPRegisterID dest)
+    {
+#if WTF_MIPS_ISA_REV(2) && WTF_MIPS_FP64
+        m_assembler.mtc1(MIPSRegisters::zero, dest);
+        m_assembler.mthc1(MIPSRegisters::zero, dest);
+#else
+        m_assembler.mtc1(MIPSRegisters::zero, dest);
+        m_assembler.mtc1(MIPSRegisters::zero, FPRegisterID(dest + 1));
+#endif
     }
 
 private:

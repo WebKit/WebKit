@@ -311,6 +311,21 @@ extern "C" {
 #define PRESERVEDR4_OFFSET          68
 // See DEFINE_STUB_FUNCTION for more information.
 
+#elif CPU(MIPS)
+
+#define PRESERVED_GP_OFFSET         60
+#define PRESERVED_S0_OFFSET         64
+#define PRESERVED_S1_OFFSET         68
+#define PRESERVED_S2_OFFSET         72
+#define PRESERVED_RETURN_ADDRESS_OFFSET 76
+#define THUNK_RETURN_ADDRESS_OFFSET 80
+#define REGISTER_FILE_OFFSET        84
+#define CALLFRAME_OFFSET            88
+#define EXCEPTION_OFFSET            92
+#define ENABLE_PROFILER_REFERENCE_OFFSET 96
+#define GLOBAL_DATA_OFFSET         100
+#define STACK_LENGTH               104
+
 #else
     #error "JIT not supported on this platform."
 #endif
@@ -465,95 +480,18 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 
 #elif CPU(MIPS)
 
-asm volatile(
-".text" "\n"
-".align 2" "\n"
-".set noreorder" "\n"
-".set nomacro" "\n"
-".set nomips16" "\n"
-".globl " SYMBOL_STRING(ctiTrampoline) "\n"
-".ent " SYMBOL_STRING(ctiTrampoline) "\n"
-SYMBOL_STRING(ctiTrampoline) ":" "\n"
-    "addiu $29,$29,-72" "\n"
-    "sw    $31,44($29)" "\n"
-    "sw    $18,40($29)" "\n"
-    "sw    $17,36($29)" "\n"
-    "sw    $16,32($29)" "\n"
-#if WTF_MIPS_PIC
-    "sw    $28,28($29)" "\n"
-#endif
-    "move  $16,$6       # set callFrameRegister" "\n"
-    "li    $17,512      # set timeoutCheckRegister" "\n"
-    "move  $25,$4       # move executableAddress to t9" "\n"
-    "sw    $5,52($29)   # store registerFile to current stack" "\n"
-    "sw    $6,56($29)   # store callFrame to curent stack" "\n"
-    "sw    $7,60($29)   # store exception to current stack" "\n"
-    "lw    $8,88($29)   # load enableProfilerReference from previous stack" "\n"
-    "lw    $9,92($29)   # load globalData from previous stack" "\n"
-    "sw    $8,64($29)   # store enableProfilerReference to current stack" "\n"
-    "jalr  $25" "\n"
-    "sw    $9,68($29)   # store globalData to current stack" "\n"
-    "lw    $16,32($29)" "\n"
-    "lw    $17,36($29)" "\n"
-    "lw    $18,40($29)" "\n"
-    "lw    $31,44($29)" "\n"
-    "jr    $31" "\n"
-    "addiu $29,$29,72" "\n"
-".set reorder" "\n"
-".set macro" "\n"
-".end " SYMBOL_STRING(ctiTrampoline) "\n"
-);
-
-asm volatile(
-".text" "\n"
-".align 2" "\n"
-".set noreorder" "\n"
-".set nomacro" "\n"
-".set nomips16" "\n"
-".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
-".ent " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
-SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
-#if WTF_MIPS_PIC
-    "lw    $28,28($29)" "\n"
-".set macro" "\n"
-    "la    $25," SYMBOL_STRING(cti_vm_throw) "\n"
-".set nomacro" "\n"
-    "bal " SYMBOL_STRING(cti_vm_throw) "\n"
-    "move  $4,$29" "\n"
-#else
-    "jal " SYMBOL_STRING(cti_vm_throw) "\n"
-    "move  $4,$29" "\n"
-#endif
-    "lw    $16,32($29)" "\n"
-    "lw    $17,36($29)" "\n"
-    "lw    $18,40($29)" "\n"
-    "lw    $31,44($29)" "\n"
-    "jr    $31" "\n"
-    "addiu $29,$29,72" "\n"
-".set reorder" "\n"
-".set macro" "\n"
-".end " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
-);
-
-asm volatile(
-".text" "\n"
-".align 2" "\n"
-".set noreorder" "\n"
-".set nomacro" "\n"
-".set nomips16" "\n"
-".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
-".ent " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
-SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
-    "lw    $16,32($29)" "\n"
-    "lw    $17,36($29)" "\n"
-    "lw    $18,40($29)" "\n"
-    "lw    $31,44($29)" "\n"
-    "jr    $31" "\n"
-    "addiu $29,$29,72" "\n"
-".set reorder" "\n"
-".set macro" "\n"
-".end " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
-);
+#define PRESERVED_GP_OFFSET         28
+#define PRESERVED_S0_OFFSET         32
+#define PRESERVED_S1_OFFSET         36
+#define PRESERVED_S2_OFFSET         40
+#define PRESERVED_RETURN_ADDRESS_OFFSET 44
+#define THUNK_RETURN_ADDRESS_OFFSET 48
+#define REGISTER_FILE_OFFSET        52
+#define CALLFRAME_OFFSET            56
+#define EXCEPTION_OFFSET            60
+#define ENABLE_PROFILER_REFERENCE_OFFSET 64
+#define GLOBAL_DATA_OFFSET          68
+#define STACK_LENGTH                72
 
 #elif COMPILER(MSVC) && CPU(X86)
 
@@ -625,6 +563,98 @@ extern "C" {
 #endif
 
 #endif // USE(JSVALUE32_64)
+
+#if CPU(MIPS)
+asm volatile(
+".text" "\n"
+".align 2" "\n"
+".set noreorder" "\n"
+".set nomacro" "\n"
+".set nomips16" "\n"
+".globl " SYMBOL_STRING(ctiTrampoline) "\n"
+".ent " SYMBOL_STRING(ctiTrampoline) "\n"
+SYMBOL_STRING(ctiTrampoline) ":" "\n"
+    "addiu $29,$29,-" STRINGIZE_VALUE_OF(STACK_LENGTH) "\n"
+    "sw    $31," STRINGIZE_VALUE_OF(PRESERVED_RETURN_ADDRESS_OFFSET) "($29)" "\n"
+    "sw    $18," STRINGIZE_VALUE_OF(PRESERVED_S2_OFFSET) "($29)" "\n"
+    "sw    $17," STRINGIZE_VALUE_OF(PRESERVED_S1_OFFSET) "($29)" "\n"
+    "sw    $16," STRINGIZE_VALUE_OF(PRESERVED_S0_OFFSET) "($29)" "\n"
+#if WTF_MIPS_PIC
+    "sw    $28," STRINGIZE_VALUE_OF(PRESERVED_GP_OFFSET) "($29)" "\n"
+#endif
+    "move  $16,$6       # set callFrameRegister" "\n"
+    "li    $17,512      # set timeoutCheckRegister" "\n"
+    "move  $25,$4       # move executableAddress to t9" "\n"
+    "sw    $5," STRINGIZE_VALUE_OF(REGISTER_FILE_OFFSET) "($29) # store registerFile to current stack" "\n"
+    "sw    $6," STRINGIZE_VALUE_OF(CALLFRAME_OFFSET) "($29)     # store callFrame to curent stack" "\n"
+    "sw    $7," STRINGIZE_VALUE_OF(EXCEPTION_OFFSET) "($29)     # store exception to current stack" "\n"
+    "lw    $8," STRINGIZE_VALUE_OF(STACK_LENGTH + 16) "($29)    # load enableProfilerReference from previous stack" "\n"
+    "lw    $9," STRINGIZE_VALUE_OF(STACK_LENGTH + 20) "($29)    # load globalData from previous stack" "\n"
+    "sw    $8," STRINGIZE_VALUE_OF(ENABLE_PROFILER_REFERENCE_OFFSET) "($29)   # store enableProfilerReference to current stack" "\n"
+    "jalr  $25" "\n"
+    "sw    $9," STRINGIZE_VALUE_OF(GLOBAL_DATA_OFFSET) "($29)   # store globalData to current stack" "\n"
+    "lw    $16," STRINGIZE_VALUE_OF(PRESERVED_S0_OFFSET) "($29)" "\n"
+    "lw    $17," STRINGIZE_VALUE_OF(PRESERVED_S1_OFFSET) "($29)" "\n"
+    "lw    $18," STRINGIZE_VALUE_OF(PRESERVED_S2_OFFSET) "($29)" "\n"
+    "lw    $31," STRINGIZE_VALUE_OF(PRESERVED_RETURN_ADDRESS_OFFSET) "($29)" "\n"
+    "jr    $31" "\n"
+    "addiu $29,$29," STRINGIZE_VALUE_OF(STACK_LENGTH) "\n"
+".set reorder" "\n"
+".set macro" "\n"
+".end " SYMBOL_STRING(ctiTrampoline) "\n"
+);
+
+asm volatile(
+".text" "\n"
+".align 2" "\n"
+".set noreorder" "\n"
+".set nomacro" "\n"
+".set nomips16" "\n"
+".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
+".ent " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
+SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
+#if WTF_MIPS_PIC
+    "lw    $28," STRINGIZE_VALUE_OF(PRESERVED_GP_OFFSET) "($29)" "\n"
+".set macro" "\n"
+    "la    $25," SYMBOL_STRING(cti_vm_throw) "\n"
+".set nomacro" "\n"
+    "bal " SYMBOL_STRING(cti_vm_throw) "\n"
+    "move  $4,$29" "\n"
+#else
+    "jal " SYMBOL_STRING(cti_vm_throw) "\n"
+    "move  $4,$29" "\n"
+#endif
+    "lw    $16," STRINGIZE_VALUE_OF(PRESERVED_S0_OFFSET) "($29)" "\n"
+    "lw    $17," STRINGIZE_VALUE_OF(PRESERVED_S1_OFFSET) "($29)" "\n"
+    "lw    $18," STRINGIZE_VALUE_OF(PRESERVED_S2_OFFSET) "($29)" "\n"
+    "lw    $31," STRINGIZE_VALUE_OF(PRESERVED_RETURN_ADDRESS_OFFSET) "($29)" "\n"
+    "jr    $31" "\n"
+    "addiu $29,$29," STRINGIZE_VALUE_OF(STACK_LENGTH) "\n"
+".set reorder" "\n"
+".set macro" "\n"
+".end " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
+);
+
+asm volatile(
+".text" "\n"
+".align 2" "\n"
+".set noreorder" "\n"
+".set nomacro" "\n"
+".set nomips16" "\n"
+".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
+".ent " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
+SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
+    "lw    $16," STRINGIZE_VALUE_OF(PRESERVED_S0_OFFSET) "($29)" "\n"
+    "lw    $17," STRINGIZE_VALUE_OF(PRESERVED_S1_OFFSET) "($29)" "\n"
+    "lw    $18," STRINGIZE_VALUE_OF(PRESERVED_S2_OFFSET) "($29)" "\n"
+    "lw    $31," STRINGIZE_VALUE_OF(PRESERVED_RETURN_ADDRESS_OFFSET) "($29)" "\n"
+    "jr    $31" "\n"
+    "addiu $29,$29," STRINGIZE_VALUE_OF(STACK_LENGTH) "\n"
+".set reorder" "\n"
+".set macro" "\n"
+".end " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
+);
+#endif
 
 #if COMPILER(GCC) && CPU(ARM_THUMB2)
 
@@ -803,17 +833,17 @@ JITThunks::JITThunks(JSGlobalData* globalData)
 
 
 #elif CPU(MIPS)
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedGP) == 28);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedS0) == 32);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedS1) == 36);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedS2) == 40);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedReturnAddress) == 44);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, thunkReturnAddress) == 48);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, registerFile) == 52);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, callFrame) == 56);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, exception) == 60);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, enabledProfilerReference) == 64);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, globalData) == 68);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedGP) == PRESERVED_GP_OFFSET);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedS0) == PRESERVED_S0_OFFSET);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedS1) == PRESERVED_S1_OFFSET);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedS2) == PRESERVED_S2_OFFSET);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedReturnAddress) == PRESERVED_RETURN_ADDRESS_OFFSET);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, thunkReturnAddress) == THUNK_RETURN_ADDRESS_OFFSET);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, registerFile) == REGISTER_FILE_OFFSET);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, callFrame) == CALLFRAME_OFFSET);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, exception) == EXCEPTION_OFFSET);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, enabledProfilerReference) == ENABLE_PROFILER_REFERENCE_OFFSET);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, globalData) == GLOBAL_DATA_OFFSET);
 
 #endif
 }
@@ -1086,14 +1116,14 @@ static NEVER_INLINE void throwStackOverflowError(CallFrame* callFrame, JSGlobalD
         ".globl " SYMBOL_STRING(cti_##op) "\n" \
         ".ent " SYMBOL_STRING(cti_##op) "\n" \
         SYMBOL_STRING(cti_##op) ":" "\n" \
-        "lw    $28,28($29)" "\n" \
-        "sw    $31,48($29)" "\n" \
+        "lw    $28," STRINGIZE_VALUE_OF(PRESERVED_GP_OFFSET) "($29)" "\n" \
+        "sw    $31," STRINGIZE_VALUE_OF(THUNK_RETURN_ADDRESS_OFFSET) "($29)" "\n" \
         ".set macro" "\n" \
         "la    $25," SYMBOL_STRING(JITStubThunked_##op) "\n" \
         ".set nomacro" "\n" \
         "bal " SYMBOL_STRING(JITStubThunked_##op) "\n" \
         "nop" "\n" \
-        "lw    $31,48($29)" "\n" \
+        "lw    $31," STRINGIZE_VALUE_OF(THUNK_RETURN_ADDRESS_OFFSET) "($29)" "\n" \
         "jr    $31" "\n" \
         "nop" "\n" \
         ".set reorder" "\n" \
@@ -1116,10 +1146,10 @@ static NEVER_INLINE void throwStackOverflowError(CallFrame* callFrame, JSGlobalD
         ".globl " SYMBOL_STRING(cti_##op) "\n" \
         ".ent " SYMBOL_STRING(cti_##op) "\n" \
         SYMBOL_STRING(cti_##op) ":" "\n" \
-        "sw    $31,48($29)" "\n" \
+        "sw    $31," STRINGIZE_VALUE_OF(THUNK_RETURN_ADDRESS_OFFSET) "($29)" "\n" \
         "jal " SYMBOL_STRING(JITStubThunked_##op) "\n" \
         "nop" "\n" \
-        "lw    $31,48($29)" "\n" \
+        "lw    $31," STRINGIZE_VALUE_OF(THUNK_RETURN_ADDRESS_OFFSET) "($29)" "\n" \
         "jr    $31" "\n" \
         "nop" "\n" \
         ".set reorder" "\n" \

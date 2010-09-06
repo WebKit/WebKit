@@ -142,6 +142,7 @@
 #define WTF_MIPS_ARCH_REV __mips_isa_rev
 #define WTF_MIPS_ISA_REV(v) (defined WTF_MIPS_ARCH_REV && WTF_MIPS_ARCH_REV == v)
 #define WTF_MIPS_DOUBLE_FLOAT (defined __mips_hard_float && !defined __mips_single_float)
+#define WTF_MIPS_FP64 (defined __mips_fpr && __mips_fpr == 64)
 /* MIPS requires allocators to use aligned memory */
 #define WTF_USE_ARENA_ALLOC_ALIGNMENT_INTEGER 1
 #endif /* MIPS */
@@ -927,7 +928,7 @@
     || CPU(SPARC64) \
     || CPU(PPC64)
 #define WTF_USE_JSVALUE64 1
-#elif CPU(MIPS) || (CPU(ARM_TRADITIONAL) && COMPILER(MSVC))
+#elif CPU(ARM_TRADITIONAL) && COMPILER(MSVC)
 #define WTF_USE_JSVALUE32 1
 #elif OS(WINDOWS) && COMPILER(MINGW)
 /* Using JSVALUE32_64 causes padding/alignement issues for JITStubArg

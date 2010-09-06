@@ -640,8 +640,14 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
     add32(Imm32(1), AbsoluteAddress(newStructure->addressOfCount()));
     storePtr(ImmPtr(newStructure), Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)));
     
+#if CPU(MIPS)
+    // For MIPS, we don't add sizeof(void*) to the stack offset.
+    load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[2]) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT3);
+    load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[2]) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT2);
+#else
     load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[2]) + sizeof(void*) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT3);
     load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[2]) + sizeof(void*) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT2);
+#endif
     
     // Write the value
     compilePutDirectOffset(regT0, regT2, regT3, newStructure, cachedOffset);
