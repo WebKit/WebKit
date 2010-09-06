@@ -21,6 +21,7 @@ EXPORTS
     ??0Structure@JSC@@AAE@VJSValue@1@ABVTypeInfo@1@I@Z
     ??0ThreadCondition@WTF@@QAE@XZ
     ??0UString@JSC@@QAE@PBD@Z
+    ??0UString@JSC@@QAE@PBDI@Z
     ??0UString@JSC@@QAE@PB_WI@Z
     ??0WTFThreadData@WTF@@QAE@XZ
     ??1ClientData@JSGlobalData@JSC@@UAE@XZ
@@ -162,6 +163,7 @@ EXPORTS
     ?getOwnPropertyNames@JSObject@JSC@@UAEXPAVExecState@2@AAVPropertyNameArray@2@W4EnumerationMode@2@@Z
     ?getOwnPropertyNames@JSVariableObject@JSC@@UAEXPAVExecState@2@AAVPropertyNameArray@2@W4EnumerationMode@2@@Z
     ?getOwnPropertyNames@StringObject@JSC@@UAEXPAVExecState@2@AAVPropertyNameArray@2@W4EnumerationMode@2@@Z
+    ?getOwnPropertySlot@JSArray@JSC@@UAE_NPAVExecState@2@IAAVPropertySlot@2@@Z
     ?getOwnPropertySlot@JSCell@JSC@@EAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertySlot@2@@Z
     ?getOwnPropertySlot@JSCell@JSC@@EAE_NPAVExecState@2@IAAVPropertySlot@2@@Z
     ?getOwnPropertySlot@JSObject@JSC@@UAE_NPAVExecState@2@IAAVPropertySlot@2@@Z
