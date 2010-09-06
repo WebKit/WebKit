@@ -1,5 +1,37 @@
 2010-09-06  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        [reviewtool] Add a field for overall comments
+        https://bugs.webkit.org/show_bug.cgi?id=45273
+
+        This patch does a couple logically separate things that could be
+        separated into smaller patches:
+
+        1) This patch adds an "overall comments" field where you can enter
+           overall comments about the patch.  These comments appear at the top
+           of the bugzilla posting.  Currently, these aren't redisplayed when
+           viewing the patch, but I plan to add that in a future patch.
+
+        2) This patch renames some of the CSS classes to more consistently
+           follow the camelCase style that PrettyPatch uses.
+
+        3) This patch moves the "prepare comments" button to the left of the
+           toolbar and renames is to "publish comments".  This makes more sense
+           when you scroll to the bottom of the page and enter in some overall
+           comments.
+
+        4) When you attempt to add a comment to a line that already has a
+           "frozen" comment, we now unfreeze the comment instead of doing
+           nothing.  The old behavior was kind of frustrating if you didn't
+           know that you could unfreeze a comment by clicking on it.
+
+        * PrettyPatch/PrettyPatch.rb:
+            - Update CSS.
+        * code-review.js:
+
+2010-09-06  Adam Barth  <abarth@webkit.org>
+
         [reviewtool] Tweak the ok button to cancel the comment if the comment
         is empty.  Previously we would get into a bad state where a line had a
         comment but there was no longer any way to access it.

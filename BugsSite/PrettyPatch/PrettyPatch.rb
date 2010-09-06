@@ -188,12 +188,6 @@ h1 :hover {
 
 /* Support for inline comments */
 
-.previous_comment {
-  border: inset 1px;
-  padding: 5px;
-  background-color: #ffd;
-}
-
 .author {
   font-style: italic;
 }
@@ -206,7 +200,7 @@ h1 :hover {
   position: relative;
 }
 
-.comment textarea {
+.comment textarea, .overallComments textarea {
   width: 100%;
   height: 6em;
 }
@@ -226,6 +220,10 @@ body {
 }
 
 #toolbar .actions {
+  float: left;
+}
+
+#toolbar .message {
   float: right;
 }
 
@@ -262,11 +260,6 @@ body {
   height: 100%;
 }
 
-.help {
- color: gray;
- font-style: italic;
-}
-
 .commentContext .lineNumber {
   background-color: yellow;
 }
@@ -275,6 +268,27 @@ body {
   background-color: #69F;
   border-bottom-color: #69F;
   border-right-color: #69F;
+}
+
+.help {
+ color: gray;
+ font-style: italic;
+}
+
+.description {
+  font-style: italic;
+}
+
+.comment, .overallComments, .previousComment, .frozenComment {
+  background-color: #ffd;
+}
+
+.overallComments {
+  padding: 5px;
+}
+
+.previousComment, .frozenComment {
+  border: inset 1px; padding: 5px;
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 

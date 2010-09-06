@@ -45,7 +45,7 @@
 
   function findCommentPositionFor(line) {
     var position = line;
-    while (position.next() && position.next().hasClass('previous_comment'))
+    while (position.next() && position.next().hasClass('previousComment'))
       position = position.next();
     return position;
   }
@@ -62,8 +62,12 @@
   }
 
   function addCommentFor(line) {
-    if (line.attr('data-has-comment'))
+    if (line.attr('data-has-comment')) {
+      // FIXME: This query is overly complex because we place comment blocks
+      // after Lines.  Instead, comment blocks should be children of Lines.
+      findCommentPositionFor(line).next().next().filter('.frozenComment').each(unfreezeComment);
       return;
+    }
     line.attr('data-has-comment', 'true');
     line.addClass('commentContext');
 
@@ -82,7 +86,7 @@
   var files = {}
 
   function addPreviousComment(line, author, comment_text) {
-    var comment_block = $('<div data-comment-for="' + line.attr('id') + '" class="previous_comment"></div>');
+    var comment_block = $('<div data-comment-for="' + line.attr('id') + '" class="previousComment"></div>');
     var author_block = $('<div class="author"></div>').text(author + ':');
     comment_block.text(comment_text).prepend(author_block).each(hoverify).click(addCommentField);
     insertCommentFor(line, comment_block);
@@ -180,8 +184,9 @@
   $(document).ready(function() {
     crawlDiff();
     fetchHistory();
-    $(document.body).prepend('<div id="toolbar"><div class="actions"><button id="post_comments">Prepare comments</button></div><span class="commentStatus"></span> <span class="help">Double-click a line to add a comment.</span></div>');
+    $(document.body).prepend('<div id="toolbar"><div class="actions"><button id="post_comments">Publish comments</button></div><div class="message"><span class="commentStatus"></span> <span class="help">Double-click a line to add a comment.</span></div></div>');
     $(document.body).prepend('<div id="comment_form" class="inactive"><div class="winter"></div><div class="lightbox"><iframe src="attachment.cgi?id=' + attachment_id + '&action=reviewform"></iframe></div></div>');
+    $(document.body).append('<div class="overallComments"><div class="description">Overall comments:</div><textarea></textarea></div>');
   });
 
   function cancelComment() {
@@ -190,6 +195,11 @@
     findCommentBlockFor(line).remove();
     line.removeAttr('data-has-comment');
     trimCommentContextToBefore(line);
+  }
+
+  function unfreezeComment() {
+    $(this).prev().show();
+    $(this).remove();
   }
 
   $('.comment .cancel').live('click', cancelComment);
@@ -202,13 +212,10 @@
     }
     var line_id = comment_textarea.attr('data-comment-for');
     var line = $('#' + line_id)
-    findCommentBlockFor(line).hide().after($('<div class="frozen-comment"></div>').text(comment_textarea.val()));
+    findCommentBlockFor(line).hide().after($('<div class="frozenComment"></div>').text(comment_textarea.val()));
   });
 
-  $('.frozen-comment').live('click', function() {
-    $(this).prev().show();
-    $(this).remove();
-  });
+  $('.frozenComment').live('click', unfreezeComment);
 
   function focusOn(comment) {
     $('.focused').removeClass('focused');
@@ -218,7 +225,7 @@
   }
 
   function focusNextComment() {
-    var comments = $('.previous_comment');
+    var comments = $('.previousComment');
     if (comments.length == 0)
       return;
     var index = comments.index($('.focused'));
@@ -227,7 +234,7 @@
   }
 
   function focusPreviousComment() {
-    var comments = $('.previous_comment');
+    var comments = $('.previousComment');
     if (comments.length == 0)
       return;
     var index = comments.index($('.focused'));
@@ -346,13 +353,16 @@
       if (line.attr('data-has-comment') != 'true')
         return;
       var snippet = snippetFor(line);
-      var comment = findCommentBlockFor(line).children('textarea').val();
+      var comment = findCommentBlockFor(line).children('textarea').val().trim();
       if (comment == '')
         return;
       comments_in_context.push(snippet + '\n' + comment);
     });
     $('#comment_form').removeClass('inactive');
-    var comment = comments_in_context.join('\n\n');
+    var comment = $('.overallComments textarea').val().trim();
+    if (comment != '')
+      comment += '\n\n';
+    comment += comments_in_context.join('\n\n');
     if (comment != '')
       comment = 'View in context: ' + window.location + '\n\n' + comment;
     $('#comment_form').find('iframe').contents().find('#comment').val(comment);
