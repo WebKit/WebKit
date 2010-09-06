@@ -1,3 +1,15 @@
+2010-09-06  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Test that an invalid pending resource pattern doesn't crash
+        https://bugs.webkit.org/show_bug.cgi?id=43587
+
+        * platform/mac-snowleopard/svg: Added.
+        * platform/mac-snowleopard/svg/custom: Added.
+        * platform/mac-snowleopard/svg/custom/use-invalid-pattern-expected.txt: Added.
+        * svg/custom/use-invalid-pattern.svg: Added.
+
 2010-09-06  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Andreas Kling.

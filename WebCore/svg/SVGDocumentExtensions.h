@@ -40,6 +40,7 @@ class SVGSVGElement;
 
 class SVGDocumentExtensions : public Noncopyable {
 public:
+    typedef HashSet<RefPtr<SVGStyledElement> > SVGPendingElements;
     SVGDocumentExtensions(Document*);
     ~SVGDocumentExtensions();
     
@@ -64,7 +65,7 @@ private:
     Document* m_document; // weak reference
     HashSet<SVGSVGElement*> m_timeContainers; // For SVG 1.2 support this will need to be made more general.
     HashMap<AtomicString, RenderSVGResourceContainer*> m_resources;
-    HashMap<AtomicString, HashSet<SVGStyledElement*>*> m_pendingResources;
+    HashMap<AtomicString, SVGPendingElements*> m_pendingResources;
     OwnPtr<SVGResourcesCache> m_resourcesCache;
 
     SVGDocumentExtensions(const SVGDocumentExtensions&);
@@ -74,9 +75,9 @@ public:
     // This HashMap contains a list of pending resources. Pending resources, are such
     // which are referenced by any object in the SVG document, but do NOT exist yet.
     // For instance, dynamically build gradients / patterns / clippers...
-    void addPendingResource(const AtomicString& id, SVGStyledElement*);
+    void addPendingResource(const AtomicString& id, PassRefPtr<SVGStyledElement>);
     bool isPendingResource(const AtomicString& id) const;
-    PassOwnPtr<HashSet<SVGStyledElement*> > removePendingResource(const AtomicString& id);
+    PassOwnPtr<SVGPendingElements> removePendingResource(const AtomicString& id);
 };
 
 }

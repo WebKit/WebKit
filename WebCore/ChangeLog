@@ -1,3 +1,25 @@
+2010-09-06  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Make SVG PendingResources use RefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=43587
+
+        Convert SVGDocumentExtensions::m_pendingResources to use a RefPtr for 
+        pending elements instead of a raw pointer so that pending elements can't
+        be freed prematurely.
+
+        Test: svg/custom/use-invalid-pattern.svg
+
+        * rendering/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::registerResource):
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::addPendingResource):
+        (WebCore::SVGDocumentExtensions::removePendingResource):
+        * svg/SVGDocumentExtensions.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::insertedIntoDocument):
+
 2010-09-06  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

@@ -156,7 +156,7 @@ void SVGDocumentExtensions::reportError(const String& message)
     reportMessage(m_document, ErrorMessageLevel, "Error: " + message);
 }
 
-void SVGDocumentExtensions::addPendingResource(const AtomicString& id, SVGStyledElement* obj)
+void SVGDocumentExtensions::addPendingResource(const AtomicString& id, PassRefPtr<SVGStyledElement> obj)
 {
     ASSERT(obj);
 
@@ -166,7 +166,7 @@ void SVGDocumentExtensions::addPendingResource(const AtomicString& id, SVGStyled
     if (m_pendingResources.contains(id))
         m_pendingResources.get(id)->add(obj);
     else {
-        HashSet<SVGStyledElement*>* set = new HashSet<SVGStyledElement*>;
+        SVGPendingElements* set = new SVGPendingElements;
         set->add(obj);
 
         m_pendingResources.add(id, set);
@@ -181,11 +181,11 @@ bool SVGDocumentExtensions::isPendingResource(const AtomicString& id) const
     return m_pendingResources.contains(id);
 }
 
-PassOwnPtr<HashSet<SVGStyledElement*> > SVGDocumentExtensions::removePendingResource(const AtomicString& id)
+PassOwnPtr<HashSet<RefPtr<SVGStyledElement> > > SVGDocumentExtensions::removePendingResource(const AtomicString& id)
 {
     ASSERT(m_pendingResources.contains(id));
 
-    OwnPtr<HashSet<SVGStyledElement*> > set(m_pendingResources.get(id));
+    OwnPtr<SVGPendingElements> set(m_pendingResources.get(id));
     m_pendingResources.remove(id);
     return set.release();
 }

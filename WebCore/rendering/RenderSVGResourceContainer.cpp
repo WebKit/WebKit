@@ -160,14 +160,14 @@ void RenderSVGResourceContainer::registerResource()
         return;
     }
 
-    OwnPtr<HashSet<SVGStyledElement*> > clients(extensions->removePendingResource(m_id));
+    OwnPtr<SVGDocumentExtensions::SVGPendingElements> clients(extensions->removePendingResource(m_id));
 
     // Cache us with the new id.
     extensions->addResource(m_id, this);
 
     // Update cached resources of pending clients.
-    const HashSet<SVGStyledElement*>::const_iterator end = clients->end();
-    for (HashSet<SVGStyledElement*>::const_iterator it = clients->begin(); it != end; ++it) {
+    const SVGDocumentExtensions::SVGPendingElements::const_iterator end = clients->end();
+    for (SVGDocumentExtensions::SVGPendingElements::const_iterator it = clients->begin(); it != end; ++it) {
         RenderObject* renderer = (*it)->renderer();
         if (!renderer)
             continue;
