@@ -1,3 +1,17 @@
+2010-09-06  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Antonio Gomes.
+
+        Convert editing/selection/shift-click.html to use setEditingBehavior
+        https://bugs.webkit.org/show_bug.cgi?id=45233
+
+        * editing/selection/script-tests/shift-click.js:
+        (shiftClick): Take only one expected string.
+        (assertSelectionString): Take only one expected string.
+        (runShiftClickTest): Added. Runs the test with a particular editing behavior.
+        * editing/selection/shift-click-expected.txt: Updated to reflect new results.
+        * platform/win/editing/selection/shift-click-expected.txt: Removed.
+
 2010-09-06  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.
