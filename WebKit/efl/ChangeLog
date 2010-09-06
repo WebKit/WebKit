@@ -1,3 +1,20 @@
+2010-09-06  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix.
+
+        [EFL] REGRESSION(66794) Need to fix build break.
+        https://bugs.webkit.org/show_bug.cgi?id=45241
+
+        Add dummy class(FrameNetworkingContextEfl) like GTK+ port and implement
+        as EFL style.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::createNetworkingContext):
+        * WebCoreSupport/FrameNetworkingContextEfl.h: Added.
+        (WebCore::FrameNetworkingContextEfl::create):
+        (WebCore::FrameNetworkingContextEfl::coreFrame):
+        (WebCore::FrameNetworkingContextEfl::FrameNetworkingContextEfl):
+
 2010-09-04  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.
