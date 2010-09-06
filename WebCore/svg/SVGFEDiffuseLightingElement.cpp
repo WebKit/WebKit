@@ -75,7 +75,7 @@ void SVGFEDiffuseLightingElement::svgAttributeChanged(const QualifiedName& attrN
         || attrName == SVGNames::diffuseConstantAttr
         || attrName == SVGNames::kernelUnitLengthAttr
         || attrName == SVGNames::lighting_colorAttr)
-        invalidate();
+        SVGFilterElement::invalidateFilter(this);
 }
 
 void SVGFEDiffuseLightingElement::synchronizeProperty(const QualifiedName& attrName)

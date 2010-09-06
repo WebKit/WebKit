@@ -1,3 +1,39 @@
+2010-09-06  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r66823.
+        http://trac.webkit.org/changeset/66823
+        https://bugs.webkit.org/show_bug.cgi?id=45266
+
+        Windows build fails with unknown reason (Requested by zherczeg
+        on #webkit).
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderObject.h:
+        * rendering/RenderSVGResourceFilterPrimitive.cpp: Removed.
+        * rendering/RenderSVGResourceFilterPrimitive.h: Removed.
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::writeSVGContainer):
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::svgAttributeChanged):
+        * svg/SVGFELightElement.cpp:
+        (WebCore::SVGFELightElement::svgAttributeChanged):
+        (WebCore::SVGFELightElement::childrenChanged):
+        * svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::svgAttributeChanged):
+        * svg/SVGFilterElement.h:
+        (WebCore::SVGFilterElement::invalidateFilter):
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::svgAttributeChanged):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::childrenChanged):
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::rendererIsNeeded):
+
 2010-09-06  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.

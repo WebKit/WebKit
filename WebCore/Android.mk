@@ -657,7 +657,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	rendering/RenderSVGResourceClipper.cpp \
 	rendering/RenderSVGResourceContainer.cpp \
 	rendering/RenderSVGResourceFilter.cpp \
-	rendering/RenderSVGResourceFilterPrimitive.cpp \
 	rendering/RenderSVGResourceGradient.cpp \
 	rendering/RenderSVGResourceLinearGradient.cpp \
 	rendering/RenderSVGResourceMarker.cpp \

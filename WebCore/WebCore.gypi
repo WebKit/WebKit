@@ -3462,8 +3462,6 @@
             'rendering/RenderSVGResourceContainer.h',
             'rendering/RenderSVGResourceFilter.cpp',
             'rendering/RenderSVGResourceFilter.h',
-            'rendering/RenderSVGResourceFilterPrimitive.cpp',
-            'rendering/RenderSVGResourceFilterPrimitive.h',
             'rendering/RenderSVGResourceGradient.cpp',
             'rendering/RenderSVGResourceGradient.h',
             'rendering/RenderSVGResourceLinearGradient.cpp',

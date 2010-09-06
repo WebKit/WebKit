@@ -57,7 +57,7 @@ void SVGFEOffsetElement::svgAttributeChanged(const QualifiedName& attrName)
     if (attrName == SVGNames::inAttr
         || attrName == SVGNames::dxAttr
         || attrName == SVGNames::dyAttr)
-        invalidate();
+        SVGFilterElement::invalidateFilter(this);
 }
 
 void SVGFEOffsetElement::synchronizeProperty(const QualifiedName& attrName)

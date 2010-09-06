@@ -23,7 +23,6 @@
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "FilterEffect.h"
-#include "RenderSVGResource.h"
 #include "SVGFilterBuilder.h"
 #include "SVGFilterElement.h"
 #include "SVGNames.h"
@@ -48,17 +47,10 @@ protected:
     virtual void synchronizeProperty(const QualifiedName&);
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
-protected:
-    inline void invalidate()
-    {
-        if (RenderObject* primitiveRenderer = renderer())
-            RenderSVGResource::markForLayoutAndParentResourceInvalidation(primitiveRenderer);
-    }
-
 private:
     virtual bool isFilterEffect() const { return true; }
 
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual bool rendererIsNeeded(RenderStyle*) { return false; }
 
     DECLARE_ANIMATED_PROPERTY(SVGFilterPrimitiveStandardAttributes, SVGNames::xAttr, SVGLength, X, x)
     DECLARE_ANIMATED_PROPERTY(SVGFilterPrimitiveStandardAttributes, SVGNames::yAttr, SVGLength, Y, y)
