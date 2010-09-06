@@ -114,6 +114,7 @@ private:
     void begin();
     void attemptToEnd();
     void endIfDelayed();
+    void attemptToRunDeferredScriptsAndEnd();
     void end();
 
     bool isScheduledForResume() const;

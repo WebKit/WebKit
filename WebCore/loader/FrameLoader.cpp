@@ -425,6 +425,10 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy, DatabasePolic
     m_workingURL = KURL();
 
     if (Document* doc = m_frame->document()) {
+        // FIXME: HTML5 doesn't tell us to set the state to complete when aborting, but we do anyway to match legacy behavior.
+        // http://www.w3.org/Bugs/Public/show_bug.cgi?id=10537
+        doc->setReadyState(Document::Complete);
+
         if (DocLoader* docLoader = doc->docLoader())
             cache()->loader()->cancelRequests(docLoader);
 
@@ -838,6 +842,7 @@ void FrameLoader::checkCompleted()
 
     // OK, completed.
     m_isComplete = true;
+    m_frame->document()->setReadyState(Document::Complete);
 
     RefPtr<Frame> protect(m_frame);
     checkCallImplicitClose(); // if we didn't do it before

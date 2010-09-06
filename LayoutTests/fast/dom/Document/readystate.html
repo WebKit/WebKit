@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body onload="shouldBeEqualToString('document.readyState', 'complete');">
+Tests that the document's readyState is set properly at various phases during load.
+<div id="console"></div>
+<script defer src="data:text/javascript,shouldBeEqualToString('document.readyState', 'interactive');"></script>
+<script src="data:text/javascript,shouldBeEqualToString('document.readyState', 'loading');"></script>
+<script>
+  var jsTestIsAsync = true;
+
+  shouldBeEqualToString("document.readyState", "loading");
+
+  document.addEventListener("DOMContentLoaded", function() {
+    shouldBeEqualToString("document.readyState", "interactive");
+
+    var el = document.createElement('script');
+    el.src = "data:text/javascript,shouldBeEqualToString('document.readyState', 'complete');";
+    el.onload = function() { finishJSTest(); }
+    document.getElementsByTagName('head')[0].appendChild(el);
+  }, false);
+
+  var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

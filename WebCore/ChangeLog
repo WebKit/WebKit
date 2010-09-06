@@ -1,3 +1,41 @@
+2010-09-06  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Implement HTML5 definition of document.readyState
+        https://bugs.webkit.org/show_bug.cgi?id=45119
+
+        The legacy behavior was "loading" -> "loaded" -> "complete". The new
+        HTML5 behavior is "loading" -> "interactive" -> "complete". There is
+        some potential for this to cause compat problems if for instance a
+        page expects readyState to be "loaded" during the DOMContentLoaded event.
+
+        Test: fast/dom/Document/readystate.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Initial value is Complete because according to http://www.whatwg.org/specs/web-apps/current-work/#dom-document-readystate,
+        when a Document is created the initial value is "complete" unless it has a parser associated with it, in which case it is "loading".
+        So the ctor starts it Complete, and when the parser is created it is flipped to Loading.
+        (WebCore::Document::readyState):
+        (WebCore::Document::setReadyState):
+        (WebCore::Document::implicitOpen):
+        (WebCore::Document::finishedParsing): Ensure that XML and HTML parser have transition to Stopping state.
+        * dom/Document.h:
+        * dom/DocumentParser.cpp:
+        (WebCore::DocumentParser::prepareToStopParsing): Previously this was being called when parsing had stopped.
+        It is better to ensure it is only called while parsing.
+        * dom/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::end): Transition to stopping before calling document finishedParsiong().
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::prepareToStopParsing): Set state to interactive before running deferred scripts.
+        This method is also called when parsing fragments, so we need to ensure it isn't done in that case.
+        (WebCore::HTMLDocumentParser::attemptToRunDeferredScriptsAndEnd): Added. Break out this part s that notifyFinished doesn't go through
+        the additional steps of pumping tokenizer, setting the state, etc.
+        (WebCore::HTMLDocumentParser::notifyFinished): Now that prepareToStopParsing is split up, we must protect. It also makes sense to add a couple of ASSERTs.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading): It looks like an aborted load should never transition to "complete" according the HTML5. I've left the legacy behavior for now though.
+        (WebCore::FrameLoader::checkCompleted): The FrameLoader now sets the state on the Document instead of the Document polling the FrameLoader.
+
 2010-09-06  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Adam Barth.

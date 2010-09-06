@@ -1,3 +1,13 @@
+2010-09-06  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Implement HTML5 definition of document.readyState
+        https://bugs.webkit.org/show_bug.cgi?id=45119
+
+        * fast/dom/Document/readystate-expected.txt: Added.
+        * fast/dom/Document/readystate.html: Added. Reads readyState inline script, external script, deferred script, DOMContentLoaded, onload, and dynamic post-onload script.
+
 2010-09-06  Shane Stephens  <shanestephens@google.com>
 
         Reviewed by Dimitri Glazkov.

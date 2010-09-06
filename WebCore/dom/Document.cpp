@@ -357,6 +357,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_compatibilityModeLocked(false)
     , m_domTreeVersion(0)
     , m_styleSheets(StyleSheetList::create(this))
+    , m_readyState(Complete)
     , m_styleRecalcTimer(this, &Document::styleRecalcTimerFired)
     , m_pendingStyleRecalcShouldForce(false)
     , m_frameElementsShouldIgnoreScrolling(false)
@@ -952,16 +953,27 @@ Element* Document::getElementById(const AtomicString& elementId) const
 
 String Document::readyState() const
 {
-    if (Frame* f = frame()) {
-        if (f->loader()->isComplete()) 
-            return "complete";
-        if (parsing()) 
-            return "loading";
-        return "loaded";
-        // FIXME: What does "interactive" mean?
-        // FIXME: Missing support for "uninitialized".
+    DEFINE_STATIC_LOCAL(const String, loading, ("loading"));
+    DEFINE_STATIC_LOCAL(const String, interactive, ("interactive"));
+    DEFINE_STATIC_LOCAL(const String, complete, ("complete"));
+
+    switch (m_readyState) {
+    case Loading:
+        return loading;
+    case Interactive:
+        return interactive;
+    case Complete:
+        return complete;
     }
+
+    ASSERT_NOT_REACHED();
     return String();
+}
+
+void Document::setReadyState(ReadyState readyState)
+{
+    // FIXME: Fire the readystatechange event on this Document.
+    m_readyState = readyState;
 }
 
 String Document::encoding() const
@@ -1869,6 +1881,7 @@ void Document::implicitOpen()
 
     m_parser = createParser();
     setParsing(true);
+    setReadyState(Loading);
 
     ScriptableDocumentParser* parser = scriptableDocumentParser();
     if (m_frame && parser)
@@ -4103,6 +4116,8 @@ CollectionCache* Document::nameCollectionInfo(CollectionType type, const AtomicS
 
 void Document::finishedParsing()
 {
+    ASSERT(!scriptableDocumentParser() || !m_parser->isParsing());
+    ASSERT(!scriptableDocumentParser() || m_readyState != Loading);
     setParsing(false);
     dispatchEvent(Event::create(eventNames().DOMContentLoadedEvent, true, false));
 

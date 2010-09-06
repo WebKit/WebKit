@@ -582,7 +582,13 @@ public:
     bool inQuirksMode() const { return m_compatibilityMode == QuirksMode; }
     bool inLimitedQuirksMode() const { return m_compatibilityMode == LimitedQuirksMode; }
     bool inNoQuirksMode() const { return m_compatibilityMode == NoQuirksMode; }
-    
+
+    enum ReadyState {
+        Loading,
+        Interactive,
+        Complete
+    };
+    void setReadyState(ReadyState);
     void setParsing(bool);
     bool parsing() const { return m_bParsing; }
     int minimumLayoutDelay();
@@ -1154,6 +1160,7 @@ private:
 
     bool m_loadingSheet;
     bool m_visuallyOrdered;
+    ReadyState m_readyState;
     bool m_bParsing;
     
     Timer<Document> m_styleRecalcTimer;

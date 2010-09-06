@@ -1,0 +1,11 @@
+Tests that the document's readyState is set properly at various phases during load.
+PASS document.readyState is "loading"
+PASS document.readyState is "loading"
+PASS document.readyState is "interactive"
+PASS document.readyState is "interactive"
+PASS document.readyState is "complete"
+PASS document.readyState is "complete"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
