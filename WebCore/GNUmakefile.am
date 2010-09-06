@@ -3903,6 +3903,8 @@ webcore_sources += \
 	WebCore/rendering/RenderSVGResourceClipper.h \
 	WebCore/rendering/RenderSVGResourceFilter.cpp \
 	WebCore/rendering/RenderSVGResourceFilter.h \
+	WebCore/rendering/RenderSVGResourceFilterPrimitive.cpp \
+	WebCore/rendering/RenderSVGResourceFilterPrimitive.h \
 	WebCore/rendering/RenderSVGResourceGradient.cpp \
 	WebCore/rendering/RenderSVGResourceGradient.h \
 	WebCore/rendering/RenderSVGResourceLinearGradient.cpp \

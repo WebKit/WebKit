@@ -1,3 +1,15 @@
+2010-09-06  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Dirk Schulze.
+
+        An individual renderer should be assigned to each SVGFE*Element class
+        https://bugs.webkit.org/show_bug.cgi?id=43954
+
+        The layout test below is fixed by this patch.
+
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-lighting-color-css-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-lighting-color-css-prop-expected.png:
+
 2010-08-26  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.

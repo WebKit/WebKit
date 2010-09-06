@@ -320,6 +320,7 @@ public:
     virtual bool isSVGImage() const { return false; }
     virtual bool isSVGForeignObject() const { return false; }
     virtual bool isSVGResourceContainer() const { return false; }
+    virtual bool isSVGResourceFilterPrimitive() const { return false; }
     virtual bool isSVGShadowTreeRootContainer() const { return false; }
 
     virtual RenderSVGResourceContainer* toRenderSVGResourceContainer();

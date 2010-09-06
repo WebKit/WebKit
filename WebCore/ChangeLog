@@ -1,3 +1,46 @@
+2010-09-06  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Dirk Schulze.
+
+        An individual renderer should be assigned to each SVGFE*Element class
+        https://bugs.webkit.org/show_bug.cgi?id=43954
+
+        RenderSVGResourceFilterPrimitive renderer is added to
+        the project, and assigned to each object, which class is
+        derived from SVGFilterPrimitiveStandardAttributes. The patch
+        mainly contains build system changes, and it fixes one layout
+        test in svg/dynamic-updates.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isSVGResourceFilterPrimitive):
+        * rendering/RenderSVGResourceFilterPrimitive.cpp: Added.
+        (WebCore::RenderSVGResourceFilterPrimitive::RenderSVGResourceFilterPrimitive):
+        * rendering/RenderSVGResourceFilterPrimitive.h: Added.
+        (WebCore::RenderSVGResourceFilterPrimitive::isSVGResourceFilterPrimitive):
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::writeSVGContainer):
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::svgAttributeChanged):
+        * svg/SVGFELightElement.cpp:
+        (WebCore::SVGFELightElement::svgAttributeChanged):
+        (WebCore::SVGFELightElement::childrenChanged):
+        * svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::svgAttributeChanged):
+        * svg/SVGFilterElement.h:
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::svgAttributeChanged):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::childrenChanged):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::createRenderer):
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::invalidate):
+
 2010-09-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Dirk Schulze.
