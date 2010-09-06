@@ -1,3 +1,15 @@
+2010-09-06  Diego Gonzalez  <diegohcg@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Update NetworkAccessManager in Qt FrameNetworkingContext
+        https://bugs.webkit.org/show_bug.cgi?id=45231
+
+        Make possible to get the current QNAM when NetwokingContext request it.
+
+        * WebCoreSupport/FrameNetworkingContextQt.cpp:
+        (WebCore::FrameNetworkingContextQt::networkAccessManager):
+
 2010-09-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Antonio Gomes.

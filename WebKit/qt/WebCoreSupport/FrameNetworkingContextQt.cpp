@@ -23,6 +23,8 @@
 
 #include <QNetworkAccessManager>
 #include <QObject>
+#include <QWebFrame>
+#include <QWebPage>
 
 namespace WebCore {
 
@@ -45,7 +47,7 @@ QObject* FrameNetworkingContextQt::originatingObject() const
 
 QNetworkAccessManager* FrameNetworkingContextQt::networkAccessManager() const
 {
-    return m_networkAccessManager;
+    return (qobject_cast<QWebFrame*>(m_originatingObject))->page()->networkAccessManager();
 }
 
 }
