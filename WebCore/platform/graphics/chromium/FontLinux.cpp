@@ -528,12 +528,11 @@ private:
             m_xPositions[i] = m_offsetX + position + offsetX;
 
             double advance = truncateFixedPointToInteger(m_item.advances[i]);
-            unsigned glyphIndex = m_item.item.pos + logClustersIndex;
             // The first half of the conjuction works around the case where
             // output glyphs aren't associated with any codepoints by the
             // clusters log.
-            if (glyphIndex < m_item.num_glyphs
-                && isWordBreak(glyphIndex, isRTL)) {
+            if (logClustersIndex < m_item.item.length
+                && isWordBreak(m_item.item.pos + logClustersIndex, isRTL)) {
                 advance += m_wordSpacingAdjustment;
 
                 if (m_padding > 0) {

@@ -1,3 +1,22 @@
+2010-09-07  Adam Langley  <agl@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] Fix complex text word spacing on Linux.
+
+        I broke complex text word spacing with r66689. I misnamed a
+        variable in the original code |glyphIndex| when it was
+        actually indexing code points. That meant that I compared it
+        against the wrong limit when working around Harfbuzz issues
+        and neatly disabled word spacing.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45191
+
+        Test: fast/text/atsui-spacing-features.html
+
+        * platform/graphics/chromium/FontLinux.cpp:
+        (WebCore::TextRunWalker::setGlyphXPositions):
+
 2010-09-07  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Steve Block.
