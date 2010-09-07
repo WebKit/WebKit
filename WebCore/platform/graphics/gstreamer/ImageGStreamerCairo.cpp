@@ -18,12 +18,13 @@
  */
 
 #include "config.h"
-
-#include "GOwnPtr.h"
 #include "ImageGStreamer.h"
 
-using namespace std;
+#if ENABLE(VIDEO)
 
+#include "GOwnPtr.h"
+
+using namespace std;
 using namespace WebCore;
 
 PassRefPtr<ImageGStreamer> ImageGStreamer::createImage(GstBuffer* buffer)
@@ -64,3 +65,4 @@ ImageGStreamer::~ImageGStreamer()
 
     m_image = 0;
 }
+#endif // ENABLE(VIDEO)

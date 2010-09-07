@@ -19,6 +19,7 @@
 
 #include "config.h"
 #include "PlatformVideoWindow.h"
+#if ENABLE(VIDEO)
 
 #include "NotImplemented.h"
 
@@ -33,3 +34,5 @@ PlatformVideoWindow::~PlatformVideoWindow()
 {
     notImplemented();
 }
+
+#endif // ENABLE(VIDEO)

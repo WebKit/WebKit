@@ -20,7 +20,6 @@
 
 #ifndef GStreamerGWorld_h
 #define GStreamerGWorld_h
-
 #if ENABLE(VIDEO)
 
 #include "PlatformVideoWindow.h"
@@ -63,5 +62,5 @@ private:
 };
 
 }
-#endif
+#endif // ENABLE(VIDEO)
 #endif

@@ -19,6 +19,7 @@
 
 #include "config.h"
 #include "ImageGStreamer.h"
+#if ENABLE(VIDEO)
 
 using namespace WebCore;
 
@@ -55,3 +56,5 @@ ImageGStreamer::~ImageGStreamer()
 
     m_image = 0;
 }
+
+#endif // ENABLE(VIDEO)

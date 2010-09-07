@@ -1,3 +1,33 @@
+2010-09-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Fix some feature guards
+        https://bugs.webkit.org/show_bug.cgi?id=45302
+
+        No new tests as this is just a build change.
+
+        * platform/graphics/gstreamer/DataSourceGStreamer.cpp: Guard with #if ENABLE(VIDEO)
+        * platform/graphics/gstreamer/DataSourceGStreamer.h: Ditto.
+        * platform/graphics/gstreamer/GOwnPtrGStreamer.cpp: Ditto.
+        * platform/graphics/gstreamer/GOwnPtrGStreamer.h: Ditto.
+        * platform/graphics/gstreamer/GStreamerGWorld.cpp: Ditto.
+        * platform/graphics/gstreamer/GStreamerGWorld.h: Ditto.
+        * platform/graphics/gstreamer/ImageGStreamer.h: Ditto.
+        * platform/graphics/gstreamer/ImageGStreamerCG.mm: Ditto.
+        * platform/graphics/gstreamer/ImageGStreamerCairo.cpp: Ditto.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp: Ditto.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h: Ditto.
+        * platform/graphics/gstreamer/PlatformVideoWindow.h: Ditto.
+        * platform/graphics/gstreamer/PlatformVideoWindowEfl.cpp: Ditto.
+        * platform/graphics/gstreamer/PlatformVideoWindowGtk.cpp: Ditto.
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp: Ditto.
+        * platform/graphics/gstreamer/VideoSinkGStreamer.h: Ditto.
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp: Ditto.
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.h: Ditto.
+        * platform/gtk/GeolocationServiceGtk.cpp: Guard with ENABLE(GEOLOCATION)
+        * platform/gtk/GeolocationServiceGtk.h: Ditto.
+
 2010-09-07  Jonathan Dixon  <joth@chromium.org>
 
         Reviewed by Jeremy Orlow.

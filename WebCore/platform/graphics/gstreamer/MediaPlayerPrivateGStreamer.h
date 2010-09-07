@@ -22,7 +22,6 @@
 
 #ifndef MediaPlayerPrivateGStreamer_h
 #define MediaPlayerPrivateGStreamer_h
-
 #if ENABLE(VIDEO)
 
 #include <wtf/Forward.h>
@@ -179,5 +178,5 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
     };
 }
 
-#endif
+#endif // ENABLE(VIDEO)
 #endif

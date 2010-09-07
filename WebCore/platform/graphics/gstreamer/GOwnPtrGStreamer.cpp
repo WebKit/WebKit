@@ -32,4 +32,4 @@ template <> void freeOwnedGPtr<GstElement>(GstElement* ptr)
 }
 
 }
-#endif
+#endif // ENABLE(VIDEO)

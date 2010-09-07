@@ -18,6 +18,7 @@
 
 #include "config.h"
 #include "DataSourceGStreamer.h"
+#if ENABLE(VIDEO)
 
 #include <gio/gio.h>
 #include <glib.h>
@@ -241,3 +242,5 @@ static void webkit_data_src_uri_handler_init(gpointer g_iface, gpointer iface_da
     iface->get_uri = webkit_data_src_uri_get_uri;
     iface->set_uri = webkit_data_src_uri_set_uri;
 }
+
+#endif // ENABLE(VIDEO)

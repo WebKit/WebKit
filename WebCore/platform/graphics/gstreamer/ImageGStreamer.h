@@ -23,7 +23,6 @@
 #if ENABLE(VIDEO)
 
 #include "BitmapImage.h"
-
 #include <gst/gst.h>
 #include <gst/video/video.h>
 #include <wtf/PassRefPtr.h>
@@ -60,6 +59,5 @@ class ImageGStreamer : public RefCounted<ImageGStreamer> {
     };
 }
 
-#endif
-
+#endif // ENABLE(VIDEO)
 #endif

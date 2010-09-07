@@ -19,6 +19,7 @@
 
 #ifndef GeolocationServiceGtk_h
 #define GeolocationServiceGtk_h
+#if ENABLE(GEOLOCATION)
 
 #include "GeolocationService.h"
 #include "Geoposition.h"
@@ -70,4 +71,5 @@ namespace WebCore {
     };
 }
 
+#endif // ENABLE(GEOLOCATION)
 #endif

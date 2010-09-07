@@ -19,6 +19,8 @@
 #ifndef DataSourceGStreamer_h
 #define DataSourceGStreamer_h
 
+#if ENABLE(VIDEO)
+
 #include <glib-object.h>
 #include <gst/base/gstbasesrc.h>
 
@@ -51,4 +53,5 @@ GType webkit_data_src_get_type(void);
 
 G_END_DECLS
 
+#endif // ENABLE(VIDEO)
 #endif
