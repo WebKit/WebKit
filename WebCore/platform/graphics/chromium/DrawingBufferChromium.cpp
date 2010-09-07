@@ -32,9 +32,12 @@
 
 #include "DrawingBuffer.h"
 
-#include "Canvas2DLayerChromium.h"
 #include "GraphicsContext3D.h"
 #include "SharedGraphicsContext3D.h"
+
+#if USE(ACCELERATED_COMPOSITING)
+#include "Canvas2DLayerChromium.h"
+#endif
 
 #include <GLES2/gl2.h>
 #ifndef GL_GLEXT_PROTOTYPES
@@ -46,7 +49,9 @@ namespace WebCore {
 
 struct DrawingBufferInternal {
     unsigned offscreenColorTexture;
+#if USE(ACCELERATED_COMPOSITING)
     RefPtr<Canvas2DLayerChromium> platformLayer;
+#endif
 };
 
 static unsigned generateColorTexture(SharedGraphicsContext3D* context, const IntSize& size)
@@ -79,11 +84,14 @@ DrawingBuffer::DrawingBuffer(SharedGraphicsContext3D* context, const IntSize& si
 
 DrawingBuffer::~DrawingBuffer()
 {
+#if USE(ACCELERATED_COMPOSITING)
     if (m_internal->platformLayer)
         m_internal->platformLayer->setDrawingBuffer(0);
+#endif
     m_context->deleteFramebuffer(m_framebuffer);
 }
 
+#if USE(ACCELERATED_COMPOSITING)
 void DrawingBuffer::publishToPlatformLayer()
 {
     if (m_callback)
@@ -98,6 +106,7 @@ void DrawingBuffer::publishToPlatformLayer()
     glCopyTextureToParentTexture(m_internal->offscreenColorTexture, parentTexture);
     glFlush();
 }
+#endif
 
 void DrawingBuffer::reset(const IntSize& newSize)
 {
@@ -108,16 +117,20 @@ void DrawingBuffer::reset(const IntSize& newSize)
     m_context->bindFramebuffer(m_framebuffer);
     m_internal->offscreenColorTexture = generateColorTexture(m_context, m_size);
 
+#if USE(ACCELERATED_COMPOSITING)
     if (m_internal->platformLayer)
         m_internal->platformLayer->setTextureChanged();
+#endif
 }
 
+#if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* DrawingBuffer::platformLayer()
 {
     if (!m_internal->platformLayer)
         m_internal->platformLayer = Canvas2DLayerChromium::create(this, 0);
     return m_internal->platformLayer.get();
 }
+#endif
 
 unsigned DrawingBuffer::getRenderingResultsAsTexture()
 {

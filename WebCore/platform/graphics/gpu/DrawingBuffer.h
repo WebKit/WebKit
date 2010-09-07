@@ -52,11 +52,13 @@ public:
     ~DrawingBuffer();
 
     void reset(const IntSize&);
-    PlatformLayer* platformLayer();
-
     void bind();
-    void publishToPlatformLayer();
     IntSize size() const { return m_size; }
+
+#if USE(ACCELERATED_COMPOSITING)
+    PlatformLayer* platformLayer();
+    void publishToPlatformLayer();
+#endif
 
     unsigned getRenderingResultsAsTexture();
 

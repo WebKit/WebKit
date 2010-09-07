@@ -1,3 +1,21 @@
+2010-09-07  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Fix compile errors in DrawingBuffer if USE(ACCELERATED_COMPOSITING) is not set
+        https://bugs.webkit.org/show_bug.cgi?id=45324
+
+        Adds appropriate #if guards around code that has to deal directly with the compositor.
+        DrawingBuffer can still be used without the compositor as an off-screen rendering
+        region.
+
+        To test, compile without USE(ACCELERATED_COMPOSITING).
+
+        * platform/graphics/chromium/DrawingBufferChromium.cpp:
+        (WebCore::DrawingBuffer::~DrawingBuffer):
+        (WebCore::DrawingBuffer::reset):
+        * platform/graphics/gpu/DrawingBuffer.h:
+
 2010-09-03  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Darin Adler.
