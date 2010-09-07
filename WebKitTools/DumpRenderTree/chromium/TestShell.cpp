@@ -42,6 +42,7 @@
 #include "public/WebElement.h"
 #include "public/WebFrame.h"
 #include "public/WebHistoryItem.h"
+#include "public/WebKit.h"
 #include "public/WebRuntimeFeatures.h"
 #include "public/WebScriptController.h"
 #include "public/WebSettings.h"
@@ -592,6 +593,8 @@ void TestShell::dumpImage(skia::PlatformCanvas* canvas) const
     bool discardTransparency = false;
 #elif OS(UNIX)
     bool discardTransparency = true;
+    if (areLayoutTestImagesOpaque())
+        device.makeOpaque(0, 0, sourceBitmap.width(), sourceBitmap.height());
 #endif
 
     // Compute MD5 sum.  We should have done this before calling

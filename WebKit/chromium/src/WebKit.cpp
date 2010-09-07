@@ -103,6 +103,11 @@ bool layoutTestMode()
     return s_layoutTestMode;
 }
 
+bool areLayoutTestImagesOpaque()
+{
+    return false;
+}
+
 void enableLogChannel(const char* name)
 {
     WTFLogChannel* channel = WebCore::getChannelFromName(name);
