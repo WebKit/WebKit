@@ -2206,6 +2206,7 @@ webcore_sources += \
 	WebCore/rendering/AutoTableLayout.h \
 	WebCore/rendering/BidiRun.cpp \
 	WebCore/rendering/BidiRun.h \
+	WebCore/rendering/ColumnInfo.h \
 	WebCore/rendering/CounterNode.cpp \
 	WebCore/rendering/CounterNode.h \
 	WebCore/rendering/EllipsisBox.cpp \
