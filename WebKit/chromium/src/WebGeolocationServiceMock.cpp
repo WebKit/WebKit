@@ -34,7 +34,6 @@
 #include "GeolocationService.h"
 #include "GeolocationServiceChromium.h"
 #include "GeolocationServiceMock.h"
-#include "WebGeolocationServiceBridge.h"
 #include "WebString.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/HashMap.h>

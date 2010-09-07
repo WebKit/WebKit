@@ -42,7 +42,6 @@ namespace WebCore {
 // Provides an interface for GeolocationServiceChromium to call into the embedder.
 class GeolocationServiceBridge {
 public:
-    virtual ~GeolocationServiceBridge();
     // Called by GeolocationServiceChromium.
     virtual bool startUpdating(PositionOptions*) = 0;
     virtual void stopUpdating() = 0;

@@ -82,12 +82,10 @@ public:
     virtual void onWebGeolocationServiceDestroyed();
 
 private:
-    bool isAttached() const;
-    // Pointer back to the WebKit geolocation client. We obtain this via the frame's page, but need to cache it
-    // as it may still be alive after the page has detached from the frame.
-    WebGeolocationService* m_webGeolocationService;
+    WebViewClient* getWebViewClient();
+
     // GeolocationServiceChromium owns us, we only have a pointer back to it.
-    GeolocationServiceChromium* m_geolocationServiceChromium;
+    GeolocationServiceChromium* m_GeolocationServiceChromium;
     int m_bridgeId;
 };
 
@@ -97,47 +95,49 @@ GeolocationServiceBridge* createGeolocationServiceBridgeImpl(GeolocationServiceC
 }
 
 WebGeolocationServiceBridgeImpl::WebGeolocationServiceBridgeImpl(GeolocationServiceChromium* geolocationServiceChromium)
-    : m_webGeolocationService(0)
-    , m_geolocationServiceChromium(geolocationServiceChromium)
+    : m_GeolocationServiceChromium(geolocationServiceChromium)
     , m_bridgeId(0)
 {
 }
 
 WebGeolocationServiceBridgeImpl::~WebGeolocationServiceBridgeImpl()
 {
-    if (isAttached())
-        m_webGeolocationService->detachBridge(m_bridgeId);
+    WebKit::WebViewClient* webViewClient = getWebViewClient();
+    // Geolocation has an OwnPtr to us, and it's destroyed after the frame has
+    // been potentially disconnected. In this case, it calls stopUpdating()
+    // has been called and we have already detached ourselves.
+    if (!webViewClient)
+        ASSERT(!m_bridgeId);
+    else if (m_bridgeId)
+        webViewClient->geolocationService()->detachBridge(m_bridgeId);
 }
 
 bool WebGeolocationServiceBridgeImpl::startUpdating(PositionOptions* positionOptions)
 {
     attachBridgeIfNeeded();
-    if (!isAttached())
-        return false;
-    m_webGeolocationService->startUpdating(m_bridgeId, m_geolocationServiceChromium->frame()->document()->url(), positionOptions->enableHighAccuracy());
+    getWebViewClient()->geolocationService()->startUpdating(m_bridgeId, m_GeolocationServiceChromium->frame()->document()->url(), positionOptions->enableHighAccuracy());
     return true;
 }
 
 void WebGeolocationServiceBridgeImpl::stopUpdating()
 {
-    if (isAttached()) {
-        m_webGeolocationService->stopUpdating(m_bridgeId);
-        m_webGeolocationService->detachBridge(m_bridgeId);
-        m_bridgeId = 0;
-        m_webGeolocationService = 0;
+    WebViewClient* webViewClient = getWebViewClient();
+    if (m_bridgeId && webViewClient) {
+        WebGeolocationService* geolocationService = webViewClient->geolocationService();
+        geolocationService->stopUpdating(m_bridgeId);
+        geolocationService->detachBridge(m_bridgeId);
     }
+    m_bridgeId = 0;
 }
 
 void WebGeolocationServiceBridgeImpl::suspend()
 {
-    if (isAttached())
-        m_webGeolocationService->suspend(m_bridgeId);
+    getWebViewClient()->geolocationService()->suspend(m_bridgeId);
 }
 
 void WebGeolocationServiceBridgeImpl::resume()
 {
-    if (isAttached())
-        m_webGeolocationService->resume(m_bridgeId);
+    getWebViewClient()->geolocationService()->resume(m_bridgeId);
 }
 
 int WebGeolocationServiceBridgeImpl::getBridgeId() const
@@ -147,54 +147,38 @@ int WebGeolocationServiceBridgeImpl::getBridgeId() const
 
 void WebGeolocationServiceBridgeImpl::attachBridgeIfNeeded()
 {
-    if (isAttached())
-        return;
-    // Lazy attach to the geolocation service of the associated page if there is one.
-    Frame* frame = m_geolocationServiceChromium->frame();
-    if (!frame || !frame->page())
-        return;
-    WebKit::ChromeClientImpl* chromeClientImpl = static_cast<WebKit::ChromeClientImpl*>(frame->page()->chrome()->client());
-    WebKit::WebViewClient* webViewClient = chromeClientImpl->webView()->client();
-    m_webGeolocationService = webViewClient->geolocationService();
-    ASSERT(m_webGeolocationService);
-    m_bridgeId = m_webGeolocationService->attachBridge(this);
-    if (!m_bridgeId) {
-        // Attach failed. Release association with this service.
-        m_webGeolocationService = 0;
-    }
+    if (!m_bridgeId)
+        m_bridgeId = getWebViewClient()->geolocationService()->attachBridge(this);
 }
 
 void WebGeolocationServiceBridgeImpl::setIsAllowed(bool allowed)
 {
-    m_geolocationServiceChromium->setIsAllowed(allowed);
+    m_GeolocationServiceChromium->setIsAllowed(allowed);
 }
 
 void WebGeolocationServiceBridgeImpl::setLastPosition(double latitude, double longitude, bool providesAltitude, double altitude, double accuracy, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed, long long timestamp)
 {
     RefPtr<Geoposition> geoposition = Geoposition::create(Coordinates::create(latitude, longitude, providesAltitude, altitude, accuracy, providesAltitudeAccuracy, altitudeAccuracy, providesHeading, heading, providesSpeed, speed), timestamp);
-    m_geolocationServiceChromium->setLastPosition(geoposition);
+    m_GeolocationServiceChromium->setLastPosition(geoposition);
 }
 
 void WebGeolocationServiceBridgeImpl::setLastError(int errorCode, const WebString& message)
 {
-    m_geolocationServiceChromium->setLastError(errorCode, message);
+    m_GeolocationServiceChromium->setLastError(errorCode, message);
+}
+
+WebViewClient* WebGeolocationServiceBridgeImpl::getWebViewClient()
+{
+    Frame* frame = m_GeolocationServiceChromium->frame();
+    if (!frame || !frame->page())
+        return 0;
+    WebKit::ChromeClientImpl* chromeClientImpl = static_cast<WebKit::ChromeClientImpl*>(frame->page()->chrome()->client());
+    WebKit::WebViewClient* webViewClient = chromeClientImpl->webView()->client();
+    return webViewClient;
 }
 
 void WebGeolocationServiceBridgeImpl::onWebGeolocationServiceDestroyed()
 {
-    m_bridgeId = 0;
-    m_webGeolocationService = 0;
-}
-
-bool WebGeolocationServiceBridgeImpl::isAttached() const
-{
-    // Test the class invariant.
-    if (m_webGeolocationService)
-        ASSERT(m_bridgeId);
-    else     
-        ASSERT(!m_bridgeId);
-
-    return m_webGeolocationService;
 }
 
 } // namespace WebKit

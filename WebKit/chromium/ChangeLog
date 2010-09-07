@@ -1,3 +1,27 @@
+2010-09-07  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, rolling out r66886.
+        http://trac.webkit.org/changeset/66886
+        https://bugs.webkit.org/show_bug.cgi?id=45112
+
+        Made
+
+        * public/WebGeolocationService.h:
+        * src/WebGeolocationServiceBridgeImpl.cpp:
+        (WebKit::WebGeolocationServiceBridgeImpl::WebGeolocationServiceBridgeImpl):
+        (WebKit::WebGeolocationServiceBridgeImpl::~WebGeolocationServiceBridgeImpl):
+        (WebKit::WebGeolocationServiceBridgeImpl::startUpdating):
+        (WebKit::WebGeolocationServiceBridgeImpl::stopUpdating):
+        (WebKit::WebGeolocationServiceBridgeImpl::suspend):
+        (WebKit::WebGeolocationServiceBridgeImpl::resume):
+        (WebKit::WebGeolocationServiceBridgeImpl::attachBridgeIfNeeded):
+        (WebKit::WebGeolocationServiceBridgeImpl::setIsAllowed):
+        (WebKit::WebGeolocationServiceBridgeImpl::setLastPosition):
+        (WebKit::WebGeolocationServiceBridgeImpl::setLastError):
+        (WebKit::WebGeolocationServiceBridgeImpl::getWebViewClient):
+        (WebKit::WebGeolocationServiceBridgeImpl::onWebGeolocationServiceDestroyed):
+        * src/WebGeolocationServiceMock.cpp:
+
 2010-09-07  Jonathan Dixon  <joth@chromium.org>
         
         Reviewed by Jeremy Orlow.
