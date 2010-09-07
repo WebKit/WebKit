@@ -1,0 +1,10 @@
+Tests that the speech button ignores programmatic click events.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.getElementById("speechInput").value is "Pictures of the moon"
+PASS speech button ignored the programmatic click event.
+PASS successfullyParsed is true
+
+TEST COMPLETE

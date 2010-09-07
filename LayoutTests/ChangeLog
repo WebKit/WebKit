@@ -1,3 +1,13 @@
+2010-09-07  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Ignore programmatic clicks on speech input button for security reasons.
+        https://bugs.webkit.org/show_bug.cgi?id=45181
+
+        * fast/speech/speech-button-ignore-generated-events-expected.txt: Added.
+        * fast/speech/speech-button-ignore-generated-events.html: Added.
+
 2010-09-07  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

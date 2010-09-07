@@ -1,3 +1,15 @@
+2010-09-07  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Ignore programmatic clicks on speech input button for security reasons.
+        https://bugs.webkit.org/show_bug.cgi?id=45181
+
+        Test: fast/speech/speech-button-ignore-generated-events.html
+
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::InputFieldSpeechButtonElement::defaultEventHandler):
+
 2010-09-07  Kent Hansen  <kent.hansen@nokia.com>
 
         Reviewed by Andreas Kling.

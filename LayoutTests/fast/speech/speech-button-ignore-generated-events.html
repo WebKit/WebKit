@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script type="text/javascript">
+description('Tests that the speech button ignores programmatic click events.');
+
+function sendClick(useEventSender) {
+    var input = document.getElementById('speechInput');
+    var clientX = input.offsetWidth - 4;
+    var clientY = input.offsetHeight / 2;
+    var pageX = input.offsetLeft + clientX;
+    var pageY = input.offsetTop + clientY;
+    if (useEventSender) {
+        eventSender.mouseMoveTo(pageX, pageY);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    } else {
+        var event = document.createEvent("MouseEvents");
+        event.initMouseEvent('click', true, true, window, 1, pageX, pageY, clientX, clientY,
+                             false, false, false, false, 0, document);
+        input.dispatchEvent(event);
+    }
+}
+
+function setupDispatchEventTest() {
+    document.getElementById('speechInput').onchange = function() {
+        testFailed('speech button accepted a programmatic click and fired onChange event.');
+        finishJSTest();
+    };
+    setTimeout(function() {
+        testPassed('speech button ignored the programmatic click event.');
+        finishJSTest();
+    }, 1000);
+    sendClick(false);
+}
+
+// In this test, we first send a click via the eventSender interface which is available only
+// within our test environment. This mimics a real user input event and hence the speech button
+// should treat it normally. We'll be receiving the mock recognition result and verify that.
+// Next we send a generated click event via the dispatchEvent interface which is available
+// for any web page to use. The speech button should identify that this is not a real user
+// input event and not process it.
+function run() {
+    if (window.layoutTestController && window.eventSender) {
+        // Running in DRT, test the eventSender case.
+        layoutTestController.setMockSpeechInputResult('Pictures of the moon');
+        document.getElementById('speechInput').onchange = function() {
+            shouldBeEqualToString('document.getElementById("speechInput").value', 'Pictures of the moon');
+
+            // The speech button is still in the processing state and does not accept clicks. So ask for
+            // a callback once it has processed pending events before sending a programmatic click.
+            setTimeout(setupDispatchEventTest, 0);
+        };
+        sendClick(true);
+    } else {
+        setupDispatchEventTest();
+    }
+}
+
+window.onload = run;
+window.jsTestIsAsync = true;
+window.successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+<input id='speechInput' speech>
+</body>
+</html>
