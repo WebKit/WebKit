@@ -1,3 +1,9 @@
+2010-09-07  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
+        * platform/chromium/drt_expectations.txt: Remove a duplicated entry.
+
 2010-09-07  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed. Build fix.

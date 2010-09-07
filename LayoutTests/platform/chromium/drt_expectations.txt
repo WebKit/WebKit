@@ -203,7 +203,6 @@ BUG_DRT WIN : fast/js/date-preserve-milliseconds.html = CRASH PASS
 BUG_DRT WIN MAC LINUX : storage/indexeddb/objectstore-basics.html = TEXT
 BUG_DRT WIN : fast/forms/search-styled.html = TEXT
 BUG_DRT WIN : fast/notifications/notifications-replace.html = TEXT
-BUG_DRT WIN : http/tests/security/xssAuditor/link-opens-new-window.html = TEXT
 BUG_DRT WIN : userscripts/user-script-audio-document.html = TEXT
 BUG_DRT WIN : userscripts/user-script-video-document.html = TEXT
 BUG_DRT WIN : fast/multicol/client-rects.html = IMAGE
