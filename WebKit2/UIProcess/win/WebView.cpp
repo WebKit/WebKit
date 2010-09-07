@@ -27,6 +27,7 @@
 
 #include "ChunkedUpdateDrawingAreaProxy.h"
 #include "RunLoop.h"
+#include "WebEditCommandProxy.h"
 #include "WebEventFactory.h"
 #include "WebPageNamespace.h"
 #include "WebPageProxy.h"

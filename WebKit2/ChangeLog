@@ -1,5 +1,11 @@
 2010-09-07  Sam Weinig  <sam@webkit.org>
 
+        Another windows fix.
+
+        * UIProcess/win/WebView.cpp:
+
+2010-09-07  Sam Weinig  <sam@webkit.org>
+
         Try and fix windows.
 
         * UIProcess/WebEditCommandProxy.h:
