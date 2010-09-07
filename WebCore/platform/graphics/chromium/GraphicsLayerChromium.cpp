@@ -106,6 +106,12 @@ GraphicsLayerChromium::GraphicsLayerChromium(GraphicsLayerClient* client)
 
 GraphicsLayerChromium::~GraphicsLayerChromium()
 {
+    if (m_layer)
+        m_layer->setOwner(0);
+    if (m_contentsLayer)
+        m_contentsLayer->setOwner(0);
+    if (m_transformLayer)
+        m_transformLayer->setOwner(0);
 }
 
 void GraphicsLayerChromium::setName(const String& inName)
