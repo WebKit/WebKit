@@ -2,6 +2,14 @@
 
         Unreviewed.
 
+        Add fast/text/atsui-spacing-features.html to test_expectations (failing on LINUX).
+
+        * platform/chromium/test_expectations.txt:
+
+2010-09-07  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed.
+
         Rebaseline WIN LINUX for a few svg/dynamic-updates tests.
 
         * platform/chromium-linux/svg/dynamic-updates/SVGFEPointLightElement-dom-x-attr-expected.checksum: Added.
