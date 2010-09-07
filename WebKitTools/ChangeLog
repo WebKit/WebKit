@@ -1,3 +1,12 @@
+2010-09-07  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
+
+        Reviewed by Eric Seidel.
+
+        [NRWT] Add temp directory to all running drivers.
+        https://bugs.webkit.org/show_bug.cgi?id=45261
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
 2010-09-06  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Kent Tamura.

@@ -43,6 +43,8 @@ import sys
 import time
 import webbrowser
 import operator
+import tempfile
+import shutil
 
 from webkitpy.common.system.executive import Executive
 
@@ -404,6 +406,10 @@ class WebKitDriver(base.Driver):
         self._port = port
         # FIXME: driver_options is never used.
         self._image_path = image_path
+        self._driver_tempdir = tempfile.mkdtemp(prefix='DumpRenderTree-')
+
+    def __del__(self):
+        shutil.rmtree(self._driver_tempdir)
 
     def start(self):
         command = []
@@ -414,6 +420,7 @@ class WebKitDriver(base.Driver):
             command.append('--pixel-tests')
         environment = self._port.setup_environ_for_server()
         environment['DYLD_FRAMEWORK_PATH'] = self._port._build_path()
+        environment['DUMPRENDERTREE_TEMP'] = self._driver_tempdir
         self._server_process = server_process.ServerProcess(self._port,
             "DumpRenderTree", command, environment)
 
