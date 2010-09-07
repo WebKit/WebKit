@@ -433,12 +433,15 @@ inline void InspectorController::didModifyDOMAttr(Element* element)
 
 inline InspectorController* InspectorController::inspectorControllerForNode(Node* node)
 {
+#if ENABLE(INSPECTOR)
     if (Page* page = node->document()->page()) {
         if (InspectorController* inspectorController = page->inspectorController()) {
             if (inspectorController->hasFrontend())
                 return inspectorController;
         }
     }
+#endif
+
     return 0;
 }
 

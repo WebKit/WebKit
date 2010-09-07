@@ -1,3 +1,15 @@
+2010-09-07  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Kent Tamura.
+
+        Add ENABLE(INSPECTOR) guard in InspectorController::inspectorControllerForNode
+        https://bugs.webkit.org/show_bug.cgi?id=45272
+
+        Build fix.
+
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::inspectorControllerForNode):
+
 2010-09-07  Joerg Bornemann  <joerg.bornemann@nokia.com>
 
         Reviewed by Ariya Hidayat.
