@@ -675,8 +675,7 @@ class TestRunner:
                         # clear that testing was aborted. Otherwise,
                         # the tests that did not run would be assumed
                         # to have passed.
-                        raise (exception_info[0], exception_info[1],
-                               exception_info[2])
+                        raise exception_info[0], exception_info[1], exception_info[2]
 
                     if thread.isAlive():
                         some_thread_is_alive = True
