@@ -1,5 +1,12 @@
 2010-09-07  Jessie Berlin  <jberlin@apple.com>
 
+        Unreviewed. Mac build fix.
+
+        * MiniBrowser/mac/WebBundle/WebBundleMain.m:
+        (didClearWindowObjectForFrame):
+
+2010-09-07  Jessie Berlin  <jberlin@apple.com>
+
         Reviewed by Darin Adler.
 
         Indicate which one of the ScriptWorlds for a Frame the Window Object has been cleared for

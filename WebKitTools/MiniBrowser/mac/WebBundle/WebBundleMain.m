@@ -37,7 +37,7 @@ static WKBundleRef globalBundle;
 
 // WKBundlePageClient functions
 
-void didClearWindowObjectForFrame(WKBundlePageRef page, WKBundleFrameRef frame, JSGlobalContextRef context, JSObjectRef window, const void *clientInfo)
+void didClearWindowObjectForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKBundleScriptWorldRef world, const void *clientInfo)
 {
     WKURLRef wkURL = WKBundleFrameCopyURL(WKBundlePageGetMainFrame(page));
     CFURLRef cfURL = WKURLCopyCFURL(0, wkURL);
