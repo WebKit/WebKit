@@ -1,3 +1,15 @@
+2010-09-07  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, trivial test move.
+
+        [Chromium/DRT] Correct a mistake made eons ago (probably by me)
+        and make the test expectations agnostic to the flavor of Windows.
+
+        * platform/chromium-win-xp/fast/multicol/client-rects-expected.checksum: Removed.
+        * platform/chromium-win-xp/fast/multicol/client-rects-expected.png: Removed.
+        * platform/chromium-win/fast/multicol/client-rects-expected.checksum: Updated.
+        * platform/chromium-win/fast/multicol/client-rects-expected.png: Updated.
+
 2010-09-07  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed.
