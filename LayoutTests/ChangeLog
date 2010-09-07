@@ -1,3 +1,12 @@
+2010-09-07  James Kozianski  <koz@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Adds tests for percent-based attributes on the <meter> element.
+
+        * fast/dom/HTMLMeterElement/meter-percent-size-expected.txt: Added.
+        * fast/dom/HTMLMeterElement/meter-percent-size.html: Added.
+
 2010-09-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.

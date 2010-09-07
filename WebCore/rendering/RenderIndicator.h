@@ -34,15 +34,10 @@ public:
 protected:
     virtual void layout();
     virtual void updateFromElement();
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
     virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
 
     virtual void layoutParts() = 0;
     virtual bool shouldHaveParts() const = 0;
-
-private:
-    void requestLayoutForParts();
-    bool hasParts() const;
 };
 
 } // namespace WebCore

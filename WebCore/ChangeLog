@@ -1,3 +1,20 @@
+2010-09-07  James Kozianski  <koz@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Crash rendering <meter/> with percent padding
+        https://bugs.webkit.org/show_bug.cgi?id=45081
+
+        Avoids a crash caused by RenderMeter checking its own dimensions to
+        determine whether it needs layout. The crash is avoided by removing
+        the check and always calling setNeedsLayout(true).
+
+        Test: fast/dom/HTMLMeterElement/meter-percent-size.html
+
+        * rendering/RenderIndicator.cpp:
+        (WebCore::RenderIndicator::updateFromElement):
+        * rendering/RenderIndicator.h:
+
 2010-09-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.

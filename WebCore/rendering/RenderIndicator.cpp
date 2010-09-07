@@ -51,29 +51,10 @@ void RenderIndicator::layout()
     setNeedsLayout(false);
 }
 
-void RenderIndicator::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
-{
-    RenderBlock::styleDidChange(diff, oldStyle);
-    requestLayoutForParts();
-}
-
 void RenderIndicator::updateFromElement()
 {
-    requestLayoutForParts();
+    setNeedsLayout(true);
     repaint();
-}
-
-bool RenderIndicator::hasParts() const
-{
-    if (RenderObject* last = lastChild())
-        return last->isRenderBlock();
-    return false;
-}
-
-void RenderIndicator::requestLayoutForParts()
-{
-    if (shouldHaveParts() || hasParts())
-        setNeedsLayout(true);
 }
 
 } // namespace WebCore
