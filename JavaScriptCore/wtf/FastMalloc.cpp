@@ -1493,7 +1493,7 @@ void TCMalloc_PageHeap::init()
 void TCMalloc_PageHeap::initializeScavenger()
 {
     // Create a non-recursive mutex.
-#if PTHREAD_MUTEX_NORMAL == PTHREAD_MUTEX_DEFAULT
+#if !defined(PTHREAD_MUTEX_NORMAL) || PTHREAD_MUTEX_NORMAL == PTHREAD_MUTEX_DEFAULT
     pthread_mutex_init(&m_scavengeMutex, 0);
 #else
     pthread_mutexattr_t attr;

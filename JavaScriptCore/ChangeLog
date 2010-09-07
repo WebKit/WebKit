@@ -1,3 +1,16 @@
+2010-09-07  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(66741): Undefined pthread macros
+        https://bugs.webkit.org/show_bug.cgi?id=45246
+
+        PTHREAD_MUTEX_NORMAL and PTHREAD_MUTEX_DEFAULT (introduced in r60487) are not defined on Linux, 
+        but used in a statement. Add an additional check to test this.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::initializeScavenger):
+
 2010-09-06  Oliver Hunt  <oliver@apple.com>
 
         Windows build fix
