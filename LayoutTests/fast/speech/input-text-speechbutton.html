@@ -7,7 +7,52 @@
 <body>
 <p id="description"></p>
 <div id="console"></div>
-<script src="script-tests/input-text-speechbutton.js"></script>
+<script type="text/javascript">
+description('Tests for speech button click with &lt;input type="text" speech>.');
+
+function onChange() {
+    shouldBeEqualToString('document.getElementById("speechInput").value', 'Pictures of the moon');
+    setTimeout(function() {
+        var input = document.getElementById('speechInput');
+        input.dir = 'rtl';
+        input.value = '';
+        input.onchange = function() {
+            shouldBeEqualToString('document.getElementById("speechInput").value',
+                                  'Pictures of the moon');
+            finishJSTest();
+        };
+
+        var x = input.offsetLeft + 4;
+        var y = input.offsetTop + input.offsetHeight / 2;
+        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }, 50);
+}
+
+function run() {
+    var input = document.createElement('input');
+    input.id = 'speechInput';
+    input.speech = 'speech';
+    input.onchange = onChange;
+    document.body.appendChild(input);
+
+    if (window.layoutTestController && window.eventSender) {
+        layoutTestController.setMockSpeechInputResult('Pictures of the moon');
+
+        // Clicking the speech button should fill in mock speech-recognized text.
+        var x = input.offsetLeft + input.offsetWidth - 4;
+        var y = input.offsetTop + input.offsetHeight / 2;
+        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+}
+
+window.onload = run;
+window.jsTestIsAsync = true;
+window.successfullyParsed = true;
+</script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>
 </html>

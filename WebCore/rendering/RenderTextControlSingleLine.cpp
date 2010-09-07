@@ -374,17 +374,18 @@ void RenderTextControlSingleLine::forwardEvent(Event* event)
         return;
     }
 
-    FloatPoint localPoint = innerTextRenderer->absoluteToLocal(static_cast<MouseEvent*>(event)->absoluteLocation(), false, true);
-    int textRight = innerTextRenderer->borderBoxRect().right();
-
 #if ENABLE(INPUT_SPEECH)
     if (RenderBox* speechBox = m_speechButton ? m_speechButton->renderBox() : 0) {
-        if (localPoint.x() >= speechBox->x() && localPoint.x() < speechBox->x() + speechBox->width()) {
+        FloatPoint pointInTextControlCoords = absoluteToLocal(static_cast<MouseEvent*>(event)->absoluteLocation(), false, true);
+        if (speechBox->frameRect().contains(roundedIntPoint(pointInTextControlCoords))) {
             m_speechButton->defaultEventHandler(event);
             return;
         }
     }
 #endif
+
+    FloatPoint localPoint = innerTextRenderer->absoluteToLocal(static_cast<MouseEvent*>(event)->absoluteLocation(), false, true);
+    int textRight = innerTextRenderer->borderBoxRect().right();
 
     if (m_resultsButton && localPoint.x() < innerTextRenderer->borderBoxRect().x())
         m_resultsButton->defaultEventHandler(event);
