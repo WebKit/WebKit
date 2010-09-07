@@ -1,3 +1,22 @@
+2010-09-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        OOB read with svg polyline
+        https://bugs.webkit.org/show_bug.cgi?id=45279
+
+        In principle, attributeChanged can do anything.  If we supported more
+        DOM mutation events, it could even run JavaScript.  That means we need
+        to be prepared for the attribute map to change when running
+        attributeChanged.  This patch makes this loop resilient to the
+        attribute map changing by storing the list of changed attributes on the
+        stack.
+
+        Test: fast/parser/changing-attrbutes-crash.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::setAttributeMap):
+
 2010-09-06  Oliver Hunt  <oliver@apple.com>
 
         Windows build fix

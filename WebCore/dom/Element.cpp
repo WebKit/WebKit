@@ -695,9 +695,12 @@ void Element::setAttributeMap(PassRefPtr<NamedNodeMap> list, FragmentScriptingPe
                 i++;
             }
         }
-        unsigned len = m_attributeMap->length();
-        for (unsigned i = 0; i < len; i++)
-            attributeChanged(m_attributeMap->m_attributes[i].get());
+        // Store the set of attributes that changed on the stack in case
+        // attributeChanged mutates m_attributeMap.
+        Vector<RefPtr<Attribute> > attributes;
+        m_attributeMap->copyAttributesToVector(attributes);
+        for (Vector<RefPtr<Attribute> >::iterator iter = attributes.begin(); iter != attributes.end(); ++iter)
+            attributeChanged(iter->get());
         // FIXME: What about attributes that were in the old map that are not in the new map?
     }
 }

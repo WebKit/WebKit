@@ -1,3 +1,15 @@
+2010-09-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        OOB read with svg polyline
+        https://bugs.webkit.org/show_bug.cgi?id=45279
+
+        Test what happens when SVG changes the attribute map out from under us.
+
+        * fast/parser/changing-attrbutes-crash-expected.txt: Added.
+        * fast/parser/changing-attrbutes-crash.html: Added.
+
 2010-09-06  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
