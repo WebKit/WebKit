@@ -1,3 +1,16 @@
+2010-09-07  Jonathan Dixon  <joth@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Access to out-of-scope WebGeolocationServiceBridgeImpl
+        https://bugs.webkit.org/show_bug.cgi?id=45112
+
+        Add missing virtual destructor to the abstract base class.
+
+        * platform/chromium/GeolocationServiceChromium.cpp:
+        (WebCore::GeolocationServiceBridge::~GeolocationServiceBridge):
+        * platform/chromium/GeolocationServiceChromium.h:
+
 2010-09-07  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
