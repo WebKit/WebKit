@@ -1,4 +1,4 @@
-description("Tests the basic operation of DeviceOrientation using the mock.");
+description('Tests the basic operation of DeviceOrientation using the mock.');
 
 var mockAlpha = 1.1;
 var mockBeta = 2.2;
@@ -10,7 +10,7 @@ else
     debug('This test can not be run without the LayoutTestController');
 
 var deviceOrientationEvent;
-window.addEventListener("deviceorientation", function(e) {
+window.addEventListener('deviceorientation', function(e) {
     deviceOrientationEvent = e;
     shouldBe('deviceOrientationEvent.alpha', 'mockAlpha');
     shouldBe('deviceOrientationEvent.beta', 'mockBeta');

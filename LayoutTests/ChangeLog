@@ -1,3 +1,32 @@
+2010-09-07  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Provide DeviceOrientation LayoutTests
+        https://bugs.webkit.org/show_bug.cgi?id=39590
+
+        Adds several new DeviceOrientation tests. Also fixes some style in existing tests.
+
+        * fast/dom/DeviceOrientation/add-listener-from-callback.html: Added.
+        * fast/dom/DeviceOrientation/script-tests/add-listener-from-callback.js: Added.
+        * fast/dom/DeviceOrientation/add-listener-from-callback-expected.txt: Added.
+        * fast/dom/DeviceOrientation/multiple-frames.html: Added.
+        * fast/dom/DeviceOrientation/script-tests/multiple-frames.js: Added.
+        * fast/dom/DeviceOrientation/multiple-frames-expected.txt: Added.
+        * fast/dom/DeviceOrientation/no-synchronous-events.html: Added.
+        * fast/dom/DeviceOrientation/script-tests/no-synchronous-events.js: Added.
+        * fast/dom/DeviceOrientation/no-synchronous-events-expected.txt: Added.
+        * fast/dom/DeviceOrientation/null-values.html: Added.
+        * fast/dom/DeviceOrientation/script-tests/null-values.js: Added.
+        * fast/dom/DeviceOrientation/null-values-expected.txt: Added.
+        * fast/dom/DeviceOrientation/updates.html: Added.
+        * fast/dom/DeviceOrientation/script-tests/updates.js: Added.
+        * fast/dom/DeviceOrientation/updates-expected.txt: Added.
+        * fast/dom/DeviceOrientation/script-tests/basic-operation.js:
+        * fast/dom/DeviceOrientation/script-tests/create-event.js:
+        * fast/dom/DeviceOrientation/script-tests/optional-event-properties.js:
+        * fast/dom/DeviceOrientation/script-tests/window-property.js:
+
 2010-09-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Add platform specific expected results for new passing tests.

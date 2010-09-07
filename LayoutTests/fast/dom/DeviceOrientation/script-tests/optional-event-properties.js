@@ -1,4 +1,4 @@
-description("Tests the optional properties of DeviceOrientationEvent. Each property should be null if not set, or set to null or undefined.");
+description('Tests the optional properties of DeviceOrientationEvent. Each property should be null if not set, or set to null or undefined.');
 
 var event;
 

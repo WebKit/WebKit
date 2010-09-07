@@ -1,4 +1,4 @@
-description("Tests that document.createEvent() works with DeviceOrientationEvent.");
+description('Tests that document.createEvent() works with DeviceOrientationEvent.');
 
 var event = document.createEvent('DeviceOrientationEvent');
 
