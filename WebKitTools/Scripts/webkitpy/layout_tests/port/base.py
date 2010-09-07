@@ -305,6 +305,18 @@ class Port(object):
         """Return the absolute path to the top of the LayoutTests directory."""
         return self.path_from_webkit_base('LayoutTests')
 
+    def skips_layout_test(self, test_name):
+        """Figures out if the givent test is being skipped or not.
+
+        Test categories are handled as well."""
+        for test_or_category in self.skipped_layout_tests():
+            if test_or_category == test_name:
+                return True
+            category = os.path.join(self.layout_tests_dir(), test_or_category)
+            if os.path.isdir(category) and test_name.startswith(test_or_category):
+                return True
+        return False
+
     def maybe_make_directory(self, *path):
         """Creates the specified directory if it doesn't already exist."""
         try:

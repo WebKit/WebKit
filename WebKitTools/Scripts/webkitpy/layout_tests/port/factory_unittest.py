@@ -69,16 +69,16 @@ class FactoryTest(unittest.TestCase):
     def tearDown(self):
         sys.platform = self.real_sys_platform
 
-    def assert_port(self, port_name, expected_port):
+    def assert_port(self, port_name, expected_port, port_obj=None):
         """Helper assert for port_name.
 
         Args:
           port_name: port name to get port object.
           expected_port: class of expected port object.
-
+          port_obj: optional port object
         """
-        self.assertTrue(isinstance(factory.get(port_name=port_name),
-                                   expected_port))
+        port_obj = port_obj or factory.get(port_name=port_name)
+        self.assertTrue(isinstance(port_obj, expected_port))
 
     def assert_platform_port(self, platform, options, expected_port):
         """Helper assert for platform and options.
@@ -136,3 +136,21 @@ class FactoryTest(unittest.TestCase):
                                   chromium_win.ChromiumWinPort)
         self.assert_platform_port("cygwin", self.chromium_options,
                                   chromium_win.ChromiumWinPort)
+
+    def test_get_all_ports(self):
+        ports = factory.get_all()
+        for name in factory.ALL_PORT_NAMES:
+            self.assertTrue(name in ports.keys())
+        self.assert_port("test", test.TestPort, ports["test"])
+        self.assert_port("dryrun-test", dryrun.DryRunPort, ports["dryrun"])
+        self.assert_port("dryrun-mac", dryrun.DryRunPort, ports["dryrun"])
+        self.assert_port("mac", mac.MacPort, ports["mac"])
+        self.assert_port("win", win.WinPort, ports["win"])
+        self.assert_port("gtk", gtk.GtkPort, ports["gtk"])
+        self.assert_port("qt", qt.QtPort, ports["qt"])
+        self.assert_port("chromium-mac", chromium_mac.ChromiumMacPort,
+                         ports["chromium-mac"])
+        self.assert_port("chromium-linux", chromium_linux.ChromiumLinuxPort,
+                         ports["chromium-linux"])
+        self.assert_port("chromium-win", chromium_win.ChromiumWinPort,
+                         ports["chromium-win"])

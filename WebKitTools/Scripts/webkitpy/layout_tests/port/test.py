@@ -76,6 +76,9 @@ class TestPort(base.Port):
     def options(self):
         return self._options
 
+    def skipped_layout_tests(self):
+        return []
+
     def path_to_test_expectations_file(self):
         return self.path_from_webkit_base('WebKitTools', 'Scripts',
             'webkitpy', 'layout_tests', 'data', 'platform', 'test',

@@ -40,6 +40,7 @@ from webkitpy.common.net.rietveld import Rietveld
 from webkitpy.common.net.irc.ircproxy import IRCProxy
 from webkitpy.common.system.executive import Executive
 from webkitpy.common.system.user import User
+from webkitpy.layout_tests import port
 import webkitpy.tool.commands as commands
 # FIXME: Remove these imports once all the commands are in the root of the
 # command package.
@@ -76,6 +77,7 @@ class WebKitPatch(MultiCommandTool):
         self._checkout = None
         self.status_server = StatusServer()
         self.codereview = Rietveld(self.executive)
+        self.port_factory = port.factory
 
     def scm(self):
         # Lazily initialize SCM to not error-out before command line parsing (or when running non-scm commands).

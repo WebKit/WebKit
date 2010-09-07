@@ -61,3 +61,13 @@ class QueryCommandsTest(CommandsTest):
     def test_tree_status(self):
         expected_stdout = "ok   : Builder1\nok   : Builder2\n"
         self.assert_execute_outputs(TreeStatus(), None, expected_stdout)
+
+    def test_skipped_ports(self):
+        expected_stdout = "Ports skipping test 'media/foo/bar.html': test_port1, test_port2\n"
+        self.assert_execute_outputs(SkippedPorts(), ("media/foo/bar.html",), expected_stdout)
+
+        expected_stdout = "Ports skipping test 'foo': test_port1\n"
+        self.assert_execute_outputs(SkippedPorts(), ("foo",), expected_stdout)
+
+        expected_stdout = "Test 'media' is not skipped by any port.\n"
+        self.assert_execute_outputs(SkippedPorts(), ("media",), expected_stdout)

@@ -556,6 +556,24 @@ class MockRietveld():
         log("MOCK: Uploading patch to rietveld")
 
 
+class MockTestPort1():
+
+    def skips_layout_test(self, test_name):
+        return test_name in ["media/foo/bar.html", "foo"]
+
+
+class MockTestPort2():
+
+    def skips_layout_test(self, test_name):
+        return test_name == "media/foo/bar.html"
+
+
+class MockPortFactory():
+
+    def get_all(self, options=None):
+        return {"test_port1": MockTestPort1(), "test_port2": MockTestPort2()}
+
+
 class MockTool():
 
     def __init__(self, log_executive=False):
@@ -570,6 +588,7 @@ class MockTool():
         self.status_server = MockStatusServer()
         self.irc_password = "MOCK irc password"
         self.codereview = MockRietveld(self.executive)
+        self.port_factory = MockPortFactory()
 
     def scm(self):
         return self._scm

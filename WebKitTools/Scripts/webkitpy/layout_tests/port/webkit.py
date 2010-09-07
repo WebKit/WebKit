@@ -344,14 +344,17 @@ class WebKitPort(base.Port):
         # This routine reads those files and turns contents into the
         # format expected by test_expectations.
 
-        # Use a set to allow duplicates
-        tests_to_skip = set(self._expectations_from_skipped_files())
-
-        tests_to_skip.update(self._tests_for_other_platforms())
-        tests_to_skip.update(self._tests_for_disabled_features())
+        tests_to_skip = self.skipped_layout_tests()
         skip_lines = map(lambda test_path: "BUG_SKIPPED SKIP : %s = FAIL" %
                                 test_path, tests_to_skip)
         return "\n".join(skip_lines)
+
+    def skipped_layout_tests(self):
+        # Use a set to allow duplicates
+        tests_to_skip = set(self._expectations_from_skipped_files())
+        tests_to_skip.update(self._tests_for_other_platforms())
+        tests_to_skip.update(self._tests_for_disabled_features())
+        return tests_to_skip
 
     def test_platform_name(self):
         return self._name + self.version()

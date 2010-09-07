@@ -32,6 +32,7 @@ import chromium_mac
 import chromium_win
 import unittest
 import StringIO
+import os
 
 from webkitpy.thirdparty.mock import Mock
 
@@ -95,3 +96,17 @@ class ChromiumDriverTest(unittest.TestCase):
             '/xcodebuild/Release/ImageDiff'))
         # FIXME: Figure out how this is going to work on Windows.
         #port = chromium_win.ChromiumWinPort('test-port', options=MockOptions())
+
+    def test_skipped_layout_tests(self):
+        class MockOptions:
+            def __init__(self):
+                self.use_drt = True
+
+        port = chromium_linux.ChromiumLinuxPort('test-port', options=MockOptions())
+
+        fake_test = os.path.join(port.layout_tests_dir(), "fast/js/not-good.js")
+
+        port.test_expectations = lambda: """BUG_TEST SKIP : fast/js/not-good.js = TEXT
+DEFER LINUX WIN : fast/js/very-good.js = TIMEOUT PASS"""
+        skipped_tests = port.skipped_layout_tests(extra_test_files=[fake_test, ])
+        self.assertTrue("fast/js/not-good.js" in skipped_tests)

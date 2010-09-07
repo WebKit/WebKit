@@ -40,6 +40,14 @@ class TestWebKitPort(WebKitPort):
     def _supported_symbol_list(self):
         return self.symbol_list
 
+    def _tests_for_other_platforms(self):
+        return ["media", ]
+
+    def _tests_for_disabled_features(self):
+        return ["accessibility", ]
+
+    def _skipped_file_paths(self):
+        return []
 
 class WebKitPortTest(unittest.TestCase):
 
@@ -54,3 +62,7 @@ class WebKitPortTest(unittest.TestCase):
         expected_directories = set(["animations/3d", "transforms/3d"])
         result_directories = set(TestWebKitPort(None, supported_features)._skipped_tests_for_unsupported_features())
         self.assertEqual(result_directories, expected_directories)
+
+    def test_skipped_layout_tests(self):
+        self.assertEqual(TestWebKitPort(None, None).skipped_layout_tests(),
+                         set(["media", "accessibility"]))

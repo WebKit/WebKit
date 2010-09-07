@@ -37,6 +37,7 @@ from webkitpy.common.system.user import User
 from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 from webkitpy.common.system.deprecated_logging import log
+from webkitpy.layout_tests import port
 
 
 class BugsToCommit(AbstractDeclarativeCommand):
@@ -284,3 +285,28 @@ and displayes the status of each builder."""
         for builder in tool.buildbot.builder_statuses():
             status_string = "ok" if builder["is_green"] else "FAIL"
             print "%s : %s" % (status_string.ljust(4), builder["name"])
+
+
+class SkippedPorts(AbstractDeclarativeCommand):
+    name = "skipped-ports"
+    help_text = "Print the list of ports skipping the given layout test(s)"
+    long_help = """Scans the the Skipped file of each port and figure
+out what ports are skipping the test(s). Categories are taken in account too."""
+    argument_names = "TEST_NAME"
+
+    def execute(self, options, args, tool):
+        class Options:
+            # Required for chromium port.
+            use_drt = True
+
+        results = dict([(test_name, []) for test_name in args])
+        for port_name, port_object in tool.port_factory.get_all(options=Options).iteritems():
+            for test_name in args:
+                if port_object.skips_layout_test(test_name):
+                    results[test_name].append(port_name)
+
+        for test_name, ports in results.iteritems():
+            if ports:
+                print "Ports skipping test %r: %s" % (test_name, ', '.join(ports))
+            else:
+                print "Test %r is not skipped by any port." % test_name

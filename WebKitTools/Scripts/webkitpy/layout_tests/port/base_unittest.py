@@ -109,6 +109,13 @@ class PortTest(unittest.TestCase):
         self.assertFalse(base._wdiff_available)
         base._wdiff_available = True
 
+    def test_layout_tests_skipping(self):
+        port = base.Port()
+        port.skipped_layout_tests = lambda: ['foo/bar.html', 'media']
+        self.assertTrue(port.skips_layout_test('foo/bar.html'))
+        self.assertTrue(port.skips_layout_test('media/video-zoom.html'))
+        self.assertFalse(port.skips_layout_test('foo/foo.html'))
+
 
 class DriverTest(unittest.TestCase):
 

@@ -46,6 +46,8 @@ import base
 import http_server
 
 from webkitpy.common.system.executive import Executive
+from webkitpy.layout_tests.layout_package import test_files
+from webkitpy.layout_tests.layout_package import test_expectations
 
 # Chromium DRT on OSX uses WebKitDriver.
 if sys.platform == 'darwin':
@@ -232,6 +234,24 @@ class ChromiumPort(base.Port):
             return None
         with codecs.open(overrides_path, "r", "utf-8") as file:
             return file.read() + drt_overrides
+
+    def skipped_layout_tests(self, extra_test_files=None):
+        expectations_str = self.test_expectations()
+        overrides_str = self.test_expectations_overrides()
+        test_platform_name = self.test_platform_name()
+        is_debug_mode = False
+
+        all_test_files = test_files.gather_test_files(self, '*')
+        if extra_test_files:
+            all_test_files.update(extra_test_files)
+
+        expectations = test_expectations.TestExpectations(
+            self, all_test_files, expectations_str, test_platform_name,
+            is_debug_mode, is_lint_mode=True,
+            tests_are_present=True, overrides=overrides_str)
+        tests_dir = self.layout_tests_dir()
+        return [self.relative_test_filename(test)
+                for test in expectations.get_tests_with_result_type(test_expectations.SKIP)]
 
     def test_platform_names(self):
         return self.test_base_platform_names() + ('win-xp',

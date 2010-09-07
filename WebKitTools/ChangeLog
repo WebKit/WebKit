@@ -1,3 +1,26 @@
+2010-09-06  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Adam Barth.
+
+        webkit-patch command to find the ports covering a specific layout test
+        https://bugs.webkit.org/show_bug.cgi?id=42832
+
+        To use it: webkit-patch skipped-ports some/layout/test.html
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        * Scripts/webkitpy/layout_tests/port/factory_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        * Scripts/webkitpy/tool/commands/queries.py:
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        * Scripts/webkitpy/tool/main.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
 2010-09-07  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
 
         Reviewed by Eric Seidel.
