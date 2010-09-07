@@ -1,3 +1,34 @@
+2010-09-07  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed.
+
+        Rebaseline WIN LINUX for a few svg/dynamic-updates tests.
+
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEPointLightElement-dom-x-attr-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEPointLightElement-dom-x-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEPointLightElement-dom-y-attr-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEPointLightElement-dom-y-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEPointLightElement-dom-z-attr-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEPointLightElement-dom-z-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEPointLightElement-svgdom-x-prop-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEPointLightElement-svgdom-x-prop-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEPointLightElement-svgdom-y-prop-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEPointLightElement-svgdom-y-prop-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEPointLightElement-svgdom-z-prop-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEPointLightElement-svgdom-z-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEPointLightElement-dom-x-attr-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEPointLightElement-dom-x-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEPointLightElement-dom-y-attr-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEPointLightElement-dom-y-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEPointLightElement-dom-z-attr-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEPointLightElement-dom-z-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEPointLightElement-svgdom-x-prop-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEPointLightElement-svgdom-x-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEPointLightElement-svgdom-y-prop-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEPointLightElement-svgdom-y-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEPointLightElement-svgdom-z-prop-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEPointLightElement-svgdom-z-prop-expected.png: Added.
+
 2010-09-07  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Jeremy Orlow.
