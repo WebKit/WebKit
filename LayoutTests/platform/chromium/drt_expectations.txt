@@ -20,6 +20,7 @@ BUG_DRT LINUX : fast/speech/input-appearance-searchandspeech.html = MISSING
 BUG_DRT LINUX : fast/speech/input-appearance-speechbutton.html = MISSING
 
 // Blob-related failures
+// Do not add MAC to apply-blob-url-to-img.html.  The downstream test_expectations.txt has an entry for it.
 BUG_DRT WIN LINUX : fast/files/apply-blob-url-to-img.html = TIMEOUT
 BUG_DRT WIN MAC LINUX : fast/files/apply-blob-url-to-xhr.html = TEXT
 BUG_DRT WIN MAC LINUX : fast/files/read-blob-async.html = TEXT
@@ -27,7 +28,7 @@ BUG_DRT WIN MAC LINUX : fast/files/read-file-async.html = TEXT
 BUG_DRT WIN MAC LINUX : http/tests/local/blob/send-data-blob.html = TEXT
 BUG_DRT WIN MAC LINUX : http/tests/local/blob/send-hybrid-blob.html = TEXT
 BUG_DRT WIN MAC LINUX : http/tests/local/blob/send-sliced-data-blob.html = TEXT
-BUG_DRT MAC LINUX : http/tests/local/send-sliced-dragged-file.html = TEXT
+BUG_DRT WIN MAC LINUX : http/tests/local/send-sliced-dragged-file.html = TEXT
 BUG_DRT WIN MAC : http/tests/local/formdata/send-form-data-with-sliced-file.html = TEXT
 
 BUG48431 WIN MAC LINUX : plugins/geturlnotify-during-document-teardown.html = TEXT
@@ -100,7 +101,7 @@ BUG_DRT MAC : fast/backgrounds/solid-color-context-restore.html = IMAGE
 BUG_DRT MAC : fast/reflections/inline-crash.html = IMAGE
 BUG_DRT MAC LINUX : http/tests/loading/preload-img-test.html = TEXT PASS
 BUG_DRT MAC LINUX : http/tests/plugins/post-url-file.html = TIMEOUT
-BUG_DRT MAC LINUX : http/tests/security/xssAuditor/link-opens-new-window.html = TEXT
+BUG_DRT WIN MAC LINUX : http/tests/security/xssAuditor/link-opens-new-window.html = TEXT
 BUG_DRT LINUX : http/tests/security/xssAuditor/embed-tag-null-char.html = TEXT PASS
 BUG_DRT LINUX : http/tests/security/xssAuditor/object-tag.html = TEXT PASS
 BUG_DRT MAC : media/video-aspect-ratio.html = TIMEOUT
@@ -111,6 +112,7 @@ BUG_DRT MAC : media/video-play-empty-events.html = CRASH TIMEOUT PASS
 BUG_DRT MAC : media/video-play-pause-events.html = CRASH PASS
 BUG_DRT MAC : media/video-src-change.html = TEXT PASS
 BUG_DRT MAC LINUX : svg/custom/clip-path-referencing-use2.svg = TEXT
+BUG_DRT MAC : svg/dynamic-updates/SVGFEDiffuseLightingElement-lighting-color-css-prop.html = IMAGE
 BUG_DRT WIN : fast/dom/object-embed-plugin-scripting.html = TEXT
 BUG_DRT WIN MAC LINUX : fast/dynamic/window-resize-scrollbars-test.html = IMAGE+TEXT
 BUG_DRT WIN : fast/events/show-modal-dialog-onblur-onfocus.html = TEXT
@@ -176,7 +178,7 @@ BUG_DRT LINUX : fast/text/international/thai-line-breaks.html = IMAGE
 BUG_DRT LINUX : svg/W3C-SVG-1.1/pservers-grad-07-b.svg = IMAGE
 BUG_DRT LINUX : svg/W3C-SVG-1.1/struct-frag-02-t.svg = IMAGE
 BUG_DRT LINUX : svg/W3C-SVG-1.1/text-text-01-b.svg = IMAGE
-BUG_DRT LINUX : svg/batik/text/textFeatures.svg = IMAGE
+BUG_DRT WIN LINUX : svg/batik/text/textFeatures.svg = IMAGE
 BUG_DRT LINUX : svg/batik/text/textLayout.svg = IMAGE
 BUG_DRT LINUX : svg/custom/js-late-clipPath-and-object-creation.svg = IMAGE
 BUG_DRT LINUX : svg/custom/js-late-clipPath-creation.svg = IMAGE
@@ -198,6 +200,24 @@ BUG_DRT WIN MAC LINUX : fast/loader/stateobjects/pushstate-clears-forward-histor
 BUG_DRT WIN : http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html = CRASH
 // 66% crash rate
 BUG_DRT WIN : fast/js/date-preserve-milliseconds.html = CRASH PASS
+BUG_DRT WIN MAC LINUX : storage/indexeddb/objectstore-basics.html = TEXT
+BUG_DRT WIN : fast/forms/search-styled.html = TEXT
+BUG_DRT WIN : fast/notifications/notifications-replace.html = TEXT
+BUG_DRT WIN : http/tests/security/xssAuditor/link-opens-new-window.html = TEXT
+BUG_DRT WIN : userscripts/user-script-audio-document.html = TEXT
+BUG_DRT WIN : userscripts/user-script-video-document.html = TEXT
+BUG_DRT WIN : fast/multicol/client-rects.html = IMAGE
+BUG_DRT WIN : fast/text/atsui-spacing-features.html = IMAGE
+BUG_DRT WIN : fast/text/international/hindi-spacing.html = IMAGE
+BUG_DRT WIN : fast/text/international/hindi-whitespace.html = IMAGE
+BUG_DRT WIN : svg/batik/text/verticalText.svg = IMAGE
+BUG_DRT WIN : svg/custom/text-linking.svg = IMAGE
+BUG_DRT WIN : svg/text/text-intro-05-t.svg = IMAGE
+BUG_DRT WIN : fast/css/css2-system-fonts.html = IMAGE+TEXT
+BUG_DRT WIN : fast/gradients/radial-centered.html = IMAGE+TEXT
+BUG_DRT WIN : fast/text/backslash-to-yen-sign.html = IMAGE+TEXT
+BUG_DRT WIN : fast/text/international/bidi-mirror-he-ar.html = IMAGE+TEXT
+BUG_DRT WIN : fast/text/international/plane2.html = IMAGE+TEXT
 
 // Windows failures from the new build slave (some may be Vista/XP diffs)
 BUG_DRT WIN : css2.1/t0805-c5519-brdr-r-01-e.html = IMAGE+TEXT

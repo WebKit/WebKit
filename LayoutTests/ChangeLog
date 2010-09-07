@@ -1,3 +1,14 @@
+2010-09-07  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
+        Update DRT/Chromium expectations, and skip meter-percent-size.html
+        for platforms without <meter> support.
+
+        * platform/chromium/drt_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/win/Skipped:
+
 2010-09-07  James Kozianski  <koz@chromium.org>
 
         Reviewed by Kent Tamura.

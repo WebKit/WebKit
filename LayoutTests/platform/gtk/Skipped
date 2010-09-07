@@ -5394,6 +5394,7 @@ fast/dom/HTMLMeterElement/set-meter-properties.html
 fast/dom/HTMLMeterElement/meter-appearances-capacity.html
 fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html
 fast/dom/HTMLMeterElement/meter-optimums.html
+fast/dom/HTMLMeterElement/meter-percent-size.html
 fast/dom/HTMLMeterElement/meter-styles.html
 fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html
 
