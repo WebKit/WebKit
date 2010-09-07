@@ -54,14 +54,14 @@ VALID_ARCHS_macosx = i386 ppc x86_64 ppc64;
 WARNING_CFLAGS_BASE = -Wall -Wextra -Wcast-qual -Wchar-subscripts -Wextra-tokens -Wformat=2 -Winit-self -Wmissing-format-attribute -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wundef -Wwrite-strings;
 WARNING_CFLAGS = $(WARNING_CFLAGS_$(REAL_PLATFORM_NAME));
 WARNING_CFLAGS_iphoneos = $(WARNING_CFLAGS_BASE) -Wshorten-64-to-32;
-WARNING_CFLAGS_iphonesimulator = $(WARNING_CFLAGS_BASE) -Wcast-align -Wshorten-64-to-32;
+WARNING_CFLAGS_iphonesimulator = $(WARNING_CFLAGS_BASE) -Wshorten-64-to-32;
 WARNING_CFLAGS_macosx = $(WARNING_CFLAGS_macosx_$(CURRENT_ARCH));
-WARNING_CFLAGS_macosx_ = $(WARNING_CFLAGS_BASE) -Wcast-align -Wshorten-64-to-32;
-WARNING_CFLAGS_macosx_i386 = $(WARNING_CFLAGS_BASE) -Wcast-align -Wshorten-64-to-32;
-WARNING_CFLAGS_macosx_ppc = $(WARNING_CFLAGS_BASE) -Wcast-align -Wshorten-64-to-32;
+WARNING_CFLAGS_macosx_ = $(WARNING_CFLAGS_BASE) -Wshorten-64-to-32;
+WARNING_CFLAGS_macosx_i386 = $(WARNING_CFLAGS_BASE) -Wshorten-64-to-32;
+WARNING_CFLAGS_macosx_ppc = $(WARNING_CFLAGS_BASE) -Wshorten-64-to-32;
 // FIXME: WebCore 64-bit builds should build with -Wshorten-64-to-32
-WARNING_CFLAGS_macosx_ppc64 = $(WARNING_CFLAGS_BASE) -Wcast-align;
-WARNING_CFLAGS_macosx_x86_64 = $(WARNING_CFLAGS_BASE) -Wcast-align;
+WARNING_CFLAGS_macosx_ppc64 = $(WARNING_CFLAGS_BASE);
+WARNING_CFLAGS_macosx_x86_64 = $(WARNING_CFLAGS_BASE);
 
 
 REAL_PLATFORM_NAME = $(REAL_PLATFORM_NAME_$(PLATFORM_NAME));

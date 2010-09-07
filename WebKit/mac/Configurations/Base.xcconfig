@@ -56,8 +56,8 @@ VALID_ARCHS_macosx = i386 ppc x86_64 ppc64;
 WARNING_CFLAGS_BASE = -Wall -Wextra -Wchar-subscripts -Wextra-tokens -Wformat-security -Winit-self -Wmissing-format-attribute -Wmissing-noreturn -Wno-unused-parameter -Wpacked -Wpointer-arith -Wredundant-decls -Wundef -Wwrite-strings;
 WARNING_CFLAGS = $(WARNING_CFLAGS_$(REAL_PLATFORM_NAME));
 WARNING_CFLAGS_iphoneos = $(WARNING_CFLAGS_BASE);
-WARNING_CFLAGS_iphonesimulator = $(WARNING_CFLAGS_BASE) -Wcast-align;
-WARNING_CFLAGS_macosx = $(WARNING_CFLAGS_BASE) -Wcast-align;
+WARNING_CFLAGS_iphonesimulator = $(WARNING_CFLAGS_BASE);
+WARNING_CFLAGS_macosx = $(WARNING_CFLAGS_BASE);
 
 
 REAL_PLATFORM_NAME = $(REAL_PLATFORM_NAME_$(PLATFORM_NAME));

@@ -1,3 +1,13 @@
+2010-09-07  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8381749> -Wcast-align warning emitted when building with clang
+
+        Remove the -Wcast-align-warning since it isn't really useful, and clang is more aggressive about warning than gcc.
+
+        * Configurations/Base.xcconfig:
+
 2010-09-07  Sam Weinig  <sam@webkit.org>
 
         Another windows fix.
