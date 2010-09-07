@@ -1,3 +1,19 @@
+2010-09-07  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Indicate which one of the ScriptWorlds for a Frame the Window Object has been cleared for
+        https://bugs.webkit.org/show_bug.cgi?id=45217
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::didClearWindowObjectForFrame):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld):
+
 2010-09-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

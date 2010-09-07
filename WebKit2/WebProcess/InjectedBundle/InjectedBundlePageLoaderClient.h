@@ -30,6 +30,10 @@
 #include <JavaScriptCore/JSBase.h>
 #include <wtf/Forward.h>
 
+namespace WebCore {
+class DOMWrapperWorld;
+}
+
 namespace WebKit {
 
 class WebPage;
@@ -48,7 +52,7 @@ public:
     void didFinishLoadForFrame(WebPage*, WebFrame*);
     void didFailLoadWithErrorForFrame(WebPage*, WebFrame*);
     void didReceiveTitleForFrame(WebPage*, const WTF::String&, WebFrame*);
-    void didClearWindowObjectForFrame(WebPage*, WebFrame*, JSGlobalContextRef, JSObjectRef);
+    void didClearWindowObjectForFrame(WebPage*, WebFrame*, WebCore::DOMWrapperWorld*);
     void didCancelClientRedirectForFrame(WebPage*, WebFrame*);
     void willPerformClientRedirectForFrame(WebPage*, WebFrame*, const WTF::String& url, double delay, double date);
     void didChangeLocationWithinPageForFrame(WebPage*, WebFrame*);

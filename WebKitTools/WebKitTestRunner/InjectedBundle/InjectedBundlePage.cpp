@@ -35,6 +35,7 @@
 #include <WebKit2/WKBundlePagePrivate.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WKBundleRange.h>
+#include <WebKit2/WKBundleScriptWorld.h>
 
 using namespace std;
 
@@ -198,9 +199,9 @@ void InjectedBundlePage::didReceiveTitleForFrame(WKBundlePageRef page, WKStringR
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didReceiveTitleForFrame(title, frame);
 }
 
-void InjectedBundlePage::didClearWindowForFrame(WKBundlePageRef page, WKBundleFrameRef frame, JSGlobalContextRef context, JSObjectRef window, const void *clientInfo)
+void InjectedBundlePage::didClearWindowForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKBundleScriptWorldRef world, const void *clientInfo)
 {
-    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didClearWindowForFrame(frame, context, window);
+    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didClearWindowForFrame(frame, world);
 }
 
 void InjectedBundlePage::didCancelClientRedirectForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void* clientInfo)
@@ -412,10 +413,16 @@ void InjectedBundlePage::didReceiveTitleForFrame(WKStringRef title, WKBundleFram
     InjectedBundle::shared().os() << "TITLE CHANGED: " << title << "\n";
 }
 
-void InjectedBundlePage::didClearWindowForFrame(WKBundleFrameRef frame, JSGlobalContextRef context, JSObjectRef window)
+void InjectedBundlePage::didClearWindowForFrame(WKBundleFrameRef frame, WKBundleScriptWorldRef world)
 {
     if (!InjectedBundle::shared().isTestRunning())
         return;
+
+    if (WKBundleScriptWorldNormalWorld() != world)
+        return;
+
+    JSGlobalContextRef context = WKBundleFrameGetJavaScriptContextForWorld(frame, world);
+    JSObjectRef window = JSContextGetGlobalObject(context);
 
     JSValueRef exception = 0;
     InjectedBundle::shared().layoutTestController()->makeWindowObject(context, window, &exception);

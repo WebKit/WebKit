@@ -52,7 +52,7 @@ private:
     static void didFinishLoadForFrame(WKBundlePageRef, WKBundleFrameRef, const void*);
     static void didFailLoadWithErrorForFrame(WKBundlePageRef, WKBundleFrameRef, const void*);
     static void didReceiveTitleForFrame(WKBundlePageRef, WKStringRef title, WKBundleFrameRef, const void*);
-    static void didClearWindowForFrame(WKBundlePageRef, WKBundleFrameRef, JSGlobalContextRef, JSObjectRef window, const void*);
+    static void didClearWindowForFrame(WKBundlePageRef, WKBundleFrameRef, WKBundleScriptWorldRef, const void*);
     static void didCancelClientRedirectForFrame(WKBundlePageRef, WKBundleFrameRef, const void*);
     static void willPerformClientRedirectForFrame(WKBundlePageRef, WKBundleFrameRef, WKURLRef url, double delay, double date, const void*);
     static void didChangeLocationWithinPageForFrame(WKBundlePageRef, WKBundleFrameRef, const void*);
@@ -67,7 +67,7 @@ private:
     void didFinishLoadForFrame(WKBundleFrameRef);
     void didFailLoadWithErrorForFrame(WKBundleFrameRef);
     void didReceiveTitleForFrame(WKStringRef title, WKBundleFrameRef);
-    void didClearWindowForFrame(WKBundleFrameRef, JSGlobalContextRef, JSObjectRef window);
+    void didClearWindowForFrame(WKBundleFrameRef, WKBundleScriptWorldRef);
     void didCancelClientRedirectForFrame(WKBundleFrameRef);
     void willPerformClientRedirectForFrame(WKBundleFrameRef, WKURLRef url, double delay, double date);
     void didChangeLocationWithinPageForFrame(WKBundleFrameRef);

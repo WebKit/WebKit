@@ -1,3 +1,18 @@
+2010-09-07  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Indicate which one of the ScriptWorlds for a Frame the Window Object has been cleared for
+        https://bugs.webkit.org/show_bug.cgi?id=45217
+        
+        Make WebKitTestRunner work with this change.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::didClearWindowForFrame):
+        Make sure the ScriptWorld here is the normal world, since that is no longer being done in
+        WebFrameLoaderClient.
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+
 2010-09-07  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, build fix.
