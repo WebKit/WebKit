@@ -1,3 +1,9 @@
+2010-09-07  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium/DRT] Remove now-passing tests.
+
+        * platform/chromium/drt_expectations.txt: A few more tests now pass, yay!
+
 2010-09-07  Tony Chang  <tony@chromium.org>
 
         Reviewed by Kent Tamura.
