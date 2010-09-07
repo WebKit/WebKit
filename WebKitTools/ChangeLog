@@ -1,3 +1,14 @@
+2010-09-07  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, build fix.
+
+        webkit-patch command to find the ports covering a specific layout test
+        https://bugs.webkit.org/show_bug.cgi?id=42832
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py: Don't assume the
+        tests are present when building the expectations. This is needed
+        for the unittests.
+
 2010-09-06  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Adam Barth.

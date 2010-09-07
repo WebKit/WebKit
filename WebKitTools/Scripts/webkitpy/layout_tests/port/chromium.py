@@ -248,7 +248,7 @@ class ChromiumPort(base.Port):
         expectations = test_expectations.TestExpectations(
             self, all_test_files, expectations_str, test_platform_name,
             is_debug_mode, is_lint_mode=True,
-            tests_are_present=True, overrides=overrides_str)
+            tests_are_present=False, overrides=overrides_str)
         tests_dir = self.layout_tests_dir()
         return [self.relative_test_filename(test)
                 for test in expectations.get_tests_with_result_type(test_expectations.SKIP)]
