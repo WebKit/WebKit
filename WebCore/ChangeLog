@@ -1,5 +1,12 @@
 2010-09-07  Martin Robinson  <mrobinson@igalia.com>
 
+        Small build fix. Remove libWebCoreJS from CLEAN_FILES, as it
+        is no longer built.
+
+        * GNUmakefile.am: Remove reference to libWebCoreJS.
+
+2010-09-07  Martin Robinson  <mrobinson@igalia.com>
+
         Reviewed by Xan Lopez.
 
         [GTK] [REGRESSION] r66848 caused a crash in testwebview
