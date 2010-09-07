@@ -1,3 +1,12 @@
+2010-09-06  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, just adding some emails from lists.webkit.org.
+
+        Update committers.py to include emails from lists.webkit.org
+        as found by the validate-committer-lists script.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-09-06  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
