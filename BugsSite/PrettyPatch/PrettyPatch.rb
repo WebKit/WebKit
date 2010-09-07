@@ -192,10 +192,6 @@ h1 :hover {
   font-style: italic;
 }
 
-.focused {
-  border: 1px solid blue;
-}
-
 .comment {
   position: relative;
 }
@@ -294,9 +290,13 @@ body {
 .comment button {
   width: 6em;
 }
+
+.focused {
+  border: 1px solid blue;
+}
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
-<script src="code-review.js?version=6"></script> 
+<script src="code-review.js?version=7"></script> 
 EOF
 
     def self.revisionOrDescription(string)

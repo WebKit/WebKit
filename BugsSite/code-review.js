@@ -71,7 +71,7 @@
     line.attr('data-has-comment', 'true');
     line.addClass('commentContext');
 
-    var comment_block = $('<div class="comment"><textarea data-comment-for="' + line.attr('id') + '"></textarea><div class="actions"><button class="ok">Ok</button><button class="cancel">Cancel</button></div></div>');
+    var comment_block = $('<div class="comment"><textarea data-comment-for="' + line.attr('id') + '"></textarea><div class="actions"><button class="ok">Ok</button><button class="discard">Discard</button></div></div>');
     insertCommentFor(line, comment_block);
     comment_block.hide().slideDown('fast', function() {
       $(this).children('textarea').focus();
@@ -191,7 +191,7 @@
     $(document.body).append('<div class="overallComments"><div class="description">Overall comments:</div><textarea></textarea></div>');
   });
 
-  function cancelComment() {
+  function discardComment() {
     var line_id = $(this).parentsUntil('.comment').parent().find('textarea').attr('data-comment-for');
     var line = $('#' + line_id)
     findCommentBlockFor(line).slideUp('fast', function() {
@@ -206,12 +206,12 @@
     $(this).remove();
   }
 
-  $('.comment .cancel').live('click', cancelComment);
+  $('.comment .discard').live('click', discardComment);
 
   $('.comment .ok').live('click', function() {
     var comment_textarea = $(this).parentsUntil('.comment').parent().find('textarea');
     if (comment_textarea.val().trim() == '') {
-      cancelComment.call(this);
+      discardComment.call(this);
       return;
     }
     var line_id = comment_textarea.attr('data-comment-for');

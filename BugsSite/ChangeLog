@@ -1,3 +1,14 @@
+2010-09-07  Adam Barth  <abarth@webkit.org>
+
+        Minor tweaks to the reviewtool UI.
+
+        Rename Cancel to Discard to make it more clear what the button does.
+        Also, move the style declaration for the focus ring later in the sheet
+        so it works.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
 2010-09-06  Adam Barth  <abarth@webkit.org>
 
         Small UI tweak to the reviewtool.  Make the Ok/Cancel buttons a bit
