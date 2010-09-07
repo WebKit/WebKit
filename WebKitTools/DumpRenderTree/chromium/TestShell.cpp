@@ -493,6 +493,7 @@ void TestShell::dump()
     if (!frame)
         return;
     bool shouldDumpAsText = m_layoutTestController->shouldDumpAsText();
+    bool shouldGeneratePixelResults = m_layoutTestController->shouldGeneratePixelResults();
     bool dumpedAnything = false;
     if (m_params.dumpTree) {
         dumpedAnything = true;
@@ -502,7 +503,10 @@ void TestShell::dump()
         if (!shouldDumpAsText) {
             // Plain text pages should be dumped as text
             string mimeType = frame->dataSource()->response().mimeType().utf8();
-            shouldDumpAsText = mimeType == "text/plain";
+            if (mimeType == "text/plain") {
+                shouldDumpAsText = true;
+                shouldGeneratePixelResults = false;
+            }
         }
         if (shouldDumpAsText) {
             bool recursive = m_layoutTestController->shouldDumpChildFramesAsText();
@@ -520,7 +524,7 @@ void TestShell::dump()
     if (dumpedAnything && m_params.printSeparators)
         m_printer->handleTextFooter();
 
-    if (m_params.dumpPixels && m_layoutTestController->shouldGeneratePixelResults()) {
+    if (m_params.dumpPixels && shouldGeneratePixelResults) {
         // Image output: we write the image data to the file given on the
         // command line (for the dump pixels argument), and the MD5 sum to
         // stdout.

@@ -1,3 +1,13 @@
+2010-09-06  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Do not generate pixel results for text/plain resources
+        https://bugs.webkit.org/show_bug.cgi?id=45253
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::dump): Clear shouldGeneratePixelResults flag for text/plain.
+
 2010-09-06  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Kent Tamura.
