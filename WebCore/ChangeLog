@@ -1,3 +1,18 @@
+2010-09-07  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Remove redundant bounds check in originalText(). Add bounds check
+        to previousCharacter(). No need of start() > 0 check since m_start
+        is unsigned and we already do start() null check inside function.
+        https://bugs.webkit.org/show_bug.cgi?id=45303
+
+        Test: fast/text/one-letter-transform-crash.html
+
+        * rendering/RenderTextFragment.cpp:
+        (WebCore::RenderTextFragment::originalText):
+        (WebCore::RenderTextFragment::previousCharacter):
+
 2010-09-07  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.

@@ -1,3 +1,14 @@
+2010-09-07  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Tests that we dont hit assert i < m_length when trying to read
+        previousCharacter for text fragments.
+        https://bugs.webkit.org/show_bug.cgi?id=45303
+
+        * fast/text/one-letter-transform-crash-expected.txt: Added.
+        * fast/text/one-letter-transform-crash.html: Added.
+
 2010-09-07  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed.
