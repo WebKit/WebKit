@@ -1,3 +1,12 @@
+2010-09-07  Arno Renevier  <arno@renevier.net>
+
+        Reviewed by Holger Freyther.
+
+        gitignore *~ files and gtk *.pot files
+        https://bugs.webkit.org/show_bug.cgi?id=45129
+
+        * .gitignore:
+
 2010-09-04  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.

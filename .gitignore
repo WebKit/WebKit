@@ -10,6 +10,7 @@ WebKitTools/Scripts/webkitpy/thirdparty/autoinstalled
 # Ignore common tool auto-generated files.
 .gdb_history
 tags
+*~
 
 # Ignore Chromium projects auto-generated from .gyp files:
 JavaScriptCore/JavaScriptCore.gyp/*.Makefile
@@ -80,6 +81,7 @@ LayoutTests/java/*.class
 /configure
 /GNUmakefile.in
 /WebKit/gtk/docs/GNUmakefile.in
+/WebKit/gtk/po/*.pot
 /gtk-doc.make
 /INSTALL
 /README
