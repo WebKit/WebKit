@@ -67,8 +67,8 @@ using namespace WebCore;
 
 @interface WebEditorUndoTargetObjC : NSObject
 
-- (void)undoEditing:(id)arg;
-- (void)redoEditing:(id)arg;
+- (void)undoEditing:(id)sender;
+- (void)redoEditing:(id)sender;
 
 @end
 
