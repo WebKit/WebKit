@@ -1,3 +1,11 @@
+2010-09-07  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed.
+
+        Remove passing tests from chromium/test_expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-07  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Darin Adler.
