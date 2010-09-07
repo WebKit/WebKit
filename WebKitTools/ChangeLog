@@ -1,3 +1,19 @@
+2010-09-07  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Provide a way to trigger a <select multiple> onchange event on changes
+        https://bugs.webkit.org/show_bug.cgi?id=45192
+
+        Adds a selector on ObjCController for testing
+        -[DOMHTMLSelectElement _activateItemAtIndex:allowMultipleSelection:] and
+        its different uses.
+
+        * DumpRenderTree/mac/ObjCController.m:
+        (+[ObjCController isSelectorExcludedFromWebScript:]):
+        (+[ObjCController webScriptNameForSelector:]):
+        (-[ObjCController setSelectElement:selectedIndex:allowingMultiple:]):
+
 2010-09-07  James Robinson  <jamesr@chromium.org>
 
         Rubber-stamped by Dimitri Glazkov.

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head><title></title></head>
+<body onload="test()">
+
+    <select id="single">
+        <option>0</option>
+        <option>1</option>
+        <option>2</option>
+    </select>
+
+    <select id="sized" size="3">
+        <option>0</option>
+        <option>1</option>
+        <option>2</option>
+    </select>
+
+    <select id="multiple-1" multiple>
+        <option>0</option>
+        <option>1</option>
+        <option>2</option>
+    </select>
+
+    <select id="multiple-2" multiple>
+        <option>0</option>
+        <option>1</option>
+        <option>2</option>
+    </select>
+
+    <pre id="console"></pre>
+
+    <script>
+
+    // -----------
+    //   Helpers
+    // -----------
+
+    function log(msg) {
+        document.getElementById("console").appendChild(document.createTextNode(msg + "\n"));
+    }
+
+    function onChangeEventHandler(event) {
+        log("-- change event fired --");
+    }
+
+    function assertSelectedIndex(elem, index) {
+        if (elem.selectedIndex === index)
+            log("PASS - expected index was selected.");
+        else
+            log("FAIL - expected index was " + elem.selected + " but was expected to be " + index + ".");
+    }
+
+    function assertSelectedIndexes(elem, flags) {
+        var allGood = true;
+        var options = elem.options;
+        for (var i=0; i<options.length; ++i) {
+            if (options[i].selected !== flags[i]) {
+                log("FAIL - option " + i + " was not what we expected.");
+                allGood = false;
+            }
+        }
+
+        if (allGood)
+            log("PASS - selected options were what we expected.")
+    }
+
+    // ------------
+    //   The Test
+    // ------------
+
+    function test() {
+        if (!window.layoutTestController) {
+            log("This test can only be run under DumpRenderTree.");
+            return;
+        }
+
+        layoutTestController.dumpAsText();
+
+        log("This tests the Private Objective-C DOM HTML Bindings API for selecting indexes of a <select> that also activate the \"change\" event.");
+        wrapper("Select a single index in a normal <select>.", "single", testSingle);
+        wrapper("Select a single index in a sized <select>.", "sized", testSized);
+        wrapper("Select multiple indexes, in a <select multiple>.", "multiple-1", testMultiple1);
+        wrapper("Select multiple indexes, with multi-select on, in a <select multiple>.", "multiple-2", testMultiple2);
+    }
+
+    function wrapper(msg, id, func) {
+        log("");
+        log(msg);
+        var elem = document.getElementById(id);
+        elem.addEventListener("change", onChangeEventHandler, false);
+        func(elem);
+    }
+
+    function testSingle(elem) {
+        objCController.setSelectElementSelectedIndexAllowingMultiple(elem, 1, false);
+        assertSelectedIndex(elem, 1);
+    }
+
+    function testSized(elem) {
+        objCController.setSelectElementSelectedIndexAllowingMultiple(elem, 1, false);
+        assertSelectedIndex(elem, 1);
+    }
+
+    function testMultiple1(elem) {
+        // Triggers selecting index 1 then 2, expecting the result to be just index 2 selected.
+        objCController.setSelectElementSelectedIndexAllowingMultiple(elem, 1, false);
+        objCController.setSelectElementSelectedIndexAllowingMultiple(elem, 2, false);
+        assertSelectedIndexes(elem, [false, false, true]);
+    }
+
+    function testMultiple2(elem) {
+        // Triggers selecting index 1 then 2, expecting the result to be both are selected.
+        objCController.setSelectElementSelectedIndexAllowingMultiple(elem, 1, true);
+        objCController.setSelectElementSelectedIndexAllowingMultiple(elem, 2, true);
+        assertSelectedIndexes(elem, [false, true, true]);
+    }
+
+    </script>
+</body>
+</html>

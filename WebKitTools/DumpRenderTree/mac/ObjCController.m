@@ -29,8 +29,12 @@
 #import "config.h"
 #import "ObjCController.h"
 
+// Avoid compile error in DOMPrivate.h.
+@class NSFont;
+
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <WebKit/DOMAbstractView.h>
+#import <WebKit/DOMPrivate.h>
 #import <WebKit/WebScriptObject.h>
 #import <WebKit/WebView.h>
 #import <pthread.h>
@@ -73,6 +77,7 @@ static void* runJavaScriptThread(void* arg)
             || aSelector == @selector(testValueForKey)
             || aSelector == @selector(testHasWebScriptKey:)
             || aSelector == @selector(testArray)
+            || aSelector == @selector(setSelectElement:selectedIndex:allowingMultiple:)
         )
         return NO;
     return YES;
@@ -102,6 +107,8 @@ static void* runJavaScriptThread(void* arg)
         return @"testHasWebScriptKey";
     if (aSelector == @selector(testArray))
         return @"testArray";
+    if (aSelector == @selector(setSelectElement:selectedIndex:allowingMultiple:))
+        return @"setSelectElementSelectedIndexAllowingMultiple";
 
     return nil;
 }
@@ -261,6 +268,18 @@ static void* runJavaScriptThread(void* arg)
 {
     // FIXME: Perhaps we should log that this has been called.
     return nil;
+}
+
+#pragma mark -
+#pragma mark Testing Objective-C DOM HTML Bindings
+
+- (void)setSelectElement:(WebScriptObject *)element selectedIndex:(int)index allowingMultiple:(BOOL)allowingMultiple
+{
+    if (![element isKindOfClass:[DOMHTMLSelectElement class]])
+        return;
+
+    DOMHTMLSelectElement *select = (DOMHTMLSelectElement*)element;
+    [select _activateItemAtIndex:index allowMultipleSelection:allowingMultiple];
 }
 
 @end
