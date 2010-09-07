@@ -1,3 +1,13 @@
+2010-09-07  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: disable debugger tests on qt
+        https://bugs.webkit.org/show_bug.cgi?id=45290
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
 2010-09-07  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Steve Block.
