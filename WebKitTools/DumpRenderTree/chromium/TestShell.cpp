@@ -204,6 +204,7 @@ void TestShell::resetWebSettings(WebView& webView)
     settings->setLocalStorageEnabled(true);
     settings->setOfflineWebApplicationCacheEnabled(true);
     settings->setAllowFileAccessFromFileURLs(true);
+    settings->setUserStyleSheetLocation(WebURL());
 
     // LayoutTests were written with Safari Mac in mind which does not allow
     // tabbing to links by default.

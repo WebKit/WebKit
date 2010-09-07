@@ -1,3 +1,21 @@
+2010-09-06  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium/DRT] Empty out user stylesheet after each test run.
+        https://bugs.webkit.org/show_bug.cgi?id=45282
+
+        This should significantly cut down on the number of the mysterious flaky tests
+        whose diffs looked like the page was blown up to a very lage size. This
+        was indeed the dirty work of platform/mac/fast/loader/user-stylesheet-fast-path.html,
+        which set the base body font to 100px.
+
+        Since the user stylesheet was never reset, _all_ pixel tests that ran after it in
+        the same thread failed.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::resetWebSettings): Set user stylesheet to an empty URL.
+
 2010-09-06  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
