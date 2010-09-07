@@ -1,0 +1,170 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 450x500
+  RenderSVGRoot {svg} at (14,34) size 417x367
+    RenderSVGText {text} at (105,34) size 240x20 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 240x20
+        chunk 1 (middle anchor) text run 1 at (105.00,50.00) startOffset 0 endOffset 34 width 240.00: "patternUnits / patternContentUnits"
+    RenderSVGText {text} at (168,59) size 114x20 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 114x20
+        chunk 1 (middle anchor) text run 1 at (168.00,75.00) startOffset 0 endOffset 15 width 114.00: "pattern viewBox"
+    RenderSVGContainer {g} at (14,108) size 417x293
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGResourcePattern {pattern} [id="pattern1"] [patternUnits=objectBoundingBox] [patternContentUnits=userSpaceOnUse]
+          RenderPath {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [data="M20.00,10.00 L19.98,10.63 L19.92,11.25 L19.82,11.87 L19.69,12.49 L19.51,13.09 L19.30,13.68 L19.05,14.26 L18.76,14.82 L18.44,15.36 L18.09,15.88 L17.71,16.37 L17.29,16.85 L16.85,17.29 L16.37,17.71 L15.88,18.09 L15.36,18.44 L14.82,18.76 L14.26,19.05 L13.68,19.30 L13.09,19.51 L12.49,19.69 L11.87,19.82 L11.25,19.92 L10.63,19.98 L10.00,20.00 L9.37,19.98 L8.75,19.92 L8.13,19.82 L7.51,19.69 L6.91,19.51 L6.32,19.30 L5.74,19.05 L5.18,18.76 L4.64,18.44 L4.12,18.09 L3.63,17.71 L3.15,17.29 L2.71,16.85 L2.29,16.37 L1.91,15.88 L1.56,15.36 L1.24,14.82 L0.95,14.26 L0.70,13.68 L0.49,13.09 L0.31,12.49 L0.18,11.87 L0.08,11.25 L0.02,10.63 L0.00,10.00 L0.02,9.37 L0.08,8.75 L0.18,8.13 L0.31,7.51 L0.49,6.91 L0.70,6.32 L0.95,5.74 L1.24,5.18 L1.56,4.64 L1.91,4.12 L2.29,3.63 L2.71,3.15 L3.15,2.71 L3.63,2.29 L4.12,1.91 L4.64,1.56 L5.18,1.24 L5.74,0.95 L6.32,0.70 L6.91,0.49 L7.51,0.31 L8.13,0.18 L8.75,0.08 L9.37,0.02 L10.00,0.00 L10.63,0.02 L11.25,0.08 L11.87,0.18 L12.49,0.31 L13.09,0.49 L13.68,0.70 L14.26,0.95 L14.82,1.24 L15.36,1.56 L15.88,1.91 L16.37,2.29 L16.85,2.71 L17.29,3.15 L17.71,3.63 L18.09,4.12 L18.44,4.64 L18.76,5.18 L19.05,5.74 L19.30,6.32 L19.51,6.91 L19.69,7.51 L19.82,8.13 L19.92,8.75 L19.98,9.37 L20.00,10.00"]
+          RenderPath {rect} at (10,10) size 15x15 [fill={[type=SOLID] [color=#008000]}] [data="M10.00,10.00 L25.00,10.00 L25.00,25.00 L10.00,25.00 L10.00,10.00"]
+        RenderSVGResourcePattern {pattern} [id="pattern2"] [patternUnits=objectBoundingBox] [patternContentUnits=userSpaceOnUse]
+          RenderPath {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [data="M20.00,10.00 L19.98,10.63 L19.92,11.25 L19.82,11.87 L19.69,12.49 L19.51,13.09 L19.30,13.68 L19.05,14.26 L18.76,14.82 L18.44,15.36 L18.09,15.88 L17.71,16.37 L17.29,16.85 L16.85,17.29 L16.37,17.71 L15.88,18.09 L15.36,18.44 L14.82,18.76 L14.26,19.05 L13.68,19.30 L13.09,19.51 L12.49,19.69 L11.87,19.82 L11.25,19.92 L10.63,19.98 L10.00,20.00 L9.37,19.98 L8.75,19.92 L8.13,19.82 L7.51,19.69 L6.91,19.51 L6.32,19.30 L5.74,19.05 L5.18,18.76 L4.64,18.44 L4.12,18.09 L3.63,17.71 L3.15,17.29 L2.71,16.85 L2.29,16.37 L1.91,15.88 L1.56,15.36 L1.24,14.82 L0.95,14.26 L0.70,13.68 L0.49,13.09 L0.31,12.49 L0.18,11.87 L0.08,11.25 L0.02,10.63 L0.00,10.00 L0.02,9.37 L0.08,8.75 L0.18,8.13 L0.31,7.51 L0.49,6.91 L0.70,6.32 L0.95,5.74 L1.24,5.18 L1.56,4.64 L1.91,4.12 L2.29,3.63 L2.71,3.15 L3.15,2.71 L3.63,2.29 L4.12,1.91 L4.64,1.56 L5.18,1.24 L5.74,0.95 L6.32,0.70 L6.91,0.49 L7.51,0.31 L8.13,0.18 L8.75,0.08 L9.37,0.02 L10.00,0.00 L10.63,0.02 L11.25,0.08 L11.87,0.18 L12.49,0.31 L13.09,0.49 L13.68,0.70 L14.26,0.95 L14.82,1.24 L15.36,1.56 L15.88,1.91 L16.37,2.29 L16.85,2.71 L17.29,3.15 L17.71,3.63 L18.09,4.12 L18.44,4.64 L18.76,5.18 L19.05,5.74 L19.30,6.32 L19.51,6.91 L19.69,7.51 L19.82,8.13 L19.92,8.75 L19.98,9.37 L20.00,10.00"]
+          RenderPath {rect} at (10,10) size 15x15 [fill={[type=SOLID] [color=#008000]}] [data="M10.00,10.00 L25.00,10.00 L25.00,25.00 L10.00,25.00 L10.00,10.00"]
+        RenderSVGResourcePattern {pattern} [id="pattern3"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
+          RenderPath {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [data="M20.00,10.00 L19.98,10.63 L19.92,11.25 L19.82,11.87 L19.69,12.49 L19.51,13.09 L19.30,13.68 L19.05,14.26 L18.76,14.82 L18.44,15.36 L18.09,15.88 L17.71,16.37 L17.29,16.85 L16.85,17.29 L16.37,17.71 L15.88,18.09 L15.36,18.44 L14.82,18.76 L14.26,19.05 L13.68,19.30 L13.09,19.51 L12.49,19.69 L11.87,19.82 L11.25,19.92 L10.63,19.98 L10.00,20.00 L9.37,19.98 L8.75,19.92 L8.13,19.82 L7.51,19.69 L6.91,19.51 L6.32,19.30 L5.74,19.05 L5.18,18.76 L4.64,18.44 L4.12,18.09 L3.63,17.71 L3.15,17.29 L2.71,16.85 L2.29,16.37 L1.91,15.88 L1.56,15.36 L1.24,14.82 L0.95,14.26 L0.70,13.68 L0.49,13.09 L0.31,12.49 L0.18,11.87 L0.08,11.25 L0.02,10.63 L0.00,10.00 L0.02,9.37 L0.08,8.75 L0.18,8.13 L0.31,7.51 L0.49,6.91 L0.70,6.32 L0.95,5.74 L1.24,5.18 L1.56,4.64 L1.91,4.12 L2.29,3.63 L2.71,3.15 L3.15,2.71 L3.63,2.29 L4.12,1.91 L4.64,1.56 L5.18,1.24 L5.74,0.95 L6.32,0.70 L6.91,0.49 L7.51,0.31 L8.13,0.18 L8.75,0.08 L9.37,0.02 L10.00,0.00 L10.63,0.02 L11.25,0.08 L11.87,0.18 L12.49,0.31 L13.09,0.49 L13.68,0.70 L14.26,0.95 L14.82,1.24 L15.36,1.56 L15.88,1.91 L16.37,2.29 L16.85,2.71 L17.29,3.15 L17.71,3.63 L18.09,4.12 L18.44,4.64 L18.76,5.18 L19.05,5.74 L19.30,6.32 L19.51,6.91 L19.69,7.51 L19.82,8.13 L19.92,8.75 L19.98,9.37 L20.00,10.00"]
+          RenderPath {rect} at (10,10) size 15x15 [fill={[type=SOLID] [color=#008000]}] [data="M10.00,10.00 L25.00,10.00 L25.00,25.00 L10.00,25.00 L10.00,10.00"]
+        RenderSVGResourcePattern {pattern} [id="pattern4"] [patternUnits=objectBoundingBox] [patternContentUnits=objectBoundingBox]
+          RenderPath {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.50,0.33 L0.50,0.35 L0.50,0.36 L0.50,0.38 L0.49,0.40 L0.49,0.41 L0.48,0.43 L0.48,0.44 L0.47,0.45 L0.46,0.47 L0.45,0.48 L0.44,0.49 L0.43,0.50 L0.42,0.52 L0.41,0.53 L0.40,0.54 L0.38,0.54 L0.37,0.55 L0.36,0.56 L0.34,0.57 L0.33,0.57 L0.31,0.58 L0.30,0.58 L0.28,0.58 L0.27,0.58 L0.25,0.58 L0.23,0.58 L0.22,0.58 L0.20,0.58 L0.19,0.58 L0.17,0.57 L0.16,0.57 L0.14,0.56 L0.13,0.55 L0.12,0.54 L0.10,0.54 L0.09,0.53 L0.08,0.52 L0.07,0.50 L0.06,0.49 L0.05,0.48 L0.04,0.47 L0.03,0.45 L0.02,0.44 L0.02,0.43 L0.01,0.41 L0.01,0.40 L0.00,0.38 L0.00,0.36 L0.00,0.35 L0.00,0.33 L0.00,0.32 L0.00,0.30 L0.00,0.29 L0.01,0.27 L0.01,0.26 L0.02,0.24 L0.02,0.23 L0.03,0.21 L0.04,0.20 L0.05,0.19 L0.06,0.17 L0.07,0.16 L0.08,0.15 L0.09,0.14 L0.10,0.13 L0.12,0.12 L0.13,0.11 L0.14,0.11 L0.16,0.10 L0.17,0.10 L0.19,0.09 L0.20,0.09 L0.22,0.09 L0.23,0.08 L0.25,0.08 L0.27,0.08 L0.28,0.09 L0.30,0.09 L0.31,0.09 L0.33,0.10 L0.34,0.10 L0.36,0.11 L0.37,0.11 L0.38,0.12 L0.40,0.13 L0.41,0.14 L0.42,0.15 L0.43,0.16 L0.44,0.17 L0.45,0.19 L0.46,0.20 L0.47,0.21 L0.48,0.23 L0.48,0.24 L0.49,0.26 L0.49,0.27 L0.50,0.29 L0.50,0.30 L0.50,0.32 L0.50,0.33"]
+          RenderPath {rect} at (0,0) size 1x1 [fill={[type=SOLID] [color=#008000]}] [data="M0.25,0.33 L0.62,0.33 L0.62,0.83 L0.25,0.83 L0.25,0.33"]
+        RenderSVGResourcePattern {pattern} [id="pattern5"] [patternUnits=objectBoundingBox] [patternContentUnits=objectBoundingBox]
+          RenderPath {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.50,0.33 L0.50,0.35 L0.50,0.36 L0.50,0.38 L0.49,0.40 L0.49,0.41 L0.48,0.43 L0.48,0.44 L0.47,0.45 L0.46,0.47 L0.45,0.48 L0.44,0.49 L0.43,0.50 L0.42,0.52 L0.41,0.53 L0.40,0.54 L0.38,0.54 L0.37,0.55 L0.36,0.56 L0.34,0.57 L0.33,0.57 L0.31,0.58 L0.30,0.58 L0.28,0.58 L0.27,0.58 L0.25,0.58 L0.23,0.58 L0.22,0.58 L0.20,0.58 L0.19,0.58 L0.17,0.57 L0.16,0.57 L0.14,0.56 L0.13,0.55 L0.12,0.54 L0.10,0.54 L0.09,0.53 L0.08,0.52 L0.07,0.50 L0.06,0.49 L0.05,0.48 L0.04,0.47 L0.03,0.45 L0.02,0.44 L0.02,0.43 L0.01,0.41 L0.01,0.40 L0.00,0.38 L0.00,0.36 L0.00,0.35 L0.00,0.33 L0.00,0.32 L0.00,0.30 L0.00,0.29 L0.01,0.27 L0.01,0.26 L0.02,0.24 L0.02,0.23 L0.03,0.21 L0.04,0.20 L0.05,0.19 L0.06,0.17 L0.07,0.16 L0.08,0.15 L0.09,0.14 L0.10,0.13 L0.12,0.12 L0.13,0.11 L0.14,0.11 L0.16,0.10 L0.17,0.10 L0.19,0.09 L0.20,0.09 L0.22,0.09 L0.23,0.08 L0.25,0.08 L0.27,0.08 L0.28,0.09 L0.30,0.09 L0.31,0.09 L0.33,0.10 L0.34,0.10 L0.36,0.11 L0.37,0.11 L0.38,0.12 L0.40,0.13 L0.41,0.14 L0.42,0.15 L0.43,0.16 L0.44,0.17 L0.45,0.19 L0.46,0.20 L0.47,0.21 L0.48,0.23 L0.48,0.24 L0.49,0.26 L0.49,0.27 L0.50,0.29 L0.50,0.30 L0.50,0.32 L0.50,0.33"]
+          RenderPath {rect} at (0,0) size 1x1 [fill={[type=SOLID] [color=#008000]}] [data="M0.25,0.33 L0.62,0.33 L0.62,0.83 L0.25,0.83 L0.25,0.33"]
+        RenderSVGResourcePattern {pattern} [id="pattern6"] [patternUnits=userSpaceOnUse] [patternContentUnits=objectBoundingBox]
+          RenderPath {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.50,0.33 L0.50,0.35 L0.50,0.36 L0.50,0.38 L0.49,0.40 L0.49,0.41 L0.48,0.43 L0.48,0.44 L0.47,0.45 L0.46,0.47 L0.45,0.48 L0.44,0.49 L0.43,0.50 L0.42,0.52 L0.41,0.53 L0.40,0.54 L0.38,0.54 L0.37,0.55 L0.36,0.56 L0.34,0.57 L0.33,0.57 L0.31,0.58 L0.30,0.58 L0.28,0.58 L0.27,0.58 L0.25,0.58 L0.23,0.58 L0.22,0.58 L0.20,0.58 L0.19,0.58 L0.17,0.57 L0.16,0.57 L0.14,0.56 L0.13,0.55 L0.12,0.54 L0.10,0.54 L0.09,0.53 L0.08,0.52 L0.07,0.50 L0.06,0.49 L0.05,0.48 L0.04,0.47 L0.03,0.45 L0.02,0.44 L0.02,0.43 L0.01,0.41 L0.01,0.40 L0.00,0.38 L0.00,0.36 L0.00,0.35 L0.00,0.33 L0.00,0.32 L0.00,0.30 L0.00,0.29 L0.01,0.27 L0.01,0.26 L0.02,0.24 L0.02,0.23 L0.03,0.21 L0.04,0.20 L0.05,0.19 L0.06,0.17 L0.07,0.16 L0.08,0.15 L0.09,0.14 L0.10,0.13 L0.12,0.12 L0.13,0.11 L0.14,0.11 L0.16,0.10 L0.17,0.10 L0.19,0.09 L0.20,0.09 L0.22,0.09 L0.23,0.08 L0.25,0.08 L0.27,0.08 L0.28,0.09 L0.30,0.09 L0.31,0.09 L0.33,0.10 L0.34,0.10 L0.36,0.11 L0.37,0.11 L0.38,0.12 L0.40,0.13 L0.41,0.14 L0.42,0.15 L0.43,0.16 L0.44,0.17 L0.45,0.19 L0.46,0.20 L0.47,0.21 L0.48,0.23 L0.48,0.24 L0.49,0.26 L0.49,0.27 L0.50,0.29 L0.50,0.30 L0.50,0.32 L0.50,0.33"]
+          RenderPath {rect} at (0,0) size 1x1 [fill={[type=SOLID] [color=#008000]}] [data="M0.25,0.33 L0.62,0.33 L0.62,0.83 L0.25,0.83 L0.25,0.33"]
+        RenderSVGResourcePattern {pattern} [id="pattern7"] [patternUnits=userSpaceOnUse] [patternContentUnits=objectBoundingBox]
+          RenderPath {circle} at (0,0) size 40x40 [fill={[type=SOLID] [color=#FF0000]}] [data="M40.00,20.00 L39.96,21.26 L39.84,22.51 L39.65,23.75 L39.37,24.97 L39.02,26.18 L38.60,27.36 L38.10,28.52 L37.53,29.64 L36.89,30.72 L36.18,31.76 L35.41,32.75 L34.58,33.69 L33.69,34.58 L32.75,35.41 L31.76,36.18 L30.72,36.89 L29.64,37.53 L28.52,38.10 L27.36,38.60 L26.18,39.02 L24.97,39.37 L23.75,39.65 L22.51,39.84 L21.26,39.96 L20.00,40.00 L18.74,39.96 L17.49,39.84 L16.25,39.65 L15.03,39.37 L13.82,39.02 L12.64,38.60 L11.48,38.10 L10.36,37.53 L9.28,36.89 L8.24,36.18 L7.25,35.41 L6.31,34.58 L5.42,33.69 L4.59,32.75 L3.82,31.76 L3.11,30.72 L2.47,29.64 L1.90,28.52 L1.40,27.36 L0.98,26.18 L0.63,24.97 L0.35,23.75 L0.16,22.51 L0.04,21.26 L0.00,20.00 L0.04,18.74 L0.16,17.49 L0.35,16.25 L0.63,15.03 L0.98,13.82 L1.40,12.64 L1.90,11.48 L2.47,10.36 L3.11,9.28 L3.82,8.24 L4.59,7.25 L5.42,6.31 L6.31,5.42 L7.25,4.59 L8.24,3.82 L9.28,3.11 L10.36,2.47 L11.48,1.90 L12.64,1.40 L13.82,0.98 L15.03,0.63 L16.25,0.35 L17.49,0.16 L18.74,0.04 L20.00,0.00 L21.26,0.04 L22.51,0.16 L23.75,0.35 L24.97,0.63 L26.18,0.98 L27.36,1.40 L28.52,1.90 L29.64,2.47 L30.72,3.11 L31.76,3.82 L32.75,4.59 L33.69,5.42 L34.58,6.31 L35.41,7.25 L36.18,8.24 L36.89,9.28 L37.53,10.36 L38.10,11.48 L38.60,12.64 L39.02,13.82 L39.37,15.03 L39.65,16.25 L39.84,17.49 L39.96,18.74 L40.00,20.00"]
+        RenderSVGResourcePattern {pattern} [id="pattern8"] [patternUnits=userSpaceOnUse] [patternContentUnits=objectBoundingBox]
+          RenderPath {circle} at (0,0) size 40x40 [fill={[type=SOLID] [color=#FF0000]}] [data="M40.00,20.00 L39.96,21.26 L39.84,22.51 L39.65,23.75 L39.37,24.97 L39.02,26.18 L38.60,27.36 L38.10,28.52 L37.53,29.64 L36.89,30.72 L36.18,31.76 L35.41,32.75 L34.58,33.69 L33.69,34.58 L32.75,35.41 L31.76,36.18 L30.72,36.89 L29.64,37.53 L28.52,38.10 L27.36,38.60 L26.18,39.02 L24.97,39.37 L23.75,39.65 L22.51,39.84 L21.26,39.96 L20.00,40.00 L18.74,39.96 L17.49,39.84 L16.25,39.65 L15.03,39.37 L13.82,39.02 L12.64,38.60 L11.48,38.10 L10.36,37.53 L9.28,36.89 L8.24,36.18 L7.25,35.41 L6.31,34.58 L5.42,33.69 L4.59,32.75 L3.82,31.76 L3.11,30.72 L2.47,29.64 L1.90,28.52 L1.40,27.36 L0.98,26.18 L0.63,24.97 L0.35,23.75 L0.16,22.51 L0.04,21.26 L0.00,20.00 L0.04,18.74 L0.16,17.49 L0.35,16.25 L0.63,15.03 L0.98,13.82 L1.40,12.64 L1.90,11.48 L2.47,10.36 L3.11,9.28 L3.82,8.24 L4.59,7.25 L5.42,6.31 L6.31,5.42 L7.25,4.59 L8.24,3.82 L9.28,3.11 L10.36,2.47 L11.48,1.90 L12.64,1.40 L13.82,0.98 L15.03,0.63 L16.25,0.35 L17.49,0.16 L18.74,0.04 L20.00,0.00 L21.26,0.04 L22.51,0.16 L23.75,0.35 L24.97,0.63 L26.18,0.98 L27.36,1.40 L28.52,1.90 L29.64,2.47 L30.72,3.11 L31.76,3.82 L32.75,4.59 L33.69,5.42 L34.58,6.31 L35.41,7.25 L36.18,8.24 L36.89,9.28 L37.53,10.36 L38.10,11.48 L38.60,12.64 L39.02,13.82 L39.37,15.03 L39.65,16.25 L39.84,17.49 L39.96,18.74 L40.00,20.00"]
+        RenderSVGResourceRadialGradient {radialGradient} [id="redToYellow"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.50]
+          RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+          RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFF00]
+        RenderSVGResourcePattern {pattern} [id="pattern9"] [patternUnits=userSpaceOnUse] [patternContentUnits=objectBoundingBox]
+          RenderPath {circle} at (0,0) size 60x60 [fill={[type=RADIAL-GRADIENT] [id="redToYellow"]}] [data="M60.00,20.00 L59.92,22.51 L59.68,25.01 L59.29,27.50 L58.74,29.95 L58.04,32.36 L57.19,34.72 L56.19,37.03 L55.05,39.27 L53.77,41.43 L52.36,43.51 L50.82,45.50 L49.16,47.38 L47.38,49.16 L45.50,50.82 L43.51,52.36 L41.43,53.77 L39.27,55.05 L37.03,56.19 L34.72,57.19 L32.36,58.04 L29.95,58.74 L27.50,59.29 L25.01,59.68 L22.51,59.92 L20.00,60.00 L17.49,59.92 L14.99,59.68 L12.50,59.29 L10.05,58.74 L7.64,58.04 L5.28,57.19 L2.97,56.19 L0.73,55.05 L-1.43,53.77 L-3.51,52.36 L-5.50,50.82 L-7.38,49.16 L-9.16,47.38 L-10.82,45.50 L-12.36,43.51 L-13.77,41.43 L-15.05,39.27 L-16.19,37.03 L-17.19,34.72 L-18.04,32.36 L-18.74,29.95 L-19.29,27.50 L-19.68,25.01 L-19.92,22.51 L-20.00,20.00 L-19.92,17.49 L-19.68,14.99 L-19.29,12.50 L-18.74,10.05 L-18.04,7.64 L-17.19,5.28 L-16.19,2.97 L-15.05,0.73 L-13.77,-1.43 L-12.36,-3.51 L-10.82,-5.50 L-9.16,-7.38 L-7.38,-9.16 L-5.50,-10.82 L-3.51,-12.36 L-1.43,-13.77 L0.73,-15.05 L2.97,-16.19 L5.28,-17.19 L7.64,-18.04 L10.05,-18.74 L12.50,-19.29 L14.99,-19.68 L17.49,-19.92 L20.00,-20.00 L22.51,-19.92 L25.01,-19.68 L27.50,-19.29 L29.95,-18.74 L32.36,-18.04 L34.72,-17.19 L37.03,-16.19 L39.27,-15.05 L41.43,-13.77 L43.51,-12.36 L45.50,-10.82 L47.38,-9.16 L49.16,-7.38 L50.82,-5.50 L52.36,-3.51 L53.77,-1.43 L55.05,0.73 L56.19,2.97 L57.19,5.28 L58.04,7.64 L58.74,10.05 L59.29,12.50 L59.68,14.99 L59.92,17.49 L60.00,20.00"]
+      RenderSVGContainer {g} at (14,108) size 417x293 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-5.00,100.00)}]
+        RenderSVGContainer {g} at (14,108) size 141x44
+          RenderPath {rect} at (14,119) size 42x32 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="pattern1"]}] [data="M20.00,20.00 L60.00,20.00 L60.00,50.00 L20.00,50.00 L20.00,20.00"]
+          RenderSVGContainer {g} at (15,108) size 140x44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,20.00)}]
+            RenderSVGText {text} at (0,-12) size 41x13 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 41x13
+                chunk 1 text run 1 at (0.00,-2.00) startOffset 0 endOffset 9 width 41.00: "#pattern1"
+            RenderSVGContainer {g} at (65,119) size 90x33 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,9.00)}]
+              RenderSVGText {text} at (0,-10) size 90x13 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 90x13
+                  chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 20 width 90.00: "patternUnits=default"
+              RenderSVGText {text} at (0,0) size 90x13 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 90x13
+                  chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 20 width 90.00: "contentUnits=default"
+              RenderSVGText {text} at (0,10) size 49x13 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 49x13
+                  chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 10 width 49.00: "no viewbox"
+        RenderSVGContainer {g} at (14,158) size 197x43
+          RenderPath {rect} at (14,169) size 42x32 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="pattern2"]}] [data="M20.00,70.00 L60.00,70.00 L60.00,100.00 L20.00,100.00 L20.00,70.00"]
+          RenderSVGContainer {g} at (15,158) size 196x34 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,70.00)}]
+            RenderSVGText {text} at (0,-12) size 41x13 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 41x13
+                chunk 1 text run 1 at (0.00,-2.00) startOffset 0 endOffset 9 width 41.00: "#pattern2"
+            RenderSVGContainer {g} at (65,169) size 146x23 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,9.00)}]
+              RenderSVGText {text} at (0,-10) size 146x13 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 146x13
+                  chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 30 width 146.00: "patternUnits=objectBoundingBox"
+              RenderSVGText {text} at (0,0) size 90x13 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 90x13
+                  chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 20 width 90.00: "contentUnits=default"
+        RenderSVGContainer {g} at (14,208) size 183x44
+          RenderPath {rect} at (14,219) size 42x32 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="pattern3"]}] [data="M20.00,120.00 L60.00,120.00 L60.00,150.00 L20.00,150.00 L20.00,120.00"]
+          RenderSVGContainer {g} at (15,208) size 182x44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,120.00)}]
+            RenderSVGText {text} at (0,-12) size 41x13 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 41x13
+                chunk 1 text run 1 at (0.00,-2.00) startOffset 0 endOffset 9 width 41.00: "#pattern3"
+            RenderSVGContainer {g} at (65,219) size 132x33 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,9.00)}]
+              RenderSVGText {text} at (0,-10) size 132x13 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 132x13
+                  chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 27 width 132.00: "patternUnits=userSpaceOnUse"
+              RenderSVGText {text} at (0,0) size 90x13 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 90x13
+                  chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 20 width 90.00: "contentUnits=default"
+              RenderSVGText {text} at (0,10) size 70x13 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 70x13
+                  chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 16 width 70.00: "overflow=visible"
+        RenderSVGContainer {g} at (14,258) size 197x44
+          RenderPath {rect} at (14,269) size 42x32 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="pattern4"]}] [data="M20.00,170.00 L60.00,170.00 L60.00,200.00 L20.00,200.00 L20.00,170.00"]
+          RenderSVGContainer {g} at (15,258) size 196x44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,170.00)}]
+            RenderSVGText {text} at (0,-12) size 41x13 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 41x13
+                chunk 1 text run 1 at (0.00,-2.00) startOffset 0 endOffset 9 width 41.00: "#pattern4"
+            RenderSVGContainer {g} at (65,269) size 146x33 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,9.00)}]
+              RenderSVGText {text} at (0,-10) size 90x13 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 90x13
+                  chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 20 width 90.00: "patternUnits=default"
+              RenderSVGText {text} at (0,0) size 146x13 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 146x13
+                  chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 30 width 146.00: "contentUnits=objectBoundingBox"
+              RenderSVGText {text} at (0,10) size 70x13 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 70x13
+                  chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 16 width 70.00: "overflow=visible"
+        RenderSVGContainer {g} at (14,308) size 197x43
+          RenderPath {rect} at (14,319) size 42x32 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="pattern5"]}] [data="M20.00,220.00 L60.00,220.00 L60.00,250.00 L20.00,250.00 L20.00,220.00"]
+          RenderSVGContainer {g} at (15,308) size 196x34 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,220.00)}]
+            RenderSVGText {text} at (0,-12) size 41x13 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 41x13
+                chunk 1 text run 1 at (0.00,-2.00) startOffset 0 endOffset 9 width 41.00: "#pattern5"
+            RenderSVGContainer {g} at (65,319) size 146x23 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,9.00)}]
+              RenderSVGText {text} at (0,-10) size 146x13 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 146x13
+                  chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 30 width 146.00: "patternUnits=objectBoundingBox"
+              RenderSVGText {text} at (0,0) size 146x13 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 146x13
+                  chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 30 width 146.00: "contentUnits=objectBoundingBox"
+        RenderSVGContainer {g} at (14,358) size 197x43
+          RenderPath {rect} at (14,369) size 42x32 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="pattern6"]}] [data="M20.00,270.00 L60.00,270.00 L60.00,300.00 L20.00,300.00 L20.00,270.00"]
+          RenderSVGContainer {g} at (15,358) size 196x34 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,270.00)}]
+            RenderSVGText {text} at (0,-12) size 41x13 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 41x13
+                chunk 1 text run 1 at (0.00,-2.00) startOffset 0 endOffset 9 width 41.00: "#pattern6"
+            RenderSVGContainer {g} at (65,369) size 146x23 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,9.00)}]
+              RenderSVGText {text} at (0,-10) size 132x13 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 132x13
+                  chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 27 width 132.00: "patternUnits=userSpaceOnUse"
+              RenderSVGText {text} at (0,0) size 146x13 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 146x13
+                  chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 30 width 146.00: "contentUnits=objectBoundingBox"
+        RenderSVGContainer {g} at (219,108) size 203x44
+          RenderPath {rect} at (219,119) size 42x32 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="pattern7"]}] [data="M225.00,20.00 L265.00,20.00 L265.00,50.00 L225.00,50.00 L225.00,20.00"]
+          RenderSVGContainer {g} at (220,108) size 202x44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(225.00,20.00)}]
+            RenderSVGText {text} at (0,-12) size 41x13 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 41x13
+                chunk 1 text run 1 at (0.00,-2.00) startOffset 0 endOffset 9 width 41.00: "#pattern7"
+            RenderSVGContainer {g} at (270,119) size 152x33 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,9.00)}]
+              RenderSVGText {text} at (0,-10) size 132x13 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 132x13
+                  chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 27 width 132.00: "patternUnits=userSpaceOnUse"
+              RenderSVGText {text} at (0,0) size 146x13 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 146x13
+                  chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 30 width 146.00: "contentUnits=objectBoundingBox"
+              RenderSVGText {text} at (0,10) size 152x13 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 152x13
+                  chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 32 width 152.00: "viewBox preserveAspectRatio=none"
+        RenderSVGContainer {g} at (219,158) size 212x43
+          RenderPath {rect} at (219,169) size 42x32 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="pattern8"]}] [data="M225.00,70.00 L265.00,70.00 L265.00,100.00 L225.00,100.00 L225.00,70.00"]
+          RenderSVGContainer {g} at (220,158) size 211x34 [transform={m=((1.00,0.00)(0.00,1.00)) t=(225.00,70.00)}]
+            RenderSVGText {text} at (0,-12) size 41x13 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 41x13
+                chunk 1 text run 1 at (0.00,-2.00) startOffset 0 endOffset 9 width 41.00: "#pattern8"
+            RenderSVGContainer {g} at (270,169) size 161x23 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,9.00)}]
+              RenderSVGText {text} at (0,-10) size 99x13 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 99x13
+                  chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 22 width 99.00: "same as pattern#7 with"
+              RenderSVGText {text} at (0,0) size 161x13 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 161x13
+                  chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 33 width 161.00: "preserveAspectRatio=xMinYmin meet"
+        RenderSVGContainer {g} at (219,208) size 211x43
+          RenderPath {rect} at (219,219) size 42x32 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="pattern9"]}] [data="M225.00,120.00 L265.00,120.00 L265.00,150.00 L225.00,150.00 L225.00,120.00"]
+          RenderSVGContainer {g} at (220,208) size 210x34 [transform={m=((1.00,0.00)(0.00,1.00)) t=(225.00,120.00)}]
+            RenderSVGText {text} at (0,-12) size 41x13 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 41x13
+                chunk 1 text run 1 at (0.00,-2.00) startOffset 0 endOffset 9 width 41.00: "#pattern9"
+            RenderSVGContainer {g} at (270,219) size 160x23 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,9.00)}]
+              RenderSVGText {text} at (0,-10) size 160x13 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 160x13
+                  chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 34 width 160.00: "preserveAspectRatio=xMinYmin slice"
+              RenderSVGText {text} at (0,0) size 70x13 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 70x13
+                  chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 16 width 70.00: "overflow=visible"
+    RenderSVGContainer {use} at (0,0) size 0x0

@@ -1,3 +1,84 @@
+2010-09-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Add platform specific expected results for new passing tests.
+        Compared to Mac png files and Mac expected files.
+
+        * platform/qt/fast/css/percent-top-relative-container-height-unspecified-expected.checksum: Added.
+        * platform/qt/fast/css/percent-top-relative-container-height-unspecified-expected.png: Added.
+        * platform/qt/fast/css/percent-top-relative-container-height-unspecified-expected.txt: Added.
+        * platform/qt/fast/forms/placeholder-stripped-expected.checksum: Added.
+        * platform/qt/fast/forms/placeholder-stripped-expected.png: Added.
+        * platform/qt/fast/forms/placeholder-stripped-expected.txt: Added.
+        * platform/qt/fast/gradients/radial-centered-expected.checksum: Added.
+        * platform/qt/fast/gradients/radial-centered-expected.png: Added.
+        * platform/qt/fast/gradients/radial-centered-expected.txt: Added.
+        * platform/qt/fast/multicol/float-paginate-expected.checksum: Added.
+        * platform/qt/fast/multicol/float-paginate-expected.png: Added.
+        * platform/qt/fast/multicol/float-paginate-expected.txt: Added.
+        * platform/qt/fast/multicol/paginate-block-replaced-expected.checksum: Added.
+        * platform/qt/fast/multicol/paginate-block-replaced-expected.png: Added.
+        * platform/qt/fast/multicol/paginate-block-replaced-expected.txt: Added.
+        * platform/qt/fast/repaint/multicol-repaint-expected.checksum: Added.
+        * platform/qt/fast/repaint/multicol-repaint-expected.png: Added.
+        * platform/qt/fast/repaint/multicol-repaint-expected.txt: Added.
+        * platform/qt/fast/repaint/view-background-from-body-1-expected.checksum: Copied from LayoutTests/platform/mac/fast/repaint/view-background-from-body-1-expected.checksum.
+        * platform/qt/fast/repaint/view-background-from-body-1-expected.png: Copied from LayoutTests/platform/qt/svg/custom/use-property-synchronization-crash-expected.png.
+        * platform/qt/fast/repaint/view-background-from-body-1-expected.txt: Copied from LayoutTests/platform/gtk/fast/repaint/view-background-from-body-1-expected.txt.
+        * platform/qt/fast/repaint/view-background-from-body-2-expected.checksum: Copied from LayoutTests/platform/mac/fast/repaint/view-background-from-body-2-expected.checksum.
+        * platform/qt/fast/repaint/view-background-from-body-2-expected.png: Added.
+        * platform/qt/fast/repaint/view-background-from-body-2-expected.txt: Copied from LayoutTests/platform/gtk/fast/repaint/view-background-from-body-2-expected.txt.
+        * platform/qt/svg/batik/paints/patternRegions-positioned-objects-expected.checksum: Added.
+        * platform/qt/svg/batik/paints/patternRegions-positioned-objects-expected.png: Added.
+        * platform/qt/svg/batik/paints/patternRegions-positioned-objects-expected.txt: Added.
+        * platform/qt/svg/css/composite-shadow-text-expected.checksum: Added.
+        * platform/qt/svg/css/composite-shadow-text-expected.png: Added.
+        * platform/qt/svg/css/composite-shadow-text-expected.txt: Added.
+        * platform/qt/svg/custom/bug45331-expected.checksum: Added.
+        * platform/qt/svg/custom/bug45331-expected.png: Added.
+        * platform/qt/svg/custom/bug45331-expected.txt: Added.
+        * platform/qt/svg/custom/getscreenctm-in-scrollable-div-area-expected.checksum: Added.
+        * platform/qt/svg/custom/getscreenctm-in-scrollable-div-area-expected.png: Added.
+        * platform/qt/svg/custom/getscreenctm-in-scrollable-div-area-expected.txt: Added.
+        * platform/qt/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.checksum: Added.
+        * platform/qt/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.png: Added.
+        * platform/qt/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.txt: Added.
+        * platform/qt/svg/custom/getscreenctm-in-scrollable-svg-area-expected.checksum: Added.
+        * platform/qt/svg/custom/getscreenctm-in-scrollable-svg-area-expected.png: Added.
+        * platform/qt/svg/custom/getscreenctm-in-scrollable-svg-area-expected.txt: Added.
+        * platform/qt/svg/custom/marker-empty-path-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/marker-empty-path-expected.checksum.
+        * platform/qt/svg/custom/marker-empty-path-expected.png: Added.
+        * platform/qt/svg/custom/marker-empty-path-expected.txt: Added.
+        * platform/qt/svg/custom/mouse-move-on-svg-container-expected.checksum: Added.
+        * platform/qt/svg/custom/mouse-move-on-svg-container-expected.png: Added.
+        * platform/qt/svg/custom/mouse-move-on-svg-container-expected.txt: Added.
+        * platform/qt/svg/custom/mouse-move-on-svg-container-standalone-expected.checksum: Added.
+        * platform/qt/svg/custom/mouse-move-on-svg-container-standalone-expected.png: Added.
+        * platform/qt/svg/custom/mouse-move-on-svg-container-standalone-expected.txt: Added.
+        * platform/qt/svg/custom/mouse-move-on-svg-root-expected.checksum: Added.
+        * platform/qt/svg/custom/mouse-move-on-svg-root-expected.png: Added.
+        * platform/qt/svg/custom/mouse-move-on-svg-root-expected.txt: Added.
+        * platform/qt/svg/custom/mouse-move-on-svg-root-standalone-expected.checksum: Added.
+        * platform/qt/svg/custom/mouse-move-on-svg-root-standalone-expected.png: Added.
+        * platform/qt/svg/custom/mouse-move-on-svg-root-standalone-expected.txt: Added.
+        * platform/qt/svg/custom/non-scaling-stroke-markers-expected.checksum: Copied from LayoutTests/platform/mac/svg/custom/non-scaling-stroke-markers-expected.checksum.
+        * platform/qt/svg/custom/non-scaling-stroke-markers-expected.png: Added.
+        * platform/qt/svg/custom/non-scaling-stroke-markers-expected.txt: Added.
+        * platform/qt/svg/custom/pattern-incorrect-tiling-expected.checksum: Added.
+        * platform/qt/svg/custom/pattern-incorrect-tiling-expected.png: Added.
+        * platform/qt/svg/custom/pattern-incorrect-tiling-expected.txt: Added.
+        * platform/qt/svg/custom/pattern-no-pixelation-expected.checksum: Added.
+        * platform/qt/svg/custom/pattern-no-pixelation-expected.png: Added.
+        * platform/qt/svg/custom/pattern-no-pixelation-expected.txt: Added.
+        * platform/qt/svg/custom/use-font-face-crash-expected.checksum: Added.
+        * platform/qt/svg/custom/use-font-face-crash-expected.png: Added.
+        * platform/qt/svg/custom/use-font-face-crash-expected.txt: Added.
+        * platform/qt/svg/transforms/text-with-mask-with-svg-transform-expected.checksum: Added.
+        * platform/qt/svg/transforms/text-with-mask-with-svg-transform-expected.png: Added.
+        * platform/qt/svg/transforms/text-with-mask-with-svg-transform-expected.txt: Added.
+        * platform/qt/transitions/svg-text-shadow-transition-expected.checksum: Added.
+        * platform/qt/transitions/svg-text-shadow-transition-expected.png: Added.
+        * platform/qt/transitions/svg-text-shadow-transition-expected.txt: Added.
+
 2010-09-07  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.

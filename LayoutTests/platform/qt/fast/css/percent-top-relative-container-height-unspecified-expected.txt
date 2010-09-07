@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x23 [border: (1px solid #FF0000)]
+      RenderBlock {DIV} at (0,23) size 784x23 [border: (1px solid #FF0000)]
+layer at (9,9) size 782x21
+  RenderBlock (relative positioned) {DIV} at (1,1) size 782x21
+    RenderText {#text} at (0,0) size 655x21
+      text run at (0,0) width 655: "This text with top percent relative and containing block auto should appear inside the red border"
+layer at (9,32) size 782x21
+  RenderBlock (relative positioned) {DIV} at (1,1) size 782x21
+    RenderText {#text} at (0,0) size 681x21
+      text run at (0,0) width 681: "This text with bottom percent relative and containing block auto should appear inside the red border"

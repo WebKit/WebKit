@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 72x172
+    RenderSVGContainer {g} at (0,0) size 72x172
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGResourceMarker {marker} [id="testMarker"] [markerUnits=strokeWidth] [ref at (0,0)] [angle=0.00]
+          RenderPath {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L96.00,0.00 L96.00,96.00 L0.00,96.00 L0.00,0.00"]
+      RenderPath {path} at (0,0) size 72x72 [fill={[type=SOLID] [color=#000000]}] [end marker=testMarker] [data="M0.00,0.00"]
+      RenderPath {line} at (0,100) size 72x72 [fill={[type=SOLID] [color=#000000]}] [end marker=testMarker] [data="M0.00,100.00"]
