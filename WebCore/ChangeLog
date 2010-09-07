@@ -1,3 +1,18 @@
+2010-09-07  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Regression in JPEG texture uploads on Mac OS X
+        https://bugs.webkit.org/show_bug.cgi?id=45316
+
+        Fixed regression introduced in
+        https://bugs.webkit.org/show_bug.cgi?id=44566 . Added regression
+        test covering this case to gl-teximage.html in Khronos repository
+        and synced test with WebKit's version.
+
+        * platform/graphics/cg/GraphicsContext3DCG.cpp:
+        (WebCore::GraphicsContext3D::getImageData):
+
 2010-09-07  Martin Robinson  <mrobinson@igalia.com>
 
         Add rendering/ColumnInfo.h to the sources list.

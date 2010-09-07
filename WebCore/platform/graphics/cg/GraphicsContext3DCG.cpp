@@ -119,6 +119,7 @@ bool GraphicsContext3D::getImageData(Image* image,
         default:
             return false;
         }
+        break;
     case kCGImageAlphaNone:
         switch (componentsPerPixel) {
         case 1:

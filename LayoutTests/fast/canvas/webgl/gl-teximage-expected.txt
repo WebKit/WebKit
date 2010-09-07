@@ -62,6 +62,10 @@ PASS pixel 255, 8 should be 0, 255, 0, 255 was 0, 255, 0, 255
 PASS pixel 0, 0 should be 0, 0, 0, 255 was 0, 0, 0, 255
 PASS pixel 128, 0 should be 0, 0, 255, 255 was 0, 0, 255, 255
 PASS pixel 255, 0 should be 255, 0, 0, 255 was 255, 0, 0, 255
+
+check uploading of images with no alpha channel works
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS pixel 128, 8 should be within 10 units of 0, 0, 255, 255 was 0, 0, 254, 255
 PASS getError was expected value: NO_ERROR : Should be no errors
 
 PASS successfullyParsed is true
