@@ -67,7 +67,7 @@ enum Kind {
     SetToolTip,
     TakeFocus,
     WillSubmitForm,
-    
+
     BackForwardAddItem,
     BackForwardGoToItem,
     BackForwardBackItem,
@@ -76,6 +76,9 @@ enum Kind {
     BackForwardItemAtIndex,
     BackForwardBackListCount,
     BackForwardForwardListCount,
+
+    RegisterEditCommandForUndo,
+    ClearAllEditCommands,
 
 #if USE(ACCELERATED_COMPOSITING)
     DidChangeAcceleratedCompositing,

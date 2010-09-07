@@ -23,41 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageClient_h
-#define PageClient_h
-
-#include <wtf/Forward.h>
-
-namespace WebCore {
-    class Cursor;
-}
+#include "WebEditCommand.h"
 
 namespace WebKit {
 
-class WebEditCommandProxy;
+static uint64_t generateCommandID()
+{
+    static uint64_t uniqueCommandID = 1;
+    return uniqueCommandID++;
+}
 
-class PageClient {
-public:
-    virtual ~PageClient() { }
-
-    virtual void processDidExit() = 0;
-    virtual void processDidRevive() = 0;
-
-    virtual void takeFocus(bool direction) = 0;
-    virtual void toolTipChanged(const WTF::String&, const WTF::String&) = 0;
-
-    virtual void setCursor(const WebCore::Cursor&) = 0;
-
-    enum UndoOrRedo { Undo, Redo };
-    virtual void registerEditCommand(PassRefPtr<WebEditCommandProxy>, UndoOrRedo) = 0;
-    virtual void clearAllEditCommands() = 0;
-
-#if USE(ACCELERATED_COMPOSITING)
-    virtual void pageDidEnterAcceleratedCompositing() = 0;
-    virtual void pageDidLeaveAcceleratedCompositing() = 0;
-#endif
-};
+PassRefPtr<WebEditCommand> WebEditCommand::create(PassRefPtr<WebCore::EditCommand> command)
+{
+    return adoptRef(new WebEditCommand(command, generateCommandID()));
+}
 
 } // namespace WebKit
-
-#endif // PageClient_h

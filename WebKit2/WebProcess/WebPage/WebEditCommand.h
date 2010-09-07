@@ -23,41 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageClient_h
-#define PageClient_h
+#ifndef WebEditCommand_h
+#define WebEditCommand_h
 
-#include <wtf/Forward.h>
-
-namespace WebCore {
-    class Cursor;
-}
+#include <WebCore/EditCommand.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebKit {
 
-class WebEditCommandProxy;
-
-class PageClient {
+class WebEditCommand : public RefCounted<WebEditCommand> {
 public:
-    virtual ~PageClient() { }
+    static PassRefPtr<WebEditCommand> create(PassRefPtr<WebCore::EditCommand>);
 
-    virtual void processDidExit() = 0;
-    virtual void processDidRevive() = 0;
+    WebCore::EditCommand* command() const { return m_command.get(); }
+    uint64_t commandID() const { return m_commandID; }
 
-    virtual void takeFocus(bool direction) = 0;
-    virtual void toolTipChanged(const WTF::String&, const WTF::String&) = 0;
+private:
+    WebEditCommand(PassRefPtr<WebCore::EditCommand> command, uint64_t commandID)
+        : m_command(command)
+        , m_commandID(commandID)
+    {
+    }
 
-    virtual void setCursor(const WebCore::Cursor&) = 0;
-
-    enum UndoOrRedo { Undo, Redo };
-    virtual void registerEditCommand(PassRefPtr<WebEditCommandProxy>, UndoOrRedo) = 0;
-    virtual void clearAllEditCommands() = 0;
-
-#if USE(ACCELERATED_COMPOSITING)
-    virtual void pageDidEnterAcceleratedCompositing() = 0;
-    virtual void pageDidLeaveAcceleratedCompositing() = 0;
-#endif
+    RefPtr<WebCore::EditCommand> m_command;
+    uint64_t m_commandID;
 };
 
 } // namespace WebKit
 
-#endif // PageClient_h
+#endif // WebEditCommand_h

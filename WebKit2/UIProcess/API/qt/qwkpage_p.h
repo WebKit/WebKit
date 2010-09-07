@@ -51,6 +51,8 @@ public:
     virtual void setCursor(const WebCore::Cursor&);
     virtual void takeFocus(bool direction) { }
     virtual void toolTipChanged(const WTF::String&, const WTF::String&);
+    virtual void registerEditCommand(PassRefPtr<WebKit::WebEditCommandProxy>, UndoOrRedo);
+    virtual void clearAllEditCommands();
 
     void paint(QPainter* painter, QRect);
 

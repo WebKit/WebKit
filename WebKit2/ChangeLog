@@ -1,3 +1,105 @@
+2010-09-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Add support for Undo/Redo
+        <rdar://problem/7660519>
+        https://bugs.webkit.org/show_bug.cgi?id=42781
+
+        Adds platform independent parts of Undo/Redo support and the mac
+        platform support.
+
+        To work around the common assumption made by platforms, that a redo
+        item will be added synchronously while an undo is in progress, we
+        ignore the calls from WebCore to add redo items, and instead add add
+        them after telling WebCore to unapply the EditCommand. We similarly
+        need to ignore undos, that take place during a redo, and force the
+        addition ourselves.
+
+        * Shared/CoreIPCSupport/WebPageMessageKinds.h:
+        * Shared/CoreIPCSupport/WebPageProxyMessageKinds.h:
+        Add new messages.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (-[WebEditCommandObjC initWithWebEditCommandProxy:WebKit::]):
+        (-[WebEditCommandObjC WebKit::]):
+        (-[WebEditorUndoTargetObjC undoEditing:]):
+        (-[WebEditorUndoTargetObjC redoEditing:]):
+        (WebKit::PageClientImpl::PageClientImpl):
+        (WebKit::nameForEditAction):
+        (WebKit::PageClientImpl::registerEditCommand):
+        (WebKit::PageClientImpl::clearAllEditCommands):
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::registerEditCommand):
+        (QWKPagePrivate::clearAllEditCommands):
+        * UIProcess/API/qt/qwkpage_p.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::registerEditCommand):
+        (WebKit::WebView::clearAllEditCommands):
+        * UIProcess/win/WebView.h:
+        Add platform specific hooks for undo/redo.
+
+        * UIProcess/WebEditCommandProxy.cpp: Added.
+        (WebKit::WebEditCommandProxy::WebEditCommandProxy):
+        (WebKit::WebEditCommandProxy::~WebEditCommandProxy):
+        (WebKit::WebEditCommandProxy::unapply):
+        (WebKit::WebEditCommandProxy::reapply):
+        * UIProcess/WebEditCommandProxy.h: Added.
+        (WebKit::WebEditCommandProxy::create):
+        (WebKit::WebEditCommandProxy::commandID):
+        (WebKit::WebEditCommandProxy::editAction):
+        (WebKit::WebEditCommandProxy::invalidate):
+        A proxy for the WebEditCommands in the WebProcess. These are owned
+        by the platform back/forward list, with a weak reference back to the
+        WebPageProxy (which holds a weakset of live WebEditCommandProxys).
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::didReceiveMessage):
+        (WebKit::WebPageProxy::registerEditCommandForUndo):
+        (WebKit::WebPageProxy::clearAllEditCommands):
+        (WebKit::WebPageProxy::registerEditCommandForRedo):
+        (WebKit::WebPageProxy::addEditCommand):
+        (WebKit::WebPageProxy::removeEditCommand):
+        (WebKit::WebPageProxy::processDidExit):
+        * UIProcess/WebPageProxy.h:
+        Forward messages.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::registerCommandForUndo):
+        (WebKit::WebEditorClient::registerCommandForRedo):
+        (WebKit::WebEditorClient::clearUndoRedoOperations):
+        Send undo/redo registration and clearing to the UIProcess.
+
+        * WebProcess/WebPage/WebEditCommand.cpp: Added.
+        (WebKit::generateCommandID):
+        (WebKit::WebEditCommand::WebEditCommand):
+        * WebProcess/WebPage/WebEditCommand.h: Added.
+        (WebKit::WebEditCommand::create):
+        (WebKit::WebEditCommand::command):
+        (WebKit::WebEditCommand::commandID):
+        Wrapper for WebCore::EditCommand, with an added unique ID.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::webEditCommand):
+        (WebKit::WebPage::addWebEditCommand):
+        (WebKit::WebPage::removeWebEditCommand):
+        (WebKit::WebPage::unapplyEditCommand):
+        (WebKit::WebPage::reapplyEditCommand):
+        (WebKit::WebPage::didRemoveEditCommand):
+        (WebKit::WebPage::didReceiveMessage):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::isInRedo):
+        Forward messages.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        Add new files.
+
 2010-09-07  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Darin Adler.

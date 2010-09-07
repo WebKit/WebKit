@@ -30,6 +30,8 @@
 
 #include "WebFrameLoaderClient.h"
 #include "WebPage.h"
+#include "WebPageProxyMessageKinds.h"
+#include "WebProcess.h"
 #include <WebCore/EditCommand.h>
 #include <WebCore/Frame.h>
 #include <WebCore/HTMLInputElement.h>
@@ -196,19 +198,28 @@ void WebEditorClient::didSetSelectionTypesForPasteboard()
     notImplemented();
 }
 
-void WebEditorClient::registerCommandForUndo(PassRefPtr<EditCommand>)
+void WebEditorClient::registerCommandForUndo(PassRefPtr<EditCommand> command)
 {
-    notImplemented();
+    // FIXME: Add assertion that the command being reapplied is the same command that is
+    // being passed to us.
+    if (m_page->isInRedo())
+        return;
+
+    RefPtr<WebEditCommand> webCommand = WebEditCommand::create(command);
+    m_page->addWebEditCommand(webCommand->commandID(), webCommand.get());
+    uint32_t editAction = static_cast<uint32_t>(webCommand->command()->editingAction());
+
+    WebProcess::shared().connection()->send(WebPageProxyMessage::RegisterEditCommandForUndo, m_page->pageID(),
+                                            CoreIPC::In(webCommand->commandID(), editAction));
 }
 
 void WebEditorClient::registerCommandForRedo(PassRefPtr<EditCommand>)
 {
-    notImplemented();
 }
 
 void WebEditorClient::clearUndoRedoOperations()
 {
-    notImplemented();
+    WebProcess::shared().connection()->send(WebPageProxyMessage::ClearAllEditCommands, m_page->pageID(), CoreIPC::In());
 }
 
 bool WebEditorClient::canUndo() const

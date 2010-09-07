@@ -569,6 +569,14 @@ void WebView::setCursor(const WebCore::Cursor& cursor)
     ::SetCursor(platformCursor);
 }
 
+void WebView::registerEditCommand(PassRefPtr<WebEditCommandProxy>, UndoOrRedo)
+{
+}
+
+void WebView::clearAllEditCommands()
+{
+}
+
 #if USE(ACCELERATED_COMPOSITING)
 void WebView::pageDidEnterAcceleratedCompositing()
 {

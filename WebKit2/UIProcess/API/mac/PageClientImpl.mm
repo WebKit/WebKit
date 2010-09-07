@@ -28,12 +28,66 @@
 #import "WKAPICast.h"
 #import "WKStringCF.h"
 #import "WKViewInternal.h"
+#import "WebEditCommandProxy.h"
 #import <WebCore/Cursor.h>
 #import <WebCore/FoundationExtras.h>
 #import <wtf/PassOwnPtr.h>
 #import <wtf/text/WTFString.h>
 
 using namespace WebCore;
+
+@interface WebEditCommandObjC : NSObject
+{
+    RefPtr<WebKit::WebEditCommandProxy> m_command;   
+}
+
+- (id)initWithWebEditCommandProxy:(PassRefPtr<WebKit::WebEditCommandProxy>)command;
+- (WebKit::WebEditCommandProxy*)command;
+
+@end
+
+@implementation WebEditCommandObjC
+
+- (id)initWithWebEditCommandProxy:(PassRefPtr<WebKit::WebEditCommandProxy>)command
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    m_command = command;
+    return self;
+}
+
+- (WebKit::WebEditCommandProxy*)command
+{
+    return m_command.get();
+}
+
+@end
+
+@interface WebEditorUndoTargetObjC : NSObject
+
+- (void)undoEditing:(id)arg;
+- (void)redoEditing:(id)arg;
+
+@end
+
+@implementation WebEditorUndoTargetObjC
+
+- (void)undoEditing:(id)sender
+{
+    ASSERT([sender isKindOfClass:[WebEditCommandObjC class]]);
+    [sender command]->unapply();
+}
+
+- (void)redoEditing:(id)sender
+{
+    ASSERT([sender isKindOfClass:[WebEditCommandObjC class]]);
+    [sender command]->reapply();
+}
+
+@end
+
 
 namespace WebKit {
 
@@ -49,6 +103,7 @@ PassOwnPtr<PageClientImpl> PageClientImpl::create(WKView* wkView)
 
 PageClientImpl::PageClientImpl(WKView* wkView)
     : m_wkView(wkView)
+    , m_undoTarget(AdoptNS, [[WebEditorUndoTargetObjC alloc] init])
 {
 }
 
@@ -79,6 +134,71 @@ void PageClientImpl::toolTipChanged(const String& oldToolTip, const String& newT
 void PageClientImpl::setCursor(const WebCore::Cursor& cursor)
 {
     [m_wkView _setCursor:cursor.platformCursor()];
+}
+
+static NSString* nameForEditAction(EditAction editAction)
+{
+    // FIXME: Use localized strings.
+    // FIXME: Move this to a platform independent location.
+
+    switch (editAction) {
+    case EditActionUnspecified: return nil;
+    case EditActionSetColor: return @"Set Color";
+    case EditActionSetBackgroundColor: return @"Set Background Color";
+    case EditActionTurnOffKerning: return @"Turn Off Kerning";
+    case EditActionTightenKerning: return @"Tighten Kerning";
+    case EditActionLoosenKerning: return @"Loosen Kerning";
+    case EditActionUseStandardKerning: return @"Use Standard Kerning";
+    case EditActionTurnOffLigatures: return @"Turn Off Ligatures";
+    case EditActionUseStandardLigatures: return @"Use Standard Ligatures";
+    case EditActionUseAllLigatures: return @"Use All Ligatures";
+    case EditActionRaiseBaseline: return @"Raise Baseline";
+    case EditActionLowerBaseline: return @"Lower Baseline";
+    case EditActionSetTraditionalCharacterShape: return @"Set Traditional Character Shape";
+    case EditActionSetFont: return @"Set Font";
+    case EditActionChangeAttributes: return @"Change Attributes";
+    case EditActionAlignLeft: return @"Align Left";
+    case EditActionAlignRight: return @"Align Right";
+    case EditActionCenter: return @"Center";
+    case EditActionJustify: return @"Justify";
+    case EditActionSetWritingDirection: return @"Set Writing Direction";
+    case EditActionSubscript: return @"Subscript";
+    case EditActionSuperscript: return @"Superscript";
+    case EditActionUnderline: return @"Underline";
+    case EditActionOutline: return @"Outline";
+    case EditActionUnscript: return @"Unscript";
+    case EditActionDrag: return @"Drag";
+    case EditActionCut: return @"Cut";
+    case EditActionPaste: return @"Paste";
+    case EditActionPasteFont: return @"Paste Font";
+    case EditActionPasteRuler: return @"Paste Ruler";
+    case EditActionTyping: return @"Typing";
+    case EditActionCreateLink: return @"Create Link";
+    case EditActionUnlink: return @"Unlink";
+    case EditActionInsertList: return @"Insert List";
+    case EditActionFormatBlock: return @"Formatting";
+    case EditActionIndent: return @"Indent";
+    case EditActionOutdent: return @"Outdent";
+    }
+    return nil;
+}
+
+void PageClientImpl::registerEditCommand(PassRefPtr<WebEditCommandProxy> prpCommand, UndoOrRedo undoOrRedo)
+{
+    RefPtr<WebEditCommandProxy> command = prpCommand;
+
+    RetainPtr<WebEditCommandObjC> commandObjC(AdoptNS, [[WebEditCommandObjC alloc] initWithWebEditCommandProxy:command]);
+    NSString *actionName = nameForEditAction(command->editAction());
+
+    NSUndoManager *undoManager = [m_wkView undoManager];
+    [undoManager registerUndoWithTarget:m_undoTarget.get() selector:((undoOrRedo == Undo) ? @selector(undoEditing:) : @selector(redoEditing:)) object:commandObjC.get()];
+    if (actionName)
+        [undoManager setActionName:actionName];
+}
+
+void PageClientImpl::clearAllEditCommands()
+{
+    [[m_wkView undoManager] removeAllActionsWithTarget:m_undoTarget.get()];
 }
 
 #if USE(ACCELERATED_COMPOSITING)

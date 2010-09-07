@@ -35,6 +35,7 @@ namespace WebPageMessage {
 enum Kind {
     Close,
     DidReceivePolicyDecision,
+    DidRemoveEditCommand,
     GetRenderTreeExternalRepresentation,
     GoBack,
     GoForward,
@@ -44,6 +45,7 @@ enum Kind {
     LoadURLRequest,
     MouseEvent,
     PreferencesDidChange,
+    ReapplyEditCommand,
     Reload,
     RunJavaScriptInMainFrame,
     SetActive,
@@ -52,6 +54,7 @@ enum Kind {
     SetIsInWindow,
     StopLoading,
     TryClose,
+    UnapplyEditCommand,
     WheelEvent
 #if ENABLE(TOUCH_EVENTS)
     , TouchEvent

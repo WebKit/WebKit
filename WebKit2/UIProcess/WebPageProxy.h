@@ -37,8 +37,10 @@
 #include "WebLoaderClient.h"
 #include "WebPolicyClient.h"
 #include "WebUIClient.h"
+#include <WebCore/EditAction.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -65,6 +67,7 @@ class PageClient;
 class WebBackForwardList;
 class WebBackForwardListItem;
 class WebData;
+class WebEditCommandProxy;
 class WebKeyboardEvent;
 class WebMouseEvent;
 class WebPageNamespace;
@@ -162,6 +165,11 @@ public:
     void didLeaveAcceleratedCompositing();
 #endif
 
+    void addEditCommand(WebEditCommandProxy*);
+    void removeEditCommand(WebEditCommandProxy*);
+    void registerEditCommandForUndo(PassRefPtr<WebEditCommandProxy>);
+    void registerEditCommandForRedo(PassRefPtr<WebEditCommandProxy>);
+
     WebProcessProxy* process() const;
     WebPageNamespace* pageNamespace() const { return m_pageNamespace.get(); }
 
@@ -210,8 +218,13 @@ private:
     WTF::String runJavaScriptPrompt(WebFrameProxy* frame, const WTF::String&, const WTF::String&);
     void contentsSizeChanged(WebFrameProxy*, const WebCore::IntSize&);
 
+    // Back/Forward list management
     void addItemToBackForwardList(WebBackForwardListItem*);
     void goToItemInBackForwardList(WebBackForwardListItem*);
+
+    // Undo management
+    void registerEditCommandForUndo(uint64_t commandID, WebCore::EditAction);
+    void clearAllEditCommands();
 
     void takeFocus(bool direction);
     void setToolTip(const WTF::String&);
@@ -238,6 +251,8 @@ private:
 
     HashMap<uint64_t, RefPtr<ScriptReturnValueCallback> > m_scriptReturnValueCallbacks;
     HashMap<uint64_t, RefPtr<RenderTreeExternalRepresentationCallback> > m_renderTreeExternalRepresentationCallbacks;
+
+    HashSet<WebEditCommandProxy*> m_editCommandSet;
 
     double m_estimatedProgress;
 

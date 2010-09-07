@@ -23,41 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageClient_h
-#define PageClient_h
+#ifndef WebEditCommandProxy_h
+#define WebEditCommandProxy_h
 
-#include <wtf/Forward.h>
-
-namespace WebCore {
-    class Cursor;
-}
+#include <WebCore/EditAction.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebKit {
 
-class WebEditCommandProxy;
+class WebPageProxy;
 
-class PageClient {
+class WebEditCommandProxy : public RefCounted<WebEditCommandProxy> {
 public:
-    virtual ~PageClient() { }
+    static PassRefPtr<WebEditCommandProxy> create(uint64_t commandID, WebCore::EditAction editAction, WebPageProxy* page)
+    {
+        return adoptRef(new WebEditCommandProxy(commandID, editAction, page));
+    }
 
-    virtual void processDidExit() = 0;
-    virtual void processDidRevive() = 0;
+    uint64_t commandID() const { return m_commandID; }
+    WebCore::EditAction editAction() const { return m_editAction; }
 
-    virtual void takeFocus(bool direction) = 0;
-    virtual void toolTipChanged(const WTF::String&, const WTF::String&) = 0;
+    void invalidate() { m_page = 0; }
 
-    virtual void setCursor(const WebCore::Cursor&) = 0;
+    void unapply();
+    void reapply();
 
-    enum UndoOrRedo { Undo, Redo };
-    virtual void registerEditCommand(PassRefPtr<WebEditCommandProxy>, UndoOrRedo) = 0;
-    virtual void clearAllEditCommands() = 0;
+private:
+    friend class RefCounted<WebEditCommandProxy>;
 
-#if USE(ACCELERATED_COMPOSITING)
-    virtual void pageDidEnterAcceleratedCompositing() = 0;
-    virtual void pageDidLeaveAcceleratedCompositing() = 0;
-#endif
+    WebEditCommandProxy(uint64_t commandID, WebCore::EditAction, WebPageProxy*);
+    ~WebEditCommandProxy();
+
+    uint64_t m_commandID;
+    WebCore::EditAction m_editAction;
+    WebPageProxy* m_page;
 };
 
 } // namespace WebKit
 
-#endif // PageClient_h
+#endif // WebEditCommandProxy_h

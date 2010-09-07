@@ -207,6 +207,7 @@ HEADERS += \
     UIProcess/WebContext.h \
     UIProcess/WebContextInjectedBundleClient.h \
     UIProcess/WebContextUserMessageCoders.h \
+    UIProcess/WebEditCommandProxy.h \
     UIProcess/WebFormClient.h \
     UIProcess/WebFormSubmissionListenerProxy.h \
     UIProcess/WebFrameListenerProxy.h \
@@ -254,6 +255,7 @@ HEADERS += \
     WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.h \
     WebProcess/WebPage/ChunkedUpdateDrawingArea.h \
     WebProcess/WebPage/DrawingArea.h \
+    WebProcess/WebPage/WebEditCommand.h \
     WebProcess/WebPage/WebFrame.h \
     WebProcess/WebPage/WebPage.h \
     WebProcess/WebProcess.h \
@@ -315,6 +317,7 @@ SOURCES += \
     UIProcess/WebBackForwardListItem.cpp \
     UIProcess/WebContext.cpp \
     UIProcess/WebContextInjectedBundleClient.cpp \
+    UIProcess/WebEditCommandProxy.cpp \
     UIProcess/WebFormClient.cpp \
     UIProcess/WebFormSubmissionListenerProxy.cpp \
     UIProcess/WebFrameListenerProxy.cpp \
@@ -363,6 +366,7 @@ SOURCES += \
     WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.cpp \
     WebProcess/WebPage/ChunkedUpdateDrawingArea.cpp \
     WebProcess/WebPage/DrawingArea.cpp \
+    WebProcess/WebPage/WebEditCommand.cpp \
     WebProcess/WebPage/WebFrame.cpp \
     WebProcess/WebPage/WebPage.cpp \
     WebProcess/WebPage/WebBackForwardListProxy.cpp \

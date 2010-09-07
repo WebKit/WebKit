@@ -32,6 +32,7 @@
 #include "InjectedBundlePageFormClient.h"
 #include "InjectedBundlePageLoaderClient.h"
 #include "InjectedBundlePageUIClient.h"
+#include "WebEditCommand.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/ZoomMode.h>
@@ -97,6 +98,11 @@ public:
     bool handleEditingKeyboardEvent(WebCore::KeyboardEvent*);
     void show();
     String userAgent() const;
+
+    WebEditCommand* webEditCommand(uint64_t);
+    void addWebEditCommand(uint64_t, WebEditCommand*);
+    void removeWebEditCommand(uint64_t);
+    bool isInRedo() const { return m_isInRedo; }
 
     // -- Called from WebProcess.
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
@@ -167,6 +173,10 @@ private:
     void didReceivePolicyDecision(WebFrame*, uint64_t listenerID, WebCore::PolicyAction policyAction);
     void setCustomUserAgent(const WTF::String&);
 
+    void unapplyEditCommand(uint64_t commandID);
+    void reapplyEditCommand(uint64_t commandID);
+    void didRemoveEditCommand(uint64_t commandID);
+
     OwnPtr<WebCore::Page> m_page;
     RefPtr<WebFrame> m_mainFrame;
 
@@ -174,6 +184,9 @@ private:
 
     WebCore::IntSize m_viewSize;
     RefPtr<DrawingArea> m_drawingArea;
+
+    bool m_isInRedo;
+    HashMap<uint64_t, RefPtr<WebEditCommand> > m_editCommandMap;
 
     InjectedBundlePageEditorClient m_editorClient;
     InjectedBundlePageFormClient m_formClient;

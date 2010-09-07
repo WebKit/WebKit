@@ -728,6 +728,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\WebProcess\WebPage\WebEditCommand.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebPage\WebEditCommand.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\WebPage\WebFrame.cpp"
 					>
 				</File>
@@ -1121,11 +1129,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\UIProcess\WebData.h"
+				RelativePath="..\UIProcess\WebEditCommandProxy.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\UIProcess\WebError.h"
+				RelativePath="..\UIProcess\WebEditCommandProxy.h"
 				>
 			</File>
 			<File
