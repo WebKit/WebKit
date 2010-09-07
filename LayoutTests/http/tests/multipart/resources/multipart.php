@@ -26,6 +26,7 @@
 
     echo("--$boundary\r\n");
 
+    ob_end_flush();
     do {
         for ($k = 1; $k < $i; $k++) {
             sendPart($images[$k]);

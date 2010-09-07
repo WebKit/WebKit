@@ -1,3 +1,18 @@
+2010-09-07  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        turn off php output buffering in multipart tests
+        https://bugs.webkit.org/show_bug.cgi?id=45232
+
+        This was causing hanging multipart resources to not output anything.
+        On Lucid, the output buffer is enabled by default, but it's not enabled on Hardy.
+        http://www.php.net/manual/en/function.ob-end-flush.php
+
+        * http/tests/multipart/resources/multipart-wait-before-boundary.php:
+        * http/tests/multipart/resources/multipart.php:
+        * platform/chromium/drt_expectations.txt:
+
 2010-09-07  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed.

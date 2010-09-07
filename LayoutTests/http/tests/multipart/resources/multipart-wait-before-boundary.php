@@ -25,6 +25,7 @@
     }
 
     sendHeader();
+    ob_end_flush();
     echo("test html\n");
     echo("<!-- $padding -->");
     flush();
