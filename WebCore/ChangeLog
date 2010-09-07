@@ -1,3 +1,23 @@
+2010-09-07  Kent Hansen  <kent.hansen@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] tst_QWebFrame::connectAndDisconnect() fails on WebKit trunk because __qt_sender__ is never set
+        https://bugs.webkit.org/show_bug.cgi?id=44697
+
+        When the signal handler is a JS function, __qt_sender__ is stuffed into a temporary
+        object that's pushed onto the function's scope before the function is invoked, and
+        popped again afterwards.
+
+        We were pushing this new scope object _after_ calling JSFunction::getCallData(),
+        and relying on JSC::call() to use the fresh scope chain from the function object.
+        However, this is no longer the case; JSC::call() uses the scope chain passed in
+        the CallData argument. Hence, we need to set up the scope before the function's
+        CallData is queried.
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::QtConnectionObject::execute):
+
 2010-09-07  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Kent Tamura.
