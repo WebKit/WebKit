@@ -1,3 +1,21 @@
+2010-09-07  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Media elements should derive from ActiveDOMObjects
+        https://bugs.webkit.org/show_bug.cgi?id=45306
+        <rdar://problem/7929062>
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Initialize ActiveDOMObject
+        (WebCore::HTMLMediaElement::stop): Call suspend, we want to do the same thing in both cases.
+        (WebCore::HTMLMediaElement::suspend): Rename from documentWillBecomeInactive.
+        (WebCore::HTMLMediaElement::resume): Rename from documentDidBecomeActive.
+        (WebCore::HTMLMediaElement::hasPendingActivity): Return true if the event queue is not empty
+        so the element can't be collected before they are sent.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::canSuspend):
+
 2010-09-07  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r66886.

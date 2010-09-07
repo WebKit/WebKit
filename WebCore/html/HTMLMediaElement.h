@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO)
 
 #include "HTMLElement.h"
+#include "ActiveDOMObject.h"
 #include "MediaCanStartListener.h"
 #include "MediaPlayer.h"
 
@@ -51,7 +52,7 @@ class Widget;
 // But it can't be until the Chromium WebMediaPlayerClientImpl class is fixed so it
 // no longer depends on typecasting a MediaPlayerClient to an HTMLMediaElement.
 
-class HTMLMediaElement : public HTMLElement, public MediaPlayerClient, private MediaCanStartListener {
+class HTMLMediaElement : public HTMLElement, public MediaPlayerClient, private MediaCanStartListener, private ActiveDOMObject {
 public:
     MediaPlayer* player() const { return m_player.get(); }
     
@@ -196,8 +197,13 @@ private:
     float getTimeOffsetAttribute(const QualifiedName&, float valueOnError) const;
     void setTimeOffsetAttribute(const QualifiedName&, float value);
     
-    virtual void documentWillBecomeInactive();
-    virtual void documentDidBecomeActive();
+    // ActiveDOMObject functions.
+    virtual bool canSuspend() const;
+    virtual void suspend();
+    virtual void resume();
+    virtual void stop();
+    virtual bool hasPendingActivity() const;
+    
     virtual void mediaVolumeDidChange();
 
     virtual void updateDisplayState() { }

@@ -29,14 +29,14 @@
 #include "HTMLMediaElement.h"
 
 #include "Attribute.h"
-#include "CSSHelper.h"
-#include "CSSPropertyNames.h"
-#include "CSSValueKeywords.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ClientRect.h"
 #include "ClientRectList.h"
 #include "ContentType.h"
+#include "CSSHelper.h"
+#include "CSSPropertyNames.h"
+#include "CSSValueKeywords.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
@@ -48,12 +48,12 @@
 #include "HTMLNames.h"
 #include "HTMLSourceElement.h"
 #include "HTMLVideoElement.h"
-#include "MIMETypeRegistry.h"
 #include "MediaDocument.h"
 #include "MediaError.h"
 #include "MediaList.h"
 #include "MediaPlayer.h"
 #include "MediaQueryEvaluator.h"
+#include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
@@ -80,8 +80,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* doc)
-    : HTMLElement(tagName, doc)
+HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* document)
+    : HTMLElement(tagName, document)
+    , ActiveDOMObject(document, this)
     , m_loadTimer(this, &HTMLMediaElement::loadTimerFired)
     , m_asyncEventTimer(this, &HTMLMediaElement::asyncEventTimerFired)
     , m_progressEventTimer(this, &HTMLMediaElement::progressEventTimerFired)
@@ -132,8 +133,8 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* doc)
     , m_loadInitiatedByUserGesture(false)
     , m_completelyLoaded(false)
 {
-    document()->registerForDocumentActivationCallbacks(this);
-    document()->registerForMediaVolumeCallbacks(this);
+    document->registerForDocumentActivationCallbacks(this);
+    document->registerForMediaVolumeCallbacks(this);
 }
 
 HTMLMediaElement::~HTMLMediaElement()
@@ -1849,7 +1850,17 @@ void HTMLMediaElement::userCancelledLoad()
     m_readyState = HAVE_NOTHING;
 }
 
-void HTMLMediaElement::documentWillBecomeInactive()
+bool HTMLMediaElement::canSuspend() const
+{
+    return true; 
+}
+
+void HTMLMediaElement::stop()
+{
+    suspend();
+}
+
+void HTMLMediaElement::suspend()
 {
     if (m_isFullscreen)
         exitFullscreen();
@@ -1867,7 +1878,7 @@ void HTMLMediaElement::documentWillBecomeInactive()
     cancelPendingEventsAndCallbacks();
 }
 
-void HTMLMediaElement::documentDidBecomeActive()
+void HTMLMediaElement::resume()
 {
     m_inActiveDocument = true;
     setPausedInternal(false);
@@ -1883,6 +1894,13 @@ void HTMLMediaElement::documentDidBecomeActive()
 
     if (renderer())
         renderer()->updateFromElement();
+}
+
+bool HTMLMediaElement::hasPendingActivity() const
+{
+    // Return true when we have pending events so we can't fire events after the JS 
+    // object gets collected.
+    return m_pendingEvents.size();
 }
 
 void HTMLMediaElement::mediaVolumeDidChange()
