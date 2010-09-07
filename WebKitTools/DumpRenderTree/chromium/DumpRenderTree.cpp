@@ -47,6 +47,7 @@ static const char optionPixelTestsWithName[] = "--pixel-tests=";
 static const char optionTestShell[] = "--test-shell";
 static const char optionAllowExternalPages[] = "--allow-external-pages";
 static const char optionStartupDialog[] = "--testshell-startup-dialog";
+static const char optionCheckLayoutTestSystemDeps[] = "--check-layout-test-sys-deps";
 
 static void runTest(TestShell& shell, TestParams& params, const string& testName, bool testShellMode)
 {
@@ -109,6 +110,8 @@ int main(int argc, char* argv[])
             allowExternalPages = true;
         else if (argument == optionStartupDialog)
             startupDialog = true;
+        else if (argument == optionCheckLayoutTestSystemDeps)
+            exit(checkLayoutTestSystemDependencies() ? EXIT_SUCCESS : EXIT_FAILURE);
         else if (argument.size() && argument[0] == '-')
             fprintf(stderr, "Unknown option: %s\n", argv[i]);
         else

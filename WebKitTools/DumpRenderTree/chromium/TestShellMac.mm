@@ -137,3 +137,9 @@ void openStartupDialog()
     [alert addButtonWithTitle:@"OK"];
     [alert runModal];
 }
+
+bool checkLayoutTestSystemDependencies()
+{
+    return true;
+}
+

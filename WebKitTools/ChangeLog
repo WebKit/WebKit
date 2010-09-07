@@ -1,3 +1,20 @@
+2010-09-07  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Implement --check-layout-test-sys-deps
+        https://bugs.webkit.org/show_bug.cgi?id=45283
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (main): Check --check-layout-test-sys-deps and call checkLayoutTestSystemDependencies().
+        * DumpRenderTree/chromium/TestShell.h: Declare checkLayoutTestSystemDependencies().
+        * DumpRenderTree/chromium/TestShellGtk.cpp:
+        (checkLayoutTestSystemDependencies): Add an empty implementation.
+        * DumpRenderTree/chromium/TestShellMac.mm:
+        (checkLayoutTestSystemDependencies): Add an empty implementation.
+        * DumpRenderTree/chromium/TestShellWin.cpp:
+        (checkLayoutTestSystemDependencies): Port similar function of test_shell.
+
 2010-09-07  Jessie Berlin  <jberlin@apple.com>
 
         Unreviewed. Mac build fix.

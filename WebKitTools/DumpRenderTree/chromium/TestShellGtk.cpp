@@ -203,3 +203,8 @@ void openStartupDialog()
     gtk_dialog_run(GTK_DIALOG(dialog)); // Runs a nested message loop.
     gtk_widget_destroy(dialog);
 }
+
+bool checkLayoutTestSystemDependencies()
+{
+    return true;
+}
