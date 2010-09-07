@@ -1,3 +1,11 @@
+2010-09-07  James Robinson  <jamesr@chromium.org>
+
+        Rubber-stamped by Dimitri Glazkov.
+
+        Move myself from the committer to the reviewer list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-09-07  Tony Chang  <tony@chromium.org>
 
         Reviewed by Darin Fisher.
