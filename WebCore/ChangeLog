@@ -1,3 +1,21 @@
+2010-09-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        <rdar://problem/7794761> Floats inside of multicol fail to hit test
+        https://bugs.webkit.org/show_bug.cgi?id=44730
+
+        Test: fast/multicol/hit-test-float.html
+
+        Factored float hit-testing out of nodeAtPoint so that hitTestColumns could
+        call it with column-adjusted coordinates.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::RenderBlock::hitTestFloats):
+        (WebCore::RenderBlock::hitTestColumns):
+        * rendering/RenderBlock.h:
+
 2010-09-07  François Sausset  <sausset@gmail.com>
 
         Reviewed by Beth Dakin.
