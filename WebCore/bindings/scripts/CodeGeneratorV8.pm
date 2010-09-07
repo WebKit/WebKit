@@ -3379,6 +3379,7 @@ sub ConvertToV8Parameter
 
     die "Wrong native type passed: $nativeType" unless $nativeType =~ /^V8Parameter/;
     if ($signature->type eq "DOMString") {
+        $implIncludes{"V8BindingMacros.h"} = 1;
         my $macro = "STRING_TO_V8PARAMETER_EXCEPTION_BLOCK";
         $macro .= "_$suffix" if $suffix;
         return "$macro($nativeType, $variableName, $value);"
