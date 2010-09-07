@@ -408,10 +408,7 @@ bool WKCACFLayerRenderer::createRenderer()
 
     m_d3dDevice = device;
 
-    D3DXMATRIXA16 projection;
-    D3DXMatrixOrthoOffCenterRH(&projection, rect.left, rect.right, rect.top, rect.bottom, -1.0f, 1.0f);
-
-    m_d3dDevice->SetTransform(D3DTS_PROJECTION, &projection);
+    initD3DGeometry();
 
     m_renderer = CARenderOGLNew(&kCARenderDX9Callbacks, m_d3dDevice.get(), 0);
 

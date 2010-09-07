@@ -1,3 +1,17 @@
+2010-09-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Minor WKCACFLayerRenderer cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=45201
+
+        Call initD3DGeometry() from createRenderer, rather than duplicating the code.
+
+        No behavior changes.
+
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        (WebCore::WKCACFLayerRenderer::createRenderer):
+
 2010-09-07  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Darin Fisher.
