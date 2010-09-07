@@ -1,5 +1,14 @@
 2010-09-07  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Unreviewed, trivial expectations update.
+
+        [Chromium/DRT] Remove expectation of crash for
+        fast/js/date-preserve-milliseconds.html. It's now passing.
+
+        * platform/chromium/drt_expectations.txt: Remove now-passing test.
+
+2010-09-07  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Unreviewed, trivial test move.
 
         [Chromium/DRT] Correct a mistake made eons ago (probably by me)
