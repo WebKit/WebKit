@@ -1,3 +1,19 @@
+2010-09-07  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Clean up a potential resource leak.
+        https://bugs.webkit.org/show_bug.cgi?id=45198
+
+        Several bitmap device context were being created and used,
+        and destroyed without returning the context to its original
+        state.  This showed up as bitmap leaks in BoundsChecker.
+
+        * FullscreenVideoController.cpp:
+        * WebView.cpp:
+        (WebView::scrollBackingStore):
+        (WebView::paint):
+
 2010-09-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
