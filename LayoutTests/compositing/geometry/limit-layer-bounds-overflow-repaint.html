@@ -18,7 +18,7 @@
       background-color: blue;
     }
     
-    embed {
+    video {
       position: absolute;
       top: 20px;
       left: 20px;
@@ -62,7 +62,7 @@
 <body>
   
   <!-- Go into compositing without transforms. -->
-  <embed type="application/x-webkit-test-netscape" drawingmodel="coreanimation">
+  <video src="../resources/video.mp4"></video>
 
   <!-- Test repainting when the graphicsLayer offsetFromRenderer changes -->
   <!-- You should see one green square, and no red -->

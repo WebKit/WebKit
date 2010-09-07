@@ -1,4 +1,3 @@
-
 middle
 (GraphicsLayer
   (position 0.00 0.00)
@@ -32,7 +31,7 @@ middle
           (opacity 1.00)
           (usingTiledLayer 0)
           (preserves3D 0)
-          (drawsContent 1)
+          (drawsContent 0)
           (backfaceVisibility visible)
           (backgroundColor none)
           (transform identity)
@@ -82,7 +81,7 @@ middle
                   (anchor 0.50 0.50)
                   (bounds 2050.00 100.00)
                   (opacity 1.00)
-                  (usingTiledLayer 0)
+                  (usingTiledLayer 1)
                   (preserves3D 0)
                   (drawsContent 1)
                   (backfaceVisibility visible)

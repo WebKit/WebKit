@@ -1,3 +1,30 @@
+2010-09-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Chris Marrin.
+
+        Avoid use of CA plugin in compositing tests so that they work on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=45312
+        
+        Convert tests to use <video> rather than a plugin, so that they have similar
+        compositing behavior on Windows.
+
+        * compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt:
+        * compositing/geometry/limit-layer-bounds-clipping-ancestor.html:
+        * compositing/geometry/limit-layer-bounds-fixed-positioned-expected.txt:
+        * compositing/geometry/limit-layer-bounds-fixed-positioned.html:
+        * compositing/geometry/limit-layer-bounds-overflow-repaint.html:
+        * compositing/geometry/limit-layer-bounds-overflow-root-expected.txt:
+        * compositing/geometry/limit-layer-bounds-overflow-root.html:
+        * compositing/geometry/limit-layer-bounds-positioned-expected.txt:
+        * compositing/geometry/limit-layer-bounds-positioned-transition-expected.txt:
+        * compositing/geometry/limit-layer-bounds-positioned-transition.html:
+        * compositing/geometry/limit-layer-bounds-positioned.html:
+        * compositing/geometry/limit-layer-bounds-transformed-expected.txt:
+        * compositing/geometry/limit-layer-bounds-transformed-overflow-expected.txt:
+        * compositing/geometry/limit-layer-bounds-transformed-overflow.html:
+        * compositing/geometry/limit-layer-bounds-transformed.html:
+        * platform/mac/compositing/geometry/limit-layer-bounds-overflow-repaint-expected.txt:
+
 2010-09-07  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed.

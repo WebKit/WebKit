@@ -1,4 +1,3 @@
-
 top
 
 middlebottom
@@ -37,7 +36,7 @@ middlebottom
           (opacity 1.00)
           (usingTiledLayer 0)
           (preserves3D 0)
-          (drawsContent 1)
+          (drawsContent 0)
           (backfaceVisibility visible)
           (backgroundColor none)
           (transform identity)
