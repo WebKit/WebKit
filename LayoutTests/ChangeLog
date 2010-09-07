@@ -1,3 +1,15 @@
+2010-09-07  François Sausset  <sausset@gmail.com>
+
+        Reviewed by Beth Dakin.
+
+        Update to test the display attribute on the math element.
+        https://bugs.webkit.org/show_bug.cgi?id=44206
+
+        * mathml/presentation/attributes.xhtml:
+        * platform/mac/mathml/presentation/attributes-expected.checksum:
+        * platform/mac/mathml/presentation/attributes-expected.png:
+        * platform/mac/mathml/presentation/attributes-expected.txt:
+
 2010-09-07  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Chris Marrin.
