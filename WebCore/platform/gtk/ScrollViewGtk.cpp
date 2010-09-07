@@ -91,6 +91,8 @@ void ScrollView::setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj, boo
     // time we want to to allow FrameLoaderClientGtk.cpp to call 
     // ScrollView::setGtkAdjustments(0, 0) unconditionally.
     ASSERT(!parent() || !hadj);
+    if (parent())
+        return;
 
     m_horizontalAdjustment = hadj;
     m_verticalAdjustment = vadj;

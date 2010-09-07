@@ -1,3 +1,18 @@
+2010-09-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] [REGRESSION] r66848 caused a crash in testwebview
+        https://bugs.webkit.org/show_bug.cgi?id=45298
+
+        No new tests as this fixes a test failure.
+
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::setGtkAdjustments): Don't actually attach the
+        scrollbar adjustments unless this is a main frame ScrollView. If we do
+        Scrollbars will be cast incorrectly to MainFrameScrollbarGtk, causing
+        a segfault.
+
 2010-09-07  Adam Langley  <agl@chromium.org>
 
         Reviewed by Tony Chang.
