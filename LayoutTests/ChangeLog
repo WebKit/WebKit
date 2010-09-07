@@ -1,3 +1,11 @@
+2010-09-07  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed.
+
+        Add fast/canvas/webgl/gl-teximage.html (failing on chromium mac bot) to chromium/test_expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-07  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, trivial expectations update.
