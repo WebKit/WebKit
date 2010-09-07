@@ -40,6 +40,7 @@ public:
     {
         return adoptRef(new WebEditCommandProxy(commandID, editAction, page));
     }
+    ~WebEditCommandProxy();
 
     uint64_t commandID() const { return m_commandID; }
     WebCore::EditAction editAction() const { return m_editAction; }
@@ -50,10 +51,7 @@ public:
     void reapply();
 
 private:
-    friend class RefCounted<WebEditCommandProxy>;
-
     WebEditCommandProxy(uint64_t commandID, WebCore::EditAction, WebPageProxy*);
-    ~WebEditCommandProxy();
 
     uint64_t m_commandID;
     WebCore::EditAction m_editAction;

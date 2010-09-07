@@ -1,5 +1,11 @@
 2010-09-07  Sam Weinig  <sam@webkit.org>
 
+        Try and fix windows.
+
+        * UIProcess/WebEditCommandProxy.h:
+
+2010-09-07  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Darin Adler.
 
         Fix incorrect parameter name.
