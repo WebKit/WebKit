@@ -3016,8 +3016,9 @@ BUG51161 LINUX DEBUG : svg/clip-path/clip-path-text.svg = CRASH
 // This test has not landed yet, though the fix has.
 //BUG41968 LINUX WIN : svg/hittest/svg-rect-hit.html = TEXT
 
-// Failure caused by r64749
-BUGSATISH: fast/speech/input-text-speechbutton.html = TIMEOUT
+// Speech input tests sending click events to HTML elements, being investigated.
+BUGWK45296: fast/speech/input-text-speechbutton.html = TIMEOUT
+BUGWK45296: fast/speech/speech-button-ignore-generated-events.html = TIMEOUT
 
 // Need to support DeviceMotion.
 BUG51416 : fast/dom/DeviceMotion/window-property.html = TEXT

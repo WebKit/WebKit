@@ -1,3 +1,12 @@
+2010-09-07  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Disable a timing out speech input test for generated clicks.
+        https://bugs.webkit.org/show_bug.cgi?id=45297
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-07  Renata Hodovan  <reni@inf.u-szeged.hu>
 
         Reviewed by Dirk Schulze.
