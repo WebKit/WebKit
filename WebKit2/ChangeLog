@@ -1,5 +1,20 @@
 2010-09-07  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Fix clang++ build.
+
+        * UIProcess/API/C/WKAPICast.h:
+        Move all functions into the WebKit namespace.
+        
+        * UIProcess/API/C/cf/WKStringCF.cpp:
+        Add using namespace WebKit.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+        Move all functions into the WebKit namespace.
+
+2010-09-07  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         <rdar://problem/8381749> -Wcast-align warning emitted when building with clang

@@ -120,12 +120,10 @@ private:
     RefPtr<ImplType> m_impl;
 };
 
-} // namespace WebKit
-
 /* Opaque typing convenience methods */
 
 template<typename T>
-inline typename WebKit::APITypeInfo<T>::ImplType toWK(T t)
+inline typename APITypeInfo<T>::ImplType toWK(T t)
 {
     // An example of the conversions that take place:
     // const struct OpaqueWKArray* -> const struct OpaqueWKArray -> struct OpaqueWKArray -> struct OpaqueWKArray* -> ImmutableArray*
@@ -133,40 +131,40 @@ inline typename WebKit::APITypeInfo<T>::ImplType toWK(T t)
     typedef typename WTF::RemovePointer<T>::Type PotentiallyConstValueType;
     typedef typename WTF::RemoveConst<PotentiallyConstValueType>::Type NonConstValueType;
 
-    return reinterpret_cast<typename WebKit::APITypeInfo<T>::ImplType>(const_cast<NonConstValueType*>(t));
+    return reinterpret_cast<typename APITypeInfo<T>::ImplType>(const_cast<NonConstValueType*>(t));
 }
 
 template<typename T>
-inline typename WebKit::ImplTypeInfo<T>::APIType toRef(T t)
+inline typename ImplTypeInfo<T>::APIType toRef(T t)
 {
-    return reinterpret_cast<typename WebKit::ImplTypeInfo<T>::APIType>(t);
+    return reinterpret_cast<typename ImplTypeInfo<T>::APIType>(t);
 }
 
 /* Special cases. */
 
-inline WebKit::ProxyingRefPtr<WebKit::WebString> toRef(WTF::StringImpl* string)
+inline ProxyingRefPtr<WebString> toRef(WTF::StringImpl* string)
 {
     WTF::StringImpl* impl = string ? string : WTF::StringImpl::empty();
-    return WebKit::ProxyingRefPtr<WebKit::WebString>(WebKit::WebString::create(WTF::String(impl)));
+    return ProxyingRefPtr<WebString>(WebString::create(WTF::String(impl)));
 }
 
-inline WebKit::ProxyingRefPtr<WebKit::WebURL> toURLRef(WTF::StringImpl* string)
+inline ProxyingRefPtr<WebURL> toURLRef(WTF::StringImpl* string)
 {
     WTF::StringImpl* impl = string ? string : WTF::StringImpl::empty();
-    return WebKit::ProxyingRefPtr<WebKit::WebURL>(WebKit::WebURL::create(WTF::String(impl)));
+    return ProxyingRefPtr<WebURL>(WebURL::create(WTF::String(impl)));
 }
 
 inline WKStringRef toCopiedRef(const WTF::String& string)
 {
     WTF::StringImpl* impl = string.impl() ? string.impl() : WTF::StringImpl::empty();
-    RefPtr<WebKit::WebString> webString = WebKit::WebString::create(WTF::String(impl));
+    RefPtr<WebString> webString = WebString::create(WTF::String(impl));
     return toRef(webString.release().releaseRef());
 }
 
 inline WKURLRef toCopiedURLRef(const WTF::String& string)
 {
     WTF::StringImpl* impl = string.impl() ? string.impl() : WTF::StringImpl::empty();
-    RefPtr<WebKit::WebURL> webURL = WebKit::WebURL::create(WTF::String(impl));
+    RefPtr<WebURL> webURL = WebURL::create(WTF::String(impl));
     return toRef(webURL.release().releaseRef());
 }
 
@@ -186,7 +184,7 @@ inline WTF::String toWTFString(WKURLRef urlRef)
 
 /* Enum conversions */
 
-inline WKTypeID toRef(WebKit::APIObject::Type type)
+inline WKTypeID toRef(APIObject::Type type)
 {
     return static_cast<WKTypeID>(type);
 }
@@ -219,18 +217,20 @@ inline WKFrameNavigationType toRef(WebCore::NavigationType type)
     return wkType;
 }
 
-inline WKEventModifiers toRef(WebKit::WebEvent::Modifiers modifiers)
+inline WKEventModifiers toRef(WebEvent::Modifiers modifiers)
 {
     WKEventModifiers wkModifiers = 0;
-    if (modifiers & WebKit::WebEvent::ShiftKey)
+    if (modifiers & WebEvent::ShiftKey)
         wkModifiers |= kWKEventModifiersShiftKey;
-    if (modifiers & WebKit::WebEvent::ControlKey)
+    if (modifiers & WebEvent::ControlKey)
         wkModifiers |= kWKEventModifiersControlKey;
-    if (modifiers & WebKit::WebEvent::AltKey)
+    if (modifiers & WebEvent::AltKey)
         wkModifiers |= kWKEventModifiersAltKey;
-    if (modifiers & WebKit::WebEvent::MetaKey)
+    if (modifiers & WebEvent::MetaKey)
         wkModifiers |= kWKEventModifiersMetaKey;
     return wkModifiers;
 }
+
+} // namespace WebKit
 
 #endif // WKAPICast_h

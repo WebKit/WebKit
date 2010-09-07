@@ -70,23 +70,21 @@ template<> struct BundleImplTypeInfo<WebCore::CSSStyleDeclaration*>     { typede
 template<> struct BundleImplTypeInfo<WebCore::Node*>                    { typedef WKBundleNodeRef APIType; };
 template<> struct BundleImplTypeInfo<WebCore::Range*>                   { typedef WKBundleRangeRef APIType; };
 
-} // namespace WebKit
-
 /* Opaque typing convenience methods */
 
 template<typename T>
-inline typename WebKit::BundleAPITypeInfo<T>::ImplType toWK(T t)
+inline typename BundleAPITypeInfo<T>::ImplType toWK(T t)
 {
     typedef typename WTF::RemovePointer<T>::Type PotentiallyConstValueType;
     typedef typename WTF::RemoveConst<PotentiallyConstValueType>::Type NonConstValueType;
 
-    return reinterpret_cast<typename WebKit::BundleAPITypeInfo<T>::ImplType>(const_cast<NonConstValueType*>(t));
+    return reinterpret_cast<typename BundleAPITypeInfo<T>::ImplType>(const_cast<NonConstValueType*>(t));
 }
 
 template<typename T>
-inline typename WebKit::BundleImplTypeInfo<T>::APIType toRef(T t)
+inline typename BundleImplTypeInfo<T>::APIType toRef(T t)
 {
-    return reinterpret_cast<typename WebKit::BundleImplTypeInfo<T>::APIType>(t);
+    return reinterpret_cast<typename BundleImplTypeInfo<T>::APIType>(t);
 }
 
 inline WKInsertActionType toWK(WebCore::EditorInsertAction action)
@@ -158,5 +156,7 @@ inline WebCore::UserContentInjectedFrames toUserContentInjectedFrames(WKUserCont
     ASSERT_NOT_REACHED();
     return WebCore::InjectInAllFrames;
 }
+
+} // namespace WebKit
 
 #endif // WKBundleAPICast_h

@@ -29,6 +29,7 @@
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
+using namespace WebKit;
 
 WKStringRef WKStringCreateWithCFString(CFStringRef cfString)
 {
