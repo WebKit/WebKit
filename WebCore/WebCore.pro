@@ -2463,6 +2463,8 @@ contains(DEFINES, ENABLE_SQLITE=1) {
         }
     }
 
+    wince*:DEFINES += HAVE_LOCALTIME_S=0
+
     SOURCES += \
         platform/sql/SQLiteAuthorizer.cpp \
         platform/sql/SQLiteDatabase.cpp \

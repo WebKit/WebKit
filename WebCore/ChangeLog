@@ -1,3 +1,14 @@
+2010-09-07  Joerg Bornemann  <joerg.bornemann@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        Fix QtWebKit linker error on Windows CE 6.
+        https://bugs.webkit.org/show_bug.cgi?id=43442
+
+        Doesn't affect any tests.
+
+        * WebCore.pro:
+
 2010-09-07  James Kozianski  <koz@chromium.org>
 
         Reviewed by Kent Tamura.
