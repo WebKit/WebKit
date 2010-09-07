@@ -1,5 +1,17 @@
 2010-09-07  Kent Tamura  <tkent@chromium.org>
 
+        Reviewed by Ojan Vafai.
+
+        Fix wrong position calculation of fast/forms/listbox-selection.html
+        https://bugs.webkit.org/show_bug.cgi?id=45285
+
+        * fast/forms/script-tests/listbox-selection.js:
+        (mouseDownOnSelect): Refer window.pageYOffset after sl.focus()
+        call because focus() might scroll the page.
+        * platform/chromium/test_expectations.txt:
+
+2010-09-07  Kent Tamura  <tkent@chromium.org>
+
         Unreviewed, test expectation update.
 
         Update DRT/Chromium expectations, and skip meter-percent-size.html

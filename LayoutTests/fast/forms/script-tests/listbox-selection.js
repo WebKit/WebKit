@@ -4,11 +4,11 @@ function mouseDownOnSelect(selId, index, modifier) {
     var sl = document.getElementById(selId);
     var itemHeight = Math.floor(sl.offsetHeight / sl.size);
     var border = 1;
-    var y = border + index * itemHeight - window.pageYOffset;
+    var y = border + index * itemHeight;
 
     sl.focus();
     if (window.eventSender) {
-        eventSender.mouseMoveTo(sl.offsetLeft + border, sl.offsetTop + y);
+        eventSender.mouseMoveTo(sl.offsetLeft + border, sl.offsetTop + y - window.pageYOffset);
         eventSender.mouseDown(0, [modifier]);
         eventSender.mouseUp(0, [modifier]);
     }
