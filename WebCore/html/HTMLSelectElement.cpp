@@ -85,8 +85,17 @@ void HTMLSelectElement::setSelectedIndex(int optionIndex, bool deselect)
     SelectElement::setSelectedIndex(m_data, this, optionIndex, deselect, false, false);
 }
 
-void HTMLSelectElement::setSelectedIndexByUser(int optionIndex, bool deselect, bool fireOnChangeNow)
+void HTMLSelectElement::setSelectedIndexByUser(int optionIndex, bool deselect, bool fireOnChangeNow, bool allowMultipleSelection)
 {
+    // List box selects can fire onchange events through user interaction, such as
+    // mousedown events. This allows that same behavior programmatically.
+    if (!m_data.usesMenuList()) {
+        updateSelectedState(m_data, this, optionIndex, allowMultipleSelection, false);
+        if (fireOnChangeNow)
+            listBoxOnChange();
+        return;
+    }
+
     // Bail out if this index is already the selected one, to avoid running unnecessary JavaScript that can mess up
     // autofill, when there is no actual change (see https://bugs.webkit.org/show_bug.cgi?id=35256 and rdar://7467917 ).
     // Perhaps this logic could be moved into SelectElement, but some callers of SelectElement::setSelectedIndex()

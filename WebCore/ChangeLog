@@ -1,3 +1,31 @@
+2010-09-03  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Provide a way to trigger a <select multiple> onchange event on changes
+        https://bugs.webkit.org/show_bug.cgi?id=45192
+
+        Test: LayoutTests/platform/mac/fast/objc/dom-html-select-activate.html
+
+        This provides a way for a WebKit client using the Obj-C DOM bindings to
+        trigger the "change" on a listbox select (<select multiple> or <select>
+        with size > 1). This is because when a select is rendered as a listbox
+        "change" events are triggered by mouse down events.
+
+        This adds -[DOMHTMLSelectElement _activateItemAtIndex:allowMultipleSelection:]
+        to allow for handling multiple selections if the select element is a
+        multi-select.
+
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLSelectElement _activateItemAtIndex:allowMultipleSelection:]):
+        * bindings/objc/DOMPrivate.h: unified the Category name. Was "FormsAutocomplete" now all are "FormAutocomplete".
+        * dom/SelectElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setSelectedIndexByUser): listboxs need to be treated specially to fire their "change" event.
+        * html/HTMLSelectElement.h:
+        * wml/WMLSelectElement.cpp:
+        (WebCore::WMLSelectElement::setSelectedIndexByUser):
+
 2010-09-07  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.

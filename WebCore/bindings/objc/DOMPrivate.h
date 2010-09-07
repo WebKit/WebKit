@@ -69,7 +69,7 @@
 // All the methods in this category are used by Safari forms autofill and should not be used for any other purpose.
 // Each one should eventually be replaced by public DOM API, and when that happens Safari will switch to implementations 
 // using that public API, and these will be deleted.
-@interface DOMHTMLInputElement (FormsAutoFillTransition)
+@interface DOMHTMLInputElement (FormAutoFillTransition)
 - (BOOL)_isAutofilled;
 - (BOOL)_isTextField;
 - (NSRect)_rectOnScreen; // bounding box of the text field, in screen coordinates
@@ -92,6 +92,7 @@
 // They are stopgap measures until we finish transitioning form controls to not use NSView. Each one should become
 // replaceable by public DOM API, and when that happens Safari will switch to implementations using that public API,
 // and these will be deleted.
-@interface DOMHTMLSelectElement (FormsAutoFillTransition)
+@interface DOMHTMLSelectElement (FormAutoFillTransition)
 - (void)_activateItemAtIndex:(int)index;
+- (void)_activateItemAtIndex:(int)index allowMultipleSelection:(BOOL)allowMultipleSelection;
 @end

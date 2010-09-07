@@ -41,7 +41,7 @@ public:
 
     virtual int selectedIndex() const;
     virtual void setSelectedIndex(int index, bool deselect = true);
-    virtual void setSelectedIndexByUser(int index, bool deselect = true, bool fireOnChangeNow = false);
+    virtual void setSelectedIndexByUser(int index, bool deselect = true, bool fireOnChangeNow = false, bool allowMultipleSelection = false);
 
     unsigned length() const;
 

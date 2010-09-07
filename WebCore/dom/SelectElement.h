@@ -59,7 +59,7 @@ public:
 
     virtual int selectedIndex() const = 0;
     virtual void setSelectedIndex(int index, bool deselect = true) = 0;
-    virtual void setSelectedIndexByUser(int index, bool deselect = true, bool fireOnChangeNow = false) = 0;
+    virtual void setSelectedIndexByUser(int index, bool deselect = true, bool fireOnChangeNow = false, bool allowMultipleSelection = false) = 0;
 
     virtual void listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow = true) = 0;
 
