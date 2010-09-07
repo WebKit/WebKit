@@ -1,3 +1,40 @@
+2010-09-07  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45317, encapsulate multi-column rectangle information.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/ColumnInfo.h: Added.
+        (WebCore::ColumnInfo::ColumnInfo):
+        (WebCore::ColumnInfo::desiredColumnWidth):
+        (WebCore::ColumnInfo::setDesiredColumnWidth):
+        (WebCore::ColumnInfo::desiredColumnCount):
+        (WebCore::ColumnInfo::setDesiredColumnCount):
+        (WebCore::ColumnInfo::columnCount):
+        (WebCore::ColumnInfo::columnRectAt):
+        (WebCore::ColumnInfo::clearColumns):
+        (WebCore::ColumnInfo::addColumnRect):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintColumnRules):
+        (WebCore::RenderBlock::paintColumnContents):
+        (WebCore::RenderBlock::lowestPosition):
+        (WebCore::RenderBlock::rightmostPosition):
+        (WebCore::RenderBlock::leftmostPosition):
+        (WebCore::RenderBlock::hitTestColumns):
+        (WebCore::RenderBlock::setDesiredColumnCountAndWidth):
+        (WebCore::RenderBlock::desiredColumnWidth):
+        (WebCore::RenderBlock::desiredColumnCount):
+        (WebCore::RenderBlock::columnInfo):
+        (WebCore::RenderBlock::layoutColumns):
+        (WebCore::RenderBlock::adjustPointToColumnContents):
+        (WebCore::RenderBlock::adjustRectForColumns):
+        (WebCore::RenderBlock::adjustForColumns):
+        * rendering/RenderBlock.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintChildLayerIntoColumns):
+        (WebCore::RenderLayer::hitTestChildLayerColumns):
+
 2010-09-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

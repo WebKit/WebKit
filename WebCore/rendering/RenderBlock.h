@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class ColumnInfo;
 class InlineIterator;
 class RenderInline;
 
@@ -148,7 +149,7 @@ public:
     static void appendRunsForObject(int start, int end, RenderObject*, InlineBidiResolver&);    
     static bool requiresLineBox(const InlineIterator&, bool isLineEmpty = true, bool previousLineBrokeCleanly = true);
 
-    Vector<IntRect>* columnRects() const;
+    ColumnInfo* columnInfo() const;
     int columnGap() const;
 
 protected:

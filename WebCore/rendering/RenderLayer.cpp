@@ -44,6 +44,7 @@
 #include "config.h"
 #include "RenderLayer.h"
 
+#include "ColumnInfo.h"
 #include "CSSPropertyNames.h"
 #include "CSSStyleDeclaration.h"
 #include "CSSStyleSelector.h"
@@ -2539,12 +2540,12 @@ void RenderLayer::paintChildLayerIntoColumns(RenderLayer* childLayer, RenderLaye
     int layerY = 0;
     columnBlock->layer()->convertToLayerCoords(rootLayer, layerX, layerY);
     
-    Vector<IntRect>* colRects = columnBlock->columnRects();
-    unsigned colCount = colRects->size();
+    ColumnInfo* colInfo = columnBlock->columnInfo();
+    unsigned colCount = colInfo->columnCount();
     int currYOffset = 0;
     for (unsigned i = 0; i < colCount; i++) {
         // For each rect, we clip to the rect, and then we adjust our coords.
-        IntRect colRect = colRects->at(i);
+        IntRect colRect = colInfo->columnRectAt(i);
         int currXOffset = colRect.x() - (columnBlock->borderLeft() + columnBlock->paddingLeft());
         colRect.move(layerX, layerY);
 
@@ -3005,18 +3006,18 @@ RenderLayer* RenderLayer::hitTestChildLayerColumns(RenderLayer* childLayer, Rend
     int layerY = 0;
     columnBlock->layer()->convertToLayerCoords(rootLayer, layerX, layerY);
     
-    Vector<IntRect>* colRects = columnBlock->columnRects();
-    int colCount = colRects->size();
+    ColumnInfo* colInfo = columnBlock->columnInfo();
+    int colCount = colInfo->columnCount();
     
     // We have to go backwards from the last column to the first.
     int left = columnBlock->borderLeft() + columnBlock->paddingLeft();
     int currYOffset = 0;
     int i;
     for (i = 0; i < colCount; i++)
-        currYOffset -= colRects->at(i).height();
+        currYOffset -= colInfo->columnRectAt(i).height();
     for (i = colCount - 1; i >= 0; i--) {
         // For each rect, we clip to the rect, and then we adjust our coords.
-        IntRect colRect = colRects->at(i);
+        IntRect colRect = colInfo->columnRectAt(i);
         int currXOffset = colRect.x() - left;
         currYOffset += colRect.height();
         colRect.move(layerX, layerY);

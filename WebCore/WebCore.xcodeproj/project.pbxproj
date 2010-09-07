@@ -4930,6 +4930,7 @@
 		BCD9C2C10C17B69E005C90A2 /* JSNamedNodeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD9C2BD0C17B69E005C90A2 /* JSNamedNodeMap.h */; };
 		BCD9C2C20C17B69E005C90A2 /* JSNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD9C2BE0C17B69E005C90A2 /* JSNodeList.cpp */; };
 		BCD9C2C30C17B69E005C90A2 /* JSNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD9C2BF0C17B69E005C90A2 /* JSNodeList.h */; };
+		BCDD454E1236C95C009A7985 /* ColumnInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDD454D1236C95C009A7985 /* ColumnInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCDF317B11F8D683003C5BF8 /* UserTypingGestureIndicator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCDF317911F8D683003C5BF8 /* UserTypingGestureIndicator.cpp */; };
 		BCDF317C11F8D683003C5BF8 /* UserTypingGestureIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDF317A11F8D683003C5BF8 /* UserTypingGestureIndicator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCDFD48E0E305290009D10AD /* XMLHttpRequestUpload.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDFD48C0E305290009D10AD /* XMLHttpRequestUpload.h */; };
@@ -10730,6 +10731,7 @@
 		BCD9C2BD0C17B69E005C90A2 /* JSNamedNodeMap.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSNamedNodeMap.h; sourceTree = "<group>"; };
 		BCD9C2BE0C17B69E005C90A2 /* JSNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSNodeList.cpp; sourceTree = "<group>"; };
 		BCD9C2BF0C17B69E005C90A2 /* JSNodeList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSNodeList.h; sourceTree = "<group>"; };
+		BCDD454D1236C95C009A7985 /* ColumnInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColumnInfo.h; sourceTree = "<group>"; };
 		BCDF317911F8D683003C5BF8 /* UserTypingGestureIndicator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserTypingGestureIndicator.cpp; sourceTree = "<group>"; };
 		BCDF317A11F8D683003C5BF8 /* UserTypingGestureIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserTypingGestureIndicator.h; sourceTree = "<group>"; };
 		BCDFD48C0E305290009D10AD /* XMLHttpRequestUpload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLHttpRequestUpload.h; sourceTree = "<group>"; };
@@ -17090,6 +17092,7 @@
 				BCE789851120E7A60060ECE5 /* BidiRun.h */,
 				BCEA4815097D93020094C9E4 /* break_lines.cpp */,
 				BCEA4816097D93020094C9E4 /* break_lines.h */,
+				BCDD454D1236C95C009A7985 /* ColumnInfo.h */,
 				9392F14F0AD1862300691BD4 /* CounterNode.cpp */,
 				9392F14B0AD1861B00691BD4 /* CounterNode.h */,
 				A8CFF6CA0A1561CD000A4234 /* EllipsisBox.cpp */,
@@ -20432,6 +20435,7 @@
 				898785B9122CA2A7003AABDA /* JSMetadataCallback.h in Headers */,
 				898785F1122E1E87003AABDA /* JSFileException.h in Headers */,
 				898785F5122E1EAC003AABDA /* JSFileReaderSync.h in Headers */,
+				BCDD454E1236C95C009A7985 /* ColumnInfo.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
