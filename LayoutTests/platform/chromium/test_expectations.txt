@@ -2665,11 +2665,6 @@ BUG45106 WIN : svg/text/text-text-05-t.svg = PASS CRASH
 
 BUG45720 WIN LINUX : websocket/tests/reload-crash.html = PASS CRASH
 
-// Failing since http://trac.webkit.org/changeset/60865
-// Need to add setEditingBehavior to layoutTestController.
-BUG46096 : editing/selection/extend-selection-after-double-click.html = TEXT
-BUG46096 : editing/selection/5195166-1.html = TEXT
-
 // Flaky since at least r60276
 BUG46157 WIN RELEASE : transforms/2d/transform-value-types.html = PASS TEXT
 
@@ -3073,10 +3068,6 @@ BUGWK44278 WIN LINUX : svg/custom/js-late-pattern-creation.svg = IMAGE
 BUGWK44278 WIN LINUX : svg/custom/non-scaling-stroke.svg = IMAGE
 BUGWK44278 WIN LINUX : svg/custom/pattern-no-pixelation.svg = IMAGE
 BUGWK44278 WIN LINUX : svg/custom/stroked-pattern.svg = IMAGE
-
-// Tests are failing after http://trac.webkit.org/changeset/65681/
-// due to pixel results not having a caret visible.
-BUGWK44290 WIN MAC : fast/forms/input-text-scroll-left-on-blur.html = IMAGE
 
 // Clip paths aren't working after http://trac.webkit.org/changeset/65729
 BUGWK44341 WIN LINUX : svg/clip-path/clip-path-pixelation.svg = IMAGE+TEXT
