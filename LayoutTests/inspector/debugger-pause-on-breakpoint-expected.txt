@@ -1,0 +1,11 @@
+Tests that debugger will stop on breakpoint.
+
+Debugger was enabled.
+Script source was shown.
+Set timer for test function.
+Script execution paused.
+Call stack:
+    0) testFunction (debugger-pause-on-breakpoint.html:9)
+Script execution resumed.
+Debugger was disabled.
+

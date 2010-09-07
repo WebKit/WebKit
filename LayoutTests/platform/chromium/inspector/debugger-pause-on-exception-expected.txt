@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: line 9: Uncaught ReferenceError: unknown_var is not defined
+Tests that pause on exception works.
+
+Debugger was enabled.
+Script source was shown.
+Script execution paused.
+Call stack:
+    0) throwAnException (debugger-pause-on-exception.html:9)
+    1) handleClick (debugger-pause-on-exception.html:14)
+Script execution resumed.
+Debugger was disabled.
+

@@ -1,0 +1,45 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/debugger-test2.js"></script>
+<script>
+
+function testFunction()
+{
+    var x = Math.sqrt(10);
+    return x;
+}
+
+var test = function()
+{
+    InspectorTest.startDebuggerTest(step1);
+
+    function step1()
+    {
+        InspectorTest.showScriptSource("debugger-pause-on-breakpoint.html", step2);
+    }
+
+    function step2()
+    {
+        InspectorTest.addResult("Script source was shown.");
+        WebInspector.panels.scripts.visibleView._addBreakpoint(9);
+        InspectorTest.runTestFunctionAndWaitUntilPaused(step3);
+    }
+
+    function step3(callFrames)
+    {
+        InspectorTest.captureStackTrace(callFrames);
+        InspectorTest.completeDebuggerTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that debugger will stop on breakpoint.
+</p>
+
+</body>
+</html>

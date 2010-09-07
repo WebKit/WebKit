@@ -1,0 +1,50 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/debugger-test2.js"></script>
+<script>
+
+function throwAnException()
+{
+    return unknown_var;
+}
+
+function handleClick()
+{
+    throwAnException();
+}
+
+var test = function()
+{
+    InspectorTest.startDebuggerTest(step1);
+
+    function step1()
+    {
+        InspectorBackend.setPauseOnExceptionsState(WebInspector.ScriptsPanel.PauseOnExceptionsState.PauseOnUncaughtExceptions);
+        InspectorTest.showScriptSource("debugger-pause-on-exception.html", step2);
+    }
+
+    function step2()
+    {
+        InspectorTest.addResult("Script source was shown.");
+        InspectorTest.evaluateInPage("setTimeout(handleClick, 0)");
+        InspectorTest.waitUntilPaused(step3);
+    }
+
+    function step3(callFrames)
+    {
+        InspectorTest.captureStackTrace(callFrames);
+        InspectorTest.completeDebuggerTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that pause on exception works.
+</p>
+
+</body>
+</html>

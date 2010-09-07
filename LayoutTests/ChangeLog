@@ -1,3 +1,16 @@
+2010-09-07  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: upstream two debugger tests
+        https://bugs.webkit.org/show_bug.cgi?id=45262
+
+        * inspector/debugger-pause-on-breakpoint-expected.txt: Added.
+        * inspector/debugger-pause-on-breakpoint.html: Added.
+        * inspector/debugger-pause-on-exception-expected.txt: Added.
+        * inspector/debugger-pause-on-exception.html: Added.
+        * platform/chromium/inspector/debugger-pause-on-exception-expected.txt: Added.
+
 2010-09-07  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.
