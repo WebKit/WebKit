@@ -38,6 +38,28 @@ PassRefPtr<WorkQueue::WorkItemWin> WorkQueue::WorkItemWin::create(PassOwnPtr<Wor
     return adoptRef(new WorkItemWin(item, queue));
 }
 
+WorkQueue::WorkItemWin::~WorkItemWin()
+{
+}
+
+inline WorkQueue::HandleWorkItem::HandleWorkItem(HANDLE handle, PassOwnPtr<WorkItem> item, WorkQueue* queue)
+    : WorkItemWin(item, queue)
+    , m_handle(handle)
+    , m_waitHandle(0)
+{
+    ASSERT_ARG(handle, handle);
+}
+
+PassRefPtr<WorkQueue::HandleWorkItem> WorkQueue::HandleWorkItem::createByAdoptingHandle(HANDLE handle, PassOwnPtr<WorkItem> item, WorkQueue* queue)
+{
+    return adoptRef(new HandleWorkItem(handle, item, queue));
+}
+
+WorkQueue::HandleWorkItem::~HandleWorkItem()
+{
+    ::CloseHandle(m_handle);
+}
+
 void WorkQueue::handleCallback(void* context, BOOLEAN timerOrWaitFired)
 {
     ASSERT_ARG(context, context);
@@ -65,20 +87,32 @@ void WorkQueue::handleCallback(void* context, BOOLEAN timerOrWaitFired)
 
 void WorkQueue::registerHandle(HANDLE handle, PassOwnPtr<WorkItem> item)
 {
-    RefPtr<WorkItemWin> itemWin = WorkItemWin::create(item, this);
+    RefPtr<HandleWorkItem> handleItem = HandleWorkItem::createByAdoptingHandle(handle, item, this);
 
-    // Add the item.
     {
-        MutexLocker locker(m_handlesLock);
-        m_handles.set(handle, itemWin);
+        MutexLocker lock(m_handlesLock);
+        ASSERT_ARG(handle, !m_handles.contains(handle));
+        m_handles.set(handle, handleItem);
     }
 
-    // FIXME: We need to hold onto waitHandle so that we can unregister the wait later.
     HANDLE waitHandle;
-    if (!::RegisterWaitForSingleObject(&waitHandle, handle, handleCallback, itemWin.get(), INFINITE, WT_EXECUTEDEFAULT)) {
+    if (!::RegisterWaitForSingleObject(&waitHandle, handle, handleCallback, handleItem.get(), INFINITE, WT_EXECUTEDEFAULT)) {
         DWORD error = ::GetLastError();
         ASSERT_NOT_REACHED();
     }
+    handleItem->setWaitHandle(waitHandle);
+}
+
+void WorkQueue::unregisterAndCloseHandle(HANDLE handle)
+{
+    RefPtr<HandleWorkItem> item;
+    {
+        MutexLocker locker(m_handlesLock);
+        ASSERT_ARG(handle, m_handles.contains(handle));
+        item = m_handles.take(handle);
+    }
+
+    unregisterWaitAndDestroyItemSoon(item.release());
 }
 
 DWORD WorkQueue::workThreadCallback(void* context)
@@ -146,7 +180,10 @@ void WorkQueue::unregisterAsWorkThread()
 
 void WorkQueue::platformInvalidate()
 {
-    // FIXME: Stop the thread and do other cleanup.
+#if !ASSERT_DISABLED
+    MutexLocker lock(m_handlesLock);
+    ASSERT(m_handles.isEmpty());
+#endif
 }
 
 void WorkQueue::scheduleWork(PassOwnPtr<WorkItem> item)
@@ -163,4 +200,29 @@ void WorkQueue::scheduleWork(PassOwnPtr<WorkItem> item)
     // only one thread actually ends up performing work.)
     if (!m_isWorkThreadRegistered)
         ::QueueUserWorkItem(workThreadCallback, this, WT_EXECUTEDEFAULT);
+}
+
+void WorkQueue::unregisterWaitAndDestroyItemSoon(PassRefPtr<HandleWorkItem> item)
+{
+    // We're going to make a blocking call to ::UnregisterWaitEx before closing the handle. (The
+    // blocking version of ::UnregisterWaitEx is much simpler than the non-blocking version.) If we
+    // do this on the current thread, we'll deadlock if we're currently in a callback function for
+    // the wait we're unregistering. So instead we do it asynchronously on some other worker thread.
+
+    ::QueueUserWorkItem(unregisterWaitAndDestroyItemCallback, item.leakRef(), WT_EXECUTEDEFAULT);
+}
+
+DWORD WINAPI WorkQueue::unregisterWaitAndDestroyItemCallback(void* context)
+{
+    ASSERT_ARG(context, context);
+    RefPtr<HandleWorkItem> item = adoptRef(static_cast<HandleWorkItem*>(context));
+
+    // Now that we know we're not in a callback function for the wait we're unregistering, we can
+    // make a blocking call to ::UnregisterWaitEx.
+    if (!::UnregisterWaitEx(item->waitHandle(), INVALID_HANDLE_VALUE)) {
+        DWORD error = ::GetLastError();
+        ASSERT_NOT_REACHED();
+    }
+
+    return 0;
 }

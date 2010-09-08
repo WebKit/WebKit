@@ -98,12 +98,10 @@ void Connection::platformInvalidate()
     if (m_connectionPipe == INVALID_HANDLE_VALUE)
         return;
 
-    // FIXME: Unregister the handles.
-
-    ::CloseHandle(m_readState.hEvent);
+    m_connectionQueue.unregisterAndCloseHandle(m_readState.hEvent);
     m_readState.hEvent = 0;
 
-    ::CloseHandle(m_writeState.hEvent);
+    m_connectionQueue.unregisterAndCloseHandle(m_writeState.hEvent);
     m_writeState.hEvent = 0;
 
     ::CloseHandle(m_connectionPipe);
@@ -112,6 +110,9 @@ void Connection::platformInvalidate()
 
 void Connection::readEventHandler()
 {
+    if (m_connectionPipe == INVALID_HANDLE_VALUE)
+        return;
+
     while (true) {
         // Check if we got some data.
         DWORD numberOfBytesRead = 0;
@@ -231,6 +232,9 @@ void Connection::readEventHandler()
 
 void Connection::writeEventHandler()
 {
+    if (m_connectionPipe == INVALID_HANDLE_VALUE)
+        return;
+
     DWORD numberOfBytesWritten = 0;
     if (!::GetOverlappedResult(m_connectionPipe, &m_writeState, &numberOfBytesWritten, FALSE)) {
         DWORD error = ::GetLastError();

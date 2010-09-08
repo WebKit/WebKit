@@ -68,7 +68,7 @@ public:
     void unregisterMachPortEventHandler(mach_port_t);
 #elif PLATFORM(WIN)
     void registerHandle(HANDLE, PassOwnPtr<WorkItem>);
-    void unregisterHandle(HANDLE);
+    void unregisterAndCloseHandle(HANDLE);
 #elif PLATFORM(QT)
     void connectSignal(QObject*, const char* signal, PassOwnPtr<WorkItem>);
     void disconnectSignal(QObject*, const char* signal);
@@ -96,15 +96,32 @@ private:
     class WorkItemWin : public RefCounted<WorkItemWin> {
     public:
         static PassRefPtr<WorkItemWin> create(PassOwnPtr<WorkItem>, WorkQueue*);
+        virtual ~WorkItemWin();
 
         WorkItem* item() const { return m_item.get(); }
         WorkQueue* queue() const { return m_queue; }
 
-    private:
+    protected:
         WorkItemWin(PassOwnPtr<WorkItem>, WorkQueue*);
 
+    private:
         OwnPtr<WorkItem> m_item;
         WorkQueue* m_queue;
+    };
+
+    class HandleWorkItem : public WorkItemWin {
+    public:
+        static PassRefPtr<HandleWorkItem> createByAdoptingHandle(HANDLE, PassOwnPtr<WorkItem>, WorkQueue*);
+        virtual ~HandleWorkItem();
+
+        void setWaitHandle(HANDLE waitHandle) { m_waitHandle = waitHandle; }
+        HANDLE waitHandle() const { return m_waitHandle; }
+
+    private:
+        HandleWorkItem(HANDLE, PassOwnPtr<WorkItem>, WorkQueue*);
+
+        HANDLE m_handle;
+        HANDLE m_waitHandle;
     };
 
     static void CALLBACK handleCallback(void* context, BOOLEAN timerOrWaitFired);
@@ -114,13 +131,16 @@ private:
     void unregisterAsWorkThread();
     void performWorkOnRegisteredWorkThread();
 
+    static void unregisterWaitAndDestroyItemSoon(PassRefPtr<HandleWorkItem>);
+    static DWORD WINAPI unregisterWaitAndDestroyItemCallback(void* context);
+
     volatile LONG m_isWorkThreadRegistered;
 
     Mutex m_workItemQueueLock;
     Vector<RefPtr<WorkItemWin> > m_workItemQueue;
 
     Mutex m_handlesLock;
-    HashMap<HANDLE, RefPtr<WorkItemWin> > m_handles;
+    HashMap<HANDLE, RefPtr<HandleWorkItem> > m_handles;
 #elif PLATFORM(QT)
     class WorkItemQt;
     HashMap<QObject*, WorkItemQt*> m_signalListeners;

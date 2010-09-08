@@ -1,5 +1,59 @@
 2010-09-08  Adam Roben  <aroben@apple.com>
 
+        Teach WorkQueue how to stop waiting on objects on Windows
+
+        WorkQueue now uses a subclass of WorkItemWin, HandleWorkItem, to hold
+        the waited-upon HANDLE and its corresponding wait handle. When a
+        HANDLE is unregistered, we use the HandleWorkItem to cancel the wait
+        and destroy the HANDLE.
+
+        Fixes <http://webkit.org/b/42826> <rdar://problem/8222253> Crash in
+        thread pool because WorkQueue keeps waiting on closed HANDLEs
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/CoreIPC/win/ConnectionWin.cpp:
+        (CoreIPC::Connection::platformInvalidate): Changed to call
+        WorkQueue::unregisterAndCloseHandle instead of closing our handles
+        manually.
+
+        (CoreIPC::Connection::readEventHandler):
+        (CoreIPC::Connection::writeEventHandler):
+        Handle cases where the pipe has already closed by just bailing out.
+        This can happen if a WorkItem to call one of these functions has
+        already been scheduled before platformInvalidate is called.
+
+        * Platform/WorkQueue.h: Gave WorkItemWin a virtual destructor, added
+        HandleWorkItem, changed m_handles to hold HandleWorkItems, and added
+        functions for unregistering waits.
+
+        * Platform/win/WorkQueueWin.cpp:
+        (WorkQueue::WorkItemWin::~WorkItemWin): Added. This virtual destructor
+        ensures that HandleWorkItem's destructor gets called.
+
+        (WorkQueue::HandleWorkItem::HandleWorkItem):
+        (WorkQueue::HandleWorkItem::createByAdoptingHandle):
+        Added simple constructor/creator.
+
+        (WorkQueue::HandleWorkItem::~HandleWorkItem): Closes the handle we
+        adopted.
+        (WorkQueue::registerHandle): Changed to create a HandleWorkItemWin and
+        to store the wait handle in it.
+        (WorkQueue::unregisterAndCloseHandle): Added. Removes the
+        HandleWorkItem for this HANDLE from m_handles and then schedules its
+        wait to be unregistered and the item to be destroyed.
+        (WorkQueue::platformInvalidate): Added an assertion and removed an
+        obsolete FIXME.
+        (WorkQueue::unregisterWaitAndDestroyItemSoon): Added. Calls
+        unregisterWaitAndDestroyItemCallback on a worker thread, passing it
+        ownership of the HandleWorkItem.
+        (WorkQueue::unregisterWaitAndDestroyItemCallback): Added. Adopts the
+        passed-in HandleWorkItem, then unregisters the handle's wait, then
+        destroys the HandleWorkItem when the RefPtr holding it goes out of
+        scope. Destroying the HandleWorkItem closes the handle.
+
+2010-09-08  Adam Roben  <aroben@apple.com>
+
         Remove WKSerializedScriptValue.cpp/h from the Copy Files build phase
 
         * WebKit2.xcodeproj/project.pbxproj:
