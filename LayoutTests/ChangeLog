@@ -1,3 +1,29 @@
+2010-09-08  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        http/tests/navigation/anchor-frames.html should not be diffing images
+        https://bugs.webkit.org/show_bug.cgi?id=45307
+
+        anchor-frames.html is a pretty straightforward test that makes sure that we
+        scroll to named anchors when they're used as frame sources. There's no need
+        for it to be a pixel test with per-platform expectations (which are currently
+        missing for Chromium Mac in any case).
+
+        * http/tests/navigation/anchor-frames-expected.txt: Added.
+        * http/tests/navigation/anchor-frames.html:
+        * http/tests/navigation/resources/frame-with-anchor.html: Added.
+        * platform/chromium-linux/http/tests/navigation/anchor-frames-expected.checksum: Removed.
+        * platform/chromium-linux/http/tests/navigation/anchor-frames-expected.png: Removed.
+        * platform/chromium-linux/http/tests/navigation/anchor-frames-expected.txt: Removed.
+        * platform/chromium-win/http/tests/navigation/anchor-frames-expected.checksum: Removed.
+        * platform/chromium-win/http/tests/navigation/anchor-frames-expected.png: Removed.
+        * platform/chromium-win/http/tests/navigation/anchor-frames-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/http/tests/navigation/anchor-frames-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/anchor-frames-expected.png: Removed.
+        * platform/mac/http/tests/navigation/anchor-frames-expected.txt: Removed.
+
 2010-09-08  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser.

@@ -1421,7 +1421,6 @@ BUG23498 MAC : fonts/fantasy.html = IMAGE
 BUG23498 MAC : fonts/monospace.html = IMAGE
 BUG23498 MAC : fonts/sans-serif.html = IMAGE
 BUG23498 MAC : fonts/serif.html = IMAGE
-BUG23498 MAC : http/tests/navigation/anchor-frames.html = IMAGE
 BUG9798 BUG23498 MAC DEBUG : http/tests/navigation/error404-frames.html = TIMEOUT IMAGE
 BUG9798 BUG23498 MAC RELEASE : http/tests/navigation/error404-frames.html = IMAGE
 BUG23498 MAC : http/tests/navigation/error404-subframeload.html = IMAGE

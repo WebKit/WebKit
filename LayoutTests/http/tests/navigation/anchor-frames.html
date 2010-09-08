@@ -1,8 +1,11 @@
-<script type="text/javascript" src="resources/testcode.js"></script>
-<!-- %23 below is a #, which is escaped so the anchor applies to the subframe instead of the frameset. -->
-<script>
-    if(window.layoutTestController) layoutTestController.dumpChildFrameScrollPositions();
-    runBasicTest("resources/frameset.pl?frameURL=success200.html%23anchor1", "none");
-</script>
-This page just kicks off a test, and should not appear in the expected test output.
-The files in the resources dir have comments about the tests.
+<html>
+  <!-- See resources/frame-with-anchor.html for description of test -->
+  <script>
+    if (window.layoutTestController)
+        layoutTestController.dumpChildFramesAsText();
+  </script>
+  <frameset rows="90%,10%">
+    <frame src="resources/frame-with-anchor.html#anchor1" name="main">
+    <frame src="about:blank" name="footer">
+  </frameset>
+</html>
