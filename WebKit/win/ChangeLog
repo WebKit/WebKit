@@ -3,6 +3,14 @@
         Not reviewed, build fix.
 
         * WebScrollBar.cpp:
+        (WebScrollBar::scrollSize):
+        (WebScrollBar::setScrollOffsetFromAnimation):
+
+2010-09-08  Peter Kasting  <pkasting@google.com>
+
+        Not reviewed, build fix.
+
+        * WebScrollBar.cpp:
         (WebScrollBar::setValue):
         (WebScrollBar::scrollSize):
         (WebScrollBar::setScrollOffsetFromAnimation):
