@@ -2553,9 +2553,6 @@ BUG41206 : fast/history/multiple-classes-visited.html = TEXT TIMEOUT
 BUG41292 : fast/url/ipv4.html = TEXT TIMEOUT
 BUG41292 : fast/url/anchor.html = TEXT TIMEOUT
 
-// Caused by r57695. Will investigate.
-BUG_JIANLI LINUX : http/tests/local/formdata/send-form-data-with-sliced-file.html = TEXT
-
 BUG33812 SKIP : fast/dom/icon-url-property.html = FAIL
 
 // Failing with webkit roll 57659 -> 57677.

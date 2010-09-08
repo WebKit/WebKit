@@ -84,10 +84,11 @@ String createCanonicalUUIDString()
     FILE* fptr = fopen("/proc/sys/kernel/random/uuid", "r");
     if (!fptr)
         return String();
-    char uuidStr[37] = {0};
-    if (!fgets(uuidStr, sizeof(uuidStr) - 1, fptr))
-        return String();
+    char uuidStr[37];
+    char* result = fgets(uuidStr, sizeof(uuidStr), fptr);
     fclose(fptr);
+    if (!result)
+        return String();
     String canonicalUuidStr = String(uuidStr).lower(); // make it lower.
     ASSERT(canonicalUuidStr[uuidVersionIdentifierIndex] == uuidVersionRequired);
     return canonicalUuidStr;
