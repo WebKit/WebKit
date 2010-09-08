@@ -1,5 +1,14 @@
 2010-09-08  Anders Carlsson  <andersca@apple.com>
 
+        Suggested and reviewed by Darin Adler.
+
+        Fix an overflow bug in bufferIsLargeEnoughToContain.
+
+        * Platform/CoreIPC/ArgumentDecoder.h:
+        (CoreIPC::ArgumentDecoder::bufferIsLargeEnoughToContain):
+
+2010-09-08  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         Improve CoreIPC encoding of strings

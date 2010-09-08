@@ -58,6 +58,9 @@ public:
     template<typename T>
     bool bufferIsLargeEnoughToContain(size_t numElements) const
     {
+        if (numElements > std::numeric_limits<size_t>::max() / sizeof(T))
+            return false;
+
         return bufferIsLargeEnoughToContain(__alignof(T), numElements * sizeof(T));
     }
 
