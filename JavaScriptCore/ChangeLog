@@ -1,5 +1,16 @@
 2010-09-07  Mihai Parparita  <mihaip@chromium.org>
 
+        Reviewed by James Robinson.
+
+        Fix Windows build after r66936
+        https://bugs.webkit.org/show_bug.cgi?id=45348
+
+        Add symbol names that were missing from r66936.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2010-09-07  Mihai Parparita  <mihaip@chromium.org>
+
         Reviewed by Oliver Hunt.
 
         pushState and replaceState do not clone RegExp objects correctly
