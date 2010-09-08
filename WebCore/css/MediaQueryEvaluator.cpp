@@ -148,14 +148,14 @@ bool MediaQueryEvaluator::eval(const MediaList* mediaList, CSSStyleSelector* sty
             continue;
 
         if (mediaTypeMatch(query->mediaType())) {
-            const Vector<MediaQueryExp*>* exps = query->expressions();
+            const Vector<OwnPtr<MediaQueryExp> >* exps = query->expressions();
             // iterate through expressions, stop if any of them eval to false
             // (AND semantics)
             size_t j = 0;
             for (; j < exps->size(); ++j) {
-                bool exprResult = eval(exps->at(j));
+                bool exprResult = eval(exps->at(j).get());
                 if (styleSelector && exps->at(j)->isViewportDependent())
-                    styleSelector->addViewportDependentMediaQueryResult(exps->at(j), exprResult);
+                    styleSelector->addViewportDependentMediaQueryResult(exps->at(j).get(), exprResult);
                 if (!exprResult)
                     break;
             }

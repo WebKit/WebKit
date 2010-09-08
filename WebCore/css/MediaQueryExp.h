@@ -31,6 +31,7 @@
 
 #include "CSSValue.h"
 #include "MediaFeatureNames.h"
+#include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/AtomicString.h>
 
@@ -39,7 +40,7 @@ class CSSParserValueList;
 
 class MediaQueryExp : public FastAllocBase {
 public:
-    MediaQueryExp(const AtomicString& mediaFeature, CSSParserValueList* values);
+    static PassOwnPtr<MediaQueryExp> create(const AtomicString& mediaFeature, CSSParserValueList* values);
     ~MediaQueryExp();
 
     AtomicString mediaFeature() const { return m_mediaFeature; }
@@ -69,6 +70,8 @@ public:
     String serialize() const;
 
 private:
+    MediaQueryExp(const AtomicString& mediaFeature, CSSParserValueList* values);
+
     AtomicString m_mediaFeature;
     RefPtr<CSSValue> m_value;
     bool m_isValid;

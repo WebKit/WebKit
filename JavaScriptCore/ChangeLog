@@ -1,3 +1,26 @@
+2010-08-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Handle MediaQueryExp memory management exclusively with smart pointers
+        https://bugs.webkit.org/show_bug.cgi?id=44874
+        
+        Implemented a non-copying sort function to make it possible to sort a Vector
+        of OwnPtrs (which cannot be copied). This is required for the above.
+
+        * wtf/NonCopyingSort.h: Added.
+        (WTF::nonCopyingSort): It's secretly heapsort.
+        (WTF::heapSort): heapsort implementation.
+        (WTF::siftDown): Helper function for heapsort.
+        (WTF::heapify): ditto
+
+        Adjust build systems.
+        
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2010-09-08  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Darin Adler.

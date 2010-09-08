@@ -25,6 +25,7 @@
 #include "CSSStyleSheet.h"
 #include "ExceptionCode.h"
 #include "MediaQuery.h"
+#include "MediaQueryExp.h"
 
 namespace WebCore {
 

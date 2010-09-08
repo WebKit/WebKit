@@ -463,6 +463,7 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/MD5.cpp \
 	JavaScriptCore/wtf/MD5.h \
 	JavaScriptCore/wtf/MessageQueue.h \
+	JavaScriptCore/wtf/NonCopyingSort.h \
 	JavaScriptCore/wtf/Noncopyable.h \
 	JavaScriptCore/wtf/NotFound.h \
 	JavaScriptCore/wtf/OwnArrayPtr.h \

@@ -394,6 +394,7 @@
             'wtf/MallocZoneSupport.h',
             'wtf/MathExtras.h',
             'wtf/MessageQueue.h',
+            'wtf/NonCopyingSort.h',
             'wtf/Noncopyable.h',
             'wtf/NotFound.h',
             'wtf/OwnArrayPtr.h',

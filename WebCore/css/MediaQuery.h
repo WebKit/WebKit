@@ -43,11 +43,11 @@ public:
         Only, Not, None
     };
 
-    MediaQuery(Restrictor, const String& mediaType, PassOwnPtr<Vector<MediaQueryExp*> > exprs);
+    MediaQuery(Restrictor, const String& mediaType, PassOwnPtr<Vector<OwnPtr<MediaQueryExp> > > exprs);
     ~MediaQuery();
 
     Restrictor restrictor() const { return m_restrictor; }
-    const Vector<MediaQueryExp*>* expressions() const { return m_expressions.get(); }
+    const Vector<OwnPtr<MediaQueryExp> >* expressions() const { return m_expressions.get(); }
     String mediaType() const { return m_mediaType; }
     bool operator==(const MediaQuery& other) const;
     String cssText() const;
@@ -56,7 +56,7 @@ public:
  private:
     Restrictor m_restrictor;
     String m_mediaType;
-    OwnPtr<Vector<MediaQueryExp*> > m_expressions;
+    OwnPtr<Vector<OwnPtr<MediaQueryExp> > > m_expressions;
     bool m_ignored;
     String m_serializationCache;
 

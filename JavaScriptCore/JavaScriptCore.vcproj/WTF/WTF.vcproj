@@ -405,6 +405,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\NonCopyingSort.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\Noncopyable.h"
 			>
 		</File>

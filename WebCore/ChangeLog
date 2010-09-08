@@ -1,3 +1,35 @@
+2010-08-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Handle MediaQueryExp memory management exclusively with smart pointers
+        https://bugs.webkit.org/show_bug.cgi?id=44874
+
+        Gace MediaQueryExp a create function, made the constructor private, and followed
+        the implications. The one tricky bit was using a non-copying sort to sort
+        the Vector<OwnPtr<MediaQueryExp> > in the MediaQuery constructor.
+        
+        * ForwardingHeaders/wtf/NonCopyingSort.h: Added.
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::~CSSParser):
+        (WebCore::CSSParser::createFloatingMediaQueryExp):
+        (WebCore::CSSParser::createFloatingMediaQueryExpList):
+        (WebCore::CSSParser::sinkFloatingMediaQueryExpList):
+        (WebCore::CSSParser::createFloatingMediaQuery):
+        * css/CSSParser.h:
+        * css/MediaList.cpp:
+        * css/MediaQuery.cpp:
+        (WebCore::expressionCompare):
+        (WebCore::MediaQuery::MediaQuery):
+        (WebCore::MediaQuery::~MediaQuery):
+        * css/MediaQuery.h:
+        (WebCore::MediaQuery::expressions):
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::MediaQueryEvaluator::eval):
+        * css/MediaQueryExp.h:
+        (WebCore::MediaQueryExp::create):
+
 2010-09-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Maciej Stachowiak.

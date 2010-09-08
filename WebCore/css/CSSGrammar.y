@@ -79,7 +79,7 @@ using namespace HTMLNames;
     MediaQueryExp* mediaQueryExp;
     CSSParserValue value;
     CSSParserValueList* valueList;
-    Vector<MediaQueryExp*>* mediaQueryExpList;
+    Vector<OwnPtr<MediaQueryExp> >* mediaQueryExpList;
     WebKitCSSKeyframeRule* keyframeRule;
     WebKitCSSKeyframesRule* keyframesRule;
     float val;
@@ -627,11 +627,11 @@ media_query_exp_list:
     media_query_exp {
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingMediaQueryExpList();
-        $$->append(p->sinkFloatingMediaQueryExp($1).leakPtr());
+        $$->append(p->sinkFloatingMediaQueryExp($1));
     }
     | media_query_exp_list maybe_space MEDIA_AND maybe_space media_query_exp {
         $$ = $1;
-        $$->append(static_cast<CSSParser*>(parser)->sinkFloatingMediaQueryExp($5).leakPtr());
+        $$->append(static_cast<CSSParser*>(parser)->sinkFloatingMediaQueryExp($5));
     }
     ;
 
