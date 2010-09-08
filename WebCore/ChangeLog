@@ -1,3 +1,9 @@
+2010-09-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed trivial fix after r66960.
+
+        * WebCore.pro: loader/TextDocument.h renamed to html/TextDocument.h
+
 2010-09-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

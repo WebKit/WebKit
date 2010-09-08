@@ -1529,6 +1529,7 @@ HEADERS += \
     html/ImageResizerThread.h \
     html/LabelsNodeList.h \
     html/StepRange.h \
+    html/TextDocument.h \
     html/TimeRanges.h \
     html/ValidityState.h \
     html/parser/CSSPreloadScanner.h \
@@ -1611,7 +1612,6 @@ HEADERS += \
     loader/Request.h \
     loader/ResourceLoader.h \
     loader/SubresourceLoader.h \
-    loader/TextDocument.h \
     loader/TextResourceDecoder.h \
     loader/ThreadableLoader.h \
     loader/WorkerThreadableLoader.h \
