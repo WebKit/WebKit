@@ -1,3 +1,20 @@
+2010-09-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Remove unused member variable from DecodedDocumentParser
+        https://bugs.webkit.org/show_bug.cgi?id=45379
+
+        This member variable isn't used because of the recent split of
+        TextDocumentParser and TextViewSourceParser.
+
+        * dom/DecodedDataDocumentParser.cpp:
+        (WebCore::DecodedDataDocumentParser::DecodedDataDocumentParser):
+        * dom/DecodedDataDocumentParser.h:
+        * dom/ScriptableDocumentParser.cpp:
+        (WebCore::ScriptableDocumentParser::ScriptableDocumentParser):
+        * dom/ScriptableDocumentParser.h:
+
 2010-09-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Andreas Kling.

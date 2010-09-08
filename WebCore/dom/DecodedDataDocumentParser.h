@@ -36,11 +36,8 @@ public:
     // XMLHttpRequest if the responseXML was well formed.
     virtual bool wellFormed() const { return true; }
 
-    bool inViewSourceMode() const { return m_inViewSourceMode; }
-    void setInViewSourceMode(bool mode) { m_inViewSourceMode = mode; }
-
 protected:
-    DecodedDataDocumentParser(Document*, bool viewSourceMode = false);
+    explicit DecodedDataDocumentParser(Document*);
 
 private:
     // append is used by DocumentWriter::replaceDocument
@@ -48,8 +45,6 @@ private:
 
     // appendBytes is used by DocumentWriter (the loader)
     virtual void appendBytes(DocumentWriter*, const char* bytes, int length, bool flush);
-
-    bool m_inViewSourceMode;
 };
 
 }

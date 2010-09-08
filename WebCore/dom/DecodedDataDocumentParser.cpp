@@ -32,9 +32,8 @@
 
 namespace WebCore {
 
-DecodedDataDocumentParser::DecodedDataDocumentParser(Document* document, bool viewSourceMode)
+DecodedDataDocumentParser::DecodedDataDocumentParser(Document* document)
     : DocumentParser(document)
-    , m_inViewSourceMode(viewSourceMode)
 {
 }
 
