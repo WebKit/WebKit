@@ -1,3 +1,20 @@
+2010-09-08  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        [Chromium] Fix test results server to make sure
+        it does not have corrupted data.
+
+        results.json file size coulbe be >1M and we split
+        the data into multiple data store entries in this
+        case. This patch fixes the issue that the data may
+        be corrupted if data store error happens in the middle
+        of saving multiple entries.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45063
+
+        * TestResultServer/model/datastorefile.py:
+
 2010-09-08  Peter Varga  <pvarga@inf.u-szeged.hu>
 
         Reviewed by Kenneth Rohde Christiansen.

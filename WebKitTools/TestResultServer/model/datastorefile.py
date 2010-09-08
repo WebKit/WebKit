@@ -58,6 +58,9 @@ class DataStoreFile(db.Model):
 
     name = db.StringProperty()
     data_keys = db.ListProperty(db.Key)
+    # keys to the data store entries that can be reused for new data.
+    # If it is emtpy, create new DataEntry.
+    new_data_keys = db.ListProperty(db.Key)
     date = db.DateTimeProperty(auto_now_add=True)
 
     data = None
@@ -82,11 +85,18 @@ class DataStoreFile(db.Model):
             return False
 
         start = 0
-        keys = self.data_keys
-        self.data_keys = []
+        # Use the new_data_keys to store new data. If all new data are saved
+        # successfully, swap new_data_keys and data_keys so we can reuse the
+        # data_keys entries in next run. If unable to save new data for any
+        # reason, only the data pointed by new_data_keys may be corrupted,
+        # the existing data_keys data remains untouched. The corrupted data
+        # in new_data_keys will be overwritten in next update.
+        keys = self.new_data_keys
+        self.new_data_keys = []
+
         while start < len(data):
             if keys:
-                key = keys.pop(0)
+                key = keys[0]
                 data_entry = DataEntry.get(key)
                 if not data_entry:
                     logging.warning("Found key, but no data entry: %s", key)
@@ -95,16 +105,27 @@ class DataStoreFile(db.Model):
                 data_entry = DataEntry()
 
             data_entry.data = db.Blob(data[start: start + MAX_ENTRY_LEN])
-            data_entry.put()
+            try:
+                data_entry.put()
+            except Exception, err:
+                logging.error("Failed to save data store entry: %s", err)
+                if keys:
+                    self.delete_data(keys)
+                return False
 
             logging.info("Data saved: %s.", data_entry.key())
-            self.data_keys.append(data_entry.key())
+            self.new_data_keys.append(data_entry.key())
+            if keys:
+                keys.pop(0)
 
             start = start + MAX_ENTRY_LEN
 
         if keys:
             self.delete_data(keys)
 
+        temp_keys = self.data_keys
+        self.data_keys = self.new_data_keys
+        self.new_data_keys = temp_keys
         self.data = data
 
         return True
