@@ -1,3 +1,9 @@
+2010-09-07  James Robinson  <jamesr@chromium.org>
+
+        Compile fix attempt for windows.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2010-09-07  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by James Robinson.

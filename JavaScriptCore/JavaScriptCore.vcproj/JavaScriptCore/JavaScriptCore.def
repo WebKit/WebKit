@@ -1,6 +1,5 @@
 EXPORTS
 
-    ??_GRegExp@JSC@@QAEPAXI@Z
     ??0CString@WTF@@QAE@PBD@Z
     ??0CString@WTF@@QAE@PBDI@Z
     ??0Collator@WTF@@QAE@PBD@Z
@@ -34,6 +33,7 @@ EXPORTS
     ??1JSGlobalObject@JSC@@UAE@XZ
     ??1Mutex@WTF@@QAE@XZ
     ??1RefCountedLeakCounter@WTF@@QAE@XZ
+    ??1RegExp@JSC@@QAE@XZ
     ??1Structure@JSC@@QAE@XZ
     ??1ThreadCondition@WTF@@QAE@XZ
     ??1WTFThreadData@WTF@@QAE@XZ
