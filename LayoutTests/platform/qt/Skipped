@@ -5457,3 +5457,7 @@ fast/events/continuous-platform-wheelevent-in-scrolling-div.html
 fast/events/scroll-event-does-not-bubble.html
 fast/events/spatial-navigation/snav-only-clipped-overflow-content.html
 fast/events/wheelevent-in-scrolling-div.html
+fast/events/platform-wheelevent-in-scrolling-div.html
+fast/events/spatial-navigation/snav-iframe-with-offscreen-focusable-element.html
+platform/qt/fast/events/event-sender-keydown-frame.html
+fast/events/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html
