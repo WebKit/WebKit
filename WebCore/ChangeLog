@@ -1,3 +1,35 @@
+2010-09-06  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Eric Carlson.
+
+        Add mediaPlayerPlaybackStateChanged to MediaPlayerClient
+
+        https://bugs.webkit.org/show_bug.cgi?id=45263
+
+        The platform backend may change state, for example as a result
+        of an external plugin controlling the backend, so we need to
+        react to this situation by syncing up the WebCore state with the
+        platform backend.
+
+        We call playInternal()/pauseInternal() depending on the backend
+        state, to trigger the corresponding DOM events to match the state.
+
+        updatePlayState() is then refactored to take into account the
+        situation where the backend is already in the correct state but
+        WebCore is not, so that we update the playback progress timer
+        and set m_playing correctly.
+
+        updatePlayState() changes Should be covered by existing tests.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerPlaybackStateChanged):
+        (WebCore::HTMLMediaElement::updatePlayState):
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::playbackStateChanged):
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerPlaybackStateChanged):
+
 2010-09-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

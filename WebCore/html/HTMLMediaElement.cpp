@@ -1600,6 +1600,19 @@ void HTMLMediaElement::mediaPlayerRateChanged(MediaPlayer*)
     endProcessingMediaPlayerCallback();
 }
 
+void HTMLMediaElement::mediaPlayerPlaybackStateChanged(MediaPlayer*)
+{
+    if (!m_player)
+        return;
+
+    beginProcessingMediaPlayerCallback();
+    if (m_player->paused())
+        pauseInternal();
+    else
+        playInternal();
+    endProcessingMediaPlayerCallback();
+}
+
 void HTMLMediaElement::mediaPlayerSawUnsupportedTracks(MediaPlayer*)
 {
     // The MediaPlayer came across content it cannot completely handle.
@@ -1775,24 +1788,33 @@ void HTMLMediaElement::updatePlayState()
     
     bool shouldBePlaying = potentiallyPlaying();
     bool playerPaused = m_player->paused();
-    if (shouldBePlaying && playerPaused) {
+
+    if (shouldBePlaying) {
         setDisplayMode(Video);
 
-        // Set rate before calling play in case the rate was set before the media engine wasn't setup.
-        // The media engine should just stash the rate since it isn't already playing.
-        m_player->setRate(m_playbackRate);
-        m_player->play();
+        if (playerPaused) {
+            // Set rate before calling play in case the rate was set before the media engine was setup.
+            // The media engine should just stash the rate since it isn't already playing.
+            m_player->setRate(m_playbackRate);
+            m_player->play();
+        }
+
         startPlaybackProgressTimer();
         m_playing = true;
-    } else if (!shouldBePlaying && !playerPaused) {
-        m_player->pause();
+
+    } else { // Should not be playing right now
+        if (!playerPaused)
+            m_player->pause();
+
         m_playbackProgressTimer.stop();
         m_playing = false;
         float time = currentTime();
         if (time > m_lastSeekTime)
             addPlayedRange(m_lastSeekTime, time);
-    } else if (couldPlayIfEnoughData() && playerPaused)
-        m_player->prepareToPlay();
+
+        if (couldPlayIfEnoughData())
+            m_player->prepareToPlay();
+    }
     
     if (renderer())
         renderer()->updateFromElement();
