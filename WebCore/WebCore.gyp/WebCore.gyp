@@ -1279,6 +1279,8 @@
           'sources/': [
             ['exclude', 'Posix\\.cpp$'],
             ['include', '/opentype/'],
+            ['include', '/ScrollAnimatorWin\\.cpp$'],
+            ['include', '/ScrollAnimatorWin\\.h$'],
             ['include', '/SkiaFontWin\\.cpp$'],
             ['include', '/TransparencyWin\\.cpp$'],
           ],

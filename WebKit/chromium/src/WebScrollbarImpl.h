@@ -58,6 +58,8 @@ public:
     virtual bool handleInputEvent(const WebInputEvent&);
 
     // WebCore::ScrollbarClient methods
+    virtual int scrollSize(WebCore::ScrollbarOrientation orientation) const;
+    virtual void setScrollOffsetFromAnimation(const WebCore::IntPoint&);
     virtual void valueChanged(WebCore::Scrollbar*);
     virtual void invalidateScrollbarRect(WebCore::Scrollbar*, const WebCore::IntRect&);
     virtual bool isActive() const;

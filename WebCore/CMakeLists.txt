@@ -1200,7 +1200,9 @@ SET(WebCore_SOURCES
     platform/LinkHash.cpp
     platform/Logging.cpp
     platform/MIMETypeRegistry.cpp
+    platform/ScrollAnimator.cpp
     platform/Scrollbar.cpp
+    platform/ScrollbarClient.cpp
     platform/ScrollbarThemeComposite.cpp
     platform/ScrollView.cpp
     platform/SharedBuffer.cpp

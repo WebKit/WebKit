@@ -1,3 +1,82 @@
+2010-09-08  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by David Hyatt.
+
+        Add smooth scrolling framework, and a Windows implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=32356
+
+        * CMakeLists.txt: Add ScrollAnimator.
+        * GNUmakefile.am: Add ScrollAnimator.
+        * WebCore.gyp/WebCore.gyp: Add Windows ScrollAnimator.
+        * WebCore.gypi: Add ScrollAnimator.
+        * WebCore.pro: Add ScrollAnimator.
+        * WebCore.vcproj/WebCore.vcproj: Add ScrollAnimator.
+        * WebCore.xcodeproj/project.pbxproj: Add ScrollAnimator.
+        * platform/ScrollAnimator.cpp: Added base implementation that does no animation.
+        (WebCore::ScrollAnimator::create):
+        (WebCore::ScrollAnimator::scroll):
+        (WebCore::ScrollAnimator::setScrollPositionAndStopAnimation):
+        * platform/ScrollAnimator.h: Added base implementation that does no animation.
+        (WebCore::ScrollAnimator::ScrollAnimator):
+        (WebCore::ScrollAnimator::~ScrollAnimator):
+        * platform/ScrollAnimatorWin.cpp: Added Windows subclass that animates scrolls.
+        (WebCore::ScrollAnimator::create):
+        (WebCore::ScrollAnimatorWin::PerAxisData::PerAxisData):
+        (WebCore::ScrollAnimatorWin::ScrollAnimatorWin):
+        (WebCore::ScrollAnimatorWin::~ScrollAnimatorWin):
+        (WebCore::ScrollAnimatorWin::scroll):
+        (WebCore::ScrollAnimatorWin::setScrollPositionAndStopAnimation):
+        (WebCore::ScrollAnimatorWin::accelerationTime):
+        (WebCore::ScrollAnimatorWin::animationTimerFired):
+        (WebCore::ScrollAnimatorWin::stopAnimationTimerIfNeeded):
+        (WebCore::ScrollAnimatorWin::animateScroll):
+        * platform/ScrollAnimatorWin.h: Added Windows subclass that animates scrolls.
+        * platform/ScrollView.cpp: Implement new ScrollbarClient functions.  Allow wheel scrolls to be animated.
+        (WebCore::ScrollView::scrollSize):
+        (WebCore::ScrollView::setScrollOffsetFromAnimation):
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::wheelEvent):
+        * platform/ScrollView.h: Implement new ScrollbarClient functions.
+        * platform/Scrollbar.cpp: Allow ScrollAnimator to handle scrolls if present.
+        (WebCore::Scrollbar::setValue):
+        (WebCore::Scrollbar::scroll):
+        (WebCore::Scrollbar::moveThumb):
+        (WebCore::Scrollbar::setCurrentPos):
+        (WebCore::Scrollbar::mouseMoved):
+        * platform/Scrollbar.h:
+        * platform/ScrollbarClient.cpp: Added to avoid having to make ScrollAnimator.h non-private.
+        (WebCore::ScrollbarClient::ScrollbarClient):
+        (WebCore::ScrollbarClient::~ScrollbarClient):
+        (WebCore::ScrollbarClient::scroll):
+        (WebCore::ScrollbarClient::setScrollPositionAndStopAnimation):
+        * platform/ScrollbarClient.h: Add hooks for ScrollAnimator.
+        (WebCore::ScrollbarClient::convertFromScrollbarToContainingView):
+        (WebCore::ScrollbarClient::convertFromContainingViewToScrollbar):
+        * platform/gtk/MainFrameScrollbarGtk.cpp:
+        (MainFrameScrollbarGtk::gtkValueChanged):
+        * platform/qt/ScrollbarQt.cpp: Use scroll() in preference to setValue().
+        (WebCore::Scrollbar::contextMenu):
+        * platform/win/PopupMenuWin.cpp: Implement new ScrollbarClient functions.
+        (WebCore::PopupMenuWin::scrollSize):
+        (WebCore::PopupMenuWin::setScrollOffsetFromAnimation):
+        * platform/win/PopupMenuWin.h: Implement new ScrollbarClient functions.
+        * rendering/RenderDataGrid.cpp: Implement new ScrollbarClient functions.
+        (WebCore::RenderDataGrid::scrollSize):
+        (WebCore::RenderDataGrid::setScrollOffsetFromAnimation):
+        * rendering/RenderDataGrid.h: Implement new ScrollbarClient functions.
+        * rendering/RenderLayer.cpp: Implement new ScrollbarClient functions.
+        (WebCore::RenderLayer::scrollToOffset):
+        (WebCore::RenderLayer::scrollSize):
+        (WebCore::RenderLayer::setScrollOffsetFromAnimation):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        * rendering/RenderLayer.h: Implement new ScrollbarClient functions.
+        * rendering/RenderListBox.cpp: Implement new ScrollbarClient functions.
+        (WebCore::RenderListBox::scrollToRevealElementAtListIndex):
+        (WebCore::RenderListBox::scrollSize):
+        (WebCore::RenderListBox::setScrollOffsetFromAnimation):
+        (WebCore::RenderListBox::setScrollTop):
+        * rendering/RenderListBox.h: Implement new ScrollbarClient functions.
+
 2010-09-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.

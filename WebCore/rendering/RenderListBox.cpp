@@ -500,7 +500,7 @@ bool RenderListBox::scrollToRevealElementAtListIndex(int index)
 
     m_indexOffset = newOffset;
     if (m_vBar)
-        m_vBar->setValue(m_indexOffset);
+        m_vBar->setValue(m_indexOffset, Scrollbar::NotFromScrollAnimator);
 
     return true;
 }
@@ -521,6 +521,17 @@ void RenderListBox::valueChanged(unsigned listIndex)
     SelectElement* select = toSelectElement(element);
     select->setSelectedIndex(select->listToOptionIndex(listIndex));
     element->dispatchFormControlChangeEvent();
+}
+
+int RenderListBox::scrollSize(ScrollbarOrientation orientation) const
+{
+    return ((orientation == VerticalScrollbar) && m_vBar) ? (m_vBar->totalSize() - m_vBar->visibleSize()) : 0;
+}
+
+void RenderListBox::setScrollOffsetFromAnimation(const IntPoint& offset)
+{
+    if (m_vBar)
+        m_vBar->setValue(offset.y(), Scrollbar::FromScrollAnimator);
 }
 
 void RenderListBox::valueChanged(Scrollbar*)
@@ -578,7 +589,7 @@ void RenderListBox::setScrollTop(int newTop)
         return;
     m_indexOffset = index;
     if (m_vBar)
-        m_vBar->setValue(index);
+        m_vBar->setValue(index, Scrollbar::NotFromScrollAnimator);
 }
 
 bool RenderListBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction)

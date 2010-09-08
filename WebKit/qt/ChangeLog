@@ -1,3 +1,13 @@
+2010-09-08  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by David Hyatt.
+
+        Add smooth scrolling framework, and a Windows implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=32356
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::setScrollBarValue):
+
 2010-09-06  Diego Gonzalez  <diegohcg@webkit.org>
 
         Reviewed by Antonio Gomes.

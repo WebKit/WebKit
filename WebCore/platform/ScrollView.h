@@ -58,7 +58,9 @@ class ScrollView : public Widget, public ScrollbarClient {
 public:
     ~ScrollView();
 
-    // ScrollbarClient function. FrameView overrides the others.
+    // ScrollbarClient functions.  FrameView overrides the others.
+    virtual int scrollSize(ScrollbarOrientation orientation) const;
+    virtual void setScrollOffsetFromAnimation(const IntPoint&);
     virtual void valueChanged(Scrollbar*);
     
     // The window thats hosts the ScrollView. The ScrollView will communicate scrolls and repaints to the

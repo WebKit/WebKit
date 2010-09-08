@@ -273,6 +273,20 @@ IntPoint ScrollView::maximumScrollPosition() const
     return IntPoint(maximumOffset.width(), maximumOffset.height());
 }
 
+int ScrollView::scrollSize(ScrollbarOrientation orientation) const
+{
+    Scrollbar* scrollbar = ((orientation == HorizontalScrollbar) ? m_horizontalScrollbar : m_verticalScrollbar).get();
+    return scrollbar ? (scrollbar->totalSize() - scrollbar->visibleSize()) : 0;
+}
+
+void ScrollView::setScrollOffsetFromAnimation(const IntPoint& offset)
+{
+    if (m_horizontalScrollbar)
+        m_horizontalScrollbar->setValue(offset.x(), Scrollbar::FromScrollAnimator);
+    if (m_verticalScrollbar)
+        m_verticalScrollbar->setValue(offset.y(), Scrollbar::FromScrollAnimator);
+}
+
 void ScrollView::valueChanged(Scrollbar* scrollbar)
 {
     // Figure out if we really moved.
@@ -441,7 +455,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
             m_horizontalScrollbar->setSuppressInvalidation(true);
         m_horizontalScrollbar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
         m_horizontalScrollbar->setProportion(clientWidth, contentsWidth());
-        m_horizontalScrollbar->setValue(scroll.width());
+        m_horizontalScrollbar->setValue(scroll.width(), Scrollbar::NotFromScrollAnimator);
         if (m_scrollbarsSuppressed)
             m_horizontalScrollbar->setSuppressInvalidation(false); 
     } 
@@ -463,7 +477,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
             m_verticalScrollbar->setSuppressInvalidation(true);
         m_verticalScrollbar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
         m_verticalScrollbar->setProportion(clientHeight, contentsHeight());
-        m_verticalScrollbar->setValue(scroll.height());
+        m_verticalScrollbar->setValue(scroll.height(), Scrollbar::NotFromScrollAnimator);
         if (m_scrollbarsSuppressed)
             m_verticalScrollbar->setSuppressInvalidation(false);
     }
@@ -673,7 +687,12 @@ void ScrollView::wheelEvent(PlatformWheelEvent& e)
             if (negative)
                 deltaY = -deltaY;
         }
-        scrollBy(IntSize(-deltaX, -deltaY));
+
+        // Should we fall back on scrollBy() if there is no scrollbar for a non-zero delta?
+        if (deltaY && m_verticalScrollbar)
+            m_verticalScrollbar->scroll(ScrollUp, ScrollByPixel, deltaY);
+        if (deltaX && m_horizontalScrollbar)
+            m_horizontalScrollbar->scroll(ScrollLeft, ScrollByPixel, deltaX);
     }
 }
 

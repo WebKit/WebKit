@@ -76,11 +76,11 @@ bool Scrollbar::contextMenu(const PlatformMouseEvent& event)
         const QPoint pos = convertFromContainingWindow(event.pos());
         moveThumb(horizontal ? pos.x() : pos.y());
     } else if (actionSelected == actScrollTop)
-        setValue(0);
+        scroll(horizontal ? ScrollLeft : ScrollUp, ScrollByDocument);
     else if (actionSelected == actScrollBottom)
-        setValue(maximum());
+        scroll(horizontal ? ScrollRight : ScrollDown, ScrollByDocument);
     else if (actionSelected == actPageUp)
-        scroll(horizontal ? ScrollLeft: ScrollUp, ScrollByPage);
+        scroll(horizontal ? ScrollLeft : ScrollUp, ScrollByPage);
     else if (actionSelected == actPageDown)
         scroll(horizontal ? ScrollRight : ScrollDown, ScrollByPage);
     else if (actionSelected == actScrollUp)

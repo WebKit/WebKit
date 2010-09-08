@@ -24265,11 +24265,31 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\ScrollAnimator.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\ScrollAnimator.h"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\ScrollAnimatorWin.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\ScrollAnimatorWin.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\Scrollbar.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\platform\Scrollbar.h"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\ScrollbarClient.cpp"
 				>
 			</File>
 			<File

@@ -4842,7 +4842,8 @@
 		BC99812E0DBE807A008CE9EF /* DOMAbstractViewFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = BC99812D0DBE807A008CE9EF /* DOMAbstractViewFrame.h */; };
 		BC9ADD230CC4032600098C4C /* WebKitCSSTransformValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9ADD220CC4032600098C4C /* WebKitCSSTransformValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC9ADD800CC4092200098C4C /* WebKitCSSTransformValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC9ADD7F0CC4092200098C4C /* WebKitCSSTransformValue.cpp */; };
-		BC9BC64E0E7C4889008B9849 /* ScrollbarClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9BC64D0E7C4889008B9849 /* ScrollbarClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC9BC64D0E7C4889008B9849 /* ScrollbarClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC9BC64B0E7C4889008B9849 /* ScrollbarClient.cpp */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC9BC64E0E7C4889008B9849 /* ScrollbarClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9BC64C0E7C4889008B9849 /* ScrollbarClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCA169A20BFD55B40019CA76 /* JSHTMLTableCaptionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA169A00BFD55B40019CA76 /* JSHTMLTableCaptionElement.cpp */; };
 		BCA169A30BFD55B40019CA76 /* JSHTMLTableCaptionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA169A10BFD55B40019CA76 /* JSHTMLTableCaptionElement.h */; };
 		BCA2B061105047600043BD1C /* UserScript.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA2B0601050475F0043BD1C /* UserScript.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5133,6 +5134,8 @@
 		C5EBDD84105EDDEC0056816F /* StorageEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = C5EBDD81105EDDEC0056816F /* StorageEventDispatcher.h */; };
 		C6D74AD509AA282E000B0A52 /* ModifySelectionListLevel.h in Headers */ = {isa = PBXBuildFile; fileRef = C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */; };
 		C6D74AE409AA290A000B0A52 /* ModifySelectionListLevel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */; };
+		CA3BF67C10D99BAE00E6CE53 /* ScrollAnimator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CA3BF67B10D99BAE00E6CE53 /* ScrollAnimator.cpp */; };
+		CA3BF67E10D99BAE00E6CE53 /* ScrollAnimator.h in Headers */ = {isa = PBXBuildFile; fileRef = CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */; };
 		CE02F0C411E83ADD00C6684A /* ScriptControllerBase.h in Headers */ = {isa = PBXBuildFile; fileRef = CE02F0C311E83ADD00C6684A /* ScriptControllerBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE057FA51220731100A476D5 /* DocumentMarkerController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE057FA31220731100A476D5 /* DocumentMarkerController.cpp */; };
 		CE057FA61220731100A476D5 /* DocumentMarkerController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE057FA41220731100A476D5 /* DocumentMarkerController.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10644,7 +10647,8 @@
 		BC99812D0DBE807A008CE9EF /* DOMAbstractViewFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMAbstractViewFrame.h; sourceTree = "<group>"; };
 		BC9ADD220CC4032600098C4C /* WebKitCSSTransformValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebKitCSSTransformValue.h; sourceTree = "<group>"; };
 		BC9ADD7F0CC4092200098C4C /* WebKitCSSTransformValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSTransformValue.cpp; sourceTree = "<group>"; };
-		BC9BC64D0E7C4889008B9849 /* ScrollbarClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollbarClient.h; sourceTree = "<group>"; };
+		BC9BC64B0E7C4889008B9849 /* ScrollbarClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollbarClient.cpp; sourceTree = "<group>"; };
+		BC9BC64C0E7C4889008B9849 /* ScrollbarClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollbarClient.h; sourceTree = "<group>"; };
 		BCA169A00BFD55B40019CA76 /* JSHTMLTableCaptionElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTableCaptionElement.cpp; sourceTree = "<group>"; };
 		BCA169A10BFD55B40019CA76 /* JSHTMLTableCaptionElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLTableCaptionElement.h; sourceTree = "<group>"; };
 		BCA2B0601050475F0043BD1C /* UserScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserScript.h; sourceTree = "<group>"; };
@@ -10964,6 +10968,8 @@
 		C5EBDD81105EDDEC0056816F /* StorageEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageEventDispatcher.h; sourceTree = "<group>"; };
 		C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModifySelectionListLevel.h; sourceTree = "<group>"; };
 		C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModifySelectionListLevel.cpp; sourceTree = "<group>"; };
+		CA3BF67B10D99BAE00E6CE53 /* ScrollAnimator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollAnimator.cpp; sourceTree = "<group>"; };
+		CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollAnimator.h; sourceTree = "<group>"; };
 		CD4E0AFA11F7BC27009D3811 /* fullscreen.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = fullscreen.css; sourceTree = "<group>"; };
 		CE02F0C311E83ADD00C6684A /* ScriptControllerBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptControllerBase.h; sourceTree = "<group>"; };
 		CE057FA31220731100A476D5 /* DocumentMarkerController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentMarkerController.cpp; sourceTree = "<group>"; };
@@ -16735,8 +16741,11 @@
 				1C63A2460F71646600C09D5A /* RunLoopTimer.h */,
 				5162C7F211F77EFA00612EFE /* SchemeRegistry.cpp */,
 				5162C7F311F77EFB00612EFE /* SchemeRegistry.h */,
+				CA3BF67B10D99BAE00E6CE53 /* ScrollAnimator.cpp */,
+				CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */,
 				BC7B2AF80450824100A8000F /* Scrollbar.h */,
-				BC9BC64D0E7C4889008B9849 /* ScrollbarClient.h */,
+				BC9BC64B0E7C4889008B9849 /* ScrollbarClient.cpp */,
+				BC9BC64C0E7C4889008B9849 /* ScrollbarClient.h */,
 				BC8B854A0E7C7F5600AB6984 /* ScrollbarTheme.h */,
 				BC1402880E83680800319717 /* ScrollbarThemeComposite.cpp */,
 				BC1402890E83680800319717 /* ScrollbarThemeComposite.h */,
@@ -19830,6 +19839,7 @@
 				416F45F00ED7B311008215B6 /* ScriptString.h in Headers */,
 				934CC0E20ED39D6F00A658F2 /* ScriptValue.h in Headers */,
 				228C284510D82500009D0D0E /* ScriptWrappable.h in Headers */,
+				CA3BF67E10D99BAE00E6CE53 /* ScrollAnimator.h in Headers */,
 				93F199B808245E59001E9ABC /* Scrollbar.h in Headers */,
 				BC9BC64E0E7C4889008B9849 /* ScrollbarClient.h in Headers */,
 				BC8B854B0E7C7F5600AB6984 /* ScrollbarTheme.h in Headers */,
@@ -22383,7 +22393,9 @@
 				9F72305011184B4100AD0126 /* ScriptProfiler.cpp in Sources */,
 				4127D5370F8AAB1D00E424F5 /* ScriptState.cpp in Sources */,
 				934CC0E10ED39D6F00A658F2 /* ScriptValue.cpp in Sources */,
+				CA3BF67C10D99BAE00E6CE53 /* ScrollAnimator.cpp in Sources */,
 				BCAA90C30A7EBA60008B1229 /* Scrollbar.cpp in Sources */,
+				BC9BC64D0E7C4889008B9849 /* ScrollbarClient.cpp in Sources */,
 				BC14028A0E83680800319717 /* ScrollbarThemeComposite.cpp in Sources */,
 				BCEF869F0E844E9D00A85CD5 /* ScrollbarThemeMac.mm in Sources */,
 				5D925B670F64D4DD00B847F0 /* ScrollBehavior.cpp in Sources */,

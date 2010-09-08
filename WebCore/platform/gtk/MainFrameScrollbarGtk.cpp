@@ -108,7 +108,7 @@ void MainFrameScrollbarGtk::updateThumbProportion()
 
 void MainFrameScrollbarGtk::gtkValueChanged(GtkAdjustment*, MainFrameScrollbarGtk* that)
 {
-    that->setValue(static_cast<int>(gtk_adjustment_get_value(that->m_adjustment.get())));
+    that->setValue(static_cast<int>(gtk_adjustment_get_value(that->m_adjustment.get())), NotFromScrollAnimator);
 }
 
 void MainFrameScrollbarGtk::paint(GraphicsContext* context, const IntRect& rect)

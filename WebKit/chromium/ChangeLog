@@ -1,3 +1,21 @@
+2010-09-08  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by David Hyatt.
+
+        Add smooth scrolling framework, and a Windows implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=32356
+
+        * src/WebScrollbarImpl.cpp: Plumb new ScrollbarClient functions.  Allow wheel scrolls to be animated.
+        (WebKit::WebScrollbarImpl::setLocation):
+        (WebKit::WebScrollbarImpl::setValue):
+        (WebKit::WebScrollbarImpl::scroll):
+        (WebKit::WebScrollbarImpl::onMouseWheel):
+        (WebKit::WebScrollbarImpl::onKeyDown):
+        (WebKit::WebScrollbarImpl::setScrollOffsetFromAnimation):
+        * src/WebScrollbarImpl.h: Plumb new ScrollbarClient functions.
+        * src/win/WebInputEventFactory.cpp: Update comments now that we have smooth scrolling.
+        (WebKit::WebInputEventFactory::mouseWheelEvent):
+
 2010-09-08  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Joseph Pecoraro.

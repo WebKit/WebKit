@@ -42,6 +42,11 @@ class PlatformMouseEvent;
 
 class Scrollbar : public Widget {
 public:
+    enum ScrollSource {
+        FromScrollAnimator,
+        NotFromScrollAnimator,
+    };
+
     virtual ~Scrollbar();
 
     // Must be implemented by platforms that can't simply use the Scrollbar base class.  Right now the only platform that is not using the base class is GTK.
@@ -75,7 +80,7 @@ public:
     virtual void setPressedPart(ScrollbarPart);
 
     void setSteps(int lineStep, int pageStep, int pixelsPerStep = 1);
-    bool setValue(int);
+    bool setValue(int, ScrollSource source);
     void setProportion(int visibleSize, int totalSize);
     void setPressedPos(int p) { m_pressedPos = p; }
 
@@ -167,7 +172,7 @@ protected:
 private:
     virtual bool isScrollbar() const { return true; }
 
-    bool setCurrentPos(float pos);
+    bool setCurrentPos(float pos, ScrollSource source);
 };
 
 }

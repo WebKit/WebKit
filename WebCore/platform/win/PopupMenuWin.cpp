@@ -664,6 +664,17 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
         ::ReleaseDC(m_popup, localDC);
 }
 
+int PopupMenuWin::scrollSize(ScrollbarOrientation orientation) const
+{
+    return ((orientation == VerticallScrollbar) && m_scrollbar) ? (m_scrollbar->totalSize() - m_scrollbar->visibleSize()) : 0;
+}
+
+void PopupMenuWin::setScrollOffsetFromAnimation(const IntPoint& offset)
+{
+    if (m_scrollbar)
+        m_scrollbar->setValue(offset.y(), Scrollbar::FromScrollAnimator);
+}
+
 void PopupMenuWin::valueChanged(Scrollbar* scrollBar)
 {
     ASSERT(m_scrollbar);

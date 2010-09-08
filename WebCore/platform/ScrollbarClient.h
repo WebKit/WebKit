@@ -26,21 +26,28 @@
 #ifndef ScrollbarClient_h
 #define ScrollbarClient_h
 
+#include "IntPoint.h"
 #include "IntRect.h"
 #include "Scrollbar.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
+class ScrollAnimator;
+
 class ScrollbarClient {
 public:
-    virtual ~ScrollbarClient() { }
+    ScrollbarClient();
+    virtual ~ScrollbarClient();
+
+    bool scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier);
+    void setScrollPositionAndStopAnimation(ScrollbarOrientation orientation, float pos);
+
+    virtual int scrollSize(ScrollbarOrientation orientation) const = 0;
+    virtual void setScrollOffsetFromAnimation(const IntPoint&) = 0;
     virtual void valueChanged(Scrollbar*) = 0;
-
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&) = 0;
-
     virtual bool isActive() const = 0;
-    
     virtual bool scrollbarCornerPresent() const = 0;
 
     virtual void getTickmarks(Vector<IntRect>&) const { }
@@ -52,21 +59,21 @@ public:
     {
         return scrollbar->Widget::convertToContainingView(scrollbarRect);
     }
-    
     virtual IntRect convertFromContainingViewToScrollbar(const Scrollbar* scrollbar, const IntRect& parentRect) const
     {
         return scrollbar->Widget::convertFromContainingView(parentRect);
     }
-    
     virtual IntPoint convertFromScrollbarToContainingView(const Scrollbar* scrollbar, const IntPoint& scrollbarPoint) const
     {
         return scrollbar->Widget::convertToContainingView(scrollbarPoint);
     }
-    
     virtual IntPoint convertFromContainingViewToScrollbar(const Scrollbar* scrollbar, const IntPoint& parentPoint) const
     {
         return scrollbar->Widget::convertFromContainingView(parentPoint);
     }
+
+private:
+    OwnPtr<ScrollAnimator> m_scrollAnimator;
 };
 
 }

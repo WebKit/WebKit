@@ -94,7 +94,7 @@ int WebScrollbarImpl::value() const
 
 void WebScrollbarImpl::setValue(int position)
 {
-    m_scrollbar->setValue(position);
+    m_scrollbar->setValue(position, Scrollbar::NotFromScrollAnimator);
 }
 
 void WebScrollbarImpl::setDocumentSize(int size)
@@ -218,7 +218,7 @@ bool WebScrollbarImpl::onMouseWheel(const WebInputEvent& event)
                 if (negative)
                     delta *= -1;
             }
-            m_scrollbar->setValue(m_scrollbar->value() - delta);
+            m_scrollbar->scroll((m_scrollbar->orientation() == HorizontalScrollbar) ? WebCore::ScrollLeft : WebCore::ScrollUp, WebCore::ScrollByPixel, delta);
             return true;
         }
 
@@ -260,6 +260,16 @@ bool WebScrollbarImpl::onKeyDown(const WebInputEvent& event)
             return m_scrollbar->scroll(scrollDirection, scrollGranularity);
         }
     return false;
+}
+
+int WebScrollbarImpl::scrollSize(WebCore::ScrollbarOrientation orientation) const
+{
+    return (orientation == m_scrollbar->orientation()) ? (m_scrollbar->totalSize() - m_scrollbar->visibleSize()) : 0;
+}
+
+void WebScrollbarImpl::setScrollOffsetFromAnimation(const WebCore::IntPoint& offset)
+{
+    m_scrollbar->setValue((m_scrollbar->orientation() == HorizontalScrollbar) ? offset.x() : offset.y(), Scrollbar::FromScrollAnimator);
 }
 
 void WebScrollbarImpl::valueChanged(WebCore::Scrollbar*)

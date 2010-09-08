@@ -67,6 +67,8 @@ private:
     HTMLDataGridElement* gridElement() const { return static_cast<HTMLDataGridElement*>(node()); }
 
     // ScrollbarClient interface.
+    virtual int scrollSize(ScrollbarOrientation orientation) const;
+    virtual void setScrollOffsetFromAnimation(const IntPoint&);
     virtual void valueChanged(Scrollbar*);
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);
     virtual bool isActive() const;

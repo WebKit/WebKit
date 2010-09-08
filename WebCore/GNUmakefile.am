@@ -1953,6 +1953,8 @@ webcore_sources += \
 	WebCore/platform/PopupMenuStyle.h \
 	WebCore/platform/PurgeableBuffer.h \
 	WebCore/platform/SSLKeyGenerator.h \
+	WebCore/platform/ScrollAnimator.cpp \
+	WebCore/platform/ScrollAnimator.h \
 	WebCore/platform/ScrollTypes.h \
 	WebCore/platform/ScrollView.cpp \
 	WebCore/platform/ScrollView.h \
@@ -1960,6 +1962,7 @@ webcore_sources += \
 	WebCore/platform/SchemeRegistry.h \
 	WebCore/platform/Scrollbar.cpp \
 	WebCore/platform/Scrollbar.h \
+	WebCore/platform/ScrollbarClient.cpp \
 	WebCore/platform/ScrollbarClient.h \
 	WebCore/platform/ScrollbarTheme.h \
 	WebCore/platform/ScrollbarThemeComposite.cpp \
@@ -2573,6 +2576,8 @@ endif
 
 if TARGET_WIN32
 webcore_sources += \
+	WebCore/platform/ScrollAnimatorWin.cpp \
+	WebCore/platform/ScrollAnimatorWin.h \
 	WebCore/plugins/win/PluginDatabaseWin.cpp \
 	WebCore/plugins/win/PluginMessageThrottlerWin.cpp \
 	WebCore/plugins/win/PluginMessageThrottlerWin.h

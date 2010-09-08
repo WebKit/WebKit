@@ -959,7 +959,9 @@ SOURCES += \
     platform/network/ResourceResponseBase.cpp \
     platform/text/RegularExpression.cpp \
     platform/SchemeRegistry.cpp \
+    platform/ScrollAnimator.cpp \
     platform/Scrollbar.cpp \
+    platform/ScrollbarClient.cpp \
     platform/ScrollbarThemeComposite.cpp \
     platform/ScrollView.cpp \
     platform/text/SegmentedString.cpp \
@@ -1789,7 +1791,9 @@ HEADERS += \
     platform/qt/QtStyleOptionWebComboBox.h \
     platform/qt/RenderThemeQt.h \
     platform/qt/ScrollbarThemeQt.h \
+    platform/ScrollAnimator.h \
     platform/Scrollbar.h \
+    platform/ScrollbarClient.h \
     platform/ScrollbarThemeComposite.h \
     platform/ScrollView.h \
     platform/SearchPopupMenu.h \
@@ -2350,8 +2354,12 @@ maemo5 {
 }
 
 
-    win32-*|wince*: SOURCES += platform/win/SystemTimeWin.cpp \
-                               platform/graphics/win/TransformationMatrixWin.cpp
+    win32-*|wince* {
+        HEADERS += platform/ScrollAnimatorWin.h
+        SOURCES += platform/ScrollAnimatorWin.cpp \
+                   platform/win/SystemTimeWin.cpp \
+                   platform/graphics/win/TransformationMatrixWin.cpp
+    }
 
     mac {
         SOURCES += \

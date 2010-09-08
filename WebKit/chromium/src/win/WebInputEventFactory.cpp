@@ -403,6 +403,9 @@ WebMouseWheelEvent WebInputEventFactory::mouseWheelEvent(HWND hwnd, UINT message
     // smooth scrolling while Firefox doesn't, so it can get away with somewhat
     // larger scroll values without feeling as jerky.  Here we use 100 px per
     // three lines (the default scroll amount is three lines per wheel tick).
+    // Even though we have smooth scrolling, we don't make this as large as IE
+    // because subjectively IE feels like it scrolls farther than you want while
+    // reading articles.
     static const float scrollbarPixelsPerLine = 100.0f / 3.0f;
     wheelDelta /= WHEEL_DELTA;
     float scrollDelta = wheelDelta;

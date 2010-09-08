@@ -1364,9 +1364,9 @@ void RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repai
 
     if (updateScrollbars) {
         if (m_hBar)
-            m_hBar->setValue(scrollXOffset());
+            m_hBar->setValue(scrollXOffset(), Scrollbar::NotFromScrollAnimator);
         if (m_vBar)
-            m_vBar->setValue(m_scrollY);
+            m_vBar->setValue(m_scrollY, Scrollbar::NotFromScrollAnimator);
     }
 
     // Schedule the scroll DOM event.
@@ -1617,6 +1617,20 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const IntSize& oldOffset
     document->updateLayout();
 
     // FIXME (Radar 4118564): We should also autoscroll the window as necessary to keep the point under the cursor in view.
+}
+
+int RenderLayer::scrollSize(ScrollbarOrientation orientation) const
+{
+    Scrollbar* scrollbar = ((orientation == HorizontalScrollbar) ? m_hBar : m_vBar).get();
+    return scrollbar ? (scrollbar->totalSize() - scrollbar->visibleSize()) : 0;
+}
+
+void RenderLayer::setScrollOffsetFromAnimation(const IntPoint& offset)
+{
+    if (m_hBar)
+        m_hBar->setValue(offset.x(), Scrollbar::FromScrollAnimator);
+    if (m_vBar)
+        m_vBar->setValue(offset.y(), Scrollbar::FromScrollAnimator);
 }
 
 void RenderLayer::valueChanged(Scrollbar*)
@@ -2069,7 +2083,7 @@ RenderLayer::updateScrollInfoAfterLayout()
         // so this is needed to keep everything working (see how scrollXOffset()
         // differs from scrollYOffset() to get an idea of why the horizontal and
         // vertical scrollbars need to be treated differently).
-        m_hBar->setValue(scrollXOffset());
+        m_hBar->setValue(scrollXOffset(), Scrollbar::NotFromScrollAnimator);
     }
     if (m_vBar) {
         int clientHeight = box->clientHeight();
