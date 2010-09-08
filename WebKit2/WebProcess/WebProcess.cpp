@@ -41,6 +41,7 @@
 #include <WebCore/SchemeRegistry.h>
 #include <WebCore/Settings.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/RandomNumber.h>
 
 #if PLATFORM(MAC)
 #include "MachPort.h"
@@ -54,6 +55,32 @@
 using namespace WebCore;
 
 namespace WebKit {
+
+#if OS(WINDOWS)
+static void sleep(unsigned seconds)
+{
+    ::Sleep(seconds * 1000);
+}
+#endif
+
+static void* randomCrashThread(void*)
+{
+    // This delay was chosen semi-arbitrarily. We want the crash to happen somewhat quickly to
+    // enable useful stress testing, but not so quickly that the web process will always crash soon
+    // after launch.
+    static const unsigned maximumRandomCrashDelay = 180;
+
+    sleep(randomNumber() * maximumRandomCrashDelay);
+    CRASH();
+    return 0;
+}
+
+static void startRandomCrashThreadIfRequested()
+{
+    if (!getenv("WEBKIT2_CRASH_WEB_PROCESS_RANDOMLY"))
+        return;
+    createThread(randomCrashThread, 0, "WebKit2: Random Crash Thread");
+}
 
 WebProcess& WebProcess::shared()
 {
@@ -81,6 +108,8 @@ void WebProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier, Ru
     m_connection->open();
 
     m_runLoop = runLoop;
+
+    startRandomCrashThreadIfRequested();
 }
 
 #if ENABLE(WEB_PROCESS_SANDBOX)

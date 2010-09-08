@@ -1,5 +1,28 @@
 2010-09-08  Adam Roben  <aroben@apple.com>
 
+        Add a way to cause the web process to crash at a random time
+
+        Setting the WEBKIT2_CRASH_WEB_PROCESS_RANDOMLY environment variable
+        will cause the web process to crash at a random point up to 3 minutes
+        after launching.
+
+        Fixes <http://webkit.org/b/43058> <rdar://problem/8240150>
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::sleep): Added an implementation of this function for Windows.
+        It just calls through to ::Sleep.
+        (WebKit::randomCrashThread): Added. Sleeps for a random amount of time
+        up to 3 minutes, then crashes.
+        (WebKit::startRandomCrashThreadIfRequested): Added. Starts the crash
+        thread if the WEBKIT2_CRASH_WEB_PROCESS_RANDOMLY environment variable
+        is set.
+        (WebKit::WebProcess::initialize): Added a call to
+        startRandomCrashThreadIfRequested.
+
+2010-09-08  Adam Roben  <aroben@apple.com>
+
         Fix potential ref-counting issues with WorkItemWin
 
         Reviewed by Anders Carlsson.
