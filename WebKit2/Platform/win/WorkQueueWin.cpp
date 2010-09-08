@@ -81,17 +81,17 @@ void WorkQueue::registerHandle(HANDLE handle, PassOwnPtr<WorkItem> item)
     }
 }
 
-void WorkQueue::eventCallback(void* context, BOOLEAN timerOrWaitFired)
+DWORD WorkQueue::workThreadCallback(void* context)
 {
     ASSERT_ARG(context, context);
-    ASSERT_ARG(timerOrWaitFired, !timerOrWaitFired);
 
     WorkQueue* queue = static_cast<WorkQueue*>(context);
 
     if (!queue->tryRegisterAsWorkThread())
-        return;
+        return 0;
 
     queue->performWorkOnRegisteredWorkThread();
+    return 0;
 }
 
 void WorkQueue::performWorkOnRegisteredWorkThread()
@@ -129,16 +129,6 @@ void WorkQueue::performWorkOnRegisteredWorkThread()
 void WorkQueue::platformInitialize(const char* name)
 {
     m_isWorkThreadRegistered = 0;
-
-    // Create our event.
-    m_performWorkEvent = ::CreateEventW(0, FALSE, FALSE, 0);
-
-    // FIXME: We need to hold onto waitHandle so that we can unregister the wait later.
-    HANDLE waitHandle;
-    if (!::RegisterWaitForSingleObject(&waitHandle, m_performWorkEvent, eventCallback, this, INFINITE, WT_EXECUTEDEFAULT)) {
-        DWORD error = ::GetLastError();
-        ASSERT_NOT_REACHED();
-    }
 }
 
 bool WorkQueue::tryRegisterAsWorkThread()
@@ -156,8 +146,6 @@ void WorkQueue::unregisterAsWorkThread()
 
 void WorkQueue::platformInvalidate()
 {
-    ::CloseHandle(m_performWorkEvent);
-
     // FIXME: Stop the thread and do other cleanup.
 }
 
@@ -167,12 +155,12 @@ void WorkQueue::scheduleWork(PassOwnPtr<WorkItem> item)
 
     m_workItemQueue.append(WorkItemWin::create(item, this));
 
-    // Signal our event so that work thread will perform the work we just added. As an optimization,
-    // we avoid signaling the event if a work thread is already registered. This prevents multiple
-    // work threads from being spawned in most cases. (Note that when a work thread has been spawned
-    // but hasn't registered itself yet, m_isWorkThreadRegistered will be false and we'll end up
+    // Spawn a work thread to perform the work we just added. As an optimization, we avoid
+    // spawning the thread if a work thread is already registered. This prevents multiple work
+    // threads from being spawned in most cases. (Note that when a work thread has been spawned but
+    // hasn't registered itself yet, m_isWorkThreadRegistered will be false and we'll end up
     // spawning a second work thread here. But work thread registration process will ensure that
     // only one thread actually ends up performing work.)
     if (!m_isWorkThreadRegistered)
-        ::SetEvent(m_performWorkEvent);
+        ::QueueUserWorkItem(workThreadCallback, this, WT_EXECUTEDEFAULT);
 }

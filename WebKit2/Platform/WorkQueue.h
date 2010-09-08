@@ -108,13 +108,11 @@ private:
     };
 
     static void CALLBACK handleCallback(void* context, BOOLEAN timerOrWaitFired);
-    static void CALLBACK eventCallback(void* context, BOOLEAN timerOrWaitFired);
+    static DWORD WINAPI workThreadCallback(void* context);
 
     bool tryRegisterAsWorkThread();
     void unregisterAsWorkThread();
     void performWorkOnRegisteredWorkThread();
-
-    HANDLE m_performWorkEvent;
 
     volatile LONG m_isWorkThreadRegistered;
 

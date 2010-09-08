@@ -1,5 +1,30 @@
 2010-09-08  Adam Roben  <aroben@apple.com>
 
+        Get rid of WorkQueue::m_performWorkEvent
+
+        We were signaling m_performWorkEvent to spawn a worker thread. We can
+        use ::QueueUserWorkItem to spawn the thread instead.
+
+        Fixes <http://webkit.org/b/45407> WorkQueue::m_performWorkEvent is
+        unnecessary
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/WorkQueue.h: Removed m_performWorkEvent.
+
+        * Platform/win/WorkQueueWin.cpp:
+        (WorkQueue::workThreadCallback): Replaced eventCallback with this
+        function. Its functionality is unchanged.
+
+        (WorkQueue::platformInitialize):
+        (WorkQueue::platformInvalidate):
+        Removed code to set up and clean up m_performWorkEvent.
+
+        (WorkQueue::scheduleWork): Use ::QueueUserWorkItem instead of
+        signaling m_performWorkEvent to spawn a worker thread.
+
+2010-09-08  Adam Roben  <aroben@apple.com>
+
         Fix WebKit2Common.vsprops line-endings
 
         * win/WebKit2Common.vsprops: Made all line-endings be CRLF, as this is
