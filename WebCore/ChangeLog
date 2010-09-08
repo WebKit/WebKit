@@ -1,3 +1,22 @@
+2010-09-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        DatasetDOMStringMap does not have the right memory model
+        https://bugs.webkit.org/show_bug.cgi?id=45358
+
+        Test: fast/dom/dataset-gc.html
+
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::JSElement::markChildren):
+        Mark the dataset if it exists.
+
+        * dom/Element.cpp:
+        (WebCore::Element::optionalDataset):
+        * dom/Element.h:
+        Expose a way to get the dataset or null (depending on if anyone thing
+        has forced its creation yet).
+
 2010-09-07  Jan E Hanssen  <jhanssen@sencha.com>
 
         Reviewed by Andreas Kling.

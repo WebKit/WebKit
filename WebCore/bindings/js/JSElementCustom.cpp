@@ -60,6 +60,8 @@ void JSElement::markChildren(MarkStack& markStack)
     JSGlobalData& globalData = *Heap::heap(this)->globalData();
 
     markDOMObjectWrapper(markStack, globalData, element->attributeMap());
+    markDOMObjectWrapper(markStack, globalData, element->optionalDataset());
+
     if (element->isStyledElement())
         markDOMObjectWrapper(markStack, globalData, static_cast<StyledElement*>(element)->inlineStyleDecl());
 }

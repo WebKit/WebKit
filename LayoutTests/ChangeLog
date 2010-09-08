@@ -1,3 +1,16 @@
+2010-09-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        DatasetDOMStringMap does not have the right memory model
+        https://bugs.webkit.org/show_bug.cgi?id=45358
+
+        Test that the dataset persists gc.
+
+        * fast/dom/dataset-gc-expected.txt: Added.
+        * fast/dom/dataset-gc.html: Added.
+        * fast/dom/script-tests/dataset-gc.js: Added.
+
 2010-09-07  Jan E Hanssen  <jhanssen@sencha.com>
 
         Reviewed by Andreas Kling.

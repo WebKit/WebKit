@@ -1,0 +1,12 @@
+This tests that custom properties on element.dataset persist GC.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS d.dataset.__proto__ is non-null.
+PASS d.dataset.__proto__ is null
+PASS d.dataset.__proto__ is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
