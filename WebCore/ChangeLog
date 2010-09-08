@@ -1,3 +1,13 @@
+2010-09-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        Fix warning in rendering/RenderBlock.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=45373
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::hitTestColumns): Suggested parentheses added around && within ||
+
 2010-09-08  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Martin Robinson.

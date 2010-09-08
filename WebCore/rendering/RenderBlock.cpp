@@ -3870,7 +3870,7 @@ bool RenderBlock::hitTestColumns(const HitTestRequest& request, HitTestResult& r
             if (result.isRectBasedTest() && !colRect.contains(result.rectFromPoint(x, y)))
                 hitTestContents(request, result, x, y, finalX, finalY, hitTestAction);
             else
-                return hitTestContents(request, result, x, y, finalX, finalY, hitTestAction) || hitTestAction == HitTestFloat && hitTestFloats(request, result, x, y, finalX, finalY);
+                return hitTestContents(request, result, x, y, finalX, finalY, hitTestAction) || (hitTestAction == HitTestFloat && hitTestFloats(request, result, x, y, finalX, finalY));
         }
     }
 
