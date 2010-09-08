@@ -257,7 +257,7 @@ int WebScrollBar::scrollSize(ScrollbarOrientation orientation) const
     return (orientation == m_scrollBar->orientation()) ? (m_scrollBar->totalSize() - m_scrollBar->visibleSize()) : 0; 
 }
 
-void WebScrollBar::setScrollOffsetFromAnimation(const IntPoint&)
+void WebScrollBar::setScrollOffsetFromAnimation(const IntPoint& offset)
 {
     m_scrollBar->setValue((m_scrollBar->orientation() == HorizontalScrollbar) ? offset.x() : offset.y(), Scrollbar::FromScrollAnimator);
 }
