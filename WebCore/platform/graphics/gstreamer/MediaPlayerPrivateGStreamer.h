@@ -131,6 +131,7 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             static MediaPlayer::SupportsType supportsType(const String& type, const String& codecs);
             static bool isAvailable();
 
+            void cacheDuration();
             void updateStates();
             void cancelSeek();
             void endPointTimerFired(Timer<MediaPlayerPrivateGStreamer>*);

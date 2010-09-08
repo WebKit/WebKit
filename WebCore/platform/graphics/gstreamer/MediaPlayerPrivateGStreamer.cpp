@@ -839,8 +839,12 @@ void MediaPlayerPrivateGStreamer::updateStates()
 
         // Try to figure out ready and network states.
         if (state == GST_STATE_READY) {
-            m_readyState = MediaPlayer::HaveNothing;
+            m_readyState = MediaPlayer::HaveMetadata;
             m_networkState = MediaPlayer::Empty;
+            // Cache the duration without emiting the durationchange
+            // event because it's taken care of by the media element
+            // in this precise case.
+            cacheDuration();
         } else if (maxTimeLoaded() == duration()) {
             m_networkState = MediaPlayer::Loaded;
             m_readyState = MediaPlayer::HaveEnoughData;
@@ -875,13 +879,6 @@ void MediaPlayerPrivateGStreamer::updateStates()
         } else if (state == GST_STATE_PLAYING) {
             m_readyState = MediaPlayer::HaveEnoughData;
             m_paused = false;
-
-            if (!m_mediaDuration) {
-                float newDuration = duration();
-                m_mediaDurationKnown = !isinf(newDuration);
-                if (m_mediaDurationKnown)
-                    m_mediaDuration = newDuration;
-            }
 
             if (m_buffering) {
                 m_readyState = MediaPlayer::HaveCurrentData;
@@ -1115,7 +1112,7 @@ void MediaPlayerPrivateGStreamer::didEnd()
     timeChanged();
 }
 
-void MediaPlayerPrivateGStreamer::durationChanged()
+void MediaPlayerPrivateGStreamer::cacheDuration()
 {
     // Reset cached media duration
     m_mediaDuration = 0;
@@ -1139,8 +1136,16 @@ void MediaPlayerPrivateGStreamer::durationChanged()
 
     if (!isinf(newDuration))
         m_mediaDuration = newDuration;
+}
 
-    m_player->durationChanged();
+void MediaPlayerPrivateGStreamer::durationChanged()
+{
+    float previousDuration = m_mediaDuration;
+
+    cacheDuration();
+
+    if (m_mediaDuration != previousDuration)
+        m_player->durationChanged();
 }
 
 bool MediaPlayerPrivateGStreamer::supportsMuting() const
