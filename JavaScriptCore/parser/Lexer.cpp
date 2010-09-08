@@ -675,6 +675,27 @@ ALWAYS_INLINE bool Lexer::parseNumberAfterExponentIndicator()
     return true;
 }
 
+ALWAYS_INLINE bool Lexer::parseMultilineComment()
+{
+    while (true) {
+        while (UNLIKELY(m_current == '*')) {
+            shift();
+            if (m_current == '/') {
+                shift();
+                return true;
+            }
+        }
+
+        if (UNLIKELY(m_current == -1))
+            return false;
+
+        if (isLineTerminator(m_current))
+            shiftLineTerminator();
+        else
+            shift();
+    }
+}
+
 JSTokenType Lexer::lex(JSTokenData* lvalp, JSTokenInfo* llocp, LexType lexType)
 {
     ASSERT(!m_error);
@@ -835,7 +856,9 @@ start:
         }
         if (m_current == '*') {
             shift();
-            goto inMultiLineComment;
+            if (parseMultilineComment())
+                goto start;
+            goto returnError;
         }
         if (m_current == '=') {
             shift();
@@ -1026,27 +1049,6 @@ inSingleLineComment:
     m_terminator = true;
     if (lastTokenWasRestrKeyword())
         goto doneSemicolon;
-    goto start;
-
-inMultiLineComment:
-    while (true) {
-        if (UNLIKELY(m_current == '*')) {
-            shift();
-            if (m_current == '/')
-                break;
-            if (m_current == '*')
-                continue;
-        }
-
-        if (UNLIKELY(m_current == -1))
-            goto returnError;
-
-        if (isLineTerminator(m_current))
-            shiftLineTerminator();
-        else
-            shift();
-    }
-    shift();
     goto start;
 
 doneSemicolon:

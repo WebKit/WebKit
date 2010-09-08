@@ -1,3 +1,20 @@
+2010-09-08  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Refactoring multiline comments in the lexer
+        https://bugs.webkit.org/show_bug.cgi?id=45289
+
+        MultiLine comment parsing is moved to a separate function.
+
+        Slight performance increase on --parse-only tests (from 33.6ms to 32.8ms)
+        SunSpider reports no change (from 523.1ms to 521.2ms).
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer::parseMultilineComment):
+        (JSC::Lexer::lex):
+        * parser/Lexer.h:
+
 2010-09-07  James Robinson  <jamesr@chromium.org>
 
         Compile fix attempt for windows.
