@@ -562,7 +562,7 @@ void GraphicsContext::clipConvexPolygon(size_t numPoints, const FloatPoint* poin
     cairo_fill_rule_t savedFillRule = cairo_get_fill_rule(cr);
     cairo_antialias_t savedAntialiasRule = cairo_get_antialias(cr);
 
-    cairo_set_antialias(cr, CAIRO_ANTIALIAS_DEFAULT);
+    cairo_set_antialias(cr, antialiased ? CAIRO_ANTIALIAS_DEFAULT : CAIRO_ANTIALIAS_NONE);
     cairo_set_fill_rule(cr, CAIRO_FILL_RULE_WINDING);
     addConvexPolygonToContext(cr, numPoints, points);
     cairo_clip(cr);

@@ -1,3 +1,20 @@
+2010-09-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Dirk Schulze.
+
+        [Cairo] Actually use the antialias parameter of GraphicsContext::clipConvexPolygon
+        https://bugs.webkit.org/show_bug.cgi?id=45355
+
+        r63864 added an additional boolean parameter to GraphicsContext::clipConvexPolygon,
+        which determines whether or not to render the render the clip with anti-aliasing
+        or not. The Cairo implementation now uses that parameter to determine the argument
+        to pass to cairo_set_antialias(...) when clipping.
+
+        Test: This is tested by many tests in fast/borders.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::clipConvexPolygon): Actually use the boolean antialias parameter.
+
 2010-09-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen.

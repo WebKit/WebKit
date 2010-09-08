@@ -1,3 +1,167 @@
+2010-09-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Dirk Schulze.
+
+        [Cairo] Actually use the antialias parameter of GraphicsContext::clipConvexPolygon
+        https://bugs.webkit.org/show_bug.cgi?id=45355
+
+        Rebaseline all differing border tests and unskip any border tests without results.
+
+        * platform/gtk/Skipped: Unskip all border tests.
+        * platform/gtk/fast/borders/block-mask-overlay-image-expected.checksum: Added.
+        * platform/gtk/fast/borders/block-mask-overlay-image-expected.png: Added.
+        * platform/gtk/fast/borders/block-mask-overlay-image-expected.txt: Added.
+        * platform/gtk/fast/borders/border-color-inherit-expected.checksum: Added.
+        * platform/gtk/fast/borders/border-color-inherit-expected.png: Added.
+        * platform/gtk/fast/borders/border-color-inherit-expected.txt: Added.
+        * platform/gtk/fast/borders/border-fit-expected.checksum: Added.
+        * platform/gtk/fast/borders/border-fit-expected.png: Added.
+        * platform/gtk/fast/borders/border-fit-expected.txt: Added.
+        * platform/gtk/fast/borders/border-image-01-expected.checksum: Added.
+        * platform/gtk/fast/borders/border-image-01-expected.png: Added.
+        * platform/gtk/fast/borders/border-image-01-expected.txt: Added.
+        * platform/gtk/fast/borders/border-image-border-radius-expected.checksum: Added.
+        * platform/gtk/fast/borders/border-image-border-radius-expected.png: Added.
+        * platform/gtk/fast/borders/border-image-border-radius-expected.txt: Added.
+        * platform/gtk/fast/borders/border-image-omit-right-slice-expected.checksum: Added.
+        * platform/gtk/fast/borders/border-image-omit-right-slice-expected.png: Added.
+        * platform/gtk/fast/borders/border-image-omit-right-slice-expected.txt: Copied from LayoutTests/platform/mac/fast/borders/border-image-omit-right-slice-expected.txt.
+        * platform/gtk/fast/borders/border-image-rotate-transform-expected.checksum: Added.
+        * platform/gtk/fast/borders/border-image-rotate-transform-expected.png: Added.
+        * platform/gtk/fast/borders/border-image-rotate-transform-expected.txt: Added.
+        * platform/gtk/fast/borders/border-image-scale-transform-expected.checksum: Added.
+        * platform/gtk/fast/borders/border-image-scale-transform-expected.png: Added.
+        * platform/gtk/fast/borders/border-image-scale-transform-expected.txt: Added.
+        * platform/gtk/fast/borders/border-radius-circle-expected.checksum:
+        * platform/gtk/fast/borders/border-radius-circle-expected.png:
+        * platform/gtk/fast/borders/border-radius-constraints-expected.checksum: Added.
+        * platform/gtk/fast/borders/border-radius-constraints-expected.png: Added.
+        * platform/gtk/fast/borders/border-radius-constraints-expected.txt: Added.
+        * platform/gtk/fast/borders/border-radius-groove-01-expected.checksum:
+        * platform/gtk/fast/borders/border-radius-groove-01-expected.png:
+        * platform/gtk/fast/borders/border-radius-groove-02-expected.checksum:
+        * platform/gtk/fast/borders/border-radius-groove-02-expected.png:
+        * platform/gtk/fast/borders/border-radius-groove-03-expected.checksum:
+        * platform/gtk/fast/borders/border-radius-groove-03-expected.png:
+        * platform/gtk/fast/borders/border-radius-huge-assert-expected.checksum: Added.
+        * platform/gtk/fast/borders/border-radius-huge-assert-expected.png: Added.
+        * platform/gtk/fast/borders/border-radius-huge-assert-expected.txt: Added.
+        * platform/gtk/fast/borders/border-radius-split-inline-expected.checksum: Added.
+        * platform/gtk/fast/borders/border-radius-split-inline-expected.png: Added.
+        * platform/gtk/fast/borders/border-radius-split-inline-expected.txt: Added.
+        * platform/gtk/fast/borders/border-radius-wide-border-01-expected.checksum:
+        * platform/gtk/fast/borders/border-radius-wide-border-01-expected.png:
+        * platform/gtk/fast/borders/border-radius-wide-border-02-expected.checksum:
+        * platform/gtk/fast/borders/border-radius-wide-border-02-expected.png:
+        * platform/gtk/fast/borders/border-radius-wide-border-03-expected.checksum:
+        * platform/gtk/fast/borders/border-radius-wide-border-03-expected.png:
+        * platform/gtk/fast/borders/border-radius-wide-border-04-expected.checksum:
+        * platform/gtk/fast/borders/border-radius-wide-border-04-expected.png:
+        * platform/gtk/fast/borders/borderRadiusAllStylesAllCorners-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusAllStylesAllCorners-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusAllStylesAllCorners-expected.txt: Added.
+        * platform/gtk/fast/borders/borderRadiusArcs01-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusArcs01-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusArcs01-expected.txt: Added.
+        * platform/gtk/fast/borders/borderRadiusDashed01-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusDashed01-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusDashed01-expected.txt: Added.
+        * platform/gtk/fast/borders/borderRadiusDashed02-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusDashed02-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusDashed02-expected.txt: Added.
+        * platform/gtk/fast/borders/borderRadiusDashed03-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusDashed03-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusDashed03-expected.txt: Added.
+        * platform/gtk/fast/borders/borderRadiusDashed04-expected.checksum:
+        * platform/gtk/fast/borders/borderRadiusDashed04-expected.png:
+        * platform/gtk/fast/borders/borderRadiusDashed05-expected.checksum:
+        * platform/gtk/fast/borders/borderRadiusDashed05-expected.png:
+        * platform/gtk/fast/borders/borderRadiusDashed06-expected.checksum:
+        * platform/gtk/fast/borders/borderRadiusDashed06-expected.png:
+        * platform/gtk/fast/borders/borderRadiusDotted01-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusDotted01-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusDotted01-expected.txt: Added.
+        * platform/gtk/fast/borders/borderRadiusDotted02-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusDotted02-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusDotted02-expected.txt: Added.
+        * platform/gtk/fast/borders/borderRadiusDotted03-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusDotted03-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusDotted03-expected.txt: Added.
+        * platform/gtk/fast/borders/borderRadiusDotted04-expected.checksum:
+        * platform/gtk/fast/borders/borderRadiusDotted04-expected.png:
+        * platform/gtk/fast/borders/borderRadiusDotted05-expected.checksum:
+        * platform/gtk/fast/borders/borderRadiusDotted05-expected.png:
+        * platform/gtk/fast/borders/borderRadiusDotted06-expected.checksum:
+        * platform/gtk/fast/borders/borderRadiusDotted06-expected.png:
+        * platform/gtk/fast/borders/borderRadiusDouble01-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusDouble01-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusDouble01-expected.txt: Added.
+        * platform/gtk/fast/borders/borderRadiusDouble02-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusDouble02-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusDouble02-expected.txt: Added.
+        * platform/gtk/fast/borders/borderRadiusDouble03-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusDouble03-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusDouble03-expected.txt: Added.
+        * platform/gtk/fast/borders/borderRadiusDouble04-expected.checksum:
+        * platform/gtk/fast/borders/borderRadiusDouble04-expected.png:
+        * platform/gtk/fast/borders/borderRadiusDouble05-expected.checksum:
+        * platform/gtk/fast/borders/borderRadiusDouble05-expected.png:
+        * platform/gtk/fast/borders/borderRadiusDouble06-expected.checksum:
+        * platform/gtk/fast/borders/borderRadiusDouble06-expected.png:
+        * platform/gtk/fast/borders/borderRadiusDouble07-expected.checksum:
+        * platform/gtk/fast/borders/borderRadiusDouble07-expected.png:
+        * platform/gtk/fast/borders/borderRadiusDouble08-expected.checksum:
+        * platform/gtk/fast/borders/borderRadiusDouble08-expected.png:
+        * platform/gtk/fast/borders/borderRadiusDouble09-expected.checksum:
+        * platform/gtk/fast/borders/borderRadiusDouble09-expected.png:
+        * platform/gtk/fast/borders/borderRadiusGroove01-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusGroove01-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusGroove01-expected.txt: Added.
+        * platform/gtk/fast/borders/borderRadiusGroove02-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusGroove02-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusGroove02-expected.txt: Added.
+        * platform/gtk/fast/borders/borderRadiusInset01-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusInset01-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusInset01-expected.txt: Added.
+        * platform/gtk/fast/borders/borderRadiusInvalidColor-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusInvalidColor-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusInvalidColor-expected.txt: Added.
+        * platform/gtk/fast/borders/borderRadiusOutset01-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusOutset01-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusOutset01-expected.txt: Added.
+        * platform/gtk/fast/borders/borderRadiusRidge01-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusRidge01-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusRidge01-expected.txt: Added.
+        * platform/gtk/fast/borders/borderRadiusSolid01-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusSolid01-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusSolid01-expected.txt: Added.
+        * platform/gtk/fast/borders/borderRadiusSolid02-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusSolid02-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusSolid02-expected.txt: Added.
+        * platform/gtk/fast/borders/borderRadiusSolid03-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusSolid03-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusSolid03-expected.txt: Added.
+        * platform/gtk/fast/borders/borderRadiusSolid04-expected.checksum: Added.
+        * platform/gtk/fast/borders/borderRadiusSolid04-expected.png: Added.
+        * platform/gtk/fast/borders/borderRadiusSolid04-expected.txt: Added.
+        * platform/gtk/fast/borders/different-color-borders-expected.checksum:
+        * platform/gtk/fast/borders/different-color-borders-expected.png:
+        * platform/gtk/fast/borders/fieldsetBorderRadius-expected.checksum: Added.
+        * platform/gtk/fast/borders/fieldsetBorderRadius-expected.png: Added.
+        * platform/gtk/fast/borders/fieldsetBorderRadius-expected.txt: Copied from LayoutTests/platform/mac/fast/borders/fieldsetBorderRadius-expected.txt.
+        * platform/gtk/fast/borders/inline-mask-overlay-image-expected.checksum: Added.
+        * platform/gtk/fast/borders/inline-mask-overlay-image-expected.png: Added.
+        * platform/gtk/fast/borders/inline-mask-overlay-image-expected.txt: Added.
+        * platform/gtk/fast/borders/outline-offset-min-assert-expected.checksum: Added.
+        * platform/gtk/fast/borders/outline-offset-min-assert-expected.png: Added.
+        * platform/gtk/fast/borders/outline-offset-min-assert-expected.txt: Copied from LayoutTests/platform/mac/fast/borders/outline-offset-min-assert-expected.txt.
+        * platform/gtk/fast/borders/svg-as-border-image-2-expected.checksum: Added.
+        * platform/gtk/fast/borders/svg-as-border-image-2-expected.png: Added.
+        * platform/gtk/fast/borders/svg-as-border-image-2-expected.txt: Added.
+        * platform/gtk/fast/borders/svg-as-border-image-expected.checksum: Added.
+        * platform/gtk/fast/borders/svg-as-border-image-expected.png: Added.
+        * platform/gtk/fast/borders/svg-as-border-image-expected.txt: Added.
+
 2010-09-08  Martin Robinson  <mrobinson@igalia.com>
 
         Rebaseline mathml/presentation/attributes.xhtml.
