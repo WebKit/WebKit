@@ -1,5 +1,11 @@
 2010-09-07  Kinuko Yasuda  <kinuko@chromium.org>
 
+        Unreviewed, another Qt release build fix attempt.
+
+        * UIProcess/API/cpp/qt/WKURLQt.cpp:
+
+2010-09-07  Kinuko Yasuda  <kinuko@chromium.org>
+
         Unreviewed, attempt to fix Qt release build.
 
         * UIProcess/API/cpp/qt/WKStringQt.cpp:
