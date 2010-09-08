@@ -1,5 +1,11 @@
 2010-09-08  Adam Roben  <aroben@apple.com>
 
+        Remove WKSerializedScriptValue.cpp/h from the Copy Files build phase
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2010-09-08  Adam Roben  <aroben@apple.com>
+
         Get rid of WorkQueue::m_performWorkEvent
 
         We were signaling m_performWorkEvent to spawn a worker thread. We can

@@ -105,9 +105,6 @@
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		9391F2CA121B679A00EBF7E8 /* WebFrameNetworkingContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9391F284121B38F500EBF7E8 /* WebFrameNetworkingContext.mm */; };
 		9391F2CB121B67AD00EBF7E8 /* WebFrameNetworkingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 9391F283121B38F500EBF7E8 /* WebFrameNetworkingContext.h */; };
-		A72D5D811236CBA800A88B15 /* WebSerializedScriptValue.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = A72D5D7F1236CBA800A88B15 /* WebSerializedScriptValue.h */; };
-		A72D5F301236F9E800A88B15 /* WKSerializedScriptValue.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = A72D5F2E1236F9E800A88B15 /* WKSerializedScriptValue.h */; };
-		A72D5F311236F9E800A88B15 /* WKSerializedScriptValue.cpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = A72D5F2F1236F9E800A88B15 /* WKSerializedScriptValue.cpp */; };
 		A72D610B1237144F00A88B15 /* WKSerializedScriptValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A72D5F2F1236F9E800A88B15 /* WKSerializedScriptValue.cpp */; };
 		A72D610C1237145000A88B15 /* WKSerializedScriptValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A72D5F2F1236F9E800A88B15 /* WKSerializedScriptValue.cpp */; };
 		BC0092F7115837A300E0AE2A /* RunLoopMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC0092F5115837A300E0AE2A /* RunLoopMac.mm */; };
@@ -387,9 +384,6 @@
 			dstSubfolderSpec = 1;
 			files = (
 				1A50DB66110A3D57000D3FE5 /* WebProcess.app in CopyFiles */,
-				A72D5D811236CBA800A88B15 /* WebSerializedScriptValue.h in CopyFiles */,
-				A72D5F301236F9E800A88B15 /* WKSerializedScriptValue.h in CopyFiles */,
-				A72D5F311236F9E800A88B15 /* WKSerializedScriptValue.cpp in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1674,7 +1668,6 @@
 			isa = PBXProject;
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "WebKit2" */;
 			compatibilityVersion = "Xcode 3.1";
-			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
