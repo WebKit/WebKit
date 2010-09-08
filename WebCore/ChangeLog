@@ -1,3 +1,25 @@
+2010-09-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        move-during-parse-parent.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=45210
+
+        When inserting elements into the tree, they need to be associated with
+        their parent's document, not the document for which the parser is
+        running.  These two are different when the parent has been moved to a
+        different document during parsing.
+
+        Test: fast/parser/move-during-parsing.html
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::insertComment):
+        (WebCore::HTMLConstructionSite::insertCommentOnHTMLHtmlElement):
+        (WebCore::HTMLConstructionSite::insertScriptElement):
+        (WebCore::HTMLConstructionSite::insertTextNode):
+        (WebCore::HTMLConstructionSite::createElement):
+        (WebCore::HTMLConstructionSite::createHTMLElement):
+
 2010-09-08  Gabor Loki  <loki@webkit.org>
 
         Reviewed by Andreas Kling.

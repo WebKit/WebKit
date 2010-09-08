@@ -1,0 +1,12 @@
+ALERT: parser/resources/move-during-parsing-iframe.html
+
+This text should not show inside the iframe. It should show inside the parent. Furthermore, there should be text saying "Middle of Page" and then "End of Page" below (also in the parent).
+
+Middle of Page
+
+End of Page
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+

@@ -213,7 +213,7 @@ void HTMLConstructionSite::insertDoctype(AtomicHTMLToken& token)
 void HTMLConstructionSite::insertComment(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::Comment);
-    attach(currentElement(), Comment::create(m_document, token.comment()));
+    attach(currentElement(), Comment::create(currentElement()->document(), token.comment()));
 }
 
 void HTMLConstructionSite::insertCommentOnDocument(AtomicHTMLToken& token)
@@ -225,7 +225,8 @@ void HTMLConstructionSite::insertCommentOnDocument(AtomicHTMLToken& token)
 void HTMLConstructionSite::insertCommentOnHTMLHtmlElement(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::Comment);
-    attach(m_openElements.htmlElement(), Comment::create(m_document, token.comment()));
+    Element* parent = m_openElements.htmlElement();
+    attach(parent, Comment::create(parent->document(), token.comment()));
 }
 
 PassRefPtr<Element> HTMLConstructionSite::attachToCurrent(PassRefPtr<Element> child)
@@ -293,7 +294,7 @@ void HTMLConstructionSite::insertFormattingElement(AtomicHTMLToken& token)
 
 void HTMLConstructionSite::insertScriptElement(AtomicHTMLToken& token)
 {
-    RefPtr<HTMLScriptElement> element = HTMLScriptElement::create(scriptTag, m_document, true);
+    RefPtr<HTMLScriptElement> element = HTMLScriptElement::create(scriptTag, currentElement()->document(), true);
     if (m_fragmentScriptingPermission == FragmentScriptingAllowed)
         element->setAttributeMap(token.takeAtributes(), m_fragmentScriptingPermission);
     m_openElements.push(attachToCurrent(element.release()));
@@ -326,13 +327,13 @@ void HTMLConstructionSite::insertTextNode(const String& characters)
         return;
     }
 
-    attachAtSite(site, Text::create(m_document, characters));
+    attachAtSite(site, Text::create(site.parent->document(), characters));
 }
 
 PassRefPtr<Element> HTMLConstructionSite::createElement(AtomicHTMLToken& token, const AtomicString& namespaceURI)
 {
     QualifiedName tagName(nullAtom, token.name(), namespaceURI);
-    RefPtr<Element> element = m_document->createElement(tagName, true);
+    RefPtr<Element> element = currentElement()->document()->createElement(tagName, true);
     element->setAttributeMap(token.takeAtributes(), m_fragmentScriptingPermission);
     return element.release();
 }
@@ -343,7 +344,7 @@ PassRefPtr<Element> HTMLConstructionSite::createHTMLElement(AtomicHTMLToken& tok
     // FIXME: This can't use HTMLConstructionSite::createElement because we
     // have to pass the current form element.  We should rework form association
     // to occur after construction to allow better code sharing here.
-    RefPtr<Element> element = HTMLElementFactory::createHTMLElement(tagName, m_document, form(), true);
+    RefPtr<Element> element = HTMLElementFactory::createHTMLElement(tagName, currentElement()->document(), form(), true);
     element->setAttributeMap(token.takeAtributes(), m_fragmentScriptingPermission);
     ASSERT(element->isHTMLElement());
     return element.release();

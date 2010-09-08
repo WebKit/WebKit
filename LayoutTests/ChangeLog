@@ -1,3 +1,14 @@
+2010-09-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        move-during-parse-parent.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=45210
+
+        * fast/parser/move-during-parsing-expected.txt: Added.
+        * fast/parser/move-during-parsing.html: Added.
+        * fast/parser/resources/move-during-parsing-iframe.html: Added.
+
 2010-09-08  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by John Honeycutt.
