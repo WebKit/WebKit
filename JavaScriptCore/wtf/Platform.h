@@ -948,6 +948,11 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #define ENABLE_JIT 0
 #endif
 
+/* JIT is not implemented for 64 bit on MSVC */
+#if !defined(ENABLE_JIT) && COMPILER(MSVC) && CPU(X86_64)
+#define ENABLE_JIT 0
+#endif
+
 /* The JIT is enabled by default on all x86, x64-64, ARM & MIPS platforms. */
 #if !defined(ENABLE_JIT) \
     && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(MIPS)) \

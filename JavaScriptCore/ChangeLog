@@ -1,3 +1,15 @@
+2010-09-08  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        Re-Disable JIT for MSVC 64bit to fix the build on this compiler.
+        https://bugs.webkit.org/show_bug.cgi?id=45382
+
+        It was enabled in the cleanup made in r64176, though it is still
+        not implemented.
+
+        * wtf/Platform.h:
+
 2010-09-08  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
