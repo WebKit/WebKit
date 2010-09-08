@@ -89,7 +89,8 @@ Markup.noAutoDump = function()
 
 Markup.waitUntilDone = function()
 {
-    layoutTestController.waitUntilDone();
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
     Markup.noAutoDump();
 }
 
