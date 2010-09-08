@@ -121,6 +121,16 @@ editing/style/style-boundary-005.html
 
 # WebKitTestRunner needs an implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
+svg/custom/mouse-move-on-svg-container-standalone.svg
+svg/custom/mouse-move-on-svg-container.xhtml
+svg/custom/mouse-move-on-svg-root-standalone.svg
+svg/custom/mouse-move-on-svg-root.xhtml
+svg/dynamic-updates/SVGFEPointLightElement-dom-x-attr.html
+svg/dynamic-updates/SVGFEPointLightElement-dom-y-attr.html
+svg/dynamic-updates/SVGFEPointLightElement-dom-z-attr.html
+svg/dynamic-updates/SVGFEPointLightElement-svgdom-x-prop.html
+svg/dynamic-updates/SVGFEPointLightElement-svgdom-y-prop.html
+svg/dynamic-updates/SVGFEPointLightElement-svgdom-z-prop.html
 compositing/iframes/layout-on-compositing-change.html
 editing/deleting/5390681-2.html
 editing/deleting/5729680.html
@@ -841,6 +851,8 @@ java
 # <https://bugs.webkit.org/show_bug.cgi?id=42197>
 # Get accelerated compositing working with webkit2
 # <https://bugs.webkit.org/show_bug.cgi?id=41084>
+fast/loader/stateobjects/popstate-fires-with-page-cache.html
+fast/canvas/webgl/gl-teximage.html
 compositing/webgl/webgl-background-color.html
 compositing/webgl/webgl-reflection.html
 fast/canvas/webgl/array-buffer-crash.html
@@ -1314,6 +1326,7 @@ http/tests/security/mixedContent/redirect-http-to-https-script-in-iframe.html
 http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html
 http/tests/security/mixedContent/redirect-https-to-http-script-in-iframe.html
 webarchive/loading/mainresource-null-mimetype-crash.html
+webarchive/loading/missing-data.html
 
 # WebKitTestRunner needs layoutTestController.dumpResourceLoadCallbacks
 # <https://bugs.webkit.org/show_bug.cgi?id=42332>
@@ -1364,6 +1377,8 @@ fast/history/gesture-before-onload-location-href.html
 
 # WebKitTestRunner needs textInputController
 # <https://bugs.webkit.org/show_bug.cgi?id=42337>
+editing/spelling/spelling-contenteditable.html
+editing/spelling/spelling-textarea.html
 editing/selection/5825350-1.html
 editing/selection/5825350-2.html
 editing/selection/move-left-right.html
@@ -1443,6 +1458,7 @@ storage/transaction-success-callback-isolated-world.html
 
 # WebKitTestRunner needs layoutTestController.pathToLocalResource
 # <https://bugs.webkit.org/show_bug.cgi?id=42541>
+fast/history/history-traversal-is-asynchronous.html
 fast/loader/local-CSS-from-local.html
 fast/loader/local-iFrame-source-from-local.html
 fast/loader/local-image-from-local.html
@@ -2119,6 +2135,7 @@ transitions/font-family-during-transition.html
 transitions/min-max-width-height-transitions.html
 transitions/text-indent-transition.html
 websocket/tests/frame-lengths.html
+fast/loader/stateobjects/popstate-fires-on-history-traversal.html
 
 ########################################
 
@@ -2130,6 +2147,7 @@ platform/mac/fast/AppleScript/array.html
 platform/mac/fast/AppleScript/date.html
 
 # WebKitTestRunner doesn't have objCController
+platform/mac/fast/objc/dom-html-select-activate.html
 platform/mac/fast/dom/objc-wrapper-identity.html
 platform/mac/fast/dom/wrapper-classes-objc.html
 platform/mac/fast/dom/wrapper-round-tripping.html

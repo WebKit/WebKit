@@ -1,3 +1,12 @@
+2010-09-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Add some entries to the WebKit2 skipped list, based on the buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=45380
+
+        * platform/mac-wk2/Skipped:
+
 2010-09-08  Andy Estes  <aestes@apple.com>
 
         Reviewed by Eric Carlson.
