@@ -1037,7 +1037,7 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclaration *style)
             RefPtr<CSSMutableStyleDeclaration> embeddingStyle = CSSMutableStyleDeclaration::create();
             embeddingStyle->setProperty(CSSPropertyUnicodeBidi, CSSValueEmbed);
             embeddingStyle->setProperty(CSSPropertyDirection, direction);
-            applyInlineStyleToRange(embeddingStyle.get(), embeddingApplyStart, embeddingApplyEnd);
+            fixRangeAndApplyInlineStyle(embeddingStyle.get(), embeddingApplyStart, embeddingApplyEnd);
 
             if (styleWithoutEmbedding)
                 styleToApply = styleWithoutEmbedding;
@@ -1049,7 +1049,7 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclaration *style)
         }
     }
 
-    applyInlineStyleToRange(styleToApply.get(), start, end);
+    fixRangeAndApplyInlineStyle(styleToApply.get(), start, end);
 
     // Remove dummy style spans created by splitting text elements.
     cleanupUnstyledAppleStyleSpans(startDummySpanAncestor);
@@ -1057,78 +1057,71 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclaration *style)
         cleanupUnstyledAppleStyleSpans(endDummySpanAncestor);
 }
 
-void ApplyStyleCommand::applyInlineStyleToRange(CSSMutableStyleDeclaration* style, const Position& start, const Position& rangeEnd)
+void ApplyStyleCommand::fixRangeAndApplyInlineStyle(CSSMutableStyleDeclaration* style, const Position& start, const Position& end)
 {
-    Node* node = start.node();
-    Position end = rangeEnd;
-
-    bool rangeIsEmpty = false;
+    Node* startNode = start.node();
 
     if (start.deprecatedEditingOffset() >= caretMaxOffset(start.node())) {
-        node = node->traverseNextNode();
-        Position newStart = Position(node, 0);
-        if (!node || comparePositions(end, newStart) < 0)
-            rangeIsEmpty = true;
+        startNode = startNode->traverseNextNode();
+        if (!startNode || comparePositions(end, Position(startNode, 0)) < 0)
+            return;
     }
 
-    if (!rangeIsEmpty) {
-        // pastEndNode is the node after the last fully selected node.
-        Node* pastEndNode = end.node();
-        if (end.deprecatedEditingOffset() >= caretMaxOffset(end.node()))
-            pastEndNode = end.node()->traverseNextSibling();
-        // FIXME: Callers should perform this operation on a Range that includes the br
-        // if they want style applied to the empty line.
-        if (start == end && start.node()->hasTagName(brTag))
-            pastEndNode = start.node()->traverseNextNode();
-        // Add the style to selected inline runs.
-        for (Node* next; node && node != pastEndNode; node = next) {
-            
-            next = node->traverseNextNode();
-            
-            if (!node->renderer() || !node->isContentEditable())
-                continue;
-            
-            if (!node->isContentRichlyEditable() && node->isHTMLElement()) {
-                // This is a plaintext-only region. Only proceed if it's fully selected.
-                // pastEndNode is the node after the last fully selected node, so if it's inside node then
-                // node isn't fully selected.
-                if (pastEndNode && pastEndNode->isDescendantOf(node))
-                    break;
-                // Add to this element's inline style and skip over its contents.
-                HTMLElement* element = static_cast<HTMLElement*>(node);
-                RefPtr<CSSMutableStyleDeclaration> inlineStyle = element->getInlineStyleDecl()->copy();
-                inlineStyle->merge(style);
-                setNodeAttribute(element, styleAttr, inlineStyle->cssText());
-                next = node->traverseNextSibling();
-                continue;
-            }
+    Node* pastEndNode = end.node();
+    if (end.deprecatedEditingOffset() >= caretMaxOffset(end.node()))
+        pastEndNode = end.node()->traverseNextSibling();
+
+    // FIXME: Callers should perform this operation on a Range that includes the br
+    // if they want style applied to the empty line.
+    if (start == end && start.node()->hasTagName(brTag))
+        pastEndNode = start.node()->traverseNextNode();
+
+    applyInlineStyleToNodeRange(style, startNode, pastEndNode);
+}
+
+void ApplyStyleCommand::applyInlineStyleToNodeRange(CSSMutableStyleDeclaration* style, Node* node, Node* pastEndNode)
+{
+    for (Node* next; node && node != pastEndNode; node = next) {
+        next = node->traverseNextNode();
         
-            if (isBlock(node))
-                continue;
-                
-            if (node->childNodeCount()) {
-                if (editingIgnoresContent(node)) {
-                    next = node->traverseNextSibling();
-                    continue;
-                }
-                continue;
-            }
-            
-            Node* runStart = node;
-            // Find the end of the run.
-            Node* sibling = node->nextSibling();
-            StyleChange startChange(style, Position(node, 0));
-            while (sibling && sibling != pastEndNode && !sibling->contains(pastEndNode)
-                   && (!isBlock(sibling) || sibling->hasTagName(brTag))
-                   && StyleChange(style, Position(sibling, 0)) == startChange) {
-                node = sibling;
-                sibling = node->nextSibling();
-            }
-            // Recompute next, since node has changed.
+        if (!node->renderer() || !node->isContentEditable())
+            continue;
+        
+        if (!node->isContentRichlyEditable() && node->isHTMLElement()) {
+            // This is a plaintext-only region. Only proceed if it's fully selected.
+            // pastEndNode is the node after the last fully selected node, so if it's inside node then
+            // node isn't fully selected.
+            if (pastEndNode && pastEndNode->isDescendantOf(node))
+                break;
+            // Add to this element's inline style and skip over its contents.
+            HTMLElement* element = static_cast<HTMLElement*>(node);
+            RefPtr<CSSMutableStyleDeclaration> inlineStyle = element->getInlineStyleDecl()->copy();
+            inlineStyle->merge(style);
+            setNodeAttribute(element, styleAttr, inlineStyle->cssText());
             next = node->traverseNextSibling();
-            // Apply the style to the run.
-            addInlineStyleIfNeeded(style, runStart, node, m_removeOnly ? DoNotAddStyledElement : AddStyledElement);
+            continue;
         }
+        
+        if (isBlock(node))
+            continue;
+        
+        if (node->childNodeCount()) {
+            if (editingIgnoresContent(node))
+                next = node->traverseNextSibling();
+            continue;
+        }
+
+        Node* runEnd = node;
+        Node* sibling = node->nextSibling();
+        StyleChange startChange(style, Position(node, 0));
+        while (sibling && sibling != pastEndNode && !sibling->contains(pastEndNode)
+               && (!isBlock(sibling) || sibling->hasTagName(brTag))
+               && StyleChange(style, Position(sibling, 0)) == startChange) {
+            runEnd = sibling;
+            sibling = runEnd->nextSibling();
+        }
+        next = runEnd->traverseNextSibling();
+        addInlineStyleIfNeeded(style, node, runEnd, m_removeOnly ? DoNotAddStyledElement : AddStyledElement);
     }
 }
 
