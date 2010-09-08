@@ -34,6 +34,7 @@ import chromium_mac
 import chromium_win
 import dryrun
 import factory
+import google_chrome
 import gtk
 import mac
 import qt
@@ -114,6 +115,18 @@ class FactoryTest(unittest.TestCase):
         self.assert_platform_port("cygwin", None, win.WinPort)
         self.assert_platform_port("cygwin", self.webkit_options, win.WinPort)
 
+    def test_google_chrome(self):
+        # The actual Chrome class names aren't available so we test that the
+        # objects we get are at least subclasses of the Chromium versions.
+        self.assert_port("google-chrome-linux32",
+                         chromium_linux.ChromiumLinuxPort)
+        self.assert_port("google-chrome-linux64",
+                         chromium_linux.ChromiumLinuxPort)
+        self.assert_port("google-chrome-win",
+                         chromium_win.ChromiumWinPort)
+        self.assert_port("google-chrome-mac",
+                         chromium_mac.ChromiumMacPort)
+
     def test_gtk(self):
         self.assert_port("gtk", gtk.GtkPort)
 
@@ -154,3 +167,20 @@ class FactoryTest(unittest.TestCase):
                          ports["chromium-linux"])
         self.assert_port("chromium-win", chromium_win.ChromiumWinPort,
                          ports["chromium-win"])
+
+    def test_unknown_specified(self):
+        # Test what happens when you specify an unknown port.
+        orig_platform = sys.platform
+        self.assertRaises(NotImplementedError, factory.get,
+                          port_name='unknown')
+
+    def test_unknown_default(self):
+        # Test what happens when you're running on an unknown platform.
+        orig_platform = sys.platform
+        sys.platform = 'unknown'
+        self.assertRaises(NotImplementedError, factory.get)
+        sys.platform = orig_platform
+
+
+if __name__ == '__main__':
+    unittest.main()

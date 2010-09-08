@@ -32,9 +32,9 @@
 import codecs
 import logging
 import os
-import pdb
 import Queue
 import sys
+import tempfile
 import thread
 import time
 import threading
@@ -59,7 +59,10 @@ def passing_run(args=[], port_obj=None, record_results=False,
     new_args.extend(args)
     if not tests_included:
         # We use the glob to test that globbing works.
-        new_args.extend(['passes', 'failures/expected/*'])
+        new_args.extend(['passes',
+                         'http/tests',
+                         'websocket/tests',
+                         'failures/expected/*'])
     options, parsed_args = run_webkit_tests.parse_args(new_args)
     if port_obj is None:
         port_obj = port.get(options.platform, options)
@@ -71,10 +74,12 @@ def logging_run(args=[], tests_included=False):
     new_args = ['--no-record-results']
     if not '--platform' in args:
         new_args.extend(['--platform', 'test'])
-    if args:
-        new_args.extend(args)
+    new_args.extend(args)
     if not tests_included:
-        new_args.extend(['passes', 'failures/expected/*'])
+        new_args.extend(['passes',
+                         'http/tests'
+                         'websocket/tests',
+                         'failures/expected/*'])
     options, parsed_args = run_webkit_tests.parse_args(new_args)
     port_obj = port.get(options.platform, options)
     buildbot_output = array_stream.ArrayStream()
@@ -117,6 +122,14 @@ class MainTest(unittest.TestCase):
         res, out, err = logging_run(['--help-printing'])
         self.assertEqual(res, 0)
         self.assertTrue(out.empty())
+        self.assertFalse(err.empty())
+
+    def test_hung_thread(self):
+        res, out, err = logging_run(['--run-singly', '--time-out-ms=50',
+                                     'failures/expected/hang.html'],
+                                    tests_included=True)
+        self.assertEqual(res, 0)
+        self.assertFalse(out.empty())
         self.assertFalse(err.empty())
 
     def test_keyboard_interrupt(self):
@@ -174,6 +187,19 @@ class MainTest(unittest.TestCase):
     def test_single_file(self):
         # FIXME: verify # of tests run
         self.assertTrue(passing_run(['passes/text.html'], tests_included=True))
+
+    def test_test_list(self):
+        filename = tempfile.mktemp()
+        tmpfile = file(filename, mode='w+')
+        tmpfile.write('passes/text.html')
+        tmpfile.close()
+        self.assertTrue(passing_run(['--test-list=%s' % filename],
+                                    tests_included=True))
+        os.remove(filename)
+        res, out, err = logging_run(['--test-list=%s' % filename],
+                                    tests_included=True)
+        self.assertEqual(res, -1)
+        self.assertFalse(err.empty())
 
     def test_unexpected_failures(self):
         # Run tests including the unexpected failures.
@@ -278,6 +304,13 @@ class DryrunTest(unittest.TestCase):
                                      'fast/html']))
         self.assertTrue(passing_run(['--platform', 'dryrun-mac',
                                      'fast/html']))
+
+    def test_test(self):
+        res, out, err = logging_run(['--platform', 'dryrun-test',
+                                     '--pixel-tests'])
+        self.assertEqual(res, 2)
+        self.assertFalse(out.empty())
+        self.assertFalse(err.empty())
 
 
 class TestThread(dump_render_tree_thread.WatchableThread):
@@ -388,13 +421,6 @@ class StandaloneFunctionsTest(unittest.TestCase):
         self.assertFalse(child_thread.isAlive())
         oc.restore_output()
 
-    def test_find_thread_stack(self):
-        id, stack = sys._current_frames().items()[0]
-        found_stack = run_webkit_tests._find_thread_stack(id)
-        self.assertNotEqual(found_stack, None)
-
-        found_stack = run_webkit_tests._find_thread_stack(0)
-        self.assertEqual(found_stack, None)
 
 if __name__ == '__main__':
     unittest.main()

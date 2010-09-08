@@ -47,11 +47,29 @@ import sys
 import thread
 import threading
 import time
+import traceback
 
 import test_failures
 
 _log = logging.getLogger("webkitpy.layout_tests.layout_package."
                          "dump_render_tree_thread")
+
+
+def find_thread_stack(id):
+    """Returns a stack object that can be used to dump a stack trace for
+    the given thread id (or None if the id is not found)."""
+    for thread_id, stack in sys._current_frames().items():
+        if thread_id == id:
+            return stack
+    return None
+
+
+def log_stack(stack):
+    """Log a stack trace to log.error()."""
+    for filename, lineno, name, line in traceback.extract_stack(stack):
+        _log.error('File: "%s", line %d, in %s' % (filename, lineno, name))
+        if line:
+            _log.error('  %s' % line.strip())
 
 
 def _process_output(port, test_info, test_types, test_args, configuration,
@@ -167,6 +185,7 @@ class SingleTestThread(threading.Thread):
         self._test_args = test_args
         self._configuration = configuration
         self._output_dir = output_dir
+        self._driver = None
 
     def run(self):
         self._covered_run()
@@ -175,18 +194,19 @@ class SingleTestThread(threading.Thread):
         # FIXME: this is a separate routine to work around a bug
         # in coverage: see http://bitbucket.org/ned/coveragepy/issue/85.
         test_info = self._test_info
-        driver = self._port.create_driver(self._image_path, self._shell_args)
-        driver.start()
+        self._driver = self._port.create_driver(self._image_path,
+                                                self._shell_args)
+        self._driver.start()
         start = time.time()
         crash, timeout, actual_checksum, output, error = \
-            driver.run_test(test_info.uri.strip(), test_info.timeout,
-                            test_info.image_hash())
+            self._driver.run_test(test_info.uri.strip(), test_info.timeout,
+                                  test_info.image_hash())
         end = time.time()
         self._test_result = _process_output(self._port,
             test_info, self._test_types, self._test_args,
             self._configuration, self._output_dir, crash, timeout, end - start,
             actual_checksum, output, error)
-        driver.stop()
+        self._driver.stop()
 
     def get_test_result(self):
         return self._test_result
@@ -312,9 +332,7 @@ class TestShellThread(WatchableThread):
             # Save the exception for our caller to see.
             self._exception_info = sys.exc_info()
             self._stop_time = time.time()
-            # Re-raise it and die.
-            _log.error('%s dying, exception raised: %s' % (self.getName(),
-                       self._exception_info))
+            _log.error('%s dying, exception raised' % self.getName())
 
         self._stop_time = time.time()
 
@@ -426,7 +444,7 @@ class TestShellThread(WatchableThread):
         worker.start()
 
         thread_timeout = _milliseconds_to_seconds(
-            _pad_timeout(test_info.timeout))
+            _pad_timeout(int(test_info.timeout)))
         thread._next_timeout = time.time() + thread_timeout
         worker.join(thread_timeout)
         if worker.isAlive():
@@ -439,11 +457,13 @@ class TestShellThread(WatchableThread):
             # that tradeoff in order to avoid losing the rest of this
             # thread's results.
             _log.error('Test thread hung: killing all DumpRenderTrees')
-            worker._driver.stop()
+            if worker._driver:
+                worker._driver.stop()
 
         try:
             result = worker.get_test_result()
         except AttributeError, e:
+            # This gets raised if the worker thread has already exited.
             failures = []
             _log.error('Cannot get results of test: %s' %
                        test_info.filename)
@@ -476,7 +496,7 @@ class TestShellThread(WatchableThread):
         start = time.time()
 
         thread_timeout = _milliseconds_to_seconds(
-             _pad_timeout(test_info.timeout))
+             _pad_timeout(int(test_info.timeout)))
         self._next_timeout = start + thread_timeout
 
         crash, timeout, actual_checksum, output, error = \

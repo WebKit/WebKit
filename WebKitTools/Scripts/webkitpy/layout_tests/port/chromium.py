@@ -126,6 +126,26 @@ class ChromiumPort(base.Port):
         return check_file_exists(image_diff_path, 'image diff exe',
                                  override_step, logging)
 
+    def diff_image(self, expected_filename, actual_filename,
+                   diff_filename=None, tolerance=0):
+        executable = self._path_to_image_diff()
+        if diff_filename:
+            cmd = [executable, '--diff', expected_filename, actual_filename,
+                   diff_filename]
+        else:
+            cmd = [executable, expected_filename, actual_filename]
+
+        result = True
+        try:
+            if self._executive.run_command(cmd, return_exit_code=True) == 0:
+                return False
+        except OSError, e:
+            if e.errno == errno.ENOENT or e.errno == errno.EACCES:
+                _compare_available = False
+            else:
+                raise e
+        return result
+
     def driver_name(self):
         return "test_shell"
 
@@ -349,9 +369,6 @@ class ChromiumDriver(base.Driver):
         # poll() is not threadsafe and can throw OSError due to:
         # http://bugs.python.org/issue1731717
         return self._proc.poll()
-
-    def returncode(self):
-        return self._proc.returncode
 
     def _write_command_and_read_line(self, input=None):
         """Returns a tuple: (line, did_crash)"""

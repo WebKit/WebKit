@@ -70,14 +70,11 @@ def _read_file(path, mode='r'):
 def _write_file(path, contents, mode='w'):
     """Write the string to the specified path.
 
-    Returns nothing if the write fails, instead of raising an IOError.
+    Writes should never fail, so we may raise IOError.
 
     """
-    try:
-        with open(path, mode) as f:
+    with open(path, mode) as f:
             f.write(contents)
-    except IOError:
-        pass
 
 
 class DryRunPort(object):
@@ -133,9 +130,6 @@ class DryrunDriver(base.Driver):
 
     def poll(self):
         return None
-
-    def returncode(self):
-        return 0
 
     def run_test(self, uri, timeoutms, image_hash):
         test_name = self._uri_to_test(uri)

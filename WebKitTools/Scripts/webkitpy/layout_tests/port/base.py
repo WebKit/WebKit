@@ -120,7 +120,7 @@ class Port(object):
 
     def check_image_diff(self, override_step=None, logging=True):
         """This routine is used to check whether image_diff binary exists."""
-        raise NotImplemented('Port.check_image_diff')
+        raise NotImplementedError('Port.check_image_diff')
 
     def compare_text(self, expected_text, actual_text):
         """Return whether or not the two strings are *not* equal. This
@@ -141,26 +141,9 @@ class Port(object):
         |tolerance| should be a percentage value (0.0 - 100.0).
         If it is omitted, the port default tolerance value is used.
 
-        While this is a generic routine, we include it in the Port
-        interface so that it can be overriden for testing purposes."""
-        executable = self._path_to_image_diff()
+        """
+        raise NotImplementedError('Port.diff_image')
 
-        if diff_filename:
-            cmd = [executable, '--diff', expected_filename, actual_filename,
-                   diff_filename]
-        else:
-            cmd = [executable, expected_filename, actual_filename]
-
-        result = True
-        try:
-            if self._executive.run_command(cmd, return_exit_code=True) == 0:
-                return False
-        except OSError, e:
-            if e.errno == errno.ENOENT or e.errno == errno.EACCES:
-                _compare_available = False
-            else:
-                raise e
-        return result
 
     def diff_text(self, expected_text, actual_text,
                   expected_filename, actual_filename):
@@ -353,84 +336,16 @@ class Port(object):
         if the port does not use expectations files."""
         raise NotImplementedError('Port.path_to_test_expectations_file')
 
-    def remove_directory(self, *path):
-        """Recursively removes a directory, even if it's marked read-only.
-
-        Remove the directory located at *path, if it exists.
-
-        shutil.rmtree() doesn't work on Windows if any of the files
-        or directories are read-only, which svn repositories and
-        some .svn files are.  We need to be able to force the files
-        to be writable (i.e., deletable) as we traverse the tree.
-
-        Even with all this, Windows still sometimes fails to delete a file,
-        citing a permission error (maybe something to do with antivirus
-        scans or disk indexing).  The best suggestion any of the user
-        forums had was to wait a bit and try again, so we do that too.
-        It's hand-waving, but sometimes it works. :/
-        """
-        file_path = os.path.join(*path)
-        if not os.path.exists(file_path):
-            return
-
-        win32 = False
-        if sys.platform == 'win32':
-            win32 = True
-            # Some people don't have the APIs installed. In that case we'll do
-            # without.
-            try:
-                win32api = __import__('win32api')
-                win32con = __import__('win32con')
-            except ImportError:
-                win32 = False
-
-            def remove_with_retry(rmfunc, path):
-                os.chmod(path, os.stat.S_IWRITE)
-                if win32:
-                    win32api.SetFileAttributes(path,
-                                              win32con.FILE_ATTRIBUTE_NORMAL)
-                try:
-                    return rmfunc(path)
-                except EnvironmentError, e:
-                    if e.errno != errno.EACCES:
-                        raise
-                    print 'Failed to delete %s: trying again' % repr(path)
-                    time.sleep(0.1)
-                    return rmfunc(path)
-        else:
-
-            def remove_with_retry(rmfunc, path):
-                if os.path.islink(path):
-                    return os.remove(path)
-                else:
-                    return rmfunc(path)
-
-        for root, dirs, files in os.walk(file_path, topdown=False):
-            # For POSIX:  making the directory writable guarantees
-            # removability. Windows will ignore the non-read-only
-            # bits in the chmod value.
-            os.chmod(root, 0770)
-            for name in files:
-                remove_with_retry(os.remove, os.path.join(root, name))
-            for name in dirs:
-                remove_with_retry(os.rmdir, os.path.join(root, name))
-
-        remove_with_retry(os.rmdir, file_path)
-
-    def test_platform_name(self):
-        return self._name
-
     def relative_test_filename(self, filename):
         """Relative unix-style path for a filename under the LayoutTests
         directory. Filenames outside the LayoutTests directory should raise
         an error."""
-        # FIXME This should assert() here but cannot due to printing_unittest.Testprinter
-        # assert(filename.startswith(self.layout_tests_dir()))
+        assert(filename.startswith(self.layout_tests_dir()))
         return filename[len(self.layout_tests_dir()) + 1:]
 
     def results_directory(self):
         """Absolute path to the place to store the test results."""
-        raise NotImplemented('Port.results_directory')
+        raise NotImplementedError('Port.results_directory')
 
     def setup_test_run(self):
         """Perform port-specific work at the beginning of a test run."""
@@ -620,7 +535,6 @@ class Port(object):
                 _wdiff_available = False
                 return ""
             raise
-        assert(False)  # Should never be reached.
 
     _pretty_patch_error_html = "Failed to run PrettyPatch, see error console."
 
@@ -823,11 +737,6 @@ class Driver:
         """Returns None if the Driver is still running. Returns the returncode
         if it has exited."""
         raise NotImplementedError('Driver.poll')
-
-    def returncode(self):
-        """Returns the system-specific returncode if the Driver has stopped or
-        exited."""
-        raise NotImplementedError('Driver.returncode')
 
     def stop(self):
         raise NotImplementedError('Driver.stop')

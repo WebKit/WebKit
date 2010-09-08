@@ -1,3 +1,47 @@
+2010-09-01  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        new-run-webkit-tests: still more unit tests
+
+        Clean up and remove unnecessary code. Biggest notable change is
+        moving the chromium-specific imagediff code from port/base to
+        port/chromium.
+
+        Add more unit tests for run_webkit_tests.py, port/base.py,
+        port/factory.py, port/dryrun.py, and
+        layout_package/dump_render_tree_thread.py
+
+        This covers almost all of the generic and test code paths except for
+        a few error paths involving invalid or port-specific command line
+        arguments, and the code path for uploading results files to the
+        buildbots.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=45090
+
+        * Scripts/webkitpy/layout_tests/data/failures/expected/hang.html: Added.
+        * Scripts/webkitpy/layout_tests/data/http/tests/passes/text-expected.txt: Copied from WebKitTools/Scripts/webkitpy/layout_tests/data/passes/text-expected.txt.
+        * Scripts/webkitpy/layout_tests/data/http/tests/passes/text.html: Copied from WebKitTools/Scripts/webkitpy/layout_tests/data/passes/text.html.
+        * Scripts/webkitpy/layout_tests/data/http/tests/ssl/text-expected.txt: Copied from WebKitTools/Scripts/webkitpy/layout_tests/data/passes/text-expected.txt.
+        * Scripts/webkitpy/layout_tests/data/http/tests/ssl/text.html: Copied from WebKitTools/Scripts/webkitpy/layout_tests/data/passes/text.html.
+        * Scripts/webkitpy/layout_tests/data/platform/test/test_expectations.txt:
+        * Scripts/webkitpy/layout_tests/data/websocket/tests/passes/text-expected.txt: Copied from WebKitTools/Scripts/webkitpy/layout_tests/data/passes/text-expected.txt.
+        * Scripts/webkitpy/layout_tests/data/websocket/tests/passes/text.html: Copied from WebKitTools/Scripts/webkitpy/layout_tests/data/passes/text.html.
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread_unittest.py: Added.
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/dryrun.py:
+        * Scripts/webkitpy/layout_tests/port/factory_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py: Added.
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2010-09-07  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Darin Adler.

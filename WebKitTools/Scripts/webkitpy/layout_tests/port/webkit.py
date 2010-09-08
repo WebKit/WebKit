@@ -435,9 +435,6 @@ class WebKitDriver(base.Driver):
         self._server_process.start()
         return
 
-    def returncode(self):
-        return self._server_process.returncode()
-
     # FIXME: This function is huge.
     def run_test(self, uri, timeoutms, image_hash):
         if uri.startswith("file:///"):

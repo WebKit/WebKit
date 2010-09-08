@@ -53,7 +53,6 @@ import logging
 import math
 import optparse
 import os
-import pdb
 import platform
 import Queue
 import random
@@ -371,7 +370,7 @@ class TestRunner:
                 assert(test_size > 0)
             except:
                 _log.critical("invalid chunk '%s'" % chunk_value)
-                sys.exit(1)
+                return None
 
             # Get the number of tests
             num_tests = len(test_files)
@@ -1349,11 +1348,18 @@ class TestRunner:
 def read_test_files(files):
     tests = []
     for file in files:
-        # FIXME: This could be cleaner using a list comprehension.
-        for line in codecs.open(file, "r", "utf-8"):
-            line = test_expectations.strip_comments(line)
-            if line:
-                tests.append(line)
+        try:
+            with codecs.open(file, 'r', 'utf-8') as file_contents:
+                # FIXME: This could be cleaner using a list comprehension.
+                for line in file_contents:
+                    line = test_expectations.strip_comments(line)
+                    if line:
+                        tests.append(line)
+        except IOError, e:
+            if e.errno == errno.ENOENT:
+                _log.critical('')
+                _log.critical('--test-list file "%s" not found' % file)
+            raise
     return tests
 
 
@@ -1397,7 +1403,12 @@ def run(port, options, args, regular_output=sys.stderr,
         test_runner._print_config()
 
         printer.print_update("Collecting tests ...")
-        test_runner.collect_tests(args, last_unexpected_results)
+        try:
+            test_runner.collect_tests(args, last_unexpected_results)
+        except IOError, e:
+            if e.errno == errno.ENOENT:
+                return -1
+            raise
 
         printer.print_update("Parsing expectations ...")
         if options.lint_test_files:
@@ -1694,31 +1705,14 @@ def parse_args(args=None):
     return options, args
 
 
-def _find_thread_stack(id):
-    """Returns a stack object that can be used to dump a stack trace for
-    the given thread id (or None if the id is not found)."""
-    for thread_id, stack in sys._current_frames().items():
-        if thread_id == id:
-            return stack
-    return None
-
-
-def _log_stack(stack):
-    """Log a stack trace to log.error()."""
-    for filename, lineno, name, line in traceback.extract_stack(stack):
-        _log.error('File: "%s", line %d, in %s' % (filename, lineno, name))
-        if line:
-            _log.error('  %s' % line.strip())
-
-
 def _log_wedged_thread(thread):
     """Log information about the given thread state."""
     id = thread.id()
-    stack = _find_thread_stack(id)
+    stack = dump_render_tree_thread.find_thread_stack(id)
     assert(stack is not None)
     _log.error("")
     _log.error("thread %s (%d) is wedged" % (thread.getName(), id))
-    _log_stack(stack)
+    dump_render_tree_thread.log_stack(stack)
     _log.error("")
 
 

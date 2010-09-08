@@ -27,15 +27,49 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import base
-import unittest
+import os
+import StringIO
+import sys
 import tempfile
+import unittest
 
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.thirdparty.mock import Mock
 
 
-class PortTest(unittest.TestCase):
+# FIXME: This makes StringIO objects work with "with". Remove
+# when we upgrade to 2.6.
+class NewStringIO(StringIO.StringIO):
+    def __enter__(self):
+        return self
 
+    def __exit__(self, type, value, traceback):
+        pass
+
+
+class MockExecutive():
+    def __init__(self, exception):
+        self._exception = exception
+
+    def run_command(self, *args, **kwargs):
+        raise self._exception
+
+
+class UnitTestPort(base.Port):
+    """Subclass of base.Port used for unit testing."""
+    def __init__(self, configuration_contents=None, executive_exception=None):
+        base.Port.__init__(self)
+        self._configuration_contents = configuration_contents
+        if executive_exception:
+            self._executive = MockExecutive(executive_exception)
+
+    def _open_configuration_file(self):
+        if self._configuration_contents:
+            return NewStringIO(self._configuration_contents)
+        return base.Port._open_configuration_file(self)
+
+
+class PortTest(unittest.TestCase):
     def test_format_wdiff_output_as_html(self):
         output = "OUTPUT %s %s %s" % (base.Port._WDIFF_DEL, base.Port._WDIFF_ADD, base.Port._WDIFF_END)
         html = base.Port()._format_wdiff_output_as_html(output)
@@ -62,6 +96,26 @@ class PortTest(unittest.TestCase):
         new_file.write(contents.encode(encoding))
         new_file.flush()
         return new_file
+
+    def test_pretty_patch_os_error(self):
+        port = UnitTestPort(executive_exception=OSError)
+        self.assertEqual(port.pretty_patch_text("patch.txt"),
+                         port._pretty_patch_error_html)
+
+        # This tests repeated calls to make sure we cache the result.
+        self.assertEqual(port.pretty_patch_text("patch.txt"),
+                         port._pretty_patch_error_html)
+
+    def test_pretty_patch_script_error(self):
+        # FIXME: This is some ugly white-box test hacking ...
+        base._pretty_patch_available = True
+        port = UnitTestPort(executive_exception=ScriptError)
+        self.assertEqual(port.pretty_patch_text("patch.txt"),
+                         port._pretty_patch_error_html)
+
+        # This tests repeated calls to make sure we cache the result.
+        self.assertEqual(port.pretty_patch_text("patch.txt"),
+                         port._pretty_patch_error_html)
 
     def test_run_wdiff(self):
         executive = Executive()
@@ -109,12 +163,78 @@ class PortTest(unittest.TestCase):
         self.assertFalse(base._wdiff_available)
         base._wdiff_available = True
 
+    def test_default_configuration_notfound(self):
+        port = UnitTestPort()
+        self.assertEqual(port.default_configuration(), "Release")
+
     def test_layout_tests_skipping(self):
         port = base.Port()
         port.skipped_layout_tests = lambda: ['foo/bar.html', 'media']
         self.assertTrue(port.skips_layout_test('foo/bar.html'))
         self.assertTrue(port.skips_layout_test('media/video-zoom.html'))
         self.assertFalse(port.skips_layout_test('foo/foo.html'))
+
+    def test_default_configuration_found(self):
+        port = UnitTestPort(configuration_contents="Debug")
+        self.assertEqual(port.default_configuration(), "Debug")
+
+    def test_default_configuration_unknown(self):
+        port = UnitTestPort(configuration_contents="weird_value")
+        self.assertEqual(port.default_configuration(), "weird_value")
+
+    def test_setup_test_run(self):
+        port = base.Port()
+        # This routine is a no-op. We just test it for coverage.
+        port.setup_test_run()
+
+
+class VirtualTest(unittest.TestCase):
+    """Tests that various methods expected to be virtual are."""
+    def assertVirtual(self, method, *args, **kwargs):
+        self.assertRaises(NotImplementedError, method, *args, **kwargs)
+
+    def test_virtual_methods(self):
+        port = base.Port()
+        self.assertVirtual(port.baseline_path)
+        self.assertVirtual(port.baseline_search_path)
+        self.assertVirtual(port.check_build, None)
+        self.assertVirtual(port.check_image_diff)
+        self.assertVirtual(port.create_driver, None, None)
+        self.assertVirtual(port.diff_image, None, None)
+        self.assertVirtual(port.path_to_test_expectations_file)
+        self.assertVirtual(port.test_platform_name)
+        self.assertVirtual(port.results_directory)
+        self.assertVirtual(port.show_html_results_file, None)
+        self.assertVirtual(port.test_expectations)
+        self.assertVirtual(port.test_base_platform_names)
+        self.assertVirtual(port.test_platform_name)
+        self.assertVirtual(port.test_platforms)
+        self.assertVirtual(port.test_platform_name_to_name, None)
+        self.assertVirtual(port.version)
+        self.assertVirtual(port._path_to_apache)
+        self.assertVirtual(port._path_to_apache_config_file)
+        self.assertVirtual(port._path_to_driver)
+        self.assertVirtual(port._path_to_helper)
+        self.assertVirtual(port._path_to_image_diff)
+        self.assertVirtual(port._path_to_lighttpd)
+        self.assertVirtual(port._path_to_lighttpd_modules)
+        self.assertVirtual(port._path_to_lighttpd_php)
+        self.assertVirtual(port._path_to_wdiff)
+        self.assertVirtual(port._shut_down_http_server, None)
+
+    def test_virtual_driver_method(self):
+        self.assertRaises(NotImplementedError, base.Driver, base.Port, "", None)
+        self.assertVirtual(base.Driver, base.Port, "", None)
+
+    def test_virtual_driver_methods(self):
+        class VirtualDriver(base.Driver):
+            def __init__(self):
+                pass
+
+        driver = VirtualDriver()
+        self.assertVirtual(driver.run_test, None, None, None)
+        self.assertVirtual(driver.poll)
+        self.assertVirtual(driver.stop)
 
 
 class DriverTest(unittest.TestCase):
@@ -131,3 +251,7 @@ class DriverTest(unittest.TestCase):
         command_with_spaces = "valgrind --smc-check=\"check with spaces!\" --foo"
         expected_parse = ["valgrind", "--smc-check=check with spaces!", "--foo"]
         self._assert_wrapper(command_with_spaces, expected_parse)
+
+
+if __name__ == '__main__':
+    unittest.main()
