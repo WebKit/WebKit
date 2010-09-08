@@ -43,11 +43,6 @@ WMLIntrinsicEvent::WMLIntrinsicEvent(Document* document, const String& targetURL
     m_taskElement->setAttribute(HTMLNames::hrefAttr, targetURL);
 }
 
-PassRefPtr<WMLIntrinsicEvent> WMLIntrinsicEvent::create(const QualifiedName& tagName, Document* document)
-{
-    return adoptRef(new WMLIntrinsicEvent(tagName, document));
-}
-
 WMLIntrinsicEvent::WMLIntrinsicEvent(WMLTaskElement* taskElement)
     : m_taskElement(taskElement)
 {

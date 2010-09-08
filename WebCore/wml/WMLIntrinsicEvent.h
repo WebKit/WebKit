@@ -22,11 +22,11 @@
 #define WMLIntrinsicEvent_h
 
 #if ENABLE(WML)
+#include "WMLTaskElement.h"
+
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-
-#include "WMLTaskElement.h"
 
 namespace WebCore {
 

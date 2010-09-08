@@ -1,3 +1,21 @@
+2010-09-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Dirk Schulze.
+
+        [WML] Add create functions to WML.
+        https://bugs.webkit.org/show_bug.cgi?id=44950
+
+        There are missing definitions of create function in WML area. 
+        So, there are build breaks when enabling WML. The create functions and the construction 
+        are added. In addition, a style error and duplicated adoptRef usage are fixed.
+
+        * wml/WMLDocument.h:
+        (WebCore::WMLDocument::create):
+        * wml/WMLFormControlElement.h:
+        * wml/WMLIntrinsicEvent.cpp:
+        (WebCore::WMLIntrinsicEvent::WMLIntrinsicEvent):
+        * wml/WMLIntrinsicEvent.h:
+
 2010-09-08  Nico Weber  <thakis@chromium.org>
 
         Reviewed by Kenneth Russell.

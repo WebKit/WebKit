@@ -28,7 +28,9 @@ namespace WebCore {
 
 class WMLFormControlElement : public WMLElement {
 public:
-    WMLFormControlElement(const QualifiedName&, Document*);
+    static PassRefPtr<WMLFormControlElement> create(const QualifiedName&, Document*);
+
+
     virtual ~WMLFormControlElement();
 
     virtual bool isFormControlElement() const { return true; }
@@ -43,6 +45,9 @@ public:
 
     virtual void attach();
     virtual void recalcStyle(StyleChange);
+
+protected:
+    WMLFormControlElement(const QualifiedName&, Document*);
 
 private:
     bool m_valueMatchesRenderer;
