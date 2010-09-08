@@ -162,6 +162,7 @@ committers_unable_to_review = [
     Committer("Robert Hogan", ["robert@webkit.org", "robert@roberthogan.net", "lists@roberthogan.net"], "mwenge"),
     Committer("Roland Steiner", "rolandsteiner@chromium.org"),
     Committer("Ryosuke Niwa", "rniwa@webkit.org", "rniwa"),
+    Committer("Satish Sampath", "satish@chromium.org"),
     Committer("Scott Violet", "sky@chromium.org", "sky"),
     Committer("Stephen White", "senorblanco@chromium.org", "senorblanco"),
     Committer("Tony Gentilcore", "tonyg@chromium.org", "tonyg-cr"),

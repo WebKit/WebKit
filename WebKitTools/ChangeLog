@@ -1,3 +1,9 @@
+2010-09-08  Satish Sampath  <satish@chromium.org>
+
+        Unreviewed, adding myself to committers list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-09-08  Hans Wennborg  <hans@chromium.org>
 
         Unreviewed.
