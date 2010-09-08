@@ -1,3 +1,12 @@
+2010-09-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed buildfix after r66972.
+
+        [Qt] Treat warnings as errors by default for gcc
+        https://bugs.webkit.org/show_bug.cgi?id=43191
+
+        * WebKit.pri: Don't add -Werror for maemo platforms.
+
 2010-09-08  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
