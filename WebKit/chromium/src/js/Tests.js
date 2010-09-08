@@ -219,40 +219,6 @@ TestSuite.prototype.addSniffer = function(receiver, methodName, override, opt_st
 
 
 /**
- * Tests that the real injected host is present in the context.
- */
-TestSuite.prototype.testHostIsPresent = function()
-{
-    this.assertTrue(typeof InspectorFrontendHost === "object" && !InspectorFrontendHost.isStub);
-};
-
-
-/**
- * Tests elements tree has an "HTML" root.
- */
-TestSuite.prototype.testElementsTreeRoot = function()
-{
-    var doc = WebInspector.domAgent.document;
-    this.assertEquals("HTML", doc.documentElement.nodeName);
-    this.assertTrue(doc.documentElement.hasChildNodes());
-};
-
-
-/**
- * Tests that main resource is present in the system and that it is
- * the only resource.
- */
-TestSuite.prototype.testMainResource = function()
-{
-    var tokens = [];
-    var resources = WebInspector.resources;
-    for (var id in resources)
-        tokens.push(resources[id].lastPathComponent);
-    this.assertEquals("simple_page.html", tokens.join(","));
-};
-
-
-/**
  * Tests that resources tab is enabled when corresponding item is selected.
  */
 TestSuite.prototype.testEnableResourcesTab = function()
@@ -799,54 +765,6 @@ TestSuite.prototype.evaluateInConsole_ = function(code, callback)
 
 
 /**
- * Tests eval on call frame.
- */
-TestSuite.prototype.testEvalOnCallFrame = function()
-{
-    this.showPanel("scripts");
-
-    var breakpointLine = 16;
-
-    var test = this;
-    this._waitUntilScriptsAreParsed(["debugger_test_page.html"],
-        function() {
-          test.showMainPageScriptSource_(
-              "debugger_test_page.html",
-              function(view, url) {
-                  view._addBreakpoint(breakpointLine);
-
-                  // Since breakpoints are ignored in evals' calculate() function is
-                  // execute after zero-timeout so that the breakpoint is hit.
-                  test.evaluateInConsole_(
-                      'setTimeout("calculate(123)" , 0)',
-                      function(resultText) {
-                          test.assertTrue(!isNaN(resultText), "Failed to get timer id: " + resultText);
-                          waitForBreakpointHit();
-                      });
-              });
-        });
-
-    function waitForBreakpointHit() {
-      test.addSniffer(WebInspector,
-          "pausedScript",
-          function(callFrames) {
-            test.assertEquals(2, callFrames.length, "Unexpected stack depth on the breakpoint. " + JSON.stringify(callFrames, null, 4));
-            test.assertEquals("calculate", callFrames[0].functionName, "Unexpected top frame function.");
-            // Evaluate "e+1" where "e" is an argument of "calculate" function.
-            test.evaluateInConsole_(
-                "e+1",
-                function(resultText) {
-                    test.assertEquals("124", resultText, 'Unexpected "e+1" value.');
-                    test.releaseControl();
-                });
-          });
-    }
-
-    this.takeControl();
-};
-
-
-/**
  * Tests that console auto completion works when script execution is paused.
  */
 TestSuite.prototype.testCompletionOnPause = function()
@@ -1325,48 +1243,6 @@ TestSuite.createKeyEvent = function(keyIdentifier)
     var evt = document.createEvent("KeyboardEvent");
     evt.initKeyboardEvent("keydown", true /* can bubble */, true /* can cancel */, null /* view */, keyIdentifier, "");
     return evt;
-};
-
-
-/**
- * Tests the message loop re-entrancy.
- */
-TestSuite.prototype.testMessageLoopReentrant = function()
-{
-    var test = this;
-    this.showPanel("scripts");
-
-    var breakpointLine = 16;
-
-    WebInspector.showConsole();
-
-    this._waitUntilScriptsAreParsed(["debugger_test_page.html"],
-        function() {
-          test.showMainPageScriptSource_(
-              "debugger_test_page.html",
-              function(view, url) {
-                view._addBreakpoint(breakpointLine);
-
-                test.evaluateInConsole_(
-                    'setTimeout("calculate()", 0)',
-                    function(resultText) {
-                      test.assertTrue(!isNaN(resultText), "Failed to get timer id: " + resultText);
-                    });
-
-              });
-        });
-
-    // Wait until script is paused.
-    this.addSniffer(
-        WebInspector,
-        "pausedScript",
-        function(callFrames) {
-            test.evaluateInConsole_(
-                'document.cookie',
-                test.releaseControl.bind(test)); // This callback will be invoked only if the test succeeds (i.e. no crash).
-        });
-
-    this.takeControl();
 };
 
 
