@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x204
-  RenderBlock {html} at (0,0) size 800x204
-    RenderBody {body} at (8,16) size 784x172
+layer at (0,0) size 800x257
+  RenderBlock {html} at (0,0) size 800x257
+    RenderBody {body} at (8,16) size 784x225
       RenderBlock {p} at (0,0) size 784x40
         RenderText {#text} at (0,11) size 432x20
           text run at (0,11) width 432: "following elements should appear in blue on an orange background: "
@@ -91,3 +91,17 @@ layer at (0,0) size 800x204
             RenderText {#text} at (55,10) size 12x21
               text run at (55,10) width 12: "A"
         RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,188) size 784x37
+        RenderBlock (anonymous) at (0,0) size 784x20
+          RenderText {#text} at (0,0) size 226x20
+            text run at (0,0) width 226: "following element should be inline: "
+          RenderBlock {math} at (226,1) size 11x17
+            RenderInline {mi} at (0,0) size 9x21
+              RenderText {#text} at (1,-2) size 9x21
+                text run at (1,-2) width 9: "x"
+          RenderText {#text} at (237,0) size 234x20
+            text run at (237,0) width 234: ", and this one centered on a new line:"
+        RenderBlock {math} at (0,20) size 784x17
+          RenderInline {mi} at (0,0) size 9x21
+            RenderText {#text} at (387,-2) size 9x21
+              text run at (387,-2) width 9: "x"

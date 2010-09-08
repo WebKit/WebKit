@@ -1,3 +1,9 @@
+2010-09-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Rebaseline mathml/presentation/attributes.xhtml.
+
+        * platform/gtk/mathml/presentation/attributes-expected.txt:
+
 2010-09-08  Jan E Hanssen  <jhanssen@sencha.com>
 
         Reviewed by Dirk Schulze.
