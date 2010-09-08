@@ -1,3 +1,22 @@
+2010-09-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Chris Marrin.
+
+        Transform animations always run in software now
+        https://bugs.webkit.org/show_bug.cgi?id=45341
+        
+        After r66339 we always fell into software animation, because we
+        failed to detect transform or opacity properties in the keyframes,
+        so would send an empty list of values to the GraphicsLayer.
+        
+        Fixed by using CSSProperty values, rather than GraphicsLayer
+        values, when detecting the presence of properties in the keyframes.
+        
+        Test: manual-tests/transition-accelerated.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::startAnimation):
+
 2010-09-07  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.

@@ -1127,10 +1127,10 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation* anim
         // get timing function
         const TimingFunction* tf = keyframeStyle->hasAnimations() ? &((*keyframeStyle->animations()).animation(0)->timingFunction()) : 0;
         
-        if (currentKeyframe.containsProperty(AnimatedPropertyWebkitTransform))
+        if (currentKeyframe.containsProperty(CSSPropertyWebkitTransform))
             transformVector.insert(new TransformAnimationValue(key, &(keyframeStyle->transform()), tf));
         
-        if (currentKeyframe.containsProperty(AnimatedPropertyOpacity))
+        if (currentKeyframe.containsProperty(CSSPropertyOpacity))
             opacityVector.insert(new FloatAnimationValue(key, keyframeStyle->opacity(), tf));
     }
 
