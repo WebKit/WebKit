@@ -264,6 +264,11 @@ void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
 
 void Path::closeSubpath()
 {
+    m_path.closeSubpath();
+}
+
+void Path::closeCanvasSubpath()
+{
     const int elementCount = m_path.elementCount();
 
     if (!elementCount)

@@ -1,3 +1,18 @@
+2010-09-07  Jan E Hanssen  <jhanssen@sencha.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Added test case for Path::length()
+        https://bugs.webkit.org/show_bug.cgi?id=45331
+
+        Also removed test case for Path::pointAtLength() that is now passing
+
+        * platform/qt/svg/dom/path-pointAtLength-expected.txt: Removed.
+        * svg/dom/path-totalLength-expected.txt: Added.
+        * svg/dom/path-totalLength.html: Added.
+        * svg/dom/script-tests/path-totalLength.js: Added.
+        (getTotalLength):
+
 2010-09-07  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Kent Tamura.

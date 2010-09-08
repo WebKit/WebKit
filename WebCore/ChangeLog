@@ -1,3 +1,25 @@
+2010-09-07  Jan E Hanssen  <jhanssen@sencha.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Add a separate Path::closeCanvasSubpath() function for canvas paths
+        https://bugs.webkit.org/show_bug.cgi?id=45331
+
+        This is needed due to an adverse effect of the fix in 44061 that causes
+        certain paths not to be closed. This is not important for canvas paths
+        but it is for SVG paths, so splitting up the code in a generic (SVG)
+        case and one specialized for canvas.
+
+        Test: svg/dom/path-totalLength.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::closePath):
+        * platform/graphics/Path.h:
+        (WebCore::Path::closeCanvasSubpath):
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::Path::closeSubpath):
+        (WebCore::Path::closeCanvasSubpath):
+
 2010-09-07  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Chris Marrin.
