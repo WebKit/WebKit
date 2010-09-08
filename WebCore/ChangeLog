@@ -1,3 +1,13 @@
+2010-09-08  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        chromium/mac: Fix crash with compositor due to missing current NSGraphicsContext
+        https://bugs.webkit.org/show_bug.cgi?id=45354
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::updateContents): Set a current local context.
+
 2010-09-08  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Nikolas Zimmermann.
