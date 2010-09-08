@@ -212,7 +212,6 @@ PASS WebKitCSSKeyframesRule from inner.document.getElementById("dummyStyle").she
 PASS WebKitCSSKeyframesRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.6.constructor
 PASS WebKitCSSKeyframesRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.6.__proto__
 Never found Audio
-Never found BlobBuilder
 Never found Blob
 Never found CDATASection
 Never found CSSRule

@@ -1,3 +1,13 @@
+2010-09-08  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Steve Falkenburg.
+
+        Updated expected results for computed-style and prototype-inheritance tests on Windows.
+
+        * platform/win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/win/fast/dom/prototype-inheritance-2-expected.txt:
+
 2010-09-08  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Dimitri Glazkov.
