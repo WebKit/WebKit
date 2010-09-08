@@ -507,7 +507,7 @@ static bool readTime(time_t& resultTime, char*& start, const char* end)
     if (start + sizeof(time_t) >= end)
         return false;
 
-    resultTime = *reinterpret_cast<time_t*>(start);
+    resultTime = *reinterpret_cast_ptr<time_t*>(start);
     start += sizeof(time_t);
 
     return true;
