@@ -1,3 +1,11 @@
+2010-09-08  Hans Wennborg  <hans@chromium.org>
+
+        Unreviewed.
+
+        Adding myself as a committer in committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-09-08  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Simon Hausmann.
