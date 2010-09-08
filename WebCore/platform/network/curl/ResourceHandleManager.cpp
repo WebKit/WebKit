@@ -612,7 +612,8 @@ static void parseDataUrl(ResourceHandle* handle)
 
         // WebCore's decoder fails on Acid3 test 97 (whitespace).
         Vector<char> out;
-        if (base64Decode(data.latin1().data(), data.latin1().length(), out) && out.size() > 0)
+        CString latin1 = data.latin1();
+        if (base64Decode(latin1.data(), latin1.length(), out) && out.size() > 0)
             client->didReceiveData(handle, out.data(), out.size(), 0);
     } else {
         // We have to convert to UTF-16 early due to limitations in KURL

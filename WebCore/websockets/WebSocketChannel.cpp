@@ -88,7 +88,8 @@ bool WebSocketChannel::send(const String& msg)
     ASSERT(!m_suspended);
     Vector<char> buf;
     buf.append('\0');  // frame type
-    buf.append(msg.utf8().data(), msg.utf8().length());
+    CString utf8 = msg.utf8();
+    buf.append(utf8.data(), utf8.length());
     buf.append('\xff');  // frame end
     return m_handle->send(buf.data(), buf.size());
 }

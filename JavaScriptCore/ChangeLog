@@ -1,3 +1,14 @@
+2010-09-08  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        Remove some unnecessary duplicate calls to string functions
+
+        https://bugs.webkit.org/show_bug.cgi?id=45314
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::format):
+
 2010-09-08  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Andreas Kling.

@@ -335,7 +335,8 @@ String String::format(const char *format, ...)
 
     va_end(args);
 
-    return StringImpl::create(buffer.toUtf8().constData(), buffer.toUtf8().length());
+    QByteArray ba = buffer.toUtf8();
+    return StringImpl::create(ba.constData(), ba.length());
 
 #elif OS(WINCE)
     va_list args;

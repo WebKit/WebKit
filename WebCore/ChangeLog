@@ -1,3 +1,16 @@
+2010-09-08  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        Remove some unnecessary duplicate calls to string functions
+
+        https://bugs.webkit.org/show_bug.cgi?id=45314
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::parseDataUrl):
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::send):
+
 2010-09-08  Peter Kasting  <pkasting@google.com>
 
         Not reviewed, fallout from http://trac.webkit.org/changeset/67001
