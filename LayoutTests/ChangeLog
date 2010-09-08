@@ -1,3 +1,11 @@
+2010-09-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by John Honeycutt.
+
+        Add newly failing test to skipped list.
+
+        * platform/mac-wk2/Skipped:
+
 2010-09-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         LayoutTest regressions due to http://trac.webkit.org/changeset/67001

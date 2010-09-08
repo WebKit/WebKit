@@ -1458,6 +1458,7 @@ storage/transaction-success-callback-isolated-world.html
 
 # WebKitTestRunner needs layoutTestController.pathToLocalResource
 # <https://bugs.webkit.org/show_bug.cgi?id=42541>
+fast/dom/frame-loading-via-document-write.htm
 fast/history/history-traversal-is-asynchronous.html
 fast/loader/local-CSS-from-local.html
 fast/loader/local-iFrame-source-from-local.html
