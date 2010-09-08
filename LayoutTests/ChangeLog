@@ -1,3 +1,19 @@
+2010-09-08  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Adam Barth.
+
+        Errors in LayoutTests/http/tests/security/xss-DENIED-mime-type-execute-as-html.html
+        https://bugs.webkit.org/show_bug.cgi?id=45377
+
+        The test passes a MIME type as argument of a URL. A PHP code uses
+        that MIME type to fill the Content-Type of the response.  If the
+        MIME type is application/rss+xml the php decodes the '+' as a
+        blank space and thus the returned content type is incorrectly set
+        to "rss xml" instead of "rss+xml".
+
+        * http/tests/security/resources/send-mime-types.php:
+        * http/tests/security/xss-DENIED-mime-type-execute-as-html.html:
+
 2010-09-07  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Dirk Schulze.

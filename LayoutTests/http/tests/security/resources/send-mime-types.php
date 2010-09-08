@@ -1,5 +1,5 @@
 <?php
-    $mime_type = urldecode($_GET["mt"]);
+    $mime_type = $_GET["mt"];
     
     header("Content-Type: ".$mime_type);
 

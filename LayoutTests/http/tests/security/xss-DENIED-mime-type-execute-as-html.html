@@ -16,7 +16,7 @@ var mime_types = ["application/atom+xml", "application/json",
                   
 for(var i in mime_types) {
   var ifr = document.createElement('iframe');
-  ifr.src = "http://localhost:8000/security/resources/send-mime-types.php?mt=" + escape(mime_types[i]);
+  ifr.src = "http://localhost:8000/security/resources/send-mime-types.php?mt=" + encodeURIComponent(mime_types[i]);
   document.body.appendChild(ifr);
 }
 </script>
