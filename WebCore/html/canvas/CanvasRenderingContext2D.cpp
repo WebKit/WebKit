@@ -1605,7 +1605,7 @@ PassRefPtr<ImageData> CanvasRenderingContext2D::getImageData(float sx, float sy,
         scaledRect.setWidth(1);
     if (scaledRect.height() < 1)
         scaledRect.setHeight(1);
-    ImageBuffer* buffer = canvas() ? canvas()->buffer() : 0;
+    ImageBuffer* buffer = canvas()->buffer();
     if (!buffer)
         return createEmptyImageData(scaledRect.size());
     return buffer->getUnmultipliedImageData(scaledRect);

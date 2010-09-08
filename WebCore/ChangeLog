@@ -1,3 +1,16 @@
+2010-09-08  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Canvas: Remove unnecessary null-check of canvas() in getImageData()
+        https://bugs.webkit.org/show_bug.cgi?id=45394
+
+        canvas() is already dereferenced earlier in the function so there is
+        no use in checking it for null later.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::getImageData):
+
 2010-09-08  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Carlson.
