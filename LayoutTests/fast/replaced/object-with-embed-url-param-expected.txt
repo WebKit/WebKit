@@ -1,7 +1,8 @@
-   
 This test verifies that the right URL is loaded when there is an <object> with a 'src' <param> and a fallback <embed>.
 
 An <object> with a 'data' @attr and a 'src' <param> should load the URL from the 'data' @attr and does.
 An <object> with a 'src' <param> should load the URL from the 'src' <param> and does.
 An <object> with no URL specified and a nested <embed> should load the URL from the 'src' @attr of the <embed> and does.
-
+An <object> with a URL specified in a 'src' <param> and a nested <embed> should load the URL from the 'src' @attr of the <embed> and does.
+An <object> with a URL specified in a 'src' <param> and a MIME type specified in a 'type' <param> should load the URL from the 'src' <param> and does.
+      

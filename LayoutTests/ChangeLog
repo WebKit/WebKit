@@ -1,3 +1,16 @@
+2010-09-08  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Fallback content should be rendered when an <object> doesn't specify a
+        data, type or classid attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=45364
+        <rdar://problem/8375816>
+
+        * fast/replaced/object-param-url-control-char.html:
+        * fast/replaced/object-with-embed-url-param-expected.txt:
+        * fast/replaced/object-with-embed-url-param.html:
+
 2010-09-08  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

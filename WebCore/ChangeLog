@@ -1,3 +1,43 @@
+2010-09-08  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Fallback content should be rendered when an <object> doesn't specify a
+        data, type or classid attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=45364
+        <rdar://problem/8375816>
+
+        HTML5 says that if no data or type attribute is specified on an <object>,
+        fallback content should be rendered. However, WebKit has traditionally
+        supported specifying a URL and MIME type in <param> elements. 
+
+        To more closely match the spec while maintaining compatibility with
+        content that relied on our old behavior, we will continue to load
+        a resource specified by <param> elements if we can determine a priori
+        that it will be handled by a plug-in. 
+
+        If we can't make this determination, and the <object> element has no
+        "data" or "type" attribute, the <param> elements will be ignored and
+        fallback content will be rendered. Otherwise, there is no change in
+        behavior.
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parametersForPlugin): If an empty url is
+        passed to this function and a <param> exists that specifies a url that
+        references a plug-in resource, set it to url, making it the url that
+        will be loaded by the <object> element.
+        (WebCore::HTMLObjectElement::updateWidget): If no type attribute was
+        specified, but there is a classid attribute, try to map the classid to
+        a MIME type. This needs to be done before calling
+        HTMLObjectElement::parametersForPlugin().
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::resourceWillUsePlugin): Make a public method
+        that determines if a resource will load a plug-in based on its url and
+        MIME type. This is equivalent to calling
+        SubframeLoader::shouldUsePlugin(), but does not burden the caller with
+        the details of fallback content.
+        * loader/SubframeLoader.h:
+
 2010-09-08  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
