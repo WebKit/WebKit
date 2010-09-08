@@ -31,7 +31,7 @@
 #include "CString.h"
 #include "ChromeClient.h"
 #include "CookieJarSoup.h"
-#include "DocLoader.h"
+#include "CachedResourceLoader.h"
 #include "FileSystem.h"
 #include "Frame.h"
 #include "GOwnPtrSoup.h"

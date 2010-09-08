@@ -96,7 +96,7 @@ sub wanted
 my $isDOMTypeRename = 0;
 my %renames = (
     # Renames go here in the form of:
-    # "HTMLDocumentParser" => "LegacyHTMLDocumentParser",
+    "DocLoader" => "CachedResourceLoader",
 );
 
 my %renamesContemplatedForTheFuture = (

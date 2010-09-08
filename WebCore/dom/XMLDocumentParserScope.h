@@ -34,21 +34,21 @@
 
 namespace WebCore {
 
-    class DocLoader;
+    class CachedResourceLoader;
 
     class XMLDocumentParserScope : public Noncopyable {
     public:
-        XMLDocumentParserScope(DocLoader* docLoader);
+        XMLDocumentParserScope(CachedResourceLoader* cachedResourceLoader);
         ~XMLDocumentParserScope();
 
-        static DocLoader* currentDocLoader;
+        static CachedResourceLoader* currentCachedResourceLoader;
 
 #if ENABLE(XSLT)
-        XMLDocumentParserScope(DocLoader* docLoader, xmlGenericErrorFunc genericErrorFunc, xmlStructuredErrorFunc structuredErrorFunc = 0, void* errorContext = 0);
+        XMLDocumentParserScope(CachedResourceLoader* cachedResourceLoader, xmlGenericErrorFunc genericErrorFunc, xmlStructuredErrorFunc structuredErrorFunc = 0, void* errorContext = 0);
 #endif
 
     private:
-        DocLoader* m_oldDocLoader;
+        CachedResourceLoader* m_oldCachedResourceLoader;
 
 #if ENABLE(XSLT)
         xmlGenericErrorFunc m_oldGenericErrorFunc;

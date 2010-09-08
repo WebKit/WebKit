@@ -1,3 +1,195 @@
+2010-09-08  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Rename DocLoader to CachedResourceLoader because that's what it does.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::cachedImage):
+        * css/CSSCursorImageValue.h:
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData):
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::cachedResourceLoader):
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        * css/CSSFontSelector.h:
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::cachedImage):
+        * css/CSSImageValue.h:
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::insertedIntoParent):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::loadPendingImages):
+        * css/CSSStyleSheet.h:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::~Document):
+        (WebCore::Document::implicitClose):
+        * dom/Document.h:
+        (WebCore::Document::cachedResourceLoader):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElementData::requestScript):
+        * dom/XMLDocumentParser.cpp:
+        * dom/XMLDocumentParser.h:
+        * dom/XMLDocumentParserLibxml2.cpp:
+        (WebCore::matchFunc):
+        (WebCore::shouldAllowExternalLoad):
+        (WebCore::openFunc):
+        (WebCore::XMLDocumentParser::doWrite):
+        (WebCore::XMLDocumentParser::endElementNs):
+        (WebCore::XMLDocumentParser::initializeParserContext):
+        (WebCore::XMLDocumentParser::doEnd):
+        (WebCore::xmlDocPtrForString):
+        * dom/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::parseEndElement):
+        * dom/XMLDocumentParserScope.cpp:
+        (WebCore::XMLDocumentParserScope::XMLDocumentParserScope):
+        (WebCore::XMLDocumentParserScope::~XMLDocumentParserScope):
+        * dom/XMLDocumentParserScope.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::paste):
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::paste):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        * html/parser/CSSPreloadScanner.cpp:
+        (WebCore::CSSPreloadScanner::emitRule):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::HTMLNames::PreloadTask::preload):
+        * html/parser/HTMLScriptRunner.cpp:
+        (WebCore::HTMLScriptRunner::requestPendingScript):
+        * inspector/InspectorResource.cpp:
+        (WebCore::InspectorResource::cachedResource):
+        * loader/Cache.cpp:
+        (WebCore::Cache::requestResource):
+        (WebCore::Cache::requestUserCSSStyleSheet):
+        (WebCore::Cache::revalidateResource):
+        (WebCore::Cache::addCachedResourceLoader):
+        (WebCore::Cache::removeCachedResourceLoader):
+        * loader/Cache.h:
+        * loader/CachedCSSStyleSheet.h:
+        * loader/CachedFont.cpp:
+        (WebCore::CachedFont::load):
+        (WebCore::CachedFont::beginLoadIfNeeded):
+        * loader/CachedFont.h:
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::load):
+        (WebCore::CachedImage::maximumDecodedImageSize):
+        * loader/CachedImage.h:
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::~CachedResource):
+        (WebCore::CachedResource::load):
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::load):
+        (WebCore::CachedResource::setCachedResourceLoader):
+        * loader/CachedResourceLoader.cpp: Copied from WebCore/loader/DocLoader.cpp.
+        (WebCore::CachedResourceLoader::CachedResourceLoader):
+        (WebCore::CachedResourceLoader::~CachedResourceLoader):
+        (WebCore::CachedResourceLoader::frame):
+        (WebCore::CachedResourceLoader::checkForReload):
+        (WebCore::CachedResourceLoader::requestImage):
+        (WebCore::CachedResourceLoader::requestFont):
+        (WebCore::CachedResourceLoader::requestCSSStyleSheet):
+        (WebCore::CachedResourceLoader::requestUserCSSStyleSheet):
+        (WebCore::CachedResourceLoader::requestScript):
+        (WebCore::CachedResourceLoader::requestXSLStyleSheet):
+        (WebCore::CachedResourceLoader::requestLinkPrefetch):
+        (WebCore::CachedResourceLoader::canRequest):
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::printAccessDeniedMessage):
+        (WebCore::CachedResourceLoader::setAutoLoadImages):
+        (WebCore::CachedResourceLoader::cachePolicy):
+        (WebCore::CachedResourceLoader::removeCachedResource):
+        (WebCore::CachedResourceLoader::setLoadInProgress):
+        (WebCore::CachedResourceLoader::checkCacheObjectStatus):
+        (WebCore::CachedResourceLoader::incrementRequestCount):
+        (WebCore::CachedResourceLoader::decrementRequestCount):
+        (WebCore::CachedResourceLoader::requestCount):
+        (WebCore::CachedResourceLoader::preload):
+        (WebCore::CachedResourceLoader::checkForPendingPreloads):
+        (WebCore::CachedResourceLoader::requestPreload):
+        (WebCore::CachedResourceLoader::clearPreloads):
+        (WebCore::CachedResourceLoader::clearPendingPreloads):
+        (WebCore::CachedResourceLoader::printPreloadStats):
+        * loader/CachedResourceLoader.h: Copied from WebCore/loader/DocLoader.h.
+        * loader/CachedScript.h:
+        * loader/CachedXSLStyleSheet.h:
+        * loader/DocLoader.cpp: Removed.
+        * loader/DocLoader.h: Removed.
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::isLoadingInAPISense):
+        (WebCore::DocumentLoader::subresource):
+        (WebCore::DocumentLoader::getSubresources):
+        * loader/FrameLoader.cpp:
+        (WebCore::numRequests):
+        (WebCore::FrameLoader::stopLoading):
+        (WebCore::FrameLoader::didBeginDocument):
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::createItem):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::updateFromElement):
+        * loader/Request.cpp:
+        (WebCore::Request::Request):
+        * loader/Request.h:
+        (WebCore::Request::cachedResourceLoader):
+        * loader/loader.cpp:
+        (WebCore::Loader::load):
+        (WebCore::Loader::cancelRequests):
+        (WebCore::Loader::Host::servePendingRequests):
+        (WebCore::Loader::Host::didFinishLoading):
+        (WebCore::Loader::Host::didFail):
+        (WebCore::Loader::Host::didReceiveResponse):
+        (WebCore::Loader::Host::cancelPendingRequests):
+        (WebCore::Loader::Host::cancelRequests):
+        * loader/loader.h:
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeEditDrag):
+        * page/Frame.cpp:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::checkStopDelayingDeferredRepaints):
+        (WebCore::FrameView::updateDeferredRepaintDelay):
+        * page/Settings.cpp:
+        (WebCore::setLoadsImagesAutomaticallyInAllFrames):
+        * platform/android/TemporaryLinkStubs.cpp:
+        (WebCore::CheckCacheObjectStatus):
+        * platform/network/android/ResourceHandleAndroid.cpp:
+        (WebCore::ResourceHandle::start):
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        * platform/network/mac/ResourceHandleMac.mm:
+        * platform/network/qt/ResourceHandleQt.cpp:
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        * platform/network/win/ResourceHandleWin.cpp:
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::requestImageResource):
+        * svg/SVGFontFaceUriElement.cpp:
+        (WebCore::SVGFontFaceUriElement::loadFont):
+        * workers/Worker.cpp:
+        * xml/XSLImportRule.cpp:
+        (WebCore::XSLImportRule::loadSheet):
+        * xml/XSLStyleSheet.h:
+        * xml/XSLStyleSheetLibxslt.cpp:
+        (WebCore::XSLStyleSheet::cachedResourceLoader):
+        (WebCore::XSLStyleSheet::parseString):
+        * xml/XSLStyleSheetQt.cpp:
+        (WebCore::XSLStyleSheet::cachedResourceLoader):
+        * xml/XSLTProcessor.cpp:
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::docLoaderFunc):
+        (WebCore::setXSLTLoadCallBack):
+        (WebCore::xmlDocPtrFromNode):
+        (WebCore::XSLTProcessor::transformToString):
+
 2010-09-06  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Eric Carlson.

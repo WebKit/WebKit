@@ -71,7 +71,7 @@ CachedFont::~CachedFont()
 #endif
 }
 
-void CachedFont::load(DocLoader*)
+void CachedFont::load(CachedResourceLoader*)
 {
     // Don't load the file yet.  Wait for an access before triggering the load.
     setLoading(true);
@@ -94,7 +94,7 @@ void CachedFont::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
     checkNotify();
 }
 
-void CachedFont::beginLoadIfNeeded(DocLoader* dl)
+void CachedFont::beginLoadIfNeeded(CachedResourceLoader* dl)
 {
     if (!m_loadInitiated) {
         m_loadInitiated = true;

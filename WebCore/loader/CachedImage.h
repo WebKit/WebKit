@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class DocLoader;
+class CachedResourceLoader;
 class Cache;
 
 class CachedImage : public CachedResource, public ImageObserver {
@@ -42,7 +42,7 @@ public:
     CachedImage(Image*);
     virtual ~CachedImage();
     
-    virtual void load(DocLoader* docLoader);
+    virtual void load(CachedResourceLoader* cachedResourceLoader);
 
     Image* image() const;
 

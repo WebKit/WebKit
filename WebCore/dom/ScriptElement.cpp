@@ -26,7 +26,7 @@
 
 #include "AsyncScriptRunner.h"
 #include "CachedScript.h"
-#include "DocLoader.h"
+#include "CachedResourceLoader.h"
 #include "Document.h"
 #include "DocumentParser.h"
 #include "Frame.h"
@@ -170,7 +170,7 @@ void ScriptElementData::requestScript(const String& sourceUrl)
         return;
 
     ASSERT(!m_cachedScript);
-    m_cachedScript = document->docLoader()->requestScript(sourceUrl, scriptCharset());
+    m_cachedScript = document->cachedResourceLoader()->requestScript(sourceUrl, scriptCharset());
     m_requested = true;
 
     // m_createdByParser is never reset - always resied at the initial value set while parsing.

@@ -29,7 +29,7 @@
 #include "HTMLPreloadScanner.h"
 
 #include "CSSHelper.h"
-#include "DocLoader.h"
+#include "CachedResourceLoader.h"
 #include "Document.h"
 #include "HTMLTokenizer.h"
 #include "HTMLTreeBuilder.h"
@@ -98,13 +98,13 @@ public:
         if (m_urlToLoad.isEmpty())
             return;
 
-        DocLoader* docLoader = document->docLoader();
+        CachedResourceLoader* cachedResourceLoader = document->cachedResourceLoader();
         if (m_tagName == scriptTag)
-            docLoader->preload(CachedResource::Script, m_urlToLoad, m_charset, scanningBody);
+            cachedResourceLoader->preload(CachedResource::Script, m_urlToLoad, m_charset, scanningBody);
         else if (m_tagName == imgTag) 
-            docLoader->preload(CachedResource::ImageResource, m_urlToLoad, String(), scanningBody);
+            cachedResourceLoader->preload(CachedResource::ImageResource, m_urlToLoad, String(), scanningBody);
         else if (m_tagName == linkTag && m_linkIsStyleSheet) 
-            docLoader->preload(CachedResource::CSSStyleSheet, m_urlToLoad, m_charset, scanningBody);
+            cachedResourceLoader->preload(CachedResource::CSSStyleSheet, m_urlToLoad, m_charset, scanningBody);
     }
 
     const AtomicString& tagName() const { return m_tagName; }

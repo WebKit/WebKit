@@ -28,7 +28,7 @@
 
 #include "BackForwardList.h"
 #include "Database.h"
-#include "DocLoader.h"
+#include "CachedResourceLoader.h"
 #include "Frame.h"
 #include "FrameTree.h"
 #include "FrameView.h"
@@ -51,7 +51,7 @@ static void setNeedsRecalcStyleInAllFrames(Page* page)
 static void setLoadsImagesAutomaticallyInAllFrames(Page* page)
 {
     for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext())
-        frame->document()->docLoader()->setAutoLoadImages(page->settings()->loadsImagesAutomatically());
+        frame->document()->cachedResourceLoader()->setAutoLoadImages(page->settings()->loadsImagesAutomatically());
 }
 
 #if USE(SAFARI_THEME)

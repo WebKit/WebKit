@@ -25,7 +25,7 @@
 #if ENABLE(XSLT)
 
 #include "CachedXSLStyleSheet.h"
-#include "DocLoader.h"
+#include "CachedResourceLoader.h"
 #include "XSLStyleSheet.h"
 
 namespace WebCore {
@@ -77,13 +77,13 @@ bool XSLImportRule::isLoading()
 
 void XSLImportRule::loadSheet()
 {
-    DocLoader* docLoader = 0;
+    CachedResourceLoader* cachedResourceLoader = 0;
     StyleBase* root = this;
     StyleBase* parent;
     while ((parent = root->parent()))
         root = parent;
     if (root->isXSLStyleSheet())
-        docLoader = static_cast<XSLStyleSheet*>(root)->docLoader();
+        cachedResourceLoader = static_cast<XSLStyleSheet*>(root)->cachedResourceLoader();
     
     String absHref = m_strHref;
     XSLStyleSheet* parentSheet = parentStyleSheet();
@@ -98,7 +98,7 @@ void XSLImportRule::loadSheet()
             return;
     }
     
-    m_cachedSheet = docLoader->requestXSLStyleSheet(absHref);
+    m_cachedSheet = cachedResourceLoader->requestXSLStyleSheet(absHref);
     
     if (m_cachedSheet) {
         m_cachedSheet->addClient(this);

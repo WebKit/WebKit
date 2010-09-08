@@ -29,7 +29,7 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "CachedResourceHandle.h"
-#include "DocLoader.h"
+#include "CachedResourceLoader.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "KURL.h"
@@ -78,7 +78,7 @@ CachedResource::CachedResource(const String& url, Type type)
     , m_prevInAllResourcesList(0)
     , m_nextInLiveResourcesList(0)
     , m_prevInLiveResourcesList(0)
-    , m_docLoader(0)
+    , m_cachedResourceLoader(0)
     , m_resourceToRevalidate(0)
     , m_proxyResource(0)
 {
@@ -99,14 +99,14 @@ CachedResource::~CachedResource()
     cachedResourceLeakCounter.decrement();
 #endif
 
-    if (m_docLoader)
-        m_docLoader->removeCachedResource(this);
+    if (m_cachedResourceLoader)
+        m_cachedResourceLoader->removeCachedResource(this);
 }
 
-void CachedResource::load(DocLoader* docLoader, bool incremental, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks)
+void CachedResource::load(CachedResourceLoader* cachedResourceLoader, bool incremental, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks)
 {
     m_sendResourceLoadCallbacks = sendResourceLoadCallbacks;
-    cache()->loader()->load(docLoader, this, incremental, securityCheck, sendResourceLoadCallbacks);
+    cache()->loader()->load(cachedResourceLoader, this, incremental, securityCheck, sendResourceLoadCallbacks);
     m_loading = true;
 }
 

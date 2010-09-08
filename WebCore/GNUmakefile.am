@@ -1675,8 +1675,8 @@ webcore_sources += \
 	WebCore/loader/CrossOriginAccessControl.h \
 	WebCore/loader/CrossOriginPreflightResultCache.cpp \
 	WebCore/loader/CrossOriginPreflightResultCache.h \
-	WebCore/loader/DocLoader.cpp \
-	WebCore/loader/DocLoader.h \
+	WebCore/loader/CachedResourceLoader.cpp \
+	WebCore/loader/CachedResourceLoader.h \
 	WebCore/loader/DocumentLoadTiming.h \
 	WebCore/loader/DocumentLoader.cpp \
 	WebCore/loader/DocumentLoader.h \

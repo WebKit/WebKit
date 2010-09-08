@@ -23,8 +23,8 @@
     pages from the web. It has a memory cache for these objects.
 */
 
-#ifndef DocLoader_h
-#define DocLoader_h
+#ifndef CachedResourceLoader_h
+#define CachedResourceLoader_h
 
 #include "CachedResource.h"
 #include "CachedResourceHandle.h"
@@ -46,14 +46,14 @@ class Frame;
 class ImageLoader;
 class KURL;
 
-// The DocLoader manages the loading of scripts/images/stylesheets for a single document.
-class DocLoader : public Noncopyable {
+// The CachedResourceLoader manages the loading of scripts/images/stylesheets for a single document.
+class CachedResourceLoader : public Noncopyable {
 friend class Cache;
 friend class ImageLoader;
 
 public:
-    DocLoader(Document*);
-    ~DocLoader();
+    CachedResourceLoader(Document*);
+    ~CachedResourceLoader();
 
     CachedImage* requestImage(const String& url);
     CachedCSSStyleSheet* requestCSSStyleSheet(const String& url, const String& charset);

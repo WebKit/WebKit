@@ -1,3 +1,11 @@
+2010-09-08  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Rename DocLoader to CachedResourceLoader because that's what it does.
+
+        * WebView/WebFrame.mm:
+
 2010-09-07  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver Hunt.

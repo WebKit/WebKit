@@ -315,7 +315,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	loader/CachedScript.cpp \
 	loader/CrossOriginAccessControl.cpp \
 	loader/CrossOriginPreflightResultCache.cpp \
-	loader/DocLoader.cpp \
+	loader/CachedResourceLoader.cpp \
 	loader/DocumentLoader.cpp \
 	loader/DocumentThreadableLoader.cpp \
 	loader/DocumentWriter.cpp \

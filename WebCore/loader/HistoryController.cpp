@@ -450,9 +450,9 @@ void HistoryController::setProvisionalItem(HistoryItem* item)
 
 PassRefPtr<HistoryItem> HistoryController::createItem(bool useOriginal)
 {
-    DocumentLoader* docLoader = m_frame->loader()->documentLoader();
+    DocumentLoader* documentLoader = m_frame->loader()->documentLoader();
     
-    KURL unreachableURL = docLoader ? docLoader->unreachableURL() : KURL();
+    KURL unreachableURL = documentLoader ? documentLoader->unreachableURL() : KURL();
     
     KURL url;
     KURL originalURL;
@@ -461,11 +461,11 @@ PassRefPtr<HistoryItem> HistoryController::createItem(bool useOriginal)
         url = unreachableURL;
         originalURL = unreachableURL;
     } else {
-        originalURL = docLoader ? docLoader->originalURL() : KURL();
+        originalURL = documentLoader ? documentLoader->originalURL() : KURL();
         if (useOriginal)
             url = originalURL;
-        else if (docLoader)
-            url = docLoader->requestURL();
+        else if (documentLoader)
+            url = documentLoader->requestURL();
     }
 
     LOG(History, "WebCoreHistory: Creating item for %s", url.string().ascii().data());
@@ -482,20 +482,20 @@ PassRefPtr<HistoryItem> HistoryController::createItem(bool useOriginal)
     
     Frame* parentFrame = m_frame->tree()->parent();
     String parent = parentFrame ? parentFrame->tree()->name() : "";
-    String title = docLoader ? docLoader->title() : "";
+    String title = documentLoader ? documentLoader->title() : "";
 
     RefPtr<HistoryItem> item = HistoryItem::create(url, m_frame->tree()->name(), parent, title);
     item->setOriginalURLString(originalURL.string());
 
-    if (!unreachableURL.isEmpty() || !docLoader || docLoader->response().httpStatusCode() >= 400)
+    if (!unreachableURL.isEmpty() || !documentLoader || documentLoader->response().httpStatusCode() >= 400)
         item->setLastVisitWasFailure(true);
 
     // Save form state if this is a POST
-    if (docLoader) {
+    if (documentLoader) {
         if (useOriginal)
-            item->setFormInfoFromRequest(docLoader->originalRequest());
+            item->setFormInfoFromRequest(documentLoader->originalRequest());
         else
-            item->setFormInfoFromRequest(docLoader->request());
+            item->setFormInfoFromRequest(documentLoader->request());
     }
     
     // Set the item for which we will save document state

@@ -27,7 +27,7 @@
 #include "Attribute.h"
 #include "CSSHelper.h"
 #include "CachedCSSStyleSheet.h"
-#include "DocLoader.h"
+#include "CachedResourceLoader.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -194,7 +194,7 @@ void HTMLLinkElement::process()
 
 #if ENABLE(LINK_PREFETCH)
     if (m_relAttribute.m_isLinkPrefetch && m_url.isValid() && document()->frame())
-        document()->docLoader()->requestLinkPrefetch(m_url);
+        document()->cachedResourceLoader()->requestLinkPrefetch(m_url);
 #endif
 
     bool acceptIfTypeContainsTextCSS = document()->page() && document()->page()->settings() && document()->page()->settings()->treatsAnyTextCSSLinkAsStylesheet();
@@ -225,7 +225,7 @@ void HTMLLinkElement::process()
         if (!isAlternate())
             document()->addPendingSheet();
 
-        m_cachedSheet = document()->docLoader()->requestCSSStyleSheet(m_url, charset);
+        m_cachedSheet = document()->cachedResourceLoader()->requestCSSStyleSheet(m_url, charset);
         
         if (m_cachedSheet)
             m_cachedSheet->addClient(this);

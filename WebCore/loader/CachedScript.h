@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-    class DocLoader;
+    class CachedResourceLoader;
     class TextResourceDecoder;
 
     class CachedScript : public CachedResource {

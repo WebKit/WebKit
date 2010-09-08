@@ -105,7 +105,7 @@ namespace WebCore {
 
 // This function tells the bridge that a resource was loaded from the cache and thus
 // the app may update progress with the amount of data loaded.
-void CheckCacheObjectStatus(DocLoader*, CachedResource*)
+void CheckCacheObjectStatus(CachedResourceLoader*, CachedResource*)
 {
     ASSERT_NOT_REACHED();
     notImplemented();

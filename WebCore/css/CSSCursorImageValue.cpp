@@ -22,7 +22,7 @@
 #include "config.h"
 #include "CSSCursorImageValue.h"
 
-#include "DocLoader.h"
+#include "CachedResourceLoader.h"
 #include "Document.h"
 #include "PlatformString.h"
 #include <wtf/MathExtras.h>
@@ -111,7 +111,7 @@ bool CSSCursorImageValue::updateIfSVGCursorIsUsed(Element* element)
     return false;
 }
 
-StyleCachedImage* CSSCursorImageValue::cachedImage(DocLoader* loader)
+StyleCachedImage* CSSCursorImageValue::cachedImage(CachedResourceLoader* loader)
 {
     String url = getStringValue();
 

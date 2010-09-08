@@ -31,7 +31,7 @@
 #include "ResourceHandle.h"
 
 #include "ChromeClientQt.h"
-#include "DocLoader.h"
+#include "CachedResourceLoader.h"
 #include "Frame.h"
 #include "FrameLoaderClientQt.h"
 #include "NotImplemented.h"

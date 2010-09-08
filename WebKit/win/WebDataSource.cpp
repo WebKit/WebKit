@@ -39,7 +39,7 @@
 #include "WebResource.h"
 #include "WebURLResponse.h"
 #include <WebCore/BString.h>
-#include <WebCore/DocLoader.h>
+#include <WebCore/CachedResourceLoader.h>
 #include <WebCore/Document.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>

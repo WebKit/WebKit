@@ -40,7 +40,7 @@
 #include "CreateLinkCommand.h"
 #include "DeleteButtonController.h"
 #include "DeleteSelectionCommand.h"
-#include "DocLoader.h"
+#include "CachedResourceLoader.h"
 #include "DocumentFragment.h"
 #include "EditorClient.h"
 #include "EventHandler.h"
@@ -1190,7 +1190,7 @@ void Editor::paste()
         return; // DHTML did the whole operation
     if (!canPaste())
         return;
-    DocLoader* loader = m_frame->document()->docLoader();
+    CachedResourceLoader* loader = m_frame->document()->cachedResourceLoader();
     loader->setAllowStaleResources(true);
     if (m_frame->selection()->isContentRichlyEditable())
         pasteWithPasteboard(Pasteboard::generalPasteboard(), true);

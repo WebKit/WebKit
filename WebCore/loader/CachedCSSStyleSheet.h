@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-    class DocLoader;
+    class CachedResourceLoader;
     class TextResourceDecoder;
 
     class CachedCSSStyleSheet : public CachedResource {

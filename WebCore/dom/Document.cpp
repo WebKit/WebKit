@@ -47,7 +47,7 @@
 #include "DOMWindow.h"
 #include "DeviceMotionEvent.h"
 #include "DeviceOrientationEvent.h"
-#include "DocLoader.h"
+#include "CachedResourceLoader.h"
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
 #include "DocumentType.h"
@@ -425,7 +425,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
 
     m_markers = new DocumentMarkerController();
 
-    m_docLoader = new DocLoader(this);
+    m_cachedResourceLoader = new CachedResourceLoader(this);
 
     m_visuallyOrdered = false;
     m_bParsing = false;
@@ -542,7 +542,7 @@ Document::~Document()
     ASSERT(!m_parser || m_parser->refCount() == 1);
     detachParser();
     m_document = 0;
-    m_docLoader.clear();
+    m_cachedResourceLoader.clear();
 
     m_renderArena.clear();
 
@@ -1998,7 +1998,7 @@ void Document::implicitClose()
     detachParser();
 
     // Parser should have picked up all preloads by now
-    m_docLoader->clearPreloads();
+    m_cachedResourceLoader->clearPreloads();
 
     // Create a head and a body if we don't have those yet (e.g. for about:blank).
     if (!this->body() && isHTMLDocument()) {

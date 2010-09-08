@@ -26,7 +26,7 @@
 
 #include "Attr.h"
 #include "CachedImage.h"
-#include "DocLoader.h"
+#include "CachedResourceLoader.h"
 #include "Document.h"
 #include "RenderObject.h"
 #include "RenderSVGResource.h"
@@ -64,7 +64,7 @@ void SVGFEImageElement::requestImageResource()
     if (hrefElement && hrefElement->isSVGElement() && hrefElement->renderer())
         return;
 
-    m_cachedImage = ownerDocument()->docLoader()->requestImage(href());
+    m_cachedImage = ownerDocument()->cachedResourceLoader()->requestImage(href());
 
     if (m_cachedImage)
         m_cachedImage->addClient(this);

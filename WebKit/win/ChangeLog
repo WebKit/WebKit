@@ -1,3 +1,11 @@
+2010-09-08  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Rename DocLoader to CachedResourceLoader because that's what it does.
+
+        * WebDataSource.cpp:
+
 2010-09-07  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Adam Roben.

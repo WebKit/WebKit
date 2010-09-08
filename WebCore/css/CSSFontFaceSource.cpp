@@ -29,7 +29,7 @@
 #include "CachedFont.h"
 #include "CSSFontFace.h"
 #include "CSSFontSelector.h"
-#include "DocLoader.h"
+#include "CachedResourceLoader.h"
 #include "FontCache.h"
 #include "FontDescription.h"
 #include "GlyphPageTreeNode.h"
@@ -173,8 +173,8 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
         }
     } else {
         // Kick off the load now.
-        if (DocLoader* docLoader = fontSelector->docLoader())
-            m_font->beginLoadIfNeeded(docLoader);
+        if (CachedResourceLoader* cachedResourceLoader = fontSelector->cachedResourceLoader())
+            m_font->beginLoadIfNeeded(cachedResourceLoader);
         // FIXME: m_string is a URL so it makes no sense to pass it as a family name.
         SimpleFontData* tempData = fontCache()->getCachedFontData(fontDescription, m_string);
         if (!tempData)

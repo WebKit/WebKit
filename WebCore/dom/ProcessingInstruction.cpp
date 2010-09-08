@@ -25,7 +25,7 @@
 #include "CachedCSSStyleSheet.h"
 #include "CachedXSLStyleSheet.h"
 #include "Document.h"
-#include "DocLoader.h"
+#include "CachedResourceLoader.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -159,7 +159,7 @@ void ProcessingInstruction::checkStyleSheet()
             
 #if ENABLE(XSLT)
             if (m_isXSL)
-                m_cachedSheet = document()->docLoader()->requestXSLStyleSheet(url);
+                m_cachedSheet = document()->cachedResourceLoader()->requestXSLStyleSheet(url);
             else
 #endif
             {
@@ -167,7 +167,7 @@ void ProcessingInstruction::checkStyleSheet()
                 if (charset.isEmpty())
                     charset = document()->frame()->loader()->writer()->encoding();
 
-                m_cachedSheet = document()->docLoader()->requestCSSStyleSheet(url, charset);
+                m_cachedSheet = document()->cachedResourceLoader()->requestCSSStyleSheet(url, charset);
             }
             if (m_cachedSheet)
                 m_cachedSheet->addClient(this);

@@ -28,7 +28,7 @@
 
 #include "Attribute.h"
 #include "CachedScript.h"
-#include "DocLoader.h"
+#include "CachedResourceLoader.h"
 #include "Element.h"
 #include "Event.h"
 #include "Frame.h"
@@ -298,7 +298,7 @@ bool HTMLScriptRunner::requestPendingScript(PendingScript& pendingScript, Elemen
         return false;
     pendingScript.adoptElement(script);
     // This should correctly return 0 for empty or invalid srcValues.
-    CachedScript* cachedScript = m_document->docLoader()->requestScript(srcValue, toScriptElement(script)->scriptCharset());
+    CachedScript* cachedScript = m_document->cachedResourceLoader()->requestScript(srcValue, toScriptElement(script)->scriptCharset());
     if (!cachedScript) {
         notImplemented(); // Dispatch error event.
         return false;

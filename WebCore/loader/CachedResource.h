@@ -39,7 +39,7 @@ class Cache;
 class CachedMetadata;
 class CachedResourceClient;
 class CachedResourceHandleBase;
-class DocLoader;
+class CachedResourceLoader;
 class Frame;
 class InspectorResource;
 class Request;
@@ -77,8 +77,8 @@ public:
     CachedResource(const String& url, Type);
     virtual ~CachedResource();
     
-    virtual void load(DocLoader* docLoader)  { load(docLoader, false, DoSecurityCheck, true); }
-    void load(DocLoader*, bool incremental, SecurityCheckPolicy, bool sendResourceLoadCallbacks);
+    virtual void load(CachedResourceLoader* cachedResourceLoader)  { load(cachedResourceLoader, false, DoSecurityCheck, true); }
+    void load(CachedResourceLoader*, bool incremental, SecurityCheckPolicy, bool sendResourceLoadCallbacks);
 
     virtual void setEncoding(const String&) { }
     virtual String encoding() const { return String(); }
@@ -182,7 +182,7 @@ public:
     
     virtual void destroyDecodedData() { }
 
-    void setDocLoader(DocLoader* docLoader) { m_docLoader = docLoader; }
+    void setCachedResourceLoader(CachedResourceLoader* cachedResourceLoader) { m_cachedResourceLoader = cachedResourceLoader; }
     
     bool isPreloaded() const { return m_preloadCount; }
     void increasePreloadCount() { ++m_preloadCount; }
@@ -269,7 +269,7 @@ private:
     CachedResource* m_nextInLiveResourcesList;
     CachedResource* m_prevInLiveResourcesList;
 
-    DocLoader* m_docLoader; // only non-0 for resources that are not in the cache
+    CachedResourceLoader* m_cachedResourceLoader; // only non-0 for resources that are not in the cache
     
     // If this field is non-null we are using the resource as a proxy for checking whether an existing resource is still up to date
     // using HTTP If-Modified-Since/If-None-Match headers. If the response is 304 all clients of this resource are moved

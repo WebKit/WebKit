@@ -27,7 +27,7 @@
 #include "config.h"
 #include "ResourceHandle.h"
 
-#include "DocLoader.h"
+#include "CachedResourceLoader.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"

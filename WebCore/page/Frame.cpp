@@ -38,7 +38,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DOMWindow.h"
-#include "DocLoader.h"
+#include "CachedResourceLoader.h"
 #include "DocumentType.h"
 #include "EditingText.h"
 #include "EditorClient.h"

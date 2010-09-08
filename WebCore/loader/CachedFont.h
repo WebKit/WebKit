@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-class DocLoader;
+class CachedResourceLoader;
 class Cache;
 class FontPlatformData;
 class SVGFontElement;
@@ -49,7 +49,7 @@ public:
     CachedFont(const String& url);
     virtual ~CachedFont();
     
-    virtual void load(DocLoader* docLoader);
+    virtual void load(CachedResourceLoader* cachedResourceLoader);
 
     virtual void didAddClient(CachedResourceClient*);
     virtual void data(PassRefPtr<SharedBuffer> data, bool allDataReceived);
@@ -59,7 +59,7 @@ public:
 
     void checkNotify();
 
-    void beginLoadIfNeeded(DocLoader* dl);
+    void beginLoadIfNeeded(CachedResourceLoader* dl);
 
     bool ensureCustomFontData();
     FontPlatformData platformDataFromCustomData(float size, bool bold, bool italic, FontRenderingMode = NormalRenderingMode);

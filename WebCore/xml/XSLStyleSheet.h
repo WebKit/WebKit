@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-class DocLoader;
+class CachedResourceLoader;
 class Document;
 class XSLImportRule;
     
@@ -71,7 +71,7 @@ public:
     void loadChildSheets();
     void loadChildSheet(const String& href);
 
-    DocLoader* docLoader();
+    CachedResourceLoader* cachedResourceLoader();
 
     Document* ownerDocument() { return m_ownerDocument; }
     void setParentStyleSheet(XSLStyleSheet* parent);

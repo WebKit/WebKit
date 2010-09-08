@@ -38,7 +38,7 @@ class CSSFontFace;
 class CSSFontFaceRule;
 class CSSSegmentedFontFace;
 class Document;
-class DocLoader;
+class CachedResourceLoader;
 class FontDescription;
 
 class CSSFontSelector : public FontSelector {
@@ -60,7 +60,7 @@ public:
 
     bool isEmpty() const;
 
-    DocLoader* docLoader() const;
+    CachedResourceLoader* cachedResourceLoader() const;
 
 private:
     CSSFontSelector(Document*);

@@ -34,7 +34,7 @@
 #include "Base64.h"
 #include "CookieStorageWin.h"
 #include "CredentialStorage.h"
-#include "DocLoader.h"
+#include "CachedResourceLoader.h"
 #include "FormDataStreamCFNet.h"
 #include "Frame.h"
 #include "FrameLoader.h"

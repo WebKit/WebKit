@@ -64,7 +64,7 @@ class DOMImplementation;
 class DOMSelection;
 class DOMWindow;
 class DatabaseThread;
-class DocLoader;
+class CachedResourceLoader;
 class DocumentFragment;
 class DocumentType;
 class DocumentWeakReference;
@@ -509,7 +509,7 @@ public:
     void pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int& marginTop, int& marginRight, int& marginBottom, int& marginLeft);
 
     static void updateStyleForAllDocuments(); // FIXME: Try to reduce the # of calls to this function.
-    DocLoader* docLoader() { return m_docLoader.get(); }
+    CachedResourceLoader* cachedResourceLoader() { return m_cachedResourceLoader.get(); }
 
     virtual void attach();
     virtual void detach();
@@ -1072,7 +1072,7 @@ private:
     bool m_didCalculateStyleSelector;
 
     Frame* m_frame;
-    OwnPtr<DocLoader> m_docLoader;
+    OwnPtr<CachedResourceLoader> m_cachedResourceLoader;
     RefPtr<DocumentParser> m_parser;
     bool m_wellFormed;
 

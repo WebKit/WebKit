@@ -35,7 +35,7 @@
 namespace WebCore {
 
     class CachedResource;
-    class DocLoader;
+    class CachedResourceLoader;
     class KURL;
     class Request;
 
@@ -44,9 +44,9 @@ namespace WebCore {
         Loader();
         ~Loader();
 
-        void load(DocLoader*, CachedResource*, bool incremental = true, SecurityCheckPolicy = DoSecurityCheck, bool sendResourceLoadCallbacks = true);
+        void load(CachedResourceLoader*, CachedResource*, bool incremental = true, SecurityCheckPolicy = DoSecurityCheck, bool sendResourceLoadCallbacks = true);
 
-        void cancelRequests(DocLoader*);
+        void cancelRequests(CachedResourceLoader*);
         
         enum Priority { VeryLow, Low, Medium, High };
         void servePendingRequests(Priority minimumPriority = VeryLow);
@@ -77,7 +77,7 @@ namespace WebCore {
             void nonCacheRequestInFlight();
             void nonCacheRequestComplete();
             void servePendingRequests(Priority minimumPriority = VeryLow);
-            void cancelRequests(DocLoader*);
+            void cancelRequests(CachedResourceLoader*);
             bool hasRequests() const;
 
             bool processingResource() const { return m_numResourcesProcessing != 0 || m_nonCachedRequestsInFlight !=0; }
@@ -94,7 +94,7 @@ namespace WebCore {
             typedef Deque<Request*> RequestQueue;
             void servePendingRequests(RequestQueue& requestsPending, bool& serveLowerPriority);
             void didFail(SubresourceLoader*, bool cancelled = false);
-            void cancelPendingRequests(RequestQueue& requestsPending, DocLoader*);
+            void cancelPendingRequests(RequestQueue& requestsPending, CachedResourceLoader*);
             
             RequestQueue m_requestsPending[High + 1];
             typedef HashMap<RefPtr<SubresourceLoader>, Request*> RequestMap;

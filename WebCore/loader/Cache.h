@@ -39,7 +39,7 @@ namespace WebCore  {
 
 class CachedCSSStyleSheet;
 class CachedResource;
-class DocLoader;
+class CachedResourceLoader;
 class KURL;
 
 // This cache holds subresources used by Web pages: images, scripts, stylesheets, etc.
@@ -93,11 +93,11 @@ public:
 
     // Request resources from the cache.  A load will be initiated and a cache object created if the object is not
     // found in the cache.
-    CachedResource* requestResource(DocLoader*, CachedResource::Type, const KURL& url, const String& charset, bool isPreload = false);
+    CachedResource* requestResource(CachedResourceLoader*, CachedResource::Type, const KURL& url, const String& charset, bool isPreload = false);
 
-    CachedCSSStyleSheet* requestUserCSSStyleSheet(DocLoader*, const String& url, const String& charset);
+    CachedCSSStyleSheet* requestUserCSSStyleSheet(CachedResourceLoader*, const String& url, const String& charset);
     
-    void revalidateResource(CachedResource*, DocLoader*);
+    void revalidateResource(CachedResource*, CachedResourceLoader*);
     void revalidationSucceeded(CachedResource* revalidatingResource, const ResourceResponse&);
     void revalidationFailed(CachedResource* revalidatingResource);
     
@@ -129,8 +129,8 @@ public:
     // Remove an existing cache entry from both the resource map and from the LRU list.
     void remove(CachedResource* resource) { evict(resource); }
 
-    void addDocLoader(DocLoader*);
-    void removeDocLoader(DocLoader*);
+    void addCachedResourceLoader(CachedResourceLoader*);
+    void removeCachedResourceLoader(CachedResourceLoader*);
 
     CachedResource* resourceForURL(const String&);
 
@@ -171,7 +171,7 @@ private:
     void evict(CachedResource*);
 
     // Member variables.
-    HashSet<DocLoader*> m_docLoaders;
+    HashSet<CachedResourceLoader*> m_cachedResourceLoaders;
     Loader m_loader;
 
     bool m_disabled;  // Whether or not the cache is enabled.

@@ -27,7 +27,7 @@
 #include "XSLTProcessor.h"
 
 #include "DOMImplementation.h"
-#include "DocLoader.h"
+#include "CachedResourceLoader.h"
 #include "DocumentFragment.h"
 #include "Frame.h"
 #include "FrameLoader.h"

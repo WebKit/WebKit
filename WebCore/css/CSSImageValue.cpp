@@ -24,7 +24,7 @@
 #include "CSSValueKeywords.h"
 #include "Cache.h"
 #include "CachedImage.h"
-#include "DocLoader.h"
+#include "CachedResourceLoader.h"
 #include "StyleCachedImage.h"
 #include "StylePendingImage.h"
 
@@ -59,12 +59,12 @@ StyleImage* CSSImageValue::cachedOrPendingImage()
     return m_image.get();
 }
 
-StyleCachedImage* CSSImageValue::cachedImage(DocLoader* loader)
+StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader)
 {
     return cachedImage(loader, getStringValue());
 }
 
-StyleCachedImage* CSSImageValue::cachedImage(DocLoader* loader, const String& url)
+StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader, const String& url)
 {
     if (!m_accessedImage) {
         m_accessedImage = true;

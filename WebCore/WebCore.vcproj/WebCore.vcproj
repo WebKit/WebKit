@@ -23497,11 +23497,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\loader\DocLoader.cpp"
+				RelativePath="..\loader\CachedResourceLoader.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\loader\DocLoader.h"
+				RelativePath="..\loader\CachedResourceLoader.h"
 				>
 			</File>
 			<File

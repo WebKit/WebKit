@@ -60,7 +60,7 @@
 #import <WebCore/Chrome.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/DOMImplementation.h>
-#import <WebCore/DocLoader.h>
+#import <WebCore/CachedResourceLoader.h>
 #import <WebCore/DocumentFragment.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/EventNames.h>

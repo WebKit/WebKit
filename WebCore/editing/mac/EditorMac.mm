@@ -27,7 +27,7 @@
 #import "Editor.h"
 
 #import "ClipboardMac.h"
-#import "DocLoader.h"
+#import "CachedResourceLoader.h"
 #import "Frame.h"
 #import "FrameView.h"
 
@@ -63,7 +63,7 @@ void Editor::paste()
     FrameView* view = m_frame->view();
     if (!view)
         return;
-    DocLoader* loader = m_frame->document()->docLoader();
+    CachedResourceLoader* loader = m_frame->document()->cachedResourceLoader();
     loader->setAllowStaleResources(true);
     [view->documentView() tryToPerform:@selector(paste:) with:nil];
     loader->setAllowStaleResources(false);

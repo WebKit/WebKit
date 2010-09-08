@@ -29,16 +29,16 @@
 namespace WebCore {
 
     class CachedResource;
-    class DocLoader;
+    class CachedResourceLoader;
 
     class Request : public Noncopyable {
     public:
-        Request(DocLoader*, CachedResource*, bool incremental, SecurityCheckPolicy, bool sendResourceLoadCallbacks);
+        Request(CachedResourceLoader*, CachedResource*, bool incremental, SecurityCheckPolicy, bool sendResourceLoadCallbacks);
         ~Request();
         
         Vector<char>& buffer() { return m_buffer; }
         CachedResource* cachedResource() { return m_object; }
-        DocLoader* docLoader() { return m_docLoader; }
+        CachedResourceLoader* cachedResourceLoader() { return m_cachedResourceLoader; }
 
         bool isIncremental() { return m_incremental; }
         void setIsIncremental(bool b = true) { m_incremental = b; }
@@ -52,7 +52,7 @@ namespace WebCore {
     private:
         Vector<char> m_buffer;
         CachedResource* m_object;
-        DocLoader* m_docLoader;
+        CachedResourceLoader* m_cachedResourceLoader;
         bool m_incremental;
         bool m_multipart;
         SecurityCheckPolicy m_shouldDoSecurityCheck;

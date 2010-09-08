@@ -32,7 +32,7 @@
 #include "Worker.h"
 
 #include "DOMWindow.h"
-#include "DocLoader.h"
+#include "CachedResourceLoader.h"
 #include "Document.h"
 #include "EventException.h"
 #include "EventListener.h"

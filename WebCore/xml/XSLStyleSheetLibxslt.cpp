@@ -26,7 +26,7 @@
 
 #include "Console.h"
 #include "DOMWindow.h"
-#include "DocLoader.h"
+#include "CachedResourceLoader.h"
 #include "Document.h"
 #include "Frame.h"
 #include "Node.h"
@@ -128,11 +128,11 @@ void XSLStyleSheet::clearDocuments()
     }
 }
 
-DocLoader* XSLStyleSheet::docLoader()
+CachedResourceLoader* XSLStyleSheet::cachedResourceLoader()
 {
     if (!m_ownerDocument)
         return 0;
-    return m_ownerDocument->docLoader();
+    return m_ownerDocument->cachedResourceLoader();
 }
 
 bool XSLStyleSheet::parseString(const String& string, bool)
@@ -148,7 +148,7 @@ bool XSLStyleSheet::parseString(const String& string, bool)
     if (Frame* frame = ownerDocument()->frame())
         console = frame->domWindow()->console();
 
-    XMLDocumentParserScope scope(docLoader(), XSLTProcessor::genericErrorFunc, XSLTProcessor::parseErrorFunc, console);
+    XMLDocumentParserScope scope(cachedResourceLoader(), XSLTProcessor::genericErrorFunc, XSLTProcessor::parseErrorFunc, console);
 
     const char* buffer = reinterpret_cast<const char*>(string.characters());
     int size = string.length() * sizeof(UChar);

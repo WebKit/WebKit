@@ -32,7 +32,7 @@
 #import "BlobRegistry.h"
 #import "BlockExceptions.h"
 #import "CredentialStorage.h"
-#import "DocLoader.h"
+#import "CachedResourceLoader.h"
 #import "EmptyProtocolDefinitions.h"
 #import "FormDataStreamMac.h"
 #import "Frame.h"

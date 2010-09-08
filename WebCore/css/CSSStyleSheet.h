@@ -29,7 +29,7 @@ namespace WebCore {
 struct CSSNamespace;
 class CSSParser;
 class CSSRule;
-class DocLoader;
+class CachedResourceLoader;
 class Document;
 
 typedef int ExceptionCode;
