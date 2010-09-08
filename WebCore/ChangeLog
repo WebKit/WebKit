@@ -1,3 +1,17 @@
+2010-09-08  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        NULL deref when use target is reset, then set to display:none
+        https://bugs.webkit.org/show_bug.cgi?id=45345
+
+        Move the NULL check on shadowRoot earlier in SVGUseElement::recalcStyle
+
+        Test: svg/custom/use-display-none.svg
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::recalcStyle):
+
 2010-08-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin Adler.

@@ -326,15 +326,15 @@ void SVGUseElement::recalcStyle(StyleChange change)
     if (m_updatesBlocked)
         ASSERT(!m_needsShadowTreeRecreation);
 
-    bool needsStyleUpdate = !m_needsShadowTreeRecreation;
-    if (m_needsShadowTreeRecreation) {
-        static_cast<RenderSVGShadowTreeRootContainer*>(renderer())->markShadowTreeForRecreation();
-        m_needsShadowTreeRecreation = false;
-    }
-
     RenderSVGShadowTreeRootContainer* shadowRoot = static_cast<RenderSVGShadowTreeRootContainer*>(renderer());
     if (!shadowRoot)
         return;
+    
+    bool needsStyleUpdate = !m_needsShadowTreeRecreation;
+    if (m_needsShadowTreeRecreation) {
+        shadowRoot->markShadowTreeForRecreation();
+        m_needsShadowTreeRecreation = false;
+    }
 
     shadowRoot->updateFromElement();
 

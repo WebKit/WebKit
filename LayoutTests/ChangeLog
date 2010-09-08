@@ -1,3 +1,13 @@
+2010-09-08  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        NULL deref when use target is reset, then set to display:none
+        https://bugs.webkit.org/show_bug.cgi?id=45345
+
+        * svg/custom/use-display-none-expected.txt: Added.
+        * svg/custom/use-display-none.svg: Added.
+
 2010-09-08  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Dirk Schulze.
