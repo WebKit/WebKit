@@ -132,7 +132,10 @@ int main(int argc, char* argv[])
                     buffer.close();
                     const QByteArray &data = buffer.data();
                     printf("Content-Length: %lu\n", static_cast<unsigned long>(data.length()));
-                    fwrite(data.constData(), 1, data.length(), stdout);
+
+                    // We have to use the return value of fwrite to avoid "ignoring return value" gcc warning
+                    // See https://bugs.webkit.org/show_bug.cgi?id=45384 for details.
+                    if (fwrite(data.constData(), 1, data.length(), stdout)) {}
 
                     fprintf(stdout, "diff: %01.2f%% failed\n", difference);
                 }

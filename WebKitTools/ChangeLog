@@ -1,3 +1,19 @@
+2010-09-08  Peter Varga  <pvarga@inf.u-szeged.hu>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix ignoring return value warning in case of gcc 4.4.4
+        https://bugs.webkit.org/show_bug.cgi?id=45384
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginObject.cpp:
+        (testPostURLFile):
+        If fwrite have written zero byte then the testPostURLFile function
+        returns with false as tempFile can't be opened.
+        * DumpRenderTree/qt/ImageDiff.cpp:
+        (main):
+        Put fwrite function into an if condition without body to avoid
+        warning. It is safe because this function writes to the stdout.
+
 2010-09-08  Satish Sampath  <satish@chromium.org>
 
         Unreviewed, adding myself to committers list.
