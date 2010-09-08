@@ -1233,7 +1233,7 @@ static inline double solveCubicBezierFunction(qreal p1x, qreal p1y, qreal p2x, q
 static inline double solveStepsFunction(int numSteps, bool stepAtStart, double t)
 {
     if (stepAtStart)
-        return min(1.0, (floor(numSteps * t) + 1) / numSteps);
+        return qMin(1.0, (floor(numSteps * t) + 1) / numSteps);
     return floor(numSteps * t) / numSteps;
 }
 
@@ -1251,7 +1251,7 @@ static inline qreal applyTimingFunction(const TimingFunction* timingFunction, qr
                                         ctf->x2(),
                                         ctf->y2(),
                                         double(progress), double(duration) / 1000);
-    } else if (tf->isStepsTimingFunction()) {
+    } else if (timingFunction->isStepsTimingFunction()) {
         const StepsTimingFunction* stf = static_cast<const StepsTimingFunction*>(timingFunction);
         return solveStepsFunction(stf->numberOfSteps(), stf->stepAtStart(), double(progress));
     } else

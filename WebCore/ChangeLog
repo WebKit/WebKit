@@ -1,5 +1,13 @@
 2010-09-08  Dean Jackson  <dino@apple.com>
 
+        Unreviewed attempt to fix QT build.
+
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::solveStepsFunction):
+        (WebCore::applyTimingFunction):
+
+2010-09-08  Dean Jackson  <dino@apple.com>
+
         Reviewed by Simon Fraser.
 
         Implement steps() timing function for animations
