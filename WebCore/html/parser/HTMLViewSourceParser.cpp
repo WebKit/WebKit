@@ -42,6 +42,11 @@ HTMLViewSourceParser::~HTMLViewSourceParser()
 {
 }
 
+void HTMLViewSourceParser::forcePlaintext()
+{
+    m_tokenizer->setState(HTMLTokenizer::PLAINTEXTState);
+}
+
 void HTMLViewSourceParser::insert(const SegmentedString&)
 {
     ASSERT_NOT_REACHED();

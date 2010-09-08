@@ -41971,6 +41971,14 @@
                     RelativePath="..\html\parser\HTMLViewSourceParser.h"
                     >
                 </File>
+                <File
+                    RelativePath="..\html\parser\TextDocumentParser.cpp"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\parser\TextDocumentParser.h"
+                    >
+                </File>
             </Filter>
 			<File
 				RelativePath="..\html\StepRange.cpp"

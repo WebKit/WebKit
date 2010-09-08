@@ -751,6 +751,7 @@ SOURCES += \
     html/parser/HTMLTokenizer.cpp \
     html/parser/HTMLTreeBuilder.cpp \
     html/parser/HTMLViewSourceParser.cpp \
+    html/parser/TextDocumentParser.cpp \
     inspector/ConsoleMessage.cpp \
     inspector/InjectedScript.cpp \
     inspector/InjectedScriptHost.cpp \

@@ -1,3 +1,43 @@
+2010-09-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        TextDocument should come in from the cold
+        https://bugs.webkit.org/show_bug.cgi?id=45334
+
+        Previously, TextDocument reinvented the wheel to parse text.  This
+        patch replaces TextDocument's hand-rolled parser with a parser built on
+        the HTML parser infrustructure, which gives us that stuff for free.  I
+        also disentangled TextDocument from HTMLViewSourceDocument.
+
+        In a future patch, I'll move TextDocument out of the "loader" directory.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::createParser):
+        * html/HTMLViewSourceDocument.h:
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::constructTreeFromToken):
+        (WebCore::HTMLTreeBuilder::constructTreeFromAtomicToken):
+        * html/parser/HTMLTreeBuilder.h:
+        * html/parser/HTMLViewSourceParser.cpp:
+        (WebCore::HTMLViewSourceParser::forcePlaintext):
+        * html/parser/HTMLViewSourceParser.h:
+        * html/parser/TextDocumentParser.cpp: Added.
+        (WebCore::TextDocumentParser::TextDocumentParser):
+        (WebCore::TextDocumentParser::~TextDocumentParser):
+        (WebCore::TextDocumentParser::insertFakePreElement):
+        * html/parser/TextDocumentParser.h: Added.
+        (WebCore::TextDocumentParser::create):
+        * loader/TextDocument.cpp:
+        * loader/TextDocument.h:
+
 2010-09-06  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Andreas Kling.

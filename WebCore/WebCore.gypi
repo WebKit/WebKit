@@ -1778,6 +1778,8 @@
             'html/parser/HTMLTreeBuilder.h',
             'html/parser/HTMLViewSourceParser.cpp',
             'html/parser/HTMLViewSourceParser.h',
+            'html/parser/TextDocumentParser.cpp',
+            'html/parser/TextDocumentParser.h',
             'inspector/InspectorClient.h',
             'inspector/ConsoleMessage.cpp',
             'inspector/ConsoleMessage.h',

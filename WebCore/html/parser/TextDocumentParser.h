@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -19,27 +19,32 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TextDocument_h
-#define TextDocument_h
 
-#include "HTMLDocument.h"
+#ifndef TextDocumentParser_h
+#define TextDocumentParser_h
+
+#include "HTMLDocumentParser.h"
 
 namespace WebCore {
 
-class TextDocument : public HTMLDocument {
+class TextDocumentParser : public HTMLDocumentParser {
 public:
-    static PassRefPtr<TextDocument> create(Frame* frame, const KURL& url)
+    static PassRefPtr<TextDocumentParser> create(HTMLDocument* document)
     {
-        return adoptRef(new TextDocument(frame, url));
+        return adoptRef(new TextDocumentParser(document));
     }
+    virtual ~TextDocumentParser();
 
 private:
-    TextDocument(Frame*, const KURL&);
-    
-    virtual PassRefPtr<DocumentParser> createParser();
+    explicit TextDocumentParser(HTMLDocument*);
+
+    virtual void append(const SegmentedString&);
+    void insertFakePreElement();
+
+    bool m_haveInsertedFakePreElement;
 };
 
 }

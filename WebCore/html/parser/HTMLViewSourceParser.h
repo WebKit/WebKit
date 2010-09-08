@@ -50,6 +50,8 @@ public:
     }
     virtual ~HTMLViewSourceParser();
 
+    void forcePlaintext();
+
 private:
     HTMLViewSourceParser(HTMLViewSourceDocument*);
 

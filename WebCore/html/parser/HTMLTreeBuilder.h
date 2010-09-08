@@ -68,6 +68,8 @@ public:
 
     // The token really should be passed as a const& since it's never modified.
     void constructTreeFromToken(HTMLToken&);
+    void constructTreeFromAtomicToken(AtomicHTMLToken&);
+
     // Must be called when parser is paused before calling the parser again.
     PassRefPtr<Element> takeScriptToProcess(int& scriptStartLine);
 

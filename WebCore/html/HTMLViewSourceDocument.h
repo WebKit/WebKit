@@ -42,9 +42,6 @@ public:
 
     void addSource(const String&, HTMLToken&);
 
-    void addViewSourceToken(HTMLToken&); // Used by the HTMLDocumentParser.
-    void addViewSourceText(const String&); // Used by the TextDocumentParser.
-
 private:
     HTMLViewSourceDocument(Frame*, const KURL&, const String& mimeType);
 

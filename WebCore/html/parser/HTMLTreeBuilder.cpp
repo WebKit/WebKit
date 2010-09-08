@@ -463,6 +463,11 @@ HTMLTokenizer::State HTMLTreeBuilder::adjustedLexerState(HTMLTokenizer::State st
 void HTMLTreeBuilder::constructTreeFromToken(HTMLToken& rawToken)
 {
     AtomicHTMLToken token(rawToken);
+    constructTreeFromAtomicToken(token);
+}
+
+void HTMLTreeBuilder::constructTreeFromAtomicToken(AtomicHTMLToken& token)
+{
     processToken(token);
 
     // Swallowing U+0000 characters isn't in the HTML5 spec, but turning all

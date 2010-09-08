@@ -69,16 +69,19 @@ public:
 
 protected:
     virtual void insert(const SegmentedString&);
+    virtual void append(const SegmentedString&);
     virtual void finish();
 
     HTMLDocumentParser(HTMLDocument*, bool reportErrors);
     HTMLDocumentParser(DocumentFragment*, Element* contextElement, FragmentScriptingPermission);
 
+    HTMLTokenizer* tokenizer() const { return m_tokenizer.get(); }
+    HTMLTreeBuilder* treeBuilder() const { return m_treeBuilder.get(); }
+
 private:
     // DocumentParser
     virtual void detach();
     virtual bool hasInsertionPoint();
-    virtual void append(const SegmentedString&);
     virtual bool finishWasCalled();
     virtual bool processingData() const;
     virtual void prepareToStopParsing();
