@@ -1,3 +1,18 @@
+2010-09-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Need a WebSocket implementation
+        https://bugs.webkit.org/show_bug.cgi?id=45197
+
+        Add a GIO-based WebSocket implementation.
+
+        * wtf/gobject/GRefPtr.cpp: Added PlatformRefPtr support for GSource.
+        (WTF::refPlatformPtr):
+        (WTF::derefPlatformPtr):
+        * wtf/gobject/GRefPtr.h: Added new template specialization declarations.
+        * wtf/gobject/GTypedefs.h: Add some more GLib/GIO forward declarations.
+
 2010-08-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin Adler.

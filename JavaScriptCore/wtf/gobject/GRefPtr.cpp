@@ -66,4 +66,17 @@ template <> void derefPlatformPtr(GVariant* ptr)
 
 #endif
 
+template <> GSource* refPlatformPtr(GSource* ptr)
+{
+    if (ptr)
+        g_source_ref(ptr);
+    return ptr;
+}
+
+template <> void derefPlatformPtr(GSource* ptr)
+{
+    if (ptr)
+        g_source_unref(ptr);
+}
+
 } // namespace WTF

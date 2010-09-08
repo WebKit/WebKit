@@ -5181,9 +5181,6 @@ fast/ruby/rubyDOM-remove-rt2.html
 fast/ruby/rubyDOM-remove-text1.html
 fast/ruby/rubyDOM-remove-text2.html
 
-# Missing SocketStreamHandle implementation
-websocket/tests
-
 # New color correction tests
 fast/css/color-correction-backgrounds-and-text.html
 fast/css/color-correction-on-backgrounds.html

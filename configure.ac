@@ -628,8 +628,8 @@ fi
 AC_MSG_CHECKING([whether to enable Web Sockets support])
 AC_ARG_ENABLE(web_sockets,
               AC_HELP_STRING([--enable-web-sockets],
-                             [enable support for Web Sockets [default=no]]),
-              [],[enable_web_sockets="no"])
+                             [enable support for Web Sockets [default=yes]]),
+              [],[enable_web_sockets="yes"])
 AC_MSG_RESULT([$enable_web_sockets])
 
 # check whether to enable Web Timing support

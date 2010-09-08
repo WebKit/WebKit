@@ -1,3 +1,12 @@
+2010-09-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Need a WebSocket implementation
+        https://bugs.webkit.org/show_bug.cgi?id=45197
+
+        * platform/gtk/Skipped: Unskip all WebSocket tests, as they are passing.
+
 2010-09-08  Sergio Villar Senin  <svillar@igalia.com>
 
         Reviewed by Adam Barth.

@@ -1,3 +1,31 @@
+2010-09-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Need a WebSocket implementation
+        https://bugs.webkit.org/show_bug.cgi?id=45197
+
+        Add a GIO-based WebSocket implementation. This does not yet support
+        SSL sockets or proxies, but these should be possible to add as support
+        arrives in GLib/GIO for them.
+
+        * platform/network/soup/SocketStreamHandle.h:
+        * platform/network/soup/SocketStreamHandleSoup.cpp: Add a GIO-based WebSocket implementation.
+        (WebCore::isActiveHandle): Added.
+        (WebCore::deactivateHandle): Added.
+        (WebCore::SocketStreamHandle::SocketStreamHandle): Filled out stub.
+        (WebCore::SocketStreamHandle::~SocketStreamHandle): Ditto.
+        (WebCore::SocketStreamHandle::connected): Added.
+        (WebCore::SocketStreamHandle::readBytes): Added.
+        (WebCore::SocketStreamHandle::writeReady): Added.
+        (WebCore::SocketStreamHandle::platformSend): Filled out stub.
+        (WebCore::SocketStreamHandle::platformClose): Filled out stub.
+        (WebCore::SocketStreamHandle::beginWaitingForSocketWritability): Added.
+        (WebCore::SocketStreamHandle::stopWaitingForSocketWritability):
+        (WebCore::connectedCallback): Added.
+        (WebCore::readReadyCallback): Added.
+        (WebCore::writeReadyCallback): Added.
+
 2010-09-07  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Dirk Schulze.

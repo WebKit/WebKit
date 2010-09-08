@@ -36,6 +36,8 @@ typedef unsigned long gulong;
 typedef unsigned short gushort;
 typedef void* gpointer;
 
+typedef struct _GAsyncResult GAsyncResult;
+typedef struct _GCancellable GCancellable;
 typedef struct _GCond GCond;
 typedef struct _GDir GDir;
 typedef struct _GdkAtom* GdkAtom;
@@ -47,9 +49,14 @@ typedef struct _GdkPixbuf GdkPixbuf;
 typedef struct _GError GError;
 typedef struct _GFile GFile;
 typedef struct _GHashTable GHashTable;
+typedef struct _GInputStream GInputStream;
 typedef struct _GList GList;
 typedef struct _GMutex GMutex;
+typedef struct _GOutputStream GOutputStream;
 typedef struct _GPatternSpec GPatternSpec;
+typedef struct _GSocketClient GSocketClient;
+typedef struct _GSocketConnection GSocketConnection;
+typedef struct _GSource GSource;
 typedef struct _GVariant GVariant;
 typedef union _GdkEvent GdkEvent;
 
