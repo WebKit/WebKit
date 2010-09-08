@@ -1,3 +1,22 @@
+2010-09-07  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Oliver Hunt.
+
+        pushState and replaceState do not clone RegExp objects correctly
+        https://bugs.webkit.org/show_bug.cgi?id=44718
+        
+        Add RegExp support to the JSC implementation of SerializedScriptValue
+        (it stores the pattern and flags read from a RegExpObject, and creates
+        a new one on deserialization).
+        
+        Tests: fast/loader/stateobjects/pushstate-object-types.html 
+
+        * ForwardingHeaders/runtime/RegExp.h: Added.
+        * ForwardingHeaders/runtime/RegExpObject.h: Added.
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        (WebCore::CloneDeserializer::readTerminal):
+
 2010-09-07  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.

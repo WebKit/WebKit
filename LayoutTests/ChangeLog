@@ -1,3 +1,18 @@
+2010-09-07  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Oliver Hunt.
+
+        pushState and replaceState do not clone RegExp objects correctly
+        https://bugs.webkit.org/show_bug.cgi?id=44718
+        
+        Make RegExp test of pushstate-object-types.html actually test a RegExp
+        value with flags.
+        
+        Also adds ImageData since it can be serialized as of r54646.        
+
+        * fast/loader/stateobjects/pushstate-object-types-expected.txt:
+        * fast/loader/stateobjects/pushstate-object-types.html:
+
 2010-09-07  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.

@@ -1,3 +1,25 @@
+2010-09-07  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Oliver Hunt.
+
+        pushState and replaceState do not clone RegExp objects correctly
+        https://bugs.webkit.org/show_bug.cgi?id=44718
+        
+        Move internal representation of JSC::RegExp (which depends on wether
+        YARR and YARR_JIT is enabled) into RegExpRepresentation which can live
+        in the implementation only. This makes it feasible to use RegExp in
+        WebCore without bringing in all of YARR.
+
+        * JavaScriptCore.exp: Export RegExp and RegExpObject functions that are
+        needed inside WebCore's JSC bindings.
+        * runtime/RegExp.cpp:
+        (JSC::RegExpRepresentation::~RegExpRepresentation):
+        (JSC::RegExp::RegExp):
+        (JSC::RegExp::~RegExp):
+        (JSC::RegExp::compile):
+        (JSC::RegExp::match):
+        * runtime/RegExp.h:
+
 2010-09-07  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

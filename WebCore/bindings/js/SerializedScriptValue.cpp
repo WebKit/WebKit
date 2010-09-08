@@ -44,6 +44,8 @@
 #include <runtime/ExceptionHelpers.h>
 #include <runtime/JSLock.h>
 #include <runtime/PropertyNameArray.h>
+#include <runtime/RegExp.h>
+#include <runtime/RegExpObject.h>
 #include <wtf/ByteArray.h>
 #include <wtf/HashTraits.h>
 #include <wtf/Vector.h>
@@ -83,6 +85,7 @@ enum SerializationTag {
     BlobTag = 15,
     StringTag = 16,
     EmptyStringTag = 17,
+    RegExpTag = 18,
     ErrorTag = 255
 };
 
@@ -145,6 +148,8 @@ static const unsigned int StringPoolTag = 0xFFFFFFFE;
  * Blob :-
  *    BlobTag <url:StringData><type:StringData><size:long long>
  *
+ * RegExp :-
+ *    RegExpTag <pattern:StringData><flags:StringData>
  */
 
 class CloneBase {
@@ -387,6 +392,21 @@ private:
                 write(data->height());
                 write(data->data()->length());
                 write(data->data()->data()->data(), data->data()->length());
+                return true;
+            }
+            if (obj->inherits(&RegExpObject::info)) {
+                RegExpObject* regExp = asRegExpObject(obj);
+                char flags[3];
+                int flagCount = 0;
+                if (regExp->regExp()->global())
+                    flags[flagCount++] = 'g';
+                if (regExp->regExp()->ignoreCase())
+                    flags[flagCount++] = 'i';
+                if (regExp->regExp()->multiline())
+                    flags[flagCount++] = 'm';
+                write(RegExpTag);
+                write(regExp->regExp()->pattern());
+                write(UString(flags, flagCount));
                 return true;
             }
 
@@ -1066,6 +1086,16 @@ private:
         }
         case EmptyStringTag:
             return jsEmptyString(&m_exec->globalData());
+        case RegExpTag: {
+            Identifier pattern;
+            if (!readStringData(pattern))
+                return JSValue();
+            Identifier flags;
+            if (!readStringData(flags))
+                return JSValue();
+            RefPtr<RegExp> regExp = RegExp::create(&m_exec->globalData(), pattern.ustring(), flags.ustring());
+            return new (m_exec) RegExpObject(m_exec->lexicalGlobalObject(), m_globalObject->regExpStructure(), regExp); 
+        }
         default:
             m_ptr--; // Push the tag back
             return JSValue();
