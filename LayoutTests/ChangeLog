@@ -1,3 +1,10 @@
+2010-09-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Skip websocket tests until the GLib/GIO situation on the
+        Debug bots can be sorted out.
+
+        * platform/gtk/Skipped: Skip websocket tests.
+
 2010-09-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders Carlsson.

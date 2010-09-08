@@ -5953,3 +5953,7 @@ fullscreen/
 
 # https://bugs.webkit.org/show_bug.cgi?id=44932
 canvas/philip/tests/2d.path.isPointInPath.edge.html
+
+# The version of GLib on the Debug bots appears to be
+# broken ATM causing most websocket tests to fail.
+websocket/tests
