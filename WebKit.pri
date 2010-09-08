@@ -66,6 +66,9 @@ symbian {
 CONFIG -= warn_on
 *-g++*:QMAKE_CXXFLAGS += -Wall -Wextra -Wreturn-type -fno-strict-aliasing -Wcast-align -Wchar-subscripts -Wformat-security -Wreturn-type -Wno-unused-parameter -Wno-sign-compare -Wno-switch -Wno-switch-enum -Wundef -Wmissing-noreturn -Winit-self
 
+# Treat warnings as errors on x86/Linux/GCC
+linux-g++*: QMAKE_CXXFLAGS += -Werror
+
 # Enable GNU compiler extensions to the ARM compiler for all Qt ports using RVCT
 symbian|*-armcc {
     RVCT_COMMON_CFLAGS = --gnu --diag_suppress 68,111,177,368,830,1293

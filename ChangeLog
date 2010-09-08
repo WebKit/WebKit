@@ -1,3 +1,12 @@
+2010-09-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Treat warnings as errors by default for gcc
+        https://bugs.webkit.org/show_bug.cgi?id=43191
+
+        * WebKit.pri: -Werror added to QMAKE_CXXFLAGS for x86 Linux platforms
+
 2010-09-07  Arno Renevier  <arno@renevier.net>
 
         Reviewed by Holger Freyther.
