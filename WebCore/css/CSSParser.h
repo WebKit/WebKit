@@ -108,7 +108,7 @@ namespace WebCore {
         PassRefPtr<CSSValue> parseAnimationTimingFunction();
 
         void parseTransformOriginShorthand(RefPtr<CSSValue>&, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
-        bool parseTimingFunctionValue(CSSParserValueList*& args, double& result);
+        bool parseCubicBezierTimingFunctionValue(CSSParserValueList*& args, double& result);
         bool parseAnimationProperty(int propId, RefPtr<CSSValue>&);
         bool parseTransitionShorthand(bool important);
         bool parseAnimationShorthand(bool important);

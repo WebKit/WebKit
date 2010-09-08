@@ -1213,7 +1213,7 @@ PlatformLayer* GraphicsLayerQt::platformLayer() const
 
 template <typename T>
 struct KeyframeValueQt {
-    TimingFunction timingFunction;
+    const TimingFunction* timingFunction;
     T value;
 };
 
@@ -1230,23 +1230,32 @@ static inline double solveCubicBezierFunction(qreal p1x, qreal p1y, qreal p2x, q
     return bezier.solve(t, solveEpsilon(duration));
 }
 
-static inline qreal applyTimingFunction(const TimingFunction& timingFunction, qreal progress, double duration)
+static inline double solveStepsFunction(int numSteps, bool stepAtStart, double t)
+{
+    if (stepAtStart)
+        return min(1.0, (floor(numSteps * t) + 1) / numSteps);
+    return floor(numSteps * t) / numSteps;
+}
+
+static inline qreal applyTimingFunction(const TimingFunction* timingFunction, qreal progress, double duration)
 {
     // We want the timing function to be as close as possible to what the web-developer intended, so
     // we're using the same function used by WebCore when compositing is disabled. Using easing-curves
     // would probably work for some of the cases, but wouldn't really buy us anything as we'd have to
     // convert the bezier function back to an easing curve.
 
-    if (timingFunction.type() == LinearTimingFunction)
-        return progress;
-    if (timingFunction.type() == CubicBezierTimingFunction) {
-        return solveCubicBezierFunction(timingFunction.x1(),
-                                        timingFunction.y1(),
-                                        timingFunction.x2(),
-                                        timingFunction.y2(),
+    if (timingFunction->isCubicBezierTimingFunction()) {
+        const CubicBezierTimingFunction* ctf = static_cast<const CubicBezierTimingFunction*>(timingFunction);
+        return solveCubicBezierFunction(ctf->x1(),
+                                        ctf->y1(),
+                                        ctf->x2(),
+                                        ctf->y2(),
                                         double(progress), double(duration) / 1000);
-    }
-    return progress;
+    } else if (tf->isStepsTimingFunction()) {
+        const StepsTimingFunction* stf = static_cast<const StepsTimingFunction*>(timingFunction);
+        return solveStepsFunction(stf->numberOfSteps(), stf->stepAtStart(), double(progress));
+    } else
+        return progress;
 }
 
 // Helper functions to safely get a value out of WebCore's AnimationValue*.
@@ -1322,9 +1331,9 @@ public:
             const AnimationValue* animationValue = values.at(i);
             KeyframeValueQt<T> keyframeValue;
             if (animationValue->timingFunction())
-                keyframeValue.timingFunction = *animationValue->timingFunction();
+                keyframeValue.timingFunction = animationValue->timingFunction();
             else
-                keyframeValue.timingFunction = anim->timingFunction();
+                keyframeValue.timingFunction = anim->timingFunction().get();
             webkitAnimationToQtAnimationValue(animationValue, keyframeValue.value);
             m_keyframeValues[animationValue->keyTime()] = keyframeValue;
         }
@@ -1381,7 +1390,7 @@ protected:
         const KeyframeValueQt<T>& fromKeyframe = it.value();
         const KeyframeValueQt<T>& toKeyframe = it2.value();
 
-        const TimingFunction& timingFunc = fromKeyframe.timingFunction;
+        const TimingFunction* timingFunc = fromKeyframe.timingFunction;
         const T& fromValue = fromKeyframe.value;
         const T& toValue = toKeyframe.value;
 

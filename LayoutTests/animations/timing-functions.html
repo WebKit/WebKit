@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Test timing functions</title>
+  <style type="text/css" media="screen">
+    .box {
+      position: relative;
+      left: 100px;
+      top: 0px;
+      height: 5px;
+      width: 5px;
+      background-color: blue;
+      -webkit-animation-duration: 1s;
+      -webkit-animation-name: anim;
+    }
+    @-webkit-keyframes anim {
+        from { left: 100px; }
+        to   { left: 200px; }
+    }
+    #box1 {
+    }
+    #box2 {
+      -webkit-animation-timing-function: ease;
+    }
+    #box3 {
+      -webkit-animation-timing-function: linear;
+    }
+    #box4 {
+      -webkit-animation-timing-function: step-start;
+    }
+    #box5 {
+      -webkit-animation-timing-function: step-end;
+    }
+    #box6 {
+      -webkit-animation-timing-function: steps(3);
+    }
+    #box7 {
+      -webkit-animation-timing-function: steps(3, start);
+    }
+    #box8 {
+      -webkit-animation-timing-function: steps(3, end);
+    }
+    
+  </style>
+  <script src="animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["anim", 0.25, "box1", "left", 141, 5],
+      ["anim", 0.50, "box1", "left", 180, 5],
+      ["anim", 0.75, "box1", "left", 196, 5],
+      ["anim", 0.25, "box2", "left", 141, 5],
+      ["anim", 0.50, "box2", "left", 180, 5],
+      ["anim", 0.75, "box2", "left", 196, 5],
+      ["anim", 0.25, "box3", "left", 125, 5],
+      ["anim", 0.50, "box3", "left", 150, 5],
+      ["anim", 0.75, "box3", "left", 175, 5],
+      ["anim", 0.25, "box4", "left", 200, 5],
+      ["anim", 0.50, "box4", "left", 200, 5],
+      ["anim", 0.75, "box4", "left", 200, 5],
+      ["anim", 0.25, "box5", "left", 100, 5],
+      ["anim", 0.50, "box5", "left", 100, 5],
+      ["anim", 0.75, "box5", "left", 100, 5],
+      ["anim", 0.25, "box6", "left", 100, 5],
+      ["anim", 0.50, "box6", "left", 133, 5],
+      ["anim", 0.75, "box6", "left", 166, 5],
+      ["anim", 0.25, "box7", "left", 133, 5],
+      ["anim", 0.50, "box7", "left", 166, 5],
+      ["anim", 0.75, "box7", "left", 200, 5],
+      ["anim", 0.25, "box8", "left", 100, 5],
+      ["anim", 0.50, "box8", "left", 133, 5],
+      ["anim", 0.75, "box8", "left", 166, 5],
+    ];
+    
+    runAnimationTest(expectedValues);
+    
+  </script>
+</head>
+<body>
+This test performs an animation of the left property. It animates over 1 second.
+It takes 3 snapshots and expects each result to be within a specified range.
+<div class="box" id="box1">
+</div>
+<div class="box" id="box2">
+</div>
+<div class="box" id="box3">
+</div>
+<div class="box" id="box4">
+</div>
+<div class="box" id="box5">
+</div>
+<div class="box" id="box6">
+</div>
+<div class="box" id="box7">
+</div>
+<div class="box" id="box8">
+</div>
+<div id="result">
+</div>
+</body>
+</html>

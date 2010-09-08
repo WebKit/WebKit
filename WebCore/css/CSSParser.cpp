@@ -2784,7 +2784,7 @@ void CSSParser::parseTransformOriginShorthand(RefPtr<CSSValue>& value1, RefPtr<C
         m_valueList->next();
 }
 
-bool CSSParser::parseTimingFunctionValue(CSSParserValueList*& args, double& result)
+bool CSSParser::parseCubicBezierTimingFunctionValue(CSSParserValueList*& args, double& result)
 {
     CSSParserValue* v = args->current();
     if (!validUnit(v, FNumber, m_strict))
@@ -2805,31 +2805,67 @@ bool CSSParser::parseTimingFunctionValue(CSSParserValueList*& args, double& resu
 PassRefPtr<CSSValue> CSSParser::parseAnimationTimingFunction()
 {
     CSSParserValue* value = m_valueList->current();
-    if (value->id == CSSValueEase || value->id == CSSValueLinear || value->id == CSSValueEaseIn || value->id == CSSValueEaseOut || value->id == CSSValueEaseInOut)
+    if (value->id == CSSValueEase || value->id == CSSValueLinear || value->id == CSSValueEaseIn || value->id == CSSValueEaseOut
+        || value->id == CSSValueEaseInOut || value->id == CSSValueStepStart || value->id == CSSValueStepEnd)
         return CSSPrimitiveValue::createIdentifier(value->id);
 
     // We must be a function.
     if (value->unit != CSSParserValue::Function)
         return 0;
 
-    // The only timing function we accept for now is a cubic bezier function.  4 points must be specified.
     CSSParserValueList* args = value->function->args.get();
-    if (!equalIgnoringCase(value->function->name, "cubic-bezier(") || !args || args->size() != 7)
-        return 0;
 
-    // There are two points specified.  The values must be between 0 and 1.
-    double x1, y1, x2, y2;
+    if (equalIgnoringCase(value->function->name, "steps(")) {
+        // For steps, 1 or 2 params must be specified (comma-separated)
+        if (!args || (args->size() != 1 && args->size() != 3))
+            return 0;
 
-    if (!parseTimingFunctionValue(args, x1))
-        return 0;
-    if (!parseTimingFunctionValue(args, y1))
-        return 0;
-    if (!parseTimingFunctionValue(args, x2))
-        return 0;
-    if (!parseTimingFunctionValue(args, y2))
-        return 0;
+        // There are two values.
+        int numSteps;
+        bool stepAtStart = false;
 
-    return CSSTimingFunctionValue::create(x1, y1, x2, y2);
+        CSSParserValue* v = args->current();
+        if (!validUnit(v, FInteger, m_strict))
+            return 0;
+        numSteps = min(v->fValue, (double)INT_MAX);
+        if (numSteps < 1)
+            return 0;
+        v = args->next();
+
+        if (v) {
+            // There is a comma so we need to parse the second value
+            if (v->unit != CSSParserValue::Operator && v->iValue != ',')
+                return 0;
+            v = args->next();
+            if (v->id != CSSValueStart && v->id != CSSValueEnd)
+                return 0;
+            stepAtStart = v->id == CSSValueStart;
+        }
+
+        return CSSStepsTimingFunctionValue::create(numSteps, stepAtStart);
+    }
+    
+    if (equalIgnoringCase(value->function->name, "cubic-bezier(")) {
+        // For cubic bezier, 4 values must be specified.
+        if (!args || args->size() != 7)
+            return 0;
+
+        // There are two points specified.  The values must be between 0 and 1.
+        double x1, y1, x2, y2;
+
+        if (!parseCubicBezierTimingFunctionValue(args, x1))
+            return 0;
+        if (!parseCubicBezierTimingFunctionValue(args, y1))
+            return 0;
+        if (!parseCubicBezierTimingFunctionValue(args, x2))
+            return 0;
+        if (!parseCubicBezierTimingFunctionValue(args, y2))
+            return 0;
+
+        return CSSCubicBezierTimingFunctionValue::create(x1, y1, x2, y2);
+    }
+    
+    return 0;
 }
 
 bool CSSParser::parseAnimationProperty(int propId, RefPtr<CSSValue>& result)

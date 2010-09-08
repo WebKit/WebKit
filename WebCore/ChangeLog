@@ -1,3 +1,117 @@
+2010-09-08  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Implement steps() timing function for animations
+        https://bugs.webkit.org/show_bug.cgi?id=44541
+
+        Tests: animations/timing-functions.html
+               transitions/steps-timing-function.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::getTimingFunctionValue):
+            - when creating computed style we now test what
+              type of timing function it being used
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseCubicBezierTimingFunctionValue):
+            - rename this method from parseTimingFunctionValue
+        (WebCore::CSSParser::parseAnimationTimingFunction):
+            - support parsing the steps() function
+        * css/CSSParser.h:
+            - method rename
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::mapAnimationTimingFunction):
+            - handle 'step-start' and 'step-end' identifiers. Also
+              now use ::create when constructing objects
+        * css/CSSTimingFunctionValue.cpp:
+        (WebCore::CSSLinearTimingFunctionValue::cssText):
+        (WebCore::CSSCubicBezierTimingFunctionValue::cssText):
+        (WebCore::CSSStepsTimingFunctionValue::cssText):
+            - new text output for computed style. We now produce
+              the text 'linear' when appropriate.
+        * css/CSSTimingFunctionValue.h:
+        (WebCore::CSSTimingFunctionValue::isLinearTimingFunctionValue):
+        (WebCore::CSSTimingFunctionValue::isCubicBezierTimingFunctionValue):
+        (WebCore::CSSTimingFunctionValue::isStepsTimingFunctionValue):
+        (WebCore::CSSTimingFunctionValue::CSSTimingFunctionValue):
+        (WebCore::CSSTimingFunctionValue::isTimingFunctionValue):
+        (WebCore::CSSLinearTimingFunctionValue::create):
+        (WebCore::CSSLinearTimingFunctionValue::isLinearTimingFunctionValue):
+        (WebCore::CSSLinearTimingFunctionValue::CSSLinearTimingFunctionValue):
+        (WebCore::CSSCubicBezierTimingFunctionValue::create):
+        (WebCore::CSSCubicBezierTimingFunctionValue::isCubicBezierTimingFunctionValue):
+        (WebCore::CSSCubicBezierTimingFunctionValue::CSSCubicBezierTimingFunctionValue):
+        (WebCore::CSSStepsTimingFunctionValue::create):
+        (WebCore::CSSStepsTimingFunctionValue::numberOfSteps):
+        (WebCore::CSSStepsTimingFunctionValue::stepAtStart):
+        (WebCore::CSSStepsTimingFunctionValue::isStepsTimingFunctionValue):
+        (WebCore::CSSStepsTimingFunctionValue::CSSStepsTimingFunctionValue):
+            - CSSTimingFunction is now a pure virtual ref-counted base class, with
+              subclasses for each of the three supported timing functions.
+        * css/CSSValueKeywords.in:
+            - new keywords step-start and step-end
+        * page/animation/AnimationBase.cpp:
+        (WebCore::solveStepsFunction):
+            - produces the output value from a stepping function
+        (WebCore::AnimationBase::progress):
+            - now has to switch based on timing function type
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::fetchIntervalEndpointsForProperty):
+            - use ref-counted access
+        * platform/animation/Animation.cpp:
+        (WebCore::Animation::animationsMatch):
+            - change timing function comparison for operator==
+        * platform/animation/Animation.h:
+        (WebCore::Animation::timingFunction):
+        (WebCore::Animation::setTimingFunction):
+        (WebCore::Animation::initialAnimationTimingFunction):
+            - move to ref-counted timing function class
+        * platform/animation/TimingFunction.h:
+        (WebCore::TimingFunction::~TimingFunction):
+        (WebCore::TimingFunction::isLinearTimingFunction):
+        (WebCore::TimingFunction::isCubicBezierTimingFunction):
+        (WebCore::TimingFunction::isStepsTimingFunction):
+        (WebCore::TimingFunction::TimingFunction):
+        (WebCore::LinearTimingFunction::create):
+        (WebCore::LinearTimingFunction::~LinearTimingFunction):
+        (WebCore::LinearTimingFunction::operator==):
+        (WebCore::LinearTimingFunction::LinearTimingFunction):
+        (WebCore::CubicBezierTimingFunction::create):
+        (WebCore::CubicBezierTimingFunction::~CubicBezierTimingFunction):
+        (WebCore::CubicBezierTimingFunction::operator==):
+        (WebCore::CubicBezierTimingFunction::CubicBezierTimingFunction):
+        (WebCore::StepsTimingFunction::create):
+        (WebCore::StepsTimingFunction::~StepsTimingFunction):
+        (WebCore::StepsTimingFunction::operator==):
+        (WebCore::StepsTimingFunction::numberOfSteps):
+        (WebCore::StepsTimingFunction::stepAtStart):
+        (WebCore::StepsTimingFunction::StepsTimingFunction):
+            - TimingFunction is now a ref-counted pure virtual base class,
+              with three subclasses representing the types of timing functions
+              that are supported.
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::AnimationValue::AnimationValue):
+        (WebCore::FloatAnimationValue::FloatAnimationValue):
+        (WebCore::TransformAnimationValue::TransformAnimationValue):
+            - use PassRefPtr in function parameters
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::solveStepsFunction):
+        (WebCore::applyTimingFunction):
+        (WebCore::AnimationQt::AnimationQt):
+        (WebCore::AnimationQt::updateCurrentTime):
+            - implement the timing function switch for QT
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::getCAMediaTimingFunction):
+            - update for new timing function interface
+        (WebCore::animationHasStepsTimingFunction):
+            - new method to make sure animations with steps() functions
+              never try to execute in Core Animation
+        (WebCore::GraphicsLayerCA::addAnimation):
+            - test for steps() timing function
+        (WebCore::GraphicsLayerCA::timingFunctionForAnimationValue):
+        * rendering/style/RenderStyleConstants.h:
+            - remove old RenderStyle enum for timing function types
+
 2010-09-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed trivial fix after r66960.

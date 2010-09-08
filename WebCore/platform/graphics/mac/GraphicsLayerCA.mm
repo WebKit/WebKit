@@ -272,16 +272,16 @@ static TransformationMatrix flipTransform()
 }
 #endif
 
-static CAMediaTimingFunction* getCAMediaTimingFunction(const TimingFunction& timingFunction)
+static CAMediaTimingFunction* getCAMediaTimingFunction(const TimingFunction* timingFunction)
 {
-    switch (timingFunction.type()) {
-        case LinearTimingFunction:
-            return [CAMediaTimingFunction functionWithName:@"linear"];
-        case CubicBezierTimingFunction:
-            return [CAMediaTimingFunction functionWithControlPoints:static_cast<float>(timingFunction.x1()) :static_cast<float>(timingFunction.y1())
-                        :static_cast<float>(timingFunction.x2()) :static_cast<float>(timingFunction.y2())];
-    }
-    return 0;
+    // By this point, timing functions can only be linear or cubic, not steps.
+    ASSERT(!timingFunction->isStepsTimingFunction());
+    if (timingFunction->isCubicBezierTimingFunction()) {
+        const CubicBezierTimingFunction* ctf = static_cast<const CubicBezierTimingFunction*>(timingFunction);
+        return [CAMediaTimingFunction functionWithControlPoints:static_cast<float>(ctf->x1()) :static_cast<float>(ctf->y1())
+                                                               :static_cast<float>(ctf->x2()) :static_cast<float>(ctf->y2())];
+    } else
+        return [CAMediaTimingFunction functionWithName:@"linear"];
 }
 
 static void setLayerBorderColor(PlatformLayer* layer, const Color& color)
@@ -354,6 +354,20 @@ static NSDictionary* nullActionsDictionary()
                              nullValue, @"zPosition",
                              nil];
     return actions;
+}
+
+static bool animationHasStepsTimingFunction(const KeyframeValueList& valueList, const Animation* anim)
+{
+    if (anim->timingFunction()->isStepsTimingFunction())
+        return true;
+    
+    for (unsigned i = 0; i < valueList.size(); ++i) {
+        const TimingFunction* timingFunction = valueList.at(i)->timingFunction();
+        if (timingFunction && timingFunction->isStepsTimingFunction())
+            return true;
+    }
+
+    return false;
 }
 
 PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
@@ -715,6 +729,11 @@ bool GraphicsLayerCA::addAnimation(const KeyframeValueList& valueList, const Int
     if (valueList.property() == AnimatedPropertyOpacity)
         return false;
 #endif
+
+    // CoreAnimation does not handle the steps() timing function. Fall back
+    // to software animation in that case.
+    if (animationHasStepsTimingFunction(valueList, anim))
+        return false;
 
     bool createdAnimations = false;
     if (valueList.property() == AnimatedPropertyWebkitTransform)
@@ -1913,9 +1932,9 @@ CAMediaTimingFunction* GraphicsLayerCA::timingFunctionForAnimationValue(const An
     if (animValue->timingFunction())
         tf = animValue->timingFunction();
     else if (anim->isTimingFunctionSet())
-        tf = &anim->timingFunction();
+        tf = anim->timingFunction().get();
 
-    return getCAMediaTimingFunction(tf ? *tf : TimingFunction());
+    return getCAMediaTimingFunction(tf ? tf : CubicBezierTimingFunction::create().get());
 }
 
 bool GraphicsLayerCA::setAnimationEndpoints(const KeyframeValueList& valueList, const Animation* anim, CABasicAnimation* basicAnim)

@@ -25,32 +25,81 @@
 #ifndef TimingFunction_h
 #define TimingFunction_h
 
-#include "RenderStyleConstants.h"
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-struct TimingFunction : FastAllocBase {
-    TimingFunction()
-        : m_type(CubicBezierTimingFunction)
-        , m_x1(0.25)
-        , m_y1(0.1)
-        , m_x2(0.25)
-        , m_y2(1.0)
+class TimingFunction : public RefCounted<TimingFunction> {
+public:
+
+    enum TimingFunctionType {
+        LinearFunction, CubicBezierFunction, StepsFunction
+    };
+    
+    virtual ~TimingFunction() { }
+    
+    bool isLinearTimingFunction() const { return m_type == LinearFunction; }
+    bool isCubicBezierTimingFunction() const { return m_type == CubicBezierFunction; }
+    bool isStepsTimingFunction() const { return m_type == StepsFunction; }
+    
+    virtual bool operator==(const TimingFunction& other) = 0;
+
+protected:
+    TimingFunction(TimingFunctionType type)
+        : m_type(type)
     {
     }
+    
+    TimingFunctionType m_type;
+};
 
-    // This explicit copy constructor works around an inlining bug in GCC 4.2 (only reproed on mac, but may exist on other platforms).
-    TimingFunction(const TimingFunction& that)
-        : m_type(that.m_type)
-        , m_x1(that.m_x1)
-        , m_y1(that.m_y1)
-        , m_x2(that.m_x2)
-        , m_y2(that.m_y2)
+class LinearTimingFunction : public TimingFunction {
+public:
+    static PassRefPtr<LinearTimingFunction> create()
+    {
+        return adoptRef(new LinearTimingFunction);
+    }
+    
+    ~LinearTimingFunction() { }
+    
+    virtual bool operator==(const TimingFunction& other)
+    {
+        return other.isLinearTimingFunction();
+    }
+    
+private:
+    LinearTimingFunction()
+        : TimingFunction(LinearFunction)
     {
     }
+};
+    
+class CubicBezierTimingFunction : public TimingFunction {
+public:
+    static PassRefPtr<CubicBezierTimingFunction> create(double x1 = 0.25, double y1 = 0.1, double x2 = 0.25, double y2 = 1.0)
+    {
+        return adoptRef(new CubicBezierTimingFunction(x1, y1, x2, y2));
+    }
 
-    TimingFunction(ETimingFunctionType timingFunction, double x1 = 0.0, double y1 = 0.0, double x2 = 1.0, double y2 = 1.0)
-        : m_type(timingFunction)
+    ~CubicBezierTimingFunction() { }
+    
+    virtual bool operator==(const TimingFunction& other)
+    {
+        if (other.isCubicBezierTimingFunction()) {
+            const CubicBezierTimingFunction* ctf = static_cast<const CubicBezierTimingFunction*>(&other);
+            return m_x1 == ctf->m_x1 && m_y1 == ctf->m_y1 && m_x2 == ctf->m_x2 && m_y2 == ctf->m_y2;
+        }
+        return false;
+    }
+
+    double x1() const { return m_x1; }
+    double y1() const { return m_y1; }
+    double x2() const { return m_x2; }
+    double y2() const { return m_y2; }
+    
+private:
+    CubicBezierTimingFunction(double x1, double y1, double x2, double y2)
+        : TimingFunction(CubicBezierFunction)
         , m_x1(x1)
         , m_y1(y1)
         , m_x2(x2)
@@ -58,27 +107,45 @@ struct TimingFunction : FastAllocBase {
     {
     }
 
-    bool operator==(const TimingFunction& o) const
-    {
-        return m_type == o.m_type && m_x1 == o.m_x1 && m_y1 == o.m_y1 && m_x2 == o.m_x2 && m_y2 == o.m_y2;
-    }
-
-    double x1() const { return m_x1; }
-    double y1() const { return m_y1; }
-    double x2() const { return m_x2; }
-    double y2() const { return m_y2; }
-
-    ETimingFunctionType type() const { return m_type; }
-
-private:
-    ETimingFunctionType m_type;
-
     double m_x1;
     double m_y1;
     double m_x2;
     double m_y2;
 };
 
+class StepsTimingFunction : public TimingFunction {
+public:
+    static PassRefPtr<StepsTimingFunction> create(int steps, bool stepAtStart)
+    {
+        return adoptRef(new StepsTimingFunction(steps, stepAtStart));
+    }
+    
+    ~StepsTimingFunction() { }
+    
+    virtual bool operator==(const TimingFunction& other)
+    {
+        if (other.isStepsTimingFunction()) {
+            const StepsTimingFunction* stf = static_cast<const StepsTimingFunction*>(&other);
+            return m_steps == stf->m_steps && m_stepAtStart == stf->m_stepAtStart;
+        }
+        return false;
+    }
+    
+    int numberOfSteps() const { return m_steps; }
+    bool stepAtStart() const { return m_stepAtStart; }
+    
+private:
+    StepsTimingFunction(int steps, bool stepAtStart)
+        : TimingFunction(StepsFunction)
+        , m_steps(steps)
+        , m_stepAtStart(stepAtStart)
+    {
+    }
+    
+    int m_steps;
+    bool m_stepAtStart;
+};
+    
 } // namespace WebCore
 
 #endif // TimingFunction_h

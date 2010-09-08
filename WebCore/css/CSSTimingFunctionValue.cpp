@@ -30,7 +30,12 @@
 
 namespace WebCore {
 
-String CSSTimingFunctionValue::cssText() const
+String CSSLinearTimingFunctionValue::cssText() const
+{
+    return "linear";
+}
+
+String CSSCubicBezierTimingFunctionValue::cssText() const
 {
     String text("cubic-bezier(");
     text += String::number(m_x1);
@@ -40,6 +45,16 @@ String CSSTimingFunctionValue::cssText() const
     text += String::number(m_x2);
     text += ", ";
     text += String::number(m_y2);
+    text += ")";
+    return text;
+}
+
+String CSSStepsTimingFunctionValue::cssText() const
+{
+    String text("steps(");
+    text += String::number(m_steps);
+    text += ", ";
+    text += m_stepAtStart ? "start" : "end";
     text += ")";
     return text;
 }

@@ -691,6 +691,8 @@ linear
 ease-in
 ease-out
 ease-in-out
+step-start
+step-end
 
 #
 # CSS_PROP_ZOOM

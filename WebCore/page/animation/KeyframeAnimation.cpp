@@ -127,7 +127,7 @@ void KeyframeAnimation::fetchIntervalEndpointsForProperty(int property, const Re
     const TimingFunction* timingFunction = 0;
     if (fromStyle->animations() && fromStyle->animations()->size() > 0) {
         // We get the timing function from the first animation, because we've synthesized a RenderStyle for each keyframe.
-        timingFunction = &(fromStyle->animations()->animation(0)->timingFunction());
+        timingFunction = fromStyle->animations()->animation(0)->timingFunction().get();
     }
 
     prog = progress(scale, offset, timingFunction);

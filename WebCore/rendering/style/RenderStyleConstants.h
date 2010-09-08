@@ -303,8 +303,6 @@ enum EAnimPlayState {
     AnimPlayStatePaused = 0x1
 };
 
-enum ETimingFunctionType { LinearTimingFunction, CubicBezierTimingFunction };
-
 enum EWhiteSpace {
     NORMAL, PRE, PRE_WRAP, PRE_LINE, NOWRAP, KHTML_NOWRAP
 };

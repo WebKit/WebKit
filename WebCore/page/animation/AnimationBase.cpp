@@ -70,6 +70,13 @@ static inline double solveCubicBezierFunction(double p1x, double p1y, double p2x
     return bezier.solve(t, solveEpsilon(duration));
 }
 
+static inline double solveStepsFunction(int numSteps, bool stepAtStart, double t)
+{
+    if (stepAtStart)
+        return min(1.0, (floor(numSteps * t) + 1) / numSteps);
+    return floor(numSteps * t) / numSteps;
+}
+
 static inline int blendFunc(const AnimationBase*, int from, int to, double progress)
 {  
     return int(from + (to - from) * progress);
@@ -1249,18 +1256,20 @@ double AnimationBase::progress(double scale, double offset, const TimingFunction
         fractionalTime = (fractionalTime - offset) * scale;
         
     if (!tf)
-        tf = &m_animation->timingFunction();
+        tf = m_animation->timingFunction().get();
 
-    if (tf->type() == LinearTimingFunction)
+    if (tf->isCubicBezierTimingFunction()) {
+        const CubicBezierTimingFunction* ctf = static_cast<const CubicBezierTimingFunction*>(tf);
+        return solveCubicBezierFunction(ctf->x1(),
+                                        ctf->y1(),
+                                        ctf->x2(),
+                                        ctf->y2(),
+                                        fractionalTime, m_animation->duration());
+    } else if (tf->isStepsTimingFunction()) {
+        const StepsTimingFunction* stf = static_cast<const StepsTimingFunction*>(tf);
+        return solveStepsFunction(stf->numberOfSteps(), stf->stepAtStart(), fractionalTime);
+    } else
         return fractionalTime;
-
-    // Cubic bezier.
-    double result = solveCubicBezierFunction(tf->x1(),
-                                            tf->y1(),
-                                            tf->x2(),
-                                            tf->y2(),
-                                            fractionalTime, m_animation->duration());
-    return result;
 }
 
 void AnimationBase::getTimeToNextEvent(double& time, bool& isLooping) const

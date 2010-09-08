@@ -26,6 +26,15 @@
         -webkit-animation-timing-function: linear, ease-in-out;
         -webkit-animation-direction: normal, alternate;
     }
+    #test3 {
+        width: 20px;
+        height: 20px;
+        background-color: blue;
+        position: relative;
+        -webkit-animation-name: anim1, anim2, anim3;
+        -webkit-animation-duration: 5s;
+        -webkit-animation-timing-function: step-start, step-end, steps(5, end);
+    }
     @-webkit-keyframes anim1 {
         from { left: 10px; }
         to { left: 20px; }
@@ -44,6 +53,7 @@
 <body>
 <p id="test1"></p>
 <p id="test2"></p>
+<p id="test3"></p>
 <p id="description"></p>
 <div id="console"></div>
 <script>
@@ -55,9 +65,11 @@ var test2 = document.getElementById("test2");
 
 var test1Style = window.getComputedStyle(test1);
 var test2Style = window.getComputedStyle(test2);
+var test3Style = window.getComputedStyle(test3);
 
 shouldBe("test1Style.webkitAnimationName", "'anim1'");
 shouldBe("test2Style.webkitAnimationName", "'anim2, anim3'");
+shouldBe("test3Style.webkitAnimationName", "'anim1, anim2, anim3'");
 
 shouldBe("test1Style.webkitAnimationDuration", "'10s'");
 shouldBe("test2Style.webkitAnimationDuration", "'5s, 2.5s'");
@@ -68,8 +80,9 @@ shouldBe("test2Style.webkitAnimationFillMode", "'forwards, both'");
 shouldBe("test1Style.webkitAnimationIterationCount", "'10'");
 shouldBe("test2Style.webkitAnimationIterationCount", "'10, infinite'");
 
-shouldBe("test1Style.webkitAnimationTimingFunction", "'cubic-bezier(0, 0, 1, 1)'");
-shouldBe("test2Style.webkitAnimationTimingFunction", "'cubic-bezier(0, 0, 1, 1), cubic-bezier(0.42, 0, 0.58, 1)'");
+shouldBe("test1Style.webkitAnimationTimingFunction", "'linear'");
+shouldBe("test2Style.webkitAnimationTimingFunction", "'linear, cubic-bezier(0.42, 0, 0.58, 1)'");
+shouldBe("test3Style.webkitAnimationTimingFunction", "'steps(1, start), steps(1, end), steps(5, end)'");
 
 shouldBe("test1Style.webkitAnimationDirection", "'normal'");
 shouldBe("test2Style.webkitAnimationDirection", "'normal, alternate'");
