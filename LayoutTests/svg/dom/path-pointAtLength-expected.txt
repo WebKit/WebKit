@@ -6,6 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS pointAtLengthOfPath('M0,20 L400,20 L640,20') is '(640, 20)'
 PASS pointAtLengthOfPath('M0,20 L400,20 L640,20 z') is '(580, 20)'
 PASS pointAtLengthOfPath('M0,20 L400,20 z M 320,20 L640,20') is '(100, 20)'
+PASS pointAtLengthOfPath('M0,20 L20,40') is '(20, 40)'
 PASS successfullyParsed is true
 
 TEST COMPLETE

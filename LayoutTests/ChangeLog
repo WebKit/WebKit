@@ -1,3 +1,13 @@
+2010-09-08  Jan E Hanssen  <jhanssen@sencha.com>
+
+        Reviewed by Dirk Schulze.
+
+        Add a test for getting a point beyond the length of the path
+        https://bugs.webkit.org/show_bug.cgi?id=43837
+
+        * svg/dom/path-pointAtLength-expected.txt:
+        * svg/dom/script-tests/path-pointAtLength.js:
+
 2010-09-08  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Antonio Gomes.

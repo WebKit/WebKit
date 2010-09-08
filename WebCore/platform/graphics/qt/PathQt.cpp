@@ -474,6 +474,31 @@ void Path::transform(const AffineTransform& transform)
         m_path = qTransform.map(m_path);
 }
 
+float Path::length()
+{
+    return m_path.length();
+}
+
+FloatPoint Path::pointAtLength(float length, bool& ok)
+{
+    ok = (length >= 0 && length <= m_path.length());
+
+    qreal percent = m_path.percentAtLength(length);
+    QPointF point = m_path.pointAtPercent(percent);
+
+    return point;
+}
+
+float Path::normalAngleAtLength(float length, bool& ok)
+{
+    ok = (length >= 0 && length <= m_path.length());
+
+    qreal percent = m_path.percentAtLength(length);
+    qreal angle = m_path.angleAtPercent(percent);
+
+    return angle;
+}
+
 }
 
 // vim: ts=4 sw=4 et

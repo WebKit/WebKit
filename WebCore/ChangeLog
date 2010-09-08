@@ -1,3 +1,19 @@
+2010-09-08  Jan E Hanssen  <jhanssen@sencha.com>
+
+        Reviewed by Dirk Schulze.
+
+        [Qt] PathQt should use the QPainterPath functionality for calculations
+        https://bugs.webkit.org/show_bug.cgi?id=43837
+
+        Change PathQt to use the built-in functionality of QPainterPath for
+        calculating length(), pointAtLength() and normalAngleAtLength().
+
+        * platform/graphics/Path.cpp:
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::Path::length):
+        (WebCore::Path::pointAtLength):
+        (WebCore::Path::normalAngleAtLength):
+
 2010-09-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Dirk Schulze.
