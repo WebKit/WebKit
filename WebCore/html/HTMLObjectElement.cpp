@@ -163,7 +163,7 @@ static void mapDataParamToSrc(Vector<String>* paramNames, Vector<String>* paramV
 void HTMLObjectElement::parametersForPlugin(Vector<String>& paramNames, Vector<String>& paramValues, String& url, String& serviceType)
 {
     HashSet<StringImpl*, CaseFoldingHash> uniqueParamNames;
-    String urlParam;
+    String urlParameter;
     
     // Scan the PARAM children and store their name/value pairs.
     // Get the URL and type from the params if we don't already have them.
@@ -181,8 +181,8 @@ void HTMLObjectElement::parametersForPlugin(Vector<String>& paramNames, Vector<S
         paramValues.append(p->value());
 
         // FIXME: url adjustment does not belong in this function.
-        if (url.isEmpty() && urlParam.isEmpty() && (equalIgnoringCase(name, "src") || equalIgnoringCase(name, "movie") || equalIgnoringCase(name, "code") || equalIgnoringCase(name, "url")))
-            urlParam = deprecatedParseURL(p->value());
+        if (url.isEmpty() && urlParameter.isEmpty() && (equalIgnoringCase(name, "src") || equalIgnoringCase(name, "movie") || equalIgnoringCase(name, "code") || equalIgnoringCase(name, "url")))
+            urlParameter = deprecatedParseURL(p->value());
         // FIXME: serviceType calculation does not belong in this function.
         if (serviceType.isEmpty() && equalIgnoringCase(name, "type")) {
             serviceType = p->value();
@@ -222,10 +222,10 @@ void HTMLObjectElement::parametersForPlugin(Vector<String>& paramNames, Vector<S
     // attribute, not by a param element. However, for compatibility, allow the
     // resource's URL to be given by a param named "src", "movie", "code" or "url"
     // if we know that resource points to a plug-in.
-    if (url.isEmpty() && !urlParam.isEmpty()) {
+    if (url.isEmpty() && !urlParameter.isEmpty()) {
         SubframeLoader* loader = document()->frame()->loader()->subframeLoader();
-        if (loader->resourceWillUsePlugin(urlParam, serviceType))
-            url = urlParam;
+        if (loader->resourceWillUsePlugin(urlParameter, serviceType))
+            url = urlParameter;
     }
 }
 
