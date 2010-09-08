@@ -1,3 +1,19 @@
+2010-09-08  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Always do 2d canvas clearRect() in hardware
+        https://bugs.webkit.org/show_bug.cgi?id=45415
+
+        r67003 forced Canvas 2d's clearRect() to happen in software if a gradient/shadow/etc was
+        active.  This is subtly wrong for mixed mode rendering since it results in only the
+        software backing store being cleared and not the hardware.  This forces clearRect() to
+        happen in hardware.  Since we upload mixed mode results before doing any hardware draw
+        this means we always clear everything.
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::clearRect):
+
 2010-09-08  Dean Jackson  <dino@apple.com>
 
         Unreviewed attempt to fix the Mac builds.

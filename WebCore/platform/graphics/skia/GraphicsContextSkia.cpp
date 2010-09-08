@@ -338,7 +338,7 @@ void GraphicsContext::clearRect(const FloatRect& rect)
     if (paintingDisabled())
         return;
 
-    if (platformContext()->useGPU() && platformContext()->canAccelerate()) {
+    if (platformContext()->useGPU()) {
         platformContext()->prepareForHardwareDraw();
         platformContext()->gpuCanvas()->clearRect(rect);
         return;
