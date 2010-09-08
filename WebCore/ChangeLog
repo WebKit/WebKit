@@ -1,5 +1,12 @@
 2010-09-08  Dean Jackson  <dino@apple.com>
 
+        Unreviewed attempt to fix the Mac builds.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseAnimationTimingFunction):
+
+2010-09-08  Dean Jackson  <dino@apple.com>
+
         Unreviewed attempt to fix QT build.
 
         * platform/graphics/qt/GraphicsLayerQt.cpp:

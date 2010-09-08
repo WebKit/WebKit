@@ -2827,7 +2827,7 @@ PassRefPtr<CSSValue> CSSParser::parseAnimationTimingFunction()
         CSSParserValue* v = args->current();
         if (!validUnit(v, FInteger, m_strict))
             return 0;
-        numSteps = min(v->fValue, (double)INT_MAX);
+        numSteps = (int) min(v->fValue, (double)INT_MAX);
         if (numSteps < 1)
             return 0;
         v = args->next();
