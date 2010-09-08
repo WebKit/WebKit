@@ -26,35 +26,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BrowserWindow_h
-#define BrowserWindow_h
+#ifndef BrowserView_h
+#define BrowserView_h
 
-#define PLATFORM(x) 0
+#include <QGraphicsView>
+#include "qgraphicswkview.h"
+#include "WKRetainPtr.h"
 
-#include "BrowserView.h"
-#include <QtGui>
-
-class BrowserWindow : public QMainWindow {
+class BrowserView : public QGraphicsView {
     Q_OBJECT
 
 public:
-    BrowserWindow();
-    ~BrowserWindow();
-    void load(const QString& url);
+    BrowserView(QWidget* parent = 0);
+    virtual ~BrowserView() { delete m_item; }
 
-public slots:
-    BrowserWindow* newWindow(const QString& url = "about:blank");
+    void load(const QUrl&);
+    QGraphicsWKView* view() const;
 
-protected slots:
-    void changeLocation();
-    void loadProgress(int progress);
-    void titleChanged(const QString&);
-    void urlChanged(const QUrl&);
+protected:
+    virtual void resizeEvent(QResizeEvent*);
 
 private:
-    BrowserView* m_browser;
-    QMenuBar* m_menu;
-    QLineEdit* m_addressBar;
+    QGraphicsWKView* m_item;
+    WKRetainPtr<WKContextRef> m_context;
 };
 
 #endif

@@ -3,9 +3,11 @@ TARGET = MiniBrowser
 
 SOURCES += \
     main.cpp \
+    BrowserView.cpp \
     BrowserWindow.cpp \
 
 HEADERS += \
+    BrowserView.h \
     BrowserWindow.h \
 
 CONFIG += uitools

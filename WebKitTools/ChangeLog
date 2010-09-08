@@ -1,3 +1,24 @@
+2010-09-08  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Refactor MiniBrowser 
+        https://bugs.webkit.org/show_bug.cgi?id=45173
+
+        Split BrowserWindow into two source files and headers. Remove unnecessary header includes.
+
+        * MiniBrowser/qt/BrowserView.cpp: Added.
+        (createNewPage):
+        (BrowserView::BrowserView):
+        (BrowserView::resizeEvent):
+        (BrowserView::load):
+        (BrowserView::view):
+        * MiniBrowser/qt/BrowserView.h: Added.
+        (BrowserView::~BrowserView):
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        * MiniBrowser/qt/BrowserWindow.h:
+        * MiniBrowser/qt/MiniBrowser.pro:
+
 2010-09-08  Adam Barth  <abarth@webkit.org>
 
         Rubber-stamped by Eric Seidel.

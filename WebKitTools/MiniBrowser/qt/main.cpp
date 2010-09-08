@@ -26,8 +26,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <QtGui>
 #include "BrowserWindow.h"
+#include <QtGui>
 
 int main(int argc, char** argv) {
     QApplication app(argc, argv);

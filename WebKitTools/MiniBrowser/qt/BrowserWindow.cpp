@@ -27,55 +27,8 @@
  */
 
 #include "BrowserWindow.h"
+
 #include "WKPageNamespace.h"
-#include "qwkpage.h"
-
-static QWKPage* createNewPage(QWKPage* page)
-{
-    return page;
-}
-
-BrowserView::BrowserView(QWidget* parent)
-    : QGraphicsView(parent)
-    , m_item(0)
-{
-    m_context.adopt(WKContextGetSharedProcessContext());
-
-    WKRetainPtr<WKPageNamespaceRef> pageNamespace(AdoptWK, WKPageNamespaceCreate(m_context.get()));
-
-    m_item = new QGraphicsWKView(pageNamespace.get(), QGraphicsWKView::Simple, 0);
-    setScene(new QGraphicsScene(this));
-    scene()->addItem(m_item);
-
-    setFrameShape(QFrame::NoFrame);
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-    connect(m_item, SIGNAL(titleChanged(QString)), this, SLOT(setWindowTitle(QString)));
-    m_item->page()->setCreateNewPageFunction(createNewPage);
-}
-
-void BrowserView::resizeEvent(QResizeEvent* event)
-{
-    QGraphicsView::resizeEvent(event);
-    QRectF rect(QPoint(0, 0), event->size());
-    m_item->setGeometry(rect);
-    scene()->setSceneRect(rect);
-}
-
-void BrowserView::load(const QUrl& url)
-{
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
-    return m_item->load(QUrl::fromUserInput(url.toString()));
-#else
-    return m_item->load(url);
-#endif
-}
-
-QGraphicsWKView* BrowserView::view() const
-{
-    return m_item;
-}
 
 BrowserWindow::BrowserWindow()
 {
