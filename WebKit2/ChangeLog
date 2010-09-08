@@ -1,3 +1,9 @@
+2010-09-07  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Unreviewed, attempt to fix Qt release build.
+
+        * UIProcess/API/cpp/qt/WKStringQt.cpp:
+
 2010-09-07  Brent Fulgham  <bfulgham@webkit.org>
 
         Build correction, no review.

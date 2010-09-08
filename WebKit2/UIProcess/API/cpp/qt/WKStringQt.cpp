@@ -25,6 +25,8 @@
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
+using namespace WebKit;
+
 WKStringRef WKStringCreateWithQString(const QString& qString)
 {
     WTF::String string(qString);
