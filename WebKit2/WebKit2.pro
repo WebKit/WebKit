@@ -191,6 +191,7 @@ HEADERS += \
     UIProcess/API/C/WKURL.h \
     UIProcess/API/C/WKURLRequest.h \
     UIProcess/API/C/WKURLResponse.h \
+    UIProcess/API/C/WKSerializedScriptValue.h \
     UIProcess/API/qt/qgraphicswkview.h \
     UIProcess/API/qt/qwkpage.h \
     UIProcess/API/qt/qwkpage_p.h \
@@ -295,6 +296,7 @@ SOURCES += \
     UIProcess/API/C/WKPage.cpp \
     UIProcess/API/C/WKPageNamespace.cpp \
     UIProcess/API/C/WKPreferences.cpp \
+    UIProcess/API/C/WKSerializedScriptValue.cpp \
     UIProcess/API/C/WKString.cpp \
     UIProcess/API/C/WKType.cpp \
     UIProcess/API/C/WKURL.cpp \

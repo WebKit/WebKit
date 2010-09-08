@@ -1,3 +1,18 @@
+2010-09-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Support SerializedScriptValue in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=45340
+
+        Add a new constructor that allows WebKit2 to create a SerializedScriptValue
+        directly from serialized data.
+
+        * WebCore.exp.in:
+        * bindings/js/SerializedScriptValue.h:
+        (WebCore::SerializedScriptValue::adopt):
+        (WebCore::SerializedScriptValue::data):
+
 2010-09-08  Andy Estes  <aestes@apple.com>
 
         Reviewed by Eric Carlson.

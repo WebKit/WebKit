@@ -105,6 +105,11 @@
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		9391F2CA121B679A00EBF7E8 /* WebFrameNetworkingContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9391F284121B38F500EBF7E8 /* WebFrameNetworkingContext.mm */; };
 		9391F2CB121B67AD00EBF7E8 /* WebFrameNetworkingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 9391F283121B38F500EBF7E8 /* WebFrameNetworkingContext.h */; };
+		A72D5D811236CBA800A88B15 /* WebSerializedScriptValue.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = A72D5D7F1236CBA800A88B15 /* WebSerializedScriptValue.h */; };
+		A72D5F301236F9E800A88B15 /* WKSerializedScriptValue.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = A72D5F2E1236F9E800A88B15 /* WKSerializedScriptValue.h */; };
+		A72D5F311236F9E800A88B15 /* WKSerializedScriptValue.cpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = A72D5F2F1236F9E800A88B15 /* WKSerializedScriptValue.cpp */; };
+		A72D610B1237144F00A88B15 /* WKSerializedScriptValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A72D5F2F1236F9E800A88B15 /* WKSerializedScriptValue.cpp */; };
+		A72D610C1237145000A88B15 /* WKSerializedScriptValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A72D5F2F1236F9E800A88B15 /* WKSerializedScriptValue.cpp */; };
 		BC0092F7115837A300E0AE2A /* RunLoopMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC0092F5115837A300E0AE2A /* RunLoopMac.mm */; };
 		BC0092F8115837A300E0AE2A /* WorkQueueMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0092F6115837A300E0AE2A /* WorkQueueMac.cpp */; };
 		BC032D7510F4378D0058C15A /* WebChromeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032D6010F4378D0058C15A /* WebChromeClient.h */; };
@@ -382,6 +387,9 @@
 			dstSubfolderSpec = 1;
 			files = (
 				1A50DB66110A3D57000D3FE5 /* WebProcess.app in CopyFiles */,
+				A72D5D811236CBA800A88B15 /* WebSerializedScriptValue.h in CopyFiles */,
+				A72D5F301236F9E800A88B15 /* WKSerializedScriptValue.h in CopyFiles */,
+				A72D5F311236F9E800A88B15 /* WKSerializedScriptValue.cpp in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -479,6 +487,9 @@
 		8DC2EF5B0486A6940098B216 /* WebKit2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebKit2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9391F283121B38F500EBF7E8 /* WebFrameNetworkingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFrameNetworkingContext.h; sourceTree = "<group>"; };
 		9391F284121B38F500EBF7E8 /* WebFrameNetworkingContext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebFrameNetworkingContext.mm; sourceTree = "<group>"; };
+		A72D5D7F1236CBA800A88B15 /* WebSerializedScriptValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSerializedScriptValue.h; sourceTree = "<group>"; };
+		A72D5F2E1236F9E800A88B15 /* WKSerializedScriptValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSerializedScriptValue.h; sourceTree = "<group>"; };
+		A72D5F2F1236F9E800A88B15 /* WKSerializedScriptValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKSerializedScriptValue.cpp; sourceTree = "<group>"; };
 		BC0092F5115837A300E0AE2A /* RunLoopMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RunLoopMac.mm; sourceTree = "<group>"; };
 		BC0092F6115837A300E0AE2A /* WorkQueueMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkQueueMac.cpp; sourceTree = "<group>"; };
 		BC032D6010F4378D0058C15A /* WebChromeClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebChromeClient.h; sourceTree = "<group>"; };
@@ -943,6 +954,7 @@
 				BCE2315B122C30CA00D5C35A /* WebURLRequest.h */,
 				BC90A1D1122DD55E00CC8C50 /* WebURLResponse.cpp */,
 				BC90A1D0122DD55E00CC8C50 /* WebURLResponse.h */,
+				A72D5D7F1236CBA800A88B15 /* WebSerializedScriptValue.h */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -1191,6 +1203,8 @@
 				BCE231C5122C492300D5C35A /* WKURLRequest.h */,
 				BC90A1DB122DD89800CC8C50 /* WKURLResponse.cpp */,
 				BC90A1DA122DD89800CC8C50 /* WKURLResponse.h */,
+				A72D5F2E1236F9E800A88B15 /* WKSerializedScriptValue.h */,
+				A72D5F2F1236F9E800A88B15 /* WKSerializedScriptValue.cpp */,
 			);
 			path = C;
 			sourceTree = "<group>";
@@ -1660,7 +1674,14 @@
 			isa = PBXProject;
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "WebKit2" */;
 			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
 			mainGroup = 0867D691FE84028FC02AAC07 /* WebKit2 */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
@@ -1698,6 +1719,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1A6FA31111E3921E00DB1371 /* MainMac.cpp in Sources */,
+				A72D610C1237145000A88B15 /* WKSerializedScriptValue.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1848,6 +1870,7 @@
 				BCB0AF3612301DFB00B1341E /* WKMutableDictionary.cpp in Sources */,
 				BCA0EF8012331E78007D3CFB /* WebEditCommand.cpp in Sources */,
 				BCA0EFA012332642007D3CFB /* WebEditCommandProxy.cpp in Sources */,
+				A72D610B1237144F00A88B15 /* WKSerializedScriptValue.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -42,13 +42,19 @@ public:
     static PassRefPtr<SerializedScriptValue> create(JSC::ExecState* exec, JSC::JSValue value);
     static PassRefPtr<SerializedScriptValue> create(JSContextRef, JSValueRef value, JSValueRef* exception);
     static PassRefPtr<SerializedScriptValue> create(String string);
+    static PassRefPtr<SerializedScriptValue> adopt(Vector<uint8_t>& buffer)
+    {
+        return adoptRef(new SerializedScriptValue(buffer));
+    }
+
     static PassRefPtr<SerializedScriptValue> create();
     static SerializedScriptValue* nullValue();
 
     JSC::JSValue deserialize(JSC::ExecState* exec, JSC::JSGlobalObject* globalObject);
     String toString();
     JSValueRef deserialize(JSContextRef, JSValueRef* exception);
-    
+    const Vector<uint8_t>& data() { return m_data; }
+
     ~SerializedScriptValue();
 
 private:

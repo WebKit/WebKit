@@ -485,6 +485,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\WebSerializedScriptValue.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\WebString.h"
 				>
 			</File>
@@ -1424,6 +1428,14 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKPreferencesPrivate.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKSerializedScriptValue.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKSerializedScriptValue.h"
 						>
 					</File>
 					<File

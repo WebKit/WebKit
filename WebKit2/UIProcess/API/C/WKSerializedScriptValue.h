@@ -23,63 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIObject_h
-#define APIObject_h
+#ifndef WKSerializedScriptValue_h
+#define WKSerializedScriptValue_h
 
-#include <wtf/RefCounted.h>
+#include <JavaScriptCore/JavaScript.h>
+#include <WebKit2/WKBase.h>
 
-namespace WebKit {
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-class APIObject : public RefCounted<APIObject> {
-public:
-    enum Type {
-        // Base types
-        TypeNull,
-        TypeArray,
-        TypeData,
-        TypeDictionary,
-        TypeError,
-        TypeSerializedScriptValue,
-        TypeString,
-        TypeURL,
-        TypeURLRequest,
-        TypeURLResponse,
-        
-        // UIProcess types
-        TypeBackForwardList,
-        TypeBackForwardListItem,
-        TypeContext,
-        TypeFormSubmissionListener,
-        TypeFrame,
-        TypeFramePolicyListener,
-        TypeNavigationData,
-        TypePage,
-        TypePageNamespace,
-        TypePreferences,
+WK_EXPORT WKTypeID WKSerializedScriptValueGetTypeID();
 
-        // Bundle types
-        TypeBundle,
-        TypeBundleFrame,
-        TypeBundlePage,
-        TypeBundleScriptWorld,
-        TypeBundleNodeHandle,
+WK_EXPORT WKSerializedScriptValueRef WKSerializedScriptValueCreate(JSContextRef context, JSValueRef value, JSValueRef* exception);
+WK_EXPORT JSValueRef WKSerializedScriptValueDeserialize(WKSerializedScriptValueRef scriptValue, JSContextRef constext, JSValueRef* exception);
 
-        // Platform specific
-        TypeView
-    };
+#ifdef __cplusplus
+}
+#endif
 
-    virtual ~APIObject()
-    {
-    }
-
-    virtual Type type() const = 0;
-
-protected:
-    APIObject()
-    {
-    }
-};
-
-} // namespace WebKit
-
-#endif // APIObject_h
+#endif /* WKSerializedScriptValue_h */

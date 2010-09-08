@@ -23,63 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIObject_h
-#define APIObject_h
+#include "WKSerializedScriptValue.h"
 
-#include <wtf/RefCounted.h>
+#include "WKAPICast.h"
+#include "WebSerializedScriptValue.h"
 
-namespace WebKit {
+using namespace WebKit;
 
-class APIObject : public RefCounted<APIObject> {
-public:
-    enum Type {
-        // Base types
-        TypeNull,
-        TypeArray,
-        TypeData,
-        TypeDictionary,
-        TypeError,
-        TypeSerializedScriptValue,
-        TypeString,
-        TypeURL,
-        TypeURLRequest,
-        TypeURLResponse,
-        
-        // UIProcess types
-        TypeBackForwardList,
-        TypeBackForwardListItem,
-        TypeContext,
-        TypeFormSubmissionListener,
-        TypeFrame,
-        TypeFramePolicyListener,
-        TypeNavigationData,
-        TypePage,
-        TypePageNamespace,
-        TypePreferences,
+WKTypeID WKSerializedScriptValueGetTypeID()
+{
+    return toRef(WebSerializedScriptValue::APIType);
+}
 
-        // Bundle types
-        TypeBundle,
-        TypeBundleFrame,
-        TypeBundlePage,
-        TypeBundleScriptWorld,
-        TypeBundleNodeHandle,
+WKSerializedScriptValueRef WKSerializedScriptValueCreate(JSContextRef context, JSValueRef value, JSValueRef* exception)
+{
+    RefPtr<WebSerializedScriptValue> serializedValue = WebSerializedScriptValue::create(context, value, exception);
+    return toRef(serializedValue.release().leakRef());
+}
 
-        // Platform specific
-        TypeView
-    };
-
-    virtual ~APIObject()
-    {
-    }
-
-    virtual Type type() const = 0;
-
-protected:
-    APIObject()
-    {
-    }
-};
-
-} // namespace WebKit
-
-#endif // APIObject_h
+JSValueRef WKSerializedScriptValueDeserialize(WKSerializedScriptValueRef scriptValueRef, JSContextRef contextRef, JSValueRef* exception)
+{
+    return toWK(scriptValueRef)->deserialize(contextRef, exception);
+}
