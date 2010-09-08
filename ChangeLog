@@ -1,3 +1,21 @@
+2010-09-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Support to enable HTML5's Video based on gstreamer in WebKit-EFL
+        https://bugs.webkit.org/show_bug.cgi?id=44098
+
+        To support video of HTML5 based on gstreamer, add cmake files for gstreamer. 
+
+        * cmake/FindGStreamer-App.cmake: Added.
+        * cmake/FindGStreamer-Base.cmake: Added.
+        * cmake/FindGStreamer-Interfaces.cmake: Added.
+        * cmake/FindGStreamer-Pbutils.cmake: Added.
+        * cmake/FindGStreamer-Plugins-Base.cmake: Added.
+        * cmake/FindGStreamer-Video.cmake: Added.
+        * cmake/FindGStreamer.cmake: Added.
+        * cmake/OptionsEfl.cmake:
+
 2010-09-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Andreas Kling.

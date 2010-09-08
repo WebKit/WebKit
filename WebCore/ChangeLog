@@ -1,3 +1,15 @@
+2010-09-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Support to enable HTML5's Video based on gstreamer in WebKit-EFL
+        https://bugs.webkit.org/show_bug.cgi?id=44098
+
+        To support video of HTML5 based on gstreamer, add files regarding gstreamer to
+        CMakeListsEfl.txt.
+
+        * CMakeListsEfl.txt:
+
 2010-09-08  Jan E Hanssen  <jhanssen@sencha.com>
 
         Reviewed by Dirk Schulze.

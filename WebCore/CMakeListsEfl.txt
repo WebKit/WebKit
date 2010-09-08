@@ -122,6 +122,22 @@ IF (WTF_USE_ICU_UNICODE)
   )
 ENDIF ()
 
+IF (ENABLE_VIDEO)
+  LIST(APPEND WebCore_INCLUDE_DIRECTORIES
+    "${WEBCORE_DIR}/platform/graphics/gstreamer"
+  )
+  LIST(APPEND WebCore_SOURCES
+    platform/graphics/gstreamer/DataSourceGStreamer.cpp
+    platform/graphics/gstreamer/GOwnPtrGStreamer.cpp
+    platform/graphics/gstreamer/GStreamerGWorld.cpp
+    platform/graphics/gstreamer/ImageGStreamerCairo.cpp
+    platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+    platform/graphics/gstreamer/PlatformVideoWindowEfl.cpp
+    platform/graphics/gstreamer/VideoSinkGStreamer.cpp
+    platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp
+  )
+ENDIF ()
+
 LIST(APPEND WebCore_LIBRARIES
   ${Cairo_LIBRARIES}
   ${ECORE_X_LIBRARIES}
@@ -147,6 +163,15 @@ IF (WTF_USE_CURL)
   )
 ENDIF ()
 
+IF (ENABLE_VIDEO)
+  LIST(APPEND WebCore_LIBRARIES
+    ${GStreamer-App_LIBRARIES}
+    ${GStreamer-Interfaces_LIBRARIES}
+    ${GStreamer-Pbutils_LIBRARIES}
+    ${GStreamer-Video_LIBRARIES}
+  )
+ENDIF ()
+
 LIST(APPEND WebCore_INCLUDE_DIRECTORIES
   ${Cairo_INCLUDE_DIRS}
   ${ECORE_X_INCLUDE_DIRS}
@@ -159,6 +184,16 @@ LIST(APPEND WebCore_INCLUDE_DIRECTORIES
   ${Pango_INCLUDE_DIRS}
   ${SQLITE_INCLUDE_DIRS}
 )
+
+IF (ENABLE_VIDEO)
+  LIST(APPEND WebCore_INCLUDE_DIRECTORIES
+    ${GStreamer-App_INCLUDE_DIRS}
+    ${GStreamer-Interfaces_INCLUDE_DIRS}
+    ${GStreamer-Pbutils_INCLUDE_DIRS}
+    ${GStreamer-Video_INCLUDE_DIRS}
+  )
+ENDIF ()
+
 
 IF (ENABLE_GLIB_SUPPORT)
   LIST(APPEND WebCore_LIBRARIES
