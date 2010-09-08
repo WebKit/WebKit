@@ -77,7 +77,7 @@ bool ArgumentDecoder::alignBufferPosition(unsigned alignment, size_t size)
     return true;
 }
 
-bool ArgumentDecoder::bufferIsLargeEnoughtToContain(unsigned alignment, size_t size) const
+bool ArgumentDecoder::bufferIsLargeEnoughToContain(unsigned alignment, size_t size) const
 {
     return roundUpToAlignment(m_bufferPos, alignment) + size <= m_bufferEnd;
 }

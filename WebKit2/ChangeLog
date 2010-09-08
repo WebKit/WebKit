@@ -1,3 +1,19 @@
+2010-09-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Improve CoreIPC encoding of strings
+        https://bugs.webkit.org/show_bug.cgi?id=45418
+
+        Encode and decode null Strings. Check that the string length isn't bogus.
+
+        * Platform/CoreIPC/ArgumentCoders.h:
+        * Platform/CoreIPC/ArgumentDecoder.cpp:
+        (CoreIPC::ArgumentDecoder::bufferIsLargeEnoughToContain):
+        * Platform/CoreIPC/ArgumentDecoder.h:
+        (CoreIPC::ArgumentDecoder::bufferIsLargeEnoughToContain):
+        * Shared/WebCoreArgumentCoders.h:
+
 2010-09-08  Adam Roben  <aroben@apple.com>
 
         Add a way to cause the web process to crash at a random time

@@ -35,7 +35,10 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/ResourceRequest.h>
+#include <limits>
 #include <wtf/text/WTFString.h>
+
+using namespace std;
 
 namespace CoreIPC {
 
@@ -46,6 +49,12 @@ template<> struct ArgumentCoder<WebCore::IntRect> : SimpleArgumentCoder<WebCore:
 template<> struct ArgumentCoder<WTF::String> {
     static void encode(ArgumentEncoder* encoder, const WTF::String& string)
     {
+        // Special case the null string.
+        if (string.isNull()) {
+            encoder->encodeUInt32(numeric_limits<uint32_t>::max());
+            return;
+        }
+
         uint32_t length = string.length();
         encoder->encode(length);
         encoder->encodeBytes(reinterpret_cast<const uint8_t*>(string.characters()), length * sizeof(UChar));
@@ -56,6 +65,18 @@ template<> struct ArgumentCoder<WTF::String> {
         uint32_t length;
         if (!decoder->decode(length))
             return false;
+
+        if (length == numeric_limits<uint32_t>::max()) {
+            // This is the null string.
+            s = String();
+            return true;
+        }
+
+        // Before allocating the string, make sure that the decoder buffer is big enough.
+        if (!decoder->bufferIsLargeEnoughToContain<UChar>(length)) {
+            decoder->markInvalid();
+            return false;
+        }
         
         UChar* buffer;
         WTF::String string = WTF::String::createUninitialized(length, buffer);

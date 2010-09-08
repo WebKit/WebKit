@@ -56,9 +56,9 @@ public:
     bool decodeDouble(double&);
 
     template<typename T>
-    bool bufferIsLargeEnoughtToContain(size_t numElements) const
+    bool bufferIsLargeEnoughToContain(size_t numElements) const
     {
-        return bufferIsLargeEnoughtToContain(__alignof(T), numElements * sizeof(T));
+        return bufferIsLargeEnoughToContain(__alignof(T), numElements * sizeof(T));
     }
 
     // Generic type decode function.
@@ -85,7 +85,7 @@ private:
     void initialize(const uint8_t* buffer, size_t bufferSize);
 
     bool alignBufferPosition(unsigned alignment, size_t size);
-    bool bufferIsLargeEnoughtToContain(unsigned alignment, size_t size) const;
+    bool bufferIsLargeEnoughToContain(unsigned alignment, size_t size) const;
 
     uint64_t m_destinationID;
 
