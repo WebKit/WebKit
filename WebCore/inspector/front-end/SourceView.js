@@ -99,6 +99,9 @@ WebInspector.SourceView.prototype = {
         var mimeType = this._canonicalMimeType(this.resource);
         this.sourceFrame.setContent(mimeType, content, this.resource.url);
         this._sourceFrameSetupFinished();
+        var breakpoints = WebInspector.breakpointManager.breakpointsForURL(this.resource.url);
+        for (var i = 0; i < breakpoints.length; ++i)
+            this.sourceFrame.addBreakpoint(breakpoints[i]);
     },
 
     _canonicalMimeType: function(resource)

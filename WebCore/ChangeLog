@@ -1,3 +1,16 @@
+2010-09-08  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: add breakpoints to source frame after content is loaded.
+        https://bugs.webkit.org/show_bug.cgi?id=43056
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._resourceLoadingFinished):
+        (WebInspector.ScriptsPanel.prototype._showScriptOrResource):
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView.prototype._contentLoaded):
+
 2010-09-08  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

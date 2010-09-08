@@ -276,14 +276,6 @@ WebInspector.ScriptsPanel.prototype = {
 
             // Remove script from the files list.
             script.filesSelectOption.parentElement.removeChild(script.filesSelectOption);
-
-            // Move breakpoints to the resource's frame.
-            if (script._scriptView) {
-                var sourceFrame = script._scriptView.sourceFrame;
-                var resourceFrame = this._sourceFrameForScriptOrResource(resource);
-                for (var j = 0; j < sourceFrame.breakpoints; ++j)
-                    resourceFrame.addBreakpoint(sourceFrame.breakpoints[j]);
-            }
         }
         // Adding first script will add resource.
         this._addScriptToFilesMenu(resource._scriptsPendingResourceLoad[0]);
@@ -599,10 +591,6 @@ WebInspector.ScriptsPanel.prototype = {
                 return null;
             view = WebInspector.panels.resources.resourceViewForResource(scriptOrResource);
             view.headersVisible = false;
-            var sourceFrame = this._sourceFrameForScriptOrResource(scriptOrResource);
-            var breakpoints = WebInspector.breakpointManager.breakpointsForURL(scriptOrResource.url);
-            for (var i = 0; i < breakpoints.length; ++i)
-                sourceFrame.addBreakpoint(breakpoints[i]);
         } else if (scriptOrResource instanceof WebInspector.Script)
             view = this.scriptViewForScript(scriptOrResource);
 
