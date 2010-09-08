@@ -1,3 +1,19 @@
+2010-09-08  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Export data directory through pkg-config
+        https://bugs.webkit.org/show_bug.cgi?id=45385
+
+        Using pkg-config it's possible for a browser to know the location of
+        installed themes. When compiling the browser, a variable might be
+        defined with the datadir, like below:
+
+        gcc -o browser browser.c $(pkg-config --libs --cflags ewebkit) \
+           -DEWEBKIT_DATA_DIR=$(pkg-config --variable=datadir)
+
+        * ewebkit.pc.in: Export datadir variable.
+
 2010-09-06  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix.
