@@ -34,6 +34,7 @@
 #if HAVE(ACCESSIBILITY)
 
 #include "AXObjectCache.h"
+#include "AccessibilityList.h"
 #include "AccessibilityListBox.h"
 #include "AccessibilityListBoxOption.h"
 #include "AccessibilityRenderObject.h"
@@ -54,6 +55,7 @@
 #include "InlineTextBox.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
+#include "RenderListMarker.h"
 #include "RenderText.h"
 #include "TextEncoding.h"
 #include <wtf/text/CString.h>
@@ -931,6 +933,16 @@ static gchar* webkit_accessible_text_get_text(AtkText* text, gint startOffset, g
         if (!endOffset)
             endOffset = ret.length();
         ret = ret.substring(start, endOffset - startOffset);
+    }
+
+    // Prefix a item number/bullet if needed
+    if (coreObject->roleValue() == ListItemRole) {
+        RenderObject* objRenderer = static_cast<AccessibilityRenderObject*>(coreObject)->renderer();
+        RenderObject* markerRenderer = objRenderer ? objRenderer->firstChild() : 0;
+        if (markerRenderer && markerRenderer->isListMarker()) {
+            String markerTxt = toRenderListMarker(markerRenderer)->text();
+            ret = markerTxt.length() > 0 ? markerTxt + " " + ret : ret;
+        }
     }
 
     return g_strdup(ret.utf8().data());

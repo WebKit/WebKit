@@ -46,6 +46,8 @@ static const char* contentsInTableWithHeaders = "<html><body><table><tr><th>foo<
 
 static const char* textWithAttributes = "<html><head><style>.st1 {font-family: monospace; color:rgb(120,121,122);} .st2 {text-decoration:underline; background-color:rgb(80,81,82);}</style></head><body><p style=\"font-size:14; text-align:right;\">This is the <i>first</i><b> sentence of this text.</b></p><p class=\"st1\">This sentence should have an style applied <span class=\"st2\">and this part should have another one</span>.</p><p>x<sub>1</sub><sup>2</sup>=x<sub>2</sub><sup>3</sup></p><p style=\"text-align:center;\">This sentence is the <strike>last</strike> one.</p></body></html>";
 
+static const char* listsOfItems = "<html><body><ul><li>text only</li><li><a href='foo'>link only</a></li><li>text and a <a href='bar'>link</a></li></ul><ol><li>text only</li><li><a href='foo'>link only</a></li><li>text and a <a href='bar'>link</a></li></ol></body></html>";
+
 static gboolean bail_out(GMainLoop* loop)
 {
     if (g_main_loop_is_running(loop))
@@ -843,6 +845,81 @@ static void test_webkit_atk_get_extents(void)
     g_object_unref(webView);
 }
 
+static void testWebkitAtkListsOfItems(void)
+{
+    WebKitWebView* webView;
+    AtkObject* obj;
+    AtkObject* uList;
+    AtkObject* oList;
+    AtkObject* item1;
+    AtkObject* item2;
+    AtkObject* item3;
+    GMainLoop* loop;
+
+    webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    g_object_ref_sink(webView);
+    GtkAllocation alloc = { 0, 0, 800, 600 };
+    gtk_widget_size_allocate(GTK_WIDGET(webView), &alloc);
+    webkit_web_view_load_string(webView, listsOfItems, NULL, NULL, NULL);
+    loop = g_main_loop_new(NULL, TRUE);
+
+    g_timeout_add(100, (GSourceFunc)bail_out, loop);
+    g_main_loop_run(loop);
+
+    obj = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    g_assert(obj);
+
+    // Unordered list
+
+    uList = atk_object_ref_accessible_child(obj, 0);
+    g_assert(ATK_OBJECT(uList));
+    g_assert(atk_object_get_role(uList) == ATK_ROLE_LIST);
+    g_assert_cmpint(atk_object_get_n_accessible_children(uList), ==, 3);
+
+    item1 = ATK_TEXT(atk_object_ref_accessible_child(uList, 0));
+    item2 = ATK_TEXT(atk_object_ref_accessible_child(uList, 1));
+    item3 = ATK_TEXT(atk_object_ref_accessible_child(uList, 2));
+
+    g_assert_cmpint(atk_object_get_n_accessible_children(item1), ==, 0);
+    g_assert_cmpint(atk_object_get_n_accessible_children(item2), ==, 1);
+    g_assert_cmpint(atk_object_get_n_accessible_children(item3), ==, 1);
+
+    g_assert_cmpstr(atk_text_get_text(item1, 0, -1), ==, "\342\200\242 text only");
+    g_assert_cmpstr(atk_text_get_text(item2, 0, -1), ==, "\342\200\242 link only");
+    g_assert_cmpstr(atk_text_get_text(item3, 0, -1), ==, "\342\200\242 text and a link");
+
+    g_object_unref(item1);
+    g_object_unref(item2);
+    g_object_unref(item3);
+
+    // Ordered list
+
+    oList = atk_object_ref_accessible_child(obj, 1);
+    g_assert(ATK_OBJECT(oList));
+    g_assert(atk_object_get_role(oList) == ATK_ROLE_LIST);
+    g_assert_cmpint(atk_object_get_n_accessible_children(oList), ==, 3);
+
+    item1 = ATK_TEXT(atk_object_ref_accessible_child(oList, 0));
+    item2 = ATK_TEXT(atk_object_ref_accessible_child(oList, 1));
+    item3 = ATK_TEXT(atk_object_ref_accessible_child(oList, 2));
+
+    g_assert_cmpstr(atk_text_get_text(item1, 0, -1), ==, "1 text only");
+    g_assert_cmpstr(atk_text_get_text(item2, 0, -1), ==, "2 link only");
+    g_assert_cmpstr(atk_text_get_text(item3, 0, -1), ==, "3 text and a link");
+
+    g_assert_cmpint(atk_object_get_n_accessible_children(item1), ==, 0);
+    g_assert_cmpint(atk_object_get_n_accessible_children(item2), ==, 1);
+    g_assert_cmpint(atk_object_get_n_accessible_children(item3), ==, 1);
+
+    g_object_unref(item1);
+    g_object_unref(item2);
+    g_object_unref(item3);
+
+    g_object_unref(uList);
+    g_object_unref(oList);
+    g_object_unref(webView);
+}
+
 int main(int argc, char** argv)
 {
     g_thread_init(NULL);
@@ -860,6 +937,7 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/atk/getHeadersInTable", testWebkitAtkGetHeadersInTable);
     g_test_add_func("/webkit/atk/textAttributes", testWebkitAtkTextAttributes);
     g_test_add_func("/webkit/atk/get_extents", test_webkit_atk_get_extents);
+    g_test_add_func("/webkit/atk/listsOfItems", testWebkitAtkListsOfItems);
     return g_test_run ();
 }
 

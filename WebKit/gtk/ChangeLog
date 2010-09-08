@@ -1,3 +1,17 @@
+2010-09-08  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] A list item's number/bullet should not be a child of that list item
+        https://bugs.webkit.org/show_bug.cgi?id=45190
+
+        New unit test added.
+
+        * tests/testatk.c:
+        (testWebkitAtkListsOfItems): New test to check ordered/unordered
+        list of items are properly exposed to AT technologies.
+        (main):
+
 2010-09-07  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

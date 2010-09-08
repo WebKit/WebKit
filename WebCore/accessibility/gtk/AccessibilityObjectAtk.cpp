@@ -71,6 +71,10 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     if (role == StaticTextRole)
         return IgnoreObject;
 
+    // Bullets/numbers for list items shouldn't be exposed as AtkObjects.
+    if (roleValue() == ListMarkerRole)
+        return IgnoreObject;
+
     return DefaultBehavior;
 }
 

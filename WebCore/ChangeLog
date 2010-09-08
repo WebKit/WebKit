@@ -1,3 +1,19 @@
+2010-09-08  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] A list item's number/bullet should not be a child of that list item
+        https://bugs.webkit.org/show_bug.cgi?id=45190
+
+        Ignore list markers and prefix them to the text for the item
+
+        * accessibility/gtk/AccessibilityObjectAtk.cpp:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+        Make list markers ignore accessibility for the GTK port.
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_text_get_text): Prefix the text of a marker
+        along with the accessible text for its list item's AtkObject
+
 2010-09-08  Adam Barth  <abarth@webkit.org>
 
         Rubber-stamped by Eric Seidel.
