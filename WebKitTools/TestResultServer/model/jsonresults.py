@@ -413,6 +413,7 @@ class JsonResults(object):
             # Use the incremental data if there is no aggregated file to merge.
             file = TestFile()
             file.builder = builder
+            file.test_type = test_type
             file.name = JSON_RESULTS_FILE
             new_results = incremental
             logging.info("No existing json results, incremental json is saved.")

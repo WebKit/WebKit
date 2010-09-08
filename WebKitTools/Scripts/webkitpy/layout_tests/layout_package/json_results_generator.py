@@ -37,6 +37,8 @@ import time
 import urllib2
 import xml.dom.minidom
 
+from webkitpy.layout_tests.layout_package import test_results_uploader
+
 import webkitpy.thirdparty.simplejson as simplejson
 
 # A JSON results generator for generic tests.
@@ -85,13 +87,14 @@ class JSONResultsGeneratorBase(object):
     INCREMENTAL_RESULTS_FILENAME = "incremental_results.json"
 
     URL_FOR_TEST_LIST_JSON = \
-        "http://%s/testfile?builder=%s&name=%s&testlistjson=1"
+        "http://%s/testfile?builder=%s&name=%s&testlistjson=1&testtype=%s"
 
     def __init__(self, builder_name, build_name, build_number,
         results_file_base_path, builder_base_url,
         test_results_map, svn_repositories=None,
         generate_incremental_results=False,
-        test_results_server=None):
+        test_results_server=None,
+        test_type=""):
         """Modifies the results.json file. Grabs it off the archive directory
         if it is not found locally.
 
@@ -129,6 +132,7 @@ class JSONResultsGeneratorBase(object):
             self._svn_repositories = {}
 
         self._test_results_server = test_results_server
+        self._test_type = test_type
 
         self._json = None
         self._archived_results = None
@@ -287,7 +291,8 @@ class JSONResultsGeneratorBase(object):
                 results_file_url = (self.URL_FOR_TEST_LIST_JSON %
                     (urllib2.quote(self._test_results_server),
                      urllib2.quote(self._builder_name),
-                     self.RESULTS_FILENAME))
+                     self.RESULTS_FILENAME,
+                     urllib2.quote(self._test_type)))
             else:
                 # Check if we have the archived JSON file on the buildbot
                 # server.
@@ -518,9 +523,33 @@ class JSONResultsGenerator(JSONResultsGeneratorBase):
     # The flag is for backward compatibility.
     output_json_in_init = True
 
+    def _upload_json_files(self):
+        if not self._test_results_server or not self._test_type:
+            return
+
+        _log.info("Uploading JSON files for %s to the server: %s",
+                  self._builder_name, self._test_results_server)
+        attrs = [("builder", self._builder_name), ("testtype", self._test_type)]
+        json_files = [self.INCREMENTAL_RESULTS_FILENAME]
+
+        files = [(file, os.path.join(self._results_directory, file))
+            for file in json_files]
+        uploader = test_results_uploader.TestResultsUploader(
+            self._test_results_server)
+        try:
+            # Set uploading timeout in case appengine server is having problem.
+            # 120 seconds are more than enough to upload test results.
+            uploader.upload(attrs, files, 120)
+        except Exception, err:
+            _log.error("Upload failed: %s" % err)
+            return
+
+        _log.info("JSON files uploaded.")
+
     def __init__(self, port, builder_name, build_name, build_number,
         results_file_base_path, builder_base_url,
-        test_timings, failures, passed_tests, skipped_tests, all_tests):
+        test_timings, failures, passed_tests, skipped_tests, all_tests,
+        test_results_server=None, test_type=None):
         """Generates a JSON results file.
 
         Args
@@ -536,7 +565,12 @@ class JSONResultsGenerator(JSONResultsGeneratorBase):
           skipped_tests: A set containing all the skipped tests.
           all_tests: List of all the tests that were run.  This should not
               include skipped tests.
+          test_results_server: server that hosts test results json.
+          test_type: the test type.
         """
+
+        self._test_type = test_type
+        self._results_directory = results_file_base_path
 
         # Create a map of (name, TestResult).
         test_results_map = dict()
@@ -557,10 +591,16 @@ class JSONResultsGenerator(JSONResultsGeneratorBase):
             if test not in test_results_map:
                 test_results_map[test] = TestResult(test)
 
+        # Generate the JSON with incremental flag enabled.
+        # (This should also output the full result for now.)
         super(JSONResultsGenerator, self).__init__(
             builder_name, build_name, build_number,
             results_file_base_path, builder_base_url, test_results_map,
-            svn_repositories=port.test_repository_paths())
+            svn_repositories=port.test_repository_paths(),
+            generate_incremental_results=True,
+            test_results_server=test_results_server,
+            test_type=test_type)
 
         if self.__class__.output_json_in_init:
             self.generate_json_output()
+            self._upload_json_files()
