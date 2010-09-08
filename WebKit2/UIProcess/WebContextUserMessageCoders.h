@@ -25,12 +25,14 @@
 
 #include "UserMessageCoders.h"
 #include "WebContext.h"
+#include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 
 namespace WebKit {
 
 // Adds
 // - Page -> BundlePage
+// - Frame -> BundleFrame
 
 class WebContextUserMessageEncoder : public UserMessageEncoder<WebContextUserMessageEncoder> {
 public:
@@ -53,6 +55,11 @@ public:
             encoder->encode(page->pageID());
             break;
         }
+        case APIObject::TypeFrame: {
+            WebFrameProxy* frame = static_cast<WebFrameProxy*>(m_root);
+            encoder->encode(frame->frameID());
+            break;
+        }
         default:
             ASSERT_NOT_REACHED();
             break;
@@ -62,6 +69,7 @@ public:
 
 // Adds
 //   - Page -> BundlePage
+//   - Frame -> BundleFrame
 
 class WebContextUserMessageDecoder : public UserMessageDecoder<WebContextUserMessageDecoder> {
 public:
@@ -94,6 +102,13 @@ public:
             if (!decoder->decode(pageID))
                 return false;
             coder.m_root = coder.m_context->process()->webPage(pageID);
+            break;
+        }
+        case APIObject::TypeBundleFrame: {
+            uint64_t frameID;
+            if (!decoder->decode(frameID))
+                return false;
+            coder.m_root = coder.m_context->process()->webFrame(frameID);
             break;
         }
         default:

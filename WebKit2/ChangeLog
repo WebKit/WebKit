@@ -1,3 +1,18 @@
+2010-09-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Jon Honeycutt.
+
+        Would like WKBundleFrameRef to turn into WKFrameRef across postMessage boundary, a la PageRef
+        <rdar://problem/8402804>
+        https://bugs.webkit.org/show_bug.cgi?id=45370
+
+        * UIProcess/WebContextUserMessageCoders.h:
+        (WebKit::WebContextUserMessageEncoder::encode):
+        (WebKit::WebContextUserMessageDecoder::decode):
+        * WebProcess/InjectedBundle/InjectedBundleUserMessageCoders.h:
+        (WebKit::InjectedBundleUserMessageEncoder::encode):
+        (WebKit::InjectedBundleUserMessageDecoder::decode):
+
 2010-09-07  Kinuko Yasuda  <kinuko@chromium.org>
 
         Unreviewed, another Qt release build fix attempt.
