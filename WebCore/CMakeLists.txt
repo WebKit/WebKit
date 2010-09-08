@@ -1027,6 +1027,7 @@ SET(WebCore_SOURCES
     html/ImageResizerThread.cpp
     html/LabelsNodeList.cpp
     html/StepRange.cpp
+    html/TextDocument.cpp
     html/ValidityState.cpp
     html/canvas/CanvasGradient.cpp
     html/canvas/CanvasPattern.cpp
@@ -1112,7 +1113,6 @@ SET(WebCore_SOURCES
     loader/SinkDocument.cpp
     loader/SubframeLoader.cpp
     loader/SubresourceLoader.cpp
-    loader/TextDocument.cpp
     loader/TextResourceDecoder.cpp
     loader/ThreadableLoader.cpp
     loader/WorkerThreadableLoader.cpp

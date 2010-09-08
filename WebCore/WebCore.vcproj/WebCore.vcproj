@@ -23797,10 +23797,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\loader\TextDocument.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\loader\TextDocument.h"
 				>
 			</File>
@@ -41994,6 +41990,10 @@
 			</File>
 			<File
 				RelativePath="..\html\StepRange.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\TextDocument.cpp"
 				>
 			</File>
 			<File

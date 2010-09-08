@@ -279,6 +279,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/HTMLViewSourceDocument.cpp \
 	html/ImageData.cpp \
 	html/ImageResizerThread.cpp \
+	html/TextDocument.cpp \
 	html/TimeRanges.cpp \
 	html/ValidityState.cpp \
 	\
@@ -341,7 +342,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	loader/ResourceLoader.cpp \
 	loader/SubframeLoader.cpp \
 	loader/SubresourceLoader.cpp \
-	loader/TextDocument.cpp \
 	loader/TextResourceDecoder.cpp \
 	loader/ThreadableLoader.cpp \
 	loader/WorkerThreadableLoader.cpp \

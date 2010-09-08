@@ -731,6 +731,7 @@ SOURCES += \
     html/ImageResizerThread.cpp \
     html/LabelsNodeList.cpp \
     html/StepRange.cpp \
+    html/TextDocument.cpp \
     html/ValidityState.cpp \
     html/canvas/CanvasGradient.cpp \
     html/canvas/CanvasPattern.cpp \
@@ -819,7 +820,6 @@ SOURCES += \
     loader/SinkDocument.cpp \
     loader/SubframeLoader.cpp \
     loader/SubresourceLoader.cpp \
-    loader/TextDocument.cpp \
     loader/TextResourceDecoder.cpp \
     loader/ThreadableLoader.cpp \
     notifications/Notification.cpp \

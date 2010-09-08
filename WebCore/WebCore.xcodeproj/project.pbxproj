@@ -410,8 +410,6 @@
 		1A569D230D7E2B82007C3983 /* runtime_object.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A569CF40D7E2B82007C3983 /* runtime_object.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A569D240D7E2B82007C3983 /* runtime_root.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A569CF50D7E2B82007C3983 /* runtime_root.cpp */; };
 		1A569D250D7E2B82007C3983 /* runtime_root.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A569CF60D7E2B82007C3983 /* runtime_root.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1A6938010A11100A00C127FE /* TextDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6937FF0A11100A00C127FE /* TextDocument.cpp */; };
-		1A6938020A11100A00C127FE /* TextDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6938000A11100A00C127FE /* TextDocument.h */; };
 		1A71D57B0F33819000F9CE4E /* IdentifierRep.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A71D5790F33819000F9CE4E /* IdentifierRep.cpp */; };
 		1A71D57C0F33819000F9CE4E /* IdentifierRep.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A71D57A0F33819000F9CE4E /* IdentifierRep.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A750D5C0A90DEE1000FF215 /* JSTreeWalker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A750D5A0A90DEE1000FF215 /* JSTreeWalker.cpp */; };
@@ -2791,6 +2789,8 @@
 		97BC849B12370A4B000C6161 /* HTMLInputStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC849A12370A4B000C6161 /* HTMLInputStream.h */; };
 		97BC84A412370DC8000C6161 /* TextViewSourceParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC84A212370DC7000C6161 /* TextViewSourceParser.cpp */; };
 		97BC84A512370DC8000C6161 /* TextViewSourceParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC84A312370DC8000C6161 /* TextViewSourceParser.h */; };
+		97BC84B312371180000C6161 /* TextDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC84B112371180000C6161 /* TextDocument.cpp */; };
+		97BC84B412371180000C6161 /* TextDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC84B212371180000C6161 /* TextDocument.h */; };
 		97C078501165D5BE003A32EF /* SuffixTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 97C0784F1165D5BE003A32EF /* SuffixTree.h */; };
 		97DCE20110807C750057D394 /* HistoryController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97DCE1FF10807C750057D394 /* HistoryController.cpp */; };
 		97DCE20210807C750057D394 /* HistoryController.h in Headers */ = {isa = PBXBuildFile; fileRef = 97DCE20010807C750057D394 /* HistoryController.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6233,8 +6233,6 @@
 		1A569CF40D7E2B82007C3983 /* runtime_object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = runtime_object.h; path = bridge/runtime_object.h; sourceTree = "<group>"; };
 		1A569CF50D7E2B82007C3983 /* runtime_root.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = runtime_root.cpp; path = bridge/runtime_root.cpp; sourceTree = "<group>"; };
 		1A569CF60D7E2B82007C3983 /* runtime_root.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = runtime_root.h; path = bridge/runtime_root.h; sourceTree = "<group>"; };
-		1A6937FF0A11100A00C127FE /* TextDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextDocument.cpp; sourceTree = "<group>"; };
-		1A6938000A11100A00C127FE /* TextDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextDocument.h; sourceTree = "<group>"; };
 		1A71D5790F33819000F9CE4E /* IdentifierRep.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IdentifierRep.cpp; path = bridge/IdentifierRep.cpp; sourceTree = "<group>"; };
 		1A71D57A0F33819000F9CE4E /* IdentifierRep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IdentifierRep.h; path = bridge/IdentifierRep.h; sourceTree = "<group>"; };
 		1A750D3C0A90DE35000FF215 /* TreeWalker.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TreeWalker.idl; sourceTree = "<group>"; };
@@ -8663,6 +8661,8 @@
 		97BC849A12370A4B000C6161 /* HTMLInputStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLInputStream.h; path = parser/HTMLInputStream.h; sourceTree = "<group>"; };
 		97BC84A212370DC7000C6161 /* TextViewSourceParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextViewSourceParser.cpp; path = parser/TextViewSourceParser.cpp; sourceTree = "<group>"; };
 		97BC84A312370DC8000C6161 /* TextViewSourceParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextViewSourceParser.h; path = parser/TextViewSourceParser.h; sourceTree = "<group>"; };
+		97BC84B112371180000C6161 /* TextDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextDocument.cpp; sourceTree = "<group>"; };
+		97BC84B212371180000C6161 /* TextDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextDocument.h; sourceTree = "<group>"; };
 		97C0784F1165D5BE003A32EF /* SuffixTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SuffixTree.h; sourceTree = "<group>"; };
 		97C1F552122855CB00EDE616 /* HTMLToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLToken.h; path = parser/HTMLToken.h; sourceTree = "<group>"; };
 		97DCE1FF10807C750057D394 /* HistoryController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HistoryController.cpp; sourceTree = "<group>"; };
@@ -14335,6 +14335,8 @@
 				E446139C0CD6331000FADA75 /* MediaError.idl */,
 				A5AFB34D115151A700B045CB /* StepRange.cpp */,
 				A5AFB34E115151A700B045CB /* StepRange.h */,
+				97BC84B112371180000C6161 /* TextDocument.cpp */,
+				97BC84B212371180000C6161 /* TextDocument.h */,
 				BCEF45E80E687767001C1287 /* TextMetrics.h */,
 				BCEF453F0E676AC1001C1287 /* TextMetrics.idl */,
 				E446139D0CD6331000FADA75 /* TimeRanges.cpp */,
@@ -16589,8 +16591,6 @@
 				1A3178920B20A81600316987 /* SubresourceLoaderClient.h */,
 				659A7D120B6DB4D9001155B3 /* SubstituteData.h */,
 				1A8F6B010DB53006001DB794 /* SubstituteResource.h */,
-				1A6937FF0A11100A00C127FE /* TextDocument.cpp */,
-				1A6938000A11100A00C127FE /* TextDocument.h */,
 				F523D27802DE43D7018635CA /* TextResourceDecoder.cpp */,
 				F523D27902DE43D7018635CA /* TextResourceDecoder.h */,
 				0B90561D0F257E930095FF6A /* ThreadableLoader.cpp */,
@@ -20167,7 +20167,6 @@
 				B2C3DA420D006C1D00EF6F26 /* TextCodecUTF16.h in Headers */,
 				AB014DE40E689A4300E10445 /* TextControlInnerElements.h in Headers */,
 				B2C3DA450D006C1D00EF6F26 /* TextDirection.h in Headers */,
-				1A6938020A11100A00C127FE /* TextDocument.h in Headers */,
 				B2C3DA470D006C1D00EF6F26 /* TextEncoding.h in Headers */,
 				C105DA640F3AA6B8001DD44F /* TextEncodingDetector.h in Headers */,
 				B2C3DA490D006C1D00EF6F26 /* TextEncodingRegistry.h in Headers */,
@@ -20457,6 +20456,7 @@
 				97BC84841236FD93000C6161 /* TextDocumentParser.h in Headers */,
 				97BC849B12370A4B000C6161 /* HTMLInputStream.h in Headers */,
 				97BC84A512370DC8000C6161 /* TextViewSourceParser.h in Headers */,
+				97BC84B412371180000C6161 /* TextDocument.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -22690,7 +22690,6 @@
 				B2C3DA3F0D006C1D00EF6F26 /* TextCodecUserDefined.cpp in Sources */,
 				B2C3DA410D006C1D00EF6F26 /* TextCodecUTF16.cpp in Sources */,
 				AB014DE30E689A4300E10445 /* TextControlInnerElements.cpp in Sources */,
-				1A6938010A11100A00C127FE /* TextDocument.cpp in Sources */,
 				B2C3DA460D006C1D00EF6F26 /* TextEncoding.cpp in Sources */,
 				C105DA620F3AA68F001DD44F /* TextEncodingDetectorICU.cpp in Sources */,
 				B2C3DA480D006C1D00EF6F26 /* TextEncodingRegistry.cpp in Sources */,
@@ -22923,6 +22922,7 @@
 				898785F4122E1EAC003AABDA /* JSFileReaderSync.cpp in Sources */,
 				97BC84831236FD93000C6161 /* TextDocumentParser.cpp in Sources */,
 				97BC84A412370DC8000C6161 /* TextViewSourceParser.cpp in Sources */,
+				97BC84B312371180000C6161 /* TextDocument.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

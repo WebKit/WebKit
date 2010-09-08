@@ -1525,6 +1525,8 @@ webcore_sources += \
 	WebCore/html/MediaError.h \
 	WebCore/html/StepRange.cpp \
 	WebCore/html/StepRange.h \
+	WebCore/html/TextDocument.cpp \
+	WebCore/html/TextDocument.h \
 	WebCore/html/TextMetrics.h \
 	WebCore/html/canvas/CanvasContextAttributes.h \
 	WebCore/html/canvas/CanvasGradient.cpp \
@@ -1741,8 +1743,6 @@ webcore_sources += \
 	WebCore/loader/SubresourceLoaderClient.h \
 	WebCore/loader/SubstituteData.h \
 	WebCore/loader/SubstituteResource.h \
-	WebCore/loader/TextDocument.cpp \
-	WebCore/loader/TextDocument.h \
 	WebCore/loader/TextResourceDecoder.cpp \
 	WebCore/loader/TextResourceDecoder.h \
 	WebCore/loader/ThreadableLoader.cpp \

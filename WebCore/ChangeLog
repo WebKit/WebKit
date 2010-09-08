@@ -2,6 +2,30 @@
 
         Reviewed by Eric Seidel.
 
+        TextDocument doesn't belong in WebCore/loader
+        https://bugs.webkit.org/show_bug.cgi?id=45346
+
+        TextDocument has nothing to do with loading.  It turns out that it
+        should be in WebCore/html because TextDocument is actually a subclass
+        of HTMLDocument (in quirks mode, no less).
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/TextDocument.cpp: Renamed from WebCore/loader/TextDocument.cpp.
+        (WebCore::TextDocument::TextDocument):
+        (WebCore::TextDocument::createParser):
+        * html/TextDocument.h: Renamed from WebCore/loader/TextDocument.h.
+        (WebCore::TextDocument::create):
+
+2010-09-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Create TextViewSourceParser
         https://bugs.webkit.org/show_bug.cgi?id=45343
 
