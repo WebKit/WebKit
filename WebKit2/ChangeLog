@@ -1,3 +1,10 @@
+2010-09-08  Adam Roben  <aroben@apple.com>
+
+        Fix WebKit2Common.vsprops line-endings
+
+        * win/WebKit2Common.vsprops: Made all line-endings be CRLF, as this is
+        the format Visual Studio wants.
+
 2010-09-07  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Anders Carlsson.
