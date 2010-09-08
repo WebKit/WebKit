@@ -38,7 +38,6 @@ namespace WebCore {
     class Page;
 }
 
-@class WebDeviceOrientationClient;
 @class WebInspector;
 @class WebNodeHighlight;
 @class WebPluginDatabase;

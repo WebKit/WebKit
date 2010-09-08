@@ -78,7 +78,7 @@ using namespace WebCore;
 
 @implementation WebDeviceOrientationProviderMock
 
-- (id)init;
+- (id)init
 {
     self = [super init];
     if (!self)

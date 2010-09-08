@@ -1,5 +1,21 @@
 2010-09-07  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Fix clang++ build.
+
+        * Misc/WebLocalizableStrings.h:
+        Fix a struct/tag mismatch.
+
+        * WebView/WebDeviceOrientationProviderMock.mm:
+        (-[WebDeviceOrientationProviderMock init]):
+        Remove stray semicolon.
+
+        * WebView/WebViewData.h:
+        Remove unused class forward declaration.
+
+2010-09-07  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         <rdar://problem/8381749> -Wcast-align warning emitted when building with clang

@@ -28,6 +28,8 @@
 
 #if __OBJC__
 @class NSBundle;
+#elif __cplusplus
+class NSBundle;
 #else
 typedef struct NSBundle NSBundle;
 #endif
