@@ -1,3 +1,34 @@
+2010-09-07  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        audio engine: add FFTFrame files
+        https://bugs.webkit.org/show_bug.cgi?id=34827
+
+        No new tests since audio API is not yet implemented.
+
+        * platform/audio/FFTFrame.cpp: Added.
+        (WebCore::FFTFrame::doPaddedFFT):
+        (WebCore::FFTFrame::createInterpolatedFrame):
+        (WebCore::FFTFrame::interpolateFrequencyComponents):
+        (WebCore::FFTFrame::extractAverageGroupDelay):
+        (WebCore::FFTFrame::addConstantGroupDelay):
+        (WebCore::FFTFrame::print):
+        * platform/audio/FFTFrame.h: Added.
+        (WebCore::FFTFrame::fftSize):
+        (WebCore::FFTFrame::log2FFTSize):
+        (WebCore::FFTFrame::dspSplitComplex):
+        * platform/audio/mac/FFTFrameMac.cpp: Added.
+        (WebCore::FFTFrame::FFTFrame):
+        (WebCore::FFTFrame::~FFTFrame):
+        (WebCore::FFTFrame::multiply):
+        (WebCore::FFTFrame::doFFT):
+        (WebCore::FFTFrame::doInverseFFT):
+        (WebCore::FFTFrame::fftSetupForSize):
+        (WebCore::FFTFrame::cleanup):
+        (WebCore::FFTFrame::realData):
+        (WebCore::FFTFrame::imagData):
+
 2010-09-07  Brent Fulgham  <bfulgham@webkit.org>
 
         Build fix, no review.
