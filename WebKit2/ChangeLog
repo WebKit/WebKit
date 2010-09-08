@@ -1,3 +1,10 @@
+2010-09-07  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build correction, no review.
+
+        * win/WebKit2.vcproj: Disable two unused files for
+        the WinCairo target.
+
 2010-09-07  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

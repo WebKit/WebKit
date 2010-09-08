@@ -56,6 +56,11 @@ namespace WebCore {
         {
         }
 
+        ResourceRequest(CFURLRequestRef)
+            : ResourceRequestBase()
+        {
+        }
+
         // Needed for compatibility.
         CFURLRequestRef cfURLRequest() const { return 0; }
 

@@ -1488,6 +1488,22 @@
 						<File
 							RelativePath="..\UIProcess\API\C\cf\WKURLRequestCF.cpp"
 							>
+							<FileConfiguration
+								Name="Debug_Cairo|Win32"
+								ExcludedFromBuild="true"
+								>
+								<Tool
+									Name="VCCLCompilerTool"
+								/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release_Cairo|Win32"
+								ExcludedFromBuild="true"
+								>
+								<Tool
+									Name="VCCLCompilerTool"
+								/>
+							</FileConfiguration>
 						</File>
 						<File
 							RelativePath="..\UIProcess\API\C\cf\WKURLRequestCF.h"
@@ -1496,6 +1512,22 @@
 						<File
 							RelativePath="..\UIProcess\API\C\cf\WKURLResponseCF.cpp"
 							>
+							<FileConfiguration
+								Name="Debug_Cairo|Win32"
+								ExcludedFromBuild="true"
+								>
+								<Tool
+									Name="VCCLCompilerTool"
+								/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release_Cairo|Win32"
+								ExcludedFromBuild="true"
+								>
+								<Tool
+									Name="VCCLCompilerTool"
+								/>
+							</FileConfiguration>
 						</File>
 						<File
 							RelativePath="..\UIProcess\API\C\cf\WKURLResponseCF.h"

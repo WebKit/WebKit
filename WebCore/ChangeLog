@@ -1,3 +1,15 @@
+2010-09-07  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build fix, no review.
+
+        Provide stubs to allow WebKit.dll to build
+        for the WinCairo port.
+
+        * platform/network/curl/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+        * platform/network/curl/ResourceResponse.h:
+        (WebCore::ResourceResponse::cfURLResponse):
+
 2010-09-07  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.
