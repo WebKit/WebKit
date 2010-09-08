@@ -1,3 +1,15 @@
+2010-09-08  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        chromium/mac: Fix overrelease in ImageLayerChromium
+        https://bugs.webkit.org/show_bug.cgi?id=45360
+
+        Only release colorSpace if we created it.
+
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::updateContents):
+
 2010-09-08  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Antonio Gomes.
