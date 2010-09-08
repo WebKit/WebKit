@@ -99,6 +99,7 @@ public:
     virtual PlatformLayer* platformLayer() const;
 #endif
 
+    virtual PlatformMedia platformMedia() const;
 private slots:
     void mediaStatusChanged(QMediaPlayer::MediaStatus);
     void handleError(QMediaPlayer::Error);

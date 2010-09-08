@@ -70,6 +70,7 @@ struct PlatformMedia {
         QTMovieVisualContextType,
         GStreamerGWorldType,
         ChromiumMediaPlayerType,
+        QtMediaPlayerType,
     } type;
 
     union {
@@ -78,6 +79,7 @@ struct PlatformMedia {
         QTMovieVisualContext* qtMovieVisualContext;
         GStreamerGWorld* gstreamerGWorld;
         MediaPlayerPrivateInterface* chromiumMediaPlayer;
+        MediaPlayerPrivateInterface* qtMediaPlayer;
     } media;
 };
 
