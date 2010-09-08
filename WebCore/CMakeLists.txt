@@ -1615,6 +1615,7 @@ IF (ENABLE_SVG)
         rendering/RenderSVGResourceClipper.cpp
         rendering/RenderSVGResourceContainer.cpp
         rendering/RenderSVGResourceFilter.cpp
+        rendering/RenderSVGResourceFilterPrimitive.cpp
         rendering/RenderSVGResourceGradient.cpp
         rendering/RenderSVGResourceLinearGradient.cpp
         rendering/RenderSVGResourceMarker.cpp

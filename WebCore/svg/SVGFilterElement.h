@@ -45,22 +45,6 @@ public:
     void setFilterRes(unsigned long filterResX, unsigned long filterResY);
     FloatRect filterBoundingBox(const FloatRect&) const;
 
-    static void invalidateFilter(SVGElement* element)
-    {
-        ASSERT(element);
-        if (!element->inDocument())
-            return;
-        Node* parent = element->parentNode();
-        while (parent && !parent->hasTagName(SVGNames::filterTag))
-            parent = parent->parentNode();
-
-        if (!parent)
-            return;
-
-        if (RenderObject* object = parent->renderer())
-            object->setNeedsLayout(true);
-    }
-
 private:
     SVGFilterElement(const QualifiedName&, Document*);
 

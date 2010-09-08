@@ -676,6 +676,9 @@ void writeSVGResourceContainer(TextStream& ts, const RenderObject& object, int i
 
 void writeSVGContainer(TextStream& ts, const RenderObject& container, int indent)
 {
+    // Currently RenderSVGResourceFilterPrimitive has no meaningful output.
+    if (container.isSVGResourceFilterPrimitive())
+        return;
     writeStandardPrefix(ts, container, indent);
     writePositionAndStyle(ts, container);
     ts << "\n";

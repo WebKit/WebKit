@@ -25,6 +25,7 @@
 #include "SVGFELightElement.h"
 
 #include "Attribute.h"
+#include "RenderSVGResource.h"
 #include "SVGFilterElement.h"
 #include "SVGNames.h"
 
@@ -76,8 +77,13 @@ void SVGFELightElement::svgAttributeChanged(const QualifiedName& attrName)
         || attrName == SVGNames::pointsAtYAttr
         || attrName == SVGNames::pointsAtZAttr
         || attrName == SVGNames::specularExponentAttr
-        || attrName == SVGNames::limitingConeAngleAttr)
-        SVGFilterElement::invalidateFilter(this);
+        || attrName == SVGNames::limitingConeAngleAttr) {
+        if (Node* parentNode = parent()) {
+            RenderObject* renderer = parentNode->renderer();
+            if (renderer && renderer->isSVGResourceFilterPrimitive())
+                RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
+        }
+    }
 }
 
 void SVGFELightElement::synchronizeProperty(const QualifiedName& attrName)
@@ -124,8 +130,13 @@ void SVGFELightElement::childrenChanged(bool changedByParser, Node* beforeChange
 {
     SVGElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 
-    if (!changedByParser)
-        SVGFilterElement::invalidateFilter(this);
+    if (!changedByParser) {
+        if (Node* parentNode = parent()) {
+            RenderObject* renderer = parentNode->renderer();
+            if (renderer && renderer->isSVGResourceFilterPrimitive())
+                RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
+        }
+    }
 }
 
 }

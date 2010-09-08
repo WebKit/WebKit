@@ -324,6 +324,8 @@
 		18F831B80FD48C7800D8C56B /* WorkerLoaderProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 18F831B70FD48C7800D8C56B /* WorkerLoaderProxy.h */; };
 		1921327411C0E6BB00456238 /* SVGFEConvolveMatrixElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1921327111C0E6BB00456238 /* SVGFEConvolveMatrixElement.cpp */; };
 		1921327511C0E6BB00456238 /* SVGFEConvolveMatrixElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1921327211C0E6BB00456238 /* SVGFEConvolveMatrixElement.h */; };
+		19423B501234E86B00D1EE9E /* RenderSVGResourceFilterPrimitive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19423B4E1234E86B00D1EE9E /* RenderSVGResourceFilterPrimitive.cpp */; };
+		19423B511234E86B00D1EE9E /* RenderSVGResourceFilterPrimitive.h in Headers */ = {isa = PBXBuildFile; fileRef = 19423B4F1234E86B00D1EE9E /* RenderSVGResourceFilterPrimitive.h */; };
 		19BFF64B11C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 19BFF64611C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.h */; };
 		19BFF64C11C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 19BFF64711C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.mm */; };
 		19BFF64D11C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 19BFF64811C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElementInternal.h */; };
@@ -6137,6 +6139,8 @@
 		1921327111C0E6BB00456238 /* SVGFEConvolveMatrixElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEConvolveMatrixElement.cpp; sourceTree = "<group>"; };
 		1921327211C0E6BB00456238 /* SVGFEConvolveMatrixElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFEConvolveMatrixElement.h; sourceTree = "<group>"; };
 		1921327311C0E6BB00456238 /* SVGFEConvolveMatrixElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGFEConvolveMatrixElement.idl; sourceTree = "<group>"; };
+		19423B4E1234E86B00D1EE9E /* RenderSVGResourceFilterPrimitive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourceFilterPrimitive.cpp; sourceTree = "<group>"; };
+		19423B4F1234E86B00D1EE9E /* RenderSVGResourceFilterPrimitive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceFilterPrimitive.h; sourceTree = "<group>"; };
 		19BFF64611C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGFEConvolveMatrixElement.h; sourceTree = "<group>"; };
 		19BFF64711C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGFEConvolveMatrixElement.mm; sourceTree = "<group>"; };
 		19BFF64811C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGFEConvolveMatrixElementInternal.h; sourceTree = "<group>"; };
@@ -17248,6 +17252,8 @@
 				08082372117987C100241DE8 /* RenderSVGResourceContainer.h */,
 				841FDC241178C9BE00F8AC9B /* RenderSVGResourceFilter.cpp */,
 				841FDC251178C9BE00F8AC9B /* RenderSVGResourceFilter.h */,
+				19423B4E1234E86B00D1EE9E /* RenderSVGResourceFilterPrimitive.cpp */,
+				19423B4F1234E86B00D1EE9E /* RenderSVGResourceFilterPrimitive.h */,
 				08C34AF11179C056002D7456 /* RenderSVGResourceGradient.cpp */,
 				08C34AF21179C057002D7456 /* RenderSVGResourceGradient.h */,
 				08C34AF31179C057002D7456 /* RenderSVGResourceLinearGradient.cpp */,
@@ -19726,6 +19732,7 @@
 				84BDA16C11358D2A00DBF64C /* RenderSVGResourceClipper.h in Headers */,
 				08082373117987C100241DE8 /* RenderSVGResourceContainer.h in Headers */,
 				841FDC271178C9BE00F8AC9B /* RenderSVGResourceFilter.h in Headers */,
+				19423B511234E86B00D1EE9E /* RenderSVGResourceFilterPrimitive.h in Headers */,
 				08C34AF61179C057002D7456 /* RenderSVGResourceGradient.h in Headers */,
 				08C34AF81179C057002D7456 /* RenderSVGResourceLinearGradient.h in Headers */,
 				8499A515115FB33000F566E3 /* RenderSVGResourceMarker.h in Headers */,
@@ -22281,6 +22288,7 @@
 				84BDA16B11358D2A00DBF64C /* RenderSVGResourceClipper.cpp in Sources */,
 				086A400611F6D6B7002CEC53 /* RenderSVGResourceContainer.cpp in Sources */,
 				841FDC261178C9BE00F8AC9B /* RenderSVGResourceFilter.cpp in Sources */,
+				19423B501234E86B00D1EE9E /* RenderSVGResourceFilterPrimitive.cpp in Sources */,
 				08C34AF51179C057002D7456 /* RenderSVGResourceGradient.cpp in Sources */,
 				08C34AF71179C057002D7456 /* RenderSVGResourceLinearGradient.cpp in Sources */,
 				8499A514115FB33000F566E3 /* RenderSVGResourceMarker.cpp in Sources */,

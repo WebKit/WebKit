@@ -1906,6 +1906,7 @@ HEADERS += \
     rendering/RenderSVGResourceClipper.h \
     rendering/RenderSVGResourceContainer.h \
     rendering/RenderSVGResourceFilter.h \ 
+    rendering/RenderSVGResourceFilterPrimitive.h \
     rendering/RenderSVGResourceGradient.h \
     rendering/RenderSVGResourceLinearGradient.h \
     rendering/RenderSVGResourceMarker.h \
@@ -3054,6 +3055,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/RenderSVGResourceClipper.cpp \
         rendering/RenderSVGResourceContainer.cpp \
         rendering/RenderSVGResourceFilter.cpp \
+        rendering/RenderSVGResourceFilterPrimitive.cpp \
         rendering/RenderSVGResourceGradient.cpp \
         rendering/RenderSVGResourceLinearGradient.cpp \
         rendering/RenderSVGResourceMarker.cpp \

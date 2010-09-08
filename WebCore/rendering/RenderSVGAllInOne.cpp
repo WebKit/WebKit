@@ -37,6 +37,7 @@
 #include "RenderSVGResourceClipper.cpp"
 #include "RenderSVGResourceContainer.cpp"
 #include "RenderSVGResourceFilter.cpp"
+#include "RenderSVGResourceFilterPrimitive.cpp"
 #include "RenderSVGResourceGradient.cpp"
 #include "RenderSVGResourceLinearGradient.cpp"
 #include "RenderSVGResourceMarker.cpp"
