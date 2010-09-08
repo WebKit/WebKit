@@ -23,55 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTMLViewSourceParser_h
-#define HTMLViewSourceParser_h
+#ifndef TextViewSourceParser_h
+#define TextViewSourceParser_h
 
-#include "DecodedDataDocumentParser.h"
-#include "HTMLInputStream.h"
-#include "HTMLToken.h"
-#include "HTMLTokenizer.h"
-#include "HTMLViewSourceDocument.h"
-#include <wtf/PassOwnPtr.h>
+#include "HTMLViewSourceParser.h"
 
 namespace WebCore {
 
-class HTMLTokenizer;
-class HTMLScriptRunner;
-class HTMLTreeBuilder;
-class HTMLPreloadScanner;
-class ScriptController;
-class ScriptSourceCode;
-
-class HTMLViewSourceParser :  public DecodedDataDocumentParser {
+class TextViewSourceParser :  public HTMLViewSourceParser {
 public:
-    static PassRefPtr<HTMLViewSourceParser> create(HTMLViewSourceDocument* document)
+    static PassRefPtr<TextViewSourceParser> create(HTMLViewSourceDocument* document)
     {
-        return adoptRef(new HTMLViewSourceParser(document));
+        return adoptRef(new TextViewSourceParser(document));
     }
-    virtual ~HTMLViewSourceParser();
-
-protected:
-    explicit HTMLViewSourceParser(HTMLViewSourceDocument*);
-
-    HTMLTokenizer* tokenizer() const { return m_tokenizer.get(); }
+    virtual ~TextViewSourceParser();
 
 private:
-    // DocumentParser
-    virtual void insert(const SegmentedString&);
-    virtual void append(const SegmentedString&);
-    virtual void finish();
-    virtual bool finishWasCalled();
-
-    HTMLViewSourceDocument* document() const { return static_cast<HTMLViewSourceDocument*>(DecodedDataDocumentParser::document()); }
-
-    void pumpTokenizer();
-    String sourceForToken();
-    void updateTokenizerState();
-
-    HTMLInputStream m_input;
-    SegmentedString m_source;
-    HTMLToken m_token;
-    OwnPtr<HTMLTokenizer> m_tokenizer;
+    explicit TextViewSourceParser(HTMLViewSourceDocument*);
 };
 
 }

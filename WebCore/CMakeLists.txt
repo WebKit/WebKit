@@ -1048,6 +1048,7 @@ SET(WebCore_SOURCES
     html/parser/HTMLTreeBuilder.cpp
     html/parser/HTMLViewSourceParser.cpp
     html/parser/TextDocumentParser.cpp
+    html/parser/TextViewSourceParser.cpp
 
     inspector/ConsoleMessage.cpp
     inspector/InjectedScript.cpp

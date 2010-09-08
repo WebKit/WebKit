@@ -302,6 +302,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/parser/HTMLTreeBuilder.cpp \
 	html/parser/HTMLViewSourceParser.cpp \
 	html/parser/TextDocumentParser.cpp \
+	html/parser/TextViewSourceParser.cpp \
 	\
 	loader/Cache.cpp \
 	loader/CachedCSSStyleSheet.cpp \

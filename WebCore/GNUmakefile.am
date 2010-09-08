@@ -1571,6 +1571,8 @@ webcore_sources += \
 	WebCore/html/parser/HTMLViewSourceParser.h \
 	WebCore/html/parser/TextDocumentParser.cpp \
 	WebCore/html/parser/TextDocumentParser.h \
+	WebCore/html/parser/TextViewSourceParser.cpp \
+	WebCore/html/parser/TextViewSourceParser.h \
 	WebCore/html/ValidityState.cpp \
 	WebCore/html/ValidityState.h \
 	WebCore/html/VoidCallback.h \

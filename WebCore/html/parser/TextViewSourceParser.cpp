@@ -23,57 +23,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTMLViewSourceParser_h
-#define HTMLViewSourceParser_h
+#include "config.h"
+#include "TextViewSourceParser.h"
 
-#include "DecodedDataDocumentParser.h"
-#include "HTMLInputStream.h"
-#include "HTMLToken.h"
 #include "HTMLTokenizer.h"
-#include "HTMLViewSourceDocument.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
-class HTMLTokenizer;
-class HTMLScriptRunner;
-class HTMLTreeBuilder;
-class HTMLPreloadScanner;
-class ScriptController;
-class ScriptSourceCode;
-
-class HTMLViewSourceParser :  public DecodedDataDocumentParser {
-public:
-    static PassRefPtr<HTMLViewSourceParser> create(HTMLViewSourceDocument* document)
-    {
-        return adoptRef(new HTMLViewSourceParser(document));
-    }
-    virtual ~HTMLViewSourceParser();
-
-protected:
-    explicit HTMLViewSourceParser(HTMLViewSourceDocument*);
-
-    HTMLTokenizer* tokenizer() const { return m_tokenizer.get(); }
-
-private:
-    // DocumentParser
-    virtual void insert(const SegmentedString&);
-    virtual void append(const SegmentedString&);
-    virtual void finish();
-    virtual bool finishWasCalled();
-
-    HTMLViewSourceDocument* document() const { return static_cast<HTMLViewSourceDocument*>(DecodedDataDocumentParser::document()); }
-
-    void pumpTokenizer();
-    String sourceForToken();
-    void updateTokenizerState();
-
-    HTMLInputStream m_input;
-    SegmentedString m_source;
-    HTMLToken m_token;
-    OwnPtr<HTMLTokenizer> m_tokenizer;
-};
-
+TextViewSourceParser::TextViewSourceParser(HTMLViewSourceDocument* document)
+    : HTMLViewSourceParser(document)
+{
+    tokenizer()->setState(HTMLTokenizer::PLAINTEXTState);
 }
 
-#endif
+TextViewSourceParser::~TextViewSourceParser()
+{
+}
+
+}

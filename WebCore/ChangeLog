@@ -1,5 +1,37 @@
 2010-09-08  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Create TextViewSourceParser
+        https://bugs.webkit.org/show_bug.cgi?id=45343
+
+        Rather than have the view source document set a flag on
+        HTMLViewSourceParser to indicate whether we're parsing a text document,
+        this patch creates a TextViewSourceParser for parsing text documents in
+        view-source mode.  Like the TextDocumentParser, the
+        TextViewSourceParser implements this functionality by subclassing its
+        HTML counterpart.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::createParser):
+        * html/parser/HTMLViewSourceParser.cpp:
+        * html/parser/HTMLViewSourceParser.h:
+        (WebCore::HTMLViewSourceParser::tokenizer):
+        * html/parser/TextViewSourceParser.cpp: Added.
+        (WebCore::TextViewSourceParser::TextViewSourceParser):
+        (WebCore::TextViewSourceParser::~TextViewSourceParser):
+        * html/parser/TextViewSourceParser.h: Added.
+        (WebCore::TextViewSourceParser::create):
+
+2010-09-08  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Darin Adler.
 
         Move HTMLInputStream to WebCore/html/parser
