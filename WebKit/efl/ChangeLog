@@ -1,3 +1,14 @@
+2010-09-08  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix.
+
+        [EFL] Need to add custom dependencies.
+        https://bugs.webkit.org/show_bug.cgi?id=45247
+
+        Add WebKit_Theme into WebKit_SOURCES to make it while building.
+
+        * CMakeListsEfl.txt:
+
 2010-09-08  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.
