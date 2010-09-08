@@ -143,6 +143,8 @@ public:
     void addPath(const SkPath&);
     SkPath currentPathInLocalCoordinates() const;
 
+    void canvasClipPath(const SkPath&);
+
     // Returns the fill color. The returned color has it's alpha adjusted
     // by the current alpha.
     SkColor effectiveFillColor() const;
@@ -180,6 +182,8 @@ public:
     void setImageResamplingHint(const IntSize& srcSize, const FloatSize& dstSize);
     void clearImageResamplingHint();
     bool hasImageResamplingHint() const;
+
+    bool canAccelerate() const;
     bool useGPU() { return m_useGPU; }
     void setSharedGraphicsContext3D(SharedGraphicsContext3D*, DrawingBuffer*, const IntSize&);
     GLES2Canvas* gpuCanvas() const { return m_gpuCanvas.get(); }

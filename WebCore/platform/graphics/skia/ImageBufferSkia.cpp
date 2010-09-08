@@ -111,13 +111,16 @@ void ImageBuffer::draw(GraphicsContext* context, ColorSpace styleColorSpace, con
                        CompositeOperator op, bool useLowQualityScale)
 {
     if (m_data.m_platformContext.useGPU() && context->platformContext()->useGPU()) {
-        DrawingBuffer* sourceDrawingBuffer = m_data.m_platformContext.gpuCanvas()->drawingBuffer();
-        unsigned sourceTexture = sourceDrawingBuffer->getRenderingResultsAsTexture();
-        FloatRect destRectFlipped(destRect);
-        destRectFlipped.setY(destRect.y() + destRect.height());
-        destRectFlipped.setHeight(-destRect.height());
-        context->platformContext()->gpuCanvas()->drawTexturedRect(sourceTexture, m_size, srcRect, destRectFlipped, styleColorSpace, op);
-        return;
+        if (context->platformContext()->canAccelerate()) {
+            DrawingBuffer* sourceDrawingBuffer = m_data.m_platformContext.gpuCanvas()->drawingBuffer();
+            unsigned sourceTexture = sourceDrawingBuffer->getRenderingResultsAsTexture();
+            FloatRect destRectFlipped(destRect);
+            destRectFlipped.setY(destRect.y() + destRect.height());
+            destRectFlipped.setHeight(-destRect.height());
+            context->platformContext()->gpuCanvas()->drawTexturedRect(sourceTexture, m_size, srcRect, destRectFlipped, styleColorSpace, op);
+            return;
+        }
+        m_data.m_platformContext.syncSoftwareCanvas();
     }
 
     RefPtr<Image> image = BitmapImageSingleFrameSkia::create(*m_data.m_platformContext.bitmap(), context == m_context);

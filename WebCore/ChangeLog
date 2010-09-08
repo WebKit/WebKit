@@ -1,3 +1,34 @@
+2010-09-08  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Force canvas 2d draw calls to happen in software if a gradient, pattern, shadow, or clip are active
+        https://bugs.webkit.org/show_bug.cgi?id=45405
+
+        This forces all draw calls to happen in software instead of hardware if there is a fill pattern, gradient,
+        shadow, or clip applied; at least until we can handle these in hardware.  Otherwise the pattern/gradient/etc
+        is completely ignored by the hardware drawing routine and we render incorrectly.
+
+        The test is slightly convervative - for example it will force drawImage() calls to happen in software if a
+        fill gradient is set even though it's irrelevant.  This doesn't seem to be an issue in practice and we
+        can tighten the checks later if needed.
+
+        Tested by fast/canvas/canvas-incremental-repaint.html.
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::canvasClip):
+        (WebCore::GraphicsContext::fillRect):
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::draw):
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImageSingleFrameSkia::draw):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::State::State):
+        (WebCore::PlatformContextSkia::canvasClipPath):
+        (WebCore::PlatformContextSkia::canAccelerate):
+        * platform/graphics/skia/PlatformContextSkia.h:
+
 2010-09-08  Peter Kasting  <pkasting@google.com>
 
         Reviewed by David Hyatt.
