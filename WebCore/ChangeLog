@@ -1,3 +1,15 @@
+2010-09-08  Peter Kasting  <pkasting@google.com>
+
+        Not reviewed, fallout from http://trac.webkit.org/changeset/67001
+
+        Fix compile failures and add svn:eol-style on two new files.
+
+        * platform/ScrollAnimator.h: Added property svn:eol-style.
+        * platform/ScrollAnimatorWin.cpp: Added property svn:eol-style.
+        * platform/win/PopupMenuWin.cpp: Fix compile errors.
+        (WebCore::PopupMenuWin::scrollToRevealSelection):
+        (WebCore::PopupMenuWin::scrollSize):
+
 2010-09-08  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.

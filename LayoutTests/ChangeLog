@@ -1,3 +1,11 @@
+2010-09-08  Peter Kasting  <pkasting@google.com>
+
+        Not reviewed, skip failing layout tests.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45411
+
+        * platform/qt/Skipped:
+
 2010-09-08  Martin Robinson  <mrobinson@igalia.com>
 
         Skip websocket tests until the GLib/GIO situation on the

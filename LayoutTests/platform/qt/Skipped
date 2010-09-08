@@ -5451,3 +5451,9 @@ fullscreen/
 
 # https://bugs.webkit.org/show_bug.cgi?id=45194
 fast/text/decomposed-after-stacked-diacritics.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=45411
+fast/events/continuous-platform-wheelevent-in-scrolling-div.html
+fast/events/scroll-event-does-not-bubble.html
+fast/events/spatial-navigation/snav-only-clipped-overflow-content.html
+fast/events/wheelevent-in-scrolling-div.html
