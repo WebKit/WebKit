@@ -110,7 +110,7 @@ void FocusController::setFocusedFrame(PassRefPtr<Frame> frame)
     m_isChangingFocusedFrame = false;
 }
 
-Frame* FocusController::focusedOrMainFrame()
+Frame* FocusController::focusedOrMainFrame() const
 {
     if (Frame* frame = focusedFrame())
         return frame;

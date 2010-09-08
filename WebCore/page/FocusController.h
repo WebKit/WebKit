@@ -46,7 +46,7 @@ public:
 
     void setFocusedFrame(PassRefPtr<Frame>);
     Frame* focusedFrame() const { return m_focusedFrame.get(); }
-    Frame* focusedOrMainFrame();
+    Frame* focusedOrMainFrame() const;
 
     bool setInitialFocus(FocusDirection, KeyboardEvent*);
     bool advanceFocus(FocusDirection, KeyboardEvent*, bool initialFocus = false);
