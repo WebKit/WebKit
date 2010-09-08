@@ -1,3 +1,16 @@
+2010-09-07  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        test-webkitpy: Fix load error of
+        webkitpy/layout_tests/port/factory_unittest.py on Win32 Python
+        https://bugs.webkit.org/show_bug.cgi?id=45356 Need a short
+
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+          Avoid to import fcntl on win32. Win32 Python doesn't have fcntl
+          and we don't use server_process.py on Win32 Python. However
+          unittest.py tries to load everything in a module.
+
 2010-09-07  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Kent Tamura.

@@ -29,7 +29,6 @@
 
 """Package that implements the ServerProcess wrapper class"""
 
-import fcntl
 import logging
 import os
 import select
@@ -37,6 +36,8 @@ import signal
 import subprocess
 import sys
 import time
+if sys.platform != 'win32':
+    import fcntl
 
 from webkitpy.common.system.executive import Executive
 
