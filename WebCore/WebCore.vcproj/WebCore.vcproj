@@ -39537,10 +39537,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTMLInputStream.h"
-				>
-			</File>
-			<File
 				RelativePath="..\html\HTMLIsIndexElement.cpp"
 				>
 				<FileConfiguration
@@ -41913,6 +41909,10 @@
                 </File>
                 <File
                     RelativePath="..\html\parser\HTMLFormattingElementList.h"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\parser\HTMLInputStream.h"
                     >
                 </File>
                 <File

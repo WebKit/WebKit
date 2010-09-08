@@ -1433,7 +1433,6 @@ webcore_sources += \
 	WebCore/html/HTMLImageLoader.h \
 	WebCore/html/HTMLInputElement.cpp \
 	WebCore/html/HTMLInputElement.h \
-	WebCore/html/HTMLInputStream.h \
 	WebCore/html/HTMLIsIndexElement.cpp \
 	WebCore/html/HTMLIsIndexElement.h \
 	WebCore/html/HTMLKeygenElement.cpp \
@@ -1555,6 +1554,7 @@ webcore_sources += \
 	WebCore/html/parser/HTMLEntityTable.h \
 	WebCore/html/parser/HTMLFormattingElementList.cpp \
 	WebCore/html/parser/HTMLFormattingElementList.h \
+	WebCore/html/parser/HTMLInputStream.h \
 	WebCore/html/parser/HTMLParserScheduler.cpp \
 	WebCore/html/parser/HTMLParserScheduler.h \
 	WebCore/html/parser/HTMLPreloadScanner.cpp \

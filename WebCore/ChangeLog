@@ -1,5 +1,31 @@
 2010-09-08  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        Move HTMLInputStream to WebCore/html/parser
+        https://bugs.webkit.org/show_bug.cgi?id=45339
+
+        I forgot to move this file before.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/parser/HTMLInputStream.h: Renamed from WebCore/html/HTMLInputStream.h.
+        (WebCore::HTMLInputStream::HTMLInputStream):
+        (WebCore::HTMLInputStream::appendToEnd):
+        (WebCore::HTMLInputStream::insertAtCurrentInsertionPoint):
+        (WebCore::HTMLInputStream::hasInsertionPoint):
+        (WebCore::HTMLInputStream::markEndOfFile):
+        (WebCore::HTMLInputStream::haveSeenEndOfFile):
+        (WebCore::HTMLInputStream::current):
+        (WebCore::HTMLInputStream::splitInto):
+        (WebCore::HTMLInputStream::mergeFrom):
+        (WebCore::InsertionPointRecord::InsertionPointRecord):
+        (WebCore::InsertionPointRecord::~InsertionPointRecord):
+
+2010-09-08  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         TextDocument should come in from the cold
