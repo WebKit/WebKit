@@ -28,6 +28,7 @@
 
 #include "WebCommon.h"
 #include "WebDeviceOrientationClient.h"
+#include "WebPrivateOwnPtr.h"
 
 namespace WebCore { class DeviceOrientationClientMock; }
 
@@ -49,7 +50,7 @@ private:
     WEBKIT_API void initialize();
     WEBKIT_API void reset();
 
-    WebCore::DeviceOrientationClientMock* m_clientMock;
+    WebPrivateOwnPtr<WebCore::DeviceOrientationClientMock> m_clientMock;
 };
 
 } // namespace WebKit

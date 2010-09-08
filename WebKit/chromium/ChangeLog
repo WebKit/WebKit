@@ -1,3 +1,22 @@
+2010-09-08  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Plug leak in WebDeviceOrientationClientMock
+        https://bugs.webkit.org/show_bug.cgi?id=45305
+
+        WebDeviceOrientationClientMock is responsible for destroying the
+        WebDeviceOrientationController object pointed to by the argument
+        passed to the setController() member function.
+
+        Also use the new WebPrivateOnwPtr for m_clientMock.
+
+        * public/WebDeviceOrientationClientMock.h:
+        * src/WebDeviceOrientationClientMock.cpp:
+        (WebKit::WebDeviceOrientationClientMock::setController):
+        (WebKit::WebDeviceOrientationClientMock::initialize):
+        (WebKit::WebDeviceOrientationClientMock::reset):
+
 2010-09-07  Tony Chang  <tony@chromium.org>
 
         Reviewed by Darin Fisher.
