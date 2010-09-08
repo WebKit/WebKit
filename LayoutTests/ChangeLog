@@ -1,3 +1,14 @@
+2010-09-08  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        Missing EOL in expected test results
+        https://bugs.webkit.org/show_bug.cgi?id=45352
+
+        Add the missing EOL.
+
+        * fast/notifications/notifications-click-event-expected.txt:
+
 2010-09-08  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Nikolas Zimmermann.

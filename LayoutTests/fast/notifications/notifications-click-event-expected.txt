@@ -5,3 +5,4 @@ Showing notifications.
 To exercise manually, grant notification permissions and load this page, then click on the notification. You should see a "PASS" message.
 
 PASS: click event fired.
+
