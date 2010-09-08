@@ -1,5 +1,12 @@
 2010-09-08  Adam Barth  <abarth@webkit.org>
 
+        Attempted Window build fix.
+
+        * WebDataSource.cpp:
+        (WebDataSource::subresourceForURL):
+
+2010-09-08  Adam Barth  <abarth@webkit.org>
+
         Rubber-stamped by Eric Seidel.
 
         Rename DocLoader to CachedResourceLoader because that's what it does.

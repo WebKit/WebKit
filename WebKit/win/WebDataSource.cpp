@@ -297,7 +297,7 @@ HRESULT STDMETHODCALLTYPE WebDataSource::subresourceForURL(
     if (!doc)
         return E_FAIL;
 
-    CachedResource *cachedResource = doc->docLoader()->cachedResource(String(url));
+    CachedResource *cachedResource = doc->cachedResourceLoader()->cachedResource(String(url));
 
     if (!cachedResource)
         return E_FAIL;
