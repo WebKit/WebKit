@@ -1,5 +1,19 @@
 2010-09-08  Tony Chang  <tony@chromium.org>
 
+        Unreviewed.  Remove compositing results because we skip these
+        tests in chromium-linux.
+
+        * platform/chromium-linux/compositing: Removed.
+        * platform/chromium-linux/compositing/generated-content-expected.checksum: Removed.
+        * platform/chromium-linux/compositing/generated-content-expected.png: Removed.
+        * platform/chromium-linux/compositing/overflow: Removed.
+        * platform/chromium-linux/compositing/overflow/overflow-positioning-expected.checksum: Removed.
+        * platform/chromium-linux/compositing/overflow/overflow-positioning-expected.png: Removed.
+        * platform/chromium-linux/compositing/repaint: Removed.
+        * platform/chromium-linux/compositing/repaint/become-overlay-composited-layer-expected.checksum: Removed.
+
+2010-09-08  Tony Chang  <tony@chromium.org>
+
         Unreviewed.  Adding png files for chromium-linux tests that have
         .checksum files but no png files.  Also remove 4 checksums where
         there is no corresponding png file, but we're failing the tests so
