@@ -130,6 +130,32 @@ def extract_platforms(paths):
     return platforms
 
 
+def has_intermediate_results(test, fallbacks, matching_platform,
+                             path_exists=os.path.exists):
+    """Returns True if there is a test result that causes us to not delete
+    this duplicate.
+
+    For example, chromium-linux may be a duplicate of the checked in result,
+    but chromium-win may have a different result checked in.  In this case,
+    we need to keep the duplicate results.
+
+    Args:
+        test: The test name.
+        fallbacks: A list of platforms we fall back on.
+        matching_platform: The platform that we found the duplicate test
+            result.  We can stop checking here.
+        path_exists: Optional parameter that allows us to stub out
+            os.path.exists for testing.
+    """
+    for platform in fallbacks:
+        if platform == matching_platform:
+            return False
+        test_path = os.path.join('LayoutTests', 'platform', platform, test)
+        if path_exists(test_path):
+            return True
+    return False
+
+
 def find_dups(hashes, port_fallbacks):
     """Yields info about redundant test expectations.
     Args:
@@ -151,7 +177,12 @@ def find_dups(hashes, port_fallbacks):
         for platform in platforms.keys():
             for fallback in port_fallbacks[platform]:
                 if fallback in platforms.keys():
-                    yield test, platform, fallback, platforms[platform]
+                    # We have to verify that there isn't an intermediate result
+                    # that causes this duplicate hash to exist.
+                    if not has_intermediate_results(test,
+                            port_fallbacks[platform], fallback):
+                        path = os.path.join('LayoutTests', platforms[platform])
+                        yield test, platform, fallback, path
 
 
 def deduplicate(glob_pattern):

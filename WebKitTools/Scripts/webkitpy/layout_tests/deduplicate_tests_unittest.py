@@ -89,6 +89,47 @@ class ListDuplicatesTest(unittest.TestCase):
                            deduplicate_tests._BASE_PLATFORM: 'what/'},
                            deduplicate_tests.extract_platforms(['platform/foo/bar', 'what/']))
 
+    def test_has_intermediate_results(self):
+        test_cases = (
+            # If we found a duplicate in our first fallback, we have no
+            # intermediate results.
+            (False, ('fast/foo-expected.txt',
+                     ['chromium-win', 'chromium', 'base'],
+                     'chromium-win',
+                     lambda path: True)),
+            # Since chromium-win has a result, we have an intermediate result.
+            (True,  ('fast/foo-expected.txt',
+                     ['chromium-win', 'chromium', 'base'],
+                     'chromium',
+                     lambda path: True)),
+            # There are no intermediate results.
+            (False, ('fast/foo-expected.txt',
+                     ['chromium-win', 'chromium', 'base'],
+                     'chromium',
+                     lambda path: False)),
+            # There are no intermediate results since a result for chromium is
+            # our duplicate file.
+            (False, ('fast/foo-expected.txt',
+                     ['chromium-win', 'chromium', 'base'],
+                     'chromium',
+                     lambda path: path == 'LayoutTests/platform/chromium/fast/foo-expected.txt')),
+            # We have an intermediate result in 'chromium' even though our
+            # duplicate is with the file in 'base'.
+            (True,  ('fast/foo-expected.txt',
+                     ['chromium-win', 'chromium', 'base'],
+                     'base',
+                     lambda path: path == 'LayoutTests/platform/chromium/fast/foo-expected.txt')),
+            # We have an intermediate result in 'chromium-win' even though our
+            # duplicate is in 'base'.
+            (True,  ('fast/foo-expected.txt',
+                     ['chromium-win', 'chromium', 'base'],
+                     'base',
+                     lambda path: path == 'LayoutTests/platform/chromium-win/fast/foo-expected.txt')),
+        )
+        for expected, inputs in test_cases:
+            self.assertEquals(expected,
+                deduplicate_tests.has_intermediate_results(*inputs))
+
     def test_unique(self):
         MockExecutive.response = (
             '100644 blob 5053240b3353f6eb39f7cb00259785f16d121df2\tLayoutTests/mac/foo-expected.txt\n'
@@ -116,12 +157,12 @@ class ListDuplicatesTest(unittest.TestCase):
         self.assertEquals(('git', 'ls-tree', '-r', 'HEAD', 'LayoutTests'), MockExecutive.last_run_command[-1])
         self.assertEquals(2, len(result))
         self.assertEquals({'test': 'animage.png',
-                           'path': 'platform/chromium-linux/animage.png',
+                           'path': 'LayoutTests/platform/chromium-linux/animage.png',
                            'fallback': 'chromium-win',
                            'platform': 'chromium-linux'},
                           result[0])
         self.assertEquals({'test': 'foo-expected.txt',
-                           'path': 'platform/chromium-linux/foo-expected.txt',
+                           'path': 'LayoutTests/platform/chromium-linux/foo-expected.txt',
                            'fallback': 'chromium-win',
                            'platform': 'chromium-linux'},
                           result[1])
@@ -131,7 +172,7 @@ class ListDuplicatesTest(unittest.TestCase):
         self.assertEquals(('git', 'ls-tree', '-r', 'HEAD', 'LayoutTests'), MockExecutive.last_run_command[-1])
         self.assertEquals(1, len(result))
         self.assertEquals({'test': 'foo-expected.txt',
-                           'path': 'platform/chromium-linux/foo-expected.txt',
+                           'path': 'LayoutTests/platform/chromium-linux/foo-expected.txt',
                            'fallback': 'chromium-win',
                            'platform': 'chromium-linux'},
                           result[0])
@@ -141,7 +182,7 @@ class ListDuplicatesTest(unittest.TestCase):
         self.assertEquals(('git', 'ls-tree', '-r', 'HEAD', 'LayoutTests'), MockExecutive.last_run_command[-1])
         self.assertEquals(1, len(result))
         self.assertEquals({'test': 'animage.png',
-                           'path': 'platform/chromium-linux/animage.png',
+                           'path': 'LayoutTests/platform/chromium-linux/animage.png',
                            'fallback': 'chromium-win',
                            'platform': 'chromium-linux'},
                           result[0])
