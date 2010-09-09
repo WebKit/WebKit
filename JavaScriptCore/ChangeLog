@@ -1,3 +1,16 @@
+2010-09-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        [Qt] REGRESSION(63348): jsc is broken
+        https://bugs.webkit.org/show_bug.cgi?id=42818
+
+        Need fastcall conventions on Qt/Win/MinGW.
+        Based on patches of Gavin Barraclough: r63947 and r63948.
+
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+
 2010-09-08  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Antonio Gomes.

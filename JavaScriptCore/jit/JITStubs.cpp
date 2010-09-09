@@ -80,8 +80,12 @@ namespace JSC {
 
 #if OS(LINUX) && CPU(X86_64)
 #define SYMBOL_STRING_RELOCATION(name) #name "@plt"
+#elif OS(DARWIN)
+#define SYMBOL_STRING_RELOCATION(name) "_" #name
+#elif CPU(X86) && COMPILER(MINGW)
+#define SYMBOL_STRING_RELOCATION(name) "@" #name "@4"
 #else
-#define SYMBOL_STRING_RELOCATION(name) SYMBOL_STRING(name)
+#define SYMBOL_STRING_RELOCATION(name) #name
 #endif
 
 #if OS(DARWIN)

@@ -239,12 +239,16 @@ namespace JSC {
 #define STUB_ARGS_DECLARATION void** args
 #define STUB_ARGS (args)
 
-#if CPU(X86) && COMPILER(MSVC)
-#define JIT_STUB __fastcall
-#elif CPU(X86) && COMPILER(GCC) && !OS(WINDOWS)
-#define JIT_STUB  __attribute__ ((fastcall))
+#if CPU(X86)
+    #if COMPILER(MSVC)
+    #define JIT_STUB __fastcall
+    #elif COMPILER(GCC)
+    #define JIT_STUB  __attribute__ ((fastcall))
+    #else
+    #error "JIT_STUB function calls require fastcall conventions on x86, add appropriate directive/attribute here for your compiler!"
+    #endif
 #else
-#define JIT_STUB
+    #define JIT_STUB
 #endif
 
     extern "C" void ctiVMThrowTrampoline();
