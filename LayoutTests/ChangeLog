@@ -1,3 +1,19 @@
+2010-09-09  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] always send an Accept header
+
+        Ensure QtWebKit always sends an Accept header. This is required
+        for compatibility with sites that expect the header in requests
+        for subresources.
+
+        See https://bugs.webkit.org/show_bug.cgi?id=33242 for more.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45458
+
+        * platform/qt/Skipped:
+
 2010-09-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by James Robinson.

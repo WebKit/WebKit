@@ -64,6 +64,11 @@ QNetworkRequest ResourceRequest::toNetworkRequest(QObject* originatingFrame) con
             request.setRawHeader(name, "");
     }
 
+    // Make sure we always have an Accept header; some sites require this to
+    // serve subresources
+    if (!request.hasRawHeader("Accept"))
+        request.setRawHeader("Accept", "*/*");
+
     switch (cachePolicy()) {
     case ReloadIgnoringCacheData:
         request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::AlwaysNetwork);
