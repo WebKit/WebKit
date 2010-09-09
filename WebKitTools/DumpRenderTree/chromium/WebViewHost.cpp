@@ -156,7 +156,7 @@ static string URLDescription(const GURL& url)
 static void printResponseDescription(const WebURLResponse& response)
 {
     if (response.isNull()) {
-        fputs("(null)", stdout);
+        puts("(null)");
         return;
     }
     string url = response.url().spec();
@@ -168,17 +168,17 @@ static void printResponseDescription(const WebURLResponse& response)
 static void printNodeDescription(const WebNode& node, int exception)
 {
     if (exception) {
-        fputs("ERROR", stdout);
+        puts("ERROR");
         return;
     }
     if (node.isNull()) {
-        fputs("(null)", stdout);
+        puts("(null)");
         return;
     }
-    fputs(node.nodeName().utf8().data(), stdout);
+    puts(node.nodeName().utf8().data());
     const WebNode& parent = node.parentNode();
     if (!parent.isNull()) {
-        fputs(" > ", stdout);
+        puts(" > ");
         printNodeDescription(parent, 0);
     }
 }
@@ -186,7 +186,7 @@ static void printNodeDescription(const WebNode& node, int exception)
 static void printRangeDescription(const WebRange& range)
 {
     if (range.isNull()) {
-        fputs("(null)", stdout);
+        puts("(null)");
         return;
     }
     printf("range from %d of ", range.startOffset());
@@ -277,9 +277,9 @@ void WebViewHost::didStopLoading()
 bool WebViewHost::shouldBeginEditing(const WebRange& range)
 {
     if (layoutTestController()->shouldDumpEditingCallbacks()) {
-        fputs("EDITING DELEGATE: shouldBeginEditingInDOMRange:", stdout);
+        puts("EDITING DELEGATE: shouldBeginEditingInDOMRange:");
         printRangeDescription(range);
-        fputs("\n", stdout);
+        puts("\n");
     }
     return layoutTestController()->acceptsEditing();
 }
@@ -287,9 +287,9 @@ bool WebViewHost::shouldBeginEditing(const WebRange& range)
 bool WebViewHost::shouldEndEditing(const WebRange& range)
 {
     if (layoutTestController()->shouldDumpEditingCallbacks()) {
-        fputs("EDITING DELEGATE: shouldEndEditingInDOMRange:", stdout);
+        puts("EDITING DELEGATE: shouldEndEditingInDOMRange:");
         printRangeDescription(range);
-        fputs("\n", stdout);
+        puts("\n");
     }
     return layoutTestController()->acceptsEditing();
 }
@@ -297,9 +297,9 @@ bool WebViewHost::shouldEndEditing(const WebRange& range)
 bool WebViewHost::shouldInsertNode(const WebNode& node, const WebRange& range, WebEditingAction action)
 {
     if (layoutTestController()->shouldDumpEditingCallbacks()) {
-        fputs("EDITING DELEGATE: shouldInsertNode:", stdout);
+        ("EDITING DELEGATE: shouldInsertNode:");
         printNodeDescription(node, 0);
-        fputs(" replacingDOMRange:", stdout);
+        puts(" replacingDOMRange:");
         printRangeDescription(range);
         printf(" givenAction:%s\n", editingActionDescription(action).c_str());
     }
@@ -320,9 +320,9 @@ bool WebViewHost::shouldChangeSelectedRange(
     const WebRange& fromRange, const WebRange& toRange, WebTextAffinity affinity, bool stillSelecting)
 {
     if (layoutTestController()->shouldDumpEditingCallbacks()) {
-        fputs("EDITING DELEGATE: shouldChangeSelectedDOMRange:", stdout);
+        puts("EDITING DELEGATE: shouldChangeSelectedDOMRange:");
         printRangeDescription(fromRange);
-        fputs(" toDOMRange:", stdout);
+        puts(" toDOMRange:");
         printRangeDescription(toRange);
         printf(" affinity:%s stillSelecting:%s\n",
                textAffinityDescription(affinity).c_str(),
@@ -334,9 +334,9 @@ bool WebViewHost::shouldChangeSelectedRange(
 bool WebViewHost::shouldDeleteRange(const WebRange& range)
 {
     if (layoutTestController()->shouldDumpEditingCallbacks()) {
-        fputs("EDITING DELEGATE: shouldDeleteDOMRange:", stdout);
+        puts("EDITING DELEGATE: shouldDeleteDOMRange:");
         printRangeDescription(range);
-        fputs("\n", stdout);
+        puts("\n");
     }
     return layoutTestController()->acceptsEditing();
 }
@@ -346,7 +346,7 @@ bool WebViewHost::shouldApplyStyle(const WebString& style, const WebRange& range
     if (layoutTestController()->shouldDumpEditingCallbacks()) {
         printf("EDITING DELEGATE: shouldApplyStyle:%s toElementsInDOMRange:", style.utf8().data());
         printRangeDescription(range);
-        fputs("\n", stdout);
+        puts("\n");
     }
     return layoutTestController()->acceptsEditing();
 }
@@ -365,13 +365,13 @@ void WebViewHost::didBeginEditing()
 {
     if (!layoutTestController()->shouldDumpEditingCallbacks())
         return;
-    fputs("EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification\n", stdout);
+    puts("EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification\n");
 }
 
 void WebViewHost::didChangeSelection(bool isEmptySelection)
 {
     if (layoutTestController()->shouldDumpEditingCallbacks())
-        fputs("EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification\n", stdout);
+        puts("EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification\n");
     // No need to update clipboard with the selected text in DRT.
 }
 
@@ -379,14 +379,14 @@ void WebViewHost::didChangeContents()
 {
     if (!layoutTestController()->shouldDumpEditingCallbacks())
         return;
-    fputs("EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification\n", stdout);
+    puts("EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification\n");
 }
 
 void WebViewHost::didEndEditing()
 {
     if (!layoutTestController()->shouldDumpEditingCallbacks())
         return;
-    fputs("EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification\n", stdout);
+    puts("EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification\n");
 }
 
 bool WebViewHost::handleCurrentKeyboardEvent()
@@ -661,10 +661,10 @@ WebNavigationPolicy WebViewHost::decidePolicyForNavigation(
     printf("Policy delegate: attempt to load %s with navigation type '%s'",
            URLDescription(request.url()).c_str(), webNavigationTypeToString(type));
     if (!originatingNode.isNull()) {
-        fputs(" originating from ", stdout);
+        puts(" originating from ");
         printNodeDescription(originatingNode, 0);
     }
-    fputs("\n", stdout);
+    puts("\n");
     if (m_policyDelegateIsPermissive)
         result = WebKit::WebNavigationPolicyCurrentTab;
     else
@@ -720,7 +720,7 @@ void WebViewHost::didCancelClientRedirect(WebFrame* frame)
     if (!m_shell->shouldDumpFrameLoadCallbacks())
         return;
     printFrameDescription(frame);
-    fputs(" - didCancelClientRedirectForFrame\n", stdout);
+    puts(" - didCancelClientRedirectForFrame\n");
 }
 
 void WebViewHost::didCreateDataSource(WebFrame*, WebDataSource* ds)
@@ -732,7 +732,7 @@ void WebViewHost::didStartProvisionalLoad(WebFrame* frame)
 {
     if (m_shell->shouldDumpFrameLoadCallbacks()) {
         printFrameDescription(frame);
-        fputs(" - didStartProvisionalLoadForFrame\n", stdout);
+        puts(" - didStartProvisionalLoadForFrame\n");
     }
 
     if (!m_topLoadingFrame)
@@ -740,7 +740,7 @@ void WebViewHost::didStartProvisionalLoad(WebFrame* frame)
 
     if (layoutTestController()->stopProvisionalFrameLoads()) {
         printFrameDescription(frame);
-        fputs(" - stopping load in didStartProvisionalLoadForFrame callback\n", stdout);
+        puts(" - stopping load in didStartProvisionalLoadForFrame callback\n");
         frame->stopLoading();
     }
     updateAddressBar(frame->view());
@@ -750,7 +750,7 @@ void WebViewHost::didReceiveServerRedirectForProvisionalLoad(WebFrame* frame)
 {
     if (m_shell->shouldDumpFrameLoadCallbacks()) {
         printFrameDescription(frame);
-        fputs(" - didReceiveServerRedirectForProvisionalLoadForFrame\n", stdout);
+        puts(" - didReceiveServerRedirectForProvisionalLoadForFrame\n");
     }
     updateAddressBar(frame->view());
 }
@@ -759,7 +759,7 @@ void WebViewHost::didFailProvisionalLoad(WebFrame* frame, const WebURLError& err
 {
     if (m_shell->shouldDumpFrameLoadCallbacks()) {
         printFrameDescription(frame);
-        fputs(" - didFailProvisionalLoadWithError\n", stdout);
+        puts(" - didFailProvisionalLoadWithError\n");
     }
 
     locationChangeDone(frame);
@@ -772,7 +772,7 @@ void WebViewHost::didCommitProvisionalLoad(WebFrame* frame, bool isNewNavigation
 {
     if (m_shell->shouldDumpFrameLoadCallbacks()) {
         printFrameDescription(frame);
-        fputs(" - didCommitLoadForFrame\n", stdout);
+        puts(" - didCommitLoadForFrame\n");
     }
     updateForCommittedLoad(frame, isNewNavigation);
 }
@@ -801,7 +801,7 @@ void WebViewHost::didFinishDocumentLoad(WebFrame* frame)
 {
     if (m_shell->shouldDumpFrameLoadCallbacks()) {
         printFrameDescription(frame);
-        fputs(" - didFinishDocumentLoadForFrame\n", stdout);
+        puts(" - didFinishDocumentLoadForFrame\n");
     } else {
         unsigned pendingUnloadEvents = frame->unloadListenerCount();
         if (pendingUnloadEvents) {
@@ -815,7 +815,7 @@ void WebViewHost::didHandleOnloadEvents(WebFrame* frame)
 {
     if (m_shell->shouldDumpFrameLoadCallbacks()) {
         printFrameDescription(frame);
-        fputs(" - didHandleOnloadEventsForFrame\n", stdout);
+        puts(" - didHandleOnloadEventsForFrame\n");
     }
 }
 
@@ -823,7 +823,7 @@ void WebViewHost::didFailLoad(WebFrame* frame, const WebURLError& error)
 {
     if (m_shell->shouldDumpFrameLoadCallbacks()) {
         printFrameDescription(frame);
-        fputs(" - didFailLoadWithError\n", stdout);
+        puts(" - didFailLoadWithError\n");
     }
     locationChangeDone(frame);
 }
@@ -832,7 +832,7 @@ void WebViewHost::didFinishLoad(WebFrame* frame)
 {
     if (m_shell->shouldDumpFrameLoadCallbacks()) {
         printFrameDescription(frame);
-        fputs(" - didFinishLoadForFrame\n", stdout);
+        puts(" - didFinishLoadForFrame\n");
     }
     updateAddressBar(frame->view());
     locationChangeDone(frame);
@@ -849,7 +849,7 @@ void WebViewHost::didChangeLocationWithinPage(WebFrame* frame)
 {
     if (m_shell->shouldDumpFrameLoadCallbacks()) {
         printFrameDescription(frame);
-        fputs(" - didChangeLocationWithinPageForFrame\n", stdout);
+        puts(" - didChangeLocationWithinPageForFrame\n");
     }
 }
 
@@ -875,11 +875,11 @@ void WebViewHost::willSendRequest(WebFrame*, unsigned identifier, WebURLRequest&
                URLDescription(mainDocumentURL).c_str(),
                request.httpMethod().utf8().data());
         printResponseDescription(redirectResponse);
-        fputs("\n", stdout);
+        puts("\n");
     }
 
     if (!redirectResponse.isNull() && m_blocksRedirects) {
-        fputs("Returning null for this redirect\n", stdout);
+        puts("Returning null for this redirect\n");
         // To block the request, we set its URL to an empty one.
         request.setURL(WebURL());
         return;
@@ -915,19 +915,27 @@ void WebViewHost::willSendRequest(WebFrame*, unsigned identifier, WebURLRequest&
 
 void WebViewHost::didReceiveResponse(WebFrame*, unsigned identifier, const WebURLResponse& response)
 {
-    if (!m_shell->shouldDumpResourceLoadCallbacks())
-        return;
-    printResourceDescription(identifier);
-    fputs(" - didReceiveResponse ", stdout);
-    printResponseDescription(response);
-    fputs("\n", stdout);
+    if (m_shell->shouldDumpResourceLoadCallbacks()) {
+        printResourceDescription(identifier);
+        puts(" - didReceiveResponse ");
+        printResponseDescription(response);
+        puts("\n");
+    }
+    if (m_shell->shouldDumpResourceResponseMIMETypes()) {
+        GURL url = response.url();
+        WebString mimeType = response.mimeType();
+        printf("%s has MIME type %s\n",
+            url.ExtractFileName().c_str(),
+            // Simulate NSURLResponse's mapping of empty/unknown MIME types to application/octet-stream
+            mimeType.isEmpty() ? "application/octet-stream" : mimeType.utf8().data());
+    }
 }
 
 void WebViewHost::didFinishResourceLoad(WebFrame*, unsigned identifier)
 {
     if (m_shell->shouldDumpResourceLoadCallbacks()) {
         printResourceDescription(identifier);
-        fputs(" - didFinishLoading\n", stdout);
+        puts(" - didFinishLoading\n");
     }
     m_resourceIdentifierMap.remove(identifier);
 }
@@ -936,9 +944,9 @@ void WebViewHost::didFailResourceLoad(WebFrame*, unsigned identifier, const WebU
 {
     if (m_shell->shouldDumpResourceLoadCallbacks()) {
         printResourceDescription(identifier);
-        fputs(" - didFailLoadingWithError: ", stdout);
-        fputs(webkit_support::MakeURLErrorDescription(error).c_str(), stdout);
-        fputs("\n", stdout);
+        puts(" - didFailLoadingWithError: ");
+        puts(webkit_support::MakeURLErrorDescription(error).c_str());
+        puts("\n");
     }
     m_resourceIdentifierMap.remove(identifier);
 }
@@ -946,13 +954,13 @@ void WebViewHost::didFailResourceLoad(WebFrame*, unsigned identifier, const WebU
 void WebViewHost::didDisplayInsecureContent(WebFrame*)
 {
     if (m_shell->shouldDumpFrameLoadCallbacks())
-        fputs("didDisplayInsecureContent\n", stdout);
+        puts("didDisplayInsecureContent\n");
 }
 
 void WebViewHost::didRunInsecureContent(WebFrame*, const WebSecurityOrigin& origin)
 {
     if (m_shell->shouldDumpFrameLoadCallbacks())
-        fputs("didRunInsecureContent\n", stdout);
+        puts("didRunInsecureContent\n");
 }
 
 bool WebViewHost::allowScript(WebFrame*, bool enabledPerSettings)
@@ -1200,14 +1208,14 @@ void WebViewHost::printFrameDescription(WebFrame* webframe)
     string name8 = webframe->name().utf8();
     if (webframe == webView()->mainFrame()) {
         if (!name8.length()) {
-            fputs("main frame", stdout);
+            puts("main frame");
             return;
         }
         printf("main frame \"%s\"", name8.c_str());
         return;
     }
     if (!name8.length()) {
-        fputs("frame (anonymous)", stdout);
+        puts("frame (anonymous)");
         return;
     }
     printf("frame \"%s\"", name8.c_str());

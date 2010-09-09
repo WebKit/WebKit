@@ -107,6 +107,7 @@ public:
     void setFocus(WebKit::WebWidget*, bool enable);
     bool shouldDumpFrameLoadCallbacks() const { return (m_testIsPreparing || m_testIsPending) && layoutTestController()->shouldDumpFrameLoadCallbacks(); }
     bool shouldDumpResourceLoadCallbacks() const  { return (m_testIsPreparing || m_testIsPending) && layoutTestController()->shouldDumpResourceLoadCallbacks(); }
+    bool shouldDumpResourceResponseMIMETypes() const  { return (m_testIsPreparing || m_testIsPending) && layoutTestController()->shouldDumpResourceResponseMIMETypes(); }
     void setIsLoading(bool flag) { m_isLoading = flag; }
 
     // Called by the LayoutTestController to signal test completion.

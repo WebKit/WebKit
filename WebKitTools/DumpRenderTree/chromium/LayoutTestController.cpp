@@ -83,6 +83,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("dumpBackForwardList", &LayoutTestController::dumpBackForwardList);
     bindMethod("dumpFrameLoadCallbacks", &LayoutTestController::dumpFrameLoadCallbacks);
     bindMethod("dumpResourceLoadCallbacks", &LayoutTestController::dumpResourceLoadCallbacks);
+    bindMethod("dumpResourceResponseMIMETypes", &LayoutTestController::dumpResourceResponseMIMETypes);
     bindMethod("dumpStatusCallbacks", &LayoutTestController::dumpWindowStatusChanges);
     bindMethod("dumpTitleChanges", &LayoutTestController::dumpTitleChanges);
     bindMethod("setAcceptsEditing", &LayoutTestController::setAcceptsEditing);
@@ -285,6 +286,12 @@ void LayoutTestController::dumpResourceLoadCallbacks(const CppArgumentList&, Cpp
     result->setNull();
 }
 
+void LayoutTestController::dumpResourceResponseMIMETypes(const CppArgumentList&, CppVariant* result)
+{
+    m_dumpResourceResponseMIMETypes = true;
+    result->setNull();
+}
+
 void LayoutTestController::dumpChildFrameScrollPositions(const CppArgumentList&, CppVariant* result)
 {
     m_dumpChildFrameScrollPositions = true;
@@ -480,6 +487,7 @@ void LayoutTestController::reset()
     m_dumpEditingCallbacks = false;
     m_dumpFrameLoadCallbacks = false;
     m_dumpResourceLoadCallbacks = false;
+    m_dumpResourceResponseMIMETypes = false;
     m_dumpBackForwardList = false;
     m_dumpChildFrameScrollPositions = false;
     m_dumpChildFramesAsText = false;

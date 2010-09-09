@@ -1,3 +1,16 @@
+2010-09-09  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Implement layoutTestController.dumpResourceResponseMIMETypes in Chromium DRT
+        https://bugs.webkit.org/show_bug.cgi?id=45479
+
+        Remove tests from Chromium expectations that now pass.
+
+        * platform/chromium-linux/fast/dom/HTMLLinkElement/prefetch-expected.txt: Removed.
+        * platform/chromium-mac/fast/dom/HTMLLinkElement/prefetch-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2010-09-09  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Andreas Kling.
