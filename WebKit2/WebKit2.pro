@@ -167,6 +167,7 @@ HEADERS += \
     Shared/VisitedLinkTable.h \
     Shared/WebEventConversion.h \
     Shared/WebEvent.h \
+    Shared/WebNumber.h \
     Shared/WebNavigationDataStore.h \
     Shared/WebPreferencesStore.h \
     Shared/WebURLRequest.h \
@@ -182,6 +183,7 @@ HEADERS += \
     UIProcess/API/C/WKFrame.h \
     UIProcess/API/C/WKFramePolicyListener.h \
     UIProcess/API/C/WKNavigationData.h \
+    UIProcess/API/C/WKNumber.h \
     UIProcess/API/C/WKPage.h \
     UIProcess/API/C/WKPageNamespace.h \
     UIProcess/API/C/WKPagePrivate.h \
@@ -293,6 +295,7 @@ SOURCES += \
     UIProcess/API/C/WKFrame.cpp \
     UIProcess/API/C/WKFramePolicyListener.cpp \
     UIProcess/API/C/WKNavigationData.cpp \
+    UIProcess/API/C/WKNumber.cpp \
     UIProcess/API/C/WKPage.cpp \
     UIProcess/API/C/WKPageNamespace.cpp \
     UIProcess/API/C/WKPreferences.cpp \

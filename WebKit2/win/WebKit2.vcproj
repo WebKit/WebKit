@@ -477,6 +477,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\WebNumber.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\WebPreferencesStore.cpp"
 				>
 			</File>
@@ -1392,6 +1396,14 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKNavigationData.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKNumber.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKNumber.h"
 						>
 					</File>
 					<File

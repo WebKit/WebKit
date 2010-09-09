@@ -44,6 +44,9 @@ public:
         TypeURL,
         TypeURLRequest,
         TypeURLResponse,
+
+        // Base numberic types
+        TypeDouble,
         
         // UIProcess types
         TypeBackForwardList,

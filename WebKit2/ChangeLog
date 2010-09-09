@@ -1,3 +1,36 @@
+2010-09-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        WebKit2 needs a way to box numbers (for Array, Dictionary, etc.)
+        <rdar://problem/8408844>
+        https://bugs.webkit.org/show_bug.cgi?id=45429
+
+        This adds a generic WebNumber class that can be used for any scalar
+        numeric type. Right now, we are only exposing a double version, but it
+        is designed to allow more.
+
+        * Shared/APIObject.h:
+        * Shared/WebNumber.h: Added.
+        (WebKit::WebNumber::create):
+        (WebKit::WebNumber::value):
+        (WebKit::WebNumber::setValue):
+        (WebKit::WebNumber::WebNumber):
+        (WebKit::WebNumber::type):
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKBase.h:
+        * UIProcess/API/C/WKNumber.cpp: Added.
+        (WKDoubleGetTypeID):
+        (WKDoubleCreate):
+        (WKDoubleGetValue):
+        (WKDoubleSetValue):
+        * UIProcess/API/C/WKNumber.h: Added.
+        * UIProcess/API/C/WebKit2.h:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.make:
+
 2010-09-08  Anders Carlsson  <andersca@apple.com>
 
         Don't include the std namespace in a header. This hopefully fixes the Windows build.

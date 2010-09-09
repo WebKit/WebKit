@@ -23,35 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKit2_h
-#define WebKit2_h
+#ifndef WebNumber_h
+#define WebNumber_h
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKType.h>
+#include "APIObject.h"
+#include <wtf/PassRefPtr.h>
 
-#include <WebKit2/WKArray.h>
-#include <WebKit2/WKBackForwardList.h>
-#include <WebKit2/WKBackForwardListItem.h>
-#include <WebKit2/WKContext.h>
-#include <WebKit2/WKData.h>
-#include <WebKit2/WKError.h>
-#include <WebKit2/WKFormSubmissionListener.h>
-#include <WebKit2/WKFrame.h>
-#include <WebKit2/WKFramePolicyListener.h>
-#include <WebKit2/WKMutableArray.h>
-#include <WebKit2/WKMutableDictionary.h>
-#include <WebKit2/WKNavigationData.h>
-#include <WebKit2/WKNumber.h>
-#include <WebKit2/WKPage.h>
-#include <WebKit2/WKPageNamespace.h>
-#include <WebKit2/WKPreferences.h>
-#include <WebKit2/WKString.h>
-#include <WebKit2/WKURL.h>
-#include <WebKit2/WKURLRequest.h>
-#include <WebKit2/WKURLResponse.h>
+namespace WebKit {
 
-#if !__APPLE__ || __OBJC__
-#include <WebKit2/WKView.h>
-#endif
+template<typename NumberType, APIObject::Type APIObjectType>
+class WebNumber : public APIObject {
+public:
+    static const Type APIType = APIObjectType;
 
-#endif /* WebKit2_h */
+    static PassRefPtr<WebNumber> create(NumberType value)
+    {
+        return adoptRef(new WebNumber(value));
+    }
+
+    NumberType value() const { return m_value; }
+    void setValue(NumberType value) { m_value = value; }
+
+private:
+    WebNumber(NumberType value)
+        : m_value(value)
+    {
+    }
+
+    virtual Type type() const { return APIType; }
+
+    NumberType m_value;
+};
+
+typedef WebNumber<double, APIObject::TypeDouble> WebDouble;
+
+} // namespace WebKit
+
+#endif // WebNumber_h
