@@ -1,3 +1,34 @@
+2010-09-08  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed.
+
+        Rebaseline chromium-mac image: WebKit r67049 starts showing spelling marker under foo or so.
+
+        * platform/chromium-mac/editing/execCommand/outdent-selection-expected.checksum: Added.
+        * platform/chromium-mac/editing/execCommand/outdent-selection-expected.png: Added.
+        * platform/chromium-mac/editing/inserting/insert-3907422-fix-expected.checksum: Added.
+        * platform/chromium-mac/editing/inserting/insert-3907422-fix-expected.png: Added.
+        * platform/chromium-mac/editing/pasteboard/interchange-newline-1-expected.checksum: Added.
+        * platform/chromium-mac/editing/pasteboard/interchange-newline-1-expected.png: Added.
+        * platform/chromium-mac/editing/pasteboard/merge-after-delete-1-expected.checksum: Added.
+        * platform/chromium-mac/editing/pasteboard/merge-after-delete-1-expected.png: Added.
+        * platform/chromium-mac/editing/pasteboard/merge-after-delete-2-expected.checksum: Added.
+        * platform/chromium-mac/editing/pasteboard/merge-after-delete-2-expected.png: Added.
+        * platform/chromium-mac/editing/pasteboard/merge-after-delete-expected.checksum: Added.
+        * platform/chromium-mac/editing/pasteboard/merge-after-delete-expected.png: Added.
+        * platform/chromium-mac/editing/pasteboard/merge-end-4-expected.checksum: Added.
+        * platform/chromium-mac/editing/pasteboard/merge-end-4-expected.png: Added.
+        * platform/chromium-mac/editing/pasteboard/merge-end-blockquote-expected.checksum: Added.
+        * platform/chromium-mac/editing/pasteboard/merge-end-blockquote-expected.png: Added.
+        * platform/chromium-mac/editing/pasteboard/merge-end-list-expected.checksum: Added.
+        * platform/chromium-mac/editing/pasteboard/merge-end-list-expected.png: Added.
+        * platform/chromium-mac/editing/pasteboard/merge-end-table-expected.checksum: Added.
+        * platform/chromium-mac/editing/pasteboard/merge-end-table-expected.png: Added.
+        * platform/chromium-mac/editing/style/create-block-for-style-011-expected.checksum: Added.
+        * platform/chromium-mac/editing/style/create-block-for-style-011-expected.png: Added.
+        * platform/chromium-mac/editing/style/create-block-for-style-012-expected.checksum: Added.
+        * platform/chromium-mac/editing/style/create-block-for-style-012-expected.png: Added.
+
 2010-09-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         LayoutTest regressions due to http://trac.webkit.org/changeset/67001
