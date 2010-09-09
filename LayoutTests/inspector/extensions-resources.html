@@ -18,7 +18,7 @@ function extension_testGetAllResources(nextTest)
 {
     function compareResources(a, b)
     {
-        return a.har.request.url.localeCompare(b.har.request.url);
+        return a.har.request.url.toLowerCase().localeCompare(b.har.request.url.toLowerCase());
     }
 
     function onResource(result)

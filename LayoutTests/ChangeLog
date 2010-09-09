@@ -1,3 +1,10 @@
+2010-09-09  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed test fix.
+        Make resource url sorting order depend less on collation order
+
+        * inspector/extensions-resources.html:
+
 2010-09-09  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.
