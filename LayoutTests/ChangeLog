@@ -1,3 +1,32 @@
+2010-09-09  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Convert IndexedDB tests from script tests to normal tests
+        https://bugs.webkit.org/show_bug.cgi?id=45452
+
+        Half the indexedDB tests are currently script tests and half aren't.
+        We should make them all the same.  Based on the webkit-dev thread AP
+        started not long ago, I think normal tests (but using the script tests)
+        scripts makes the most sense.
+
+        There are no changes to the tests themselves...I just moved code between
+        files.
+
+        * storage/indexeddb/basics.html:
+        * storage/indexeddb/database-basics.html:
+        * storage/indexeddb/keyrange.html:
+        * storage/indexeddb/objectstore-basics.html:
+        * storage/indexeddb/open-cursor.html:
+        * storage/indexeddb/script-tests/TEMPLATE.html: Removed.
+        * storage/indexeddb/script-tests/basics.js: Removed.
+        * storage/indexeddb/script-tests/database-basics.js: Removed.
+        * storage/indexeddb/script-tests/keyrange.js: Removed.
+        * storage/indexeddb/script-tests/objectstore-basics.js: Removed.
+        * storage/indexeddb/script-tests/open-cursor.js: Removed.
+        * storage/indexeddb/script-tests/transaction-basics.js: Removed.
+        * storage/indexeddb/transaction-basics.html:
+
 2010-09-09  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.
