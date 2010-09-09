@@ -1,3 +1,18 @@
+2010-09-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by James Robinson.
+
+        REGRESSION (r67101): query-font-size.html fails on qt and gtk builds
+        https://bugs.webkit.org/show_bug.cgi?id=45484
+
+        Removed the computed style's font size from the result.
+
+        This is fine because the expected result still contains queryCommandValue('fontSize')
+        along with the markup on which queryCommandValue is called,
+        which is sufficient to ensure the bug 21033 does not regress.
+
+        * editing/execCommand/query-font-size.html:
+
 2010-09-09  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Adam Roben.

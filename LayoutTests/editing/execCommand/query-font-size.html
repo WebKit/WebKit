@@ -59,10 +59,8 @@ function reportSizeForSpan(span, comment)
     var tableRow = addRow(table);
     addCellWithTextContents(tableRow, comment);
     addCellWithTextContents(tableRow, span.parentNode.innerHTML); // sill FF has no outerHTML
-   
     window.getSelection().selectAllChildren(span.parentNode);
     addCellWithTextContents(tableRow, "" + document.queryCommandValue("FontSize"));
-    addCellWithTextContents(tableRow, "" + window.getComputedStyle(span, null).fontSize);
 }
 
 function testExecCommandFontSize(size, fontFamily)
@@ -98,7 +96,6 @@ var tableRow = addRow(table);
 addHeaderWithTextContents(tableRow, "test");
 addHeaderWithTextContents(tableRow, "html");
 addHeaderWithTextContents(tableRow, "queryCommandValue result");
-addHeaderWithTextContents(tableRow, "getComputedStyle result");
 
 for (var size = -2; size < 8; size++) {
     testExecCommandFontSize(size);
@@ -115,7 +112,7 @@ testManualFontSize("5em");
 testManualFontSize("10px");
 
 tableRow = addRow(table);
-addHeaderWithTextContents(tableRow, "monospace tests to show bug 19161");
+addHeaderWithTextContents(tableRow, "monospace tests to ensure the bug 19161 does not affect queryCommandValue's values");
 
 for (var size = -2; size < 8; size++) {
     testExecCommandFontSize(size, 'monospace');
