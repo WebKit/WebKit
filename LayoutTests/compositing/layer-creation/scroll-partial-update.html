@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style type="text/css">
+      #overlay {
+        position: absolute;
+        left: 10px;
+        top: 10px;
+        width: 400px;
+        height: 100px;
+        z-index: 1;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+
+      #container {
+        position: absolute;
+        left: 200px;
+        top: 8px;
+        width: 200px;
+        z-index: 2;
+        border: 2px solid blue;
+      }
+
+      #scroller {
+        height: 200px;
+        background-color: yellow;
+        overflow-y: scroll;
+      }
+
+      #scroller > div {
+        height: 400px;
+      }
+      
+      pre {
+        margin-top: 200px;
+      }
+    </style>
+    <script type="text/javascript" charset="utf-8">
+      if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+      }
+
+      function doTest()
+      {
+        window.setTimeout(function() {
+          document.getElementById('scroller').scrollTop = 50;
+          if (window.layoutTestController) {
+            document.getElementById('results').innerText = layoutTestController.layerTreeAsText();
+            layoutTestController.notifyDone();
+          }
+        }, 20);
+      }
+      window.addEventListener('load', doTest, false);
+    </script>
+  </head>
+  <body>
+
+    <video src="../resources/video.mp4" height="20" width="20"></video>
+
+    <div id="overlay"></div>
+
+    <div id="container">
+      <div id="scroller">
+        <div>scroll me</div>
+      </div>
+    </div>
+    <pre id="results"></pre>
+</body>
+</html>

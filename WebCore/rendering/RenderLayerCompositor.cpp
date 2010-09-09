@@ -212,7 +212,7 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         return;
 
     bool needHierarchyUpdate = m_compositingLayersNeedRebuild;
-    if (!updateRoot) {
+    if (!updateRoot || m_compositingConsultsOverlap) {
         // Only clear the flag if we're updating the entire hierarchy.
         m_compositingLayersNeedRebuild = false;
         updateRoot = rootRenderLayer();
