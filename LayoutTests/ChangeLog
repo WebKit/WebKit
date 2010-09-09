@@ -1,3 +1,9 @@
+2010-09-08  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, Added newly failing test to skipped list.
+
+        * platform/gtk/Skipped:
+
 2010-09-08  Tony Chang  <tony@chromium.org>
 
         Reviewed by Dimitri Glazkov.
