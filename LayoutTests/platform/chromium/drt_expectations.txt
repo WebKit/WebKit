@@ -141,7 +141,6 @@ BUG_DRT : platform/chromium/accessibility/children-changed-notification.html = P
 BUG_DRT LINUX : fast/text/international/thai-line-breaks.html = IMAGE
 BUG_DRT WIN : svg/batik/text/textFeatures.svg = IMAGE
 BUG_DRT WIN MAC LINUX : media/media-can-play-mpeg4-video.html = TEXT
-BUG_DRT WIN MAC LINUX : fast/loader/stateobjects/pushstate-clears-forward-history.html = CRASH
 BUG_DRT WIN : http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html = CRASH
 BUG_DRT WIN MAC LINUX : storage/indexeddb/objectstore-basics.html = TEXT
 BUG_DRT WIN : fast/forms/search-styled.html = TEXT

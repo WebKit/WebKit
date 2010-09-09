@@ -45,8 +45,12 @@ function onTestWindowPopState(event)
             setTimeout(function() {testWindow.history.back();}, 0);
             break;
         case 4:
-            testWindow.close();
-            finishJSTest();        
+            // Close the window in a timeout to simulate popstate firing asynchronously, otherwise closing the window in a popstate handler results in a crash.
+            // FIXME: remove this when http://webkit.org/b/36202 is fixed.
+            setTimeout(function() {
+                testWindow.close();
+                finishJSTest();
+            }, 0);
             break;
         default:
             testFailed('unexpected pop state event state');

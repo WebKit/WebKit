@@ -1,3 +1,23 @@
+2010-09-08  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        pushstate-clears-forward-history.html crashes with Chromium DRT
+        https://bugs.webkit.org/show_bug.cgi?id=45351
+
+        pushstate-clears-forward-history.html would appear to crash with the
+        Chromium DRT. The crash was actually caused by the test that preceded
+        it, popstate-fires-with-page-cache.html, added with r66628. That test
+        would close a popup window during a popstate event handler, triggering
+        bug 36202 (popstate fires sychronously instead of asynchronously), 
+        leading to asserts firing.
+        
+        The workaround is to simulate popstate being async by wrapping the
+        cleanup code in a timeout (fixing 36202 itself is also on my radar).
+
+        * fast/loader/stateobjects/popstate-fires-with-page-cache.html:
+        * platform/chromium/drt_expectations.txt:
+
 2010-09-08  MORITA Hajime <morrita@google.com>
 
         Unreviewed, Added 1 test failures on Win to test_expectations.txt
