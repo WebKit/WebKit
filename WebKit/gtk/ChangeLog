@@ -1,3 +1,18 @@
+2010-09-09  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] testmimehandling falsely succeeds testing Ogg mime type
+        https://bugs.webkit.org/show_bug.cgi?id=45349
+
+        Make this actually test an ogg file request instead of pdf and
+        changed the expected result to match libsoup content-sniffing
+        result in the case of ogg/vorbis file.
+
+        * tests/testmimehandling.c:
+        (mime_type_policy_decision_requested_cb):
+        (test_mime_ogg):
+
 2010-09-08  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Martin Robinson.

@@ -125,7 +125,7 @@ static gboolean mime_type_policy_decision_requested_cb(WebKitWebView* view, WebK
         g_assert_cmpstr(mime_type, ==, "text/plain");
         g_assert(webkit_web_view_can_show_mime_type(view, mime_type));
     } else if (g_str_equal(type, "ogg")) {
-        g_assert_cmpstr(mime_type, ==, "audio/ogg");
+        g_assert_cmpstr(mime_type, ==, "audio/x-vorbis+ogg");
         g_assert(webkit_web_view_can_show_mime_type(view, mime_type));
     }
 
@@ -172,7 +172,7 @@ static void test_mime_text()
 
 static void test_mime_ogg()
 {
-    test_mime_type("pdf");
+    test_mime_type("ogg");
 }
 
 int main(int argc, char** argv)

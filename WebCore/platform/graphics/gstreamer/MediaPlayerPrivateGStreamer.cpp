@@ -1267,6 +1267,7 @@ static HashSet<String> mimeTypeCache()
 
                 if (g_str_equal(name, "audio/x-vorbis")) {
                     cache.add(String("audio/ogg"));
+                    cache.add(String("audio/x-vorbis+ogg"));
                     cached = true;
                 }
 
