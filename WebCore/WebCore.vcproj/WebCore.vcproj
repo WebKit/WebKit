@@ -23461,6 +23461,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\CachedResourceLoader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\CachedResourceLoader.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\CachedScript.cpp"
 				>
 			</File>
@@ -23494,14 +23502,6 @@
 			</File>
 			<File
 				RelativePath="..\loader\CrossOriginPreflightResultCache.h"
-				>
-			</File>
-			<File
-				RelativePath="..\loader\CachedResourceLoader.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\loader\CachedResourceLoader.h"
 				>
 			</File>
 			<File
@@ -25608,6 +25608,10 @@
 					</File>
 					<File
 						RelativePath="..\platform\graphics\win\IntSizeWin.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\LocalWindowsContext.h"
 						>
 					</File>
 					<File
@@ -37129,6 +37133,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\AsyncImageResizer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\AsyncImageResizer.h"
+				>
+			</File>
+			<File
 				RelativePath="..\fileapi\Blob.cpp"
 				>
 			</File>
@@ -37153,6 +37165,102 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\canvas\CanvasGradient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\CanvasGradient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\CanvasPattern.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\CanvasPattern.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\CanvasPixelArray.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\CanvasPixelArray.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\CanvasRenderingContext.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\CanvasRenderingContext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\CanvasRenderingContext2D.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\CanvasRenderingContext2D.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\CanvasStyle.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\CanvasStyle.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\CollectionCache.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\html\CollectionCache.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\CollectionType.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DataGridColumn.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DataGridColumn.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DataGridColumnList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DataGridColumnList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DataGridDataSource.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DateComponents.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DateComponents.h"
+				>
+			</File>
+			<File
 				RelativePath="..\fileapi\DirectoryEntry.cpp"
 				>
 			</File>
@@ -37169,6 +37277,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\DOMDataGridDataSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DOMDataGridDataSource.h"
+				>
+			</File>
+			<File
 				RelativePath="..\fileapi\DOMFilePath.cpp"
 				>
 			</File>
@@ -37182,6 +37298,14 @@
 			</File>
 			<File
 				RelativePath="..\fileapi\DOMFileSystem.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DOMFormData.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DOMFormData.h"
 				>
 			</File>
 			<File
@@ -37309,147 +37433,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\fileapi\LocalFileSystem.cpp"
+				RelativePath="..\html\FormDataList.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\fileapi\LocalFileSystem.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\Metadata.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\MetadataCallback.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\ThreadableBlobRegistry.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\ThreadableBlobRegistry.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\AsyncImageResizer.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\AsyncImageResizer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\CanvasGradient.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\CanvasGradient.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\CanvasPattern.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\CanvasPattern.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\CanvasPixelArray.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\CanvasPixelArray.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\CanvasRenderingContext.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\CanvasRenderingContext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\CanvasRenderingContext2D.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\CanvasRenderingContext2D.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\CanvasStyle.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\CanvasStyle.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\CollectionCache.cpp"
-				>
-				<FileConfiguration
-					Name="Release_PGO|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WholeProgramOptimization="true"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\html\CollectionCache.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\CollectionType.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\DataGridColumn.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\DataGridColumn.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\DataGridColumnList.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\DataGridColumnList.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\DataGridDataSource.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\DateComponents.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\DateComponents.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\DOMDataGridDataSource.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\DOMDataGridDataSource.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\DOMFormData.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\DOMFormData.h"
+				RelativePath="..\html\FormDataList.h"
 				>
 			</File>
 			<File
@@ -37458,14 +37446,6 @@
 			</File>
 			<File
 				RelativePath="..\html\FTPDirectoryDocument.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\FormDataList.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\FormDataList.h"
 				>
 			</File>
 			<File
@@ -41849,6 +41829,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\fileapi\LocalFileSystem.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\LocalFileSystem.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\MediaDocument.cpp"
 				>
 			</File>
@@ -41861,6 +41849,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\fileapi\Metadata.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\MetadataCallback.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\PluginDocument.cpp"
 				>
 			</File>
@@ -41868,142 +41864,6 @@
 				RelativePath="..\html\PluginDocument.h"
 				>
 			</File>
-			<Filter
-				Name="parser"
-				>
-                <File
-                    RelativePath="..\html\parser\CSSPreloadScanner.cpp"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\CSSPreloadScanner.h"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\HTMLConstructionSite.cpp"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\HTMLConstructionSite.h"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\HTMLDocumentParser.cpp"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\HTMLDocumentParser.h"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\HTMLEntityParser.cpp"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\HTMLEntityParser.h"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\HTMLElementStack.cpp"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\HTMLElementStack.h"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\HTMLEntitySearch.cpp"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\HTMLEntitySearch.h"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\HTMLFormattingElementList.cpp"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\HTMLFormattingElementList.h"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\HTMLInputStream.h"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\HTMLParserScheduler.cpp"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\HTMLParserScheduler.h"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\HTMLPreloadScanner.cpp"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\HTMLPreloadScanner.h"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\HTMLScriptRunner.cpp"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\HTMLScriptRunner.h"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\HTMLScriptRunnerHost.h"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\HTMLToken.h"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\HTMLTokenizer.cpp"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\HTMLTokenizer.h"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\HTMLTreeBuilder.cpp"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\HTMLTreeBuilder.h"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\HTMLViewSourceParser.cpp"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\HTMLViewSourceParser.h"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\TextDocumentParser.cpp"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\TextDocumentParser.h"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\TextViewSourceParser.cpp"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\parser\TextViewSourceParser.h"
-                    >
-                </File>
-            </Filter>
 			<File
 				RelativePath="..\html\StepRange.cpp"
 				>
@@ -42014,6 +41874,14 @@
 			</File>
 			<File
 				RelativePath="..\html\TextDocument.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\ThreadableBlobRegistry.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\ThreadableBlobRegistry.h"
 				>
 			</File>
 			<File
@@ -42036,6 +41904,142 @@
 				RelativePath="..\html\VoidCallback.h"
 				>
 			</File>
+			<Filter
+				Name="parser"
+				>
+				<File
+					RelativePath="..\html\parser\CSSPreloadScanner.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\CSSPreloadScanner.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLConstructionSite.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLConstructionSite.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLDocumentParser.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLDocumentParser.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLElementStack.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLElementStack.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLEntityParser.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLEntityParser.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLEntitySearch.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLEntitySearch.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLFormattingElementList.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLFormattingElementList.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLInputStream.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLParserScheduler.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLParserScheduler.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLPreloadScanner.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLPreloadScanner.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLScriptRunner.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLScriptRunner.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLScriptRunnerHost.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLToken.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLTokenizer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLTokenizer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLTreeBuilder.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLTreeBuilder.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLViewSourceParser.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLViewSourceParser.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\TextDocumentParser.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\TextDocumentParser.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\TextViewSourceParser.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\TextViewSourceParser.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="bindings"
@@ -52308,6 +52312,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\heapProfiler.css"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\HeapSnapshotView.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\helpScreen.css"
 					>
 				</File>
@@ -52345,14 +52357,6 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\inspectorSyntaxHighlight.css"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\heapProfiler.css"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\HeapSnapshotView.js"
 					>
 				</File>
 				<File

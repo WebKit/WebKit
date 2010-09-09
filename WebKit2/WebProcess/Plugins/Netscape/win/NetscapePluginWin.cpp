@@ -28,6 +28,7 @@
 #include "NotImplemented.h"
 #include "WebEvent.h"
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/LocalWindowsContext.h>
 
 using namespace WebCore;
 
@@ -49,10 +50,10 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
     }
 
     // FIXME: Support transparent plugins.
-    HDC hdc = context->getWindowsContext(dirtyRect, false);
+    LocalWindowsContext windowsContext(context, dirtyRect, false);
 
     m_npWindow.type = NPWindowTypeDrawable;
-    m_npWindow.window = hdc;
+    m_npWindow.window = windowsContext.hdc();
 
     WINDOWPOS windowpos = { 0, 0, 0, 0, 0, 0, 0 };
 
@@ -73,13 +74,10 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
     RECT dirtyWinRect = dirtyRect;
 
     npEvent.event = WM_PAINT;
-    npEvent.wParam = reinterpret_cast<uintptr_t>(hdc);
+    npEvent.wParam = reinterpret_cast<uintptr_t>(windowsContext.hdc());
     npEvent.lParam = reinterpret_cast<uintptr_t>(&dirtyWinRect);
 
     NPP_HandleEvent(&npEvent);
-
-    // FIXME: Support transparent plugins.
-    context->releaseWindowsContext(hdc, dirtyRect, false);
 }
 
 NPEvent toNP(const WebMouseEvent& event)

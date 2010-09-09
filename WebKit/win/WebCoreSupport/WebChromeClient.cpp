@@ -53,6 +53,7 @@
 #endif
 #include <WebCore/HTMLNames.h>
 #include <WebCore/Icon.h>
+#include <WebCore/LocalWindowsContext.h>
 #include <WebCore/LocalizedStrings.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
@@ -705,10 +706,9 @@ bool WebChromeClient::paintCustomScrollbar(GraphicsContext* context, const Float
         webState |= WebPressedScrollbarState;
     
     RECT webRect = enclosingIntRect(rect);
-    HDC hDC = context->getWindowsContext(webRect);
-    HRESULT hr = delegate->paintCustomScrollbar(m_webView, hDC, webRect, webSize, webState, webPressedPart, 
+    LocalWindowsContext windowsContext(context, webRect);
+    HRESULT hr = delegate->paintCustomScrollbar(m_webView, windowsContext.hdc(), webRect, webSize, webState, webPressedPart, 
                                                           vertical, value, proportion, webParts);
-    context->releaseWindowsContext(hDC, webRect);
     return SUCCEEDED(hr);
 }
 
@@ -722,9 +722,8 @@ bool WebChromeClient::paintCustomScrollCorner(GraphicsContext* context, const Fl
         return false;
 
     RECT webRect = enclosingIntRect(rect);
-    HDC hDC = context->getWindowsContext(webRect);
-    HRESULT hr = delegate->paintCustomScrollCorner(m_webView, hDC, webRect);
-    context->releaseWindowsContext(hDC, webRect);
+    LocalWindowsContext windowsContext(context, webRect);
+    HRESULT hr = delegate->paintCustomScrollCorner(m_webView, windowsContext.hdc(), webRect);
     return SUCCEEDED(hr);
 }
 

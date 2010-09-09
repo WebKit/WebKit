@@ -27,6 +27,7 @@
 #include "ScrollbarThemeWin.h"
 
 #include "GraphicsContext.h"
+#include "LocalWindowsContext.h"
 #include "PlatformMouseEvent.h"
 #include "Scrollbar.h"
 #include "SoftLinking.h"
@@ -240,14 +241,17 @@ void ScrollbarThemeWin::paintTrackPiece(GraphicsContext* context, Scrollbar* scr
     bool alphaBlend = false;
     if (scrollbarTheme)
         alphaBlend = IsThemeBackgroundPartiallyTransparent(scrollbarTheme, part, state);
-    HDC hdc = context->getWindowsContext(rect, alphaBlend);
+
+    LocalWindowsContext windowsContext(context, rect, alphaBlend);
     RECT themeRect(rect);
+
     if (scrollbarTheme)
-        DrawThemeBackground(scrollbarTheme, hdc, part, state, &themeRect, 0);
+        DrawThemeBackground(scrollbarTheme, windowsContext.hdc(), part, state, &themeRect, 0);
     else {
         DWORD color3DFace = ::GetSysColor(COLOR_3DFACE);
         DWORD colorScrollbar = ::GetSysColor(COLOR_SCROLLBAR);
         DWORD colorWindow = ::GetSysColor(COLOR_WINDOW);
+        HDC hdc = windowsContext.hdc();
         if ((color3DFace != colorScrollbar) && (colorWindow != colorScrollbar))
             ::FillRect(hdc, &themeRect, HBRUSH(COLOR_SCROLLBAR+1));
         else {
@@ -265,7 +269,6 @@ void ScrollbarThemeWin::paintTrackPiece(GraphicsContext* context, Scrollbar* scr
             ::DeleteObject(patternBitmap);
         }
     }
-    context->releaseWindowsContext(hdc, rect, alphaBlend);
 }
 
 void ScrollbarThemeWin::paintButton(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect, ScrollbarPart part)
@@ -308,14 +311,13 @@ void ScrollbarThemeWin::paintButton(GraphicsContext* context, Scrollbar* scrollb
     bool alphaBlend = false;
     if (scrollbarTheme)
         alphaBlend = IsThemeBackgroundPartiallyTransparent(scrollbarTheme, SP_BUTTON, xpState);
-    HDC hdc = context->getWindowsContext(rect, alphaBlend);
 
+    LocalWindowsContext windowsContext(context, rect, alphaBlend);
     RECT themeRect(rect);
     if (scrollbarTheme)
-        DrawThemeBackground(scrollbarTheme, hdc, SP_BUTTON, xpState, &themeRect, 0);
+        DrawThemeBackground(scrollbarTheme, windowsContext.hdc(), SP_BUTTON, xpState, &themeRect, 0);
     else
-        ::DrawFrameControl(hdc, &themeRect, DFC_SCROLL, classicState);
-    context->releaseWindowsContext(hdc, rect, alphaBlend);
+        ::DrawFrameControl(windowsContext.hdc(), &themeRect, DFC_SCROLL, classicState);
 }
 
 static IntRect gripperRect(int thickness, const IntRect& thumbRect)

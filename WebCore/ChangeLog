@@ -1,3 +1,40 @@
+2010-09-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Scrollbars fail to render in composited iframes.
+        https://bugs.webkit.org/show_bug.cgi?id=45335
+
+        Add a stack-based class, LocalWindowsContext, which does a getWindowsContext/
+        releaseWindowsContext automatically.
+
+        Also fix getWindowsContext to create a bitmap context if mayCreateBitmap
+        is true, and if the context's HDC is null. This fixes scrollbar rendering
+        in compositing layers.
+
+        Use LocalWindowsContext in places where we had bare getWindowsContext() calls.
+
+        * platform/graphics/win/LocalWindowsContext.h
+        (WebCore::LocalWindowsContext::LocalWindowsContext):
+        (WebCore::LocalWindowsContext::~LocalWindowsContext):
+        (WebCore::LocalWindowsContext::hdc):
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::releaseWindowsContext):
+        * platform/graphics/win/GraphicsContextWin.cpp:
+        (WebCore::GraphicsContext::getWindowsContext):
+        * platform/graphics/win/IconWin.cpp:
+        (WebCore::Icon::paint):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::MediaPlayerPrivate::paint):
+        * platform/win/ScrollbarThemeWin.cpp:
+        (WebCore::ScrollbarThemeWin::paintTrackPiece):
+        (WebCore::ScrollbarThemeWin::paintButton):
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::paintWindowedPluginIntoContext):
+        (WebCore::PluginView::paint):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::drawControl):
+
 2010-09-09  Vincent Scheib  <scheib@chromium.org>
 
         Reviewed by James Robinson.

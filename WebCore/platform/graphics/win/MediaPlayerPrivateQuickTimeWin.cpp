@@ -600,6 +600,7 @@ void MediaPlayerPrivate::paint(GraphicsContext* p, const IntRect& r)
 
     bool usingTempBitmap = false;
     OwnPtr<GraphicsContext::WindowsBitmap> bitmap;
+    // FIXME: use LocalWindowsContext.
     HDC hdc = p->getWindowsContext(r);
     if (!hdc) {
         // The graphics context doesn't have an associated HDC so create a temporary

@@ -1,3 +1,15 @@
+2010-09-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Scrollbars fail to render in composited iframes.
+        https://bugs.webkit.org/show_bug.cgi?id=45335
+
+        Use LocalWindowsContext when painting the plugin.
+
+        * WebProcess/Plugins/Netscape/win/NetscapePluginWin.cpp:
+        (WebKit::NetscapePlugin::platformPaint):
+
 2010-09-09  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

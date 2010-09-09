@@ -23,6 +23,7 @@
 #include "Icon.h"
 
 #include "GraphicsContext.h"
+#include "LocalWindowsContext.h"
 #include "PlatformString.h"
 #include <tchar.h>
 #include <windows.h>
@@ -90,11 +91,8 @@ void Icon::paint(GraphicsContext* context, const IntRect& r)
 #if OS(WINCE)
     context->drawIcon(m_hIcon, r, DI_NORMAL);
 #else
-    HDC hdc = context->getWindowsContext(r);
-
-    DrawIconEx(hdc, r.x(), r.y(), m_hIcon, r.width(), r.height(), 0, 0, DI_NORMAL);
-
-    context->releaseWindowsContext(hdc, r);
+    LocalWindowsContext windowContext(context, r);
+    DrawIconEx(windowContext.hdc(), r.x(), r.y(), m_hIcon, r.width(), r.height(), 0, 0, DI_NORMAL);
 #endif
 }
 
