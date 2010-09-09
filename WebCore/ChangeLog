@@ -34,6 +34,15 @@
 
 2010-09-09  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix windows build by adding missing file.
+
+        * platform/graphics/win/LocalWindowsContext.h: Added.
+        (WebCore::LocalWindowsContext::LocalWindowsContext):
+        (WebCore::LocalWindowsContext::~LocalWindowsContext):
+        (WebCore::LocalWindowsContext::hdc):
+
+2010-09-09  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Adam Roben.
 
         Scrollbars fail to render in composited iframes.
