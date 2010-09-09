@@ -3148,3 +3148,11 @@ BUG54921 WIN : fast/events/scroll-event-does-not-bubble.html = TEXT
 BUG54923 WIN : fast/repaint/fixed-move-after-keyboard-scroll.html = IMAGE+TEXT
 
 BUGWK45438 : editing/spelling/spelling-backspace-between-lines.html = TEXT
+
+// Regressed in webkit r54948
+BUG54948 WIN DEBUG : animations/animation-shorthand-removed.html = TEXT
+BUG54948 WIN DEBUG : animations/animation-shorthand.html = TEXT
+BUG54948 WIN DEBUG : fast/css/getComputedStyle/computed-style-without-renderer.html = TEXT
+BUG54948 WIN DEBUG : fast/css/getComputedStyle/computed-style.html = TEXT
+BUG54948 WIN DEBUG : svg/css/getComputedStyle-basic.xhtml = TEXT
+BUG54948 WIN DEBUG : transitions/inherit-other-props.html = TEXT

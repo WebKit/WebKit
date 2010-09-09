@@ -1,3 +1,17 @@
+2010-09-09  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed.
+
+        6 test start failing in chromium win.
+         animations/animation-shorthand-removed.html = TEXT
+         animations/animation-shorthand.html = TEXT
+         fast/css/getComputedStyle/computed-style-without-renderer.html = TEXT
+         fast/css/getComputedStyle/computed-style.html = TEXT
+         svg/css/getComputedStyle-basic.xhtml = TEXT
+         transitions/inherit-other-props.html = TEXT
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed typo fix after r67068 based on suggestion of Renáta Hodován.
