@@ -1,3 +1,12 @@
+2010-09-09  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: remove inspector/debugger-pause-on-debugger-statement.html from skipped list for GTK
+        https://bugs.webkit.org/show_bug.cgi?id=45445
+
+        * platform/gtk/Skipped:
+
 2010-09-09  Mads Ager  <ager@chromium.org>
 
         Reviewed by Yury Semikhatsky.

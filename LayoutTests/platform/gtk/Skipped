@@ -5865,9 +5865,9 @@ editing/style/typing-style-003.html
 # https://bugs.webkit.org/show_bug.cgi?id=43034
 inspector/debugger-breakpoints-not-activated-on-reload.html
 
+# Inlined scripts has wrong starting line (always 1).
 # https://bugs.webkit.org/show_bug.cgi?id=45291
 inspector/debugger-pause-on-breakpoint.html
-inspector/debugger-pause-on-debugger-statement.html
 
 # Fails because multiple clicks in a row in the same place
 # register as a triple-click even though the mouse have moved
