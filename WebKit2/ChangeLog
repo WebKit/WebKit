@@ -1,5 +1,11 @@
 2010-09-08  Anders Carlsson  <andersca@apple.com>
 
+        Don't include the std namespace in a header. This hopefully fixes the Windows build.
+
+        * Shared/WebCoreArgumentCoders.h:
+
+2010-09-08  Anders Carlsson  <andersca@apple.com>
+
         Suggested and reviewed by Darin Adler.
 
         Fix an overflow bug in bufferIsLargeEnoughToContain.
