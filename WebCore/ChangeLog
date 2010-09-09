@@ -1,3 +1,28 @@
+2010-09-09  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Add AudioBuffer files
+        https://bugs.webkit.org/show_bug.cgi?id=45003
+
+        No new tests since audio API is not yet implemented.
+
+        * webaudio/AudioBuffer.cpp: Added.
+        (WebCore::AudioBuffer::create):
+        (WebCore::AudioBuffer::createFromAudioFileData):
+        (WebCore::AudioBuffer::AudioBuffer):
+        (WebCore::AudioBuffer::releaseMemory):
+        (WebCore::AudioBuffer::getChannelData):
+        (WebCore::AudioBuffer::zero):
+        * webaudio/AudioBuffer.h: Added.
+        (WebCore::AudioBuffer::length):
+        (WebCore::AudioBuffer::duration):
+        (WebCore::AudioBuffer::sampleRate):
+        (WebCore::AudioBuffer::numberOfChannels):
+        (WebCore::AudioBuffer::gain):
+        (WebCore::AudioBuffer::setGain):
+        * webaudio/AudioBuffer.idl: Added.
+
 2010-09-09  Alexey Marinichev  <amarinichev@chromium.org>
 
         Reviewed by James Robinson.
