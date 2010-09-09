@@ -1,3 +1,20 @@
+2010-09-09  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Add setRange() and zeroRange() methods to TypedArrayBase
+        https://bugs.webkit.org/show_bug.cgi?id=45419
+
+        No new tests since adding new methods which are not yet called anywhere.
+
+        * html/canvas/ArrayBufferView.cpp:
+        (WebCore::ArrayBufferView::setRangeImpl):
+        (WebCore::ArrayBufferView::zeroRangeImpl):
+        * html/canvas/ArrayBufferView.h:
+        * html/canvas/TypedArrayBase.h:
+        (WebCore::TypedArrayBase::setRange):
+        (WebCore::TypedArrayBase::zeroRange):
+
 2010-09-09  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Andreas Kling.

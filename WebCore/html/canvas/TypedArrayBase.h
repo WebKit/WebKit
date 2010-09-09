@@ -42,6 +42,16 @@ class TypedArrayBase : public ArrayBufferView {
         setImpl(array, offset * sizeof(T), ec);
     }
 
+    void setRange(const T* data, size_t dataLength, unsigned offset, ExceptionCode& ec)
+    {
+        setRangeImpl(reinterpret_cast<const char*>(data), dataLength * sizeof(T), offset * sizeof(T), ec);
+    }
+
+    void zeroRange(unsigned offset, size_t length, ExceptionCode& ec)
+    {
+        zeroRangeImpl(offset * sizeof(T), length * sizeof(T), ec);
+    }
+
     // Overridden from ArrayBufferView. This must be public because of
     // rules about inheritance of members in template classes, and
     // because it is accessed via pointers to subclasses.

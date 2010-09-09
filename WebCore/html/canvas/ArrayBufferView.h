@@ -73,6 +73,10 @@ class ArrayBufferView : public RefCounted<ArrayBufferView> {
 
     void setImpl(ArrayBufferView* array, unsigned byteOffset, ExceptionCode& ec);
 
+    void setRangeImpl(const char* data, size_t dataByteLength, unsigned byteOffset, ExceptionCode& ec);
+
+    void zeroRangeImpl(unsigned byteOffset, size_t rangeByteLength, ExceptionCode& ec);
+
     static void calculateOffsetAndLength(int start, int end, unsigned arraySize,
                                          unsigned* offset, unsigned* length);
 
