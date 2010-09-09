@@ -1368,7 +1368,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 static Node* spellingNode(Frame* coreFrame)
 {
-    Node* focusedNode = coreFrame->document()->focusedNode();
+    Node* focusedNode = coreFrame->selection()->start().node();
     if (!focusedNode || !focusedNode->renderer())
         return 0;
 

@@ -1,3 +1,15 @@
+2010-09-08  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Tony Chang.
+
+        spelling underline gets lost on backspace
+        https://bugs.webkit.org/show_bug.cgi?id=41423
+
+        * editing/spelling/script-tests/TEMPLATE.html: Copied from LayoutTests/editing/selection/script-tests/TEMPLATE.html.
+        * editing/spelling/script-tests/spelling-backspace-between-lines.js: Added.
+        * editing/spelling/spelling-backspace-between-lines-expected.txt: Added.
+        * editing/spelling/spelling-backspace-between-lines.html: Added.
+
 2010-09-08  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed.

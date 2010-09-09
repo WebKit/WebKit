@@ -2353,6 +2353,29 @@ bool Editor::spellingPanelIsShowing()
     return client()->spellingUIIsShowing();
 }
 
+void Editor::clearMisspellingsAndBadGrammar(const VisibleSelection &movingSelection)
+{
+    RefPtr<Range> selectedRange = movingSelection.toNormalizedRange();
+    if (selectedRange) {
+        frame()->document()->markers()->removeMarkers(selectedRange.get(), DocumentMarker::Spelling);
+        frame()->document()->markers()->removeMarkers(selectedRange.get(), DocumentMarker::Grammar);
+    }
+}
+
+void Editor::markMisspellingsAndBadGrammar(const VisibleSelection &movingSelection)
+{
+    bool markSpelling = isContinuousSpellCheckingEnabled();
+    bool markGrammar = markSpelling && isGrammarCheckingEnabled();
+
+    if (markSpelling) {
+        RefPtr<Range> unusedFirstMisspellingRange;
+        markMisspellings(movingSelection, unusedFirstMisspellingRange);
+    }
+
+    if (markGrammar)
+        markBadGrammar(movingSelection);
+}
+
 void Editor::markMisspellingsAfterTypingToPosition(const VisiblePosition &p)
 {
 #if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)

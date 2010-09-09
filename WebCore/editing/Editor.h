@@ -314,6 +314,9 @@ public:
 
     // This is only called on the mac where paste is implemented primarily at the WebKit level.
     void pasteAsPlainTextBypassingDHTML();
+ 
+    void clearMisspellingsAndBadGrammar(const VisibleSelection&);
+    void markMisspellingsAndBadGrammar(const VisibleSelection&);
 
     Node* findEventTargetFrom(const VisibleSelection& selection) const;
 private:

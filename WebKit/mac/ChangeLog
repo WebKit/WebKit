@@ -1,3 +1,21 @@
+2010-09-08  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Tony Chang.
+
+        spelling underline gets lost on backspace
+        https://bugs.webkit.org/show_bug.cgi?id=41423
+
+        Switched to use a anchorNode of the selection instead of a focused
+        node for finer control of node selection in spellingNode():
+        With the focused node, we cannot select other nodes but the first
+        child of that node. In some case, we need to inspect these.
+
+        The API is only for LayoutTests, and the change is compatible for
+        existing test cases.
+        
+        * WebView/WebFrame.mm:
+        (spellingNode):
+
 2010-09-08  Adam Barth  <abarth@webkit.org>
 
         Rubber-stamped by Eric Seidel.

@@ -1,3 +1,23 @@
+2010-09-08  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Tony Chang.
+
+        spelling underline gets lost on backspace
+        https://bugs.webkit.org/show_bug.cgi?id=41423
+
+        moveParagraphs() did make a DOM range by serializing source range
+        and deserializing it back, and markers are gone during the process.
+        This change marks that DOM range again.
+
+        Test: editing/spelling/spelling-backspace-between-lines.html
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        * editing/Editor.cpp:
+        (WebCore::Editor::clearMisspellingsAndBadGrammar): Added.
+        (WebCore::Editor::markMisspellingsAndBadGrammar): Added.
+        * editing/Editor.h:
+
 2010-09-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

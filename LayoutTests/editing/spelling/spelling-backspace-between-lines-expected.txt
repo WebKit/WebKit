@@ -1,0 +1,21 @@
+For Bug 41423: Spelling marker should remain after hitting a backspace key.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS firstLineText() is 'OK'
+PASS sel.anchorNode.data is 'OK zz OK'
+PASS textInputController.hasSpellingMarker(3, 2) is 1
+PASS sel.anchorNode.data is 'OK zz OK'
+PASS firstLineText() is 'OKOK zz OK'
+PASS textInputController.hasSpellingMarker(3, 2) is 1
+PASS firstLineText() is 'OK'
+PASS sel.anchorNode.data is 'OK zz OK'
+PASS textInputController.hasSpellingMarker(3, 2) is 1
+PASS firstLineText() is 'OKOK zz OK'
+PASS sel.anchorNode.data is 'OK zz OK'
+PASS textInputController.hasSpellingMarker(3, 2) is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
