@@ -533,7 +533,7 @@ void ClipboardChromium::writeRange(Range* selectedRange, Frame* frame)
     m_dataObject->textHtml = createMarkup(selectedRange, 0, AnnotateForInterchange, false, AbsoluteURLs);
     m_dataObject->htmlBaseUrl = frame->document()->url();
 
-    String str = frame->selectedText();
+    String str = frame->editor()->selectedText();
 #if OS(WINDOWS)
     replaceNewlinesWithWindowsStyleNewlines(str);
 #endif

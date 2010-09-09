@@ -98,7 +98,7 @@ static bool isASingleWord(const String& text)
 static String selectMisspelledWord(const ContextMenu* defaultMenu, Frame* selectedFrame)
 {
     // First select from selectedText to check for multiple word selection.
-    String misspelledWord = selectedFrame->selectedText().stripWhiteSpace();
+    String misspelledWord = selectedFrame->editor()->selectedText().stripWhiteSpace();
 
     // If some texts were already selected, we don't change the selection.
     if (!misspelledWord.isEmpty()) {
@@ -119,7 +119,7 @@ static String selectMisspelledWord(const ContextMenu* defaultMenu, Frame* select
         return misspelledWord; // It is empty.
 
     WebFrameImpl::selectWordAroundPosition(selectedFrame, pos);
-    misspelledWord = selectedFrame->selectedText().stripWhiteSpace();
+    misspelledWord = selectedFrame->editor()->selectedText().stripWhiteSpace();
 
 #if OS(DARWIN)
     // If misspelled word is still empty, then that portion should not be
@@ -233,7 +233,7 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
         data.frameURL = urlFromFrame(selectedFrame);
 
     if (r.isSelected())
-        data.selectedText = selectedFrame->selectedText().stripWhiteSpace();
+        data.selectedText = selectedFrame->editor()->selectedText().stripWhiteSpace();
 
     if (r.isContentEditable()) {
         data.isEditable = true;

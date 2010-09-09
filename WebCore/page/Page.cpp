@@ -496,7 +496,7 @@ bool Page::findString(const String& target, TextCaseSensitivity caseSensitivity,
     Frame* frame = focusController()->focusedOrMainFrame();
     Frame* startFrame = frame;
     do {
-        if (frame->findString(target, direction == FindDirectionForward, caseSensitivity == TextCaseSensitive, false, true)) {
+        if (frame->editor()->findString(target, direction == FindDirectionForward, caseSensitivity == TextCaseSensitive, false, true)) {
             if (frame != startFrame)
                 startFrame->selection()->clear();
             focusController()->setFocusedFrame(frame);
@@ -508,7 +508,7 @@ bool Page::findString(const String& target, TextCaseSensitivity caseSensitivity,
     // Search contents of startFrame, on the other side of the selection that we did earlier.
     // We cheat a bit and just research with wrap on
     if (shouldWrap && !startFrame->selection()->isNone()) {
-        bool found = startFrame->findString(target, direction == FindDirectionForward, caseSensitivity == TextCaseSensitive, true, true);
+        bool found = startFrame->editor()->findString(target, direction == FindDirectionForward, caseSensitivity == TextCaseSensitive, true, true);
         focusController()->setFocusedFrame(frame);
         return found;
     }
@@ -525,8 +525,8 @@ unsigned int Page::markAllMatchesForText(const String& target, TextCaseSensitivi
 
     Frame* frame = mainFrame();
     do {
-        frame->setMarkedTextMatchesAreHighlighted(shouldHighlight);
-        matches += frame->countMatchesForText(target, caseSensitivity == TextCaseSensitive, (limit == 0) ? 0 : (limit - matches), true);
+        frame->editor()->setMarkedTextMatchesAreHighlighted(shouldHighlight);
+        matches += frame->editor()->countMatchesForText(target, caseSensitivity == TextCaseSensitive, limit ? (limit - matches) : 0, true);
         frame = incrementFrame(frame, true, false);
     } while (frame);
 

@@ -489,7 +489,7 @@ QVariantList DumpRenderTreeSupportQt::firstRectForCharacterRange(QWebPage* page,
     if (!range)
         return QVariantList();
 
-    QRect resultRect = frame->firstRectForRange(range.get());
+    QRect resultRect = frame->editor()->firstRectForRange(range.get());
     rect << resultRect.x() << resultRect.y() << resultRect.width() << resultRect.height();
     return rect;
 }

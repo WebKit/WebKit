@@ -226,7 +226,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         break;
 #endif
     case ContextMenuItemTagSpellingGuess:
-        ASSERT(frame->selectedText().length());
+        ASSERT(frame->editor()->selectedText().length());
         if (frame->editor()->shouldInsertText(item->title(), frame->selection()->toNormalizedRange().get(), EditorInsertActionPasted)) {
             Document* document = frame->document();
             RefPtr<ReplaceSelectionCommand> command = ReplaceSelectionCommand::create(document, createFragmentFromMarkup(document, item->title(), ""), true, false, true);

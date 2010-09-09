@@ -84,7 +84,7 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
     String html = createMarkup(selectedRange, 0, AnnotateForInterchange, false, AbsoluteURLs);
     ExceptionCode ec = 0;
     KURL url = selectedRange->startContainer(ec)->document()->url();
-    String plainText = frame->selectedText();
+    String plainText = frame->editor()->selectedText();
 #if OS(WINDOWS)
     replaceNewlinesWithWindowsStyleNewlines(plainText);
 #endif

@@ -1278,7 +1278,7 @@ WebRect WebViewImpl::caretOrSelectionBounds()
         if (!node || !node->renderer())
             return rect;
         RefPtr<Range> range = controller->toNormalizedRange();
-        rect = view->contentsToWindow(focused->firstRectForRange(range.get()));
+        rect = view->contentsToWindow(focused->editor()->firstRectForRange(range.get()));
     }
     return rect;
 }

@@ -3693,7 +3693,7 @@ void webkit_web_view_set_highlight_text_matches(WebKitWebView* webView, gboolean
 
     Frame *frame = core(webView)->mainFrame();
     do {
-        frame->setMarkedTextMatchesAreHighlighted(shouldHighlight);
+        frame->editor()->setMarkedTextMatchesAreHighlighted(shouldHighlight);
         frame = frame->tree()->traverseNextWithWrap(false);
     } while (frame);
 }
@@ -3875,7 +3875,7 @@ gchar* webkit_web_view_get_selected_text(WebKitWebView* webView)
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
 
     Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
-    return g_strdup(frame->selectedText().utf8().data());
+    return g_strdup(frame->editor()->selectedText().utf8().data());
 }
 
 /**
@@ -3947,7 +3947,7 @@ void webkit_web_view_set_editable(WebKitWebView* webView, gboolean flag)
     priv->editable = flag;
 
     if (flag) {
-        frame->applyEditingStyleToBodyElement();
+        frame->editor()->applyEditingStyleToBodyElement();
         // TODO: If the WebKitWebView is made editable and the selection is empty, set it to something.
         //if (!webkit_web_view_get_selected_dom_range(webView))
         //    mainFrame->setSelectionFromNone();

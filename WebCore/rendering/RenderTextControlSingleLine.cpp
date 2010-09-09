@@ -181,12 +181,12 @@ void RenderTextControlSingleLine::subtreeHasChanged()
 
     if (!wasChanged && node()->focused()) {
         if (Frame* frame = this->frame())
-            frame->textFieldDidBeginEditing(static_cast<Element*>(node()));
+            frame->editor()->textFieldDidBeginEditing(static_cast<Element*>(node()));
     }
 
     if (node()->focused()) {
         if (Frame* frame = document()->frame())
-            frame->textDidChangeInTextField(static_cast<Element*>(node()));
+            frame->editor()->textDidChangeInTextField(static_cast<Element*>(node()));
     }
 }
 

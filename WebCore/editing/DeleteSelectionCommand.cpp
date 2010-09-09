@@ -746,7 +746,7 @@ void DeleteSelectionCommand::doApply()
         if (ancestorNode && ancestorNode->hasTagName(inputTag)
                 && static_cast<HTMLInputElement*>(ancestorNode)->isTextField()
                 && ancestorNode->focused())
-            document()->frame()->textWillBeDeletedInTextField(static_cast<Element*>(ancestorNode));
+            document()->frame()->editor()->textWillBeDeletedInTextField(static_cast<Element*>(ancestorNode));
     }
 
     // save this to later make the selection with

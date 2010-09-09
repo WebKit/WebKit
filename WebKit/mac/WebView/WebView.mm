@@ -4766,7 +4766,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
         Frame* mainFrame = [self _mainCoreFrame];
         if (mainFrame) {
             if (flag) {
-                mainFrame->applyEditingStyleToBodyElement();
+                mainFrame->editor()->applyEditingStyleToBodyElement();
                 // If the WebView is made editable and the selection is empty, set it to something.
                 if (![self selectedDOMRange])
                     mainFrame->setSelectionFromNone();

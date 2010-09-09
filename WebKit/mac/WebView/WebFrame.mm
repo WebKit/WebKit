@@ -529,7 +529,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (NSString *)_selectedString
 {
-    return _private->coreFrame->displayStringModifiedByEncoding(_private->coreFrame->selectedText());
+    return _private->coreFrame->displayStringModifiedByEncoding(_private->coreFrame->editor()->selectedText());
 }
 
 - (NSString *)_stringForRange:(DOMRange *)range
@@ -662,7 +662,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (NSRect)_firstRectForDOMRange:(DOMRange *)range
 {
-   return _private->coreFrame->firstRectForRange(core(range));
+   return _private->coreFrame->editor()->firstRectForRange(core(range));
 }
 
 - (void)_scrollDOMRangeToVisible:(DOMRange *)range
@@ -788,7 +788,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (DOMRange *)_markDOMRange
 {
-    return kit(_private->coreFrame->mark().toNormalizedRange().get());
+    return kit(_private->coreFrame->editor()->mark().toNormalizedRange().get());
 }
 
 // Given proposedRange, returns an extended range that includes adjacent whitespace that should
@@ -904,7 +904,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
     if (!_private->coreFrame)
         return;
-    _private->coreFrame->computeAndSetTypingStyle(core(style), undoAction);
+    _private->coreFrame->editor()->computeAndSetTypingStyle(core(style), undoAction);
 }
 
 - (void)_dragSourceEndedAt:(NSPoint)windowLoc operation:(NSDragOperation)operation

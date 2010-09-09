@@ -37,7 +37,6 @@
 #include "FrameTree.h"
 #include "ScriptController.h"
 #include "ScrollBehavior.h"
-#include "SelectionController.h"
 #include "UserScriptTypes.h"
 #include "ZoomMode.h"
 
@@ -52,10 +51,8 @@
 #if PLATFORM(MAC)
 #ifndef __OBJC__
 class NSArray;
-class NSDictionary;
 class NSMutableDictionary;
 class NSString;
-typedef int NSWritingDirection;
 #endif
 #endif
 
@@ -176,48 +173,16 @@ namespace WebCore {
         }
 
 #if ENABLE(TILED_BACKING_STORE)
+        // FIXME: This should be in FrameView, not Frame.
         TiledBackingStore* tiledBackingStore() const { return m_tiledBackingStore.get(); }
         void setTiledBackingStoreEnabled(bool);
 #endif
 
-    private:
-        void lifeSupportTimerFired(Timer<Frame>*);
-
-    // === to be moved into Editor
-
-    public:
-        String selectedText() const;
-        bool findString(const String&, bool forward, bool caseFlag, bool wrapFlag, bool startInSelection);
-
-        const VisibleSelection& mark() const; // Mark, to be used as emacs uses it.
-        void setMark(const VisibleSelection&);
-
-        void computeAndSetTypingStyle(CSSStyleDeclaration* , EditAction = EditActionUnspecified);
-        void applyEditingStyleToBodyElement() const;
-        void applyEditingStyleToElement(Element*) const;
-
-        IntRect firstRectForRange(Range*) const;
-
-        void respondToChangedSelection(const VisibleSelection& oldSelection, bool closeTyping);
-        bool shouldChangeSelection(const VisibleSelection& oldSelection, const VisibleSelection& newSelection, EAffinity, bool stillSelecting) const;
-
-        RenderStyle* styleForSelectionStart(Node*& nodeToRemove) const;
-
-        unsigned countMatchesForText(const String&, bool caseFlag, unsigned limit, bool markMatches);
-        bool markedTextMatchesAreHighlighted() const;
-        void setMarkedTextMatchesAreHighlighted(bool flag);
-
-        PassRefPtr<CSSComputedStyleDeclaration> selectionComputedStyle(Node*& nodeToRemove) const;
-
-        void textFieldDidBeginEditing(Element*);
-        void textFieldDidEndEditing(Element*);
-        void textDidChangeInTextField(Element*);
-        bool doTextFieldCommandFromEvent(Element*, KeyboardEvent*);
-        void textWillBeDeletedInTextField(Element* input);
-        void textDidChangeInTextArea(Element*);
-
         DragImageRef nodeImage(Node*);
         DragImageRef dragImageForSelection();
+
+    private:
+        void lifeSupportTimerFired(Timer<Frame>*);
 
     // === to be moved into SelectionController
 
@@ -256,6 +221,7 @@ namespace WebCore {
         Document* documentAtPoint(const IntPoint& windowPoint);
 
 #if ENABLE(TILED_BACKING_STORE)
+        // FIXME: This should be in FrameView, not Frame.
 
     private:
         // TiledBackingStoreClient interface
@@ -281,15 +247,7 @@ namespace WebCore {
 
         NSImage* selectionImage(bool forceBlackText = false) const;
         NSImage* snapshotDragImage(Node*, NSRect* imageRect, NSRect* elementRect) const;
-
-    private:
         NSImage* imageFromRect(NSRect) const;
-
-    // === to be moved into Editor
-
-    public:
-        NSDictionary* fontAttributesForSelectionStart() const;
-        NSWritingDirection baseWritingDirectionForSelectionStart() const;
 
 #endif
 
@@ -308,7 +266,6 @@ namespace WebCore {
 
         ScriptController m_script;
 
-        mutable VisibleSelection m_mark;
         mutable Editor m_editor;
         mutable SelectionController m_selectionController;
         mutable EventHandler m_eventHandler;
@@ -322,7 +279,6 @@ namespace WebCore {
         int m_orientation;
 #endif
 
-        bool m_highlightTextMatches;
         bool m_inViewSourceMode;
         bool m_isDisconnected;
         bool m_excludeFromTextSearch;
@@ -377,21 +333,6 @@ namespace WebCore {
         return &m_animationController;
     }
 
-    inline const VisibleSelection& Frame::mark() const
-    {
-        return m_mark;
-    }
-
-    inline void Frame::setMark(const VisibleSelection& s)
-    {
-        ASSERT(!s.base().node() || s.base().node()->document() == document());
-        ASSERT(!s.extent().node() || s.extent().node()->document() == document());
-        ASSERT(!s.start().node() || s.start().node()->document() == document());
-        ASSERT(!s.end().node() || s.end().node()->document() == document());
-
-        m_mark = s;
-    }
-
     inline CSSMutableStyleDeclaration* Frame::typingStyle() const
     {
         return m_typingStyle.get();
@@ -435,11 +376,6 @@ namespace WebCore {
     inline void Frame::setInViewSourceMode(bool mode)
     {
         m_inViewSourceMode = mode;
-    }
-
-    inline bool Frame::markedTextMatchesAreHighlighted() const
-    {
-        return m_highlightTextMatches;
     }
 
     inline FrameTree* Frame::tree() const

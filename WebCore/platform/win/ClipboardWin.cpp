@@ -776,7 +776,7 @@ void ClipboardWin::writeRange(Range* selectedRange, Frame* frame)
     if (medium.hGlobal && FAILED(m_writableDataObject->SetData(htmlFormat(), &medium, TRUE)))
         ::GlobalFree(medium.hGlobal);
 
-    String str = frame->selectedText();
+    String str = frame->editor()->selectedText();
     replaceNewlinesWithWindowsStyleNewlines(str);
     replaceNBSPWithSpace(str);
     medium.hGlobal = createGlobalData(str);

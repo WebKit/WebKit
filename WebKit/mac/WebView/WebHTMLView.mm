@@ -4204,7 +4204,7 @@ static BOOL isInPasswordField(Frame* coreFrame)
 {
     Frame* coreFrame = core([self _frame]);
     NSAttributedString *string = [[NSAttributedString alloc] initWithString:@"x"
-        attributes:coreFrame ? coreFrame->fontAttributesForSelectionStart() : nil];
+        attributes:coreFrame ? coreFrame->editor()->fontAttributesForSelectionStart() : nil];
     NSData *data = [string RTFFromRange:NSMakeRange(0, [string length]) documentAttributes:nil];
     [string release];
     return data;
@@ -4831,7 +4831,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
         return;
 
     WritingDirection direction = RightToLeftWritingDirection;
-    switch (coreFrame->baseWritingDirectionForSelectionStart()) {
+    switch (coreFrame->editor()->baseWritingDirectionForSelectionStart()) {
         case NSWritingDirectionLeftToRight:
             break;
         case NSWritingDirectionRightToLeft:
@@ -6167,7 +6167,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     if (![string length])
         return NO;
     Frame* coreFrame = core([self _frame]);
-    return coreFrame && coreFrame->findString(string, forward, caseFlag, wrapFlag, startInSelection);
+    return coreFrame && coreFrame->editor()->findString(string, forward, caseFlag, wrapFlag, startInSelection);
 }
 
 @end
@@ -6197,7 +6197,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     Frame* coreFrame = core([self _frame]);
     if (!coreFrame)
         return 0;
-    return coreFrame->countMatchesForText(string, caseFlag, limit, markMatches);
+    return coreFrame->editor()->countMatchesForText(string, caseFlag, limit, markMatches);
 }
 
 - (void)setMarkedTextMatchesAreHighlighted:(BOOL)newValue
@@ -6205,13 +6205,13 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     Frame* coreFrame = core([self _frame]);
     if (!coreFrame)
         return;
-    coreFrame->setMarkedTextMatchesAreHighlighted(newValue);
+    coreFrame->editor()->setMarkedTextMatchesAreHighlighted(newValue);
 }
 
 - (BOOL)markedTextMatchesAreHighlighted
 {
     Frame* coreFrame = core([self _frame]);
-    return coreFrame && coreFrame->markedTextMatchesAreHighlighted();
+    return coreFrame && coreFrame->editor()->markedTextMatchesAreHighlighted();
 }
 
 - (void)unmarkAllTextMatches

@@ -61,7 +61,7 @@ Pasteboard* Pasteboard::generalPasteboard()
 void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
 {
     QMimeData* md = new QMimeData;
-    QString text = frame->selectedText();
+    QString text = frame->editor()->selectedText();
     text.replace(QChar(0xa0), QLatin1Char(' '));
     md->setText(text);
 

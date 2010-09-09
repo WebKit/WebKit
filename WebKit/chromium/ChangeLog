@@ -1,3 +1,21 @@
+2010-09-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Move functions from Frame to Editor as planned
+        https://bugs.webkit.org/show_bug.cgi?id=45218
+
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::selectMisspelledWord):
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::find):
+        (WebKit::WebFrameImpl::stopFinding):
+        (WebKit::WebFrameImpl::scopeStringMatches):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::caretOrSelectionBounds):
+        Changed call sites to use editor().
+
 2010-09-09  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.

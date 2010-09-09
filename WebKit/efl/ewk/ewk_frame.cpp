@@ -636,7 +636,7 @@ Eina_Bool ewk_frame_editable_set(Evas_Object* o, Eina_Bool editable)
     if (sd->editable == editable)
         return EINA_TRUE;
     if (editable)
-        sd->frame->applyEditingStyleToBodyElement();
+        sd->frame->editor()->applyEditingStyleToBodyElement();
     return EINA_TRUE;
 }
 
@@ -651,7 +651,7 @@ char* ewk_frame_selection_get(const Evas_Object* o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, 0);
-    WTF::CString s = sd->frame->selectedText().utf8();
+    WTF::CString s = sd->frame->editor()->selectedText().utf8();
     if (s.isNull())
         return 0;
     return strdup(s.data());
@@ -751,7 +751,7 @@ Eina_Bool ewk_frame_text_search(const Evas_Object* o, const char* string, Eina_B
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(string, EINA_FALSE);
 
-    return sd->frame->findString(WTF::String::fromUTF8(string), forward, case_sensitive, wrap, true);
+    return sd->frame->editor()->findString(WTF::String::fromUTF8(string), forward, case_sensitive, wrap, true);
 }
 
 /**
@@ -771,8 +771,8 @@ unsigned int ewk_frame_text_matches_mark(Evas_Object* o, const char* string, Ein
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(string, 0);
 
-    sd->frame->setMarkedTextMatchesAreHighlighted(highlight);
-    return sd->frame->countMatchesForText(WTF::String::fromUTF8(string), case_sensitive, limit, true);
+    sd->frame->editor()->setMarkedTextMatchesAreHighlighted(highlight);
+    return sd->frame->editor()->countMatchesForText(WTF::String::fromUTF8(string), case_sensitive, limit, true);
 }
 
 /**
@@ -803,7 +803,7 @@ Eina_Bool ewk_frame_text_matches_highlight_set(Evas_Object* o, Eina_Bool highlig
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, EINA_FALSE);
-    sd->frame->setMarkedTextMatchesAreHighlighted(highlight);
+    sd->frame->editor()->setMarkedTextMatchesAreHighlighted(highlight);
     return EINA_TRUE;
 }
 
@@ -818,7 +818,7 @@ Eina_Bool ewk_frame_text_matches_highlight_get(const Evas_Object* o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, EINA_FALSE);
-    return sd->frame->markedTextMatchesAreHighlighted();
+    return sd->frame->editor()->markedTextMatchesAreHighlighted();
 }
 
 /** 

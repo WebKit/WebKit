@@ -2059,7 +2059,7 @@ bool EventHandler::sendContextMenuEventForKey()
 
     if (start.node() && (selectionController->rootEditableElement() || selectionController->isRange())) {
         RefPtr<Range> selection = selectionController->toNormalizedRange();
-        IntRect firstRect = m_frame->firstRectForRange(selection.get());
+        IntRect firstRect = m_frame->editor()->firstRectForRange(selection.get());
 
         int x = rightAligned ? firstRect.right() : firstRect.x();
         location = IntPoint(x, firstRect.bottom());

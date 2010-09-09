@@ -212,7 +212,7 @@ static NSArray *concatenateArrays(NSArray *first, NSArray *second)
         
         WebView *webView = [frame webView];
         if ([webView isEditable])
-            core(frame)->applyEditingStyleToBodyElement();
+            core(frame)->editor()->applyEditingStyleToBodyElement();
     }
 }
 

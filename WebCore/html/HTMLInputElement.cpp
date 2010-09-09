@@ -2262,7 +2262,7 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
             && evt->isKeyboardEvent()
             && focused()
             && document()->frame()
-            && document()->frame()->doTextFieldCommandFromEvent(this, static_cast<KeyboardEvent*>(evt))) {
+            && document()->frame()->editor()->doTextFieldCommandFromEvent(this, static_cast<KeyboardEvent*>(evt))) {
         evt->setDefaultHandled();
         return;
     }

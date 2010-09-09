@@ -1045,7 +1045,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::selectedString(
     if (!coreFrame)
         return E_FAIL;
 
-    String text = coreFrame->displayStringModifiedByEncoding(coreFrame->selectedText());
+    String text = coreFrame->displayStringModifiedByEncoding(coreFrame->editor()->selectedText());
 
     *result = BString(text).release();
     return S_OK;

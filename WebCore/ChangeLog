@@ -1,3 +1,96 @@
+2010-09-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Move functions from Frame to Editor as planned
+        https://bugs.webkit.org/show_bug.cgi?id=45218
+
+        Just executing the plan that has long been described in Frame.h
+        to move a bunch of functions to Editor.
+
+        * WebCore.exp.in: Updated.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::fontForSelection):
+        (WebCore::Editor::textDirectionForSelection):
+        (WebCore::Editor::applyStyle):
+        (WebCore::Editor::selectionStartHasStyle):
+        (WebCore::Editor::selectionHasStyle):
+        (WebCore::Editor::selectionStartCSSPropertyValue):
+        (WebCore::Editor::Editor):
+        (WebCore::Editor::cut):
+        (WebCore::Editor::copy):
+        (WebCore::Editor::ignoreSpelling):
+        (WebCore::Editor::learnSpelling):
+        (WebCore::Editor::isSelectionMisspelled):
+        (WebCore::Editor::guessesForMisspelledSelection):
+        (WebCore::Editor::selectedText):
+        (WebCore::Editor::firstRectForRange):
+        (WebCore::Editor::shouldChangeSelection):
+        (WebCore::Editor::computeAndSetTypingStyle):
+        (WebCore::Editor::selectionComputedStyle):
+        (WebCore::Editor::textFieldDidBeginEditing):
+        (WebCore::Editor::textFieldDidEndEditing):
+        (WebCore::Editor::textDidChangeInTextField):
+        (WebCore::Editor::doTextFieldCommandFromEvent):
+        (WebCore::Editor::textWillBeDeletedInTextField):
+        (WebCore::Editor::textDidChangeInTextArea):
+        (WebCore::Editor::applyEditingStyleToBodyElement):
+        (WebCore::Editor::applyEditingStyleToElement):
+        (WebCore::Editor::styleForSelectionStart):
+        (WebCore::Editor::findString):
+        (WebCore::Editor::countMatchesForText):
+        (WebCore::Editor::setMarkedTextMatchesAreHighlighted):
+        (WebCore::Editor::respondToChangedSelection):
+        * editing/Editor.h:
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::fontAttributesForSelectionStart):
+        (WebCore::Editor::baseWritingDirectionForSelectionStart):
+        Moved functions here.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        (WebCore::Frame::shouldChangeSelection):
+        * page/Frame.h:
+        * page/mac/FrameMac.mm:
+        Moved functions out of here.
+
+        * dom/InputElement.cpp:
+        (WebCore::InputElement::dispatchBlurEvent):
+        (WebCore::InputElement::aboutToUnload):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::doApply):
+        * editing/EditorCommand.cpp:
+        (WebCore::executeToggleStyleInList):
+        (WebCore::executeDeleteToMark):
+        (WebCore::executeFindString):
+        (WebCore::executeSelectToMark):
+        (WebCore::executeSetMark):
+        (WebCore::executeSwapWithMark):
+        (WebCore::enabledVisibleSelectionAndMark):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::setSelection):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::find):
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::sendContextMenuEventForKey):
+        * page/Page.cpp:
+        (WebCore::Page::findString):
+        (WebCore::Page::markAllMatchesForText):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::subtreeHasChanged):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::subtreeHasChanged):
+        Changed call sites to use editor().
+
 2010-09-09  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.

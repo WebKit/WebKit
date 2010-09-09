@@ -315,7 +315,7 @@ void ClipboardQt::writeRange(Range* range, Frame* frame)
 
     if (!m_writableData)
         m_writableData = new QMimeData;
-    QString text = frame->selectedText();
+    QString text = frame->editor()->selectedText();
     text.replace(QChar(0xa0), QLatin1Char(' '));
     m_writableData->setText(text);
     m_writableData->setHtml(createMarkup(range, 0, AnnotateForInterchange, false, AbsoluteURLs));

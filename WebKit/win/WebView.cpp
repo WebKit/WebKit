@@ -3547,7 +3547,7 @@ HRESULT STDMETHODCALLTYPE WebView::selectedText(
     if (!focusedFrame)
         return E_FAIL;
 
-    String frameSelectedText = focusedFrame->selectedText();
+    String frameSelectedText = focusedFrame->editor()->selectedText();
     *text = SysAllocStringLen(frameSelectedText.characters(), frameSelectedText.length());
     if (!*text && frameSelectedText.length())
         return E_OUTOFMEMORY;
@@ -5267,7 +5267,7 @@ void WebView::prepareCandidateWindow(Frame* targetFrame, HIMC hInputContext)
     if (RefPtr<Range> range = targetFrame->selection()->selection().toNormalizedRange()) {
         ExceptionCode ec = 0;
         RefPtr<Range> tempRange = range->cloneRange(ec);
-        caret = targetFrame->firstRectForRange(tempRange.get());
+        caret = targetFrame->editor()->firstRectForRange(tempRange.get());
     }
     caret = targetFrame->view()->contentsToWindow(caret);
     CANDIDATEFORM form;
@@ -5538,7 +5538,7 @@ LRESULT WebView::onIMERequestCharPosition(Frame* targetFrame, IMECHARPOSITION* c
         ExceptionCode ec = 0;
         RefPtr<Range> tempRange = range->cloneRange(ec);
         tempRange->setStart(tempRange->startContainer(ec), tempRange->startOffset(ec) + charPos->dwCharPos, ec);
-        caret = targetFrame->firstRectForRange(tempRange.get());
+        caret = targetFrame->editor()->firstRectForRange(tempRange.get());
     }
     caret = targetFrame->view()->contentsToWindow(caret);
     charPos->pt.x = caret.x();

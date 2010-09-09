@@ -26,10 +26,12 @@
 #import "config.h"
 #import "Editor.h"
 
+#import "ColorMac.h"
 #import "ClipboardMac.h"
 #import "CachedResourceLoader.h"
 #import "Frame.h"
 #import "FrameView.h"
+#import "RenderBlock.h"
 
 namespace WebCore {
 
@@ -67,6 +69,105 @@ void Editor::paste()
     loader->setAllowStaleResources(true);
     [view->documentView() tryToPerform:@selector(paste:) with:nil];
     loader->setAllowStaleResources(false);
+}
+
+NSDictionary* Editor::fontAttributesForSelectionStart() const
+{
+    Node* nodeToRemove;
+    RenderStyle* style = styleForSelectionStart(nodeToRemove);
+    if (!style)
+        return nil;
+
+    NSMutableDictionary* result = [NSMutableDictionary dictionary];
+
+    if (style->visitedDependentColor(CSSPropertyBackgroundColor).isValid() && style->visitedDependentColor(CSSPropertyBackgroundColor).alpha() != 0)
+        [result setObject:nsColor(style->visitedDependentColor(CSSPropertyBackgroundColor)) forKey:NSBackgroundColorAttributeName];
+
+    if (style->font().primaryFont()->getNSFont())
+        [result setObject:style->font().primaryFont()->getNSFont() forKey:NSFontAttributeName];
+
+    if (style->visitedDependentColor(CSSPropertyColor).isValid() && style->visitedDependentColor(CSSPropertyColor) != Color::black)
+        [result setObject:nsColor(style->visitedDependentColor(CSSPropertyColor)) forKey:NSForegroundColorAttributeName];
+
+    const ShadowData* shadow = style->textShadow();
+    if (shadow) {
+        NSShadow* s = [[NSShadow alloc] init];
+        [s setShadowOffset:NSMakeSize(shadow->x(), shadow->y())];
+        [s setShadowBlurRadius:shadow->blur()];
+        [s setShadowColor:nsColor(shadow->color())];
+        [result setObject:s forKey:NSShadowAttributeName];
+    }
+
+    int decoration = style->textDecorationsInEffect();
+    if (decoration & LINE_THROUGH)
+        [result setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSStrikethroughStyleAttributeName];
+
+    int superscriptInt = 0;
+    switch (style->verticalAlign()) {
+        case BASELINE:
+        case BOTTOM:
+        case BASELINE_MIDDLE:
+        case LENGTH:
+        case MIDDLE:
+        case TEXT_BOTTOM:
+        case TEXT_TOP:
+        case TOP:
+            break;
+        case SUB:
+            superscriptInt = -1;
+            break;
+        case SUPER:
+            superscriptInt = 1;
+            break;
+    }
+    if (superscriptInt)
+        [result setObject:[NSNumber numberWithInt:superscriptInt] forKey:NSSuperscriptAttributeName];
+
+    if (decoration & UNDERLINE)
+        [result setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
+
+    if (nodeToRemove) {
+        ExceptionCode ec = 0;
+        nodeToRemove->remove(ec);
+        ASSERT(ec == 0);
+    }
+
+    return result;
+}
+
+NSWritingDirection Editor::baseWritingDirectionForSelectionStart() const
+{
+    NSWritingDirection result = NSWritingDirectionLeftToRight;
+
+    Position pos = m_frame->selection()->selection().visibleStart().deepEquivalent();
+    Node* node = pos.node();
+    if (!node)
+        return result;
+
+    RenderObject* renderer = node->renderer();
+    if (!renderer)
+        return result;
+
+    if (!renderer->isBlockFlow()) {
+        renderer = renderer->containingBlock();
+        if (!renderer)
+            return result;
+    }
+
+    RenderStyle* style = renderer->style();
+    if (!style)
+        return result;
+        
+    switch (style->direction()) {
+        case LTR:
+            result = NSWritingDirectionLeftToRight;
+            break;
+        case RTL:
+            result = NSWritingDirectionRightToLeft;
+            break;
+    }
+
+    return result;
 }
 
 } // namespace WebCore

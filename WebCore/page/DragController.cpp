@@ -741,7 +741,7 @@ bool DragController::startDrag(Frame* src, Clipboard* clipboard, DragOperation s
     } else if (isSelected && (m_dragSourceAction & DragSourceActionSelection)) {
         if (!clipboard->hasData()) {
             if (isNodeInTextFormControl(src->selection()->start().node()))
-                clipboard->writePlainText(src->selectedText());
+                clipboard->writePlainText(src->editor()->selectedText());
             else {
                 RefPtr<Range> selectionRange = src->selection()->toNormalizedRange();
                 ASSERT(selectionRange);

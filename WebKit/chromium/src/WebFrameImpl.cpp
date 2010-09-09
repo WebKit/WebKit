@@ -1356,7 +1356,7 @@ bool WebFrameImpl::find(int identifier,
     }
 
     ASSERT(frame() && frame()->view());
-    bool found = frame()->findString(
+    bool found = frame()->editor()->findString(
         searchText, options.forward, options.matchCase, wrapWithinFrame,
         startInSelection);
     if (found) {
@@ -1439,7 +1439,7 @@ void WebFrameImpl::stopFinding(bool clearSelection)
 
     // Remove all markers for matches found and turn off the highlighting.
     frame()->document()->markers()->removeMarkers(DocumentMarker::TextMatch);
-    frame()->setMarkedTextMatchesAreHighlighted(false);
+    frame()->editor()->setMarkedTextMatchesAreHighlighted(false);
 
     // Let the frame know that we don't want tickmarks or highlighting anymore.
     invalidateArea(InvalidateAll);
@@ -1460,7 +1460,7 @@ void WebFrameImpl::scopeStringMatches(int identifier,
         // Scoping is just about to begin.
         m_scopingComplete = false;
         // Clear highlighting for this frame.
-        if (frame()->markedTextMatchesAreHighlighted())
+        if (frame()->editor()->markedTextMatchesAreHighlighted())
             frame()->page()->unmarkAllTextMatches();
         // Clear the counters from last operation.
         m_lastMatchCount = 0;
@@ -1585,7 +1585,7 @@ void WebFrameImpl::scopeStringMatches(int identifier,
     m_lastSearchString = searchText;
 
     if (matchCount > 0) {
-        frame()->setMarkedTextMatchesAreHighlighted(true);
+        frame()->editor()->setMarkedTextMatchesAreHighlighted(true);
 
         m_lastMatchCount += matchCount;
 

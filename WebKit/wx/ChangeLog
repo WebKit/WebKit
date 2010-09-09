@@ -1,3 +1,14 @@
+2010-09-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Move functions from Frame to Editor as planned
+        https://bugs.webkit.org/show_bug.cgi?id=45218
+
+        * WebFrame.cpp:
+        (wxWebFrame::FindString):
+        Changed call sites to use editor().
+
 2010-08-31  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
