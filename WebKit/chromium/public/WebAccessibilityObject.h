@@ -81,17 +81,22 @@ public:
     WEBKIT_API WebAccessibilityObject parentObject() const;
     WEBKIT_API WebAccessibilityObject previousSibling() const;
 
+    WEBKIT_API bool canSetSelectedAttribute() const;
     WEBKIT_API bool isAnchor() const;
     WEBKIT_API bool isChecked() const;
+    WEBKIT_API bool isCollapsed() const;
     WEBKIT_API bool isFocused() const;
     WEBKIT_API bool isEnabled() const;
     WEBKIT_API bool isHovered() const;
     WEBKIT_API bool isIndeterminate() const;
+    WEBKIT_API bool isLinked() const;
     WEBKIT_API bool isMultiSelectable() const;
     WEBKIT_API bool isOffScreen() const;
     WEBKIT_API bool isPasswordField() const;
     WEBKIT_API bool isPressed() const;
     WEBKIT_API bool isReadOnly() const;
+    WEBKIT_API bool isSelected() const;
+    WEBKIT_API bool isVisible() const;
     WEBKIT_API bool isVisited() const;
 
     WEBKIT_API WebRect boundingBoxRect() const;
