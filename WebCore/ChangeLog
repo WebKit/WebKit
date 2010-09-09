@@ -1,3 +1,37 @@
+2010-09-09  Alexey Marinichev  <amarinichev@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Disable subpixel rendering in Linux when GPU compositor is active
+        https://bugs.webkit.org/show_bug.cgi?id=45087
+
+        Covered by all tests that activate the compositor and contain text.
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::updateContents):
+        * platform/graphics/chromium/FontLinux.cpp:
+        (WebCore::adjustTextRenderMode): Added a check to see if the compositor is active.
+        (WebCore::Font::drawGlyphs):
+        (WebCore::Font::drawComplexText):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::setRootLayerCanvasSize):
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::updateContents):
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        (WebCore::ImageBuffer::clip):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        Made setDrawingToImageBuffer and isDrawingToImageBuffer available to
+        Linux; removed all #if OS(WINDOWS) || OS(LINUX).
+        (WebCore::PlatformContextSkia::State::State):
+        (WebCore::PlatformContextSkia::PlatformContextSkia):
+        (WebCore::PlatformContextSkia::isDrawingToImageBuffer):
+        (WebCore::PlatformContextSkia::save):
+        (WebCore::PlatformContextSkia::beginLayerClippedToImage):
+        (WebCore::PlatformContextSkia::restore):
+        (WebCore::PlatformContextSkia::applyClipFromImage):
+        * platform/graphics/skia/PlatformContextSkia.h:
+
 2010-09-09  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Adam Roben.

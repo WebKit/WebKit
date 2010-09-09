@@ -65,13 +65,13 @@ static bool isCanvasMultiLayered(SkCanvas* canvas)
     return !layerIterator.done();
 }
 
-static void adjustTextRenderMode(SkPaint* paint, bool isCanvasMultiLayered)
+static void adjustTextRenderMode(SkPaint* paint, PlatformContextSkia* skiaContext)
 {
     // Our layers only have a single alpha channel. This means that subpixel
     // rendered text cannot be compositied correctly when the layer is
     // collapsed. Therefore, subpixel text is disabled when we are drawing
-    // onto a layer.
-    if (isCanvasMultiLayered)
+    // onto a layer or when the compositor is being used.
+    if (isCanvasMultiLayered(skiaContext->canvas()) || skiaContext->isDrawingToImageBuffer())
         paint->setLCDRenderText(false);
 }
 
@@ -104,14 +104,13 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
 
     SkCanvas* canvas = gc->platformContext()->canvas();
     int textMode = gc->platformContext()->getTextDrawingMode();
-    bool haveMultipleLayers = isCanvasMultiLayered(canvas);
 
     // We draw text up to two times (once for fill, once for stroke).
     if (textMode & cTextFill) {
         SkPaint paint;
         gc->platformContext()->setupPaintForFilling(&paint);
         font->platformData().setupPaint(&paint);
-        adjustTextRenderMode(&paint, haveMultipleLayers);
+        adjustTextRenderMode(&paint, gc->platformContext());
         paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
         paint.setColor(gc->fillColor().rgb());
         canvas->drawPosText(glyphs, numGlyphs << 1, pos, paint);
@@ -124,7 +123,7 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
         SkPaint paint;
         gc->platformContext()->setupPaintForStroking(&paint, 0, 0);
         font->platformData().setupPaint(&paint);
-        adjustTextRenderMode(&paint, haveMultipleLayers);
+        adjustTextRenderMode(&paint, gc->platformContext());
         paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
         paint.setColor(gc->strokeColor().rgb());
 
@@ -646,7 +645,6 @@ void Font::drawComplexText(GraphicsContext* gc, const TextRun& run,
     }
 
     TextRunWalker walker(run, point.x(), this);
-    bool haveMultipleLayers = isCanvasMultiLayered(canvas);
     walker.setWordSpacingAdjustment(wordSpacing());
     walker.setLetterSpacingAdjustment(letterSpacing());
     walker.setPadding(run.padding());
@@ -654,13 +652,13 @@ void Font::drawComplexText(GraphicsContext* gc, const TextRun& run,
     while (walker.nextScriptRun()) {
         if (fill) {
             walker.fontPlatformDataForScriptRun()->setupPaint(&fillPaint);
-            adjustTextRenderMode(&fillPaint, haveMultipleLayers);
+            adjustTextRenderMode(&fillPaint, gc->platformContext());
             canvas->drawPosTextH(walker.glyphs(), walker.length() << 1, walker.xPositions(), point.y(), fillPaint);
         }
 
         if (stroke) {
             walker.fontPlatformDataForScriptRun()->setupPaint(&strokePaint);
-            adjustTextRenderMode(&strokePaint, haveMultipleLayers);
+            adjustTextRenderMode(&strokePaint, gc->platformContext());
             canvas->drawPosTextH(walker.glyphs(), walker.length() << 1, walker.xPositions(), point.y(), strokePaint);
         }
     }
