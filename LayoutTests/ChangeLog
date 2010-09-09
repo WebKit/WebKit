@@ -1,3 +1,10 @@
+2010-09-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        LayoutTest regressions due to http://trac.webkit.org/changeset/67001
+        https://bugs.webkit.org/show_bug.cgi?id=45411
+
+        * platform/qt/Skipped: Unskip tests, because bug fixed in r67052.
+
 2010-09-08  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Dimitri Glazkov.
