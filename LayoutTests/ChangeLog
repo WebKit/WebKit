@@ -1,3 +1,11 @@
+2010-09-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed, fixing trivial typo.
+
+        Fix typo in my last commit (.htm should be .html)
+
+        * platform/mac-wk2/Skipped:
+
 2010-09-08  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Tony Chang.
