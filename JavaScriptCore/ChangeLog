@@ -1,3 +1,19 @@
+2010-09-08  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Removing doneSemicolon label in the lexer
+        https://bugs.webkit.org/show_bug.cgi?id=45289
+
+        As a side effect of moving the multiline comment parsing
+        to a separate function, an opportunity raised to simplify
+        the single line comment parsing, and removing doneSemicolon
+        label. Slight performance increase on --parse-only
+        tests (from 32.8ms to 31.5ms)
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer::lex):
+
 2010-09-08  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Alexey Proskuryakov.
