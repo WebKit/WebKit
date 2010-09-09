@@ -3146,3 +3146,5 @@ BUG54917 WIN : editing/input/page-up-down-scrolls.html = TEXT
 BUG54919 WIN : fast/events/remove-child-onscroll.html = TEXT
 BUG54921 WIN : fast/events/scroll-event-does-not-bubble.html = TEXT
 BUG54923 WIN : fast/repaint/fixed-move-after-keyboard-scroll.html = IMAGE+TEXT
+
+BUGWK45438 : editing/spelling/spelling-backspace-between-lines.html = TEXT
