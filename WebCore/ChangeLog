@@ -2,6 +2,25 @@
 
         Reviewed by Kenneth Russell.
 
+        Add AudioDSPKernelProcessor files
+        https://bugs.webkit.org/show_bug.cgi?id=45211
+
+        No new tests since audio API is not yet implemented.
+
+        * platform/audio/AudioDSPKernelProcessor.cpp: Added.
+        (WebCore::AudioDSPKernelProcessor::AudioDSPKernelProcessor):
+        (WebCore::AudioDSPKernelProcessor::initialize):
+        (WebCore::AudioDSPKernelProcessor::uninitialize):
+        (WebCore::AudioDSPKernelProcessor::process):
+        (WebCore::AudioDSPKernelProcessor::reset):
+        (WebCore::AudioDSPKernelProcessor::setNumberOfChannels):
+        * platform/audio/AudioDSPKernelProcessor.h: Added.
+        (WebCore::AudioDSPKernelProcessor::numberOfChannels):
+
+2010-09-09  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
         Add setRange() and zeroRange() methods to TypedArrayBase
         https://bugs.webkit.org/show_bug.cgi?id=45419
 
