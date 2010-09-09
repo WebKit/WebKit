@@ -1,6 +1,6 @@
 S8.6.2_A5_T1
 
-FAIL TypeError: Result of expression 'screen.touch' [undefined] is not a function.
+PASS 
 
 TEST COMPLETE
 

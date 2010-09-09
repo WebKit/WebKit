@@ -44,7 +44,7 @@ module window {
         LegacyParent=JSDOMWindowBase
     ] DOMWindow {
         // DOM Level 0
-        readonly attribute Screen screen;
+        attribute [Replaceable] Screen screen;
         readonly attribute [DoNotCheckDomainSecurity, JSCCustomGetter] History history;
         attribute [Replaceable] BarInfo locationbar;
         attribute [Replaceable] BarInfo menubar;

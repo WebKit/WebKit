@@ -1,3 +1,25 @@
+2010-09-09  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Give WebKit clients a way to replace window.screen to 
+        foil attempts to track users with it 
+
+        This allows clients to overload the values returned by the
+        Screen object through the JSC manipulation API (such as
+        QWebFrame::addToJavaScriptWindowObject() in Qt). Clients will
+        want to do this when they do not want to reveal too much
+        explicit information about the user's desktop configuration.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41802
+
+        * fast/dom/Window/window-property-shadowing-expected.txt:
+        * fast/dom/Window/window-property-shadowing.html:
+        * fast/js/sputnik/Conformance/08_Types/8.6_The_Object_Type/8.6.2_Internal_Properties_and_Methods/S8.6.2_A5_T1-expected.txt:
+        * fast/js/var-declarations-shadowing-expected.txt:
+        * fast/js/var-declarations-shadowing.html:
+        * http/tests/security/cross-frame-access-put-expected.txt:
+
 2010-09-09  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser.

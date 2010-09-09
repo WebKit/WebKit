@@ -80,9 +80,9 @@ PASS: defaultStatus == marker should be true and is.
 PASS: eval('defaultStatus == marker') should be true and is.
 PASS: defaultstatus == marker should be true and is.
 PASS: eval('defaultstatus == marker') should be true and is.
+PASS: screen == marker should be true and is.
+PASS: eval('screen == marker') should be true and is.
 -----
-PASS: screen == marker should be false and is.
-PASS: eval('screen == marker') should be false and is.
 PASS: history == marker should be false and is.
 PASS: eval('history == marker') should be false and is.
 PASS: frameElement == marker should be false and is.
