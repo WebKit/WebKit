@@ -1,3 +1,15 @@
+2010-09-09  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed build fix.
+
+        [EFL] Fix duplicate gstreamer macro in CMakeListEfl.txt
+        https://bugs.webkit.org/show_bug.cgi?id=45433
+
+        In WebKit/efl/CMakeListEfl.txt, duplicated ENABLE_VIDEO macros were added.
+        So, unnecessary ENABLE_VIDEO macro is deleted.
+
+        * CMakeListsEfl.txt:
+
 2010-09-08  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix.

@@ -24,16 +24,6 @@ LIST(APPEND WebKit_INCLUDE_DIRECTORIES
 IF (ENABLE_VIDEO)
 LIST(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/gstreamer"
-    ${Gstreamer-App_INCLUDE_DIRS}
-    ${Gstreamer-Interfaces_INCLUDE_DIRS}
-    ${Gstreamer-Pbutils_INCLUDE_DIRS}
-    ${Gstreamer-Video_INCLUDE_DIRS}
-)
-ENDIF()
-
-IF (ENABLE_VIDEO)
-LIST(APPEND WebKit_INCLUDE_DIRECTORIES
-    "${WEBCORE_DIR}/platform/graphics/gstreamer"
     ${GStreamer-App_INCLUDE_DIRS}
     ${GStreamer-Interfaces_INCLUDE_DIRS}
     ${GStreamer-Pbutils_INCLUDE_DIRS}
