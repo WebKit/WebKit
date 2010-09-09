@@ -1,3 +1,12 @@
+2010-09-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        [Qt] JSVALUE32_64 not works on Windows platform with MinGW compiler
+        https://bugs.webkit.org/show_bug.cgi?id=29268
+
+        * wtf/Platform.h: Enable JSVALUE32_64 for Qt/Windows/MinGW, because it works now.
+
 2010-09-08  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Darin Adler.
