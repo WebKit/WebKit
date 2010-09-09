@@ -1,3 +1,23 @@
+2010-09-09  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Fill mode is broken with multiple keyframes
+        https://bugs.webkit.org/show_bug.cgi?id=41209
+
+        With a forward fill mode the animation would tick after
+        the end of the animation, causing the fractional
+        duration of the animation to wrap. This meant the last
+        style update would happen using the incorrect keyframes.
+        The solution was to put clamps in for the elapsed time
+        and current iteration count.
+
+        Tests: animations/fill-mode-missing-from-to-keyframes.html
+               animations/fill-mode-multiple-keyframes.html
+
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::fetchIntervalEndpointsForProperty):
+
 2010-09-09  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by David Kilzer.
