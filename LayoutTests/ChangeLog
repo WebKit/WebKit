@@ -1,3 +1,13 @@
+2010-09-08  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Joseph Pecoraro.
+
+        Web Inspector: test that debugger won't pause on syntax errors
+        https://bugs.webkit.org/show_bug.cgi?id=45388
+
+        * inspector/debugger-autocontinue-on-syntax-error-expected.txt: Added.
+        * inspector/debugger-autocontinue-on-syntax-error.html: Added.
+
 2010-09-08  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Steve Falkenburg.

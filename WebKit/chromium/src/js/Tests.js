@@ -821,16 +821,6 @@ TestSuite.prototype.testCompletionOnPause = function()
 
 
 /**
- * Tests that inspected page doesn't hang on reload if it contains a syntax
- * error and DevTools window is open.
- */
-TestSuite.prototype.testAutoContinueOnSyntaxError = function()
-{
-    // TODO(yurys): provide an implementation that works with ScriptDebugServer.
-};
-
-
-/**
  * Checks current execution line against expectations.
  * @param {WebInspector.SourceFrame} sourceFrame
  * @param {number} lineNumber Expected line number

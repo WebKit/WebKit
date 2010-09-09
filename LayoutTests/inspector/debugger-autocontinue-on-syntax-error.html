@@ -1,0 +1,38 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/debugger-test2.js"></script>
+<script src="resources/syntax-error.js"></script>
+<script>
+
+function test()
+{
+    WebInspector.showPanel("scripts");
+    InspectorTest.startDebuggerTest(startDebuggerTestCallback);
+
+    function startDebuggerTestCallback()
+    {
+        InspectorBackend.setPauseOnExceptionsState(WebInspector.ScriptsPanel.PauseOnExceptionsState.PauseOnUncaughtExceptions);
+        InspectorTest.showScriptSource("debugger-autocontinue-on-syntax-error.html", reloadInspectedPage);
+    }
+
+    function reloadInspectedPage()
+    {
+        InspectorTest.reloadPage(function() {
+            InspectorTest.addResult("DONE.");
+            InspectorTest.completeTest();
+        });
+    }
+
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that debugger won't stop on syntax errors even if "pause on uncaught exceptions" is on.
+</p>
+
+</body>
+</html>

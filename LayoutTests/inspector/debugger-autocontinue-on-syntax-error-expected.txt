@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 1: SyntaxError: Parse error
+CONSOLE MESSAGE: line 1: SyntaxError: Parse error
+Tests that debugger won't stop on syntax errors even if "pause on uncaught exceptions" is on.
+
+Debugger was enabled.
+Page reloaded.
+DONE.
+
