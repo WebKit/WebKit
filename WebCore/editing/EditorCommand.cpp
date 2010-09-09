@@ -133,6 +133,9 @@ static bool executeToggleStyleInList(Frame* frame, EditorCommandSource source, E
     ExceptionCode ec = 0;
     Node* nodeToRemove = 0;
     RefPtr<CSSComputedStyleDeclaration> selectionStyle = frame->selectionComputedStyle(nodeToRemove);
+    if (!selectionStyle)
+        return false;
+
     RefPtr<CSSValue> selectedCSSValue = selectionStyle->getPropertyCSSValue(propertyID);
     String newStyle = "none";
     if (selectedCSSValue->isValueList()) {

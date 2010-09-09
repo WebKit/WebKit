@@ -58,6 +58,7 @@ public:
 
     PassRefPtr<CSSValue> getPropertyCSSValue(int propertyID, EUpdateLayout) const;
     PassRefPtr<CSSValue> getFontSizeCSSValuePreferringKeyword() const;
+    bool useFixedFontDefaultSize() const;
 #if ENABLE(SVG)
     PassRefPtr<CSSValue> getSVGPropertyCSSValue(int propertyID, EUpdateLayout) const;
 #endif

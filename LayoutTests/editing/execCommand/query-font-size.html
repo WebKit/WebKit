@@ -1,0 +1,126 @@
+<body>
+<script>
+
+function addRow(table)
+{
+    var tableRow = document.createElement("tr");
+    table.appendChild(tableRow);
+    return tableRow;
+}
+
+function addCellWithNodeContents(tableRow, contents)
+{
+    var tableCell = document.createElement("td");
+    tableCell.appendChild(contents);
+    tableRow.appendChild(tableCell);
+    return tableCell;
+}
+
+function addCellWithTextContents(tableRow, contents)
+{
+    return addCellWithNodeContents(tableRow, document.createTextNode(contents));
+}
+
+function addHeaderWithTextContents(tableRow, contents)
+{
+    var tableCell = document.createElement("th");   
+    tableCell.appendChild(document.createTextNode(contents));
+    tableRow.appendChild(tableCell);
+    return tableCell;
+}
+
+function setFontSizeOnContent(size)
+{
+    window.getSelection().selectAllChildren(editableDiv);
+    document.execCommand("FontSize", false, size);
+    return editableDiv.firstChild;
+}
+
+function setFontFamilyOnContent(fontFamily)
+{
+    window.getSelection().selectAllChildren(editableDiv);
+    document.execCommand("FontName", false, fontFamily);
+    return editableDiv.firstChild;
+}
+
+function wrapInSpanIfNeeded(shouldBeSpan)
+{
+    // Sometimes the result of the ExecCommand will not have a wrapping <span>
+    if (!shouldBeSpan.localName || shouldBeSpan.localName.toLowerCase() != "span") {
+        shouldBeSpan = document.createElement("span");
+        shouldBeSpan.appendChild(editableDiv.firstChild);
+        editableDiv.appendChild(shouldBeSpan);
+    }
+    return shouldBeSpan;
+}
+
+function reportSizeForSpan(span, comment)
+{
+    var tableRow = addRow(table);
+    addCellWithTextContents(tableRow, comment);
+    addCellWithTextContents(tableRow, span.parentNode.innerHTML); // sill FF has no outerHTML
+   
+    window.getSelection().selectAllChildren(span.parentNode);
+    addCellWithTextContents(tableRow, "" + document.queryCommandValue("FontSize"));
+    addCellWithTextContents(tableRow, "" + window.getComputedStyle(span, null).fontSize);
+}
+
+function testExecCommandFontSize(size, fontFamily)
+{
+    editableDiv.innerHTML = "test";
+    var sizedContent = setFontSizeOnContent(size);
+    sizedContent = wrapInSpanIfNeeded(sizedContent);
+    if (fontFamily)
+        sizedContent = setFontFamilyOnContent(fontFamily);
+    var sizeString = (typeof(size) == "string") ? ("'" + size + "'") : size;
+    reportSizeForSpan(sizedContent, "execCommand('FontSize', " + sizeString + ")");
+}
+
+function testManualFontSize(size)
+{
+    editableDiv.innerHTML = "<span style='font-size: " + size + "'>test</span>";
+    reportSizeForSpan(editableDiv.firstChild, "manual CSS font-size: " + size);
+}
+
+if (window.layoutTestController)
+    window.layoutTestController.dumpAsText();
+
+var editableDiv = document.createElement("div");
+editableDiv.contentEditable = true;
+document.body.appendChild(editableDiv);
+
+var table = document.createElement("table");
+table.border = "1px";
+table.width = "100%";
+document.body.appendChild(table);
+
+var tableRow = addRow(table);
+addHeaderWithTextContents(tableRow, "test");
+addHeaderWithTextContents(tableRow, "html");
+addHeaderWithTextContents(tableRow, "queryCommandValue result");
+addHeaderWithTextContents(tableRow, "getComputedStyle result");
+
+for (var size = -2; size < 8; size++) {
+    testExecCommandFontSize(size);
+}
+testExecCommandFontSize("8px");
+testExecCommandFontSize("2px");
+
+testManualFontSize("3px");
+testManualFontSize("0.2em");
+testManualFontSize("17px");
+testManualFontSize("31px");
+testManualFontSize("50px");
+testManualFontSize("5em");
+testManualFontSize("10px");
+
+tableRow = addRow(table);
+addHeaderWithTextContents(tableRow, "monospace tests to show bug 19161");
+
+for (var size = -2; size < 8; size++) {
+    testExecCommandFontSize(size, 'monospace');
+}
+
+document.body.removeChild(editableDiv);
+
+</script>

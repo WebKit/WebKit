@@ -1,3 +1,36 @@
+2010-09-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        QueryCommandValue('FontSize') returns pixel values instead of IE font numbers
+        https://bugs.webkit.org/show_bug.cgi?id=21033
+
+        Modified selectionStartCSSPropertyValue to return legacy font size instead of pixel size.
+        To implement the conversion between pixel font size and legacy font size,
+        added legacyFontSize to CSSStyleSelector with a helper static function findNearestLegacyFontSize.
+
+        Fixed a bug in selectionComputedStyle where it obtains the style of the previous editing position
+        even when the selection is a range. This change revealed a crash in executeToggleStyleInList,
+        which was also fixed.
+
+        Test: editing/execCommand/query-font-size.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getFontSizeCSSValuePreferringKeyword): Corrected style.
+        (WebCore::CSSComputedStyleDeclaration::useFixedFontDefaultSize): Added.
+        * css/CSSComputedStyleDeclaration.h:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::fontSizeForKeyword): Renamed fixed/monospace to shouldUseFixedDefaultSize.
+        (WebCore::findNearestLegacyFontSize): Added, a helper for legacyFontSize.
+        (WebCore::CSSStyleSelector::legacyFontSize): Added.
+        * css/CSSStyleSelector.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectionStartCSSPropertyValue): Added a conversion from pixel to legacy font size.
+        * editing/EditorCommand.cpp:
+        (WebCore::executeToggleStyleInList): Crash fix.
+        * page/Frame.cpp:
+        (WebCore::Frame::selectionComputedStyle): See above.
+
 2010-09-09  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Adam Barth.

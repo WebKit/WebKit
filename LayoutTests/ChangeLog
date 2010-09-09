@@ -1,3 +1,17 @@
+2010-09-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        queryCommandValue('FontSize') returns pixel values instead of IE font numbers
+        https://bugs.webkit.org/show_bug.cgi?id=21033
+
+        Added a test to ensure queryCommandValue('fontSize') returns legacy font size
+        for both variable width and fixed width fonts.
+
+        * editing/execCommand/query-font-size-expected.txt: Added.
+        * editing/execCommand/query-font-size.html: Added.
+        * fast/serializer: Added.
+
 2010-09-09  Tony Chang  <tony@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -745,6 +745,14 @@ PassRefPtr<CSSComputedStyleDeclaration> Frame::selectionComputedStyle(Node*& nod
     RefPtr<Range> range(selection()->toNormalizedRange());
     Position pos = range->editingStartPosition();
 
+    // If the pos is at the end of a text node, then this node is not fully selected.
+    // Move it to the next deep equivalent position to avoid removing the style from this node.
+    // e.g. if pos was at Position("hello", 5) in <b>hello<div>world</div></b>, we want Position("world", 0) instead.
+    // We only do this for range because caret at Position("hello", 5) in <b>hello</b>world should give you font-weight: bold.
+    Node* posNode = pos.containerNode();
+    if (selection()->isRange() && posNode && posNode->isTextNode() && pos.computeOffsetInContainerNode() == posNode->maxCharacterOffset())
+        pos = nextVisuallyDistinctCandidate(pos);
+
     Element *elem = pos.element();
     if (!elem)
         return 0;

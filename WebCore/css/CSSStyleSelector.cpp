@@ -6311,14 +6311,14 @@ static const int strictFontSizeTable[fontSizeTableMax - fontSizeTableMin + 1][to
 // factors for each keyword value.
 static const float fontSizeFactors[totalKeywords] = { 0.60f, 0.75f, 0.89f, 1.0f, 1.2f, 1.5f, 2.0f, 3.0f };
 
-float CSSStyleSelector::fontSizeForKeyword(Document* document, int keyword, bool fixed)
+float CSSStyleSelector::fontSizeForKeyword(Document* document, int keyword, bool shouldUseFixedDefaultSize)
 {
     Settings* settings = document->settings();
     if (!settings)
         return 1.0f;
 
     bool quirksMode = document->inQuirksMode();
-    int mediumSize = fixed ? settings->defaultFixedFontSize() : settings->defaultFontSize();
+    int mediumSize = shouldUseFixedDefaultSize ? settings->defaultFixedFontSize() : settings->defaultFontSize();
     if (mediumSize >= fontSizeTableMin && mediumSize <= fontSizeTableMax) {
         // Look up the entry in the table.
         int row = mediumSize - fontSizeTableMin;
@@ -6329,6 +6329,33 @@ float CSSStyleSelector::fontSizeForKeyword(Document* document, int keyword, bool
     // Value is outside the range of the table. Apply the scale factor instead.
     float minLogicalSize = max(settings->minimumLogicalFontSize(), 1);
     return max(fontSizeFactors[keyword - CSSValueXxSmall]*mediumSize, minLogicalSize);
+}
+
+template<typename T>
+static int findNearestLegacyFontSize(int pixelFontSize, const T* table, int multiplier)
+{
+    // Ignore table[0] because xx-small does not correspond to any legacy font size.
+    for (int i = 1; i < totalKeywords - 1; i++) {
+        if (pixelFontSize * 2 < (table[i] + table[i + 1]) * multiplier)
+            return i;
+    }
+    return totalKeywords - 1;
+}
+
+int CSSStyleSelector::legacyFontSize(Document* document, int pixelFontSize, bool shouldUseFixedDefaultSize)
+{
+    Settings* settings = document->settings();
+    if (!settings)
+        return 1;
+
+    bool quirksMode = document->inQuirksMode();
+    int mediumSize = shouldUseFixedDefaultSize ? settings->defaultFixedFontSize() : settings->defaultFontSize();
+    if (mediumSize >= fontSizeTableMin && mediumSize <= fontSizeTableMax) {
+        int row = mediumSize - fontSizeTableMin;
+        return findNearestLegacyFontSize<int>(pixelFontSize, quirksMode ? quirksFontSizeTable[row] : strictFontSizeTable[row], 1);
+    }
+
+    return findNearestLegacyFontSize<float>(pixelFontSize, fontSizeFactors, mediumSize);
 }
 
 float CSSStyleSelector::largerFontSize(float size, bool) const

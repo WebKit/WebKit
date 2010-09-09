@@ -571,13 +571,12 @@ static int cssIdentifierForFontSizeKeyword(int keywordSize)
 
 PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getFontSizeCSSValuePreferringKeyword() const
 {
-    Node* node = m_node.get();
-    if (!node)
+    if (!m_node)
         return 0;
 
-    node->document()->updateLayoutIgnorePendingStylesheets();
+    m_node->document()->updateLayoutIgnorePendingStylesheets();
 
-    RefPtr<RenderStyle> style = node->computedStyle(m_pseudoElementSpecifier);
+    RefPtr<RenderStyle> style = m_node->computedStyle(m_pseudoElementSpecifier);
     if (!style)
         return 0;
 
@@ -585,6 +584,18 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getFontSizeCSSValuePreferringK
         return CSSPrimitiveValue::createIdentifier(cssIdentifierForFontSizeKeyword(keywordSize));
 
     return CSSPrimitiveValue::create(style->fontDescription().computedPixelSize(), CSSPrimitiveValue::CSS_PX);
+}
+
+bool CSSComputedStyleDeclaration::useFixedFontDefaultSize() const
+{
+    if (!m_node)
+        return false;
+
+    RefPtr<RenderStyle> style = m_node->computedStyle(m_pseudoElementSpecifier);
+    if (!style)
+        return false;
+
+    return style->fontDescription().useFixedDefaultSize();
 }
 
 PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForShadow(const ShadowData* shadow, int id) const

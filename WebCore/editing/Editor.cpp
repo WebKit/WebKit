@@ -33,6 +33,7 @@
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
+#include "CSSStyleSelector.h"
 #include "CSSValueKeywords.h"
 #include "CharacterNames.h"
 #include "ClipboardEvent.h"
@@ -938,7 +939,7 @@ static bool hasTransparentBackgroundColor(CSSStyleDeclaration* style)
 String Editor::selectionStartCSSPropertyValue(int propertyID)
 {
     Node* nodeToRemove;
-    RefPtr<CSSStyleDeclaration> selectionStyle = m_frame->selectionComputedStyle(nodeToRemove);
+    RefPtr<CSSComputedStyleDeclaration> selectionStyle = m_frame->selectionComputedStyle(nodeToRemove);
     if (!selectionStyle)
         return String();
 
@@ -963,6 +964,14 @@ String Editor::selectionStartCSSPropertyValue(int propertyID)
                 break;
             }
         }
+    }
+
+    if (propertyID == CSSPropertyFontSize) {
+        RefPtr<CSSValue> value = selectionStyle->getPropertyCSSValue(CSSPropertyFontSize);
+        ASSERT(value->isPrimitiveValue());
+        int fontPixelSize = static_cast<CSSPrimitiveValue*>(value.get())->getIntValue(CSSPrimitiveValue::CSS_PX);
+        int size = CSSStyleSelector::legacyFontSize(m_frame->document(), fontPixelSize, selectionStyle->useFixedFontDefaultSize());
+        return String::number(size);
     }
 
     return value;
