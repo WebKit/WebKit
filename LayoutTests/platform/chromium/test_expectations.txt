@@ -3134,3 +3134,6 @@ BUGWK44960 LINUX : fast/text/atsui-spacing-features.html = IMAGE+TEXT
 
 // Regressed in r66908
 BUGWK45332 MAC : fast/canvas/webgl/gl-teximage.html = TEXT
+
+// Regressed in r66955
+BUGWK45431 LINUX : svg/dynamic-updates/SVGFEDiffuseLightingElement-lighting-color-css-prop.html = IMAGE

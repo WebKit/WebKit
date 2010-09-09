@@ -1,3 +1,11 @@
+2010-09-08  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed.
+
+        Add svg/dynamic-updates/SVGFEDiffuseLightingElement-lighting-color-css-prop.html to test_expectations.txt
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-08  Tony Chang  <tony@chromium.org>
 
         Unreviewed.  Remove compositing results because we skip these
