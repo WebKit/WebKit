@@ -1,3 +1,12 @@
+2010-09-09  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Use of ENABLE macro in WebUIDelegatePrivate.h breaks use from outside WebKit
+        <rdar://problem/8412657>
+
+        * WebView/WebUIDelegatePrivate.h: Use ENABLE_FULLSCREEN_API instead of ENABLE(FULLSCREEN_API)
+
 2010-09-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Barth.

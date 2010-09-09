@@ -32,6 +32,10 @@
 #define ENABLE_DASHBOARD_SUPPORT 1
 #endif
 
+#if !defined(ENABLE_FULLSCREEN_API)
+#define ENABLE_FULLSCREEN_API 1
+#endif
+
 // Mail on Tiger expects the old value for WebMenuItemTagSearchInGoogle
 #define WebMenuItemTagSearchInGoogle OldWebMenuItemTagSearchWeb
 
@@ -95,7 +99,7 @@ enum {
 - (void)deny;
 @end
 
-#if ENABLE(FULLSCREEN_API)
+#if ENABLE_FULLSCREEN_API
 @protocol WebKitFullScreenListener<NSObject>
 - (void)webkitWillEnterFullScreen;
 - (void)webkitDidEnterFullScreen;
@@ -173,7 +177,7 @@ enum {
 */
 - (void)webView:(WebView *)sender printFrame:(WebFrame *)frame;
 
-#if ENABLE(FULLSCREEN_API)
+#if ENABLE_FULLSCREEN_API
 - (BOOL)webView:(WebView *)sender supportsFullScreenForElement:(DOMElement *)element;
 - (void)webView:(WebView *)sender enterFullScreenForElement:(DOMElement *)element;
 - (void)webView:(WebView *)sender exitFullScreenForElement:(DOMElement *)element;
