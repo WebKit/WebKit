@@ -1,3 +1,21 @@
+2010-09-09  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by James Robinson.
+
+        Make sure skia is not Chromium specific
+        https://bugs.webkit.org/show_bug.cgi?id=39672
+
+        FontCustomPlatformData is not Chromium-specific. Move it to platform/skia.
+
+        No new tests because this is pure refactoring.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * platform/graphics/chromium/FontCustomPlatformData.cpp: Removed.
+        * platform/graphics/chromium/FontCustomPlatformData.h: Removed.
+        * platform/graphics/skia/FontCustomPlatformData.cpp: Copied from WebCore/platform/graphics/chromium/FontCustomPlatformData.cpp.
+        * platform/graphics/skia/FontCustomPlatformData.h: Copied from WebCore/platform/graphics/chromium/FontCustomPlatformData.h.
+
 2010-09-09  Chris Rogers  <crogers@google.com>
 
         Reviewed by Chris Fleizach.

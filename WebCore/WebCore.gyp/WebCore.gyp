@@ -1220,7 +1220,7 @@
 
             # The Mac currently uses FontCustomPlatformData.cpp from
             # platform/graphics/mac, included by regex above, instead.
-            '../platform/graphics/chromium/FontCustomPlatformData.cpp',
+            '../platform/graphics/skia/FontCustomPlatformData.cpp',
 
             # The Mac currently uses ScrollbarThemeChromiumMac.mm, which is not
             # related to ScrollbarThemeChromium.cpp.
