@@ -84,7 +84,7 @@ static void scrollbarEflEdjeMessage(void* data, Evas_Object* o, Edje_Message_Typ
 
     m = static_cast<Edje_Message_Float*>(msg);
     v = m->val * (that->totalSize() - that->visibleSize());
-    that->setValue(v);
+    that->setValue(v, Scrollbar::NotFromScrollAnimator);
 }
 
 void ScrollbarEfl::setParent(ScrollView* view)
