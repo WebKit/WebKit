@@ -1,3 +1,155 @@
+2010-09-08  Tony Chang  <tony@chromium.org>
+
+        Unreviewed.  Adding png files for chromium-linux tests that have
+        .checksum files but no png files.  Also remove 4 checksums where
+        there is no corresponding png file, but we're failing the tests so
+        I didn't want to check in a bad png file.
+
+        * platform/chromium-linux/editing/deleting/collapse-whitespace-3587601-fix-expected.png: Copied from LayoutTests/platform/chromium-win/editing/deleting/collapse-whitespace-3587601-fix-expected.png.
+        * platform/chromium-linux/editing/deleting/delete-at-start-or-end-expected.png: Copied from LayoutTests/platform/chromium-win/editing/deleting/delete-at-start-or-end-expected.png.
+        * platform/chromium-linux/editing/deleting/delete-block-contents-001-expected.png: Copied from LayoutTests/platform/chromium-win/editing/deleting/delete-block-contents-001-expected.png.
+        * platform/chromium-linux/editing/deleting/delete-block-contents-002-expected.png: Copied from LayoutTests/platform/chromium-win/editing/deleting/delete-block-contents-002-expected.png.
+        * platform/chromium-linux/editing/deleting/delete-image-004-expected.png: Copied from LayoutTests/platform/chromium-win/editing/deleting/delete-image-004-expected.png.
+        * platform/chromium-linux/editing/deleting/delete-select-all-002-expected.png: Copied from LayoutTests/platform/chromium-win/editing/deleting/delete-select-all-002-expected.png.
+        * platform/chromium-linux/editing/deleting/delete-select-all-003-expected.png: Copied from LayoutTests/platform/chromium-win/editing/deleting/delete-select-all-003-expected.png.
+        * platform/chromium-linux/editing/pasteboard/innerText-inline-table-expected.png: Added.
+        * platform/chromium-linux/editing/pasteboard/paste-table-cells-expected.png: Added.
+        * platform/chromium-linux/editing/selection/selectNode-expected.png: Added.
+        * platform/chromium-linux/editing/selection/selectNodeContents-expected.png: Added.
+        * platform/chromium-linux/editing/undo/5378473-expected.png: Copied from LayoutTests/platform/chromium-win/editing/undo/5378473-expected.png.
+        * platform/chromium-linux/editing/undo/undo-misspellings-expected.png: Copied from LayoutTests/platform/chromium-win/editing/undo/undo-misspellings-expected.png.
+        * platform/chromium-linux/fast/backgrounds/bgCompositeCopy-expected.png: Copied from LayoutTests/platform/chromium-win/fast/backgrounds/bgCompositeCopy-expected.png.
+        * platform/chromium-linux/fast/backgrounds/svg-as-background-2-expected.png: Copied from LayoutTests/platform/chromium-win/fast/backgrounds/svg-as-background-2-expected.png.
+        * platform/chromium-linux/fast/block/basic/quirk-percent-height-table-cell-expected.png: Copied from LayoutTests/platform/chromium-win/fast/block/basic/quirk-percent-height-table-cell-expected.png.
+        * platform/chromium-linux/fast/block/float/014-expected.png: Added.
+        * platform/chromium-linux/fast/block/positioning/replaced-inside-fixed-top-bottom-expected.png: Added.
+        * platform/chromium-linux/fast/borders/svg-as-border-image-2-expected.png: Added.
+        * platform/chromium-linux/fast/borders/svg-as-border-image-expected.png: Added.
+        * platform/chromium-linux/fast/canvas/canvas-as-image-incremental-repaint-expected.png: Copied from LayoutTests/platform/chromium-win/fast/canvas/canvas-as-image-incremental-repaint-expected.png.
+        * platform/chromium-linux/fast/canvas/canvas-text-baseline-expected.png: Added.
+        * platform/chromium-linux/fast/canvas/quadraticCurveTo-expected.png: Added.
+        * platform/chromium-linux/fast/css-generated-content/table-row-group-to-inline-expected.png: Added.
+        * platform/chromium-linux/fast/css-generated-content/table-row-group-with-before-expected.png: Added.
+        * platform/chromium-linux/fast/css-generated-content/table-row-with-before-expected.png: Added.
+        * platform/chromium-linux/fast/css-generated-content/table-with-before-expected.png: Added.
+        * platform/chromium-linux/fast/css/001-expected.png: Added.
+        * platform/chromium-linux/fast/css/background-shorthand-invalid-url-expected.png: Added.
+        * platform/chromium-linux/fast/css/value-list-out-of-bounds-crash-expected.png: Added.
+        * platform/chromium-linux/fast/css/variables/image-test-expected.png: Added.
+        * platform/chromium-linux/fast/doctypes/001-expected.png: Added.
+        * platform/chromium-linux/fast/doctypes/002-expected.png: Added.
+        * platform/chromium-linux/fast/doctypes/004-expected.png: Added.
+        * platform/chromium-linux/fast/forms/preserveFormDuringResidualStyle-expected.png: Added.
+        * platform/chromium-linux/fast/inline-block/14498-positionForCoordinates-expected.png: Added.
+        * platform/chromium-linux/fast/inline/emptyInlinesWithinLists-expected.png: Added.
+        * platform/chromium-linux/fast/invalid/016-expected.png: Added.
+        * platform/chromium-linux/fast/layers/add-layer-with-nested-stacking-expected.png: Copied from LayoutTests/platform/chromium-win/fast/layers/add-layer-with-nested-stacking-expected.png.
+        * platform/chromium-linux/fast/layers/self-painting-outline-expected.png: Copied from LayoutTests/platform/chromium-win/fast/layers/self-painting-outline-expected.png.
+        * platform/chromium-linux/fast/layers/video-layer-expected.png: Added.
+        * platform/chromium-linux/fast/lists/005-expected.png: Added.
+        * platform/chromium-linux/fast/lists/big-list-marker-expected.png: Added.
+        * platform/chromium-linux/fast/lists/scrolled-marker-paint-expected.png: Added.
+        * platform/chromium-linux/fast/parser/parseCommentsInTitles-expected.png: Added.
+        * platform/chromium-linux/fast/repaint/background-generated-expected.png: Copied from LayoutTests/platform/chromium-win/fast/repaint/background-generated-expected.png.
+        * platform/chromium-linux/fast/repaint/background-misaligned-expected.png: Copied from LayoutTests/platform/chromium-win/fast/repaint/background-misaligned-expected.png.
+        * platform/chromium-linux/fast/repaint/block-selection-gap-in-table-cell-expected.png: Copied from LayoutTests/platform/chromium-win/fast/repaint/block-selection-gap-in-table-cell-expected.png.
+        * platform/chromium-linux/fast/repaint/block-selection-gap-stale-cache-expected.png: Added.
+        * platform/chromium-linux/fast/repaint/button-spurious-layout-hint-expected.png: Copied from LayoutTests/platform/chromium-win/fast/repaint/button-spurious-layout-hint-expected.png.
+        * platform/chromium-linux/fast/repaint/clip-with-layout-delta-expected.png: Added.
+        * platform/chromium-linux/fast/repaint/content-into-overflow-expected.png: Copied from LayoutTests/platform/chromium-win/fast/repaint/content-into-overflow-expected.png.
+        * platform/chromium-linux/fast/repaint/float-in-new-block-with-layout-delta-expected.png: Copied from LayoutTests/platform/chromium-win/fast/repaint/float-in-new-block-with-layout-delta-expected.png.
+        * platform/chromium-linux/fast/repaint/float-new-in-block-expected.png: Copied from LayoutTests/platform/chromium-win/fast/repaint/float-new-in-block-expected.png.
+        * platform/chromium-linux/fast/repaint/focus-ring-expected.png: Copied from LayoutTests/platform/chromium-win/fast/repaint/focus-ring-expected.png.
+        * platform/chromium-linux/fast/repaint/inline-relative-positioned-expected.png: Added.
+        * platform/chromium-linux/fast/repaint/intermediate-layout-position-clip-expected.png: Copied from LayoutTests/platform/chromium-win/fast/repaint/intermediate-layout-position-clip-expected.png.
+        * platform/chromium-linux/fast/repaint/intermediate-layout-position-expected.png: Copied from LayoutTests/platform/chromium-win/fast/repaint/intermediate-layout-position-expected.png.
+        * platform/chromium-linux/fast/repaint/multicol-repaint-expected.png: Copied from LayoutTests/platform/chromium-win/fast/repaint/multicol-repaint-expected.png.
+        * platform/chromium-linux/fast/repaint/outline-inset-expected.png: Copied from LayoutTests/platform/chromium-win/fast/repaint/outline-inset-expected.png.
+        * platform/chromium-linux/fast/repaint/overflow-into-content-expected.png: Copied from LayoutTests/platform/chromium-win/fast/repaint/overflow-into-content-expected.png.
+        * platform/chromium-linux/fast/repaint/positioned-document-element-expected.png: Added.
+        * platform/chromium-linux/fast/repaint/selection-clear-expected.png: Copied from LayoutTests/platform/chromium-win/fast/repaint/selection-clear-expected.png.
+        * platform/chromium-linux/fast/repaint/table-outer-border-expected.png: Copied from LayoutTests/platform/chromium-win/fast/repaint/table-outer-border-expected.png.
+        * platform/chromium-linux/fast/repaint/table-section-repaint-expected.png: Copied from LayoutTests/platform/chromium-win/fast/repaint/table-section-repaint-expected.png.
+        * platform/chromium-linux/fast/repaint/table-two-pass-layout-overpaint-expected.png: Copied from LayoutTests/platform/chromium-win/fast/repaint/table-two-pass-layout-overpaint-expected.png.
+        * platform/chromium-linux/fast/repaint/transform-disable-layoutstate-expected.png: Copied from LayoutTests/platform/chromium-win/fast/repaint/transform-disable-layoutstate-expected.png.
+        * platform/chromium-linux/fast/repaint/transform-replaced-shadows-expected.png: Copied from LayoutTests/platform/chromium-win/fast/repaint/transform-replaced-shadows-expected.png.
+        * platform/chromium-linux/fast/replaced/image-sizing-expected.png: Added.
+        * platform/chromium-linux/fast/runin/generated4-expected.png: Added.
+        * platform/chromium-linux/fast/selectors/001-expected.png: Added.
+        * platform/chromium-linux/fast/selectors/013-expected.png: Added.
+        * platform/chromium-linux/fast/selectors/015-expected.png: Added.
+        * platform/chromium-linux/fast/table/border-collapsing/equal-precedence-resolution-expected.png: Copied from LayoutTests/platform/chromium-win/fast/table/border-collapsing/equal-precedence-resolution-expected.png.
+        * platform/chromium-linux/fast/table/giantRowspan-expected.png: Copied from LayoutTests/platform/chromium-win/fast/table/giantRowspan-expected.png.
+        * platform/chromium-linux/fast/table/multiple-percent-height-rows-expected.png: Copied from LayoutTests/platform/chromium-win/fast/table/multiple-percent-height-rows-expected.png.
+        * platform/chromium-linux/scrollbars/listbox-scrollbar-combinations-expected.png: Added.
+        * platform/chromium-linux/svg/batik/masking/maskRegions-expected.checksum: Removed.
+        * platform/chromium-linux/svg/custom/bug45331-expected.png: Added.
+        * platform/chromium-linux/svg/custom/clone-element-with-animated-svg-properties-expected.png: Added.
+        * platform/chromium-linux/svg/custom/control-points-for-S-and-T-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/control-points-for-S-and-T-expected.png.
+        * platform/chromium-linux/svg/custom/deep-dynamic-updates-expected.png: Added.
+        * platform/chromium-linux/svg/custom/dynamic-empty-path-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/dynamic-empty-path-expected.png.
+        * platform/chromium-linux/svg/custom/feDisplacementMap-01-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/feDisplacementMap-01-expected.png.
+        * platform/chromium-linux/svg/custom/fill-opacity-hsl-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/fill-opacity-hsl-expected.png.
+        * platform/chromium-linux/svg/custom/fill-opacity-rgba-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/fill-opacity-rgba-expected.png.
+        * platform/chromium-linux/svg/custom/glyph-transformation-with-hkern-expected.png: Added.
+        * platform/chromium-linux/svg/custom/gradient-stop-corner-cases-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/gradient-stop-corner-cases-expected.png.
+        * platform/chromium-linux/svg/custom/grayscale-gradient-mask-expected.checksum: Removed.
+        * platform/chromium-linux/svg/custom/group-opacity-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/group-opacity-expected.png.
+        * platform/chromium-linux/svg/custom/image-with-transform-clip-filter-expected.png: Added.
+        * platform/chromium-linux/svg/custom/js-repaint-rect-on-path-with-stroke-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/js-repaint-rect-on-path-with-stroke-expected.png.
+        * platform/chromium-linux/svg/custom/js-update-container-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/js-update-container-expected.png.
+        * platform/chromium-linux/svg/custom/js-update-container2-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/js-update-container2-expected.png.
+        * platform/chromium-linux/svg/custom/js-update-polygon-changes-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/js-update-polygon-changes-expected.png.
+        * platform/chromium-linux/svg/custom/js-update-polygon-removal-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/js-update-polygon-removal-expected.png.
+        * platform/chromium-linux/svg/custom/js-update-style-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/js-update-style-expected.png.
+        * platform/chromium-linux/svg/custom/js-update-transform-addition-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/js-update-transform-addition-expected.png.
+        * platform/chromium-linux/svg/custom/marker-referencePoint-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/marker-referencePoint-expected.png.
+        * platform/chromium-linux/svg/custom/mouse-move-on-svg-container-expected.png: Added.
+        * platform/chromium-linux/svg/custom/mouse-move-on-svg-container-standalone-expected.png: Added.
+        * platform/chromium-linux/svg/custom/mouse-move-on-svg-root-expected.png: Added.
+        * platform/chromium-linux/svg/custom/mouse-move-on-svg-root-standalone-expected.png: Added.
+        * platform/chromium-linux/svg/custom/non-scaling-stroke-expected.checksum: Removed.
+        * platform/chromium-linux/svg/custom/pattern-cycle-detection-expected.png: Added.
+        * platform/chromium-linux/svg/custom/pattern-deep-referencing-expected.png: Added.
+        * platform/chromium-linux/svg/custom/pattern-with-transformation-expected.png: Added.
+        * platform/chromium-linux/svg/custom/pattern-y-offset-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/pattern-y-offset-expected.png.
+        * platform/chromium-linux/svg/custom/repaint-moving-svg-and-div-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/repaint-moving-svg-and-div-expected.png.
+        * platform/chromium-linux/svg/custom/repaint-stroke-width-changes-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/repaint-stroke-width-changes-expected.png.
+        * platform/chromium-linux/svg/custom/stroked-pattern-expected.checksum: Removed.
+        * platform/chromium-linux/svg/custom/svg-fonts-with-no-element-reference-expected.png: Added.
+        * platform/chromium-linux/svg/custom/text-dom-removal-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/text-dom-removal-expected.png.
+        * platform/chromium-linux/svg/custom/text-linking-expected.png: Added.
+        * platform/chromium-linux/svg/custom/use-forward-refs-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/use-forward-refs-expected.png.
+        * platform/chromium-linux/svg/filters/feComposite-expected.png: Added.
+        * platform/chromium-linux/svg/filters/filter-on-tspan-expected.png: Added.
+        * platform/chromium-linux/svg/filters/filter-width-update-expected.png: Added.
+        * platform/chromium-linux/svg/filters/sourceAlpha-expected.png: Added.
+        * platform/chromium-linux/svg/foreignObject/no-crash-with-svg-content-in-html-document-expected.png: Added.
+        * platform/chromium-linux/svg/foreignObject/svg-document-as-direct-child-expected.png: Added.
+        * platform/chromium-linux/svg/foreignObject/svg-document-in-html-document-expected.png: Added.
+        * platform/chromium-linux/svg/hixie/data-types/001-expected.png: Copied from LayoutTests/platform/chromium-win/svg/hixie/data-types/001-expected.png.
+        * platform/chromium-linux/svg/zoom/text/absolute-sized-document-no-scrollbars-expected.png: Copied from LayoutTests/platform/chromium-win/svg/zoom/text/absolute-sized-document-no-scrollbars-expected.png.
+        * platform/chromium-linux/svg/zoom/text/absolute-sized-document-scrollbars-expected.png: Copied from LayoutTests/platform/chromium-win/svg/zoom/text/absolute-sized-document-scrollbars-expected.png.
+        * platform/chromium-linux/svg/zoom/text/relative-sized-document-scrollbars-expected.png: Copied from LayoutTests/platform/chromium-win/svg/zoom/text/relative-sized-document-scrollbars-expected.png.
+        * platform/chromium-linux/tables/mozilla/bugs/bug106795-expected.png: Copied from LayoutTests/platform/chromium-win/tables/mozilla/bugs/bug106795-expected.png.
+        * platform/chromium-linux/tables/mozilla/bugs/bug11026-expected.png: Added.
+        * platform/chromium-linux/tables/mozilla/bugs/bug1296-expected.png: Added.
+        * platform/chromium-linux/tables/mozilla/bugs/bug131020-2-expected.png: Copied from LayoutTests/platform/chromium-win/tables/mozilla/bugs/bug131020-2-expected.png.
+        * platform/chromium-linux/tables/mozilla/bugs/bug13169-expected.png: Copied from LayoutTests/platform/chromium-win/tables/mozilla/bugs/bug13169-expected.png.
+        * platform/chromium-linux/tables/mozilla/bugs/bug133948-expected.png: Copied from LayoutTests/platform/chromium-win/tables/mozilla/bugs/bug133948-expected.png.
+        * platform/chromium-linux/tables/mozilla/bugs/bug15544-expected.png: Added.
+        * platform/chromium-linux/tables/mozilla/bugs/bug1818-1-expected.png: Copied from LayoutTests/platform/chromium-win/tables/mozilla/bugs/bug1818-1-expected.png.
+        * platform/chromium-linux/tables/mozilla/bugs/bug1818-2-expected.png: Copied from LayoutTests/platform/chromium-win/tables/mozilla/bugs/bug1818-2-expected.png.
+        * platform/chromium-linux/tables/mozilla/bugs/bug1818-3-expected.png: Copied from LayoutTests/platform/chromium-win/tables/mozilla/bugs/bug1818-3-expected.png.
+        * platform/chromium-linux/tables/mozilla/bugs/bug1818-4-expected.png: Copied from LayoutTests/platform/chromium-win/tables/mozilla/bugs/bug1818-4-expected.png.
+        * platform/chromium-linux/tables/mozilla/bugs/bug219693-1-expected.png: Copied from LayoutTests/platform/chromium-win/tables/mozilla/bugs/bug219693-1-expected.png.
+        * platform/chromium-linux/tables/mozilla/bugs/bug219693-2-expected.png: Copied from LayoutTests/platform/chromium-win/tables/mozilla/bugs/bug219693-2-expected.png.
+        * platform/chromium-linux/tables/mozilla/bugs/bug26553-expected.png: Copied from LayoutTests/platform/chromium-win/tables/mozilla/bugs/bug26553-expected.png.
+        * platform/chromium-linux/tables/mozilla/bugs/bug32447-expected.png: Added.
+        * platform/chromium-linux/tables/mozilla/bugs/bug34538-expected.png: Added.
+        * platform/chromium-linux/tables/mozilla/bugs/bug56201-expected.png: Copied from LayoutTests/platform/chromium-win/tables/mozilla/bugs/bug56201-expected.png.
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug23847-expected.png: Copied from LayoutTests/platform/chromium-win/tables/mozilla_expected_failures/bugs/bug23847-expected.png.
+
 2010-09-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
