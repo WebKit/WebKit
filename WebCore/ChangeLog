@@ -1,3 +1,15 @@
+2010-09-09  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Dirk Schulze.
+
+        [WML] Add a parameter to fix build break.
+        https://bugs.webkit.org/show_bug.cgi?id=45437
+
+        In WMLSelectElement.h, the setSelectedIndexByUser() needs to have one more parameter. 
+        Because, parent class's setSelectedIndexByUser() has one more param.
+
+        * wml/WMLSelectElement.h:
+
 2010-09-09  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed attempt to fix EFL build after r67001.
