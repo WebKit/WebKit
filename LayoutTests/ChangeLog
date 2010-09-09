@@ -1,3 +1,48 @@
+2010-09-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed typo fix after r67068 based on suggestion of Renáta Hodován.
+
+        * platform/mac/svg/dynamic-updates/SVGFEDistantLightELement-dom-azimuth-attr-expected.checksum: Removed.
+        * platform/mac/svg/dynamic-updates/SVGFEDistantLightELement-dom-azimuth-attr-expected.png: Removed.
+        * platform/mac/svg/dynamic-updates/SVGFEDistantLightELement-dom-elevation-attr-expected.checksum: Removed.
+        * platform/mac/svg/dynamic-updates/SVGFEDistantLightELement-dom-elevation-attr-expected.png: Removed.
+        * platform/mac/svg/dynamic-updates/SVGFEDistantLightELement-svgdom-azimuth-prop-expected.checksum: Removed.
+        * platform/mac/svg/dynamic-updates/SVGFEDistantLightELement-svgdom-azimuth-prop-expected.png: Removed.
+        * platform/mac/svg/dynamic-updates/SVGFEDistantLightELement-svgdom-elevation-prop-expected.checksum: Removed.
+        * platform/mac/svg/dynamic-updates/SVGFEDistantLightELement-svgdom-elevation-prop-expected.png: Removed.
+        * platform/mac/svg/dynamic-updates/SVGFEDistantLightElement-dom-azimuth-attr-expected.checksum: Copied from LayoutTests/platform/mac/svg/dynamic-updates/SVGFEDistantLightELement-dom-azimuth-attr-expected.checksum.
+        * platform/mac/svg/dynamic-updates/SVGFEDistantLightElement-dom-azimuth-attr-expected.png: Copied from LayoutTests/platform/mac/svg/dynamic-updates/SVGFEDistantLightELement-dom-azimuth-attr-expected.png.
+        * platform/mac/svg/dynamic-updates/SVGFEDistantLightElement-dom-elevation-attr-expected.checksum: Copied from LayoutTests/platform/mac/svg/dynamic-updates/SVGFEDistantLightELement-dom-elevation-attr-expected.checksum.
+        * platform/mac/svg/dynamic-updates/SVGFEDistantLightElement-dom-elevation-attr-expected.png: Copied from LayoutTests/platform/mac/svg/dynamic-updates/SVGFEDistantLightELement-dom-elevation-attr-expected.png.
+        * platform/mac/svg/dynamic-updates/SVGFEDistantLightElement-svgdom-azimuth-prop-expected.checksum: Copied from LayoutTests/platform/mac/svg/dynamic-updates/SVGFEDistantLightELement-svgdom-azimuth-prop-expected.checksum.
+        * platform/mac/svg/dynamic-updates/SVGFEDistantLightElement-svgdom-azimuth-prop-expected.png: Copied from LayoutTests/platform/mac/svg/dynamic-updates/SVGFEDistantLightELement-svgdom-azimuth-prop-expected.png.
+        * platform/mac/svg/dynamic-updates/SVGFEDistantLightElement-svgdom-elevation-prop-expected.checksum: Copied from LayoutTests/platform/mac/svg/dynamic-updates/SVGFEDistantLightELement-svgdom-elevation-prop-expected.checksum.
+        * platform/mac/svg/dynamic-updates/SVGFEDistantLightElement-svgdom-elevation-prop-expected.png: Copied from LayoutTests/platform/mac/svg/dynamic-updates/SVGFEDistantLightELement-svgdom-elevation-prop-expected.png.
+        * svg/dynamic-updates/SVGFEDistantLightELement-dom-azimuth-attr-expected.txt: Removed.
+        * svg/dynamic-updates/SVGFEDistantLightELement-dom-azimuth-attr.html: Removed.
+        * svg/dynamic-updates/SVGFEDistantLightELement-dom-elevation-attr-expected.txt: Removed.
+        * svg/dynamic-updates/SVGFEDistantLightELement-dom-elevation-attr.html: Removed.
+        * svg/dynamic-updates/SVGFEDistantLightELement-svgdom-azimuth-prop-expected.txt: Removed.
+        * svg/dynamic-updates/SVGFEDistantLightELement-svgdom-azimuth-prop.html: Removed.
+        * svg/dynamic-updates/SVGFEDistantLightELement-svgdom-elevation-prop-expected.txt: Removed.
+        * svg/dynamic-updates/SVGFEDistantLightELement-svgdom-elevation-prop.html: Removed.
+        * svg/dynamic-updates/SVGFEDistantLightElement-dom-azimuth-attr-expected.txt: Copied from LayoutTests/svg/dynamic-updates/SVGFEDistantLightELement-dom-azimuth-attr-expected.txt.
+        * svg/dynamic-updates/SVGFEDistantLightElement-dom-azimuth-attr.html: Copied from LayoutTests/svg/dynamic-updates/SVGFEDistantLightELement-dom-azimuth-attr.html.
+        * svg/dynamic-updates/SVGFEDistantLightElement-dom-elevation-attr-expected.txt: Copied from LayoutTests/svg/dynamic-updates/SVGFEDistantLightELement-dom-elevation-attr-expected.txt.
+        * svg/dynamic-updates/SVGFEDistantLightElement-dom-elevation-attr.html: Copied from LayoutTests/svg/dynamic-updates/SVGFEDistantLightELement-dom-elevation-attr.html.
+        * svg/dynamic-updates/SVGFEDistantLightElement-svgdom-azimuth-prop-expected.txt: Copied from LayoutTests/svg/dynamic-updates/SVGFEDistantLightELement-svgdom-azimuth-prop-expected.txt.
+        * svg/dynamic-updates/SVGFEDistantLightElement-svgdom-azimuth-prop.html: Copied from LayoutTests/svg/dynamic-updates/SVGFEDistantLightELement-svgdom-azimuth-prop.html.
+        * svg/dynamic-updates/SVGFEDistantLightElement-svgdom-elevation-prop-expected.txt: Copied from LayoutTests/svg/dynamic-updates/SVGFEDistantLightELement-svgdom-elevation-prop-expected.txt.
+        * svg/dynamic-updates/SVGFEDistantLightElement-svgdom-elevation-prop.html: Copied from LayoutTests/svg/dynamic-updates/SVGFEDistantLightELement-svgdom-elevation-prop.html.
+        * svg/dynamic-updates/script-tests/SVGFEDistantLightELement-dom-azimuth-attr.js: Removed.
+        * svg/dynamic-updates/script-tests/SVGFEDistantLightELement-dom-elevation-attr.js: Removed.
+        * svg/dynamic-updates/script-tests/SVGFEDistantLightELement-svgdom-azimuth-prop.js: Removed.
+        * svg/dynamic-updates/script-tests/SVGFEDistantLightELement-svgdom-elevation-prop.js: Removed.
+        * svg/dynamic-updates/script-tests/SVGFEDistantLightElement-dom-azimuth-attr.js: Copied from LayoutTests/svg/dynamic-updates/script-tests/SVGFEDistantLightELement-dom-azimuth-attr.js.
+        * svg/dynamic-updates/script-tests/SVGFEDistantLightElement-dom-elevation-attr.js: Copied from LayoutTests/svg/dynamic-updates/script-tests/SVGFEDistantLightELement-dom-elevation-attr.js.
+        * svg/dynamic-updates/script-tests/SVGFEDistantLightElement-svgdom-azimuth-prop.js: Copied from LayoutTests/svg/dynamic-updates/script-tests/SVGFEDistantLightELement-svgdom-azimuth-prop.js.
+        * svg/dynamic-updates/script-tests/SVGFEDistantLightElement-svgdom-elevation-prop.js: Copied from LayoutTests/svg/dynamic-updates/script-tests/SVGFEDistantLightELement-svgdom-elevation-prop.js.
+
 2010-09-09  Renata Hodovan  <reni@inf.u-szeged.hu>
 
         Reviewed by Dirk Schulze.
