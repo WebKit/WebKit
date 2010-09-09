@@ -1,3 +1,13 @@
+2010-09-09  Luke Macpherson  <macpherson@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Add test for percent height image inside floated element.
+        https://bugs.webkit.org/show_bug.cgi?id=45366
+
+        * fast/images/percent-height-image-expected.txt: Added.
+        * fast/images/percent-height-image.html: Added.
+
 2010-09-09  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed.
