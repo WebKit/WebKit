@@ -1,3 +1,15 @@
+2010-09-09  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Adam Roben.
+
+        Add failing Windows results to some mouse-move SVG tests. Fixing the tests is covered by
+        <https://bugs.webkit.org/show_bug.cgi?id=45475>.
+
+        * platform/win/svg/custom/mouse-move-on-svg-container-expected.txt: Added.
+        * platform/win/svg/custom/mouse-move-on-svg-container-standalone-expected.txt: Added.
+        * platform/win/svg/custom/mouse-move-on-svg-root-expected.txt: Added.
+        * platform/win/svg/custom/mouse-move-on-svg-root-standalone-expected.txt: Added.
+
 2010-09-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
