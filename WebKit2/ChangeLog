@@ -1,3 +1,13 @@
+2010-09-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Allow passing WebDoubles via postMessage.
+
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode):
+        (WebKit::UserMessageDecoder::baseDecode):
+
 2010-09-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
