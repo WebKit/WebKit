@@ -2296,6 +2296,9 @@ editing/spelling/spelling.html
 editing/spelling/spelling-contenteditable.html
 editing/spelling/spelling-textarea.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=45435
+editing/spelling/spelling-backspace-between-lines.html
+
 # ============================================================================= #
 # failing editing/style tests
 # ============================================================================= #

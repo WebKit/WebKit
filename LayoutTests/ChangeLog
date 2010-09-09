@@ -1,3 +1,9 @@
+2010-09-08  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, Added newly failing test to skipped list.
+
+        * platform/qt/Skipped:
+
 2010-09-08  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by James Robinson.
