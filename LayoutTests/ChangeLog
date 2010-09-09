@@ -1,3 +1,12 @@
+2010-09-09  Tony Chang  <tony@chromium.org>
+
+        Unreviewed.  This test failed after I landed the new checksums. I
+        suspect we had the wrong png checked in.  I manually verified that
+        this seemed just like a rebaseline.
+
+        * platform/chromium-linux/svg/custom/gradient-stroke-width-expected.checksum:
+        * platform/chromium-linux/svg/custom/gradient-stroke-width-expected.png:
+
 2010-09-09  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
