@@ -1,3 +1,38 @@
+2010-09-09  Renata Hodovan  <reni@inf.u-szeged.hu>
+
+        Reviewed by Dirk Schulze.
+
+        SVGFilterElement & SVGFE*Element don't support dynamic invalidation, when attributes change.
+        https://bugs.webkit.org/show_bug.cgi?id=42244
+
+        Adding layout tests for feDistantLight dynamic changes.
+        feSpotLight svgAttributeChanged covered the distantLight case as well so we don't need new C++ code.
+
+        * platform/mac/svg/dynamic-updates/SVGFEDistantLightELement-dom-azimuth-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDistantLightELement-dom-azimuth-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDistantLightELement-dom-elevation-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDistantLightELement-dom-elevation-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDistantLightELement-svgdom-azimuth-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDistantLightELement-svgdom-azimuth-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDistantLightELement-svgdom-elevation-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDistantLightELement-svgdom-elevation-prop-expected.png: Added.
+        * svg/dynamic-updates/SVGFEDistantLightELement-dom-azimuth-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEDistantLightELement-dom-azimuth-attr.html: Added.
+        * svg/dynamic-updates/SVGFEDistantLightELement-dom-elevation-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEDistantLightELement-dom-elevation-attr.html: Added.
+        * svg/dynamic-updates/SVGFEDistantLightELement-svgdom-azimuth-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEDistantLightELement-svgdom-azimuth-prop.html: Added.
+        * svg/dynamic-updates/SVGFEDistantLightELement-svgdom-elevation-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEDistantLightELement-svgdom-elevation-prop.html: Added.
+        * svg/dynamic-updates/script-tests/SVGFEDistantLightELement-dom-azimuth-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEDistantLightELement-dom-elevation-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEDistantLightELement-svgdom-azimuth-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEDistantLightELement-svgdom-elevation-prop.js: Added.
+        (executeTest):
+
 2010-09-08  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Joseph Pecoraro.
