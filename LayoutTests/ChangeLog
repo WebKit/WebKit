@@ -1,3 +1,15 @@
+2010-09-09  Mads Ager  <ager@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        [V8] Rebaseline parser-xml-close-comment
+        https://bugs.webkit.org/show_bug.cgi?id=45444
+
+        The only difference is the parse error message.
+
+        * platform/chromium/fast/js/parser-xml-close-comment-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-09-09  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed.

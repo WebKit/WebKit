@@ -3082,9 +3082,6 @@ BUG53073 LINUX : svg/custom/clip-path-units-changes.svg = TEXT
 BUG53546 LINUX : userscripts/user-script-audio-document.html = TEXT
 BUG53546 LINUX : userscripts/user-script-video-document.html = TEXT
 
-// Added in r66135, failing since then.
-BUG53548 MAC WIN LINUX : fast/js/parser-xml-close-comment.html = TEXT
-
 // These tests are flaky on Mac and Linux.
 BUG53554 MAC LINUX : svg/W3C-SVG-1.1/fonts-elem-07-b.svg = PASS IMAGE
 BUG53554 MAC LINUX : svg/custom/svg-fonts-without-missing-glyph.xhtml = PASS IMAGE
