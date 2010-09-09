@@ -3230,7 +3230,7 @@ HEADERS += $$WEBKIT_API_HEADERS
     exists($$OUTPUT_DIR/include/QtWebKit/classheaders.pri): include($$OUTPUT_DIR/include/QtWebKit/classheaders.pri)
     WEBKIT_INSTALL_HEADERS = $$WEBKIT_API_HEADERS $$WEBKIT_CLASS_HEADERS
 
-    !symbian {
+    !symbian-abld:!symbian-sbsv2 {
         headers.files = $$WEBKIT_INSTALL_HEADERS
 
         !isEmpty(INSTALL_HEADERS): headers.path = $$INSTALL_HEADERS/QtWebKit
@@ -3244,7 +3244,7 @@ HEADERS += $$WEBKIT_API_HEADERS
 
         INSTALLS += target headers modfile
     } else {
-        # INSTALLS is not implemented in qmake's s60 generators, copy headers manually
+        # INSTALLS is not implemented in qmake's mmp generators, copy headers manually
         inst_headers.commands = $$QMAKE_COPY ${QMAKE_FILE_NAME} ${QMAKE_FILE_OUT}
         inst_headers.input = WEBKIT_INSTALL_HEADERS
         inst_headers.CONFIG = no_clean
