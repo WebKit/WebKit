@@ -105,7 +105,7 @@ bool layoutTestMode()
 
 bool areLayoutTestImagesOpaque()
 {
-    return false;
+    return true;
 }
 
 void enableLogChannel(const char* name)
