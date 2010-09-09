@@ -1,3 +1,52 @@
+2010-09-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        MarkupAccumulator should be broken down into two classes
+        https://bugs.webkit.org/show_bug.cgi?id=44854
+
+        Extracted wrapWithNode, wrapWithStyleNode, stringValueForRange, renderedText, removeExteriorStyles,
+        shouldAnnotate, m_shouldAnnotate, and m_reversedPrecedingMarkup from MarkupAccumulator to create
+        StyledMarkupAccumulator in order to isolate annotation related code and prepending of text.
+
+        Isolating MarkupAccumulator as a separate class has two advantages:
+        1. Isolated serialization code is easier to understand and easier to security-review.
+        2. Embedder can use MarkupAccumulator to implement "Save as" feature.
+
+        Also made takeResults, appendText, and appendElement in MarkupAccumulator virtual to override in
+        StyledMarkupAccumulator because prepending text requires overriding takeResults, appendText needs
+        to append only rendered text when shouldAnnotate() is true, and appendElement requires a different
+        behavior when shouldAnnotate() is true or when called inside wrapWithNode with convertBlocksToInlines = true.
+
+        No new tests are added since this is a cleanup.
+
+        * editing/markup.cpp:
+        (WebCore::MarkupAccumulator::MarkupAccumulator): Removed shouldAnnotate from argument.
+        (WebCore::MarkupAccumulator::~MarkupAccumulator): Added.
+        (WebCore::StyledMarkupAccumulator::): Added.
+        (WebCore::StyledMarkupAccumulator::StyledMarkupAccumulator): Added.
+        (WebCore::StyledMarkupAccumulator::appendElement): Added to support annotation.
+        (WebCore::StyledMarkupAccumulator::shouldAnnotate): Moved from MarkupAccumulator.
+        (WebCore::MarkupAccumulator::appendStartTag): No longer takes convertBlocksToInlines and RangeFullySelectsNode.
+        (WebCore::StyledMarkupAccumulator::wrapWithStyleNode): Moved from MarkupAccumulator.
+        (WebCore::MarkupAccumulator::takeResults): No longer accumulates prepended text, and made virtual.
+        (WebCore::StyledMarkupAccumulator::takeResults): Added to support prepended text.
+        (WebCore::MarkupAccumulator::shouldAddNamespaceAttribute): Takes a reference to Attribute instead of a pointer.
+        (WebCore::MarkupAccumulator::entityMaskForText): Extracted from appendText.
+        (WebCore::MarkupAccumulator::appendText): No longer deals with annotation.
+        (WebCore::StyledMarkupAccumulator::appendText): Added to support annotation.
+        (WebCore::StyledMarkupAccumulator::stringValueForRange): Moved from MarkupAccumulator.
+        (WebCore::StyledMarkupAccumulator::renderedText): Moved from MarkupAccumulator.
+        (WebCore::MarkupAccumulator::appendElement): No longer deals with annotation.
+        (WebCore::StyledMarkupAccumulator::wrapWithNode): Moved from MarkupAccumulator.
+        (WebCore::StyledMarkupAccumulator::removeExteriorStyles): Moved from MarkupAccumulator.
+        (WebCore::MarkupAccumulator::appendOpenTag): Added.
+        (WebCore::MarkupAccumulator::appendCloseTag): Added.
+        (WebCore::MarkupAccumulator::appendAttribute): Added.
+        (WebCore::MarkupAccumulator::appendStartMarkup): No longer takes convertBlocksToInlines and RangeFullySelectsNode.
+        (WebCore::serializeNodes): Takes StyledMarkupAccumulator.
+        (WebCore::createMarkup): Range version uses StyledMarkupAccumulator and node version uses MarkupAccumulator.
+
 2010-09-08  Peter Kasting  <pkasting@google.com>
 
         Not reviewed, layout test fix.
