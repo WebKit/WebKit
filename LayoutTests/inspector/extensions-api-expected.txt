@@ -46,6 +46,16 @@ RUNNING TEST: extension_testAPI
             addListener : <function>
             removeListener : <function>
         }
+        Types : {
+            Document : "document"
+            Stylesheet : "stylesheet"
+            Image : "image"
+            Font : "font"
+            Script : "script"
+            XHR : "XHR"
+            Media : "media"
+            Other : "other"
+        }
         getAll : <function>
         get : <function>
     }

@@ -1,3 +1,21 @@
+2010-09-09  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: use string representation of resource type in extension API
+        Fixed Resoruce.Type.toString() to handle Resource.Type.Media.
+        https://bugs.webkit.org/show_bug.cgi?id=45286
+
+        Test: inspector/extensions-resources.html
+
+        * English.lproj/localizedStrings.js: Added "media".
+        * inspector/front-end/ExtensionServer.js: Added webInspector.resources.Types. Return resource types as strings.
+        (WebInspector.ExtensionServer.prototype._convertResource):
+        (WebInspector.ExtensionServer.prototype._buildExtensionAPIInjectedScript):
+        * inspector/front-end/Resource.js: Added toUIString(), changed toString() to return locale-independent representation.
+        (WebInspector.Resource.Type.toUIString):
+        (WebInspector.Resource.Type.toString):
+
 2010-09-09  Kristian Amlie  <kristian.amlie@nokia.com>
 
         Reviewed by Andreas Kling.

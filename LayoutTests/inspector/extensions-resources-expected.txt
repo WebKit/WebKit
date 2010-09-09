@@ -1,0 +1,21 @@
+Tests WebInspector extension API
+
+ 
+Page reloaded.
+Started extension.
+Running tests...
+RUNNING TEST: extension_testGetAllResources
+resource: .../tests/inspector/inspector-test2.js, type: script
+resource: .../LayoutTests/inspector/extensions-resources.html, type: document
+resource: .../LayoutTests/inspector/extensions-resources.html, type: XHR
+resource: .../LayoutTests/inspector/extensions-test.js, type: script
+resource: .../inspector/resources/abe.png, type: image
+resource: .../inspector/resources/Ahem.ttf, type: font
+resource: .../inspector/resources/audits-style1.css, type: stylesheet
+resource: .../inspector/resources/missing-image.png, type: other
+RUNNING TEST: extension_testGetInvalidResource
+Attempted to retrieve invalid resource: {"code":"E_NOTFOUND","description":"Object not found: %s","details":[2128506],"isError":true}
+RUNNING TEST: extension_testResourceNotification
+Resource finished: .../LayoutTests/inspector/extensions-resources.html
+All tests done.
+

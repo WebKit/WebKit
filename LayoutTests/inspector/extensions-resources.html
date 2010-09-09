@@ -1,0 +1,75 @@
+<html>
+<head>
+<link rel="stylesheet" href="resources/audits-style1.css" type="text/css">
+<style>
+@font-face {
+    font-family: 'test';
+    src: url(resources/Ahem.ttf);
+}
+
+p { font-family: 'test'; }
+</style>
+
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="extensions-test.js"></script>
+<script type="text/javascript">
+
+function extension_testGetAllResources(nextTest)
+{
+    function compareResources(a, b)
+    {
+        return a.har.request.url.localeCompare(b.har.request.url);
+    }
+
+    function onResource(result)
+    {
+        var resources = result.sort(compareResources);
+
+        for (var i = 0; i < resources.length; ++i)
+            output("resource: " + resources[i].har.request.url.replace(/.*((\/[^/]*){3}$)/,"...$1") + ", type: " + resources[i].type);
+    }
+    extension_doXHR(function() {
+        webInspector.resources.getAll(callbackAndNextTest(onResource, nextTest));
+    });
+}
+
+function extension_testGetInvalidResource(nextTest)
+{
+    function onResource(result)
+    {
+        output("Attempted to retrieve invalid resource: " + JSON.stringify(result));
+    }
+    webInspector.resources.get(2128506, callbackAndNextTest(onResource, nextTest));
+}
+
+function doXHR()
+{
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', location.href, false);
+    xhr.send(null);
+}
+
+function extension_doXHR(callback)
+{
+    webInspector.inspectedWindow.evaluate("doXHR()", callback);
+}
+
+function extension_testResourceNotification(nextTest)
+{
+    function onResourceFinished(resource)
+    {
+        output("Resource finished: " + resource.har.request.url.replace(/.*((\/[^/]*){3}$)/,"...$1"));
+    }
+
+    webInspector.resources.onFinished.addListener(callbackAndNextTest(onResourceFinished, nextTest));
+    extension_doXHR();
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests WebInspector extension API</p>
+<img src="resources/abe.png">
+<img src="resources/missing-image.png">
+</body>
+</html>

@@ -9,7 +9,7 @@ Got callback, arguments dump follows:
 {
     0 : {
         id : <number>
-        type : 7
+        type : "other"
         har : <object>
     }
 }

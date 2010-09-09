@@ -103,7 +103,7 @@ WebInspector.ExtensionServer.prototype = {
     {
         return {
             id: resource.identifier,
-            type: resource.type,
+            type: WebInspector.Resource.Type.toString(resource.type),
             har: (new WebInspector.HAREntry(resource)).build(),
         };
     },
@@ -321,10 +321,20 @@ WebInspector.ExtensionServer.prototype = {
 
     _buildExtensionAPIInjectedScript: function()
     {
+        var resourceTypes = {};
+        var resourceTypeProperties = Object.getOwnPropertyNames(WebInspector.Resource.Type);
+        for (var i = 0; i < resourceTypeProperties.length; ++i) {
+             var propName = resourceTypeProperties[i];
+             var propValue = WebInspector.Resource.Type[propName];
+             if (typeof propValue === "number")
+                 resourceTypes[propName] = WebInspector.Resource.Type.toString(propValue);
+        }
+
         return "(function(){ " +
             "var private = {};" +
             "(" + WebInspector.commonExtensionSymbols.toString() + ")(private);" +
             "(" + WebInspector.injectedExtensionAPI.toString() + ").apply(this, arguments);" +
+            "webInspector.resources.Types = " + JSON.stringify(resourceTypes) + ";" +
             "})";
     },
 
