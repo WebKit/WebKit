@@ -184,7 +184,7 @@ class ChromiumPort(base.Port):
             shutil.rmtree(cachedir)
 
     def show_results_html_file(self, results_filename):
-        uri = self.filename_to_uri(results_filename)
+        uri = self.get_absolute_path(results_filename)
         if self._options.use_drt:
             # FIXME: This should use User.open_url
             webbrowser.open(uri, new=1)
