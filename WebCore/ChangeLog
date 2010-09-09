@@ -1,3 +1,15 @@
+2010-09-08  Peter Kasting  <pkasting@google.com>
+
+        Not reviewed, layout test fix.
+        
+        Fix flaky layout test results caused by not initializing members correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=45411
+
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::ScrollAnimator):
+        (WebCore::ScrollAnimator::~ScrollAnimator):
+        * platform/ScrollAnimator.h:
+
 2010-09-08  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Tony Chang.

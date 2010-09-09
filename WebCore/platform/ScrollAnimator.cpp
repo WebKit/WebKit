@@ -43,6 +43,17 @@ ScrollAnimator* ScrollAnimator::create(ScrollbarClient* client)
 }
 #endif
 
+ScrollAnimator::ScrollAnimator(ScrollbarClient* client)
+    : m_client(client)
+    , m_currentPosX(0)
+    , m_currentPosY(0)
+{
+}
+
+ScrollAnimator::~ScrollAnimator()
+{
+}
+
 bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity, float step, float multiplier)
 {
     float* currentPos = (orientation == HorizontalScrollbar) ? &m_currentPosX : &m_currentPosY;

@@ -41,8 +41,8 @@ class ScrollAnimator {
 public:
     static ScrollAnimator* create(ScrollbarClient*);
 
-    ScrollAnimator(ScrollbarClient* client) : m_client(client) { }
-    virtual ~ScrollAnimator() { }
+    ScrollAnimator(ScrollbarClient* client);
+    virtual ~ScrollAnimator();
 
     // Computes a scroll destination for the given parameters.  Returns false if
     // already at the destination.  Otherwise, starts scrolling towards the
