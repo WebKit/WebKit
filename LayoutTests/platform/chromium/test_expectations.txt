@@ -3140,3 +3140,9 @@ BUGWK45431 LINUX : svg/dynamic-updates/SVGFEDiffuseLightingElement-lighting-colo
 
 // Regressed in r66954
 BUGWK45432 WIN MAC LINUX : fast/dom/dataset-gc.html = TEXT
+
+// Regressed in webkit r66999:r67003 / chrome r58859:r58863
+BUG54917 WIN : editing/input/page-up-down-scrolls.html = TEXT
+BUG54919 WIN : fast/events/remove-child-onscroll.html = TEXT
+BUG54921 WIN : fast/events/scroll-event-does-not-bubble.html = TEXT
+BUG54923 WIN : fast/repaint/fixd-move-after-keyboard-scroll.html = IMAGE+TEXT

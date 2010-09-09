@@ -2,6 +2,18 @@
 
         Unreviewed.
 
+        Add 4 tests failures on Win to test_expectations.txt
+        - editing/input/page-up-down-scrolls.html
+        - fast/events/remove-child-onscroll.html
+        - fast/events/scroll-event-does-not-bubble.html
+        - fast/repaint/fixd-move-after-keyboard-scroll.html
+
+        * platform/chromium/test_expectations.txt:
+
+2010-09-08  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed.
+
         Add fast/dom/dataset-gc.html to test_expectations.txt
 
         * platform/chromium/test_expectations.txt:
