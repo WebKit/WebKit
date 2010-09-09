@@ -49,6 +49,11 @@ bool AccessibilityTextMarker::isEqual(AccessibilityTextMarker* other)
     return [(id)platformTextMarker() isEqual:(id)other->platformTextMarker()];
 }
 
+PlatformTextMarker AccessibilityTextMarker::platformTextMarker() const 
+{ 
+    return m_textMarker.get();
+}
+
 #pragma mark AccessibilityTextMarkerRange
 
 AccessibilityTextMarkerRange::AccessibilityTextMarkerRange(PlatformTextMarkerRange markerRange)
@@ -70,3 +75,7 @@ bool AccessibilityTextMarkerRange::isEqual(AccessibilityTextMarkerRange* other)
     return [(id)platformTextMarkerRange() isEqual:(id)other->platformTextMarkerRange()];
 }
 
+PlatformTextMarkerRange AccessibilityTextMarkerRange::platformTextMarkerRange() const
+{
+    return m_textMarkerRange.get();
+}

@@ -1,5 +1,19 @@
 2010-09-09  Chris Fleizach  <cfleizach@apple.com>
 
+        Fixing GTK and windows build failure.
+
+        AX: Support AccessibilityTextMarkers in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=44778
+
+        * DumpRenderTree/AccessibilityTextMarker.h:
+        (AccessibilityTextMarker::platformTextMarker):
+        (AccessibilityTextMarkerRange::platformTextMarkerRange):
+        * DumpRenderTree/mac/AccessibilityTextMarkerMac.mm:
+        (AccessibilityTextMarker::platformTextMarker):
+        (AccessibilityTextMarkerRange::platformTextMarkerRange):
+
+2010-09-09  Chris Fleizach  <cfleizach@apple.com>
+
         Reviewed by David Kilzer.
 
         AX: Support AccessibilityTextMarkers in DRT

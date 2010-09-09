@@ -51,7 +51,7 @@ public:
     AccessibilityTextMarker(const AccessibilityTextMarker&);
     ~AccessibilityTextMarker();
     
-    PlatformTextMarker platformTextMarker() const { return m_textMarker.get(); }
+    PlatformTextMarker platformTextMarker() const;
     
     static JSObjectRef makeJSAccessibilityTextMarker(JSContextRef, const AccessibilityTextMarker&);
     bool isEqual(AccessibilityTextMarker*);
@@ -71,7 +71,7 @@ public:
     AccessibilityTextMarkerRange(const AccessibilityTextMarkerRange&);
     ~AccessibilityTextMarkerRange();
     
-    PlatformTextMarkerRange platformTextMarkerRange() const { return m_textMarkerRange.get(); }
+    PlatformTextMarkerRange platformTextMarkerRange() const;
     
     static JSObjectRef makeJSAccessibilityTextMarkerRange(JSContextRef, const AccessibilityTextMarkerRange&);
     bool isEqual(AccessibilityTextMarkerRange*);
@@ -93,11 +93,13 @@ inline AccessibilityTextMarker::AccessibilityTextMarker(PlatformTextMarker) { }
 inline AccessibilityTextMarker::AccessibilityTextMarker(const AccessibilityTextMarker&) { }
 inline AccessibilityTextMarker::~AccessibilityTextMarker() { }
 inline bool AccessibilityTextMarker::isEqual(AccessibilityTextMarker*) { return false; }
+inline PlatformTextMarker AccessibilityTextMarker::platformTextMarker() const { return m_textMarker; }
 
 inline AccessibilityTextMarkerRange::AccessibilityTextMarkerRange(PlatformTextMarkerRange) { }
 inline AccessibilityTextMarkerRange::AccessibilityTextMarkerRange(const AccessibilityTextMarkerRange&) { }
 inline AccessibilityTextMarkerRange::~AccessibilityTextMarkerRange() { }
 inline bool AccessibilityTextMarkerRange::isEqual(AccessibilityTextMarkerRange*) { return false; }
+inline PlatformTextMarkerRange AccessibilityTextMarkerRange::platformTextMarkerRange() const { return m_textMarkerRange; }
 #endif
 
 #endif // AccessibilityUIElement_h
