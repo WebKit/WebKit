@@ -85,7 +85,7 @@ static void reportFatalErrorInV8(const char* location, const char* message)
     // FIXME: clean up V8Proxy and disable JavaScript.
     int memoryUsageMB = -1;
 #if PLATFORM(CHROMIUM)
-    memoryUsageMB = ChromiumBridge::memoryUsageMB();
+    memoryUsageMB = ChromiumBridge::actualMemoryUsageMB();
 #endif
     printf("V8 error: %s (%s).  Current memory usage: %d MB\n", message, location, memoryUsageMB);
     handleFatalErrorInV8();

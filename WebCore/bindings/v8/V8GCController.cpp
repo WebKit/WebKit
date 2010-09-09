@@ -406,6 +406,15 @@ int getMemoryUsageInMB()
 #endif
 }
 
+int getActualMemoryUsageInMB()
+{
+#if PLATFORM(CHROMIUM)
+    return ChromiumBridge::actualMemoryUsageMB();
+#else
+    return 0;
+#endif
+}
+
 }  // anonymous namespace
 
 void V8GCController::gcEpilogue()
@@ -417,7 +426,7 @@ void V8GCController::gcEpilogue()
     GCEpilogueVisitor epilogueVisitor;
     visitActiveDOMObjectsInCurrentThread(&epilogueVisitor);
 
-    workingSetEstimateMB = getMemoryUsageInMB();
+    workingSetEstimateMB = getActualMemoryUsageInMB();
 
 #ifndef NDEBUG
     // Check all survivals are weak.
