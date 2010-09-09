@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef CanvasRenderingContext2D_h
@@ -264,14 +264,15 @@ private:
 
     void applyShadow();
 
-    enum CanvasWillDrawOption {
-        CanvasWillDrawApplyTransform = 1,
-        CanvasWillDrawApplyShadow = 1 << 1,
-        CanvasWillDrawApplyClip = 1 << 2,
-        CanvasWillDrawApplyAll = 0xffffffff
+    enum CanvasDidDrawOption {
+        CanvasDidDrawApplyNone = 0,
+        CanvasDidDrawApplyTransform = 1,
+        CanvasDidDrawApplyShadow = 1 << 1,
+        CanvasDidDrawApplyClip = 1 << 2,
+        CanvasDidDrawApplyAll = 0xffffffff
     };
 
-    void didDraw(const FloatRect&, unsigned options = CanvasWillDrawApplyAll);
+    void didDraw(const FloatRect&, unsigned options = CanvasDidDrawApplyAll);
 
     GraphicsContext* drawingContext() const;
 

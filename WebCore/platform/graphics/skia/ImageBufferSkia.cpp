@@ -117,6 +117,7 @@ void ImageBuffer::draw(GraphicsContext* context, ColorSpace styleColorSpace, con
             FloatRect destRectFlipped(destRect);
             destRectFlipped.setY(destRect.y() + destRect.height());
             destRectFlipped.setHeight(-destRect.height());
+            context->platformContext()->prepareForHardwareDraw();
             context->platformContext()->gpuCanvas()->drawTexturedRect(sourceTexture, m_size, srcRect, destRectFlipped, styleColorSpace, op);
             return;
         }

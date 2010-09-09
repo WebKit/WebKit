@@ -32,10 +32,14 @@
 
 #include "Texture.h"
 
+#include "FloatRect.h"
 #include "GraphicsContext3D.h"
 #include "IntRect.h"
 
+#include <algorithm>
 #include <wtf/OwnArrayPtr.h>
+
+using namespace std;
 
 namespace WebCore {
 
@@ -82,7 +86,6 @@ PassRefPtr<Texture> Texture::create(GraphicsContext3D* context, Format format, i
 {
     int maxTextureSize = 0;
     context->getIntegerv(GraphicsContext3D::MAX_TEXTURE_SIZE, &maxTextureSize);
-
     TilingData tiling(maxTextureSize, width, height, true);
     int numTiles = tiling.numTiles();
 
@@ -137,6 +140,11 @@ static uint32_t* copySubRect(uint32_t* src, int srcX, int srcY, uint32_t* dst, i
 
 void Texture::load(void* pixels)
 {
+    updateSubRect(pixels, IntRect(0, 0, m_tiles.totalSizeX(), m_tiles.totalSizeY()));
+}
+
+void Texture::updateSubRect(void* pixels, const IntRect updateRect)
+{
     uint32_t* pixels32 = static_cast<uint32_t*>(pixels);
     unsigned int glFormat = 0;
     unsigned int glType = 0;
@@ -146,26 +154,42 @@ void Texture::load(void* pixels)
         ASSERT(glFormat == GraphicsContext3D::RGBA && glType == GraphicsContext3D::UNSIGNED_BYTE);
         // FIXME:  This could use PBO's to save doing an extra copy here.
     }
-    OwnArrayPtr<uint32_t> tempBuff(new uint32_t[m_tiles.maxTextureSize() * m_tiles.maxTextureSize()]);
+    int tempBuffSize = // Temporary buffer size is the smaller of the max texture size or the updateRect
+        min(m_tiles.maxTextureSize(), m_tiles.borderTexels() + updateRect.width()) *
+        min(m_tiles.maxTextureSize(), m_tiles.borderTexels() + updateRect.height());
+    OwnArrayPtr<uint32_t> tempBuff(new uint32_t[tempBuffSize]);
 
-    for (int i = 0; i < m_tiles.numTiles(); i++) {
-        IntRect tileBoundsWithBorder = m_tiles.tileBoundsWithBorder(i);
+    for (int tile = 0; tile < m_tiles.numTiles(); tile++) {
+        // Intersect with tile
+        IntRect tileBoundsWithBorder = m_tiles.tileBoundsWithBorder(tile);
 
+        IntRect updateRectIntersected = updateRect;
+        updateRectIntersected.intersect(tileBoundsWithBorder);
+
+        IntRect dstRect = updateRectIntersected;
+        dstRect.move(-tileBoundsWithBorder.x(), -tileBoundsWithBorder.y());
+
+        if (updateRectIntersected.isEmpty())
+            continue;
+
+        // Copy sub rectangle out of larger pixel data
         uint32_t* uploadBuff = 0;
         if (swizzle) {
             uploadBuff = copySubRect<true>(
-            pixels32, tileBoundsWithBorder.x(), tileBoundsWithBorder.y(),
-            tempBuff.get(), tileBoundsWithBorder.width(), tileBoundsWithBorder.height(), m_tiles.totalSizeX());
+            pixels32, updateRectIntersected.x(), updateRectIntersected.y(),
+            tempBuff.get(), updateRectIntersected.width(), updateRectIntersected.height(), m_tiles.totalSizeX());
         } else {
             uploadBuff = copySubRect<false>(
-            pixels32, tileBoundsWithBorder.x(), tileBoundsWithBorder.y(),
-            tempBuff.get(), tileBoundsWithBorder.width(), tileBoundsWithBorder.height(), m_tiles.totalSizeX());
+            pixels32, updateRectIntersected.x(), updateRectIntersected.y(),
+            tempBuff.get(), updateRectIntersected.width(), updateRectIntersected.height(), m_tiles.totalSizeX());
         }
 
-        m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_tileTextureIds->at(i));
-        m_context->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, 0, 0,
-            tileBoundsWithBorder.width(),
-            tileBoundsWithBorder.height(), glFormat, glType, uploadBuff);
+        m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_tileTextureIds->at(tile));
+        m_context->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0 /* level */,
+            dstRect.x(),
+            dstRect.y(),
+            updateRectIntersected.width(),
+            updateRectIntersected.height(), glFormat, glType, uploadBuff);
     }
 }
 

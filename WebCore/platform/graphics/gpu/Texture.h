@@ -41,6 +41,8 @@
 namespace WebCore {
 class GraphicsContext3D;
 
+class IntRect;
+
 class Texture : public RefCounted<Texture> {
 public:
     ~Texture();
@@ -48,6 +50,7 @@ public:
     static PassRefPtr<Texture> create(GraphicsContext3D*, Format, int width, int height);
     void bindTile(int tile);
     void load(void* pixels);
+    void updateSubRect(void* pixels, const IntRect);
     Format format() const { return m_format; }
     const TilingData& tiles() const { return m_tiles; }
 private:

@@ -1,10 +1,10 @@
 /*
  * Copyright (c) 2008, Google Inc. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -187,7 +187,7 @@ PlatformContextSkia::State PlatformContextSkia::State::cloneInheritedProperties(
     PlatformContextSkia::State state(*this);
 
     // Everything is inherited except for the clip paths.
-    state.m_antiAliasClipPaths.clear();  
+    state.m_antiAliasClipPaths.clear();
 
     return state;
 }
@@ -339,7 +339,7 @@ void PlatformContextSkia::drawRect(SkRect rect)
         // We do a fill of four rects to simulate the stroke of a border.
         SkColor oldFillColor = m_state->m_fillColor;
 
-        // setFillColor() will set the shader to NULL, so save a ref to it now. 
+        // setFillColor() will set the shader to NULL, so save a ref to it now.
         SkShader* oldFillShader = m_state->m_fillShader;
         oldFillShader->safeRef();
         setFillColor(m_state->m_strokeColor);
@@ -464,7 +464,7 @@ void PlatformContextSkia::setXfermodeMode(SkXfermode::Mode pdm)
 void PlatformContextSkia::setFillColor(SkColor color)
 {
     m_state->m_fillColor = color;
-    setFillShader(NULL);
+    setFillShader(0);
 }
 
 SkDrawLooper* PlatformContextSkia::getDrawLooper() const
@@ -485,7 +485,7 @@ void PlatformContextSkia::setStrokeStyle(StrokeStyle strokeStyle)
 void PlatformContextSkia::setStrokeColor(SkColor strokeColor)
 {
     m_state->m_strokeColor = strokeColor;
-    setStrokeShader(NULL);
+    setStrokeShader(0);
 }
 
 float PlatformContextSkia::getStrokeThickness() const
@@ -802,6 +802,23 @@ void PlatformContextSkia::syncSoftwareCanvas() const
     m_backingStoreState = Software;
 }
 
+void PlatformContextSkia::markDirtyRect(const IntRect& rect)
+{
+    if (!m_useGPU)
+        return;
+
+    switch (m_backingStoreState) {
+    case Software:
+    case Mixed:
+        m_softwareDirtyRect.unite(rect);
+        return;
+    case Hardware:
+        return;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+
 void PlatformContextSkia::uploadSoftwareToHardware(CompositeOperator op) const
 {
     const SkBitmap& bitmap = m_canvas->getDevice()->accessBitmap(false);
@@ -809,10 +826,11 @@ void PlatformContextSkia::uploadSoftwareToHardware(CompositeOperator op) const
     SharedGraphicsContext3D* context = m_gpuCanvas->context();
     if (!m_uploadTexture || m_uploadTexture->tiles().totalSizeX() < bitmap.width() || m_uploadTexture->tiles().totalSizeY() < bitmap.height())
         m_uploadTexture = context->createTexture(Texture::BGRA8, bitmap.width(), bitmap.height());
-    m_uploadTexture->load(bitmap.getPixels());
-    IntRect rect(0, 0, bitmap.width(), bitmap.height());
+
+    m_uploadTexture->updateSubRect(bitmap.getPixels(), m_softwareDirtyRect);
     AffineTransform identity;
-    gpuCanvas()->drawTexturedRect(m_uploadTexture.get(), rect, rect, identity, 1.0, DeviceColorSpace, op);
+    gpuCanvas()->drawTexturedRect(m_uploadTexture.get(), m_softwareDirtyRect, m_softwareDirtyRect, identity, 1.0, DeviceColorSpace, op);
+    m_softwareDirtyRect.setWidth(0); // Clear dirty rect.
 }
 
 void PlatformContextSkia::readbackHardwareToSoftware() const

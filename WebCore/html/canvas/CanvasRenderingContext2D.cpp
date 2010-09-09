@@ -25,7 +25,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -219,7 +219,7 @@ void CanvasRenderingContext2D::restore()
     c->restore();
 }
 
-void CanvasRenderingContext2D::setAllAttributesToDefault() 
+void CanvasRenderingContext2D::setAllAttributesToDefault()
 {
     state().m_globalAlpha = 1;
     state().m_shadowOffset = FloatSize();
@@ -943,7 +943,7 @@ void CanvasRenderingContext2D::strokeRect(float x, float y, float width, float h
 {
     if (!validateRectForCanvas(x, y, width, height))
         return;
- 
+
     if (!(lineWidth >= 0))
         return;
 
@@ -1276,7 +1276,7 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* sourceCanvas, const 
         return;
     if (!state().m_invertibleCTM)
         return;
- 
+
     FloatRect sourceRect = c->roundToDevicePixels(srcRect);
     FloatRect destRect = c->roundToDevicePixels(dstRect);
 
@@ -1510,12 +1510,12 @@ void CanvasRenderingContext2D::didDraw(const FloatRect& r, unsigned options)
         return;
 
     FloatRect dirtyRect = r;
-    if (options & CanvasWillDrawApplyTransform) {
+    if (options & CanvasDidDrawApplyTransform) {
         AffineTransform ctm = state().m_transform;
         dirtyRect = ctm.mapRect(r);
     }
 
-    if (options & CanvasWillDrawApplyShadow && alphaChannel(state().m_shadowColor)) {
+    if (options & CanvasDidDrawApplyShadow && alphaChannel(state().m_shadowColor)) {
         // The shadow gets applied after transformation
         FloatRect shadowRect(dirtyRect);
         shadowRect.move(state().m_shadowOffset);
@@ -1523,12 +1523,16 @@ void CanvasRenderingContext2D::didDraw(const FloatRect& r, unsigned options)
         dirtyRect.unite(shadowRect);
     }
 
-    if (options & CanvasWillDrawApplyClip) {
+    if (options & CanvasDidDrawApplyClip) {
         // FIXME: apply the current clip to the rectangle. Unfortunately we can't get the clip
         // back out of the GraphicsContext, so to take clip into account for incremental painting,
         // we'd have to keep the clip path around.
     }
 
+#if ENABLE(ACCELERATED_2D_CANVAS)
+    if (isAccelerated())
+        drawingContext()->markDirtyRect(enclosingIntRect(dirtyRect));
+#endif
 #if ENABLE(ACCELERATED_2D_CANVAS) && USE(ACCELERATED_COMPOSITING)
     // If we are drawing to hardware and we have a composited layer, just call rendererContentChanged().
     RenderBox* renderBox = canvas()->renderBox();
@@ -1658,7 +1662,7 @@ void CanvasRenderingContext2D::putImageData(ImageData* data, float dx, float dy,
     IntPoint destPoint(destOffset.width(), destOffset.height());
 
     buffer->putUnmultipliedImageData(data, sourceRect, destPoint);
-    didDraw(sourceRect, 0); // ignore transform, shadow and clip
+    didDraw(sourceRect, CanvasDidDrawApplyNone); // ignore transform, shadow and clip
 }
 
 String CanvasRenderingContext2D::font() const
@@ -1878,11 +1882,11 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
     c->drawBidiText(font, textRun, location);
 
     if (fill)
-        canvas()->didDraw(textRect);
+        didDraw(textRect);
     else {
         // When stroking text, pointy miters can extend outside of textRect, so we
         // punt and dirty the whole canvas.
-        canvas()->didDraw(FloatRect(0, 0, canvas()->width(), canvas()->height()));
+        didDraw(FloatRect(0, 0, canvas()->width(), canvas()->height()));
     }
 
 #if PLATFORM(QT)

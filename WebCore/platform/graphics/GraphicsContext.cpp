@@ -467,7 +467,7 @@ void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorS
 {
     if (paintingDisabled() || !image)
         return;
-        
+
     float tsw = src.width();
     float tsh = src.height();
     float tw = dest.width();
@@ -489,7 +489,7 @@ void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorS
     }
 
     image->draw(this, styleColorSpace, dest, src, op, useLowQualityScale);
-    
+
     if (useLowQualityScale)
         restore();
 }
@@ -577,6 +577,10 @@ void GraphicsContext::setSharedGraphicsContext3D(SharedGraphicsContext3D*, Drawi
 }
 
 void GraphicsContext::syncSoftwareCanvas()
+{
+}
+
+void GraphicsContext::markDirtyRect(const IntRect&)
 {
 }
 #endif

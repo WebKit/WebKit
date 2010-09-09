@@ -1,3 +1,52 @@
+2010-09-09  Vincent Scheib  <scheib@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [Chromium] Minimize uploads in canvas 2d mixed mode rendering
+        https://bugs.webkit.org/show_bug.cgi?id=45476
+
+        No new tests - change is for performance, logic fixes only apparent when running hardware acceleration.
+
+        - Enumeration values fixed, "CavasWillDraw" -> "CanvasDidDraw".
+        - markDirtyRect() plumbed through GraphicsContext to PlatformContextSkia.
+        - Texture::updateSubRect() added to allow uploading only a dirty rect.
+        - Logic fix in ImageBuffer::draw(), caused canvas to canvas copies to be incorrect.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setAllAttributesToDefault):
+        (WebCore::CanvasRenderingContext2D::strokeRect):
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        (WebCore::CanvasRenderingContext2D::didDraw):
+          - Logic fix for drawingContext()->markDirtyRect() call.
+        (WebCore::CanvasRenderingContext2D::putImageData):
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+          - Logic fix for calls to "didDraw()", use peer method first.
+        * html/canvas/CanvasRenderingContext2D.h:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawImageBuffer):
+        (WebCore::GraphicsContext::markDirtyRect):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/gpu/Texture.cpp:
+        (WebCore::Texture::create):
+        (WebCore::Texture::load):
+        (WebCore::Texture::updateSubRect):
+        * platform/graphics/gpu/Texture.h:
+        * platform/graphics/gpu/TilingData.h:
+        (WebCore::TilingData::borderTexels):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::clipConvexPolygon):
+        (WebCore::GraphicsContext::markDirtyRect):
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::draw):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::State::cloneInheritedProperties):
+        (WebCore::PlatformContextSkia::drawRect):
+        (WebCore::PlatformContextSkia::setFillColor):
+        (WebCore::PlatformContextSkia::setStrokeColor):
+        (WebCore::PlatformContextSkia::markDirtyRect):
+        (WebCore::PlatformContextSkia::uploadSoftwareToHardware):
+        * platform/graphics/skia/PlatformContextSkia.h:
+
 2010-09-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Barth.

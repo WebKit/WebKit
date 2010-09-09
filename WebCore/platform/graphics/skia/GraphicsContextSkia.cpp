@@ -1,10 +1,10 @@
 /*
  * Copyright (c) 2006, Google Inc. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -65,7 +65,7 @@ namespace {
 inline int fastMod(int value, int max)
 {
     int sign = SkExtractSign(value);
-    
+
     value = SkApplySign(value, sign);
     if (value >= max)
         value %= max;
@@ -499,7 +499,7 @@ void GraphicsContext::clipConvexPolygon(size_t numPoints, const FloatPoint* poin
 
     if (numPoints <= 1)
         return;
-    
+
     // FIXME: IMPLEMENT!!
 }
 
@@ -1248,6 +1248,11 @@ void GraphicsContext::syncSoftwareCanvas()
 void GraphicsContext::setSharedGraphicsContext3D(SharedGraphicsContext3D* context, DrawingBuffer* framebuffer, const IntSize& size)
 {
     platformContext()->setSharedGraphicsContext3D(context, framebuffer, size);
+}
+
+void GraphicsContext::markDirtyRect(const IntRect& rect)
+{
+    platformContext()->markDirtyRect(rect);
 }
 
 }  // namespace WebCore
