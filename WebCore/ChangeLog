@@ -2,6 +2,22 @@
 
         Reviewed by Chris Fleizach.
 
+        Add AudioDSPKernel files
+        https://bugs.webkit.org/show_bug.cgi?id=45319
+
+        No new tests since audio API is not yet implemented.
+
+        * platform/audio/AudioDSPKernel.h: Added.
+        (WebCore::AudioDSPKernel::AudioDSPKernel):
+        (WebCore::AudioDSPKernel::~AudioDSPKernel):
+        (WebCore::AudioDSPKernel::sampleRate):
+        (WebCore::AudioDSPKernel::nyquist):
+        (WebCore::AudioDSPKernel::processor):
+
+2010-09-09  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Chris Fleizach.
+
         Add AudioProcessor.h
         https://bugs.webkit.org/show_bug.cgi?id=45206
 
