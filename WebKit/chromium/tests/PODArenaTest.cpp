@@ -27,6 +27,7 @@
 
 #include "PODArena.h"
 
+#include "ArenaTestHelpers.h"
 #include <algorithm>
 #include <gtest/gtest.h>
 #include <wtf/FastMalloc.h>
@@ -35,46 +36,9 @@
 
 namespace WebCore {
 
+using ArenaTestHelpers::TrackedAllocator;
+
 namespace {
-
-// An allocator for the PODArena which tracks the regions which have
-// been allocated.
-class TrackedAllocator : public PODArena::FastMallocAllocator {
-public:
-    static PassRefPtr<TrackedAllocator> create()
-    {
-        return adoptRef(new TrackedAllocator);
-    }
-
-    virtual void* allocate(size_t size)
-    {
-        void* result = PODArena::FastMallocAllocator::allocate(size);
-        m_allocatedRegions.append(result);
-        return result;
-    }
-
-    virtual void free(void* ptr)
-    {
-        size_t slot = m_allocatedRegions.find(ptr);
-        ASSERT_GE(slot, 0);
-        m_allocatedRegions.remove(slot);
-        PODArena::FastMallocAllocator::free(ptr);
-    }
-
-    bool isEmpty() const
-    {
-        return !numRegions();
-    }
-
-    int numRegions() const
-    {
-        return m_allocatedRegions.size();
-    }
-
-private:
-    TrackedAllocator() { }
-    Vector<void*> m_allocatedRegions;
-};
 
 // A couple of simple structs to allocate.
 struct TestClass1 {

@@ -733,6 +733,7 @@
                         'src',
                     ],
                     'sources': [
+                        'tests/ArenaTestHelpers.h',
                         'tests/DragImageTest.cpp',
                         'tests/IDBBindingUtilitiesTest.cpp',
                         'tests/IDBKeyPathTest.cpp',

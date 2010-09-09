@@ -52,7 +52,7 @@ public:
         init();
     }
 
-    explicit PODIntervalTree(PODArena* arena)
+    explicit PODIntervalTree(PassRefPtr<PODArena> arena)
         : PODRedBlackTree<IntervalType>(arena)
     {
         init();

@@ -29,15 +29,31 @@
 
 #include "PODRedBlackTree.h"
 
+#include "ArenaTestHelpers.h"
 #include "TreeTestHelpers.h"
 #include <gtest/gtest.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
+using ArenaTestHelpers::TrackedAllocator;
 using TreeTestHelpers::generateSeed;
 using TreeTestHelpers::initRandom;
 using TreeTestHelpers::nextRandom;
+
+TEST(PODRedBlackTreeTest, TestTreeAllocatesFromArena)
+{
+    RefPtr<TrackedAllocator> allocator = TrackedAllocator::create();
+    {
+        RefPtr<PODArena> arena = PODArena::create(allocator);
+        PODRedBlackTree<int> tree(arena);
+        int numAdditions = 2 * PODArena::DefaultChunkSize / sizeof(int);
+        for (int i = 0; i < numAdditions; ++i)
+            tree.add(i);
+        EXPECT_GT(allocator->numRegions(), 1);
+    }
+    EXPECT_EQ(allocator->numRegions(), 0);
+}
 
 TEST(PODRedBlackTreeTest, TestSingleElementInsertion)
 {

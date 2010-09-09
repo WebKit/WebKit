@@ -86,24 +86,22 @@ public:
     // Allocates an object from the arena.
     template<class T> T* allocateObject()
     {
-        void* ptr = 0;
-        size_t roundedSize = roundUp(sizeof(T), minAlignment<T>());
-        if (m_current)
-            ptr = m_current->allocate(roundedSize);
-
-        if (!ptr) {
-            if (roundedSize > m_currentChunkSize)
-                m_currentChunkSize = roundedSize;
-            m_chunks.append(adoptPtr(new Chunk(m_allocator.get(), m_currentChunkSize)));
-            m_current = m_chunks.last().get();
-            ptr = m_current->allocate(roundedSize);
-        }
-
+        void* ptr = allocateBase<T>();
         if (ptr) {
             // Use placement operator new to allocate a T at this location.
             new(ptr) T();
         }
+        return static_cast<T*>(ptr);
+    }
 
+    // Allocates an object from the arena, calling a single-argument constructor.
+    template<class T, class Argument1Type> T* allocateObject(const Argument1Type& argument1)
+    {
+        void* ptr = allocateBase<T>();
+        if (ptr) {
+            // Use placement operator new to allocate a T at this location.
+            new(ptr) T(argument1);
+        }
         return static_cast<T*>(ptr);
     }
 
@@ -133,6 +131,23 @@ private:
     template <class T> static size_t minAlignment()
     {
         return WTF_ALIGN_OF(T);
+    }
+
+    template<class T> void* allocateBase()
+    {
+        void* ptr = 0;
+        size_t roundedSize = roundUp(sizeof(T), minAlignment<T>());
+        if (m_current)
+            ptr = m_current->allocate(roundedSize);
+
+        if (!ptr) {
+            if (roundedSize > m_currentChunkSize)
+                m_currentChunkSize = roundedSize;
+            m_chunks.append(adoptPtr(new Chunk(m_allocator.get(), m_currentChunkSize)));
+            m_current = m_chunks.last().get();
+            ptr = m_current->allocate(roundedSize);
+        }
+        return ptr;
     }
 
     // Rounds up the given allocation size to the specified alignment.

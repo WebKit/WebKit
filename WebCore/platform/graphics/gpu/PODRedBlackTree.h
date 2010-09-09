@@ -122,7 +122,7 @@ public:
 
     void add(const T& data)
     {
-        Node* node = new Node(data);
+        Node* node = m_arena->allocateObject<Node, T>(data);
         insertNode(node);
     }
 

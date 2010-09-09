@@ -1,3 +1,26 @@
+2010-09-09  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        Memory leak in red/black tree
+        https://bugs.webkit.org/show_bug.cgi?id=45472
+
+        Fixed memory leak in red/black tree where it was using operator
+        new directly to allocate its internal nodes rather than the arena
+        with which it was configured. Added allocateObject variant to
+        arena supporting single-argument constructors. Added test to
+        red/black tree unit tests to cover this functionality, and
+        refactored TrackedAllocator into helper file to share between
+        arena and red/black tree tests.
+
+        * platform/graphics/gpu/PODArena.h:
+        (WebCore::PODArena::allocateObject):
+        (WebCore::PODArena::allocateBase):
+        * platform/graphics/gpu/PODIntervalTree.h:
+        (WebCore::PODIntervalTree::PODIntervalTree):
+        * platform/graphics/gpu/PODRedBlackTree.h:
+        (WebCore::PODRedBlackTree::add):
+
 2010-09-09  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser.
