@@ -40,7 +40,7 @@ public:
     BrowserView(QWidget* parent = 0);
     virtual ~BrowserView() { delete m_item; }
 
-    void load(const QUrl&);
+    void load(const QString&);
     QGraphicsWKView* view() const;
 
 protected:

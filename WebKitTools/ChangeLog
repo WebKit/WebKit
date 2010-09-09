@@ -1,3 +1,18 @@
+2010-09-09  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Modify load method of MiniBrowser's BrowserView class
+        https://bugs.webkit.org/show_bug.cgi?id=45442
+
+        Modify load method to take a QString as argument, remove unnecessary QT_VERSION_CHECK.
+
+        * MiniBrowser/qt/BrowserView.cpp:
+        (BrowserView::load):
+        * MiniBrowser/qt/BrowserView.h:
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::load):
+
 2010-09-09  Tony Chang  <tony@chromium.org>
 
         Reviewed by Ojan Vafai.

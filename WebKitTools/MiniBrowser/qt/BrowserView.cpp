@@ -64,13 +64,9 @@ void BrowserView::resizeEvent(QResizeEvent* event)
     scene()->setSceneRect(rect);
 }
 
-void BrowserView::load(const QUrl& url)
+void BrowserView::load(const QString& url)
 {
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
-    return m_item->load(QUrl::fromUserInput(url.toString()));
-#else
-    return m_item->load(url);
-#endif
+    return m_item->load(QUrl::fromUserInput(url));
 }
 
 QGraphicsWKView* BrowserView::view() const

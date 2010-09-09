@@ -64,7 +64,7 @@ BrowserWindow::BrowserWindow()
 void BrowserWindow::load(const QString& url)
 {
     m_addressBar->setText(url);
-    m_browser->load(QUrl(url));
+    m_browser->load(url);
 }
 
 BrowserWindow* BrowserWindow::newWindow(const QString& url)
