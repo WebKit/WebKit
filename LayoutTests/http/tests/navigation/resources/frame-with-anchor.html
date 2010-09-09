@@ -7,17 +7,21 @@
     function runTest() {
       description('Tests that loading a frame with a URL that contains a fragment pointed at a named anchor actually scrolls to that anchor.');
 
-      // Make sure that the body is taller than the viewport (i.e. scrolling is
-      // required).
-      shouldBeTrue('document.body.offsetHeight > document.documentElement.clientHeight');
-      
-      // We should be scrolled at least a little bit
-      shouldBeTrue('document.body.scrollTop > 0');
-      
-      // And the bottom of the viewable area should be at least 2000 pixels from the top, due to the spacer element above.
-      shouldBeTrue('document.body.scrollTop + document.documentElement.clientHeight > 2000');
-      
-      finishJSTest();
+      // Check scroll position in a timeout to make sure that the anchor has
+      // been scrolled to.
+      setTimeout(function() {
+          // Make sure that the body is taller than the viewport (i.e. scrolling is
+          // required).
+          shouldBeTrue('document.body.offsetHeight > document.documentElement.clientHeight');
+          
+          // We should be scrolled at least a little bit
+          shouldBeTrue('document.body.scrollTop > 0');
+          
+          // And the bottom of the viewable area should be at least 2000 pixels from the top, due to the spacer element above.
+          shouldBeTrue('document.body.scrollTop + document.documentElement.clientHeight > 2000');
+          
+          finishJSTest();          
+      }, 0);
     }
     
     var successfullyParsed = true;

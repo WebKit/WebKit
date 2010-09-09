@@ -1,3 +1,15 @@
+2010-09-08  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by James Robinson.
+
+        http/tests/navigation/anchor-frames.html doesn't pass with TestShell
+        https://bugs.webkit.org/show_bug.cgi?id=45430
+
+        Check scroll position in a timeout, otherwise TestShell will report 0
+        for it.
+
+        * http/tests/navigation/resources/frame-with-anchor.html:
+
 2010-09-08  Maciej Stachowiak  <mjs@apple.com>
 
         Not reviewed, fixing trivial typo.
