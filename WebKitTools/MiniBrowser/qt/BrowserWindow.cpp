@@ -59,6 +59,9 @@ BrowserWindow::BrowserWindow()
     this->setCentralWidget(m_browser);
 
     m_browser->setFocus(Qt::OtherFocusReason);
+
+    resize(960, 640);
+    show();
 }
 
 void BrowserWindow::load(const QString& url)
@@ -70,8 +73,6 @@ void BrowserWindow::load(const QString& url)
 BrowserWindow* BrowserWindow::newWindow(const QString& url)
 {
     BrowserWindow* window = new BrowserWindow();
-    window->resize(960, 640);
-    window->show();
     window->load(url);
     return window;
 }

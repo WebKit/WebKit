@@ -1,3 +1,17 @@
+2010-09-09  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] MiniBrowser does not starts properly
+        https://bugs.webkit.org/show_bug.cgi?id=45459
+
+        Do not try set up the first window by calling newWindow on a
+        newly created BrowserWindow since it creates a new object.
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::BrowserWindow):
+        * MiniBrowser/qt/main.cpp:
+        (main):
+
 2010-09-09  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
