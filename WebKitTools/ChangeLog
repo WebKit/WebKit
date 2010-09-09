@@ -1,3 +1,13 @@
+2010-09-09  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Get ImageDiff building on Win32
+        https://bugs.webkit.org/show_bug.cgi?id=45353
+
+        * DumpRenderTree/gtk/ImageDiff.cpp:
+        (main): Switch from using strtok to g_strsplit.
+
 2010-09-09  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Andreas Kling.

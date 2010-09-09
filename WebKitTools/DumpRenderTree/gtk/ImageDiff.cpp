@@ -199,10 +199,15 @@ int main(int argc, char* argv[])
             *newLineCharacter = '\0';
 
         if (!strncmp("Content-Length: ", buffer, 16)) {
-            char* context;
-            strtok_r(buffer, " ", &context);
-            long imageSize = strtol(strtok_r(0, " ", &context), 0, 10);
+            gchar** tokens = g_strsplit(buffer, " ", 0);
+            if (!tokens[1]) {
+                g_strfreev(tokens);
+                printf("Error, image size must be specified..\n");
+                return 1;
+            }
 
+            long imageSize = strtol(tokens[1], 0, 10);
+            g_strfreev(tokens);
             if (imageSize > 0 && !actualImage) {
                 if (!(actualImage = readPixbufFromStdin(imageSize))) {
                     printf("Error, could not read actual image.\n");
