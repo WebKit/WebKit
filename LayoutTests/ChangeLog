@@ -2,6 +2,14 @@
 
         Unreviewed.
 
+        Rebaseline for chromium-win.  console message diffs in JavaScript engine.
+
+        * platform/chromium-win/inspector/debugger-autocontinue-on-syntax-error-expected.txt: Added.
+
+2010-09-08  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed.
+
         Fixed typo: s/fixd/fixed/
 
         * platform/chromium/test_expectations.txt:

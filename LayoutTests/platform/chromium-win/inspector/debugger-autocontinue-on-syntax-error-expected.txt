@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 1: Uncaught SyntaxError: Unexpected token )
+CONSOLE MESSAGE: line 1: Uncaught SyntaxError: Unexpected token )
+Tests that debugger won't stop on syntax errors even if "pause on uncaught exceptions" is on.
+
+Debugger was enabled.
+Page reloaded.
+DONE.
