@@ -23581,14 +23581,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\loader\FTPDirectoryDocument.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\loader\FTPDirectoryDocument.h"
-				>
-			</File>
-			<File
 				RelativePath="..\loader\FTPDirectoryParser.cpp"
 				>
 			</File>
@@ -23602,14 +23594,6 @@
 			</File>
 			<File
 				RelativePath="..\loader\HistoryController.h"
-				>
-			</File>
-			<File
-				RelativePath="..\loader\ImageDocument.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\loader\ImageDocument.h"
 				>
 			</File>
 			<File
@@ -23634,14 +23618,6 @@
 			</File>
 			<File
 				RelativePath="..\loader\MainResourceLoader.h"
-				>
-			</File>
-			<File
-				RelativePath="..\loader\MediaDocument.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\loader\MediaDocument.h"
 				>
 			</File>
 			<File
@@ -23674,14 +23650,6 @@
 			</File>
 			<File
 				RelativePath="..\loader\PlaceholderDocument.h"
-				>
-			</File>
-			<File
-				RelativePath="..\loader\PluginDocument.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\loader\PluginDocument.h"
 				>
 			</File>
 			<File
@@ -37485,6 +37453,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\FTPDirectoryDocument.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\FTPDirectoryDocument.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\FormDataList.cpp"
 				>
 			</File>
@@ -41849,6 +41825,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\ImageDocument.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\ImageDocument.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\ImageResizerThread.cpp"
 				>
 			</File>
@@ -41865,7 +41849,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\MediaDocument.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\MediaDocument.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\MediaError.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\PluginDocument.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\PluginDocument.h"
 				>
 			</File>
 			<Filter

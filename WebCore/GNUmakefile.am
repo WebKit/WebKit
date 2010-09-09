@@ -1351,6 +1351,8 @@ webcore_sources += \
 	WebCore/html/DataGridDataSource.h \
 	WebCore/html/DateComponents.cpp \
 	WebCore/html/DateComponents.h \
+	WebCore/html/FTPDirectoryDocument.cpp \
+	WebCore/html/FTPDirectoryDocument.h \
 	WebCore/html/FormDataList.cpp \
 	WebCore/html/FormDataList.h \
 	WebCore/html/HTMLAllCollection.cpp \
@@ -1518,11 +1520,17 @@ webcore_sources += \
 	WebCore/html/HTMLViewSourceDocument.h \
 	WebCore/html/ImageData.cpp \
 	WebCore/html/ImageData.h \
+	WebCore/html/ImageDocument.cpp \
+	WebCore/html/ImageDocument.h \
 	WebCore/html/ImageResizerThread.cpp \
 	WebCore/html/ImageResizerThread.h \
 	WebCore/html/LabelsNodeList.cpp \
 	WebCore/html/LabelsNodeList.h \
+	WebCore/html/MediaDocument.cpp \
+	WebCore/html/MediaDocument.h \
 	WebCore/html/MediaError.h \
+	WebCore/html/PluginDocument.cpp \
+	WebCore/html/PluginDocument.h \
 	WebCore/html/StepRange.cpp \
 	WebCore/html/StepRange.h \
 	WebCore/html/TextDocument.cpp \
@@ -1685,8 +1693,6 @@ webcore_sources += \
 	WebCore/loader/DocumentWriter.cpp \
 	WebCore/loader/DocumentWriter.h \
 	WebCore/loader/EmptyClients.h \
-	WebCore/loader/FTPDirectoryDocument.cpp \
-	WebCore/loader/FTPDirectoryDocument.h \
 	WebCore/loader/FTPDirectoryParser.cpp \
 	WebCore/loader/FTPDirectoryParser.h \
 	WebCore/loader/FormState.cpp \
@@ -1702,14 +1708,10 @@ webcore_sources += \
 	WebCore/loader/FrameNetworkingContext.h \
 	WebCore/loader/HistoryController.cpp \
 	WebCore/loader/HistoryController.h \
-	WebCore/loader/ImageDocument.cpp \
-	WebCore/loader/ImageDocument.h \
 	WebCore/loader/ImageLoader.cpp \
 	WebCore/loader/ImageLoader.h \
 	WebCore/loader/MainResourceLoader.cpp \
 	WebCore/loader/MainResourceLoader.h \
-	WebCore/loader/MediaDocument.cpp \
-	WebCore/loader/MediaDocument.h \
 	WebCore/loader/NavigationAction.cpp \
 	WebCore/loader/NavigationAction.h \
 	WebCore/loader/NetscapePlugInStreamLoader.cpp \
@@ -1718,8 +1720,6 @@ webcore_sources += \
 	WebCore/loader/PingLoader.h \
 	WebCore/loader/PlaceholderDocument.cpp \
 	WebCore/loader/PlaceholderDocument.h \
-	WebCore/loader/PluginDocument.cpp \
-	WebCore/loader/PluginDocument.h \
 	WebCore/loader/PolicyCallback.cpp \
 	WebCore/loader/PolicyCallback.h \
 	WebCore/loader/PolicyChecker.cpp \

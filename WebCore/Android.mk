@@ -278,7 +278,10 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/HTMLTableRowsCollection.cpp \
 	html/HTMLViewSourceDocument.cpp \
 	html/ImageData.cpp \
+	html/ImageDocument.cpp \
+  html/MediaDocument.cpp \
 	html/ImageResizerThread.cpp \
+	html/PluginDocument.cpp \
 	html/TextDocument.cpp \
 	html/TimeRanges.cpp \
 	html/ValidityState.cpp \
@@ -324,15 +327,12 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	loader/FrameLoader.cpp \
 	loader/FrameLoaderStateMachine.cpp \
 	loader/HistoryController.cpp \
-	loader/ImageDocument.cpp \
 	loader/ImageLoader.cpp \
 	loader/MainResourceLoader.cpp \
-	loader/MediaDocument.cpp \
 	loader/NavigationAction.cpp \
 	loader/NetscapePlugInStreamLoader.cpp \
 	loader/PingLoader.cpp \
 	loader/PlaceholderDocument.cpp \
-	loader/PluginDocument.cpp \
 	loader/PolicyCallback.cpp \
 	loader/PolicyChecker.cpp \
 	loader/ProgressTracker.cpp \

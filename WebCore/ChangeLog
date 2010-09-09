@@ -1,3 +1,34 @@
+2010-09-09  Adam Barth  <abarth@webkit.org>
+
+        Move FTPDirectoryDocument, ImageDocument, MediaDocument, and
+        PluginDocument from WebCore/loader to WebCore/html.  These classes are
+        subclasses of HTMLDocument.  They don't belong in the loader.  Further
+        cleanup patches to follow.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/FTPDirectoryDocument.cpp: Copied from WebCore/loader/FTPDirectoryDocument.cpp.
+        * html/FTPDirectoryDocument.h: Copied from WebCore/loader/FTPDirectoryDocument.h.
+        * html/ImageDocument.cpp: Copied from WebCore/loader/ImageDocument.cpp.
+        * html/ImageDocument.h: Copied from WebCore/loader/ImageDocument.h.
+        * html/MediaDocument.cpp: Copied from WebCore/loader/MediaDocument.cpp.
+        * html/MediaDocument.h: Copied from WebCore/loader/MediaDocument.h.
+        * html/PluginDocument.cpp: Copied from WebCore/loader/PluginDocument.cpp.
+        * html/PluginDocument.h: Copied from WebCore/loader/PluginDocument.h.
+        * loader/FTPDirectoryDocument.cpp: Removed.
+        * loader/FTPDirectoryDocument.h: Removed.
+        * loader/ImageDocument.cpp: Removed.
+        * loader/ImageDocument.h: Removed.
+        * loader/MediaDocument.cpp: Removed.
+        * loader/MediaDocument.h: Removed.
+        * loader/PluginDocument.cpp: Removed.
+        * loader/PluginDocument.h: Removed.
+
 2010-09-09  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.

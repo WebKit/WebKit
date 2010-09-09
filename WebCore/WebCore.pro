@@ -645,6 +645,7 @@ SOURCES += \
     html/DataGridColumn.cpp \
     html/DataGridColumnList.cpp \
     html/DateComponents.cpp \
+    html/FTPDirectoryDocument.cpp \
     html/FormDataList.cpp \
     html/HTMLAllCollection.cpp \
     html/HTMLAnchorElement.cpp \
@@ -728,8 +729,11 @@ SOURCES += \
     html/HTMLUListElement.cpp \
     html/HTMLViewSourceDocument.cpp \
     html/ImageData.cpp \
+    html/ImageDocument.cpp \
     html/ImageResizerThread.cpp \
     html/LabelsNodeList.cpp \
+    html/MediaDocument.cpp \
+    html/PluginDocument.cpp \
     html/StepRange.cpp \
     html/TextDocument.cpp \
     html/ValidityState.cpp \
@@ -797,19 +801,15 @@ SOURCES += \
     loader/FrameLoader.cpp \
     loader/FrameLoaderStateMachine.cpp \
     loader/HistoryController.cpp \
-    loader/FTPDirectoryDocument.cpp \
     loader/FTPDirectoryParser.cpp \
     loader/icon/IconLoader.cpp \
-    loader/ImageDocument.cpp \
     loader/ImageLoader.cpp \
     loader/loader.cpp \
     loader/MainResourceLoader.cpp \
-    loader/MediaDocument.cpp \
     loader/NavigationAction.cpp \
     loader/NetscapePlugInStreamLoader.cpp \
     loader/PingLoader.cpp \
     loader/PlaceholderDocument.cpp \
-    loader/PluginDocument.cpp \
     loader/PolicyCallback.cpp \
     loader/PolicyChecker.cpp \
     loader/ProgressTracker.cpp \
