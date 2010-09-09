@@ -1,3 +1,19 @@
+2010-09-09  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        Add cubic curve classifier
+        https://bugs.webkit.org/show_bug.cgi?id=45249
+
+        Adding the cubic curve classification algorithm per the GPU Gems 3
+        chapter. No tests yet; will be tested in conjunction with later code.
+
+        * platform/graphics/gpu/LoopBlinnClassifier.cpp: Added.
+        (WebCore::LoopBlinnClassifier::classify):
+        * platform/graphics/gpu/LoopBlinnClassifier.h: Added.
+        (WebCore::LoopBlinnClassifier::Result::Result):
+        (WebCore::LoopBlinnClassifier::LoopBlinnClassifier):
+
 2010-09-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
