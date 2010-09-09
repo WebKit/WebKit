@@ -1,3 +1,17 @@
+2010-09-09  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Unreviewed buildfix.
+
+        [Qt] Treat warnings as errors by default for gcc
+        https://bugs.webkit.org/show_bug.cgi?id=43191
+
+        The buildfix r66990 fixes the build for the Maemo
+        branch of Qt, but the symbols maemo5 and 6 are not defined
+        for regular branches on ARM.
+        This fixes the build by disabling -Werror for any ARM platform.
+
+        * WebKit.pri: Don't add -Werror for arm platforms.
+
 2010-09-08  Peter Kasting  <pkasting@google.com>
 
         Reviewed by David Hyatt.
