@@ -3156,3 +3156,9 @@ BUG54948 WIN DEBUG : fast/css/getComputedStyle/computed-style-without-renderer.h
 BUG54948 WIN DEBUG : fast/css/getComputedStyle/computed-style.html = TEXT
 BUG54948 WIN DEBUG : svg/css/getComputedStyle-basic.xhtml = TEXT
 BUG54948 WIN DEBUG : transitions/inherit-other-props.html = TEXT
+
+// WebKit r67068
+BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-dom-azimuth-attr.html = IMAGE
+BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-dom-elevation-attr.html = IMAGE
+BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-svgdom-azimuth-prop.html = IMAGE
+BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-svgdom-elevation-prop.html = IMAGE

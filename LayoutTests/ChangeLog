@@ -1,3 +1,15 @@
+2010-09-09  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed.
+
+        4 test failing in chromium win/linux from webkit r67068
+        - svg/dynamic-updates/SVGFEDistantLightElement-dom-azimuth-attr.html
+        - svg/dynamic-updates/SVGFEDistantLightElement-dom-elevation-attr.html
+        - svg/dynamic-updates/SVGFEDistantLightElement-svgdom-azimuth-prop.html
+        - svg/dynamic-updates/SVGFEDistantLightElement-svgdom-elevation-prop.html
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-09  Luke Macpherson  <macpherson@chromium.org>
 
         Reviewed by James Robinson.
