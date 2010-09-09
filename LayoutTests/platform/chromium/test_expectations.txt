@@ -1720,24 +1720,6 @@ BUG23560 MAC : fast/images/animated-svg-as-image.html = IMAGE PASS
 // because we enforce non-transparent color in Font::drawGlyphs.
 BUG24191 LINUX : fast/css/hsla-color.html = FAIL
 
-// Linux checksum computation produces results, different from Windows or upstream.
-BUG21386 LINUX : fast/repaint/erase-overflow.html = FAIL
-BUG21386 LINUX : fast/repaint/inline-block-resize.html = FAIL
-BUG21386 LINUX : fast/repaint/inline-overflow.html = FAIL
-BUG21386 LINUX : fast/repaint/invisible-objects.html = FAIL
-BUG21386 LINUX : fast/repaint/layer-full-repaint.html = FAIL
-BUG21386 LINUX : fast/repaint/layer-hide-when-needs-layout.html = FAIL
-BUG21386 LINUX : fast/repaint/layer-visibility.html = FAIL
-BUG21386 LINUX : fast/repaint/overflow-clip-subtree-layout.html = FAIL
-BUG21386 LINUX : fast/repaint/subtree-root-clip-2.html = FAIL
-BUG21386 LINUX : fast/repaint/subtree-root-clip-3.html = FAIL
-BUG21386 LINUX : fast/repaint/subtree-root-clip.html = FAIL
-BUG21386 LINUX : fast/repaint/table-col-background.html = FAIL
-BUG21386 LINUX : fast/repaint/table-row.html = FAIL
-BUG21386 LINUX : fast/repaint/table-section-overflow.html = FAIL
-BUG21386 LINUX : fast/layers/layer-content-visibility-change.html = FAIL
-BUG21386 LINUX : fast/repaint/table-cell-overflow.html = FAIL
-
 // TODO(tc): flaky.
 BUG10391 LINUX : fast/events/5056619.html = FAIL
 
@@ -2393,7 +2375,6 @@ BUG32308 DEBUG : fast/frames/cached-frame-counter.html = TIMEOUT
 // WebKit roll 53341:53451
 BUG32670 LINUX : fast/css/zoom-body-scroll.html = TEXT
 BUG32673 WIN LINUX : fast/forms/textarea-scrollbar-height.html = TEXT
-BUG32675 LINUX : fast/repaint/trailing-floats-root-line-box-overflow.html = IMAGE
 
 // Flaky tests found during the roll.
 BUG32679 LINUX DEBUG : http/tests/navigation/lockedhistory-iframe.html = TEXT PASS
