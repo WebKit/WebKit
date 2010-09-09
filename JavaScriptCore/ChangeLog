@@ -1,3 +1,15 @@
+2010-09-08  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove accessor for private member variable in JSParser
+        https://bugs.webkit.org/show_bug.cgi?id=45378
+
+        m_token is private to JSParser, so it does not seem to be useful
+        to have an accessor for it. On top of that, the file was both
+        using the accessor and directly accessing the member variable,
+        only one style should be used.
+
 2010-09-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Oliver Hunt.
