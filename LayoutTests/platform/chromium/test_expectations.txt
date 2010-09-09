@@ -3137,3 +3137,6 @@ BUGWK45332 MAC : fast/canvas/webgl/gl-teximage.html = TEXT
 
 // Regressed in r66955
 BUGWK45431 LINUX : svg/dynamic-updates/SVGFEDiffuseLightingElement-lighting-color-css-prop.html = IMAGE
+
+// Regressed in r66954
+BUGWK45432 WIN MAC LINUX : fast/dom/dataset-gc.html = TEXT
