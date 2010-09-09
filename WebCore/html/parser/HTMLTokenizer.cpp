@@ -293,7 +293,9 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
                 ADVANCE_TO(DataState);
             if (m_state == RCDATAState)
                 ADVANCE_TO(RCDATAState);
-            ASSERT_NOT_REACHED();
+            // When parsing text/plain documents, we run the tokenizer in the
+            // PLAINTEXTState and ignore m_skipLeadingNewLineForListing.
+            ASSERT(m_state == PLAINTEXTState);
         }
     }
 

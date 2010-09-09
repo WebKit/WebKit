@@ -1,3 +1,21 @@
+2010-09-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        text/plain documents that start with \n trigger ASSERT
+        https://bugs.webkit.org/show_bug.cgi?id=45409
+
+        Because the TextDocumentParser uses a <pre> element to show the text,
+        it ran into a requirement from HTML5 to skip any initial \n character
+        tokens inside a <pre> element.  We don't want the behavior for
+        TextDocuments, so I've loosened our ASSERTs and added a comment and a
+        test to document the correct behavior.
+
+        Test: fast/tokenizer/text-plain.html
+
+        * html/parser/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::nextToken):
+
 2010-09-08  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.

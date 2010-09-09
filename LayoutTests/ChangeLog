@@ -1,3 +1,13 @@
+2010-09-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        text/plain documents that start with \n trigger ASSERT
+        https://bugs.webkit.org/show_bug.cgi?id=45409
+
+        * fast/tokenizer/resources/text.txt: Added.
+        * fast/tokenizer/text-plain.html: Added.
+
 2010-09-08  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Joseph Pecoraro.
