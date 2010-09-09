@@ -1,3 +1,17 @@
+2010-09-09  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by David Kilzer.
+
+        AX: Support AccessibilityTextMarkers in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=44778
+
+        Add basic text marker tests to validate functions are working.
+
+        * platform/mac/accessibility/element-for-text-marker-expected.txt: Added.
+        * platform/mac/accessibility/element-for-text-marker.html: Added.
+        * platform/mac/accessibility/text-marker-length-expected.txt: Added.
+        * platform/mac/accessibility/text-marker-length.html: Added.
+
 2010-09-09  Tony Chang  <tony@chromium.org>
 
         Unreviewed.  This test failed after I landed the new checksums. I

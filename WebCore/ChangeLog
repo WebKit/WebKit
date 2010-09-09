@@ -1,3 +1,19 @@
+2010-09-09  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by David Kilzer.
+
+        AX: Support AccessibilityTextMarkers in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=44778
+
+        Provide support in DRT for accessing and manipulating the text marker system that AX exposes.
+        This will allow future bug fixes in the text marker system to be adequately tested.
+
+        Tests: platform/mac/accessibility/element-for-text-marker.html
+               platform/mac/accessibility/text-marker-length.html
+
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+
 2010-09-09  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

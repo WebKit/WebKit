@@ -1190,3 +1190,70 @@ void AccessibilityUIElement::removeSelection()
 {
     // FIXME: implement
 }
+
+#if SUPPORTS_AX_TEXTMARKERS
+
+// Text markers
+AccessibilityTextMarkerRange AccessibilityUIElement::textMarkerRangeForElement(AccessibilityUIElement* element)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id textMarkerRange = [m_element accessibilityAttributeValue:@"AXTextMarkerRangeForUIElement" forParameter:element->platformUIElement()];
+    return AccessibilityTextMarkerRange(textMarkerRange);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
+}
+
+int AccessibilityUIElement::textMarkerRangeLength(AccessibilityTextMarkerRange* range)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSNumber* lengthValue = [m_element accessibilityAttributeValue:@"AXLengthForTextMarkerRange" forParameter:(id)range->platformTextMarkerRange()];
+    return [lengthValue intValue];
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
+}
+
+
+AccessibilityTextMarkerRange AccessibilityUIElement::textMarkerRangeForMarkers(AccessibilityTextMarker* startMarker, AccessibilityTextMarker* endMarker)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSArray* textMarkers = [NSArray arrayWithObjects:(id)startMarker->platformTextMarker(), (id)endMarker->platformTextMarker(), nil];
+    id textMarkerRange = [m_element accessibilityAttributeValue:@"AXTextMarkerRangeForUnorderedTextMarkers" forParameter:textMarkers];
+    return AccessibilityTextMarkerRange(textMarkerRange);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
+}
+
+AccessibilityTextMarker AccessibilityUIElement::startTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange* range)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id textMarker = [m_element accessibilityAttributeValue:@"AXStartTextMarkerForTextMarkerRange" forParameter:(id)range->platformTextMarkerRange()];
+    return AccessibilityTextMarker(textMarker);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;    
+}
+
+AccessibilityTextMarker AccessibilityUIElement::endTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange* range)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id textMarker = [m_element accessibilityAttributeValue:@"AXEndTextMarkerForTextMarkerRange" forParameter:(id)range->platformTextMarkerRange()];
+    return AccessibilityTextMarker(textMarker);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;    
+}
+
+AccessibilityUIElement AccessibilityUIElement::accessibilityElementForTextMarker(AccessibilityTextMarker* marker)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id uiElement = [m_element accessibilityAttributeValue:@"AXUIElementForTextMarker" forParameter:(id)marker->platformTextMarker()];
+    return AccessibilityUIElement(uiElement);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;  
+}
+
+#endif // SUPPORTS_AX_TEXTMARKERS

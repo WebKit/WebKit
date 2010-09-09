@@ -1,3 +1,69 @@
+2010-09-09  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by David Kilzer.
+
+        AX: Support AccessibilityTextMarkers in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=44778
+
+        Add AccessibilityTextMarker and AccessibilityTextMarkerRange which encapsulate the AXTextMarkers 
+        that WebCore uses when vending information about its VisiblePositions through AX.
+
+        There are a few new methods in AccessibilityUIElement to retrieve and use text markers, and some basic
+        methods for encapsulating and checking equality.
+
+        This will allow future bug fixes in the text marker system to be adequately tested.
+
+        * DumpRenderTree/AccessibilityTextMarker.cpp: Added.
+        (toTextMarker):
+        (isMarkerEqualCallback):
+        (markerFinalize):
+        (AccessibilityTextMarker::makeJSAccessibilityTextMarker):
+        (AccessibilityTextMarker::getJSClass):
+        (toTextMarkerRange):
+        (isMarkerRangeEqualCallback):
+        (markerRangeFinalize):
+        (AccessibilityTextMarkerRange::makeJSAccessibilityTextMarkerRange):
+        (AccessibilityTextMarkerRange::getJSClass):
+        * DumpRenderTree/AccessibilityTextMarker.h: Added.
+        (AccessibilityTextMarker::platformTextMarker):
+        (AccessibilityTextMarkerRange::platformTextMarkerRange):
+        (AccessibilityTextMarker::AccessibilityTextMarker):
+        (AccessibilityTextMarker::~AccessibilityTextMarker):
+        (AccessibilityTextMarker::isEqual):
+        (AccessibilityTextMarkerRange::AccessibilityTextMarkerRange):
+        (AccessibilityTextMarkerRange::~AccessibilityTextMarkerRange):
+        (AccessibilityTextMarkerRange::isEqual):
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (textMarkerRangeForElementCallback):
+        (textMarkerRangeLengthCallback):
+        (textMarkerRangeForMarkersCallback):
+        (startTextMarkerForTextMarkerRangeCallback):
+        (endTextMarkerForTextMarkerRangeCallback):
+        (accessibilityElementForTextMarkerCallback):
+        (AccessibilityUIElement::textMarkerRangeForElement):
+        (AccessibilityUIElement::textMarkerRangeLength):
+        (AccessibilityUIElement::startTextMarkerForTextMarkerRange):
+        (AccessibilityUIElement::endTextMarkerForTextMarkerRange):
+        (AccessibilityUIElement::accessibilityElementForTextMarker):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/mac/AccessibilityTextMarkerMac.mm: Added.
+        (AccessibilityTextMarker::AccessibilityTextMarker):
+        (AccessibilityTextMarker::~AccessibilityTextMarker):
+        (AccessibilityTextMarker::isEqual):
+        (AccessibilityTextMarkerRange::AccessibilityTextMarkerRange):
+        (AccessibilityTextMarkerRange::~AccessibilityTextMarkerRange):
+        (AccessibilityTextMarkerRange::isEqual):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::textMarkerRangeForElement):
+        (AccessibilityUIElement::textMarkerRangeLength):
+        (AccessibilityUIElement::textMarkerRangeForMarkers):
+        (AccessibilityUIElement::startTextMarkerForTextMarkerRange):
+        (AccessibilityUIElement::endTextMarkerForTextMarkerRange):
+        (AccessibilityUIElement::accessibilityElementForTextMarker):
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+
 2010-08-25  Tony Chang  <tony@chromium.org>
 
         Reviewed by Ojan Vafai.

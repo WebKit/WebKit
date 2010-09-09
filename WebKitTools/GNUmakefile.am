@@ -49,6 +49,8 @@ Programs_DumpRenderTree_SOURCES = \
 	WebKitTools/DumpRenderTree/DumpRenderTreePrefix.h \
 	WebKitTools/DumpRenderTree/AccessibilityController.cpp \
 	WebKitTools/DumpRenderTree/AccessibilityController.h \
+	WebKitTools/DumpRenderTree/AccessibilityTextMarker.cpp \
+	WebKitTools/DumpRenderTree/AccessibilityTextMarker.h \
 	WebKitTools/DumpRenderTree/AccessibilityUIElement.cpp \
 	WebKitTools/DumpRenderTree/AccessibilityUIElement.h \
 	WebKitTools/DumpRenderTree/GCController.cpp \

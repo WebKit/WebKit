@@ -578,6 +578,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\AccessibilityTextMarker.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\AccessibilityTextMarker.h"
+			>
+		</File>
+		<File
 			RelativePath=".\DraggingInfo.h"
 			>
 		</File>
