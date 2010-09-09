@@ -1,0 +1,61 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/debugger-test2.js"></script>
+<script>
+
+function populateDOMStorage()
+{
+    localStorage.clear();
+    sessionStorage.clear();
+    // Fill local and session storage with some random strings.
+    for (var i = 0; i < 10; i++) {
+        localStorage["a" + i] = "=value" + i + ", ";
+        sessionStorage["b" + i] = "=value" + (i+10) + ", ";
+    }
+}
+
+function test()
+{
+    WebInspector.showPanel("storage");
+
+    InspectorTest.evaluateInConsole("populateDOMStorage()", function(result) {
+        InspectorTest.addResult("Populated local and session storage");
+    });
+    function name(storage) {
+        return storage.isLocalStorage ? "Local storage" : "Session storage";
+    }
+    InspectorTest.runAfterPendingDispatches(function() {
+        var storages = WebInspector.panels.storage._domStorage;
+        if (storages) {
+            for (var i = 0; i < storages.length; i++) {
+                var storage = storages[i];
+                WebInspector.currentPanel.showDOMStorage(storage);
+                InspectorTest.addResult("Did show: " + name(storage));
+            }
+        } else
+            InspectorTest.addResult("FAIL: no DOM storages found.");
+
+        InspectorTest.runAfterPendingDispatches(function() {
+            var storages = WebInspector.panels.storage._domStorage;
+            for (var i = 0; i < storages.length; i++) {
+                var storage = storages[i];
+                InspectorTest.addResult(name(storage) + " content: ");
+                InspectorTest.addResult(storage._domStorageView.element.textContent);
+            }
+            InspectorTest.addResult("DONE");
+            InspectorTest.completeTest();
+        });
+    });
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Test that storage panel is present and that it contains correct data for local and session DOM storages.
+</p>
+
+</body>
+</html>

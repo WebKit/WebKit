@@ -1237,43 +1237,6 @@ TestSuite.createKeyEvent = function(keyIdentifier)
 
 
 /**
- * Tests that Storage panel can be open and that local DOM storage is added
- * to the panel.
- */
-TestSuite.prototype.testShowStoragePanel = function()
-{
-    var test = this;
-    this.addSniffer(WebInspector.panels.storage, "addDOMStorage",
-        function(storage) {
-            var orig = storage.getEntries;
-            storage.getEntries = function(callback) {
-                orig.call(this, function(entries) {
-                    callback(entries);
-                    test.releaseControl();
-                });
-            };
-            try {
-                WebInspector.currentPanel.selectDOMStorage(storage.id);
-                storage.getEntries = orig;
-            } catch (e) {
-                test.fail("Exception in selectDOMStorage: " + e);
-            }
-        });
-    this.showPanel("storage");
-
-    // Access localStorage so that it's pushed to the frontend.
-    this.evaluateInConsole_(
-        'setTimeout("localStorage.x = 10" , 0)',
-        function(resultText) {
-            test.assertTrue(!isNaN(resultText), "Failed to get timer id: " + resultText);
-        });
-
-    // Wait until DOM storage is added to the panel.
-    this.takeControl();
-};
-
-
-/**
  * Test runner for the test suite.
  */
 var uiTests = {};
