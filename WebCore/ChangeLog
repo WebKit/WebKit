@@ -1,3 +1,73 @@
+2010-09-09  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Chris Marrin.
+
+        Add media element logging
+        https://bugs.webkit.org/show_bug.cgi?id=45469
+
+        Add logging at interesting points in a media element's lifecycle.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::urlForLogging):
+        (WebCore::boolString):
+        (WebCore::HTMLMediaElement::scheduleEvent):
+        (WebCore::HTMLMediaElement::asyncEventTimerFired):
+        (WebCore::HTMLMediaElement::canPlayType):
+        (WebCore::HTMLMediaElement::load):
+        (WebCore::HTMLMediaElement::prepareForLoad):
+        (WebCore::HTMLMediaElement::selectMediaResource):
+        (WebCore::HTMLMediaElement::loadResource):
+        (WebCore::HTMLMediaElement::isSafeToLoadURL):
+        (WebCore::HTMLMediaElement::waitForSourceChange):
+        (WebCore::HTMLMediaElement::noneSupported):
+        (WebCore::HTMLMediaElement::mediaEngineError):
+        (WebCore::HTMLMediaElement::cancelPendingEventsAndCallbacks):
+        (WebCore::HTMLMediaElement::setNetworkState):
+        (WebCore::HTMLMediaElement::setReadyState):
+        (WebCore::HTMLMediaElement::rewind):
+        (WebCore::HTMLMediaElement::returnToRealtime):
+        (WebCore::HTMLMediaElement::addPlayedRange):
+        (WebCore::HTMLMediaElement::seek):
+        (WebCore::HTMLMediaElement::finishSeek):
+        (WebCore::HTMLMediaElement::setPlaybackRate):
+        (WebCore::HTMLMediaElement::setWebkitPreservesPitch):
+        (WebCore::HTMLMediaElement::setAutoplay):
+        (WebCore::HTMLMediaElement::setPreload):
+        (WebCore::HTMLMediaElement::play):
+        (WebCore::HTMLMediaElement::playInternal):
+        (WebCore::HTMLMediaElement::pause):
+        (WebCore::HTMLMediaElement::pauseInternal):
+        (WebCore::HTMLMediaElement::setLoop):
+        (WebCore::HTMLMediaElement::setControls):
+        (WebCore::HTMLMediaElement::setVolume):
+        (WebCore::HTMLMediaElement::setMuted):
+        (WebCore::HTMLMediaElement::togglePlayState):
+        (WebCore::HTMLMediaElement::beginScrubbing):
+        (WebCore::HTMLMediaElement::endScrubbing):
+        (WebCore::HTMLMediaElement::selectNextSourceChild):
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerVolumeChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerMuteChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerDurationChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerRateChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerPlaybackStateChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerSawUnsupportedTracks):
+        (WebCore::HTMLMediaElement::mediaPlayerSizeChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerRenderingModeChanged):
+        (WebCore::HTMLMediaElement::updatePlayState):
+        (WebCore::HTMLMediaElement::userCancelledLoad):
+        (WebCore::HTMLMediaElement::stop):
+        (WebCore::HTMLMediaElement::suspend):
+        (WebCore::HTMLMediaElement::resume):
+        (WebCore::HTMLMediaElement::hasPendingActivity):
+        (WebCore::HTMLMediaElement::mediaVolumeDidChange):
+        (WebCore::HTMLMediaElement::createMediaPlayerProxy):
+        (WebCore::HTMLMediaElement::enterFullscreen):
+        (WebCore::HTMLMediaElement::exitFullscreen):
+        (WebCore::HTMLMediaElement::setClosedCaptionsVisible):
+        (WebCore::HTMLMediaElement::mediaCanStart):
+        (WebCore::HTMLMediaElement::setShouldDelayLoadEvent):
+
 2010-09-09  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Adam Barth.
