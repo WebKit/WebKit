@@ -1,3 +1,16 @@
+2010-09-09  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Daniel Bates.
+
+        svn-apply tries to delete directories it shouldn't
+        https://bugs.webkit.org/show_bug.cgi?id=45424
+
+        isDirectoryEmptyForRemoval had the wrong check. If an item in the
+        directory is itself a directory, then the directory is definitely
+        not empty.
+
+        * Scripts/svn-apply:
+
 2010-09-09  Chris Fleizach  <cfleizach@apple.com>
 
         Fixing GTK and windows build failure.

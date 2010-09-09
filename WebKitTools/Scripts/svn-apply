@@ -280,7 +280,7 @@ sub isDirectoryEmptyForRemoval($)
     opendir DIR, $dir or die "Could not open '$dir' to list files: $?";
     for (my $item = readdir DIR; $item && $directoryIsEmpty; $item = readdir DIR) {
         next if exists $removeDirectoryIgnoreList{$item};
-        if (! -d File::Spec->catdir($dir, $item)) {
+        if (-d File::Spec->catdir($dir, $item)) {
             $directoryIsEmpty = 0;
         } else {
             next if (scmWillDeleteFile(File::Spec->catdir($dir, $item)));
