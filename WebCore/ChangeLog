@@ -1,3 +1,18 @@
+2010-09-09  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Chris Fleizach.
+
+        Add AudioProcessor.h
+        https://bugs.webkit.org/show_bug.cgi?id=45206
+
+        No new tests since audio API is not yet implemented.
+
+        * platform/audio/AudioProcessor.h: Added.
+        (WebCore::AudioProcessor::AudioProcessor):
+        (WebCore::AudioProcessor::~AudioProcessor):
+        (WebCore::AudioProcessor::isInitialized):
+        (WebCore::AudioProcessor::sampleRate):
+
 2010-09-09  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.
