@@ -1220,16 +1220,13 @@ static void webkit_web_view_finalize(GObject* object)
     WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
     WebKitWebViewPrivate* priv = webView->priv;
 
-    g_free(priv->tooltipText);
-    g_free(priv->mainResourceIdentifier);
-    g_free(priv->encoding);
-    g_free(priv->customEncoding);
-    g_free(priv->iconURI);
-
     delete priv->previousClickPoint;
     delete priv->draggingDataObjects;
     delete priv->droppingContexts;
 
+    // We need to manually call the destructor here, since this object's memory is managed
+    // by GLib. This calls all C++ members' destructors and prevents memory leaks.
+    priv->~WebKitWebViewPrivate();
     G_OBJECT_CLASS(webkit_web_view_parent_class)->finalize(object);
 }
 
@@ -1512,8 +1509,8 @@ static gboolean webkit_web_view_query_tooltip(GtkWidget *widget, gint x, gint y,
 {
     WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW_GET_PRIVATE(widget);
 
-    if (priv->tooltipText) {
-        gtk_tooltip_set_text(tooltip, priv->tooltipText);
+    if (priv->tooltipText.length() > 0) {
+        gtk_tooltip_set_text(tooltip, priv->tooltipText.data());
         return TRUE;
     }
 
@@ -3095,6 +3092,12 @@ static void webkit_web_view_init(WebKitWebView* webView)
 {
     WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
     webView->priv = priv;
+    // This is the placement new syntax: http://www.parashift.com/c++-faq-lite/dtors.html#faq-11.10
+    // It allows us to call a constructor on manually allocated locations in memory. We must use it
+    // in this case, because GLib manages the memory for the private data section, but we wish it
+    // to contain C++ object members. The use of placement new calls the constructor on all C++ data
+    // members, which ensures they are initialized properly.
+    new (priv) WebKitWebViewPrivate();
 
     priv->imContext = gtk_im_multicontext_new();
 
@@ -3134,7 +3137,6 @@ static void webkit_web_view_init(WebKitWebView* webView)
 
     priv->subResources = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_object_unref);
 
-    priv->tooltipText = 0;
     priv->currentClickCount = 0;
     priv->previousClickPoint = new IntPoint(0, 0);
     priv->previousClickButton = 0;
@@ -4246,16 +4248,11 @@ gdouble webkit_web_view_get_progress(WebKitWebView* webView)
 const gchar* webkit_web_view_get_encoding(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), NULL);
-
     String encoding = core(webView)->mainFrame()->loader()->writer()->encoding();
-
-    if (!encoding.isEmpty()) {
-        WebKitWebViewPrivate* priv = webView->priv;
-        g_free(priv->encoding);
-        priv->encoding = g_strdup(encoding.utf8().data());
-        return priv->encoding;
-    } else
-      return NULL;
+    if (encoding.isEmpty())
+        return 0;
+    webView->priv->encoding = encoding.utf8();
+    return webView->priv->encoding.data();
 }
 
 /**
@@ -4289,16 +4286,11 @@ void webkit_web_view_set_custom_encoding(WebKitWebView* webView, const char* enc
 const char* webkit_web_view_get_custom_encoding(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), NULL);
-
     String overrideEncoding = core(webView)->mainFrame()->loader()->documentLoader()->overrideEncoding();
-
-    if (!overrideEncoding.isEmpty()) {
-        WebKitWebViewPrivate* priv = webView->priv;
-        g_free (priv->customEncoding);
-        priv->customEncoding = g_strdup(overrideEncoding.utf8().data());
-        return priv->customEncoding;
-    } else
-      return NULL;
+    if (overrideEncoding.isEmpty())
+        return 0;
+    webView->priv->customEncoding = overrideEncoding.utf8();
+    return webView->priv->customEncoding.data();
 }
 
 /**
@@ -4521,7 +4513,7 @@ void webkit_web_view_add_resource(WebKitWebView* webView, const char* identifier
 
     if (!priv->mainResource) {
         priv->mainResource = webResource;
-        priv->mainResourceIdentifier = g_strdup(identifier);
+        priv->mainResourceIdentifier = identifier;
         return;
     }
 
@@ -4531,16 +4523,15 @@ void webkit_web_view_add_resource(WebKitWebView* webView, const char* identifier
 WebKitWebResource* webkit_web_view_get_resource(WebKitWebView* webView, char* identifier)
 {
     WebKitWebViewPrivate* priv = webView->priv;
-    gpointer webResource = NULL;
-
+    gpointer webResource = 0;
     gboolean resourceFound = g_hash_table_lookup_extended(priv->subResources, identifier, NULL, &webResource);
 
     // The only resource we do not store in this hash table is the
     // main!  If we did not find a request, it probably means the load
     // has been interrupted while while a resource was still being
     // loaded.
-    if (!resourceFound && !g_str_equal(identifier, priv->mainResourceIdentifier))
-        return NULL;
+    if (!resourceFound && !g_str_equal(identifier, priv->mainResourceIdentifier.data()))
+        return 0;
 
     if (!webResource)
         return webkit_web_view_get_main_resource(webView);
@@ -4557,8 +4548,7 @@ void webkit_web_view_clear_resources(WebKitWebView* webView)
 {
     WebKitWebViewPrivate* priv = webView->priv;
 
-    g_free(priv->mainResourceIdentifier);
-    priv->mainResourceIdentifier = NULL;
+    priv->mainResourceIdentifier = "";
 
     if (priv->mainResource) {
         g_object_unref(priv->mainResource);
@@ -4589,12 +4579,11 @@ void webkit_web_view_set_tooltip_text(WebKitWebView* webView, const char* toolti
 {
 #if GTK_CHECK_VERSION(2, 12, 0)
     WebKitWebViewPrivate* priv = webView->priv;
-    g_free(priv->tooltipText);
     if (tooltip && *tooltip != '\0') {
-        priv->tooltipText = g_strdup(tooltip);
+        priv->tooltipText = tooltip;
         gtk_widget_set_has_tooltip(GTK_WIDGET(webView), TRUE);
     } else {
-        priv->tooltipText = 0;
+        priv->tooltipText = "";
         gtk_widget_set_has_tooltip(GTK_WIDGET(webView), FALSE);
     }
 
@@ -4646,15 +4635,10 @@ WebKitHitTestResult* webkit_web_view_get_hit_test_result(WebKitWebView* webView,
  */
 G_CONST_RETURN gchar* webkit_web_view_get_icon_uri(WebKitWebView* webView)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), NULL);
-
-    Page* corePage = core(webView);
-    String iconURL = iconDatabase()->iconURLForPageURL(corePage->mainFrame()->loader()->url().prettyURL());
-
-    WebKitWebViewPrivate* priv = webView->priv;
-    g_free(priv->iconURI);
-    priv->iconURI = g_strdup(iconURL.utf8().data());
-    return priv->iconURI;
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+    String iconURL = iconDatabase()->iconURLForPageURL(core(webView)->mainFrame()->loader()->url().prettyURL());
+    webView->priv->iconURI = iconURL.utf8();
+    return webView->priv->iconURI.data();
 }
 
 /**

@@ -1,3 +1,35 @@
+2010-09-10  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Placement new / manual destructor invocation should be used on private GObject memory
+        https://bugs.webkit.org/show_bug.cgi?id=45550
+
+        GLib allocates and deallocates GObject private data structs itself. When
+        those structs contain C++ members, their constructors and destructors are not
+        called. This is not only dangerous, it makes RefPtr-type smart pointers much
+        less useful. We can fix this problem by calling placement new on the private
+        data struct during instance initialization and calling the destructor during
+        finalization.
+
+        This patch takes that approach and switches plain char* members of
+        WebKitWebView (with manual memory allocation) to use CString.
+
+        * webkit/webkitprivate.h: Switch char* members to CString.
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_finalize): Manually call the destructor on the private
+        data. Remove manual deallocation of members which are now CString.
+        (webkit_web_view_query_tooltip): Update to reflect CString change.
+        (webkit_web_view_init): Use placement new to initialize C++ members of
+        the private data section.
+        (webkit_web_view_get_encoding): Update to reflect CString change.
+        (webkit_web_view_get_custom_encoding): Ditto.
+        (webkit_web_view_add_resource): Ditto.
+        (webkit_web_view_get_resource): Ditto.
+        (webkit_web_view_clear_resources): Ditto.
+        (webkit_web_view_set_tooltip_text): Ditto.
+        (webkit_web_view_get_icon_uri): Ditto.
+
 2010-09-10  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Martin Robinson.
