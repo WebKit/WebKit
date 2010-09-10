@@ -1,3 +1,25 @@
+2010-09-09  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Clear only the uploaded portion of the software backing store when in mixed mode
+        https://bugs.webkit.org/show_bug.cgi?id=45503
+
+        This clears out only the dirty region of the software backing store when uploading results
+        to hardware rather than clearing out the entire software backing store.  This is a significant
+        performance improvement when the dirty rects are small relative to the whole canvas.
+
+        This also implements the non-swizzle path of copySubRect() using memcpy() to copy the rows, which
+        is another respectable performance increase.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        * platform/graphics/gpu/Texture.cpp:
+        (WebCore::copySubRect):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::prepareForSoftwareDraw):
+        (WebCore::PlatformContextSkia::uploadSoftwareToHardware):
+        (WebCore::PlatformContextSkia::readbackHardwareToSoftware):
+
 2010-09-09  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.

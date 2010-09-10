@@ -747,9 +747,7 @@ void PlatformContextSkia::prepareForSoftwareDraw() const
         // of a compositing operation).
 
         if (m_state->m_xferMode == SkXfermode::kSrcOver_Mode) {
-            // Last drawn on hardware; clear out the canvas.
-            m_canvas->getDevice()->eraseColor(0);
-            // Start compositing into the empty canvas.
+            // Note that we have rendering results in both the hardware and software backing stores.
             m_backingStoreState = Mixed;
         } else {
             readbackHardwareToSoftware();
@@ -830,6 +828,13 @@ void PlatformContextSkia::uploadSoftwareToHardware(CompositeOperator op) const
     m_uploadTexture->updateSubRect(bitmap.getPixels(), m_softwareDirtyRect);
     AffineTransform identity;
     gpuCanvas()->drawTexturedRect(m_uploadTexture.get(), m_softwareDirtyRect, m_softwareDirtyRect, identity, 1.0, DeviceColorSpace, op);
+    // Clear out the region of the software canvas we just uploaded.
+    m_canvas->save();
+    m_canvas->resetMatrix();
+    SkRect bounds = m_softwareDirtyRect;
+    m_canvas->clipRect(bounds, SkRegion::kReplace_Op);
+    m_canvas->drawARGB(0, 0, 0, 0, SkXfermode::kClear_Mode);
+    m_canvas->restore();
     m_softwareDirtyRect.setWidth(0); // Clear dirty rect.
 }
 
@@ -855,6 +860,7 @@ void PlatformContextSkia::readbackHardwareToSoftware() const
             }
         }
     }
+    m_softwareDirtyRect.unite(IntRect(0, 0, width, height)); // Mark everything as dirty.
 }
 
 } // namespace WebCore
