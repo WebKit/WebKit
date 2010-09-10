@@ -30,6 +30,7 @@
 #include "config.h"
 #include "PlatformKeyboardEvent.h"
 
+#include "GtkVersioning.h"
 #include "NotImplemented.h"
 #include "TextEncoding.h"
 #include "WindowsKeyboardCodes.h"

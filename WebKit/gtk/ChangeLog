@@ -1,3 +1,15 @@
+2010-09-10  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        Fix compilation with GTK+ 3.x.
+
+        GDK key macros were renamed from GDK_FOO to GDK_KEY_FOO, we need
+        to include the compat header provided if we want to keep using the
+        old names.
+
+        * WebCoreSupport/FullscreenVideoController.cpp: include GtkVersioning.h
+
 2010-09-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Barth.

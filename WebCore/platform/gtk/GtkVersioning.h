@@ -23,6 +23,10 @@
 
 #include <gtk/gtk.h>
 
+#ifndef GTK_API_VERSION_2
+#include <gdk/gdkkeysyms-compat.h>
+#endif
+
 G_BEGIN_DECLS
 
 // Macros to avoid deprecation checking churn

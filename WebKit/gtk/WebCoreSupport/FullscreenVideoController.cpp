@@ -23,6 +23,7 @@
 
 #include "FullscreenVideoController.h"
 
+#include "GtkVersioning.h"
 #include "MediaPlayer.h"
 
 #include <gdk/gdk.h>
