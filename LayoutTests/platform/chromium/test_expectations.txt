@@ -3152,8 +3152,5 @@ BUGWK45512 WIN : animations/fill-mode.html = TEXT
 //  Added in r67084
 BUGWK45513 WIN : inspector/extensions-resources.html = TIMEOUT
 
-// Regressions from webkit roll from to r67171 (need triaging)
-BUGDIRK : media/media-can-play-mpeg4-video.html = TEXT
-
 // Regressions from webkit r67182
 BUGWK45527 : fast/dom/replaceChild.html = IMAGE
