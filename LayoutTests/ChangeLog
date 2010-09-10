@@ -1,3 +1,16 @@
+2010-09-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        execCommand("fontsize") on certain selected html generates too many SPAN tags.
+        https://bugs.webkit.org/show_bug.cgi?id=28968
+
+        Added a test to ensure only one font element is added when applying font-size
+        to multiple inline nodes.
+
+        * editing/style/apply-font-size-to-multiple-nodes-expected.txt: Added.
+        * editing/style/apply-font-size-to-multiple-nodes.html: Added.
+
 2010-09-10  Simon Fraser  <simon.fraser@apple.com>
 
         Re-enable some Windows compositing tests that no longer assert.
