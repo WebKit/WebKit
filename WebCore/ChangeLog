@@ -1,3 +1,9 @@
+2010-09-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed fix after r67085.
+
+        * WebCore.pro: Fix previously moved filenames.
+
 2010-09-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

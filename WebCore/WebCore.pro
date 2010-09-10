@@ -1438,6 +1438,7 @@ HEADERS += \
     html/DOMDataGridDataSource.h \
     html/DOMFormData.h \
     html/FormDataList.h \
+    html/FTPDirectoryDocument.h \
     html/HTMLAllCollection.h \
     html/HTMLAnchorElement.h \
     html/HTMLAppletElement.h \
@@ -1524,8 +1525,11 @@ HEADERS += \
     html/HTMLVideoElement.h \
     html/HTMLViewSourceDocument.h \
     html/ImageData.h \
+    html/ImageDocument.h \
     html/ImageResizerThread.h \
     html/LabelsNodeList.h \
+    html/MediaDocument.h \
+    html/PluginDocument.h \
     html/StepRange.h \
     html/TextDocument.h \
     html/TimeRanges.h \
@@ -1591,21 +1595,17 @@ HEADERS += \
     loader/FormState.h \
     loader/FrameLoader.h \
     loader/FrameLoaderStateMachine.h \
-    loader/FTPDirectoryDocument.h \
     loader/FTPDirectoryParser.h \
     loader/icon/IconDatabase.h \
     loader/icon/IconLoader.h \
     loader/icon/IconRecord.h \
     loader/icon/PageURLRecord.h \
-    loader/ImageDocument.h \
     loader/ImageLoader.h \
     loader/loader.h \
     loader/MainResourceLoader.h \
-    loader/MediaDocument.h \
     loader/NavigationAction.h \
     loader/NetscapePlugInStreamLoader.h \
     loader/PlaceholderDocument.h \
-    loader/PluginDocument.h \
     loader/ProgressTracker.h \
     loader/Request.h \
     loader/ResourceLoader.h \
