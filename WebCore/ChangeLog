@@ -1,3 +1,16 @@
+2010-09-10  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        WebGL: Fix GCC warnings about suggested parentheses around && within ||
+        https://bugs.webkit.org/show_bug.cgi?id=45534
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getVertexAttrib):
+        (WebCore::WebGLRenderingContext::readPixels):
+        (WebCore::WebGLRenderingContext::texParameter):
+        (WebCore::WebGLRenderingContext::handleNPOTTextures):
+
 2010-09-09  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
