@@ -1213,13 +1213,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
     BEGIN_STATE(CommentEndState) {
         if (cc == '>')
             return emitAndResumeIn(source, DataState);
-        else if (isTokenizerWhitespace(cc)) {
-            parseError();
-            m_token->appendToComment('-');
-            m_token->appendToComment('-');
-            m_token->appendToComment(cc);
-            ADVANCE_TO(CommentEndSpaceState);
-        } else if (cc == '!') {
+        else if (cc == '!') {
             parseError();
             ADVANCE_TO(CommentEndBangState);
         } else if (cc == '-') {
@@ -1254,24 +1248,6 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             m_token->appendToComment('-');
             m_token->appendToComment('-');
             m_token->appendToComment('!');
-            m_token->appendToComment(cc);
-            ADVANCE_TO(CommentState);
-        }
-    }
-    END_STATE()
-
-    BEGIN_STATE(CommentEndSpaceState) {
-        if (isTokenizerWhitespace(cc)) {
-            m_token->appendToComment(cc);
-            ADVANCE_TO(CommentEndSpaceState);
-        } else if (cc == '-')
-            ADVANCE_TO(CommentEndDashState);
-        else if (cc == '>')
-            return emitAndResumeIn(source, DataState);
-        else if (cc == InputStreamPreprocessor::endOfFileMarker) {
-            parseError();
-            return emitAndReconsumeIn(source, DataState);
-        } else {
             m_token->appendToComment(cc);
             ADVANCE_TO(CommentState);
         }

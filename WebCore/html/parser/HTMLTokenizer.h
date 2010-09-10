@@ -96,7 +96,6 @@ public:
         CommentEndDashState,
         CommentEndState,
         CommentEndBangState,
-        CommentEndSpaceState,
         DOCTYPEState,
         BeforeDOCTYPENameState,
         DOCTYPENameState,

@@ -190,8 +190,41 @@ resources/entities01.dat: PASS
 
 resources/entities02.dat: PASS
 
-resources/comments01.dat: PASS
+resources/comments01.dat:
+3
+6
 
+Test 3 of 13 in resources/comments01.dat failed. Input:
+FOO<!-- BAR --   >BAZ
+Got:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     <!--  BAR --   >BAZ -->
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     <!--  BAR --    -->
+|     "BAZ"
+
+Test 6 of 13 in resources/comments01.dat failed. Input:
+FOO<!-- BAR -- <QUX> -- MUX -- >BAZ
+Got:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     <!--  BAR -- <QUX> -- MUX -- >BAZ -->
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     <!--  BAR -- <QUX> -- MUX --  -->
+|     "BAZ"
 resources/adoption01.dat: PASS
 
 resources/adoption02.dat:

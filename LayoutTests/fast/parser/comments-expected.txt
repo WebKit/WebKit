@@ -1,29 +1,22 @@
 Output of this test should match HTML5 (no strict SGML comment parsing).
 
-Basic comments (2 PASSED):
-PASSED PASSED
-Comment series (3 PASSED):
+Basic comments:
+PASSED
+Comment series:
+PASSED
+Dash runs:
 PASSED PASSED PASSED
 
-Dash runs (5 PASSED):
-PASSED PASSED PASSED PASSED PASSED
+Empty comments:
+PASSED PASSED PASSED
 
-Empty comments (5 PASSED):
-PASSED PASSED PASSED PASSED PASSED
+Multiple lines:
+PASSED
 
-Multiple lines (4 PASSED):
-PASSED PASSED PASSED PASSED
-
-Compatibility (7 PASSED):
-PASSED PASSED PASSED PASSED PASSED PASSED PASSED
-
-White space after comment close (4 PASSED):
-PASSED PASSED PASSED PASSED
-
-Text after comment close:
-Extra comment after markup declaration close (2 PASSED):
-FAILED: extra comment end and markup declaration close -->
+Compatibility:
 PASSED PASSED
 
-Nested comment (1 PASSED):
+White space after comment close:
+Extra comment after markup declaration close:
+FAILED: extra comment end and markup declaration close -->
 PASSED (outer nested comment) -->

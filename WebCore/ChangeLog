@@ -1,3 +1,19 @@
+2010-09-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (HTML Parser): CNN's Money site is not formatted correctly with AdBlock installed
+        https://bugs.webkit.org/show_bug.cgi?id=41371
+
+        Drop support for closing comments with "-- >".  This was an attempt to
+        be more IE-like in comment parsing, but it turns out to cause problems
+        for some high-profile sites.  Firefox 4 is dropping support as well.
+        We expect the spec to change soon too.
+
+        * html/parser/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::nextToken):
+        * html/parser/HTMLTokenizer.h:
+
 2010-09-10  Chris Marrin  <cmarrin@apple.com>
 
         Unreviewed.

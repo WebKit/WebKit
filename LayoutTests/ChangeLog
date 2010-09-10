@@ -1,3 +1,19 @@
+2010-09-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (HTML Parser): CNN's Money site is not formatted correctly with AdBlock installed
+        https://bugs.webkit.org/show_bug.cgi?id=41371
+
+        Update test results for new behavior.
+
+        * fast/parser/comments-expected.txt:
+        * fast/parser/comments.html:
+          - Removed the redundant in-test expectations.
+        * html5lib/runner-expected.txt:
+          - We now "fail" these two tests.  We'll pass them again once the spec
+            changes and HTML5lib updates its expectations.
+
 2010-09-10  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Adam Roben.

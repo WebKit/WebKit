@@ -7,29 +7,29 @@
 if (window.layoutTestController)
     layoutTestController.dumpAsText();
 </script>
-<p>Basic comments (2 PASSED):<br>
+<p>Basic comments:<br>
 <!-- basic comment -->PASSED
 <!-- basic comment with spaces after comment end --    >PASSED
 <!-- basic comment with spaces after comment end - -    >FAILED--></p>
-<p>Comment series (3 PASSED):<br>
+<p>Comment series:<br>
 <!-- comment -- -- series-->PASSED
 <!-- comment -- -- series with space after comment end-- >PASSED
 <!-- comment -- -- series with spaces after comment end--  >PASSED</p>
 <!-- comment -- -- series with spaces after comment end- -  >FAILED--></p>
-<p>Dash runs (5 PASSED):<br>
+<p>Dash runs:<br>
 <!------ Hello -->PASSED
 <!------ Hello -- >PASSED
 <!------ Hello --  >PASSED
 <!------ Hello - -  >FAILED
 <!-- --- Hello -->PASSED
 <!-- Hello --->PASSED</p>
-<p>Empty comments (5 PASSED):<br>
+<p>Empty comments:<br>
 <!---->PASSED
 <!---- >PASSED
 <!>PASSED
 <!-->PASSED
 <!--->PASSED</p>
-<p>Multiple lines (4 PASSED):<br>
+<p>Multiple lines:<br>
 <!-- here's a comment, a little longer,
     which occupies more than one line -->PASSED
 <!-- here's a comment, a little longer,
@@ -43,7 +43,7 @@ if (window.layoutTestController)
     which occupies more than one line - -	 >FAILED-->
 </p>
 
-<p>Compatibility (7 PASSED):<br>
+<p>Compatibility:<br>
 <!-- Compatibility: comment series with --extraneous-- text -- between -- the comments -->PASSED
 <!-- Compatibility: comment series with --extraneous-- text -- between -- the comments -- >PASSED
 <!-- Compatibility: comment series with --extraneous-- text -- between -- the comments --  >PASSED
@@ -55,7 +55,7 @@ if (window.layoutTestController)
 <!-- Compatibility: <!--extra comment start like www.the-leaky-cauldron.com has <rdar://problem/4226539> - -  >FAILED-->
 </p>
 
-<p>White space after comment close (4 PASSED):<br>
+<p>White space after comment close:<br>
 <!-- tab after comment close--	>PASSED
 <!-- LF after comment close-->PASSED
 <!-- CR after comment close--
@@ -67,12 +67,12 @@ if (window.layoutTestController)
 <!-- text after comment close--ouch>FAILED: should be part of the comment --></p>
 
 
-<p>Extra comment after markup declaration close (2 PASSED):<br>
+<p>Extra comment after markup declaration close:<br>
 <!-- Comment --> FAILED: extra comment end and markup declaration close --><br>
 <!-- Comment with a whitespace in markup declaration close -- >PASSED
 <!-- Comment with a whitespace in markup declaration close --    >PASSED</p>
 
-<p>Nested comment (1 PASSED):<br>
+<p>Nested comment:<br>
 <!-- nested: <!--FAILED (inner comment)--> PASSED (outer nested comment) --></p>
 
 </body>
