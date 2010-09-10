@@ -1,3 +1,30 @@
+2010-09-09  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Support <script async> as specified by HTML5
+        https://bugs.webkit.org/show_bug.cgi?id=45310
+
+        Tests: fast/dom/HTMLScriptElement/async-inline-script.html
+               fast/dom/HTMLScriptElement/async-onbeforeload.html
+               fast/dom/HTMLScriptElement/async-write.html
+               http/tests/misc/async-and-defer-script.html
+               http/tests/misc/script-async.html
+
+        * dom/AsyncScriptRunner.cpp:
+        (WebCore::AsyncScriptRunner::AsyncScriptRunner):
+        (WebCore::AsyncScriptRunner::~AsyncScriptRunner):
+        (WebCore::AsyncScriptRunner::executeScriptSoon): Increment the delay count when a task to execute scripts is queued up.
+        (WebCore::AsyncScriptRunner::timerFired): decrementLoadEventDelayCount handles calling checkCompleted().
+        * dom/AsyncScriptRunner.h:
+        (WebCore::AsyncScriptRunner::create):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::insertedIntoDocument): Treats async scripts just like a dynamically inserted script element rather than a parser inserted one.
+        * html/parser/HTMLScriptRunner.cpp:
+        (WebCore::HTMLScriptRunner::runScript):
+
 2010-09-09  Alexey Marinichev  <amarinichev@chromium.org>
 
         Reviewed by James Robinson.

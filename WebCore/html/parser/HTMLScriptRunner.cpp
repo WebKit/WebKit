@@ -321,7 +321,9 @@ void HTMLScriptRunner::runScript(Element* script, int startingLineNumber)
         notImplemented(); // event for support
 
         if (script->hasAttribute(srcAttr)) {
-            // FIXME: Handle async.
+            if (script->hasAttribute(asyncAttr)) // Async takes precendence over defer.
+                return; // Asynchronous scripts handle themselves.
+
             if (script->hasAttribute(deferAttr))
                 requestDeferredScript(script);
             else

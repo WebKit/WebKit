@@ -1,3 +1,29 @@
+2010-09-09  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Support <script async> as specified by HTML5
+        https://bugs.webkit.org/show_bug.cgi?id=45310
+
+        * fast/dom/Document/readystate.html: Dynamically inserted scripts now block the load event like in FF4. So move the finishJSTest call to load.
+        * fast/dom/Document/readystate-expected.txt: Dynamically inserted script now runs before load during "interactive" phase.
+        * fast/dom/HTMLScriptElement/async-inline-script-expected.txt: Added.
+        * fast/dom/HTMLScriptElement/async-inline-script.html: Added. The async attribute doesn't apply to inline scripts, so check that they execute in order.
+        * fast/dom/HTMLScriptElement/async-onbeforeload-expected.txt: Added.
+        * fast/dom/HTMLScriptElement/async-onbeforeload.html: Added. Check that onbeforeload events fire synchronously and that they may be cancelled.
+        * fast/dom/HTMLScriptElement/async-write-expected.txt: Added.
+        * fast/dom/HTMLScriptElement/async-write.html: Added. Check that writes from async scripts are neutralized.
+        * fast/dom/HTMLScriptElement/resources/async.js: Added.
+        * http/tests/misc/async-and-defer-script-expected.txt: Added.
+        * http/tests/misc/async-and-defer-script.html: Added. The async attributes takes precendence over the defer attribute.
+        Check that a script which has both async and defer acts as async by ensuring it loads after DOMContentLoaded.
+        A deferred scripts would block DCL.
+        * http/tests/misc/resources/async-script.js: Added.
+        * http/tests/misc/resources/slow-async-script.cgi: Added.
+        * http/tests/misc/script-async-expected.txt: Added.
+        * http/tests/misc/script-async.html: Added. Test general execution order of deferred scripts.
+        The test checks for multiple valid orders since it is indeterminate.
+
 2010-09-09  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations update.

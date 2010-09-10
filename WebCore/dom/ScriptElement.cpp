@@ -52,7 +52,7 @@ namespace WebCore {
 
 void ScriptElement::insertedIntoDocument(ScriptElementData& data, const String& sourceUrl)
 {
-    if (data.createdByParser())
+    if (data.createdByParser() && !data.isAsynchronous())
         return;
 
     // http://www.whatwg.org/specs/web-apps/current-work/#script

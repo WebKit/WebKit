@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="../../js/resources/js-test-style.css">
 <script src="../../js/resources/js-test-pre.js"></script>
 </head>
-<body onload="shouldBeEqualToString('document.readyState', 'complete');">
+<body onload="shouldBeEqualToString('document.readyState', 'complete');finishJSTest();">
 Tests that the document's readyState is set properly at various phases during load.
 <div id="console"></div>
 <script defer src="data:text/javascript,shouldBeEqualToString('document.readyState', 'interactive');"></script>
@@ -18,8 +18,7 @@ Tests that the document's readyState is set properly at various phases during lo
     shouldBeEqualToString("document.readyState", "interactive");
 
     var el = document.createElement('script');
-    el.src = "data:text/javascript,shouldBeEqualToString('document.readyState', 'complete');";
-    el.onload = function() { finishJSTest(); }
+    el.src = "data:text/javascript,shouldBeEqualToString('document.readyState', 'interactive');";
     document.getElementsByTagName('head')[0].appendChild(el);
   }, false);
 

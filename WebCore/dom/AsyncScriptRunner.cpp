@@ -27,20 +27,25 @@
 #include "AsyncScriptRunner.h"
 
 #include "CachedScript.h"
+#include "Document.h"
 #include "Element.h"
 #include "ScriptElement.h"
 
 namespace WebCore {
 
-AsyncScriptRunner::AsyncScriptRunner()
-    : m_timer(this, &AsyncScriptRunner::timerFired)
+AsyncScriptRunner::AsyncScriptRunner(Document* document)
+    : m_document(document)
+    , m_timer(this, &AsyncScriptRunner::timerFired)
 {
+    ASSERT(document);
 }
 
 AsyncScriptRunner::~AsyncScriptRunner()
 {
-    for (size_t i = 0; i < m_scriptsToExecuteSoon.size(); ++i)
-         m_scriptsToExecuteSoon[i].first->element()->deref(); // Balances ref() in executeScriptSoon().
+    for (size_t i = 0; i < m_scriptsToExecuteSoon.size(); ++i) {
+        m_scriptsToExecuteSoon[i].first->element()->deref(); // Balances ref() in executeScriptSoon().
+        m_document->decrementLoadEventDelayCount();
+    }
 }
 
 void AsyncScriptRunner::executeScriptSoon(ScriptElementData* data, CachedResourceHandle<CachedScript> cachedScript)
@@ -51,6 +56,7 @@ void AsyncScriptRunner::executeScriptSoon(ScriptElementData* data, CachedResourc
     ASSERT(element);
     ASSERT(element->inDocument());
 
+    m_document->incrementLoadEventDelayCount();
     m_scriptsToExecuteSoon.append(make_pair(data, cachedScript));
     element->ref(); // Balanced by deref()s in timerFired() and dtor.
     if (!m_timer.isActive())
@@ -78,6 +84,7 @@ void AsyncScriptRunner::timerFired(Timer<AsyncScriptRunner>* timer)
     for (size_t i = 0; i < size; ++i) {
         scripts[i].first->execute(scripts[i].second.get());
         scripts[i].first->element()->deref(); // Balances ref() in executeScriptSoon().
+        m_document->decrementLoadEventDelayCount();
     }
 }
 
