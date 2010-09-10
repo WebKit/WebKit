@@ -1,5 +1,17 @@
 2010-09-10  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, rolling out r67178.
+        http://trac.webkit.org/changeset/67178
+        https://bugs.webkit.org/show_bug.cgi?id=45524
+
+        re-roll-out patch to put original changes back in
+
+        * fast/replaced/object-param-url-control-char.html:
+        * fast/replaced/object-with-embed-url-param-expected.txt:
+        * fast/replaced/object-with-embed-url-param.html:
+
+2010-09-10  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Kent Tamura.
 
         roll out r66992 and r66997 - possibly introduced a perf slowdown in chromium tests

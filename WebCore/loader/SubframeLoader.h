@@ -75,6 +75,8 @@ public:
     bool allowPlugins(ReasonForCallingAllowPlugins);
 
     bool containsPlugins() const { return m_containsPlugins; }
+    
+    bool resourceWillUsePlugin(const String& url, const String& mimeType);
 
 private:
     Frame* loadOrRedirectSubframe(HTMLFrameOwnerElement*, const KURL&, const AtomicString& frameName, bool lockHistory, bool lockBackForwardList);

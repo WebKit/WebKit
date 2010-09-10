@@ -163,6 +163,7 @@ static void mapDataParamToSrc(Vector<String>* paramNames, Vector<String>* paramV
 void HTMLObjectElement::parametersForPlugin(Vector<String>& paramNames, Vector<String>& paramValues, String& url, String& serviceType)
 {
     HashSet<StringImpl*, CaseFoldingHash> uniqueParamNames;
+    String urlParameter;
     
     // Scan the PARAM children and store their name/value pairs.
     // Get the URL and type from the params if we don't already have them.
@@ -180,8 +181,8 @@ void HTMLObjectElement::parametersForPlugin(Vector<String>& paramNames, Vector<S
         paramValues.append(p->value());
 
         // FIXME: url adjustment does not belong in this function.
-        if (url.isEmpty() && (equalIgnoringCase(name, "src") || equalIgnoringCase(name, "movie") || equalIgnoringCase(name, "code") || equalIgnoringCase(name, "url")))
-            url = deprecatedParseURL(p->value());
+        if (url.isEmpty() && urlParameter.isEmpty() && (equalIgnoringCase(name, "src") || equalIgnoringCase(name, "movie") || equalIgnoringCase(name, "code") || equalIgnoringCase(name, "url")))
+            urlParameter = deprecatedParseURL(p->value());
         // FIXME: serviceType calculation does not belong in this function.
         if (serviceType.isEmpty() && equalIgnoringCase(name, "type")) {
             serviceType = p->value();
@@ -217,9 +218,15 @@ void HTMLObjectElement::parametersForPlugin(Vector<String>& paramNames, Vector<S
     
     mapDataParamToSrc(&paramNames, &paramValues);
     
-    // If we still don't have a type, try to map from a specific CLASSID to a type.
-    if (serviceType.isEmpty())
-        serviceType = serviceTypeForClassId(classId());
+    // HTML5 says that an object resource's URL is specified by the object's data
+    // attribute, not by a param element. However, for compatibility, allow the
+    // resource's URL to be given by a param named "src", "movie", "code" or "url"
+    // if we know that resource points to a plug-in.
+    if (url.isEmpty() && !urlParameter.isEmpty()) {
+        SubframeLoader* loader = document()->frame()->loader()->subframeLoader();
+        if (loader->resourceWillUsePlugin(urlParameter, serviceType))
+            url = urlParameter;
+    }
 }
 
     
@@ -250,7 +257,12 @@ void HTMLObjectElement::updateWidget(bool onlyCreateNonNetscapePlugins)
         return;
 
     String url = this->url();
+    
+    // If the object does not specify a MIME type via a type attribute, but does
+    // contain a classid attribute, try to map the classid to a MIME type.
     String serviceType = this->serviceType();
+    if (serviceType.isEmpty())
+        serviceType = serviceTypeForClassId(classId());
 
     // FIXME: These should be joined into a PluginParameters class.
     Vector<String> paramNames;
