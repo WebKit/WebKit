@@ -1,3 +1,15 @@
+2010-09-09  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <http://webkit.org/b/45502> JSObjectSetPrivateProperty does not handle NULL values as it claims
+
+        * API/JSObjectRef.cpp:
+        (JSObjectSetPrivateProperty): Don't call toJS if we have a NULL value as that will cause an assertion
+        failure. Instead map NULL directly to the null JSValue.
+        * API/tests/testapi.c:
+        (main): Add test coverage for the NULL value case.
+
 2010-09-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Gavin Barraclough.
