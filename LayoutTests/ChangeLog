@@ -1,3 +1,20 @@
+2010-09-09  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        Clean Up Some Expected Results for Missing Tests
+        https://bugs.webkit.org/show_bug.cgi?id=45489
+
+          Test was removed in r35456 but expected results were missed.
+
+        * http/tests/xmlhttprequest/access-control-basic-exclude-expected.txt: Removed.
+
+          Results were added in r19036 but the test was never added. No record of the test.
+
+        * editing/pasteboard/4944770-expected.txt: Removed.
+        * platform/mac/editing/pasteboard/4944770-expected.checksum: Removed.
+        * platform/mac/editing/pasteboard/4944770-expected.png: Removed.
+
 2010-09-10  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Chris Marrin.
