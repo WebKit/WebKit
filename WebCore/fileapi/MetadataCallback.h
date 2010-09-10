@@ -38,7 +38,6 @@
 namespace WebCore {
 
 class Metadata;
-class ScriptExecutionContext;
 
 class MetadataCallback : public RefCounted<MetadataCallback> {
 public:

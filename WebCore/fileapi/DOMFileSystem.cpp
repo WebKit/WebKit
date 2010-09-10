@@ -78,6 +78,7 @@ bool DOMFileSystem::hasPendingActivity() const
 void DOMFileSystem::contextDestroyed()
 {
     m_asyncFileSystem->stop();
+    ActiveDOMObject::contextDestroyed();
 }
 
 void DOMFileSystem::getMetadata(const Entry* entry, PassRefPtr<MetadataCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)

@@ -1,3 +1,22 @@
+2010-09-09  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Dumitru Daniliuc.
+
+        Add Entry.getMetadata for FileSystem API
+        https://bugs.webkit.org/show_bug.cgi?id=45403
+
+        Add getMetadata to Entry.idl (I had missed to include this
+        in my previous Entry.idl patch.)
+
+        Also make some minor cleanups and nits fixes.
+
+        No new tests; layout test is going be added later.
+
+        * fileapi/DOMFileSystem.cpp: Bug fix.
+        * fileapi/MetadataCallback.h: Nits fix.
+        * fileapi/Entry.idl: Added getMetadata.
+        * fileapi/ErrorCallback.h: Nits fix.
+
 2010-09-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

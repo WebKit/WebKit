@@ -38,7 +38,6 @@
 namespace WebCore {
 
 class FileError;
-class ScriptExecutionContext;
 
 class ErrorCallback : public RefCounted<ErrorCallback> {
 public:

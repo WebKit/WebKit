@@ -38,10 +38,10 @@ module storage {
         readonly attribute DOMString fullPath;
         readonly attribute DOMFileSystem filesystem;
 
+        void getMetadata(in [Optional, Callback] MetadataCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
         void moveTo(in Entry parent, in [Optional] DOMString name, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
         void copyTo(in Entry parent, in [Optional] DOMString name, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
         void remove(in [Optional, Callback] VoidCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
         void getParent(in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
-        DOMString toURI(in [Optional] DOMString mimeType);
     };
 }
