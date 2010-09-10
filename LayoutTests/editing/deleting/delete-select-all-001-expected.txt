@@ -1,2 +1,2 @@
 
-execDeleteCommand: <span class="Apple-style-span" style="-webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px; font-size: medium;"><br></span>
+execDeleteCommand: <font class="Apple-style-span" size="3"><span class="Apple-style-span" style="-webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px;"><br></span></font>

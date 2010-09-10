@@ -1,3 +1,27 @@
+2010-09-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION: applying new font size causes font-size outside selection to change
+        https://bugs.webkit.org/show_bug.cgi?id=45026
+
+        The regression was caused by removeImplicitlyStyledElement not converting font size to CSS value properly.
+        Namely, it was treating font size as a pixel value for font-size property.  Fixed this by adding fontSizeToCSSValue
+        which uses HTMLFontElement::cssValueFromFontSizeNumber and deployed it in removeImplicitlyStyledElement
+
+        Also fixed a bug in StyleChange::extractTextStyles that it ignores font-size property when the values were
+        relative terms such as x-small and -webkit-xxx-large. And replaced the logic to convert from pixel font size
+        to legacy font size by CSSStyleSelector::legacyFontSize.
+
+        Test: editing/style/push-down-font-styles.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::StyleChange::extractTextStyles): Fixed a bug. See above.
+        (WebCore::stringToCSSValue): Converts string to CSSValue.
+        (WebCore::fontSizeToCSSValue): Converts font size number (String) to CSSPrimitiveValue.
+        (WebCore::ApplyStyleCommand::removeImplicitlyStyledElement): Calls stringToCSSValue and fontSizeToCSSValue.
+        * css/CSSStyleSelector.h: Made fontSizeForKeyword public.
+
 2010-09-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r67126.
