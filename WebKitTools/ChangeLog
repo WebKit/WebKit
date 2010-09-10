@@ -1,3 +1,9 @@
+2010-09-09  Michael Saboff  <msaboff@apple.com>
+
+        Unreviewed, adding myself to committers list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-09-09  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Tony Chang.
