@@ -261,8 +261,6 @@ public:
 
     void resetMultipleFormSubmissionProtection();
 
-    void addData(const char* bytes, int length);
-
     void checkCallImplicitClose();
 
     void frameDetached();

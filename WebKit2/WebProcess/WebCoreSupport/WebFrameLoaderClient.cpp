@@ -620,6 +620,7 @@ void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, const char* dat
     m_pluginView->manualLoadDidReceiveData(data, length);
 }
 
+// FIXME: This function should be moved into WebCore.
 void WebFrameLoaderClient::receivedData(const char* data, int length, const String& textEncoding)
 {
     Frame* coreFrame = m_frame->coreFrame();
@@ -633,7 +634,7 @@ void WebFrameLoaderClient::receivedData(const char* data, int length, const Stri
         encoding = textEncoding;
     coreFrame->loader()->writer()->setEncoding(encoding, userChosen);
     
-    coreFrame->loader()->addData(data, length);
+    coreFrame->loader()->documentLoader()->addData(data, length);
 }
 
 void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)

@@ -1,3 +1,18 @@
+2010-09-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Main resource bytes shouldn't bounce through FrameLoader
+        https://bugs.webkit.org/show_bug.cgi?id=45496
+
+        Now return the bytes to the DocumentLoader.
+
+        Previously, we were checking the document for null.  However, Frame can
+        never have a null document, so this check is no longer needed.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _addData:]):
+
 2010-09-09  John Therrell  <jtherrell@apple.com>
 
         Reviewed by Alexey Proskuryakov.

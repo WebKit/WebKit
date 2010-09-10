@@ -286,6 +286,14 @@ void DocumentLoader::commitLoad(const char* data, int length)
     frameLoader->client()->committedLoad(this, data, length);
 }
 
+void DocumentLoader::addData(const char* bytes, int length)
+{
+    ASSERT(m_frame->document());
+    ASSERT(m_frame->document()->parsing());
+    // FIXME: DocumentWriter should move to be owned by DocumentLoader.
+    frameLoader()->writer()->addData(bytes, length);
+}
+
 bool DocumentLoader::doesProgressiveLoad(const String& MIMEType) const
 {
     return !frameLoader()->isReplacing() || MIMEType == "text/html";

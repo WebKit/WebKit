@@ -1089,14 +1089,6 @@ void FrameLoader::willSetEncoding()
         receivedFirstData();
 }
 
-void FrameLoader::addData(const char* bytes, int length)
-{
-    ASSERT(m_workingURL.isEmpty());
-    ASSERT(m_frame->document());
-    ASSERT(m_frame->document()->parsing());
-    writer()->addData(bytes, length);
-}
-
 #if ENABLE(WML)
 static inline bool frameContainsWMLContent(Frame* frame)
 {
@@ -2255,7 +2247,7 @@ void FrameLoader::finishedLoadingDocument(DocumentLoader* loader)
 
     ASSERT(m_frame->document());
 
-    addData(mainResource->data()->data(), mainResource->data()->size());
+    loader->addData(mainResource->data()->data(), mainResource->data()->size());
 }
 
 bool FrameLoader::isReplacing() const

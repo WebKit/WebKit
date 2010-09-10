@@ -182,7 +182,7 @@ void FrameLoaderClientEfl::dispatchWillSubmitForm(FramePolicyFunction function, 
     callPolicyFunction(function, PolicyUse);
 }
 
-
+// FIXME: This function should be moved into WebCore.
 void FrameLoaderClientEfl::committedLoad(DocumentLoader* loader, const char* data, int length)
 {
     if (!m_pluginView) {
@@ -194,7 +194,7 @@ void FrameLoaderClientEfl::committedLoad(DocumentLoader* loader, const char* dat
             fl->writer()->setEncoding(m_response.textEncodingName(), false);
             m_firstData = false;
         }
-        fl->addData(data, length);
+        fl->documentLoader()->addData(data, length);
     }
 
     // We re-check here as the plugin can have been created

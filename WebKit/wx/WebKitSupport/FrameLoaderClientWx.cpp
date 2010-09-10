@@ -612,6 +612,7 @@ void FrameLoaderClientWx::setMainDocumentError(WebCore::DocumentLoader* loader, 
     }
 }
 
+// FIXME: This function should be moved into WebCore.
 void FrameLoaderClientWx::committedLoad(WebCore::DocumentLoader* loader, const char* data, int length)
 {
     if (!m_webFrame)
@@ -619,7 +620,7 @@ void FrameLoaderClientWx::committedLoad(WebCore::DocumentLoader* loader, const c
     if (!m_pluginView) {
         FrameLoader* fl = loader->frameLoader();
         fl->writer()->setEncoding(m_response.textEncodingName(), false);
-        fl->addData(data, length);
+        fl->documentLoader()->addData(data, length);
     }
     
     // We re-check here as the plugin can have been created

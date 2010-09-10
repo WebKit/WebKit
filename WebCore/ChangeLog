@@ -1,3 +1,30 @@
+2010-09-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Main resource bytes shouldn't bounce through FrameLoader
+        https://bugs.webkit.org/show_bug.cgi?id=45496
+
+        After the MainResourceLoader hands the bytes for the main resource to
+        the DocumentLoader, the DocumentLoader hands the bytes to the
+        FrameLoaderClient.  The FrameLoaderClient, in turn, returns the bytes
+        to WebCore.  Prior to this patch, the FrameLoaderClient returned the
+        bytes to the FrameLoader.  However, the FrameLoader was actually adding
+        any value.
+
+        In this patch, we change the FrameLoaderClient to return the bytes to
+        the DocumentLoader directly.  In a future patch, we'll cut out the
+        FrameLoaderClient middleman and handle the bytes internally in the
+        DocumentLoader.
+
+        * WebCore.exp.in:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::addData):
+        * loader/DocumentLoader.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::finishedLoadingDocument):
+        * loader/FrameLoader.h:
+
 2010-09-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.

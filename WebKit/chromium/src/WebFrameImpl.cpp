@@ -1012,7 +1012,8 @@ void WebFrameImpl::dispatchWillSendRequest(WebURLRequest& request)
         0, 0, request.toMutableResourceRequest(), response);
 }
 
-void WebFrameImpl::commitDocumentData(const char* data, size_t dataLen)
+// FIXME: This function should be moved into WebCore.
+void WebFrameImpl::commitDocumentData(const char* data, size_t length)
 {
     DocumentLoader* documentLoader = m_frame->loader()->documentLoader();
 
@@ -1025,9 +1026,7 @@ void WebFrameImpl::commitDocumentData(const char* data, size_t dataLen)
         encoding = documentLoader->response().textEncodingName();
     }
     m_frame->loader()->writer()->setEncoding(encoding, userChosen);
-
-    // NOTE: mac only does this if there is a document
-    m_frame->loader()->addData(data, dataLen);
+    m_frame->documentLoader()->addData(data, length);
 }
 
 unsigned WebFrameImpl::unloadListenerCount() const

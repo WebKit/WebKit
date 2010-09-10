@@ -490,16 +490,9 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 - (void)_addData:(NSData *)data
 {
     Document* document = _private->coreFrame->document();
-    
-    // Document may be nil if the part is about to redirect
-    // as a result of JS executing during load, i.e. one frame
-    // changing another's location before the frame's document
-    // has been created. 
-    if (!document)
-        return;
 
     document->setShouldCreateRenderers(_private->shouldCreateRenderers);
-    _private->coreFrame->loader()->addData((const char *)[data bytes], [data length]);
+    _private->coreFrame->loader()->documentLoader()->addData((const char *)[data bytes], [data length]);
 }
 
 - (NSString *)_stringWithDocumentTypeStringAndMarkupString:(NSString *)markupString

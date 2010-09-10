@@ -245,7 +245,7 @@ void FrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction policyFunctio
     (core(m_frame)->loader()->policyChecker()->*policyFunction)(PolicyUse);
 }
 
-
+// FIXME: This function should be moved into WebCore.
 void FrameLoaderClient::committedLoad(WebCore::DocumentLoader* loader, const char* data, int length)
 {
     if (!m_pluginView) {
@@ -260,7 +260,7 @@ void FrameLoaderClient::committedLoad(WebCore::DocumentLoader* loader, const cha
         FrameLoader* frameLoader = loader->frameLoader();
         frameLoader->writer()->setEncoding(encoding, userChosen);
         if (data)
-            frameLoader->addData(data, length);
+            frameLoader->documentLoader()->addData(data, length);
 
         Frame* coreFrame = loader->frame();
         if (coreFrame && coreFrame->document() && coreFrame->document()->isMediaDocument())
