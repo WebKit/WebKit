@@ -1,5 +1,15 @@
 2010-09-09  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, expectations fix.
+
+        Remove unused platform-specific expectations (test is actually
+        text-only).
+
+        * platform/chromium-win/fast/dom/Window/window-property-shadowing-expected.checksum: Removed.
+        * platform/chromium-win/fast/dom/Window/window-property-shadowing-expected.png: Removed.
+
+2010-09-09  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, expectations change.
 
         * platform/chromium-mac/fast/dom/Window/window-property-shadowing-expected.txt:
