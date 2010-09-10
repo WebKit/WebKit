@@ -1,3 +1,9 @@
+2010-09-10  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Fix wrong gtk baseline for select-x-list-1.svg.
+
+        * platform/gtk/svg/text/select-x-list-1-expected.txt:
+
 2010-09-10  Martin Robinson  <mrobinson@igalia.com>
 
         Slight skipped list reorganization.
