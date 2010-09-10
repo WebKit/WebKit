@@ -2708,13 +2708,6 @@ void FrameLoader::addHTTPOriginIfNeeded(ResourceRequest& request, String origin)
     request.setHTTPOrigin(origin);
 }
 
-void FrameLoader::committedLoad(DocumentLoader* loader, const char* data, int length)
-{
-    if (ArchiveFactory::isArchiveMimeType(loader->response().mimeType()))
-        return;
-    m_client->committedLoad(loader, data, length);
-}
-
 void FrameLoader::loadPostRequest(const ResourceRequest& inRequest, const String& referrer, const String& frameName, bool lockHistory, FrameLoadType loadType, PassRefPtr<Event> event, PassRefPtr<FormState> prpFormState)
 {
     RefPtr<FormState> formState = prpFormState;

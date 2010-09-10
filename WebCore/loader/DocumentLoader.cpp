@@ -39,6 +39,7 @@
 #include "Event.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "FrameTree.h"
 #include "HistoryItem.h"
 #include "Logging.h"
@@ -277,8 +278,12 @@ void DocumentLoader::commitLoad(const char* data, int length)
     RefPtr<DocumentLoader> protect(this);
 
     commitIfReady();
-    if (FrameLoader* frameLoader = DocumentLoader::frameLoader())
-        frameLoader->committedLoad(this, data, length);
+    FrameLoader* frameLoader = DocumentLoader::frameLoader();
+    if (!frameLoader)
+        return;
+    if (ArchiveFactory::isArchiveMimeType(response().mimeType()))
+        return;
+    frameLoader->client()->committedLoad(this, data, length);
 }
 
 bool DocumentLoader::doesProgressiveLoad(const String& MIMEType) const

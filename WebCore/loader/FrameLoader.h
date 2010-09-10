@@ -179,7 +179,6 @@ public:
 
     void didReceiveServerRedirectForProvisionalLoadForFrame();
     void finishedLoadingDocument(DocumentLoader*);
-    void committedLoad(DocumentLoader*, const char*, int);
     bool isReplacing() const;
     void setReplacing();
     void revertToProvisional(DocumentLoader*);

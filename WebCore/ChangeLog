@@ -1,3 +1,18 @@
+2010-09-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Inline FrameLoader::committedLoad into its one caller
+        https://bugs.webkit.org/show_bug.cgi?id=45481
+
+        This saves one round-trip through the FrameLoader when loading
+        documents.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::commitLoad):
+        * loader/FrameLoader.cpp:
+        * loader/FrameLoader.h:
+
 2010-09-10  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Adam Roben.
