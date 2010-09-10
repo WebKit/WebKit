@@ -1,0 +1,21 @@
+A number input fields with an unacceptable string should have :invalid style.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial state. The elment has no value.
+PASS colorOf(number) is normalStyleColor
+Type '-'. The renderer value becomes unacceptable.
+PASS colorOf(number) is invalidStyleColor
+PASS number.validity.valid is true
+Type '1' additionally. The renderer value becomes acceptable.
+PASS colorOf(number) is normalStyleColor
+Type '+' additionally. The renderer value becomes unacceptable again.
+PASS colorOf(number) is invalidStyleColor
+The element losts focus. The unacceptable value should be purged and the style should be normal.
+PASS colorOf(number) is normalStyleColor
+PASS document.getSelection().toString() is "-1"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

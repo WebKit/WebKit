@@ -2,6 +2,39 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Apply :invalid CSS class to <input type=number> with an unacceptable value
+        https://bugs.webkit.org/show_bug.cgi?id=45376
+
+        Apply :invalid CSS class to <input type=number> elements with an
+        unacceptable value in order to tell users that a value is not
+        valid.
+
+        Introducing Element::hasUnaccceptableValue(), and CSSStyleSelector
+        applies :invalid to not only elements with !isValidFormControlElement()
+        but also elements with hasUnaccceptableValue().
+
+        HTMLInputElement and RenderTextControlSingleLine need some changes
+        to update style and to avoid updating renderer value during style
+        update.
+
+        Test: fast/forms/input-number-unacceptable-style.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        * dom/Element.h:
+        (WebCore::Element::hasUnacceptableValue):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::handleBlurEvent):
+        (WebCore::HTMLInputElement::hasUnacceptableValue):
+        * html/HTMLInputElement.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::subtreeHasChanged):
+        (WebCore::RenderTextControlSingleLine::updateFromElement):
+
+2010-09-09  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         <input type=number> should not have an invalid number as its value
         https://bugs.webkit.org/show_bug.cgi?id=43973
 

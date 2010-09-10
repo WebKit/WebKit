@@ -173,6 +173,10 @@ void RenderTextControlSingleLine::subtreeHasChanged()
     String value = text();
     if (input->isAcceptableValue(value))
         input->setValueFromRenderer(input->sanitizeValue(value));
+    if (node()->isHTMLElement()) {
+        // Recalc for :invalid and hasUnacceptableValue() change.
+        static_cast<HTMLInputElement*>(input)->setNeedsStyleRecalc();
+    }
 
     if (m_cancelButton)
         updateCancelButtonVisibility();
@@ -679,7 +683,10 @@ void RenderTextControlSingleLine::updateFromElement()
     } else {
         if (!inputElement()->suggestedValue().isNull())
             setInnerTextValue(inputElement()->suggestedValue());
-        else
+        else if (!node()->isHTMLElement() || !static_cast<HTMLInputElement*>(node())->formControlValueMatchesRenderer())
+            // For HTMLInputElement, update the renderer value only if the
+            // formControlValueMatchesRenderer() flag is false. It protects an
+            // unacceptable renderer value from being overwritten with the DOM value.
             setInnerTextValue(inputElement()->value());
     }
 

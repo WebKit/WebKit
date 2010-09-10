@@ -2576,7 +2576,7 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                 if (!e)
                     return false;
                 e->document()->setContainsValidityStyleRules();
-                return e->willValidate() && !e->isValidFormControlElement();
+                return e->willValidate() && !e->isValidFormControlElement() || e->hasUnacceptableValue();
             } case CSSSelector::PseudoChecked: {
                 if (!e || !e->isFormControlElement())
                     break;

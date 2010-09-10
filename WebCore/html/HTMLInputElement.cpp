@@ -828,8 +828,14 @@ void HTMLInputElement::handleFocusEvent()
 
 void HTMLInputElement::handleBlurEvent()
 {
-    // Reset the renderer value, which might be unmatched with the element value.
-    setFormControlValueMatchesRenderer(false);
+    if (inputType() == NUMBER) {
+        // Reset the renderer value, which might be unmatched with the element value.
+        setFormControlValueMatchesRenderer(false);
+        // We need to reset the renderer value explicitly because an unacceptable
+        // renderer value should be purged before style calculation.
+        if (renderer())
+            renderer()->updateFromElement();
+    }
     InputElement::dispatchBlurEvent(this, this);
 }
 
@@ -2689,6 +2695,11 @@ String HTMLInputElement::sanitizeValue(const String& proposedValue) const
         return serializeForNumberType(StepRange(this).clampValue(proposedValue));
 
     return proposedValue;
+}
+
+bool HTMLInputElement::hasUnacceptableValue() const
+{
+    return inputType() == NUMBER && renderer() && !isAcceptableValue(toRenderTextControl(renderer())->text());
 }
 
 bool HTMLInputElement::needsActivationCallback()
