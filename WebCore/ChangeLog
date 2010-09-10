@@ -1,3 +1,16 @@
+2010-09-10  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement HTML5 definition of script for-event neutering
+        https://bugs.webkit.org/show_bug.cgi?id=45493
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElementData::shouldExecuteAsJavaScript): Same behavior, but reads more like the spec. Removed obsolete comments about supporting for-event.
+        * html/parser/HTMLScriptRunner.cpp:
+        (WebCore::HTMLScriptRunner::executeScript): Moved to runScript.
+        (WebCore::HTMLScriptRunner::runScript): Checking shouldExecuteAsJavaScript() here means that external scripts which fail the check will never be requested.
+
 2010-09-10  Nat Duca  <nduca@chromium.org>
 
         Reviewed by Darin Fisher.

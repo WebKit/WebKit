@@ -1,17 +1,14 @@
-description("If a script has a for attribute, then it was intended to only be run under certain conditions, often as a result of a certain window event.<br>Since we don't yet support the full for attribute syntax we would run these scripts as we parsed them, often causing unintentional breakage of the site in question.<br>You should *not* see any failure when running this test. If you do, we're not properly running these scripts only when they were intended to be run.");
+description("Tests that scripts which have a for-event other than window.onload are not executed.");
 
-// A variable indicates the script-for attribute doesn't get executed immediately.
-var scriptForExecuted = false;
-
-function ScriptForAttributeExecute() {
-    scriptForExecuted = true;
-}
-
-document.write('<script for=window event=onresize> ScriptForAttributeExecute(); </script>');
-shouldBe('scriptForExecuted', "false");
-document.write('<script for=window event=onresize type="text/javascript"> ScriptForAttributeExecute(); </script>');
-shouldBe('scriptForExecuted', "false");
-document.write('<script for=window event=onresize language="javascript"> ScriptForAttributeExecute(); </script>');
-shouldBe('scriptForExecuted', "false");
+document.write('<script for="window">testPassed(\'for=window\');</script>');
+document.write('<script for="anything">testPassed(\'for=anything\');</script>');
+document.write('<script event="onload">testPassed(\'event=onload\');</script>');
+document.write('<script event="anything">testPassed(\'event=anything\');</script>');
+document.write('<script for="window" event="onload">testPassed(\'for=window event=onload\');</script>');
+document.write('<script for="window" event="onload()">testPassed(\'for=window event=onload()\');</script>');
+document.write('<script for="  WINDOW  " event="  ONLOAD()  ">testPassed(\'for=WINDOW event=ONLOAD()\');</script>');
+document.write('<script for="window" event="onresize">testFailed(\'for=window event=onresize\');</script>');
+document.write('<script for="document" event="onload">testFailed(\'for=document event=onload\');</script>');
+document.write('<script for="document" event="onclick">testFailed(\'for=document event=onclick\');</script>');
 
 var successfullyParsed = true;

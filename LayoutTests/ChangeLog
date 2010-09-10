@@ -1,3 +1,13 @@
+2010-09-10  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement HTML5 definition of script for-event neutering
+        https://bugs.webkit.org/show_bug.cgi?id=45493
+
+        * fast/dom/HTMLScriptElement/script-for-attribute-unexpected-execution-expected.txt:
+        * fast/dom/HTMLScriptElement/script-tests/script-for-attribute-unexpected-execution.js: Beef up test with some more cases, change style to be more readable, and remove obsolete comments about supporting for-event.
+
 2010-09-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

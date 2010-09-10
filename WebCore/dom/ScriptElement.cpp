@@ -264,6 +264,8 @@ bool ScriptElementData::shouldExecuteAsJavaScript() const
          WinIE 7 accepts ecmascript and jscript, but Mozilla 1.8 doesn't.
          Neither Mozilla 1.8 nor WinIE 7 accept leading or trailing whitespace.
          We want to accept all the values that either of these browsers accept, but not other values.
+     
+         FIXME: Is this HTML5 compliant?
      */
     String type = m_scriptElement->typeAttributeValue();
     if (!type.isEmpty()) {
@@ -276,20 +278,20 @@ bool ScriptElementData::shouldExecuteAsJavaScript() const
     }    
 
     // No type or language is specified, so we assume the script to be JavaScript.
-    // We don't yet support setting event listeners via the 'for' attribute for scripts.
-    // If there is such an attribute it's likely better to not execute the script than to do so
-    // immediately and unconditionally.
-    // FIXME: After <rdar://problem/4471751> / https://bugs.webkit.org/show_bug.cgi?id=16915 are resolved 
-    // and we support the for syntax in script tags, this check can be removed and we should just
-    // return 'true' here.
+
     String forAttribute = m_scriptElement->forAttributeValue();
     String eventAttribute = m_scriptElement->eventAttributeValue();
-    if (forAttribute.isEmpty() || eventAttribute.isEmpty())
-        return true;
+    if (!forAttribute.isEmpty() && !eventAttribute.isEmpty()) {
+        forAttribute = forAttribute.stripWhiteSpace();
+        if (!equalIgnoringCase(forAttribute, "window"))
+            return false;
+            
+        eventAttribute = eventAttribute.stripWhiteSpace();
+        if (!equalIgnoringCase(eventAttribute, "onload") && !equalIgnoringCase(eventAttribute, "onload()"))
+            return false;
+    }
     
-    forAttribute = forAttribute.stripWhiteSpace();
-    eventAttribute = eventAttribute.stripWhiteSpace();
-    return equalIgnoringCase(forAttribute, "window") && (equalIgnoringCase(eventAttribute, "onload") || equalIgnoringCase(eventAttribute, "onload()"));
+    return true;
 }
 
 String ScriptElementData::scriptCharset() const

@@ -138,20 +138,16 @@ void HTMLScriptRunner::executePendingScriptAndDispatchEvent(PendingScript& pendi
         if (errorOccurred)
             scriptElement->dispatchEvent(createScriptErrorEvent());
         else {
-            executeScript(scriptElement.get(), sourceCode);
+            executeScript(sourceCode);
             scriptElement->dispatchEvent(createScriptLoadEvent());
         }
     }
     ASSERT(!m_scriptNestingLevel);
 }
 
-void HTMLScriptRunner::executeScript(Element* element, const ScriptSourceCode& sourceCode) const
+void HTMLScriptRunner::executeScript(const ScriptSourceCode& sourceCode) const
 {
     ASSERT(m_document);
-    ScriptElement* scriptElement = toScriptElement(element);
-    ASSERT(scriptElement);
-    if (!scriptElement->shouldExecuteAsJavaScript())
-        return;
     ASSERT(isExecutingScript());
     if (!m_document->frame())
         return;
@@ -300,9 +296,11 @@ void HTMLScriptRunner::runScript(Element* script, int startingLineNumber)
         InsertionPointRecord insertionPointRecord(m_host->inputStream());
         NestingLevelIncrementer nestingLevelIncrementer(m_scriptNestingLevel);
 
-        // Check script type and language, current code uses ScriptElement::shouldExecuteAsJavaScript(), but that may not be HTML5 compliant.
-        notImplemented(); // event for support
-
+        ScriptElement* scriptElement = toScriptElement(script);
+        ASSERT(scriptElement);
+        if (!scriptElement->shouldExecuteAsJavaScript())
+            return;
+        
         if (script->hasAttribute(srcAttr)) {
             if (script->hasAttribute(asyncAttr)) // Async takes precendence over defer.
                 return; // Asynchronous scripts handle themselves.
@@ -318,7 +316,7 @@ void HTMLScriptRunner::runScript(Element* script, int startingLineNumber)
             // ASSERT(document()->haveStylesheetsLoaded());
             ASSERT(isExecutingScript());
             ScriptSourceCode sourceCode(script->textContent(), documentURLForScriptExecution(m_document), startingLineNumber);
-            executeScript(script, sourceCode);
+            executeScript(sourceCode);
         }
     }
 }
