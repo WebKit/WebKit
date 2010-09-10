@@ -1,6 +1,6 @@
 2010-09-10  Paul Sawaya  <psawaya@apple.com>
 
-        Reviewed by Chris Marr.
+        Reviewed by Chris Marrin.
 
         Refactored non-Mac specific code into GraphicsContext3DOpenGL.
         
