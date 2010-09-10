@@ -13,7 +13,6 @@ nmstart         [_a-zA-Z]|{nonascii}|{escape}
 nmchar          [_a-zA-Z0-9-]|{nonascii}|{escape}
 string1         \"([\t !#$%&(-~]|\\{nl}|\'|{nonascii}|{escape})*\"
 string2         \'([\t !#$%&(-~]|\\{nl}|\"|{nonascii}|{escape})*\'
-hexcolor        {h}{3}|{h}{6}
 
 ident           -?{nmstart}{nmchar}*
 name            {nmchar}+
@@ -48,8 +47,8 @@ nth             [\+-]?{intnum}*n([\+-]{intnum})?
 {ident}                 {yyTok = IDENT; return yyTok;}
 {nth}                   {yyTok = NTH; return yyTok;}
 
-"#"{hexcolor}           {yyTok = HEX; return yyTok;}
 "#"{ident}              {yyTok = IDSEL; return yyTok;}
+"#"{name}               {yyTok = HEX; return yyTok;}
 
 "@import"               {BEGIN(mediaquery); yyTok = IMPORT_SYM; return yyTok;}
 "@page"                 {yyTok = PAGE_SYM; return yyTok;}

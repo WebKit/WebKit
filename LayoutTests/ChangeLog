@@ -1,3 +1,14 @@
+2010-09-09  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for Bug 24742 - CSS tokenizer allows color in 6 hex digit notation to be followed by the next token without separation
+        https://bugs.webkit.org/show_bug.cgi?id=24742
+
+        * fast/css/invalid-hex-color-expected.txt: Added.
+        * fast/css/invalid-hex-color.html: Added.
+        * svg/custom/invalid-fill-hex.svg: Changed to avoid a questionable behavior that this bug fix revealed.
+
 2010-09-09  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, rolling out r67145.

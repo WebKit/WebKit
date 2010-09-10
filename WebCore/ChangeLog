@@ -1,3 +1,18 @@
+2010-09-09  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for Bug 24742 - CSS tokenizer allows color in 6 hex digit notation to be followed by the next token without separation
+        Stop checking in the flex definition the number of hexadecimal digits for a hex color.
+        Instead, rely on the checking in Color::parseHexColor().
+        The resultant grammar is actually more close to the one in http://www.w3.org/TR/CSS21/grammar.html .
+
+        https://bugs.webkit.org/show_bug.cgi?id=24742
+
+        Test: fast/css/invalid-hex-color.html
+
+        * css/tokenizer.flex:
+
 2010-09-09  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.
