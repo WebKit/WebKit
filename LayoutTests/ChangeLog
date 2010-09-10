@@ -1,3 +1,11 @@
+2010-09-10  Adam Roben  <aroben@apple.com>
+
+        Give expected results files the right names
+
+        * platform/win/fast/text/hyphenate-first-word-expected.txt: Renamed from LayoutTests/platform/win/fast/text/hyphenate-first-word-actual.txt.
+        * platform/win/fast/text/hyphenate-locale-expected.txt: Renamed from LayoutTests/platform/win/fast/text/hyphenate-locale-actual.txt.
+        * platform/win/html5lib/runner-expected.txt: Renamed from LayoutTests/platform/win/html5lib/runner-actual.txt.
+
 2010-09-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Antonio Gomes.
