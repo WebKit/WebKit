@@ -1,3 +1,18 @@
+2010-09-09  John Therrell  <jtherrell@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Added statistics sampling and reporting for JavaScriptCore's RegisterFile and ExecutableAllocator classes
+        https://bugs.webkit.org/show_bug.cgi?id=45134
+
+        Added ability to enable new JavaScriptCore statistics sampling and reporting for RegisterFile 
+        and ExecutableAllocator classes. Added reporting of JavaScriptCore's stack committed memory 
+        and JIT code committed memory statistics to WebCoreStatistics memoryStatistics.
+
+        * Misc/WebCoreStatistics.mm:
+        (+[WebCoreStatistics memoryStatistics]):
+        Added statistics reporting for JSC RegisterFile and ExecutableAllocator.
+
 2010-09-09  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Mark Rowe.

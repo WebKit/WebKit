@@ -58,6 +58,7 @@ static void initializeThreadingOnce()
 #if ENABLE(JSC_MULTIPLE_THREADS)
     s_dtoaP5Mutex = new Mutex;
     initializeDates();
+    RegisterFile::initializeThreading();
 #endif
 }
 

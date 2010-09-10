@@ -1,3 +1,54 @@
+2010-09-09  John Therrell  <jtherrell@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Added statistics sampling and reporting for JavaScriptCore's RegisterFile and ExecutableAllocator classes
+        https://bugs.webkit.org/show_bug.cgi?id=45134
+
+        Added thread-safe committed byte counting and reporting functionality to RegisterFile and 
+        ExecutableAllocator.
+
+        * JavaScriptCore.exp:
+        Exported new symbols to allow for WebKit to get statistics from JavaScriptCore classes.
+        
+        * interpreter/RegisterFile.cpp:
+        (JSC::registerFileStatisticsMutex):
+        Added function which returns a static Mutex used for locking during read/write access to
+        static committed byte count variable.
+        (JSC::RegisterFile::~RegisterFile):
+        Added call to addToStatistics since memory is decommitted here.
+        (JSC::RegisterFile::releaseExcessCapacity):
+        Added call to addToStatistics since memory is decommitted here.
+        (JSC::RegisterFile::initializeThreading):
+        Added function which calls registerFileStatisticsMutex().
+        (JSC::RegisterFile::committedByteCount):
+        Added function which returns the current committed byte count for RegisterFile.
+        (JSC::RegisterFile::addToCommittedByteCount):
+        Added function which updates committed byte count.
+        
+        * interpreter/RegisterFile.h:
+        (JSC::RegisterFile::RegisterFile):
+        Added call to addToStatistics since memory is committed here.
+        (JSC::RegisterFile::grow):
+        Added call to addToStatistics since memory is committed here.
+        
+        * jit/ExecutableAllocator.h:
+        Added function prototype for public static function committedByteCount().
+        
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolAllocator::release):
+        Added call to addToStatistics since memory is decommitted here.
+        (JSC::FixedVMPoolAllocator::reuse):
+        Added call to addToStatistics since memory is committed here.
+        (JSC::FixedVMPoolAllocator::addToCommittedByteCount):
+        Added function which updates committed byte count.
+        (JSC::ExecutableAllocator::committedByteCount):
+        Added function which returns the current committed byte count for ExecutableAllocator.
+        
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreadingOnce):
+        Added call to RegisterFile::initializeThreading.
+
 2010-09-09  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.

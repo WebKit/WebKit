@@ -33,16 +33,26 @@
 
 namespace JSC {
 
+static size_t committedBytesCount = 0;
+
+static Mutex& registerFileStatisticsMutex()
+{
+    DEFINE_STATIC_LOCAL(Mutex, staticMutex, ());
+    return staticMutex;
+}    
+    
 RegisterFile::~RegisterFile()
 {
     void* base = m_reservation.base();
     m_reservation.decommit(base, reinterpret_cast<intptr_t>(m_commitEnd) - reinterpret_cast<intptr_t>(base));
+    addToCommittedByteCount(-(reinterpret_cast<intptr_t>(m_commitEnd) - reinterpret_cast<intptr_t>(base)));
     m_reservation.deallocate();
 }
 
 void RegisterFile::releaseExcessCapacity()
 {
     m_reservation.decommit(m_start, reinterpret_cast<intptr_t>(m_commitEnd) - reinterpret_cast<intptr_t>(m_start));
+    addToCommittedByteCount(-(reinterpret_cast<intptr_t>(m_commitEnd) - reinterpret_cast<intptr_t>(m_start)));
     m_commitEnd = m_start;
     m_maxUsed = m_start;
 }
@@ -60,6 +70,24 @@ bool RegisterFile::clearGlobalObject(JSGlobalObject* globalObject)
 JSGlobalObject* RegisterFile::globalObject()
 {
     return m_globalObject.get();
+}
+
+void RegisterFile::initializeThreading()
+{
+    registerFileStatisticsMutex();
+}
+
+size_t RegisterFile::committedByteCount()
+{
+    MutexLocker locker(registerFileStatisticsMutex());
+    return committedBytesCount;
+}
+
+void RegisterFile::addToCommittedByteCount(long byteCount)
+{
+    MutexLocker locker(registerFileStatisticsMutex());
+    ASSERT(static_cast<long>(committedBytesCount) + byteCount > -1);
+    committedBytesCount += byteCount;
 }
 
 } // namespace JSC
