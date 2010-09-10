@@ -158,12 +158,14 @@ IDL_BINDINGS += \
     fileapi/EntryCallback.idl \
     fileapi/ErrorCallback.idl \
     fileapi/File.idl \
-    fileapi/FileList.idl \
-    fileapi/FileReader.idl \
-    fileapi/FileWriter.idl \
+    fileapi/FileCallback.idl \
     fileapi/FileEntry.idl \
     fileapi/FileError.idl \
+    fileapi/FileList.idl \
+    fileapi/FileReader.idl \
     fileapi/FileSystemCallback.idl \
+    fileapi/FileWriter.idl \
+    fileapi/FileWriterCallback.idl \
     fileapi/Flags.idl \
     fileapi/Metadata.idl \
     fileapi/MetadataCallback.idl \

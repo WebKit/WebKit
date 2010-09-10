@@ -3026,6 +3026,8 @@ webcore_built_sources += \
        DerivedSources/WebCore/JSEntryCallback.h \
        DerivedSources/WebCore/JSErrorCallback.cpp \
        DerivedSources/WebCore/JSErrorCallback.h \
+       DerivedSources/WebCore/JSFileCallback.cpp \
+       DerivedSources/WebCore/JSFileCallback.h \
        DerivedSources/WebCore/JSFileEntry.cpp \
        DerivedSources/WebCore/JSFileEntry.h \
        DerivedSources/WebCore/JSFileSystemCallback.cpp \
@@ -3053,6 +3055,7 @@ webcore_sources += \
        WebCore/fileapi/EntryArray.h \
        WebCore/fileapi/EntryCallback.h \
        WebCore/fileapi/ErrorCallback.h \
+       WebCore/fileapi/FileCallback.h \
        WebCore/fileapi/FileEntry.cpp \
        WebCore/fileapi/FileEntry.h \
        WebCore/fileapi/FileSystemCallback.h \
@@ -4457,12 +4460,15 @@ webcore_cppflags += -DENABLE_FILE_WRITER=1
 webcore_built_sources += \
 	DerivedSources/WebCore/JSFileWriter.cpp \
 	DerivedSources/WebCore/JSFileWriter.h
+	DerivedSources/WebCore/JSFileWriterCallback.cpp \
+	DerivedSources/WebCore/JSFileWriterCallback.h
 
 webcore_sources += \
 	WebCore/fileapi/AsyncFileWriter.h \
 	WebCore/fileapi/FileWriterClient.h \
 	WebCore/fileapi/FileWriter.cpp \
-	WebCore/fileapi/FileWriter.h
+	WebCore/fileapi/FileWriter.h \
+	WebCore/fileapi/FileWriterCallback.h
 
 endif  # END ENABLE_FILE_WRITER
 

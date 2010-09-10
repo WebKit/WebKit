@@ -4821,6 +4821,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSFileCallback.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSFileCallback.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSFileError.cpp"
 				>
 				<FileConfiguration
@@ -5114,6 +5122,14 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSFileWriter.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSFileWriterCallback.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSFileWriterCallback.h"
 				>
 			</File>
 			<File
@@ -37345,6 +37361,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\fileapi\FileCallback.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\FileEntry.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\fileapi\FileEntry.cpp"
 				>
 			</File>
@@ -37422,6 +37446,14 @@
 			</File>
 			<File
 				RelativePath="..\fileapi\FileWriter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\FileWriterCallback.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\FileWriterCallback.h"
 				>
 			</File>
 			<File

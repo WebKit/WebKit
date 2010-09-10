@@ -198,7 +198,6 @@ SET(WebCore_IDL_FILES
     fileapi/File.idl
     fileapi/FileList.idl
     fileapi/FileReader.idl
-    fileapi/FileWriter.idl
 
     html/DataGridColumn.idl
     html/DataGridColumnList.idl
@@ -1586,11 +1585,22 @@ if (ENABLE_FILE_SYSTEM)
         fileapi/EntryArray.idl
         fileapi/EntryCallback.idl
         fileapi/ErrorCallback.idl
+        fileapi/FileCallback.idl
         fileapi/FileEntry.idl
         fileapi/FileSystemCallback.idl
         fileapi/Flags.idl
         fileapi/Metadata.idl
         fileapi/MetadataCallback.idl
+    )
+ENDIF ()
+
+if (ENABLE_FILE_WRITER)
+    LIST(APPEND WebCore_SOURCES
+        fileapi/FileWriter.cpp
+    )
+    LIST(APPEND WebCore_IDL_FILES
+        fileapi/FileWriterCallback.idl
+        fileapi/FileWriter.idl
     )
 ENDIF ()
 

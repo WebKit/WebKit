@@ -151,6 +151,7 @@ DOM_CLASSES = \
     EventSource \
     EventTarget \
     File \
+    FileCallback \
     FileEntry \
     FileException \
     FileError \
@@ -158,6 +159,7 @@ DOM_CLASSES = \
     FileReader \
     FileReaderSync \
     FileWriter \
+    FileWriterCallback \
     FileSystemCallback \
     Flags \
     Geolocation \

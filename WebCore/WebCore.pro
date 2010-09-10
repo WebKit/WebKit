@@ -629,7 +629,6 @@ SOURCES += \
     fileapi/FileReaderSync.cpp \
     fileapi/FileStreamProxy.cpp \
     fileapi/FileThread.cpp \
-    fileapi/FileWriter.cpp \
     fileapi/ThreadableBlobRegistry.cpp \
     history/BackForwardController.cpp \
     history/BackForwardListImpl.cpp \
@@ -1403,7 +1402,6 @@ HEADERS += \
     editing/VisibleSelection.h \
     editing/visible_units.h \
     editing/WrapContentsInDummySpanCommand.h \
-    fileapi/AsyncFileWriter.h \
     fileapi/Blob.h \
     fileapi/BlobBuilder.h \
     fileapi/BlobURL.h \
@@ -1416,8 +1414,6 @@ HEADERS += \
     fileapi/FileStreamProxy.h \
     fileapi/FileThread.h \
     fileapi/FileThreadTask.h \
-    fileapi/FileWriter.h \
-    fileapi/FileWriterClient.h \
     history/BackForwardController.h \
     history/BackForwardControllerClient.h \
     history/BackForwardListImpl.h \
@@ -2630,10 +2626,10 @@ contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
         fileapi/EntryArray.h \
         fileapi/EntryCallback.h \
         fileapi/ErrorCallback.h \
+        fileapi/FileCallback.h \
         fileapi/FileEntry.h \
         fileapi/FileSystemCallback.h \
         fileapi/FileSystemCallbacks.h \
-        fileapi/FileWriterCallback.h \
         fileapi/Flags.h \
         fileapi/LocalFileSystem.h \
         fileapi/Metadata.h \
@@ -2652,6 +2648,17 @@ contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
         fileapi/FileSystemCallbacks.cpp \
         fileapi/LocalFileSystem.cpp \
         platform/AsyncFileSystem.cpp
+}
+
+contains(DEFINES, ENABLE_FILE_WRITER=1) {
+    HEADERS += \
+        fileapi/AsyncFileWriter.h \
+        fileapi/FileWriter.h \
+        fileapi/FileWriterCallback.h \
+        fileapi/FileWriterClient.h
+
+    SOURCES += \
+        fileapi/FileWriter.cpp
 }
 
 contains(DEFINES, ENABLE_ICONDATABASE=1) {
