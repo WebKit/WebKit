@@ -1,3 +1,19 @@
+2010-09-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Chris Marrin.
+
+        Update Windows LayoutTest/compositing results
+        https://bugs.webkit.org/show_bug.cgi?id=45323
+
+        Fix up some windows compositing test results.
+
+        * platform/win/compositing/iframes/composited-parent-iframe-expected.txt: Removed.
+        * platform/win/compositing/iframes/iframe-resize-expected.txt: Removed.
+        * platform/win/compositing/iframes/leave-compositing-iframe-expected.txt: Removed.
+        * platform/win/compositing/iframes/overlapped-iframe-expected.txt: Removed.
+        * platform/win/compositing/plugins/composited-plugin-expected.txt: Added.
+        * platform/win/compositing/plugins/small-to-large-composited-plugin-expected.txt: Copied from LayoutTests/compositing/iframes/leave-compositing-iframe-expected.txt.
+
 2010-09-10  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
