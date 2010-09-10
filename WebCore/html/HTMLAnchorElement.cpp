@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
- * Copyright (C) 2003, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -105,117 +105,67 @@ bool HTMLAnchorElement::isKeyboardFocusable(KeyboardEvent* event) const
     return hasNonEmptyBoundingBox();
 }
 
-void HTMLAnchorElement::defaultEventHandler(Event* evt)
+static void appendServerMapMousePosition(String& url, Event* event)
 {
-    // React on clicks and on keypresses.
-    // Don't make this KEYUP_EVENT again, it makes khtml follow links it shouldn't,
-    // when pressing Enter in the combo.
-    if (isLink() && (evt->type() == eventNames().clickEvent || (evt->type() == eventNames().keydownEvent && focused()))) {
-        MouseEvent* e = 0;
-        if (evt->type() == eventNames().clickEvent && evt->isMouseEvent())
-            e = static_cast<MouseEvent*>(evt);
+    if (!event->isMouseEvent())
+        return;
 
-        KeyboardEvent* k = 0;
-        if (evt->type() == eventNames().keydownEvent && evt->isKeyboardEvent())
-            k = static_cast<KeyboardEvent*>(evt);
+    ASSERT(event->target());
+    Node* target = event->target()->toNode();
+    ASSERT(target);
+    if (!target->hasTagName(imgTag))
+        return;
 
-        if (e && e->button() == RightButton) {
-            HTMLElement::defaultEventHandler(evt);
+    HTMLImageElement* imageElement = static_cast<HTMLImageElement*>(event->target()->toNode());
+    if (!imageElement || !imageElement->isServerMap())
+        return;
+
+    RenderImage* renderer = toRenderImage(imageElement->renderer());
+    if (!renderer)
+        return;
+
+    // FIXME: This should probably pass true for useTransforms.
+    FloatPoint absolutePosition = renderer->absoluteToLocal(FloatPoint(static_cast<MouseEvent*>(event)->pageX(), static_cast<MouseEvent*>(event)->pageY()));
+    int x = absolutePosition.x();
+    int y = absolutePosition.y();
+    url += "?";
+    url += String::number(x);
+    url += ",";
+    url += String::number(y);
+}
+
+void HTMLAnchorElement::defaultEventHandler(Event* event)
+{
+    if (isLink()) {
+        if (focused() && isEnterKeyKeydownEvent(event) && treatLinkAsLiveForEventType(NonMouseEvent)) {
+            event->setDefaultHandled();
+            dispatchSimulatedClick(event);
             return;
         }
 
-        // If the link is editable, then we need to check the settings to see whether or not to follow the link
+        if (isLinkClick(event) && treatLinkAsLiveForEventType(eventType(event))) {
+            String url = deprecatedParseURL(getAttribute(hrefAttr));
+            appendServerMapMousePosition(url, event);
+            handleLinkClick(event, document(), url, getAttribute(targetAttr), hasRel(RelationNoReferrer));
+            return;
+        }
+
         if (isContentEditable()) {
-            EditableLinkBehavior editableLinkBehavior = EditableLinkDefaultBehavior;
-            if (Settings* settings = document()->settings())
-                editableLinkBehavior = settings->editableLinkBehavior();
-                
-            switch (editableLinkBehavior) {
-                // Always follow the link (Safari 2.0 behavior)
-                default:
-                case EditableLinkDefaultBehavior:
-                case EditableLinkAlwaysLive:
-                    break;
-
-                case EditableLinkNeverLive:
-                    HTMLElement::defaultEventHandler(evt);
-                    return;
-
-                // If the selection prior to clicking on this link resided in the same editable block as this link,
-                // and the shift key isn't pressed, we don't want to follow the link
-                case EditableLinkLiveWhenNotFocused:
-                    if (e && !e->shiftKey() && m_rootEditableElementForSelectionOnMouseDown == rootEditableElement()) {
-                        HTMLElement::defaultEventHandler(evt);
-                        return;
-                    }
-                    break;
-
-                // Only follow the link if the shift key is down (WinIE/Firefox behavior)
-                case EditableLinkOnlyLiveWithShiftKey:
-                    if (e && !e->shiftKey()) {
-                        HTMLElement::defaultEventHandler(evt);
-                        return;
-                    }
-                    break;
+            // This keeps track of the editable block that the selection was in (if it was in one) just before the link was clicked
+            // for the LiveWhenNotFocused editable link behavior
+            if (event->type() == eventNames().mousedownEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() != RightButton && document()->frame() && document()->frame()->selection()) {
+                m_rootEditableElementForSelectionOnMouseDown = document()->frame()->selection()->rootEditableElement();
+                m_wasShiftKeyDownOnMouseDown = static_cast<MouseEvent*>(event)->shiftKey();
+            } else if (event->type() == eventNames().mouseoverEvent) {
+                // These are cleared on mouseover and not mouseout because their values are needed for drag events,
+                // but drag events happen after mouse out events.
+                m_rootEditableElementForSelectionOnMouseDown = 0;
+                m_wasShiftKeyDownOnMouseDown = false;
             }
-        }
-
-        if (k) {
-            if (k->keyIdentifier() != "Enter") {
-                HTMLElement::defaultEventHandler(evt);
-                return;
-            }
-            evt->setDefaultHandled();
-            dispatchSimulatedClick(evt);
-            return;
-        }
-
-        String url = deprecatedParseURL(getAttribute(hrefAttr));
-
-        ASSERT(evt->target());
-        ASSERT(evt->target()->toNode());
-        if (evt->target()->toNode()->hasTagName(imgTag)) {
-            HTMLImageElement* img = static_cast<HTMLImageElement*>(evt->target()->toNode());
-            if (img && img->isServerMap()) {
-                RenderImage* r = toRenderImage(img->renderer());
-                if (r && e) {
-                    // FIXME: broken with transforms
-                    FloatPoint absPos = r->localToAbsolute();
-                    int x = e->pageX() - absPos.x();
-                    int y = e->pageY() - absPos.y();
-                    url += "?";
-                    url += String::number(x);
-                    url += ",";
-                    url += String::number(y);
-                } else {
-                    evt->setDefaultHandled();
-                    HTMLElement::defaultEventHandler(evt);
-                    return;
-                }
-            }
-        }
-
-        if (!evt->defaultPrevented() && document()->frame())
-            document()->frame()->loader()->urlSelected(document()->completeURL(url), getAttribute(targetAttr), evt, false, false, true, hasRel(RelationNoReferrer) ? NoReferrer : SendReferrer);
-
-        evt->setDefaultHandled();
-    } else if (isLink() && isContentEditable()) {
-        // This keeps track of the editable block that the selection was in (if it was in one) just before the link was clicked
-        // for the LiveWhenNotFocused editable link behavior
-        if (evt->type() == eventNames().mousedownEvent && evt->isMouseEvent() && static_cast<MouseEvent*>(evt)->button() != RightButton && document()->frame() && document()->frame()->selection()) {
-            MouseEvent* e = static_cast<MouseEvent*>(evt);
-
-            m_rootEditableElementForSelectionOnMouseDown = document()->frame()->selection()->rootEditableElement();
-            m_wasShiftKeyDownOnMouseDown = e && e->shiftKey();
-        } else if (evt->type() == eventNames().mouseoverEvent) {
-            // These are cleared on mouseover and not mouseout because their values are needed for drag events, but these happen
-            // after mouse out events.
-            m_rootEditableElementForSelectionOnMouseDown = 0;
-            m_wasShiftKeyDownOnMouseDown = false;
         }
     }
 
-    HTMLElement::defaultEventHandler(evt);
+    HTMLElement::defaultEventHandler(event);
 }
 
 void HTMLAnchorElement::setActive(bool down, bool pause)
@@ -512,32 +462,69 @@ String HTMLAnchorElement::toString() const
 
 bool HTMLAnchorElement::isLiveLink() const
 {
-    if (!isLink())
-        return false;
+    return isLink() && treatLinkAsLiveForEventType(m_wasShiftKeyDownOnMouseDown ? MouseEventWithShiftKey : MouseEventWithoutShiftKey);
+}
+
+HTMLAnchorElement::EventType HTMLAnchorElement::eventType(Event* event)
+{
+    if (!event->isMouseEvent())
+        return NonMouseEvent;
+    return static_cast<MouseEvent*>(event)->shiftKey() ? MouseEventWithShiftKey : MouseEventWithoutShiftKey;
+}
+
+bool HTMLAnchorElement::treatLinkAsLiveForEventType(EventType eventType) const
+{
     if (!isContentEditable())
         return true;
-    
-    EditableLinkBehavior editableLinkBehavior = EditableLinkDefaultBehavior;
-    if (Settings* settings = document()->settings())
-        editableLinkBehavior = settings->editableLinkBehavior();
-        
-    switch (editableLinkBehavior) {
-        default:
-        case EditableLinkDefaultBehavior:
-        case EditableLinkAlwaysLive:
-            return true;
 
-        case EditableLinkNeverLive:
-            return false;
+    Settings* settings = document()->settings();
+    if (!settings)
+        return true;
 
-        // Don't set the link to be live if the current selection is in the same editable block as
-        // this link or if the shift key is down
-        case EditableLinkLiveWhenNotFocused:
-            return m_wasShiftKeyDownOnMouseDown || m_rootEditableElementForSelectionOnMouseDown != rootEditableElement();
-            
-        case EditableLinkOnlyLiveWithShiftKey:
-            return m_wasShiftKeyDownOnMouseDown;
+    switch (settings->editableLinkBehavior()) {
+    case EditableLinkDefaultBehavior:
+    case EditableLinkAlwaysLive:
+        return true;
+
+    case EditableLinkNeverLive:
+        return false;
+
+    // If the selection prior to clicking on this link resided in the same editable block as this link,
+    // and the shift key isn't pressed, we don't want to follow the link.
+    case EditableLinkLiveWhenNotFocused:
+        return eventType == MouseEventWithShiftKey || (eventType == MouseEventWithoutShiftKey && m_rootEditableElementForSelectionOnMouseDown != rootEditableElement());
+
+    case EditableLinkOnlyLiveWithShiftKey:
+        return eventType == MouseEventWithShiftKey;
     }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool isEnterKeyKeydownEvent(Event* event)
+{
+    return event->type() == eventNames().keydownEvent && event->isKeyboardEvent() && static_cast<KeyboardEvent*>(event)->keyIdentifier() == "Enter";
+}
+
+bool isMiddleMouseButtonEvent(Event* event)
+{
+    return event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == MiddleButton;
+}
+
+bool isLinkClick(Event* event)
+{
+    return event->type() == eventNames().clickEvent && (!event->isMouseEvent() || static_cast<MouseEvent*>(event)->button() != RightButton);
+}
+
+void handleLinkClick(Event* event, Document* document, const String& url, const String& target, bool hideReferrer)
+{
+    event->setDefaultHandled();
+
+    Frame* frame = document->frame();
+    if (!frame)
+        return;
+    frame->loader()->urlSelected(document->completeURL(url), target, event, false, false, true, hideReferrer ? NoReferrer : SendReferrer);
 }
 
 }

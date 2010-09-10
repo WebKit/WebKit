@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
- * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -109,10 +109,25 @@ private:
     virtual short tabIndex() const;
     virtual bool draggable() const;
 
+    enum EventType {
+        MouseEventWithoutShiftKey,
+        MouseEventWithShiftKey,
+        NonMouseEvent,
+    };
+    static EventType eventType(Event*);
+    bool treatLinkAsLiveForEventType(EventType) const;
+
     RefPtr<Element> m_rootEditableElementForSelectionOnMouseDown;
     bool m_wasShiftKeyDownOnMouseDown;
     uint32_t m_linkRelations;
 };
+
+// Functions shared with the other anchor elements (SVG and WML).
+
+bool isEnterKeyKeydownEvent(Event*);
+bool isMiddleMouseButtonEvent(Event*);
+bool isLinkClick(Event*);
+void handleLinkClick(Event*, Document*, const String& url, const String& target, bool hideReferrer = false);
 
 } // namespace WebCore
 

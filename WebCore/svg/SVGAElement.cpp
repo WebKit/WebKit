@@ -2,6 +2,7 @@
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2007 Rob Buis <buis@kde.org>
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,6 +34,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderTypes.h"
+#include "HTMLAnchorElement.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "PlatformMouseEvent.h"
@@ -125,60 +127,47 @@ RenderObject* SVGAElement::createRenderer(RenderArena* arena, RenderStyle*)
     return new (arena) RenderSVGTransformableContainer(this);
 }
 
-void SVGAElement::defaultEventHandler(Event* evt)
+void SVGAElement::defaultEventHandler(Event* event)
 {
-    if (isLink() && (evt->type() == eventNames().clickEvent || (evt->type() == eventNames().keydownEvent && focused()))) {
-        MouseEvent* e = 0;
-        if (evt->type() == eventNames().clickEvent && evt->isMouseEvent())
-            e = static_cast<MouseEvent*>(evt);
-        
-        KeyboardEvent* k = 0;
-        if (evt->type() == eventNames().keydownEvent && evt->isKeyboardEvent())
-            k = static_cast<KeyboardEvent*>(evt);
-        
-        if (e && e->button() == RightButton) {
-            SVGStyledTransformableElement::defaultEventHandler(evt);
+    if (isLink()) {
+        if (focused() && isEnterKeyKeydownEvent(event)) {
+            event->setDefaultHandled();
+            dispatchSimulatedClick(event);
             return;
         }
-        
-        if (k) {
-            if (k->keyIdentifier() != "Enter") {
-                SVGStyledTransformableElement::defaultEventHandler(evt);
-                return;
-            }
-            evt->setDefaultHandled();
-            dispatchSimulatedClick(evt);
-            return;
-        }
-        
-        String target = this->target();
-        if (e && e->button() == MiddleButton)
-            target = "_blank";
-        else if (target.isEmpty()) // if target is empty, default to "_self" or use xlink:target if set
-            target = (getAttribute(XLinkNames::showAttr) == "new") ? "_blank" : "_self";
 
-        if (!evt->defaultPrevented()) {
+        if (isLinkClick(event)) {
             String url = deprecatedParseURL(href());
+
 #if ENABLE(SVG_ANIMATION)
-            if (url.startsWith("#")) {
+            if (url[0] == '#') {
                 Element* targetElement = document()->getElementById(url.substring(1));
                 if (SVGSMILElement::isSMILElement(targetElement)) {
-                    SVGSMILElement* timed = static_cast<SVGSMILElement*>(targetElement);
-                    timed->beginByLinkActivation();
-                    evt->setDefaultHandled();
-                    SVGStyledTransformableElement::defaultEventHandler(evt);
+                    static_cast<SVGSMILElement*>(targetElement)->beginByLinkActivation();
+                    event->setDefaultHandled();
                     return;
                 }
             }
 #endif
-            if (document()->frame())
-                document()->frame()->loader()->urlSelected(document()->completeURL(url), target, evt, false, false, true, SendReferrer);
-        }
 
-        evt->setDefaultHandled();
+            // FIXME: Why does the SVG anchor element have this special logic
+            // for middle click that the HTML anchor element does not have?
+            // Making a middle click open a link in a new window or tab is
+            // properly handled at the client level, not inside WebKit; this
+            // code should be deleted.
+            String target = isMiddleMouseButtonEvent(event) ? "_blank" : this->target();
+
+            // FIXME: It's not clear why setting target to "_self" is ever
+            // helpful.
+            if (target.isEmpty())
+                target = (getAttribute(XLinkNames::showAttr) == "new") ? "_blank" : "_self";
+
+            handleLinkClick(event, document(), url, target);
+            return;
+        }
     }
 
-    SVGStyledTransformableElement::defaultEventHandler(evt);
+    SVGStyledTransformableElement::defaultEventHandler(event);
 }
 
 bool SVGAElement::supportsFocus() const

@@ -4,7 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
- * Copyright (C) 2003, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2006, 2007, 2008, 2010 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -35,6 +35,7 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "HTMLAnchorElement.h"
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
@@ -119,37 +120,17 @@ bool WMLAElement::isKeyboardFocusable(KeyboardEvent* event) const
 
 void WMLAElement::defaultEventHandler(Event* event)
 {
-    if (isLink() && (event->type() == eventNames().clickEvent || (event->type() == eventNames().keydownEvent && focused()))) {
-        MouseEvent* e = 0;
-        if (event->type() == eventNames().clickEvent && event->isMouseEvent())
-            e = static_cast<MouseEvent*>(event);
-
-        KeyboardEvent* k = 0;
-        if (event->type() == eventNames().keydownEvent && event->isKeyboardEvent())
-            k = static_cast<KeyboardEvent*>(event);
-
-        if (e && e->button() == RightButton) {
-            WMLElement::defaultEventHandler(event);
-            return;
-        }
-
-        if (k) {
-            if (k->keyIdentifier() != "Enter") {
-                WMLElement::defaultEventHandler(event);
-                return;
-            }
-
+    if (isLink()) {
+        if (focused() && isEnterKeyKeydownEvent(event)) {
             event->setDefaultHandled();
             dispatchSimulatedClick(event);
             return;
         }
- 
-        if (!event->defaultPrevented() && document()->frame()) {
-            KURL url = document()->completeURL(deprecatedParseURL(getAttribute(HTMLNames::hrefAttr)));
-            document()->frame()->loader()->urlSelected(url, target(), event, false, false, true, SendReferrer);
-        }
 
-        event->setDefaultHandled();
+        if (isLinkClick(event)) {
+            handleLinkClick(document(), deprecatedParseURL(getAttribute(HTMLNames::hrefAttr)), target(), event);
+            return;
+        }
     }
 
     WMLElement::defaultEventHandler(event);

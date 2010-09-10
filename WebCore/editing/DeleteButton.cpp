@@ -50,14 +50,10 @@ PassRefPtr<DeleteButton> DeleteButton::create(Document* document)
 
 void DeleteButton::defaultEventHandler(Event* event)
 {
-    // FIXME: Is it really import to check the type of the event?
-    // Seems OK to respond to any event named click even if it does not have the correct type.
-    if (event->isMouseEvent()) {
-        if (event->type() == eventNames().clickEvent) {
-            document()->frame()->editor()->deleteButtonController()->deleteTarget();
-            event->setDefaultHandled();
-            // FIXME: Shouldn't we return here instead of falling through?
-        }
+    if (event->type() == eventNames().clickEvent) {
+        document()->frame()->editor()->deleteButtonController()->deleteTarget();
+        event->setDefaultHandled();
+        return;
     }
 
     HTMLImageElement::defaultEventHandler(event);

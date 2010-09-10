@@ -1,3 +1,47 @@
+2010-09-109  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Darin Adler.
+
+        Cleanup and simplification in advance of making middle clicks not send a
+        click event.
+        https://bugs.webkit.org/show_bug.cgi?id=22382
+
+        * editing/DeleteButton.cpp:
+        (WebCore::DeleteButton::defaultEventHandler): Removed unneeded code to
+        check if the event is a MouseEvent. Any click event will do.
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::appendServerMapMousePosition): Added. Factors out the
+        modifications to the URL to add the mouse position to make the default
+        event handler function easier to read.
+        (WebCore::HTMLAnchorElement::defaultEventHandler): Reorganized to make
+        the enter key logic separate from the link clicking logic and simplify
+        the function.  This makes minor functional changes like not calling
+        FrameLoader::urlSelected() for fake "keydown" events constructed from
+        JavaScript.
+        (WebCore::HTMLAnchorElement::isLiveLink): Refactored to use new shared
+        implementation in treatLinkAsLiveForEventType().
+        (WebCore::eventType): Factors out event type calculation (for
+        treatLinkAsLiveForEventType()) from the default event handler to make it
+        easier to read.
+        (WebCore::HTMLAnchorElement::treatLinkAsLiveForEventType):
+        Implementation of the portions of isLiveLink() that are common with the
+        checks defaultEventHandler() wants to do.
+        (WebCore::isEnterKeyKeydownEvent): Added. Shared by the default
+        event handlers for all three anchor elements.
+        (WebCore::isMiddleMouseButtonEvent): Added. Shared by the isLinkClick
+        function below and some code in SVG. Later we can make this private to
+        this source file once we remove the unneeded SVG code.
+        (WebCore::isLinkClick): Added. Shared by the default event handlers for
+        all three anchor elements.
+        (WebCore::handleLinkClick): Ditto.
+        * html/HTMLAnchorElement.h: Added the new functions.
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler): Removed lots of unneeded
+        logic and streamlined the code to more closely match the
+        HTMLAnchorElement code and share functions with it.
+        * wml/WMLAElement.cpp:
+        (WebCore::WMLAElement::defaultEventHandler): Ditto.
+
 2010-09-10  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Eric Seidel.
