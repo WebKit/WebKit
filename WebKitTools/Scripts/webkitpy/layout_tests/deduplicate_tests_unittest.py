@@ -186,22 +186,3 @@ class ListDuplicatesTest(unittest.TestCase):
                            'fallback': 'chromium-win',
                            'platform': 'chromium-linux'},
                           result[0])
-
-    def test_get_relative_test_path(self):
-        checkout_root = scm.find_checkout_root()
-        layout_test_dir = os.path.join(checkout_root, 'LayoutTests')
-        test_cases = (
-            ('platform/mac/test.html',
-             ('platform/mac/test.html', layout_test_dir)),
-            ('LayoutTests/platform/mac/test.html',
-             ('platform/mac/test.html', checkout_root)),
-            ('../LayoutTests/platform/mac/test.html',
-             ('platform/mac/test.html', os.path.join(checkout_root, 'WebCore'))),
-            ('test.html',
-             ('platform/mac/test.html', os.path.join(layout_test_dir, 'platform/mac'))),
-            (None,
-             ('platform/mac/test.html', os.path.join(layout_test_dir, 'platform/win'))),
-        )
-        for expected, inputs in test_cases:
-            self.assertEquals(expected,
-                              deduplicate_tests.get_relative_test_path(*inputs))
