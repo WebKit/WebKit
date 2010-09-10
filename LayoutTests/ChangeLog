@@ -1,3 +1,16 @@
+2010-09-10  Mike Lawther  <mikelawther@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        [Chromium] Rebaseline transitions/opacity-transition-zindex.html
+        https://bugs.webkit.org/show_bug.cgi?id=45515
+
+        Difference was off-by-one on the green channel.
+
+        * platform/chromium-win/transitions/opacity-transition-zindex-expected.checksum: Added.
+        * platform/chromium-win/transitions/opacity-transition-zindex-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-09-10  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -993,12 +993,6 @@ BUG22700 LINUX WIN : fast/canvas/canvas-getImageData.html = FAIL
 // and gif, which is a low priority.
 BUG10318 WIN LINUX : fast/canvas/toDataURL-supportedTypes.html = FAIL
 
-// This test finishes while in the middle of a CSS animation. This is
-// intentional, but it makes pixel results unreliable.
-// http://bugs.webkit.org/show_bug.cgi?id=21491
-// CSS animations should not block our next release.
-BUG10320 WIN LINUX : transitions/opacity-transition-zindex.html = PASS FAIL
-
 // Issue 3273: TextInputController::firstRectForCharacterRange not implemented.
 BUG3273 : editing/selection/move-left-right.html = FAIL
 BUG3273 MAC : platform/mac/editing/input/caret-primary-bidi.html = FAIL
