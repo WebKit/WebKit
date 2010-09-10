@@ -41,6 +41,7 @@
 #include <wtf/Vector.h>
 
 #if ENABLE(SVG)
+#include "RenderSVGInlineText.h"
 #include "SVGRootInlineBox.h"
 #endif
 
@@ -1558,6 +1559,10 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
 
             RenderText* t = toRenderText(o);
 
+#if ENABLE(SVG)
+            bool isSVGText = t->isSVGInlineText();
+#endif
+
             int strlen = t->textLength();
             int len = strlen - pos;
             const UChar* str = t->characters();
@@ -1644,7 +1649,19 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                     }
                     continue;
                 }
-                
+ 
+#if ENABLE(SVG)
+                if (isSVGText) {
+                    RenderSVGInlineText* svgInlineText = static_cast<RenderSVGInlineText*>(t);
+                    if (pos > 0) {
+                        if (svgInlineText->characterStartsNewTextChunk(pos)) {
+                            addMidpoint(lineMidpointState, InlineIterator(0, o, pos - 1));
+                            addMidpoint(lineMidpointState, InlineIterator(0, o, pos));
+                        }
+                    }
+                }
+#endif
+
                 bool applyWordSpacing = false;
                 
                 currentCharacterIsWS = currentCharacterIsSpace || (breakNBSP && c == noBreakSpace);

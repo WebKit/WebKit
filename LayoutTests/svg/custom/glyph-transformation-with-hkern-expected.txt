@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
     RenderSVGText {text} at (30,1) size 138x151 contains 6 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 138x151
         chunk 1 text run 1 at (30.00,30.00) startOffset 0 endOffset 1 width 25.27: "R"
-        chunk 2 text run 1 at (49.54,50.00) startOffset 1 endOffset 2 width 27.23: "O"
-        chunk 3 text run 1 at (68.53,70.00) startOffset 2 endOffset 3 width 21.39: "T"
-        chunk 4 text run 1 at (86.68,90.00) startOffset 3 endOffset 4 width 23.34: "A"
-        chunk 5 text run 1 at (106.75,110.00) startOffset 4 endOffset 5 width 21.39: "T"
-        chunk 6 text run 1 at (130.00,130.00) startOffset 5 endOffset 6 width 23.34: "E"
+        chunk 2 text run 1 at (49.54,50.00) startOffset 0 endOffset 1 width 27.23: "O"
+        chunk 3 text run 1 at (68.53,70.00) startOffset 0 endOffset 1 width 21.39: "T"
+        chunk 4 text run 1 at (86.68,90.00) startOffset 0 endOffset 1 width 23.34: "A"
+        chunk 5 text run 1 at (106.75,110.00) startOffset 0 endOffset 1 width 21.39: "T"
+        chunk 6 text run 1 at (130.00,130.00) startOffset 0 endOffset 1 width 23.34: "E"

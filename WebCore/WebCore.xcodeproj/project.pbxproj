@@ -152,6 +152,10 @@
 		088451160F267B63007F139E /* WMLInputElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 088451140F267B63007F139E /* WMLInputElement.h */; };
 		0885067F11DA045B00182B98 /* PaintInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0885067D11DA045B00182B98 /* PaintInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0885068011DA045B00182B98 /* PaintPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0885067E11DA045B00182B98 /* PaintPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		088C2F7912390081003D65CE /* SVGTextLayoutAttributes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 088C2F7512390080003D65CE /* SVGTextLayoutAttributes.cpp */; };
+		088C2F7A12390081003D65CE /* SVGTextLayoutAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 088C2F7612390080003D65CE /* SVGTextLayoutAttributes.h */; };
+		088C2F7B12390081003D65CE /* SVGTextLayoutBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 088C2F7712390081003D65CE /* SVGTextLayoutBuilder.cpp */; };
+		088C2F7C12390081003D65CE /* SVGTextLayoutBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 088C2F7812390081003D65CE /* SVGTextLayoutBuilder.h */; };
 		088C97120ECB6D92000534BA /* WMLNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CA3AB490E556F2400E9C0C0 /* WMLNames.cpp */; };
 		088C97130ECB6D9D000534BA /* WMLNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CA3AB480E556F2400E9C0C0 /* WMLNames.h */; };
 		088C97510ECB6E28000534BA /* WMLAElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6B99180E52E37300487BB7 /* WMLAElement.cpp */; };
@@ -5985,6 +5989,10 @@
 		088451140F267B63007F139E /* WMLInputElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLInputElement.h; sourceTree = "<group>"; };
 		0885067D11DA045B00182B98 /* PaintInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaintInfo.h; sourceTree = "<group>"; };
 		0885067E11DA045B00182B98 /* PaintPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaintPhase.h; sourceTree = "<group>"; };
+		088C2F7512390080003D65CE /* SVGTextLayoutAttributes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTextLayoutAttributes.cpp; sourceTree = "<group>"; };
+		088C2F7612390080003D65CE /* SVGTextLayoutAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTextLayoutAttributes.h; sourceTree = "<group>"; };
+		088C2F7712390081003D65CE /* SVGTextLayoutBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTextLayoutBuilder.cpp; sourceTree = "<group>"; };
+		088C2F7812390081003D65CE /* SVGTextLayoutBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTextLayoutBuilder.h; sourceTree = "<group>"; };
 		0893E4650ECB68F400A28563 /* WMLPageState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLPageState.cpp; sourceTree = "<group>"; };
 		0893E4660ECB68F400A28563 /* WMLPageState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLPageState.h; sourceTree = "<group>"; };
 		089582530E857A7E00F82C83 /* ImageLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageLoader.cpp; sourceTree = "<group>"; };
@@ -11418,6 +11426,17 @@
 			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 0;
+		};
+		088C2F7412390080003D65CE /* svg */ = {
+			isa = PBXGroup;
+			children = (
+				088C2F7512390080003D65CE /* SVGTextLayoutAttributes.cpp */,
+				088C2F7612390080003D65CE /* SVGTextLayoutAttributes.h */,
+				088C2F7712390081003D65CE /* SVGTextLayoutBuilder.cpp */,
+				088C2F7812390081003D65CE /* SVGTextLayoutBuilder.h */,
+			);
+			path = svg;
+			sourceTree = "<group>";
 		};
 		089C1665FE841158C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
@@ -17164,6 +17183,7 @@
 			isa = PBXGroup;
 			children = (
 				BC8C8FAA0DDCD2F200B592F4 /* style */,
+				088C2F7412390080003D65CE /* svg */,
 				A8CFF04B0A154F09000A4234 /* AutoTableLayout.cpp */,
 				A8CFF0490A154F09000A4234 /* AutoTableLayout.h */,
 				BCE7898A1120E8020060ECE5 /* BidiRun.cpp */,
@@ -20516,6 +20536,8 @@
 				97BC849B12370A4B000C6161 /* HTMLInputStream.h in Headers */,
 				97BC84A512370DC8000C6161 /* TextViewSourceParser.h in Headers */,
 				97BC84B412371180000C6161 /* TextDocument.h in Headers */,
+				088C2F7A12390081003D65CE /* SVGTextLayoutAttributes.h in Headers */,
+				088C2F7C12390081003D65CE /* SVGTextLayoutBuilder.h in Headers */,
 				97205AB0123928CA00B17380 /* FTPDirectoryDocument.h in Headers */,
 				97205AB61239291000B17380 /* ImageDocument.h in Headers */,
 				97205AB81239291000B17380 /* MediaDocument.h in Headers */,
@@ -22995,6 +23017,8 @@
 				97BC84831236FD93000C6161 /* TextDocumentParser.cpp in Sources */,
 				97BC84A412370DC8000C6161 /* TextViewSourceParser.cpp in Sources */,
 				97BC84B312371180000C6161 /* TextDocument.cpp in Sources */,
+				088C2F7912390081003D65CE /* SVGTextLayoutAttributes.cpp in Sources */,
+				088C2F7B12390081003D65CE /* SVGTextLayoutBuilder.cpp in Sources */,
 				97205AAF123928CA00B17380 /* FTPDirectoryDocument.cpp in Sources */,
 				97205AB51239291000B17380 /* ImageDocument.cpp in Sources */,
 				97205AB71239291000B17380 /* MediaDocument.cpp in Sources */,

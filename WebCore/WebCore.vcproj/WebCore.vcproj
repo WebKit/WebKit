@@ -33134,6 +33134,26 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="svg"
+				>
+				<File
+					RelativePath="..\rendering\svg\SVGTextLayoutAttributes.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\svg\SVGTextLayoutAttributes.h"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\svg\SVGTextLayoutBuilder.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\svg\SVGTextLayoutBuilder.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="xml"

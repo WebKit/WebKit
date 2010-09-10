@@ -5,13 +5,13 @@ layer at (0,0) size 800x600
     RenderSVGText {text} at (10,6) size 71x18 contains 3 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 71x18
         chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 1 width 12.00: "A"
-        chunk 2 text run 1 at (50.00,20.00) startOffset 1 endOffset 2 width 11.00: "B"
-        chunk 3 text run 1 at (70.00,20.00) startOffset 2 endOffset 3 width 11.00: "C"
+        chunk 2 text run 1 at (50.00,20.00) startOffset 0 endOffset 1 width 11.00: "B"
+        chunk 3 text run 1 at (70.00,20.00) startOffset 0 endOffset 1 width 11.00: "C"
     RenderSVGText {text} at (10,26) size 71x18 contains 3 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 71x18
         chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 1 width 12.00: "A"
-        chunk 2 text run 1 at (50.00,40.00) startOffset 1 endOffset 2 width 11.00: "B"
-        chunk 3 text run 1 at (70.00,40.00) startOffset 2 endOffset 3 width 11.00: "C"
+        chunk 2 text run 1 at (50.00,40.00) startOffset 0 endOffset 1 width 11.00: "B"
+        chunk 3 text run 1 at (70.00,40.00) startOffset 0 endOffset 1 width 11.00: "C"
     RenderSVGText {text} at (10,46) size 71x18 contains 3 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 12x18
         chunk 1 text run 1 at (10.00,60.00) startOffset 0 endOffset 1 width 12.00: "A"
@@ -32,8 +32,8 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (15,106) size 71x18 contains 3 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 71x18
           chunk 1 text run 1 at (15.00,120.00) startOffset 0 endOffset 1 width 12.00: "A"
-          chunk 2 text run 1 at (55.00,120.00) startOffset 1 endOffset 2 width 11.00: "B"
-          chunk 3 text run 1 at (75.00,120.00) startOffset 2 endOffset 3 width 11.00: "C"
+          chunk 2 text run 1 at (55.00,120.00) startOffset 0 endOffset 1 width 11.00: "B"
+          chunk 3 text run 1 at (75.00,120.00) startOffset 0 endOffset 1 width 11.00: "C"
       RenderSVGText {text} at (15,126) size 71x18 contains 3 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 12x18
           chunk 1 text run 1 at (15.00,140.00) startOffset 0 endOffset 1 width 12.00: "A"
@@ -45,8 +45,8 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (15,146) size 71x18 contains 3 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 71x18
           chunk 1 text run 1 at (15.00,160.00) startOffset 0 endOffset 1 width 12.00: "A"
-          chunk 2 text run 1 at (55.00,160.00) startOffset 1 endOffset 2 width 11.00: "B"
-          chunk 3 text run 1 at (75.00,160.00) startOffset 2 endOffset 3 width 11.00: "C"
+          chunk 2 text run 1 at (55.00,160.00) startOffset 0 endOffset 1 width 11.00: "B"
+          chunk 3 text run 1 at (75.00,160.00) startOffset 0 endOffset 1 width 11.00: "C"
       RenderSVGText {text} at (15,166) size 71x18 contains 3 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 12x18
           chunk 1 text run 1 at (15.00,180.00) startOffset 0 endOffset 1 width 12.00: "A"

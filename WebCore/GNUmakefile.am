@@ -52,6 +52,7 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/plugins \
 	-I$(srcdir)/WebCore/rendering \
 	-I$(srcdir)/WebCore/rendering/style \
+	-I$(srcdir)/WebCore/rendering/svg \
 	-I$(srcdir)/WebCore/storage \
 	-I$(srcdir)/WebCore/svg \
 	-I$(srcdir)/WebCore/svg/animation \
@@ -3992,6 +3993,10 @@ webcore_sources += \
 	WebCore/rendering/style/SVGRenderStyle.h \
 	WebCore/rendering/style/SVGRenderStyleDefs.cpp \
 	WebCore/rendering/style/SVGRenderStyleDefs.h \
+	WebCore/rendering/svg/SVGTextLayoutAttributes.cpp \
+	WebCore/rendering/svg/SVGTextLayoutAttributes.h \
+	WebCore/rendering/svg/SVGTextLayoutBuilder.cpp \
+	WebCore/rendering/svg/SVGTextLayoutBuilder.h \
 	WebCore/svg/ColorDistance.cpp \
 	WebCore/svg/ColorDistance.h \
 	WebCore/svg/ElementTimeControl.h \

@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
     RenderSVGText {text} at (10,1) size 76x11 contains 3 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 76x11
         chunk 1 text run 1 at (10.00,10.00) startOffset 0 endOffset 1 width 6.00: "T"
-        chunk 2 text run 1 at (20.00,10.00) startOffset 1 endOffset 2 width 6.00: "h"
-        chunk 3 text run 1 at (40.00,10.00) startOffset 2 endOffset 14 width 46.00: "is is a test"
+        chunk 2 text run 1 at (20.00,10.00) startOffset 0 endOffset 1 width 6.00: "h"
+        chunk 3 text run 1 at (40.00,10.00) startOffset 0 endOffset 12 width 46.00: "is is a test"
 selection start: position 8 of child 0 {#text} of child 5 {text} of child 0 {svg} of document
 selection end:   position 9 of child 0 {#text} of child 5 {text} of child 0 {svg} of document

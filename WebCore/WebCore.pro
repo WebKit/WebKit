@@ -220,6 +220,7 @@ WEBCORE_INCLUDEPATH = \
     $$PWD/plugins \
     $$PWD/rendering \
     $$PWD/rendering/style \
+    $$PWD/rendering/svg \
     $$PWD/storage \
     $$PWD/svg \
     $$PWD/svg/animation \
@@ -1969,6 +1970,8 @@ HEADERS += \
     rendering/style/StyleVisualData.h \
     rendering/style/SVGRenderStyleDefs.h \
     rendering/style/SVGRenderStyle.h \
+    rendering/svg/SVGTextLayoutAttributes.h \
+    rendering/svg/SVGTextLayoutBuilder.h \
     rendering/SVGCharacterData.h \
     rendering/SVGCharacterLayoutInfo.h \
     rendering/SVGImageBufferTools.h \
@@ -2896,7 +2899,8 @@ contains(DEFINES, ENABLE_SVG=1) {
         css/SVGCSSStyleSelector.cpp \
         rendering/style/SVGRenderStyle.cpp \
         rendering/style/SVGRenderStyleDefs.cpp \
-        svg/SVGZoomEvent.cpp \
+        rendering/svg/SVGTextLayoutAttributes.cpp \
+        rendering/svg/SVGTextLayoutBuilder.cpp \
         rendering/PointerEventsHitRules.cpp \
         svg/SVGDocumentExtensions.cpp \
         svg/SVGImageLoader.cpp \
@@ -3042,6 +3046,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGViewSpec.cpp \
         svg/SVGVKernElement.cpp \
         svg/SVGZoomAndPan.cpp \
+        svg/SVGZoomEvent.cpp \
         svg/animation/SMILTime.cpp \
         svg/animation/SMILTimeContainer.cpp \
         svg/animation/SVGSMILElement.cpp \

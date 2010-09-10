@@ -45,6 +45,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/plugins"
     "${WEBCORE_DIR}/rendering"
     "${WEBCORE_DIR}/rendering/style"
+    "${WEBCORE_DIR}/rendering/svg"
     "${WEBCORE_DIR}/storage"
     "${WEBCORE_DIR}/svg"
     "${WEBCORE_DIR}/svg/animation"
@@ -1662,6 +1663,8 @@ IF (ENABLE_SVG)
         rendering/SVGTextQuery.cpp
         rendering/style/SVGRenderStyle.cpp
         rendering/style/SVGRenderStyleDefs.cpp
+        rendering/svg/SVGTextLayoutAttributes.cpp
+        rendering/svg/SVGTextLayoutBuilder.cpp
         svg/ColorDistance.cpp
         svg/SVGAElement.cpp
         svg/SVGAltGlyphElement.cpp

@@ -1,3 +1,61 @@
+2010-09-10  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        SVG text chunk concept needs to be integrated in the InlineBox structure
+        https://bugs.webkit.org/show_bug.cgi?id=45533
+
+        Updated all tests containing text chunks, to reflect the fact that more SVGInlineTextBoxes are created now.
+        All 'startOffset' dumps now begin at 0, indicating that there's only one chunk contained in a single SVGInlineTextBox.
+        These dumps will be removed in follow-up patches, as they don't make any sense anymore in the new concept.
+
+        * platform/gtk/svg/text/select-x-list-1-expected.txt:
+        * platform/gtk/svg/text/select-x-list-2-expected.txt:
+        * platform/gtk/svg/text/select-x-list-3-expected.txt:
+        * platform/gtk/svg/text/select-x-list-4-expected.txt:
+        * platform/gtk/svg/text/select-x-list-with-tspans-1-expected.txt:
+        * platform/gtk/svg/text/select-x-list-with-tspans-2-expected.txt:
+        * platform/gtk/svg/text/select-x-list-with-tspans-3-expected.txt:
+        * platform/gtk/svg/text/select-x-list-with-tspans-4-expected.txt: 
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-40-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-04-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-05-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-06-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-07-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-tspan-01-b-expected.txt:
+        * platform/mac/svg/batik/text/textAnchor2-expected.txt:
+        * platform/mac/svg/batik/text/textAnchor3-expected.txt:
+        * platform/mac/svg/batik/text/textLayout-expected.txt:
+        * platform/mac/svg/batik/text/textLayout2-expected.txt:
+        * platform/mac/svg/batik/text/textOnPathSpaces-expected.txt:
+        * platform/mac/svg/batik/text/textPosition-expected.txt:
+        * platform/mac/svg/batik/text/textPosition2-expected.txt:
+        * platform/mac/svg/custom/text-letter-spacing-expected.txt:
+        * platform/mac/svg/custom/text-x-dx-lists-expected.txt:
+        * platform/mac/svg/custom/text-x-override-in-tspan-child-expected.txt:
+        * platform/mac/svg/text/select-x-list-1-expected.txt:
+        * platform/mac/svg/text/select-x-list-2-expected.txt:
+        * platform/mac/svg/text/select-x-list-3-expected.txt:
+        * platform/mac/svg/text/select-x-list-4-expected.txt:
+        * platform/mac/svg/text/select-x-list-with-tspans-1-expected.txt:
+        * platform/mac/svg/text/select-x-list-with-tspans-2-expected.txt:
+        * platform/mac/svg/text/select-x-list-with-tspans-3-expected.txt:
+        * platform/mac/svg/text/select-x-list-with-tspans-4-expected.txt:
+        * platform/mac/svg/text/text-text-04-t-expected.txt:
+        * platform/mac/svg/text/text-text-05-t-expected.txt:
+        * platform/mac/svg/text/text-text-06-t-expected.txt:
+        * platform/mac/svg/text/text-text-07-t-expected.txt:
+        * platform/mac/svg/text/text-tspan-01-b-expected.txt:
+        * svg/custom/glyph-transformation-with-hkern-expected.txt:
+        * platform/qt/svg/text/select-x-list-1-expected.txt:
+        * platform/qt/svg/text/select-x-list-2-expected.txt:
+        * platform/qt/svg/text/select-x-list-3-expected.txt:
+        * platform/qt/svg/text/select-x-list-4-expected.txt:
+        * platform/qt/svg/text/select-x-list-with-tspans-1-expected.txt:
+        * platform/qt/svg/text/select-x-list-with-tspans-2-expected.txt:
+        * platform/qt/svg/text/select-x-list-with-tspans-3-expected.txt:
+        * platform/qt/svg/text/select-x-list-with-tspans-4-expected.txt:
+
 2010-09-10  Anton Muhin <antonm@chromium.org>
 
         Unreview fixed.

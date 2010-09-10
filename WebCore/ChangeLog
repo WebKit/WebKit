@@ -1,3 +1,53 @@
+2010-09-10  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        SVG text chunk concept needs to be integrated in the InlineBox structure
+        https://bugs.webkit.org/show_bug.cgi?id=45533
+
+        Begin rewriting the SVG text layout code. As first step move the text chunk concept right into the inline box structure.
+        This obsoletes the whole text chunk part concept (see SVGTextChunkLayoutInfo.h for details), and will soon simplify the
+        whole layout code a lot. Previously we hacked around the fact that a single InlineTextBox could contain multiple text chunks
+        For example: <text x="20 30 40">ABC</text> only led to the creation of one InlineTextBox containing three chunks. When
+        painting such an InlineTextBox, we had to do nasty hacks (same for text selection etc.)
+        
+        This is finally fixed by incorporating the knownledge about text chunks into the line layout algorithm.
+        Note, this has no impact on HTML at all, no worries.
+
+        It's even required to do it this way as BiDi reordering shouldn't happen across text chunks.
+        These are only the first bits, and currently slows down text layouting. Follow-up patches will remove the old layout
+        algorithm, and will rely on the stored SVGTextLayoutAttributes in the RenerSVGInlineText renderers (instead of computing again).
+
+        * Android.mk: Add rendering/svg/SVGTextLayoutAttributes.* & rendering/svg/SVGTextLayoutBuilder.* to build.
+        * CMakeLists.txt: Ditto.
+        * GNUmakefile.am: Ditto.
+        * WebCore.gyp/WebCore.gyp: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.vcproj/WebCoreCommon.vsprops: Ditto. (Recognize new rendering/svg directory.)
+        * WebCore.vcproj/copyForwardingHeaders.cmd: Ditto. (Copy forwarding headers from rendering/svg directory.)
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * rendering/RenderBlockLineLayout.cpp: This is the key of the new concept, take text chunks into account when building the InlineBox structure.
+        (WebCore::RenderBlock::findNextLineBreak): Split midpointState, if we encounter the beginning of a new text chunk.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isSVGInline): New method, which will be used to identify RenderSVGInline objects.
+        * rendering/RenderSVGInline.h:
+        (WebCore::RenderSVGInline::isSVGInline): Return true.
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::linesBoundingBox): Overriden, to simplify the calculations for SVG.
+        (WebCore::RenderSVGInlineText::characterStartsNewTextChunk): Determines wheter the given position starts a new text chunk.
+        * rendering/RenderSVGInlineText.h:
+        (WebCore::RenderSVGInlineText::storeLayoutAttributes): Stores the layout attributes calculated in the text layout process (will be used everywhere in follow-up patches).
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout): Invoke SVGTextLayoutBuilder before creating the inline box tree, so we can decide which characters start new text chunks.
+        * rendering/RenderText.h: Made linesBoundingBox() virtual so RenderSVGInlineText can override it.
+        * rendering/svg: Added.
+        * rendering/svg/SVGTextLayoutAttributes.cpp: Added. Holds x/y/dx/dy/rotate values and all kerning/ligature information used during layout.
+        * rendering/svg/SVGTextLayoutAttributes.h: Added.
+        * rendering/svg/SVGTextLayoutBuilder.cpp: Added.
+        * rendering/svg/SVGTextLayoutBuilder.h: Added.
+
 2010-09-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed fix after r67085.

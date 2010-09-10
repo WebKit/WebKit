@@ -37,6 +37,7 @@ public:
 
     virtual const char* renderName() const { return "RenderSVGInline"; }
     virtual bool requiresLayer() const { return false; }
+    virtual bool isSVGInline() const { return true; }
 
     // Chapter 10.4 of the SVG Specification say that we should use the
     // object bounding box of the parent text element.

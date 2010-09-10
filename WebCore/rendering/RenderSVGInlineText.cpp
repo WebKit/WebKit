@@ -65,6 +65,47 @@ IntRect RenderSVGInlineText::localCaretRect(InlineBox*, int, int*)
     return IntRect();
 }
 
+IntRect RenderSVGInlineText::linesBoundingBox() const
+{
+    IntRect boundingBox;
+    for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
+        boundingBox.unite(box->calculateBoundaries());
+    return boundingBox;
+}
+
+bool RenderSVGInlineText::characterStartsNewTextChunk(int position) const
+{
+    ASSERT(m_attributes.xValues().size() == textLength());
+    ASSERT(m_attributes.yValues().size() == textLength());
+    ASSERT(position >= 0);
+    ASSERT(position < static_cast<int>(textLength()));
+
+    int currentPosition = 0;
+    unsigned size = m_attributes.characterDataValues().size();
+    for (unsigned i = 0; i < size; ++i) {
+        const SVGTextLayoutAttributes::CharacterData& data = m_attributes.characterDataValues().at(i);
+
+        // We found the desired character.
+        if (currentPosition == position) {
+            if (isVerticalWritingMode(style()->svgStyle()))
+                return m_attributes.yValues().at(position) != SVGTextLayoutAttributes::emptyValue();
+
+            return m_attributes.xValues().at(position) != SVGTextLayoutAttributes::emptyValue();
+        }
+
+        currentPosition += data.spansCharacters;
+        if (currentPosition > position)
+            break;
+    }
+
+    // The desired position is available in the x/y list, but not in the character data values list.
+    // That means the previous character data described a single glyph, consisting of multiple unicode characters.
+    // The consequence is that the desired character does not define a new absolute x/y position, even if present in the x/y test.
+    // This code is tested by svg/W3C-SVG-1.1/text-text-06-t.svg (and described in detail, why this influences chunk detection).
+    ASSERT(currentPosition > position);
+    return false;
+}
+
 }
 
 #endif // ENABLE(SVG)

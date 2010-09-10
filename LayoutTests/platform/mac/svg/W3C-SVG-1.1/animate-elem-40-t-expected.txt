@@ -125,7 +125,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (-35,-49) size 64x40 contains 2 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 64x40
             chunk 1 text run 1 at (-35.00,-15.00) startOffset 0 endOffset 1 width 22.32: "1"
-            chunk 2 text run 1 at (5.00,-15.00) startOffset 1 endOffset 2 width 23.40: "2"
+            chunk 2 text run 1 at (5.00,-15.00) startOffset 0 endOffset 1 width 23.40: "2"
         RenderSVGContainer {use} at (21,191) size 38x38
           RenderSVGContainer {g} at (21,191) size 38x38 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-20.00,0.00)}]
             RenderSVGContainer {g} at (21,191) size 38x38

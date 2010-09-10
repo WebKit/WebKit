@@ -163,6 +163,7 @@
       '../plugins/chromium',
       '../rendering',
       '../rendering/style',
+      '../rendering/svg',
       '../storage',
       '../storage/chromium',
       '../svg',
