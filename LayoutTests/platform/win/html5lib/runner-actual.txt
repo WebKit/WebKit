@@ -1,0 +1,235 @@
+CONSOLE MESSAGE: line 1: SyntaxError: Parse error
+CONSOLE MESSAGE: line 1: SyntaxError: Parse error
+CONSOLE MESSAGE: line 0: Warning: Problem parsing viewBox=""
+CONSOLE MESSAGE: line 0: Warning: Problem parsing viewBox=""
+CONSOLE MESSAGE: line 0: Warning: Problem parsing viewBox=""
+CONSOLE MESSAGE: line 1: SyntaxError: Parse error
+CONSOLE MESSAGE: line 1: SyntaxError: Parse error
+CONSOLE MESSAGE: line 1: SyntaxError: Parse error
+CONSOLE MESSAGE: line 1: SyntaxError: Parse error
+CONSOLE MESSAGE: line 2: PASS
+CONSOLE MESSAGE: line 2: FOO<span>BAR</span>BAZ
+resources/tests1.dat: PASS
+
+resources/tests2.dat: PASS
+
+resources/tests3.dat: PASS
+
+resources/tests4.dat: PASS
+
+resources/tests5.dat: PASS
+
+resources/tests6.dat: PASS
+
+resources/tests7.dat: PASS
+
+resources/tests8.dat: PASS
+
+resources/tests9.dat: PASS
+
+resources/tests10.dat:
+35
+48
+49
+
+Test 35 of 49 in resources/tests10.dat failed. Input:
+<svg><script></script><path>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|       <svg script>
+|         <svg path>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|       <svg script>
+|       <svg path>
+
+Test 48 of 49 in resources/tests10.dat failed. Input:
+<math><annotation-xml><svg><foreignObject><div><math><mi></mi></math><span></span></div></foreignObject><path></path></svg></annotation-xml><mi>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       <math annotation-xml>
+|         <svg svg>
+|           <svg foreignObject>
+|             <div>
+|               <math math>
+|                 <math mi>
+|               <span>
+|             <path>
+|       <math mi>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       <math annotation-xml>
+|         <svg svg>
+|           <svg foreignObject>
+|             <div>
+|               <math math>
+|                 <math mi>
+|               <span>
+|           <svg path>
+|       <math mi>
+
+Test 49 of 49 in resources/tests10.dat failed. Input:
+<math><annotation-xml><svg><foreignObject><math><mi><svg></svg></mi><mo></mo></math><span></span></foreignObject><path></path></svg></annotation-xml><mi>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       <math annotation-xml>
+|         <svg svg>
+|           <svg foreignObject>
+|             <math math>
+|               <math mi>
+|                 <svg svg>
+|         <math mo>
+|     <span>
+|     <path>
+|     <mi>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       <math annotation-xml>
+|         <svg svg>
+|           <svg foreignObject>
+|             <math math>
+|               <math mi>
+|                 <svg svg>
+|               <math mo>
+|             <span>
+|           <svg path>
+|       <math mi>
+resources/tests11.dat: PASS
+
+resources/tests12.dat: PASS
+
+resources/tests14.dat: PASS
+
+resources/tests15.dat: PASS
+
+resources/tests16.dat: PASS
+
+resources/tests17.dat: PASS
+
+resources/tests18.dat: PASS
+
+resources/tests19.dat: PASS
+
+resources/tests20.dat: PASS
+
+resources/tests21.dat: PASS
+
+resources/tests_innerHTML_1.dat: PASS
+
+resources/webkit01.dat: PASS
+
+resources/webkit02.dat: PASS
+
+resources/doctype01.dat: PASS
+
+resources/scriptdata01.dat: PASS
+
+resources/html5test-com.dat: PASS
+
+resources/entities01.dat: PASS
+
+resources/entities02.dat: PASS
+
+resources/comments01.dat: PASS
+
+resources/adoption01.dat: PASS
+
+resources/adoption02.dat:
+2
+
+Test 2 of 3 in resources/adoption02.dat failed. Input:
+<b id="b">1<i id="i">2<p>3<script>document.getElementById("b").id = "c";document.getElementById("i").id = "j"</script></b>4
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <b>
+|       id="c"
+|       "1"
+|       <i>
+|         id="j"
+|         "2"
+|     <i>
+|       id="j"
+|       <p>
+|         <b>
+|           id="c"
+|           "3"
+|           <script>
+|             "document.getElementById("b").id = "c";document.getElementById("i").id = "j""
+|         "4"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <b>
+|       id="c"
+|       "1"
+|       <i>
+|         id="j"
+|         "2"
+|     <i>
+|       id="i"
+|       <p>
+|         <b>
+|           id="b"
+|           "3"
+|           <script>
+|             "document.getElementById("b").id = "c";document.getElementById("i").id = "j""
+|         "4"
+resources/inbody01.dat: PASS
+
+resources/isindex.dat: PASS
+
+resources/tables01.dat: PASS
+
+resources/tricky01.dat: PASS
+
+resources/scripted/adoption01.dat:
+1
+
+Test 1 of 1 in resources/scripted/adoption01.dat failed. Input:
+<p><b id="A"><script>document.getElementById("A").id = "B"</script></p>TEXT</b>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <b>
+|         id="B"
+|         <script>
+|           "document.getElementById("A").id = "B""
+|     <b>
+|       id="B"
+|       "TEXT"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <b>
+|         id="B"
+|         <script>
+|           "document.getElementById("A").id = "B""
+|     <b>
+|       id="A"
+|       "TEXT"
+resources/scripted/webkit01.dat: PASS

@@ -1,3 +1,19 @@
+2010-09-10  Adam Roben  <aroben@apple.com>
+
+        Land new expected results for some tests on Windows
+
+        Rubber-stamped in advance by Simon Fraser.
+
+        * platform/win/fast/text/hyphenate-first-word-actual.txt: Added.
+        * platform/win/fast/text/hyphenate-locale-actual.txt: Added.
+        Windows doesn't support hyphenation.
+
+        * platform/win/html5lib/runner-actual.txt: Added.
+        We don't implement <keygen> on Windows, so we pass some tests that
+        expect <keygen> to have no child elements (on Mac, the child elements
+        are real DOM elements, rather than living in the shadow DOM tree like
+        HTML5 mandates, so the tests fail).
+
 2010-09-09  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Andreas Kling.
