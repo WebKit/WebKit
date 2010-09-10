@@ -5282,9 +5282,6 @@ svg/custom/use-instanceRoot-event-bubbling.xhtml
 # New failure after http://trac.webkit.org/changeset/53758
 scrollbars/scrollbar-middleclick-nopaste.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=34246
-fast/dom/Window/window-postmessage-clone-frames.html
-
 # Relies on WebKit API [WebView _loadBackForwardListFromOtherView:]
 fast/loader/crash-copying-backforwardlist.html
 
@@ -5832,6 +5829,7 @@ editing/pasteboard/files-during-page-drags.html
 fast/events/drag-to-navigate.html
 fast/events/prevent-drag-to-navigate.html
 fast/dom/Window/window-postmessage-clone.html
+fast/dom/Window/window-postmessage-clone-frames.html
 http/tests/security/clipboard/clipboard-file-access.html
 
 # Still failing, looks like a bug in the EventSender drag-and-drop
