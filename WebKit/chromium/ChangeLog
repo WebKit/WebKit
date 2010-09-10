@@ -1,3 +1,16 @@
+2010-09-10  David Holloway  <dhollowa@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Change WebKit::WebFormElement::wasUserSubmitted to use WebCore::HTMLFormElement::submittedByUserGesture
+        instead of WebCore::HTMLFormElement::submissionTrigger.
+        Chromium AutoFill feature semantics changed with respect to what we mean by "user submitted" form.  A
+        more accurate measure of the user manually submitting a form is via user gesture.
+        https://bugs.webkit.org/show_bug.cgi?id=45128
+
+        * src/WebFormElement.cpp:
+        (WebKit::WebFormElement::wasUserSubmitted):
+
 2010-09-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Barth.

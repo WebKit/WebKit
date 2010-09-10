@@ -42,7 +42,7 @@ class TextEncoding;
 
 struct CollectionCache;
 
-class HTMLFormElement : public HTMLElement { 
+class HTMLFormElement : public HTMLElement {
 public:
     static PassRefPtr<HTMLFormElement> create(Document*);
     static PassRefPtr<HTMLFormElement> create(const QualifiedName&, Document*);
@@ -98,7 +98,7 @@ public:
 
     virtual String target() const;
 
-    FormSubmissionTrigger submissionTrigger() const;
+    bool wasUserSubmitted() const;
 
     HTMLFormControlElement* defaultButton() const;
 
@@ -117,7 +117,7 @@ private:
     virtual bool rendererIsNeeded(RenderStyle*);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
- 
+
     virtual void handleLocalEvents(Event*);
 
     virtual void parseMappedAttribute(Attribute*);
@@ -129,7 +129,7 @@ private:
     virtual void willMoveToNewOwnerDocument();
     virtual void didMoveToNewOwnerDocument();
 
-    void submit(Event*, bool activateSubmitButton, bool lockHistory, FormSubmissionTrigger);
+    void submit(Event*, bool activateSubmitButton, bool processingUserGesture, FormSubmissionTrigger);
 
     unsigned formElementIndex(HTMLFormControlElement*);
     // Returns true if the submission should be proceeded.
@@ -147,11 +147,11 @@ private:
     OwnPtr<CollectionCache> m_collectionCache;
 
     CheckedRadioButtons m_checkedRadioButtons;
-    
+
     Vector<HTMLFormControlElement*> m_associatedElements;
     Vector<HTMLImageElement*> m_imageElements;
 
-    FormSubmissionTrigger m_submissionTrigger;
+    bool m_wasUserSubmitted;
 
     bool m_autocomplete : 1;
     bool m_insubmit : 1;

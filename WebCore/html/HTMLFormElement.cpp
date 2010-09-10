@@ -65,7 +65,7 @@ using namespace HTMLNames;
 
 HTMLFormElement::HTMLFormElement(const QualifiedName& tagName, Document* document)
     : HTMLElement(tagName, document)
-    , m_submissionTrigger(NotSubmittedByJavaScript)
+    , m_wasUserSubmitted(false)
     , m_autocomplete(true)
     , m_insubmit(false)
     , m_doingsubmit(false)
@@ -106,13 +106,13 @@ bool HTMLFormElement::rendererIsNeeded(RenderStyle* style)
 {
     if (!isDemoted())
         return HTMLElement::rendererIsNeeded(style);
-    
+
     Node* node = parentNode();
     RenderObject* parentRenderer = node->renderer();
     bool parentIsTableElementPart = (parentRenderer->isTable() && node->hasTagName(tableTag))
         || (parentRenderer->isTableRow() && node->hasTagName(trTag))
         || (parentRenderer->isTableSection() && node->hasTagName(tbodyTag))
-        || (parentRenderer->isTableCol() && node->hasTagName(colTag)) 
+        || (parentRenderer->isTableCol() && node->hasTagName(colTag))
         || (parentRenderer->isTableCell() && node->hasTagName(trTag));
 
     if (!parentIsTableElementPart)
@@ -139,7 +139,7 @@ void HTMLFormElement::removedFromDocument()
 {
     if (document()->isHTMLDocument())
         static_cast<HTMLDocument*>(document())->removeNamedItem(m_name);
-   
+
     HTMLElement::removedFromDocument();
 }
 
@@ -263,7 +263,7 @@ bool HTMLFormElement::prepareSubmit(Event* event)
     m_insubmit = false;
 
     if (m_doingsubmit)
-        submit(event, true, false, NotSubmittedByJavaScript);
+        submit(event, true, true, NotSubmittedByJavaScript);
 
     return m_doingsubmit;
 }
@@ -271,12 +271,12 @@ bool HTMLFormElement::prepareSubmit(Event* event)
 void HTMLFormElement::submit(Frame* javaScriptActiveFrame)
 {
     if (javaScriptActiveFrame)
-        submit(0, false, !javaScriptActiveFrame->script()->anyPageIsProcessingUserGesture(), SubmittedByJavaScript);
+        submit(0, false, javaScriptActiveFrame->script()->anyPageIsProcessingUserGesture(), SubmittedByJavaScript);
     else
-        submit(0, false, false, NotSubmittedByJavaScript);
+        submit(0, false, true, NotSubmittedByJavaScript);
 }
 
-void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool lockHistory, FormSubmissionTrigger formSubmissionTrigger)
+void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool processingUserGesture, FormSubmissionTrigger formSubmissionTrigger)
 {
     FrameView* view = document()->view();
     Frame* frame = document()->frame();
@@ -289,11 +289,11 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool lockH
     }
 
     m_insubmit = true;
-    m_submissionTrigger = formSubmissionTrigger;
+    m_wasUserSubmitted = processingUserGesture;
 
     HTMLFormControlElement* firstSuccessfulSubmitButton = 0;
     bool needButtonActivation = activateSubmitButton; // do we need to activate a submit button?
-    
+
     for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
         HTMLFormControlElement* control = m_associatedElements[i];
         if (needButtonActivation) {
@@ -307,11 +307,11 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool lockH
     if (needButtonActivation && firstSuccessfulSubmitButton)
         firstSuccessfulSubmitButton->setActivatedSubmit(true);
 
-    frame->loader()->submitForm(FormSubmission::create(this, m_attributes, event, lockHistory, formSubmissionTrigger));
+    frame->loader()->submitForm(FormSubmission::create(this, m_attributes, event, !processingUserGesture, formSubmissionTrigger));
 
     if (needButtonActivation && firstSuccessfulSubmitButton)
         firstSuccessfulSubmitButton->setActivatedSubmit(false);
-    
+
     m_doingsubmit = m_insubmit = false;
 }
 
@@ -355,7 +355,7 @@ void HTMLFormElement::parseMappedAttribute(Attribute* attr)
     } else if (attr->name() == autocompleteAttr) {
         m_autocomplete = !equalIgnoringCase(attr->value(), "off");
         if (!m_autocomplete)
-            document()->registerForDocumentActivationCallbacks(this);    
+            document()->registerForDocumentActivationCallbacks(this);
         else
             document()->unregisterForDocumentActivationCallbacks(this);
     } else if (attr->name() == onsubmitAttr)
@@ -482,9 +482,9 @@ String HTMLFormElement::target() const
     return getAttribute(targetAttr);
 }
 
-FormSubmissionTrigger HTMLFormElement::submissionTrigger() const
+bool HTMLFormElement::wasUserSubmitted() const
 {
-    return m_submissionTrigger;
+    return m_wasUserSubmitted;
 }
 
 HTMLFormControlElement* HTMLFormElement::defaultButton() const
@@ -556,13 +556,13 @@ void HTMLFormElement::getNamedElements(const AtomicString& name, Vector<RefPtr<N
     }
     // name has been accessed, remember it
     if (namedItems.size() && aliasElem != namedItems.first())
-        addElementAlias(static_cast<HTMLFormControlElement*>(namedItems.first().get()), name);        
+        addElementAlias(static_cast<HTMLFormControlElement*>(namedItems.first().get()), name);
 }
 
 void HTMLFormElement::documentDidBecomeActive()
 {
     ASSERT(!m_autocomplete);
-    
+
     for (unsigned i = 0; i < m_associatedElements.size(); ++i)
         m_associatedElements[i]->reset();
 }

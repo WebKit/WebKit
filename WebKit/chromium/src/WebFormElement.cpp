@@ -68,7 +68,7 @@ WebString WebFormElement::method() const
 
 bool WebFormElement::wasUserSubmitted() const
 {
-    return constUnwrap<HTMLFormElement>()->submissionTrigger() == NotSubmittedByJavaScript;
+    return constUnwrap<HTMLFormElement>()->wasUserSubmitted();
 }
 
 void WebFormElement::submit()
