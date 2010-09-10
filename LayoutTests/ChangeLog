@@ -1,3 +1,18 @@
+2010-09-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        REGRESSION(r67176): editing/selection/doubleclick-inline-first-last-contenteditable.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=45525
+
+        Added a test to ensure WebKit does not crash when copying a region that doesn't have any common block ancestor.
+        Also removed doubleclick-inline-first-last-contenteditable.html from the qt's skipped list since
+        this test should not crash anymore.
+
+        * editing/pasteboard/copy-without-common-block-crash-expected.txt: Added.
+        * editing/pasteboard/copy-without-common-block-crash.html: Added.
+        * platform/qt/Skipped: Removed doubleclick-inline-first-last-contenteditable.html from the list.
+
 2010-09-10  Adam Roben  <aroben@apple.com>
 
         Land new expected results for some tests on Windows

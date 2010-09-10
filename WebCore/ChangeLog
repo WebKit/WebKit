@@ -1,3 +1,18 @@
+2010-09-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        REGRESSION(r67176): editing/selection/doubleclick-inline-first-last-contenteditable.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=45525
+
+        The crash was caused by ancestorToRetainStructureAndAppearance not taking into consideration
+        the case where there is no common block ancestor. Fixed this by adding a null check.
+
+        Test: editing/pasteboard/copy-without-common-block-crash.html
+
+        * editing/markup.cpp:
+        (WebCore::ancestorToRetainStructureAndAppearance): Added a null check.
+
 2010-09-09  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Dumitru Daniliuc.

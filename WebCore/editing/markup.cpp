@@ -896,6 +896,9 @@ static Node* ancestorToRetainStructureAndAppearance(Node* commonAncestor)
 {
     Node* commonAncestorBlock = enclosingBlock(commonAncestor);
 
+    if (!commonAncestorBlock)
+        return 0;
+
     if (commonAncestorBlock->hasTagName(tbodyTag) || commonAncestorBlock->hasTagName(trTag)) {
         Node* table = commonAncestorBlock->parentNode();
         while (table && !table->hasTagName(tableTag))
