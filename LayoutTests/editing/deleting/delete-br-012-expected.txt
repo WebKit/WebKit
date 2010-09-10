@@ -17,9 +17,12 @@ This tests pressing delete key to remove empty quoted line places cursor at the 
 |   style="border-style:solid; border-color:blue;"
 |   <font>
 |     class="Apple-style-span"
-|     size="5"
-|     <#selection-caret>
-|     <br>
+|     size="6"
+|     <span>
+|       class="Apple-style-span"
+|       style="font-size: 24px;"
+|       <#selection-caret>
+|       <br>
 |   "
 "
 | "

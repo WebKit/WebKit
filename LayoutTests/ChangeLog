@@ -1,5 +1,26 @@
 2010-09-09  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, rolling out r67145.
+        http://trac.webkit.org/changeset/67145
+        https://bugs.webkit.org/show_bug.cgi?id=45431
+
+        broke editing/inserting/5994480-2.html on Chromium Linux
+
+        * editing/deleting/delete-br-012-expected.txt:
+        * editing/deleting/delete-select-all-001-expected.txt:
+        * editing/execCommand/query-font-size-expected.txt:
+        * editing/execCommand/query-font-size.html:
+        * editing/inserting/5994480-2-expected.txt:
+        * editing/style/block-style-004-expected.txt:
+        * editing/style/block-style-005-expected.txt:
+        * editing/style/block-style-006-expected.txt:
+        * editing/style/fontsize-1-expected.txt:
+        * editing/style/push-down-font-styles-expected.txt: Removed.
+        * editing/style/push-down-font-styles.html: Removed.
+        * editing/style/script-tests/push-down-font-styles.js: Removed.
+
+2010-09-09  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, expectations update.
 
         Mark inspector/extensions-resources.html as SLOW on Win.

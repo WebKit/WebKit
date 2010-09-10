@@ -43,6 +43,17 @@ function setFontFamilyOnContent(fontFamily)
     return editableDiv.firstChild;
 }
 
+function wrapInSpanIfNeeded(shouldBeSpan)
+{
+    // Sometimes the result of the ExecCommand will not have a wrapping <span>
+    if (!shouldBeSpan.localName || shouldBeSpan.localName.toLowerCase() != "span") {
+        shouldBeSpan = document.createElement("span");
+        shouldBeSpan.appendChild(editableDiv.firstChild);
+        editableDiv.appendChild(shouldBeSpan);
+    }
+    return shouldBeSpan;
+}
+
 function reportSizeForSpan(span, comment)
 {
     var tableRow = addRow(table);
@@ -56,6 +67,7 @@ function testExecCommandFontSize(size, fontFamily)
 {
     editableDiv.innerHTML = "test";
     var sizedContent = setFontSizeOnContent(size);
+    sizedContent = wrapInSpanIfNeeded(sizedContent);
     if (fontFamily)
         sizedContent = setFontFamilyOnContent(fontFamily);
     var sizeString = (typeof(size) == "string") ? ("'" + size + "'") : size;

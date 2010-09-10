@@ -1,3 +1,17 @@
+2010-09-09  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, rolling out r67145.
+        http://trac.webkit.org/changeset/67145
+        https://bugs.webkit.org/show_bug.cgi?id=45431
+
+        broke editing/inserting/5994480-2.html on Chromium Linux
+
+        * css/CSSStyleSelector.h:
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::StyleChange::init):
+        (WebCore::StyleChange::extractTextStyles):
+        (WebCore::ApplyStyleCommand::removeImplicitlyStyledElement):
+
 2010-09-09  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
