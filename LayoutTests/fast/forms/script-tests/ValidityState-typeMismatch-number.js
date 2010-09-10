@@ -3,56 +3,66 @@ description('This test aims to check for typeMismatch flag with type=number inpu
 var i = document.createElement('input');
 i.type = 'number';
 
-function check(value, mismatchExpected)
+function check(value)
 {
     i.value = value;
-    var actual = i.validity.typeMismatch;
-    var didPass = actual == mismatchExpected;
-    var resultText = value + ' is ' + (didPass ? 'a correct ' : 'an incorrect ') + (actual ? 'invalid' : 'valid') + ' number.';
-    if (didPass)
+    var mismatch = i.validity.typeMismatch;
+    var resultText = '"' + value + '" is ' + (mismatch ? 'an invalid' : 'a valid') + ' number.';
+    if (!mismatch)
         testPassed(resultText);
     else
         testFailed(resultText);
 }
 
+function checkSanitization(value, expectedValue)
+{
+    i.value = value;
+    if (i.validity.typeMismatch) {
+        testFailed('"' + value + '" made typeMismatch true.');
+    } else if (i.value != expectedValue) {
+        testFailed('"' + value + '" was sanitized to "' + i.value + '". It should be ' + expectedValue);
+    } else {
+        testPassed('"' + value + '" was sanitized to "' + i.value + '".');
+    }
+}
+
 // Valid values
-check('0', false);
-check('10', false);
-check('01', false);
-check('-0', false);
-check('-1.2', false);
-check('1.2E10', false);
-check('1.2E-10', false);
-check('1.2E+10', false);
-check('12345678901234567890123456789012345678901234567890', false);
-check('0.12345678901234567890123456789012345678901234567890', false);
+check('0');
+check('10');
+check('01');
+check('-0');
+check('-1.2');
+check('1.2E10');
+check('1.2E-10');
+check('1.2E+10');
+check('12345678901234567890123456789012345678901234567890');
+check('0.12345678901234567890123456789012345678901234567890');
 
 // Invalid values
-check('abc', true);
-check('0xff', true);
+checkSanitization('abc', '');
+checkSanitization('0xff', '');
 
-check('+1', true);
-check(' 10', true);
-check('10 ', true);
-check('1,2', true);
-check('.2', true);
-check('1E', true);
-check('NaN', true);
-check('nan', true);
-check('Inf', true);
-check('inf', true);
-check('Infinity', true);
-check('infinity', true);
+checkSanitization('+1', '');
+checkSanitization(' 10', '');
+checkSanitization('10 ', '');
+checkSanitization('1,2', '');
+checkSanitization('.2', '');
+checkSanitization('1E', '');
+checkSanitization('NaN', '');
+checkSanitization('nan', '');
+checkSanitization('Inf', '');
+checkSanitization('inf', '');
+checkSanitization('Infinity', '');
+checkSanitization('infinity', '');
 
 // Assume empty string as valid.
-check('', false);
+check('');
 
-// The spec allows, but our implementation doesn't
 // Huge exponent.
-check('1.2E65535', true);
+checkSanitization('1.2E65535', '');
 
 // The spec doesn't allow, but our implementation does.
-check('1.', false);
-check('1.2e10', false);
+check('1.');
+check('1.2e10');
 
 var successfullyParsed = true;

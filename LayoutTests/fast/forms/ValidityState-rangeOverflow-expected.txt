@@ -63,7 +63,7 @@ PASS The value "99" doesn't overflow the maximum value "100".
 PASS The value "-101" doesn't overflow the maximum value "-100".
 PASS The value "99" doesn't overflow the maximum value "1E+2".
 PASS The value "0.99" doesn't overflow the maximum value "1.00".
-PASS The value "abc" doesn't overflow the maximum value "100".
+PASS The value "" doesn't overflow the maximum value "100".
 PASS The value "" doesn't overflow the maximum value "-1".
 PASS The value "101" doesn't overflow the maximum value "".
 PASS The value "101" doesn't overflow the maximum value "xxx".

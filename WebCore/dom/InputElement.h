@@ -60,6 +60,8 @@ public:
     virtual void setValue(const String&, bool sendChangeEvent = false) = 0;
     virtual void setValueForUser(const String&) = 0;
 
+    // Returns true if the specified string can be set as the value of InputElement.
+    virtual bool isAcceptableValue(const String&) const = 0;
     virtual String sanitizeValue(const String&) const = 0;
     virtual void setValueFromRenderer(const String&) = 0;
 

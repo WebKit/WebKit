@@ -1,3 +1,18 @@
+2010-09-09  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        <input type=number> should not have an invalid number as its value
+        https://bugs.webkit.org/show_bug.cgi?id=43973
+
+        * fast/forms/ValidityState-rangeOverflow-expected.txt:
+        * fast/forms/ValidityState-rangeUnderflow-expected.txt:
+        * fast/forms/ValidityState-typeMismatch-number-expected.txt:
+        * fast/forms/input-number-commit-valid-only-expected.txt: Added.
+        * fast/forms/input-number-commit-valid-only.html: Added.
+        * fast/forms/script-tests/ValidityState-typeMismatch-number.js:
+        * fast/forms/script-tests/input-number-commit-valid-only.js: Added.
+
 2010-09-09  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Adam Barth.

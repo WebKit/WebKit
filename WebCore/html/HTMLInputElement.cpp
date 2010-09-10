@@ -260,7 +260,8 @@ bool HTMLInputElement::typeMismatch(const String& value) const
     case COLOR:
         return !isValidColorString(value);
     case NUMBER:
-        return !parseToDoubleForNumberType(value, 0);
+        ASSERT(parseToDoubleForNumberType(value, 0));
+        return false;
     case URL:
         return !KURL(KURL(), value).isValid();
     case EMAIL: {
@@ -827,6 +828,8 @@ void HTMLInputElement::handleFocusEvent()
 
 void HTMLInputElement::handleBlurEvent()
 {
+    // Reset the renderer value, which might be unmatched with the element value.
+    setFormControlValueMatchesRenderer(false);
     InputElement::dispatchBlurEvent(this, this);
 }
 
@@ -2664,8 +2667,18 @@ FileList* HTMLInputElement::files()
     return m_fileList.get();
 }
 
+bool HTMLInputElement::isAcceptableValue(const String& proposedValue) const
+{
+    if (inputType() != NUMBER)
+        return true;
+    return proposedValue.isEmpty() || parseToDoubleForNumberType(proposedValue, 0);
+}
+
 String HTMLInputElement::sanitizeValue(const String& proposedValue) const
 {
+    if (inputType() == NUMBER)
+        return parseToDoubleForNumberType(proposedValue, 0) ? proposedValue : String();
+
     if (isTextField())
         return InputElement::sanitizeValueForTextField(this, proposedValue);
 

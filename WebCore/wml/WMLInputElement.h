@@ -82,6 +82,7 @@ public:
     virtual void defaultEventHandler(Event*);
     virtual void cacheSelection(int start, int end);
 
+    virtual bool isAcceptableValue(const String&) const { return true; }
     virtual String sanitizeValue(const String& proposedValue) const { return constrainValue(proposedValue); }
 
     virtual void documentDidBecomeActive();

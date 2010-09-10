@@ -3,34 +3,34 @@ This test aims to check for typeMismatch flag with type=number input fields
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS 0 is a correct valid number.
-PASS 10 is a correct valid number.
-PASS 01 is a correct valid number.
-PASS -0 is a correct valid number.
-PASS -1.2 is a correct valid number.
-PASS 1.2E10 is a correct valid number.
-PASS 1.2E-10 is a correct valid number.
-PASS 1.2E+10 is a correct valid number.
-PASS 12345678901234567890123456789012345678901234567890 is a correct valid number.
-PASS 0.12345678901234567890123456789012345678901234567890 is a correct valid number.
-PASS abc is a correct invalid number.
-PASS 0xff is a correct invalid number.
-PASS +1 is a correct invalid number.
-PASS  10 is a correct invalid number.
-PASS 10  is a correct invalid number.
-PASS 1,2 is a correct invalid number.
-PASS .2 is a correct invalid number.
-PASS 1E is a correct invalid number.
-PASS NaN is a correct invalid number.
-PASS nan is a correct invalid number.
-PASS Inf is a correct invalid number.
-PASS inf is a correct invalid number.
-PASS Infinity is a correct invalid number.
-PASS infinity is a correct invalid number.
-PASS  is a correct valid number.
-PASS 1.2E65535 is a correct invalid number.
-PASS 1. is a correct valid number.
-PASS 1.2e10 is a correct valid number.
+PASS "0" is a valid number.
+PASS "10" is a valid number.
+PASS "01" is a valid number.
+PASS "-0" is a valid number.
+PASS "-1.2" is a valid number.
+PASS "1.2E10" is a valid number.
+PASS "1.2E-10" is a valid number.
+PASS "1.2E+10" is a valid number.
+PASS "12345678901234567890123456789012345678901234567890" is a valid number.
+PASS "0.12345678901234567890123456789012345678901234567890" is a valid number.
+PASS "abc" was sanitized to "".
+PASS "0xff" was sanitized to "".
+PASS "+1" was sanitized to "".
+PASS " 10" was sanitized to "".
+PASS "10 " was sanitized to "".
+PASS "1,2" was sanitized to "".
+PASS ".2" was sanitized to "".
+PASS "1E" was sanitized to "".
+PASS "NaN" was sanitized to "".
+PASS "nan" was sanitized to "".
+PASS "Inf" was sanitized to "".
+PASS "inf" was sanitized to "".
+PASS "Infinity" was sanitized to "".
+PASS "infinity" was sanitized to "".
+PASS "" is a valid number.
+PASS "1.2E65535" was sanitized to "".
+PASS "1." is a valid number.
+PASS "1.2e10" is a valid number.
 PASS successfullyParsed is true
 
 TEST COMPLETE

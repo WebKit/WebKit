@@ -1,3 +1,41 @@
+2010-09-09  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        <input type=number> should not have an invalid number as its value
+        https://bugs.webkit.org/show_bug.cgi?id=43973
+
+        This change implements the value sanitization algorithm for
+        type=number, and remove validity.typeMismatch support for
+        type=number in order to improve HTML5 conformance.
+
+        HTMLInputElement::value for type=number always has a valid number
+        string or an empty string. However, the input field for it, a
+        RenderTextControlSingleLine, can have a non-number string. For
+        example, '-' is a non-number string, but a user needs to type
+        '-'. So, the string in the input field has never been committed to
+        HTMLInputElement until the string becomes a valid number string.
+
+        This change is also a preparation of supporting localized
+        numbers. A localized string in the input field would not be
+        matched with HTMLInputElement::value.
+
+        Test: fast/forms/input-number-commit-valid-only.html
+
+        * dom/InputElement.h: Add isCommittableValue()
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::handleBlurEvent):
+         Set formControlValueMatchesRenderer false to clean an invalid value in the renderer.
+        (WebCore::HTMLInputElement::isCommittableValue):
+        (WebCore::HTMLInputElement::sanitizeValue):
+        * html/HTMLInputElement.h:
+        * html/ValidityState.cpp:
+        (WebCore::ValidityState::typeMismatch): Always returns false for type=number.
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::subtreeHasChanged):
+        * wml/WMLInputElement.h:
+        (WebCore::WMLInputElement::isCommittableValue):
+
 2010-09-09  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Adam Barth.

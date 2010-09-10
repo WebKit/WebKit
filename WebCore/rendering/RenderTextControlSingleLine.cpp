@@ -170,7 +170,9 @@ void RenderTextControlSingleLine::subtreeHasChanged()
     // InputElement::handleBeforeTextInsertedEvent() has already called
     // sanitizeUserInputValue().
     // sanitizeValue() is needed because IME input doesn't dispatch BeforeTextInsertedEvent.
-    input->setValueFromRenderer(input->sanitizeValue(text()));
+    String value = text();
+    if (input->isAcceptableValue(value))
+        input->setValueFromRenderer(input->sanitizeValue(value));
 
     if (m_cancelButton)
         updateCancelButtonVisibility();
