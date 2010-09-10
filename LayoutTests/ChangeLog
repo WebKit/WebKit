@@ -1,3 +1,13 @@
+2010-09-10  Cris Neckar  <cdn@chromium.org>
+
+        Reviewed by Chris Fleizach.
+
+        Test for null deref in RenderBlock::findNextLineBreak().
+        https://bugs.webkit.org/show_bug.cgi?id=45350
+
+        * fast/dom/firstline-fixed-crash-expected.txt: Added.
+        * fast/dom/firstline-fixed-crash.html: Added.
+
 2010-09-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Dimitri Glazkov.
