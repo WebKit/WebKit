@@ -2429,7 +2429,8 @@ contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
     
         win32-* {
             INCLUDEPATH += $$PWD/plugins/win \
-                           $$PWD/platform/win
+                           $$PWD/platform/win \
+                           $$PWD/platform/graphics/win
     
             SOURCES += plugins/win/PluginDatabaseWin.cpp \
                        plugins/win/PluginPackageWin.cpp \
