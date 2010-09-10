@@ -1,3 +1,11 @@
+2010-09-10  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Eric Carlson.
+
+        Skip a few media tests that started randomly failing after r66961
+
+        * platform/mac-leopard/Skipped:
+
 2010-09-10  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Fix wrong gtk baseline for select-x-list-1.svg.

@@ -91,3 +91,12 @@ fast/text/hyphenate-locale.html
 # as well as presumably other leopard installs.
 # See https://bugs.webkit.org/show_bug.cgi?id=35271
 http/tests/media/video-seekable-stall.html
+
+# Disable tests which started failing after r66961
+# Failures look like an underlying platform issue
+# https://bugs.webkit.org/show_bug.cgi?id=45546
+media/video-width-height.html
+media/video-autoplay.html
+media/video-aspect-ratio.html
+media/video-play-pause-events.html
+media/video-width-height.html
