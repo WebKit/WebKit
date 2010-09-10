@@ -1,3 +1,16 @@
+2010-09-10  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        SVGGElement::rendererIsNeeded should return false when parent isn't SVG
+        https://bugs.webkit.org/show_bug.cgi?id=45562
+
+        Test: svg/custom/g-outside-svg.html
+
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::rendererIsNeeded):
+        * svg/SVGGElement.h:
+
 2010-09-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

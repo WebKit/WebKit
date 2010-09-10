@@ -91,6 +91,11 @@ RenderObject* SVGGElement::createRenderer(RenderArena* arena, RenderStyle* style
     return new (arena) RenderSVGTransformableContainer(this);
 }
 
+bool SVGGElement::rendererIsNeeded(RenderStyle*)
+{
+    return parentNode() && parentNode()->isSVGElement(); 
+}
+
 }
 
 #endif // ENABLE(SVG)

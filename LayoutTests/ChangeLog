@@ -1,3 +1,13 @@
+2010-09-10  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        SVGGElement::rendererIsNeeded should return false when parent isn't SVG
+        https://bugs.webkit.org/show_bug.cgi?id=45562
+
+        * svg/custom/g-outside-svg-expected.txt: Added.
+        * svg/custom/g-outside-svg.html: Added.
+
 2010-09-10  Jian Li  <jianli@chromium.org>
 
         Skip file api tests for workers that could crash occasionally before
