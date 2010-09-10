@@ -2679,7 +2679,7 @@ BUG46872 : fast/preloader/image.html = PASS
 BUG46872 : fast/preloader/link.html = PASS
 BUG46872 : fast/preloader/noscript.html = PASS
 BUG46872 : fast/preloader/style.html = PASS
-BUG46872 : fast/dom/HTMLLinkElement/prefetch.html = TIMEOUT
+BUG46872 MAC LINUX : fast/dom/HTMLLinkElement/prefetch.html = TEXT
 
 BUG47035 WIN DEBUG : fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.html = PASS TEXT
 
@@ -3150,3 +3150,6 @@ BUGWK45512 WIN : animations/fill-mode.html = TEXT
 
 //  Added in r67084
 BUGWK45513 WIN : inspector/extensions-resources.html = TIMEOUT
+
+// Regressions from webkit roll from to r67171 (need triaging)
+BUGDIRK : media/media-can-play-mpeg4-video.html = TEXT
