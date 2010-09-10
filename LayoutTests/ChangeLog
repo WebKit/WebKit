@@ -1,3 +1,9 @@
+2010-09-09  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -3058,7 +3058,7 @@ BUG53131 LINUX : fast/js/array-iterate-backwards.html = CRASH PASS
 // new or failing since WebKit rev. 65740:65800
 BUG21852 MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html = TEXT
 BUG53073 DEBUG : storage/change-version.html = CRASH PASS
-BUG53073 LINUX : svg/custom/clip-path-units-changes.svg = TEXT
+BUG53073 LINUX : svg/custom/clip-path-units-changes.svg = TEXT PASS
 
 // Failing after r66144
 BUG53546 LINUX : userscripts/user-script-audio-document.html = TEXT
@@ -3141,3 +3141,9 @@ BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-svgdom-eleva
 
 // Introduced in Chromium r58994
 BUGWK45506 LINUX : fast/preloader/script.html = TEXT
+
+// Regressed in webkit r67098
+BUGWK45512 WIN : animations/fill-mode-missing-from-to-keyframes.html = TEXT
+BUGWK45512 WIN : animations/fill-mode-multiple-keyframes.html = TEXT
+BUGWK45512 WIN : animations/fill-mode-transform.html = TEXT
+BUGWK45512 WIN : animations/fill-mode.html = TEXT
