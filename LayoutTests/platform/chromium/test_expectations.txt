@@ -2631,8 +2631,8 @@ BUGWK39105 : editing/spelling/context-menu-suggestions.html = TEXT
 BUG44229 WIN LINUX : fast/loader/recursive-before-unload-crash.html = PASS TEXT
 
 // DeviceOrientation API not yet implemented.
-BUG44654 SKIP : fast/dom/DeviceOrientation = TEXT
-BUG44654 SKIP : fast/dom/Window/window-properties-device-orientation.html = TEXT
+BUG44654 : fast/dom/DeviceOrientation/window-property.html = TEXT
+BUG44654 : fast/dom/Window/window-properties-device-orientation.html = TEXT
 
 BUGWK39655 : fast/dom/prototype-property.html = FAIL
 
