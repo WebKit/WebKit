@@ -1,3 +1,9 @@
+2010-09-10  Jian Li  <jianli@chromium.org>
+
+        Update mac/Skipped to include the bug numbers for newly added skip entries.
+
+        * platform/mac/Skipped:
+
 2010-09-10  Mike Lawther  <mikelawther@chromium.org>
 
         Reviewed by Ojan Vafai.
