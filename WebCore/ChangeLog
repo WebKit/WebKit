@@ -1,5 +1,11 @@
 2010-09-09  Kinuko Yasuda  <kinuko@chromium.org>
 
+        Unreviewed, Windows build fix.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
+2010-09-09  Kinuko Yasuda  <kinuko@chromium.org>
+
         Reviewed by Jian Li.
 
         [FileSystem] Add File and FileWriter accessor methods in FileEntry

@@ -37449,10 +37449,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\fileapi\FileWriterCallback.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\fileapi\FileWriterCallback.h"
 				>
 			</File>
