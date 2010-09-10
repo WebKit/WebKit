@@ -1,3 +1,9 @@
+2010-09-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Re-enable some Windows compositing tests that no longer assert.
+
+        * platform/win/Skipped:
+
 2010-09-10  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Darin Adler.

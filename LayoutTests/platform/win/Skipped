@@ -719,16 +719,6 @@ fast/history/nested-visited-test.html
 fast/history/self-is-visited.html
 fast/history/sibling-visited-test.html
 
-# ACCELERATED_COMPOSITING tests that crash
-compositing/layers-inside-overflow-scroll.html
-compositing/self-painting-layers.html
-compositing/geometry/clipped-video-controller.html
-compositing/geometry/video-fixed-scrolling.html
-compositing/geometry/video-opacity-overlay.html
-compositing/overflow/scroll-ancestor-update.html
-compositing/reflections/load-video-in-reflection.html
-compositing/video/video-background-color.html
-
 # ACCELERATED_COMPOSITING tests that have incorrect layout
 compositing/webgl/webgl-background-color.html
 compositing/webgl/webgl-reflection.html
