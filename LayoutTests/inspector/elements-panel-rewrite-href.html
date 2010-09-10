@@ -37,7 +37,7 @@ function frontend_testRewriteHrefsContinuation(testController)
         var node = innerMapping[nodeId];
         if (node.nodeName === "LINK" || node.nodeName === "SCRIPT") {
             var segments = [];
-            var href = WebInspector.ElementsTreeElement.prototype._rewriteAttrHref(node, node.getAttribute("src") || node.getAttribute("href"));
+            var href = WebInspector.resourceURLForRelatedNode(node, node.getAttribute("src") || node.getAttribute("href"));
             if (!href) {
                 segments.push("<empty>");
                 continue;
