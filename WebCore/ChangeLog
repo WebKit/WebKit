@@ -1,3 +1,16 @@
+2010-09-09  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Chromium mac build should exclude all Skia files in platform/graphics/skia/, not just some
+        https://bugs.webkit.org/show_bug.cgi?id=45516
+
+        This excludes platform/graphics/skia/*Skia.(h|cpp) by pattern instead of individual files.
+        None of these files should be compiled into the Chromium mac build and the old file list had
+        both omissions and stale entries.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2010-09-09  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, rolling out r67145.

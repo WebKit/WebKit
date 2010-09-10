@@ -1212,6 +1212,9 @@
             ['include', 'platform/Theme\\.cpp$'],
 
             ['include', 'WebKit/mac/WebCoreSupport/WebSystemInterface\\.mm$'],
+
+            # Chromium Mac does not use skia.
+            ['exclude', 'platform/graphics/skia/[^/]*Skia\\.(cpp|h)$'],
           ],
           'sources!': [
             # The Mac uses platform/mac/KillRingMac.mm instead of the dummy
@@ -1229,22 +1232,6 @@
             # The Mac uses ImageSourceCG.cpp from platform/graphics/cg, included
             # by regex above, instead.
             '../platform/graphics/ImageSource.cpp',
-
-            # These Skia files aren't currently built on the Mac, which uses
-            # CoreGraphics directly for this portion of graphics handling.
-            '../platform/graphics/skia/FloatPointSkia.cpp',
-            '../platform/graphics/skia/FloatRectSkia.cpp',
-            '../platform/graphics/skia/GradientSkia.cpp',
-            '../platform/graphics/skia/GraphicsContext3DSkia.cpp',
-            '../platform/graphics/skia/GraphicsContextSkia.cpp',
-            '../platform/graphics/skia/ImageBufferSkia.cpp',
-            '../platform/graphics/skia/ImageSkia.cpp',
-            '../platform/graphics/skia/ImageSourceSkia.cpp',
-            '../platform/graphics/skia/IntPointSkia.cpp',
-            '../platform/graphics/skia/IntRectSkia.cpp',
-            '../platform/graphics/skia/PathSkia.cpp',
-            '../platform/graphics/skia/PatternSkia.cpp',
-            '../platform/graphics/skia/TransformationMatrixSkia.cpp',
 
             # RenderThemeChromiumSkia is not used on mac since RenderThemeChromiumMac
             # does not reference the Skia code that is used by Windows and Linux.
