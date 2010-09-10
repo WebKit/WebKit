@@ -1,3 +1,17 @@
+2010-09-10  Adam Roben  <aroben@apple.com>
+
+        Don't crash when a frame is destroyed after the UI process has
+        disconnected
+
+        Fixes <http://webkit.org/b/45535> <rdar://problem/8412928> Crash in
+        WebProcess::removeWebFrame on exit with WebKit2 (Release builds only)
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::removeWebFrame): Null-check m_connection before
+        dereferencing it.
+
 2010-09-09  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Adam Roben.

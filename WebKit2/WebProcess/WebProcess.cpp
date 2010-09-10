@@ -392,6 +392,12 @@ void WebProcess::addWebFrame(uint64_t frameID, WebFrame* frame)
 void WebProcess::removeWebFrame(uint64_t frameID)
 {
     m_frameMap.remove(frameID);
+
+    // We can end up here after our connection has closed when WebCore's frame life-support timer
+    // fires when the application is shutting down. There's no need (and no way) to update the UI
+    // process in this case.
+    if (!m_connection)
+        return;
     m_connection->send(WebProcessProxyMessage::DidDestroyFrame, 0, CoreIPC::In(frameID));
 }
 
