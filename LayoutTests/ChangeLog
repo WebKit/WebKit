@@ -1,3 +1,12 @@
+2010-09-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed.
+
+        Added editing/selection/doubleclick-inline-first-last-contenteditable.html to the qt's skipped list.
+        See https://bugs.webkit.org/show_bug.cgi?id=45525 for the detail.
+
+        * platform/qt/Skipped:
+
 2010-09-10  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, rolling out r67178.
