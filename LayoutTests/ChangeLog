@@ -1,3 +1,31 @@
+2010-09-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION: applying new font size causes font-size outside selection to change
+        https://bugs.webkit.org/show_bug.cgi?id=45026
+
+        Added a test to apply font-size and font-family on various markups.
+
+        * editing/deleting/delete-br-012-expected.txt: Conflicting font and span elements are merged into one font element.
+        * editing/inserting/5994480-2-expected.txt: Removed redundant size attribute from font element.
+        * editing/deleting/delete-select-all-001-expected.txt: Style spans are replaced by font elements.
+        * editing/style/block-style-004-expected.txt: Ditto.
+        * editing/style/block-style-005-expected.txt: Ditto.
+        * editing/style/block-style-006-expected.txt: Ditto.
+        * editing/style/fontsize-1-expected.txt: Ditto.
+        * editing/execCommand/query-font-size-expected.txt: Ditto; also fixed the test not to add extraneous spans.
+        * editing/style/push-down-font-styles-expected.txt: Added.
+        * editing/style/push-down-font-styles.html: Added.
+        * editing/style/script-tests/push-down-font-styles.js: Added.
+        (testSingleToggle):
+        (selectAll):
+        (selectTest):
+        (selectFirstWord):
+        (selectSecondWord):
+        (selectLastTwoWords):
+        * platform/chromium-win/editing/inserting/5994480-2-expected.txt: Removed extraneous span.
+
 2010-09-09  James Kozianski  <koz@chromium.org>
 
         Reviewed by Ojan Vafai.

@@ -31,11 +31,13 @@
 #include "CSSParser.h"
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
+#include "CSSStyleSelector.h"
 #include "CSSValueKeywords.h"
 #include "Document.h"
 #include "Editor.h"
 #include "Frame.h"
 #include "HTMLElement.h"
+#include "HTMLFontElement.h"
 #include "HTMLInterchange.h"
 #include "HTMLNames.h"
 #include "NodeList.h"
@@ -110,7 +112,7 @@ public:
 private:
     void init(PassRefPtr<CSSStyleDeclaration>, const Position&);
     void reconcileTextDecorationProperties(CSSMutableStyleDeclaration*);
-    void extractTextStyles(CSSMutableStyleDeclaration*);
+    void extractTextStyles(Document*, CSSMutableStyleDeclaration*, bool shouldUseFixedFontDefautlSize);
 
     String m_cssStyle;
     bool m_applyBold;
@@ -147,7 +149,7 @@ void StyleChange::init(PassRefPtr<CSSStyleDeclaration> style, const Position& po
 
     reconcileTextDecorationProperties(mutableStyle.get());
     if (!document->frame()->editor()->shouldStyleWithCSS())
-        extractTextStyles(mutableStyle.get());
+        extractTextStyles(document, mutableStyle.get(), computedStyle->useFixedFontDefaultSize());
 
     // Changing the whitespace style in a tab span would collapse the tab into a space.
     if (isTabSpanTextNode(position.node()) || isTabSpanNode((position.node())))
@@ -202,7 +204,7 @@ static void setTextDecorationProperty(CSSMutableStyleDeclaration* style, const C
     }
 }
 
-void StyleChange::extractTextStyles(CSSMutableStyleDeclaration* style)
+void StyleChange::extractTextStyles(Document* document, CSSMutableStyleDeclaration* style, bool shouldUseFixedFontDefautlSize)
 {
     ASSERT(style);
 
@@ -259,28 +261,18 @@ void StyleChange::extractTextStyles(CSSMutableStyleDeclaration* style)
             style->removeProperty(CSSPropertyFontSize); // Can't make sense of the number. Put no font size.
         else {
             CSSPrimitiveValue* value = static_cast<CSSPrimitiveValue*>(fontSize.get());
-
-            // Only accept absolute scale
             if (value->primitiveType() >= CSSPrimitiveValue::CSS_PX && value->primitiveType() <= CSSPrimitiveValue::CSS_PC) {
-                float number = value->getFloatValue(CSSPrimitiveValue::CSS_PX);
-                if (number <= 9)
-                    m_applyFontSize = "1";
-                else if (number <= 10)
-                    m_applyFontSize = "2";
-                else if (number <= 13)
-                    m_applyFontSize = "3";
-                else if (number <= 16)
-                    m_applyFontSize = "4";
-                else if (number <= 18)
-                    m_applyFontSize = "5";
-                else if (number <= 24)
-                    m_applyFontSize = "6";
-                else
-                    m_applyFontSize = "7";
+                int pixelFontSize = value->getFloatValue(CSSPrimitiveValue::CSS_PX);
+                int legacyFontSize = CSSStyleSelector::legacyFontSize(document, pixelFontSize, shouldUseFixedFontDefautlSize);
+                // Use legacy font size only if pixel value matches exactly to that of legacy font size.
+                if (CSSStyleSelector::fontSizeForKeyword(document, legacyFontSize - 1 + CSSValueXSmall, shouldUseFixedFontDefautlSize) == pixelFontSize) {
+                    m_applyFontSize = String::number(legacyFontSize);
+                    style->removeProperty(CSSPropertyFontSize);
+                }
+            } else if (CSSValueXSmall <= value->getIdent() && value->getIdent() <= CSSValueWebkitXxxLarge) {
+                m_applyFontSize = String::number(value->getIdent() - CSSValueXSmall + 1);
+                style->removeProperty(CSSPropertyFontSize);
             }
-            // Huge quirk in Microsoft Entourage is that they understand CSS font-size, but also write 
-            // out legacy 1-7 values in font tags (I guess for mailers that are not CSS-savvy at all, 
-            // like Eudora). Yes, they write out *both*. We need to write out both as well.
         }
     }
 }
@@ -1158,33 +1150,52 @@ struct HTMLEquivalent {
     int primitiveId;
     const QualifiedName* element;
     const QualifiedName* attribute;
+    PassRefPtr<CSSValue> (*attributeToCSSValue)(int propertyID, const String&);
     EPushDownType pushDownType;
 };
 
+static PassRefPtr<CSSValue> stringToCSSValue(int propertyID, const String& value)
+{
+    RefPtr<CSSMutableStyleDeclaration> dummyStyle;
+    dummyStyle = CSSMutableStyleDeclaration::create();
+    dummyStyle->setProperty(propertyID, value);
+    return dummyStyle->getPropertyCSSValue(propertyID);
+}
+
+static PassRefPtr<CSSValue> fontSizeToCSSValue(int propertyID, const String& value)
+{
+    UNUSED_PARAM(propertyID);
+    ASSERT(propertyID == CSSPropertyFontSize);
+    int size;
+    if (!HTMLFontElement::cssValueFromFontSizeNumber(value, size))
+        return 0;
+    return CSSPrimitiveValue::createIdentifier(size);
+}
+
 static const HTMLEquivalent HTMLEquivalents[] = {
-    { CSSPropertyFontWeight, false, CSSValueBold, &bTag, 0, ShouldBePushedDown },
-    { CSSPropertyFontWeight, false, CSSValueBold, &strongTag, 0, ShouldBePushedDown },
-    { CSSPropertyVerticalAlign, false, CSSValueSub, &subTag, 0, ShouldBePushedDown },
-    { CSSPropertyVerticalAlign, false, CSSValueSuper, &supTag, 0, ShouldBePushedDown },
-    { CSSPropertyFontStyle, false, CSSValueItalic, &iTag, 0, ShouldBePushedDown },
-    { CSSPropertyFontStyle, false, CSSValueItalic, &emTag, 0, ShouldBePushedDown },
+    { CSSPropertyFontWeight, false, CSSValueBold, &bTag, 0, 0, ShouldBePushedDown },
+    { CSSPropertyFontWeight, false, CSSValueBold, &strongTag, 0, 0, ShouldBePushedDown },
+    { CSSPropertyVerticalAlign, false, CSSValueSub, &subTag, 0, 0, ShouldBePushedDown },
+    { CSSPropertyVerticalAlign, false, CSSValueSuper, &supTag, 0, 0, ShouldBePushedDown },
+    { CSSPropertyFontStyle, false, CSSValueItalic, &iTag, 0, 0, ShouldBePushedDown },
+    { CSSPropertyFontStyle, false, CSSValueItalic, &emTag, 0, 0, ShouldBePushedDown },
 
     // text-decorations should be CSSValueList
-    { CSSPropertyTextDecoration, true, CSSValueUnderline, &uTag, 0, ShouldBePushedDown },
-    { CSSPropertyTextDecoration, true, CSSValueLineThrough, &sTag, 0, ShouldBePushedDown },
-    { CSSPropertyTextDecoration, true, CSSValueLineThrough, &strikeTag, 0, ShouldBePushedDown },
-    { CSSPropertyWebkitTextDecorationsInEffect, true, CSSValueUnderline, &uTag, 0, ShouldBePushedDown },
-    { CSSPropertyWebkitTextDecorationsInEffect, true, CSSValueLineThrough, &sTag, 0, ShouldBePushedDown },
-    { CSSPropertyWebkitTextDecorationsInEffect, true, CSSValueLineThrough, &strikeTag, 0, ShouldBePushedDown },
+    { CSSPropertyTextDecoration, true, CSSValueUnderline, &uTag, 0, 0, ShouldBePushedDown },
+    { CSSPropertyTextDecoration, true, CSSValueLineThrough, &sTag, 0, 0, ShouldBePushedDown },
+    { CSSPropertyTextDecoration, true, CSSValueLineThrough, &strikeTag, 0, 0, ShouldBePushedDown },
+    { CSSPropertyWebkitTextDecorationsInEffect, true, CSSValueUnderline, &uTag, 0, 0, ShouldBePushedDown },
+    { CSSPropertyWebkitTextDecorationsInEffect, true, CSSValueLineThrough, &sTag, 0, 0, ShouldBePushedDown },
+    { CSSPropertyWebkitTextDecorationsInEffect, true, CSSValueLineThrough, &strikeTag, 0, 0, ShouldBePushedDown },
 
     // FIXME: font attributes should only be removed if values were different
-    { CSSPropertyColor, false, CSSValueInvalid, &fontTag, &colorAttr, ShouldBePushedDown },
-    { CSSPropertyFontFamily, false, CSSValueInvalid, &fontTag, &faceAttr, ShouldBePushedDown },
-    { CSSPropertyFontSize, false, CSSValueInvalid, &fontTag, &sizeAttr, ShouldBePushedDown },
+    { CSSPropertyColor, false, CSSValueInvalid, &fontTag, &colorAttr, stringToCSSValue, ShouldBePushedDown },
+    { CSSPropertyFontFamily, false, CSSValueInvalid, &fontTag, &faceAttr, stringToCSSValue, ShouldBePushedDown },
+    { CSSPropertyFontSize, false, CSSValueInvalid, &fontTag, &sizeAttr, fontSizeToCSSValue, ShouldBePushedDown },
 
     // unicode-bidi and direction are pushed down separately so don't push down with other styles.
-    { CSSPropertyUnicodeBidi, false, CSSValueInvalid, 0, &dirAttr, ShouldNotBePushedDown },
-    { CSSPropertyDirection, false, CSSValueInvalid, 0, &dirAttr, ShouldNotBePushedDown },
+    { CSSPropertyDirection, false, CSSValueInvalid, 0, &dirAttr, stringToCSSValue, ShouldNotBePushedDown },
+    { CSSPropertyUnicodeBidi, false, CSSValueInvalid, 0, &dirAttr, stringToCSSValue, ShouldNotBePushedDown },
 };
 
 bool ApplyStyleCommand::removeImplicitlyStyledElement(CSSMutableStyleDeclaration* style, HTMLElement* element, InlineStyleRemovalMode mode, CSSMutableStyleDeclaration* extractedStyle)
@@ -1203,19 +1214,19 @@ bool ApplyStyleCommand::removeImplicitlyStyledElement(CSSMutableStyleDeclaration
         RefPtr<CSSValue> styleValue = style->getPropertyCSSValue(equivalent.propertyID);
         if (!styleValue)
             continue;
-        RefPtr<CSSPrimitiveValue> mapValue = CSSPrimitiveValue::createIdentifier(equivalent.primitiveId);
+        RefPtr<CSSValue> mapValue;
+        if (equivalent.attribute)
+            mapValue = equivalent.attributeToCSSValue(equivalent.propertyID, element->getAttribute(*equivalent.attribute));
+        else
+            mapValue = CSSPrimitiveValue::createIdentifier(equivalent.primitiveId).get();
 
         if (equivalent.isValueList && styleValue->isValueList() && static_cast<CSSValueList*>(styleValue.get())->hasValue(mapValue.get()))
             continue; // If CSS value assumes CSSValueList, then only skip if the value was present in style to apply.
-        else if (styleValue->cssText() == mapValue->cssText())
+        else if (mapValue && styleValue->cssText() == mapValue->cssText())
             continue; // If CSS value is primitive, then skip if they are equal.
 
-        if (extractedStyle) {
-            if (equivalent.primitiveId == CSSValueInvalid)
-                extractedStyle->setProperty(equivalent.propertyID, element->getAttribute(*equivalent.attribute));
-            else
-                extractedStyle->setProperty(equivalent.propertyID, mapValue->cssText());
-        }
+        if (extractedStyle)
+            extractedStyle->setProperty(equivalent.propertyID, mapValue->cssText());
 
         if (mode == RemoveNone)
             return true;

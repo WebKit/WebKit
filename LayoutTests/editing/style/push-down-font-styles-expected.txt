@@ -1,0 +1,48 @@
+Test to make sure we push down inline styles properly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Font size
+PASS fontsize 2 on all of "hello world" yields "<font class="Apple-style-span" size="2">hello world</font>"
+PASS fontsize 4 on all of "hello world" yields "<font class="Apple-style-span" size="4">hello world</font>"
+PASS fontsize 5 on first word of "hello world" yields "<font class="Apple-style-span" size="5">hello</font> world"
+PASS fontsize 3 on first word of "<font size="7">hello <div>world</div></font>" yields "hello <div style="font-size: -webkit-xxx-large; ">world</div>"
+PASS fontsize 3 on first word of "<font size="7"><div>hello</div><div>world</div></font>" yields "<div>hello</div><div style="font-size: -webkit-xxx-large; ">world</div>"
+PASS fontsize 3 on second word of "<font size="7"><div>hello</div>world</font>" yields "<div style="font-size: -webkit-xxx-large; ">hello</div>world"
+PASS fontsize 7 on all of "<font size="7"><div>hello</div>world</font>" yields "<font size="7"><div>hello</div>world</font>"
+PASS fontsize 7 on all of "<font size="3"><div>hello</div>world</font>" yields "<div><font class="Apple-style-span" size="7">hello</font></div><font class="Apple-style-span" size="7">world</font>"
+PASS fontsize 6 on all of "<font size="7"><div>hello</div>world</font>" yields "<div><font class="Apple-style-span" size="6">hello</font></div><font class="Apple-style-span" size="6">world</font>"
+PASS fontsize 5 on all of "<font size="7"><div>hello</div>world</font>" yields "<div><font class="Apple-style-span" size="5">hello</font></div><font class="Apple-style-span" size="5">world</font>"
+PASS fontsize 3 on all of "<font size="7"><div>hello</div>world</font>" yields "<div>hello</div>world"
+PASS fontsize 3 on all of "<font size="3"><div>hello</div>world</font>" yields "<font size="3"><div>hello</div>world</font>"
+PASS fontsize 1 on all of "<font size="3"><div>hello</div>world</font>" yields "<div><font class="Apple-style-span" size="1">hello</font></div><font class="Apple-style-span" size="1">world</font>"
+
+Font size (with CSS)
+PASS fontsize 7 on all of "<font size="7"><div>hello</div>world</font>" yields "<font size="7"><div>hello</div>world</font>"
+PASS fontsize 7 on all of "<font size="3"><div>hello</div>world</font>" yields "<div><span class="Apple-style-span" style="font-size: -webkit-xxx-large;">hello</span></div><span class="Apple-style-span" style="font-size: -webkit-xxx-large;">world</span>"
+PASS fontsize 6 on all of "<font size="7"><div>hello</div>world</font>" yields "<div><span class="Apple-style-span" style="font-size: xx-large;">hello</span></div><span class="Apple-style-span" style="font-size: xx-large;">world</span>"
+PASS fontsize 5 on all of "<font size="7"><div>hello</div>world</font>" yields "<div><span class="Apple-style-span" style="font-size: x-large;">hello</span></div><span class="Apple-style-span" style="font-size: x-large;">world</span>"
+PASS fontsize 3 on all of "<font size="7"><div>hello</div>world</font>" yields "<div>hello</div>world"
+PASS fontsize 3 on all of "<font size="3"><div>hello</div>world</font>" yields "<font size="3"><div>hello</div>world</font>"
+PASS fontsize 1 on all of "<font size="3"><div>hello</div>world</font>" yields "<div><span class="Apple-style-span" style="font-size: x-small;">hello</span></div><span class="Apple-style-span" style="font-size: x-small;">world</span>"
+
+Font family
+PASS fontname Arial on all of "hello world" yields "<font class="Apple-style-span" face="Arial">hello world</font>"
+PASS fontname Arial on first word of "<font face="sans-serif">hello world</font>" yields "<font class="Apple-style-span" face="Arial">hello</font><font face="sans-serif"> world</font>"
+PASS fontname Arial on first word of "<font face="sans-serif">hello<div>world</div></font>" yields "<font class="Apple-style-span" face="Arial">hello</font><div style="font-family: sans-serif; ">world</div>"
+PASS fontname Arial on second word of "<font face="sans-serif">hello<div>world</div></font>" yields "<font class="Apple-style-span" face="sans-serif">hello</font><div><font class="Apple-style-span" face="Arial">world</font></div>"
+PASS fontname Sans-Serif on all of "<font face="sans-serif"><div>hello</div><div>world</div></font>" yields "<font face="sans-serif"><div>hello</div><div>world</div></font>"
+PASS fontname Arial on all of "<font face="sans-serif"><div>hello</div><div>world</div></font>" yields "<div><font class="Apple-style-span" face="Arial">hello</font></div><div><font class="Apple-style-span" face="Arial">world</font></div>"
+
+Font family (with CSS)
+PASS fontname Arial on all of "hello world" yields "<span class="Apple-style-span" style="font-family: Arial;">hello world</span>"
+PASS fontname Arial on first word of "<font face="sans-serif">hello world</font>" yields "<span class="Apple-style-span" style="font-family: Arial;">hello</span><font face="sans-serif"> world</font>"
+PASS fontname Arial on first word of "<font face="sans-serif">hello<div>world</div></font>" yields "<span class="Apple-style-span" style="font-family: Arial;">hello</span><div style="font-family: sans-serif; ">world</div>"
+PASS fontname Arial on second word of "<font face="sans-serif">hello<div>world</div></font>" yields "<span class="Apple-style-span" style="font-family: sans-serif;">hello</span><div><span class="Apple-style-span" style="font-family: Arial;">world</span></div>"
+PASS fontname Sans-Serif on all of "<font face="sans-serif"><div>hello</div><div>world</div></font>" yields "<font face="sans-serif"><div>hello</div><div>world</div></font>"
+PASS fontname Arial on all of "<font face="sans-serif"><div>hello</div><div>world</div></font>" yields "<div><span class="Apple-style-span" style="font-family: Arial;">hello</span></div><div><span class="Apple-style-span" style="font-family: Arial;">world</span></div>"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
