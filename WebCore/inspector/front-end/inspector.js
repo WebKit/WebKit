@@ -788,6 +788,16 @@ WebInspector.documentClick = function(event)
     followLink();
 }
 
+WebInspector.openResource = function(resourceURL, inResourcesPanel)
+{
+    var resource = WebInspector.resourceForURL(resourceURL);
+    if (inResourcesPanel && resource) {
+        WebInspector.panels.resources.showResource(resource);
+        WebInspector.showPanel("resources");
+    } else
+        InspectorBackend.openInInspectedWindow(resource ? resource.url : resourceURL);
+}
+
 WebInspector._registerShortcuts = function()
 {
     var shortcut = WebInspector.KeyboardShortcut;
@@ -1827,6 +1837,29 @@ WebInspector.linkifyResourceAsNode = function(url, preferredPanel, lineNumber, c
     node.setAttribute("preferred_panel", preferredPanel);
     return node;
 }
+
+WebInspector.resourceURLForRelatedNode = function(node, url)
+{
+    if (!url || url.indexOf("://") > 0)
+        return url;
+
+    for (var frameOwnerCandidate = node; frameOwnerCandidate; frameOwnerCandidate = frameOwnerCandidate.parentNode) {
+        if (frameOwnerCandidate.documentURL) {
+            var result = WebInspector.completeURL(frameOwnerCandidate.documentURL, url);
+            if (result)
+                return result;
+            break;
+        }
+    }
+
+    // documentURL not found or has bad value
+    for (var resourceURL in WebInspector.resourceURLMap) {
+        var match = resourceURL.match(WebInspector.URLRegExp);
+        if (match && match[4] === url)
+            return resourceURL;
+    }
+    return url;
+},
 
 WebInspector.completeURL = function(baseURL, href)
 {

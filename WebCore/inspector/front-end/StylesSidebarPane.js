@@ -64,6 +64,7 @@ WebInspector.StylesSidebarPane = function(computedStylePane)
 
     this.titleElement.appendChild(this.settingsSelectElement);
     this._computedStylePane = computedStylePane;
+    this.element.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), true);
 }
 
 // Taken from http://www.w3.org/TR/CSS21/propidx.html.
@@ -103,6 +104,17 @@ WebInspector.StylesSidebarPane.prototype = {
             this.settingsSelectElement[1].selected = true;
         if (format === "hsl")
             this.settingsSelectElement[2].selected = true;
+    },
+
+    _contextMenuEventFired: function(event)
+    {
+        var href = event.target.enclosingNodeOrSelfWithClass("webkit-html-resource-link") || event.target.enclosingNodeOrSelfWithClass("webkit-html-external-link");
+        if (href) {
+            var contextMenu = new WebInspector.ContextMenu();
+            var filled = WebInspector.panels.elements.populateHrefContextMenu(contextMenu, event, href);
+            if (filled)
+                contextMenu.show(event);
+        }
     },
 
     update: function(node, editedSection, forceUpdate)

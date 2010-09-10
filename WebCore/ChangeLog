@@ -1,3 +1,27 @@
+2010-09-09  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Add navigation items into the Elements panel context menu.
+
+        For all anchors that have the class of "webkit-html-resource-link" or "webkit-html-external-link",
+        a custom context menu with the items "Open Link in New Window" (invokes InspectorBackend.openInInspectedWindow() with
+        the related URL) and "Open Link in Resources Panel" (opens the related resource in the Resources panel) is shown
+        (the latter item is displayed only if the corresponding resource is known to the Web Inspector).
+        https://bugs.webkit.org/show_bug.cgi?id=34250
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.populateHrefContextMenu):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype._contextMenuEventFired):
+        (WebInspector.ElementsTreeElement.prototype._attributeHTML):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._contextMenuEventFired):
+        * inspector/front-end/inspector.js:
+        (WebInspector.openResource):
+        (WebInspector.resourceURLForRelatedNode):
+
 2010-09-10  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by James Robinson.

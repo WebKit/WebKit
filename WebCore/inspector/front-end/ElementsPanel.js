@@ -261,6 +261,23 @@ WebInspector.ElementsPanel.prototype = {
         this._nodeSearchButton.toggled = false;
     },
 
+    populateHrefContextMenu: function(contextMenu, event, anchorElement)
+    {
+        if (!anchorElement.href)
+            return false;
+
+        var resourceURL = WebInspector.resourceURLForRelatedNode(this.focusedDOMNode, anchorElement.href);
+        if (!resourceURL)
+            return false;
+
+        // Add resource-related actions.
+        // Keep these consistent with those added in WebInspector.StylesSidebarPane.prototype._populateHrefContextMenu().
+        contextMenu.appendItem(WebInspector.UIString("Open Link in New Window"), WebInspector.openResource.bind(null, resourceURL, false));
+        if (WebInspector.resourceForURL(resourceURL))
+            contextMenu.appendItem(WebInspector.UIString("Open Link in Resources Panel"), WebInspector.openResource.bind(null, resourceURL, true));
+        return true;
+    },
+
     _updateMatchesCount: function()
     {
         WebInspector.updateSearchMatchesCount(this._searchResults.length, this);

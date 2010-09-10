@@ -285,12 +285,21 @@ WebInspector.ElementsTreeOutline.prototype = {
 
         var contextMenu = new WebInspector.ContextMenu();
 
+        var href = event.target.enclosingNodeOrSelfWithClass("webkit-html-resource-link") || event.target.enclosingNodeOrSelfWithClass("webkit-html-external-link");
         var tag = event.target.enclosingNodeOrSelfWithClass("webkit-html-tag");
         var textNode = event.target.enclosingNodeOrSelfWithClass("webkit-html-text-node");
-        if (tag && listItem.treeElement._populateTagContextMenu)
+        var needSeparator;
+        if (href)
+            needSeparator = WebInspector.panels.elements.populateHrefContextMenu(contextMenu, event, href);
+        if (tag && listItem.treeElement._populateTagContextMenu) {
+            if (needSeparator)
+                contextMenu.appendSeparator();
             listItem.treeElement._populateTagContextMenu(contextMenu, event);
-        else if (textNode && listItem.treeElement._populateTextContextMenu)
+        } else if (textNode && listItem.treeElement._populateTextContextMenu) {
+            if (needSeparator)
+                contextMenu.appendSeparator();
             listItem.treeElement._populateTextContextMenu(contextMenu, textNode);
+        }
         contextMenu.show(event);
     }
 }
@@ -1189,29 +1198,6 @@ WebInspector.ElementsTreeElement.prototype = {
         this._highlightSearchResults();
     },
 
-    _rewriteAttrHref: function(node, hrefValue)
-    {
-        if (!hrefValue || hrefValue.indexOf("://") > 0)
-            return hrefValue;
-
-        for (var frameOwnerCandidate = node; frameOwnerCandidate; frameOwnerCandidate = frameOwnerCandidate.parentNode) {
-            if (frameOwnerCandidate.documentURL) {
-                var result = WebInspector.completeURL(frameOwnerCandidate.documentURL, hrefValue);
-                if (result)
-                    return result;
-                break;
-            }
-        }
-
-        // documentURL not found or has bad value
-        for (var url in WebInspector.resourceURLMap) {
-            var match = url.match(WebInspector.URLRegExp);
-            if (match && match[4] === hrefValue)
-                return url;
-        }
-        return hrefValue;
-    },
-
     _attributeHTML: function(name, value, node, linkify)
     {
         var hasText = (value.length > 0);
@@ -1221,7 +1207,7 @@ WebInspector.ElementsTreeElement.prototype = {
             html += "=&#8203;\"";
 
         if (linkify && (name === "src" || name === "href")) {
-            var rewrittenHref = this._rewriteAttrHref(node, value);
+            var rewrittenHref = WebInspector.resourceURLForRelatedNode(node, value);
             value = value.replace(/([\/;:\)\]\}])/g, "$1\u200B");
             html += linkify(rewrittenHref, value, "webkit-html-attribute-value", node.nodeName.toLowerCase() === "a");
         } else {
