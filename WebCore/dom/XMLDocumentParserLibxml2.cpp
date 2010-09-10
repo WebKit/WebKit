@@ -671,17 +671,14 @@ void XMLDocumentParser::doWrite(const String& parseString)
     }
 }
 
-static inline String toString(const xmlChar* str, unsigned len)
+static inline String toString(const xmlChar* string, size_t size)
 {
-    return UTF8Encoding().decode(reinterpret_cast<const char*>(str), len);
+    return String::fromUTF8(reinterpret_cast<const char*>(string), size);
 }
 
-static inline String toString(const xmlChar* str)
+static inline String toString(const xmlChar* string)
 {
-    if (!str)
-        return String();
-
-    return UTF8Encoding().decode(reinterpret_cast<const char*>(str), strlen(reinterpret_cast<const char*>(str)));
+    return String::fromUTF8(reinterpret_cast<const char*>(string));
 }
 
 struct _xmlSAX2Namespace {
