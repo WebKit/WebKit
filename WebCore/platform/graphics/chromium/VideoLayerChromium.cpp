@@ -96,14 +96,9 @@ void VideoLayerChromium::updateContents()
         m_canvas = new skia::PlatformCanvas(dirtyRect.width(), dirtyRect.height(), true);
         m_skiaContext = new PlatformContextSkia(m_canvas.get());
 
-#if OS(WINDOWS)
-        // This is needed to get text to show up correctly. Without it,
-        // GDI renders with zero alpha and the text becomes invisible.
-        // Unfortunately, setting this to true disables cleartype.
+        // This is needed to get text to show up correctly.
         // FIXME: Does this take us down a very slow text rendering path?
-        // FIXME: Why is this is a windows-only call?
         m_skiaContext->setDrawingToImageBuffer(true);
-#endif
         m_graphicsContext = new GraphicsContext(reinterpret_cast<PlatformGraphicsContext*>(m_skiaContext.get()));
     }
 
