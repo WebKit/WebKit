@@ -1,3 +1,10 @@
+2010-09-10  Jian Li  <jianli@chromium.org>
+
+        Skip file api tests for workers that could crash occasionally before
+        we figure out how to fix them.
+
+        * platform/mac/Skipped:
+
 2010-09-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
