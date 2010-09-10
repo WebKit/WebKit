@@ -3147,3 +3147,6 @@ BUGWK45512 WIN : animations/fill-mode-missing-from-to-keyframes.html = TEXT
 BUGWK45512 WIN : animations/fill-mode-multiple-keyframes.html = TEXT
 BUGWK45512 WIN : animations/fill-mode-transform.html = TEXT
 BUGWK45512 WIN : animations/fill-mode.html = TEXT
+
+//  Added in r67084
+BUGWK45513 WIN SLOW : inspector/extensions-resources.html = PASS
