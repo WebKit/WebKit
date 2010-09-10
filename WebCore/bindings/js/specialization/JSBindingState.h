@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,34 +28,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef V8BindingState_h
-#define V8BindingState_h
+#ifndef JSBindingState_h
+#define JSBindingState_h
 
 #include "GenericBinding.h"
-#include "V8Binding.h"
+#include "JSBinding.h"
+
+namespace JSC {
+
+class ExecState;
+
+} // namespace JSC
 
 namespace WebCore {
 
 class Frame;
 
-// Singleton implementation of State<V8Binding>.  Uses V8's global data
-// structures to return information about relevant execution state.
 template <>
-class State<V8Binding> : public State<GenericBinding> {
+class State<JSBinding> : public State<GenericBinding> {
 public:
-    // Singleton
-    static State* Only();
+    explicit State(JSC::ExecState* exec)
+        : m_exec(exec)
+    {
+    }
 
-    // Reports an error message (without delay) if the security check fails.
-    static void immediatelyReportUnsafeAccessTo(Frame*);
+    virtual ~State()
+    {
+    }
 
-    // The DOMWindow corresponding to the 'calling context' of execution.
-    DOMWindow* getActiveWindow();
-
-    // The frame corresponding to the 'calling context' of execution.
     Frame* getActiveFrame();
-
-    // The first frame in which execution entered user script.
     Frame* getFirstFrame();
 
     bool processingUserGesture();
@@ -64,12 +65,11 @@ public:
     bool allowsAccessFromFrame(Frame*);
 
 private:
-    explicit State() {}
-    ~State();
+    JSC::ExecState* m_exec;
 };
 
-typedef State<V8Binding> V8BindingState;
+typedef State<JSBinding> JSBindingState;
 
-}
+} // namespace WebCore
 
-#endif // V8BindingState_h
+#endif // JSBindingState_h

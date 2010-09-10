@@ -42091,10 +42091,30 @@
 					RelativePath="..\bindings\generic\ActiveDOMCallback.h"
 					>
 				</File>
-			</Filter>
-			<Filter
-				Name="generic"
-				>
+				<File
+					RelativePath="..\bindings\generic\BindingFrame.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\generic\BindingLocation.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\generic\BindingSecurity.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\generic\BindingSecurityBase.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\generic\BindingSecurityBase.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\generic\GenericBinding.h"
+					>
+				</File>
 				<File
 					RelativePath="..\bindings\generic\RuntimeEnabledFeatures.cpp"
 					>
@@ -42445,6 +42465,10 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSAudioConstructor.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSBinding.h"
 					>
 				</File>
 				<File
@@ -49741,6 +49765,62 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\WorkerScriptController.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\specialization\JSBindingState.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Internal|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Cairo|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_Cairo|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_All|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\bindings\js\specialization\JSBindingState.h"
 					>
 				</File>
 			</Filter>

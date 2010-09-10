@@ -292,19 +292,7 @@ v8::Handle<v8::Value> V8Location::replaceCallback(const v8::Arguments& args)
     INC_STATS("DOM.Location.replace");
     v8::Handle<v8::Object> holder = args.Holder();
     Location* imp = V8Location::toNative(holder);
-
-    Frame* frame = imp->frame();
-    if (!frame)
-        return v8::Undefined();
-
-    KURL url = completeURL(toWebCoreString(args[0]));
-    if (url.isNull())
-        return v8::Undefined();
-
-    if (!shouldAllowNavigation(frame))
-        return v8::Undefined();
-
-    navigateIfAllowed(frame, url, true, true);
+    V8Binding::Location::replace(V8BindingState::Only(), imp, toWebCoreString(args[0]));
     return v8::Undefined();
 }
 
@@ -378,4 +366,3 @@ v8::Handle<v8::Value> toV8(Location* impl)
 }
 
 }  // namespace WebCore
-

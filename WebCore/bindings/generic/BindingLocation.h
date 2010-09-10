@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,48 +28,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef V8BindingState_h
-#define V8BindingState_h
+#ifndef BindingLocation_h
+#define BindingLocation_h
 
+#include "BindingSecurity.h"
 #include "GenericBinding.h"
-#include "V8Binding.h"
+#include "Location.h"
 
 namespace WebCore {
 
-class Frame;
-
-// Singleton implementation of State<V8Binding>.  Uses V8's global data
-// structures to return information about relevant execution state.
-template <>
-class State<V8Binding> : public State<GenericBinding> {
+template <class Binding>
+class BindingLocation {
 public:
-    // Singleton
-    static State* Only();
-
-    // Reports an error message (without delay) if the security check fails.
-    static void immediatelyReportUnsafeAccessTo(Frame*);
-
-    // The DOMWindow corresponding to the 'calling context' of execution.
-    DOMWindow* getActiveWindow();
-
-    // The frame corresponding to the 'calling context' of execution.
-    Frame* getActiveFrame();
-
-    // The first frame in which execution entered user script.
-    Frame* getFirstFrame();
-
-    bool processingUserGesture();
-
-    // FIXME: This should be shared in BindingSecurity
-    bool allowsAccessFromFrame(Frame*);
-
-private:
-    explicit State() {}
-    ~State();
+    static void replace(State<Binding>*, Location*, const String& url);
 };
 
-typedef State<V8Binding> V8BindingState;
+template <class Binding>
+void BindingLocation<Binding>::replace(State<Binding>* state, Location* location, const String& url)
+{
+    Frame* frame = location->frame();
+    if (!frame)
+        return;
 
+    KURL fullURL = completeURL(state, url);
+    if (fullURL.isNull())
+        return;
+
+    if (!BindingSecurity<Binding>::shouldAllowNavigation(state, frame))
+        return;
+
+    Binding::Frame::navigateIfAllowed(state, frame, fullURL, true, true);
 }
 
-#endif // V8BindingState_h
+} // namespace WebCore
+
+#endif // BindingLocation_h

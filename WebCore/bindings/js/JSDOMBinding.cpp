@@ -38,11 +38,14 @@
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "HTMLScriptElement.h"
+#include "JSBinding.h"
+#include "JSBindingState.h"
 #include "JSDOMCoreException.h"
 #include "JSDOMWindowCustom.h"
 #include "JSDebugWrapperSet.h"
 #include "JSEventException.h"
 #include "JSExceptionBase.h"
+#include "JSMainThreadExecState.h"
 #include "JSNode.h"
 #include "JSRangeException.h"
 #include "JSXMLHttpRequestException.h"
@@ -639,8 +642,8 @@ bool allowsAccessFromFrame(ExecState* exec, Frame* frame, String& message)
 
 bool shouldAllowNavigation(ExecState* exec, Frame* frame)
 {
-    Frame* lexicalFrame = toLexicalFrame(exec);
-    return lexicalFrame && lexicalFrame->loader()->shouldAllowNavigation(frame);
+    JSBindingState state(exec);
+    return JSBindingSecurity::shouldAllowNavigation(&state, frame);
 }
 
 bool allowSettingSrcToJavascriptURL(ExecState* exec, Element* element, const String& name, const String& value)
@@ -671,26 +674,23 @@ void printErrorMessageForFrame(Frame* frame, const String& message)
 
 Frame* toLexicalFrame(ExecState* exec)
 {
-    return asJSDOMWindow(exec->lexicalGlobalObject())->impl()->frame();
+    return JSBindingState(exec).getActiveFrame();
 }
 
 Frame* toDynamicFrame(ExecState* exec)
 {
-    return asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
+    return JSBindingState(exec).getFirstFrame();
 }
 
 bool processingUserGesture()
 {
-    return ScriptController::processingUserGesture();
+    return JSBindingState(JSMainThreadExecState::currentState()).processingUserGesture();
 }
 
 KURL completeURL(ExecState* exec, const String& relativeURL)
 {
-    // For historical reasons, we need to complete the URL using the dynamic frame.
-    Frame* frame = toDynamicFrame(exec);
-    if (!frame)
-        return KURL();
-    return frame->loader()->completeURL(relativeURL);
+    JSBindingState state(exec);
+    return completeURL(&state, relativeURL);
 }
 
 JSValue objectToStringFunctionGetter(ExecState* exec, JSValue, const Identifier& propertyName)
