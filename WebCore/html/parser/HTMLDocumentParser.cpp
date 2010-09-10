@@ -36,6 +36,7 @@
 #include "HTMLScriptRunner.h"
 #include "HTMLTreeBuilder.h"
 #include "HTMLDocument.h"
+#include "NestingLevelIncrementer.h"
 #include "XSSAuditor.h"
 #include <wtf/CurrentTime.h>
 
@@ -48,23 +49,6 @@ namespace WebCore {
 using namespace HTMLNames;
 
 namespace {
-
-class NestingLevelIncrementer : public Noncopyable {
-public:
-    explicit NestingLevelIncrementer(int& counter)
-        : m_counter(&counter)
-    {
-        ++(*m_counter);
-    }
-
-    ~NestingLevelIncrementer()
-    {
-        --(*m_counter);
-    }
-
-private:
-    int* m_counter;
-};
 
 // This is a direct transcription of step 4 from:
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-end.html#fragment-case

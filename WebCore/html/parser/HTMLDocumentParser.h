@@ -139,7 +139,7 @@ private:
     OwnPtr<HTMLParserScheduler> m_parserScheduler;
 
     bool m_endWasDelayed;
-    int m_writeNestingLevel;
+    unsigned m_writeNestingLevel;
 };
 
 }

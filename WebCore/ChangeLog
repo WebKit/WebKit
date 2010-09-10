@@ -1,3 +1,23 @@
+2010-09-09  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Factor out the NestingLevelIncrementer
+        https://bugs.webkit.org/show_bug.cgi?id=45471
+
+        No new tests because no new functionality.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/parser/HTMLDocumentParser.cpp:
+        * html/parser/HTMLDocumentParser.h:
+        * html/parser/HTMLScriptRunner.cpp:
+        * html/parser/NestingLevelIncrementer.h: Added.
+        (WebCore::NestingLevelIncrementer::NestingLevelIncrementer):
+        (WebCore::NestingLevelIncrementer::~NestingLevelIncrementer):
+
 2010-09-10  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

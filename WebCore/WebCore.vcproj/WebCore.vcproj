@@ -42072,6 +42072,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\html\parser\NestingLevelIncrementer.h"
+					>
+				</File>
+				<File
 					RelativePath="..\html\parser\TextDocumentParser.cpp"
 					>
 				</File>

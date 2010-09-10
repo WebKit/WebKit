@@ -1797,6 +1797,7 @@
             'html/parser/HTMLTreeBuilder.h',
             'html/parser/HTMLViewSourceParser.cpp',
             'html/parser/HTMLViewSourceParser.h',
+            'html/parser/NestingLevelIncrementer.h',
             'html/parser/TextDocumentParser.cpp',
             'html/parser/TextDocumentParser.h',
             'html/parser/TextViewSourceParser.cpp',

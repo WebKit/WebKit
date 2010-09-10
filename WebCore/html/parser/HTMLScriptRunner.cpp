@@ -35,6 +35,7 @@
 #include "HTMLScriptRunnerHost.h"
 #include "HTMLInputStream.h"
 #include "HTMLNames.h"
+#include "NestingLevelIncrementer.h"
 #include "NotImplemented.h"
 #include "ScriptElement.h"
 #include "ScriptSourceCode.h"
@@ -42,24 +43,6 @@
 namespace WebCore {
 
 using namespace HTMLNames;
-
-// FIXME: Factor out to avoid duplication with HTMLDocumentParser.
-class NestingLevelIncrementer : public Noncopyable {
-public:
-    explicit NestingLevelIncrementer(unsigned& nestingLevel)
-        : m_nestingLevel(&nestingLevel)
-    {
-        ++(*m_nestingLevel);
-    }
-
-    ~NestingLevelIncrementer()
-    {
-        --(*m_nestingLevel);
-    }
-
-private:
-    unsigned* m_nestingLevel;
-};
 
 HTMLScriptRunner::HTMLScriptRunner(Document* document, HTMLScriptRunnerHost* host)
     : m_document(document)

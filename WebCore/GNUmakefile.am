@@ -1589,6 +1589,7 @@ webcore_sources += \
 	WebCore/html/parser/HTMLTreeBuilder.h \
 	WebCore/html/parser/HTMLViewSourceParser.cpp \
 	WebCore/html/parser/HTMLViewSourceParser.h \
+	WebCore/html/parser/NestingLevelIncrementer.h \
 	WebCore/html/parser/TextDocumentParser.cpp \
 	WebCore/html/parser/TextDocumentParser.h \
 	WebCore/html/parser/TextViewSourceParser.cpp \

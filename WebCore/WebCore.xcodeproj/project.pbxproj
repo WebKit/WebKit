@@ -2448,6 +2448,7 @@
 		89D08DA012228451001241DF /* AsyncFileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 89D08D9D12228451001241DF /* AsyncFileSystem.h */; };
 		89D08DA112228451001241DF /* AsyncFileSystemCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 89D08D9E12228451001241DF /* AsyncFileSystemCallbacks.h */; };
 		8A12E35D11FA33280025836A /* DocumentLoadTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A12E35C11FA33280025836A /* DocumentLoadTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		8A309C9F123950BE00CB9204 /* NestingLevelIncrementer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A309C9E123950BE00CB9204 /* NestingLevelIncrementer.h */; };
 		8A413AE01207BBA50082016E /* AsyncScriptRunner.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A413ADE1207BBA50082016E /* AsyncScriptRunner.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8A413AE11207BBA50082016E /* AsyncScriptRunner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A413ADF1207BBA50082016E /* AsyncScriptRunner.cpp */; };
 		8A7CC96B12076D73001D4588 /* PendingScript.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A7CC96A12076D73001D4588 /* PendingScript.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8355,6 +8356,7 @@
 		89D08D9D12228451001241DF /* AsyncFileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncFileSystem.h; sourceTree = "<group>"; };
 		89D08D9E12228451001241DF /* AsyncFileSystemCallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncFileSystemCallbacks.h; sourceTree = "<group>"; };
 		8A12E35C11FA33280025836A /* DocumentLoadTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentLoadTiming.h; sourceTree = "<group>"; };
+		8A309C9E123950BE00CB9204 /* NestingLevelIncrementer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NestingLevelIncrementer.h; path = parser/NestingLevelIncrementer.h; sourceTree = "<group>"; };
 		8A413ADE1207BBA50082016E /* AsyncScriptRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncScriptRunner.h; sourceTree = "<group>"; };
 		8A413ADF1207BBA50082016E /* AsyncScriptRunner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncScriptRunner.cpp; sourceTree = "<group>"; };
 		8A7CC96A12076D73001D4588 /* PendingScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PendingScript.h; sourceTree = "<group>"; };
@@ -14515,6 +14517,7 @@
 				977B37221228721700B81FF8 /* HTMLTreeBuilder.h */,
 				977B3860122883E900B81FF8 /* HTMLViewSourceParser.cpp */,
 				977B3861122883E900B81FF8 /* HTMLViewSourceParser.h */,
+				8A309C9E123950BE00CB9204 /* NestingLevelIncrementer.h */,
 				97BC84811236FD93000C6161 /* TextDocumentParser.cpp */,
 				97BC84821236FD93000C6161 /* TextDocumentParser.h */,
 				97BC84A212370DC7000C6161 /* TextViewSourceParser.cpp */,
@@ -20553,6 +20556,7 @@
 				893C47A81238908B002B3D86 /* FileWriterCallback.h in Headers */,
 				893C47B81238A099002B3D86 /* JSFileCallback.h in Headers */,
 				893C47BC1238A0A9002B3D86 /* JSFileWriterCallback.h in Headers */,
+				8A309C9F123950BE00CB9204 /* NestingLevelIncrementer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
