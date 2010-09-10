@@ -762,6 +762,25 @@ public:
     }
 
 private:
+    struct CachedString {
+        CachedString(const UString& string)
+            : m_string(string)
+        {
+        }
+
+        JSValue jsString(ExecState* exec)
+        {
+            if (!m_jsString)
+                m_jsString = JSC::jsString(exec, m_string);
+            return m_jsString;
+        }
+        const UString& ustring() { return m_string; }
+
+    private:
+        UString m_string;
+        JSValue m_jsString;
+    };
+
     CloneDeserializer(ExecState* exec, JSGlobalObject* globalObject, const Vector<uint8_t>& buffer)
         : CloneBase(exec)
         , m_globalObject(globalObject)
@@ -903,13 +922,13 @@ private:
         return true;
     }
 
-    bool readStringData(Identifier& ident)
+    bool readStringData(CachedString*& cachedString)
     {
         bool scratch;
-        return readStringData(ident, scratch);
+        return readStringData(cachedString, scratch);
     }
 
-    bool readStringData(Identifier& ident, bool& wasTerminator)
+    bool readStringData(CachedString*& cachedString, bool& wasTerminator)
     {
         if (m_failed)
             return false;
@@ -930,7 +949,7 @@ private:
                 fail();
                 return false;
             }
-            ident = m_constantPool[index];
+            cachedString = &m_constantPool[index];
             return true;
         }
         UString str;
@@ -938,8 +957,8 @@ private:
             fail();
             return false;
         }
-        ident = Identifier(m_exec, str);
-        m_constantPool.append(ident);
+        m_constantPool.append(str);
+        cachedString = &m_constantPool.last();
         return true;
     }
 
@@ -958,24 +977,24 @@ private:
             array->put(m_exec, index, value);
     }
 
-    void putProperty(JSObject* object, Identifier& property, JSValue value)
+    void putProperty(JSObject* object, const Identifier& property, JSValue value)
     {
         object->putDirect(property, value);
     }
 
     bool readFile(RefPtr<File>& file)
     {
-        Identifier path;
+        CachedString* path;
         if (!readStringData(path))
             return 0;
-        Identifier url;
+        CachedString* url;
         if (!readStringData(url))
             return 0;
-        Identifier type;
+        CachedString* type;
         if (!readStringData(type))
             return 0;
         if (m_isDOMGlobalObject)
-            file = File::create(String(path.ustring().impl()), KURL(KURL(), String(url.ustring().impl())), String(type.ustring().impl()));
+            file = File::create(String(path->ustring().impl()), KURL(KURL(), String(url->ustring().impl())), String(type->ustring().impl()));
         return true;
     }
 
@@ -1061,10 +1080,10 @@ private:
             return toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_globalObject), result.get());
         }
         case BlobTag: {
-            Identifier url;
+            CachedString* url;
             if (!readStringData(url))
                 return JSValue();
-            Identifier type;
+            CachedString* type;
             if (!readStringData(type))
                 return JSValue();
             unsigned long long size = 0;
@@ -1072,24 +1091,24 @@ private:
                 return JSValue();
             if (!m_isDOMGlobalObject)
                 return jsNull();
-            return toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_globalObject), Blob::create(KURL(KURL(), url.ustring().impl()), String(type.ustring().impl()), size));
+            return toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_globalObject), Blob::create(KURL(KURL(), url->ustring().impl()), String(type->ustring().impl()), size));
         }
         case StringTag: {
-            Identifier ident;
-            if (!readStringData(ident))
+            CachedString* cachedString;
+            if (!readStringData(cachedString))
                 return JSValue();
-            return jsString(m_exec, ident.ustring());
+            return cachedString->jsString(m_exec);
         }
         case EmptyStringTag:
             return jsEmptyString(&m_exec->globalData());
         case RegExpTag: {
-            Identifier pattern;
+            CachedString* pattern;
             if (!readStringData(pattern))
                 return JSValue();
-            Identifier flags;
+            CachedString* flags;
             if (!readStringData(flags))
                 return JSValue();
-            RefPtr<RegExp> regExp = RegExp::create(&m_exec->globalData(), pattern.ustring(), flags.ustring());
+            RefPtr<RegExp> regExp = RegExp::create(&m_exec->globalData(), pattern->ustring(), flags->ustring());
             return new (m_exec) RegExpObject(m_exec->lexicalGlobalObject(), m_globalObject->regExpStructure(), regExp); 
         }
         default:
@@ -1103,7 +1122,7 @@ private:
     const uint8_t* m_ptr;
     const uint8_t* m_end;
     unsigned m_version;
-    Vector<Identifier> m_constantPool;
+    Vector<CachedString> m_constantPool;
 };
 
 JSValue CloneDeserializer::deserialize()
@@ -1192,9 +1211,9 @@ JSValue CloneDeserializer::deserialize()
                 tickCount = ticksUntilNextCheck();
             }
 
-            Identifier ident;
+            CachedString* cachedString;
             bool wasTerminator = false;
-            if (!readStringData(ident, wasTerminator)) {
+            if (!readStringData(cachedString, wasTerminator)) {
                 if (!wasTerminator)
                     goto error;
                 JSObject* outObject = outputObjectStack.last();
@@ -1205,11 +1224,11 @@ JSValue CloneDeserializer::deserialize()
             }
 
             if (JSValue terminal = readTerminal()) {
-                putProperty(outputObjectStack.last(), ident, terminal);
+                putProperty(outputObjectStack.last(), Identifier(m_exec, cachedString->ustring()), terminal);
                 goto objectStartVisitMember;
             }
             stateStack.append(ObjectEndVisitMember);
-            propertyNameStack.append(ident);
+            propertyNameStack.append(Identifier(m_exec, cachedString->ustring()));
             goto stateUnknown;
         }
         case ObjectEndVisitMember: {

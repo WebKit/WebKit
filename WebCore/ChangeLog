@@ -1,3 +1,28 @@
+2010-09-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Speed up deserialisation of strings
+        https://bugs.webkit.org/show_bug.cgi?id=45555
+
+        Rather than building a list of Identifiers for the string pool
+        we now build a list of a tuple of UString and JSString*.  This
+        doesn't hurt the property name case as ustring->identifier conversion
+        is essentially free if the ustring has already been converted to
+        an Identifier, but saves an unnecessary Identifier creation for
+        strings we only ever use to create JSStrings.  We also reduce
+        GC pressure for duplicate strings by caching the JSStrings.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::CachedString::CachedString):
+        (WebCore::CloneDeserializer::CachedString::jsString):
+        (WebCore::CloneDeserializer::CachedString::ustring):
+        (WebCore::CloneDeserializer::readStringData):
+        (WebCore::CloneDeserializer::putProperty):
+        (WebCore::CloneDeserializer::readFile):
+        (WebCore::CloneDeserializer::readTerminal):
+        (WebCore::CloneDeserializer::deserialize):
+
 2010-09-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Antonio Gomes.
