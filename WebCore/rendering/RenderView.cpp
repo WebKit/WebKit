@@ -221,7 +221,7 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, int, int)
     // or there is a transform on the <html>.
     // Only fill with the base background color (typically white) if we're the root document, 
     // since iframes/frames with no background in the child document should show the parent's background.
-    if (view()->isTransparent()) // FIXME: This needs to be dynamic.  We should be able to go back to blitting if we ever stop being transparent.
+    if (frameView()->isTransparent()) // FIXME: This needs to be dynamic.  We should be able to go back to blitting if we ever stop being transparent.
         frameView()->setUseSlowRepaints(); // The parent must show behind the child.
     else {
         Color baseColor = frameView()->baseBackgroundColor();

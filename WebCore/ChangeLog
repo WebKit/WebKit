@@ -1,3 +1,29 @@
+2010-09-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45509
+        <rdar://problem/8142166> REGRESSION: WebView setDrawsBackground:NO no
+        longer works without setBackgroundColor:clearColor
+        
+        r61215 caused RenderView to paint the viewport background when the
+        document element's renderer is known to not fill opaquely paint
+        the entire viewport, i.e. more often than it did before.
+        
+        This exposed a latent, long-standing bug which was introduced
+        in r14638 (the RenderCanvas -> RenderView rename), where a call
+        to view()->isTransparent() was not converted to frameView()->isTransparent(),
+        yet happened to still compile because of RenderObject::isTransparent().
+        
+        This resulted in us painting the viewport background, even when
+        WebView clients explicitly said that they wanted a transparent
+        WebView.
+        
+        Fixed by calling frameView()->isTransparent(), as intended.
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paintBoxDecorations):
+
 2010-09-09  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.
