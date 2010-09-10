@@ -1,3 +1,25 @@
+2010-09-09  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        Add math utilities for cubic curve processing
+        https://bugs.webkit.org/show_bug.cgi?id=45251
+
+        Adding mathematic utilities needed for the GPU accelerated path
+        rendering algorithm from GPU Gems 3. No tests yet; will be tested
+        in conjunction with later code.
+
+        * platform/graphics/gpu/LoopBlinnMathUtils.cpp: Added.
+        (WebCore::LoopBlinnMathUtils::roundToZero):
+        (WebCore::LoopBlinnMathUtils::approxEqual):
+        (WebCore::LoopBlinnMathUtils::linesIntersect):
+        (WebCore::LoopBlinnMathUtils::pointInTriangle):
+        (WebCore::LoopBlinnMathUtils::trianglesOverlap):
+        (WebCore::LoopBlinnMathUtils::chopCubicAt):
+        (WebCore::LoopBlinnMathUtils::xRayCrossesLine):
+        (WebCore::LoopBlinnMathUtils::numXRayCrossingsForCubic):
+        * platform/graphics/gpu/LoopBlinnMathUtils.h: Added.
+
 2010-09-09  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Dumitru Daniliuc.
