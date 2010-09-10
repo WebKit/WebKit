@@ -2354,7 +2354,10 @@ static RenderObject* rendererForView(NSView* view)
     // dispatch
     if ([attribute isEqualToString:@"AXUIElementForTextMarker"]) {
         VisiblePosition visiblePos = visiblePositionForTextMarker(textMarker);
-        return m_object->accessibilityObjectForPosition(visiblePos)->wrapper();
+        AccessibilityObject* axObject = m_object->accessibilityObjectForPosition(visiblePos);
+        if (!axObject)
+            return nil;
+        return axObject->wrapper();
     }
 
     if ([attribute isEqualToString:@"AXTextMarkerRangeForUIElement"]) {

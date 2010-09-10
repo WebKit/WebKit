@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+asdf
+
+<div id="content" tabindex="0">test</div>
+
+asdf
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This protects against a crash when AXUIElementForTextMarker is queried with an empty text marker.");
+
+    if (window.accessibilityController) {
+
+          document.getElementById("content").focus();
+          var content = accessibilityController.focusedElement;
+
+          // get a marker that is invalid (the next one after the end of the body).
+          var textMarkerRange = content.textMarkerRangeForElement(content);
+          var endMarker = content.endTextMarkerForTextMarkerRange(textMarkerRange);
+
+          // Remove "content" so that the text marker becomes invalid.
+          document.getElementById("body").removeChild(document.getElementById("content"));
+
+          document.getElementById("body").focus();
+          var body = accessibilityController.focusedElement;
+
+          // Ask for the ui element for that marker (should not crash).
+          body.accessibilityElementForTextMarker(endMarker);
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
