@@ -1,5 +1,20 @@
 2010-09-10  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        Remove useless FrameLoader method
+        https://bugs.webkit.org/show_bug.cgi?id=45492
+
+        This method has one caller, and that caller already has a more direct
+        way of accessing the correct DocumentLoader.
+
+        * loader/FrameLoader.cpp:
+        * loader/FrameLoader.h:
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::addData):
+
+2010-09-10  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Main resource bytes shouldn't bounce through FrameLoader

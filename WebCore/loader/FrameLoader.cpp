@@ -1493,11 +1493,6 @@ const ResourceRequest& FrameLoader::initialRequest() const
     return activeDocumentLoader()->originalRequest();
 }
 
-void FrameLoader::receivedData(const char* data, int length)
-{
-    activeDocumentLoader()->receivedData(data, length);
-}
-
 bool FrameLoader::willLoadMediaElementURL(KURL& url)
 {
     ResourceRequest request(url);
