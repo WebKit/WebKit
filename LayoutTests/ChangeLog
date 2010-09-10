@@ -1,3 +1,11 @@
+2010-09-10  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed. expectations update.
+
+        fast/dom/replaceChild.html image failure.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-10  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by Chris Fleizach.
