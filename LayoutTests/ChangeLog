@@ -2,6 +2,16 @@
 
         Reviewed by Chris Fleizach.
 
+        Test for null deref in RenderBlock::updateFirstLetter().
+        https://bugs.webkit.org/show_bug.cgi?id=45404
+
+        * fast/dom/firstletter-tablecell-crash-expected.txt: Added.
+        * fast/dom/firstletter-tablecell-crash.html: Added.
+
+2010-09-10  Cris Neckar  <cdn@chromium.org>
+
+        Reviewed by Chris Fleizach.
+
         Test for null deref in RenderBlock::findNextLineBreak().
         https://bugs.webkit.org/show_bug.cgi?id=45350
 

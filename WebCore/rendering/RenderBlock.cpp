@@ -5168,7 +5168,11 @@ void RenderBlock::updateFirstLetter()
         // Create our pseudo style now that we have our firstLetterContainer determined.
         RenderStyle* pseudoStyle = firstLetterBlock->getCachedPseudoStyle(FIRST_LETTER,
                                                                           firstLetterContainer->firstLineStyle());
-        
+        if (!pseudoStyle) {
+            view()->enableLayoutState();
+            return;
+        }        
+
         // Force inline display (except for floating first-letters)
         pseudoStyle->setDisplay(pseudoStyle->isFloating() ? BLOCK : INLINE);
         pseudoStyle->setPosition(StaticPosition); // CSS2 says first-letter can't be positioned.

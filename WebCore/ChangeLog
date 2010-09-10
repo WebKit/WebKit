@@ -2,6 +2,18 @@
 
         Reviewed by Chris Fleizach.
 
+        Null deref in RenderBlock::updateFirstLetter(). Check for null psuedo style.
+        https://bugs.webkit.org/show_bug.cgi?id=45404
+
+        Test: fast/dom/firstletter-tablecell-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetter):
+
+2010-09-10  Cris Neckar  <cdn@chromium.org>
+
+        Reviewed by Chris Fleizach.
+
         Null deref in RenderBlock::findNextLineBreak(). Check for null style with
         first-line style and fixed position.
         https://bugs.webkit.org/show_bug.cgi?id=45350
