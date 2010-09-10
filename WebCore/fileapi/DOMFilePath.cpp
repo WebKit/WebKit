@@ -61,7 +61,7 @@ String DOMFilePath::getName(const String& path)
 {
     int index = path.reverseFind(DOMFilePath::separator);
     if (index != -1)
-        return path.substring(index);
+        return path.substring(index + 1);
     return path;
 }
 

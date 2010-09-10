@@ -45,12 +45,8 @@ namespace WebCore {
 Entry::Entry(DOMFileSystem* fileSystem, const String& fullPath)
     : m_fileSystem(fileSystem)
     , m_fullPath(fullPath)
+    , m_name(DOMFilePath::getName(fullPath))
 {
-    size_t index = fullPath.reverseFind("/");
-    if (index != notFound)
-        m_name = fullPath.substring(index);
-    else
-        m_name = fullPath;
 }
 
 void Entry::getMetadata(PassRefPtr<MetadataCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)

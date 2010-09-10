@@ -128,13 +128,12 @@ EntriesCallbacks::EntriesCallbacks(PassRefPtr<EntriesCallback> successCallback, 
     , m_successCallback(successCallback)
     , m_fileSystem(fileSystem)
     , m_basePath(basePath)
+    , m_entries(EntryArray::create())
 {
 }
 
 void EntriesCallbacks::didReadDirectoryEntry(const String& name, bool isDirectory)
 {
-    if (!m_entries)
-        m_entries = EntryArray::create();
     if (isDirectory)
         m_entries->append(DirectoryEntry::create(m_fileSystem, DOMFilePath::append(m_basePath, name)));
     else
@@ -143,15 +142,14 @@ void EntriesCallbacks::didReadDirectoryEntry(const String& name, bool isDirector
 
 void EntriesCallbacks::didReadDirectoryEntries(bool hasMore)
 {
-    ASSERT(m_entries);
     if (m_successCallback) {
         m_successCallback->handleEvent(m_entries.get());
-        m_entries->clear();
-        if (!hasMore) {
-            // If there're no more entries, call back once more with an empty array.
-            m_successCallback->handleEvent(m_entries.get());
+        if (!m_entries->isEmpty() && !hasMore) {
+            // If we have returned some entries and there're no more coming entries (hasMore==false), call back once more with an empty array.
+            m_successCallback->handleEvent(EntryArray::create().get());
             m_successCallback.clear();
         }
+        m_entries->clear();
     }
 }
 
