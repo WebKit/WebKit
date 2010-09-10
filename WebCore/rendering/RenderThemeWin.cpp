@@ -749,15 +749,16 @@ const int sliderThumbHeight = 15;
 
 void RenderThemeWin::adjustSliderThumbSize(RenderObject* o) const
 {
-    if (o->style()->appearance() == SliderThumbVerticalPart) {
+    ControlPart part = o->style()->appearance();
+    if (part == SliderThumbVerticalPart) {
         o->style()->setWidth(Length(sliderThumbHeight, Fixed));
         o->style()->setHeight(Length(sliderThumbWidth, Fixed));
-    } else if (o->style()->appearance() == SliderThumbHorizontalPart) {
+    } else if (part == SliderThumbHorizontalPart) {
         o->style()->setWidth(Length(sliderThumbWidth, Fixed));
         o->style()->setHeight(Length(sliderThumbHeight, Fixed));
     }
 #if ENABLE(VIDEO)
-    else if (o->style()->appearance() == MediaSliderThumbPart) 
+    else if (part == MediaSliderThumbPart || part == MediaVolumeSliderThumbPart) 
         RenderMediaControls::adjustMediaSliderThumbSize(o);
 #endif
 }
@@ -937,6 +938,11 @@ Color RenderThemeWin::systemColor(int cssValueId) const
 
 #if ENABLE(VIDEO)
 
+String RenderThemeWin::extraMediaControlsStyleSheet()
+{
+    return String(mediaControlsQuickTimeUserAgentStyleSheet, sizeof(mediaControlsQuickTimeUserAgentStyleSheet));
+}
+
 bool RenderThemeWin::shouldRenderMediaControlPart(ControlPart part, Element* element)
 {
     if (part == MediaToggleClosedCaptionsButtonPart) {
@@ -968,6 +974,11 @@ bool RenderThemeWin::paintMediaPlayButton(RenderObject* o, const PaintInfo& pain
     return RenderMediaControls::paintMediaControlsPart(MediaPlayButton, o, paintInfo, r);
 }
 
+bool RenderThemeWin::paintMediaRewindButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+{
+    return RenderMediaControls::paintMediaControlsPart(MediaRewindButton, o, paintInfo, r);
+}
+
 bool RenderThemeWin::paintMediaSeekBackButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     return RenderMediaControls::paintMediaControlsPart(MediaSeekBackButton, o, paintInfo, r);
@@ -992,6 +1003,32 @@ bool RenderThemeWin::paintMediaToggleClosedCaptionsButton(RenderObject* o, const
 {
     return RenderMediaControls::paintMediaControlsPart(MediaShowClosedCaptionsButton, o, paintInfo, r);
 }
+
+bool RenderThemeWin::paintMediaControlsBackground(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+{
+    return RenderMediaControls::paintMediaControlsPart(MediaTimelineContainer, o, paintInfo, r);
+}
+
+bool RenderThemeWin::paintMediaVolumeSliderContainer(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+{
+    return RenderMediaControls::paintMediaControlsPart(MediaVolumeSliderContainer, o, paintInfo, r);
+}
+
+bool RenderThemeWin::paintMediaVolumeSliderTrack(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+{
+    return RenderMediaControls::paintMediaControlsPart(MediaVolumeSlider, o, paintInfo, r);
+}
+
+bool RenderThemeWin::paintMediaVolumeSliderThumb(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+{
+    return RenderMediaControls::paintMediaControlsPart(MediaVolumeSliderThumb, o, paintInfo, r);
+}
+
+IntPoint RenderThemeWin::volumeSliderOffsetFromMuteButton(Node* muteButton, const IntSize& size) const
+{
+    return RenderMediaControls::volumeSliderOffsetFromMuteButton(muteButton, size);
+}
+
 
 #endif
 

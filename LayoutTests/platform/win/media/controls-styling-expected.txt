@@ -21,7 +21,7 @@ layer at (18,266) size 320x16
     RenderButton {INPUT} at (0,0) size 16x16
     RenderFlexibleBox {DIV} at (16,0) size 256x16
       RenderSlider {INPUT} at (0,0) size 256x16
-        RenderBlock {DIV} at (2,1) size 13x14
+        RenderBlock {DIV} at (2,4) size 10x8
     RenderButton {INPUT} at (272,0) size 16x16
     RenderButton {INPUT} at (288,0) size 16x16
     RenderButton {INPUT} at (304,0) size 16x16
@@ -32,7 +32,7 @@ layer at (8,506) size 320x16
     RenderButton {INPUT} at (0,0) size 16x16
     RenderFlexibleBox {DIV} at (16,0) size 256x16
       RenderSlider {INPUT} at (0,0) size 256x16
-        RenderBlock {DIV} at (2,1) size 13x14
+        RenderBlock {DIV} at (2,4) size 10x8
     RenderButton {INPUT} at (272,0) size 16x16
     RenderButton {INPUT} at (288,0) size 16x16
     RenderButton {INPUT} at (304,0) size 16x16

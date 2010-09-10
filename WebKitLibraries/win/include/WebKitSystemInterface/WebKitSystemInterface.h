@@ -28,6 +28,7 @@
 
 struct CGAffineTransform;
 struct CGPoint;
+struct CGRect;
 struct CGSize;
 
 typedef const struct __CFData* CFDataRef;
@@ -88,5 +89,47 @@ CFHTTPMessageRef wkCopyCONNECTProxyResponse(CFReadStreamRef, CFURLRef responseUR
 CFURLCredentialRef wkCopyCredentialFromCFPersistentStorage(CFURLProtectionSpaceRef protectionSpace);
 
 CFStringRef wkCFNetworkErrorGetLocalizedDescription(CFIndex errorCode);
+
+typedef enum {
+    WKMediaUIPartFullscreenButton   = 0,
+    WKMediaUIPartMuteButton,
+    WKMediaUIPartPlayButton,
+    WKMediaUIPartSeekBackButton,
+    WKMediaUIPartSeekForwardButton,
+    WKMediaUIPartTimelineSlider,
+    WKMediaUIPartTimelineSliderThumb,
+    WKMediaUIPartRewindButton,
+    WKMediaUIPartSeekToRealtimeButton,
+    WKMediaUIPartShowClosedCaptionsButton,
+    WKMediaUIPartHideClosedCaptionsButton,
+    WKMediaUIPartUnMuteButton,
+    WKMediaUIPartPauseButton,
+    WKMediaUIPartBackground,
+    WKMediaUIPartCurrentTimeDisplay,
+    WKMediaUIPartTimeRemainingDisplay,
+    WKMediaUIPartStatusDisplay,
+    WKMediaUIPartControlsPanel,
+    WKMediaUIPartVolumeSliderContainer,
+    WKMediaUIPartVolumeSlider,
+    WKMediaUIPartVolumeSliderThumb
+} WKMediaUIPart;
+
+typedef enum {
+    WKMediaControllerThemeClassic   = 1,
+    WKMediaControllerThemeQuickTime = 2
+} WKMediaControllerThemeStyle;
+
+typedef enum {
+    WKMediaControllerFlagDisabled = 1 << 0,
+    WKMediaControllerFlagPressed = 1 << 1,
+    WKMediaControllerFlagDrawEndCaps = 1 << 3,
+    WKMediaControllerFlagFocused = 1 << 4
+} WKMediaControllerThemeState;
+
+bool WKMediaControllerThemeAvailable(int themeStyle);
+bool WKHitTestMediaUIPart(int part, int themeStyle, CGRect bounds, CGPoint point);
+void WKMeasureMediaUIPart(int part, int themeStyle, CGRect *bounds, CGSize *naturalSize);
+void WKDrawMediaUIPart(int part, int themeStyle, CGContextRef context, CGRect rect, unsigned state);
+void WKDrawMediaSliderTrack(int themeStyle, CGContextRef context, CGRect rect, float timeLoaded, float currentTime, float duration, unsigned state);
 
 #endif // WebKitSystemInterface_h

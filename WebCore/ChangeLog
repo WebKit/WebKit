@@ -1,3 +1,29 @@
+2010-09-09  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Adopt shared control drawing for <video> controls on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=45490
+        
+        * DerivedSources.make: Remove the OS check around mediaControlsQuickTime.css.
+        * rendering/RenderMediaControls.cpp:
+        (WebCore::determineState): Use WKMediaControllerThemeState flags instead of SafariTheme ones.
+        (WebCore::getUnzoomedRectAndAdjustCurrentContext): Added. Copied verbatim from RenderMediaMac.mm.
+        (WebCore::RenderMediaControls::adjustMediaSliderThumbSize): Use wkMeasureMediaUIPart to adjust the thumb size.
+        (WebCore::RenderMediaControls::paintMediaControlsPart): Use wkDrawMediaUIPart instead of paintThemePart.
+        (WebCore::RenderMediaControls::volumeSliderOffsetFromMuteButton): Added. Copied verbatim from RenderMediaMac.mm.
+        * rendering/RenderMediaControls.h:
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::adjustSliderThumbSize): Adjust both sliders and volume sliders.
+        (WebCore::RenderThemeWin::extraMediaControlsStyleSheet): Added. Returns the mediaControlsQuickTime sheet.
+        (WebCore::RenderThemeWin::paintMediaRewindButton): Added. Pass through to RenderMediaControls.
+        (WebCore::RenderThemeWin::paintMediaControlsBackground): Added. Pass through to RenderMediaControls.
+        (WebCore::RenderThemeWin::paintMediaVolumeSliderContainer): Added. Pass through to RenderMediaControls.
+        (WebCore::RenderThemeWin::paintMediaVolumeSliderTrack): Added. Pass through to RenderMediaControls.
+        (WebCore::RenderThemeWin::paintMediaVolumeSliderThumb): Added.  Pass through to RenderMediaControls.
+        (WebCore::RenderThemeWin::volumeSliderOffsetFromMuteButton): Added. Pass through to RenderMediaControls.
+        * rendering/RenderThemeWin.h:
+
 2010-09-109  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Darin Adler.
