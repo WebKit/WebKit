@@ -72,7 +72,7 @@ void MediaDocumentParser::createDocumentStructure()
     RefPtr<Element> rootElement = document()->createElement(htmlTag, false);
     document()->appendChild(rootElement, ec);
 
-    if (document()->frame() && document()->frame()->loader())
+    if (document()->frame())
         document()->frame()->loader()->dispatchDocumentElementAvailable();
         
     RefPtr<Element> body = document()->createElement(bodyTag, false);

@@ -1,3 +1,15 @@
+2010-09-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Spurious null check in MediaDocumentParser
+        https://bugs.webkit.org/show_bug.cgi?id=45461
+
+        Trivial change.  FrameLoader can never be null.
+
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::createDocumentStructure):
+
 2010-09-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.
