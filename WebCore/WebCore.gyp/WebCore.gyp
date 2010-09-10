@@ -1229,6 +1229,10 @@
             # related to ScrollbarThemeChromium.cpp.
             '../platform/chromium/ScrollbarThemeChromium.cpp',
 
+            # The Mac currently uses ImageChromiumMac.mm from
+            # platform/graphics/chromium, included by regex above, instead.
+            '../platform/graphics/chromium/ImageChromium.cpp',
+
             # The Mac uses ImageSourceCG.cpp from platform/graphics/cg, included
             # by regex above, instead.
             '../platform/graphics/ImageSource.cpp',

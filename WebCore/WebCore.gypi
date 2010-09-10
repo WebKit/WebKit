@@ -2315,6 +2315,7 @@
             'platform/graphics/chromium/IconChromiumMac.cpp',
             'platform/graphics/chromium/IconChromiumWin.cpp',
             'platform/graphics/chromium/ImageBufferData.h',
+            'platform/graphics/chromium/ImageChromium.cpp',
             'platform/graphics/chromium/ImageChromiumMac.mm',
             'platform/graphics/chromium/ImageLayerChromium.cpp',
             'platform/graphics/chromium/ImageLayerChromium.h',

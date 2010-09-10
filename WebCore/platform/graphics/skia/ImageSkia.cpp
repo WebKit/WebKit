@@ -33,7 +33,6 @@
 #include "AffineTransform.h"
 #include "BitmapImage.h"
 #include "BitmapImageSingleFrameSkia.h"
-#include "ChromiumBridge.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
 #include "GLES2Canvas.h"
@@ -309,11 +308,6 @@ bool FrameData::clear(bool clearMetadata)
         return true;
     }
     return false;
-}
-
-PassRefPtr<Image> Image::loadPlatformResource(const char *name)
-{
-    return ChromiumBridge::loadPlatformImageResource(name);
 }
 
 void Image::drawPattern(GraphicsContext* context,
