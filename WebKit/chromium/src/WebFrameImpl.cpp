@@ -1026,7 +1026,7 @@ void WebFrameImpl::commitDocumentData(const char* data, size_t length)
         encoding = documentLoader->response().textEncodingName();
     }
     m_frame->loader()->writer()->setEncoding(encoding, userChosen);
-    m_frame->documentLoader()->addData(data, length);
+    m_frame->loader()->documentLoader()->addData(data, length);
 }
 
 unsigned WebFrameImpl::unloadListenerCount() const

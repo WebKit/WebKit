@@ -1,5 +1,12 @@
 2010-09-10  Adam Barth  <abarth@webkit.org>
 
+        Chromium build fix (one hopes!)
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::commitDocumentData):
+
+2010-09-10  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Main resource bytes shouldn't bounce through FrameLoader
