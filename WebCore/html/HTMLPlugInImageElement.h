@@ -59,7 +59,6 @@ protected:
     bool wouldLoadAsNetscapePlugin(const String& url, const String& serviceType);
 
 private:
-    virtual bool canLazyAttach() { return false; }
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void recalcStyle(StyleChange);
     

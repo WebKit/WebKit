@@ -51,9 +51,11 @@ RenderPart* HTMLFrameOwnerElement::renderPart() const
 
 void HTMLFrameOwnerElement::willRemove()
 {
+    // FIXME: It is unclear why this can't be moved to removedFromDocument()
+    // this is the only implementation of willRemove in WebCore!
     if (Frame* frame = contentFrame()) {
-        frame->disconnectOwnerElement();
         frame->loader()->frameDetached();
+        frame->disconnectOwnerElement();
     }
 
     HTMLElement::willRemove();

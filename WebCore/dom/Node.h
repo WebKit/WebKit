@@ -310,8 +310,11 @@ public:
     void setIsLink() { setFlag(IsLinkFlag); }
     void clearIsLink() { clearFlag(IsLinkFlag); }
 
-    void lazyAttach();
-    virtual bool canLazyAttach() { return true; }
+    enum ShouldSetAttached {
+        SetAttached,
+        DoNotSetAttached
+    };
+    void lazyAttach(ShouldSetAttached = SetAttached);
 
     virtual void setFocus(bool b = true);
     virtual void setActive(bool f = true, bool /*pause*/ = false) { setFlag(f, IsActiveFlag); }
@@ -680,6 +683,9 @@ private:
 #endif
 
     void setStyleChange(StyleChangeType);
+
+    // Used to share code between lazyAttach and setNeedsStyleRecalc.
+    void markAncestorsWithChildNeedsStyleRecalc();
 
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }

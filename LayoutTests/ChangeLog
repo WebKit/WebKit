@@ -1,3 +1,21 @@
+2010-09-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Remove support for non-lazy attach and fix frames to load from insertedIntoDocument instead of attach
+        https://bugs.webkit.org/show_bug.cgi?id=45365
+
+        * fast/dom/beforeload/remove-frame-in-beforeload-listener.html:
+          - Add a comment to make clear that this test intentionally
+            does not cancel the load in the beforeload event, but rather
+            relies on WebCore's own Node::willRemove() implementation to
+            cancel the load when the frame is removed.
+            (The load is not actually directly canceled per say, but the
+            loading logic checks to see if the frame is still in the frame
+            tree right after creating the frame and aborts if its not.
+            HTMLFrameOwnerElement::willRemove clears the frame owner pointer
+            causing the frame to be removed from the tree.)
+
 2010-09-10  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.

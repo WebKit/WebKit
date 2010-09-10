@@ -114,19 +114,19 @@ PassRefPtr<ChildType> HTMLConstructionSite::attach(ContainerNode* parent, PassRe
 
 void HTMLConstructionSite::attachAtSite(const AttachmentSite& site, PassRefPtr<Node> prpChild)
 {
-    RefPtr<Node> child = prpChild;
-
-    if (site.nextChild) {
-        site.parent->parserInsertBefore(child, site.nextChild);
-        if (site.parent->attached() && !child->attached())
-            child->attach();
-        return;
-    }
-    site.parent->parserAddChild(child);
-    // It's slightly unfortunate that we need to hold a reference to child
+    // FIXME: It's unfortunate that we need to hold a reference to child
     // here to call attach().  We should investigate whether we can rely on
     // |site.parent| to hold a ref at this point.
-    if (site.parent->attached() && !child->attached())
+    RefPtr<Node> child = prpChild;
+
+    if (site.nextChild)
+        site.parent->parserInsertBefore(child, site.nextChild);
+    else
+        site.parent->parserAddChild(child);
+
+    // JavaScript run from beforeload (or DOM Mutation or event handlers)
+    // might have removed the child, in which case we should not attach it.
+    if (child->parentNode() && site.parent->attached() && !child->attached())
         child->attach();
 }
 

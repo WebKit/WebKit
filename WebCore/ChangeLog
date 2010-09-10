@@ -1,3 +1,114 @@
+2010-09-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Remove support for non-lazy attach and fix frames to load from insertedIntoDocument instead of attach
+        https://bugs.webkit.org/show_bug.cgi?id=45365
+
+        This change is the last piece of the puzzle which was preventing us from
+        removing all eager-attach logic and moving WebCore to using an entirely
+        recalcStyle-driven, on-demand renderer creation system, instead of every
+        element being synchronously attached during parsing, regardless of whether
+        it was ever going to be displayed or not.
+
+        This does not change the places we call lazyAttach vs. attach.  This only
+        changes the behavior of frame/plugin elements when lazyAttach is called.
+        Previously lazyAttach would eager-attach those elements (and their ancestors)
+        because they were marked as canLazyAttach() { return false; }.
+
+        This is a very tricky change, please review carefully.
+
+        Mostly I'm moving logic which used to be in attach() into
+        insertedIntoDocument.  Once it was there, there was no longer any reason
+        why frame elements couldn't lazyAttach, thus removing the need
+        for the non-lazy attach code path entirely.
+        We've not yet converted all callsites over to using lazyAttach() instead
+        of attach() however.
+
+        In order to move frame loading logic into insertedIntoDocument
+        instead of attach, I needed to make sure that any javascript calls
+        during the load would see an attached element.  Thus I needed to mark
+        the element as needing style resolve so that it would attach itself
+        if needed.
+
+        I was not able to just call lazyAttach() from insertedIntoDocument directly
+        due to two conflicting assumptions in the rendering tree:
+         1. ContainerNode::attach() assumes its "safe" to call attach on all children
+            without checking first if the child is already attached.  This seems sane
+            since its strange to think of a subtree as being attached w/o ancestors
+            already being attached.  Although it is a hard rule that subtrees may not
+            have renderers w/o ancestors also having renderers, I do not believe it's
+            a hard rule that subtrees may not be attached.  Remember, attached() does
+            not imply renderer()!  It's possible ContainerNode::attach()'s assumption is wrong here.
+         2. Node::attach() asserts !attached().  This makes sense and I would not
+            want to remove this assert, however it means that if insertedIntoDocument
+            were to call lazyAttach() (thus marking the element as attached()) then
+            all callers would need to check if the element was already attached after
+            insertedIntoDocument (called by appendChild, parserAppendChild, etc.)
+            before calling attach or lazyAttach().  The following example:
+            element.innerHTML = "<span><iframe></span>" is one case where this
+            ASSERT would be hit if insertedIntoDocument called lazyAttach, since
+            ContainerNode::attach() (called on the span by in appendChild(DocumentFragment) code)
+            does not check if iframe is already attached.
+
+        Note: One subtle change here is that synchronous javascript which results
+        from javascript: or beforeload is now run as part of insertedIntoDocument
+        (thus any insert/append call *even* parserAddChild) instead of being
+        run during attach (technically in the post-attach callbacks).
+
+        This is covered by numerous layout tests.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::willRemoveChild):
+        (WebCore::willRemoveChildren):
+         - Since insertedIntoDocument starts a load and yet does not mark the
+           element as attached, we need to always call willRemove().
+           See note above as to why we don't just mark attached() in insertedIntoDocument.
+        * dom/Node.cpp:
+        (WebCore::Node::markAncestorsWithChildNeedsStyleRecalc):
+         - Share some code between lazyAttach and setNeedsStyleRecalc.
+        (WebCore::Node::setNeedsStyleRecalc):
+         - Use the new markAncestorsWithChildNeedsStyleRecalc
+        (WebCore::Node::lazyAttach):
+         - Remove the non-lazy code path, and use markAncestorsWithChildNeedsStyleRecalc.
+         - Add an option to lazyAttach without marking attached(), used by HTMLFrameElementBase::insertedIntoDocument.
+        * dom/Node.h:
+        * html/HTMLFrameElementBase.cpp:
+         - m_shouldOpenURLAfterAttach is no longer needed, yay!
+         - m_checkAttachedTimer no longer has anything to do with attached(), so renamed it.
+           I also documented that the newly named m_checkInDocumentTimer is all about the
+           "magic iframe" performance quirk.  (Which is actually speced in HTML5).
+           I was initially baffled by this code, so I documented it.
+        (WebCore::HTMLFrameElementBase::HTMLFrameElementBase)
+        (WebCore::HTMLFrameElementBase::insertedIntoDocument):
+         - This is the meat of this change, see discussion above.
+        (WebCore::HTMLFrameElementBase::attach):
+         - Code deleted or moved to insertedIntoDocument.
+        (WebCore::HTMLFrameElementBase::width):
+         - Fixed a bug in height()/width() which was probably causing crashes
+           and was causing incorrect behavior after this change.
+           renderBox() is not necessarily valid unless layout is up to date.
+           Updating layout, can cause renderBox() to go invalid, thus this
+           could have been a null-pointer crash.
+        (WebCore::HTMLFrameElementBase::height): see width()
+        (WebCore::HTMLFrameElementBase::setRemainsAliveOnRemovalFromTree): Timer rename.
+        (WebCore::HTMLFrameElementBase::checkInDocumentTimerFired): Timer rename.
+        * html/HTMLFrameElementBase.h:
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::willRemove):
+         - Disconnecting the owner element removes the frame from the frame tree.
+           frameDetached() calls Page::frameCount which expects that the frame is
+           already gone at this point and asserts when it's not.  It's unclear how
+           this worked before, except that the frame removal was likely done in the
+           post-attach callback, so the frameCount was wrong (too high) during
+           frameDetached(), but was fixed up in the post-detach callback.
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::attachAtSite):
+          - Simplified this code, and added a check for the case when the node was already removed.
+            Since the load logic is now run during insertedIntoDocument instead of attach(),
+            synchronous javascript is now running during insertedIntoDocument and we need to
+            make sure that the child is still in the tree.
+
 2010-09-10  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, rolling out r67178.

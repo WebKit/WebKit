@@ -359,9 +359,7 @@ static void willRemoveChild(Node* child)
 
     // fire removed from document mutation events.
     dispatchChildRemovalEvents(child);
-
-    if (child->attached())
-        child->willRemove();
+    child->willRemove();
 }
 
 static void willRemoveChildren(ContainerNode* container)
@@ -373,9 +371,7 @@ static void willRemoveChildren(ContainerNode* container)
     for (RefPtr<Node> child = container->firstChild(); child; child = child->nextSibling()) {
         // fire removed from document mutation events.
         dispatchChildRemovalEvents(child.get());
-
-        if (child->attached())
-            child->willRemove();
+        child->willRemove();
     }
 }
 
