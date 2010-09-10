@@ -1,5 +1,12 @@
 2010-09-09  John Therrell  <jtherrell@apple.com>
 
+        32-bit build fix.
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutableAllocator::committedByteCount):
+
+2010-09-09  John Therrell  <jtherrell@apple.com>
+
         Reviewed by Alexey Proskuryakov.
 
         Added statistics sampling and reporting for JavaScriptCore's RegisterFile and ExecutableAllocator classes
