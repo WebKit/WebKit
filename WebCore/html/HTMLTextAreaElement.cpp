@@ -222,7 +222,7 @@ void HTMLTextAreaElement::updateFocusAppearance(bool restorePreviousSelection)
     }
 
     if (document()->frame())
-        document()->frame()->revealSelection();
+        document()->frame()->selection()->revealSelection();
 }
 
 void HTMLTextAreaElement::defaultEventHandler(Event* event)

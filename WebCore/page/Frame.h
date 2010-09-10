@@ -29,14 +29,12 @@
 #define Frame_h
 
 #include "AnimationController.h"
-#include "CSSMutableStyleDeclaration.h"
 #include "DragImage.h"
 #include "Editor.h"
 #include "EventHandler.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "ScriptController.h"
-#include "ScrollBehavior.h"
 #include "UserScriptTypes.h"
 #include "ZoomMode.h"
 
@@ -67,37 +65,31 @@ namespace WebCore {
     class RenderPart;
     class TiledBackingStore;
 
-    class Frame : public RefCounted<Frame>
-#if ENABLE(TILED_BACKING_STORE)
-        , public TiledBackingStoreClient
+#if !ENABLE(TILED_BACKING_STORE)
+    class TiledBackingStoreClient { };
 #endif
-    {
+
+    class Frame : public RefCounted<Frame>, public TiledBackingStoreClient {
     public:
         static PassRefPtr<Frame> create(Page*, HTMLFrameOwnerElement*, FrameLoaderClient*);
-        void setView(PassRefPtr<FrameView>);
-        ~Frame();
 
         void init();
+        void setView(PassRefPtr<FrameView>);
+        void createView(const IntSize&, const Color&, bool, const IntSize&, bool,
+            ScrollbarMode = ScrollbarAuto, bool horizontalLock = false,
+            ScrollbarMode = ScrollbarAuto, bool verticalLock = false);
 
-        Page* page() const;
+        ~Frame();
+
         void detachFromPage();
-        void transferChildFrameToNewDocument();
-
-        HTMLFrameOwnerElement* ownerElement() const;
-
         void pageDestroyed();
         void disconnectOwnerElement();
 
+        Page* page() const;
+        HTMLFrameOwnerElement* ownerElement() const;
+
         Document* document() const;
         FrameView* view() const;
-
-        void setDOMWindow(DOMWindow*);
-        void clearFormerDOMWindow(DOMWindow*);
-
-        // Unlike many of the accessors in Frame, domWindow() always creates a new DOMWindow if m_domWindow is null.
-        // Callers that don't need a new DOMWindow to be created should use existingDOMWindow().
-        DOMWindow* domWindow() const;
-        DOMWindow* existingDOMWindow() { return m_domWindow.get(); }
 
         Editor* editor() const;
         EventHandler* eventHandler() const;
@@ -108,31 +100,30 @@ namespace WebCore {
         AnimationController* animation() const;
         ScriptController* script();
 
-        RenderView* contentRenderer() const; // root renderer for the document contained in this frame
-        RenderPart* ownerRenderer() const; // renderer for the element that contains this frame
+        RenderView* contentRenderer() const; // Root of the render tree for the document contained in this frame.
+        RenderPart* ownerRenderer() const; // Renderer for the element that contains this frame.
+
+        void transferChildFrameToNewDocument();
+
+    // ======== All public functions below this point are candidates to move out of Frame into another class. ========
 
         bool isDisconnected() const;
         void setIsDisconnected(bool);
         bool excludeFromTextSearch() const;
         void setExcludeFromTextSearch(bool);
 
-        void createView(const IntSize&, const Color&, bool, const IntSize &, bool,
-                        ScrollbarMode = ScrollbarAuto, bool horizontalLock = false,
-                        ScrollbarMode = ScrollbarAuto, bool verticalLock = false);
-
         void injectUserScripts(UserScriptInjectionTime);
         
         String layerTreeAsText() const;
 
-    private:
-        void injectUserScriptsForWorld(DOMWrapperWorld*, const UserScriptVector&, UserScriptInjectionTime);
+        // Unlike most accessors in this class, domWindow() always creates a new DOMWindow if m_domWindow is null.
+        // Callers that don't need a new DOMWindow to be created should use existingDOMWindow().
+        DOMWindow* domWindow() const;
+        DOMWindow* existingDOMWindow() { return m_domWindow.get(); }
+        void setDOMWindow(DOMWindow*);
+        void clearFormerDOMWindow(DOMWindow*);
+        void clearDOMWindow();
 
-    private:
-        Frame(Page*, HTMLFrameOwnerElement*, FrameLoaderClient*);
-
-    // === undecided, would like to consider moving to another class
-
-    public:
         static Frame* frameForWidget(const Widget*);
 
         Settings* settings() const; // can be NULL
@@ -163,80 +154,25 @@ namespace WebCore {
 
         String documentTypeString() const;
 
-        // This method -- and the corresponding list of former DOM windows --
-        // should move onto ScriptController
-        void clearDOMWindow();
-
         String displayStringModifiedByEncoding(const String& str) const
         {
             return document() ? document()->displayStringModifiedByEncoding(str) : str;
         }
 
-#if ENABLE(TILED_BACKING_STORE)
-        // FIXME: This should be in FrameView, not Frame.
-        TiledBackingStore* tiledBackingStore() const { return m_tiledBackingStore.get(); }
-        void setTiledBackingStoreEnabled(bool);
-#endif
-
         DragImageRef nodeImage(Node*);
         DragImageRef dragImageForSelection();
 
-    private:
-        void lifeSupportTimerFired(Timer<Frame>*);
-
-    // === to be moved into SelectionController
-
-    public:
-        TextGranularity selectionGranularity() const;
-
-        bool shouldChangeSelection(const VisibleSelection&) const;
-        bool shouldDeleteSelection(const VisibleSelection&) const;
-        void setFocusedNodeIfNeeded();
-        void notifyRendererOfSelectionChange(bool userTriggered);
-
-        void paintDragCaret(GraphicsContext*, int tx, int ty, const IntRect& clipRect) const;
-
         bool isContentEditable() const; // if true, everything in frame is editable
 
-        CSSMutableStyleDeclaration* typingStyle() const;
-        void setTypingStyle(CSSMutableStyleDeclaration*);
-        void clearTypingStyle();
-
-        FloatRect selectionBounds(bool clipToVisibleContent = true) const;
-        enum SelectionRectRespectTransforms { RespectTransforms = true, IgnoreTransforms = false };
-        void selectionTextRects(Vector<FloatRect>&, SelectionRectRespectTransforms respectTransforms, bool clipToVisibleContent = true) const;
-
-        HTMLFormElement* currentForm() const;
-
-        void revealSelection(const ScrollAlignment& = ScrollAlignment::alignCenterIfNeeded, bool revealExtent = false);
-        void setSelectionFromNone();
-
-        SelectionController* dragCaretController() const;
+        VisiblePosition visiblePositionForPoint(const IntPoint& framePoint);
+        Document* documentAtPoint(const IntPoint& windowPoint);
 
         String searchForLabelsAboveCell(RegularExpression*, HTMLTableCellElement*, size_t* resultDistanceFromStartOfCell);
         String searchForLabelsBeforeElement(const Vector<String>& labels, Element*, size_t* resultDistance, bool* resultIsInCellAbove);
         String matchLabelsAgainstElement(const Vector<String>& labels, Element*);
 
-        VisiblePosition visiblePositionForPoint(const IntPoint& framePoint);
-        Document* documentAtPoint(const IntPoint& windowPoint);
-
-#if ENABLE(TILED_BACKING_STORE)
-        // FIXME: This should be in FrameView, not Frame.
-
-    private:
-        // TiledBackingStoreClient interface
-        virtual void tiledBackingStorePaintBegin();
-        virtual void tiledBackingStorePaint(GraphicsContext*, const IntRect&);
-        virtual void tiledBackingStorePaintEnd(const Vector<IntRect>& paintedArea);
-        virtual IntRect tiledBackingStoreContentsRect();
-        virtual IntRect tiledBackingStoreVisibleRect();
-#endif
-
 #if PLATFORM(MAC)
 
-    // === undecided, would like to consider moving to another class
-
-    public:
         NSString* searchForNSLabelsAboveCell(RegularExpression*, HTMLTableCellElement*, size_t* resultDistanceFromStartOfCell);
         NSString* searchForLabelsBeforeElement(NSArray* labels, Element*, size_t* resultDistance, bool* resultIsInCellAbove);
         NSString* matchLabelsAgainstElement(NSArray* labels, Element*);
@@ -251,7 +187,14 @@ namespace WebCore {
 
 #endif
 
+    // ========
+
     private:
+        Frame(Page*, HTMLFrameOwnerElement*, FrameLoaderClient*);
+
+        void injectUserScriptsForWorld(DOMWrapperWorld*, const UserScriptVector&, UserScriptInjectionTime);
+        void lifeSupportTimerFired(Timer<Frame>*);
+
         Page* m_page;
         mutable FrameTree m_treeNode;
         mutable FrameLoader m_loader;
@@ -271,8 +214,6 @@ namespace WebCore {
         mutable EventHandler m_eventHandler;
         mutable AnimationController m_animationController;
 
-        RefPtr<CSSMutableStyleDeclaration> m_typingStyle;
-
         Timer<Frame> m_lifeSupportTimer;
 
 #if ENABLE(ORIENTATION_EVENTS)
@@ -283,7 +224,21 @@ namespace WebCore {
         bool m_isDisconnected;
         bool m_excludeFromTextSearch;
 
-#if ENABLE(TILED_BACKING_STORE)        
+#if ENABLE(TILED_BACKING_STORE)
+    // FIXME: The tiled backing store belongs in FrameView, not Frame.
+
+    public:
+        TiledBackingStore* tiledBackingStore() const { return m_tiledBackingStore.get(); }
+        void setTiledBackingStoreEnabled(bool);
+
+    private:
+        // TiledBackingStoreClient interface
+        virtual void tiledBackingStorePaintBegin();
+        virtual void tiledBackingStorePaint(GraphicsContext*, const IntRect&);
+        virtual void tiledBackingStorePaintEnd(const Vector<IntRect>& paintedArea);
+        virtual IntRect tiledBackingStoreContentsRect();
+        virtual IntRect tiledBackingStoreVisibleRect();
+
         OwnPtr<TiledBackingStore> m_tiledBackingStore;
 #endif
     };
@@ -331,16 +286,6 @@ namespace WebCore {
     inline AnimationController* Frame::animation() const
     {
         return &m_animationController;
-    }
-
-    inline CSSMutableStyleDeclaration* Frame::typingStyle() const
-    {
-        return m_typingStyle.get();
-    }
-
-    inline void Frame::clearTypingStyle()
-    {
-        m_typingStyle = 0;
     }
 
     inline HTMLFrameOwnerElement* Frame::ownerElement() const

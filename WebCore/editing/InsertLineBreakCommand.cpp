@@ -165,7 +165,7 @@ void InsertLineBreakCommand::doApply()
 
     // Handle the case where there is a typing style.
     
-    CSSMutableStyleDeclaration* typingStyle = document()->frame()->typingStyle();
+    CSSMutableStyleDeclaration* typingStyle = document()->frame()->selection()->typingStyle();
     
     if (typingStyle && typingStyle->length() > 0) {
         // Apply the typing style to the inserted line break, so that if the selection

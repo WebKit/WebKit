@@ -714,7 +714,7 @@ void DeleteSelectionCommand::calculateTypingStyleAfterDelete()
     // In this case if we start typing, the new characters should have the same style as the just deleted ones,
     // but, if we change the selection, come back and start typing that style should be lost.  Also see 
     // preserveTypingStyle() below.
-    document()->frame()->setTypingStyle(m_typingStyle.get());
+    document()->frame()->selection()->setTypingStyle(m_typingStyle);
 }
 
 void DeleteSelectionCommand::clearTransientState()

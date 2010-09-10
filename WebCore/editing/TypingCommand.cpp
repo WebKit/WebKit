@@ -356,7 +356,7 @@ void TypingCommand::insertText(const String &text, bool selectInsertedText)
 void TypingCommand::insertTextRunWithoutNewlines(const String &text, bool selectInsertedText)
 {
     RefPtr<InsertTextCommand> command;
-    if (!document()->frame()->typingStyle() && !m_commands.isEmpty()) {
+    if (!document()->frame()->selection()->typingStyle() && !m_commands.isEmpty()) {
         EditCommand* lastCommand = m_commands.last().get();
         if (lastCommand->isInsertTextCommand())
             command = static_cast<InsertTextCommand*>(lastCommand);
@@ -496,7 +496,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
     if (selectionToDelete.isNone())
         return;
     
-    if (selectionToDelete.isCaret() || !document()->frame()->shouldDeleteSelection(selectionToDelete))
+    if (selectionToDelete.isCaret() || !document()->frame()->selection()->shouldDeleteSelection(selectionToDelete))
         return;
     
     if (killRing)
@@ -579,7 +579,7 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool ki
     if (selectionToDelete.isNone())
         return;
     
-    if (selectionToDelete.isCaret() || !document()->frame()->shouldDeleteSelection(selectionToDelete))
+    if (selectionToDelete.isCaret() || !document()->frame()->selection()->shouldDeleteSelection(selectionToDelete))
         return;
         
     if (killRing)

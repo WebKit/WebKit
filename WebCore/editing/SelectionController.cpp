@@ -29,6 +29,7 @@
 #include "DeleteSelectionCommand.h"
 #include "Document.h"
 #include "Editor.h"
+#include "EditorClient.h"
 #include "Element.h"
 #include "EventHandler.h"
 #include "ExceptionCode.h"
@@ -38,7 +39,8 @@
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
-#include "HTMLFrameOwnerElement.h"
+#include "HTMLFormElement.h"
+#include "HTMLFrameElementBase.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HitTestRequest.h"
@@ -46,8 +48,10 @@
 #include "Page.h"
 #include "Range.h"
 #include "RenderLayer.h"
+#include "RenderTextControl.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "RenderWidget.h"
 #include "SecureTextInput.h"
 #include "Settings.h"
 #include "TextIterator.h"
@@ -107,7 +111,7 @@ void SelectionController::moveTo(const Position &base, const Position &extent, E
     setSelection(VisibleSelection(base, extent, affinity), true, true, userTriggered);
 }
 
-void SelectionController::setSelection(const VisibleSelection& s, bool closeTyping, bool clearTypingStyle, bool userTriggered, CursorAlignOnScroll align, TextGranularity granularity, DirectionalityPolicy directionalityPolicy)
+void SelectionController::setSelection(const VisibleSelection& s, bool closeTyping, bool shouldClearTypingStyle, bool userTriggered, CursorAlignOnScroll align, TextGranularity granularity, DirectionalityPolicy directionalityPolicy)
 {
     m_granularity = granularity;
 
@@ -134,15 +138,15 @@ void SelectionController::setSelection(const VisibleSelection& s, bool closeTypi
     // <http://bugs.webkit.org/show_bug.cgi?id=23464>: Infinite recursion at SelectionController::setSelection
     // if document->frame() == m_frame we can get into an infinite loop
     if (document && document->frame() && document->frame() != m_frame && document != m_frame->document()) {
-        document->frame()->selection()->setSelection(s, closeTyping, clearTypingStyle, userTriggered);
+        document->frame()->selection()->setSelection(s, closeTyping, shouldClearTypingStyle, userTriggered);
         return;
     }
     
     if (closeTyping)
         TypingCommand::closeTyping(m_frame->editor()->lastEditCommand());
 
-    if (clearTypingStyle)
-        m_frame->clearTypingStyle();
+    if (shouldClearTypingStyle)
+        clearTypingStyle();
         
     if (m_selection == s)
         return;
@@ -154,7 +158,7 @@ void SelectionController::setSelection(const VisibleSelection& s, bool closeTypi
     m_caretRectNeedsUpdate = true;
     
     if (!s.isNone())
-        m_frame->setFocusedNodeIfNeeded();
+        setFocusedNodeIfNeeded();
     
     updateAppearance();
 
@@ -162,7 +166,7 @@ void SelectionController::setSelection(const VisibleSelection& s, bool closeTypi
     // It will be restored by the vertical arrow navigation code if necessary.
     m_xPosForVerticalArrowNavigation = NoXPosForVerticalArrowNavigation;
     selectFrameElementInParentIfFullySelected();
-    m_frame->notifyRendererOfSelectionChange(userTriggered);
+    notifyRendererOfSelectionChange(userTriggered);
     m_frame->editor()->respondToChangedSelection(oldSelection, closeTyping);
     if (userTriggered) {
         ScrollAlignment alignment;
@@ -172,7 +176,7 @@ void SelectionController::setSelection(const VisibleSelection& s, bool closeTypi
         else
             alignment = (align == AlignCursorOnScrollAlways) ? ScrollAlignment::alignTopAlways : ScrollAlignment::alignToEdgeIfNeeded;
 
-        m_frame->revealSelection(alignment, true);
+        revealSelection(alignment, true);
     }
 
     notifyAccessibilityForSelectionChange();
@@ -287,8 +291,7 @@ void SelectionController::willBeModified(EAlteration alter, EDirection direction
 
 TextDirection SelectionController::directionOfEnclosingBlock()
 {
-    Node* n = m_selection.extent().node();
-    Node* enclosingBlockNode = enclosingBlock(n);
+    Node* enclosingBlockNode = enclosingBlock(m_selection.extent().node());
     if (!enclosingBlockNode)
         return LTR;
     RenderObject* renderer = enclosingBlockNode->renderer();
@@ -638,7 +641,7 @@ bool SelectionController::modify(EAlteration alter, EDirection direction, TextGr
         trialSelectionController.setIsDirectional(m_isDirectional);
         trialSelectionController.modify(alter, direction, granularity, false, settings);
 
-        bool change = m_frame->shouldChangeSelection(trialSelectionController.selection());
+        bool change = shouldChangeSelection(trialSelectionController.selection());
         if (!change)
             return false;
     }
@@ -734,7 +737,7 @@ bool SelectionController::modify(EAlteration alter, int verticalDistance, bool u
         trialSelectionController.setIsDirectional(m_isDirectional);
         trialSelectionController.modify(alter, verticalDistance, false);
 
-        bool change = m_frame->shouldChangeSelection(trialSelectionController.selection());
+        bool change = shouldChangeSelection(trialSelectionController.selection());
         if (!change)
             return false;
     }
@@ -1243,7 +1246,7 @@ void SelectionController::selectFrameElementInParentIfFullySelected()
 
     // Focus on the parent frame, and then select from before this element to after.
     VisibleSelection newSelection(beforeOwnerElement, afterOwnerElement);
-    if (parent->shouldChangeSelection(newSelection)) {
+    if (parent->selection()->shouldChangeSelection(newSelection)) {
         page->focusController()->setFocusedFrame(parent);
         parent->selection()->setSelection(newSelection);
     }
@@ -1269,10 +1272,10 @@ void SelectionController::selectAll()
     if (!root)
         return;
     VisibleSelection newSelection(VisibleSelection::selectionFromContentsOfNode(root));
-    if (m_frame->shouldChangeSelection(newSelection))
+    if (shouldChangeSelection(newSelection))
         setSelection(newSelection);
     selectFrameElementInParentIfFullySelected();
-    m_frame->notifyRendererOfSelectionChange(true);
+    notifyRendererOfSelectionChange(true);
 }
 
 bool SelectionController::setSelectedRange(Range* range, EAffinity affinity, bool closeTyping)
@@ -1347,11 +1350,11 @@ void SelectionController::focusedOrActiveStateChanged()
     // RenderObject::selectionForegroundColor() check if the frame is active,
     // we have to update places those colors were painted.
     if (RenderView* view = toRenderView(m_frame->document()->renderer()))
-        view->repaintRectangleInViewAndCompositedLayers(enclosingIntRect(m_frame->selectionBounds()));
+        view->repaintRectangleInViewAndCompositedLayers(enclosingIntRect(bounds()));
 
     // Caret appears in the active frame.
     if (activeAndFocused)
-        m_frame->setSelectionFromNone();
+        setSelectionFromNone();
     setCaretVisible(activeAndFocused);
 
     // Update for caps lock state
@@ -1500,6 +1503,207 @@ void SelectionController::caretBlinkTimerFired(Timer<SelectionController>*)
     m_caretPaint = !caretPaint;
     invalidateCaretRect();
 #endif
+}
+
+void SelectionController::notifyRendererOfSelectionChange(bool userTriggered)
+{
+    m_frame->document()->updateStyleIfNeeded();
+
+    if (!rootEditableElement())
+        return;
+
+    RenderObject* renderer = rootEditableElement()->shadowAncestorNode()->renderer();
+    if (!renderer || !renderer->isTextControl())
+        return;
+
+    toRenderTextControl(renderer)->selectionChanged(userTriggered);
+}
+
+// Helper function that tells whether a particular node is an element that has an entire
+// Frame and FrameView, a <frame>, <iframe>, or <object>.
+static bool isFrameElement(const Node* n)
+{
+    if (!n)
+        return false;
+    RenderObject* renderer = n->renderer();
+    if (!renderer || !renderer->isWidget())
+        return false;
+    Widget* widget = toRenderWidget(renderer)->widget();
+    return widget && widget->isFrameView();
+}
+
+void SelectionController::setFocusedNodeIfNeeded()
+{
+    if (isNone() || !isFocused())
+        return;
+
+    bool caretBrowsing = m_frame->settings() && m_frame->settings()->caretBrowsingEnabled();
+    if (caretBrowsing) {
+        if (Node* anchor = enclosingAnchorElement(base())) {
+            m_frame->page()->focusController()->setFocusedNode(anchor, m_frame);
+            return;
+        }
+    }
+
+    if (Node* target = rootEditableElement()) {
+        RenderObject* renderer = target->renderer();
+
+        // Walk up the render tree to search for a node to focus.
+        // Walking up the DOM tree wouldn't work for shadow trees, like those behind the engine-based text fields.
+        while (renderer) {
+            // We don't want to set focus on a subframe when selecting in a parent frame,
+            // so add the !isFrameElement check here. There's probably a better way to make this
+            // work in the long term, but this is the safest fix at this time.
+            if (target && target->isMouseFocusable() && !isFrameElement(target)) {
+                m_frame->page()->focusController()->setFocusedNode(target, m_frame);
+                return;
+            }
+            renderer = renderer->parent();
+            if (renderer)
+                target = renderer->node();
+        }
+        m_frame->document()->setFocusedNode(0);
+    }
+
+    if (caretBrowsing)
+        m_frame->page()->focusController()->setFocusedNode(0, m_frame);
+}
+
+void SelectionController::paintDragCaret(GraphicsContext* p, int tx, int ty, const IntRect& clipRect) const
+{
+#if ENABLE(TEXT_CARET)
+    SelectionController* dragCaretController = m_frame->page()->dragCaretController();
+    ASSERT(dragCaretController->selection().isCaret());
+    if (dragCaretController->selection().start().node()->document()->frame() == m_frame)
+        dragCaretController->paintCaret(p, tx, ty, clipRect);
+#else
+    UNUSED_PARAM(p);
+    UNUSED_PARAM(tx);
+    UNUSED_PARAM(ty);
+    UNUSED_PARAM(clipRect);
+#endif
+}
+
+bool SelectionController::shouldDeleteSelection(const VisibleSelection& selection) const
+{
+    return m_frame->editor()->client()->shouldDeleteRange(selection.toNormalizedRange().get());
+}
+
+FloatRect SelectionController::bounds(bool clipToVisibleContent) const
+{
+    RenderView* root = m_frame->contentRenderer();
+    FrameView* view = m_frame->view();
+    if (!root || !view)
+        return IntRect();
+
+    IntRect selectionRect = root->selectionBounds(clipToVisibleContent);
+    return clipToVisibleContent ? intersection(selectionRect, view->visibleContentRect()) : selectionRect;
+}
+
+void SelectionController::getClippedVisibleTextRectangles(Vector<FloatRect>& rectangles) const
+{
+    RenderView* root = m_frame->contentRenderer();
+    if (!root)
+        return;
+
+    FloatRect visibleContentRect = m_frame->view()->visibleContentRect();
+
+    Vector<FloatQuad> quads;
+    toNormalizedRange()->textQuads(quads, true);
+
+    // FIXME: We are appending empty rectangles to the list for those that fall outside visibleContentRect.
+    // It might be better to omit those rectangles entirely.
+    size_t size = quads.size();
+    for (size_t i = 0; i < size; ++i)
+        rectangles.append(intersection(quads[i].enclosingBoundingBox(), visibleContentRect));
+}
+
+// Scans logically forward from "start", including any child frames.
+static HTMLFormElement* scanForForm(Node* start)
+{
+    for (Node* node = start; node; node = node->traverseNextNode()) {
+        if (node->hasTagName(formTag))
+            return static_cast<HTMLFormElement*>(node);
+        if (node->isHTMLElement() && static_cast<HTMLElement*>(node)->isFormControlElement())
+            return static_cast<HTMLFormControlElement*>(node)->form();
+        if (node->hasTagName(frameTag) || node->hasTagName(iframeTag)) {
+            Node* childDocument = static_cast<HTMLFrameElementBase*>(node)->contentDocument();
+            if (HTMLFormElement* frameResult = scanForForm(childDocument))
+                return frameResult;
+        }
+    }
+    return 0;
+}
+
+// We look for either the form containing the current focus, or for one immediately after it
+HTMLFormElement* SelectionController::currentForm() const
+{
+    // Start looking either at the active (first responder) node, or where the selection is.
+    Node* start = m_frame->document()->focusedNode();
+    if (!start)
+        start = this->start().node();
+
+    // Try walking up the node tree to find a form element.
+    Node* node;
+    for (node = start; node; node = node->parentNode()) {
+        if (node->hasTagName(formTag))
+            return static_cast<HTMLFormElement*>(node);
+        if (node->isHTMLElement() && static_cast<HTMLElement*>(node)->isFormControlElement())
+            return static_cast<HTMLFormControlElement*>(node)->form();
+    }
+
+    // Try walking forward in the node tree to find a form element.
+    return scanForForm(start);
+}
+
+void SelectionController::revealSelection(const ScrollAlignment& alignment, bool revealExtent)
+{
+    IntRect rect;
+
+    switch (selectionType()) {
+    case VisibleSelection::NoSelection:
+        return;
+    case VisibleSelection::CaretSelection:
+        rect = absoluteCaretBounds();
+        break;
+    case VisibleSelection::RangeSelection:
+        rect = revealExtent ? VisiblePosition(extent()).absoluteCaretBounds() : enclosingIntRect(bounds(false));
+        break;
+    }
+
+    Position start = this->start();
+    ASSERT(start.node());
+    if (start.node() && start.node()->renderer()) {
+        // FIXME: This code only handles scrolling the startContainer's layer, but
+        // the selection rect could intersect more than just that.
+        // See <rdar://problem/4799899>.
+        if (RenderLayer* layer = start.node()->renderer()->enclosingLayer()) {
+            layer->scrollRectToVisible(rect, false, alignment, alignment);
+            updateAppearance();
+        }
+    }
+}
+
+void SelectionController::setSelectionFromNone()
+{
+    // Put a caret inside the body if the entire frame is editable (either the
+    // entire WebView is editable or designMode is on for this document).
+
+    Document* document = m_frame->document();
+    bool caretBrowsing = m_frame->settings() && m_frame->settings()->caretBrowsingEnabled();
+    if (!isNone() || !(m_frame->isContentEditable() || caretBrowsing))
+        return;
+
+    Node* node = document->documentElement();
+    while (node && !node->hasTagName(bodyTag))
+        node = node->traverseNextNode();
+    if (node)
+        setSelection(VisibleSelection(Position(node, 0), DOWNSTREAM));
+}
+
+bool SelectionController::shouldChangeSelection(const VisibleSelection& newSelection) const
+{
+    return m_frame->editor()->shouldChangeSelection(selection(), newSelection, newSelection.affinity(), false);
 }
 
 #ifndef NDEBUG

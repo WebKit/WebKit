@@ -1712,7 +1712,7 @@ int WebFrameImpl::pageNumberForElementById(const WebString& id,
 WebRect WebFrameImpl::selectionBoundsRect() const
 {
     if (hasSelection())
-        return IntRect(frame()->selectionBounds(false));
+        return IntRect(frame()->selection()->bounds(false));
 
     return WebRect();
 }

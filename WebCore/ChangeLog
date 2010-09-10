@@ -1,3 +1,109 @@
+2010-09-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Move functions from Frame to SelectionController as planned
+        https://bugs.webkit.org/show_bug.cgi?id=45508
+
+        Also removed Frame::dragCaretController since it just called Page::dragCaretController.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::setSelection):
+        (WebCore::SelectionController::modify):
+        (WebCore::SelectionController::selectFrameElementInParentIfFullySelected):
+        (WebCore::SelectionController::selectAll):
+        (WebCore::SelectionController::focusedOrActiveStateChanged):
+        (WebCore::SelectionController::notifyRendererOfSelectionChange):
+        (WebCore::isFrameElement):
+        (WebCore::SelectionController::setFocusedNodeIfNeeded):
+        (WebCore::SelectionController::paintDragCaret):
+        (WebCore::SelectionController::shouldDeleteSelection):
+        (WebCore::SelectionController::selectionBounds):
+        (WebCore::SelectionController::selectionTextRects):
+        (WebCore::scanForForm):
+        (WebCore::SelectionController::currentForm):
+        (WebCore::SelectionController::revealSelection):
+        (WebCore::SelectionController::setSelectionFromNone):
+        (WebCore::SelectionController::shouldChangeSelection):
+        * editing/SelectionController.h:
+        Moved functions here from Frame.
+
+        * page/Frame.cpp:
+        * page/Frame.h:
+        Moved functions to SelectionController.
+        Reorganized header to be easier to read and a bit more logical.
+
+        * WebCore.exp.in: Updated.
+
+        * dom/Document.cpp:
+        (WebCore::Document::nodeChildrenWillBeRemoved):
+        (WebCore::Document::nodeWillBeRemoved):
+        Call Page::dragCaretController directly.
+
+        * dom/Element.cpp:
+        (WebCore::Element::updateFocusAppearance):
+        * dom/InputElement.cpp:
+        (WebCore::InputElement::updateFocusAppearance):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::editingStyleAtPosition):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::calculateTypingStyleAfterDelete):
+        * editing/Editor.cpp:
+        (WebCore::Editor::canSmartCopyOrDelete):
+        (WebCore::Editor::textDirectionForSelection):
+        (WebCore::Editor::appliedEditing):
+        (WebCore::Editor::insertTextWithoutSendingTextEvent):
+        (WebCore::Editor::advanceToNextMisspelling):
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+        (WebCore::Editor::revealSelectionAfterEditingOperation):
+        (WebCore::Editor::transpose):
+        (WebCore::Editor::changeSelectionAfterCommand):
+        (WebCore::Editor::computeAndSetTypingStyle):
+        (WebCore::Editor::selectionComputedStyle):
+        (WebCore::Editor::styleForSelectionStart):
+        (WebCore::Editor::findString):
+        * editing/EditorCommand.cpp:
+        (WebCore::executeDelete):
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply):
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::input):
+        * editing/RemoveFormatCommand.cpp:
+        (WebCore::RemoveFormatCommand::doApply):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::insertTextRunWithoutNewlines):
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::updateFocusAppearance):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeEditDrag):
+        (WebCore::dragLocForSelectionDrag):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectClosestWordFromMouseEvent):
+        (WebCore::EventHandler::selectClosestWordOrLinkFromMouseEvent):
+        (WebCore::EventHandler::handleMousePressEventTripleClick):
+        (WebCore::EventHandler::handleMousePressEventSingleClick):
+        (WebCore::EventHandler::updateSelectionForMouseDrag):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        * page/FocusController.cpp:
+        (WebCore::FocusController::advanceFocusInDocumentOrder):
+        * page/chromium/EventHandlerChromium.cpp:
+        (WebCore::EventHandler::passMousePressEventToSubframe):
+        * page/chromium/FrameChromium.cpp:
+        (WebCore::Frame::dragImageForSelection):
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::selectionImage):
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::ClipboardMac::writeRange):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintCaret):
+        Call functions on selection().
+
 2010-09-10  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Darin Adler.

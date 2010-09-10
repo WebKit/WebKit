@@ -1,3 +1,29 @@
+2010-09-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Move functions from Frame to SelectionController as planned
+        https://bugs.webkit.org/show_bug.cgi?id=45508
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _selectionGranularity]):
+        (-[WebFrame _insertParagraphSeparatorInQuotedContent]):
+        (-[WebFrame _typingStyle]):
+        (-[WebFrame _replaceSelectionWithFragment:selectReplacement:smartReplace:matchStyle:]):
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation currentForm]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView jumpToSelection:]):
+        (-[WebHTMLView centerSelectionInVisibleArea:]):
+        (-[WebHTMLView _canSmartCopyOrDelete]):
+        (-[WebHTMLView _lookUpInDictionaryFromMenu:]):
+        (-[WebHTMLView selectionRect]):
+        (-[WebHTMLView selectionTextRects]):
+        (-[WebHTMLView selectionImageRect]):
+        * WebView/WebView.mm:
+        (-[WebView setEditable:]):
+        Call functions on selection().
+
 2010-09-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -101,7 +101,7 @@ DragImageRef Frame::dragImageForSelection()
     m_view->setPaintBehavior(PaintBehaviorSelectionOnly);
     m_doc->updateLayout();
 
-    IntRect paintingRect = enclosingIntRect(selectionBounds());
+    IntRect paintingRect = enclosingIntRect(selection()->bounds());
 
     OwnPtr<ImageBuffer> buffer(ImageBuffer::create(paintingRect.size()));
     if (!buffer)

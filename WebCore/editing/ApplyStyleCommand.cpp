@@ -464,7 +464,7 @@ PassRefPtr<CSSMutableStyleDeclaration> ApplyStyleCommand::editingStyleAtPosition
     }
 
     if (shouldIncludeTypingStyle == IncludeTypingStyle) {
-        CSSMutableStyleDeclaration* typingStyle = pos.node()->document()->frame()->typingStyle();
+        CSSMutableStyleDeclaration* typingStyle = pos.node()->document()->frame()->selection()->typingStyle();
         if (typingStyle)
             style->merge(typingStyle);
     }

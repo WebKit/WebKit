@@ -110,7 +110,7 @@ HBITMAP imageFromSelection(Frame* frame, bool forceBlackText)
         return 0;
 
     frame->view()->setPaintRestriction(forceBlackText ? PaintRestrictionSelectionOnlyBlackText : PaintRestrictionSelectionOnly);
-    FloatRect fr = frame->selectionBounds();
+    FloatRect fr = frame->selection()->bounds();
     IntRect ir((int)fr.x(), (int)fr.y(), (int)fr.width(), (int)fr.height());
     if (ir.isEmpty())
         return 0;

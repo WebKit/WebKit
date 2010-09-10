@@ -78,7 +78,7 @@ void RemoveFormatCommand::doApply()
     
     // Insert the content with the default style.
     // See <rdar://problem/5794382> RemoveFormat doesn't always reset text alignment
-    frame->setTypingStyle(defaultStyle.get());
+    frame->selection()->setTypingStyle(defaultStyle.release());
     
     inputText(string, true);
 }

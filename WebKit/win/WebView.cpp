@@ -3401,7 +3401,7 @@ HRESULT STDMETHODCALLTYPE WebView::selectionRect(RECT* rc)
     WebCore::Frame* frame = m_page->focusController()->focusedOrMainFrame();
 
     if (frame) {
-        IntRect ir = enclosingIntRect(frame->selectionBounds());
+        IntRect ir = enclosingIntRect(frame->selection()->bounds());
         ir = frame->view()->convertToContainingWindow(ir);
         ir.move(-frame->view()->scrollOffset().width(), -frame->view()->scrollOffset().height());
         rc->left = ir.x();
@@ -3561,7 +3561,7 @@ HRESULT STDMETHODCALLTYPE WebView::centerSelectionInVisibleArea(
     if (!coreFrame)
         return E_FAIL;
 
-    coreFrame->revealSelection(ScrollAlignment::alignCenterAlways);
+    coreFrame->selection()->revealSelection(ScrollAlignment::alignCenterAlways);
     return S_OK;
 }
 

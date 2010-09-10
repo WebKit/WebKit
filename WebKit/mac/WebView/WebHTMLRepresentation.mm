@@ -323,7 +323,7 @@ static HTMLInputElement* inputElementFromDOMElement(DOMElement* element)
 
 - (DOMElement *)currentForm
 {
-    return kit(core([_private->dataSource webFrame])->currentForm());
+    return kit(core([_private->dataSource webFrame])->selection()->currentForm());
 }
 
 - (NSArray *)controlsInForm:(DOMElement *)form

@@ -347,7 +347,7 @@ NSImage* Frame::selectionImage(bool forceBlackText) const
 {
     m_view->setPaintBehavior(PaintBehaviorSelectionOnly | (forceBlackText ? PaintBehaviorForceBlackText : 0));
     m_doc->updateLayout();
-    NSImage* result = imageFromRect(selectionBounds());
+    NSImage* result = imageFromRect(selection()->bounds());
     m_view->setPaintBehavior(PaintBehaviorNormal);
     return result;
 }

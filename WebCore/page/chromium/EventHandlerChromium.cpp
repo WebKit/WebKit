@@ -63,7 +63,7 @@ bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& m
         VisiblePosition visiblePos(
             mev.targetNode()->renderer()->positionForPoint(mev.localPoint()));
         VisibleSelection newSelection(visiblePos);
-        if (m_frame->shouldChangeSelection(newSelection))
+        if (m_frame->selection()->shouldChangeSelection(newSelection))
             m_frame->selection()->setSelection(newSelection);
     }
 

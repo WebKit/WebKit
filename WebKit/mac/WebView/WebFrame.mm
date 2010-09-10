@@ -708,7 +708,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (TextGranularity)_selectionGranularity
 {
-    return _private->coreFrame->selectionGranularity();
+    return _private->coreFrame->selection()->granularity();
 }
 
 - (NSRange)_convertToNSRange:(Range *)range
@@ -852,7 +852,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
         return;
     
     TypingCommand::insertParagraphSeparatorInQuotedContent(_private->coreFrame->document());
-    _private->coreFrame->revealSelection(ScrollAlignment::alignToEdgeIfNeeded);
+    _private->coreFrame->selection()->revealSelection(ScrollAlignment::alignToEdgeIfNeeded);
 }
 
 - (VisiblePosition)_visiblePositionForPoint:(NSPoint)point
@@ -888,9 +888,9 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (DOMCSSStyleDeclaration *)_typingStyle
 {
-    if (!_private->coreFrame || !_private->coreFrame->typingStyle())
+    if (!_private->coreFrame || !_private->coreFrame->selection()->typingStyle())
         return nil;
-    return kit(_private->coreFrame->typingStyle()->copy().get());
+    return kit(_private->coreFrame->selection()->typingStyle()->copy().get());
 }
 
 - (void)_setTypingStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(EditAction)undoAction
@@ -1160,7 +1160,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
         return;
     
     applyCommand(ReplaceSelectionCommand::create(_private->coreFrame->document(), core(fragment), selectReplacement, smartReplace, matchStyle));
-    _private->coreFrame->revealSelection(ScrollAlignment::alignToEdgeIfNeeded);
+    _private->coreFrame->selection()->revealSelection(ScrollAlignment::alignToEdgeIfNeeded);
 }
 
 - (void)_replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace

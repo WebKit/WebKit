@@ -190,7 +190,7 @@ void InsertTextCommand::input(const String& text, bool selectInsertedText)
     setEndingSelection(forcedEndingSelection);
 
     // Handle the case where there is a typing style.
-    CSSMutableStyleDeclaration* typingStyle = document()->frame()->typingStyle();
+    CSSMutableStyleDeclaration* typingStyle = document()->frame()->selection()->typingStyle();
     RefPtr<CSSComputedStyleDeclaration> endingStyle = endPosition.computedStyle();
     RefPtr<CSSValue> unicodeBidi;
     RefPtr<CSSValue> direction;

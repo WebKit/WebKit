@@ -87,7 +87,7 @@ HBITMAP imageFromSelection(Frame* frame, bool forceBlackText)
     frame->document()->updateLayout();
 
     frame->view()->setPaintBehavior(PaintBehaviorSelectionOnly | (forceBlackText ? PaintBehaviorForceBlackText : 0));
-    FloatRect fr = frame->selectionBounds();
+    FloatRect fr = frame->selection()->bounds();
     IntRect ir(static_cast<int>(fr.x()), static_cast<int>(fr.y()),
                static_cast<int>(fr.width()), static_cast<int>(fr.height()));
     HBITMAP image = imageFromRect(frame, ir);

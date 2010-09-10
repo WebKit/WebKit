@@ -1914,12 +1914,11 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 
 - (NSImage *)_selectionDraggingImage
 {
-    if ([self _hasSelection]) {
-        NSImage *dragImage = core([self _frame])->selectionImage();
-        [dragImage _web_dissolveToFraction:WebDragImageAlpha];
-        return dragImage;
-    }
-    return nil;
+    if (![self _hasSelection])
+        return nil;
+    NSImage *dragImage = core([self _frame])->selectionImage();
+    [dragImage _web_dissolveToFraction:WebDragImageAlpha];
+    return dragImage;
 }
 
 - (NSRect)_selectionDraggingRect
@@ -2664,7 +2663,7 @@ WEBCORE_COMMAND(yankAndSelect)
     COMMAND_PROLOGUE
 
     if (Frame* coreFrame = core([self _frame]))
-        coreFrame->revealSelection(ScrollAlignment::alignCenterAlways);
+        coreFrame->selection()->revealSelection(ScrollAlignment::alignCenterAlways);
 }
 
 - (NSCellStateValue)selectionHasStyle:(CSSStyleDeclaration*)style
@@ -4197,7 +4196,7 @@ static BOOL isInPasswordField(Frame* coreFrame)
     COMMAND_PROLOGUE
 
     if (Frame* coreFrame = core([self _frame]))
-        coreFrame->revealSelection(ScrollAlignment::alignCenterAlways);
+        coreFrame->selection()->revealSelection(ScrollAlignment::alignCenterAlways);
 }
 
 - (NSData *)_selectionStartFontAttributesAsRTF
@@ -5145,7 +5144,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
     if (![[self _webView] smartInsertDeleteEnabled])
         return NO;
     Frame* coreFrame = core([self _frame]);
-    return coreFrame && coreFrame->selectionGranularity() == WordGranularity;
+    return coreFrame && coreFrame->selection()->granularity() == WordGranularity;
 }
 
 - (NSEvent *)_mouseDownEvent
@@ -5360,7 +5359,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     if (!coreFrame)
         return;
 
-    NSRect rect = coreFrame->selectionBounds();
+    NSRect rect = coreFrame->selection()->bounds();
 
 #ifndef BUILDING_ON_TIGER
     NSDictionary *attributes = [attrString fontAttributesInRange:NSMakeRange(0,1)];
@@ -6037,25 +6036,27 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (NSRect)selectionRect
 {
-    if ([self _hasSelection])
-        return core([self _frame])->selectionBounds();
-    return NSZeroRect;
+    if (![self _hasSelection])
+        return NSZeroRect;
+    return core([self _frame])->selection()->bounds();
 }
 
 - (NSArray *)selectionTextRects
 {
     if (![self _hasSelection])
         return nil;
-    
+
     Vector<FloatRect> list;
     if (Frame* coreFrame = core([self _frame]))
-        coreFrame->selectionTextRects(list, Frame::RespectTransforms);
+        coreFrame->selection()->getClippedVisibleTextRectangles(list);
 
-    unsigned size = list.size();
-    NSMutableArray *result = [[[NSMutableArray alloc] initWithCapacity:size] autorelease];
-    for (unsigned i = 0; i < size; ++i)
+    size_t size = list.size();
+
+    NSMutableArray *result = [NSMutableArray arrayWithCapacity:size];
+
+    for (size_t i = 0; i < size; ++i)
         [result addObject:[NSValue valueWithRect:list[i]]];
-    
+
     return result;
 }
 
@@ -6066,16 +6067,16 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (NSImage *)selectionImageForcingBlackText:(BOOL)forceBlackText
 {
-    if ([self _hasSelection])
-        return core([self _frame])->selectionImage(forceBlackText);
-    return nil;
+    if (![self _hasSelection])
+        return nil;
+    return core([self _frame])->selectionImage(forceBlackText);
 }
 
 - (NSRect)selectionImageRect
 {
-    if ([self _hasSelection])
-        return core([self _frame])->selectionBounds();
-    return NSZeroRect;
+    if (![self _hasSelection])
+        return NSZeroRect;
+    return core([self _frame])->selection()->bounds();
 }
 
 - (NSArray *)pasteboardTypesForSelection

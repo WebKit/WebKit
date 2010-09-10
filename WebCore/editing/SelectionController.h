@@ -26,8 +26,10 @@
 #ifndef SelectionController_h
 #define SelectionController_h
 
+#include "CSSMutableStyleDeclaration.h"
 #include "IntRect.h"
 #include "Range.h"
+#include "ScrollBehavior.h"
 #include "Timer.h"
 #include "VisibleSelection.h"
 #include <wtf/Noncopyable.h>
@@ -36,6 +38,7 @@ namespace WebCore {
 
 class Frame;
 class GraphicsContext;
+class HTMLFormElement;
 class RenderObject;
 class RenderView;
 class Settings;
@@ -149,6 +152,26 @@ public:
     void showTreeForThis() const;
 #endif
 
+    bool shouldChangeSelection(const VisibleSelection&) const;
+    bool shouldDeleteSelection(const VisibleSelection&) const;
+    void setFocusedNodeIfNeeded();
+    void notifyRendererOfSelectionChange(bool userTriggered);
+
+    void paintDragCaret(GraphicsContext*, int tx, int ty, const IntRect& clipRect) const;
+
+    CSSMutableStyleDeclaration* typingStyle() const;
+    void setTypingStyle(PassRefPtr<CSSMutableStyleDeclaration>);
+    void clearTypingStyle();
+
+    FloatRect bounds(bool clipToVisibleContent = true) const;
+
+    void getClippedVisibleTextRectangles(Vector<FloatRect>&) const;
+
+    HTMLFormElement* currentForm() const;
+
+    void revealSelection(const ScrollAlignment& = ScrollAlignment::alignCenterIfNeeded, bool revealExtent = false);
+    void setSelectionFromNone();
+
 private:
     enum EPositionType { START, END, BASE, EXTENT };
 
@@ -193,6 +216,8 @@ private:
     VisibleSelection m_selection;
     TextGranularity m_granularity;
 
+    RefPtr<CSSMutableStyleDeclaration> m_typingStyle;
+
     Timer<SelectionController> m_caretBlinkTimer;
 
     IntRect m_caretRect; // caret rect in coords local to the renderer responsible for painting the caret
@@ -208,6 +233,21 @@ private:
     bool m_caretVisible;
     bool m_caretPaint;
 };
+
+inline CSSMutableStyleDeclaration* SelectionController::typingStyle() const
+{
+    return m_typingStyle.get();
+}
+
+inline void SelectionController::clearTypingStyle()
+{
+    m_typingStyle.clear();
+}
+
+inline void SelectionController::setTypingStyle(PassRefPtr<CSSMutableStyleDeclaration> style)
+{
+    m_typingStyle = style;
+}
 
 #if !(PLATFORM(MAC) || PLATFORM(GTK))
 inline void SelectionController::notifyAccessibilityForSelectionChange()
