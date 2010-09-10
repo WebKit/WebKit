@@ -15,6 +15,7 @@ PASS: length successfully shadowed
 PASS: name successfully shadowed
 PASS: navigator successfully shadowed
 PASS: clientInformation successfully shadowed
+PASS: screen successfully shadowed
 PASS: offscreenBuffering successfully shadowed
 PASS: opener successfully shadowed
 PASS: outerHeight successfully shadowed

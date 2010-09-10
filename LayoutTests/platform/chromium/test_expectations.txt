@@ -3140,3 +3140,6 @@ BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-dom-azimuth-
 BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-dom-elevation-attr.html = IMAGE
 BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-svgdom-azimuth-prop.html = IMAGE
 BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-svgdom-elevation-prop.html = IMAGE
+
+// Introduced in Chromium r58994
+BUGWK45506 LINUX : fast/preloader/script.html = TEXT
