@@ -1,3 +1,15 @@
+2010-09-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove mention of "part" from Document.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=45566
+
+        This is an old KHTML name that's lingering around.
+
+        * dom/Document.cpp:
+        (WebCore::Document::parentDocument):
+
 2010-09-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Barth.

@@ -3978,10 +3978,9 @@ bool Document::inDesignMode() const
 
 Document* Document::parentDocument() const
 {
-    Frame* childPart = frame();
-    if (!childPart)
+    if (!m_frame)
         return 0;
-    Frame* parent = childPart->tree()->parent();
+    Frame* parent = m_frame->tree()->parent();
     if (!parent)
         return 0;
     return parent->document();
