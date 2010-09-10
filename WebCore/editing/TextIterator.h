@@ -35,6 +35,15 @@ namespace WebCore {
 class RenderText;
 class RenderTextFragment;
 
+enum TextIteratorBehavior {
+    TextIteratorDefaultBehavior = 0,
+    TextIteratorEmitsCharactersBetweenAllVisiblePositions = 1 << 0,
+    TextIteratorEntersTextControls = 1 << 1,
+    TextIteratorEmitsTextsWithoutTranscoding = 1 << 2,
+    TextIteratorEndsAtEditingBoundary = 1 << 3,
+    TextIteratorIgnoresStyleVisibility = 1 << 4
+};
+    
 // FIXME: Can't really answer this question correctly without knowing the white-space mode.
 // FIXME: Move this somewhere else in the editing directory. It doesn't belong here.
 inline bool isCollapsibleWhitespace(UChar c)
@@ -48,8 +57,8 @@ inline bool isCollapsibleWhitespace(UChar c)
     }
 }
 
-String plainText(const Range*);
-UChar* plainTextToMallocAllocatedBuffer(const Range*, unsigned& bufferLength, bool isDisplayString);
+String plainText(const Range*, TextIteratorBehavior defaultBehavior = TextIteratorDefaultBehavior);
+UChar* plainTextToMallocAllocatedBuffer(const Range*, unsigned& bufferLength, bool isDisplayString, TextIteratorBehavior defaultBehavior = TextIteratorDefaultBehavior);
 PassRefPtr<Range> findPlainText(const Range*, const String&, bool forward, bool caseSensitive);
 
 class BitStack {
@@ -70,14 +79,6 @@ private:
 // Iterates through the DOM range, returning all the text, and 0-length boundaries
 // at points where replaced elements break up the text flow.  The text comes back in
 // chunks so as to optimize for performance of the iteration.
-
-enum TextIteratorBehavior {
-    TextIteratorDefaultBehavior = 0,
-    TextIteratorEmitsCharactersBetweenAllVisiblePositions = 1 << 0,
-    TextIteratorEntersTextControls = 1 << 1,
-    TextIteratorEmitsTextsWithoutTranscoding = 1 << 2,
-    TextIteratorEndsAtEditingBoundary = 1 << 3
-};
 
 class TextIterator {
 public:
@@ -173,6 +174,8 @@ private:
     bool m_emitsTextWithoutTranscoding;
     // Used when deciding text fragment created by :first-letter should be looked into.
     bool m_handledFirstLetter;
+    // Used when the visibility of the style should not affect text gathering.
+    bool m_ignoresStyleVisibility;
 };
 
 // Iterates through the DOM range, returning all the text, and 0-length boundaries

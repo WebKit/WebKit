@@ -63,6 +63,16 @@
 
         Reviewed by David Kilzer.
 
+        AX: accessibility not returning strings when visibility is hidden
+        https://bugs.webkit.org/show_bug.cgi?id=45116
+
+        * platform/mac/accessibility/clipped-text-under-element-expected.txt: Added.
+        * platform/mac/accessibility/clipped-text-under-element.html: Added.
+
+2010-09-10  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by David Kilzer.
+
         Mail crashes with searching for next misspelled word with VoiceOver
         https://bugs.webkit.org/show_bug.cgi?id=45501
 

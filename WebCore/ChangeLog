@@ -13,6 +13,39 @@
 
         Reviewed by David Kilzer.
 
+        AX: accessibility not returning strings when visibility is hidden
+        https://bugs.webkit.org/show_bug.cgi?id=45116
+
+        AX code uses plainText() in TextIterator to get the text for a node.
+        However, when that node is not visible, no text is returned because TextIterator ignores
+        clipped nodes and other hidden elements.
+
+        Solution is to add a new text iterator behavior for ignoring style visiblity. This allows
+        for text to allows be returned for accessibility purposes.
+
+        Test: platform/mac/accessibility/clipped-text-under-element.html
+
+        * WebCore.exp.in:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::textUnderElement):
+        (WebCore::AccessibilityRenderObject::stringValue):
+           Use the new flag for plainText
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::TextIterator):
+        (WebCore::TextIterator::handleTextNode):
+        (WebCore::TextIterator::handleTextBox):
+        (WebCore::TextIterator::handleTextNodeFirstLetter):
+        (WebCore::TextIterator::handleReplacedElement):
+           Use the new flag to NOT skip hidden elements.
+        (WebCore::plainTextToMallocAllocatedBuffer):
+        (WebCore::plainText):
+        * editing/TextIterator.h:
+           Add the new text iterator behavior.
+
+2010-09-10  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by David Kilzer.
+
         Mail crashes with searching for next misspelled word with VoiceOver
         https://bugs.webkit.org/show_bug.cgi?id=45501
 

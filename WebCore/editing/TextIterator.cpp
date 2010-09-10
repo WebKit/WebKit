@@ -261,6 +261,7 @@ TextIterator::TextIterator()
     , m_entersTextControls(false)
     , m_emitsTextWithoutTranscoding(false)
     , m_handledFirstLetter(false)
+    , m_ignoresStyleVisibility(false)
 {
 }
 
@@ -278,6 +279,7 @@ TextIterator::TextIterator(const Range* r, TextIteratorBehavior behavior)
     , m_entersTextControls(behavior & TextIteratorEntersTextControls)
     , m_emitsTextWithoutTranscoding(behavior & TextIteratorEmitsTextsWithoutTranscoding)
     , m_handledFirstLetter(false)
+    , m_ignoresStyleVisibility(behavior & TextIteratorIgnoresStyleVisibility)
 {
     // FIXME: should support TextIteratorEndsAtEditingBoundary http://webkit.org/b/43609
     ASSERT(behavior != TextIteratorEndsAtEditingBoundary);
@@ -444,7 +446,7 @@ void TextIterator::advance()
 
 bool TextIterator::handleTextNode()
 {
-    if (m_fullyClippedStack.top())
+    if (m_fullyClippedStack.top() && !m_ignoresStyleVisibility)
         return false;
 
     RenderText* renderer = toRenderText(m_node->renderer());
@@ -469,7 +471,7 @@ bool TextIterator::handleTextNode()
                 return false;
             }
         }
-        if (renderer->style()->visibility() != VISIBLE)
+        if (renderer->style()->visibility() != VISIBLE && !m_ignoresStyleVisibility)
             return false;
         int strLength = str.length();
         int end = (m_node == m_endContainer) ? m_endOffset : INT_MAX;
@@ -490,7 +492,7 @@ bool TextIterator::handleTextNode()
                 return false;
             }
         }
-        if (renderer->style()->visibility() != VISIBLE)
+        if (renderer->style()->visibility() != VISIBLE && !m_ignoresStyleVisibility)
             return false;
         m_lastTextNodeEndedWithCollapsedSpace = true; // entire block is collapsed space
         return true;
@@ -516,7 +518,7 @@ bool TextIterator::handleTextNode()
 void TextIterator::handleTextBox()
 {    
     RenderText* renderer = m_firstLetterText ? m_firstLetterText : toRenderText(m_node->renderer());
-    if (renderer->style()->visibility() != VISIBLE) {
+    if (renderer->style()->visibility() != VISIBLE && !m_ignoresStyleVisibility) {
         m_textBox = 0;
         return;
     }
@@ -600,7 +602,7 @@ void TextIterator::handleTextNodeFirstLetter(RenderTextFragment* renderer)
 {
     if (renderer->firstLetter()) {
         RenderObject* r = renderer->firstLetter();
-        if (r->style()->visibility() != VISIBLE)
+        if (r->style()->visibility() != VISIBLE && !m_ignoresStyleVisibility)
             return;
         for (RenderObject *currChild = r->firstChild(); currChild; currChild->nextSibling()) {
             if (currChild->isText()) {
@@ -622,7 +624,7 @@ bool TextIterator::handleReplacedElement()
         return false;
 
     RenderObject* renderer = m_node->renderer();
-    if (renderer->style()->visibility() != VISIBLE)
+    if (renderer->style()->visibility() != VISIBLE && !m_ignoresStyleVisibility)
         return false;
 
     if (m_lastTextNodeEndedWithCollapsedSpace) {
@@ -2214,7 +2216,7 @@ PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(Element* scope, int r
 
 // --------
     
-UChar* plainTextToMallocAllocatedBuffer(const Range* r, unsigned& bufferLength, bool isDisplayString)
+UChar* plainTextToMallocAllocatedBuffer(const Range* r, unsigned& bufferLength, bool isDisplayString, TextIteratorBehavior defaultBehavior)
 {
     UChar* result = 0;
 
@@ -2226,7 +2228,11 @@ UChar* plainTextToMallocAllocatedBuffer(const Range* r, unsigned& bufferLength, 
     OwnPtr<Vector<TextSegment> > textSegments;
     Vector<UChar> textBuffer;
     textBuffer.reserveInitialCapacity(cMaxSegmentSize);
-    for (TextIterator it(r, isDisplayString ? TextIteratorDefaultBehavior : TextIteratorEmitsTextsWithoutTranscoding); !it.atEnd(); it.advance()) {
+    TextIteratorBehavior behavior = defaultBehavior;
+    if (!isDisplayString)
+        behavior = static_cast<TextIteratorBehavior>(behavior | TextIteratorEmitsTextsWithoutTranscoding);
+    
+    for (TextIterator it(r, behavior); !it.atEnd(); it.advance()) {
         if (textBuffer.size() && textBuffer.size() + it.length() > cMaxSegmentSize) {
             UChar* newSegmentBuffer = static_cast<UChar*>(malloc(textBuffer.size() * sizeof(UChar)));
             if (!newSegmentBuffer)
@@ -2275,10 +2281,10 @@ exit:
     return result;
 }
 
-String plainText(const Range* r)
+String plainText(const Range* r, TextIteratorBehavior defaultBehavior)
 {
     unsigned length;
-    UChar* buf = plainTextToMallocAllocatedBuffer(r, length, false);
+    UChar* buf = plainTextToMallocAllocatedBuffer(r, length, false, defaultBehavior);
     if (!buf)
         return "";
     String result(buf, length);
