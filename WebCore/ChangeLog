@@ -1,3 +1,24 @@
+2010-09-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        Extract the code to find special ancestors in createMarkup into a function
+        https://bugs.webkit.org/show_bug.cgi?id=45449
+
+        Extracted the code to find special common ancestors in createMarkup as highestAncestorToWrapMarkup.
+        Also isolated the code to find ancestors required to retain structure and appearance into
+        ancestorToRetainStructureAndAppearance.
+
+        No new tests are added since this is a cleanup.
+
+        * editing/markup.cpp:
+        (WebCore::ancestorToRetainStructureAndAppearance): Added.
+        (WebCore::propertyMissingOrEqualToNone): Moved.
+        (WebCore::isElementPresentational): Moved.
+        (WebCore::shouldIncludeWrapperForFullySelectedRoot): Added. isSpecialAncestorBlock is merged into this function.
+        (WebCore::highestAncestorToWrapMarkup): Extracted from createMarkup.
+        (WebCore::createMarkup): Calls highestAncestorToWrapMarkup.
+
 2010-09-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

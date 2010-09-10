@@ -818,55 +818,6 @@ static PassRefPtr<CSSMutableStyleDeclaration> styleFromMatchedRulesAndInlineDecl
     return style.release();
 }
 
-static bool propertyMissingOrEqualToNone(CSSStyleDeclaration* style, int propertyID)
-{
-    if (!style)
-        return false;
-    RefPtr<CSSValue> value = style->getPropertyCSSValue(propertyID);
-    if (!value)
-        return true;
-    if (!value->isPrimitiveValue())
-        return false;
-    return static_cast<CSSPrimitiveValue*>(value.get())->getIdent() == CSSValueNone;
-}
-
-static bool isElementPresentational(const Node* node)
-{
-    if (node->hasTagName(uTag) || node->hasTagName(sTag) || node->hasTagName(strikeTag)
-        || node->hasTagName(iTag) || node->hasTagName(emTag) || node->hasTagName(bTag) || node->hasTagName(strongTag))
-        return true;
-    RefPtr<CSSMutableStyleDeclaration> style = styleFromMatchedRulesAndInlineDecl(node);
-    if (!style)
-        return false;
-    return !propertyMissingOrEqualToNone(style.get(), CSSPropertyTextDecoration);
-}
-
-static bool isSpecialAncestorBlock(Node* node)
-{
-    if (!node || !isBlock(node))
-        return false;
-        
-    return node->hasTagName(listingTag)
-        || node->hasTagName(olTag)
-        || node->hasTagName(preTag)
-        || node->hasTagName(tableTag)
-        || node->hasTagName(ulTag)
-        || node->hasTagName(xmpTag)
-        || node->hasTagName(h1Tag)
-        || node->hasTagName(h2Tag)
-        || node->hasTagName(h3Tag)
-        || node->hasTagName(h4Tag)
-        || node->hasTagName(h5Tag);
-}
-
-static bool shouldIncludeWrapperForFullySelectedRoot(Node* fullySelectedRoot, CSSMutableStyleDeclaration* style)
-{
-    if (fullySelectedRoot->isElementNode() && static_cast<Element*>(fullySelectedRoot)->hasAttribute(backgroundAttr))
-        return true;
-        
-    return style->getPropertyCSSValue(CSSPropertyBackgroundImage) || style->getPropertyCSSValue(CSSPropertyBackgroundColor);
-}
-
 static Node* serializeNodes(StyledMarkupAccumulator& accumulator, Node* startNode, Node* pastEnd)
 {
     Vector<Node*> ancestorsToClose;
@@ -941,6 +892,110 @@ static Node* serializeNodes(StyledMarkupAccumulator& accumulator, Node* startNod
     return lastClosed;
 }
 
+static Node* ancestorToRetainStructureAndAppearance(Node* commonAncestor)
+{
+    Node* commonAncestorBlock = enclosingBlock(commonAncestor);
+
+    if (commonAncestorBlock->hasTagName(tbodyTag) || commonAncestorBlock->hasTagName(trTag)) {
+        Node* table = commonAncestorBlock->parentNode();
+        while (table && !table->hasTagName(tableTag))
+            table = table->parentNode();
+
+        return table;
+    }
+
+    if (commonAncestorBlock->hasTagName(listingTag)
+        || commonAncestorBlock->hasTagName(olTag)
+        || commonAncestorBlock->hasTagName(preTag)
+        || commonAncestorBlock->hasTagName(tableTag)
+        || commonAncestorBlock->hasTagName(ulTag)
+        || commonAncestorBlock->hasTagName(xmpTag)
+        || commonAncestorBlock->hasTagName(h1Tag)
+        || commonAncestorBlock->hasTagName(h2Tag)
+        || commonAncestorBlock->hasTagName(h3Tag)
+        || commonAncestorBlock->hasTagName(h4Tag)
+        || commonAncestorBlock->hasTagName(h5Tag))
+        return commonAncestorBlock;
+
+    return 0;
+}
+
+static bool propertyMissingOrEqualToNone(CSSStyleDeclaration* style, int propertyID)
+{
+    if (!style)
+        return false;
+    RefPtr<CSSValue> value = style->getPropertyCSSValue(propertyID);
+    if (!value)
+        return true;
+    if (!value->isPrimitiveValue())
+        return false;
+    return static_cast<CSSPrimitiveValue*>(value.get())->getIdent() == CSSValueNone;
+}
+
+static bool isElementPresentational(const Node* node)
+{
+    if (node->hasTagName(uTag) || node->hasTagName(sTag) || node->hasTagName(strikeTag)
+        || node->hasTagName(iTag) || node->hasTagName(emTag) || node->hasTagName(bTag) || node->hasTagName(strongTag))
+        return true;
+    RefPtr<CSSMutableStyleDeclaration> style = styleFromMatchedRulesAndInlineDecl(node);
+    if (!style)
+        return false;
+    return !propertyMissingOrEqualToNone(style.get(), CSSPropertyTextDecoration);
+}
+
+static bool shouldIncludeWrapperForFullySelectedRoot(Node* fullySelectedRoot, CSSMutableStyleDeclaration* style)
+{
+    if (fullySelectedRoot->isElementNode() && static_cast<Element*>(fullySelectedRoot)->hasAttribute(backgroundAttr))
+        return true;
+    
+    return style->getPropertyCSSValue(CSSPropertyBackgroundImage) || style->getPropertyCSSValue(CSSPropertyBackgroundColor);
+}
+
+static Node* highestAncestorToWrapMarkup(const Range* range, Node* fullySelectedRoot, EAnnotateForInterchange shouldAnnotate)
+{
+    ExceptionCode ec;
+    Node* commonAncestor = range->commonAncestorContainer(ec);
+    ASSERT(commonAncestor);
+    Node* specialCommonAncestor = 0;
+    if (shouldAnnotate == AnnotateForInterchange) {
+        // Include ancestors that aren't completely inside the range but are required to retain 
+        // the structure and appearance of the copied markup.
+        specialCommonAncestor = ancestorToRetainStructureAndAppearance(commonAncestor);
+
+        // Retain the Mail quote level by including all ancestor mail block quotes.
+        for (Node* ancestor = range->firstNode(); ancestor; ancestor = ancestor->parentNode()) {
+            if (isMailBlockquote(ancestor))
+                specialCommonAncestor = ancestor;
+        }
+    }
+
+    Node* checkAncestor = specialCommonAncestor ? specialCommonAncestor : commonAncestor;
+    if (checkAncestor->renderer()) {
+        Node* newSpecialCommonAncestor = highestEnclosingNodeOfType(Position(checkAncestor, 0), &isElementPresentational);
+        if (newSpecialCommonAncestor)
+            specialCommonAncestor = newSpecialCommonAncestor;
+    }
+
+    // If a single tab is selected, commonAncestor will be a text node inside a tab span.
+    // If two or more tabs are selected, commonAncestor will be the tab span.
+    // In either case, if there is a specialCommonAncestor already, it will necessarily be above 
+    // any tab span that needs to be included.
+    if (!specialCommonAncestor && isTabSpanTextNode(commonAncestor))
+        specialCommonAncestor = commonAncestor->parentNode();
+    if (!specialCommonAncestor && isTabSpanNode(commonAncestor))
+        specialCommonAncestor = commonAncestor;
+
+    if (Node *enclosingAnchor = enclosingNodeWithTag(Position(specialCommonAncestor ? specialCommonAncestor : commonAncestor, 0), aTag))
+        specialCommonAncestor = enclosingAnchor;
+
+    if (shouldAnnotate == AnnotateForInterchange && fullySelectedRoot) {
+        RefPtr<CSSMutableStyleDeclaration> fullySelectedRootStyle = styleFromMatchedRulesAndInlineDecl(fullySelectedRoot);
+        if (shouldIncludeWrapperForFullySelectedRoot(fullySelectedRoot, fullySelectedRootStyle.get()))
+            specialCommonAncestor = fullySelectedRoot;
+    }
+    return specialCommonAncestor;
+}
+
 // FIXME: Shouldn't we omit style info when annotate == DoNotAnnotateForInterchange? 
 // FIXME: At least, annotation and style info should probably not be included in range.markupString()
 String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterchange shouldAnnotate, bool convertBlocksToInlines, EAbsoluteURLs shouldResolveURLs)
@@ -1000,63 +1055,22 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
         }
     }
 
+    Node* body = enclosingNodeWithTag(Position(commonAncestor, 0), bodyTag);
+    Node* fullySelectedRoot = 0;
+    // FIXME: Do this for all fully selected blocks, not just the body.
+    if (body && areRangesEqual(VisibleSelection::selectionFromContentsOfNode(body).toNormalizedRange().get(), range))
+        fullySelectedRoot = body;
+
+    Node* specialCommonAncestor = highestAncestorToWrapMarkup(updatedRange.get(), fullySelectedRoot, shouldAnnotate);
+
     Node* lastClosed = serializeNodes(accumulator, startNode, pastEnd);
 
-    // Include ancestors that aren't completely inside the range but are required to retain 
-    // the structure and appearance of the copied markup.
-    Node* specialCommonAncestor = 0;
-    Node* commonAncestorBlock = commonAncestor ? enclosingBlock(commonAncestor) : 0;
-    if (shouldAnnotate == AnnotateForInterchange && commonAncestorBlock) {
-        if (commonAncestorBlock->hasTagName(tbodyTag) || commonAncestorBlock->hasTagName(trTag)) {
-            Node* table = commonAncestorBlock->parentNode();
-            while (table && !table->hasTagName(tableTag))
-                table = table->parentNode();
-            if (table)
-                specialCommonAncestor = table;
-        } else if (isSpecialAncestorBlock(commonAncestorBlock))
-            specialCommonAncestor = commonAncestorBlock;
-    }
-                                      
-    // Retain the Mail quote level by including all ancestor mail block quotes.
-    if (lastClosed && shouldAnnotate == AnnotateForInterchange) {
-        for (Node *ancestor = lastClosed->parentNode(); ancestor; ancestor = ancestor->parentNode())
-            if (isMailBlockquote(ancestor))
-                specialCommonAncestor = ancestor;
-    }
-
-    Node* checkAncestor = specialCommonAncestor ? specialCommonAncestor : commonAncestor;
-    if (checkAncestor->renderer()) {
-        Node* newSpecialCommonAncestor = highestEnclosingNodeOfType(Position(checkAncestor, 0), &isElementPresentational);
-        if (newSpecialCommonAncestor)
-            specialCommonAncestor = newSpecialCommonAncestor;
-    }
-    
-    // If a single tab is selected, commonAncestor will be a text node inside a tab span.
-    // If two or more tabs are selected, commonAncestor will be the tab span.
-    // In either case, if there is a specialCommonAncestor already, it will necessarily be above 
-    // any tab span that needs to be included.
-    if (!specialCommonAncestor && isTabSpanTextNode(commonAncestor))
-        specialCommonAncestor = commonAncestor->parentNode();
-    if (!specialCommonAncestor && isTabSpanNode(commonAncestor))
-        specialCommonAncestor = commonAncestor;
-        
-    if (Node *enclosingAnchor = enclosingNodeWithTag(Position(specialCommonAncestor ? specialCommonAncestor : commonAncestor, 0), aTag))
-        specialCommonAncestor = enclosingAnchor;
-    
-    Node* body = enclosingNodeWithTag(Position(commonAncestor, 0), bodyTag);
-    // FIXME: Do this for all fully selected blocks, not just the body.
-    Node* fullySelectedRoot = body && areRangesEqual(VisibleSelection::selectionFromContentsOfNode(body).toNormalizedRange().get(), updatedRange.get()) ? body : 0;
-    RefPtr<CSSMutableStyleDeclaration> fullySelectedRootStyle = fullySelectedRoot ? styleFromMatchedRulesAndInlineDecl(fullySelectedRoot) : 0;
-    if (shouldAnnotate == AnnotateForInterchange && fullySelectedRoot) {
-        if (shouldIncludeWrapperForFullySelectedRoot(fullySelectedRoot, fullySelectedRootStyle.get()))
-            specialCommonAncestor = fullySelectedRoot;
-    }
-        
     if (specialCommonAncestor && lastClosed) {
         // Also include all of the ancestors of lastClosed up to this special ancestor.
         for (Node* ancestor = lastClosed->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
             if (ancestor == fullySelectedRoot && !convertBlocksToInlines) {
-                
+                RefPtr<CSSMutableStyleDeclaration> fullySelectedRootStyle = styleFromMatchedRulesAndInlineDecl(fullySelectedRoot);
+
                 // Bring the background attribute over, but not as an attribute because a background attribute on a div
                 // appears to have no effect.
                 if (!fullySelectedRootStyle->getPropertyCSSValue(CSSPropertyBackgroundImage) && static_cast<Element*>(fullySelectedRoot)->hasAttribute(backgroundAttr))
