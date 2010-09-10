@@ -2,6 +2,14 @@
 
         Unreviewed, expectations fix.
 
+        Update w/ tests that are now passing.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-09-09  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations fix.
+
         Remove unused platform-specific expectations (test is actually
         text-only).
 
