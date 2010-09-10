@@ -2,6 +2,25 @@
 
         Reviewed by Kenneth Russell.
 
+        [chromium] Don't call deleteTexture on a texture attached to an FBO that is not currently bound
+        https://bugs.webkit.org/show_bug.cgi?id=45504
+
+        The OpenGL semantics for glDeleteTextures() are that if one of the specified texture is attached
+        to the currently bound FBO, that FBO's color attachment is removed.  However, if the specified
+        texture is attached to a non-current FBO then OpenGL states explicitly that that FBO's color
+        attachment is not cleared and that the texture stays alive even though its ID is no longer
+        valid to use.  This is not the behavior we want in DrawingBuffer - we actually want the
+        texture to be immediately deleted.  This patch makes sure the DrawingBuffer's FBO is bound
+        before deleting its color attachment texture.
+
+        * platform/graphics/chromium/DrawingBufferChromium.cpp:
+        (WebCore::DrawingBuffer::~DrawingBuffer):
+        (WebCore::DrawingBuffer::reset):
+
+2010-09-09  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
         [chromium] Chromium mac build should exclude all Skia files in platform/graphics/skia/, not just some
         https://bugs.webkit.org/show_bug.cgi?id=45516
 
