@@ -1,3 +1,17 @@
+2010-09-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Adam Roben.
+
+        compositing/iframes/iframe-src-change.html test fails on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=45554
+        
+        This test had the wrong behavior. It never actually entered compositing mode.
+        Now give it a chance to do so (and test for it), and then test that the layers
+        disappeared.
+
+        * compositing/iframes/iframe-src-change-expected.txt:
+        * compositing/iframes/iframe-src-change.html:
+
 2010-09-10  Adam Roben  <aroben@apple.com>
 
         Give expected results files the right names

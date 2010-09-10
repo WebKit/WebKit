@@ -1,4 +1,4 @@
 
 The iframe content was removed. There should be no layers here.
 
-
+PASS: layers disappeared when iframe source changed.
