@@ -1,3 +1,26 @@
+2010-09-10  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Google sites do not like WebKitGTK+
+        https://bugs.webkit.org/show_bug.cgi?id=39617
+
+        Special-case Google domains, and spoof User-Agent when talking to
+        them, to stop being treated as a second-class citizen.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::initializeDomainsList):
+        (WebKit::isGoogleDomain):
+        (WebKit::FrameLoaderClient::userAgent): If enable-site-specific-quirks
+        is enabled, send the standard WebKit User-Agent string, disregarding the
+        custom one set by the browser for Google domains.
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebsettings.cpp:
+        (webkitPlatform): Fix style, and simplify.
+        (webkitOSVersion): Ditto.
+        (webkitUserAgent): Add the Version/x.y string Safari has been
+        using since Safari 2.2.
+
 2010-09-10  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.

@@ -59,6 +59,7 @@
 #include "FullscreenVideoController.h"
 #include "Node.h"
 #include "Page.h"
+#include "PlatformString.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
@@ -205,6 +206,9 @@ extern "C" {
 
         gboolean disposed;
     };
+
+    WTF::String
+    webkitUserAgent();
 
     void
     webkit_web_frame_core_frame_gone(WebKitWebFrame*);

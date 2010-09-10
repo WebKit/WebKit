@@ -49,6 +49,7 @@
 #include "MIMETypeRegistry.h"
 #include "MouseEvent.h"
 #include "NotImplemented.h"
+#include "Page.h"
 #include "PlatformString.h"
 #include "PluginDatabase.h"
 #include "RenderPart.h"
@@ -93,9 +94,115 @@ FrameLoaderClient::~FrameLoaderClient()
         g_object_unref(m_policyDecision);
 }
 
-String FrameLoaderClient::userAgent(const KURL&)
+static void initializeDomainsList(HashSet<String>& googleDomains)
+{
+    // Google search domains.
+    googleDomains.add("biz");
+    googleDomains.add("com");
+    googleDomains.add("net");
+    googleDomains.add("org");
+    googleDomains.add("ae");
+    googleDomains.add("ag");
+    googleDomains.add("am");
+    googleDomains.add("at");
+    googleDomains.add("az");
+    googleDomains.add("be");
+    googleDomains.add("bi");
+    googleDomains.add("ca");
+    googleDomains.add("cc");
+    googleDomains.add("cd");
+    googleDomains.add("cg");
+    googleDomains.add("ch");
+    googleDomains.add("cl");
+    googleDomains.add("com.br");
+    googleDomains.add("co.uk");
+    googleDomains.add("co.jp");
+    googleDomains.add("de");
+    googleDomains.add("dj");
+    googleDomains.add("dk");
+    googleDomains.add("es");
+    googleDomains.add("fi");
+    googleDomains.add("fm");
+    googleDomains.add("fr");
+    googleDomains.add("gg");
+    googleDomains.add("gl");
+    googleDomains.add("gm");
+    googleDomains.add("gs");
+    googleDomains.add("hn");
+    googleDomains.add("hu");
+    googleDomains.add("ie");
+    googleDomains.add("it");
+    googleDomains.add("je");
+    googleDomains.add("kz");
+    googleDomains.add("li");
+    googleDomains.add("lt");
+    googleDomains.add("lu");
+    googleDomains.add("lv");
+    googleDomains.add("ma");
+    googleDomains.add("ms");
+    googleDomains.add("mu");
+    googleDomains.add("mw");
+    googleDomains.add("nl");
+    googleDomains.add("no");
+    googleDomains.add("nu");
+    googleDomains.add("pl");
+    googleDomains.add("pn");
+    googleDomains.add("pt");
+    googleDomains.add("ru");
+    googleDomains.add("rw");
+    googleDomains.add("sh");
+    googleDomains.add("sk");
+    googleDomains.add("sm");
+    googleDomains.add("st");
+    googleDomains.add("td");
+    googleDomains.add("tk");
+    googleDomains.add("tp");
+    googleDomains.add("tv");
+    googleDomains.add("us");
+    googleDomains.add("uz");
+    googleDomains.add("ws");
+}
+
+static bool isGoogleDomain(String host)
+{
+    DEFINE_STATIC_LOCAL(HashSet<String>, googleDomains, ());
+    DEFINE_STATIC_LOCAL(Vector<String>, otherGoogleDomains, ());
+
+    if (googleDomains.isEmpty()) {
+        otherGoogleDomains.append("gmail.com");
+        otherGoogleDomains.append("youtube.com");
+        otherGoogleDomains.append("gstatic.com");
+        otherGoogleDomains.append("ytimg.com");
+
+        initializeDomainsList(googleDomains);
+    }
+
+    // First check if this is one of the various google.com international domains.
+    int position = host.find(".google.");
+    if (position > 0 && googleDomains.contains(host.substring(position + sizeof(".google."))))
+        return true;
+
+    // Then we check the possibility of it being one of the other, .com-only google domains.
+    for (unsigned int i = 0; i < otherGoogleDomains.size(); i++) {
+        if (host.endsWith(otherGoogleDomains.at(i)))
+            return true;
+    }
+
+    return false;
+}
+
+String FrameLoaderClient::userAgent(const KURL& url)
 {
     WebKitWebSettings* settings = webkit_web_view_get_settings(getViewFromFrame(m_frame));
+
+    gboolean useQuirks;
+    g_object_get(settings, "enable-site-specific-quirks", &useQuirks, NULL);
+
+    // For Google domains, drop the browser's custom User Agent string, and use the standard
+    // WebKit/Safari one, so they don't give us a broken experience.
+    if (useQuirks && isGoogleDomain(url.host()))
+        return webkitUserAgent();
+
     return String::fromUTF8(webkit_web_settings_get_user_agent(settings));
 }
 
