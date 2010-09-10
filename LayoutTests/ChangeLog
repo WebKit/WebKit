@@ -1,3 +1,14 @@
+2010-09-09  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
+        The baseline image was wrong.  It was exposed by r45431.
+        https://bugs.webkit.org/show_bug.cgi?id=45431
+
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEDiffuseLightingElement-lighting-color-css-prop-expected.checksum:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEDiffuseLightingElement-lighting-color-css-prop-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2010-09-09  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations fix.
