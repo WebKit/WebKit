@@ -1,3 +1,23 @@
+2010-09-09  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Joseph Pecoraro.
+
+        WebInspector: Selecting 'inspect element' always shows body in inspector instead of clicked element.
+
+        1. Open any page
+        2. Right-click on any element, select "Inspect Element"
+        3. Web Inspector is opened but the <body> element (for HTML) is focused rather than the selected element
+        4. Inspect the Web Inspector. An error message is logged in the console.
+
+        The regression was introduced in http://trac.webkit.org/changeset/66012 - focusNode() is invoked in
+        InspectorController::populateScriptObjects() before the main document is set for the InspectorDOMAgent
+        instance (which makes focusNode() bail out prematurely).
+
+        https://bugs.webkit.org/show_bug.cgi?id=45374
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::populateScriptObjects):
+
 2010-09-10  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by Chris Fleizach.

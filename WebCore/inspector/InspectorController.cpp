@@ -604,8 +604,7 @@ void InspectorController::populateScriptObjects()
 
     if (m_showAfterVisible == lastActivePanel)
         m_showAfterVisible = setting(lastActivePanel);
-    if (m_nodeToFocus)
-        focusNode();
+
     showPanel(m_showAfterVisible);
 
     if (m_resourceTrackingEnabled)
@@ -627,6 +626,9 @@ void InspectorController::populateScriptObjects()
         it->second->updateScriptObject(m_frontend.get());
 
     m_domAgent->setDocument(m_inspectedPage->mainFrame()->document());
+
+    if (m_nodeToFocus)
+        focusNode();
 
     if (m_expiredConsoleMessageCount)
         m_frontend->updateConsoleMessageExpiredCount(m_expiredConsoleMessageCount);
