@@ -1,3 +1,9 @@
+2010-09-09  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, attempt to fix a Qt test failure.
+
+        * fast/forms/input-number-unacceptable-style.html: Set background-color explicitly.
+
 2010-09-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.
