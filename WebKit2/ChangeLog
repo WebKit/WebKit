@@ -1,3 +1,22 @@
+2010-09-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mark Rowe and Darin Adler.
+
+        Set the visible name for the web process
+        https://bugs.webkit.org/show_bug.cgi?id=45564
+        <rdar://problem/8416970>
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::processName):
+        Add a thread safe implementation of -[NSProcessInfo processName].
+
+        (WebKit::ProcessLauncher::launchProcess):
+        Pass the process name to the child process.
+
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMain):
+        Set the visible name.
+
 2010-09-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

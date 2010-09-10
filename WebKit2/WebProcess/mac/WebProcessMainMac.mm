@@ -30,6 +30,7 @@
 #import "WebProcess.h"
 #import "WebSystemInterface.h"
 #import <WebKit2/WKView.h>
+#import <WebKitSystemInterface.h>
 #import <objc/objc-auto.h>
 #import <runtime/InitializeThreading.h>
 #import <servers/bootstrap.h>
@@ -37,6 +38,7 @@
 #import <stdio.h>
 #import <sysexits.h>
 #import <unistd.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/Threading.h>
 #import <wtf/text/CString.h>
 
@@ -80,7 +82,6 @@ int WebProcessMain(CommandLine* commandLine)
         printf("bootstrap_look_up2 result: %x", kr);
         return 2;
     }
-    
 
 #if !SHOW_CRASH_REPORTER
     // Installs signal handlers that exit on a crash so that CrashReporter does not show up.
@@ -95,6 +96,14 @@ int WebProcessMain(CommandLine* commandLine)
     WTF::initializeMainThread();
     RunLoop::initializeMainRunLoop();
 
+    // Set the visible application name.
+    String parentProcessName = (*commandLine)["parentprocessname"];
+    if (!parentProcessName.isNull()) {
+        // FIXME: Localization!
+        NSString *applicationName = [NSString stringWithFormat:@"%@ Web Content", (NSString *)parentProcessName];
+        WKSetVisibleApplicationName((CFStringRef)applicationName);
+    }
+    
     // Create the connection.
     WebProcess::shared().initialize(serverPort, RunLoop::main());
     

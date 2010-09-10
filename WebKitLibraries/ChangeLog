@@ -1,3 +1,14 @@
+2010-09-10  Anders Carlsson  <andersca@apple.com>
+
+        WebKitSystemInterface part of:
+        Set the visible name for the web process
+        https://bugs.webkit.org/show_bug.cgi?id=45564
+        <rdar://problem/8416970>
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
 2010-08-05  Jian Li  <jianli@chromium.org>
 
         Reviewed by David Levin.
