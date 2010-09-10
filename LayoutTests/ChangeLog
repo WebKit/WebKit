@@ -1,3 +1,12 @@
+2010-09-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed.
+
+        Added editing/spelling/spelling-backspace-between-lines.html to the skipped list for WebKit2
+        since the test uses textInputController, which hasn't been implemented yet in WebKitTestRunner.
+
+        * platform/mac-wk2/Skipped:
+
 2010-09-09  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations update.
