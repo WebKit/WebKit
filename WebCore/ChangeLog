@@ -2,6 +2,15 @@
 
         Reviewed by Martin Robinson.
 
+        GDK_DISPLAY was removed in GTK+ 3.x, re-declare it when built
+        against that.
+
+        * platform/gtk/GtkVersioning.h:
+
+2010-09-10  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         Fix compilation with GTK+ 3.x.
 
         GDK key macros were renamed from GDK_FOO to GDK_KEY_FOO, we need

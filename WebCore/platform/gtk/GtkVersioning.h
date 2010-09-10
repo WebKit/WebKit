@@ -30,6 +30,10 @@
 G_BEGIN_DECLS
 
 // Macros to avoid deprecation checking churn
+#ifndef GTK_API_VERSION_2
+#define GDK_DISPLAY() (GDK_DISPLAY_XDISPLAY(gdk_display_get_default()))
+#endif
+
 #if !GTK_CHECK_VERSION(2, 21, 2)
 #define gdk_visual_get_depth(visual) (visual)->depth
 #define gdk_visual_get_bits_per_rgb(visual) (visual)->bits_per_rgb
