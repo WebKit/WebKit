@@ -1,3 +1,17 @@
+2010-09-10  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        roll out r66992 and r66997 - possibly introduced a perf slowdown in chromium tests
+        https://bugs.webkit.org/show_bug.cgi?id=45524
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parametersForPlugin):
+        (WebCore::HTMLObjectElement::updateWidget):
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::requestFrame):
+        * loader/SubframeLoader.h:
+
 2010-09-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.
