@@ -1,3 +1,15 @@
+2010-09-09  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r67119.
+        http://trac.webkit.org/changeset/67119
+        https://bugs.webkit.org/show_bug.cgi?id=45505
+
+        Extra newlines in results (Requested by tony^work on #webkit).
+
+        * platform/chromium-linux/fast/dom/HTMLLinkElement/prefetch-expected.txt: Added.
+        * platform/chromium-mac/fast/dom/HTMLLinkElement/prefetch-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-09-09  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Tony Chang.

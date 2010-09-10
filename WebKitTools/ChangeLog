@@ -1,3 +1,49 @@
+2010-09-09  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r67119.
+        http://trac.webkit.org/changeset/67119
+        https://bugs.webkit.org/show_bug.cgi?id=45505
+
+        Extra newlines in results (Requested by tony^work on #webkit).
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::reset):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/chromium/TestShell.h:
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (printResponseDescription):
+        (printNodeDescription):
+        (printRangeDescription):
+        (WebViewHost::shouldBeginEditing):
+        (WebViewHost::shouldEndEditing):
+        (WebViewHost::shouldInsertNode):
+        (WebViewHost::shouldChangeSelectedRange):
+        (WebViewHost::shouldDeleteRange):
+        (WebViewHost::shouldApplyStyle):
+        (WebViewHost::didBeginEditing):
+        (WebViewHost::didChangeSelection):
+        (WebViewHost::didChangeContents):
+        (WebViewHost::didEndEditing):
+        (WebViewHost::decidePolicyForNavigation):
+        (WebViewHost::didCancelClientRedirect):
+        (WebViewHost::didStartProvisionalLoad):
+        (WebViewHost::didReceiveServerRedirectForProvisionalLoad):
+        (WebViewHost::didFailProvisionalLoad):
+        (WebViewHost::didCommitProvisionalLoad):
+        (WebViewHost::didFinishDocumentLoad):
+        (WebViewHost::didHandleOnloadEvents):
+        (WebViewHost::didFailLoad):
+        (WebViewHost::didFinishLoad):
+        (WebViewHost::didChangeLocationWithinPage):
+        (WebViewHost::willSendRequest):
+        (WebViewHost::didReceiveResponse):
+        (WebViewHost::didFinishResourceLoad):
+        (WebViewHost::didFailResourceLoad):
+        (WebViewHost::didDisplayInsecureContent):
+        (WebViewHost::didRunInsecureContent):
+        (WebViewHost::printFrameDescription):
+
 2010-09-09  Michael Saboff  <msaboff@apple.com>
 
         Unreviewed, adding myself to committers list.

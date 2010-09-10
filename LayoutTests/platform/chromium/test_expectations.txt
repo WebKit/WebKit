@@ -2673,6 +2673,11 @@ BUG46603 : fast/frames/lots-of-objects.html = PASS TIMEOUT
 // LayoutTestController::pageProperty is not implemented for Chromium yet.
 BUGWK35961 : printing/page-rule-selection.html = TEXT
 
+// Needs to implement layoutTestController.dumpResourceResponseMIMETypes()
+BUG46872 : fast/preloader = TEXT
+BUG46872 : fast/dom/HTMLLinkElement/prefetch.html = TIMEOUT
+BUG46872 : http/tests/loading/preload-slow-loading.php = TEXT
+
 BUG47035 WIN DEBUG : fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.html = PASS TEXT
 
 // CSS3 Hyphenation landed in http://trac.webkit.org/changeset/61548
@@ -2793,6 +2798,8 @@ BUG48859 WIN : fast/inline/continuation-outlines-with-layers-2.html = IMAGE+TEXT
 // Somehow rebaseline in http://trac.webkit.org/changeset/63196 failed.
 // Need investigation.
 BUGWK38016 WIN : svg/custom/foreign-object-skew.svg = FAIL
+
+BUG49031 WIN LINUX MAC : http/tests/mime/uppercase-mime-type.html = MISSING
 
 BUG49021 : userscripts/mixed-case-stylesheet.html = TEXT
 BUG49021 : userscripts/simple-stylesheet.html = TEXT
