@@ -1,7 +1,7 @@
 // [Name] SVGFEDiffuseLightingElement-lighting-color-css-prop.js
 // [Expected rendering result] A shining circle (performed by diffuse lighting) - and a series of PASS messages
 
-description("Tests dynamic updates of the 'lighting-color' css property of the SVGFEDiffuseLightingElement object (The pixel test currently fails - the image is not changed to yellow)")
+description("Tests dynamic updates of the 'lighting-color' css property of the SVGFEDiffuseLightingElement object");
 createSVGTestCase();
 
 var pointLight = createSVGElement("fePointLight");
