@@ -73,6 +73,10 @@ public:
     {
         return reinterpret_cast<RegexJITCode>(m_ref.m_code.executableAddress())(input, start, length, output);
     }
+    
+#if ENABLE(REGEXP_TRACING)
+    void *getAddr() { return m_ref.m_code.executableAddress(); }
+#endif
 
 private:
     MacroAssembler::CodeRef m_ref;

@@ -1,3 +1,33 @@
+2010-09-09  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Added a regular expression tracing facility.  This tracing is connected
+        to jsc.  Every compiled regular expression object is added to a list.
+        When the process exits, each regular expression dumps its pattern,
+        JIT address, number of times it was executed and the number of matches.
+        This tracing is controlled by the macro ENABLE_REGEXP_TRACING in
+        wtf/Platform.h.
+        https://bugs.webkit.org/show_bug.cgi?id=45401
+
+        * JavaScriptCore.exp:
+        * jsc.cpp:
+        (runWithScripts):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::~JSGlobalData):
+        (JSC::JSGlobalData::addRegExpToTrace):
+        (JSC::JSGlobalData::dumpRegExpTrace):
+        * runtime/JSGlobalData.h:
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::RegExp):
+        (JSC::RegExp::create):
+        (JSC::RegExp::match):
+        * runtime/RegExp.h:
+        * wtf/Platform.h:
+        * yarr/RegexJIT.h:
+        (JSC::Yarr::RegexCodeBlock::getAddr):
+
 2010-09-09  John Therrell  <jtherrell@apple.com>
 
         32-bit build fix.

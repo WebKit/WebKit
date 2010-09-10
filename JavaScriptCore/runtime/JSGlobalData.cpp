@@ -51,6 +51,10 @@
 #include "Parser.h"
 #include "RegExpCache.h"
 #include <wtf/WTFThreadData.h>
+#if ENABLE(REGEXP_TRACING)
+#include "RegExp.h"
+#endif
+
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
 #include <wtf/Threading.h>
@@ -145,6 +149,9 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , cachedUTCOffset(NaN)
     , maxReentryDepth(threadStackType == ThreadStackTypeSmall ? MaxSmallThreadReentryDepth : MaxLargeThreadReentryDepth)
     , m_regExpCache(new RegExpCache(this))
+#if ENABLE(REGEXP_TRACING)
+    , m_rtTraceList(new RTTraceList())
+#endif
 #ifndef NDEBUG
     , exclusiveThread(0)
 #endif
@@ -218,6 +225,9 @@ JSGlobalData::~JSGlobalData()
 
     delete clientData;
     delete m_regExpCache;
+#if ENABLE(REGEXP_TRACING)
+    delete m_rtTraceList;
+#endif
 }
 
 PassRefPtr<JSGlobalData> JSGlobalData::createContextGroup(ThreadStackType type)
@@ -300,5 +310,39 @@ void JSGlobalData::dumpSampleData(ExecState* exec)
 {
     interpreter->dumpSampleData(exec);
 }
+
+
+#if ENABLE(REGEXP_TRACING)
+void JSGlobalData::addRegExpToTrace(PassRefPtr<RegExp> regExp)
+{
+    m_rtTraceList->add(regExp);
+}
+
+void JSGlobalData::dumpRegExpTrace()
+{
+    // The first RegExp object is ignored.  It is create by the RegExpPrototype ctor and not used.
+    RTTraceList::iterator iter = ++m_rtTraceList->begin();
+    
+    if (iter != m_rtTraceList->end()) {
+        printf("\nRegExp Tracing\n");
+        printf("                                                            match()    matches\n");
+        printf("Regular Expression                          JIT Address      calls      found\n");
+        printf("----------------------------------------+----------------+----------+----------\n");
+    
+        unsigned reCount = 0;
+    
+        for (; iter != m_rtTraceList->end(); ++iter, ++reCount)
+            (*iter)->printTraceData();
+
+        printf("%d Regular Expressions\n", reCount);
+    }
+    
+    m_rtTraceList->clear();
+}
+#else
+void JSGlobalData::dumpRegExpTrace()
+{
+}
+#endif
 
 } // namespace JSC

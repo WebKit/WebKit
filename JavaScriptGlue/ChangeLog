@@ -1,3 +1,12 @@
+2010-09-09  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Added ListHashSet.h as an exported header in support of RegExp tracing.
+        https://bugs.webkit.org/show_bug.cgi?id=45401
+
+        * ForwardingHeaders/wtf/ListHashSet.h: Added.
+
 2010-09-07  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

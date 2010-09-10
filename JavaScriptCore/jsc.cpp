@@ -408,6 +408,9 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
 #if ENABLE(SAMPLING_COUNTERS)
     AbstractSamplingCounter::dump();
 #endif
+#if ENABLE(REGEXP_TRACING)
+    globalData->dumpRegExpTrace();
+#endif
     return success;
 }
 

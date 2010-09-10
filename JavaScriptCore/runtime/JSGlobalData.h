@@ -46,6 +46,9 @@
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/ThreadSpecific.h>
+#if ENABLE(REGEXP_TRACING)
+#include <wtf/ListHashSet.h>
+#endif
 
 struct OpaqueJSClass;
 struct OpaqueJSClassContextData;
@@ -64,6 +67,9 @@ namespace JSC {
     class Stringifier;
     class Structure;
     class UString;
+#if ENABLE(REGEXP_TRACING)
+    class RegExp;
+#endif
 
     struct HashTable;
     struct Instruction;    
@@ -222,6 +228,11 @@ namespace JSC {
         BumpPointerAllocator m_regexAllocator;
 #endif
 
+#if ENABLE(REGEXP_TRACING)
+        typedef ListHashSet<RefPtr<RegExp> > RTTraceList;
+        RTTraceList* m_rtTraceList;
+#endif
+
 #ifndef NDEBUG
         ThreadIdentifier exclusiveThread;
 #endif
@@ -234,6 +245,10 @@ namespace JSC {
         void stopSampling();
         void dumpSampleData(ExecState* exec);
         RegExpCache* regExpCache() { return m_regExpCache; }
+#if ENABLE(REGEXP_TRACING)
+        void addRegExpToTrace(PassRefPtr<RegExp> regExp);
+#endif
+        void dumpRegExpTrace();
     private:
         JSGlobalData(GlobalDataType, ThreadStackType);
         static JSGlobalData*& sharedInstanceInternal();
