@@ -25,9 +25,7 @@
 #include "GraphicsContext.h"
 #include "Image.h"
 #include "ImageData.h"
-#include "JPEGEncoder.h"
 #include "NotImplemented.h"
-#include "PNGEncoder.h"
 #include "SharedBitmap.h"
 #include "UnusedParam.h"
 #include <wtf/UnusedParam.h>
@@ -250,28 +248,8 @@ String ImageBuffer::toDataURL(const String& mimeType, const double*) const
     if (!m_data.m_bitmap->bytes())
         return "data:,";
 
-    Vector<char> output;
-    const char* header;
-    if (mimeType.lower() == "image/png") {
-        if (!compressBitmapToPng(m_data.m_bitmap.get(), output))
-            return "data:,";
-        header = "data:image/png;base64,";
-    } else {
-        if (!compressBitmapToJpeg(m_data.m_bitmap.get(), output))
-            return "data:,";
-        header = "data:image/jpeg;base64,";
-    }
-
-    Vector<char> base64;
-    base64Encode(output, base64);
-
-    output.clear();
-
-    Vector<char> url;
-    url.append(header, strlen(header));
-    url.append(base64);
-
-    return String(url.data(), url.size());
+    notImplemented();
+    return String();
 }
 
 }
