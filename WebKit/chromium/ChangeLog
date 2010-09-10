@@ -1,3 +1,46 @@
+2010-09-10  Nat Duca  <nduca@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Accelerated Compositing: screen garbage when scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=45092
+
+        Introduce a new API on WebWidget for painting with accelerated
+        compositing that allows the compositor to properly distingiush
+        scrolling, invalidation and repainting from one another. The key
+        change is that in accelerated rendering case, invalidates and
+        scrolling pass directly to the compositor, rather than passing up
+        to the client as was the case in the software path. For
+        accelerated rendering, the previous paint() method is replaced by
+        composite().
+
+        * public/WebWidget.h:
+        * public/WebWidgetClient.h:
+        (WebKit::WebWidgetClient::scheduleComposite):
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::invalidateContentsAndWindow):
+        (WebKit::ChromeClientImpl::scroll):
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenuImpl::themeChanged):
+        (WebKit::WebPopupMenuImpl::composite):
+        * src/WebPopupMenuImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::resize):
+        (WebKit::WebViewImpl::paint):
+        (WebKit::WebViewImpl::themeChanged):
+        (WebKit::WebViewImpl::composite):
+        (WebKit::WebViewImpl::setRootGraphicsLayer):
+        (WebKit::WebViewImpl::setRootLayerNeedsDisplay):
+        (WebKit::WebViewImpl::scrollRootLayerRect):
+        (WebKit::WebViewImpl::invalidateRootLayerRect):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit::WebViewImpl::updateRootLayerContents):
+        (WebKit::WebViewImpl::doComposite):
+        * src/WebViewImpl.h:
+        * tests/PopupMenuTest.cpp:
+        (WebKit::TestWebWidget::themeChanged):
+        (WebKit::TestWebWidget::composite):
+
 2010-09-10  David Holloway  <dhollowa@chromium.org>
 
         Reviewed by Adam Barth.

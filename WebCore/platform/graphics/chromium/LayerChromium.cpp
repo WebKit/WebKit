@@ -299,10 +299,15 @@ void LayerChromium::setBounds(const IntSize& size)
     if (m_bounds == size)
         return;
 
+    bool firstResize = !m_bounds.width() && !m_bounds.height() && size.width() && size.height();
+
     m_bounds = size;
     m_backingStoreSize = size;
 
-    setNeedsCommit();
+    if (firstResize)
+        setNeedsDisplay(FloatRect(0, 0, m_bounds.width(), m_bounds.height()));
+    else
+        setNeedsCommit();
 }
 
 void LayerChromium::setFrame(const FloatRect& rect)
@@ -311,7 +316,7 @@ void LayerChromium::setFrame(const FloatRect& rect)
       return;
 
     m_frame = rect;
-    setNeedsCommit();
+    setNeedsDisplay(FloatRect(0, 0, m_bounds.width(), m_bounds.height()));
 }
 
 const LayerChromium* LayerChromium::rootLayer() const
@@ -353,7 +358,6 @@ void LayerChromium::setNeedsDisplay(const FloatRect& dirtyRect)
     m_contentsDirty = true;
 
     m_dirtyRect.unite(dirtyRect);
-
     setNeedsCommit();
 }
 
@@ -361,6 +365,12 @@ void LayerChromium::setNeedsDisplay()
 {
     m_dirtyRect.setSize(m_bounds);
     m_contentsDirty = true;
+}
+
+void LayerChromium::resetNeedsDisplay()
+{
+    m_dirtyRect = FloatRect();
+    m_contentsDirty = false;
 }
 
 void LayerChromium::toGLMatrix(float* flattened, const TransformationMatrix& m)

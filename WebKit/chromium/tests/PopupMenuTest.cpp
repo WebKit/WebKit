@@ -128,6 +128,8 @@ public:
     virtual void resize(const WebSize&) { }
     virtual void layout() { }
     virtual void paint(WebCanvas*, const WebRect&) { }
+    virtual void themeChanged() { }
+    virtual void composite(bool finish) { }
     virtual bool handleInputEvent(const WebInputEvent&) { return true; }
     virtual void mouseCaptureLost() { }
     virtual void setFocus(bool) { }

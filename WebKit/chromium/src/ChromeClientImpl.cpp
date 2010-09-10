@@ -493,8 +493,15 @@ void ChromeClientImpl::invalidateContentsAndWindow(const IntRect& updateRect, bo
 {
     if (updateRect.isEmpty())
         return;
-    if (m_webView->client())
-        m_webView->client()->didInvalidateRect(updateRect);
+#if USE(ACCELERATED_COMPOSITING)
+    if (!m_webView->isAcceleratedCompositingActive()) {
+#endif
+        if (m_webView->client())
+            m_webView->client()->didInvalidateRect(updateRect);
+#if USE(ACCELERATED_COMPOSITING)
+    } else
+        m_webView->invalidateRootLayerRect(updateRect);
+#endif
 }
 
 void ChromeClientImpl::invalidateContentsForSlowScroll(const IntRect& updateRect, bool immediate)
@@ -508,11 +515,18 @@ void ChromeClientImpl::scroll(
     const IntRect& clipRect)
 {
     m_webView->hidePopups();
-    if (m_webView->client()) {
-        int dx = scrollDelta.width();
-        int dy = scrollDelta.height();
-        m_webView->client()->didScrollRect(dx, dy, clipRect);
-    }
+#if USE(ACCELERATED_COMPOSITING)
+    if (!m_webView->isAcceleratedCompositingActive()) {
+#endif
+        if (m_webView->client()) {
+            int dx = scrollDelta.width();
+            int dy = scrollDelta.height();
+            m_webView->client()->didScrollRect(dx, dy, clipRect);
+        }
+#if USE(ACCELERATED_COMPOSITING)
+    } else
+        m_webView->scrollRootLayerRect(scrollDelta, clipRect);
+#endif
 }
 
 IntPoint ChromeClientImpl::screenToWindow(const IntPoint&) const

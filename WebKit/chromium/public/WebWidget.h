@@ -60,13 +60,26 @@ public:
     // and it may result in calls to WebWidgetClient::didInvalidateRect.
     virtual void layout() = 0;
 
-    // Called to paint the specified region of the WebWidget onto the given
-    // canvas.  You MUST call Layout before calling this method.  It is
-    // okay to call paint multiple times once layout has been called,
-    // assuming no other changes are made to the WebWidget (e.g., once
-    // events are processed, it should be assumed that another call to
-    // layout is warranted before painting again).
-    virtual void paint(WebCanvas*, const WebRect&) = 0;
+    // Called to paint the rectangular region within the WebWidget 
+    // onto the specified canvas at (viewPort.x,viewPort.y). You MUST call
+    // Layout before calling this method.  It is okay to call paint
+    // multiple times once layout has been called, assuming no other
+    // changes are made to the WebWidget (e.g., once events are
+    // processed, it should be assumed that another call to layout is
+    // warranted before painting again).
+    virtual void paint(WebCanvas*, const WebRect& viewPort) = 0;
+
+    // Triggers compositing of the current layers onto the screen.
+    // The finish argument controls whether the compositor will wait for the
+    // GPU to finish rendering before returning. You MUST call Layout
+    // before calling this method, for the same reasons described in
+    // the paint method above.
+    virtual void composite(bool finish) = 0;
+
+    // Called to inform the WebWidget of a change in theme.
+    // Implementors that cache rendered copies of widgets need to re-render
+    // on receiving this message
+    virtual void themeChanged() = 0;
 
     // Called to inform the WebWidget of an input event.  Returns true if
     // the event has been processed, false otherwise.

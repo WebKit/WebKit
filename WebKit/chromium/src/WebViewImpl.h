@@ -34,6 +34,7 @@
 #include "WebGLES2Context.h"
 #include "WebNavigationPolicy.h"
 #include "WebPoint.h"
+#include "WebRect.h"
 #include "WebSize.h"
 #include "WebString.h"
 #include "WebView.h"
@@ -92,6 +93,8 @@ public:
     virtual void resize(const WebSize&);
     virtual void layout();
     virtual void paint(WebCanvas*, const WebRect&);
+    virtual void themeChanged();
+    virtual void composite(bool finish);
     virtual bool handleInputEvent(const WebInputEvent&);
     virtual void mouseCaptureLost();
     virtual void setFocus(bool enable);
@@ -322,9 +325,11 @@ public:
     }
 
 #if USE(ACCELERATED_COMPOSITING)
-    void setRootLayerNeedsDisplay();
-    void setRootGraphicsLayer(WebCore::PlatformLayer*);
     bool allowsAcceleratedCompositing();
+    void setRootGraphicsLayer(WebCore::PlatformLayer*);
+    void setRootLayerNeedsDisplay();
+    void scrollRootLayerRect(const WebCore::IntSize& scrollDelta, const WebCore::IntRect& clipRect);
+    void invalidateRootLayerRect(const WebCore::IntRect&);
 #endif
     // Onscreen contexts display to the screen associated with this view.
     // Offscreen contexts render offscreen but can share resources with the
@@ -386,7 +391,8 @@ private:
 
 #if USE(ACCELERATED_COMPOSITING)
     void setIsAcceleratedCompositingActive(bool);
-    void updateRootLayerContents(const WebRect&);
+    void updateRootLayerContents(const WebCore::IntRect&);
+    void doComposite();
 #endif
 
     WebViewClient* m_client;
@@ -511,6 +517,7 @@ private:
     RefPtr<WebCore::Node> m_mouseCaptureNode;
 
 #if USE(ACCELERATED_COMPOSITING)
+    WebCore::IntRect m_scrollDamage;
     OwnPtr<WebCore::LayerRendererChromium> m_layerRenderer;
     bool m_isAcceleratedCompositingActive;
     bool m_compositorCreationFailed;

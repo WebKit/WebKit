@@ -174,6 +174,16 @@ void WebPopupMenuImpl::paint(WebCanvas* canvas, const WebRect& rect)
     }
 }
 
+void WebPopupMenuImpl::themeChanged()
+{
+    notImplemented();
+}
+
+void WebPopupMenuImpl::composite(bool finish)
+{
+    notImplemented();
+}
+
 bool WebPopupMenuImpl::handleInputEvent(const WebInputEvent& inputEvent)
 {
     if (!m_widget)

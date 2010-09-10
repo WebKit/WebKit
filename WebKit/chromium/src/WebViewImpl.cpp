@@ -912,7 +912,12 @@ void WebViewImpl::resize(const WebSize& newSize)
 
     if (m_client) {
         WebRect damagedRect(0, 0, m_size.width, m_size.height);
-        m_client->didInvalidateRect(damagedRect);
+        if (isAcceleratedCompositingActive()) {
+#if USE(ACCELERATED_COMPOSITING)
+            invalidateRootLayerRect(damagedRect);
+#endif
+        } else
+            m_client->didInvalidateRect(damagedRect);
     }
 
 #if OS(DARWIN)
@@ -946,33 +951,44 @@ void WebViewImpl::layout()
 
 void WebViewImpl::paint(WebCanvas* canvas, const WebRect& rect)
 {
-
+    if (isAcceleratedCompositingActive()) {
 #if USE(ACCELERATED_COMPOSITING)
-    if (!isAcceleratedCompositingActive()) {
+        doComposite();
+
+        // Readback into the canvas
+        // FIXME Insert wjmaclean's readback code here for webkit bug 44127
+
+        // Temporarily present so the downstream Chromium renderwidget still renders.
+        // FIXME: remove this call once the changes to Chromium's renderwidget have landed.
+        m_layerRenderer->present();
 #endif
+    } else {
         WebFrameImpl* webframe = mainFrameImpl();
         if (webframe)
             webframe->paint(canvas, rect);
-#if USE(ACCELERATED_COMPOSITING)
-    } else {
-        // Draw the contents of the root layer.
-        updateRootLayerContents(rect);
-
-        WebFrameImpl* webframe = mainFrameImpl();
-        if (!webframe)
-            return;
-        FrameView* view = webframe->frameView();
-        if (!view)
-            return;
-
-        // The visibleRect includes scrollbars whereas the contentRect doesn't.
-        IntRect visibleRect = view->visibleContentRect(true);
-        IntRect contentRect = view->visibleContentRect(false);
-
-        // Ask the layer compositor to redraw all the layers.
-        ASSERT(m_layerRenderer->hardwareCompositing());
-        m_layerRenderer->drawLayers(rect, visibleRect, contentRect, IntPoint(view->scrollX(), view->scrollY()));
     }
+}
+
+void WebViewImpl::themeChanged()
+{
+    if (!page())
+        return;
+    FrameView* view = page()->mainFrame()->view();
+
+    WebRect damagedRect(0, 0, m_size.width, m_size.height);
+    view->invalidateRect(damagedRect);
+}
+
+void WebViewImpl::composite(bool finish)
+{
+#if USE(ACCELERATED_COMPOSITING)
+    doComposite();
+
+    // Finish if requested.
+    // FIXME: handle finish flag.
+
+    // Put result onscreen.
+    m_layerRenderer->present();
 #endif
 }
 
@@ -2114,10 +2130,110 @@ bool WebViewImpl::allowsAcceleratedCompositing()
 
 void WebViewImpl::setRootGraphicsLayer(WebCore::PlatformLayer* layer)
 {
+    bool wasActive = m_isAcceleratedCompositingActive;
     setIsAcceleratedCompositingActive(layer ? true : false);
     if (m_layerRenderer)
         m_layerRenderer->setRootLayer(layer);
+    if (wasActive != m_isAcceleratedCompositingActive) {
+        IntRect damagedRect(0, 0, m_size.width, m_size.height);
+        if (m_isAcceleratedCompositingActive)
+            invalidateRootLayerRect(damagedRect);
+        else
+            m_client->didInvalidateRect(damagedRect);
+    }
 }
+
+void WebViewImpl::setRootLayerNeedsDisplay()
+{
+    if (m_layerRenderer)
+        m_layerRenderer->setNeedsDisplay();
+    m_client->scheduleComposite();
+    // FIXME: To avoid breaking the downstream Chrome render_widget while downstream
+    // changes land, we also have to pass a 1x1 invalidate up to the client
+    {
+        WebRect damageRect(0, 0, 1, 1);
+        m_client->didInvalidateRect(damageRect);
+    }
+}
+
+
+void WebViewImpl::scrollRootLayerRect(const IntSize& scrollDelta, const IntRect& clipRect)
+{
+    // FIXME: To avoid breaking the Chrome render_widget when the new compositor render
+    // path is not checked in, we must still pass scroll damage up to the client. This
+    // code will be backed out in a followup CL once the Chromium changes have landed.
+    m_client->didScrollRect(scrollDelta.width(), scrollDelta.height(), clipRect);
+
+    ASSERT(m_layerRenderer);
+    // Compute the damage rect in viewport space.
+    WebFrameImpl* webframe = mainFrameImpl();
+    if (!webframe)
+        return;
+    FrameView* view = webframe->frameView();
+    if (!view)
+        return;
+
+    IntRect contentRect = view->visibleContentRect(false);
+
+    // We support fast scrolling in one direction at a time.
+    if (scrollDelta.width() && scrollDelta.height()) {
+        invalidateRootLayerRect(WebRect(contentRect));
+        return;
+    }
+
+    // Compute the region we will expose by scrolling. We use the
+    // content rect for invalidation.  Using this space for damage
+    // rects allows us to intermix invalidates with scrolls.
+    IntRect damagedContentsRect;
+    if (scrollDelta.width()) {
+        float dx = static_cast<float>(scrollDelta.width());
+        damagedContentsRect.setY(contentRect.y());
+        damagedContentsRect.setHeight(contentRect.height());
+        if (dx > 0) {
+            damagedContentsRect.setX(contentRect.x());
+            damagedContentsRect.setWidth(dx);
+        } else {
+            damagedContentsRect.setX(contentRect.right() + dx);
+            damagedContentsRect.setWidth(-dx);
+        }
+    } else {
+        float dy = static_cast<float>(scrollDelta.height());
+        damagedContentsRect.setX(contentRect.x());
+        damagedContentsRect.setWidth(contentRect.width());
+        if (dy > 0) {
+            damagedContentsRect.setY(contentRect.y());
+            damagedContentsRect.setHeight(dy);
+        } else {
+            damagedContentsRect.setY(contentRect.bottom() + dy);
+            damagedContentsRect.setHeight(-dy);
+        }
+    }
+
+    m_scrollDamage.unite(damagedContentsRect);
+    setRootLayerNeedsDisplay();
+}
+
+void WebViewImpl::invalidateRootLayerRect(const IntRect& rect)
+{
+    // FIXME: To avoid breaking the Chrome render_widget when the new compositor render
+    // path is not checked in, we must still pass damage up to the client. This
+    // code will be backed out in a followup CL once the Chromium changes have landed.
+    m_client->didInvalidateRect(rect);
+
+    ASSERT(m_layerRenderer);
+
+    if (!page())
+        return;
+    FrameView* view = page()->mainFrame()->view();
+
+    // rect is in viewport space. Convert to content space
+    // so that invalidations and scroll invalidations play well with one-another.
+    FloatRect contentRect = view->windowToContents(rect);
+
+    // FIXME: add a smarter damage aggregation logic? Right now, LayerChromium does simple union-ing.
+    m_layerRenderer->rootLayer()->setNeedsDisplay(contentRect);
+}
+
 
 void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
 {
@@ -2128,10 +2244,6 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         m_layerRenderer = LayerRendererChromium::create(getOnscreenGLES2Context());
         if (m_layerRenderer) {
             m_isAcceleratedCompositingActive = true;
-            
-            // Force a redraw the entire view so that the compositor gets the entire view,
-            // rather than just the currently-dirty subset.
-            m_client->didInvalidateRect(IntRect(0, 0, m_size.width, m_size.height));
         } else {
             m_isAcceleratedCompositingActive = false;
             m_compositorCreationFailed = true;
@@ -2142,15 +2254,9 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
     }
 }
 
-void WebViewImpl::updateRootLayerContents(const WebRect& rect)
+void WebViewImpl::updateRootLayerContents(const IntRect& rect)
 {
     if (!isAcceleratedCompositingActive())
-        return;
-
-    // FIXME: The accelerated compositing path invalidates a 1x1 rect at (0, 0)
-    // in order to get the renderer to ask the compositor to redraw. This is only
-    // temporary until we get the compositor to render directly from its own thread.
-    if (!rect.x && !rect.y && rect.width == 1 && rect.height == 1)
         return;
 
     WebFrameImpl* webframe = mainFrameImpl();
@@ -2164,7 +2270,7 @@ void WebViewImpl::updateRootLayerContents(const WebRect& rect)
     if (rootLayer) {
         IntRect visibleRect = view->visibleContentRect(true);
 
-        m_layerRenderer->setRootLayerCanvasSize(IntSize(rect.width, rect.height));
+        m_layerRenderer->setRootLayerCanvasSize(IntSize(rect.width(), rect.height()));
         GraphicsContext* rootLayerContext = m_layerRenderer->rootLayerGraphicsContext();
 
 #if PLATFORM(SKIA)
@@ -2174,7 +2280,7 @@ void WebViewImpl::updateRootLayerContents(const WebRect& rect)
         platformCanvas->save();
 
         // Bring the canvas into the coordinate system of the paint rect.
-        platformCanvas->translate(static_cast<SkScalar>(-rect.x), static_cast<SkScalar>(-rect.y));
+        platformCanvas->translate(static_cast<SkScalar>(-rect.x()), static_cast<SkScalar>(-rect.y()));
 
         rootLayerContext->save();
 
@@ -2188,7 +2294,7 @@ void WebViewImpl::updateRootLayerContents(const WebRect& rect)
         CGContextSaveGState(cgContext);
 
         // Bring the CoreGraphics context into the coordinate system of the paint rect.
-        CGContextTranslateCTM(cgContext, -rect.x, -rect.y);
+        CGContextTranslateCTM(cgContext, -rect.x(), -rect.y());
 
         rootLayerContext->save();
 
@@ -2202,22 +2308,48 @@ void WebViewImpl::updateRootLayerContents(const WebRect& rect)
     }
 }
 
-void WebViewImpl::setRootLayerNeedsDisplay()
+void WebViewImpl::doComposite()
 {
-    // FIXME: For now we're posting a repaint event for the entire page which is an overkill.
-    if (WebFrameImpl* webframe = mainFrameImpl()) {
-        if (FrameView* view = webframe->frameView()) {
-            // FIXME: Temporary hack to invalidate part of the page so that we get called to render
-            //        again.
-            IntRect visibleRect = view->visibleContentRect(true);
-            m_client->didInvalidateRect(IntRect(0, 0, 1, 1));
+    ASSERT(isAcceleratedCompositingActive());
+    if (!page())
+        return;
+    FrameView* view = page()->mainFrame()->view();
+
+    // The visibleRect includes scrollbars whereas the contentRect doesn't.
+    IntRect visibleRect = view->visibleContentRect(true);
+    IntRect contentRect = view->visibleContentRect(false);
+    IntRect viewPort = IntRect(0, 0, m_size.width, m_size.height);
+
+    // Give the compositor a chance to setup/resize the root texture handle and perform scrolling.
+    m_layerRenderer->prepareToDrawLayers(visibleRect, contentRect, IntPoint(view->scrollX(), view->scrollY()));
+
+    // Draw the contents of the root layer.
+    Vector<FloatRect> damageRects;
+    damageRects.append(m_scrollDamage);
+    damageRects.append(m_layerRenderer->rootLayer()->dirtyRect());
+    for (size_t i = 0; i < damageRects.size(); ++i) {
+        // The damage rect for the root layer is in content space [e.g. unscrolled].
+        // Convert from content space to viewPort space.
+        const FloatRect damagedContentRect = damageRects[i];
+        IntRect damagedRect = view->contentsToWindow(IntRect(damagedContentRect));
+
+        // Intersect this rectangle with the viewPort.
+        damagedRect.intersect(viewPort);
+
+        // Now render it.
+        if (damagedRect.width() && damagedRect.height()) {
+            updateRootLayerContents(damagedRect);
+            m_layerRenderer->updateRootLayerTextureRect(damagedRect);
         }
     }
+    m_layerRenderer->rootLayer()->resetNeedsDisplay();
+    m_scrollDamage = WebRect();
 
-    if (m_layerRenderer)
-        m_layerRenderer->setNeedsDisplay();
+    // Draw the actual layers...
+    m_layerRenderer->drawLayers(visibleRect, contentRect);
 }
-#endif // USE(ACCELERATED_COMPOSITING)
+#endif
+
 
 PassOwnPtr<GLES2Context> WebViewImpl::getOnscreenGLES2Context()
 {

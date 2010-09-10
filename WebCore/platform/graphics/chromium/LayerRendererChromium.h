@@ -61,9 +61,17 @@ public:
     LayerRendererChromium(PassOwnPtr<GLES2Context> gles2Context);
     ~LayerRendererChromium();
 
-    // Updates the contents of the root layer that fall inside the updateRect and recomposites
-    // all the layers.
-    void drawLayers(const IntRect& updateRect, const IntRect& visibleRect, const IntRect& contentRect, const IntPoint& scrollPosition);
+    // updates size of root texture, if needed, and scrolls the backbuffer.
+    void prepareToDrawLayers(const IntRect& visibleRect, const IntRect& contentRect, const IntPoint& scrollPosition);
+
+    // updates a rectangle within the root layer texture
+    void updateRootLayerTextureRect(const IntRect& updateRect);
+
+    // draws the current layers onto the backbuffer
+    void drawLayers(const IntRect& visibleRect, const IntRect& contentRect);
+
+    // puts backbuffer onscreen
+    void present();
 
     void setRootLayer(PassRefPtr<LayerChromium> layer) { m_rootLayer = layer; }
     LayerChromium* rootLayer() { return m_rootLayer.get(); }

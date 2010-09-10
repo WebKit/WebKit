@@ -1,3 +1,30 @@
+2010-09-10  Nat Duca  <nduca@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Accelerated Compositing: screen garbage when scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=45092
+
+        Split LayerRenderChromium::drawLayers into several different
+        functions, responsible for preparing the backbuffer, updating the
+        root texture, compositing and performing the final
+        swapbuffers. This are then used by the new
+        WebViewImpl::composite rendering path.
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::setBounds):
+        (WebCore::LayerChromium::setFrame):
+        (WebCore::LayerChromium::setNeedsDisplay):
+        (WebCore::LayerChromium::resetNeedsDisplay):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::dirtyRect):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::prepareToDrawLayers):
+        (WebCore::LayerRendererChromium::updateRootLayerTextureRect):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::present):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+
 2010-09-10  David Holloway  <dhollowa@chromium.org>
 
         Reviewed by Adam Barth.

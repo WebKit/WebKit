@@ -156,8 +156,8 @@ void LayerRendererChromium::useShader(unsigned programId)
 
 // Updates the contents of the root layer texture that fall inside the updateRect
 // and re-composits all sublayers.
-void LayerRendererChromium::drawLayers(const IntRect& updateRect, const IntRect& visibleRect,
-                                       const IntRect& contentRect, const IntPoint& scrollPosition)
+void LayerRendererChromium::prepareToDrawLayers(const IntRect& visibleRect, const IntRect& contentRect, 
+                                                const IntPoint& scrollPosition)
 {
     ASSERT(m_hardwareCompositing);
 
@@ -197,14 +197,12 @@ void LayerRendererChromium::drawLayers(const IntRect& updateRect, const IntRect&
         m_scrollPosition = scrollPosition;
 
     IntPoint scrollDelta = toPoint(scrollPosition - m_scrollPosition);
-    // Scroll only when the updateRect contains pixels for the newly uncovered region to avoid flashing.
-    if ((scrollDelta.x() && updateRect.width() >= abs(scrollDelta.x()) && updateRect.height() >= contentRect.height())
-        || (scrollDelta.y() && updateRect.height() >= abs(scrollDelta.y()) && updateRect.width() >= contentRect.width())) {
+    // Scroll the backbuffer
+    if (scrollDelta.x() || scrollDelta.y()) {
         // Scrolling works as follows: We render a quad with the current root layer contents
         // translated by the amount the page has scrolled since the last update and then read the
         // pixels of the content area (visible area excluding the scroll bars) back into the
-        // root layer texture. The newly exposed area is subesquently filled as usual with
-        // the contents of the updateRect.
+        // root layer texture. The newly exposed area will be filled by a subsequent drawLayersIntoRect call
         TransformationMatrix scrolledLayerMatrix;
 #if PLATFORM(SKIA)
         float scaleFactor = 1.0f;
@@ -235,41 +233,64 @@ void LayerRendererChromium::drawLayers(const IntRect& updateRect, const IntRect&
         m_scrollPosition = scrollPosition;
     }
 
-    // FIXME: The following check should go away when the compositor renders independently from its own thread.
-    // Ignore a 1x1 update rect at (0, 0) as that's used a way to kick off a redraw for the compositor.
-    if (!(!updateRect.x() && !updateRect.y() && updateRect.width() == 1 && updateRect.height() == 1)) {
-        // Update the root layer texture.
-        ASSERT((updateRect.x() + updateRect.width() <= m_rootLayerTextureWidth)
-               && (updateRect.y() + updateRect.height() <= m_rootLayerTextureHeight));
+    // Translate all the composited layers by the scroll position.
+    TransformationMatrix matrix;
+    matrix.translate3d(-m_scrollPosition.x(), -m_scrollPosition.y(), 0);
+
+    // Traverse the layer tree and update the layer transforms.
+    float opacity = 1;
+    const Vector<RefPtr<LayerChromium> >& sublayers = m_rootLayer->getSublayers();
+    size_t i;
+    for (i = 0; i < sublayers.size(); i++)
+        updateLayersRecursive(sublayers[i].get(), matrix, opacity);
+}
+
+void LayerRendererChromium::updateRootLayerTextureRect(const IntRect& updateRect)
+{
+    ASSERT(m_hardwareCompositing);
+
+    if (!m_rootLayer)
+        return;
+
+    GLC(glBindTexture(GL_TEXTURE_2D, m_rootLayerTextureId));
+
+    // Update the root layer texture.
+    ASSERT((updateRect.right()  <= m_rootLayerTextureWidth)
+           && (updateRect.bottom() <= m_rootLayerTextureHeight));
 
 #if PLATFORM(SKIA)
-        // Get the contents of the updated rect.
-        const SkBitmap bitmap = m_rootLayerCanvas->getDevice()->accessBitmap(false);
-        int rootLayerWidth = bitmap.width();
-        int rootLayerHeight = bitmap.height();
-        ASSERT(rootLayerWidth == updateRect.width() && rootLayerHeight == updateRect.height());
-        void* pixels = bitmap.getPixels();
-
-        // Copy the contents of the updated rect to the root layer texture.
-        GLC(glTexSubImage2D(GL_TEXTURE_2D, 0, updateRect.x(), updateRect.y(), updateRect.width(), updateRect.height(), GL_RGBA, GL_UNSIGNED_BYTE, pixels));
+    // Get the contents of the updated rect.
+    const SkBitmap bitmap = m_rootLayerCanvas->getDevice()->accessBitmap(false);
+    int bitmapWidth = bitmap.width();
+    int bitmapHeight = bitmap.height();
+    ASSERT(bitmapWidth == updateRect.width() && bitmapHeight == updateRect.height());
+    void* pixels = bitmap.getPixels();
+    // Copy the contents of the updated rect to the root layer texture.
+    GLC(glTexSubImage2D(GL_TEXTURE_2D, 0, updateRect.x(), updateRect.y(), updateRect.width(), updateRect.height(), GL_RGBA, GL_UNSIGNED_BYTE, pixels));
 #elif PLATFORM(CG)
-        // Get the contents of the updated rect.
-        ASSERT(static_cast<int>(CGBitmapContextGetWidth(m_rootLayerCGContext.get())) == updateRect.width() && static_cast<int>(CGBitmapContextGetHeight(m_rootLayerCGContext.get())) == updateRect.height());
-        void* pixels = m_rootLayerBackingStore.data();
+    // Get the contents of the updated rect.
+    ASSERT(static_cast<int>(CGBitmapContextGetWidth(m_rootLayerCGContext.get())) == updateRect.width() && static_cast<int>(CGBitmapContextGetHeight(m_rootLayerCGContext.get())) == updateRect.height());
+    void* pixels = m_rootLayerBackingStore.data();
 
-        // Copy the contents of the updated rect to the root layer texture.
-        // The origin is at the lower left in Core Graphics' coordinate system. We need to correct for this here.
-        GLC(glTexSubImage2D(GL_TEXTURE_2D, 0,
-                            updateRect.x(), m_rootLayerTextureHeight - updateRect.y() - updateRect.height(),
-                            updateRect.width(), updateRect.height(),
-                            GL_RGBA, GL_UNSIGNED_BYTE, pixels));
+    // Copy the contents of the updated rect to the root layer texture.
+    // The origin is at the lower left in Core Graphics' coordinate system. We need to correct for this here.
+    GLC(glTexSubImage2D(GL_TEXTURE_2D, 0,
+                        updateRect.x(), m_rootLayerTextureHeight - updateRect.y() - updateRect.height(),
+                        updateRect.width(), updateRect.height(),
+                        GL_RGBA, GL_UNSIGNED_BYTE, pixels));
 #else
 #error "Need to implement for your platform."
 #endif
-    }
+}
+
+void LayerRendererChromium::drawLayers(const IntRect& visibleRect, const IntRect& contentRect)
+{
+    ASSERT(m_hardwareCompositing);
 
     glClearColor(0, 0, 1, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    GLC(glBindTexture(GL_TEXTURE_2D, m_rootLayerTextureId));
 
     // Render the root layer using a quad that takes up the entire visible area of the window.
     // We reuse the shader program used by ContentLayerChromium.
@@ -294,6 +315,9 @@ void LayerRendererChromium::drawLayers(const IntRect& updateRect, const IntRect&
     GLC(glEnable(GL_BLEND));
     GLC(glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
 
+    // Set the rootVisibleRect --- used by subsequent drawLayers calls
+    m_rootVisibleRect = visibleRect;
+
     // Translate all the composited layers by the scroll position.
     TransformationMatrix matrix;
     matrix.translate3d(-m_scrollPosition.x(), -m_scrollPosition.y(), 0);
@@ -305,11 +329,10 @@ void LayerRendererChromium::drawLayers(const IntRect& updateRect, const IntRect&
     for (i = 0; i < sublayers.size(); i++)
         updateLayersRecursive(sublayers[i].get(), matrix, opacity);
 
-    m_rootVisibleRect = visibleRect;
-
     // Enable scissoring to avoid rendering composited layers over the scrollbars.
     GLC(glEnable(GL_SCISSOR_TEST));
     FloatRect scissorRect(contentRect);
+
     // The scissorRect should not include the scroll offset.
     scissorRect.move(-m_scrollPosition.x(), -m_scrollPosition.y());
     scissorToRect(scissorRect);
@@ -320,13 +343,16 @@ void LayerRendererChromium::drawLayers(const IntRect& updateRect, const IntRect&
     GLC(glStencilMask(0));
 
     // Traverse the layer tree one more time to draw the layers.
-    for (i = 0; i < sublayers.size(); i++)
+    for (size_t i = 0; i < sublayers.size(); i++)
         drawLayersRecursive(sublayers[i].get(), scissorRect);
 
     GLC(glDisable(GL_SCISSOR_TEST));
+}
 
+void LayerRendererChromium::present()
+{
+    // We're done! Time to swapbuffers!
     m_gles2Context->swapBuffers();
-
     m_needsDisplay = false;
 }
 
