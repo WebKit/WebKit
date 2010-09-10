@@ -22,11 +22,11 @@
 
         Test: fast/forms/input-number-commit-valid-only.html
 
-        * dom/InputElement.h: Add isCommittableValue()
+        * dom/InputElement.h: Add isAcceptableValue()
         * html/HTMLInputElement.cpp:
         (WebCore::HTMLInputElement::handleBlurEvent):
          Set formControlValueMatchesRenderer false to clean an invalid value in the renderer.
-        (WebCore::HTMLInputElement::isCommittableValue):
+        (WebCore::HTMLInputElement::isAcceptableValue):
         (WebCore::HTMLInputElement::sanitizeValue):
         * html/HTMLInputElement.h:
         * html/ValidityState.cpp:
@@ -34,7 +34,7 @@
         * rendering/RenderTextControlSingleLine.cpp:
         (WebCore::RenderTextControlSingleLine::subtreeHasChanged):
         * wml/WMLInputElement.h:
-        (WebCore::WMLInputElement::isCommittableValue):
+        (WebCore::WMLInputElement::isAcceptableValue):
 
 2010-09-09  Tony Gentilcore  <tonyg@chromium.org>
 
