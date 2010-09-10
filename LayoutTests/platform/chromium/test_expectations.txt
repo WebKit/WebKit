@@ -3149,4 +3149,4 @@ BUGWK45512 WIN : animations/fill-mode-transform.html = TEXT
 BUGWK45512 WIN : animations/fill-mode.html = TEXT
 
 //  Added in r67084
-BUGWK45513 WIN SLOW : inspector/extensions-resources.html = PASS
+BUGWK45513 WIN : inspector/extensions-resources.html = TIMEOUT
