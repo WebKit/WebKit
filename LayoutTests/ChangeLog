@@ -1,3 +1,11 @@
+2010-09-09  James Kozianski  <koz@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Test expectation update.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-09  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

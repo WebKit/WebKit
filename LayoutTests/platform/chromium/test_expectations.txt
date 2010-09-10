@@ -1154,7 +1154,7 @@ BUG10361 WIN : http/tests/misc/single-character-pi-stylesheet.xhtml = FAIL
 
 // Windows is missing the green box. Started to pass in roll to WebKit r50313
 BUG8729 WIN DEBUG : http/tests/multipart/invalid-image-data.html = FAIL
-BUG8729 SLOW WIN RELEASE : http/tests/multipart/invalid-image-data.html = FAIL
+BUG8729 WIN RELEASE : http/tests/multipart/invalid-image-data.html = IMAGE+TEXT
 // Flaky on Linux dbg.
 BUG8729 LINUX DEBUG : http/tests/multipart/invalid-image-data.html = IMAGE PASS
 
@@ -1750,7 +1750,7 @@ BUG10418 WIN DEBUG : animations/change-keyframes-name.html = FAIL PASS
 // We could fix this test for us and upstream it if the test shell user agent
 // would let us differentiate test_shell and WebKit DumpTreeNode.
 BUG7482 LINUX MAC : http/tests/misc/timer-vs-loading.html = TIMEOUT
-BUG7482 WIN : http/tests/misc/timer-vs-loading.html = PASS TIMEOUT
+BUG7482 WIN : http/tests/misc/timer-vs-loading.html = TIMEOUT
 
 // Regressions from WebKit merge to 40864
 // Likely just needs a rebaseline.
@@ -1933,7 +1933,7 @@ BUG11613 LINUX : editing/inserting/5607069-2.html = FAIL
 BUG11796 LINUX : fast/forms/search-styled.html = FAIL
 
 // Details for all of these are in the bugs.
-BUG12361 WIN SLOW : http/tests/cookies/double-quoted-value-with-semi-colon.html = FAIL
+BUG12361 WIN : http/tests/cookies/double-quoted-value-with-semi-colon.html = FAIL
 BUG12361 LINUX MAC DEBUG : http/tests/cookies/double-quoted-value-with-semi-colon.html = FAIL
 BUG12361 LINUX RELEASE : http/tests/cookies/double-quoted-value-with-semi-colon.html = FAIL
 BUG12361 SLOW MAC RELEASE : http/tests/cookies/double-quoted-value-with-semi-colon.html = FAIL
@@ -2530,8 +2530,8 @@ BUGWK36983 MAC : fast/canvas/webgl/uniform-location.html = TEXT
 BUG41206 : fast/history/multiple-classes-visited.html = TEXT TIMEOUT
 
 // Tests that work with KURL, but fail with GURL
-BUG41292 : fast/url/ipv4.html = TEXT TIMEOUT
-BUG41292 : fast/url/anchor.html = TEXT TIMEOUT
+BUG41292 : fast/url/ipv4.html = TEXT
+BUG41292 : fast/url/anchor.html = TEXT
 
 BUG33812 SKIP : fast/dom/icon-url-property.html = FAIL
 
