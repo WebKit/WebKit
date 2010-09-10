@@ -4,9 +4,6 @@
 <link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
 <script src="../../fast/js/resources/js-test-pre.js"></script>
 <style>
-input {
-  background-color: #ffffff;
-}
 :invalid {
   background-color: #ff0000;
 }
@@ -25,13 +22,12 @@ description('A number input fields with an unacceptable string should have :inva
 function colorOf(el) {
     return document.defaultView.getComputedStyle(el, null).getPropertyValue('background-color');
 }
-var normalStyleColor = 'rgb(255, 255, 255)';
 var invalidStyleColor = 'rgb(255, 0, 0)';
 
 var number = document.getElementById('number');
 number.focus();
 debug('Initial state. The elment has no value.');
-shouldBe('colorOf(number)', 'normalStyleColor');
+shouldBeTrue('colorOf(number) != invalidStyleColor');
 
 debug("Type '-'. The renderer value becomes unacceptable.");
 document.execCommand('InsertText', false, '-');
@@ -40,7 +36,7 @@ shouldBeTrue('number.validity.valid');
 
 debug("Type '1' additionally. The renderer value becomes acceptable.");
 document.execCommand('InsertText', false, '1');
-shouldBe('colorOf(number)', 'normalStyleColor');
+shouldBeTrue('colorOf(number) != invalidStyleColor');
 
 debug("Type '+' additionally. The renderer value becomes unacceptable again.");
 document.execCommand('InsertText', false, '+');
@@ -48,7 +44,7 @@ shouldBe('colorOf(number)', 'invalidStyleColor');
 
 debug("The element losts focus. The unacceptable value should be purged and the style should be normal.");
 document.getElementById('another').focus();
-shouldBe('colorOf(number)', 'normalStyleColor');
+shouldBeTrue('colorOf(number) != invalidStyleColor');
 // Visiblue value is not '-1+'.
 number.focus();
 document.execCommand('SelectAll');
