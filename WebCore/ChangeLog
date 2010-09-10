@@ -2,6 +2,29 @@
 
         Reviewed by Kenneth Russell.
 
+        audio engine: add Biquad files
+        https://bugs.webkit.org/show_bug.cgi?id=44795
+
+        No new tests since audio API is not yet implemented.
+
+        * platform/audio/Biquad.cpp: Added.
+        (WebCore::Biquad::Biquad):
+        (WebCore::Biquad::process):
+        (WebCore::Biquad::processFast):
+        (WebCore::Biquad::processSliceFast):
+        (WebCore::Biquad::reset):
+        (WebCore::Biquad::setLowpassParams):
+        (WebCore::Biquad::setHighpassParams):
+        (WebCore::Biquad::setLowShelfParams):
+        (WebCore::Biquad::setZeroPolePairs):
+        (WebCore::Biquad::setAllpassPole):
+        * platform/audio/Biquad.h: Added.
+        (WebCore::Biquad::~Biquad):
+
+2010-09-09  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
         Add AudioBuffer files
         https://bugs.webkit.org/show_bug.cgi?id=45003
 
