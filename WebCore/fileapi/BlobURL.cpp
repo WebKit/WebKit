@@ -34,28 +34,27 @@
 
 #include "KURL.h"
 #include "PlatformString.h"
-#include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "UUID.h"
 
 namespace WebCore {
 
-KURL BlobURL::createURL(ScriptExecutionContext* scriptExecutionContext)
+const char BlobURL::kBlobProtocol[] = "blob";
+
+KURL BlobURL::createPublicURL(SecurityOrigin* securityOrigin)
 {
-    // Create the blob URL in the following format:
-    //     blob:%escaped_origin%/%UUID%
-    // The origin of the host page is encoded in the URL value to allow easy lookup of the origin when the security check needs
-    // to be performed.
-    String urlString = "blob:";
-    urlString += encodeWithURLEscapeSequences(scriptExecutionContext->securityOrigin()->toString());
-    urlString += "/";
-    urlString += createCanonicalUUIDString();
-    return KURL(ParsedURLString, urlString);
+    ASSERT(securityOrigin);
+    return createBlobURL(securityOrigin->toString());
+}
+
+KURL BlobURL::createInternalURL()
+{
+    return createBlobURL("blobinternal://");
 }
 
 KURL BlobURL::getOrigin(const KURL& url)
 {
-    ASSERT(url.protocolIs("blob"));
+    ASSERT(url.protocolIs(kBlobProtocol));
 
     unsigned startIndex = url.pathStart();
     unsigned afterEndIndex = url.pathAfterLastSlash();
@@ -65,10 +64,20 @@ KURL BlobURL::getOrigin(const KURL& url)
 
 String BlobURL::getIdentifier(const KURL& url)
 {
-    ASSERT(url.protocolIs("blob"));
+    ASSERT(url.protocolIs(kBlobProtocol));
 
     unsigned startIndex = url.pathAfterLastSlash();
     return url.string().substring(startIndex);
+}
+
+KURL BlobURL::createBlobURL(const String& originString)
+{
+    String urlString = kBlobProtocol;
+    urlString += ":";
+    urlString += encodeWithURLEscapeSequences(originString);
+    urlString += "/";
+    urlString += createCanonicalUUIDString();
+    return KURL(ParsedURLString, urlString);
 }
 
 } // namespace WebCore

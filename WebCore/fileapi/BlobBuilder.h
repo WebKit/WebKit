@@ -41,7 +41,6 @@
 namespace WebCore {
 
 class Blob;
-class ScriptExecutionContext;
 class TextEncoding;
 
 typedef int ExceptionCode;
@@ -54,7 +53,7 @@ public:
     bool append(const String& text, ExceptionCode&);
     bool append(const String& text, const String& ending, ExceptionCode&);
 
-    PassRefPtr<Blob> getBlob(ScriptExecutionContext*, const String& contentType = String());
+    PassRefPtr<Blob> getBlob(const String& contentType = String());
 
 private:
     BlobBuilder();

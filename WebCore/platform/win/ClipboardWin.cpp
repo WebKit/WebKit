@@ -604,13 +604,12 @@ PassRefPtr<FileList> ClipboardWin::files() const
     if (!hdrop)
         return files.release();
 
-    ScriptExecutionContext* scriptExecutionContext = m_frame->document()->scriptExecutionContext();
     WCHAR filename[MAX_PATH];
     UINT fileCount = DragQueryFileW(hdrop, 0xFFFFFFFF, 0, 0);
     for (UINT i = 0; i < fileCount; i++) {
         if (!DragQueryFileW(hdrop, i, filename, ARRAYSIZE(filename)))
             continue;
-        files->append(File::create(scriptExecutionContext, reinterpret_cast<UChar*>(filename)));
+        files->append(File::create(reinterpret_cast<UChar*>(filename)));
     }
 
     GlobalUnlock(medium.hGlobal);

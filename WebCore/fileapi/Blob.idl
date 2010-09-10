@@ -38,7 +38,7 @@ module html {
 
 #if !defined(LANGUAGE_OBJECTIVE_C)
 #if defined(ENABLE_BLOB) && ENABLE_BLOB
-        [CallWith=ScriptExecutionContext] Blob slice(in long long start, in long long length, in [Optional, ConvertUndefinedOrNullToNullString] DOMString contentType);
+        Blob slice(in long long start, in long long length, in [Optional, ConvertUndefinedOrNullToNullString] DOMString contentType);
 #endif
 #endif
     };

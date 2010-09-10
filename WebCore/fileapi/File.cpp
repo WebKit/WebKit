@@ -26,7 +26,6 @@
 #include "config.h"
 #include "File.h"
 
-#include "BlobRegistry.h"
 #include "FileSystem.h"
 #include "MIMETypeRegistry.h"
 
@@ -45,23 +44,23 @@ static PassOwnPtr<BlobData> createBlobDataForFile(const String& path)
     return blobData.release();
 }
 
-File::File(ScriptExecutionContext* scriptExecutionContext, const String& path)
-    : Blob(scriptExecutionContext, createBlobDataForFile(path), -1)
+File::File(const String& path)
+    : Blob(createBlobDataForFile(path), -1)
     , m_path(path)
     , m_name(pathGetFileName(path))
 {
 }
 
-File::File(ScriptExecutionContext* scriptExecutionContext, const String& path, const KURL& url, const String& type)
-    : Blob(scriptExecutionContext, url, type, -1)
+File::File(const String& path, const KURL& url, const String& type)
+    : Blob(url, type, -1)
     , m_path(path)
 {
     m_name = pathGetFileName(path);
 }
 
 #if ENABLE(DIRECTORY_UPLOAD)
-File::File(ScriptExecutionContext* scriptExecutionContext, const String& relativePath, const String& path)
-    : Blob(scriptExecutionContext, createBlobDataForFile(path), -1)
+File::File(const String& relativePath, const String& path)
+    : Blob(createBlobDataForFile(path), -1)
     , m_path(path)
     , m_relativePath(relativePath)
 {

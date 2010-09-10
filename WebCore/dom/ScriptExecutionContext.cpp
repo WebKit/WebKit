@@ -94,13 +94,10 @@ ScriptExecutionContext::~ScriptExecutionContext()
     }
 #endif
 
-    HashSet<Blob*>::iterator blobsEnd = m_blobs.end();
-    for (HashSet<Blob*>::iterator iter = m_blobs.begin(); iter != blobsEnd; ++iter)
-        (*iter)->contextDestroyed();
 #if ENABLE(BLOB)
     HashSet<String>::iterator publicBlobURLsEnd = m_publicBlobURLs.end();
     for (HashSet<String>::iterator iter = m_publicBlobURLs.begin(); iter != publicBlobURLsEnd; ++iter)
-        ThreadableBlobRegistry::unregisterBlobURL(this, KURL(ParsedURLString, *iter));
+        ThreadableBlobRegistry::unregisterBlobURL(KURL(ParsedURLString, *iter));
 #endif
 }
 
@@ -173,18 +170,6 @@ void ScriptExecutionContext::destroyedMessagePort(MessagePort* port)
 #endif
 
     m_messagePorts.remove(port);
-}
-
-void ScriptExecutionContext::addBlob(Blob* blob)
-{
-    ASSERT(blob);
-    m_blobs.add(blob);
-}
-
-void ScriptExecutionContext::removeBlob(Blob* blob)
-{
-    ASSERT(blob);
-    m_blobs.remove(blob);
 }
 
 bool ScriptExecutionContext::canSuspendActiveDOMObjects()
@@ -277,8 +262,8 @@ DOMTimer* ScriptExecutionContext::findTimeout(int timeoutId)
 #if ENABLE(BLOB)
 KURL ScriptExecutionContext::createPublicBlobURL(Blob* blob)
 {
-    KURL publicURL = BlobURL::createURL(this);
-    ThreadableBlobRegistry::registerBlobURL(this, publicURL, blob->url());
+    KURL publicURL = BlobURL::createPublicURL(securityOrigin());
+    ThreadableBlobRegistry::registerBlobURL(publicURL, blob->url());
     m_publicBlobURLs.add(publicURL.string());
     return publicURL;
 }
@@ -286,7 +271,7 @@ KURL ScriptExecutionContext::createPublicBlobURL(Blob* blob)
 void ScriptExecutionContext::revokePublicBlobURL(const KURL& url)
 {
     if (m_publicBlobURLs.contains(url.string())) {
-        ThreadableBlobRegistry::unregisterBlobURL(this, url);
+        ThreadableBlobRegistry::unregisterBlobURL(url);
         m_publicBlobURLs.remove(url.string());
     }
 }

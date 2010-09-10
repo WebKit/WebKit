@@ -131,8 +131,6 @@ namespace WebCore {
         void removeTimeout(int timeoutId);
         DOMTimer* findTimeout(int timeoutId);
 
-        void addBlob(Blob*);
-        void removeBlob(Blob*);
 #if ENABLE(BLOB)
         KURL createPublicBlobURL(Blob*);
         void revokePublicBlobURL(const KURL&);
@@ -167,7 +165,6 @@ namespace WebCore {
 
         HashMap<int, DOMTimer*> m_timeouts;
 
-        HashSet<Blob*> m_blobs;
 #if ENABLE(BLOB)
         HashSet<String> m_publicBlobURLs;
 #endif

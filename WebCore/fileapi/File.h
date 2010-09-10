@@ -34,25 +34,24 @@
 namespace WebCore {
 
 class KURL;
-class ScriptExecutionContext;
 
 class File : public Blob {
 public:
-    static PassRefPtr<File> create(ScriptExecutionContext* scriptExecutionContext, const String& path)
+    static PassRefPtr<File> create(const String& path)
     {
-        return adoptRef(new File(scriptExecutionContext, path));
+        return adoptRef(new File(path));
     }
 
     // For deserialization.
-    static PassRefPtr<File> create(ScriptExecutionContext* scriptExecutionContext, const String& path, const KURL& srcURL, const String& type)
+    static PassRefPtr<File> create(const String& path, const KURL& srcURL, const String& type)
     {
-        return adoptRef(new File(scriptExecutionContext, path, srcURL, type));
+        return adoptRef(new File(path, srcURL, type));
     }
 
 #if ENABLE(DIRECTORY_UPLOAD)
-    static PassRefPtr<File> create(ScriptExecutionContext* scriptExecutionContext, const String& relativePath, const String& path)
+    static PassRefPtr<File> create(const String& relativePath, const String& path)
     {
-        return adoptRef(new File(scriptExecutionContext, relativePath, path));
+        return adoptRef(new File(relativePath, path));
     }
 #endif
 
@@ -74,13 +73,13 @@ public:
     unsigned long long fileSize() const { return size(); }
 
 private:
-    File(ScriptExecutionContext*, const String& path);
+    File(const String& path);
     
     // For deserialization.
-    File(ScriptExecutionContext*, const String& path, const KURL& srcURL, const String& type);
+    File(const String& path, const KURL& srcURL, const String& type);
 
 #if ENABLE(DIRECTORY_UPLOAD)
-    File(ScriptExecutionContext*, const String& relativePath, const String& path);
+    File(const String& relativePath, const String& path);
 #endif
 
     String m_path;

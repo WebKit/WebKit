@@ -34,7 +34,6 @@
 
 #include "BlobData.h"
 #include "BlobRegistry.h"
-#include "ScriptExecutionContext.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -70,7 +69,7 @@ static void registerBlobURLTask(void* context)
     blobRegistry().registerBlobURL(blobRegistryContext->url, blobRegistryContext->blobData.release());
 }
 
-void ThreadableBlobRegistry::registerBlobURL(ScriptExecutionContext*, const KURL& url, PassOwnPtr<BlobData> blobData)
+void ThreadableBlobRegistry::registerBlobURL(const KURL& url, PassOwnPtr<BlobData> blobData)
 {
     if (isMainThread())
         blobRegistry().registerBlobURL(url, blobData);
@@ -86,7 +85,7 @@ static void registerBlobURLFromTask(void* context)
     blobRegistry().registerBlobURL(blobRegistryContext->url, blobRegistryContext->srcURL);
 }
 
-void ThreadableBlobRegistry::registerBlobURL(ScriptExecutionContext*, const KURL& url, const KURL& srcURL)
+void ThreadableBlobRegistry::registerBlobURL(const KURL& url, const KURL& srcURL)
 {
     if (isMainThread())
         blobRegistry().registerBlobURL(url, srcURL);
@@ -102,7 +101,7 @@ static void unregisterBlobURLTask(void* context)
     blobRegistry().unregisterBlobURL(blobRegistryContext->url);
 }
 
-void ThreadableBlobRegistry::unregisterBlobURL(ScriptExecutionContext*, const KURL& url)
+void ThreadableBlobRegistry::unregisterBlobURL(const KURL& url)
 {
     if (isMainThread())
         blobRegistry().unregisterBlobURL(url);
@@ -114,15 +113,15 @@ void ThreadableBlobRegistry::unregisterBlobURL(ScriptExecutionContext*, const KU
 
 #else
 
-void ThreadableBlobRegistry::registerBlobURL(ScriptExecutionContext*, const KURL&, PassOwnPtr<BlobData>)
+void ThreadableBlobRegistry::registerBlobURL(const KURL&, PassOwnPtr<BlobData>)
 {
 }
 
-void ThreadableBlobRegistry::registerBlobURL(ScriptExecutionContext*, const KURL&, const KURL&)
+void ThreadableBlobRegistry::registerBlobURL(const KURL&, const KURL&)
 {
 }
 
-void ThreadableBlobRegistry::unregisterBlobURL(ScriptExecutionContext*, const KURL&)
+void ThreadableBlobRegistry::unregisterBlobURL(const KURL&)
 {
 }
 #endif // ENABL(BLOB)

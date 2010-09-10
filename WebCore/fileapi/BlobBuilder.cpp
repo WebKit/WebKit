@@ -117,13 +117,13 @@ bool BlobBuilder::append(PassRefPtr<Blob> blob)
     return true;
 }
 
-PassRefPtr<Blob> BlobBuilder::getBlob(ScriptExecutionContext* scriptExecutionContext, const String& contentType)
+PassRefPtr<Blob> BlobBuilder::getBlob(const String& contentType)
 {
     OwnPtr<BlobData> blobData = BlobData::create();
     blobData->setContentType(contentType);
     blobData->swapItems(m_items);
 
-    RefPtr<Blob> blob = Blob::create(scriptExecutionContext, blobData.release(), m_size);
+    RefPtr<Blob> blob = Blob::create(blobData.release(), m_size);
 
     // After creating a blob from the current blob data, we do not need to keep the data around any more. Instead, we only
     // need to keep a reference to the URL of the blob just created.

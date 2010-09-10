@@ -313,12 +313,11 @@ PassRefPtr<FileList> ClipboardMac::files() const
     NSArray *absoluteURLs = absoluteURLsFromPasteboardFilenames(m_pasteboard.get());
     NSUInteger count = [absoluteURLs count];
 
-    ScriptExecutionContext* scriptExecutionContext = m_frame->document()->scriptExecutionContext();
     RefPtr<FileList> fileList = FileList::create();
     for (NSUInteger x = 0; x < count; x++) {
         NSURL *absoluteURL = [NSURL URLWithString:[absoluteURLs objectAtIndex:x]];
         ASSERT([absoluteURL isFileURL]);
-        fileList->append(File::create(scriptExecutionContext, [absoluteURL path]));
+        fileList->append(File::create([absoluteURL path]));
     }
     return fileList.release(); // We will always return a FileList, sometimes empty
 }

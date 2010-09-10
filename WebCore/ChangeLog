@@ -1,3 +1,84 @@
+2010-09-10  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Dumitru Daniliuc.
+
+        Decouple Blob from ScriptExecutionContext.
+        https://bugs.webkit.org/show_bug.cgi?id=45410
+
+        - Removed ScriptExecutionContext pointers from Blob and File constructors.
+        - Removed ScriptExecutionContext's collection of Blobs instance in that context.
+        - Refactored BlobURL to make a distinction between 'public' blob urls and 'internal'
+          urls that are used solely as identifiers. The former requires a SecurityOrigin to
+          to manufacture, the latter does not.
+        - Added a constant and accessor for the blob protocol scheme on the BlobURL class.
+
+        No new tests are added since this is a cleanup.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::readFile):
+        (WebCore::CloneDeserializer::readTerminal):
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::ZigZag::Reader::readBlob):
+        (WebCore::ZigZag::Reader::readFile):
+        (WebCore::ZigZag::Reader::readFileList):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::~ScriptExecutionContext):
+        (WebCore::ScriptExecutionContext::createPublicBlobURL):
+        (WebCore::ScriptExecutionContext::revokePublicBlobURL):
+        * dom/ScriptExecutionContext.h:
+        * fileapi/Blob.cpp:
+        (WebCore::Blob::Blob):
+        (WebCore::Blob::~Blob):
+        (WebCore::Blob::slice):
+        * fileapi/Blob.h:
+        (WebCore::Blob::create):
+        (WebCore::Blob::url):
+        * fileapi/Blob.idl:
+        * fileapi/BlobBuilder.cpp:
+        (WebCore::BlobBuilder::getBlob):
+        * fileapi/BlobBuilder.h:
+        * fileapi/BlobBuilder.idl:
+        * fileapi/BlobURL.cpp:
+        (WebCore::BlobURL::createPublicURL):
+        (WebCore::BlobURL::createInternalURL):
+        (WebCore::BlobURL::getOrigin):
+        (WebCore::BlobURL::getIdentifier):
+        (WebCore::BlobURL::createBlobURL):
+        * fileapi/BlobURL.h:
+        (WebCore::BlobURL::blobProtocol):
+        (WebCore::BlobURL::BlobURL):
+        * fileapi/File.cpp:
+        (WebCore::File::File):
+        * fileapi/File.h:
+        (WebCore::File::create):
+        * fileapi/FileReader.cpp: Register a public url to perform the read.
+        (WebCore::FileReader::cleanup):
+        (WebCore::FileReader::start):
+        (WebCore::FileReader::didFinishLoading):
+        (WebCore::FileReader::failed):
+        * fileapi/FileReader.h: Added m_urlForReading data member.
+        * fileapi/FileReaderSync.cpp:
+        (WebCore::FileReaderSync::read): Register a public url to perform the read.
+        * fileapi/ThreadableBlobRegistry.cpp:
+        (WebCore::ThreadableBlobRegistry::registerBlobURL):
+        (WebCore::ThreadableBlobRegistry::unregisterBlobURL):
+        * fileapi/ThreadableBlobRegistry.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::appendFormData):
+        (WebCore::HTMLInputElement::setFileListFromRenderer):
+        * page/SecurityOrigin.cpp: Use BlobURL.blobProtocol().
+        (WebCore::SecurityOrigin::create):
+        (WebCore::SecurityOrigin::canRequest):
+        (WebCore::SecurityOrigin::canDisplay):
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::ClipboardChromium::files):
+        * platform/gtk/ClipboardGtk.cpp:
+        (WebCore::ClipboardGtk::files):
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::ClipboardMac::files):
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::ClipboardWin::files):
+
 2010-09-10  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.

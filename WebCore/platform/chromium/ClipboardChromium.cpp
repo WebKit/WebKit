@@ -364,10 +364,9 @@ PassRefPtr<FileList> ClipboardChromium::files() const
     if (!m_dataObject || m_dataObject->filenames.isEmpty())
         return FileList::create();
 
-    ScriptExecutionContext* scriptExecutionContext = m_frame->document()->scriptExecutionContext();
     RefPtr<FileList> fileList = FileList::create();
     for (size_t i = 0; i < m_dataObject->filenames.size(); ++i)
-        fileList->append(File::create(scriptExecutionContext, m_dataObject->filenames.at(i)));
+        fileList->append(File::create(m_dataObject->filenames.at(i)));
 
     return fileList.release();
 }

@@ -36,6 +36,7 @@
 
 #include "Base64.h"
 #include "Blob.h"
+#include "BlobURL.h"
 #include "CrossThreadTask.h"
 #include "File.h"
 #include "Logging.h"
@@ -44,6 +45,7 @@
 #include "ResourceRequest.h"
 #include "ScriptExecutionContext.h"
 #include "TextResourceDecoder.h"
+#include "ThreadableBlobRegistry.h"
 #include "ThreadableLoader.h"
 #include <wtf/CurrentTime.h>
 
@@ -154,17 +156,27 @@ void FileReader::terminate()
 {
     if (m_loader) {
         m_loader->cancel();
-        m_loader = 0;
+        cleanup();
     }
     m_state = Completed;
+}
+
+void FileReader::cleanup()
+{
+    m_loader = 0;
+    ThreadableBlobRegistry::unregisterBlobURL(m_urlForReading);
+    m_urlForReading = KURL();
 }
 
 void FileReader::start()
 {
     m_state = Opening;
 
-    // The blob is read by routing through the request handling layer given the blob url.
-    ResourceRequest request(m_blob->url());
+    // The blob is read by routing through the request handling layer given a temporary public url.
+    m_urlForReading = BlobURL::createPublicURL(scriptExecutionContext()->securityOrigin());
+    ThreadableBlobRegistry::registerBlobURL(m_urlForReading, m_blob->url());
+
+    ResourceRequest request(m_urlForReading);
     request.setHTTPMethod("GET");
 
     ThreadableLoaderOptions options;
@@ -230,7 +242,7 @@ void FileReader::didFinishLoading(unsigned long)
     fireEvent(eventNames().loadEvent);
     fireEvent(eventNames().loadendEvent);
 
-    m_loader = 0;
+    cleanup();
 }
 
 void FileReader::didFail(const ResourceError&)
@@ -247,7 +259,7 @@ void FileReader::failed(int httpStatusCode)
     fireEvent(eventNames().errorEvent);
     fireEvent(eventNames().loadendEvent);
 
-    m_loader = 0;
+    cleanup();
 }
 
 ExceptionCode FileReader::httpStatusCodeToExceptionCode(int httpStatusCode)

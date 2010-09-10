@@ -265,9 +265,8 @@ PassRefPtr<FileList> ClipboardGtk::files() const
     RefPtr<FileList> fileList = FileList::create();
     Vector<String> fileVector(m_dataObject->files());
 
-    ScriptExecutionContext* scriptExecutionContext = m_frame->document()->scriptExecutionContext();
     for (size_t i = 0; i < fileVector.size(); i++)
-        fileList->append(File::create(scriptExecutionContext, fileVector[i]));
+        fileList->append(File::create(fileVector[i]));
 
     return fileList.release();
 }

@@ -879,7 +879,7 @@ private:
             return false;
         if (!doReadUint64(&size))
             return false;
-        PassRefPtr<Blob> blob = Blob::create(getScriptExecutionContext(), KURL(ParsedURLString, url), type, size);
+        PassRefPtr<Blob> blob = Blob::create(KURL(ParsedURLString, url), type, size);
         *value = toV8(blob);
         return true;
     }
@@ -895,7 +895,7 @@ private:
             return false;
         if (!readWebCoreString(&type))
             return false;
-        PassRefPtr<File> file = File::create(getScriptExecutionContext(), path, KURL(ParsedURLString, url), type);
+        PassRefPtr<File> file = File::create(path, KURL(ParsedURLString, url), type);
         *value = toV8(file);
         return true;
     }
@@ -916,7 +916,7 @@ private:
                 return false;
             if (!readWebCoreString(&type))
                 return false;
-            fileList->append(File::create(getScriptExecutionContext(), path, KURL(ParsedURLString, urlString), type));
+            fileList->append(File::create(path, KURL(ParsedURLString, urlString), type));
         }
         *value = toV8(fileList);
         return true;

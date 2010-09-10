@@ -33,57 +33,37 @@
 
 #include "BlobURL.h"
 #include "File.h"
-#include "ScriptExecutionContext.h"
 #include "ThreadableBlobRegistry.h"
 
 namespace WebCore {
 
-Blob::Blob(ScriptExecutionContext* scriptExecutionContext, PassOwnPtr<BlobData> blobData, long long size)
-    : m_scriptExecutionContext(scriptExecutionContext)
-    , m_type(blobData->contentType())
+Blob::Blob(PassOwnPtr<BlobData> blobData, long long size)
+    : m_type(blobData->contentType())
     , m_size(size)
 {
     ASSERT(blobData);
 
-    m_scriptExecutionContext->addBlob(this);
-
     // Create a new internal URL and register it with the provided blob data.
-    m_url = BlobURL::createURL(scriptExecutionContext);
-    ThreadableBlobRegistry::registerBlobURL(scriptExecutionContext, m_url, blobData);
+    m_internalURL = BlobURL::createInternalURL();
+    ThreadableBlobRegistry::registerBlobURL(m_internalURL, blobData);
 }
 
-Blob::Blob(ScriptExecutionContext* scriptExecutionContext, const KURL& srcURL, const String& type, long long size)
-    : m_scriptExecutionContext(scriptExecutionContext)
-    , m_type(type)
+Blob::Blob(const KURL& srcURL, const String& type, long long size)
+    : m_type(type)
     , m_size(size)
 {
-   m_scriptExecutionContext->addBlob(this);
-
     // Create a new internal URL and register it with the same blob data as the source URL.
-    m_url = BlobURL::createURL(scriptExecutionContext);
-    ThreadableBlobRegistry::registerBlobURL(scriptExecutionContext, m_url, srcURL);
+    m_internalURL = BlobURL::createInternalURL();
+    ThreadableBlobRegistry::registerBlobURL(m_internalURL, srcURL);
 }
 
 Blob::~Blob()
 {
-    // The internal URL is only used to refer to the Blob object. So we need to unregister the URL when the object is GC-ed.
-    if (m_scriptExecutionContext) {
-        m_scriptExecutionContext->removeBlob(this);
-        ThreadableBlobRegistry::unregisterBlobURL(m_scriptExecutionContext, m_url);
-    }
-}
-
-void Blob::contextDestroyed()
-{
-    ASSERT(m_scriptExecutionContext);
-
-    // Unregister the internal URL before the context is gone.
-    ThreadableBlobRegistry::unregisterBlobURL(m_scriptExecutionContext, m_url);
-    m_scriptExecutionContext = 0;
+    ThreadableBlobRegistry::unregisterBlobURL(m_internalURL);
 }
 
 #if ENABLE(BLOB)
-PassRefPtr<Blob> Blob::slice(ScriptExecutionContext* scriptExecutionContext, long long start, long long length, const String& contentType) const
+PassRefPtr<Blob> Blob::slice(long long start, long long length, const String& contentType) const
 {
     // When we slice a file for the first time, we obtain a snapshot of the file by capturing its current size and modification time.
     // The modification time will be used to verify if the file has been changed or not, when the underlying data are accessed.
@@ -114,9 +94,9 @@ PassRefPtr<Blob> Blob::slice(ScriptExecutionContext* scriptExecutionContext, lon
     if (isFile())
         blobData->appendFile(static_cast<const File*>(this)->path(), start, length, modificationTime);
     else
-        blobData->appendBlob(m_url, start, length);
+        blobData->appendBlob(m_internalURL, start, length);
 
-    return Blob::create(scriptExecutionContext, blobData.release(), length);
+    return Blob::create(blobData.release(), length);
 }
 #endif
 

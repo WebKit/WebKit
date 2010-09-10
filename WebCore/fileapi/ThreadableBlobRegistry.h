@@ -37,13 +37,12 @@ namespace WebCore {
 
 class BlobData;
 class KURL;
-class ScriptExecutionContext;
 
 class ThreadableBlobRegistry {
 public:
-    static void registerBlobURL(ScriptExecutionContext*, const KURL&, PassOwnPtr<BlobData>);
-    static void registerBlobURL(ScriptExecutionContext*, const KURL&, const KURL& srcURL);
-    static void unregisterBlobURL(ScriptExecutionContext*, const KURL&);
+    static void registerBlobURL(const KURL&, PassOwnPtr<BlobData>);
+    static void registerBlobURL(const KURL&, const KURL& srcURL);
+    static void unregisterBlobURL(const KURL&);
 };
 
 } // namespace WebCore

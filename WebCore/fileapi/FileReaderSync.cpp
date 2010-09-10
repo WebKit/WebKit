@@ -36,11 +36,13 @@
 
 #include "Base64.h"
 #include "Blob.h"
+#include "BlobURL.h"
 #include "FileReader.h"
 #include "ResourceRequest.h"
 #include "ScriptExecutionContext.h"
 #include "TextEncoding.h"
 #include "TextResourceDecoder.h"
+#include "ThreadableBlobRegistry.h"
 #include "ThreadableLoader.h"
 
 namespace WebCore {
@@ -149,12 +151,16 @@ const ScriptString& FileReaderSync::readAsDataURL(ScriptExecutionContext* script
 
 void FileReaderSync::read(ScriptExecutionContext* scriptExecutionContext, Blob* blob, ReadType readType, ExceptionCode& ec)
 {
-    // The blob is read by routing through the request handling layer given the blob url.
-    ResourceRequest request(blob->url());
+    // The blob is read by routing through the request handling layer given the temporary public url.
+    KURL urlForReading = BlobURL::createPublicURL(scriptExecutionContext->securityOrigin());
+    ThreadableBlobRegistry::registerBlobURL(urlForReading, blob->url());
+
+    ResourceRequest request(urlForReading);
     request.setHTTPMethod("GET");
 
     FileReaderSyncLoader loader((readType == ReadAsBinaryString) ? &m_result : 0);
     loader.start(scriptExecutionContext, request, ec);
+    ThreadableBlobRegistry::unregisterBlobURL(urlForReading);
     if (ec)
         return;
 
