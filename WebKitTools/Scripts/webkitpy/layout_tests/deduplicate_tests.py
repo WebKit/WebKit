@@ -36,6 +36,7 @@ import os
 import subprocess
 import sys
 import re
+import webkitpy.common.checkout.scm as scm
 import webkitpy.common.system.executive as executive
 import webkitpy.common.system.logutils as logutils
 import webkitpy.layout_tests.port.factory as port_factory
@@ -56,7 +57,8 @@ def port_fallbacks():
         try:
             platforms = port_factory.get(port_name).baseline_search_path()
         except NotImplementedError:
-            _log.error("'%s' lacks baseline_search_path(), please fix." % port_name)
+            _log.error("'%s' lacks baseline_search_path(), please fix."
+                       % port_name)
             fallbacks[port_name] = [_BASE_PLATFORM]
             continue
         fallbacks[port_name] = [os.path.basename(p) for p in platforms][1:]
@@ -156,11 +158,35 @@ def has_intermediate_results(test, fallbacks, matching_platform,
     return False
 
 
-def find_dups(hashes, port_fallbacks):
+def get_relative_test_path(filename, relative_to):
+    """Constructs a relative path to |filename| from |relative_to|.  Also, if
+    |relative_to| is a sub directory of the layout test directory and
+    |filename| is not in |relative_to|, return None.  This lets us filter
+    the results to only show results that are under where the script was run
+    from.
+    Args:
+        filename: The test file we're trying to get a relative path to.
+        relative_to: The absolute path we're relative to.
+    Returns:
+        A relative path to filename or None.
+    """
+    layout_test_dir = os.path.join(scm.find_checkout_root(), 'LayoutTests')
+    abs_path = os.path.join(layout_test_dir, filename)
+    path = os.path.relpath(abs_path, relative_to)
+    # If we're in the layout test directory, only return results that are below
+    # where the tool was run from.
+    if (relative_to.startswith(layout_test_dir) and path.startswith('..')):
+        return None
+    return path
+
+
+def find_dups(hashes, port_fallbacks, relative_to):
     """Yields info about redundant test expectations.
     Args:
         hashes: a list of hashes as returned by cluster_file_hashes.
-        port_fallbacks: a list of fallback information as returned by get_port_fallbacks.
+        port_fallbacks: a list of fallback information as returned by
+            get_port_fallbacks.
+        relative_to: the directory that we want the results relative to
     Returns:
         a tuple containing (test, platform, fallback, platforms)
     """
@@ -176,13 +202,20 @@ def find_dups(hashes, port_fallbacks):
         # See if any of the platforms are redundant with each other.
         for platform in platforms.keys():
             for fallback in port_fallbacks[platform]:
-                if fallback in platforms.keys():
-                    # We have to verify that there isn't an intermediate result
-                    # that causes this duplicate hash to exist.
-                    if not has_intermediate_results(test,
-                            port_fallbacks[platform], fallback):
-                        path = os.path.join('LayoutTests', platforms[platform])
-                        yield test, platform, fallback, path
+                if fallback not in platforms.keys():
+                    continue
+                # We have to verify that there isn't an intermediate result
+                # that causes this duplicate hash to exist.
+                if has_intermediate_results(test, port_fallbacks[platform],
+                                            fallback):
+                    continue
+                # We print the relative path so it's easy to pipe the results
+                # to xargs rm.
+                path = get_relative_test_path(platforms[platform], relative_to)
+                if not path:
+                    continue
+                yield {'test': test, 'platform': platform,
+                       'fallback': fallback, 'path': path}
 
 
 def deduplicate(glob_pattern):
@@ -192,7 +225,11 @@ def deduplicate(glob_pattern):
     Returns:
         a dictionary containing test, path, platform and fallback.
     """
-    fallbacks = port_fallbacks()
-    hashes = cluster_file_hashes(glob_pattern)
-    return [{'test': test, 'path': path, 'platform': platform, 'fallback': fallback}
-             for test, platform, fallback, path in find_dups(hashes, fallbacks)]
+    current_dir = os.getcwd()
+    try:
+        os.chdir(scm.find_checkout_root())
+        fallbacks = port_fallbacks()
+        hashes = cluster_file_hashes(glob_pattern)
+        return list(find_dups(hashes, fallbacks, current_dir))
+    finally:
+        os.chdir(current_dir)
