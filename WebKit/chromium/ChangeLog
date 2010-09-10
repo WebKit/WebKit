@@ -53,13 +53,22 @@
         * src/WebKit.cpp:
         (WebKit::areLayoutTestImagesOpaque): Make linux match windows.
 
+2010-09-10  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add the destructor to WebDOMEvent to prevent a leak.
+        https://bugs.webkit.org/show_bug.cgi?id=45287
+
+        * public/WebDOMEvent.h:
+        (WebKit::WebDOMEvent::~WebDOMEvent):
+
 2010-09-09  Chris Guillory  <chris.guillory@google.com>
 
         Reviewed by Chris Fleizach.
 
         Add methods used to determine accessibility state.
         https://bugs.webkit.org/show_bug.cgi?id=45434
-        
 
         * public/WebAccessibilityObject.h:
         * src/WebAccessibilityObject.cpp:

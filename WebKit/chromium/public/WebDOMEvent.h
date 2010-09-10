@@ -50,6 +50,8 @@ public:
         BubblingPhase      = 3
     };
 
+    ~WebDOMEvent() { reset(); }
+
     WebDOMEvent() : m_private(0) { }
     WebDOMEvent(const WebDOMEvent& e) : m_private(0) { assign(e); }
     WebDOMEvent& operator=(const WebDOMEvent& e)
