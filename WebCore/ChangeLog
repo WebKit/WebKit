@@ -1,3 +1,16 @@
+2010-09-09  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Add AudioSourceNode files
+        https://bugs.webkit.org/show_bug.cgi?id=45010
+
+        No new tests since audio API is not yet implemented.
+
+        * webaudio/AudioSourceNode.h: Added.
+        (WebCore::AudioSourceNode::AudioSourceNode):
+        * webaudio/AudioSourceNode.idl: Added.
+
 2010-09-09  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.
