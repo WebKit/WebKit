@@ -38,6 +38,8 @@
 #include "public/WebAnimationController.h"
 #include "public/WebBindings.h"
 #include "public/WebConsoleMessage.h"
+#include "public/WebDeviceOrientation.h"
+#include "public/WebDeviceOrientationClientMock.h"
 #include "public/WebDocument.h"
 #include "public/WebElement.h"
 #include "public/WebFrame.h"
@@ -192,6 +194,10 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindProperty("globalFlag", &m_globalFlag);
     // webHistoryItemCount is used by tests in LayoutTests\http\tests\history
     bindProperty("webHistoryItemCount", &m_webHistoryItemCount);
+}
+
+LayoutTestController::~LayoutTestController()
+{
 }
 
 LayoutTestController::WorkQueue::~WorkQueue()
@@ -1387,8 +1393,14 @@ void LayoutTestController::setEditingBehavior(const CppArgumentList& arguments, 
 
 void LayoutTestController::setMockDeviceOrientation(const CppArgumentList& arguments, CppVariant* result)
 {
-    // FIXME: Implement for DeviceOrientation layout tests.
-    // See https://bugs.webkit.org/show_bug.cgi?id=30335.
+    result->setNull();
+    if (arguments.size() < 6 || !arguments[0].isBool() || !arguments[1].isNumber() || !arguments[2].isBool() || !arguments[3].isNumber() || !arguments[4].isBool() || !arguments[5].isNumber())
+        return;
+
+    WebKit::WebDeviceOrientation orientation(arguments[0].toBoolean(), arguments[1].toDouble(), arguments[2].toBoolean(), arguments[3].toDouble(), arguments[4].toBoolean(), arguments[5].toDouble());
+
+    ASSERT(m_deviceOrientationClientMock);
+    m_deviceOrientationClientMock->setOrientation(orientation);
 }
 
 void LayoutTestController::setGeolocationPermission(const CppArgumentList& arguments, CppVariant* result)
@@ -1443,4 +1455,11 @@ void LayoutTestController::markerTextForListItem(const CppArgumentList& args, Cp
         result->setNull();
     else
         result->set(element.document().frame()->markerTextForListItem(element).utf8());
+}
+
+WebKit::WebDeviceOrientationClient* LayoutTestController::deviceOrientationClient()
+{
+    if (!m_deviceOrientationClientMock.get())
+        m_deviceOrientationClientMock.set(new WebKit::WebDeviceOrientationClientMock());
+    return m_deviceOrientationClientMock.get();
 }

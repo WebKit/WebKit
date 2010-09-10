@@ -512,6 +512,11 @@ WebSpeechInputController* WebViewHost::speechInputController(WebKit::WebSpeechIn
     return m_shell->layoutTestController()->speechInputController(listener);
 }
 
+WebKit::WebDeviceOrientationClient* WebViewHost::deviceOrientationClient()
+{
+    return m_shell->layoutTestController()->deviceOrientationClient();
+}
+
 // WebWidgetClient -----------------------------------------------------------
 
 void WebViewHost::didInvalidateRect(const WebRect& rect)
