@@ -4,7 +4,7 @@
 
         Refactored non-Mac specific code into GraphicsContext3DOpenGL.
         
-        Moving this file into platform/graphics/mac for now, and only building on Mac.
+        Moving this file into platform/graphics/opengl and only building on Mac for now.
         
         https://bugs.webkit.org/show_bug.cgi?id=30625
 
