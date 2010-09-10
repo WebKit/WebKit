@@ -762,6 +762,7 @@ BUG16779 WONTFIX SKIP : media/media-can-play-mpeg-audio.html = TEXT
 BUG16779 WONTFIX SKIP : media/video-can-play-type.html = FAIL TIMEOUT
 BUG16779 WONTFIX SKIP : media/video-document-types.html = FAIL TIMEOUT
 BUG16779 WONTFIX SKIP : media/video-size-intrinsic-scale.html = FAIL TIMEOUT
+BUGWK45102 WONTFIX SKIP : media/media-can-play-mpeg4-video.html = TEXT
 
 // We haven't implemented the WebKit fullscreen extension.
 BUG16735 : media/media-fullscreen-inline.html = TIMEOUT
