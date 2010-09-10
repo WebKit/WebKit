@@ -1228,7 +1228,7 @@ void WebFrameImpl::selectWordAroundPosition(Frame* frame, VisiblePosition pos)
     VisibleSelection selection(pos);
     selection.expandUsingGranularity(WordGranularity);
 
-    if (frame->shouldChangeSelection(selection)) {
+    if (frame->selection()->shouldChangeSelection(selection)) {
         TextGranularity granularity = selection.isRange() ? WordGranularity : CharacterGranularity;
         frame->selection()->setSelection(selection, granularity);
     }
