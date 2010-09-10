@@ -5263,7 +5263,6 @@ canvas/philip/tests/2d.text.draw.baseline.middle.html
 canvas/philip/tests/2d.text.draw.baseline.top.html
 canvas/philip/tests/2d.text.draw.fill.maxWidth.fontface.html
 canvas/philip/tests/2d.text.draw.fontface.notinpage.html
-canvas/philip/tests/2d.text.draw.fontface.repeat.html
 canvas/philip/tests/2d.text.draw.space.collapse.end.html
 canvas/philip/tests/2d.text.draw.space.collapse.nonspace.html
 canvas/philip/tests/2d.text.draw.space.collapse.other.html
