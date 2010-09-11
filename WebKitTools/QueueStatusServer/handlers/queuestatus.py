@@ -50,9 +50,27 @@ class QueueStatus(webapp.RequestHandler):
     def get(self, queue_name):
         work_items = WorkItems.all().filter("queue_name =", queue_name).get()
         statuses = queuestatus.QueueStatus.all().filter("queue_name =", queue_name).order("-date").fetch(15)
+
+        status_groups_by_patch_id = {}
+        status_groups = []
+        synthetic_patch_id_counter = 0
+
+        for status in statuses:
+            if status.active_patch_id:
+                patch_id = status.active_patch_id
+            else:
+                patch_id = 'synthetic-' + synthetic_patch_id_counter
+                synthetic_patch_id_counter += 1
+
+            if patch_id not in status_groups_by_patch_id:
+                new_status_group = []
+                status_groups_by_patch_id[patch_id] = new_status_group
+                status_groups.append(new_status_group)
+            status_groups_by_patch_id[patch_id].append(status)
+
         template_values = {
             "display_queue_name": display_name_for_queue(queue_name),
             "work_item_rows": self._rows_for_work_items(work_items),
-            "statuses": statuses,
+            "status_groups": status_groups,
         }
         self.response.out.write(template.render("templates/queuestatus.html", template_values))

@@ -11,18 +11,29 @@
 
 <div class="status-details">
   <ul>
-    {% for status in statuses %}
-    <li>{% if status.active_bug_id %}
-    <span class="status-bug">
-      Patch {{ status.active_patch_id|force_escape|webkit_attachment_id|safe }} from bug
-      {{ status.active_bug_id|force_escape|webkit_bug_id|safe }}:
-    </span>{% endif %}
-    <span class="status-message">{{ status.message|force_escape|urlize|webkit_linkify|safe }}</span>
-    {% if status.results_file %}
-    <span class="status-results">[{{ status.key.id|results_link|safe }}]</span>
-    {% endif %}
-    <span class="status-date">{{ status.date|timesince }} ago</span>
-    </li>
+    {% for status_group in status_groups %}
+        {% with status_group.0 as title_status %}
+            <li class="status-group">
+                {% if title_status.active_bug_id %}
+                    <span class="status-bug">
+                        Patch {{ title_status.active_patch_id|force_escape|webkit_attachment_id|safe }} from bug
+                        {{ title_status.active_bug_id|force_escape|webkit_bug_id|safe }}:
+                    </span>
+                {% endif %}
+              
+                <ul>
+                    {% for status in status_group %}
+                        <li class="status">
+                            <span class="status-date">{{ status.date|timesince }} ago</span>
+                            <span class="status-message">{{ status.message|force_escape|urlize|webkit_linkify|safe }}</span>
+                            {% if status.results_file %}
+                                <span class="status-results">[{{ status.key.id|results_link|safe }}]</span>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endwith %}
     {% endfor %}
   </ul>
 </div>

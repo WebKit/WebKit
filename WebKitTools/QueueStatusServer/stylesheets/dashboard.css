@@ -44,36 +44,59 @@ td {
 tr:hover, li:hover {
   background-color: #EEE;
 }
+
+.status-group {
+  font-size: 90%;
+}
+
+.status-bug {
+  font-weight: bold;
+}
+
+.status-group ul {
+  font-size: 90%;
+}
+
+.status-group ul li {
+  padding: 2px 0 2px 7px;
+  overflow: hidden;
+}
+
+.status-group ul li:hover {
+  background: #ddd;
+}
+
 .status-date {
   color: #AAA;
   float: right;
   font-size: 8pt;
 }
-.status {
+
+.status-cell {
   margin: 1px;
   padding: 1px 2px;
   font-size: 9pt;
   border: 1px solid transparent;
 }
-.status:hover {
+.status-cell:hover {
   border: 1px solid black;
 }
-.pass {
+.status-cell.pass {
   background-color: #8FDF5F;
   cursor: pointer;
   /* border: 1px solid #4F8530; */
 }
-.fail {
+.status-cell.fail {
   background-color: #E98080;
   cursor: pointer;
   /* border: 1px solid #A77272; */
 }
-.pending {
+.status-cell.pending {
   background-color: #FFFC6C;
   cursor: pointer;
   /* border: 1px solid #C5C56D; */
 }
-.error {
+.status-cell.error {
   background-color: #E0B0FF;
   cursor: pointer;
   /* border: 1px solid #ACA0B3; */

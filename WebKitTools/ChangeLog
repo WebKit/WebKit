@@ -1,5 +1,31 @@
 2010-09-11  Mihai Parparita  <mihaip@chromium.org>
 
+        Reviewed by Adam Barth.
+
+        Group statuses in queue status by patch ID
+        https://bugs.webkit.org/show_bug.cgi?id=45588
+
+        Group statuses by patch ID so that the status page is easier
+        to scan.
+
+        * QueueStatusServer/handlers/queuestatus.py:
+        * QueueStatusServer/stylesheets/dashboard.css:
+        (.status-group):
+        (.status-bug):
+        (.status-group ul):
+        (.status-group ul li):
+        (.status-group ul li:hover):
+        (.status-cell):
+        (.status-cell:hover):
+        (.status-cell.pass):
+        (.status-cell.fail):
+        (.status-cell.pending):
+        (.status-cell.error):
+        * QueueStatusServer/templates/dashboard.html:
+        * QueueStatusServer/templates/queuestatus.html:
+
+2010-09-11  Mihai Parparita  <mihaip@chromium.org>
+
         Reviewed by Tony Chang.
 
         Implement layoutTestController.dumpResourceResponseMIMETypes in Chromium DRT
