@@ -668,8 +668,10 @@ void DumpRenderTree::processArgsLine(const QStringList &args)
 
 void DumpRenderTree::loadNextTestInStandAloneMode()
 {
-    if (m_standAloneModeTestList.isEmpty())
+    if (m_standAloneModeTestList.isEmpty()) {
         emit quit();
+        return;
+    }
 
     processLine(m_standAloneModeTestList.first());
     m_standAloneModeTestList.removeFirst();

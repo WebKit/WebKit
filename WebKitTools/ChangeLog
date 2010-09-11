@@ -1,3 +1,14 @@
+2010-09-10  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Fix crash in DRT in standalone mode
+
+        https://bugs.webkit.org/show_bug.cgi?id=45454
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::loadNextTestInStandAloneMode):
+
 2010-09-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
