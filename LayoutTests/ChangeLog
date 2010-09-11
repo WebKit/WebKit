@@ -1,5 +1,14 @@
 2010-09-10  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed.
+
+        Added editing/style/style-3690704-fix.html to the gtk's skipped list
+        since the test requires editing delegates, which hasn't been implemented in gtk.
+
+        * platform/gtk/Skipped:
+
+2010-09-10  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed by Tony Chang.
 
         editing/inserting/insert-3659587-fix.html and editing/style/style-3690704-fix.html should use runDumpAsTextEditingTest

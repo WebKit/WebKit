@@ -5858,6 +5858,7 @@ editing/selection/drag-start-event-client-x-y.html
 # Tests that require editing delegate dumps.
 editing/pasteboard/drop-link.html
 editing/style/typing-style-003.html
+editing/style/style-3690704-fix.html
 
 # Flaky due to JSC debugger issue.
 # https://bugs.webkit.org/show_bug.cgi?id=43034
