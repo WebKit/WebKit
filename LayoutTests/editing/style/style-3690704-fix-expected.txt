@@ -27,27 +27,6 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > B > I > SPAN > DIV > BODY > HTML > #document to 4 of #text > B > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x94 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 246x64
-          RenderText {#text} at (14,15) size 78x31
-            text run at (14,15) width 78: "here is "
-          RenderInline {I} at (0,0) size 62x32
-            RenderInline {B} at (0,0) size 62x33
-              RenderText {#text} at (92,14) size 62x33
-                text run at (92,14) width 62: "some"
-          RenderInline {B} at (0,0) size 189x66
-            RenderText {#text} at (154,14) size 49x33
-              text run at (154,14) width 49: " text"
-            RenderBR {BR} at (203,38) size 0x0
-            RenderText {#text} at (14,47) size 50x33
-              text run at (14,47) width 50: "here"
-          RenderText {#text} at (64,48) size 196x31
-            text run at (64,48) width 196: " is some more text"
-        RenderText {#text} at (0,0) size 0x0
-selection start: position 0 of child 0 {#text} of child 0 {B} of child 1 {I} of child 1 {SPAN} of child 1 {DIV} of body
-selection end:   position 4 of child 2 {#text} of child 2 {B} of child 1 {SPAN} of child 1 {DIV} of body
+here is some text
+here is some more text
+execBoldCommand: <span id="test">here is <i><b>some</b></i><b> text<br>here</b> is some more text</span>

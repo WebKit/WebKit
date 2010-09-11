@@ -1,3 +1,37 @@
+2010-09-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        editing/inserting/insert-3659587-fix.html and editing/style/style-3690704-fix.html should use runDumpAsTextEditingTest
+        https://bugs.webkit.org/show_bug.cgi?id=45578
+
+        Modified insert-3659587-fix.html and style-3690704-fix.html to use runDumpAsTextEditingTest().
+
+        * editing/inserting/insert-3659587-fix-expected.txt: Added.
+        * editing/inserting/insert-3659587-fix.html:
+        * editing/style/style-3690704-fix-expected.txt: Added.
+        * editing/style/style-3690704-fix.html:
+        * platform/chromium-linux/editing/inserting/insert-3659587-fix-expected.checksum: Removed.
+        * platform/chromium-linux/editing/inserting/insert-3659587-fix-expected.png: Removed.
+        * platform/chromium-linux/editing/style/style-3690704-fix-expected.checksum: Removed.
+        * platform/chromium-linux/editing/style/style-3690704-fix-expected.png: Removed.
+        * platform/chromium-win/editing/inserting/insert-3659587-fix-expected.checksum: Removed.
+        * platform/chromium-win/editing/inserting/insert-3659587-fix-expected.png: Removed.
+        * platform/chromium-win/editing/inserting/insert-3659587-fix-expected.txt: Removed.
+        * platform/chromium-win/editing/style/style-3690704-fix-expected.checksum: Removed.
+        * platform/chromium-win/editing/style/style-3690704-fix-expected.png: Removed.
+        * platform/chromium-win/editing/style/style-3690704-fix-expected.txt: Removed.
+        * platform/gtk/editing/inserting/insert-3659587-fix-expected.txt: Removed.
+        * platform/gtk/editing/style/style-3690704-fix-expected.txt: Removed.
+        * platform/mac/editing/inserting/insert-3659587-fix-expected.checksum: Removed.
+        * platform/mac/editing/inserting/insert-3659587-fix-expected.png: Removed.
+        * platform/mac/editing/inserting/insert-3659587-fix-expected.txt: Removed.
+        * platform/mac/editing/style/style-3690704-fix-expected.checksum: Removed.
+        * platform/mac/editing/style/style-3690704-fix-expected.png: Removed.
+        * platform/mac/editing/style/style-3690704-fix-expected.txt: Removed.
+        * platform/qt/editing/inserting/insert-3659587-fix-expected.txt: Removed.
+        * platform/qt/editing/style/style-3690704-fix-expected.txt: Removed.
+
 2010-09-10  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Andreas Kling.

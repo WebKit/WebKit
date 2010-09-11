@@ -33,12 +33,13 @@ function editingTest() {
 <title>Editing Test</title> 
 </head> 
 <body>
+<p>Test that inserting a line break will preserve bolding. All of the text below should be bold.</p>
 <div contenteditable id="root" class="editing">
 <span id="test">test</span>
 </div>
 
 <script>
-runEditingTest();
+runDumpAsTextEditingTest();
 </script>
 
 </body>
