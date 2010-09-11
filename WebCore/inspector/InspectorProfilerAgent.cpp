@@ -43,6 +43,7 @@
 #include "ScriptProfile.h"
 #include "ScriptProfiler.h"
 #include <wtf/OwnPtr.h>
+#include <wtf/text/CString.h>
 
 #if USE(JSC)
 #include "JSDOMWindow.h"

@@ -38,6 +38,7 @@
 #include "PlatformString.h"
 #include "ScriptDebugServer.h"
 #include <wtf/MD5.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

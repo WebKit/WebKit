@@ -1,3 +1,18 @@
+2010-09-11  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] V8 port: Fix "WTF::String::utf8" returns incomplete type WTF::CString
+        https://bugs.webkit.org/show_bug.cgi?id=45157
+
+        Include CString.h where necessary. Chromium builds would get it from
+        KURLGooglePrivate.h so this is only an issue for Qt + V8.
+
+        * bindings/v8/V8Proxy.cpp:
+        * inspector/InspectorDebuggerAgent.cpp:
+        * inspector/InspectorProfilerAgent.cpp:
+        * plugins/PluginDatabase.cpp:
+
 2010-09-11  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Andreas Kling.

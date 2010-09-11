@@ -34,6 +34,7 @@
 #include "FileSystem.h"
 #endif
 #include <stdlib.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
