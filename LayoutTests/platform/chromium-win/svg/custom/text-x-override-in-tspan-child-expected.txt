@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
       RenderSVGTSpan {tspan} at (0,0) size 40x19
         RenderSVGInlineText {#text} at (0,0) size 40x19
           chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 1 width 11.00: "A"
-          chunk 2 text run 1 at (40.00,40.00) startOffset 1 endOffset 2 width 10.00: "B"
+          chunk 2 text run 1 at (40.00,40.00) startOffset 0 endOffset 1 width 10.00: "B"
       RenderSVGInlineText {#text} at (60,0) size 11x19
         chunk 3 text run 1 at (70.00,40.00) startOffset 0 endOffset 1 width 11.00: "C"
     RenderSVGContainer {g} at (20,90) size 142x78 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-10.00,0.00)}]
@@ -30,7 +30,7 @@ layer at (0,0) size 800x600
         RenderSVGTSpan {tspan} at (0,0) size 40x19
           RenderSVGInlineText {#text} at (0,0) size 40x19
             chunk 1 text run 1 at (20.00,80.00) startOffset 0 endOffset 1 width 11.00: "A"
-            chunk 2 text run 1 at (50.00,80.00) startOffset 1 endOffset 2 width 10.00: "B"
+            chunk 2 text run 1 at (50.00,80.00) startOffset 0 endOffset 1 width 10.00: "B"
         RenderSVGInlineText {#text} at (60,0) size 11x19
           chunk 3 text run 1 at (80.00,80.00) startOffset 0 endOffset 1 width 11.00: "C"
     RenderSVGContainer {g} at (20,170) size 142x78 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-10.00,0.00)}]
@@ -46,7 +46,7 @@ layer at (0,0) size 800x600
         RenderSVGTSpan {tspan} at (0,0) size 40x19
           RenderSVGInlineText {#text} at (0,0) size 40x19
             chunk 1 text run 1 at (20.00,120.00) startOffset 0 endOffset 1 width 11.00: "A"
-            chunk 2 text run 1 at (50.00,120.00) startOffset 1 endOffset 2 width 10.00: "B"
+            chunk 2 text run 1 at (50.00,120.00) startOffset 0 endOffset 1 width 10.00: "B"
         RenderSVGInlineText {#text} at (60,0) size 11x19
           chunk 3 text run 1 at (80.00,120.00) startOffset 0 endOffset 1 width 11.00: "C"
     RenderSVGContainer {g} at (0,250) size 162x78 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-10.00,0.00)}]
@@ -62,6 +62,6 @@ layer at (0,0) size 800x600
         RenderSVGTSpan {tspan} at (0,0) size 30x19
           RenderSVGInlineText {#text} at (20,0) size 30x19
             chunk 1 text run 1 at (20.00,160.00) startOffset 0 endOffset 1 width 11.00: "A"
-            chunk 2 text run 1 at (40.00,160.00) startOffset 1 endOffset 2 width 10.00: "B"
+            chunk 2 text run 1 at (40.00,160.00) startOffset 0 endOffset 1 width 10.00: "B"
         RenderSVGInlineText {#text} at (0,0) size 11x19
           chunk 3 text run 1 at (0.00,160.00) startOffset 0 endOffset 1 width 11.00: "C"

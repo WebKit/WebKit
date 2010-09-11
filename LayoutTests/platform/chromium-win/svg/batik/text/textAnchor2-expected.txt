@@ -48,26 +48,26 @@ layer at (0,0) size 450x500
         RenderSVGTSpan {tspan} at (0,0) size 168x19
           RenderSVGInlineText {#text} at (0,0) size 168x19
             chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 10.00: "B"
-            chunk 2 text run 1 at (40.00,0.00) startOffset 1 endOffset 2 width 7.00: "a"
-            chunk 3 text run 1 at (80.00,0.00) startOffset 2 endOffset 3 width 4.00: "t"
-            chunk 4 text run 1 at (120.00,0.00) startOffset 3 endOffset 4 width 3.00: "i"
-            chunk 5 text run 1 at (160.00,0.00) startOffset 4 endOffset 5 width 8.00: "k"
+            chunk 2 text run 1 at (40.00,0.00) startOffset 0 endOffset 1 width 7.00: "a"
+            chunk 3 text run 1 at (80.00,0.00) startOffset 0 endOffset 1 width 4.00: "t"
+            chunk 4 text run 1 at (120.00,0.00) startOffset 0 endOffset 1 width 3.00: "i"
+            chunk 5 text run 1 at (160.00,0.00) startOffset 0 endOffset 1 width 8.00: "k"
       RenderSVGText {text} at (-5,-15) size 169x19 contains 5 chunk(s)
         RenderSVGTSpan {tspan} at (0,0) size 169x19
           RenderSVGInlineText {#text} at (0,0) size 169x19
             chunk 1 (middle anchor) text run 1 at (-5.00,0.00) startOffset 0 endOffset 1 width 10.00: "B"
-            chunk 2 (middle anchor) text run 1 at (36.50,0.00) startOffset 1 endOffset 2 width 7.00: "a"
-            chunk 3 (middle anchor) text run 1 at (78.00,0.00) startOffset 2 endOffset 3 width 4.00: "t"
-            chunk 4 (middle anchor) text run 1 at (118.50,0.00) startOffset 3 endOffset 4 width 3.00: "i"
-            chunk 5 (middle anchor) text run 1 at (156.00,0.00) startOffset 4 endOffset 5 width 8.00: "k"
+            chunk 2 (middle anchor) text run 1 at (36.50,0.00) startOffset 0 endOffset 1 width 7.00: "a"
+            chunk 3 (middle anchor) text run 1 at (78.00,0.00) startOffset 0 endOffset 1 width 4.00: "t"
+            chunk 4 (middle anchor) text run 1 at (118.50,0.00) startOffset 0 endOffset 1 width 3.00: "i"
+            chunk 5 (middle anchor) text run 1 at (156.00,0.00) startOffset 0 endOffset 1 width 8.00: "k"
       RenderSVGText {text} at (-10,-15) size 170x19 contains 5 chunk(s)
         RenderSVGTSpan {tspan} at (0,0) size 170x19
           RenderSVGInlineText {#text} at (0,0) size 170x19
             chunk 1 (end anchor) text run 1 at (-10.00,0.00) startOffset 0 endOffset 1 width 10.00: "B"
-            chunk 2 (end anchor) text run 1 at (33.00,0.00) startOffset 1 endOffset 2 width 7.00: "a"
-            chunk 3 (end anchor) text run 1 at (76.00,0.00) startOffset 2 endOffset 3 width 4.00: "t"
-            chunk 4 (end anchor) text run 1 at (117.00,0.00) startOffset 3 endOffset 4 width 3.00: "i"
-            chunk 5 (end anchor) text run 1 at (152.00,0.00) startOffset 4 endOffset 5 width 8.00: "k"
+            chunk 2 (end anchor) text run 1 at (33.00,0.00) startOffset 0 endOffset 1 width 7.00: "a"
+            chunk 3 (end anchor) text run 1 at (76.00,0.00) startOffset 0 endOffset 1 width 4.00: "t"
+            chunk 4 (end anchor) text run 1 at (117.00,0.00) startOffset 0 endOffset 1 width 3.00: "i"
+            chunk 5 (end anchor) text run 1 at (152.00,0.00) startOffset 0 endOffset 1 width 8.00: "k"
       RenderSVGText {text} at (0,-15) size 32x29 contains 1 chunk(s)
         RenderSVGTSpan {tspan} at (0,0) size 32x29
           RenderSVGInlineText {#text} at (0,0) size 32x29
@@ -84,23 +84,23 @@ layer at (0,0) size 450x500
         RenderSVGTSpan {tspan} at (0,0) size 168x29
           RenderSVGInlineText {#text} at (0,0) size 168x29
             chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 10.00: "B"
-            chunk 2 text run 1 at (40.00,10.00) startOffset 1 endOffset 2 width 7.00: "a"
-            chunk 3 text run 1 at (80.00,0.00) startOffset 2 endOffset 3 width 4.00: "t"
-            chunk 4 text run 1 at (120.00,10.00) startOffset 3 endOffset 4 width 3.00: "i"
-            chunk 5 text run 1 at (160.00,0.00) startOffset 4 endOffset 5 width 8.00: "k"
+            chunk 2 text run 1 at (40.00,10.00) startOffset 0 endOffset 1 width 7.00: "a"
+            chunk 3 text run 1 at (80.00,0.00) startOffset 0 endOffset 1 width 4.00: "t"
+            chunk 4 text run 1 at (120.00,10.00) startOffset 0 endOffset 1 width 3.00: "i"
+            chunk 5 text run 1 at (160.00,0.00) startOffset 0 endOffset 1 width 8.00: "k"
       RenderSVGText {text} at (-5,-15) size 169x29 contains 5 chunk(s)
         RenderSVGTSpan {tspan} at (0,0) size 169x29
           RenderSVGInlineText {#text} at (0,0) size 169x29
             chunk 1 (middle anchor) text run 1 at (-5.00,0.00) startOffset 0 endOffset 1 width 10.00: "B"
-            chunk 2 (middle anchor) text run 1 at (36.50,10.00) startOffset 1 endOffset 2 width 7.00: "a"
-            chunk 3 (middle anchor) text run 1 at (78.00,0.00) startOffset 2 endOffset 3 width 4.00: "t"
-            chunk 4 (middle anchor) text run 1 at (118.50,10.00) startOffset 3 endOffset 4 width 3.00: "i"
-            chunk 5 (middle anchor) text run 1 at (156.00,0.00) startOffset 4 endOffset 5 width 8.00: "k"
+            chunk 2 (middle anchor) text run 1 at (36.50,10.00) startOffset 0 endOffset 1 width 7.00: "a"
+            chunk 3 (middle anchor) text run 1 at (78.00,0.00) startOffset 0 endOffset 1 width 4.00: "t"
+            chunk 4 (middle anchor) text run 1 at (118.50,10.00) startOffset 0 endOffset 1 width 3.00: "i"
+            chunk 5 (middle anchor) text run 1 at (156.00,0.00) startOffset 0 endOffset 1 width 8.00: "k"
       RenderSVGText {text} at (-10,-15) size 170x29 contains 5 chunk(s)
         RenderSVGTSpan {tspan} at (0,0) size 170x29
           RenderSVGInlineText {#text} at (0,0) size 170x29
             chunk 1 (end anchor) text run 1 at (-10.00,0.00) startOffset 0 endOffset 1 width 10.00: "B"
-            chunk 2 (end anchor) text run 1 at (33.00,10.00) startOffset 1 endOffset 2 width 7.00: "a"
-            chunk 3 (end anchor) text run 1 at (76.00,0.00) startOffset 2 endOffset 3 width 4.00: "t"
-            chunk 4 (end anchor) text run 1 at (117.00,10.00) startOffset 3 endOffset 4 width 3.00: "i"
-            chunk 5 (end anchor) text run 1 at (152.00,0.00) startOffset 4 endOffset 5 width 8.00: "k"
+            chunk 2 (end anchor) text run 1 at (33.00,10.00) startOffset 0 endOffset 1 width 7.00: "a"
+            chunk 3 (end anchor) text run 1 at (76.00,0.00) startOffset 0 endOffset 1 width 4.00: "t"
+            chunk 4 (end anchor) text run 1 at (117.00,10.00) startOffset 0 endOffset 1 width 3.00: "i"
+            chunk 5 (end anchor) text run 1 at (152.00,0.00) startOffset 0 endOffset 1 width 8.00: "k"

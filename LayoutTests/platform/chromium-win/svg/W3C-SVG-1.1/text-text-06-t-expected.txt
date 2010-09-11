@@ -53,10 +53,10 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (10,-9) size 135x11 contains 5 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 135x11
               chunk 1 text run 1 at (10.00,0.00) startOffset 0 endOffset 2 width 15.00: "fi"
-              chunk 2 text run 1 at (40.00,0.00) startOffset 2 endOffset 3 width 15.00: "1"
-              chunk 3 text run 1 at (70.00,0.00) startOffset 3 endOffset 4 width 15.00: "2"
-              chunk 4 text run 1 at (100.00,0.00) startOffset 4 endOffset 5 width 15.00: "3"
-              chunk 5 text run 1 at (130.00,0.00) startOffset 5 endOffset 6 width 15.00: "4"
+              chunk 2 text run 1 at (40.00,0.00) startOffset 0 endOffset 1 width 15.00: "1"
+              chunk 3 text run 1 at (70.00,0.00) startOffset 0 endOffset 1 width 15.00: "2"
+              chunk 4 text run 1 at (100.00,0.00) startOffset 0 endOffset 1 width 15.00: "3"
+              chunk 5 text run 1 at (130.00,0.00) startOffset 0 endOffset 1 width 15.00: "4"
         RenderSVGContainer {g} at (116,85) size 79x79 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,80.00)}]
           RenderSVGContainer {use} at (116,85) size 8x19
             RenderSVGContainer {g} at (116,85) size 8x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,-10.00)}]
@@ -125,10 +125,10 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (10,-19) size 135x51 contains 5 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 135x51
               chunk 1 text run 1 at (10.00,-10.00) startOffset 0 endOffset 2 width 15.00: "fi"
-              chunk 2 text run 1 at (40.00,0.00) startOffset 2 endOffset 3 width 15.00: "1"
-              chunk 3 text run 1 at (70.00,10.00) startOffset 3 endOffset 4 width 15.00: "2"
-              chunk 4 text run 1 at (100.00,20.00) startOffset 4 endOffset 5 width 15.00: "3"
-              chunk 5 text run 1 at (130.00,30.00) startOffset 5 endOffset 6 width 15.00: "4"
+              chunk 2 text run 1 at (40.00,0.00) startOffset 0 endOffset 1 width 15.00: "1"
+              chunk 3 text run 1 at (70.00,10.00) startOffset 0 endOffset 1 width 15.00: "2"
+              chunk 4 text run 1 at (100.00,20.00) startOffset 0 endOffset 1 width 15.00: "3"
+              chunk 5 text run 1 at (130.00,30.00) startOffset 0 endOffset 1 width 15.00: "4"
     RenderSVGText {text} at (10,303) size 261x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 261x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.9 $"

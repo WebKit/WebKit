@@ -1,3 +1,44 @@
+2010-09-10  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
+        Need to rebaseline a bunch of files resulting from the SVG change
+        in r67200.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45580
+
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-40-t-expected.txt
+        * platform/chromium-win/svg/W3C-SVG-1.1/text-text-04-t-expected.txt
+        * platform/chromium-win/svg/W3C-SVG-1.1/text-text-05-t-expected.txt
+        * platform/chromium-win/svg/W3C-SVG-1.1/text-text-06-t-expected.txt
+        * platform/chromium-win/svg/W3C-SVG-1.1/text-text-07-t-expected.txt
+        * platform/chromium-win/svg/W3C-SVG-1.1/text-tspan-01-b-expected.txt
+        * platform/chromium-win/svg/batik/text/textAnchor2-expected.txt
+        * platform/chromium-win/svg/batik/text/textAnchor3-expected.txt
+        * platform/chromium-win/svg/batik/text/textLayout-expected.txt
+        * platform/chromium-win/svg/batik/text/textLayout2-expected.txt
+        * platform/chromium-win/svg/batik/text/textOnPathSpaces-expected.txt
+        * platform/chromium-win/svg/batik/text/textPosition-expected.txt
+        * platform/chromium-win/svg/batik/text/textPosition2-expected.txt
+        * platform/chromium-win/svg/custom/text-letter-spacing-expected.txt
+        * platform/chromium-win/svg/custom/text-x-dx-lists-expected.txt
+        * platform/chromium-win/svg/custom/text-x-override-in-tspan-child-expected.txt
+        * platform/chromium-win/svg/text/select-x-list-1-expected.txt
+        * platform/chromium-win/svg/text/select-x-list-2-expected.txt
+        * platform/chromium-win/svg/text/select-x-list-3-expected.txt
+        * platform/chromium-win/svg/text/select-x-list-4-expected.txt
+        * platform/chromium-win/svg/text/select-x-list-with-tspans-1-expected.txt
+        * platform/chromium-win/svg/text/select-x-list-with-tspans-2-expected.txt
+        * platform/chromium-win/svg/text/select-x-list-with-tspans-3-expected.txt
+        * platform/chromium-win/svg/text/select-x-list-with-tspans-4-expected.txt
+        * platform/chromium-win/svg/text/text-text-04-t-expected.txt
+        * platform/chromium-win/svg/text/text-text-05-t-expected.txt
+        * platform/chromium-win/svg/text/text-text-06-t-expected.txt
+        * platform/chromium-win/svg/text/text-text-07-t-expected.txt
+        * platform/chromium-win/svg/text/text-tspan-01-b-expected.txt
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.
