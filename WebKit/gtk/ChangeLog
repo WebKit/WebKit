@@ -1,3 +1,15 @@
+2010-09-10  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Fix warnings because of bad assignments in testatk.c
+        https://bugs.webkit.org/show_bug.cgi?id=45538
+
+        Use AtkObject and AtkText instances properly in the code.
+
+        * tests/testatk.c:
+        (testWebkitAtkListsOfItems):
+
 2010-09-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Fisher.

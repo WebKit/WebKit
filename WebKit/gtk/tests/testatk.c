@@ -876,17 +876,17 @@ static void testWebkitAtkListsOfItems(void)
     g_assert(atk_object_get_role(uList) == ATK_ROLE_LIST);
     g_assert_cmpint(atk_object_get_n_accessible_children(uList), ==, 3);
 
-    item1 = ATK_TEXT(atk_object_ref_accessible_child(uList, 0));
-    item2 = ATK_TEXT(atk_object_ref_accessible_child(uList, 1));
-    item3 = ATK_TEXT(atk_object_ref_accessible_child(uList, 2));
+    item1 = atk_object_ref_accessible_child(uList, 0);
+    item2 = atk_object_ref_accessible_child(uList, 1);
+    item3 = atk_object_ref_accessible_child(uList, 2);
 
     g_assert_cmpint(atk_object_get_n_accessible_children(item1), ==, 0);
     g_assert_cmpint(atk_object_get_n_accessible_children(item2), ==, 1);
     g_assert_cmpint(atk_object_get_n_accessible_children(item3), ==, 1);
 
-    g_assert_cmpstr(atk_text_get_text(item1, 0, -1), ==, "\342\200\242 text only");
-    g_assert_cmpstr(atk_text_get_text(item2, 0, -1), ==, "\342\200\242 link only");
-    g_assert_cmpstr(atk_text_get_text(item3, 0, -1), ==, "\342\200\242 text and a link");
+    g_assert_cmpstr(atk_text_get_text(ATK_TEXT(item1), 0, -1), ==, "\342\200\242 text only");
+    g_assert_cmpstr(atk_text_get_text(ATK_TEXT(item2), 0, -1), ==, "\342\200\242 link only");
+    g_assert_cmpstr(atk_text_get_text(ATK_TEXT(item3), 0, -1), ==, "\342\200\242 text and a link");
 
     g_object_unref(item1);
     g_object_unref(item2);
@@ -899,13 +899,13 @@ static void testWebkitAtkListsOfItems(void)
     g_assert(atk_object_get_role(oList) == ATK_ROLE_LIST);
     g_assert_cmpint(atk_object_get_n_accessible_children(oList), ==, 3);
 
-    item1 = ATK_TEXT(atk_object_ref_accessible_child(oList, 0));
-    item2 = ATK_TEXT(atk_object_ref_accessible_child(oList, 1));
-    item3 = ATK_TEXT(atk_object_ref_accessible_child(oList, 2));
+    item1 = atk_object_ref_accessible_child(oList, 0);
+    item2 = atk_object_ref_accessible_child(oList, 1);
+    item3 = atk_object_ref_accessible_child(oList, 2);
 
-    g_assert_cmpstr(atk_text_get_text(item1, 0, -1), ==, "1 text only");
-    g_assert_cmpstr(atk_text_get_text(item2, 0, -1), ==, "2 link only");
-    g_assert_cmpstr(atk_text_get_text(item3, 0, -1), ==, "3 text and a link");
+    g_assert_cmpstr(atk_text_get_text(ATK_TEXT(item1), 0, -1), ==, "1 text only");
+    g_assert_cmpstr(atk_text_get_text(ATK_TEXT(item2), 0, -1), ==, "2 link only");
+    g_assert_cmpstr(atk_text_get_text(ATK_TEXT(item3), 0, -1), ==, "3 text and a link");
 
     g_assert_cmpint(atk_object_get_n_accessible_children(item1), ==, 0);
     g_assert_cmpint(atk_object_get_n_accessible_children(item2), ==, 1);
