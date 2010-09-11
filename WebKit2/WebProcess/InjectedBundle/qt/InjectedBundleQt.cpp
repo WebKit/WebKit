@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 University of Szeged.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,11 +33,20 @@ using namespace WebCore;
 
 namespace WebKit {
 
-// FIXME: This should try and use <WebCore/FileSystem.h>.
-
 bool InjectedBundle::load()
 {
-    return false;
+    m_platformBundle.setFileName(static_cast<QString>(m_path));
+    if (!m_platformBundle.load())
+        return false;
+
+    WKBundleInitializeFunctionPtr initializeFunction =
+            reinterpret_cast<WKBundleInitializeFunctionPtr>(m_platformBundle.resolve("WKBundleInitialize"));
+
+    if (!initializeFunction)
+        return false;
+
+    initializeFunction(toRef(this));
+    return true;
 }
 
 void InjectedBundle::activateMacFontAscentHack()

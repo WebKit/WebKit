@@ -33,6 +33,10 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(QT)
+#include <QLibrary>
+#endif
+
 namespace CoreIPC {
     class ArgumentDecoder;
     class Connection;
@@ -46,7 +50,7 @@ typedef CFBundleRef PlatformBundle;
 #elif PLATFORM(WIN)
 typedef HMODULE PlatformBundle;
 #elif PLATFORM(QT)
-typedef void* PlatformBundle;
+typedef QLibrary PlatformBundle;
 #endif
 
 class ImmutableArray;

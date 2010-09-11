@@ -2,6 +2,17 @@
 
         Reviewed by Andreas Kling.
 
+        [Qt] Implement port specific part of WebKit::InjectedBundle
+        https://bugs.webkit.org/show_bug.cgi?id=45541
+
+        * WebProcess/InjectedBundle/InjectedBundle.h: Typedef PlatformBundle as QLibrary for qt.
+        * WebProcess/InjectedBundle/qt/InjectedBundleQt.cpp:
+        (WebKit::InjectedBundle::load): Implemented.
+
+2010-09-10  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Reviewed by Andreas Kling.
+
         [Qt] MiniBrowser crashes with multiply windows when closing one of them
         https://bugs.webkit.org/show_bug.cgi?id=45536
 
