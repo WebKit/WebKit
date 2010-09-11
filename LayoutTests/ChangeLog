@@ -1,3 +1,9 @@
+2010-09-11  Martin Robinson  <mrobinson@igalia.com>
+
+        Add a platform-specific result after r67281.
+
+        * platform/gtk/fast/dynamic/first-letter-display-change-expected.txt: Added.
+
 2010-09-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
