@@ -260,17 +260,16 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
 #endif
 }
 
-bool ResourceHandle::start(Frame* frame)
+bool ResourceHandle::start(NetworkingContext* context)
 {
-    if (!frame)
+    if (!context)
         return false;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    // If we are no longer attached to a Page, this must be an attempted load from an
-    // onUnload handler, so let's just block it.
-    Page* page = frame->page();
-    if (!page)
+    // If NetworkingContext is invalid then we are no longer attached to a Page,
+    // this must be an attempted load from an unload event handler, so let's just block it.
+    if (!context->isValid())
         return false;
 
 #ifndef NDEBUG
@@ -293,16 +292,16 @@ bool ResourceHandle::start(Frame* frame)
         firstRequest().setCachePolicy(ReloadIgnoringCacheData);
 #endif
 
-    d->m_needsSiteSpecificQuirks = frame->settings() && frame->settings()->needsSiteSpecificQuirks();
+    d->m_needsSiteSpecificQuirks = context->needsSiteSpecificQuirks();
 
     createNSURLConnection(
         d->m_proxy.get(),
         shouldUseCredentialStorage,
-        d->m_shouldContentSniff || frame->settings()->localFileContentSniffingEnabled());
+        d->m_shouldContentSniff || context->localFileContentSniffingEnabled());
 
 #ifndef BUILDING_ON_TIGER
     bool scheduled = false;
-    if (SchedulePairHashSet* scheduledPairs = page->scheduledRunLoopPairs()) {
+    if (SchedulePairHashSet* scheduledPairs = context->scheduledRunLoopPairs()) {
         SchedulePairHashSet::iterator end = scheduledPairs->end();
         for (SchedulePairHashSet::iterator it = scheduledPairs->begin(); it != end; ++it) {
             if (NSRunLoop *runLoop = (*it)->nsRunLoop()) {
@@ -461,7 +460,7 @@ bool ResourceHandle::willLoadFromCache(ResourceRequest& request, Frame*)
 #endif
 }
 
-void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data, Frame* frame)
+void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     LOG(Network, "ResourceHandle::loadResourceSynchronously:%@ allowStoredCredentials:%u", request.nsURLRequest(), storedCredentials);
 
@@ -483,15 +482,15 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, S
 
     RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(request, client.get(), false /*defersLoading*/, true /*shouldContentSniff*/));
 
-    if (handle->d->m_scheduledFailureType != NoFailure) {
-        error = frame->loader()->blockedError(request);
+    if (context && handle->d->m_scheduledFailureType != NoFailure) {
+        error = context->blockedError(request);
         return;
     }
 
     handle->createNSURLConnection(
         handle->delegate(), // A synchronous request cannot turn into a download, so there is no need to proxy the delegate.
         storedCredentials == AllowStoredCredentials,
-        handle->shouldContentSniff() || frame->settings()->localFileContentSniffingEnabled());
+        handle->shouldContentSniff() || (context && context->localFileContentSniffingEnabled()));
 
     [handle->connection() scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:WebCoreSynchronousLoaderRunLoopMode];
     [handle->connection() start];
@@ -507,7 +506,7 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, S
 
 #else
     UNUSED_PARAM(storedCredentials);
-    UNUSED_PARAM(frame);
+    UNUSED_PARAM(context);
     NSURLRequest *firstRequest = request.nsURLRequest();
 
     // If a URL already has cookies, then we'll relax the 3rd party cookie policy and accept new cookies.

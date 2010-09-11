@@ -52,8 +52,7 @@ ResourceHandle::ResourceHandle(const ResourceRequest& request, ResourceHandleCli
     }
 }
 
-PassRefPtr<ResourceHandle> ResourceHandle::create(const ResourceRequest& request, ResourceHandleClient* client,
-    Frame* frame, bool defersLoading, bool shouldContentSniff)
+PassRefPtr<ResourceHandle> ResourceHandle::create(NetworkingContext* context, const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool shouldContentSniff)
 {
 #if ENABLE(BLOB)
     if (request.url().protocolIs("blob")) {
@@ -68,7 +67,7 @@ PassRefPtr<ResourceHandle> ResourceHandle::create(const ResourceRequest& request
     if (newHandle->d->m_scheduledFailureType != NoFailure)
         return newHandle.release();
 
-    if (newHandle->start(frame))
+    if (newHandle->start(context))
         return newHandle.release();
 
     return 0;

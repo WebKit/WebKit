@@ -2765,7 +2765,7 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         if (!documentLoader()->applicationCacheHost()->maybeLoadSynchronously(newRequest, error, response, data)) {
 #endif
-            ResourceHandle::loadResourceSynchronously(newRequest, storedCredentials, error, response, data, m_frame);
+            ResourceHandle::loadResourceSynchronously(networkingContext(), newRequest, storedCredentials, error, response, data);
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
             documentLoader()->applicationCacheHost()->maybeLoadFallbackSynchronously(newRequest, error, response, data);
         }

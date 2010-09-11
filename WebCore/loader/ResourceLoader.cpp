@@ -35,6 +35,7 @@
 #include "FileStreamProxy.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "InspectorTimelineAgent.h"
 #include "Page.h"
 #include "ProgressTracker.h"
@@ -143,7 +144,7 @@ bool ResourceLoader::load(const ResourceRequest& r)
         return true;
     }
     
-    m_handle = ResourceHandle::create(clientRequest, this, m_frame.get(), m_defersLoading, m_shouldContentSniff);
+    m_handle = ResourceHandle::create(m_frame->loader()->networkingContext(), clientRequest, this, m_defersLoading, m_shouldContentSniff);
 
     return true;
 }

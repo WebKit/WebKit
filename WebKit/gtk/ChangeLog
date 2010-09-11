@@ -1,3 +1,15 @@
+2010-09-10  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        Reviewed by Darin Adler.
+
+        Add NetworkingContext to avoid layer violations
+        https://bugs.webkit.org/show_bug.cgi?id=42292
+
+        * webkit/webkitdownload.cpp:
+        (webkit_download_start):
+        * webkit/webkitprivate.cpp:
+        (currentToplevelCallback):
+
 2010-09-10  Sam Weinig  <sam@webkit.org>
 
         Fix GTK build.

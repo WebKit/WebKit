@@ -39,6 +39,7 @@
 #include "DOMWindow.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "MainResourceLoader.h"
 #include "ManifestParser.h"
 #include "Page.h"
@@ -479,7 +480,7 @@ PassRefPtr<ResourceHandle> ApplicationCacheGroup::createResourceHandle(const KUR
         }
     }
 
-    RefPtr<ResourceHandle> handle = ResourceHandle::create(request, this, m_frame, false, true);
+    RefPtr<ResourceHandle> handle = ResourceHandle::create(m_frame->loader()->networkingContext(), request, this, false, true);
 #if ENABLE(INSPECTOR)
     // Because willSendRequest only gets called during redirects, we initialize
     // the identifier and the first willSendRequest here.

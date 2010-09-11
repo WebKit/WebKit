@@ -23,6 +23,7 @@
 #include "Document.h"
 #include "GOwnPtr.h"
 #include "GRefPtr.h"
+#include "NetworkingContext.h"
 #include "Noncopyable.h"
 #include "NotImplemented.h"
 #include "ResourceHandleClient.h"
@@ -391,14 +392,17 @@ static bool webKitWebSrcStart(WebKitWebSrc* src)
     request.setTargetType(ResourceRequestBase::TargetIsMedia);
     request.setAllowCookies(true);
 
+    NetworkingContext* context = 0;
     if (priv->frame) {
         Document* document = priv->frame->document();
         if (document)
             request.setHTTPReferrer(document->documentURI());
 
         FrameLoader* loader = priv->frame->loader();
-        if (loader)
+        if (loader) {
             loader->addExtraFieldsToSubresourceRequest(request);
+            context = loader->networkingContext();
+        }
     }
 
     // Let Apple web servers know we want to access their nice movie trailers.
@@ -419,7 +423,7 @@ static bool webKitWebSrcStart(WebKitWebSrc* src)
     // Needed to use DLNA streaming servers
     request.setHTTPHeaderField("transferMode.dlna", "Streaming");
 
-    priv->resourceHandle = ResourceHandle::create(request, priv->client, 0, false, false);
+    priv->resourceHandle = ResourceHandle::create(context, request, priv->client, false, false);
     if (!priv->resourceHandle) {
         GST_ERROR_OBJECT(src, "Failed to create ResourceHandle");
         return false;

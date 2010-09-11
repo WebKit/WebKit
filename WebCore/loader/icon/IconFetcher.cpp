@@ -27,6 +27,7 @@
 #include "IconFetcher.h"
 
 #include "Frame.h"
+#include "FrameLoaderClient.h"
 #include "HTMLHeadElement.h"
 #include "HTMLLinkElement.h"
 #include "HTMLNames.h"
@@ -173,7 +174,7 @@ void IconFetcher::loadEntry()
     ASSERT(m_currentEntry < m_entries.size());
     ASSERT(!m_handle);
     
-    m_handle = ResourceHandle::create(m_entries[m_currentEntry].url(), this, m_frame, false, false);
+    m_handle = ResourceHandle::create(m_frame->loader()->networkingContext(), m_entries[m_currentEntry].url(), this, false, false);
 }
     
 void IconFetcher::loadFailed()

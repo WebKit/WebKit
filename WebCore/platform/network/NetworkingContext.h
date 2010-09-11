@@ -57,6 +57,7 @@ public:
 #if PLATFORM(WIN)
     virtual String userAgent() const = 0;
     virtual String referrer() const = 0;
+    virtual ResourceError blockedError(const ResourceRequest&) const = 0;
 #endif
 
 protected:

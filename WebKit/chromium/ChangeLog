@@ -1,3 +1,15 @@
+2010-09-10  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        Reviewed by Darin Adler.
+
+        Add NetworkingContext to avoid layer violations
+        https://bugs.webkit.org/show_bug.cgi?id=42292
+
+        * src/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::create):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+
 2010-09-10  Sam Weinig  <sam@webkit.org>
 
         Fix chromium build.

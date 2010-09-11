@@ -51,7 +51,6 @@ class Frame;
 #endif
 
 #if PLATFORM(QT)
-class QWebFrame;
 class QWebNetworkJob;
 namespace WebCore {
 class QNetworkReplyHandler;
@@ -121,11 +120,9 @@ namespace WebCore {
             , m_bufferSize(0)
             , m_total(0)
             , m_idleHandler(0)
-            , m_frame(0)
 #endif
 #if PLATFORM(QT)
             , m_job(0)
-            , m_frame(0)
 #endif
 #if PLATFORM(MAC)
             , m_startWhenScheduled(false)
@@ -202,11 +199,11 @@ namespace WebCore {
         char* m_buffer;
         gsize m_bufferSize, m_total;
         guint m_idleHandler;
-        Frame* m_frame;
+        RefPtr<NetworkingContext> m_context;
 #endif
 #if PLATFORM(QT)
         QNetworkReplyHandler* m_job;
-        QWebFrame* m_frame;
+        RefPtr<NetworkingContext> m_context;
 #endif
 
 #if PLATFORM(MAC)

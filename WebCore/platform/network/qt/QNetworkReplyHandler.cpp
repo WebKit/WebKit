@@ -171,7 +171,11 @@ QNetworkReplyHandler::QNetworkReplyHandler(ResourceHandle* handle, LoadMode load
     else
         m_method = QNetworkAccessManager::UnknownOperation;
 
-    m_request = r.toNetworkRequest(m_resourceHandle->getInternal()->m_frame);
+    QObject* originatingObject = 0;
+    if (m_resourceHandle->getInternal()->m_context)
+        originatingObject = m_resourceHandle->getInternal()->m_context->originatingObject();
+
+    m_request = r.toNetworkRequest(originatingObject);
 
     if (m_loadMode == LoadNormal)
         start();
@@ -374,7 +378,11 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
         if (!m_resourceHandle) // network error did cancel the request
             return;
 
-        m_request = newRequest.toNetworkRequest(m_resourceHandle->getInternal()->m_frame);
+        QObject* originatingObject = 0;
+        if (m_resourceHandle->getInternal()->m_context)
+            originatingObject = m_resourceHandle->getInternal()->m_context->originatingObject();
+
+        m_request = newRequest.toNetworkRequest(originatingObject);
         return;
     }
 
@@ -426,7 +434,12 @@ void QNetworkReplyHandler::start()
 
     ResourceHandleInternal* d = m_resourceHandle->getInternal();
 
-    QNetworkAccessManager* manager = d->m_frame->page()->networkAccessManager();
+    QNetworkAccessManager* manager = 0;
+    if (d->m_context)
+        manager = d->m_context->networkAccessManager();
+
+    if (!manager)
+        return;
 
     const QUrl url = m_request.url();
     const QString scheme = url.scheme();

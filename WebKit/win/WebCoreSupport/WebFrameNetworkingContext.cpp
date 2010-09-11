@@ -37,3 +37,8 @@ String WebFrameNetworkingContext::referrer() const
 {
     return frame()->loader()->referrer();
 }
+
+WebCore::ResourceError WebFrameNetworkingContext::blockedError(const WebCore::ResourceRequest& request) const
+{
+    return frame()->loader()->blockedError(request);
+}

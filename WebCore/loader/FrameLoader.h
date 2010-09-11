@@ -329,7 +329,7 @@ public:
 
     bool pageDismissalEventBeingDispatched() const { return m_pageDismissalEventBeingDispatched; }
 
-    inline NetworkingContext* networkingContext() const;
+    NetworkingContext* networkingContext() const;
 
 private:
     bool canCachePageContainingThisFrame();

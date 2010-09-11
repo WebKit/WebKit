@@ -103,13 +103,14 @@ ResourceHandle::~ResourceHandle()
     cancel();
 }
 
-bool ResourceHandle::start(Frame* frame)
+bool ResourceHandle::start(NetworkingContext* context)
 {
     // The frame could be null if the ResourceHandle is not associated to any
     // Frame, e.g. if we are downloading a file.
     // If the frame is not null but the page is null this must be an attempted
-    // load from an onUnload handler, so let's just block it.
-    if (frame && !frame->page())
+    // load from an unload handler, so let's just block it.
+    // If both the frame and the page are not null the context is valid.
+    if (context && !context->isValid())
         return false;
 
     ResourceHandleManager::sharedInstance()->add(this);
@@ -187,7 +188,7 @@ bool ResourceHandle::loadsBlocked()
     return false;
 }
 
-void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data, Frame*)
+void ResourceHandle::loadResourceSynchronously(NetworkingContext*, const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     WebCoreSynchronousLoader syncLoader;
     RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(request, &syncLoader, true, false));

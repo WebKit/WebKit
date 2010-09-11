@@ -29,6 +29,7 @@
 #include "AuthenticationChallenge.h"
 #include "AuthenticationClient.h"
 #include "HTTPHeaderMap.h"
+#include "NetworkingContext.h"
 #include "ThreadableLoader.h"
 #include <wtf/OwnPtr.h>
 
@@ -109,9 +110,8 @@ private:
     };
 
 public:
-    // FIXME: should not need the Frame
-    static PassRefPtr<ResourceHandle> create(const ResourceRequest&, ResourceHandleClient*, Frame*, bool defersLoading, bool shouldContentSniff);
-    static void loadResourceSynchronously(const ResourceRequest&, StoredCredentials, ResourceError&, ResourceResponse&, Vector<char>& data, Frame* frame);
+    static PassRefPtr<ResourceHandle> create(NetworkingContext*, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff);
+    static void loadResourceSynchronously(NetworkingContext*, const ResourceRequest&, StoredCredentials, ResourceError&, ResourceResponse&, Vector<char>& data);
 
     static void prepareForURL(const KURL&);
     static bool willLoadFromCache(ResourceRequest&, Frame*);
@@ -212,7 +212,7 @@ private:
 
     void scheduleFailure(FailureType);
 
-    bool start(Frame*);
+    bool start(NetworkingContext*);
 
     virtual void refAuthenticationClient() { ref(); }
     virtual void derefAuthenticationClient() { deref(); }
