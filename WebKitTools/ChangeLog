@@ -1,3 +1,15 @@
+2010-09-10  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Update queue status when patches fail their first land attempt
+        https://bugs.webkit.org/show_bug.cgi?id=45583
+
+        Add a few more _update_status calls to make it more obvious if a patch is 
+        being retried because tests failed.
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+
 2010-09-10  Balazs Kelemen  <kb@inf.u-szeged.hu>
 
         Reviewed by Andreas Kling.

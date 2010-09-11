@@ -213,7 +213,7 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
                 "--quiet"])
         except ScriptError, e:
             failure_log = self._log_from_script_error_for_upload(e)
-            self._update_status("Unable to successfully build and test", results_file=failure_log)
+            self._update_status("Unable to successfully do a clean build and test", results_file=failure_log)
             return False
         return True
 
@@ -260,11 +260,13 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
     def process_work_item(self, patch):
         self._cc_watchers(patch.bug_id())
         if not self._land(patch, first_run=True):
+            self._update_status("Patch could not be landed with first attempt, doing a clean build as a sanity check", patch)
             # The patch failed to land, but the bots were green. It's possible
             # that the bots were behind. To check that case, we try to build and
             # test ourselves.
             if not self._can_build_and_test():
                 return False
+            self._update_status("Clean build succeeded, trying patch again", patch)
             # Hum, looks like the patch is actually bad. Of course, we could
             # have been bitten by a flaky test the first time around.  We try
             # to land again.  If it fails a second time, we're pretty sure its
