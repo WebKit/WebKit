@@ -2436,8 +2436,6 @@ BUG36019 WIN LINUX : fast/images/svg-as-tiled-background.html = IMAGE
 // WebKit roll 55250 to 55339
 BUG36966 : fast/loader/about-blank-hash-kept.html = FAIL
 
-BUG37463 MAC DEBUG : svg/custom/transform-ignore-after-invalid.svg = PASS CRASH
-
 // Bugs that went unreported when we upstreamed run_webkit_tests
 // This one may be an actual regression! Started being flaky after
 // http://trac.webkit.org/log/?verbose=on&rev=55742&stop_rev=55710

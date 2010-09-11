@@ -1,3 +1,12 @@
+2010-09-11  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] remove passing test svg/custom/transform-ignore-after-invalid.svg
+        https://bugs.webkit.org/show_bug.cgi?id=45579
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-11  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.
