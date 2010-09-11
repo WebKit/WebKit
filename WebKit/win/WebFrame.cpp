@@ -507,9 +507,10 @@ HRESULT STDMETHODCALLTYPE WebFrame::currentForm(
 
     *currentForm = 0;
 
-    if (Frame* coreFrame = core(this))
-        if (HTMLFormElement* formElement = coreFrame->currentForm())
+    if (Frame* coreFrame = core(this)) {
+        if (HTMLFormElement* formElement = coreFrame->selection()->currentForm())
             *currentForm = DOMElement::createInstance(formElement);
+    }
 
     return *currentForm ? S_OK : E_FAIL;
 }

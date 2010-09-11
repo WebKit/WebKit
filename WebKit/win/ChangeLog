@@ -1,3 +1,11 @@
+2010-09-10  Brian Weinstein  <bweinstein@apple.com>
+
+        Windows Build Fix. Fix some fallout from r67238, currentForm is now off of 
+        SelectionController instead of frame. Also fix a style issue.
+
+        * WebFrame.cpp:
+        (WebFrame::currentForm):
+
 2010-09-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Fisher.
