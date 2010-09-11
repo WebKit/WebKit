@@ -1,3 +1,19 @@
+2010-09-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8414282> Can’t dynamically change first-letter to/from floating
+
+        Test: fast/dynamic/first-letter-display-change.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::styleForFirstLetter): Factored this helper function out.
+        (WebCore::RenderBlock::updateFirstLetter): Renamed variables so that the
+        “update style” and “create new” branches use the same terminology. In the
+        update case, if the style change requires a new renderer, handle it.
+        * rendering/RenderTextFragment.h:
+        (WebCore::toRenderTextFragment): Added.
+
 2010-09-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

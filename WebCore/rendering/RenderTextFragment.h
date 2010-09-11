@@ -59,6 +59,21 @@ private:
     RenderObject* m_firstLetter;
 };
 
+inline RenderTextFragment* toRenderTextFragment(RenderObject* object)
+{ 
+    ASSERT(!object || toRenderText(object)->isTextFragment());
+    return static_cast<RenderTextFragment*>(object);
+}
+
+inline const RenderTextFragment* toRenderTextFragment(const RenderObject* object)
+{ 
+    ASSERT(!object || toRenderText(object)->isTextFragment());
+    return static_cast<const RenderTextFragment*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderTextFragment(const RenderTextFragment*);
+
 } // namespace WebCore
 
 #endif // RenderTextFragment_h

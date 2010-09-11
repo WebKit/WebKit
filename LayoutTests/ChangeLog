@@ -1,3 +1,14 @@
+2010-09-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8414282> Can’t dynamically change first-letter to/from floating
+
+        * fast/dynamic/first-letter-display-change-expected.checksum: Added.
+        * fast/dynamic/first-letter-display-change-expected.png: Added.
+        * fast/dynamic/first-letter-display-change-expected.txt: Added.
+        * fast/dynamic/first-letter-display-change.html: Added.
+
 2010-09-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed.
