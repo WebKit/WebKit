@@ -1,3 +1,19 @@
+2010-09-11  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Fix EFL build after r67274
+        https://bugs.webkit.org/show_bug.cgi?id=45584
+
+        Remove include of ZoomMode.h and change setZoomFactor and zoomFactor
+        to proper apis chaged by r67264.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_zoom_get):
+        (ewk_frame_zoom_set):
+        (ewk_frame_zoom_text_only_get):
+        (ewk_frame_zoom_text_only_set):
+
 2010-09-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Fisher.

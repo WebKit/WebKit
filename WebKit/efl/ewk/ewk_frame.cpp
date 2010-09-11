@@ -45,7 +45,6 @@
 #include "SharedBuffer.h"
 #include "SubstituteData.h"
 #include "WindowsKeyboardCodes.h"
-#include "ZoomMode.h"
 #include "ewk_private.h"
 
 #include <Eina.h>
@@ -71,7 +70,7 @@ struct Ewk_Frame_Smart_Data {
     struct {
         Evas_Coord w, h;
     } contents_size;
-    WebCore::ZoomMode zoom_mode;
+    Eina_Bool textZoom:1;
     Eina_Bool editable:1;
 };
 
@@ -1024,7 +1023,10 @@ float ewk_frame_zoom_get(const Evas_Object* o)
     WebCore::FrameView* view = sd->frame->view();
     if (!view)
         return -1;
-    return view->zoomFactor();
+
+    if (sd->textZoom)
+        return view->textZoomFactor();
+    return view->pageZoomFactor();
 }
 
 /**
@@ -1044,7 +1046,10 @@ Eina_Bool ewk_frame_zoom_set(Evas_Object* o, float zoom)
     WebCore::FrameView* view = sd->frame->view();
     if (!view)
         return EINA_FALSE;
-    view->setZoomFactor(zoom, sd->zoom_mode);
+    if (sd->textZoom)
+        view->setTextZoomFactor(zoom);
+    else
+        view->setPageZoomFactor(zoom);
     return EINA_TRUE;
 }
 
@@ -1058,7 +1063,7 @@ Eina_Bool ewk_frame_zoom_set(Evas_Object* o, float zoom)
 Eina_Bool ewk_frame_zoom_text_only_get(const Evas_Object* o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
-    return sd->zoom_mode == WebCore::ZoomTextOnly;
+    return sd->textZoom;
 }
 
 /**
@@ -1073,15 +1078,19 @@ Eina_Bool ewk_frame_zoom_text_only_set(Evas_Object* o, Eina_Bool setting)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, EINA_FALSE);
-    WebCore::ZoomMode zm = setting ? WebCore::ZoomTextOnly : WebCore::ZoomPage;
-    if (sd->zoom_mode == zm)
+    if (sd->textZoom == setting)
         return EINA_TRUE;
 
-    sd->zoom_mode = zm;
     WebCore::FrameView* view = sd->frame->view();
     if (!view)
         return EINA_FALSE;
-    view->setZoomFactor(view->zoomFactor(), sd->zoom_mode);
+
+    float zoom_level = sd->textZoom ? view->textZoomFactor() : view->pageZoomFactor();
+    sd->textZoom = setting;
+    if (sd->textZoom)
+        view->setPageAndTextZoomFactors(1, zoom_level);
+    else
+        view->setPageAndTextZoomFactors(zoom_level, 1);
     return EINA_TRUE;
 }
 
