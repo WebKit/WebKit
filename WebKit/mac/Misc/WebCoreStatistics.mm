@@ -29,11 +29,10 @@
 #import "WebCoreStatistics.h"
 
 #import "DOMElementInternal.h"
-#import <JavaScriptCore/RegisterFile.h>
-#import <JavaScriptCore/ExecutableAllocator.h>
 #import "WebCache.h"
 #import "WebFrameInternal.h"
-#import <runtime/JSLock.h>
+#import <JavaScriptCore/JSLock.h>
+#import <JavaScriptCore/MemoryStatistics.h>
 #import <WebCore/Console.h>
 #import <WebCore/FontCache.h>
 #import <WebCore/Frame.h>
@@ -196,18 +195,19 @@ using namespace WebCore;
 + (NSDictionary *)memoryStatistics
 {
     WTF::FastMallocStatistics fastMallocStatistics = WTF::fastMallocStatistics();
+    
     JSLock lock(SilenceAssertionsOnly);
-    Heap::Statistics jsHeapStatistics = JSDOMWindow::commonJSGlobalData()->heap.statistics();
-    size_t jscStackBytes = RegisterFile::committedByteCount();
-    size_t jscJITBytes = ExecutableAllocator::committedByteCount();
+    Heap::Statistics heapMemoryStats = heapStatistics(JSDOMWindow::commonJSGlobalData());
+    GlobalMemoryStatistics globalMemoryStats = globalMemoryStatistics();
+    
     return [NSDictionary dictionaryWithObjectsAndKeys:
                 [NSNumber numberWithInt:fastMallocStatistics.reservedVMBytes], @"FastMallocReservedVMBytes",
                 [NSNumber numberWithInt:fastMallocStatistics.committedVMBytes], @"FastMallocCommittedVMBytes",
                 [NSNumber numberWithInt:fastMallocStatistics.freeListBytes], @"FastMallocFreeListBytes",
-                [NSNumber numberWithInt:jsHeapStatistics.size], @"JavaScriptHeapSize",
-                [NSNumber numberWithInt:jsHeapStatistics.free], @"JavaScriptFreeSize",
-                [NSNumber numberWithUnsignedInt:(unsigned int)jscStackBytes], @"JavaScriptStackSize",
-                [NSNumber numberWithUnsignedInt:(unsigned int)jscJITBytes], @"JavaScriptJITSize",
+                [NSNumber numberWithInt:heapMemoryStats.size], @"JavaScriptHeapSize",
+                [NSNumber numberWithInt:heapMemoryStats.free], @"JavaScriptFreeSize",
+                [NSNumber numberWithUnsignedInt:(unsigned int)globalMemoryStats.stackBytes], @"JavaScriptStackSize",
+                [NSNumber numberWithUnsignedInt:(unsigned int)globalMemoryStats.JITBytes], @"JavaScriptJITSize",
             nil];
 }
 

@@ -1,3 +1,19 @@
+2010-09-10  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+        
+        Refactor JavaScriptCore memory statistics so that WebKit doesn't need to know 
+        about the JIT and other implementation details of JavaScriptCore.  Necessary 
+        to fix PPC build.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=45528
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/MemoryStatistics.cpp: Added.
+        (JSC::memoryStatistics):
+        * runtime/MemoryStatistics.h: Added.
+
 2010-09-09  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Gavin Barraclough.
