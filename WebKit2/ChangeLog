@@ -1,3 +1,15 @@
+2010-09-10  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Reviewed by Andreas Kling.
+
+        Application cache directory should be checked before sending to the web process
+        https://bugs.webkit.org/show_bug.cgi?id=45462
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy): Check the return value of
+        m_context->applicationCacheDirectoy() to avoid sending a null string
+        to the web process what makes it asserting.
+
 2010-09-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
