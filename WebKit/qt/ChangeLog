@@ -1,5 +1,12 @@
 2010-09-10  Sam Weinig  <sam@webkit.org>
 
+        Fix Qt build.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+
+2010-09-10  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Darin Adler.
 
         Remove unnecessary constraint in WebCore of choosing either text zoom or full page zoom.
