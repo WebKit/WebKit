@@ -2,6 +2,19 @@
 
         No review; build fix only.
 
+        <CoreGraphics/CGAffineTransform.h> isn't on the build bots either.  Wrap
+        all references to m_movieTransform in #if USE(ACCELERATED_COMPOSITING) guards.
+        
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::MediaPlayerPrivateQuickTimeVisualContext):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::naturalSize):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::retrieveAndResetMovieTransform):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.h:
+
+2010-09-10  Jer Noble  <jer.noble@apple.com>
+
+        No review; build fix only.
+
         <CoreGraphics/CGFloat.h> does not exist on the build bots.  Replace
         instances of CGFAbs() with abs().
 

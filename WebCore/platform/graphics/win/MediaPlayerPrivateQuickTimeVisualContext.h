@@ -173,6 +173,7 @@ private:
     RefPtr<WKCACFLayer> m_qtVideoLayer;
     OwnPtr<GraphicsLayer> m_transformLayer;
     OwnPtr<WKCAImageQueue> m_imageQueue;
+    CGAffineTransform m_movieTransform; 
 #endif
     RefPtr<QTMovieVisualContext> m_visualContext;
     float m_seekTo;
@@ -193,7 +194,6 @@ private:
     double m_timeStartedPlaying;
     double m_timeStoppedPlaying;
 #endif
-    CGAffineTransform m_movieTransform; 
 
 };
 
