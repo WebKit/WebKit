@@ -75,7 +75,6 @@ Settings::Settings(Page* page)
     , m_sessionStorageQuota(StorageMap::noQuota)
 #endif
     , m_pluginAllowedRunTime(numeric_limits<unsigned>::max())
-    , m_zoomMode(ZoomPage)
     , m_isSpatialNavigationEnabled(false)
     , m_isJavaEnabled(false)
     , m_loadsImagesAutomatically(false)
@@ -509,15 +508,6 @@ void Settings::setOfflineWebApplicationCacheEnabled(bool enabled)
 void Settings::setShouldPaintCustomScrollbars(bool shouldPaintCustomScrollbars)
 {
     m_shouldPaintCustomScrollbars = shouldPaintCustomScrollbars;
-}
-
-void Settings::setZoomMode(ZoomMode mode)
-{
-    if (mode == m_zoomMode)
-        return;
-    
-    m_zoomMode = mode;
-    setNeedsRecalcStyleInAllFrames(m_page);
 }
 
 void Settings::setEnforceCSSMIMETypeInNoQuirksMode(bool enforceCSSMIMETypeInNoQuirksMode)

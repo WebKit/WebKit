@@ -115,7 +115,6 @@ WebPage::WebPage(uint64_t pageID, const IntSize& viewSize, const WebPreferencesS
     m_page->settings()->setFixedFontFamily(store.fixedFontFamily);
     m_page->settings()->setSansSerifFontFamily(store.sansSerifFontFamily);
     m_page->settings()->setSerifFontFamily(store.serifFontFamily);
-
     m_page->settings()->setJavaScriptCanOpenWindowsAutomatically(true);
 
     m_page->setGroupName("WebKit2Group");
@@ -303,27 +302,40 @@ void WebPage::drawRect(GraphicsContext& graphicsContext, const IntRect& rect)
     graphicsContext.restore();
 }
 
-float WebPage::zoomFactor() const
+float WebPage::textZoomFactor() const
 {
     if (Frame* coreFrame = m_mainFrame->coreFrame()) {
         if (FrameView* view = coreFrame->view())
-            return view->zoomFactor();
+            return view->textZoomFactor();
     }
     
     return 1.0f;
 }
 
-void WebPage::setZoomFactor(float zoomFactor)
+void WebPage::setTextZoomFactor(float zoomFactor)
 {
     if (Frame* coreFrame = m_mainFrame->coreFrame()) {
         if (FrameView* view = coreFrame->view())
-            return view->setZoomFactor(zoomFactor, m_page->settings()->zoomMode());
+            return view->setTextZoomFactor(zoomFactor);
     }
 }
 
-void WebPage::setZoomMode(ZoomMode mode)
+float WebPage::pageZoomFactor() const
 {
-    m_page->settings()->setZoomMode(mode);
+    if (Frame* coreFrame = m_mainFrame->coreFrame()) {
+        if (FrameView* view = coreFrame->view())
+            return view->pageZoomFactor();
+    }
+    
+    return 1.0f;
+}
+
+void WebPage::setPageZoomFactor(float zoomFactor)
+{
+    if (Frame* coreFrame = m_mainFrame->coreFrame()) {
+        if (FrameView* view = coreFrame->view())
+            return view->setPageZoomFactor(zoomFactor);
+    }
 }
 
 // Events 

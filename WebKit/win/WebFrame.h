@@ -355,7 +355,6 @@ public:
     void updateBackground();
 
     // WebFrame (matching WebCoreFrameBridge)
-    void setTextSizeMultiplier(float multiplier);
     HRESULT inViewSourceMode(BOOL *flag);
     HRESULT setInViewSourceMode(BOOL flag);
     HRESULT elementWithName(BSTR name, IDOMElement* form, IDOMElement** element);

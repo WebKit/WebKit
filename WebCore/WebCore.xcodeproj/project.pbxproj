@@ -5157,7 +5157,6 @@
 		CE02F0C411E83ADD00C6684A /* ScriptControllerBase.h in Headers */ = {isa = PBXBuildFile; fileRef = CE02F0C311E83ADD00C6684A /* ScriptControllerBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE057FA51220731100A476D5 /* DocumentMarkerController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE057FA31220731100A476D5 /* DocumentMarkerController.cpp */; };
 		CE057FA61220731100A476D5 /* DocumentMarkerController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE057FA41220731100A476D5 /* DocumentMarkerController.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CE172E011136E8CE0062A533 /* ZoomMode.h in Headers */ = {isa = PBXBuildFile; fileRef = CE172E001136E8CE0062A533 /* ZoomMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE4C00E410F6F7BA00CA38F5 /* HTMLNoScriptElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE4C00E310F6F7BA00CA38F5 /* HTMLNoScriptElement.cpp */; };
 		CE4C00E610F6F7C100CA38F5 /* HTMLNoScriptElement.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4C00E510F6F7C100CA38F5 /* HTMLNoScriptElement.h */; };
 		CE54FD381016D9A6008B44C8 /* ScriptSourceProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = CE54FD371016D9A6008B44C8 /* ScriptSourceProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11011,7 +11010,6 @@
 		CE02F0C311E83ADD00C6684A /* ScriptControllerBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptControllerBase.h; sourceTree = "<group>"; };
 		CE057FA31220731100A476D5 /* DocumentMarkerController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentMarkerController.cpp; sourceTree = "<group>"; };
 		CE057FA41220731100A476D5 /* DocumentMarkerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentMarkerController.h; sourceTree = "<group>"; };
-		CE172E001136E8CE0062A533 /* ZoomMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZoomMode.h; sourceTree = "<group>"; };
 		CE4C00E310F6F7BA00CA38F5 /* HTMLNoScriptElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLNoScriptElement.cpp; sourceTree = "<group>"; };
 		CE4C00E510F6F7C100CA38F5 /* HTMLNoScriptElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLNoScriptElement.h; sourceTree = "<group>"; };
 		CE54FD371016D9A6008B44C8 /* ScriptSourceProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptSourceProvider.h; sourceTree = "<group>"; };
@@ -12808,7 +12806,6 @@
 				E1271A510EEECD1C00F61213 /* WorkerNavigator.idl */,
 				97DD4D840FDF4D6D00ECF9A4 /* XSSAuditor.cpp */,
 				97DD4D850FDF4D6E00ECF9A4 /* XSSAuditor.h */,
-				CE172E001136E8CE0062A533 /* ZoomMode.h */,
 			);
 			path = page;
 			sourceTree = "<group>";
@@ -20456,7 +20453,6 @@
 				93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */,
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
-				CE172E011136E8CE0062A533 /* ZoomMode.h in Headers */,
 				D0FF2A5E11F8C45A007E74E0 /* PingLoader.h in Headers */,
 				C50B561712119D23008B46E0 /* GroupSettings.h in Headers */,
 				BCA979171215D055005C485C /* ImageBufferData.h in Headers */,

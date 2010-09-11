@@ -1427,7 +1427,6 @@ static bool fastDocumentTeardownEnabled()
     settings->setWebArchiveDebugModeEnabled([preferences webArchiveDebugModeEnabled]);
     settings->setLocalFileContentSniffingEnabled([preferences localFileContentSniffingEnabled]);
     settings->setOfflineWebApplicationCacheEnabled([preferences offlineWebApplicationCacheEnabled]);
-    settings->setZoomMode([preferences zoomsTextOnly] ? ZoomTextOnly : ZoomPage);
     settings->setJavaScriptCanAccessClipboard([preferences javaScriptCanAccessClipboard]);
     settings->setXSSAuditorEnabled([preferences isXSSAuditorEnabled]);
     settings->setEnforceCSSMIMETypeInNoQuirksMode(!WKAppVersionCheckLessThan(@"com.apple.iWeb", -1, 2.1));
@@ -1450,6 +1449,10 @@ static bool fastDocumentTeardownEnabled()
 
     // Application Cache Preferences are stored on the global cache storage manager, not in Settings.
     [WebApplicationCache setDefaultOriginQuota:[preferences applicationCacheDefaultOriginQuota]];
+
+    BOOL zoomsTextOnly = [preferences zoomsTextOnly];
+    if (_private->zoomsTextOnly != zoomsTextOnly)
+        [self _setZoomMultiplier:_private->zoomMultiplier isTextOnly:zoomsTextOnly];
 }
 
 static inline IMP getMethod(id o, SEL s)
@@ -3301,17 +3304,18 @@ static bool needsWebViewInitThreadWorkaround()
 {
     // NOTE: This has no visible effect when viewing a PDF (see <rdar://problem/4737380>)
     _private->zoomMultiplier = multiplier;
-
-    ASSERT(_private->page);
-    if (_private->page)
-        _private->page->settings()->setZoomMode(isTextOnly ? ZoomTextOnly : ZoomPage);
+    _private->zoomsTextOnly = isTextOnly;
 
     // FIXME: It would be nice to rework this code so that _private->zoomMultiplier doesn't exist
     // and instead FrameView::zoomFactor is used.
     Frame* coreFrame = [self _mainCoreFrame];
     if (coreFrame) {
-        if (FrameView* view = coreFrame->view())
-            view->setZoomFactor(multiplier, isTextOnly ? ZoomTextOnly : ZoomPage);
+        if (FrameView* view = coreFrame->view()) {
+            if (_private->zoomsTextOnly)
+                view->setPageAndTextZoomFactors(1, multiplier);
+            else
+                view->setPageAndTextZoomFactors(multiplier, 1);
+        }
     }
 }
 
@@ -3332,7 +3336,7 @@ static bool needsWebViewInitThreadWorkaround()
     if (!_private->page)
         return NO;
     
-    return _private->page->settings()->zoomMode() == ZoomTextOnly;
+    return _private->zoomsTextOnly;
 }
 
 #define MinimumZoomMultiplier       0.5f

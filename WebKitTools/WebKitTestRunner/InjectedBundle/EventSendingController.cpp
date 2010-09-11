@@ -92,30 +92,38 @@ void EventSendingController::leapForward(JSContextRef context, size_t argumentCo
 
 void EventSendingController::textZoomIn()
 {
-    WKBundlePageSetZoomMode(InjectedBundle::shared().page()->page(), kWKBundlePageZoomModeTextOnly);
-    float zoomFactor = WKBundlePageGetZoomFactor(InjectedBundle::shared().page()->page());
-    WKBundlePageSetZoomFactor(InjectedBundle::shared().page()->page(), zoomFactor * ZoomMultiplierRatio);
+    // Ensure page zoom is reset.
+    WKBundlePageSetPageZoomFactor(InjectedBundle::shared().page()->page(), 1);
+
+    float zoomFactor = WKBundlePageGetTextZoomFactor(InjectedBundle::shared().page()->page());
+    WKBundlePageSetTextZoomFactor(InjectedBundle::shared().page()->page(), zoomFactor * ZoomMultiplierRatio);
 }
 
 void EventSendingController::textZoomOut()
 {
-    WKBundlePageSetZoomMode(InjectedBundle::shared().page()->page(), kWKBundlePageZoomModeTextOnly);
-    float zoomFactor = WKBundlePageGetZoomFactor(InjectedBundle::shared().page()->page());
-    WKBundlePageSetZoomFactor(InjectedBundle::shared().page()->page(), zoomFactor / ZoomMultiplierRatio);
+    // Ensure page zoom is reset.
+    WKBundlePageSetPageZoomFactor(InjectedBundle::shared().page()->page(), 1);
+
+    float zoomFactor = WKBundlePageGetTextZoomFactor(InjectedBundle::shared().page()->page());
+    WKBundlePageSetTextZoomFactor(InjectedBundle::shared().page()->page(), zoomFactor / ZoomMultiplierRatio);
 }
 
 void EventSendingController::zoomPageIn()
 {
-    WKBundlePageSetZoomMode(InjectedBundle::shared().page()->page(), kWKBundlePageZoomModePage);
-    float zoomFactor = WKBundlePageGetZoomFactor(InjectedBundle::shared().page()->page());
-    WKBundlePageSetZoomFactor(InjectedBundle::shared().page()->page(), zoomFactor * ZoomMultiplierRatio);
+    // Ensure text zoom is reset.
+    WKBundlePageSetTextZoomFactor(InjectedBundle::shared().page()->page(), 1);
+
+    float zoomFactor = WKBundlePageGetPageZoomFactor(InjectedBundle::shared().page()->page());
+    WKBundlePageSetPageZoomFactor(InjectedBundle::shared().page()->page(), zoomFactor / ZoomMultiplierRatio);
 }
 
 void EventSendingController::zoomPageOut()
 {
-    WKBundlePageSetZoomMode(InjectedBundle::shared().page()->page(), kWKBundlePageZoomModePage);
-    float zoomFactor = WKBundlePageGetZoomFactor(InjectedBundle::shared().page()->page());
-    WKBundlePageSetZoomFactor(InjectedBundle::shared().page()->page(), zoomFactor / ZoomMultiplierRatio);
+    // Ensure text zoom is reset.
+    WKBundlePageSetTextZoomFactor(InjectedBundle::shared().page()->page(), 1);
+
+    float zoomFactor = WKBundlePageGetPageZoomFactor(InjectedBundle::shared().page()->page());
+    WKBundlePageSetPageZoomFactor(InjectedBundle::shared().page()->page(), zoomFactor / ZoomMultiplierRatio);
 }
 
 // Object Creation

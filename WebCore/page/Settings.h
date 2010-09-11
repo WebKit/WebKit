@@ -30,7 +30,6 @@
 #include "EditingBehaviorTypes.h"
 #include "FontRenderingMode.h"
 #include "KURL.h"
-#include "ZoomMode.h"
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
@@ -251,9 +250,6 @@ namespace WebCore {
 
         void setShouldPaintCustomScrollbars(bool);
         bool shouldPaintCustomScrollbars() const { return m_shouldPaintCustomScrollbars; }
-
-        void setZoomMode(ZoomMode);
-        ZoomMode zoomMode() const { return m_zoomMode; }
         
         void setEnforceCSSMIMETypeInNoQuirksMode(bool);
         bool enforceCSSMIMETypeInNoQuirksMode() { return m_enforceCSSMIMETypeInNoQuirksMode; }
@@ -354,7 +350,6 @@ namespace WebCore {
         unsigned m_sessionStorageQuota;
 #endif
         unsigned m_pluginAllowedRunTime;
-        ZoomMode m_zoomMode;
         bool m_isSpatialNavigationEnabled : 1;
         bool m_isJavaEnabled : 1;
         bool m_loadsImagesAutomatically : 1;

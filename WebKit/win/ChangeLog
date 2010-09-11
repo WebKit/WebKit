@@ -1,3 +1,27 @@
+2010-09-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove unnecessary constraint in WebCore of choosing either text zoom or full page zoom.
+        Precursor to <rdar://problem/7660657>
+        https://bugs.webkit.org/show_bug.cgi?id=45522
+
+        * WebFrame.cpp:
+        * WebFrame.h:
+        Remove dead code.
+
+        * WebView.cpp:
+        (WebView::WebView):
+        (WebView::setZoomMultiplier):
+        (WebView::zoomMultiplier):
+        (WebView::canMakeTextLarger):
+        (WebView::makeTextLarger):
+        (WebView::canMakeTextSmaller):
+        (WebView::makeTextSmaller):
+        (WebView::notifyPreferencesChanged):
+        * WebView.h:
+        Move tracking of text only zoom here from WebCore.
+
 2010-09-10  Brian Weinstein  <bweinstein@apple.com>
 
         Windows Build Fix. Fix some fallout from r67238, currentForm is now off of 

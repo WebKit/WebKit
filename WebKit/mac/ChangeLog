@@ -1,3 +1,20 @@
+2010-09-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove unnecessary constraint in WebCore of choosing either text zoom or full page zoom.
+        Precursor to <rdar://problem/7660657>
+        https://bugs.webkit.org/show_bug.cgi?id=45522
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]):
+        (-[WebView _setZoomMultiplier:isTextOnly:]):
+        (-[WebView _realZoomMultiplierIsTextOnly]):
+        * WebView/WebViewData.h:
+        * WebView/WebViewData.mm:
+        (-[WebViewPrivate init]):
+        Move tracking of text only zoom here from WebCore.
+
 2010-09-10  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Alexey Proskuryakov.

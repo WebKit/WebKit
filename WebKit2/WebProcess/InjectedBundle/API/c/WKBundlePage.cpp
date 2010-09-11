@@ -70,6 +70,11 @@ WKBundleFrameRef WKBundlePageGetMainFrame(WKBundlePageRef pageRef)
     return toRef(toWK(pageRef)->mainFrame());
 }
 
+void WKBundlePageStopLoading(WKBundlePageRef pageRef)
+{
+    toWK(pageRef)->stopLoading();
+}
+
 WKStringRef WKBundlePageCopyRenderTreeExternalRepresentation(WKBundlePageRef pageRef)
 {
     return toCopiedRef(toWK(pageRef)->renderTreeExternalRepresentation());
@@ -95,22 +100,22 @@ void WKBundlePageClose(WKBundlePageRef pageRef)
     toWK(pageRef)->sendClose();
 }
 
-float WKBundlePageGetZoomFactor(WKBundlePageRef pageRef)
+float WKBundlePageGetTextZoomFactor(WKBundlePageRef pageRef)
 {
-    return toWK(pageRef)->zoomFactor();
+    return toWK(pageRef)->textZoomFactor();
 }
 
-void WKBundlePageSetZoomFactor(WKBundlePageRef pageRef, float zoomFactor)
+void WKBundlePageSetTextZoomFactor(WKBundlePageRef pageRef, float zoomFactor)
 {
-    toWK(pageRef)->setZoomFactor(zoomFactor);
+    toWK(pageRef)->setTextZoomFactor(zoomFactor);
 }
 
-void WKBundlePageSetZoomMode(WKBundlePageRef pageRef, WKBundlePageZoomMode zoomMode)
+float WKBundlePageGetPageZoomFactor(WKBundlePageRef pageRef)
 {
-    toWK(pageRef)->setZoomMode(toZoomMode(zoomMode));
+    return toWK(pageRef)->pageZoomFactor();
 }
 
-void WKBundlePageStopLoading(WKBundlePageRef pageRef)
+void WKBundlePageSetPageZoomFactor(WKBundlePageRef pageRef, float zoomFactor)
 {
-    toWK(pageRef)->stopLoading();
+    toWK(pageRef)->setPageZoomFactor(zoomFactor);
 }

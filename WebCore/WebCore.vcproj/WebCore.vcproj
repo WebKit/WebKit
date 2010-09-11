@@ -23340,10 +23340,6 @@
 				RelativePath="..\page\XSSAuditor.h"
 				>
 			</File>
-			<File
-				RelativePath="..\page\ZoomMode.h"
-				>
-			</File>
 			<Filter
 				Name="win"
 				>

@@ -72,6 +72,7 @@ public:
         , marginWidth(-1)
         , marginHeight(-1)
         , initialLayoutComplete(false)
+        , zoomTextOnly(false)
         {}
     void init(QWebFrame* qframe, QWebFrameData* frameData);
     void setPage(QWebPage*);
@@ -100,6 +101,7 @@ public:
     int marginWidth;
     int marginHeight;
     bool initialLayoutComplete;
+    bool zoomTextOnly;
 };
 
 class QWebHitTestResultPrivate {

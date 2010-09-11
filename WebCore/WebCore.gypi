@@ -2170,7 +2170,6 @@
             'page/WorkerNavigator.h',
             'page/XSSAuditor.cpp',
             'page/XSSAuditor.h',
-            'page/ZoomMode.h',
             'platform/animation/Animation.cpp',
             'platform/animation/Animation.h',
             'platform/animation/AnimationList.cpp',

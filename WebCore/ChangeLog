@@ -1,3 +1,62 @@
+2010-09-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove unnecessary constraint in WebCore of choosing either text zoom or full page zoom.
+        Precursor to <rdar://problem/7660657>
+        https://bugs.webkit.org/show_bug.cgi?id=45522
+
+        * GNUmakefile.am:
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Remove ZoomMode.h
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::getComputedSizeFromSpecifiedSize):
+        Remove uses of shouldApplyTextZoom(), it had turned into just a compare to 1.0f.
+
+        * html/HTMLBodyElement.cpp:
+        (WebCore::adjustForZoom):
+        (WebCore::HTMLBodyElement::setScrollLeft):
+        (WebCore::HTMLBodyElement::setScrollTop):
+        Convert these to use the explicit pageZoomFactor() function, it made no sense for text zoom
+        anyway.
+
+        * page/Frame.h:
+        Remove include of ZoomMode.h
+
+        * page/FrameView.cpp:
+        (WebCore::parentPageZoomFactor):
+        (WebCore::parentTextZoomFactor):
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::setPageZoomFactor):
+        (WebCore::FrameView::setTextZoomFactor):
+        (WebCore::FrameView::setPageAndTextZoomFactors):
+        * page/FrameView.h:
+        (WebCore::FrameView::pageZoomFactor):
+        (WebCore::FrameView::textZoomFactor):
+        Change FrameView to store two values for zoom, one for page zoom and one for text zoom.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        Removed zoom mode.
+
+        * page/ZoomMode.h: Removed.
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::zoomFactor):
+        Remove now unnecessary call to shouldApplyPageZoom since it will be 1 if it should
+        be ignored.
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::setCurrentScale):
+        Use explicit setPageZoomFactor function.
+
 2010-09-10  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix for EFL.

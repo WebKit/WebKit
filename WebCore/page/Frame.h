@@ -36,7 +36,6 @@
 #include "FrameTree.h"
 #include "ScriptController.h"
 #include "UserScriptTypes.h"
-#include "ZoomMode.h"
 
 #if PLATFORM(WIN)
 #include "FrameWin.h"

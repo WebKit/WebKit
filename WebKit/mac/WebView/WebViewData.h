@@ -78,6 +78,7 @@ extern int pluginDatabaseClientCount;
     BOOL allowsUndo;
         
     float zoomMultiplier;
+    BOOL zoomsTextOnly;
 
     NSString *applicationNameForUserAgent;
     WTF::String userAgent;

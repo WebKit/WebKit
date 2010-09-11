@@ -34,7 +34,6 @@
 #include <WebCore/TextAffinity.h>
 #include <WebCore/UserContentTypes.h>
 #include <WebCore/UserScriptTypes.h>
-#include <WebCore/ZoomMode.h>
 
 namespace WebCore {
     class CSSStyleDeclaration;
@@ -116,19 +115,6 @@ inline WKAffinityType toWK(WebCore::EAffinity affinity)
     }
     ASSERT_NOT_REACHED();
     return kWKAffinityUpstream;
-}
-
-inline WebCore::ZoomMode toZoomMode(WKBundlePageZoomMode wkZoomMode)
-{
-    switch (wkZoomMode) {
-    case kWKBundlePageZoomModeTextOnly:
-        return WebCore::ZoomTextOnly;
-    case kWKBundlePageZoomModePage:
-        return WebCore::ZoomPage;
-    }
-
-    ASSERT_NOT_REACHED();
-    return WebCore::ZoomTextOnly;
 }
 
 inline WebCore::UserScriptInjectionTime toUserScriptInjectionTime(WKUserScriptInjectionTime wkInjectedTime)

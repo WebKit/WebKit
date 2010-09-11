@@ -33,23 +33,18 @@
 extern "C" {
 #endif
 
-enum WKBundlePageZoomMode {
-    kWKBundlePageZoomModePage = 0,
-    kWKBundlePageZoomModeTextOnly = 1
-};
-typedef enum WKBundlePageZoomMode WKBundlePageZoomMode;
-
+WK_EXPORT void WKBundlePageStopLoading(WKBundlePageRef page);
 WK_EXPORT bool WKBundlePageIsEditingCommandEnabled(WKBundlePageRef page, WKStringRef commandName);
 WK_EXPORT void WKBundlePageClearMainFrameName(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageClose(WKBundlePageRef page);
 WK_EXPORT WKStringRef WKBundlePageCopyRenderTreeExternalRepresentation(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageExecuteEditingCommand(WKBundlePageRef page, WKStringRef commandName, WKStringRef argument);
 
-WK_EXPORT float WKBundlePageGetZoomFactor(WKBundlePageRef page);
-WK_EXPORT void WKBundlePageSetZoomFactor(WKBundlePageRef page, float zoomFactor);
-WK_EXPORT void WKBundlePageSetZoomMode(WKBundlePageRef page, WKBundlePageZoomMode zoomMode);
+WK_EXPORT float WKBundlePageGetTextZoomFactor(WKBundlePageRef page);
+WK_EXPORT void WKBundlePageSetTextZoomFactor(WKBundlePageRef page, float zoomFactor);
+WK_EXPORT float WKBundlePageGetPageZoomFactor(WKBundlePageRef page);
+WK_EXPORT void WKBundlePageSetPageZoomFactor(WKBundlePageRef page, float zoomFactor);
 
-WK_EXPORT void WKBundlePageStopLoading(WKBundlePageRef page);
 
 #ifdef __cplusplus
 }

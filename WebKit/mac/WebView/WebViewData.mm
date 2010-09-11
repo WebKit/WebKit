@@ -62,6 +62,7 @@ int pluginDatabaseClientCount = 0;
     cssAnimationsSuspended = NO;
 
     zoomMultiplier = 1;
+    zoomsTextOnly = NO;
 
 #if ENABLE(DASHBOARD_SUPPORT)
     dashboardBehaviorAllowWheelScrolling = YES;

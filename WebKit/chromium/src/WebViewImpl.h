@@ -342,6 +342,8 @@ public:
 
     WebCore::PopupContainer* selectPopup() const { return m_selectPopup.get(); }
 
+    bool zoomTextOnly() const { return m_zoomTextOnly; }
+
     // Returns true if the event leads to scrolling.
     static bool mapKeyCodeForScroll(int keyCode,
                                    WebCore::ScrollDirection* scrollDirection,
@@ -438,6 +440,8 @@ private:
     // Keeps track of the current zoom level. 0 means no zoom, positive numbers
     // mean zoom in, negative numbers mean zoom out.
     int m_zoomLevel;
+
+    bool m_zoomTextOnly;
 
     bool m_contextMenuAllowed;
 

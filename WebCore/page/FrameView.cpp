@@ -29,9 +29,9 @@
 
 #include "AXObjectCache.h"
 #include "CSSStyleSelector.h"
+#include "CachedResourceLoader.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "CachedResourceLoader.h"
 #include "EventHandler.h"
 #include "FloatRect.h"
 #include "FocusController.h"
@@ -111,7 +111,7 @@ struct ScheduledEvent : Noncopyable {
     RefPtr<Node> m_eventTarget;
 };
 
-static inline float parentZoomFactor(Frame* frame)
+static inline float parentPageZoomFactor(Frame* frame)
 {
     Frame* parent = frame->tree()->parent();
     if (!parent)
@@ -119,7 +119,18 @@ static inline float parentZoomFactor(Frame* frame)
     FrameView* parentView = parent->view();
     if (!parentView)
         return 1;
-    return parentView->zoomFactor();
+    return parentView->pageZoomFactor();
+}
+
+static inline float parentTextZoomFactor(Frame* frame)
+{
+    Frame* parent = frame->tree()->parent();
+    if (!parent)
+        return 1;
+    FrameView* parentView = parent->view();
+    if (!parentView)
+        return 1;
+    return parentView->textZoomFactor();
 }
 
 FrameView::FrameView(Frame* frame)
@@ -145,7 +156,9 @@ FrameView::FrameView(Frame* frame)
     , m_deferSetNeedsLayouts(0)
     , m_setNeedsLayoutWasDeferred(false)
     , m_scrollCorner(0)
-    , m_zoomFactor(parentZoomFactor(frame))
+    , m_pageZoomFactor(parentPageZoomFactor(frame))
+    , m_textZoomFactor(parentTextZoomFactor(frame))
+
 {
     init();
 }
@@ -2275,36 +2288,26 @@ IntPoint FrameView::convertFromContainingView(const IntPoint& parentPoint) const
     return parentPoint;
 }
 
-bool FrameView::shouldApplyTextZoom() const
+void FrameView::setPageZoomFactor(float factor)
 {
-    if (m_zoomFactor == 1)
-        return false;
-    if (!m_frame)
-        return false;
-    Page* page = m_frame->page();
-    return page && page->settings()->zoomMode() == ZoomTextOnly;
+    setPageAndTextZoomFactors(factor, m_textZoomFactor);
 }
 
-bool FrameView::shouldApplyPageZoom() const
+void FrameView::setTextZoomFactor(float factor)
 {
-    if (m_zoomFactor == 1)
-        return false;
-    if (!m_frame)
-        return false;
-    Page* page = m_frame->page();
-    return page && page->settings()->zoomMode() == ZoomPage;
+    setPageAndTextZoomFactors(m_pageZoomFactor, factor);
 }
 
-void FrameView::setZoomFactor(float percent, ZoomMode mode)
+void FrameView::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor)
 {
+    if (m_pageZoomFactor == pageZoomFactor && m_textZoomFactor == textZoomFactor)
+        return;
+
     if (!m_frame)
         return;
 
     Page* page = m_frame->page();
     if (!page)
-        return;
-
-    if (m_zoomFactor == percent && page->settings()->zoomMode() == mode)
         return;
 
     Document* document = m_frame->document();
@@ -2322,27 +2325,26 @@ void FrameView::setZoomFactor(float percent, ZoomMode mode)
     }
 #endif
 
-    if (mode == ZoomPage) {
+    if (m_pageZoomFactor != pageZoomFactor) {
         // Update the scroll position when doing a full page zoom, so the content stays in relatively the same position.
         IntPoint scrollPosition = this->scrollPosition();
-        float percentDifference = (percent / m_zoomFactor);
+        float percentDifference = (pageZoomFactor / m_pageZoomFactor);
         setScrollPosition(IntPoint(scrollPosition.x() * percentDifference, scrollPosition.y() * percentDifference));
     }
 
-    m_zoomFactor = percent;
-    page->settings()->setZoomMode(mode);
+    m_pageZoomFactor = pageZoomFactor;
+    m_textZoomFactor = textZoomFactor;
 
     document->recalcStyle(Node::Force);
 
     for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling()) {
         if (FrameView* childView = child->view())
-            childView->setZoomFactor(m_zoomFactor, mode);
+            childView->setPageAndTextZoomFactors(m_pageZoomFactor, m_textZoomFactor);
     }
 
     if (document->renderer() && document->renderer()->needsLayout() && didFirstLayout())
         layout();
 }
-
 
 // Normal delay
 void FrameView::setRepaintThrottlingDeferredRepaintDelay(double p)

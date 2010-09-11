@@ -1,3 +1,16 @@
+2010-09-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove unnecessary constraint in WebCore of choosing either text zoom or full page zoom.
+        Precursor to <rdar://problem/7660657>
+        https://bugs.webkit.org/show_bug.cgi?id=45522
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_get_zoom_level):
+        (webkit_web_view_apply_zoom_level):
+        (webkit_web_view_set_full_content_zoom):
+
 2010-09-10  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

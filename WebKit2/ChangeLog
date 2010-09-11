@@ -1,3 +1,30 @@
+2010-09-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove unnecessary constraint in WebCore of choosing either text zoom or full page zoom.
+        Precursor to <rdar://problem/7660657>
+        https://bugs.webkit.org/show_bug.cgi?id=45522
+
+        Now that WebCore doesn't require a mode, change the bundle API for zoom to not
+        require one either.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageStopLoading):
+        (WKBundlePageGetTextZoomFactor):
+        (WKBundlePageSetTextZoomFactor):
+        (WKBundlePageGetPageZoomFactor):
+        (WKBundlePageSetPageZoomFactor):
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::textZoomFactor):
+        (WebKit::WebPage::setTextZoomFactor):
+        (WebKit::WebPage::pageZoomFactor):
+        (WebKit::WebPage::setPageZoomFactor):
+        * WebProcess/WebPage/WebPage.h:
+
 2010-09-10  Balazs Kelemen  <kb@inf.u-szeged.hu>
 
         Reviewed by Andreas Kling.
