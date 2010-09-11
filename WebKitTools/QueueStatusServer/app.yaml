@@ -7,5 +7,9 @@ handlers:
 - url: /stylesheets
   static_dir: stylesheets
 
+- url: /remote_api
+  script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
+  login: admin
+
 - url: /.*
   script: main.py

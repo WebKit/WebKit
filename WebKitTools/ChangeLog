@@ -1,3 +1,15 @@
+2010-09-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        queues.webkit.org should expose /remote_api for data upload/download
+        https://bugs.webkit.org/show_bug.cgi?id=45559
+
+        * QueueStatusServer/app.yaml:
+         - /remote_api is a standard app-engine service which allows use of
+           the bulk uploader for data upload/download.  Exposing this
+           (for admin access only) allows us to use 
+
 2010-09-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
