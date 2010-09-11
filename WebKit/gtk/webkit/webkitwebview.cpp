@@ -4214,9 +4214,9 @@ void webkit_web_view_set_full_content_zoom(WebKitWebView* webView, gboolean zoom
 
     priv->zoomFullContent = zoomFullContent;
     if (priv->zoomFullContent)
-        view->setPageAndTextZoomFactors(multiplier, 1);
+        view->setPageAndTextZoomFactors(zoomLevel, 1);
     else
-        view->setPageAndTextZoomFactors(1, multiplier);
+        view->setPageAndTextZoomFactors(1, zoomLevel);
 
     g_object_notify(G_OBJECT(webView), "full-content-zoom");
 }
