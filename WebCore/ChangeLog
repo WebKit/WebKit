@@ -1,3 +1,12 @@
+2010-09-10  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix for EFL.
+
+        [EFL] REGRESSION(67167) build break because of newly added JSBindingState.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=45537
+
+        * CMakeLists.txt:
+
 2010-09-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
