@@ -2690,7 +2690,6 @@
 		93F199EC08245E59001E9ABC /* XSLStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06F24A06D18A7E004A6FA3 /* XSLStyleSheet.h */; };
 		93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06F24C06D18A7E004A6FA3 /* XSLTProcessor.h */; };
 		93F199F008245E59001E9ABC /* WebCoreView.h in Headers */ = {isa = PBXBuildFile; fileRef = BE855F7F0701E83500239769 /* WebCoreView.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93F199F108245E59001E9ABC /* WebDashboardRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 5150C2A10702629000AF642C /* WebDashboardRegion.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F19A2608245E59001E9ABC /* CursorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784F002DE375901EA4122 /* CursorMac.mm */; };
 		93F19A3C08245E59001E9ABC /* DeprecatedPtrListImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587851602DE375901EA4122 /* DeprecatedPtrListImpl.cpp */; };
 		93F19A5F08245E59001E9ABC /* WebCoreViewFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = F587855502DE375901EA4122 /* WebCoreViewFactory.m */; };
@@ -2710,7 +2709,6 @@
 		93F19B0408245E59001E9ABC /* XSLTProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F24B06D18A7E004A6FA3 /* XSLTProcessor.cpp */; };
 		93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F24D06D18A7E004A6FA3 /* XSLTProcessorLibxslt.cpp */; };
 		93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8560510701F91100239769 /* WebCoreView.m */; };
-		93F19B0808245E59001E9ABC /* WebDashboardRegion.m in Sources */ = {isa = PBXBuildFile; fileRef = 5150C2A50702629800AF642C /* WebDashboardRegion.m */; settings = {COMPILER_FLAGS = "-Wno-cast-qual"; }; };
 		93F19B1308245E59001E9ABC /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C2869302846DCD018635CA /* ApplicationServices.framework */; };
 		93F19B1408245E59001E9ABC /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C2869402846DCD018635CA /* Carbon.framework */; };
 		93F19B1508245E59001E9ABC /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C2869502846DCD018635CA /* Cocoa.framework */; };
@@ -7073,8 +7071,6 @@
 		514C76680CE923A1007EF3CD /* ResourceRequestBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceRequestBase.h; sourceTree = "<group>"; };
 		514C76690CE923A1007EF3CD /* ResourceResponseBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceResponseBase.cpp; sourceTree = "<group>"; };
 		514C766A0CE923A1007EF3CD /* ResourceResponseBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceResponseBase.h; sourceTree = "<group>"; };
-		5150C2A10702629000AF642C /* WebDashboardRegion.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDashboardRegion.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		5150C2A50702629800AF642C /* WebDashboardRegion.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebDashboardRegion.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		515788C01207852C00A37C4A /* VisitedLinkStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitedLinkStrategy.h; sourceTree = "<group>"; };
 		515B03970CD1642A00B7EA9C /* SQLStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLStatement.h; sourceTree = "<group>"; };
 		515B03980CD1642A00B7EA9C /* SQLStatement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLStatement.cpp; sourceTree = "<group>"; };
@@ -14108,8 +14104,6 @@
 				BE983D95052A2E0A00892D85 /* WebCoreKeyboardUIMode.h */,
 				F587855402DE375901EA4122 /* WebCoreViewFactory.h */,
 				F587855502DE375901EA4122 /* WebCoreViewFactory.m */,
-				5150C2A10702629000AF642C /* WebDashboardRegion.h */,
-				5150C2A50702629800AF642C /* WebDashboardRegion.m */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -20335,7 +20329,6 @@
 				37F818FD0D657606005E1F05 /* WebCoreURLResponse.h in Headers */,
 				93F199F008245E59001E9ABC /* WebCoreView.h in Headers */,
 				93F199B308245E59001E9ABC /* WebCoreViewFactory.h in Headers */,
-				93F199F108245E59001E9ABC /* WebDashboardRegion.h in Headers */,
 				BC6DADEF0A195FDF00E5CD14 /* WebFontCache.h in Headers */,
 				A7D20F6D107F438B00A80392 /* WebGLActiveInfo.h in Headers */,
 				49C7B9C91042D32F0009D447 /* WebGLBuffer.h in Headers */,
@@ -22850,7 +22843,6 @@
 				37F818FE0D657606005E1F05 /* WebCoreURLResponse.mm in Sources */,
 				93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */,
 				93F19A5F08245E59001E9ABC /* WebCoreViewFactory.m in Sources */,
-				93F19B0808245E59001E9ABC /* WebDashboardRegion.m in Sources */,
 				BC6DADFA0A19602B00E5CD14 /* WebFontCache.mm in Sources */,
 				49C7B9C81042D32F0009D447 /* WebGLBuffer.cpp in Sources */,
 				6E4E91AE10F7FB3100A2779C /* WebGLContextAttributes.cpp in Sources */,

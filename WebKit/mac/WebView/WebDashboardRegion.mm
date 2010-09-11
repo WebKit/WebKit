@@ -23,7 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "config.h"
 #import "WebDashboardRegion.h"
 
 #import <wtf/UnusedParam.h>
@@ -66,14 +65,14 @@
 static const char* typeName(WebDashboardRegionType type)
 {
     switch (type) {
-        case WebDashboardRegionTypeNone:
-            return "None";
-        case WebDashboardRegionTypeCircle:
-            return "Circle";
-        case WebDashboardRegionTypeRectangle:
-            return "Rectangle";
-        case WebDashboardRegionTypeScrollerRectangle:
-            return "ScrollerRectangle";
+    case WebDashboardRegionTypeNone:
+        return "None";
+    case WebDashboardRegionTypeCircle:
+        return "Circle";
+    case WebDashboardRegionTypeRectangle:
+        return "Rectangle";
+    case WebDashboardRegionTypeScrollerRectangle:
+        return "ScrollerRectangle";
     }
     return "Unknown";
 }

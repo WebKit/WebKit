@@ -321,6 +321,8 @@
 		9398112C0824BF01008DF038 /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F738C9EA03FAD3DF0321FBE0 /* WebCore.framework */; };
 		9398112E0824BF01008DF038 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93D623DD051E791F002F47DD /* libicucore.dylib */; };
 		9398112F0824BF01008DF038 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 830E81E005853AC000AD0891 /* Security.framework */; };
+		93E2A1A4123B0B3C009FE12A /* WebDashboardRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E2A1A2123B0B3C009FE12A /* WebDashboardRegion.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		93E2A1A5123B0B3C009FE12A /* WebDashboardRegion.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93E2A1A3123B0B3C009FE12A /* WebDashboardRegion.mm */; };
 		93EB178D09F88D460091F8FF /* WebSystemInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93EB178C09F88D460091F8FF /* WebSystemInterface.mm */; };
 		93EB178F09F88D510091F8FF /* WebSystemInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 93EB178E09F88D510091F8FF /* WebSystemInterface.h */; };
 		93FDE9330D79CAF30074F029 /* WebHistoryInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FDE9320D79CAF30074F029 /* WebHistoryInternal.h */; };
@@ -627,6 +629,8 @@
 		93C6F14507920B93002449CD /* WebFrameViewPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebFrameViewPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93D1FE13067EB10B009CE68A /* WebNSObjectExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSObjectExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93D623DD051E791F002F47DD /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = /usr/lib/libicucore.dylib; sourceTree = "<absolute>"; };
+		93E2A1A2123B0B3C009FE12A /* WebDashboardRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDashboardRegion.h; sourceTree = "<group>"; };
+		93E2A1A3123B0B3C009FE12A /* WebDashboardRegion.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDashboardRegion.mm; sourceTree = "<group>"; };
 		93EB178C09F88D460091F8FF /* WebSystemInterface.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSystemInterface.mm; sourceTree = "<group>"; };
 		93EB178E09F88D510091F8FF /* WebSystemInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSystemInterface.h; sourceTree = "<group>"; };
 		93FDE9320D79CAF30074F029 /* WebHistoryInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebHistoryInternal.h; sourceTree = "<group>"; };
@@ -1142,6 +1146,20 @@
 		9C7CABBB0190A37C0ECA16EA /* WebView */ = {
 			isa = PBXGroup;
 			children = (
+				F52CA6BD02DF9D0F018635CA /* HTML */,
+				51E94C0706C02CA300A9B09E /* PDF */,
+				8373435A0624EE0D00F3B289 /* WebArchive.h */,
+				8373435B0624EE0D00F3B289 /* WebArchive.mm */,
+				933D659903413FF2008635CE /* WebClipView.h */,
+				933D659A03413FF2008635CE /* WebClipView.mm */,
+				93E2A1A2123B0B3C009FE12A /* WebDashboardRegion.h */,
+				93E2A1A3123B0B3C009FE12A /* WebDashboardRegion.mm */,
+				39446070020F50ED0ECA1767 /* WebDataSource.h */,
+				39446071020F50ED0ECA1767 /* WebDataSource.mm */,
+				658A40950A14853B005E6987 /* WebDataSourceInternal.h */,
+				39446072020F50ED0ECA1767 /* WebDataSourcePrivate.h */,
+				BC542C400FD7766F00D8AB5D /* WebDelegateImplementationCaching.h */,
+				BC542C410FD7766F00D8AB5D /* WebDelegateImplementationCaching.mm */,
 				598ADA451202275000ABAE4E /* WebDeviceOrientationProvider.h */,
 				598AD9291201CF3B00ABAE4E /* WebDeviceOrientationProviderMockInternal.h */,
 				598AD9271201CF3200ABAE4E /* WebDeviceOrientationProviderMock.mm */,
@@ -1149,18 +1167,6 @@
 				598AD9231201CF1900ABAE4E /* WebDeviceOrientationInternal.h */,
 				598AD9211201CF1000ABAE4E /* WebDeviceOrientation.mm */,
 				598AD91F1201CF0700ABAE4E /* WebDeviceOrientation.h */,
-				F52CA6BD02DF9D0F018635CA /* HTML */,
-				51E94C0706C02CA300A9B09E /* PDF */,
-				8373435A0624EE0D00F3B289 /* WebArchive.h */,
-				8373435B0624EE0D00F3B289 /* WebArchive.mm */,
-				933D659903413FF2008635CE /* WebClipView.h */,
-				933D659A03413FF2008635CE /* WebClipView.mm */,
-				39446070020F50ED0ECA1767 /* WebDataSource.h */,
-				39446071020F50ED0ECA1767 /* WebDataSource.mm */,
-				658A40950A14853B005E6987 /* WebDataSourceInternal.h */,
-				39446072020F50ED0ECA1767 /* WebDataSourcePrivate.h */,
-				BC542C400FD7766F00D8AB5D /* WebDelegateImplementationCaching.h */,
-				BC542C410FD7766F00D8AB5D /* WebDelegateImplementationCaching.mm */,
 				35081DAE02B6D4F50ACA2ACA /* WebDocument.h */,
 				ED21B9810528F7AA003299AC /* WebDocumentInternal.h */,
 				65FFB7FA0AD0B7D30048CD05 /* WebDocumentLoaderMac.h */,
@@ -1622,6 +1628,7 @@
 				598AD9261201CF2500ABAE4E /* WebDeviceOrientationProviderMock.h in Headers */,
 				598AD92A1201CF3B00ABAE4E /* WebDeviceOrientationProviderMockInternal.h in Headers */,
 				598ADA461202275000ABAE4E /* WebDeviceOrientationProvider.h in Headers */,
+				93E2A1A4123B0B3C009FE12A /* WebDashboardRegion.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1988,6 +1995,7 @@
 				598AD91E1201CECF00ABAE4E /* WebDeviceOrientationClient.mm in Sources */,
 				598AD9221201CF1000ABAE4E /* WebDeviceOrientation.mm in Sources */,
 				598AD9281201CF3200ABAE4E /* WebDeviceOrientationProviderMock.mm in Sources */,
+				93E2A1A5123B0B3C009FE12A /* WebDashboardRegion.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,3 +1,22 @@
+2010-09-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Move some Dashboard stuff from WebCore to WebKit along with a bit more FrameMac cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=45582
+
+        * MigrateHeaders.make: Removed WebDashboardRegion.h from the set of header to copy.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::dashboardRegionsChanged): Changed this to call
+        -[WebView _dashboardRegions] so we don't have two copies of that code.
+
+        * WebView/WebDashboardRegion.h: Copied from WebCore/page/mac/WebDashboardRegion.h.
+        * WebView/WebDashboardRegion.mm: Copied from WebCore/page/mac/WebDashboardRegion.m.
+
+        * WebView/WebView.mm:
+        (-[WebView _dashboardRegions]): Moved the code from Frame::dashboardRegions here.
+
 2010-09-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Fisher.

@@ -71,8 +71,6 @@
 #import <wtf/PassRefPtr.h>
 #import <wtf/Vector.h>
 
-
-
 #if USE(ACCELERATED_COMPOSITING)
 #import <WebCore/GraphicsLayer.h>
 #endif
@@ -111,6 +109,7 @@ using namespace WebCore;
 @end
 
 #if ENABLE(FULLSCREEN_API)
+
 @interface WebKitFullScreenListener : NSObject <WebKitFullScreenListener>
 {
     RefPtr<Element> _element;
@@ -118,6 +117,7 @@ using namespace WebCore;
 
 - (id)initWithElement:(Element*)element;
 @end
+
 #endif
 
 WebChromeClient::WebChromeClient(WebView *webView) 
@@ -564,6 +564,7 @@ void WebChromeClient::print(Frame* frame)
 }
 
 #if ENABLE(DATABASE)
+
 void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseName)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -579,9 +580,11 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }
+
 #endif
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
+
 void WebChromeClient::reachedMaxAppCacheSize(int64_t spaceNeeded)
 {
     // FIXME: Free some space.
@@ -597,6 +600,7 @@ void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin* origin)
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }
+
 #endif
     
 void WebChromeClient::populateVisitedLinks()
@@ -616,17 +620,14 @@ void WebChromeClient::populateVisitedLinks()
 }
 
 #if ENABLE(DASHBOARD_SUPPORT)
+
 void WebChromeClient::dashboardRegionsChanged()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
-    NSMutableDictionary *regions = core([m_webView mainFrame])->dashboardRegionsDictionary();
-    [m_webView _addScrollerDashboardRegions:regions];
-
-    CallUIDelegate(m_webView, @selector(webView:dashboardRegionsChanged:), regions);
-
+    CallUIDelegate(m_webView, @selector(webView:dashboardRegionsChanged:), [m_webView _dashboardRegions]);
     END_BLOCK_OBJC_EXCEPTIONS;
 }
+
 #endif
 
 FloatRect WebChromeClient::customHighlightRect(Node* node, const AtomicString& type, const FloatRect& lineRect)
@@ -954,7 +955,9 @@ void WebChromeClient::requestGeolocationPermissionForFrame(Frame* frame, Geoloca
 @end
 
 #if ENABLE(FULLSCREEN_API)
+
 @implementation WebKitFullScreenListener
+
 - (id)initWithElement:(Element*)element
 {
     if (!(self = [super init]))
@@ -989,4 +992,5 @@ void WebChromeClient::requestGeolocationPermissionForFrame(Frame* frame, Geoloca
 }
 
 @end
+
 #endif

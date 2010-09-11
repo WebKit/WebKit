@@ -1,3 +1,14 @@
+2010-09-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Move some Dashboard stuff from WebCore to WebKit along with a bit more FrameMac cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=45582
+
+        * WebKit.xcodeproj/project.pbxproj: Added WebDashboardRegion.h/mm and
+        also gave the header private visibility so it will get installed in the
+        PrivateHeaders directory.
+
 2010-09-02  Steve Block  <steveblock@google.com>
 
         Reviewed by Adam Barth.

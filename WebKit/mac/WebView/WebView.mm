@@ -1908,9 +1908,38 @@ static inline IMP getMethod(id o, SEL s)
     Frame* mainFrame = [self _mainCoreFrame];
     if (!mainFrame)
         return nil;
-    NSMutableDictionary *regions = mainFrame->dashboardRegionsDictionary();
-    [self _addScrollerDashboardRegions:regions];
-    return regions;
+
+    const Vector<DashboardRegionValue>& regions = mainFrame->document()->dashboardRegions();
+    size_t size = regions.size();
+
+    NSMutableDictionary *webRegions = [NSMutableDictionary dictionaryWithCapacity:size];
+    for (size_t i = 0; i < size; i++) {
+        const DashboardRegionValue& region = regions[i];
+
+        if (region.type == StyleDashboardRegion::None)
+            continue;
+
+        NSString *label = region.label;
+        WebDashboardRegionType type = WebDashboardRegionTypeNone;
+        if (region.type == StyleDashboardRegion::Circle)
+            type = WebDashboardRegionTypeCircle;
+        else if (region.type == StyleDashboardRegion::Rectangle)
+            type = WebDashboardRegionTypeRectangle;
+        NSMutableArray *regionValues = [webRegions objectForKey:label];
+        if (!regionValues) {
+            regionValues = [[NSMutableArray alloc] initWithCapacity:1];
+            [webRegions setObject:regionValues forKey:label];
+            [regionValues release];
+        }
+
+        WebDashboardRegion *webRegion = [[WebDashboardRegion alloc] initWithRect:region.bounds clip:region.clip type:type];
+        [regionValues addObject:webRegion];
+        [webRegion release];
+    }
+
+    [self _addScrollerDashboardRegions:webRegions];
+
+    return webRegions;
 }
 
 - (void)_setDashboardBehavior:(WebDashboardBehavior)behavior to:(BOOL)flag

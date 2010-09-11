@@ -1,3 +1,20 @@
+2010-09-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Move some Dashboard stuff from WebCore to WebKit along with a bit more FrameMac cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=45582
+
+        * WebCore.exp.in: Updated.
+
+        * WebCore.xcodeproj/project.pbxproj: Removed WebDashboardRegion.h/m.
+        * page/mac/WebDashboardRegion.h: Removed.
+        * page/mac/WebDashboardRegion.m: Removed.
+
+        * page/Frame.h: Removed unneeded #if. Removed dashboardRegionsDictionary function, now
+        handled in WebKit. Removed searchForNSLabelsAboveCell function, which had become dead code.
+        * page/mac/FrameMac.mm: Ditto. Also tweaked a place that said "int unsigned".
+
 2010-09-10  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Darin Adler.
