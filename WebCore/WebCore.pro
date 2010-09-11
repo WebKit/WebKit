@@ -1,6 +1,3 @@
-# Include to determine JS engine
-include(../common.pri)
-
 # WebCore - qmake build info
 CONFIG += building-libs
 CONFIG += depend_includepath

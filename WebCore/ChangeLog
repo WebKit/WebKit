@@ -1,3 +1,12 @@
+2010-09-11  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] V8 port: webkit project files changes
+        https://bugs.webkit.org/show_bug.cgi?id=45140
+
+        * WebCore.pro: Removed unecessary common.pri inclusion from earlier patch.
+
 2010-09-03  Vlad Burlik  <volodimir.burlik@nokia.com>, Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Andreas Kling.

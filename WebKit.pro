@@ -3,7 +3,7 @@ CONFIG += ordered
 
 include(WebKit.pri)
 
-SUBDIRS += JavaScriptCore
+!v8: SUBDIRS += JavaScriptCore
 webkit2 {
     SUBDIRS += WebKit2
 }
@@ -14,7 +14,7 @@ exists($$PWD/WebKitTools/QtTestBrowser): SUBDIRS += WebKitTools/QtTestBrowser
 contains(QT_CONFIG, declarative) {
     exists($$PWD/WebKit/qt/declarative): SUBDIRS += WebKit/qt/declarative
 }
-exists($$PWD/JavaScriptCore/jsc.pro): SUBDIRS += JavaScriptCore/jsc.pro
+!v8:exists($$PWD/JavaScriptCore/jsc.pro): SUBDIRS += JavaScriptCore/jsc.pro
 exists($$PWD/WebKit/qt/tests): SUBDIRS += WebKit/qt/tests
 exists($$PWD/WebKitTools/DumpRenderTree/qt/DumpRenderTree.pro): SUBDIRS += WebKitTools/DumpRenderTree/qt/DumpRenderTree.pro
 exists($$PWD/WebKitTools/DumpRenderTree/qt/ImageDiff.pro): SUBDIRS += WebKitTools/DumpRenderTree/qt/ImageDiff.pro

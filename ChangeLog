@@ -1,3 +1,13 @@
+2010-09-11  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] V8 port: webkit project files changes
+        https://bugs.webkit.org/show_bug.cgi?id=45140
+
+        * WebKit.pro: Don't compile JavaScriptCore and jsc when
+        building with v8.
+
 2010-09-11  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.
