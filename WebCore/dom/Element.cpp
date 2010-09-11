@@ -479,6 +479,7 @@ PassRefPtr<ClientRect> Element::getBoundingClientRect() const
     document()->updateLayoutIgnorePendingStylesheets();
 
     Vector<FloatQuad> quads;
+#if ENABLE(SVG)
     if (isSVGElement()) {
         // Get the bounding rectangle from the SVG model.
         const SVGElement* svgElement = static_cast<const SVGElement*>(this);
@@ -488,7 +489,9 @@ PassRefPtr<ClientRect> Element::getBoundingClientRect() const
                 quads.append(renderer()->localToAbsoluteQuad(localRect));
             }
         }
-    } else {
+    } else
+#endif
+    {
         // Get the bounding rectangle from the box model.
         if (renderBoxModelObject())
             renderBoxModelObject()->absoluteQuads(quads);

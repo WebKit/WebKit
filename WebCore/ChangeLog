@@ -1,3 +1,10 @@
+2010-09-10  Adam Barth  <abarth@webkit.org>
+
+        Attempted build fix for Qt Minimal.
+
+        * dom/Element.cpp:
+        (WebCore::Element::getBoundingClientRect):
+
 2010-09-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.
