@@ -1,3 +1,12 @@
+2010-09-10  Jer Noble  <jer.noble@apple.com>
+
+        No review; build fix only.
+
+        Touch mediaControlsQuickTime in order to trigger the UserAgentStyleSheet.h to be rebuilt.
+
+        * css/mediaControlsQuickTime.css:
+        (audio::-webkit-media-controls-volume-slider-mute-button, video::-webkit-media-controls-volume-slider-mute-button):
+
 2010-09-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Fisher.
