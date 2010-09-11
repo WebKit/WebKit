@@ -1,3 +1,12 @@
+2010-09-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Pseudostyle resolution corrupts cached child index values
+        https://bugs.webkit.org/show_bug.cgi?id=45574
+
+        * fast/dom/firstline-fixed-crash-expected.txt: Updated results.
+
 2010-09-10  Cosmin Truta  <ctruta@chromium.org>
 
         Reviewed by Nikolas Zimmermann.

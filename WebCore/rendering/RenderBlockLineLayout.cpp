@@ -1568,8 +1568,6 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
             const UChar* str = t->characters();
 
             RenderStyle* style = t->style(firstLine);
-            if (!style)
-                goto end;
             const Font& f = style->font();
             bool isFixedPitch = f.isFixedPitch();
             bool canHyphenate = style->hyphens() == HyphensAuto && WebCore::canHyphenate(style->hyphenationLocale());

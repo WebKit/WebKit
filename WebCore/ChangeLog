@@ -1,3 +1,29 @@
+2010-09-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Pseudostyle resolution corrupts cached child index values
+        https://bugs.webkit.org/show_bug.cgi?id=45574
+
+        Covered by fast/dom/firstline-fixed-crash.html and fast/dom/firstletter-tablecell-crash.html.
+
+        RenderBlock::updateFirstLetter() calls getCachedPseudoStyle() passing as the parent style the
+        style of the parent of the first letter, which is not always the parent of the element for
+        which we are getting :first-letter style. As a result, style resolution caches childIndex values
+        in the wrong element’s style.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::pseudoStyleForElement): Create the new style and inherit from
+        the parent style before matching rules, to avoid corrupting the parent style itself.
+        (WebCore::CSSStyleSelector::checkSelector): Always pass the element’s parent style as
+        the parent style here.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetter): Removed the null check that was added
+        in r67183.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::findNextLineBreak): Removed the null check that was added
+        in r67184.
+
 2010-09-10  Jer Noble  <jer.noble@apple.com>
 
         No review; build fix only.

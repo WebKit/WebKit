@@ -1503,8 +1503,10 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
     }
 
     initForStyleResolve(e, parentStyle, pseudo);
-    m_style = parentStyle;
-    
+    m_style = RenderStyle::create();
+    if (parentStyle)
+        m_style->inheritFrom(parentStyle);
+
     m_checker.m_matchVisitedPseudoClass = matchVisitedPseudoClass;
 
     // Since we don't use pseudo-elements in any of our quirk/print user agent rules, don't waste time walking
@@ -1521,10 +1523,6 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
 
     if (m_matchedDecls.isEmpty() && !visitedStyle)
         return 0;
-
-    m_style = RenderStyle::create();
-    if (parentStyle)
-        m_style->inheritFrom(parentStyle);
 
     m_style->setStyleType(pseudo);
     
@@ -1888,7 +1886,7 @@ bool CSSStyleSelector::checkSelector(CSSSelector* sel)
     m_dynamicPseudo = NOPSEUDO;
 
     // Check the selector
-    SelectorMatch match = m_checker.checkSelector(sel, m_element, &m_selectorAttrs, m_dynamicPseudo, false, false, style(), m_parentStyle);
+    SelectorMatch match = m_checker.checkSelector(sel, m_element, &m_selectorAttrs, m_dynamicPseudo, false, false, style(), m_parentNode ? m_parentNode->renderStyle() : 0);
     if (match != SelectorMatches)
         return false;
 
