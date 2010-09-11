@@ -39,9 +39,8 @@ static QWKPage* createNewPage(QWKPage* page)
 BrowserView::BrowserView(QWidget* parent)
     : QGraphicsView(parent)
     , m_item(0)
+    , m_context(WKContextGetSharedProcessContext())
 {
-    m_context.adopt(WKContextGetSharedProcessContext());
-
     WKRetainPtr<WKPageNamespaceRef> pageNamespace(AdoptWK, WKPageNamespaceCreate(m_context.get()));
 
     m_item = new QGraphicsWKView(pageNamespace.get(), QGraphicsWKView::Simple, 0);

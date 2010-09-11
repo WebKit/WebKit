@@ -266,7 +266,6 @@ QWKPage::QWKPage(WKPageNamespaceRef namespaceRef)
 QWKPage::~QWKPage()
 {
     delete d;
-    WKPageTerminate(pageRef());
 }
 
 void QWKPage::timerEvent(QTimerEvent* ev)

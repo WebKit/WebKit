@@ -1,3 +1,15 @@
+2010-09-10  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] MiniBrowser crashes with multiply windows when closing one of them
+        https://bugs.webkit.org/show_bug.cgi?id=45536
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::~QWKPage): Do not call WKPageTerminate since this is designed
+        to terminate the web process. We are correctly detaching the page without
+        this call anyway.
+
 2010-09-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Fisher.
