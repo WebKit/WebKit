@@ -50,6 +50,7 @@
 #include "RenderLayer.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "SVGStyledLocatableElement.h"
 #include "Settings.h"
 #include "TextIterator.h"
 #include "XMLNames.h"
@@ -476,12 +477,22 @@ PassRefPtr<ClientRectList> Element::getClientRects() const
 PassRefPtr<ClientRect> Element::getBoundingClientRect() const
 {
     document()->updateLayoutIgnorePendingStylesheets();
-    RenderBoxModelObject* renderBoxModelObject = this->renderBoxModelObject();
-    if (!renderBoxModelObject)
-        return ClientRect::create();
 
     Vector<FloatQuad> quads;
-    renderBoxModelObject->absoluteQuads(quads);
+    if (isSVGElement()) {
+        // Get the bounding rectangle from the SVG model.
+        const SVGElement* svgElement = static_cast<const SVGElement*>(this);
+        if (svgElement->isStyledLocatable()) {
+            if (renderer()) {
+                const FloatRect& localRect = static_cast<const SVGStyledLocatableElement*>(svgElement)->getBBox();
+                quads.append(renderer()->localToAbsoluteQuad(localRect));
+            }
+        }
+    } else {
+        // Get the bounding rectangle from the box model.
+        if (renderBoxModelObject())
+            renderBoxModelObject()->absoluteQuads(quads);
+    }
 
     if (quads.isEmpty())
         return ClientRect::create();
@@ -495,7 +506,8 @@ PassRefPtr<ClientRect> Element::getBoundingClientRect() const
         result.move(-visibleContentRect.x(), -visibleContentRect.y());
     }
 
-    adjustIntRectForAbsoluteZoom(result, renderBoxModelObject);
+    if (renderBoxModelObject())
+        adjustIntRectForAbsoluteZoom(result, renderBoxModelObject());
 
     return ClientRect::create(result);
 }

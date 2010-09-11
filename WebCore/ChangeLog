@@ -1,3 +1,17 @@
+2010-09-10  Cosmin Truta  <ctruta@chromium.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        getBoundingClientRect Broken for SVG Elements
+        https://bugs.webkit.org/show_bug.cgi?id=42815
+
+        Use getBBox to retrieve the bounding rectangle for SVG elements.
+
+        Test: svg/dom/getBoundingClientRect.xhtml
+
+        * dom/Element.cpp:
+        (Element::getBoundingClientRect):
+
 2010-09-09  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.

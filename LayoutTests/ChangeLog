@@ -1,3 +1,15 @@
+2010-09-10  Cosmin Truta  <ctruta@chromium.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        getBoundingClientRect Broken for SVG Elements
+        https://bugs.webkit.org/show_bug.cgi?id=42815
+
+        Added tests for getBoundingClientRect applied to SVG elements.
+
+        * svg/custom/getBoundingClientRect.xhtml: Added
+        * svg/custom/getBoundingClientRect-expected.txt: Added
+
 2010-09-10  Jian Li  <jianli@chromium.org>
 
         Update mac/Skipped to include the bug numbers for newly added skip entries.
