@@ -302,39 +302,47 @@ void WebPage::drawRect(GraphicsContext& graphicsContext, const IntRect& rect)
     graphicsContext.restore();
 }
 
-float WebPage::textZoomFactor() const
+double WebPage::textZoomFactor() const
 {
     if (Frame* coreFrame = m_mainFrame->coreFrame()) {
         if (FrameView* view = coreFrame->view())
             return view->textZoomFactor();
     }
     
-    return 1.0f;
+    return 1;
 }
 
-void WebPage::setTextZoomFactor(float zoomFactor)
+void WebPage::setTextZoomFactor(double zoomFactor)
 {
     if (Frame* coreFrame = m_mainFrame->coreFrame()) {
         if (FrameView* view = coreFrame->view())
-            return view->setTextZoomFactor(zoomFactor);
+            return view->setTextZoomFactor(static_cast<float>(zoomFactor));
     }
 }
 
-float WebPage::pageZoomFactor() const
+double WebPage::pageZoomFactor() const
 {
     if (Frame* coreFrame = m_mainFrame->coreFrame()) {
         if (FrameView* view = coreFrame->view())
             return view->pageZoomFactor();
     }
     
-    return 1.0f;
+    return 1;
 }
 
-void WebPage::setPageZoomFactor(float zoomFactor)
+void WebPage::setPageZoomFactor(double zoomFactor)
 {
     if (Frame* coreFrame = m_mainFrame->coreFrame()) {
         if (FrameView* view = coreFrame->view())
-            return view->setPageZoomFactor(zoomFactor);
+            return view->setPageZoomFactor(static_cast<float>(zoomFactor));
+    }
+}
+
+void WebPage::setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor)
+{
+    if (Frame* coreFrame = m_mainFrame->coreFrame()) {
+        if (FrameView* view = coreFrame->view())
+            return view->setPageAndTextZoomFactors(static_cast<float>(pageZoomFactor), static_cast<float>(textZoomFactor));
     }
 }
 
@@ -764,6 +772,28 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
             if (!arguments->decode(CoreIPC::Out(commandID)))
                 return;
             didRemoveEditCommand(commandID);
+            return;
+        }
+        case WebPageMessage::SetPageZoomFactor: {
+            double zoomFactor;
+            if (!arguments->decode(CoreIPC::Out(zoomFactor)))
+                return;
+            setPageZoomFactor(zoomFactor);
+            return;
+        }
+        case WebPageMessage::SetTextZoomFactor: {
+            double zoomFactor;
+            if (!arguments->decode(CoreIPC::Out(zoomFactor)))
+                return;
+            setTextZoomFactor(zoomFactor);
+            return;
+        }
+        case WebPageMessage::SetPageAndTextZoomFactors: {
+            double pageZoomFactor;
+            double textZoomFactor;
+            if (!arguments->decode(CoreIPC::Out(pageZoomFactor, textZoomFactor)))
+                return;
+            setPageAndTextZoomFactors(pageZoomFactor, textZoomFactor);
             return;
         }
     }

@@ -100,22 +100,22 @@ void WKBundlePageClose(WKBundlePageRef pageRef)
     toWK(pageRef)->sendClose();
 }
 
-float WKBundlePageGetTextZoomFactor(WKBundlePageRef pageRef)
+double WKBundlePageGetTextZoomFactor(WKBundlePageRef pageRef)
 {
     return toWK(pageRef)->textZoomFactor();
 }
 
-void WKBundlePageSetTextZoomFactor(WKBundlePageRef pageRef, float zoomFactor)
+void WKBundlePageSetTextZoomFactor(WKBundlePageRef pageRef, double zoomFactor)
 {
     toWK(pageRef)->setTextZoomFactor(zoomFactor);
 }
 
-float WKBundlePageGetPageZoomFactor(WKBundlePageRef pageRef)
+double WKBundlePageGetPageZoomFactor(WKBundlePageRef pageRef)
 {
     return toWK(pageRef)->pageZoomFactor();
 }
 
-void WKBundlePageSetPageZoomFactor(WKBundlePageRef pageRef, float zoomFactor)
+void WKBundlePageSetPageZoomFactor(WKBundlePageRef pageRef, double zoomFactor)
 {
     toWK(pageRef)->setPageZoomFactor(zoomFactor);
 }

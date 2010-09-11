@@ -34,6 +34,7 @@
 
     WKPageNamespaceRef _pageNamespace;
     WKView *_webView;
+    BOOL _zoomTextOnly;
 }
 - (IBAction)fetch:(id)sender;
 - (IBAction)reload:(id)sender;
@@ -47,5 +48,14 @@
 - (id)initWithPageNamespace:(WKPageNamespaceRef)pageNamespace;
 - (void)loadURLString:(NSString *)urlString;
 - (void)applicationTerminating;
+
+- (IBAction)zoomIn:(id)sender;
+- (IBAction)zoomOut:(id)sender;
+- (IBAction)resetZoom:(id)sender;
+- (BOOL)canZoomIn;
+- (BOOL)canZoomOut;
+- (BOOL)canResetZoom;
+
+- (IBAction)toggleZoomMode:(id)sender;
 
 @end

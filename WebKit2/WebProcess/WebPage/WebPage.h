@@ -125,10 +125,11 @@ public:
     void clearMainFrameName();
     void sendClose();
 
-    float textZoomFactor() const;
-    void setTextZoomFactor(float);
-    float pageZoomFactor() const;
-    void setPageZoomFactor(float);
+    double textZoomFactor() const;
+    void setTextZoomFactor(double);
+    double pageZoomFactor() const;
+    void setPageZoomFactor(double);
+    void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor);
 
     void stopLoading();
 

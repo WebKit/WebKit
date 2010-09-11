@@ -40,11 +40,10 @@ WK_EXPORT void WKBundlePageClose(WKBundlePageRef page);
 WK_EXPORT WKStringRef WKBundlePageCopyRenderTreeExternalRepresentation(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageExecuteEditingCommand(WKBundlePageRef page, WKStringRef commandName, WKStringRef argument);
 
-WK_EXPORT float WKBundlePageGetTextZoomFactor(WKBundlePageRef page);
-WK_EXPORT void WKBundlePageSetTextZoomFactor(WKBundlePageRef page, float zoomFactor);
-WK_EXPORT float WKBundlePageGetPageZoomFactor(WKBundlePageRef page);
-WK_EXPORT void WKBundlePageSetPageZoomFactor(WKBundlePageRef page, float zoomFactor);
-
+WK_EXPORT double WKBundlePageGetTextZoomFactor(WKBundlePageRef page);
+WK_EXPORT void WKBundlePageSetTextZoomFactor(WKBundlePageRef page, double zoomFactor);
+WK_EXPORT double WKBundlePageGetPageZoomFactor(WKBundlePageRef page);
+WK_EXPORT void WKBundlePageSetPageZoomFactor(WKBundlePageRef page, double zoomFactor);
 
 #ifdef __cplusplus
 }

@@ -1,3 +1,46 @@
+2010-09-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Add zoom support to WebKit2 API
+        <rdar://problem/7660657>
+        https://bugs.webkit.org/show_bug.cgi?id=45585
+
+        - Add UIProcess API for setting zoom factors.
+        - Change bundle zoom API to be in terms of doubles
+          for consistency.
+
+        * Shared/CoreIPCSupport/WebPageMessageKinds.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetTextZoomFactor):
+        (WKPageSetTextZoomFactor):
+        (WKPageGetPageZoomFactor):
+        (WKPageSetPageZoomFactor):
+        (WKPageSetPageAndTextZoomFactors):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::setTextZoomFactor):
+        (WebKit::WebPageProxy::setPageZoomFactor):
+        (WebKit::WebPageProxy::setPageAndTextZoomFactors):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::textZoomFactor):
+        (WebKit::WebPageProxy::pageZoomFactor):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageGetTextZoomFactor):
+        (WKBundlePageSetTextZoomFactor):
+        (WKBundlePageGetPageZoomFactor):
+        (WKBundlePageSetPageZoomFactor):
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::textZoomFactor):
+        (WebKit::WebPage::setTextZoomFactor):
+        (WebKit::WebPage::pageZoomFactor):
+        (WebKit::WebPage::setPageZoomFactor):
+        (WebKit::WebPage::setPageAndTextZoomFactors):
+        (WebKit::WebPage::didReceiveMessage):
+        * WebProcess/WebPage/WebPage.h:
+
 2010-09-10  Balazs Kelemen  <kb@inf.u-szeged.hu>
 
         Reviewed by Andreas Kling.

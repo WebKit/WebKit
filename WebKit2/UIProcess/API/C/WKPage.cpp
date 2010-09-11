@@ -153,6 +153,31 @@ void WKPageRestoreFromSessionState(WKPageRef pageRef, WKDataRef sessionStateData
     toWK(pageRef)->restoreFromSessionState(toWK(sessionStateData));
 }
 
+double WKPageGetTextZoomFactor(WKPageRef pageRef)
+{
+    return toWK(pageRef)->textZoomFactor();
+}
+
+void WKPageSetTextZoomFactor(WKPageRef pageRef, double zoomFactor)
+{
+    toWK(pageRef)->setTextZoomFactor(zoomFactor);
+}
+
+double WKPageGetPageZoomFactor(WKPageRef pageRef)
+{
+    return toWK(pageRef)->pageZoomFactor();
+}
+
+void WKPageSetPageZoomFactor(WKPageRef pageRef, double zoomFactor)
+{
+    toWK(pageRef)->setPageZoomFactor(zoomFactor);
+}
+
+void WKPageSetPageAndTextZoomFactors(WKPageRef pageRef, double pageZoomFactor, double textZoomFactor)
+{
+    toWK(pageRef)->setPageAndTextZoomFactors(pageZoomFactor, textZoomFactor);
+}
+
 void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClient* wkClient)
 {
     if (wkClient && wkClient->version)

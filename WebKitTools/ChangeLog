@@ -1,3 +1,36 @@
+2010-09-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Add zoom support to WebKit2 API
+        <rdar://problem/7660657>
+        https://bugs.webkit.org/show_bug.cgi?id=45585
+
+        - Add zoom options to MiniBrowser that mimic Safari's options using
+          the new WebKit2 zoom APIs.
+        - Switch uses of float for the zoom APIs to use double.
+
+        * MiniBrowser/mac/BrowserWindowController.h:
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController initWithPageNamespace:]):
+        (-[BrowserWindowController validateMenuItem:]):
+        (-[BrowserWindowController validateUserInterfaceItem:]):
+        (-[BrowserWindowController currentZoomFactor]):
+        (-[BrowserWindowController setCurrentZoomFactor:]):
+        (-[BrowserWindowController canZoomIn]):
+        (-[BrowserWindowController zoomIn:]):
+        (-[BrowserWindowController canZoomOut]):
+        (-[BrowserWindowController zoomOut:]):
+        (-[BrowserWindowController canResetZoom]):
+        (-[BrowserWindowController resetZoom:]):
+        (-[BrowserWindowController toggleZoomMode:]):
+        * MiniBrowser/mac/MainMenu.xib:
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::EventSendingController::textZoomIn):
+        (WTR::EventSendingController::textZoomOut):
+        (WTR::EventSendingController::zoomPageIn):
+        (WTR::EventSendingController::zoomPageOut):
+
 2010-09-10  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Andreas Kling.

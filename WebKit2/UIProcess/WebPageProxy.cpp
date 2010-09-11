@@ -74,6 +74,8 @@ WebPageProxy::WebPageProxy(WebPageNamespace* pageNamespace, uint64_t pageID)
     , m_estimatedProgress(0.0)
     , m_isInWindow(false)
     , m_backForwardList(WebBackForwardList::create(this))
+    , m_textZoomFactor(1)
+    , m_pageZoomFactor(1)
     , m_valid(true)
     , m_closed(false)
     , m_pageID(pageID)
@@ -390,6 +392,43 @@ PassRefPtr<WebData> WebPageProxy::sessionState() const
 void WebPageProxy::restoreFromSessionState(WebData*)
 {
     // FIXME: Restore the Page from the passed in session state data.
+}
+
+void WebPageProxy::setTextZoomFactor(double zoomFactor)
+{
+    if (!isValid())
+        return;
+
+    if (m_textZoomFactor == zoomFactor)
+        return;
+
+    m_textZoomFactor = zoomFactor;
+    process()->send(WebPageMessage::SetTextZoomFactor, m_pageID, CoreIPC::In(m_textZoomFactor)); 
+}
+
+void WebPageProxy::setPageZoomFactor(double zoomFactor)
+{
+    if (!isValid())
+        return;
+
+    if (m_pageZoomFactor == zoomFactor)
+        return;
+
+    m_pageZoomFactor = zoomFactor;
+    process()->send(WebPageMessage::SetPageZoomFactor, m_pageID, CoreIPC::In(m_pageZoomFactor)); 
+}
+
+void WebPageProxy::setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor)
+{
+    if (!isValid())
+        return;
+
+    if (m_pageZoomFactor == pageZoomFactor && m_textZoomFactor == textZoomFactor)
+        return;
+
+    m_pageZoomFactor = pageZoomFactor;
+    m_textZoomFactor = textZoomFactor;
+    process()->send(WebPageMessage::SetPageAndTextZoomFactors, m_pageID, CoreIPC::In(m_pageZoomFactor, m_textZoomFactor)); 
 }
 
 void WebPageProxy::runJavaScriptInMainFrame(const String& script, PassRefPtr<ScriptReturnValueCallback> prpCallback)

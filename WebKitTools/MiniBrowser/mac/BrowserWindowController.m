@@ -44,8 +44,10 @@
 
 - (id)initWithPageNamespace:(WKPageNamespaceRef)pageNamespace
 {
-    if ((self = [super initWithWindowNibName:@"BrowserWindow"]))
+    if ((self = [super initWithWindowNibName:@"BrowserWindow"])) {
         _pageNamespace = WKRetain(pageNamespace);
+        _zoomTextOnly = NO;
+    }
     
     return self;
 }
@@ -86,10 +88,21 @@
 
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem
 {
-    if ([menuItem action] == @selector(showHideWebView:))
+    SEL action = [menuItem action];
+
+    if (action == @selector(zoomIn:))
+        return [self canZoomIn];
+    if (action == @selector(zoomOut:))
+        return [self canZoomOut];
+    if (action == @selector(resetZoom:))
+        return [self canResetZoom];
+
+    if (action == @selector(showHideWebView:))
         [menuItem setTitle:[_webView isHidden] ? @"Show Web View" : @"Hide Web View"];
-    else if ([menuItem action] == @selector(removeReinsertWebView:))
+    else if (action == @selector(removeReinsertWebView:))
         [menuItem setTitle:[_webView window] ? @"Remove Web View" : @"Insert Web View"];
+    else if (action == @selector(toggleZoomMode:))
+        [menuItem setState:_zoomTextOnly ? NSOnState : NSOffState];
     return YES;
 }
 
@@ -116,7 +129,7 @@
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
 {
     SEL action = [item action];
-    
+
     if (action == @selector(goBack:))
         return _webView && WKPageCanGoBack(_webView.pageRef);
     
@@ -148,6 +161,77 @@
 {
     WKPageClose(_webView.pageRef);
     WKRelease(_webView.pageRef);
+}
+
+#define DefaultMinimumZoomFactor (.5)
+#define DefaultMaximumZoomFactor (3.0)
+#define DefaultZoomFactorRatio (1.2)
+
+- (double)currentZoomFactor
+{
+    return _zoomTextOnly ? WKPageGetTextZoomFactor(_webView.pageRef) : WKPageGetPageZoomFactor(_webView.pageRef);
+}
+
+- (void)setCurrentZoomFactor:(double)factor
+{
+    _zoomTextOnly ? WKPageSetTextZoomFactor(_webView.pageRef, factor) : WKPageSetPageZoomFactor(_webView.pageRef, factor);
+}
+
+- (BOOL)canZoomIn
+{
+    return [self currentZoomFactor] * DefaultZoomFactorRatio < DefaultMaximumZoomFactor;
+}
+
+- (void)zoomIn:(id)sender;
+{
+    if (![self canZoomIn])
+        return;
+
+    double factor = [self currentZoomFactor] * DefaultZoomFactorRatio;
+    [self setCurrentZoomFactor:factor];
+}
+
+- (BOOL)canZoomOut
+{
+    return [self currentZoomFactor] / DefaultZoomFactorRatio > DefaultMinimumZoomFactor;
+}
+
+- (void)zoomOut:(id)sender;
+{
+    if (![self canZoomIn])
+        return;
+
+    double factor = [self currentZoomFactor] / DefaultZoomFactorRatio;
+    [self setCurrentZoomFactor:factor];
+}
+
+- (BOOL)canResetZoom
+{
+    return _zoomTextOnly ? (WKPageGetTextZoomFactor(_webView.pageRef) != 1) : (WKPageGetPageZoomFactor(_webView.pageRef) != 1);
+}
+
+- (void)resetZoom:(id)sender;
+{
+    if (![self canResetZoom])
+        return;
+
+    if (_zoomTextOnly)
+        WKPageSetTextZoomFactor(_webView.pageRef, 1);
+    else
+        WKPageSetPageZoomFactor(_webView.pageRef, 1);
+}
+
+- (IBAction)toggleZoomMode:(id)sender
+{
+    if (_zoomTextOnly) {
+        _zoomTextOnly = NO;
+        double currentTextZoom = WKPageGetTextZoomFactor(_webView.pageRef);
+        WKPageSetPageAndTextZoomFactors(_webView.pageRef, currentTextZoom, 1);
+    } else {
+        _zoomTextOnly = YES;
+        double currentPageZoom = WKPageGetPageZoomFactor(_webView.pageRef);
+        WKPageSetPageAndTextZoomFactors(_webView.pageRef, 1, currentPageZoom);
+    }
 }
 
 #pragma mark Loader Client Callbacks
