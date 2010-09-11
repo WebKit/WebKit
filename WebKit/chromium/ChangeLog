@@ -1,3 +1,10 @@
+2010-09-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed, speculative chromium build fix.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setZoomLevel):
+
 2010-09-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
