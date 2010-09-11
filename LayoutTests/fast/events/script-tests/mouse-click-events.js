@@ -49,9 +49,9 @@ function testEvents(description, button, expectedString) {
 
 if (window.eventSender) {
     testEvents("Left Mouse Button", 0, "mousedown(0) mouseup(0) click(0) mousedown(0) mouseup(0) click(0) dblclick(0) ");
-    testEvents("Middle Mouse Button", 1, "mousedown(1) mouseup(1) click(1) mousedown(1) mouseup(1) click(1) dblclick(1) ");
+    testEvents("Middle Mouse Button", 1, "mousedown(1) mouseup(1) mousedown(1) mouseup(1) ");
     testEvents("Right Mouse Button", 2, "mousedown(2) mouseup(2) mousedown(2) mouseup(2) ");
-    testEvents("4th Mouse Button", 3, "mousedown(1) mouseup(1) click(1) mousedown(1) mouseup(1) click(1) dblclick(1) ");
+    testEvents("4th Mouse Button", 3, "mousedown(1) mouseup(1) mousedown(1) mouseup(1) ");
 }
 
 var successfullyParsed = true;

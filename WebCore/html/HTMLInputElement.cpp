@@ -2155,16 +2155,13 @@ struct EventHandlingState : FastAllocBase {
         , m_checked(checked) { }
 };
 
-void* HTMLInputElement::preDispatchEventHandler(Event *evt)
+void* HTMLInputElement::preDispatchEventHandler(Event* evt)
 {
     // preventDefault or "return false" are used to reverse the automatic checking/selection we do here.
     // This result gives us enough info to perform the "undo" in postDispatch of the action we take here.
     void* result = 0; 
-    if ((inputType() == CHECKBOX || inputType() == RADIO) && evt->isMouseEvent()
-            && evt->type() == eventNames().clickEvent && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
-        
+    if ((inputType() == CHECKBOX || inputType() == RADIO) && evt->type() == eventNames().clickEvent) {
         OwnPtr<EventHandlingState> state = adoptPtr(new EventHandlingState(indeterminate(), checked()));
-
         if (inputType() == CHECKBOX) {
             if (indeterminate())
                 setIndeterminate(false);
@@ -2192,8 +2189,7 @@ void* HTMLInputElement::preDispatchEventHandler(Event *evt)
 
 void HTMLInputElement::postDispatchEventHandler(Event *evt, void* data)
 {
-    if ((inputType() == CHECKBOX || inputType() == RADIO) && evt->isMouseEvent()
-            && evt->type() == eventNames().clickEvent && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
+    if ((inputType() == CHECKBOX || inputType() == RADIO) && evt->type() == eventNames().clickEvent) {
         
         if (EventHandlingState* state = reinterpret_cast<EventHandlingState*>(data)) {
             if (inputType() == CHECKBOX) {
@@ -2276,10 +2272,7 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
         return;
     }
 
-    if (inputType() == RADIO
-            && evt->isMouseEvent()
-            && evt->type() == eventNames().clickEvent
-            && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
+    if (inputType() == RADIO && evt->type() == eventNames().clickEvent) {
         evt->setDefaultHandled();
         return;
     }

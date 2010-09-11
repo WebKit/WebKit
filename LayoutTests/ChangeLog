@@ -1,3 +1,13 @@
+2010-09-10  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Darin Adler.
+
+        Make middle clicks not fire DOM onclick events.
+        https://bugs.webkit.org/show_bug.cgi?id=22382
+
+        * fast/events/mouse-click-events-expected.txt:
+        * fast/events/script-tests/mouse-click-events.js:
+
 2010-09-10  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change.

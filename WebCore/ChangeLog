@@ -1,3 +1,24 @@
+2010-09-10  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Darin Adler.
+
+        Make middle clicks not fire DOM onclick events.
+        https://bugs.webkit.org/show_bug.cgi?id=22382
+
+        * html/HTMLAnchorElement.cpp: Explicitly include middle-clicks in the
+        computation of what constitutes a link click, since they're no longer
+        implicitly included.
+        (WebCore::isLinkClick):
+        * html/HTMLInputElement.cpp: Removed unneeded checks that click events
+        are coming from the left mouse button, since they all are now.
+        (WebCore::HTMLInputElement::preDispatchEventHandler):
+        (WebCore::HTMLInputElement::postDispatchEventHandler):
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        * page/EventHandler.cpp: Changed logic to send a click event only for
+        the left button.
+        (WebCore::EventHandler::handleMouseDoubleClickEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+
 2010-09-10  Adam Barth  <abarth@webkit.org>
 
         Attempted build fix for Qt Minimal.
@@ -99,7 +120,7 @@
         (WebCore::RenderThemeWin::volumeSliderOffsetFromMuteButton): Added. Pass through to RenderMediaControls.
         * rendering/RenderThemeWin.h:
 
-2010-09-109  Peter Kasting  <pkasting@google.com>
+2010-09-10  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Darin Adler.
 
