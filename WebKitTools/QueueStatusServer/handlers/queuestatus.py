@@ -59,7 +59,7 @@ class QueueStatus(webapp.RequestHandler):
             if status.active_patch_id:
                 patch_id = status.active_patch_id
             else:
-                patch_id = 'synthetic-' + synthetic_patch_id_counter
+                patch_id = 'synthetic-%d' % synthetic_patch_id_counter
                 synthetic_patch_id_counter += 1
 
             if patch_id not in status_groups_by_patch_id:
