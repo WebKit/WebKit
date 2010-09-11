@@ -1,3 +1,16 @@
+2010-09-10  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Movies with track or movie matrices don't display in <video> elements (Safari 5/Windows)
+        https://bugs.webkit.org/show_bug.cgi?id=45333
+        
+        The rootChild layer must be set as flipped, otherwise transformed movies will appear
+        incorrectly rotated.
+
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::enterFullscreen):
+
 2010-09-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

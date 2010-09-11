@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\&quot;;&quot;$(ProjectDir)..\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\include\private\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\include\private\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\private&quot;;&quot;$(WebKitLibrariesDir)\QTInternalSDK\CIncludes&quot;;&quot;$(WebKitLibrariesDir)\QuickTime SDK\CIncludes&quot;;&quot;$(ProgramFiles)/QuickTime SDK/cincludes&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\private&quot;"
-				PreprocessorDefinitions="_USRDLL;QTMOVIEWIN_EXPORTS"
+				PreprocessorDefinitions="_USRDLL;QTMOVIEWIN_EXPORTS;TARGET_OS_WIN32"
 				DisableSpecificWarnings="4819"
 			/>
 			<Tool
@@ -113,7 +113,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\&quot;;&quot;$(ProjectDir)..\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\include\private\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\include\private\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\private&quot;;&quot;$(WebKitLibrariesDir)\QTInternalSDK\CIncludes&quot;;&quot;$(WebKitLibrariesDir)\QuickTime SDK\CIncludes&quot;;&quot;$(ProgramFiles)/QuickTime SDK/cincludes&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\private&quot;"
-				PreprocessorDefinitions="_USRDLL;QTMOVIEWIN_EXPORTS"
+				PreprocessorDefinitions="_USRDLL;QTMOVIEWIN_EXPORTS;TARGET_OS_WIN32"
 				DisableSpecificWarnings="4819"
 			/>
 			<Tool
@@ -185,7 +185,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\&quot;;&quot;$(ProjectDir)..\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\include\private\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\include\private\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\private&quot;;&quot;$(WebKitLibrariesDir)\QTInternalSDK\CIncludes&quot;;&quot;$(WebKitLibrariesDir)\QuickTime SDK\CIncludes&quot;;&quot;$(ProgramFiles)/QuickTime SDK/cincludes&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\private&quot;"
-				PreprocessorDefinitions="_USRDLL;QTMOVIEWIN_EXPORTS"
+				PreprocessorDefinitions="_USRDLL;QTMOVIEWIN_EXPORTS;TARGET_OS_WIN32"
 				DisableSpecificWarnings="4819"
 			/>
 			<Tool
@@ -257,7 +257,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\&quot;;&quot;$(ProjectDir)..\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\include\private\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\include\private\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\private&quot;;&quot;$(WebKitLibrariesDir)\QTInternalSDK\CIncludes&quot;;&quot;$(WebKitLibrariesDir)\QuickTime SDK\CIncludes&quot;;&quot;$(ProgramFiles)/QuickTime SDK/cincludes&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\private&quot;"
-				PreprocessorDefinitions="_USRDLL;QTMOVIEWIN_EXPORTS"
+				PreprocessorDefinitions="_USRDLL;QTMOVIEWIN_EXPORTS;TARGET_OS_WIN32"
 				DisableSpecificWarnings="4819"
 			/>
 			<Tool
@@ -341,6 +341,10 @@
 				RelativePath="..\platform\graphics\win\QTPixelBuffer.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\platform\graphics\win\QTTrack.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -373,6 +377,10 @@
 			</File>
 			<File
 				RelativePath="..\platform\graphics\win\QTPixelBuffer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\graphics\win\QTTrack.h"
 				>
 			</File>
 		</Filter>

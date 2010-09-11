@@ -155,6 +155,45 @@
 
 2010-09-10  Jer Noble  <jer.noble@apple.com>
 
+        Reviewed by Simon Fraser.
+
+        Movies with track or movie matrices don't display in <video> elements (Safari 5/Windows)
+        https://bugs.webkit.org/show_bug.cgi?id=45333
+        rdar://problem/81333126
+        
+        QuickTime will refuse to decode video frames for movies whose movie and track matrices 
+        are non-identity.  To work around this problem, extract the movie and track matrices 
+        from the movie, and set that matrix on the video layer instead.
+
+        * WebCore.vcproj/QTMovieWin.vcproj:
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::LayoutClient::LayoutClient): Added.
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::LayoutClient::layoutSublayersOfLayer):
+            Layout the video layer according to its superlayer's size.
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::MediaPlayerPrivateQuickTimeVisualContext):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::platformLayer):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::naturalSize):
+            Apply the m_movieTransform to the size reported by QTMovie.
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::retrieveAndResetMovieTransform):
+            Calculate m_movieTransform and reset the movie and track matrices in the movie.
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::createLayerForMovie):
+            Create two nested layers instead of one.
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::destroyLayerForMovie):
+            Make sure to remove m_qtVideoLayer from any superlayer before dereferencing it.
+        * platform/graphics/win/QTMovie.cpp:
+        (QTMovie::videoTracks): Added.
+        (QTMovie::getTransform): Added.
+        (QTMovie::setTransform): Added.
+        (QTMovie::resetTransform): Added.
+        * platform/graphics/win/QTMovie.h:
+        * platform/graphics/win/QTTrack.cpp: Added.
+        * platform/graphics/win/QTTrack.h: Added.
+        * platform/graphics/win/WKCACFLayer.cpp:
+        (WebCore::WKCACFLayer::setBounds): Call setNeedsLayout() if a layoutClient is present.
+        (WebCore::WKCACFLayer::setFrame): Call setNeedsLayout() if a layoutClient is present.
+
+2010-09-10  Jer Noble  <jer.noble@apple.com>
+
         No review; build fix only.
 
         Touch mediaControlsQuickTime in order to trigger the UserAgentStyleSheet.h to be rebuilt.
