@@ -1,3 +1,27 @@
+2010-09-11  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] V8 port for Qt platform: Qt WebCoreSupport changes
+        https://bugs.webkit.org/show_bug.cgi?id=45149
+
+        Original patch by Vlad Burlik <volodimir.burlik@nokia.com>
+
+        Implemented the V8 specifics needed in DumpRenderTreeSupportQt and
+        FrameLoaderClientQt.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::javaScriptObjectsCount):
+        (DumpRenderTreeSupportQt::garbageCollectorCollect):
+        (DumpRenderTreeSupportQt::garbageCollectorCollectOnAlternateThread):
+        (DumpRenderTreeSupportQt::evaluateScriptInIsolatedWorld):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::didCreateScriptContextForFrame):
+        (WebCore::FrameLoaderClientQt::didDestroyScriptContextForFrame):
+        (WebCore::FrameLoaderClientQt::didCreateIsolatedScriptContext):
+        (WebCore::FrameLoaderClientQt::createDocumentLoader):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2010-09-11  Vlad Burlik  <volodimir.burlik@nokia.com>
 
         Reviewed by Andreas Kling.

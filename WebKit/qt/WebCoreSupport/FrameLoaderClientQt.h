@@ -211,6 +211,17 @@ public:
     virtual void documentElementAvailable();
     virtual void didPerformFirstNavigation() const;
 
+#if USE(V8)
+    // A frame's V8 context was created or destroyed.
+    virtual void didCreateScriptContextForFrame();
+    virtual void didDestroyScriptContextForFrame();
+
+    // A context untied to a frame was created (through evaluateInIsolatedWorld).
+    // This context is not tied to the lifetime of its frame, and is destroyed
+    // in garbage collection.
+    virtual void didCreateIsolatedScriptContext();
+#endif
+
     virtual void registerForIconNotification(bool);
 
     QString chooseFile(const QString& oldFile);

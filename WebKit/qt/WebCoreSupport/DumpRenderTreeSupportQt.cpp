@@ -34,7 +34,12 @@
 #include "Frame.h"
 #include "FrameLoaderClientQt.h"
 #include "FrameView.h"
+#if USE(JSC)
 #include "GCController.h"
+#elif USE(V8)
+#include "V8GCController.h"
+#include "V8Proxy.h"
+#endif
 #include "Geolocation.h"
 #include "GeolocationServiceMock.h"
 #include "Geoposition.h"
@@ -296,17 +301,31 @@ void DumpRenderTreeSupportQt::clearFrameName(QWebFrame* frame)
 
 int DumpRenderTreeSupportQt::javaScriptObjectsCount()
 {
+#if USE(JSC)
     return JSDOMWindowBase::commonJSGlobalData()->heap.globalObjectCount();
+#elif USE(V8)
+    // FIXME: Find a way to do this using V8.
+    return 1;
+#endif
 }
 
 void DumpRenderTreeSupportQt::garbageCollectorCollect()
 {
+#if USE(JSC)
     gcController().garbageCollectNow();
+#elif USE(V8)
+    v8::V8::LowMemoryNotification();
+#endif
 }
 
 void DumpRenderTreeSupportQt::garbageCollectorCollectOnAlternateThread(bool waitUntilDone)
 {
+#if USE(JSC)
     gcController().garbageCollectOnAlternateThreadForDebugging(waitUntilDone);
+#elif USE(V8)
+    // FIXME: Find a way to do this using V8.
+    garbageCollectorCollect();
+#endif
 }
 
 // Returns the value of counter in the element specified by \a id.
@@ -670,8 +689,16 @@ void DumpRenderTreeSupportQt::evaluateScriptInIsolatedWorld(QWebFrame* frame, in
 
     ScriptController* proxy = coreFrame->script();
 
-    if (proxy)
-        proxy->executeScriptInWorld(scriptWorld->world(), script, true);
+    if (!proxy)
+        return;
+#if USE(JSC)
+    proxy->executeScriptInWorld(scriptWorld->world(), script, true);
+#elif USE(V8)
+    ScriptSourceCode source(script);
+    Vector<ScriptSourceCode> sources;
+    sources.append(source);
+    proxy->evaluateInIsolatedWorld(0, sources, true);
+#endif
 }
 
 bool DumpRenderTreeSupportQt::isPageBoxVisible(QWebFrame* frame, int pageIndex)
