@@ -1,3 +1,15 @@
+2010-09-10  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45563
+        Assertion failure: useTransforms when scrolling to an SVG element
+
+        This has been indirectly fixed in r63633, just adding a test.
+
+        * svg/custom/scroll-to-svg-element-assertion-expected.txt: Added.
+        * svg/custom/scroll-to-svg-element-assertion.html: Added.
+
 2010-09-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
