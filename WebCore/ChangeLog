@@ -1,3 +1,15 @@
+2010-09-11  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=45587
+        Move line clamp code to its own function.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutVerticalBox):
+        (WebCore::RenderFlexibleBox::applyLineClamp):
+        * rendering/RenderFlexibleBox.h:
+
 2010-09-11  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.
