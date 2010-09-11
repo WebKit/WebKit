@@ -1201,7 +1201,8 @@ void QWebPagePrivate::inputMethodEvent(QInputMethodEvent *ev)
                                    (selection.length < 0) ? selection.start : selection.start + selection.length);
         } else
 #endif
-            editor->setComposition(preedit, underlines, preedit.length(), 0);
+            if (!preedit.isEmpty())
+                editor->setComposition(preedit, underlines, preedit.length(), 0);
     }
 
     ev->accept();

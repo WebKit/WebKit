@@ -1,3 +1,15 @@
+2010-09-10  yi shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] selected text gets deleted when qgraphicswebview losts focus
+        https://bugs.webkit.org/show_bug.cgi?id=45539
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::inputMethodEvent):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::inputMethods):
+
 2010-09-10  Sam Weinig  <sam@webkit.org>
 
         Fix Qt build.

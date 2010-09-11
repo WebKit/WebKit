@@ -1661,6 +1661,22 @@ void tst_QWebPage::inputMethods()
     QVERIFY(!viewEventSpy.contains(QEvent::RequestSoftwareInputPanel));
 #endif
 
+#if QT_VERSION >= 0x040600
+    //START - Test for sending empty QInputMethodEvent
+    page->mainFrame()->setHtml("<html><body>" \
+                                            "<input type='text' id='input3' value='QtWebKit2'/>" \
+                                            "</body></html>");
+    page->mainFrame()->evaluateJavaScript("var inputEle = document.getElementById('input3'); inputEle.focus(); inputEle.select();");
+
+    //Send empty QInputMethodEvent
+    QInputMethodEvent emptyEvent;
+    page->event(&emptyEvent);
+
+    QString inputValue = page->mainFrame()->evaluateJavaScript("document.getElementById('input3').value").toString();
+    QCOMPARE(inputValue, QString("QtWebKit2"));
+    //END - Test for sending empty QInputMethodEvent
+#endif
+
     delete container;
 }
 
