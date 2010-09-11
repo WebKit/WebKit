@@ -1,0 +1,4 @@
+script1.js has MIME type application/javascript
+This test requires DumpRenderTree to see the log of what resources are loaded.
+
+<script src=resources/script1.js></script>

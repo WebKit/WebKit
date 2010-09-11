@@ -1,3 +1,20 @@
+2010-09-11  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Implement layoutTestController.dumpResourceResponseMIMETypes in Chromium DRT
+        https://bugs.webkit.org/show_bug.cgi?id=45479
+
+        Remove tests from Chromium expectations that now pass. Add
+        Chromium/Linux expectations for the script test, since it reports a
+        different MIME type (application/javascript vs.
+        application/x-javascript).
+
+        * platform/chromium-linux/fast/dom/HTMLLinkElement/prefetch-expected.txt: Removed.
+        * platform/chromium-linux/fast/preloader/script-expected.txt: Added.
+        * platform/chromium-mac/fast/dom/HTMLLinkElement/prefetch-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2010-09-11  Tony Chang  <tony@chromium.org>
 
         Reviewed by Kent Tamura.

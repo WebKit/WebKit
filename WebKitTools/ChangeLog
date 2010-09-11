@@ -1,3 +1,25 @@
+2010-09-11  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Implement layoutTestController.dumpResourceResponseMIMETypes in Chromium DRT
+        https://bugs.webkit.org/show_bug.cgi?id=45479
+
+        Implement layoutTestController.dumpResourceResponseMIMETypes (modelled after
+        implementation in ResourceLoadDelegate in the Mac port).
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::dumpResourceResponseMIMETypes):
+        (LayoutTestController::reset):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        (LayoutTestController::setShouldDumpResourceResponseMIMETypes):
+        (LayoutTestController::shouldDumpResourceResponseMIMETypes):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell::shouldDumpResourceResponseMIMETypes):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::didReceiveResponse):
+
 2010-09-11  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

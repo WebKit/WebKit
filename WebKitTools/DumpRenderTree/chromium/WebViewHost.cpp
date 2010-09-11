@@ -920,12 +920,20 @@ void WebViewHost::willSendRequest(WebFrame*, unsigned identifier, WebURLRequest&
 
 void WebViewHost::didReceiveResponse(WebFrame*, unsigned identifier, const WebURLResponse& response)
 {
-    if (!m_shell->shouldDumpResourceLoadCallbacks())
-        return;
-    printResourceDescription(identifier);
-    fputs(" - didReceiveResponse ", stdout);
-    printResponseDescription(response);
-    fputs("\n", stdout);
+    if (m_shell->shouldDumpResourceLoadCallbacks()) {
+        printResourceDescription(identifier);
+        fputs(" - didReceiveResponse ", stdout);
+        printResponseDescription(response);
+        fputs("\n", stdout);
+    }
+    if (m_shell->shouldDumpResourceResponseMIMETypes()) {
+        GURL url = response.url();
+        WebString mimeType = response.mimeType();
+        printf("%s has MIME type %s\n",
+            url.ExtractFileName().c_str(),
+            // Simulate NSURLResponse's mapping of empty/unknown MIME types to application/octet-stream
+            mimeType.isEmpty() ? "application/octet-stream" : mimeType.utf8().data());
+    }
 }
 
 void WebViewHost::didFinishResourceLoad(WebFrame*, unsigned identifier)

@@ -2666,14 +2666,6 @@ BUG46603 : fast/frames/lots-of-objects.html = PASS TIMEOUT
 // LayoutTestController::pageProperty is not implemented for Chromium yet.
 BUGWK35961 : printing/page-rule-selection.html = TEXT
 
-// Needs to implement layoutTestController.dumpResourceResponseMIMETypes()
-BUG46872 : fast/preloader = TEXT
-BUG46872 : fast/preloader/image.html = PASS
-BUG46872 : fast/preloader/link.html = PASS
-BUG46872 : fast/preloader/noscript.html = PASS
-BUG46872 : fast/preloader/style.html = PASS
-BUG46872 MAC LINUX : fast/dom/HTMLLinkElement/prefetch.html = TEXT
-
 BUG47035 WIN DEBUG : fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.html = PASS TEXT
 
 // CSS3 Hyphenation landed in http://trac.webkit.org/changeset/61548
