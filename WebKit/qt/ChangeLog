@@ -1,5 +1,23 @@
 2010-09-10  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Darin Fisher.
+
+        Move code from WebKit-layer to DocumentLoader
+        https://bugs.webkit.org/show_bug.cgi?id=45569
+
+        This code didn't know that setEncoding can be called multiple times.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::FrameLoaderClientQt):
+        (WebCore::FrameLoaderClientQt::finishedLoading):
+        (WebCore::FrameLoaderClientQt::setMainDocumentError):
+        (WebCore::FrameLoaderClientQt::committedLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveResponse):
+        (WebCore::FrameLoaderClientQt::dispatchDidFailLoading):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
+2010-09-10  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Main resource bytes shouldn't bounce through FrameLoader

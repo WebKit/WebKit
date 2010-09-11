@@ -209,7 +209,6 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
     Evas_Object *m_frame;
 
     ResourceResponse m_response;
-    bool m_firstData;
     String m_userAgent;
     String m_customUserAgent;
 

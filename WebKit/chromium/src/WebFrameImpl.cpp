@@ -1012,21 +1012,9 @@ void WebFrameImpl::dispatchWillSendRequest(WebURLRequest& request)
         0, 0, request.toMutableResourceRequest(), response);
 }
 
-// FIXME: This function should be moved into WebCore.
 void WebFrameImpl::commitDocumentData(const char* data, size_t length)
 {
-    DocumentLoader* documentLoader = m_frame->loader()->documentLoader();
-
-    // Set the text encoding.  This calls begin() for us.  It is safe to call
-    // this multiple times (Mac does: page/mac/WebCoreFrameBridge.mm).
-    bool userChosen = true;
-    String encoding = documentLoader->overrideEncoding();
-    if (encoding.isNull()) {
-        userChosen = false;
-        encoding = documentLoader->response().textEncodingName();
-    }
-    m_frame->loader()->writer()->setEncoding(encoding, userChosen);
-    m_frame->loader()->documentLoader()->addData(data, length);
+    m_frame->loader()->documentLoader()->commitData(data, length);
 }
 
 unsigned WebFrameImpl::unloadListenerCount() const

@@ -1,3 +1,21 @@
+2010-09-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Fisher.
+
+        Move code from WebKit-layer to DocumentLoader
+        https://bugs.webkit.org/show_bug.cgi?id=45569
+
+        This code is the most confused, but now should be a bit cleaner.
+        There's still a magical fake-setting for creating renderers that needs
+        to be cleaned up, but we can do that in a separate patch.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _commitData:]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation receivedData:withDataSource:]):
+        (-[WebHTMLRepresentation finishedLoadingWithDataSource:]):
+
 2010-09-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Barth.

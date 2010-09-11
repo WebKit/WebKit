@@ -491,11 +491,8 @@ void WebFrameLoaderClient::postProgressFinishedNotification()
 
 void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, const char* data, int length)
 {
-    // FIXME: This should probably go through the data source.
-    const String& textEncoding = loader->response().textEncodingName();
-
     if (!m_manualLoader)
-        receivedData(data, length, textEncoding);
+        loader->commitData(data, length);
 
     if (!m_manualLoader)
         return;
@@ -510,22 +507,6 @@ void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, const char* dat
         m_hasSentResponseToPlugin = true;
     }
     m_manualLoader->didReceiveData(data, length);
-}
-
-// FIXME: This function should be moved into WebCore.
-void WebFrameLoaderClient::receivedData(const char* data, int length, const String& textEncoding)
-{
-    Frame* coreFrame = core(m_webFrame);
-    if (!coreFrame)
-        return;
-
-    // Set the encoding. This only needs to be done once, but it's harmless to do it again later.
-    String encoding = coreFrame->loader()->documentLoader()->overrideEncoding();
-    bool userChosen = !encoding.isNull();
-    if (encoding.isNull())
-        encoding = textEncoding;
-    coreFrame->loader()->writer()->setEncoding(encoding, userChosen);
-    coreFrame->loader()->documentLoader()->addData(data, length);
 }
 
 void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)

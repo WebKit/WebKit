@@ -2226,8 +2226,10 @@ void FrameLoader::finishedLoadingDocument(DocumentLoader* loader)
     if (!archive)
         return;
 
-    loader->addAllArchiveResources(archive.get());
+    // FIXME: The remainder of this function should be in DocumentLoader.
     
+    loader->addAllArchiveResources(archive.get());
+
     ArchiveResource* mainResource = archive->mainResource();
     loader->setParsedArchiveData(mainResource->data());
 
@@ -2236,13 +2238,11 @@ void FrameLoader::finishedLoadingDocument(DocumentLoader* loader)
     closeURL();
     didOpenURL(mainResource->url());
 
+    ASSERT(m_frame->document());
     String userChosenEncoding = documentLoader()->overrideEncoding();
     bool encodingIsUserChosen = !userChosenEncoding.isNull();
     writer()->setEncoding(encodingIsUserChosen ? userChosenEncoding : mainResource->textEncoding(), encodingIsUserChosen);
-
-    ASSERT(m_frame->document());
-
-    loader->addData(mainResource->data()->data(), mainResource->data()->size());
+    writer()->addData(mainResource->data()->data(), mainResource->data()->size());
 }
 
 bool FrameLoader::isReplacing() const

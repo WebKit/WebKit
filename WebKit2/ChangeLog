@@ -1,3 +1,17 @@
+2010-09-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Fisher.
+
+        Move code from WebKit-layer to DocumentLoader
+        https://bugs.webkit.org/show_bug.cgi?id=45569
+
+        This code looks copy/pasted from Mac.  It's unclear whether whether all
+        the complexity is needed here, but I don't have a good way to find out.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::committedLoad):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
 2010-09-10  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mark Rowe and Darin Adler.

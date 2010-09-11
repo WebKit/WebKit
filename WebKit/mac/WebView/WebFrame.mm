@@ -487,14 +487,6 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return dataSource(_private->coreFrame->loader()->documentLoader());
 }
 
-- (void)_addData:(NSData *)data
-{
-    Document* document = _private->coreFrame->document();
-
-    document->setShouldCreateRenderers(_private->shouldCreateRenderers);
-    _private->coreFrame->loader()->documentLoader()->addData((const char *)[data bytes], [data length]);
-}
-
 - (NSString *)_stringWithDocumentTypeStringAndMarkupString:(NSString *)markupString
 {
     return _private->coreFrame->documentTypeString() + markupString;
@@ -935,15 +927,13 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return [self _canProvideDocumentSource];
 }
 
-- (void)_receivedData:(NSData *)data textEncodingName:(NSString *)textEncodingName
+- (void)_commitData:(NSData *)data
 {
-    // Set the encoding. This only needs to be done once, but it's harmless to do it again later.
-    String encoding = _private->coreFrame->loader()->documentLoader()->overrideEncoding();
-    bool userChosen = !encoding.isNull();
-    if (encoding.isNull())
-        encoding = textEncodingName;
-    _private->coreFrame->loader()->writer()->setEncoding(encoding, userChosen);
-    [self _addData:data];
+    // FIXME: This really should be a setting.
+    Document* document = _private->coreFrame->document();
+    document->setShouldCreateRenderers(_private->shouldCreateRenderers);
+
+    _private->coreFrame->loader()->documentLoader()->commitData((const char *)[data bytes], [data length]);
 }
 
 @end

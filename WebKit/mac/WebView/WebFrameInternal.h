@@ -162,7 +162,7 @@ WebView *getWebView(WebFrame *webFrame);
 - (BOOL)_canProvideDocumentSource;
 - (BOOL)_canSaveAsWebArchive;
 
-- (void)_receivedData:(NSData *)data textEncodingName:(NSString *)textEncodingName;
+- (void)_commitData:(NSData *)data;
 
 @end
 

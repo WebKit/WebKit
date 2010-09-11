@@ -617,12 +617,9 @@ void FrameLoaderClientWx::committedLoad(WebCore::DocumentLoader* loader, const c
 {
     if (!m_webFrame)
         return;
-    if (!m_pluginView) {
-        FrameLoader* fl = loader->frameLoader();
-        fl->writer()->setEncoding(m_response.textEncodingName(), false);
-        fl->documentLoader()->addData(data, length);
-    }
-    
+    if (!m_pluginView)
+        loader->commitData(data, length);
+
     // We re-check here as the plugin can have been created
     if (m_pluginView) {
         if (!m_hasSentResponseToPlugin) {

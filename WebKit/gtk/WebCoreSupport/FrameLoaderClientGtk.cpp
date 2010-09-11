@@ -245,26 +245,15 @@ void FrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction policyFunctio
     (core(m_frame)->loader()->policyChecker()->*policyFunction)(PolicyUse);
 }
 
-// FIXME: This function should be moved into WebCore.
 void FrameLoaderClient::committedLoad(WebCore::DocumentLoader* loader, const char* data, int length)
 {
     if (!m_pluginView) {
         ASSERT(loader->frame());
-        // Setting the encoding on the frame loader is our way to get work done that is normally done
-        // when the first bit of data is received, even for the case of a document with no data (like about:blank).
-        String encoding = loader->overrideEncoding();
-        bool userChosen = !encoding.isNull();
-        if (!userChosen)
-            encoding = loader->response().textEncodingName();
-
-        FrameLoader* frameLoader = loader->frameLoader();
-        frameLoader->writer()->setEncoding(encoding, userChosen);
-        if (data)
-            frameLoader->documentLoader()->addData(data, length);
+        loader->commitData(data, length);
 
         Frame* coreFrame = loader->frame();
-        if (coreFrame && coreFrame->document() && coreFrame->document()->isMediaDocument())
-            loader->cancelMainResourceLoad(frameLoader->client()->pluginWillHandleLoadError(loader->response()));
+        if (coreFrame && coreFrame->document()->isMediaDocument())
+            loader->cancelMainResourceLoad(coreFrame->loader()->client()->pluginWillHandleLoadError(loader->response()));
     }
 
     if (m_pluginView) {

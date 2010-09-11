@@ -211,7 +211,9 @@ namespace WebCore {
         DocumentLoadTiming* timing() { return &m_documentLoadTiming; }
         void resetTiming() { m_documentLoadTiming = DocumentLoadTiming(); }
 
-        void addData(const char* bytes, int length);
+        // The WebKit layer calls this function when it's ready for the data to
+        // actually be added to the document.
+        void commitData(const char* bytes, int length);
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         ApplicationCacheHost* applicationCacheHost() const { return m_applicationCacheHost.get(); }

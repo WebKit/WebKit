@@ -599,12 +599,10 @@ void WebFrameLoaderClient::didChangeTitle(DocumentLoader*)
 
 void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, const char* data, int length)
 {
-    const String& textEncoding = loader->response().textEncodingName();
-    
     if (!m_pluginView)
-        receivedData(data, length, textEncoding);
+        loader->commitData(data, length);
 
-    // Calling receivedData did not create the plug-in view.
+    // Calling commitData did not create the plug-in view.
     if (!m_pluginView)
         return;
 
@@ -618,23 +616,6 @@ void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, const char* dat
         m_hasSentResponseToPluginView = true;
     }
     m_pluginView->manualLoadDidReceiveData(data, length);
-}
-
-// FIXME: This function should be moved into WebCore.
-void WebFrameLoaderClient::receivedData(const char* data, int length, const String& textEncoding)
-{
-    Frame* coreFrame = m_frame->coreFrame();
-    if (!coreFrame)
-        return;
-    
-    // Set the encoding. This only needs to be done once, but it's harmless to do it again later.
-    String encoding = coreFrame->loader()->documentLoader()->overrideEncoding();
-    bool userChosen = !encoding.isNull();
-    if (encoding.isNull())
-        encoding = textEncoding;
-    coreFrame->loader()->writer()->setEncoding(encoding, userChosen);
-    
-    coreFrame->loader()->documentLoader()->addData(data, length);
 }
 
 void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)

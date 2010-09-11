@@ -232,7 +232,6 @@ private:
     Frame *m_frame;
     QWebFrame *m_webFrame;
     ResourceResponse m_response;
-    bool m_firstData;
 
     // Plugin view to redirect data to
     WebCore::PluginView* m_pluginView;

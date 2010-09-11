@@ -1,3 +1,22 @@
+2010-09-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Fisher.
+
+        Move code from WebKit-layer to DocumentLoader
+        https://bugs.webkit.org/show_bug.cgi?id=45569
+
+        There's a bunch of code that's copy/pasted (poorly) across all the
+        ports that really belongs in WebCore.  This patch moves that logic into
+        DocumentLoader.  This patch is a step on the path to having
+        DocumentLoader own DocumentWriter.
+
+        * WebCore.exp.in:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::commitData):
+        * loader/DocumentLoader.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::finishedLoadingDocument):
+
 2010-09-10  Cosmin Truta  <ctruta@chromium.org>
 
         Reviewed by Nikolas Zimmermann.

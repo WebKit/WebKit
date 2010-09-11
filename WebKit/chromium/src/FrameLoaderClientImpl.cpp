@@ -1053,8 +1053,7 @@ void FrameLoaderClientImpl::committedLoad(DocumentLoader* loader, const char* da
 
     // If we are sending data to MediaDocument, we should stop here
     // and cancel the request.
-    if (m_webFrame->frame()->document()
-        && m_webFrame->frame()->document()->isMediaDocument())
+    if (m_webFrame->frame()->document()->isMediaDocument())
         loader->cancelMainResourceLoad(pluginWillHandleLoadError(loader->response()));
 
     // The plugin widget could have been created in the m_webFrame->DidReceiveData

@@ -166,23 +166,24 @@ static NSArray *concatenateArrays(NSArray *first, NSArray *second)
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource
 {
     WebFrame *webFrame = [dataSource webFrame];
-    if (webFrame) {
-        if (!_private->pluginView)
-            [webFrame _receivedData:data textEncodingName:[[_private->dataSource response] textEncodingName]];
-        
-        // If the document is a stand-alone media document, now is the right time to cancel the WebKit load
-        Frame* coreFrame = core(webFrame);
-        if (coreFrame->document() && coreFrame->document()->isMediaDocument())
-            coreFrame->loader()->documentLoader()->cancelMainResourceLoad(coreFrame->loader()->client()->pluginWillHandleLoadError(coreFrame->loader()->documentLoader()->response()));
+    if (!webFrame)
+        return;
 
-        if (_private->pluginView) {
-            if (!_private->hasSentResponseToPlugin) {
-                [_private->manualLoader pluginView:_private->pluginView receivedResponse:[dataSource response]];
-                _private->hasSentResponseToPlugin = YES;
-            }
-            
-            [_private->manualLoader pluginView:_private->pluginView receivedData:data];
+    if (!_private->pluginView)
+        [webFrame _commitData:data];
+
+    // If the document is a stand-alone media document, now is the right time to cancel the WebKit load
+    Frame* coreFrame = core(webFrame);
+    if (coreFrame->document()->isMediaDocument())
+        coreFrame->loader()->documentLoader()->cancelMainResourceLoad(coreFrame->loader()->client()->pluginWillHandleLoadError(coreFrame->loader()->documentLoader()->response()));
+
+    if (_private->pluginView) {
+        if (!_private->hasSentResponseToPlugin) {
+            [_private->manualLoader pluginView:_private->pluginView receivedResponse:[dataSource response]];
+            _private->hasSentResponseToPlugin = YES;
         }
+        
+        [_private->manualLoader pluginView:_private->pluginView receivedData:data];
     }
 }
 
@@ -195,25 +196,26 @@ static NSArray *concatenateArrays(NSArray *first, NSArray *second)
 
 - (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource
 {
-    WebFrame *frame = [dataSource webFrame];
+    WebFrame* webFrame = [dataSource webFrame];
 
     if (_private->pluginView) {
         [_private->manualLoader pluginViewFinishedLoading:_private->pluginView];
         return;
     }
 
-    if (frame) {
-        if (![self _isDisplayingWebArchive]) {
-            // Telling the frame we received some data and passing nil as the data is our
-            // way to get work done that is normally done when the first bit of data is
-            // received, even for the case of a document with no data (like about:blank).
-            [frame _receivedData:nil textEncodingName:[[_private->dataSource response] textEncodingName]];
-        }
-        
-        WebView *webView = [frame webView];
-        if ([webView isEditable])
-            core(frame)->editor()->applyEditingStyleToBodyElement();
+    if (!webFrame)
+        return;
+
+    if (![self _isDisplayingWebArchive]) {
+        // Telling the frame we received some data and passing nil as the data is our
+        // way to get work done that is normally done when the first bit of data is
+        // received, even for the case of a document with no data (like about:blank).
+        [webFrame _commitData:nil];
     }
+
+    WebView *webView = [webFrame webView];
+    if ([webView isEditable])
+        core(webFrame)->editor()->applyEditingStyleToBodyElement();
 }
 
 - (BOOL)canProvideDocumentSource
