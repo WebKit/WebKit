@@ -1,3 +1,13 @@
+2010-09-11  Robert Hogan  <robert@webkit.org>
+
+        Unreviewed, unskip passing test.
+
+        Test fixed by http://trac.webkit.org/changeset/56511
+
+        See https://bugs.webkit.org/show_bug.cgi?id=36492
+
+        * platform/qt/Skipped:
+
 2010-09-11  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Tony Chang.

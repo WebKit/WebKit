@@ -5316,15 +5316,6 @@ transitions/transition-end-event-rendering.html
 transitions/transition-drt-api.html
 
 # ============================================================================= #
-# failing websocket tests
-# ============================================================================= #
-
-# [Qt] websocket/tests/long-invalid-header.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=36492
-websocket/tests/long-invalid-header.html
-
-
-# ============================================================================= #
 # new tests without expected results
 # ============================================================================= #
 editing/inserting/insert-bg-font.html
