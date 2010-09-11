@@ -1,3 +1,23 @@
+2010-09-11  Vlad Burlik  <volodimir.burlik@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] V8 port for QT platform: QT API implementation changes
+        https://bugs.webkit.org/show_bug.cgi?id=45148
+
+        V8 Implementation of QWebFrame::addToJavaScriptWindowObject()
+        and QWebFrame::evaluateJavaScript()
+
+        * Api/qwebelement.cpp:
+        (setupScriptContext): JSC and V8 variations
+        (QWebElement::evaluateJavaScript):
+        * Api/qwebelement.h:
+        * Api/qwebframe.cpp: QObject injection to V8 world
+        (QWebFrame::addToJavaScriptWindowObject):
+        (QWebFrame::evaluateJavaScript):
+        * Api/qwebpage.cpp: Use ScriptController type definitions instead of direct references to JSC or V8
+        (QWebPagePrivate::QWebPagePrivate):
+
 2010-09-10  yi shen  <yi.4.shen@nokia.com>
 
         Reviewed by Antonio Gomes.

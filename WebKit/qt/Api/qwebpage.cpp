@@ -263,7 +263,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     , inspectorIsInternalOnly(false)
 {
     WebCore::InitializeLoggingChannelsIfNecessary();
-    JSC::initializeThreading();
+    ScriptController::initializeThreading();
     WTF::initializeMainThread();
     WebCore::SecurityOrigin::setLocalLoadPolicy(WebCore::SecurityOrigin::AllowLocalLoadsForLocalAndSubstituteData);
 #if QT_VERSION < QT_VERSION_CHECK(4, 7, 0)

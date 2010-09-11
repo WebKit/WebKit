@@ -21,8 +21,12 @@
 #include "config.h"
 #include "qwebframe.h"
 
+#if USE(JSC)
 #include "Bridge.h"
 #include "CallFrame.h"
+#elif USE(V8)
+#include "V8Binding.h"
+#endif
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "DragData.h"
@@ -32,23 +36,34 @@
 #include "FrameLoaderClientQt.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#if USE(JSC)
 #include "GCController.h"
+#elif USE(V8)
+#include "V8GCController.h"
+#endif
 #include "GraphicsContext.h"
 #include "HTMLMetaElement.h"
 #include "HitTestResult.h"
 #include "HTTPParsers.h"
 #include "IconDatabase.h"
 #include "InspectorController.h"
+#if USE(JSC)
 #include "JSDOMBinding.h"
 #include "JSDOMWindowBase.h"
 #include "JSLock.h"
 #include "JSObject.h"
+#elif USE(V8)
+#include "V8DOMWrapper.h"
+#include "V8DOMWindowShell.h"
+#endif
 #include "NodeList.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
 #include "PrintContext.h"
+#if USE(JSC)
 #include "PutPropertySlot.h"
+#endif
 #include "RenderLayer.h"
 #include "RenderTreeAsText.h"
 #include "RenderView.h"
@@ -64,8 +79,13 @@
 #include "TiledBackingStore.h"
 #include "htmlediting.h"
 #include "markup.h"
+#if USE(JSC)
 #include "qt_instance.h"
 #include "qt_runtime.h"
+#elif USE(V8)
+#include "qt_instancev8.h"
+#include "qt_runtimev8.h"
+#endif
 #include "qwebelement.h"
 #include "qwebframe_p.h"
 #include "qwebpage.h"
@@ -74,8 +94,10 @@
 #include "qwebsecurityorigin_p.h"
 #include "qwebscriptworld.h"
 #include "qwebscriptworld_p.h"
+#if USE(JSC)
 #include "runtime_object.h"
 #include "runtime_root.h"
+#endif
 #include "wtf/HashMap.h"
 #include <QMultiMap>
 #include <qdebug.h>
@@ -476,7 +498,7 @@ void QWebFrame::addToJavaScriptWindowObject(const QString &name, QObject *object
 {
     if (!page()->settings()->testAttribute(QWebSettings::JavascriptEnabled))
         return;
-
+#if USE(JSC)
     JSC::JSLock lock(JSC::SilenceAssertionsOnly);
     JSDOMWindow* window = toJSDOMWindow(d->frame, mainThreadNormalWorld());
     JSC::Bindings::RootObject* root;
@@ -497,6 +519,24 @@ void QWebFrame::addToJavaScriptWindowObject(const QString &name, QObject *object
 
     JSC::PutPropertySlot slot;
     window->put(exec, JSC::Identifier(exec, reinterpret_cast_ptr<const UChar*>(name.constData()), name.length()), runtimeObject, slot);
+#elif USE(V8)
+    // Publish QObject in v8 isolated context
+    v8::HandleScope handlescope;
+    v8::Handle<v8::Context> v8Context = V8Proxy::mainWorldContext(d->frame);
+    if (v8Context.IsEmpty())
+        return;
+    v8::Context::Scope conxtextscope(v8Context);
+    v8::Handle<v8::Value> windowValue = v8Context->Global()->Get(v8::String::New("window"));
+    v8::Handle<v8::Object> dest = 
+        (windowValue.IsEmpty() || !windowValue->IsObject()) ? v8Context->Global() : windowValue->ToObject();
+    dest->Set(v8::String::New(
+        name.toLatin1().constData()), 
+        V8::Bindings::QtInstance::getQtInstance(
+                object, 
+                v8Context, 
+                name, // have to pass name for v8::FunctionTemplate
+                ownership)->getV8Object());
+#endif
 }
 
 /*!
@@ -1393,9 +1433,22 @@ QVariant QWebFrame::evaluateJavaScript(const QString& scriptSource)
     ScriptController *proxy = d->frame->script();
     QVariant rc;
     if (proxy) {
-        JSC::JSValue v = d->frame->script()->executeScript(ScriptSourceCode(scriptSource)).jsValue();
         int distance = 0;
+#if USE(JSC)
+        JSC::JSValue v = d->frame->script()->executeScript(ScriptSourceCode(scriptSource)).jsValue();
+
         rc = JSC::Bindings::convertValueToQVariant(proxy->globalObject(mainThreadNormalWorld())->globalExec(), v, QMetaType::Void, &distance);
+#elif USE(V8)
+        v8::HandleScope handlescope;
+        // Get context from the frame
+        v8::Handle<v8::Context> v8Context = V8Proxy::mainWorldContext(d->frame);
+        if (v8Context.IsEmpty())
+            return rc;
+        // Get root object for the context
+        v8::Context::Scope conxtextscope(v8Context);
+        v8::Handle<v8::Value> v = v8::Script::Compile(v8::String::New(scriptSource.toLatin1().constData()))->Run();
+        rc = V8::Bindings::convertValueToQVariant(v, QMetaType::Void, &distance);
+#endif
     }
     return rc;
 }
