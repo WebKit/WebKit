@@ -5335,7 +5335,6 @@ svg/W3C-SVG-1.1/filters-light-04-f.svg
 # new skipped tests yet to be sorted
 # ============================================================================= #
 fast/dom/Geolocation/callback-to-remote-context2.html
-fast/notifications/notifications-click-event.html
 
 # Link prefetch is disabled by default
 fast/dom/HTMLLinkElement/prefetch.html

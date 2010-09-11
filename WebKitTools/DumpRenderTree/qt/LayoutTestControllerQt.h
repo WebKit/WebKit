@@ -124,6 +124,7 @@ public slots:
     void grantDesktopNotificationPermission(const QString& origin);
     void ignoreDesktopNotificationPermissionRequests();
     bool checkDesktopNotificationPermission(const QString& origin);
+    void simulateDesktopNotificationClick(const QString& title);
     void display();
     void clearBackForwardList();
     QString pathToLocalResource(const QString& url);

@@ -61,9 +61,11 @@ public:
     const QString title() const;
     const QString message() const;
     const QByteArray iconData() const;
+    const QUrl openerPageUrl() const;
 
 public Q_SLOTS:
     void notificationClosed();
+    void notificationClicked();
 
 public:
 #ifndef QT_NO_SYSTEMTRAYICON
@@ -102,6 +104,8 @@ public:
     static NotificationPresenterClientQt* notificationPresenter();
 
     Notification* notificationForWrapper(const NotificationWrapper*) const;
+    void notificationClicked(NotificationWrapper*);
+    void notificationClicked(const QString& title);
 
 private:
     void sendEvent(Notification*, const AtomicString& eventName);

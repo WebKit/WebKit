@@ -36,6 +36,7 @@ public:
 
 Q_SIGNALS:
     void notificationClosed();
+    void notificationClicked();
 };
 
 class WebNotificationPresenter : public QWebNotificationPresenter
@@ -47,6 +48,7 @@ public:
     {
         m_widget = new WebNotificationWidget();
         connect(m_widget, SIGNAL(notificationClosed()), this, SIGNAL(notificationClosed()));
+        connect(m_widget, SIGNAL(notificationClicked()), this, SIGNAL(notificationClicked()));
     }
     virtual ~WebNotificationPresenter() { m_widget->close(); delete m_widget; }
 

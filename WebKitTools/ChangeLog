@@ -1,3 +1,17 @@
+2010-09-10  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Support click event for notifications
+        https://bugs.webkit.org/show_bug.cgi?id=44836
+
+        Add support for simulateDesktopNotificationClick by calling
+        back to DumpRenderTreeSupportQt.cpp.
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::simulateDesktopNotificationClick):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+
 2010-09-10  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Eric Seidel.

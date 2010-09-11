@@ -57,7 +57,11 @@ void WebNotificationWidget::showNotification(const QWebNotificationData* data)
 
 bool WebNotificationWidget::event(QEvent* ev)
 {
-    if (ev->type() == QEvent::MouseButtonRelease || ev->type() == QEvent::Close) {
+    if (ev->type() == QEvent::MouseButtonRelease) {
+        emit notificationClicked();
+        return true;
+    }
+    if (ev->type() == QEvent::Close) {
         emit notificationClosed();
         return true;
     }

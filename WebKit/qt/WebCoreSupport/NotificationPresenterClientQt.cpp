@@ -118,6 +118,26 @@ const QByteArray NotificationWrapper::iconData() const
     return iconData;
 }
 
+const QUrl NotificationWrapper::openerPageUrl() const
+{
+    QUrl url;
+#if ENABLE(NOTIFICATIONS)
+    Notification* notification = NotificationPresenterClientQt::notificationPresenter()->notificationForWrapper(this);
+    if (notification) {
+        if (notification->scriptExecutionContext()) 
+            url = static_cast<Document*>(notification->scriptExecutionContext())->page()->mainFrame()->document()->url();
+    }
+#endif
+    return url;
+}
+
+void NotificationWrapper::notificationClicked()
+{
+#if ENABLE(NOTIFICATIONS)
+    NotificationPresenterClientQt::notificationPresenter()->notificationClicked(this);
+#endif
+}
+
 void NotificationWrapper::notificationClosed()
 {
 #if ENABLE(NOTIFICATIONS)
@@ -204,11 +224,13 @@ void NotificationPresenterClientQt::displayNotification(Notification* notificati
 
     if (wrapper->m_presenter) {
         wrapper->connect(wrapper->m_presenter.get(), SIGNAL(notificationClosed()), wrapper, SLOT(notificationClosed()), Qt::QueuedConnection);
+        wrapper->connect(wrapper->m_presenter.get(), SIGNAL(notificationClicked()), wrapper, SLOT(notificationClicked()));
         wrapper->m_presenter->showNotification(wrapper);
         return;
     }
 
 #ifndef QT_NO_SYSTEMTRAYICON
+    wrapper->connect(wrapper->m_notificationIcon.get(), SIGNAL(messageClicked()), wrapper, SLOT(notificationClicked()));
     wrapper->m_notificationIcon->show();
     wrapper->m_notificationIcon->showMessage(notification->contents().title(), notification->contents().body());
 #endif
@@ -235,6 +257,35 @@ void NotificationPresenterClientQt::cancel(NotificationWrapper* wrapper)
     Notification* notification = notificationForWrapper(wrapper);
     if (notification)
         cancel(notification);
+}
+
+void NotificationPresenterClientQt::notificationClicked(NotificationWrapper* wrapper)
+{
+    Notification* notification =  notificationForWrapper(wrapper);
+    if (notification)
+        sendEvent(notification, eventNames().clickEvent);
+}
+
+void NotificationPresenterClientQt::notificationClicked(const QString& title)
+{
+    if (!dumpNotification)
+        return;
+    NotificationsQueue::ConstIterator end = m_notifications.end();
+    NotificationsQueue::ConstIterator iter = m_notifications.begin();
+    Notification* notification = 0;
+    while (iter != end) {
+        notification = iter.key();
+        QString notificationTitle;
+        if (notification->isHTML())
+            notificationTitle = notification->url().string();
+        else
+            notificationTitle = notification->contents().title();
+        if (notificationTitle == title)
+            break;
+        iter++;
+    }
+    if (notification)
+        sendEvent(notification, eventNames().clickEvent);
 }
 
 Notification* NotificationPresenterClientQt::notificationForWrapper(const NotificationWrapper* wrapper) const

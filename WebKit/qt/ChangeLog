@@ -1,3 +1,35 @@
+2010-09-10  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Support click event for notifications
+        https://bugs.webkit.org/show_bug.cgi?id=44836
+
+        Propagate click events to JavaScript from either the
+        platform plugn or from QSystemTrayIcon.
+        Also added the method NotificationWrapper::openerPageUrl so that
+        if the platform plugin can reopen the page that created the
+        notification directly, when the user clicks the notification.
+
+        Added DumpRenderTreeSupportQt::simulateDesktopNotificationClick
+        for testing purpose.
+
+        * Api/qwebkitplatformplugin.h:
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::simulateDesktopNotificationClick):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+        * WebCoreSupport/NotificationPresenterClientQt.cpp:
+        (WebCore::NotificationWrapper::openerPageUrl):
+        (WebCore::NotificationWrapper::notificationClicked):
+        (WebCore::NotificationPresenterClientQt::displayNotification):
+        (WebCore::NotificationPresenterClientQt::notificationClicked):
+        * WebCoreSupport/NotificationPresenterClientQt.h:
+        * examples/platformplugin/WebNotificationPresenter.cpp:
+        (WebNotificationWidget::event):
+        * examples/platformplugin/WebNotificationPresenter.h:
+        (WebNotificationPresenter::WebNotificationPresenter):
+        * examples/platformplugin/qwebkitplatformplugin.h:
+
 2010-09-10  Adam Barth  <abarth@webkit.org>
 
         Attempt to fix the failign Qt tests.  This patch adapts code from
