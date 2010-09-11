@@ -1,3 +1,20 @@
+2010-09-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Remove unneeded Empty Queue messages
+        https://bugs.webkit.org/show_bug.cgi?id=45602
+
+        We already have a /gc job to delete these.
+        recentstatus.py is already smart enough to use the
+        most recent of the workitems last update or the most recent status,
+        so removing these should not change the _last_status_date() return
+        value more than a few milliseconds.
+
+        These messages just spam the recent status log.
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+
 2010-09-11  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.

@@ -194,7 +194,6 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
         patches = sorted(patches, self._patch_cmp)
         self._update_work_items([patch.id() for patch in patches])
         if not patches:
-            self._update_status("Empty queue")
             return None
         # Only bother logging if we have patches in the queue.
         self.log_progress([patch.id() for patch in patches])
@@ -379,7 +378,6 @@ class AbstractReviewQueue(AbstractPatchQueue, PersistentPatchCollectionDelegate,
         patch_id = self._patches.next()
         if patch_id:
             return self.tool.bugs.fetch_attachment(patch_id)
-        self._update_status("Empty queue")
 
     def should_proceed_with_work_item(self, patch):
         raise NotImplementedError, "subclasses must implement"
