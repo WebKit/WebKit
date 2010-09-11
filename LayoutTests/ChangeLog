@@ -1,3 +1,20 @@
+2010-09-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        chromium fast/dom/replaceChild.html regression by r67182
+        https://bugs.webkit.org/show_bug.cgi?id=45527
+
+        Turns out this is a progression!  Our new images
+        match minefield (and sanity).  The old image had a
+        border drawn which should have been removed when the
+        iframe was replaced.
+
+        Other platforms may need to update their results as well.
+
+        * platform/mac/fast/dom/replaceChild-expected.checksum:
+        * platform/mac/fast/dom/replaceChild-expected.png:
+
 2010-09-11  Robert Hogan  <robert@webkit.org>
 
         Unreviewed, unskip passing test.
