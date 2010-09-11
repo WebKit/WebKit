@@ -1,3 +1,12 @@
+2010-09-10  Fridrich Strba  <fridrich.strba@bluewin.ch>
+
+        Reviewed by Andreas Kling.
+
+        Add a define missing when building with glib unicode backend
+        https://bugs.webkit.org/show_bug.cgi?id=45544
+
+        * wtf/unicode/glib/UnicodeMacrosFromICU.h:
+
 2010-09-10  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Alexey Proskuryakov.

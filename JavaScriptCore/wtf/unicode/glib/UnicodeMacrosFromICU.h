@@ -36,6 +36,7 @@
 
 #define U16_LEAD(supplementary) (UChar)(((supplementary)>>10)+0xd7c0)
 #define U16_TRAIL(supplementary) (UChar)(((supplementary)&0x3ff)|0xdc00)
+#define U16_LENGTH(c) ((uint32_t)(c) <= 0xffff ? 1 : 2)
 
 #define U_IS_SURROGATE(c) (((c)&0xfffff800)==0xd800)
 #define U16_IS_SINGLE(c) !U_IS_SURROGATE(c)
