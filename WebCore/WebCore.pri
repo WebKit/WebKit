@@ -63,6 +63,11 @@ STYLESHEETS_EMBED = \
     $$PWD/css/themeQtNoListboxes.css \
     $$PWD/css/themeQtMaemo5.css
 
+v8 {
+    IDL_BINDINGS += \
+        html/canvas/CanvasPixelArray.idl
+}
+
 IDL_BINDINGS += \
     css/Counter.idl \
     css/CSSCharsetRule.idl \
@@ -495,10 +500,13 @@ IDL_BINDINGS += \
 INSPECTOR_INTERFACES = inspector/Inspector.idl
 INSPECTOR_BACKEND_STUB_QRC = inspector/front-end/InspectorBackendStub.qrc
 
+v8: wrapperFactoryArg = --wrapperFactoryV8
+else: wrapperFactoryArg = --wrapperFactory
+
 mathmlnames.output = $${WC_GENERATED_SOURCES_DIR}/MathMLNames.cpp
 mathmlnames.input = MATHML_NAMES
 mathmlnames.wkScript = $$PWD/dom/make_names.pl
-mathmlnames.commands = perl -I$$PWD/bindings/scripts $$mathmlnames.wkScript --tags $$PWD/mathml/mathtags.in --attrs $$PWD/mathml/mathattrs.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\" --factory --wrapperFactory --outputDir $$WC_GENERATED_SOURCES_DIR
+mathmlnames.commands = perl -I$$PWD/bindings/scripts $$mathmlnames.wkScript --tags $$PWD/mathml/mathtags.in --attrs $$PWD/mathml/mathattrs.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\" --factory $$wrapperFactoryArg --outputDir $$WC_GENERATED_SOURCES_DIR
 mathmlnames.wkExtraSources = $${WC_GENERATED_SOURCES_DIR}/MathMLElementFactory.cpp 
 addExtraCompiler(mathmlnames)
 
@@ -506,7 +514,7 @@ contains(DEFINES, ENABLE_WML=1) {
     wmlnames.output = $${WC_GENERATED_SOURCES_DIR}/WMLNames.cpp
     wmlnames.input = WML_NAMES
     wmlnames.wkScript = $$PWD/dom/make_names.pl
-    wmlnames.commands = perl -I$$PWD/bindings/scripts $$wmlnames.wkScript --tags $$PWD/wml/WMLTagNames.in --attrs $$PWD/wml/WMLAttributeNames.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\" --factory --wrapperFactory --outputDir $$WC_GENERATED_SOURCES_DIR
+    wmlnames.commands = perl -I$$PWD/bindings/scripts $$wmlnames.wkScript --tags $$PWD/wml/WMLTagNames.in --attrs $$PWD/wml/WMLAttributeNames.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\" --factory $$wrapperFactoryArg --outputDir $$WC_GENERATED_SOURCES_DIR
     wmlnames.wkExtraSources = $${WC_GENERATED_SOURCES_DIR}/WMLElementFactory.cpp
     addExtraCompiler(wmlnames)
 }
@@ -516,8 +524,13 @@ svgnames.output = $${WC_GENERATED_SOURCES_DIR}/SVGNames.cpp
 svgnames.input = SVG_NAMES
 svgnames.depends = $$PWD/svg/svgattrs.in
 svgnames.wkScript = $$PWD/dom/make_names.pl
-svgnames.commands = perl -I$$PWD/bindings/scripts $$svgnames.wkScript --tags $$PWD/svg/svgtags.in --attrs $$PWD/svg/svgattrs.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\" --factory --wrapperFactory --outputDir $$WC_GENERATED_SOURCES_DIR
-svgnames.wkExtraSources = $${WC_GENERATED_SOURCES_DIR}/SVGElementFactory.cpp $${WC_GENERATED_SOURCES_DIR}/JSSVGElementWrapperFactory.cpp
+svgnames.commands = perl -I$$PWD/bindings/scripts $$svgnames.wkScript --tags $$PWD/svg/svgtags.in --attrs $$PWD/svg/svgattrs.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\" --factory $$wrapperFactoryArg --outputDir $$WC_GENERATED_SOURCES_DIR
+svgnames.wkExtraSources = $${WC_GENERATED_SOURCES_DIR}/SVGElementFactory.cpp
+v8 {
+    svgnames.wkExtraSources += $${WC_GENERATED_SOURCES_DIR}/V8SVGElementWrapperFactory.cpp
+} else {
+    svgnames.wkExtraSources += $${WC_GENERATED_SOURCES_DIR}/JSSVGElementWrapperFactory.cpp
+}
 addExtraCompiler(svgnames)
 
 # GENERATOR 5-D:
@@ -545,15 +558,26 @@ cssvalues.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_WC_GENERATED_SOURCES_DIR}/${QMAK
 addExtraCompiler(cssvalues)
 
 # GENERATOR 1: IDL compiler
-idl.output = $${WC_GENERATED_SOURCES_DIR}/JS${QMAKE_FILE_BASE}.cpp
 idl.input = IDL_BINDINGS
 idl.wkScript = $$PWD/bindings/scripts/generate-bindings.pl
-idl.commands = perl -I$$PWD/bindings/scripts $$idl.wkScript --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" --generator JS --include $$PWD/dom --include $$PWD/fileapi --include $$PWD/html --include $$PWD/xml --include $$PWD/svg --outputDir $$WC_GENERATED_SOURCES_DIR --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME}
-idl.depends = $$PWD/bindings/scripts/CodeGenerator.pm \
-              $$PWD/bindings/scripts/CodeGeneratorJS.pm \
-              $$PWD/bindings/scripts/IDLParser.pm \
-              $$PWD/bindings/scripts/IDLStructure.pm \
-              $$PWD/bindings/scripts/InFilesParser.pm
+v8: generator = V8
+else: generator = JS
+idl.commands = perl -I$$PWD/bindings/scripts $$idl.wkScript --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" --generator $$generator --include $$PWD/dom --include $$PWD/fileapi --include $$PWD/html --include $$PWD/xml --include $$PWD/svg --outputDir $$WC_GENERATED_SOURCES_DIR --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME}
+v8 {
+    idl.output = $${WC_GENERATED_SOURCES_DIR}/V8${QMAKE_FILE_BASE}.cpp
+    idl.depends = $$PWD/bindings/scripts/CodeGenerator.pm \
+                  $$PWD/bindings/scripts/CodeGeneratorV8.pm \
+                  $$PWD/bindings/scripts/IDLParser.pm \
+                  $$PWD/bindings/scripts/IDLStructure.pm \
+                  $$PWD/bindings/scripts/InFilesParser.pm
+} else {
+    idl.output = $${WC_GENERATED_SOURCES_DIR}/JS${QMAKE_FILE_BASE}.cpp
+    idl.depends = $$PWD/bindings/scripts/CodeGenerator.pm \
+                  $$PWD/bindings/scripts/CodeGeneratorJS.pm \
+                  $$PWD/bindings/scripts/IDLParser.pm \
+                  $$PWD/bindings/scripts/IDLStructure.pm \
+                  $$PWD/bindings/scripts/InFilesParser.pm
+}
 addExtraCompiler(idl)
 
 # GENERATOR 2: inspector idl compiler
@@ -594,9 +618,14 @@ addExtraCompiler(cssbison)
 htmlnames.output = $${WC_GENERATED_SOURCES_DIR}/HTMLNames.cpp
 htmlnames.input = HTML_NAMES
 htmlnames.wkScript = $$PWD/dom/make_names.pl
-htmlnames.commands = perl -I$$PWD/bindings/scripts $$htmlnames.wkScript --tags $$PWD/html/HTMLTagNames.in --attrs $$PWD/html/HTMLAttributeNames.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\"  --factory --wrapperFactory --outputDir $$WC_GENERATED_SOURCES_DIR
 htmlnames.depends = $$PWD/html/HTMLAttributeNames.in
-htmlnames.wkExtraSources = $${WC_GENERATED_SOURCES_DIR}/HTMLElementFactory.cpp $${WC_GENERATED_SOURCES_DIR}/JSHTMLElementWrapperFactory.cpp
+htmlnames.commands = perl -I$$PWD/bindings/scripts $$htmlnames.wkScript --tags $$PWD/html/HTMLTagNames.in --attrs $$PWD/html/HTMLAttributeNames.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\"  --factory $$wrapperFactoryArg --outputDir $$WC_GENERATED_SOURCES_DIR
+htmlnames.wkExtraSources = $${WC_GENERATED_SOURCES_DIR}/HTMLElementFactory.cpp
+v8 {
+    htmlnames.wkExtraSources += $${WC_GENERATED_SOURCES_DIR}/V8HTMLElementWrapperFactory.cpp
+} else {
+    htmlnames.wkExtraSources += $${WC_GENERATED_SOURCES_DIR}/JSHTMLElementWrapperFactory.cpp
+}
 addExtraCompiler(htmlnames)
 
 # GENERATOR 5-B:

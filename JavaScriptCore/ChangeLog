@@ -1,3 +1,14 @@
+2010-09-11  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] V8 port: webcore project files changes
+        https://bugs.webkit.org/show_bug.cgi?id=45141
+
+        * JavaScriptCore.pro: Moved wtf specific files to wtf.pri,
+        so that they can also be used from WebCore.pro for v8 builds.
+        * wtf/wtf.pri: Added.
+
 2010-09-10  Fridrich Strba  <fridrich.strba@bluewin.ch>
 
         Reviewed by Andreas Kling.

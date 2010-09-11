@@ -66,6 +66,7 @@ wince* {
 }
 
 include(pcre/pcre.pri)
+include(wtf/wtf.pri)
 
 SOURCES += \
     API/JSBase.cpp \
@@ -203,42 +204,11 @@ SOURCES += \
     runtime/Structure.cpp \
     runtime/TimeoutChecker.cpp \
     runtime/UString.cpp \
-    wtf/Assertions.cpp \
-    wtf/ByteArray.cpp \
-    wtf/CurrentTime.cpp \
-    wtf/DateMath.cpp \
-    wtf/dtoa.cpp \
-    wtf/FastMalloc.cpp \
-    wtf/HashTable.cpp \
-    wtf/MD5.cpp \
-    wtf/MainThread.cpp \
-    wtf/qt/MainThreadQt.cpp \
-    wtf/qt/StringQt.cpp \
-    wtf/qt/ThreadingQt.cpp \
-    wtf/PageAllocation.cpp \
-    wtf/RandomNumber.cpp \
-    wtf/RefCountedLeakCounter.cpp \
-    wtf/ThreadingNone.cpp \
-    wtf/Threading.cpp \
-    wtf/TypeTraits.cpp \
-    wtf/WTFThreadData.cpp \
-    wtf/text/AtomicString.cpp \
-    wtf/text/CString.cpp \
-    wtf/text/StringImpl.cpp \
-    wtf/text/StringStatics.cpp \
-    wtf/text/WTFString.cpp \
-    wtf/unicode/CollatorDefault.cpp \
-    wtf/unicode/icu/CollatorICU.cpp \
-    wtf/unicode/UTF8.cpp \
     yarr/RegexCompiler.cpp \
     yarr/RegexInterpreter.cpp \
     yarr/RegexJIT.cpp
 
 # Generated files, simply list them for JavaScriptCore
-
-!contains(DEFINES, USE_SYSTEM_MALLOC) {
-    SOURCES += wtf/TCSystemAlloc.cpp
-}
 
 # Disable C++0x mode in JSC for those who enabled it in their Qt's mkspec
 *-g++*:QMAKE_CXXFLAGS -= -std=c++0x -std=gnu++0x
