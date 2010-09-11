@@ -606,6 +606,7 @@ sub generateSource
     my @sourceContent = split("\r", $licenseTemplate);
     push(@sourceContent, "\n#include \"config.h\"");
     push(@sourceContent, "#include \"$className.h\"");
+    push(@sourceContent, "#include <wtf/text/CString.h>");
     push(@sourceContent, "");
     push(@sourceContent, "#if ENABLE(INSPECTOR)");
     push(@sourceContent, "");

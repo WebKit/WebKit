@@ -1,3 +1,17 @@
+2010-09-11  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Web Inspector: Include CString.h in generated files
+
+        This is necessary for generated code that uses the CString
+        returned by String::utf8() (from generateBackendDispatcher)
+
+        Chromium builds already get CString.h from KURLGooglePrivate.h
+        so this issue only occurs when building Qt against V8.
+
+        * inspector/CodeGeneratorInspector.pm:
+
 2010-09-11  Adele Peterson  <adele@apple.com>
 
         Reviewed by Sam Weinig.
