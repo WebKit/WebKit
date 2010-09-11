@@ -1,3 +1,13 @@
+2010-09-10  Jer Noble  <jer.noble@apple.com>
+
+        No review; build fix only.
+
+        <CoreGraphics/CGFloat.h> does not exist on the build bots.  Replace
+        instances of CGFAbs() with abs().
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::naturalSize):
+
 2010-09-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

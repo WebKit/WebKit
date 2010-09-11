@@ -47,7 +47,6 @@
 #include "Timer.h"
 #include <AssertMacros.h>
 #include <CoreGraphics/CGContext.h>
-#include <CoreGraphics/CGFloat.h>
 #include <Wininet.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/HashSet.h>
@@ -442,7 +441,7 @@ IntSize MediaPlayerPrivateQuickTimeVisualContext::naturalSize() const
     m_movie->getNaturalSize(width, height);
     CGSize originalSize = {width, height};
     CGSize transformedSize = CGSizeApplyAffineTransform(originalSize, m_movieTransform);
-    return IntSize(CGFAbs(transformedSize.width), CGFAbs(transformedSize.height));
+    return IntSize(abs(transformedSize.width), abs(transformedSize.height));
 }
 
 bool MediaPlayerPrivateQuickTimeVisualContext::hasVideo() const
