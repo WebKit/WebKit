@@ -1,3 +1,14 @@
+2010-09-11  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Make introspection work with g-o-i 0.9.5
+        https://bugs.webkit.org/show_bug.cgi?id=45590
+
+        Bump required gobject-introspection version to 0.9.5.
+
+        * configure.ac:
+
 2010-09-09  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Unreviewed buildfix.
