@@ -1,5 +1,18 @@
 2010-09-10  Adam Barth  <abarth@webkit.org>
 
+        Attempt to fix the failign Qt tests.  This patch adapts code from
+        Chromium.  The long-term fix is to remove the need for this code, but
+        that's a bit too complicated for a buildfix patch.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::FrameLoaderClientQt):
+        (WebCore::FrameLoaderClientQt::makeRepresentation):
+        (WebCore::FrameLoaderClientQt::revertToProvisionalState):
+        (WebCore::FrameLoaderClientQt::finishedLoading):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
+2010-09-10  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Darin Fisher.
 
         Move code from WebKit-layer to DocumentLoader
