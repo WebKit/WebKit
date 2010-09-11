@@ -1,3 +1,16 @@
+2010-09-11  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        URIs in styles created via innerHTML are not resolved against the document's base URI
+        https://bugs.webkit.org/show_bug.cgi?id=45565
+
+        Add test to read back the background image URL from an element that was
+        created via innerHTML (reduction of http://crbug.com/55023).
+
+        * fast/innerHTML/innerHTML-uri-resolution-expected.txt: Added.
+        * fast/innerHTML/innerHTML-uri-resolution.html: Added.
+
 2010-09-10  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

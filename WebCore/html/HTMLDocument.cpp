@@ -80,8 +80,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLDocument::HTMLDocument(Frame* frame, const KURL& url)
-    : Document(frame, url, false, true)
+HTMLDocument::HTMLDocument(Frame* frame, const KURL& url, const KURL& baseURL)
+    : Document(frame, url, false, true, baseURL)
 {
     clearXMLVersion();
 }

@@ -1025,7 +1025,7 @@ public:
     bool isDelayingLoadEvent() const { return m_loadEventDelayCount; }
 
 protected:
-    Document(Frame*, const KURL&, bool isXHTML, bool isHTML);
+    Document(Frame*, const KURL& url, bool isXHTML, bool isHTML, const KURL& baseURL = KURL());
 
     void clearXMLVersion() { m_xmlVersion = String(); }
 

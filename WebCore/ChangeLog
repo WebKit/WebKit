@@ -1,3 +1,34 @@
+2010-09-11  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        URIs in styles created via innerHTML are not resolved against the document's base URI
+        https://bugs.webkit.org/show_bug.cgi?id=45565
+
+        The dummy document used for fragment parsing created by 
+        FragmentParsingContext should use the base URI of the fragment's
+        document. Since (HTML)Document doesn't expose a setter for the base URI
+        (and shouldn't), we allow it to be set by the constructor/create
+        function.
+        
+        Also remove some obsolete code that references the legacy tree builder
+        from HTMLElement that I happened to notice.
+
+        Test: fast/innerHTML/innerHTML-uri-resolution.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::HTMLDocument):
+        * html/HTMLDocument.h:
+        (WebCore::HTMLDocument::create):
+        * html/HTMLElement.cpp:
+        (WebCore::createFragmentFromSource):
+        (WebCore::HTMLElement::setInnerHTML):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::FragmentParsingContext::FragmentParsingContext):
+
 2010-09-10  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Darin Adler.
