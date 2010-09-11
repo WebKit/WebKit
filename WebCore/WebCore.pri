@@ -562,7 +562,7 @@ idl.input = IDL_BINDINGS
 idl.wkScript = $$PWD/bindings/scripts/generate-bindings.pl
 v8: generator = V8
 else: generator = JS
-idl.commands = perl -I$$PWD/bindings/scripts $$idl.wkScript --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" --generator $$generator --include $$PWD/dom --include $$PWD/fileapi --include $$PWD/html --include $$PWD/xml --include $$PWD/svg --outputDir $$WC_GENERATED_SOURCES_DIR --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME}
+idl.commands = perl -I$$PWD/bindings/scripts $$idl.wkScript --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" --generator $$generator --include $$PWD/dom --include $$PWD/fileapi --include $$PWD/html --include $$PWD/xml --include $$PWD/svg --include $$PWD/storage --include $$PWD/css --include $$PWD/workers --outputDir $$WC_GENERATED_SOURCES_DIR --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME}
 v8 {
     idl.output = $${WC_GENERATED_SOURCES_DIR}/V8${QMAKE_FILE_BASE}.cpp
     idl.depends = $$PWD/bindings/scripts/CodeGenerator.pm \

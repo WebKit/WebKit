@@ -1,3 +1,12 @@
+2010-09-11  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed.
+
+        [Qt] Trivial V8 build fix.
+
+        * WebCore.pri: Add storage, workers and css to the include paths for the
+        JS code generator.
+
 2010-09-11  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Simon Hausmann.
