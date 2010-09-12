@@ -298,6 +298,24 @@ void MediaPlayerPrivateQuickTimeVisualContext::setUpCookiesForQuickTime(const St
     }
 }
 
+static void disableComponentsOnce()
+{
+    static bool sComponentsDisabled = false;
+    if (sComponentsDisabled)
+        return;
+    sComponentsDisabled = true;
+
+    uint32_t componentsToDisable[][5] = {
+        {'eat ', 'TEXT', 'text', 0, 0},
+        {'eat ', 'TXT ', 'text', 0, 0},    
+        {'eat ', 'utxt', 'text', 0, 0},  
+        {'eat ', 'TEXT', 'tx3g', 0, 0},  
+    };
+
+    for (size_t i = 0; i < sizeof(componentsToDisable) / sizeof(componentsToDisable[0]); ++i) 
+        QTMovie::disableComponent(componentsToDisable[i]);
+}
+
 void MediaPlayerPrivateQuickTimeVisualContext::load(const String& url)
 {
     if (!QTMovie::initializeQuickTime()) {
@@ -306,6 +324,8 @@ void MediaPlayerPrivateQuickTimeVisualContext::load(const String& url)
         m_player->networkStateChanged();
         return;
     }
+
+    disableComponentsOnce();
 
     // Initialize the task timer.
     MediaPlayerPrivateTaskTimer::initialize();

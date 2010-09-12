@@ -280,6 +280,16 @@ QTMovie::~QTMovie()
     delete m_private;
 }
 
+void QTMovie::disableComponent(uint32_t cd[5])
+{
+    ComponentDescription nullDesc = {'null', 'base', kAppleManufacturer, 0, 0};
+    Component nullComp = FindNextComponent(0, &nullDesc);
+    Component disabledComp = 0;
+
+    while (disabledComp = FindNextComponent(disabledComp, (ComponentDescription*)&cd[0]))
+        CaptureComponent(disabledComp, nullComp);
+}
+
 void QTMovie::addClient(QTMovieClient* client)
 {
     if (client)

@@ -62,6 +62,8 @@ public:
     static bool initializeQuickTime();
     static void taskTimerFired();
 
+    static void disableComponent(uint32_t[5]);
+
     QTMovie(QTMovieClient*);
     ~QTMovie();
 
