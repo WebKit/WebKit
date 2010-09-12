@@ -33,28 +33,6 @@
 accessibility
 platform/mac/accessibility
 
-# Animations don't seem to run in multiple WebKit2 animation tests
-# <https://bugs.webkit.org/show_bug.cgi?id=42137>
-animations/animation-hit-test-transform.html
-animations/animation-iteration-event-destroy-renderer.html
-animations/big-rotation.html
-animations/combo-transform-rotate+scale.html
-animations/combo-transform-translate+scale.html
-animations/dynamic-stylesheet-loading.html
-animations/fill-mode-transform.html
-animations/fill-mode.html
-animations/fill-unset-properties.html
-animations/keyframe-timing-functions-transform.html
-animations/matrix-anim.html
-animations/missing-from-to-transforms.html
-animations/negative-delay.html
-animations/play-state.html
-animations/simultaneous-start-transform.html
-animations/3d/change-transform-in-end-event.html
-animations/3d/state-at-end-event-transform.html
-animations/3d/transform-origin-vs-functions.html
-compositing/animation/state-at-end-event-transform-layer.html
-
 # WebKitTestRunner does not block remote resources or complain about them
 # <https://bugs.webkit.org/show_bug.cgi?id=42139>
 fast/loader/null-request-after-willSendRequest.html
