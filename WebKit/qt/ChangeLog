@@ -1,3 +1,11 @@
+2010-09-12  Martin Smith  <martin.smith@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        doc: Changed the title so lists of contents sort better.
+
+        * docs/qtwebkit.qdoc:
+
 2010-09-12  David Boddie  <david.boddie@nokia.com>
 
         Reviewed by Simon Hausmann.
