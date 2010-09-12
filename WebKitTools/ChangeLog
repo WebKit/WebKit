@@ -1,5 +1,14 @@
 2010-09-11  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Maciej Stachowiak.
+
+        Fix zoom related tests when testing WebKit2.
+
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::EventSendingController::zoomPageIn): Zoom in and zoom out are not the same.
+
+2010-09-11  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Dan Bernstein.
 
         Implement WebKit2 callback equivalent to - [WebUIDelegate webView:setStatusText:]
