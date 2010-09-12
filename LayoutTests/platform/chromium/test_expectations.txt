@@ -3138,3 +3138,11 @@ BUGWK45513 WIN : inspector/extensions-resources.html = TIMEOUT
 
 // Regressions from webkit r67182
 BUGWK45527 : fast/dom/replaceChild.html = IMAGE
+
+// Regression from r67285
+BUGWK45623 LINUX : fast/dynamic/first-letter-display-change.html = IMAGE
+
+// Comment out temporarily - these tests need rebaselines but the tool isn't
+// working
+BUGDPRANKE LINUX : svg/batik/text/textPosition.svg = TEXT
+BUGDPRANKE REBASELINE LINUX : svg/batik/text/textPosition2.svg = TEXT
