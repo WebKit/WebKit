@@ -730,8 +730,7 @@ void PluginView::setJavaScriptPaused(bool paused)
         m_requestTimer.startOneShot(0);
 }
 
-#if USE(JSC)
-PassRefPtr<JSC::Bindings::Instance> PluginView::bindingInstance()
+NPObject* PluginView::npObject()
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     NPObject* object = 0;
@@ -756,6 +755,19 @@ PassRefPtr<JSC::Bindings::Instance> PluginView::bindingInstance()
         PluginView::setCurrentPluginView(0);
     }
 
+    return object;
+#else
+    return 0;
+#endif
+}
+
+#if USE(JSC)
+PassRefPtr<JSC::Bindings::Instance> PluginView::bindingInstance()
+{
+    NPObject* object = npObject();
+    if (!object)
+        return 0;
+
     if (hasOneRef()) {
         // The renderer for the PluginView was destroyed during the above call, and
         // the PluginView will be destroyed when this function returns, so we
@@ -772,9 +784,6 @@ PassRefPtr<JSC::Bindings::Instance> PluginView::bindingInstance()
     _NPN_ReleaseObject(object);
 
     return instance.release();
-#else
-    return 0;
-#endif
 }
 #endif
 

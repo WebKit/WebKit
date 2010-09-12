@@ -139,6 +139,7 @@ namespace WebCore {
         void setNPWindowRect(const IntRect&);
         static PluginView* currentPluginView();
 
+        NPObject* npObject();
 #if USE(JSC)
         PassRefPtr<JSC::Bindings::Instance> bindingInstance();
 #endif

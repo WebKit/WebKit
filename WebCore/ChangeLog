@@ -1,3 +1,24 @@
+2010-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Add PlatformBridge for V8 build.
+
+        Add the minimalisting platform bridge with the two
+        methods needed by NPV8Object.cpp.
+
+        * WebCore.pro:
+        * platform/qt/PlatformBridge.h: Added.
+        * platform/qt/PlatformBridgeQt.cpp: Added.
+        (WebCore::PlatformBridge::popupsAllowed):
+        (WebCore::PlatformBridge::pluginScriptableObject):
+        * plugins/PluginView.cpp: Refactor the plugin object
+        retrieval code into a separate function, called by
+        bindingInstance() and PlatformBridge.
+        (WebCore::PluginView::npObject):
+        (WebCore::PluginView::bindingInstance):
+        * plugins/PluginView.h:
+
 2010-09-11  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.

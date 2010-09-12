@@ -2517,7 +2517,7 @@ HEADERS += \
 
 v8 {
     SOURCES += \
-       platform/qt/PlatformBridge.cpp \
+       platform/qt/PlatformBridgeQt.cpp \
        bridge/qt/v8/qt_instancev8.cpp \
        bridge/qt/v8/qt_pixmapruntimev8.cpp \
        bridge/qt/v8/qt_runtimev8.cpp
