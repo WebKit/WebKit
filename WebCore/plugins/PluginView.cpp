@@ -755,9 +755,10 @@ NPObject* PluginView::npObject()
         PluginView::setCurrentPluginView(0);
     }
 
+    if (npErr != NPERR_NO_ERROR)
+        return 0;
+
     return object;
-#else
-    return 0;
 }
 #endif
 
@@ -775,9 +776,6 @@ PassRefPtr<JSC::Bindings::Instance> PluginView::bindingInstance()
         // return null.
         return 0;
     }
-
-    if (npErr != NPERR_NO_ERROR || !object)
-        return 0;
 
     RefPtr<JSC::Bindings::RootObject> root = m_parentFrame->script()->createRootObject(this);
     RefPtr<JSC::Bindings::Instance> instance = JSC::Bindings::CInstance::create(object, root.release());

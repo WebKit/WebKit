@@ -1,5 +1,14 @@
 2010-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Fix the Gtk and minimal builds.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::npObject): Correct the #ifdefs.
+        (WebCore::PluginView::bindingInstance): Moved npErr variable
+        into npObject() function where it is used.
+
+2010-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Prospective build fix for minimal build.
 
         * plugins/PluginView.cpp: Guard newly added function
