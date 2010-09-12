@@ -2,6 +2,23 @@
 
         Reviewed by Andreas Kling.
 
+        Fix the build without JSC.
+
+        Complement http://trac.webkit.org/changeset/59826 and
+        add missing JSC guards.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::bindingInstance):
+        (WebCore::PluginView::privateBrowsingStateChanged):
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::dispatchNPEvent):
+        (WebCore::PluginView::setNPWindowIfNeeded):
+        (WebCore::PluginView::platformStart):
+
+2010-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Andreas Kling.
+
         Fix compilation with V8 and XPath enabled.
 
         V8XPathNSResolver.cpp includes V8XPathNSResolver.h,

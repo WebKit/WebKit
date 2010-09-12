@@ -28,7 +28,9 @@
 #include "config.h"
 #include "PluginView.h"
 
+#if USE(JSC)
 #include "Bridge.h"
+#endif
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Element.h"
@@ -44,7 +46,9 @@
 #include "HTMLPlugInElement.h"
 #include "HostWindow.h"
 #include "Image.h"
+#if USE(JSC)
 #include "JSDOMBinding.h"
+#endif
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "NotImplemented.h"
@@ -335,7 +339,9 @@ bool PluginView::dispatchNPEvent(NPEvent& event)
         return false;
 
     PluginView::setCurrentPluginView(this);
+#if USE(JSC)
     JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
+#endif
     setCallingPlugin(true);
     bool accepted = m_plugin->pluginFuncs()->event(m_instance, &event);
     setCallingPlugin(false);
@@ -622,7 +628,9 @@ void PluginView::setNPWindowIfNeeded()
     }
 
     PluginView::setCurrentPluginView(this);
+#if USE(JSC)
     JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
+#endif
     setCallingPlugin(true);
     m_plugin->pluginFuncs()->setwindow(m_instance, &m_npWindow);
     setCallingPlugin(false);
@@ -838,7 +846,9 @@ bool PluginView::platformStart()
 
     if (m_plugin->pluginFuncs()->getvalue) {
         PluginView::setCurrentPluginView(this);
+#if USE(JSC)
         JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
+#endif
         setCallingPlugin(true);
         m_plugin->pluginFuncs()->getvalue(m_instance, NPPVpluginNeedsXEmbed, &m_needsXEmbed);
         setCallingPlugin(false);
