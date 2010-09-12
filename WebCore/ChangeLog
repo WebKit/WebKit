@@ -2,6 +2,16 @@
 
         Reviewed by Andreas Kling.
 
+        [Qt] Fix compilation with V8 and Qt.
+
+        Use WebKit's page cache for ScriptCachedFrameData.
+
+        * bindings/v8/ScriptCachedFrameData.h:
+
+2010-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Andreas Kling.
+
         Fix compiler warning.
 
         NPClass has 13 members, the last one (NPConstructFunctionPtr construct) wasn't
