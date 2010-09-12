@@ -65,6 +65,7 @@ enum Kind {
     DidStartProgress,
     DidStartProvisionalLoadForFrame,
     SetCursor,
+    SetStatusText,
     SetToolTip,
     TakeFocus,
     WillSubmitForm,

@@ -2,6 +2,28 @@
 
         Reviewed by Dan Bernstein.
 
+        Implement WebKit2 callback equivalent to - [WebUIDelegate webView:setStatusText:]
+        <rdar://problem/8359252>
+        https://bugs.webkit.org/show_bug.cgi?id=45605
+
+        * Shared/CoreIPCSupport/WebPageProxyMessageKinds.h:
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::QWKPage):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessage):
+        (WebKit::WebPageProxy::setStatusText):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::setStatusText):
+        * UIProcess/WebUIClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::setStatusbarText):
+
+2010-09-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
         Add callback mechanism for the getting the source of a frame
         <rdar://problem/8364681>
         https://bugs.webkit.org/show_bug.cgi?id=45604

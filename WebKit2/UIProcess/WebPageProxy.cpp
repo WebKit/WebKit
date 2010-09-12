@@ -476,7 +476,6 @@ void WebPageProxy::getStatistics(WKContextStatistics* statistics)
     statistics->numberOfWKFrames += process()->frameCountInPage(this);
 }
 
-
 void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     if (messageID.is<CoreIPC::MessageClassDrawingAreaProxy>()) {
@@ -714,6 +713,13 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
             if (!arguments->decode(CoreIPC::Out(frameID, size)))
                 return;
             contentsSizeChanged(process()->webFrame(frameID), size);
+            break;
+        }
+        case WebPageProxyMessage::SetStatusText: {
+            String text;
+            if (!arguments->decode(CoreIPC::Out(text)))
+                return;
+            setStatusText(text);
             break;
         }
         case WebPageProxyMessage::RegisterEditCommandForUndo: {
@@ -998,6 +1004,11 @@ bool WebPageProxy::runJavaScriptConfirm(WebFrameProxy* frame, const String& mess
 String WebPageProxy::runJavaScriptPrompt(WebFrameProxy* frame, const String& message, const String& defaultValue)
 {
     return m_uiClient.runJavaScriptPrompt(this, message, defaultValue, frame);
+}
+
+void WebPageProxy::setStatusText(const String& text)
+{
+    m_uiClient.setStatusText(this, text);
 }
 
 void WebPageProxy::contentsSizeChanged(WebFrameProxy* frame, const WebCore::IntSize& size)

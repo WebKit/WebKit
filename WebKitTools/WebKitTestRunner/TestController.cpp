@@ -83,6 +83,7 @@ static WKPageRef createOtherPage(WKPageRef oldPage, const void*)
         0,
         0,
         0,
+        0,
         0
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient);
@@ -155,6 +156,7 @@ void TestController::initialize(int argc, const char* argv[])
         0,
         this,
         createOtherPage,
+        0,
         0,
         0,
         0,

@@ -103,6 +103,14 @@ String WebUIClient::runJavaScriptPrompt(WebPageProxy* page, const String& messag
     return result;
 }
 
+void WebUIClient::setStatusText(WebPageProxy* page, const String& text)
+{
+    if (!m_pageUIClient.setStatusText)
+        return;
+
+    m_pageUIClient.setStatusText(toRef(page), toRef(text.impl()), m_pageUIClient.clientInfo);
+}
+
 void WebUIClient::contentsSizeChanged(WebPageProxy* page, const IntSize& size, WebFrameProxy* frame)
 {
     if (!m_pageUIClient.contentsSizeChanged)

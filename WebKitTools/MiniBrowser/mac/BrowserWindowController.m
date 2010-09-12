@@ -461,6 +461,16 @@ static WKStringRef runJavaScriptPrompt(WKPageRef page, WKStringRef message, WKSt
     return WKStringCreateWithCFString((CFStringRef)result);
 }
 
+static void setStatusText(WKPageRef page, WKStringRef text, const void* clientInfo)
+{
+    LOG(@"setStatusText");
+}
+
+static void contentsSizeChanged(WKPageRef page, int width, int height, WKFrameRef frame, const void *clientInfo)
+{
+    LOG(@"contentsSizeChanged");
+}
+
 - (void)awakeFromNib
 {
     _webView = [[WKView alloc] initWithFrame:[containerView frame] pageNamespaceRef:_pageNamespace];
@@ -511,7 +521,8 @@ static WKStringRef runJavaScriptPrompt(WKPageRef page, WKStringRef message, WKSt
         runJavaScriptAlert,
         runJavaScriptConfirm,
         runJavaScriptPrompt,
-        0           /* contentsSizeChanged */
+        setStatusText,
+        contentsSizeChanged
     };
     WKPageSetPageUIClient(_webView.pageRef, &uiClient);
 }
