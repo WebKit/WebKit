@@ -1,3 +1,11 @@
+2010-09-12  Martin Smith  <martin.smith@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix group of declarative web view in QML docs.
+
+        * declarative/qdeclarativewebview.cpp:
+
 2010-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Andreas Kling.

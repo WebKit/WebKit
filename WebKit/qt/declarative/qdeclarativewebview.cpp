@@ -139,6 +139,7 @@ void GraphicsWebView::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 
 /*!
     \qmlclass WebView QDeclarativeWebView
+    \ingroup qml-view-elements
     \since 4.7
     \brief The WebView item allows you to add web content to a canvas.
     \inherits Item
