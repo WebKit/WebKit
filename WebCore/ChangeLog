@@ -1,3 +1,22 @@
+2010-09-12  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] get_n_selections and get_selection fail when selecting text across object boundaries
+        https://bugs.webkit.org/show_bug.cgi?id=26991
+
+        Fix AtkText getNSelections() and getSelection() to work properly
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (selectionBelongsToObject): Check that both the selection intersects
+        the node AND that the selection is not just "touching" one of the
+        boundaries for the selected node. We want to check whether the
+        node is actually inside the region, at least partially
+        (getSelectionOffsetsForObject): New function to get the start and
+        end offsets of a selection for a given accessible object.
+        (webkit_accessible_text_get_selection): Return zero when both
+        start and end offsets are equal, following the lead of GAIL.
+
 2010-09-11  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.
