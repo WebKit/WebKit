@@ -1,3 +1,10 @@
+2010-09-11  Daniel Bates  <dbates@rim.com>
+
+        Attempt to fix the Qt Linux Release build after changeset 67312 <http://trac.webkit.org/changeset/67312>.
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::QWKPage): Add missing ',' in WKPageUIClient initialization list.
+
 2010-09-11  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.
