@@ -2,6 +2,29 @@
 
         Reviewed by Andreas Kling.
 
+        Fix compilation with V8 and XPath enabled.
+
+        V8XPathNSResolver.cpp includes V8XPathNSResolver.h,
+        which includes V8DOMWrapper.h as its first header.
+        V8DOMWrapper.h then uses V8XPathNSResolver in an inline
+        function, and gcc doesn't seem to like this, because
+        at this point the type isn't known ("V8XPathNSResolver
+        has not been declared"). Forward declaring the type
+        doesn't help unfortunately: "incomplete type
+        'WebCore::V8XPathNSResolver' used in nested name
+        specifier".
+
+        To resolve this circular dependency, this patch moves
+        the inline function into the .cpp file.
+
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::getXPathNSResolver):
+        * bindings/v8/V8DOMWrapper.h:
+
+2010-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Andreas Kling.
+
         [Qt][X11] Fix build with V8 against X11 headers.
 
         Added "True" and "False" to the list of words

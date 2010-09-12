@@ -93,15 +93,7 @@ namespace WebCore {
 
 #if ENABLE(XPATH)
         // XPath-related utilities
-        static RefPtr<XPathNSResolver> getXPathNSResolver(v8::Handle<v8::Value> value, V8Proxy* proxy = 0)
-        {
-            RefPtr<XPathNSResolver> resolver;
-            if (V8XPathNSResolver::HasInstance(value))
-                resolver = V8XPathNSResolver::toNative(v8::Handle<v8::Object>::Cast(value));
-            else if (value->IsObject())
-                resolver = V8CustomXPathNSResolver::create(value->ToObject());
-            return resolver;
-        }
+        static RefPtr<XPathNSResolver> getXPathNSResolver(v8::Handle<v8::Value> value, V8Proxy* proxy = 0);
 #endif
 
         // Wrap JS node filter in C++.
