@@ -107,7 +107,7 @@ NPObject* v8ObjectToNPObject(v8::Handle<v8::Object> object)
 static NPClass V8NPObjectClass = { NP_CLASS_STRUCT_VERSION,
                                    allocV8NPObject,
                                    freeV8NPObject,
-                                   0, 0, 0, 0, 0, 0, 0, 0, 0 };
+                                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 // NPAPI's npruntime functions.
 NPClass* npScriptObjectClass = &V8NPObjectClass;

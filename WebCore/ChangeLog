@@ -1,3 +1,14 @@
+2010-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        Fix compiler warning.
+
+        NPClass has 13 members, the last one (NPConstructFunctionPtr construct) wasn't
+        initialized explicitly.
+
+        * bindings/v8/NPV8Object.cpp:
+
 2010-09-12  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Martin Robinson.
