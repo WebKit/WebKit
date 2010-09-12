@@ -31,7 +31,7 @@
 #ifndef V8Helpers_h
 #define V8Helpers_h
 
-#include "npruntime.h"
+#include "npruntime_internal.h"
 #include <v8.h>
 
 namespace WebCore {

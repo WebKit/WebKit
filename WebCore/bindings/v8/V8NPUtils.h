@@ -33,7 +33,7 @@
 #if PLATFORM(CHROMIUM)
 #include <bindings/npruntime.h>
 #else
-#include "npruntime.h"
+#include "npruntime_internal.h"
 #endif
 
 #include <v8.h>

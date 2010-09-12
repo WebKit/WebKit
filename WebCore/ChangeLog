@@ -1,5 +1,21 @@
 2010-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Reviewed by Andreas Kling.
+
+        Fix compilation of the V8 bindings on X11 with Qt.
+
+        These headers include npruntime, which drag on X11Resources.h, which
+        among other things #define's None and Boolean. Later on v8.h is included,
+        which declares these in enums and therefore conflicts. npruntime_internal.h
+        was introduced exactly to address this problem by including npruntime.h
+        and undeff'ing the offending constants.
+
+        * bindings/v8/V8Helpers.h:
+        * bindings/v8/V8NPObject.h:
+        * bindings/v8/V8NPUtils.h:
+
+2010-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Gtk build fix.
 
         Use false instead of False after
