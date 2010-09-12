@@ -38,4 +38,16 @@
     #undef Auto
     #undef Complex
     #undef Status
+    #undef CursorShape
+    #undef FocusIn
+    #undef FocusOut
+    #undef KeyPress
+    #undef KeyRelease
+    #undef Unsorted
+    #undef Bool
+    #undef FontChange
+    #undef GrayScale
+    #undef NormalState
+    #undef True
+    #undef False
 #endif

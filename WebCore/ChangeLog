@@ -17,6 +17,19 @@
 
         Fix compilation of the V8 bindings on X11 with Qt.
 
+        This changes brings the file in sync with its copy in bridge/,
+        adding additional conflicting X11 keywords to undef. This is
+        a temporary fix until the file is removed altogether, which is
+        tracked in https://bugs.webkit.org/show_bug.cgi?id=45617
+
+        * bindings/v8/npruntime_internal.h:
+
+2010-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        Fix compilation of the V8 bindings on X11 with Qt.
+
         These headers include npruntime, which drag on X11Resources.h, which
         among other things #define's None and Boolean. Later on v8.h is included,
         which declares these in enums and therefore conflicts. npruntime_internal.h
