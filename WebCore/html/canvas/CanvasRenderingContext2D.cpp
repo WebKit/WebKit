@@ -659,7 +659,7 @@ void CanvasRenderingContext2D::closePath()
 
     FloatRect boundRect = m_path.boundingRect();
     if (boundRect.width() || boundRect.height())
-        m_path.closeCanvasSubpath();
+        m_path.closeSubpath();
 }
 
 void CanvasRenderingContext2D::moveTo(float x, float y)

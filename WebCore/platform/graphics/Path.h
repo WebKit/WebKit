@@ -133,11 +133,6 @@ namespace WebCore {
         void addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint& endPoint);
         void addArcTo(const FloatPoint&, const FloatPoint&, float radius);
         void closeSubpath();
-#if PLATFORM(QT)
-        void closeCanvasSubpath();
-#else
-        void closeCanvasSubpath() { closeSubpath(); }
-#endif
 
         void addArc(const FloatPoint&, float radius, float startAngle, float endAngle, bool anticlockwise);
         void addRect(const FloatRect&);

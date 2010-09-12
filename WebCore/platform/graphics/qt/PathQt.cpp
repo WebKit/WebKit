@@ -267,30 +267,6 @@ void Path::closeSubpath()
     m_path.closeSubpath();
 }
 
-void Path::closeCanvasSubpath()
-{
-    const int elementCount = m_path.elementCount();
-
-    if (!elementCount)
-        return;
-
-    QPointF lastMoveToPoint = m_path.elementAt(m_lastMoveToIndex);
-    int elementsInLastSubpath = 0;
-
-    for (int i = m_lastMoveToIndex; i < elementCount; ++i) {
-        QPainterPath::Element element = m_path.elementAt(i);
-        if (element.isLineTo() || element.isCurveTo()) {
-            // All we need to know is if there are 1 or more elements in the last subpath.
-            if (++elementsInLastSubpath == 2) {
-                m_path.lineTo(lastMoveToPoint);
-                return;
-            }
-        }
-    }
-
-    moveTo(lastMoveToPoint);
-}
-
 #define DEGREES(t) ((t) * 180.0 / M_PI)
 void Path::addArc(const FloatPoint& p, float r, float sar, float ear, bool anticlockwise)
 {

@@ -5439,3 +5439,6 @@ fullscreen/
 
 # https://bugs.webkit.org/show_bug.cgi?id=45194
 fast/text/decomposed-after-stacked-diacritics.html
+
+# Fixed in Qt 4.7.1 - Unskip when buildbot is upgraded.
+fast/canvas/canvas-closePath-single-point.html
