@@ -61,7 +61,7 @@ public:
     }
 
     explicit WebCoreStringResource(const AtomicString& string)
-        : m_plainString(string)
+        : m_plainString(string.string())
         , m_atomicString(string)
     {
 #ifndef NDEBUG

@@ -2,6 +2,26 @@
 
         Reviewed by Andreas Kling.
 
+        [Qt] Fix the compilation of V8Binding.cpp when compiling with Qt.
+
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::WebCoreStringResource::WebCoreStringResource): In this
+        line an AtomicString should be converted to a WTF::String. The former
+        has a conversion operator to the latter, to be able to call the
+        WTF::String copy constructor. When compiling with Qt, then AtomicString
+        also has a conversion operator to QString _and_ WTF::String has an
+        implicit constructor that takes a QString. Therefore the compiler is
+        confused and not sure which conversion to prefer, the one that isn't
+        actually a conversion - going to WTF::String - or the conversion from
+        AtomicString to QString and then constructing the WTF::String from
+        a QString. To resolve this ambiguity we explicitly call the string()
+        helper function on the AtomicString, which is equivalent to the
+        operator WTF::String().
+
+2010-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Andreas Kling.
+
         Fix the build without JSC.
 
         Complement http://trac.webkit.org/changeset/59826 and
