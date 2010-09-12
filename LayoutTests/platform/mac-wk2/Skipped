@@ -61,6 +61,7 @@ fast/loader/null-request-after-willSendRequest.html
 
 # Support layoutTestController.layerTreeAsText in WebKitTestRunner
 # <https://bugs.webkit.org/show_bug.cgi?id=42145>
+compositing/layer-creation/scroll-partial-update.html
 compositing/animation/animation-compositing.html
 compositing/geometry/clip.html
 compositing/geometry/limit-layer-bounds-clipping-ancestor.html
@@ -121,6 +122,10 @@ editing/style/style-boundary-005.html
 
 # WebKitTestRunner needs an implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
+svg/dynamic-updates/SVGFEDistantLightElement-dom-azimuth-attr.html
+svg/dynamic-updates/SVGFEDistantLightElement-dom-elevation-attr.html
+svg/dynamic-updates/SVGFEDistantLightElement-svgdom-azimuth-prop.html
+svg/dynamic-updates/SVGFEDistantLightElement-svgdom-elevation-prop.html
 svg/custom/mouse-move-on-svg-container-standalone.svg
 svg/custom/mouse-move-on-svg-container.xhtml
 svg/custom/mouse-move-on-svg-root-standalone.svg
