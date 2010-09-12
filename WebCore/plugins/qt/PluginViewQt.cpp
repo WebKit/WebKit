@@ -322,7 +322,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     dispatchNPEvent(xevent);
 
     if (syncX)
-        XSync(m_pluginDisplay, False); // sync changes by plugin
+        XSync(m_pluginDisplay, false); // sync changes by plugin
 
     painter->drawPixmap(QPoint(frameRect().x() + exposedRect.x(), frameRect().y() + exposedRect.y()), qtDrawable,
                         exposedRect);

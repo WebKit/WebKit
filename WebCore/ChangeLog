@@ -2,6 +2,24 @@
 
         Reviewed by Andreas Kling.
 
+        [Qt][X11] Fix build with V8 against X11 headers.
+
+        Added "True" and "False" to the list of words
+        we free from the X11 macro jail.
+
+        * bridge/npruntime_internal.h:
+        * config.h: The V8 bindings end up indirectly pulling
+        in X11 headers and they use True/False. There's no
+        central header apart from this one, so include the
+        x11 fixing header here for Qt/X11/V8.
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::paint): Use false instead of False
+        since False isn't available anymore.
+
+2010-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Andreas Kling.
+
         [Qt] Fix compilation with V8 and Qt.
 
         Use WebKit's page cache for ScriptCachedFrameData.
