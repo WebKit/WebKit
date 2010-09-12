@@ -284,32 +284,35 @@ bool SecurityOrigin::isAccessWhiteListed(const SecurityOrigin* targetOrigin) con
     return false;
 }
   
-bool SecurityOrigin::canDisplay(const KURL& url, const String& referrer, Document* document)
+bool SecurityOrigin::canDisplay(const KURL& url) const
 {
 #if ENABLE(BLOB)
-    if (url.protocolIs(BlobURL::blobProtocol()) && document) {
-        SecurityOrigin* documentOrigin = document->securityOrigin();
-        RefPtr<SecurityOrigin> targetOrigin = SecurityOrigin::create(url);
-        return documentOrigin->isSameSchemeHostPort(targetOrigin.get());
-    }
+    if (url.protocolIs(BlobURL::blobProtocol()))
+        return canRequest(url);
 #endif
+
+    if (!restrictAccessToLocal())
+        return true;
 
     if (!SchemeRegistry::shouldTreatURLAsLocal(url.string()))
         return true;
 
-    // If we were provided a document, we first check if the access has been white listed.
-    // Then we let its local file police dictate the result.
-    // Otherwise we allow local loads only if the supplied referrer is also local.
-    if (document) {
-        SecurityOrigin* documentOrigin = document->securityOrigin();
-        RefPtr<SecurityOrigin> targetOrigin = SecurityOrigin::create(url);
-        if (documentOrigin->isAccessWhiteListed(targetOrigin.get()))
-            return true;
-        return documentOrigin->canLoadLocalResources();
-    }
-    if (!referrer.isEmpty())
-        return SchemeRegistry::shouldTreatURLAsLocal(referrer);
-    return false;
+    RefPtr<SecurityOrigin> targetOrigin = SecurityOrigin::create(url);
+    if (isAccessWhiteListed(targetOrigin.get()))
+        return true;
+
+    return canLoadLocalResources();
+}
+
+bool SecurityOrigin::deprecatedCanDisplay(const String& referrer, const KURL& url)
+{
+    if (!restrictAccessToLocal())
+        return true;
+
+    if (!SchemeRegistry::shouldTreatURLAsLocal(url.string()))
+        return true;
+
+    return SchemeRegistry::shouldTreatURLAsLocal(referrer);
 }
 
 void SecurityOrigin::grantLoadLocalResources()

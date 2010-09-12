@@ -741,19 +741,16 @@ bool HTMLMediaElement::isSafeToLoadURL(const KURL& url, InvalidSourceAction acti
     if (!url.isValid()) {
         LOG(Media, "HTMLMediaElement::isSafeToLoadURL(%s) -> FALSE because url is invalid", urlForLogging(url.string()).utf8().data());
         return false;
-       }
-    
-    Frame* frame = document()->frame();
-    FrameLoader* loader = frame ? frame->loader() : 0;
+    }
 
-    // don't allow remote to local urls, and check with the frame loader client.
-    if (!loader || !SecurityOrigin::canDisplay(url, String(), document())) {
+    Frame* frame = document()->frame();
+    if (!frame || !document()->securityOrigin()->canDisplay(url)) {
         if (actionIfInvalid == Complain)
             FrameLoader::reportLocalLoadFailed(frame, url.string());
         LOG(Media, "HTMLMediaElement::isSafeToLoadURL(%s) -> FALSE rejected by SecurityOrigin", urlForLogging(url.string()).utf8().data());
         return false;
     }
-    
+
     return true;
 }
 

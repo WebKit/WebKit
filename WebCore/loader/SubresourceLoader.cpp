@@ -71,9 +71,7 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, Subresourc
 
     ResourceRequest newRequest = request;
 
-    if (securityCheck == DoSecurityCheck
-            && SecurityOrigin::restrictAccessToLocal()
-            && !SecurityOrigin::canDisplay(request.url(), String(), frame->document())) {
+    if (securityCheck == DoSecurityCheck && !frame->document()->securityOrigin()->canDisplay(request.url())) {
         FrameLoader::reportLocalLoadFailed(frame, request.url().string());
         return 0;
     }

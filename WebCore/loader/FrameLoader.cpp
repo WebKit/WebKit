@@ -1257,9 +1257,10 @@ void FrameLoader::loadFrameRequest(const FrameLoadRequest& request, bool lockHis
         referrer = m_outgoingReferrer;
 
     ASSERT(frame()->document());
-    if (SchemeRegistry::shouldTreatURLAsLocal(url.string()) && !isFeedWithNestedProtocolInHTTPFamily(url)) {
-        if (!SecurityOrigin::canDisplay(url, String(), frame()->document()) && !SecurityOrigin::canDisplay(url, referrer, 0)) {
-            FrameLoader::reportLocalLoadFailed(m_frame, url.string());
+    // FIXME: Should we move the isFeedWithNestedProtocolInHTTPFamily logic inside SecurityOrigin::canDisplay?
+    if (!isFeedWithNestedProtocolInHTTPFamily(url)) {
+        if (!frame()->document()->securityOrigin()->canDisplay(url) && !SecurityOrigin::deprecatedCanDisplay(referrer, url)) {
+            reportLocalLoadFailed(m_frame, url.string());
             return;
         }
     }

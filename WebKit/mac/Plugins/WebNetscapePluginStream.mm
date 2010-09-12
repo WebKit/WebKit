@@ -161,7 +161,7 @@ WebNetscapePluginStream::WebNetscapePluginStream(NSURLRequest *request, NPP plug
     WebNetscapePluginView *view = (WebNetscapePluginView *)plugin->ndata;
     
     // This check has already been done by the plug-in view.
-    ASSERT(SecurityOrigin::canDisplay([request URL], String(), core([view webFrame])->document()));
+    ASSERT(core([view webFrame])->document()->securityOrigin()->canDisplay([request URL]));
     
     ASSERT([request URL]);
     ASSERT(plugin);

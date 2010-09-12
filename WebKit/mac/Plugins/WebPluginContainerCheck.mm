@@ -99,7 +99,7 @@ using namespace WebCore;
 {
    Frame* coreFrame = core([_controller webFrame]);
    ASSERT(coreFrame);
-   if (!SecurityOrigin::canDisplay([_request URL], String(), coreFrame->document())) {
+   if (!coreFrame->document()->securityOrigin()->canDisplay([_request URL])) {
        [self _continueWithPolicy:PolicyIgnore];
        return YES;
    }

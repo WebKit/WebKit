@@ -156,7 +156,7 @@ PassRefPtr<Widget> SubframeLoader::loadMediaPlayerProxyPlugin(Node* node, const 
     if (!url.isEmpty())
         completedURL = completeURL(url);
 
-    if (!SecurityOrigin::canDisplay(completedURL, String(), m_frame->document())) {
+    if (!m_frame->document()->securityOrigin()->canDisplay(completedURL)) {
         FrameLoader::reportLocalLoadFailed(m_frame, completedURL.string());
         return 0;
     }
@@ -214,7 +214,7 @@ PassRefPtr<Widget> SubframeLoader::createJavaAppletWidget(const IntSize& size, H
 
     if (!codeBaseURLString.isEmpty()) {
         KURL codeBaseURL = completeURL(codeBaseURLString);
-        if (!SecurityOrigin::canDisplay(codeBaseURL, String(), element->document())) {
+        if (!element->document()->securityOrigin()->canDisplay(codeBaseURL)) {
             FrameLoader::reportLocalLoadFailed(m_frame, codeBaseURL.string());
             return 0;
         }
@@ -256,7 +256,7 @@ Frame* SubframeLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const K
         marginHeight = o->getMarginHeight();
     }
 
-    if (!SecurityOrigin::canDisplay(url, String(), ownerElement->document())) {
+    if (!ownerElement->document()->securityOrigin()->canDisplay(url)) {
         FrameLoader::reportLocalLoadFailed(m_frame, url.string());
         return 0;
     }
@@ -345,7 +345,7 @@ bool SubframeLoader::loadPlugin(HTMLPlugInImageElement* pluginElement, const KUR
     if (!renderer || useFallback)
         return false;
 
-    if (!SecurityOrigin::canDisplay(url, String(), document())) {
+    if (!document()->securityOrigin()->canDisplay(url)) {
         FrameLoader::reportLocalLoadFailed(m_frame, url.string());
         return false;
     }

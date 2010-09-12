@@ -99,17 +99,16 @@ CachedResource* Cache::requestResource(CachedResourceLoader* cachedResourceLoade
     // Would it be better to just go on with the cache code and let it fail later?
     if (url.isEmpty())
         return 0;
-    
+
     // Look up the resource in our map.
     CachedResource* resource = resourceForURL(url.string());
-    
+
     if (resource && requestIsPreload && !resource->isPreloaded())
         return 0;
-    
-    if (SecurityOrigin::restrictAccessToLocal() && !SecurityOrigin::canDisplay(url, String(), cachedResourceLoader->doc())) {
-        Document* doc = cachedResourceLoader->doc();
-        if (doc && !requestIsPreload)
-            FrameLoader::reportLocalLoadFailed(doc->frame(), url.string());
+
+    if (!cachedResourceLoader->doc()->securityOrigin()->canDisplay(url)) {
+        if (!requestIsPreload)
+            FrameLoader::reportLocalLoadFailed(cachedResourceLoader->doc()->frame(), url.string());
         return 0;
     }
     

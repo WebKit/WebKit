@@ -86,9 +86,11 @@ public:
 
     // Returns true if |document| can display content from the given URL (e.g.,
     // in an iframe or as an image). For example, web sites generally cannot
-    // display content from the user's files system. If |document| is 0,
-    // |referrer| is used to make this determination.
-    static bool canDisplay(const KURL&, const String& referrer, Document* document);
+    // display content from the user's files system.
+    bool canDisplay(const KURL&) const;
+
+    // FIXME: Remove this function. This function exists only to service FrameLoader.
+    static bool deprecatedCanDisplay(const String& referrer, const KURL& targetURL);
 
     // Returns true if this SecurityOrigin can load local resources, such
     // as images, iframes, and style sheets, and can link to local URLs.
