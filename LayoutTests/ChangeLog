@@ -1,3 +1,39 @@
+2010-09-12  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        post-basic.html and post-frames.html in http/tests/navigation should not be pixel tests
+        https://bugs.webkit.org/show_bug.cgi?id=45610
+
+        post-basic.html and post-frames.html would be a lot simpler if
+        they weren't pixel tests (post-frames.html doesn't even have the right
+        expectations for Chromium/Mac). Since all they test is that form
+        POSTs are handled correctly, they can just use dumpAsText.
+
+        * http/tests/navigation/post-basic-expected.txt: Added.
+        * http/tests/navigation/post-basic.html:
+        * http/tests/navigation/post-frames-expected.txt: Added.
+        * http/tests/navigation/post-frames.html:
+        * http/tests/navigation/resources/page-that-posts.html: Added.
+        * http/tests/navigation/resources/postresult.pl:
+        * platform/chromium-linux/http/tests/navigation/post-basic-expected.checksum: Removed.
+        * platform/chromium-linux/http/tests/navigation/post-basic-expected.png: Removed.
+        * platform/chromium-linux/http/tests/navigation/post-frames-expected.checksum: Removed.
+        * platform/chromium-linux/http/tests/navigation/post-frames-expected.png: Removed.
+        * platform/chromium-win/http/tests/navigation/post-basic-expected.checksum: Removed.
+        * platform/chromium-win/http/tests/navigation/post-basic-expected.png: Removed.
+        * platform/chromium-win/http/tests/navigation/post-basic-expected.txt: Removed.
+        * platform/chromium-win/http/tests/navigation/post-frames-expected.checksum: Removed.
+        * platform/chromium-win/http/tests/navigation/post-frames-expected.png: Removed.
+        * platform/chromium-win/http/tests/navigation/post-frames-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/http/tests/navigation/post-basic-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/post-basic-expected.png: Removed.
+        * platform/mac/http/tests/navigation/post-basic-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/post-frames-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/post-frames-expected.png: Removed.
+        * platform/mac/http/tests/navigation/post-frames-expected.txt: Removed.
+
 2010-09-11  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adam Barth.

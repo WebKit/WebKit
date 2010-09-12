@@ -36,6 +36,10 @@ if (($submitWithPost && $method eq "POST") || ($redirectHappened && $method eq "
     The first text field contained: $textFieldData
     <br>
     This page was requested with an HTTP $method
+    <script>
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+    </script>
     </body>
     </html>
 HERE_DOC_END

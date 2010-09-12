@@ -1,0 +1,11 @@
+This is just a minimal page that we navigate in response to an HTTP POST. 
+
+If the next line is empty after the colon, it probably means that we made a mistake and requested this page with a GET with no query instead of a POST. 
+
+The first text field contained: input value goes here 
+This page was requested with an HTTP POST
+
+============== Back Forward List ==============
+        http://127.0.0.1:8000/navigation/resources/page-that-posts.html  **nav target**
+curr->  http://127.0.0.1:8000/navigation/resources/postresult.pl  **nav target**
+===============================================
