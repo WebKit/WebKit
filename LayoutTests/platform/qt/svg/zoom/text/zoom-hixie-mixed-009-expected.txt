@@ -1,19 +1,19 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x375
-  RenderBlock {html} at (0,0) size 800x317
-    RenderBody {body} at (8,10) size 784x297
-      RenderBlock {p} at (0,0) size 784x30 [color=#000080]
-        RenderText {#text} at (0,0) size 707x30
-          text run at (0,0) width 707: "The word \"TEST \" should appear twice below, the same size each time."
-      RenderBlock (anonymous) at (0,40) size 784x127
-        RenderSVGRoot {svg} at (8,50) size 400x120
-          RenderPath {rect} at (8,50) size 400x120 [transform={m=((10.00,0.00)(0.00,10.00)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#EEEEEE]}] [data="M0.00,0.00 L60.00,0.00 L60.00,12.00 L0.00,12.00 L0.00,0.00"]
+layer at (0,0) size 800x337
+  RenderBlock {html} at (0,0) size 800x311
+    RenderBody {body} at (8,10) size 784x291
+      RenderBlock {p} at (0,0) size 784x25 [color=#000080]
+        RenderText {#text} at (0,0) size 585x25
+          text run at (0,0) width 585: "The word \"TEST \" should appear twice below, the same size each time."
+      RenderBlock (anonymous) at (0,35) size 784x126
+        RenderSVGRoot {svg} at (8,45) size 400x120
+          RenderPath {rect} at (8,45) size 400x120 [transform={m=((10.00,0.00)(0.00,10.00)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#EEEEEE]}] [data="M0.00,0.00 L60.00,0.00 L60.00,12.00 L0.00,12.00 L0.00,0.00"]
           RenderForeignObject {foreignObject} at (0,0) size 60x10
             RenderBlock {div} at (0,0) size 60x13 [color=#000080]
               RenderText {#text} at (0,0) size 27x13
                 text run at (0,0) width 27: "TEST"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {div} at (0,177) size 400x120 [color=#000080] [bgcolor=#EEEEEE]
-        RenderText {#text} at (0,0) size 368x188
-          text run at (0,0) width 368: "TEST"
+      RenderBlock {div} at (0,171) size 400x120 [color=#000080] [bgcolor=#EEEEEE]
+        RenderText {#text} at (0,0) size 307x156
+          text run at (0,0) width 307: "TEST"

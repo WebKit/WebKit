@@ -1,3 +1,14 @@
+2010-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Rebase a bunch of tests after r67200.
+
+        * platform/qt/svg/zoom/text/zoom-hixie-mixed-008-expected.txt:
+        * platform/qt/svg/zoom/text/zoom-hixie-mixed-009-expected.txt:
+        * platform/qt/svg/zoom/text/zoom-hixie-rendering-model-004-expected.txt:
+        * platform/qt/svg/zoom/text/zoom-svg-float-border-padding-expected.txt:
+
 2010-09-12  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
