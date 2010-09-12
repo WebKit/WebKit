@@ -94,7 +94,6 @@ compositing/plugins/1x1-composited-plugin.html
 compositing/plugins/composited-plugin.html
 compositing/plugins/large-to-small-composited-plugin.html
 compositing/plugins/small-to-large-composited-plugin.html
-compositing/tiling/compositing/iframes/become-overlapped-iframe.html
 compositing/tiling/crash-reparent-tiled-layer.html
 compositing/tiling/huge-layer-add-remove-child.html
 compositing/tiling/huge-layer-resize.html
