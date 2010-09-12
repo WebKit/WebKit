@@ -1,3 +1,14 @@
+2010-09-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Attempt to fix Windows MiniBrowser build (untested)
+        https://bugs.webkit.org/show_bug.cgi?id=45609
+
+        * MiniBrowser/win/BrowserView.cpp:
+        (runJavaScriptConfirm):
+        (runJavaScriptPrompt):
+
 2010-09-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.
