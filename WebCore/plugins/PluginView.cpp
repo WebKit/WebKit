@@ -730,9 +730,9 @@ void PluginView::setJavaScriptPaused(bool paused)
         m_requestTimer.startOneShot(0);
 }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
 NPObject* PluginView::npObject()
 {
-#if ENABLE(NETSCAPE_PLUGIN_API)
     NPObject* object = 0;
 
     if (!m_isStarted || !m_plugin || !m_plugin->pluginFuncs()->getvalue)
@@ -758,12 +758,13 @@ NPObject* PluginView::npObject()
     return object;
 #else
     return 0;
-#endif
 }
+#endif
 
 #if USE(JSC)
 PassRefPtr<JSC::Bindings::Instance> PluginView::bindingInstance()
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     NPObject* object = npObject();
     if (!object)
         return 0;
@@ -784,6 +785,9 @@ PassRefPtr<JSC::Bindings::Instance> PluginView::bindingInstance()
     _NPN_ReleaseObject(object);
 
     return instance.release();
+#else
+    return 0;
+#endif
 }
 #endif
 

@@ -1,5 +1,14 @@
 2010-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Prospective build fix for minimal build.
+
+        * plugins/PluginView.cpp: Guard newly added function
+        by ENABLE_NETSCAPE_PLUGIN feature.
+        (WebCore::PluginView::npObject):
+        * plugins/PluginView.h:
+
+2010-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Reviewed by Andreas Kling.
 
         [Qt] Add support for binding QtWebKit to a QScriptEngine.
