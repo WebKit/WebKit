@@ -1,3 +1,16 @@
+2010-09-12  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Let QtWebKit inject itself into the qt configuration
+
+        i.e., don't explicitly deal with qt_webkit_version.pri outside of the
+        webkit source directory.
+
+        Task-number: QTBUG-12379
+
+        * WebCore.pro:
+
 2010-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Build fix.

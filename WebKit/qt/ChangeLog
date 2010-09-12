@@ -1,3 +1,14 @@
+2010-09-12  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] let WebKit inject itself into the qt configuration
+
+        Task-number: QTBUG-12379
+
+        * qt_webkit_version.pri: Use the faster + instead of *
+        operator to add webkit to the config.
+
 2010-09-12  Martin Smith  <martin.smith@nokia.com>
 
         Reviewed by Simon Hausmann.
