@@ -389,7 +389,7 @@ void QDeclarativeWebView::setPreferredHeight(int height)
 }
 
 /*!
-    \qmlmethod bool WebView::evaluateJavaScript(string)
+    \qmlmethod bool WebView::evaluateJavaScript(string scriptSource)
 
     Evaluates the \a scriptSource JavaScript inside the context of the
     main web frame, and returns the result of the last executed statement.
@@ -513,14 +513,14 @@ void QDeclarativeWebView::setRenderingEnabled(bool enabled)
 }
 
 /*!
-    \qmlsignal WebView::onDoubleClick(clickx, clicky)
+    \qmlsignal WebView::onDoubleClick(int clickx, int clicky)
 
     The WebView does not pass double-click events to the web engine, but rather
     emits this signals.
 */
 
 /*!
-    \qmlmethod bool WebView::heuristicZoom(clickX,clickY,maxzoom)
+    \qmlmethod bool WebView::heuristicZoom(int clickX, int clickY, real maxzoom)
 
     Finds a zoom that:
     \list
@@ -976,7 +976,7 @@ QString QDeclarativeWebPage::chooseFile(QWebFrame* originatingFrame, const QStri
 }
 
 /*!
-    \qmlsignal WebView::onAlert(message)
+    \qmlsignal WebView::onAlert(string message)
 
     The handler is called when the web engine sends a JavaScript alert. The \a message is the text
     to be displayed in the alert to the user.

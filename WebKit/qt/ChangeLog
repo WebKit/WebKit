@@ -1,3 +1,11 @@
+2010-09-12  David Boddie  <david.boddie@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Doc: qdoc fixes.
+
+        * declarative/qdeclarativewebview.cpp:
+
 2010-09-12  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
 
         Reviewed by Simon Hausmann.
