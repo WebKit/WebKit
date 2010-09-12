@@ -82,9 +82,6 @@
 #if USE(JSC)
 #include "qt_instance.h"
 #include "qt_runtime.h"
-#elif USE(V8)
-#include "qt_instancev8.h"
-#include "qt_runtimev8.h"
 #endif
 #include "qwebelement.h"
 #include "qwebframe_p.h"
@@ -520,22 +517,11 @@ void QWebFrame::addToJavaScriptWindowObject(const QString &name, QObject *object
     JSC::PutPropertySlot slot;
     window->put(exec, JSC::Identifier(exec, reinterpret_cast_ptr<const UChar*>(name.constData()), name.length()), runtimeObject, slot);
 #elif USE(V8)
-    // Publish QObject in v8 isolated context
-    v8::HandleScope handlescope;
-    v8::Handle<v8::Context> v8Context = V8Proxy::mainWorldContext(d->frame);
-    if (v8Context.IsEmpty())
+    QScriptEngine* engine = d->frame->script()->qtScriptEngine();
+    if (!engine)
         return;
-    v8::Context::Scope conxtextscope(v8Context);
-    v8::Handle<v8::Value> windowValue = v8Context->Global()->Get(v8::String::New("window"));
-    v8::Handle<v8::Object> dest = 
-        (windowValue.IsEmpty() || !windowValue->IsObject()) ? v8Context->Global() : windowValue->ToObject();
-    dest->Set(v8::String::New(
-        name.toLatin1().constData()), 
-        V8::Bindings::QtInstance::getQtInstance(
-                object, 
-                v8Context, 
-                name, // have to pass name for v8::FunctionTemplate
-                ownership)->getV8Object());
+    QScriptValue v = engine->newQObject(object, ownership);
+    engine->globalObject().property("window").setProperty(name, v);
 #endif
 }
 
@@ -1433,21 +1419,16 @@ QVariant QWebFrame::evaluateJavaScript(const QString& scriptSource)
     ScriptController *proxy = d->frame->script();
     QVariant rc;
     if (proxy) {
-        int distance = 0;
 #if USE(JSC)
+        int distance = 0;
         JSC::JSValue v = d->frame->script()->executeScript(ScriptSourceCode(scriptSource)).jsValue();
 
         rc = JSC::Bindings::convertValueToQVariant(proxy->globalObject(mainThreadNormalWorld())->globalExec(), v, QMetaType::Void, &distance);
 #elif USE(V8)
-        v8::HandleScope handlescope;
-        // Get context from the frame
-        v8::Handle<v8::Context> v8Context = V8Proxy::mainWorldContext(d->frame);
-        if (v8Context.IsEmpty())
+        QScriptEngine* engine = d->frame->script()->qtScriptEngine();
+        if (!engine)
             return rc;
-        // Get root object for the context
-        v8::Context::Scope conxtextscope(v8Context);
-        v8::Handle<v8::Value> v = v8::Script::Compile(v8::String::New(scriptSource.toLatin1().constData()))->Run();
-        rc = V8::Bindings::convertValueToQVariant(v, QMetaType::Void, &distance);
+        rc = engine->evaluate(scriptSource).toVariant();
 #endif
     }
     return rc;

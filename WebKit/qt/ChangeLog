@@ -2,6 +2,21 @@
 
         Reviewed by Andreas Kling.
 
+        [Qt] Partial implementation of Qt bridge using V8 and QtScript.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::evaluateJavaScript): Stub it out for now,
+        to compile, until we have a conversion path between v8::Object
+        and QScriptValue.
+        * Api/qwebframe.cpp:
+        (QWebFrame::addToJavaScriptWindowObject): Implemented using
+        few lines of QtScript code.
+        (QWebFrame::evaluateJavaScript): Ditto.
+
+2010-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Andreas Kling.
+
         Fix the build with V8.
 
         This is a temporary kludge until the scriptworld stuff is properly

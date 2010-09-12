@@ -41,7 +41,7 @@
 #elif USE(V8)
 #include "V8DOMWindow.h"
 #include "V8Binding.h"
-#include "qt_instancev8.h"
+#include "NotImplemented.h"
 #endif
 #include "NodeList.h"
 #include "RenderImage.h"
@@ -786,24 +786,8 @@ QVariant QWebElement::evaluateJavaScript(const QString& scriptSource)
     int distance = 0;
     return JSC::Bindings::convertValueToQVariant(state, result, QMetaType::Void, &distance);
 #elif USE(V8)
-    // Create scope handler
-    v8::HandleScope hs;
-    // Get proxy from scriptcontroller
-    V8Proxy* proxy = scriptController->proxy();
-    // Ask the context from proxy
-    v8::Handle<v8::Context> context = proxy->context();
-    if (context.IsEmpty())
-        return QVariant();
-
-    // Create scope for the context
-    v8::Context::Scope scope(context);
-    v8::Local<v8::Value> object = proxy->evaluate(ScriptSourceCode(scriptSource), static_cast<Node*>(m_element));
-
-    if (object.IsEmpty())
-        return QVariant();
-    String result = v8ValueToWebCoreString(object);
-    int distance = 0;
-    return V8::Bindings::convertValueToQVariant(object, QMetaType::Void, &distance);
+    notImplemented();
+    return QVariant();
 #endif
 }
 
