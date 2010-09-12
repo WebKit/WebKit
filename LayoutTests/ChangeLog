@@ -4,6 +4,12 @@
 
         * platform/chromium/test_expectations.txt:
 
+2010-09-12  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-12  James Robinson  <jamesr@chromium.org>
 
         Unreviewed, rolling out r67328.

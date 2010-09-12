@@ -3140,7 +3140,7 @@ BUGWK45513 WIN : inspector/extensions-resources.html = TIMEOUT
 BUGWK45527 : fast/dom/replaceChild.html = IMAGE
 
 // Regression from r67285
-BUGWK45623 LINUX : fast/dynamic/first-letter-display-change.html = IMAGE
+BUGWK45623 WIN LINUX : fast/dynamic/first-letter-display-change.html = IMAGE
 
 // Comment out temporarily - these tests need rebaselines but the tool isn't
 // working
