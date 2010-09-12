@@ -1,5 +1,16 @@
 2010-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Gtk build fix.
+
+        Use false instead of False after
+        http://trac.webkit.org/changeset/67323
+
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+        (WebCore::PluginView::paint):
+
+2010-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Reviewed by Andreas Kling.
 
         [Qt] Fix the compilation of V8Binding.cpp when compiling with Qt.
