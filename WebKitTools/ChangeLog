@@ -1,3 +1,13 @@
+2010-09-12  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, build fix.
+
+        My last change accidentally contained a local change to the
+        rebaselinig script; webkit-patch land picked it up without telling
+        me and committed it :(
+
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+
 2010-09-11  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders Carlsson.

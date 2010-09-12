@@ -738,7 +738,7 @@ class HtmlGenerator(object):
 
         _log.info('Launching html: "%s"', self._html_file)
 
-        html_uri = "file:///" + self._html_file
+        html_uri = self._target_port.filename_to_uri(self._html_file)
         webbrowser.open(html_uri, 1)
 
         _log.info('Html launched.')
