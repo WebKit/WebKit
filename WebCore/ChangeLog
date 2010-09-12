@@ -1,3 +1,17 @@
+2010-09-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Neglect unlikely hyphenation opportunities
+        https://bugs.webkit.org/show_bug.cgi?id=45606
+
+        Avoid looking for hyphenation points in about 40% of the cases at the cost of missing about
+        3% of the hyphenation opportunities.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::tryHyphenating): Bail out if the widest the prefix before the hyphen can be is no more
+        than 5/4 the font size.
+
 2010-09-12  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
 
         Reviewed by Simon Hausmann.
