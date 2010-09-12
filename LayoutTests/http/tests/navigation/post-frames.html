@@ -1,12 +1,6 @@
+<script type="text/javascript" src="resources/testcode.js"></script>
 <script>
-  if (window.layoutTestController) {
-      layoutTestController.dumpAsText();
-      layoutTestController.dumpChildFramesAsText();
-      layoutTestController.waitUntilDone();
-      layoutTestController.dumpBackForwardList();
-   }
-</script>  
-
-<p>Tests that a POST request in a frame is handled correctly. If this test passes, you will see a page indicating a form was POSTed.</p>
-
-<iframe src="resources/page-that-posts.html"></iframe>
+    runBasicTest("resources/frameset.pl?frameURL=success200.html", "post");
+</script>
+This page just kicks off a test, and should not appear in the expected test output.
+The files in the resources dir have comments about the tests.

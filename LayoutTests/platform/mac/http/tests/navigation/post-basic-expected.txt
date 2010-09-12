@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 747x74
+        text run at (0,0) width 747: "This is just a minimal page that we navigate in response to"
+        text run at (0,37) width 222: "an HTTP POST. "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (0,74) size 0x37
+      RenderText {#text} at (0,111) size 763x111
+        text run at (0,111) width 743: "If the next line is empty after the colon, it probably means"
+        text run at (0,148) width 178: "that we made "
+        text run at (178,148) width 585: "a mistake and requested this page with a GET"
+        text run at (0,185) width 436: "with no query instead of a POST. "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (0,222) size 0x37
+      RenderText {#text} at (0,259) size 709x37
+        text run at (0,259) width 709: "The first text field contained: New form text from user "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderText {#text} at (0,296) size 591x37
+        text run at (0,296) width 591: "This page was requested with an HTTP POST"
+
+============== Back Forward List ==============
+        http://127.0.0.1:8000/navigation/post-basic.html  **nav target**
+        http://127.0.0.1:8000/navigation/resources/success200.html  **nav target**
+curr->  http://127.0.0.1:8000/navigation/resources/postresult.pl  **nav target**
+===============================================

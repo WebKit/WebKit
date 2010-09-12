@@ -1,3 +1,35 @@
+2010-09-12  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed, rolling out r67328.
+        http://trac.webkit.org/changeset/67328
+        https://bugs.webkit.org/show_bug.cgi?id=45610
+
+        Broke layout tests on mac and chromium.
+
+        * http/tests/navigation/post-basic-expected.txt: Removed.
+        * http/tests/navigation/post-basic.html:
+        * http/tests/navigation/post-frames-expected.txt: Removed.
+        * http/tests/navigation/post-frames.html:
+        * http/tests/navigation/resources/page-that-posts.html: Removed.
+        * http/tests/navigation/resources/postresult.pl:
+        * platform/chromium-linux/http/tests/navigation/post-basic-expected.checksum: Added.
+        * platform/chromium-linux/http/tests/navigation/post-basic-expected.png: Added.
+        * platform/chromium-linux/http/tests/navigation/post-frames-expected.checksum: Added.
+        * platform/chromium-linux/http/tests/navigation/post-frames-expected.png: Added.
+        * platform/chromium-win/http/tests/navigation/post-basic-expected.checksum: Added.
+        * platform/chromium-win/http/tests/navigation/post-basic-expected.png: Added.
+        * platform/chromium-win/http/tests/navigation/post-basic-expected.txt: Added.
+        * platform/chromium-win/http/tests/navigation/post-frames-expected.checksum: Added.
+        * platform/chromium-win/http/tests/navigation/post-frames-expected.png: Added.
+        * platform/chromium-win/http/tests/navigation/post-frames-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/http/tests/navigation/post-basic-expected.checksum: Copied from LayoutTests/platform/mac/http/tests/navigation/post-goback1-expected.checksum.
+        * platform/mac/http/tests/navigation/post-basic-expected.png: Copied from LayoutTests/platform/mac/http/tests/navigation/post-goback1-expected.png.
+        * platform/mac/http/tests/navigation/post-basic-expected.txt: Added.
+        * platform/mac/http/tests/navigation/post-frames-expected.checksum: Added.
+        * platform/mac/http/tests/navigation/post-frames-expected.png: Added.
+        * platform/mac/http/tests/navigation/post-frames-expected.txt: Added.
+
 2010-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Antonio Gomes.
