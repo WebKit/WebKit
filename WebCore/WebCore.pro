@@ -6,9 +6,10 @@ meegotouch {
     DEFINES += WTF_USE_MEEGOTOUCH=1
 }
 
-v8 {
-    # Take v8 location from environment
-    V8_INCLUDE_DIR = $$(V8_INCLUDE_DIR)
+v8:exists($$[QT_INSTALL_PREFIX]/src/3rdparty/v8/include/v8.h) {
+    message(Using V8 with QtScript)
+    QT += script
+    INCLUDEPATH += $$[QT_INSTALL_PREFIX]/src/3rdparty/v8/include
 
     DEFINES *= V8_BINDING=1
     DEFINES += WTF_CHANGES=1
@@ -73,14 +74,6 @@ symbian: {
         QMAKE_CXXFLAGS -= --thumb
     }
     CONFIG(release, debug|release): QMAKE_CXXFLAGS.ARMCC += -OTime -O3
-}
-
-v8 {
-    win32-* {
-        LIBS += -lWs2_32
-        LIBS += -lwinmm
-    }
-    LIBS += -lv8
 }
 
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ..
@@ -205,7 +198,6 @@ include(WebCore.pri)
 
 v8 {
     WEBCORE_INCLUDEPATH = \
-        $$V8_INCLUDE_DIR \
         $$PWD/bindings/v8 \
         $$PWD/bindings/v8/custom \
         $$PWD/bindings/v8/specialization \
@@ -2517,17 +2509,10 @@ HEADERS += \
 
 v8 {
     SOURCES += \
-       platform/qt/PlatformBridgeQt.cpp \
-       bridge/qt/v8/qt_instancev8.cpp \
-       bridge/qt/v8/qt_pixmapruntimev8.cpp \
-       bridge/qt/v8/qt_runtimev8.cpp
+       platform/qt/PlatformBridgeQt.cpp
 } else {
     SOURCES += \
        bindings/js/ScriptControllerQt.cpp \
-       bridge/qt/qt_class.cpp \
-       bridge/qt/qt_instance.cpp \
-       bridge/qt/qt_pixmapruntime.cpp \
-       bridge/qt/qt_runtime.cpp
 }
 
 SOURCES += \
