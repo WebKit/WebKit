@@ -2509,6 +2509,7 @@ HEADERS += \
 
 v8 {
     SOURCES += \
+       bindings/v8/ScriptControllerQt.cpp \
        platform/qt/PlatformBridgeQt.cpp
 } else {
     SOURCES += \

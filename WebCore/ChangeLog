@@ -2,6 +2,28 @@
 
         Reviewed by Andreas Kling.
 
+        [Qt] Add support for binding QtWebKit to a QScriptEngine.
+
+        The ScriptController owns the V8 context, and this patch
+        for the Qt build also gives it a QScriptEngine, that has
+        been instructed to adopt the V8 context.
+
+        This is the enabler for the QObject bindings, used in
+        the API and DRT.
+
+        * WebCore.pro:
+        * bindings/v8/ScriptController.cpp: Include QScriptEngine
+        for the Qt build, to let the ~ScriptController destructor
+        find the QScriptEngine destructor (via OwnPtr).
+        * bindings/v8/ScriptController.h: Declare getters.
+        * bindings/v8/ScriptControllerQt.cpp: Added.
+        (WebCore::ScriptController::qtScriptEngine): Implement
+        engine adoption.
+
+2010-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Andreas Kling.
+
         [Qt] Last bits and pieces for a V8 build.
 
         When building with V8, get it from QtScript.
