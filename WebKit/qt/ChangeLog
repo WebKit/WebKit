@@ -1,3 +1,14 @@
+2010-09-12  Martin Jones  <martin.jones@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qml] Ensure WebView gets focus when an editable node is clicked on.
+
+        Task-number: QTBUG-13342
+
+        * declarative/qdeclarativewebview.cpp:
+        (GraphicsWebView::mousePressEvent):
+
 2010-09-12  David Boddie  <david.boddie@nokia.com>
 
         Reviewed by Simon Hausmann.
