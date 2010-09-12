@@ -2,6 +2,20 @@
 
         Reviewed by Simon Hausmann.
 
+        [Qt] fix qt_webkit_version.pri install for in-Qt builds
+
+        Always add the target, even if building inside Qt - as opposed to the
+        headers and libraries, there are no rules for that coming from
+        qbase.pri.
+
+        Task-number: QTBUG-13306
+
+        * WebCore.pro:
+
+2010-09-12  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         [Qt] Let QtWebKit inject itself into the qt configuration
 
         i.e., don't explicitly deal with qt_webkit_version.pri outside of the
