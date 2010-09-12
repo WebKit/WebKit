@@ -243,3 +243,22 @@ void WKPageRenderTreeExternalRepresentation_b(WKPageRef pageRef, WKPageRenderTre
     WKPageRenderTreeExternalRepresentation(pageRef, Block_copy(block), callRenderTreeExternalRepresentationBlockAndDispose);
 }
 #endif
+
+void WKPageGetSourceForFrame(WKPageRef pageRef, WKFrameRef frameRef, void *context, WKPageGetSourceForFrameFunction callback)
+{
+    toWK(pageRef)->getSourceForFrame(toWK(frameRef), FrameSourceCallback::create(context, callback));
+}
+
+#ifdef __BLOCKS__
+static void callGetSourceForFrameBlockBlockAndDispose(WKStringRef resultValue, WKErrorRef error, void* context)
+{
+    WKPageGetSourceForFrameBlock block = (WKPageGetSourceForFrameBlock)context;
+    block(resultValue, error);
+    Block_release(block);
+}
+
+void WKPageGetSourceForFrame_b(WKPageRef pageRef, WKFrameRef frameRef, WKPageGetSourceForFrameBlock block)
+{
+    WKPageGetSourceForFrame(pageRef, frameRef, Block_copy(block), callGetSourceForFrameBlockBlockAndDispose);
+}
+#endif

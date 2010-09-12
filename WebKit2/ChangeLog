@@ -1,3 +1,33 @@
+2010-09-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Add callback mechanism for the getting the source of a frame
+        <rdar://problem/8364681>
+        https://bugs.webkit.org/show_bug.cgi?id=45604
+
+        * Shared/CoreIPCSupport/WebPageMessageKinds.h:
+        * Shared/CoreIPCSupport/WebPageProxyMessageKinds.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetSourceForFrame):
+        (callGetSourceForFrameBlockBlockAndDispose):
+        (WKPageGetSourceForFrame_b):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::getSourceForFrame):
+        (WebKit::WebPageProxy::didReceiveMessage):
+        (WebKit::WebPageProxy::didGetSourceForFrame):
+        (WebKit::WebPageProxy::processDidExit):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::source):
+        * WebProcess/WebPage/WebFrame.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getSourceForFrame):
+        (WebKit::WebPage::didReceiveMessage):
+        * WebProcess/WebPage/WebPage.h:
+
 2010-09-10  Jesus Sanchez-Palencia <jesus.palencia@openbossa.org>
 
         Reviewed by Darin Adler.

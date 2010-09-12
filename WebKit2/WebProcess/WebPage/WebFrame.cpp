@@ -35,12 +35,14 @@
 #include <WebCore/AnimationController.h>
 #include <WebCore/CSSComputedStyleDeclaration.h>
 #include <WebCore/Chrome.h>
+#include <WebCore/DocumentLoader.h>
 #include <WebCore/Frame.h>
-#include <WebCore/Page.h>
 #include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/JSCSSStyleDeclaration.h>
 #include <WebCore/JSElement.h>
+#include <WebCore/Page.h>
 #include <WebCore/RenderTreeAsText.h>
+#include <WebCore/TextResourceDecoder.h>
 
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
@@ -178,6 +180,25 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action
     invalidatePolicyListener();
 
     (m_coreFrame->loader()->policyChecker()->*function)(action);
+}
+
+String WebFrame::source() const 
+{
+    if (!m_coreFrame)
+        return String();
+    Document* document = m_coreFrame->document();
+    if (!document)
+        return String();
+    TextResourceDecoder* decoder = document->decoder();
+    if (!decoder)
+        return String();
+    DocumentLoader* documentLoader = m_coreFrame->loader()->activeDocumentLoader();
+    if (!documentLoader)
+        return String();
+    RefPtr<SharedBuffer> mainResourceData = documentLoader->mainResourceData();
+    if (!mainResourceData)
+        return String();
+    return decoder->encoding().decode(mainResourceData->data(), mainResourceData->size());
 }
 
 bool WebFrame::isMainFrame() const

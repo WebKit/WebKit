@@ -56,6 +56,7 @@ enum Kind {
     DidFirstLayoutForFrame,
     DidFirstVisuallyNonEmptyLayoutForFrame,
     DidGetRenderTreeExternalRepresentation,
+    DidGetSourceForFrame,
     DidReceiveEvent,
     DidReceiveServerRedirectForProvisionalLoadForFrame,
     DidReceiveTitleForFrame,

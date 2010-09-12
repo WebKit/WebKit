@@ -150,6 +150,8 @@ private:
     static const char* interpretKeyEvent(const WebCore::KeyboardEvent*);
     bool performDefaultBehaviorForKeyEvent(const WebKeyboardEvent&);
 
+    String sourceForFrame(WebFrame*);
+
     // Actions
     void tryClose();
     void loadURL(const String&);
@@ -169,6 +171,7 @@ private:
 #endif
     void runJavaScriptInMainFrame(const WTF::String&, uint64_t callbackID);
     void getRenderTreeExternalRepresentation(uint64_t callbackID);
+    void getSourceForFrame(WebFrame*, uint64_t callbackID);
     void preferencesDidChange(const WebPreferencesStore&);
     void platformPreferencesDidChange(const WebPreferencesStore&);
     void didReceivePolicyDecision(WebFrame*, uint64_t listenerID, WebCore::PolicyAction policyAction);

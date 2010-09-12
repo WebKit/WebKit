@@ -68,6 +68,8 @@ public:
     void invalidatePolicyListener();
     void didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyAction);
 
+    String source() const;
+
     // WKBundleFrame API and SPI functions
     bool isMainFrame() const;
     WTF::String name() const;

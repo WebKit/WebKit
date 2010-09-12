@@ -37,6 +37,7 @@ enum Kind {
     DidReceivePolicyDecision,
     DidRemoveEditCommand,
     GetRenderTreeExternalRepresentation,
+    GetSourceForFrame,
     GoBack,
     GoForward,
     GoToBackForwardItem,

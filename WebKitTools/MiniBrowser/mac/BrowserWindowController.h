@@ -58,4 +58,6 @@
 
 - (IBAction)toggleZoomMode:(id)sender;
 
+- (IBAction)dumpSourceToConsole:(id)sender;
+
 @end

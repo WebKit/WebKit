@@ -1,3 +1,18 @@
+2010-09-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Add callback mechanism for the getting the source of a frame
+        <rdar://problem/8364681>
+        https://bugs.webkit.org/show_bug.cgi?id=45604
+
+        Add ability to dump the main frame's source to the console.
+
+        * MiniBrowser/mac/BrowserWindowController.h:
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController dumpSourceToConsole:]):
+        * MiniBrowser/mac/MainMenu.xib:
+
 2010-09-11  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

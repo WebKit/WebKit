@@ -76,6 +76,7 @@ class WebURLRequest;
 class WebWheelEvent;
 struct WebNavigationDataStore;
 
+typedef GenericCallback<WKStringRef, WTF::StringImpl*> FrameSourceCallback;
 typedef GenericCallback<WKStringRef, WTF::StringImpl*> RenderTreeExternalRepresentationCallback;
 typedef GenericCallback<WKStringRef, WTF::StringImpl*> ScriptReturnValueCallback;
 
@@ -155,6 +156,7 @@ public:
 
     void runJavaScriptInMainFrame(const WTF::String&, PassRefPtr<ScriptReturnValueCallback>);
     void getRenderTreeExternalRepresentation(PassRefPtr<RenderTreeExternalRepresentationCallback>);
+    void getSourceForFrame(WebFrameProxy*, PassRefPtr<FrameSourceCallback>);
 
     void receivedPolicyDecision(WebCore::PolicyAction, WebFrameProxy*, uint64_t listenerID);
 
@@ -237,8 +239,10 @@ private:
     void setCursor(const WebCore::Cursor&);
 
     void didReceiveEvent(WebEvent::Type);
+
     void didRunJavaScriptInMainFrame(const WTF::String&, uint64_t);
     void didGetRenderTreeExternalRepresentation(const WTF::String&, uint64_t);
+    void didGetSourceForFrame(const String&, uint64_t);
 
 #if USE(ACCELERATED_COMPOSITING)
     void didChangeAcceleratedCompositing(bool compositing);
@@ -257,6 +261,7 @@ private:
 
     HashMap<uint64_t, RefPtr<ScriptReturnValueCallback> > m_scriptReturnValueCallbacks;
     HashMap<uint64_t, RefPtr<RenderTreeExternalRepresentationCallback> > m_renderTreeExternalRepresentationCallbacks;
+    HashMap<uint64_t, RefPtr<FrameSourceCallback> > m_frameSourceCallbacks;
 
     HashSet<WebEditCommandProxy*> m_editCommandSet;
 

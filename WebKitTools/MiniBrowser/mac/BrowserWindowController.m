@@ -234,6 +234,15 @@
     }
 }
 
+- (IBAction)dumpSourceToConsole:(id)sender
+{
+    WKPageGetSourceForFrame_b(_webView.pageRef, WKPageGetMainFrame(_webView.pageRef), ^(WKStringRef result, WKErrorRef error) {
+        CFStringRef cfResult = WKStringCopyCFString(0, result);
+        LOG(@"Main frame source\n \"%@\"", (NSString *)cfResult);
+        CFRelease(cfResult);
+    });
+}
+
 #pragma mark Loader Client Callbacks
 
 static void didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
