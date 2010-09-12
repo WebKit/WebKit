@@ -145,46 +145,76 @@ void GraphicsWebView::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     \qmlclass WebView QDeclarativeWebView
     \ingroup qml-view-elements
     \since 4.7
-    \brief The WebView item allows you to add web content to a canvas.
+    \brief The WebView item allows you to add Web content to a canvas.
     \inherits Item
 
-    A WebView renders web content based on a URL.
+    A WebView renders Web content based on a URL.
 
     This type is made available by importing the \c QtWebKit module:
 
     \bold{import QtWebKit 1.0}
 
-    If the width and height of the item is not set, they will
-    dynamically adjust to a size appropriate for the content.
-    This width may be large for typical online web pages.
+    The WebView item includes no scrolling, scaling, toolbars, or other common browser
+    components. These must be implemented around WebView. See the \l{QML Web Browser}
+    example for a demonstration of this.
 
-    If the width or height is explictly set, the rendered website
-    will be clipped, not scaled, to fit into the set dimensions.
+    The page to be displayed by the item is specified using the \l url property,
+    and this can be changed to fetch and display a new page. While the page loads,
+    the \l progress property is updated to indicate how much of the page has been
+    loaded.
 
-    If the preferredWidth is set, the width will be this amount or larger,
-    usually laying out the web content to fit the preferredWidth.
+    \section1 Appearance
 
-    \qml
-    import QtWebKit 1.0
+    If the width and height of the item is not set, they will dynamically adjust
+    to a size appropriate for the content. This width may be large for typical
+    online web pages, typically greater than 800 by 600 pixels.
 
-    WebView {
-        url: "http://www.nokia.com"
-        preferredWidth: 490
-        preferredHeight: 400
-        scale: 0.5
-        smooth: false
-        smoothCache: true
-    }
-    \endqml
+    If the \l{Item::}{width} or \l{Item::}{height} is explictly set, the rendered Web site will be
+    clipped, not scaled, to fit into the set dimensions.
 
-    \image webview.png
+    If the preferredWidth property is set, the width will be this amount or larger,
+    usually laying out the Web content to fit the preferredWidth.
 
-    The item includes no scrolling, scaling,
-    toolbars, etc., those must be implemented around WebView. See the WebBrowser example
-    for a demonstration of this.
+    The appearance of the content can be controlled to a certain extent by changing
+    the settings.standardFontFamily property and other settings related to fonts.
 
-    When this item has keyboard focus, all keyboard input will be sent directly to the
-    web page within.
+    The page can be zoomed by calling the heuristicZoom() method, which performs a
+    series of tests to determine whether zoomed content will be displayed in an
+    appropriate way in the space allocated to the item.
+
+    \section1 User Interaction and Navigation
+
+    By default, certain mouse and touch events are delivered to other items in
+    preference to the Web content. For example, when a scrolling view is created
+    by placing a WebView in a Flickable, move events are delivered to the Flickable
+    so that the user can scroll the page. This prevents the user from accidentally
+    selecting text in a Web page instead of scrolling.
+
+    The pressGrabTime property defines the time the user must touch or press a
+    mouse button over the WebView before the Web content will receive the move
+    events it needs to select text and images.
+
+    When this item has keyboard focus, all keyboard input will be sent directly to
+    the Web page within.
+
+    When the navigates by clicking on links, the item records the pages visited
+    in its internal history
+
+    Because this item is designed to be used as a component in a browser, it
+    exposes \l{Action}{actions} for \l back, \l forward, \l reload and \l stop.
+    These can be triggered to change the current page displayed by the item.
+
+    \section1 Example Usage
+
+    \beginfloatright
+    \inlineimage webview.png
+    \endfloat
+
+    The following example displays a scaled down Web page at a fixed size.
+
+    \snippet doc/src/snippets/declarative/webview/webview.qml document
+
+    \clearfloat
 
     \sa {declarative/modelviews/webview}{WebView example}, {demos/declarative/webbrowser}{Web Browser demo}
 */
@@ -559,11 +589,11 @@ bool QDeclarativeWebView::heuristicZoom(int clickX, int clickY, qreal maxZoom)
     \qmlproperty int WebView::pressGrabTime
 
     The number of milliseconds the user must press before the WebView
-    starts passing move events through to the web engine (rather than
+    starts passing move events through to the Web engine (rather than
     letting other QML elements such as a Flickable take them).
 
     Defaults to 400ms. Set to 0 to always grab and pass move events to
-    the web engine.
+    the Web engine.
 */
 int QDeclarativeWebView::pressGrabTime() const
 {
