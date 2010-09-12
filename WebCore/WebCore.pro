@@ -2514,6 +2514,10 @@ v8 {
 } else {
     SOURCES += \
        bindings/js/ScriptControllerQt.cpp \
+       bridge/qt/qt_class.cpp \
+       bridge/qt/qt_instance.cpp \
+       bridge/qt/qt_pixmapruntime.cpp \
+       bridge/qt/qt_runtime.cpp
 }
 
 SOURCES += \

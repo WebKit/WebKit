@@ -1,3 +1,9 @@
+2010-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Build fix.
+
+        * WebCore.pro: Re-add erroneously removed sources.
+
 2010-09-12  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
