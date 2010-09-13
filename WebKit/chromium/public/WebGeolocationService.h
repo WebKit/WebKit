@@ -31,10 +31,9 @@
 #ifndef WebGeolocationService_h
 #define WebGeolocationService_h
 
-#include "WebGeolocationServiceBridge.h"
-
 namespace WebKit {
 
+class WebGeolocationServiceBridge;
 class WebString;
 class WebURL;
 
@@ -50,10 +49,14 @@ public:
 
     // Attaches the WebGeolocationServiceBridge to the embedder and returns its
     // id, which should be used on subsequent calls for the methods above.
+    // An ID of zero indicates the attach failed.
     virtual int attachBridge(WebGeolocationServiceBridge*) { return 0; }
 
     // Detaches the WebGeolocationServiceBridge from the embedder.
     virtual void detachBridge(int bridgeId) { }
+
+protected:
+    virtual ~WebGeolocationService() {}
 };
 
 } // namespace WebKit

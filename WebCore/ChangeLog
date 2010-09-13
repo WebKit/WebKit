@@ -1,3 +1,17 @@
+2010-09-13  Jonathan Dixon  <joth@chromium.org>
+
+        Reviewed by Steve Block.
+
+        [chromium] Port test shell geolocation fixes to DRT
+        https://bugs.webkit.org/show_bug.cgi?id=45313
+
+        Also re-apply rolled out patch http://trac.webkit.org/changeset/66886 :-
+        Add missing virtual destructor to the abstract base class.
+
+        * platform/chromium/GeolocationServiceChromium.cpp:
+        (WebCore::GeolocationServiceBridge::~GeolocationServiceBridge):
+        * platform/chromium/GeolocationServiceChromium.h:
+
 2010-09-13  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

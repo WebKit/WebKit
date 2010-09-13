@@ -34,9 +34,11 @@
 #include "GeolocationService.h"
 #include "GeolocationServiceChromium.h"
 #include "GeolocationServiceMock.h"
+#include "WebGeolocationServiceBridge.h"
 #include "WebString.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/HashMap.h>
+#include <wtf/Vector.h>
 
 #if ENABLE(GEOLOCATION)
 
@@ -51,6 +53,7 @@ using WebCore::Geoposition;
 using WebCore::PositionError;
 using WebCore::PositionOptions;
 using WTF::String;
+using WTF::Vector;
 
 namespace WebCore {
 class GeolocationServiceChromiumMock : public GeolocationServiceChromium, public GeolocationServiceClient {
@@ -124,17 +127,34 @@ namespace WebKit {
 
 class WebGeolocationServiceMockImpl : public WebGeolocationServiceMock {
 public:
-    virtual ~WebGeolocationServiceMockImpl() { }
+    WebGeolocationServiceMockImpl();
+    virtual ~WebGeolocationServiceMockImpl();
+    static void setMockGeolocationPermission(bool allowed);
+
+    // WebGeolocationService
     virtual void requestPermissionForFrame(int bridgeId, const WebURL& url);
     virtual int attachBridge(WebGeolocationServiceBridge*);
     virtual void detachBridge(int bridgeId);
 
 private:
+    void notifyPendingPermissions();
+
     typedef HashMap<int, WebGeolocationServiceBridge*> IdToBridgeMap;
     IdToBridgeMap m_idToBridgeMap;
+    Vector<int> m_pendingPermissionRequests;
+
+    // In addition to the singleton instance pointer, we need to keep the setMockGeolocationPermission() state
+    // as a static (not object members) as this call may come in before the service has been created.
+    static enum PermissionState {
+        PermissionStateUnset,
+        PermissionStateAllowed,
+        PermissionStateDenied,
+    } s_permissionState;
+    static WebGeolocationServiceMockImpl* s_instance;
 };
 
-bool WebGeolocationServiceMock::s_mockGeolocationPermission = false;
+WebGeolocationServiceMockImpl::PermissionState WebGeolocationServiceMockImpl::s_permissionState = WebGeolocationServiceMockImpl::PermissionStateUnset;
+WebGeolocationServiceMockImpl* WebGeolocationServiceMockImpl::s_instance = 0;
 
 WebGeolocationServiceMock* WebGeolocationServiceMock::createWebGeolocationServiceMock()
 {
@@ -143,7 +163,7 @@ WebGeolocationServiceMock* WebGeolocationServiceMock::createWebGeolocationServic
 
 void WebGeolocationServiceMock::setMockGeolocationPermission(bool allowed)
 {
-    s_mockGeolocationPermission = allowed;
+    WebGeolocationServiceMockImpl::setMockGeolocationPermission(allowed);
 }
 
 void WebGeolocationServiceMock::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
@@ -160,12 +180,35 @@ void WebGeolocationServiceMock::setMockGeolocationError(int errorCode, const Web
     GeolocationServiceMock::setError(positionError);
 }
 
+WebGeolocationServiceMockImpl::WebGeolocationServiceMockImpl()
+{
+    ASSERT(!s_instance);
+    s_instance = this;
+}
+
+WebGeolocationServiceMockImpl::~WebGeolocationServiceMockImpl()
+{
+    ASSERT(this == s_instance);
+    s_instance = 0;
+    // Reset the permission state, so any future service instance (e.g. running
+    // multiple tests in a single DRT run) will see a clean call sequence.
+    s_permissionState = PermissionStateUnset;
+    for (IdToBridgeMap::iterator it = m_idToBridgeMap.begin(); it != m_idToBridgeMap.end(); ++it)
+        it->second->didDestroyGeolocationService();
+}
+
+void WebGeolocationServiceMockImpl::setMockGeolocationPermission(bool allowed)
+{
+    s_permissionState = allowed ? PermissionStateAllowed : PermissionStateDenied;
+    if (s_instance)
+        s_instance->notifyPendingPermissions();
+}
+
 void WebGeolocationServiceMockImpl::requestPermissionForFrame(int bridgeId, const WebURL& url)
 {
-    IdToBridgeMap::iterator iter = m_idToBridgeMap.find(bridgeId);
-    if (iter == m_idToBridgeMap.end())
-        return;
-    iter->second->setIsAllowed(s_mockGeolocationPermission);
+    m_pendingPermissionRequests.append(bridgeId);
+    if (s_permissionState != PermissionStateUnset)
+        notifyPendingPermissions();
 }
 
 int WebGeolocationServiceMockImpl::attachBridge(WebGeolocationServiceBridge* bridge)
@@ -181,6 +224,19 @@ int WebGeolocationServiceMockImpl::attachBridge(WebGeolocationServiceBridge* bri
 void WebGeolocationServiceMockImpl::detachBridge(int bridgeId)
 {
     m_idToBridgeMap.remove(bridgeId);
+}
+
+void WebGeolocationServiceMockImpl::notifyPendingPermissions()
+{
+    ASSERT(s_permissionState == PermissionStateAllowed || s_permissionState ==  PermissionStateDenied);
+    Vector<int> pendingPermissionRequests;
+    pendingPermissionRequests.swap(m_pendingPermissionRequests);
+    for (Vector<int>::const_iterator it = pendingPermissionRequests.begin(); it != pendingPermissionRequests.end(); ++it) {
+        ASSERT(*it > 0);
+        IdToBridgeMap::iterator iter = m_idToBridgeMap.find(*it);
+        if (iter != m_idToBridgeMap.end())
+            iter->second->setIsAllowed(s_permissionState == PermissionStateAllowed);
+    }
 }
 
 } // namespace WebKit

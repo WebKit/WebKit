@@ -110,7 +110,6 @@ BUG_DRT LINUX : fast/text/international/003.html = IMAGE
 BUG_DRT LINUX : svg/batik/text/verticalText.svg = IMAGE+TEXT
 
 // Misc.
-BUG_DRT WIN MAC LINUX : fast/dom/Geolocation/delayed-permission-allowed-for-multiple-requests.html = TIMEOUT
 BUG_DRT WIN MAC LINUX : fast/dynamic/window-resize-scrollbars-test.html = IMAGE+TEXT
 BUG_DRT WIN MAC LINUX : http/tests/security/xssAuditor/link-opens-new-window.html = TEXT
 BUG_DRT WIN MAC LINUX : storage/domstorage/quota.html = TEXT

@@ -44,9 +44,6 @@ public:
     WEBKIT_API static void setMockGeolocationPermission(bool allowed);
     WEBKIT_API static void setMockGeolocationPosition(double latitude, double longitude, double accuracy);
     WEBKIT_API static void setMockGeolocationError(int errorCode, const WebString& message);
-
-protected:
-    static bool s_mockGeolocationPermission;
 };
 
 } // namespace WebKit

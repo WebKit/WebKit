@@ -1,3 +1,15 @@
+2010-09-13  Jonathan Dixon  <joth@chromium.org>
+
+        Reviewed by Steve Block.
+
+        [chromium] Port test shell geolocation fixes to DRT
+        https://bugs.webkit.org/show_bug.cgi?id=45313
+
+        Remove exceptions for tests that now pass (in DRT and downstream test_shell)
+
+        * platform/chromium/drt_expectations.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-09-13  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Skip new debugger test on Qt.

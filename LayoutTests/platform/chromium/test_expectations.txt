@@ -2960,10 +2960,6 @@ BUG50637 : fast/dom/prototype-inheritance.html = FAIL
 // Application Cache Quotas
 BUGWK43459 : http/tests/appcache/origin-quota.html = TEXT MISSING
 
-// Missing LayoutTestController harness.
-BUGWK43480 SKIP : fast/dom/Geolocation/delayed-permission-allowed.html = TEXT TIMEOUT PASS
-BUGWK43480 SKIP : fast/dom/Geolocation/delayed-permission-denied.html = TEXT TIMEOUT PASS
-
 BUG51161 LINUX DEBUG : svg/W3C-SVG-1.1/masking-mask-01-b.svg = CRASH
 BUG51161 LINUX DEBUG : svg/clip-path/clip-path-text.svg = CRASH
 
