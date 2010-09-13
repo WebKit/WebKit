@@ -1,3 +1,15 @@
+2010-09-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix </sarcasm>
+        https://bugs.webkit.org/show_bug.cgi?id=45645
+
+        Umm... Yeah.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processEndTagForInBody):
+
 2010-09-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Darin Adler.

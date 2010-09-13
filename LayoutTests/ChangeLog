@@ -1,3 +1,14 @@
+2010-09-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix </sarcasm>
+        https://bugs.webkit.org/show_bug.cgi?id=45645
+
+        Test that </sarcasm> works properly.
+
+        * html5lib/resources/webkit02.dat:
+
 2010-09-13  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Rebaseline inspector/extensions-events.html
