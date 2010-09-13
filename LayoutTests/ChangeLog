@@ -1,3 +1,9 @@
+2010-09-13  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Rebaseline inspector/extensions-events.html
+
+        * inspector/extensions-events-expected.txt:
+
 2010-09-13  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
