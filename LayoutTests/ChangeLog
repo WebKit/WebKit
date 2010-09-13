@@ -1,3 +1,15 @@
+2010-09-13  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Dirk Schulze.
+
+        [chromium] svg/filters/filter-empty-g.svg crashes in linux/mac debug after r63530
+        https://bugs.webkit.org/show_bug.cgi?id=42486
+
+        Removed skip line. 
+        This looks fixed with a fix for http://webkit.org/b/41175.
+        
+        * platform/chromium/test_expectations.txt:
+
 2010-09-13  Andreas Kling  <andreas.kling@nokia.com>
 
         Unreviewed.

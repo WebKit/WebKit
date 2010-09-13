@@ -2915,8 +2915,6 @@ BUGWK20011 : printing/setPrinting.html = FAIL
 // Needs V8 change.
 BUG49343 : fast/js/reserved-words-as-property.html = TEXT
 
-BUG42486 MAC DEBUG : svg/filters/filter-empty-g.svg = CRASH
-
 BUG42598 : http/tests/misc/401-alternative-content.php = TEXT
 BUG42598 : http/tests/xmlhttprequest/failed-auth.html = TEXT
 
