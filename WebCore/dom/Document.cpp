@@ -1959,26 +1959,6 @@ void Document::close()
     }
 }
 
-// FIXME: These settings probably don't work anymore.  We should either remove
-// them or make them work properly.
-#ifdef BUILDING_ON_LEOPARD
-static bool shouldCreateImplicitHead(Document* document)
-{
-    ASSERT(document);
-    Settings* settings = document->page() ? document->page()->settings() : 0;
-    return settings ? !settings->needsLeopardMailQuirks() : true;
-}
-#elif defined(BUILDING_ON_TIGER)
-static bool shouldCreateImplicitHead(Document* document)
-{
-    ASSERT(document);
-    Settings* settings = document->page() ? document->page()->settings() : 0;
-    return settings ? !settings->needsTigerMailQuirks() : true;
-}
-#else
-inline bool shouldCreateImplicitHead(Document*) { return true; }
-#endif
-
 void Document::implicitClose()
 {
     // If we're in the middle of recalcStyle, we need to defer the close until the style information is accurate and all elements are re-attached.
@@ -2004,21 +1984,6 @@ void Document::implicitClose()
 
     // Parser should have picked up all preloads by now
     m_cachedResourceLoader->clearPreloads();
-
-    // Create a head and a body if we don't have those yet (e.g. for about:blank).
-    if (!this->body() && isHTMLDocument()) {
-        if (Node* documentElement = this->documentElement()) {
-            ExceptionCode ec = 0;
-            
-            // The implicit <head> isn't expected in older versions of Mail - <rdar://problem/6863795>
-            if (!head() && shouldCreateImplicitHead(this)) {
-                documentElement->appendChild(HTMLHeadElement::create(this), ec);
-                ASSERT(!ec);
-            }
-            documentElement->appendChild(HTMLBodyElement::create(this), ec);
-            ASSERT(!ec);
-        }
-    }
 
     // FIXME: We kick off the icon loader when the Document is done parsing.
     // There are earlier opportunities we could start it:

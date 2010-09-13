@@ -1,3 +1,23 @@
+2010-09-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement EOF handling in TextMode
+        https://bugs.webkit.org/show_bug.cgi?id=45644
+
+        This patch is actually covered by a bunch of tests.  We were just
+        magically passing the tests before because of some nutty code in
+        Document.cpp.
+
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+            - This code was masking the notImplemented in the tree builder.
+              I also removed the use of the setting because it wasn't working
+              properly anyway.  I'll implement a working version shortly.
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+            - Implement per the spec.
+
 2010-09-13  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Sam Weining.

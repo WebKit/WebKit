@@ -2595,7 +2595,7 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken& token)
     case InBodyMode:
     case InCellMode:
         ASSERT(insertionMode() == InBodyMode || insertionMode() == InCellMode);
-        notImplemented(); // Emit parse error based on what elemtns are still open.
+        notImplemented(); // Emit parse error based on what elements are still open.
         break;
     case AfterBodyMode:
     case AfterAfterBodyMode:
@@ -2646,6 +2646,13 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken& token)
         processEndOfFile(token);
         return;
     case TextMode:
+        parseError(token);
+        if (m_tree.currentElement()->hasTagName(scriptTag))
+            notImplemented(); // mark the script element as "already started".
+        m_tree.openElements()->pop();
+        setInsertionMode(m_originalInsertionMode);
+        processEndOfFile(token);
+        return;
     case InCaptionMode:
     case InRowMode:
         notImplemented();
