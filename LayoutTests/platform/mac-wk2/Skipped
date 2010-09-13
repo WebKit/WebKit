@@ -1977,6 +1977,7 @@ fast/history/saves-state-after-fragment-nav.html
 fast/history/self-is-visited.html
 fast/history/sibling-visited-test.html
 fast/html/empty-fragment-id-goto-top.html
+fast/loader/empty-ref-versus-no-ref.html 
 fast/loader/frame-creation-removal.html
 fast/loader/goto-anchor-infinite-layout.html
 fast/loader/hashchange-event-async.html
@@ -1991,6 +1992,7 @@ fast/regex/test4.html
 fast/table/giantCellspacing.html
 fast/workers/storage/change-version-handle-reuse-sync.html
 fast/workers/storage/multiple-databases-garbage-collection.html
+storage/open-database-while-transaction-in-progress.html
 fast/workers/storage/open-database-creation-callback-sync.html
 fast/workers/storage/open-database-inputs-sync.html
 fast/workers/storage/sql-exception-codes-sync.html
@@ -2021,7 +2023,10 @@ storage/multiple-databases-garbage-collection.html
 svg/custom/clip-path-referencing-use2.svg
 svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html
 svg/hixie/cascade/002.xml
+transitions/color-transition-all.html 
 transitions/font-family-during-transition.html
+transitions/min-max-width-height-transitions.html
+transitions/text-indent-transition.html
 fast/loader/stateobjects/popstate-fires-on-history-traversal.html
 
 ########################################
