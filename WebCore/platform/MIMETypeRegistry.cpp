@@ -102,12 +102,11 @@ static void initializeSupportedImageMIMETypes()
             continue;
 #endif
         String mimeType = MIMETypeRegistry::getMIMETypeForExtension(formats.at(i).constData());
-        supportedImageMIMETypes->add(mimeType);
-        supportedImageResourceMIMETypes->add(mimeType);
+        if (!mimeType.isEmpty()) {
+            supportedImageMIMETypes->add(mimeType);
+            supportedImageResourceMIMETypes->add(mimeType);
+        }
     }
-
-    supportedImageMIMETypes->remove("application/octet-stream");
-    supportedImageResourceMIMETypes->remove("application/octet-stream");
 #else
     // assume that all implementations at least support the following standard
     // image types:
@@ -152,10 +151,9 @@ static void initializeSupportedImageMIMETypesForEncoding()
     QList<QByteArray> formats = QImageWriter::supportedImageFormats();
     for (int i = 0; i < formats.size(); ++i) {
         String mimeType = MIMETypeRegistry::getMIMETypeForExtension(formats.at(i).constData());
-        supportedImageMIMETypesForEncoding->add(mimeType);
+        if (!mimeType.isEmpty())
+            supportedImageMIMETypesForEncoding->add(mimeType);
     }
-
-    supportedImageMIMETypesForEncoding->remove("application/octet-stream");
 #elif PLATFORM(GTK)
     supportedImageMIMETypesForEncoding->add("image/png");
     supportedImageMIMETypesForEncoding->add("image/jpeg");
