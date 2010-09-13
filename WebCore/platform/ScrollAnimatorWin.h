@@ -31,6 +31,8 @@
 #ifndef ScrollAnimatorWin_h
 #define ScrollAnimatorWin_h
 
+#if ENABLE(SMOOTH_SCROLLING)
+
 #include "ScrollAnimator.h"
 #include "Timer.h"
 
@@ -68,4 +70,7 @@ private:
 };
 
 }
+
+#endif // ENABLE(SMOOTH_SCROLLING)
+
 #endif

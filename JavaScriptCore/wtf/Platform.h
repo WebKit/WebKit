@@ -1045,6 +1045,10 @@
 #define ENABLE_PAN_SCROLLING 1
 #endif
 
+#if !defined(ENABLE_SMOOTH_SCROLLING)
+#define ENABLE_SMOOTH_SCROLLING 0
+#endif
+
 /* Use the QXmlStreamReader implementation for XMLDocumentParser */
 /* Use the QXmlQuery implementation for XSLTProcessor */
 #if PLATFORM(QT)

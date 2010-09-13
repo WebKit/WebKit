@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-#if !OS(WINDOWS)
+#if !ENABLE(SMOOTH_SCROLLING)
 ScrollAnimator* ScrollAnimator::create(ScrollbarClient* client)
 {
     return new ScrollAnimator(client);
