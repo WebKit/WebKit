@@ -1,3 +1,12 @@
+2010-09-12  Adam Barth  <abarth@webkit.org>
+
+        Revert mistaken changes to test baselines.
+
+        * platform/mac/http/tests/navigation/post-goback1-expected.txt:
+        * platform/mac/http/tests/navigation/postredirect-basic-expected.txt:
+        * platform/mac/http/tests/navigation/postredirect-frames-expected.txt:
+        * platform/mac/http/tests/navigation/postredirect-goback1-expected.txt:
+
 2010-09-10  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Tony Chang.
