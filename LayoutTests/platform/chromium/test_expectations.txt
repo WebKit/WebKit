@@ -2718,6 +2718,7 @@ BUGWK41311 WIN LINUX : fast/borders/borderRadiusDouble08.html = IMAGE
 BUGWK41311 WIN LINUX : fast/borders/borderRadiusDouble09.html = IMAGE
 
 // Need to implement textInputController.hasSpellingMarkers().
+// Note that hasSpellingMarkers() is available for DRT: http://webkit.org/b/45441
 BUGWK41832 : editing/spelling/spelling-textarea.html = FAIL
 BUGWK41832 : editing/spelling/spelling-contenteditable.html = FAIL
 

@@ -1,3 +1,17 @@
+2010-09-10  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Tony Chang.
+
+        [Chromium] Implement textInputController.hasSpellingMarker() for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=45441
+
+        Exported Frame::selectionStartHasSpellingMarkerFor() for DRT use.
+
+        * public/WebFrame.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::selectionStartHasSpellingMarkerFor):
+        * src/WebFrameImpl.h:
+
 2010-09-10  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Darin Adler.

@@ -533,6 +533,9 @@ public:
     // empty ((0,0), (0,0)).
     virtual WebRect selectionBoundsRect() const = 0;
 
+    // Only for testing purpose: 
+    // Returns true if selection.anchorNode has a marker on range from |from| with |length|.
+    virtual bool selectionStartHasSpellingMarkerFor(int from, int length) const = 0;
 protected:
     ~WebFrame() { }
 };

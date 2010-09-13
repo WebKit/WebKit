@@ -1,3 +1,16 @@
+2010-09-10  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Tony Chang.
+
+        [Chromium] Implement textInputController.hasSpellingMarker() for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=45441
+
+        Moved the actual logic of hasSpellingMarker into WebCore to share
+        it with other ports.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame hasSpellingMarker:length:]):
+
 2010-09-11  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.

@@ -1705,6 +1705,13 @@ WebRect WebFrameImpl::selectionBoundsRect() const
     return WebRect();
 }
 
+bool WebFrameImpl::selectionStartHasSpellingMarkerFor(int from, int length) const
+{
+    if (!m_frame)
+        return false;
+    return m_frame->editor()->selectionStartHasSpellingMarkerFor(from, length);
+}
+
 // WebFrameImpl public ---------------------------------------------------------
 
 PassRefPtr<WebFrameImpl> WebFrameImpl::create(WebFrameClient* client)

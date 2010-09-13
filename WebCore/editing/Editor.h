@@ -360,6 +360,8 @@ public:
     NSWritingDirection baseWritingDirectionForSelectionStart() const;
 #endif
 
+    bool selectionStartHasSpellingMarkerFor(int from, int length) const;
+
 private:
     Frame* m_frame;
     OwnPtr<DeleteButtonController> m_deleteButtonController;

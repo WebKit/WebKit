@@ -65,6 +65,7 @@ TextInputController::TextInputController(TestShell* shell)
     bindMethod("characterIndexForPoint", &TextInputController::characterIndexForPoint);
     bindMethod("validAttributesForMarkedText", &TextInputController::validAttributesForMarkedText);
     bindMethod("makeAttributedString", &TextInputController::makeAttributedString);
+    bindMethod("hasSpellingMarker", &TextInputController::hasSpellingMarker);
 }
 
 WebFrame* TextInputController::getMainFrame()
@@ -213,4 +214,15 @@ void TextInputController::makeAttributedString(const CppArgumentList&, CppVarian
 {
     // FIXME: Implement this.
     result->setNull();
+}
+
+void TextInputController::hasSpellingMarker(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() < 2 || !arguments[0].isNumber() || !arguments[1].isNumber())
+        return;
+    WebFrame* mainFrame = getMainFrame();
+    if (!mainFrame)
+        return;
+    // Returns as a number for a compatibility reason.
+    result->set(mainFrame->selectionStartHasSpellingMarkerFor(arguments[0].toInt32(), arguments[1].toInt32()) ? 1 : 0);
 }

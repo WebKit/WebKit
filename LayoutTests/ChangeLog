@@ -1,3 +1,14 @@
+2010-09-10  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Tony Chang.
+
+        [Chromium] Implement textInputController.hasSpellingMarker() for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=45441
+        
+        Add an note for API readiness.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-12  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change.

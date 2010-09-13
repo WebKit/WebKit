@@ -182,6 +182,8 @@ public:
                                          float pageHeightInPixels) const;
     virtual WebRect selectionBoundsRect() const;
 
+    virtual bool selectionStartHasSpellingMarkerFor(int from, int length) const;
+
     static PassRefPtr<WebFrameImpl> create(WebFrameClient* client);
     ~WebFrameImpl();
 

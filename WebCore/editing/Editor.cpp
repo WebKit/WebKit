@@ -3591,4 +3591,24 @@ void Editor::respondToChangedSelection(const VisibleSelection& oldSelection, boo
     respondToChangedSelection(oldSelection);
 }
 
+bool Editor::selectionStartHasSpellingMarkerFor(int from, int length) const
+{
+    Node* node = m_frame->selection()->start().node();
+    if (!node || !node->renderer())
+        return false;
+    ASSERT(node->renderer()->isText());
+
+    unsigned int startOffset = static_cast<unsigned int>(from);
+    unsigned int endOffset = static_cast<unsigned int>(from + length);
+    Vector<DocumentMarker> markers = m_frame->document()->markers()->markersForNode(node);
+    for (size_t i = 0; i < markers.size(); ++i) {
+        DocumentMarker marker = markers[i];
+        if (marker.startOffset <= startOffset && endOffset <= marker.endOffset && marker.type == DocumentMarker::Spelling)
+            return true;
+    }
+
+    return false;
+}
+
+
 } // namespace WebCore
