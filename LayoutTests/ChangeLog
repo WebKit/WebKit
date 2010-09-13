@@ -1,5 +1,25 @@
 2010-09-13  MORITA Hajime  <morrita@google.com>
 
+        Reviewed by Kent Tamura.
+
+        [Chromium][Test] custom-scrollbar-with-incomplete-style.html need expectation files.
+        https://bugs.webkit.org/show_bug.cgi?id=45646
+        
+        Added missing expectations.
+        
+        * platform/chromium-linux/scrollbars/custom-scrollbar-with-incomplete-style-expected.checksum: Added.
+        * platform/chromium-linux/scrollbars/custom-scrollbar-with-incomplete-style-expected.png: Added.
+        * platform/chromium-linux/scrollbars/custom-scrollbar-with-incomplete-style-expected.txt: Added.
+        * platform/chromium-mac/scrollbars/custom-scrollbar-with-incomplete-style-expected.checksum: Added.
+        * platform/chromium-mac/scrollbars/custom-scrollbar-with-incomplete-style-expected.png: Added.
+        * platform/chromium-mac/scrollbars/custom-scrollbar-with-incomplete-style-expected.txt: Added.
+        * platform/chromium-win/scrollbars/custom-scrollbar-with-incomplete-style-expected.checksum: Added.
+        * platform/chromium-win/scrollbars/custom-scrollbar-with-incomplete-style-expected.png: Added.
+        * platform/chromium-win/scrollbars/custom-scrollbar-with-incomplete-style-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
+2010-09-13  MORITA Hajime  <morrita@google.com>
+
         Reviewed by Dirk Schulze.
 
         [chromium] svg/filters/filter-empty-g.svg crashes in linux/mac debug after r63530

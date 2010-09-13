@@ -1,0 +1,31 @@
+layer at (0,0) size 1550x1385
+  RenderView at (0,0) size 787x587
+layer at (0,0) size 1550x1385
+  RenderBlock {HTML} at (0,0) size 787x1385
+    RenderBody {BODY} at (8,8) size 771x1364
+      RenderBlock {H2} at (0,0) size 771x54
+        RenderText {#text} at (0,0) size 731x53
+          text run at (0,0) width 731: "It's OK if nothing drawn for a scrollbar (for an outermost frame and an"
+          text run at (0,27) width 226: "element with overlow)"
+      RenderBlock {P} at (0,73) size 771x20
+        RenderText {#text} at (0,0) size 559x19
+          text run at (0,0) width 559: "Note that Safari doesn't allow to customize the outermost scdrollbars and just show Cocoa's."
+      RenderBlock {PRE} at (0,222) size 771x1142 [bgcolor=#008000]
+      RenderBlock {PRE} at (0,1377) size 1542x0 [bgcolor=#008000]
+layer at (8,117) size 100x100 clip at (8,117) size 87x87 scrollWidth 1432 scrollHeight 112
+  RenderBlock {PRE} at (0,109) size 100x100 [bgcolor=#008000]
+    RenderText {#text} at (0,0) size 1432x112
+      text run at (0,0) width 1432: "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog."
+      text run at (1432,0) width 0: " "
+      text run at (0,16) width 1432: "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog."
+      text run at (1432,16) width 0: " "
+      text run at (0,32) width 1432: "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog."
+      text run at (1432,32) width 0: " "
+      text run at (0,48) width 1432: "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog."
+      text run at (1432,48) width 0: " "
+      text run at (0,64) width 1432: "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog."
+      text run at (1432,64) width 0: " "
+      text run at (0,80) width 1432: "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog."
+      text run at (1432,80) width 0: " "
+      text run at (0,96) width 1432: "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog."
+      text run at (1432,96) width 0: " "

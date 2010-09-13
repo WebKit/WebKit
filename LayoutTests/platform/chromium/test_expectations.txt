@@ -3056,9 +3056,6 @@ BUGWK44909 MAC : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
 // Full Screen JS API is not yet enabled.
 BUGWK44797 : fullscreen = FAIL
 
-// Need rebasline to pick the results.
-BUG47946 WIN LINUX MAC : scrollbars/custom-scrollbar-with-incomplete-style.html = MISSING
-
 // Doesn't apply to Chromium (QuickTime-specific behavior)
 WONTFIX SKIP : media/video-does-not-loop.html = TIMEOUT
 
