@@ -1486,7 +1486,6 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
         processStartTag(token);
         break;
     case InForeignContentMode: {
-        // FIXME: We're missing a bunch of if branches here.
         if (shouldProcessUsingSecondaryInsertionMode(token, m_tree.currentElement())) {
             processUsingSecondaryInsertionModeAndAdjustInsertionMode(token);
             return;
@@ -1531,8 +1530,10 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             || token.name() == ulTag
             || token.name() == varTag
             || (token.name() == fontTag && (token.getAttributeItem(colorAttr) || token.getAttributeItem(faceAttr) || token.getAttributeItem(sizeAttr)))) {
-            m_tree.openElements()->popUntilElementWithNamespace(xhtmlNamespaceURI);
-            setInsertionMode(m_secondaryInsertionMode);
+            parseError(token);
+            m_tree.openElements()->popUntilForeignContentScopeMarker();
+            if (insertionMode() == InForeignContentMode && m_tree.openElements()->hasOnlyHTMLElementsInScope())
+                setInsertionMode(m_secondaryInsertionMode);
             processStartTag(token);
             return;
         }
@@ -2636,9 +2637,11 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken& token)
         return;
     case InForeignContentMode:
         parseError(token);
-        // FIXME: Following the spec would infinitely recurse on <svg><svg>
-        // http://www.w3.org/Bugs/Public/show_bug.cgi?id=10115
-        m_tree.openElements()->popUntilElementWithNamespace(xhtmlNamespaceURI);
+        m_tree.openElements()->popUntilForeignContentScopeMarker();
+        // FIXME: The spec adds the following condition before setting the
+        //        insertion mode.  However, this condition causes an infinite loop.
+        //        See http://www.w3.org/Bugs/Public/show_bug.cgi?id=10621
+        //        if (insertionMode() == InForeignContentMode && m_tree.openElements()->hasOnlyHTMLElementsInScope())
         setInsertionMode(m_secondaryInsertionMode);
         processEndOfFile(token);
         return;

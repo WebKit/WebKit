@@ -28,6 +28,7 @@
 
 #include "Element.h"
 #include "HTMLNames.h"
+#include "MathMLNames.h"
 #include <wtf/PassOwnPtr.h>
 
 #if ENABLE(SVG)
@@ -90,6 +91,19 @@ inline bool isTableRowScopeMarker(Element* element)
 {
     return element->hasTagName(trTag)
         || element->hasTagName(htmlTag);
+}
+
+inline bool isForeignContentScopeMarker(Element* element)
+{
+    return element->hasTagName(MathMLNames::miTag)
+        || element->hasTagName(MathMLNames::moTag)
+        || element->hasTagName(MathMLNames::mnTag)
+        || element->hasTagName(MathMLNames::msTag)
+        || element->hasTagName(MathMLNames::mtextTag)
+        || element->hasTagName(SVGNames::foreignObjectTag)
+        || element->hasTagName(SVGNames::descTag)
+        || element->hasTagName(SVGNames::titleTag)
+        || element->namespaceURI() == HTMLNames::xhtmlNamespaceURI;
 }
 
 inline bool isButtonScopeMarker(Element* element)
@@ -186,12 +200,6 @@ void HTMLElementStack::pop()
     popCommon();
 }
 
-void HTMLElementStack::popUntilElementWithNamespace(const AtomicString& namespaceURI)
-{
-    while (top()->namespaceURI() != namespaceURI)
-        pop();
-}
-
 void HTMLElementStack::popUntil(const AtomicString& tagName)
 {
     while (!top()->hasLocalName(tagName)) {
@@ -244,6 +252,12 @@ void HTMLElementStack::popUntilTableRowScopeMarker()
 {
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#clear-the-stack-back-to-a-table-row-context
     while (!isTableRowScopeMarker(top()))
+        pop();
+}
+
+void HTMLElementStack::popUntilForeignContentScopeMarker()
+{
+    while (!isForeignContentScopeMarker(top()))
         pop();
 }
 

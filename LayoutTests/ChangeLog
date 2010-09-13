@@ -1,3 +1,14 @@
+2010-09-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Apply spec changes to InForeignContentMode
+        https://bugs.webkit.org/show_bug.cgi?id=45636
+
+        Add some tests of breaking out of foreign content.
+
+        * html5lib/resources/webkit01.dat:
+
 2010-09-12  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

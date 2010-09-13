@@ -472,3 +472,38 @@ console.log("FOO<span>BAR</span>BAZ");
 |       <a>
 |         <title>
 |       <a>
+
+#data
+<svg><title><div>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|       <svg title>
+|         <div>
+
+#data
+<svg><title><rect><div>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|       <svg title>
+|         <rect>
+|           <div>
+
+#data
+<svg><title><svg><div>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|       <svg title>
+|         <svg svg>
+|         <div>

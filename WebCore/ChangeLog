@@ -2,6 +2,25 @@
 
         Reviewed by Eric Seidel.
 
+        Apply spec changes to InForeignContentMode
+        https://bugs.webkit.org/show_bug.cgi?id=45636
+
+        Now breaking out of foreign content doesn't always bring you back to
+        HTML.  If you have a foreign content element that can contain HTML, you
+        just get brought back to that element.
+
+        * html/parser/HTMLElementStack.cpp:
+        (WebCore::HTMLNames::isForeignContentScopeMarker):
+        (WebCore::HTMLElementStack::popUntilForeignContentScopeMarker):
+        * html/parser/HTMLElementStack.h:
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+
+2010-09-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Convert notImplemented() to ASSERT_NOT_REACHED
         https://bugs.webkit.org/show_bug.cgi?id=45639
 
