@@ -3130,6 +3130,9 @@ BUGWK45527 MAC RELEASE : fast/dom/replaceChild.html = IMAGE
 // Regression from r67285
 BUGWK45623 WIN LINUX : fast/dynamic/first-letter-display-change.html = IMAGE
 
+// New tests added in r67376
+BUGWK45652 SKIP : fast/viewport/ = TEXT
+
 // Comment out temporarily - these tests need rebaselines but the tool isn't
 // working
 BUGDPRANKE LINUX : svg/batik/text/textPosition.svg = TEXT
