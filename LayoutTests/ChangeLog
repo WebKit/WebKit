@@ -1,3 +1,21 @@
+2010-09-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove FIXME now that the HTML5 spec has been updated
+        https://bugs.webkit.org/show_bug.cgi?id=45634
+
+        Add tests recommended by Hixie.
+
+        * fast/parser/form-pointer-1-expected.txt: Added.
+        * fast/parser/form-pointer-1.html: Added.
+        * fast/parser/form-pointer-2-expected.txt: Added.
+        * fast/parser/form-pointer-2.html: Added.
+        * fast/parser/form-pointer-3-expected.txt: Added.
+        * fast/parser/form-pointer-3.html: Added.
+        * fast/parser/form-pointer-4-expected.txt: Added.
+        * fast/parser/form-pointer-4.html: Added.
+
 2010-09-12  Robin Qiu  <robin.qiu@torchmobile.com.cn>
 
         Reviewed by Antonio Gomes.

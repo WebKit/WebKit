@@ -1,3 +1,21 @@
+2010-09-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove FIXME now that the HTML5 spec has been updated
+        https://bugs.webkit.org/show_bug.cgi?id=45634
+
+        The spec changed to say what we do here so this FIXME isn't needed
+        anymore.
+
+        Tests: fast/parser/form-pointer-1.html
+               fast/parser/form-pointer-2.html
+               fast/parser/form-pointer-3.html
+               fast/parser/form-pointer-4.html
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTagForInTable):
+
 2010-09-12  Robin Qiu  <robin.qiu@torchmobile.com.cn>
 
         Reviewed by Antonio Gomes.
