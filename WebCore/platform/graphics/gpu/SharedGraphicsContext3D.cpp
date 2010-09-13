@@ -58,11 +58,13 @@ SharedGraphicsContext3D::SharedGraphicsContext3D(PassOwnPtr<GraphicsContext3D> c
     , m_solidFillShader(SolidFillShader::create(m_context.get()))
     , m_texShader(TexShader::create(m_context.get()))
 {
+    allContexts()->add(this);
 }
 
 SharedGraphicsContext3D::~SharedGraphicsContext3D()
 {
     m_context->deleteBuffer(m_quadVertices);
+    allContexts()->remove(this);
 }
 
 void SharedGraphicsContext3D::makeContextCurrent()
@@ -179,6 +181,28 @@ Texture* SharedGraphicsContext3D::getTexture(NativeImagePtr ptr)
     RefPtr<Texture> texture = m_textures.get(ptr);
     return texture ? texture.get() : 0;
 }
+
+void SharedGraphicsContext3D::removeTextureFor(NativeImagePtr ptr)
+{
+    TextureHashMap::iterator it = m_textures.find(ptr);
+    if (it != m_textures.end())
+        m_textures.remove(it);
+}
+
+// static
+void SharedGraphicsContext3D::removeTexturesFor(NativeImagePtr ptr)
+{
+    for (HashSet<SharedGraphicsContext3D*>::iterator it = allContexts()->begin(); it != allContexts()->end(); ++it)
+        (*it)->removeTextureFor(ptr);
+}
+
+// static
+HashSet<SharedGraphicsContext3D*>* SharedGraphicsContext3D::allContexts()
+{
+    static OwnPtr<HashSet<SharedGraphicsContext3D*> > set(new HashSet<SharedGraphicsContext3D*>);
+    return set.get();
+}
+
 
 PassRefPtr<Texture> SharedGraphicsContext3D::createTexture(Texture::Format format, int width, int height)
 {

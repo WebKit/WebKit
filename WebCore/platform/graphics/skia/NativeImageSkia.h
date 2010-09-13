@@ -42,6 +42,7 @@ namespace WebCore {
 class NativeImageSkia : public SkBitmap {
 public:
     NativeImageSkia();
+    ~NativeImageSkia();
 
     // This constructor does a shallow copy of the passed-in SkBitmap (ie., it
     // references the same pixel data and bumps the refcount).  Use only when

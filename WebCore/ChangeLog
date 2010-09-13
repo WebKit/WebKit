@@ -1,3 +1,25 @@
+2010-09-13  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        SharedGraphicsContext3D's texture cache holds on to images after free
+        https://bugs.webkit.org/show_bug.cgi?id=45706
+
+        Each SharedGraphicsContext3D keeps a cache of uploaded textures keyed by NativeImagePtrs.
+        Whenever the backing native image is deleted it needs to let the SharedGraphicsContext3D know
+        so that the cache entry and associated texture can also be removed.
+
+        * platform/graphics/gpu/SharedGraphicsContext3D.cpp:
+        (WebCore::SharedGraphicsContext3D::SharedGraphicsContext3D):
+        (WebCore::SharedGraphicsContext3D::~SharedGraphicsContext3D):
+        (WebCore::SharedGraphicsContext3D::removeTextureFor):
+        (WebCore::SharedGraphicsContext3D::removeTexturesFor):
+        (WebCore::SharedGraphicsContext3D::allContexts):
+        * platform/graphics/gpu/SharedGraphicsContext3D.h:
+        * platform/graphics/skia/NativeImageSkia.cpp:
+        (WebCore::NativeImageSkia::~NativeImageSkia):
+        * platform/graphics/skia/NativeImageSkia.h:
+
 2010-09-13  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by David Kilzer.
