@@ -214,13 +214,29 @@ static inline void drawPathShadow(GraphicsContext* context, GraphicsContextPriva
     float radius = 0;
     GraphicsContext::calculateShadowBufferDimensions(shadowBufferSize, shadowRect, radius, rect, shadowOffset, shadowBlur);
 
+    cairo_clip_extents(cr, &x0, &y0, &x1, &y1);
+    FloatRect clipRect(x0, y0, x1 - x0, y1 - y0);
+
+    FloatPoint rectLocation = shadowRect.location();
+
+    // Reduce the shadow rect using the clip area.
+    if (!clipRect.contains(shadowRect)) {
+        shadowRect.intersect(clipRect);
+        if (shadowRect.isEmpty())
+            return;
+        shadowRect.inflate(radius);
+        shadowBufferSize = IntSize(shadowRect.width(), shadowRect.height());
+    }
+
+    shadowOffset = rectLocation - shadowRect.location();
+
     // Create suitably-sized ImageBuffer to hold the shadow.
     OwnPtr<ImageBuffer> shadowBuffer = ImageBuffer::create(shadowBufferSize);
 
     // Draw shadow into a new ImageBuffer.
     cairo_t* shadowContext = shadowBuffer->context()->platformContext();
     copyContextProperties(cr, shadowContext);
-    cairo_translate(shadowContext, -rect.x() + radius, -rect.y() + radius);
+    cairo_translate(shadowContext, -rect.x() + radius + shadowOffset.width(), -rect.y() + radius + shadowOffset.height());
     cairo_new_path(shadowContext);
     OwnPtr<cairo_path_t> path(cairo_copy_path(cr));
     cairo_append_path(shadowContext, path.get());
