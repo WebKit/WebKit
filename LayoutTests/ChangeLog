@@ -1,5 +1,11 @@
 2010-09-13  Yury Semikhatsky  <yurys@chromium.org>
 
+        Unreviewed. Skip new debugger test on Qt.
+
+        * platform/qt/Skipped:
+
+2010-09-13  Yury Semikhatsky  <yurys@chromium.org>
+
         Reviewed by Pavel Feldman.
 
         Web Inspector: upstream testExpandScope debugger test

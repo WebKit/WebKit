@@ -5341,6 +5341,7 @@ inspector/debugger-cyclic-ref.html
 inspector/debugger-step-in.html
 inspector/debugger-step-out.html
 inspector/debugger-step-over.html
+inspector/debugger-expand-scope.html
 
 # [Qt] fast/text/bidi-explicit-embedding-past-end.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=41241
