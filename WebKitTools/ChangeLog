@@ -1,3 +1,18 @@
+2010-09-13  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r64816-r64889): Crash in WebCore::AccessibilityRenderObject
+        https://bugs.webkit.org/show_bug.cgi?id=43807
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (textMarkerForPointCallback):
+        (AccessibilityUIElement::textMarkerForPoint):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::textMarkerForPoint):
+
 2010-09-13  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

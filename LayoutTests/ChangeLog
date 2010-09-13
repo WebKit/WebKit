@@ -1,3 +1,13 @@
+2010-09-13  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r64816-r64889): Crash in WebCore::AccessibilityRenderObject
+        https://bugs.webkit.org/show_bug.cgi?id=43807
+
+        * platform/mac/accessibility/visible-position-crash-for-text-node-expected.txt: Added.
+        * platform/mac/accessibility/visible-position-crash-for-text-node.html: Added.
+
 2010-09-13  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Andreas Kling.

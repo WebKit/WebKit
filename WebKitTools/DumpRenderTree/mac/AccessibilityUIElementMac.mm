@@ -1246,6 +1246,16 @@ AccessibilityTextMarker AccessibilityUIElement::endTextMarkerForTextMarkerRange(
     return 0;    
 }
 
+AccessibilityTextMarker AccessibilityUIElement::textMarkerForPoint(int x, int y)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id textMarker = [m_element accessibilityAttributeValue:@"AXTextMarkerForPosition" forParameter:[NSValue valueWithPoint:NSMakePoint(x, y)]];
+    return AccessibilityTextMarker(textMarker);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;    
+}
+
 AccessibilityUIElement AccessibilityUIElement::accessibilityElementForTextMarker(AccessibilityTextMarker* marker)
 {
     BEGIN_AX_OBJC_EXCEPTIONS

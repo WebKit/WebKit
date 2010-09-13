@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="content" tabindex="0" style="width:200px;">
+This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. 
+This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text.
+This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text.
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This protects against a crash in asking for visible point for position to ensure that it can handle all RenderText objects.");
+
+    if (window.accessibilityController) {
+
+          document.getElementById("content").focus();
+          var content = accessibilityController.focusedElement;
+
+          // Get the text marker at this point. It should not crash.
+          var markerAtPoint = content.textMarkerForPoint(content.x + content.width/2, content.y + content.height/2);
+          var textElement = content.accessibilityElementForTextMarker(markerAtPoint);
+
+          // Verify the element is the same as the one we wanted.
+          var textElement = content.accessibilityElementForTextMarker(markerAtPoint);
+          shouldBeTrue("content.childAtIndex(0).isEqual(textElement)");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
+
