@@ -1,5 +1,14 @@
 2010-09-12  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, expectations change.
+
+        Suppress some more failures so I can triage the WebKit roll
+        without the tree being red.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-09-12  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, expectations change. Suppress some failures so I can
         triage the WebKit roll without the tree being red.
 

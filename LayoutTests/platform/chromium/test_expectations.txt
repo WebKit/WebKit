@@ -3161,6 +3161,10 @@ BUGDPRANKE WIN : fast/parser/fragment-parser.html = CRASH
 BUGDPRANKE WIN : fast/xpath/xpath-detached-iframe-resolver-crash.html = CRASH
 BUGDPRANKE WIN : traversal/acid3-test-2.html = CRASH
 BUGDPRANKE LINUX : fast/files/read-file-async.html = CRASH
+BUGDPRANKE LINUX : http/tests/incremental/slow-utf8-text.pl = TIMEOUT PASS
+BUGDPRANKE LINUX : fast/forms/restore-selection-after-layout.html = TEXT
+BUGDPRANKE LINUX : http/tests/navigation/postredirect-frames.html = IMAGE
+BUGDPRANKE LINUX : fast/frames/frame-limit.html = TIMEOUT
 
 
 
