@@ -1612,21 +1612,6 @@ HTMLElementStack::ElementRecord* HTMLTreeBuilder::furthestBlockForFormattingElem
     return 0;
 }
 
-// FIXME: This should have a whitty name.
-// FIXME: This must be implemented in many other places in WebCore.
-void HTMLTreeBuilder::reparentChildren(Element* oldParent, Element* newParent)
-{
-    Node* child = oldParent->firstChild();
-    while (child) {
-        Node* nextChild = child->nextSibling();
-        oldParent->parserRemoveChild(child);
-        newParent->parserAddChild(child);
-        if (newParent->attached() && !child->attached())
-            child->attach();
-        child = nextChild;
-    }
-}
-
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#parsing-main-inbody
 void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken& token)
 {
@@ -1719,7 +1704,7 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken& token)
         // 8
         RefPtr<Element> newElement = m_tree.createHTMLElementFromElementRecord(formattingElementRecord);
         // 9
-        reparentChildren(furthestBlock->element(), newElement.get());
+        newElement->takeAllChildrenFrom(furthestBlock->element());
         // 10
         Element* furthestBlockElement = furthestBlock->element();
         // FIXME: All this creation / parserAddChild / attach business should

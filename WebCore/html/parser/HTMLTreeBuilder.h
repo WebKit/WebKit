@@ -170,7 +170,6 @@ private:
     PassRefPtr<NamedNodeMap> attributesForIsindexInput(AtomicHTMLToken&);
 
     HTMLElementStack::ElementRecord* furthestBlockForFormattingElement(Element*);
-    void reparentChildren(Element* oldParent, Element* newParent);
     void callTheAdoptionAgency(AtomicHTMLToken&);
 
     void closeTheCell();

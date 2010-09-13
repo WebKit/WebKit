@@ -20,6 +20,7 @@ layer at (0,0) size 800x600
       RenderBR {BR} at (0,0) size 0x0
       RenderText {#text} at (0,296) size 575x37
         text run at (0,296) width 575: "This page was requested with an HTTP GET"
+      RenderText {#text} at (0,0) size 0x0
 
 ============== Back Forward List ==============
         http://127.0.0.1:8000/navigation/postredirect-basic.html  **nav target**

@@ -20,6 +20,7 @@ layer at (0,0) size 800x600
       RenderBR {BR} at (0,0) size 0x0
       RenderText {#text} at (0,296) size 591x37
         text run at (0,296) width 591: "This page was requested with an HTTP POST"
+      RenderText {#text} at (0,0) size 0x0
 
 ============== Back Forward List ==============
         http://127.0.0.1:8000/navigation/post-goback1.html  **nav target**

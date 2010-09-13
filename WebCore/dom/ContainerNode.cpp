@@ -72,7 +72,6 @@ void ContainerNode::removeAllChildren()
     removeAllChildrenInContainer<Node, ContainerNode>(this);
 }
 
-
 void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
 {
     NodeVector children;
@@ -82,10 +81,14 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
 
     for (unsigned i = 0; i < children.size(); ++i) {
         ExceptionCode ec = 0;
+        if (children[i]->attached())
+            children[i]->detach();
         // FIXME: We need a no mutation event version of adoptNode.
         RefPtr<Node> child = document()->adoptNode(children[i].release(), ec);
         ASSERT(!ec);
-        parserAddChild(child.release());
+        parserAddChild(child.get());
+        if (attached() && !child->attached())
+            child->attach();
     }
 }
 

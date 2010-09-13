@@ -432,3 +432,43 @@ console.log("FOO<span>BAR</span>BAZ");
 |         <tbody>
 |           <tr>
 |       <div>
+
+#data
+<a><li><style></style><title></title></a>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|     <li>
+|       <a>
+|         <style>
+|         <title>
+
+#data
+<font></p><p><meta><title></title></font>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <font>
+|       <p>
+|     <p>
+|       <font>
+|         <meta>
+|         <title>
+
+#data
+<a><center><title></title><a>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|     <center>
+|       <a>
+|         <title>
+|       <a>

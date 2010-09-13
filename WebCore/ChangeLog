@@ -2,6 +2,25 @@
 
         Reviewed by Eric Seidel.
 
+        Adoption agency should use takeAllChildrenFrom
+        https://bugs.webkit.org/show_bug.cgi?id=45570
+
+        Before this patch, we were using an unsafe pattern of walking the
+        sibling list without grabbing references.  Instead, we should use the
+        shiny new takeAllChildrenFrom method that shoves the children into a
+        vector first.  Also, update takeAllChildrenFrom to handle the case
+        where the old parent is attached.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::takeAllChildrenFrom):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency):
+        * html/parser/HTMLTreeBuilder.h:
+
+2010-09-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         isParsingFragment assert hit in new treebuilder
         https://bugs.webkit.org/show_bug.cgi?id=45621
 
