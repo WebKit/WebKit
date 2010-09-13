@@ -79,6 +79,7 @@ class HitTestResult;
 class KURL;
 class Node;
 class Range;
+class ArchiveResource;
     
 class Pasteboard : public Noncopyable {
 public:
@@ -118,6 +119,8 @@ private:
 #if PLATFORM(MAC)
     Pasteboard(NSPasteboard *);
     RetainPtr<NSPasteboard> m_pasteboard;
+    PassRefPtr<DocumentFragment> documentFragmentWithImageResource(Frame* frame, PassRefPtr<ArchiveResource> resource);
+    PassRefPtr<DocumentFragment> documentFragmentWithRtf(Frame* frame, NSString* pboardType);
 #endif
 
 #if PLATFORM(WIN)

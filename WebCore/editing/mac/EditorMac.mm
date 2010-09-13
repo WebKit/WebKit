@@ -29,9 +29,14 @@
 #import "ColorMac.h"
 #import "ClipboardMac.h"
 #import "CachedResourceLoader.h"
+#import "DocumentFragment.h"
+#import "Editor.h"
+#import "EditorClient.h"
 #import "Frame.h"
 #import "FrameView.h"
+#import "Pasteboard.h"
 #import "RenderBlock.h"
+#import "RuntimeApplicationChecks.h"
 
 namespace WebCore {
 
@@ -55,20 +60,32 @@ void Editor::showColorPanel()
     [[NSApplication sharedApplication] orderFrontColorPanel:nil];
 }
 
-// FIXME: We want to use the platform-independent code instead. But when we last
-// tried to do so it seemed that we first need to move more of the logic from
-// -[WebHTMLView.cpp _documentFragmentFromPasteboard] into PasteboardMac.
-
-void Editor::paste()
+void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText)
 {
-    ASSERT(m_frame->document());
-    FrameView* view = m_frame->view();
-    if (!view)
-        return;
-    CachedResourceLoader* loader = m_frame->document()->cachedResourceLoader();
-    loader->setAllowStaleResources(true);
-    [view->documentView() tryToPerform:@selector(paste:) with:nil];
-    loader->setAllowStaleResources(false);
+    RefPtr<Range> range = selectedRange();
+    bool choosePlainText;
+    
+    m_frame->editor()->client()->setInsertionPasteboard([NSPasteboard generalPasteboard]);
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    RefPtr<DocumentFragment> fragment = pasteboard->documentFragment(m_frame, range, allowPlainText, choosePlainText);
+    if (fragment && shouldInsertFragment(fragment, range, EditorInsertActionPasted))
+        pasteAsFragment(fragment, canSmartReplaceWithPasteboard(pasteboard), false);
+#else
+    // Mail is ignoring the frament passed to the delegate and creates a new one.
+    // We want to avoid creating the fragment twice.
+    if (applicationIsAppleMail()) {
+        if (shouldInsertFragment(NULL, range, EditorInsertActionPasted)) {
+            RefPtr<DocumentFragment> fragment = pasteboard->documentFragment(m_frame, range, allowPlainText, choosePlainText);
+            if (fragment)
+                pasteAsFragment(fragment, canSmartReplaceWithPasteboard(pasteboard), false);
+        }        
+    } else {
+        RefPtr<DocumentFragment>fragment = pasteboard->documentFragment(m_frame, range, allowPlainText, choosePlainText);
+        if (fragment && shouldInsertFragment(fragment, range, EditorInsertActionPasted))
+            pasteAsFragment(fragment, canSmartReplaceWithPasteboard(pasteboard), false);
+    }
+#endif
+    m_frame->editor()->client()->setInsertionPasteboard(nil);
 }
 
 NSDictionary* Editor::fontAttributesForSelectionStart() const

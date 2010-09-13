@@ -361,6 +361,12 @@ void FrameLoaderClientHaiku::finishedLoading(DocumentLoader*)
     notImplemented();
 }
 
+bool FrameLoaderClientHaiku::canShowMIMETypeAsHTML(const String& MIMEType) const
+{
+    notImplemented();
+    return false;
+}
+    
 bool FrameLoaderClientHaiku::canShowMIMEType(const String& MIMEType) const
 {
     notImplemented();

@@ -160,6 +160,7 @@ namespace WebKit {
 
         virtual bool canHandleRequest(const WebCore::ResourceRequest&) const;
         virtual bool canShowMIMEType(const WTF::String&) const;
+        virtual bool canShowMIMETypeAsHTML(const String& MIMEType) const;
         virtual bool representationExistsForURLScheme(const WTF::String&) const;
         virtual WTF::String generatedMIMETypeForURLScheme(const WTF::String&) const;
 

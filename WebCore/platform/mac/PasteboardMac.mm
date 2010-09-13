@@ -31,16 +31,22 @@
 #import "DOMRangeInternal.h"
 #import "Document.h"
 #import "DocumentFragment.h"
+#import "DocumentLoader.h"
 #import "Editor.h"
 #import "EditorClient.h"
 #import "Frame.h"
+#import "FrameLoaderClient.h"
 #import "HitTestResult.h"
+#import "HTMLAnchorElement.h"
+#import "HTMLNames.h"
 #import "Image.h"
 #import "KURL.h"
 #import "LegacyWebArchive.h"
 #import "LoaderNSURLExtras.h"
 #import "MIMETypeRegistry.h"
+#import "Page.h"
 #import "RenderImage.h"
+#import "Text.h"
 #import "WebCoreNSStringExtras.h"
 #import "markup.h"
 
@@ -139,7 +145,8 @@ void Pasteboard::writeSelection(NSPasteboard* pasteboard, Range* selectedRange, 
         Pasteboard::generalPasteboard(); // Initializes pasteboard types.
     ASSERT(selectedRange);
     
-    NSAttributedString *attributedString = [[[NSAttributedString alloc] _initWithDOMRange:kit(selectedRange)] autorelease];
+    NSAttributedString *attributedString = [[[NSAttributedString alloc] initWithString:selectedRange->text()] autorelease];
+
 #ifdef BUILDING_ON_TIGER
     // 4930197: Mail overrides [WebHTMLView pasteboardTypesForSelection] in order to add another type to the pasteboard
     // after WebKit does.  On Tiger we must call this function so that Mail code will be executed, meaning that 
@@ -362,11 +369,123 @@ String Pasteboard::plainText(Frame* frame)
     
     return String(); 
 }
+    
+PassRefPtr<DocumentFragment> Pasteboard::documentFragmentWithImageResource(Frame* frame, PassRefPtr<ArchiveResource> resource)
+{
+    if (DocumentLoader* loader = frame->loader()->documentLoader())
+        loader->addArchiveResource(resource.get());
 
+    RefPtr<Element> imageElement = frame->document()->createElement(HTMLNames::imgTag, false);
+    if (!imageElement)
+        return 0;
+
+    NSURL *URL = resource->url();
+    imageElement->setAttribute(HTMLNames::srcAttr, [URL isFileURL] ? [URL absoluteString] : resource->url());
+    RefPtr<DocumentFragment> fragment = frame->document()->createDocumentFragment();
+    if (fragment) {
+        ExceptionCode ec;
+        fragment->appendChild(imageElement, ec);
+        return fragment.release();       
+    }
+    return 0;
+}
+
+PassRefPtr<DocumentFragment> Pasteboard::documentFragmentWithRtf(Frame* frame, NSString* pboardType)
+{
+    if (!frame || !frame->document() || !frame->document()->isHTMLDocument())
+        return 0;
+
+    NSAttributedString *string = nil;
+    if (pboardType == NSRTFDPboardType)
+        string = [[NSAttributedString alloc] initWithRTFD:[m_pasteboard.get() dataForType:NSRTFDPboardType] documentAttributes:NULL];
+    if (string == nil)
+        string = [[NSAttributedString alloc] initWithRTF:[m_pasteboard.get() dataForType:NSRTFPboardType] documentAttributes:NULL];
+    if (string == nil)
+        return nil;
+
+    bool wasDeferringCallbacks = frame->page()->defersLoading();
+    if (!wasDeferringCallbacks)
+        frame->page()->setDefersLoading(true);
+
+    Vector<ArchiveResource*> resources;
+    RefPtr<DocumentFragment> fragment = frame->editor()->client()->documentFragmentFromAttributedString(string, resources);
+
+    size_t size = resources.size();
+    if (size) {
+        DocumentLoader* loader = frame->loader()->documentLoader();
+        for (size_t i = 0; i < size; ++i)
+            loader->addArchiveResource(resources[i]);    
+    }
+
+    if (!wasDeferringCallbacks)
+        frame->page()->setDefersLoading(false);
+
+    [string release];
+    return fragment.release();
+}
+
+#define WebDataProtocolScheme @"webkit-fake-url"
+
+static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
+{
+    CFUUIDRef UUIDRef = CFUUIDCreate(kCFAllocatorDefault);
+    NSString *UUIDString = (NSString *)CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
+    CFRelease(UUIDRef);
+    NSURL *URL = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@/%@", WebDataProtocolScheme, UUIDString, relativePart]];
+    CFRelease(UUIDString);
+
+    return URL;
+}
+    
 PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefPtr<Range> context, bool allowPlainText, bool& chosePlainText)
 {
     NSArray *types = [m_pasteboard.get() types];
+    RefPtr<DocumentFragment> fragment;
     chosePlainText = false;
+
+    if ([types containsObject:WebArchivePboardType]) {
+        RefPtr<LegacyWebArchive> coreArchive = LegacyWebArchive::create(SharedBuffer::wrapNSData([m_pasteboard.get() dataForType:WebArchivePboardType]).get());
+        if (coreArchive) {
+            RefPtr<ArchiveResource> mainResource = coreArchive->mainResource();
+            if (mainResource) {
+                NSString *MIMEType = mainResource->mimeType();
+                if (!frame || !frame->document())
+                    return 0;
+                if (frame->loader()->client()->canShowMIMETypeAsHTML(MIMEType)) {
+                    NSString *markupString = [[NSString alloc] initWithData:[mainResource->data()->createNSData() autorelease] encoding:NSUTF8StringEncoding];
+                    // FIXME: seems poor form to do this as a side effect of getting a document fragment
+                    if (DocumentLoader* loader = frame->loader()->documentLoader())
+                        loader->addAllArchiveResources(coreArchive.get());
+                    
+                    fragment = createFragmentFromMarkup(frame->document(), markupString, mainResource->url(), FragmentScriptingNotAllowed);
+                    [markupString release];
+                } else if (MIMETypeRegistry::isSupportedImageMIMEType(MIMEType))
+                   fragment = documentFragmentWithImageResource(frame, mainResource);                    
+            }
+        }
+        if (fragment)
+            return fragment.release();
+    } 
+
+    if ([types containsObject:NSFilenamesPboardType]) {
+        NSArray* paths = [m_pasteboard.get() propertyListForType:NSFilenamesPboardType];
+        NSEnumerator* enumerator = [paths objectEnumerator];
+        NSString* path;
+        Vector< RefPtr<Node> > refNodesVector;
+        Vector<Node*> nodesVector;
+
+        while ((path = [enumerator nextObject]) != nil) {
+            // Non-image file types; _web_userVisibleString is appropriate here because this will
+            // be pasted as visible text.
+            NSString *url = frame->editor()->client()->userVisibleString([NSURL fileURLWithPath:path]);
+            RefPtr<Node> textNode = frame->document()->createTextNode(url);
+            refNodesVector.append(textNode.get());
+            nodesVector.append(textNode.get());
+        }
+        fragment = createFragmentFromNodes(frame->document(), nodesVector);
+        if (fragment && fragment->firstChild())
+            return fragment.release();
+    }
 
     if ([types containsObject:NSHTMLPboardType]) {
         NSString *HTMLString = [m_pasteboard.get() stringForType:NSHTMLPboardType];
@@ -377,24 +496,66 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
                 HTMLString = [HTMLString substringFromIndex:range.location];
             }
         }
-        if ([HTMLString length] != 0) {
-            // FIXME: FragmentScriptingNotAllowed is a HACK and should
-            // be removed or replaced with an enum with a better name.
-            // FragmentScriptingNotAllowed causes the Parser to remove children
-            // of <script> tags (so javascript doesn't show up in pastes).
-            RefPtr<DocumentFragment> fragment = createFragmentFromMarkup(frame->document(), HTMLString, "", FragmentScriptingNotAllowed);
-            if (fragment)
-                return fragment.release();
-        }
-    }
-    
-    if (allowPlainText && [types containsObject:NSStringPboardType]) {
-        chosePlainText = true;
-        RefPtr<DocumentFragment> fragment = createFragmentFromText(context.get(), [[m_pasteboard.get() stringForType:NSStringPboardType] precomposedStringWithCanonicalMapping]);
-        if (fragment)
+        if ([HTMLString length] != 0 &&
+            (fragment = createFragmentFromMarkup(frame->document(), HTMLString, "", FragmentScriptingNotAllowed)))
             return fragment.release();
     }
-    
+
+    if ([types containsObject:NSRTFDPboardType] &&
+        (fragment = documentFragmentWithRtf(frame, NSRTFDPboardType)))
+       return fragment.release();
+
+    if ([types containsObject:NSRTFPboardType] &&
+        (fragment = documentFragmentWithRtf(frame, NSRTFPboardType)))
+        return fragment.release();
+
+    if ([types containsObject:NSTIFFPboardType] &&
+        (fragment = documentFragmentWithImageResource(frame, ArchiveResource::create(SharedBuffer::wrapNSData([[[m_pasteboard.get() dataForType:NSTIFFPboardType] copy] autorelease]), uniqueURLWithRelativePart(@"image.tiff"), "image/tiff", "", ""))))
+        return fragment.release();
+
+    if ([types containsObject:NSPDFPboardType] &&
+        (fragment = documentFragmentWithImageResource(frame, ArchiveResource::create(SharedBuffer::wrapNSData([[[m_pasteboard.get() dataForType:NSPDFPboardType] copy] autorelease]), uniqueURLWithRelativePart(@"application.pdf"), "application/pdf", "", ""))))
+        return fragment.release();
+
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+    if ([types containsObject:NSPICTPboardType] &&
+        (fragment = documentFragmentWithImageResource(frame, ArchiveResource::create(SharedBuffer::wrapNSData([[[m_pasteboard.get() dataForType:NSPICTPboardType] copy] autorelease]), uniqueURLWithRelativePart(@"image.pict"), "image/pict", "", ""))))
+        return fragment.release();
+#endif
+
+    // Only 10.5 and higher support setting and retrieving pasteboard types with UTIs, but we don't believe
+    // that any applications on Tiger put types for which we only have a UTI, like PNG, on the pasteboard.
+    if ([types containsObject:(NSString*)kUTTypePNG] &&
+        (fragment = documentFragmentWithImageResource(frame, ArchiveResource::create(SharedBuffer::wrapNSData([[[m_pasteboard.get() dataForType:(NSString*)kUTTypePNG] copy] autorelease]), uniqueURLWithRelativePart(@"image.png"), "image/png", "", ""))))
+        return fragment.release();
+
+    if ([types containsObject:NSURLPboardType]) {
+        NSURL *URL = [NSURL URLFromPasteboard:m_pasteboard.get()];
+        Document* document = frame->document();
+        ASSERT(document);
+        if (!document)
+            return 0;
+        RefPtr<Element> anchor = document->createElement(HTMLNames::aTag, false);
+        NSString *URLString = [URL absoluteString]; // Original data is ASCII-only, so there is no need to precompose.
+        if ([URLString length] == 0)
+            return nil;
+        NSString *URLTitleString = [[m_pasteboard.get() stringForType:WebURLNamePboardType] precomposedStringWithCanonicalMapping];
+        ExceptionCode ec;
+        anchor->setAttribute(HTMLNames::hrefAttr, URLString);
+        anchor->appendChild(document->createTextNode(URLTitleString), ec);
+        fragment = document->createDocumentFragment();
+        if (fragment) {
+            fragment->appendChild(anchor, ec);
+            return fragment.release();
+        }
+    }
+
+    if (allowPlainText && [types containsObject:NSStringPboardType]) {
+        chosePlainText = true;
+        fragment = createFragmentFromText(context.get(), [[m_pasteboard.get() stringForType:NSStringPboardType] precomposedStringWithCanonicalMapping]);
+        return fragment.release();
+    }
+
     return 0;
 }
 

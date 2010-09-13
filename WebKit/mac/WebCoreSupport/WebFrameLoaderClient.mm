@@ -1018,6 +1018,11 @@ bool WebFrameLoaderClient::canShowMIMEType(const String& MIMEType) const
     return [getWebView(m_webFrame.get()) _canShowMIMEType:MIMEType];
 }
 
+bool WebFrameLoaderClient::canShowMIMETypeAsHTML(const String& MIMEType) const
+{
+    return [WebView canShowMIMETypeAsHTML:MIMEType];
+}
+
 bool WebFrameLoaderClient::representationExistsForURLScheme(const String& URLScheme) const
 {
     return [WebView _representationExistsForURLScheme:URLScheme];

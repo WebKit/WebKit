@@ -1604,6 +1604,12 @@ bool WebFrame::canHandleRequest(const ResourceRequest& request) const
     return WebView::canHandleRequest(request);
 }
 
+bool WebFrame::canShowMIMETypeASHTML(const String& /*MIMEType*/) const
+{
+    notImplemented();
+    return true;
+}
+
 bool WebFrame::canShowMIMEType(const String& /*MIMEType*/) const
 {
     notImplemented();

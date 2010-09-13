@@ -772,6 +772,11 @@ bool WebFrameLoaderClient::canShowMIMEType(const String& MIMEType) const
     return true;
 }
 
+bool WebFrameLoaderClient::canShowMIMETypeAsHTML(const String& MIMEType) const
+{
+    return true;
+}
+
 bool WebFrameLoaderClient::representationExistsForURLScheme(const String& URLScheme) const
 {
     notImplemented();

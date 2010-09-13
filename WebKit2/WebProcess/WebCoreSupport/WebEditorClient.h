@@ -92,6 +92,8 @@ private:
 
 #if PLATFORM(MAC)
     virtual NSString* userVisibleString(NSURL*);
+    virtual WebCore::DocumentFragment* documentFragmentFromAttributedString(NSAttributedString*, Vector<WebCore::ArchiveResource*>&);
+    virtual void setInsertionPasteboard(NSPasteboard*);
 #ifdef BUILDING_ON_TIGER
     virtual NSArray* pasteboardTypesForSelection(WebCore::Frame*);
 #endif

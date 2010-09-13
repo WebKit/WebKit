@@ -612,7 +612,12 @@ void FrameLoaderClientQt::finishedLoading(DocumentLoader* loader)
     m_hasSentResponseToPlugin = false;
 }
 
-
+bool FrameLoaderClientQt::canShowMIMETypeAsHTML(const String& MIMEType) const
+{
+    notImplemented();
+    return false;
+}
+    
 bool FrameLoaderClientQt::canShowMIMEType(const String& MIMEType) const
 {
     String type = MIMEType;

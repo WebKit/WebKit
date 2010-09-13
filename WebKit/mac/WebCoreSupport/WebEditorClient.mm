@@ -30,6 +30,7 @@
 #import "WebEditorClient.h"
 
 #import "DOMCSSStyleDeclarationInternal.h"
+#import "DOMDocumentFragmentInternal.h"
 #import "DOMHTMLElementInternal.h"
 #import "DOMHTMLInputElementInternal.h"
 #import "DOMHTMLTextAreaElementInternal.h"
@@ -48,8 +49,11 @@
 #import "WebKitVersionChecks.h"
 #import "WebLocalizableStrings.h"
 #import "WebNSURLExtras.h"
+#import "WebResourceInternal.h"
 #import "WebViewInternal.h"
+#import <WebCore/ArchiveResource.h>
 #import <WebCore/Document.h>
+#import <WebCore/DocumentFragment.h>
 #import <WebCore/EditAction.h>
 #import <WebCore/EditCommand.h>
 #import <WebCore/HTMLInputElement.h>
@@ -72,6 +76,11 @@ using namespace WebCore;
 using namespace WTF;
 
 using namespace HTMLNames;
+
+@interface NSAttributedString (WebNSAttributedStringDetails)
+- (id)_initWithDOMRange:(DOMRange *)range;
+- (DOMDocumentFragment *)_documentFromRange:(NSRange)range document:(DOMDocument *)document documentAttributes:(NSDictionary *)dict subresources:(NSArray **)subresources;
+@end
 
 static WebViewInsertAction kit(EditorInsertAction coreAction)
 {
@@ -328,6 +337,52 @@ void WebEditorClient::didSetSelectionTypesForPasteboard()
 NSString* WebEditorClient::userVisibleString(NSURL *URL)
 {
     return [URL _web_userVisibleString];
+}
+
+static NSArray* excludedElementsForAttributedStringConversion()
+{
+    static NSArray *elements = nil;
+    if (elements == nil) {
+        elements = [[NSArray alloc] initWithObjects:
+                    // Omit style since we want style to be inline so the fragment can be easily inserted.
+                    @"style",
+                    // Omit xml so the result is not XHTML.
+                    @"xml", 
+                    // Omit tags that will get stripped when converted to a fragment anyway.
+                    @"doctype", @"html", @"head", @"body",
+                    // Omit deprecated tags.
+                    @"applet", @"basefont", @"center", @"dir", @"font", @"isindex", @"menu", @"s", @"strike", @"u",
+                    // Omit object so no file attachments are part of the fragment.
+                    @"object", nil];
+        CFRetain(elements);
+    }
+    return elements;
+}
+
+DocumentFragment* WebEditorClient::documentFragmentFromAttributedString(NSAttributedString* string, Vector<ArchiveResource*>& resources)
+{
+    NSDictionary *dictionary = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                        excludedElementsForAttributedStringConversion(), NSExcludedElementsDocumentAttribute,
+                                        m_webView, @"WebResourceHandler", nil];
+    
+    NSArray* s;
+    DOMDocumentFragment* fragment = [string _documentFromRange:NSMakeRange(0, [string length]) 
+                                                      document:[[m_webView mainFrame] DOMDocument] 
+                                            documentAttributes:dictionary
+                                                  subresources:&s];
+    NSEnumerator *e = [s objectEnumerator];
+    WebResource *r;
+    while ((r = [e nextObject])) {
+        RefPtr<ArchiveResource>  ar = [r _coreResource];
+        resources.append(ar.get());
+    }
+    [dictionary release];
+    return core(fragment);
+}
+
+void WebEditorClient::setInsertionPasteboard(NSPasteboard* pasteboard)
+{
+    [m_webView _setInsertionPasteboard:pasteboard];
 }
 
 #ifdef BUILDING_ON_TIGER

@@ -2528,6 +2528,7 @@ WEBCORE_COMMAND(alignLeft)
 WEBCORE_COMMAND(alignRight)
 WEBCORE_COMMAND(copy)
 WEBCORE_COMMAND(cut)
+WEBCORE_COMMAND(paste)
 WEBCORE_COMMAND(delete)
 WEBCORE_COMMAND(deleteBackward)
 WEBCORE_COMMAND(deleteBackwardByDecomposingPreviousCharacter)
@@ -5160,24 +5161,6 @@ static BOOL writingDirectionKeyBindingsEnabled()
 - (WebFrame *)_frame
 {
     return [_private->dataSource webFrame];
-}
-
-- (void)paste:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    RetainPtr<WebHTMLView> selfProtector = self;
-    RefPtr<Frame> coreFrame = core([self _frame]);
-    if (!coreFrame)
-        return;
-    if (coreFrame->editor()->tryDHTMLPaste())
-        return; // DHTML did the whole operation
-    if (!coreFrame->editor()->canPaste())
-        return;
-    if (coreFrame->selection()->isContentRichlyEditable())
-        [self _pasteWithPasteboard:[NSPasteboard generalPasteboard] allowPlainText:YES];
-    else
-        coreFrame->editor()->pasteAsPlainTextBypassingDHTML();
 }
 
 - (void)closeIfNotCurrentView

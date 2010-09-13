@@ -445,7 +445,13 @@ void FrameLoaderClientWx::finishedLoading(DocumentLoader* loader)
     }
 }
 
+bool FrameLoaderClientWx::canShowMIMETypeAsHTML(const String& MIMEType) const
+{
+    notImplemented();
+    return true;
+}
 
+    
 bool FrameLoaderClientWx::canShowMIMEType(const String& MIMEType) const
 {
     notImplemented();

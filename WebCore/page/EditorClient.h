@@ -37,12 +37,16 @@
 #if PLATFORM(MAC)
 #ifdef __OBJC__
 @class NSArray;
+@class NSAttributedString;
 @class NSData;
+@class NSPasteboard;
 @class NSString;
 @class NSURL;
 #else
 class NSArray;
+class NSAttributedString;
 class NSData;
+class NSPasteboard;
 class NSString;
 class NSURL;
 #endif
@@ -50,7 +54,9 @@ class NSURL;
 
 namespace WebCore {
 
+class ArchiveResource;
 class CSSStyleDeclaration;
+class DocumentFragment;
 class EditCommand;
 class Editor;
 class Element;
@@ -147,6 +153,8 @@ public:
 
 #if PLATFORM(MAC)
     virtual NSString* userVisibleString(NSURL*) = 0;
+    virtual DocumentFragment* documentFragmentFromAttributedString(NSAttributedString*, Vector<ArchiveResource*>&) = 0;
+    virtual void setInsertionPasteboard(NSPasteboard*) = 0;
 #ifdef BUILDING_ON_TIGER
     virtual NSArray* pasteboardTypesForSelection(Frame*) = 0;
 #endif
