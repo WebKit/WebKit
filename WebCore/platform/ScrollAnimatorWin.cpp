@@ -128,7 +128,7 @@ bool ScrollAnimatorWin::scroll(ScrollbarOrientation orientation, ScrollGranulari
     // velocity needed to stay smoothly in sync with the user's actions; for
     // events that come slower, we'll scroll one increment and then pause until
     // the next event fires.
-    float animationStep = abs(newPos - *data->m_currentPos);
+    float animationStep = fabs(newPos - *data->m_currentPos);
     // If a key is held down (or the wheel continually spun), then once we have
     // reached a velocity close to the steady-state velocity, we're likely to
     // hit the desired position at around the same time we'd expect the next
@@ -275,7 +275,7 @@ void ScrollAnimatorWin::animateScroll(PerAxisData* data)
     }
 
     // Now update the scroll position based on the distance traveled.
-    if (distanceTraveled >= abs(data->m_desiredPos - *data->m_currentPos)) {
+    if (distanceTraveled >= fabs(data->m_desiredPos - *data->m_currentPos)) {
         // We've traveled far enough to reach the desired position.  Stop smooth
         // scrolling.
         *data->m_currentPos = data->m_desiredPos;

@@ -1,3 +1,16 @@
+2010-09-13  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [WINCE] Buildfix for ScrollAnimatorWin
+        https://bugs.webkit.org/show_bug.cgi?id=45595
+
+        Use fabs() instead of abs().
+
+        * platform/ScrollAnimatorWin.cpp:
+        (WebCore::ScrollAnimatorWin::scroll):
+        (WebCore::ScrollAnimatorWin::animateScroll):
+
 2010-09-13  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
