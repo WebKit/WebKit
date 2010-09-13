@@ -227,6 +227,12 @@ QString LayoutTestController::pathToLocalResource(const QString& url)
     return QDir::toNativeSeparators(url);
 }
 
+void LayoutTestController::dumpConfigurationForViewport(int availableWidth, int availableHeight)
+{
+    QString res = DumpRenderTreeSupportQt::viewportAsText(m_drt->webPage(), QSize(availableWidth, availableHeight));
+    fputs(qPrintable(res), stdout);
+}
+
 void LayoutTestController::dumpEditingCallbacks()
 {
     qDebug() << ">>>dumpEditingCallbacks";

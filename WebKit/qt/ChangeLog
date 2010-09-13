@@ -1,3 +1,35 @@
+2010-08-27  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Antti Koivisto.
+
+        Add a Qt API for the viewport meta tag support based on the
+        following draft spec:
+
+        http://people.opera.com/rune/TR/ED-css-viewport-20100806/
+
+        Add common handling of viewport meta tag based on new Opera spec
+        https://bugs.webkit.org/show_bug.cgi?id=44201
+
+        * Api/qwebframe_p.h:
+        (QWebFramePrivate::QWebFramePrivate):
+        * Api/qwebpage.cpp:
+        (QWebPage::ViewportConfiguration::ViewportConfiguration):
+        (QWebPage::ViewportConfiguration::~ViewportConfiguration):
+        (QWebPage::ViewportConfiguration::operator=):
+        (QWebPage::viewportConfigurationForSize):
+        (QWebPage::setPreferredContentsSize):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        (QtViewportConfigurationPrivate::QtViewportConfigurationPrivate):
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::didReceiveViewportArguments):
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::viewportAsText):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDidCommitLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidFirstLayout):
+
 2010-09-12  Martin Smith  <martin.smith@nokia.com>
 
         Reviewed by Simon Hausmann.

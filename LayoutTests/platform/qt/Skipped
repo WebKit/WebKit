@@ -5439,3 +5439,11 @@ fast/text/decomposed-after-stacked-diacritics.html
 
 # Fixed in Qt 4.7.1 - Unskip when buildbot is upgraded.
 fast/canvas/canvas-closePath-single-point.html
+
+# viewport meta tag tests that differ from the Opera results
+fast/viewport/viewport-65.html
+fast/viewport/viewport-82.html
+fast/viewport/viewport-84.html
+fast/viewport/viewport-87.html
+fast/viewport/viewport-126.html
+fast/viewport/viewport-127.html

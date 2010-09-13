@@ -1,0 +1,13 @@
+<head>
+    <title>Check that xinitial-scale property is dropped after space.</title>
+    <meta name="viewport" content="width=100 xinitial-scale=1">
+    <script>
+        function test() {
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.dumpConfigurationForViewport(320, 352);
+            }
+        }
+    </script>
+</head>
+<body onload="test();">

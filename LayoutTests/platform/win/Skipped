@@ -977,3 +977,6 @@ svg/batik/paints/patternRegions-positioned-objects.svg
 
 # Full Screen support is not yet enabled.
 fullscreen/
+
+# viewport meta tag support
+fast/viewport

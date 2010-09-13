@@ -1,3 +1,145 @@
+2010-08-27  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        Update support for the viewport meta tag algorithm, to
+        match the following draft spec:
+
+        http://people.opera.com/rune/TR/ED-css-viewport-20100806/
+
+        Add common handling of viewport meta tag based on new Opera spec
+        https://bugs.webkit.org/show_bug.cgi?id=44201
+
+        Tests: fast/viewport/viewport-1.html
+               fast/viewport/viewport-10.html
+               fast/viewport/viewport-100.html
+               fast/viewport/viewport-101.html
+               fast/viewport/viewport-102.html
+               fast/viewport/viewport-103.html
+               fast/viewport/viewport-104.html
+               fast/viewport/viewport-105.html
+               fast/viewport/viewport-106.html
+               fast/viewport/viewport-107.html
+               fast/viewport/viewport-108.html
+               fast/viewport/viewport-109.html
+               fast/viewport/viewport-11.html
+               fast/viewport/viewport-110.html
+               fast/viewport/viewport-111.html
+               fast/viewport/viewport-112.html
+               fast/viewport/viewport-113.html
+               fast/viewport/viewport-114.html
+               fast/viewport/viewport-115.html
+               fast/viewport/viewport-116.html
+               fast/viewport/viewport-117.html
+               fast/viewport/viewport-118.html
+               fast/viewport/viewport-119.html
+               fast/viewport/viewport-12.html
+               fast/viewport/viewport-120.html
+               fast/viewport/viewport-121.html
+               fast/viewport/viewport-122.html
+               fast/viewport/viewport-123.html
+               fast/viewport/viewport-124.html
+               fast/viewport/viewport-125.html
+               fast/viewport/viewport-126.html
+               fast/viewport/viewport-127.html
+               fast/viewport/viewport-13.html
+               fast/viewport/viewport-14.html
+               fast/viewport/viewport-15.html
+               fast/viewport/viewport-16.html
+               fast/viewport/viewport-17.html
+               fast/viewport/viewport-18.html
+               fast/viewport/viewport-19.html
+               fast/viewport/viewport-2.html
+               fast/viewport/viewport-20.html
+               fast/viewport/viewport-21.html
+               fast/viewport/viewport-22.html
+               fast/viewport/viewport-23.html
+               fast/viewport/viewport-24.html
+               fast/viewport/viewport-25.html
+               fast/viewport/viewport-26.html
+               fast/viewport/viewport-27.html
+               fast/viewport/viewport-28.html
+               fast/viewport/viewport-29.html
+               fast/viewport/viewport-3.html
+               fast/viewport/viewport-30.html
+               fast/viewport/viewport-31.html
+               fast/viewport/viewport-32.html
+               fast/viewport/viewport-33.html
+               fast/viewport/viewport-34.html
+               fast/viewport/viewport-35.html
+               fast/viewport/viewport-36.html
+               fast/viewport/viewport-37.html
+               fast/viewport/viewport-38.html
+               fast/viewport/viewport-39.html
+               fast/viewport/viewport-4.html
+               fast/viewport/viewport-40.html
+               fast/viewport/viewport-41.html
+               fast/viewport/viewport-42.html
+               fast/viewport/viewport-43.html
+               fast/viewport/viewport-44.html
+               fast/viewport/viewport-45.html
+               fast/viewport/viewport-46.html
+               fast/viewport/viewport-47.html
+               fast/viewport/viewport-48.html
+               fast/viewport/viewport-49.html
+               fast/viewport/viewport-5.html
+               fast/viewport/viewport-50.html
+               fast/viewport/viewport-51.html
+               fast/viewport/viewport-52.html
+               fast/viewport/viewport-53.html
+               fast/viewport/viewport-54.html
+               fast/viewport/viewport-55.html
+               fast/viewport/viewport-56.html
+               fast/viewport/viewport-57.html
+               fast/viewport/viewport-58.html
+               fast/viewport/viewport-59.html
+               fast/viewport/viewport-6.html
+               fast/viewport/viewport-60.html
+               fast/viewport/viewport-61.html
+               fast/viewport/viewport-62.html
+               fast/viewport/viewport-63.html
+               fast/viewport/viewport-64.html
+               fast/viewport/viewport-65.html
+               fast/viewport/viewport-66.html
+               fast/viewport/viewport-67.html
+               fast/viewport/viewport-68.html
+               fast/viewport/viewport-69.html
+               fast/viewport/viewport-7.html
+               fast/viewport/viewport-70.html
+               fast/viewport/viewport-71.html
+               fast/viewport/viewport-72.html
+               fast/viewport/viewport-73.html
+               fast/viewport/viewport-74.html
+               fast/viewport/viewport-75.html
+               fast/viewport/viewport-76.html
+               fast/viewport/viewport-77.html
+               fast/viewport/viewport-78.html
+               fast/viewport/viewport-79.html
+               fast/viewport/viewport-8.html
+               fast/viewport/viewport-80.html
+               fast/viewport/viewport-81.html
+               fast/viewport/viewport-82.html
+               fast/viewport/viewport-83.html
+               fast/viewport/viewport-84.html
+               fast/viewport/viewport-85.html
+               fast/viewport/viewport-86.html
+               fast/viewport/viewport-87.html
+               fast/viewport/viewport-88.html
+               fast/viewport/viewport-9.html
+               fast/viewport/viewport-90.html
+
+        * dom/ViewportArguments.cpp:
+        (WebCore::findConfigurationForViewportData):
+        (WebCore::findSizeValue):
+        (WebCore::findScaleValue):
+        (WebCore::findUserScalableValue):
+        (WebCore::findTargetDensityDPIValue):
+        (WebCore::setViewportFeature):
+        * dom/ViewportArguments.h:
+        (WebCore::ViewportArguments::):
+        (WebCore::ViewportArguments::ViewportArguments):
+        (WebCore::ViewportArguments::hasCustomArgument):
+
 2010-09-13  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -1,0 +1,13 @@
+<head>
+    <title>Viewport Meta with "height=device-height".</title>
+    <meta name="viewport" content="height=device-height">
+    <script>
+        function test() {
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.dumpConfigurationForViewport(320, 352);
+            }
+        }
+    </script>
+</head>
+<body onload="test();">

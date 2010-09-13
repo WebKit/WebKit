@@ -1,0 +1,13 @@
+<head>
+    <title>Empty property name not allowed ("== width=400")</title>
+    <meta name="viewport" content="== width=400">
+    <script>
+        function test() {
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.dumpConfigurationForViewport(320, 352);
+            }
+        }
+    </script>
+</head>
+<body onload="test();">

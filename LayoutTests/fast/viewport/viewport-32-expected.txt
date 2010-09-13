@@ -1,0 +1,2 @@
+viewport size 980x200 scale 1.760000 with limits [1.760000, 5.000000]
+

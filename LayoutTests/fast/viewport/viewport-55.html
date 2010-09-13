@@ -1,0 +1,13 @@
+<head>
+    <title>Check that 'yes' and 'no' translate to 0 for width/height.</title>
+    <meta name="viewport" content="width=yes, height=no">
+    <script>
+        function test() {
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.dumpConfigurationForViewport(320, 352);
+            }
+        }
+    </script>
+</head>
+<body onload="test();">

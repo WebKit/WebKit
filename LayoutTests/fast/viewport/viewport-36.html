@@ -1,0 +1,13 @@
+<head>
+    <title>Viewport META with "height=700, initial-scale=1.6".</title>
+    <meta name="viewport" content="height=700, initial-scale=1.6">
+    <script>
+        function test() {
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.dumpConfigurationForViewport(320, 352);
+            }
+        }
+    </script>
+</head>
+<body onload="test();">

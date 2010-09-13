@@ -1,0 +1,13 @@
+<head>
+    <title>Check that minimum-scale=no is 0.</title>
+    <meta name="viewport" content="minimum-scale=no, initial-scale=0">
+    <script>
+        function test() {
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.dumpConfigurationForViewport(320, 352);
+            }
+        }
+    </script>
+</head>
+<body onload="test();">

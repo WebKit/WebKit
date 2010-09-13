@@ -640,22 +640,9 @@ QWebSelectMethod* ChromeClientQt::createSelectPopup() const
 
 void ChromeClientQt::didReceiveViewportArguments(Frame* frame, const ViewportArguments& arguments) const
 {
-    if (m_webPage->mainFrame()->d->initialLayoutComplete)
-        return;
+    m_webPage->mainFrame()->d->viewportArguments = arguments;
 
-    QSize viewportSize(arguments.width, arguments.height);
-    bool isUserScalable = arguments.userScalable == 1;
-
-    QWebPage::ViewportHints hints;
-    hints.m_isValid = true;
-    hints.m_size = viewportSize;
-    hints.m_initialScaleFactor = arguments.initialScale;
-    hints.m_minimumScaleFactor = arguments.minimumScale;
-    hints.m_maximumScaleFactor = arguments.maximumScale;
-    hints.m_targetDensityDpi = arguments.targetDensityDpi;
-    hints.m_isUserScalable = isUserScalable;
-
-    emit m_webPage->viewportChangeRequested(hints);
+    emit m_webPage->viewportChangeRequested();
 }
 
 bool ChromeClientQt::selectItemWritingDirectionIsNatural()

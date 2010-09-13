@@ -5957,3 +5957,6 @@ canvas/philip/tests/2d.path.isPointInPath.edge.html
 # The version of GLib on the Debug bots appears to be
 # broken ATM causing most websocket tests to fail.
 websocket/tests
+
+# viewport meta tag support
+fast/viewport

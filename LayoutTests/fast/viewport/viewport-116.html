@@ -1,0 +1,13 @@
+<head>
+    <title>Width recognized in "width height=400"</title>
+    <meta name="viewport" content="width height=400">
+    <script>
+        function test() {
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.dumpConfigurationForViewport(320, 352);
+            }
+        }
+    </script>
+</head>
+<body onload="test();">

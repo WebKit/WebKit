@@ -128,6 +128,7 @@ public:
     static QString pageProperty(QWebFrame* frame, const QString& propertyName, int pageNumber);
     static void addUserStyleSheet(QWebPage* page, const QString& sourceCode);
     static void simulateDesktopNotificationClick(const QString& title);
+    static QString viewportAsText(QWebPage*, const QSize&);
 };
 
 #endif

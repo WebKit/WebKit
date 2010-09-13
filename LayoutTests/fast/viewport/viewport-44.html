@@ -1,0 +1,13 @@
+<head>
+    <title>Viewport META with "width=15000, height=20000".</title>
+    <meta name="viewport" content="width=15000, height=20000">
+    <script>
+        function test() {
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.dumpConfigurationForViewport(320, 352);
+            }
+        }
+    </script>
+</head>
+<body onload="test();">

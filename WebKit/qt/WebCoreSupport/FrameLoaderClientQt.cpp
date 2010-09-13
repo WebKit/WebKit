@@ -67,6 +67,7 @@
 #include "ScriptString.h"
 #include "Settings.h"
 #include "QWebPageClient.h"
+#include "ViewportArguments.h"
 
 #include "qwebpage.h"
 #include "qwebpage_p.h"
@@ -445,7 +446,8 @@ void FrameLoaderClientQt::dispatchDidCommitLoad()
     if (m_frame->tree()->parent() || !m_webFrame)
         return;
 
-    m_webFrame->d->initialLayoutComplete = false;
+    // Clear the viewport arguments.
+    m_webFrame->d->viewportArguments = WebCore::ViewportArguments();
 
     emit m_webFrame->urlChanged(m_webFrame->url());
     m_webFrame->page()->d->updateNavigationActions();
@@ -459,7 +461,7 @@ void FrameLoaderClientQt::dispatchDidCommitLoad()
     if (!isMainFrame)
         return;
 
-    emit m_webFrame->page()->viewportChangeRequested(QWebPage::ViewportHints());
+    emit m_webFrame->page()->viewportChangeRequested();
 }
 
 
@@ -497,7 +499,6 @@ void FrameLoaderClientQt::dispatchDidFinishLoad()
 
 void FrameLoaderClientQt::dispatchDidFirstLayout()
 {
-    m_webFrame->d->initialLayoutComplete = true;
 }
 
 void FrameLoaderClientQt::dispatchDidFirstVisuallyNonEmptyLayout()

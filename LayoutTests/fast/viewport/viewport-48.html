@@ -1,0 +1,13 @@
+<head>
+    <title>Check that height is increased to fill the visual viewport.</title>
+    <meta name="viewport" content="width=3000, height=10, initial-scale=1.0">
+    <script>
+        function test() {
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.dumpConfigurationForViewport(320, 352);
+            }
+        }
+    </script>
+</head>
+<body onload="test();">

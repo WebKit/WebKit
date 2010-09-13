@@ -1,0 +1,13 @@
+<head>
+    <title>Viewport META with "minimum-scale=8".</title>
+    <meta name="viewport" content="minimum-scale=8">
+    <script>
+        function test() {
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.dumpConfigurationForViewport(320, 352);
+            }
+        }
+    </script>
+</head>
+<body onload="test();">

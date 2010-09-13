@@ -1,0 +1,2 @@
+viewport size 32x35 scale 10.000000 with limits [10.000000, 10.000000]
+

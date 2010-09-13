@@ -1,0 +1,13 @@
+<head>
+    <title>Check that negative height is translated to auto.</title>
+    <meta name="viewport" content="height=-1.5">
+    <script>
+        function test() {
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.dumpConfigurationForViewport(320, 352);
+            }
+        }
+    </script>
+</head>
+<body onload="test();">
