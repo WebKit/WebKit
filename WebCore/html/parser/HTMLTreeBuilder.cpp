@@ -2594,7 +2594,9 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken& token)
         // Fall through
     case InBodyMode:
     case InCellMode:
-        ASSERT(insertionMode() == InBodyMode || insertionMode() == InCellMode);
+    case InCaptionMode:
+    case InRowMode:
+        ASSERT(insertionMode() == InBodyMode || insertionMode() == InCellMode || insertionMode() == InCaptionMode || insertionMode() == InRowMode);
         notImplemented(); // Emit parse error based on what elements are still open.
         break;
     case AfterBodyMode:
@@ -2653,10 +2655,6 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken& token)
         setInsertionMode(m_originalInsertionMode);
         processEndOfFile(token);
         return;
-    case InCaptionMode:
-    case InRowMode:
-        notImplemented();
-        break;
     }
     ASSERT(m_tree.openElements()->top());
     m_tree.openElements()->popAll();

@@ -1,3 +1,17 @@
+2010-09-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        More trivial EOF handling in tree builder
+        https://bugs.webkit.org/show_bug.cgi?id=45648
+
+        The spec says to treat these modes like the InBodyMode, which is what
+        this patch does.  Doing so is indistinguishable from our current
+        behavior, which is why we didn't catch this based on tests.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+
 2010-09-13  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.
