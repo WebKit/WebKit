@@ -4399,6 +4399,9 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
 
 - (BOOL)canMarkAllTextMatches
 {
+    if (_private->closed)
+        return NO;
+
     WebFrame *frame = [self mainFrame];
     do {
         id <WebDocumentView> view = [[frame frameView] documentView];

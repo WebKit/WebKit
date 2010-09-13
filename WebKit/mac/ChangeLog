@@ -1,3 +1,17 @@
+2010-09-13  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45677
+        [WebView canMarkAllTextMatches] can crash if called after [WebView close]
+        
+        <rdar://problem/8404890>
+
+        * WebView/WebView.mm:
+        (-[WebView canMarkAllTextMatches]):
+        Return NO immediately if the webview has already been closed. This was an overlooked
+        case from the fix for 45175.
+
 2010-09-10  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Tony Chang.
