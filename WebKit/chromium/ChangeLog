@@ -1,3 +1,16 @@
+2010-09-13  Chris Guillory  <chris.guillory@google.com>
+
+        Reviewed by Chris Fleizach.
+
+        WebAccessibilityCacheImpl needs to handle invalid accessibility object ids.
+        https://bugs.webkit.org/show_bug.cgi?id=45572
+
+        * public/WebAccessibilityObject.h:
+        * src/WebAccessibilityCacheImpl.cpp:
+        (WebKit::WebAccessibilityCacheImpl::addOrGetId):
+        * src/WebAccessibilityObject.cpp:
+        (WebKit::WebAccessibilityObject::isAxObjectIdValid):
+
 2010-09-13  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Dimitri Glazkov.

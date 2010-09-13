@@ -63,7 +63,6 @@ WebAccessibilityCache* WebAccessibilityCache::create()
 
 PassRefPtr<WebAccessibilityCacheImpl::WeakHandle> WebAccessibilityCacheImpl::WeakHandle::create(AccessibilityObject* object)
 {
-    // FIXME: Remove resetting ref-count from AccessibilityObjectWrapper
     RefPtr<WebAccessibilityCacheImpl::WeakHandle> weakHandle = adoptRef(new WebAccessibilityCacheImpl::WeakHandle(object));
     weakHandle->m_object->setWrapper(weakHandle.get());
     
@@ -149,7 +148,7 @@ void WebAccessibilityCacheImpl::clear()
 
 int WebAccessibilityCacheImpl::addOrGetId(const WebAccessibilityObject& object)
 {
-    if (object.isNull())
+    if (!object.isValid())
         return invalidObjectId;
 
     RefPtr<AccessibilityObject> o = toAccessibilityObject(object);

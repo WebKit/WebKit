@@ -101,6 +101,15 @@ bool WebAccessibilityObject::canSetValueAttribute() const
     return m_private->canSetValueAttribute();
 }
 
+bool WebAccessibilityObject::isValid() const
+{
+    if (!m_private)
+        return false;
+
+    m_private->updateBackingStore();
+    return m_private->axObjectID();
+}
+
 unsigned WebAccessibilityObject::childCount() const
 {
     if (!m_private)
