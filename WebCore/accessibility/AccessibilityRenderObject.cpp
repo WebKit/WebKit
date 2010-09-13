@@ -1310,10 +1310,9 @@ String AccessibilityRenderObject::title() const
         || ariaRole == RadioButtonRole
         || ariaRole == CheckBoxRole
         || ariaRole == TabRole
-        || isHeading())
-        return textUnderElement();
-    
-    if (isLink())
+        || ariaRole == PopUpButtonRole
+        || isHeading()
+        || isLink())
         return textUnderElement();
     
     return String();

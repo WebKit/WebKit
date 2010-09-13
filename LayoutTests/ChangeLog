@@ -1,3 +1,13 @@
+2010-09-13  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: REGRESSION: WebKit does not report label of web popup buttons
+        https://bugs.webkit.org/show_bug.cgi?id=45715
+
+        * platform/mac/accessibility/popup-button-title-expected.txt: Added.
+        * platform/mac/accessibility/popup-button-title.html: Added.
+
 2010-09-13  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change.

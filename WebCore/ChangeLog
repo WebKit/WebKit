@@ -1,3 +1,16 @@
+2010-09-13  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: REGRESSION: WebKit does not report label of web popup buttons
+        https://bugs.webkit.org/show_bug.cgi?id=45715
+
+        Test: platform/mac/accessibility/popup-button-title.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::title):
+
 2010-09-13  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Dumitru Daniliuc.
