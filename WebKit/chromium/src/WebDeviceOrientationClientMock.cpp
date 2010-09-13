@@ -32,6 +32,11 @@
 
 namespace WebKit {
 
+WebDeviceOrientationClientMock* WebDeviceOrientationClientMock::create()
+{
+    return new WebDeviceOrientationClientMock();
+}
+
 void WebDeviceOrientationClientMock::setController(WebDeviceOrientationController* controller)
 {
     m_clientMock->setController(controller->controller());

@@ -1,3 +1,19 @@
+2010-09-13  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Add WebDeviceOrientationClientMock::create() and use it from DRT.
+        https://bugs.webkit.org/show_bug.cgi?id=45650
+
+        Do not use the WebDeviceOrientationClientMock constructor directly,
+        but use the create() member function.
+
+        This should fix the linker errors for the multi-DLL Chromium DRT build.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::setMockDeviceOrientation):
+        (LayoutTestController::deviceOrientationClient):
+
 2010-08-27  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         Reviewed by Antti Koivisto.
