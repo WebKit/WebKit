@@ -1880,9 +1880,6 @@ void HTMLTreeBuilder::processEndTagForInCell(AtomicHTMLToken& token)
         m_tree.openElements()->popUntilPopped(token.name());
         m_tree.activeFormattingElements()->clearToLastMarker();
         setInsertionMode(InRowMode);
-        // FIXME: The fragment case of this ASSERT is a spec bug:
-        // http://www.w3.org/Bugs/Public/show_bug.cgi?id=10338
-        ASSERT(m_tree.currentElement()->hasTagName(trTag) || (isParsingFragment() && m_fragmentContext.contextElement()->hasTagName(trTag)));
         return;
     }
     if (token.name() == bodyTag
@@ -1896,8 +1893,6 @@ void HTMLTreeBuilder::processEndTagForInCell(AtomicHTMLToken& token)
         || isTableBodyContextTag(token.name())) {
         if (!m_tree.openElements()->inTableScope(token.name())) {
             ASSERT(isParsingFragment());
-            // FIXME: It is unclear what the exact ASSERT should be.
-            // http://www.w3.org/Bugs/Public/show_bug.cgi?id=10098
             parseError(token);
             return;
         }

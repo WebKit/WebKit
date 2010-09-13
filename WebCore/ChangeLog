@@ -1,3 +1,17 @@
+2010-09-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove fixed FIXME
+        https://bugs.webkit.org/show_bug.cgi?id=45637
+
+        The spec made assertions that were false.  Hixie fixed the spec by
+        removing the assertions.  There's no need to keep these FIXMEs in the
+        code.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processEndTagForInCell):
+
 2010-09-12  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
