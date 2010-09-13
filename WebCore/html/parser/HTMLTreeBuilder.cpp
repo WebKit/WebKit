@@ -1548,7 +1548,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
         break;
     }
     case TextMode:
-        notImplemented();
+        ASSERT_NOT_REACHED();
         break;
     }
 }

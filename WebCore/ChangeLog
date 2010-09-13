@@ -1,3 +1,16 @@
+2010-09-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Convert notImplemented() to ASSERT_NOT_REACHED
+        https://bugs.webkit.org/show_bug.cgi?id=45639
+
+        The reason we never implemented this state is because it's not actually
+        reachable.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTag):
+
 2010-09-13  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Kenneth Rohde Christiansen.
