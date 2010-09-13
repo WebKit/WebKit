@@ -1160,6 +1160,15 @@ bool AccessibilityUIElement::isCollapsed() const
     return false;
 }
 
+bool AccessibilityUIElement::isIgnored() const
+{
+    BOOL result = NO;
+    BEGIN_AX_OBJC_EXCEPTIONS
+    result = [m_element accessibilityIsIgnored];
+    END_AX_OBJC_EXCEPTIONS
+    return result;
+}
+
 bool AccessibilityUIElement::hasPopup() const
 {
     BEGIN_AX_OBJC_EXCEPTIONS

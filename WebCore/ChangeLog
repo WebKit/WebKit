@@ -1,5 +1,17 @@
 2010-09-13  Chris Fleizach  <cfleizach@apple.com>
 
+        Reviewed by David Kilzer.
+
+        AX: accessibilityIsIgnored is returning nil when return value expects a BOOL
+        https://bugs.webkit.org/show_bug.cgi?id=45548
+
+        Test: platform/mac/accessibility/element-is-ignored.html
+
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityIsIgnored]):
+
+2010-09-13  Chris Fleizach  <cfleizach@apple.com>
+
         Reviewed by Darin Adler.
 
         CrashTracer: 874 crashes in Safari at com.apple.WebCore: WebCore::AccessibilityTable::isTableExposableThroughAccessibility + 663

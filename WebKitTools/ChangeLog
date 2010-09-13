@@ -1,3 +1,21 @@
+2010-09-13  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by David Kilzer.
+
+        AX: accessibilityIsIgnored is returning nil when return value expects a BOOL
+        https://bugs.webkit.org/show_bug.cgi?id=45548
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (isIgnoredCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::isIgnored):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::isIgnored):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::isIgnored):
+
 2010-09-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Andreas Kling.

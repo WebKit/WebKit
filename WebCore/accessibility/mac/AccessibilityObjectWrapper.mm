@@ -1972,11 +1972,11 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 - (BOOL)accessibilityIsIgnored
 {
     if (!m_object)
-        return nil;
+        return YES;
 
     m_object->updateBackingStore();
     if (!m_object)
-        return nil;
+        return YES;
 
     if (m_object->isAttachment())
         return [[self attachmentView] accessibilityIsIgnored];

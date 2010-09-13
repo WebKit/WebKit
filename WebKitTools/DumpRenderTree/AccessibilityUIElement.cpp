@@ -674,6 +674,11 @@ static JSValueRef getIsCollapsedCallback(JSContextRef context, JSObjectRef thisO
     return JSValueMakeBoolean(context, toAXElement(thisObject)->isCollapsed());
 }
 
+static JSValueRef isIgnoredCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef*)
+{
+    return JSValueMakeBoolean(context, toAXElement(thisObject)->isIgnored());
+}
+
 static JSValueRef getHasPopupCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef*)
 {
     return JSValueMakeBoolean(context, toAXElement(thisObject)->hasPopup());
@@ -831,6 +836,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "orientation", getOrientationCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "ariaIsGrabbed", getARIAIsGrabbedCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "ariaDropEffects", getARIADropEffectsCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "isIgnored", isIgnoredCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0, 0 }
     };
 
