@@ -1,3 +1,11 @@
+2010-09-13  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
+        Remove a bunch of tests that are now passing.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-13  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
