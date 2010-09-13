@@ -44,9 +44,11 @@ static const char* contentsInTable = "<html><body><table><tr><td>foo</td><td>bar
 
 static const char* contentsInTableWithHeaders = "<html><body><table><tr><th>foo</th><th>bar</th><th colspan='2'>baz</th></tr><tr><th>qux</th><td>1</td><td>2</td><td>3</td></tr><tr><th rowspan='2'>quux</th><td>4</td><td>5</td><td>6</td></tr><tr><td>6</td><td>7</td><td>8</td></tr><tr><th>corge</th><td>9</td><td>10</td><td>11</td></tr></table><table><tr><td>1</td><td>2</td></tr><tr><td>3</td><td>4</td></tr></table></body></html>";
 
-static const char* textWithAttributes = "<html><head><style>.st1 {font-family: monospace; color:rgb(120,121,122);} .st2 {text-decoration:underline; background-color:rgb(80,81,82);}</style></head><body><p style=\"font-size:14; text-align:right;\">This is the <i>first</i><b> sentence of this text.</b></p><p class=\"st1\">This sentence should have an style applied <span class=\"st2\">and this part should have another one</span>.</p><p>x<sub>1</sub><sup>2</sup>=x<sub>2</sub><sup>3</sup></p><p style=\"text-align:center;\">This sentence is the <strike>last</strike> one.</p></body></html>";
-
 static const char* listsOfItems = "<html><body><ul><li>text only</li><li><a href='foo'>link only</a></li><li>text and a <a href='bar'>link</a></li></ul><ol><li>text only</li><li><a href='foo'>link only</a></li><li>text and a <a href='bar'>link</a></li></ol></body></html>";
+
+static const char* textForSelections = "<html><body><p>A paragraph with plain text</p><p>A paragraph with <a href='http://webkit.org'>a link</a> in the middle</p></body></html>";
+
+static const char* textWithAttributes = "<html><head><style>.st1 {font-family: monospace; color:rgb(120,121,122);} .st2 {text-decoration:underline; background-color:rgb(80,81,82);}</style></head><body><p style=\"font-size:14; text-align:right;\">This is the <i>first</i><b> sentence of this text.</b></p><p class=\"st1\">This sentence should have an style applied <span class=\"st2\">and this part should have another one</span>.</p><p>x<sub>1</sub><sup>2</sup>=x<sub>2</sub><sup>3</sup></p><p style=\"text-align:center;\">This sentence is the <strike>last</strike> one.</p></body></html>";
 
 static gboolean bail_out(GMainLoop* loop)
 {
@@ -742,6 +744,121 @@ static void testWebkitAtkTextAttributes(void)
     atk_attribute_set_free(set3);
 }
 
+static void testWekitAtkTextSelections(void)
+{
+    WebKitWebView* webView;
+    AtkObject* obj;
+    GMainLoop* loop;
+    gchar* selectedText;
+    gint startOffset;
+    gint endOffset;
+    gboolean result;
+
+    webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    g_object_ref_sink(webView);
+    GtkAllocation alloc = { 0, 0, 800, 600 };
+    gtk_widget_size_allocate(GTK_WIDGET(webView), &alloc);
+    webkit_web_view_load_string(webView, textForSelections, NULL, NULL, NULL);
+    loop = g_main_loop_new(NULL, TRUE);
+
+    g_timeout_add(100, (GSourceFunc)bail_out, loop);
+    g_main_loop_run(loop);
+
+    obj = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    g_assert(obj);
+
+    AtkText* paragraph1 = ATK_TEXT(atk_object_ref_accessible_child(obj, 0));
+    g_assert(ATK_IS_TEXT(paragraph1));
+    AtkText* paragraph2 = ATK_TEXT(atk_object_ref_accessible_child(obj, 1));
+    g_assert(ATK_IS_TEXT(paragraph2));
+    AtkText* link = ATK_TEXT(atk_object_ref_accessible_child(ATK_OBJECT(paragraph2), 0));
+    g_assert(ATK_IS_TEXT(link));
+
+    // First paragraph (simple text)
+
+    // Basic initial checks
+    g_assert_cmpint(atk_text_get_n_selections(paragraph1), ==, 0);
+    selectedText = atk_text_get_selection(paragraph1, 0, &startOffset, &endOffset);
+    g_assert_cmpint(startOffset, ==, 0);
+    g_assert_cmpint(endOffset, ==, 0);
+    g_assert_cmpstr(selectedText, ==, NULL);
+    g_free (selectedText);
+    // Try removing a non existing (yet) selection
+    result = atk_text_remove_selection(paragraph1, 0);
+    g_assert(!result);
+    // Try setting a 0-char selection
+    result = atk_text_set_selection(paragraph1, 0, 5, 5);
+    g_assert(result);
+
+    // Make a selection and test it
+    result = atk_text_set_selection(paragraph1, 0, 5, 25);
+    g_assert(result);
+    g_assert_cmpint(atk_text_get_n_selections(paragraph1), ==, 1);
+    selectedText = atk_text_get_selection(paragraph1, 0, &startOffset, &endOffset);
+    g_assert_cmpint(startOffset, ==, 5);
+    g_assert_cmpint(endOffset, ==, 25);
+    g_assert_cmpstr(selectedText, ==, "agraph with plain te");
+    g_free (selectedText);
+    // Try removing the selection from other AtkText object (should fail)
+    result = atk_text_remove_selection(paragraph2, 0);
+    g_assert(!result);
+
+    // Remove the selection and test everything again
+    result = atk_text_remove_selection(paragraph1, 0);
+    g_assert(result);
+    g_assert_cmpint(atk_text_get_n_selections(paragraph1), ==, 0);
+    selectedText = atk_text_get_selection(paragraph1, 0, &startOffset, &endOffset);
+    // Now offsets should be the same, set to the last position of the caret
+    g_assert_cmpint(startOffset, ==, endOffset);
+    g_assert_cmpint(startOffset, ==, 25);
+    g_assert_cmpint(endOffset, ==, 25);
+    g_assert_cmpstr(selectedText, ==, NULL);
+    g_free (selectedText);
+
+    // Second paragraph (text + link + text)
+
+    // Set a selection partially covering the link and test it
+    result = atk_text_set_selection(paragraph2, 0, 7, 21);
+    g_assert(result);
+
+    // Test the paragraph first
+    g_assert_cmpint(atk_text_get_n_selections(paragraph2), ==, 1);
+    selectedText = atk_text_get_selection(paragraph2, 0, &startOffset, &endOffset);
+    g_assert_cmpint(startOffset, ==, 7);
+    g_assert_cmpint(endOffset, ==, 21);
+    g_assert_cmpstr(selectedText, ==, "raph with a li");
+    g_free (selectedText);
+
+    // Now test just the link
+    g_assert_cmpint(atk_text_get_n_selections(link), ==, 1);
+    selectedText = atk_text_get_selection(link, 0, &startOffset, &endOffset);
+    g_assert_cmpint(startOffset, ==, 0);
+    g_assert_cmpint(endOffset, ==, 4);
+    g_assert_cmpstr(selectedText, ==, "a li");
+    g_free (selectedText);
+
+    // Remove selections and text everything again
+    result = atk_text_remove_selection(paragraph2, 0);
+    g_assert(result);
+    g_assert_cmpint(atk_text_get_n_selections(paragraph2), ==, 0);
+    selectedText = atk_text_get_selection(paragraph2, 0, &startOffset, &endOffset);
+    // Now offsets should be the same (no selection)
+    g_assert_cmpint(startOffset, ==, endOffset);
+    g_assert_cmpstr(selectedText, ==, NULL);
+    g_free (selectedText);
+
+    g_assert_cmpint(atk_text_get_n_selections(link), ==, 0);
+    selectedText = atk_text_get_selection(link, 0, &startOffset, &endOffset);
+    // Now offsets should be the same (no selection)
+    g_assert_cmpint(startOffset, ==, endOffset);
+    g_assert_cmpstr(selectedText, ==, NULL);
+    g_free (selectedText);
+
+    g_object_unref(paragraph1);
+    g_object_unref(paragraph2);
+    g_object_unref(webView);
+}
+
 static void test_webkit_atk_get_extents(void)
 {
     WebKitWebView* webView;
@@ -936,6 +1053,7 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/atk/getTextInTable", testWebkitAtkGetTextInTable);
     g_test_add_func("/webkit/atk/getHeadersInTable", testWebkitAtkGetHeadersInTable);
     g_test_add_func("/webkit/atk/textAttributes", testWebkitAtkTextAttributes);
+    g_test_add_func("/webkit/atk/textSelections", testWekitAtkTextSelections);
     g_test_add_func("/webkit/atk/get_extents", test_webkit_atk_get_extents);
     g_test_add_func("/webkit/atk/listsOfItems", testWebkitAtkListsOfItems);
     return g_test_run ();

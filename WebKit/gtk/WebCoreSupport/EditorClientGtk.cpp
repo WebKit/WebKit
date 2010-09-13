@@ -341,6 +341,31 @@ static void collapseSelection(GtkClipboard* clipboard, WebKitWebView* webView)
     frame->selection()->setBase(frame->selection()->extent(), frame->selection()->affinity());
 }
 
+#if PLATFORM(X11)
+static void setSelectionPrimaryClipboardIfNeeded(WebKitWebView* webView)
+{
+    if (!gtk_widget_has_screen(GTK_WIDGET(webView)))
+        return;
+
+    GtkClipboard* clipboard = gtk_widget_get_clipboard(GTK_WIDGET(webView), GDK_SELECTION_PRIMARY);
+    DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
+    WebCore::Page* corePage = core(webView);
+    Frame* targetFrame = corePage->focusController()->focusedOrMainFrame();
+
+    if (!targetFrame->selection()->isRange())
+        return;
+
+    dataObject->clear();
+    dataObject->setRange(targetFrame->selection()->toNormalizedRange());
+
+    viewSettingClipboard = webView;
+    GClosure* callback = g_cclosure_new_object(G_CALLBACK(collapseSelection), G_OBJECT(webView));
+    g_closure_set_marshal(callback, g_cclosure_marshal_VOID__VOID);
+    pasteboardHelperInstance()->writeClipboardContents(clipboard, callback);
+    viewSettingClipboard = 0;
+}
+#endif
+
 void EditorClient::respondToChangedSelection()
 {
     WebKitWebViewPrivate* priv = m_webView->priv;
@@ -354,19 +379,7 @@ void EditorClient::respondToChangedSelection()
         return;
 
 #if PLATFORM(X11)
-    GtkClipboard* clipboard = gtk_widget_get_clipboard(GTK_WIDGET(m_webView), GDK_SELECTION_PRIMARY);
-    DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
-
-    if (targetFrame->selection()->isRange()) {
-        dataObject->clear();
-        dataObject->setRange(targetFrame->selection()->toNormalizedRange());
-
-        viewSettingClipboard = m_webView;
-        GClosure* callback = g_cclosure_new_object(G_CALLBACK(collapseSelection), G_OBJECT(m_webView));
-        g_closure_set_marshal(callback, g_cclosure_marshal_VOID__VOID);
-        pasteboardHelperInstance()->writeClipboardContents(clipboard, callback);
-        viewSettingClipboard = 0;
-    }
+    setSelectionPrimaryClipboardIfNeeded(m_webView);
 #endif
 
     if (!targetFrame->editor()->hasComposition())

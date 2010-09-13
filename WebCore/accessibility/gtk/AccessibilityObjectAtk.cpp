@@ -20,6 +20,8 @@
 
 #include "config.h"
 #include "AccessibilityObject.h"
+#include "RenderObject.h"
+#include "RenderText.h"
 
 #include <glib-object.h>
 
@@ -100,6 +102,29 @@ void AccessibilityObject::setWrapper(AccessibilityObjectWrapper* wrapper)
 bool AccessibilityObject::allowsTextRanges() const
 {
     return isTextControl() || isWebArea() || isGroup() || isLink() || isHeading();
+}
+
+unsigned AccessibilityObject::getLengthForTextRange() const
+{
+    unsigned textLength = text().length();
+
+    if (textLength)
+        return textLength;
+
+    // Gtk ATs need this for all text objects; not just text controls.
+    Node* node = this->node();
+    RenderObject* renderer = node ? node->renderer() : 0;
+    if (renderer && renderer->isText()) {
+        RenderText* renderText = toRenderText(renderer);
+        textLength = renderText ? renderText->textLength() : 0;
+    }
+
+    // Get the text length from the elements under the
+    // accessibility object if the value is still zero.
+    if (!textLength && allowsTextRanges())
+        textLength = textUnderElement().length();
+
+    return textLength;
 }
 
 } // namespace WebCore

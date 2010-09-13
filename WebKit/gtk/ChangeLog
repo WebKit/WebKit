@@ -1,3 +1,27 @@
+2010-09-13  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Provide unit tests for AtkText's text selection functions
+        https://bugs.webkit.org/show_bug.cgi?id=43919
+
+        New tests to check getting, setting and removing text selections
+
+        * tests/testatk.c:
+        (testWekitAtkTextSelections): New unit tests to check all the text
+        selection related functions altogether through a single test
+        function.
+        (main):
+
+        Make sure that code dependant on getting information from the
+        clipboard gets executed only when there's a GDK window associated
+        to the webview widget, as that's not the case when executing the
+        unit tests (the wedbview is not inside of any toplevel window) and
+        will make the tests crash if not taken into account.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::respondToChangedSelection):
+
 2010-09-11  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.

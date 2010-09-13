@@ -373,22 +373,7 @@ VisiblePositionRange AccessibilityObject::styleRangeForPosition(const VisiblePos
 // NOTE: Consider providing this utility method as AX API
 VisiblePositionRange AccessibilityObject::visiblePositionRangeForRange(const PlainTextRange& range) const
 {
-    unsigned textLength = text().length();
-#if PLATFORM(GTK)
-    // Gtk ATs need this for all text objects; not just text controls.
-    if (!textLength) {
-        Node* node = this->node();
-        RenderObject* renderer = node ? node->renderer() : 0;
-        if (renderer && renderer->isText()) {
-            RenderText* renderText = toRenderText(renderer);
-            textLength = renderText ? renderText->textLength() : 0;
-        }
-        // Get the text length from the elements under the
-        // accessibility object if the value is still zero.
-        if (!textLength && allowsTextRanges())
-            textLength = textUnderElement().length();
-    }
-#endif
+    unsigned textLength = getLengthForTextRange();
     if (range.start + range.length > textLength)
         return VisiblePositionRange();
 

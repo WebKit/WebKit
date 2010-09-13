@@ -1,3 +1,28 @@
+2010-09-13  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] ATs should be able to select/unselect text
+        https://bugs.webkit.org/show_bug.cgi?id=25673
+
+        Implement AtkText's setSelection and removeSelection functions
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::visiblePositionRangeForRange):
+        Moved some GTK specific code from a ifdef-endif region to
+        AccessibilityObjectAtk.cpp
+        * accessibility/AccessibilityObject.h:
+        * accessibility/gtk/AccessibilityObjectAtk.cpp:
+        (WebCore::AccessibilityObject::getLengthForTextRange): New.
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_text_remove_selection): Implemented following
+        the lead of GAIL's implementation of the AtkText interface.
+        (webkit_accessible_text_set_selection): Implemented following
+        the lead of GAIL's implementation of the AtkText interface.
+        (webkit_accessible_text_set_caret_offset): Changed to directly use
+        visiblePositionRangeForRange now that there's no longer a problem
+        with that, as it was in the past (only worked for text controls).
+
 2010-08-27  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Antti Koivisto.

@@ -1459,32 +1459,51 @@ static gboolean webkit_accessible_text_add_selection(AtkText* text, gint start_o
     return FALSE;
 }
 
-static gboolean webkit_accessible_text_remove_selection(AtkText* text, gint selection_num)
+static gboolean webkit_accessible_text_set_selection(AtkText* text, gint selectionNum, gint startOffset, gint endOffset)
 {
-    notImplemented();
-    return FALSE;
+    // WebCore does not support multiple selection, so anything but 0 does not make sense for now.
+    if (selectionNum)
+        return FALSE;
+
+    // Consider -1 and out-of-bound values and correct them to length
+    gint textCount = webkit_accessible_text_get_character_count(text);
+    if (startOffset < 0 || startOffset > textCount)
+        startOffset = textCount;
+    if (endOffset < 0 || endOffset > textCount)
+        endOffset = textCount;
+
+    AccessibilityObject* coreObject = core(text);
+    PlainTextRange textRange(startOffset, endOffset - startOffset);
+    VisiblePositionRange range = coreObject->visiblePositionRangeForRange(textRange);
+    coreObject->setSelectedVisiblePositionRange(range);
+
+    return TRUE;
 }
 
-static gboolean webkit_accessible_text_set_selection(AtkText* text, gint selection_num, gint start_offset, gint end_offset)
+static gboolean webkit_accessible_text_remove_selection(AtkText* text, gint selectionNum)
 {
-    notImplemented();
-    return FALSE;
+    // WebCore does not support multiple selection, so anything but 0 does not make sense for now.
+    if (selectionNum)
+        return FALSE;
+
+    // Do nothing if current selection doesn't belong to the object
+    if (!webkit_accessible_text_get_n_selections(text))
+        return FALSE;
+
+    // Set a new 0-sized selection to the caret position, in order
+    // to simulate selection removal (GAIL style)
+    gint caretOffset = webkit_accessible_text_get_caret_offset(text);
+    return webkit_accessible_text_set_selection(text, selectionNum, caretOffset, caretOffset);
 }
 
 static gboolean webkit_accessible_text_set_caret_offset(AtkText* text, gint offset)
 {
     AccessibilityObject* coreObject = core(text);
 
-    // FIXME: We need to reimplement visiblePositionRangeForRange here
-    // because the actual function checks the offset is within the
-    // boundaries of text().length(), but text() only works for text
-    // controls...
-    VisiblePosition startPosition = coreObject->visiblePositionForIndex(offset);
-    startPosition.setAffinity(DOWNSTREAM);
-    VisiblePosition endPosition = coreObject->visiblePositionForIndex(offset);
-    VisiblePositionRange range = VisiblePositionRange(startPosition, endPosition);
-
+    PlainTextRange textRange(offset, 0);
+    VisiblePositionRange range = coreObject->visiblePositionRangeForRange(textRange);
     coreObject->setSelectedVisiblePositionRange(range);
+
     return TRUE;
 }
 
