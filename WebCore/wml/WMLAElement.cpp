@@ -128,7 +128,7 @@ void WMLAElement::defaultEventHandler(Event* event)
         }
 
         if (isLinkClick(event)) {
-            handleLinkClick(document(), deprecatedParseURL(getAttribute(HTMLNames::hrefAttr)), target(), event);
+            handleLinkClick(event, document(), deprecatedParseURL(getAttribute(HTMLNames::hrefAttr)), target(), event);
             return;
         }
     }
