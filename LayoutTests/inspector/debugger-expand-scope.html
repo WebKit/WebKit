@@ -1,0 +1,81 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/debugger-test2.js"></script>
+<script>
+
+function makeClosure(n) {
+  var makeClosureLocalVar = 'local.' + n;
+  return function innerFunction(x) {
+    var innerFunctionLocalVar = x + 2;
+    debugger;
+    return n + makeClosureLocalVar + x + innerFunctionLocalVar;
+  }
+}
+
+function testFunction() {
+  var f = makeClosure('TextParam');
+  f(2010);
+}
+
+
+function test()
+{
+    var scriptToEvaluate = "setTimeout(testFunction, 0)";
+
+    InspectorTest.startDebuggerTest(step1);
+
+    function step1()
+    {
+        InspectorTest.evaluateInConsole(scriptToEvaluate, InspectorTest.addResult.bind(InspectorTest, "Evaluated script in console."));
+        InspectorTest.waitUntilPaused(step2);
+    }
+
+    function step2()
+    {
+        // Expand all but global scopes. Expanding global scope takes for too long
+        // so we keep it collapsed.
+        var sections = WebInspector.currentPanel.sidebarPanes.scopechain.sections;
+        // global scope is always the last one.
+        for (var i = 0; i < sections.length - 1; i++)
+            sections[i].expand();
+        InspectorTest.runAfterPendingDispatches(step3);
+    }
+
+    function step3()
+    {
+        var sections = WebInspector.currentPanel.sidebarPanes.scopechain.sections;
+        InspectorTest.addResult("");
+        InspectorTest.addResult("Dump scope sections:");
+        for (var i = 0; i < sections.length; i++) {
+            var section = sections[i];
+            InspectorTest.addResult("- " + section.headerElement.textContent);
+            if (!section.expanded) {
+                InspectorTest.addResult("  <section collapsed>");
+                continue;
+            }
+            var properties = section.propertiesForTest;
+            if (properties) {
+                for (var j = 0; j < properties.length; j++) {
+                    var p = properties[j];
+                    InspectorTest.addResult("  " + p.name + ": " + p.value.description);
+                }
+            } else
+                InspectorTest.addResult("  <no properties>");
+        }
+        InspectorTest.addResult("");
+        InspectorTest.completeDebuggerTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<input type='button' onclick='testFunction()' value='Test'/>
+<p>
+Test that sections representing scopes of the current call frame are expandable
+and contain correct data.
+</p>
+</body>
+</html>

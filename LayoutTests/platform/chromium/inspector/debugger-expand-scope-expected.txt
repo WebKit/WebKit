@@ -1,0 +1,19 @@
+Test that sections representing scopes of the current call frame are expandable and contain correct data.
+
+Debugger was enabled.
+Evaluated script in console.
+Script execution paused.
+
+Dump scope sections:
+- Local
+  innerFunctionLocalVar: 2012
+  this: DOMWindow
+  x: 2010
+- Closure
+  makeClosureLocalVar: "local.TextParam"
+  n: "TextParam"
+- DOMWindowGlobal
+  <section collapsed>
+
+Script execution resumed.
+Debugger was disabled.

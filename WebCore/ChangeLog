@@ -1,3 +1,15 @@
+2010-09-13  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: upstream testExpandScope debugger test
+        https://bugs.webkit.org/show_bug.cgi?id=45260
+
+        Test: inspector/debugger-expand-scope.html
+
+        * inspector/front-end/InjectedScript.js: return "Arguments" as class name for arguments variable in v8.
+        (injectedScriptConstructor.):
+
 2010-09-13  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Martin Robinson.

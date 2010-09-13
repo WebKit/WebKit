@@ -1,3 +1,17 @@
+2010-09-13  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: upstream testExpandScope debugger test
+        https://bugs.webkit.org/show_bug.cgi?id=45260
+
+        Test that scope sections in Scripts panel are expandable and
+        contain correct data.
+
+        * inspector/debugger-expand-scope-expected.txt: Added.
+        * inspector/debugger-expand-scope.html: Added.
+        * platform/chromium/inspector/debugger-expand-scope-expected.txt: Added.
+
 2010-09-13  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

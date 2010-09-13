@@ -228,13 +228,32 @@ DebuggerScript._frameMirrorToJSCallFrame = function(frameMirror, callerFrame)
     for (var i = 0; i < frameMirror.scopeCount(); i++) {
         var scopeMirror = frameMirror.scope(i);
         var scopeObjectMirror = scopeMirror.scopeObject();
-        var properties = scopeObjectMirror.properties();
-        var scopeObject = {};
-        for (var j = 0; j < properties.length; j++)
-            scopeObject[properties[j].name()] = properties[j].value_;
-        // Reset scope object prototype to null so that the proto properties
-        // don't appear in th local scope section.
-        scopeObject.__proto__ = null;
+
+        var scopeObject;
+        switch (scopeMirror.scopeType()) {
+        case ScopeType.Local:
+        case ScopeType.Closure:
+            // For transient objects we create a "persistent" copy that contains
+            // the same properties.
+            scopeObject = {};
+            // Reset scope object prototype to null so that the proto properties
+            // don't appear in the local scope section.
+            scopeObject.__proto__ = null;
+            var properties = scopeObjectMirror.properties();
+            for (var j = 0; j < properties.length; j++) {
+                var name = properties[j].name();
+                if (name.charAt(0) === ".")
+                    continue; // Skip internal variables like ".arguments"
+                scopeObject[name] = properties[j].value_;
+            }
+            break;
+        case ScopeType.Global:
+        case ScopeType.With:
+        case ScopeType.Catch:
+            scopeObject = scopeMirror.details_.object();
+            break;
+        }
+
         scopeType.push(scopeMirror.scopeType());
         scopeChain.push(scopeObject);
     }

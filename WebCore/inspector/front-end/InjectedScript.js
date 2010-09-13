@@ -464,6 +464,10 @@ InjectedScript.prototype = {
             return str.replace(/^\[object (.*)\]$/i, "$1");
         } else {
             // V8
+            if (isFinite(obj.length) && typeof obj.callee === "function") {
+                // Arguments.constructor === Object in V8
+                return "Arguments";
+            }
             return obj.constructor && obj.constructor.name || "Object";
         }
     },
