@@ -3008,10 +3008,6 @@ BUGJAPHET MAC : fast/canvas/webgl/texture-npot.html = TEXT
 // This test causes the next one to run to ASSERT
 BUGWK44079 DEBUG SKIP : fast/events/popup-allowed-from-gesture-initiated-form-submit.html = PASS
 
-// Due to http://trac.webkit.org/changeset/65511
-BUGWK44118 : fast/dom/Geolocation/delayed-permission-allowed-for-multiple-requests.html = TEXT
-BUGWK44118 : fast/dom/Geolocation/delayed-permission-denied-for-multiple-requests.html = TIMEOUT
-
 // Flaky. Not sure when it started to fail.
 BUG52572 WIN LINUX DEBUG : http/tests/misc/image-blocked-src-change.html = PASS TEXT
 
@@ -3124,9 +3120,6 @@ BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-dom-elevatio
 BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-svgdom-azimuth-prop.html = IMAGE
 BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-svgdom-elevation-prop.html = IMAGE
 
-// Introduced in Chromium r58994
-BUGWK45506 LINUX : fast/preloader/script.html = TEXT
-
 // Regressed in webkit r67098
 BUGWK45512 WIN : animations/fill-mode-missing-from-to-keyframes.html = TEXT
 BUGWK45512 WIN : animations/fill-mode-multiple-keyframes.html = TEXT
@@ -3137,7 +3130,7 @@ BUGWK45512 WIN : animations/fill-mode.html = TEXT
 BUGWK45513 WIN : inspector/extensions-resources.html = TIMEOUT
 
 // Regressions from webkit r67182
-BUGWK45527 : fast/dom/replaceChild.html = IMAGE
+BUGWK45527 WIN LINUX : fast/dom/replaceChild.html = IMAGE
 
 // Regression from r67285
 BUGWK45623 WIN LINUX : fast/dynamic/first-letter-display-change.html = IMAGE
@@ -3145,4 +3138,4 @@ BUGWK45623 WIN LINUX : fast/dynamic/first-letter-display-change.html = IMAGE
 // Comment out temporarily - these tests need rebaselines but the tool isn't
 // working
 BUGDPRANKE LINUX : svg/batik/text/textPosition.svg = TEXT
-BUGDPRANKE REBASELINE LINUX : svg/batik/text/textPosition2.svg = TEXT
+BUGDPRANKE LINUX : svg/batik/text/textPosition2.svg = TEXT

@@ -1,3 +1,10 @@
+2010-09-12  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change. Fix a duplicate expectation and
+        remove some passing tests.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-12  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
