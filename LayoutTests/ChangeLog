@@ -1,3 +1,12 @@
+2010-09-13  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [Chromium] mark fast/files/read-blob-async.html as CRASH PASS on linux
+        https://bugs.webkit.org/show_bug.cgi?id=45672
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-13  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by David Kilzer.

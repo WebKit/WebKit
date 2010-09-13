@@ -3155,3 +3155,4 @@ BUGDPRANKE LINUX : http/tests/incremental/slow-utf8-text.pl = TIMEOUT PASS
 BUGDPRANKE LINUX : fast/forms/restore-selection-after-layout.html = TEXT
 BUGDPRANKE LINUX MAC : fast/frames/frame-limit.html = TIMEOUT
 
+BUGWK45667 LINUX : fast/files/read-blob-async.html = CRASH PASS
