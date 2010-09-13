@@ -1,3 +1,16 @@
+2010-09-13  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] DOM listeners get wrong keycodes for some keys
+        https://bugs.webkit.org/show_bug.cgi?id=43365
+
+        Produce the proper keycodes for the print screen key as well as the
+        keypad insert and delete keys.
+
+        * platform/qt/PlatformKeyboardEventQt.cpp:
+        (WebCore::windowsKeyCodeForKeyEvent): Fix keycode translation for the mentioned keys.
+
 2010-09-13  Jonathan Dixon  <joth@chromium.org>
 
         Reviewed by Steve Block.

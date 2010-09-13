@@ -188,6 +188,10 @@ int windowsKeyCodeForKeyEvent(unsigned int keycode, bool isKeypad)
             return VK_RIGHT; // (27) RIGHT ARROW key
         case Qt::Key_Down:
             return VK_DOWN; // (28) DOWN ARROW key
+        case Qt::Key_Insert:
+            return VK_INSERT; // (2D) INS key
+        case Qt::Key_Delete:
+            return VK_DELETE; // (2E) DEL key
         default:
             return 0;
         }
@@ -304,12 +308,9 @@ int windowsKeyCodeForKeyEvent(unsigned int keycode, bool isKeypad)
     case Qt::Key_Select:
         return VK_SELECT; // (29) SELECT key
     case Qt::Key_Print:
-        return VK_PRINT; // (2A) PRINT key
+        return VK_SNAPSHOT; // (2A) PRINT key
     case Qt::Key_Execute:
         return VK_EXECUTE; // (2B) EXECUTE key
-        // dunno on this
-        // case Qt::Key_PrintScreen:
-        // return VK_SNAPSHOT; // (2C) PRINT SCREEN key
     case Qt::Key_Insert:
         return VK_INSERT; // (2D) INS key
     case Qt::Key_Delete:

@@ -5420,11 +5420,6 @@ fast/events/spatial-navigation/snav-clipped-overflowed-content.html
 # See http://code.google.com/p/chromium/issues/detail?id=19897
 svg/custom/getscreenctm-in-mixed-content2.xhtml
 
-# [Qt] DOM listeners get wrong keycodes for some keys
-# https://bugs.webkit.org/show_bug.cgi?id=43365
-fast/events/keydown-numpad-keys.html
-fast/events/special-key-events-in-input-text.html
-
 # Still working out flakiness issues with the perf tests.
 # https://bugs.webkit.org/show_bug.cgi?id=44199
 perf/
