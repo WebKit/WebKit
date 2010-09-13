@@ -1,3 +1,9 @@
+2010-09-13  Adam Roben  <aroben@apple.com>
+
+        Copy JavaScriptCore's generated sources to the right directory
+
+        * JavaScriptCore.vcproj/JavaScriptCore.make: Fixed typo.
+
 2010-09-13  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Kent Tamura.
