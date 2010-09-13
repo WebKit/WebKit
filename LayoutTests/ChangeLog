@@ -1,3 +1,11 @@
+2010-09-13  Andreas Kling  <andreas.kling@nokia.com>
+
+        Unreviewed.
+
+        [Qt] Skip three viewport meta tag tests that fail on the bot.
+
+        * platform/qt/Skipped:
+
 2010-09-13  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
