@@ -50,6 +50,7 @@ chdirWebKit();
 my $showHelp = 0;
 my $clean = 0;
 my $minimal = 0;
+my $v8 = 0;
 my $installHeaders;
 my $installLibs;
 my $prefixPath;
@@ -222,7 +223,8 @@ push @ARGV, split(/ /, $ENV{'BUILD_WEBKIT_ARGS'}) if ($ENV{'BUILD_WEBKIT_ARGS'})
 foreach (@ARGV) {
     if ($_ eq '--minimal') {
         $minimal = 1;
-        last;
+    } elsif ($_ eq '--v8') {
+        $v8 = 1;
     }
 }
 
@@ -250,6 +252,7 @@ Usage: $programName [options] [options to pass to build system]
 
   --install-headers=<path>          Set installation path for the headers (Qt only)
   --install-libs=<path>             Set installation path for the libraries (Qt only)
+  --v8                              Use V8 as JavaScript engine (Qt only)
 
   --prefix=<path>                   Set installation prefix to the given path (Gtk only)
   --makeargs=<arguments>            Optional Makefile flags
@@ -266,6 +269,7 @@ my %options = (
     'prefix=s' => \$prefixPath,
     'makeargs=s' => \$makeArgs,
     'minimal' => \$minimal,
+    'v8' => \$v8,
 );
 
 # Build usage text and options list from features
@@ -394,6 +398,10 @@ if (isGtk()) {
 
     if ($minimal) {
         push @options, "CONFIG+=minimal";
+    }
+
+    if ($v8) {
+        push @options, "CONFIG+=v8";
     }
 }
 

@@ -1,3 +1,14 @@
+2010-09-13  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] build-webkit: Add --v8 option to build against V8
+
+        Note that V8 is picked up from QtScript, so this currently requires building
+        against the experimental qt-script-v8 branch.
+
+        * Scripts/build-webkit:
+
 2010-09-13  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Jeremy Orlow.
