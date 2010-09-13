@@ -355,6 +355,9 @@ void WebFrameLoaderClient::dispatchDidFinishDocumentLoad()
 
     // Notify the bundle client.
     webPage->injectedBundleLoaderClient().didFinishDocumentLoadForFrame(webPage, m_frame);
+
+    // Notify the UIProcess.
+    WebProcess::shared().connection()->send(WebPageProxyMessage::DidFinishDocumentLoadForFrame, webPage->pageID(), CoreIPC::In(m_frame->frameID()));
 }
 
 void WebFrameLoaderClient::dispatchDidFinishLoad()

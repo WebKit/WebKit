@@ -1,3 +1,15 @@
+2010-09-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        didFinishDocumentLoadForFrame() is not being sent by WebKit2
+        <rdar://problem/8424171>
+
+        Finish wiring up didFinishDocumentLoad to the UIProcess.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishDocumentLoad):
+
 2010-09-13  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Sam Weinig.
