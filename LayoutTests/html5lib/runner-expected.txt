@@ -114,10 +114,10 @@ Got:
 |             <math math>
 |               <math mi>
 |                 <svg svg>
-|         <math mo>
-|     <span>
-|     <path>
-|     <mi>
+|               <math mo>
+|             <span>
+|             <path>
+|       <math mi>
 Expected:
 | <html>
 |   <head>

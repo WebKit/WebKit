@@ -132,11 +132,14 @@ bool isTableBodyContextTag(const AtomicString& tagName)
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#special
 bool isSpecialNode(Node* node)
 {
+    if (node->hasTagName(SVGNames::foreignObjectTag))
+        return true;
     if (node->namespaceURI() != xhtmlNamespaceURI)
         return false;
-    // FIXME: This list is out of sync with the spec.
     const AtomicString& tagName = node->localName();
     return tagName == addressTag
+        || tagName == appletTag
+        || tagName == areaTag
         || tagName == articleTag
         || tagName == asideTag
         || tagName == baseTag
@@ -146,6 +149,7 @@ bool isSpecialNode(Node* node)
         || tagName == bodyTag
         || tagName == brTag
         || tagName == buttonTag
+        || tagName == captionTag
         || tagName == centerTag
         || tagName == colTag
         || tagName == colgroupTag
@@ -158,6 +162,7 @@ bool isSpecialNode(Node* node)
         || tagName == dtTag
         || tagName == embedTag
         || tagName == fieldsetTag
+        || tagName == figcaptionTag
         || tagName == figureTag
         || tagName == footerTag
         || tagName == formTag
@@ -176,12 +181,14 @@ bool isSpecialNode(Node* node)
         || tagName == liTag
         || tagName == linkTag
         || tagName == listingTag
+        || tagName == marqueeTag
         || tagName == menuTag
         || tagName == metaTag
         || tagName == navTag
         || tagName == noembedTag
         || tagName == noframesTag
         || tagName == noscriptTag
+        || tagName == objectTag
         || tagName == olTag
         || tagName == pTag
         || tagName == paramTag
@@ -191,8 +198,12 @@ bool isSpecialNode(Node* node)
         || tagName == sectionTag
         || tagName == selectTag
         || tagName == styleTag
+        || tagName == summaryTag
+        || tagName == tableTag
         || isTableBodyContextTag(tagName)
+        || tagName == tdTag
         || tagName == textareaTag
+        || tagName == thTag
         || tagName == titleTag
         || tagName == trTag
         || tagName == ulTag

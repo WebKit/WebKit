@@ -401,3 +401,34 @@ console.log("FOO<span>BAR</span>BAZ");
 |   " "
 |   <body>
 |     "ddd"
+
+#data
+<kbd><table></kbd><col><select><tr>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <kbd>
+|       <select>
+|       <table>
+|         <colgroup>
+|           <col>
+|         <tbody>
+|           <tr>
+
+#data
+<kbd><table></kbd><col><select><tr></table><div>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <kbd>
+|       <select>
+|       <table>
+|         <colgroup>
+|           <col>
+|         <tbody>
+|           <tr>
+|       <div>

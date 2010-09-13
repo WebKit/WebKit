@@ -1,3 +1,15 @@
+2010-09-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        isParsingFragment assert hit in new treebuilder
+        https://bugs.webkit.org/show_bug.cgi?id=45621
+
+        Add new tests and (minor) test progression.
+
+        * html5lib/resources/webkit01.dat:
+        * html5lib/runner-expected.txt:
+
 2010-09-12  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Andreas Kling.
