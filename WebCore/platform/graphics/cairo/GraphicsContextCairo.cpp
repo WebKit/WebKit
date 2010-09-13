@@ -38,6 +38,7 @@
 #include "FEGaussianBlur.h"
 #include "FloatRect.h"
 #include "Font.h"
+#include "OwnPtrCairo.h"
 #include "ImageBuffer.h"
 #include "ImageBufferFilter.h"
 #include "IntRect.h"
@@ -201,7 +202,6 @@ static inline void drawPathShadow(GraphicsContext* context, GraphicsContextPriva
     
     // Calculate filter values to create appropriate shadow.
     cairo_t* cr = context->platformContext();
-    cairo_path_t* path = cairo_copy_path(cr);
     double x0, x1, y0, y1;
     if (strokeShadow)
         cairo_stroke_extents(cr, &x0, &y0, &x1, &y1);
@@ -222,7 +222,8 @@ static inline void drawPathShadow(GraphicsContext* context, GraphicsContextPriva
     copyContextProperties(cr, shadowContext);
     cairo_translate(shadowContext, -rect.x() + radius, -rect.y() + radius);
     cairo_new_path(shadowContext);
-    cairo_append_path(shadowContext, path);
+    OwnPtr<cairo_path_t> path(cairo_copy_path(cr));
+    cairo_append_path(shadowContext, path.get());
 
     if (fillShadow)
         setPlatformFill(context, shadowContext, gcp);

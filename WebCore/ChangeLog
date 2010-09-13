@@ -1,3 +1,18 @@
+2010-09-13  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Leak in the GraphicsContextCairo drawPathShadow
+        https://bugs.webkit.org/show_bug.cgi?id=44959
+
+        Fix a leak of the cairo_path.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::drawPathShadow):
+        * platform/graphics/cairo/OwnPtrCairo.cpp:
+        (WTF::cairo_path_t):
+        * platform/graphics/cairo/OwnPtrCairo.h:
+
 2010-09-13  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
