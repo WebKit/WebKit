@@ -1,3 +1,47 @@
+2010-09-13  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Dumitru Daniliuc.
+
+        Expose Flags constructor if FileSystem API is Enabled
+        https://bugs.webkit.org/show_bug.cgi?id=45165
+
+        This change also includes:
+        - Changed Flags' attribute names from UPPERCASE to camelCase to reflect the recent spec change.
+          http://dev.w3.org/2009/dap/file-system/file-dir-sys.html#the-flags-interface
+        - Enhanced EnabledAtRuntime attribute to take parameter that is used to generate a RuntimeEnabledFeatures method name.
+
+        No new tests; tests will be added when we fully expose the interface.
+
+        * bindings/v8/V8DOMWindowCustom.cpp: Added custom getter for FlagsConstructor.
+        * fileapi/Flags.idl: Changed attribute names to camelCase.
+        * page/DOMWindow.idl: Exposed Flags constructor.
+
+        * bindings/scripts/CodeGenerator.pm: Updated the WK_lcfirst hack to work around getter method for 'create' (create() should be avoided as it's widely used to instantiate an object).
+        * bindings/scripts/CodeGeneratorV8.pm: Added EnabledAtRuntime=FeatureName support.
+        * bindings/scripts/test/CPP/WebDOMTestObj.cpp:
+        (WebDOMTestObj::create):
+        (WebDOMTestObj::setCreate):
+        * bindings/scripts/test/CPP/WebDOMTestObj.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_set_property):
+        (webkit_dom_test_obj_get_property):
+        (webkit_dom_test_obj_class_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::createAttrGetter):
+        (WebCore::TestObjInternal::createAttrSetter):
+        (WebCore::TestObjInternal::enabledAtRuntimeAttr1AttrGetter):
+        (WebCore::TestObjInternal::enabledAtRuntimeAttr1AttrSetter):
+        (WebCore::TestObjInternal::enabledAtRuntimeAttr2AttrGetter):
+        (WebCore::TestObjInternal::enabledAtRuntimeAttr2AttrSetter):
+        (WebCore::TestObjInternal::enabledAtRuntimeMethod1Callback):
+        (WebCore::TestObjInternal::enabledAtRuntimeMethod2Callback):
+        (WebCore::ConfigureV8TestObjTemplate):
+
 2010-09-13  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

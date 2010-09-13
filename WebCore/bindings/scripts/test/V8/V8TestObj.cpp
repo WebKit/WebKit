@@ -35,6 +35,7 @@
 #include "V8IsolatedContext.h"
 #include "V8Proxy.h"
 #include "V8TestCallback.h"
+#include "V8int.h"
 #include "V8log.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefCounted.h>
@@ -172,16 +173,16 @@ static void XMLObjAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value
     return;
 }
 
-static v8::Handle<v8::Value> CREATEAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+static v8::Handle<v8::Value> createAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestObj.CREATE._get");
+    INC_STATS("DOM.TestObj.create._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
     return v8Boolean(imp->isCreate());
 }
 
-static void CREATEAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+static void createAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestObj.CREATE._set");
+    INC_STATS("DOM.TestObj.create._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
     bool v = value->BooleanValue();
     imp->setCreate(v);
@@ -514,6 +515,38 @@ static void conditionalAttr3AttrSetter(v8::Local<v8::String> name, v8::Local<v8:
 }
 
 #endif // ENABLE(Condition1) || ENABLE(Condition2)
+
+static v8::Handle<v8::Value> enabledAtRuntimeAttr1AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.enabledAtRuntimeAttr1._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8::Integer::New(imp->enabledAtRuntimeAttr1());
+}
+
+static void enabledAtRuntimeAttr1AttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.enabledAtRuntimeAttr1._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    int v = toInt32(value);
+    imp->setEnabledAtRuntimeAttr1(v);
+    return;
+}
+
+static v8::Handle<v8::Value> enabledAtRuntimeAttr2AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.enabledAtRuntimeAttr2._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8::Integer::New(imp->enabledAtRuntimeAttr2());
+}
+
+static void enabledAtRuntimeAttr2AttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.enabledAtRuntimeAttr2._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    int v = toInt32(value);
+    imp->setEnabledAtRuntimeAttr2(v);
+    return;
+}
 
 static v8::Handle<v8::Value> descriptionAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
@@ -1020,6 +1053,24 @@ static v8::Handle<v8::Value> classMethodWithOptionalCallback(const v8::Arguments
     return v8::Integer::New(TestObj::classMethodWithOptional(arg));
 }
 
+static v8::Handle<v8::Value> enabledAtRuntimeMethod1Callback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.enabledAtRuntimeMethod1");
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    EXCEPTION_BLOCK(int, intArg, V8int::HasInstance(args[0]) ? V8int::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0);
+    imp->enabledAtRuntimeMethod1(intArg);
+    return v8::Handle<v8::Value>();
+}
+
+static v8::Handle<v8::Value> enabledAtRuntimeMethod2Callback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.enabledAtRuntimeMethod2");
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    EXCEPTION_BLOCK(int, intArg, V8int::HasInstance(args[0]) ? V8int::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0);
+    imp->enabledAtRuntimeMethod2(intArg);
+    return v8::Handle<v8::Value>();
+}
+
 } // namespace TestObjInternal
 
 static const BatchedAttribute TestObjAttrs[] = {
@@ -1041,8 +1092,8 @@ static const BatchedAttribute TestObjAttrs[] = {
     {"testObjAttr", TestObjInternal::testObjAttrAttrGetter, TestObjInternal::testObjAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'XMLObjAttr' (Type: 'attribute' ExtAttr: '')
     {"XMLObjAttr", TestObjInternal::XMLObjAttrAttrGetter, TestObjInternal::XMLObjAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
-    // Attribute 'CREATE' (Type: 'attribute' ExtAttr: '')
-    {"CREATE", TestObjInternal::CREATEAttrGetter, TestObjInternal::CREATEAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'create' (Type: 'attribute' ExtAttr: '')
+    {"create", TestObjInternal::createAttrGetter, TestObjInternal::createAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'reflectedStringAttr' (Type: 'attribute' ExtAttr: 'Reflect')
     {"reflectedStringAttr", TestObjInternal::reflectedStringAttrAttrGetter, TestObjInternal::reflectedStringAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'reflectedIntegralAttr' (Type: 'attribute' ExtAttr: 'Reflect')
@@ -1157,6 +1208,18 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persi
     v8::Local<v8::ObjectTemplate> instance = desc->InstanceTemplate();
     v8::Local<v8::ObjectTemplate> proto = desc->PrototypeTemplate();
     
+    if (RuntimeEnabledFeatures::enabledAtRuntimeAttr1Enabled()) {
+        static const BatchedAttribute attrData =\
+        // Attribute 'enabledAtRuntimeAttr1' (Type: 'attribute' ExtAttr: 'EnabledAtRuntime')
+        {"enabledAtRuntimeAttr1", TestObjInternal::enabledAtRuntimeAttr1AttrGetter, TestObjInternal::enabledAtRuntimeAttr1AttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */};
+        configureAttribute(instance, proto, attrData);
+    }
+    if (RuntimeEnabledFeatures::featureNameEnabled()) {
+        static const BatchedAttribute attrData =\
+        // Attribute 'enabledAtRuntimeAttr2' (Type: 'attribute' ExtAttr: 'EnabledAtRuntime')
+        {"enabledAtRuntimeAttr2", TestObjInternal::enabledAtRuntimeAttr2AttrGetter, TestObjInternal::enabledAtRuntimeAttr2AttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */};
+        configureAttribute(instance, proto, attrData);
+    }
 
     // Custom Signature 'voidMethodWithArgs'
     const int voidMethodWithArgsArgc = 3;
@@ -1195,6 +1258,10 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persi
     proto->Set(v8::String::New("customArgsAndException"), v8::FunctionTemplate::New(TestObjInternal::customArgsAndExceptionCallback, v8::Handle<v8::Value>(), customArgsAndExceptionSignature));
     desc->Set(v8::String::New("classMethod"), v8::FunctionTemplate::New(TestObjInternal::classMethodCallback, v8::Handle<v8::Value>(), v8::Local<v8::Signature>()));
     desc->Set(v8::String::New("classMethodWithOptional"), v8::FunctionTemplate::New(TestObjInternal::classMethodWithOptionalCallback, v8::Handle<v8::Value>(), v8::Local<v8::Signature>()));
+    if (RuntimeEnabledFeatures::enabledAtRuntimeMethod1Enabled())
+        proto->Set(v8::String::New("enabledAtRuntimeMethod1"), v8::FunctionTemplate::New(TestObjInternal::enabledAtRuntimeMethod1Callback, v8::Handle<v8::Value>(), defaultSignature));
+    if (RuntimeEnabledFeatures::featureNameEnabled())
+        proto->Set(v8::String::New("enabledAtRuntimeMethod2"), v8::FunctionTemplate::New(TestObjInternal::enabledAtRuntimeMethod2Callback, v8::Handle<v8::Value>(), defaultSignature));
     batchConfigureConstants(desc, proto, TestObjConsts, sizeof(TestObjConsts) / sizeof(*TestObjConsts));
 
     // Custom toString template
@@ -1214,24 +1281,16 @@ v8::Persistent<v8::FunctionTemplate> V8TestObj::GetTemplate()
     return V8TestObjCache;
 }
 
-TestObj* V8TestObj::toNative(v8::Handle<v8::Object> object)
-{
-    return reinterpret_cast<TestObj*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
-}
-
 bool V8TestObj::HasInstance(v8::Handle<v8::Value> value)
 {
     return GetRawTemplate()->HasInstance(value);
 }
 
 
-v8::Handle<v8::Object> V8TestObj::wrap(TestObj* impl)
+v8::Handle<v8::Object> V8TestObj::wrapSlow(TestObj* impl)
 {
     v8::Handle<v8::Object> wrapper;
     V8Proxy* proxy = 0;
-        wrapper = getDOMObjectMap().get(impl);
-        if (!wrapper.IsEmpty())
-            return wrapper;
     wrapper = V8DOMWrapper::instantiateV8Object(proxy, &info, impl);
     if (wrapper.IsEmpty())
         return wrapper;
@@ -1239,18 +1298,6 @@ v8::Handle<v8::Object> V8TestObj::wrap(TestObj* impl)
     impl->ref();
     getDOMObjectMap().set(impl, v8::Persistent<v8::Object>::New(wrapper));
     return wrapper;
-}
-
-v8::Handle<v8::Value> toV8(PassRefPtr<TestObj > impl)
-{
-    return toV8(impl.get());
-}
-
-v8::Handle<v8::Value> toV8(TestObj* impl)
-{
-    if (!impl)
-        return v8::Null();
-    return V8TestObj::wrap(impl);
 }
 
 void V8TestObj::derefObject(void* object)

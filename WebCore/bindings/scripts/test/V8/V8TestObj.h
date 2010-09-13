@@ -22,6 +22,7 @@
 #define V8TestObj_h
 
 #include "TestObj.h"
+#include "V8DOMWrapper.h"
 #include "WrapperTypeInfo.h"
 #include "wtf/text/StringHash.h"
 #include <v8.h>
@@ -35,8 +36,11 @@ public:
     static bool HasInstance(v8::Handle<v8::Value> value);
     static v8::Persistent<v8::FunctionTemplate> GetRawTemplate();
     static v8::Persistent<v8::FunctionTemplate> GetTemplate();
-    static TestObj* toNative(v8::Handle<v8::Object>);
-    static v8::Handle<v8::Object> wrap(TestObj*);
+    static TestObj* toNative(v8::Handle<v8::Object> object)
+    {
+        return reinterpret_cast<TestObj*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
+    }
+    inline static v8::Handle<v8::Object> wrap(TestObj*);
     static void derefObject(void*);
     static WrapperTypeInfo info;
     static v8::Handle<v8::Value> customMethodCallback(const v8::Arguments&);
@@ -44,10 +48,29 @@ public:
     static v8::Handle<v8::Value> customAttrAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info);
     static void customAttrAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info);
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
+private:
+    static v8::Handle<v8::Object> wrapSlow(TestObj*);
 };
 
-v8::Handle<v8::Value> toV8(TestObj*);
-v8::Handle<v8::Value> toV8(PassRefPtr<TestObj >);
+
+v8::Handle<v8::Object> V8TestObj::wrap(TestObj* impl)
+{
+        v8::Handle<v8::Object> wrapper = getDOMObjectMap().get(impl);
+        if (!wrapper.IsEmpty())
+            return wrapper;
+    return V8TestObj::wrapSlow(impl);
+}
+
+inline v8::Handle<v8::Value> toV8(TestObj* impl)
+{
+    if (!impl)
+        return v8::Null();
+    return V8TestObj::wrap(impl);
+}
+inline v8::Handle<v8::Value> toV8(PassRefPtr< TestObj > impl)
+{
+    return toV8(impl.get());
+}
 }
 
 #endif // V8TestObj_h

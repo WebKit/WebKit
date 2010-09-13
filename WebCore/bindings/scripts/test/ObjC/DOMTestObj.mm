@@ -168,16 +168,16 @@
     IMPL->setXMLObjAttr(core(newXMLObjAttr));
 }
 
-- (BOOL)CREATE
+- (BOOL)create
 {
     WebCore::JSMainThreadNullState state;
     return IMPL->isCreate();
 }
 
-- (void)setCREATE:(BOOL)newCREATE
+- (void)setCreate:(BOOL)newCreate
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setCreate(newCREATE);
+    IMPL->setCreate(newCreate);
 }
 
 - (NSString *)reflectedStringAttr

@@ -344,10 +344,6 @@ sub WK_ucfirst
     my $ret = ucfirst($param);
     $ret =~ s/Xml/XML/ if $ret =~ /^Xml[^a-z]/;
 
-    # For HTML5 FileSystem API Flags attributes.
-    $ret =~ s/^CREATE/Create/ if $ret =~ /^CREATE$/;
-    $ret =~ s/^EXCLUSIVE/Exclusive/ if $ret =~ /^EXCLUSIVE$/;
-
     return $ret;
 }
 
@@ -364,8 +360,9 @@ sub WK_lcfirst
     $ret =~ s/xSLT/xslt/ if $ret =~ /^xSLT/;
 
     # For HTML5 FileSystem API Flags attributes.
-    $ret =~ s/^cREATE/isCreate/ if $ret =~ /^cREATE$/;
-    $ret =~ s/^eXCLUSIVE/isExclusive/ if $ret =~ /^eXCLUSIVE$/;
+    # (create is widely used to instantiate an object and must be avoided.)
+    $ret =~ s/^create/isCreate/ if $ret =~ /^create$/;
+    $ret =~ s/^exclusive/isExclusive/ if $ret =~ /^exclusive$/;
 
     return $ret;
 }

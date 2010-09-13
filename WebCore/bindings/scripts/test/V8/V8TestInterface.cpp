@@ -70,24 +70,16 @@ v8::Persistent<v8::FunctionTemplate> V8TestInterface::GetTemplate()
     return V8TestInterfaceCache;
 }
 
-TestInterface* V8TestInterface::toNative(v8::Handle<v8::Object> object)
-{
-    return reinterpret_cast<TestInterface*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
-}
-
 bool V8TestInterface::HasInstance(v8::Handle<v8::Value> value)
 {
     return GetRawTemplate()->HasInstance(value);
 }
 
 
-v8::Handle<v8::Object> V8TestInterface::wrap(TestInterface* impl)
+v8::Handle<v8::Object> V8TestInterface::wrapSlow(TestInterface* impl)
 {
     v8::Handle<v8::Object> wrapper;
     V8Proxy* proxy = 0;
-        wrapper = getDOMObjectMap().get(impl);
-        if (!wrapper.IsEmpty())
-            return wrapper;
     wrapper = V8DOMWrapper::instantiateV8Object(proxy, &info, impl);
     if (wrapper.IsEmpty())
         return wrapper;
@@ -95,18 +87,6 @@ v8::Handle<v8::Object> V8TestInterface::wrap(TestInterface* impl)
     impl->ref();
     getDOMObjectMap().set(impl, v8::Persistent<v8::Object>::New(wrapper));
     return wrapper;
-}
-
-v8::Handle<v8::Value> toV8(PassRefPtr<TestInterface > impl)
-{
-    return toV8(impl.get());
-}
-
-v8::Handle<v8::Value> toV8(TestInterface* impl)
-{
-    if (!impl)
-        return v8::Null();
-    return V8TestInterface::wrap(impl);
 }
 
 void V8TestInterface::derefObject(void* object)

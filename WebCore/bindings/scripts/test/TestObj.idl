@@ -44,7 +44,7 @@ module test {
         JS, V8
         // WK_ucfirst, WK_lcfirst exceptional cases.
         attribute TestObj                  XMLObjAttr;
-        attribute boolean                  CREATE;
+        attribute boolean                  create;
 
         // Reflected DOM attributes
         attribute [Reflect] DOMString reflectedStringAttr;
@@ -141,6 +141,14 @@ module test {
         // Class methods within JavaScript (like what's used for IDBKeyRange).
         [ClassMethod] void classMethod();
         [ClassMethod] long classMethodWithOptional(in [Optional] long arg);
+
+#if defined(TESTING_V8)
+        // 'EnabledAtRuntime' methods and attributes.
+        [EnabledAtRuntime] void enabledAtRuntimeMethod1(in int intArg);
+        [EnabledAtRuntime=FeatureName] void enabledAtRuntimeMethod2(in int intArg);
+        attribute [EnabledAtRuntime] long enabledAtRuntimeAttr1;
+        attribute [EnabledAtRuntime=FeatureName] long enabledAtRuntimeAttr2;
+#endif
 
         // ObjectiveC reserved words.
         readonly attribute long      description;

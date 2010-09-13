@@ -199,7 +199,7 @@ void WebDOMTestObj::setXMLObjAttr(const WebDOMTestObj& newXMLObjAttr)
     impl()->setXMLObjAttr(toWebCore(newXMLObjAttr));
 }
 
-bool WebDOMTestObj::CREATE() const
+bool WebDOMTestObj::create() const
 {
     if (!impl())
         return false;
@@ -207,12 +207,12 @@ bool WebDOMTestObj::CREATE() const
     return impl()->isCreate();
 }
 
-void WebDOMTestObj::setCREATE(bool newCREATE)
+void WebDOMTestObj::setCreate(bool newCreate)
 {
     if (!impl())
         return;
 
-    impl()->setCreate(newCREATE);
+    impl()->setCreate(newCreate);
 }
 
 WebDOMString WebDOMTestObj::reflectedStringAttr() const

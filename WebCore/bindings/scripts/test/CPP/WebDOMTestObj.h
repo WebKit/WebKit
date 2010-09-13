@@ -72,8 +72,8 @@ public:
     void setTestObjAttr(const WebDOMTestObj&);
     WebDOMTestObj XMLObjAttr() const;
     void setXMLObjAttr(const WebDOMTestObj&);
-    bool CREATE() const;
-    void setCREATE(bool);
+    bool create() const;
+    void setCreate(bool);
     WebDOMString reflectedStringAttr() const;
     void setReflectedStringAttr(const WebDOMString&);
     int reflectedIntegralAttr() const;
