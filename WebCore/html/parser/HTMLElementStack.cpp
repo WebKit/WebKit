@@ -29,6 +29,7 @@
 #include "Element.h"
 #include "HTMLNames.h"
 #include "MathMLNames.h"
+#include "SVGNames.h"
 #include <wtf/PassOwnPtr.h>
 
 #if ENABLE(SVG)

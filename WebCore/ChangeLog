@@ -1,5 +1,11 @@
 2010-09-13  Adam Barth  <abarth@webkit.org>
 
+        Attempted Qt build fix.
+
+        * html/parser/HTMLElementStack.cpp:
+
+2010-09-13  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Apply spec changes to InForeignContentMode
