@@ -3126,11 +3126,6 @@ BUGWK45623 WIN LINUX : fast/dynamic/first-letter-display-change.html = IMAGE
 // New tests added in r67376
 BUGWK45652 SKIP : fast/viewport/ = TEXT
 
-// Comment out temporarily - these tests need rebaselines but the tool isn't
-// working
-BUGDPRANKE LINUX : svg/batik/text/textPosition.svg = TEXT
-BUGDPRANKE LINUX : svg/batik/text/textPosition2.svg = TEXT
-
 // Regressions from r67349?
 BUGDPRANKE LINUX MAC : http/tests/navigation/postredirect-frames.html = IMAGE
 

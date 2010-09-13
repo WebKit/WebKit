@@ -1,5 +1,16 @@
 2010-09-13  Pavel Podivilov  <podivilov@chromium.org>
 
+        Reviewed by Yury Semikhatsky.
+
+        [Chromium] rebaseline two svg tests after r67200
+        https://bugs.webkit.org/show_bug.cgi?id=45665
+
+        * platform/chromium-linux/svg/batik/text/textPosition-expected.txt:
+        * platform/chromium-linux/svg/batik/text/textPosition2-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
+2010-09-13  Pavel Podivilov  <podivilov@chromium.org>
+
         Reviewed by Pavel Feldman.
 
         [Chromium] mark fast/files/read-blob-async.html as CRASH PASS on linux
