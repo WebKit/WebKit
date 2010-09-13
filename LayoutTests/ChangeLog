@@ -1,3 +1,12 @@
+2010-09-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by James Robinson.
+
+        Remove some tests from the WebKit2 skipped list that are now passing
+        https://bugs.webkit.org/show_bug.cgi?id=45625
+
+        * platform/mac-wk2/Skipped:
+
 2010-09-12  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change.

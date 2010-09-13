@@ -1719,9 +1719,6 @@ fast/workers/shared-worker-lifecycle.html
 fast/workers/worker-lifecycle.html
 fast/workers/worker-close-more.html
 
-# null-page-show-modal-dialog test has extra trailing space in output
-fast/dom/null-page-show-modal-dialog-crash.html
-
 # WebKitTestRunner needs to clear caches (including app cache) at the start
 http/tests/appcache/empty-manifest.html
 http/tests/appcache/foreign-iframe-main.html
@@ -1779,12 +1776,7 @@ animations/suspend-resume-animation.html
 # WebKitTestRunner needs layoutTestController.pageProperty
 printing/page-rule-selection.html
 
-# WebKitTestRunner gets confused by location.href redirects.
-plugins/attach-during-destroy.html
-plugins/destroy-reentry.html
-
 # WebKit2 needs support for moving/resizing and querying the location/size the window
-fast/dom/Window/window-lookup-precedence.html
 fast/dom/Window/window-resize-and-move-arguments.html
 fast/dom/Window/window-resize.html
 
@@ -1813,9 +1805,6 @@ editing/undo/undo-typing-001.html
 # WebKit2 needs to define a default charset (Settings::defaultTextEncodingName)
 fast/dom/Document/document-charset.html
 
-# WebKit2 small buttons render bigger than WebKit1
-fast/forms/button-sizes.html
-
 # WebKit2 needs keygen support
 fast/html/keygen.html
 fast/invalid/residual-style.html
@@ -1836,7 +1825,6 @@ http/tests/xmlhttprequest/basic-auth.html
 http/tests/xmlhttprequest/basic-auth-default.html
 http/tests/xmlhttprequest/logout.html
 http/tests/xmlhttprequest/re-login-async.html
-http/tests/xmlhttprequest/re-login.html
 
 # WebKit2 needs showModalDialog
 fast/harness/show-modal-dialog.html
@@ -1850,36 +1838,14 @@ fullscreen/full-screen-twice.html
 
 # WebKit2 needs to support synchronous creation of about:blank/data:url frames
 editing/selection/DOMSelection-crossing-document.html
-fast/dom/Document/document-write-doctype.html
 fast/dom/HTMLDocument/hasFocus.html
-fast/dom/prototype-inheritance-2.html
-fast/dom/Window/BarInfo-after-frame-removed.html
-fast/dom/Window/window-collection-length-no-crash.html 
-fast/encoding/char-encoding-mac.html
-fast/encoding/char-encoding.html
-fast/encoding/invalid-xml.html
 fast/events/blur-focus-window-should-blur-focus-element.html
-fast/forms/focus2.html
-fast/frames/frame-limit.html
 fast/frames/sandboxed-iframe-navigation-targetlink.html
 fast/loader/about-blank-hash-kept.html
-fast/loader/iframe-recursive-synchronous-load.html
-fast/loader/meta-refresh-vs-open.html
 http/tests/security/cross-frame-access-get-override.html
 http/tests/security/cross-frame-access-history-get-override.html
 http/tests/security/cross-frame-access-location-get-override.html
-http/tests/security/frameNavigation/context-for-location-assign.html
-http/tests/security/frameNavigation/context-for-location-href.html
-http/tests/security/frameNavigation/context-for-location.html
-http/tests/security/frameNavigation/context-for-window-open.html
 http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-sub-frame-2-level.html
-http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-sub-frame.html
-media/adopt-node-crash.html
-storage/domstorage/events/basic-body-attribute.html
-storage/domstorage/events/basic-setattribute.html
-storage/domstorage/events/basic.html
-storage/domstorage/events/case-sensitive.html
-storage/domstorage/events/documentURI.html
 
 # WebKit2 doesn't have a missing plug-in delegate
 plugins/clicking-missing-plugin-fires-delegate.html
@@ -1901,23 +1867,15 @@ fast/parser/remove-misnested-iframe-parent-in-beforeload.html
 fast/events/onunload-clears-onbeforeunload.html
 
 # Unexplained failures that were formerly in the dumpChildFramesAsText list.
-fast/frames/sandboxed-iframe-noscript.html
 fast/frames/sandboxed-iframe-storage.html
 http/tests/misc/isindex-with-no-form-base-href.html
-http/tests/security/cross-frame-access-port-explicit-domain.html
 http/tests/security/cross-frame-access-private-browsing.html
 http/tests/security/cross-origin-xsl-BLOCKED.html
-http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-subframe.html
-http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-2-level.html
 http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-to-data-url-sub-frame.html
-http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame.html
 http/tests/security/dataURL/xss-DENIED-from-data-url-to-data-url.html
-http/tests/security/dataURL/xss-DENIED-to-data-url-from-data-url.html
 http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe-location-change.html
 http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe.html
 http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-2-level.html
-http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html
-http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame.html
 http/tests/security/frameNavigation/xss-ALLOWED-targeted-subframe-navigation-change.html
 http/tests/security/host-compare-case-insensitive.html
 http/tests/security/javascriptURL/javascriptURL-execution-context-frame-location-htmldom.html
@@ -1933,17 +1891,11 @@ http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-set
 http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNS.html
 http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNode.html
 http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNodeNS.html
-http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-2-level.html
-http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame.html
 http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-subframe.html
-http/tests/security/protocol-compare-case-insensitive.html
 
 # Unexplained failures that were formerly in the setCanOpenWindows or setCloseRemainingWindowsWhenComplete lists.
 fast/dom/Window/new-window-opener.html
 fast/dom/open-and-close-by-DOM.html
-fast/frames/iframe-reparenting-new-page.html
-fast/parser/xhtml-close-while-parsing.xhtml
-http/tests/media/video-cancel-load.html
 http/tests/misc/set-window-opener-to-null.html
 http/tests/misc/window-open-then-write.html
 http/tests/navigation/target-frame-from-window.html
@@ -1965,10 +1917,6 @@ http/tests/security/window-events-clear-port.html
 http/tests/xmlhttprequest/close-window.html
 http/tests/xmlhttprequest/cross-origin-authorization.html
 http/tests/xmlhttprequest/cross-origin-no-authorization.html
-http/tests/xmlhttprequest/request-from-popup.html
-plugins/access-after-page-destroyed.html
-storage/domstorage/localstorage/window-open.html
-storage/domstorage/sessionstorage/window-open.html
 http/tests/security/popup-blocked-from-fake-event.html
 http/tests/security/popup-blocked-from-window-open.html
 
@@ -1981,18 +1929,14 @@ userscripts/user-script-audio-document.html
 userscripts/user-script-video-document.html
 
 # Unexplained failures that were formerly in the "unsafe access" list.
-http/tests/security/cross-frame-access-child-explicit-domain.html
 http/tests/security/cross-frame-access-enumeration.html
 http/tests/security/cross-frame-access-get-custom-property-cached.html
 http/tests/security/cross-frame-access-get.html
 http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html
 http/tests/security/cross-frame-access-history-get.html
 http/tests/security/cross-frame-access-location-get.html
-http/tests/security/cross-frame-access-parent-explicit-domain.html
-http/tests/security/cross-frame-access-port.html
 http/tests/security/cross-frame-access-protocol-explicit-domain.html
 http/tests/security/cross-frame-access-protocol.html
-http/tests/security/cross-frame-access-selection.html
 
 # Unexplained sputnik failures
 fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T1.html
@@ -2019,29 +1963,12 @@ fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Con
 fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T11.html
 
 # Unexplained failures
-animations/transition-and-animation-1.html
-compositing/images/direct-image-background-color.html
-compositing/masks/direct-image-mask.html
-compositing/repaint/layer-repaint-rects.html
-dom/html/level2/html/HTMLBaseElement02.html
-dom/xhtml/level2/html/HTMLBaseElement02.xhtml
-dom/xhtml/level2/html/HTMLFormElement10.xhtml
-fast/css/counters/destroy-counter-crash.html
-fast/css/target-fragment-match.html
 fast/dom/beforeload/remove-frame-in-beforeload-listener.html
 fast/dom/css-cached-import-rule.html
 fast/dom/Document/open-with-pending-load.html
 fast/dom/Window/window-appendages-cleared.html
 fast/dynamic/anchor-lock.html
-fast/encoding/percent-escaping.html
-fast/events/event-targets.html
-fast/events/onload-after-document-close-no-subresource.html
-fast/events/onload-after-document-close-with-subresource.html
 fast/events/simulated-key-state.html
-fast/forms/textarea-and-mutation-events.html
-fast/frames/crash-removed-iframe.html
-fast/frames/document-write-in-iframe-onload-2.html
-fast/frames/document-write-in-iframe-onload.html
 fast/frames/iframe-onload-remove-self-no-crash.html
 fast/frames/location-put-after-removal.html
 fast/history/multiple-classes-visited.html
@@ -2050,25 +1977,18 @@ fast/history/saves-state-after-fragment-nav.html
 fast/history/self-is-visited.html
 fast/history/sibling-visited-test.html
 fast/html/empty-fragment-id-goto-top.html
-fast/images/move-image-to-new-document.html
-fast/loader/empty-embed-src-attribute.html
-fast/loader/empty-ref-versus-no-ref.html
 fast/loader/frame-creation-removal.html
 fast/loader/goto-anchor-infinite-layout.html
 fast/loader/hashchange-event-async.html
 fast/loader/hashchange-event.html
 fast/loader/onhashchange-attribute-listeners.html
 fast/loader/submit-form-while-parsing-2.html
-fast/overflow/overflow-y-scroll.html
 fast/overflow/overflow_hidden.html
 fast/overflow/scroll-vertical-not-horizontal.html
 fast/parser/document-close-iframe-load.html
-fast/parser/document-close-nested-iframe-load.html
-fast/parser/entities-in-xhtml.xhtml
 fast/regex/test1.html
 fast/regex/test4.html
 fast/table/giantCellspacing.html
-fast/text/selection-hard-linebreak.html
 fast/workers/storage/change-version-handle-reuse-sync.html
 fast/workers/storage/multiple-databases-garbage-collection.html
 fast/workers/storage/open-database-creation-callback-sync.html
@@ -2079,46 +1999,29 @@ http/tests/appcache/fallback.html
 http/tests/cache/subresource-expiration.html
 http/tests/eventsource/eventsource-reconnect.html
 http/tests/eventsource/eventsource-status-code-states.html
-http/tests/history/back-to-post.php
 http/tests/media/video-load-twice.html
 http/tests/misc/location-replace-crossdomain.html
 http/tests/misc/object-image-error-with-onload.html
 http/tests/misc/slow-loading-mask.html
-http/tests/multipart/invalid-image-data-standalone.html
 http/tests/multipart/multipart-wait-before-boundary.html
 http/tests/navigation/back-send-referrer.html
 http/tests/navigation/fallback-anchor-reload.html
 http/tests/navigation/history-back-across-form-submission-to-fragment.html
 http/tests/security/originHeader/origin-header-for-https.html
-http/tests/security/xss-DENIED-mime-type-execute-as-html.html
 http/tests/ssl/referer-301.html
 http/tests/ssl/referer-303.html
 http/tests/ssl/verify-ssl-enabled.php
 http/tests/storage/callbacks-are-called-in-correct-context.html
 http/tests/xmlhttprequest/send-on-abort.html
-http/tests/xmlhttprequest/small-chunks-response-text.html
 media/controls-after-reload.html
 media/controls-styling.html
-media/event-attributes.html
-media/media-captions.html
-media/media-document-audio-size.html
-media/video-click-dblckick-standalone.html
-media/video-document-types.html
-media/video-played-reset.html
-media/video-preload.html
-media/video-src-change.html
 media/video-zoom-controls.html
 platform/mac/fast/loader/non-html-load-event.html
 storage/multiple-databases-garbage-collection.html
-storage/open-database-while-transaction-in-progress.html
 svg/custom/clip-path-referencing-use2.svg
 svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html
 svg/hixie/cascade/002.xml
-transitions/color-transition-all.html
 transitions/font-family-during-transition.html
-transitions/min-max-width-height-transitions.html
-transitions/text-indent-transition.html
-websocket/tests/frame-lengths.html
 fast/loader/stateobjects/popstate-fires-on-history-traversal.html
 
 ########################################
