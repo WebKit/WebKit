@@ -3079,9 +3079,6 @@ BUGWK45193 LINUX : fast/text/decomposed-after-stacked-diacritics.html = TEXT
 // Regressed in r66712
 BUGWK45209 WIN : inspector/dom-breakpoints.html = PASS TIMEOUT
 
-// Regressed in r66689
-BUGWK44960 LINUX : fast/text/atsui-spacing-features.html = IMAGE+TEXT
-
 // Regressed in r66908
 BUGWK45332 MAC : fast/canvas/webgl/gl-teximage.html = TEXT
 

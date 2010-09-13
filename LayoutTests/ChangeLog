@@ -1,3 +1,17 @@
+2010-09-13  Adam Langley  <agl@chromium.org>
+
+        Unreviewed. Layout test re-baseline.
+
+        After r66882, complex text word spacing changed due to a bug fix. This
+        rebaselines the layout test for that case.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45191
+
+        * platform/chromium-linux/fast/text/atsui-spacing-features-expected.checksum:
+        * platform/chromium-linux/fast/text/atsui-spacing-features-expected.png:
+        * platform/chromium-linux/fast/text/atsui-spacing-features-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-09-13  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
