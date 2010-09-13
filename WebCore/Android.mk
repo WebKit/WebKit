@@ -299,6 +299,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/parser/HTMLElementStack.cpp \
 	html/parser/HTMLEntityParser.cpp \
 	html/parser/HTMLFormattingElementList.cpp \
+	html/parser/HTMLParserIdioms.cpp \
 	html/parser/HTMLParserScheduler.cpp \
 	html/parser/HTMLPreloadScanner.cpp \
 	html/parser/HTMLScriptRunner.cpp \

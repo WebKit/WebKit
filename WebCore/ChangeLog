@@ -1,3 +1,54 @@
+2010-09-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Preparation for eliminating deprecatedParseURL
+        https://bugs.webkit.org/show_bug.cgi?id=45695
+
+        Added new HTMLParserIdioms source file, with a name inspired by the HTML
+        specification, which has a section defining things like "space character"
+        that talks about common parser idioms. These are idioms for the main HTML
+        parser and for parsers for various microlanguages as well.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Added HTMLParserIdioms.
+
+        * css/CSSHelper.h: Fixed indentation and comments here. Point to the new
+        stripLeadingAndTrailingHTMLSpaces function.
+
+        * html/parser/HTMLParserIdioms.cpp: Added.
+        * html/parser/HTMLParserIdioms.h: Added.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::skipLeadingWhitespace):
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::takeLeadingWhitespace):
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::takeLeadingNonWhitespace):
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::takeRemainingWhitespace):
+        Updated for name changes.
+
+        * html/parser/HTMLTreeBuilder.h: Moved functions to HTMLParserIdioms.h.
+
+        * html/HTMLInputElement.cpp:
+        * html/HTMLMeterElement.cpp:
+        * html/HTMLProgressElement.cpp:
+        * html/StepRange.cpp:
+        * rendering/RenderSlider.cpp:
+        Updated includes.
+
+        * svg/SVGImageLoader.cpp:
+        (WebCore::SVGImageLoader::sourceURI): Fixed incorrect use of deprecatedParseURL.
+        This is for use on the attribute value before building the URL, not on the URL
+        after building it. I did not add a test case; this is an obscure corner and soon
+        we will be moving to stripLeadingAndTrailingHTMLSpaces anyway.
+        * wml/WMLImageLoader.cpp:
+        (WebCore::WMLImageLoader::sourceURI): Ditto.
+
 2010-09-13  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

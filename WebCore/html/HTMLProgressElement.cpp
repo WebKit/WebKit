@@ -28,7 +28,7 @@
 #include "FormDataList.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
-#include "HTMLTreeBuilder.h"
+#include "HTMLParserIdioms.h"
 #include "RenderProgress.h"
 #include <wtf/StdLibExtras.h>
 

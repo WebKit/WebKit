@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
@@ -49,7 +49,7 @@ void WMLImageLoader::dispatchLoadEvent()
 
 String WMLImageLoader::sourceURI(const AtomicString& attr) const
 {
-    return deprecatedParseURL(KURL(element()->baseURI(), attr).string());
+    return KURL(element()->baseURI(), deprecatedParseURL(attr));
 }
 
 void WMLImageLoader::notifyFinished(CachedResource* image)

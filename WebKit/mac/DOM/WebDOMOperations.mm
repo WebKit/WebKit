@@ -121,8 +121,7 @@ using namespace JSC;
 
 - (WebFrame *)webFrame
 {
-    Document* document = core(self);
-    Frame* frame = document->frame();
+    Frame* frame = core(self)->frame();
     if (!frame)
         return nil;
     return kit(frame);
@@ -130,7 +129,6 @@ using namespace JSC;
 
 - (NSURL *)URLWithAttributeString:(NSString *)string
 {
-    // FIXME: Is deprecatedParseURL appropriate here?
     return core(self)->completeURL(deprecatedParseURL(string));
 }
 

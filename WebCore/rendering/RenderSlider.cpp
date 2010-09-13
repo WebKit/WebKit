@@ -29,7 +29,7 @@
 #include "Frame.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
-#include "HTMLTreeBuilder.h"
+#include "HTMLParserIdioms.h"
 #include "MediaControlElements.h"
 #include "MouseEvent.h"
 #include "RenderLayer.h"

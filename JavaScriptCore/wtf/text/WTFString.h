@@ -53,6 +53,7 @@ class BString;
 namespace WTF {
 
 class CString;
+struct StringHash;
 
 // Declarations of string operations
 
@@ -71,6 +72,8 @@ intptr_t charactersToIntPtr(const UChar*, size_t, bool* ok = 0); // ignores trai
 
 double charactersToDouble(const UChar*, size_t, bool* ok = 0);
 float charactersToFloat(const UChar*, size_t, bool* ok = 0);
+
+template<bool isSpecialCharacter(UChar)> bool isAllSpecialCharacters(const UChar*, size_t);
 
 class String {
 public:
@@ -220,6 +223,7 @@ public:
     String simplifyWhiteSpace() const;
 
     String removeCharacters(CharacterMatchFunctionPtr) const;
+    template<bool isSpecialCharacter(UChar)> bool isAllSpecialCharacters() const;
 
     // Return the string with case folded for case insensitive comparison.
     String foldCase() const;
@@ -423,7 +427,19 @@ inline void appendNumber(Vector<UChar>& vector, unsigned char number)
     }
 }
 
-struct StringHash;
+template<bool isSpecialCharacter(UChar)> inline bool isAllSpecialCharacters(const UChar* characters, size_t length)
+{
+    for (size_t i = 0; i < length; ++i) {
+        if (!isSpecialCharacter(characters[i]))
+            return false;
+    }
+    return true;
+}
+
+template<bool isSpecialCharacter(UChar)> inline bool String::isAllSpecialCharacters() const
+{
+    return WTF::isAllSpecialCharacters<isSpecialCharacter>(characters(), length());
+}
 
 // StringHash is the default hash for String
 template<typename T> struct DefaultHash;
@@ -440,17 +456,17 @@ template <> struct VectorTraits<String> : SimpleClassVectorTraits
 
 using WTF::CString;
 using WTF::String;
-
-using WTF::isSpaceOrNewline;
-using WTF::find;
-using WTF::reverseFind;
 using WTF::append;
 using WTF::appendNumber;
+using WTF::charactersAreAllASCII;
+using WTF::charactersToDouble;
+using WTF::charactersToFloat;
+using WTF::charactersToInt;
 using WTF::equal;
 using WTF::equalIgnoringCase;
-using WTF::charactersAreAllASCII;
-using WTF::charactersToInt;
-using WTF::charactersToFloat;
-using WTF::charactersToDouble;
+using WTF::find;
+using WTF::isAllSpecialCharacters;
+using WTF::isSpaceOrNewline;
+using WTF::reverseFind;
 
 #endif

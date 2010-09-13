@@ -48,7 +48,7 @@ void SVGImageLoader::dispatchLoadEvent()
 
 String SVGImageLoader::sourceURI(const AtomicString& attr) const
 {
-    return deprecatedParseURL(KURL(element()->baseURI(), attr).string());
+    return KURL(element()->baseURI(), deprecatedParseURL(attr)).string();
 }
 
 }

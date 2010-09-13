@@ -1783,6 +1783,8 @@
             'html/parser/HTMLFormattingElementList.cpp',
             'html/parser/HTMLFormattingElementList.h',
             'html/parser/HTMLInputStream.h',
+            'html/parser/HTMLParserIdioms.cpp',
+            'html/parser/HTMLParserIdioms.h',
             'html/parser/HTMLParserScheduler.cpp',
             'html/parser/HTMLParserScheduler.h',
             'html/parser/HTMLPreloadScanner.cpp',

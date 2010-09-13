@@ -42012,6 +42012,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\html\parser\HTMLParserIdioms.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLParserIdioms.h"
+					>
+				</File>
+				<File
 					RelativePath="..\html\parser\HTMLParserScheduler.cpp"
 					>
 				</File>

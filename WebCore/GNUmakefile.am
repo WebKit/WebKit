@@ -1642,6 +1642,8 @@ webcore_sources += \
 	WebCore/html/parser/HTMLFormattingElementList.cpp \
 	WebCore/html/parser/HTMLFormattingElementList.h \
 	WebCore/html/parser/HTMLInputStream.h \
+	WebCore/html/parser/HTMLParserIdioms.cpp \
+	WebCore/html/parser/HTMLParserIdioms.h \
 	WebCore/html/parser/HTMLParserScheduler.cpp \
 	WebCore/html/parser/HTMLParserScheduler.h \
 	WebCore/html/parser/HTMLPreloadScanner.cpp \

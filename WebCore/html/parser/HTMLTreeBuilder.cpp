@@ -26,16 +26,17 @@
 #include "config.h"
 #include "HTMLTreeBuilder.h"
 
+#include "CharacterNames.h"
 #include "Comment.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
-#include "Element.h"
 #include "Frame.h"
 #include "HTMLDocument.h"
 #include "HTMLElementFactory.h"
 #include "HTMLFormElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "HTMLScriptElement.h"
 #include "HTMLToken.h"
 #include "HTMLTokenizer.h"
@@ -44,15 +45,10 @@
 #include "NotImplemented.h"
 #include "SVGNames.h"
 #include "ScriptController.h"
-#include "Settings.h"
 #include "Text.h"
 #include "XLinkNames.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
-// FIXME: Remove this include once we find a home for the free functions that
-// are using it.
-#include <wtf/dtoa.h>
-#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 
@@ -62,42 +58,19 @@ static const int uninitializedLineNumberValue = -1;
 
 namespace {
 
-inline bool isTreeBuilderWhitepace(UChar c)
+inline bool isHTMLSpaceOrReplacementCharacter(UChar character)
 {
-    // FIXME: Consider branch permutations.
-    return c == '\t' || c == '\x0A' || c == '\x0C' || c == '\x0D' || c == ' ';
-}
-
-inline bool isNotTreeBuilderWhitepace(UChar c)
-{
-    return !isTreeBuilderWhitepace(c);
-}
-
-inline bool isTreeBuilderWhitepaceOrReplacementCharacter(UChar c)
-{
-    return isTreeBuilderWhitepace(c) || c == 0xFFFD;
-}
-
-template<bool isSpecialCharacter(UChar c)>
-inline bool isAllSpecialCharacters(const String& string)
-{
-    const UChar* characters = string.characters();
-    const unsigned length = string.length();
-    for (unsigned i = 0; i < length; ++i) {
-        if (!isSpecialCharacter(characters[i]))
-            return false;
-    }
-    return true;
+    return isHTMLSpace(character) || character == replacementCharacter;
 }
 
 inline bool isAllWhitespace(const String& string)
 {
-    return isAllSpecialCharacters<isTreeBuilderWhitepace>(string);
+    return string.isAllSpecialCharacters<isHTMLSpace>();
 }
 
 inline bool isAllWhitespaceOrReplacementCharacters(const String& string)
 {
-    return isAllSpecialCharacters<isTreeBuilderWhitepaceOrReplacementCharacter>(string);
+    return string.isAllSpecialCharacters<isHTMLSpaceOrReplacementCharacter>();
 }
 
 bool isNumberedHeaderTag(const AtomicString& tagName)
@@ -279,17 +252,17 @@ public:
 
     void skipLeadingWhitespace()
     {
-        skipLeading<isTreeBuilderWhitepace>();
+        skipLeading<isHTMLSpace>();
     }
 
     String takeLeadingWhitespace()
     {
-        return takeLeading<isTreeBuilderWhitepace>();
+        return takeLeading<isHTMLSpace>();
     }
 
     String takeLeadingNonWhitespace()
     {
-        return takeLeading<isNotTreeBuilderWhitepace>();
+        return takeLeading<isNotHTMLSpace>();
     }
 
     String takeRemaining()
@@ -312,7 +285,7 @@ public:
         Vector<UChar> whitespace;
         do {
             UChar cc = *m_current++;
-            if (isTreeBuilderWhitepace(cc))
+            if (isHTMLSpace(cc))
                 whitespace.append(cc);
         } while (m_current < m_end);
         // Returning the null string when there aren't any whitespace
@@ -2815,43 +2788,6 @@ bool HTMLTreeBuilder::pluginsEnabled(Frame* frame)
     if (!frame)
         return false;
     return frame->loader()->subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin);
-}
-
-// FIXME: Move this function to a more appropriate place.
-String serializeForNumberType(double number)
-{
-    // According to HTML5, "the best representation of the number n as a floating
-    // point number" is a string produced by applying ToString() to n.
-    NumberToStringBuffer buffer;
-    unsigned length = numberToString(number, buffer);
-    return String(buffer, length);
-}
-
-// FIXME: Move this function to a more appropriate place.
-bool parseToDoubleForNumberType(const String& src, double* out)
-{
-    // See HTML5 2.4.4.3 `Real numbers.'
-
-    if (src.isEmpty())
-        return false;
-    // String::toDouble() accepts leading + \t \n \v \f \r and SPACE, which are invalid in HTML5.
-    // So, check the first character.
-    if (src[0] != '-' && (src[0] < '0' || src[0] > '9'))
-        return false;
-
-    bool valid = false;
-    double value = src.toDouble(&valid);
-    if (!valid)
-        return false;
-    // NaN and Infinity are not valid numbers according to the standard.
-    if (!isfinite(value))
-        return false;
-    // -0 -> 0
-    if (!value)
-        value = 0;
-    if (out)
-        *out = value;
-    return true;
 }
 
 }

@@ -1047,6 +1047,7 @@ SET(WebCore_SOURCES
     html/parser/HTMLElementStack.cpp
     html/parser/HTMLEntityParser.cpp
     html/parser/HTMLEntitySearch.cpp
+    html/parser/HTMLParserIdioms.cpp
     html/parser/HTMLParserScheduler.cpp
     html/parser/HTMLFormattingElementList.cpp
     html/parser/HTMLPreloadScanner.cpp
