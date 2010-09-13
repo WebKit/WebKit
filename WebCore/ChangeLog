@@ -1,3 +1,15 @@
+2010-09-13  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] When a feature is disabled by default, the source necessary to build it are not included in the distribution
+        https://bugs.webkit.org/show_bug.cgi?id=45230
+
+        No new tests as this is just a build change.
+
+        * GNUmakefile.am: Move as many sources as possible to the SOURCES primary.
+        Others should be moved over time as we solve issues with them.
+
 2010-09-13  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
