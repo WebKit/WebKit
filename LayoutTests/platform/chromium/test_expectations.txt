@@ -3141,10 +3141,7 @@ BUGDPRANKE LINUX : svg/batik/text/textPosition.svg = TEXT
 BUGDPRANKE LINUX : svg/batik/text/textPosition2.svg = TEXT
 
 // Regressions from r67349?
-BUGDPRANKE : http/tests/navigation/postredirect-basic.html = TEXT
-BUGDPRANKE : http/tests/navigation/postredirect-goback1.html = TEXT
-BUGDPRANKE WIN MAC : http/tests/navigation/postredirect-frames.html = IMAGE+TEXT
-BUGDPRANKE LINUX : http/tests/navigation/postredirect-frames.html = IMAGE
+BUGDPRANKE LINUX MAC : http/tests/navigation/postredirect-frames.html = IMAGE
 
 // Regressions from webkit roll r67178:t67358
 BUGDPRANKE WIN : dom/html/level2/events/DocumentEventCast01.html = TEXT PASS
