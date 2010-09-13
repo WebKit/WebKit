@@ -1,3 +1,12 @@
+2010-09-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        jscPath() is incorrect in Windows' cmd.exe shell
+        https://bugs.webkit.org/show_bug.cgi?id=45651
+
+        * Scripts/webkitdirs.pm: Add ".exe" suffix to $jscName on Windows.
+
 2010-09-13  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
