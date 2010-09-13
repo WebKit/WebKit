@@ -190,34 +190,6 @@ private:
     const bool m_shouldResolveURLs;
 };
 
-class StyledMarkupAccumulator : public MarkupAccumulator {
-public:
-    enum RangeFullySelectsNode { DoesFullySelectNode, DoesNotFullySelectNode };
-
-    StyledMarkupAccumulator(Vector<Node*>* nodes, EAbsoluteURLs shouldResolveURLs, EAnnotateForInterchange shouldAnnotate, const Range* range)
-        : MarkupAccumulator(nodes, shouldResolveURLs, range)
-        , m_shouldAnnotate(shouldAnnotate)
-    {
-    }
-    void wrapWithNode(Node*, bool convertBlocksToInlines = false, RangeFullySelectsNode = DoesFullySelectNode);
-    void wrapWithStyleNode(CSSStyleDeclaration*, Document*, bool isBlock = false);
-    String takeResults();
-
-protected:
-    virtual void appendText(Vector<UChar>& out, Text*);
-    String renderedText(const Node*, const Range*);
-    String stringValueForRange(const Node*, const Range*);
-    void removeExteriorStyles(CSSMutableStyleDeclaration*);
-    void appendElement(Vector<UChar>& out, Element* element, bool addDisplayInline, RangeFullySelectsNode);
-    void appendElement(Vector<UChar>& out, Element* element, Namespaces*) { appendElement(out, element, false, DoesFullySelectNode); }
-
-    bool shouldAnnotate() { return m_shouldAnnotate == AnnotateForInterchange; }
-
-private:
-    Vector<String> m_reversedPrecedingMarkup;
-    const EAnnotateForInterchange m_shouldAnnotate;
-};
-
 void MarkupAccumulator::appendString(const String& string)
 {
     m_succeedingMarkup.append(string);
@@ -239,37 +211,6 @@ void MarkupAccumulator::appendEndTag(Node* node)
     m_succeedingMarkup.append(String::adopt(markup));
 }
 
-void StyledMarkupAccumulator::wrapWithNode(Node* node, bool convertBlocksToInlines, RangeFullySelectsNode rangeFullySelectsNode)
-{
-    Vector<UChar> markup;
-    if (node->isElementNode())
-        appendElement(markup, static_cast<Element*>(node), convertBlocksToInlines && isBlock(const_cast<Node*>(node)), rangeFullySelectsNode);
-    else
-        appendStartMarkup(markup, node, 0);
-    m_reversedPrecedingMarkup.append(String::adopt(markup));
-    appendEndTag(node);
-    if (m_nodes)
-        m_nodes->append(node);
-}
-
-void StyledMarkupAccumulator::wrapWithStyleNode(CSSStyleDeclaration* style, Document* document, bool isBlock)
-{
-    // All text-decoration-related elements should have been treated as special ancestors
-    // If we ever hit this ASSERT, we should export StyleChange in ApplyStyleCommand and use it here
-    ASSERT(propertyMissingOrEqualToNone(style, CSSPropertyTextDecoration) && propertyMissingOrEqualToNone(style, CSSPropertyWebkitTextDecorationsInEffect));
-    DEFINE_STATIC_LOCAL(const String, divStyle, ("<div style=\""));
-    DEFINE_STATIC_LOCAL(const String, divClose, ("</div>"));
-    DEFINE_STATIC_LOCAL(const String, styleSpanOpen, ("<span class=\"" AppleStyleSpanClass "\" style=\""));
-    DEFINE_STATIC_LOCAL(const String, styleSpanClose, ("</span>"));
-    Vector<UChar> openTag;
-    append(openTag, isBlock ? divStyle : styleSpanOpen);
-    appendAttributeValue(openTag, style->cssText(), document->isHTMLDocument());
-    openTag.append('\"');
-    openTag.append('>');
-    m_reversedPrecedingMarkup.append(String::adopt(openTag));
-    m_succeedingMarkup.append(isBlock ? divClose : styleSpanClose);
-}
-
 // FIXME: This is a very inefficient way of accumulating the markup.
 // We're converting results of appendStartMarkup and appendEndMarkup from Vector<UChar> to String
 // and then back to Vector<UChar> and again to String here.
@@ -283,30 +224,6 @@ String MarkupAccumulator::takeResults()
 
     Vector<UChar> result;
     result.reserveInitialCapacity(length);
-
-    for (size_t i = 0; i < postCount; ++i)
-        append(result, m_succeedingMarkup[i]);
-
-    return String::adopt(result);
-}
-
-String StyledMarkupAccumulator::takeResults()
-{
-    size_t length = 0;
-
-    size_t preCount = m_reversedPrecedingMarkup.size();
-    for (size_t i = 0; i < preCount; ++i)
-        length += m_reversedPrecedingMarkup[i].length();
-
-    size_t postCount = m_succeedingMarkup.size();
-    for (size_t i = 0; i < postCount; ++i)
-        length += m_succeedingMarkup[i].length();
-
-    Vector<UChar> result;
-    result.reserveInitialCapacity(length);
-
-    for (size_t i = preCount; i > 0; --i)
-        append(result, m_reversedPrecedingMarkup[i - 1]);
 
     for (size_t i = 0; i < postCount; ++i)
         append(result, m_succeedingMarkup[i]);
@@ -344,20 +261,6 @@ void MarkupAccumulator::appendQuotedURLAttributeValue(Vector<UChar>& result, con
     result.append(quoteChar);
 }
 
-String StyledMarkupAccumulator::stringValueForRange(const Node* node, const Range* range)
-{
-    if (!range)
-        return node->nodeValue();
-
-    String str = node->nodeValue();
-    ExceptionCode ec;
-    if (node == range->endContainer(ec))
-        str.truncate(range->endOffset(ec));
-    if (node == range->startContainer(ec))
-        str.remove(0, range->startOffset(ec));
-    return str;
-}
-
 void MarkupAccumulator::appendNodeValue(Vector<UChar>& out, const Node* node, const Range* range, EntityMask entityMask)
 {
     String str = node->nodeValue();
@@ -376,59 +279,6 @@ void MarkupAccumulator::appendNodeValue(Vector<UChar>& out, const Node* node, co
     }
 
     appendCharactersReplacingEntities(out, characters, length, entityMask);
-}
-
-String StyledMarkupAccumulator::renderedText(const Node* node, const Range* range)
-{
-    if (!node->isTextNode())
-        return String();
-
-    ExceptionCode ec;
-    const Text* textNode = static_cast<const Text*>(node);
-    unsigned startOffset = 0;
-    unsigned endOffset = textNode->length();
-
-    if (range && node == range->startContainer(ec))
-        startOffset = range->startOffset(ec);
-    if (range && node == range->endContainer(ec))
-        endOffset = range->endOffset(ec);
-
-    Position start(const_cast<Node*>(node), startOffset);
-    Position end(const_cast<Node*>(node), endOffset);
-    return plainText(Range::create(node->document(), start, end).get());
-}
-
-static PassRefPtr<CSSMutableStyleDeclaration> styleFromMatchedRulesForElement(Element* element, bool authorOnly = true)
-{
-    RefPtr<CSSMutableStyleDeclaration> style = CSSMutableStyleDeclaration::create();
-    RefPtr<CSSRuleList> matchedRules = element->document()->styleSelector()->styleRulesForElement(element, authorOnly);
-    if (matchedRules) {
-        for (unsigned i = 0; i < matchedRules->length(); i++) {
-            if (matchedRules->item(i)->type() == CSSRule::STYLE_RULE) {
-                RefPtr<CSSMutableStyleDeclaration> s = static_cast<CSSStyleRule*>(matchedRules->item(i))->style();
-                style->merge(s.get(), true);
-            }
-        }
-    }
-    
-    return style.release();
-}
-
-static void removeEnclosingMailBlockquoteStyle(CSSMutableStyleDeclaration* style, Node* node)
-{
-    Node* blockquote = nearestMailBlockquote(node);
-    if (!blockquote || !blockquote->parentNode())
-        return;
-
-    removeStylesAddedByNode(style, blockquote);
-}
-
-static void removeDefaultStyles(CSSMutableStyleDeclaration* style, Document* document)
-{
-    if (!document || !document->documentElement())
-        return;
-
-    prepareEditingStyleToApplyAt(style, Position(document->documentElement(), 0));
 }
 
 bool MarkupAccumulator::shouldAddNamespaceElement(const Element* element)
@@ -500,20 +350,6 @@ void MarkupAccumulator::appendText(Vector<UChar>& out, Text* text)
     appendNodeValue(out, text, m_range, entityMaskForText(text));
 }
 
-void StyledMarkupAccumulator::appendText(Vector<UChar>& out, Text* text)
-{
-    if (!shouldAnnotate() || (text->parentElement() && text->parentElement()->tagQName() == textareaTag)) {
-        MarkupAccumulator::appendText(out, text);
-        return;
-    }
-
-    bool useRenderedText = !enclosingNodeWithTag(Position(text, 0), selectTag);
-    String content = useRenderedText ? renderedText(text, m_range) : stringValueForRange(text, m_range);
-    Vector<UChar> buffer;
-    appendCharactersReplacingEntities(buffer, content.characters(), content.length(), EntityMaskInPCDATA);
-    append(out, convertHTMLTextToInterchangeFormat(String::adopt(buffer), text));
-}
-
 void MarkupAccumulator::appendComment(Vector<UChar>& out, const String& comment)
 {
     // FIXME: Comment content is not escaped, but XMLSerializer (and possibly other callers) should raise an exception if it includes "-->".
@@ -561,11 +397,6 @@ void MarkupAccumulator::appendProcessingInstruction(Vector<UChar>& out, const St
     append(out, "?>");
 }
 
-void StyledMarkupAccumulator::removeExteriorStyles(CSSMutableStyleDeclaration* style)
-{
-    style->removeProperty(CSSPropertyFloat);
-}
-
 void MarkupAccumulator::appendElement(Vector<UChar>& out, Element* element, Namespaces* namespaces)
 {
     appendOpenTag(out, element, namespaces);
@@ -578,66 +409,6 @@ void MarkupAccumulator::appendElement(Vector<UChar>& out, Element* element, Name
     appendCloseTag(out, element);
 }
 
-void StyledMarkupAccumulator::appendElement(Vector<UChar>& out, Element* element, bool addDisplayInline, RangeFullySelectsNode rangeFullySelectsNode)
-{
-    bool documentIsHTML = element->document()->isHTMLDocument();
-    appendOpenTag(out, element, 0);
-
-    NamedNodeMap* attributes = element->attributes();
-    unsigned length = attributes->length();
-    for (unsigned int i = 0; i < length; i++) {
-        Attribute* attribute = attributes->attributeItem(i);
-        // We'll handle the style attribute separately, below.
-        if (attribute->name() == styleAttr && element->isHTMLElement() && (shouldAnnotate() || addDisplayInline))
-            continue;
-        appendAttribute(out, element, *attribute, 0);
-    }
-
-    if (element->isHTMLElement() && (shouldAnnotate() || addDisplayInline)) {
-        RefPtr<CSSMutableStyleDeclaration> style = static_cast<HTMLElement*>(element)->getInlineStyleDecl()->copy();
-        if (shouldAnnotate()) {
-            RefPtr<CSSMutableStyleDeclaration> styleFromMatchedRules = styleFromMatchedRulesForElement(const_cast<Element*>(element));
-            // Styles from the inline style declaration, held in the variable "style", take precedence 
-            // over those from matched rules.
-            styleFromMatchedRules->merge(style.get());
-            style = styleFromMatchedRules;
-
-            RefPtr<CSSComputedStyleDeclaration> computedStyleForElement = computedStyle(element);
-            RefPtr<CSSMutableStyleDeclaration> fromComputedStyle = CSSMutableStyleDeclaration::create();
-
-            {
-                CSSMutableStyleDeclaration::const_iterator end = style->end();
-                for (CSSMutableStyleDeclaration::const_iterator it = style->begin(); it != end; ++it) {
-                    const CSSProperty& property = *it;
-                    CSSValue* value = property.value();
-                    // The property value, if it's a percentage, may not reflect the actual computed value.  
-                    // For example: style="height: 1%; overflow: visible;" in quirksmode
-                    // FIXME: There are others like this, see <rdar://problem/5195123> Slashdot copy/paste fidelity problem
-                    if (value->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE)
-                        if (static_cast<CSSPrimitiveValue*>(value)->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
-                            if (RefPtr<CSSValue> computedPropertyValue = computedStyleForElement->getPropertyCSSValue(property.id()))
-                                fromComputedStyle->addParsedProperty(CSSProperty(property.id(), computedPropertyValue));
-                }
-            }
-            style->merge(fromComputedStyle.get());
-        }
-        if (addDisplayInline)
-            style->setProperty(CSSPropertyDisplay, CSSValueInline, true);
-        // If the node is not fully selected by the range, then we don't want to keep styles that affect its relationship to the nodes around it
-        // only the ones that affect it and the nodes within it.
-        if (rangeFullySelectsNode == DoesNotFullySelectNode)
-            removeExteriorStyles(style.get());
-        if (style->length() > 0) {
-            DEFINE_STATIC_LOCAL(const String, stylePrefix, (" style=\""));
-            append(out, stylePrefix);
-            appendAttributeValue(out, style->cssText(), documentIsHTML);
-            out.append('\"');
-        }
-    }
-
-    appendCloseTag(out, element);
-}
-    
 void MarkupAccumulator::appendOpenTag(Vector<UChar>& out, Element* element, Namespaces* namespaces)
 {
     out.append('<');
@@ -794,28 +565,217 @@ static void completeURLs(Node* node, const String& baseURL)
     for (size_t i = 0; i < numChanges; ++i)
         changes[i].apply();
 }
+    
+class StyledMarkupAccumulator : public MarkupAccumulator {
+public:
+    enum RangeFullySelectsNode { DoesFullySelectNode, DoesNotFullySelectNode };
 
-static bool needInterchangeNewlineAfter(const VisiblePosition& v)
+    StyledMarkupAccumulator(Vector<Node*>* nodes, EAbsoluteURLs shouldResolveURLs, EAnnotateForInterchange shouldAnnotate, const Range* range)
+    : MarkupAccumulator(nodes, shouldResolveURLs, range)
+    , m_shouldAnnotate(shouldAnnotate)
+    {
+    }
+    void wrapWithNode(Node*, bool convertBlocksToInlines = false, RangeFullySelectsNode = DoesFullySelectNode);
+    void wrapWithStyleNode(CSSStyleDeclaration*, Document*, bool isBlock = false);
+    String takeResults();
+
+protected:
+    virtual void appendText(Vector<UChar>& out, Text*);
+    String renderedText(const Node*, const Range*);
+    String stringValueForRange(const Node*, const Range*);
+    void removeExteriorStyles(CSSMutableStyleDeclaration*);
+    void appendElement(Vector<UChar>& out, Element* element, bool addDisplayInline, RangeFullySelectsNode);
+    void appendElement(Vector<UChar>& out, Element* element, Namespaces*) { appendElement(out, element, false, DoesFullySelectNode); }
+
+    bool shouldAnnotate() { return m_shouldAnnotate == AnnotateForInterchange; }
+
+private:
+    Vector<String> m_reversedPrecedingMarkup;
+    const EAnnotateForInterchange m_shouldAnnotate;
+};
+
+void StyledMarkupAccumulator::wrapWithNode(Node* node, bool convertBlocksToInlines, RangeFullySelectsNode rangeFullySelectsNode)
 {
-    VisiblePosition next = v.next();
-    Node* upstreamNode = next.deepEquivalent().upstream().node();
-    Node* downstreamNode = v.deepEquivalent().downstream().node();
-    // Add an interchange newline if a paragraph break is selected and a br won't already be added to the markup to represent it.
-    return isEndOfParagraph(v) && isStartOfParagraph(next) && !(upstreamNode->hasTagName(brTag) && upstreamNode == downstreamNode);
+    Vector<UChar> markup;
+    if (node->isElementNode())
+        appendElement(markup, static_cast<Element*>(node), convertBlocksToInlines && isBlock(const_cast<Node*>(node)), rangeFullySelectsNode);
+    else
+        appendStartMarkup(markup, node, 0);
+    m_reversedPrecedingMarkup.append(String::adopt(markup));
+    appendEndTag(node);
+    if (m_nodes)
+        m_nodes->append(node);
 }
 
-static PassRefPtr<CSSMutableStyleDeclaration> styleFromMatchedRulesAndInlineDecl(const Node* node)
+void StyledMarkupAccumulator::wrapWithStyleNode(CSSStyleDeclaration* style, Document* document, bool isBlock)
 {
-    if (!node->isHTMLElement())
-        return 0;
+    // All text-decoration-related elements should have been treated as special ancestors
+    // If we ever hit this ASSERT, we should export StyleChange in ApplyStyleCommand and use it here
+    ASSERT(propertyMissingOrEqualToNone(style, CSSPropertyTextDecoration) && propertyMissingOrEqualToNone(style, CSSPropertyWebkitTextDecorationsInEffect));
+    DEFINE_STATIC_LOCAL(const String, divStyle, ("<div style=\""));
+    DEFINE_STATIC_LOCAL(const String, divClose, ("</div>"));
+    DEFINE_STATIC_LOCAL(const String, styleSpanOpen, ("<span class=\"" AppleStyleSpanClass "\" style=\""));
+    DEFINE_STATIC_LOCAL(const String, styleSpanClose, ("</span>"));
+    Vector<UChar> openTag;
+    append(openTag, isBlock ? divStyle : styleSpanOpen);
+    appendAttributeValue(openTag, style->cssText(), document->isHTMLDocument());
+    openTag.append('\"');
+    openTag.append('>');
+    m_reversedPrecedingMarkup.append(String::adopt(openTag));
+    m_succeedingMarkup.append(isBlock ? divClose : styleSpanClose);
+}
+
+String StyledMarkupAccumulator::takeResults()
+{
+    size_t length = 0;
+
+    size_t preCount = m_reversedPrecedingMarkup.size();
+    for (size_t i = 0; i < preCount; ++i)
+        length += m_reversedPrecedingMarkup[i].length();
+
+    size_t postCount = m_succeedingMarkup.size();
+    for (size_t i = 0; i < postCount; ++i)
+        length += m_succeedingMarkup[i].length();
+
+    Vector<UChar> result;
+    result.reserveInitialCapacity(length);
+
+    for (size_t i = preCount; i > 0; --i)
+        append(result, m_reversedPrecedingMarkup[i - 1]);
+
+    for (size_t i = 0; i < postCount; ++i)
+        append(result, m_succeedingMarkup[i]);
+
+    return String::adopt(result);
+}
+
+void StyledMarkupAccumulator::appendText(Vector<UChar>& out, Text* text)
+{
+    if (!shouldAnnotate() || (text->parentElement() && text->parentElement()->tagQName() == textareaTag)) {
+        MarkupAccumulator::appendText(out, text);
+        return;
+    }
+
+    bool useRenderedText = !enclosingNodeWithTag(Position(text, 0), selectTag);
+    String content = useRenderedText ? renderedText(text, m_range) : stringValueForRange(text, m_range);
+    Vector<UChar> buffer;
+    appendCharactersReplacingEntities(buffer, content.characters(), content.length(), EntityMaskInPCDATA);
+    append(out, convertHTMLTextToInterchangeFormat(String::adopt(buffer), text));
+}
     
-    // FIXME: Having to const_cast here is ugly, but it is quite a bit of work to untangle
-    // the non-const-ness of styleFromMatchedRulesForElement.
-    HTMLElement* element = const_cast<HTMLElement*>(static_cast<const HTMLElement*>(node));
-    RefPtr<CSSMutableStyleDeclaration> style = styleFromMatchedRulesForElement(element);
-    RefPtr<CSSMutableStyleDeclaration> inlineStyleDecl = element->getInlineStyleDecl();
-    style->merge(inlineStyleDecl.get());
+String StyledMarkupAccumulator::renderedText(const Node* node, const Range* range)
+{
+    if (!node->isTextNode())
+        return String();
+
+    ExceptionCode ec;
+    const Text* textNode = static_cast<const Text*>(node);
+    unsigned startOffset = 0;
+    unsigned endOffset = textNode->length();
+
+    if (range && node == range->startContainer(ec))
+        startOffset = range->startOffset(ec);
+    if (range && node == range->endContainer(ec))
+        endOffset = range->endOffset(ec);
+
+    Position start(const_cast<Node*>(node), startOffset);
+    Position end(const_cast<Node*>(node), endOffset);
+    return plainText(Range::create(node->document(), start, end).get());
+}
+
+String StyledMarkupAccumulator::stringValueForRange(const Node* node, const Range* range)
+{
+    if (!range)
+        return node->nodeValue();
+
+    String str = node->nodeValue();
+    ExceptionCode ec;
+    if (node == range->endContainer(ec))
+        str.truncate(range->endOffset(ec));
+    if (node == range->startContainer(ec))
+        str.remove(0, range->startOffset(ec));
+    return str;
+}
+
+static PassRefPtr<CSSMutableStyleDeclaration> styleFromMatchedRulesForElement(Element* element, bool authorOnly = true)
+{
+    RefPtr<CSSMutableStyleDeclaration> style = CSSMutableStyleDeclaration::create();
+    RefPtr<CSSRuleList> matchedRules = element->document()->styleSelector()->styleRulesForElement(element, authorOnly);
+    if (matchedRules) {
+        for (unsigned i = 0; i < matchedRules->length(); i++) {
+            if (matchedRules->item(i)->type() == CSSRule::STYLE_RULE) {
+                RefPtr<CSSMutableStyleDeclaration> s = static_cast<CSSStyleRule*>(matchedRules->item(i))->style();
+                style->merge(s.get(), true);
+            }
+        }
+    }
+
     return style.release();
+}
+
+void StyledMarkupAccumulator::appendElement(Vector<UChar>& out, Element* element, bool addDisplayInline, RangeFullySelectsNode rangeFullySelectsNode)
+{
+    bool documentIsHTML = element->document()->isHTMLDocument();
+    appendOpenTag(out, element, 0);
+
+    NamedNodeMap* attributes = element->attributes();
+    unsigned length = attributes->length();
+    for (unsigned int i = 0; i < length; i++) {
+        Attribute* attribute = attributes->attributeItem(i);
+        // We'll handle the style attribute separately, below.
+        if (attribute->name() == styleAttr && element->isHTMLElement() && (shouldAnnotate() || addDisplayInline))
+            continue;
+        appendAttribute(out, element, *attribute, 0);
+    }
+
+    if (element->isHTMLElement() && (shouldAnnotate() || addDisplayInline)) {
+        RefPtr<CSSMutableStyleDeclaration> style = static_cast<HTMLElement*>(element)->getInlineStyleDecl()->copy();
+        if (shouldAnnotate()) {
+            RefPtr<CSSMutableStyleDeclaration> styleFromMatchedRules = styleFromMatchedRulesForElement(const_cast<Element*>(element));
+            // Styles from the inline style declaration, held in the variable "style", take precedence 
+            // over those from matched rules.
+            styleFromMatchedRules->merge(style.get());
+            style = styleFromMatchedRules;
+
+            RefPtr<CSSComputedStyleDeclaration> computedStyleForElement = computedStyle(element);
+            RefPtr<CSSMutableStyleDeclaration> fromComputedStyle = CSSMutableStyleDeclaration::create();
+
+            {
+                CSSMutableStyleDeclaration::const_iterator end = style->end();
+                for (CSSMutableStyleDeclaration::const_iterator it = style->begin(); it != end; ++it) {
+                    const CSSProperty& property = *it;
+                    CSSValue* value = property.value();
+                    // The property value, if it's a percentage, may not reflect the actual computed value.  
+                    // For example: style="height: 1%; overflow: visible;" in quirksmode
+                    // FIXME: There are others like this, see <rdar://problem/5195123> Slashdot copy/paste fidelity problem
+                    if (value->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE)
+                        if (static_cast<CSSPrimitiveValue*>(value)->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+                            if (RefPtr<CSSValue> computedPropertyValue = computedStyleForElement->getPropertyCSSValue(property.id()))
+                                fromComputedStyle->addParsedProperty(CSSProperty(property.id(), computedPropertyValue));
+                }
+            }
+            style->merge(fromComputedStyle.get());
+        }
+        if (addDisplayInline)
+            style->setProperty(CSSPropertyDisplay, CSSValueInline, true);
+        // If the node is not fully selected by the range, then we don't want to keep styles that affect its relationship to the nodes around it
+        // only the ones that affect it and the nodes within it.
+        if (rangeFullySelectsNode == DoesNotFullySelectNode)
+            removeExteriorStyles(style.get());
+        if (style->length() > 0) {
+            DEFINE_STATIC_LOCAL(const String, stylePrefix, (" style=\""));
+            append(out, stylePrefix);
+            appendAttributeValue(out, style->cssText(), documentIsHTML);
+            out.append('\"');
+        }
+    }
+
+    appendCloseTag(out, element);
+}
+
+void StyledMarkupAccumulator::removeExteriorStyles(CSSMutableStyleDeclaration* style)
+{
+    style->removeProperty(CSSPropertyFloat);
 }
 
 static Node* serializeNodes(StyledMarkupAccumulator& accumulator, Node* startNode, Node* pastEnd)
@@ -935,6 +895,29 @@ static bool propertyMissingOrEqualToNone(CSSStyleDeclaration* style, int propert
     return static_cast<CSSPrimitiveValue*>(value.get())->getIdent() == CSSValueNone;
 }
 
+static bool needInterchangeNewlineAfter(const VisiblePosition& v)
+{
+    VisiblePosition next = v.next();
+    Node* upstreamNode = next.deepEquivalent().upstream().node();
+    Node* downstreamNode = v.deepEquivalent().downstream().node();
+    // Add an interchange newline if a paragraph break is selected and a br won't already be added to the markup to represent it.
+    return isEndOfParagraph(v) && isStartOfParagraph(next) && !(upstreamNode->hasTagName(brTag) && upstreamNode == downstreamNode);
+}
+
+static PassRefPtr<CSSMutableStyleDeclaration> styleFromMatchedRulesAndInlineDecl(const Node* node)
+{
+    if (!node->isHTMLElement())
+        return 0;
+
+    // FIXME: Having to const_cast here is ugly, but it is quite a bit of work to untangle
+    // the non-const-ness of styleFromMatchedRulesForElement.
+    HTMLElement* element = const_cast<HTMLElement*>(static_cast<const HTMLElement*>(node));
+    RefPtr<CSSMutableStyleDeclaration> style = styleFromMatchedRulesForElement(element);
+    RefPtr<CSSMutableStyleDeclaration> inlineStyleDecl = element->getInlineStyleDecl();
+    style->merge(inlineStyleDecl.get());
+    return style.release();
+}
+
 static bool isElementPresentational(const Node* node)
 {
     if (node->hasTagName(uTag) || node->hasTagName(sTag) || node->hasTagName(strikeTag)
@@ -997,6 +980,23 @@ static Node* highestAncestorToWrapMarkup(const Range* range, Node* fullySelected
             specialCommonAncestor = fullySelectedRoot;
     }
     return specialCommonAncestor;
+}
+
+static void removeEnclosingMailBlockquoteStyle(CSSMutableStyleDeclaration* style, Node* node)
+{
+    Node* blockquote = nearestMailBlockquote(node);
+    if (!blockquote || !blockquote->parentNode())
+        return;
+
+    removeStylesAddedByNode(style, blockquote);
+}
+
+static void removeDefaultStyles(CSSMutableStyleDeclaration* style, Document* document)
+{
+    if (!document || !document->documentElement())
+        return;
+
+    prepareEditingStyleToApplyAt(style, Position(document->documentElement(), 0));
 }
 
 // FIXME: Shouldn't we omit style info when annotate == DoNotAnnotateForInterchange? 
