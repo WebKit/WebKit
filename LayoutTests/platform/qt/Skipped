@@ -215,9 +215,6 @@ http/tests/navigation/javascriptlink-goback.html
 http/tests/navigation/metaredirect-goback.html
 http/tests/navigation/timerredirect-goback.html
 
-#unknown
-http/tests/navigation/reload-subframe-object.html
-
 # new content not loaded from popup window
 http/tests/navigation/target-frame-from-window.html
 

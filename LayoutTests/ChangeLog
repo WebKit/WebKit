@@ -1,3 +1,15 @@
+2010-09-12  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Fix http/tests/navigation/reload-subframe-object.html
+
+        Unskip http/tests/navigation/reload-subframe-object.html
+
+        https://bugs.webkit.org/show_bug.cgi?id=45613
+
+        * platform/qt/Skipped:
+
 2010-09-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by James Robinson.

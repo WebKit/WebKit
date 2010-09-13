@@ -304,12 +304,7 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
 
     if (mimeType.isEmpty()) {
         // let's try to guess from the extension
-        QString extension = m_reply->url().path();
-        int index = extension.lastIndexOf(QLatin1Char('.'));
-        if (index > 0) {
-            extension = extension.mid(index + 1);
-            mimeType = MIMETypeRegistry::getMIMETypeForExtension(extension);
-        }
+        mimeType = MIMETypeRegistry::getMIMETypeForPath(m_reply->url().path());
     }
 
     KURL url(m_reply->url());

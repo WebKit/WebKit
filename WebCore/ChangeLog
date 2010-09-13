@@ -1,3 +1,28 @@
+2010-09-12  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Fix http/tests/navigation/reload-subframe-object.html
+
+        We need to bring our use of getMimeTypeForPath() and
+        getMimeTypeForExtension() into line with WebCore expectations.
+
+        We should use MIMETypeRegistry::getMIMETypeForExtension() for cases
+        where an empty mimetype should be returned if no match is found, and
+        MIMETypeRegistry::getMIMETypeForPath() for cases where
+        'application/octet-stream' should be returned if no match is found.
+
+        Fixes http/tests/navigation/reload-subframe-object.html
+
+        Based on findings in webkit.org/b/31398 and webkit.org/b/15554.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45613
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::sendResponseIfNeeded):
+        * platform/qt/MIMETypeRegistryQt.cpp:
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+
 2010-09-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adele Peterson.
