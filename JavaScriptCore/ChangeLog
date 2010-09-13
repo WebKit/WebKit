@@ -1,3 +1,16 @@
+2010-09-13  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Kent Tamura.
+
+        [BREWMP] Don't call _msize
+        https://bugs.webkit.org/show_bug.cgi?id=45556
+
+        Because Brew MP uses its own memory allocator, it is not correct to use
+        _msize in fastMallocSize. Add !PLATFORM(BREWMP) guard.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::fastMallocSize):
+
 2010-09-11  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Andreas Kling.

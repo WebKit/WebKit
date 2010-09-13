@@ -384,7 +384,8 @@ size_t fastMallocSize(const void* p)
 {
 #if OS(DARWIN)
     return malloc_size(p);
-#elif COMPILER(MSVC)
+#elif COMPILER(MSVC) && !PLATFORM(BREWMP)
+    // Brew MP uses its own memory allocator, so _msize does not work on the Brew MP simulator.
     return _msize(const_cast<void*>(p));
 #else
     return 1;
