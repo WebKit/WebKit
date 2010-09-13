@@ -1,3 +1,23 @@
+2010-09-12  Robin Qiu  <robin.qiu@torchmobile.com.cn>
+
+        Reviewed by Antonio Gomes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18768
+        Fixed a bug in scroll flow. When we don't have scrollbars, we need to
+        repaintFixedElementsAfterScrolling(), sendScrollEvent() ... as well as
+        scrollContents();
+
+        Tests: scrollbars/scrollevent-iframe-no-scrolling-wheel.html
+               scrollbars/scrollevent-iframe-no-scrolling.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::valueChanged): Added.
+        * page/FrameView.h: Added a new method.
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::valueChanged): Added.
+        (WebCore::ScrollView::updateScrollbars):
+        * platform/ScrollView.h: Added a new method.
+
 2010-09-10  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Tony Chang.

@@ -62,6 +62,7 @@ public:
     virtual int scrollSize(ScrollbarOrientation orientation) const;
     virtual void setScrollOffsetFromAnimation(const IntPoint&);
     virtual void valueChanged(Scrollbar*);
+    virtual void valueChanged(const IntSize&);
     
     // The window thats hosts the ScrollView. The ScrollView will communicate scrolls and repaints to the
     // host window in the window's coordinate space.

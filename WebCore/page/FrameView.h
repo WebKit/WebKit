@@ -269,6 +269,7 @@ private:
 
     // ScrollBarClient interface
     virtual void valueChanged(Scrollbar*);
+    virtual void valueChanged(const IntSize&);
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);
     virtual bool isActive() const;
     virtual void getTickmarks(Vector<IntRect>&) const;

@@ -1790,6 +1790,13 @@ void FrameView::valueChanged(Scrollbar* bar)
     frame()->loader()->client()->didChangeScrollOffset();
 }
 
+void FrameView::valueChanged(const IntSize& scrollDelta)
+{
+    ScrollView::valueChanged(scrollDelta);
+    frame()->eventHandler()->sendScrollEvent();
+    frame()->loader()->client()->didChangeScrollOffset();
+}
+
 void FrameView::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& rect)
 {
     // Add in our offset within the FrameView.

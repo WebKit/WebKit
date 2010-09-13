@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <script>
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.waitUntilDone();
+            }
+            function timeoutFired()
+            {
+                document.getElementById('console').innerHTML = "Scrolled by JavaScript scrollTo(): FAILED";
+                if (window.layoutTestController)
+                    window.layoutTestController.notifyDone();
+            }
+            function scrollEventFired()
+            {
+                document.getElementById('console').innerHTML = "Scrolled by JavaScript scrollTo(): PASS";
+                if (window.layoutTestController)
+                    window.layoutTestController.notifyDone();
+            }
+            function runTest()
+            {
+                window.frames[0].onscroll = scrollEventFired;
+                window.frames[0].scrollTo(0, 50);
+                setTimeout("timeoutFired()", 1000);
+            }
+        </script>
+    </head>
+    <body>
+        <div id="console"></div>
+        <iframe onload="runTest();" scrolling="no" style="width:200px;height:200px;" src="resources/scrollable-iframe.html"> 
+    </body>
+</html>
+
