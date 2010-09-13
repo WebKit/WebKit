@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+    var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<table id="table">
+<tr id="row"><td id="tablecell" tabindex=0>1</td><td>2</td></tr>
+<tr id="row2"><td id="tablecell2" tabindex=0>1</td><td>2</td></tr>
+</table>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests for a crash that can occur while altering an attribute on a table row because it accesses the table when its in a bad state.");
+
+    if (window.accessibilityController) {
+        document.getElementById("body").focus();
+        var body = accessibilityController.focusedElement;
+        var tr = document.createElement("tr");
+        var td = document.createElement("td");
+        td.appendChild(document.createTextNode("asdf"));
+        tr.appendChild(td);
+
+        // To reproduce, we need to remove a row and replace with another row, then set an attribute in the meantime.
+        document.getElementById("table").getElementsByTagName("TBODY")[0].removeChild(document.getElementById("row2"));
+        document.getElementById("table").getElementsByTagName("TBODY")[0].appendChild(tr);
+        document.getElementById("row").setAttribute("title", "gridrow");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

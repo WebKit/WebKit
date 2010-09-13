@@ -1,3 +1,18 @@
+2010-09-13  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        CrashTracer: 874 crashes in Safari at com.apple.WebCore: WebCore::AccessibilityTable::isTableExposableThroughAccessibility + 663
+        https://bugs.webkit.org/show_bug.cgi?id=45697
+
+        Inside of AccessibilityTableRow, parentTable() should not use getOrCreate() on the parent table, because the render table may
+        be in a bad state and accessing internal variables can lead to a crash.
+
+        Test: platform/mac/accessibility/updating-attribute-in-table-row-crash.html
+
+        * accessibility/AccessibilityTableRow.cpp:
+        (WebCore::AccessibilityTableRow::parentTable):
+
 2010-09-13  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

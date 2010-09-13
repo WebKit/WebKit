@@ -1,3 +1,13 @@
+2010-09-13  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        CrashTracer: 874 crashes in Safari at com.apple.WebCore: WebCore::AccessibilityTable::isTableExposableThroughAccessibility + 663
+        https://bugs.webkit.org/show_bug.cgi?id=45697
+
+        * platform/mac/accessibility/updating-attribute-in-table-row-crash-expected.txt: Added.
+        * platform/mac/accessibility/updating-attribute-in-table-row-crash.html: Added.
+
 2010-09-13  Tony Chang  <tony@chromium.org>
 
         Unreviewed, removing chromium-linux results that deduplicate-tests says are
