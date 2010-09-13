@@ -302,6 +302,7 @@ public:
     virtual void didChangeIcons(WebCore::DocumentLoader*);
     virtual bool canHandleRequest(const WebCore::ResourceRequest&) const;
     virtual bool canShowMIMEType(const WTF::String& MIMEType) const;
+    virtual bool canShowMIMETypeAsHTML(const WTF::String& MIMEType) const;
     virtual bool representationExistsForURLScheme(const WTF::String& URLScheme) const;
     virtual WTF::String generatedMIMETypeForURLScheme(const WTF::String& URLScheme) const;
     virtual void frameLoadCompleted();
