@@ -2,6 +2,19 @@
 
         Reviewed by Darin Adler.
 
+        "Implement" EOF processing in AfterBodyMode and AfterAfterBodyMode
+        https://bugs.webkit.org/show_bug.cgi?id=45647
+
+        Implements the notImplemented by doing nothing, which is the proper
+        behavior according to the spec.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+
+2010-09-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
         More trivial EOF handling in tree builder
         https://bugs.webkit.org/show_bug.cgi?id=45648
 
