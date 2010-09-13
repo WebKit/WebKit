@@ -1,3 +1,16 @@
+2010-09-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Add setting API for enabling page cache
+        https://bugs.webkit.org/show_bug.cgi?id=44931
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+        (ewk_view_setting_page_cache_get): Added.
+        (ewk_view_setting_page_cache_set): Added.
+        * ewk/ewk_view.h:
+
 2010-09-13  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Sam Weinig.
