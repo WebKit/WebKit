@@ -35,8 +35,6 @@
 #include "DRTDevToolsClient.h"
 #include "LayoutTestController.h"
 #include "WebViewHost.h"
-#include "base/string16.h"
-#include "gfx/codec/png_codec.h" // FIXME: Remove dependecy. WebCore/platform/image-encoder is better?
 #include "public/WebDataSource.h"
 #include "public/WebDocument.h"
 #include "public/WebElement.h"
@@ -55,6 +53,7 @@
 #include "skia/ext/bitmap_platform_device.h"
 #include "skia/ext/platform_canvas.h"
 #include "webkit/support/webkit_support.h"
+#include "webkit/support/webkit_support_gfx.h"
 #include <algorithm>
 #include <cctype>
 #include <vector>
@@ -619,10 +618,9 @@ void TestShell::dumpImage(skia::PlatformCanvas* canvas) const
     // is really expensive.
     if (md5hash.compare(m_params.pixelHash)) {
         std::vector<unsigned char> png;
-        gfx::PNGCodec::ColorFormat colorFormat = gfx::PNGCodec::FORMAT_BGRA;
-        gfx::PNGCodec::Encode(
+        webkit_support::EncodeBGRAPNG(
             reinterpret_cast<const unsigned char*>(sourceBitmap.getPixels()),
-            colorFormat, sourceBitmap.width(), sourceBitmap.height(),
+            sourceBitmap.width(), sourceBitmap.height(),
             static_cast<int>(sourceBitmap.rowBytes()), discardTransparency, &png);
 
         m_printer->handleImage(md5hash.c_str(), m_params.pixelHash.c_str(), &png[0], png.size(), m_params.pixelFileName.c_str());

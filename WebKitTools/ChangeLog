@@ -1,3 +1,19 @@
+2010-09-12  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [DRT/Chromium] Remove dependency to base/string16.h and gfx/codec/png_codec.h
+        https://bugs.webkit.org/show_bug.cgi?id=45517
+
+        Use webkit_support_gfx.h for PNG encoding/decoding instead of png_codec.h
+
+        * DumpRenderTree/chromium/ImageDiff.cpp:
+        (Image::craeteFromStdin):
+        (Image::createFromFilename):
+        (diffImages):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::dumpImage):
+
 2010-09-10  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Tony Chang.

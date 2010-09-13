@@ -36,7 +36,7 @@
 
 #include "config.h"
 
-#include "gfx/codec/png_codec.h"
+#include "webkit/support/webkit_support_gfx.h"
 #include <algorithm>
 #include <stdio.h>
 #include <string.h>
@@ -49,7 +49,6 @@
 #define PATH_MAX MAX_PATH
 #endif
 
-using namespace gfx;
 using namespace std;
 
 // Causes the app to remain open, waiting for pairs of filenames on stdin.
@@ -93,8 +92,7 @@ public:
         if (fread(source.get(), 1, byteLength, stdin) != byteLength)
             return false;
 
-        if (!PNGCodec::Decode(source.get(), byteLength, PNGCodec::FORMAT_RGBA,
-                              &m_data, &m_width, &m_height)) {
+        if (!webkit_support::DecodePNG(source.get(), byteLength, &m_data, &m_width, &m_height)) {
             clear();
             return false;
         }
@@ -118,8 +116,7 @@ public:
 
         fclose(f);
 
-        if (!PNGCodec::Decode(&compressed[0], compressed.size(),
-                              PNGCodec::FORMAT_RGBA, &m_data, &m_width, &m_height)) {
+        if (!webkit_support::DecodePNG(&compressed[0], compressed.size(), &m_data, &m_width, &m_height)) {
             clear();
             return false;
         }
@@ -353,8 +350,8 @@ int diffImages(const char* file1, const char* file2, const char* outFile)
         return statusSame;
 
     vector<unsigned char> pngData;
-    PNGCodec::Encode(diffImage.data(), PNGCodec::FORMAT_RGBA, diffImage.width(),
-                     diffImage.height(), diffImage.width() * 4, false, &pngData);
+    webkit_support::EncodeRGBAPNG(diffImage.data(), diffImage.width(), diffImage.height(),
+                                  diffImage.width() * 4, &pngData);
     if (!writeFile(outFile, &pngData.front(), pngData.size()))
         return statusError;
     return statusDifferent;
