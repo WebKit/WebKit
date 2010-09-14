@@ -1,3 +1,14 @@
+2010-09-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Sort with non-numeric custom sort function fails on array with length but no values
+        https://bugs.webkit.org/show_bug.cgi?id=45781
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::sort): Replaced early exit for an array of length zero to instead
+        exit for any array without values, even if it has a non-0 length.
+
 2010-09-14  Steve Falkenburg  <sfalken@apple.com>
 
         Windows production build fix.

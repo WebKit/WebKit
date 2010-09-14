@@ -1,3 +1,13 @@
+2010-09-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Sort with non-numeric custom sort function fails on array with length but no values
+        https://bugs.webkit.org/show_bug.cgi?id=45781
+
+        * fast/js/script-tests/sort-large-array.js: Added test cases.
+        * fast/js/sort-large-array-expected.txt: Updated.
+
 2010-09-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.

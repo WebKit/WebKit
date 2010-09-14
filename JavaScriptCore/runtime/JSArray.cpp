@@ -1060,10 +1060,11 @@ void JSArray::sort(ExecState* exec, JSValue compareFunction, CallType callType, 
     if (storage->m_length > static_cast<unsigned>(std::numeric_limits<int>::max()))
         return;
 
-    if (!storage->m_length)
-        return;
-
     unsigned usedVectorLength = min(storage->m_length, m_vectorLength);
+    unsigned nodeCount = usedVectorLength + (storage->m_sparseValueMap ? storage->m_sparseValueMap->size() : 0);
+
+    if (!nodeCount)
+        return;
 
     AVLTree<AVLTreeAbstractorForArrayCompare, 44> tree; // Depth 44 is enough for 2^31 items
     tree.abstractor().m_exec = exec;
@@ -1071,7 +1072,7 @@ void JSArray::sort(ExecState* exec, JSValue compareFunction, CallType callType, 
     tree.abstractor().m_compareCallType = callType;
     tree.abstractor().m_compareCallData = &callData;
     tree.abstractor().m_globalThisValue = exec->globalThisValue();
-    tree.abstractor().m_nodes.resize(usedVectorLength + (storage->m_sparseValueMap ? storage->m_sparseValueMap->size() : 0));
+    tree.abstractor().m_nodes.grow(nodeCount);
 
     if (callType == CallTypeJS)
         tree.abstractor().m_cachedCall = adoptPtr(new CachedCall(exec, asFunction(compareFunction), 2, exec->exceptionSlot()));

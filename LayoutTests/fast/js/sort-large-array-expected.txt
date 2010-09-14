@@ -8,6 +8,9 @@ PASS test[9999] is 9999
 PASS test[10000] is 10000
 PASS test.slice(0, 20).join(', ') is '0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19'
 PASS test.slice(9990, 10010).join(', ') is '9990, 9991, 9992, 9993, 9994, 9995, 9996, 9997, 9998, 9999, 10000, 10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009'
+PASS testNoValues.length is 10110
+PASS testNoValues[9999] is undefined
+PASS testNoValues[10000] is undefined
 PASS successfullyParsed is true
 
 TEST COMPLETE
