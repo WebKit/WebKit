@@ -1,3 +1,11 @@
+2010-09-14  Oliver Hunt  <oliver@apple.com>
+
+        PPC Build fix.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::readFile):
+        (WebCore::CloneDeserializer::readTerminal):
+
 2010-09-14  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Andreas Kling.

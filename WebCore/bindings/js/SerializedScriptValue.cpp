@@ -984,13 +984,13 @@ private:
 
     bool readFile(RefPtr<File>& file)
     {
-        CachedString* path;
+        CachedString* path = 0;
         if (!readStringData(path))
             return 0;
-        CachedString* url;
+        CachedString* url = 0;
         if (!readStringData(url))
             return 0;
-        CachedString* type;
+        CachedString* type = 0;
         if (!readStringData(type))
             return 0;
         if (m_isDOMGlobalObject)
@@ -1080,10 +1080,10 @@ private:
             return toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_globalObject), result.get());
         }
         case BlobTag: {
-            CachedString* url;
+            CachedString* url = 0;
             if (!readStringData(url))
                 return JSValue();
-            CachedString* type;
+            CachedString* type = 0;
             if (!readStringData(type))
                 return JSValue();
             unsigned long long size = 0;
@@ -1094,7 +1094,7 @@ private:
             return toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_globalObject), Blob::create(KURL(KURL(), url->ustring().impl()), String(type->ustring().impl()), size));
         }
         case StringTag: {
-            CachedString* cachedString;
+            CachedString* cachedString = 0;
             if (!readStringData(cachedString))
                 return JSValue();
             return cachedString->jsString(m_exec);
@@ -1102,10 +1102,10 @@ private:
         case EmptyStringTag:
             return jsEmptyString(&m_exec->globalData());
         case RegExpTag: {
-            CachedString* pattern;
+            CachedString* pattern = 0;
             if (!readStringData(pattern))
                 return JSValue();
-            CachedString* flags;
+            CachedString* flags = 0;
             if (!readStringData(flags))
                 return JSValue();
             RefPtr<RegExp> regExp = RegExp::create(&m_exec->globalData(), pattern->ustring(), flags->ustring());
