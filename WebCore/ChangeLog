@@ -1,3 +1,27 @@
+2010-09-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        applyInlineStyleToNodeRange does not extend run properly
+        https://bugs.webkit.org/show_bug.cgi?id=45616
+
+        The bug was caused by applyInlineStyleToNodeRange's skipping a node whenever it has children.
+        Fixed the bug by only skipping a node that contains the past end node, contains non-editable region,
+        or has a non-editable parent node. Also fixed a bug that applyInlineStyleToNodeRange does not remove
+        styled elements in a run that are identical to the one added. addInlineStyleIfNeeded now removes
+        all styled elements in a run using removeStyleFromRunBeforeApplyingStyle before calling addInlineStyleIfNeeded.
+
+        Test: editing/style/inline-style-extend-run.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::containsNonEditableRegion): Added.
+        (WebCore::ApplyStyleCommand::applyInlineStyleToNodeRange): See above.
+        (WebCore::ApplyStyleCommand::removeStyleFromRunBeforeApplyingStyle): Added, see above.
+        (WebCore::ApplyStyleCommand::removeInlineStyleFromElement): Added support for RemoveAlways.
+        (WebCore::ApplyStyleCommand::removeImplicitlyStyledElement): Replaced RemoveAttributesAndElements by RemoveIfNeeded.
+        (WebCore::ApplyStyleCommand::extractInlineStyleToPushDown): Replaced RemoveAttributesAndElements by RemoveIfNeeded.
+        * editing/ApplyStyleCommand.h:
+
 2010-09-13  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Kent Tamura.

@@ -42,7 +42,7 @@ enum ShouldIncludeTypingStyle {
 class ApplyStyleCommand : public CompositeEditCommand {
 public:
     enum EPropertyLevel { PropertyDefault, ForceBlockProperties };
-    enum InlineStyleRemovalMode { RemoveAttributesAndElements, RemoveNone };
+    enum InlineStyleRemovalMode { RemoveIfNeeded, RemoveAlways, RemoveNone };
     enum EAddStyledElement { AddStyledElement, DoNotAddStyledElement };
 
     static PassRefPtr<ApplyStyleCommand> create(Document* document, CSSStyleDeclaration* style, EditAction action = EditActionChangeAttributes, EPropertyLevel level = PropertyDefault)
@@ -71,11 +71,12 @@ private:
     CSSMutableStyleDeclaration* style() const { return m_style.get(); }
 
     // style-removal helpers
-    bool removeInlineStyleFromElement(CSSMutableStyleDeclaration*, HTMLElement*, InlineStyleRemovalMode = RemoveAttributesAndElements);
+    bool removeStyleFromRunBeforeApplyingStyle(CSSMutableStyleDeclaration* style, Node*& runStart, Node*& runEnd);
+    bool removeInlineStyleFromElement(CSSMutableStyleDeclaration*, HTMLElement*, InlineStyleRemovalMode = RemoveIfNeeded);
     inline bool shouldRemoveInlineStyleFromElement(CSSMutableStyleDeclaration* style, HTMLElement* element) {return removeInlineStyleFromElement(style, element, RemoveNone);}
     bool removeImplicitlyStyledElement(CSSMutableStyleDeclaration*, HTMLElement*, InlineStyleRemovalMode, CSSMutableStyleDeclaration* extractedStyle = 0);
     void replaceWithSpanOrRemoveIfWithoutAttributes(HTMLElement*&);
-    bool removeCSSStyle(CSSMutableStyleDeclaration*, HTMLElement*, InlineStyleRemovalMode = RemoveAttributesAndElements);
+    bool removeCSSStyle(CSSMutableStyleDeclaration*, HTMLElement*, InlineStyleRemovalMode = RemoveIfNeeded);
     HTMLElement* highestAncestorWithConflictingInlineStyle(CSSMutableStyleDeclaration*, Node*);
     PassRefPtr<CSSMutableStyleDeclaration> extractInlineStyleToPushDown(CSSMutableStyleDeclaration*, Node*, bool isStyledElement);
     void applyInlineStyleToPushDown(Node*, CSSMutableStyleDeclaration *style);

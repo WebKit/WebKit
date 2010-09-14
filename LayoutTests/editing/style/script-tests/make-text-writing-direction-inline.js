@@ -97,7 +97,7 @@ modifyWritingDirection('<div dir="rtl"><b>هنا يكتب</b> النص العر�
 modifyWritingDirection('<div dir="rtl">هنا <span dir="ltr">يكتب النص العربي</span></div>', selectThirdWord, 'Natural',
                        '<div dir="rtl">هنا <span dir="ltr">يكتب</span> النص<span dir="ltr"> العربي</span></div>');
 modifyWritingDirection('<div dir="rtl">هنا <span dir="ltr">يكتب النص العربي</span></div>', selectThirdWord, 'LeftToRight',
-                       '<div dir="rtl"><span style="direction: ltr;">هنا </span><span dir="ltr">يكتب النص العربي</span></div>');
+                       '<div dir="rtl"><span style="direction: ltr;">هنا يكتب النص العربي</span></div>');
 modifyWritingDirection('<div dir="rtl">هنا <span dir="ltr">يكتب النص العربي</span></div>', selectThirdWord, 'RightToLeft',
                        '<div dir="rtl">هنا <span dir="ltr">يكتب</span><span style="unicode-bidi: embed;"> النص</span><span dir="ltr"> العربي</span></div>');
 
