@@ -199,7 +199,7 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
         self.log_progress([patch.id() for patch in patches])
         return patches[0]
 
-    def _can_build_and_test(self):
+    def _can_build_and_test_without_patch(self):
         try:
             self.run_webkit_patch([
                 "build-and-test",
@@ -212,7 +212,7 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
                 "--quiet"])
         except ScriptError, e:
             failure_log = self._log_from_script_error_for_upload(e)
-            self._update_status("Unable to successfully do a clean build and test", results_file=failure_log)
+            self._update_status("Unable to build and test without patch", results_file=failure_log)
             return False
         return True
 
@@ -221,16 +221,16 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
         self._update_status("Landing %s" % patch_text, patch)
         return True
 
-    def _land(self, patch, first_run=False):
+    def _build_and_test_patch(self, patch, first_run=False):
         try:
             args = [
-                "land-attachment",
+                "build-and-test-attachment",
                 "--force-clean",
                 "--build",
                 "--non-interactive",
-                "--ignore-builders",
                 "--build-style=both",
                 "--quiet",
+                "--parent-command=commit-queue",
                 patch.id()
             ]
             # We don't bother to run tests for rollouts as that makes them too slow.
@@ -248,31 +248,50 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
                 # built and tested.
                 args.append("--no-update")
             self.run_webkit_patch(args)
-            self._did_pass(patch)
             return True
         except ScriptError, e:
             failure_log = self._log_from_script_error_for_upload(e)
-            self._update_status("Unable to land patch", patch=patch, results_file=failure_log)
+            self._update_status("Unable to build and test patch", patch=patch, results_file=failure_log)
             if first_run:
                 return False
             self._did_fail(patch)
             raise
 
+    def _land(self, patch):
+        try:
+            args = [
+                "land-attachment",
+                "--force-clean",
+                "--non-interactive",
+                "--ignore-builders",
+                "--quiet",
+                "--parent-command=commit-queue",
+                patch.id(),
+            ]
+            self.run_webkit_patch(args)
+            self._did_pass(patch)
+        except ScriptError, e:
+            failure_log = self._log_from_script_error_for_upload(e)
+            self._update_status("Unable to land patch", patch=patch, results_file=failure_log)
+            self._did_fail(patch)
+            raise
+
     def process_work_item(self, patch):
         self._cc_watchers(patch.bug_id())
-        if not self._land(patch, first_run=True):
-            self._update_status("Doing a clean build as a sanity check", patch)
-            # The patch failed to land, but the bots were green. It's possible
-            # that the bots were behind. To check that case, we try to build and
-            # test ourselves.
-            if not self._can_build_and_test():
+        if not self._build_and_test_patch(patch, first_run=True):
+            self._update_status("Building and testing without the patch as a sanity check", patch)
+            # The patch failed to build and test. It's possible that the
+            # tree is busted. To check that case, we try to build and test
+            # without the patch.
+            if not self._can_build_and_test_without_patch():
                 return False
-            self._update_status("Clean build succeeded, trying patch again", patch)
+            self._update_status("Build and test succeeded, trying again with patch", patch)
             # Hum, looks like the patch is actually bad. Of course, we could
             # have been bitten by a flaky test the first time around.  We try
-            # to land again.  If it fails a second time, we're pretty sure its
-            # a bad test and re can reject it outright.
-            self._land(patch)
+            # to build and test again. If it fails a second time, we're pretty
+            # sure its a bad test and re can reject it outright.
+            self._build_and_test_patch(patch)
+        self._land(patch)
         return True
 
     def handle_unexpected_error(self, patch, message):

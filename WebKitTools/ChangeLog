@@ -1,3 +1,27 @@
+2010-09-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        commit-queue is slow during the day
+        https://bugs.webkit.org/show_bug.cgi?id=45780
+
+        Thanks to the new logging, we've noticed that checkout-is-out-of-date
+        errors in the first pass of landing don't retry the land.  Instead,
+        they're treated as failures and cause the commit-queue to do two more
+        builds before really trying to land the patch.  Worse, in the second
+        build, we can get bitten by a flaky test.
+
+        This patch takes a slightly different approach to the commit-queue's
+        main control logic.  We now use a separate subprocess for building and
+        testing and for landing.  This means we should very rarely see the
+        checkout-is-out-of-date error, and when we do see it, we should retry
+        more quickly.  If my understanding is correct, this should be a big
+        speed win for the commit-queue.
+
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
 2010-09-14  Tony Chang  <tony@chromium.org>
 
         Reviewed by Dimitri Glazkov.
