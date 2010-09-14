@@ -1,3 +1,12 @@
+2010-09-13  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: WebSocket in Resources tab
+        https://bugs.webkit.org/show_bug.cgi?id=40768
+
+        * inspector/extensions-api-expected.txt: Added a new resource type.
+
 2010-09-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

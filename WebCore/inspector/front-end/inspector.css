@@ -2835,7 +2835,8 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
 }
 
 .resources-category-documents, .resources-category-stylesheets, .resources-category-images,
-.resources-category-scripts, .resources-category-xhr, .resources-category-fonts, .resources-category-other {
+.resources-category-scripts, .resources-category-xhr, .resources-category-fonts,
+.resources-category-websockets, .resources-category-other {
     display: none;
 }
 
@@ -2845,6 +2846,7 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
 .filter-all .resources-category-scripts, .filter-scripts .resources-category-scripts,
 .filter-all .resources-category-xhr, .filter-xhr .resources-category-xhr,
 .filter-all .resources-category-fonts, .filter-fonts .resources-category-fonts,
+.filter-all .resources-category-websockets, .filter-websockets .resources-category-websockets,
 .filter-all .resources-category-other, .filter-other .resources-category-other,
 .resource-sidebar-tree-item.selected {
     display: list-item;
@@ -2918,6 +2920,15 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
 
 .resources-category-xhr.resource-cached .resources-graph-bar {
     -webkit-border-image: url(Images/timelineHollowPillYellow.png) 6 7 6 7;
+}
+
+/* FIXME: Create bar images for WebSocket. */
+.resources-category-websockets .resources-graph-bar {
+    -webkit-border-image: url(Images/timelinePillGray.png) 6 7 6 7;
+}
+
+.resources-category-websockets.resource-cached .resources-graph-bar {
+   -webkit-border-image: url(Images/timelineHollowPillGray.png) 6 7 6 7;
 }
 
 #resource-views {

@@ -45,7 +45,8 @@ WebInspector.Resource.Type = {
     Script:     4,
     XHR:        5,
     Media:      6,
-    Other:      7,
+    WebSocket:  7,
+    Other:      8,
 
     isTextType: function(type)
     {
@@ -76,6 +77,8 @@ WebInspector.Resource.Type = {
                 return "XHR";
             case this.Media:
                 return "media";
+            case this.WebSocket:
+                return "WebSocket";
             case this.Other:
             default:
                 return "other";
@@ -372,6 +375,9 @@ WebInspector.Resource.prototype = {
             case WebInspector.Resource.Type.XHR:
                 this.category = WebInspector.resourceCategories.xhr;
                 break;
+            case WebInspector.Resource.Type.WebSocket:
+                this.category = WebInspector.resourceCategories.websocket;
+                break;
             case WebInspector.Resource.Type.Other:
             default:
                 this.category = WebInspector.resourceCategories.other;
@@ -584,7 +590,8 @@ WebInspector.Resource.prototype = {
 
         if (typeof this.type === "undefined"
          || this.type === WebInspector.Resource.Type.Other
-         || this.type === WebInspector.Resource.Type.XHR)
+         || this.type === WebInspector.Resource.Type.XHR
+         || this.type === WebInspector.Resource.Type.WebSocket)
             return true;
 
         if (this.mimeType in WebInspector.MIMETypes)

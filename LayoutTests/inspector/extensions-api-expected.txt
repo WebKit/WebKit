@@ -54,6 +54,7 @@ RUNNING TEST: extension_testAPI
             Script : "script"
             XHR : "XHR"
             Media : "media"
+            WebSocket : "WebSocket"
             Other : "other"
         }
         getAll : <function>

@@ -34,6 +34,8 @@
 #include "HTTPHeaderMap.h"
 #include "KURL.h"
 #include "ScriptString.h"
+#include "WebSocketHandshakeRequest.h"
+#include "WebSocketHandshakeResponse.h"
 
 #include <wtf/CurrentTime.h>
 #include <wtf/OwnPtr.h>
@@ -51,6 +53,11 @@ namespace WebCore {
     class ResourceRequest;
     class ResourceResponse;
 
+#if ENABLE(WEB_SOCKETS)
+    class WebSocketHandshakeRequest;
+    class WebSocketHandshakeResponse;
+#endif
+
     class InspectorResource : public RefCounted<InspectorResource> {
     public:
 
@@ -63,15 +70,18 @@ namespace WebCore {
             Script,
             XHR,
             Media,
+            WebSocket,
             Other
         };
 
-        static PassRefPtr<InspectorResource> create(unsigned long identifier, DocumentLoader* loader, const KURL& requestURL)
-        {
-            return adoptRef(new InspectorResource(identifier, loader, requestURL));
-        }
+        static PassRefPtr<InspectorResource> create(unsigned long identifier, DocumentLoader* loader, const KURL& requestURL);
 
         static PassRefPtr<InspectorResource> createCached(unsigned long identifier, DocumentLoader*, const CachedResource*);
+
+#if ENABLE(WEB_SOCKETS)
+        // WebSocket resource doesn't have its loader. For WebSocket resources, m_loader and m_frame will become null.
+        static PassRefPtr<InspectorResource> createWebSocket(unsigned long identifier, const KURL& requestURL, const KURL& documentURL);
+#endif
 
         ~InspectorResource();
 
@@ -81,6 +91,11 @@ namespace WebCore {
 
         void updateRequest(const ResourceRequest&);
         void updateResponse(const ResourceResponse&);
+
+#if ENABLE(WEB_SOCKETS)
+        void updateWebSocketRequest(const WebSocketHandshakeRequest&);
+        void updateWebSocketResponse(const WebSocketHandshakeResponse&);
+#endif
 
         void setOverrideContent(const ScriptString& data, Type);
 
@@ -149,10 +164,15 @@ namespace WebCore {
         Type cachedResourceType() const;
         CachedResource* cachedResource() const;
 
+#if ENABLE(WEB_SOCKETS)
+        void markWebSocket() { m_isWebSocket = true; }
+#endif
+
         unsigned long m_identifier;
         RefPtr<DocumentLoader> m_loader;
         RefPtr<Frame> m_frame;
         KURL m_requestURL;
+        KURL m_documentURL;
         HTTPHeaderMap m_requestHeaderFields;
         HTTPHeaderMap m_responseHeaderFields;
         String m_mimeType;
@@ -179,6 +199,15 @@ namespace WebCore {
         String m_requestMethod;
         String m_requestFormData;
         Vector<RefPtr<InspectorResource> > m_redirects;
+
+#if ENABLE(WEB_SOCKETS)
+        bool m_isWebSocket;
+
+        // The following fields are not used for resources other than WebSocket.
+        // We allocate them dynamically to reduce memory consumption for regular resources.
+        OwnPtr<WebSocketHandshakeRequest::Key3> m_webSocketRequestKey3;
+        OwnPtr<WebSocketHandshakeResponse::ChallengeResponse> m_webSocketChallengeResponse;
+#endif
     };
 
 } // namespace WebCore

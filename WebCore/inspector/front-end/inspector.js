@@ -517,6 +517,7 @@ WebInspector.doLoadedDone = function()
         scripts: new WebInspector.ResourceCategory("scripts", WebInspector.UIString("Scripts"), "rgb(255,121,0)"),
         xhr: new WebInspector.ResourceCategory("xhr", WebInspector.UIString("XHR"), "rgb(231,231,10)"),
         fonts: new WebInspector.ResourceCategory("fonts", WebInspector.UIString("Fonts"), "rgb(255,82,62)"),
+        websocket: new WebInspector.ResourceCategory("websockets", WebInspector.UIString("WebSocket"), "rgb(186,186,186)"), // FIXME: Decide the color.
         other: new WebInspector.ResourceCategory("other", WebInspector.UIString("Other"), "rgb(186,186,186)")
     };
 
@@ -1233,6 +1234,8 @@ WebInspector.updateResource = function(payload)
         resource.requestMethod = payload.requestMethod;
         resource.requestFormData = payload.requestFormData;
         resource.documentURL = payload.documentURL;
+        if (typeof payload.webSocketRequestKey3 !== "undefined")
+            resource.webSocketRequestKey3 = payload.webSocketRequestKey3;
 
         if (resource.mainResource)
             this.mainResource = resource;
@@ -1257,6 +1260,8 @@ WebInspector.updateResource = function(payload)
         resource.connectionReused = payload.connectionReused;
         resource.timing = payload.timing;
         resource.cached = payload.cached;
+        if (typeof payload.webSocketChallengeResponse !== "undefined")
+            resource.webSocketChallengeResponse = payload.webSocketChallengeResponse;
     }
 
     if (payload.didTypeChange) {

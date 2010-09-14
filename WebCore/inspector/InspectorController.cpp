@@ -800,6 +800,8 @@ void InspectorController::addResource(InspectorResource* resource)
     m_knownResources.add(resource->requestURL());
 
     Frame* frame = resource->frame();
+    if (!frame)
+        return;
     ResourcesMap* resourceMap = m_frameResources.get(frame);
     if (resourceMap)
         resourceMap->set(resource->identifier(), resource);
@@ -818,6 +820,8 @@ void InspectorController::removeResource(InspectorResource* resource)
         m_knownResources.remove(requestURL);
 
     Frame* frame = resource->frame();
+    if (!frame)
+        return;
     ResourcesMap* resourceMap = m_frameResources.get(frame);
     if (!resourceMap) {
         ASSERT_NOT_REACHED();
@@ -1443,6 +1447,56 @@ InspectorDOMStorageResource* InspectorController::getDOMStorageResourceForId(lon
     return it->second.get();
 }
 #endif
+
+#if ENABLE(WEB_SOCKETS)
+void InspectorController::didCreateWebSocket(unsigned long identifier, const KURL& requestURL, const KURL& documentURL)
+{
+    if (!enabled())
+        return;
+    ASSERT(m_inspectedPage);
+
+    RefPtr<InspectorResource> resource = InspectorResource::createWebSocket(identifier, requestURL, documentURL);
+    addResource(resource.get());
+
+    if (m_frontend)
+        resource->updateScriptObject(m_frontend.get());
+}
+
+void InspectorController::willSendWebSocketHandshakeRequest(unsigned long identifier, const WebSocketHandshakeRequest& request)
+{
+    RefPtr<InspectorResource> resource = getTrackedResource(identifier);
+    if (!resource)
+        return;
+    resource->startTiming();
+    resource->updateWebSocketRequest(request);
+    if (m_frontend)
+        resource->updateScriptObject(m_frontend.get());
+}
+
+void InspectorController::didReceiveWebSocketHandshakeResponse(unsigned long identifier, const WebSocketHandshakeResponse& response)
+{
+    RefPtr<InspectorResource> resource = getTrackedResource(identifier);
+    if (!resource)
+        return;
+    // Calling resource->markResponseReceivedTime() here makes resources bar chart confusing, because
+    // we cannot apply the "latency + download" model of regular resources to WebSocket connections.
+    // FIXME: Design a new UI for bar charts of WebSocket resources, and record timing here.
+    resource->updateWebSocketResponse(response);
+    if (m_frontend)
+        resource->updateScriptObject(m_frontend.get());
+}
+
+void InspectorController::didCloseWebSocket(unsigned long identifier)
+{
+    RefPtr<InspectorResource> resource = getTrackedResource(identifier);
+    if (!resource)
+        return;
+
+    resource->endTiming();
+    if (m_frontend)
+        resource->updateScriptObject(m_frontend.get());
+}
+#endif // ENABLE(WEB_SOCKETS)
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 void InspectorController::addProfile(PassRefPtr<ScriptProfile> prpProfile, unsigned lineNumber, const String& sourceURL)

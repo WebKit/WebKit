@@ -1,3 +1,72 @@
+2010-09-13  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Add WebSocket resource type to Web Inspector.
+
+        When a new WebSocket connection is established, a line for that connection
+        will appear in Web Inspector's Resources tab. If the resource name is
+        clicked, the details of handshake request and response will be shown.
+
+        Web Inspector: WebSocket in Resources tab
+        https://bugs.webkit.org/show_bug.cgi?id=40768
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::addResource): WebSocket resource does not
+        have an associated loader, thus frame might be null. Need to check it.
+        (WebCore::InspectorController::removeResource): Ditto.
+        (WebCore::InspectorController::didCreateWebSocket):
+        (WebCore::InspectorController::willSendWebSocketHandshakeRequest):
+        (WebCore::InspectorController::didReceiveWebSocketHandshakeResponse):
+        (WebCore::InspectorController::didCloseWebSocket):
+        * inspector/InspectorController.h:
+        * inspector/InspectorResource.cpp: Add null checks of m_loader and m_frame,
+        because WebSocket does not have a loader and we need to allow null for
+        these variables.
+        (WebCore::createReadableStringFromBinary):
+        (WebCore::InspectorResource::InspectorResource):
+        (WebCore::InspectorResource::create): Factory function of
+        regular (non-WebSocket) resources.
+        (WebCore::InspectorResource::createWebSocket): Factory function of
+        WebSocket resources.
+        (WebCore::InspectorResource::updateWebSocketRequest):
+        (WebCore::InspectorResource::updateWebSocketResponse):
+        (WebCore::InspectorResource::updateScriptObject): m_frame->document() becomes
+        available when Frame::setDocument() is called. We cannot obtain documentURL
+        during the constructor or updateRequest() function, because m_frame->document()
+        is not available yet at that point and documentURL will contain a wrong URL.
+        As far as I know, updateScriptObject() is the only place where we can safely
+        obtain documentURL.
+        (WebCore::InspectorResource::cachedResource):
+        (WebCore::InspectorResource::type):
+        (WebCore::InspectorResource::resourceData):
+        * inspector/InspectorResource.h:
+        (WebCore::InspectorResource::):
+        (WebCore::InspectorResource::markWebSocket):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.Type.toString):
+        (WebInspector.Resource.prototype.set type):
+        (WebInspector.Resource.prototype._mimeTypeIsConsistentWithType):
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceView.prototype._refreshRequestHeaders):
+        (WebInspector.ResourceView.prototype._refreshResponseHeaders):
+        (WebInspector.ResourceView.prototype._refreshHeaders):
+        * inspector/front-end/inspector.css:
+        (.resources-category-websockets, .resources-category-other):
+        (.resources-category-websockets .resources-graph-bar):
+        (.resources-category-websockets.resource-cached .resources-graph-bar):
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded):
+        (WebInspector.updateResource):
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::WebSocketChannel):
+        (WebCore::WebSocketChannel::disconnect):
+        (WebCore::WebSocketChannel::didOpen):
+        (WebCore::WebSocketChannel::didClose):
+        (WebCore::WebSocketChannel::processBuffer):
+        (WebCore::WebSocketChannel::identifier):
+        * websockets/WebSocketChannel.h:
+
 2010-09-13  W. James MacLean  <wjmaclean@google.com>
 
         Reviewed by Darin Fisher.

@@ -43,14 +43,37 @@
 #include "ResourceLoadTiming.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "StringBuffer.h"
 #include "TextEncoding.h"
+#include "WebSocketHandshakeRequest.h"
+#include "WebSocketHandshakeResponse.h"
+
+#include <wtf/Assertions.h>
 
 namespace WebCore {
+
+// Create human-readable binary representation, like "01:23:45:67:89:AB:CD:EF".
+static String createReadableStringFromBinary(const unsigned char* value, size_t length)
+{
+    ASSERT(length > 0);
+    static const char hexDigits[17] = "0123456789ABCDEF";
+    size_t bufferSize = length * 3 - 1;
+    StringBuffer buffer(bufferSize);
+    size_t index = 0;
+    for (size_t i = 0; i < length; ++i) {
+        if (i > 0)
+            buffer[index++] = ':';
+        buffer[index++] = hexDigits[value[i] >> 4];
+        buffer[index++] = hexDigits[value[i] & 0xF];
+    }
+    ASSERT(index == bufferSize);
+    return String::adopt(buffer);
+}
 
 InspectorResource::InspectorResource(unsigned long identifier, DocumentLoader* loader, const KURL& requestURL)
     : m_identifier(identifier)
     , m_loader(loader)
-    , m_frame(loader->frame())
+    , m_frame(loader ? loader->frame() : 0)
     , m_requestURL(requestURL)
     , m_expectedContentLength(0)
     , m_cached(false)
@@ -66,6 +89,9 @@ InspectorResource::InspectorResource(unsigned long identifier, DocumentLoader* l
     , m_connectionID(0)
     , m_connectionReused(false)
     , m_isMainResource(false)
+#if ENABLE(WEB_SOCKETS)
+    , m_isWebSocket(false)
+#endif
 {
 }
 
@@ -88,6 +114,12 @@ PassRefPtr<InspectorResource> InspectorResource::appendRedirect(unsigned long id
     return redirect;
 }
 
+PassRefPtr<InspectorResource> InspectorResource::create(unsigned long identifier, DocumentLoader* loader, const KURL& requestURL)
+{
+    ASSERT(loader);
+    return adoptRef(new InspectorResource(identifier, loader, requestURL));
+}
+
 PassRefPtr<InspectorResource> InspectorResource::createCached(unsigned long identifier, DocumentLoader* loader, const CachedResource* cachedResource)
 {
     PassRefPtr<InspectorResource> resource = create(identifier, loader, KURL(ParsedURLString, cachedResource->url()));
@@ -106,6 +138,16 @@ PassRefPtr<InspectorResource> InspectorResource::createCached(unsigned long iden
 
     return resource;
 }
+
+#if ENABLE(WEB_SOCKETS)
+PassRefPtr<InspectorResource> InspectorResource::createWebSocket(unsigned long identifier, const KURL& requestURL, const KURL& documentURL)
+{
+    RefPtr<InspectorResource> resource = adoptRef(new InspectorResource(identifier, 0, requestURL));
+    resource->markWebSocket();
+    resource->m_documentURL = documentURL;
+    return resource.release();
+}
+#endif
 
 void InspectorResource::updateRequest(const ResourceRequest& request)
 {
@@ -146,6 +188,27 @@ void InspectorResource::updateResponse(const ResourceResponse& response)
     m_changes.set(TypeChange);
 }
 
+#if ENABLE(WEB_SOCKETS)
+void InspectorResource::updateWebSocketRequest(const WebSocketHandshakeRequest& request)
+{
+    m_requestHeaderFields = request.headerFields();
+    m_requestMethod = "GET"; // Currently we always use "GET" to request handshake.
+    m_webSocketRequestKey3.set(new WebSocketHandshakeRequest::Key3(request.key3()));
+    m_changes.set(RequestChange);
+    m_changes.set(TypeChange);
+}
+
+void InspectorResource::updateWebSocketResponse(const WebSocketHandshakeResponse& response)
+{
+    m_responseStatusCode = response.statusCode();
+    m_responseStatusText = response.statusText();
+    m_responseHeaderFields = response.headerFields();
+    m_webSocketChallengeResponse.set(new WebSocketHandshakeResponse::ChallengeResponse(response.challengeResponse()));
+    m_changes.set(ResponseChange);
+    m_changes.set(TypeChange);
+}
+#endif // ENABLE(WEB_SOCKETS)
+
 static PassRefPtr<InspectorObject> buildHeadersObject(const HTTPHeaderMap& headers)
 {
     RefPtr<InspectorObject> object = InspectorObject::create();
@@ -183,8 +246,10 @@ void InspectorResource::updateScriptObject(InspectorFrontend* frontend)
     RefPtr<InspectorObject> jsonObject = InspectorObject::create();
     jsonObject->setNumber("id", m_identifier);
     if (m_changes.hasChange(RequestChange)) {
+        if (m_frame)
+            m_documentURL = m_frame->document()->url();
         jsonObject->setString("url", m_requestURL.string());
-        jsonObject->setString("documentURL", m_frame->document()->url().string());
+        jsonObject->setString("documentURL", m_documentURL.string());
         jsonObject->setString("host", m_requestURL.host());
         jsonObject->setString("path", m_requestURL.path());
         jsonObject->setString("lastPathComponent", m_requestURL.lastPathComponent());
@@ -194,6 +259,10 @@ void InspectorResource::updateScriptObject(InspectorFrontend* frontend)
         jsonObject->setString("requestMethod", m_requestMethod);
         jsonObject->setString("requestFormData", m_requestFormData);
         jsonObject->setBoolean("didRequestChange", true);
+#if ENABLE(WEB_SOCKETS)
+        if (m_webSocketRequestKey3)
+            jsonObject->setString("webSocketRequestKey3", createReadableStringFromBinary(m_webSocketRequestKey3->value, sizeof(m_webSocketRequestKey3->value)));
+#endif
     }
 
     if (m_changes.hasChange(ResponseChange)) {
@@ -209,6 +278,10 @@ void InspectorResource::updateScriptObject(InspectorFrontend* frontend)
         jsonObject->setBoolean("cached", m_cached);
         if (m_loadTiming && !m_cached)
             jsonObject->setObject("timing", buildObjectForTiming(m_loadTiming.get()));
+#if ENABLE(WEB_SOCKETS)
+        if (m_webSocketChallengeResponse)
+            jsonObject->setString("webSocketChallengeResponse", createReadableStringFromBinary(m_webSocketChallengeResponse->value, sizeof(m_webSocketChallengeResponse->value)));
+#endif
         jsonObject->setBoolean("didResponseChange", true);
     }
 
@@ -267,6 +340,8 @@ CachedResource* InspectorResource::cachedResource() const
     // Try hard to find a corresponding CachedResource. During preloading, CachedResourceLoader may not have the resource in document resources set yet,
     // but Inspector will already try to fetch data that is only available via CachedResource (and it won't update once the resource is added,
     // because m_changes will not have the appropriate bits set).
+    if (!m_frame)
+        return 0;
     const String& url = m_requestURL.string();
     CachedResource* cachedResource = m_frame->document()->cachedResourceLoader()->cachedResource(url);
     if (!cachedResource)
@@ -303,6 +378,12 @@ InspectorResource::Type InspectorResource::type() const
     if (!m_overrideContent.isNull())
         return m_overrideContentType;
 
+#if ENABLE(WEB_SOCKETS)
+    if (m_isWebSocket)
+        return WebSocket;
+#endif
+
+    ASSERT(m_loader);
     if (equalIgnoringFragmentIdentifier(m_requestURL, m_loader->requestURL())) {
         InspectorResource::Type resourceType = cachedResourceType();
         if (resourceType == Other)
@@ -342,7 +423,7 @@ String InspectorResource::sourceString() const
 
 PassRefPtr<SharedBuffer> InspectorResource::resourceData(String* textEncodingName) const
 {
-    if (equalIgnoringFragmentIdentifier(m_requestURL, m_loader->requestURL())) {
+    if (m_loader && equalIgnoringFragmentIdentifier(m_requestURL, m_loader->requestURL())) {
         *textEncodingName = m_frame->document()->inputEncoding();
         return m_loader->mainResourceData();
     }
