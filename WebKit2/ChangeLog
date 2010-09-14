@@ -1,5 +1,26 @@
 2010-09-13  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Jon Honeycutt.
+
+        URL in address bar doesn't update when navigating to http://webkit.org/new-bug when using WebKit2
+        <rdar://problem/8272775>
+        https://bugs.webkit.org/show_bug.cgi?id=45729
+
+        Pass an updated provisional url while notifying the UIProcess of
+        didReceiveServerRedirectForProvisionalLoadForFrame.
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::didReceiveServerRedirectForProvisionalLoad):
+        * UIProcess/WebFrameProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessage):
+        (WebKit::WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad):
+
+2010-09-13  Sam Weinig  <sam@webkit.org>
+
         Fix windows build.
 
         * UIProcess/Launcher/win/ProcessLauncherWin.cpp:

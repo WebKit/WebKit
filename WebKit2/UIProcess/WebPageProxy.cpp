@@ -508,9 +508,10 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
         }
         case WebPageProxyMessage::DidReceiveServerRedirectForProvisionalLoadForFrame: {
             uint64_t frameID;
-            if (!arguments->decode(frameID))
+            String url;
+            if (!arguments->decode(CoreIPC::Out(frameID, url)))
                 return;
-            didReceiveServerRedirectForProvisionalLoadForFrame(process()->webFrame(frameID));
+            didReceiveServerRedirectForProvisionalLoadForFrame(process()->webFrame(frameID), url);
             break;
         }
         case WebPageProxyMessage::DidFailProvisionalLoadForFrame: {
@@ -889,8 +890,9 @@ void WebPageProxy::didStartProvisionalLoadForFrame(WebFrameProxy* frame, const S
     m_loaderClient.didStartProvisionalLoadForFrame(this, frame);
 }
 
-void WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame(WebFrameProxy* frame)
+void WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame(WebFrameProxy* frame, const String& url)
 {
+    frame->didReceiveServerRedirectForProvisionalLoad(url);
     m_loaderClient.didReceiveServerRedirectForProvisionalLoadForFrame(this, frame);
 }
 

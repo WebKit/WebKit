@@ -72,7 +72,8 @@ public:
     const WTF::String& url() const { return m_url; }
     const WTF::String& provisionalURL() const { return m_provisionalURL; }
 
-    void didStartProvisionalLoad(const WTF::String& url);
+    void didStartProvisionalLoad(const String& url);
+    void didReceiveServerRedirectForProvisionalLoad(const String& url);
     void didCommitLoad();
     void didFinishLoad();
     void didReceiveTitle(const WTF::String&);

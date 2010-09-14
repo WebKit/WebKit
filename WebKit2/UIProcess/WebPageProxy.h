@@ -198,8 +198,8 @@ private:
     void didCreateMainFrame(uint64_t frameID);
     void didCreateSubFrame(uint64_t frameID);
 
-    void didStartProvisionalLoadForFrame(WebFrameProxy*, const WTF::String&);
-    void didReceiveServerRedirectForProvisionalLoadForFrame(WebFrameProxy*);
+    void didStartProvisionalLoadForFrame(WebFrameProxy*, const String&);
+    void didReceiveServerRedirectForProvisionalLoadForFrame(WebFrameProxy*, const String&);
     void didFailProvisionalLoadForFrame(WebFrameProxy*);
     void didCommitLoadForFrame(WebFrameProxy*);
     void didFinishDocumentLoadForFrame(WebFrameProxy*);
