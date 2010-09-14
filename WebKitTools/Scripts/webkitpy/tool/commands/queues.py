@@ -294,6 +294,8 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
 
     @classmethod
     def handle_checkout_needs_update(cls, tool, state, options, error):
+        message = "Tests passed, but commit failed (checkout out of date).  Updating, then landing without building or re-running tests."
+        tool.status_server.update_status(cls.name, message, state["patch"])
         # The only time when we find out that out checkout needs update is
         # when we were ready to actually pull the trigger and land the patch.
         # Rather than spinning in the master process, we retry without

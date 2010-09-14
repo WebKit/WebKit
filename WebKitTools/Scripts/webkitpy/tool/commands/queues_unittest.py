@@ -36,7 +36,7 @@ from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.queues import *
 from webkitpy.tool.commands.queuestest import QueuesTest
 from webkitpy.tool.commands.stepsequence import StepSequence
-from webkitpy.tool.mocktool import MockTool, MockSCM
+from webkitpy.tool.mocktool import MockTool, MockSCM, MockStatusServer
 
 
 class TestQueue(AbstractPatchQueue):
@@ -141,6 +141,9 @@ class NeedsUpdateSequence(StepSequence):
 
 
 class AlwaysCommitQueueTool(object):
+    def __init__(self):
+        self.status_server = MockStatusServer()
+
     def command_by_name(self, name):
         return CommitQueue
 
@@ -245,8 +248,9 @@ MOCK: update_work_items: commit-queue [106, 197]
         tool = AlwaysCommitQueueTool()
         sequence = NeedsUpdateSequence(None)
 
-        expected_stderr = "Commit failed because the checkout is out of date.  Please update and try again.\n"
-        OutputCapture().assert_outputs(self, sequence.run_and_handle_errors, [tool, options], expected_exception=TryAgain, expected_stderr=expected_stderr)
+        expected_stderr = "Commit failed because the checkout is out of date.  Please update and try again.\nMOCK: update_status: commit-queue Tests passed, but commit failed (checkout out of date).  Updating, then landing without building or re-running tests.\n"
+        state = {'patch': None}
+        OutputCapture().assert_outputs(self, sequence.run_and_handle_errors, [tool, options, state], expected_exception=TryAgain, expected_stderr=expected_stderr)
 
         self.assertEquals(options.update, True)
         self.assertEquals(options.build, False)

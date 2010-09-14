@@ -1,3 +1,23 @@
+2010-09-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        commit-queue should log when it's retrying due to checkout out of date error
+        https://bugs.webkit.org/show_bug.cgi?id=45725
+
+        This will allow us to better track how often we see these errors
+        and how long it takes the queue to recover from them.
+
+        In order to pass the tests, I had to correct an error
+        from a previous change.  The UnitTestPort should not have
+        ever been using the base port method as that will read
+        a file from disk.  If the unit tests haven't passed the contents
+        it should raise an IOError as though the file doesn't exist.
+
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
 2010-09-13  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.

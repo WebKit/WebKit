@@ -66,7 +66,7 @@ class UnitTestPort(base.Port):
     def _open_configuration_file(self):
         if self._configuration_contents:
             return NewStringIO(self._configuration_contents)
-        return base.Port._open_configuration_file(self)
+        raise IOError
 
 
 class PortTest(unittest.TestCase):
