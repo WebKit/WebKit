@@ -1,3 +1,27 @@
+2010-09-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Move adjustLexerState to the HTMLTokenizer
+        https://bugs.webkit.org/show_bug.cgi?id=45649
+
+        This function used let us share code between the tree builder and the
+        two other users of the HTMLTokenizer.  However, now that the tree
+        builder is all grown up, it can't use this code anymore.  The other
+        users would much rather this code lived on HTMLTokenizer and understood
+        <script>.  This patch attempts to make them happy.
+
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::HTMLPreloadScanner::processToken):
+        * html/parser/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::updateStateFor):
+        * html/parser/HTMLTokenizer.h:
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::scriptEnabled):
+        * html/parser/HTMLTreeBuilder.h:
+        * html/parser/HTMLViewSourceParser.cpp:
+        (WebCore::HTMLViewSourceParser::updateTokenizerState):
+
 2010-09-14  Pierre-Antoine LaFayette  <plafayet@codeaurora.org>
 
         Reviewed by Darin Adler.

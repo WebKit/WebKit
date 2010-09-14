@@ -30,6 +30,7 @@
 
 #include "HTMLEntityParser.h"
 #include "HTMLToken.h"
+#include "HTMLTreeBuilder.h"
 #include "HTMLNames.h"
 #include "NotImplemented.h"
 #include <wtf/ASCIICType.h>
@@ -171,7 +172,7 @@ inline bool HTMLTokenizer::processEntity(SegmentedString& source)
 
 // Sometimes there's more complicated logic in the spec that separates when
 // we consume the next input character and when we switch to a particular
-// state.  We handle those cases by advancing the source directly and using
+// state. We handle those cases by advancing the source directly and using
 // this macro to switch to the indicated state.
 #define SWITCH_TO(stateName)                                               \
     do {                                                                   \
@@ -277,7 +278,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
 
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#parsing-main-inbody
     // Note that this logic is different than the generic \r\n collapsing
-    // handled in the input stream preprocessor.  This logic is here as an
+    // handled in the input stream preprocessor. This logic is here as an
     // "authoring convenience" so folks can write:
     //
     // <pre>
@@ -1054,7 +1055,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
                 m_token->appendToAttributeValue(*iter);
         }
         // We're supposed to switch back to the attribute value state that
-        // we were in when we were switched into this state.  Rather than
+        // we were in when we were switched into this state. Rather than
         // keeping track of this explictly, we observe that the previous
         // state can be determined by m_additionalAllowedCharacter.
         if (m_additionalAllowedCharacter == '"')
@@ -1630,6 +1631,23 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
 
     ASSERT_NOT_REACHED();
     return false;
+}
+
+void HTMLTokenizer::updateStateFor(const AtomicString& tagName, Frame* frame)
+{
+    if (tagName == textareaTag || tagName == titleTag)
+        setState(RCDATAState);
+    else if (tagName == plaintextTag)
+        setState(PLAINTEXTState);
+    else if (tagName == scriptTag)
+        setState(ScriptDataState);
+    else if (tagName == styleTag
+        || tagName == iframeTag
+        || tagName == xmpTag
+        || (tagName == noembedTag && HTMLTreeBuilder::pluginsEnabled(frame))
+        || tagName == noframesTag
+        || (tagName == noscriptTag && HTMLTreeBuilder::scriptEnabled(frame)))
+        setState(RAWTEXTState);
 }
 
 inline bool HTMLTokenizer::temporaryBufferIs(const String& expectedString)

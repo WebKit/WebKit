@@ -425,25 +425,6 @@ PassRefPtr<Element> HTMLTreeBuilder::takeScriptToProcess(int& scriptStartLine)
     return m_scriptToProcess.release();
 }
 
-HTMLTokenizer::State HTMLTreeBuilder::adjustedLexerState(HTMLTokenizer::State state, const AtomicString& tagName, Frame* frame)
-{
-    if (tagName == textareaTag || tagName == titleTag)
-        return HTMLTokenizer::RCDATAState;
-
-    if (tagName == styleTag
-        || tagName == iframeTag
-        || tagName == xmpTag
-        || (tagName == noembedTag && pluginsEnabled(frame))
-        || tagName == noframesTag
-        || (tagName == noscriptTag && scriptEnabled(frame)))
-        return HTMLTokenizer::RAWTEXTState;
-
-    if (tagName == plaintextTag)
-        return HTMLTokenizer::PLAINTEXTState;
-
-    return state;
-}
-
 void HTMLTreeBuilder::constructTreeFromToken(HTMLToken& rawToken)
 {
     AtomicHTMLToken token(rawToken);
@@ -2778,9 +2759,7 @@ bool HTMLTreeBuilder::scriptEnabled(Frame* frame)
 {
     if (!frame)
         return false;
-    if (ScriptController* scriptController = frame->script())
-        return scriptController->canExecuteScripts(NotAboutToExecuteScript);
-    return false;
+    return frame->script()->canExecuteScripts(NotAboutToExecuteScript);
 }
 
 bool HTMLTreeBuilder::pluginsEnabled(Frame* frame)
