@@ -1,3 +1,19 @@
+2010-09-13  W. James MacLean  <wjmaclean@google.com>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Thumbnails not generated for GPU Rendered Pages
+        https://bugs.webkit.org/show_bug.cgi?id=44127
+
+        Replicates existing functionality, use existing tests.
+        Adds pixel-readback for GPU composited pages to allow for thumbnailing,
+        printing and other services to work with GPU rendered pages.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::getFramebufferPixels):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore::LayerRendererChromium::rootLayerTextureSize):
+
 2010-09-13  Kinuko Yasuda  <kinuko@chromium.org>
 
         Unreviewed, build fix for Gtk.

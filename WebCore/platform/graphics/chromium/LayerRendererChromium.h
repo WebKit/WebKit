@@ -98,6 +98,9 @@ public:
     const ContentLayerChromium::SharedValues* contentLayerSharedValues() const { return m_contentLayerSharedValues.get(); }
     const CanvasLayerChromium::SharedValues* canvasLayerSharedValues() const { return m_canvasLayerSharedValues.get(); }
 
+    IntSize rootLayerTextureSize() const { return IntSize(m_rootLayerTextureWidth, m_rootLayerTextureHeight); }
+    void getFramebufferPixels(void *pixels, const IntRect& rect);
+
 private:
     void updateLayersRecursive(LayerChromium* layer, const TransformationMatrix& parentMatrix, float opacity);
 

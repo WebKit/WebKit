@@ -356,6 +356,20 @@ void LayerRendererChromium::present()
     m_needsDisplay = false;
 }
 
+void LayerRendererChromium::getFramebufferPixels(void *pixels, const IntRect& rect)
+{
+    ASSERT(rect.right() <= rootLayerTextureSize().width()
+           && rect.bottom() <= rootLayerTextureSize().height());
+
+    if (!pixels)
+        return;
+
+    makeContextCurrent();
+
+    GLC(glReadPixels(rect.x(), rect.y(), rect.width(), rect.height(),
+                     GL_RGBA, GL_UNSIGNED_BYTE, pixels));
+}
+
 // FIXME: This method should eventually be replaced by a proper texture manager.
 unsigned LayerRendererChromium::createLayerTexture()
 {

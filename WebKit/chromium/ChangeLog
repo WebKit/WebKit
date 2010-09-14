@@ -1,3 +1,21 @@
+2010-09-13  W. James MacLean  <wjmaclean@google.com>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Thumbnails not generated for GPU Rendered Pages
+        https://bugs.webkit.org/show_bug.cgi?id=44127
+
+        Modified WebViewImpl::paint() to detect non-null canvas pointers when
+        accelerated compositing is active, and instead fills the pixel buffer
+        from the GPU framebuffer. Includes re-scaling support when provided
+        canvas does not match size of current render layer. Limits pixel
+        readback to rect passed to paint(), clipped by size of rootLayerTexture.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::doPixelReadbackToCanvas):
+        (WebKit::WebViewImpl::paint):
+        * src/WebViewImpl.h:
+
 2010-09-13  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Dimitri Glazkov.

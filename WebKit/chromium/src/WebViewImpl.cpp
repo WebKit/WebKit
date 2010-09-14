@@ -34,6 +34,7 @@
 #include "AutoFillPopupMenuClient.h"
 #include "AXObjectCache.h"
 #include "Chrome.h"
+#include "ColorSpace.h"
 #include "CompositionUnderlineVectorBuilder.h"
 #include "ContextMenu.h"
 #include "ContextMenuController.h"
@@ -64,8 +65,9 @@
 #include "HitTestResult.h"
 #include "HTMLNames.h"
 #include "Image.h"
+#include "ImageBuffer.h"
+#include "ImageData.h"
 #include "InspectorController.h"
-#include "IntRect.h"
 #include "KeyboardCodes.h"
 #include "KeyboardEvent.h"
 #include "MIMETypeRegistry.h"
@@ -115,7 +117,11 @@
 #include "WebString.h"
 #include "WebVector.h"
 #include "WebViewClient.h"
-#include "wtf/OwnPtr.h"
+#include <wtf/RefPtr.h>
+
+#if PLATFORM(CG)
+#include <CoreGraphics/CGContext.h>
+#endif
 
 #if OS(WINDOWS)
 #include "RenderThemeChromiumWin.h"
@@ -950,14 +956,57 @@ void WebViewImpl::layout()
     }
 }
 
+#if USE(ACCELERATED_COMPOSITING)
+void WebViewImpl::doPixelReadbackToCanvas(WebCanvas* canvas, const IntRect& rect)
+{
+    ASSERT(rect.right() <= m_layerRenderer->rootLayerTextureSize().width()
+           && rect.bottom() <= m_layerRenderer->rootLayerTextureSize().height());
+
+#if PLATFORM(SKIA)
+    PlatformContextSkia context(canvas);
+
+    // PlatformGraphicsContext is actually a pointer to PlatformContextSkia
+    GraphicsContext gc(reinterpret_cast<PlatformGraphicsContext*>(&context));
+    int bitmapHeight = canvas->getDevice()->accessBitmap(false).height();
+#elif PLATFORM(CG)
+    GraphicsContext gc(canvas);
+    int bitmapHeight = CGBitmapContextGetHeight(reinterpret_cast<CGContextRef>(canvas));
+#else
+    notImplemented();
+#endif
+    // Compute rect to sample from inverted GPU buffer.
+    IntRect invertRect(rect.x(), bitmapHeight - rect.bottom(), rect.width(), rect.height());
+
+    OwnPtr<ImageBuffer> imageBuffer(ImageBuffer::create(rect.size()));
+    RefPtr<ImageData> imageData(ImageData::create(rect.width(), rect.height()));
+    if (imageBuffer.get() && imageData.get()) {
+        m_layerRenderer->getFramebufferPixels(imageData->data()->data()->data(), invertRect);
+        imageBuffer->putPremultipliedImageData(imageData.get(), IntRect(IntPoint(), rect.size()), IntPoint());
+        gc.save();
+        gc.translate(FloatSize(0.0f, bitmapHeight));
+        gc.scale(FloatSize(1.0f, -1.0f));
+        // Use invertRect in next line, so that transform above inverts it back to
+        // desired destination rect.
+        gc.drawImageBuffer(imageBuffer.get(), DeviceColorSpace, invertRect.location());
+        gc.restore();
+    }
+}
+#endif
+
 void WebViewImpl::paint(WebCanvas* canvas, const WebRect& rect)
 {
     if (isAcceleratedCompositingActive()) {
 #if USE(ACCELERATED_COMPOSITING)
         doComposite();
 
-        // Readback into the canvas
-        // FIXME Insert wjmaclean's readback code here for webkit bug 44127
+        // If a canvas was passed in, we use it to grab a copy of the
+        // freshly-rendered pixels.
+        if (canvas) {
+            // Clip rect to the confines of the rootLayerTexture.
+            IntRect resizeRect(rect);
+            resizeRect.intersect(IntRect(IntPoint(), m_layerRenderer->rootLayerTextureSize()));
+            doPixelReadbackToCanvas(canvas, resizeRect);
+        }
 
         // Temporarily present so the downstream Chromium renderwidget still renders.
         // FIXME: remove this call once the changes to Chromium's renderwidget have landed.
