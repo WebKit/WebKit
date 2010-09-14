@@ -1680,6 +1680,7 @@ BUG23473 MAC : fast/repaint/line-flow-with-floats-8.html = PASS
 BUG23473 MAC : fast/repaint/line-flow-with-floats-9.html = PASS
 BUG23473 MAC : fast/repaint/list-marker.html = PASS
 BUG23473 MAC : fast/repaint/moving-shadow-on-path.html = PASS
+BUG23473 MAC : fast/repaint/multicol-repaint.html = PASS
 BUG23473 MAC : fast/repaint/overflow-scroll-body-appear.html = PASS
 BUG23473 MAC : fast/repaint/positioned-document-element.html = PASS
 BUG23473 MAC : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = PASS
@@ -1744,7 +1745,7 @@ BUG10418 WIN DEBUG : animations/change-keyframes-name.html = FAIL PASS
 // We could fix this test for us and upstream it if the test shell user agent
 // would let us differentiate test_shell and WebKit DumpTreeNode.
 BUG7482 LINUX MAC : http/tests/misc/timer-vs-loading.html = TIMEOUT
-BUG7482 WIN : http/tests/misc/timer-vs-loading.html = TIMEOUT
+BUG7482 WIN : http/tests/misc/timer-vs-loading.html = TIMEOUT PASS
 
 // Regressions from WebKit merge to 40864
 // Likely just needs a rebaseline.
@@ -2975,7 +2976,7 @@ BUGWK45296: fast/speech/speech-button-ignore-generated-events.html = TIMEOUT
 BUG51416 : fast/dom/DeviceMotion/window-property.html = TEXT
 
 // Slow test introduced in r64817
-BUG51571 WIN : http/tests/misc/bad-charset-alias.html = TIMEOUT
+BUG51571 WIN : http/tests/misc/bad-charset-alias.html = TIMEOUT PASS
 
 // Probably rebaseline, but want to make sure before doing so
 BUGJAPHET WIN : svg/custom/resource-invalidate-on-target-update.svg = IMAGE
@@ -3085,12 +3086,6 @@ BUGWK45332 MAC : fast/canvas/webgl/gl-teximage.html = TEXT
 // Regressed in r66954
 BUGWK45432 WIN MAC LINUX : fast/dom/dataset-gc.html = TEXT
 
-// Regressed in webkit r66999:r67003 / chrome r58859:r58863
-BUG54917 WIN : editing/input/page-up-down-scrolls.html = TEXT
-BUG54919 WIN : fast/events/remove-child-onscroll.html = TEXT
-BUG54921 WIN : fast/events/scroll-event-does-not-bubble.html = TEXT
-BUG54923 WIN : fast/repaint/fixed-move-after-keyboard-scroll.html = IMAGE+TEXT
-
 BUGWK45438 : editing/spelling/spelling-backspace-between-lines.html = TEXT
 
 // Regressed in webkit r54948
@@ -3129,13 +3124,27 @@ BUGWK45652 SKIP : fast/viewport/ = TEXT
 // Regressions from r67349?
 BUGDPRANKE LINUX MAC : http/tests/navigation/postredirect-frames.html = IMAGE
 
-// Regressions from webkit roll r67178:t67358
-BUGDPRANKE WIN : dom/html/level2/events/DocumentEventCast01.html = TEXT PASS
-BUGDPRANKE WIN : fast/dom/Geolocation/callback-exception.html = TEXT PASS
-BUGDPRANKE WIN : fast/dom/Geolocation/delayed-permission-denied-for-multiple-requests.html = TEXT PASS
-BUGPDRANKE WIN : fast/dom/Geolocation/no-page-cache.html = TEXT PASS
-BUGDPRANKE : fast/forms/select-set-length-with-mutation-remove.html = TIMEOUT PASS
-BUGDPRANKE LINUX : fast/files/read-file-async.html = CRASH
-BUGDPRANKE LINUX : http/tests/incremental/slow-utf8-text.pl = TIMEOUT PASS
-
+BUGWK45667 LINUX : fast/files/read-file-async.html = CRASH PASS
 BUGWK45667 LINUX : fast/files/read-blob-async.html = CRASH PASS
+
+// Regressions from webkit roll r67178:t67358
+BUGDPRANKE WIN DEBUG : fast/dom/node-filter-detached-iframe-crash.html = CRASH
+BUGDPRANKE WIN DEBUG : fast/dynamic/insertAdjacentHTML-allowed-parents.html = CRASH
+BUGDPRANKE WIN DEBUG : fast/forms/textarea-and-mutation-events.html = CRASH
+BUGDPRANKE WIN DEBUG : fast/frames/frame-limit.html = CRASH SLOW
+BUGDPRANKE MAC LINUX : fast/frames/frame-limit.html = TIMEOUT
+BUGDPRANKE WIN DEBUG : fast/parser/fragment-parser.html = CRASH
+BUGDPRANKE WIN DEBUG : fast/xpath/xpath-detached-iframe-resolver-crash.html = CRASH
+BUGDPRANKE WIN DEBUG : traversal/acid3-test-2.html = CRASH
+BUGDPRANKE WIN DEBUG : fast/dom/Document/document-write-doctype.html = CRASH
+BUGDPRANKE WIN DEBUG : fast/dom/URL-attribute-reflection.html = CRASH
+BUGDPRANKE WIN DEBUG : fast/dom/Window/window-function-frame-getter-precedence.html = CRASH
+BUGDPRANKE WIN LINUX DEBUG : fast/forms/select-set-length-with-mutation-remove.html = TIMEOUT PASS
+BUGDPRANKE LINUX DEBUG : http/tests/incremental/slow-utf8-text.pl = TIMEOUT PASS
+BUGDPRANKE LINUX DEBUG : fast/forms/restore-selection-after-layout.html = TEXT
+BUGDPRANKE LINUX : http/tests/navigation/postredirect-frames.html = IMAGE
+
+BUGWK45513 WIN : inspector/extensions-resources.html = TIMEOUT CRASH
+
+BUGDPRANKE WIN DEBUG : inspector/debugger-autocontinue-on-syntax-error.html = PASS TIMEOUT
+BUGDPRANKE WIN LINUX : media/video-poster.html = PASS TEXT

@@ -1,3 +1,12 @@
+2010-09-13  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
+        Add some suppressions back in - it looks like we are probably tripping
+        over some debug asserts that I need to triage downstream.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-13  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
