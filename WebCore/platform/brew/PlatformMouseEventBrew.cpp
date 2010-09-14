@@ -65,15 +65,10 @@ PlatformMouseEvent::PlatformMouseEvent(AEEEvent event, uint16 wParam, uint32 dwP
     m_altKey   = keyModifiers & (KB_LALT | KB_RALT);
     m_metaKey  = m_altKey;
 
-    uint16 mouseModifiers = AEE_POINTER_GET_MOUSE_MODIFIERS(dwParamStr);
-    if (mouseModifiers & AEE_POINTER_MOUSE_LBUTTON)
-        m_button = LeftButton;
-    else if (mouseModifiers & AEE_POINTER_MOUSE_RBUTTON)
-        m_button = RightButton;
-    else if (mouseModifiers & AEE_POINTER_MOUSE_MBUTTON)
-        m_button = MiddleButton;
-    else
-        m_button = NoButton;
+    // AEE_POINTER_GET_MOUSE_MODIFIERS(dwParamStr) always returns 0,
+    // so it is impossible to know which button is pressed or released.
+    // Just use LeftButton because Brew MP usually runs on touch device.
+    m_button = LeftButton;
 
     // AEE_POINTER_GET_TIME returns milliseconds
     m_timestamp = AEE_POINTER_GET_TIME(dwParamStr) * 0.001;
