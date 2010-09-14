@@ -16,7 +16,7 @@ function testSingleToggle(toggleCommand, initialContents, expectedContents)
     }
 }
 
-testSingleToggle("bold", 'hello<b id="test">world</b>', '<b>hello</b><b id="test">world</b>');
+testSingleToggle("bold", 'hello<b id="test">world</b>', '<b>hello<span id="test">world</span></b>');
 testSingleToggle("bold", 'hello<b><i>world</i></b>', '<b>hello<i>world</i></b>');
 testSingleToggle("italic", 'hello <i>world</i> <b>webkit</b>', '<i>hello world <b>webkit</b></i>');
 testSingleToggle("italic", 'hello <i>world</i> webkit', '<i>hello world webkit</i>');
