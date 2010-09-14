@@ -559,6 +559,9 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
         Vector<FloatWithRect> floats;
         bool hasInlineChild = false;
         while (o) {
+            if (!hasInlineChild && o->isInline())
+                hasInlineChild = true;
+
             if (o->isReplaced() || o->isFloating() || o->isPositioned()) {
                 RenderBox* box = toRenderBox(o);
                 
@@ -580,7 +583,6 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                     o->layoutIfNeeded();
                 }
             } else if (o->isText() || (o->isRenderInline() && !endOfInline)) {
-                hasInlineChild = true;
                 if (fullLayout || o->selfNeedsLayout())
                     dirtyLineBoxesForRenderer(o, fullLayout);
                 o->setNeedsLayout(false);

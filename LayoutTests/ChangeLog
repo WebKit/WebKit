@@ -1,3 +1,21 @@
+2010-09-14  Pierre-Antoine LaFayette  <plafayet@codeaurora.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r52839): Incomplete repaint of IMG with text-align:center
+        https://bugs.webkit.org/show_bug.cgi?id=40142
+
+        Add pixel tests to verify proper repaint of RenderReplaced as well as non-inline children.
+
+        * fast/repaint/block-layout-inline-children-float-positioned.html: Added.
+        * fast/repaint/block-layout-inline-children-replaced.html: Added.
+        * platform/mac/fast/repaint/block-layout-inline-children-float-positioned-expected.checksum: Added.
+        * platform/mac/fast/repaint/block-layout-inline-children-float-positioned-expected.png: Added.
+        * platform/mac/fast/repaint/block-layout-inline-children-float-positioned-expected.txt: Added.
+        * platform/mac/fast/repaint/block-layout-inline-children-replaced-expected.checksum: Added.
+        * platform/mac/fast/repaint/block-layout-inline-children-replaced-expected.png: Added.
+        * platform/mac/fast/repaint/block-layout-inline-children-replaced-expected.txt: Added.
+
 2010-09-14  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
