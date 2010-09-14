@@ -1,3 +1,18 @@
+2010-09-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION: In Gmail, a crash occurs at getDoubleValue() when applying a text color to a new line
+        https://bugs.webkit.org/show_bug.cgi?id=45632
+
+        Test: editing/execCommand/query-font-size-with-typing-style.html
+
+        The crash was caused by selectionStartCSSPropertyValue's deleting nodeToRemove before
+        retrieving the font-size property. Fixed the bug by moving the removal code to the end of the function.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectionStartCSSPropertyValue):
+
 2010-09-13  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Darin Adler.

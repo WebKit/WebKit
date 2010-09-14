@@ -1,3 +1,15 @@
+2010-09-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION: In Gmail, a crash occurs at getDoubleValue() when applying a text color to a new line
+        https://bugs.webkit.org/show_bug.cgi?id=45632
+
+        Added a test to ensure WebKit does not crash when querying font size even if there is a typing style.
+
+        * editing/execCommand/query-font-size-with-typing-style-expected.txt: Added.
+        * editing/execCommand/query-font-size-with-typing-style.html: Added.
+
 2010-09-13  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Geoff Garen.

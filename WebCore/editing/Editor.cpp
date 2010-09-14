@@ -951,12 +951,6 @@ String Editor::selectionStartCSSPropertyValue(int propertyID)
 
     String value = selectionStyle->getPropertyValue(propertyID);
 
-    if (nodeToRemove) {
-        ExceptionCode ec = 0;
-        nodeToRemove->remove(ec);
-        ASSERT(!ec);
-    }
-
     // If background color is transparent, traverse parent nodes until we hit a different value or document root
     // Also, if the selection is a range, ignore the background color at the start of selection,
     // and find the background color of the common ancestor.
@@ -973,11 +967,17 @@ String Editor::selectionStartCSSPropertyValue(int propertyID)
     }
 
     if (propertyID == CSSPropertyFontSize) {
-        RefPtr<CSSValue> value = selectionStyle->getPropertyCSSValue(CSSPropertyFontSize);
-        ASSERT(value->isPrimitiveValue());
-        int fontPixelSize = static_cast<CSSPrimitiveValue*>(value.get())->getIntValue(CSSPrimitiveValue::CSS_PX);
+        RefPtr<CSSValue> cssValue = selectionStyle->getPropertyCSSValue(CSSPropertyFontSize);
+        ASSERT(cssValue->isPrimitiveValue());
+        int fontPixelSize = static_cast<CSSPrimitiveValue*>(cssValue.get())->getIntValue(CSSPrimitiveValue::CSS_PX);
         int size = CSSStyleSelector::legacyFontSize(m_frame->document(), fontPixelSize, selectionStyle->useFixedFontDefaultSize());
-        return String::number(size);
+        value = String::number(size);
+    }
+
+    if (nodeToRemove) {
+        ExceptionCode ec = 0;
+        nodeToRemove->remove(ec);
+        ASSERT(!ec);
     }
 
     return value;
