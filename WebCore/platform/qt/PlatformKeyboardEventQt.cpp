@@ -188,6 +188,9 @@ int windowsKeyCodeForKeyEvent(unsigned int keycode, bool isKeypad)
             return VK_RIGHT; // (27) RIGHT ARROW key
         case Qt::Key_Down:
             return VK_DOWN; // (28) DOWN ARROW key
+        case Qt::Key_Enter:
+        case Qt::Key_Return:
+            return VK_RETURN; // (0D) Return key
         case Qt::Key_Insert:
             return VK_INSERT; // (2D) INS key
         case Qt::Key_Delete:

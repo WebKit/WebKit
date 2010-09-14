@@ -1,3 +1,22 @@
+2010-09-14  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Numpad Enter key returns keyCode 0 instead of 13
+        https://bugs.webkit.org/show_bug.cgi?id=45014
+
+        Original patch by Jarred Nicholls <jarred.nicholls@gmail.com>
+
+        There is a missing case statement in the PlatformKeyboardEventQt.cpp
+        file to handle the Enter button on the number pad.  Because it is not
+        handled, the keyCode returned in a JavaScript event is 0 rather than 13.
+
+        Test: manual-tests/qt/numpad-enter-key.html
+
+        * manual-tests/qt/numpad-enter-key.html: Added.
+        * platform/qt/PlatformKeyboardEventQt.cpp:
+        (WebCore::windowsKeyCodeForKeyEvent):
+
 2010-09-14  Evan Martin  <evan@chromium.org>
 
         Reviewed by Darin Fisher.
