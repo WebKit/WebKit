@@ -1,3 +1,20 @@
+2010-09-14  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r67449.
+        http://trac.webkit.org/changeset/67449
+        https://bugs.webkit.org/show_bug.cgi?id=45746
+
+        This change makes tree red. (Requested by pfeldman on
+        #webkit).
+
+        * editing/execCommand/script-tests/toggle-style-3.js:
+        * editing/execCommand/toggle-style-3-expected.txt:
+        * editing/execCommand/unlink-expected.txt:
+        * editing/style/inline-style-extend-run-expected.txt: Removed.
+        * editing/style/inline-style-extend-run.html: Removed.
+        * editing/style/script-tests/inline-style-extend-run.js: Removed.
+        * editing/style/script-tests/make-text-writing-direction-inline.js:
+
 2010-09-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.
