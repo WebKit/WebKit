@@ -1,3 +1,10 @@
+2010-09-14  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows production build fix.
+        Roll out r65143.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make:
+
 2010-09-14  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Darin Adler.

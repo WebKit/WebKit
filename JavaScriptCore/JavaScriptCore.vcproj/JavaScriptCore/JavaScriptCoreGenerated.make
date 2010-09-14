@@ -1,5 +1,4 @@
 all:
-    -if not exist "$(WEBKITLIBRARIESDIR)\tools\vsprops\.svn" del /s/q "$(WEBKITLIBRARIESDIR)\tools\vsprops\"
     -xcopy /y/d/e/i "..\..\..\WebKitLibraries\win\tools" "$(WEBKITLIBRARIESDIR)\tools"
     touch "$(WEBKITOUTPUTDIR)\buildfailed"
     bash build-generated-files.sh "$(WEBKITOUTPUTDIR)" "$(WEBKITLIBRARIESDIR)"
