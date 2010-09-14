@@ -1,3 +1,30 @@
+2010-09-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Hang processing href attribute containing a million slashes
+        https://bugs.webkit.org/show_bug.cgi?id=45767
+
+        Test: fast/css/visited-link-hang.html
+
+        * platform/LinkHash.cpp:
+        (WebCore::findSlashDotDotSlash): Added a start position argument and
+        changed types to use size_t consistently instead of a mix.
+        (WebCore::findSlashSlash): Ditto.
+        (WebCore::findSlashDotSlash): Ditto.
+        (WebCore::squeezeOutNullCharacters): Added.
+        (WebCore::cleanSlashDotDotSlashes): Added. Factored out part
+        of cleanPath (see below).
+        (WebCore::mergeDoubleSlashes): Ditto.
+        (WebCore::cleanSlashDotSlashes): Ditto.
+        (WebCore::cleanPath): Changed algorithm to not remove as we go to
+        avoid N^2 behavior; instead replace with null characters and then
+        do a squeeze operation after the fact. Also moved the body of the
+        function out of line since we normally don't have to do any cleaning.
+        This whole thing should go at some point -- it's not the right
+        algorithm -- but this should eliminate the performance problems
+        without changing behavior.
+
 2010-09-14  Nico Weber  <thakis@chromium.org>
 
         Reviewed by Kenneth Russell.

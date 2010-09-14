@@ -2,6 +2,16 @@
 
         Reviewed by Geoffrey Garen.
 
+        Hang processing href attribute containing a million slashes
+        https://bugs.webkit.org/show_bug.cgi?id=45767
+
+        * fast/css/visited-link-hang-expected.txt: Added.
+        * fast/css/visited-link-hang.html: Added.
+
+2010-09-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
         Sort with non-numeric custom sort function fails on array with length but no values
         https://bugs.webkit.org/show_bug.cgi?id=45781
 

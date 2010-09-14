@@ -1,0 +1,3 @@
+The URL of this link has a ton of slashes.
+
+If this test runs without hanging, then it passes. The visited link hash algorithm was N^2 at one point and would hang.

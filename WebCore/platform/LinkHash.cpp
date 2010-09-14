@@ -31,36 +31,36 @@
 
 namespace WebCore {
 
-static inline size_t findSlashDotDotSlash(const UChar* characters, size_t length)
+static inline size_t findSlashDotDotSlash(const UChar* characters, size_t length, size_t position)
 {
     if (length < 4)
         return notFound;
-    unsigned loopLimit = length - 3;
-    for (unsigned i = 0; i < loopLimit; ++i) {
+    size_t loopLimit = length - 3;
+    for (size_t i = position; i < loopLimit; ++i) {
         if (characters[i] == '/' && characters[i + 1] == '.' && characters[i + 2] == '.' && characters[i + 3] == '/')
             return i;
     }
     return notFound;
 }
 
-static inline size_t findSlashSlash(const UChar* characters, size_t length, int position)
+static inline size_t findSlashSlash(const UChar* characters, size_t length, size_t position)
 {
     if (length < 2)
         return notFound;
-    unsigned loopLimit = length - 1;
-    for (unsigned i = position; i < loopLimit; ++i) {
+    size_t loopLimit = length - 1;
+    for (size_t i = position; i < loopLimit; ++i) {
         if (characters[i] == '/' && characters[i + 1] == '/')
             return i;
     }
     return notFound;
 }
 
-static inline size_t findSlashDotSlash(const UChar* characters, size_t length)
+static inline size_t findSlashDotSlash(const UChar* characters, size_t length, size_t position)
 {
     if (length < 3)
         return notFound;
-    unsigned loopLimit = length - 2;
-    for (unsigned i = 0; i < loopLimit; ++i) {
+    size_t loopLimit = length - 2;
+    for (size_t i = position; i < loopLimit; ++i) {
         if (characters[i] == '/' && characters[i + 1] == '.' && characters[i + 2] == '/')
             return i;
     }
@@ -79,38 +79,90 @@ static inline bool containsColonSlashSlash(const UChar* characters, unsigned len
     return false;
 }
 
-static inline void cleanPath(Vector<UChar, 512>& path)
+static inline void squeezeOutNullCharacters(Vector<UChar, 512>& string)
 {
-    // FIXME: Should not do this in the query or anchor part.
-    size_t pos;
-    while ((pos = findSlashDotDotSlash(path.data(), path.size())) != notFound) {
-        size_t prev = reverseFind(path.data(), path.size(), '/', pos - 1);
-        // don't remove the host, i.e. http://foo.org/../foo.html
-        if (prev == notFound || (prev > 3 && path[prev - 2] == ':' && path[prev - 1] == '/'))
-            path.remove(pos, 3);
-        else
-            path.remove(prev, pos - prev + 3);
+    size_t size = string.size();
+    size_t i = 0;
+    for (i = 0; i < size; ++i) {
+        if (!string[i])
+            break;
     }
-
-    // FIXME: Should not do this in the query part.
-    pos = 0;
-    if ((pos = findSlashSlash(path.data(), path.size(), pos)) != notFound) {
-        size_t refPos = find(path.data(), path.size(), '#');
-        while (refPos == 0 || refPos == notFound || pos < refPos) {
-            if (pos == 0 || path[pos - 1] != ':')
-                path.remove(pos);
-            else
-                pos += 2;
-            if ((pos = findSlashSlash(path.data(), path.size(), pos)) == notFound)
-                break;
-        }
+    if (i == size)
+        return;
+    size_t j = i;
+    for (++i; i < size; ++i) {
+        if (UChar character = string[i])
+            string[j++] = character;
     }
-
-    // FIXME: Should not do this in the query or anchor part.
-    while ((pos = findSlashDotSlash(path.data(), path.size())) != notFound)
-        path.remove(pos, 2);
+    ASSERT(j < size);
+    string.shrink(j);
 }
 
+static void cleanSlashDotDotSlashes(Vector<UChar, 512>& path, size_t firstSlash)
+{
+    size_t slash = firstSlash;
+    do {
+        size_t previousSlash = slash ? reverseFind(path.data(), path.size(), '/', slash - 1) : notFound;
+        // Don't remove the host, i.e. http://foo.org/../foo.html
+        if (previousSlash == notFound || (previousSlash > 3 && path[previousSlash - 2] == ':' && path[previousSlash - 1] == '/')) {
+            path[slash] = 0;
+            path[slash + 1] = 0;
+            path[slash + 2] = 0;
+        } else {
+            for (size_t i = previousSlash; i < slash + 3; ++i)
+                path[i] = 0;
+        }
+        slash += 3;
+    } while ((slash = findSlashDotDotSlash(path.data(), path.size(), slash)) != notFound);
+    squeezeOutNullCharacters(path);
+}
+
+static void mergeDoubleSlashes(Vector<UChar, 512>& path, size_t firstSlash)
+{
+    size_t refPos = find(path.data(), path.size(), '#');
+    if (!refPos || refPos == notFound)
+        refPos = path.size();
+
+    size_t slash = firstSlash;
+    while (slash < refPos) {
+        if (!slash || path[slash - 1] != ':')
+            path[slash++] = 0;
+        else
+            slash += 2;
+        if ((slash = findSlashSlash(path.data(), path.size(), slash)) == notFound)
+            break;
+    }
+    squeezeOutNullCharacters(path);
+}
+
+static void cleanSlashDotSlashes(Vector<UChar, 512>& path, size_t firstSlash)
+{
+    size_t slash = firstSlash;
+    do {
+        path[slash] = 0;
+        path[slash + 1] = 0;
+        slash += 2;
+    } while ((slash = findSlashDotSlash(path.data(), path.size(), slash)) != notFound);
+    squeezeOutNullCharacters(path);
+}
+
+static inline void cleanPath(Vector<UChar, 512>& path)
+{
+    // FIXME: Should not do this in the query or anchor part of the URL.
+    size_t firstSlash = findSlashDotDotSlash(path.data(), path.size(), 0);
+    if (firstSlash != notFound)
+        cleanSlashDotDotSlashes(path, firstSlash);
+
+    // FIXME: Should not do this in the query part.
+    firstSlash = findSlashSlash(path.data(), path.size(), 0);
+    if (firstSlash != notFound)
+        mergeDoubleSlashes(path, firstSlash);
+
+    // FIXME: Should not do this in the query or anchor part.
+    firstSlash = findSlashDotSlash(path.data(), path.size(), 0);
+    if (firstSlash != notFound)
+        cleanSlashDotSlashes(path, firstSlash);
+}
 
 static inline bool matchLetter(UChar c, UChar lowercaseLetter)
 {
