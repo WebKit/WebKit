@@ -366,7 +366,9 @@ void DumpRenderTreeSupportQt::suspendActiveDOMObjects(QWebFrame* frame)
 {
     Frame* coreFrame = QWebFramePrivate::core(frame);
     if (coreFrame->document())
-        coreFrame->document()->suspendActiveDOMObjects();
+        // FIXME: This function should be changed take a ReasonForSuspension parameter 
+        // https://bugs.webkit.org/show_bug.cgi?id=45732
+        coreFrame->document()->suspendActiveDOMObjects(ActiveDOMObject::JavaScriptPaused);
 }
 
 // Resume active DOM objects in this frame.
