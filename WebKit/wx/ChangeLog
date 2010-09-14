@@ -1,3 +1,19 @@
+2010-09-14  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix after FrameNetworkingContext changes and setZoomLevel changes.
+
+        * WebFrame.cpp:
+        (wxWebFrame::IncreaseTextSize):
+        (wxWebFrame::DecreaseTextSize):
+        (wxWebFrame::ResetTextSize):
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::createNetworkingContext):
+        * WebKitSupport/FrameLoaderClientWx.h:
+        * WebKitSupport/FrameNetworkingContextWx.h: Added.
+        (WebCore::FrameNetworkingContextWx::create):
+        (WebCore::FrameNetworkingContextWx::coreFrame):
+        (WebCore::FrameNetworkingContextWx::FrameNetworkingContextWx):
+
 2010-09-13  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Sam Weinig.

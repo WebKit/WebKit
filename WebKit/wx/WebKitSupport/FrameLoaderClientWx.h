@@ -221,6 +221,8 @@ namespace WebCore {
         virtual void registerForIconNotification(bool listen = true);
         
         virtual bool shouldUsePluginDocument(const String &mimeType) const;
+        
+        virtual PassRefPtr<FrameNetworkingContext> createNetworkingContext();
 
     private:
         wxWebFrame *m_webFrame;

@@ -55,6 +55,7 @@
 
 #include <stdio.h>
 
+#include "FrameNetworkingContextWx.h"
 #include "WebFrame.h"
 #include "WebFramePrivate.h"
 #include "WebView.h"
@@ -967,6 +968,11 @@ bool FrameLoaderClientWx::shouldUsePluginDocument(const String &mimeType) const
     // NOTE: Plugin Documents are used for viewing PDFs, etc. inline, and should
     // not be used for pages with plugins in them.
     return false;
+}
+
+PassRefPtr<FrameNetworkingContext> FrameLoaderClientWx::createNetworkingContext()
+{
+    return FrameNetworkingContextWx::create(m_frame);
 }
 
 }

@@ -1,3 +1,10 @@
+2010-09-14  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix after move of selectedText() method.
+
+        * platform/wx/PasteboardWx.cpp:
+        (WebCore::Pasteboard::writeSelection):
+
 2010-09-14  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

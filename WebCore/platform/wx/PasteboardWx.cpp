@@ -53,7 +53,7 @@ Pasteboard* Pasteboard::generalPasteboard()
 void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
 {
     if (wxTheClipboard->Open()) {
-        wxTheClipboard->SetData( new wxTextDataObject(frame->selectedText()) );
+        wxTheClipboard->SetData( new wxTextDataObject(frame->editor()->selectedText()) );
         wxTheClipboard->Close();
     }
 }

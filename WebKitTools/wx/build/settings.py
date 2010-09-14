@@ -102,6 +102,7 @@ webcore_dirs = [
     'WebCore/bindings/cpp',
     'WebCore/bindings/generic',
     'WebCore/bindings/js',
+    'WebCore/bindings/js/specialization',
     'WebCore/bridge', 
     'WebCore/bridge/c',
     'WebCore/bridge/jsc',
@@ -141,12 +142,14 @@ webcore_dirs = [
     'WebCore/platform/text/transcoder',
     'WebCore/plugins', 
     'WebCore/rendering', 
-    'WebCore/rendering/style', 
+    'WebCore/rendering/style',
+    'WebCore/rendering/svg',
     'WebCore/storage',
     'WebCore/svg',
     'WebCore/svg/animation',
     'WebCore/svg/graphics',
     'WebCore/svg/graphics/filters',
+    
     'WebCore/websockets', 
     'WebCore/xml'
 ]

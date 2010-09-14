@@ -1,3 +1,9 @@
+2010-09-14  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix, add newly added directories to the directory list.
+
+        * wx/build/settings.py:
+
 2010-09-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
