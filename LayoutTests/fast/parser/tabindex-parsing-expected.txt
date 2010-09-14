@@ -9,8 +9,8 @@ This element shouldn't be focusable PASSED
 This element should be focusable PASSED
 .tabIndex=7 getAttribute('tabindex')='007'
 
-This element shouldn't be focusable PASSED
-.tabIndex=-1 getAttribute('tabindex')='1px'
+This element should be focusable PASSED
+.tabIndex=1 getAttribute('tabindex')='1px'
 
 This element should be focusable PASSED
 .tabIndex=0 getAttribute('tabindex')='-0'

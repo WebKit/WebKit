@@ -45,6 +45,9 @@ String serializeForNumberType(double);
 // The double* parameter may be 0 to check if the string can be parsed without getting the result.
 bool parseToDoubleForNumberType(const String&, double*);
 
+// http://www.whatwg.org/specs/web-apps/current-work/#rules-for-parsing-integers
+bool parseHTMLInteger(const String&, int&);
+
 // Inline implementations of some of the functions declared above.
 
 inline bool isHTMLSpace(UChar character)

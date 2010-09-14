@@ -91,4 +91,54 @@ bool parseToDoubleForNumberType(const String& string, double* result)
     return true;
 }
 
+// http://www.whatwg.org/specs/web-apps/current-work/#rules-for-parsing-integers
+bool parseHTMLInteger(const String& input, int& value)
+{
+    // Step 1
+    // Step 2
+    const UChar* position = input.characters();
+    const UChar* end = position + input.length();
+
+    // Step 3
+    int sign = 1;
+
+    // Step 4
+    while (position < end) {
+        if (!isHTMLSpace(*position))
+            break;
+        ++position;
+    }
+
+    // Step 5
+    if (position == end)
+        return false;
+    ASSERT(position < end);
+
+    // Step 6
+    if (*position == '-') {
+        sign = -1;
+        ++position;
+    } else if (*position == '+')
+        ++position;
+    if (position == end)
+        return false;
+    ASSERT(position < end);
+
+    // Step 7
+    if (!isASCIIDigit(*position))
+        return false;
+
+    // Step 8
+    Vector<UChar, 16> digits;
+    while (position < end) {
+        if (!isASCIIDigit(*position))
+            break;
+        digits.append(*position++);
+    }
+
+    // Step 9
+    value = sign * charactersToIntStrict(digits.data(), digits.size());
+    return true;
+}
+
 }

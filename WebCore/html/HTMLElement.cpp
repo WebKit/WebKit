@@ -39,6 +39,7 @@
 #include "HTMLElementFactory.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "RenderWordBreak.h"
 #include "ScriptEventListener.h"
 #include "Settings.h"
@@ -142,12 +143,10 @@ void HTMLElement::parseMappedAttribute(Attribute* attr)
         setContentEditable(attr);
     } else if (attr->name() == tabindexAttr) {
         indexstring = getAttribute(tabindexAttr);
-        if (indexstring.length()) {
-            bool parsedOK;
-            int tabindex = indexstring.toIntStrict(&parsedOK);
-            if (parsedOK)
-                // Clamp tabindex to the range of 'short' to match Firefox's behavior.
-                setTabIndexExplicitly(max(static_cast<int>(std::numeric_limits<short>::min()), min(tabindex, static_cast<int>(std::numeric_limits<short>::max()))));
+        int tabindex = 0;
+        if (parseHTMLInteger(indexstring, tabindex)) {
+            // Clamp tabindex to the range of 'short' to match Firefox's behavior.
+            setTabIndexExplicitly(max(static_cast<int>(std::numeric_limits<short>::min()), min(tabindex, static_cast<int>(std::numeric_limits<short>::max()))));
         }
     } else if (attr->name() == langAttr) {
         // FIXME: Implement

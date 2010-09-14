@@ -72,12 +72,10 @@ void WMLElement::parseMappedAttribute(Attribute* attr)
             addCSSProperty(attr, CSSPropertyTextAlign, attr->value());
     } else if (attr->name() == HTMLNames::tabindexAttr) {
         String indexstring = attr->value();
-        if (indexstring.length()) {
-            bool parsedOK;
-            int tabindex = indexstring.toIntStrict(&parsedOK);
-            if (parsedOK)
-                // Clamp tabindex to the range of 'short' to match Firefox's behavior.
-                setTabIndexExplicitly(max(static_cast<int>(std::numeric_limits<short>::min()), min(tabindex, static_cast<int>(std::numeric_limits<short>::max()))));
+        int tabindex = 0;
+        if (parseHTMLInteger(tabindex)) {
+            // Clamp tabindex to the range of 'short' to match Firefox's behavior.
+            setTabIndexExplicitly(max(static_cast<int>(std::numeric_limits<short>::min()), min(tabindex, static_cast<int>(std::numeric_limits<short>::max()))));
         }
     }
 }

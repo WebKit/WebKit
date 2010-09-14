@@ -1,3 +1,21 @@
+2010-09-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        incorrect tabindex parsing
+        https://bugs.webkit.org/show_bug.cgi?id=21076
+
+        Updated our integer parsing for tabindex to use the algorithm from the
+        HTML5 spec.
+
+        Test: fast/parser/tabindex-parsing-2.html
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseMappedAttribute):
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::parseHTMLInteger):
+        * html/parser/HTMLParserIdioms.h:
+
 2010-09-14  Brent Fulgham  <bfulgham@webkit.org>
 
         Build correction, no review.
