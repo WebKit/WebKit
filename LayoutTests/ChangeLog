@@ -1,3 +1,16 @@
+2010-09-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        `document.compatMode` is `undefined` when using `application/xhtml+xml`
+        https://bugs.webkit.org/show_bug.cgi?id=44422
+
+        Test the value of compatMode in XHTML.  I'm terrible at XML, but this
+        test seems to work.
+
+        * fast/parser/compatMode-in-xhtml-expected.txt: Added.
+        * fast/parser/compatMode-in-xhtml.xhtml: Added.
+
 2010-09-14  James Kozianski  <soulplant@gmail.com>
 
         Reviewed by Ojan Vafai.

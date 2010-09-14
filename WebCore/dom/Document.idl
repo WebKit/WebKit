@@ -233,6 +233,8 @@ module core {
         // HTML 5
         NodeList getElementsByClassName(in DOMString tagname);
 
+        readonly attribute DOMString compatMode;
+
         // NodeSelector - Selector API
         Element querySelector(in DOMString selectors)
             raises(DOMException);
