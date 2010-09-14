@@ -678,7 +678,7 @@ bool FrameLoaderClientEfl::canHandleRequest(const ResourceRequest&) const
     return true;
 }
 
-virtual bool FrameLoaderClientEfl::canShowMIMETypeAsHTML(const String& MIMEType) const
+bool FrameLoaderClientEfl::canShowMIMETypeAsHTML(const String& MIMEType) const
 {
     notImplemented();
     return false;

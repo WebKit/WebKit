@@ -1,3 +1,11 @@
+2010-09-14  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed build fix: remove "virtual" keyword from
+        implementation file.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::canShowMIMETypeAsHTML):
+
 2010-09-13  Rafael Antognolli  <antognolli@profusion.mobi>
 
         Unreviewed build fix.
