@@ -232,6 +232,7 @@ void QtFallbackWebPopup::populate(const QWebSelectData& data)
         case QWebSelectData::Option:
             m_combo->insertItem(i, data.itemText(i));
             model->item(i)->setEnabled(data.itemIsEnabled(i));
+            model->item(i)->setToolTip(data.itemToolTip(i));
             if (data.itemIsSelected(i))
                 currentIndex = i;
             break;

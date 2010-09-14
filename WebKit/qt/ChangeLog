@@ -1,3 +1,15 @@
+2010-09-14  Enrico Ros  <eros@codeaurora.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Respect title attribute on option elements
+        https://bugs.webkit.org/show_bug.cgi?id=45084
+
+        Set the tooltip in the combo box model, so it's reflected in the view.
+
+        * WebCoreSupport/QtFallbackWebPopup.cpp:
+        (WebCore::QtFallbackWebPopup::populate):
+
 2010-09-13  Daniel Bates  <dbates@rim.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=45732
