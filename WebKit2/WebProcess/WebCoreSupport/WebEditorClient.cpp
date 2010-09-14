@@ -503,12 +503,6 @@ void WebEditorClient::dismissCorrectionPanel(bool correctionAccepted)
 {
     notImplemented();
 }
-
-bool WebEditorClient::isShowingCorrectionPanel()
-{
-    notImplemented();
-    return false;
-}
 #endif
 
 } // namespace WebKit

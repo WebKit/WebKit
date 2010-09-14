@@ -1122,13 +1122,6 @@ static bool supportedPaste(Frame* frame, EditorCommandSource source)
     return false;
 }
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-static bool supportedDismissCorrectionPanel(Frame* frame, EditorCommandSource source)
-{
-    return supportedFromMenuOrKeyBinding(frame, source) && frame->editor()->isShowingCorrectionPanel();
-}
-#endif
-
 // Enabled functions
 
 static bool enabled(Frame*, Event*, EditorCommandSource)
@@ -1474,7 +1467,7 @@ static const CommandMap& createCommandMap()
         { "Yank", { executeYank, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "YankAndSelect", { executeYankAndSelect, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
 #if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-        { "CancelOperation", { executeCancelOperation, supportedDismissCorrectionPanel, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+        { "CancelOperation", { executeCancelOperation, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
 #endif
     };
 

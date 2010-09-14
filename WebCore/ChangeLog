@@ -1,3 +1,18 @@
+2010-09-14  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, reverting changes r67451 and r67451.
+        Broke lots of builders.
+
+        Only intercept ESC key press when autocorrection UI is visible.
+        https://bugs.webkit.org/show_bug.cgi?id=45071
+
+        * editing/Editor.cpp:
+        * editing/Editor.h:
+        * editing/EditorCommand.cpp:
+        (WebCore::createCommandMap):
+        * loader/EmptyClients.h:
+        * page/EditorClient.h:
+
 2010-09-14  Kinuko Yasuda  <kinuko@chromium.org>
 
         Unreviewed; an attempt to fix Chromium Windows build.

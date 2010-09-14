@@ -1,3 +1,16 @@
+2010-09-14  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, reverting changes r67451 and r67451.
+        Broke lots of builders.
+
+        Only intercept ESC key press when autocorrection UI is visible.
+        https://bugs.webkit.org/show_bug.cgi?id=45071
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::WebEditorClient):
+        (WebEditorClient::dismissCorrectionPanel):
+
 2010-09-14  Jia Pu  <jpu@apple.com>
 
         Reviewed by Dan Bernstein.
