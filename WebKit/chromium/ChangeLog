@@ -1,3 +1,27 @@
+2010-09-13  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add Chromium API for FileWriter
+        https://bugs.webkit.org/show_bug.cgi?id=44360
+
+        Build file changes.
+        * WebKit.gyp:
+
+        Added a way to get a WebFileWriter.
+        * public/WebFileSystem.h:
+        (WebKit::WebFileSystem::createFileWriter):
+
+        WebFileWriter writes and truncates files.
+        * public/WebFileWriter.h: Added.
+
+        WebFileWriterClient reports success/failure and progress events.
+        * public/WebFileWriterClient.h: Added.
+
+        AsyncFileWriterChromium is a connector that links FileWriter and WebFileWriter, FileWriterClient and WebFileWriterClient.
+        * src/AsyncFileWriterChromium.cpp: Added.
+        * src/AsyncFileWriterChromium.h: Added.
+
 2010-09-13  W. James MacLean  <wjmaclean@google.com>
 
         Reviewed by Darin Fisher.
