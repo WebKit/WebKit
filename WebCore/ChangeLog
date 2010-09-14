@@ -1,3 +1,9 @@
+2010-09-14  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * editing/EditorCommand.cpp:
+
 2010-09-14  Jia Pu  <jpu@apple.com>
 
         Reviewed by Dan Bernstein.
