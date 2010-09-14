@@ -1,5 +1,11 @@
 2010-09-13  Sam Weinig  <sam@webkit.org>
 
+        Fix windows build.
+
+        * UIProcess/Launcher/win/ProcessLauncherWin.cpp:
+
+2010-09-13  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Jon Honeycutt.
 
         Threaded mode should work in WebKit2 MiniBrowser

@@ -29,8 +29,6 @@
 #include "RunLoop.h"
 #include <wtf/text/WTFString.h>
 
-using namespace WebCore;
-
 #if !defined(NDEBUG) && (!defined(DEBUG_INTERNAL) || defined(DEBUG_ALL))
 const LPCWSTR webProcessName = L"WebKit2WebProcess_debug.exe";
 #else
