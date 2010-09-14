@@ -43,7 +43,6 @@
 #include "SkTypeface.h"
 #include "SkUtils.h"
 
-#include <unicode/utf16.h>
 #include <wtf/Assertions.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
