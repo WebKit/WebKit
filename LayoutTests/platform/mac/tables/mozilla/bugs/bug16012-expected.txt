@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,2) size 34x1
             RenderTableCell {TD} at (2,2) size 30x1 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 30x1
-      RenderBlock (anonymous) at (0,64) size 784x184
+      RenderBlock (anonymous) at (0,64) size 784x170
         RenderBR {BR} at (0,0) size 0x18
         RenderBR {BR} at (0,18) size 0x18
         RenderBR {BR} at (0,36) size 0x18
@@ -30,19 +30,19 @@ layer at (0,0) size 800x600
           text run at (222,54) width 175: "1st at size=0, 2nd at size=-4"
         RenderBR {BR} at (397,68) size 0x0
         RenderBR {BR} at (0,72) size 0x18
-        RenderInline {FONT} at (0,0) size 160x35
-          RenderText {#text} at (0,90) size 160x17
-            text run at (0,90) width 160: "Detonator 3.53 Drivers"
-          RenderBR {BR} at (160,104) size 0x0
-          RenderText {#text} at (0,108) size 118x17
-            text run at (0,108) width 118: "Available NOW! "
-        RenderBR {BR} at (118,122) size 0x0
-        RenderBR {BR} at (0,126) size 0x18
         RenderInline {FONT} at (0,0) size 104x22
-          RenderText {#text} at (0,144) size 104x11
-            text run at (0,144) width 104: "Detonator 3.53 Drivers"
-          RenderBR {BR} at (104,153) size 0x0
-          RenderText {#text} at (0,155) size 75x11
-            text run at (0,155) width 75: "Available NOW! "
-        RenderBR {BR} at (75,164) size 0x0
-        RenderBR {BR} at (0,166) size 0x18
+          RenderText {#text} at (0,90) size 104x11
+            text run at (0,90) width 104: "Detonator 3.53 Drivers"
+          RenderBR {BR} at (104,99) size 0x0
+          RenderText {#text} at (0,101) size 75x11
+            text run at (0,101) width 75: "Available NOW! "
+        RenderBR {BR} at (75,110) size 0x0
+        RenderBR {BR} at (0,112) size 0x18
+        RenderInline {FONT} at (0,0) size 104x22
+          RenderText {#text} at (0,130) size 104x11
+            text run at (0,130) width 104: "Detonator 3.53 Drivers"
+          RenderBR {BR} at (104,139) size 0x0
+          RenderText {#text} at (0,141) size 75x11
+            text run at (0,141) width 75: "Available NOW! "
+        RenderBR {BR} at (75,150) size 0x0
+        RenderBR {BR} at (0,152) size 0x18

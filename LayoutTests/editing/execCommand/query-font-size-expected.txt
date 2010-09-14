@@ -1,7 +1,7 @@
 test	html	queryCommandValue result
 execCommand('FontSize', -2)	<font class="Apple-style-span" size="1">test</font>	1
 execCommand('FontSize', -1)	<font class="Apple-style-span" size="2">test</font>	2
-execCommand('FontSize', 0)	test	3
+execCommand('FontSize', 0)	<font class="Apple-style-span" size="1">test</font>	1
 execCommand('FontSize', 1)	<font class="Apple-style-span" size="1">test</font>	1
 execCommand('FontSize', 2)	<font class="Apple-style-span" size="2">test</font>	2
 execCommand('FontSize', 3)	test	3
@@ -21,7 +21,7 @@ manual CSS font-size: 10px	<span style="font-size: 10px">test</span>	1
 monospace tests to ensure the bug 19161 does not affect queryCommandValue's values
 execCommand('FontSize', -2)	<font class="Apple-style-span" size="1"><font class="Apple-style-span" face="monospace">test</font></font>	1
 execCommand('FontSize', -1)	<font class="Apple-style-span" size="2"><font class="Apple-style-span" face="monospace">test</font></font>	2
-execCommand('FontSize', 0)	<font class="Apple-style-span" face="monospace">test</font>	3
+execCommand('FontSize', 0)	<font class="Apple-style-span" size="1"><font class="Apple-style-span" face="monospace">test</font></font>	1
 execCommand('FontSize', 1)	<font class="Apple-style-span" size="1"><font class="Apple-style-span" face="monospace">test</font></font>	1
 execCommand('FontSize', 2)	<font class="Apple-style-span" size="2"><font class="Apple-style-span" face="monospace">test</font></font>	2
 execCommand('FontSize', 3)	<font class="Apple-style-span" face="monospace">test</font>	3

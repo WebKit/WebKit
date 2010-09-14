@@ -2,6 +2,20 @@
 
         Reviewed by Darin Adler.
 
+        Handle <font size=0> as <font size=1> like any other browser
+        https://bugs.webkit.org/show_bug.cgi?id=39148
+
+        Update tests and results to match new behavior.
+
+        * editing/execCommand/query-font-size-expected.txt:
+        * fast/dom/HTMLFontElement/script-tests/size-attribute.js:
+        * fast/dom/HTMLFontElement/size-attribute-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug16012-expected.txt:
+
+2010-09-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
         document.lastModified gives no output if the response doesn't have a Last-Modified header
         https://bugs.webkit.org/show_bug.cgi?id=8475
 

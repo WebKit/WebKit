@@ -2,6 +2,20 @@
 
         Reviewed by Darin Adler.
 
+        Handle <font size=0> as <font size=1> like any other browser
+        https://bugs.webkit.org/show_bug.cgi?id=39148
+
+        Update font size parser to match HTML5 spec.  The main difference here
+        is the handling of 0, which now maps to 1 instead of 3.
+
+        * html/HTMLFontElement.cpp:
+        (WebCore::parseFontSize):
+        (WebCore::HTMLFontElement::cssValueFromFontSizeNumber):
+
+2010-09-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
         document.lastModified gives no output if the response doesn't have a Last-Modified header
         https://bugs.webkit.org/show_bug.cgi?id=8475
 

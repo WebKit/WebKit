@@ -11,7 +11,7 @@ PASS fontSizeAttributeEffect("4") is "18px"
 PASS fontSizeAttributeEffect("5") is "24px"
 PASS fontSizeAttributeEffect("6") is "32px"
 PASS fontSizeAttributeEffect("7") is "48px"
-PASS fontSizeAttributeEffect("0") is "16px"
+PASS fontSizeAttributeEffect("0") is "10px"
 PASS fontSizeAttributeEffect("-1") is "13px"
 PASS fontSizeAttributeEffect("-2") is "10px"
 PASS fontSizeAttributeEffect("-3") is "10px"
@@ -22,6 +22,36 @@ PASS fontSizeAttributeEffect("-7") is "10px"
 PASS fontSizeAttributeEffect("-8") is "10px"
 PASS fontSizeAttributeEffect("-9") is "10px"
 PASS fontSizeAttributeEffect("-10") is "10px"
+PASS fontSizeAttributeEffect("x6") is null
+PASS fontSizeAttributeEffect(" 6") is "32px"
+PASS fontSizeAttributeEffect("\t6") is "32px"
+PASS fontSizeAttributeEffect("\r6") is "32px"
+PASS fontSizeAttributeEffect("\n6") is "32px"
+PASS fontSizeAttributeEffect("\u20086") is null
+PASS fontSizeAttributeEffect("x-6") is null
+PASS fontSizeAttributeEffect(" -6") is "10px"
+PASS fontSizeAttributeEffect("\t-6") is "10px"
+PASS fontSizeAttributeEffect("\r-6") is "10px"
+PASS fontSizeAttributeEffect("\n-6") is "10px"
+PASS fontSizeAttributeEffect("\u2008-6") is null
+PASS fontSizeAttributeEffect("x+6") is null
+PASS fontSizeAttributeEffect(" +6") is "48px"
+PASS fontSizeAttributeEffect("\t+6") is "48px"
+PASS fontSizeAttributeEffect("\r+6") is "48px"
+PASS fontSizeAttributeEffect("\n+6") is "48px"
+PASS fontSizeAttributeEffect("\u2008+6") is null
+PASS fontSizeAttributeEffect("x+x6") is null
+PASS fontSizeAttributeEffect(" + 6") is null
+PASS fontSizeAttributeEffect("\t+\t6") is null
+PASS fontSizeAttributeEffect("\r+\r6") is null
+PASS fontSizeAttributeEffect("\n+\n6") is null
+PASS fontSizeAttributeEffect("\u2008+\u20086") is null
+PASS fontSizeAttributeEffect("x-x6") is null
+PASS fontSizeAttributeEffect(" - 6") is null
+PASS fontSizeAttributeEffect("\t-\t6") is null
+PASS fontSizeAttributeEffect("\r-\r6") is null
+PASS fontSizeAttributeEffect("\n-\n6") is null
+PASS fontSizeAttributeEffect("\u2008-\u20086") is null
 PASS fontSizeAttributeEffect("8") is "48px"
 PASS fontSizeAttributeEffect("9") is "48px"
 PASS fontSizeAttributeEffect("10") is "48px"

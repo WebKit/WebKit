@@ -24,7 +24,7 @@ shouldBe('fontSizeAttributeEffect("5")', '"24px"');
 shouldBe('fontSizeAttributeEffect("6")', '"32px"');
 shouldBe('fontSizeAttributeEffect("7")', '"48px"');
 
-shouldBe('fontSizeAttributeEffect("0")', '"16px"'); // Gecko and WebKit do not agree on this result. Which matches IE?
+shouldBe('fontSizeAttributeEffect("0")', '"10px"');
 
 shouldBe('fontSizeAttributeEffect("-1")', '"13px"');
 shouldBe('fontSizeAttributeEffect("-2")', '"10px"');
@@ -36,6 +36,41 @@ shouldBe('fontSizeAttributeEffect("-7")', '"10px"');
 shouldBe('fontSizeAttributeEffect("-8")', '"10px"');
 shouldBe('fontSizeAttributeEffect("-9")', '"10px"');
 shouldBe('fontSizeAttributeEffect("-10")', '"10px"');
+
+shouldBe('fontSizeAttributeEffect("x6")', 'null');
+shouldBe('fontSizeAttributeEffect(" 6")', '"32px"');
+shouldBe('fontSizeAttributeEffect("\\t6")', '"32px"');
+shouldBe('fontSizeAttributeEffect("\\r6")', '"32px"');
+shouldBe('fontSizeAttributeEffect("\\n6")', '"32px"');
+shouldBe('fontSizeAttributeEffect("\\u20086")', 'null');
+
+shouldBe('fontSizeAttributeEffect("x-6")', 'null');
+shouldBe('fontSizeAttributeEffect(" -6")', '"10px"');
+shouldBe('fontSizeAttributeEffect("\\t-6")', '"10px"');
+shouldBe('fontSizeAttributeEffect("\\r-6")', '"10px"');
+shouldBe('fontSizeAttributeEffect("\\n-6")', '"10px"');
+shouldBe('fontSizeAttributeEffect("\\u2008-6")', 'null');
+
+shouldBe('fontSizeAttributeEffect("x+6")', 'null');
+shouldBe('fontSizeAttributeEffect(" +6")', '"48px"');
+shouldBe('fontSizeAttributeEffect("\\t+6")', '"48px"');
+shouldBe('fontSizeAttributeEffect("\\r+6")', '"48px"');
+shouldBe('fontSizeAttributeEffect("\\n+6")', '"48px"');
+shouldBe('fontSizeAttributeEffect("\\u2008+6")', 'null');
+
+shouldBe('fontSizeAttributeEffect("x+x6")', 'null');
+shouldBe('fontSizeAttributeEffect(" + 6")', 'null');
+shouldBe('fontSizeAttributeEffect("\\t+\\t6")', 'null');
+shouldBe('fontSizeAttributeEffect("\\r+\\r6")', 'null');
+shouldBe('fontSizeAttributeEffect("\\n+\\n6")', 'null');
+shouldBe('fontSizeAttributeEffect("\\u2008+\\u20086")', 'null');
+
+shouldBe('fontSizeAttributeEffect("x-x6")', 'null');
+shouldBe('fontSizeAttributeEffect(" - 6")', 'null');
+shouldBe('fontSizeAttributeEffect("\\t-\\t6")', 'null');
+shouldBe('fontSizeAttributeEffect("\\r-\\r6")', 'null');
+shouldBe('fontSizeAttributeEffect("\\n-\\n6")', 'null');
+shouldBe('fontSizeAttributeEffect("\\u2008-\\u20086")', 'null');
 
 shouldBe('fontSizeAttributeEffect("8")', '"48px"');
 shouldBe('fontSizeAttributeEffect("9")', '"48px"');
