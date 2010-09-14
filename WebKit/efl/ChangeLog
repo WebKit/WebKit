@@ -1,3 +1,15 @@
+2010-09-13  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Unreviewed build fix.
+
+        [EFL] Fix build break when enabling HTML5 video support
+        https://bugs.webkit.org/show_bug.cgi?id=45674
+
+        The correct include variable for LibXml2 in cmake is
+        LIBXML2_INCLUDE_DIR instead of LIBXML2_INCLUDE_DIRS.
+
+        * CMakeListsEfl.txt:
+
 2010-09-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen.
