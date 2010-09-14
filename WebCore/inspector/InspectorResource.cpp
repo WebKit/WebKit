@@ -52,6 +52,7 @@
 
 namespace WebCore {
 
+#if ENABLE(WEB_SOCKETS)
 // Create human-readable binary representation, like "01:23:45:67:89:AB:CD:EF".
 static String createReadableStringFromBinary(const unsigned char* value, size_t length)
 {
@@ -69,6 +70,7 @@ static String createReadableStringFromBinary(const unsigned char* value, size_t 
     ASSERT(index == bufferSize);
     return String::adopt(buffer);
 }
+#endif
 
 InspectorResource::InspectorResource(unsigned long identifier, DocumentLoader* loader, const KURL& requestURL)
     : m_identifier(identifier)

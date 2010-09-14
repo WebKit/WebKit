@@ -1,5 +1,16 @@
 2010-09-13  Yuta Kitamura  <yutak@chromium.org>
 
+        Reviewed by Kent Tamura.
+
+        Add one #if guard block to fix Qt builds.
+
+        Web Inspector: WebSocket in Resources tab
+        https://bugs.webkit.org/show_bug.cgi?id=40768
+
+        * inspector/InspectorResource.cpp:
+
+2010-09-13  Yuta Kitamura  <yutak@chromium.org>
+
         Reviewed by Pavel Feldman.
 
         Add WebSocket resource type to Web Inspector.
