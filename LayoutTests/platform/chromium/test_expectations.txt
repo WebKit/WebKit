@@ -2775,9 +2775,6 @@ BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.2.3.3-4-212.html = TEXT
 BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.2.3.3-4-213.html = TEXT
 BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.2.3.3-4-214.html = TEXT
 BUG48737 WIN LINUX MAC : ietestcenter/Javascript/15.2.3.3-4-215.html = TEXT
-BUG48737 WIN LINUX MAC SKIP : ietestcenter/Javascript/15.4.4.15-3-14.html = TIMEOUT
-BUG48737 WIN LINUX MAC SKIP : ietestcenter/Javascript/15.4.4.15-3-29.html = TIMEOUT
-BUG48737 WIN LINUX MAC SKIP : ietestcenter/Javascript/15.4.4.15-3-8.html = TIMEOUT
 
 BUG49029 WIN LINUX MAC : fast/js/object-literal-syntax.html = TEXT
 
