@@ -31,6 +31,7 @@
 #include "Cookie.h"
 #include "Document.h"
 #include "KURL.h"
+#include "NetworkingContext.h"
 #include "PlatformString.h"
 
 #include "qwebpage.h"
@@ -51,9 +52,7 @@ static QNetworkCookieJar *cookieJar(const Document *document)
     FrameLoader *loader = frame->loader();
     if (!loader)
         return 0;
-    QWebFrame* webFrame = static_cast<FrameLoaderClientQt*>(loader->client())->webFrame();
-    QWebPage* page = webFrame->page();
-    QNetworkAccessManager* manager = page->networkAccessManager();
+    QNetworkAccessManager* manager = loader->networkingContext()->networkAccessManager();
     QNetworkCookieJar* jar = manager->cookieJar();
     return jar;
 }
