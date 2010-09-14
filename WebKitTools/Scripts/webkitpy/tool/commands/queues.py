@@ -210,11 +210,11 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
                 "--no-update",
                 "--build-style=both",
                 "--quiet"])
+            return True
         except ScriptError, e:
             failure_log = self._log_from_script_error_for_upload(e)
             self._update_status("Unable to build and test without patch", results_file=failure_log)
             return False
-        return True
 
     def should_proceed_with_work_item(self, patch):
         patch_text = "rollout patch" if patch.is_rollout() else "patch"
@@ -230,7 +230,6 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
                 "--non-interactive",
                 "--build-style=both",
                 "--quiet",
-                "--parent-command=commit-queue",
                 patch.id()
             ]
             # We don't bother to run tests for rollouts as that makes them too slow.

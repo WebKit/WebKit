@@ -1,3 +1,11 @@
+2010-09-14  Adam Barth  <abarth@webkit.org>
+
+        Fix two typos in commit-queue.  The first is harmless.  The second
+        causes the queue to reject patches when the build is broken.  :(
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
 2010-09-14  Chris Guillory   <chris.guillory@google.com>
 
         Reviewed by Chris Fleizach.
