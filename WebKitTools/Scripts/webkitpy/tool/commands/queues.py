@@ -251,6 +251,8 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
             self._did_pass(patch)
             return True
         except ScriptError, e:
+            failure_log = self._log_from_script_error_for_upload(e)
+            self._update_status("Unable to land patch", patch=patch, results_file=failure_log)
             if first_run:
                 return False
             self._did_fail(patch)
@@ -259,7 +261,7 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
     def process_work_item(self, patch):
         self._cc_watchers(patch.bug_id())
         if not self._land(patch, first_run=True):
-            self._update_status("Patch could not be landed with first attempt, doing a clean build as a sanity check", patch)
+            self._update_status("Doing a clean build as a sanity check", patch)
             # The patch failed to land, but the bots were green. It's possible
             # that the bots were behind. To check that case, we try to build and
             # test ourselves.

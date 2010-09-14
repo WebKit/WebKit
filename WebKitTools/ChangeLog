@@ -1,3 +1,14 @@
+2010-09-13  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Upload results when cq patch landing fails
+        https://bugs.webkit.org/show_bug.cgi?id=45683
+        
+        Include script errors when CommitQueue._land fails.
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+
 2010-09-13  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by David Kilzer.
