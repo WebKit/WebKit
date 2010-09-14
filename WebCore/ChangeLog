@@ -1,3 +1,17 @@
+2010-09-13  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [WINCE] Buildfix for ViewportArguments.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=45678
+
+        Use fabs() instead of abs().
+        This patch also fixes the return value, when
+        the value is between -1 and 1.
+
+        * dom/ViewportArguments.cpp:
+        (WebCore::findUserScalableValue):
+
 2010-09-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Barth.
