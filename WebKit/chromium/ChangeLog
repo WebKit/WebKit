@@ -1,5 +1,11 @@
 2010-09-14  Tony Chang  <tony@chromium.org>
 
+        Unreviewed, fix chromium win compile.
+
+        * public/WebView.h:
+
+2010-09-14  Tony Chang  <tony@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         [chromium] implement layoutTestController.setDomainRelaxationForbiddenForURLScheme

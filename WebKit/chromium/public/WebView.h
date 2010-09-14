@@ -110,7 +110,7 @@ public:
     virtual void setIsActive(bool) = 0;
 
     // Allows disabling domain relaxation.
-    virtual void setDomainRelaxationForbidden(bool, const WebString& scheme);
+    virtual void setDomainRelaxationForbidden(bool, const WebString& scheme) = 0;
 
 
     // Closing -------------------------------------------------------------
