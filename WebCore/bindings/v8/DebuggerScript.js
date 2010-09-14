@@ -144,7 +144,7 @@ DebuggerScript.currentCallFrame = function(execState, args)
     var frameCount = execState.frameCount();
     if (frameCount === 0)
         return undefined;
-    
+
     var topFrame;
     for (var i = frameCount - 1; i >= 0; i--) {
         var frameMirror = execState.frame(i);
@@ -211,14 +211,14 @@ DebuggerScript._frameMirrorToJSCallFrame = function(frameMirror, callerFrame)
     var functionName;
     if (func)
         functionName = func.name() || func.inferredName();
-        
+
     // Get script ID.
     var script = func.script();
     var sourceID = script && script.id();
-    
+
     // Get line number.
     var line = DebuggerScript._v8ToWebkitLineNumber(frameMirror.sourceLine());
-    
+
     // Get this object.
     var thisObject = frameMirror.details_.receiver();
 
@@ -257,11 +257,11 @@ DebuggerScript._frameMirrorToJSCallFrame = function(frameMirror, callerFrame)
         scopeType.push(scopeMirror.scopeType());
         scopeChain.push(scopeObject);
     }
-    
+
     function evaluate(expression) {
         return frameMirror.evaluate(expression, false).value();
     }
-    
+
     return {
         "sourceID": sourceID,
         "line": line,

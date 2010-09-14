@@ -9,7 +9,7 @@
   </outputs>
   <release seq="1">
     <includes>
-      <include name="IDR_DEVTOOLS_DEBUGGER_SCRIPT_JS" file="src\js\DebuggerScript.js" type="BINDATA"/>
+      <include name="IDR_DEVTOOLS_DEBUGGER_SCRIPT_JS" file="..\..\WebCore\bindings\v8\DebuggerScript.js" type="BINDATA"/>
       <include name="IDR_DEVTOOLS_INJECT_WEBKIT_JS" file="..\..\WebCore\inspector\front-end\InjectedScript.js" type="BINDATA"/>
     </includes>
   </release>

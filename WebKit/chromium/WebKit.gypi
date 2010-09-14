@@ -34,7 +34,6 @@
         # for copying them to resource dir, and for generating 'devtools.html' file.
         'devtools_js_files': [
             'src/js/DevTools.js',
-            'src/js/DevToolsHostStub.js',
             'src/js/Tests.js',
         ],
         'devtools_css_files': [

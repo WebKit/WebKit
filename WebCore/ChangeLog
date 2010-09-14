@@ -1,3 +1,12 @@
+2010-09-14  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Andreas Kling.
+
+        Move DebuggerScript.js from WebKit/chromium/src/js to WebCore/bindings/v8
+        https://bugs.webkit.org/show_bug.cgi?id=45739
+
+        * bindings/v8/DebuggerScript.js: Added.
+
 2010-09-10  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
