@@ -1,3 +1,19 @@
+2010-09-14  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium]: crash less in compositor mode on mac
+        https://bugs.webkit.org/show_bug.cgi?id=45714
+
+        The contents image can go away when the dom is updated. Since the
+        layer tree is updated asynchronously, it needs to ref the native image,
+        else it will hold on to a stale object.
+
+        This still needs to be done for skia, too.
+
+        * platform/graphics/chromium/ImageLayerChromium.h:
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+
 2010-09-14  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.

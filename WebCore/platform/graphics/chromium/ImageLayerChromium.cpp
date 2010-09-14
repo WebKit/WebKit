@@ -95,7 +95,7 @@ void ImageLayerChromium::updateContents()
     }
 #elif PLATFORM(CG)
     // NativeImagePtr is a CGImageRef on Mac OS X.
-    CGImageRef cgImage = m_contents;
+    CGImageRef cgImage = m_contents.get();
     int width = CGImageGetWidth(cgImage);
     int height = CGImageGetHeight(cgImage);
     requiredTextureSize = IntSize(width, height);

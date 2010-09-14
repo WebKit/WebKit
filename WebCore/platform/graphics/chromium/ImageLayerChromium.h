@@ -36,6 +36,10 @@
 
 #include "ContentLayerChromium.h"
 
+#if PLATFORM(CG)
+#include <wtf/RetainPtr.h>
+#endif
+
 namespace WebCore {
 
 // A Layer that contains only an Image element.
@@ -50,7 +54,13 @@ public:
 
 private:
     ImageLayerChromium(GraphicsLayerChromium* owner);
+
+#if PLATFORM(CG)
+    RetainPtr<CGImageRef> m_contents;
+#elif 
+    // FIXME: This needs to be an owning type.
     NativeImagePtr m_contents;
+#endif
 };
 
 }
