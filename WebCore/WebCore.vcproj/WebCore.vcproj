@@ -46684,6 +46684,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSEntryCustom.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSImageConstructor.cpp"
 					>
 					<FileConfiguration

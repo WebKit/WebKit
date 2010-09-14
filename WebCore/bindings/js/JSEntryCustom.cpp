@@ -28,15 +28,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module storage {
-    interface [
-        Conditional=FILE_SYSTEM,
-        GenerateNativeConverter,
-        GenerateToJS
-    ] FileEntry : Entry {
-#if defined(ENABLE_FILE_WRITER) && ENABLE_FILE_WRITER
-        void createWriter(in [Callback] FileWriterCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
-#endif
-        void file(in [Callback] FileCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
-    };
+#include "config.h"
+#include "JSEntry.h"
+
+#if ENABLE(FILE_SYSTEM)
+
+#include "Entry.h"
+#include "JSDOMBinding.h"
+#include "JSDirectoryEntry.h"
+#include "JSFileEntry.h"
+#include <wtf/Assertions.h>
+
+using namespace JSC;
+
+namespace WebCore {
+
+JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Entry* entry)
+{
+    if (!entry)
+        return jsNull();
+
+    if (entry->isFile())
+        return getDOMObjectWrapper<JSFileEntry>(exec, globalObject, static_cast<FileEntry*>(entry));
+
+    ASSERT(entry->isDirectory());
+    return getDOMObjectWrapper<JSDirectoryEntry>(exec, globalObject, static_cast<DirectoryEntry*>(entry));
 }
+
+} // namespace WebCore
+
+#endif // ENABLE(FILE_SYSTEM)

@@ -1,3 +1,35 @@
+2010-09-13  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Make FileEntry and DirectoryEntry methods accessible via Entry instance
+        https://bugs.webkit.org/show_bug.cgi?id=45553
+
+        FileEntry- and DirectoryEntry- specific methods must be available on Entry object based on its internal type.
+
+        Added custom toJS/toV8 implementation to Entry interface.
+
+        No new tests; test will be added later when we have complete implementation for the API.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSEntryCustom.cpp: Added.
+        (WebCore::toJS):
+        * bindings/v8/custom/V8EntryCustom.cpp: Added.
+        (WebCore::toV8):
+        * fileapi/DirectoryEntry.h: Nits fix.
+        * fileapi/DirectoryEntry.idl: Added ConvertUndefinedOrNullToString to path parameter.
+        * fileapi/Entry.idl: Added CustomToJS attribute.
+        * fileapi/FileEntry.cpp:
+        (WebCore::FileEntry::createWriter):
+        (WebCore::FileEntry::file):
+        * fileapi/FileEntry.h:
+        * fileapi/FileEntry.idl:
+
 2010-09-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

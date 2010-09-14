@@ -699,6 +699,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSDOMWrapper.cpp \
 	WebCore/bindings/js/JSDOMWrapper.h \
 	WebCore/bindings/js/JSElementCustom.cpp \
+	WebCore/bindings/js/JSEntryCustom.cpp \
 	WebCore/bindings/js/JSEventCustom.cpp \
 	WebCore/bindings/js/JSEventListener.cpp \
 	WebCore/bindings/js/JSEventListener.h \

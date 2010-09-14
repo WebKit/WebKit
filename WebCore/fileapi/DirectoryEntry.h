@@ -54,8 +54,8 @@ public:
     virtual bool isDirectory() const { return true; }
 
     PassRefPtr<DirectoryReader> createReader();
-    void getFile(const String& path, PassRefPtr<Flags> options = 0, PassRefPtr<EntryCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0);
-    void getDirectory(const String& path, PassRefPtr<Flags> options = 0, PassRefPtr<EntryCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0);
+    void getFile(const String& path, PassRefPtr<Flags> = 0, PassRefPtr<EntryCallback> = 0, PassRefPtr<ErrorCallback> = 0);
+    void getDirectory(const String& path, PassRefPtr<Flags> = 0, PassRefPtr<EntryCallback> = 0, PassRefPtr<ErrorCallback> = 0);
 
 private:
     DirectoryEntry(DOMFileSystem* fileSystem, const String& fullPath);

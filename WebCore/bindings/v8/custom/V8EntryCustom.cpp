@@ -28,15 +28,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module storage {
-    interface [
-        Conditional=FILE_SYSTEM,
-        GenerateNativeConverter,
-        GenerateToJS
-    ] FileEntry : Entry {
-#if defined(ENABLE_FILE_WRITER) && ENABLE_FILE_WRITER
-        void createWriter(in [Callback] FileWriterCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
-#endif
-        void file(in [Callback] FileCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
-    };
+#include "config.h"
+#include "Entry.h"
+
+#if ENABLE(FILE_SYSTEM)
+
+#include "V8Attr.h"
+#include "V8Binding.h"
+#include "V8BindingState.h"
+#include "V8DirectoryEntry.h"
+#include "V8Entry.h"
+#include "V8FileEntry.h"
+#include "V8Proxy.h"
+#include <wtf/RefPtr.h>
+
+namespace WebCore {
+
+v8::Handle<v8::Value> toV8(Entry* impl)
+{
+    if (!impl)
+        return v8::Null();
+
+    if (impl->isFile())
+        return toV8(static_cast<FileEntry*>(impl));
+
+    ASSERT(impl->isDirectory());
+    return toV8(static_cast<DirectoryEntry*>(impl));
 }
+
+} // namespace WebCore
+
+#endif // ENABLE(FILE_SYSTEM)

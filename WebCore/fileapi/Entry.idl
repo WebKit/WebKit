@@ -30,7 +30,8 @@
 
 module storage {
     interface [
-        Conditional=FILE_SYSTEM
+        Conditional=FILE_SYSTEM,
+        CustomToJS
     ] Entry {
         readonly attribute boolean isFile;
         readonly attribute boolean isDirectory;
@@ -39,8 +40,8 @@ module storage {
         readonly attribute DOMFileSystem filesystem;
 
         void getMetadata(in [Optional, Callback] MetadataCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
-        void moveTo(in Entry parent, in [Optional] DOMString name, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
-        void copyTo(in Entry parent, in [Optional] DOMString name, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
+        void moveTo(in Entry parent, in [Optional, ConvertUndefinedOrNullToNullString] DOMString name, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
+        void copyTo(in Entry parent, in [Optional, ConvertUndefinedOrNullToNullString] DOMString name, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
         void remove(in [Optional, Callback] VoidCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
         void getParent(in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
     };

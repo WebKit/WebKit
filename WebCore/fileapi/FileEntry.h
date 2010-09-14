@@ -34,6 +34,8 @@
 #if ENABLE(FILE_SYSTEM)
 
 #include "Entry.h"
+#include "FileCallback.h"
+#include "FileWriterCallback.h"
 
 namespace WebCore {
 
@@ -45,6 +47,12 @@ public:
     {
         return adoptRef(new FileEntry(fileSystem, fullPath));
     }
+
+#if ENABLE(FILE_WRITER)
+    void createWriter(PassRefPtr<FileWriterCallback>, PassRefPtr<ErrorCallback> = 0);
+#endif
+    void file(PassRefPtr<FileCallback>, PassRefPtr<ErrorCallback> = 0);
+
     virtual bool isFile() const { return true; }
 
 private:
