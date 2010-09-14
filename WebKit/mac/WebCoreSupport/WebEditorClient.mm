@@ -87,6 +87,8 @@ static WebViewInsertAction kit(EditorInsertAction coreAction)
     return static_cast<WebViewInsertAction>(coreAction);
 }
 
+static const int InvalidCorrectionPanelTag = 0;
+
 #ifdef BUILDING_ON_TIGER
 @interface NSSpellChecker (NotYetPublicMethods)
 - (void)learnWord:(NSString *)word;
@@ -184,7 +186,7 @@ WebEditorClient::WebEditorClient(WebView *webView)
     , m_undoTarget([[[WebEditorUndoTarget alloc] init] autorelease])
     , m_haveUndoRedoOperations(false)
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    , m_correctionPanelTag(-1)
+    , m_correctionPanelTag(InvalidCorrectionPanelTag)
 #endif
 {
 }
@@ -884,10 +886,15 @@ void WebEditorClient::showCorrectionPanel(const FloatRect& boundingBoxOfReplaced
 
 void WebEditorClient::dismissCorrectionPanel(bool correctionAccepted)
 {
-    if (m_correctionPanelTag >= 0) {
+    if (m_correctionPanelTag != InvalidCorrectionPanelTag) {
         [[NSSpellChecker sharedSpellChecker] dismissCorrection:m_correctionPanelTag acceptCorrection:correctionAccepted];
-        m_correctionPanelTag = -1;
+        m_correctionPanelTag = InvalidCorrectionPanelTag;
     }
+}
+
+bool WebEditorClient::isShowingCorrectionPanel()
+{
+    return m_correctionPanelTag != InvalidCorrectionPanelTag;
 }
 #endif
 

@@ -1,3 +1,19 @@
+2010-09-14  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Only intercept ESC key press when autocorrection UI is visible.
+        https://bugs.webkit.org/show_bug.cgi?id=45071
+
+        * WebCoreSupport/WebEditorClient.h: Added declaration of isShowingCorrectionPanel(),
+          which provides an inteface to query whether autocorrection panel is shown.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::WebEditorClient): Defined a constant, InvalidCorrectionPanelTag,
+          for invalid correction panel tag. Replaced -1 with this constant.
+        (WebEditorClient::dismissCorrectionPanel): Ditto
+        (WebEditorClient::isShowingCorrectionPanel): Query whether autocorrection panel is shown.
+
 2010-09-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Barth.

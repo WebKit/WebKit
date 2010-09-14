@@ -2854,6 +2854,15 @@ void Editor::handleCancelOperation()
 #endif
 }
 
+bool Editor::isShowingCorrectionPanel()
+{
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    if (client())
+        return client()->isShowingCorrectionPanel();
+#endif
+    return false;
+}
+
 PassRefPtr<Range> Editor::rangeForPoint(const IntPoint& windowPoint)
 {
     Document* document = m_frame->documentAtPoint(windowPoint);
