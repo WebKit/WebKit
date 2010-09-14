@@ -260,6 +260,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE numberOfActiveAnimations(UINT*);
     virtual HRESULT STDMETHODCALLTYPE suspendAnimations();
     virtual HRESULT STDMETHODCALLTYPE resumeAnimations();
+    virtual HRESULT STDMETHODCALLTYPE loadPlainTextString(BSTR string, BSTR url);
 
     virtual HRESULT STDMETHODCALLTYPE isDisplayingStandaloneImage(BOOL*);
 

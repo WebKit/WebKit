@@ -117,4 +117,6 @@ interface IWebFramePrivate : IUnknown
 
     HRESULT suspendAnimations();
     HRESULT resumeAnimations();
+
+    HRESULT loadPlainTextString([in] BSTR string, [in] BSTR url);
 }

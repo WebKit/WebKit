@@ -1,3 +1,16 @@
+2010-09-14  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add an IWebFramePrivate API to load string as plain text into the WebFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=45782
+
+        * Interfaces/IWebFramePrivate.idl:
+        * Interfaces/WebKit.idl: Touch the file.
+        * WebFrame.cpp:
+        (WebFrame::loadPlainTextString):
+        * WebFrame.h:
+
 2010-09-13  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Sam Weinig.

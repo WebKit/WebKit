@@ -602,6 +602,17 @@ HRESULT STDMETHODCALLTYPE WebFrame::loadData(
     return S_OK;
 }
 
+HRESULT WebFrame::loadPlainTextString(
+    /* [in] */ BSTR string,
+    /* [in] */ BSTR url)
+{
+    RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(reinterpret_cast<char*>(string), sizeof(UChar) * SysStringLen(string));
+    BString plainTextMimeType(TEXT("text/plain"), 10);
+    BString utf16Encoding(TEXT("utf-16"), 6);
+    loadData(sharedBuffer.release(), plainTextMimeType, utf16Encoding, url, 0);
+    return S_OK;
+}
+
 void WebFrame::loadHTMLString(BSTR string, BSTR baseURL, BSTR unreachableURL)
 {
     RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(reinterpret_cast<char*>(string), sizeof(UChar) * SysStringLen(string));
