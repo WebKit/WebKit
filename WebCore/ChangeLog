@@ -1,3 +1,15 @@
+2010-09-14  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Kent Tamura.
+
+        [BREWMP] Remove TextBreakIteratorInternalICUBrew.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=45691
+
+        Brew MP no longer depends on ICU for internationalization.
+        Remove TextBreakIteratorInternalICUBrew.cpp.
+
+        * platform/text/brew/TextBreakIteratorInternalICUBrew.cpp: Removed.
+
 2010-09-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.
