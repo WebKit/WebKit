@@ -24,12 +24,12 @@
 
 namespace WebCore {
 
-void WebCore::getSupportedKeySizes(Vector<String>& v)
+void getSupportedKeySizes(Vector<String>& v)
 {
     notImplemented();
 }
 
-String WebCore::signedPublicKeyAndChallengeString(unsigned index, const String& challenge, const KURL& url)
+String signedPublicKeyAndChallengeString(unsigned index, const String& challenge, const KURL& url)
 {
     notImplemented();
     return String();
