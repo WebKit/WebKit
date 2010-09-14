@@ -25,6 +25,8 @@ margin-top: 10px;
 display: none;
 
 ======== Matched CSS Rules ========
+[expanded] .foo { (resources/elements-panel-styles.css:33)
+
 [expanded] .foo, .foo::before { (resources/elements-panel-styles.css:15)
 color: blue;
 content: '[before Foo]';
@@ -51,6 +53,8 @@ font-size: 14px;
 
 
 ======== Pseudo ::before element ========
+[expanded] .foo::before { (resources/elements-panel-styles.css:37)
+
 [expanded] .foo::before { (resources/elements-panel-styles.css:20)
 color: red;
 

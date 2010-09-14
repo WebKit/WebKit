@@ -119,8 +119,8 @@ public:
 
     public:
         // These methods will give back the set of rules that matched for a given element (or a pseudo-element).
-        PassRefPtr<CSSRuleList> styleRulesForElement(Element*, bool authorOnly);
-        PassRefPtr<CSSRuleList> pseudoStyleRulesForElement(Element*, PseudoId, bool authorOnly);
+        PassRefPtr<CSSRuleList> styleRulesForElement(Element*, bool authorOnly, bool includeEmptyRules = false);
+        PassRefPtr<CSSRuleList> pseudoStyleRulesForElement(Element*, PseudoId, bool authorOnly, bool includeEmptyRules = false);
 
         // Given a CSS keyword in the range (xx-small to -webkit-xxx-large), this function will return
         // the correct font size scaled relative to the user's default (medium).
@@ -186,8 +186,8 @@ public:
         void addMatchedRule(CSSRuleData* rule) { m_matchedRules.append(rule); }
         void addMatchedDeclaration(CSSMutableStyleDeclaration* decl);
 
-        void matchRules(CSSRuleSet*, int& firstRuleIndex, int& lastRuleIndex);
-        void matchRulesForList(CSSRuleDataList*, int& firstRuleIndex, int& lastRuleIndex);
+        void matchRules(CSSRuleSet*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
+        void matchRulesForList(CSSRuleDataList*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
         void sortMatchedRules(unsigned start, unsigned end);
 
         template <bool firstPass>

@@ -1148,7 +1148,7 @@ void InspectorDOMAgent::getStyles(long nodeId, bool authorOnly, RefPtr<Inspector
     result->setObject("computedStyle", buildObjectForStyle(computedStyleInfo.get(), false));
 
     CSSStyleSelector* selector = element->ownerDocument()->styleSelector();
-    RefPtr<CSSRuleList> matchedRules = selector->styleRulesForElement(element, authorOnly);
+    RefPtr<CSSRuleList> matchedRules = selector->styleRulesForElement(element, authorOnly, true);
     result->setArray("matchedCSSRules", buildArrayForCSSRules(node->ownerDocument(), matchedRules.get()));
 
     result->setObject("styleAttributes", buildObjectForAttributeStyles(element));
@@ -1163,7 +1163,7 @@ void InspectorDOMAgent::getStyles(long nodeId, bool authorOnly, RefPtr<Inspector
             parentStyle->setObject("inlineStyle", buildObjectForStyle(parentElement->style(), true));
 
         CSSStyleSelector* parentSelector = parentElement->ownerDocument()->styleSelector();
-        RefPtr<CSSRuleList> parentMatchedRules = parentSelector->styleRulesForElement(parentElement, authorOnly);
+        RefPtr<CSSRuleList> parentMatchedRules = parentSelector->styleRulesForElement(parentElement, authorOnly, true);
         parentStyle->setArray("matchedCSSRules", buildArrayForCSSRules(parentElement->ownerDocument(), parentMatchedRules.get()));
 
         parentElement = parentElement->parentElement();
@@ -1267,7 +1267,7 @@ PassRefPtr<InspectorArray> InspectorDOMAgent::buildArrayForPseudoElements(Elemen
     RefPtr<RenderStyle> renderStyle = element->styleForRenderer();
 
     for (PseudoId pseudoId = FIRST_PUBLIC_PSEUDOID; pseudoId < AFTER_LAST_INTERNAL_PSEUDOID; pseudoId = static_cast<PseudoId>(pseudoId + 1)) {
-        RefPtr<CSSRuleList> matchedRules = selector->pseudoStyleRulesForElement(element, pseudoId, authorOnly);
+        RefPtr<CSSRuleList> matchedRules = selector->pseudoStyleRulesForElement(element, pseudoId, authorOnly, true);
         if (matchedRules && matchedRules->length()) {
             RefPtr<InspectorObject> pseudoStyles = InspectorObject::create();
             pseudoStyles->setNumber("pseudoId", static_cast<int>(pseudoId));

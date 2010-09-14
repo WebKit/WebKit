@@ -654,7 +654,7 @@ void CSSStyleSelector::resolveVariablesForDeclaration(CSSMutableStyleDeclaration
     }
 }
 
-void CSSStyleSelector::matchRules(CSSRuleSet* rules, int& firstRuleIndex, int& lastRuleIndex)
+void CSSStyleSelector::matchRules(CSSRuleSet* rules, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules)
 {
     m_matchedRules.clear();
 
@@ -664,16 +664,16 @@ void CSSStyleSelector::matchRules(CSSRuleSet* rules, int& firstRuleIndex, int& l
     // We need to collect the rules for id, class, tag, and everything else into a buffer and
     // then sort the buffer.
     if (m_element->hasID())
-        matchRulesForList(rules->getIDRules(m_element->idForStyleResolution().impl()), firstRuleIndex, lastRuleIndex);
+        matchRulesForList(rules->getIDRules(m_element->idForStyleResolution().impl()), firstRuleIndex, lastRuleIndex, includeEmptyRules);
     if (m_element->hasClass()) {
         ASSERT(m_styledElement);
         const SpaceSplitString& classNames = m_styledElement->classNames();
         size_t size = classNames.size();
         for (size_t i = 0; i < size; ++i)
-            matchRulesForList(rules->getClassRules(classNames[i].impl()), firstRuleIndex, lastRuleIndex);
+            matchRulesForList(rules->getClassRules(classNames[i].impl()), firstRuleIndex, lastRuleIndex, includeEmptyRules);
     }
-    matchRulesForList(rules->getTagRules(m_element->localName().impl()), firstRuleIndex, lastRuleIndex);
-    matchRulesForList(rules->getUniversalRules(), firstRuleIndex, lastRuleIndex);
+    matchRulesForList(rules->getTagRules(m_element->localName().impl()), firstRuleIndex, lastRuleIndex, includeEmptyRules);
+    matchRulesForList(rules->getUniversalRules(), firstRuleIndex, lastRuleIndex, includeEmptyRules);
     
     // If we didn't match any rules, we're done.
     if (m_matchedRules.isEmpty())
@@ -695,7 +695,7 @@ void CSSStyleSelector::matchRules(CSSRuleSet* rules, int& firstRuleIndex, int& l
     }
 }
 
-void CSSStyleSelector::matchRulesForList(CSSRuleDataList* rules, int& firstRuleIndex, int& lastRuleIndex)
+void CSSStyleSelector::matchRulesForList(CSSRuleDataList* rules, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules)
 {
     if (!rules)
         return;
@@ -703,9 +703,9 @@ void CSSStyleSelector::matchRulesForList(CSSRuleDataList* rules, int& firstRuleI
     for (CSSRuleData* d = rules->first(); d; d = d->next()) {
         CSSStyleRule* rule = d->rule();
         if (checkSelector(d->selector())) {
-            // If the rule has no properties to apply, then ignore it.
+            // If the rule has no properties to apply, then ignore it in the non-debug mode.
             CSSMutableStyleDeclaration* decl = rule->declaration();
-            if (!decl || !decl->length())
+            if (!decl || (!decl->length() && !includeEmptyRules))
                 continue;
             
             // If we're matching normal rules, set a pseudo bit if 
@@ -1083,17 +1083,17 @@ void CSSStyleSelector::matchUARules(int& firstUARule, int& lastUARule)
     // First we match rules from the user agent sheet.
     CSSRuleSet* userAgentStyleSheet = m_medium->mediaTypeMatchSpecific("print")
         ? defaultPrintStyle : defaultStyle;
-    matchRules(userAgentStyleSheet, firstUARule, lastUARule);
+    matchRules(userAgentStyleSheet, firstUARule, lastUARule, false);
 
     // In quirks mode, we match rules from the quirks user agent sheet.
     if (!m_checker.m_strictParsing)
-        matchRules(defaultQuirksStyle, firstUARule, lastUARule);
+        matchRules(defaultQuirksStyle, firstUARule, lastUARule, false);
         
     // If we're in view source mode, then we match rules from the view source style sheet.
     if (m_checker.m_document->frame() && m_checker.m_document->frame()->inViewSourceMode()) {
         if (!defaultViewSourceStyle)
             loadViewSourceStyle();
-        matchRules(defaultViewSourceStyle, firstUARule, lastUARule);
+        matchRules(defaultViewSourceStyle, firstUARule, lastUARule, false);
     }
 }
 
@@ -1247,7 +1247,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
     if (!resolveForRootDefault) {
         // 4. Now we check user sheet rules.
         if (m_matchAuthorAndUserStyles)
-            matchRules(m_userStyle.get(), firstUserRule, lastUserRule);
+            matchRules(m_userStyle.get(), firstUserRule, lastUserRule, false);
 
         // 5. Now check author rules, beginning first with presentational attributes
         // mapped from HTML.
@@ -1286,7 +1286,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
     
         // 6. Check the rules in author sheets next.
         if (m_matchAuthorAndUserStyles)
-            matchRules(m_authorStyle.get(), firstAuthorRule, lastAuthorRule);
+            matchRules(m_authorStyle.get(), firstAuthorRule, lastAuthorRule, false);
 
         // 7. Now check our inline style attribute.
         if (m_matchAuthorAndUserStyles && m_styledElement) {
@@ -1517,8 +1517,8 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
     matchUARules(firstUARule, lastUARule);
 
     if (m_matchAuthorAndUserStyles) {
-        matchRules(m_userStyle.get(), firstUserRule, lastUserRule);
-        matchRules(m_authorStyle.get(), firstAuthorRule, lastAuthorRule);
+        matchRules(m_userStyle.get(), firstUserRule, lastUserRule, false);
+        matchRules(m_authorStyle.get(), firstAuthorRule, lastAuthorRule, false);
     }
 
     if (m_matchedDecls.isEmpty() && !visitedStyle)
@@ -1843,12 +1843,12 @@ void CSSStyleSelector::cacheBorderAndBackground()
     }
 }
 
-PassRefPtr<CSSRuleList> CSSStyleSelector::styleRulesForElement(Element* e, bool authorOnly)
+PassRefPtr<CSSRuleList> CSSStyleSelector::styleRulesForElement(Element* e, bool authorOnly, bool includeEmptyRules)
 {
-    return pseudoStyleRulesForElement(e, NOPSEUDO, authorOnly);
+    return pseudoStyleRulesForElement(e, NOPSEUDO, authorOnly, includeEmptyRules);
 }
 
-PassRefPtr<CSSRuleList> CSSStyleSelector::pseudoStyleRulesForElement(Element* e, PseudoId pseudoId, bool authorOnly)
+PassRefPtr<CSSRuleList> CSSStyleSelector::pseudoStyleRulesForElement(Element* e, PseudoId pseudoId, bool authorOnly, bool includeEmptyRules)
 {
     if (!e || !e->document()->haveStylesheetsLoaded())
         return 0;
@@ -1866,14 +1866,14 @@ PassRefPtr<CSSRuleList> CSSStyleSelector::pseudoStyleRulesForElement(Element* e,
         // Now we check user sheet rules.
         if (m_matchAuthorAndUserStyles) {
             int firstUserRule = -1, lastUserRule = -1;
-            matchRules(m_userStyle.get(), firstUserRule, lastUserRule);
+            matchRules(m_userStyle.get(), firstUserRule, lastUserRule, includeEmptyRules);
         }
     }
 
     if (m_matchAuthorAndUserStyles) {
         // Check the rules in author sheets.
         int firstAuthorRule = -1, lastAuthorRule = -1;
-        matchRules(m_authorStyle.get(), firstAuthorRule, lastAuthorRule);
+        matchRules(m_authorStyle.get(), firstAuthorRule, lastAuthorRule, includeEmptyRules);
     }
 
     m_checker.m_collectRulesOnly = false;

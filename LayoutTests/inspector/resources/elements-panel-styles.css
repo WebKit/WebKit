@@ -29,3 +29,11 @@ body {
 	font-family: courier;
 	content: "[after Foo 2]";
 }
+
+.foo {
+    /* Empty rule that should be reported in the Styles pane */
+}
+
+.foo::before {
+    /* Empty rule that should be reported in the Styles pane */
+}

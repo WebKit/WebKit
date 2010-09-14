@@ -1,3 +1,23 @@
+2010-09-10  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Implement on-demand reporting of empty CSS rules matched for a node by WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=45530
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::matchRules):
+        (WebCore::CSSStyleSelector::matchRulesForList):
+        (WebCore::CSSStyleSelector::matchUARules):
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::pseudoStyleForElement):
+        (WebCore::CSSStyleSelector::styleRulesForElement):
+        (WebCore::CSSStyleSelector::pseudoStyleRulesForElement):
+        * css/CSSStyleSelector.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getStyles):
+        (WebCore::InspectorDOMAgent::buildArrayForPseudoElements):
+
 2010-09-14  Hyung Song  <beergun@company100.net>
 
         Reviewed by Darin Adler.
