@@ -1,3 +1,16 @@
+2010-09-14  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Make WebDeviceOrientationClientMock constructor private.
+        https://bugs.webkit.org/show_bug.cgi?id=45743
+
+        Clients should use the create member function instead. DumpRenderTree
+        and the Chromium test_shell have previously been updated to call create.
+
+        * public/WebDeviceOrientationClientMock.h:
+        (WebKit::WebDeviceOrientationClientMock::WebDeviceOrientationClientMock):
+
 2010-09-13  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by Darin Fisher.
