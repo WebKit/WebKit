@@ -1,3 +1,10 @@
+2010-09-14  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build correction, no review.
+
+        * win/WebKit2.vcproj: Disable build for Cairo targets of
+        the WebURLRequestWin.cpp and WebURLResponseWin.cpp files.
+
 2010-09-14  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, reverting changes r67451 and r67451.

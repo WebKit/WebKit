@@ -1,3 +1,12 @@
+2010-09-14  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build correction, no review.
+
+        * WebCore.vcproj/WebCore.vcproj: Add missing OwnPtrCairo.cpp
+          implementation file.
+        * platform/graphics/cairo/OwnPtrCairo.cpp: Add missing include
+          for <cairo.h>
+
 2010-09-14  Chris Guillory   <chris.guillory@google.com>
 
         Reviewed by Chris Fleizach.

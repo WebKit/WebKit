@@ -25,6 +25,8 @@
 #include <fontconfig/fcfreetype.h>
 #endif
 
+#include <cairo.h>
+
 namespace WTF {
 
 #if defined(USE_FREETYPE)
