@@ -123,6 +123,7 @@ public:
     virtual void setTabKeyCyclesThroughElements(bool value);
     virtual bool isActive() const;
     virtual void setIsActive(bool value);
+    virtual void setDomainRelaxationForbidden(bool, const WebString& scheme);
     virtual bool dispatchBeforeUnloadEvent();
     virtual void dispatchUnloadEvent();
     virtual WebFrame* mainFrame();
