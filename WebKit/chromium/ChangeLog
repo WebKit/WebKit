@@ -1,3 +1,17 @@
+2010-09-13  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] Return NULL from getSharedGraphicsContext3D if we couldn't initialize
+        https://bugs.webkit.org/show_bug.cgi?id=45731
+
+        If we can't create a GraphicsContext3D, return NULL from getSharedGraphicsContext3D rather
+        than an object with NULL internal pointers.  Callers know how to handle a null return value
+        but not one that has inconsistent internal state.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::getSharedGraphicsContext3D):
+
 2010-09-13  Chris Guillory  <chris.guillory@google.com>
 
         Reviewed by Chris Fleizach.
