@@ -1,3 +1,54 @@
+2010-09-13  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        JavaScript dialog should not deactivate media element
+        https://bugs.webkit.org/show_bug.cgi?id=45688
+
+        Test: http/tests/media/reload-after-dialog.html
+
+        * bindings/generic/ActiveDOMCallback.cpp:
+        (WebCore::ActiveDOMObjectCallbackImpl::suspend): Add ReasonForSuspension parameter.
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setJavaScriptPaused): Pass new parameter to suspendActiveDOMObjects.
+
+        * dom/ActiveDOMObject.cpp:
+        (WebCore::ActiveDOMObject::suspend): Add ReasonForSuspension parameter.
+        * dom/ActiveDOMObject.h:
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::suspendActiveDOMObjects): Ditto.
+        * dom/ScriptExecutionContext.h:
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::CachedFrame): Pass new parameter to suspendActiveDOMObjects.
+
+        * html/HTMLMarqueeElement.cpp:
+        (WebCore::HTMLMarqueeElement::suspend): Add ReasonForSuspension parameter.
+        * html/HTMLMarqueeElement.h:
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::stop): Deal with element being suspended.
+        (WebCore::HTMLMediaElement::suspend): Do nothing unless reason for suspension is document
+        becoming inactive.
+        * html/HTMLMediaElement.h:
+
+        * page/PageGroupLoadDeferrer.cpp:
+        (WebCore::PageGroupLoadDeferrer::PageGroupLoadDeferrer): Pass WillShowDialog to suspendActiveDOMObjects.
+
+        * page/SuspendableTimer.cpp:
+        (WebCore::SuspendableTimer::suspend): Add ReasonForSuspension parameter.
+        * page/SuspendableTimer.h:
+
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::suspend): Ditto.
+        * websockets/WebSocket.h:
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::suspend): Ditto.
+        * xml/XMLHttpRequest.h:
+
 2010-09-13  Sam Weinig  <sam@webkit.org>
 
         Fix the mac build.

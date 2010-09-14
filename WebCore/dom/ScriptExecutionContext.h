@@ -27,6 +27,7 @@
 #ifndef ScriptExecutionContext_h
 #define ScriptExecutionContext_h
 
+#include "ActiveDOMObject.h"
 #include "Console.h"
 #include "KURL.h"
 #include <wtf/Forward.h>
@@ -44,7 +45,6 @@
 
 namespace WebCore {
 
-    class ActiveDOMObject;
     class Blob;
 #if ENABLE(DATABASE)
     class Database;
@@ -99,7 +99,7 @@ namespace WebCore {
         bool canSuspendActiveDOMObjects();
         // Active objects can be asked to suspend even if canSuspendActiveDOMObjects() returns 'false' -
         // step-by-step JS debugging is one example.
-        void suspendActiveDOMObjects();
+        void suspendActiveDOMObjects(ActiveDOMObject::ReasonForSuspension);
         void resumeActiveDOMObjects();
         void stopActiveDOMObjects();
         void createdActiveDOMObject(ActiveDOMObject*, void* upcastPointer);

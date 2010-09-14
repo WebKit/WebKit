@@ -1,0 +1,17 @@
+CONFIRM: I hope the movie continues to play!
+Make sure we don't reload a <video> element after a dialog is shown.
+Test this by loading a movie slowly and showing a dialog when a 'loadstart' event 
+handler is called. If the movie is reloaded when the dialog is "dismissed", another 
+'loadstart' event will be fired
+
+
+'load' event
+*** Setting up element...
+
+'loadstart' event
+*** Showing confirm dialog...
+
+'canplaythrough' event
+
+END OF TEST
+

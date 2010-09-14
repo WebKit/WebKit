@@ -406,7 +406,7 @@ void ScriptDebugServer::setJavaScriptPaused(Frame* frame, bool paused)
 
     Document* document = frame->document();
     if (paused)
-        document->suspendActiveDOMObjects();
+        document->suspendActiveDOMObjects(ActiveDOMObject::JavaScriptDebuggerPaused);
     else
         document->resumeActiveDOMObjects();
 

@@ -83,7 +83,7 @@ namespace WebCore {
         virtual ScriptExecutionContext* scriptExecutionContext() const;
         virtual void contextDestroyed();
         virtual bool canSuspend() const;
-        virtual void suspend();
+        virtual void suspend(ReasonForSuspension);
         virtual void resume();
         virtual void stop();
 

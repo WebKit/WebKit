@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=../../../media/media-file.js></script>
+        <script src=../../../media/video-test.js></script>
+        <script>
+            var loadCount = 0;
+
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.waitUntilDone();
+                layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+            }
+
+            function logEvent(event) 
+            {
+                consoleWrite("<br><b><em>'" + event.type + "'<" + "/em> event<" + "/b>");
+            }
+
+            function loadstart() 
+            {
+                logEvent(event);
+                
+                if (++loadCount > 1) {
+                    consoleWrite('FAIL: loadstart fired more than once.');
+                    endTest();
+                    return;
+                }
+
+                consoleWrite("*** Showing confirm dialog...");
+                confirm('I hope the movie continues to play!');
+            }
+
+            function canplaythrough()
+            {
+                logEvent(event);
+
+                consoleWrite("");
+                endTest();
+            }
+
+            function setup()
+            {
+                logEvent(event);
+                consoleWrite("*** Setting up element...");
+
+                findMediaElement();
+                var movie = findMediaFile("video", "../resources/test");
+                video.src = "http://127.0.0.1:8000/media/video-throttled-load.cgi?name=" + movie + "&throttle=100";
+            }
+
+        </script>
+    </head>
+
+    <body onload="setup()">
+        <video controls
+            oncanplaythrough="canplaythrough()"
+            onloadstart="loadstart()">
+            </video>
+        <p>Make sure we don't reload a &lt;video&gt; element after a dialog is shown.<br>
+        Test this by loading a movie slowly and showing a dialog when a 'loadstart' event <br>
+        handler is called. If the movie is reloaded when the dialog is "dismissed", another <br>
+        'loadstart' event will be fired</p>
+    </body>
+</html>
+

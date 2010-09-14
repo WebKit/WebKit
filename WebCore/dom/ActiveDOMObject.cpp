@@ -66,7 +66,7 @@ bool ActiveDOMObject::canSuspend() const
     return false;
 }
 
-void ActiveDOMObject::suspend()
+void ActiveDOMObject::suspend(ReasonForSuspension)
 {
 }
 

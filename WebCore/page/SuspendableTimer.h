@@ -41,7 +41,7 @@ public:
     virtual bool hasPendingActivity() const;
     virtual void stop();
     virtual bool canSuspend() const;
-    virtual void suspend();
+    virtual void suspend(ReasonForSuspension);
     virtual void resume();
 
 private:

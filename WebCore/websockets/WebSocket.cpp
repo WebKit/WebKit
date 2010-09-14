@@ -216,7 +216,7 @@ bool WebSocket::canSuspend() const
     return !m_channel;
 }
 
-void WebSocket::suspend()
+void WebSocket::suspend(ReasonForSuspension)
 {
     if (m_channel)
         m_channel->suspend();

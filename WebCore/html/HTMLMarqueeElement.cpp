@@ -132,7 +132,7 @@ bool HTMLMarqueeElement::canSuspend() const
     return true;
 }
 
-void HTMLMarqueeElement::suspend()
+void HTMLMarqueeElement::suspend(ReasonForSuspension)
 {
     if (RenderMarquee* marqueeRenderer = renderMarquee())
         marqueeRenderer->suspend();

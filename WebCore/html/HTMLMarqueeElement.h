@@ -49,7 +49,7 @@ private:
 
     // ActiveDOMObject
     virtual bool canSuspend() const;
-    virtual void suspend();
+    virtual void suspend(ReasonForSuspension);
     virtual void resume();
 
     RenderMarquee* renderMarquee() const;

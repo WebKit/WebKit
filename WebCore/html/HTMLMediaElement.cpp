@@ -2020,27 +2020,36 @@ bool HTMLMediaElement::canSuspend() const
 void HTMLMediaElement::stop()
 {
     LOG(Media, "HTMLMediaElement::stop");
-    suspend();
-}
-
-void HTMLMediaElement::suspend()
-{
-    LOG(Media, "HTMLMediaElement::suspend");
-
     if (m_isFullscreen)
         exitFullscreen();
-
+    
     m_inActiveDocument = false;
     userCancelledLoad();
-
+    
     // Stop the playback without generating events
     setPausedInternal(true);
-
+    
     if (renderer())
         renderer()->updateFromElement();
-
+    
     stopPeriodicTimers();
     cancelPendingEventsAndCallbacks();
+}
+
+void HTMLMediaElement::suspend(ReasonForSuspension why)
+{
+    LOG(Media, "HTMLMediaElement::suspend");
+    
+    switch (why)
+    {
+        case DocumentWillBecomeInactive:
+            stop();
+            break;
+        case JavaScriptDebuggerPaused:
+        case WillShowDialog:
+            // Do nothing, we don't pause media playback in these cases.
+            break;
+    }
 }
 
 void HTMLMediaElement::resume()
