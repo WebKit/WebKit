@@ -1,3 +1,15 @@
+2010-09-14  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Wheeling over windowed plugins sometimes cause them to disappear
+
+        * plugins/qt/PluginContainerQt.cpp:
+        (PluginClientWrapper::x11Event): Pass on captured mouse wheel events
+        to the effective native window rather than the grandparent widget.
+        We were calling QWidget::winId() which caused a new X11 window to be
+        created for the grandparent widget and generally mess things up.
+
 2010-09-14  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix after move of selectedText() method.

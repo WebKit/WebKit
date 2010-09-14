@@ -56,7 +56,7 @@ PluginClientWrapper::~PluginClientWrapper()
 bool PluginClientWrapper::x11Event(XEvent* event)
 {
     // modify the event window id and insert it into the Qt event system.
-    event->xany.window = m_parent->parentWidget()->winId();
+    event->xany.window = m_parent->effectiveWinId();
     static_cast<QApplication*>(QApplication::instance())->x11ProcessEvent(event);
     return true;
 }
