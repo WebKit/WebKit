@@ -7,6 +7,7 @@ CONFIG(QTDIR_build): CONFIG += standalone_package
 else:exists($$PWD/WebCore/generated): CONFIG += standalone_package
 
 CONFIG += depend_includepath
+DEPENDPATH += $$OUT_PWD
 
 DEFINES += BUILDING_QT__=1
 building-libs {
