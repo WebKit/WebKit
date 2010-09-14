@@ -1,3 +1,18 @@
+2010-09-14  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Darin Adler.
+
+        Share UnicodeMacrosFromICU.h
+        https://bugs.webkit.org/show_bug.cgi?id=45710
+
+        glib, qt4 and wince use the same macros from ICU.
+        Remove the code duplication and use the same header file.
+
+        * wtf/unicode/UnicodeMacrosFromICU.h: Copied from JavaScriptCore/wtf/unicode/glib/UnicodeMacrosFromICU.h.
+        * wtf/unicode/glib/UnicodeMacrosFromICU.h: Removed.
+        * wtf/unicode/qt4/UnicodeQt4.h:
+        * wtf/unicode/wince/UnicodeWince.h:
+
 2010-09-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Barth.
