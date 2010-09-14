@@ -3127,12 +3127,13 @@ BUGDPRANKE LINUX MAC : http/tests/navigation/postredirect-frames.html = IMAGE
 BUGWK45667 LINUX : fast/files/read-file-async.html = CRASH PASS
 BUGWK45667 LINUX : fast/files/read-blob-async.html = CRASH PASS
 
+// Regressed after r67179:r67353 roll
+BUGWK45737 DEBUG SLOW : fast/frames/frame-limit.html = CRASH PASS
+
 // Regressions from webkit roll r67178:t67358
 BUGDPRANKE WIN DEBUG : fast/dom/node-filter-detached-iframe-crash.html = CRASH
 BUGDPRANKE WIN DEBUG : fast/dynamic/insertAdjacentHTML-allowed-parents.html = CRASH
 BUGDPRANKE WIN DEBUG : fast/forms/textarea-and-mutation-events.html = CRASH
-BUGDPRANKE WIN DEBUG SLOW : fast/frames/frame-limit.html = CRASH
-BUGDPRANKE MAC LINUX : fast/frames/frame-limit.html = TIMEOUT
 BUGDPRANKE WIN DEBUG : fast/parser/fragment-parser.html = CRASH
 BUGDPRANKE WIN DEBUG : fast/xpath/xpath-detached-iframe-resolver-crash.html = CRASH
 BUGDPRANKE WIN DEBUG : traversal/acid3-test-2.html = CRASH
