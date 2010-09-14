@@ -33,6 +33,7 @@
 
 #if ENABLE(FILE_SYSTEM)
 
+#include "ErrorCallback.h"
 #include "FileCallback.h"
 #include "FileWriterCallback.h"
 

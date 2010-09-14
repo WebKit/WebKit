@@ -1,3 +1,9 @@
+2010-09-14  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Unreviewed; an attempt to fix Chromium Windows build.
+
+        * fileapi/FileEntry.cpp:
+
 2010-09-13  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
