@@ -2618,10 +2618,6 @@ BUGWK39105 : editing/spelling/context-menu-suggestions.html = TEXT
 // Flaky tests
 BUG44229 WIN LINUX : fast/loader/recursive-before-unload-crash.html = PASS TEXT
 
-// DeviceOrientation API not yet implemented.
-BUG44654 : fast/dom/DeviceOrientation/window-property.html = TEXT
-BUG44654 : fast/dom/Window/window-properties-device-orientation.html = TEXT
-
 BUGWK39655 : fast/dom/prototype-property.html = FAIL
 
 // These SVG tests have been flaky on Win from quite some time.
@@ -2944,13 +2940,6 @@ BUG50832 : printing/stretch-to-view-height.html = TEXT
 
 // New test added in r64470 fails on Chromium.
 BUG50969 : fast/events/keydown-numpad-keys.html = TEXT
-
-// This test fails because the expected output is wrong.
-// The reason is the device orientation runtime feature
-// switch had to be switched off for test_shell until
-// it provides a mock DeviceOrientationClient.
-// See crbug.com/50637.
-BUG50637 : fast/dom/prototype-inheritance.html = FAIL
 
 // Application Cache Quotas
 BUGWK43459 : http/tests/appcache/origin-quota.html = TEXT MISSING

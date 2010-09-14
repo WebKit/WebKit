@@ -1,3 +1,28 @@
+2010-09-14  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Rebaseline DeviceOrientation related layout tests for Chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=45542
+
+        Some DeviceOrientation layout tests need Chromium-specific
+        baselines because of differences between JSC and V8.
+
+        Also enable prototype-inheritance.html again and unfork its
+        expectations.
+
+        * fast/dom/script-tests/prototype-inheritance.js:
+        * platform/chromium-linux/fast/dom/DeviceOrientation/window-property-expected.txt: Added.
+        * platform/chromium-linux/fast/dom/Window/window-properties-device-orientation-expected.txt: Added.
+        * platform/chromium-mac/fast/dom/DeviceOrientation/window-property-expected.txt: Added.
+        * platform/chromium-mac/fast/dom/Window/window-properties-device-orientation-expected.txt: Added.
+        * platform/chromium-mac/fast/dom/prototype-inheritance-expected.txt: Removed.
+        * platform/chromium-win/fast/dom/DeviceOrientation/window-property-expected.txt: Added.
+        * platform/chromium-win/fast/dom/Window/window-properties-device-orientation-expected.txt: Added.
+        * platform/chromium-win/fast/dom/prototype-inheritance-expected.txt: Removed.
+        * platform/chromium/fast/dom/prototype-inheritance-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-09-14  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

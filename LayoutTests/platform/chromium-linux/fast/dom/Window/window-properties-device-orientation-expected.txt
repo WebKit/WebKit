@@ -1,0 +1,6 @@
+This test dumps all of the properties that are reachable from the window.DeviceMotionEvent window.ondevicemotion, window.DeviceOrientationEvent and window.ondeviceorientation objects, along with their types. These properties are currently guarded by ENABLE_DEVICE_ORIENTATION.
+
+window.DeviceMotionEvent [undefined]
+window.ondevicemotion [undefined]
+window.DeviceOrientationEvent [function]
+window.ondeviceorientation [null]

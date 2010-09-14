@@ -75,6 +75,8 @@ PASS inner.DOMParser.isInner is true
 PASS inner.DOMParser.constructor.isInner is true
 PASS inner.DOMStringList.isInner is true
 PASS inner.DOMStringList.constructor.isInner is true
+PASS inner.DOMStringMap.isInner is true
+PASS inner.DOMStringMap.constructor.isInner is true
 PASS inner.Date.isInner is true
 PASS inner.Date.constructor.isInner is true
 PASS inner.Document.isInner is true
@@ -599,6 +601,8 @@ PASS inner.TextEvent.isInner is true
 PASS inner.TextEvent.constructor.isInner is true
 PASS inner.TextMetrics.isInner is true
 PASS inner.TextMetrics.constructor.isInner is true
+PASS inner.TimeRanges.isInner is true
+PASS inner.TimeRanges.constructor.isInner is true
 PASS inner.TouchEvent.isInner is true
 PASS inner.TouchEvent.constructor.isInner is true
 PASS inner.TypeError.isInner is true
@@ -659,8 +663,6 @@ PASS inner.btoa.isInner is true
 PASS inner.btoa.constructor.isInner is true
 PASS inner.captureEvents.isInner is true
 PASS inner.captureEvents.constructor.isInner is true
-PASS inner.chromium.isInner is true
-PASS inner.chromium.constructor.isInner is true
 PASS inner.clearInterval.isInner is true
 PASS inner.clearInterval.constructor.isInner is true
 PASS inner.clearTimeout.isInner is true
