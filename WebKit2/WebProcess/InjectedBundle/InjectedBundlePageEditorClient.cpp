@@ -27,6 +27,7 @@
 
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
+#include "InjectedBundleNodeHandle.h"
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
@@ -62,8 +63,10 @@ bool InjectedBundlePageEditorClient::shouldEndEditing(WebPage* page, Range* rang
 
 bool InjectedBundlePageEditorClient::shouldInsertNode(WebPage* page, Node* node, Range* rangeToReplace, EditorInsertAction action)
 {
-    if (m_client.shouldInsertNode)
-        return m_client.shouldInsertNode(toRef(page), toRef(node), toRef(rangeToReplace), toWK(action), m_client.clientInfo);
+    if (m_client.shouldInsertNode) {
+        RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(node);
+        return m_client.shouldInsertNode(toRef(page), toRef(nodeHandle.get()), toRef(rangeToReplace), toWK(action), m_client.clientInfo);
+    }
     return true;
 }
 

@@ -27,6 +27,8 @@
 #define InjectedBundlePage_h
 
 #include <WebKit2/WKBundlePage.h>
+#include <WebKit2/WKBundleScriptWorld.h>
+#include <WebKit2/WKRetainPtr.h>
 
 namespace WTR {
 
@@ -91,7 +93,7 @@ private:
     // Editor client
     static bool shouldBeginEditing(WKBundlePageRef, WKBundleRangeRef, const void* clientInfo);
     static bool shouldEndEditing(WKBundlePageRef, WKBundleRangeRef, const void* clientInfo);
-    static bool shouldInsertNode(WKBundlePageRef, WKBundleNodeRef, WKBundleRangeRef rangeToReplace, WKInsertActionType, const void* clientInfo);
+    static bool shouldInsertNode(WKBundlePageRef, WKBundleNodeHandleRef, WKBundleRangeRef rangeToReplace, WKInsertActionType, const void* clientInfo);
     static bool shouldInsertText(WKBundlePageRef, WKStringRef, WKBundleRangeRef rangeToReplace, WKInsertActionType, const void* clientInfo);
     static bool shouldDeleteRange(WKBundlePageRef, WKBundleRangeRef, const void* clientInfo);
     static bool shouldChangeSelectedRange(WKBundlePageRef, WKBundleRangeRef fromRange, WKBundleRangeRef toRange, WKAffinityType, bool stillSelecting, const void* clientInfo);
@@ -102,7 +104,7 @@ private:
     static void didChangeSelection(WKBundlePageRef, WKStringRef notificationName, const void* clientInfo);
     bool shouldBeginEditing(WKBundleRangeRef);
     bool shouldEndEditing(WKBundleRangeRef);
-    bool shouldInsertNode(WKBundleNodeRef, WKBundleRangeRef rangeToReplace, WKInsertActionType);
+    bool shouldInsertNode(WKBundleNodeHandleRef, WKBundleRangeRef rangeToReplace, WKInsertActionType);
     bool shouldInsertText(WKStringRef, WKBundleRangeRef rangeToReplace, WKInsertActionType);
     bool shouldDeleteRange(WKBundleRangeRef);
     bool shouldChangeSelectedRange(WKBundleRangeRef fromRange, WKBundleRangeRef toRange, WKAffinityType, bool stillSelecting);
@@ -116,6 +118,7 @@ private:
     void dumpAllFrameScrollPositions();
 
     WKBundlePageRef m_page;
+    WKRetainPtr<WKBundleScriptWorldRef> m_world;
     bool m_isLoading;
 };
 

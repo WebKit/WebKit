@@ -1,3 +1,27 @@
+2010-09-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Remove WKBundleNodeRef, replacing uses with WKBundleNodeHandleRef.
+        https://bugs.webkit.org/show_bug.cgi?id=45785
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        Remove files.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleBase.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleNode.cpp: Removed.
+        * WebProcess/InjectedBundle/API/c/WKBundleNode.h: Removed.
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleRange.cpp:
+        (WKBundleRangeCopyStartContainer):
+        (WKBundleRangeCopyEndContainer):
+        * WebProcess/InjectedBundle/API/c/WKBundleRange.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp:
+        (WebKit::InjectedBundlePageEditorClient::shouldInsertNode):
+        Change to be in terms of WKBundleNodeHandleRef.
+
 2010-09-14  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Adam Roben.

@@ -39,11 +39,11 @@ extern "C" {
 
 WK_EXPORT unsigned WKBundleRangeGetStartOffset(WKBundleRangeRef range);
 
-WK_EXPORT WKBundleNodeRef WKBundleRangeGetStartContainer(WKBundleRangeRef range);
+WK_EXPORT WKBundleNodeHandleRef WKBundleRangeCopyStartContainer(WKBundleRangeRef range);
 
 WK_EXPORT unsigned WKBundleRangeGetEndOffset(WKBundleRangeRef range);
 
-WK_EXPORT WKBundleNodeRef WKBundleRangeGetEndContainer(WKBundleRangeRef range);
+WK_EXPORT WKBundleNodeHandleRef WKBundleRangeCopyEndContainer(WKBundleRangeRef range);
 
 #ifdef __cplusplus
 }

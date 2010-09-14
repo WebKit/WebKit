@@ -906,14 +906,6 @@
 							>
 						</File>
 						<File
-							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleNode.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleNode.h"
-							>
-						</File>
-						<File
 							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleNodeHandle.cpp"
 							>
 						</File>

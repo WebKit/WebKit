@@ -1,3 +1,26 @@
+2010-09-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Remove WKBundleNodeRef, replacing uses with WKBundleNodeHandleRef.
+        https://bugs.webkit.org/show_bug.cgi?id=45785
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::propertyValue):
+        (WTR::numericWindowPropertyValue):
+        (WTR::dumpPath):
+        (WTR::toStr):
+        (WTR::operator<<):
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+        (WTR::InjectedBundlePage::shouldInsertNode):
+        (WTR::InjectedBundlePage::shouldBeginEditing):
+        (WTR::InjectedBundlePage::shouldEndEditing):
+        (WTR::InjectedBundlePage::shouldInsertText):
+        (WTR::InjectedBundlePage::shouldDeleteRange):
+        (WTR::InjectedBundlePage::shouldChangeSelectedRange):
+        (WTR::InjectedBundlePage::shouldApplyStyle):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+
 2010-09-14  Adam Barth  <abarth@webkit.org>
 
         Fix two typos in commit-queue.  The first is harmless.  The second

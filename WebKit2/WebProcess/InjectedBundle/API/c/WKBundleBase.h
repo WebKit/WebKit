@@ -33,7 +33,6 @@ typedef const struct OpaqueWKBundlePage* WKBundlePageRef;
 typedef const struct OpaqueWKBundleScriptWorld* WKBundleScriptWorldRef;
 
 typedef const struct OpaqueWKBundleDOMCSSStyleDeclaration* WKBundleCSSStyleDeclarationRef;
-typedef const struct OpaqueWKBundleNode* WKBundleNodeRef;
 typedef const struct OpaqueWKBundleRange* WKBundleRangeRef;
 
 #undef WK_EXPORT

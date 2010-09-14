@@ -354,8 +354,6 @@
 		E1EE53E711F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE53E611F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp */; };
 		E1EE55F411F8F18900CCBEE4 /* WKBundleRange.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE55F311F8F18900CCBEE4 /* WKBundleRange.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E1EE55F811F8F1BC00CCBEE4 /* WKBundleRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE55F711F8F1BC00CCBEE4 /* WKBundleRange.cpp */; };
-		E1EE563011F8F6AA00CCBEE4 /* WKBundleNode.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE562F11F8F6AA00CCBEE4 /* WKBundleNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		E1EE565611F8F71700CCBEE4 /* WKBundleNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE565511F8F71700CCBEE4 /* WKBundleNode.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -740,8 +738,6 @@
 		E1EE53E611F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageEditorClient.cpp; sourceTree = "<group>"; };
 		E1EE55F311F8F18900CCBEE4 /* WKBundleRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleRange.h; sourceTree = "<group>"; };
 		E1EE55F711F8F1BC00CCBEE4 /* WKBundleRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleRange.cpp; sourceTree = "<group>"; };
-		E1EE562F11F8F6AA00CCBEE4 /* WKBundleNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleNode.h; sourceTree = "<group>"; };
-		E1EE565511F8F71700CCBEE4 /* WKBundleNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleNode.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1343,8 +1339,6 @@
 				BCD25F1511D6BDE100169B0E /* WKBundleFrame.h */,
 				BCF049E411FE20F600F86A58 /* WKBundleFramePrivate.h */,
 				BC204EED11C83EC8008F3375 /* WKBundleInitialize.h */,
-				E1EE565511F8F71700CCBEE4 /* WKBundleNode.cpp */,
-				E1EE562F11F8F6AA00CCBEE4 /* WKBundleNode.h */,
 				BC4BEFE0120A1A4C00FBA0C7 /* WKBundleNodeHandle.cpp */,
 				BC4BEFDF120A1A4C00FBA0C7 /* WKBundleNodeHandle.h */,
 				BC20528011C94284008F3375 /* WKBundlePage.cpp */,
@@ -1588,7 +1582,6 @@
 				1A24B5F311F531E800C38269 /* MachUtilities.h in Headers */,
 				E1EE53E311F8CFC000CCBEE4 /* InjectedBundlePageEditorClient.h in Headers */,
 				E1EE55F411F8F18900CCBEE4 /* WKBundleRange.h in Headers */,
-				E1EE563011F8F6AA00CCBEE4 /* WKBundleNode.h in Headers */,
 				BCF049E611FE20F600F86A58 /* WKBundleFramePrivate.h in Headers */,
 				BCF049E711FE20F600F86A58 /* WKBundlePrivate.h in Headers */,
 				1AE4976811FF658E0048B464 /* NPJSObject.h in Headers */,
@@ -1842,7 +1835,6 @@
 				1A24B5F211F531E800C38269 /* MachUtilities.cpp in Sources */,
 				E1EE53E711F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp in Sources */,
 				E1EE55F811F8F1BC00CCBEE4 /* WKBundleRange.cpp in Sources */,
-				E1EE565611F8F71700CCBEE4 /* WKBundleNode.cpp in Sources */,
 				1AE4976911FF658E0048B464 /* NPJSObject.cpp in Sources */,
 				1AE4987911FF7FAA0048B464 /* JSNPObject.cpp in Sources */,
 				1AE49A4A11FFA8CE0048B464 /* JSNPMethod.cpp in Sources */,

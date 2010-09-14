@@ -55,7 +55,6 @@ template<> struct BundleAPITypeInfo<WKBundlePageRef>                    { typede
 template<> struct BundleAPITypeInfo<WKBundleRef>                        { typedef InjectedBundle* ImplType; };
 template<> struct BundleAPITypeInfo<WKBundleNodeHandleRef>              { typedef InjectedBundleNodeHandle* ImplType; };
 template<> struct BundleAPITypeInfo<WKBundleScriptWorldRef>             { typedef InjectedBundleScriptWorld* ImplType; };
-template<> struct BundleAPITypeInfo<WKBundleNodeRef>                    { typedef WebCore::Node* ImplType; };
 template<> struct BundleAPITypeInfo<WKBundleRangeRef>                   { typedef WebCore::Range* ImplType; };
 template<> struct BundleAPITypeInfo<WKBundleCSSStyleDeclarationRef>     { typedef WebCore::CSSStyleDeclaration* ImplType; };
 
@@ -66,7 +65,6 @@ template<> struct BundleImplTypeInfo<InjectedBundleScriptWorld*>        { typede
 template<> struct BundleImplTypeInfo<WebFrame*>                         { typedef WKBundleFrameRef APIType; };
 template<> struct BundleImplTypeInfo<WebPage*>                          { typedef WKBundlePageRef APIType; };
 template<> struct BundleImplTypeInfo<WebCore::CSSStyleDeclaration*>     { typedef WKBundleCSSStyleDeclarationRef APIType; };
-template<> struct BundleImplTypeInfo<WebCore::Node*>                    { typedef WKBundleNodeRef APIType; };
 template<> struct BundleImplTypeInfo<WebCore::Range*>                   { typedef WKBundleRangeRef APIType; };
 
 /* Opaque typing convenience methods */

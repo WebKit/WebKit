@@ -25,8 +25,8 @@
 
 #include "WKBundleRange.h"
 
+#include "InjectedBundleNodeHandle.h"
 #include "WKBundleAPICast.h"
-#include "WKBundleNode.h"
 #include <WebCore/Range.h>
 
 using namespace WebCore;
@@ -37,9 +37,10 @@ unsigned WKBundleRangeGetStartOffset(WKBundleRangeRef range)
     return toWK(range)->startOffset();
 }
 
-WKBundleNodeRef WKBundleRangeGetStartContainer(WKBundleRangeRef range)
+WKBundleNodeHandleRef WKBundleRangeCopyStartContainer(WKBundleRangeRef range)
 {
-    return toRef(toWK(range)->startContainer());
+    RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(toWK(range)->startContainer());
+    return toRef(nodeHandle.release().leakRef());
 }
 
 unsigned WKBundleRangeGetEndOffset(WKBundleRangeRef range)
@@ -47,7 +48,8 @@ unsigned WKBundleRangeGetEndOffset(WKBundleRangeRef range)
     return toWK(range)->endOffset();
 }
 
-WKBundleNodeRef WKBundleRangeGetEndContainer(WKBundleRangeRef range)
+WKBundleNodeHandleRef WKBundleRangeCopyEndContainer(WKBundleRangeRef range)
 {
-    return toRef(toWK(range)->endContainer());
+    RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(toWK(range)->endContainer());
+    return toRef(nodeHandle.release().leakRef());
 }
