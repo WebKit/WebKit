@@ -40,6 +40,7 @@
 #include "public/WebContextMenuData.h"
 #include "public/WebDataSource.h"
 #include "public/WebDragData.h"
+#include "public/WebElement.h"
 #include "public/WebFrame.h"
 #include "public/WebGeolocationServiceMock.h"
 #include "public/WebHistoryItem.h"
@@ -489,10 +490,68 @@ void WebViewHost::focusAccessibilityObject(const WebAccessibilityObject& object)
     m_shell->accessibilityController()->setFocusedElement(object);
 }
 
-void WebViewHost::didChangeAccessibilityObjectChildren(const WebAccessibilityObject& object)
+void WebViewHost::postAccessibilityNotification(const WebAccessibilityObject& obj, WebAccessibilityNotification notification)
 {
-    if (m_shell->accessibilityController()->shouldDumpAccessibilityNotifications())
-        printf("didChangeAccessibilityObjectChildren - new count: %d\n", object.childCount());
+    printf("AccessibilityNotification - ");
+    
+    if (m_shell->accessibilityController()->shouldDumpAccessibilityNotifications()) {
+        switch (notification) {
+        case WebAccessibilityNotificationActiveDescendantChanged:
+            printf("ActiveDescendantChanged");
+            break;
+        case WebAccessibilityNotificationCheckedStateChanged:
+            printf("CheckedStateChanged");
+            break;
+        case WebAccessibilityNotificationChildrenChanged:
+            printf("ChildrenChanged");
+            break;
+        case WebAccessibilityNotificationFocusedUIElementChanged:
+            printf("FocusedUIElementChanged");
+            break;
+        case WebAccessibilityNotificationLayoutComplete:
+            printf("LayoutComplete");
+            break;
+        case WebAccessibilityNotificationLoadComplete:
+            printf("LoadComplete");
+            break;
+        case WebAccessibilityNotificationSelectedChildrenChanged:
+            printf("SelectedChildrenChanged");
+            break;
+        case WebAccessibilityNotificationSelectedTextChanged:
+            printf("SelectedTextChanged");
+            break;
+        case WebAccessibilityNotificationValueChanged:
+            printf("ValueChanged");
+            break;
+        case WebAccessibilityNotificationScrolledToAnchor:
+            printf("ScrolledToAnchor");
+            break;
+        case WebAccessibilityNotificationLiveRegionChanged:
+            printf("LiveRegionChanged");
+            break;
+        case WebAccessibilityNotificationMenuListValueChanged:
+            printf("MenuListValueChanged");
+            break;
+        case WebAccessibilityNotificationRowCountChanged:
+            printf("RowCountChanged");
+            break;
+        case WebAccessibilityNotificationRowCollapsed:
+            printf("RowCollapsed");
+            break;
+        case WebAccessibilityNotificationRowExpanded:
+            printf("RowExpanded");
+            break;
+        }
+
+        WebKit::WebNode node = obj.node();
+        if (!node.isNull() && node.isElementNode()) {
+            WebKit::WebElement element = node.to<WebKit::WebElement>();
+            if (element.hasAttribute("id"))
+                printf(" - id:%s", element.getAttribute("id").utf8().data());
+        }
+
+        printf("\n");
+    }
 }
 
 WebNotificationPresenter* WebViewHost::notificationPresenter()

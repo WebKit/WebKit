@@ -1,0 +1,2 @@
+AccessibilityNotification - CheckedStateChanged - id:checkbox-for-CheckedStateChanged
+This tests that chromium correctly recieves the CheckedStateChanged notification.  

@@ -1,0 +1,16 @@
+<html>
+<head>
+<script>
+    function testNotification() {
+        document.getElementById("ul-for-LiveRegionChanged").title = "title";
+    }
+</script>
+</head>
+<body onload="test()">
+This tests that chromium correctly recieves the LiveRegionChanged notification.
+
+<ul id="ul-for-LiveRegionChanged" aria-help="ul-for-LiveRegionChanged" role="region" aria-live="polite" aria-relevant="additions removals"></ul>
+
+<script type="text/javascript" src="post-notification.js"></script>
+</body>
+</html>

@@ -1,0 +1,2 @@
+AccessibilityNotification - ValueChanged - id:text-for-ValueChanged
+This tests that chromium correctly recieves the ValueChanged notification.  

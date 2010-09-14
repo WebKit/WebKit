@@ -1,0 +1,16 @@
+<html>
+<head>
+<script>
+    function testNotification() {
+        document.getElementById("text-for-ValueChanged").value = "button"
+    }
+</script>
+</head>
+<body onload="test()">
+This tests that chromium correctly recieves the ValueChanged notification.
+
+<input id="text-for-ValueChanged" aria-help="text-for-ValueChanged" type="text" value="value" />
+
+<script type="text/javascript" src="post-notification.js"></script>
+</body>
+</html>

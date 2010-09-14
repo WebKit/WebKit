@@ -1,0 +1,2 @@
+AccessibilityNotification - SelectedChildrenChanged - id:select-for-SelectedChildrenChanged
+This tests that chromium correctly recieves the SelectedChildrenChanged notification.  

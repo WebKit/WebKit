@@ -1,0 +1,3 @@
+AccessibilityNotification - ChildrenChanged - id:div-for-ChildrenChanged
+This tests that chromium correctly recieves the ChildrenChanged notification.
+text

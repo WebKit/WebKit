@@ -98,6 +98,7 @@
                 'public/mac/WebSandboxSupport.h',
                 'public/mac/WebScreenInfoFactory.h',
                 'public/WebAccessibilityCache.h',
+                'public/WebAccessibilityNotification.h',
                 'public/WebAccessibilityObject.h',
                 'public/WebAccessibilityRole.h',
                 'public/WebAnimationController.h',

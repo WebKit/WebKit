@@ -1,0 +1,16 @@
+<html>
+<head>
+<script>
+    function testNotification() {
+        document.getElementById("div-for-ChildrenChanged").innerHTML = "text";
+    }
+</script>
+</head>
+<body onload="test()">
+This tests that chromium correctly recieves the ChildrenChanged notification.
+
+<div id="div-for-ChildrenChanged" aria-help="div-for-ChildrenChanged"></div>
+
+<script type="text/javascript" src="post-notification.js"></script>
+</body>
+</html>

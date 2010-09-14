@@ -1,0 +1,16 @@
+<html>
+<head>
+<script>
+    function testNotification() {
+        document.getElementById("div-for-RowCollapsed").setAttribute("aria-expanded", false);
+    }
+</script>
+</head>
+<body onload="test()">
+This tests that chromium correctly recieves the RowCollapsed notification.
+
+<div id="div-for-RowCollapsed" aria-help="div-for-RowCollapsed" role="treeitem"></div>
+
+<script type="text/javascript" src="post-notification.js"></script>
+</body>
+</html>

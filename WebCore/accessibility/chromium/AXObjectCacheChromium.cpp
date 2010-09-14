@@ -60,30 +60,34 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
         return;
 
     ChromeClientChromium* client = toChromeClientChromium(obj->documentFrameView());
-    if (client) {
-        switch (notification) {
-        case AXCheckedStateChanged:
-            client->didChangeAccessibilityObjectState(obj);
-            break;
-        case AXChildrenChanged:
-            client->didChangeAccessibilityObjectChildren(obj);
-            break;
-        case AXActiveDescendantChanged:
-        case AXFocusedUIElementChanged:
-        case AXLayoutComplete:
-        case AXLiveRegionChanged:
-        case AXLoadComplete:
-        case AXMenuListValueChanged:
-        case AXRowCollapsed:
-        case AXRowCountChanged:
-        case AXRowExpanded:
-        case AXScrolledToAnchor:
-        case AXSelectedChildrenChanged:
-        case AXSelectedTextChanged:
-        case AXValueChanged:
-            break;
-        }
+    if (!client)
+        return;
+
+    // TODO: Remove after the new postAccessibilityNotification is used downstream.
+    switch (notification) {
+    case AXCheckedStateChanged:
+        client->didChangeAccessibilityObjectState(obj);
+        break;
+    case AXChildrenChanged:
+        client->didChangeAccessibilityObjectChildren(obj);
+        break;
+    case AXActiveDescendantChanged:
+    case AXFocusedUIElementChanged:
+    case AXLayoutComplete:
+    case AXLiveRegionChanged:
+    case AXLoadComplete:
+    case AXMenuListValueChanged:
+    case AXRowCollapsed:
+    case AXRowCountChanged:
+    case AXRowExpanded:
+    case AXScrolledToAnchor:
+    case AXSelectedChildrenChanged:
+    case AXSelectedTextChanged:
+    case AXValueChanged:
+        break;
     }
+
+    client->postAccessibilityNotification(obj, notification);        
 }
 
 void AXObjectCache::handleFocusedUIElementChanged(RenderObject*, RenderObject*)

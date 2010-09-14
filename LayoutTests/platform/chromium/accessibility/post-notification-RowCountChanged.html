@@ -1,0 +1,20 @@
+<html>
+<head>
+<script>
+    function testNotification() {
+        var div = document.getElementById("div-for-RowCountChanged");
+
+        div.children[0].setAttribute("aria-expanded", true);
+    }
+</script>
+</head>
+<body onload="test()">
+This tests that chromium correctly recieves the RowCountChanged notification.
+
+<div id="div-for-RowCountChanged" aria-help="div-for-RowCountChanged" role="grid">
+    <div></div>
+</div>
+
+<script type="text/javascript" src="post-notification.js"></script>
+</body>
+</html>

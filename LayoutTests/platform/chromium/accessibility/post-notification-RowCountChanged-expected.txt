@@ -1,0 +1,2 @@
+AccessibilityNotification - RowCountChanged - id:div-for-RowCountChanged
+This tests that chromium correctly recieves the RowCountChanged notification.

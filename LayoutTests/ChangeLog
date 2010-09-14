@@ -1,3 +1,49 @@
+2010-09-14  Chris Guillory   <chris.guillory@google.com>
+
+        Reviewed by Chris Fleizach.
+
+        Send all accessibility notifications to Chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=45156
+
+        * platform/chromium/accessibility/children-changed-notification-expected.txt: Removed.
+        * platform/chromium/accessibility/children-changed-notification.html: Removed.
+        * platform/chromium/accessibility/post-notification-ActiveDescendantChanged-expected.txt: Added.
+        * platform/chromium/accessibility/post-notification-ActiveDescendantChanged.html: Added.
+        * platform/chromium/accessibility/post-notification-CheckedStateChanged-expected.txt: Added.
+        * platform/chromium/accessibility/post-notification-CheckedStateChanged.html: Added.
+        * platform/chromium/accessibility/post-notification-ChildrenChanged-expected.txt: Added.
+        * platform/chromium/accessibility/post-notification-ChildrenChanged.html: Added.
+        * platform/chromium/accessibility/post-notification-FocusedUIElementChanged-expected.txt: Added.
+        * platform/chromium/accessibility/post-notification-FocusedUIElementChanged.html: Added.
+        * platform/chromium/accessibility/post-notification-LayoutComplete-expected.txt: Added.
+        * platform/chromium/accessibility/post-notification-LayoutComplete.html: Added.
+        * platform/chromium/accessibility/post-notification-LiveRegionChanged-expected.txt: Added.
+        * platform/chromium/accessibility/post-notification-LiveRegionChanged.html: Added.
+        * platform/chromium/accessibility/post-notification-LoadComplete-expected.txt: Added.
+        * platform/chromium/accessibility/post-notification-LoadComplete.html: Added.
+        * platform/chromium/accessibility/post-notification-MenuListValueChanged-expected.txt: Added.
+        * platform/chromium/accessibility/post-notification-MenuListValueChanged.html: Added.
+        * platform/chromium/accessibility/post-notification-RowCollapsed-expected.txt: Added.
+        * platform/chromium/accessibility/post-notification-RowCollapsed.html: Added.
+        * platform/chromium/accessibility/post-notification-RowCountChanged-expected.txt: Added.
+        * platform/chromium/accessibility/post-notification-RowCountChanged.html: Added.
+        * platform/chromium/accessibility/post-notification-RowExpanded-expected.txt: Added.
+        * platform/chromium/accessibility/post-notification-RowExpanded.html: Added.
+        * platform/chromium/accessibility/post-notification-ScrolledToAnchor-expected.txt: Added.
+        * platform/chromium/accessibility/post-notification-ScrolledToAnchor.html: Added.
+        * platform/chromium/accessibility/post-notification-SelectedChildrenChanged-expected.txt: Added.
+        * platform/chromium/accessibility/post-notification-SelectedChildrenChanged.html: Added.
+        * platform/chromium/accessibility/post-notification-SelectedTextChanged-expected.txt: Added.
+        * platform/chromium/accessibility/post-notification-SelectedTextChanged.html: Added.
+        * platform/chromium/accessibility/post-notification-ValueChanged-expected.txt: Added.
+        * platform/chromium/accessibility/post-notification-ValueChanged.html: Added.
+        * platform/chromium/accessibility/post-notification.js: Added.
+        (enumAccessibilityObjects):
+        (testDone):
+        (test):
+        * platform/chromium/drt_expectations.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-09-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoffrey Garen.

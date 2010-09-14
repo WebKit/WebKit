@@ -56,11 +56,10 @@
 #include "NotificationPresenterImpl.h"
 #include "Page.h"
 #include "PopupMenuChromium.h"
-#include "SearchPopupMenuChromium.h"
 #include "ScriptController.h"
+#include "SearchPopupMenuChromium.h"
 #include "SecurityOrigin.h"
 #include "SharedGraphicsContext3D.h"
-#include "WebGeolocationService.h"
 #if USE(V8)
 #include "V8Proxy.h"
 #endif
@@ -70,6 +69,7 @@
 #include "WebFileChooserCompletionImpl.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
+#include "WebGeolocationService.h"
 #include "WebInputEvent.h"
 #include "WebKit.h"
 #include "WebNode.h"
@@ -100,6 +100,46 @@ static WebPopupType convertPopupType(PopupContainer::PopupType type)
     default:
         ASSERT_NOT_REACHED();
         return WebPopupTypeNone;
+    }
+}
+
+// Converts a WebCore::AXObjectCache::AXNotification to a WebKit::WebAccessibilityNotification
+static WebAccessibilityNotification toWebAccessibilityNotification(AXObjectCache::AXNotification notification)
+{
+    switch (notification) {
+    case AXObjectCache::AXActiveDescendantChanged:
+        return WebAccessibilityNotificationActiveDescendantChanged;
+    case AXObjectCache::AXCheckedStateChanged:
+        return WebAccessibilityNotificationCheckedStateChanged;
+    case AXObjectCache::AXChildrenChanged:
+        return WebAccessibilityNotificationChildrenChanged;
+    case AXObjectCache::AXFocusedUIElementChanged:
+        return WebAccessibilityNotificationFocusedUIElementChanged;
+    case AXObjectCache::AXLayoutComplete:
+        return WebAccessibilityNotificationLayoutComplete;
+    case AXObjectCache::AXLoadComplete:
+        return WebAccessibilityNotificationLoadComplete;
+    case AXObjectCache::AXSelectedChildrenChanged:
+        return WebAccessibilityNotificationSelectedChildrenChanged;
+    case AXObjectCache::AXSelectedTextChanged:
+        return WebAccessibilityNotificationSelectedTextChanged;
+    case AXObjectCache::AXValueChanged:
+        return WebAccessibilityNotificationValueChanged;
+    case AXObjectCache::AXScrolledToAnchor:
+        return WebAccessibilityNotificationScrolledToAnchor;
+    case AXObjectCache::AXLiveRegionChanged:
+        return WebAccessibilityNotificationLiveRegionChanged;
+    case AXObjectCache::AXMenuListValueChanged:
+        return WebAccessibilityNotificationMenuListValueChanged;
+    case AXObjectCache::AXRowCountChanged:
+        return WebAccessibilityNotificationRowCountChanged;
+    case AXObjectCache::AXRowCollapsed:
+        return WebAccessibilityNotificationRowCollapsed;
+    case AXObjectCache::AXRowExpanded:
+        return WebAccessibilityNotificationRowExpanded;
+    default:
+        ASSERT_NOT_REACHED();
+        return WebAccessibilityNotificationInvalid;
     }
 }
 
@@ -343,9 +383,9 @@ bool ChromeClientImpl::statusbarVisible()
 void ChromeClientImpl::setScrollbarsVisible(bool value)
 {
     m_scrollbarsVisible = value;
-    WebFrameImpl* web_frame = static_cast<WebFrameImpl*>(m_webView->mainFrame());
-    if (web_frame)
-        web_frame->setCanHaveScrollbars(value);
+    WebFrameImpl* webFrame = static_cast<WebFrameImpl*>(m_webView->mainFrame());
+    if (webFrame)
+        webFrame->setCanHaveScrollbars(value);
 }
 
 bool ChromeClientImpl::scrollbarsVisible()
@@ -732,6 +772,13 @@ void ChromeClientImpl::didChangeAccessibilityObjectChildren(WebCore::Accessibili
     // Alert assistive technology about the accessibility object children change
     if (obj)
         m_webView->client()->didChangeAccessibilityObjectChildren(WebAccessibilityObject(obj));
+}
+
+void ChromeClientImpl::postAccessibilityNotification(AccessibilityObject* obj, AXObjectCache::AXNotification notification)
+{
+    // Alert assistive technology about the accessibility object notification.
+    if (obj)
+        m_webView->client()->postAccessibilityNotification(WebAccessibilityObject(obj), toWebAccessibilityNotification(notification));
 }
 
 #if ENABLE(NOTIFICATIONS)

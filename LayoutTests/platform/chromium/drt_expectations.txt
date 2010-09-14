@@ -161,4 +161,4 @@ BUG_DRT WIN : css2.1/t0905-c5526-flthw-00-c-g.html = IMAGE+TEXT
 
 
 // Pass with DRT though FAIL on test_shell
-BUG_DRT : platform/chromium/accessibility/children-changed-notification.html = PASS
+BUG_DRT : platform/chromium/accessibility = PASS

@@ -1,3 +1,0 @@
-didChangeAccessibilityObjectChildren - new count: 1
-This tests that chromium correctly recieves notifications when the children of an accessibility object change.
-text

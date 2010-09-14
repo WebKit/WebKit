@@ -33,6 +33,7 @@
 
 #include "MockSpellCheck.h"
 #include "TestNavigationController.h"
+#include "public/WebAccessibilityNotification.h"
 #include "public/WebCursorInfo.h"
 #include "public/WebFrameClient.h"
 #include "public/WebViewClient.h"
@@ -127,7 +128,7 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual int historyBackListCount();
     virtual int historyForwardListCount();
     virtual void focusAccessibilityObject(const WebKit::WebAccessibilityObject&);
-    virtual void didChangeAccessibilityObjectChildren(const WebKit::WebAccessibilityObject&);
+    virtual void postAccessibilityNotification(const WebKit::WebAccessibilityObject&, WebKit::WebAccessibilityNotification);
     virtual WebKit::WebNotificationPresenter* notificationPresenter();
     virtual WebKit::WebGeolocationService* geolocationService();
     virtual WebKit::WebSpeechInputController* speechInputController(WebKit::WebSpeechInputListener*);

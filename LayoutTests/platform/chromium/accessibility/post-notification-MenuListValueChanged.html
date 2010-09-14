@@ -1,0 +1,18 @@
+<html>
+<head>
+<script>
+    function testNotification() {
+        document.getElementById("select-for-MenuListValueChanged").selectedIndex = 0;
+    }
+</script>
+</head>
+<body onload="test()">
+This tests that chromium correctly recieves the MenuListValueChanged notification.
+
+<select id="select-for-MenuListValueChanged" aria-help="select-for-MenuListValueChanged">
+<option></option> 
+</select>
+
+<script type="text/javascript" src="post-notification.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<html>
+<head>
+<script>
+    function testNotification() {
+        document.getElementById("checkbox-for-CheckedStateChanged").checked = true;
+    }
+</script>
+</head>
+<body onload="test()">
+This tests that chromium correctly recieves the CheckedStateChanged notification.
+
+<input id="checkbox-for-CheckedStateChanged" aria-help="checkbox-for-CheckedStateChanged" type="checkbox" />
+
+<script type="text/javascript" src="post-notification.js"></script>
+</body>
+</html>

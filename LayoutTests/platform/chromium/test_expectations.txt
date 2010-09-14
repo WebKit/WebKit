@@ -954,7 +954,7 @@ BUG10322 DEFER SKIP : platform/mac/accessibility = PASS FAIL
 BUG10322 DEFER SKIP : platform/win/accessibility = PASS FAIL
 
 // Functionality is supported in DRT but not TestShell
-WONTFIX SKIP : platform/chromium/accessibility/children-changed-notification.html = FAIL
+WONTFIX SKIP : platform/chromium/accessibility = FAIL
 
 // -----------------------------------------------------------------
 // Other failures

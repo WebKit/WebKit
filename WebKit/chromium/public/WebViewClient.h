@@ -31,6 +31,7 @@
 #ifndef WebViewClient_h
 #define WebViewClient_h
 
+#include "WebAccessibilityNotification.h"
 #include "WebDragOperation.h"
 #include "WebEditingAction.h"
 #include "WebFileChooserCompletion.h"
@@ -280,6 +281,9 @@ public:
     
     // Notifies embedder that the children of an accessibility object has changed.
     virtual void didChangeAccessibilityObjectChildren(const WebAccessibilityObject&) { }
+    
+    // Notifies embedder about an accessibility notification.
+    virtual void postAccessibilityNotification(const WebAccessibilityObject&, WebAccessibilityNotification) { }
 
 
     // Developer tools -----------------------------------------------------

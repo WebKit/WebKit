@@ -1,3 +1,33 @@
+2010-09-14  Chris Guillory   <chris.guillory@google.com>
+
+        Reviewed by Chris Fleizach.
+
+        Send all accessibility notifications to Chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=45156
+        
+        Use postAccessibilityNotification to pass accessibility notifications
+        to chromium.
+
+        Tests: platform/chromium/accessibility/post-notification-ActiveDescendantChanged.html
+               platform/chromium/accessibility/post-notification-CheckedStateChanged.html
+               platform/chromium/accessibility/post-notification-ChildrenChanged.html
+               platform/chromium/accessibility/post-notification-FocusedUIElementChanged.html
+               platform/chromium/accessibility/post-notification-LayoutComplete.html
+               platform/chromium/accessibility/post-notification-LiveRegionChanged.html
+               platform/chromium/accessibility/post-notification-LoadComplete.html
+               platform/chromium/accessibility/post-notification-MenuListValueChanged.html
+               platform/chromium/accessibility/post-notification-RowCollapsed.html
+               platform/chromium/accessibility/post-notification-RowCountChanged.html
+               platform/chromium/accessibility/post-notification-RowExpanded.html
+               platform/chromium/accessibility/post-notification-ScrolledToAnchor.html
+               platform/chromium/accessibility/post-notification-SelectedChildrenChanged.html
+               platform/chromium/accessibility/post-notification-SelectedTextChanged.html
+               platform/chromium/accessibility/post-notification-ValueChanged.html
+
+        * accessibility/chromium/AXObjectCacheChromium.cpp:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        * page/chromium/ChromeClientChromium.h:
+
 2010-09-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoffrey Garen.
