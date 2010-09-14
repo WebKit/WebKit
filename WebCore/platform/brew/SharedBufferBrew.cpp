@@ -64,6 +64,7 @@ PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& fi
     int32 bytesRead;
     while ((bytesRead = IFILE_Read(file.get(), result->m_buffer.data() + totalBytesRead, fileSize - totalBytesRead)) > 0)
         totalBytesRead += bytesRead;
+    result->m_size = totalBytesRead;
 
     if (totalBytesRead != fileSize) {
         LOG_ERROR("Failed to fully read contents of file %s - errno(%i)", filePath.ascii().data(), IFILEMGR_GetLastError(fileMgr.get()));
