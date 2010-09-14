@@ -1,5 +1,12 @@
 2010-09-13  Sam Weinig  <sam@webkit.org>
 
+        Fix the mac build.
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::passMousePressEventToSubframe):
+
+2010-09-13  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Can't scroll on Bugzilla patch review pages on Mac with WebKit2

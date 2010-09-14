@@ -640,7 +640,7 @@ bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& m
 {
     // WebKit1 code path.
     if (frameHasPlatformWidget(m_frame))
-        return passSubframeEventToSubframe(mev, subframe)
+        return passSubframeEventToSubframe(mev, subframe);
 
     // WebKit2 code path.
     subframe->eventHandler()->handleMousePressEvent(mev.event());
