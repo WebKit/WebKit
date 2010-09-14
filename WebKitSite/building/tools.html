@@ -60,6 +60,8 @@ Keep all the default options and click <b>Next</b> until the file is extracted a
 
 <li><p>Optional: Install the 32-bit version of Debugging Tools for Windows</p>
 <p>Debugging Tools for Windows includes many useful debugging tools such as WinDbg and NTSD. Some of WebKit&rsquo;s tests and scripts use these tools. Follow the <a target="installtools" href="http://www.microsoft.com/whdc/devtools/debugging/installx86.mspx#b">instructions for installing the 32-bit version of Debugging Tools for Windows</a>.</p>
+<li><p>Optional: Hotfix for 64-bit Windows to disable the user-mode callback filter for exceptions</p>
+<p>Without the <a href="http://support.microsoft.com/kb/976038">976038 hotfix</a>, exceptions may be thrown in callback routines that do not cause a crash but leave the application in an inconsistent state that might cause a crash later. You will need to click on "View and request hotfix downloads" and fill out the form. A link to download the hotfix and a password will be emailed to you.</p>
 </ol>
 </div>
 

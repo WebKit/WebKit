@@ -1,3 +1,17 @@
+2010-09-14  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Exceptions are getting ignored on 64-bit Windows in the Web Process
+        https://bugs.webkit.org/show_bug.cgi?id=45779
+
+        * WebProcess/WebKitMain.cpp:
+        (disableProcessCallbackFilterForExceptions):
+        Clear the PROCESS_CALLBACK_FILTER_ENABLED flag so that exceptions thrown in callback routines
+        are not ignored, as described in http://support.microsoft.com/kb/976038 and
+        http://blog.paulbetts.org/index.php/2010/07/20/the-case-of-the-disappearing-onload-exception-user-mode-callback-exceptions-in-x64/.
+        (WebKitMain):
+
 2010-09-14  Brent Fulgham  <bfulgham@webkit.org>
 
         Build correction, no review.

@@ -79,6 +79,34 @@ static void enableTerminationOnHeapCorruption()
     heapSetInformation(0, heapEnableTerminationOnCorruption, 0, 0);
 }
 
+static void disableUserModeCallbackExceptionFilter()
+{
+    const DWORD PROCESS_CALLBACK_FILTER_ENABLED = 0x1;
+    typedef BOOL (NTAPI *getProcessUserModeExceptionPolicyPtr)(LPDWORD lpFlags);
+    typedef BOOL (NTAPI *setProcessUserModeExceptionPolicyPtr)(DWORD dwFlags);
+
+    HMODULE lib = LoadLibrary(TEXT("kernel32.dll"));
+    ASSERT(lib);
+
+    getProcessUserModeExceptionPolicyPtr getPolicyPtr = (getProcessUserModeExceptionPolicyPtr)GetProcAddress(lib, "GetProcessUserModeExceptionPolicy");
+    setProcessUserModeExceptionPolicyPtr setPolicyPtr = (setProcessUserModeExceptionPolicyPtr)GetProcAddress(lib, "SetProcessUserModeExceptionPolicy");
+
+    DWORD dwFlags;
+    if (!getPolicyPtr || !setPolicyPtr || !getPolicyPtr(&dwFlags)) {
+        FreeLibrary(lib);
+        return;
+    }
+
+    // If this flag isn't cleared, exceptions that are thrown when running in a 64-bit version of
+    // Windows are ignored, possibly leaving Safari in an inconsistent state that could cause an 
+    // unrelated exception to be thrown.
+    // http://support.microsoft.com/kb/976038
+    // http://blog.paulbetts.org/index.php/2010/07/20/the-case-of-the-disappearing-onload-exception-user-mode-callback-exceptions-in-x64/
+    setPolicyPtr(dwFlags & ~PROCESS_CALLBACK_FILTER_ENABLED);
+
+    FreeLibrary(lib);
+}
+
 extern "C" __declspec(dllexport) 
 int WebKitMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpstrCmdLine, int nCmdShow)
 {
@@ -91,6 +119,8 @@ int WebKitMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpstrCmdLine
 #endif
 
     enableTerminationOnHeapCorruption();
+
+    disableUserModeCallbackExceptionFilter();
 
     CommandLine commandLine;
     if (!commandLine.parse(lpstrCmdLine))

@@ -1,3 +1,13 @@
+2010-09-14  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Exceptions are getting ignored on 64-bit Windows in the Web Process.
+        https://bugs.webkit.org/show_bug.cgi?id=45779
+
+        * building/tools.html:
+        Add instructions about how to optionally get hotfix 976038.
+
 2010-09-06  Robin Qiu  <robin.qiu@torchmobile.com.cn>
 
         Reviewed by Adam Barth.
