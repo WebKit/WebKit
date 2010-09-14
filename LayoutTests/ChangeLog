@@ -1,3 +1,41 @@
+2010-09-14  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] Remove the wrong chromium-win-vista expectations.
+
+        Layout test results generated from Chromium vista bots match
+        the expectations in chromium-win. These baselines are either
+        wrong or out of date. Need to be cleaned up so chromium
+        vista bots can pass on these tests.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45766
+
+        * platform/chromium-win-vista/css2.1/t0805-c5519-brdr-r-01-e-expected.checksum: Removed.
+        * platform/chromium-win-vista/css2.1/t0805-c5519-brdr-r-01-e-expected.png: Removed.
+        * platform/chromium-win-vista/css2.1/t0805-c5519-brdr-r-01-e-expected.txt: Removed.
+        * platform/chromium-win-vista/css2.1/t0905-c414-flt-fit-01-d-g-expected.checksum: Removed.
+        * platform/chromium-win-vista/css2.1/t0905-c414-flt-fit-01-d-g-expected.png: Removed.
+        * platform/chromium-win-vista/css2.1/t0905-c414-flt-fit-01-d-g-expected.txt: Removed.
+        * platform/chromium-win-vista/css2.1/t0905-c5525-fltblck-00-d-ag-expected.checksum: Removed.
+        * platform/chromium-win-vista/css2.1/t0905-c5525-fltblck-00-d-ag-expected.png: Removed.
+        * platform/chromium-win-vista/css2.1/t0905-c5525-fltblck-00-d-ag-expected.txt: Removed.
+        * platform/chromium-win-vista/css2.1/t0905-c5525-flthw-00-c-g-expected.checksum: Removed.
+        * platform/chromium-win-vista/css2.1/t0905-c5525-flthw-00-c-g-expected.png: Removed.
+        * platform/chromium-win-vista/css2.1/t0905-c5525-flthw-00-c-g-expected.txt: Removed.
+        * platform/chromium-win-vista/css2.1/t0905-c5526-flthw-00-c-g-expected.checksum: Removed.
+        * platform/chromium-win-vista/css2.1/t0905-c5526-flthw-00-c-g-expected.png: Removed.
+        * platform/chromium-win-vista/css2.1/t0905-c5526-flthw-00-c-g-expected.txt: Removed.
+        * platform/chromium-win-vista/css2.1/t1202-counter-09-b-expected.checksum: Removed.
+        * platform/chromium-win-vista/css2.1/t1202-counter-09-b-expected.png: Removed.
+        * platform/chromium-win-vista/css2.1/t1202-counters-09-b-expected.checksum: Removed.
+        * platform/chromium-win-vista/css2.1/t1202-counters-09-b-expected.png: Removed.
+        * platform/chromium-win-vista/fast/gradients/radial-centered-expected.checksum: Removed.
+        * platform/chromium-win-vista/fast/gradients/radial-centered-expected.png: Removed.
+        * platform/chromium-win-vista/fast/gradients/radial-centered-expected.txt: Removed.
+        * platform/chromium-win-vista/svg/custom/text-linking-expected.checksum: Removed.
+        * platform/chromium-win-vista/svg/custom/text-linking-expected.png: Removed.
+
 2010-09-14  Geoffrey Garen  <ggaren@apple.com>
 
         Not reviewed.
