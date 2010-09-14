@@ -1,5 +1,19 @@
 2010-09-14  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Nate Chapin.
+
+        V8 security checks don't account for shadowing named frames
+        https://bugs.webkit.org/show_bug.cgi?id=45700
+
+        Test whether cross-origin observers can see global variables shadowing
+        named frames.
+
+        * http/tests/security/resources/frame-for-parent-name.html: Added.
+        * http/tests/security/xss-DENIED-frame-name-expected.txt: Added.
+        * http/tests/security/xss-DENIED-frame-name.html: Added.
+
+2010-09-14  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         incorrect tabindex parsing

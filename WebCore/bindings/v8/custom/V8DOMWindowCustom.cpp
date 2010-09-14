@@ -605,9 +605,11 @@ bool V8DOMWindow::namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::V
 
     if (key->IsString()) {
         String name = toWebCoreString(key);
-
-        // Allow access of GET and HAS if index is a subframe.
-        if ((type == v8::ACCESS_GET || type == v8::ACCESS_HAS) && target->tree()->child(name))
+        // Notice that we can't call HasRealNamedProperty for ACCESS_HAS
+        // because that would generate infinite recursion.
+        if (type == v8::ACCESS_HAS && target->tree()->child(name))
+            return true;
+        if (type == v8::ACCESS_GET && target->tree()->child(name) && !host->HasRealNamedProperty(key->ToString()))
             return true;
     }
 
@@ -628,8 +630,11 @@ bool V8DOMWindow::indexedSecurityCheck(v8::Local<v8::Object> host, uint32_t inde
     if (!target)
         return false;
 
-    // Allow access of GET and HAS if index is a subframe.
-    if ((type == v8::ACCESS_GET || type == v8::ACCESS_HAS) && target->tree()->child(index))
+    // Notice that we can't call HasRealNamedProperty for ACCESS_HAS
+    // because that would generate infinite recursion.
+    if (type == v8::ACCESS_HAS && target->tree()->child(index))
+        return true;
+    if (type == v8::ACCESS_GET && target->tree()->child(index) && !host->HasRealIndexedProperty(index))
         return true;
 
     return V8BindingSecurity::canAccessFrame(V8BindingState::Only(), target, false);

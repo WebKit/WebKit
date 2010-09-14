@@ -1,5 +1,24 @@
 2010-09-14  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Nate Chapin.
+
+        V8 security checks don't account for shadowing named frames
+        https://bugs.webkit.org/show_bug.cgi?id=45700
+
+        Test: http/tests/security/xss-DENIED-frame-name.html
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::namedSecurityCheck):
+            - If the property name exists on the object, it will shadow the
+              named property lookup on the window object.  That means we need
+              to block access if there's shadowing going on.
+        (WebCore::V8DOMWindow::indexedSecurityCheck):
+            - I made the corresponding change to this function too, but I don't
+              think this one can actually be triggered because JavaScript
+              variable names need to start with a non-digit.
+
+2010-09-14  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         incorrect tabindex parsing
