@@ -292,7 +292,7 @@ setConfiguration();
 my $productDir = productDir();
 
 # Remove 0 byte sized files from productDir after slave lost for Qt buildbots.
-File::Find::find(\&unlinkZeroFiles, $productDir) if isQt();
+File::Find::find(\&unlinkZeroFiles, $productDir) if (isQt() && -e $productDir);
 
 sub unlinkZeroFiles ()
 {
