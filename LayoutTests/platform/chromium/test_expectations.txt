@@ -3124,6 +3124,11 @@ BUGWK45667 LINUX : fast/files/read-blob-async.html = CRASH PASS
 // Regressed after r67179:r67353 roll
 BUGWK45737 DEBUG SLOW : fast/frames/frame-limit.html = CRASH PASS
 
+BUGWK45753 WIN LINUX : fast/repaint/block-layout-inline-children-float-positioned.html = IMAGE+TEXT
+BUGWK45753 MAC : fast/repaint/block-layout-inline-children-float-positioned.html = IMAGE
+BUGWK45753 WIN LINUX : fast/repaint/block-layout-inline-children-replaced.html = IMAGE+TEXT
+BUGWK45753 MAC : fast/repaint/block-layout-inline-children-replaced.html = IMAGE
+
 // Regressions from webkit roll r67178:t67358
 BUGDPRANKE WIN DEBUG : fast/dom/node-filter-detached-iframe-crash.html = CRASH
 BUGDPRANKE WIN DEBUG : fast/dynamic/insertAdjacentHTML-allowed-parents.html = CRASH
