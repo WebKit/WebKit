@@ -71,8 +71,8 @@ ContentLayerChromium::SharedValues::SharedValues()
         "}                            \n";
 
     // Note differences between Skia and Core Graphics versions:
-    //  - Skia uses BGRA and origin is upper left
-    //  - Core Graphics uses RGBA and origin is lower left
+    //  - Skia uses BGRA
+    //  - Core Graphics uses RGBA
     char fragmentShaderString[] =
         "precision mediump float;                            \n"
         "varying vec2 v_texCoord;                            \n"
@@ -80,11 +80,10 @@ ContentLayerChromium::SharedValues::SharedValues()
         "uniform float alpha;                                \n"
         "void main()                                         \n"
         "{                                                   \n"
-#if PLATFORM(SKIA)
         "  vec4 texColor = texture2D(s_texture, v_texCoord); \n"
+#if PLATFORM(SKIA)
         "  gl_FragColor = vec4(texColor.z, texColor.y, texColor.x, texColor.w) * alpha; \n"
 #elif PLATFORM(CG)
-        "  vec4 texColor = texture2D(s_texture, vec2(v_texCoord.x, 1.0 - v_texCoord.y)); \n"
         "  gl_FragColor = vec4(texColor.x, texColor.y, texColor.z, texColor.w) * alpha; \n"
 #else
 #error "Need to implement for your platform."
@@ -207,11 +206,13 @@ void ContentLayerChromium::updateContents()
                                                                      dirtyRect.width(), dirtyRect.height(), 8, rowBytes,
                                                                      colorSpace.get(),
                                                                      kCGImageAlphaPremultipliedLast));
+    CGContextTranslateCTM(contextCG.get(), 0, dirtyRect.height());
+    CGContextScaleCTM(contextCG.get(), 1, -1);
 
     GraphicsContext graphicsContext(contextCG.get());
     LocalCurrentGraphicsContext scopedNSGraphicsContext(&graphicsContext);
 
-    // Translate the graphics contxt into the coordinate system of the dirty rect.
+    // Translate the graphics context into the coordinate system of the dirty rect.
     graphicsContext.translate(-dirtyRect.x(), -dirtyRect.y());
 
     m_owner->paintGraphicsLayerContents(graphicsContext, dirtyRect);
@@ -248,17 +249,7 @@ void ContentLayerChromium::updateTextureRect(void* pixels, const IntSize& bitmap
     } else {
         ASSERT(updateRect.width() <= m_allocatedTextureSize.width() && updateRect.height() <= m_allocatedTextureSize.height());
         ASSERT(updateRect.width() == bitmapSize.width() && updateRect.height() == bitmapSize.height());
-#if PLATFORM(CG)
-        // The origin is at the lower left in Core Graphics' coordinate system. We need to correct for this here.
-        GLC(glTexSubImage2D(GL_TEXTURE_2D, 0,
-                            updateRect.x(), m_allocatedTextureSize.height() - updateRect.height() - updateRect.y(),
-                            updateRect.width(), updateRect.height(),
-                            GL_RGBA, GL_UNSIGNED_BYTE, pixels));
-#elif PLATFORM(SKIA)
         GLC(glTexSubImage2D(GL_TEXTURE_2D, 0, updateRect.x(), updateRect.y(), updateRect.width(), updateRect.height(), GL_RGBA, GL_UNSIGNED_BYTE, pixels));
-#else
-#error "Need to implement for your platform."
-#endif
     }
 
     m_dirtyRect.setSize(FloatSize());

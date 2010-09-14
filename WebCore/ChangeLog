@@ -1,3 +1,25 @@
+2010-09-14  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium]: On Mac, let image layer data row order match skia.
+        https://bugs.webkit.org/show_bug.cgi?id=45400
+
+        Make CoreGraphics texture row order match skia's row order, remove all
+        code that worked around this difference. This also fixes a problem where
+        image layers would be drawn upside down.
+
+        Covered by existing layout tests, but we don't run these with
+        compositing yet.
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::SharedValues::SharedValues):
+        (WebCore::ContentLayerChromium::updateContents):
+        (WebCore::ContentLayerChromium::updateTextureRect):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::setRootLayerCanvasSize):
+        (WebCore::LayerRendererChromium::drawLayers):
+
 2010-09-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.
