@@ -1,3 +1,13 @@
+2010-09-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Not reviewed.
+        
+        Fixed layout test failure seen on buildbot by correcting expected results.
+        
+        It looks like Darin accidentally checked in the wrong expected results.
+
+        * fast/css/visited-link-hang-expected.txt:
+
 2010-09-14  Chris Guillory   <chris.guillory@google.com>
 
         Reviewed by Chris Fleizach.
