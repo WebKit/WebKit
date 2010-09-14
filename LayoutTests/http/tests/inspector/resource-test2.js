@@ -6,6 +6,7 @@ InspectorTest.HARNondeterministicProperties = {
     wait: 1,
     receive: 1,
     headers: 1,
+    timings: 1,
 };
 
 // addObject checks own properties only, so make a deep copy rather than use prototype.

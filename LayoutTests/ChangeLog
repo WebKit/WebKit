@@ -1,3 +1,15 @@
+2010-09-14  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [Resources panel] [HAR] Need a way to save timing data.
+        https://bugs.webkit.org/show_bug.cgi?id=45663
+
+        * http/tests/inspector/resource-har-conversion-expected.txt:
+        * http/tests/inspector/resource-parameters-expected.txt:
+        * http/tests/inspector/resource-test2.js: Added entire timings object to list of non-deterministic fields.
+        * http/tests/inspector/resource-tests.js: Ditto.
+
 2010-09-14  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Jeremy Orlow.

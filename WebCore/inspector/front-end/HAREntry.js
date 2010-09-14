@@ -95,14 +95,34 @@ WebInspector.HAREntry.prototype = {
 
     _buildTimings: function()
     {
+        var waitForConnection = this._interval("connectStart", "connectEnd");
+        var blocked;
+        var connect;
+        var dns = this._interval("dnsStart", "dnsEnd");
+        var send = this._interval("sendStart", "sendEnd");
+        var ssl = this._interval("sslStart", "sslEnd");
+
+        if (ssl !== -1 && send !== -1)
+            send -= ssl;
+
+        if (this._resource.connectionReused) {
+            connect = -1;
+            blocked = waitForConnection;
+        } else {
+            blocked = 0;
+            connect = waitForConnection;
+            if (dns !== -1)
+                connect -= dns;
+        }
+
         return {
-            blocked: -1, // Not available.
-            dns: -1, // Not available.
-            connect: -1, // Not available.
-            send: -1, // Not available.
-            wait: this._toMilliseconds(this._resource.latency),
+            blocked: blocked,
+            dns: dns,
+            connect: connect,
+            send: send,
+            wait: this._interval("sendEnd", "receiveHeadersEnd"),
             receive: this._toMilliseconds(this._resource.receiveDuration),
-            ssl: -1 // Not available.
+            ssl: ssl
         };
     },
 
@@ -133,5 +153,14 @@ WebInspector.HAREntry.prototype = {
     _toMilliseconds: function(time)
     {
         return time === -1 ? -1 : Math.round(time * 1000);
+    },
+
+    _interval: function(start, end)
+    {
+        var timing = this._resource.timing;
+        if (!timing)
+            return -1;
+        var startTime = timing[start];
+        return typeof startTime !== "number" || startTime === -1 ? -1 : Math.round(timing[end] - startTime);
     }
 };

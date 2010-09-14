@@ -4,6 +4,7 @@ var HARNondeterministicProperties = {
     wait: 1,
     receive: 1,
     headers: 1,
+    timings: 1,
 };
 
 function resourceURLComparer(r1, r2)

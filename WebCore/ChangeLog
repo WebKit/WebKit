@@ -1,3 +1,16 @@
+2010-09-14  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [Resources panel] [HAR] Need a way to save timing data.
+        Added support for resource timings to HAREntry.
+        https://bugs.webkit.org/show_bug.cgi?id=45663
+
+        * inspector/front-end/HAREntry.js:
+        (WebInspector.HAREntry.prototype._buildTimings):
+        (WebInspector.HAREntry.prototype._toMilliseconds):
+        (WebInspector.HAREntry.prototype._interval):
+
 2010-09-14  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Kent Tamura.

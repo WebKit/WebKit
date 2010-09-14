@@ -25,15 +25,7 @@ Page reloaded.
             headersSize : -1
             bodySize : <number>
         }
-        timings : {
-            blocked : -1
-            dns : -1
-            connect : -1
-            send : -1
-            wait : <number>
-            receive : <number>
-            ssl : -1
-        }
+        timings : <object>
     }
     1 : {
         pageref : "http://127.0.0.1:8000/inspector/resource-har-conversion.html"
@@ -58,15 +50,7 @@ Page reloaded.
             headersSize : -1
             bodySize : <number>
         }
-        timings : {
-            blocked : -1
-            dns : -1
-            connect : -1
-            send : -1
-            wait : <number>
-            receive : <number>
-            ssl : -1
-        }
+        timings : <object>
     }
     2 : {
         pageref : "http://127.0.0.1:8000/inspector/resource-har-conversion.html"
@@ -91,15 +75,7 @@ Page reloaded.
             headersSize : -1
             bodySize : <number>
         }
-        timings : {
-            blocked : -1
-            dns : -1
-            connect : -1
-            send : -1
-            wait : <number>
-            receive : <number>
-            ssl : -1
-        }
+        timings : <object>
     }
     3 : {
         pageref : "http://127.0.0.1:8000/inspector/resource-har-conversion.html"
@@ -128,15 +104,7 @@ Page reloaded.
             headersSize : -1
             bodySize : <number>
         }
-        timings : {
-            blocked : -1
-            dns : -1
-            connect : -1
-            send : -1
-            wait : <number>
-            receive : <number>
-            ssl : -1
-        }
+        timings : <object>
     }
 }
 
