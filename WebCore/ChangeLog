@@ -1,5 +1,11 @@
 2010-09-13  Kinuko Yasuda  <kinuko@chromium.org>
 
+        Unreviewed, build fix for Gtk.
+
+        * bindings/js/JSEntryCustom.cpp:
+
+2010-09-13  Kinuko Yasuda  <kinuko@chromium.org>
+
         Reviewed by Adam Barth.
 
         Make FileEntry and DirectoryEntry methods accessible via Entry instance

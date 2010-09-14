@@ -29,9 +29,10 @@
  */
 
 #include "config.h"
-#include "JSEntry.h"
 
 #if ENABLE(FILE_SYSTEM)
+
+#include "JSEntry.h"
 
 #include "Entry.h"
 #include "JSDOMBinding.h"
