@@ -1,3 +1,17 @@
+2010-09-14  Jian Li  <jianli@chromium.org>
+
+        Reviewed by David Levin.
+
+        fast/files/apply-blob-url-to-img.html timeout on Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=45576
+
+        Update the test to compute the right coordinates to drag the file to.
+        This fixes the problem that onInputFileChange() is not called on
+        Leopard.
+
+        * fast/files/apply-blob-url-to-img.html:
+        * platform/mac/Skipped: Remove the passing test from Skipped list.
+
 2010-09-14  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Dimitri Glazkov.

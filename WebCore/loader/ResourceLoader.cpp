@@ -51,7 +51,7 @@ PassRefPtr<SharedBuffer> ResourceLoader::resourceData()
     if (m_resourceData)
         return m_resourceData;
 
-    if (ResourceHandle::supportsBufferedData() && m_handle)
+    if (m_handle && m_handle->supportsBufferedData())
         return m_handle->bufferedData();
     
     return 0;
@@ -188,7 +188,7 @@ void ResourceLoader::addData(const char* data, int length, bool allAtOnce)
         return;
     }
         
-    if (ResourceHandle::supportsBufferedData()) {
+    if (m_handle && m_handle->supportsBufferedData()) {
         // Buffer data only if the connection has handed us the data because is has stopped buffering it.
         if (m_resourceData)
             m_resourceData->append(data, length);

@@ -300,10 +300,6 @@ inspector/dom-breakpoints.html
 # https://bugs.webkit.org/show_bug.cgi?id=43960
 scrollbars/custom-scrollbar-with-incomplete-style.html
 
-# Timeout on Leopard only.
-# https://bugs.webkit.org/show_bug.cgi?id=45576
-fast/files/apply-blob-url-to-img.html
-
 # Crash due to r66850.
 # https://bugs.webkit.org/show_bug.cgi?id=45575
 fast/files/workers

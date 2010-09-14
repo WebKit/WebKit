@@ -189,6 +189,11 @@ void BlobResourceHandle::cancel()
     m_aborted = true;
 }
 
+bool BlobResourceHandle::supportsBufferedData()
+{
+    return false;
+}
+
 void BlobResourceHandle::start()
 {
     // Do not continue if the request is aborted or an error occurs.

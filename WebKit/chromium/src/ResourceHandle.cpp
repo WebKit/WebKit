@@ -281,7 +281,6 @@ bool ResourceHandle::loadsBlocked()
     return false;  // This seems to be related to sync XMLHttpRequest...
 }
 
-// static
 bool ResourceHandle::supportsBufferedData()
 {
     return false;  // The loader will buffer manually if it needs to.

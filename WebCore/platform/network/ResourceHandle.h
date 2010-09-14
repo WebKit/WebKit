@@ -160,7 +160,7 @@ public:
 #endif
 
     PassRefPtr<SharedBuffer> bufferedData();
-    static bool supportsBufferedData();
+    virtual bool supportsBufferedData();
 
     bool shouldContentSniff() const;
     static bool shouldContentSniffURL(const KURL&);

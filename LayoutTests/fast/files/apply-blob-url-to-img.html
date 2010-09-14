@@ -29,10 +29,18 @@ function onImgLoad()
         layoutTestController.notifyDone();
 }
 
+function moveMouseToCenterOfElement(element)
+{
+    var centerX = element.offsetLeft + element.offsetWidth / 2;
+    var centerY = element.offsetTop + element.offsetHeight / 2;
+    eventSender.mouseMoveTo(centerX, centerY);
+}
+
 function runTests()
 {
     eventSender.beginDragWithFiles(['resources/abe.png']);
-    eventSender.mouseMoveTo(10, 10);
+    var fileInput = document.getElementById('file');
+    moveMouseToCenterOfElement(fileInput);
     eventSender.mouseUp();
 }
 
