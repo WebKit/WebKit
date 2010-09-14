@@ -1,3 +1,20 @@
+2010-09-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        HTML5 spec violation: </><!doctype html> or </x><!doctype html> SHOULD NOT imply standards mode
+        https://bugs.webkit.org/show_bug.cgi?id=17722
+
+        I believe our behavior matches the HTML5 spec.  When we see a </x>, we
+        correctly kick out of standards mode.  In the </> case, however, the
+        tokenizer just eats the bytes, without emitting a token, which means we
+        don't get kicked out of standards mode.  Our behavior matches Minefield.
+
+        * fast/parser/strange-doctype-compatmode-1-expected.txt: Added.
+        * fast/parser/strange-doctype-compatmode-1.html: Added.
+        * fast/parser/strange-doctype-compatmode-2-expected.txt: Added.
+        * fast/parser/strange-doctype-compatmode-2.html: Added.
+
 2010-09-14  Tony Chang  <tony@chromium.org>
 
         Unreviewed, remove tests that are now passing after Noel Gordon's
