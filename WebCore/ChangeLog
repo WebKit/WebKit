@@ -1,3 +1,11 @@
+2010-09-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Alice Liu.
+
+        Clean up xcode project.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2010-09-13  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Geoff Garen.
