@@ -1,3 +1,16 @@
+2010-09-14  James Kozianski  <soulplant@gmail.com>
+
+        Reviewed by Ojan Vafai.
+
+        Setting of CSSStyleDeclaration.prototype.foo on outer window affects prototype of inner window
+        https://bugs.webkit.org/show_bug.cgi?id=18447
+
+        Add a test for CSSStyleDeclaration.prototype.foo leaking into inner
+        windows.
+
+        * fast/frames/css-style-declaration-isolation-expected.txt: Added.
+        * fast/frames/css-style-declaration-isolation.html: Added.
+
 2010-09-14  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Nate Chapin.
