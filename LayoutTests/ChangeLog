@@ -1,5 +1,12 @@
 2010-09-14  Tony Chang  <tony@chromium.org>
 
+        Unreviewed, remove tests that are now passing after Noel Gordon's
+        fix to test_shell delete key handling.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-09-14  Tony Chang  <tony@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         [chromium] implement layoutTestController.setDomainRelaxationForbiddenForURLScheme

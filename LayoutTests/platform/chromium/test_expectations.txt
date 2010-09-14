@@ -2647,10 +2647,6 @@ BUG_HAMAJI WIN LINUX : svg/W3C-SVG-1.1/fonts-glyph-02-t.svg = IMAGE+TEXT
 // WebKit r60999 updated acid3.html, doesn't match expected on Chromium Mac.
 BUG46375 MAC : http/tests/misc/acid3.html = IMAGE
 
-// Fails starting http://trac.webkit.org/changeset/61153
-// Needs update to test_shell.
-BUG46538 MAC WIN LINUX : editing/deleting/forward-delete-key.html = TEXT
-
 BUG46603 : fast/frames/lots-of-iframes.html = PASS TIMEOUT
 BUG46603 : fast/frames/lots-of-objects.html = PASS TIMEOUT
 
@@ -2936,9 +2932,6 @@ BUG50910 : plugins/npruntime/remove-property.html = TEXT
 
 // New test added in r64409 fails in Chromium.
 BUG50832 : printing/stretch-to-view-height.html = TEXT
-
-// New test added in r64470 fails on Chromium.
-BUG50969 : fast/events/keydown-numpad-keys.html = TEXT
 
 // Application Cache Quotas
 BUGWK43459 : http/tests/appcache/origin-quota.html = TEXT MISSING
