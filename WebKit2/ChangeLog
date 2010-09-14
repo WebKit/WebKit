@@ -1,5 +1,11 @@
 2010-09-14  Sam Weinig  <sam@webkit.org>
 
+        Fix windows build.
+
+        * win/WebKit2Generated.make:
+
+2010-09-14  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Remove WKBundleNodeRef, replacing uses with WKBundleNodeHandleRef.
