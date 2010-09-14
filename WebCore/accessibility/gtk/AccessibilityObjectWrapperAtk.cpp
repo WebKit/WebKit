@@ -1397,20 +1397,10 @@ static void getSelectionOffsetsForObject(AccessibilityObject* coreObject, Visibl
     else
         nodeRangeEnd = selRange->endPosition();
 
-    // Set preliminar values for start and end offsets
+    // Set values for start and end offsets
+    RefPtr<Range> nodeRange = Range::create(node->document(), nodeRangeStart, nodeRangeEnd);
     startOffset = nodeRangeStart.offsetInContainerNode();
-    endOffset = nodeRangeEnd.offsetInContainerNode();
-
-    // If the end node is different then the start node, iterate over
-    // those among them to build the effective value for endOffset
-    if (nodeRangeStart.anchorNode() != nodeRangeEnd.anchorNode()) {
-        RefPtr<Range> nodeRange = Range::create(node->document(), nodeRangeStart, positionBeforeNode(nodeRangeEnd.anchorNode()));
-        for (TextIterator it(nodeRange.get()); !it.atEnd(); it.advance()) {
-            RefPtr<Range> range = it.range();
-            if (range->startContainer()->isTextNode())
-                endOffset += range->endOffset();
-        }
-    }
+    endOffset = startOffset + TextIterator::rangeLength(nodeRange.get());
 }
 
 static gint webkit_accessible_text_get_n_selections(AtkText* text)

@@ -1,3 +1,17 @@
+2010-09-13  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Code simplification needed in Atk Wrapper
+        https://bugs.webkit.org/show_bug.cgi?id=45687
+
+        Use TextIterator::rangeLength() to calculate endOffset
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (getSelectionOffsetsForObject): Don't manually iterate over a
+        artificial new range but just call TextIterator::rangeLength on
+        the range created between the start and end positions.
+
 2010-09-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Alice Liu.
