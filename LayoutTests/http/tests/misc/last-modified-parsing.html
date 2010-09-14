@@ -1,0 +1,18 @@
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.dumpChildFramesAsText();
+}
+
+function test(text) {
+    document.write('<iframe src="../resources/last-modified.php?date=' + escape(text) + '"></iframe>');
+}
+
+test('Mon, 21 Nov 2008 01:03:33 GMT');
+test('Tuesday, 21 Nov 2008 01:03:33 GMT');
+test('Mon, 21 Nov 97 01:03:33 GMT');
+test('Mon, 21-Nov-2008 01:03:33 GMT');
+test('Mon, 21-Feb-2008 01:03:33 GMT');
+test('Mon, 03-Feb-2008 01:03:33 GMT');
+test('Mon, 3-Mar-2008 01:03:33 GMT');
+</script>

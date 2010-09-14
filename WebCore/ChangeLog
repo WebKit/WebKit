@@ -1,5 +1,20 @@
 2010-09-14  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        document.lastModified gives no output if the response doesn't have a Last-Modified header
+        https://bugs.webkit.org/show_bug.cgi?id=8475
+
+        Implement document.lastModified as per HTML5.
+
+        Tests: http/tests/misc/last-modified-parsing.html
+               http/tests/misc/no-last-modified.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::lastModified):
+
+2010-09-14  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         `document.compatMode` is `undefined` when using `application/xhtml+xml`

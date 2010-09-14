@@ -1,0 +1,19 @@
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function test(text) {
+    document.write('<iframe src="../resources/last-modified.php?date=' + escape(text) + '"></iframe>');
+}
+
+test('');
+
+window.onload = function() {
+    var lastModified = Date.parse(frames[0].document.body.textContent);
+    var now = new Date();
+    if (lastModified > now - 60*1000)
+        alert('PASS');
+    else
+        alert('FAIL');
+}
+</script>

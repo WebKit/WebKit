@@ -43,6 +43,7 @@
 #include "Console.h"
 #include "CookieJar.h"
 #include "CustomEvent.h"
+#include "DateComponents.h"
 #include "DOMImplementation.h"
 #include "DOMWindow.h"
 #include "DeviceMotionEvent.h"
@@ -3611,15 +3612,24 @@ void Document::setDomain(const String& newDomain, ExceptionCode& ec)
         m_frame->script()->updateSecurityOrigin();
 }
 
+// http://www.whatwg.org/specs/web-apps/current-work/#dom-document-lastmodified
 String Document::lastModified() const
 {
-    Frame* f = frame();
-    if (!f)
-        return String();
-    DocumentLoader* loader = f->loader()->documentLoader();
-    if (!loader)
-        return String();
-    return loader->response().httpHeaderField("Last-Modified");
+    DateComponents date;
+    bool foundDate = false;
+    if (m_frame) {
+        String httpLastModified = m_frame->loader()->documentLoader()->response().httpHeaderField("Last-Modified");
+        if (!httpLastModified.isEmpty()) {
+            date.setMillisecondsSinceEpochForDateTime(parseDate(httpLastModified));
+            foundDate = true;
+        }
+    }
+    // FIXME: If this document came from the file system, the HTML5
+    // specificiation tells us to read the last modification date from the file
+    // system.
+    if (!foundDate)
+        date.setMillisecondsSinceEpochForDateTime(currentTimeMS());
+    return String::format("%02d/%02d/%04d %02d:%02d:%02d", date.month() + 1, date.monthDay(), date.fullYear(), date.hour(), date.minute(), date.second());
 }
 
 static bool isValidNameNonASCII(const UChar* characters, unsigned length)
