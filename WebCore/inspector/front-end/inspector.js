@@ -736,7 +736,7 @@ WebInspector.documentMouseOver = function(event)
 WebInspector.documentClick = function(event)
 {
     var anchor = event.target.enclosingNodeOrSelfWithNodeName("a");
-    if (!anchor)
+    if (!anchor || anchor.target === "_blank")
         return;
 
     // Prevent the link from navigating, since we don't do any navigation by following links normally.
@@ -1819,7 +1819,6 @@ WebInspector.linkifyURLAsNode = function(url, linkText, classes, isExternal, too
         a.title = url;
     else if (typeof tooltipText !== "string" || tooltipText.length)
         a.title = tooltipText;
-    a.target = "_blank";
     a.textContent = linkText;
 
     return a;

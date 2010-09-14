@@ -79,8 +79,14 @@ WebInspector.AuditFormatters = {
         return parent;
     },
 
-    url: function(url, displayText)
+    url: function(url, displayText, allowExternalNavigation)
     {
-        return WebInspector.linkifyURLAsNode(url, displayText || url, null, (url in WebInspector.resourceURLMap));
+        var a = document.createElement("a");
+        a.href = url;
+        a.title = url;
+        a.textContent = displayText || url;
+        if (allowExternalNavigation)
+            a.target = "_blank";
+        return a;
     }
 };
