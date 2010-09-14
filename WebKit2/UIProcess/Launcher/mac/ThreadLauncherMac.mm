@@ -23,57 +23,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebProcessLauncher_h
-#define WebProcessLauncher_h
+#include "ThreadLauncher.h"
 
-#include "Connection.h"
-#include "PlatformProcessIdentifier.h"
-#include <wtf/RefPtr.h>
+#include "RunLoop.h"
+#include "WebProcess.h"
+#include "WebSystemInterface.h"
+#include <runtime/InitializeThreading.h>
 #include <wtf/Threading.h>
-
-#if PLATFORM(QT)
-class QLocalSocket;
-#endif
 
 namespace WebKit {
 
-class ProcessLauncher : public ThreadSafeShared<ProcessLauncher> {
-public:
-    class Client {
-    public:
-        virtual ~Client() { }
-        
-        virtual void didFinishLaunching(ProcessLauncher*, CoreIPC::Connection::Identifier) = 0;
-    };
-    
-    static PassRefPtr<ProcessLauncher> create(Client* client)
-    {
-        return adoptRef(new ProcessLauncher(client));
+static void* webThreadBody(void* context)
+{
+    mach_port_t serverPort = static_cast<mach_port_t>(reinterpret_cast<uintptr_t>(context));
+
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+    InitWebCoreSystemInterface();
+    JSC::initializeThreading();
+    WTF::initializeMainThread();
+
+    WebProcess::shared().initialize(serverPort, RunLoop::current());
+
+    [pool drain];
+
+    RunLoop::current()->run();
+
+    return 0;
+}
+
+CoreIPC::Connection::Identifier ThreadLauncher::createWebThread()
+{
+    // Create the service port.
+     mach_port_t listeningPort;
+     mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
+     
+     // Insert a send right so we can send to it.
+     mach_port_insert_right(mach_task_self(), listeningPort, listeningPort, MACH_MSG_TYPE_MAKE_SEND);
+
+    if (!createThread(webThreadBody, reinterpret_cast<void*>(listeningPort), "WebKit2: WebThread")) {
+        mach_port_destroy(mach_task_self(), listeningPort);
+        return MACH_PORT_NULL;
     }
 
-    bool isLaunching() const { return m_isLaunching; }
-    PlatformProcessIdentifier processIdentifier() const { return m_processIdentifier; }
-
-    void terminateProcess();
-    void invalidate();
-
-#if PLATFORM(QT)
-    friend class ProcessLauncherHelper;
-    static QLocalSocket* takePendingConnection();
-#endif
-
-private:
-    explicit ProcessLauncher(Client*);
-
-    void launchProcess();
-    void didFinishLaunchingProcess(PlatformProcessIdentifier, CoreIPC::Connection::Identifier);
-
-    Client* m_client;
-
-    bool m_isLaunching;
-    PlatformProcessIdentifier m_processIdentifier;
-};
+    return listeningPort;
+}
 
 } // namespace WebKit
-
-#endif // WebProcessLauncher_h

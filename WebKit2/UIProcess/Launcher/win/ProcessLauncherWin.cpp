@@ -27,9 +27,6 @@
 
 #include "Connection.h"
 #include "RunLoop.h"
-#include "WebProcess.h"
-#include <runtime/InitializeThreading.h>
-#include <wtf/Threading.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
@@ -92,38 +89,6 @@ void ProcessLauncher::terminateProcess()
         return;
 
     ::TerminateProcess(m_processIdentifier, 0);
-}
-
-static void* webThreadBody(void* context)
-{
-    HANDLE clientIdentifier = reinterpret_cast<HANDLE>(context);
-
-    // Initialization
-    JSC::initializeThreading();
-    WTF::initializeMainThread();
-
-    WebProcess::shared().initialize(clientIdentifier, RunLoop::current());
-    RunLoop::run();
-
-    return 0;
-}
-
-CoreIPC::Connection::Identifier ProcessLauncher::createWebThread()
-{
-    // First, create the server and client identifiers.
-    HANDLE serverIdentifier, clientIdentifier;
-    if (!CoreIPC::Connection::createServerAndClientIdentifiers(serverIdentifier, clientIdentifier)) {
-        // FIXME: What should we do here?
-        ASSERT_NOT_REACHED();
-    }
-
-    if (!createThread(webThreadBody, reinterpret_cast<void*>(clientIdentifier), "WebKit2: WebThread")) {
-        ::CloseHandle(serverIdentifier);
-        ::CloseHandle(clientIdentifier);
-        return 0;
-    }
-
-    return serverIdentifier;
 }
 
 } // namespace WebKit

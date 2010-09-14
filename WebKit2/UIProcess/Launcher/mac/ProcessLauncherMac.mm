@@ -125,41 +125,5 @@ void ProcessLauncher::terminateProcess()
     
     kill(m_processIdentifier, SIGKILL);
 }
-
-static void* webThreadBody(void* context)
-{
-    mach_port_t serverPort = static_cast<mach_port_t>(reinterpret_cast<uintptr_t>(context));
-
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-
-    InitWebCoreSystemInterface();
-    JSC::initializeThreading();
-    WTF::initializeMainThread();
-
-    WebProcess::shared().initialize(serverPort, RunLoop::current());
-
-    [pool drain];
-
-    RunLoop::current()->run();
-
-    return 0;
-}
-
-CoreIPC::Connection::Identifier ProcessLauncher::createWebThread()
-{
-    // Create the service port.
-     mach_port_t listeningPort;
-     mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
-     
-     // Insert a send right so we can send to it.
-     mach_port_insert_right(mach_task_self(), listeningPort, listeningPort, MACH_MSG_TYPE_MAKE_SEND);
-
-    if (!createThread(webThreadBody, reinterpret_cast<void*>(listeningPort), "WebKit2: WebThread")) {
-        mach_port_destroy(mach_task_self(), listeningPort);
-        return MACH_PORT_NULL;
-    }
-
-    return listeningPort;
-}
     
 } // namespace WebKit

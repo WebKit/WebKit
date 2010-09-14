@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebProcessLauncher_h
-#define WebProcessLauncher_h
+#ifndef ThreadLauncher_h
+#define ThreadLauncher_h
 
 #include "Connection.h"
 #include "PlatformProcessIdentifier.h"
@@ -37,43 +37,35 @@ class QLocalSocket;
 
 namespace WebKit {
 
-class ProcessLauncher : public ThreadSafeShared<ProcessLauncher> {
+class ThreadLauncher : public ThreadSafeShared<ThreadLauncher> {
 public:
     class Client {
     public:
         virtual ~Client() { }
-        
-        virtual void didFinishLaunching(ProcessLauncher*, CoreIPC::Connection::Identifier) = 0;
+        virtual void didFinishLaunching(ThreadLauncher*, CoreIPC::Connection::Identifier) = 0;
     };
     
-    static PassRefPtr<ProcessLauncher> create(Client* client)
+    static PassRefPtr<ThreadLauncher> create(Client* client)
     {
-        return adoptRef(new ProcessLauncher(client));
+        return adoptRef(new ThreadLauncher(client));
     }
 
     bool isLaunching() const { return m_isLaunching; }
-    PlatformProcessIdentifier processIdentifier() const { return m_processIdentifier; }
 
-    void terminateProcess();
     void invalidate();
 
-#if PLATFORM(QT)
-    friend class ProcessLauncherHelper;
-    static QLocalSocket* takePendingConnection();
-#endif
-
 private:
-    explicit ProcessLauncher(Client*);
+    explicit ThreadLauncher(Client*);
 
-    void launchProcess();
-    void didFinishLaunchingProcess(PlatformProcessIdentifier, CoreIPC::Connection::Identifier);
+    void launchThread();
+    void didFinishLaunchingThread(CoreIPC::Connection::Identifier);
 
-    Client* m_client;
+    static CoreIPC::Connection::Identifier createWebThread();
 
     bool m_isLaunching;
-    PlatformProcessIdentifier m_processIdentifier;
+    Client* m_client;
 };
 
 } // namespace WebKit
 
-#endif // WebProcessLauncher_h
+#endif // ThreadLauncher_h

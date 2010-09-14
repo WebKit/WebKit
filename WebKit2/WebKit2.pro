@@ -201,6 +201,7 @@ HEADERS += \
     UIProcess/DrawingAreaProxy.h \
     UIProcess/GenericCallback.h \
     UIProcess/Launcher/ProcessLauncher.h \
+    UIProcess/Launcher/ThreadLauncher.h \
     UIProcess/Plugins/PluginInfoStore.h \
     UIProcess/PageClient.h \
     UIProcess/ProcessModel.h \
@@ -315,7 +316,9 @@ SOURCES += \
     UIProcess/Plugins/PluginInfoStore.cpp \
     UIProcess/Plugins/qt/PluginInfoStoreQt.cpp \
     UIProcess/Launcher/ProcessLauncher.cpp \
+    UIProcess/Launcher/ThreadLauncher.cpp \
     UIProcess/Launcher/qt/ProcessLauncherQt.cpp \
+    UIProcess/Launcher/qt/ThreadLauncherQt.cpp \
     UIProcess/ResponsivenessTimer.cpp \
     UIProcess/VisitedLinkProvider.cpp \
     UIProcess/WebBackForwardList.cpp \

@@ -333,6 +333,9 @@
 		BCEE98CD1133174C006BCC24 /* WKPageNamespace.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEE98CB1133174C006BCC24 /* WKPageNamespace.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BCF049E611FE20F600F86A58 /* WKBundleFramePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF049E411FE20F600F86A58 /* WKBundleFramePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCF049E711FE20F600F86A58 /* WKBundlePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF049E511FE20F600F86A58 /* WKBundlePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCF50121123ED3B3005955AE /* ThreadLauncher.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF5011F123ED3B3005955AE /* ThreadLauncher.h */; };
+		BCF50122123ED3B3005955AE /* ThreadLauncher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF50120123ED3B3005955AE /* ThreadLauncher.cpp */; };
+		BCF501B4123EF602005955AE /* ThreadLauncherMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCF501B3123EF602005955AE /* ThreadLauncherMac.mm */; };
 		BCF69F861176CD6F00471A52 /* WebHistoryClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF69F841176CD6F00471A52 /* WebHistoryClient.cpp */; };
 		BCF69F871176CD6F00471A52 /* WebHistoryClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF69F851176CD6F00471A52 /* WebHistoryClient.h */; };
 		BCF69F9A1176CED600471A52 /* WebNavigationDataStore.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF69F981176CED600471A52 /* WebNavigationDataStore.h */; };
@@ -716,6 +719,9 @@
 		BCF049E511FE20F600F86A58 /* WKBundlePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundlePrivate.h; sourceTree = "<group>"; };
 		BCF04C8C11FF9B7D00F86A58 /* APIObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIObject.h; sourceTree = "<group>"; };
 		BCF04C8E11FF9F6E00F86A58 /* WebString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebString.h; sourceTree = "<group>"; };
+		BCF5011F123ED3B3005955AE /* ThreadLauncher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadLauncher.h; sourceTree = "<group>"; };
+		BCF50120123ED3B3005955AE /* ThreadLauncher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadLauncher.cpp; sourceTree = "<group>"; };
+		BCF501B3123EF602005955AE /* ThreadLauncherMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ThreadLauncherMac.mm; sourceTree = "<group>"; };
 		BCF69F841176CD6F00471A52 /* WebHistoryClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebHistoryClient.cpp; sourceTree = "<group>"; };
 		BCF69F851176CD6F00471A52 /* WebHistoryClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebHistoryClient.h; sourceTree = "<group>"; };
 		BCF69F981176CED600471A52 /* WebNavigationDataStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNavigationDataStore.h; sourceTree = "<group>"; };
@@ -1230,6 +1236,8 @@
 				BC111B19112F5FC500337BAB /* mac */,
 				1AE117F511DBB30900981615 /* ProcessLauncher.cpp */,
 				BC1A7C571136E19C00FB7167 /* ProcessLauncher.h */,
+				BCF50120123ED3B3005955AE /* ThreadLauncher.cpp */,
+				BCF5011F123ED3B3005955AE /* ThreadLauncher.h */,
 			);
 			path = Launcher;
 			sourceTree = "<group>";
@@ -1238,6 +1246,7 @@
 			isa = PBXGroup;
 			children = (
 				BC111B1B112F5FE600337BAB /* ProcessLauncherMac.mm */,
+				BCF501B3123EF602005955AE /* ThreadLauncherMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -1630,6 +1639,7 @@
 				BC33DD681238464600360F3F /* WebNumber.h in Headers */,
 				BC33DE8E12385C3300360F3F /* WKNumber.h in Headers */,
 				BC33DF061238677F00360F3F /* WKSerializedScriptValue.h in Headers */,
+				BCF50121123ED3B3005955AE /* ThreadLauncher.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1876,6 +1886,8 @@
 				BCA0EFA012332642007D3CFB /* WebEditCommandProxy.cpp in Sources */,
 				A72D610B1237144F00A88B15 /* WKSerializedScriptValue.cpp in Sources */,
 				BC33DE8F12385C3300360F3F /* WKNumber.cpp in Sources */,
+				BCF50122123ED3B3005955AE /* ThreadLauncher.cpp in Sources */,
+				BCF501B4123EF602005955AE /* ThreadLauncherMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

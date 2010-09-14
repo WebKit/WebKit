@@ -26,7 +26,6 @@
 #include "WebProcessProxy.h"
 
 #include "PluginInfoStore.h"
-#include "ProcessLauncher.h"
 #include "WebBackForwardListItem.h"
 #include "WebContext.h"
 #include "WebNavigationDataStore.h"
@@ -102,18 +101,22 @@ WebProcessProxy::~WebProcessProxy()
         m_processLauncher->invalidate();
         m_processLauncher = 0;
     }
+
+    if (m_threadLauncher) {
+        m_threadLauncher->invalidate();
+        m_threadLauncher = 0;
+    }
 }
 
 void WebProcessProxy::connect()
 {
     if (m_context->processModel() == ProcessModelSharedSecondaryThread) {
-        CoreIPC::Connection::Identifier connectionIdentifier = ProcessLauncher::createWebThread();
-        didFinishLaunching(0, connectionIdentifier);
-        return;
+        ASSERT(!m_threadLauncher);
+        m_threadLauncher = ThreadLauncher::create(this);
+    } else {
+        ASSERT(!m_processLauncher);
+        m_processLauncher = ProcessLauncher::create(this);
     }
-
-    ASSERT(!m_processLauncher);
-    m_processLauncher = ProcessLauncher::create(this);
 }
 
 bool WebProcessProxy::sendMessage(CoreIPC::MessageID messageID, PassOwnPtr<CoreIPC::ArgumentEncoder> arguments)
@@ -126,6 +129,16 @@ bool WebProcessProxy::sendMessage(CoreIPC::MessageID messageID, PassOwnPtr<CoreI
     }
     
     return m_connection->sendMessage(messageID, arguments);
+}
+
+bool WebProcessProxy::isLaunching() const
+{
+    if (m_processLauncher)
+        return m_processLauncher->isLaunching();
+    if (m_threadLauncher)
+        return m_threadLauncher->isLaunching();
+
+    return false;
 }
 
 void WebProcessProxy::terminate()
@@ -424,7 +437,17 @@ void WebProcessProxy::didBecomeResponsive(ResponsivenessTimer*)
         pages[i]->processDidBecomeResponsive();
 }
 
-void WebProcessProxy::didFinishLaunching(ProcessLauncher*, const CoreIPC::Connection::Identifier& connectionIdentifier)
+void WebProcessProxy::didFinishLaunching(ProcessLauncher*, CoreIPC::Connection::Identifier connectionIdentifier)
+{
+    didFinishLaunching(connectionIdentifier);
+}
+
+void WebProcessProxy::didFinishLaunching(ThreadLauncher*, CoreIPC::Connection::Identifier connectionIdentifier)
+{
+    didFinishLaunching(connectionIdentifier);
+}
+
+void WebProcessProxy::didFinishLaunching(CoreIPC::Connection::Identifier connectionIdentifier)
 {
     ASSERT(!m_connection);
     

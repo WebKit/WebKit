@@ -23,57 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebProcessLauncher_h
-#define WebProcessLauncher_h
+#include "ThreadLauncher.h"
 
-#include "Connection.h"
-#include "PlatformProcessIdentifier.h"
-#include <wtf/RefPtr.h>
+#include "RunLoop.h"
+#include "WebProcess.h"
+#include <runtime/InitializeThreading.h>
 #include <wtf/Threading.h>
 
-#if PLATFORM(QT)
-class QLocalSocket;
-#endif
+using namespace WebCore;
 
 namespace WebKit {
 
-class ProcessLauncher : public ThreadSafeShared<ProcessLauncher> {
-public:
-    class Client {
-    public:
-        virtual ~Client() { }
-        
-        virtual void didFinishLaunching(ProcessLauncher*, CoreIPC::Connection::Identifier) = 0;
-    };
-    
-    static PassRefPtr<ProcessLauncher> create(Client* client)
-    {
-        return adoptRef(new ProcessLauncher(client));
+static void* webThreadBody(void* context)
+{
+    HANDLE clientIdentifier = reinterpret_cast<HANDLE>(context);
+
+    // Initialization
+    JSC::initializeThreading();
+    WTF::initializeMainThread();
+
+    WebProcess::shared().initialize(clientIdentifier, RunLoop::current());
+    RunLoop::run();
+
+    return 0;
+}
+
+CoreIPC::Connection::Identifier ThreadLauncher::createWebThread()
+{
+    // First, create the server and client identifiers.
+    HANDLE serverIdentifier, clientIdentifier;
+    if (!CoreIPC::Connection::createServerAndClientIdentifiers(serverIdentifier, clientIdentifier)) {
+        // FIXME: What should we do here?
+        ASSERT_NOT_REACHED();
     }
 
-    bool isLaunching() const { return m_isLaunching; }
-    PlatformProcessIdentifier processIdentifier() const { return m_processIdentifier; }
+    if (!createThread(webThreadBody, reinterpret_cast<void*>(clientIdentifier), "WebKit2: WebThread")) {
+        ::CloseHandle(serverIdentifier);
+        ::CloseHandle(clientIdentifier);
+        return 0;
+    }
 
-    void terminateProcess();
-    void invalidate();
-
-#if PLATFORM(QT)
-    friend class ProcessLauncherHelper;
-    static QLocalSocket* takePendingConnection();
-#endif
-
-private:
-    explicit ProcessLauncher(Client*);
-
-    void launchProcess();
-    void didFinishLaunchingProcess(PlatformProcessIdentifier, CoreIPC::Connection::Identifier);
-
-    Client* m_client;
-
-    bool m_isLaunching;
-    PlatformProcessIdentifier m_processIdentifier;
-};
+    return serverIdentifier;
+}
 
 } // namespace WebKit
-
-#endif // WebProcessLauncher_h

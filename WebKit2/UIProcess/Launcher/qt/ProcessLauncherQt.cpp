@@ -141,34 +141,6 @@ QLocalSocket* ProcessLauncher::takePendingConnection()
     return ProcessLauncherHelper::instance()->takePendingConnection();
 }
 
-static void* webThreadBody(void* /* context */)
-{
-    // Initialization
-    JSC::initializeThreading();
-    WTF::initializeMainThread();
-
-    // FIXME: We do not support threaded mode for now.
-
-    WebProcess::shared().initialize("foo", RunLoop::current());
-    RunLoop::run();
-
-    return 0;
-}
-
-CoreIPC::Connection::Identifier ProcessLauncher::createWebThread()
-{
-    srandom(time(0));
-    int connectionIdentifier = random();
-
-    if (!createThread(webThreadBody, reinterpret_cast<void*>(connectionIdentifier), "WebKit2: WebThread")) {
-        qWarning() << "failed starting thread";
-        return 0;
-    }
-
-    QString serverIdentifier = QString::number(connectionIdentifier);
-    return serverIdentifier;
-}
-
 } // namespace WebKit
 
 #include "ProcessLauncherQt.moc"

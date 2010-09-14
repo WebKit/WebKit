@@ -33,6 +33,9 @@ public:
     template<typename C> 
     static PassOwnPtr<WorkItem> create(C*, void (C::*)());
 
+    template<typename C, typename T0>
+    static PassOwnPtr<WorkItem> create(C*, void (C::*)(T0), T0);
+
     template<typename C, typename T0, typename T1>
     static PassOwnPtr<WorkItem> create(C*, void (C::*)(T0, T1), T0, T1);
 
@@ -75,6 +78,36 @@ class MemberFunctionWorkItem0 : private WorkItem {
     FunctionType m_function;
 };
 
+template<typename C, typename T0>
+class MemberFunctionWorkItem1 : private WorkItem {
+    // We only allow WorkItem to create this.
+    friend class WorkItem;
+    
+    typedef void (C::*FunctionType)(T0);
+    
+    MemberFunctionWorkItem1(C* ptr, FunctionType function, T0 t0)
+        : m_ptr(ptr)
+        , m_function(function)
+        , m_t0(t0)
+    {
+        m_ptr->ref();
+    }
+    
+    ~MemberFunctionWorkItem1()
+    {
+        m_ptr->deref();
+    }
+
+    void execute()
+    {
+        (m_ptr->*m_function)(m_t0);
+    }
+    
+    C* m_ptr;
+    FunctionType m_function;
+    T0 m_t0;
+};
+
 template<typename C, typename T0, typename T1>
 class MemberFunctionWorkItem2 : private WorkItem {
     // We only allow WorkItem to create this.
@@ -111,6 +144,12 @@ template<typename C>
 PassOwnPtr<WorkItem> WorkItem::create(C* ptr, void (C::*function)())
 {
     return adoptPtr(static_cast<WorkItem*>(new MemberFunctionWorkItem0<C>(ptr, function)));
+}
+
+template<typename C, typename T0>
+PassOwnPtr<WorkItem> WorkItem::create(C* ptr, void (C::*function)(T0), T0 t0)
+{
+    return adoptPtr(static_cast<WorkItem*>(new MemberFunctionWorkItem1<C, T0>(ptr, function, t0)));
 }
 
 template<typename C, typename T0, typename T1>

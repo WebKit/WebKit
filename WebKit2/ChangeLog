@@ -1,5 +1,55 @@
 2010-09-13  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Jon Honeycutt.
+
+        Threaded mode should work in WebKit2 MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=45727
+
+        - Make starting the web thread more like starting a new
+          process (encapsulate it in a thread launcher class).
+        - Make the call to didFinishLaunching asynchronous so that
+          WebProcess is fully constructed before it is called.
+
+        * Platform/WorkItem.h:
+        (MemberFunctionWorkItem1::MemberFunctionWorkItem1):
+        (MemberFunctionWorkItem1::~MemberFunctionWorkItem1):
+        (MemberFunctionWorkItem1::execute):
+        (WorkItem::create):
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/ThreadLauncher.cpp: Added.
+        (WebKit::ThreadLauncher::ThreadLauncher):
+        (WebKit::ThreadLauncher::launchThread):
+        (WebKit::ThreadLauncher::didFinishLaunchingThread):
+        (WebKit::ThreadLauncher::invalidate):
+        * UIProcess/Launcher/ThreadLauncher.h: Added.
+        (WebKit::ThreadLauncher::Client::~Client):
+        (WebKit::ThreadLauncher::create):
+        (WebKit::ThreadLauncher::isLaunching):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::terminateProcess):
+        * UIProcess/Launcher/mac/ThreadLauncherMac.mm: Added.
+        (WebKit::webThreadBody):
+        (WebKit::ThreadLauncher::createWebThread):
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        * UIProcess/Launcher/qt/ThreadLauncherQt.cpp: Added.
+        (WebKit::webThreadBody):
+        (WebKit::ProcessLauncher::createWebThread):
+        * UIProcess/Launcher/win/ProcessLauncherWin.cpp:
+        * UIProcess/Launcher/win/ThreadLauncherWin.cpp: Added.
+        (WebKit::webThreadBody):
+        (WebKit::ProcessLauncher::createWebThread):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::~WebProcessProxy):
+        (WebKit::WebProcessProxy::connect):
+        (WebKit::WebProcessProxy::isLaunching):
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        * UIProcess/WebProcessProxy.h:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+
+2010-09-13  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         didFinishDocumentLoadForFrame() is not being sent by WebKit2

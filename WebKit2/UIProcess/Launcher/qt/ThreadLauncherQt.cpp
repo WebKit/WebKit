@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,57 +24,54 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebProcessLauncher_h
-#define WebProcessLauncher_h
+#include "ThreadLauncher.h"
 
-#include "Connection.h"
-#include "PlatformProcessIdentifier.h"
-#include <wtf/RefPtr.h>
+#include "RunLoop.h"
+#include "WebProcess.h"
+#include <runtime/InitializeThreading.h>
 #include <wtf/Threading.h>
 
-#if PLATFORM(QT)
-class QLocalSocket;
-#endif
+#include <QApplication>
+#include <QDebug>
+#include <QFile>
+#include <QLocalServer>
+#include <QProcess>
+
+#include <QtCore/qglobal.h>
+
+#include <sys/resource.h>
+#include <unistd.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 
-class ProcessLauncher : public ThreadSafeShared<ProcessLauncher> {
-public:
-    class Client {
-    public:
-        virtual ~Client() { }
-        
-        virtual void didFinishLaunching(ProcessLauncher*, CoreIPC::Connection::Identifier) = 0;
-    };
-    
-    static PassRefPtr<ProcessLauncher> create(Client* client)
-    {
-        return adoptRef(new ProcessLauncher(client));
+static void* webThreadBody(void* /* context */)
+{
+    // Initialization
+    JSC::initializeThreading();
+    WTF::initializeMainThread();
+
+    // FIXME: We do not support threaded mode for now.
+
+    WebProcess::shared().initialize("foo", RunLoop::current());
+    RunLoop::run();
+
+    return 0;
+}
+
+CoreIPC::Connection::Identifier ThreadLauncher::createWebThread()
+{
+    srandom(time(0));
+    int connectionIdentifier = random();
+
+    if (!createThread(webThreadBody, reinterpret_cast<void*>(connectionIdentifier), "WebKit2: WebThread")) {
+        qWarning() << "failed starting thread";
+        return 0;
     }
 
-    bool isLaunching() const { return m_isLaunching; }
-    PlatformProcessIdentifier processIdentifier() const { return m_processIdentifier; }
-
-    void terminateProcess();
-    void invalidate();
-
-#if PLATFORM(QT)
-    friend class ProcessLauncherHelper;
-    static QLocalSocket* takePendingConnection();
-#endif
-
-private:
-    explicit ProcessLauncher(Client*);
-
-    void launchProcess();
-    void didFinishLaunchingProcess(PlatformProcessIdentifier, CoreIPC::Connection::Identifier);
-
-    Client* m_client;
-
-    bool m_isLaunching;
-    PlatformProcessIdentifier m_processIdentifier;
-};
+    QString serverIdentifier = QString::number(connectionIdentifier);
+    return serverIdentifier;
+}
 
 } // namespace WebKit
-
-#endif // WebProcessLauncher_h

@@ -1599,11 +1599,23 @@
 					RelativePath="..\UIProcess\Launcher\ProcessLauncher.h"
 					>
 				</File>
+				<File
+					RelativePath="..\UIProcess\Launcher\ThreadLauncher.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\Launcher\ThreadLauncher.h"
+					>
+				</File>
 				<Filter
 					Name="win"
 					>
 					<File
 						RelativePath="..\UIProcess\Launcher\win\ProcessLauncherWin.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\Launcher\win\ThreadLauncherWin.cpp"
 						>
 					</File>
 				</Filter>

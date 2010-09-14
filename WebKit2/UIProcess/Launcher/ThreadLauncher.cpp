@@ -23,57 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebProcessLauncher_h
-#define WebProcessLauncher_h
+#include "ThreadLauncher.h"
 
-#include "Connection.h"
-#include "PlatformProcessIdentifier.h"
-#include <wtf/RefPtr.h>
-#include <wtf/Threading.h>
-
-#if PLATFORM(QT)
-class QLocalSocket;
-#endif
+#include "RunLoop.h"
 
 namespace WebKit {
 
-class ProcessLauncher : public ThreadSafeShared<ProcessLauncher> {
-public:
-    class Client {
-    public:
-        virtual ~Client() { }
-        
-        virtual void didFinishLaunching(ProcessLauncher*, CoreIPC::Connection::Identifier) = 0;
-    };
+ThreadLauncher::ThreadLauncher(Client* client)
+    : m_client(client)
+{
+    launchThread();
+}
+
+void ThreadLauncher::launchThread()
+{
+    m_isLaunching = true;
+
+    CoreIPC::Connection::Identifier connectionIdentifier = createWebThread();
+
+    // We've finished launching the thread, message back to the main run loop.
+    RunLoop::main()->scheduleWork(WorkItem::create(this, &ThreadLauncher::didFinishLaunchingThread, connectionIdentifier));
+}
+
+void ThreadLauncher::didFinishLaunchingThread(CoreIPC::Connection::Identifier identifier)
+{
+    m_isLaunching = false;
     
-    static PassRefPtr<ProcessLauncher> create(Client* client)
-    {
-        return adoptRef(new ProcessLauncher(client));
+    if (!m_client) {
+        // FIXME: Dispose of the connection identifier.
+        return;
     }
 
-    bool isLaunching() const { return m_isLaunching; }
-    PlatformProcessIdentifier processIdentifier() const { return m_processIdentifier; }
+    m_client->didFinishLaunching(this, identifier);
+}
 
-    void terminateProcess();
-    void invalidate();
-
-#if PLATFORM(QT)
-    friend class ProcessLauncherHelper;
-    static QLocalSocket* takePendingConnection();
-#endif
-
-private:
-    explicit ProcessLauncher(Client*);
-
-    void launchProcess();
-    void didFinishLaunchingProcess(PlatformProcessIdentifier, CoreIPC::Connection::Identifier);
-
-    Client* m_client;
-
-    bool m_isLaunching;
-    PlatformProcessIdentifier m_processIdentifier;
-};
+void ThreadLauncher::invalidate()
+{
+    m_client = 0;
+}
 
 } // namespace WebKit
-
-#endif // WebProcessLauncher_h
