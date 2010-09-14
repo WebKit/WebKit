@@ -1,3 +1,17 @@
+2010-09-14  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] building without debug syms broke after recent refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=45720
+
+        Now that we build WebCore as multiple libraries, we need to adjust the
+        flags to turn off debug symbols for all of these libraries.
+
+        No new tests; should only affect an uncommon build flag.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2010-09-14  Tony Chang  <tony@chromium.org>
 
         Unreviewed, fix chromium compile.

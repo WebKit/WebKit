@@ -95,6 +95,12 @@
         },  # target webkit_system_interface
       ],  # targets
     }],  # condition OS == "mac"
+    ['OS!="win" and remove_webcore_debug_symbols==1', {
+      # Remove -g from all targets defined here.
+      'target_defaults': {
+        'cflags!': ['-g'],
+      },
+    }],
   ],  # conditions
 
   'variables': {
@@ -798,13 +804,6 @@
           'include_dirs++': ['../dom'],
           'direct_dependent_settings': {
             'include_dirs+++': ['../dom'],
-          },
-        }],
-        ['OS!="win" and remove_webcore_debug_symbols==1', {
-          'configurations': {
-            'Debug': {
-              'cflags!': ['-g'],
-            }
           },
         }],
       ],
