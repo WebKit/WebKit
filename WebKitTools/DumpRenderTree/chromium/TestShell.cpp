@@ -584,23 +584,15 @@ void TestShell::dumpImage(skia::PlatformCanvas* canvas) const
     // to keep it. On Windows, the alpha channel is wrong since text/form control
     // drawing may have erased it in a few places. So on Windows we force it to
     // opaque and also don't write the alpha channel for the reference. Linux
-    // doesn't have the wrong alpha like Windows, but we ignore it anyway.
-#if OS(WINDOWS)
+    // doesn't have the wrong alpha like Windows, but we match Windows.
+#if OS(MAC_OS_X)
+    bool discardTransparency = false;
+#else
     bool discardTransparency = true;
     device.makeOpaque(0, 0, sourceBitmap.width(), sourceBitmap.height());
-#elif OS(MAC_OS_X)
-    bool discardTransparency = false;
-#elif OS(UNIX)
-    bool discardTransparency = true;
-    if (areLayoutTestImagesOpaque())
-        device.makeOpaque(0, 0, sourceBitmap.width(), sourceBitmap.height());
 #endif
 
-    // Compute MD5 sum.  We should have done this before calling
-    // device.makeOpaque on Windows.  Because we do it after the call, there are
-    // some images that are the pixel identical on windows and other platforms
-    // but have different MD5 sums.  At this point, rebaselining all the windows
-    // tests is too much of a pain, so we just check in different baselines.
+    // Compute MD5 sum.
     MD5 digester;
     Vector<uint8_t, 16> digestValue;
     digester.addBytes(reinterpret_cast<const uint8_t*>(sourceBitmap.getPixels()), sourceBitmap.getSize());
