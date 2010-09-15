@@ -81,9 +81,17 @@ WebInspector.Settings.initialize = function()
         WebInspector.sessionSettings.dispatchEventToListeners("loaded");
     }
 
+    function populateBackendSettings(settingsString)
+    {
+        var settings = JSON.parse(settingsString);
+
+        WebInspector.monitoringXHREnabled = settings.monitoringXHREnabled;
+    }
+
     InspectorBackend.getSettings(function(settings) {
         populateApplicationSettings(settings.application);
         populateSessionSettings(settings.session);
+        populateBackendSettings(settings.backend);
     });
 }
 

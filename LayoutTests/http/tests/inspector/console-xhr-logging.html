@@ -45,26 +45,28 @@ function requestHelper(method, url)
 
 function frontend_enableXMLHttpRequestLogging(testController)
 {
-    InspectorBackend.enableMonitoringXHR();
+    InspectorBackend.setMonitoringXHR(true, function(newStatus) {
+         if (newStatus)
+            testController.notifyDone("enabled");
+    });
+
     if (WebInspector.monitoringXHREnabled)
         return "enabled";
 
     testController.waitUntilDone();
-    frontend_addSniffer(WebInspector, "monitoringXHRWasEnabled", function() {
-         testController.notifyDone("enabled");
-    });
 }
 
 function frontend_disableXMLHttpRequestLogging(testController)
 {
-    InspectorBackend.disableMonitoringXHR();
+    InspectorBackend.setMonitoringXHR(false, function(newStatus) {
+        if (!newStatus)
+            testController.notifyDone("disabled");
+    });
+
     if (!WebInspector.monitoringXHREnabled)
         return "disabled";
 
     testController.waitUntilDone();
-    frontend_addSniffer(WebInspector, "monitoringXHRWasDisabled", function() {
-        testController.notifyDone("disabled");
-    });
 }
 
 </script>

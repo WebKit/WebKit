@@ -270,6 +270,7 @@ public:
 
 private:
     static const String& frontendSettingsSettingName();
+    String getBackendSettings();
 
     friend class InspectorBackend;
     friend class InspectorBackendDispatcher;
@@ -283,9 +284,7 @@ private:
     void enableSearchingForNode() { setSearchingForNode(true); }
     void disableSearchingForNode() { setSearchingForNode(false); }
 
-    void setMonitoringXHR(bool enabled);
-    void enableMonitoringXHR() { setMonitoringXHR(true); }
-    void disableMonitoringXHR() { setMonitoringXHR(false); }
+    void setMonitoringXHR(bool enabled, bool* newState);
     void storeLastActivePanel(const String& panelName);
     InspectorDOMAgent* domAgent() { return m_domAgent.get(); }
     void releaseFrontendLifetimeAgents();

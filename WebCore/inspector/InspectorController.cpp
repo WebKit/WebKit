@@ -248,11 +248,19 @@ void InspectorController::saveSessionSettings(const String& settingsJSON)
     m_sessionSettings = InspectorValue::parseJSON(settingsJSON);
 }
 
+String InspectorController::getBackendSettings()
+{
+    RefPtr<InspectorObject> runtimeSettings = InspectorObject::create();
+    runtimeSettings->setBoolean(monitoringXHRSettingName, m_monitoringXHR);
+    return runtimeSettings->toJSONString();
+}
+
 void InspectorController::getSettings(RefPtr<InspectorObject>* settings)
 {
     *settings = InspectorObject::create();
     (*settings)->setString("application", setting(frontendSettingsSettingName()));
     (*settings)->setString("session", m_sessionSettings->toJSONString());
+    (*settings)->setString("backend", getBackendSettings());
 }
 
 void InspectorController::inspect(Node* node)
@@ -460,18 +468,13 @@ void InspectorController::setSearchingForNode(bool enabled)
     }
 }
 
-void InspectorController::setMonitoringXHR(bool enabled)
+void InspectorController::setMonitoringXHR(bool enabled, bool* newState)
 {
+    *newState = enabled;
     if (m_monitoringXHR == enabled)
         return;
     m_monitoringXHR = enabled;
     setSetting(monitoringXHRSettingName, enabled ? "true" : "false");
-    if (m_frontend) {
-        if (enabled)
-            m_frontend->monitoringXHRWasEnabled();
-        else
-            m_frontend->monitoringXHRWasDisabled();
-    }
 }
 
 void InspectorController::connectFrontend()
@@ -613,8 +616,6 @@ void InspectorController::populateScriptObjects()
     if (m_searchingForNode)
         m_frontend->searchingForNodeWasEnabled();
 
-    if (m_monitoringXHR)
-        m_frontend->monitoringXHRWasEnabled();
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     if (m_profilerAgent->enabled())

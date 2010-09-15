@@ -44,8 +44,6 @@ module core {
         [notify] void evaluateForTestInFrontend(out long testCallId, out String script);
         [notify] void disconnectFromBackend();
         [notify] void inspectedURLChanged(out String url);
-        [notify] void monitoringXHRWasEnabled();
-        [notify] void monitoringXHRWasDisabled();
         [notify] void removeResource(out unsigned long identifier);
         [notify] void reset();
         [notify] void resetProfilesPanel();
@@ -110,8 +108,7 @@ module core {
         [handler=Controller] void enableSearchingForNode();
         [handler=Controller] void disableSearchingForNode();
 
-        [handler=Controller] void enableMonitoringXHR();
-        [handler=Controller] void disableMonitoringXHR();
+        [handler=Controller] void setMonitoringXHR(in boolean enable, out boolean newState);
 
         [handler=Controller] void enableResourceTracking(in boolean always);
         [handler=Controller] void disableResourceTracking(in boolean always);

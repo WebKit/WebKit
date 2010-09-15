@@ -1,3 +1,25 @@
+2010-09-14  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        WebInspector: small refactoring for monitorXHR backend property.
+
+        Our Inspector API is quite big and can be simplified a bit.
+        As example for single backend property like monitoringXHR we
+        have 4 functions in the API. Two functions for frontend
+        enableMonitoringXHR/disableMonitoringXHR and
+        two functions for backend monitoringXHRWasEnabled and
+        monitoringXHRWasDisabled. These functions can be replaced by
+        one setMonitoringXHR with one 'in' and one 'out' argument.
+        The initial state of the flag can be gathered from backend
+        with help of getSettings call where additional section was
+        added for backend state information.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45759
+
+        * http/tests/inspector/console-xhr-logging.html:
+        * inspector/report-API-errors.html:
+
 2010-09-15  Steve Block  <steveblock@google.com>
 
         Reviewed by Kent Tamura.

@@ -14,8 +14,8 @@ function test()
     InspectorBackend.enableResourceTracking(1);
     InspectorBackend.enableResourceTracking();
     InspectorBackend.enableResourceTracking(true, "not a function");
-    InspectorBackend.enableMonitoringXHR(undefined);
-    InspectorBackend.disableMonitoringXHR(undefined);
+    InspectorBackend.setMonitoringXHR(true, undefined);
+    InspectorBackend.setMonitoringXHR(false, undefined);
     WebInspector_syncDispatch('{"type": "event", "domain": "dom", "event": "something-strange", "data": {}}');
 
     InspectorTest.completeTest();
