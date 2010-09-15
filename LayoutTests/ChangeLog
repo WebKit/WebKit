@@ -1,5 +1,21 @@
 2010-09-14  John Gregg  <johnnyg@google.com>
 
+        Unreviewed, chromium rebaseline to fix build.
+
+        [chromium] rebaselines for bug16012.html after font-size changes
+        https://bugs.webkit.org/show_bug.cgi?id=45805
+
+        * platform/chromium-linux/tables/mozilla/bugs/bug16012-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug16012-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/bugs/bug16012-expected.txt: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug16012-expected.checksum: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug16012-expected.png: Added.
+        * platform/chromium-win/tables/mozilla/bugs/bug16012-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug16012-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug16012-expected.txt:
+
+2010-09-14  John Gregg  <johnnyg@google.com>
+
         Unreviewed, chromium rebaseline.
 
         Rebaseline xss-DENIED-frame-name-expected.txt
