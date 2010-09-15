@@ -497,8 +497,9 @@ class MockIRC(object):
 
 class MockStatusServer(object):
 
-    def __init__(self):
+    def __init__(self, work_items=None):
         self.host = "example.com"
+        self._work_items = work_items or []
 
     def patch_status(self, queue_name, patch_id):
         return None
@@ -506,7 +507,13 @@ class MockStatusServer(object):
     def svn_revision(self, svn_revision):
         return None
 
+    def next_work_item(self, queue_name):
+        if not self._work_items:
+            return None
+        return self._work_items[0]
+
     def update_work_items(self, queue_name, work_items):
+        self._work_items = work_items
         log("MOCK: update_work_items: %s %s" % (queue_name, work_items))
 
     def update_status(self, queue_name, status, patch=None, results_file=None):

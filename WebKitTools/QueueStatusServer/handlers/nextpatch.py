@@ -1,9 +1,9 @@
-# Copyright (C) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2010 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above
@@ -13,7 +13,7 @@
 #     * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -26,50 +26,31 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Request a modern Django
-from google.appengine.dist import use_library
-use_library('django', '1.1')
-
 from google.appengine.ext import webapp
-from google.appengine.ext.webapp.util import run_wsgi_app
 
-from handlers.dashboard import Dashboard
-from handlers.gc import GC
-from handlers.nextpatch import NextPatch
-from handlers.patch import Patch
-from handlers.patchstatus import PatchStatus
-from handlers.queuestatus import QueueStatus
-from handlers.recentstatus import QueuesOverview
-from handlers.showresults import ShowResults
-from handlers.statusbubble import StatusBubble
-from handlers.svnrevision import SVNRevision
-from handlers.updatestatus import UpdateStatus
-from handlers.updatesvnrevision import UpdateSVNRevision
-from handlers.updateworkitems import UpdateWorkItems
+from model.workitems import WorkItems
+from model import queuestatus
+
+from datetime import datetime, timedelta
 
 
-webapp.template.register_template_library('filters.webkit_extras')
+class NextPatch(webapp.RequestHandler):
+    def _get_next_patch_id(self, queue_name):
+        work_items = WorkItems.all().filter("queue_name =", queue_name).get()
+        if not work_items:
+            return None
+        one_hour_ago = datetime.now() - timedelta(minutes=60)
+        statuses = queuestatus.QueueStatus.all().filter("queue_name =", queue_name).filter("date >", one_hour_ago).fetch(15)
+        active_patch_ids = set([status.active_patch_id for status in statuses])
+        for item_id in work_items.item_ids:
+            if item_id not in active_patch_ids:
+                return item_id
+        # Either there were no work items, or they're all active.
+        return None
 
-routes = [
-    ('/', QueuesOverview),
-    ('/dashboard', Dashboard),
-    ('/gc', GC),
-    (r'/patch-status/(.*)/(.*)', PatchStatus),
-    (r'/patch/(.*)', Patch),
-    (r'/results/(.*)', ShowResults),
-    (r'/status-bubble/(.*)', StatusBubble),
-    (r'/svn-revision/(.*)', SVNRevision),
-    (r'/queue-status/(.*)', QueueStatus),
-    (r'/next-patch/(.*)', NextPatch),
-    ('/update-status', UpdateStatus),
-    ('/update-work-items', UpdateWorkItems),
-    ('/update-svn-revision', UpdateSVNRevision),
-]
-
-application = webapp.WSGIApplication(routes, debug=True)
-
-def main():
-    run_wsgi_app(application)
-
-if __name__ == "__main__":
-    main()
+    def get(self, queue_name):
+        patch_id = self._get_next_patch_id(queue_name)
+        if not patch_id:
+            self.error(404)
+            return
+        self.response.out.write(patch_id)

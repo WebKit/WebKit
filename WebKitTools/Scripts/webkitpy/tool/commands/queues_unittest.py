@@ -121,6 +121,16 @@ class AbstractQueueTest(CommandsTest):
         self._assert_log_message(script_error, expected_output)
 
 
+class AbstractPatchQueueTest(CommandsTest):
+    def test_fetch_next_work_item(self):
+        queue = AbstractPatchQueue()
+        tool = MockTool()
+        queue.bind_to_tool(tool)
+        self.assertEquals(queue._fetch_next_work_item(), None)
+        tool.status_server = MockStatusServer(work_items=[2, 1, 3])
+        self.assertEquals(queue._fetch_next_work_item(), 2)
+
+
 class AbstractReviewQueueTest(CommandsTest):
     def test_patch_collection_delegate_methods(self):
         queue = TestReviewQueue()

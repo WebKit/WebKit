@@ -27,6 +27,11 @@ indexes:
   properties:
   - name: queue_name
   - name: date
+
+- kind: QueueStatus
+  properties:
+  - name: queue_name
+  - name: date
     direction: desc
 
 - kind: SVNRevision

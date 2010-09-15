@@ -144,8 +144,16 @@ class AbstractPatchQueue(AbstractQueue):
     def _update_status(self, message, patch=None, results_file=None):
         self.tool.status_server.update_status(self.name, message, patch, results_file)
 
+    # Note, eventually this will be done by a separate "feeder" queue
+    # whose job it is to poll bugzilla and feed work items into the
+    # status server for other queues to munch on.
     def _update_work_items(self, patch_ids):
         self.tool.status_server.update_work_items(self.name, patch_ids)
+        if patch_ids:
+            self.log_progress(patch_ids)
+
+    def _fetch_next_work_item(self):
+        return self.tool.status_server.next_work_item(self.name)
 
     def _did_pass(self, patch):
         self._update_status(self._pass_status, patch)
@@ -189,15 +197,20 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
             return rollout_cmp
         return cmp(a.attach_date(), b.attach_date())
 
-    def next_work_item(self):
+    def _feed_work_items_to_server(self):
+        # Grab the set of patches from bugzilla, sort them, and update the status server.
+        # Eventually this will all be done by a separate feeder queue.
         patches = self._validate_patches_in_commit_queue()
         patches = sorted(patches, self._patch_cmp)
         self._update_work_items([patch.id() for patch in patches])
-        if not patches:
+
+    def next_work_item(self):
+        self._feed_work_items_to_server()
+        # The grab the next patch to work on back from the status server.
+        patch_id = self._fetch_next_work_item()
+        if not patch_id:
             return None
-        # Only bother logging if we have patches in the queue.
-        self.log_progress([patch.id() for patch in patches])
-        return patches[0]
+        return self.tool.bugs.fetch_attachment(patch_id)
 
     def _can_build_and_test_without_patch(self):
         try:

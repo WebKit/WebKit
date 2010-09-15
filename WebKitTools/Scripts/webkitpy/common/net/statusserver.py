@@ -96,6 +96,11 @@ class StatusServer:
         self.browser["work_items"] = " ".join(work_items)
         return self.browser.submit().read()
 
+    def next_work_item(self, queue_name):
+        _log.debug("Fetching next work item for %s" % queue_name)
+        patch_status_url = "%s/next-patch/%s" % (self.url, queue_name)
+        return self._fetch_url(patch_status_url)
+
     def update_work_items(self, queue_name, work_items):
         _log.debug("Recording work items: %s for %s" % (work_items, queue_name))
         return NetworkTransaction().run(lambda: self._post_work_items_to_server(queue_name, work_items))

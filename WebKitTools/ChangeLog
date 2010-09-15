@@ -1,3 +1,29 @@
+2010-09-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Make it possible to run more than one commit-queue instance
+        https://bugs.webkit.org/show_bug.cgi?id=45786
+
+        Mostly we need to make sure the two (or more) instances get
+        different patches to work on.  To do this, I re-worked
+        the code responsible for getting the next work item to
+        round trip through the status server.  The status server only
+        vends patches from the work items list, only if those patches
+        have not had status reported for them in the last hour.
+
+        This is another step towards making all queues go through the
+        status server, thus making it possible to run more than one
+        instance of various EWS bots (as requested in bug 44292).
+
+        The webkitpy changes are already covered by existing unit tests.
+        The QueueStatusSever sadly has no testing infrastructure yet. :(
+
+        * QueueStatusServer/handlers/nextpatch.py: Added.
+        * QueueStatusServer/index.yaml:
+        * QueueStatusServer/main.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+
 2010-09-15  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Tony Chang.
