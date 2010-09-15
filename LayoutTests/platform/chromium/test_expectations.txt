@@ -3088,7 +3088,13 @@ BUGWK45527 MAC RELEASE : fast/dom/replaceChild.html = IMAGE
 BUGWK45623 WIN LINUX : fast/dynamic/first-letter-display-change.html = IMAGE
 
 // New tests added in r67376
-BUGWK45652 SKIP : fast/viewport/ = TEXT
+BUGWK45652 : fast/viewport/ = TEXT
+BUGWK45652 SKIP : fast/viewport/viewport-65.html = TEXT
+BUGWK45652 SKIP : fast/viewport/viewport-82.html = TEXT
+BUGWK45652 SKIP : fast/viewport/viewport-84.html = TEXT
+BUGWK45652 SKIP : fast/viewport/viewport-87.html = TEXT
+BUGWK45652 SKIP : fast/viewport/viewport-126.html = TEXT
+BUGWK45652 SKIP : fast/viewport/viewport-127.html = TEXT
 
 // Regressions from r67349?
 BUGDPRANKE LINUX MAC : http/tests/navigation/postredirect-frames.html = IMAGE
