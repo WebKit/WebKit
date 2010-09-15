@@ -310,10 +310,46 @@ void RenderText::absoluteRectsForRange(Vector<IntRect>& rects, unsigned start, u
     }
 }
 
+static IntRect ellipsisRectForBox(InlineTextBox* box, unsigned startPos, unsigned endPos)
+{
+    if (!box)
+        return IntRect();
+    
+    unsigned short truncation = box->truncation();
+    if (truncation == cNoTruncation)
+        return IntRect();
+    
+    IntRect rect;
+    if (EllipsisBox* ellipsis = box->root()->ellipsisBox()) {
+        int ellipsisStartPosition = max<int>(startPos - box->start(), 0);
+        int ellipsisEndPosition = min<int>(endPos - box->start(), box->len());
+        
+        // The ellipsis should be considered to be selected if the end of
+        // the selection is past the beginning of the truncation and the
+        // beginning of the selection is before or at the beginning of the truncation.
+        if (ellipsisEndPosition >= truncation && ellipsisStartPosition <= truncation)
+            return ellipsis->selectionRect(0, 0);
+    }
+    
+    return IntRect();
+}
+    
+void RenderText::absoluteQuads(Vector<FloatQuad>& quads, ClippingOption option)
+{
+    for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
+        IntRect boundaries = box->calculateBoundaries();
+
+        // Shorten the width of this text box if it ends in an ellipsis.
+        IntRect ellipsisRect = (option == ClipToEllipsis) ? ellipsisRectForBox(box, 0, textLength()) : IntRect();
+        if (!ellipsisRect.isEmpty())
+            boundaries.setWidth(ellipsisRect.right() - boundaries.x());
+        quads.append(localToAbsoluteQuad(FloatRect(boundaries)));
+    }
+}
+    
 void RenderText::absoluteQuads(Vector<FloatQuad>& quads)
 {
-    for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
-        quads.append(localToAbsoluteQuad(FloatRect(box->calculateBoundaries())));
+    absoluteQuads(quads, NoClipping);
 }
 
 void RenderText::absoluteQuadsForRange(Vector<FloatQuad>& quads, unsigned start, unsigned end, bool useSelectionHeight)
@@ -1270,7 +1306,7 @@ IntRect RenderText::selectionRectForRepaint(RenderBoxModelObject* repaintContain
 
     if (selectionState() == SelectionNone)
         return IntRect();
-    RenderBlock* cb =  containingBlock();
+    RenderBlock* cb = containingBlock();
     if (!cb)
         return IntRect();
 
@@ -1295,21 +1331,7 @@ IntRect RenderText::selectionRectForRepaint(RenderBoxModelObject* repaintContain
     IntRect rect;
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
         rect.unite(box->selectionRect(0, 0, startPos, endPos));
-
-        // Check if there are ellipsis which fall within the selection.
-        unsigned short truncation = box->truncation();
-        if (truncation != cNoTruncation) {
-            if (EllipsisBox* ellipsis = box->root()->ellipsisBox()) {
-                int ePos = min<int>(endPos - box->start(), box->len());
-                int sPos = max<int>(startPos - box->start(), 0);
-                // The ellipsis should be considered to be selected if the end of
-                // the selection is past the beginning of the truncation and the
-                // beginning of the selection is before or at the beginning of the
-                // truncation.
-                if (ePos >= truncation && sPos <= truncation)
-                    rect.unite(ellipsis->selectionRect(0, 0));
-            }
-        }
+        rect.unite(ellipsisRectForBox(box, startPos, endPos));
     }
 
     if (clipToVisibleContent)

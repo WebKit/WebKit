@@ -1,3 +1,26 @@
+2010-09-15  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        AX: when text is auto-truncated, accessibility bounds are wrong
+        https://bugs.webkit.org/show_bug.cgi?id=45793
+
+        Allow accessibility to retrieve the absoluteQuads of a text node that
+        clips to the ellipsis.
+        
+        Test: accessibility/ellipsis-text.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::boundingBoxRect):
+        * rendering/RenderText.cpp:
+        (WebCore::ellipsisRectForBox):
+            Make a common method to retrieve the ellipsis rect.
+        (WebCore::RenderText::absoluteQuads):
+            Default into the absoluteQuads method that allows for ellipsis clipping.
+        (WebCore::RenderText::selectionRectForRepaint):
+            Use the common method for retrieving the ellipsis.
+        * rendering/RenderText.h:
+
 2010-09-15  Ariya Hidayat  <ariya@sencha.com>
 
         [Qt] Improve the speed of blur shadow

@@ -1392,7 +1392,9 @@ IntRect AccessibilityRenderObject::boundingBoxRect() const
     // absoluteFocusRingQuads will query the hierarchy below this element, which for large webpages can be very slow.
     // For a web area, which will have the most elements of any element, absoluteQuads should be used.
     Vector<FloatQuad> quads;
-    if (obj->isText() || isWebArea())
+    if (obj->isText())
+        toRenderText(obj)->absoluteQuads(quads, RenderText::ClipToEllipsis);
+    else if (isWebArea())
         obj->absoluteQuads(quads);
     else
         obj->absoluteFocusRingQuads(quads);
