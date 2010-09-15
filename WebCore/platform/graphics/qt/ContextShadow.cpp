@@ -139,134 +139,80 @@ void ContextShadow::clear()
     offset = QPointF(0, 0);
 }
 
-// Instead of integer division, we use 18.14 for fixed-point division.
-static const int BlurSumShift = 14;
+// Instead of integer division, we use 17.15 for fixed-point division.
+static const int BlurSumShift = 15;
 
-// Note: image must be RGB32 format
-static void blurHorizontal(QImage& image, int radius, bool swap = false)
+// Check http://www.w3.org/TR/SVG/filters.html#feGaussianBlur.
+// As noted in the SVG filter specification, running box blur 3x
+// approximates a real gaussian blur nicely.
+
+void shadowBlur(QImage& image, int radius, const QColor& shadowColor)
 {
-    Q_ASSERT(image.format() == QImage::Format_ARGB32_Premultiplied);
-
     // See comments in http://webkit.org/b/40793, it seems sensible
-    // to follow Skia's limit of 128 pixels of blur radius
-    radius = qMin(128, radius);
+    // to follow Skia's limit of 128 pixels for the blur radius.
+    if (radius > 128)
+        radius = 128;
 
-    int imgWidth = image.width();
-    int imgHeight = image.height();
-
-    // Check http://www.w3.org/TR/SVG/filters.html#feGaussianBlur
-    // for the approaches when the box-blur radius is even vs odd.
+    int channels[4] = { 3, 0, 1, 3 };
     int dmax = radius >> 1;
-    int dmin = qMax(0, dmax - 1 + (radius & 1));
+    int dmin = dmax - 1 + (radius & 1);
+    if (dmin < 0)
+        dmin = 0;
 
-    for (int y = 0; y < imgHeight; ++y) {
+    // Two stages: horizontal and vertical
+    for (int k = 0; k < 2; ++k) {
 
-        unsigned char* pixels = image.scanLine(y);
+        unsigned char* pixels = image.bits();
+        int stride = (!k) ? 4 : image.bytesPerLine();
+        int delta = (!k) ? image.bytesPerLine() : 4;
+        int jfinal = (!k) ? image.height() : image.width();
+        int dim = (!k) ? image.width() : image.height();
 
-        int left;
-        int right;
-        int pixelCount;
-        int prev;
-        int next;
-        int firstAlpha;
-        int lastAlpha;
-        int totalAlpha;
-        unsigned char* target;
-        unsigned char* prevPtr;
-        unsigned char* nextPtr;
+        for (int j = 0; j < jfinal; ++j, pixels += delta) {
 
-        int invCount;
+            // For each step, we blur the alpha in a channel and store the result
+            // in another channel for the subsequent step.
+            // We use sliding window algorithm to accumulate the alpha values.
+            // This is much more efficient than computing the sum of each pixels
+            // covered by the box kernel size for each x.
 
-        static const int alphaChannel = 3;
-        static const int blueChannel = 0;
-        static const int greenChannel = 1;
+            for (int step = 0; step < 3; ++step) {
+                int side1 = (!step) ? dmin : dmax;
+                int side2 = (step == 1) ? dmin : dmax;
+                int pixelCount = side1 + 1 + side2;
+                int invCount = ((1 << BlurSumShift) + pixelCount - 1) / pixelCount;
+                int ofs = 1 + side2;
+                int alpha1 = pixels[channels[step]];
+                int alpha2 = pixels[(dim - 1) * stride + channels[step]];
+                unsigned char* ptr = pixels + channels[step + 1];
+                unsigned char* prev = pixels + stride + channels[step];
+                unsigned char* next = pixels + ofs * stride + channels[step];
 
-        // For each step, we use sliding window algorithm. This is much more
-        // efficient than computing the sum of each pixels covered by the box
-        // kernel size for each x.
+                int i;
+                int sum = side1 * alpha1 + alpha1;
+                int limit = (dim < side2 + 1) ? dim : side2 + 1;
+                for (i = 1; i < limit; ++i, prev += stride)
+                    sum += *prev;
+                if (limit <= side2)
+                    sum += (side2 - limit + 1) * alpha2;
 
-        // As noted in the SVG filter specification, running box blur 3x
-        // approximates a real gaussian blur nicely.
-
-        // Step 1: blur alpha channel and store the result in the blue channel.
-        left = swap ? dmax : dmin;
-        right = swap ? dmin : dmax;
-        pixelCount = left + 1 + right;
-        invCount = (1 << BlurSumShift) / pixelCount;
-        prev = -left;
-        next = 1 + right;
-        firstAlpha = pixels[alphaChannel];
-        lastAlpha = pixels[(imgWidth - 1) * 4 + alphaChannel];
-        totalAlpha = 0;
-        for (int i = 0; i < pixelCount; ++i)
-            totalAlpha += pixels[qBound(0, i - left, imgWidth - 1) * 4 + alphaChannel];
-        target = pixels + blueChannel;
-        prevPtr = pixels + prev * 4 + alphaChannel;
-        nextPtr = pixels + next * 4 + alphaChannel;
-        for (int x = 0; x < imgWidth; ++x, ++prev, ++next, target += 4, prevPtr += 4, nextPtr += 4) {
-            *target = (totalAlpha * invCount) >> BlurSumShift;
-            int delta = ((next < imgWidth) ? *nextPtr : lastAlpha) -
-                        ((prev > 0) ? *prevPtr : firstAlpha);
-            totalAlpha += delta;
-        }
-
-        // Step 2: blur blue channel and store the result in the green channel.
-        left = swap ? dmin : dmax;
-        right = swap ? dmax : dmin;
-        pixelCount = left + 1 + right;
-        invCount = (1 << BlurSumShift) / pixelCount;
-        prev = -left;
-        next = 1 + right;
-        firstAlpha = pixels[blueChannel];
-        lastAlpha = pixels[(imgWidth - 1) * 4 + blueChannel];
-        totalAlpha = 0;
-        for (int i = 0; i < pixelCount; ++i)
-            totalAlpha += pixels[qBound(0, i - left, imgWidth - 1) * 4 + blueChannel];
-        target = pixels + greenChannel;
-        prevPtr = pixels + prev * 4 + blueChannel;
-        nextPtr = pixels + next * 4 + blueChannel;
-        for (int x = 0; x < imgWidth; ++x, ++prev, ++next, target += 4, prevPtr += 4, nextPtr += 4) {
-            *target = (totalAlpha * invCount) >> BlurSumShift;
-            int delta = ((next < imgWidth) ? *nextPtr : lastAlpha) -
-                        ((prev > 0) ? *prevPtr : firstAlpha);
-            totalAlpha += delta;
-        }
-
-        // Step 3: blur green channel and store the result in the alpha channel.
-        left = dmax;
-        right = dmax;
-        pixelCount = left + 1 + right;
-        invCount = (1 << BlurSumShift) / pixelCount;
-        prev = -left;
-        next = 1 + right;
-        firstAlpha = pixels[greenChannel];
-        lastAlpha = pixels[(imgWidth - 1) * 4 + greenChannel];
-        totalAlpha = 0;
-        for (int i = 0; i < pixelCount; ++i)
-            totalAlpha += pixels[qBound(0, i - left, imgWidth - 1) * 4 + greenChannel];
-        target = pixels + alphaChannel;
-        prevPtr = pixels + prev * 4 + greenChannel;
-        nextPtr = pixels + next * 4 + greenChannel;
-        for (int x = 0; x < imgWidth; ++x, ++prev, ++next, target += 4, prevPtr += 4, nextPtr += 4) {
-            *target = (totalAlpha * invCount) >> BlurSumShift;
-            int delta = ((next < imgWidth) ? *nextPtr : lastAlpha) -
-                        ((prev > 0) ? *prevPtr : firstAlpha);
-            totalAlpha += delta;
+                limit = (side1 < dim) ? side1 : dim;
+                for (i = 0; i < limit; ptr += stride, next += stride, ++i, ++ofs) {
+                    *ptr = (sum * invCount) >> BlurSumShift;
+                    sum += ((ofs < dim) ? *next : alpha2) - alpha1;
+                }
+                prev = pixels + channels[step];
+                for (; ofs < dim; ptr += stride, prev += stride, next += stride, ++i, ++ofs) {
+                    *ptr = (sum * invCount) >> BlurSumShift;
+                    sum += (*next) - (*prev);
+                }
+                for (; i < dim; ptr += stride, prev += stride, ++i) {
+                    *ptr = (sum * invCount) >> BlurSumShift;
+                    sum += alpha2 - (*prev);
+                }
+            }
         }
     }
-}
-
-static void shadowBlur(QImage& image, int radius, const QColor& shadowColor)
-{
-    blurHorizontal(image, radius);
-
-    QTransform transform;
-    transform.rotate(90);
-    image = image.transformed(transform);
-    blurHorizontal(image, radius, true);
-    transform.reset();
-    transform.rotate(270);
-    image = image.transformed(transform);
 
     // "Colorize" with the right shadow color.
     QPainter p(&image);

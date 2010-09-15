@@ -1,3 +1,15 @@
+2010-09-15  Ariya Hidayat  <ariya@sencha.com>
+
+        [Qt] Improve the speed of blur shadow
+        https://bugs.webkit.org/show_bug.cgi?id=44222
+
+        Rewrite the shadow blur function with loop unrolls and sliding step
+        unification for both horizontal and vertical directions.
+        This gives significant performance improvement on most cases.
+
+        * platform/graphics/qt/ContextShadow.cpp:
+        (WebCore::shadowBlur):
+
 2010-09-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -1,3 +1,13 @@
+2010-09-15  Ariya Hidayat  <ariya@sencha.com>
+
+        [Qt] Improve the speed of blur shadow
+        https://bugs.webkit.org/show_bug.cgi?id=44222
+
+        Update pixel test result.
+
+        * platform/qt/fast/box-shadow/basic-shadows-expected.checksum:
+        * platform/qt/fast/box-shadow/basic-shadows-expected.png:
+
 2010-09-15  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.
