@@ -608,7 +608,8 @@ void LayoutTestController::setUserStyleSheetEnabled(const CppArgumentList& argum
 void LayoutTestController::setUserStyleSheetLocation(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isString()) {
-        m_userStyleSheetLocation = webkit_support::RewriteLayoutTestsURL(arguments[0].toString());
+        m_userStyleSheetLocation = webkit_support::LocalFileToDataURL(
+            webkit_support::RewriteLayoutTestsURL(arguments[0].toString()));
         m_shell->webView()->settings()->setUserStyleSheetLocation(m_userStyleSheetLocation);
     }
     result->setNull();

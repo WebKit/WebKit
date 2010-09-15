@@ -800,13 +800,6 @@ BUG14885 SLOW : fast/js/JSON-stringify.html = FAIL CRASH
 BUG14885 : fast/js/JSON-parse-reviver.html = FAIL
 BUG14885 : fast/js/JSON-stringify-replacer.html = FAIL
 
-// User stylesheets not currently supported by chrome.
-// Webkit supports them by doing filesystem operations directly.
-// This is disallowed in a sandboxed renderer. The test fails in
-// test_shell.exe because the necessary filesystem stubs are notImplemented(),
-// and would need to be proxied through the browser
-BUG24199 : http/tests/security/local-user-CSS-from-remote.html = FAIL
-
 // Implement CSS -webkit-font-smoothing property support.
 BUG23270 WIN LINUX : fast/css/font-smoothing.html = FAIL
 
