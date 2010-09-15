@@ -2,6 +2,7 @@
  * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov <ap@nypop.com>
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
+ * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +33,7 @@
 #include "TextCodec.h"
 #include "TextEncoding.h"
 #include <wtf/Vector.h>
+#include <windows.h>
 
 namespace WebCore {
 
@@ -43,7 +45,7 @@ public:
     static void registerExtendedEncodingNames(EncodingNameRegistrar);
     static void registerExtendedCodecs(TextCodecRegistrar);
 
-    TextCodecWinCE(const TextEncoding&);
+    TextCodecWinCE(UINT codePage);
     virtual ~TextCodecWinCE();
 
     virtual String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError);
@@ -62,7 +64,7 @@ public:
     static void enumerateSupportedEncodings(EncodingReceiver& receiver);
 
 private:
-    TextEncoding m_encoding;
+    UINT m_codePage;
     Vector<char> m_decodeBuffer;
 };
 

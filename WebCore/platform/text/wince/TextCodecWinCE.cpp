@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007-2009 Torch Mobile, Inc. All rights reserved.
+ * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -132,11 +133,11 @@ static UINT getCodePage(const char* name)
 
 static PassOwnPtr<TextCodec> newTextCodecWinCE(const TextEncoding& encoding, const void*)
 {
-    return new TextCodecWinCE(encoding);
+    return new TextCodecWinCE(getCodePage(encoding.name()));
 }
 
-TextCodecWinCE::TextCodecWinCE(const TextEncoding& encoding)
-    : m_encoding(encoding)
+TextCodecWinCE::TextCodecWinCE(UINT codePage)
+    : m_codePage(codePage)
 {
 }
 
@@ -211,21 +212,11 @@ static inline const char* findFirstNonAsciiCharacter(const char* bytes, size_t l
     return bytes;
 }
 
-static void decode(Vector<UChar, 8192>& result, const char* encodingName, const char* bytes, size_t length, size_t* left, bool canBeFirstTime, bool& sawInvalidChar)
+static void decode(Vector<UChar, 8192>& result, UINT codePage, const char* bytes, size_t length, size_t* left, bool canBeFirstTime, bool& sawInvalidChar)
 {
     *left = length;
     if (!bytes || !length)
         return;
-
-    UINT codePage;
-
-    HashMap<String, CharsetInfo>::iterator i = knownCharsets().find(encodingName);
-    if (i == knownCharsets().end()) {
-        if (!strcmp(encodingName, "UTF-8"))
-            codePage = CP_UTF8;
-        else
-            codePage = CP_ACP;
-    }
 
     DWORD flags = getCodePageFlags(codePage);
 
@@ -331,7 +322,7 @@ String TextCodecWinCE::decode(const char* bytes, size_t length, bool flush, bool
     Vector<UChar, 8192> result;
     for (;;) {
         bool sawInvalidChar = false;
-        WebCore::decode(result, m_encoding.name(), bytes, length, &left, m_decodeBuffer.isEmpty(), sawInvalidChar);
+        WebCore::decode(result, m_codePage, bytes, length, &left, m_decodeBuffer.isEmpty(), sawInvalidChar);
         if (!left)
             break;
 
@@ -367,10 +358,9 @@ CString TextCodecWinCE::encode(const UChar* characters, size_t length, Unencodab
     if (!characters || !length)
         return CString();
 
-    UINT codePage = getCodePage(m_encoding.name());
-    DWORD flags = codePage == CP_UTF8 ? 0 : WC_COMPOSITECHECK;
+    DWORD flags = m_codePage == CP_UTF8 ? 0 : WC_COMPOSITECHECK;
 
-    int resultLength = WideCharToMultiByte(codePage, flags, characters, length, 0, 0, 0, 0);
+    int resultLength = WideCharToMultiByte(m_codePage, flags, characters, length, 0, 0, 0, 0);
 
     // FIXME: We need to implement UnencodableHandling: QuestionMarksForUnencodables, EntitiesForUnencodables, and URLEncodedEntitiesForUnencodables.
 
@@ -379,7 +369,7 @@ CString TextCodecWinCE::encode(const UChar* characters, size_t length, Unencodab
 
     Vector<char> result(resultLength);
 
-    WideCharToMultiByte(codePage, flags, characters, length, result.data(), resultLength, 0, 0);
+    WideCharToMultiByte(m_codePage, flags, characters, length, result.data(), resultLength, 0, 0);
 
     return CString(result.data(), result.size());
 }
