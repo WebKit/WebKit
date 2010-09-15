@@ -3344,7 +3344,6 @@ webcoregtk_sources += \
 	WebCore/page/gtk/EventHandlerGtk.cpp \
 	WebCore/page/gtk/FrameGtk.cpp \
 	WebCore/platform/graphics/cairo/CairoPath.h \
-	WebCore/platform/graphics/cairo/FontCacheCairo.cpp \
 	WebCore/platform/graphics/cairo/FontCairo.cpp \
 	WebCore/platform/graphics/cairo/FontCustomPlatformData.h \
 	WebCore/platform/graphics/cairo/FontPlatformData.h \
@@ -3532,13 +3531,14 @@ webcore_cppflags += -DENABLE_FAST_MOBILE_SCROLLING=1
 endif # END ENABLE_FAST_MOBILE_SCROLLING
 
 # ---
-# Freetype font backend
+# FreeType font backend
 # ---
 if USE_FREETYPE
 webcoregtk_cppflags += -DUSE_FREETYPE=1
 webcoregtk_sources += \
+	WebCore/platform/graphics/cairo/FontCacheFreeType.cpp \
 	WebCore/platform/graphics/cairo/FontCustomPlatformData.cpp \
-	WebCore/platform/graphics/cairo/FontPlatformDataCairo.cpp \
+	WebCore/platform/graphics/cairo/FontPlatformDataFreeType.cpp \
 	WebCore/platform/graphics/cairo/GlyphPageTreeNodeCairo.cpp \
 	WebCore/platform/graphics/cairo/SimpleFontDataCairo.cpp
 endif # END USE_FREETYPE
@@ -3549,6 +3549,7 @@ endif # END USE_FREETYPE
 if USE_PANGO
 webcoregtk_cppflags += -DUSE_PANGO=1
 webcoregtk_sources += \
+	WebCore/platform/graphics/gtk/FontCachePango.cpp \
 	WebCore/platform/graphics/gtk/FontCustomPlatformDataPango.cpp \
 	WebCore/platform/graphics/gtk/FontPlatformDataPango.cpp \
 	WebCore/platform/graphics/gtk/GlyphPageTreeNodePango.cpp \

@@ -1,3 +1,79 @@
+2010-09-14  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Fully separate Pango and FreeType font backends
+        https://bugs.webkit.org/show_bug.cgi?id=27442
+
+        Split FontPlatformData.h into separate versions for Pango, FreeType and WinCairo.
+        Include the correct file via #ifdef'd includes, like the Chromium port. Also split
+        FontCacheCairo.cpp into Pango and FreeType versions, as they had almost no code in
+        common. Finally, rename FontPlatformDataCairo to FontPlatformDataFreeType, as this
+        compilation unit is used only by the FreeType backend. This change is important to
+        prevent upcoming fixes to the FreeType backend from affecting other backends.
+
+        No new tests as functionality has not changed.
+
+        * CMakeListsEfl.txt: Update source lists.
+        * GNUmakefile.am: Update source lists.
+        * platform/graphics/cairo/FontCacheCairo.cpp: Removed.
+        * platform/graphics/cairo/FontCacheFreeType.cpp: Added.
+        (WebCore::FontCache::platformInit):
+        (WebCore::FontCache::getFontDataForCharacters):
+        (WebCore::FontCache::getSimilarFontPlatformData):
+        (WebCore::FontCache::getLastResortFallbackFont):
+        (WebCore::FontCache::getTraitsInFamily):
+        (WebCore::isWellKnownFontName):
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/graphics/cairo/FontPlatformData.h:
+        * platform/graphics/cairo/FontPlatformDataFreeType.cpp: Renamed from WebCore/platform/graphics/cairo/FontPlatformDataCairo.cpp.
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::operator=):
+        (WebCore::FontPlatformData::init):
+        (WebCore::FontPlatformData::~FontPlatformData):
+        (WebCore::FontPlatformData::isFixedPitch):
+        (WebCore::FontPlatformData::operator==):
+        (WebCore::FontPlatformData::description):
+        * platform/graphics/cairo/FontPlatformDataFreeType.h: Added.
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::size):
+        (WebCore::FontPlatformData::setSize):
+        (WebCore::FontPlatformData::syntheticBold):
+        (WebCore::FontPlatformData::syntheticOblique):
+        (WebCore::FontPlatformData::scaledFont):
+        (WebCore::FontPlatformData::hash):
+        (WebCore::FontPlatformData::isHashTableDeletedValue):
+        (WebCore::FontPlatformData::hashTableDeletedFontValue):
+        * platform/graphics/gtk/FontCachePango.cpp: Added.
+        (WebCore::FontCache::platformInit):
+        (WebCore::FontCache::getFontDataForCharacters):
+        (WebCore::FontCache::getSimilarFontPlatformData):
+        (WebCore::FontCache::getLastResortFallbackFont):
+        (WebCore::FontCache::getTraitsInFamily):
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/graphics/gtk/FontPlatformDataPango.h: Added.
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::size):
+        (WebCore::FontPlatformData::setSize):
+        (WebCore::FontPlatformData::syntheticBold):
+        (WebCore::FontPlatformData::syntheticOblique):
+        (WebCore::FontPlatformData::scaledFont):
+        (WebCore::FontPlatformData::hash):
+        (WebCore::FontPlatformData::isHashTableDeletedValue):
+        (WebCore::FontPlatformData::hashTableDeletedFontValue):
+        * platform/graphics/win/FontPlatformDataCairoWin.h: Added.
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::hfont):
+        (WebCore::FontPlatformData::useGDI):
+        (WebCore::FontPlatformData::fontFace):
+        (WebCore::FontPlatformData::size):
+        (WebCore::FontPlatformData::setSize):
+        (WebCore::FontPlatformData::syntheticBold):
+        (WebCore::FontPlatformData::syntheticOblique):
+        (WebCore::FontPlatformData::scaledFont):
+        (WebCore::FontPlatformData::hash):
+        (WebCore::FontPlatformData::isHashTableDeletedValue):
+
 2010-09-15  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Simon Fraser.
