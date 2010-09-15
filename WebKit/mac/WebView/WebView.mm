@@ -2636,6 +2636,13 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     automaticTextReplacementEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticTextReplacementEnabled];
     automaticSpellingCorrectionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticSpellingCorrectionEnabled];
 #endif
+
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:WebAutomaticTextReplacementEnabled])
+        automaticTextReplacementEnabled = [NSSpellChecker isAutomaticTextReplacementEnabled];
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:WebAutomaticSpellingCorrectionEnabled])
+        automaticTextReplacementEnabled = [NSSpellChecker isAutomaticSpellingCorrectionEnabled];
+#endif
 }
 
 + (void)_applicationWillTerminate
