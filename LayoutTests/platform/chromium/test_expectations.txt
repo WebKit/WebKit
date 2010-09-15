@@ -3045,8 +3045,9 @@ BUG54348 LINUX : http/tests/security/xssAuditor/dom-write-innerHTML.html = PASS 
 // New test in r66740
 BUGWK45193 LINUX : fast/text/decomposed-after-stacked-diacritics.html = TEXT
 
-// Regressed in r66712
-BUGWK45209 WIN : inspector/dom-breakpoints.html = PASS TIMEOUT
+// Debugger tests are slow on win debug bots
+BUGWK45209 WIN DEBUG SLOW : inspector/debugger-autocontinue-on-syntax-error.html = PASS
+BUGWK45209 WIN DEBUG SLOW : inspector/dom-breakpoints.html = PASS
 
 // Regressed in r66908
 BUGWK45332 MAC : fast/canvas/webgl/gl-teximage.html = TEXT
@@ -3117,5 +3118,4 @@ BUGDPRANKE WIN LINUX DEBUG : fast/forms/select-set-length-with-mutation-remove.h
 BUGDPRANKE LINUX DEBUG : http/tests/incremental/slow-utf8-text.pl = TIMEOUT PASS
 BUGDPRANKE LINUX DEBUG : fast/forms/restore-selection-after-layout.html = TEXT
 
-BUGDPRANKE WIN DEBUG : inspector/debugger-autocontinue-on-syntax-error.html = PASS TIMEOUT
 BUGDPRANKE WIN LINUX : media/video-poster.html = PASS TEXT

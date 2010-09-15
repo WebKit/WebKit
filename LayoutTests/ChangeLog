@@ -1,3 +1,12 @@
+2010-09-15  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [Web Inspector] mark two debugger tests as slow on win debug chromium
+        https://bugs.webkit.org/show_bug.cgi?id=45742
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-14  John Gregg  <johnnyg@google.com>
 
         Unreviewed, chromium rebaseline to fix build.
