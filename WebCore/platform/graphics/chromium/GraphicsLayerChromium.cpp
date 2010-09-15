@@ -84,11 +84,6 @@ static void clearLayerBackgroundColor(LayerChromium& layer)
     layer.setBackgroundColor(static_cast<RGBA32>(0));
 }
 
-GraphicsLayer::CompositingCoordinatesOrientation GraphicsLayer::compositingCoordinatesOrientation()
-{
-    return CompositingCoordinatesBottomUp;
-}
-
 PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
 {
     return new GraphicsLayerChromium(client);

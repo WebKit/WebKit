@@ -1,5 +1,11 @@
 2010-09-15  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix chromium build.
+        
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+
+2010-09-15  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Adam Roben.
 
         https://bugs.webkit.org/show_bug.cgi?id=44715
