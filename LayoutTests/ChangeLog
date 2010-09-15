@@ -1,3 +1,12 @@
+2010-09-15  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix regression from bug 32230. The test needed to be updated to reflect the zoom adjusted font-size.
+        https://bugs.webkit.org/show_bug.cgi?id=45841
+
+        * editing/pasteboard/page-zoom.html:
+
 2010-09-15  Julien Chaffraix  <jchaffraix@codeaurora.org>
 
         Reviewed by Andreas Kling.

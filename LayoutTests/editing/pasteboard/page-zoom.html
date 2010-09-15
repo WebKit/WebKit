@@ -23,7 +23,7 @@ function editingTest()
     execMoveSelectionForwardByWordCommand();
     execPasteCommand();
 
-    if (document.getElementById("target").innerHTML.toString().indexOf("font-size: 16px") == -1)
+    if (document.getElementById("target").innerHTML.toString().indexOf("font-size: 16px") != -1)
         throw "absolute font size is wrong";
 
     // Make sure relative font sizes are not adjusted.
