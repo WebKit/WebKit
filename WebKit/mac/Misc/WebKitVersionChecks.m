@@ -29,17 +29,23 @@
 #import "WebKitVersionChecks.h"
 #import <mach-o/dyld.h>
 
+static int WebKitLinkTimeVersion(void);
+static int overridenWebKitLinkTimeVersion;
+
 BOOL WebKitLinkedOnOrAfter(int version)
 {
-    return (WebKitLinkTimeVersion() >= version); 
+    return (WebKitLinkTimeVersion() >= version);
 }
 
-int WebKitLinkTimeVersion(void)
+void setWebKitLinkTimeVersion(int version)
 {
+    overridenWebKitLinkTimeVersion = version;
+}
+
+static int WebKitLinkTimeVersion(void)
+{
+    if (overridenWebKitLinkTimeVersion)
+        return overridenWebKitLinkTimeVersion;
+
     return NSVersionOfLinkTimeLibrary("WebKit");
-}
-
-int WebKitRunTimeVersion(void)
-{
-    return NSVersionOfRunTimeLibrary("WebKit");
 }

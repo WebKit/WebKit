@@ -203,6 +203,8 @@ extern NSString *WebPreferencesRemovedNotification;
 + (void)_setInitialDefaultTextEncodingToSystemEncoding;
 + (void)_setIBCreatorID:(NSString *)string;
 
++ (void)setWebKitLinkTimeVersion:(int)version;
+
 // For WebView's use only.
 - (void)willAddToWebView;
 - (void)didRemoveFromWebView;

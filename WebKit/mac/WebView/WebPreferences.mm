@@ -1357,6 +1357,11 @@ static NSString *classIBCreatorID = nil;
     return [self _boolValueForKey:WebKitFullScreenEnabledPreferenceKey];
 }
 
++ (void)setWebKitLinkTimeVersion:(int)version
+{
+    setWebKitLinkTimeVersion(version);
+}
+
 @end
 
 @implementation WebPreferences (WebInternal)
