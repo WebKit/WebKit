@@ -65,6 +65,7 @@ private:
     QStringList urlList;
     LocationEdit* urlEdit;
 
+protected:
     WebPage* m_page;
 };
 

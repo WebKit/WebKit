@@ -103,7 +103,10 @@ void LauncherWindow::init()
 
 void LauncherWindow::initializeView()
 {
+    QUrl url = m_page->mainFrame()->url();
+    delete m_page;
     delete m_view;
+    m_page = new WebPage(this);
 
     QSplitter* splitter = static_cast<QSplitter*>(centralWidget());
 
@@ -127,6 +130,9 @@ void LauncherWindow::initializeView()
 
         m_view = view;
     }
+
+    if (url.isValid())
+        m_page->mainFrame()->load(url);
 
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     m_touchMocking = false;

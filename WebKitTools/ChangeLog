@@ -1,3 +1,21 @@
+2010-09-15  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] QtTestBrowser crashes when enabling QGraphicsView mode after first loading page without it enabled
+        https://bugs.webkit.org/show_bug.cgi?id=35247
+
+        The main issue when changing the views is that the plugins and any other components that
+        depend on view specific attributes such as the native window id are not teared down.
+        Even if we had a tear-down procedure, we'd have to re-initialize the plugin after
+        switching to the new view (QGraphicsWebView). This is a rather uncommon situation, so
+        we decided to work around this in QtTestBrowser by making toggling between QWebView
+        and QGraphicsWebView also re-create the page.
+
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::initializeView):
+        * QtTestBrowser/mainwindow.h:
+
 2010-09-14  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.
