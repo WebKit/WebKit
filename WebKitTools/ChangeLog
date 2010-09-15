@@ -1,3 +1,13 @@
+2010-09-15  Simon Fraser  <simon.fraser@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=45849
+        WKURLCreateWithCFURL crashes with null url
+        
+        Fix MiniBrowser crash when the url is not parseable.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController fetch:]):
+
 2010-09-15  Patrick Gansterer  <paroga@paroga.com>
 
         Unreviewed.

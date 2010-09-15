@@ -61,6 +61,9 @@
 - (IBAction)fetch:(id)sender
 {
     CFURLRef cfURL = CFURLCreateWithString(0, (CFStringRef)[urlText stringValue], 0);
+    if (!cfURL)
+        return;
+
     WKURLRef url = WKURLCreateWithCFURL(cfURL);
     CFRelease(cfURL);
 
