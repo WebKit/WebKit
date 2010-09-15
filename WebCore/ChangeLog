@@ -1,3 +1,13 @@
+2010-09-15  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [WINCE] Avoid memcpy in TextCodecWinCE::encode
+        https://bugs.webkit.org/show_bug.cgi?id=45468
+
+        * platform/text/wince/TextCodecWinCE.cpp:
+        (WebCore::TextCodecWinCE::encode):
+
 2010-09-14  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Dumitru Daniliuc.
