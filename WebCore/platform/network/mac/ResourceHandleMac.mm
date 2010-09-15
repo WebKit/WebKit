@@ -410,7 +410,7 @@ bool ResourceHandle::supportsBufferedData()
 
 PassRefPtr<SharedBuffer> ResourceHandle::bufferedData()
 {
-    if (supportsBufferedData())
+    if (ResourceHandle::supportsBufferedData())
         return SharedBuffer::wrapNSData([d->m_connection.get() _bufferedData]);
 
     return 0;

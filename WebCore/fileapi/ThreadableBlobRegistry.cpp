@@ -41,7 +41,7 @@ namespace WebCore {
 struct BlobRegistryContext {
     BlobRegistryContext(const KURL& url, PassOwnPtr<BlobData> blobData)
         : url(url.copy())
-        , blobData(blobData->copy())
+        , blobData(blobData)
     {
     }
 

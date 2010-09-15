@@ -1,3 +1,22 @@
+2010-09-14  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r67503.
+        http://trac.webkit.org/changeset/67503
+        https://bugs.webkit.org/show_bug.cgi?id=45802
+
+        This patch broke GTK builds (Requested by jianli_ on #webkit).
+
+        * fileapi/ThreadableBlobRegistry.cpp:
+        (WebCore::BlobRegistryContext::BlobRegistryContext):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::resourceData):
+        (WebCore::ResourceLoader::addData):
+        * platform/network/BlobResourceHandle.cpp:
+        * platform/network/BlobResourceHandle.h:
+        * platform/network/ResourceHandle.h:
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::bufferedData):
+
 2010-09-14  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
