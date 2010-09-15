@@ -1,3 +1,33 @@
+2010-09-15  Julien Chaffraix  <jchaffraix@codeaurora.org>
+
+        Reviewed by Andreas Kling.
+
+        Parse system colors in the HTML5 canvas context.
+        https://bugs.webkit.org/show_bug.cgi?id=39168
+
+        Test: fast/css/test-setting-canvas-color.html
+
+        Based on previous work by Jan Erik Hanssen  <jhanssen@codeaurora.org>
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseColor): Changed the function to better match our
+        early return policy. Also we now return false when we don't parse the color.
+        This is needed for createFromString to fallback to using parseSystemColor.
+
+        (WebCore::CSSParser::parseSystemColor): Made use of the RenderTheme to get
+        the system colors.
+
+        * css/CSSParser.h: Added the new parseSystemColor method.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setStrokeColor): Pass the document to createFromString.
+        (WebCore::CanvasRenderingContext2D::setFillColor): Ditto.
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::createFromString): Try to parse the color using CSSParser::parseColor
+        and fall back to parseSystemColor if it did not work.
+
+        * html/canvas/CanvasStyle.h: Added the new Document* parameter to createFromString.
+
 2010-09-14  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Darin Adler.

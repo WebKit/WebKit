@@ -86,12 +86,16 @@ CanvasStyle::CanvasStyle(PassRefPtr<CanvasPattern> pattern)
 {
 }
 
-PassRefPtr<CanvasStyle> CanvasStyle::createFromString(const String& color)
+PassRefPtr<CanvasStyle> CanvasStyle::createFromString(const String& color, Document* document)
 {
     RGBA32 rgba;
-    if (!CSSParser::parseColor(rgba, color))
-        return 0;
-    return adoptRef(new CanvasStyle(rgba));
+    if (CSSParser::parseColor(rgba, color))
+        return adoptRef(new CanvasStyle(rgba));
+
+    if (CSSParser::parseSystemColor(rgba, color, document))
+        return adoptRef(new CanvasStyle(rgba));
+
+    return 0;
 }
 
 PassRefPtr<CanvasStyle> CanvasStyle::createFromStringWithOverrideAlpha(const String& color, float alpha)

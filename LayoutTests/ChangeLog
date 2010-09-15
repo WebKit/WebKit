@@ -1,3 +1,18 @@
+2010-09-15  Julien Chaffraix  <jchaffraix@codeaurora.org>
+
+        Reviewed by Andreas Kling.
+
+        Test for: Parse system colors in the HTML5 canvas context.
+        https://bugs.webkit.org/show_bug.cgi?id=39168
+
+        This tests that svg color, deprecated system color and different
+        type of colors and invalid inputs are still parsed as such.
+
+        * fast/css/test-setting-canvas-color-expected.txt: Added.
+        * fast/css/test-setting-canvas-color.html: Added.
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+
 2010-09-14  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Darin Adler.
