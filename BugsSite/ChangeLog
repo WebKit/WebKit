@@ -1,5 +1,21 @@
 2010-09-15  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        [reviewtool] Comments should quote previous comments on the same line
+        https://bugs.webkit.org/show_bug.cgi?id=45847
+
+        Now when you reply to a previous comment, the tool will quote the
+        previous comment in the bugs.webkit.org post.  This makes it eaiser for
+        folks following along in email to understand the discussion.
+
+        While I was editing this code, I also cleaned up some of the whitespace
+        handling in comments.
+
+        * code-review.js:
+
+2010-09-15  Adam Barth  <abarth@webkit.org>
+
         Minor UI tweak to the review tool.  We want to display newlines in
         previous and frozen comments instead of collapsing them.
 

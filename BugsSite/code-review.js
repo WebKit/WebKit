@@ -67,6 +67,16 @@
     });
   }
 
+  function previousCommentsFor(line) {
+    var comments = [];
+    var position = line;
+    while (position.next() && position.next().hasClass('previousComment')) {
+      position = position.next();
+      comments.push(position.get());
+    }
+    return $(comments);
+  }
+
   function findCommentPositionFor(line) {
     var position = line;
     while (position.next() && position.next().hasClass('previousComment'))
@@ -114,7 +124,8 @@
   function addPreviousComment(line, author, comment_text) {
     var comment_block = $('<div data-comment-for="' + line.attr('id') + '" class="previousComment"></div>');
     var author_block = $('<div class="author"></div>').text(author + ':');
-    comment_block.text(comment_text).prepend(author_block).each(hoverify).click(addCommentField);
+    var text_block = $('<div class="content"></div>').text(comment_text);
+    comment_block.append(author_block).append(text_block).each(hoverify).click(addCommentField);
     insertCommentFor(line, comment_block);
   }
 
@@ -171,7 +182,7 @@
         ++i;
       }
       --i; // Decrement i because the for loop will increment it again in a second.
-      var comment_text = comment_lines.join('\n');
+      var comment_text = comment_lines.join('\n').trim();
       comments.push({
         'author': author,
         'file_name': file_name,
@@ -347,7 +358,7 @@
 
   $('.DiffSection').live('mouseleave', stopDragSelect).live('mouseup', stopDragSelect);
 
-  function contextSnippetFor(line) {
+  function contextSnippetFor(line, indent) {
     var snippets = []
     contextLinesFor(line).each(function() {
       var action = ' ';
@@ -356,7 +367,7 @@
       else if ($(this).hasClass('remove'))
         action = '-';
       var text = $(this).children('.text').text();
-      snippets.push('> ' + action + text);
+      snippets.push(indent + action + text);
     });
     return snippets.join('\n');
   }
@@ -365,10 +376,25 @@
     return line.parentsUntil('.FileDiff').parent().find('h1').text();
   }
 
-  function snippetFor(line) {
+  function indentFor(depth) {
+    return (new Array(depth + 1)).join('>') + ' ';
+  }
+
+  function snippetFor(line, indent) {
     var file_name = fileNameFor(line);
     var line_number = line.hasClass('remove') ? '-' + line.children('.from').text() : line.children('.to').text();
-    return '> ' + file_name + ':' + line_number + '\n' + contextSnippetFor(line);
+    return indent + file_name + ':' + line_number + '\n' + contextSnippetFor(line, indent);
+  }
+
+  function quotePreviousComments(comments) {
+    var quoted_comments = [];
+    var depth = comments.size();
+    comments.each(function() {
+      var indent = indentFor(depth--);
+      var text = $(this).children('.content').text();
+      quoted_comments.push(indent + '\n' + indent + text.split('\n').join('\n' + indent));
+    });
+    return quoted_comments.join('\n');
   }
 
   $('#comment_form .winter').live('click', function() {
@@ -380,11 +406,18 @@
     forEachLine(function(line) {
       if (line.attr('data-has-comment') != 'true')
         return;
-      var snippet = snippetFor(line);
       var comment = findCommentBlockFor(line).children('textarea').val().trim();
       if (comment == '')
         return;
-      comments_in_context.push(snippet + '\n' + comment);
+      var previous_comments = previousCommentsFor(line);
+      var snippet = snippetFor(line, indentFor(previous_comments.size() + 1));
+      var quoted_comments = quotePreviousComments(previous_comments);
+      var comment_with_context = [];
+      comment_with_context.push(snippet);
+      if (quoted_comments != '')
+        comment_with_context.push(quoted_comments);
+      comment_with_context.push('\n' + comment);
+      comments_in_context.push(comment_with_context.join('\n'));
     });
     $('#comment_form').removeClass('inactive');
     var comment = $('.overallComments textarea').val().trim();
