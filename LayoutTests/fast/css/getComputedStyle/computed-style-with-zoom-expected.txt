@@ -1,0 +1,50 @@
+Tests that computed style is not affected by the zoom value
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS -webkit-border-horizontal-spacing, value: "5px"
+PASS -webkit-border-vertical-spacing, value: "5px"
+PASS -webkit-box-reflect, value: "below 5px -webkit-gradient(linear, 0% 0%, 0% 100%, from(transparent), to(white)) 0 0 0 0 stretch stretch"
+PASS -webkit-box-shadow, value: "rgb(255, 0, 0) 5px 5px 5px 5px"
+PASS -webkit-column-rule-width, value: "5px"
+PASS -webkit-perspective-origin, value: "5px 5px"
+PASS -webkit-text-stroke-width, value: "5px"
+PASS -webkit-transform, value: "matrix(1, 0, 0, 1, 5, 5)"
+PASS -webkit-transform, value: "matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 5, 5, 5, 1)"
+PASS -webkit-transform-origin, value: "5px 5px"
+PASS border-bottom-left-radius, value: "5px"
+PASS border-bottom-right-radius, value: "5px"
+PASS border-bottom-width, value: "5px"
+PASS border-left-width, value: "5px"
+PASS border-right-width, value: "5px"
+PASS border-spacing, value: "5px 5px"
+PASS border-top-left-radius, value: "5px"
+PASS border-top-right-radius, value: "5px"
+PASS border-top-width, value: "5px"
+PASS bottom, value: "5px"
+PASS clip, value: "rect(5px 95px 95px 5px)"
+PASS font-size, value: "5px"
+PASS font-size, value: "16px"
+PASS height, value: "5px"
+PASS left, value: "5px"
+PASS letter-spacing, value: "5px"
+PASS line-height, value: "5px"
+PASS margin-bottom, value: "5px"
+PASS margin-left, value: "5px"
+PASS margin-right, value: "5px"
+PASS margin-top, value: "5px"
+PASS outline-width, value: "5px"
+PASS padding-bottom, value: "5px"
+PASS padding-left, value: "5px"
+PASS padding-right, value: "5px"
+PASS padding-top, value: "5px"
+PASS right, value: "5px"
+PASS text-shadow, value: "rgb(255, 0, 0) 5px 5px 5px"
+PASS top, value: "5px"
+PASS width, value: "5px"
+PASS word-spacing, value: "5px"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

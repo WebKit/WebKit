@@ -74,7 +74,7 @@ private:
     virtual String removeProperty(int propertyID, ExceptionCode&);
     virtual void setProperty(int propertyId, const String& value, bool important, ExceptionCode&);
 
-    PassRefPtr<CSSValue> valueForShadow(const ShadowData*, int) const;
+    PassRefPtr<CSSValue> valueForShadow(const ShadowData*, int, RenderStyle*) const;
     PassRefPtr<CSSPrimitiveValue> currentColorOrValidColor(RenderStyle*, const Color&) const;
     
     RefPtr<Node> m_node;

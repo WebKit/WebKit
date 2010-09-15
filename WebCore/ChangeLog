@@ -1,3 +1,30 @@
+2010-09-14  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        getComputedStyle() returns different values for different zoom levels
+        https://bugs.webkit.org/show_bug.cgi?id=32230
+
+        Test: fast/css/getComputedStyle/computed-style-with-zoom.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::zoomAdjustedPixelValue):
+        (WebCore::zoomAdjustedNumberValue):
+        (WebCore::valueForReflection):
+        (WebCore::getPositionOffsetValue):
+        (WebCore::getBorderRadiusCornerValue):
+        (WebCore::computedTransform):
+        (WebCore::CSSComputedStyleDeclaration::getFontSizeCSSValuePreferringKeyword):
+        (WebCore::CSSComputedStyleDeclaration::valueForShadow):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSComputedStyleDeclaration.h:
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getSVGPropertyCSSValue):
+        * rendering/RenderObject.h:
+        (WebCore::adjustForAbsoluteZoom):
+        * rendering/style/RenderStyle.h:
+        (WebCore::adjustForAbsoluteZoom):
+
 2010-09-14  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

@@ -989,14 +989,7 @@ inline void makeMatrixRenderable(TransformationMatrix& matrix, bool has3DRenderi
 
 inline int adjustForAbsoluteZoom(int value, RenderObject* renderer)
 {
-    double zoomFactor = renderer->style()->effectiveZoom();
-    if (zoomFactor == 1)
-        return value;
-    // Needed because computeLengthInt truncates (rather than rounds) when scaling up.
-    if (zoomFactor > 1)
-        value++;
-
-    return roundForImpreciseConversion<int, INT_MAX, INT_MIN>(value / zoomFactor);
+    return adjustForAbsoluteZoom(value, renderer->style());
 }
 
 inline void adjustIntRectForAbsoluteZoom(IntRect& rect, RenderObject* renderer)
