@@ -6,9 +6,11 @@ if (window.layoutTestController) {
 } else
     debug('This test can not be run without the LayoutTestController');
 
-navigator.geolocation.watchPosition(function() {});
-navigator.geolocation.clearWatch(0);
-location = "data:text/html,TEST COMPLETE<script>layoutTestController.notifyDone();</script>";
+document.body.onload = function() {
+    navigator.geolocation.watchPosition(function() {});
+    navigator.geolocation.clearWatch(0);
+    location = "data:text/html,TEST COMPLETE<script>if(window.layoutTestController) layoutTestController.notifyDone();</script>";
+}
 
 window.jsTestIsAsync = true;
 window.successfullyParsed = true;

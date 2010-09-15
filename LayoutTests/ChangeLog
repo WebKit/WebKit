@@ -1,3 +1,25 @@
+2010-09-15  Steve Block  <steveblock@google.com>
+
+        Reviewed by Kent Tamura.
+
+        LayoutTest fast/dom/Geolocation/clear-watch-invalid-id-crash.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=45783
+
+        This test synchronously navigates the page to a new URL from its main script file.
+        This navigation causes WebView.onPageFinished() to be called for the test page.
+        The problem is that this may occur before js-test-post.js, which is included by the
+        test and calls layoutTestController.waitUntilDone(), is loaded and parsed. As a
+        result, the test is incorrectly deemed to have finished as soon as the navigation
+        is started and the output will therefore be incorrect.
+
+        This patch fixes the problem by initiating the page navigation from
+        the onload handler, which is not fired until all resources have been
+        loaded and parsed. This guarantees that WebView.onPageFinished() is
+        not called until after layoutTestController.waitUntilDone() has been
+        called.
+
+        * fast/dom/Geolocation/script-tests/clear-watch-invalid-id-crash.js:
+
 2010-09-15  Renata Hodovan  <reni@inf.u-szeged.hu>
 
         Reviewed by Dirk Schulze.
