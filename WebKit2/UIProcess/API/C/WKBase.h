@@ -56,6 +56,7 @@ typedef const struct OpaqueWKPageNamespace* WKPageNamespaceRef;
 typedef const struct OpaqueWKPreferences* WKPreferencesRef;
 typedef const struct OpaqueWKSerializedScriptValue* WKSerializedScriptValueRef;
 typedef const struct OpaqueWKString* WKStringRef;
+typedef const struct OpaqueWKUInt64* WKUInt64Ref;
 typedef const struct OpaqueWKURL* WKURLRef;
 typedef const struct OpaqueWKURLRequest* WKURLRequestRef;
 typedef const struct OpaqueWKURLResponse* WKURLResponseRef;

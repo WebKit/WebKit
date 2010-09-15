@@ -50,3 +50,24 @@ void WKDoubleSetValue(WKDoubleRef doubleRef, double value)
 {
     toWK(doubleRef)->setValue(value);
 }
+
+WKTypeID WKUInt64GetTypeID()
+{
+    return toRef(WebUInt64::APIType);
+}
+
+WKUInt64Ref WKUInt64Create(uint64_t value)
+{
+    RefPtr<WebUInt64> uint64Object = WebUInt64::create(value);
+    return toRef(uint64Object.release().releaseRef());
+}
+
+uint64_t WKUInt64GetValue(WKUInt64Ref uint64Ref)
+{
+    return toWK(uint64Ref)->value();
+}
+
+void WKUInt64SetValue(WKUInt64Ref uint64Ref, uint64_t value)
+{
+    toWK(uint64Ref)->setValue(value);
+}

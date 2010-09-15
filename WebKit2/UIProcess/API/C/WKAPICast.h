@@ -81,6 +81,7 @@ template<> struct APITypeInfo<WKPreferencesRef>                 { typedef WebPre
 template<> struct APITypeInfo<WKSerializedScriptValueRef>       { typedef WebSerializedScriptValue* ImplType; };
 template<> struct APITypeInfo<WKStringRef>                      { typedef WebString* ImplType; };
 template<> struct APITypeInfo<WKTypeRef>                        { typedef APIObject* ImplType; };
+template<> struct APITypeInfo<WKUInt64Ref>                      { typedef WebUInt64* ImplType; };
 template<> struct APITypeInfo<WKURLRef>                         { typedef WebURL* ImplType; };
 template<> struct APITypeInfo<WKURLRequestRef>                  { typedef WebURLRequest* ImplType; };
 template<> struct APITypeInfo<WKURLResponseRef>                 { typedef WebURLResponse* ImplType; };
@@ -107,6 +108,7 @@ template<> struct ImplTypeInfo<WebPageProxy*>                   { typedef WKPage
 template<> struct ImplTypeInfo<WebPreferences*>                 { typedef WKPreferencesRef APIType; };
 template<> struct ImplTypeInfo<WebSerializedScriptValue*>       { typedef WKSerializedScriptValueRef APIType; };
 template<> struct ImplTypeInfo<WebString*>                      { typedef WKStringRef APIType; };
+template<> struct ImplTypeInfo<WebUInt64*>                      { typedef WKUInt64Ref APIType; };
 template<> struct ImplTypeInfo<WebURL*>                         { typedef WKURLRef APIType; };
 template<> struct ImplTypeInfo<WebURLRequest*>                  { typedef WKURLRequestRef APIType; };
 template<> struct ImplTypeInfo<WebURLResponse*>                 { typedef WKURLResponseRef APIType; };

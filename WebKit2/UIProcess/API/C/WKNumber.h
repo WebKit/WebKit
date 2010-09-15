@@ -38,6 +38,12 @@ WK_EXPORT WKDoubleRef WKDoubleCreate(double value);
 WK_EXPORT double WKDoubleGetValue(WKDoubleRef doubleRef);
 WK_EXPORT void WKDoubleSetValue(WKDoubleRef doubleRef, double value);
 
+/* WKUInt64 */
+WK_EXPORT WKTypeID WKUInt64GetTypeID();
+WK_EXPORT WKUInt64Ref WKUInt64Create(uint64_t value);
+WK_EXPORT uint64_t WKUInt64GetValue(WKUInt64Ref doubleRef);
+WK_EXPORT void WKUInt64SetValue(WKUInt64Ref uint64Ref, uint64_t value);
+
 #ifdef __cplusplus
 }
 #endif

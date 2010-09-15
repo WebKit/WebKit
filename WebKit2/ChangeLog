@@ -1,3 +1,20 @@
+2010-09-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Jon Honeycutt.
+
+        Add WKUInt64Ref wrapper for sending uint64_ts.
+
+        * Shared/APIObject.h:
+        * Shared/WebNumber.h:
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKBase.h:
+        * UIProcess/API/C/WKNumber.cpp:
+        (WKUInt64GetTypeID):
+        (WKUInt64Create):
+        (WKUInt64GetValue):
+        (WKUInt64SetValue):
+        * UIProcess/API/C/WKNumber.h:
+
 2010-09-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Adam Roben.
