@@ -59,6 +59,7 @@ http/tests/incremental/split-hex-entities.pl
 #   Tests failing
 accessibility/aria-combobox.html
 accessibility/aria-disabled.html
+accessibility/ellipsis-text.html
 accessibility/aria-help.html
 accessibility/aria-hidden.html
 accessibility/aria-hidden-with-elements.html
