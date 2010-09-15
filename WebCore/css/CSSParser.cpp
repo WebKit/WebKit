@@ -63,10 +63,8 @@
 #include "FontValue.h"
 #include "MediaList.h"
 #include "MediaQueryExp.h"
-#include "Page.h"
 #include "Pair.h"
 #include "Rect.h"
-#include "RenderTheme.h"
 #include "ShadowValue.h"
 #include "WebKitCSSKeyframeRule.h"
 #include "WebKitCSSKeyframesRule.h"
@@ -295,15 +293,12 @@ bool CSSParser::parseColor(RGBA32& color, const String& string, bool strict)
         return false;
 
     CSSValue* value = parser.m_parsedProperties[0]->value();
-    if (value->cssValueType() != CSSValue::CSS_PRIMITIVE_VALUE)
-        return false;
-
-    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
-    if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_RGBCOLOR) {
+    if (value->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE) {
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
         color = primitiveValue->getRGBA32Value();
-        return true;
     }
-    return false;
+
+    return true;
 }
 
 bool CSSParser::parseColor(CSSMutableStyleDeclaration* declaration, const String& string)
@@ -316,22 +311,6 @@ bool CSSParser::parseColor(CSSMutableStyleDeclaration* declaration, const String
     m_rule = 0;
 
     return (m_numParsedProperties && m_parsedProperties[0]->m_id == CSSPropertyColor);
-}
-
-bool CSSParser::parseSystemColor(RGBA32& color, const String& string, Document* document)
-{
-    if (!document || !document->page())
-        return false;
-
-    CSSParserString cssColor;
-    cssColor.characters = const_cast<UChar*>(string.characters());
-    cssColor.length = string.length();
-    int id = cssValueKeywordID(cssColor);
-    if (id <= 0)
-        return false;
-
-    color = document->page()->theme()->systemColor(id).rgb();
-    return true;
 }
 
 void CSSParser::parseSelector(const String& string, Document* doc, CSSSelectorList& selectorList)

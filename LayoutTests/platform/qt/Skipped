@@ -5223,6 +5223,7 @@ canvas/philip/tests/2d.drawImage.null.html
 canvas/philip/tests/2d.fillStyle.parse.current.basic.html
 canvas/philip/tests/2d.fillStyle.parse.current.changed.html
 canvas/philip/tests/2d.fillStyle.parse.current.removed.html
+canvas/philip/tests/2d.fillStyle.parse.system.html
 canvas/philip/tests/2d.gradient.radial.cone.behind.html
 canvas/philip/tests/2d.gradient.radial.cone.beside.html
 canvas/philip/tests/2d.gradient.radial.cone.bottom.html

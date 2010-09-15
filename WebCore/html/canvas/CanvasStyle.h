@@ -34,13 +34,12 @@ namespace WebCore {
 
     class CanvasGradient;
     class CanvasPattern;
-    class Document;
     class GraphicsContext;
 
     class CanvasStyle : public RefCounted<CanvasStyle> {
     public:
         static PassRefPtr<CanvasStyle> createFromRGBA(RGBA32 rgba) { return adoptRef(new CanvasStyle(rgba)); }
-        static PassRefPtr<CanvasStyle> createFromString(const String& color, Document* = 0);
+        static PassRefPtr<CanvasStyle> createFromString(const String& color);
         static PassRefPtr<CanvasStyle> createFromStringWithOverrideAlpha(const String& color, float alpha);
         static PassRefPtr<CanvasStyle> createFromGrayLevelWithAlpha(float grayLevel, float alpha) { return adoptRef(new CanvasStyle(grayLevel, alpha)); }
         static PassRefPtr<CanvasStyle> createFromRGBAChannels(float r, float g, float b, float a) { return adoptRef(new CanvasStyle(r, g, b, a)); }

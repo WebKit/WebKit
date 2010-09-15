@@ -1,3 +1,12 @@
+2010-09-15  Julien Chaffraix  <jchaffraix@codeaurora.org>
+
+        Unreviewed.
+
+        Reverting my changes as it is breaking several tests on Gtk and Qt.
+
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+
 2010-09-15  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Adam Barth.

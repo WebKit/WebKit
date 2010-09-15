@@ -1,5 +1,21 @@
 2010-09-15  Julien Chaffraix  <jchaffraix@codeaurora.org>
 
+        Unreviewed.
+
+        Reverting my changes as it is breaking several tests on Gtk and Qt.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseColor):
+        * css/CSSParser.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setStrokeColor):
+        (WebCore::CanvasRenderingContext2D::setFillColor):
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::createFromString):
+        * html/canvas/CanvasStyle.h:
+
+2010-09-15  Julien Chaffraix  <jchaffraix@codeaurora.org>
+
         Reviewed by Andreas Kling.
 
         Parse system colors in the HTML5 canvas context.
