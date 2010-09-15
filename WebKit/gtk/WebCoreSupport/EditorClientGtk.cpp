@@ -122,6 +122,13 @@ static void pasteClipboardCallback(GtkWidget* widget, EditorClient* client)
     client->addPendingEditorCommand("Paste");
 }
 
+static void toggleOverwriteCallback(GtkWidget* widget, EditorClient* client)
+{
+    // We don't support toggling the overwrite mode, but the default callback expects
+    // the GtkTextView to have a layout, so we handle this signal just to stop it.
+    g_signal_stop_emission_by_name(widget, "toggle-overwrite");
+}
+
 static const char* const gtkDeleteCommands[][2] = {
     { "DeleteBackward",               "DeleteForward"                        }, // Characters
     { "DeleteWordBackward",           "DeleteWordForward"                    }, // Word ends
@@ -770,6 +777,7 @@ EditorClient::EditorClient(WebKitWebView* webView)
     g_signal_connect(m_nativeWidget.get(), "select-all", G_CALLBACK(selectAllCallback), this);
     g_signal_connect(m_nativeWidget.get(), "move-cursor", G_CALLBACK(moveCursorCallback), this);
     g_signal_connect(m_nativeWidget.get(), "delete-from-cursor", G_CALLBACK(deleteFromCursorCallback), this);
+    g_signal_connect(m_nativeWidget.get(), "toggle-overwrite", G_CALLBACK(toggleOverwriteCallback), this);
 }
 
 EditorClient::~EditorClient()

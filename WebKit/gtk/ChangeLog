@@ -1,3 +1,18 @@
+2010-09-14  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] fast/events/keydown-numpad-keys.html produces many GLib warnings
+        https://bugs.webkit.org/show_bug.cgi?id=45775
+
+        Handle the toggle-overwrite signal on the GtkTextView used for generating editing
+        commands. Ignore this signals, as the default handler assumes that the GtkTextView
+        has a layout and this one does not.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::toggleOverwriteCallback): Added. Cancels the default handler.
+        (WebKit::EditorClient::EditorClient): Attach a handler for toggle-overwrite.
+
 2010-09-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
