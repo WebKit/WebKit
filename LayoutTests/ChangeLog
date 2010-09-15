@@ -1,3 +1,12 @@
+2010-09-14  Adam Barth  <abarth@webkit.org>
+
+        Attempt to fix test failure on Qt and Gtk.  It's tricky to write a test
+        for an API that supposed to report the current date and time without a
+        timezone.  This patch increases the allowably time window to a day +
+        one hour, which should be enough to account for any timezone issues.
+
+        * http/tests/misc/no-last-modified.html:
+
 2010-09-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r67503.

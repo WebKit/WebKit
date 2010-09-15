@@ -11,7 +11,7 @@ test('');
 window.onload = function() {
     var lastModified = Date.parse(frames[0].document.body.textContent);
     var now = new Date();
-    if (lastModified > now - 60*1000)
+    if (lastModified > now - (24+1)*60*60*1000)
         alert('PASS');
     else
         alert('FAIL');
