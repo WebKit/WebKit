@@ -1,3 +1,11 @@
+2010-09-15  Patrick Gansterer  <paroga@paroga.com>
+
+        Unreviewed.
+
+        Adding myself to the committers list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-09-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
