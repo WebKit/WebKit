@@ -721,18 +721,6 @@ WebInspector.disconnectFromBackend = function()
     InspectorFrontendHost.disconnectFromBackend();
 }
 
-WebInspector.documentMouseOver = function(event)
-{
-    if (event.target.tagName !== "A")
-        return;
-
-    const anchor = event.target;
-    if (!anchor.hasStyleClass("webkit-html-resource-link"))
-        return;
-    if (anchor.href && anchor.href.indexOf("/data:") != -1)
-        return;
-}
-
 WebInspector.documentClick = function(event)
 {
     var anchor = event.target.enclosingNodeOrSelfWithNodeName("a");
@@ -1887,7 +1875,6 @@ WebInspector.addMainEventListeners = function(doc)
     doc.defaultView.addEventListener("focus", this.windowFocused.bind(this), false);
     doc.defaultView.addEventListener("blur", this.windowBlurred.bind(this), false);
     doc.addEventListener("click", this.documentClick.bind(this), true);
-    doc.addEventListener("mouseover", this.documentMouseOver.bind(this), true);
 }
 
 WebInspector._searchFieldManualFocus = function(event)

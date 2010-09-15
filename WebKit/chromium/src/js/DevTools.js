@@ -162,7 +162,3 @@ WebInspector.resetToolbarColors = function()
 
 }
 
-// TODO(yurys): should be removed when eclipse debugger stops using it.
-if (window.RemoteDebuggerAgent) {
-    RemoteDebuggerAgent.setContextId = function() {};
-}
