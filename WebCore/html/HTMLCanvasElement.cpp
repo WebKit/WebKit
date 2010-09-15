@@ -193,7 +193,7 @@ void HTMLCanvasElement::didDraw(const FloatRect& rect)
         FloatRect destRect = ro->contentBoxRect();
         FloatRect r = mapRect(rect, FloatRect(0, 0, size().width(), size().height()), destRect);
         r.intersect(destRect);
-        if (m_dirtyRect.contains(r))
+        if (r.isEmpty() || m_dirtyRect.contains(r))
             return;
 
         m_dirtyRect.unite(r);
