@@ -163,6 +163,33 @@ class PortTest(unittest.TestCase):
         self.assertFalse(base._wdiff_available)
         base._wdiff_available = True
 
+    def test_diff_text(self):
+        port = base.Port()
+        # Make sure that we don't run into decoding exceptions when the
+        # filenames are unicode, with regular or malformed input (expected or
+        # actual input is always raw bytes, not unicode).
+        port.diff_text('exp', 'act', 'exp.txt', 'act.txt')
+        port.diff_text('exp', 'act', u'exp.txt', 'act.txt')
+        port.diff_text('exp', 'act', u'a\xac\u1234\u20ac\U00008000', 'act.txt')
+
+        port.diff_text('exp' + chr(255), 'act', 'exp.txt', 'act.txt')
+        port.diff_text('exp' + chr(255), 'act', u'exp.txt', 'act.txt')
+
+        # Though expected and actual files should always be read in with no
+        # encoding (and be stored as str objects), test unicode inputs just to
+        # be safe.
+        port.diff_text(u'exp', 'act', 'exp.txt', 'act.txt')
+        port.diff_text(
+            u'a\xac\u1234\u20ac\U00008000', 'act', 'exp.txt', 'act.txt')
+
+        # And make sure we actually get diff output.
+        diff = port.diff_text('foo', 'bar', 'exp.txt', 'act.txt')
+        self.assertTrue('foo' in diff)
+        self.assertTrue('bar' in diff)
+        self.assertTrue('exp.txt' in diff)
+        self.assertTrue('act.txt' in diff)
+        self.assertFalse('nosuchthing' in diff)
+
     def test_default_configuration_notfound(self):
         port = UnitTestPort()
         self.assertEqual(port.default_configuration(), "Release")

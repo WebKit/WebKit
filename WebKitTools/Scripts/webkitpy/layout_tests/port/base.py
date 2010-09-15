@@ -152,6 +152,16 @@ class Port(object):
 
         While this is a generic routine, we include it in the Port
         interface so that it can be overriden for testing purposes."""
+
+        # The filenames show up in the diff output, make sure they're
+        # raw bytes and not unicode, so that they don't trigger join()
+        # trying to decode the input.
+        def to_raw_bytes(str):
+            if isinstance(str, unicode):
+                return str.encode('utf-8')
+            return str
+        expected_filename = to_raw_bytes(expected_filename)
+        actual_filename = to_raw_bytes(actual_filename)
         diff = difflib.unified_diff(expected_text.splitlines(True),
                                     actual_text.splitlines(True),
                                     expected_filename,
