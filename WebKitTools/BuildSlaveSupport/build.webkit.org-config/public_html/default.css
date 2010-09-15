@@ -337,13 +337,13 @@ div.BuildWaterfall {
 /* LastBuild, BuildStep states */
 .success {
 	color: #FFFFFF;
-	background-color: #8d8;
+	background-color: #6d6;
 	border-color: #4F8530;
 }
 
 .failure {
 	color: #FFFFFF;
-	background-color: #f99;
+	background-color: #d66;
 	border-color: #A77272;
 }
 
