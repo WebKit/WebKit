@@ -1,3 +1,27 @@
+2010-09-15  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        fast/dom/DeviceOrientation/add-listener-from-callback flaky
+        https://bugs.webkit.org/show_bug.cgi?id=45814
+
+        When we call addEventListener(), an event is sent to all registered
+        event listeners on that page. So in the existing test, both the calls
+        to setMockDeviceOrientation() and addEventListener() will trigger events
+        to fire asynchronously on both listeners (both will be registered by the
+        time the event fires), giving a total of five events. A race condition
+        exists as to whether the test finishes after the third event, before
+        the fourth event fires.
+
+        This patch fixes the problem by expecting the correct number of events
+        to fire. We also remove the call to setMockDeviceOrientation() as this
+        adds extra complication and is tested in update.html.
+
+        * fast/dom/DeviceOrientation/add-listener-from-callback-expected.txt:
+        * fast/dom/DeviceOrientation/script-tests/add-listener-from-callback.js:
+        (checkOrientation):
+        (firstListener):
+
 2010-09-15  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
