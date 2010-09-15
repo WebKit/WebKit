@@ -602,11 +602,11 @@ void ApplicationCacheGroup::didReceiveData(ResourceHandle* handle, const char* d
     m_loadedSize += length;
 }
 
-void ApplicationCacheGroup::didFinishLoading(ResourceHandle* handle, double finishTime)
+void ApplicationCacheGroup::didFinishLoading(ResourceHandle* handle)
 {
 #if ENABLE(INSPECTOR)
     if (Page* page = m_frame->page())
-        page->inspectorController()->didFinishLoading(m_currentResourceIdentifier, finishTime);
+        page->inspectorController()->didFinishLoading(m_currentResourceIdentifier);
 #endif
 
     if (handle == m_manifestHandle) {

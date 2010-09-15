@@ -559,7 +559,7 @@ void DocumentLoader::substituteResourceDeliveryTimerFired(Timer<DocumentLoader>*
         
             loader->didReceiveResponse(resource->response());
             loader->didReceiveData(data->data(), data->size(), data->size(), true);
-            loader->didFinishLoading(0);
+            loader->didFinishLoading();
         } else {
             // A null resource means that we should fail the load.
             // FIXME: Maybe we should use another error here - something like "not in cache".

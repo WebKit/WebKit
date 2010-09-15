@@ -275,9 +275,9 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
             if (m_substituteData.content()->size())
                 didReceiveData(m_substituteData.content()->data(), m_substituteData.content()->size(), m_substituteData.content()->size(), true);
             if (frameLoader() && !frameLoader()->isStopping()) 
-                didFinishLoading(0);
+                didFinishLoading();
         } else if (shouldLoadAsEmptyDocument(url) || frameLoader()->representationExistsForURLScheme(url.protocol()))
-            didFinishLoading(0);
+            didFinishLoading();
     }
 }
 
@@ -420,7 +420,7 @@ void MainResourceLoader::didReceiveData(const char* data, int length, long long 
     ResourceLoader::didReceiveData(data, length, lengthReceived, allAtOnce);
 }
 
-void MainResourceLoader::didFinishLoading(double finishTime)
+void MainResourceLoader::didFinishLoading()
 {
     // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
     // See <rdar://problem/6304600> for more details.
@@ -439,7 +439,7 @@ void MainResourceLoader::didFinishLoading(double finishTime)
     ASSERT(!documentLoader()->timing()->responseEnd);
     documentLoader()->timing()->responseEnd = m_timeOfLastDataReceived;
     frameLoader()->finishedLoading();
-    ResourceLoader::didFinishLoading(finishTime);
+    ResourceLoader::didFinishLoading();
     
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     dl->applicationCacheHost()->finishedLoadingMainResource();

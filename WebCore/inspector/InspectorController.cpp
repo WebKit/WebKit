@@ -964,7 +964,7 @@ void InspectorController::willSendRequest(unsigned long identifier, ResourceRequ
         // Redirect may have empty URL and we'd like to not crash with invalid HashMap entry.
         // See http/tests/misc/will-send-request-returns-null-on-redirect.html
         if (!request.url().isEmpty()) {
-            resource->endTiming(0);
+            resource->endTiming();
             resource->updateResponse(redirectResponse);
 
             // We always store last redirect by the original id key. Rest of the redirects are stored within the last one.
@@ -1021,7 +1021,7 @@ void InspectorController::didReceiveContentLength(unsigned long identifier, int 
         resource->updateScriptObject(m_frontend.get());
 }
 
-void InspectorController::didFinishLoading(unsigned long identifier, double finishTime)
+void InspectorController::didFinishLoading(unsigned long identifier)
 {
     if (!enabled())
         return;
@@ -1033,7 +1033,7 @@ void InspectorController::didFinishLoading(unsigned long identifier, double fini
     if (!resource)
         return;
 
-    resource->endTiming(finishTime);
+    resource->endTiming();
 
     // No need to mute this event for main resource since it happens after did commit load.
     if (m_frontend)
@@ -1058,7 +1058,7 @@ void InspectorController::didFailLoading(unsigned long identifier, const Resourc
         return;
 
     resource->markFailed();
-    resource->endTiming(0);
+    resource->endTiming();
 
     // No need to mute this event for main resource since it happens after did commit load.
     if (m_frontend)
@@ -1493,7 +1493,7 @@ void InspectorController::didCloseWebSocket(unsigned long identifier)
     if (!resource)
         return;
 
-    resource->endTiming(0);
+    resource->endTiming();
     if (m_frontend)
         resource->updateScriptObject(m_frontend.get());
 }

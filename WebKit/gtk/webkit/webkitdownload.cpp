@@ -60,7 +60,7 @@ class DownloadClient : public Noncopyable, public ResourceHandleClient {
 
         virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
         virtual void didReceiveData(ResourceHandle*, const char*, int, int);
-        virtual void didFinishLoading(ResourceHandle*, double);
+        virtual void didFinishLoading(ResourceHandle*);
         virtual void didFail(ResourceHandle*, const ResourceError&);
         virtual void wasBlocked(ResourceHandle*);
         virtual void cannotShowURL(ResourceHandle*);
@@ -930,7 +930,7 @@ void DownloadClient::didReceiveData(ResourceHandle*, const char* data, int lengt
     webkit_download_received_data(m_download, data, length);
 }
 
-void DownloadClient::didFinishLoading(ResourceHandle*, double)
+void DownloadClient::didFinishLoading(ResourceHandle*)
 {
     webkit_download_finished_loading(m_download);
 }

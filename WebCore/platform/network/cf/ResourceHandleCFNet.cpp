@@ -92,7 +92,7 @@ private:
     virtual void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&);
     virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
     virtual void didReceiveData(ResourceHandle*, const char*, int, int /*lengthReceived*/);
-    virtual void didFinishLoading(ResourceHandle*, double /*finishTime*/);
+    virtual void didFinishLoading(ResourceHandle*);
     virtual void didFail(ResourceHandle*, const ResourceError&);
 
     bool m_allowStoredCredentials;
@@ -241,7 +241,7 @@ void didFinishLoading(CFURLConnectionRef conn, const void* clientInfo)
     LOG(Network, "CFNet - didFinishLoading(conn=%p, handle=%p) (%s)", conn, handle, handle->firstRequest().url().string().utf8().data());
 
     if (handle->client())
-        handle->client()->didFinishLoading(handle, 0);
+        handle->client()->didFinishLoading(handle);
 }
 
 void didFail(CFURLConnectionRef conn, CFErrorRef error, const void* clientInfo) 
@@ -741,7 +741,7 @@ void WebCoreSynchronousLoaderClient::didReceiveData(ResourceHandle*, const char*
     CFDataAppendBytes(m_data.get(), reinterpret_cast<const UInt8*>(data), length);
 }
 
-void WebCoreSynchronousLoaderClient::didFinishLoading(ResourceHandle*, double)
+void WebCoreSynchronousLoaderClient::didFinishLoading(ResourceHandle*)
 {
     m_isDone = true;
 }

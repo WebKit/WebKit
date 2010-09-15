@@ -117,7 +117,7 @@ namespace WebCore {
         void startTiming();
         void markLoadEventTime();
         void markDOMContentEventTime();
-        void endTiming(double actualEndTime);
+        void endTiming();
 
         void markFailed();
         void addLength(int lengthReceived);

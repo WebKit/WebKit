@@ -60,7 +60,7 @@ private:
 
     void didReceiveResponse(ResourceHandle*, const ResourceResponse&) { delete this; }
     void didReceiveData(ResourceHandle*, const char*, int) { delete this; }
-    void didFinishLoading(ResourceHandle*, double) { delete this; }
+    void didFinishLoading(ResourceHandle*) { delete this; }
     void didFail(ResourceHandle*, const ResourceError&) { delete this; }
 
     RefPtr<ResourceHandle> m_handle;

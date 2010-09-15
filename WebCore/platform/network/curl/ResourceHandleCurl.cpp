@@ -47,7 +47,7 @@ public:
 
     virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
     virtual void didReceiveData(ResourceHandle*, const char*, int, int lengthReceived);
-    virtual void didFinishLoading(ResourceHandle*, double /*finishTime*/);
+    virtual void didFinishLoading(ResourceHandle*);
     virtual void didFail(ResourceHandle*, const ResourceError&);
 
     ResourceResponse resourceResponse() const { return m_response; }
@@ -74,7 +74,7 @@ void WebCoreSynchronousLoader::didReceiveData(ResourceHandle*, const char* data,
     m_data.append(data, length);
 }
 
-void WebCoreSynchronousLoader::didFinishLoading(ResourceHandle*, double)
+void WebCoreSynchronousLoader::didFinishLoading(ResourceHandle*)
 {
 }
 

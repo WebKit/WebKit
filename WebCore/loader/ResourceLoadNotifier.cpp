@@ -82,11 +82,11 @@ void ResourceLoadNotifier::didReceiveData(ResourceLoader* loader, const char* da
     dispatchDidReceiveContentLength(loader->documentLoader(), loader->identifier(), lengthReceived);
 }
 
-void ResourceLoadNotifier::didFinishLoad(ResourceLoader* loader, double finishTime)
+void ResourceLoadNotifier::didFinishLoad(ResourceLoader* loader)
 {    
     if (Page* page = m_frame->page())
         page->progress()->completeProgress(loader->identifier());
-    dispatchDidFinishLoading(loader->documentLoader(), loader->identifier(), finishTime);
+    dispatchDidFinishLoading(loader->documentLoader(), loader->identifier());
 }
 
 void ResourceLoadNotifier::didFailToLoad(ResourceLoader* loader, const ResourceError& error)
@@ -150,13 +150,13 @@ void ResourceLoadNotifier::dispatchDidReceiveContentLength(DocumentLoader* loade
 #endif
 }
 
-void ResourceLoadNotifier::dispatchDidFinishLoading(DocumentLoader* loader, unsigned long identifier, double finishTime)
+void ResourceLoadNotifier::dispatchDidFinishLoading(DocumentLoader* loader, unsigned long identifier)
 {
     m_frame->loader()->client()->dispatchDidFinishLoading(loader, identifier);
 
 #if ENABLE(INSPECTOR)
     if (Page* page = m_frame->page())
-        page->inspectorController()->didFinishLoading(identifier, finishTime);
+        page->inspectorController()->didFinishLoading(identifier);
 #endif
 }
 
@@ -169,7 +169,7 @@ void ResourceLoadNotifier::sendRemainingDelegateMessages(DocumentLoader* loader,
         dispatchDidReceiveContentLength(loader, identifier, length);
 
     if (error.isNull())
-        dispatchDidFinishLoading(loader, identifier, 0);
+        dispatchDidFinishLoading(loader, identifier);
     else
         m_frame->loader()->client()->dispatchDidFailLoading(loader, identifier, error);
 }

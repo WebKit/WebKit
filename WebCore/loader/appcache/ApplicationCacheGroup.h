@@ -113,7 +113,7 @@ private:
 #endif
     virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
     virtual void didReceiveData(ResourceHandle*, const char*, int length, int lengthReceived);
-    virtual void didFinishLoading(ResourceHandle*, double finishTime);
+    virtual void didFinishLoading(ResourceHandle*);
     virtual void didFail(ResourceHandle*, const ResourceError&);
 
     void didReceiveManifestResponse(const ResourceResponse&);

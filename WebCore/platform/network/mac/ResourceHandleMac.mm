@@ -115,7 +115,7 @@ private:
     virtual void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&);
     virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
     virtual void didReceiveData(ResourceHandle*, const char*, int, int /*lengthReceived*/);
-    virtual void didFinishLoading(ResourceHandle*, double /*finishTime*/);
+    virtual void didFinishLoading(ResourceHandle*);
     virtual void didFail(ResourceHandle*, const ResourceError&);
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     virtual bool canAuthenticateAgainstProtectionSpace(ResourceHandle*, const ProtectionSpace&);
@@ -917,7 +917,7 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     if (!ResourceHandle::didSendBodyDataDelegateExists())
         disassociateStreamWithResourceHandle([m_handle->firstRequest().nsURLRequest() HTTPBodyStream]);
 
-    m_handle->client()->didFinishLoading(m_handle, 0);
+    m_handle->client()->didFinishLoading(m_handle);
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
@@ -1059,7 +1059,7 @@ void WebCoreSynchronousLoaderClient::didReceiveData(ResourceHandle*, const char*
     [m_data appendBytes:data length:length];
 }
 
-void WebCoreSynchronousLoaderClient::didFinishLoading(ResourceHandle*, double)
+void WebCoreSynchronousLoaderClient::didFinishLoading(ResourceHandle*)
 {
     m_isDone = true;
 }

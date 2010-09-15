@@ -140,7 +140,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& r)
         
         // After the first multipart section is complete, signal to delegates that this load is "finished" 
         m_documentLoader->subresourceLoaderFinishedLoadingOnePart(this);
-        didFinishLoadingOnePart(0);
+        didFinishLoadingOnePart();
     }
 }
 
@@ -168,7 +168,7 @@ void SubresourceLoader::didReceiveCachedMetadata(const char* data, int length)
         m_client->didReceiveCachedMetadata(this, data, length);
 }
 
-void SubresourceLoader::didFinishLoading(double finishTime)
+void SubresourceLoader::didFinishLoading()
 {
     if (cancelled())
         return;
@@ -185,7 +185,7 @@ void SubresourceLoader::didFinishLoading(double finishTime)
     if (cancelled())
         return;
     m_documentLoader->removeSubresourceLoader(this);
-    ResourceLoader::didFinishLoading(finishTime);
+    ResourceLoader::didFinishLoading();
 }
 
 void SubresourceLoader::didFail(const ResourceError& error)

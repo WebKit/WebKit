@@ -101,7 +101,7 @@ void NetscapePlugInStreamLoader::didFinishLoading()
 
     m_documentLoader->removePlugInStreamLoader(this);
     m_client->didFinishLoading(this);
-    ResourceLoader::didFinishLoading(0);
+    ResourceLoader::didFinishLoading();
 }
 
 void NetscapePlugInStreamLoader::didFail(const ResourceError& error)
