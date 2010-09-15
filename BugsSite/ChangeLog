@@ -1,5 +1,30 @@
 2010-09-14  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        bugs.webkit.org should autocomplete WebKit Committers and Reviewers
+        https://bugs.webkit.org/show_bug.cgi?id=45799
+
+        This patch implements an autocomplete dropdown that helps users type
+        the names of WebKit committers and reviewers.  The script grabs the
+        data from SVN now that wms set up CORS for http://svn.webkit.org.
+        Security technology for the win.
+
+        This script is based on (well, essentially copied from) the popular
+        autocomplete extension:
+
+        https://chrome.google.com/extensions/detail/olaabhcgdogcbcoiolomlcodkngnemfb
+
+        I asked Ojan, and said he was fine licensing the code under the BSD
+        license.  I'm not sure how the patch interacts with the extension, but
+        we can retire the extension if they interact poorly.
+
+        * committers-autocomplete.js: Added.
+        * template/en/default/global/footer.html.tmpl:
+            - Add the script to every page on bugs.webkit.org
+
+2010-09-14  Adam Barth  <abarth@webkit.org>
+
         Add a license block to the reviewtool.  I should have added this from
         the start.  According to the SVN log, I'm the only one to have ever
         touched this file.
