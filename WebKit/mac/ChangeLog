@@ -14,17 +14,6 @@
         (WebEditorClient::dismissCorrectionPanel): Ditto
         (WebEditorClient::isShowingCorrectionPanel): Query whether autocorrection panel is shown.
 
-2010-09-14  Jia Pu  <jpu@apple.com>
-
-        Reviewed by Dan Bernstein.
-
-        WebKit should use system wide spell checking preference when application specific one isn't set.
-        https://bugs.webkit.org/show_bug.cgi?id=45789
-
-        * WebView/WebView.mm:
-        (+[WebView initialize]): Use system wide autocorrection and text substitution preferences
-           when the application level preferences are not set.
-
 2010-09-14  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by John Sullivan.
