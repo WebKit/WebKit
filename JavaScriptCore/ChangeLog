@@ -1,3 +1,14 @@
+2010-09-14  Hyung Song  <beergun@company100.net>
+
+        Reviewed by Kent Tamura.
+
+        [BREWMP] Add IMemGroup and IMemSpace to OwnPtr type.
+        https://bugs.webkit.org/show_bug.cgi?id=44764
+
+        * wtf/OwnPtrCommon.h:
+        * wtf/brew/OwnPtrBrew.cpp:
+        (WTF::deleteOwnedPtr):
+
 2010-09-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoffrey Garen.

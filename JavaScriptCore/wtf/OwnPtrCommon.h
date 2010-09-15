@@ -46,6 +46,8 @@ typedef struct _IFileMgr IFileMgr;
 typedef struct _IFile IFile;
 typedef struct IBitmap IBitmap;
 typedef struct ISSL ISSL;
+typedef struct IMemGroup IMemGroup;
+typedef struct IMemSpace IMemSpace;
 #endif
 
 namespace WTF {
@@ -73,6 +75,8 @@ namespace WTF {
     void deleteOwnedPtr(IBitmap*);
     void deleteOwnedPtr(ISSL*);
     void deleteOwnedPtr(ISocket*);
+    void deleteOwnedPtr(IMemGroup*);
+    void deleteOwnedPtr(IMemSpace*);
 #endif
 
 } // namespace WTF

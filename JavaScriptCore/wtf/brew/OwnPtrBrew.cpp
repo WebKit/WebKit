@@ -28,6 +28,8 @@
 
 #include <AEEBitmap.h>
 #include <AEEFile.h>
+#include <AEEIMemGroup.h>
+#include <AEEIMemSpace.h>
 #include <AEENet.h>
 #include <AEESSL.h>
 #include <AEEStdLib.h>
@@ -56,6 +58,18 @@ void deleteOwnedPtr(ISSL* ptr)
 {
     if (ptr)
         ISSL_Release(ptr);
+}
+
+void deleteOwnedPtr(IMemGroup* ptr)
+{
+    if (ptr)
+        IMemGroup_Release(ptr);
+}
+
+void deleteOwnedPtr(IMemSpace* ptr)
+{
+    if (ptr)
+        IMemSpace_Release(ptr);
 }
 
 void deleteOwnedPtr(ISocket* ptr)
