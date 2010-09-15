@@ -90,6 +90,7 @@ struct _Ewk_View_Private_Data {
         const char* encoding_default;
         const char* encoding_custom;
         const char* cache_directory;
+        const char* theme;
         int font_minimum_size;
         int font_minimum_logical_size;
         int font_default_size;
@@ -1113,6 +1114,9 @@ void ewk_view_fixed_layout_size_get(Evas_Object* o, Evas_Coord* w, Evas_Coord* h
 void ewk_view_theme_set(Evas_Object* o, const char* path)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv);
+    if (!eina_stringshare_replace(&priv->settings.theme, path))
+        return;
     ewk_frame_theme_set(sd->main_frame, path);
 }
 
@@ -1128,7 +1132,8 @@ void ewk_view_theme_set(Evas_Object* o, const char* path)
 const char* ewk_view_theme_get(Evas_Object* o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
-    return ewk_frame_theme_get(sd->main_frame);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
+    return priv->settings.theme;
 }
 
 /**

@@ -1962,7 +1962,9 @@ void ewk_frame_view_create_for_view(Evas_Object* o, Evas_Object* view)
     sd->frame->createView(size, bg, !a, WebCore::IntSize(), false);
     if (!sd->frame->view())
         return;
-    sd->frame->view()->setEdjeTheme(sd->theme);
+
+    const char* theme = ewk_view_theme_get(view);
+    sd->frame->view()->setEdjeTheme(theme);
     sd->frame->view()->setEvasObject(o);
 }
 

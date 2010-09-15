@@ -1,3 +1,19 @@
+2010-09-14  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] ewk_frame_view_create_for_view set null as theme.
+        https://bugs.webkit.org/show_bug.cgi?id=45741
+
+        Add theme in ewk_view to use instead of frame's theme which is null in
+        ewk_frame_view_create_for_view.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_view_create_for_view):
+        * ewk/ewk_view.cpp:
+        (ewk_view_theme_set):
+        (ewk_view_theme_get):
+
 2010-09-14  Leandro Pereira  <leandro@profusion.mobi>
 
         [EFL] Unreviewed build fix: remove "virtual" keyword from
