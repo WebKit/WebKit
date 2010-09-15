@@ -48,6 +48,7 @@ if build_port == "wx":
 
 if sys.platform.startswith("win"):
     wk_includes.append(os.path.join(wk_root, 'WebCore','platform','win'))
+    wk_includes.append(os.path.join(wk_root, 'WebCore','platform','graphics','win'))
 
 windows_deps = [
                 'lib/pthreadVC2.dll',
@@ -68,8 +69,7 @@ if build_port == "wx":
         webcore_sources['wx-win'] = [
                'WebCore/platform/graphics/win/GlyphPageTreeNodeCairoWin.cpp',
                'WebCore/platform/graphics/win/TransformationMatrixWin.cpp',
-               'WebCore/platform/win/ScrollAnimatorWin.cpp',
-               'WebCore/platform/win/ScrollAnimatorWin.h',
+               'WebCore/platform/ScrollAnimatorWin.cpp',
                # wxTimer on Windows has a bug that causes it to eat crashes in callbacks
                # so we need to use the Win port's implementation until the wx bug fix is
                # widely available (it was fixed in 2.8.10).

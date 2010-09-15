@@ -1,3 +1,9 @@
+2010-09-15  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fixes for wxMSW.
+
+        * wscript:
+
 2010-09-14  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Csaba Osztrogonác.
