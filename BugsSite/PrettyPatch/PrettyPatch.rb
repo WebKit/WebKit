@@ -284,7 +284,9 @@ body {
 }
 
 .previousComment, .frozenComment {
-  border: inset 1px; padding: 5px;
+  border: inset 1px;
+  padding: 5px;
+  white-space: pre-wrap;
 }
 
 .comment button {

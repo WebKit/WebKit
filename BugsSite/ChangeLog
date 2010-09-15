@@ -1,3 +1,10 @@
+2010-09-15  Adam Barth  <abarth@webkit.org>
+
+        Minor UI tweak to the review tool.  We want to display newlines in
+        previous and frozen comments instead of collapsing them.
+
+        * PrettyPatch/PrettyPatch.rb:
+
 2010-09-14  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
