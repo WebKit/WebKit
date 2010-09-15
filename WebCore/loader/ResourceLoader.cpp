@@ -36,6 +36,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include "InspectorController.h"
 #include "InspectorTimelineAgent.h"
 #include "Page.h"
 #include "ProgressTracker.h"
@@ -276,7 +277,7 @@ void ResourceLoader::willStopBufferingData(const char* data, int length)
     m_resourceData = SharedBuffer::create(data, length);
 }
 
-void ResourceLoader::didFinishLoading()
+void ResourceLoader::didFinishLoading(double finishTime)
 {
     // If load has been cancelled after finishing (which could happen with a 
     // JavaScript that changes the window location), do nothing.
@@ -284,11 +285,11 @@ void ResourceLoader::didFinishLoading()
         return;
     ASSERT(!m_reachedTerminalState);
 
-    didFinishLoadingOnePart();
+    didFinishLoadingOnePart(finishTime);
     releaseResources();
 }
 
-void ResourceLoader::didFinishLoadingOnePart()
+void ResourceLoader::didFinishLoadingOnePart(double finishTime)
 {
     if (m_cancelled)
         return;
@@ -298,7 +299,7 @@ void ResourceLoader::didFinishLoadingOnePart()
         return;
     m_calledDidFinishLoad = true;
     if (m_sendResourceLoadCallbacks)
-        frameLoader()->notifier()->didFinishLoad(this);
+        frameLoader()->notifier()->didFinishLoad(this, finishTime);
 }
 
 void ResourceLoader::didFail(const ResourceError& error)
@@ -440,9 +441,9 @@ void ResourceLoader::didReceiveData(ResourceHandle*, const char* data, int lengt
 #endif
 }
 
-void ResourceLoader::didFinishLoading(ResourceHandle*)
+void ResourceLoader::didFinishLoading(ResourceHandle*, double finishTime)
 {
-    didFinishLoading();
+    didFinishLoading(finishTime);
 }
 
 void ResourceLoader::didFail(ResourceHandle*, const ResourceError& error)

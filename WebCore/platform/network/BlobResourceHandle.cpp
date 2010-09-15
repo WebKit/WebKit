@@ -80,7 +80,7 @@ public:
 
     virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
     virtual void didReceiveData(ResourceHandle*, const char*, int, int /*lengthReceived*/);
-    virtual void didFinishLoading(ResourceHandle*);
+    virtual void didFinishLoading(ResourceHandle*, double /*finishTime*/);
     virtual void didFail(ResourceHandle*, const ResourceError&);
 
 private:
@@ -116,7 +116,7 @@ void BlobResourceSynchronousLoader::didReceiveData(ResourceHandle*, const char*,
 {
 }
 
-void BlobResourceSynchronousLoader::didFinishLoading(ResourceHandle*)
+void BlobResourceSynchronousLoader::didFinishLoading(ResourceHandle*, double)
 {
 }
 
@@ -581,7 +581,7 @@ void BlobResourceHandle::notifyFail(int errorCode)
 void BlobResourceHandle::notifyFinish()
 {
     if (client())
-        client()->didFinishLoading(this);
+        client()->didFinishLoading(this, 0);
 }
 
 } // namespace WebCore

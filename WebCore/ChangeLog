@@ -1,3 +1,69 @@
+2010-09-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Provide network-based load timing.
+        Before this change, inspector used timers taken from
+        within WebCore notifications (that are by definition
+        synchronous and serialized). As a result, timing was
+        affected by the routines running on the main thread
+        (JavaScript and such).
+        https://bugs.webkit.org/show_bug.cgi?id=45664
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::willSendRequest):
+        (WebCore::InspectorController::didFinishLoading):
+        (WebCore::InspectorController::didFailLoading):
+        * inspector/InspectorController.h:
+        * inspector/InspectorResource.cpp:
+        (WebCore::InspectorResource::endTiming):
+        * inspector/InspectorResource.h:
+        * loader/PingLoader.h:
+        (WebCore::PingLoader::didFinishLoading):
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::dispatchDidFinishLoading):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didFinishLoading):
+        * loader/ResourceLoader.h:
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::didFinishLoading):
+        * loader/appcache/ApplicationCacheGroup.h:
+        * loader/icon/IconFetcher.cpp:
+        (WebCore::IconFetcher::didFinishLoading):
+        * loader/icon/IconFetcher.h:
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (StreamingClient::didFinishLoading):
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::BlobResourceHandle::notifyFinish):
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::didFinishLoading):
+        * platform/network/ResourceLoadTiming.h:
+        (WebCore::ResourceLoadTiming::deepCopy):
+        (WebCore::ResourceLoadTiming::operator==):
+        (WebCore::ResourceLoadTiming::ResourceLoadTiming):
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::didFinishLoading):
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::WebCoreSynchronousLoader::didFinishLoading):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::downloadTimerCallback):
+        (WebCore::parseDataUrl):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (-[WebCoreResourceHandleAsDelegate connectionDidFinishLoading:]):
+        (WebCoreSynchronousLoaderClient::didFinishLoading):
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::finish):
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::WebCoreSynchronousLoader::didFinishLoading):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::WebCoreSynchronousLoader::didFinishLoading):
+        (WebCore::WebCoreSynchronousLoader::didFail):
+        * platform/network/win/ResourceHandleWin.cpp:
+        (WebCore::WebCoreSynchronousLoader::didFinishLoading):
+        (WebCore::ResourceHandle::onRequestComplete):
+        (WebCore::ResourceHandle::fileLoadTimer):
+        (WebCore::ResourceHandle::cancel):
+
 2010-09-14  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
