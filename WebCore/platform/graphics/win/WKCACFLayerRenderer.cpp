@@ -327,6 +327,7 @@ void WKCACFLayerRenderer::setRootChildLayer(WKCACFLayer* layer)
     m_scrollLayer->removeAllSublayers();
     m_rootChildLayer = layer;
     if (layer) {
+        layer->setGeometryFlipped(true);
         m_scrollLayer->addSublayer(layer);
         // Adjust the scroll frame accordingly
         updateScrollFrame();

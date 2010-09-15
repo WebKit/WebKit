@@ -121,11 +121,6 @@ static void clearLayerBackgroundColor(WKCACFLayer* layer)
     layer->setBackgroundColor(0);
 }
 
-GraphicsLayer::CompositingCoordinatesOrientation GraphicsLayer::compositingCoordinatesOrientation()
-{
-    return CompositingCoordinatesBottomUp;
-}
-
 PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
 {
     return new GraphicsLayerCACF(client);
@@ -395,15 +390,6 @@ void GraphicsLayerCACF::setContentsToMedia(PlatformLayer* mediaLayer)
     updateSublayerList();
 }
 
-void GraphicsLayerCACF::setGeometryOrientation(CompositingCoordinatesOrientation orientation)
-{
-    if (orientation == m_geometryOrientation)
-        return;
-
-    GraphicsLayer::setGeometryOrientation(orientation);
-    updateGeometryOrientation();
-}
-
 PlatformLayer* GraphicsLayerCACF::hostLayerForSublayers() const
 {
     return m_transformLayer ? m_transformLayer.get() : m_layer.get();
@@ -462,12 +448,13 @@ void GraphicsLayerCACF::swapFromOrToTiledLayer(bool useTiledLayer)
     
     m_usingTiledLayer = useTiledLayer;
 
-    if (useTiledLayer) {
-        if (GraphicsLayer::compositingCoordinatesOrientation() == GraphicsLayer::CompositingCoordinatesBottomUp)
-            m_layer->setContentsGravity(WKCACFLayer::BottomLeft);
-        else
-            m_layer->setContentsGravity(WKCACFLayer::TopLeft);
-    }
+    // FIXME: need this?
+//    if (useTiledLayer) {
+//        if (GraphicsLayer::compositingCoordinatesOrientation() == GraphicsLayer::CompositingCoordinatesBottomUp)
+//            m_layer->setContentsGravity(WKCACFLayer::BottomLeft);
+//        else
+//            m_layer->setContentsGravity(WKCACFLayer::TopLeft);
+//    }
     
     m_layer->adoptSublayers(oldLayer.get());
     if (oldLayer->superlayer())
@@ -736,21 +723,6 @@ void GraphicsLayerCACF::updateContentsRect()
 
     m_contentsLayer->setPosition(point);
     m_contentsLayer->setBounds(rect);
-}
-
-void GraphicsLayerCACF::updateGeometryOrientation()
-{
-    switch (geometryOrientation()) {
-        case CompositingCoordinatesTopDown:
-            m_layer->setGeometryFlipped(false);
-            break;
-        
-        case CompositingCoordinatesBottomUp:
-            m_layer->setGeometryFlipped(true);
-            break;
-    }
-    // Geometry orientation is mapped onto children transform in older QuartzCores,
-    // so is handled via setGeometryOrientation().
 }
 
 void GraphicsLayerCACF::setupContentsLayer(WKCACFLayer* contentsLayer)

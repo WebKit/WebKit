@@ -1,3 +1,40 @@
+2010-09-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44715
+        maps.google.com flips upside down when zooming map using trackpad in WebKit2 on Mac
+
+        Remove the concept of geometry flipping from GraphicsLayer; geometry flipping will
+        be taken care of in platform code without the need to complicate the GraphicsLayer API.
+        
+        RenderLayerCompositor no longer sets the geometry orientation for the root
+        platform layer; platform-specific code does this instead.
+        
+        This fixes flipped layers in WebKit2, since WebKit2 was already flipping
+        geometry, and then RenderLayerCompositor was doing an additional flip.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::GraphicsLayer):
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        * platform/graphics/chromium/GraphicsLayerChromium.h:
+        * platform/graphics/mac/GraphicsLayerCA.h:
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+        (WebCore::GraphicsLayerCA::defaultContentsOrientation):
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::GraphicsLayerQtImpl::flushChanges):
+        * platform/graphics/qt/GraphicsLayerQt.h:
+        * platform/graphics/win/GraphicsLayerCACF.cpp:
+        (WebCore::GraphicsLayerCACF::swapFromOrToTiledLayer):
+        * platform/graphics/win/GraphicsLayerCACF.h:
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        (WebCore::WKCACFLayerRenderer::setRootChildLayer):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::ensureRootPlatformLayer):
+
 2010-09-15  Julien Chaffraix  <jchaffraix@codeaurora.org>
 
         Unreviewed.

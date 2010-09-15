@@ -1,3 +1,15 @@
+2010-09-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44715
+        maps.google.com flips upside down when zooming map using trackpad in WebKit2 on Mac
+
+        Move geometry flipping to platform-specific code.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView attachRootLayer:]):
+
 2010-09-14  Jia Pu  <jpu@apple.com>
 
         Reviewed by Dan Bernstein.

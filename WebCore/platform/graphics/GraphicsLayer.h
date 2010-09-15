@@ -313,14 +313,7 @@ public:
     int repaintCount() const { return m_repaintCount; }
     int incrementRepaintCount() { return ++m_repaintCount; }
 
-    // Report whether the underlying compositing system uses a top-down
-    // or a bottom-up coordinate system.
     enum CompositingCoordinatesOrientation { CompositingCoordinatesTopDown, CompositingCoordinatesBottomUp };
-    static CompositingCoordinatesOrientation compositingCoordinatesOrientation();
-
-    // Set the geometry orientation (top-down, or bottom-up) for this layer, which also controls sublayer geometry.
-    virtual void setGeometryOrientation(CompositingCoordinatesOrientation orientation) { m_geometryOrientation = orientation; }
-    CompositingCoordinatesOrientation geometryOrientation() const { return m_geometryOrientation; }
 
     // Flippedness of the contents of this layer. Does not affect sublayer geometry.
     virtual void setContentsOrientation(CompositingCoordinatesOrientation orientation) { m_contentsOrientation = orientation; }
@@ -395,8 +388,7 @@ protected:
     bool m_drawsContent : 1;
 
     GraphicsLayerPaintingPhase m_paintingPhase;
-    CompositingCoordinatesOrientation m_geometryOrientation;    // affects geometry of layer positions
-    CompositingCoordinatesOrientation m_contentsOrientation;    // affects orientation of layer contents
+    CompositingCoordinatesOrientation m_contentsOrientation; // affects orientation of layer contents
 
     Vector<GraphicsLayer*> m_children;
     GraphicsLayer* m_parent;

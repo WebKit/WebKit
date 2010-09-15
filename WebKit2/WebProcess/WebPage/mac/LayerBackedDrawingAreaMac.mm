@@ -42,6 +42,7 @@ namespace WebKit {
 
 void LayerBackedDrawingArea::platformInit()
 {
+    [m_backingLayer->platformLayer() setGeometryFlipped:YES];
 #if HAVE(HOSTED_CORE_ANIMATION)
     attachCompositingContext();
 #endif

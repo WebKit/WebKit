@@ -81,7 +81,6 @@ public:
     virtual void setContentsToGraphicsContext3D(const GraphicsContext3D*);
     virtual void setGraphicsContext3DNeedsDisplay();
 #endif
-    virtual void setGeometryOrientation(CompositingCoordinatesOrientation orientation);
     virtual void setContentsOrientation(CompositingCoordinatesOrientation orientation);
     virtual void distributeOpacity(float);
     virtual float accumulatedOpacity() const;

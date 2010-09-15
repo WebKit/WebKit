@@ -130,22 +130,21 @@ public:
         TransformChange =           (1L << 6),
         ContentChange =             (1L << 7),
 
-        GeometryOrientationChange = (1L << 8),
-        ContentsOrientationChange = (1L << 9),
-        OpacityChange =             (1L << 10),
-        ContentsRectChange =        (1L << 11),
+        ContentsOrientationChange = (1L << 8),
+        OpacityChange =             (1L << 9),
+        ContentsRectChange =        (1L << 10),
 
-        Preserves3DChange =         (1L << 12),
-        MasksToBoundsChange =       (1L << 13),
-        DrawsContentChange =        (1L << 14),
-        ContentsOpaqueChange =      (1L << 15),
+        Preserves3DChange =         (1L << 11),
+        MasksToBoundsChange =       (1L << 12),
+        DrawsContentChange =        (1L << 13),
+        ContentsOpaqueChange =      (1L << 14),
 
-        BackfaceVisibilityChange =  (1L << 16),
-        ChildrenTransformChange =   (1L << 17),
-        DisplayChange =             (1L << 18),
-        BackgroundColorChange =     (1L << 19),
+        BackfaceVisibilityChange =  (1L << 15),
+        ChildrenTransformChange =   (1L << 16),
+        DisplayChange =             (1L << 17),
+        BackgroundColorChange =     (1L << 18),
 
-        DistributesOpacityChange =  (1L << 20)
+        DistributesOpacityChange =  (1L << 19)
     };
 
     // The compositor lets us special-case images and colors, so we try to do so.
@@ -250,7 +249,6 @@ public:
         TransformationMatrix childrenTransform;
         Color backgroundColor;
         Color currentColor;
-        GraphicsLayer::CompositingCoordinatesOrientation geoOrientation;
         GraphicsLayer::CompositingCoordinatesOrientation contentsOrientation;
         float opacity;
         QRect contentsRect;
@@ -777,7 +775,6 @@ void GraphicsLayerQtImpl::flushChanges(bool recursive, bool forceUpdateTransform
     m_state.anchorPoint = m_layer->anchorPoint();
     m_state.size = m_layer->size();
     m_state.transform = m_layer->transform();
-    m_state.geoOrientation = m_layer->geometryOrientation();
     m_state.contentsOrientation =m_layer->contentsOrientation();
     m_state.opacity = m_layer->opacity();
     m_state.contentsRect = m_layer->contentsRect();
@@ -835,13 +832,6 @@ GraphicsLayerQt::~GraphicsLayerQt()
 PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
 {
     return new GraphicsLayerQt(client);
-}
-
-/* \reimp (GraphicsLayer.h): Qt is top-down
-*/
-GraphicsLayer::CompositingCoordinatesOrientation GraphicsLayer::compositingCoordinatesOrientation()
-{
-    return CompositingCoordinatesTopDown;
 }
 
 /* \reimp (GraphicsLayer.h): The current size might change, thus we need to update the whole display.
@@ -1145,14 +1135,6 @@ void GraphicsLayerQt::setContentsToMedia(PlatformLayer* media)
 
     m_impl->notifyChange(GraphicsLayerQtImpl::ContentChange);
     GraphicsLayer::setContentsToMedia(media);
-}
-
-/* \reimp (GraphicsLayer.h)
-*/
-void GraphicsLayerQt::setGeometryOrientation(CompositingCoordinatesOrientation orientation)
-{
-    m_impl->notifyChange(GraphicsLayerQtImpl::GeometryOrientationChange);
-    GraphicsLayer::setGeometryOrientation(orientation);
 }
 
 /* \reimp (GraphicsLayer.h)

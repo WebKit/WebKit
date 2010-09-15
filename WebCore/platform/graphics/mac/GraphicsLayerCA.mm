@@ -263,15 +263,6 @@ static String animationIdentifier(AnimatedPropertyID property, const String& key
     return builder.toString();
 }
 
-#if !HAVE_MODERN_QUARTZCORE
-static TransformationMatrix flipTransform()
-{
-    TransformationMatrix flipper;
-    flipper.flipY();
-    return flipper;
-}
-#endif
-
 static CAMediaTimingFunction* getCAMediaTimingFunction(const TimingFunction* timingFunction)
 {
     // By this point, timing functions can only be linear or cubic, not steps.
@@ -330,11 +321,6 @@ static bool forceSoftwareAnimation()
 {
     static bool forceSoftwareAnimation = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebCoreForceSoftwareAnimation"];
     return forceSoftwareAnimation;
-}
-
-GraphicsLayer::CompositingCoordinatesOrientation GraphicsLayer::compositingCoordinatesOrientation()
-{
-    return CompositingCoordinatesBottomUp;
 }
 
 static NSDictionary* nullActionsDictionary()
@@ -831,28 +817,6 @@ void GraphicsLayerCA::setContentsToMedia(PlatformLayer* mediaLayer)
     noteLayerPropertyChanged(ContentsMediaLayerChanged);
 }
 
-void GraphicsLayerCA::setGeometryOrientation(CompositingCoordinatesOrientation orientation)
-{
-    if (orientation == m_geometryOrientation)
-        return;
-
-    GraphicsLayer::setGeometryOrientation(orientation);
-    noteLayerPropertyChanged(GeometryOrientationChanged);
-
-#if !HAVE_MODERN_QUARTZCORE
-    // Geometry orientation is mapped onto children transform in older QuartzCores.
-    switch (m_geometryOrientation) {
-        case CompositingCoordinatesTopDown:
-            setChildrenTransform(TransformationMatrix());
-            break;
-        
-        case CompositingCoordinatesBottomUp:
-            setChildrenTransform(flipTransform());
-            break;
-    }
-#endif
-}
-
 void GraphicsLayerCA::didDisplay(PlatformLayer* layer)
 {
     CALayer* sourceLayer;
@@ -983,9 +947,6 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers()
     
     if (m_uncommittedChanges & ContentsRectChanged)
         updateContentsRect();
-
-    if (m_uncommittedChanges & GeometryOrientationChanged)
-        updateGeometryOrientation();
 
     if (m_uncommittedChanges & MaskLayerChanged)
         updateMaskLayer();
@@ -1459,23 +1420,6 @@ void GraphicsLayerCA::updateContentsRect()
             [currLayer setBounds:rect];
         }
     }
-}
-
-void GraphicsLayerCA::updateGeometryOrientation()
-{
-#if HAVE_MODERN_QUARTZCORE
-    switch (geometryOrientation()) {
-        case CompositingCoordinatesTopDown:
-            [m_layer.get() setGeometryFlipped:NO];
-            break;
-        
-        case CompositingCoordinatesBottomUp:
-            [m_layer.get() setGeometryFlipped:YES];
-            break;
-    }
-    // Geometry orientation is mapped onto children transform in older QuartzCores,
-    // so is handled via setGeometryOrientation().
-#endif
 }
 
 void GraphicsLayerCA::updateMaskLayer()
@@ -2226,11 +2170,7 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
         [tiledLayer setTileSize:tileSize];
         [tiledLayer setLevelsOfDetail:1];
         [tiledLayer setLevelsOfDetailBias:0];
-
-        if (GraphicsLayer::compositingCoordinatesOrientation() == GraphicsLayer::CompositingCoordinatesBottomUp)
-            [tiledLayer setContentsGravity:@"bottomLeft"];
-        else
-            [tiledLayer setContentsGravity:@"topLeft"];
+        [tiledLayer setContentsGravity:@"bottomLeft"];
 
 #if !HAVE_MODERN_QUARTZCORE
         // Tiled layer has issues with flipped coordinates.

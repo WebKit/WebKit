@@ -5564,7 +5564,11 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
         [[NSNotificationCenter defaultCenter] postNotificationName:_WebViewDidStartAcceleratedCompositingNotification object:[self _webView] userInfo:nil];
     
 #if defined(BUILDING_ON_LEOPARD)
+    [viewLayer setSublayerTransform:CATransform3DMakeScale(1, -1, 1)]; // setGeometryFlipped: doesn't exist on Leopard.
     [self _updateLayerHostingViewPosition];
+#else
+    // Do geometry flipping here, which flips all the compositing layers so they are top-down.
+    [viewLayer setGeometryFlipped:YES];
 #endif
 }
 

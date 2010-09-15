@@ -400,15 +400,6 @@ void GraphicsLayerChromium::setContentsToMedia(PlatformLayer* layer)
         updateSublayerList();
 }
 
-void GraphicsLayerChromium::setGeometryOrientation(CompositingCoordinatesOrientation orientation)
-{
-    if (orientation == m_geometryOrientation)
-        return;
-
-    GraphicsLayer::setGeometryOrientation(orientation);
-    updateGeometryOrientation();
-}
-
 PlatformLayer* GraphicsLayerChromium::hostLayerForSublayers() const
 {
     return m_transformLayer ? m_transformLayer.get() : m_layer.get();
@@ -623,21 +614,6 @@ void GraphicsLayerChromium::updateContentsRect()
 
     m_contentsLayer->setPosition(FloatPoint(m_contentsRect.x(), m_contentsRect.y()));
     m_contentsLayer->setBounds(IntSize(m_contentsRect.width(), m_contentsRect.height()));
-}
-
-void GraphicsLayerChromium::updateGeometryOrientation()
-{
-    switch (geometryOrientation()) {
-    case CompositingCoordinatesTopDown:
-        m_layer->setGeometryFlipped(false);
-        break;
-
-    case CompositingCoordinatesBottomUp:
-        m_layer->setGeometryFlipped(true);
-        break;
-    }
-    // Geometry orientation is mapped onto children transform in older QuartzCores,
-    // so is handled via setGeometryOrientation().
 }
 
 void GraphicsLayerChromium::setupContentsLayer(LayerChromium* contentsLayer)
