@@ -1,3 +1,27 @@
+2010-09-15  Renata Hodovan  <reni@inf.u-szeged.hu>
+
+        Reviewed by Dirk Schulze.
+
+        SVGFETurbulenceElement doesn't support dynamic invalidation, when attributes change.
+        A typo (noStich instead of nostitch) is also fixed in this patch.
+        https://bugs.webkit.org/show_bug.cgi?id=45809
+
+        Tests: svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-attr.html
+               svg/dynamic-updates/SVGFETurbulenceElement-dom-numOctaves-attr.html
+               svg/dynamic-updates/SVGFETurbulenceElement-dom-seed-attr.html
+               svg/dynamic-updates/SVGFETurbulenceElement-dom-stitchTiles-attr.html
+               svg/dynamic-updates/SVGFETurbulenceElement-dom-type-attr.html
+               svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html
+               svg/dynamic-updates/SVGFETurbulenceElement-svgdom-numOctaves-prop.html
+               svg/dynamic-updates/SVGFETurbulenceElement-svgdom-seed-prop.html
+               svg/dynamic-updates/SVGFETurbulenceElement-svgdom-stitchTiles-prop.html
+               svg/dynamic-updates/SVGFETurbulenceElement-svgdom-type-prop.html
+
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::parseMappedAttribute):
+        (WebCore::SVGFETurbulenceElement::svgAttributeChanged):
+        * svg/SVGFETurbulenceElement.h:
+
 2010-09-15  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -55,7 +55,7 @@ void SVGFETurbulenceElement::parseMappedAttribute(Attribute* attr)
     } else if (attr->name() == SVGNames::stitchTilesAttr) {
         if (value == "stitch")
             setStitchTilesBaseValue(SVG_STITCHTYPE_STITCH);
-        else if (value == "nostitch")
+        else if (value == "noStitch")
             setStitchTilesBaseValue(SVG_STITCHTYPE_NOSTITCH);
     } else if (attr->name() == SVGNames::baseFrequencyAttr) {
         float x, y;
@@ -69,6 +69,18 @@ void SVGFETurbulenceElement::parseMappedAttribute(Attribute* attr)
         setNumOctavesBaseValue(value.toUIntStrict());
     else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+}
+
+void SVGFETurbulenceElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+    
+    if (attrName == SVGNames::baseFrequencyAttr
+        || attrName == SVGNames::numOctavesAttr
+        || attrName == SVGNames::seedAttr
+        || attrName == SVGNames::stitchTilesAttr
+        || attrName == SVGNames::typeAttr)
+        invalidate();
 }
 
 void SVGFETurbulenceElement::synchronizeProperty(const QualifiedName& attrName)

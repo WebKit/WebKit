@@ -1,3 +1,73 @@
+2010-09-15  Renata Hodovan  <reni@inf.u-szeged.hu>
+
+        Reviewed by Dirk Schulze.
+
+        SVGFETurbulenceElement doesn't support dynamic invalidation, when attributes change.
+        https://bugs.webkit.org/show_bug.cgi?id=45809
+
+        Adding layout tests for feTurbulence dynamic changes.
+
+        * platform/mac/svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFETurbulenceElement-dom-numOctaves-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFETurbulenceElement-dom-numOctaves-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFETurbulenceElement-dom-seed-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFETurbulenceElement-dom-seed-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFETurbulenceElement-dom-stitchTiles-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFETurbulenceElement-dom-stitchTiles-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFETurbulenceElement-dom-type-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFETurbulenceElement-dom-type-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-numOctaves-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-numOctaves-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-seed-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-seed-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-stitchTiles-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-stitchTiles-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-type-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-type-prop-expected.png: Added.
+        * svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-attr.html: Added.
+        * svg/dynamic-updates/SVGFETurbulenceElement-dom-numOctaves-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFETurbulenceElement-dom-numOctaves-attr.html: Added.
+        * svg/dynamic-updates/SVGFETurbulenceElement-dom-seed-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFETurbulenceElement-dom-seed-attr.html: Added.
+        * svg/dynamic-updates/SVGFETurbulenceElement-dom-stitchTiles-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFETurbulenceElement-dom-stitchTiles-attr.html: Added.
+        * svg/dynamic-updates/SVGFETurbulenceElement-dom-type-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFETurbulenceElement-dom-type-attr.html: Added.
+        * svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html: Added.
+        * svg/dynamic-updates/SVGFETurbulenceElement-svgdom-numOctaves-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFETurbulenceElement-svgdom-numOctaves-prop.html: Added.
+        * svg/dynamic-updates/SVGFETurbulenceElement-svgdom-seed-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFETurbulenceElement-svgdom-seed-prop.html: Added.
+        * svg/dynamic-updates/SVGFETurbulenceElement-svgdom-stitchTiles-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFETurbulenceElement-svgdom-stitchTiles-prop.html: Added.
+        * svg/dynamic-updates/SVGFETurbulenceElement-svgdom-type-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFETurbulenceElement-svgdom-type-prop.html: Added.
+        * svg/dynamic-updates/script-tests/SVGFETurbulenceElement-dom-baseFrequency-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFETurbulenceElement-dom-numOctaves-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFETurbulenceElement-dom-seed-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFETurbulenceElement-dom-stitchTiles-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFETurbulenceElement-dom-type-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFETurbulenceElement-svgdom-baseFrequency-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFETurbulenceElement-svgdom-numOctaves-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFETurbulenceElement-svgdom-seed-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFETurbulenceElement-svgdom-stitchTiles-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFETurbulenceElement-svgdom-type-prop.js: Added.
+        (executeTest):
+
 2010-09-15  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
