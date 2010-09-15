@@ -171,7 +171,7 @@ bool HTMLFontElement::cssValueFromFontSizeNumber(const String& s, int& size)
 void HTMLFontElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == sizeAttr) {
-        int size;
+        int size = 0;
         if (cssValueFromFontSizeNumber(attr->value(), size))
             addCSSProperty(attr, CSSPropertyFontSize, size);
     } else if (attr->name() == colorAttr) {

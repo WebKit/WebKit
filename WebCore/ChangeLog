@@ -1,3 +1,12 @@
+2010-09-14  Adam Barth  <abarth@webkit.org>
+
+        Attempted Chromium build fix.  The compiler can't tell that
+        ASSERT_NOT_REACHED is not reached and so it demands an initialization
+        of this variable.
+
+        * html/HTMLFontElement.cpp:
+        (WebCore::HTMLFontElement::parseMappedAttribute):
+
 2010-09-14  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Ariya Hidayat.
