@@ -17,18 +17,6 @@ BUG_DRT WIN MAC : fast/speech/input-appearance-numberandspeech.html = IMAGE
 BUG_DRT WIN MAC : fast/speech/input-appearance-searchandspeech.html = IMAGE
 BUG_DRT WIN MAC : fast/speech/input-appearance-speechbutton.html = IMAGE
 
-// Blob-related failures
-// Do not add MAC to apply-blob-url-to-img.html.  The downstream test_expectations.txt has an entry for it.
-BUG_DRT WIN LINUX : fast/files/apply-blob-url-to-img.html = TIMEOUT
-BUG_DRT WIN MAC LINUX : fast/files/apply-blob-url-to-xhr.html = TEXT
-BUG_DRT WIN MAC LINUX : fast/files/read-blob-async.html = TEXT
-BUG_DRT WIN MAC LINUX : fast/files/read-file-async.html = TEXT
-BUG_DRT WIN MAC LINUX : http/tests/local/blob/send-data-blob.html = TEXT
-BUG_DRT WIN MAC LINUX : http/tests/local/blob/send-hybrid-blob.html = TEXT
-BUG_DRT WIN MAC LINUX : http/tests/local/blob/send-sliced-data-blob.html = TEXT
-BUG_DRT WIN MAC LINUX : http/tests/local/send-sliced-dragged-file.html = TEXT
-BUG_DRT WIN MAC : http/tests/local/formdata/send-form-data-with-sliced-file.html = TEXT
-
 BUG48431 WIN MAC LINUX : plugins/geturlnotify-during-document-teardown.html = TEXT
 BUG48431 WIN MAC LINUX : plugins/open-and-close-window-with-plugin.html = TEXT
 

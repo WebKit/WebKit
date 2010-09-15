@@ -1,3 +1,15 @@
+2010-09-14  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        blob: URL scheme does not work with Chromium DRT
+        https://bugs.webkit.org/show_bug.cgi?id=45772
+
+        Roll Chromium forward to r59406, which registers the blob
+        URL scheme for the Chromium DRT too.
+
+        * DEPS:
+
 2010-09-14  Jian Li  <jianli@chromium.org>
 
         Reviewed by David Levin.
