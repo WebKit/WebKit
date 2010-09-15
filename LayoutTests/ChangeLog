@@ -1,5 +1,53 @@
 2010-09-15  Pavel Podivilov  <podivilov@chromium.org>
 
+        Reviewed by Pavel Feldman.
+
+        [Chromium] rebaseline 10 new svg tests added in 67544
+        https://bugs.webkit.org/show_bug.cgi?id=45813
+
+        * platform/chromium-linux/svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-attr-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFETurbulenceElement-dom-numOctaves-attr-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFETurbulenceElement-dom-numOctaves-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFETurbulenceElement-dom-seed-attr-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFETurbulenceElement-dom-seed-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFETurbulenceElement-dom-stitchTiles-attr-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFETurbulenceElement-dom-stitchTiles-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFETurbulenceElement-dom-type-attr-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFETurbulenceElement-dom-type-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-numOctaves-prop-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-numOctaves-prop-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-seed-prop-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-seed-prop-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-stitchTiles-prop-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-stitchTiles-prop-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-type-prop-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-type-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-attr-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFETurbulenceElement-dom-numOctaves-attr-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFETurbulenceElement-dom-numOctaves-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFETurbulenceElement-dom-seed-attr-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFETurbulenceElement-dom-seed-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFETurbulenceElement-dom-stitchTiles-attr-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFETurbulenceElement-dom-stitchTiles-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFETurbulenceElement-dom-type-attr-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFETurbulenceElement-dom-type-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-numOctaves-prop-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-numOctaves-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-seed-prop-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-seed-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-stitchTiles-prop-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-stitchTiles-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-type-prop-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-type-prop-expected.png: Added.
+
+2010-09-15  Pavel Podivilov  <podivilov@chromium.org>
+
         Reviewed by Yury Semikhatsky.
 
         [Chromium] mark new viewport tests as failing rather then skip them
