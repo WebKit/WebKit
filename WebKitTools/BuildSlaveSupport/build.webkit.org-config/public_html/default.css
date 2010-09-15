@@ -32,11 +32,6 @@ table td {
 	padding: 0 0 0 4px;
 }
 
-.LastBuild,.Activity,.Builder,.BuildStep {
-	width: 15em;
-	min-width: 15em;
-}
-
 /* Chromium Specific styles */
 div.BuildResultInfo {
 	color: #444;
