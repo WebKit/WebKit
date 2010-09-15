@@ -1,5 +1,16 @@
 2010-09-15  Adam Roben  <aroben@apple.com>
 
+        Use Qt Labs' WebKit category feed instead of filtering on "webkit"
+
+        Looks like the URL of the WebKit category feed changed since this blog
+        was first added to Planet WebKit.
+
+        Rubber-stamped by David Kilzer.
+
+        * config.ini:
+
+2010-09-15  Adam Roben  <aroben@apple.com>
+
         Only include Qt Labs posts that mention WebKit
 
         All other feeds are either WebKit-specific or are filtered on
