@@ -1,3 +1,9 @@
+2010-09-15  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, remove test that is now passing in test_shell and DRT.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-15  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Simon Fraser.
