@@ -133,9 +133,10 @@ private:
     virtual void getGuessesForWord(const WTF::String&, Vector<WTF::String>& guesses);
     virtual void willSetInputMethodState();
     virtual void setInputMethodState(bool enabled);
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     virtual void showCorrectionPanel(const WebCore::FloatRect& boundingBoxOfReplacedString, const WTF::String& replacedString, const WTF::String& replacementString, WebCore::Editor*);
     virtual void dismissCorrectionPanel(bool correctionAccepted);
+    virtual bool isShowingCorrectionPanel();
 #endif
     WebPage* m_page;
 };

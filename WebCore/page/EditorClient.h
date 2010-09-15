@@ -191,6 +191,7 @@ public:
 #if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     virtual void showCorrectionPanel(const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacmentString, Editor*) = 0;
     virtual void dismissCorrectionPanel(bool correctionAccepted) = 0;
+    virtual bool isShowingCorrectionPanel() = 0;
 #endif
 
     virtual void updateSpellingUIWithGrammarString(const String&, const GrammarDetail& detail) = 0;

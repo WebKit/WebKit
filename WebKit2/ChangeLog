@@ -1,3 +1,15 @@
+2010-09-14  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Only intercept ESC key press when autocorrection UI is visible.
+        https://bugs.webkit.org/show_bug.cgi?id=45071
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::isShowingCorrectionPanel): Dummy implementation.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.h: Adopt new method delcared in base class.
+
 2010-09-14  Sam Weinig  <sam@webkit.org>
 
         Fix windows build.
