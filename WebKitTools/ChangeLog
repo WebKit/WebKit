@@ -1,3 +1,15 @@
+2010-09-14  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Send webkit accessibility notifications to Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=45156
+
+        Move printf inside shouldDumpAccessibilityNotifications check.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::postAccessibilityNotification):
+
 2010-09-14  Tony Chang  <tony@chromium.org>
 
         Reviewed by Kent Tamura.
