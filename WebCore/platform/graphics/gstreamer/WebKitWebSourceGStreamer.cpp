@@ -44,7 +44,7 @@ class StreamingClient : public Noncopyable, public ResourceHandleClient {
         virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse&);
         virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
         virtual void didReceiveData(ResourceHandle*, const char*, int, int);
-        virtual void didFinishLoading(ResourceHandle*);
+        virtual void didFinishLoading(ResourceHandle*, double /*finishTime*/);
         virtual void didFail(ResourceHandle*, const ResourceError&);
         virtual void wasBlocked(ResourceHandle*);
         virtual void cannotShowURL(ResourceHandle*);
@@ -766,7 +766,7 @@ void StreamingClient::didReceiveData(ResourceHandle* handle, const char* data, i
         GST_ELEMENT_ERROR(m_src, CORE, FAILED, (0), (0));
 }
 
-void StreamingClient::didFinishLoading(ResourceHandle*)
+void StreamingClient::didFinishLoading(ResourceHandle*, double)
 {
     WebKitWebSrcPrivate* priv = m_src->priv;
 

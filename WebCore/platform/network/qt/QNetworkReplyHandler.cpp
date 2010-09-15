@@ -34,6 +34,7 @@
 #include <QNetworkCookie>
 #include <qwebframe.h>
 #include <qwebpage.h>
+
 #include <wtf/text/CString.h>
 
 #include <QDebug>
@@ -262,7 +263,7 @@ void QNetworkReplyHandler::finish()
         resetState();
         start();
     } else if (!m_reply->error() || ignoreHttpError(m_reply, m_responseDataSent)) {
-        client->didFinishLoading(m_resourceHandle);
+        client->didFinishLoading(m_resourceHandle, 0);
     } else {
         QUrl url = m_reply->url();
         int httpStatusCode = m_reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();

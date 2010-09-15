@@ -95,13 +95,13 @@ void NetscapePlugInStreamLoader::didReceiveData(const char* data, int length, lo
     ResourceLoader::didReceiveData(data, length, lengthReceived, allAtOnce);
 }
 
-void NetscapePlugInStreamLoader::didFinishLoading()
+void NetscapePlugInStreamLoader::didFinishLoading(double finishTime)
 {
     RefPtr<NetscapePlugInStreamLoader> protect(this);
 
     m_documentLoader->removePlugInStreamLoader(this);
     m_client->didFinishLoading(this);
-    ResourceLoader::didFinishLoading();
+    ResourceLoader::didFinishLoading(finishTime);
 }
 
 void NetscapePlugInStreamLoader::didFail(const ResourceError& error)

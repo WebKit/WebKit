@@ -58,6 +58,7 @@
 #include "WebURLResponse.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
+#include <wtf/CurrentTime.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 
@@ -336,7 +337,7 @@ void WebDevToolsAgentImpl::didReceiveResponse(unsigned long resourceId, const We
 void WebDevToolsAgentImpl::didFinishLoading(unsigned long resourceId)
 {
     if (InspectorController* ic = inspectorController())
-        ic->didFinishLoading(resourceId);
+        ic->didFinishLoading(resourceId, 0);
 }
 
 void WebDevToolsAgentImpl::didFailLoading(unsigned long resourceId, const WebURLError& error)

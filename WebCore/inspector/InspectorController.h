@@ -165,7 +165,7 @@ public:
     void willSendRequest(unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse);
     void didReceiveResponse(unsigned long identifier, const ResourceResponse&);
     void didReceiveContentLength(unsigned long identifier, int lengthReceived);
-    void didFinishLoading(unsigned long identifier);
+    void didFinishLoading(unsigned long identifier, double finishTime);
     void didFailLoading(unsigned long identifier, const ResourceError&);
     void resourceRetrievedByXMLHttpRequest(unsigned long identifier, const ScriptString& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber);
     void scriptImported(unsigned long identifier, const String& sourceString);

@@ -1,3 +1,18 @@
+2010-09-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Provide network-based load timing.
+        Before this change, inspector used timers taken from
+        within WebCore notifications (that are by definition
+        synchronous and serialized). As a result, timing was
+        affected by the routines running on the main thread
+        (JavaScript and such).
+        https://bugs.webkit.org/show_bug.cgi?id=45664
+
+        * webkit/webkitdownload.cpp:
+        (DownloadClient::didFinishLoading):
+
 2010-09-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r67551.

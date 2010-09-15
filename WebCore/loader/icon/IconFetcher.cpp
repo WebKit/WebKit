@@ -202,7 +202,7 @@ void IconFetcher::didReceiveData(ResourceHandle* handle, const char* data, int l
     m_entries[m_currentEntry].buffer()->append(data, length);
 }
 
-void IconFetcher::didFinishLoading(ResourceHandle* handle)
+void IconFetcher::didFinishLoading(ResourceHandle* handle, double)
 {
     ASSERT_UNUSED(handle, m_handle == handle);
     
