@@ -1,3 +1,19 @@
+2010-09-15  Adam Roben  <aroben@apple.com>
+
+        Only include Qt Labs posts that mention WebKit
+
+        All other feeds are either WebKit-specific or are filtered on
+        "webkit". This makes Qt Labs match all the others. This should help
+        keep off-topic posts off of Planet WebKit.
+
+        Fixes <http://webkit.org/b/45818> Planet WebKit contains many
+        off-topic posts from Qt Labs
+
+        Reviewed by David Kilzer.
+
+        * config.ini: Filter the Qt Labs feed on "webkit" like we do for all
+        other non-WebKit-specific feeds.
+
 2010-08-30  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
