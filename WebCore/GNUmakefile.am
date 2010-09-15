@@ -678,6 +678,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSDedicatedWorkerContextCustom.cpp \
 	WebCore/bindings/js/JSDeviceMotionEventCustom.cpp \
 	WebCore/bindings/js/JSDeviceOrientationEventCustom.cpp \
+	WebCore/bindings/js/JSDirectoryEntryCustom.cpp \
 	WebCore/bindings/js/JSDocumentCustom.cpp \
 	WebCore/bindings/js/JSDOMApplicationCacheCustom.cpp \
 	WebCore/bindings/js/JSDOMBinding.cpp \

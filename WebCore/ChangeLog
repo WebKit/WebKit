@@ -1,3 +1,27 @@
+2010-09-14  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Dumitru Daniliuc.
+
+        Add custom binding code for DirectoryEntry to allow JSON parameters for Flags
+        https://bugs.webkit.org/show_bug.cgi?id=45724
+
+        No new tests; tests will be added later.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDirectoryEntryCustom.cpp: Added.
+        (WebCore::JSDirectoryEntry::getFile):
+        (WebCore::JSDirectoryEntry::getDirectory):
+        * bindings/v8/custom/V8DirectoryEntryCustom.cpp: Added.
+        (WebCore::V8DirectoryEntry::getDirectoryCallback):
+        (WebCore::V8DirectoryEntry::getFileCallback):
+        * fileapi/DirectoryEntry.h:
+        * fileapi/DirectoryEntry.idl:
+
 2010-09-14  Jia Pu  <jpu@apple.com>
         
         Reviewed by Dan Bernstein.

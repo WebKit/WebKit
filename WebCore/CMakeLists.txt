@@ -1569,6 +1569,7 @@ ENDIF ()
 
 if (ENABLE_FILE_SYSTEM)
     LIST(APPEND WebCore_SOURCES
+        bindings/js/JSDirectoryEntryCustom.cpp
         bindings/js/JSEntryCustom.cpp
         fileapi/DirectoryEntry.cpp
         fileapi/DirectoryReader.cpp

@@ -2939,6 +2939,7 @@ contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
         platform/AsyncFileSystemCallbacks.h
 
     SOURCES += \
+        bindings/js/JSDirectoryEntryCustom.cpp \
         bindings/js/JSEntryCustom.cpp \
         fileapi/DirectoryEntry.cpp \
         fileapi/DirectoryReader.cpp \

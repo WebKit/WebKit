@@ -35,7 +35,7 @@ module storage {
         GenerateToJS
     ] DirectoryEntry : Entry {
         DirectoryReader createReader();
-        void getFile(in [ConvertUndefinedOrNullToNullString] DOMString path, in [Optional] Flags flags, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
-        void getDirectory(in [ConvertUndefinedOrNullToNullString] DOMString path, in [Optional] Flags flags, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
+        [Custom] void getFile(in [ConvertUndefinedOrNullToNullString] DOMString path, in [Optional] Flags flags, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
+        [Custom] void getDirectory(in [ConvertUndefinedOrNullToNullString] DOMString path, in [Optional] Flags flags, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
     };
 }
