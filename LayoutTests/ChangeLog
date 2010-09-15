@@ -1,3 +1,14 @@
+2010-09-14  John Gregg  <johnnyg@google.com>
+
+        Unreviewed, chromium rebaseline.
+
+        Rebaseline xss-DENIED-frame-name-expected.txt
+        https://bugs.webkit.org/show_bug.cgi?id=45795
+
+        * platform/chromium-linux/http/tests/security/xss-DENIED-frame-name-expected.txt: Added.
+        * platform/chromium-mac/http/tests/security/xss-DENIED-frame-name-expected.txt: Added.
+        * platform/chromium-win/http/tests/security/xss-DENIED-frame-name-expected.txt: Added.
+
 2010-09-14  Adam Barth  <abarth@webkit.org>
 
         Attempt to fix test failure on Qt and Gtk.  It's tricky to write a test
