@@ -1,3 +1,20 @@
+2010-09-16  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Adam Roben.
+
+        [WINCE] Add platform-specific Image methods
+        https://bugs.webkit.org/show_bug.cgi?id=28272
+
+        * platform/graphics/wince/ImageWinCE.cpp: Added.
+        (WebCore::RGBA32Buffer::asNewNativeImage):
+        (WebCore::FrameData::clear):
+        (WebCore::BitmapImage::getHBITMAPOfSize):
+        (WebCore::BitmapImage::drawFrameMatchingSourceSize):
+        (WebCore::BitmapImage::draw):
+        (WebCore::Image::drawPattern):
+        (WebCore::BitmapImage::drawPattern):
+        (WebCore::BitmapImage::checkForSolidColor):
+
 2010-09-16  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
