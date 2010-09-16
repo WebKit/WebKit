@@ -1,3 +1,14 @@
+2010-09-16  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed.
+
+        Remove passing WebGL tests from platform/chromium/test_expectations.txt
+        https://bugs.webkit.org/show_bug.cgi?id=45905
+
+        Remove passing tests; also, put webgl tests in one place.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-16  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.  Just changing the path to the PNG file.

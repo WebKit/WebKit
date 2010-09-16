@@ -2497,10 +2497,6 @@ BUGWK37297 : fast/history/nested-visited-test.html = TEXT
 BUGWK37297 : fast/history/self-is-visited.html = TEXT
 BUGWK37297 : fast/history/sibling-visited-test.html = TEXT
 
-// These are failing due to new-run-webkit-tests's diff trimming line ends.
-BUGWK36983 MAC : fast/canvas/webgl/null-object-behaviour.html = TEXT
-BUGWK36983 MAC : fast/canvas/webgl/uniform-location.html = TEXT
-
 // Added in http://trac.webkit.org/changeset/57476. Fails in Chromium because
 // LayoutTestController::computedStyleWithVisitedInfo() is missing.
 BUG41206 : fast/history/multiple-classes-visited.html = TEXT TIMEOUT
@@ -2958,9 +2954,6 @@ BUGWK43912 WIN LINUX : svg/custom/absolute-sized-content-with-resources.xhtml = 
 // Times out frequently since the test was added
 BUG52017 MAC LINUX : http/tests/misc/isindex-with-no-form.html = PASS TIMEOUT
 
-// Probably due to http://trac.webkit.org/changeset/65279/
-BUGJAPHET MAC : fast/canvas/webgl/texture-npot.html = TEXT
-
 // Probably http://trac.webkit.org/changeset/65381
 // This test causes the next one to run to ASSERT
 BUGWK44079 DEBUG SKIP : fast/events/popup-allowed-from-gesture-initiated-form-submit.html = PASS
@@ -2994,7 +2987,6 @@ BUGWK44341 WIN LINUX : svg/clip-path/clip-path-childs-clipped.svg = IMAGE
 BUG53131 LINUX : fast/js/array-iterate-backwards.html = CRASH PASS
 
 // new or failing since WebKit rev. 65740:65800
-BUG21852 MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html = TEXT
 BUG53073 DEBUG : storage/change-version.html = CRASH PASS
 BUG53073 LINUX : svg/custom/clip-path-units-changes.svg = TEXT PASS
 
@@ -3008,10 +3000,6 @@ BUG53554 MAC LINUX : svg/custom/svg-fonts-without-missing-glyph.xhtml = PASS IMA
 
 // New test, need to verify if it's safe to rebaseline.
 BUGWK44770 WIN LINUX : svg/repaint/filter-repaint.svg = IMAGE+TEXT
-
-// New tests in r66258
-BUGWK44909 MAC : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
-BUGWK44909 MAC : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
 
 // Full Screen JS API is not yet enabled.
 BUGWK44797 : fullscreen = FAIL
@@ -3043,9 +3031,6 @@ BUGWK45193 LINUX : fast/text/decomposed-after-stacked-diacritics.html = TEXT
 // Debugger tests are slow on win debug bots
 BUGWK45209 WIN DEBUG SLOW : inspector/debugger-autocontinue-on-syntax-error.html = PASS
 BUGWK45209 WIN DEBUG SLOW : inspector/dom-breakpoints.html = PASS
-
-// Regressed in r66908
-BUGWK45332 MAC : fast/canvas/webgl/gl-teximage.html = TEXT
 
 // Regressed in r66954
 BUGWK45432 WIN MAC LINUX : fast/dom/dataset-gc.html = TEXT
@@ -3123,69 +3108,17 @@ BUGDPRANKE WIN LINUX : media/video-poster.html = PASS TEXT
 
 BUGWK45898 : editing/selection/context-menu-on-text.html = TEXT
 
-// Re-enabling webgl tests in Win/Linux
-// Currently all tests are listed here; will clean up once we get the results from bots
-BUGWEBGL WIN LINUX : fast/canvas/webgl/array-buffer-crash.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/array-buffer-view-crash.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/array-get-and-set-method-removal.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/array-get-out-of-bounds.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/array-set-out-of-bounds.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/array-setters.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/array-unit-tests.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/bad-arguments-test.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/buffer-bind-test.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/buffer-data-array-buffer.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/canvas-test.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/context-attributes.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/copy-tex-image-and-sub-image-2d.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/css-webkit-canvas-repaint.html = CRASH IMAGE TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/css-webkit-canvas.html = CRASH IMAGE TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/draw-arrays-out-of-bounds.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/draw-elements-out-of-bounds.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/error-reporting.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/framebuffer-object-attachment.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/framebuffer-test.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/get-active-test.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/gl-bind-attrib-location-test.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/gl-enable-enum-test.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/gl-enum-tests.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/gl-get-calls.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/gl-object-get-calls.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/gl-pixelstorei.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/gl-teximage.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/gl-uniform-arrays.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/gl-uniformmatrix4fv.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/gl-vertex-attrib.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/incorrect-context-object-behaviour.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/index-validation-copies-indices.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/index-validation-crash-with-buffer-sub-data.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/index-validation-verifies-too-many-indices.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/index-validation-with-resized-buffer.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/index-validation.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/invalid-UTF-16.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/invalid-passed-params.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/null-object-behaviour.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/null-uniform-location.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/point-size.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/program-test.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/read-pixels-pack-alignment.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/renderbuffer-initialization.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/tex-image-and-sub-image-2d-with-image.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/tex-image-and-uniform-binding-bugs.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/tex-image-with-format-and-type.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/tex-input-validation.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/tex-sub-image-2d.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/texImage2DImageDataTest.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/texImageTest.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/texture-active-bind.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/texture-complete.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/texture-npot.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/texture-transparent-pixels-initialized.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/triangle.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/uniform-location.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/viewport-unchanged-upon-resize.html = CRASH TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/webgl-array-invalid-ranges.html = CRASH TEXT TIMEOUT
+// These are failing due to new-run-webkit-tests's diff trimming line ends.
+BUGWEBGL MAC : fast/canvas/webgl/null-object-behaviour.html = TEXT
+BUGWEBGL MAC : fast/canvas/webgl/uniform-location.html = TEXT
+
+BUGWEBGL WIN LINUX : fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html = TEXT
+BUGWEBGL : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
+BUGWEBGL : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
+BUGWEBGL WIN LINUX : fast/canvas/webgl/gl-object-get-calls.html = TEXT
+BUGWEBGL MAC : fast/canvas/webgl/gl-teximage.html = TEXT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/gl-uniform-arrays.html = TEXT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/point-size.html = TEXT
+BUGWEBGL MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html = TEXT PASS
+BUGWEBGL MAC : fast/canvas/webgl/texture-npot.html = TEXT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/uniform-location.html = TEXT
