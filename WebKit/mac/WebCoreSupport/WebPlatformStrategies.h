@@ -113,15 +113,6 @@ private:
     virtual WTF::String contextMenuItemTagCapitalize();
     virtual WTF::String contextMenuItemTagChangeBack(const WTF::String& replacedString);
     virtual WTF::String contextMenuItemTagInspectElement();
-    virtual WTF::String contextMenuItemTagOpenMediaInNewWindow();
-    virtual WTF::String contextMenuItemTagCopyMediaLinkToClipboard();
-    virtual WTF::String contextMenuItemTagToggleMediaControls();
-    virtual WTF::String contextMenuItemTagToggleMediaLoop();
-    virtual WTF::String contextMenuItemTagEnterVideoFullscreen();
-    virtual WTF::String contextMenuItemTagMediaPlay();
-    virtual WTF::String contextMenuItemTagMediaPause();
-    virtual WTF::String contextMenuItemTagMediaMute();
-    virtual WTF::String contextMenuItemTagMediaUnMute();
 #endif // ENABLE(CONTEXT_MENUS)
     virtual WTF::String searchMenuNoRecentSearchesText();
     virtual WTF::String searchMenuRecentSearchesText();

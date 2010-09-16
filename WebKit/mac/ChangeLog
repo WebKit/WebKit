@@ -1,5 +1,12 @@
 2010-09-16  Dan Bernstein  <mitz@apple.com>
 
+        Reverted the previous change because r67628 has been reverted.
+
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+
+2010-09-16  Dan Bernstein  <mitz@apple.com>
+
         Build fix after r67628. Added context menu item localizable strings for the items
         added in r67628, following equivalent menu items in Mac OS X when possible. However,
         this set of menu items does not make much sense for Mac OS X, and this should be

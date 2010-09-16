@@ -449,51 +449,6 @@ String WebPlatformStrategies::contextMenuItemTagInspectElement()
     return UI_STRING("Inspect Element", "Inspect Element context menu item");
 }
 
-String WebPlatformStrategies::contextMenuItemTagOpenMediaInNewWindow()
-{
-    return UI_STRING("Open Media in New Window", "Open Media in New Window context menu item");
-}
-
-String WebPlatformStrategies::contextMenuItemTagCopyMediaLinkToClipboard()
-{
-    return UI_STRING("Copy Media Address", "Copy Media Address context menu item");
-}
-
-String WebPlatformStrategies::contextMenuItemTagToggleMediaControls()
-{
-    return UI_STRING("Toggle Media Controls", "Toggle Media Controls context menu item");
-}
-
-String WebPlatformStrategies::contextMenuItemTagToggleMediaLoop()
-{
-    return UI_STRING("Toggle Media Loop Playback", "Toggle Media Loop Playback context menu item");
-}
-
-String WebPlatformStrategies::contextMenuItemTagEnterVideoFullscreen()
-{
-    return UI_STRING("Fullscreen", "Fullscreen context menu item");
-}
-
-String WebPlatformStrategies::contextMenuItemTagMediaPlay()
-{
-    return UI_STRING("Play", "Play context menu item");
-}
-
-String WebPlatformStrategies::contextMenuItemTagMediaPause()
-{
-    return UI_STRING("Pause", "Pause context menu item");
-}
-
-String WebPlatformStrategies::contextMenuItemTagMediaMute()
-{
-    return UI_STRING("Mute", "Mute context menu item");
-}
-
-String WebPlatformStrategies::contextMenuItemTagMediaUnMute()
-{
-    return UI_STRING("Unmute", "Unmute context menu item");
-}
-
 #endif // ENABLE(CONTEXT_MENUS)
 
 String WebPlatformStrategies::searchMenuNoRecentSearchesText()
