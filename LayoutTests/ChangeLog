@@ -1,3 +1,16 @@
+2010-09-16  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Just changing the path to the PNG file.
+
+        fast/css/font-face-svg-decoding-error.html can cause later CSS tests to fail
+        https://bugs.webkit.org/show_bug.cgi?id=45919
+
+        Fixing the underlying issue in a separate bug.  For now
+        give this test its own png so to unblock the commit-queue.
+
+        * fast/css/font-face-svg-decoding-error.html:
+        * fast/css/resources/invalidfont.png: Copied from LayoutTests/fast/css-generated-content/resources/greenbox.png.
+
 2010-09-16  Martin Robinson  <mrobinson@igalia.com>
 
         Update baselines for GTK+ and unskip a test which is passing.
