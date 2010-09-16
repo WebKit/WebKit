@@ -1,3 +1,19 @@
+2010-09-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Mark Rowe.
+        https://bugs.webkit.org/show_bug.cgi?id=45924
+
+        Modify the SunSpider harness to allow a path to be passed to the --suite
+        argument, supress the normal prepend-"tests/" behaviour for suite names
+        containing a '/'.
+
+        Also wrap the code in an anonymous function to move variables out of global
+        scope (currently the harness cannot handle running tests the overwrite the
+        variable 'j').
+
+        * resources/sunspider-standalone-driver.js:
+        * sunspider:
+
 2010-08-27  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Stephanie Lewis.

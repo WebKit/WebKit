@@ -86,6 +86,9 @@ $suite = "sunspider-0.9.1" if (!$suite);
 
 my $resultDirectory = "${suite}-results";
 
+my $suitePath = $suite;
+$suitePath = "tests/" . $suitePath unless ($suite =~ /\//);
+
 $runShark = 1 if $runSharkCache;
 $runShark = 20 if $runShark20;
 $testRuns = 1 if $runShark;
@@ -129,7 +132,7 @@ my %uniqueCategories = ();
 
 sub loadTestsList()
 {
-    open TESTLIST, "<", "tests/${suite}/LIST" or die "Can't find ./tests/${suite}/LIST";
+    open TESTLIST, "<", "${suitePath}/LIST" or die "Can't find ${suitePath}/LIST";
     while (<TESTLIST>) {
         chomp;
         next unless !$testsPattern || /$testsPattern/;
@@ -151,7 +154,7 @@ my $resultsFile = "$resultDirectory/sunspider-results-$timeString.js";
 
 sub writePrefixFile()
 {
-    my $prefix = "var suiteName = " . '"' . $suite . '"' . ";\n";
+    my $prefix = "var suitePath = " . '"' . $suitePath . '"' . ";\n";
     $prefix .= "var tests = [ " . join(", ", map { '"' . $_ . '"' } @tests) . " ];\n";
     $prefix .= "var categories = [ " . join(", ", map { '"' . $_ . '"' } @categories) . " ];\n";
 
