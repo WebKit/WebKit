@@ -1,3 +1,9 @@
+2010-09-16  Jeremy Orlow  <jorlow@chromium.org>
+
+        Speculative build fix.
+
+        * src/IDBIndexBackendProxy.cpp:
+
 2010-09-08  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.

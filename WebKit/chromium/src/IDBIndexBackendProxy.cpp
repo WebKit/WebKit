@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBCallbacks.h"
+#include "IDBKeyRange.h"
 #include "WebIDBCallbacksImpl.h"
 #include "WebIDBDatabaseError.h"
 #include "WebIDBIndex.h"
