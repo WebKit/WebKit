@@ -2003,6 +2003,43 @@ template<> inline CSSPrimitiveValue::operator TextDirection() const
     }
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBlockFlowDirection e)
+    : m_type(CSS_IDENT)
+    , m_hasCachedCSSText(false)
+{
+    switch (e) {
+    case TopToBottomBlockFlow:
+        m_value.ident = CSSValueTb;
+        break;
+    case RightToLeftBlockFlow:
+        m_value.ident = CSSValueRl;
+        break;
+    case LeftToRightBlockFlow:
+        m_value.ident = CSSValueLr;
+        break;
+    case BottomToTopBlockFlow:
+        m_value.ident = CSSValueBt;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator EBlockFlowDirection() const
+{
+    switch (m_value.ident) {
+    case CSSValueTb:
+        return TopToBottomBlockFlow;
+    case CSSValueRl:
+        return RightToLeftBlockFlow;
+    case CSSValueLr:
+        return LeftToRightBlockFlow;
+    case CSSValueBt:
+        return BottomToTopBlockFlow;
+    default:
+        ASSERT_NOT_REACHED();
+        return TopToBottomBlockFlow;
+    }
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EPointerEvents e)
     : m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)

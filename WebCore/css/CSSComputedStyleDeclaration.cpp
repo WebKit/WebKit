@@ -158,6 +158,7 @@ static const int computedProperties[] = {
     CSSPropertyWebkitBackgroundComposite,
     CSSPropertyWebkitBackgroundOrigin,
     CSSPropertyWebkitBackgroundSize,
+    CSSPropertyWebkitBlockFlow,
     CSSPropertyWebkitBorderFit,
     CSSPropertyWebkitBorderHorizontalSpacing,
     CSSPropertyWebkitBorderImage,
@@ -1352,6 +1353,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return CSSPrimitiveValue::create(style->appearance());
         case CSSPropertyWebkitBackfaceVisibility:
             return CSSPrimitiveValue::createIdentifier((style->backfaceVisibility() == BackfaceVisibilityHidden) ? CSSValueHidden : CSSValueVisible);
+        case CSSPropertyWebkitBlockFlow:
+            return CSSPrimitiveValue::create(style->blockFlow());
         case CSSPropertyWebkitBorderImage:
             return valueForNinePieceImage(style->borderImage());
         case CSSPropertyWebkitMaskBoxImage:
@@ -1471,6 +1474,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyListStyle:
         case CSSPropertyMargin:
         case CSSPropertyPadding:
+        case CSSPropertyWebkitWritingMode:
             break;
 
         /* Unimplemented CSS 3 properties (including CSS3 shorthand properties) */

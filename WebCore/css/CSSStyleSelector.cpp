@@ -5521,6 +5521,53 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
 #endif 
 
+    // CSS Text Layout Module Level 3: Vertical writing support
+    case CSSPropertyWebkitBlockFlow:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(blockFlow, BlockFlow)
+        return;
+
+    case CSSPropertyWebkitWritingMode:
+        // The 'writing-mode' property is a shorthand property for the 'direction' property and the 'block-flow' property. 
+        if (isInherit) {
+            m_style->setDirection(m_parentStyle->direction());
+            m_style->setBlockFlow(m_parentStyle->blockFlow());
+        } else if (isInitial) {
+            m_style->setDirection(m_style->initialDirection());
+            m_style->setBlockFlow(m_style->initialBlockFlow());
+        } else {
+            if (!primitiveValue)
+                return;
+            switch (primitiveValue->getIdent()) {
+            case CSSValueLrTb:
+                m_style->setDirection(LTR);
+                m_style->setBlockFlow(TopToBottomBlockFlow);
+                break;
+            case CSSValueRlTb:
+                m_style->setDirection(RTL);
+                m_style->setBlockFlow(TopToBottomBlockFlow);
+                break;
+            case CSSValueTbRl:
+                m_style->setDirection(LTR);
+                m_style->setBlockFlow(RightToLeftBlockFlow);
+                break;
+            case CSSValueBtRl:
+                m_style->setDirection(RTL);
+                m_style->setBlockFlow(RightToLeftBlockFlow);
+                break;
+            case CSSValueTbLr:
+                m_style->setDirection(LTR);
+                m_style->setBlockFlow(LeftToRightBlockFlow);
+                break;
+            case CSSValueBtLr:
+                m_style->setDirection(RTL);
+                m_style->setBlockFlow(LeftToRightBlockFlow);
+                break;
+            default:
+                break;
+            }
+        }
+        return;
+
 #if ENABLE(SVG)
     default:
         // Try the SVG properties

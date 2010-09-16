@@ -96,6 +96,7 @@ zoom: 1;
 -webkit-background-composite: source-over;
 -webkit-background-origin: padding-box;
 -webkit-background-size: auto auto;
+-webkit-block-flow: tb;
 -webkit-border-fit: border;
 -webkit-border-image: none;
 -webkit-border-horizontal-spacing: 0px;

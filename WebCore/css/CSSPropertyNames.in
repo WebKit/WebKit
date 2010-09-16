@@ -173,6 +173,8 @@ z-index
 # a single value: -webkit-background-size: l; is equivalent to background-size: l l;
 # whereas background-size: l; is equivalent to background-size: l auto;
 -webkit-background-size
+# CSS Text Layout Module Level 3: Vertical writing support
+-webkit-block-flow
 -webkit-border-end
 -webkit-border-end-color
 -webkit-border-end-style
@@ -275,3 +277,5 @@ z-index
 -webkit-user-modify
 -webkit-user-select
 -webkit-variable-declaration-block
+# CSS Text Layout Module Level 3: Vertical writing support
+-webkit-writing-mode

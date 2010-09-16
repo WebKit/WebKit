@@ -441,6 +441,10 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         noninherited_flags._clear != other->noninherited_flags._clear)
         return StyleDifferenceLayout;
 
+    // Check block flow direction.
+    if (inherited_flags._blockFlow != other->inherited_flags._blockFlow)
+        return StyleDifferenceLayout;
+
     // Overflow returns a layout hint.
     if (noninherited_flags._overflowX != other->noninherited_flags._overflowX ||
         noninherited_flags._overflowY != other->noninherited_flags._overflowY)

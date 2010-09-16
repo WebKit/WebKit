@@ -106,6 +106,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-background-composite: source-over
     -webkit-background-origin: padding-box
     -webkit-background-size: auto auto
+    -webkit-block-flow: tb
     -webkit-border-fit: border
     -webkit-border-horizontal-spacing: 0px
     -webkit-border-image: none

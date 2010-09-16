@@ -178,7 +178,8 @@ protected:
                    (_visuallyOrdered == other._visuallyOrdered) &&
                    (_force_backgrounds_to_white == other._force_backgrounds_to_white) &&
                    (_pointerEvents == other._pointerEvents) &&
-                   (_insideLink == other._insideLink);
+                   (_insideLink == other._insideLink) &&
+                   (_blockFlow == other._blockFlow);
         }
 
         bool operator!=(const InheritedFlags& other) const { return !(*this == other); }
@@ -204,6 +205,10 @@ protected:
         unsigned _pointerEvents : 4; // EPointerEvents
         unsigned _insideLink : 2; // EInsideLink
         // 43 bits
+
+        // CSS Text Layout Module Level 3: Vertical writing support
+        unsigned _blockFlow : 2; // EBlockFlowDirection
+        // 45 bits
     } inherited_flags;
 
 // don't inherit
@@ -279,6 +284,7 @@ protected:
         inherited_flags._force_backgrounds_to_white = false;
         inherited_flags._pointerEvents = initialPointerEvents();
         inherited_flags._insideLink = NotInsideLink;
+        inherited_flags._blockFlow = initialBlockFlow();
 
         noninherited_flags._effectiveDisplay = noninherited_flags._originalDisplay = initialDisplay();
         noninherited_flags._overflowX = initialOverflowX();
@@ -712,6 +718,8 @@ public:
     bool textSizeAdjust() const { return rareInheritedData->textSizeAdjust; }
     ETextSecurity textSecurity() const { return static_cast<ETextSecurity>(rareInheritedData->textSecurity); }
 
+    EBlockFlowDirection blockFlow() const { return static_cast<EBlockFlowDirection>(inherited_flags._blockFlow); }
+
 // attribute setter methods
 
     void setDisplay(EDisplay v) { noninherited_flags._effectiveDisplay = v; }
@@ -1087,6 +1095,8 @@ public:
                originalDisplay() == INLINE_BOX || originalDisplay() == INLINE_TABLE;
     }
 
+    void setBlockFlow(EBlockFlowDirection v) { inherited_flags._blockFlow = v; }
+
     // To tell if this style matched attribute selectors. This makes it impossible to share.
     bool affectedByAttributeSelectors() const { return m_affectedByAttributeSelectors; }
     void setAffectedByAttributeSelectors() { m_affectedByAttributeSelectors = true; }
@@ -1126,6 +1136,7 @@ public:
     static ECaptionSide initialCaptionSide() { return CAPTOP; }
     static EClear initialClear() { return CNONE; }
     static TextDirection initialDirection() { return LTR; }
+    static EBlockFlowDirection initialBlockFlow() { return TopToBottomBlockFlow; }
     static EDisplay initialDisplay() { return INLINE; }
     static EEmptyCell initialEmptyCells() { return SHOW; }
     static EFloat initialFloating() { return FNONE; }

@@ -128,6 +128,11 @@ enum EUnicodeBidi {
     UBNormal, Embed, Override
 };
 
+// CSS Text Layout Module Level 3: Vertical writing support
+enum EBlockFlowDirection {
+    TopToBottomBlockFlow, RightToLeftBlockFlow, LeftToRightBlockFlow, BottomToTopBlockFlow
+};
+
 enum EFillAttachment {
     ScrollBackgroundAttachment, LocalBackgroundAttachment, FixedBackgroundAttachment
 };

@@ -1,3 +1,19 @@
+2010-09-16  takano takumi  <takano1@asia.apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45020
+        Support "block-flow" and "writing-mode": interpret properties into RenderStyle
+ 
+        Added code that interprets "block-flow" property and "writing-mode" property settings
+        into a RenderStyle object.
+
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/text/international/block-flow-parser-test-expected.txt: Added.
+        * fast/text/international/block-flow-parser-test.html: Added.
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2010-09-15  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Darin Adler.

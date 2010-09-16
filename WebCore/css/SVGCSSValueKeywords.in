@@ -276,12 +276,3 @@ reset-size
 # CSS_PROP_VECTOR_EFFECT
 # none
 non-scaling-stroke
-
-
-# CSS_PROP_WRITING_MODE
-lr-tb
-rl-tb
-tb-rl
-lr
-rl
-tb

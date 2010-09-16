@@ -742,3 +742,17 @@ windowed
 # none
 manual
 # auto
+
+# -webkit-block-flow
+tb
+rl
+lr
+bt
+
+# -webkit-writing-mode
+lr-tb
+rl-tb
+tb-rl
+bt-rl
+tb-lr
+bt-lr
