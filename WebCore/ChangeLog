@@ -2,6 +2,18 @@
 
         Reviewed by Ariya Hidayat.
 
+        [Qt] GraphicsContext: Remove unused variable
+
+        GraphicsContextPlatformPrivate::redirect wasn't used for anything.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::p):
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+
+2010-09-16  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
         [Qt] Remove unnecessary QPainter::clipPath() call in TransparencyLayer()
         https://bugs.webkit.org/show_bug.cgi?id=45923
 

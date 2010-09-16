@@ -176,12 +176,8 @@ public:
 
     inline QPainter* p()
     {
-        if (layers.isEmpty()) {
-            if (redirect)
-                return redirect;
-
+        if (layers.isEmpty())
             return painter;
-        }
         return &layers.top()->painter;
     }
 
@@ -191,7 +187,6 @@ public:
     // Counting real layers. Required by inTransparencyLayer() calls
     // For example, layers with valid alphaMask are not real layers
     int layerCount;
-    QPainter* redirect;
 
     // reuse this brush for solid color (to prevent expensive QBrush construction)
     QBrush solidColor;
@@ -227,7 +222,6 @@ GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(QPainter* p)
 {
     painter = p;
     layerCount = 0;
-    redirect = 0;
 
     solidColor = QBrush(Qt::black);
 
