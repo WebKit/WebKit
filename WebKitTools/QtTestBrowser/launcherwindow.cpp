@@ -612,16 +612,20 @@ void LauncherWindow::print()
 void LauncherWindow::screenshot()
 {
     QPixmap pixmap = QPixmap::grabWidget(m_view);
-    QLabel* label = new QLabel;
+    QLabel* label = 0;
+#if !defined(Q_OS_SYMBIAN)
+    label = new QLabel;
     label->setAttribute(Qt::WA_DeleteOnClose);
     label->setWindowTitle("Screenshot - Preview");
     label->setPixmap(pixmap);
     label->show();
+#endif
 
     QString fileName = QFileDialog::getSaveFileName(label, "Screenshot");
     if (!fileName.isEmpty()) {
         pixmap.save(fileName, "png");
-        label->setWindowTitle(QString("Screenshot - Saved at %1").arg(fileName));
+        if (label)
+            label->setWindowTitle(QString("Screenshot - Saved at %1").arg(fileName));
     }
 
 #if defined(QT_CONFIGURED_WITH_OPENGL)

@@ -1,3 +1,15 @@
+2010-09-16  Leonid Ebril  <leonid.ebril@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] QtTestBrowser: Disable creation of a new window for screenshot on Symbian platform.
+        https://bugs.webkit.org/show_bug.cgi?id=45885
+
+        Avoid creation of an additional window for screenshot to prevent overlapping with original window.
+
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::screenshot):
+
 2010-09-16  Anders Carlsson  <andersca@apple.com>
 
         Fix clang++ build.
