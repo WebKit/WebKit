@@ -97,7 +97,7 @@ bool elementHasLegalLinkAttribute(const Element* element,
         if (element->hasTagName(HTMLNames::inputTag)) {
             const HTMLInputElement* input =
             static_cast<const HTMLInputElement*>(element);
-            if (input->inputType() == HTMLInputElement::IMAGE)
+            if (input->isImageButton())
                 return true;
         }
     } else if (attrName == HTMLNames::hrefAttr) {

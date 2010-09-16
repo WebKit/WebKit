@@ -1062,7 +1062,7 @@ void ReplaceSelectionCommand::doApply()
     if (m_smartReplace && currentRoot) {
         // Disable smart replace for password fields.
         Node* start = currentRoot->shadowAncestorNode();
-        if (start->hasTagName(inputTag) && static_cast<HTMLInputElement*>(start)->inputType() == HTMLInputElement::PASSWORD)
+        if (start->hasTagName(inputTag) && static_cast<HTMLInputElement*>(start)->isPasswordField())
             m_smartReplace = false;
     }
     if (m_smartReplace) {

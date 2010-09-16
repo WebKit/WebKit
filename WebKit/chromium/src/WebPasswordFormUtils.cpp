@@ -79,8 +79,8 @@ void findPasswordFormFields(HTMLFormElement* form, PasswordFormFields* fields)
             continue;
 
         if ((fields->passwords.size() < maxPasswords)
-            && (inputElement->inputType() == HTMLInputElement::PASSWORD)
-            && (inputElement->autoComplete())) {
+            && inputElement->isPasswordField()
+            && inputElement->autoComplete()) {
             if (fields->passwords.isEmpty())
                 firstPasswordIndex = i;
             fields->passwords.append(inputElement);
@@ -98,6 +98,7 @@ void findPasswordFormFields(HTMLFormElement* form, PasswordFormFields* fields)
             if (!inputElement->isEnabledFormControl())
                 continue;
 
+            // FIXME: This needs to use a function other than inputType.
             if ((inputElement->inputType() == HTMLInputElement::TEXT)
                 && (inputElement->autoComplete())) {
                 fields->userName = inputElement;

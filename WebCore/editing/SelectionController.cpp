@@ -1332,7 +1332,7 @@ bool SelectionController::isInPasswordField() const
     if (!startNode->hasTagName(inputTag))
         return false;
     
-    return static_cast<HTMLInputElement*>(startNode)->inputType() == HTMLInputElement::PASSWORD;
+    return static_cast<HTMLInputElement*>(startNode)->isPasswordField();
 }
 
 bool SelectionController::caretRendersInsideNode(Node* node) const

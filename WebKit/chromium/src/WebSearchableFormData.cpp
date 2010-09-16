@@ -131,7 +131,7 @@ bool IsInDefaultState(const HTMLFormControlElement* formElement)
 {
     if (formElement->hasTagName(HTMLNames::inputTag)) {
         const HTMLInputElement* inputElement = static_cast<const HTMLInputElement*>(formElement);
-        if (inputElement->inputType() == HTMLInputElement::CHECKBOX || inputElement->inputType() == HTMLInputElement::RADIO)
+        if (inputElement->isCheckbox() || inputElement->isRadioButton())
             return inputElement->checked() == inputElement->defaultChecked();
     } else if (formElement->hasTagName(HTMLNames::selectTag))
         return IsSelectInDefaultState(static_cast<const HTMLSelectElement*>(formElement));
@@ -166,19 +166,24 @@ bool HasSuitableTextElement(const HTMLFormElement* form, Vector<char>* encodedSt
 
         bool isTextElement = false;
         if (formElement->hasTagName(HTMLNames::inputTag)) {
+            if (static_cast<const HTMLInputElement*>(formElement)->isFileUpload()) {
+                // Too big, don't try to index this.
+                return 0;
+            }
+
+            if (static_cast<const HTMLInputElement*>(formElement)->isPasswordField()) {
+                // Don't store passwords! This is most likely an https anyway.
+                return 0;
+            }
+
+            // FIXME: This needs to use a function on HTMLInputElement other than inputType.
+            // Also, it's not clear why TEXT should be handled differently than, say, SEARCH.
             switch (static_cast<const HTMLInputElement*>(formElement)->inputType()) {
             case HTMLInputElement::TEXT:
             case HTMLInputElement::ISINDEX:
                 isTextElement = true;
                 break;
-            case HTMLInputElement::PASSWORD:
-                // Don't store passwords! This is most likely an https anyway.
-                // Fall through.
-            case HTMLInputElement::FILE:
-                // Too big, don't try to index this.
-                return 0;
             default:
-                // All other input types are indexable.
                 break;
             }
       }

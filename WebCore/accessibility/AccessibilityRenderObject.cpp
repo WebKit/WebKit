@@ -503,7 +503,7 @@ bool AccessibilityRenderObject::isFileUploadButton() const
 {
     if (m_renderer && m_renderer->node() && m_renderer->node()->hasTagName(inputTag)) {
         HTMLInputElement* input = static_cast<HTMLInputElement*>(m_renderer->node());
-        return input->inputType() == HTMLInputElement::FILE;
+        return input->isFileUpload();
     }
     
     return false;
@@ -514,7 +514,7 @@ bool AccessibilityRenderObject::isInputImage() const
     Node* elementNode = node();
     if (roleValue() == ButtonRole && elementNode && elementNode->hasTagName(inputTag)) {
         HTMLInputElement* input = static_cast<HTMLInputElement*>(elementNode);
-        return input->inputType() == HTMLInputElement::IMAGE;
+        return input->isImageButton();
     }
     
     return false;
@@ -3036,9 +3036,9 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
 
     if (node && node->hasTagName(inputTag)) {
         HTMLInputElement* input = static_cast<HTMLInputElement*>(node);
-        if (input->inputType() == HTMLInputElement::CHECKBOX)
+        if (input->isCheckbox())
             return CheckBoxRole;
-        if (input->inputType() == HTMLInputElement::RADIO)
+        if (input->isRadioButton())
             return RadioButtonRole;
         if (input->isTextButton())
             return ButtonRole;

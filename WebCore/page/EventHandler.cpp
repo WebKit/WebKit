@@ -1045,8 +1045,7 @@ Frame* EventHandler::subframeForTargetNode(Node* node)
 
 static bool isSubmitImage(Node* node)
 {
-    return node && node->hasTagName(inputTag)
-        && static_cast<HTMLInputElement*>(node)->inputType() == HTMLInputElement::IMAGE;
+    return node && node->hasTagName(inputTag) && static_cast<HTMLInputElement*>(node)->isImageButton();
 }
 
 // Returns true if the node's editable block is not current focused for editing

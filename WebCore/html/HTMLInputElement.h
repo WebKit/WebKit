@@ -102,16 +102,22 @@ public:
     void stepUpFromRenderer(int);
 
     bool isTextButton() const { return m_type == SUBMIT || m_type == RESET || m_type == BUTTON; }
+
     virtual bool isRadioButton() const { return m_type == RADIO; }
     virtual bool isTextField() const;
     virtual bool isSearchField() const { return m_type == SEARCH; }
     virtual bool isInputTypeHidden() const { return m_type == HIDDEN; }
     virtual bool isPasswordField() const { return m_type == PASSWORD; }
     virtual bool isCheckbox() const { return m_type == CHECKBOX; }
-    bool isTelephoneField() const { return m_type == TELEPHONE; }
-    bool isNumberField() const { return m_type == NUMBER; }
+
     bool isEmailField() const { return m_type == EMAIL; }
-    bool isUrlField() const { return m_type == URL; }
+    bool isFileUpload() const { return m_type == FILE; }
+    bool isImageButton() const { return m_type == IMAGE; }
+    bool isNumberField() const { return m_type == NUMBER; }
+    bool isSubmitButton() const { return m_type == SUBMIT; }
+    bool isTelephoneField() const { return m_type == TELEPHONE; }
+    bool isURLField() const { return m_type == URL; }
+
 #if ENABLE(INPUT_SPEECH)
     virtual bool isSpeechEnabled() const;
 #endif    

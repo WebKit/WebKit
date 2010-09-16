@@ -306,15 +306,14 @@ static HTMLInputElement* inputElementFromDOMElement(DOMElement* element)
     HTMLInputElement* inputElement = inputElementFromDOMElement(element);
     return inputElement
         && inputElement->isTextField()
-        && inputElement->inputType() != HTMLInputElement::PASSWORD
+        && !inputElement->isPasswordField()
         && inputElement->autoComplete();
 }
 
 - (BOOL)elementIsPassword:(DOMElement *)element
 {
     HTMLInputElement* inputElement = inputElementFromDOMElement(element);
-    return inputElement
-        && inputElement->inputType() == HTMLInputElement::PASSWORD;
+    return inputElement && inputElement->isPasswordField();
 }
 
 - (DOMElement *)formForElement:(DOMElement *)element

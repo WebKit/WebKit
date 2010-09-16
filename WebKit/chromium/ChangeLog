@@ -1,3 +1,18 @@
+2010-09-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Andreas Kling.
+
+        Reduce use of HTMLInputElement::inputType so we can remove it later
+        https://bugs.webkit.org/show_bug.cgi?id=45903
+
+        * src/DOMUtilitiesPrivate.cpp:
+        (WebKit::elementHasLegalLinkAttribute): Use isImageButton.
+        * src/WebPasswordFormUtils.cpp:
+        (WebKit::findPasswordFormFields): Use isPasswordField.
+        * src/WebSearchableFormData.cpp:
+        (WebCore::IsInDefaultState): Use isCheckbox and isRadioButton.
+        (WebCore::HasSuitableTextElement): Use isFileUpload and isPasswordField.
+
 2010-09-16  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.

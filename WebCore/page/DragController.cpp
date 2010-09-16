@@ -255,17 +255,17 @@ static HTMLInputElement* asFileInput(Node* node)
     // The button for a FILE input is a sub element with no set input type
     // In order to get around this problem we assume any non-FILE input element
     // is this internal button, and try querying the shadow parent node.
-    if (node->hasTagName(HTMLNames::inputTag) && node->isShadowNode() && static_cast<HTMLInputElement*>(node)->inputType() != HTMLInputElement::FILE)
-      node = node->shadowParentNode();
+    if (node->hasTagName(HTMLNames::inputTag) && node->isShadowNode() && !static_cast<HTMLInputElement*>(node)->isFileUpload())
+        node = node->shadowParentNode();
 
     if (!node || !node->hasTagName(HTMLNames::inputTag))
         return 0;
 
-    HTMLInputElement* inputElem = static_cast<HTMLInputElement*>(node);
-    if (inputElem->inputType() == HTMLInputElement::FILE)
-        return inputElem;
+    HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(node);
+    if (!inputElement->isFileUpload())
+        return 0;
 
-    return 0;
+    return inputElement;
 }
 
 static Element* elementUnderMouse(Document* documentUnderMouse, const IntPoint& p)

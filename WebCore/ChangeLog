@@ -1,3 +1,42 @@
+2010-09-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Andreas Kling.
+
+        Reduce use of HTMLInputElement::inputType so we can remove it later
+        https://bugs.webkit.org/show_bug.cgi?id=45903
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isFileUploadButton): Use isFileUpload.
+        (WebCore::AccessibilityRenderObject::isInputImage): Use isImageButton.
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole): Use
+        isCheckbox and isRadioButton.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle): Use isImageButton.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::setBaseWritingDirection): Use isTextField.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): Use isPasswordField.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::isInPasswordField): Use isPasswordField.
+
+        * html/HTMLInputElement.h: Added isFileUpload, isImageButton, and isSubmitButton.
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::setToolTip): Use isSubmitButton and isFileUpload.
+
+        * page/DragController.cpp:
+        (WebCore::asFileInput): Use isFileUpload.
+
+        * page/EventHandler.cpp:
+        (WebCore::isSubmitImage): Use isImageButton.
+
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::updateFromElement): Use isFileUpload.
+
 2010-09-16  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

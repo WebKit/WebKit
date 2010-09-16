@@ -142,7 +142,7 @@ Chrome* RenderFileUploadControl::chrome() const
 void RenderFileUploadControl::updateFromElement()
 {
     HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(node());
-    ASSERT(inputElement->inputType() == HTMLInputElement::FILE);
+    ASSERT(inputElement->isFileUpload());
     
     if (!m_button) {
         m_button = ShadowInputElement::create(inputElement);

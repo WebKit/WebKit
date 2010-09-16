@@ -350,7 +350,7 @@ void Chrome::setToolTip(const HitTestResult& result)
             // Get tooltip representing form action, if relevant
             if (node->hasTagName(inputTag)) {
                 HTMLInputElement* input = static_cast<HTMLInputElement*>(node);
-                if (input->inputType() == HTMLInputElement::SUBMIT)
+                if (input->isSubmitButton())
                     if (HTMLFormElement* form = input->form()) {
                         toolTip = form->action();
                         if (form->renderer())
@@ -379,7 +379,7 @@ void Chrome::setToolTip(const HitTestResult& result)
         if (Node* node = result.innerNonSharedNode()) {
             if (node->hasTagName(inputTag)) {
                 HTMLInputElement* input = static_cast<HTMLInputElement*>(node);
-                if (input->inputType() == HTMLInputElement::FILE) {
+                if (input->isFileUpload()) {
                     FileList* files = input->files();
                     unsigned listSize = files->length();
                     if (files && listSize > 1) {
