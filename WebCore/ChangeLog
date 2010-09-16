@@ -1,3 +1,15 @@
+2010-09-16  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix debug crash in HTMLFrameOwnerElement caused by content frame being used after destruction.
+        https://bugs.webkit.org/show_bug.cgi?id=45737
+
+        Test: fast/frames/frame-limit.html
+
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::willRemove):
+
 2010-09-16  Thomas Zander <t.zander@nokia.com>
 
         Reviewed by Andreas Kling.
