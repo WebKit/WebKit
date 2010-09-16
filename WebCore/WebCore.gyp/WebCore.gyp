@@ -982,6 +982,9 @@
         '<@(webcore_files)',
       ],
       'sources/': [
+        # Start by excluding everything then include svg files only. Note that
+        # css/SVG* and bindings/v8/custom/V8SVG* are still built in
+        # webcore_remaining.
         ['exclude', '.*'],
         ['include', 'svg/'],
         ['include', 'css/svg/'],
@@ -1015,9 +1018,17 @@
         # Exclude things that don't apply to the Chromium platform on the basis
         # of their enclosing directories and tags at the ends of their
         # filenames.
-        ['exclude', '(android|cairo|cf|cg|curl|gtk|haiku|linux|mac|opentype|posix|qt|soup|symbian|win|wx)/'],
+        ['exclude', '(android|cairo|cf|cg|curl|gtk|haiku|linux|mac|opentype|posix|qt|soup|svg|symbian|win|wx)/'],
         ['exclude', '(?<!Chromium)(Android|Cairo|CF|CG|Curl|Gtk|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|Wx)\\.(cpp|mm?)$'],
         ['include', 'platform/graphics/opentype/OpenTypeSanitizer\\.cpp$'],
+
+        # Exclude most of SVG except css and javascript bindings.
+        ['exclude', 'rendering/style/SVG[^/]+.(cpp|h)$'],
+        ['exclude', 'rendering/RenderSVG[^/]+.(cpp|h)$'],
+        ['exclude', 'rendering/SVG[^/]+.(cpp|h)$'],
+
+        # A few things can't be excluded by broad patterns.
+        # List them individually.
 
         # JSC-only.
         ['exclude', 'inspector/JavaScript[^/]*\\.cpp$'],
@@ -1025,79 +1036,64 @@
         # ENABLE_OFFLINE_WEB_APPLICATIONS, exclude most of webcore's impl
         ['exclude', 'loader/appcache/'],
         ['include', 'loader/appcache/ApplicationCacheHost\.h$'],
-        ['include', 'loader/appcache/DOMApplicationCache\.(h|cpp)$'],
+        ['include', 'loader/appcache/DOMApplicationCache\.(cpp|h)$'],
 
         # Exclude some DB-related files.
-        ['exclude', 'platform/sql/SQLiteFileSystem.cpp'],
-        ['exclude', 'storage/DatabaseTracker.cpp'],
-        ['exclude', 'storage/DatabaseTrackerClient.h'],
-        ['exclude', 'storage/OriginQuotaManager.cpp'],
-        ['exclude', 'storage/OriginQuotaManager.h'],
-        ['exclude', 'storage/OriginUsageRecord.cpp'],
-        ['exclude', 'storage/OriginUsageRecord.h'],
-        ['exclude', 'storage/SQLTransactionClient.cpp'],
-
-        # Exclude SVG.
-        ['exclude', 'svg/'],
-        ['exclude', 'css/svg/'],
-        ['exclude', 'rendering/style/SVG'],
-        ['exclude', 'rendering/RenderSVG'],
-        ['exclude', 'rendering/SVG'],
-      ],
-      'sources!': [
-        # A few things can't be excluded by patterns.  List them individually.
+        ['exclude', 'platform/sql/SQLiteFileSystem\\.cpp$'],
+        ['exclude', 'storage/DatabaseTracker\\.cpp$'],
+        ['exclude', 'storage/DatabaseTrackerClient\\.h$'],
+        ['exclude', 'storage/OriginQuotaManager\\.(cpp|h)$'],
+        ['exclude', 'storage/OriginUsageRecord\\.(cpp|h)$'],
+        ['exclude', 'storage/SQLTransactionClient\\.cpp$'],
 
         # Don't build StorageNamespace.  We have our own implementation.
-        '../storage/StorageNamespace.cpp',
+        ['exclude', 'storage/StorageNamespace\\.cpp$'],
 
         # Don't build StorageEventDispatcher.  We have our own implementation.
-        '../storage/StorageEventDispatcher.cpp',
+        ['exclude', 'storage/StorageEventDispatcher\\.cpp$'],
 
         # Don't build IDBFactoryBackendInterface.  We have our own implementation.
-        '../storage/IDBFactoryBackendInterface.cpp',
+        ['exclude', 'storage/IDBFactoryBackendInterface\\.cpp$'],
 
         # Don't build IDBKeyPathBackendImpl.  We have our own implementation.
-        '../storage/IDBKeyPathBackendImpl.cpp',
+        ['exclude', 'storage/IDBKeyPathBackendImpl\\.cpp$'],
 
         # Use history/BackForwardListChromium.cpp instead.
-        '../history/BackForwardListImpl.cpp',
+        ['exclude', 'history/BackForwardListImpl\\.cpp$'],
 
         # Use loader/icon/IconDatabaseNone.cpp instead.
-        '../loader/icon/IconDatabase.cpp',
+        ['exclude', 'loader/icon/IconDatabase\\.cpp$'],
 
         # Use platform/KURLGoogle.cpp instead.
-        '../platform/KURL.cpp',
+        ['exclude', 'platform/KURL\\.cpp$'],
 
         # Use platform/MIMETypeRegistryChromium.cpp instead.
-        '../platform/MIMETypeRegistry.cpp',
+        ['exclude', 'platform/MIMETypeRegistry\\.cpp$'],
 
         # Theme.cpp is used only if we're using USE_NEW_THEME. We are not for
         # Windows and Linux. We manually include Theme.cpp for the Mac below.
-        '../platform/Theme.cpp',
+        ['exclude', 'platform/Theme\\.cpp$'],
 
         # Exclude some, but not all, of plugins.
-        '../plugins/PluginDatabase.cpp',
-        '../plugins/PluginMainThreadScheduler.cpp',
-        '../plugins/PluginPackage.cpp',
-        '../plugins/PluginStream.cpp',
-        '../plugins/PluginView.cpp',
-        '../plugins/npapi.cpp',
+        ['exclude', 'plugins/PluginDatabase\\.cpp$'],
+        ['exclude', 'plugins/PluginMainThreadScheduler\\.cpp$'],
+        ['exclude', 'plugins/PluginPackage\\.cpp$'],
+        ['exclude', 'plugins/PluginStream\\.cpp$'],
+        ['exclude', 'plugins/PluginView\\.cpp$'],
+        ['exclude', 'plugins/npapi\\.cpp$'],
 
         # Use LinkHashChromium.cpp instead
-        '../platform/LinkHash.cpp',
+        ['exclude', 'platform/LinkHash\\.cpp$'],
 
-        # Don't build these.
         # FIXME: I don't know exactly why these are excluded.  It would
         # be nice to provide more explicit comments.  Some of these do actually
         # compile.
-        '../dom/StaticStringList.cpp',
-        '../loader/icon/IconFetcher.cpp',
-        '../loader/UserStyleSheetLoader.cpp',
+        ['exclude', 'dom/StaticStringList\\.cpp$'],
+        ['exclude', 'loader/icon/IconFetcher\\.cpp$'],
+        ['exclude', 'loader/UserStyleSheetLoader\\.cpp$'],
 
         # We use a multi-process version from the WebKit API.
-        '../dom/default/PlatformMessagePortChannel.cpp',
-        '../dom/default/PlatformMessagePortChannel.h',
-
+        ['exclude', 'dom/default/PlatformMessagePortChannel\\.(cpp|h)$'],
       ],
       'link_settings': {
         'mac_bundle_resources': [
@@ -1134,10 +1130,6 @@
       },
       'conditions': [
         ['OS=="linux" or OS=="freebsd"', {
-          'sources': [
-            '../platform/graphics/chromium/VDMXParser.cpp',
-            '../platform/graphics/chromium/HarfbuzzSkia.cpp',
-          ],
           'sources/': [
             # Cherry-pick files excluded by the broader regular expressions above.
             ['include', 'platform/chromium/KeyCodeConversionGtk\\.cpp$'],
@@ -1215,55 +1207,46 @@
 
             # Chromium Mac does not use skia.
             ['exclude', 'platform/graphics/skia/[^/]*Skia\\.(cpp|h)$'],
-          ],
-          'sources!': [
+
             # The Mac uses platform/mac/KillRingMac.mm instead of the dummy
             # implementation.
-            '../platform/KillRingNone.cpp',
+            ['exclude', 'platform/KillRingNone\\.cpp$'],
 
             # The Mac currently uses FontCustomPlatformData.cpp from
             # platform/graphics/mac, included by regex above, instead.
-            '../platform/graphics/skia/FontCustomPlatformData.cpp',
+            ['exclude', 'platform/graphics/skia/FontCustomPlatformData\\.cpp$'],
 
             # The Mac currently uses ScrollbarThemeChromiumMac.mm, which is not
             # related to ScrollbarThemeChromium.cpp.
-            '../platform/chromium/ScrollbarThemeChromium.cpp',
+            ['exclude', 'platform/chromium/ScrollbarThemeChromium\\.cpp$'],
 
             # The Mac currently uses ImageChromiumMac.mm from
             # platform/graphics/chromium, included by regex above, instead.
-            '../platform/graphics/chromium/ImageChromium.cpp',
+            ['exclude', 'platform/graphics/chromium/ImageChromium\\.cpp$'],
 
             # The Mac uses ImageSourceCG.cpp from platform/graphics/cg, included
             # by regex above, instead.
-            '../platform/graphics/ImageSource.cpp',
+            ['exclude', 'platform/graphics/ImageSource\\.cpp$'],
 
             # RenderThemeChromiumSkia is not used on mac since RenderThemeChromiumMac
             # does not reference the Skia code that is used by Windows and Linux.
-            '../rendering/RenderThemeChromiumSkia.cpp',
+            ['exclude', 'rendering/RenderThemeChromiumSkia\\.cpp$'],
 
             # Skia image-decoders are also not used on mac.  CoreGraphics
             # is used directly instead.
-            '../platform/image-decoders/ImageDecoder.h',
-            '../platform/image-decoders/bmp/BMPImageDecoder.cpp',
-            '../platform/image-decoders/bmp/BMPImageDecoder.h',
-            '../platform/image-decoders/bmp/BMPImageReader.cpp',
-            '../platform/image-decoders/bmp/BMPImageReader.h',
-            '../platform/image-decoders/gif/GIFImageDecoder.cpp',
-            '../platform/image-decoders/gif/GIFImageDecoder.h',
-            '../platform/image-decoders/gif/GIFImageReader.cpp',
-            '../platform/image-decoders/gif/GIFImageReader.h',
-            '../platform/image-decoders/ico/ICOImageDecoder.cpp',
-            '../platform/image-decoders/ico/ICOImageDecoder.h',
-            '../platform/image-decoders/jpeg/JPEGImageDecoder.cpp',
-            '../platform/image-decoders/jpeg/JPEGImageDecoder.h',
-            '../platform/image-decoders/png/PNGImageDecoder.cpp',
-            '../platform/image-decoders/png/PNGImageDecoder.h',
-            '../platform/image-decoders/skia/ImageDecoderSkia.cpp',
-            '../platform/image-decoders/xbm/XBMImageDecoder.cpp',
-            '../platform/image-decoders/xbm/XBMImageDecoder.h',
+            ['exclude', 'platform/image-decoders/ImageDecoder\\.h$'],
+            ['exclude', 'platform/image-decoders/bmp/BMPImageDecoder\\.(cpp|h)$'],
+            ['exclude', 'platform/image-decoders/bmp/BMPImageReader\\.(cpp|h)$'],
+            ['exclude', 'platform/image-decoders/gif/GIFImageDecoder\\.(cpp|h)$'],
+            ['exclude', 'platform/image-decoders/gif/GIFImageReader\\.(cpp|h)$'],
+            ['exclude', 'platform/image-decoders/ico/ICOImageDecoder\\.(cpp|h)$'],
+            ['exclude', 'platform/image-decoders/jpeg/JPEGImageDecoder\\.(cpp|h)$'],
+            ['exclude', 'platform/image-decoders/png/PNGImageDecoder\\.(cpp|h)$'],
+            ['exclude', 'platform/image-decoders/skia/ImageDecoderSkia\\.cpp$'],
+            ['exclude', 'platform/image-decoders/xbm/XBMImageDecoder\\.(cpp|h)$'],
 
             # Again, Skia is not used on Mac.
-            '../platform/chromium/DragImageChromiumSkia.cpp',
+            ['exclude', 'platform/chromium/DragImageChromiumSkia\\.cpp$'],
           ],
         }],
         ['OS=="win"', {
@@ -1277,7 +1260,11 @@
           ],
         }],
         ['OS!="linux" and OS!="freebsd"', {
-          'sources/': [['exclude', '(Gtk|Linux)\\.cpp$']]
+          'sources/': [
+            ['exclude', '(Gtk|Linux)\\.cpp$'],
+            ['exclude', 'Harfbuzz[^/]+\\.(cpp|h)$'],
+            ['exclude', 'VDMX[^/]+\\.(cpp|h)$'],
+          ],
         }],
         ['OS!="mac"', {
           'sources/': [['exclude', 'Mac\\.(cpp|mm?)$']]

@@ -1,3 +1,21 @@
+2010-09-16  Marc-Antoine Ruel  <maruel@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Convert WebCore.gyp to use regexp to excludes files instead of listing them in sources!.
+
+        This is necessary because sources! is processed before sources/. This makes
+        applying broader pattern in sources/ more difficult since it overrides the files
+        listed in sources!. Having all them in sources/ permits controlling the ordering
+        of the regexp, thus the final list of included files.
+
+        Fix Harfbuzz and VDMX source files includes in WebCore.gypi and WebCore.gyp
+
+        https://bugs.webkit.org/show_bug.cgi?id=45823
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+
 2010-09-16  Nat Duca  <nduca@chromium.org>
 
         Reviewed by Darin Fisher.
