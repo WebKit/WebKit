@@ -1,3 +1,13 @@
+2010-09-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Jon Honeycutt.
+
+        Add user message coding for WebUInt64 type.
+
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode):
+        (WebKit::UserMessageDecoder::baseDecode):
+
 2010-09-15  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Jon Honeycutt.
