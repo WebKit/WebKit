@@ -3122,3 +3122,5 @@ BUGDPRANKE LINUX DEBUG : http/tests/incremental/slow-utf8-text.pl = TIMEOUT PASS
 BUGDPRANKE LINUX DEBUG : fast/forms/restore-selection-after-layout.html = TEXT
 
 BUGDPRANKE WIN LINUX : media/video-poster.html = PASS TEXT
+
+BUGWK45898 : editing/selection/context-menu-on-text.html = TEXT
