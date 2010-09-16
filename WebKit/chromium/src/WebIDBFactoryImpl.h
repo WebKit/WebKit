@@ -42,7 +42,7 @@ public:
     WebIDBFactoryImpl();
     virtual ~WebIDBFactoryImpl();
 
-    virtual void open(const WebString& name, const WebString& description, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*);
+    virtual void open(const WebString& name, const WebString& description, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir);
     virtual void abortPendingTransactions(const WebVector<int>& pendingIDs);
 
 private:

@@ -1,3 +1,25 @@
+2010-09-15  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Allow the embedder to specify the base path for IndexedDB.
+        https://bugs.webkit.org/show_bug.cgi?id=45815
+
+        Existing tests provide coverage. Use the indexedDBPath parameter that's
+        already on the group settings object. Pass this parameter into the backend
+        which will use it rather than a hard coded tmp directory location. If
+        nothing is specified, assume it should be an in-memory temporary database.
+        (This is useful for bringup and Chromium's incognito mode.)
+
+        * storage/IDBFactory.cpp:
+        (WebCore::IDBFactory::open):
+        * storage/IDBFactoryBackendImpl.cpp:
+        (WebCore::openSQLiteDatabase):
+        (WebCore::createTables):
+        (WebCore::IDBFactoryBackendImpl::open):
+        * storage/IDBFactoryBackendImpl.h:
+        * storage/IDBFactoryBackendInterface.h:
+
 2010-09-16  Yong Li  <yoli@rim.com>
 
         Reviewed by George Staikos.

@@ -29,16 +29,19 @@
 #include "config.h"
 #include "IDBFactory.h"
 
+#if ENABLE(INDEXED_DATABASE)
+
 #include "DOMStringList.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
+#include "GroupSettings.h"
 #include "IDBDatabase.h"
 #include "IDBFactoryBackendInterface.h"
 #include "IDBKeyRange.h"
 #include "IDBRequest.h"
-
-#if ENABLE(INDEXED_DATABASE)
+#include "Page.h"
+#include "PageGroup.h"
 
 namespace WebCore {
 
@@ -61,11 +64,11 @@ PassRefPtr<IDBRequest> IDBFactory::open(ScriptExecutionContext* context, const S
     }
 
     Document* document = static_cast<Document*>(context);
-    if (!document->frame())
+    if (!document->frame() || !document->page())
         return 0;
 
     RefPtr<IDBRequest> request = IDBRequest::create(document, IDBAny::create(this));
-    m_factoryBackend->open(name, description, request, document->securityOrigin(), document->frame());
+    m_factoryBackend->open(name, description, request, document->securityOrigin(), document->frame(), document->page()->group().groupSettings()->indexedDBDatabasePath());
     return request;
 }
 

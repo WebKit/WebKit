@@ -59,10 +59,10 @@ IDBFactoryBackendProxy::~IDBFactoryBackendProxy()
 {
 }
 
-void IDBFactoryBackendProxy::open(const String& name, const String& description, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> origin, Frame* frame)
+void IDBFactoryBackendProxy::open(const String& name, const String& description, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> origin, Frame* frame, const String& dataDir)
 {
     WebKit::WebFrame* webFrame = WebKit::WebFrameImpl::fromFrame(frame);
-    m_webIDBFactory->open(name, description, new WebIDBCallbacksImpl(callbacks), origin, webFrame);
+    m_webIDBFactory->open(name, description, new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir);
 }
 
 void IDBFactoryBackendProxy::abortPendingTransactions(const Vector<int>& pendingIDs)

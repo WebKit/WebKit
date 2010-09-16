@@ -58,9 +58,9 @@ WebIDBFactoryImpl::~WebIDBFactoryImpl()
 {
 }
 
-void WebIDBFactoryImpl::open(const WebString& name, const WebString& description, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame*)
+void WebIDBFactoryImpl::open(const WebString& name, const WebString& description, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame*, const WebString& dataDir)
 {
-    m_idbFactoryBackend->open(name, description, IDBCallbacksProxy::create(callbacks), origin, 0);
+    m_idbFactoryBackend->open(name, description, IDBCallbacksProxy::create(callbacks), origin, 0, dataDir);
 }
 
 void WebIDBFactoryImpl::abortPendingTransactions(const WebVector<int>& pendingIDs)

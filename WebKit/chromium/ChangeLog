@@ -1,3 +1,21 @@
+2010-09-15  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Allow the embedder to specify the base path for IndexedDB.
+        https://bugs.webkit.org/show_bug.cgi?id=45815
+
+        Need to add the extra .open() parameter to make this all work.
+
+        * public/WebIDBFactory.h:
+        (WebKit::WebIDBFactory::open):
+        * src/IDBFactoryBackendProxy.cpp:
+        (WebCore::IDBFactoryBackendProxy::open):
+        * src/IDBFactoryBackendProxy.h:
+        * src/WebIDBFactoryImpl.cpp:
+        (WebKit::WebIDBFactoryImpl::open):
+        * src/WebIDBFactoryImpl.h:
+
 2010-09-16  Jeremy Orlow  <jorlow@chromium.org>
 
         Speculative build fix.
