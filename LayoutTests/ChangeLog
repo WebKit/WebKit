@@ -1,5 +1,13 @@
 2010-09-16  Satish Sampath  <satish@chromium.org>
 
+        Unreviewed, build fix after checking in the wrong location.
+
+        Moving a test expectation which should have been under the chromium platform.
+
+        * platform/chromium/fast/images/gif-large-checkerboard-expected.txt: Renamed from LayoutTests/fast/images/gif-large-checkerboard-expected.txt.
+
+2010-09-16  Satish Sampath  <satish@chromium.org>
+
         Reviewed by Jeremy Orlow.
 
         Add chromium baselines for a recently added layout test.
