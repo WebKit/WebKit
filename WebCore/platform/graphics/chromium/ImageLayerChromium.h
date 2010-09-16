@@ -42,6 +42,8 @@
 
 namespace WebCore {
 
+class Image;
+
 // A Layer that contains only an Image element.
 class ImageLayerChromium : public ContentLayerChromium {
 public:
@@ -50,17 +52,12 @@ public:
     virtual void updateContents();
     virtual bool drawsContent() { return m_contents; }
 
-    void setContents(NativeImagePtr);
+    void setContents(Image* image);
 
 private:
     ImageLayerChromium(GraphicsLayerChromium* owner);
 
-#if PLATFORM(CG)
-    RetainPtr<CGImageRef> m_contents;
-#else
-    // FIXME: This needs to be an owning type.
-    NativeImagePtr m_contents;
-#endif
+    RefPtr<Image> m_contents;
 };
 
 }

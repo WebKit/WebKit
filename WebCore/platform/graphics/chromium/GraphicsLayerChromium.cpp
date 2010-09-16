@@ -319,7 +319,6 @@ void GraphicsLayerChromium::setContentsToImage(Image* image)
 {
     bool childrenChanged = false;
     if (image) {
-        NativeImagePtr nativeImage = image->nativeImageForCurrentFrame();
         if (!m_contentsLayer.get() || m_contentsLayerPurpose != ContentsLayerForImage) {
             RefPtr<ImageLayerChromium> imageLayer = ImageLayerChromium::create(this);
             setupContentsLayer(imageLayer.get());
@@ -328,7 +327,7 @@ void GraphicsLayerChromium::setContentsToImage(Image* image)
             childrenChanged = true;
         }
         ImageLayerChromium* imageLayer = static_cast<ImageLayerChromium*>(m_contentsLayer.get());
-        imageLayer->setContents(nativeImage);
+        imageLayer->setContents(image);
         updateContentsRect();
     } else {
         if (m_contentsLayer) {
