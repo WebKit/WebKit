@@ -279,64 +279,14 @@ void IDBObjectStoreBackendImpl::removeIndex(const String& name, PassRefPtr<IDBCa
     callbacks->onSuccess();
 }
 
-static String leftCursorWhereFragment(IDBKey::Type type, String comparisonOperator)
-{
-    switch (type) {
-    case IDBKey::StringType:
-        return "? " + comparisonOperator + " keyString  AND  ";
-    // FIXME: Implement date.
-    case IDBKey::NumberType:
-        return "(? " + comparisonOperator + " keyNumber  OR  NOT keyString IS NULL  OR  NOT keyDate IS NULL)  AND  ";
-    case IDBKey::NullType:
-        if (comparisonOperator == "<")
-            return "NOT(keyString IS NULL  AND  keyDate IS NULL  AND  keyNumber IS NULL)  AND  ";
-        return ""; // If it's =, the upper bound half will do the constraining. If it's <=, then that's a no-op.
-    }
-    ASSERT_NOT_REACHED();
-    return "";
-}
-
-static String rightCursorWhereFragment(IDBKey::Type type, String comparisonOperator)
-{
-    switch (type) {
-    case IDBKey::StringType:
-        return "(keyString " + comparisonOperator + " ?  OR  keyString IS NULL)  AND  ";
-    // FIXME: Implement date.
-    case IDBKey::NumberType:
-        return "(keyNumber " + comparisonOperator + " ? OR keyNumber IS NULL)  AND  keyString IS NULL  AND  keyDate IS NULL  AND  ";
-    case IDBKey::NullType:
-        if (comparisonOperator == "<")
-            return "0 != 0  AND  ";
-        return "keyString IS NULL  AND  keyDate IS NULL  AND  keyNumber IS NULL  AND  ";
-    }
-    ASSERT_NOT_REACHED();
-    return "";
-}
-
 void IDBObjectStoreBackendImpl::openCursor(PassRefPtr<IDBKeyRange> range, unsigned short tmpDirection, PassRefPtr<IDBCallbacks> callbacks)
 {
-    String lowerEquality;
-    if (range->flags() & IDBKeyRange::LEFT_OPEN)
-        lowerEquality = "<";
-    else if (range->flags() & IDBKeyRange::LEFT_BOUND)
-        lowerEquality = "<=";
-    else
-        lowerEquality = "=";
-
-    String upperEquality;
-    if (range->flags() & IDBKeyRange::RIGHT_OPEN)
-        upperEquality = "<";
-    else if (range->flags() & IDBKeyRange::RIGHT_BOUND)
-        upperEquality = "<=";
-    else
-        upperEquality = "=";
-
-    // If you change the order of this select, you'll need to change it in IDBCursorBackendImpl.cpp as well.
+    // Several files depend on this order of selects.
     String sql = "SELECT id, keyString, keyDate, keyNumber, value FROM ObjectStoreData WHERE ";
     if (range->flags() & IDBKeyRange::LEFT_BOUND || range->flags() == IDBKeyRange::SINGLE)
-        sql += leftCursorWhereFragment(range->left()->type(), lowerEquality);
+        sql += range->left()->leftCursorWhereFragment(range->leftWhereClauseComparisonOperator());
     if (range->flags() & IDBKeyRange::RIGHT_BOUND || range->flags() == IDBKeyRange::SINGLE)
-        sql += rightCursorWhereFragment(range->right()->type(), upperEquality);
+        sql += range->right()->rightCursorWhereFragment(range->rightWhereClauseComparisonOperator());
     sql += "objectStoreId = ? ORDER BY ";
 
     IDBCursor::Direction direction = static_cast<IDBCursor::Direction>(tmpDirection);

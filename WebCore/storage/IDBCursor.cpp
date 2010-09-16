@@ -60,7 +60,7 @@ PassRefPtr<IDBKey> IDBCursor::key() const
 
 PassRefPtr<IDBAny> IDBCursor::value() const
 {
-    return IDBAny::create(m_backend->value().get());
+    return m_backend->value();
 }
 
 PassRefPtr<IDBRequest> IDBCursor::update(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value)

@@ -26,6 +26,7 @@
 #ifndef IDBIndex_h
 #define IDBIndex_h
 
+#include "IDBCursor.h"
 #include "IDBIndexBackendInterface.h"
 #include "PlatformString.h"
 #include <wtf/Forward.h>
@@ -44,8 +45,14 @@ public:
 
     // Implement the IDL
     String name() const { return m_backend->name(); }
+    String storeName() const { return m_backend->storeName(); }
     String keyPath() const { return m_backend->keyPath(); }
     bool unique() const { return m_backend->unique(); }
+
+    PassRefPtr<IDBRequest> openObjectCursor(ScriptExecutionContext*, PassRefPtr<IDBKeyRange> = 0, unsigned short direction = IDBCursor::NEXT);
+    PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, PassRefPtr<IDBKeyRange> = 0, unsigned short direction = IDBCursor::NEXT);
+    PassRefPtr<IDBRequest> getObject(ScriptExecutionContext*, PassRefPtr<IDBKey>);
+    PassRefPtr<IDBRequest> get(ScriptExecutionContext*, PassRefPtr<IDBKey>);
 
 private:
     IDBIndex(PassRefPtr<IDBIndexBackendInterface>);

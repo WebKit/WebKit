@@ -123,7 +123,7 @@ void IDBAny::set(PassRefPtr<IDBDatabase> value)
 void IDBAny::set(PassRefPtr<IDBIndex> value)
 {
     ASSERT(m_type == UndefinedType);
-    m_type = IDBDatabaseType;
+    m_type = IDBIndexType;
     m_idbIndex = value;
 }
 

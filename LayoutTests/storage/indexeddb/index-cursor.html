@@ -1,0 +1,238 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script> 
+
+description("Test IndexedDB's IDBIndex.openCursor + the cursor it produces in depth.");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+ 
+// In order of how it should be sorted by IndexedDB.
+window.testData = [
+    null,
+    null,
+    2,
+    2,
+    10,
+    // FIXME: Dates.
+    "A big string",
+    "the BIGEST string",
+    "the BIGEST string"
+];
+ 
+function openDatabase()
+{
+    result = evalAndLog("indexedDB.open('someDB', 'some description')");
+    verifyResult(result);
+    result.onsuccess = openObjectStore;
+    result.onerror = unexpectedErrorCallback;
+}
+ 
+function openObjectStore()
+{
+    verifySuccessEvent(event);
+    window.db = evalAndLog("db = event.result");
+
+    deleteAllObjectStores(db);
+
+    result = evalAndLog("db.createObjectStore('someObjectStore')");
+    verifyResult(result);
+    result.onsuccess = openIndex;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function openIndex()
+{
+    verifySuccessEvent(event);
+    window.objectStore = evalAndLog("objectStore = event.result");
+
+    result = evalAndLog("objectStore.createIndex('someIndex', 'x')");
+    verifyResult(result);
+    result.onsuccess = startAddingData;
+    result.onerror = unexpectedErrorCallback;
+}
+ 
+function startAddingData()
+{
+    verifySuccessEvent(event);
+    window.indexObject = evalAndLog("indexObject = event.result");
+
+    window.nextToAdd = 0;
+    addData();
+}
+
+function addData()
+{
+    // We cheat when called for the first time; we're in the context of the objectStore success event.
+    verifySuccessEvent(event);
+
+    result = evalAndLog("objectStore.add({'x': testData[nextToAdd]}, nextToAdd)");
+    verifyResult(result);
+    result.onsuccess = ++window.nextToAdd < testData.length ? addData : scheduleTests;
+}
+
+function scheduleTests()
+{
+    debug("Scheduling tests...");
+    window.scheduledTests = [];
+    for (var i = 0; i < testData.length; ++i) {
+        /* left bound, is open, right bound, is open, ascending */
+        scheduledTests.unshift([i, true, null, null, true]);
+        scheduledTests.unshift([i, false, null, null, true]);
+        scheduledTests.unshift([null, null, i, true, true]);
+        scheduledTests.unshift([null, null, i, false, true]);
+        scheduledTests.unshift([i, true, null, null, false]);
+        scheduledTests.unshift([i, false, null, null, false]);
+        scheduledTests.unshift([null, null, i, true, false]);
+        scheduledTests.unshift([null, null, i, false, false]);
+        for (var j = 6; j < testData.length; ++j) {
+            scheduledTests.unshift([i, true, j, true, true]);
+            scheduledTests.unshift([i, true, j, false, true]);
+            scheduledTests.unshift([i, false, j, true, true]);
+            scheduledTests.unshift([i, false, j, false, true]);
+            scheduledTests.unshift([i, true, j, true, false]);
+            scheduledTests.unshift([i, true, j, false, false]);
+            scheduledTests.unshift([i, false, j, true, false]);
+            scheduledTests.unshift([i, false, j, false, false]);
+        }
+    }
+ 
+    debug("Running tests...");
+    setTimeout(runNextTest, 0);
+}
+ 
+function runNextTest()
+{
+    if (!scheduledTests.length) {
+        done();
+        return;
+    }
+ 
+    var test = scheduledTests.pop();
+    window.lower = test[0];
+    window.lowerIsOpen = test[1];
+    window.upper = test[2];
+    window.upperIsOpen = test[3];
+    window.ascending = test[4];
+
+    str = "Next test: ";
+    if (lower !== null) {
+        str += "lower ";
+        if (lowerIsOpen)
+            str += "open ";
+        str += "bound is " + lower + "; ";
+    }
+    if (upper !== null) {
+        str += "upper ";
+        if (upperIsOpen)
+            str += "open ";
+        str += "bound is " + upper + "; ";
+    }
+    if (ascending)
+        str += "sorted ascending.";
+    else
+        str += "sorted descending.";
+
+    debug("");
+    debug(str);
+
+    // Work around for duplicate values.
+    if (upper !== null) {
+        if (upperIsOpen) {
+            while (upper > 0 && testData[upper] === testData[upper - 1])
+                --window.upper;
+        } else {
+            while (upper < testData.length - 1 && testData[upper] === testData[upper + 1])
+                ++window.upper;
+        }
+    }
+    if (lower !== null) {
+        if (lowerIsOpen) {
+            while (lower < testData.length - 1 && testData[lower] === testData[lower + 1])
+                ++window.lower;
+        } else {
+            while (lower > 0 && testData[lower] === testData[lower - 1])
+                --window.lower;
+        }
+    }
+
+    if (ascending) {
+        if (lower !== null) {
+            if (!lowerIsOpen)
+                window.expectedIndex = lower;
+            else
+                window.expectedIndex = lower + 1;
+        } else
+            window.expectedIndex = 0;
+    } else {
+        if (upper !== null) {
+            if (!upperIsOpen)
+                window.expectedIndex = upper;
+            else
+                window.expectedIndex = upper - 1;
+        } else
+            window.expectedIndex = testData.length - 1;
+    }
+    testWithinBounds();
+ 
+    var keyRange;
+    if (lower !== null && upper !== null)
+        keyRange = IDBKeyRange.bound(testData[lower], testData[upper], lowerIsOpen, upperIsOpen);
+    else if (lower !== null)
+        keyRange = IDBKeyRange.leftBound(testData[lower], lowerIsOpen);
+    else
+        keyRange = IDBKeyRange.rightBound(testData[upper], upperIsOpen);
+ 
+    var request = indexObject.openCursor(keyRange, ascending ? IDBCursor.NEXT : IDBCursor.PREV);
+    request.onsuccess = cursorIteration;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function testWithinBounds()
+{
+    if (expectedIndex < 0 || testData.length <= expectedIndex)
+        window.expectedIndex = null;
+    if (lower !== null && expectedIndex < lower)
+        window.expectedIndex = null;
+    if (upper !== null && upper < expectedIndex)
+        window.expectedIndex = null;
+    if (lower !== null && lowerIsOpen && expectedIndex <= lower)
+        window.expectedIndex = null;
+    if (upper !== null && upperIsOpen && upper <= expectedIndex)
+        window.expectedIndex = null;
+}
+ 
+function cursorIteration()
+{
+    if (expectedIndex === null) {
+        shouldBeNull("event.result");
+        setTimeout(runNextTest, 0);
+        return;
+    }
+    if (event.result === null) {
+        testFailed("Event.result should not be null.")
+        setTimeout(runNextTest, 0);
+        return;
+    }
+ 
+    shouldBe("event.result.value", "expectedIndex");
+    shouldBe("event.result.key", "testData[" + expectedIndex + "]");
+    window.expectedIndex = ascending ? expectedIndex + 1 : expectedIndex - 1;
+    testWithinBounds();
+
+    event.result.continue();
+}
+ 
+openDatabase(); // The first step.
+var successfullyParsed = true;
+ 
+</script>
+</body>
+</html>

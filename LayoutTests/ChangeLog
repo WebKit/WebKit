@@ -1,3 +1,18 @@
+2010-09-08  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Complete index support for IndexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=45386
+
+        * storage/indexeddb/index-basics-expected.txt: Added.
+        * storage/indexeddb/index-basics.html: Added.
+        * storage/indexeddb/index-cursor-expected.txt: Added.
+        * storage/indexeddb/index-cursor.html: Added.
+        * storage/indexeddb/objectstore-basics-expected.txt:
+        * storage/indexeddb/objectstore-basics.html:
+        * storage/indexeddb/script-tests/objectstore-basics.js: Removed.
+
 2010-09-15  John Gregg  <johnnyg@google.com>
 
         Unreviewed, build fix after incomplete revert.

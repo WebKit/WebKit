@@ -42,8 +42,14 @@ public:
     virtual ~WebIDBIndexImpl();
 
     virtual WebString name() const;
+    virtual WebString storeName() const;
     virtual WebString keyPath() const;
     virtual bool unique() const;
+
+    virtual void openObjectCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*); 
+    virtual void openCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*);
+    virtual void getObject(const WebIDBKey&, WebIDBCallbacks*);
+    virtual void get(const WebIDBKey&, WebIDBCallbacks*);
 
 private:
     WTF::RefPtr<WebCore::IDBIndexBackendInterface> m_backend;

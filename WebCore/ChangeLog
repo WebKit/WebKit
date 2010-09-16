@@ -1,3 +1,69 @@
+2010-09-08  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Complete index support for IndexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=45386
+
+        Add the rest of the index related API for IndexedDB.  This
+        includes cursor suport.  A bunch of code was also refactored
+        since it is shared between indexes and objectStores.
+
+        Tests: storage/indexeddb/index-basics.html
+               storage/indexeddb/index-cursor.html
+               + additions to others.
+
+        * storage/IDBAny.cpp:
+        (WebCore::IDBAny::set):
+        * storage/IDBCursor.cpp:
+        (WebCore::IDBCursor::value):
+        * storage/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::IDBCursorBackendImpl):
+        (WebCore::IDBCursorBackendImpl::value):
+        (WebCore::IDBCursorBackendImpl::update):
+        (WebCore::IDBCursorBackendImpl::continueFunction):
+        (WebCore::IDBCursorBackendImpl::remove):
+        (WebCore::IDBCursorBackendImpl::loadCurrentRow):
+        (WebCore::IDBCursorBackendImpl::database):
+        * storage/IDBCursorBackendImpl.h:
+        (WebCore::IDBCursorBackendImpl::create):
+        * storage/IDBCursorBackendInterface.h:
+        * storage/IDBFactoryBackendImpl.cpp:
+        (WebCore::createTables):
+        * storage/IDBIndex.cpp:
+        (WebCore::IDBIndex::openObjectCursor):
+        (WebCore::IDBIndex::openCursor):
+        (WebCore::IDBIndex::getObject):
+        (WebCore::IDBIndex::get):
+        * storage/IDBIndex.h:
+        (WebCore::IDBIndex::storeName):
+        * storage/IDBIndex.idl:
+        * storage/IDBIndexBackendImpl.cpp:
+        (WebCore::IDBIndexBackendImpl::storeName):
+        (WebCore::openCursorInternal):
+        (WebCore::IDBIndexBackendImpl::openObjectCursor):
+        (WebCore::IDBIndexBackendImpl::openCursor):
+        (WebCore::getInternal):
+        (WebCore::IDBIndexBackendImpl::getObject):
+        (WebCore::IDBIndexBackendImpl::get):
+        * storage/IDBIndexBackendImpl.h:
+        (WebCore::IDBIndexBackendImpl::objectStore):
+        * storage/IDBIndexBackendInterface.h:
+        * storage/IDBKey.cpp:
+        (WebCore::IDBKey::fromQuery):
+        (WebCore::IDBKey::whereSyntax):
+        (WebCore::IDBKey::leftCursorWhereFragment):
+        (WebCore::IDBKey::rightCursorWhereFragment):
+        * storage/IDBKey.h:
+        * storage/IDBKeyRange.cpp:
+        (WebCore::IDBKeyRange::leftWhereClauseComparisonOperator):
+        (WebCore::IDBKeyRange::rightWhereClauseComparisonOperator):
+        * storage/IDBKeyRange.h:
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::openCursor):
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::timerFired):
+
 2010-09-15  Simon Fraser  <simon.fraser@apple.com>
 
         Fix chromium build.

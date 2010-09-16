@@ -1,3 +1,45 @@
+2010-09-08  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Complete index support for IndexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=45386
+
+        * public/WebIDBCursor.h:
+        (WebKit::WebIDBCursor::direction):
+        (WebKit::WebIDBCursor::key):
+        (WebKit::WebIDBCursor::value):
+        (WebKit::WebIDBCursor::update):
+        (WebKit::WebIDBCursor::continueFunction):
+        (WebKit::WebIDBCursor::remove):
+        * public/WebIDBIndex.h:
+        (WebKit::WebIDBIndex::storeName):
+        (WebKit::WebIDBIndex::openObjectCursor):
+        (WebKit::WebIDBIndex::openCursor):
+        (WebKit::WebIDBIndex::getObject):
+        (WebKit::WebIDBIndex::get):
+        * public/WebIDBKey.h:
+        * src/IDBCursorBackendProxy.cpp:
+        (WebCore::IDBCursorBackendProxy::value):
+        * src/IDBCursorBackendProxy.h:
+        * src/IDBIndexBackendProxy.cpp:
+        (WebCore::IDBIndexBackendProxy::storeName):
+        (WebCore::IDBIndexBackendProxy::openObjectCursor):
+        (WebCore::IDBIndexBackendProxy::openCursor):
+        (WebCore::IDBIndexBackendProxy::getObject):
+        (WebCore::IDBIndexBackendProxy::get):
+        * src/IDBIndexBackendProxy.h:
+        * src/WebIDBCursorImpl.cpp:
+        (WebKit::WebIDBCursorImpl::value):
+        * src/WebIDBCursorImpl.h:
+        * src/WebIDBIndexImpl.cpp:
+        (WebKit::WebIDBIndexImpl::storeName):
+        (WebKit::WebIDBIndexImpl::openCursor):
+        (WebKit::WebIDBIndexImpl::openObjectCursor):
+        (WebKit::WebIDBIndexImpl::getObject):
+        (WebKit::WebIDBIndexImpl::get):
+        * src/WebIDBIndexImpl.h:
+
 2010-09-15  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Darin Fisher.

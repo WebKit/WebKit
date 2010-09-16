@@ -50,7 +50,7 @@ PASS store.name is "storeName"
 PASS store.keyPath is null
 PASS storeNames.contains('storeName') is true
 PASS storeNames.length is 1
-event.result.createIndex('indexName', 'x')
+event.result.createIndex('indexName', 'x', true)
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
 PASS 'abort' in result is true
@@ -92,6 +92,27 @@ PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
 PASS event.result is "key"
+event.source.add({x: 'value'}, 'zzz')
+PASS 'onsuccess' in result is true
+PASS 'onerror' in result is true
+PASS 'abort' in result is true
+PASS 'readyState' in result is true
+An event should fire shortly...
+
+addAgainFailure():
+Error event fired:
+PASS 'result' in event is false
+PASS 'code' in event is true
+PASS 'message' in event is true
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'abort' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+PASS event.code is IDBDatabaseException.UNKNOWN_ERR
 store = event.source
 store.get('key')
 PASS 'onsuccess' in result is true

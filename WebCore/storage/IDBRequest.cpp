@@ -153,13 +153,12 @@ void IDBRequest::timerFired(Timer<IDBRequest>*)
     Vector<PendingEvent> pendingEvents;
     pendingEvents.swap(m_pendingEvents);
     for (size_t i = 0; i < pendingEvents.size(); ++i) {
-        PendingEvent pendingEvent = pendingEvents[i];
-        if (pendingEvent.m_error) {
-            ASSERT(!pendingEvent.m_result);
-            dispatchEvent(IDBErrorEvent::create(m_source, *pendingEvent.m_error));
+        if (pendingEvents[i].m_error) {
+            ASSERT(!pendingEvents[i].m_result);
+            dispatchEvent(IDBErrorEvent::create(m_source, *pendingEvents[i].m_error));
         } else {
-            ASSERT(pendingEvent.m_result->type() != IDBAny::UndefinedType);
-            dispatchEvent(IDBSuccessEvent::create(m_source, pendingEvent.m_result));
+            ASSERT(pendingEvents[i].m_result->type() != IDBAny::UndefinedType);
+            dispatchEvent(IDBSuccessEvent::create(m_source, pendingEvents[i].m_result));
         }
     }
 }

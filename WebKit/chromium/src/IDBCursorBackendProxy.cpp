@@ -30,9 +30,11 @@
 
 #include "IDBAny.h"
 #include "IDBCallbacks.h"
+#include "IDBKey.h"
 #include "SerializedScriptValue.h"
 #include "WebIDBCallbacksImpl.h"
 #include "WebIDBKey.h"
+#include "WebSerializedScriptValue.h"
 
 namespace WebCore {
 
@@ -60,9 +62,17 @@ PassRefPtr<IDBKey> IDBCursorBackendProxy::key() const
     return m_idbCursor->key();
 }
 
-PassRefPtr<SerializedScriptValue> IDBCursorBackendProxy::value() const
+PassRefPtr<IDBAny> IDBCursorBackendProxy::value() const
 {
-    return m_idbCursor->value();
+    WebKit::WebSerializedScriptValue webScriptValue;
+    WebKit::WebIDBKey webKey;
+    m_idbCursor->value(webScriptValue, webKey);
+    if (!webScriptValue.isNull()) {
+        ASSERT(webKey.type() == WebKit::WebIDBKey::InvalidType);
+        return IDBAny::create<SerializedScriptValue>(webScriptValue);
+    }
+    ASSERT(webKey.type() != WebKit::WebIDBKey::InvalidType);
+    return IDBAny::create<IDBKey>(webKey);
 }
 
 void IDBCursorBackendProxy::update(PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBCallbacks> callbacks)

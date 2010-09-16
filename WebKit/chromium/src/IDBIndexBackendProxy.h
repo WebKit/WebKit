@@ -42,10 +42,14 @@ public:
     virtual ~IDBIndexBackendProxy();
 
     virtual String name();
+    virtual String storeName();
     virtual String keyPath();
     virtual bool unique();
 
-    // FIXME: Add other methods.
+    virtual void openObjectCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>);
+    virtual void openCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>);
+    virtual void getObject(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>);
+    virtual void get(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>);
 
 private:
     IDBIndexBackendProxy(PassOwnPtr<WebKit::WebIDBIndex>);

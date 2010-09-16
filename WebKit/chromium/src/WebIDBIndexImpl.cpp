@@ -26,7 +26,12 @@
 #include "config.h"
 #include "WebIDBIndexImpl.h"
 
+#include "IDBCallbacksProxy.h"
 #include "IDBIndex.h"
+#include "IDBKeyRange.h"
+#include "WebIDBCallbacks.h"
+#include "WebIDBKey.h"
+#include "WebIDBKeyRange.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -48,6 +53,11 @@ WebString WebIDBIndexImpl::name() const
     return m_backend->name();
 }
 
+WebString WebIDBIndexImpl::storeName() const
+{
+    return m_backend->storeName();
+}
+
 WebString WebIDBIndexImpl::keyPath() const
 {
     return m_backend->keyPath();
@@ -56,6 +66,26 @@ WebString WebIDBIndexImpl::keyPath() const
 bool WebIDBIndexImpl::unique() const
 {
     return m_backend->unique();
+}
+
+void WebIDBIndexImpl::openCursor(const WebIDBKeyRange& keyRange, unsigned short direction, WebIDBCallbacks* callbacks)
+{
+    m_backend->openCursor(keyRange, direction, IDBCallbacksProxy::create(callbacks));
+}
+
+void WebIDBIndexImpl::openObjectCursor(const WebIDBKeyRange& keyRange, unsigned short direction, WebIDBCallbacks* callbacks)
+{
+    m_backend->openObjectCursor(keyRange, direction, IDBCallbacksProxy::create(callbacks));
+}
+
+void WebIDBIndexImpl::getObject(const WebIDBKey& keyRange, WebIDBCallbacks* callbacks)
+{
+    m_backend->getObject(keyRange, IDBCallbacksProxy::create(callbacks));
+}
+
+void WebIDBIndexImpl::get(const WebIDBKey& keyRange, WebIDBCallbacks* callbacks)
+{
+    m_backend->get(keyRange, IDBCallbacksProxy::create(callbacks));
 }
 
 } // namespace WebCore

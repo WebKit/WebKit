@@ -49,8 +49,16 @@ public:
 
     // Implements IDBIndexBackendInterface.
     virtual String name() { return m_name; }
+    virtual String storeName();
     virtual String keyPath() { return m_keyPath; }
     virtual bool unique() { return m_unique; }
+
+    virtual void openObjectCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>);
+    virtual void openCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>);
+    virtual void getObject(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>);
+    virtual void get(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>);
+
+    IDBObjectStoreBackendImpl* objectStore() const { return m_objectStore.get(); }
 
 private:
     IDBIndexBackendImpl(IDBObjectStoreBackendImpl*, int64_t id, const String& name, const String& keyPath, bool unique);

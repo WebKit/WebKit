@@ -49,7 +49,7 @@ function createSuccess()
     shouldBe("storeNames.length", "1");
     // FIXME: test all of object store's methods.
 
-    result = evalAndLog("event.result.createIndex('indexName', 'x')");
+    result = evalAndLog("event.result.createIndex('indexName', 'x', true)"); // true == unique requirement.
     verifyResult(result);
     result.onsuccess = addIndexSuccess;
     result.onerror = unexpectedErrorCallback;
@@ -72,6 +72,19 @@ function addSuccess()
     debug("addSuccess():");
     verifySuccessEvent(event);
     shouldBeEqualToString("event.result", "key");
+
+    result = evalAndLog("event.source.add({x: 'value'}, 'zzz')");
+    verifyResult(result);
+    result.onsuccess = unexpectedSuccessCallback;
+    result.onerror = addAgainFailure;
+}
+
+function addAgainFailure()
+{
+    debug("addAgainFailure():");
+    verifyErrorEvent(event);
+    // FIXME: This error code needs to be specced.
+    shouldBe("event.code", "IDBDatabaseException.UNKNOWN_ERR");
     var store = evalAndLog("store = event.source");
 
     result = evalAndLog("store.get('key')");

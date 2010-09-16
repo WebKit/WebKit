@@ -1,0 +1,217 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test the basics of IndexedDB's IDBIndex.");
+if (window.layoutTestController) 
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    result = evalAndLog("indexedDB.open('name', 'description')");
+    verifyResult(result);
+    result.onsuccess = createObjectStore;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function createObjectStore()
+{
+    verifySuccessEvent(event);
+    db = evalAndLog("db = event.result");
+
+    deleteAllObjectStores(db);
+
+    result = evalAndLog("db.createObjectStore('storeName', null)");
+    verifyResult(result);
+    result.onsuccess = createIndex;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function createIndex()
+{
+    verifySuccessEvent(event);
+    window.store = evalAndLog("store = event.result");
+
+    result = evalAndLog("event.result.createIndex('indexName', 'x')");
+    verifyResult(result);
+    result.onsuccess = addData;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function addData()
+{
+    verifySuccessEvent(event);
+    shouldBeFalse("event.result === null");
+    window.indexObject = evalAndLog("indexObject = event.result");
+    shouldBeTrue("'name' in indexObject");
+    shouldBeEqualToString("indexObject.name", "indexName");
+    shouldBeTrue("'storeName' in indexObject");
+    shouldBeEqualToString("indexObject.storeName", "storeName");
+    shouldBeTrue("'keyPath' in indexObject");
+    shouldBeEqualToString("indexObject.keyPath", "x");
+    shouldBeTrue("'unique' in indexObject");
+    shouldBeFalse("indexObject.unique");
+    shouldBeTrue("'openObjectCursor' in indexObject");
+    shouldBeTrue("'openCursor' in indexObject");
+    shouldBeTrue("'getObject' in indexObject");
+    shouldBeTrue("'get' in indexObject");
+
+    result = evalAndLog("event.source.add({x: 'value', y: 'zzz'}, 'key')");
+    verifyResult(result);
+    result.onsuccess = addMore;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function addMore()
+{
+    verifySuccessEvent(event);
+
+    result = evalAndLog("event.source.add({x: 'value2', y: 'zzz2'}, 'key2')");
+    verifyResult(result);
+    result.onsuccess = getData;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function getData()
+{
+    verifySuccessEvent(event);
+
+    result = evalAndLog("indexObject.get('value')");
+    verifyResult(result);
+    result.onsuccess = getObjectData;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function getObjectData()
+{
+    verifySuccessEvent(event);
+    shouldBeEqualToString("event.result", "key");
+
+    result = evalAndLog("indexObject.getObject('value')");
+    verifyResult(result);
+    result.onsuccess = getDataFail;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function getDataFail()
+{
+    verifySuccessEvent(event);
+    shouldBeEqualToString("event.result.x", "value");
+    shouldBeEqualToString("event.result.y", "zzz");
+
+    result = evalAndLog("indexObject.get('does not exist')");
+    verifyResult(result);
+    result.onsuccess = unexpectedSuccessCallback;
+    result.onerror = getObjectDataFail;
+}
+
+function getObjectDataFail()
+{
+    verifyErrorEvent(event);
+    shouldBe("event.code", "IDBDatabaseException.NOT_FOUND_ERR");
+
+    result = evalAndLog("indexObject.getObject('does not exist')");
+    verifyResult(result);
+    result.onsuccess = unexpectedSuccessCallback;
+    result.onerror = openCursor;
+}
+
+function openCursor()
+{
+    verifyErrorEvent(event);
+    shouldBe("event.code", "IDBDatabaseException.NOT_FOUND_ERR");
+
+    window.result = evalAndLog("indexObject.openCursor()");
+    verifyResult(result);
+    result.onsuccess = cursor1Continue;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function cursor1Continue()
+{
+    verifySuccessEvent(event);
+    shouldBeFalse("event.result === null");
+    shouldBeEqualToString("event.result.key", "value");
+    shouldBeEqualToString("event.result.value", "key");
+
+    // We re-use the last result object.
+    evalAndLog("event.result.continue()");
+    verifyResult(window.result);
+    window.result.onsuccess = cursor1Continue2;
+}
+
+function cursor1Continue2()
+{
+    verifySuccessEvent(event);
+    shouldBeFalse("event.result === null");
+    shouldBeEqualToString("event.result.key", "value2");
+    shouldBeEqualToString("event.result.value", "key2");
+
+    // We re-use the last result object.
+    evalAndLog("event.result.continue()");
+    verifyResult(window.result);
+    window.result.onsuccess = openObjectCursor;
+}
+
+function openObjectCursor()
+{
+    verifySuccessEvent(event);
+    shouldBeTrue("event.result === null");
+
+    window.result = evalAndLog("indexObject.openObjectCursor()");
+    verifyResult(result);
+    result.onsuccess = cursor2Continue;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function cursor2Continue()
+{
+    verifySuccessEvent(event);
+    shouldBeFalse("event.result === null");
+    shouldBeEqualToString("event.result.key", "value");
+    shouldBeEqualToString("event.result.value.x", "value");
+    shouldBeEqualToString("event.result.value.y", "zzz");
+
+    // We re-use the last result object.
+    evalAndLog("event.result.continue()");
+    verifyResult(window.result);
+    window.result.onsuccess = cursor2Continue2;
+}
+
+function cursor2Continue2()
+{
+    verifySuccessEvent(event);
+    shouldBeFalse("event.result === null");
+    shouldBeEqualToString("event.result.key", "value2");
+    shouldBeEqualToString("event.result.value.x", "value2");    
+    shouldBeEqualToString("event.result.value.y", "zzz2");
+
+    // We re-use the last result object.
+    evalAndLog("event.result.continue()");
+    verifyResult(window.result);
+    window.result.onsuccess = last;
+}
+
+function last()
+{
+    verifySuccessEvent(event);
+    shouldBeTrue("event.result === null");
+
+    done();
+}
+
+test();
+
+var successfullyParsed = true;
+
+</script>
+</body>
+</html>

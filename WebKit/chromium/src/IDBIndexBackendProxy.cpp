@@ -26,10 +26,14 @@
 #include "config.h"
 #include "IDBIndexBackendProxy.h"
 
+#if ENABLE(INDEXED_DATABASE)
+
+#include "IDBCallbacks.h"
+#include "WebIDBCallbacksImpl.h"
 #include "WebIDBDatabaseError.h"
 #include "WebIDBIndex.h"
-
-#if ENABLE(INDEXED_DATABASE)
+#include "WebIDBKey.h"
+#include "WebIDBKeyRange.h"
 
 namespace WebCore {
 
@@ -52,6 +56,11 @@ String IDBIndexBackendProxy::name()
     return m_webIDBIndex->name();
 }
 
+String IDBIndexBackendProxy::storeName()
+{
+    return m_webIDBIndex->storeName();
+}
+
 String IDBIndexBackendProxy::keyPath()
 {
     return m_webIDBIndex->keyPath();
@@ -60,6 +69,26 @@ String IDBIndexBackendProxy::keyPath()
 bool IDBIndexBackendProxy::unique()
 {
     return m_webIDBIndex->unique();
+}
+
+void IDBIndexBackendProxy::openObjectCursor(PassRefPtr<IDBKeyRange> keyRange, unsigned short direction, PassRefPtr<IDBCallbacks> callbacks)
+{
+    m_webIDBIndex->openObjectCursor(keyRange, direction, new WebIDBCallbacksImpl(callbacks));
+}
+
+void IDBIndexBackendProxy::openCursor(PassRefPtr<IDBKeyRange> keyRange, unsigned short direction, PassRefPtr<IDBCallbacks> callbacks)
+{
+    m_webIDBIndex->openCursor(keyRange, direction, new WebIDBCallbacksImpl(callbacks));
+}
+
+void IDBIndexBackendProxy::getObject(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
+{
+    m_webIDBIndex->getObject(key, new WebIDBCallbacksImpl(callbacks));
+}
+
+void IDBIndexBackendProxy::get(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
+{
+    m_webIDBIndex->get(key, new WebIDBCallbacksImpl(callbacks));
 }
 
 } // namespace WebCore

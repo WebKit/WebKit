@@ -57,6 +57,9 @@ public:
     PassRefPtr<IDBKey> right() const { return m_right; }
     unsigned short flags() const { return m_flags; }
 
+    String leftWhereClauseComparisonOperator() const;
+    String rightWhereClauseComparisonOperator() const;
+
     static PassRefPtr<IDBKeyRange> only(PassRefPtr<IDBKey> value);
     static PassRefPtr<IDBKeyRange> leftBound(PassRefPtr<IDBKey> bound, bool open = false);
     static PassRefPtr<IDBKeyRange> rightBound(PassRefPtr<IDBKey> bound, bool open = false);

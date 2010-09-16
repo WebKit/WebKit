@@ -54,6 +54,22 @@ IDBKey::~IDBKey()
 {
 }
 
+PassRefPtr<IDBKey> IDBKey::fromQuery(SQLiteStatement& query, int baseColumn)
+{
+    if (!query.isColumnNull(baseColumn))
+        return IDBKey::create(query.getColumnText(baseColumn));
+
+    if (!query.isColumnNull(baseColumn + 1)) {
+        ASSERT_NOT_REACHED(); // FIXME: Implement date.
+        return IDBKey::create();
+    }
+
+    if (!query.isColumnNull(baseColumn + 2))
+        return IDBKey::create(query.getColumnInt(baseColumn + 2));
+
+    return IDBKey::create(); // Null.
+}
+
 bool IDBKey::isEqual(IDBKey* other)
 {
     if (!other || other->m_type != m_type)
@@ -73,18 +89,52 @@ bool IDBKey::isEqual(IDBKey* other)
     return false;
 }
 
-String IDBKey::whereSyntax() const
+String IDBKey::whereSyntax(String qualifiedTableName) const
 {
     switch (m_type) {
     case IDBKey::StringType:
-        return "keyString = ?";
+        return qualifiedTableName + "keyString = ?  ";
     case IDBKey::NumberType:
-        return "keyNumber = ?";
+        return qualifiedTableName + "keyNumber = ?  ";
     // FIXME: Implement date.
     case IDBKey::NullType:
-        return "keyString IS NULL  AND  keyDate IS NULL  AND  keyNumber IS NULL";
+        return qualifiedTableName + "keyString IS NULL  AND  " + qualifiedTableName + "keyDate IS NULL  AND  " + qualifiedTableName + "keyNumber IS NULL  ";
     }
 
+    ASSERT_NOT_REACHED();
+    return "";
+}
+
+String IDBKey::leftCursorWhereFragment(String comparisonOperator, String qualifiedTableName)
+{
+    switch (m_type) {
+    case StringType:
+        return "? " + comparisonOperator + " " + qualifiedTableName + "keyString  AND  ";
+    // FIXME: Implement date.
+    case NumberType:
+        return "(? " + comparisonOperator + " " + qualifiedTableName + "keyNumber  OR  NOT " + qualifiedTableName + "keyString IS NULL  OR  NOT " + qualifiedTableName + "keyDate IS NULL)  AND  ";
+    case NullType:
+        if (comparisonOperator == "<")
+            return "NOT(" + qualifiedTableName + "keyString IS NULL  AND  " + qualifiedTableName + "keyDate IS NULL  AND  " + qualifiedTableName + "keyNumber IS NULL)  AND  ";
+        return ""; // If it's =, the upper bound half will do the constraining. If it's <=, then that's a no-op.
+    }
+    ASSERT_NOT_REACHED();
+    return "";
+}
+
+String IDBKey::rightCursorWhereFragment(String comparisonOperator, String qualifiedTableName)
+{
+    switch (m_type) {
+    case StringType:
+        return "(" + qualifiedTableName + "keyString " + comparisonOperator + " ?  OR  " + qualifiedTableName + "keyString IS NULL)  AND  ";
+    // FIXME: Implement date.
+    case NumberType:
+        return "(" + qualifiedTableName + "keyNumber " + comparisonOperator + " ? OR " + qualifiedTableName + "keyNumber IS NULL)  AND  " + qualifiedTableName + "keyString IS NULL  AND  " + qualifiedTableName + "keyDate IS NULL  AND  ";
+    case NullType:
+        if (comparisonOperator == "<")
+            return "0 != 0  AND  ";
+        return qualifiedTableName + "keyString IS NULL  AND  " + qualifiedTableName + "keyDate IS NULL  AND  " + qualifiedTableName + "keyNumber IS NULL  AND  ";
+    }
     ASSERT_NOT_REACHED();
     return "";
 }
