@@ -63,12 +63,8 @@ void Connection::readyReadHandler()
             m_currentMessageSize = *reinterpret_cast<size_t*>(m_readBuffer.data());
         }
 
-        if (m_socket->bytesAvailable() < m_currentMessageSize) {
-#if 0
-            printf("received message size=%d, waiting for more data\n", (int)m_currentMessageSize);
-#endif
+        if (m_socket->bytesAvailable() < m_currentMessageSize)
             return;
-        }
 
         size_t numberOfBytesRead = m_socket->read(reinterpret_cast<char*>(m_readBuffer.data()), m_currentMessageSize);
         ASSERT_UNUSED(numberOfBytesRead, numberOfBytesRead);

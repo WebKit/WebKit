@@ -1,3 +1,12 @@
+2010-09-16  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Unreviewed trivial typo fix.
+
+        Remove old debug helper code inside |#if 0| from ConnectionQt.cpp
+
+        * Platform/CoreIPC/qt/ConnectionQt.cpp:
+        (CoreIPC::Connection::readyReadHandler):
+
 2010-09-15  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Sam Weinig.
