@@ -134,25 +134,25 @@ extern "C" {
     typedef struct _WebKitWebViewPrivate WebKitWebViewPrivate;
     struct _WebKitWebViewPrivate {
         WebCore::Page* corePage;
-        WebKitWebSettings* webSettings;
-        WebKitWebInspector* webInspector;
-        WebKitWebWindowFeatures* webWindowFeatures;
+        PlatformRefPtr<WebKitWebSettings> webSettings;
+        PlatformRefPtr<WebKitWebInspector> webInspector;
+        PlatformRefPtr<WebKitWebWindowFeatures> webWindowFeatures;
 
         WebKitWebFrame* mainFrame;
-        WebKitWebBackForwardList* backForwardList;
+        PlatformRefPtr<WebKitWebBackForwardList> backForwardList;
 
-        GtkMenu* currentMenu;
+        PlatformRefPtr<GtkMenu> currentMenu;
         gint lastPopupXPosition;
         gint lastPopupYPosition;
 
         HashSet<GtkWidget*> children;
         bool editable;
-        GtkIMContext* imContext;
+        PlatformRefPtr<GtkIMContext> imContext;
 
         gboolean transparent;
 
-        GtkAdjustment* horizontalAdjustment;
-        GtkAdjustment* verticalAdjustment;
+        PlatformRefPtr<GtkAdjustment> horizontalAdjustment;
+        PlatformRefPtr<GtkAdjustment> verticalAdjustment;
 
         gboolean zoomFullContent;
         WebKitLoadStatus loadStatus;
@@ -170,18 +170,17 @@ extern "C" {
 
         // These are hosted here because the DataSource object is
         // created too late in the frame loading process.
-        WebKitWebResource* mainResource;
+        PlatformRefPtr<WebKitWebResource> mainResource;
         CString mainResourceIdentifier;
-        GHashTable* subResources;
+        PlatformRefPtr<GHashTable> subResources;
         CString tooltipText;
 
         int currentClickCount;
-        WebCore::IntPoint* previousClickPoint;
+        WebCore::IntPoint previousClickPoint;
         guint previousClickButton;
         guint32 previousClickTime;
-
-        HashMap<GdkDragContext*, RefPtr<WebCore::DataObjectGtk> >* draggingDataObjects;
-        HashMap<GdkDragContext*, WebKit::DroppingContext*>* droppingContexts;
+        HashMap<GdkDragContext*, RefPtr<WebCore::DataObjectGtk> > draggingDataObjects;
+        HashMap<GdkDragContext*, WebKit::DroppingContext*> droppingContexts;
     };
 
     #define WEBKIT_WEB_FRAME_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_FRAME, WebKitWebFramePrivate))

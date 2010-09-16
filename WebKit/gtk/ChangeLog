@@ -1,3 +1,70 @@
+2010-09-15  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Gtk] Use GOwnPtr for code that needs it
+        https://bugs.webkit.org/show_bug.cgi?id=21594
+
+        Convert as reference counted private members of WebKitWebView to
+        smart pointers as possible. This removes a lot of unecessary manual
+        memory management. Also convert some pointer members away from pointer
+        types, now that we are sure their destructors are called.
+
+        * WebCoreSupport/ContextMenuClientGtk.cpp:
+        (WebKit::inputMethodsMenuItem): Updated to reflect PlatformRefPtr changes.
+        * WebCoreSupport/DragClientGtk.cpp:
+        (WebKit::DragClient::startDrag): Ditto.
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::setInputMethodState): Ditto.
+        (WebKit::EditorClient::respondToChangedSelection): Ditto.
+        (WebKit::EditorClient::handleInputMethodKeydown): Ditto.
+        (WebKit::EditorClient::handleInputMethodMousePress): Ditto.
+        (WebKit::EditorClient::EditorClient): Ditto.
+        (WebKit::EditorClient::~EditorClient): Ditto.
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::postCommitFrameViewSetup): Ditto.
+        * webkit/webkitprivate.h: Ditto.
+        * webkit/webkitwebview.cpp: Ditto.
+        (destroy_menu_cb): Ditto.
+        (webkit_web_view_forward_context_menu_event): Ditto.
+        (webkit_web_view_key_release_event): Ditto.
+        (webkit_web_view_button_press_event): Ditto.
+        (webkit_web_view_button_release_event): Ditto.
+        (webkit_web_view_focus_in_event): Ditto.
+        (webkit_web_view_focus_out_event): Ditto.
+        (webkit_web_view_realize): Ditto.
+        (webkit_web_view_set_scroll_adjustments): Ditto.
+        (webkit_web_view_dispose): Changed all g_object_unref calls to
+        PlatformRefPtr.clear(). Although this will also be done by the manual
+        call to the WebKitWebViewPrivate destructor, the order that these
+        fields are zero'd in is still very sensitive.
+        (webkit_web_view_finalize): Updated to reflect PlatformRefPtr changes.
+        (webViewGetDPI): Ditto.
+        (webkit_web_view_screen_changed): Ditto.
+        (webkit_web_view_drag_end): Ditto.
+        (webkit_web_view_drag_data_get): Ditto.
+        (doDragLeaveLater): Ditto.
+        (webkit_web_view_drag_leave): Ditto.
+        (webkit_web_view_drag_motion): Ditto.
+        (webkit_web_view_drag_data_received): Ditto.
+        (webkit_web_view_drag_drop): Ditto.
+        (webkit_web_view_get_im_context): Ditto.
+        (webkit_web_view_update_settings): Ditto.
+        (webkit_web_view_init): Ditto.
+        (webkit_web_view_set_settings): Ditto.
+        (webkit_web_view_get_settings): Ditto.
+        (webkit_web_view_get_inspector): Ditto.
+        (webkit_web_view_set_window_features): Ditto.
+        (webkit_web_view_get_window_features): Ditto.
+        (webkit_web_view_get_back_forward_list): Ditto.
+        (webkit_web_view_zoom_in): Ditto.
+        (webkit_web_view_zoom_out): Ditto.
+        (webkit_web_view_add_resource): Ditto.
+        (webkit_web_view_get_resource): Ditto.
+        (webkit_web_view_get_main_resource): Ditto.
+        (webkit_web_view_clear_resources): Ditto.
+        (webkit_web_view_get_subresources): Ditto.
+
 2010-09-14  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
