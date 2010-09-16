@@ -1579,6 +1579,7 @@ if (ENABLE_FILE_SYSTEM)
         fileapi/EntryArray.cpp
         fileapi/FileEntry.cpp
         fileapi/FileSystemCallbacks.cpp
+        fileapi/FileWriter.cpp
         fileapi/LocalFileSystem.cpp
         platform/AsyncFileSystem.cpp
     )
@@ -1594,19 +1595,11 @@ if (ENABLE_FILE_SYSTEM)
         fileapi/FileCallback.idl
         fileapi/FileEntry.idl
         fileapi/FileSystemCallback.idl
+        fileapi/FileWriterCallback.idl
+        fileapi/FileWriter.idl
         fileapi/Flags.idl
         fileapi/Metadata.idl
         fileapi/MetadataCallback.idl
-    )
-ENDIF ()
-
-if (ENABLE_FILE_WRITER)
-    LIST(APPEND WebCore_SOURCES
-        fileapi/FileWriter.cpp
-    )
-    LIST(APPEND WebCore_IDL_FILES
-        fileapi/FileWriterCallback.idl
-        fileapi/FileWriter.idl
     )
 ENDIF ()
 

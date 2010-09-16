@@ -1,3 +1,44 @@
+2010-09-16  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by Jian Li.
+
+        Unify FILE_SYSTEM and FILE_WRITER enables under the name FILE_SYSTEM.
+        https://bugs.webkit.org/show_bug.cgi?id=45798
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * dom/EventTarget.cpp:
+        * dom/EventTarget.h:
+        * dom/ExceptionCode.h:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::~ScriptExecutionContext):
+        * dom/ScriptExecutionContext.h:
+        * fileapi/AsyncFileWriter.h:
+        * fileapi/FileEntry.cpp:
+        * fileapi/FileEntry.h:
+        * fileapi/FileEntry.idl:
+        * fileapi/FileError.h:
+        * fileapi/FileError.idl:
+        * fileapi/FileException.h:
+        * fileapi/FileException.idl:
+        * fileapi/FileStreamProxy.cpp:
+        * fileapi/FileStreamProxy.h:
+        * fileapi/FileThread.cpp:
+        * fileapi/FileThread.h:
+        * fileapi/FileWriter.cpp:
+        * fileapi/FileWriter.h:
+        * fileapi/FileWriter.idl:
+        * fileapi/FileWriterCallback.h:
+        * fileapi/FileWriterCallback.idl:
+        * fileapi/FileWriterClient.h:
+        * page/DOMWindow.idl:
+        * platform/AsyncFileStream.h:
+        * platform/FileStream.cpp:
+        * platform/FileStream.h:
+        * platform/FileStreamClient.h:
+
 2010-09-16  Marc-Antoine Ruel  <maruel@chromium.org>
 
         Reviewed by Dimitri Glazkov.

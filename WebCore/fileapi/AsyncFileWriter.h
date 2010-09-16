@@ -31,7 +31,7 @@
 #ifndef AsyncFileWriter_h
 #define AsyncFileWriter_h
 
-#if ENABLE(FILE_WRITER)
+#if ENABLE(FILE_SYSTEM)
 
 #include "PlatformString.h"
 #include <wtf/RefCounted.h>
@@ -54,7 +54,7 @@ public:
 
 } // namespace
 
-#endif // ENABLE(FILE_WRITER)
+#endif // ENABLE(FILE_SYSTEM)
 
 #endif // AsyncFileWriter_h
 

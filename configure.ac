@@ -656,14 +656,6 @@ AC_ARG_ENABLE(fast_mobile_scrolling,
               [],[enable_fast_mobile_scrolling="no"])
 AC_MSG_RESULT([$enable_fast_mobile_scrolling])
 
-# check whether to enable FileWriter support
-AC_MSG_CHECKING([whether to enable FileWriter support])
-AC_ARG_ENABLE(file_writer,
-              AC_HELP_STRING([--enable-file-writer],
-                             [enable support for FileWriter [default=no]]),
-              [],[enable_file_writer="no"])
-AC_MSG_RESULT([$enable_file_writer])
-
 # check whether to enable code coverage
 AC_MSG_CHECKING([whether to enable code coverage support])
 AC_ARG_ENABLE(coverage,
@@ -910,7 +902,6 @@ AM_CONDITIONAL([ENABLE_XHTMLMP],[test "$enable_xhtmlmp" = "yes"])
 AM_CONDITIONAL([ENABLE_XPATH],[test "$enable_xpath" = "yes"])
 AM_CONDITIONAL([ENABLE_XSLT],[test "$enable_xslt" = "yes"])
 AM_CONDITIONAL([ENABLE_FILTERS],[test "$enable_filters" = "yes"])
-AM_CONDITIONAL([ENABLE_FILE_WRITER],[test "$enable_file_writer" = "yes"])
 AM_CONDITIONAL([ENABLE_GEOLOCATION], [test "$enable_geolocation" = "yes"])
 AM_CONDITIONAL([ENABLE_MATHML], [test "$enable_mathml" = "yes"])
 AM_CONDITIONAL([ENABLE_RUBY],[test "$enable_ruby" = "yes"])
@@ -973,7 +964,6 @@ Features:
  Fast Mobile Scrolling                                    : $enable_fast_mobile_scrolling
  JIT compilation                                          : $enable_jit
  Filters support                                          : $enable_filters
- FileWriter support                                       : $enable_file_writer
  Geolocation support                                      : $enable_geolocation
  JavaScript debugger/profiler support                     : $enable_javascript_debugger
  MathML support                                           : $enable_mathml

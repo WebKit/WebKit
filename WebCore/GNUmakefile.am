@@ -3740,6 +3740,10 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSFileEntry.h \
 	DerivedSources/WebCore/JSFileSystemCallback.cpp \
 	DerivedSources/WebCore/JSFileSystemCallback.h \
+	DerivedSources/WebCore/JSFileWriter.cpp \
+	DerivedSources/WebCore/JSFileWriter.h \
+	DerivedSources/WebCore/JSFileWriterCallback.cpp \
+	DerivedSources/WebCore/JSFileWriterCallback.h \
 	DerivedSources/WebCore/JSFlags.cpp \
 	DerivedSources/WebCore/JSFlags.h \
 	DerivedSources/WebCore/JSMetadata.cpp \
@@ -4311,19 +4315,6 @@ if ENABLE_BLOB
 FEATURE_DEFINES += ENABLE_BLOB=1
 webcore_cppflags += -DENABLE_BLOB=1
 endif  # END ENABLE_BLOB
-
-# ---
-# FileWriter support
-# ---
-if ENABLE_FILE_WRITER
-FEATURE_DEFINES += ENABLE_FILE_WRITER=1
-webcore_cppflags += -DENABLE_FILE_WRITER=1
-webcore_built_sources += \
-	DerivedSources/WebCore/JSFileWriter.cpp \
-	DerivedSources/WebCore/JSFileWriter.h
-	DerivedSources/WebCore/JSFileWriterCallback.cpp \
-	DerivedSources/WebCore/JSFileWriterCallback.h
-endif  # END ENABLE_FILE_WRITER
 
 DerivedSources/WebCore/CSSPropertyNames.h: $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/makeprop.pl
 	if sort $(WEBCORE_CSS_PROPERTY_NAMES) | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi

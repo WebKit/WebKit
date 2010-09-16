@@ -1,3 +1,13 @@
+2010-09-16  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by Jian Li.
+
+        Unify FILE_SYSTEM and FILE_WRITER enables under the name FILE_SYSTEM.
+        https://bugs.webkit.org/show_bug.cgi?id=45798
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops:
+
 2010-09-09  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.

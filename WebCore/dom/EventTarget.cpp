@@ -162,7 +162,7 @@ FileReader* EventTarget::toFileReader()
     return 0;
 }
 #endif
-#if ENABLE(FILE_WRITER)
+#if ENABLE(FILE_SYSTEM)
 FileWriter* EventTarget::toFileWriter()
 {
     return 0;

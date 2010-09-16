@@ -31,7 +31,7 @@
 #ifndef AsyncFileStream_h
 #define AsyncFileStream_h
 
-#if ENABLE(BLOB) || ENABLE(FILE_WRITER)
+#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
 
 #include "FileStreamClient.h"
 #include <wtf/Forward.h>
@@ -69,6 +69,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(BLOB) || ENABLE(FILE_WRITER)
+#endif // ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
 
 #endif // AsyncFileStream_h

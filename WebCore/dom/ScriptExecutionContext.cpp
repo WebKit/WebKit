@@ -87,7 +87,7 @@ ScriptExecutionContext::~ScriptExecutionContext()
         m_databaseThread = 0;
     }
 #endif
-#if ENABLE(BLOB) || ENABLE(FILE_WRITER)
+#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
     if (m_fileThread) {
         m_fileThread->stop();
         m_fileThread = 0;
@@ -277,7 +277,7 @@ void ScriptExecutionContext::revokePublicBlobURL(const KURL& url)
 }
 #endif
 
-#if ENABLE(BLOB) || ENABLE(FILE_WRITER)
+#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
 FileThread* ScriptExecutionContext::fileThread()
 {
     if (!m_fileThread) {

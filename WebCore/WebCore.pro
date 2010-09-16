@@ -2918,6 +2918,7 @@ contains(DEFINES, ENABLE_DOM_STORAGE=1) {
 
 contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
     HEADERS += \
+        fileapi/AsyncFileWriter.h \
         fileapi/DirectoryEntry.h \
         fileapi/DirectoryReader.h \
         fileapi/DOMFilePath.h \
@@ -2931,6 +2932,9 @@ contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
         fileapi/FileEntry.h \
         fileapi/FileSystemCallback.h \
         fileapi/FileSystemCallbacks.h \
+        fileapi/FileWriter.h \
+        fileapi/FileWriterCallback.h \
+        fileapi/FileWriterClient.h \
         fileapi/Flags.h \
         fileapi/LocalFileSystem.h \
         fileapi/Metadata.h \
@@ -2949,19 +2953,9 @@ contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
         fileapi/EntryArray.cpp \
         fileapi/FileEntry.cpp \
         fileapi/FileSystemCallbacks.cpp \
+        fileapi/FileWriter.cpp \
         fileapi/LocalFileSystem.cpp \
         platform/AsyncFileSystem.cpp
-}
-
-contains(DEFINES, ENABLE_FILE_WRITER=1) {
-    HEADERS += \
-        fileapi/AsyncFileWriter.h \
-        fileapi/FileWriter.h \
-        fileapi/FileWriterCallback.h \
-        fileapi/FileWriterClient.h
-
-    SOURCES += \
-        fileapi/FileWriter.cpp
 }
 
 contains(DEFINES, ENABLE_ICONDATABASE=1) {

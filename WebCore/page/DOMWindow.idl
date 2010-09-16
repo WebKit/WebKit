@@ -756,7 +756,7 @@ module window {
 
         attribute DOMFormDataConstructor FormData;
 
-        attribute [Conditional=BLOB|FILE_WRITER] FileErrorConstructor FileError;
+        attribute [Conditional=BLOB|FILE_SYSTEM] FileErrorConstructor FileError;
         attribute [Conditional=BLOB] FileReaderConstructor FileReader;
 
         attribute [Conditional=BLOB] BlobBuilderConstructor BlobBuilder;

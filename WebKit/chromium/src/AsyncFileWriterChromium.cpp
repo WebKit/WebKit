@@ -31,7 +31,7 @@
 #include "config.h"
 #include "AsyncFileWriterChromium.h"
 
-#if ENABLE(FILE_WRITER)
+#if ENABLE(FILE_SYSTEM)
 
 #include "Blob.h"
 #include "FileWriterClient.h"
@@ -89,4 +89,4 @@ void AsyncFileWriterChromium::didFail(WebFileError error)
 
 } // namespace
 
-#endif // ENABLE(FILE_WRITER)
+#endif // ENABLE(FILE_SYSTEM)

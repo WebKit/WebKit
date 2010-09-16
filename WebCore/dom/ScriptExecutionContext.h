@@ -52,7 +52,7 @@ namespace WebCore {
     class DatabaseThread;
 #endif
     class DOMTimer;
-#if ENABLE(BLOB) || ENABLE(FILE_WRITER)
+#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
     class FileThread;
 #endif
     class MessagePort;
@@ -140,7 +140,7 @@ namespace WebCore {
         JSC::JSGlobalData* globalData();
 #endif
 
-#if ENABLE(BLOB) || ENABLE(FILE_WRITER)
+#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
         FileThread* fileThread();
         void stopFileThread();
 #endif
@@ -177,7 +177,7 @@ namespace WebCore {
         bool m_hasOpenDatabases; // This never changes back to false, even after the database thread is closed.
 #endif
 
-#if ENABLE(BLOB) || ENABLE(FILE_WRITER)
+#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
         RefPtr<FileThread> m_fileThread;
 #endif
     };

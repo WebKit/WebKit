@@ -30,7 +30,7 @@
 
 module html {
     interface [
-        Conditional=FILE_WRITER,
+        Conditional=FILE_SYSTEM,
         CallWith=ScriptExecutionContext,
         EventTarget,
         NoStaticTables

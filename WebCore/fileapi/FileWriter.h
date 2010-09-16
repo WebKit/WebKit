@@ -31,7 +31,7 @@
 #ifndef FileWriter_h
 #define FileWriter_h
 
-#if ENABLE(FILE_WRITER)
+#if ENABLE(FILE_SYSTEM)
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
@@ -125,6 +125,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(FILE_WRITER)
+#endif // ENABLE(FILE_SYSTEM)
 
 #endif // FileWriter_h

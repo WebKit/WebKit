@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#if ENABLE(BLOB) || ENABLE(FILE_WRITER)
+#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
 
 #include "FileStreamProxy.h"
 
@@ -216,4 +216,4 @@ void FileStreamProxy::truncateOnFileThread(long long position)
 
 } // namespace WebCore
 
-#endif // ENABLE(BLOB) || ENABLE(FILE_WRITER)
+#endif // ENABLE(BLOB) || ENABLE(FILE_SYSTEM)

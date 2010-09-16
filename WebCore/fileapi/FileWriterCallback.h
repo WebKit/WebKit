@@ -31,7 +31,7 @@
 #ifndef FileWriterCallback_h
 #define FileWriterCallback_h
 
-#if ENABLE(FILE_SYSTEM) && ENABLE(FILE_WRITER)
+#if ENABLE(FILE_SYSTEM)
 
 #include <wtf/RefCounted.h>
 
@@ -47,6 +47,6 @@ public:
 
 } // namespace
 
-#endif // ENABLE(FILE_SYSTEM) && ENABLE(FILE_WRITER)
+#endif // ENABLE(FILE_SYSTEM)
 
 #endif // FileWriterCallback_h

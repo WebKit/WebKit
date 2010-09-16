@@ -61,7 +61,7 @@ namespace WebCore {
 
         // Introduced in File API:
         // http://www.w3.org/TR/file-upload/#dfn-fileerror
-#if ENABLE(BLOB) || ENABLE(FILE_WRITER)
+#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
         NOT_READABLE_ERR = 24,
         ENCODING_ERR = 26,
 #endif

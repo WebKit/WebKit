@@ -198,9 +198,6 @@ my @features = (
     { option => "xslt", desc => "Toggle XSLT support",
       define => "ENABLE_XSLT", default => 1, value => \$xsltSupport },
 
-    { option => "file-writer", desc => "Toggle FileWriter support",
-      define => "ENABLE_FILE_WRITER", default => 0, value => \$fileWriterSupport },
-
     { option => "file-system", desc => "Toggle FileSystem support",
       define => "ENABLE_FILE_SYSTEM", default => 0, value => \$fileSystemSupport },
 

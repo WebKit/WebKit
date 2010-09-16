@@ -1,3 +1,12 @@
+2010-09-16  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by Jian Li.
+
+        Unify FILE_SYSTEM and FILE_WRITER enables under the name FILE_SYSTEM.
+        https://bugs.webkit.org/show_bug.cgi?id=45798
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2010-09-15  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

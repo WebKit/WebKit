@@ -30,7 +30,7 @@
 
 module html {
     interface [
-        Conditional=BLOB|FILE_WRITER,
+        Conditional=BLOB|FILE_SYSTEM,
         DontCheckEnums,
         NoStaticTables
     ] FileError {
