@@ -1,5 +1,13 @@
 2010-09-16  Darin Adler  <darin@apple.com>
 
+        Fix build.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::setInputMethodState): Updated for change
+        in name of isUrlField to isURLField.
+
+2010-09-16  Darin Adler  <darin@apple.com>
+
         Reviewed by Andreas Kling.
 
         Reduce use of HTMLInputElement::inputType so we can remove it later

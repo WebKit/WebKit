@@ -612,7 +612,7 @@ void EditorClientQt::setInputMethodState(bool active)
                 hints |= Qt::ImhDigitsOnly;
             if (inputElement->isEmailField())
                 hints |= Qt::ImhEmailCharactersOnly;
-            if (inputElement->isUrlField())
+            if (inputElement->isURLField())
                 hints |= Qt::ImhUrlCharactersOnly;
             // Setting the Qt::WA_InputMethodEnabled attribute true and Qt::ImhHiddenText flag
             // for password fields. The Qt platform is responsible for determining which widget

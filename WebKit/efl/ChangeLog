@@ -1,3 +1,11 @@
+2010-09-16  Darin Adler  <darin@apple.com>
+
+        Fix build.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_input_method_state_set): Updated for change
+        in name of isUrlField to isURLField.
+
 2010-09-14  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen.

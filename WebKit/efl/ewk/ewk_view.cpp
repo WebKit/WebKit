@@ -3250,7 +3250,7 @@ void ewk_view_input_method_state_set(Evas_Object* o, Eina_Bool active)
                 priv->imh |= inputElement->isTelephoneField() * EWK_IMH_TELEPHONE;
                 priv->imh |= inputElement->isNumberField() * EWK_IMH_NUMBER;
                 priv->imh |= inputElement->isEmailField() * EWK_IMH_EMAIL;
-                priv->imh |= inputElement->isUrlField() * EWK_IMH_URL;
+                priv->imh |= inputElement->isURLField() * EWK_IMH_URL;
             }
         }
     }
