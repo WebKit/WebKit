@@ -41,6 +41,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {

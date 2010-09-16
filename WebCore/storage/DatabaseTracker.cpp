@@ -46,6 +46,7 @@
 #include "SQLiteStatement.h"
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/CString.h>
 
 using namespace std;
 

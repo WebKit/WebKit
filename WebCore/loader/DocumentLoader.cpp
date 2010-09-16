@@ -50,6 +50,7 @@
 #include "SharedBuffer.h"
 
 #include <wtf/Assertions.h>
+#include <wtf/text/CString.h>
 #include <wtf/unicode/Unicode.h>
 
 namespace WebCore {

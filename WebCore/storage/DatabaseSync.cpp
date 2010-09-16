@@ -42,6 +42,7 @@
 #include "SecurityOrigin.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

@@ -54,6 +54,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/CString.h>
 
 #if USE(JSC)
 #include "JSDOMWindow.h"

@@ -64,6 +64,7 @@
 #include <limits>
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
+#include <wtf/text/CString.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "RenderView.h"
