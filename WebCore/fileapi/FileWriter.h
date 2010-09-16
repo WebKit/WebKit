@@ -103,7 +103,7 @@ private:
 
     virtual ~FileWriter();
 
-    friend class RefCounted<FileWriter>;
+    friend class WTF::RefCounted<FileWriter>;
 
     // EventTarget
     virtual void refEventTarget() { ref(); }

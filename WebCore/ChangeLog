@@ -1,3 +1,12 @@
+2010-09-16  Satish Sampath  <satish@chromium.org>
+
+        Unreviewed, fixing a build break with VS 2008.
+
+        Fix build break, add the namespace in a friend declaration to get MSVC recognize it properly.
+        https://bugs.webkit.org/show_bug.cgi?id=45893
+
+        * fileapi/FileWriter.h:
+
 2010-09-15  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.
