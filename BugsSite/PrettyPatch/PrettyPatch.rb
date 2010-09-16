@@ -296,9 +296,17 @@ body {
 .focused {
   border: 1px solid blue;
 }
+
+.statusBubble {
+  margin-left: 5px;
+  width: 175px;
+  height: 20px;
+  border: none;
+  vertical-align: middle;
+}
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
-<script src="code-review.js?version=8"></script> 
+<script src="code-review.js?version=9"></script> 
 EOF
 
     def self.revisionOrDescription(string)

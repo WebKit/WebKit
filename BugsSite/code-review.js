@@ -236,8 +236,8 @@
       });
 
       var details = $(data);
-
       addFlagsForAttachment(details);
+      $('#toolbar .actions').append($('<iframe class="statusBubble" src="https://webkit-commit-queue.appspot.com/status-bubble/' + attachment_id + '" scrolling="no"></iframe>'));
     });
   }
 

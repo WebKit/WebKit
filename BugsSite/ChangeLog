@@ -2,6 +2,16 @@
 
         Reviewed by Eric Seidel.
 
+        [reviewtool] Show the status bubbles on the toolbar
+        https://bugs.webkit.org/show_bug.cgi?id=45861
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2010-09-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         [reviewtool] Allow setting review and commit-queue flags from main review screen
         https://bugs.webkit.org/show_bug.cgi?id=45860
 
