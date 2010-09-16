@@ -1,3 +1,14 @@
+2010-09-16  Adrienne Walker  <enne@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Add script to synchronize WebKit and Khronos WebGL tests
+        https://bugs.webkit.org/show_bug.cgi?id=42336
+
+        * Scripts/update-webgl-conformance-tests: Added.
+        * Scripts/webkitpy/layout_tests/update_webgl_conformance_tests.py: Added.
+        * Scripts/webkitpy/layout_tests/update_webgl_conformance_tests_unittest.py: Added.
+
 2010-09-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
