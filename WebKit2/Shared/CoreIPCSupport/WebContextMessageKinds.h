@@ -33,7 +33,8 @@
 namespace WebContextMessage {
 
 enum Kind {
-    PostMessage
+    PostMessage,
+    PostSynchronousMessage
 };
 
 }

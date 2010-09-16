@@ -49,6 +49,14 @@ void WKBundlePostMessage(WKBundleRef bundleRef, WKStringRef messageNameRef, WKTy
     toWK(bundleRef)->postMessage(toWK(messageNameRef)->string(), toWK(messageBodyRef));
 }
 
+void WKBundlePostSynchronousMessage(WKBundleRef bundleRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef, WKTypeRef* returnDataRef)
+{
+    RefPtr<APIObject> returnData;
+    toWK(bundleRef)->postSynchronousMessage(toWK(messageNameRef)->string(), toWK(messageBodyRef), returnData);
+    if (returnDataRef)
+        *returnDataRef = toRef(returnData.release().leakRef());
+}
+
 void WKBundleSetShouldTrackVisitedLinks(WKBundleRef bundleRef, bool shouldTrackVisitedLinks)
 {
     toWK(bundleRef)->setShouldTrackVisitedLinks(shouldTrackVisitedLinks);

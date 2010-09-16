@@ -351,7 +351,7 @@ void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, Cor
                 getPlugins(refresh, plugins);
 
                 reply->encode(plugins);
-                break;
+                return;
             }
 
             case WebProcessProxyMessage::GetPluginHostConnection: {
@@ -364,7 +364,7 @@ void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, Cor
                 String pluginPath;
                 getPluginHostConnection(mimeType, KURL(ParsedURLString, urlString), pluginPath);
                 reply->encode(CoreIPC::In(pluginPath));
-                break;
+                return;
             }
 
             // These are asynchronous messages and should never be handled here.
@@ -376,8 +376,13 @@ void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, Cor
             case WebProcessProxyMessage::AddVisitedLink:
             case WebProcessProxyMessage::DidDestroyFrame:
                 ASSERT_NOT_REACHED();
-                break;
+                return;
         }
+    }
+
+    if (messageID.is<CoreIPC::MessageClassWebContext>()) {
+        m_context->didReceiveSyncMessage(connection, messageID, arguments, reply);    
+        return;
     }
 
     uint64_t pageID = arguments->destinationID();

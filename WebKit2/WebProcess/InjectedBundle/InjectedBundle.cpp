@@ -75,6 +75,22 @@ void InjectedBundle::postMessage(const String& messageName, APIObject* messageBo
     WebProcess::shared().connection()->send(WebContextMessage::PostMessage, 0, CoreIPC::In(messageName, InjectedBundleUserMessageEncoder(messageBody)));
 }
 
+void InjectedBundle::postSynchronousMessage(const String& messageName, APIObject* messageBody, RefPtr<APIObject>& returnData)
+{
+    RefPtr<APIObject> returnDataTmp;
+    InjectedBundleUserMessageDecoder messageDecoder(returnDataTmp);
+    
+    bool succeeded = WebProcess::shared().connection()->sendSync(WebContextMessage::PostSynchronousMessage, 0,
+                                                CoreIPC::In(messageName, InjectedBundleUserMessageEncoder(messageBody)),
+                                                CoreIPC::Out(messageDecoder),
+                                                CoreIPC::Connection::NoTimeout);
+
+    if (!succeeded)
+        return;
+
+    returnData = returnDataTmp;
+}
+
 void InjectedBundle::setShouldTrackVisitedLinks(bool shouldTrackVisitedLinks)
 {
     PageGroup::setShouldTrackVisitedLinks(shouldTrackVisitedLinks);

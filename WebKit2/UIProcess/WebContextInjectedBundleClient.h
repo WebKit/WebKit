@@ -40,6 +40,7 @@ public:
     void initialize(const WKContextInjectedBundleClient*);
 
     void didReceiveMessageFromInjectedBundle(WebContext*, const WTF::String&, APIObject*);
+    void didReceiveSynchronousMessageFromInjectedBundle(WebContext*, const String&, APIObject*, RefPtr<APIObject>& returnData);
 
 private:
     WKContextInjectedBundleClient m_client;

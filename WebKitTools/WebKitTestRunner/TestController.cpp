@@ -143,7 +143,8 @@ void TestController::initialize(int argc, const char* argv[])
     WKContextInjectedBundleClient injectedBundleClient = {
         0,
         this,
-        didReceiveMessageFromInjectedBundle
+        didReceiveMessageFromInjectedBundle,
+        0
     };
     WKContextSetInjectedBundleClient(m_context.get(), &injectedBundleClient);
 

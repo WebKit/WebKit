@@ -1,3 +1,30 @@
+2010-09-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add support for sending synchronous messages from the InjectedBundle to the WKContext
+        <rdar://problem/8365320>
+        https://bugs.webkit.org/show_bug.cgi?id=44785
+
+        * Shared/CoreIPCSupport/WebContextMessageKinds.h:
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::didReceiveSynchronousMessageFromInjectedBundle):
+        (WebKit::WebContext::didReceiveMessage):
+        (WebKit::WebContext::didReceiveSyncMessage):
+        * UIProcess/WebContext.h:
+        * UIProcess/WebContextInjectedBundleClient.cpp:
+        (WebKit::WebContextInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle):
+        * UIProcess/WebContextInjectedBundleClient.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveSyncMessage):
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundlePostSynchronousMessage):
+        * WebProcess/InjectedBundle/API/c/WKBundle.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::postSynchronousMessage):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+
 2010-09-16  Balazs Kelemen  <kbalazs@webkit.org>
 
         Unreviewed trivial typo fix.
