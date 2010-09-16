@@ -3072,7 +3072,7 @@ static void webkit_web_view_init(WebKitWebView* webView)
     priv->lastPopupXPosition = priv->lastPopupYPosition = -1;
     priv->editable = false;
 
-    priv->backForwardList = webkit_web_back_forward_list_new_with_web_view(webView);
+    priv->backForwardList = adoptPlatformRef(webkit_web_back_forward_list_new_with_web_view(webView));
 
     priv->zoomFullContent = FALSE;
 

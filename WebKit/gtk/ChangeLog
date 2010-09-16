@@ -1,5 +1,18 @@
 2010-09-15  Martin Robinson  <mrobinson@igalia.com>
 
+        Reviewed by David Levin.
+
+        [GTK] [REGRESSION] r67591 broke the testwebbackforwardlist API test and introduced a memory leak
+        https://bugs.webkit.org/show_bug.cgi?id=45865
+
+        When initializing the backForwardList private member of the WebView, do
+        so with adoptPlatformRef to prevent a memory leak.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_init): Initialize member with adoptPlatformRef.
+
+2010-09-15  Martin Robinson  <mrobinson@igalia.com>
+
         Reviewed by Eric Seidel.
 
         [Gtk] Use GOwnPtr for code that needs it
