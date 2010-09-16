@@ -3584,13 +3584,13 @@ contains(DEFINES, ENABLE_SYMBIAN_DIALOG_PROVIDERS) {
     }
 }
 
-!symbian {
+!symbian-abld:!symbian-sbsv2 {
     modfile.files = $$moduleFile
     modfile.path = $$[QMAKE_MKSPECS]/modules
 
     INSTALLS += modfile
 } else {
-    # INSTALLS is not implemented in qmake's s60 generators, copy headers manually
+    # INSTALLS is not implemented in qmake's mmp generators, copy headers manually
 
     inst_modfile.commands = $$QMAKE_COPY ${QMAKE_FILE_NAME} ${QMAKE_FILE_OUT}
     inst_modfile.input = moduleFile

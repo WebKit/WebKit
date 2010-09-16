@@ -1,3 +1,15 @@
+2010-09-16  Thomas Zander <t.zander@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45878
+
+        [Qt] Fixed incorrect Symbian scoping.
+
+        The missing install functionality is only true for mmp based systems.
+
+        * WebCore.pro: limit functionality to mmp systems.
+
 2010-09-16  Anders Carlsson  <andersca@apple.com>
 
         Fix clang build.
