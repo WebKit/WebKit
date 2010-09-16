@@ -65,8 +65,8 @@ IF (WTF_PLATFORM_CAIRO)
     "${WEBCORE_DIR}/platform/graphics/cairo"
   )
   LIST(APPEND WebCore_SOURCES
-    platform/graphics/cairo/FontCacheCairo.cpp
-    platform/graphics/cairo/FontCairoFreeType.cpp
+    platform/graphics/cairo/FontCacheFreeType.cpp
+    platform/graphics/cairo/FontCairo.cpp
     platform/graphics/cairo/FontCustomPlatformData.cpp
     platform/graphics/cairo/FontPlatformDataFreeType.cpp
     platform/graphics/cairo/OwnPtrCairo.cpp
