@@ -1,3 +1,22 @@
+2010-09-16  Dan Bernstein  <mitz@apple.com>
+
+        Build fix after r67628. Added context menu item localizable strings for the items
+        added in r67628, following equivalent menu items in Mac OS X when possible. However,
+        this set of menu items does not make much sense for Mac OS X, and this should be
+        addressed separately.
+
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::contextMenuItemTagOpenMediaInNewWindow):
+        (WebPlatformStrategies::contextMenuItemTagCopyMediaLinkToClipboard):
+        (WebPlatformStrategies::contextMenuItemTagToggleMediaControls):
+        (WebPlatformStrategies::contextMenuItemTagToggleMediaLoop):
+        (WebPlatformStrategies::contextMenuItemTagEnterVideoFullscreen):
+        (WebPlatformStrategies::contextMenuItemTagMediaPlay):
+        (WebPlatformStrategies::contextMenuItemTagMediaPause):
+        (WebPlatformStrategies::contextMenuItemTagMediaMute):
+        (WebPlatformStrategies::contextMenuItemTagMediaUnMute):
+
 2010-09-16  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by Jian Li.
