@@ -20,18 +20,20 @@
                         {{ title_status.active_bug_id|force_escape|webkit_bug_id|safe }}:
                     </span>
                 {% endif %}
-              
-                <ul>
-                    {% for status in status_group %}
-                        <li class="status">
-                            <span class="status-date">{{ status.date|timesince }} ago</span>
-                            <span class="status-message">{{ status.message|force_escape|urlize|webkit_linkify|safe }}</span>
-                            {% if status.results_file %}
-                                <span class="status-results">[{{ status.key.id|results_link|safe }}]</span>
-                            {% endif %}
-                        </li>
-                    {% endfor %}
-                </ul>
+                
+                {% ifequal status_group|length 1 %}
+                    {% with title_status as status %}
+                        {% include 'includes/singlequeuestatus.html' %}
+                    {% endwith %}
+                {% else %}
+                    <ul>
+                        {% for status in status_group %}
+                            <li class="status">
+                                {% include 'includes/singlequeuestatus.html' %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endifequal %}
             </li>
         {% endwith %}
     {% endfor %}
