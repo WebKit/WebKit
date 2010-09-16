@@ -527,12 +527,12 @@ static PassRefPtr<CSSValue> getTimingFunctionValue(const AnimationList* animList
         }
     } else {
         // Note that initialAnimationTimingFunction() is used for both transitions and animations
-        const TimingFunction* tf = Animation::initialAnimationTimingFunction().get();
+        RefPtr<TimingFunction> tf = Animation::initialAnimationTimingFunction();
         if (tf->isCubicBezierTimingFunction()) {
-            const CubicBezierTimingFunction* ctf = static_cast<const CubicBezierTimingFunction*>(tf);
+            const CubicBezierTimingFunction* ctf = static_cast<const CubicBezierTimingFunction*>(tf.get());
             list->append(CSSCubicBezierTimingFunctionValue::create(ctf->x1(), ctf->y1(), ctf->x2(), ctf->y2()));
         } else if (tf->isStepsTimingFunction()) {
-            const StepsTimingFunction* stf = static_cast<const StepsTimingFunction*>(tf);
+            const StepsTimingFunction* stf = static_cast<const StepsTimingFunction*>(tf.get());
             list->append(CSSStepsTimingFunctionValue::create(stf->numberOfSteps(), stf->stepAtStart()));
         } else {
             list->append(CSSLinearTimingFunctionValue::create());

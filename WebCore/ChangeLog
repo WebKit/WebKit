@@ -1,3 +1,18 @@
+2010-09-16  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Simon Fraser.
+
+        CSS: Fix crash in getTimingFunctionValue()
+        https://bugs.webkit.org/show_bug.cgi?id=45896
+
+        Use a RefPtr to avoid deleting the TimingFunction prematurely.
+
+        This is covered by existing tests, e.g transitions/inherit-other-props.html
+        but will only actually crash on picky platforms (or in valgrind.)
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::getTimingFunctionValue):
+
 2010-09-16  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
