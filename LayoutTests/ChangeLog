@@ -1,3 +1,13 @@
+2010-09-16  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Crash in WebCore::FrameLoader::shouldInterruptLoadForXFrameOptions
+        https://bugs.webkit.org/show_bug.cgi?id=45833
+
+        * fast/parser/x-frame-options-detached-document-crash-expected.txt: Added.
+        * fast/parser/x-frame-options-detached-document-crash.html: Added. Crashes before this patch.
+
 2010-09-14  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Carlson and Martin Robinson.

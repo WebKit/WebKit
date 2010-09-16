@@ -1,0 +1,13 @@
+This checks that writing an X-Frame-Options meta tag to a detached document does not crash.
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+<iframe id=foo></iframe>
+<script>
+  var fooFrame = document.getElementById('foo');
+  var fooDoc = fooFrame.contentWindow.document;
+  fooFrame.parentNode.removeChild(fooFrame);
+
+  fooDoc.write('<meta http-equiv="X-Frame-Options" content="deny"/>');
+</script>
