@@ -2373,8 +2373,6 @@ BUG32900 WIN LINUX : http/tests/misc/slow-loading-mask.html = IMAGE+TEXT
 // WebKit roll 53704 -> 53747
 BUG32949 WIN LINUX MAC : fast/dom/Window/invalid-protocol.html = TEXT
 
-BUG21852 DEFER SKIP LINUX WIN : fast/canvas/webgl = CRASH
-
 // WebKit roll 53941 -> 54015
 BUG33358 WIN LINUX : fast/dom/Window/window-postmessage-clone-frames.html = TEXT
 
@@ -3124,3 +3122,70 @@ BUGDPRANKE LINUX DEBUG : fast/forms/restore-selection-after-layout.html = TEXT
 BUGDPRANKE WIN LINUX : media/video-poster.html = PASS TEXT
 
 BUGWK45898 : editing/selection/context-menu-on-text.html = TEXT
+
+// Re-enabling webgl tests in Win/Linux
+// Currently all tests are listed here; will clean up once we get the results from bots
+BUGWEBGL WIN LINUX : fast/canvas/webgl/array-buffer-crash.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/array-buffer-view-crash.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/array-get-and-set-method-removal.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/array-get-out-of-bounds.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/array-set-out-of-bounds.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/array-setters.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/array-unit-tests.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/bad-arguments-test.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/buffer-bind-test.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/buffer-data-array-buffer.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/canvas-test.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/context-attributes.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/copy-tex-image-and-sub-image-2d.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/css-webkit-canvas-repaint.html = CRASH TEXT+IMAGE TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/css-webkit-canvas.html = CRASH TEXT+IMAGE TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/draw-arrays-out-of-bounds.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/draw-elements-out-of-bounds.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/error-reporting.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/framebuffer-object-attachment.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/framebuffer-test.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/get-active-test.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/gl-bind-attrib-location-test.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/gl-enable-enum-test.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/gl-enum-tests.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/gl-get-calls.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/gl-object-get-calls.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/gl-pixelstorei.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/gl-teximage.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/gl-uniform-arrays.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/gl-uniformmatrix4fv.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/gl-vertex-attrib.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/incorrect-context-object-behaviour.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/index-validation-copies-indices.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/index-validation-crash-with-buffer-sub-data.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/index-validation-verifies-too-many-indices.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/index-validation-with-resized-buffer.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/index-validation.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/invalid-UTF-16.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/invalid-passed-params.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/null-object-behaviour.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/null-uniform-location.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/point-size.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/program-test.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/read-pixels-pack-alignment.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/renderbuffer-initialization.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/tex-image-and-sub-image-2d-with-image.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/tex-image-and-uniform-binding-bugs.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/tex-image-with-format-and-type.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/tex-input-validation.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/tex-sub-image-2d.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/texImage2DImageDataTest.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/texImageTest.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/texture-active-bind.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/texture-complete.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/texture-npot.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/texture-transparent-pixels-initialized.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/triangle.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/uniform-location.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/viewport-unchanged-upon-resize.html = CRASH TEXT TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/webgl-array-invalid-ranges.html = CRASH TEXT TIMEOUT
