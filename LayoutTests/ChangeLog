@@ -2,6 +2,21 @@
 
         Reviewed by Jeremy Orlow.
 
+        Add chromium baselines for a recently added layout test.
+        https://bugs.webkit.org/show_bug.cgi?id=45886
+
+        * fast/images/gif-large-checkerboard-expected.txt: Added.
+        * platform/chromium-linux/fast/images/gif-large-checkerboard-expected.checksum: Added.
+        * platform/chromium-linux/fast/images/gif-large-checkerboard-expected.png: Added.
+        * platform/chromium-mac/fast/images/gif-large-checkerboard-expected.checksum: Added.
+        * platform/chromium-mac/fast/images/gif-large-checkerboard-expected.png: Added.
+        * platform/chromium-win/fast/images/gif-large-checkerboard-expected.checksum: Added.
+        * platform/chromium-win/fast/images/gif-large-checkerboard-expected.png: Added.
+
+2010-09-16  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
         Rename an image file to all lower case matching how it is used in the layout test.
         https://bugs.webkit.org/show_bug.cgi?id=45884
 
