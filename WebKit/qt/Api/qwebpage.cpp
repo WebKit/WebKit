@@ -64,6 +64,7 @@
 #include "FocusController.h"
 #include "Editor.h"
 #include "Scrollbar.h"
+#include "NetworkingContext.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
 #include "PluginDatabase.h"
@@ -1916,7 +1917,8 @@ QWebFrame *QWebPage::mainFrame() const
 QWebFrame *QWebPage::currentFrame() const
 {
     d->createMainFrame();
-    return static_cast<WebCore::FrameLoaderClientQt *>(d->page->focusController()->focusedOrMainFrame()->loader()->client())->webFrame();
+    WebCore::Frame *frame = d->page->focusController()->focusedOrMainFrame();
+    return qobject_cast<QWebFrame*>(frame->loader()->networkingContext()->originatingObject());
 }
 
 

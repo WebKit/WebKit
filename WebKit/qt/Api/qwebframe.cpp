@@ -56,6 +56,7 @@
 #include "V8DOMWrapper.h"
 #include "V8DOMWindowShell.h"
 #endif
+#include "NetworkingContext.h"
 #include "NodeList.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
@@ -894,9 +895,9 @@ QList<QWebFrame*> QWebFrame::childFrames() const
         FrameTree *tree = d->frame->tree();
         for (Frame *child = tree->firstChild(); child; child = child->tree()->nextSibling()) {
             FrameLoader *loader = child->loader();
-            FrameLoaderClientQt *client = static_cast<FrameLoaderClientQt*>(loader->client());
-            if (client)
-                rc.append(client->webFrame());
+            QWebFrame* webFrame = qobject_cast<QWebFrame*>(loader->networkingContext()->originatingObject());
+            if (webFrame)
+                rc.append(webFrame);
         }
 
     }
@@ -1453,7 +1454,7 @@ WebCore::Frame* QWebFramePrivate::core(const QWebFrame* webFrame)
 
 QWebFrame* QWebFramePrivate::kit(const WebCore::Frame* coreFrame)
 {
-    return static_cast<FrameLoaderClientQt*>(coreFrame->loader()->client())->webFrame();
+    return qobject_cast<QWebFrame*>(coreFrame->loader()->networkingContext()->originatingObject());
 }
 
 

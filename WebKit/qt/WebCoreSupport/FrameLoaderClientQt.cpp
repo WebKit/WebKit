@@ -230,11 +230,6 @@ void FrameLoaderClientQt::setFrame(QWebFrame* webFrame, Frame* frame)
             m_webFrame, SIGNAL(titleChanged(QString)));
 }
 
-QWebFrame* FrameLoaderClientQt::webFrame() const
-{
-    return m_webFrame;
-}
-
 void FrameLoaderClientQt::callPolicyFunction(FramePolicyFunction function, PolicyAction action)
 {
     (m_frame->loader()->policyChecker()->*function)(action);
@@ -1525,7 +1520,7 @@ String FrameLoaderClientQt::overrideMediaType() const
 
 QString FrameLoaderClientQt::chooseFile(const QString& oldFile)
 {
-    return webFrame()->page()->chooseFile(webFrame(), oldFile);
+    return m_webFrame->page()->chooseFile(m_webFrame, oldFile);
 }
 
 PassRefPtr<FrameNetworkingContext> FrameLoaderClientQt::createNetworkingContext()

@@ -25,6 +25,7 @@
 #include "GraphicsContext.h"
 #include "HTMLMediaElement.h"
 #include "HTMLVideoElement.h"
+#include "NetworkingContext.h"
 #include "NotImplemented.h"
 #include "TimeRanges.h"
 #include "Widget.h"
@@ -192,8 +193,8 @@ void MediaPlayerPrivate::commitLoad(const String& url)
 
         // Grab the frame and network manager
         Frame* frame = document ? document->frame() : 0;
+        QNetworkAccessManager* manager = frame ? frame->loader()->networkingContext()->networkAccessManager() : 0;
         FrameLoaderClientQt* frameLoader =  frame ? static_cast<FrameLoaderClientQt*>(frame->loader()->client()) : 0;
-        QNetworkAccessManager* manager = frameLoader ? frameLoader->webFrame()->page()->networkAccessManager() : 0;
 
         if (document && manager) {
             // Set the cookies
