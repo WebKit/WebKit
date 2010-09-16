@@ -1,3 +1,12 @@
+2010-09-16  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Rename an image file to all lower case matching how it is used in the layout test.
+        https://bugs.webkit.org/show_bug.cgi?id=45884
+
+        * fast/images/resources/large-gif-checkerboard.gif: Renamed from LayoutTests/fast/images/resources/large-gif-checkerboard.GIF.
+
 2010-09-16  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Antonio Gomes.
