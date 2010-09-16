@@ -147,58 +147,6 @@ bool prepareMouseButtonEvent(GdkEvent* event, int eventSenderButtonNumber, guint
     return true;
 }
 
-static JSValueRef getMenuItemTitleCallback(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
-{
-    GtkWidget* widget = GTK_WIDGET(JSObjectGetPrivate(object));
-    CString label;
-    if (GTK_IS_SEPARATOR_MENU_ITEM(widget))
-        label = "<separator>";
-    else
-        label = gtk_menu_item_get_label(GTK_MENU_ITEM(widget));
-
-    return JSValueMakeString(context, JSStringCreateWithUTF8CString(label.data()));
-}
-
-static bool setMenuItemTitleCallback(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef value, JSValueRef* exception)
-{
-    return true;
-}
-
-static JSValueRef menuItemClickCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    GtkMenuItem* item = GTK_MENU_ITEM(JSObjectGetPrivate(thisObject));
-    gtk_menu_item_activate(item);
-    return JSValueMakeUndefined(context);
-}
-
-static JSStaticFunction staticMenuItemFunctions[] = {
-    { "click", menuItemClickCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-    { 0, 0, 0 }
-};
-
-static JSStaticValue staticMenuItemValues[] = {
-    { "title", getMenuItemTitleCallback, setMenuItemTitleCallback, kJSPropertyAttributeNone },
-    { 0, 0, 0, 0 }
-};
-
-static JSClassRef getMenuItemClass()
-{
-    static JSClassRef menuItemClass = 0;
-
-    if (!menuItemClass) {
-        JSClassDefinition classDefinition = {
-                0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        classDefinition.staticFunctions = staticMenuItemFunctions;
-        classDefinition.staticValues = staticMenuItemValues;
-
-        menuItemClass = JSClassCreate(&classDefinition);
-    }
-
-    return menuItemClass;
-}
-
-
 static JSValueRef contextClickCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     GdkEvent* pressEvent = gdk_event_new(GDK_BUTTON_PRESS);
@@ -217,7 +165,13 @@ static JSValueRef contextClickCallback(JSContextRef context, JSObjectRef functio
         JSValueRef arrayValues[g_list_length(items)];
         int index = 0;
         for (GList* item = g_list_first(items); item; item = g_list_next(item)) {
-            arrayValues[index] = JSObjectMake(context, getMenuItemClass(), item->data);
+            CString label;
+            if (GTK_IS_SEPARATOR_MENU_ITEM(item->data))
+                label = "<separator>";
+            else
+                label = gtk_menu_item_get_label(GTK_MENU_ITEM(item->data));
+
+            arrayValues[index] = JSValueMakeString(context, JSStringCreateWithUTF8CString(label.data()));
             index++;
         }
         if (index)

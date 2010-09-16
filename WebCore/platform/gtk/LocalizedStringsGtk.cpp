@@ -4,7 +4,6 @@
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2008 Christian Dywan <christian@imendio.com>
  * Copyright (C) 2008 Nuanti Ltd.
- * Copyright (C) 2010 Igalia S.L
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -109,51 +108,6 @@ String contextMenuItemTagDownloadImageToDisk()
 String contextMenuItemTagCopyImageToClipboard()
 {
     return String::fromUTF8(_("Cop_y Image"));
-}
-
-String contextMenuItemTagOpenMediaInNewWindow()
-{
-    return String::fromUTF8(_("Open _Media in New Window"));
-}
-
-String contextMenuItemTagCopyMediaLinkToClipboard()
-{
-    return String::fromUTF8(_("Cop_y Media Link Location"));
-}
-
-String contextMenuItemTagToggleMediaControls()
-{
-    return String::fromUTF8(_("_Toggle Media Controls"));
-}
-
-String contextMenuItemTagToggleMediaLoop()
-{
-    return String::fromUTF8(_("Toggle Media _Loop Playback"));
-}
-
-String contextMenuItemTagEnterVideoFullscreen()
-{
-    return String::fromUTF8(_("Switch Video to _Fullscreen"));
-}
-
-String contextMenuItemTagMediaPlay()
-{
-    return String::fromUTF8(_("_Play"));
-}
-
-String contextMenuItemTagMediaPause()
-{
-    return String::fromUTF8(_("_Pause"));
-}
-
-String contextMenuItemTagMediaMute()
-{
-    return String::fromUTF8(_("_Mute"));
-}
-
-String contextMenuItemTagMediaUnMute()
-{
-    return String::fromUTF8(_("Un_Mute"));
 }
 
 String contextMenuItemTagOpenFrameInNewWindow()

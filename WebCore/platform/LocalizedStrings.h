@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2003, 2006, 2009 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2010 Igalia S.L
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -109,15 +108,6 @@ namespace WebCore {
     String contextMenuItemTagCapitalize();
     String contextMenuItemTagChangeBack(const String& replacedString);
 #endif
-    String contextMenuItemTagOpenMediaInNewWindow();
-    String contextMenuItemTagCopyMediaLinkToClipboard();
-    String contextMenuItemTagToggleMediaControls();
-    String contextMenuItemTagToggleMediaLoop();
-    String contextMenuItemTagEnterVideoFullscreen();
-    String contextMenuItemTagMediaPlay();
-    String contextMenuItemTagMediaPause();
-    String contextMenuItemTagMediaMute();
-    String contextMenuItemTagMediaUnMute();
     String contextMenuItemTagInspectElement();
 #endif // ENABLE(CONTEXT_MENUS)
 

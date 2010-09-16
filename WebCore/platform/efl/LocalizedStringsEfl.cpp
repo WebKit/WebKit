@@ -98,51 +98,6 @@ String contextMenuItemTagCopyImageToClipboard()
     return String::fromUTF8("Copy Image");
 }
 
-String contextMenuItemTagOpenMediaInNewWindow()
-{
-    return String::fromUTF8("Open Media in New Window");
-}
-
-String contextMenuItemTagCopyMediaLinkToClipboard()
-{
-    return String::fromUTF8("Copy Media Link Location");
-}
-
-String contextMenuItemTagToggleMediaControls()
-{
-    return String::fromUTF8("Toggle Media Controls");
-}
-
-String contextMenuItemTagToggleMediaLoop()
-{
-    return String::fromUTF8("Toggle Media Loop Playback");
-}
-
-String contextMenuItemTagEnterVideoFullscreen()
-{
-    return String::fromUTF8("Switch Video to Fullscreen");
-}
-
-String contextMenuItemTagMediaPlay()
-{
-    return String::fromUTF8("Play");
-}
-
-String contextMenuItemTagMediaPause()
-{
-    return String::fromUTF8("Pause");
-}
-
-String contextMenuItemTagMediaMute()
-{
-    return String::fromUTF8("Mute");
-}
-
-String contextMenuItemTagMediaUnMute()
-{
-    return String::fromUTF8("UnMute");
-}
-
 String contextMenuItemTagOpenFrameInNewWindow()
 {
     return String::fromUTF8("Open Frame in New Window");

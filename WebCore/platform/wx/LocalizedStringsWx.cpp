@@ -97,51 +97,6 @@ String contextMenuItemTagCopyImageToClipboard()
     return String("Copy Image to Clipboard"); 
 }
 
-String contextMenuItemTagOpenMediaInNewWindow()
-{
-    return String("Open Media in New Window");
-}
-
-String contextMenuItemTagCopyMediaLinkToClipboard()
-{
-    return String("Copy Media Link Location");
-}
-
-String contextMenuItemTagToggleMediaControls()
-{
-    return String("Toggle Media Controls");
-}
-
-String contextMenuItemTagToggleMediaLoop()
-{
-    return String("Toggle Media Loop Playback");
-}
-
-String contextMenuItemTagEnterVideoFullscreen()
-{
-    return String("Switch Video to Fullscreen");
-}
-
-String contextMenuItemTagMediaPlay()
-{
-    return String("Play");
-}
-
-String contextMenuItemTagMediaPause()
-{
-    return String("Pause");
-}
-
-String contextMenuItemTagMediaMute()
-{
-    return String("Mute");
-}
-
-String contextMenuItemTagMediaUnMute()
-{
-    return String("UnMute");
-}
-
 String contextMenuItemTagOpenFrameInNewWindow() 
 { 
     return String("Open Frame in New Window"); 

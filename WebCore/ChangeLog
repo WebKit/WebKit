@@ -1,3 +1,32 @@
+2010-09-16  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r67628.
+        http://trac.webkit.org/changeset/67628
+        https://bugs.webkit.org/show_bug.cgi?id=45904
+
+        broke the build (Requested by eric_carlson on #webkit).
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::populate):
+        (WebCore::ContextMenu::checkOrEnableIfNeeded):
+        * platform/ContextMenuItem.h:
+        * platform/LocalizationStrategy.h:
+        * platform/LocalizedStrings.cpp:
+        * platform/LocalizedStrings.h:
+        * platform/android/LocalizedStringsAndroid.cpp:
+        * platform/brew/LocalizedStringsBrew.cpp:
+        * platform/efl/LocalizedStringsEfl.cpp:
+        * platform/gtk/ContextMenuItemGtk.cpp:
+        (WebCore::gtkStockIDFromContextMenuAction):
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        * platform/haiku/LocalizedStringsHaiku.cpp:
+        * platform/wx/LocalizedStringsWx.cpp:
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::absoluteMediaURL):
+        * rendering/HitTestResult.h:
+
 2010-09-16  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Simon Fraser.
