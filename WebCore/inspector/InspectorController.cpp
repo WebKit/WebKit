@@ -1653,6 +1653,8 @@ void InspectorController::didEvaluateForTestInFrontend(long callId, const String
 String InspectorController::breakpointsSettingKey()
 {
     DEFINE_STATIC_LOCAL(String, keyPrefix, ("breakpoints:"));
+    if (!m_mainResource)
+        return "";
     return keyPrefix + InspectorDebuggerAgent::md5Base16(m_mainResource->requestURL());
 }
 

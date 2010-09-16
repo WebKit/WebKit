@@ -1,3 +1,13 @@
+2010-09-16  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: quick fix for crash in InspectorController::loadBreakpoints caused by empty main resource
+        https://bugs.webkit.org/show_bug.cgi?id=45901
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::breakpointsSettingKey):
+
 2010-09-16  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
