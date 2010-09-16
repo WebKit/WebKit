@@ -2269,6 +2269,8 @@ editing/selection/5195166-1.html
 
 # missing DRT feature, see also https://bugs.webkit.org/show_bug.cgi?id=39102
 editing/selection/context-menu-on-text.html
+# and https://bugs.webkit.org/show_bug.cgi?id=45021
+media/context-menu-actions.html
 
 # ============================================================================= #
 # Failing editing/spelling tests

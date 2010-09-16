@@ -32,6 +32,9 @@ namespace WebCore {
 
 class Element;
 class Frame;
+#if ENABLE(VIDEO)
+class HTMLMediaElement;
+#endif
 class Image;
 class IntRect;
 class KURL;
@@ -80,6 +83,17 @@ public:
     String textContent() const;
     bool isLiveLink() const;
     bool isContentEditable() const;
+    void toggleMediaControlsDisplay() const;
+    void toggleMediaLoopPlayback() const;
+    void enterFullscreenForVideo() const;
+    bool mediaControlsEnabled() const;
+    bool mediaLoopEnabled() const;
+    bool mediaPlaying() const;
+    bool mediaSupportsFullscreen() const;
+    void toggleMediaPlayState() const;
+    bool mediaHasAudio() const;
+    bool mediaMuted() const;
+    void toggleMediaMuteState() const;
 
     // Rect-based hit test related methods.
     bool isRectBasedTest() const { return m_isRectBased; }
@@ -95,6 +109,10 @@ public:
     void append(const HitTestResult&);
 
 private:
+
+#if ENABLE(VIDEO)
+    HTMLMediaElement* mediaElement() const;
+#endif
 
     RefPtr<Node> m_innerNode;
     RefPtr<Node> m_innerNonSharedNode;

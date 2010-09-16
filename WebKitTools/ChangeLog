@@ -1,3 +1,20 @@
+2010-09-15  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Carlson.
+
+        [GTK] enhanced context menu for media elements
+        https://bugs.webkit.org/show_bug.cgi?id=45021
+
+        EventSender::contextClick() now returns an array of js
+        objects. Each object has a title property and a click() method.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (getMenuItemTitleCallback):
+        (setMenuItemTitleCallback):
+        (menuItemClickCallback):
+        (getMenuItemClass):
+        (contextClickCallback):
+
 2010-09-14  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Carlson and Martin Robinson.

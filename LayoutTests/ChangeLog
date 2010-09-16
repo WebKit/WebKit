@@ -1,3 +1,20 @@
+2010-09-15  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Carlson.
+
+        [GTK] enhanced context menu for media elements
+        https://bugs.webkit.org/show_bug.cgi?id=45021
+
+        New test checking the actions that can be triggered by activating
+        the contex-menu of the media element. Skipped on mac, qt and win
+        because of lack of DRT support.
+
+        * media/context-menu-actions-expected.txt: Added.
+        * media/context-menu-actions.html: Added.
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2010-09-16  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Adam Barth.

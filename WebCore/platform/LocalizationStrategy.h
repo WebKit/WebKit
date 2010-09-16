@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Igalia S.L
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -112,6 +113,15 @@ public:
     virtual String contextMenuItemTagCapitalize() = 0;
     virtual String contextMenuItemTagChangeBack(const String& replacedString) = 0;
 #endif
+    virtual String contextMenuItemTagOpenMediaInNewWindow() = 0;
+    virtual String contextMenuItemTagCopyMediaLinkToClipboard() = 0;
+    virtual String contextMenuItemTagToggleMediaControls() = 0;
+    virtual String contextMenuItemTagToggleMediaLoop() = 0;
+    virtual String contextMenuItemTagEnterVideoFullscreen() = 0;
+    virtual String contextMenuItemTagMediaPlay() = 0;
+    virtual String contextMenuItemTagMediaPause() = 0;
+    virtual String contextMenuItemTagMediaMute() = 0;
+    virtual String contextMenuItemTagMediaUnMute() = 0;
     virtual String contextMenuItemTagInspectElement() = 0;
 #endif // ENABLE(CONTEXT_MENUS)
 

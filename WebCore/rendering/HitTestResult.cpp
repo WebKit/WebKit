@@ -24,6 +24,7 @@
 #include "Frame.h"
 #include "FrameTree.h"
 #include "HTMLAnchorElement.h"
+#include "HTMLVideoElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLMediaElement.h"
@@ -292,22 +293,125 @@ KURL HitTestResult::absoluteImageURL() const
 KURL HitTestResult::absoluteMediaURL() const
 {
 #if ENABLE(VIDEO)
-    if (!(m_innerNonSharedNode && m_innerNonSharedNode->document()))
-        return KURL();
-
-    if (!(m_innerNonSharedNode->renderer() && m_innerNonSharedNode->renderer()->isMedia()))
-        return KURL();
-
-    AtomicString urlString;
-    if (m_innerNonSharedNode->hasTagName(HTMLNames::videoTag) || m_innerNonSharedNode->hasTagName(HTMLNames::audioTag)) {
-        HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(m_innerNonSharedNode.get());
-        urlString = mediaElement->currentSrc();
-    } else
-        return KURL();
-
-    return m_innerNonSharedNode->document()->completeURL(deprecatedParseURL(urlString));
+    if (HTMLMediaElement* mediaElt = mediaElement())
+        return m_innerNonSharedNode->document()->completeURL(deprecatedParseURL(mediaElt->currentSrc()));
+    return KURL();
 #else
     return KURL();
+#endif
+}
+
+bool HitTestResult::mediaSupportsFullscreen() const
+{
+#if ENABLE(VIDEO)
+    HTMLMediaElement* mediaElt(mediaElement());
+    return (mediaElt && mediaElt->hasTagName(HTMLNames::videoTag) && mediaElt->supportsFullscreen());
+#else
+    return false;
+#endif
+}
+
+#if ENABLE(VIDEO)
+HTMLMediaElement* HitTestResult::mediaElement() const
+{
+    if (!(m_innerNonSharedNode && m_innerNonSharedNode->document()))
+        return 0;
+
+    if (!(m_innerNonSharedNode->renderer() && m_innerNonSharedNode->renderer()->isMedia()))
+        return 0;
+
+    if (m_innerNonSharedNode->hasTagName(HTMLNames::videoTag) || m_innerNonSharedNode->hasTagName(HTMLNames::audioTag))
+        return static_cast<HTMLMediaElement*>(m_innerNonSharedNode.get());
+    return 0;
+}
+#endif
+
+void HitTestResult::toggleMediaControlsDisplay() const
+{
+#if ENABLE(VIDEO)
+    if (HTMLMediaElement* mediaElt = mediaElement())
+        mediaElt->setControls(!mediaElt->controls());
+#endif
+}
+
+void HitTestResult::toggleMediaLoopPlayback() const
+{
+#if ENABLE(VIDEO)
+    if (HTMLMediaElement* mediaElt = mediaElement())
+        mediaElt->setLoop(!mediaElt->loop());
+#endif
+}
+
+void HitTestResult::enterFullscreenForVideo() const
+{
+#if ENABLE(VIDEO)
+    HTMLMediaElement* mediaElt(mediaElement());
+    if (mediaElt && mediaElt->hasTagName(HTMLNames::videoTag)) {
+        HTMLVideoElement* videoElt = static_cast<HTMLVideoElement*>(mediaElt);
+        if (!videoElt->isFullscreen() && mediaElt->supportsFullscreen())
+            videoElt->enterFullscreen();
+    }
+#endif
+}
+
+bool HitTestResult::mediaControlsEnabled() const
+{
+#if ENABLE(VIDEO)
+    if (HTMLMediaElement* mediaElt = mediaElement())
+        return mediaElt->controls();
+#endif
+    return false;
+}
+
+bool HitTestResult::mediaLoopEnabled() const
+{
+#if ENABLE(VIDEO)
+    if (HTMLMediaElement* mediaElt = mediaElement())
+        return mediaElt->loop();
+#endif
+    return false;
+}
+
+bool HitTestResult::mediaPlaying() const
+{
+#if ENABLE(VIDEO)
+    if (HTMLMediaElement* mediaElt = mediaElement())
+        return !mediaElt->paused();
+#endif
+    return false;
+}
+
+void HitTestResult::toggleMediaPlayState() const
+{
+#if ENABLE(VIDEO)
+    if (HTMLMediaElement* mediaElt = mediaElement())
+        mediaElt->togglePlayState();
+#endif
+}
+
+bool HitTestResult::mediaHasAudio() const
+{
+#if ENABLE(VIDEO)
+    if (HTMLMediaElement* mediaElt = mediaElement())
+        return mediaElt->hasAudio();
+#endif
+    return false;
+}
+
+bool HitTestResult::mediaMuted() const
+{
+#if ENABLE(VIDEO)
+    if (HTMLMediaElement* mediaElt = mediaElement())
+        return mediaElt->muted();
+#endif
+    return false;
+}
+
+void HitTestResult::toggleMediaMuteState() const
+{
+#if ENABLE(VIDEO)
+    if (HTMLMediaElement* mediaElt = mediaElement())
+        mediaElt->setMuted(!mediaElt->muted());
 #endif
 }
 

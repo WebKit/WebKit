@@ -1,0 +1,91 @@
+<html>
+<head>
+        <script src="media-file.js"></script>
+        <script src=video-test.js></script>
+        <script>
+
+            function playing()
+            {
+                if (window.layoutTestController) {
+                    if (!window.eventSender) {
+                        layoutTestController.dumpAsText();
+                        endTest();
+                        return;
+                    }
+                } else {
+                    endTest();
+                    return;
+                }
+
+                findMediaElement();
+
+                var x, y, items;
+                x = video.offsetParent.offsetLeft + video.offsetLeft + video.offsetWidth / 2;
+                y = video.offsetParent.offsetTop + video.offsetTop + video.offsetHeight / 2;
+                eventSender.mouseMoveTo(x, y);
+                items = eventSender.contextClick();
+
+
+                for (var i = 0; i < items.length; i++)
+                {
+                    if (items[i].title.match("Controls")) {
+                       testExpected("video.controls", true, '==');
+                       consoleWrite("Toggling media controls");
+                       items[i].click();
+                       testExpected("video.controls", false, '==');
+                       consoleWrite("");
+                    }
+
+                    if (items[i].title.match("Pause")) {
+                       testExpected("video.paused", false, '==');
+                       consoleWrite("Toggling play state");
+                       items[i].click();
+                       testExpected("video.paused", true, '==');
+                       consoleWrite("");
+                    }
+
+                    if (items[i].title.match("Loop")) {
+                       testExpected("video.loop", false, '==');
+                       consoleWrite("Toggling loop state");
+                       items[i].click();
+                       testExpected("video.loop", true, '==');
+                       consoleWrite("");
+                    }
+
+                    if (items[i].title.match("Mute")) {
+                       testExpected("video.muted", false, '==');
+                       consoleWrite("Toggling mute state");
+                       items[i].click();
+                       testExpected("video.muted", true, '==');
+                       consoleWrite("");
+                    }
+
+                    if (items[i].title.match("Fullscreen") && video.webkitSupportsFullscreen) {
+                       testExpected("video.webkitDisplayingFullscreen", false, '==');
+                       consoleWrite("Toggling fullscreen state");
+                       items[i].click();
+                       testExpected("video.webkitDisplayingFullscreen", true, '==');
+                       consoleWrite("");
+                    }
+
+                    // TODO: test copy link location and open in new window.
+                 }
+                 layoutTestController.dumpAsText();
+                 endTest();
+            }
+
+            function start()
+            {
+                findMediaElement();
+                waitForEvent('play', playing);
+                run("video.src = '" + findMediaFile("video", "content/test") + "'");
+            }
+
+       </script>
+</head>
+<body onload="start()">
+    <p>Test the various actions available in the HTML5 media element context-menu.</p>
+    <video id="video" autoplay controls></video>
+</body>
+</html>
+
