@@ -58,6 +58,10 @@ enum Kind {
     SetTextZoomFactor,
     StopLoading,
     TryClose,
+    SelectAll,
+    Copy,
+    Cut,
+    Paste,
     UnapplyEditCommand,
     WheelEvent
 #if ENABLE(TOUCH_EVENTS)

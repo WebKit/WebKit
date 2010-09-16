@@ -146,6 +146,34 @@ using namespace WebCore;
     _data->_page->drawingArea()->setSize(IntSize(size));
 }
 
+- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
+{
+    // FIXME: this needs to be implemented
+    return YES;
+}
+
+// Editing commands
+
+- (void)copy:(id)sender
+{ 
+    _data->_page->copy();
+}
+
+- (void)cut:(id)sender
+{ 
+    _data->_page->cut();
+}
+
+- (void)paste:(id)sender
+{ 
+    _data->_page->paste();
+}
+
+- (void)selectAll:(id)sender
+{
+    _data->_page->selectAll();
+}
+
 // Events
 
 // Override this so that AppKit will send us arrow keys as key down events so we can

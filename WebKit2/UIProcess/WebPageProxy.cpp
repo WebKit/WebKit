@@ -316,6 +316,38 @@ void WebPageProxy::setActive(bool active)
     process()->send(WebPageMessage::SetActive, m_pageID, CoreIPC::In(active));
 }
 
+void WebPageProxy::selectAll()
+{
+    if (!isValid())
+        return;
+
+    process()->send(WebPageMessage::SelectAll, m_pageID, CoreIPC::In());
+}
+
+void WebPageProxy::copy()
+{
+    if (!isValid())
+        return;
+
+    process()->send(WebPageMessage::Copy, m_pageID, CoreIPC::In());
+}
+
+void WebPageProxy::cut()
+{
+    if (!isValid())
+        return;
+
+    process()->send(WebPageMessage::Cut, m_pageID, CoreIPC::In());
+}
+
+void WebPageProxy::paste()
+{
+    if (!isValid())
+        return;
+
+    process()->send(WebPageMessage::Paste, m_pageID, CoreIPC::In());
+}
+    
 void WebPageProxy::setIsInWindow(bool isInWindow)
 {
     if (m_isInWindow == isInWindow)

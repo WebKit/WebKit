@@ -1,3 +1,43 @@
+2010-09-15  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Pasteboard doesn't work in WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=42317
+        <rdar://problem/7660537>
+        
+        Initial work to support cut, copy, paste and selectAll in WebKit2.
+        It still does not support RTF and RTFD format for Mac and the selective
+        enabling of the editing menu entries.
+        
+        * Shared/CoreIPCSupport/WebPageMessageKinds.h: Added messages to support the
+        new editing commands.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView validateUserInterfaceItem:]): Added.
+        (-[WKView copy:]): Added.
+        (-[WKView cut:]): Added.
+        (-[WKView paste:]): Addded.
+        (-[WKView selectAll:]): Added.
+        * UIProcess/WebPageProxy.cpp: Added all the proxy methods.
+        (WebKit::WebPageProxy::selectAll):
+        (WebKit::WebPageProxy::copy):
+        (WebKit::WebPageProxy::cut):
+        (WebKit::WebPageProxy::paste):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::documentFragmentFromAttributedString): Added but not
+        implemented. This is needed to support RTF and RTFD.
+        (WebKit::WebEditorClient::setInsertionPasteboard): Added but not implemented.
+        This is needed only to support Mail on the Mac.
+        * WebProcess/WebPage/WebPage.cpp: Added all the stub methods.
+        (WebKit::WebPage::selectAll):
+        (WebKit::WebPage::copy):
+        (WebKit::WebPage::cut):
+        (WebKit::WebPage::paste):
+        (WebKit::WebPage::didReceiveMessage): Modified to handle the new messages from
+        the UI process.
+        * WebProcess/WebPage/WebPage.h:
+
 2010-09-16  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by Jian Li.
