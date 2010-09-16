@@ -1,5 +1,13 @@
 2010-09-15  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.
+
+        Only show the review-in-context link if there are contextual comments.
+
+        * code-review.js:
+
+2010-09-15  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         [reviewtool] Show the status bubbles on the toolbar

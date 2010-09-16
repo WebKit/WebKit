@@ -455,7 +455,7 @@
     if (comment != '')
       comment += '\n\n';
     comment += comments_in_context.join('\n\n');
-    if (comment != '')
+    if (comments_in_context.length > 0)
       comment = 'View in context: ' + window.location + '\n\n' + comment;
     var review_form = $('#reviewform').contents();
     review_form.find('#comment').val(comment);
