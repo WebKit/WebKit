@@ -567,6 +567,13 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting()
     setlocale(LC_ALL, "");
 }
 
+static bool isGlobalHistoryTest(const QUrl& url)
+{
+    if (url.path().contains("globalhistory/"))
+        return true;
+    return false;
+}
+
 static bool isWebInspectorTest(const QUrl& url)
 {
     if (url.path().contains("inspector/"))
@@ -594,6 +601,9 @@ void DumpRenderTree::open(const QUrl& url)
         if (isWebInspectorTest(url))
             layoutTestController()->showWebInspector();
     }
+
+    if (isGlobalHistoryTest(url))
+        layoutTestController()->dumpHistoryCallbacks();
 
     // W3C SVG tests expect to be 480x360
     bool isW3CTest = url.toString().contains("svg/W3C-SVG-1.1");

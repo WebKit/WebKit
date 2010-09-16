@@ -173,6 +173,7 @@ namespace WebCore {
         virtual bool selectItemWritingDirectionIsNatural();
         virtual PassRefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const;
         virtual PassRefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const;
+        virtual void populateVisitedLinks();
 
         QWebSelectMethod* createSelectPopup() const;
 
@@ -187,6 +188,8 @@ namespace WebCore {
         bool statusBarVisible;
         bool menuBarVisible;
         QEventLoop* m_eventLoop;
+
+        static bool dumpVisitedLinksCallbacks;
 
         mutable QtPlatformPlugin m_platformPlugin;
     };

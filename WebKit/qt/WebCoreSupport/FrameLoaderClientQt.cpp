@@ -165,6 +165,7 @@ bool FrameLoaderClientQt::sendRequestReturnsNullOnRedirect = false;
 bool FrameLoaderClientQt::sendRequestReturnsNull = false;
 bool FrameLoaderClientQt::dumpResourceResponseMIMETypes = false;
 bool FrameLoaderClientQt::deferMainResourceDataLoad = true;
+bool FrameLoaderClientQt::dumpHistoryCallbacks = false;
 
 QStringList FrameLoaderClientQt::sendRequestClearHeaders;
 QString FrameLoaderClientQt::dumpResourceLoadCallbacksPath;
@@ -673,9 +674,17 @@ void FrameLoaderClientQt::prepareForDataSourceReplacement()
 {
 }
 
-void FrameLoaderClientQt::setTitle(const String&, const KURL&)
+void FrameLoaderClientQt::setTitle(const String& title, const KURL& url)
 {
-    // no need for, dispatchDidReceiveTitle is the right callback
+    // Used by Apple WebKit to update the title of an existing history item.
+    // QtWebKit doesn't accomodate this on history items. If it ever does,
+    // it should be privateBrowsing-aware.For now, we are just passing
+    // globalhistory layout tests.
+    if (dumpHistoryCallbacks) {
+        printf("WebView updated the title for history URL \"%s\" to \"%s\".\n",
+            qPrintable(drtDescriptionSuitableForTestResult(url)),
+            qPrintable(QString(title)));
+    }
 }
 
 
@@ -738,12 +747,48 @@ void FrameLoaderClientQt::registerForIconNotification(bool)
 void FrameLoaderClientQt::updateGlobalHistory()
 {
     QWebHistoryInterface *history = QWebHistoryInterface::defaultInterface();
+    WebCore::DocumentLoader* loader = m_frame->loader()->documentLoader();
     if (history)
-        history->addHistoryEntry(m_frame->loader()->documentLoader()->urlForHistory().prettyURL());
+        history->addHistoryEntry(loader->urlForHistory().prettyURL());
+
+    if (dumpHistoryCallbacks) {
+        printf("WebView navigated to url \"%s\" with title \"%s\" with HTTP equivalent method \"%s\".  The navigation was %s and was %s%s.\n",
+            qPrintable(drtDescriptionSuitableForTestResult(loader->urlForHistory())),
+            qPrintable(QString(loader->title())),
+            qPrintable(QString(loader->request().httpMethod())),
+            ((loader->substituteData().isValid() || (loader->response().httpStatusCode() >= 400)) ? "a failure" : "successful"),
+            ((!loader->clientRedirectSourceForHistory().isEmpty()) ? "a client redirect from " : "not a client redirect"),
+            (!loader->clientRedirectSourceForHistory().isEmpty()) ? qPrintable(drtDescriptionSuitableForTestResult(loader->clientRedirectSourceForHistory())) : "");
+    }
 }
 
 void FrameLoaderClientQt::updateGlobalHistoryRedirectLinks()
 {
+    // Apple WebKit is the only port that makes use of this callback. It calls
+    // WebCore::HistoryItem::addRedirectURL() with the contents of
+    // loader->[server|client]RedirectDestinationForHistory().
+    // WebCore can associate a bunch of redirect URLs with a particular
+    // item in the history, presumably this allows Safari to skip the redirections
+    // when navigating to that history item. That might be a feature Qt wants to
+    // offer through QWebHistoryInterface in the future. For now, we're just
+    // passing tests in LayoutTests/http/tests/globalhistory.
+    WebCore::DocumentLoader* loader = m_frame->loader()->documentLoader();
+
+    if (!loader->clientRedirectSourceForHistory().isNull()) {
+        if (dumpHistoryCallbacks) {
+            printf("WebView performed a client redirect from \"%s\" to \"%s\".\n",
+                  qPrintable(QString(loader->clientRedirectSourceForHistory())),
+                  qPrintable(QString(loader->clientRedirectDestinationForHistory())));
+        }
+    }
+
+    if (!loader->serverRedirectSourceForHistory().isNull()) {
+        if (dumpHistoryCallbacks) {
+            printf("WebView performed a server redirect from \"%s\" to \"%s\".\n",
+                  qPrintable(QString(loader->serverRedirectSourceForHistory())),
+                  qPrintable(QString(loader->serverRedirectDestinationForHistory())));
+        }
+    }
 }
 
 bool FrameLoaderClientQt::shouldGoToHistoryItem(WebCore::HistoryItem *) const

@@ -24,6 +24,7 @@
 #include "DumpRenderTreeSupportQt.h"
 
 #include "CSSComputedStyleDeclaration.h"
+#include "ChromeClientQt.h"
 #include "ContextMenu.h"
 #include "ContextMenuClientQt.h"
 #include "ContextMenuController.h"
@@ -601,6 +602,16 @@ void DumpRenderTreeSupportQt::setCustomPolicyDelegate(bool enabled, bool permiss
 {
     FrameLoaderClientQt::policyDelegateEnabled = enabled;
     FrameLoaderClientQt::policyDelegatePermissive = permissive;
+}
+
+void DumpRenderTreeSupportQt::dumpHistoryCallbacks(bool b)
+{
+    FrameLoaderClientQt::dumpHistoryCallbacks = b;
+}
+
+void DumpRenderTreeSupportQt::dumpVisitedLinksCallbacks(bool b)
+{
+    ChromeClientQt::dumpVisitedLinksCallbacks = b;
 }
 
 void DumpRenderTreeSupportQt::dumpEditingCallbacks(bool b)

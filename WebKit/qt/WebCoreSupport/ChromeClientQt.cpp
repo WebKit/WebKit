@@ -75,6 +75,8 @@
 
 namespace WebCore {
 
+bool ChromeClientQt::dumpVisitedLinksCallbacks = false;
+
 ChromeClientQt::ChromeClientQt(QWebPage* webPage)
     : m_webPage(webPage)
     , m_eventLoop(0)
@@ -660,6 +662,16 @@ PassRefPtr<PopupMenu> ChromeClientQt::createPopupMenu(PopupMenuClient* client) c
 PassRefPtr<SearchPopupMenu> ChromeClientQt::createSearchPopupMenu(PopupMenuClient* client) const
 {
     return adoptRef(new SearchPopupMenuQt(createPopupMenu(client)));
+}
+
+void ChromeClientQt::populateVisitedLinks()
+{
+    // We don't need to do anything here because history is tied to QWebPage rather than stored
+    // in a separate database
+    if (dumpVisitedLinksCallbacks) {
+        printf("Asked to populate visited links for WebView \"%s\"\n",
+                qPrintable(m_webPage->mainFrame()->url().toString()));
+    }
 }
 
 } // namespace WebCore

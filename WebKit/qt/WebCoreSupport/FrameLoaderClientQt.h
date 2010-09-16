@@ -238,6 +238,7 @@ public:
     static bool policyDelegateEnabled;
     static bool policyDelegatePermissive;
     static bool deferMainResourceDataLoad;
+    static bool dumpHistoryCallbacks;
 
 private:
     Frame *m_frame;

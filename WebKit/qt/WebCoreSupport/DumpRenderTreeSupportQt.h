@@ -106,6 +106,8 @@ public:
     static void setWillSendRequestReturnsNullOnRedirect(bool b);
     static void setWillSendRequestReturnsNull(bool b);
     static void setWillSendRequestClearHeaders(const QStringList& headers);
+    static void dumpHistoryCallbacks(bool b);
+    static void dumpVisitedLinksCallbacks(bool b);
 
     static void setDeferMainResourceDataLoad(bool b);
 

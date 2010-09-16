@@ -1,3 +1,12 @@
+2010-09-16  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Support globalhistory tests
+        https://bugs.webkit.org/show_bug.cgi?id=45774
+
+        * platform/qt/Skipped:
+
 2010-09-16  Yong Li  <yoli@rim.com>
 
         Reviewed by George Staikos.

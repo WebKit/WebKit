@@ -151,9 +151,6 @@ http/tests/cookies/third-party-cookie-relaxing.html
 http/tests/loading/basic-credentials-sent-automatically.html
 http/tests/loading/basic-auth-resend-wrong-credentials.html
 
-# This port doesn't have a global history delegate yet
-http/tests/globalhistory
-
 # Skip failing http/tests/misc tests
 # - pixel differences only?
 http/tests/misc/acid3.html

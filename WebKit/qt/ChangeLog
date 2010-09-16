@@ -1,3 +1,23 @@
+2010-09-16  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Support globalhistory tests
+        https://bugs.webkit.org/show_bug.cgi?id=45774
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::populateVisitedLinks):
+        * WebCoreSupport/ChromeClientQt.h:
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::dumpHistoryCallbacks):
+        (DumpRenderTreeSupportQt::dumpVisitedLinksCallbacks):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::setTitle):
+        (WebCore::FrameLoaderClientQt::updateGlobalHistory):
+        (WebCore::FrameLoaderClientQt::updateGlobalHistoryRedirectLinks):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2010-09-16  Diego Gonzalez  <diegohcg@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
