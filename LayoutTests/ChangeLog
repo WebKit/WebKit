@@ -1,3 +1,11 @@
+2010-09-16  Darin Adler  <darin@apple.com>
+
+        Mac results for recently-added test.
+
+        * platform/mac/fast/images/gif-large-checkerboard-expected.checksum: Added.
+        * platform/mac/fast/images/gif-large-checkerboard-expected.png: Added.
+        * platform/mac/fast/images/gif-large-checkerboard-expected.txt: Added.
+
 2010-09-16  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
