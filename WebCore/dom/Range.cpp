@@ -107,6 +107,17 @@ Range::~Range()
 #endif
 }
 
+void Range::setDocument(Document* document)
+{
+    ASSERT(m_ownerDocument != document);
+    if (m_ownerDocument)
+        m_ownerDocument->detachRange(this);
+    m_ownerDocument = document;
+    m_start.setToStartOfNode(document);
+    m_end.setToStartOfNode(document);
+    m_ownerDocument->attachRange(this);
+}
+
 Node* Range::startContainer(ExceptionCode& ec) const
 {
     if (!m_start.container()) {
@@ -1316,6 +1327,9 @@ void Range::selectNode(Node* refNode, ExceptionCode& ec)
             return;
     }
 
+    if (m_ownerDocument != refNode->document())
+        setDocument(refNode->document());
+
     ec = 0;
     setStartBefore(refNode, ec);
     if (ec)
@@ -1357,6 +1371,9 @@ void Range::selectNodeContents(Node* refNode, ExceptionCode& ec)
                 return;
         }
     }
+
+    if (m_ownerDocument != refNode->document())
+        setDocument(refNode->document());
 
     m_start.setToStartOfNode(refNode);
     m_end.setToEndOfNode(refNode);

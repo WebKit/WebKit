@@ -1,3 +1,21 @@
+2010-09-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45852
+        Range::selectNode and selectNodeContents misbehave when argument is in another document
+
+        Test: fast/dom/Range/select-node-different-document.html
+
+        There is nothing in DOM Traversal spec that says this shouldn't work, and it does work in
+        Firefox.
+
+        * dom/Range.cpp:
+        (WebCore::Range::setDocument):
+        (WebCore::Range::selectNode):
+        (WebCore::Range::selectNodeContents):
+        * dom/Range.h:
+
 2010-09-16  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.

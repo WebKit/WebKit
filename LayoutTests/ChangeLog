@@ -1,3 +1,13 @@
+2010-09-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45852
+        Range::selectNode and selectNodeContents misbehave when argument is in another document
+
+        * fast/dom/Range/select-node-different-document-expected.txt: Added.
+        * fast/dom/Range/select-node-different-document.html: Added.
+
 2010-09-16  Satish Sampath  <satish@chromium.org>
 
         Unreviewed, build fix after checking in the wrong location.
