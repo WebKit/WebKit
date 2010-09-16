@@ -1,3 +1,13 @@
+2010-09-15  John Gregg  <johnnyg@google.com>
+
+        Unreviewed, build fix after incomplete revert.
+
+        Remove layout test added in 67570 that wasn't reverted in 67574.
+        https://bugs.webkit.org/show_bug.cgi?id=45854
+
+        * fast/css/test-setting-canvas-color-expected.txt: Removed.
+        * fast/css/test-setting-canvas-color.html: Removed.
+
 2010-09-15  Julien Chaffraix  <jchaffraix@codeaurora.org>
 
         Unreviewed.
