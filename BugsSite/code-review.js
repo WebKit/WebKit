@@ -193,6 +193,33 @@
     return comments;
   }
 
+  function isReviewFlag(select) {
+    return $(select).attr('title') == 'Request for patch review.';
+  }
+
+  function isCommitQueueFlag(select) {
+    return $(select).attr('title').match(/commit-queue/);
+  }
+
+  function findControlForFlag(select) {
+    if (isReviewFlag(select))
+      return $('#toolbar .review select');
+    else if (isCommitQueueFlag(select))
+      return $('#toolbar .commitQueue select');
+    return $();
+  }
+
+  function addFlagsForAttachment(details) {
+    var flag_control = "<select><option></option><option>?</option><option>+</option><option>-</option></select>";
+    $('#toolbar .actions').append(
+      $('<span class="review"> r: ' + flag_control + '</span>')).append(
+      $('<span class="commitQueue"> cq: ' + flag_control + '</span>'));
+
+    details.find('#flags select').each(function() {
+      findControlForFlag(this).attr('selectedIndex', $(this).attr('selectedIndex'));
+    });
+  }
+
   function fetchHistory() {
     $.get('attachment.cgi?id=' + attachment_id + '&action=edit', function(data) {
       var bug_id = /Attachment \d+ Details for Bug (\d+)/.exec(data)[1];
@@ -207,6 +234,10 @@
         });
         displayPreviousComments(comments);
       });
+
+      var details = $(data);
+
+      addFlagsForAttachment(details);
     });
   }
 
@@ -221,8 +252,8 @@
   $(document).ready(function() {
     crawlDiff();
     fetchHistory();
-    $(document.body).prepend('<div id="toolbar"><div class="actions"><button id="post_comments">Publish comments</button></div><div class="message"><span class="commentStatus"></span> <span class="help">Double-click a line to add a comment.</span></div></div>');
-    $(document.body).prepend('<div id="comment_form" class="inactive"><div class="winter"></div><div class="lightbox"><iframe src="attachment.cgi?id=' + attachment_id + '&action=reviewform"></iframe></div></div>');
+    $(document.body).prepend('<div id="toolbar"><div class="actions"><button id="post_comments">Publish</button></div><div class="message"><span class="commentStatus"></span> <span class="help">Double-click a line to add a comment.</span></div></div>');
+    $(document.body).prepend('<div id="comment_form" class="inactive"><div class="winter"></div><div class="lightbox"><iframe id="reviewform" src="attachment.cgi?id=' + attachment_id + '&action=reviewform"></iframe></div></div>');
     $(document.body).append('<div class="overallComments"><div class="description">Overall comments:</div><textarea></textarea></div>');
   });
 
@@ -426,6 +457,13 @@
     comment += comments_in_context.join('\n\n');
     if (comment != '')
       comment = 'View in context: ' + window.location + '\n\n' + comment;
-    $('#comment_form').find('iframe').contents().find('#comment').val(comment);
+    var review_form = $('#reviewform').contents();
+    review_form.find('#comment').val(comment);
+    review_form.find('#flags select').each(function() {
+      var control = findControlForFlag(this);
+      if (!control.size())
+        return;
+      $(this).attr('selectedIndex', control.attr('selectedIndex'));
+    });
   });
 })();
