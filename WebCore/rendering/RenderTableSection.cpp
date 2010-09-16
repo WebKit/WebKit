@@ -605,6 +605,8 @@ int RenderTableSection::layoutRows(int toAdd)
             if (te != oldTe || be != oldBe) {
                 cell->setNeedsLayout(true, false);
                 cell->layoutIfNeeded();
+                if (view()->layoutState()->m_pageHeight && cell->height() != rHeight)
+                    cell->setHeight(rHeight); // FIXME: Pagination might have made us change size.  For now just shrink or grow the cell to fit without doing a relayout.
             }
 
             if ((te != oldTe || be > oldBe) && !table()->selfNeedsLayout() && cell->checkForRepaintDuringLayout())

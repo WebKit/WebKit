@@ -34,7 +34,7 @@
         </div>
         text runs here next to the float
     </div>
-    <!-- In this case, the float forces an early column break. -->
+    <!-- In this case, the float paginates after its second line. -->
     <div class="columns" style="height: 70px;">
         one line two lines three lines
         <div class="float" id="f3">
@@ -42,7 +42,7 @@
         </div>
         text runs here next to the float
     </div>
-    <!-- In this case, the float forces an early column break. -->
+    <!-- In this case, the float paginates after its first line. -->
     <div class="columns" style="height: 70px;">
         one line two lines three lines and some more
         <div class="float" id="f4">
@@ -50,8 +50,7 @@
         </div>
         text runs here next to the float
     </div>
-    <!-- In this case, the float is too tall to fit anyway, so it doesn't
-         affect column breaks. -->
+    <!-- In this case, the float paginates after its third line. -->
     <div class="columns" style="height: 45px;">
         one line
         <div class="float" id="f5">
@@ -76,8 +75,8 @@
     var tests = [
         ["f1", 0, 45],
         ["f2", 0, 45],
-        ["f3", 100, 5],
-        ["f4", 100, 5],
+        ["f3", 0, 45],
+        ["f4", 0, 55],
         ["f5", 0, 15]
     ];
 

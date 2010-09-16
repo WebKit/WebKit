@@ -1,3 +1,135 @@
+2010-09-15  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38402, paginate columns at layout time rather than at paint time.
+
+        This patch adds support for column breaking at layout time rather than at paint time.  New variables have been
+        added to LayoutState and to ColumnInfo to track column information while laying out.
+        
+        The basic idea behind this patch is to retain the columns' paint-time hackery of transforming one long vertical strip
+        into multiple columns.  Now, however, layout is aware of the columns and will move objects up and down vertically in order
+        to ensure they don't intersect a break.
+        
+        Many new tests added in fast/multicol and new results added for existing fast/multicol tests.
+
+        * rendering/ColumnInfo.h:
+        (WebCore::ColumnInfo::ColumnInfo):
+        (WebCore::ColumnInfo::columnCount):
+        (WebCore::ColumnInfo::columnHeight):
+        (WebCore::ColumnInfo::setColumnCountAndHeight):
+        (WebCore::ColumnInfo::setColumnHeight):
+        (WebCore::ColumnInfo::updateMinimumColumnHeight):
+        (WebCore::ColumnInfo::minimumColumnHeight):
+        (WebCore::ColumnInfo::forcedBreaks):
+        (WebCore::ColumnInfo::forcedBreakOffset):
+        (WebCore::ColumnInfo::maximumDistanceBetweenForcedBreaks):
+        (WebCore::ColumnInfo::clearForcedBreaks):
+        (WebCore::ColumnInfo::addForcedBreak):
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        (WebCore::LayoutState::clearPaginationInformation):
+        (WebCore::LayoutState::pageY):
+        (WebCore::LayoutState::addForcedColumnBreak):
+        * rendering/LayoutState.h:
+        (WebCore::LayoutState::LayoutState):
+        (WebCore::LayoutState::paginatingColumns):
+        (WebCore::LayoutState::paginated):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::RenderBlock):
+        (WebCore::RenderBlock::~RenderBlock):
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::collapseMargins):
+        (WebCore::RenderBlock::estimateVerticalPosition):
+        (WebCore::RenderBlock::layoutBlockChild):
+        (WebCore::RenderBlock::layoutPositionedObjects):
+        (WebCore::RenderBlock::paintColumnRules):
+        (WebCore::RenderBlock::paintColumnContents):
+        (WebCore::RenderBlock::paintChildren):
+        (WebCore::RenderBlock::insertFloatingObject):
+        (WebCore::RenderBlock::removeFloatingObjects):
+        (WebCore::RenderBlock::positionNewFloats):
+        (WebCore::RenderBlock::positionNewFloatOnLine):
+        (WebCore::RenderBlock::lowestPosition):
+        (WebCore::RenderBlock::rightmostPosition):
+        (WebCore::RenderBlock::leftmostPosition):
+        (WebCore::RenderBlock::markAllDescendantsWithFloatsForLayout):
+        (WebCore::RenderBlock::markDescendantBlocksAndLinesForLayout):
+        (WebCore::RenderBlock::hitTestColumns):
+        (WebCore::RenderBlock::setDesiredColumnCountAndWidth):
+        (WebCore::RenderBlock::columnCount):
+        (WebCore::RenderBlock::columnRectAt):
+        (WebCore::RenderBlock::layoutColumns):
+        (WebCore::RenderBlock::adjustPointToColumnContents):
+        (WebCore::RenderBlock::adjustRectForColumns):
+        (WebCore::RenderBlock::adjustForColumns):
+        (WebCore::RenderBlock::setMaxTopMargins):
+        (WebCore::RenderBlock::setMaxBottomMargins):
+        (WebCore::RenderBlock::setPaginationStrut):
+        (WebCore::RenderBlock::setPageY):
+        (WebCore::RenderBlock::nextPageTop):
+        (WebCore::inNormalFlow):
+        (WebCore::RenderBlock::applyBeforeBreak):
+        (WebCore::RenderBlock::applyAfterBreak):
+        (WebCore::RenderBlock::adjustForUnsplittableChild):
+        (WebCore::RenderBlock::adjustLinePositionForPagination):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::paginationStrut):
+        (WebCore::RenderBlock::pageY):
+        (WebCore::RenderBlock::maxTopPosMargin):
+        (WebCore::RenderBlock::maxTopNegMargin):
+        (WebCore::RenderBlock::maxBottomPosMargin):
+        (WebCore::RenderBlock::maxBottomNegMargin):
+        (WebCore::RenderBlock::initMaxMarginValues):
+        (WebCore::RenderBlock::FloatingObject::FloatingObject):
+        (WebCore::RenderBlock::FloatingObject::type):
+        (WebCore::RenderBlock::RenderBlockRareData::RenderBlockRareData):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::determineStartPosition):
+        (WebCore::RenderBlock::skipLeadingWhitespace):
+        (WebCore::RenderBlock::findNextLineBreak):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToContainer):
+        (WebCore::RenderBox::computeRectForRepaint):
+        (WebCore::RenderBox::markDescendantBlocksAndLinesForLayout):
+        * rendering/RenderBox.h:
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        (WebCore::RenderFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderFlexibleBox::layoutVerticalBox):
+        * rendering/RenderFlexibleBox.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::computeRectForRepaint):
+        (WebCore::RenderInline::mapLocalToContainer):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updatePagination):
+        (WebCore::RenderLayer::paintChildLayerIntoColumns):
+        (WebCore::RenderLayer::hitTestChildLayerColumns):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::paint):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::RenderTable):
+        (WebCore::RenderTable::layout):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::layout):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        (WebCore::RenderView::pushLayoutState):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::setTruncatedAt):
+        (WebCore::RenderView::pushLayoutState):
+        (WebCore::RenderView::popLayoutState):
+        (WebCore::LayoutStateMaintainer::LayoutStateMaintainer):
+        (WebCore::LayoutStateMaintainer::push):
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::RootInlineBox):
+        (WebCore::RootInlineBox::paginationStrut):
+        (WebCore::RootInlineBox::setPaginationStrut):
+
 2010-09-16  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Dimitri Glazkov.

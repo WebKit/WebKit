@@ -114,7 +114,7 @@ RenderBlock::RenderBlock(Node* node)
       , m_floatingObjects(0)
       , m_positionedObjects(0)
       , m_continuation(0)
-      , m_maxMargin(0)
+      , m_rareData(0)
       , m_lineHeight(-1)
 {
     setChildrenInline(true);
@@ -124,7 +124,6 @@ RenderBlock::~RenderBlock()
 {
     delete m_floatingObjects;
     delete m_positionedObjects;
-    delete m_maxMargin;
     
     if (hasColumns())
         delete gColumnInfoMap->take(this);
@@ -1112,7 +1111,7 @@ void RenderBlock::layout()
         clearLayoutOverflow();
 }
 
-void RenderBlock::layoutBlock(bool relayoutChildren)
+void RenderBlock::layoutBlock(bool relayoutChildren, int pageHeight)
 {
     ASSERT(needsLayout());
 
@@ -1121,9 +1120,6 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
 
     if (!relayoutChildren && layoutOnlyPositionedObjects())
         return;
-
-    LayoutRepainter repainter(*this, m_everHadLayout && checkForRepaintDuringLayout());
-    LayoutStateMaintainer statePusher(view(), this, IntSize(x(), y()), hasColumns() || hasTransform() || hasReflection());
 
     int oldWidth = width();
     int oldColumnWidth = desiredColumnWidth();
@@ -1140,6 +1136,31 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
 
     int previousHeight = height();
     setHeight(0);
+    bool hasSpecifiedPageHeight = false;
+    ColumnInfo* colInfo = columnInfo();
+    if (hasColumns()) {
+        if (!pageHeight) {
+            // We need to go ahead and set our explicit page height if one exists, so that we can
+            // avoid doing two layout passes.
+            calcHeight();
+            int columnHeight = contentHeight();
+            if (columnHeight > 0) {
+                pageHeight = columnHeight;
+                hasSpecifiedPageHeight = true;
+            }
+            setHeight(0);
+        }
+        if (colInfo->columnHeight() != pageHeight && m_everHadLayout) {
+            colInfo->setColumnHeight(pageHeight);
+            markDescendantBlocksAndLinesForLayout(); // We need to dirty all descendant blocks and lines, since the column height is different now.
+        }
+        
+        if (!hasSpecifiedPageHeight && !pageHeight)
+            colInfo->clearForcedBreaks();
+    }
+
+    LayoutRepainter repainter(*this, m_everHadLayout && checkForRepaintDuringLayout());
+    LayoutStateMaintainer statePusher(view(), this, IntSize(x(), y()), hasColumns() || hasTransform() || hasReflection(), pageHeight, colInfo);
 
     // We use four values, maxTopPos, maxTopNeg, maxBottomPos, and maxBottomNeg, to track
     // our current maximal positive and negative margins.  These values are used when we
@@ -1154,7 +1175,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     bool isCell = isTableCell();
     if (!isCell) {
         initMaxMarginValues();
-
+        
         setTopMarginQuirk(style()->marginTop().quirk());
         setBottomMarginQuirk(style()->marginBottom().quirk());
 
@@ -1164,6 +1185,8 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
             // a bottom margin.
             setMaxBottomMargins(0, 0);
         }
+        
+        setPaginationStrut(0);
     }
 
     // For overflow:scroll blocks, ensure we have both scrollbars in place always.
@@ -1189,10 +1212,9 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     if (floatBottom() > (height() - toAdd) && expandsToEncloseOverhangingFloats())
         setHeight(floatBottom() + toAdd);
     
-    // Now lay out our columns within this intrinsic height, since they can slightly affect the intrinsic height as
-    // we adjust for clean column breaks.
-    int singleColumnBottom = layoutColumns();
-
+    if (layoutColumns(hasSpecifiedPageHeight, pageHeight, statePusher))
+        return;
+ 
     // Calculate our new height.
     int oldHeight = height();
     calcHeight();
@@ -1207,21 +1229,18 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
                 }
             }
         }
-        
-        // We have to rebalance columns to the new height.
-        layoutColumns(singleColumnBottom);
     }
 
     if (previousHeight != height())
         relayoutChildren = true;
 
-    // This check is designed to catch anyone
-    // who wasn't going to propagate float information up to the parent and yet could potentially be painted by its ancestor.
-    if (isRoot() || expandsToEncloseOverhangingFloats())
-        addOverflowFromFloats();
-
     // Add overflow from children (unless we're multi-column, since in that case all our child overflow is clipped anyway).
     if (!hasColumns()) {
+        // This check is designed to catch anyone
+        // who wasn't going to propagate float information up to the parent and yet could potentially be painted by its ancestor.
+        if (isRoot() || expandsToEncloseOverhangingFloats())
+            addOverflowFromFloats();
+
         if (childrenInline())
             addOverflowFromInlineChildren();
         else
@@ -1236,6 +1255,9 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     positionListMarker();
     
     statePusher.pop();
+
+    if (view()->layoutState()->m_pageHeight)
+        setPageY(view()->layoutState()->pageY(y()));
 
     // Update our scroll information if we're overflow:auto/scroll/hidden now that we know if
     // we overflow or not.
@@ -1485,7 +1507,8 @@ int RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo)
     if (marginInfo.quirkContainer() && marginInfo.atTopOfBlock() && (posTop - negTop))
         marginInfo.setTopQuirk(topQuirk);
 
-    int ypos = height();
+    int beforeCollapseY = height();
+    int ypos = beforeCollapseY;
     if (child->isSelfCollapsingBlock()) {
         // This child has no height.  We need to compute our
         // position before we collapse the child's margins together,
@@ -1527,6 +1550,14 @@ int RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo)
             marginInfo.setBottomQuirk(child->isBottomMarginQuirk() || style()->marginBottomCollapse() == MDISCARD);
     }
     
+    // If margins would pull us past the top of the next page, then we need to pull back and pretend like the margins
+    // collapsed into the page edge.
+    bool paginated = view()->layoutState()->isPaginated();
+    if (paginated && ypos > beforeCollapseY) {
+        int oldY = ypos;
+        ypos = min(ypos, nextPageTop(beforeCollapseY));
+        setHeight(height() + (ypos - oldY));
+    }
     return ypos;
 }
 
@@ -1586,7 +1617,27 @@ int RenderBlock::estimateVerticalPosition(RenderBox* child, const MarginInfo& ma
         int childMarginTop = child->selfNeedsLayout() ? child->marginTop() : child->collapsedMarginTop();
         yPosEstimate += max(marginInfo.margin(), childMarginTop);
     }
+    
+    bool paginated = view()->layoutState()->isPaginated();
+
+    // Adjust yPosEstimate down to the next page if the margins are so large that we don't fit on the current
+    // page.
+    if (paginated && yPosEstimate > height())
+        yPosEstimate = min(yPosEstimate, nextPageTop(height()));
+
     yPosEstimate += getClearDelta(child, yPosEstimate);
+    
+    if (paginated) {
+        // If the object has a page or column break value of "before", then we should shift to the top of the next page.
+        yPosEstimate = applyBeforeBreak(child, yPosEstimate);
+    
+        // For replaced elements and scrolled elements, we want to shift them to the next page if they don't fit on the current one.
+        yPosEstimate = adjustForUnsplittableChild(child, yPosEstimate);
+        
+        if (!child->selfNeedsLayout() && child->isRenderBlock())
+            yPosEstimate += toRenderBlock(child)->paginationStrut();
+    }
+
     return yPosEstimate;
 }
 
@@ -1776,8 +1827,9 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, int
     view()->addLayoutDelta(IntSize(0, child->y() - yPosEstimate));
     child->setLocation(child->x(), yPosEstimate);
 
+    RenderBlock* childRenderBlock = child->isRenderBlock() ? toRenderBlock(child) : 0;
     bool markDescendantsWithFloats = false;
-    if (yPosEstimate != oldRect.y() && !child->avoidsFloats() && child->isBlockFlow() && toRenderBlock(child)->containsFloats())
+    if (yPosEstimate != oldRect.y() && !child->avoidsFloats() && childRenderBlock && childRenderBlock->containsFloats())
         markDescendantsWithFloats = true;
     else if (!child->avoidsFloats() || child->shrinkToAvoidFloats()) {
         // If an element might be affected by the presence of floats, then always mark it for
@@ -1787,17 +1839,23 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, int
             markDescendantsWithFloats = true;
     }
 
-    if (child->isRenderBlock()) {
+    if (childRenderBlock) {
         if (markDescendantsWithFloats)
-            toRenderBlock(child)->markAllDescendantsWithFloatsForLayout();
-
+            childRenderBlock->markAllDescendantsWithFloatsForLayout();
         previousFloatBottom = max(previousFloatBottom, oldRect.y() + toRenderBlock(child)->floatBottom());
     }
+
+    bool paginated = view()->layoutState()->isPaginated();
+    if (!child->needsLayout() && paginated && view()->layoutState()->m_pageHeight && childRenderBlock && view()->layoutState()->pageY(child->y()) != childRenderBlock->pageY())
+        childRenderBlock->setChildNeedsLayout(true, false);
 
     bool childHadLayout = child->m_everHadLayout;
     bool childNeededLayout = child->needsLayout();
     if (childNeededLayout)
         child->layout();
+
+    // Cache if we are at the top of the block right now.
+    bool atTopOfBlock = marginInfo.atTopOfBlock();
 
     // Now determine the correct ypos based off examination of collapsing margin
     // values.
@@ -1806,6 +1864,32 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, int
     // Now check for clear.
     int yAfterClear = clearFloatsIfNeeded(child, marginInfo, oldTopPosMargin, oldTopNegMargin, yBeforeClear);
     
+    if (paginated) {
+        int oldY = yAfterClear;
+        
+        // If the object has a page or column break value of "before", then we should shift to the top of the next page.
+        yAfterClear = applyBeforeBreak(child, yAfterClear);
+    
+        // For replaced elements and scrolled elements, we want to shift them to the next page if they don't fit on the current one.
+        yAfterClear = adjustForUnsplittableChild(child, yAfterClear);
+        
+        if (childRenderBlock && childRenderBlock->paginationStrut()) {
+            // We are willing to propagate out to our parent block as long as we were at the top of the block prior
+            // to collapsing our margins, and as long as we didn't clear or move as a result of other pagination.
+            if (atTopOfBlock && oldY == yBeforeClear && !isPositioned() && !isTableCell()) {
+                // FIXME: Should really check if we're exceeding the page height before propagating the strut, but we don't
+                // have all the information to do so (the strut only has the remaining amount to push).  Gecko gets this wrong too
+                // and pushes to the next page anyway, so not too concerned about it.
+                setPaginationStrut(yAfterClear + childRenderBlock->paginationStrut());
+                childRenderBlock->setPaginationStrut(0);
+            } else
+                yAfterClear += childRenderBlock->paginationStrut();
+        }
+
+        // Similar to how we apply clearance.  Go ahead and boost height() to be the place where we're going to position the child.
+        setHeight(height() + (yAfterClear - oldY));
+    }
+
     view()->addLayoutDelta(IntSize(0, yPosEstimate - yAfterClear));
     child->setLocation(child->x(), yAfterClear);
 
@@ -1818,8 +1902,13 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, int
             // So go ahead and mark the item as dirty.
             child->setChildNeedsLayout(true, false);
         }
-        if (!child->avoidsFloats() && child->isBlockFlow() && toRenderBlock(child)->containsFloats())
-            toRenderBlock(child)->markAllDescendantsWithFloatsForLayout();
+        if (childRenderBlock) {
+            if (!child->avoidsFloats() && childRenderBlock->containsFloats())
+                childRenderBlock->markAllDescendantsWithFloatsForLayout();
+            if (paginated && !child->needsLayout() && view()->layoutState()->m_pageHeight && view()->layoutState()->pageY(child->y()) != childRenderBlock->pageY())
+                child->setChildNeedsLayout(true, false);
+        }
+
         // Our guess was wrong. Make the child lay itself out again.
         child->layoutIfNeeded();
     }
@@ -1840,7 +1929,7 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, int
     }
     // If the child has overhanging floats that intrude into following siblings (or possibly out
     // of this block), then the parent gets notified of the floats now.
-    if (child->isBlockFlow() && toRenderBlock(child)->containsFloats())
+    if (childRenderBlock && childRenderBlock->containsFloats())
         maxFloatBottom = max(maxFloatBottom, addOverhangingFloats(toRenderBlock(child), -child->x(), -child->y(), !childNeededLayout));
 
     IntSize childOffset(child->x() - oldRect.x(), child->y() - oldRect.y());
@@ -1857,6 +1946,13 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, int
     if (!childHadLayout && child->checkForRepaintDuringLayout()) {
         child->repaint();
         child->repaintOverhangingFloats(true);
+    }
+
+    if (paginated) {
+        // Check for an after page/column break.
+        int newHeight = applyAfterBreak(child, height(), marginInfo);
+        if (newHeight != height())
+            setHeight(newHeight);
     }
 
     ASSERT(oldLayoutDelta == view()->layoutDelta());
@@ -1889,6 +1985,11 @@ bool RenderBlock::layoutOnlyPositionedObjects()
 void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
 {
     if (m_positionedObjects) {
+        if (hasColumns())
+            view()->layoutState()->clearPaginationInformation(); // Positioned objects are not part of the column flow, so they don't paginate with the columns.
+
+        bool paginated = view()->layoutState()->isPaginated();
+
         RenderBox* r;
         Iterator end = m_positionedObjects->end();
         for (Iterator it = m_positionedObjects->begin(); it != end; ++it) {
@@ -1904,12 +2005,21 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
             //if (relayoutChildren && (r->style()->paddingLeft().isPercent() || r->style()->paddingRight().isPercent()))
                 r->setPrefWidthsDirty(true, false);
             
+            if (!r->needsLayout() && paginated && view()->layoutState()->m_pageHeight) {
+                RenderBlock* childRenderBlock = r->isRenderBlock() ? toRenderBlock(r) : 0;
+                if (childRenderBlock && view()->layoutState()->pageY(childRenderBlock->y()) != childRenderBlock->pageY())
+                    childRenderBlock->setChildNeedsLayout(true, false);
+            }
+
             // We don't have to do a full layout.  We just have to update our position. Try that first. If we have shrink-to-fit width
             // and we hit the available width constraint, the layoutIfNeeded() will catch it and do a full layout.
             if (r->needsPositionedMovementLayoutOnly())
                 r->tryLayoutDoingPositionedMovementOnly();
             r->layoutIfNeeded();
         }
+        
+        if (hasColumns())
+            view()->layoutState()->m_columnInfo = columnInfo(); // FIXME: Kind of gross. We just put this back into the layout state so that pop() will work.
     }
 }
 
@@ -1997,12 +2107,12 @@ void RenderBlock::paintColumnRules(PaintInfo& paintInfo, int tx, int ty)
 
     // We need to do multiple passes, breaking up our child painting into strips.
     ColumnInfo* colInfo = columnInfo();
-    unsigned colCount = colInfo->columnCount();
+    unsigned colCount = columnCount(colInfo);
     int currXOffset = style()->direction() == LTR ? 0 : contentWidth();
     int ruleAdd = borderLeft() + paddingLeft();
     int ruleX = style()->direction() == LTR ? 0 : contentWidth();
     for (unsigned i = 0; i < colCount; i++) {
-        IntRect colRect = colInfo->columnRectAt(i);
+        IntRect colRect = columnRectAt(colInfo, i);
 
         // Move to the next position.
         if (style()->direction() == LTR) {
@@ -2033,14 +2143,14 @@ void RenderBlock::paintColumnContents(PaintInfo& paintInfo, int tx, int ty, bool
     GraphicsContext* context = paintInfo.context;
     int colGap = columnGap();
     ColumnInfo* colInfo = columnInfo();
-    unsigned colCount = colInfo->columnCount();
+    unsigned colCount = columnCount(colInfo);
     if (!colCount)
         return;
-    int currXOffset = style()->direction() == LTR ? 0 : contentWidth() - colInfo->columnRectAt(0).width();
+    int currXOffset = style()->direction() == LTR ? 0 : contentWidth() - columnRectAt(colInfo, 0).width();
     int currYOffset = 0;
     for (unsigned i = 0; i < colCount; i++) {
         // For each rect, we clip to the rect, and then we adjust our coords.
-        IntRect colRect = colInfo->columnRectAt(i);
+        IntRect colRect = columnRectAt(colInfo, i);
         colRect.move(tx, ty);
         PaintInfo info(paintInfo);
         info.rect.intersect(colRect);
@@ -2098,14 +2208,13 @@ void RenderBlock::paintChildren(PaintInfo& paintInfo, int tx, int ty)
     info.updatePaintingRootForChildren(this);
     
     RenderView* renderView = view();
-    bool usePrintRect = !renderView->printRect().isEmpty() && !document()->settings()->paginateDuringLayoutEnabled();
+    bool usePrintRect = !renderView->printRect().isEmpty();
     
     bool checkPageBreaks = document()->paginated() && !document()->settings()->paginateDuringLayoutEnabled();
-    bool checkColumnBreaks = !checkPageBreaks && usePrintRect;
 
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {        
         // Check for page-break-before: always, and if it's set, break and bail.
-        bool checkBeforeAlways = !childrenInline() && ((checkPageBreaks && child->style()->pageBreakBefore() == PBALWAYS) || (checkColumnBreaks && child->style()->columnBreakBefore() == PBALWAYS));
+        bool checkBeforeAlways = !childrenInline() && (checkPageBreaks && child->style()->pageBreakBefore() == PBALWAYS);
         if (checkBeforeAlways
             && (ty + child->y()) > paintInfo.rect.y()
             && (ty + child->y()) < paintInfo.rect.bottom()) {
@@ -2128,7 +2237,7 @@ void RenderBlock::paintChildren(PaintInfo& paintInfo, int tx, int ty)
             child->paint(info, tx, ty);
 
         // Check for page-break-after: always, and if it's set, break and bail.
-        bool checkAfterAlways = !childrenInline() && ((checkPageBreaks && child->style()->pageBreakAfter() == PBALWAYS) || (checkColumnBreaks && child->style()->columnBreakAfter() == PBALWAYS));
+        bool checkAfterAlways = !childrenInline() && (checkPageBreaks && child->style()->pageBreakAfter() == PBALWAYS);
         if (checkAfterAlways
             && (ty + child->y() + child->height()) > paintInfo.rect.y()
             && (ty + child->y() + child->height()) < paintInfo.rect.bottom()) {
@@ -2776,7 +2885,7 @@ void RenderBlock::removePositionedObjects(RenderBlock* o)
         m_positionedObjects->remove(deadObjects.at(i));
 }
 
-void RenderBlock::insertFloatingObject(RenderBox* o)
+RenderBlock::FloatingObject* RenderBlock::insertFloatingObject(RenderBox* o)
 {
     ASSERT(o->isFloating());
 
@@ -2789,25 +2898,37 @@ void RenderBlock::insertFloatingObject(RenderBox* o)
         DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
         FloatingObject* f;
         while ( (f = it.current()) ) {
-            if (f->m_renderer == o) return;
+            if (f->m_renderer == o)
+                return f;
             ++it;
         }
     }
 
     // Create the special object entry & append it to the list
 
-    o->layoutIfNeeded();
-
     FloatingObject* newObj = new FloatingObject(o->style()->floating() == FLEFT ? FloatingObject::FloatLeft : FloatingObject::FloatRight);
 
     newObj->m_top = -1;
     newObj->m_bottom = -1;
+    
+    // Our location is irrelevant if we're unsplittable or no pagination is in effect.
+    // Just go ahead and lay out the float.
+    bool affectedByPagination = o->isRenderBlock() && view()->layoutState()->m_pageHeight;
+    if (!affectedByPagination)
+        o->layoutIfNeeded();
+    else {
+        o->calcWidth();
+        o->calcVerticalMargins();
+    }
     newObj->m_width = o->width() + o->marginLeft() + o->marginRight();
+
     newObj->m_shouldPaint = !o->hasSelfPaintingLayer(); // If a layer exists, the float will paint itself.  Otherwise someone else will.
     newObj->m_isDescendant = true;
     newObj->m_renderer = o;
 
     m_floatingObjects->append(newObj);
+    
+    return newObj;
 }
 
 void RenderBlock::removeFloatingObject(RenderBox* o)
@@ -2828,6 +2949,18 @@ void RenderBlock::removeFloatingObject(RenderBox* o)
             }
             ++it;
         }
+    }
+}
+
+void RenderBlock::removeFloatingObjectsBelow(FloatingObject* lastFloat, int y)
+{
+    if (!m_floatingObjects)
+        return;
+    
+    FloatingObject* curr = m_floatingObjects->last();
+    while (curr != lastFloat && (curr->m_top == -1 || curr->m_top >= y)) {
+        m_floatingObjects->removeLast();
+        curr = m_floatingObjects->last();
     }
 }
 
@@ -2867,16 +3000,15 @@ bool RenderBlock::positionNewFloats()
         }
 
         RenderBox* o = f->m_renderer;
-        int _height = o->height() + o->marginTop() + o->marginBottom();
 
         int ro = rightOffset(); // Constant part of right offset.
-        int lo = leftOffset(); // Constat part of left offset.
+        int lo = leftOffset(); // Constant part of left offset.
         int fwidth = f->m_width; // The width we look for.
         if (ro - lo < fwidth)
             fwidth = ro - lo; // Never look for more than what will be available.
         
         IntRect oldRect(o->x(), o->y() , o->width(), o->height());
-        
+
         if (o->style()->clear() & CLEFT)
             y = max(leftBottom(), y);
         if (o->style()->clear() & CRIGHT)
@@ -2905,9 +3037,38 @@ bool RenderBlock::positionNewFloats()
             o->setLocation(fx - o->marginRight() - o->width(), y + o->marginTop());
         }
 
-        f->m_top = y;
-        f->m_bottom = f->m_top + _height;
+        if (view()->layoutState()->isPaginated()) {
+            RenderBlock* childBlock = o->isRenderBlock() ? toRenderBlock(o) : 0;
 
+            if (childBlock && view()->layoutState()->m_pageHeight && view()->layoutState()->pageY(o->y()) != childBlock->pageY())
+                childBlock->setChildNeedsLayout(true, false);
+            o->layoutIfNeeded();
+
+            // If we are unsplittable and don't fit, then we need to move down.
+            // We include our margins as part of the unsplittable area.
+            int newY = adjustForUnsplittableChild(o, y, true);
+            
+            // See if we have a pagination strut that is making us move down further.
+            // Note that an unsplittable child can't also have a pagination strut, so this is
+            // exclusive with the case above.
+            if (childBlock && childBlock->paginationStrut()) {
+                newY += childBlock->paginationStrut();
+                childBlock->setPaginationStrut(0);
+            }
+            
+            if (newY != y) {
+                f->m_paginationStrut = newY - y;
+                y = newY;
+                o->setY(y + o->marginTop());
+                if (childBlock)
+                    childBlock->setChildNeedsLayout(true, false);
+                o->layoutIfNeeded();
+            }
+        }
+
+        f->m_top = y;
+        f->m_bottom = f->m_top + o->marginTop() + o->height() + o->marginBottom();
+        
         // If the child moved, we have to repaint it.
         if (o->checkForRepaintDuringLayout())
             o->repaintDuringLayoutIfMoved(oldRect);
@@ -2915,6 +3076,40 @@ bool RenderBlock::positionNewFloats()
         f = m_floatingObjects->next();
     }
     return true;
+}
+
+bool RenderBlock::positionNewFloatOnLine(FloatingObject* newFloat, FloatingObject* lastFloatFromPreviousLine)
+{
+    bool didPosition = positionNewFloats();
+    if (!didPosition || !newFloat->m_paginationStrut)
+        return didPosition;
+    
+    int floatTop = newFloat->m_top;
+    int paginationStrut = newFloat->m_paginationStrut;
+    FloatingObject* f = m_floatingObjects->last();
+    
+    ASSERT(f == newFloat);
+
+    if (floatTop - paginationStrut != height())
+        return didPosition;
+
+    for (f = m_floatingObjects->prev(); f && f != lastFloatFromPreviousLine; f = m_floatingObjects->prev()) {
+        if (f->m_top == height()) {
+            ASSERT(!f->m_paginationStrut);
+            f->m_paginationStrut = paginationStrut;
+            RenderBox* o = f->m_renderer;
+            o->setY(o->y() + o->marginTop() + paginationStrut);
+            if (o->isRenderBlock())
+                toRenderBlock(o)->setChildNeedsLayout(true, false);
+            o->layoutIfNeeded();
+            f->m_top += f->m_paginationStrut;
+            f->m_bottom += f->m_paginationStrut;
+        }
+    }
+        
+    setHeight(height() + paginationStrut);
+    
+    return didPosition;
 }
 
 void RenderBlock::newLine(EClear clear)
@@ -3158,8 +3353,8 @@ int RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) 
 
     if (hasColumns()) {
         ColumnInfo* colInfo = columnInfo();
-        for (unsigned i = 0; i < colInfo->columnCount(); i++)
-            bottom = max(bottom, colInfo->columnRectAt(i).bottom() + relativeOffset);
+        for (unsigned i = 0; i < columnCount(colInfo); i++)
+            bottom = max(bottom, columnRectAt(colInfo, i).bottom() + relativeOffset);
         return bottom;
     }
 
@@ -3253,8 +3448,9 @@ int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSel
         // This only matters for LTR
         if (style()->direction() == LTR) {
             ColumnInfo* colInfo = columnInfo();
-            if (colInfo->columnCount())
-                right = max(colInfo->columnRectAt(colInfo->columnCount() - 1).right() + relativeOffset, right);
+            unsigned count = columnCount(colInfo);
+            if (count)
+                right = max(columnRectAt(colInfo, count - 1).right() + relativeOffset, right);
         }
         return right;
     }
@@ -3353,8 +3549,9 @@ int RenderBlock::leftmostPosition(bool includeOverflowInterior, bool includeSelf
         // This only matters for RTL
         if (style()->direction() == RTL) {
             ColumnInfo* colInfo = columnInfo();
-            if (colInfo->columnCount())
-                left = min(colInfo->columnRectAt(colInfo->columnCount() - 1).x() + relativeOffset, left);
+            unsigned count = columnCount(colInfo);
+            if (count)
+                left = min(columnRectAt(colInfo, count - 1).x() + relativeOffset, left);
         }
         return left;
     }
@@ -3647,6 +3844,9 @@ bool RenderBlock::containsFloat(RenderObject* o)
 
 void RenderBlock::markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove, bool inLayout)
 {
+    if (!m_everHadLayout)
+        return;
+
     setChildNeedsLayout(true, !inLayout);
 
     if (floatToRemove)
@@ -3664,30 +3864,39 @@ void RenderBlock::markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove
     }
 }
 
-int RenderBlock::visibleTopOfHighestFloatExtendingBelow(int bottom, int maxHeight) const
+void RenderBlock::markDescendantBlocksAndLinesForLayout(bool inLayout)
 {
-    int top = bottom;
-    if (m_floatingObjects) {
-        FloatingObject* floatingObject;
-        for (DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects); (floatingObject = it.current()); ++it) {
-            RenderBox* floatingBox = floatingObject->m_renderer;
-            IntRect visibleOverflow = floatingBox->visibleOverflowRect();
-            visibleOverflow.move(floatingBox->x(), floatingBox->y());
-            if (visibleOverflow.y() < top && visibleOverflow.bottom() > bottom && visibleOverflow.height() <= maxHeight && floatingBox->containingBlock() == this)
-                top = visibleOverflow.y();
-        }
-    }
+    if (!m_everHadLayout)
+        return;
 
+    setChildNeedsLayout(true, !inLayout);
+
+    // Iterate over our children and mark them as needed.
     if (!childrenInline()) {
-        for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-            if (child->isFloatingOrPositioned() || !child->isRenderBlock())
+        for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+            if (child->isFloatingOrPositioned())
                 continue;
-            RenderBlock* childBlock = toRenderBlock(child);
-            top = min(top, childBlock->y() + childBlock->visibleTopOfHighestFloatExtendingBelow(bottom - childBlock->y(), maxHeight));
+            child->markDescendantBlocksAndLinesForLayout(inLayout);
+        }
+    }
+    
+    // Walk our floating objects and mark them too.
+    if (m_floatingObjects) {
+        DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
+        while (it.current()) {
+            if (it.current()->m_renderer->isRenderBlock())
+                it.current()->m_renderer->markDescendantBlocksAndLinesForLayout(inLayout);
+            ++it;
         }
     }
 
-    return top;
+    if (m_positionedObjects) {
+        // FIXME: Technically we don't have to mark the positioned objects if we're the block
+        // that established the columns, but we don't really have that information here.
+        Iterator end = m_positionedObjects->end();
+        for (Iterator it = m_positionedObjects->begin(); it != end; ++it)
+            (*it)->markDescendantBlocksAndLinesForLayout();
+    }
 }
 
 int RenderBlock::getClearDelta(RenderBox* child, int yPos)
@@ -3847,16 +4056,16 @@ bool RenderBlock::hitTestColumns(const HitTestRequest& request, HitTestResult& r
 {
     // We need to do multiple passes, breaking up our hit testing into strips.
     ColumnInfo* colInfo = columnInfo();
-    int colCount = colInfo->columnCount();
+    int colCount = columnCount(colInfo);
     if (!colCount)
         return false;
     int left = borderLeft() + paddingLeft();
     int currYOffset = 0;
     int i;
     for (i = 0; i < colCount; i++)
-        currYOffset -= colInfo->columnRectAt(i).height();
+        currYOffset -= columnRectAt(colInfo, i).height();
     for (i = colCount - 1; i >= 0; i--) {
-        IntRect colRect = colInfo->columnRectAt(i);
+        IntRect colRect = columnRectAt(colInfo, i);
         int currXOffset = colRect.x() - left;
         currYOffset += colRect.height();
         colRect.move(tx, ty);
@@ -4150,8 +4359,7 @@ void RenderBlock::setDesiredColumnCountAndWidth(int count, int width)
     bool destroyColumns = !firstChild()
                           || (count == 1 && style()->hasAutoColumnWidth())
                           || firstChild()->isAnonymousColumnsBlock()
-                          || firstChild()->isAnonymousColumnSpanBlock()
-                          || document()->settings()->paginateDuringLayoutEnabled();
+                          || firstChild()->isAnonymousColumnSpanBlock();
     if (destroyColumns) {
         if (hasColumns()) {
             delete gColumnInfoMap->take(this);
@@ -4194,133 +4402,75 @@ ColumnInfo* RenderBlock::columnInfo() const
     return gColumnInfoMap->get(this);    
 }
 
-int RenderBlock::layoutColumns(int endOfContent, int requestedColumnHeight)
+unsigned RenderBlock::columnCount(ColumnInfo* colInfo) const
 {
-    // Don't do anything if we have no columns
-    if (!hasColumns())
-        return -1;
+    ASSERT(hasColumns() && gColumnInfoMap->get(this) == colInfo);
+    return colInfo->columnCount();
+}
 
-    ColumnInfo* info = gColumnInfoMap->get(this);
-    int desiredColumnWidth = info->desiredColumnWidth();
-    int desiredColumnCount = info->desiredColumnCount();
-    
-    bool computeIntrinsicHeight = (endOfContent == -1);
+IntRect RenderBlock::columnRectAt(ColumnInfo* colInfo, unsigned index) const
+{
+    ASSERT(hasColumns() && gColumnInfoMap->get(this) == colInfo);
 
-    // Fill the columns in to the available height.  Attempt to balance the height of the columns.
-    // Add in half our line-height to help with best-guess initial balancing.
-    int columnSlop = lineHeight(false) / 2;
-    int remainingSlopSpace = columnSlop * desiredColumnCount;
-    int availableHeight = contentHeight();
-    int colHeight;
-    if (computeIntrinsicHeight && requestedColumnHeight >= 0)
-        colHeight = requestedColumnHeight;
-    else if (computeIntrinsicHeight)
-        colHeight = min(availableHeight, availableHeight / desiredColumnCount + columnSlop);
-    else
-        colHeight = availableHeight;
-    int originalColHeight = colHeight;
-
+    // Compute the appropriate rect based off our information.
+    int colWidth = colInfo->desiredColumnWidth();
+    int colHeight = colInfo->columnHeight();
+    int colTop = borderTop() + paddingTop();
     int colGap = columnGap();
+    int colLeft = style()->direction() == LTR ? 
+                      borderLeft() + paddingLeft() + (index * (colWidth + colGap))
+                      : borderLeft() + paddingLeft() + contentWidth() - colWidth - (index * (colWidth + colGap));
+    return IntRect(colLeft, colTop, colWidth, colHeight);
+}
 
-    // Compute a collection of column rects.
-    info->clearColumns();
-    
-    // Then we do a simulated "paint" into the column slices and allow the content to slightly adjust our individual column rects.
-    // FIXME: We need to take into account layers that are affected by the columns as well here so that they can have an opportunity
-    // to adjust column rects also.
-    RenderView* v = view();
-    int left = borderLeft() + paddingLeft();
-    int top = borderTop() + paddingTop();
-    int currX = style()->direction() == LTR ? borderLeft() + paddingLeft() : borderLeft() + paddingLeft() + contentWidth() - desiredColumnWidth;
-    int currY = top;
-    unsigned colCount = desiredColumnCount;
-    int maxColBottom = borderTop() + paddingTop();
-    int contentBottom = top + availableHeight;
-    int minimumColumnHeight = -1;
-    for (unsigned i = 0; i < colCount; i++) {
-        // If we aren't constrained, then the last column can just get all the remaining space.
-        if (computeIntrinsicHeight && i == colCount - 1)
-            colHeight = availableHeight;
-
-        // This represents the real column position.
-        IntRect colRect(currX, top, desiredColumnWidth, colHeight);
-
-        int truncationPoint = visibleTopOfHighestFloatExtendingBelow(currY + colHeight, colHeight);
-
-        // For the simulated paint, we pretend like everything is in one long strip.
-        IntRect pageRect(left, currY, contentWidth(), truncationPoint - currY);
-        v->setPrintRect(pageRect);
-        v->setTruncatedAt(truncationPoint);
-        GraphicsContext context((PlatformGraphicsContext*)0);
-        PaintInfo paintInfo(&context, pageRect, PaintPhaseForeground, false, 0, 0);
+bool RenderBlock::layoutColumns(bool hasSpecifiedPageHeight, int pageHeight, LayoutStateMaintainer& statePusher)
+{
+    if (hasColumns()) {
+        // FIXME: We don't balance properly at all in the presence of forced page breaks.  We need to understand what
+        // the distance between forced page breaks is so that we can avoid making the minimum column height too tall.
+        ColumnInfo* colInfo = columnInfo();
+        int desiredColumnCount = colInfo->desiredColumnCount();
+        if (!hasSpecifiedPageHeight) {
+            int columnHeight = pageHeight;
+            int minColumnCount = colInfo->forcedBreaks() + 1;
+            if (minColumnCount >= desiredColumnCount) {
+                // The forced page breaks are in control of the balancing.  Just set the column height to the
+                // maximum page break distance.
+                if (!pageHeight) {
+                    int distanceBetweenBreaks = max(colInfo->maximumDistanceBetweenForcedBreaks(),
+                                                    view()->layoutState()->pageY(borderTop() + paddingTop() + contentHeight()) - colInfo->forcedBreakOffset());
+                    columnHeight = max(colInfo->minimumColumnHeight(), distanceBetweenBreaks);
+                }
+            } else if (contentHeight() > pageHeight * desiredColumnCount) {
+                // Now that we know the intrinsic height of the columns, we have to rebalance them.
+                columnHeight = max(colInfo->minimumColumnHeight(), (int)ceilf((float)contentHeight() / desiredColumnCount));
+            }
+            
+            if (columnHeight && columnHeight != pageHeight) {
+                statePusher.pop();
+                m_everHadLayout = true;
+                layoutBlock(false, columnHeight);
+                return true;
+            }
+        } 
         
-        setHasColumns(false);
-        paintObject(paintInfo, 0, 0);
-        setHasColumns(true);
+        if (pageHeight) // FIXME: Should we use lowestPosition (excluding our positioned objects) instead of contentHeight()?
+            colInfo->setColumnCountAndHeight(ceilf((float)contentHeight() / pageHeight), pageHeight);
 
-        if (computeIntrinsicHeight && v->minimumColumnHeight() > originalColHeight) {
-            // The initial column height was too small to contain one line of text.
-            minimumColumnHeight = max(minimumColumnHeight, v->minimumColumnHeight());
+        if (columnCount(colInfo)) {
+            IntRect lastRect = columnRectAt(colInfo, columnCount(colInfo) - 1);
+            int overflowLeft = style()->direction() == RTL ? min(0, lastRect.x()) : 0;
+            int overflowRight = style()->direction() == LTR ? max(width(), lastRect.x() + lastRect.width()) : 0;
+            int overflowHeight = borderTop() + paddingTop() + colInfo->columnHeight();
+            
+            setHeight(overflowHeight + borderBottom() + paddingBottom() + horizontalScrollbarHeight());
+
+            m_overflow.clear();
+            addLayoutOverflow(IntRect(overflowLeft, 0, overflowRight - overflowLeft, overflowHeight));
         }
-
-        int adjustedBottom = v->bestTruncatedAt();
-        if (adjustedBottom <= currY)
-            adjustedBottom = truncationPoint;
-        
-        colRect.setHeight(adjustedBottom - currY);
-        
-        // Add in the lost space to the subsequent columns.
-        // FIXME: This will create a "staircase" effect if there are enough columns, but the effect should be pretty subtle.
-        if (computeIntrinsicHeight) {
-            int lostSpace = colHeight - colRect.height();
-            if (lostSpace > remainingSlopSpace) {
-                // Redestribute the space among the remaining columns.
-                int spaceToRedistribute = lostSpace - remainingSlopSpace;
-                int remainingColumns = colCount - i + 1;
-                colHeight += spaceToRedistribute / remainingColumns;
-            } 
-            remainingSlopSpace = max(0, remainingSlopSpace - lostSpace);
-        }
-        
-        if (style()->direction() == LTR)
-            currX += desiredColumnWidth + colGap;
-        else
-            currX -= (desiredColumnWidth + colGap);
-
-        currY += colRect.height();
-        availableHeight -= colRect.height();
-
-        maxColBottom = max(colRect.bottom(), maxColBottom);
-
-        info->addColumnRect(colRect);
-        
-        // Start adding in more columns as long as there's still content left.
-        if (currY < endOfContent && i == colCount - 1 && (computeIntrinsicHeight || contentHeight()))
-            colCount++;
     }
-
-    if (minimumColumnHeight >= 0) {
-        // If originalColHeight was too small, we need to try to layout again.
-        return layoutColumns(endOfContent, minimumColumnHeight);
-    }
-
-    int overflowRight = max(width(), currX - colGap);
-    int overflowLeft = min(0, currX + desiredColumnWidth + colGap);
-    int overflowHeight = maxColBottom;
-    int toAdd = borderBottom() + paddingBottom() + horizontalScrollbarHeight();
-        
-    if (computeIntrinsicHeight)
-        setHeight(maxColBottom + toAdd);
-
-    m_overflow.clear();
-    addLayoutOverflow(IntRect(overflowLeft, 0, overflowRight - overflowLeft, overflowHeight));
-
-    v->setPrintRect(IntRect());
-    v->setTruncatedAt(0);
     
-    ASSERT(colCount == info->columnCount());
-    
-    return contentBottom;
+    return false;
 }
 
 void RenderBlock::adjustPointToColumnContents(IntPoint& point) const
@@ -4330,17 +4480,17 @@ void RenderBlock::adjustPointToColumnContents(IntPoint& point) const
         return;
     
     ColumnInfo* colInfo = columnInfo();
-    if (!colInfo->columnCount())
+    if (!columnCount(colInfo))
         return;
 
     // Determine which columns we intersect.
     int colGap = columnGap();
     int leftGap = colGap / 2;
-    IntPoint columnPoint(colInfo->columnRectAt(0).location());
+    IntPoint columnPoint(columnRectAt(colInfo, 0).location());
     int yOffset = 0;
     for (unsigned i = 0; i < colInfo->columnCount(); i++) {
         // Add in half the column gap to the left and right of the rect.
-        IntRect colRect = colInfo->columnRectAt(i);
+        IntRect colRect = columnRectAt(colInfo, i);
         IntRect gapAndColumnRect(colRect.x() - leftGap, colRect.y(), colRect.width() + colGap, colRect.height());
 
         if (point.x() >= gapAndColumnRect.x() && point.x() < gapAndColumnRect.right()) {
@@ -4378,7 +4528,7 @@ void RenderBlock::adjustRectForColumns(IntRect& r) const
     IntRect result;
     
     // Determine which columns we intersect.
-    unsigned colCount = colInfo->columnCount();
+    unsigned colCount = columnCount(colInfo);
     if (!colCount)
         return;
     
@@ -4386,7 +4536,7 @@ void RenderBlock::adjustRectForColumns(IntRect& r) const
     
     int currYOffset = 0;
     for (unsigned i = 0; i < colCount; i++) {
-        IntRect colRect = colInfo->columnRectAt(i);
+        IntRect colRect = columnRectAt(colInfo, i);
         int currXOffset = colRect.x() - left;
         
         IntRect repaintRect = r;
@@ -4412,9 +4562,9 @@ void RenderBlock::adjustForColumns(IntSize& offset, const IntPoint& point) const
 
     int left = borderLeft() + paddingLeft();
     int yOffset = 0;
-    size_t columnCount = colInfo->columnCount();
-    for (size_t i = 0; i < columnCount; ++i) {
-        IntRect columnRect = colInfo->columnRectAt(i);
+    size_t colCount = columnCount(colInfo);
+    for (size_t i = 0; i < colCount; ++i) {
+        IntRect columnRect = columnRectAt(colInfo, i);
         int xOffset = columnRect.x() - left;
         if (point.y() < columnRect.bottom() + yOffset) {
             offset.expand(xOffset, -yOffset);
@@ -5428,24 +5578,44 @@ void RenderBlock::clearTruncation()
 
 void RenderBlock::setMaxTopMargins(int pos, int neg)
 {
-    if (!m_maxMargin) {
-        if (pos == MaxMargin::topPosDefault(this) && neg == MaxMargin::topNegDefault(this))
+    if (!m_rareData) {
+        if (pos == RenderBlockRareData::topPosDefault(this) && neg == RenderBlockRareData::topNegDefault(this))
             return;
-        m_maxMargin = new MaxMargin(this);
+        m_rareData = new RenderBlockRareData(this);
     }
-    m_maxMargin->m_topPos = pos;
-    m_maxMargin->m_topNeg = neg;
+    m_rareData->m_topPos = pos;
+    m_rareData->m_topNeg = neg;
 }
 
 void RenderBlock::setMaxBottomMargins(int pos, int neg)
 {
-    if (!m_maxMargin) {
-        if (pos == MaxMargin::bottomPosDefault(this) && neg == MaxMargin::bottomNegDefault(this))
+    if (!m_rareData) {
+        if (pos == RenderBlockRareData::bottomPosDefault(this) && neg == RenderBlockRareData::bottomNegDefault(this))
             return;
-        m_maxMargin = new MaxMargin(this);
+        m_rareData = new RenderBlockRareData(this);
     }
-    m_maxMargin->m_bottomPos = pos;
-    m_maxMargin->m_bottomNeg = neg;
+    m_rareData->m_bottomPos = pos;
+    m_rareData->m_bottomNeg = neg;
+}
+
+void RenderBlock::setPaginationStrut(int strut)
+{
+    if (!m_rareData) {
+        if (!strut)
+            return;
+        m_rareData = new RenderBlockRareData(this);
+    }
+    m_rareData->m_paginationStrut = strut;
+}
+
+void RenderBlock::setPageY(int y)
+{
+    if (!m_rareData) {
+        if (!y)
+            return;
+        m_rareData = new RenderBlockRareData(this);
+    }
+    m_rareData->m_pageY = y;
 }
 
 void RenderBlock::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
@@ -5706,6 +5876,117 @@ RenderBlock* RenderBlock::createAnonymousColumnSpanBlock() const
     return newBox;
 }
 
+int RenderBlock::nextPageTop(int yPos) const
+{
+    LayoutState* layoutState = view()->layoutState();
+    if (!layoutState->m_pageHeight)
+        return yPos;
+    
+    // The yPos is in our coordinate space.  We can add in our pushed offset.
+    int pageHeight = layoutState->m_pageHeight;
+    int remainingHeight = (pageHeight - ((layoutState->m_layoutOffset - layoutState->m_pageOffset).height() + yPos) % pageHeight) % pageHeight;
+    return yPos + remainingHeight;
+}
+
+static bool inNormalFlow(RenderBox* child)
+{
+    RenderBlock* curr = child->containingBlock();
+    RenderBlock* initialBlock = child->view();
+    while (curr && curr != initialBlock) {
+        if (curr->hasColumns())
+            return true;
+        if (curr->isFloatingOrPositioned())
+            return false;
+        curr = curr->containingBlock();
+    }
+    return true;
+}
+
+int RenderBlock::applyBeforeBreak(RenderBox* child, int yPos)
+{
+    // FIXME: Add page break checking here when we support printing.
+    bool checkColumnBreaks = view()->layoutState()->isPaginatingColumns();
+    bool checkBeforeAlways = checkColumnBreaks && child->style()->columnBreakBefore() == PBALWAYS;
+    if (checkBeforeAlways && inNormalFlow(child)) {
+        if (checkColumnBreaks)
+            view()->layoutState()->addForcedColumnBreak(yPos);
+        return nextPageTop(yPos);
+    }
+    return yPos;
+}
+
+int RenderBlock::applyAfterBreak(RenderBox* child, int yPos, MarginInfo& marginInfo)
+{
+    // FIXME: Add page break checking here when we support printing.
+    bool checkColumnBreaks = view()->layoutState()->isPaginatingColumns();
+    bool checkAfterAlways = checkColumnBreaks && child->style()->columnBreakAfter() == PBALWAYS;
+    if (checkAfterAlways && inNormalFlow(child)) {
+        marginInfo.setBottomQuirk(true); // Cause margins to be discarded for any following content.
+        if (checkColumnBreaks)
+            view()->layoutState()->addForcedColumnBreak(yPos);
+        return nextPageTop(yPos);
+    }
+    return yPos;
+}
+
+int RenderBlock::adjustForUnsplittableChild(RenderBox* child, int yPos, bool includeMargins)
+{
+    bool isUnsplittable = child->isReplaced() || child->scrollsOverflow();
+    if (!isUnsplittable)
+        return yPos;
+    int childHeight = child->height() + (includeMargins ? child->marginTop() + child->marginBottom() : 0);
+    LayoutState* layoutState = view()->layoutState();
+    if (layoutState->m_columnInfo)
+        layoutState->m_columnInfo->updateMinimumColumnHeight(childHeight);
+    int pageHeight = layoutState->m_pageHeight;
+    if (!pageHeight || childHeight > pageHeight)
+        return yPos;
+    int remainingHeight = (pageHeight - ((layoutState->m_layoutOffset - layoutState->m_pageOffset).height() + yPos) % pageHeight) % pageHeight;
+    if (remainingHeight < childHeight)
+        return yPos + remainingHeight;
+    return yPos;
+}
+
+void RenderBlock::adjustLinePositionForPagination(RootInlineBox* lineBox, int& delta)
+{
+    // FIXME: For now we paginate using line overflow.  This ensures that lines don't overlap at all when we
+    // put a strut between them for pagination purposes.  However, this really isn't the desired rendering, since
+    // the line on the top of the next page will appear too far down relative to the same kind of line at the top
+    // of the first column.
+    //
+    // The rendering we would like to see is one where the lineTop is at the top of the column, and any line overflow
+    // simply spills out above the top of the column.  This effect would match what happens at the top of the first column.
+    // We can't achieve this rendering, however, until we stop columns from clipping to the column bounds (thus allowing
+    // for overflow to occur), and then cache visible overflow for each column rect.
+    //
+    // Furthermore, the paint we have to do when a column has overflow has to be special.  We need to exclude
+    // content that paints in a previous column (and content that paints in the following column).
+    //
+    // FIXME: Another problem with simply moving lines is that the available line width may change (because of floats).
+    // Technically if the location we move the line to has a different line width than our old position, then we need to dirty the
+    // line and all following lines.
+    LayoutState* layoutState = view()->layoutState();
+    int pageHeight = layoutState->m_pageHeight;
+    int yPos = lineBox->topVisibleOverflow();
+    int lineHeight = lineBox->bottomVisibleOverflow() - yPos;
+    if (layoutState->m_columnInfo)
+        layoutState->m_columnInfo->updateMinimumColumnHeight(lineHeight);
+    yPos += delta;
+    lineBox->setPaginationStrut(0);
+    if (!pageHeight || lineHeight > pageHeight)
+        return;
+    int remainingHeight = pageHeight - ((layoutState->m_layoutOffset - layoutState->m_pageOffset).height() + yPos) % pageHeight;
+    if (remainingHeight < lineHeight) {
+        int totalHeight = lineHeight + max(0, yPos);
+        if (lineBox == firstRootBox() && totalHeight < pageHeight && !isPositioned() && !isTableCell())
+            setPaginationStrut(remainingHeight + max(0, yPos));
+        else {
+            delta += remainingHeight;
+            lineBox->setPaginationStrut(remainingHeight);
+        }
+    }  
+}
+ 
 const char* RenderBlock::renderName() const
 {
     if (isBody())

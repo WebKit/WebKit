@@ -117,9 +117,14 @@ void RenderTableRow::layout()
     // Table rows do not add translation.
     LayoutStateMaintainer statePusher(view(), this, IntSize());
 
+    bool paginated = view()->layoutState()->isPaginated();
+                
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (child->isTableCell()) {
             RenderTableCell* cell = toRenderTableCell(child);
+            if (!cell->needsLayout() && paginated && view()->layoutState()->m_pageHeight && view()->layoutState()->pageY(cell->y()) != cell->pageY())
+                cell->setChildNeedsLayout(true, false);
+
             if (child->needsLayout()) {
                 cell->calcVerticalMargins();
                 cell->layout();

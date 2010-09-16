@@ -34,6 +34,7 @@ namespace WebCore {
 
 class ColumnInfo;
 class InlineIterator;
+class LayoutStateMaintainer;
 class RenderInline;
 
 struct BidiRun;
@@ -70,7 +71,7 @@ public:
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
     virtual void removeChild(RenderObject*);
 
-    virtual void layoutBlock(bool relayoutChildren);
+    virtual void layoutBlock(bool relayoutChildren, int pageHeight = 0);
 
     void insertPositionedObject(RenderBox*);
     void removePositionedObject(RenderBox*);
@@ -89,6 +90,7 @@ public:
 
     void markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove = 0, bool inLayout = true);
     void markPositionedObjectsForLayout();
+    virtual void markDescendantBlocksAndLinesForLayout(bool inLayout = true);
 
     bool containsFloats() { return m_floatingObjects && !m_floatingObjects->isEmpty(); }
     bool containsFloat(RenderObject*);
@@ -151,6 +153,15 @@ public:
 
     ColumnInfo* columnInfo() const;
     int columnGap() const;
+    
+    // These two functions take the ColumnInfo* to avoid repeated lookups of the info in the global HashMap.
+    unsigned columnCount(ColumnInfo*) const;
+    IntRect columnRectAt(ColumnInfo*, unsigned) const;
+
+    int paginationStrut() const { return m_rareData ? m_rareData->m_paginationStrut : 0; }
+    int pageY() const { return m_rareData ? m_rareData->m_pageY : 0; }
+    void setPaginationStrut(int strut);
+    void setPageY(int y);
 
 protected:
     // These functions are only used internally to manipulate the render tree structure via remove/insert/appendChildNode.
@@ -177,20 +188,22 @@ protected:
     }
     void moveChildrenTo(RenderBlock* to, RenderObject* startChild, RenderObject* endChild, RenderObject* beforeChild, bool fullRemoveInsert = false);
     
-    int maxTopPosMargin() const { return m_maxMargin ? m_maxMargin->m_topPos : MaxMargin::topPosDefault(this); }
-    int maxTopNegMargin() const { return m_maxMargin ? m_maxMargin->m_topNeg : MaxMargin::topNegDefault(this); }
-    int maxBottomPosMargin() const { return m_maxMargin ? m_maxMargin->m_bottomPos : MaxMargin::bottomPosDefault(this); }
-    int maxBottomNegMargin() const { return m_maxMargin ? m_maxMargin->m_bottomNeg : MaxMargin::bottomNegDefault(this); }
+    int maxTopPosMargin() const { return m_rareData ? m_rareData->m_topPos : RenderBlockRareData::topPosDefault(this); }
+    int maxTopNegMargin() const { return m_rareData ? m_rareData->m_topNeg : RenderBlockRareData::topNegDefault(this); }
+    int maxBottomPosMargin() const { return m_rareData ? m_rareData->m_bottomPos : RenderBlockRareData::bottomPosDefault(this); }
+    int maxBottomNegMargin() const { return m_rareData ? m_rareData->m_bottomNeg : RenderBlockRareData::bottomNegDefault(this); }
+    
     void setMaxTopMargins(int pos, int neg);
     void setMaxBottomMargins(int pos, int neg);
-    
+
     void initMaxMarginValues()
     {
-        if (m_maxMargin) {
-            m_maxMargin->m_topPos = MaxMargin::topPosDefault(this);
-            m_maxMargin->m_topNeg = MaxMargin::topNegDefault(this);
-            m_maxMargin->m_bottomPos = MaxMargin::bottomPosDefault(this);
-            m_maxMargin->m_bottomNeg = MaxMargin::bottomNegDefault(this);
+        if (m_rareData) {
+            m_rareData->m_topPos = RenderBlockRareData::topPosDefault(this);
+            m_rareData->m_topNeg = RenderBlockRareData::topNegDefault(this);
+            m_rareData->m_bottomPos = RenderBlockRareData::bottomPosDefault(this);
+            m_rareData->m_bottomNeg = RenderBlockRareData::bottomNegDefault(this);
+            m_rareData->m_paginationStrut = 0;
         }
     }
 
@@ -295,9 +308,42 @@ private:
         bool everHadLayout;
     };
 
+    struct FloatingObject : Noncopyable {
+        enum Type {
+            FloatLeft,
+            FloatRight
+        };
+
+        FloatingObject(Type type)
+            : m_renderer(0)
+            , m_top(0)
+            , m_bottom(0)
+            , m_left(0)
+            , m_width(0)
+            , m_paginationStrut(0)
+            , m_type(type)
+            , m_shouldPaint(true)
+            , m_isDescendant(false)
+        {
+        }
+
+        Type type() { return static_cast<Type>(m_type); }
+
+        RenderBox* m_renderer;
+        int m_top;
+        int m_bottom;
+        int m_left;
+        int m_width;
+        int m_paginationStrut;
+        unsigned m_type : 1; // Type (left or right aligned)
+        bool m_shouldPaint : 1;
+        bool m_isDescendant : 1;
+    };
+
     // The following functions' implementations are in RenderBlockLineLayout.cpp.
     RootInlineBox* determineStartPosition(bool& firstLine, bool& fullLayout, bool& previousLineBrokeCleanly,
-                                          InlineBidiResolver&, Vector<FloatWithRect>& floats, unsigned& numCleanFloats);
+                                          InlineBidiResolver&, Vector<FloatWithRect>& floats, unsigned& numCleanFloats,
+                                          bool& useRepaintBounds, int& repaintTop, int& repaintBottom);
     RootInlineBox* determineEndPosition(RootInlineBox* startBox, InlineIterator& cleanLineStart,
                                         BidiStatus& cleanLineBidiStatus,
                                         int& yPos);
@@ -305,9 +351,9 @@ private:
                         RootInlineBox*& endLine, int& endYPos, int& repaintBottom, int& repaintTop);
 
     void skipTrailingWhitespace(InlineIterator&, bool isLineEmpty, bool previousLineBrokeCleanly);
-    int skipLeadingWhitespace(InlineBidiResolver&, bool firstLine, bool isLineEmpty, bool previousLineBrokeCleanly);
+    int skipLeadingWhitespace(InlineBidiResolver&, bool firstLine, bool isLineEmpty, bool previousLineBrokeCleanly, FloatingObject* lastFloatFromPreviousLine);
     void fitBelowFloats(int widthToFit, bool firstLine, int& availableWidth);
-    InlineIterator findNextLineBreak(InlineBidiResolver&, bool firstLine, bool& isLineEmpty, bool& previousLineBrokeCleanly, bool& hyphenated, EClear* = 0);
+    InlineIterator findNextLineBreak(InlineBidiResolver&, bool firstLine, bool& isLineEmpty, bool& previousLineBrokeCleanly, bool& hyphenated, EClear*, FloatingObject* lastFloatFromPreviousLine);
     RootInlineBox* constructLine(unsigned runCount, BidiRun* firstRun, BidiRun* lastRun, bool firstLine, bool lastLine, RenderObject* endObject);
     InlineFlowBox* createLineBoxes(RenderObject*, bool firstLine);
     void computeHorizontalPositionsForLine(RootInlineBox*, bool firstLine, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd, GlyphOverflowAndFallbackFontsMap&);
@@ -329,12 +375,18 @@ private:
     void paintSelection(PaintInfo&, int tx, int ty);
     void paintCaret(PaintInfo&, int tx, int ty, CaretType);
 
-    void insertFloatingObject(RenderBox*);
+    FloatingObject* insertFloatingObject(RenderBox*);
     void removeFloatingObject(RenderBox*);
-
+    void removeFloatingObjectsBelow(FloatingObject*, int y);
+    
     // Called from lineWidth, to position the floats added in the last line.
-    // Returns ture if and only if it has positioned any floats.
+    // Returns true if and only if it has positioned any floats.
     bool positionNewFloats();
+    
+    // Positions new floats and also adjust all floats encountered on the line if any of them
+    // have to move to the next page/column.
+    bool positionNewFloatOnLine(FloatingObject* newFloat, FloatingObject* lastFloatFromPreviousLine);
+
     void clearFloats();
     int getClearDelta(RenderBox* child, int yPos);
 
@@ -416,8 +468,7 @@ private:
     void offsetForContents(int& tx, int& ty) const;
 
     void calcColumnWidth();
-    int layoutColumns(int endOfContent = -1, int requestedColumnHeight = -1);
-    int visibleTopOfHighestFloatExtendingBelow(int bottom, int maxHeight) const;
+    bool layoutColumns(bool hasSpecifiedPageHeight, int pageHeight, LayoutStateMaintainer&);
     void makeChildrenAnonymousColumnBlocks(RenderObject* beforeChild, RenderBlock* newBlockBox, RenderObject* newChild);
 
     bool expandsToEncloseOverhangingFloats() const;
@@ -433,36 +484,6 @@ private:
     RenderBlock* continuationBefore(RenderObject* beforeChild);
     RenderBlock* containingColumnsBlock(bool allowAnonymousColumnBlock = true);
     RenderBlock* columnsBlockForSpanningElement(RenderObject* newChild);
-    
-    struct FloatingObject : Noncopyable {
-        enum Type {
-            FloatLeft,
-            FloatRight
-        };
-
-        FloatingObject(Type type)
-            : m_renderer(0)
-            , m_top(0)
-            , m_bottom(0)
-            , m_left(0)
-            , m_width(0)
-            , m_type(type)
-            , m_shouldPaint(true)
-            , m_isDescendant(false)
-        {
-        }
-
-        Type type() { return static_cast<Type>(m_type); }
-
-        RenderBox* m_renderer;
-        int m_top;
-        int m_bottom;
-        int m_left;
-        int m_width;
-        unsigned m_type : 1; // Type (left or right aligned)
-        bool m_shouldPaint : 1;
-        bool m_isDescendant : 1;
-    };
 
     class MarginInfo {
         // Collapsing flags for whether we can collapse our margins with our children's margins.
@@ -539,6 +560,13 @@ private:
     void setCollapsedBottomMargin(const MarginInfo&);
     // End helper functions and structs used by layoutBlockChildren.
 
+    // Pagination routines.
+    int nextPageTop(int yPos) const; // Returns the top of the next page following yPos.
+    int applyBeforeBreak(RenderBox* child, int yPos); // If the child has a before break, then return a new yPos that shifts to the top of the next page/column.
+    int applyAfterBreak(RenderBox* child, int yPos, MarginInfo& marginInfo); // If the child has an after break, then return a new yPos that shifts to the top of the next page/column.
+    int adjustForUnsplittableChild(RenderBox* child, int yPos, bool includeMargins = false); // If the child is unsplittable and can't fit on the current page, return the top of the next page/column.
+    void adjustLinePositionForPagination(RootInlineBox*, int& deltaY); // Computes a deltaY value that put a line at the top of the next page if it doesn't fit on the current page.
+
     typedef PositionedObjectsListHashSet::const_iterator Iterator;
     DeprecatedPtrList<FloatingObject>* m_floatingObjects;
     
@@ -551,12 +579,14 @@ private:
     RenderBoxModelObject* m_continuation;
 
     // Allocated only when some of these fields have non-default values
-    struct MaxMargin : Noncopyable {
-        MaxMargin(const RenderBlock* o) 
+    struct RenderBlockRareData : Noncopyable {
+        RenderBlockRareData(const RenderBlock* o) 
             : m_topPos(topPosDefault(o))
             , m_topNeg(topNegDefault(o))
             , m_bottomPos(bottomPosDefault(o))
             , m_bottomNeg(bottomNegDefault(o))
+            , m_paginationStrut(0)
+            , m_pageY(0)
         { 
         }
 
@@ -564,14 +594,16 @@ private:
         static int topNegDefault(const RenderBlock* o) { return o->marginTop() < 0 ? -o->marginTop() : 0; }
         static int bottomPosDefault(const RenderBlock* o) { return o->marginBottom() > 0 ? o->marginBottom() : 0; }
         static int bottomNegDefault(const RenderBlock* o) { return o->marginBottom() < 0 ? -o->marginBottom() : 0; }
-
+        
         int m_topPos;
         int m_topNeg;
         int m_bottomPos;
         int m_bottomNeg;
+        int m_paginationStrut;
+        int m_pageY;
      };
 
-    MaxMargin* m_maxMargin;
+    OwnPtr<RenderBlockRareData> m_rareData;
 
     RenderObjectChildList m_children;
     RenderLineBoxList m_lineBoxes;   // All of the root line boxes created for this block flow.  For example, <div>Hello<br>world.</div> will have two total lines for the <div>.

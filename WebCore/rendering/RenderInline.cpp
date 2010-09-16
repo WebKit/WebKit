@@ -647,7 +647,7 @@ void RenderInline::computeRectForRepaint(RenderBoxModelObject* repaintContainer,
             LayoutState* layoutState = v->layoutState();
             if (style()->position() == RelativePosition && layer())
                 rect.move(layer()->relativePositionOffset());
-            rect.move(layoutState->m_offset);
+            rect.move(layoutState->m_paintOffset);
             if (layoutState->m_clipped)
                 rect.intersect(layoutState->m_clipRect);
             return;
@@ -734,7 +734,7 @@ void RenderInline::mapLocalToContainer(RenderBoxModelObject* repaintContainer, b
     if (RenderView *v = view()) {
         if (v->layoutStateEnabled() && !repaintContainer) {
             LayoutState* layoutState = v->layoutState();
-            IntSize offset = layoutState->m_offset;
+            IntSize offset = layoutState->m_paintOffset;
             if (style()->position() == RelativePosition && layer())
                 offset += layer()->relativePositionOffset();
             transformState.move(offset);

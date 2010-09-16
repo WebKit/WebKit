@@ -62,14 +62,14 @@ Client bounding rect for #5
 testRect.top 662
 testRect.left 8
 testRect.width 300
-testRect.height 234
-testRect.bottom 896
+testRect.height 240
+testRect.bottom 902
 testRect.right 308
 
 PASS testRect.top is 662
 PASS testRect.left is 8
 PASS testRect.width is 300
-PASS testRect.height is 234
+PASS testRect.height is 240
 PASS testRect.bottom is testRect.top + testRect.height
 PASS testRect.right is testRect.left + testRect.width
 
@@ -77,14 +77,14 @@ Client bounding rect for #6
 Known failure. Skipping.
 
 Client bounding rect for #7
-testRect.top 1230
+testRect.top 1236
 testRect.left 8
 testRect.width 299
 testRect.height 180
-testRect.bottom 1410
+testRect.bottom 1416
 testRect.right 307
 
-PASS testRect.top is 1230
+PASS testRect.top is 1236
 PASS testRect.left is 8
 PASS testRect.width is 299
 PASS testRect.height is 180
@@ -92,14 +92,14 @@ PASS testRect.bottom is testRect.top + testRect.height
 PASS testRect.right is testRect.left + testRect.width
 
 Client bounding rect for #8
-testRect.top 1460
+testRect.top 1466
 testRect.left 8
 testRect.width 300
 testRect.height 46
-testRect.bottom 1506
+testRect.bottom 1512
 testRect.right 308
 
-PASS testRect.top is 1460
+PASS testRect.top is 1466
 PASS testRect.left is 8
 PASS testRect.width is 300
 PASS testRect.height is 46
@@ -107,14 +107,14 @@ PASS testRect.bottom is testRect.top + testRect.height
 PASS testRect.right is testRect.left + testRect.width
 
 Client bounding rect for #9
-testRect.top 1556
+testRect.top 1562
 testRect.left 8
 testRect.width 300
 testRect.height 64
-testRect.bottom 1620
+testRect.bottom 1626
 testRect.right 308
 
-PASS testRect.top is 1556
+PASS testRect.top is 1562
 PASS testRect.left is 8
 PASS testRect.width is 300
 PASS testRect.height is 64
@@ -122,14 +122,14 @@ PASS testRect.bottom is testRect.top + testRect.height
 PASS testRect.right is testRect.left + testRect.width
 
 Client bounding rect for #10
-testRect.top 1672
+testRect.top 1678
 testRect.left 8
 testRect.width 300
 testRect.height 20
-testRect.bottom 1692
+testRect.bottom 1698
 testRect.right 308
 
-PASS testRect.top is 1672
+PASS testRect.top is 1678
 PASS testRect.left is 8
 PASS testRect.width is 300
 PASS testRect.height is 20
@@ -137,14 +137,14 @@ PASS testRect.bottom is testRect.top + testRect.height
 PASS testRect.right is testRect.left + testRect.width
 
 Client bounding rect for #11
-testRect.top 1768
+testRect.top 1774
 testRect.left 10
 testRect.width 147
 testRect.height 20
-testRect.bottom 1788
+testRect.bottom 1794
 testRect.right 157
 
-PASS testRect.top is 1768
+PASS testRect.top is 1774
 PASS testRect.left is 10
 PASS testRect.width is 147
 PASS testRect.height is 20
@@ -152,14 +152,14 @@ PASS testRect.bottom is testRect.top + testRect.height
 PASS testRect.right is testRect.left + testRect.width
 
 Client bounding rect for #12
-testRect.top 1862
+testRect.top 1868
 testRect.left 8
 testRect.width 100
 testRect.height 100
-testRect.bottom 1962
+testRect.bottom 1968
 testRect.right 108
 
-PASS testRect.top is 1862
+PASS testRect.top is 1868
 PASS testRect.left is 8
 PASS testRect.width is 100
 PASS testRect.height is 100
@@ -167,14 +167,14 @@ PASS testRect.bottom is testRect.top + testRect.height
 PASS testRect.right is testRect.left + testRect.width
 
 Client bounding rect for #13
-testRect.top 2098
+testRect.top 2104
 testRect.left 8
 testRect.width 180
 testRect.height 18
-testRect.bottom 2116
+testRect.bottom 2122
 testRect.right 188
 
-PASS testRect.top is 2098
+PASS testRect.top is 2104
 PASS testRect.left is 8
 PASS testRect.width is 180
 PASS testRect.height is 18
@@ -182,14 +182,14 @@ PASS testRect.bottom is testRect.top + testRect.height
 PASS testRect.right is testRect.left + testRect.width
 
 Client bounding rect for #14
-testRect.top 2166
+testRect.top 2172
 testRect.left 8
 testRect.width 300
 testRect.height 236
-testRect.bottom 2402
+testRect.bottom 2408
 testRect.right 308
 
-PASS testRect.top is 2166
+PASS testRect.top is 2172
 PASS testRect.left is 8
 FAIL testRect.width should be 200. Was 300.
 PASS testRect.height is 236
@@ -197,14 +197,14 @@ PASS testRect.bottom is testRect.top + testRect.height
 PASS testRect.right is testRect.left + testRect.width
 
 Client bounding rect for #15
-testRect.top 2452
+testRect.top 2458
 testRect.left 8
 testRect.width 0
 testRect.height 0
-testRect.bottom 2452
+testRect.bottom 2458
 testRect.right 8
 
-PASS testRect.top is 2452
+PASS testRect.top is 2458
 PASS testRect.left is 8
 PASS testRect.width is 0
 PASS testRect.height is 0

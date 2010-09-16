@@ -1,3 +1,103 @@
+2010-09-15  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38402, paginate columns at layout time rather than at paint time.
+
+        Add many new multicol layout tests that demonstrate new pagination features.
+
+        * fast/multicol/border-padding-pagination.html: Added.
+        * fast/multicol/client-rects-expected.checksum:
+        * fast/multicol/client-rects-expected.png:
+        * fast/multicol/client-rects-expected.txt:
+        * fast/multicol/column-break-with-balancing.html: Added.
+        * fast/multicol/float-paginate-complex.html: Added.
+        * fast/multicol/float-paginate.html:
+        * fast/multicol/float-truncation.html:
+        * fast/multicol/margin-collapse.html: Added.
+        * fast/multicol/max-height-columns-block.html: Added.
+        * fast/multicol/positioned-split.html: Added.
+        * fast/multicol/shadow-breaking.html: Added.
+        * fast/multicol/single-line-expected.checksum:
+        * fast/multicol/single-line-expected.png:
+        * fast/multicol/table-margin-collapse.html: Added.
+        * fast/multicol/table-vertical-align.html: Added.
+        * fast/multicol/unsplittable-inline-block.html: Added.
+        * platform/mac/fast/multicol/border-padding-pagination-expected.checksum: Added.
+        * platform/mac/fast/multicol/border-padding-pagination-expected.png: Added.
+        * platform/mac/fast/multicol/border-padding-pagination-expected.txt: Added.
+        * platform/mac/fast/multicol/column-break-with-balancing-expected.checksum: Added.
+        * platform/mac/fast/multicol/column-break-with-balancing-expected.png: Added.
+        * platform/mac/fast/multicol/column-break-with-balancing-expected.txt: Added.
+        * platform/mac/fast/multicol/column-count-with-rules-expected.checksum: Added.
+        * platform/mac/fast/multicol/column-count-with-rules-expected.png: Added.
+        * platform/mac/fast/multicol/column-count-with-rules-expected.txt:
+        * platform/mac/fast/multicol/column-rules-expected.checksum:
+        * platform/mac/fast/multicol/column-rules-expected.png:
+        * platform/mac/fast/multicol/column-rules-expected.txt:
+        * platform/mac/fast/multicol/column-rules-stacking-expected.checksum:
+        * platform/mac/fast/multicol/column-rules-stacking-expected.png:
+        * platform/mac/fast/multicol/columns-shorthand-parsing-expected.checksum:
+        * platform/mac/fast/multicol/columns-shorthand-parsing-expected.png:
+        * platform/mac/fast/multicol/float-avoidance-expected.checksum:
+        * platform/mac/fast/multicol/float-avoidance-expected.png:
+        * platform/mac/fast/multicol/float-avoidance-expected.txt:
+        * platform/mac/fast/multicol/float-multicol-expected.checksum:
+        * platform/mac/fast/multicol/float-multicol-expected.png:
+        * platform/mac/fast/multicol/float-multicol-expected.txt:
+        * platform/mac/fast/multicol/float-paginate-complex-expected.checksum: Added.
+        * platform/mac/fast/multicol/float-paginate-complex-expected.png: Added.
+        * platform/mac/fast/multicol/float-paginate-complex-expected.txt: Added.
+        * platform/mac/fast/multicol/float-paginate-expected.txt:
+        * platform/mac/fast/multicol/layers-in-multicol-expected.checksum:
+        * platform/mac/fast/multicol/layers-in-multicol-expected.png:
+        * platform/mac/fast/multicol/layers-in-multicol-expected.txt:
+        * platform/mac/fast/multicol/margin-collapse-expected.checksum: Added.
+        * platform/mac/fast/multicol/margin-collapse-expected.png: Added.
+        * platform/mac/fast/multicol/margin-collapse-expected.txt: Added.
+        * platform/mac/fast/multicol/max-height-columns-block-expected.checksum: Added.
+        * platform/mac/fast/multicol/max-height-columns-block-expected.png: Added.
+        * platform/mac/fast/multicol/max-height-columns-block-expected.txt: Added.
+        * platform/mac/fast/multicol/nested-columns-expected.checksum:
+        * platform/mac/fast/multicol/nested-columns-expected.png:
+        * platform/mac/fast/multicol/nested-columns-expected.txt:
+        * platform/mac/fast/multicol/paginate-block-replaced-expected.txt:
+        * platform/mac/fast/multicol/positioned-split-expected.checksum: Added.
+        * platform/mac/fast/multicol/positioned-split-expected.png: Added.
+        * platform/mac/fast/multicol/positioned-split-expected.txt: Added.
+        * platform/mac/fast/multicol/positioned-with-constrained-height-expected.checksum:
+        * platform/mac/fast/multicol/positioned-with-constrained-height-expected.png:
+        * platform/mac/fast/multicol/positioned-with-constrained-height-expected.txt:
+        * platform/mac/fast/multicol/shadow-breaking-expected.checksum: Added.
+        * platform/mac/fast/multicol/shadow-breaking-expected.png: Added.
+        * platform/mac/fast/multicol/shadow-breaking-expected.txt: Added.
+        * platform/mac/fast/multicol/span/span-as-immediate-child-generated-content-expected.checksum:
+        * platform/mac/fast/multicol/span/span-as-immediate-child-generated-content-expected.png:
+        * platform/mac/fast/multicol/span/span-as-immediate-child-generated-content-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-immediate-child-property-removal-expected.checksum:
+        * platform/mac/fast/multicol/span/span-as-immediate-child-property-removal-expected.png:
+        * platform/mac/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.checksum:
+        * platform/mac/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.png:
+        * platform/mac/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-immediate-columns-child-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-immediate-columns-child-removal-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.checksum:
+        * platform/mac/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.png:
+        * platform/mac/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-nested-columns-child-expected.checksum:
+        * platform/mac/fast/multicol/span/span-as-nested-columns-child-expected.png:
+        * platform/mac/fast/multicol/span/span-as-nested-columns-child-expected.txt:
+        * platform/mac/fast/multicol/table-margin-collapse-expected.checksum: Added.
+        * platform/mac/fast/multicol/table-margin-collapse-expected.png: Added.
+        * platform/mac/fast/multicol/table-margin-collapse-expected.txt: Added.
+        * platform/mac/fast/multicol/table-vertical-align-expected.checksum: Added.
+        * platform/mac/fast/multicol/table-vertical-align-expected.png: Added.
+        * platform/mac/fast/multicol/table-vertical-align-expected.txt: Added.
+        * platform/mac/fast/multicol/unsplittable-inline-block-expected.checksum: Added.
+        * platform/mac/fast/multicol/unsplittable-inline-block-expected.png: Added.
+        * platform/mac/fast/multicol/unsplittable-inline-block-expected.txt: Added.
+
 2010-09-16  Darin Adler  <darin@apple.com>
 
         Mac results for recently-added test.

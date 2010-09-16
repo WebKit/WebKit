@@ -40,6 +40,7 @@ public:
         , m_lineBreakPos(0)
         , m_lineTop(0)
         , m_lineBottom(0)
+        , m_paginationStrut(0)
     {
     }
 
@@ -56,6 +57,9 @@ public:
 
     int lineTop() const { return m_lineTop; }
     int lineBottom() const { return m_lineBottom; }
+
+    int paginationStrut() const { return m_paginationStrut; }
+    void setPaginationStrut(int s) { m_paginationStrut = s; }
 
     int selectionTop() const;
     int selectionBottom() const { return lineBottom(); }
@@ -140,6 +144,8 @@ private:
 
     int m_lineTop;
     int m_lineBottom;
+
+    int m_paginationStrut;
 
     // Floats hanging off the line are pushed into this vector during layout. It is only
     // good for as long as the line has not been marked dirty.

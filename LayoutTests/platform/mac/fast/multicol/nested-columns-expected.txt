@@ -23,8 +23,8 @@ layer at (8,8) size 750x500
     RenderBlock {H1} at (0,277) size 367x37
       RenderText {#text} at (0,0) size 169x37
         text run at (0,0) width 169: "Header Two"
-    RenderBlock (anonymous) at (0,335) size 367x198
-      RenderText {#text} at (0,0) size 362x198
+    RenderBlock (anonymous) at (0,335) size 367x201
+      RenderText {#text} at (0,0) size 362x201
         text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,18) width 351: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
         text run at (0,36) width 325: "lectus. Quisque adipiscing rhoncus sem. Proin nulla"
@@ -34,15 +34,15 @@ layer at (8,8) size 750x500
         text run at (0,108) width 344: "neque. Vestibulum velit orci, tempus euismod, pretium"
         text run at (0,126) width 343: "quis, interdum vitae, nulla. Phasellus eget ante et tortor"
         text run at (0,144) width 343: "condimentum vestibulum. Suspendisse hendrerit quam"
-        text run at (0,162) width 362: "nec felis. Sed varius turpis vitae pede. Lorem ipsum dolor"
-        text run at (0,180) width 229: "sit amet, consectetuer adipiscing elit."
-    RenderBlock {H1} at (0,554) size 367x37
+        text run at (0,165) width 362: "nec felis. Sed varius turpis vitae pede. Lorem ipsum dolor"
+        text run at (0,183) width 229: "sit amet, consectetuer adipiscing elit."
+    RenderBlock {H1} at (0,557) size 367x37
       RenderText {#text} at (0,0) size 190x37
         text run at (0,0) width 190: "Header Three"
-    RenderBlock {H1} at (0,849) size 367x37
+    RenderBlock {H1} at (0,852) size 367x37
       RenderText {#text} at (0,0) size 177x37
         text run at (0,0) width 177: "Header Four"
-    RenderBlock (anonymous) at (0,907) size 367x36
+    RenderBlock (anonymous) at (0,910) size 367x36
       RenderText {#text} at (0,0) size 354x36
         text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,18) width 154: "Nulla varius enim ac mi."

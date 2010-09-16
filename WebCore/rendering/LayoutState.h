@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class ColumnInfo;
 class RenderArena;
 class RenderBox;
 class RenderObject;
@@ -40,6 +41,8 @@ class LayoutState : public Noncopyable {
 public:
     LayoutState()
         : m_clipped(false)
+        , m_pageHeight(0)
+        , m_columnInfo(0)
         , m_next(0)
 #ifndef NDEBUG
         , m_renderer(0)
@@ -47,7 +50,7 @@ public:
     {
     }
 
-    LayoutState(LayoutState*, RenderBox*, const IntSize& offset);
+    LayoutState(LayoutState*, RenderBox*, const IntSize& offset, int pageHeight, ColumnInfo*);
     LayoutState(RenderObject*);
 
     void destroy(RenderArena*);
@@ -58,6 +61,12 @@ public:
     // Overridden to prevent the normal delete from being called.
     void operator delete(void*, size_t);
 
+    void clearPaginationInformation();
+    bool isPaginatingColumns() const { return m_columnInfo; }
+    bool isPaginated() const { return m_pageHeight || m_columnInfo; }
+    int pageY(int childY) const;
+    void addForcedColumnBreak(int childY);
+    
 private:
     // The normal operator new is disallowed.
     void* operator new(size_t) throw();
@@ -65,10 +74,16 @@ private:
 public:
     bool m_clipped;
     IntRect m_clipRect;
-    IntSize m_offset;       // x/y offset from container.
-    IntSize m_layoutDelta;  // Transient offset from the final position of the object
-                            // used to ensure that repaints happen in the correct place.
-                            // This is a total delta accumulated from the root.
+    IntSize m_paintOffset; // x/y offset from container.  Includes relative positioning and scroll offsets.
+    IntSize m_layoutOffset; // x/y offset from container.  Does not include relative positioning or scroll offsets.
+    IntSize m_layoutDelta; // Transient offset from the final position of the object
+                           // used to ensure that repaints happen in the correct place.
+                           // This is a total delta accumulated from the root.
+
+    int m_pageHeight; // The current page height for the pagination model that encloses us.
+    IntSize m_pageOffset; // The offset of the start of the first page in the nearest enclosing pagination model.
+    ColumnInfo* m_columnInfo; // If the enclosing pagination model is a column model, then this will store column information for easy retrieval/manipulation.
+
     LayoutState* m_next;
 #ifndef NDEBUG
     RenderObject* m_renderer;

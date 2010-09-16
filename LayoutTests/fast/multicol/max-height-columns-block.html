@@ -1,0 +1,9 @@
+<html>
+<body>
+This is capturing current behavior, but it's not clear that it is correct.  It's not clear if max-height on a columns block constitutes a
+constraint on the columns or not.  You obviously begin trying to balance, but only run into the constraint once the balanced columns exceed
+the max-height.  It's not clear that you should suddenly shift to a fill.  Our current behavior (which matches Firefox) is to just overflow
+without changing from balance to fill.
+
+<div style="-webkit-column-count:5; -moz-column-count:5; max-height:60px;border:2px solid black; font-size:24px; width:400px">
+This is some text<br>This is some text<br>This is some text<br>This is some text<br>This is some text<br>

@@ -29,6 +29,8 @@
 #include <wtf/Vector.h>
 #include "IntRect.h"
 
+using namespace std;
+
 namespace WebCore {
 
 class ColumnInfo : public Noncopyable {
@@ -36,6 +38,12 @@ public:
     ColumnInfo()
         : m_desiredColumnWidth(0)
         , m_desiredColumnCount(1)
+        , m_columnCount(1)
+        , m_columnHeight(0)
+        , m_minimumColumnHeight(0)
+        , m_forcedBreaks(0)
+        , m_maximumDistanceBetweenForcedBreaks(0)
+        , m_forcedBreakOffset(0)
         { }
     
     int desiredColumnWidth() const { return m_desiredColumnWidth; }
@@ -44,19 +52,51 @@ public:
     unsigned desiredColumnCount() const { return m_desiredColumnCount; }
     void setDesiredColumnCount(unsigned count) { m_desiredColumnCount = count; }
 
-    // Encapsulated for the future where we can avoid storing the rects and just compute them dynamically.
-    size_t columnCount() const { return m_columnRects.size(); }
-    const IntRect& columnRectAt(size_t i) const { return m_columnRects[i]; }
+    unsigned columnCount() const { return m_columnCount; }
+    int columnHeight() const { return m_columnHeight; }
 
-    void clearColumns() { m_columnRects.clear(); }
+    // Set our count and height.  This is enough info for a RenderBlock to compute page rects
+    // dynamically.
+    void setColumnCountAndHeight(int count, int height)
+    { 
+        m_columnCount = count;
+        m_columnHeight = height;
+    }
+    void setColumnHeight(int height) { m_columnHeight = height; }
 
-    // FIXME: Will go away once we don't use the Vector.
-    void addColumnRect(const IntRect& rect) { m_columnRects.append(rect); }
-    
+    void updateMinimumColumnHeight(int height) { m_minimumColumnHeight = max(height, m_minimumColumnHeight); }
+    int minimumColumnHeight() const { return m_minimumColumnHeight; }
+
+    int forcedBreaks() const { return m_forcedBreaks; }
+    int forcedBreakOffset() const { return m_forcedBreakOffset; }
+    int maximumDistanceBetweenForcedBreaks() const { return m_maximumDistanceBetweenForcedBreaks; }
+    void clearForcedBreaks()
+    { 
+        m_forcedBreaks = 0;
+        m_maximumDistanceBetweenForcedBreaks = 0;
+        m_forcedBreakOffset = 0;
+    }
+    void addForcedBreak(int offsetFromFirstPage)
+    { 
+        ASSERT(!m_columnHeight);
+        int distanceFromLastBreak = offsetFromFirstPage - m_forcedBreakOffset;
+        if (!distanceFromLastBreak)
+            return;
+        m_forcedBreaks++;
+        m_maximumDistanceBetweenForcedBreaks = max(m_maximumDistanceBetweenForcedBreaks, distanceFromLastBreak);
+        m_forcedBreakOffset = offsetFromFirstPage;
+    }
+
 private:
     int m_desiredColumnWidth;
     unsigned m_desiredColumnCount;
-    Vector<IntRect> m_columnRects;
+    
+    unsigned m_columnCount;
+    int m_columnHeight;
+    int m_minimumColumnHeight;
+    int m_forcedBreaks; // FIXME: We will ultimately need to cache more information to balance around forced breaks properly.
+    int m_maximumDistanceBetweenForcedBreaks;
+    int m_forcedBreakOffset;
 };
 
 }

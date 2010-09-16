@@ -52,7 +52,6 @@ RenderView::RenderView(Node* node, FrameView* view)
     , m_maximalOutlineSize(0)
     , m_bestTruncatedAt(0)
     , m_truncatorWidth(0)
-    , m_minimumColumnHeight(0)
     , m_forcedPageBreak(false)
     , m_layoutState(0)
     , m_layoutStateDisableCount(0)
@@ -693,7 +692,6 @@ void RenderView::setBestTruncatedAt(int y, RenderBoxModelObject* forRenderer, bo
 
 void RenderView::pushLayoutState(RenderObject* root)
 {
-    ASSERT(!doingFullRepaint());
     ASSERT(m_layoutStateDisableCount == 0);
     ASSERT(m_layoutState == 0);
 
