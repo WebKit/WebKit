@@ -185,7 +185,7 @@
     return [self currentZoomFactor] * DefaultZoomFactorRatio < DefaultMaximumZoomFactor;
 }
 
-- (void)zoomIn:(id)sender;
+- (void)zoomIn:(id)sender
 {
     if (![self canZoomIn])
         return;
@@ -199,7 +199,7 @@
     return [self currentZoomFactor] / DefaultZoomFactorRatio > DefaultMinimumZoomFactor;
 }
 
-- (void)zoomOut:(id)sender;
+- (void)zoomOut:(id)sender
 {
     if (![self canZoomIn])
         return;
@@ -213,7 +213,7 @@
     return _zoomTextOnly ? (WKPageGetTextZoomFactor(_webView.pageRef) != 1) : (WKPageGetPageZoomFactor(_webView.pageRef) != 1);
 }
 
-- (void)resetZoom:(id)sender;
+- (void)resetZoom:(id)sender
 {
     if (![self canResetZoom])
         return;

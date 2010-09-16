@@ -1,3 +1,13 @@
+2010-09-16  Anders Carlsson  <andersca@apple.com>
+
+        Fix clang++ build.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController zoomIn:]):
+        (-[BrowserWindowController zoomOut:]):
+        (-[BrowserWindowController resetZoom:]):
+        Remove trailing semicolons.
+
 2010-09-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r67628.
