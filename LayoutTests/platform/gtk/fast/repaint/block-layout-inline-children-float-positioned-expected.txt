@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (0,0) size 800x600
+      RenderBlock {P} at (0,0) size 800x20
+        RenderText {#text} at (0,0) size 220x20
+          text run at (0,0) width 220: "This is a test for regression against "
+        RenderInline {A} at (0,0) size 305x20 [color=#0000EE]
+          RenderText {#text} at (220,0) size 305x20
+            text run at (220,0) width 305: "https://bugs.webkit.org/show_bug.cgi?id=40142"
+      RenderBlock {DIV} at (0,36) size 800x102
+        RenderBlock {DIV} at (0,0) size 602x102 [border: (1px solid #DDDDDD)]
+          RenderBlock (floating) {SPAN} at (309,1) size 292x20
+            RenderText {#text} at (0,0) size 292x20
+              text run at (0,0) width 292: "the quick brown fox jumped over the lazy dog"
+layer at (1,37) size 292x20
+  RenderBlock (positioned) {SPAN} at (1,37) size 292x20
+    RenderText {#text} at (0,0) size 292x20
+      text run at (0,0) width 292: "the quick brown fox jumped over the lazy dog"

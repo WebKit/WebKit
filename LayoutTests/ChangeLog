@@ -1,3 +1,55 @@
+2010-09-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Update baselines for GTK+ and unskip a test which is passing.
+
+        * platform/gtk/Skipped: Update baselines for GTK+.
+        * platform/gtk/fast/css/percent-top-relative-container-height-unspecified-expected.txt: Added.
+        * platform/gtk/fast/images/gif-large-checkerboard-expected.txt: Added.
+        * platform/gtk/fast/multicol/border-padding-pagination-expected.txt: Added.
+        * platform/gtk/fast/multicol/client-rects-expected.txt: Added.
+        * platform/gtk/fast/multicol/column-break-with-balancing-expected.txt: Added.
+        * platform/gtk/fast/multicol/column-rules-expected.txt: Added.
+        * platform/gtk/fast/multicol/column-rules-stacking-expected.txt: Added.
+        * platform/gtk/fast/multicol/columns-shorthand-parsing-expected.txt: Added.
+        * platform/gtk/fast/multicol/float-avoidance-expected.txt: Added.
+        * platform/gtk/fast/multicol/float-multicol-expected.txt: Added.
+        * platform/gtk/fast/multicol/float-paginate-complex-expected.txt: Added.
+        * platform/gtk/fast/multicol/float-paginate-expected.txt: Added.
+        * platform/gtk/fast/multicol/layers-in-multicol-expected.txt:
+        * platform/gtk/fast/multicol/margin-collapse-expected.txt: Added.
+        * platform/gtk/fast/multicol/max-height-columns-block-expected.txt: Added.
+        * platform/gtk/fast/multicol/nested-columns-expected.txt:
+        * platform/gtk/fast/multicol/paginate-block-replaced-expected.txt: Added.
+        * platform/gtk/fast/multicol/positioned-split-expected.txt: Added.
+        * platform/gtk/fast/multicol/positioned-with-constrained-height-expected.txt: Added.
+        * platform/gtk/fast/multicol/shadow-breaking-expected.txt: Added.
+        * platform/gtk/fast/multicol/span/span-as-immediate-child-generated-content-expected.txt:
+        * platform/gtk/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt:
+        * platform/gtk/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.txt:
+        * platform/gtk/fast/multicol/span/span-as-immediate-columns-child-expected.txt:
+        * platform/gtk/fast/multicol/span/span-as-immediate-columns-child-removal-expected.txt:
+        * platform/gtk/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.txt:
+        * platform/gtk/fast/multicol/span/span-as-nested-columns-child-expected.txt:
+        * platform/gtk/fast/multicol/table-margin-collapse-expected.txt: Added.
+        * platform/gtk/fast/multicol/table-vertical-align-expected.txt: Added.
+        * platform/gtk/fast/multicol/unsplittable-inline-block-expected.txt: Added.
+        * platform/gtk/fast/repaint/block-layout-inline-children-float-positioned-expected.txt: Added.
+        * platform/gtk/fast/repaint/block-layout-inline-children-replaced-expected.txt: Added.
+        * platform/gtk/scrollbars/custom-scrollbar-with-incomplete-style-expected.txt: Added.
+        * platform/gtk/svg/css/composite-shadow-with-opacity-expected.txt: Added.
+        * platform/gtk/svg/css/shadow-changes-expected.txt: Added.
+        * platform/gtk/svg/custom/getscreenctm-in-scrollable-div-area-expected.txt: Added.
+        * platform/gtk/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.txt: Added.
+        * platform/gtk/svg/custom/getscreenctm-in-scrollable-svg-area-expected.txt: Added.
+        * platform/gtk/svg/custom/mouse-move-on-svg-container-expected.txt: Added.
+        * platform/gtk/svg/custom/mouse-move-on-svg-container-standalone-expected.txt: Added.
+        * platform/gtk/svg/custom/mouse-move-on-svg-root-expected.txt: Added.
+        * platform/gtk/svg/custom/mouse-move-on-svg-root-standalone-expected.txt: Added.
+        * platform/gtk/svg/custom/non-scaling-stroke-markers-expected.txt: Copied from LayoutTests/platform/mac/svg/custom/non-scaling-stroke-markers-expected.txt.
+        * platform/gtk/svg/custom/use-invalid-pattern-expected.txt: Copied from LayoutTests/platform/mac-snowleopard/svg/custom/use-invalid-pattern-expected.txt.
+        * platform/gtk/svg/repaint/filter-repaint-expected.txt: Added.
+        * platform/gtk/transitions/svg-text-shadow-transition-expected.txt: Added.
+
 2010-09-16  takano takumi  <takano1@asia.apple.com>
 
         Reviewed by Dave Hyatt.

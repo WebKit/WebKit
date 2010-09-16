@@ -23,26 +23,26 @@ layer at (8,8) size 1133x500
     RenderBlock {H1} at (0,304) size 367x42
       RenderText {#text} at (0,0) size 169x42
         text run at (0,0) width 169: "Header Two"
-    RenderBlock (anonymous) at (0,367) size 367x220
-      RenderText {#text} at (0,0) size 362x220
+    RenderBlock (anonymous) at (0,367) size 367x233
+      RenderText {#text} at (0,0) size 362x233
         text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,20) width 351: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
         text run at (0,40) width 325: "lectus. Quisque adipiscing rhoncus sem. Proin nulla"
         text run at (0,60) width 358: "purus, vulputate vel, varius ut, euismod et, nisi. Sed vitae"
         text run at (0,80) width 343: "felis vel orci sagittis aliquam. Cras convallis adipiscing"
         text run at (0,100) width 340: "sem. Nam nonummy enim. Nullam bibendum lobortis"
-        text run at (0,120) width 344: "neque. Vestibulum velit orci, tempus euismod, pretium"
-        text run at (0,140) width 343: "quis, interdum vitae, nulla. Phasellus eget ante et tortor"
-        text run at (0,160) width 343: "condimentum vestibulum. Suspendisse hendrerit quam"
-        text run at (0,180) width 362: "nec felis. Sed varius turpis vitae pede. Lorem ipsum dolor"
-        text run at (0,200) width 229: "sit amet, consectetuer adipiscing elit."
-    RenderBlock {H1} at (0,608) size 367x42
+        text run at (0,133) width 344: "neque. Vestibulum velit orci, tempus euismod, pretium"
+        text run at (0,153) width 343: "quis, interdum vitae, nulla. Phasellus eget ante et tortor"
+        text run at (0,173) width 343: "condimentum vestibulum. Suspendisse hendrerit quam"
+        text run at (0,193) width 362: "nec felis. Sed varius turpis vitae pede. Lorem ipsum dolor"
+        text run at (0,213) width 229: "sit amet, consectetuer adipiscing elit."
+    RenderBlock {H1} at (0,621) size 367x42
       RenderText {#text} at (0,0) size 190x42
         text run at (0,0) width 190: "Header Three"
-    RenderBlock {H1} at (0,932) size 367x42
+    RenderBlock {H1} at (0,945) size 367x42
       RenderText {#text} at (0,0) size 177x42
         text run at (0,0) width 177: "Header Four"
-    RenderBlock (anonymous) at (0,995) size 367x40
+    RenderBlock (anonymous) at (0,1000) size 367x40
       RenderText {#text} at (0,0) size 354x40
         text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,20) width 154: "Nulla varius enim ac mi."

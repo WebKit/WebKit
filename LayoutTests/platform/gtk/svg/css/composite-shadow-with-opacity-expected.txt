@@ -1,0 +1,13 @@
+layer at (0,0) size 781x616
+  RenderView at (0,0) size 781x600
+layer at (0,0) size 781x616
+  RenderBlock {HTML} at (0,0) size 781x616
+    RenderBody {BODY} at (8,8) size 765x600
+layer at (8,8) size 765x600
+  RenderSVGRoot {svg} at (40,36) size 436x150 [opacity=0.50]
+    RenderSVGContainer {g} at (40,36) size 146x140
+      RenderPath {path} at (40,36) size 146x140 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,100.00)}] [stroke={[type=SOLID] [color=#000000] [stroke width=10.00]}] [fill={[type=SOLID] [color=#999999]}] [data="M0.00,30.00 L-35.27,48.54 L-28.53,9.27 L-57.06,-18.54 L-17.63,-24.27 L0.00,-60.00 L17.63,-24.27 L57.06,-18.54 L28.53,9.27 L35.27,48.54 Z"]
+    RenderSVGContainer {g} at (200,46) size 128x125
+      RenderPath {path} at (200,46) size 128x125 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,100.00)}] [stroke={[type=SOLID] [color=#000000] [stroke width=10.00] [dash array={20.00}]}] [fill={[type=SOLID] [color=#999999]}] [data="M0.00,30.00 L-35.27,48.54 L-28.53,9.27 L-57.06,-18.54 L-17.63,-24.27 L0.00,-60.00 L17.63,-24.27 L57.06,-18.54 L28.53,9.27 L35.27,48.54 Z"]
+    RenderSVGContainer {g} at (349,46) size 117x122
+      RenderPath {path} at (349,46) size 117x122 [transform={m=((1.00,0.00)(0.00,1.00)) t=(400.00,100.00)}] [stroke={[type=SOLID] [color=#000000] [stroke width=10.00] [dash array={20.00}]}] [fill={[type=SOLID] [color=#999999]}] [data="M0.00,25.00 L-29.39,40.45 L-23.78,7.73 L-47.55,-15.45 L-14.70,-20.23 L0.00,-50.00 L14.70,-20.23 L47.55,-15.45 L23.78,7.73 L29.39,40.45 Z"]

@@ -2337,11 +2337,6 @@ fast/media/mq-width-absolute-02.html
 fast/media/mq-width-absolute-03.html
 fast/media/mq-width-absolute-04.html
 fast/media/viewport-media-query.html
-fast/multicol/column-rules-stacking.html
-fast/multicol/column-rules.html
-fast/multicol/columns-shorthand-parsing.html
-fast/multicol/float-avoidance.html
-fast/multicol/float-multicol.html
 fast/overflow/001.html
 fast/overflow/002.html
 fast/overflow/003.xml
@@ -4994,7 +4989,6 @@ fast/forms/basic-inputs.html
 fast/forms/menulist-style-color.html
 fast/forms/search-vertical-alignment.html
 fast/forms/text-style-color.html
-fast/multicol/positioned-with-constrained-height.html
 fast/overflow/overflow-with-local-background-attachment.html
 fast/overflow/position-fixed-transform-clipping.html
 fast/repaint/background-generated.html
@@ -5280,10 +5274,6 @@ fast/loader/loadInProgress.html
 # Needs platform specific API implemented in DRT, maybe not relevant for non-Mac and non-Windows ports
 fast/loader/api-test-new-window-data-load-base-url.html
 fast/loader/api-test-go-to-current-back-forward-item.html
-
-# Draws squares in a totally wrong fashion
-# See https://bugs.webkit.org/show_bug.cgi?id=35127
-fast/multicol/client-rects.html
 
 # Failure may be related to DRT; console message also has full file
 # path instead of just the file name
