@@ -87,6 +87,10 @@ WebInspector.Settings.initialize = function()
         var settings = JSON.parse(settingsString);
 
         WebInspector.monitoringXHREnabled = settings.monitoringXHREnabled;
+        if (settings.resourceTrackingEnabled)
+            WebInspector.panels.resources.resourceTrackingWasEnabled();
+        else
+            WebInspector.panels.resources.resourceTrackingWasDisabled();
     }
 
     InspectorBackend.getSettings(function(settings) {

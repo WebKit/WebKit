@@ -753,16 +753,23 @@ WebInspector.ResourcesPanel.prototype = {
 
     _toggleResourceTracking: function(optionalAlways)
     {
+        function callback(newState) {
+            if (newState)
+                WebInspector.panels.resources.resourceTrackingWasEnabled();
+            else
+                WebInspector.panels.resources.resourceTrackingWasDisabled();
+        }
+
         if (this._resourceTrackingEnabled) {
             this.largerResourcesButton.visible = false;
             this.sortingSelectElement.visible = false;
             WebInspector.resources = {};
             WebInspector.resourceURLMap = {};
-            InspectorBackend.disableResourceTracking(true);
+            InspectorBackend.setResourceTracking(false, true, callback);
         } else {
             this.largerResourcesButton.visible = true;
             this.sortingSelectElement.visible = true;
-            InspectorBackend.enableResourceTracking(!!optionalAlways);
+            InspectorBackend.setResourceTracking(true, !!optionalAlways, callback);
         }
     },
 

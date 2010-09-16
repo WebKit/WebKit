@@ -25,7 +25,7 @@ function doit()
 function frontend_runTest(testController)
 {
     if (!WebInspector.panels.resources.resourceTrackingEnabled) {
-        InspectorBackend.enableResourceTracking(false);
+        WebInspector.panels.resources._toggleResourceTracking();
         return "refreshing";
     }
 

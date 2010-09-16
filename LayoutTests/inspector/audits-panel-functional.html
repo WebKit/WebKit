@@ -34,7 +34,7 @@ function doit()
 function frontend_runAudits(testController)
 {
     if (!WebInspector.panels.resources.resourceTrackingEnabled) {
-        InspectorBackend.enableResourceTracking(false);
+        WebInspector.panels.resources._toggleResourceTracking();
         return "refreshing";
     }
 
@@ -52,7 +52,7 @@ function frontend_runAudits(testController)
             // Audits are done, check results.
             var output = frontend_collectAuditResults();
             // Avoid influencing tests that require resource tracking to be disabled.
-            InspectorBackend.disableResourceTracking(false);
+            WebInspector.panels.resources._toggleResourceTracking();
             testController.runAfterPendingDispatches(function() {
                 testController.notifyDone(output.join("\n"));
             });

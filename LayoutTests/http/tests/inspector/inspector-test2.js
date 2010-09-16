@@ -94,13 +94,14 @@ InspectorTest.enableResourceTracking = function(callback)
         callback();
     else {
         InspectorTest._reloadPageCallback = callback;
-        InspectorBackend.enableResourceTracking(false);
+        WebInspector.panels.resources._toggleResourceTracking();
     }
 };
 
 InspectorTest.disableResourceTracking = function()
 {
-    InspectorBackend.disableResourceTracking(false);
+    if (WebInspector.panels.resources.resourceTrackingEnabled)
+        WebInspector.panels.resources._toggleResourceTracking();
 };
 
 InspectorTest.findDOMNode = function(root, filter, callback)

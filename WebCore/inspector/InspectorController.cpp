@@ -252,6 +252,7 @@ String InspectorController::getBackendSettings()
 {
     RefPtr<InspectorObject> runtimeSettings = InspectorObject::create();
     runtimeSettings->setBoolean(monitoringXHRSettingName, m_monitoringXHR);
+    runtimeSettings->setBoolean(resourceTrackingEnabledSettingName, m_resourceTrackingEnabled);
     return runtimeSettings->toJSONString();
 }
 
@@ -616,9 +617,6 @@ void InspectorController::populateScriptObjects()
         m_showAfterVisible = setting(lastActivePanel);
 
     showPanel(m_showAfterVisible);
-
-    if (m_resourceTrackingEnabled)
-        m_frontend->resourceTrackingWasEnabled();
 
     if (m_searchingForNode)
         m_frontend->searchingForNodeWasEnabled();
@@ -1122,40 +1120,33 @@ void InspectorController::scriptImported(unsigned long identifier, const String&
         resource->updateScriptObject(m_frontend.get());
 }
 
-void InspectorController::enableResourceTracking(bool always, bool reload)
+void InspectorController::setResourceTracking(bool enable, bool always, bool* newState)
 {
-    if (!enabled())
-        return;
+    *newState = enable;
 
     if (always)
-        setSetting(resourceTrackingEnabledSettingName, "true");
+        setSetting(resourceTrackingEnabledSettingName, enable ? "true" : "false");
 
-    if (m_resourceTrackingEnabled)
+    if (m_resourceTrackingEnabled == enable)
         return;
 
     ASSERT(m_inspectedPage);
-    m_resourceTrackingEnabled = true;
-    if (m_frontend)
-        m_frontend->resourceTrackingWasEnabled();
-    m_client->resourceTrackingWasEnabled();
+    m_resourceTrackingEnabled = enable;
 
-    if (reload)
+    if (enable) {
+        m_client->resourceTrackingWasEnabled();
         m_inspectedPage->mainFrame()->redirectScheduler()->scheduleRefresh(true);
+    } else
+        m_client->resourceTrackingWasDisabled();
 }
 
-void InspectorController::disableResourceTracking(bool always)
+void InspectorController::setResourceTracking(bool enable)
 {
     if (!enabled())
         return;
 
-    if (always)
-        setSetting(resourceTrackingEnabledSettingName, "false");
-
     ASSERT(m_inspectedPage);
-    m_resourceTrackingEnabled = false;
-    if (m_frontend)
-        m_frontend->resourceTrackingWasDisabled();
-    m_client->resourceTrackingWasDisabled();
+    m_resourceTrackingEnabled = enable;
 }
 
 void InspectorController::ensureSettingsLoaded()

@@ -256,10 +256,7 @@ void WebDevToolsAgentImpl::setRuntimeProperty(const WebString& name, const WebSt
         setTimelineProfilingEnabled(value == "true");
     else if (name == kResourceTrackingFeatureName) {
         InspectorController* ic = inspectorController();
-        if (value == "true")
-          ic->enableResourceTracking(false /* not sticky */, false /* no reload */);
-        else
-          ic->disableResourceTracking(false /* not sticky */);
+        ic->setResourceTracking(value == "true");
     } else if (name == kFrontendConnectedFeatureName && !inspectorController()->hasFrontend()) {
         inspectorController()->injectedScriptHost()->setInjectedScriptSource(value);
         connectFrontend(true);
@@ -278,13 +275,13 @@ void WebDevToolsAgentImpl::setApuAgentEnabled(bool enabled)
         if (!m_resourceTrackingWasEnabled) {
             // TODO(knorton): Introduce some kind of agents dependency here so that
             // user could turn off resource tracking while apu agent is on.
-            ic->enableResourceTracking(false, false);
+            ic->setResourceTracking(true);
         }
         m_debuggerAgentImpl->setAutoContinueOnException(true);
     } else {
       ic->stopTimelineProfiler();
       if (!m_resourceTrackingWasEnabled)
-          ic->disableResourceTracking(false);
+          ic->setResourceTracking(false);
       m_resourceTrackingWasEnabled = false;
     }
     m_client->runtimePropertyChanged(

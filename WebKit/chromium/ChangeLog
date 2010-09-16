@@ -1,3 +1,19 @@
+2010-09-16  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: move resourceTracking flag under control of BackendSettings.
+
+        Four Inspector API methods about resourceTracking flag were removed.
+        Actual state of the flag is transfered as the response of setResourceTracking request.
+        Initial state of the flag on the frontend side is obtained from settings.backend.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45887
+
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::setRuntimeProperty):
+        (WebKit::WebDevToolsAgentImpl::setApuAgentEnabled):
+
 2010-09-16  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -1373,16 +1373,6 @@ WebInspector.updateNetworkState = function(isNowOnline)
     this.panels.storage.updateNetworkState(isNowOnline);
 }
 
-WebInspector.resourceTrackingWasEnabled = function()
-{
-    this.panels.resources.resourceTrackingWasEnabled();
-}
-
-WebInspector.resourceTrackingWasDisabled = function()
-{
-    this.panels.resources.resourceTrackingWasDisabled();
-}
-
 WebInspector.searchingForNodeWasEnabled = function()
 {
     this.panels.elements.searchingForNodeWasEnabled();
