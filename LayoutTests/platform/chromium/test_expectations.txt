@@ -213,9 +213,8 @@ WONTFIX SKIP : java/lc3 = TEXT
 // TODO: move to platform/chromium-linux/.
 WONTFIX SKIP MAC WIN : platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle.html = FAIL
 
-// Needs DRT queueLoadHTMLString and setDeferMainResourceLoad-implementations
-// See: https://bugs.webkit.org/show_bug.cgi?id=42151
-BUGWK42151 SKIP : fast/loader/non-deferred-substitute-load.html = FAIL
+// Passes with DRT, fails in test_shell.
+BUGWK42151 : fast/loader/non-deferred-substitute-load.html = TEXT PASS
 
 // -----------------------------------------------------------------
 // WONTFIX TESTS

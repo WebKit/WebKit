@@ -38,6 +38,7 @@
 #include "public/WebAnimationController.h"
 #include "public/WebBindings.h"
 #include "public/WebConsoleMessage.h"
+#include "public/WebData.h"
 #include "public/WebDeviceOrientation.h"
 #include "public/WebDeviceOrientationClientMock.h"
 #include "public/WebDocument.h"
@@ -119,6 +120,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("queueForwardNavigation", &LayoutTestController::queueForwardNavigation);
     bindMethod("queueLoadingScript", &LayoutTestController::queueLoadingScript);
     bindMethod("queueLoad", &LayoutTestController::queueLoad);
+    bindMethod("queueLoadHTMLString", &LayoutTestController::queueLoadHTMLString);
     bindMethod("queueNonLoadingScript", &LayoutTestController::queueNonLoadingScript);
     bindMethod("queueReload", &LayoutTestController::queueReload);
     bindMethod("removeOriginAccessWhitelistEntry", &LayoutTestController::removeOriginAccessWhitelistEntry);
@@ -133,6 +135,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setCloseRemainingWindowsWhenComplete", &LayoutTestController::setCloseRemainingWindowsWhenComplete);
     bindMethod("setCustomPolicyDelegate", &LayoutTestController::setCustomPolicyDelegate);
     bindMethod("setDatabaseQuota", &LayoutTestController::setDatabaseQuota);
+    bindMethod("setDeferMainResourceDataLoad", &LayoutTestController::setDeferMainResourceDataLoad);
     bindMethod("setDomainRelaxationForbiddenForURLScheme", &LayoutTestController::setDomainRelaxationForbiddenForURLScheme);
     bindMethod("setEditingBehavior", &LayoutTestController::setEditingBehavior);
     bindMethod("setGeolocationPermission", &LayoutTestController::setGeolocationPermission);
@@ -463,6 +466,34 @@ void LayoutTestController::queueLoad(const CppArgumentList& arguments, CppVarian
     result->setNull();
 }
 
+class WorkItemLoadHTMLString : public LayoutTestController::WorkItem  {
+public:
+    WorkItemLoadHTMLString(const std::string& html, const WebURL& baseURL)
+        : m_html(html)
+        , m_baseURL(baseURL) {}
+    bool run(TestShell* shell)
+    {
+        shell->webView()->mainFrame()->loadHTMLString(
+            WebKit::WebData(m_html.data(), m_html.length()), m_baseURL);
+        return true;
+    }
+private:
+    std::string m_html;
+    WebURL m_baseURL;
+};
+
+void LayoutTestController::queueLoadHTMLString(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isString()) {
+        string html = arguments[0].toString();
+        WebURL baseURL;
+        if (arguments.size() > 1 && arguments[1].isString())
+            baseURL = WebURL(GURL(arguments[1].toString()));
+        m_workQueue.addWork(new WorkItemLoadHTMLString(html, baseURL));
+    }
+    result->setNull();
+}
+
 void LayoutTestController::objCIdentityIsEqual(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() < 2) {
@@ -504,6 +535,7 @@ void LayoutTestController::reset()
     m_sweepHorizontally = false;
     m_shouldAddFileToPasteboard = false;
     m_stopProvisionalFrameLoads = false;
+    m_deferMainResourceDataLoad = true;
     m_globalFlag.set(false);
     m_webHistoryItemCount.set(0);
     m_userStyleSheetLocation = WebURL();
@@ -967,6 +999,11 @@ void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(const CppArg
     m_shell->webView()->setDomainRelaxationForbidden(cppVariantToBool(arguments[0]), cppVariantToWebString(arguments[1]));
 }
 
+void LayoutTestController::setDeferMainResourceDataLoad(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() == 1)
+        m_deferMainResourceDataLoad = cppVariantToBool(arguments[0]);
+}
 
 //
 // Unimplemented stubs

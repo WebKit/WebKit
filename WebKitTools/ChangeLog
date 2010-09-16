@@ -1,3 +1,22 @@
+2010-09-15  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium] Needs DRT queueLoadHTMLString and setDeferMainResourceLoad-implementations
+        https://bugs.webkit.org/show_bug.cgi?id=42151
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (WorkItemLoadHTMLString::WorkItemLoadHTMLString):
+        (WorkItemLoadHTMLString::run):
+        (LayoutTestController::queueLoadHTMLString):
+        (LayoutTestController::reset):
+        (LayoutTestController::setDeferMainResourceDataLoad):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        (LayoutTestController::deferMainResourceDataLoad):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::didCreateDataSource):
+
 2010-09-16  Adrienne Walker  <enne@google.com>
 
         Reviewed by Kenneth Russell.

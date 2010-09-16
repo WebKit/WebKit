@@ -95,6 +95,10 @@ public:
     // The application cache host associated with this datasource.
     virtual WebApplicationCacheHost* applicationCacheHost() = 0;
 
+    // Set deferMainResourceDataLoad flag on the loader.  This is used for
+    // testing.
+    virtual void setDeferMainResourceDataLoad(bool) = 0;
+
 protected:
     ~WebDataSource() { }
 };

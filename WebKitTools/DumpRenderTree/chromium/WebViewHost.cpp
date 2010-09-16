@@ -790,6 +790,8 @@ void WebViewHost::didCancelClientRedirect(WebFrame* frame)
 void WebViewHost::didCreateDataSource(WebFrame*, WebDataSource* ds)
 {
     ds->setExtraData(m_pendingExtraData.leakPtr());
+    if (!layoutTestController()->deferMainResourceDataLoad())
+        ds->setDeferMainResourceDataLoad(false);
 }
 
 void WebViewHost::didStartProvisionalLoad(WebFrame* frame)

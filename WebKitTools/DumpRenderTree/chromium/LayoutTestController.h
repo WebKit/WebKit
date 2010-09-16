@@ -139,6 +139,7 @@ public:
     void queueLoadingScript(const CppArgumentList&, CppVariant*);
     void queueNonLoadingScript(const CppArgumentList&, CppVariant*);
     void queueLoad(const CppArgumentList&, CppVariant*);
+    void queueLoadHTMLString(const CppArgumentList&, CppVariant*);
 
     // Although this is named "objC" to match the Mac version, it actually tests
     // the identity of its two arguments in C++.
@@ -232,6 +233,7 @@ public:
     void simulateDesktopNotificationClick(const CppArgumentList&, CppVariant*);
 
     void setDomainRelaxationForbiddenForURLScheme(const CppArgumentList&, CppVariant*);
+    void setDeferMainResourceDataLoad(const CppArgumentList&, CppVariant*);
     void setEditingBehavior(const CppArgumentList&, CppVariant*);
 
     // The following are only stubs.  TODO(pamg): Implement any of these that
@@ -348,6 +350,7 @@ public:
     bool canOpenWindows() { return m_canOpenWindows; }
     bool shouldAddFileToPasteboard() { return m_shouldAddFileToPasteboard; }
     bool stopProvisionalFrameLoads() { return m_stopProvisionalFrameLoads; }
+    bool deferMainResourceDataLoad() { return m_deferMainResourceDataLoad; }
 
     bool testRepaint() const { return m_testRepaint; }
     bool sweepHorizontally() const { return m_sweepHorizontally; }
@@ -513,6 +516,9 @@ private:
 
     // If true, don't dump output until notifyDone is called.
     bool m_waitUntilDone;
+
+    // If false, all new requests will not defer the main resource data load.
+    bool m_deferMainResourceDataLoad;
 
     WorkQueue m_workQueue;
 
