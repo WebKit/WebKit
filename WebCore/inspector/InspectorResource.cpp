@@ -457,7 +457,16 @@ void InspectorResource::startTiming()
 
 void InspectorResource::endTiming(double actualEndTime)
 {
-    m_endTime = actualEndTime ? actualEndTime : currentTime();
+    if (actualEndTime) {
+        m_endTime = actualEndTime;
+        // In case of fast load (or in case of cached resources), endTime on network stack
+        // can be less then m_responseReceivedTime measured in WebCore. Normalize it here,
+        // prefer actualEndTime to m_responseReceivedTime.
+        if (m_endTime < m_responseReceivedTime)
+            m_responseReceivedTime = m_endTime;
+    } else
+        m_endTime = currentTime();
+
     m_finished = true;
     m_changes.set(TimingChange);
     m_changes.set(CompletionChange);
