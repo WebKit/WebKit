@@ -1,3 +1,23 @@
+2010-09-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Implement dissolveDragImageToFraction
+        https://bugs.webkit.org/show_bug.cgi?id=45826
+
+        To support full alpha in the drag icon, changed the drag icon to be a 
+        GtkWindow with an RGBA colormap. Added logic to support painting the drag
+        image to this window during the expose event.
+
+        * WebCoreSupport/DragClientGtk.cpp:
+        (WebKit::dragIconWindowExposeEventCallback): Added.
+        (WebKit::DragClient::DragClient): Initialize the new drag icon window.
+        (WebKit::DragClient::~DragClient): Disconnect the expose event signal.
+        (WebKit::DragClient::startDrag): Resize the drag icon window the appropriate size and
+        if necessary, set its colormap.
+        (WebKit::DragClient::dragIconWindowExposeEvent): Added.
+        * WebCoreSupport/DragClientGtk.h: Added new member and method declarations.
+
 2010-09-14  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Carlson and Martin Robinson.

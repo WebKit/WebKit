@@ -1,4 +1,6 @@
 /*
+ * 2010 Igalia S.L
+ *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
  *  License as published by the Free Software Foundation; either
@@ -19,15 +21,15 @@
 
 #include "CachedImage.h"
 #include "Image.h"
-
-#include <gtk/gtk.h>
+#include "PlatformRefPtrCairo.h"
+#include <cairo.h>
 
 namespace WebCore {
 
 IntSize dragImageSize(DragImageRef image)
 {
     if (image)
-        return IntSize(gdk_pixbuf_get_width(image), gdk_pixbuf_get_height(image));
+        return IntSize(cairo_image_surface_get_width(image), cairo_image_surface_get_height(image));
 
     return IntSize(0, 0);
 }
@@ -35,32 +37,45 @@ IntSize dragImageSize(DragImageRef image)
 void deleteDragImage(DragImageRef image)
 {
     if (image)
-        g_object_unref(image);
+        cairo_surface_destroy(image);
 }
 
 DragImageRef scaleDragImage(DragImageRef image, FloatSize scale)
 {
-    if (image) {
-        IntSize imageSize = dragImageSize(image);
-        GdkPixbuf* scaledImage = gdk_pixbuf_scale_simple(image,
-                                                         imageSize.width() * scale.width(),
-                                                         imageSize.height() * scale.height(),
-                                                         GDK_INTERP_BILINEAR);
-        deleteDragImage(image);
-        return scaledImage;
-    }
+    if (!image)
+        return 0;
 
-    return 0;
+    int newWidth = scale.width() * cairo_image_surface_get_width(image);
+    int newHeight = scale.height() * cairo_image_surface_get_height(image);
+    cairo_surface_t* scaledSurface = cairo_surface_create_similar(image, CAIRO_CONTENT_COLOR_ALPHA, newWidth, newHeight);
+
+    PlatformRefPtr<cairo_t> context = adoptPlatformRef(cairo_create(scaledSurface));
+    cairo_scale(context.get(), scale.width(), scale.height());
+    cairo_pattern_set_extend(cairo_get_source(context.get()), CAIRO_EXTEND_PAD);
+    cairo_pattern_set_filter(cairo_get_source(context.get()), CAIRO_FILTER_BEST);
+    cairo_set_operator(context.get(), CAIRO_OPERATOR_SOURCE);
+    cairo_set_source_surface(context.get(), image, 0, 0);
+    cairo_paint(context.get());
+
+    deleteDragImage(image);
+    return scaledSurface;
 }
 
-DragImageRef dissolveDragImageToFraction(DragImageRef image, float)
+DragImageRef dissolveDragImageToFraction(DragImageRef image, float fraction)
 {
+    if (!image)
+        return 0;
+
+    PlatformRefPtr<cairo_t> context = adoptPlatformRef(cairo_create(image));
+    cairo_set_operator(context.get(), CAIRO_OPERATOR_DEST_IN);
+    cairo_set_source_rgba(context.get(), 0, 0, 0, fraction);
+    cairo_paint(context.get());
     return image;
 }
 
 DragImageRef createDragImageFromImage(Image* image)
 {
-    return image->getGdkPixbuf();
+    return cairo_surface_reference(image->nativeImageForCurrentFrame());
 }
 
 DragImageRef createDragImageIconForCachedImage(CachedImage*)

@@ -1,3 +1,29 @@
+2010-09-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Implement dissolveDragImageToFraction
+        https://bugs.webkit.org/show_bug.cgi?id=45826
+
+        Convert the drag image from a GdkPixbuf to a Cairo surface. Not only
+        might this allow code to be shared between Cairo ports it prevents a
+        full data copy when the image is not resized and makes the implementation
+        of dissolveDragImageToFraction more straight-forward.
+
+        This feature is covered by manual-tests/drag-image.html.
+
+        * page/gtk/DragControllerGtk.cpp:
+        (WebCore::DragController::maxDragImageSize): Make the maximum size of the drag
+        image a little smaller.
+        * platform/DragImage.h: Changed the drag image type to be a cairo_surface_t*.
+        * platform/gtk/DragImageGtk.cpp:
+        (WebCore::dragImageSize): Reimplemented to reflect new drag image type.
+        (WebCore::deleteDragImage): Ditto.
+        (WebCore::scaleDragImage): Ditto.
+        (WebCore::dissolveDragImageToFraction): Filled the stub of this function.
+        (WebCore::createDragImageFromImage): Reimplemented to reflect new drag image type.
+        * platform/gtk/GtkVersioning.h: Added definition for gtk_widget_get_realized for older GTK+s.
+
 2010-09-15  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Darin Adler.

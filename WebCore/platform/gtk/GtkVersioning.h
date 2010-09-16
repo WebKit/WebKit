@@ -42,6 +42,7 @@ G_BEGIN_DECLS
 #endif // GTK_CHECK_VERSION(2, 21, 2)
 
 #if !GTK_CHECK_VERSION(2, 20, 0)
+#define gtk_widget_get_realized(widget) GTK_WIDGET_REALIZED(widget)
 #define gtk_widget_set_realized(widget, TRUE) GTK_WIDGET_SET_FLAGS((widget), GTK_REALIZED)
 #define gtk_range_get_min_slider_size(range) (range)->min_slider_size
 #endif // GTK_CHECK_VERSION(2, 20, 0)

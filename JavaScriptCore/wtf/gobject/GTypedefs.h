@@ -45,6 +45,7 @@ typedef struct _GdkCursor GdkCursor;
 typedef struct _GdkDragContext GdkDragContext;
 typedef struct _GdkDrawable GdkDrawable;
 typedef struct _GdkEventConfigure GdkEventConfigure;
+typedef struct _GdkEventExpose GdkEventExpose;
 typedef struct _GdkPixbuf GdkPixbuf;
 typedef struct _GError GError;
 typedef struct _GFile GFile;
@@ -79,6 +80,7 @@ typedef struct _GtkStyle GtkStyle;
 typedef struct _GtkTargetList GtkTargetList;
 typedef struct _GtkThemeParts GtkThemeParts;
 typedef struct _GtkWidget GtkWidget;
+typedef struct _GtkWindow GtkWindow;
 
 #ifdef GTK_API_VERSION_2
 typedef struct _GdkRectangle GdkRectangle;

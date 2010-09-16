@@ -58,8 +58,7 @@ DragOperation DragController::dragOperation(DragData* dragData)
 
 const IntSize& DragController::maxDragImageSize()
 {
-    static const IntSize maxDragImageSize(400, 400);
-
+    static const IntSize maxDragImageSize(200, 200);
     return maxDragImageSize;
 }
 

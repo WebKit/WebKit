@@ -34,16 +34,30 @@
 #include "RenderObject.h"
 #include "webkitprivate.h"
 #include "webkitwebview.h"
+#include <gdk/gdk.h>
 #include <gtk/gtk.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
+static gboolean dragIconWindowExposeEventCallback(GtkWidget* widget, GdkEventExpose* event, DragClient* client)
+{
+    client->dragIconWindowExposeEvent(widget, event);
+    return TRUE;
+}
+
 DragClient::DragClient(WebKitWebView* webView)
     : m_webView(webView)
     , m_startPos(0, 0)
+    , m_dragIconWindow(gtk_window_new(GTK_WINDOW_POPUP))
 {
+    g_signal_connect(m_dragIconWindow.get(), "expose-event", G_CALLBACK(dragIconWindowExposeEventCallback), this);
+}
+
+DragClient::~DragClient()
+{
+    g_signal_handlers_disconnect_by_func(m_dragIconWindow.get(), (gpointer) dragIconWindowExposeEventCallback, this);
 }
 
 void DragClient::willPerformDragDestinationAction(DragDestinationAction, DragData*)
@@ -83,10 +97,36 @@ void DragClient::startDrag(DragImageRef image, const IntPoint& dragImageOrigin, 
     // happen if a drag is followed very quickly by another click (like in the DRT).
     webView->priv->previousClickTime = 0;
 
-    if (image)
-        gtk_drag_set_icon_pixbuf(context, image, eventPos.x() - dragImageOrigin.x(), eventPos.y() - dragImageOrigin.y());
-    else
+    // This strategy originally comes from Chromium:
+    // src/chrome/browser/gtk/tab_contents_drag_source.cc
+    if (image) {
+        m_dragImage = image;
+        IntSize imageSize(cairo_image_surface_get_width(image), cairo_image_surface_get_height(image));
+        gtk_window_resize(GTK_WINDOW(m_dragIconWindow.get()), imageSize.width(), imageSize.height());
+
+        if (!gtk_widget_get_realized(m_dragIconWindow.get())) {
+            GdkScreen* screen = gtk_widget_get_screen(m_dragIconWindow.get());
+            GdkColormap* rgba = gdk_screen_get_rgba_colormap(screen);
+            if (rgba)
+                gtk_widget_set_colormap(m_dragIconWindow.get(), rgba);
+        }
+
+        IntSize origin = eventPos - dragImageOrigin;
+        gtk_drag_set_icon_widget(context, m_dragIconWindow.get(),
+                                 origin.width(), origin.height());
+    } else
         gtk_drag_set_icon_default(context);
+}
+
+void DragClient::dragIconWindowExposeEvent(GtkWidget* widget, GdkEventExpose* event)
+{
+    PlatformRefPtr<cairo_t> context = adoptPlatformRef(gdk_cairo_create(event->window));
+    cairo_rectangle(context.get(), 0, 0,
+                    cairo_image_surface_get_width(m_dragImage.get()),
+                    cairo_image_surface_get_height(m_dragImage.get()));
+    cairo_set_operator(context.get(), CAIRO_OPERATOR_SOURCE);
+    cairo_set_source_surface(context.get(), m_dragImage.get(), 0, 0);
+    cairo_fill(context.get());
 }
 
 DragImageRef DragClient::createDragImageForLink(KURL&, const String&, Frame*)

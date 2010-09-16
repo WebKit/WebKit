@@ -48,7 +48,7 @@ class wxDragImage;
 #elif PLATFORM(CHROMIUM)
 #include "DragImageRef.h"
 #elif PLATFORM(GTK)
-typedef struct _GdkPixbuf GdkPixbuf;
+typedef struct _cairo_surface cairo_surface_t;
 #elif PLATFORM(HAIKU)
 class BBitmap;
 #elif PLATFORM(BREWMP)
@@ -75,7 +75,7 @@ namespace WebCore {
 #elif PLATFORM(WX)
     typedef wxDragImage* DragImageRef;
 #elif PLATFORM(GTK)
-    typedef GdkPixbuf* DragImageRef;
+    typedef cairo_surface_t* DragImageRef;
 #elif PLATFORM(HAIKU)
     typedef BBitmap* DragImageRef;
 #elif PLATFORM(BREWMP)

@@ -31,6 +31,8 @@
 #define DragClientGtk_h
 
 #include "DragClient.h"
+#include "GRefPtr.h"
+#include "PlatformRefPtrCairo.h"
 
 typedef struct _WebKitWebView WebKitWebView;
 
@@ -39,6 +41,7 @@ namespace WebKit {
     class DragClient : public WebCore::DragClient {
     public:
         DragClient(WebKitWebView*);
+        ~DragClient();
 
         virtual void willPerformDragDestinationAction(WebCore::DragDestinationAction, WebCore::DragData*);
         virtual void willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::Clipboard*);
@@ -51,9 +54,13 @@ namespace WebKit {
 
         virtual void dragControllerDestroyed();
 
+        void dragIconWindowExposeEvent(GtkWidget*, GdkEventExpose*);
+
     private:
         WebKitWebView* m_webView;
         WebCore::IntPoint m_startPos;
+        PlatformRefPtr<GtkWidget> m_dragIconWindow;
+        PlatformRefPtr<cairo_surface_t> m_dragImage;
     };
 }
 

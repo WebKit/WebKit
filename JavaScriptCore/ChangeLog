@@ -1,3 +1,12 @@
+2010-09-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Implement dissolveDragImageToFraction
+        https://bugs.webkit.org/show_bug.cgi?id=45826
+
+        * wtf/gobject/GTypedefs.h: Added forward declarations for GtkWindow and GdkEventExpose.
+
 2010-09-16  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by Jian Li.
