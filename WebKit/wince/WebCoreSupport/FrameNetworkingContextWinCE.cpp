@@ -25,6 +25,9 @@
 #include "config.h"
 #include "FrameNetworkingContextWinCE.h"
 
+#include "NotImplemented.h"
+#include "ResourceError.h"
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -43,6 +46,12 @@ String FrameNetworkingContextWinCE::userAgent() const
 String FrameNetworkingContextWinCE::referrer() const
 {
     return frame()->loader()->referrer();
+}
+
+WebCore::ResourceError FrameNetworkingContextWinCE::blockedError(const WebCore::ResourceRequest&) const
+{
+    notImplemented();
+    return WebCore::ResourceError();
 }
 
 } // namespace WebKit
