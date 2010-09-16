@@ -1,3 +1,22 @@
+2010-09-16  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Add needed entry points to WebGraphicsContext3D for compositor
+        https://bugs.webkit.org/show_bug.cgi?id=45921
+
+        * public/WebGraphicsContext3D.h:
+        * src/WebGraphicsContext3DDefaultImpl.cpp:
+        (WebKit::WebGraphicsContext3DDefaultImpl::initialize):
+        (WebKit::WebGraphicsContext3DDefaultImpl::supportsMapSubCHROMIUM):
+        (WebKit::WebGraphicsContext3DDefaultImpl::mapBufferSubDataCHROMIUM):
+        (WebKit::WebGraphicsContext3DDefaultImpl::unmapBufferSubDataCHROMIUM):
+        (WebKit::WebGraphicsContext3DDefaultImpl::mapTexSubImage2DCHROMIUM):
+        (WebKit::WebGraphicsContext3DDefaultImpl::unmapTexSubImage2DCHROMIUM):
+        (WebKit::WebGraphicsContext3DDefaultImpl::supportsCopyTextureToParentTextureCHROMIUM):
+        (WebKit::WebGraphicsContext3DDefaultImpl::copyTextureToParentTextureCHROMIUM):
+        * src/WebGraphicsContext3DDefaultImpl.h:
+
 2010-09-15  Tony Chang  <tony@chromium.org>
 
         Reviewed by Kent Tamura.

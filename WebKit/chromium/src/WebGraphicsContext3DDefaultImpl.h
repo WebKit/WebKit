@@ -59,6 +59,8 @@ public:
 
     //----------------------------------------------------------------------
     // WebGraphicsContext3D methods
+    virtual bool initialize(WebGraphicsContext3D::Attributes attributes, WebView*, bool);
+    // FIXME: remove once compositor is switched over to GraphicsContext3D.
     virtual bool initialize(WebGraphicsContext3D::Attributes attributes, WebView*);
     virtual bool makeContextCurrent();
 
@@ -80,6 +82,13 @@ public:
 
     virtual void synthesizeGLError(unsigned long error);
     virtual bool supportsBGRA();
+    virtual bool supportsMapSubCHROMIUM();
+    virtual void* mapBufferSubDataCHROMIUM(unsigned target, int offset, int size, unsigned access);
+    virtual void unmapBufferSubDataCHROMIUM(const void*);
+    virtual void* mapTexSubImage2DCHROMIUM(unsigned target, int level, int xoffset, int yoffset, int width, int height, unsigned format, unsigned type, unsigned access);
+    virtual void unmapTexSubImage2DCHROMIUM(const void*);
+    virtual bool supportsCopyTextureToParentTextureCHROMIUM();
+    virtual void copyTextureToParentTextureCHROMIUM(unsigned texture, unsigned parentTexture);
 
     virtual void activeTexture(unsigned long texture);
     virtual void attachShader(WebGLId program, WebGLId shader);

@@ -97,11 +97,16 @@ WebGraphicsContext3DDefaultImpl::~WebGraphicsContext3DDefaultImpl()
     }
 }
 
-bool WebGraphicsContext3DDefaultImpl::initialize(WebGraphicsContext3D::Attributes attributes, WebView* webView)
+bool WebGraphicsContext3DDefaultImpl::initialize(WebGraphicsContext3D::Attributes attributes, WebView* webView, bool renderDirectlyToWebView)
 {
+    if (renderDirectlyToWebView) {
+        // This mode isn't supported with the in-process implementation yet. (FIXME)
+        return false;
+    }
+
     if (!gfx::GLContext::InitializeOneOff())
         return false;
-        
+
     m_glContext = WTF::adoptPtr(gfx::GLContext::CreateOffscreenGLContext(0));
     if (!m_glContext)
         return false;
@@ -112,6 +117,11 @@ bool WebGraphicsContext3DDefaultImpl::initialize(WebGraphicsContext3D::Attribute
     glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
     m_initialized = true;
     return true;
+}
+
+bool WebGraphicsContext3DDefaultImpl::initialize(WebGraphicsContext3D::Attributes attributes, WebView* webView)
+{
+    return initialize(attributes, webView, false);
 }
 
 void WebGraphicsContext3DDefaultImpl::validateAttributes()
@@ -461,6 +471,40 @@ bool WebGraphicsContext3DDefaultImpl::supportsBGRA()
     // to translate the internalFormat from GL_BGRA to GL_RGBA, since the
     // former is not accepted by desktop GL. Return false until this is done.
     return false;
+}
+
+bool WebGraphicsContext3DDefaultImpl::supportsMapSubCHROMIUM()
+{
+    // We don't claim support for this extension at this time
+    return false;
+}
+
+void* WebGraphicsContext3DDefaultImpl::mapBufferSubDataCHROMIUM(unsigned target, int offset, int size, unsigned access)
+{
+    return 0;
+}
+
+void WebGraphicsContext3DDefaultImpl::unmapBufferSubDataCHROMIUM(const void* mem)
+{
+}
+
+void* WebGraphicsContext3DDefaultImpl::mapTexSubImage2DCHROMIUM(unsigned target, int level, int xoffset, int yoffset, int width, int height, unsigned format, unsigned type, unsigned access)
+{
+    return 0;
+}
+
+void WebGraphicsContext3DDefaultImpl::unmapTexSubImage2DCHROMIUM(const void* mem)
+{
+}
+
+bool WebGraphicsContext3DDefaultImpl::supportsCopyTextureToParentTextureCHROMIUM()
+{
+    // We don't claim support for this extension at this time
+    return false;
+}
+
+void WebGraphicsContext3DDefaultImpl::copyTextureToParentTextureCHROMIUM(unsigned id, unsigned id2)
+{
 }
 
 // Helper macros to reduce the amount of code.
