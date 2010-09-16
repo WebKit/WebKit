@@ -70,6 +70,9 @@ public:
     // draws the current layers onto the backbuffer
     void drawLayers(const IntRect& visibleRect, const IntRect& contentRect);
 
+    // waits for rendering to finish
+    void finish();
+
     // puts backbuffer onscreen
     void present();
 

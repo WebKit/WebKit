@@ -1035,7 +1035,8 @@ void WebViewImpl::composite(bool finish)
     doComposite();
 
     // Finish if requested.
-    // FIXME: handle finish flag.
+    if (finish)
+        m_layerRenderer->finish();
 
     // Put result onscreen.
     m_layerRenderer->present();

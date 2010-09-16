@@ -1,3 +1,17 @@
+2010-09-16  Nat Duca  <nduca@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Make compositor obey finish flag
+        https://bugs.webkit.org/show_bug.cgi?id=45552
+
+        The compositor should obey the finish flag on doComposite. This
+        flag causes the compositor to finish rendering before returning,
+        which is needed when resizing the window to avoid flashes of green.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::composite):
+
 2010-09-15  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.
