@@ -2,6 +2,17 @@
 
         Reviewed by James Robinson.
 
+        [chromium] Expose separate GraphicsContext3DInternal.h
+        https://bugs.webkit.org/show_bug.cgi?id=45914
+
+        * WebKit.gyp:
+        * src/GraphicsContext3D.cpp:
+        * src/GraphicsContext3DInternal.h: Added.
+
+2010-09-16  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
         [chromium] Add WebGraphicsContext3D accessor to WebView
         https://bugs.webkit.org/show_bug.cgi?id=45913
 

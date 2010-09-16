@@ -327,6 +327,7 @@
                 'src/GLES2ContextInternal.cpp',
                 'src/GLES2ContextInternal.h',
                 'src/GraphicsContext3D.cpp',
+                'src/GraphicsContext3DInternal.h',
                 'src/gtk/WebFontInfo.cpp',
                 'src/gtk/WebFontInfo.h',
                 'src/gtk/WebInputEventFactory.cpp',
