@@ -86,7 +86,7 @@ DragImageRef Frame::nodeImage(Node* node)
     buffer->context()->translate(-paintingRect.x(), -paintingRect.y());
     buffer->context()->clip(FloatRect(0, 0, paintingRect.right(), paintingRect.bottom()));
 
-    m_view->paint(buffer->context(), paintingRect);
+    m_view->paintContents(buffer->context(), paintingRect);
 
     RefPtr<Image> image = buffer->copyImage();
     return createDragImageFromImage(image.get());
@@ -109,7 +109,7 @@ DragImageRef Frame::dragImageForSelection()
     buffer->context()->translate(-paintingRect.x(), -paintingRect.y());
     buffer->context()->clip(FloatRect(0, 0, paintingRect.right(), paintingRect.bottom()));
 
-    m_view->paint(buffer->context(), paintingRect);
+    m_view->paintContents(buffer->context(), paintingRect);
 
     RefPtr<Image> image = buffer->copyImage();
     return createDragImageFromImage(image.get());
