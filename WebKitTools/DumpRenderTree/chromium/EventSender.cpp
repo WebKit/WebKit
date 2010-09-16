@@ -250,34 +250,34 @@ EventSender::EventSender(TestShell* shell)
     // they will use when called by JavaScript.  The actual binding of those
     // names to their methods will be done by calling bindToJavaScript() (defined
     // by CppBoundClass, the parent to EventSender).
-    bindMethod("mouseDown", &EventSender::mouseDown);
-    bindMethod("mouseUp", &EventSender::mouseUp);
+    bindMethod("addTouchPoint", &EventSender::addTouchPoint);
+    bindMethod("beginDragWithFiles", &EventSender::beginDragWithFiles);
+    bindMethod("cancelTouchPoint", &EventSender::cancelTouchPoint);
+    bindMethod("clearKillRing", &EventSender::clearKillRing);
+    bindMethod("clearTouchPoints", &EventSender::clearTouchPoints);
     bindMethod("contextClick", &EventSender::contextClick);
-    bindMethod("mouseMoveTo", &EventSender::mouseMoveTo);
-    bindMethod("leapForward", &EventSender::leapForward);
-    bindMethod("keyDown", &EventSender::keyDown);
+    bindMethod("continuousMouseScrollBy", &EventSender::continuousMouseScrollBy);
     bindMethod("dispatchMessage", &EventSender::dispatchMessage);
     bindMethod("enableDOMUIEventLogging", &EventSender::enableDOMUIEventLogging);
     bindMethod("fireKeyboardEventsToElement", &EventSender::fireKeyboardEventsToElement);
-    bindMethod("clearKillRing", &EventSender::clearKillRing);
+    bindMethod("keyDown", &EventSender::keyDown);
+    bindMethod("leapForward", &EventSender::leapForward);
+    bindMethod("mouseDown", &EventSender::mouseDown);
+    bindMethod("mouseMoveTo", &EventSender::mouseMoveTo);
+    bindMethod("mouseScrollBy", &EventSender::mouseScrollBy);
+    bindMethod("mouseUp", &EventSender::mouseUp);
+    bindMethod("releaseTouchPoint", &EventSender::releaseTouchPoint);
+    bindMethod("scheduleAsynchronousClick", &EventSender::scheduleAsynchronousClick);
+    bindMethod("setTouchModifier", &EventSender::setTouchModifier);
     bindMethod("textZoomIn", &EventSender::textZoomIn);
     bindMethod("textZoomOut", &EventSender::textZoomOut);
-    bindMethod("zoomPageIn", &EventSender::zoomPageIn);
-    bindMethod("zoomPageOut", &EventSender::zoomPageOut);
-    bindMethod("mouseScrollBy", &EventSender::mouseScrollBy);
-    bindMethod("continuousMouseScrollBy", &EventSender::continuousMouseScrollBy);
-    bindMethod("scheduleAsynchronousClick", &EventSender::scheduleAsynchronousClick);
-    bindMethod("beginDragWithFiles", &EventSender::beginDragWithFiles);
-    bindMethod("addTouchPoint", &EventSender::addTouchPoint);
-    bindMethod("cancelTouchPoint", &EventSender::cancelTouchPoint);
-    bindMethod("clearTouchPoints", &EventSender::clearTouchPoints);
-    bindMethod("releaseTouchPoint", &EventSender::releaseTouchPoint);
-    bindMethod("updateTouchPoint", &EventSender::updateTouchPoint);
-    bindMethod("setTouchModifier", &EventSender::setTouchModifier);
     bindMethod("touchCancel", &EventSender::touchCancel);
     bindMethod("touchEnd", &EventSender::touchEnd);
     bindMethod("touchMove", &EventSender::touchMove);
     bindMethod("touchStart", &EventSender::touchStart);
+    bindMethod("updateTouchPoint", &EventSender::updateTouchPoint);
+    bindMethod("zoomPageIn", &EventSender::zoomPageIn);
+    bindMethod("zoomPageOut", &EventSender::zoomPageOut);
 
     // When set to true (the default value), we batch mouse move and mouse up
     // events so we can simulate drag & drop.

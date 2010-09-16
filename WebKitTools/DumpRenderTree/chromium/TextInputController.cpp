@@ -51,21 +51,21 @@ TextInputController::TextInputController(TestShell* shell)
     if (!testShell)
         testShell = shell;
 
-    bindMethod("insertText", &TextInputController::insertText);
-    bindMethod("doCommand", &TextInputController::doCommand);
-    bindMethod("setMarkedText", &TextInputController::setMarkedText);
-    bindMethod("unmarkText", &TextInputController::unmarkText);
-    bindMethod("hasMarkedText", &TextInputController::hasMarkedText);
-    bindMethod("conversationIdentifier", &TextInputController::conversationIdentifier);
-    bindMethod("substringFromRange", &TextInputController::substringFromRange);
     bindMethod("attributedSubstringFromRange", &TextInputController::attributedSubstringFromRange);
+    bindMethod("characterIndexForPoint", &TextInputController::characterIndexForPoint);
+    bindMethod("conversationIdentifier", &TextInputController::conversationIdentifier);
+    bindMethod("doCommand", &TextInputController::doCommand);
+    bindMethod("firstRectForCharacterRange", &TextInputController::firstRectForCharacterRange);
+    bindMethod("hasMarkedText", &TextInputController::hasMarkedText);
+    bindMethod("hasSpellingMarker", &TextInputController::hasSpellingMarker);
+    bindMethod("insertText", &TextInputController::insertText);
+    bindMethod("makeAttributedString", &TextInputController::makeAttributedString);
     bindMethod("markedRange", &TextInputController::markedRange);
     bindMethod("selectedRange", &TextInputController::selectedRange);
-    bindMethod("firstRectForCharacterRange", &TextInputController::firstRectForCharacterRange);
-    bindMethod("characterIndexForPoint", &TextInputController::characterIndexForPoint);
+    bindMethod("setMarkedText", &TextInputController::setMarkedText);
+    bindMethod("substringFromRange", &TextInputController::substringFromRange);
+    bindMethod("unmarkText", &TextInputController::unmarkText);
     bindMethod("validAttributesForMarkedText", &TextInputController::validAttributesForMarkedText);
-    bindMethod("makeAttributedString", &TextInputController::makeAttributedString);
-    bindMethod("hasSpellingMarker", &TextInputController::hasSpellingMarker);
 }
 
 WebFrame* TextInputController::getMainFrame()
