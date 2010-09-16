@@ -1,3 +1,12 @@
+2010-09-16  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        Roll forward Chromium DEPS to r59706
+        https://bugs.webkit.org/show_bug.cgi?id=45916
+
+        * DEPS:
+
 2010-09-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Andreas Kling.
