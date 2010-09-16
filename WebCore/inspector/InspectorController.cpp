@@ -503,6 +503,13 @@ void InspectorController::connectFrontend()
     connectedFrontendCount++;
 }
 
+void InspectorController::reuseFrontend()
+{
+    connectFrontend();
+    restoreDebugger();
+    restoreProfiler();
+}
+
 void InspectorController::show()
 {
     if (!enabled())
@@ -664,6 +671,13 @@ void InspectorController::populateScriptObjects()
         m_frontend->evaluateForTestInFrontend((*it).first, (*it).second);
     m_pendingEvaluateTestCommands.clear();
 
+    restoreDebugger();
+    restoreProfiler();
+}
+
+void InspectorController::restoreDebugger()
+{
+    ASSERT(m_frontend);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     if (InspectorDebuggerAgent::isDebuggerAlwaysEnabled())
         enableDebuggerFromFrontend(false);
@@ -672,6 +686,13 @@ void InspectorController::populateScriptObjects()
         if (debuggerEnabled == "true" || m_attachDebuggerWhenShown)
             enableDebugger();
     }
+#endif
+}
+
+void InspectorController::restoreProfiler()
+{
+    ASSERT(m_frontend);
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     m_profilerAgent->setFrontend(m_frontend.get());
     if (!ScriptProfiler::isProfilerAlwaysEnabled()) {
         String profilerEnabledSetting = setting(profilerEnabledSettingName);
@@ -1615,7 +1636,6 @@ void InspectorController::resume()
     if (m_debuggerAgent)
         m_debuggerAgent->resume();
 }
-// JavaScriptDebugListener functions
 
 #endif
 

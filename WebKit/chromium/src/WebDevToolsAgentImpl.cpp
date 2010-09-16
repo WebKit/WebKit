@@ -224,9 +224,7 @@ void WebDevToolsAgentImpl::detach()
 
 void WebDevToolsAgentImpl::frontendLoaded()
 {
-    inspectorController()->connectFrontend();
-    // We know that by this time injected script has already been pushed to the backend.
-    m_client->runtimePropertyChanged(kFrontendConnectedFeatureName, inspectorController()->injectedScriptHost()->injectedScriptSource());
+    connectFrontend(false);
 }
 
 void WebDevToolsAgentImpl::didNavigate()
@@ -264,7 +262,7 @@ void WebDevToolsAgentImpl::setRuntimeProperty(const WebString& name, const WebSt
           ic->disableResourceTracking(false /* not sticky */);
     } else if (name == kFrontendConnectedFeatureName && !inspectorController()->hasFrontend()) {
         inspectorController()->injectedScriptHost()->setInjectedScriptSource(value);
-        frontendLoaded();
+        connectFrontend(true);
     }
 }
 
@@ -274,7 +272,7 @@ void WebDevToolsAgentImpl::setApuAgentEnabled(bool enabled)
     InspectorController* ic = inspectorController();
     if (enabled) {
         if (!ic->hasFrontend())
-            frontendLoaded();
+            connectFrontend(true);
         m_resourceTrackingWasEnabled = ic->resourceTrackingEnabled();
         ic->startTimelineProfiler();
         if (!m_resourceTrackingWasEnabled) {
@@ -292,6 +290,16 @@ void WebDevToolsAgentImpl::setApuAgentEnabled(bool enabled)
     m_client->runtimePropertyChanged(
         kApuAgentFeatureName,
         enabled ? String("true") : String("false"));
+}
+
+void WebDevToolsAgentImpl::connectFrontend(bool afterNavigation)
+{
+    if (afterNavigation)
+        inspectorController()->reuseFrontend();
+    else
+        inspectorController()->connectFrontend();
+    // We know that by this time injected script has already been pushed to the backend.
+    m_client->runtimePropertyChanged(kFrontendConnectedFeatureName, inspectorController()->injectedScriptHost()->injectedScriptSource());
 }
 
 WebCore::InspectorController* WebDevToolsAgentImpl::inspectorController()

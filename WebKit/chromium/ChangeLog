@@ -1,3 +1,14 @@
+2010-09-16  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [REGRESSION] Scripts disappear from scripts panel after navigation
+        https://bugs.webkit.org/show_bug.cgi?id=45890
+
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::setRuntimeProperty): make sure debugger and profiler
+        are initialized when inspected page navigation leads to renderer process change.
+
 2010-09-16  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by Jian Li.

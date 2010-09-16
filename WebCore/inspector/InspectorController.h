@@ -141,6 +141,7 @@ public:
     // transport via InspectorClient. After migration, webInspector parameter should
     // be removed.
     void connectFrontend();
+    void reuseFrontend();
     void disconnectFrontend();
 
     void addMessageToConsole(MessageSource, MessageType, MessageLevel, ScriptCallStack*, const String& message);
@@ -277,6 +278,8 @@ private:
     friend class InjectedScriptHost;
 
     void populateScriptObjects();
+    void restoreDebugger();
+    void restoreProfiler();
     void unbindAllResources();
 
     // Following are used from InspectorBackend and internally.
