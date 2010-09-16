@@ -197,8 +197,8 @@ bool GIFImageDecoder::haveDecodedRow(unsigned frameIndex, unsigned char* rowBuff
     // row's X-coordinates.
     int xBegin = upperBoundScaledX(frameReader->x_offset);
     int yBegin = upperBoundScaledY(frameReader->y_offset + rowNumber);
-    int xEnd = lowerBoundScaledX(std::min(xBegin + static_cast<int>(rowEnd - rowBuffer), size().width()) - 1, xBegin + 1) + 1;
-    int yEnd = lowerBoundScaledY(std::min(yBegin + static_cast<int>(repeatCount), size().height()) - 1, yBegin + 1) + 1;
+    int xEnd = lowerBoundScaledX(std::min(static_cast<int>(frameReader->x_offset + (rowEnd - rowBuffer)), size().width()) - 1, xBegin + 1) + 1;
+    int yEnd = lowerBoundScaledY(std::min(static_cast<int>(frameReader->y_offset + rowNumber + repeatCount), size().height()) - 1, yBegin + 1) + 1;
     if (!rowBuffer || (xBegin < 0) || (yBegin < 0) || (xEnd <= xBegin) || (yEnd <= yBegin))
         return true;
 
