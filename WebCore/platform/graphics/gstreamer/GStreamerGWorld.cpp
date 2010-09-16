@@ -195,7 +195,11 @@ void GStreamerGWorld::setWindowOverlay(GstMessage* message)
         g_object_set(sink, "force-aspect-ratio", TRUE, NULL);
 
     if (m_videoWindow)
+#if GST_CHECK_VERSION(0, 10, 31) || GST_VERSION_NANO
+        gst_x_overlay_set_window_handle(GST_X_OVERLAY(sink), m_videoWindow->videoWindowId());
+#else
         gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(sink), m_videoWindow->videoWindowId());
+#endif
 }
 
 }
