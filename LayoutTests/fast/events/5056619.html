@@ -1,6 +1,9 @@
 <html>
 <head>
+<script src="../../resources/dump-as-markup.js" type="text/javascript"></script>
 <script>
+Markup.description("This tests drag and drop into a form element that is removed in its onfocus handler.  Safari shouldn't crash and the dropped content shouldn't appear anywhere because there's no editable region left over underneath the mouse when the input element is removed on drop.");
+
 function focusHandler() {
     var input = document.getElementById("input");
     input.parentNode.removeChild(input);
@@ -10,7 +13,7 @@ function runTest() {
     if (!window.layoutTestController)
         return;
 
-    window.layoutTestController.dumpEditingCallbacks();
+    layoutTestController.dumpEditingCallbacks();
     
     var x, y;
     var span = document.getElementById("span");
@@ -36,12 +39,12 @@ function runTest() {
     eventSender.mouseMoveTo(x, y);
     eventSender.leapForward(500);
     eventSender.mouseUp();
+
+    Markup.dump(document.body);
 }
 </script>
 </head>
 <body>
-<p>This tests drag and drop into a form element that is removed in its onfocus handler.  Safari shouldn't crash and the dropped content shouldn't appear anywhere because there's no editable region left over underneath the mouse when the input element is removed on drop.</p>
-<hr>
 <span id="span">Dragme</span><input type="text" id="input" onfocus="focusHandler()">
 <script>runTest();</script>
 </body>

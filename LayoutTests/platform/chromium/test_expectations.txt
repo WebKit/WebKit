@@ -1701,9 +1701,6 @@ BUG23560 MAC : fast/images/animated-svg-as-image.html = IMAGE PASS
 // because we enforce non-transparent color in Font::drawGlyphs.
 BUG24191 LINUX : fast/css/hsla-color.html = FAIL
 
-// TODO(tc): flaky.
-BUG10391 LINUX : fast/events/5056619.html = FAIL
-
 // Failed with r6844 (dglazkov)
 BUG10392 LINUX MAC : http/tests/navigation/error404-goback.html = FAIL
 

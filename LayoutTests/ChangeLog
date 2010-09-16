@@ -1,3 +1,21 @@
+2010-09-16  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        convert fast/events/5056619.html to a dump-as-markup test
+        https://bugs.webkit.org/show_bug.cgi?id=45907
+
+        * fast/events/5056619.html:
+        * platform/chromium-linux/fast/events/5056619-expected.checksum: Removed.
+        * platform/chromium-linux/fast/events/5056619-expected.png: Removed.
+        * platform/chromium-win/fast/events/5056619-expected.checksum: Removed.
+        * platform/chromium-win/fast/events/5056619-expected.png: Removed.
+        * platform/chromium-win/fast/events/5056619-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/fast/events/5056619-expected.checksum: Removed.
+        * platform/mac/fast/events/5056619-expected.png: Removed.
+        * platform/mac/fast/events/5056619-expected.txt: Removed.
+
 2010-09-15  Tony Chang  <tony@chromium.org>
 
         Reviewed by Kent Tamura.

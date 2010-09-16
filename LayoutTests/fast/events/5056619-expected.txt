@@ -1,0 +1,19 @@
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 3 of #text > SPAN > BODY > HTML > #document to 3 of #text > SPAN > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > SPAN > BODY > HTML > #document to 3 of #text > SPAN > BODY > HTML > #document toDOMRange:range from 0 of #text > SPAN > BODY > HTML > #document to 6 of #text > SPAN > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertText:Dragme replacingDOMRange:range from 0 of DIV to 0 of DIV givenAction:WebViewInsertActionDropped
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+This tests drag and drop into a form element that is removed in its onfocus handler.  Safari shouldn't crash and the dropped content shouldn't appear anywhere because there's no editable region left over underneath the mouse when the input element is removed on drop.
+| "
+"
+| <span>
+|   id="span"
+|   "Dragme<#selection-caret>"
+| "
+"
+| <script>
+|   "runTest();"
