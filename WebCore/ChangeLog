@@ -1,3 +1,32 @@
+2010-09-16  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Resources panel] [HAR] Need a way to save timing data.
+        Added support to export HAR to file from Resources panel (conditional on Preferences)
+        Added support for HARLog (a higher-level aggregate than HAREntry)
+        https://bugs.webkit.org/show_bug.cgi?id=45663
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/HAREntry.js:
+        (WebInspector.HAREntry.prototype.build):
+        (WebInspector.HAREntry.prototype._buildTimings):
+        (WebInspector.HAREntry._toMilliseconds):
+        (WebInspector.HARLog):
+        (WebInspector.HARLog.prototype.build):
+        (WebInspector.HARLog.prototype._buildPages):
+        (WebInspector.HARLog.prototype._buildMainResourceTimings):
+        (WebInspector.HARLog.prototype._convertResource):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel):
+        (WebInspector.ResourcesPanel.prototype.hide):
+        (WebInspector.ResourcesPanel.prototype._contextMenu):
+        (WebInspector.ResourcesPanel.prototype._exportAll):
+        (WebInspector.ResourcesPanel.prototype._exportResource):
+        * inspector/front-end/Settings.js:
+        * inspector/front-end/utilities.js:
+        ():
+
 2010-09-16  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by Jian Li.

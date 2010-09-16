@@ -42,7 +42,7 @@ WebInspector.HAREntry.prototype = {
         return {
             pageref: this._resource.documentURL,
             startedDateTime: new Date(this._resource.startTime * 1000),
-            time: this._toMilliseconds(this._resource.duration),
+            time: WebInspector.HAREntry._toMilliseconds(this._resource.duration),
             request: this._buildRequest(),
             response: this._buildResponse(),
             // cache: {...}, -- Not supproted yet.
@@ -121,7 +121,7 @@ WebInspector.HAREntry.prototype = {
             connect: connect,
             send: send,
             wait: this._interval("sendEnd", "receiveHeadersEnd"),
-            receive: this._toMilliseconds(this._resource.receiveDuration),
+            receive: WebInspector.HAREntry._toMilliseconds(this._resource.receiveDuration),
             ssl: ssl
         };
     },
@@ -150,11 +150,6 @@ WebInspector.HAREntry.prototype = {
         return parameters.slice();
     },
 
-    _toMilliseconds: function(time)
-    {
-        return time === -1 ? -1 : Math.round(time * 1000);
-    },
-
     _interval: function(start, end)
     {
         var timing = this._resource.timing;
@@ -162,5 +157,58 @@ WebInspector.HAREntry.prototype = {
             return -1;
         var startTime = timing[start];
         return typeof startTime !== "number" || startTime === -1 ? -1 : Math.round(timing[end] - startTime);
+    }
+};
+
+WebInspector.HAREntry._toMilliseconds = function(time)
+{
+    return time === -1 ? -1 : Math.round(time * 1000);
+}
+
+WebInspector.HARLog = function()
+{
+}
+
+WebInspector.HARLog.prototype = {
+    build: function()
+    {
+        var webKitVersion = /AppleWebKit\/([^ ]+)/.exec(window.navigator.userAgent);
+        
+        return {
+            version: "1.2",
+            creator: {
+                name: "WebInspector",
+                version: webKitVersion ? webKitVersion[1] : "n/a"
+            },
+            pages: this._buildPages(),
+            entries: Object.properties(WebInspector.resources).map(this._convertResource)
+        }
+    },
+
+    _buildPages: function()
+    {
+        return [
+            {
+                startedDateTime: new Date(WebInspector.mainResource.startTime * 1000),
+                id: WebInspector.mainResource.documentURL,
+                title: "",
+                pageTimings: this._buildMainResourceTimings()
+            }
+        ];
+    },
+
+    _buildMainResourceTimings: function()
+    {
+        var resourcesPanel = WebInspector.panels.resources;
+        var startTime = WebInspector.mainResource.startTime;
+        return {
+             onContentLoad: WebInspector.HAREntry._toMilliseconds(resourcesPanel.mainResourceDOMContentTime - startTime),
+             onLoad: WebInspector.HAREntry._toMilliseconds(resourcesPanel.mainResourceLoadTime - startTime),
+        }
+    },
+
+    _convertResource: function(id)
+    {
+        return (new WebInspector.HAREntry(WebInspector.resources[id])).build();
     }
 };

@@ -47,6 +47,8 @@ WebInspector.ResourcesPanel = function()
     this.filter(this.filterAllElement, false);
     this.graphsTreeElement.children[0].select();
     this._resourceTrackingEnabled = false;
+
+    this.sidebarElement.addEventListener("contextmenu", this._contextMenu.bind(this), true);
 }
 
 WebInspector.ResourcesPanel.prototype = {
@@ -876,6 +878,36 @@ WebInspector.ResourcesPanel.prototype = {
     {
         WebInspector.Panel.prototype.hide.call(this);
         this._popoverHelper.hidePopup();
+    },
+
+    _contextMenu: function(event)
+    {
+        // createBlobURL is enabled conditionally, do not expose resource export if it's not available.
+        if (typeof window.createBlobURL !== "function" || !Preferences.resourceExportEnabled)
+            return;
+
+        var contextMenu = new WebInspector.ContextMenu();
+        var resourceTreeItem = event.target.enclosingNodeOrSelfWithClass("resource-sidebar-tree-item");
+        if (resourceTreeItem && resourceTreeItem.treeElement) {
+            var resource = resourceTreeItem.treeElement.representedObject;
+            contextMenu.appendItem(WebInspector.UIString("Export to HAR"), this._exportResource.bind(this, resource));
+        }
+        contextMenu.appendItem(WebInspector.UIString("Export all to HAR"), this._exportAll.bind(this));
+        contextMenu.show(event);
+    },
+
+    _exportAll: function()
+    {
+        var harArchive = {
+            log: (new WebInspector.HARLog()).build()
+        }
+        offerFileForDownload(JSON.stringify(harArchive));
+    },
+
+    _exportResource: function(resource)
+    {
+        var har = (new WebInspector.HAREntry(resource)).build();
+        offerFileForDownload(JSON.stringify(har));
     }
 }
 

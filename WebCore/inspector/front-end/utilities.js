@@ -984,3 +984,12 @@ function createSearchRegex(query)
     }
     return new RegExp(regex, "i");
 }
+
+function offerFileForDownload(contents)
+{
+    var builder = new BlobBuilder();
+    builder.append(contents);
+    var blob = builder.getBlob("application/octet-stream");
+    var url = window.createBlobURL(blob);
+    window.open(url);
+}

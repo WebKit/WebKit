@@ -44,7 +44,8 @@ var Preferences = {
     profilerAlwaysEnabled: false,
     auditsPanelEnabled: true,
     onlineDetectionEnabled: true,
-    domBreakpointsEnabled: false
+    domBreakpointsEnabled: false,
+    resourceExportEnabled: false
 }
 
 WebInspector.Settings = function(sessionScope)
