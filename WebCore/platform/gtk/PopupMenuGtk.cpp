@@ -87,7 +87,12 @@ void PopupMenuGtk::show(const IntRect& rect, FrameView* view, int index)
     // The size calls are directly copied from gtkcombobox.c which is LGPL
     GtkRequisition requisition;
     gtk_widget_set_size_request(GTK_WIDGET(m_popup.get()), -1, -1);
+#ifdef GTK_API_VERSION_2
     gtk_widget_size_request(GTK_WIDGET(m_popup.get()), &requisition);
+#else
+    gtk_size_request_get_size(GTK_SIZE_REQUEST(m_popup.get()), &requisition, NULL);
+#endif
+
     gtk_widget_set_size_request(GTK_WIDGET(m_popup.get()), std::max(rect.width(), requisition.width), -1);
 
     GList* children = gtk_container_get_children(GTK_CONTAINER(m_popup.get()));
@@ -99,7 +104,11 @@ void PopupMenuGtk::show(const IntRect& rect, FrameView* view, int index)
 
             GtkWidget* item = reinterpret_cast<GtkWidget*>(p->data);
             GtkRequisition itemRequisition;
+#ifdef GTK_API_VERSION_2
             gtk_widget_get_child_requisition(item, &itemRequisition);
+#else
+            gtk_size_request_get_size(GTK_SIZE_REQUEST(item), &itemRequisition, NULL);
+#endif
             m_menuPosition.setY(m_menuPosition.y() - itemRequisition.height);
 
             p = g_list_next(p);

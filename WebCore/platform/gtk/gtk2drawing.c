@@ -1265,7 +1265,9 @@ moz_gtk_scrollbar_thumb_paint(GtkThemeWidgetType widget,
     GtkStyle* style;
     GtkScrollbar *scrollbar;
     GtkAdjustment *adj;
+#ifdef GTK_API_VERSION_2
     gboolean activate_slider;
+#endif
 
     ensure_scrollbar_widget();
 
@@ -1317,6 +1319,7 @@ moz_gtk_scrollbar_thumb_paint(GtkThemeWidgetType widget,
 
     style = gtk_widget_get_style(GTK_WIDGET(scrollbar));
     
+#ifdef GTK_API_VERSION_2
     gtk_widget_style_get(GTK_WIDGET(scrollbar), "activate-slider",
                          &activate_slider, NULL);
     
@@ -1324,6 +1327,7 @@ moz_gtk_scrollbar_thumb_paint(GtkThemeWidgetType widget,
         shadow_type = GTK_SHADOW_IN;
         state_type = GTK_STATE_ACTIVE;
     }
+#endif
 
     TSOffsetStyleGCs(style, rect->x, rect->y);
 
@@ -1812,7 +1816,11 @@ moz_gtk_combo_box_paint(GdkDrawable* drawable, GdkRectangle* rect,
                                 rect, &arrow_rect, direction, ishtml);
     /* Now arrow_rect contains the inner rect ; we want to correct the width
      * to what the arrow needs (see gtk_combo_box_size_allocate) */
+#ifdef GTK_API_VERSION_2
     gtk_widget_size_request(gParts->comboBoxArrowWidget, &arrow_req);
+#else
+    gtk_size_request_get_size(GTK_SIZE_REQUEST(gParts->comboBoxArrowWidget), &arrow_req, NULL);
+#endif
     if (direction == GTK_TEXT_DIR_LTR)
         arrow_rect.x += arrow_rect.width - arrow_req.width;
     arrow_rect.width = arrow_req.width;
@@ -2783,8 +2791,11 @@ moz_gtk_get_widget_border(GtkThemeWidgetType widget, gint* left, gint* top,
                         XTHICKNESS(style);
             }
 
+#ifdef GTK_API_VERSION_2
             gtk_widget_size_request(gParts->comboBoxArrowWidget, &arrow_req);
-
+#else
+            gtk_size_request_get_size(GTK_SIZE_REQUEST(gParts->comboBoxArrowWidget), &arrow_req, NULL);
+#endif
             if (direction == GTK_TEXT_DIR_RTL)
                 *left += separator_width + arrow_req.width;
             else
@@ -2948,7 +2959,12 @@ moz_gtk_get_combo_box_entry_button_size(gint* width, gint* height)
     GtkRequisition requisition;
     ensure_combo_box_entry_widgets();
 
+#ifdef GTK_API_VERSION_2
     gtk_widget_size_request(gParts->comboBoxEntryButtonWidget, &requisition);
+#else
+    gtk_size_request_get_size(GTK_SIZE_REQUEST(gParts->comboBoxEntryButtonWidget), &requisition, NULL);
+#endif
+
     *width = requisition.width;
     *height = requisition.height;
 
@@ -2976,7 +2992,12 @@ moz_gtk_get_downarrow_size(gint* width, gint* height)
     GtkRequisition requisition;
     ensure_button_arrow_widget();
 
+#ifdef GTK_API_VERSION_2
     gtk_widget_size_request(gParts->buttonArrowWidget, &requisition);
+#else
+    gtk_size_request_get_size(GTK_SIZE_REQUEST(gParts->buttonArrowWidget), &requisition, NULL);
+#endif
+
     *width = requisition.width;
     *height = requisition.height;
 

@@ -220,7 +220,11 @@ static void PopupMenuPositionFunc(GtkMenu* menu, gint *x, gint *y, gboolean *pus
     GdkScreen* screen = gtk_widget_get_screen(GTK_WIDGET(view));
     GtkRequisition menuSize;
 
+#ifdef GTK_API_VERSION_2
     gtk_widget_size_request(GTK_WIDGET(menu), &menuSize);
+#else
+    gtk_size_request_get_size(GTK_SIZE_REQUEST(menu), &menuSize, NULL);
+#endif
 
     *x = priv->lastPopupXPosition;
     if ((*x + menuSize.width) >= gdk_screen_get_width(screen))

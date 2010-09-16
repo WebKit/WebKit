@@ -1,3 +1,13 @@
+2010-09-16  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        GTK+ 3.x. updates, gtk_widget_size_request is deprecated and
+        "activate-slider" style property for scrollbars is gone.
+
+        * webkit/webkitwebview.cpp:
+        (PopupMenuPositionFunc):
+
 2010-09-15  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by David Levin.
