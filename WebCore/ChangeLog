@@ -1,3 +1,22 @@
+2010-09-16  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Fix incorrect usage of dissolveDragImageToFraction().
+        https://bugs.webkit.org/show_bug.cgi?id=45835
+
+        createDragImageForSelection() was ignoring the return value of
+        dissolveDragImageToFraction(). This didn't happen to crash on most
+        platforms, since most implementations simply modified the image that was
+        passed in. However, Chromium Mac's implementation actually creates a new
+        image and returns that instead. This caused us to crash when copying the
+        image from the renderer to the browser process, since the memory had
+        already been freed.
+
+        * manual-tests/selection-drag-crash.html: Added.
+        * platform/DragImage.cpp:
+        (WebCore::createDragImageForSelection):
+
 2010-09-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r67628.
