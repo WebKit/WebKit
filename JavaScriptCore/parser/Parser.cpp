@@ -66,11 +66,12 @@ void Parser::parse(JSGlobalData* globalData, int* errLine, UString* errMsg)
 }
 
 void Parser::didFinishParsing(SourceElements* sourceElements, ParserArenaData<DeclarationStacks::VarStack>* varStack, 
-                              ParserArenaData<DeclarationStacks::FunctionStack>* funcStack, CodeFeatures features, int lastLine, int numConstants)
+                              ParserArenaData<DeclarationStacks::FunctionStack>* funcStack, CodeFeatures features, int lastLine, int numConstants, IdentifierSet& capturedVars)
 {
     m_sourceElements = sourceElements;
     m_varDeclarations = varStack;
     m_funcDeclarations = funcStack;
+    m_capturedVariables.swap(capturedVars);
     m_features = features;
     m_lastLine = lastLine;
     m_numConstants = numConstants;

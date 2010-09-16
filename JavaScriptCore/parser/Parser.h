@@ -51,7 +51,8 @@ namespace JSC {
         PassRefPtr<ParsedNode> parse(JSGlobalData* globalData, JSGlobalObject* lexicalGlobalObject, Debugger*, ExecState*, const SourceCode& source, JSObject** exception);
 
         void didFinishParsing(SourceElements*, ParserArenaData<DeclarationStacks::VarStack>*, 
-                              ParserArenaData<DeclarationStacks::FunctionStack>*, CodeFeatures features, int lastLine, int numConstants);
+                              ParserArenaData<DeclarationStacks::FunctionStack>*, CodeFeatures features,
+                              int lastLine, int numConstants, IdentifierSet&);
 
         ParserArena& arena() { return m_arena; }
 
@@ -67,6 +68,7 @@ namespace JSC {
         SourceElements* m_sourceElements;
         ParserArenaData<DeclarationStacks::VarStack>* m_varDeclarations;
         ParserArenaData<DeclarationStacks::FunctionStack>* m_funcDeclarations;
+        IdentifierSet m_capturedVariables;
         CodeFeatures m_features;
         int m_lastLine;
         int m_numConstants;
@@ -87,12 +89,13 @@ namespace JSC {
         RefPtr<ParsedNode> result;
         if (m_sourceElements) {
             result = ParsedNode::create(globalData,
-            m_sourceElements,
-            m_varDeclarations ? &m_varDeclarations->data : 0,
-            m_funcDeclarations ? &m_funcDeclarations->data : 0,
-            source,
-            m_features,
-            m_numConstants);
+                m_sourceElements,
+                m_varDeclarations ? &m_varDeclarations->data : 0,
+                m_funcDeclarations ? &m_funcDeclarations->data : 0,
+                m_capturedVariables,
+                source,
+                m_features,
+                m_numConstants);
             result->setLoc(m_source->firstLine(), m_lastLine);
         } else if (lexicalGlobalObject) {
             // We can never see a syntax error when reparsing a function, since we should have

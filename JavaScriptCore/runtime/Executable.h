@@ -172,20 +172,22 @@ namespace JSC {
 
         bool usesEval() const { return m_features & EvalFeature; }
         bool usesArguments() const { return m_features & ArgumentsFeature; }
-        bool needsActivation() const { return m_features & (EvalFeature | ClosureFeature | WithFeature | CatchFeature); }
+        bool needsActivation() const { return m_hasCapturedVariables || m_features & (EvalFeature | WithFeature | CatchFeature); }
 
         virtual PassOwnPtr<ExceptionInfo> reparseExceptionInfo(JSGlobalData*, ScopeChainNode*, CodeBlock*) = 0;
 
     protected:
-        void recordParse(CodeFeatures features, int firstLine, int lastLine)
+        void recordParse(CodeFeatures features, bool hasCapturedVariables, int firstLine, int lastLine)
         {
             m_features = features;
+            m_hasCapturedVariables = hasCapturedVariables;
             m_firstLine = firstLine;
             m_lastLine = lastLine;
         }
 
         SourceCode m_source;
         CodeFeatures m_features;
+        bool m_hasCapturedVariables;
         int m_firstLine;
         int m_lastLine;
     };

@@ -75,7 +75,7 @@ StatementNode* SourceElements::singleStatement() const
 
 // -----------------------------ScopeNodeData ---------------------------
 
-ScopeNodeData::ScopeNodeData(ParserArena& arena, SourceElements* statements, VarStack* varStack, FunctionStack* funcStack, int numConstants)
+ScopeNodeData::ScopeNodeData(ParserArena& arena, SourceElements* statements, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, int numConstants)
     : m_numConstants(numConstants)
     , m_statements(statements)
 {
@@ -84,6 +84,7 @@ ScopeNodeData::ScopeNodeData(ParserArena& arena, SourceElements* statements, Var
         m_varStack.swap(*varStack);
     if (funcStack)
         m_functionStack.swap(*funcStack);
+    m_capturedVariables.swap(capturedVariables);
 }
 
 // ------------------------------ ScopeNode -----------------------------
@@ -95,10 +96,10 @@ ScopeNode::ScopeNode(JSGlobalData* globalData)
 {
 }
 
-ScopeNode::ScopeNode(JSGlobalData* globalData, const SourceCode& source, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, CodeFeatures features, int numConstants)
+ScopeNode::ScopeNode(JSGlobalData* globalData, const SourceCode& source, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, CodeFeatures features, int numConstants)
     : StatementNode(globalData)
     , ParserArenaRefCounted(globalData)
-    , m_data(adoptPtr(new ScopeNodeData(globalData->parser->arena(), children, varStack, funcStack, numConstants)))
+    , m_data(adoptPtr(new ScopeNodeData(globalData->parser->arena(), children, varStack, funcStack, capturedVariables, numConstants)))
     , m_features(features)
     , m_source(source)
 {
@@ -111,14 +112,14 @@ StatementNode* ScopeNode::singleStatement() const
 
 // ------------------------------ ProgramNode -----------------------------
 
-inline ProgramNode::ProgramNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, const SourceCode& source, CodeFeatures features, int numConstants)
-    : ScopeNode(globalData, source, children, varStack, funcStack, features, numConstants)
+inline ProgramNode::ProgramNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& source, CodeFeatures features, int numConstants)
+    : ScopeNode(globalData, source, children, varStack, funcStack, capturedVariables, features, numConstants)
 {
 }
 
-PassRefPtr<ProgramNode> ProgramNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, const SourceCode& source, CodeFeatures features, int numConstants)
+PassRefPtr<ProgramNode> ProgramNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& source, CodeFeatures features, int numConstants)
 {
-    RefPtr<ProgramNode> node = new ProgramNode(globalData, children, varStack, funcStack, source, features, numConstants);
+    RefPtr<ProgramNode> node = new ProgramNode(globalData, children, varStack, funcStack, capturedVariables, source, features, numConstants);
 
     ASSERT(node->data()->m_arena.last() == node);
     node->data()->m_arena.removeLast();
@@ -129,14 +130,14 @@ PassRefPtr<ProgramNode> ProgramNode::create(JSGlobalData* globalData, SourceElem
 
 // ------------------------------ EvalNode -----------------------------
 
-inline EvalNode::EvalNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, const SourceCode& source, CodeFeatures features, int numConstants)
-    : ScopeNode(globalData, source, children, varStack, funcStack, features, numConstants)
+inline EvalNode::EvalNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& source, CodeFeatures features, int numConstants)
+    : ScopeNode(globalData, source, children, varStack, funcStack, capturedVariables, features, numConstants)
 {
 }
 
-PassRefPtr<EvalNode> EvalNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, const SourceCode& source, CodeFeatures features, int numConstants)
+PassRefPtr<EvalNode> EvalNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& source, CodeFeatures features, int numConstants)
 {
-    RefPtr<EvalNode> node = new EvalNode(globalData, children, varStack, funcStack, source, features, numConstants);
+    RefPtr<EvalNode> node = new EvalNode(globalData, children, varStack, funcStack, capturedVariables, source, features, numConstants);
 
     ASSERT(node->data()->m_arena.last() == node);
     node->data()->m_arena.removeLast();
@@ -158,8 +159,8 @@ inline FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData)
 {
 }
 
-inline FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, const SourceCode& sourceCode, CodeFeatures features, int numConstants)
-    : ScopeNode(globalData, sourceCode, children, varStack, funcStack, features, numConstants)
+inline FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& sourceCode, CodeFeatures features, int numConstants)
+    : ScopeNode(globalData, sourceCode, children, varStack, funcStack, capturedVariables, features, numConstants)
 {
 }
 
@@ -181,9 +182,9 @@ FunctionBodyNode* FunctionBodyNode::create(JSGlobalData* globalData)
     return new FunctionBodyNode(globalData);
 }
 
-PassRefPtr<FunctionBodyNode> FunctionBodyNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, const SourceCode& sourceCode, CodeFeatures features, int numConstants)
+PassRefPtr<FunctionBodyNode> FunctionBodyNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& sourceCode, CodeFeatures features, int numConstants)
 {
-    RefPtr<FunctionBodyNode> node = new FunctionBodyNode(globalData, children, varStack, funcStack, sourceCode, features, numConstants);
+    RefPtr<FunctionBodyNode> node = new FunctionBodyNode(globalData, children, varStack, funcStack, capturedVariables, sourceCode, features, numConstants);
 
     ASSERT(node->data()->m_arena.last() == node);
     node->data()->m_arena.removeLast();

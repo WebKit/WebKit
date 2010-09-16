@@ -100,6 +100,7 @@ public:
     typedef std::pair<ExpressionNode*, BinaryOpInfo> BinaryOperand;
     
     static const bool CreatesAST = true;
+    static const bool NeedsFreeVariableInfo = true;
 
     ExpressionNode* makeBinaryNode(int token, std::pair<ExpressionNode*, BinaryOpInfo>, std::pair<ExpressionNode*, BinaryOpInfo>);
     ExpressionNode* makeFunctionCallNode(ExpressionNode* func, ArgumentsNode* args, int start, int divot, int end);

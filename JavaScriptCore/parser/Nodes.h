@@ -81,6 +81,8 @@ namespace JSC {
         OpLogicalOr
     };
 
+    typedef HashSet<RefPtr<StringImpl>, IdentifierRepHash> IdentifierSet;
+
     namespace DeclarationStacks {
         enum VarAttrs { IsConstant = 1, HasInitializer = 2 };
         typedef Vector<std::pair<const Identifier*, unsigned> > VarStack;
@@ -1376,13 +1378,14 @@ namespace JSC {
         typedef DeclarationStacks::VarStack VarStack;
         typedef DeclarationStacks::FunctionStack FunctionStack;
 
-        ScopeNodeData(ParserArena&, SourceElements*, VarStack*, FunctionStack*, int numConstants);
+        ScopeNodeData(ParserArena&, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, int numConstants);
 
         ParserArena m_arena;
         VarStack m_varStack;
         FunctionStack m_functionStack;
         int m_numConstants;
         SourceElements* m_statements;
+        IdentifierSet m_capturedVariables;
     };
 
     class ScopeNode : public StatementNode, public ParserArenaRefCounted {
@@ -1391,7 +1394,7 @@ namespace JSC {
         typedef DeclarationStacks::FunctionStack FunctionStack;
 
         ScopeNode(JSGlobalData*);
-        ScopeNode(JSGlobalData*, const SourceCode&, SourceElements*, VarStack*, FunctionStack*, CodeFeatures, int numConstants);
+        ScopeNode(JSGlobalData*, const SourceCode&, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, CodeFeatures, int numConstants);
 
         using ParserArenaRefCounted::operator new;
 
@@ -1409,7 +1412,8 @@ namespace JSC {
         bool usesArguments() const { return m_features & ArgumentsFeature; }
         void setUsesArguments() { m_features |= ArgumentsFeature; }
         bool usesThis() const { return m_features & ThisFeature; }
-        bool needsActivation() const { return m_features & (EvalFeature | ClosureFeature | WithFeature | CatchFeature); }
+        bool needsActivation() const { ASSERT(m_data); return (hasCapturedVariables()) || (m_features & (EvalFeature | WithFeature | CatchFeature)); }
+        bool hasCapturedVariables() const { return !!m_data->m_capturedVariables.size(); }
 
         VarStack& varStack() { ASSERT(m_data); return m_data->m_varStack; }
         FunctionStack& functionStack() { ASSERT(m_data); return m_data->m_functionStack; }
@@ -1437,24 +1441,24 @@ namespace JSC {
 
     class ProgramNode : public ScopeNode {
     public:
-        static PassRefPtr<ProgramNode> create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants);
+        static PassRefPtr<ProgramNode> create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
 
         static const bool scopeIsFunction = false;
 
     private:
-        ProgramNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants);
+        ProgramNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
 
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
     };
 
     class EvalNode : public ScopeNode {
     public:
-        static PassRefPtr<EvalNode> create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants);
+        static PassRefPtr<EvalNode> create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
 
         static const bool scopeIsFunction = false;
 
     private:
-        EvalNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants);
+        EvalNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
 
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
     };
@@ -1470,7 +1474,7 @@ namespace JSC {
     class FunctionBodyNode : public ScopeNode {
     public:
         static FunctionBodyNode* create(JSGlobalData*);
-        static PassRefPtr<FunctionBodyNode> create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants);
+        static PassRefPtr<FunctionBodyNode> create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
 
         FunctionParameters* parameters() const { return m_parameters.get(); }
         size_t parameterCount() const { return m_parameters->size(); }
@@ -1486,7 +1490,7 @@ namespace JSC {
 
     private:
         FunctionBodyNode(JSGlobalData*);
-        FunctionBodyNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants);
+        FunctionBodyNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
 
         Identifier m_ident;
         RefPtr<FunctionParameters> m_parameters;

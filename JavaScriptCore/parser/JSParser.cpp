@@ -199,6 +199,81 @@ private:
     int m_assignmentCount;
     int m_nonLHSCount;
     bool m_syntaxAlreadyValidated;
+
+    struct Scope {
+        Scope()
+            : m_usesEval(false)
+        {
+        }
+        
+        void declareVariable(const Identifier* ident)
+        {
+            m_declaredVariables.add(ident->ustring().impl());
+        }
+        
+        void useVariable(const Identifier* ident, bool isEval)
+        {
+            m_usesEval |= isEval;
+            m_usedVariables.add(ident->ustring().impl());
+        }
+        
+        void collectFreeVariables(Scope* nestedScope, bool shouldTrackCapturedVariables)
+        {
+            if (nestedScope->m_usesEval)
+                m_usesEval = true;
+            IdentifierSet::iterator end = nestedScope->m_usedVariables.end();
+            for (IdentifierSet::iterator ptr = nestedScope->m_usedVariables.begin(); ptr != end; ++ptr) {
+                if (nestedScope->m_declaredVariables.contains(*ptr))
+                    continue;
+                m_usedVariables.add(*ptr);
+                if (shouldTrackCapturedVariables)
+                    m_capturedVariables.add(*ptr);
+            }
+        }
+
+        IdentifierSet& capturedVariables() { return m_capturedVariables; }
+    private:
+        bool m_usesEval;
+        IdentifierSet m_declaredVariables;
+        IdentifierSet m_usedVariables;
+        IdentifierSet m_capturedVariables;
+    };
+    
+    typedef Vector<Scope, 10> ScopeStack;
+
+    struct ScopeRef {
+        ScopeRef(ScopeStack* scopeStack, unsigned index)
+            : m_scopeStack(scopeStack)
+            , m_index(index)
+        {
+        }
+        Scope* operator->() { return &m_scopeStack->at(m_index); }
+        unsigned index() const { return m_index; }
+    private:
+        ScopeStack* m_scopeStack;
+        unsigned m_index;
+    };
+    
+    ScopeRef currentScope()
+    {
+        return ScopeRef(&m_scopeStack, m_scopeStack.size() - 1);
+    }
+    
+    ScopeRef pushScope()
+    {
+        m_scopeStack.append(Scope());
+        return currentScope();
+    }
+
+    void popScope(ScopeRef scope, bool shouldTrackCapturedVariables)
+    {
+        ASSERT_UNUSED(scope, scope.index() == m_scopeStack.size() - 1);
+        ASSERT(m_scopeStack.size() > 1);
+        m_scopeStack[m_scopeStack.size() - 2].collectFreeVariables(&m_scopeStack.last(), shouldTrackCapturedVariables);
+        m_scopeStack.removeLast();
+    }
+
+    ScopeStack m_scopeStack;
 };
 
 int jsParse(JSGlobalData* globalData, const SourceCode* source)
@@ -228,11 +303,12 @@ JSParser::JSParser(Lexer* lexer, JSGlobalData* globalData, SourceProvider* provi
 bool JSParser::parseProgram()
 {
     ASTBuilder context(m_globalData, m_lexer);
+    ScopeRef scope = pushScope();
     SourceElements* sourceElements = parseSourceElements<ASTBuilder>(context);
     if (!sourceElements || !consume(EOFTOK))
         return true;
     m_globalData->parser->didFinishParsing(sourceElements, context.varDeclarations(), context.funcDeclarations(), context.features(),
-                                          m_lastLine, context.numConstants());
+                                          m_lastLine, context.numConstants(), scope->capturedVariables());
     return false;
 }
 
@@ -327,6 +403,7 @@ template <class TreeBuilder> TreeExpression JSParser::parseVarDeclarationList(Tr
         lastIdent = name;
         next();
         bool hasInitializer = match(EQUAL);
+        currentScope()->declareVariable(name);
         context.addVar(name, (hasInitializer || (!m_allowsIn && match(INTOKEN))) ? DeclarationStacks::HasInitializer : 0);
         if (hasInitializer) {
             int varDivot = tokenStart() + 1;
@@ -358,6 +435,7 @@ template <class TreeBuilder> TreeConstDeclList JSParser::parseConstDeclarationLi
         const Identifier* name = m_token.m_data.ident;
         next();
         bool hasInitializer = match(EQUAL);
+        currentScope()->declareVariable(name);
         context.addVar(name, DeclarationStacks::IsConstant | (hasInitializer ? DeclarationStacks::HasInitializer : 0));
         TreeExpression initializer = 0;
         if (hasInitializer) {
@@ -655,12 +733,15 @@ template <class TreeBuilder> TreeStatement JSParser::parseTryStatement(TreeBuild
         matchOrFail(IDENT);
         ident = m_token.m_data.ident;
         next();
+        ScopeRef catchScope = pushScope();
+        catchScope->declareVariable(ident);
         consumeOrFail(CLOSEPAREN);
         matchOrFail(OPENBRACE);
         int initialEvalCount = context.evalCount();
         catchBlock = parseBlockStatement(context);
         failIfFalse(catchBlock);
         catchHasEval = initialEvalCount != context.evalCount();
+        popScope(catchScope, TreeBuilder::NeedsFreeVariableInfo);
     }
 
     if (match(FINALLY)) {
@@ -757,6 +838,7 @@ template <class TreeBuilder> TreeFormalParameterList JSParser::parseFormalParame
 {
     matchOrFail(IDENT);
     usesArguments = m_globalData->propertyNames->arguments == *m_token.m_data.ident;
+    currentScope()->declareVariable(m_token.m_data.ident);
     TreeFormalParameterList list = context.createFormalParameterList(*m_token.m_data.ident);
     TreeFormalParameterList tail = list;
     next();
@@ -764,6 +846,7 @@ template <class TreeBuilder> TreeFormalParameterList JSParser::parseFormalParame
         next();
         matchOrFail(IDENT);
         const Identifier* ident = m_token.m_data.ident;
+        currentScope()->declareVariable(ident);
         next();
         usesArguments = usesArguments || m_globalData->propertyNames->arguments == *ident;
         tail = context.createFormalParameterList(tail, *ident);
@@ -782,9 +865,11 @@ template <class TreeBuilder> TreeFunctionBody JSParser::parseFunctionBody(TreeBu
 
 template <JSParser::FunctionRequirements requirements, class TreeBuilder> bool JSParser::parseFunctionInfo(TreeBuilder& context, const Identifier*& name, TreeFormalParameterList& parameters, TreeFunctionBody& body, int& openBracePos, int& closeBracePos, int& bodyStartLine)
 {
+    ScopeRef functionScope = pushScope();
     if (match(IDENT)) {
         name = m_token.m_data.ident;
         next();
+        functionScope->declareVariable(name);
     } else if (requirements == FunctionNeedsName)
         return false;
     consumeOrFail(OPENPAREN);
@@ -804,7 +889,7 @@ template <JSParser::FunctionRequirements requirements, class TreeBuilder> bool J
     failIfFalse(body);
     if (usesArguments)
         context.setUsesArguments(body);
-
+    popScope(functionScope, TreeBuilder::NeedsFreeVariableInfo);
     matchOrFail(CLOSEBRACE);
     closeBracePos = m_token.m_data.intValue;
     next();
@@ -823,6 +908,7 @@ template <class TreeBuilder> TreeStatement JSParser::parseFunctionDeclaration(Tr
     int bodyStartLine = 0;
     failIfFalse(parseFunctionInfo<FunctionNeedsName>(context, name, parameters, body, openBracePos, closeBracePos, bodyStartLine));
     failIfFalse(name);
+    currentScope()->declareVariable(name);
     return context.createFuncDeclStatement(name, body, parameters, openBracePos, closeBracePos, bodyStartLine, m_lastLine);
 }
 
@@ -1281,6 +1367,7 @@ template <class TreeBuilder> TreeExpression JSParser::parsePrimaryExpression(Tre
         int start = tokenStart();
         const Identifier* ident = m_token.m_data.ident;
         next();
+        currentScope()->useVariable(ident, m_globalData->propertyNames->eval == *ident);
         return context.createResolve(ident, start);
     }
     case STRING: {

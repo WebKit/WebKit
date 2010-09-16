@@ -1,3 +1,62 @@
+2010-09-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Use free variable analysis to improve activation performance
+        https://bugs.webkit.org/show_bug.cgi?id=45837
+
+        Adds free and captured variable tracking to the JS parser.  This
+        allows us to avoid construction of an activation object in some
+        cases.  Future patches will make more use of this information to
+        improve those cases where activations are still needed.
+
+        * parser/ASTBuilder.h:
+        * parser/JSParser.cpp:
+        (JSC::JSParser::Scope::Scope):
+        (JSC::JSParser::Scope::declareVariable):
+        (JSC::JSParser::Scope::useVariable):
+        (JSC::JSParser::Scope::collectFreeVariables):
+        (JSC::JSParser::Scope::capturedVariables):
+        (JSC::JSParser::ScopeRef::ScopeRef):
+        (JSC::JSParser::ScopeRef::operator->):
+        (JSC::JSParser::ScopeRef::index):
+        (JSC::JSParser::currentScope):
+        (JSC::JSParser::pushScope):
+        (JSC::JSParser::popScope):
+        (JSC::JSParser::parseProgram):
+        (JSC::JSParser::parseVarDeclarationList):
+        (JSC::JSParser::parseConstDeclarationList):
+        (JSC::JSParser::parseTryStatement):
+        (JSC::JSParser::parseFormalParameters):
+        (JSC::JSParser::parseFunctionInfo):
+        (JSC::JSParser::parseFunctionDeclaration):
+        (JSC::JSParser::parsePrimaryExpression):
+        * parser/Nodes.cpp:
+        (JSC::ScopeNodeData::ScopeNodeData):
+        (JSC::ScopeNode::ScopeNode):
+        (JSC::ProgramNode::ProgramNode):
+        (JSC::ProgramNode::create):
+        (JSC::EvalNode::EvalNode):
+        (JSC::EvalNode::create):
+        (JSC::FunctionBodyNode::FunctionBodyNode):
+        (JSC::FunctionBodyNode::create):
+        * parser/Nodes.h:
+        (JSC::ScopeNode::needsActivation):
+        (JSC::ScopeNode::hasCapturedVariables):
+        * parser/Parser.cpp:
+        (JSC::Parser::didFinishParsing):
+        * parser/Parser.h:
+        (JSC::Parser::parse):
+        * parser/SyntaxChecker.h:
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+        * runtime/Executable.h:
+        (JSC::ScriptExecutable::needsActivation):
+        (JSC::ScriptExecutable::recordParse):
+
 2010-09-14  Hyung Song  <beergun@company100.net>
 
         Reviewed by Kent Tamura.
