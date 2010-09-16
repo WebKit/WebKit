@@ -130,6 +130,12 @@ void WebContext::ensureWebProcess()
     for (HashSet<String>::iterator it = m_schemesToRegisterAsEmptyDocument.begin(), end = m_schemesToRegisterAsEmptyDocument.end(); it != end; ++it)
         m_process->send(WebProcessMessage::RegisterURLSchemeAsEmptyDocument, 0, CoreIPC::In(*it));
 
+    for (size_t i = 0; i != m_pendingMessagesToPostToInjectedBundle.size(); ++i) {
+        pair<String, RefPtr<APIObject> >* message = &m_pendingMessagesToPostToInjectedBundle[i];
+        m_process->send(InjectedBundleMessage::PostMessage, 0, CoreIPC::In(message->first, WebContextUserMessageEncoder(message->second.get())));
+    }
+    m_pendingMessagesToPostToInjectedBundle.clear();
+
     platformSetUpWebProcess();
 }
 
@@ -197,8 +203,10 @@ void WebContext::preferencesDidChange()
 
 void WebContext::postMessageToInjectedBundle(const String& messageName, APIObject* messageBody)
 {
-    if (!hasValidProcess())
+    if (!hasValidProcess()) {
+        m_pendingMessagesToPostToInjectedBundle.append(make_pair(messageName, messageBody));
         return;
+    }
 
     // FIXME: We should consider returning false from this function if the messageBody cannot
     // be encoded.

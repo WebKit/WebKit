@@ -1,3 +1,18 @@
+2010-09-15  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        We should save messages that can't be sent when postMessageToInjectedBundle is called and
+        send them in ensureWebProcess.
+        https://bugs.webkit.org/show_bug.cgi?id=45822
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::ensureWebProcess):
+        Post any messages to the Injected Bundle that couldn't be sent earlier because the
+        WebProcess hadn't been initialized yet.
+        (WebKit::WebContext::postMessageToInjectedBundle):
+        * UIProcess/WebContext.h:
+
 2010-09-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.

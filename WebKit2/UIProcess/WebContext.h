@@ -136,6 +136,7 @@ private:
     VisitedLinkProvider m_visitedLinkProvider;
         
     HashSet<WTF::String> m_schemesToRegisterAsEmptyDocument;
+    Vector<pair<String, RefPtr<APIObject> > > m_pendingMessagesToPostToInjectedBundle;
 
 #if PLATFORM(WIN)
     bool m_shouldPaintNativeControls;
