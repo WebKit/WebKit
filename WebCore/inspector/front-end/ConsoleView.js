@@ -1094,7 +1094,7 @@ WebInspector.ConsoleGroup.prototype = {
 
         if (msg.type === WebInspector.ConsoleMessage.MessageType.StartGroup || msg.type === WebInspector.ConsoleMessage.MessageType.StartGroupCollapsed) {
             this.messagesElement.parentNode.insertBefore(element, this.messagesElement);
-            element.addEventListener("click", this._titleClicked.bind(this), true);
+            element.addEventListener("click", this._titleClicked.bind(this), false);
             var groupElement = element.enclosingNodeOrSelfWithClass("console-group");
             if (groupElement && msg.type === WebInspector.ConsoleMessage.MessageType.StartGroupCollapsed)
                 groupElement.addStyleClass("collapsed");

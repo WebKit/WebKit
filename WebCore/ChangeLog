@@ -1,3 +1,15 @@
+2010-09-16  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: console.group(object) does not allow object to be expanded.
+        https://bugs.webkit.org/show_bug.cgi?id=45806
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleGroup.prototype.addMessage):
+        * inspector/front-end/treeoutline.js:
+        (TreeElement.treeElementToggled):
+
 2010-09-08  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.

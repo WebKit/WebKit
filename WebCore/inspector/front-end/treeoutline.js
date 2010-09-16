@@ -651,6 +651,7 @@ TreeElement.treeElementToggled = function(event)
         else
             element.treeElement.expand();
     }
+    event.stopPropagation();
 }
 
 TreeElement.treeElementDoubleClicked = function(event)
