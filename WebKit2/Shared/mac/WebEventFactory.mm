@@ -987,10 +987,10 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windo
     int globalPositionY                     = globalPosition.y;
     WebWheelEvent::Granularity granularity  = WebWheelEvent::ScrollByPixelWheelEvent;
 
-    int deltaX = 0;
-    int deltaY = 0;
-    int wheelTicksX = 0;
-    int wheelTicksY = 0;
+    float deltaX = 0;
+    float deltaY = 0;
+    float wheelTicksX = 0;
+    float wheelTicksY = 0;
     if ([event _continuousScroll]) {
         // smooth scroll events
         deltaX = [event deviceDeltaX];

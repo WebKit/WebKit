@@ -1,3 +1,14 @@
+2010-09-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8214099> Mousewheel scrolling in WebKit2 is wonky
+        
+        Use floats so that fractional scrollwheel deltas don't get lost.
+
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::WebEventFactory::createWebWheelEvent):
+
 2010-09-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Jon Honeycutt.
