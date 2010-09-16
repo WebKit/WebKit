@@ -2267,6 +2267,9 @@ editing/selection/wrapped-line-caret-2.html
 # https://bugs.webkit.org/show_bug.cgi?id=41918
 editing/selection/5195166-1.html
 
+# missing DRT feature, see also https://bugs.webkit.org/show_bug.cgi?id=39102
+editing/selection/context-menu-on-text.html
+
 # ============================================================================= #
 # Failing editing/spelling tests
 # ============================================================================= #

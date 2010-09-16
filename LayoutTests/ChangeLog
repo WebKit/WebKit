@@ -1,3 +1,18 @@
+2010-09-14  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Carlson and Martin Robinson.
+
+        [GTK] eventSender.contextClick() should return the contents of the context menu
+        https://bugs.webkit.org/show_bug.cgi?id=39102
+
+        New test checking the return value of eventSender.contextClick()
+        on a non-editable element. Skipped on qt and win.
+
+        * editing/selection/context-menu-on-text-expected.txt: Added.
+        * editing/selection/context-menu-on-text.html: Added.
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2010-09-16  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Adam Barth.
