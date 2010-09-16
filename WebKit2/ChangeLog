@@ -1,3 +1,15 @@
+2010-09-15  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKit2 should be able to encode and decode objects of type APIObject::TypeURL.
+        https://bugs.webkit.org/show_bug.cgi?id=45819
+
+        * Shared/UserMessageCoders.h:
+        Add the ability to encode and decode the URL type.
+        (WebKit::UserMessageEncoder::baseEncode):
+        (WebKit::UserMessageDecoder::baseDecode):
+
 2010-09-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Jon Honeycutt.

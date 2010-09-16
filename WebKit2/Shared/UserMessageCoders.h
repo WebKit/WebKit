@@ -31,6 +31,7 @@
 #include "WebNumber.h"
 #include "WebSerializedScriptValue.h"
 #include "WebString.h"
+#include "WebURL.h"
 
 namespace WebKit {
 
@@ -41,6 +42,7 @@ namespace WebKit {
 //   - SerializedScriptValue -> SerializedScriptValue
 //   - WebDouble -> WebDouble
 //   - WebUInt64 -> WebUInt64
+//   - WebURL -> WebURL
 
 template<typename Owner>
 class UserMessageEncoder {
@@ -96,6 +98,11 @@ public:
             encoder->encode(uint64Object->value());
             return true;
         }
+        case APIObject::TypeURL: {
+            WebURL* urlObject = static_cast<WebURL*>(m_root);
+            encoder->encode(urlObject->string());
+            return true;
+        }
         default:
             break;
         }
@@ -121,6 +128,7 @@ protected:
 //   - SerializedScriptValue -> SerializedScriptValue
 //   - WebDouble -> WebDouble
 //   - WebUInt64 -> WebUInt64
+//   - WebURL -> WebURL
 
 template<typename Owner>
 class UserMessageDecoder {
@@ -201,6 +209,13 @@ public:
             if (!decoder->decode(value))
                 return false;
             coder.m_root = WebUInt64::create(value);
+            break;
+        }
+        case APIObject::TypeURL: {
+            String string;
+            if (!decoder->decode(string))
+                return false;
+            coder.m_root = WebURL::create(string);
             break;
         }
         default:
