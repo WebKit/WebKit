@@ -3,20 +3,28 @@
     URL with base64-encoded UTF-8 data, the style sheet is processed
     synchronously, instead of invoking the asynchronous loader.
 </p>
-<p id="result"></p>
 <script>
-    var result = document.getElementById("result");
+    var testObjects = [
+        {result:true,  size:"100px", url:"data:text/css;charset=utf-8;base64,Ym9keSB7Zm9udC1zaXplOiAxMDBweH0="},
+        {result:false, size:"140px", url:"data:text/css;charset=utf-8;base64,Ym9k$#eSB7Zm#9ud(C1zaXp)lOiAxNDBweH0="},
+        {result:false, size:"150px", url:"data:text/css;charset=utf-8;base64,Ym9ke%00SB7Z%20m9udC1z\n\taXplO#iAx%03NTBw%eH0="},
+        {result:false, size:"160px", url:"%50%30%10%00%20%40"}
+    ];
 
     if (window.layoutTestController) {
         layoutTestController.dumpAsText();
         layoutTestController.setUserStyleSheetEnabled(true);
-        layoutTestController.setUserStyleSheetLocation("data:text/css;charset=utf-8;base64,Ym9keSB7Zm9udC1zaXplOiAxMDBweH0=");
 
-        document.body.offsetTop;
-        if (getComputedStyle(document.body).fontSize == "100px")
-            result.innerText = "PASS";
-        else
-            result.innerText = "FAIL";
+        for (var i = 0; i < testObjects.length; i++) {
+            var obj = testObjects[i];
+            layoutTestController.setUserStyleSheetLocation(obj.url);
+
+            document.body.offsetTop;
+            var result = getComputedStyle(document.body).fontSize == obj.size;
+            document.write((result == obj.result ? "PASS" : "FAIL") + " " + obj.size + "<br>");
+
+            layoutTestController.setUserStyleSheetLocation("");
+        }
     } else
-        result.innerText = "This test can only be run in DumpRenderTree.";
+        document.write("This test can only be run in DumpRenderTree.");
 </script>

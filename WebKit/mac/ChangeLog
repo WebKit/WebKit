@@ -1,3 +1,15 @@
+2010-09-16  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Darin Adler.
+
+        Always use a valid string when setting WebKitUserStyleSheetLocationPreferenceKey.
+        https://bugs.webkit.org/show_bug.cgi?id=41510
+
+        This prevents usage of nil value, which would cause an uncaught exception.
+
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences setUserStyleSheetLocation:]):
+
 2010-09-16  Dan Bernstein  <mitz@apple.com>
 
         Reverted the previous change because r67628 has been reverted.

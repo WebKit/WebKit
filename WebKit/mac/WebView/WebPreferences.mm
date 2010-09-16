@@ -641,7 +641,10 @@ static WebCacheModel cacheModelForMainBundle(void)
     } else {
         locationString = [URL _web_originalDataAsString];
     }
-    
+
+    if (!locationString)
+        locationString = @"";
+
     [self _setStringValue:locationString forKey: WebKitUserStyleSheetLocationPreferenceKey];
 }
 

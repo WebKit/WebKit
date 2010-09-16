@@ -1,3 +1,7 @@
 This tests that when the user style sheet location is set to a data: URL with base64-encoded UTF-8 data, the style sheet is processed synchronously, instead of invoking the asynchronous loader.
 
-PASS
+PASS 100px
+PASS 140px
+PASS 150px
+PASS 160px
+
