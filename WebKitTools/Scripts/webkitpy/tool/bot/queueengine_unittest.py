@@ -34,7 +34,9 @@ import threading
 import unittest
 
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.tool.bot.queueengine import QueueEngine, QueueEngineDelegate
+from webkitpy.common.system.outputcapture import OutputCapture
+from webkitpy.tool.bot.queueengine import QueueEngine, QueueEngineDelegate, TerminateQueue
+
 
 class LoggingDelegate(QueueEngineDelegate):
     def __init__(self, test):
@@ -94,14 +96,19 @@ class LoggingDelegate(QueueEngineDelegate):
         self._test.assertEquals(work_item, "work_item")
 
 
-class ThrowErrorDelegate(LoggingDelegate):
-    def __init__(self, test, error_code):
+class RaisingDelegate(LoggingDelegate):
+    def __init__(self, test, exception):
         LoggingDelegate.__init__(self, test)
-        self.error_code = error_code
+        self._exception = exception
+        self.stop_message = None
 
     def process_work_item(self, work_item):
         self.record("process_work_item")
-        raise ScriptError(exit_code=self.error_code)
+        raise self._exception
+
+    def stop_work_queue(self, message):
+        self.record("stop_work_queue")
+        self.stop_message = message
 
 
 class NotSafeToProceedDelegate(LoggingDelegate):
@@ -132,7 +139,7 @@ class QueueEngineTest(unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(self.temp_dir, "work_log_path", "work_item.log")))
 
     def test_unexpected_error(self):
-        delegate = ThrowErrorDelegate(self, 3)
+        delegate = RaisingDelegate(self, ScriptError(exit_code=3))
         work_queue = QueueEngine("error-queue", delegate, threading.Event())
         work_queue.run()
         expected_callbacks = LoggingDelegate.expected_callbacks[:]
@@ -143,10 +150,31 @@ class QueueEngineTest(unittest.TestCase):
         self.assertEquals(delegate._callbacks, expected_callbacks)
 
     def test_handled_error(self):
-        delegate = ThrowErrorDelegate(self, QueueEngine.handled_error_code)
+        delegate = RaisingDelegate(self, ScriptError(exit_code=QueueEngine.handled_error_code))
         work_queue = QueueEngine("handled-error-queue", delegate, threading.Event())
         work_queue.run()
         self.assertEquals(delegate._callbacks, LoggingDelegate.expected_callbacks)
+
+    def _test_terminating_queue(self, exception, expected_message):
+        work_item_index = LoggingDelegate.expected_callbacks.index('process_work_item')
+        # The terminating error should be handled right after process_work_item.
+        # There should be no other callbacks after stop_work_queue.
+        expected_callbacks = LoggingDelegate.expected_callbacks[:work_item_index + 1]
+        expected_callbacks.append("stop_work_queue")
+
+        delegate = RaisingDelegate(self, exception)
+        work_queue = QueueEngine("terminating-queue", delegate, threading.Event())
+
+        output = OutputCapture()
+        expected_stderr = "\n%s\n" % expected_message
+        output.assert_outputs(self, work_queue.run, [], expected_stderr=expected_stderr)
+
+        self.assertEquals(delegate._callbacks, expected_callbacks)
+        self.assertEquals(delegate.stop_message, expected_message)
+
+    def test_terminating_error(self):
+        self._test_terminating_queue(KeyboardInterrupt(), "User terminated queue.")
+        self._test_terminating_queue(TerminateQueue(), "TerminateQueue exception received.")
 
     def test_not_safe_to_proceed(self):
         delegate = NotSafeToProceedDelegate(self)

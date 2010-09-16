@@ -1,3 +1,23 @@
+2010-09-15  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add queue start/stop messages
+        https://bugs.webkit.org/show_bug.cgi?id=45853
+
+        I ended up needing to clean up a bunch of our unit testing
+        in order to test this new code path nicely.
+
+        There are also a few PEP8 changes needed to pass check-webkit-style.
+
+        * Scripts/webkitpy/tool/bot/queueengine.py:
+        * Scripts/webkitpy/tool/bot/queueengine_unittest.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/commands/queuestest.py:
+        * Scripts/webkitpy/tool/commands/sheriffbot_unittest.py:
+
 2010-09-15  Simon Fraser  <simon.fraser@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=45849

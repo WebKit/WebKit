@@ -95,6 +95,10 @@ class AbstractQueue(Command, QueueEngineDelegate):
             if (response != "yes"):
                 error("User declined.")
         log("Running WebKit %s." % self.name)
+        self.tool.status_server.update_status(self.name, "Starting Queue")
+
+    def stop_work_queue(self, reason):
+        self.tool.status_server.update_status(self.name, "Stopping Queue, reason: %s" % reason)
 
     def should_continue_work_queue(self):
         self._iteration_count += 1

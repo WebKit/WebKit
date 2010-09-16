@@ -33,7 +33,6 @@ import traceback
 
 from datetime import datetime, timedelta
 
-from webkitpy.common.net.statusserver import StatusServer
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.deprecated_logging import log, OutputTee
 
@@ -117,10 +116,10 @@ class QueueEngine:
                     message = "Unexpected failure when processing patch!  Please file a bug against webkit-patch.\n%s" % e.message_with_output()
                     self._delegate.handle_unexpected_error(work_item, message)
             except TerminateQueue, e:
-                log("\nTerminateQueue exception received.")
+                self._stopping("TerminateQueue exception received.")
                 return 0
             except KeyboardInterrupt, e:
-                log("\nUser terminated queue.")
+                self._stopping("User terminated queue.")
                 return 1
             except Exception, e:
                 traceback.print_exc()
@@ -128,6 +127,13 @@ class QueueEngine:
                 self._sleep("Exception while preparing queue")
         # Never reached.
         self._ensure_work_log_closed()
+
+    def _stopping(self, message):
+        log("\n%s" % message)
+        self._delegate.stop_work_queue(message)
+        # Be careful to shut down our OutputTee or the unit tests will be unhappy.
+        self._ensure_work_log_closed()
+        self._output_tee.remove_log(self._queue_log)
 
     def _begin_logging(self):
         self._queue_log = self._output_tee.add_log(self._delegate.queue_log_path())
