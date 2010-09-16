@@ -1,3 +1,13 @@
+2010-09-16  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: prevent resource timing popover from having scrollers.
+        https://bugs.webkit.org/show_bug.cgi?id=45883
+
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype._showPopover):
+
 2010-09-15  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Carlson.

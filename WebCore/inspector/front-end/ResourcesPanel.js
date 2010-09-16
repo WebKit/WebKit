@@ -859,7 +859,7 @@ WebInspector.ResourcesPanel.prototype = {
 
             var title = document.createElement("span");
             title.className = "resource-timing-bar-title";
-            if (i >= rows.length - 2)
+            if (total - rows[i].end < rows[i].start)
                 title.style.right = (scale * (total - rows[i].end) + 3) + "px";
             else
                 title.style.left = (scale * rows[i].start + 3) + "px";
