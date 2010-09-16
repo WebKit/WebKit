@@ -61,8 +61,7 @@ struct TransparencyLayer : FastAllocBase {
         painter.setFont(p->font());
         if (painter.paintEngine()->hasFeature(QPaintEngine::PorterDuff))
             painter.setCompositionMode(p->compositionMode());
-        // if the path is an empty region, this assignment disables all painting
-        if (!p->clipPath().isEmpty())
+        if (p->hasClipping())
             painter.setClipPath(p->clipPath());
     }
 

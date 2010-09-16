@@ -1,3 +1,16 @@
+2010-09-16  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Remove unnecessary QPainter::clipPath() call in TransparencyLayer()
+        https://bugs.webkit.org/show_bug.cgi?id=45923
+
+        QPainter::clipPath() can be very expensive, so use QPainter::hasClipping()
+        instead of QPainter::clipPath().isEmpty().
+
+        * platform/graphics/qt/TransparencyLayer.h:
+        (WebCore::TransparencyLayer::TransparencyLayer):
+
 2010-09-16  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Eric Seidel.
