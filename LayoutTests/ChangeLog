@@ -1,3 +1,9 @@
+2010-09-16  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, test TAG fix.
+
+        * platform/chromium/test_expectations.txt: should be IMAGE+TEXT, not TEXT+IMAGE.
+
 2010-09-16  Martin Robinson  <mrobinson@igalia.com>
 
         Unskip some tests that are now passing after libxml fixes in r66336.
