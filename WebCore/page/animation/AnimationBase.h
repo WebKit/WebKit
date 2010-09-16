@@ -42,7 +42,7 @@ class Element;
 class Node;
 class RenderObject;
 class RenderStyle;
-struct TimingFunction;
+class TimingFunction;
 
 class AnimationBase : public RefCounted<AnimationBase> {
     friend class CompositeAnimation;

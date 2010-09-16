@@ -1,3 +1,10 @@
+2010-09-16  Anders Carlsson  <andersca@apple.com>
+
+        Fix clang build.
+
+        * page/animation/AnimationBase.h:
+        Fix struct/class mismatch.
+
 2010-09-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Andreas Kling.
