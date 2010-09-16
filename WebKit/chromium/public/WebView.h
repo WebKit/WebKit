@@ -45,6 +45,7 @@ class WebDragData;
 class WebFrame;
 class WebFrameClient;
 class WebGLES2Context;
+class WebGraphicsContext3D;
 class WebNode;
 class WebSettings;
 class WebString;
@@ -342,7 +343,16 @@ public:
 
     // Returns the GLES2Context associated with this WebView. One will be
     // created if it doesn't already exist.
+    // FIXME: remove this method once the compositor is fully switched
+    // over to GraphicsContext3D.
     virtual WebGLES2Context* gles2Context() = 0;
+
+    // Returns the (on-screen) WebGraphicsContext3D associated with
+    // this WebView. One will be created if it doesn't already exist.
+    // This is used to set up sharing between this context (which is
+    // that used by the compositor) and contexts for WebGL and other
+    // APIs.
+    virtual WebGraphicsContext3D* graphicsContext3D() = 0;
 
 protected:
     ~WebView() {}

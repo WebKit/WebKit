@@ -277,7 +277,6 @@ WebViewImpl::WebViewImpl(WebViewClient* client, WebDevToolsAgentClient* devTools
 #if ENABLE(INPUT_SPEECH)
     , m_speechInputClient(client)
 #endif
-    , m_gles2Context(0)
     , m_deviceOrientationClientProxy(new DeviceOrientationClientProxy(client ? client->deviceOrientationClient() : 0))
 {
     // WebKit/win/WebView.cpp does the same thing, except they call the
@@ -2458,6 +2457,12 @@ WebGLES2Context* WebViewImpl::gles2Context()
 #endif
     }
     return m_gles2Context.get();
+}
+
+WebGraphicsContext3D* WebViewImpl::graphicsContext3D()
+{
+    // FIXME: implement this.
+    return 0;
 }
 
 } // namespace WebKit

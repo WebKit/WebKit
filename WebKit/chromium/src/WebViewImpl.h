@@ -336,10 +336,19 @@ public:
     // Onscreen contexts display to the screen associated with this view.
     // Offscreen contexts render offscreen but can share resources with the
     // onscreen context and thus can be composited.
+    // FIXME: remove this once the compositor is switched to use GraphicsContext3D.
     PassOwnPtr<WebCore::GLES2Context> getOnscreenGLES2Context();
 
     // Returns an onscreen context
+    // FIXME: remove this once the compositor is switched to use GraphicsContext3D.
     virtual WebGLES2Context* gles2Context();
+
+    // Returns the onscreen 3D context used by the compositor. This is
+    // used by the renderer's code to set up resource sharing between
+    // the compositor's context and subordinate contexts for APIs like
+    // WebGL. Returns 0 if compositing support is not compiled in.
+    virtual WebGraphicsContext3D* graphicsContext3D();
+
     virtual WebCore::SharedGraphicsContext3D* getSharedGraphicsContext3D();
 
     WebCore::PopupContainer* selectPopup() const { return m_selectPopup.get(); }
