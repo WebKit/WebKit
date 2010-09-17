@@ -1,3 +1,29 @@
+2010-09-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        CoreIPC argument coder improvements
+        https://bugs.webkit.org/show_bug.cgi?id=45999
+
+        * Platform/CoreIPC/ArgumentCoders.h:
+        Add explicit specialization for a vector of bytes.
+
+        * Platform/CoreIPC/Arguments.h:
+        (CoreIPC::Arguments1::decode):
+        (CoreIPC::Arguments2::decode):
+        (CoreIPC::Arguments3::decode):
+        (CoreIPC::Arguments4::decode):
+        (CoreIPC::Arguments5::decode):
+        (CoreIPC::Arguments6::decode):
+        Use the injected class name for less typing.
+
+        (CoreIPC::Arguments7::Arguments7):
+        (CoreIPC::Arguments7::encode):
+        (CoreIPC::Arguments7::decode):
+        (CoreIPC::In):
+        (CoreIPC::Out):
+        Add Arguments7 class.
+
 2010-09-17  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.

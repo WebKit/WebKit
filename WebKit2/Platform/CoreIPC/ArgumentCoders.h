@@ -29,6 +29,7 @@
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include <utility>
+#include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
 namespace CoreIPC {
@@ -103,7 +104,57 @@ template<typename T> struct ArgumentCoder<Vector<T> > {
         return true;
     }
 };
-    
+
+// Specialization for Vector<uint8_t>
+template<> struct ArgumentCoder<Vector<uint8_t> > {
+    static void encode(ArgumentEncoder* encoder, const Vector<uint8_t>& vector)
+    {
+        encoder->encodeBytes(vector.data(), vector.size());
+    }
+
+    static bool decode(ArgumentDecoder* decoder, Vector<uint8_t>& vector)
+    {
+        return decoder->decodeBytes(vector);
+    }
+};
+
+template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg> struct ArgumentCoder<HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> > {
+    typedef HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> HashMapType;
+
+    static void encode(ArgumentEncoder* encoder, const HashMapType& hashMap)
+    {
+        encoder->encodeUInt64(hashMap.size());
+        for (typename HashMapType::const_iterator it = hashMap.begin(), end = hashMap.end(); it != end; ++it)
+            encoder->encode(*it);
+    }
+
+    static bool decode(ArgumentDecoder* decoder, HashMapType& hashMap)
+    {
+        uint64_t hashMapSize;
+        if (!decoder->decode(hashMapSize))
+            return false;
+
+        HashMapType tempHashMap;
+        for (uint64_t i = 0; i < hashMapSize; ++i) {
+            KeyArg key;
+            MappedArg value;
+            if (!decoder->decode(key))
+                return false;
+            if (!decoder->decode(value))
+                return false;
+
+            if (!tempHashMap.add(key, value).second) {
+                // The hash map already has the specified key, bail.
+                decoder->markInvalid();
+                return false;
+            }
+        }
+
+        hashMap.swap(tempHashMap);
+        return true;
+    }
+};
+
 } // namespace CoreIPC
 
 #endif // SimpleArgumentCoder_h

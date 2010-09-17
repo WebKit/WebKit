@@ -65,7 +65,7 @@ public:
         encoder->encode(m_value);
     }
 
-    static bool decode(ArgumentDecoder* decoder, Arguments1<T1>& result)
+    static bool decode(ArgumentDecoder* decoder, Arguments1& result)
     {
         return decoder->decode(result.m_value);
     }
@@ -98,7 +98,7 @@ public:
         encoder->encode(m_value);
     }
 
-    static bool decode(ArgumentDecoder* decoder, Arguments2<T1, T2>& result)
+    static bool decode(ArgumentDecoder* decoder, Arguments2& result)
     {
         if (!Arguments1<T1>::decode(decoder, result))
             return false;
@@ -134,7 +134,7 @@ public:
         encoder->encode(m_value);
     }
 
-    static bool decode(ArgumentDecoder* decoder, Arguments3<T1, T2, T3>& result)
+    static bool decode(ArgumentDecoder* decoder, Arguments3& result)
     {
         if (!Arguments2<T1, T2>::decode(decoder, result))
             return false;
@@ -170,7 +170,7 @@ public:
         encoder->encode(m_value);
     }
     
-    static bool decode(ArgumentDecoder* decoder, Arguments4<T1, T2, T3, T4>& result)
+    static bool decode(ArgumentDecoder* decoder, Arguments4& result)
     {
         if (!Arguments3<T1, T2, T3>::decode(decoder, result))
             return false;
@@ -206,7 +206,7 @@ public:
         encoder->encode(m_value);
     }
     
-    static bool decode(ArgumentDecoder* decoder, Arguments5<T1, T2, T3, T4, T5>& result)
+    static bool decode(ArgumentDecoder* decoder, Arguments5& result)
     {
         if (!Arguments4<T1, T2, T3, T4>::decode(decoder, result))
             return false;
@@ -242,7 +242,7 @@ public:
         encoder->encode(m_value);
     }
     
-    static bool decode(ArgumentDecoder* decoder, Arguments6<T1, T2, T3, T4, T5, T6>& result)
+    static bool decode(ArgumentDecoder* decoder, Arguments6& result)
     {
         if (!Arguments5<T1, T2, T3, T4, T5>::decode(decoder, result))
             return false;
@@ -262,6 +262,42 @@ template<typename T1, typename T2, typename T3, typename T4, typename T5, typena
 template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6> Arguments6<T1&, T2&, T3&, T4&, T5&, T6&> Out(T1& t1, T2& t2, T3& t3, T4& t4, T5& t5, T6& t6)
 {
     return Arguments6<T1&, T2&, T3&, T4&, T5&, T6&>(t1, t2, t3, t4, t5, t6);
+}
+
+template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7> class Arguments7 : Arguments6<T1, T2, T3, T4, T5, T6> {
+public:
+    Arguments7(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7)
+        : Arguments6<T1, T2, T3, T4, T5, T6>(t1, t2, t3, t4, t5, t6)
+        , m_value(t7)
+    {
+    }
+
+    void encode(ArgumentEncoder* encoder) const
+    {
+        Arguments6<T1, T2, T3, T4, T5, T6>::encode(encoder);
+        encoder->encode(m_value);
+    }
+    
+    static bool decode(ArgumentDecoder* decoder, Arguments7& result)
+    {
+        if (!Arguments6<T1, T2, T3, T4, T5, T6>::decode(decoder, result))
+            return false;
+        
+        return decoder->decode(result.m_value);
+    }
+
+private:
+    T7 m_value;
+};
+
+template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7> Arguments7<const T1&, const T2&, const T3&, const T4&, const T5&, const T6&, const T7&> In(const T1& t1, const T2& t2, const T3 &t3, const T4& t4, const T5& t5, const T6& t6, const T7& t7)
+{
+    return Arguments7<const T1&, const T2&, const T3&, const T4&, const T5&, const T6&, const T7&>(t1, t2, t3, t4, t5, t6, t7);
+}
+
+template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7> Arguments7<T1&, T2&, T3&, T4&, T5&, T6&, T7&> Out(T1& t1, T2& t2, T3& t3, T4& t4, T5& t5, T6& t6, T7& t7)
+{
+    return Arguments7<T1&, T2&, T3&, T4&, T5&, T6&, T7&>(t1, t2, t3, t4, t5, t6, t7);
 }
 
 } // namespace CoreIPC
