@@ -161,6 +161,11 @@ void InspectorResource::updateRequest(const ResourceRequest& request)
     m_changes.set(RequestChange);
 }
 
+void InspectorResource::markAsCached()
+{
+    m_cached = true;
+}
+
 void InspectorResource::updateResponse(const ResourceResponse& response)
 {
     m_expectedContentLength = response.expectedContentLength();
@@ -178,7 +183,7 @@ void InspectorResource::updateResponse(const ResourceResponse& response)
     m_connectionID = response.connectionID();
     m_connectionReused = response.connectionReused();
     m_loadTiming = response.resourceLoadTiming();
-    m_cached = response.wasCached();
+    m_cached = m_cached || response.wasCached();
 
     if (!m_cached && m_loadTiming && m_loadTiming->requestTime)
         m_responseReceivedTime = m_loadTiming->requestTime + m_loadTiming->receiveHeadersEnd / 1000.0;

@@ -90,6 +90,7 @@ namespace WebCore {
         void releaseScriptObject(InspectorFrontend* frontend);
 
         void updateRequest(const ResourceRequest&);
+        void markAsCached();
         void updateResponse(const ResourceResponse&);
 
 #if ENABLE(WEB_SOCKETS)

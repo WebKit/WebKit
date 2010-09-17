@@ -1008,6 +1008,15 @@ void InspectorController::willSendRequest(unsigned long identifier, ResourceRequ
         resource->updateScriptObject(m_frontend.get());
 }
 
+void InspectorController::markResourceAsCached(unsigned long identifier)
+{
+    if (!enabled())
+        return;
+
+    if (RefPtr<InspectorResource> resource = getTrackedResource(identifier))
+        resource->markAsCached();
+}
+
 void InspectorController::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
 {
     if (!enabled())

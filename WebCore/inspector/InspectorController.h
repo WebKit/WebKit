@@ -166,6 +166,7 @@ public:
 
     void identifierForInitialRequest(unsigned long identifier, DocumentLoader*, const ResourceRequest&);
     void willSendRequest(unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse);
+    void markResourceAsCached(unsigned long identifier);
     void didReceiveResponse(unsigned long identifier, const ResourceResponse&);
     void didReceiveContentLength(unsigned long identifier, int lengthReceived);
     void didFinishLoading(unsigned long identifier, double finishTime);
