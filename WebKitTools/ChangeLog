@@ -2,6 +2,18 @@
 
         Reviewed by Andreas Kling.
 
+        Make initializeView method of LauncherWindow private.
+
+        No one else needs to be able to call it but LauncherWindow.
+        Also moving the declation of isGraphicsBased method down in the same file, in order
+        to better group related methods.
+
+        * QtTestBrowser/launcherwindow.h:
+
+2010-09-12  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Andreas Kling.
+
         Make the getter 'page' method of MainWindow const.
 
         * QtTestBrowser/mainwindow.cpp:
