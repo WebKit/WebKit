@@ -196,7 +196,7 @@
                     }
                   ],
 
-    "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "branches": ["trunk"], "treeStableTimer": 45.0,
+    "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "change_filter": "trunk_filter", "treeStableTimer": 45.0,
                       "builderNames": ["Leopard Intel Release (Build)", "Leopard Intel Debug (Build)",
                                        "SnowLeopard Intel Release (Build)", "SnowLeopard Intel Leaks",
                                        "Windows Release (Build)", "Windows Debug (Build)",
