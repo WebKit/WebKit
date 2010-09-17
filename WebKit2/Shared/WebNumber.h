@@ -42,17 +42,16 @@ public:
     }
 
     NumberType value() const { return m_value; }
-    void setValue(NumberType value) { m_value = value; }
 
 private:
-    WebNumber(NumberType value)
+    explicit WebNumber(NumberType value)
         : m_value(value)
     {
     }
 
     virtual Type type() const { return APIType; }
 
-    NumberType m_value;
+    const NumberType m_value;
 };
 
 typedef WebNumber<bool, APIObject::TypeBoolean> WebBoolean;

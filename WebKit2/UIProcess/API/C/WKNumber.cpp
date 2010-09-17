@@ -46,11 +46,6 @@ bool WKBooleanGetValue(WKBooleanRef booleanRef)
     return toWK(booleanRef)->value();
 }
 
-void WKBooleanSetValue(WKBooleanRef booleanRef, bool value)
-{
-    toWK(booleanRef)->setValue(value);
-}
-
 WKTypeID WKDoubleGetTypeID()
 {
     return toRef(WebDouble::APIType);
@@ -67,11 +62,6 @@ double WKDoubleGetValue(WKDoubleRef doubleRef)
     return toWK(doubleRef)->value();
 }
 
-void WKDoubleSetValue(WKDoubleRef doubleRef, double value)
-{
-    toWK(doubleRef)->setValue(value);
-}
-
 WKTypeID WKUInt64GetTypeID()
 {
     return toRef(WebUInt64::APIType);
@@ -86,9 +76,4 @@ WKUInt64Ref WKUInt64Create(uint64_t value)
 uint64_t WKUInt64GetValue(WKUInt64Ref uint64Ref)
 {
     return toWK(uint64Ref)->value();
-}
-
-void WKUInt64SetValue(WKUInt64Ref uint64Ref, uint64_t value)
-{
-    toWK(uint64Ref)->setValue(value);
 }

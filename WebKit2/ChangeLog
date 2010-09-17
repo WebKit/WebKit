@@ -1,5 +1,18 @@
 2010-09-17  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Anders Carlsson.
+
+        Make WebNumbers immutable matching CF.
+
+        * Shared/WebNumber.h:
+        (WebKit::WebNumber::value):
+        (WebKit::WebNumber::WebNumber):
+        * UIProcess/API/C/WKNumber.cpp:
+        (WKUInt64GetValue):
+        * UIProcess/API/C/WKNumber.h:
+
+2010-09-17  Sam Weinig  <sam@webkit.org>
+
         Reviewed by John Sullivan.
 
         Add bool wrapper for WebKit2 API
