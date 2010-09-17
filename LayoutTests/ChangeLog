@@ -1,3 +1,11 @@
+2010-09-17  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed.
+
+        Add failing WebGL tests in drt_expectations.txt.
+
+        * platform/chromium/drt_expectations.txt:
+
 2010-09-17  Adam Roben  <aroben@apple.com>
 
         Land new Windows results for html5lib/runner.html
