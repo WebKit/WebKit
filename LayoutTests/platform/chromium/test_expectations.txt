@@ -1361,7 +1361,6 @@ BUG23498 MAC : fast/lists/008.html = IMAGE
 BUG23498 MAC : fast/lists/li-br.html = IMAGE
 // BUG23498 MAC : fast/lists/ol-start-parsing.html = IMAGE
 BUG23498 MAC : fast/lists/olstart.html = IMAGE
-BUG23498 MAC : fast/multicol/column-rules-stacking.html = IMAGE
 BUG23498 MAC : fast/multicol/columns-shorthand-parsing.html = IMAGE
 BUG23498 MAC : fast/multicol/float-multicol.html = IMAGE
 // BUG23498 MAC : fast/multicol/positioned-with-constrained-height.html = IMAGE
@@ -2072,8 +2071,7 @@ BUG25884 WIN LINUX : fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-i
 BUG26344 LINUX DEBUG : fast/text/atsui-partial-selection.html = CRASH
 BUG26344 LINUX DEBUG : platform/mac/editing/deleting/backward-delete.html = CRASH
 
-// More fallout from the above roll.
-BUG_JORLOW LINUX : fast/multicol/column-rules-stacking.html = FAIL
+BUGWK45957 : fast/multicol/column-rules-stacking.html = FAIL
 
 // ==== WebKit roll 50258:50313 ====
 BUG26291 MAC : fast/text/atsui-multiple-renderers.html = IMAGE
@@ -3036,9 +3034,6 @@ BUGWK45438 : editing/spelling/spelling-backspace-between-lines.html = TEXT
 // Regressed in webkit r54948
 BUG54948 WIN DEBUG : animations/animation-shorthand-removed.html = TEXT
 BUG54948 WIN DEBUG : animations/animation-shorthand.html = TEXT
-BUG54948 WIN DEBUG : fast/css/getComputedStyle/computed-style-without-renderer.html = TEXT
-BUG54948 WIN DEBUG : fast/css/getComputedStyle/computed-style.html = TEXT
-BUG54948 WIN DEBUG : svg/css/getComputedStyle-basic.xhtml = TEXT
 BUG54948 WIN DEBUG : transitions/inherit-other-props.html = TEXT
 
 // WebKit r67068
@@ -3118,3 +3113,4 @@ BUGWEBGL WIN LINUX : fast/canvas/webgl/point-size.html = TEXT
 BUGWEBGL MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html = TEXT PASS
 BUGWEBGL MAC : fast/canvas/webgl/texture-npot.html = TEXT
 BUGWEBGL WIN LINUX : fast/canvas/webgl/uniform-location.html = TEXT
+

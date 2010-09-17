@@ -68,7 +68,7 @@ rect: style.getPropertyValue(empty-cells) : show
 rect: style.getPropertyCSSValue(empty-cells) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(float) : none
 rect: style.getPropertyCSSValue(float) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(font-family) : Times
+rect: style.getPropertyValue(font-family) : 'times new roman'
 rect: style.getPropertyCSSValue(font-family) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(font-size) : 16px
 rect: style.getPropertyCSSValue(font-size) : [object CSSPrimitiveValue]
@@ -488,7 +488,7 @@ g: style.getPropertyValue(empty-cells) : show
 g: style.getPropertyCSSValue(empty-cells) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(float) : none
 g: style.getPropertyCSSValue(float) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(font-family) : Times
+g: style.getPropertyValue(font-family) : 'times new roman'
 g: style.getPropertyCSSValue(font-family) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(font-size) : 16px
 g: style.getPropertyCSSValue(font-size) : [object CSSPrimitiveValue]
