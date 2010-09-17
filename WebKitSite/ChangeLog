@@ -1,3 +1,13 @@
+2010-09-16  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Adding a timeline screenshot for blocking and defer scripts
+        https://bugs.webkit.org/show_bug.cgi?id=45933
+
+        * blog-files/timeline-blocking-script.png: Added.
+        * blog-files/timeline-defer-script.png: Added.
+
 2010-09-14  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Adam Roben.
