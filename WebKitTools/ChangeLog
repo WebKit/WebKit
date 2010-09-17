@@ -2,6 +2,18 @@
 
         Reviewed by Andreas Kling.
 
+        Moved setYRotation method body out of the class (WebViewGraphicsBased) definition.
+
+        We usually separate methods whose body are larger than a few lines from the class definition.
+
+        * QtTestBrowser/webview.h:
+        (WebViewGraphicsBased::yRotation):
+        (WebViewGraphicsBased::setYRotation):
+
+2010-09-12  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Andreas Kling.
+
         Make initializeView method of LauncherWindow private.
 
         No one else needs to be able to call it but LauncherWindow.
