@@ -69,6 +69,10 @@ public:
     // in garbage collection.
     virtual void didCreateIsolatedScriptContext();
 
+    // Returns true if we should allow the given V8 extension to be added to
+    // the script context at the currently loading page and given extension group.
+    virtual bool allowScriptExtension(const String& extensionName, int extensionGroup);
+
     virtual bool hasWebView() const;
     virtual bool hasFrameView() const;
     virtual void makeRepresentation(WebCore::DocumentLoader*);

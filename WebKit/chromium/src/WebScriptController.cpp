@@ -43,19 +43,7 @@ namespace WebKit {
 
 void WebScriptController::registerExtension(v8::Extension* extension)
 {
-    V8Proxy::registerExtension(extension, WebString());
-}
-
-void WebScriptController::registerExtension(v8::Extension* extension,
-                                            const WebString& schemeRestriction)
-{
-    V8Proxy::registerExtension(extension, schemeRestriction);
-}
-
-void WebScriptController::registerExtension(v8::Extension* extension,
-                                            int extensionGroup)
-{
-    V8Proxy::registerExtension(extension, extensionGroup);
+    V8Proxy::registerExtension(extension);
 }
 
 void WebScriptController::enableV8SingleThreadMode()
