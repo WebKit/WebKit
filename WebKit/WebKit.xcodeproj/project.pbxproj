@@ -91,6 +91,7 @@
 		41F4484F10338E8C0030E55E /* WebWorkersPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F4484D10338E8C0030E55E /* WebWorkersPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41F4485010338E8C0030E55E /* WebWorkersPrivate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41F4484E10338E8C0030E55E /* WebWorkersPrivate.mm */; };
 		441793A60E34EE150055E1AE /* WebHTMLRepresentationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 441793A50E34EE150055E1AE /* WebHTMLRepresentationInternal.h */; };
+		44BB8B141241A022001E3A22 /* WebArchiveInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 44BB8B131241A022001E3A22 /* WebArchiveInternal.h */; };
 		4BF99F900AE050BC00815C2B /* WebEditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BF99F8E0AE050BC00815C2B /* WebEditorClient.h */; settings = {ATTRIBUTES = (); }; };
 		4BF99F910AE050BC00815C2B /* WebEditorClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4BF99F8F0AE050BC00815C2B /* WebEditorClient.mm */; };
 		511F3FD50CECC88F00852565 /* WebDatabaseManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 511F3FD10CECC88F00852565 /* WebDatabaseManager.mm */; };
@@ -490,6 +491,7 @@
 		41F4484E10338E8C0030E55E /* WebWorkersPrivate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebWorkersPrivate.mm; path = mac/Workers/WebWorkersPrivate.mm; sourceTree = "<group>"; };
 		441793A50E34EE150055E1AE /* WebHTMLRepresentationInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebHTMLRepresentationInternal.h; sourceTree = "<group>"; };
 		449098B90F8F82DF0076A327 /* FeatureDefines.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeatureDefines.xcconfig; sourceTree = "<group>"; };
+		44BB8B131241A022001E3A22 /* WebArchiveInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebArchiveInternal.h; sourceTree = "<group>"; };
 		4BF99F8E0AE050BC00815C2B /* WebEditorClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebEditorClient.h; sourceTree = "<group>"; };
 		4BF99F8F0AE050BC00815C2B /* WebEditorClient.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebEditorClient.mm; sourceTree = "<group>"; };
 		511F3FD10CECC88F00852565 /* WebDatabaseManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDatabaseManager.mm; sourceTree = "<group>"; };
@@ -1150,6 +1152,7 @@
 				51E94C0706C02CA300A9B09E /* PDF */,
 				8373435A0624EE0D00F3B289 /* WebArchive.h */,
 				8373435B0624EE0D00F3B289 /* WebArchive.mm */,
+				44BB8B131241A022001E3A22 /* WebArchiveInternal.h */,
 				933D659903413FF2008635CE /* WebClipView.h */,
 				933D659A03413FF2008635CE /* WebClipView.mm */,
 				93E2A1A2123B0B3C009FE12A /* WebDashboardRegion.h */,
@@ -1431,6 +1434,7 @@
 				E169836211346D1B00894115 /* ProxyRuntimeObject.h in Headers */,
 				B6CE5C25100BC5F500219936 /* WebApplicationCache.h in Headers */,
 				9398109A0824BF01008DF038 /* WebArchive.h in Headers */,
+				44BB8B141241A022001E3A22 /* WebArchiveInternal.h in Headers */,
 				5DE92FEF0BD7017E0059A5FD /* WebAssertions.h in Headers */,
 				939810290824BF01008DF038 /* WebAuthenticationPanel.h in Headers */,
 				939810110824BF01008DF038 /* WebBackForwardList.h in Headers */,

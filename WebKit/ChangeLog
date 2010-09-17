@@ -1,3 +1,13 @@
+2010-09-17  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/45989> Add WebArchiveInternal.h to Xcode project
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebKit.xcodeproj/project.pbxproj: Added missing
+        WebArchiveInternal.h header file to the project.  It has been
+        missing since r31281!
+
 2010-09-16  Dan Bernstein  <mitz@apple.com>
 
         Reverted the previous change because r67628 has been reverted.
