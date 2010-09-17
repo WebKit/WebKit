@@ -94,7 +94,7 @@ void MainWindow::buildUI()
     page()->action(QWebPage::ToggleUnderline)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_U));
 }
 
-WebPage* MainWindow::page()
+WebPage* MainWindow::page() const
 {
     return m_page;
 }
