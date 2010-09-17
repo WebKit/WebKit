@@ -1,3 +1,22 @@
+2010-09-16  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8395558>
+        https://bugs.webkit.org/show_bug.cgi?id=45938
+        _web_makePluginViewsPerformSelector:: mutates subviews array while iterating it
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _web_makePluginSubviewsPerformSelector:withObject:]):
+        Converted from -[NSArray _web_makePluginViewsPerformSelector:withObject:]. The old method
+        was only ever called on the result of -[WebHTMLView subviews]. By moving that knowledge into
+        this helper method, it can't be used incorrectly. Now it makes a copy of [WebHTMLView subviews]
+        before enumerating it, to ensure that the selector can't mutate the array being enumerated.
+        (-[WebHTMLView viewWillMoveToHostWindow:]):
+        Updated for _web_makePluginSubviewsPerformSelector:: signature change.
+        (-[WebHTMLView viewDidMoveToHostWindow]):
+        Ditto.
+
 2010-09-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Andreas Kling.

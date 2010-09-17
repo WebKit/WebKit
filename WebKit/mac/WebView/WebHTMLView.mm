@@ -2377,10 +2377,6 @@ static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension
 
 #endif
 
-@interface NSArray (WebHTMLView)
-- (void)_web_makePluginViewsPerformSelector:(SEL)selector withObject:(id)object;
-@end
-
 @implementation WebHTMLView
 
 + (void)initialize
@@ -3080,14 +3076,31 @@ WEBCORE_COMMAND(yankAndSelect)
     }
 }
 
+- (void)_web_makePluginSubviewsPerformSelector:(SEL)selector withObject:(id)object
+{
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    // Copy subviews because [self subviews] returns the view's mutable internal array,
+    // and we must avoid mutating the array while enumerating it.
+    NSArray *subviews = [[self subviews] copy];
+    
+    NSEnumerator *enumerator = [subviews objectEnumerator];
+    WebNetscapePluginView *view;
+    while ((view = [enumerator nextObject]) != nil)
+        if ([view isKindOfClass:[WebBaseNetscapePluginView class]])
+            [view performSelector:selector withObject:object];
+    
+    [subviews release];
+#endif
+}
+
 - (void)viewWillMoveToHostWindow:(NSWindow *)hostWindow
 {
-    [[self subviews] _web_makePluginViewsPerformSelector:@selector(viewWillMoveToHostWindow:) withObject:hostWindow];
+    [self _web_makePluginSubviewsPerformSelector:@selector(viewWillMoveToHostWindow:) withObject:hostWindow];
 }
 
 - (void)viewDidMoveToHostWindow
 {
-    [[self subviews] _web_makePluginViewsPerformSelector:@selector(viewDidMoveToHostWindow) withObject:nil];
+    [self _web_makePluginSubviewsPerformSelector:@selector(viewDidMoveToHostWindow) withObject:nil];
 }
 
 
@@ -5078,21 +5091,6 @@ static BOOL writingDirectionKeyBindingsEnabled()
         [self mouseUp:event];
     else
         [super otherMouseUp:event];
-}
-
-@end
-
-@implementation NSArray (WebHTMLView)
-
-- (void)_web_makePluginViewsPerformSelector:(SEL)selector withObject:(id)object
-{
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    NSEnumerator *enumerator = [self objectEnumerator];
-    WebNetscapePluginView *view;
-    while ((view = [enumerator nextObject]) != nil)
-        if ([view isKindOfClass:[WebBaseNetscapePluginView class]])
-            [view performSelector:selector withObject:object];
-#endif
 }
 
 @end
