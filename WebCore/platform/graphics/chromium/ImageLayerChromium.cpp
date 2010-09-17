@@ -76,7 +76,6 @@ void ImageLayerChromium::updateContents()
     ASSERT(layerRenderer());
 
     void* pixels = 0;
-    IntRect dirtyRect(m_dirtyRect);
     IntSize requiredTextureSize;
     IntSize bitmapSize;
 
@@ -147,6 +146,10 @@ void ImageLayerChromium::updateContents()
     unsigned textureId = m_contentsTexture;
     if (!textureId)
         textureId = layerRenderer()->createLayerTexture();
+
+    // Clip the dirty rect to the bitmap dimensions.
+    IntRect dirtyRect(m_dirtyRect);
+    dirtyRect.intersect(IntRect(IntPoint(0, 0), bitmapSize));
 
     if (pixels)
         updateTextureRect(pixels, bitmapSize, requiredTextureSize,  dirtyRect, textureId);

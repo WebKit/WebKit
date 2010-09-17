@@ -1,3 +1,16 @@
+2010-09-16  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Clip the update region of an ImageLayerChromium to actual size
+        of the image bitmap to prevent uninitialized memory access when uploading
+        the dirty region to the texture.
+        https://bugs.webkit.org/show_bug.cgi?id=45937
+
+
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::updateContents):
+
 2010-09-17  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by David Hyatt.
