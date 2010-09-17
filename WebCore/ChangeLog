@@ -1,3 +1,17 @@
+2010-09-16  takano takumi  <takano1@asia.apple.com>
+
+        Reviewed by Kent Tamura.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45020
+        Support "block-flow" and "writing-mode": interpret properties into RenderStyle
+
+        Fixed a regression in SVG test introduced by my previous change.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::operator EWritingMode):
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+
 2010-09-16  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.

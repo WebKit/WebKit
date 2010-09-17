@@ -232,7 +232,7 @@ bool CSSParser::parseSVGValue(int propId, bool important)
 
     case CSSPropertyWritingMode:
     // lr-tb | rl_tb | tb-rl | lr | rl | tb | inherit
-        if (id >= CSSValueLrTb && id <= CSSValueTb)
+        if (id == CSSValueLrTb || id == CSSValueRlTb || id == CSSValueTbRl || id == CSSValueLr || id == CSSValueRl || id == CSSValueTb)
             valid_primitive = true;
         break;
 

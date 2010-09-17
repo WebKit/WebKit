@@ -2684,7 +2684,23 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EWritingMode e)
 
 template<> inline CSSPrimitiveValue::operator EWritingMode() const
 {
-    return static_cast<EWritingMode>(m_value.ident - CSSValueLrTb);
+    switch (m_value.ident) {
+    case CSSValueLrTb:
+        return WM_LRTB;
+    case CSSValueLr:
+        return WM_LR;
+    case CSSValueRlTb:
+        return WM_RLTB;
+    case CSSValueRl:
+        return WM_RL;
+    case CSSValueTbRl:
+        return WM_TBRL;
+    case CSSValueTb:
+        return WM_TB;
+    default:
+        ASSERT_NOT_REACHED();
+        return WM_LRTB;
+    }
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EVectorEffect e)
