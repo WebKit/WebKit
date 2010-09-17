@@ -1,3 +1,13 @@
+2010-09-17  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        ASSERTION FAILED: m_loadEventDelayCount
+        https://bugs.webkit.org/show_bug.cgi?id=45790
+
+        * dom/AsyncScriptRunner.cpp: 
+        (WebCore::AsyncScriptRunner::timerFired): Protect document before we go running scripts.
+
 2010-09-17  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Kenneth Russell.
