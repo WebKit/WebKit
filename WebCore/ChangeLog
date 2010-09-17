@@ -1,3 +1,36 @@
+2010-09-16  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        Add entry points to GraphicsContext3D needed for Chromium compositor port
+        https://bugs.webkit.org/show_bug.cgi?id=45939
+
+        Added entry points for two Chromium-specific extensions, and added
+        a flag to the GraphicsContext3D constructor, currently unsupported
+        by all ports (including Chromium), indicating whether the context
+        should render directly to the passed HostWindow or off-screen per
+        the current semantics. The switch to use GraphicsContext3D in
+        Chromium's compositor will follow in a subsequent patch.
+
+        No new tests; functionality is unchanged. Built and tested
+        Chromium and WebKit on Mac OS X.
+
+        * platform/graphics/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3D::supportsMapSubCHROMIUM):
+        (WebCore::GraphicsContext3D::mapBufferSubDataCHROMIUM):
+        (WebCore::GraphicsContext3D::unmapBufferSubDataCHROMIUM):
+        (WebCore::GraphicsContext3D::mapTexSubImage2DCHROMIUM):
+        (WebCore::GraphicsContext3D::unmapTexSubImage2DCHROMIUM):
+        (WebCore::GraphicsContext3D::supportsCopyTextureToParentTextureCHROMIUM):
+        (WebCore::GraphicsContext3D::copyTextureToParentTextureCHROMIUM):
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::create):
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::create):
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+
 2010-09-16  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by James Robinson.

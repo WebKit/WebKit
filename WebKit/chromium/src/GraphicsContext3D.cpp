@@ -61,8 +61,6 @@
 #include <CoreGraphics/CGImage.h>
 #endif
 
-// using namespace std;
-
 // There are two levels of delegation in this file:
 //
 //   1. GraphicsContext3D delegates to GraphicsContext3DInternal. This is done
@@ -79,6 +77,9 @@
 // The legacy, in-process, implementation uses WebGraphicsContext3DDefaultImpl.
 
 namespace WebCore {
+
+//----------------------------------------------------------------------
+// GraphicsContext3DInternal
 
 GraphicsContext3DInternal::GraphicsContext3DInternal()
     : m_webViewImpl(0)
@@ -291,6 +292,12 @@ rt GraphicsContext3DInternal::name(t1 a1, t2 a2, t3 a3)    \
 void GraphicsContext3DInternal::name(t1 a1, t2 a2, t3 a3, t4 a4)  \
 { \
     m_impl->name(a1, a2, a3, a4);              \
+}
+
+#define DELEGATE_TO_IMPL_4R(name, t1, t2, t3, t4, rt)       \
+rt GraphicsContext3DInternal::name(t1 a1, t2 a2, t3 a3, t4 a4)        \
+{ \
+    return m_impl->name(a1, a2, a3, a4);           \
 }
 
 #define DELEGATE_TO_IMPL_5(name, t1, t2, t3, t4, t5)      \
@@ -663,6 +670,13 @@ DELEGATE_TO_IMPL_1(deleteTexture, unsigned)
 
 DELEGATE_TO_IMPL_1(synthesizeGLError, unsigned long)
 DELEGATE_TO_IMPL_R(supportsBGRA, bool)
+DELEGATE_TO_IMPL_R(supportsMapSubCHROMIUM, bool)
+DELEGATE_TO_IMPL_4R(mapBufferSubDataCHROMIUM, unsigned, int, int, unsigned, void*)
+DELEGATE_TO_IMPL_1(unmapBufferSubDataCHROMIUM, const void*)
+DELEGATE_TO_IMPL_9R(mapTexSubImage2DCHROMIUM, unsigned, int, int, int, int, int, unsigned, unsigned, unsigned, void*)
+DELEGATE_TO_IMPL_1(unmapTexSubImage2DCHROMIUM, const void*)
+DELEGATE_TO_IMPL_R(supportsCopyTextureToParentTextureCHROMIUM, bool)
+DELEGATE_TO_IMPL_2(copyTextureToParentTextureCHROMIUM, unsigned, unsigned)
 
 //----------------------------------------------------------------------
 // GraphicsContext3D
@@ -725,6 +739,12 @@ void GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4)  \
     m_internal->name(a1, a2, a3, a4);              \
 }
 
+#define DELEGATE_TO_INTERNAL_4R(name, t1, t2, t3, t4, rt)    \
+rt GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4)  \
+{ \
+    return m_internal->name(a1, a2, a3, a4);           \
+}
+
 #define DELEGATE_TO_INTERNAL_5(name, t1, t2, t3, t4, t5)      \
 void GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5)        \
 { \
@@ -767,7 +787,7 @@ rt GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7, t8 a
     return m_internal->name(a1, a2, a3, a4, a5, a6, a7, a8, a9);   \
 }
 
-GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes, HostWindow*)
+GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes, HostWindow*, bool)
 {
 }
 
@@ -775,15 +795,17 @@ GraphicsContext3D::~GraphicsContext3D()
 {
 }
 
-PassOwnPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow)
+PassOwnPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow, GraphicsContext3D::RenderStyle renderStyle)
 {
-    GraphicsContext3DInternal* internal = new GraphicsContext3DInternal();
+    // FIXME: must pass down renderStyle argument when switching compositor to GraphicsContext3D.
+    if (renderStyle == RenderDirectlyToHostWindow)
+        return 0;
+    OwnPtr<GraphicsContext3DInternal> internal = adoptPtr(new GraphicsContext3DInternal());
     if (!internal->initialize(attrs, hostWindow)) {
-        delete internal;
         return 0;
     }
-    PassOwnPtr<GraphicsContext3D> result = new GraphicsContext3D(attrs, hostWindow);
-    result->m_internal.set(internal);
+    PassOwnPtr<GraphicsContext3D> result = new GraphicsContext3D(attrs, hostWindow, false);
+    result->m_internal = internal.release();
     return result;
 }
 
@@ -999,6 +1021,13 @@ DELEGATE_TO_INTERNAL_1(deleteTexture, unsigned)
 
 DELEGATE_TO_INTERNAL_1(synthesizeGLError, unsigned long)
 DELEGATE_TO_INTERNAL_R(supportsBGRA, bool)
+DELEGATE_TO_INTERNAL_R(supportsMapSubCHROMIUM, bool)
+DELEGATE_TO_INTERNAL_4R(mapBufferSubDataCHROMIUM, unsigned, int, int, unsigned, void*)
+DELEGATE_TO_INTERNAL_1(unmapBufferSubDataCHROMIUM, const void*)
+DELEGATE_TO_INTERNAL_9R(mapTexSubImage2DCHROMIUM, unsigned, int, int, int, int, int, unsigned, unsigned, unsigned, void*)
+DELEGATE_TO_INTERNAL_1(unmapTexSubImage2DCHROMIUM, const void*)
+DELEGATE_TO_INTERNAL_R(supportsCopyTextureToParentTextureCHROMIUM, bool)
+DELEGATE_TO_INTERNAL_2(copyTextureToParentTextureCHROMIUM, unsigned, unsigned)
 
 bool GraphicsContext3D::isGLES2Compliant() const
 {

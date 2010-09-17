@@ -830,6 +830,40 @@ bool GraphicsContext3D::supportsBGRA()
     // Returning false for now to be safe.
     return false;
 }
+
+bool GraphicsContext3D::supportsMapSubCHROMIUM()
+{
+    // We don't claim support for this extension at this time.
+    return false;
+}
+
+void* GraphicsContext3D::mapBufferSubDataCHROMIUM(unsigned, int, int, unsigned)
+{
+    return 0;
+}
+
+void GraphicsContext3D::unmapBufferSubDataCHROMIUM(const void*)
+{
+}
+
+void* GraphicsContext3D::mapTexSubImage2DCHROMIUM(unsigned, int, int, int, int, int, unsigned, unsigned, unsigned)
+{
+    return 0;
+}
+
+void GraphicsContext3D::unmapTexSubImage2DCHROMIUM(const void*)
+{
+}
+
+bool GraphicsContext3D::supportsCopyTextureToParentTextureCHROMIUM()
+{
+    // We don't claim support for this extension at this time.
+    return false;
+}
+
+void GraphicsContext3D::copyTextureToParentTextureCHROMIUM(unsigned, unsigned)
+{
+}
 #endif
 
 } // namespace WebCore

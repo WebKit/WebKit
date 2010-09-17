@@ -404,7 +404,12 @@ public:
         UNPACK_FLIP_Y_WEBGL = 0x9240,
         UNPACK_PREMULTIPLY_ALPHA_WEBGL = 0x9241,
 
-        BGRA_EXT = 0x80E1
+        // GL_EXT_texture_format_BGRA8888
+        BGRA_EXT = 0x80E1,
+
+        // GL_CHROMIUM_map_sub (enums inherited from GL_ARB_vertex_buffer_object)
+        READ_ONLY = 0x88B8,
+        WRITE_ONLY = 0x88B9
     };
 
     // Context creation attributes.
@@ -425,7 +430,12 @@ public:
         bool premultipliedAlpha;
     };
 
-    static PassOwnPtr<GraphicsContext3D> create(Attributes attrs, HostWindow* hostWindow);
+    enum RenderStyle {
+        RenderOffscreen,
+        RenderDirectlyToHostWindow
+    };
+
+    static PassOwnPtr<GraphicsContext3D> create(Attributes attrs, HostWindow* hostWindow, RenderStyle renderStyle = RenderOffscreen);
     virtual ~GraphicsContext3D();
 
 #if PLATFORM(MAC)
@@ -751,10 +761,22 @@ public:
     // getError in the order they were added.
     void synthesizeGLError(unsigned long error);
 
+    // EXT_texture_format_BGRA8888
     bool supportsBGRA();
 
+    // GL_CHROMIUM_map_sub
+    bool supportsMapSubCHROMIUM();
+    void* mapBufferSubDataCHROMIUM(unsigned target, int offset, int size, unsigned access);
+    void unmapBufferSubDataCHROMIUM(const void*);
+    void* mapTexSubImage2DCHROMIUM(unsigned target, int level, int xoffset, int yoffset, int width, int height, unsigned format, unsigned type, unsigned access);
+    void unmapTexSubImage2DCHROMIUM(const void*);
+
+    // GL_CHROMIUM_copy_texture_to_parent_texture
+    bool supportsCopyTextureToParentTextureCHROMIUM();
+    void copyTextureToParentTextureCHROMIUM(unsigned texture, unsigned parentTexture);
+
   private:
-    GraphicsContext3D(Attributes attrs, HostWindow* hostWindow);
+    GraphicsContext3D(Attributes attrs, HostWindow* hostWindow, bool renderDirectlyToHostWindow);
 
     // Each platform must provide an implementation of this method.
     //

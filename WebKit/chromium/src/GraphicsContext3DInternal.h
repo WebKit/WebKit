@@ -257,7 +257,19 @@ public:
 
     void swapBuffers();
 
+    // EXT_texture_format_BGRA8888
     bool supportsBGRA();
+
+    // GL_CHROMIUM_map_sub
+    bool supportsMapSubCHROMIUM();
+    void* mapBufferSubDataCHROMIUM(unsigned target, int offset, int size, unsigned access);
+    void unmapBufferSubDataCHROMIUM(const void*);
+    void* mapTexSubImage2DCHROMIUM(unsigned target, int level, int xoffset, int yoffset, int width, int height, unsigned format, unsigned type, unsigned access);
+    void unmapTexSubImage2DCHROMIUM(const void*);
+
+    // GL_CHROMIUM_copy_texture_to_parent_texture
+    bool supportsCopyTextureToParentTextureCHROMIUM();
+    void copyTextureToParentTextureCHROMIUM(unsigned texture, unsigned parentTexture);
 
 private:
     OwnPtr<WebKit::WebGraphicsContext3D> m_impl;
