@@ -1,3 +1,21 @@
+2010-09-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by John Sullivan.
+
+        Add bool wrapper for WebKit2 API
+        https://bugs.webkit.org/show_bug.cgi?id=45985
+
+        * Shared/APIObject.h:
+        * Shared/WebNumber.h:
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKBase.h:
+        * UIProcess/API/C/WKNumber.cpp:
+        (WKBooleanGetTypeID):
+        (WKBooleanCreate):
+        (WKBooleanGetValue):
+        (WKBooleanSetValue):
+        * UIProcess/API/C/WKNumber.h:
+
 2010-09-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

@@ -32,6 +32,12 @@
 extern "C" {
 #endif
 
+/* WKBoolean */
+WK_EXPORT WKTypeID WKBooleanGetTypeID();
+WK_EXPORT WKBooleanRef WKBooleanCreate(bool value);
+WK_EXPORT bool WKBooleanGetValue(WKBooleanRef booleanRef);
+WK_EXPORT void WKBooleanSetValue(WKBooleanRef booleanRef, bool value);
+
 /* WKDouble */
 WK_EXPORT WKTypeID WKDoubleGetTypeID();
 WK_EXPORT WKDoubleRef WKDoubleCreate(double value);

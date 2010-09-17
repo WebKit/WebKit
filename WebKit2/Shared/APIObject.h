@@ -46,6 +46,7 @@ public:
         TypeURLResponse,
 
         // Base numeric types
+        TypeBoolean,
         TypeDouble,
         TypeUInt64,
         

@@ -65,6 +65,7 @@ template<typename APIType> struct APITypeInfo { };
 template<> struct APITypeInfo<WKArrayRef>                       { typedef ImmutableArray* ImplType; };
 template<> struct APITypeInfo<WKBackForwardListItemRef>         { typedef WebBackForwardListItem* ImplType; };
 template<> struct APITypeInfo<WKBackForwardListRef>             { typedef WebBackForwardList* ImplType; };
+template<> struct APITypeInfo<WKBooleanRef>                     { typedef WebBoolean* ImplType; };
 template<> struct APITypeInfo<WKContextRef>                     { typedef WebContext* ImplType; };
 template<> struct APITypeInfo<WKDataRef>                        { typedef WebData* ImplType; };
 template<> struct APITypeInfo<WKDictionaryRef>                  { typedef ImmutableDictionary* ImplType; };
@@ -95,6 +96,7 @@ template<> struct ImplTypeInfo<MutableArray*>                   { typedef WKMuta
 template<> struct ImplTypeInfo<MutableDictionary*>              { typedef WKMutableDictionaryRef APIType; };
 template<> struct ImplTypeInfo<WebBackForwardList*>             { typedef WKBackForwardListRef APIType; };
 template<> struct ImplTypeInfo<WebBackForwardListItem*>         { typedef WKBackForwardListItemRef APIType; };
+template<> struct ImplTypeInfo<WebBoolean*>                     { typedef WKBooleanRef APIType; };
 template<> struct ImplTypeInfo<WebContext*>                     { typedef WKContextRef APIType; };
 template<> struct ImplTypeInfo<WebData*>                        { typedef WKDataRef APIType; };
 template<> struct ImplTypeInfo<WebDouble*>                      { typedef WKDoubleRef APIType; };

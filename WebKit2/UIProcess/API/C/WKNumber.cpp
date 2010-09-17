@@ -30,6 +30,27 @@
 
 using namespace WebKit;
 
+WKTypeID WKBooleanGetTypeID()
+{
+    return toRef(WebBoolean::APIType);
+}
+
+WKBooleanRef WKBooleanCreate(bool value)
+{
+    RefPtr<WebBoolean> booleanObject = WebBoolean::create(value);
+    return toRef(booleanObject.release().releaseRef());
+}
+
+bool WKBooleanGetValue(WKBooleanRef booleanRef)
+{
+    return toWK(booleanRef)->value();
+}
+
+void WKBooleanSetValue(WKBooleanRef booleanRef, bool value)
+{
+    toWK(booleanRef)->setValue(value);
+}
+
 WKTypeID WKDoubleGetTypeID()
 {
     return toRef(WebDouble::APIType);
