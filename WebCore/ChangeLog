@@ -1,5 +1,21 @@
 2010-09-17  Martin Robinson  <mrobinson@igalia.com>
 
+        Reviewed by Xan Lopez.
+
+        [GTK] [REGRESSION] Listbox rendering is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=45941
+
+        Only apply the shadow tiling optimization to a layer if the GraphicsContext
+        has a shadow.
+
+        This is covered by manual-tests/select-element-type-select.html.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::drawBorderlessRectShadow): Before applying the tiled shadow optimization
+        first check to see if the context has a shadow at all.
+
+2010-09-17  Martin Robinson  <mrobinson@igalia.com>
+
         Reviewed by Oliver Hunt.
 
         [GTK] FontPlatformDataFreeType should use smart pointers to hold its members
