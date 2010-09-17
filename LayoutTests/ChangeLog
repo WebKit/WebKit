@@ -1,5 +1,15 @@
 2010-09-17  Jian Li  <jianli@chromium.org>
 
+        Skip the new test fast/files/create-blob-url-crash.html in unsupported
+        platforms.
+
+        * platform/gtk/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
+2010-09-17  Jian Li  <jianli@chromium.org>
+
         Reviewed by Dmitry Titov.
 
         createBlobURL with no argument causes crash.

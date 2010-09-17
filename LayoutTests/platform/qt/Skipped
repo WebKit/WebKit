@@ -773,6 +773,7 @@ fast/files/read-blob-async.html
 fast/files/read-file-async.html
 fast/files/apply-blob-url-to-img.html
 fast/files/apply-blob-url-to-xhr.html
+fast/files/create-blob-url-crash.html
 fast/files/workers
 
 # Missing layoutTestController.setAlwaysAcceptCookies()
