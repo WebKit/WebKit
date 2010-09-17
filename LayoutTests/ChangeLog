@@ -1,3 +1,13 @@
+2010-09-17  Johnny Ding  <jnd@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Stop history reload navigation to bypass WebKit's popup blocker.
+        https://bugs.webkit.org/show_bug.cgi?id=45369
+
+        * fast/events/popup-blocked-from-history-reload-expected.txt: Added.
+        * fast/events/popup-blocked-from-history-reload.html: Added.
+
 2010-09-17  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed.

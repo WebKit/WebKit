@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.setCanOpenWindows();
+    layoutTestController.setPopupBlockingEnabled(true);
+    layoutTestController.setCloseRemainingWindowsWhenComplete(true);
+    layoutTestController.waitUntilDone();
+    // Record current window count.
+    window.windowCount = window.layoutTestController.windowCount();
+}
+function testDone() {
+    if (window.layoutTestController && window.layoutTestController.windowCount() == window.windowCount)
+        document.getElementById("console").innerText = "PASSED";
+    // Close the test.
+    layoutTestController.notifyDone();
+}
+</script>
+</head>
+<body">
+History reload can only navigate the page in the self frame, no matter what target frame is defined in base tag and no new window can be created. This is a test case for bug https://bugs.webkit.org/show_bug.cgi?id=45369.
+<div id="loadCount"></div>
+<div id="console">FAILED</div>
+<script>
+if (!sessionStorage.loadCount)
+   sessionStorage.loadCount = 1;
+else
+   sessionStorage.loadCount = parseInt(sessionStorage.loadCount, 10) + 1;
+document.getElementById("loadCount").innerText = "load count : " + sessionStorage.loadCount;
+if (2 == sessionStorage.loadCount)
+    testDone();
+else
+    history.go();
+</script>
+</body>
+</html>
+

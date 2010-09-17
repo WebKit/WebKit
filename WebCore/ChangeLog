@@ -1,3 +1,29 @@
+2010-09-17  Johnny Ding  <jnd@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Stop history reload navigation to bypass WebKit's popup blocker.
+        Now history reload can only navigate the page in self frame, no matter
+        what target frame is defined in <base> and no new window can be created.
+        https://bugs.webkit.org/show_bug.cgi?id=45369
+
+        Test: fast/events/popup-blocked-from-history-reload.html
+
+        * loader/RedirectScheduler.cpp:
+        (WebCore::ScheduledNavigation::ScheduledNavigation):
+        (WebCore::ScheduledNavigation::wasUserGesture):
+        Move the m_wasUserGesture to base class ScheduledNavigation. Then all
+        asynchronous navigation situations can restore the correct gesture state
+        during the real navigation process.
+        (WebCore::ScheduledURLNavigation::ScheduledURLNavigation):
+        (WebCore::ScheduledURLNavigation::fire):
+        (WebCore::ScheduledURLNavigation::referrer):
+        (WebCore::ScheduledHistoryNavigation::ScheduledHistoryNavigation):
+        (WebCore::ScheduledHistoryNavigation::fire):
+        (WebCore::ScheduledFormSubmission::ScheduledFormSubmission):
+        (WebCore::ScheduledFormSubmission::fire):
+        (WebCore::RedirectScheduler::scheduleHistoryNavigation):
+
 2010-09-16  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by James Robinson.
