@@ -944,6 +944,12 @@ userscripts/user-script-top-frame-only.html
 userscripts/user-style-all-frames.html
 userscripts/user-style-top-frame-only.html
 
+# These tests are flaky on Windows. Needs investigation.
+# https://bugs.webkit.org/show_bug.cgi?id=45980
+userscripts/user-script-video-document.html
+userscripts/user-script-audio-document.html
+userscripts/user-script-plugin-document.html
+
 # Directory upload is not enabled.
 fast/forms/input-file-directory-upload.html
 

@@ -1,3 +1,12 @@
+2010-09-17  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Adam Roben.
+
+        Skip some userscripts tests that are flaky on Windows (but pass on Mac),
+        this needs investigation, and is being tracked by <http://webkit.org/b/44199>.
+
+        * platform/win/Skipped:
+
 2010-09-17  Adam Roben  <aroben@apple.com>
 
         Land new Windows results for fast/forms/file-input-disabled.html
