@@ -2519,6 +2519,7 @@ def check_identifier_name_in_declaration(filename, line_number, line, error):
                 and not modified_identifier.startswith('NPP_')
                 and not modified_identifier.startswith('NP_')
                 and not modified_identifier.startswith('qt_')
+                and not modified_identifier.startswith('cairo_')
                 and not modified_identifier.find('::qt_') >= 0
                 and not modified_identifier == "const_iterator"):
                 error(line_number, 'readability/naming', 4, identifier + " is incorrectly named. Don't use underscores in your identifier names.")

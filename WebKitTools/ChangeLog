@@ -1,3 +1,15 @@
+2010-09-17  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Oliver Hunt.
+
+        Style bot complains about cairo forward declaration naming
+        https://bugs.webkit.org/show_bug.cgi?id=45867
+
+        Exclude Cairo forward declarations from indentifiers with underscores checks.
+
+        * Scripts/webkitpy/style/checkers/cpp.py: Add exclusion for Cairo forward-declarations.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py: Add some tests for this.
+
 2010-09-16  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Ojan Vafai.
