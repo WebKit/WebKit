@@ -1,3 +1,14 @@
+2010-09-17  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8440903> WK2: REGRESSION (r66156): Web sites using
+        AppleConnect fail to log in: "HTTP Status 404 - /ssowebapp/scriptFrame"
+        https://bugs.webkit.org/show_bug.cgi?id=45960
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createPlugin):
+
 2010-09-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
