@@ -49,7 +49,6 @@ class WebFileWriter;
 class AsyncFileWriterChromium : public WebCore::AsyncFileWriter, public WebFileWriterClient {
 public:
     AsyncFileWriterChromium(WebCore::FileWriterClient* client);
-    ~AsyncFileWriterChromium();
 
     void setWebFileWriter(WebFileWriter* writer);
 
