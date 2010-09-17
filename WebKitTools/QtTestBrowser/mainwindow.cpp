@@ -35,7 +35,7 @@
 #include "locationedit.h"
 #include "utils.h"
 
-MainWindow::MainWindow(const QString& url)
+MainWindow::MainWindow()
     : m_page(new WebPage(this))
 {
     setAttribute(Qt::WA_DeleteOnClose);

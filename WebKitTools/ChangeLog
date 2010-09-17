@@ -1,3 +1,16 @@
+2010-09-12  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        Remove useless parameter from MainWindow class' constructor.
+
+        The parameter defaults to an empty URL and is not being used by any caller. Apart from that it is also
+        not referred in the constructor body and does not make much sense.
+
+        * QtTestBrowser/mainwindow.cpp:
+        (MainWindow::MainWindow):
+        * QtTestBrowser/mainwindow.h:
+
 2010-09-15  Tony Chang  <tony@chromium.org>
 
         Reviewed by Kent Tamura.

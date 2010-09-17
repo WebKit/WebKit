@@ -42,7 +42,7 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    MainWindow(const QString& url = QString());
+    MainWindow();
 
     void addCompleterEntry(const QUrl& url);
 
