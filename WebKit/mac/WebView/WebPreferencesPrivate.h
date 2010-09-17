@@ -184,6 +184,9 @@ extern NSString *WebPreferencesRemovedNotification;
 - (BOOL)webGLEnabled;
 - (void)setWebGLEnabled:(BOOL)enabled;
 
+- (BOOL)accelerated2dCanvasEnabled;
+- (void)setAccelerated2dCanvasEnabled:(BOOL)enabled;
+
 - (BOOL)paginateDuringLayoutEnabled;
 - (void)setPaginateDuringLayoutEnabled:(BOOL)flag;
 

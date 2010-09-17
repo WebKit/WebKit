@@ -1438,11 +1438,13 @@ static bool fastDocumentTeardownEnabled()
     
     // FIXME: Enabling accelerated compositing when WebGL is enabled causes tests to fail on Leopard which expect HW compositing to be disabled.
     // Until we fix that, I will comment out the test (CFM)
-    settings->setAcceleratedCompositingEnabled((coreVideoHas7228836Fix() || [preferences webGLEnabled]) && [preferences acceleratedCompositingEnabled]);
+    settings->setAcceleratedCompositingEnabled((coreVideoHas7228836Fix() || [preferences webGLEnabled] || 
+        [preferences accelerated2dCanvasEnabled]) && [preferences acceleratedCompositingEnabled]);
     settings->setShowDebugBorders([preferences showDebugBorders]);
     settings->setShowRepaintCounter([preferences showRepaintCounter]);
     settings->setPluginAllowedRunTime([preferences pluginAllowedRunTime]);
     settings->setWebGLEnabled([preferences webGLEnabled]);
+    settings->setAccelerated2dCanvasEnabled([preferences accelerated2dCanvasEnabled]);
     settings->setLoadDeferringEnabled(shouldEnableLoadDeferring());
     settings->setFrameFlatteningEnabled([preferences isFrameFlatteningEnabled]);
     settings->setPaginateDuringLayoutEnabled([preferences paginateDuringLayoutEnabled]);
