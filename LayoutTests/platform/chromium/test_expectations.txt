@@ -2585,9 +2585,11 @@ BUG43890 MAC LINUX : fast/forms/implicit-submission.html = TEXT PASS
 // Flaky crashing test. Started crashing around Chromium r47220
 BUG44150 LINUX DEBUG : fast/forms/input-text-paste-maxlength.html = CRASH PASS
 
-// New canvas test suite from http://philip.html5.org/tests/canvas/suite/tests/
-BUG20553 SKIP DEFER : canvas/philip = TEXT
-BUG20553 SKIP DEFER : http/tests/canvas/philip = TEXT
+// Canvas test suite.  Needs baselines.
+BUG45991 : canvas/philip = TEXT
+// These appear flaky locally - will see what the bots thing.
+BUG45991 : canvas/philip/tests/2d.path.arcTo.coincide.1.html = TEXT PASS
+BUG45991 : canvas/philip/tests/2d.path.stroke.prune.arc.html = TEXT PASS
 
 // Need to dump context menu items on eventSender.contextClick(true).
 BUGWK39105 : editing/spelling/context-menu-suggestions.html = TEXT
