@@ -2199,27 +2199,13 @@ BUG31997 DEBUG WIN : fast/body-propagation/overflow/004-xhtml.xhtml = IMAGE+TEXT
 BUG35329 WIN : http/tests/appcache/resource-redirect-2.html = TIMEOUT PASS
 
 // Webkit Roll to r51875
-BUG29748 LINUX : css1/basic/containment.html = IMAGE
-BUG29748 LINUX : css1/box_properties/padding_right.html = IMAGE
-BUG29748 LINUX : css1/font_properties/font_size.html = IMAGE
-BUG29748 LINUX : fast/block/float/nested-clearance.html = IMAGE
-BUG29748 LINUX : fast/block/positioning/051.html = IMAGE
-BUG29748 LINUX : fast/block/positioning/055.html = IMAGE
-BUG29748 LINUX : fast/forms/select-change-listbox-size.html = IMAGE
-BUG29748 LINUX : fast/frames/iframe-scrolling-attribute.html = IMAGE
-BUG29748 LINUX : fast/frames/onlyCommentInIFrame.html = IMAGE
-BUG29748 LINUX : fast/multicol/positioned-with-constrained-height.html = IMAGE
-BUG29748 LINUX : fast/repaint/overflow-scroll-delete.html = IMAGE
-BUG29748 LINUX : http/tests/navigation/error404-frames.html = IMAGE
 BUG29748 LINUX : tables/mozilla/bugs/bug137388-2.html = IMAGE
 BUG29748 LINUX : tables/mozilla/bugs/bug2479-1.html = IMAGE
-//BUG29748 LINUX : tables/mozilla/bugs/bug2479-4.html = IMAGE
 BUG29748 LINUX : tables/mozilla/bugs/bug29314.html = IMAGE
 BUG29748 LINUX : tables/mozilla/bugs/bug2997.html = IMAGE
 BUG29748 LINUX : tables/mozilla/bugs/bug32205-2.html = IMAGE
 BUG29748 LINUX : tables/mozilla/bugs/bug3977.html = IMAGE
 BUG29748 LINUX : tables/mozilla/bugs/bug43854-1.html = IMAGE
-//BUG29748 LINUX : tables/mozilla/bugs/bug44505.html = IMAGE
 BUG29748 LINUX : tables/mozilla/bugs/bug650.html = IMAGE
 BUG29748 LINUX : tables/mozilla/bugs/bug73321.html = IMAGE
 BUG29748 LINUX : tables/mozilla/core/captions.html = IMAGE
@@ -2233,7 +2219,6 @@ BUG29748 LINUX : tables/mozilla_expected_failures/bugs/bug10140.html = IMAGE
 BUG29748 LINUX : tables/mozilla_expected_failures/bugs/bug1055-2.html = IMAGE
 BUG29748 LINUX : tables/mozilla_expected_failures/bugs/bug106966.html = IMAGE
 BUG29748 LINUX : tables/mozilla_expected_failures/bugs/bug22122.html = IMAGE
-//BUG29748 LINUX : tables/mozilla_expected_failures/bugs/bug2479-5.html = IMAGE
 BUG29748 LINUX : tables/mozilla_expected_failures/bugs/bug80762-2.html = IMAGE
 BUG29748 LINUX : tables/mozilla_expected_failures/bugs/bug91057.html = IMAGE
 BUG29748 LINUX : tables/mozilla_expected_failures/core/backgrounds.html = IMAGE
@@ -2247,6 +2232,9 @@ BUG29748 LINUX : tables/mozilla_expected_failures/marvin/table_overflow_dirty_re
 BUG29748 LINUX : tables/mozilla_expected_failures/other/empty_cells.html = IMAGE
 BUG29748 LINUX : tables/mozilla_expected_failures/other/test4.html = IMAGE
 BUG29748 WIN DEBUG : fast/forms/input-align-image.html = IMAGE+TEXT PASS
+
+// The scrollbar arrows exceed the height of the iframe.
+BUG29748 LINUX : fast/frames/onlyCommentInIFrame.html = IMAGE
 
 // More Webkit Roll to r51875
 // Some of these went from IMAGE+TEXT to just IMAGE at r57886
