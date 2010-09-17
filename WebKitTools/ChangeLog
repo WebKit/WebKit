@@ -1,3 +1,17 @@
+2010-09-16  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Include detailed test modifiers (e.g. FLAKY) in results.json for failing non-layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=45408
+
+        This change also tries to remove duplicated upload_results_json methods
+        in run_webkit_tests.py and json_results_generator.py.
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator_unittest.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2010-09-16  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Andreas Kling.
