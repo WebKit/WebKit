@@ -816,6 +816,7 @@ fast/forms/multiple-form-submission-protection-mouse.html
 fast/events/remove-child-onscroll.html
 fast/events/platform-wheelevent-in-scrolling-div.html
 fast/events/continuous-platform-wheelevent-in-scrolling-div.html
+scrollbars/scrollevent-iframe-no-scrolling-wheel.html
 
 # Windows port doesn't yet support rendering of non-BMP characters even though there's a font available.
 fast/text/international/plane2.html 
@@ -873,6 +874,7 @@ canvas/philip
 editing/spelling/context-menu-suggestions.html
 
 # textInputController.hasSpellingMarkers() is not implemented.
+editing/spelling/spelling-backspace-between-lines.html
 editing/spelling/spelling-contenteditable.html
 editing/spelling/spelling-textarea.html
 

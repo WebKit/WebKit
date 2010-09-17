@@ -1,3 +1,11 @@
+2010-09-17  Adam Roben  <aroben@apple.com>
+
+        Add some tests failing due to unimplemented DRT APIs to the Windows
+        Skipped file
+
+        * platform/win/Skipped: Added two tests which fail due to
+        already-known limitations of Windows DRT.
+
 2010-09-15  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
