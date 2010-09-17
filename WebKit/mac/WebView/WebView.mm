@@ -174,6 +174,10 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/Threading.h>
 
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#import <AppKit/NSTextChecker.h>
+#endif
+
 #if ENABLE(DASHBOARD_SUPPORT)
 #import <WebKit/WebDashboardRegion.h>
 #endif
@@ -2635,6 +2639,13 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     automaticDashSubstitutionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticDashSubstitutionEnabled];
     automaticTextReplacementEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticTextReplacementEnabled];
     automaticSpellingCorrectionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticSpellingCorrectionEnabled];
+#endif
+
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:WebAutomaticTextReplacementEnabled])
+        automaticTextReplacementEnabled = [NSSpellChecker isAutomaticTextReplacementEnabled];
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:WebAutomaticSpellingCorrectionEnabled])
+        automaticTextReplacementEnabled = [NSSpellChecker isAutomaticSpellingCorrectionEnabled];
 #endif
 }
 
