@@ -1,3 +1,15 @@
+2010-09-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by James Robinson.
+
+        In layerTreeAsText output, avoid printing properties which have their default values
+        https://bugs.webkit.org/show_bug.cgi?id=45931
+
+        Don't dump properties that have their default values to simplify output.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::dumpProperties):
+
 2010-09-16  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Ariya Hidayat.

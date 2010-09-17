@@ -1,3 +1,45 @@
+2010-09-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by James Robinson.
+
+        In layerTreeAsText output, avoid printing properties which have their default values
+        https://bugs.webkit.org/show_bug.cgi?id=45931
+        
+        Updated results.
+
+        * compositing/geometry/clip-expected.txt:
+        * compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt:
+        * compositing/geometry/limit-layer-bounds-fixed-positioned-expected.txt:
+        * compositing/geometry/limit-layer-bounds-overflow-root-expected.txt:
+        * compositing/geometry/limit-layer-bounds-positioned-expected.txt:
+        * compositing/geometry/limit-layer-bounds-positioned-transition-expected.txt:
+        * compositing/geometry/limit-layer-bounds-transformed-expected.txt:
+        * compositing/geometry/limit-layer-bounds-transformed-overflow-expected.txt:
+        * compositing/geometry/preserve-3d-switching-expected.txt:
+        * compositing/iframes/become-overlapped-iframe-expected.txt:
+        * compositing/iframes/composited-parent-iframe-expected.txt:
+        * compositing/iframes/connect-compositing-iframe-delayed-expected.txt:
+        * compositing/iframes/connect-compositing-iframe-expected.txt:
+        * compositing/iframes/connect-compositing-iframe2-expected.txt:
+        * compositing/iframes/connect-compositing-iframe3-expected.txt:
+        * compositing/iframes/enter-compositing-iframe-expected.txt:
+        * compositing/iframes/iframe-resize-expected.txt:
+        * compositing/iframes/iframe-size-from-zero-expected.txt:
+        * compositing/iframes/overlapped-iframe-expected.txt:
+        * compositing/iframes/scrolling-iframe-expected.txt:
+        * compositing/images/clip-on-directly-composited-image-expected.txt:
+        * compositing/layer-creation/overflow-scroll-overlap-expected.txt:
+        * compositing/layer-creation/scroll-partial-update-expected.txt:
+        * compositing/overflow/clip-descendents-expected.txt:
+        * compositing/overflow/resize-painting-expected.txt:
+        * compositing/plugins/small-to-large-composited-plugin-expected.txt:
+        * compositing/tiling/crash-reparent-tiled-layer-expected.txt:
+        * compositing/tiling/huge-layer-add-remove-child-expected.txt:
+        * compositing/tiling/huge-layer-expected.txt:
+        * compositing/tiling/huge-layer-resize-expected.txt:
+        * compositing/tiling/huge-layer-with-layer-children-expected.txt:
+        * compositing/tiling/huge-layer-with-layer-children-resize-expected.txt:
+
 2010-09-16  John Gregg  <johnnyg@google.com>
 
         Unreviewed, chromium rebaselines.
