@@ -821,6 +821,19 @@ void RenderLayerCompositor::frameViewDidScroll(const IntPoint& scrollPosition)
         m_scrollLayer->setPosition(FloatPoint(-scrollPosition.x(), -scrollPosition.y()));
 }
 
+String RenderLayerCompositor::layerTreeAsText()
+{
+    if (compositingLayerUpdatePending())
+        updateCompositingLayers();
+
+    if (!m_rootPlatformLayer)
+        return String();
+
+    // We skip dumping the scroll and clip layers to keep layerTreeAsText output
+    // similar between platforms.
+    return m_rootPlatformLayer->layerTreeAsText();
+}
+
 RenderLayerCompositor* RenderLayerCompositor::iframeContentsCompositor(RenderIFrame* renderer)
 {
     HTMLIFrameElement* element = static_cast<HTMLIFrameElement*>(renderer->node());
@@ -1281,16 +1294,9 @@ bool RenderLayerCompositor::needsContentsCompositingLayer(const RenderLayer* lay
 
 bool RenderLayerCompositor::requiresScrollLayer(RootLayerAttachment attachment) const
 {
-    if (attachment == RootLayerAttachedViaEnclosingIframe)
-        return true;
-
-#if PLATFORM(MAC)
-    // If we're viewless (i.e. WebKit2), we need to scroll ourselves.
-    // FIXME: eventually we should do this on other platforms too.
-    if (!m_renderView->frameView()->platformWidget())
-        return true;
-#endif
-    return false;
+    // We need to handle our own scrolling if we're:
+    return !m_renderView->frameView()->platformWidget() // viewless (i.e. non-Mac, or Mac in WebKit2)
+        || attachment == RootLayerAttachedViaEnclosingIframe; // a composited iframe on Mac
 }
 
 void RenderLayerCompositor::ensureRootPlatformLayer()

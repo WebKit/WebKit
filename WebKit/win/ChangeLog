@@ -1,3 +1,21 @@
+2010-09-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Chris Marrin.
+
+        Remove scroll and clip layers for WKCACFLayerRenderer
+        https://bugs.webkit.org/show_bug.cgi?id=45922
+
+        WKCACFLayerRenderer no longer needs its own layers for managing scrolling
+        and clipping, because RenderLayerCompositor provides this functionality.
+
+        * WebView.cpp:
+        (WebView::sizeChanged): Moved code that handles the WM_SIZE message
+        into this method. Use it to resize the layer renderer.
+        (WebView::WebViewWndProc): Call sizeChanged().
+        (WebView::updateRootLayerContents): No need to call setScrollFrame() any more.
+        (WebView::layerRendererBecameVisible): Move this from the header (no need to be inline).
+        * WebView.h:
+
 2010-09-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Andreas Kling.

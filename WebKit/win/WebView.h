@@ -921,6 +921,8 @@ private:
     HRESULT resetZoom(bool isTextOnly);
     bool active();
 
+    void sizeChanged(const WebCore::IntSize&);
+
     enum WindowsToPaint { PaintWebViewOnly, PaintWebViewAndChildren };
     void paintIntoBackingStore(WebCore::FrameView*, HDC bitmapDC, const WebCore::IntRect& dirtyRect, WindowsToPaint);
     void updateBackingStore(WebCore::FrameView*, HDC = 0, bool backingStoreCompletelyDirty = false, WindowsToPaint = PaintWebViewOnly);
@@ -1042,8 +1044,7 @@ protected:
     bool isAcceleratedCompositing() const { return m_isAcceleratedCompositing; }
     void setAcceleratedCompositing(bool);
     void updateRootLayerContents();
-    void resizeLayerRenderer() { m_layerRenderer->resize(); }
-    void layerRendererBecameVisible() { m_layerRenderer->createRenderer(); }
+    void layerRendererBecameVisible();
 
     OwnPtr<WebCore::WKCACFLayerRenderer> m_layerRenderer;
     bool m_isAcceleratedCompositing;

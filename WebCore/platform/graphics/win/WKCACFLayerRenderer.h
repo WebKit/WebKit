@@ -66,7 +66,6 @@ public:
     static bool acceleratedCompositingAvailable();
     static void didFlushContext(CACFContextRef);
 
-    void setScrollFrame(const IntPoint&, const IntSize&);
     void setRootContents(CGImageRef);
     void setRootContentsAndDisplay(CGImageRef);
     void setRootChildLayer(WKCACFLayer* layer);
@@ -78,7 +77,6 @@ public:
     void destroyRenderer();
     void resize();
     void renderSoon();
-    void updateScrollFrame();
 
 protected:
     WKCACFLayer* rootLayer() const;
@@ -105,16 +103,12 @@ private:
     bool m_mightBeAbleToCreateDeviceLater;
     COMPtr<IDirect3DDevice9> m_d3dDevice;
     RefPtr<WKCACFRootLayer> m_rootLayer;
-    RefPtr<WKCACFLayer> m_scrollLayer;
     RefPtr<WKCACFLayer> m_rootChildLayer;
-    RefPtr<WKCACFLayer> m_clipLayer;
     RetainPtr<CACFContextRef> m_context;
     CARenderContext* m_renderContext;
     CARenderOGLContext* m_renderer;
     HWND m_hostWindow;
     Timer<WKCACFLayerRenderer> m_renderTimer;
-    IntPoint m_scrollPosition;
-    IntSize m_scrollSize;
     bool m_backingStoreDirty;
     bool m_mustResetLostDeviceBeforeRendering;
 #ifndef NDEBUG

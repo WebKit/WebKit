@@ -854,6 +854,19 @@ void WebView::scrollBackingStore(FrameView* frameView, int dx, int dy, const Int
     ::ReleaseDC(m_viewWindow, windowDC);
 }
 
+void WebView::sizeChanged(const IntSize& newSize)
+{
+    deleteBackingStore();
+
+    if (Frame* coreFrame = core(topLevelFrame()))
+        coreFrame->view()->resize(newSize);
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_layerRenderer)
+        m_layerRenderer->resize();
+#endif
+}
+
 // This emulates the Mac smarts for painting rects intelligently.  This is very
 // important for us, since we double buffer based off dirty rects.
 static void getUpdateRects(HRGN region, const IntRect& dirtyRect, Vector<IntRect>& rects)
@@ -2080,15 +2093,8 @@ LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam,
             break;
         // FIXME: We need to check WM_UNICHAR to support supplementary characters (that don't fit in 16 bits).
         case WM_SIZE:
-            if (lParam != 0) {
-                webView->deleteBackingStore();
-#if USE(ACCELERATED_COMPOSITING)
-                if (webView->isAcceleratedCompositing())
-                    webView->resizeLayerRenderer();
-#endif
-                if (Frame* coreFrame = core(mainFrameImpl))
-                    coreFrame->view()->resize(LOWORD(lParam), HIWORD(lParam));
-            }
+            if (lParam != 0)
+                webView->sizeChanged(IntSize(LOWORD(lParam), HIWORD(lParam)));
             break;
         case WM_SHOWWINDOW:
             lResult = DefWindowProc(hWnd, message, wParam, lParam);
@@ -6279,14 +6285,11 @@ void WebView::updateRootLayerContents()
         m_nextDisplayIsSynchronous = false;
     } else
         m_layerRenderer->setRootContents(backingStoreImage.get());
+}
 
-    // Set the frame and scroll position
-    Frame* coreFrame = core(m_mainFrame);
-    if (!coreFrame)
-        return;
-    FrameView* frameView = coreFrame->view();
-
-    m_layerRenderer->setScrollFrame(IntPoint(frameView->scrollX(), frameView->scrollY()), IntSize(frameView->layoutWidth(), frameView->layoutHeight()));
+void WebView::layerRendererBecameVisible()
+{
+    m_layerRenderer->createRenderer();
 }
 #endif
 

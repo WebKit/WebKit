@@ -876,15 +876,7 @@ String Frame::layerTreeAsText() const
     if (!contentRenderer())
         return String();
 
-    RenderLayerCompositor* compositor = contentRenderer()->compositor();
-    if (compositor->compositingLayerUpdatePending())
-        compositor->updateCompositingLayers();
-
-    GraphicsLayer* rootLayer = compositor->rootPlatformLayer();
-    if (!rootLayer)
-        return String();
-
-    return rootLayer->layerTreeAsText();
+    return contentRenderer()->compositor()->layerTreeAsText();
 #else
     return String();
 #endif
