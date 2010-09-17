@@ -995,7 +995,7 @@
       ],
     },
     {
-      'target_name': 'webcore_remaining',
+      'target_name': 'webcore_platform',
       'type': '<(library)',
       'dependencies': [
         'webcore_prerequisites',
@@ -1010,59 +1010,22 @@
         '../../WebKit/mac/WebCoreSupport/WebSystemInterface.mm',
       ],
       'sources/': [
-        # Exclude JSC custom bindings.
-        ['exclude', 'bindings/js'],
-
-        # Fortunately, many things can be excluded by using broad patterns.
+        # Start by excluding everything then include platform files only.
+        ['exclude', '.*'],
+        ['include', 'platform/'],
 
         # Exclude things that don't apply to the Chromium platform on the basis
         # of their enclosing directories and tags at the ends of their
         # filenames.
         ['exclude', '(android|cairo|cf|cg|curl|gtk|haiku|linux|mac|opentype|posix|qt|soup|svg|symbian|win|wx)/'],
         ['exclude', '(?<!Chromium)(Android|Cairo|CF|CG|Curl|Gtk|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|Wx)\\.(cpp|mm?)$'],
+
+        # A few things can't be excluded by patterns.  List them individually.
+
         ['include', 'platform/graphics/opentype/OpenTypeSanitizer\\.cpp$'],
-
-        # Exclude most of SVG except css and javascript bindings.
-        ['exclude', 'rendering/style/SVG[^/]+.(cpp|h)$'],
-        ['exclude', 'rendering/RenderSVG[^/]+.(cpp|h)$'],
-        ['exclude', 'rendering/SVG[^/]+.(cpp|h)$'],
-
-        # A few things can't be excluded by broad patterns.
-        # List them individually.
-
-        # JSC-only.
-        ['exclude', 'inspector/JavaScript[^/]*\\.cpp$'],
-
-        # ENABLE_OFFLINE_WEB_APPLICATIONS, exclude most of webcore's impl
-        ['exclude', 'loader/appcache/'],
-        ['include', 'loader/appcache/ApplicationCacheHost\.h$'],
-        ['include', 'loader/appcache/DOMApplicationCache\.(cpp|h)$'],
 
         # Exclude some DB-related files.
         ['exclude', 'platform/sql/SQLiteFileSystem\\.cpp$'],
-        ['exclude', 'storage/DatabaseTracker\\.cpp$'],
-        ['exclude', 'storage/DatabaseTrackerClient\\.h$'],
-        ['exclude', 'storage/OriginQuotaManager\\.(cpp|h)$'],
-        ['exclude', 'storage/OriginUsageRecord\\.(cpp|h)$'],
-        ['exclude', 'storage/SQLTransactionClient\\.cpp$'],
-
-        # Don't build StorageNamespace.  We have our own implementation.
-        ['exclude', 'storage/StorageNamespace\\.cpp$'],
-
-        # Don't build StorageEventDispatcher.  We have our own implementation.
-        ['exclude', 'storage/StorageEventDispatcher\\.cpp$'],
-
-        # Don't build IDBFactoryBackendInterface.  We have our own implementation.
-        ['exclude', 'storage/IDBFactoryBackendInterface\\.cpp$'],
-
-        # Don't build IDBKeyPathBackendImpl.  We have our own implementation.
-        ['exclude', 'storage/IDBKeyPathBackendImpl\\.cpp$'],
-
-        # Use history/BackForwardListChromium.cpp instead.
-        ['exclude', 'history/BackForwardListImpl\\.cpp$'],
-
-        # Use loader/icon/IconDatabaseNone.cpp instead.
-        ['exclude', 'loader/icon/IconDatabase\\.cpp$'],
 
         # Use platform/KURLGoogle.cpp instead.
         ['exclude', 'platform/KURL\\.cpp$'],
@@ -1074,60 +1037,9 @@
         # Windows and Linux. We manually include Theme.cpp for the Mac below.
         ['exclude', 'platform/Theme\\.cpp$'],
 
-        # Exclude some, but not all, of plugins.
-        ['exclude', 'plugins/PluginDatabase\\.cpp$'],
-        ['exclude', 'plugins/PluginMainThreadScheduler\\.cpp$'],
-        ['exclude', 'plugins/PluginPackage\\.cpp$'],
-        ['exclude', 'plugins/PluginStream\\.cpp$'],
-        ['exclude', 'plugins/PluginView\\.cpp$'],
-        ['exclude', 'plugins/npapi\\.cpp$'],
-
         # Use LinkHashChromium.cpp instead
         ['exclude', 'platform/LinkHash\\.cpp$'],
-
-        # FIXME: I don't know exactly why these are excluded.  It would
-        # be nice to provide more explicit comments.  Some of these do actually
-        # compile.
-        ['exclude', 'dom/StaticStringList\\.cpp$'],
-        ['exclude', 'loader/icon/IconFetcher\\.cpp$'],
-        ['exclude', 'loader/UserStyleSheetLoader\\.cpp$'],
-
-        # We use a multi-process version from the WebKit API.
-        ['exclude', 'dom/default/PlatformMessagePortChannel\\.(cpp|h)$'],
       ],
-      'link_settings': {
-        'mac_bundle_resources': [
-          '../Resources/aliasCursor.png',
-          '../Resources/cellCursor.png',
-          '../Resources/contextMenuCursor.png',
-          '../Resources/copyCursor.png',
-          '../Resources/crossHairCursor.png',
-          '../Resources/eastResizeCursor.png',
-          '../Resources/eastWestResizeCursor.png',
-          '../Resources/helpCursor.png',
-          '../Resources/linkCursor.png',
-          '../Resources/missingImage.png',
-          '../Resources/moveCursor.png',
-          '../Resources/noDropCursor.png',
-          '../Resources/noneCursor.png',
-          '../Resources/northEastResizeCursor.png',
-          '../Resources/northEastSouthWestResizeCursor.png',
-          '../Resources/northResizeCursor.png',
-          '../Resources/northSouthResizeCursor.png',
-          '../Resources/northWestResizeCursor.png',
-          '../Resources/northWestSouthEastResizeCursor.png',
-          '../Resources/notAllowedCursor.png',
-          '../Resources/progressCursor.png',
-          '../Resources/southEastResizeCursor.png',
-          '../Resources/southResizeCursor.png',
-          '../Resources/southWestResizeCursor.png',
-          '../Resources/verticalTextCursor.png',
-          '../Resources/waitCursor.png',
-          '../Resources/westResizeCursor.png',
-          '../Resources/zoomInCursor.png',
-          '../Resources/zoomOutCursor.png',
-        ],
-      },
       'conditions': [
         ['OS=="linux" or OS=="freebsd"', {
           'sources/': [
@@ -1228,10 +1140,6 @@
             # by regex above, instead.
             ['exclude', 'platform/graphics/ImageSource\\.cpp$'],
 
-            # RenderThemeChromiumSkia is not used on mac since RenderThemeChromiumMac
-            # does not reference the Skia code that is used by Windows and Linux.
-            ['exclude', 'rendering/RenderThemeChromiumSkia\\.cpp$'],
-
             # Skia image-decoders are also not used on mac.  CoreGraphics
             # is used directly instead.
             ['exclude', 'platform/image-decoders/ImageDecoder\\.h$'],
@@ -1247,16 +1155,6 @@
 
             # Again, Skia is not used on Mac.
             ['exclude', 'platform/chromium/DragImageChromiumSkia\\.cpp$'],
-          ],
-        }],
-        ['OS=="win"', {
-          'sources/': [
-            ['exclude', 'Posix\\.cpp$'],
-            ['include', '/opentype/'],
-            ['include', '/ScrollAnimatorWin\\.cpp$'],
-            ['include', '/ScrollAnimatorWin\\.h$'],
-            ['include', '/SkiaFontWin\\.cpp$'],
-            ['include', '/TransparencyWin\\.cpp$'],
           ],
         }],
         ['OS!="linux" and OS!="freebsd"', {
@@ -1275,12 +1173,165 @@
             ['exclude', '/(Windows|Uniscribe)[^/]*\\.cpp$']
           ],
         }],
+        ['OS=="win"', {
+          'sources/': [
+            ['exclude', 'Posix\\.cpp$'],
+          ],
+        }],
+      ],
+    },
+    {
+      'target_name': 'webcore_remaining',
+      'type': '<(library)',
+      'dependencies': [
+        'webcore_prerequisites',
+      ],
+      # This is needed for mac because of webkit_system_interface. It'd be nice
+      # if this hard dependency could be split off the rest.
+      'hard_dependency': 1,
+      'sources': [
+        '<@(webcore_files)',
+      ],
+      'sources/': [
+        # Exclude JSC custom bindings.
+        ['exclude', 'bindings/js'],
+
+        # Fortunately, many things can be excluded by using broad patterns.
+
+        # Exclude things that don't apply to the Chromium platform on the basis
+        # of their enclosing directories and tags at the ends of their
+        # filenames.
+        ['exclude', '(android|cairo|cf|cg|curl|gtk|haiku|linux|mac|opentype|platform|posix|qt|soup|svg|symbian|win|wx)/'],
+        ['exclude', '(?<!Chromium)(Android|Cairo|CF|CG|Curl|Gtk|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|Wx)\\.(cpp|mm?)$'],
+
+        # Exclude most of SVG except css and javascript bindings.
+        ['exclude', 'rendering/style/SVG[^/]+.(cpp|h)$'],
+        ['exclude', 'rendering/RenderSVG[^/]+.(cpp|h)$'],
+        ['exclude', 'rendering/SVG[^/]+.(cpp|h)$'],
+
+        # JSC-only.
+        ['exclude', 'inspector/JavaScript[^/]*\\.cpp$'],
+
+        # ENABLE_OFFLINE_WEB_APPLICATIONS, exclude most of webcore's impl
+        ['exclude', 'loader/appcache/'],
+        ['include', 'loader/appcache/ApplicationCacheHost\.h$'],
+        ['include', 'loader/appcache/DOMApplicationCache\.(h|cpp)$'],
+
+        # Exclude some DB-related files.
+        ['exclude', 'storage/DatabaseTracker\\.cpp$'],
+        ['exclude', 'storage/DatabaseTrackerClient\\.h$'],
+        ['exclude', 'storage/OriginQuotaManager\\.(cpp|h)$'],
+        ['exclude', 'storage/OriginUsageRecord\\.(cpp|h)$'],
+        ['exclude', 'storage/SQLTransactionClient\\.cpp$'],
+
+        # Don't build StorageNamespace.  We have our own implementation.
+        ['exclude', 'storage/StorageNamespace\\.cpp$'],
+
+        # Don't build StorageEventDispatcher.  We have our own implementation.
+        ['exclude', 'storage/StorageEventDispatcher\\.cpp$'],
+
+        # Don't build IDBFactoryBackendInterface.  We have our own implementation.
+        ['exclude', 'storage/IDBFactoryBackendInterface\\.cpp$'],
+
+        # Don't build IDBKeyPathBackendImpl.  We have our own implementation.
+        ['exclude', 'storage/IDBKeyPathBackendImpl\\.cpp$'],
+
+        # Use history/BackForwardListChromium.cpp instead.
+        ['exclude', 'history/BackForwardListImpl\\.cpp$'],
+
+        # Use loader/icon/IconDatabaseNone.cpp instead.
+        ['exclude', 'loader/icon/IconDatabase\\.cpp$'],
+
+        # Exclude some, but not all, of plugins.
+        ['exclude', 'plugins/PluginDatabase\\.cpp$'],
+        ['exclude', 'plugins/PluginMainThreadScheduler\\.cpp$'],
+        ['exclude', 'plugins/PluginPackage\\.cpp$'],
+        ['exclude', 'plugins/PluginStream\\.cpp$'],
+        ['exclude', 'plugins/PluginView\\.cpp$'],
+        ['exclude', 'plugins/npapi\\.cpp$'],
+
+        # FIXME: I don't know exactly why these are excluded.  It would
+        # be nice to provide more explicit comments.  Some of these do actually
+        # compile.
+        ['exclude', 'dom/StaticStringList\\.cpp$'],
+        ['exclude', 'loader/icon/IconFetcher\\.cpp$'],
+        ['exclude', 'loader/UserStyleSheetLoader\\.cpp$'],
+
+        # We use a multi-process version from the WebKit API.
+        ['exclude', 'dom/default/PlatformMessagePortChannel\\.(cpp|h)$'],
+      ],
+      'link_settings': {
+        'mac_bundle_resources': [
+          '../Resources/aliasCursor.png',
+          '../Resources/cellCursor.png',
+          '../Resources/contextMenuCursor.png',
+          '../Resources/copyCursor.png',
+          '../Resources/crossHairCursor.png',
+          '../Resources/eastResizeCursor.png',
+          '../Resources/eastWestResizeCursor.png',
+          '../Resources/helpCursor.png',
+          '../Resources/linkCursor.png',
+          '../Resources/missingImage.png',
+          '../Resources/moveCursor.png',
+          '../Resources/noDropCursor.png',
+          '../Resources/noneCursor.png',
+          '../Resources/northEastResizeCursor.png',
+          '../Resources/northEastSouthWestResizeCursor.png',
+          '../Resources/northResizeCursor.png',
+          '../Resources/northSouthResizeCursor.png',
+          '../Resources/northWestResizeCursor.png',
+          '../Resources/northWestSouthEastResizeCursor.png',
+          '../Resources/notAllowedCursor.png',
+          '../Resources/progressCursor.png',
+          '../Resources/southEastResizeCursor.png',
+          '../Resources/southResizeCursor.png',
+          '../Resources/southWestResizeCursor.png',
+          '../Resources/verticalTextCursor.png',
+          '../Resources/waitCursor.png',
+          '../Resources/westResizeCursor.png',
+          '../Resources/zoomInCursor.png',
+          '../Resources/zoomOutCursor.png',
+        ],
+      },
+      'conditions': [
+        ['OS=="win"', {
+          'sources/': [
+            ['exclude', 'Posix\\.cpp$'],
+            ['include', '/opentype/'],
+            ['include', '/ScrollAnimatorWin\\.cpp$'],
+            ['include', '/ScrollAnimatorWin\\.h$'],
+            ['include', '/SkiaFontWin\\.cpp$'],
+            ['include', '/TransparencyWin\\.cpp$'],
+          ],
+        }],
+        ['OS=="mac"', {
+          'sources/': [
+            # RenderThemeChromiumSkia is not used on mac since RenderThemeChromiumMac
+            # does not reference the Skia code that is used by Windows and Linux.
+            ['exclude', 'rendering/RenderThemeChromiumSkia\\.cpp$'],
+          ],
+        }],
+        ['OS!="linux" and OS!="freebsd"', {
+          'sources/': [
+            ['exclude', '(Gtk|Linux)\\.cpp$'],
+          ],
+        }],
+        ['OS!="mac"', {
+          'sources/': [['exclude', 'Mac\\.(cpp|mm?)$']]
+        }],
+        ['OS!="win"', {
+          'sources/': [
+            ['exclude', 'Win\\.cpp$'],
+            ['exclude', '/(Windows|Uniscribe)[^/]*\\.cpp$']
+          ],
+        }],
       ],
     },
     {
       'target_name': 'webcore',
       'type': 'none',
       'dependencies': [
+        'webcore_platform',
         'webcore_remaining',
         # Exported.
         'webcore_bindings',

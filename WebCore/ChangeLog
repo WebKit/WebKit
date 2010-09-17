@@ -1,3 +1,15 @@
+2010-09-17  Marc-Antoine Ruel  <maruel@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] Split webcore_platform off webcore_remaining
+
+        Further reduce webcore_remaining size by moving platform/ code in its
+        own static libary.
+        https://bugs.webkit.org/show_bug.cgi?id=45915
+
+        * WebCore.gyp/WebCore.gyp:
+
 2010-09-13  Matt Perry  <mpcomplete@chromium.org>
 
         Reviewed by Darin Fisher.
