@@ -1,5 +1,15 @@
 2010-09-17  Adam Roben  <aroben@apple.com>
 
+        Land new Windows results for html5lib/runner.html
+
+        This corresponds to the changes made in r67233 and r67356.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * platform/win/html5lib/runner-expected.txt:
+
+2010-09-17  Adam Roben  <aroben@apple.com>
+
         Add some tests failing due to unimplemented DRT APIs to the Windows
         Skipped file
 
