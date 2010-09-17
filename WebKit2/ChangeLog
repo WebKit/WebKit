@@ -1,3 +1,12 @@
+2010-09-17  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Reduce minimum DOMTimer interval
+        https://bugs.webkit.org/show_bug.cgi?id=45362
+
+        * WebProcess/WebPage/WebPage.cpp: Added in a call to set the mimimum allowed DOMTimer to 4ms.
+
 2010-09-17  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

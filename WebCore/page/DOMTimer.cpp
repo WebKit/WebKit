@@ -60,9 +60,6 @@ DOMTimer::DOMTimer(ScriptExecutionContext* context, PassOwnPtr<ScheduledAction> 
 
     double intervalMilliseconds = max(oneMillisecond, timeout * oneMillisecond);
 
-    // Use a minimum interval of 10 ms to match other browsers, but only once we've
-    // nested enough to notice that we're repeating.
-    // Faster timers might be "better", but they're incompatible.
     if (intervalMilliseconds < s_minTimerInterval && m_nestingLevel >= maxTimerNestingLevel)
         intervalMilliseconds = s_minTimerInterval;
     if (singleShot)

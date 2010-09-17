@@ -49,8 +49,6 @@ namespace WebCore {
         virtual void stop();
 
         // The lowest allowable timer setting (in seconds, 0.001 == 1 ms).
-        // Default is 10ms.
-        // Chromium uses a non-default timeout.
         static double minTimerInterval() { return s_minTimerInterval; }
         static void setMinTimerInterval(double value) { s_minTimerInterval = value; }
 

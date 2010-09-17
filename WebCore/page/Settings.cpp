@@ -27,8 +27,9 @@
 #include "Settings.h"
 
 #include "BackForwardList.h"
-#include "Database.h"
 #include "CachedResourceLoader.h"
+#include "DOMTimer.h"
+#include "Database.h"
 #include "Frame.h"
 #include "FrameTree.h"
 #include "FrameView.h"
@@ -402,6 +403,11 @@ void Settings::setNeedsTigerMailQuirks(bool needsQuirks)
 void Settings::setDOMPasteAllowed(bool DOMPasteAllowed)
 {
     m_isDOMPasteAllowed = DOMPasteAllowed;
+}
+
+void Settings::setMinDOMTimerInterval(double interval)
+{
+    DOMTimer::setMinTimerInterval(interval);
 }
 
 void Settings::setUsesPageCache(bool usesPageCache)

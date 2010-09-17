@@ -116,6 +116,7 @@ WebPage::WebPage(uint64_t pageID, const IntSize& viewSize, const WebPreferencesS
     m_page->settings()->setSansSerifFontFamily(store.sansSerifFontFamily);
     m_page->settings()->setSerifFontFamily(store.serifFontFamily);
     m_page->settings()->setJavaScriptCanOpenWindowsAutomatically(true);
+    m_page->settings()->setMinDOMTimerInterval(0.004);
 
     m_page->setGroupName("WebKit2Group");
     
