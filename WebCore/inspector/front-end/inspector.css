@@ -1693,6 +1693,10 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     color: gray;
 }
 
+.pane > .body .placard + .info {
+    border-top: 1px solid gray
+}
+
 .pane.expanded > .body, .pane.expanded > .growbar {
     display: block;
 }

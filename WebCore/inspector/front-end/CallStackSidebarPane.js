@@ -26,7 +26,6 @@
 WebInspector.CallStackSidebarPane = function()
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Call Stack"));
-    
 }
 
 WebInspector.CallStackSidebarPane.prototype = {
@@ -81,6 +80,39 @@ WebInspector.CallStackSidebarPane.prototype = {
             this.placards.push(placard);
             this.bodyElement.appendChild(placard.element);
         }
+    },
+
+    updateStatus:  function(status)
+    {
+        var statusElement = document.createElement("div");
+        statusElement.className = "info";
+
+        var breakpointType = status.breakpoint.type;
+        var substitutions = [WebInspector.DOMBreakpoint.labelForType(breakpointType), WebInspector.panels.elements.linkifyNodeById(status.breakpoint.nodeId)];
+        var formatters = {
+            s: function(substitution)
+            {
+                return substitution;
+            }
+        };
+        function append(a, b)
+        {
+            if (typeof b === "string")
+                b = document.createTextNode(b);
+            statusElement.appendChild(b);
+        }
+        if (breakpointType === WebInspector.DOMBreakpoint.Types.SubtreeModified) {
+            var targetNode = WebInspector.panels.elements.linkifyNodeById(status.targetNodeId);
+            if (status.insertion) {
+                if (status.targetNodeId !== status.breakpoint.nodeId)
+                    WebInspector.formatLocalized("Paused on a \"%s\" breakpoint set on %s, because a new child was added to its descendant %s.", substitutions.concat(targetNode), formatters, "", append);
+                else
+                    WebInspector.formatLocalized("Paused on a \"%s\" breakpoint set on %s, because a new child was added to that node.", substitutions, formatters, "", append);
+            } else
+                WebInspector.formatLocalized("Paused on a \"%s\" breakpoint set on %s, because its descendant %s was removed.", substitutions.concat(targetNode), formatters, "", append);
+        } else
+            WebInspector.formatLocalized("Paused on a \"%s\" breakpoint set on %s.", substitutions, formatters, "", append);
+        this.bodyElement.appendChild(statusElement);
     },
 
     get selectedCallFrame()

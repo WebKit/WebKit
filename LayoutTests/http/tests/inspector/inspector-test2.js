@@ -27,6 +27,11 @@ InspectorTest.evaluateInPage = function(code, callback)
     InjectedScriptAccess.getDefault().evaluate(code, "console", callback || function() {});
 };
 
+InspectorTest.evaluateInPageWithTimeout = function(code, callback)
+{
+    InspectorTest.evaluateInPage("setTimeout(unescape('" + escape(code) + "'))", callback);
+};
+
 InspectorTest.addResult = function(text)
 {
     results.push(text);
@@ -107,7 +112,7 @@ InspectorTest.disableResourceTracking = function()
 InspectorTest.findDOMNode = function(root, filter, callback)
 {
     var found = false;
-    var pendingCalls = 0;
+    var pendingCalls = 1;
 
     if (root)
         findDOMNode(root);
@@ -128,20 +133,19 @@ InspectorTest.findDOMNode = function(root, filter, callback)
         if (filter(node)) {
             callback(node);
             found = true;
-        } else {
-            pendingCalls += 1;
+        } else
             WebInspector.domAgent.getChildNodesAsync(node, processChildren);
-        }
+
+        --pendingCalls;
+
+        if (!found && !pendingCalls)
+            setTimeout(findDOMNode.bind(null, root), 0);
 
         function processChildren(children)
         {
-            pendingCalls -= 1;
-
+            pendingCalls += children ? children.length : 0;
             for (var i = 0; !found && children && i < children.length; ++i)
                 findDOMNode(children[i]);
-
-            if (!found && !pendingCalls && node == root)
-                callback(null);
         }
     }
 };

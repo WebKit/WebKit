@@ -1430,7 +1430,7 @@ WebInspector.failedToParseScriptSource = function(sourceURL, source, startingLin
 
 WebInspector.pausedScript = function(details)
 {
-    this.panels.scripts.debuggerPaused(details.callFrames);
+    this.panels.scripts.debuggerPaused(details);
     InspectorFrontendHost.bringToFront();
 }
 
@@ -2010,6 +2010,11 @@ WebInspector.UIString = function(string)
     }
 
     return String.vsprintf(string, Array.prototype.slice.call(arguments, 1));
+}
+
+WebInspector.formatLocalized = function(format, substitutions, formatters, initialValue, append)
+{
+    return String.format(WebInspector.UIString(format), substitutions, formatters, initialValue, append);
 }
 
 WebInspector.isMac = function()

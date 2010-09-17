@@ -161,8 +161,8 @@ namespace WebCore {
         bool pushDocumentToFrontend();
 
         bool hasBreakpoint(Node* node, long type);
-        PassRefPtr<InspectorObject> createBreakpoint(Node* node, long type);
         void updateSubtreeBreakpoints(Node* root, uint32_t rootMask, bool value);
+        PassRefPtr<InspectorValue> descriptionForDOMEvent(Node* target, long breakpointType, bool insertion);
 
         PassRefPtr<InspectorObject> buildObjectForAttributeStyles(Element* element);
         PassRefPtr<InspectorArray> buildArrayForCSSRules(Document* ownerDocument, CSSRuleList*);

@@ -783,6 +783,14 @@ WebInspector.ElementsPanel.prototype = {
         return link;
     },
 
+    linkifyNodeById: function(nodeId)
+    {
+        var node = WebInspector.domAgent.nodeForId(nodeId);
+        if (!node)
+            return document.createTextNode(WebInspector.UIString("<node>"));
+        return this.linkifyNodeReference(node);
+    },
+
     updateBreadcrumbSizes: function(focusedCrumb)
     {
         if (!this.visible)

@@ -1,3 +1,35 @@
+2010-09-14  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: show status message below call stack when debugger is paused on DOM breakpoint
+        https://bugs.webkit.org/show_bug.cgi?id=45114
+
+        * English.lproj/localizedStrings.js:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::performSearch):
+        (WebCore::InspectorDOMAgent::shouldBreakOnNodeInsertion):
+        (WebCore::InspectorDOMAgent::shouldBreakOnNodeRemoval):
+        (WebCore::InspectorDOMAgent::shouldBreakOnAttributeModification):
+        (WebCore::InspectorDOMAgent::descriptionForDOMEvent):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::didPause):
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane):
+        (WebInspector.CallStackSidebarPane.prototype.updateStatus.formatters.s):
+        (WebInspector.CallStackSidebarPane.prototype.updateStatus.append):
+        (WebInspector.CallStackSidebarPane.prototype.updateStatus):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.linkifyNodeById):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.debuggerPaused):
+        * inspector/front-end/inspector.css:
+        (.pane > .body .placard + .info):
+        * inspector/front-end/inspector.js:
+        (WebInspector.pausedScript):
+        (WebInspector.formatLocalized):
+
 2010-09-17  Johnny Ding  <jnd@chromium.org>
 
         Reviewed by Adam Barth.

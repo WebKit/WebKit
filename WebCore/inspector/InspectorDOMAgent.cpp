@@ -708,7 +708,7 @@ void InspectorDOMAgent::performSearch(const String& whitespaceTrimmedQuery, bool
             m_pendingMatchJobs.append(new MatchPlainTextJob(document, escapedQuery));
             continue;
         }
-            
+
         m_pendingMatchJobs.append(new MatchExactIdJob(document, whitespaceTrimmedQuery));
         m_pendingMatchJobs.append(new MatchExactClassNamesJob(document, whitespaceTrimmedQuery));
         m_pendingMatchJobs.append(new MatchExactTagNamesJob(document, tagNameQuery));
@@ -777,38 +777,70 @@ void InspectorDOMAgent::removeDOMBreakpoint(long nodeId, long type)
 
 bool InspectorDOMAgent::shouldBreakOnNodeInsertion(Node*, Node* parent, PassRefPtr<InspectorValue>* details)
 {
-    if (!hasBreakpoint(parent, SubtreeModified))
-        return false;
-    RefPtr<InspectorObject> detailsObject = InspectorObject::create();
-    detailsObject->setObject("breakpoint", createBreakpoint(parent, SubtreeModified));
-    *details = detailsObject;
-    return true;
+    if (hasBreakpoint(parent, SubtreeModified)) {
+        *details = descriptionForDOMEvent(parent, SubtreeModified, true);
+        return true;
+    }
+    return false;
 }
 
 bool InspectorDOMAgent::shouldBreakOnNodeRemoval(Node* node, PassRefPtr<InspectorValue>* details)
 {
-    bool hasNodeRemovedBreakpoint = hasBreakpoint(node, NodeRemoved);
-    bool hasAnyBreakpoint = hasNodeRemovedBreakpoint || hasBreakpoint(innerParentNode(node), SubtreeModified);
-    if (!hasAnyBreakpoint)
-        return false;
-
-    RefPtr<InspectorObject> detailsObject = InspectorObject::create();
-    if (hasNodeRemovedBreakpoint)
-        detailsObject->setObject("breakpoint", createBreakpoint(node, NodeRemoved));
-    else
-        detailsObject->setObject("breakpoint", createBreakpoint(innerParentNode(node), SubtreeModified));
-    *details = detailsObject;
-    return true;
+    if (hasBreakpoint(node, NodeRemoved)) {
+        *details = descriptionForDOMEvent(node, NodeRemoved, false);
+        return true;
+    }
+    if (hasBreakpoint(innerParentNode(node), SubtreeModified)) {
+        *details = descriptionForDOMEvent(node, SubtreeModified, false);
+        return true;
+    }
+    return false;
 }
 
 bool InspectorDOMAgent::shouldBreakOnAttributeModification(Element* element, PassRefPtr<InspectorValue>* details)
 {
-    if (!hasBreakpoint(element, AttributeModified))
-        return false;
-    RefPtr<InspectorObject> detailsObject = InspectorObject::create();
-    detailsObject->setObject("breakpoint", createBreakpoint(element, AttributeModified));
-    *details = detailsObject;
-    return true;
+    if (hasBreakpoint(element, AttributeModified)) {
+        *details = descriptionForDOMEvent(element, AttributeModified, false);
+        return true;
+    }
+    return false;
+}
+
+PassRefPtr<InspectorValue> InspectorDOMAgent::descriptionForDOMEvent(Node* target, long breakpointType, bool insertion)
+{
+    ASSERT(hasBreakpoint(target, breakpointType));
+
+    RefPtr<InspectorObject> description = InspectorObject::create();
+    Node* breakpointOwner = target;
+    if ((1 << breakpointType) & inheritableDOMBreakpointTypesMask) {
+        // For inheritable breakpoint types, target node isn't always the same as the node that owns a breakpoint.
+        // Target node may be unknown to frontend, so we need to push it first.
+        long targetNodeId = pushNodePathToFrontend(target);
+        ASSERT(targetNodeId);
+        description->setNumber("targetNodeId", targetNodeId);
+
+        // Find breakpoint owner node.
+        if (!insertion)
+            breakpointOwner = innerParentNode(target);
+        ASSERT(breakpointOwner);
+        while (!(m_breakpoints.get(breakpointOwner) & (1 << breakpointType))) {
+            breakpointOwner = innerParentNode(breakpointOwner);
+            ASSERT(breakpointOwner);
+        }
+
+        if (breakpointType == SubtreeModified)
+            description->setBoolean("insertion", insertion);
+    }
+
+    long breakpointOwnerNodeId = m_documentNodeToIdMap.get(breakpointOwner);
+    ASSERT(breakpointOwnerNodeId);
+
+    RefPtr<InspectorObject> breakpoint = InspectorObject::create();
+    breakpoint->setNumber("nodeId", breakpointOwnerNodeId);
+    breakpoint->setNumber("type", breakpointType);
+    description->setObject("breakpoint", breakpoint);
+
+    return description;
 }
 
 String InspectorDOMAgent::documentURLString(Document* document) const
@@ -1086,23 +1118,6 @@ void InspectorDOMAgent::didModifyDOMAttr(Element* element)
         return;
 
     m_frontend->attributesUpdated(id, buildArrayForElementAttributes(element));
-}
-
-PassRefPtr<InspectorObject> InspectorDOMAgent::createBreakpoint(Node* node, long type)
-{
-    RefPtr<InspectorObject> breakpoint = InspectorObject::create();
-
-    // Find breakpoint owner.
-    while (!(m_breakpoints.get(node) & (1 << type))) {
-        node = innerParentNode(node);
-        ASSERT(node);
-    }
-    long nodeId = m_documentNodeToIdMap.get(node);
-    ASSERT(nodeId);
-
-    breakpoint->setNumber("nodeId", nodeId);
-    breakpoint->setNumber("type", type);
-    return breakpoint.release();
 }
 
 bool InspectorDOMAgent::hasBreakpoint(Node* node, long type)

@@ -375,7 +375,7 @@ WebInspector.ScriptsPanel.prototype = {
         InjectedScriptAccess.get(callFrame.worldId).evaluateInCallFrame(callFrame.id, code, objectGroup, evalCallback);
     },
 
-    debuggerPaused: function(callFrames)
+    debuggerPaused: function(details)
     {
         WebInspector.breakpointManager.removeOneTimeBreakpoint();
         this._paused = true;
@@ -384,8 +384,11 @@ WebInspector.ScriptsPanel.prototype = {
 
         this._updateDebuggerButtons();
 
-        this.sidebarPanes.callstack.update(callFrames, this._sourceIDMap);
-        this.sidebarPanes.callstack.selectedCallFrame = callFrames[0];
+        this.sidebarPanes.callstack.update(details.callFrames, this._sourceIDMap);
+        this.sidebarPanes.callstack.selectedCallFrame = details.callFrames[0];
+
+        if (details.status)
+            this.sidebarPanes.callstack.updateStatus(details.status);
 
         WebInspector.currentPanel = this;
         window.focus();

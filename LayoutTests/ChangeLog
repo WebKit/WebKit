@@ -1,3 +1,18 @@
+2010-09-14  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: show status message below call stack when debugger is paused on DOM breakpoint
+        https://bugs.webkit.org/show_bug.cgi?id=45114
+
+        * http/tests/inspector/inspector-test2.js:
+        (initialize_InspectorTest.InspectorTest.evaluateInPageWithTimeout):
+        (initialize_InspectorTest.InspectorTest.findDOMNode.findDOMNode.processChildren):
+        (initialize_InspectorTest.InspectorTest.findDOMNode.findDOMNode):
+        (initialize_InspectorTest.InspectorTest.findDOMNode):
+        * inspector/dom-breakpoints-expected.txt:
+        * inspector/dom-breakpoints.html:
+
 2010-09-17  Johnny Ding  <jnd@chromium.org>
 
         Reviewed by Adam Barth.

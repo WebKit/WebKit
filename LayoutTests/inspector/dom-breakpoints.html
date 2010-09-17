@@ -25,85 +25,127 @@ function removeElement(elementId)
 
 var test = function()
 {
-    InspectorTest.startDebuggerTest(step1);
-
-    var d0, d1;
-
-    function step1()
+    testInsertChild = {};
+    testInsertChild.step1 = function()
     {
-        findDOMNodeById("d0", step2);
+        InspectorTest.addResult("Test that 'Subtree Modified' breakpoint is hit when appending a child.");
+        findDOMNodeById("rootElement", testInsertChild.step2);
+    };
+    testInsertChild.step2 = function(node)
+    {
+        node.setBreakpoint(WebInspector.DOMBreakpoint.Types.SubtreeModified);
+        InspectorTest.addResult("Set 'Subtree Modified' DOM breakpoint on rootElement.");
+        InspectorTest.evaluateInPageWithTimeout("appendElement('rootElement', 'childElement')");
+        InspectorTest.addResult("Append childElement to rootElement.");
+        InspectorTest.waitUntilPaused(testInsertChild.step3);
+    };
+    testInsertChild.step3 = function(callFrames)
+    {
+        dumpStatus(callFrames);
+        InspectorTest.resumeExecution(testInsertGrandchild.step1);
+    };
+
+    var testInsertGrandchild = {};
+    testInsertGrandchild.step1 = function()
+    {
+        InspectorTest.addResult("Test that 'Subtree Modified' breakpoint is hit when appending a grandchild.");
+        InspectorTest.evaluateInPageWithTimeout("appendElement('childElement', 'grandchildElement')");
+        InspectorTest.addResult("Append grandchildElement to childElement.");
+        InspectorTest.waitUntilPaused(testInsertGrandchild.step2);
+    }
+    testInsertGrandchild.step2 = function(callFrames)
+    {
+        dumpStatus(callFrames);
+        InspectorTest.resumeExecution(testRemoveChild.step1);
     }
 
-    function step2(node)
+    var testRemoveChild = {};
+    testRemoveChild.step1 = function()
     {
-        d0 = node;
-        InspectorTest.addResult("Test that 'Subtree Modified' breakpoint is hit when appending child.");
-        d0.setBreakpoint(WebInspector.DOMBreakpoint.Types.SubtreeModified);
-        InspectorTest.addResult("Set subtree modified DOM breakpoint on d0.");
-        InspectorTest.evaluateInConsole("appendElement('d0', 'd1')");
-        InspectorTest.addResult("Append d1 to d0.");
-        InspectorTest.waitUntilPaused(step3);
+        InspectorTest.addResult("Test that 'Subtree Modified' breakpoint is hit when removing a child.");
+        InspectorTest.evaluateInPageWithTimeout("removeElement('grandchildElement')");
+        InspectorTest.addResult("Remove grandchildElement.");
+        InspectorTest.waitUntilPaused(testRemoveChild.step2);
+
+    }
+    testRemoveChild.step2 = function(callFrames)
+    {
+        dumpStatus(callFrames);
+        findDOMNodeById("rootElement", testRemoveChild.step3);
+    }
+    testRemoveChild.step3 = function(node)
+    {
+        node.removeBreakpoint(WebInspector.DOMBreakpoint.Types.SubtreeModified);
+        InspectorTest.resumeExecution(testModifyAttribute.step1);
     }
 
-    function step3(callFrames)
+    var testModifyAttribute = {};
+    testModifyAttribute.step1 = function()
     {
-        InspectorTest.addResult("line: " + callFrames[0].line + ", function: " + callFrames[0].functionName);
-        d0.removeBreakpoint(WebInspector.DOMBreakpoint.Types.SubtreeModified);
-        InspectorTest.resumeExecution(findDOMNodeById.bind(null, "d1", step4));
-    }
-
-    function step4(node)
-    {
-        d1 = node;
         InspectorTest.addResult("Test that 'Attribute Modified' breakpoint is hit when modifying attribute.");
-        d1.setBreakpoint(WebInspector.DOMBreakpoint.Types.AttributeModified);
-        InspectorTest.addResult("Set attribute modified DOM breakpoint on d1.");
-        InspectorTest.evaluateInConsole("modifyAttribute('d1', 'className', 'foo')");
-        InspectorTest.addResult("Modify d1 className.");
-        InspectorTest.waitUntilPaused(step5);
+        findDOMNodeById("rootElement", testModifyAttribute.step2);
     }
-
-    function step5(callFrames)
+    testModifyAttribute.step2 = function(node)
     {
-        InspectorTest.addResult("line: " + callFrames[0].line + ", function: " + callFrames[0].functionName);
-        d1.removeBreakpoint(WebInspector.DOMBreakpoint.Types.AttributeModified);
-        InspectorTest.resumeExecution(step6);
+        node.setBreakpoint(WebInspector.DOMBreakpoint.Types.AttributeModified);
+        InspectorTest.addResult("Set 'Attribute Modified' DOM breakpoint on rootElement.");
+        InspectorTest.evaluateInPageWithTimeout("modifyAttribute('rootElement', 'className', 'foo')");
+        InspectorTest.addResult("Modify rootElement className.");
+        InspectorTest.waitUntilPaused(testModifyAttribute.step3.bind(null, node));
+    }
+    testModifyAttribute.step3 = function(node, callFrames)
+    {
+        dumpStatus(callFrames);
+        node.removeBreakpoint(WebInspector.DOMBreakpoint.Types.AttributeModified);
+        InspectorTest.resumeExecution(testRemoveNode.step1);
     }
 
-    function step6()
+    var testRemoveNode = {};
+    testRemoveNode.step1 = function()
     {
         InspectorTest.addResult("Test that 'Node Removed' breakpoint is hit when removing a node.");
-        d1.setBreakpoint(WebInspector.DOMBreakpoint.Types.NodeRemoved);
-        InspectorTest.addResult("Set node removed DOM breakpoint on d1.");
-        InspectorTest.evaluateInConsole("removeElement('d1')");
-        InspectorTest.addResult("Remove d1.");
-        InspectorTest.waitUntilPaused(step7);
+        InspectorTest.evaluateInPageWithTimeout("appendElement('rootElement', 'elementToRemove')", testRemoveNode.step2);
     }
-
-    function step7(callFrames)
+    testRemoveNode.step2 = function()
     {
-        InspectorTest.addResult("line: " + callFrames[0].line + ", function: " + callFrames[0].functionName);
-        InspectorTest.resumeExecution(step8);
+        InspectorTest.addResult("Append elementToRemove to rootElement.");
+        findDOMNodeById("elementToRemove", testRemoveNode.step3);
+    }
+    testRemoveNode.step3 = function(node)
+    {
+        node.setBreakpoint(WebInspector.DOMBreakpoint.Types.NodeRemoved);
+        InspectorTest.addResult("Set 'Node Removed' DOM breakpoint on elementToRemove.");
+        InspectorTest.evaluateInPageWithTimeout("removeElement('elementToRemove')");
+        InspectorTest.addResult("Remove elementToRemove.");
+        InspectorTest.waitUntilPaused(testRemoveNode.step4);
+    }
+    testRemoveNode.step4 = function(callFrames)
+    {
+        dumpStatus(callFrames);
+        InspectorTest.resumeExecution(testReload.step1);
     }
 
-    function step8()
+    var testReload= {};
+    testReload.step1 = function()
     {
         InspectorTest.addResult("Test that DOM breakpoints are persisted between page reloads.");
-        d0.setBreakpoint(WebInspector.DOMBreakpoint.Types.SubtreeModified);
-        InspectorTest.addResult("Set subtree modified DOM breakpoint on d0.");
-        InspectorTest.reloadPage(step9);
+        findDOMNodeById("rootElement", testReload.step2);
     }
-
-    function step9()
+    testReload.step2 = function(node)
     {
-        InspectorTest.evaluateInConsole("appendElement('d0', 'd1')");
-        InspectorTest.addResult("Append d1 to d0.");
-        InspectorTest.waitUntilPaused(step10);
+        node.setBreakpoint(WebInspector.DOMBreakpoint.Types.SubtreeModified);
+        InspectorTest.addResult("Set 'Subtree Modified' DOM breakpoint on rootElement.");
+        InspectorTest.reloadPage(testReload.step3);
     }
-
-    function step10(callFrames)
+    testReload.step3 = function()
     {
-        InspectorTest.addResult("line: " + callFrames[0].line + ", function: " + callFrames[0].functionName);
+        InspectorTest.evaluateInPageWithTimeout("appendElement('rootElement', 'childElement')");
+        InspectorTest.addResult("Append childElement to rootElement.");
+        InspectorTest.waitUntilPaused(testReload.step4);
+    }
+    testReload.step4 = function(callFrames)
+    {
+        dumpStatus(callFrames);
         InspectorTest.completeDebuggerTest();
     }
 
@@ -113,6 +155,14 @@ var test = function()
             return node.getAttribute("id") === id;
         }, callback);
     }
+
+    function dumpStatus(callFrames)
+    {
+        InspectorTest.captureStackTrace(callFrames);
+        InspectorTest.addResult(WebInspector.panels.scripts.sidebarPanes.callstack.bodyElement.lastChild.innerText);
+    }
+
+    InspectorTest.startDebuggerTest(testInsertChild.step1);
 };
 
 </script>
@@ -122,7 +172,7 @@ var test = function()
 <p>
 Tests DOM breakpoints. <a href="https://bugs.webkit.org/show_bug.cgi?id=42886">Bug 42886</a>
 </p>
-<div id="d0"></div>
+<div id="rootElement"></div>
 </body>
 </html>
 
