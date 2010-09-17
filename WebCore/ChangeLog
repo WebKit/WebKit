@@ -1,3 +1,16 @@
+2010-09-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        REGRESSION (r66711): Plug-in replacement text is never shown
+        https://bugs.webkit.org/show_bug.cgi?id=45997
+        <rdar://problem/8446766>
+
+        Don't return when the plug-in has replacement text.
+
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::paintReplaced):
+
 2010-09-17  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Unreviewed, build fix. Add files missed in r67704.

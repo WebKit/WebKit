@@ -141,7 +141,7 @@ void RenderEmbeddedObject::paint(PaintInfo& paintInfo, int tx, int ty)
 
 void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
 {
-    if (pluginCrashedOrWasMissing())
+    if (!pluginCrashedOrWasMissing())
         return;
 
     if (paintInfo.phase == PaintPhaseSelection)
