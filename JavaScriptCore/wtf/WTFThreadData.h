@@ -59,7 +59,14 @@ public:
     template<typename U, typename V>
     std::pair<HashSet<StringImpl*>::iterator, bool> add(U value);
 
-    void remove(StringImpl* r) { m_table.remove(r); }
+    bool remove(StringImpl* r)
+    {
+        HashSet<StringImpl*>::iterator iter = m_table.find(r);
+        if (iter == m_table.end())
+            return false;
+        m_table.remove(iter);
+        return true;
+    }
 
     LiteralIdentifierTable& literalTable() { return m_literalTable; }
 

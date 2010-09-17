@@ -1,3 +1,35 @@
+2010-09-16  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Crash due to timer triggered GC on one heap while another heap is active
+        https://bugs.webkit.org/show_bug.cgi?id=45932
+        <rdar://problem/8318446>
+
+        The GC timer may trigger for one heap while another heap is active.  This
+        is safe, but requires us to ensure that we have temporarily associated the
+        thread's identifierTable with the heap we're collecting on.  Otherwise we
+        may end up with the identifier tables in an inconsistent state leading to
+        an eventual crash.
+
+        * runtime/Collector.cpp:
+        (JSC::Heap::allocate):
+        (JSC::Heap::reset):
+        (JSC::Heap::collectAllGarbage):
+           Add assertions to ensure we have the correct identifierTable active
+           while collecting.
+        * runtime/GCActivityCallbackCF.cpp:
+        (JSC::DefaultGCActivityCallbackPlatformData::trigger):
+           Temporarily make the expected IdentifierTable active
+        * wtf/WTFThreadData.h:
+        (JSC::IdentifierTable::remove):
+           Make it possible to see when IdentifierTable::remove has succeeded
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::~StringImpl):
+           CRASH if an StringImpl is an Identifier but isn't present in the
+           active IdentifierTable.  If we get to this state something has
+           gone wrong and we should just crash immediately.
+
 2010-09-16  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

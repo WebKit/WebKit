@@ -29,9 +29,12 @@
 #include "config.h"
 #include "GCActivityCallback.h"
 
+#include "APIShims.h"
 #include "Collector.h"
+#include "JSGlobalData.h"
 #include "JSLock.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/WTFThreadData.h>
 #include <CoreFoundation/CoreFoundation.h>
 
 #if !PLATFORM(CF)
@@ -52,8 +55,7 @@ const CFTimeInterval decade = 60 * 60 * 24 * 365 * 10;
 void DefaultGCActivityCallbackPlatformData::trigger(CFRunLoopTimerRef, void *info)
 {
     Heap* heap = static_cast<Heap*>(info);
-    JSLock lock(heap->globalData());
-
+    APIEntryShim shim(heap->globalData());
     heap->collectAllGarbage();
 }
 

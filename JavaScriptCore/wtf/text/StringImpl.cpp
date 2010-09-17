@@ -48,8 +48,10 @@ StringImpl::~StringImpl()
     if (isAtomic())
         AtomicString::remove(this);
 #if USE(JSC)
-    if (isIdentifier())
-        wtfThreadData().currentIdentifierTable()->remove(this);
+    if (isIdentifier()) {
+        if (!wtfThreadData().currentIdentifierTable()->remove(this))
+            CRASH();
+    }
 #endif
 
     BufferOwnership ownership = bufferOwnership();

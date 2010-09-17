@@ -43,6 +43,7 @@
 #include <stdlib.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashCountedSet.h>
+#include <wtf/WTFThreadData.h>
 #include <wtf/UnusedParam.h>
 #include <wtf/VMTags.h>
 
@@ -298,6 +299,7 @@ void Heap::recordExtraCost(size_t cost)
 
 void* Heap::allocate(size_t s)
 {
+    ASSERT(globalData()->identifierTable == wtfThreadData().currentIdentifierTable());
     typedef HeapConstants::Block Block;
     typedef HeapConstants::Cell Cell;
     
@@ -1189,6 +1191,7 @@ bool Heap::isBusy()
 
 void Heap::reset()
 {
+    ASSERT(globalData()->identifierTable == wtfThreadData().currentIdentifierTable());
     JAVASCRIPTCORE_GC_BEGIN();
 
     markRoots();
@@ -1211,6 +1214,7 @@ void Heap::reset()
 
 void Heap::collectAllGarbage()
 {
+    ASSERT(globalData()->identifierTable == wtfThreadData().currentIdentifierTable());
     JAVASCRIPTCORE_GC_BEGIN();
 
     // If the last iteration through the heap deallocated blocks, we need
