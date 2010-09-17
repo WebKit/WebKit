@@ -1,3 +1,20 @@
+2010-09-17  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Remove extraneous RenderObject traversal.
+        https://bugs.webkit.org/show_bug.cgi?id=45821
+
+        This code always exits in the first iteration of the loop,
+        because in the context of this call, node->renderer()->node() != 0
+        is always true.
+
+        No behavior change, covered by existing tests.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::canMouseDownStartSelect): Removed the loop.
+        (WebCore::EventHandler::canMouseDragExtendSelect): Ditto.
+
 2010-09-17  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

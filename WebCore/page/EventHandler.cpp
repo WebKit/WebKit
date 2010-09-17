@@ -2149,12 +2149,7 @@ bool EventHandler::canMouseDownStartSelect(Node* node)
     if (!node->canStartSelection())
         return false;
             
-    for (RenderObject* curr = node->renderer(); curr; curr = curr->parent()) {
-        if (Node* node = curr->node())
-            return node->dispatchEvent(Event::create(eventNames().selectstartEvent, true, true));
-    }
-
-    return true;
+    return node->dispatchEvent(Event::create(eventNames().selectstartEvent, true, true));
 }
 
 #if ENABLE(DRAG_SUPPORT)
@@ -2163,12 +2158,7 @@ bool EventHandler::canMouseDragExtendSelect(Node* node)
     if (!node || !node->renderer())
         return true;
             
-    for (RenderObject* curr = node->renderer(); curr; curr = curr->parent()) {
-        if (Node* node = curr->node())
-            return node->dispatchEvent(Event::create(eventNames().selectstartEvent, true, true));
-    }
-
-    return true;
+    return node->dispatchEvent(Event::create(eventNames().selectstartEvent, true, true));
 }
 #endif // ENABLE(DRAG_SUPPORT)
 
