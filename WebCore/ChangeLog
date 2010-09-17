@@ -1,3 +1,9 @@
+2010-09-17  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Unreviewed, build fix. Add files missed in r67704.
+
+        * CMakeLists.txt:
+
 2010-09-17  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Chris Marrin.

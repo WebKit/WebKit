@@ -734,6 +734,7 @@ SET(WebCore_SOURCES
     css/CSSPrimitiveValue.cpp
     css/CSSProperty.cpp
     css/CSSPropertyLonghand.cpp
+    css/CSSPropertySourceData.cpp
     css/CSSReflectValue.cpp
     css/CSSRule.cpp
     css/CSSRuleList.cpp
