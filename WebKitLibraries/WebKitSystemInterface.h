@@ -33,6 +33,10 @@ NSDate *WKGetNSURLResponseLastModifiedDate(NSURLResponse *response);
 NSTimeInterval WKGetNSURLResponseFreshnessLifetime(NSURLResponse *response);
 NSString *WKCopyNSURLResponseStatusLine(NSURLResponse *response);
 
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+CFArrayRef WKCopyNSURLResponsePeerCertificates(NSURLResponse *response);
+#endif
+
 CFStringEncoding WKGetWebDefaultCFStringEncoding(void);
 
 void WKSetMetadataURL(NSString *URLString, NSString *referrer, NSString *path);

@@ -1,3 +1,13 @@
+2010-09-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed, tweaked, and landed by Anders Carlsson.
+
+        Add WKCopyNSURLResponsePeerCertificates.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
 2010-09-16  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by Jian Li.
