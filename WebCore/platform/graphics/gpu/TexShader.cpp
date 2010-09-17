@@ -57,7 +57,9 @@ PassOwnPtr<TexShader> TexShader::create(GraphicsContext3D* context)
         "    gl_Position = vec4(matrix * position, 1.0);\n"
         "}\n";
     static const char* fragmentShaderSource =
+        "#ifdef GL_ES\n"
         "precision mediump float;\n"
+        "#endif\n"
         "uniform sampler2D sampler;\n"
         "uniform float alpha;\n"
         "varying vec3 texCoord;\n"

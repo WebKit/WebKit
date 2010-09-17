@@ -54,7 +54,9 @@ PassOwnPtr<SolidFillShader> SolidFillShader::create(GraphicsContext3D* context)
             "    gl_Position = vec4(matrix * position, 1.0);\n"
             "}\n";
     static const char* fragmentShaderSource =
+            "#ifdef GL_ES\n"
             "precision mediump float;\n"
+            "#endif\n"
             "uniform mat3 matrix;\n"
             "uniform vec4 color;\n"
             "void main() {\n"

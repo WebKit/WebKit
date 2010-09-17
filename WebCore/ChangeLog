@@ -1,3 +1,22 @@
+2010-09-17  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [CHROMIUM] GPU-accelerated canvas should work in test_shell.
+        https://bugs.webkit.org/show_bug.cgi?id=45968
+
+        In order for the shaders in GPU-accelerated canvas to work in both the
+        GraphicsContext3D / GLES2 path as well as chromium's test_shell (which
+        passes them to the Mesa backend unmodified), the precision specifiers
+        in the fragment shader have to be wrapped in #if GL_ES.
+
+        Soon to be covered by many layout tests.
+
+        * platform/graphics/gpu/SolidFillShader.cpp:
+        (WebCore::SolidFillShader::create):
+        * platform/graphics/gpu/TexShader.cpp:
+        (WebCore::TexShader::create):
+
 2010-09-17  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
