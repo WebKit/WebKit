@@ -3,7 +3,7 @@
         Rubber-stamped by Adam Roben.
 
         Skip some userscripts tests that are flaky on Windows (but pass on Mac),
-        this needs investigation, and is being tracked by <http://webkit.org/b/44199>.
+        this needs investigation, and is being tracked by <http://webkit.org/b/45980>.
 
         * platform/win/Skipped:
 
