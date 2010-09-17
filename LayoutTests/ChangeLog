@@ -1,3 +1,31 @@
+2010-09-17  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        http/tests/navigation/post-goback1.html should not be a pixel test
+        https://bugs.webkit.org/show_bug.cgi?id=45834
+        
+        Convert post-goback1.html to be a simpler dumpAsText test. It can use
+        the form-target.pl that was added r67466 with some small modifications.
+        
+        To be extra safe, clear the back forward list for all the tests that
+        were converted to use dumpAsText.
+
+        * http/tests/navigation/post-basic.html:
+        * http/tests/navigation/post-frames.html:
+        * http/tests/navigation/post-goback1-expected.txt: Added.
+        * http/tests/navigation/post-goback1.html:
+        * http/tests/navigation/resources/form-target.pl:
+        * http/tests/navigation/resources/go-back.html: Added.
+        * platform/chromium-linux/http/tests/navigation/post-goback1-expected.checksum: Removed.
+        * platform/chromium-linux/http/tests/navigation/post-goback1-expected.png: Removed.
+        * platform/chromium-win/http/tests/navigation/post-goback1-expected.checksum: Removed.
+        * platform/chromium-win/http/tests/navigation/post-goback1-expected.png: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/http/tests/navigation/post-goback1-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/post-goback1-expected.png: Removed.
+        * platform/mac/http/tests/navigation/post-goback1-expected.txt: Removed.
+
 2010-09-17  Eric Carlson  <eric.carlson@apple.com>
 
         Rubber-stamped by Simon Fraser.

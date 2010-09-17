@@ -1,6 +1,12 @@
-<script type="text/javascript" src="resources/testcode.js"></script>
 <script>
-    runBackTest("resources/success200.html", 1, "post");
-</script>
-This page just kicks off a test, and should not appear in the expected test output.
-The files in the resources dir have comments about the tests.
+  sessionStorage.formTargetShouldNavAndGoBack = true;
+  if (window.layoutTestController) {
+      layoutTestController.dumpAsText();
+      layoutTestController.waitUntilDone();
+      layoutTestController.clearBackForwardList();
+      layoutTestController.dumpBackForwardList();
+  }
+  window.location.href = 'resources/page-that-posts.html';
+</script>  
+
+<p>Tests that POST-ing a page, navigating to another page and then going back is handled correctly. If this test passes, you will see a page indicating a form was POSTed.</p>

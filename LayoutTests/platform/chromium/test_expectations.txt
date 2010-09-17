@@ -660,11 +660,6 @@ BUG21901 : plugins/npruntime/enumerate.html = FAIL
 // it doesn't need to block the current release
 BUG10275 : http/tests/security/cross-frame-access-put.html = FAIL
 
-// Due to differences in error pages. Needs re-baselining.
-BUG24208 WIN DEBUG : http/tests/navigation/post-goback1.html = FAIL
-BUG24208 SLOW WIN RELEASE : http/tests/navigation/post-goback1.html = FAIL
-BUG24208 LINUX MAC : http/tests/navigation/post-goback1.html = FAIL
-
 // Requires layoutTestController.dispatchPendingLoadRequests
 BUG33211 WIN RELEASE : http/tests/loading/deleted-host-in-resource-load-delegate-callback.html = TIMEOUT CRASH
 BUG33211 WIN DEBUG : http/tests/loading/deleted-host-in-resource-load-delegate-callback.html = TIMEOUT

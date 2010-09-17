@@ -5,7 +5,6 @@ use CGI;
 $query = new CGI;
 
 print "Content-type: text/html\r\n";
-print "Cache-Control: no-store, no-cache, must-revalidate\r\n";
 print "\r\n";
 
 $method = $query->request_method();
@@ -28,8 +27,23 @@ foreach $paramName (@paramNames)
 print <<FOOTER
 </ul>
 <script>
-if (window.layoutTestController)
+var isDone = true;
+if (sessionStorage.formTargetShouldNavAndGoBack) {
+  if (sessionStorage.didNav) {
+      delete sessionStorage.didNav;
+      delete sessionStorage.formTargetShouldNavAndGoBack;
+  } else {
+      isDone = false;
+      sessionStorage.didNav = true;
+      onload = function() {
+          setTimeout(function() {window.location.href = 'go-back.html'}, 0);
+      };
+  }
+}
+
+if (isDone && window.layoutTestController)
     layoutTestController.notifyDone();
+
 </script>
 </body>
 FOOTER
