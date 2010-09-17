@@ -1,3 +1,22 @@
+2010-09-16  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] When switching views (WebViewGraphicsBased <--> WebViewTraditional), QWebPage signals and QActions have to be re-set.
+
+        Recently r67554 changed the way different views use the WebPage class: it was previously being shared between
+        different views, but now for each view switch, a new WebPage class is constructed and set. Signals and QAction's
+        were not being set to the new WebPage though. Patch fix that, by re constructing the toolbar, and then re-hooking
+        all page specific stuff to the UI.
+
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::initializeView):
+        * QtTestBrowser/mainwindow.cpp:
+        (MainWindow::MainWindow):
+        (MainWindow::buildUI):
+        (MainWindow::setPage):
+        * QtTestBrowser/mainwindow.h:
+
 2010-09-12  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Andreas Kling.

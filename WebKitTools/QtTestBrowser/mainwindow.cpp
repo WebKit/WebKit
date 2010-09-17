@@ -37,6 +37,7 @@
 
 MainWindow::MainWindow()
     : m_page(new WebPage(this))
+    , m_toolBar(0)
 {
     setAttribute(Qt::WA_DeleteOnClose);
     if (qgetenv("QTTESTBROWSER_USE_ARGB_VISUALS").toInt() == 1)
@@ -47,29 +48,31 @@ MainWindow::MainWindow()
 
 void MainWindow::buildUI()
 {
-    QToolBar* bar = addToolBar("Navigation");
+    delete m_toolBar;
+
+    m_toolBar = addToolBar("Navigation");
 #if defined(Q_OS_SYMBIAN)
-    bar->setIconSize(QSize(16, 16));
+    m_toolBar->setIconSize(QSize(16, 16));
 #endif
     QAction* reloadAction = page()->action(QWebPage::Reload);
     connect(reloadAction, SIGNAL(triggered()), this, SLOT(changeLocation()));
 
-    bar->addAction(page()->action(QWebPage::Back));
-    bar->addAction(page()->action(QWebPage::Forward));
-    bar->addAction(reloadAction);
-    bar->addAction(page()->action(QWebPage::Stop));
+    m_toolBar->addAction(page()->action(QWebPage::Back));
+    m_toolBar->addAction(page()->action(QWebPage::Forward));
+    m_toolBar->addAction(reloadAction);
+    m_toolBar->addAction(page()->action(QWebPage::Stop));
 
-    urlEdit = new LocationEdit(this);
+    urlEdit = new LocationEdit(m_toolBar);
     urlEdit->setSizePolicy(QSizePolicy::Expanding, urlEdit->sizePolicy().verticalPolicy());
     connect(urlEdit, SIGNAL(returnPressed()), SLOT(changeLocation()));
-    QCompleter* completer = new QCompleter(this);
+    QCompleter* completer = new QCompleter(m_toolBar);
     urlEdit->setCompleter(completer);
     completer->setModel(&urlModel);
 #if defined(Q_OS_SYMBIAN)
     addToolBarBreak();
     addToolBar("Location")->addWidget(urlEdit);
 #else
-    bar->addWidget(urlEdit);
+    m_toolBar->addWidget(urlEdit);
 #endif
 
     connect(page()->mainFrame(), SIGNAL(titleChanged(const QString&)),
@@ -92,6 +95,14 @@ void MainWindow::buildUI()
     page()->action(QWebPage::ToggleBold)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_B));
     page()->action(QWebPage::ToggleItalic)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_I));
     page()->action(QWebPage::ToggleUnderline)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_U));
+}
+
+void MainWindow::setPage(WebPage* page)
+{
+    delete m_page;
+    m_page = page;
+
+    buildUI();
 }
 
 WebPage* MainWindow::page() const

@@ -50,6 +50,7 @@ public:
     void load(const QUrl& url);
 
     WebPage* page() const;
+    void setPage(WebPage*);
 
 protected slots:
     void setAddressUrl(const QString& url);
@@ -61,12 +62,11 @@ protected slots:
 private:
     void buildUI();
 
+    WebPage* m_page;
+    QToolBar* m_toolBar;
     QStringListModel urlModel;
     QStringList urlList;
     LocationEdit* urlEdit;
-
-protected:
-    WebPage* m_page;
 };
 
 #endif
