@@ -1,3 +1,208 @@
+2010-09-16  John Gregg  <johnnyg@google.com>
+
+        Unreviewed, chromium rebaselines.
+
+        [chromium] Rebaseline multicol tests
+        https://bugs.webkit.org/show_bug.cgi?id=45936
+
+        * platform/chromium-linux/fast/multicol/border-padding-pagination-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/border-padding-pagination-expected.txt: Added.
+        * platform/chromium-linux/fast/multicol/client-rects-expected.checksum:
+        * platform/chromium-linux/fast/multicol/client-rects-expected.png:
+        * platform/chromium-linux/fast/multicol/client-rects-expected.txt: Added.
+        * platform/chromium-linux/fast/multicol/column-break-with-balancing-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/column-break-with-balancing-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/column-break-with-balancing-expected.txt: Added.
+        * platform/chromium-linux/fast/multicol/column-count-with-rules-expected.checksum:
+        * platform/chromium-linux/fast/multicol/column-count-with-rules-expected.png:
+        * platform/chromium-linux/fast/multicol/column-rules-expected.checksum:
+        * platform/chromium-linux/fast/multicol/column-rules-expected.png:
+        * platform/chromium-linux/fast/multicol/column-rules-expected.txt: Added.
+        * platform/chromium-linux/fast/multicol/float-avoidance-expected.checksum:
+        * platform/chromium-linux/fast/multicol/float-avoidance-expected.png:
+        * platform/chromium-linux/fast/multicol/float-avoidance-expected.txt: Added.
+        * platform/chromium-linux/fast/multicol/float-multicol-expected.checksum:
+        * platform/chromium-linux/fast/multicol/float-multicol-expected.png:
+        * platform/chromium-linux/fast/multicol/float-multicol-expected.txt: Added.
+        * platform/chromium-linux/fast/multicol/float-paginate-complex-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/float-paginate-complex-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/float-paginate-complex-expected.txt: Added.
+        * platform/chromium-linux/fast/multicol/float-paginate-expected.txt:
+        * platform/chromium-linux/fast/multicol/layers-in-multicol-expected.checksum:
+        * platform/chromium-linux/fast/multicol/layers-in-multicol-expected.png:
+        * platform/chromium-linux/fast/multicol/layers-in-multicol-expected.txt: Added.
+        * platform/chromium-linux/fast/multicol/margin-collapse-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/margin-collapse-expected.txt: Added.
+        * platform/chromium-linux/fast/multicol/max-height-columns-block-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/max-height-columns-block-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/max-height-columns-block-expected.txt: Added.
+        * platform/chromium-linux/fast/multicol/nested-columns-expected.checksum:
+        * platform/chromium-linux/fast/multicol/nested-columns-expected.png:
+        * platform/chromium-linux/fast/multicol/nested-columns-expected.txt: Added.
+        * platform/chromium-linux/fast/multicol/paginate-block-replaced-expected.txt:
+        * platform/chromium-linux/fast/multicol/positioned-split-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/positioned-split-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/positioned-split-expected.txt: Added.
+        * platform/chromium-linux/fast/multicol/shadow-breaking-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/shadow-breaking-expected.txt: Added.
+        * platform/chromium-linux/fast/multicol/single-line-expected.checksum:
+        * platform/chromium-linux/fast/multicol/single-line-expected.png:
+        * platform/chromium-linux/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.checksum:
+        * platform/chromium-linux/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.png:
+        * platform/chromium-linux/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.txt: Added.
+        * platform/chromium-linux/fast/multicol/span/span-as-immediate-child-generated-content-expected.checksum:
+        * platform/chromium-linux/fast/multicol/span/span-as-immediate-child-generated-content-expected.png:
+        * platform/chromium-linux/fast/multicol/span/span-as-immediate-child-generated-content-expected.txt: Added.
+        * platform/chromium-linux/fast/multicol/span/span-as-immediate-child-property-removal-expected.checksum:
+        * platform/chromium-linux/fast/multicol/span/span-as-immediate-child-property-removal-expected.png:
+        * platform/chromium-linux/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt: Added.
+        * platform/chromium-linux/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.checksum:
+        * platform/chromium-linux/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.png:
+        * platform/chromium-linux/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.txt: Added.
+        * platform/chromium-linux/fast/multicol/span/span-as-immediate-columns-child-expected.txt: Added.
+        * platform/chromium-linux/fast/multicol/span/span-as-immediate-columns-child-removal-expected.checksum:
+        * platform/chromium-linux/fast/multicol/span/span-as-immediate-columns-child-removal-expected.png:
+        * platform/chromium-linux/fast/multicol/span/span-as-immediate-columns-child-removal-expected.txt: Added.
+        * platform/chromium-linux/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.checksum:
+        * platform/chromium-linux/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.png:
+        * platform/chromium-linux/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.txt: Added.
+        * platform/chromium-linux/fast/multicol/span/span-as-nested-columns-child-expected.checksum:
+        * platform/chromium-linux/fast/multicol/span/span-as-nested-columns-child-expected.png:
+        * platform/chromium-linux/fast/multicol/span/span-as-nested-columns-child-expected.txt: Added.
+        * platform/chromium-linux/fast/multicol/table-margin-collapse-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/table-margin-collapse-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/table-margin-collapse-expected.txt: Added.
+        * platform/chromium-linux/fast/multicol/table-vertical-align-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/table-vertical-align-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/table-vertical-align-expected.txt: Added.
+        * platform/chromium-linux/fast/multicol/unsplittable-inline-block-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/unsplittable-inline-block-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/unsplittable-inline-block-expected.txt: Added.
+        * platform/chromium-linux/fast/repaint/multicol-repaint-expected.txt:
+        * platform/chromium-mac/fast/multicol/client-rects-expected.checksum:
+        * platform/chromium-mac/fast/multicol/client-rects-expected.png: Removed.
+        * platform/chromium-mac/fast/multicol/column-break-with-balancing-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/column-break-with-balancing-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/column-rules-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/column-rules-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/float-avoidance-expected.checksum:
+        * platform/chromium-mac/fast/multicol/float-multicol-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/float-multicol-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/float-paginate-complex-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/float-paginate-complex-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/float-paginate-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/float-paginate-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/layers-in-multicol-expected.checksum:
+        * platform/chromium-mac/fast/multicol/layers-in-multicol-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/margin-collapse-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/max-height-columns-block-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/nested-columns-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/paginate-block-replaced-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/positioned-split-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/shadow-breaking-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/single-line-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-child-generated-content-expected.checksum:
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-child-generated-content-expected.png:
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-child-generated-content-expected.txt: Added.
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-child-property-removal-expected.checksum:
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-child-property-removal-expected.png:
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt: Added.
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.txt: Added.
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-columns-child-expected.checksum:
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-columns-child-expected.png: Removed.
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-columns-child-expected.txt: Added.
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-columns-child-removal-expected.checksum:
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-columns-child-removal-expected.png: Removed.
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-columns-child-removal-expected.txt: Added.
+        * platform/chromium-mac/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.checksum:
+        * platform/chromium-mac/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.png:
+        * platform/chromium-mac/fast/multicol/span/span-as-nested-columns-child-expected.checksum:
+        * platform/chromium-mac/fast/multicol/span/span-as-nested-columns-child-expected.png:
+        * platform/chromium-mac/fast/multicol/span/span-as-nested-columns-child-expected.txt: Removed.
+        * platform/chromium-mac/fast/multicol/table-margin-collapse-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/table-vertical-align-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/table-vertical-align-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/unsplittable-inline-block-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/multicol-repaint-expected.checksum:
+        * platform/chromium-mac/fast/repaint/multicol-repaint-expected.png:
+        * platform/chromium-win/fast/multicol/border-padding-pagination-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/border-padding-pagination-expected.png: Added.
+        * platform/chromium-win/fast/multicol/border-padding-pagination-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/client-rects-expected.checksum:
+        * platform/chromium-win/fast/multicol/client-rects-expected.png:
+        * platform/chromium-win/fast/multicol/client-rects-expected.txt:
+        * platform/chromium-win/fast/multicol/column-break-with-balancing-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/column-break-with-balancing-expected.png: Added.
+        * platform/chromium-win/fast/multicol/column-break-with-balancing-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/column-count-with-rules-expected.checksum:
+        * platform/chromium-win/fast/multicol/column-count-with-rules-expected.png:
+        * platform/chromium-win/fast/multicol/column-rules-expected.checksum:
+        * platform/chromium-win/fast/multicol/column-rules-expected.png:
+        * platform/chromium-win/fast/multicol/column-rules-expected.txt:
+        * platform/chromium-win/fast/multicol/float-avoidance-expected.checksum:
+        * platform/chromium-win/fast/multicol/float-avoidance-expected.png:
+        * platform/chromium-win/fast/multicol/float-avoidance-expected.txt:
+        * platform/chromium-win/fast/multicol/float-multicol-expected.checksum:
+        * platform/chromium-win/fast/multicol/float-multicol-expected.png:
+        * platform/chromium-win/fast/multicol/float-multicol-expected.txt:
+        * platform/chromium-win/fast/multicol/float-paginate-complex-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/float-paginate-complex-expected.png: Added.
+        * platform/chromium-win/fast/multicol/float-paginate-complex-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/float-paginate-expected.txt:
+        * platform/chromium-win/fast/multicol/layers-in-multicol-expected.checksum:
+        * platform/chromium-win/fast/multicol/layers-in-multicol-expected.png:
+        * platform/chromium-win/fast/multicol/layers-in-multicol-expected.txt:
+        * platform/chromium-win/fast/multicol/margin-collapse-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/margin-collapse-expected.png: Added.
+        * platform/chromium-win/fast/multicol/margin-collapse-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/max-height-columns-block-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/max-height-columns-block-expected.png: Added.
+        * platform/chromium-win/fast/multicol/max-height-columns-block-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/nested-columns-expected.checksum:
+        * platform/chromium-win/fast/multicol/nested-columns-expected.png:
+        * platform/chromium-win/fast/multicol/nested-columns-expected.txt:
+        * platform/chromium-win/fast/multicol/paginate-block-replaced-expected.txt:
+        * platform/chromium-win/fast/multicol/positioned-split-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/positioned-split-expected.png: Added.
+        * platform/chromium-win/fast/multicol/positioned-split-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/shadow-breaking-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/shadow-breaking-expected.png: Added.
+        * platform/chromium-win/fast/multicol/shadow-breaking-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/single-line-expected.checksum:
+        * platform/chromium-win/fast/multicol/single-line-expected.png:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.checksum:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.png:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.txt:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-child-generated-content-expected.checksum:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-child-generated-content-expected.png:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-child-generated-content-expected.txt:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-child-property-removal-expected.checksum:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-child-property-removal-expected.png:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.txt:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-columns-child-expected.txt:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-columns-child-removal-expected.checksum:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-columns-child-removal-expected.png:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-columns-child-removal-expected.txt:
+        * platform/chromium-win/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.checksum:
+        * platform/chromium-win/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.png:
+        * platform/chromium-win/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.txt:
+        * platform/chromium-win/fast/multicol/span/span-as-nested-columns-child-expected.checksum:
+        * platform/chromium-win/fast/multicol/span/span-as-nested-columns-child-expected.png:
+        * platform/chromium-win/fast/multicol/span/span-as-nested-columns-child-expected.txt:
+        * platform/chromium-win/fast/multicol/table-margin-collapse-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/table-margin-collapse-expected.png: Added.
+        * platform/chromium-win/fast/multicol/table-margin-collapse-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/table-vertical-align-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/table-vertical-align-expected.png: Added.
+        * platform/chromium-win/fast/multicol/table-vertical-align-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/unsplittable-inline-block-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/unsplittable-inline-block-expected.png: Added.
+        * platform/chromium-win/fast/multicol/unsplittable-inline-block-expected.txt: Added.
+        * platform/chromium-win/fast/repaint/multicol-repaint-expected.checksum:
+        * platform/chromium-win/fast/repaint/multicol-repaint-expected.png:
+        * platform/chromium-win/fast/repaint/multicol-repaint-expected.txt:
+
 2010-09-16  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Jon Honeycutt.

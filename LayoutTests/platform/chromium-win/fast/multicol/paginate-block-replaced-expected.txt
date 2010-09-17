@@ -36,8 +36,8 @@ layer at (8,8) size 1578x404
       RenderText {#text} at (0,180) size 104x19
         text run at (0,180) width 104: "This is some text."
       RenderBR {BR} at (104,195) size 0x0
-    RenderImage {IMG} at (2,202) size 250x300 [bgcolor=#008000]
-    RenderBlock (anonymous) at (2,502) size 382x600
+    RenderImage {IMG} at (2,402) size 250x300 [bgcolor=#008000]
+    RenderBlock (anonymous) at (2,702) size 382x600
       RenderText {#text} at (0,0) size 104x19
         text run at (0,0) width 104: "This is some text."
       RenderBR {BR} at (104,15) size 0x0
