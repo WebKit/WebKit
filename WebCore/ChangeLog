@@ -1,3 +1,15 @@
+2010-09-17  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Show node description in inspector highlight
+        https://bugs.webkit.org/show_bug.cgi?id=20930
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::drawNodeHighlight):
+        (WebCore::InspectorController::drawElementTitle):
+        * inspector/InspectorController.h:
+
 2010-09-16  takano takumi  <takano1@asia.apple.com>
 
         Reviewed by Kent Tamura.

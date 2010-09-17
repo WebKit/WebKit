@@ -50,6 +50,7 @@ class Database;
 class Document;
 class DocumentLoader;
 class Element;
+class FloatRect;
 class GraphicsContext;
 class HitTestResult;
 class InjectedScript;
@@ -72,6 +73,7 @@ class InspectorStorageAgent;
 class InspectorTimelineAgent;
 class InspectorValue;
 class InspectorWorkerResource;
+class IntRect;
 class KURL;
 class Node;
 class Page;
@@ -228,6 +230,7 @@ public:
 
     void drawNodeHighlight(GraphicsContext&) const;
     void openInInspectedWindow(const String& url);
+    void drawElementTitle(GraphicsContext&, const IntRect& boundingBox, const FloatRect& overlayRect, WebCore::Settings*) const;
 
     void count(const String& title, unsigned lineNumber, const String& sourceID);
 

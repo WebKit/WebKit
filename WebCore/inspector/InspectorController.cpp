@@ -71,6 +71,7 @@
 #include "InspectorTimelineAgent.h"
 #include "InspectorValues.h"
 #include "InspectorWorkerResource.h"
+#include "IntRect.h"
 #include "Page.h"
 #include "ProgressTracker.h"
 #include "Range.h"
@@ -1814,6 +1815,84 @@ void InspectorController::drawNodeHighlight(GraphicsContext& context) const
 
         drawHighlightForLineBoxesOrSVGRenderer(context, lineBoxQuads);
     }
+
+    // Draw node title if necessary.
+
+    if (!m_highlightedNode->isElementNode())
+        return;
+
+    WebCore::Settings* settings = containingFrame->settings();
+    drawElementTitle(context, boundingBox, overlayRect, settings);
+}
+
+void InspectorController::drawElementTitle(GraphicsContext& context, const IntRect& boundingBox, const FloatRect& overlayRect, WebCore::Settings* settings) const
+{
+    static const int rectInflatePx = 4;
+    static const int fontHeightPx = 12;
+    static const int borderWidthPx = 1;
+    static const Color tooltipBackgroundColor(255, 255, 194, 255);
+    static const Color tooltipBorderColor(Color::black);
+    static const Color tooltipFontColor(Color::black);
+
+    Element* element = static_cast<Element*>(m_highlightedNode.get());
+    bool isXHTML = element->document()->isXHTMLDocument();
+    String nodeTitle = isXHTML ? element->nodeName() : element->nodeName().lower();
+    const AtomicString& idValue = element->getIdAttribute();
+    if (!idValue.isNull() && !idValue.isEmpty()) {
+        nodeTitle += "#";
+        nodeTitle += idValue;
+    }
+    if (element->hasClass() && element->isStyledElement()) {
+        const SpaceSplitString& classNamesString = static_cast<StyledElement*>(element)->classNames();
+        size_t classNameCount = classNamesString.size();
+        if (classNameCount) {
+            HashSet<AtomicString> usedClassNames;
+            for (size_t i = 0; i < classNameCount; ++i) {
+                const AtomicString& className = classNamesString[i];
+                if (usedClassNames.contains(className))
+                    continue;
+                usedClassNames.add(className);
+                nodeTitle += ".";
+                nodeTitle += className;
+            }
+        }
+    }
+    nodeTitle += " [";
+    nodeTitle += String::number(boundingBox.width());
+    nodeTitle.append(static_cast<UChar>(0x00D7)); // &times;
+    nodeTitle += String::number(boundingBox.height());
+    nodeTitle += "]";
+
+    FontDescription desc;
+    FontFamily family;
+    family.setFamily(settings->fixedFontFamily());
+    desc.setFamily(family);
+    desc.setComputedSize(fontHeightPx);
+    Font font = Font(desc, 0, 0);
+    font.update(0);
+
+    TextRun nodeTitleRun(nodeTitle);
+    IntPoint titleBasePoint = boundingBox.bottomLeft();
+    titleBasePoint.move(rectInflatePx, rectInflatePx);
+    IntRect titleRect = enclosingIntRect(font.selectionRectForText(nodeTitleRun, titleBasePoint, fontHeightPx));
+    titleRect.inflate(rectInflatePx);
+
+    // The initial offsets needed to compensate for a 1px-thick border stroke (which is not a part of the rectangle).
+    int dx = -borderWidthPx;
+    int dy = borderWidthPx;
+    if (titleRect.right() > overlayRect.right())
+        dx += overlayRect.right() - titleRect.right();
+    if (titleRect.x() + dx < overlayRect.x())
+        dx = overlayRect.x() - titleRect.x();
+    if (titleRect.bottom() > overlayRect.bottom())
+        dy += overlayRect.bottom() - titleRect.bottom() - borderWidthPx;
+    titleRect.move(dx, dy);
+    context.setStrokeColor(tooltipBorderColor, DeviceColorSpace);
+    context.setStrokeThickness(borderWidthPx);
+    context.setFillColor(tooltipBackgroundColor, DeviceColorSpace);
+    context.drawRect(titleRect);
+    context.setFillColor(tooltipFontColor, DeviceColorSpace);
+    context.drawText(font, nodeTitleRun, IntPoint(titleRect.x() + rectInflatePx, titleRect.y() + font.height()));
 }
 
 void InspectorController::openInInspectedWindow(const String& url)
