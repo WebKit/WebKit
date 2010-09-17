@@ -47,7 +47,7 @@ void SimpleFontData::platformInit()
 {
     cairo_font_extents_t font_extents;
     cairo_text_extents_t text_extents;
-    cairo_scaled_font_extents(m_platformData.m_scaledFont, &font_extents);
+    cairo_scaled_font_extents(m_platformData.m_scaledFont.get(), &font_extents);
     m_ascent = static_cast<int>(lroundf(font_extents.ascent));
     m_descent = static_cast<int>(lroundf(font_extents.descent));
     m_lineSpacing = static_cast<int>(lroundf(font_extents.height));
@@ -58,9 +58,9 @@ void SimpleFontData::platformInit()
     // while we figure out what's going on.
     if (m_lineSpacing < m_ascent + m_descent)
         m_lineSpacing = m_ascent + m_descent;
-    cairo_scaled_font_text_extents(m_platformData.m_scaledFont, "x", &text_extents);
+    cairo_scaled_font_text_extents(m_platformData.m_scaledFont.get(), "x", &text_extents);
     m_xHeight = text_extents.height;
-    cairo_scaled_font_text_extents(m_platformData.m_scaledFont, " ", &text_extents);
+    cairo_scaled_font_text_extents(m_platformData.m_scaledFont.get(), " ", &text_extents);
     m_spaceWidth = static_cast<float>(text_extents.x_advance);
     m_lineGap = m_lineSpacing - m_ascent - m_descent;
     m_syntheticBoldOffset = m_platformData.syntheticBold() ? 1.0f : 0.f;
@@ -92,19 +92,19 @@ SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDes
 
 bool SimpleFontData::containsCharacters(const UChar* characters, int length) const
 {
-    FT_Face face = cairo_ft_scaled_font_lock_face(m_platformData.m_scaledFont);
+    FT_Face face = cairo_ft_scaled_font_lock_face(m_platformData.m_scaledFont.get());
 
     if (!face)
         return false;
 
     for (int i = 0; i < length; i++) {
         if (FcFreeTypeCharIndex(face, characters[i]) == 0) {
-            cairo_ft_scaled_font_unlock_face(m_platformData.m_scaledFont);
+            cairo_ft_scaled_font_unlock_face(m_platformData.m_scaledFont.get());
             return false;
         }
     }
 
-    cairo_ft_scaled_font_unlock_face(m_platformData.m_scaledFont);
+    cairo_ft_scaled_font_unlock_face(m_platformData.m_scaledFont.get());
 
     return true;
 }
@@ -125,10 +125,10 @@ float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 
     cairo_glyph_t cglyph = { glyph, 0, 0 };
     cairo_text_extents_t extents;
-    cairo_scaled_font_glyph_extents(m_platformData.m_scaledFont, &cglyph, 1, &extents);
+    cairo_scaled_font_glyph_extents(m_platformData.m_scaledFont.get(), &cglyph, 1, &extents);
 
     float w = (float)m_spaceWidth;
-    if (cairo_scaled_font_status(m_platformData.m_scaledFont) == CAIRO_STATUS_SUCCESS && extents.x_advance != 0)
+    if (cairo_scaled_font_status(m_platformData.m_scaledFont.get()) == CAIRO_STATUS_SUCCESS && extents.x_advance)
         w = (float)extents.x_advance;
 
     return w;    

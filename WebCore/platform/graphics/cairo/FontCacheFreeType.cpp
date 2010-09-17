@@ -24,6 +24,7 @@
 #include "CString.h"
 #include "Font.h"
 #include "OwnPtrCairo.h"
+#include "PlatformRefPtrCairo.h"
 #include "SimpleFontData.h"
 #include <wtf/Assertions.h>
 
@@ -46,13 +47,13 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
         return 0;
 
     if (!prim->m_fallbacks)
-        prim->m_fallbacks = FcFontSort(NULL, prim->m_pattern, FcTrue, NULL, &fresult);
+        prim->m_fallbacks = FcFontSort(0, prim->m_pattern.get(), FcTrue, 0, &fresult);
 
     FcFontSet* fs = prim->m_fallbacks;
 
     for (int i = 0; i < fs->nfont; i++) {
-        FcPattern* fin = FcFontRenderPrepare(NULL, prim->m_pattern, fs->fonts[i]);
-        cairo_font_face_t* fontFace = cairo_ft_font_face_create_for_pattern(fin);
+        PlatformRefPtr<FcPattern> fin = adoptPlatformRef(FcFontRenderPrepare(0, prim->m_pattern.get(), fs->fonts[i]));
+        cairo_font_face_t* fontFace = cairo_ft_font_face_create_for_pattern(fin.get());
         FontPlatformData alternateFont(fontFace, font.fontDescription().computedPixelSize(), false, false);
         cairo_font_face_destroy(fontFace);
         alternateFont.m_pattern = fin;
@@ -112,7 +113,7 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
     CString familyNameString = family.string().utf8();
     const char* fcfamily = familyNameString.data();
 
-    OwnPtr<FcPattern> pattern(FcPatternCreate());
+    PlatformRefPtr<FcPattern> pattern = adoptPlatformRef(FcPatternCreate());
     if (!FcPatternAddString(pattern.get(), FC_FAMILY, reinterpret_cast<const FcChar8*>(fcfamily)))
         return 0;
 

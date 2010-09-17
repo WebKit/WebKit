@@ -27,6 +27,8 @@
 
 #include "FontDescription.h"
 #include "GlyphBuffer.h"
+#include "HashFunctions.h"
+#include "PlatformRefPtrCairo.h"
 #include <cairo-ft.h>
 #include <cairo.h>
 #include <fontconfig/fcfreetype.h>
@@ -37,21 +39,18 @@ namespace WebCore {
 class FontPlatformData {
 public:
     FontPlatformData(WTF::HashTableDeletedValueType)
-        : m_pattern(hashTableDeletedFontValue())
-        , m_fallbacks(0)
+        : m_fallbacks(0)
         , m_size(0)
         , m_syntheticBold(false)
         , m_syntheticOblique(false)
-        , m_scaledFont(0)
+        , m_scaledFont(WTF::HashTableDeletedValue)
         { }
 
     FontPlatformData()
-        : m_pattern(0)
-        , m_fallbacks(0)
+        : m_fallbacks(0)
         , m_size(0)
         , m_syntheticBold(false)
         , m_syntheticOblique(false)
-        , m_scaledFont(0)
         { }
 
     FontPlatformData(const FontDescription&, const AtomicString& family);
@@ -68,34 +67,30 @@ public:
     bool syntheticBold() const { return m_syntheticBold; }
     bool syntheticOblique() const { return m_syntheticOblique; }
 
-    cairo_scaled_font_t* scaledFont() const { return m_scaledFont; }
+    cairo_scaled_font_t* scaledFont() const { return m_scaledFont.get(); }
 
     unsigned hash() const
     {
-        if (m_pattern)
-            return FcPatternHash(m_pattern);
+        return PtrHash<cairo_scaled_font_t*>::hash(m_scaledFont.get());
     }
 
     bool operator==(const FontPlatformData&) const;
     FontPlatformData& operator=(const FontPlatformData&);
     bool isHashTableDeletedValue() const
     {
-        return m_pattern == hashTableDeletedFontValue();
+        return m_scaledFont.isHashTableDeletedValue();
     }
 
 #ifndef NDEBUG
     String description() const;
 #endif
 
-    FcPattern* m_pattern;
+    PlatformRefPtr<FcPattern> m_pattern;
     FcFontSet* m_fallbacks;
     float m_size;
     bool m_syntheticBold;
     bool m_syntheticOblique;
-    cairo_scaled_font_t* m_scaledFont;
-
-private:
-    static FcPattern *hashTableDeletedFontValue() { return reinterpret_cast<FcPattern*>(-1); }
+    PlatformRefPtr<cairo_scaled_font_t> m_scaledFont;
 };
 
 }

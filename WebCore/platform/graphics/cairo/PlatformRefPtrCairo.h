@@ -24,6 +24,11 @@
 
 typedef struct _cairo cairo_t;
 typedef struct _cairo_surface cairo_surface_t;
+typedef struct _cairo_scaled_font cairo_scaled_font_t;
+
+#if defined(USE_FREETYPE)
+typedef struct _FcPattern FcPattern;
+#endif
 
 namespace WTF {
 
@@ -32,6 +37,14 @@ template <> void derefPlatformPtr(cairo_t* ptr);
 
 template <> cairo_surface_t* refPlatformPtr(cairo_surface_t* ptr);
 template <> void derefPlatformPtr(cairo_surface_t* ptr);
+
+template <> cairo_scaled_font_t* refPlatformPtr(cairo_scaled_font_t*);
+template <> void derefPlatformPtr(cairo_scaled_font_t*);
+
+#if defined(USE_FREETYPE)
+template <> FcPattern* refPlatformPtr(FcPattern*);
+template <> void derefPlatformPtr(FcPattern*);
+#endif
 
 }
 

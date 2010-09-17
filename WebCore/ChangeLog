@@ -1,3 +1,45 @@
+2010-09-17  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Oliver Hunt.
+
+        [GTK] FontPlatformDataFreeType should use smart pointers to hold its members
+        https://bugs.webkit.org/show_bug.cgi?id=45917
+
+        Have FontPlatformDataFreeType use smart pointers to hold its reference-counted
+        members. Also move the FcPattern specialization from OwnPtrCairo to PlatformRefPtrCairo
+        as this type is reference-counted.
+
+        No new tests as this should not introduce any functionality changes.
+
+        * platform/graphics/cairo/FontCacheFreeType.cpp:
+        (WebCore::FontCache::getFontDataForCharacters): Updated to reflect smart pointer changes.
+        (WebCore::FontCache::createFontPlatformData): Ditto.
+        * platform/graphics/cairo/FontPlatformDataFreeType.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Ditto.
+        (WebCore::FontPlatformData::operator=): Ditto.
+        (WebCore::FontPlatformData::~FontPlatformData): Ditto.
+        (WebCore::FontPlatformData::isFixedPitch): Ditto.
+        (WebCore::FontPlatformData::operator==): Ditto.
+        * platform/graphics/cairo/FontPlatformDataFreeType.h:
+        (WebCore::FontPlatformData::FontPlatformData): Ditto.
+        (WebCore::FontPlatformData::scaledFont): Ditto.
+        (WebCore::FontPlatformData::hash): Ditto.
+        (WebCore::FontPlatformData::isHashTableDeletedValue): Ditto.
+        * platform/graphics/cairo/GlyphPageTreeNodeCairo.cpp:
+        (WebCore::GlyphPage::fill): Ditto.
+        * platform/graphics/cairo/OwnPtrCairo.cpp: Removed FcPattern specialization.
+        * platform/graphics/cairo/OwnPtrCairo.h: Ditto.
+        * platform/graphics/cairo/PlatformRefPtrCairo.cpp: Added FcPattern and cairo_scaled_font_t specializations.
+        (WTF::refPlatformPtr): Ditto.
+        (WTF::derefPlatformPtr): Ditto.
+        * platform/graphics/cairo/PlatformRefPtrCairo.h: Ditto.
+        * platform/graphics/cairo/SimpleFontDataCairo.cpp:
+        (WebCore::SimpleFontData::platformInit): Updated to reflect smart pointer changes.
+        (WebCore::SimpleFontData::containsCharacters): Ditto.
+        (WebCore::SimpleFontData::platformWidthForGlyph): Ditto.
+        * platform/graphics/gtk/FontGtk.cpp:
+        (WebCore::setPangoAttributes): Ditto.
+
 2010-09-14  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

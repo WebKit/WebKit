@@ -1,3 +1,16 @@
+2010-09-17  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Oliver Hunt.
+
+        [GTK] FontPlatformDataFreeType should use smart pointers to hold its members
+        https://bugs.webkit.org/show_bug.cgi?id=45917
+
+        Added support to PlatformRefPtr for handling HashTableDeletedValue.
+
+        * wtf/PlatformRefPtr.h:
+        (WTF::PlatformRefPtr::PlatformRefPtr): Added a constructor that takes HashTableDeletedValue.
+        (WTF::PlatformRefPtr::isHashTableDeletedValue): Added.
+
 2010-09-16  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

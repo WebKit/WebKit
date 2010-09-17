@@ -39,12 +39,10 @@
 namespace WebCore {
 
 FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const AtomicString& familyName)
-    : m_pattern(0)
-    , m_fallbacks(0)
+    : m_fallbacks(0)
     , m_size(fontDescription.computedPixelSize())
     , m_syntheticBold(false)
     , m_syntheticOblique(false)
-    , m_scaledFont(0)
 {
     FontPlatformData::init();
 
@@ -61,14 +59,14 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
 
     int type = fontDescription.genericFamily();
 
-    FcPattern* pattern = FcPatternCreate();
+    PlatformRefPtr<FcPattern> pattern = adoptPlatformRef(FcPatternCreate());
     cairo_font_face_t* fontFace;
     static const cairo_font_options_t* defaultOptions = cairo_font_options_create();
     const cairo_font_options_t* options = NULL;
     cairo_matrix_t fontMatrix;
 
-    if (!FcPatternAddString(pattern, FC_FAMILY, reinterpret_cast<const FcChar8*>(fcfamily)))
-        goto freePattern;
+    if (!FcPatternAddString(pattern.get(), FC_FAMILY, reinterpret_cast<const FcChar8*>(fcfamily)))
+        return;
 
     switch (type) {
     case FontDescription::SerifFamily:
@@ -89,31 +87,31 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
         break;
     }
 
-    if (fcfamily && !FcPatternAddString(pattern, FC_FAMILY, reinterpret_cast<const FcChar8*>(fcfamily)))
-        goto freePattern;
-    if (!FcPatternAddInteger(pattern, FC_WEIGHT, fcweight))
-        goto freePattern;
-    if (!FcPatternAddInteger(pattern, FC_SLANT, fcslant))
-        goto freePattern;
-    if (!FcPatternAddDouble(pattern, FC_PIXEL_SIZE, fcsize))
-        goto freePattern;
+    if (fcfamily && !FcPatternAddString(pattern.get(), FC_FAMILY, reinterpret_cast<const FcChar8*>(fcfamily)))
+        return;
+    if (!FcPatternAddInteger(pattern.get(), FC_WEIGHT, fcweight))
+        return;
+    if (!FcPatternAddInteger(pattern.get(), FC_SLANT, fcslant))
+        return;
+    if (!FcPatternAddDouble(pattern.get(), FC_PIXEL_SIZE, fcsize))
+        return;
 
-    FcConfigSubstitute(NULL, pattern, FcMatchPattern);
-    FcDefaultSubstitute(pattern);
+    FcConfigSubstitute(0, pattern.get(), FcMatchPattern);
+    FcDefaultSubstitute(pattern.get());
 
     FcResult fcresult;
-    m_pattern = FcFontMatch(NULL, pattern, &fcresult);
+    m_pattern = adoptPlatformRef(FcFontMatch(0, pattern.get(), &fcresult));
     // FIXME: should we set some default font?
     if (!m_pattern)
-        goto freePattern;
-    fontFace = cairo_ft_font_face_create_for_pattern(m_pattern);
+        return;
+    fontFace = cairo_ft_font_face_create_for_pattern(m_pattern.get());
     cairo_matrix_t ctm;
     cairo_matrix_init_scale(&fontMatrix, fontDescription.computedPixelSize(), fontDescription.computedPixelSize());
     cairo_matrix_init_identity(&ctm);
 
 #if !PLATFORM(EFL) || ENABLE(GLIB_SUPPORT)
     if (GdkScreen* screen = gdk_screen_get_default())
-        options = gdk_screen_get_font_options(screen);
+gdk_screen_get_font_options(screen);
 #endif
 
     // gdk_screen_get_font_options() returns NULL if no default options are
@@ -121,30 +119,23 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
     if (!options)
         options = defaultOptions;
 
-    m_scaledFont = cairo_scaled_font_create(fontFace, &fontMatrix, &ctm, options);
+    m_scaledFont = adoptPlatformRef(cairo_scaled_font_create(fontFace, &fontMatrix, &ctm, options));
     cairo_font_face_destroy(fontFace);
-
-freePattern:
-    FcPatternDestroy(pattern);
 }
 
 FontPlatformData::FontPlatformData(float size, bool bold, bool italic)
-    : m_pattern(0)
-    , m_fallbacks(0)
+    : m_fallbacks(0)
     , m_size(size)
     , m_syntheticBold(bold)
     , m_syntheticOblique(italic)
-    , m_scaledFont(0)
 {
 }
 
 FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, float size, bool bold, bool italic)
-    : m_pattern(0)
-    , m_fallbacks(0)
+    : m_fallbacks(0)
     , m_size(size)
     , m_syntheticBold(bold)
     , m_syntheticOblique(italic)
-    , m_scaledFont(0)
 {
     cairo_matrix_t fontMatrix;
     cairo_matrix_init_scale(&fontMatrix, size, size);
@@ -163,7 +154,7 @@ FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, float size, bool
     if (!options)
         options = defaultOptions;
 
-    m_scaledFont = cairo_scaled_font_create(fontFace, &fontMatrix, &ctm, options);
+    m_scaledFont = adoptPlatformRef(cairo_scaled_font_create(fontFace, &fontMatrix, &ctm, options));
 }
 
 FontPlatformData& FontPlatformData::operator=(const FontPlatformData& other)
@@ -175,17 +166,7 @@ FontPlatformData& FontPlatformData::operator=(const FontPlatformData& other)
     m_size = other.m_size;
     m_syntheticBold = other.m_syntheticBold;
     m_syntheticOblique = other.m_syntheticOblique;
-
-    if (other.m_scaledFont)
-        cairo_scaled_font_reference(other.m_scaledFont);
-    if (m_scaledFont)
-        cairo_scaled_font_destroy(m_scaledFont);
     m_scaledFont = other.m_scaledFont;
-
-    if (other.m_pattern)
-        FcPatternReference(other.m_pattern);
-    if (m_pattern)
-        FcPatternDestroy(m_pattern);
     m_pattern = other.m_pattern;
 
     if (m_fallbacks) {
@@ -198,9 +179,7 @@ FontPlatformData& FontPlatformData::operator=(const FontPlatformData& other)
 }
 
 FontPlatformData::FontPlatformData(const FontPlatformData& other)
-    : m_pattern(0)
-    , m_fallbacks(0)
-    , m_scaledFont(0)
+    : m_fallbacks(0)
 {
     *this = other;
 }
@@ -220,18 +199,10 @@ bool FontPlatformData::init()
 
 FontPlatformData::~FontPlatformData()
 {
-    if (m_pattern && ((FcPattern*)-1 != m_pattern)) {
-        FcPatternDestroy(m_pattern);
-        m_pattern = 0;
-    }
-
     if (m_fallbacks) {
         FcFontSetDestroy(m_fallbacks);
         m_fallbacks = 0;
     }
-
-    if (m_scaledFont)
-        cairo_scaled_font_destroy(m_scaledFont);
 }
 
 bool FontPlatformData::isFixedPitch()
@@ -241,7 +212,7 @@ bool FontPlatformData::isFixedPitch()
         return false;
 
     int spacing;
-    if (FcPatternGetInteger(m_pattern, FC_SPACING, 0, &spacing) == FcResultMatch)
+    if (FcPatternGetInteger(m_pattern.get(), FC_SPACING, 0, &spacing) == FcResultMatch)
         return spacing == FC_MONO;
     return false;
 }
@@ -250,10 +221,9 @@ bool FontPlatformData::operator==(const FontPlatformData& other) const
 {
     if (m_pattern == other.m_pattern)
         return true;
-    if (m_pattern == 0 || m_pattern == reinterpret_cast<FcPattern*>(-1)
-            || other.m_pattern == 0 || other.m_pattern == reinterpret_cast<FcPattern*>(-1))
+    if (!m_pattern || m_pattern.isHashTableDeletedValue() || !other.m_pattern || other.m_pattern.isHashTableDeletedValue())
         return false;
-    return FcPatternEqual(m_pattern, other.m_pattern);
+    return FcPatternEqual(m_pattern.get(), other.m_pattern.get());
 }
 
 #ifndef NDEBUG

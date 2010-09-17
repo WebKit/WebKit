@@ -21,6 +21,11 @@
 
 #include <cairo.h>
 
+#if defined(USE_FREETYPE)
+#include <cairo-ft.h>
+#include <fontconfig/fcfreetype.h>
+#endif
+
 namespace WTF {
 
 template <> cairo_t* refPlatformPtr(cairo_t* ptr)
@@ -48,5 +53,33 @@ template <> void derefPlatformPtr(cairo_surface_t* ptr)
     if (ptr)
         cairo_surface_destroy(ptr);
 }
+
+template <> cairo_scaled_font_t* refPlatformPtr(cairo_scaled_font_t* ptr)
+{
+    if (ptr)
+        cairo_scaled_font_reference(ptr);
+    return ptr;
+}
+
+template <> void derefPlatformPtr(cairo_scaled_font_t* ptr)
+{
+    if (ptr)
+        cairo_scaled_font_destroy(ptr);
+}
+
+#if defined(USE_FREETYPE)
+template <> FcPattern* refPlatformPtr(FcPattern* ptr)
+{
+    if (ptr)
+        FcPatternReference(ptr);
+    return ptr;
+}
+
+template <> void derefPlatformPtr(FcPattern* ptr)
+{
+    if (ptr)
+        FcPatternDestroy(ptr);
+}
+#endif
 
 }

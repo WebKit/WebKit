@@ -30,12 +30,6 @@
 namespace WTF {
 
 #if defined(USE_FREETYPE)
-template <> void deleteOwnedPtr<FcPattern>(FcPattern* ptr)
-{
-    if (ptr)
-        FcPatternDestroy(ptr);
-}
-
 template <> void deleteOwnedPtr<FcObjectSet>(FcObjectSet* ptr)
 {
     if (ptr)
