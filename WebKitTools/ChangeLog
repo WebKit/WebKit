@@ -2,6 +2,24 @@
 
         Reviewed by Andreas Kling.
 
+        Make all accesses to m_item (GraphicsWebView) done by WebViewGraphicsBased class happen though graphicsWebView getter method.
+
+        This patch is mostly a preparation for another commit, where the ownership of the m_item/GraphicsWebView
+        object will move to the qgraphicsscene instead of the qgraphicsview.
+
+        * QtTestBrowser/webview.cpp:
+        (WebViewGraphicsBased::setPage):
+        (WebViewGraphicsBased::setResizesToContents):
+        (WebViewGraphicsBased::resizeEvent):
+        (WebViewGraphicsBased::animatedFlip):
+        * QtTestBrowser/webview.h:
+        (WebViewGraphicsBased::setItemCacheMode):
+        (WebViewGraphicsBased::itemCacheMode):
+
+2010-09-12  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Andreas Kling.
+
         Moved setYRotation method body out of the class (WebViewGraphicsBased) definition.
 
         We usually separate methods whose body are larger than a few lines from the class definition.

@@ -59,7 +59,7 @@ WebViewGraphicsBased::WebViewGraphicsBased(QWidget* parent)
 void WebViewGraphicsBased::setPage(QWebPage* page)
 {
     connect(page->mainFrame(), SIGNAL(contentsSizeChanged(const QSize&)), SLOT(contentsSizeChanged(const QSize&)));
-    m_item->setPage(page);
+    graphicsWebView()->setPage(page);
 }
 
 void WebViewGraphicsBased::contentsSizeChanged(const QSize& size)
@@ -74,7 +74,7 @@ void WebViewGraphicsBased::setResizesToContents(bool b)
         return;
 
     m_resizesToContents = b;
-    m_item->setResizesToContents(m_resizesToContents);
+    graphicsWebView()->setResizesToContents(m_resizesToContents);
 
     // When setting resizesToContents ON, our web view widget will always size as big as the
     // web content being displayed, and so will the QWebPage's viewport. It implies that internally
@@ -94,16 +94,16 @@ void WebViewGraphicsBased::setResizesToContents(bool b)
     if (m_resizesToContents) {
         setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
         setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-        m_item->page()->setPreferredContentsSize(size());
-        QRectF itemRect(m_item->geometry().topLeft(), m_item->page()->mainFrame()->contentsSize());
-        m_item->setGeometry(itemRect);
+        graphicsWebView()->page()->setPreferredContentsSize(size());
+        QRectF itemRect(graphicsWebView()->geometry().topLeft(), graphicsWebView()->page()->mainFrame()->contentsSize());
+        graphicsWebView()->setGeometry(itemRect);
         scene()->setSceneRect(itemRect);
     } else {
         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        m_item->page()->setPreferredContentsSize(QSize());
+        graphicsWebView()->page()->setPreferredContentsSize(QSize());
         QRect viewportRect(QPoint(0, 0), size());
-        m_item->setGeometry(viewportRect);
+        graphicsWebView()->setGeometry(viewportRect);
         scene()->setSceneRect(viewportRect);
     }
 }
@@ -115,12 +115,12 @@ void WebViewGraphicsBased::resizeEvent(QResizeEvent* event)
     QSize size(event->size());
 
     if (m_resizesToContents) {
-        m_item->page()->setPreferredContentsSize(size);
+        graphicsWebView()->page()->setPreferredContentsSize(size);
         return;
     }
 
     QRectF rect(QPoint(0, 0), size);
-    m_item->setGeometry(rect);
+    graphicsWebView()->setGeometry(rect);
     scene()->setSceneRect(rect);
 }
 
@@ -152,14 +152,14 @@ void WebViewGraphicsBased::updateFrameRate()
 void WebViewGraphicsBased::animatedFlip()
 {
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
-    QSizeF center = m_item->boundingRect().size() / 2;
+    QSizeF center = graphicsWebView()->boundingRect().size() / 2;
     QPointF centerPoint = QPointF(center.width(), center.height());
-    m_item->setTransformOriginPoint(centerPoint);
+    graphicsWebView()->setTransformOriginPoint(centerPoint);
 
-    QPropertyAnimation* animation = new QPropertyAnimation(m_item, "rotation", this);
+    QPropertyAnimation* animation = new QPropertyAnimation(graphicsWebView(), "rotation", this);
     animation->setDuration(1000);
 
-    int rotation = int(m_item->rotation());
+    int rotation = int(graphicsWebView()->rotation());
 
     animation->setStartValue(rotation);
     animation->setEndValue(rotation + 180 - (rotation % 180));
