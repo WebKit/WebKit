@@ -1,3 +1,13 @@
+2010-09-17  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        http/tests/security/xss-DENIED-mime-type-execute-as-html.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=37540
+
+        * platform/gtk/Skipped: test works fine after the fix for
+        https://bugs.webkit.org/show_bug.cgi?id=45377
+
 2010-09-17  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Dimitri Glazkov.

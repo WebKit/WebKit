@@ -5392,9 +5392,6 @@ plugins/npruntime/round-trip-npobject.html
 # https://bugs.webkit.org/show_bug.cgi?id=37539
 svg/custom/use-on-clip-path-with-transformation.svg
 
-# https://bugs.webkit.org/show_bug.cgi?id=37540
-http/tests/security/xss-DENIED-mime-type-execute-as-html.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=37544
 svg/custom/use-instanceRoot-as-event-target.xhtml
 
