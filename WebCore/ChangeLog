@@ -1,3 +1,20 @@
+2010-09-17  Alexander Pavlov  <apavlov@chromium.org>
+
+        Unreviewed, build fix. Add files missed in the previous commit.
+
+        * GNUmakefile.am:
+        * css/CSSPropertySourceData.cpp: Added.
+        (WebCore::SourceRange::SourceRange):
+        (WebCore::SourceRange::operator=):
+        (WebCore::CSSPropertySourceData::CSSPropertySourceData):
+        (WebCore::CSSPropertySourceData::operator=):
+        (WebCore::CSSPropertySourceData::toString):
+        (WebCore::CSSPropertySourceData::hash):
+        (WebCore::CSSPropertySourceData::init):
+        * css/CSSPropertySourceData.h: Added.
+        (WebCore::CSSPropertySourceData::~CSSPropertySourceData):
+        (WebCore::CSSStyleSourceData::create):
+
 2010-09-15  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
