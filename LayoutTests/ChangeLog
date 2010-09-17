@@ -1,3 +1,10 @@
+2010-09-17  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed, GTK+ rebaselines.
+
+        * platform/gtk/fast/repaint/multicol-repaint-expected.txt:
+        * platform/gtk/svg/css/getComputedStyle-basic-expected.txt:
+
 2010-09-16  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by James Robinson.
