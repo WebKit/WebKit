@@ -29,46 +29,54 @@
 #ifndef InspectorCSSStore_h
 #define InspectorCSSStore_h
 
+#include "CSSPropertySourceData.h"
+#include "Cache.h"
+
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
-#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
-class Document;
-class InspectorController;
 class CSSMutableStyleDeclaration;
 class CSSStyleDeclaration;
 class CSSRuleList;
 class CSSStyleRule;
 class CSSStyleSheet;
+class Document;
+class Element;
+class InspectorController;
+class Node;
 class StyleBase;
 
 typedef std::pair<String, String> PropertyValueAndPriority;
-typedef std::pair<unsigned, unsigned> SourceRange;
 typedef HashMap<String, PropertyValueAndPriority> DisabledStyleDeclaration;
 typedef HashMap<CSSStyleDeclaration*, long> StyleToIdMap;
 typedef HashMap<long, RefPtr<CSSStyleDeclaration> > IdToStyleMap;
 typedef HashMap<CSSStyleRule*, long> RuleToIdMap;
 typedef HashMap<long, RefPtr<CSSStyleRule> > IdToRuleMap;
-typedef HashMap<CSSStyleSheet*, Vector<SourceRange>* > StyleSheetToOffsetsMap;
+typedef HashMap<CSSStyleSheet*, Vector<RefPtr<CSSStyleSourceData> >* > StyleSheetToOffsetsMap;
 typedef HashMap<CSSStyleSheet*, long> StyleSheetToIdMap;
 typedef HashMap<long, RefPtr<CSSStyleSheet> > IdToStyleSheetMap;
+typedef HashMap<long, String> IdToStyleSheetTextMap;
 typedef HashMap<long, DisabledStyleDeclaration> IdToDisabledStyleMap;
 typedef HashMap<RefPtr<Document>, RefPtr<CSSStyleSheet> > DocumentToStyleSheetMap;
 
 class InspectorCSSStore {
 
 public:
+    static CSSStyleSheet* getParentStyleSheet(CSSStyleDeclaration*);
+    static Element* inlineStyleElement(CSSStyleDeclaration*);
+
     InspectorCSSStore(InspectorController* inspectorController);
     ~InspectorCSSStore();
     void reset();
-    HashMap<long, SourceRange> getRuleRanges(CSSStyleSheet*);
+    bool getStyleSourceData(CSSStyleDeclaration*, RefPtr<CSSStyleSourceData>* result);
     CSSStyleDeclaration* styleForId(long styleId);
     CSSStyleSheet* styleSheetForId(long styleSheetId);
     CSSStyleRule* ruleForId(long styleRuleId);
     DisabledStyleDeclaration* disabledStyleForId(long styleId, bool createIfAbsent);
+    String styleSheetText(long styleSheetId);
     CSSStyleSheet* inspectorStyleSheet(Document* ownerDocument, bool createIfAbsent);
     void removeDocument(Document*);
 
@@ -78,6 +86,10 @@ public:
 
 private:
     static CSSStyleRule* asCSSStyleRule(StyleBase*);
+    String inlineStyleSheetText(CSSStyleSheet*);
+    bool resourceStyleSheetText(CSSStyleSheet*, String* result);
+    void extractRanges(CSSStyleSheet*, const StyleRuleRangeMap&, Vector<RefPtr<CSSStyleSourceData> >* rangesVector);
+    bool getStyleAttributeRanges(Node* parentNode, RefPtr<CSSStyleSourceData>* result);
 
     StyleToIdMap m_styleToId;
     IdToStyleMap m_idToStyle;
@@ -85,8 +97,9 @@ private:
     IdToRuleMap m_idToRule;
     StyleSheetToOffsetsMap m_styleSheetToOffsets;
     StyleSheetToIdMap m_styleSheetToId;
-    IdToStyleSheetMap m_idToStyleSheet;
     IdToDisabledStyleMap m_idToDisabledStyle;
+    IdToStyleSheetMap m_idToStyleSheet;
+    IdToStyleSheetTextMap m_idToStyleSheetText;
     DocumentToStyleSheetMap m_documentNodeToInspectorStyleSheetMap;
 
     InspectorController* m_inspectorController;

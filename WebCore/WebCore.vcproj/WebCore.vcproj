@@ -29405,6 +29405,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\CSSPropertySourceData.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSPropertySourceData.h"
+				>
+			</File>
+			<File
 				RelativePath="..\css\CSSQuirkPrimitiveValue.h"
 				>
 			</File>

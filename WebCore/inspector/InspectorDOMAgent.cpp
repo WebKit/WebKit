@@ -37,6 +37,7 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSPropertyNames.h"
+#include "CSSPropertySourceData.h"
 #include "CSSRule.h"
 #include "CSSRuleList.h"
 #include "CSSStyleRule.h"
@@ -1191,26 +1192,34 @@ void InspectorDOMAgent::getStyleSheet(long styleSheetId, RefPtr<InspectorObject>
         *styleSheetObject = buildObjectForStyleSheet(styleSheet->document(), styleSheet);
 }
 
-void InspectorDOMAgent::getRuleRanges(long styleSheetId, RefPtr<InspectorValue>* ruleRange)
+void InspectorDOMAgent::getStyleSourceData(long styleId, RefPtr<InspectorObject>* dataObject)
 {
-    CSSStyleSheet* styleSheet = cssStore()->styleSheetForId(styleSheetId);
-    if (styleSheet && styleSheet->document()) {
-        HashMap<long, SourceRange> ruleRanges = cssStore()->getRuleRanges(styleSheet);
-        if (!ruleRanges.size())
-            return;
-        RefPtr<InspectorObject> result = InspectorObject::create();
-        for (HashMap<long, SourceRange>::iterator it = ruleRanges.begin(); it != ruleRanges.end(); ++it) {
-            if (it->second.second) {
-                RefPtr<InspectorObject> ruleRange = InspectorObject::create();
-                result->setObject(String::number(it->first).utf8().data(), ruleRange);
-                RefPtr<InspectorObject> bodyRange = InspectorObject::create();
-                ruleRange->setObject("bodyRange", bodyRange);
-                bodyRange->setNumber("start", it->second.first);
-                bodyRange->setNumber("end", it->second.second);
-            }
-        }
-        *ruleRange = result.release();
+    CSSStyleDeclaration* style = cssStore()->styleForId(styleId);
+    if (!style)
+        return;
+    RefPtr<CSSStyleSourceData> sourceData = CSSStyleSourceData::create();
+    bool success = cssStore()->getStyleSourceData(style, &sourceData);
+    if (!success)
+        return;
+    RefPtr<InspectorObject> result = InspectorObject::create();
+    RefPtr<InspectorObject> bodyRange = InspectorObject::create();
+    result->setObject("bodyRange", bodyRange);
+    bodyRange->setNumber("start", sourceData->styleBodyRange.start);
+    bodyRange->setNumber("end", sourceData->styleBodyRange.end);
+    RefPtr<InspectorArray> propertyRanges = InspectorArray::create();
+    result->setArray("propertyData", propertyRanges);
+    Vector<CSSPropertySourceData>& propertyData = sourceData->propertyData;
+    for (Vector<CSSPropertySourceData>::iterator it = propertyData.begin(); it != propertyData.end(); ++it) {
+        RefPtr<InspectorObject> propertyRange = InspectorObject::create();
+        propertyRange->setString("name", it->name);
+        propertyRange->setString("value", it->value);
+        propertyRange->setBoolean("important", it->important);
+        propertyRange->setBoolean("parsed", it->parsedOk);
+        propertyRange->setNumber("start", it->range.start);
+        propertyRange->setNumber("end", it->range.end);
+        propertyRanges->pushObject(propertyRange);
     }
+    *dataObject = result.release();
 }
 
 void InspectorDOMAgent::getInlineStyle(long nodeId, RefPtr<InspectorValue>* style)
@@ -1469,7 +1478,7 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::buildObjectForStyle(CSSStyleDecla
     if (bind) {
         long styleId = cssStore()->bindStyle(style);
         result->setNumber("id", styleId);
-        CSSStyleSheet* parentStyleSheet = getParentStyleSheet(style);
+        CSSStyleSheet* parentStyleSheet = InspectorCSSStore::getParentStyleSheet(style);
         if (parentStyleSheet)
             result->setNumber("parentStyleSheetId", cssStore()->bindStyleSheet(parentStyleSheet));
 
@@ -1679,20 +1688,6 @@ PassRefPtr<InspectorArray> InspectorDOMAgent::toArray(const Vector<String>& data
     for (unsigned i = 0; i < data.size(); ++i)
         result->pushString(data[i]);
     return result.release();
-}
-
-CSSStyleSheet* InspectorDOMAgent::getParentStyleSheet(CSSStyleDeclaration* style)
-{
-    CSSStyleSheet* parentStyleSheet = style->parentRule() ? style->parentRule()->parentStyleSheet() : 0;
-    if (!parentStyleSheet) {
-        StyleBase* parent = style->parent();
-        if (parent && parent->isCSSStyleSheet()) {
-            parentStyleSheet = static_cast<CSSStyleSheet*>(parent);
-            if (!parentStyleSheet->length())
-                return 0;
-        }
-    }
-    return parentStyleSheet;
 }
 
 void InspectorDOMAgent::onMatchJobsTimer(Timer<InspectorDOMAgent>*)

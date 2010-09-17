@@ -123,7 +123,7 @@ namespace WebCore {
         void getInlineStyle(long nodeId, RefPtr<InspectorValue>* styles);
         void getComputedStyle(long nodeId, RefPtr<InspectorValue>* styles);
         void getStyleSheet(long styleSheetId, RefPtr<InspectorObject>* styleSheetObject);
-        void getRuleRanges(long styleSheetId, RefPtr<InspectorValue>* ruleRange);
+        void getStyleSourceData(long styleId, RefPtr<InspectorObject>* dataObject);
         void applyStyleText(long styleId, const String& styleText, const String& propertyName, bool* success, RefPtr<InspectorValue>* styleObject, RefPtr<InspectorArray>* changedProperties);
         void setStyleText(long styleId, const String& cssText, bool* success);
         void setStyleProperty(long styleId, const String& name, const String& value, bool* success);
@@ -148,7 +148,6 @@ namespace WebCore {
         void copyNode(long nodeId);
 
     private:
-        static CSSStyleSheet* getParentStyleSheet(CSSStyleDeclaration*);
         void startListening(Document* document);
         void stopListening(Document* document);
 

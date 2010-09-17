@@ -314,7 +314,7 @@ webkit_keyframe_rule:
 ;
 
 webkit_decls:
-    WEBKIT_DECLS_SYM '{' maybe_space declaration_list '}' {
+    WEBKIT_DECLS_SYM '{' maybe_space_before_declaration declaration_list '}' {
         /* can be empty */
     }
 ;
@@ -903,8 +903,15 @@ unary_operator:
   | '+' { $$ = 1; }
   ;
 
+maybe_space_before_declaration:
+    maybe_space {
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        p->markPropertyStart();
+    }
+  ;
+
 ruleset:
-    selector_list '{' maybe_space declaration_list closing_brace {
+    selector_list '{' maybe_space_before_declaration declaration_list closing_brace {
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createStyleRule($1);
     }
@@ -1355,6 +1362,8 @@ declaration_list:
 
 decl_list:
     declaration ';' maybe_space {
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        p->markPropertyStart();
         $$ = $1;
     }
     | declaration invalid_block_list maybe_space {
@@ -1364,12 +1373,16 @@ decl_list:
         $$ = false;
     }
     | error ';' maybe_space {
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        p->markPropertyStart();
         $$ = false;
     }
     | error invalid_block_list error ';' maybe_space {
         $$ = false;
     }
     | decl_list declaration ';' maybe_space {
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        p->markPropertyStart();
         $$ = $1;
         if ($2)
             $$ = $2;
@@ -1386,15 +1399,21 @@ declaration:
     property ':' maybe_space expr prio {
         $$ = false;
         CSSParser* p = static_cast<CSSParser*>(parser);
+        bool isPropertyParsed = false;
         if ($1 && $4) {
             p->m_valueList = p->sinkFloatingValueList($4);
             int oldParsedProperties = p->m_numParsedProperties;
             $$ = p->parseValue($1, $5);
-            if (!$$)
+            if (!$$) {
+                if (static_cast<int>(p->m_numParsedProperties) == oldParsedProperties)
+                    isPropertyParsed = true;
                 p->rollbackLastProperties(p->m_numParsedProperties - oldParsedProperties);
+            } else
+                isPropertyParsed = true;
             delete p->m_valueList;
             p->m_valueList = 0;
         }
+        p->markPropertyEnd($5, isPropertyParsed);
     }
     |
     variable_reference maybe_space {
@@ -1417,11 +1436,15 @@ declaration:
         /* The default movable type template has letter-spacing: .none;  Handle this by looking for
         error tokens at the start of an expr, recover the expr and then treat as an error, cleaning
         up and deleting the shifted expr.  */
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        p->markPropertyEnd(false, false);
         $$ = false;
     }
     |
     property ':' maybe_space expr prio error {
         /* When we encounter something like p {color: red !important fail;} we should drop the declaration */
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        p->markPropertyEnd(false, false);
         $$ = false;
     }
     |
@@ -1432,11 +1455,15 @@ declaration:
     |
     property ':' maybe_space {
         /* div { font-family: } Just reduce away this property with no value. */
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        p->markPropertyEnd(false, false);
         $$ = false;
     }
     |
     property ':' maybe_space error {
         /* if we come across rules with invalid values like this case: p { weight: *; }, just discard the rule */
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        p->markPropertyEnd(false, false);
         $$ = false;
     }
     |

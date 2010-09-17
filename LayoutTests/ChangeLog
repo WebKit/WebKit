@@ -1,3 +1,17 @@
+2010-09-15  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Provide source-based properties for style declarations to CSSParser clients
+        https://bugs.webkit.org/show_bug.cgi?id=44949
+
+        * inspector/resources/styles-source-offsets.css:
+        (body):
+        (/* comment before selector */body.main1/* comment after selector */):
+        (body.main2):
+        * inspector/styles-source-offsets-expected.txt:
+        * inspector/styles-source-offsets.html:
+
 2010-09-17  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed, GTK+ rebaselines.

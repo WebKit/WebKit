@@ -1010,6 +1010,8 @@
             'css/CSSProperty.h',
             'css/CSSPropertyLonghand.cpp',
             'css/CSSPropertyLonghand.h',
+            'css/CSSPropertySourceData.cpp',
+            'css/CSSPropertySourceData.h',
             'css/CSSQuirkPrimitiveValue.h',
             'css/CSSReflectValue.cpp',
             'css/CSSReflectValue.h',

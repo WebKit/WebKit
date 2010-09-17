@@ -1,3 +1,67 @@
+2010-09-15  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Provide source-based properties for style declarations to CSSParser clients
+
+        This change:
+        - Enables InspectorCSSStore to extract CSS stylesheet text for all source-based stylesheets,
+          even with the resource tracking turned off.
+        - Adds to CSSParser a capability of source-related style declaration data extraction:
+          * Start/end source offsets for a declaration, relative to the parent stylesheet start or the "style" attribute value.
+          * Start/end source offsets for CSS properties, relative to the declaration start.
+          * CSS property data: name, value, priority, WebCore parsability (i.e. if the property is understood by WebCore).
+        - Provides the extracted data to the WebInspector frontend via InspectorDOMAgent::getStyleSourceData().
+        https://bugs.webkit.org/show_bug.cgi?id=44949
+
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSGrammar.y:
+        * css/CSSMutableStyleDeclaration.h:
+        (WebCore::CSSMutableStyleDeclaration::node):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::parseSheet):
+        (WebCore::CSSParser::parseDeclaration):
+        (WebCore::CSSParser::createStyleRule):
+        (WebCore::CSSParser::markRuleBodyStart):
+        (WebCore::CSSParser::markPropertyStart):
+        (WebCore::CSSParser::markPropertyEnd):
+        * css/CSSParser.h:
+        (WebCore::CSSParser::resetPropertyMarks):
+        * css/CSSPropertySourceData.cpp: Added.
+        (WebCore::SourceRange::SourceRange):
+        (WebCore::SourceRange::operator=):
+        (WebCore::CSSPropertySourceData::CSSPropertySourceData):
+        (WebCore::CSSPropertySourceData::operator=):
+        (WebCore::CSSPropertySourceData::toString):
+        (WebCore::CSSPropertySourceData::hash):
+        (WebCore::CSSPropertySourceData::init):
+        * css/CSSPropertySourceData.h: Added.
+        (WebCore::CSSPropertySourceData::~CSSPropertySourceData):
+        (WebCore::CSSStyleSourceData::create):
+        * inspector/Inspector.idl:
+        * inspector/InspectorCSSStore.cpp:
+        (WebCore::InspectorCSSStore::reset):
+        (WebCore::InspectorCSSStore::styleSheetText):
+        (WebCore::InspectorCSSStore::resourceStyleSheetText):
+        (WebCore::InspectorCSSStore::inlineStyleSheetText):
+        (WebCore::InspectorCSSStore::getStyleSourceData):
+        (WebCore::InspectorCSSStore::extractRanges):
+        (WebCore::InspectorCSSStore::getStyleAttributeRanges):
+        (WebCore::InspectorCSSStore::getParentStyleSheet):
+        (WebCore::InspectorCSSStore::inlineStyleElement):
+        * inspector/InspectorCSSStore.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::resourceContentForURL):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getStyleSourceData):
+        (WebCore::InspectorDOMAgent::buildObjectForStyle):
+        * inspector/InspectorDOMAgent.h:
+
 2010-09-17  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

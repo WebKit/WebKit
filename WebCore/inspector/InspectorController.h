@@ -226,6 +226,7 @@ public:
 
     const ResourcesMap& resources() const { return m_resources; }
     InspectorResource* resourceForURL(const String& url);
+    bool resourceContentForURL(const KURL& url, Document* loaderDocument, String* result);
     bool hasFrontend() const { return m_frontend; }
 
     void drawNodeHighlight(GraphicsContext&) const;

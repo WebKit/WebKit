@@ -35,55 +35,43 @@ function frontend_runTest(testController)
         function stylesCallback(testController, styles)
         {
             var matchedCSSRules = styles.matchedCSSRules;
-            var parentStyleSheetId = matchedCSSRules[0].style.parentStyleSheetId;
-            if (!parentStyleSheetId) {
-                testController.results.push("BAD STYLESHEET ID: " + parentStyleSheetId);
-                testController.notifyDone(testController.results);
-                return;
+            for (var i = 0; i < matchedCSSRules.length; ++i) {
+                var rule = matchedCSSRules[i];
+                InspectorBackend.getStyleSourceData(rule.style.id, frontend_styleDataReceived.bind(null, testController, rule, false));
             }
-            InspectorBackend.getRuleRanges(parentStyleSheetId, frontend_ruleRangesReceived.bind(null, testController, parentStyleSheetId, matchedCSSRules));
+            InspectorBackend.getStyleSourceData(styles.inlineStyle.id, frontend_styleDataReceived.bind(null, testController, styles.inlineStyle, true));
         }
         InspectorBackend.getStyles(WebInspector.domAgent.document.body.id, true, stylesCallback.bind(null, testController));
     });
 }
 
-function frontend_ruleRangesReceived(testController, styleSheetId, matchedCSSRules, ruleRanges)
+function frontend_styleDataReceived(testController, ruleOrStyle, shouldBail, data)
 {
-    for (var i = 0; i < matchedCSSRules.length; ++i) {
-        var rule = matchedCSSRules[i];
-        testController.results.push(rule.selectorText + ": [" + ruleRanges[rule.style.id].bodyRange.start + "-" + ruleRanges[rule.style.id].bodyRange.end + "]");
+    var isRule = !!(ruleOrStyle.style);
+    testController.results.push((isRule ? ruleOrStyle.selectorText : "element.style") + ": [" + data.bodyRange.start + "-" + data.bodyRange.end + "]");
+    for (var i = 0; i < data.propertyData.length; ++i) {
+        var propertyDatum = data.propertyData[i];
+        testController.results.push("['" + propertyDatum.name + "':'" + propertyDatum.value + "'" + (propertyDatum.important ? " !important" : "") + (propertyDatum.parsed ? "" : " non-parsed") +"] @[" + propertyDatum.start + "-" + propertyDatum.end + "]");
     }
-    InspectorBackend.getStyleSheet(styleSheetId, frontend_handleStyleSheet.bind(null, testController));
-}
-
-function frontend_handleStyleSheet(testController, styleSheet)
-{
-    var url = styleSheet.href;
-    if (url !== "") {
-        var resource = WebInspector.resourceURLMap[url];
-        if (!resource) {
-            testController.results.push("NO RESOURCE FOR URL: " + url);
-            testController.notifyDone(testController.results);
-            return;
-        }
-        WebInspector.getResourceContent(resource.identifier, frontend_styleSheetTextReceived.bind(null, testController));
-    } else {
-        testController.results.push("EMPTY STYLESHEET HREF");
+    if (shouldBail)
         testController.notifyDone(testController.results);
-    }
 }
 
-function frontend_styleSheetTextReceived(testController, styleSheetText)
-{
-    testController.results.push(styleSheetText.replace(/\n/g, "&"));
-    testController.notifyDone(testController.results);
-}
 </script>
+
+<style>
+
+body.mainpage {
+    text-decoration: none; /* at least one valid property is necessary for WebCore to match a rule */
+    badproperty: 1badvalue1;
+}
+
+</style>
 </head>
 
-<body class="main1 main2" onload="onload()">
+<body class="main1 main2 mainpage" onload="onload()" style="font-weight: normal; width: 80%">
 <p>
-Tests that proper start/end offset positions are reported for CSS rule bodies.
+Tests that proper data and start/end offset positions are reported for CSS style declarations and properties.
 </p>
 
 </body>

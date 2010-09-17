@@ -33,6 +33,7 @@
 #if ENABLE(INSPECTOR)
 
 #include "CachedResource.h"
+#include "CachedResourceLoader.h"
 #include "Chrome.h"
 #include "Console.h"
 #include "ConsoleMessage.h"
@@ -1987,6 +1988,49 @@ void InspectorController::getResourceContent(unsigned long identifier, String* c
 {
     RefPtr<InspectorResource> resource = m_resources.get(identifier);
     *content = resource ? resource->sourceString() : String();
+}
+
+bool InspectorController::resourceContentForURL(const KURL& url, Document* frameDocument, String* result)
+{
+    if (!frameDocument)
+        return false;
+
+    String textEncodingName;
+    RefPtr<SharedBuffer> buffer;
+    if (equalIgnoringFragmentIdentifier(url, frameDocument->frame()->loader()->documentLoader()->requestURL())) {
+        textEncodingName = frameDocument->inputEncoding();
+        buffer = frameDocument->frame()->loader()->provisionalDocumentLoader()->mainResourceData();
+    } else {
+        const String& urlString = url.string();
+        CachedResource* cachedResource = frameDocument->cachedResourceLoader()->cachedResource(urlString);
+        if (!cachedResource)
+            cachedResource = cache()->resourceForURL(urlString);
+
+        ASSERT(cachedResource); // FIXME(apavlov): This might be too aggressive.
+
+        bool isUnpurgeable = true;
+        if (cachedResource->isPurgeable()) {
+            // If the resource is purgeable then make it unpurgeable to get
+            // its data. This might fail, in which case we return an
+            // empty String.
+            if (!cachedResource->makePurgeable(false))
+                isUnpurgeable = false;
+        }
+        if (isUnpurgeable) {
+            textEncodingName = cachedResource->encoding();
+            buffer = cachedResource->data();
+        }
+    }
+
+    if (buffer) {
+        TextEncoding encoding(textEncodingName);
+        if (!encoding.isValid())
+            encoding = WindowsLatin1Encoding();
+        *result = encoding.decode(buffer->data(), buffer->size());
+        return true;
+    }
+
+    return false;
 }
 
 void InspectorController::reloadPage()

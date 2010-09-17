@@ -37,11 +37,18 @@
 #include "CSSStyleDeclaration.h"
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
+#include "CachedResource.h"
+#include "DocumentLoader.h"
+#include "Element.h"
+#include "Frame.h"
 #include "HTMLHeadElement.h"
 #include "InspectorController.h"
 #include "InspectorResource.h"
+#include "Node.h"
 #include "PlatformString.h"
+#include "SharedBuffer.h"
 #include "StyleSheetList.h"
+#include "TextEncoding.h"
 
 namespace WebCore {
 
@@ -67,6 +74,7 @@ void InspectorCSSStore::reset()
     m_styleSheetToOffsets.clear();
     m_styleSheetToId.clear();
     m_idToStyleSheet.clear();
+    m_idToStyleSheetText.clear();
     m_idToDisabledStyle.clear();
     m_documentNodeToInspectorStyleSheetMap.clear();
 
@@ -104,48 +112,145 @@ CSSStyleSheet* InspectorCSSStore::inspectorStyleSheet(Document* ownerDocument, b
     return inspectorStyleSheet;
 }
 
-HashMap<long, SourceRange> InspectorCSSStore::getRuleRanges(CSSStyleSheet* styleSheet)
+String InspectorCSSStore::styleSheetText(long styleSheetId)
 {
+    IdToStyleSheetTextMap::iterator it = m_idToStyleSheetText.find(styleSheetId);
+    if (it != m_idToStyleSheetText.end())
+        return it->second;
+
+    CSSStyleSheet* styleSheet = styleSheetForId(styleSheetId);
     if (!styleSheet)
-        return HashMap<long, SourceRange>();
-    RefPtr<CSSRuleList> originalRuleList = CSSRuleList::create(styleSheet, false);
+        return String();
+
+    String result;
+    bool success = false;
+    Node* ownerNode = styleSheet->ownerNode();
+    if (ownerNode && ownerNode->nodeType() == Node::ELEMENT_NODE) {
+        Element* ownerElement = static_cast<Element*>(ownerNode);
+        if (ownerElement->tagName().lower() == "style") {
+            result = inlineStyleSheetText(styleSheet);
+            success = true;
+        }
+    }
+    if (!success)
+        success = resourceStyleSheetText(styleSheet, &result);
+
+    if (success)
+        m_idToStyleSheetText.set(styleSheetId, result);
+    return result;
+}
+
+bool InspectorCSSStore::resourceStyleSheetText(CSSStyleSheet* styleSheet, String* result)
+{
+    return m_inspectorController->resourceContentForURL(styleSheet->finalURL(), styleSheet->document(), result);
+}
+
+String InspectorCSSStore::inlineStyleSheetText(CSSStyleSheet* styleSheet)
+{
+    Node* ownerNode = styleSheet->ownerNode();
+    if (!ownerNode || ownerNode->nodeType() != Node::ELEMENT_NODE || m_styleSheetToId.find(styleSheet) == m_styleSheetToId.end())
+        return String();
+    Element* ownerElement = static_cast<Element*>(ownerNode);
+    if (ownerElement->tagName().lower() != "style")
+        return String();
+    return ownerElement->innerText();
+}
+
+
+// All ranges are: [start; end) (start - inclusive, end - exclusive).
+bool InspectorCSSStore::getStyleSourceData(CSSStyleDeclaration* style, RefPtr<CSSStyleSourceData>* result)
+{
+    if (!style)
+        return false;
+
+    Element* element = inlineStyleElement(style);
+    if (element) {
+        // Inline: style="...".
+        RefPtr<CSSStyleSourceData> styleSourceData = CSSStyleSourceData::create();
+        bool success = getStyleAttributeRanges(element, &styleSourceData);
+        if (!success)
+            return false;
+        *result = styleSourceData;
+        return true;
+    }
+
+    CSSStyleSheet* styleSheet = getParentStyleSheet(style);
+    if (!styleSheet)
+        return false;
+
+    Vector<RefPtr<CSSStyleSourceData> >* rangesVector = 0;
     StyleSheetToOffsetsMap::iterator it = m_styleSheetToOffsets.find(styleSheet);
-    Vector<SourceRange>* offsetVector = 0;
     if (it == m_styleSheetToOffsets.end()) {
-        InspectorResource* resource = m_inspectorController->resourceForURL(styleSheet->finalURL().string());
-        if (resource) {
-            offsetVector = new Vector<SourceRange>;
+        String text = styleSheetText(bindStyleSheet(styleSheet));
+        if (!text.isEmpty()) {
             RefPtr<CSSStyleSheet> newStyleSheet = CSSStyleSheet::create(styleSheet->ownerNode());
             CSSParser p;
-            CSSParser::StyleRuleRanges ruleRangeMap;
-            p.parseSheet(newStyleSheet.get(), resource->sourceString(), 0, &ruleRangeMap);
-            for (unsigned i = 0, length = newStyleSheet->length(); i < length; ++i) {
-                CSSStyleRule* rule = asCSSStyleRule(newStyleSheet->item(i));
-                if (!rule)
-                    continue;
-                HashMap<CSSStyleRule*, std::pair<unsigned, unsigned> >::iterator it = ruleRangeMap.find(rule);
-                if (it != ruleRangeMap.end())
-                    offsetVector->append(it->second);
-            }
-            m_styleSheetToOffsets.set(styleSheet, offsetVector);
+            StyleRuleRangeMap ruleRangeMap;
+            p.parseSheet(newStyleSheet.get(), text, 0, &ruleRangeMap);
+            rangesVector = new Vector<RefPtr<CSSStyleSourceData> >;
+            extractRanges(newStyleSheet.get(), ruleRangeMap, rangesVector);
+            m_styleSheetToOffsets.set(styleSheet, rangesVector);
         }
     } else
-        offsetVector = it->second;
-    if (!offsetVector)
-        return HashMap<long, SourceRange>();
+        rangesVector = it->second;
+    if (!rangesVector)
+        return false;
 
     unsigned ruleIndex = 0;
-    HashMap<long, SourceRange> result;
     for (unsigned i = 0, length = styleSheet->length(); i < length; ++i) {
-        ASSERT(ruleIndex < offsetVector->size());
         CSSStyleRule* rule = asCSSStyleRule(styleSheet->item(i));
         if (!rule)
             continue;
-        // This maps the style id to the rule body range.
-        result.set(bindStyle(rule->style()), offsetVector->at(ruleIndex));
+        if (rule->style() == style) {
+            ASSERT(ruleIndex < rangesVector->size());
+            *result = rangesVector->at(ruleIndex);
+            return true;
+        }
         ruleIndex++;
     }
-    return result;
+    return false;
+}
+
+void InspectorCSSStore::extractRanges(CSSStyleSheet* styleSheet, const StyleRuleRangeMap& ruleRangeMap, Vector<RefPtr<CSSStyleSourceData> >* rangesVector)
+{
+    for (unsigned i = 0, length = styleSheet->length(); i < length; ++i) {
+        CSSStyleRule* rule = asCSSStyleRule(styleSheet->item(i));
+        if (!rule)
+            continue;
+        StyleRuleRangeMap::const_iterator it = ruleRangeMap.find(rule);
+        if (it != ruleRangeMap.end())
+            rangesVector->append(it->second);
+    }
+}
+
+bool InspectorCSSStore::getStyleAttributeRanges(Node* node, RefPtr<CSSStyleSourceData>* result)
+{
+    if (!node || !node->isStyledElement())
+        return false;
+
+    String styleText = static_cast<StyledElement*>(node)->getAttribute("style");
+    if (styleText.isEmpty()) {
+        (*result)->styleBodyRange.start = 0;
+        (*result)->styleBodyRange.end = 0;
+        return true;
+    }
+
+    RefPtr<CSSMutableStyleDeclaration> tempDeclaration = CSSMutableStyleDeclaration::create();
+    CSSParser p;
+    p.parseDeclaration(tempDeclaration.get(), styleText, result->get());
+    return true;
+}
+
+CSSStyleSheet* InspectorCSSStore::getParentStyleSheet(CSSStyleDeclaration* style)
+{
+    if (!style)
+        return 0;
+
+    StyleSheet* styleSheet = style->stylesheet();
+    if (styleSheet && styleSheet->isCSSStyleSheet())
+        return static_cast<CSSStyleSheet*>(styleSheet);
+
+    return 0;
 }
 
 CSSStyleRule* InspectorCSSStore::asCSSStyleRule(StyleBase* styleBase)
@@ -215,6 +320,17 @@ long InspectorCSSStore::bindRule(CSSStyleRule* rule)
         m_ruleToId.set(rule, id);
     }
     return id;
+}
+
+// static
+Element* InspectorCSSStore::inlineStyleElement(CSSStyleDeclaration* style)
+{
+    if (!style || !style->isMutableStyleDeclaration())
+        return 0;
+    Node* node = static_cast<CSSMutableStyleDeclaration*>(style)->node();
+    if (!node || !node->isStyledElement() || static_cast<StyledElement*>(node)->getInlineStyleDecl() != style)
+        return 0;
+    return static_cast<Element*>(node);
 }
 
 } // namespace WebCore
