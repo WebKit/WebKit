@@ -1,3 +1,11 @@
+2010-09-17  Eric Carlson  <eric.carlson@apple.com>
+
+        Rubber-stamped by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45983
+
+        * platform/win/Skipped: Skip media-can-play-mpeg4-video.html.
+
 2010-09-17  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -992,3 +992,6 @@ fullscreen/
 
 # viewport meta tag support
 fast/viewport
+
+# https://bugs.webkit.org/show_bug.cgi?id=45983
+media/media-can-play-mpeg4-video.html
