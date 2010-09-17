@@ -762,7 +762,7 @@ module window {
         attribute [Conditional=BLOB] BlobBuilderConstructor BlobBuilder;
 
 #if defined(ENABLE_BLOB) && ENABLE_BLOB
-        DOMString createBlobURL(in Blob blob);
+        [ConvertNullStringTo=Undefined] DOMString createBlobURL(in Blob blob);
         void revokeBlobURL(in DOMString blobURL);
 #endif
 

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function log(message)
+{
+    document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
+}
+
+function test()
+{
+    log("Test that createBlobURL with no argument should not cause crash.");
+    var url = createBlobURL();
+    log(url == undefined ? "PASS" : "FAIL");
+
+    log("DONE");
+}
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+</head>
+<body onload="test()">
+<pre id='console'></pre>
+</body>
+</html>
+

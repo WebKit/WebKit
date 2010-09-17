@@ -1,0 +1,4 @@
+Test that createBlobURL with no argument should not cause crash.
+PASS
+DONE
+

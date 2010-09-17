@@ -262,6 +262,8 @@ DOMTimer* ScriptExecutionContext::findTimeout(int timeoutId)
 #if ENABLE(BLOB)
 KURL ScriptExecutionContext::createPublicBlobURL(Blob* blob)
 {
+    if (!blob)
+        return KURL();
     KURL publicURL = BlobURL::createPublicURL(securityOrigin());
     ThreadableBlobRegistry::registerBlobURL(publicURL, blob->url());
     m_publicBlobURLs.add(publicURL.string());
