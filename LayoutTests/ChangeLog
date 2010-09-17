@@ -1,3 +1,13 @@
+2010-09-17  Adam Roben  <aroben@apple.com>
+
+        Land new Windows results for fast/forms/file-input-disabled.html
+
+        This corresponds to the changes made in r64712.
+
+        Rubber-stamped by John Sullivan.
+
+        * platform/win/fast/forms/file-input-disabled-expected.txt:
+
 2010-09-14  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

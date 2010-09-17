@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {FORM} at (0,0) size 784x61
+      RenderBlock {FORM} at (0,0) size 784x59
         RenderBlock (anonymous) at (0,0) size 784x59
           RenderBlock {INPUT} at (3,4) size 12x12
           RenderInline {B} at (0,0) size 75x18
@@ -19,5 +19,4 @@ layer at (0,0) size 800x600
                 RenderText at (0,0) size 62x13
                   text run at (0,0) width 62: "Choose File"
           RenderBR {BR} at (327,52) size 0x0
-        RenderTable {TABLE} at (0,59) size 4x2
-          RenderTableSection {TBODY} at (0,0) size 4x2
+        RenderTable {TABLE} at (0,59) size 4x0
