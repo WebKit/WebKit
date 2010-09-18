@@ -47,6 +47,11 @@ COMPILE_ASSERT(!IsInteger<volatile char*>::value, WTF_IsInteger_volatile_char_po
 COMPILE_ASSERT(!IsInteger<double>::value, WTF_IsInteger_double_false);
 COMPILE_ASSERT(!IsInteger<float>::value, WTF_IsInteger_float_false);
 
+COMPILE_ASSERT(IsFloatingPoint<float>::value, WTF_IsFloatingPoint_float_true);
+COMPILE_ASSERT(IsFloatingPoint<double>::value, WTF_IsFloatingPoint_double_true);
+COMPILE_ASSERT(IsFloatingPoint<long double>::value, WTF_IsFloatingPoint_long_double_true);
+COMPILE_ASSERT(!IsFloatingPoint<int>::value, WTF_IsFloatingPoint_int_false);
+
 COMPILE_ASSERT(IsPod<bool>::value, WTF_IsPod_bool_true);
 COMPILE_ASSERT(IsPod<char>::value, WTF_IsPod_char_true);
 COMPILE_ASSERT(IsPod<signed char>::value, WTF_IsPod_signed_char_true);

@@ -1,3 +1,13 @@
+2010-09-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add IsFloatingPoint and IsArithmetic type traits
+        https://bugs.webkit.org/show_bug.cgi?id=46018
+
+        * wtf/TypeTraits.h:
+        * wtf/TypeTraits.cpp:
+
 2010-09-17  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Oliver Hunt.
