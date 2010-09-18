@@ -1,3 +1,12 @@
+2010-09-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Jon Honeycutt.
+
+        Need a way to load data (as plain text) in a WKPage
+        <rdar://problem/8424239>
+
+        * WebCore.exp.in:
+
 2010-09-17  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.

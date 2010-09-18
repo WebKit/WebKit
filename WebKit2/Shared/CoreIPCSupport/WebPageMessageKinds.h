@@ -44,6 +44,7 @@ enum Kind {
     KeyEvent,
     LoadURL,
     LoadURLRequest,
+    LoadHTMLString,
     MouseEvent,
     PreferencesDidChange,
     ReapplyEditCommand,

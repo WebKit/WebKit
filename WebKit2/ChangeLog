@@ -1,5 +1,24 @@
 2010-09-17  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Jon Honeycutt.
+
+        Need a way to load data (as plain text) in a WKPage
+        <rdar://problem/8424239>
+
+        * Shared/CoreIPCSupport/WebPageMessageKinds.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageLoadHTMLString):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadHTMLString):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadHTMLString):
+        (WebKit::WebPage::didReceiveMessage):
+        * WebProcess/WebPage/WebPage.h:
+
+2010-09-17  Sam Weinig  <sam@webkit.org>
+
         Rubber-stamped by Anders Carlsson.
 
         Replace all uses of WTF::String and WTF::AtomicString with

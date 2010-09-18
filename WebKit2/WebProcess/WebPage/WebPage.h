@@ -157,6 +157,7 @@ private:
     void tryClose();
     void loadURL(const String&);
     void loadURLRequest(const WebCore::ResourceRequest&);
+    void loadHTMLString(const String& htmlString, const String& baseURL);
     void reload(bool reloadFromOrigin);
     void goForward(uint64_t);
     void goBack(uint64_t);

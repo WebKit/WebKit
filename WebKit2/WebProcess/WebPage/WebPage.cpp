@@ -56,6 +56,8 @@
 #include <WebCore/RenderTreeAsText.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/Settings.h>
+#include <WebCore/SharedBuffer.h>
+#include <WebCore/SubstituteData.h>
 #include <runtime/JSLock.h>
 #include <runtime/JSValue.h>
 
@@ -245,6 +247,20 @@ void WebPage::loadURL(const String& url)
 void WebPage::loadURLRequest(const ResourceRequest& request)
 {
     m_mainFrame->coreFrame()->loader()->load(request, false);
+}
+
+void WebPage::loadHTMLString(const String& htmlString, const String& baseURLString)
+{
+    RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(reinterpret_cast<const char*>(htmlString.characters()), htmlString.length() * sizeof(UChar));
+    String MIMEType("text/html");
+    String encodingName("utf-16");
+    KURL baseURL = baseURLString.isEmpty() ? blankURL() : KURL(KURL(), baseURLString);
+    KURL failingURL;
+
+    ResourceRequest request(baseURL);
+    SubstituteData substituteData(sharedBuffer.release(), MIMEType, encodingName, failingURL);
+
+    m_mainFrame->coreFrame()->loader()->load(request, substituteData, false);
 }
 
 void WebPage::stopLoading()
@@ -744,6 +760,15 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
                 return;
             
             loadURLRequest(request);
+            return;
+        }
+        case WebPageMessage::LoadHTMLString: {
+            String htmlString;
+            String baseURL;
+            if (!arguments->decode(CoreIPC::In(htmlString, baseURL)))
+                return;
+            
+            loadHTMLString(htmlString, baseURL);
             return;
         }
         case WebPageMessage::StopLoading:
