@@ -1,3 +1,16 @@
+2010-09-18  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        webkitAnimationEnd event doesn't fire when skipping over final iteration
+        https://bugs.webkit.org/show_bug.cgi?id=46010
+        
+        Add a test with a short enough animation interval (0.001s) that we 
+        appear to always skip the second iteration.
+
+        * animations/animation-end-event-short-iterations-expected.txt: Added.
+        * animations/animation-end-event-short-iterations.html: Added.
+
 2010-09-17  Mihai Parparita  <mihaip@chromium.org>
 
        Reviewed by James Robinson.

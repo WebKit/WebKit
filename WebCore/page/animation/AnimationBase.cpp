@@ -1180,6 +1180,10 @@ void AnimationBase::fireAnimationEventsIfNeeded()
     
     // Check for end timeout
     if (m_totalDuration >= 0 && elapsedDuration >= m_totalDuration) {
+        // We may still be in AnimationStateLooping if we've managed to skip a
+        // whole iteration, in which case we should jump to the end state.
+        m_animState = AnimationStateEnding;
+
         // Fire an end event
         updateStateMachine(AnimationStateInputEndTimerFired, m_totalDuration);
     } else {

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test animations with repeated iterations and short loops</title>
+  <style>
+    #box {
+      position: relative;
+      left: 100px;
+      top: 10px;
+      height: 100px;
+      width: 100px;
+      -webkit-animation-duration: 0.001s;
+      -webkit-animation-name: anim;
+      background-color: #999;
+      -webkit-animation-iteration-count: 2;
+    }
+    @-webkit-keyframes anim {
+        from { left: 200px; }
+        to   { left: 300px; }
+    }
+  </style>
+  <script>
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+  
+    onload = function()
+    {
+        document.addEventListener('webkitAnimationEnd', function() {
+            document.getElementById('result').innerHTML = 'PASS: got webkitAnimationEnd event';      
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }, false);
+        
+        // Animation begins once we append the DOM node to the document.
+        var boxNode = document.createElement('div');
+        boxNode.id = 'box';
+        document.body.appendChild(boxNode);
+    }
+  </script>
+</head>
+<body>
+Checks that we still end an animation properly (i.e. fire a webkitAnimationEnd
+event) when using more than one iteration with very short durations.
+<pre id="result">FAIL: no webkitAnimationEnd event received</pre>
+</body>
+</html>

@@ -1,3 +1,22 @@
+2010-09-18  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        webkitAnimationEnd event doesn't fire when skipping over final iteration
+        https://bugs.webkit.org/show_bug.cgi?id=46010
+        
+        It's possible for AnimationBase::fireAnimationEventsIfNeeded to decide
+        that the animation is ended while we're in the looping state, if the
+        animation timer never fires during an iteration. That then fails the
+        assert in AnimationBase::updateStateMachine (we don't expect
+        AnimationStateInputEndTimerFired while in the looping state). Jump the
+        state to AnimationStateEnding, which is more accurate.
+
+        Test: animations/animation-end-event-short-iterations.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::fireAnimationEventsIfNeeded):
+
 2010-09-18  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Andreas Kling.
