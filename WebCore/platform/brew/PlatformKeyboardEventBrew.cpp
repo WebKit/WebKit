@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-static String keyIdentifierForBrewKeyCode(int16 keyCode)
+static String keyIdentifierForBrewKeyCode(uint16 keyCode)
 {
     switch (keyCode) {
     case AVK_LALT:

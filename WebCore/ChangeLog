@@ -1,3 +1,15 @@
+2010-09-18  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Andreas Kling.
+
+        [BREWMP] Wrong key code type in keyIdentifierForBrewKeyCode
+        https://bugs.webkit.org/show_bug.cgi?id=46005
+
+        The type of key code in Brew MP is uint16. Take uint16 instead of int16 in keyIdentifierForBrewKeyCode.
+
+        * platform/brew/PlatformKeyboardEventBrew.cpp:
+        (WebCore::keyIdentifierForBrewKeyCode):
+
 2010-09-18  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Oliver Hunt.
