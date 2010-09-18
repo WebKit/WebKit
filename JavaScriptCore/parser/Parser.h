@@ -48,7 +48,7 @@ namespace JSC {
     class Parser : public Noncopyable {
     public:
         template <class ParsedNode>
-        PassRefPtr<ParsedNode> parse(JSGlobalData* globalData, JSGlobalObject* lexicalGlobalObject, Debugger*, ExecState*, const SourceCode& source, JSObject** exception);
+        PassRefPtr<ParsedNode> parse(JSGlobalData* globalData, JSGlobalObject* lexicalGlobalObject, Debugger*, ExecState*, const SourceCode& source, FunctionParameters*, JSObject** exception);
 
         void didFinishParsing(SourceElements*, ParserArenaData<DeclarationStacks::VarStack>*, 
                               ParserArenaData<DeclarationStacks::FunctionStack>*, CodeFeatures features,
@@ -57,7 +57,7 @@ namespace JSC {
         ParserArena& arena() { return m_arena; }
 
     private:
-        void parse(JSGlobalData*, int* errLine, UString* errMsg);
+        void parse(JSGlobalData*, FunctionParameters*, int* errLine, UString* errMsg);
 
         // Used to determine type of error to report.
         bool isFunctionBodyNode(ScopeNode*) { return false; }
@@ -75,7 +75,7 @@ namespace JSC {
     };
 
     template <class ParsedNode>
-    PassRefPtr<ParsedNode> Parser::parse(JSGlobalData* globalData, JSGlobalObject* lexicalGlobalObject, Debugger* debugger, ExecState* debuggerExecState, const SourceCode& source, JSObject** exception)
+    PassRefPtr<ParsedNode> Parser::parse(JSGlobalData* globalData, JSGlobalObject* lexicalGlobalObject, Debugger* debugger, ExecState* debuggerExecState, const SourceCode& source, FunctionParameters* parameters, JSObject** exception)
     {
         ASSERT(exception && !*exception);
         int errLine;
@@ -84,7 +84,7 @@ namespace JSC {
         m_source = &source;
         if (ParsedNode::scopeIsFunction)
             globalData->lexer->setIsReparsing();
-        parse(globalData, &errLine, &errMsg);
+        parse(globalData, parameters, &errLine, &errMsg);
 
         RefPtr<ParsedNode> result;
         if (m_sourceElements) {

@@ -35,7 +35,7 @@ extern int jscyyparse(void*);
 
 namespace JSC {
 
-void Parser::parse(JSGlobalData* globalData, int* errLine, UString* errMsg)
+void Parser::parse(JSGlobalData* globalData, FunctionParameters* parameters, int* errLine, UString* errMsg)
 {
     m_sourceElements = 0;
 
@@ -53,7 +53,7 @@ void Parser::parse(JSGlobalData* globalData, int* errLine, UString* errMsg)
     Lexer& lexer = *globalData->lexer;
     lexer.setCode(*m_source, m_arena);
 
-    int parseError = jsParse(globalData, m_source);
+    int parseError = jsParse(globalData, parameters, m_source);
     int lineNumber = lexer.lineNumber();
     bool lexError = lexer.sawError();
     lexer.clear();

@@ -67,7 +67,7 @@ static const ptrdiff_t kMaxParserStackUsage = 128 * sizeof(void*) * 1024;
 
 class JSParser {
 public:
-    JSParser(Lexer*, JSGlobalData*, SourceProvider*);
+    JSParser(Lexer*, JSGlobalData*, FunctionParameters*, SourceProvider*);
     bool parseProgram();
 private:
     struct AllowInOverride {
@@ -161,7 +161,7 @@ private:
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseVarDeclarationList(TreeBuilder&, int& declarations, const Identifier*& lastIdent, TreeExpression& lastInitializer, int& identStart, int& initStart, int& initEnd);
     template <class TreeBuilder> ALWAYS_INLINE TreeConstDeclList parseConstDeclarationList(TreeBuilder& context);
     enum FunctionRequirements { FunctionNoRequirements, FunctionNeedsName };
-    template <FunctionRequirements, class TreeBuilder> bool parseFunctionInfo(TreeBuilder&, const Identifier*&, TreeFormalParameterList&, TreeFunctionBody&, int& openBrace, int& closeBrace, int& bodyStartLine);
+    template <FunctionRequirements, bool nameIsInContainingScope, class TreeBuilder> bool parseFunctionInfo(TreeBuilder&, const Identifier*&, TreeFormalParameterList&, TreeFunctionBody&, int& openBrace, int& closeBrace, int& bodyStartLine);
     ALWAYS_INLINE int isBinaryOperator(JSTokenType token);
     bool allowAutomaticSemicolon();
 
@@ -203,6 +203,7 @@ private:
     struct Scope {
         Scope()
             : m_usesEval(false)
+            , m_needsFullActivation(false)
         {
         }
         
@@ -217,7 +218,9 @@ private:
             m_usedVariables.add(ident->ustring().impl());
         }
         
-        void collectFreeVariables(Scope* nestedScope, bool shouldTrackCapturedVariables)
+        void needsFullActivation() { m_needsFullActivation = true; }
+        
+        void collectFreeVariables(Scope* nestedScope, bool shouldTrackClosedVariables)
         {
             if (nestedScope->m_usesEval)
                 m_usesEval = true;
@@ -226,17 +229,29 @@ private:
                 if (nestedScope->m_declaredVariables.contains(*ptr))
                     continue;
                 m_usedVariables.add(*ptr);
-                if (shouldTrackCapturedVariables)
-                    m_capturedVariables.add(*ptr);
+                if (shouldTrackClosedVariables)
+                    m_closedVariables.add(*ptr);
             }
         }
 
-        IdentifierSet& capturedVariables() { return m_capturedVariables; }
+        void getCapturedVariables(IdentifierSet& capturedVariables)
+        {
+            if (m_needsFullActivation || m_usesEval) {
+                capturedVariables.swap(m_declaredVariables);
+                return;
+            }
+            for (IdentifierSet::iterator ptr = m_closedVariables.begin(); ptr != m_closedVariables.end(); ++ptr) {
+                if (!m_declaredVariables.contains(*ptr))
+                    continue;
+                capturedVariables.add(*ptr);
+            }
+        }
     private:
         bool m_usesEval;
+        bool m_needsFullActivation;
         IdentifierSet m_declaredVariables;
         IdentifierSet m_usedVariables;
-        IdentifierSet m_capturedVariables;
+        IdentifierSet m_closedVariables;
     };
     
     typedef Vector<Scope, 10> ScopeStack;
@@ -265,24 +280,24 @@ private:
         return currentScope();
     }
 
-    void popScope(ScopeRef scope, bool shouldTrackCapturedVariables)
+    void popScope(ScopeRef scope, bool shouldTrackClosedVariables)
     {
         ASSERT_UNUSED(scope, scope.index() == m_scopeStack.size() - 1);
         ASSERT(m_scopeStack.size() > 1);
-        m_scopeStack[m_scopeStack.size() - 2].collectFreeVariables(&m_scopeStack.last(), shouldTrackCapturedVariables);
+        m_scopeStack[m_scopeStack.size() - 2].collectFreeVariables(&m_scopeStack.last(), shouldTrackClosedVariables);
         m_scopeStack.removeLast();
     }
 
     ScopeStack m_scopeStack;
 };
 
-int jsParse(JSGlobalData* globalData, const SourceCode* source)
+int jsParse(JSGlobalData* globalData, FunctionParameters* parameters, const SourceCode* source)
 {
-    JSParser parser(globalData->lexer, globalData, source->provider());
+    JSParser parser(globalData->lexer, globalData, parameters, source->provider());
     return parser.parseProgram();
 }
 
-JSParser::JSParser(Lexer* lexer, JSGlobalData* globalData, SourceProvider* provider)
+JSParser::JSParser(Lexer* lexer, JSGlobalData* globalData, FunctionParameters* parameters, SourceProvider* provider)
     : m_lexer(lexer)
     , m_endAddress(0)
     , m_error(false)
@@ -298,17 +313,24 @@ JSParser::JSParser(Lexer* lexer, JSGlobalData* globalData, SourceProvider* provi
     m_endAddress = wtfThreadData().approximatedStackStart() - kMaxParserStackUsage;
     next();
     m_lexer->setLastLineNumber(tokenLine());
+    ScopeRef scope = pushScope();
+    if (parameters) {
+        for (unsigned i = 0; i < parameters->size(); i++)
+            scope->declareVariable(&parameters->at(i));
+    }
 }
 
 bool JSParser::parseProgram()
 {
     ASTBuilder context(m_globalData, m_lexer);
-    ScopeRef scope = pushScope();
+    ScopeRef scope = currentScope();
     SourceElements* sourceElements = parseSourceElements<ASTBuilder>(context);
     if (!sourceElements || !consume(EOFTOK))
         return true;
+    IdentifierSet capturedVariables;
+    scope->getCapturedVariables(capturedVariables);
     m_globalData->parser->didFinishParsing(sourceElements, context.varDeclarations(), context.funcDeclarations(), context.features(),
-                                          m_lastLine, context.numConstants(), scope->capturedVariables());
+                                          m_lastLine, context.numConstants(), capturedVariables);
     return false;
 }
 
@@ -630,6 +652,7 @@ template <class TreeBuilder> TreeStatement JSParser::parseThrowStatement(TreeBui
 template <class TreeBuilder> TreeStatement JSParser::parseWithStatement(TreeBuilder& context)
 {
     ASSERT(match(WITH));
+    currentScope()->needsFullActivation();
     int startLine = tokenLine();
     next();
     consumeOrFail(OPENPAREN);
@@ -728,6 +751,7 @@ template <class TreeBuilder> TreeStatement JSParser::parseTryStatement(TreeBuild
     int lastLine = m_lastLine;
 
     if (match(CATCH)) {
+        currentScope()->needsFullActivation();
         next();
         consumeOrFail(OPENPAREN);
         matchOrFail(IDENT);
@@ -863,13 +887,14 @@ template <class TreeBuilder> TreeFunctionBody JSParser::parseFunctionBody(TreeBu
     return context.createFunctionBody();
 }
 
-template <JSParser::FunctionRequirements requirements, class TreeBuilder> bool JSParser::parseFunctionInfo(TreeBuilder& context, const Identifier*& name, TreeFormalParameterList& parameters, TreeFunctionBody& body, int& openBracePos, int& closeBracePos, int& bodyStartLine)
+template <JSParser::FunctionRequirements requirements, bool nameIsInContainingScope, class TreeBuilder> bool JSParser::parseFunctionInfo(TreeBuilder& context, const Identifier*& name, TreeFormalParameterList& parameters, TreeFunctionBody& body, int& openBracePos, int& closeBracePos, int& bodyStartLine)
 {
     ScopeRef functionScope = pushScope();
     if (match(IDENT)) {
         name = m_token.m_data.ident;
         next();
-        functionScope->declareVariable(name);
+        if (!nameIsInContainingScope)
+            functionScope->declareVariable(name);
     } else if (requirements == FunctionNeedsName)
         return false;
     consumeOrFail(OPENPAREN);
@@ -906,7 +931,7 @@ template <class TreeBuilder> TreeStatement JSParser::parseFunctionDeclaration(Tr
     int openBracePos = 0;
     int closeBracePos = 0;
     int bodyStartLine = 0;
-    failIfFalse(parseFunctionInfo<FunctionNeedsName>(context, name, parameters, body, openBracePos, closeBracePos, bodyStartLine));
+    failIfFalse((parseFunctionInfo<FunctionNeedsName, true>(context, name, parameters, body, openBracePos, closeBracePos, bodyStartLine)));
     failIfFalse(name);
     currentScope()->declareVariable(name);
     return context.createFuncDeclStatement(name, body, parameters, openBracePos, closeBracePos, bodyStartLine, m_lastLine);
@@ -1199,7 +1224,7 @@ template <bool complete, class TreeBuilder> TreeProperty JSParser::parseProperty
             type = PropertyNode::Setter;
         else
             fail();
-        failIfFalse(parseFunctionInfo<FunctionNeedsName>(context, accessorName, parameters, body, openBracePos, closeBracePos, bodyStartLine));
+        failIfFalse((parseFunctionInfo<FunctionNeedsName, false>(context, accessorName, parameters, body, openBracePos, closeBracePos, bodyStartLine)));
         return context.template createGetterOrSetterProperty<complete>(type, accessorName, parameters, body, openBracePos, closeBracePos, bodyStartLine, m_lastLine);
     }
     case NUMBER: {
@@ -1451,7 +1476,7 @@ template <class TreeBuilder> TreeExpression JSParser::parseMemberExpression(Tree
         int closeBracePos = 0;
         int bodyStartLine = 0;
         next();
-        failIfFalse(parseFunctionInfo<FunctionNoRequirements>(context, name, parameters, body, openBracePos, closeBracePos, bodyStartLine));
+        failIfFalse((parseFunctionInfo<FunctionNoRequirements, false>(context, name, parameters, body, openBracePos, closeBracePos, bodyStartLine)));
         base = context.createFunctionExpr(name, body, parameters, openBracePos, closeBracePos, bodyStartLine, m_lastLine);
     } else
         base = parsePrimaryExpression(context);

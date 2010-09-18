@@ -28,6 +28,7 @@
 
 namespace JSC {
 
+class FunctionParameters;
 class Identifier;
 class JSGlobalData;
 class SourceCode;
@@ -154,6 +155,6 @@ struct JSToken {
     JSTokenInfo m_info;
 };
 
-int jsParse(JSGlobalData*, const SourceCode*);
+int jsParse(JSGlobalData*, FunctionParameters*, const SourceCode*);
 }
 #endif // JSParser_h

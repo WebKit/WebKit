@@ -1,3 +1,56 @@
+2010-09-17  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Imprecise tracking of variable capture leads to overly pessimistic creation of activations
+        https://bugs.webkit.org/show_bug.cgi?id=46020
+
+        The old logic for track free and captured variables would cause us
+        to decide we needed an activation in every function along the scope
+        chain between a variable capture and its declaration.  We now track
+        captured variables precisely which requires a bit of additional work
+
+        The most substantial change is that the parsing routine needs to
+        be passed the list of function parameters when reparsing a function
+        as when reparsing we don't parse the function declaration itself only
+        its body.
+
+        * JavaScriptCore.exp:
+        * parser/JSParser.cpp:
+        (JSC::JSParser::Scope::Scope):
+        (JSC::JSParser::Scope::needsFullActivation):
+           We need to distinguish between use of a feature that requires
+           an activation and eval so we now get this additional flag.
+        (JSC::JSParser::Scope::collectFreeVariables):
+        (JSC::JSParser::Scope::getCapturedVariables):
+           We can't simply return the list of "capturedVariables" now as
+           is insufficiently precise, so we compute them instead.
+        (JSC::JSParser::popScope):
+        (JSC::jsParse):
+        (JSC::JSParser::JSParser):
+        (JSC::JSParser::parseProgram):
+        (JSC::JSParser::parseWithStatement):
+        (JSC::JSParser::parseTryStatement):
+        (JSC::JSParser::parseFunctionInfo):
+        (JSC::JSParser::parseFunctionDeclaration):
+        (JSC::JSParser::parseProperty):
+        (JSC::JSParser::parseMemberExpression):
+        * parser/JSParser.h:
+        * parser/Parser.cpp:
+        (JSC::Parser::parse):
+        * parser/Parser.h:
+        (JSC::Parser::parse):
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::ProgramExecutable::checkSyntax):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+        (JSC::FunctionExecutable::reparseExceptionInfo):
+        (JSC::EvalExecutable::reparseExceptionInfo):
+        (JSC::FunctionExecutable::fromGlobalCode):
+           Pass function parameters (if available) to the parser.
+
 2010-09-17  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
