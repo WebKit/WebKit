@@ -46,35 +46,17 @@ import webkitpy.thirdparty.simplejson as simplejson
 
 _log = logging.getLogger("webkitpy.layout_tests.layout_package.json_results_generator")
 
+
 class TestResult(object):
     """A simple class that represents a single test result."""
-
-    # Test modifier constants.
-    (NONE, FAILS, FLAKY, DISABLED) = range(4)
-
-    def __init__(self, name, failed=False, elapsed_time=0):
+    def __init__(self, name, failed=False, skipped=False, elapsed_time=0):
         self.name = name
         self.failed = failed
+        self.skipped = skipped
         self.time = elapsed_time
 
-        test_name = name
-        try:
-            test_name = name.split('.')[1]
-        except IndexError:
-            _log.warn("Invalid test name: %s.", name)
-            pass
-
-        if test_name.startswith('FAILS_'):
-            self.modifier = self.FAILS
-        elif test_name.startswith('FLAKY_'):
-            self.modifier = self.FLAKY
-        elif test_name.startswith('DISABLED_'):
-            self.modifier = self.DISABLED
-        else:
-            self.modifier = self.NONE
-
     def fixable(self):
-        return self.failed or self.modifier == self.DISABLED
+        return self.failed or self.skipped
 
 
 class JSONResultsGeneratorBase(object):
@@ -85,20 +67,10 @@ class JSONResultsGeneratorBase(object):
     MIN_TIME = 1
     JSON_PREFIX = "ADD_RESULTS("
     JSON_SUFFIX = ");"
-
-    # Note that in non-chromium tests those chars are used to indicate
-    # test modifiers (FAILS, FLAKY, etc) but not actual test results.
     PASS_RESULT = "P"
     SKIP_RESULT = "X"
     FAIL_RESULT = "F"
-    FLAKY_RESULT = "L"
     NO_DATA_RESULT = "N"
-
-    MODIFIER_TO_CHAR = {TestResult.NONE: PASS_RESULT,
-                        TestResult.DISABLED: SKIP_RESULT,
-                        TestResult.FAILS: FAIL_RESULT,
-                        TestResult.FLAKY: FLAKY_RESULT}
-
     VERSION = 3
     VERSION_KEY = "version"
     RESULTS = "results"
@@ -146,7 +118,6 @@ class JSONResultsGeneratorBase(object):
         self._build_name = build_name
         self._build_number = build_number
         self._builder_base_url = builder_base_url
-        self._results_directory = results_file_base_path
         self._results_file_path = os.path.join(results_file_base_path,
             self.RESULTS_FILENAME)
         self._incremental_results_file_path = os.path.join(
@@ -234,31 +205,6 @@ class JSONResultsGeneratorBase(object):
     def set_archived_results(self, archived_results):
         self._archived_results = archived_results
 
-    def upload_json_files(self, json_files):
-        """Uploads the given json_files to the test_results_server (if the
-        test_results_server is given)."""
-        if not self._test_results_server:
-            return
-
-        _log.info("Uploading JSON files for builder: %s", self._builder_name)
-        attrs = [("builder", self._builder_name),
-                 ("testtype", self._test_type)]
-
-        files = [(file, os.path.join(self._results_directory, file))
-            for file in json_files]
-
-        uploader = test_results_uploader.TestResultsUploader(
-            self._test_results_server)
-        try:
-            # Set uploading timeout in case appengine server is having problem.
-            # 120 seconds are more than enough to upload test results.
-            uploader.upload(attrs, files, 120)
-        except Exception, err:
-            _log.error("Upload failed: %s" % err)
-            return
-
-        _log.info("JSON files uploaded.")
-
     def _generate_json_file(self, json, file_path):
         # Specify separators in order to get compact encoding.
         json_data = simplejson.dumps(json, separators=(',', ':'))
@@ -280,17 +226,19 @@ class JSONResultsGeneratorBase(object):
         """Returns a set of failed test names."""
         return set([r.name for r in self._test_results if r.failed])
 
-    def _get_modifier_char(self, test_name):
+    def _get_result_type_char(self, test_name):
         """Returns a single char (e.g. SKIP_RESULT, FAIL_RESULT,
-        PASS_RESULT, NO_DATA_RESULT, etc) that indicates the test modifier
+        PASS_RESULT, NO_DATA_RESULT, etc) that indicates the test result
         for the given test_name.
         """
         if test_name not in self._test_results_map:
             return JSONResultsGenerator.NO_DATA_RESULT
 
         test_result = self._test_results_map[test_name]
-        if test_result.modifier in self.MODIFIER_TO_CHAR.keys():
-            return self.MODIFIER_TO_CHAR[test_result.modifier]
+        if test_result.skipped:
+            return JSONResultsGenerator.SKIP_RESULT
+        if test_result.failed:
+            return JSONResultsGenerator.FAIL_RESULT
 
         return JSONResultsGenerator.PASS_RESULT
 
@@ -396,10 +344,10 @@ class JSONResultsGeneratorBase(object):
         self._insert_item_into_raw_list(results_for_builder,
             fixable_count, self.FIXABLE_COUNT)
 
-        # Create a test modifiers (FAILS, FLAKY etc) summary dictionary.
+        # Create a pass/skip/failure summary dictionary.
         entry = {}
         for test_name in self._test_results_map.iterkeys():
-            result_char = self._get_modifier_char(test_name)
+            result_char = self._get_result_type_char(test_name)
             entry[result_char] = entry.get(result_char, 0) + 1
 
         # Insert the pass/skip/failure summary dictionary.
@@ -475,7 +423,7 @@ class JSONResultsGeneratorBase(object):
           tests: Dictionary containing test result entries.
         """
 
-        result = self._get_modifier_char(test_name)
+        result = self._get_result_type_char(test_name)
         time = self._get_test_timing(test_name)
 
         if test_name not in tests:
@@ -575,6 +523,29 @@ class JSONResultsGenerator(JSONResultsGeneratorBase):
     # The flag is for backward compatibility.
     output_json_in_init = True
 
+    def _upload_json_files(self):
+        if not self._test_results_server or not self._test_type:
+            return
+
+        _log.info("Uploading JSON files for %s to the server: %s",
+                  self._builder_name, self._test_results_server)
+        attrs = [("builder", self._builder_name), ("testtype", self._test_type)]
+        json_files = [self.INCREMENTAL_RESULTS_FILENAME]
+
+        files = [(file, os.path.join(self._results_directory, file))
+            for file in json_files]
+        uploader = test_results_uploader.TestResultsUploader(
+            self._test_results_server)
+        try:
+            # Set uploading timeout in case appengine server is having problem.
+            # 120 seconds are more than enough to upload test results.
+            uploader.upload(attrs, files, 120)
+        except Exception, err:
+            _log.error("Upload failed: %s" % err)
+            return
+
+        _log.info("JSON files uploaded.")
+
     def __init__(self, port, builder_name, build_name, build_number,
         results_file_base_path, builder_base_url,
         test_timings, failures, passed_tests, skipped_tests, all_tests,
@@ -611,9 +582,11 @@ class JSONResultsGenerator(JSONResultsGeneratorBase):
             test_result.failed = True
         for test in skipped_tests:
             test_results_map[test] = test_result = get(test, TestResult(test))
+            test_result.skipped = True
         for test in passed_tests:
             test_results_map[test] = test_result = get(test, TestResult(test))
             test_result.failed = False
+            test_result.skipped = False
         for test in all_tests:
             if test not in test_results_map:
                 test_results_map[test] = TestResult(test)
@@ -630,4 +603,4 @@ class JSONResultsGenerator(JSONResultsGeneratorBase):
 
         if self.__class__.output_json_in_init:
             self.generate_json_output()
-            self.upload_json_files([self.INCREMENTAL_RESULTS_FILENAME])
+            self._upload_json_files()

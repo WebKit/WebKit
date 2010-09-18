@@ -69,6 +69,7 @@ from layout_package import printing
 from layout_package import test_expectations
 from layout_package import test_failures
 from layout_package import test_files
+from layout_package import test_results_uploader
 from test_types import image_diff
 from test_types import text_diff
 from test_types import test_type_base
@@ -814,10 +815,12 @@ class TestRunner:
         self._printer.print_unexpected_results(unexpected_results)
 
         if self._options.record_results:
-            # Write the same data to log files and upload generated JSON files
-            # to appengine server.
-            self._upload_json_files(unexpected_results, result_summary,
-                                    individual_test_timings)
+            # Write the same data to log files.
+            self._write_json_files(unexpected_results, result_summary,
+                                   individual_test_timings)
+
+            # Upload generated JSON files to appengine server.
+            self._upload_json_files()
 
         # Write the summary to disk (results.html) and display it if requested.
         wrote_results = self._write_results_html_file(result_summary)
@@ -900,10 +903,10 @@ class TestRunner:
 
         return failed_results
 
-    def _upload_json_files(self, unexpected_results, result_summary,
+    def _write_json_files(self, unexpected_results, result_summary,
                         individual_test_timings):
         """Writes the results of the test run as JSON files into the results
-        dir and upload the files to the appengine server.
+        dir.
 
         There are three different files written into the results dir:
           unexpected_results.json: A short list of any unexpected results.
@@ -932,7 +935,7 @@ class TestRunner:
         with codecs.open(expectations_path, "w", "utf-8") as file:
             file.write(u"ADD_EXPECTATIONS(%s);" % expectations_json)
 
-        generator = json_layout_results_generator.JSONLayoutResultsGenerator(
+        json_layout_results_generator.JSONLayoutResultsGenerator(
             self._port, self._options.builder_name, self._options.build_name,
             self._options.build_number, self._options.results_directory,
             BUILDER_BASE_URL, individual_test_timings,
@@ -942,16 +945,34 @@ class TestRunner:
 
         _log.debug("Finished writing JSON files.")
 
+    def _upload_json_files(self):
+        if not self._options.test_results_server:
+            return
+
+        _log.info("Uploading JSON files for builder: %s",
+                   self._options.builder_name)
+
+        attrs = [("builder", self._options.builder_name)]
         json_files = ["expectations.json"]
         if self._options.upload_full_results:
             json_files.append("results.json")
         else:
             json_files.append("incremental_results.json")
 
-        generator.upload_json_files(json_files)
+        files = [(file, os.path.join(self._options.results_directory, file))
+            for file in json_files]
+
+        uploader = test_results_uploader.TestResultsUploader(
+            self._options.test_results_server)
+        try:
+            # Set uploading timeout in case appengine server is having problem.
+            # 120 seconds are more than enough to upload test results.
+            uploader.upload(attrs, files, 120)
+        except Exception, err:
+            _log.error("Upload failed: %s" % err)
+            return
 
         _log.info("JSON files uploaded.")
-
 
     def _print_config(self):
         """Prints the configuration for the test run."""
