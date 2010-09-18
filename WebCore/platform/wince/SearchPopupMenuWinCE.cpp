@@ -51,4 +51,4 @@ void SearchPopupMenu::loadRecentSearches(const AtomicString& name, Vector<String
     notImplemented();
 }
 
-}
+} // namespace WebCore

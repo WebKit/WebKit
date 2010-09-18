@@ -20,7 +20,7 @@
  */
 
 #include "config.h"
-#include "UnicodeWince.h"
+#include "UnicodeWinCE.h"
 
 #include <wchar.h>
 

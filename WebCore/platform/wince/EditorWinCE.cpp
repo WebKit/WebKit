@@ -22,7 +22,7 @@
 
 #include "Editor.h"
 
-#include "ClipboardWince.h"
+#include "ClipboardWinCE.h"
 #include "Document.h"
 #include "EditorClient.h"
 #include "Element.h"
@@ -37,7 +37,7 @@ namespace WebCore {
 
 PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy, Frame*)
 {
-    return adoptRef(new ClipboardWince(policy, false));
+    return adoptRef(new ClipboardWinCE(policy, false));
 }
 
 } // namespace WebCore

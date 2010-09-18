@@ -80,4 +80,4 @@ void LocalStorageThread::performTerminate()
     m_timer.stop();
 }
 
-}
+} // namespace WebCore

@@ -27,4 +27,4 @@ String KURL::fileSystemPath() const
     return path();
 }
 
-}
+} // namespace WebCore

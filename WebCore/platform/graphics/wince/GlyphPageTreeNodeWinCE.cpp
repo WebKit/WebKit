@@ -75,5 +75,4 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
     return true;
 }
 
-}
-
+} // namespace WebCore

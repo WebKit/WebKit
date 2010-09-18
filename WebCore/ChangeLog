@@ -17,6 +17,131 @@
 
 2010-09-18  Patrick Gansterer  <paroga@paroga.com>
 
+        Reviewed by Darin Adler.
+
+        Rename Wince files to WinCE
+        https://bugs.webkit.org/show_bug.cgi?id=37287
+
+        * loader/icon/wince/IconDatabaseWinCE.cpp: Copied from WebCore/loader/icon/wince/IconDatabaseWince.cpp.
+        * loader/icon/wince/IconDatabaseWince.cpp: Removed.
+        * page/wince/FrameWinCE.cpp: Copied from WebCore/page/wince/FrameWince.cpp.
+        * page/wince/FrameWince.cpp: Removed.
+        * platform/graphics/MediaPlayer.cpp:
+        * platform/graphics/wince/ColorWinCE.cpp: Copied from WebCore/platform/graphics/wince/ColorWince.cpp.
+        * platform/graphics/wince/ColorWince.cpp: Removed.
+        * platform/graphics/wince/FontCacheWinCE.cpp: Copied from WebCore/platform/graphics/wince/FontCacheWince.cpp.
+        * platform/graphics/wince/FontCacheWince.cpp: Removed.
+        * platform/graphics/wince/FontWinCE.cpp: Copied from WebCore/platform/graphics/wince/FontWince.cpp.
+        * platform/graphics/wince/FontWince.cpp: Removed.
+        * platform/graphics/wince/GlyphPageTreeNodeWinCE.cpp: Copied from WebCore/platform/graphics/wince/GlyphPageTreeNodeWince.cpp.
+        * platform/graphics/wince/GlyphPageTreeNodeWince.cpp: Removed.
+        * platform/graphics/wince/GradientWinCE.cpp: Copied from WebCore/platform/graphics/wince/GradientWince.cpp.
+        * platform/graphics/wince/GradientWince.cpp: Removed.
+        * platform/graphics/wince/GraphicsContextWinCE.cpp: Copied from WebCore/platform/graphics/wince/GraphicsContextWince.cpp.
+        * platform/graphics/wince/GraphicsContextWince.cpp: Removed.
+        * platform/graphics/wince/ImageBufferWinCE.cpp: Copied from WebCore/platform/graphics/wince/ImageBufferWince.cpp.
+        * platform/graphics/wince/ImageBufferWince.cpp: Removed.
+        * platform/graphics/wince/MediaPlayerPrivateWinCE.h: Copied from WebCore/platform/graphics/wince/MediaPlayerPrivateWince.h.
+        * platform/graphics/wince/MediaPlayerPrivateWince.h: Removed.
+        * platform/graphics/wince/PathWinCE.cpp: Copied from WebCore/platform/graphics/wince/PathWince.cpp.
+        * platform/graphics/wince/PathWince.cpp: Removed.
+        * platform/graphics/wince/PlatformPathWinCE.cpp: Copied from WebCore/platform/graphics/wince/PlatformPathWince.cpp.
+        * platform/graphics/wince/PlatformPathWinCE.h: Copied from WebCore/platform/graphics/wince/PlatformPathWince.h.
+        * platform/graphics/wince/PlatformPathWince.cpp: Removed.
+        * platform/graphics/wince/PlatformPathWince.h: Removed.
+        * platform/graphics/wince/SimpleFontDataWinCE.cpp: Copied from WebCore/platform/graphics/wince/SimpleFontDataWince.cpp.
+        * platform/graphics/wince/SimpleFontDataWince.cpp: Removed.
+        * platform/graphics/wince/WinCEGraphicsExtras.h: Copied from WebCore/platform/graphics/wince/WinceGraphicsExtras.h.
+        * platform/graphics/wince/WinceGraphicsExtras.h: Removed.
+        * platform/text/wince/TextBoundariesWinCE.cpp: Copied from WebCore/platform/text/wince/TextBoundariesWince.cpp.
+        * platform/text/wince/TextBoundariesWince.cpp: Removed.
+        * platform/text/wince/TextBreakIteratorWinCE.cpp: Copied from WebCore/platform/text/wince/TextBreakIteratorWince.cpp.
+        * platform/text/wince/TextBreakIteratorWince.cpp: Removed.
+        * platform/wince/CursorWinCE.cpp: Copied from WebCore/platform/wince/CursorWince.cpp.
+        * platform/wince/CursorWince.cpp: Removed.
+        * platform/wince/DragDataWinCE.cpp: Copied from WebCore/platform/wince/DragDataWince.cpp.
+        * platform/wince/DragDataWince.cpp: Removed.
+        * platform/wince/DragImageWinCE.cpp: Copied from WebCore/platform/wince/DragImageWince.cpp.
+        * platform/wince/DragImageWince.cpp: Removed.
+        * platform/wince/EditorWinCE.cpp: Copied from WebCore/platform/wince/EditorWince.cpp.
+        (WebCore::Editor::newGeneralClipboard):
+        * platform/wince/EditorWince.cpp: Removed.
+        * platform/wince/FileChooserWinCE.cpp: Copied from WebCore/platform/wince/FileChooserWince.cpp.
+        * platform/wince/FileChooserWince.cpp: Removed.
+        * platform/wince/FileSystemWinCE.cpp: Copied from WebCore/platform/wince/FileSystemWince.cpp.
+        * platform/wince/FileSystemWince.cpp: Removed.
+        * platform/wince/KURLWinCE.cpp: Copied from WebCore/platform/wince/KURLWince.cpp.
+        * platform/wince/KURLWince.cpp: Removed.
+        * platform/wince/KeygenWinCE.cpp: Copied from WebCore/platform/wince/KeygenWince.cpp.
+        * platform/wince/KeygenWince.cpp: Removed.
+        * platform/wince/MIMETypeRegistryWinCE.cpp: Copied from WebCore/platform/wince/MIMETypeRegistryWince.cpp.
+        * platform/wince/MIMETypeRegistryWince.cpp: Removed.
+        * platform/wince/PasteboardWinCE.cpp: Copied from WebCore/platform/wince/PasteboardWince.cpp.
+        * platform/wince/PasteboardWince.cpp: Removed.
+        * platform/wince/SearchPopupMenuWinCE.cpp: Copied from WebCore/platform/wince/SearchPopupMenuWince.cpp.
+        * platform/wince/SearchPopupMenuWince.cpp: Removed.
+        * platform/wince/SharedTimerWinCE.cpp: Copied from WebCore/platform/wince/SharedTimerWince.cpp.
+        * platform/wince/SharedTimerWince.cpp: Removed.
+        * rendering/RenderThemeWinCE.cpp: Copied from WebCore/rendering/RenderThemeWince.cpp.
+        (WebCore::RenderThemeWinCE::create):
+        (WebCore::RenderTheme::themeForPage):
+        (WebCore::RenderThemeWinCE::RenderThemeWinCE):
+        (WebCore::RenderThemeWinCE::~RenderThemeWinCE):
+        (WebCore::RenderThemeWinCE::platformActiveSelectionBackgroundColor):
+        (WebCore::RenderThemeWinCE::platformInactiveSelectionBackgroundColor):
+        (WebCore::RenderThemeWinCE::platformActiveSelectionForegroundColor):
+        (WebCore::RenderThemeWinCE::platformInactiveSelectionForegroundColor):
+        (WebCore::RenderThemeWinCE::supportsFocus):
+        (WebCore::RenderThemeWinCE::supportsFocusRing):
+        (WebCore::RenderThemeWinCE::determineClassicState):
+        (WebCore::RenderThemeWinCE::getThemeData):
+        (WebCore::RenderThemeWinCE::paintButton):
+        (WebCore::RenderThemeWinCE::setCheckboxSize):
+        (WebCore::RenderThemeWinCE::paintTextField):
+        (WebCore::RenderThemeWinCE::adjustMenuListStyle):
+        (WebCore::RenderThemeWinCE::paintMenuList):
+        (WebCore::RenderThemeWinCE::paintMenuListButton):
+        (WebCore::RenderThemeWinCE::systemFont):
+        (WebCore::RenderThemeWinCE::themeChanged):
+        (WebCore::RenderThemeWinCE::extraDefaultStyleSheet):
+        (WebCore::RenderThemeWinCE::extraQuirksStyleSheet):
+        (WebCore::RenderThemeWinCE::supportsHover):
+        (WebCore::RenderThemeWinCE::systemColor):
+        (WebCore::RenderThemeWinCE::adjustSliderThumbSize):
+        (WebCore::RenderThemeWinCE::adjustButtonInnerStyle):
+        (WebCore::RenderThemeWinCE::adjustSearchFieldStyle):
+        (WebCore::RenderThemeWinCE::paintSearchField):
+        (WebCore::RenderThemeWinCE::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeWinCE::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeWinCE::adjustSearchFieldDecorationStyle):
+        (WebCore::RenderThemeWinCE::adjustSearchFieldResultsDecorationStyle):
+        (WebCore::RenderThemeWinCE::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeWinCE::adjustSearchFieldResultsButtonStyle):
+        (WebCore::RenderThemeWinCE::paintSearchFieldResultsButton):
+        (WebCore::RenderThemeWinCE::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeWinCE::paintSliderTrack):
+        (WebCore::RenderThemeWinCE::paintSliderThumb):
+        (WebCore::RenderThemeWinCE::paintMediaFullscreenButton):
+        (WebCore::RenderThemeWinCE::paintMediaMuteButton):
+        (WebCore::RenderThemeWinCE::paintMediaPlayButton):
+        (WebCore::RenderThemeWinCE::paintMediaSeekBackButton):
+        (WebCore::RenderThemeWinCE::paintMediaSeekForwardButton):
+        (WebCore::RenderThemeWinCE::paintMediaSliderTrack):
+        (WebCore::RenderThemeWinCE::paintMediaSliderThumb):
+        * rendering/RenderThemeWinCE.h: Copied from WebCore/rendering/RenderThemeWince.h.
+        * rendering/RenderThemeWince.cpp: Removed.
+        * rendering/RenderThemeWince.h: Removed.
+        * storage/wince/DatabaseThreadWinCE.cpp: Copied from WebCore/storage/wince/DatabaseThreadWince.cpp.
+        * storage/wince/DatabaseThreadWinCE.h: Copied from WebCore/storage/wince/DatabaseThreadWince.h.
+        * storage/wince/DatabaseThreadWince.cpp: Removed.
+        * storage/wince/DatabaseThreadWince.h: Removed.
+        * storage/wince/LocalStorageThreadWinCE.cpp: Copied from WebCore/storage/wince/LocalStorageThreadWince.cpp.
+        * storage/wince/LocalStorageThreadWinCE.h: Copied from WebCore/storage/wince/LocalStorageThreadWince.h.
+        * storage/wince/LocalStorageThreadWince.cpp: Removed.
+        * storage/wince/LocalStorageThreadWince.h: Removed.
+
+2010-09-18  Patrick Gansterer  <paroga@paroga.com>
+
         Reviewed by Eric Seidel.
 
         Move Plugin*None.cpp from CMakeLists.txt into CMakeListsEfl.txt

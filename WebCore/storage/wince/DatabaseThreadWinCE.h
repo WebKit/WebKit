@@ -21,8 +21,8 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#ifndef DatabaseThreadWince_h
-#define DatabaseThreadWince_h
+#ifndef DatabaseThreadWinCE_h
+#define DatabaseThreadWinCE_h
 
 #include <wtf/Deque.h>
 #include <wtf/RefCounted.h>
@@ -62,4 +62,4 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // DatabaseThreadWince
+#endif // DatabaseThreadWinCE_h

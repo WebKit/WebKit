@@ -334,4 +334,4 @@ bool Font::canReturnFallbackFontsForComplexText()
     return false;
 }
 
-}
+} // namespace WebCore

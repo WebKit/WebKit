@@ -17,8 +17,8 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#ifndef WinceGraphicsExtras_h
-#define WinceGraphicsExtras_h
+#ifndef WinCEGraphicsExtras_h
+#define WinCEGraphicsExtras_h
 
 // This file is used to contain small utilities used by WINCE graphics code.
 
@@ -36,4 +36,4 @@ namespace WebCore {
     }
 }
 
-#endif WinceGraphicsExtras_h
+#endif WinCEGraphicsExtras_h

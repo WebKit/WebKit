@@ -128,4 +128,4 @@ void stopSharedTimer()
     timerID = TimerIdNone;
 }
 
-}
+} // namespace WebCore

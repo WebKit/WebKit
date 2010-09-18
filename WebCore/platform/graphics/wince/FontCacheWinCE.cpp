@@ -348,5 +348,4 @@ void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigne
     copyToVector(procData.m_traitsMasks, traitsMasks);
 }
 
-}
-
+} // namespace WebCore

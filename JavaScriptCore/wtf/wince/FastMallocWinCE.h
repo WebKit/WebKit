@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef FastMallocWince_h
-#define FastMallocWince_h
+#ifndef WTF_FastMallocWinCE_h
+#define WTF_FastMallocWinCE_h
 
 #include <new.h>
 
@@ -172,5 +172,4 @@ namespace WTF {
 
 #endif
 
-#endif // FastMallocWince_h
-
+#endif // WTF_FastMallocWinCE_h

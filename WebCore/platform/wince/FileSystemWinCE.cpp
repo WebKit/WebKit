@@ -281,4 +281,4 @@ Vector<String> listDirectory(const String& path, const String& filter)
     return entries;
 }
 
-}
+} // namespace WebCore

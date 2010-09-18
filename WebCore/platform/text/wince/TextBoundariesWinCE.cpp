@@ -71,5 +71,4 @@ void findWordBoundary(const UChar * buffer, int len, int position, int* start, i
     *end = currentPosition;
 }
 
-
-}
+} // namespace WebCore

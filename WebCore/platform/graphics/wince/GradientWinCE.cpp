@@ -49,4 +49,4 @@ void Gradient::fill(GraphicsContext* c, const FloatRect& r)
     c->fillRect(r, this);
 }
 
-}
+} // namespace WebCore

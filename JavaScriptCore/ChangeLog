@@ -1,3 +1,18 @@
+2010-09-18  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Darin Adler.
+
+        Rename Wince files to WinCE
+        https://bugs.webkit.org/show_bug.cgi?id=37287
+
+        * wtf/unicode/Unicode.h:
+        * wtf/unicode/wince/UnicodeWinCE.cpp: Copied from JavaScriptCore/wtf/unicode/wince/UnicodeWince.cpp.
+        * wtf/unicode/wince/UnicodeWinCE.h: Copied from JavaScriptCore/wtf/unicode/wince/UnicodeWince.h.
+        * wtf/unicode/wince/UnicodeWince.cpp: Removed.
+        * wtf/unicode/wince/UnicodeWince.h: Removed.
+        * wtf/wince/FastMallocWinCE.h: Copied from JavaScriptCore/wtf/wince/FastMallocWince.h.
+        * wtf/wince/FastMallocWince.h: Removed.
+
 2010-09-18  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

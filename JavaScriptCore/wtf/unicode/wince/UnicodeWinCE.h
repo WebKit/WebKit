@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef UNICODE_WINCE_H
-#define UNICODE_WINCE_H
+#ifndef WTF_UnicodeWinCE_h
+#define WTF_UnicodeWinCE_h
 
 #include "UnicodeMacrosFromICU.h"
 
@@ -176,5 +176,4 @@ namespace WTF {
 
 }   // namespace WTF
 
-#endif
-// vim: ts=2 sw=2 et
+#endif // WTF_UnicodeWinCE_h

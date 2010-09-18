@@ -29,7 +29,7 @@
 #include "GraphicsContextPrivate.h"
 #include "NotImplemented.h"
 #include "Path.h"
-#include "PlatformPathWince.h"
+#include "PlatformPathWinCE.h"
 #include "SharedBitmap.h"
 #include "SimpleFontData.h"
 #include <wtf/OwnPtr.h>

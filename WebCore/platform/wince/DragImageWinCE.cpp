@@ -19,66 +19,45 @@
  */
 
 #include "config.h"
-#include "DragData.h"
+#include "DragImage.h"
 
-#include "DocumentFragment.h"
-#include "PlatformString.h"
+#include "CachedImage.h"
+#include "GraphicsContext.h"
+#include "Image.h"
+
+#include <windows.h>
 
 namespace WebCore {
 
-bool DragData::containsURL(FilenameConversionPolicy filenamePolicy) const
+IntSize dragImageSize(DragImageRef)
 {
-    return false;
+    return IntSize(0, 0);
 }
 
-String DragData::asURL(FilenameConversionPolicy filenamePolicy, String* title) const
+void deleteDragImage(DragImageRef image)
 {
-    return String();
+    if (image)
+        ::DeleteObject(image);
 }
 
-bool DragData::containsFiles() const
+DragImageRef scaleDragImage(DragImageRef, FloatSize)
 {
-    return false;
+    return 0;
 }
 
-void DragData::asFilenames(Vector<String>&) const
+DragImageRef dissolveDragImageToFraction(DragImageRef image, float)
 {
+    return image;
 }
 
-bool DragData::containsPlainText() const
+DragImageRef createDragImageFromImage(Image*)
 {
-    return false;
+    return 0;
 }
 
-String DragData::asPlainText() const
+DragImageRef createDragImageIconForCachedImage(CachedImage*)
 {
-    return String();
+    return 0;
 }
 
-bool DragData::containsColor() const
-{
-    return false;
-}
-
-bool DragData::canSmartReplace() const
-{
-    return false;
-}
-
-bool DragData::containsCompatibleContent() const
-{
-    return false;
-}
-
-PassRefPtr<DocumentFragment> DragData::asFragment(Document* doc) const
-{
-     return 0;
-}
-
-Color DragData::asColor() const
-{
-    return Color();
-}
-
-}
-
+} // namespace WebCore

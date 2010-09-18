@@ -23,7 +23,7 @@
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "NotImplemented.h"
-#include "PlatformPathWince.h"
+#include "PlatformPathWinCE.h"
 #include "PlatformString.h"
 #include <wtf/OwnPtr.h>
 

@@ -32,7 +32,7 @@
 #elif USE(GLIB_UNICODE)
 #include <wtf/unicode/glib/UnicodeGLib.h>
 #elif USE(WINCE_UNICODE)
-#include <wtf/unicode/wince/UnicodeWince.h>
+#include <wtf/unicode/wince/UnicodeWinCE.h>
 #else
 #error "Unknown Unicode implementation"
 #endif

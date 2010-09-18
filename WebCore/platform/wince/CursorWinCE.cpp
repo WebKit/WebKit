@@ -106,4 +106,4 @@ const Cursor& westPanningCursor() { return crossCursor(); }
 const Cursor& grabbingCursor() { return moveCursor(); }
 const Cursor& grabCursor() { return moveCursor(); }
 
-}
+} // namespace WebCore

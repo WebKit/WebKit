@@ -57,4 +57,4 @@ String FileChooser::basenameForWidth(const Font& font, int width) const
     return StringTruncator::centerTruncate(string, width, font, false);
 }
 
-}
+} // namespace WebCore

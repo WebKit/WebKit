@@ -138,4 +138,4 @@ bool MIMETypeRegistry::isApplicationPluginMIMEType(const String&)
     return false;
 }
 
-}
+} // namespace WebCore

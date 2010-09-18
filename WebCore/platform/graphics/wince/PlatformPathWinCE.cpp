@@ -18,14 +18,14 @@
  */
 
 #include "config.h"
-#include "PlatformPathWince.h"
+#include "PlatformPathWinCE.h"
 
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "Path.h"
 #include "PlatformString.h"
-#include "WinceGraphicsExtras.h"
+#include "WinCEGraphicsExtras.h"
 #include <wtf/MathExtras.h>
 #include <wtf/OwnPtr.h>
 
@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-// Implemented in GraphicsContextWince.cpp
+// Implemented in GraphicsContextWinCE.cpp
 void getEllipsePointByAngle(double angle, double a, double b, float& x, float& y);
 
 static void quadCurve(int segments, Vector<PathPoint>& pts, const PathPoint* control)
