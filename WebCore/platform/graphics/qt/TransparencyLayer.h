@@ -61,8 +61,6 @@ struct TransparencyLayer : FastAllocBase {
         painter.setFont(p->font());
         if (painter.paintEngine()->hasFeature(QPaintEngine::PorterDuff))
             painter.setCompositionMode(p->compositionMode());
-        if (p->hasClipping())
-            painter.setClipPath(p->clipPath());
     }
 
     TransparencyLayer()
