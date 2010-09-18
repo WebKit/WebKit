@@ -10,7 +10,7 @@ function runTest()
         return;
 
     if (!window.sessionStorage)
-        return
+        return;
 
     layoutTestController.waitUntilDone();
     if (sessionStorage.testCompleted) {
@@ -19,7 +19,7 @@ function runTest()
     } else {
         // Note, it is sufficient to zoom-in only once, but so as to make it easier
         // for a human to compare the pixel test results we zoom-in up to Safari's
-        // maximum zoom level, which at the time of writing (09/17) is 6.
+        // maximum zoom level, which at the time of writing (09/17/2010) is 6.
         const MaxZoomIn = 6;
 
         for (var i = 0; i < MaxZoomIn; ++i)
@@ -27,7 +27,6 @@ function runTest()
         sessionStorage.testCompleted = true;
         document.location.reload(true);
     }
-
 }
 
 window.onload = runTest;

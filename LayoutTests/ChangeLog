@@ -1,3 +1,14 @@
+2010-09-18  Daniel Bates  <dbates@rim.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        REGRESSION (r60104): Zoom level is unexpectedly reset on page reload
+        https://bugs.webkit.org/show_bug.cgi?id=42863
+
+        Fix some minor, non-visual typos that do not affect the test result.
+
+        * fast/css/preserve-user-specified-zoom-level-on-reload.html:
+
 2010-09-18  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Dirk Schulze.
