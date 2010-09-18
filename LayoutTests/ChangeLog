@@ -1,3 +1,9 @@
+2010-09-18  Adam Barth  <abarth@webkit.org>
+
+        Also update the snow-leopard result.
+
+        * platform/mac-snowleopard/platform/mac/fast/loader/file-url-mimetypes-2-expected.txt:
+
 2010-09-18  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r67792.
