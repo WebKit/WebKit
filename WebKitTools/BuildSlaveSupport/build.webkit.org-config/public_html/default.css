@@ -331,37 +331,37 @@ div.BuildWaterfall {
 /* LastBuild, BuildStep states */
 .success {
 	color: #FFFFFF;
-	background-color: #6d6;
+	background-color: #8FDF5F;
 	border-color: #4F8530;
 }
 
 .failure {
 	color: #FFFFFF;
-	background-color: #d66;
+	background-color: #E98080;
 	border-color: #A77272;
 }
 
 .warnings {
 	color: #FFFFFF;
-	background-color: #ffc343;
+	background-color: #FFC343;
 	border-color: #C29D46;
 }
 
 .exception {
 	color: #FFFFFF;
-	background-color: #f6f;
+	background-color: #E0B0FF;
 	border-color: #ACA0B3;
 }
 
 .start,.running,td.building {
 	color: #666666;
-	background-color: #ff6;
+	background-color: #FFFC6C;
 	border-color: #C5C56D;
 }
 
 .offline,td.offline {
     color: #FFFFFF;
-    background-color: #777777;
+    background-color: #E0B0FF;
     border-color: #dddddd;
 }
 

@@ -1,3 +1,19 @@
+2010-09-17  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        The colors on the new build.webkit.org (after upgrading the master to 0.8.1) are
+        slightly harder to read, so this reverts the previous background colors for various
+        states, making it easier to read.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/default.css:
+        (.success):
+        (.failure):
+        (.warnings):
+        (.exception):
+        (.start,.running,td.building):
+        (.offline,td.offline):
+
 2010-09-17  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r67692.
