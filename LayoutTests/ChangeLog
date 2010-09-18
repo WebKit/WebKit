@@ -1,3 +1,16 @@
+2010-09-17  Adam Barth  <abarth@webkit.org>
+
+        Remove Leopard specific expected results because these now match Snow
+        Leopard.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38402
+
+        * platform/mac-leopard/fast/multicol/span/span-as-immediate-child-generated-content-expected.txt: Removed.
+        * platform/mac-leopard/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt: Removed.
+        * platform/mac-leopard/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.txt: Removed.
+        * platform/mac-leopard/fast/multicol/span/span-as-immediate-columns-child-expected.txt: Removed.
+        * platform/mac-leopard/fast/multicol/span/span-as-immediate-columns-child-removal-expected.txt: Removed.
+
 2010-09-17  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Darin Adler.
