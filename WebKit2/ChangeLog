@@ -1,3 +1,12 @@
+2010-09-17  Sam Weinig  <sam@webkit.org>
+
+        Fix Windows and Qt builds.
+
+        * Shared/qt/PlatformCertificateInfo.h:
+        (WebKit::PlatformCertificateInfo::decode):
+        * Shared/win/PlatformCertificateInfo.h:
+        (WebKit::PlatformCertificateInfo::decode):
+
 2010-09-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

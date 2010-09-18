@@ -48,6 +48,7 @@ public:
 
     static bool decode(CoreIPC::ArgumentDecoder*, PlatformCertificateInfo&)
     {
+        return true;
     }
 };
 
