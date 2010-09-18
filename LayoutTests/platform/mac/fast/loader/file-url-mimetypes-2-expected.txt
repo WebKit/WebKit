@@ -102,7 +102,6 @@ example-ppsx.ppsx has MIME type application/vnd.openxmlformats-officedocument.pr
 example-ppt.ppt has MIME type application/vnd.ms-powerpoint
 example-pptm.pptm has MIME type application/vnd.ms-powerpoint.presentation.macroenabled.12
 example-pptx.pptx has MIME type application/vnd.openxmlformats-officedocument.presentationml.presentation
-example-ps.ps has MIME type application/postscript
 example-psd.psd has MIME type image/vnd.adobe.photoshop
 example-py.py has MIME type text/x-python-script
 example-qif.qif has MIME type text/qif
