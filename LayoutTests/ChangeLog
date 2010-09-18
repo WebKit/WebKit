@@ -1,3 +1,16 @@
+2010-09-18  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, rolling out r67792.
+        http://trac.webkit.org/changeset/67792
+        https://bugs.webkit.org/show_bug.cgi?id=45976
+
+        Broke over a hundred SVG tests.
+
+        * canvas/philip/tests/2d.drawImage.negativeOneDest-expected.txt: Removed.
+        * canvas/philip/tests/2d.drawImage.negativeOneDest.html: Removed.
+        * canvas/philip/tests/2d.drawImage.negativeOneSource-expected.txt: Removed.
+        * canvas/philip/tests/2d.drawImage.negativeOneSource.html: Removed.
+
 2010-09-18  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

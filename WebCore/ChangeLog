@@ -1,3 +1,16 @@
+2010-09-18  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, rolling out r67792.
+        http://trac.webkit.org/changeset/67792
+        https://bugs.webkit.org/show_bug.cgi?id=45976
+
+        Broke over a hundred SVG tests.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawImage):
+        (WebCore::GraphicsContext::drawImageBuffer):
+        * platform/graphics/GraphicsContext.h:
+
 2010-09-18  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Simon Fraser.
