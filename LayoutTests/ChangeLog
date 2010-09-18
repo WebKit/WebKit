@@ -1,3 +1,17 @@
+2010-09-18  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Canvas drawImage with source or destination widths/heights of -1 renders incorrectly.
+        https://bugs.webkit.org/show_bug.cgi?id=45976
+
+        * canvas/philip/tests/2d.drawImage.negativeOneDest-expected.txt: Added.
+        * canvas/philip/tests/2d.drawImage.negativeOneDest.html: Added. Tests that using -1
+        for the destination width/height renders correctly.
+        * canvas/philip/tests/2d.drawImage.negativeOneSource-expected.txt: Added.
+        * canvas/philip/tests/2d.drawImage.negativeOneSource.html: Added. Tests that using -1
+        for the source width/height renders correctly.
+
 2010-09-18  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Gavin Barraclough.

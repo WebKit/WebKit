@@ -1,3 +1,24 @@
+2010-09-18  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Canvas drawImage with source or destination widths/heights of -1 renders incorrectly.
+        https://bugs.webkit.org/show_bug.cgi?id=45976
+
+        Specifying a -1 width or height for either the source or destination rectangle in drawImage
+        get improperly drawn with -1 replaced as the corresponding image width or height. This was because
+        the value -1 was being passed around to signal non-specified widths and heights and thus was
+        interpreted lower down in the drawImage implementation which disallowed any calls that actually
+        wanted to use -1 as the widths or heights. Fixed this by moving the default logic up and not using
+        -1 in-band signaling to denote default behavior.
+
+        Tests: canvas/philip/tests/2d.drawImage.negativeOneDest.html
+               canvas/philip/tests/2d.drawImage.negativeOneSource.html
+
+        * platform/graphics/GraphicsContext.cpp: Removed -1 in-band signals and replaced cascased calls to have
+        the desired replaces for unspecified widths and heights earlier on.
+        * platform/graphics/GraphicsContext.h: Removed faulty default value.
+
 2010-09-18  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

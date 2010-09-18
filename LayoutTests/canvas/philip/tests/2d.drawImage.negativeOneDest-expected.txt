@@ -1,0 +1,8 @@
+2d.drawImage.negativeOneDest
+-1 dest width/height represents the correct rectangle
+References: 2d.drawImage.direction
+Actual output:
+Expected output:
+
+Passed
+

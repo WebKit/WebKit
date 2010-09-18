@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.drawImage.negativeOneSource</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<body class="show_output">
+<p>
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.drawImage.html">drawImage</a>.negativeOneSource</h1>
+<p class="desc">-1 source width/height represents the correct rectangle</p>
+<div class="refs">References:
+<ul>
+<li><a href="spec.html#testrefs.2d.drawImage.direction">2d.drawImage.direction</a>
+
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+<p class="output expectedtext">Expected output:<p><img src="green-100x50.png" class="output expected" id="expected" alt="">
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+ctx.fillStyle = '#f00';
+ctx.fillRect(0, 0, 100, 50);
+var img = document.getElementById('ggrr-256x256.png');
+ctx.drawImage(img, 128, 128, -1, -1, 0, 0, 100, 50);
+
+_assertPixelApprox(canvas, 1,1, 0,255,0,255, "1,1", "0,255,0,255", 2);
+_assertPixelApprox(canvas, 1,48, 0,255,0,255, "1,48", "0,255,0,255", 2);
+_assertPixelApprox(canvas, 98,1, 0,255,0,255, "98,1", "0,255,0,255", 2);
+_assertPixelApprox(canvas, 98,48, 0,255,0,255, "98,48", "0,255,0,255", 2);
+_assertPixelApprox(canvas, 48,1, 0,255,0,255, "48,1", "0,255,0,255", 2);
+_assertPixelApprox(canvas, 48,48, 0,255,0,255, "48,48", "0,255,0,255", 2);
+_assertPixelApprox(canvas, 51,1, 0,255,0,255, "51,1", "0,255,0,255", 2);
+_assertPixelApprox(canvas, 51,48, 0,255,0,255, "51,48", "0,255,0,255", 2);
+_assertPixelApprox(canvas, 25,25, 0,255,0,255, "25,25", "0,255,0,255", 2);
+_assertPixelApprox(canvas, 75,25, 0,255,0,255, "75,25", "0,255,0,255", 2);
+
+
+});
+</script>
+<img src="../images/ggrr-256x256.png" id="ggrr-256x256.png" class="resource">
+
