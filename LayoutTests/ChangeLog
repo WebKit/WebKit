@@ -1,3 +1,12 @@
+2010-09-18  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Remove duplicate expectations from platform/chromium-win-xp.
+
+        * platform/chromium-win-xp/css2.1/t1202-counter-09-b-expected.checksum: Removed.
+        * platform/chromium-win-xp/css2.1/t1202-counter-09-b-expected.png: Removed.
+        * platform/chromium-win-xp/css2.1/t1202-counters-09-b-expected.checksum: Removed.
+        * platform/chromium-win-xp/css2.1/t1202-counters-09-b-expected.png: Removed.
+
 2010-09-18  Mike Lawther  <mikelawther@chromium.org>
 
         Reviewed by Nate Chapin.
