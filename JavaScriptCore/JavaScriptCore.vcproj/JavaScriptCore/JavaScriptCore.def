@@ -232,7 +232,6 @@ EXPORTS
     ?nonInlineNaN@JSC@@YANXZ
     ?objectCount@Heap@JSC@@QBEIXZ
     ?objectProtoFuncToString@JSC@@YI_JPAVExecState@1@@Z
-    ?parse@Parser@JSC@@AAEXPAVJSGlobalData@2@PAHPAVUString@2@@Z
     ?parseDateFromNullTerminatedCharacters@WTF@@YANPBD@Z
     ?pool@WeakGCHandle@JSC@@QAEPAVWeakGCHandlePool@2@XZ
     ?profiler@Profiler@JSC@@SAPAV12@XZ

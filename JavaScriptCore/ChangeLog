@@ -1,3 +1,11 @@
+2010-09-18  Darin Adler  <darin@apple.com>
+
+        First step in fixing Windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        Removed incorrect symbol. The build will probably still fail,
+        but the failure will tell us what symbol to add.
+
 2010-09-18  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Gavin Barraclough.
