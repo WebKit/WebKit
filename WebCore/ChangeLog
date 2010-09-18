@@ -1,3 +1,11 @@
+2010-09-18  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, a trivial change.
+
+        Run sort-Xcode-project-file.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2010-09-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Eric Seidel.
