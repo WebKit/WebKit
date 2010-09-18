@@ -2115,9 +2115,6 @@ BUG27850 : fast/history/back-forward-reset-after-error-handling.html = TEXT
 // in isolated worlds are cleared.
 BUG27849 : http/tests/security/isolatedWorld/didClearWindowObject.html = TEXT
 
-BUG28040 WIN : fast/body-propagation/overflow/004.html = PASS IMAGE+TEXT
-BUG28040 MAC DEBUG : fast/body-propagation/overflow/004.html = PASS IMAGE+TEXT
-
 BUG28040 WIN MAC DEBUG : fast/body-propagation/overflow/003-xhtml.xhtml = PASS IMAGE+TEXT
 
 BUG28092 WIN : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PASS FAIL
@@ -2303,7 +2300,6 @@ BUG32153 : svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop.html = IMAGE+TE
 BUG32155 : fast/js/Object-getOwnPropertyNames.html = TEXT
 
 // New flakiness?
-BUG32145 WIN : animations/3d/transform-origin-vs-functions.html = TEXT PASS
 BUG32149 WIN RELEASE : fast/dom/Document/early-document-access.html = TIMEOUT PASS
 
 BUG32195 LINUX : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = IMAGE TEXT
@@ -2573,9 +2569,6 @@ BUG45106 WIN : svg/text/text-text-05-t.svg = PASS CRASH
 
 BUG45720 WIN LINUX : websocket/tests/reload-crash.html = PASS CRASH
 
-// Flaky since at least r60276
-BUG46157 WIN RELEASE : transforms/2d/transform-value-types.html = PASS TEXT
-
 // Chromium does not use the icon loader in WebCore for loading notifications.
 WONTFIX SKIP : http/tests/notifications = FAIL
 
@@ -2662,7 +2655,6 @@ BUGWK41832 : editing/spelling/spelling-contenteditable.html = FAIL
 BUG44345 LINUX : svg/zoom/text/zoom-hixie-mixed-009.xml = IMAGE PASS
 BUG44346 LINUX : svg/zoom/page/zoom-hixie-mixed-009.xml = IMAGE PASS
 BUG44347 LINUX : svg/hixie/mixed/009.xml = IMAGE PASS
-BUG48110 WIN LINUX : fast/dom/HTMLDocument/activeElement.html = PASS TEXT
 BUG48139 LINUX : fast/js/comparison-operators-less.html = CRASH PASS
 BUG48144 LINUX : fast/js/activation-object-function-lifetime.html = CRASH PASS
 

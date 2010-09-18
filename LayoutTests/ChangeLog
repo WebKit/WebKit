@@ -1,3 +1,12 @@
+2010-09-18  Mike Lawther  <mikelawther@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Remove passing tests from chromium test_expectations
+        https://bugs.webkit.org/show_bug.cgi?id=45948
+
+        Removes tests the flakiness dashboard shows as having passed for a couple of weeks
+
 2010-09-18  Daniel Bates  <dbates@rim.com>
 
         Rubber-stamped by Sam Weinig.
