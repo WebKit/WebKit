@@ -1,3 +1,17 @@
+2010-09-17  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46027, image on gamespot.com paginates without bringing its enclosing border along.
+        
+        Make sure that unsplittable objects like replaced elements propagate their pagination strut outward to the parent block
+        when appropriate.  An image on a line did this, but a block-level image did not.
+
+        Added fast/multicol/image-inside-nested-blocks-with-border.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlockChild):
+
 2010-09-17  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, build fix.

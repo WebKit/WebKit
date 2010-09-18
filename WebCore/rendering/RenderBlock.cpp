@@ -1872,19 +1872,28 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, int
         yAfterClear = applyBeforeBreak(child, yAfterClear);
     
         // For replaced elements and scrolled elements, we want to shift them to the next page if they don't fit on the current one.
-        yAfterClear = adjustForUnsplittableChild(child, yAfterClear);
+        int yBeforeUnsplittableAdjustment = yAfterClear;
+        int yAfterUnsplittableAdjustment = adjustForUnsplittableChild(child, yAfterClear);
         
-        if (childRenderBlock && childRenderBlock->paginationStrut()) {
+        int paginationStrut = 0;
+        int unsplittableAdjustmentDelta = yAfterUnsplittableAdjustment - yBeforeUnsplittableAdjustment;
+        if (unsplittableAdjustmentDelta)
+            paginationStrut = unsplittableAdjustmentDelta;
+        else if (childRenderBlock && childRenderBlock->paginationStrut())
+            paginationStrut = childRenderBlock->paginationStrut();
+
+        if (paginationStrut) {
             // We are willing to propagate out to our parent block as long as we were at the top of the block prior
             // to collapsing our margins, and as long as we didn't clear or move as a result of other pagination.
             if (atTopOfBlock && oldY == yBeforeClear && !isPositioned() && !isTableCell()) {
                 // FIXME: Should really check if we're exceeding the page height before propagating the strut, but we don't
                 // have all the information to do so (the strut only has the remaining amount to push).  Gecko gets this wrong too
                 // and pushes to the next page anyway, so not too concerned about it.
-                setPaginationStrut(yAfterClear + childRenderBlock->paginationStrut());
-                childRenderBlock->setPaginationStrut(0);
+                setPaginationStrut(yAfterClear + paginationStrut);
+                if (childRenderBlock)
+                    childRenderBlock->setPaginationStrut(0);
             } else
-                yAfterClear += childRenderBlock->paginationStrut();
+                yAfterClear += paginationStrut;
         }
 
         // Similar to how we apply clearance.  Go ahead and boost height() to be the place where we're going to position the child.
