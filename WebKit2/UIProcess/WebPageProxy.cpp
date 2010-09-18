@@ -30,6 +30,7 @@
 #include "PageClient.h"
 #include "WebBackForwardList.h"
 #include "WebBackForwardListItem.h"
+#include "WebCertificateInfo.h"
 #include "WebContext.h"
 #include "WebContextUserMessageCoders.h"
 #include "WebCoreArgumentCoders.h"
@@ -555,9 +556,10 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
         }
         case WebPageProxyMessage::DidCommitLoadForFrame: {
             uint64_t frameID;
-            if (!arguments->decode(frameID))
+            PlatformCertificateInfo certificateInfo;
+            if (!arguments->decode(CoreIPC::Out(frameID, certificateInfo)))
                 return;
-            didCommitLoadForFrame(process()->webFrame(frameID));
+            didCommitLoadForFrame(process()->webFrame(frameID), certificateInfo);
             break;
         }
         case WebPageProxyMessage::DidFinishDocumentLoadForFrame: {
@@ -933,8 +935,9 @@ void WebPageProxy::didFailProvisionalLoadForFrame(WebFrameProxy* frame)
     m_loaderClient.didFailProvisionalLoadWithErrorForFrame(this, frame);
 }
 
-void WebPageProxy::didCommitLoadForFrame(WebFrameProxy* frame)
+void WebPageProxy::didCommitLoadForFrame(WebFrameProxy* frame, const PlatformCertificateInfo& certificateInfo)
 {
+    frame->setCertificateInfo(WebCertificateInfo::create(certificateInfo));
     frame->didCommitLoad();
     m_loaderClient.didCommitLoadForFrame(this, frame);
 }

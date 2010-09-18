@@ -336,6 +336,14 @@
 		BCF50121123ED3B3005955AE /* ThreadLauncher.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF5011F123ED3B3005955AE /* ThreadLauncher.h */; };
 		BCF50122123ED3B3005955AE /* ThreadLauncher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF50120123ED3B3005955AE /* ThreadLauncher.cpp */; };
 		BCF501B4123EF602005955AE /* ThreadLauncherMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCF501B3123EF602005955AE /* ThreadLauncherMac.mm */; };
+		BCF505E71243047B005955AE /* PlatformCertificateInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF505E51243047B005955AE /* PlatformCertificateInfo.h */; };
+		BCF505E81243047B005955AE /* PlatformCertificateInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCF505E61243047B005955AE /* PlatformCertificateInfo.mm */; };
+		BCF5068512431861005955AE /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCF5068412431861005955AE /* Security.framework */; };
+		BCF50724124328A9005955AE /* WKCertificateInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF50722124328A9005955AE /* WKCertificateInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BCF50725124328A9005955AE /* WKCertificateInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF50723124328A9005955AE /* WKCertificateInfo.cpp */; };
+		BCF50728124329AA005955AE /* WebCertificateInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF50726124329AA005955AE /* WebCertificateInfo.h */; };
+		BCF5072E12432A97005955AE /* WKCertificateInfoMac.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF5072C12432A97005955AE /* WKCertificateInfoMac.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BCF5072F12432A97005955AE /* WKCertificateInfoMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCF5072D12432A97005955AE /* WKCertificateInfoMac.mm */; };
 		BCF69F861176CD6F00471A52 /* WebHistoryClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF69F841176CD6F00471A52 /* WebHistoryClient.cpp */; };
 		BCF69F871176CD6F00471A52 /* WebHistoryClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF69F851176CD6F00471A52 /* WebHistoryClient.h */; };
 		BCF69F9A1176CED600471A52 /* WebNavigationDataStore.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF69F981176CED600471A52 /* WebNavigationDataStore.h */; };
@@ -720,6 +728,14 @@
 		BCF5011F123ED3B3005955AE /* ThreadLauncher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadLauncher.h; sourceTree = "<group>"; };
 		BCF50120123ED3B3005955AE /* ThreadLauncher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadLauncher.cpp; sourceTree = "<group>"; };
 		BCF501B3123EF602005955AE /* ThreadLauncherMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ThreadLauncherMac.mm; sourceTree = "<group>"; };
+		BCF505E51243047B005955AE /* PlatformCertificateInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCertificateInfo.h; sourceTree = "<group>"; };
+		BCF505E61243047B005955AE /* PlatformCertificateInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformCertificateInfo.mm; sourceTree = "<group>"; };
+		BCF5068412431861005955AE /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
+		BCF50722124328A9005955AE /* WKCertificateInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKCertificateInfo.h; sourceTree = "<group>"; };
+		BCF50723124328A9005955AE /* WKCertificateInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKCertificateInfo.cpp; sourceTree = "<group>"; };
+		BCF50726124329AA005955AE /* WebCertificateInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCertificateInfo.h; sourceTree = "<group>"; };
+		BCF5072C12432A97005955AE /* WKCertificateInfoMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKCertificateInfoMac.h; sourceTree = "<group>"; };
+		BCF5072D12432A97005955AE /* WKCertificateInfoMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKCertificateInfoMac.mm; sourceTree = "<group>"; };
 		BCF69F841176CD6F00471A52 /* WebHistoryClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebHistoryClient.cpp; sourceTree = "<group>"; };
 		BCF69F851176CD6F00471A52 /* WebHistoryClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebHistoryClient.h; sourceTree = "<group>"; };
 		BCF69F981176CED600471A52 /* WebNavigationDataStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNavigationDataStore.h; sourceTree = "<group>"; };
@@ -763,6 +779,7 @@
 				BC87DFAA1018101400564216 /* libicucore.dylib in Frameworks */,
 				1AA1CC5D100FA1A10078DEBC /* QuartzCore.framework in Frameworks */,
 				1A1C4EC810D06099005E67E7 /* WebCore.framework in Frameworks */,
+				BCF5068512431861005955AE /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -826,6 +843,7 @@
 				BC87DFA91018101400564216 /* libicucore.dylib */,
 				1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */,
 				1AA1C79A100E7FC50078DEBC /* WebCore.framework */,
+				BCF5068412431861005955AE /* Security.framework */,
 			);
 			name = "Linked Frameworks";
 			sourceTree = "<group>";
@@ -942,6 +960,7 @@
 				1A0F29C9120B37160053D1B9 /* VisitedLinkTable.cpp */,
 				1A0F29CA120B37160053D1B9 /* VisitedLinkTable.h */,
 				BC1DD7B1114DC396005ADAF3 /* WebCoreArgumentCoders.h */,
+				BCF50726124329AA005955AE /* WebCertificateInfo.h */,
 				51578B821209ECEF00A37C4A /* WebData.h */,
 				516A4A5B120A2CCD00C05B7F /* WebError.h */,
 				BC032DAF10F4380F0058C15A /* WebEvent.h */,
@@ -951,13 +970,13 @@
 				BC33DD671238464600360F3F /* WebNumber.h */,
 				BCD598AB112B7FDF00EC8C23 /* WebPreferencesStore.cpp */,
 				BCD598AA112B7FDF00EC8C23 /* WebPreferencesStore.h */,
+				A72D5D7F1236CBA800A88B15 /* WebSerializedScriptValue.h */,
 				BCF04C8E11FF9F6E00F86A58 /* WebString.h */,
 				BCDB86C01200FB97007254BE /* WebURL.h */,
 				BCE2315C122C30CA00D5C35A /* WebURLRequest.cpp */,
 				BCE2315B122C30CA00D5C35A /* WebURLRequest.h */,
 				BC90A1D1122DD55E00CC8C50 /* WebURLResponse.cpp */,
 				BC90A1D0122DD55E00CC8C50 /* WebURLResponse.h */,
-				A72D5D7F1236CBA800A88B15 /* WebSerializedScriptValue.h */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -1166,6 +1185,8 @@
 				BC646C1811DD399F006455B0 /* WKBackForwardListItem.cpp */,
 				BC646C1911DD399F006455B0 /* WKBackForwardListItem.h */,
 				BC0C376710F807B20076D7CB /* WKBase.h */,
+				BCF50723124328A9005955AE /* WKCertificateInfo.cpp */,
+				BCF50722124328A9005955AE /* WKCertificateInfo.h */,
 				BCB9E24A1120E15C00A137E0 /* WKContext.cpp */,
 				BCB9E2491120E15C00A137E0 /* WKContext.h */,
 				BCC938E01180DE440085E5FE /* WKContextPrivate.h */,
@@ -1263,6 +1284,8 @@
 			isa = PBXGroup;
 			children = (
 				1A6F9FB611E1408500DB1371 /* CommandLineMac.cpp */,
+				BCF505E61243047B005955AE /* PlatformCertificateInfo.mm */,
+				BCF505E51243047B005955AE /* PlatformCertificateInfo.h */,
 				BC9E95D211449B0300870E71 /* UpdateChunk.cpp */,
 				BC9E95D111449B0300870E71 /* UpdateChunk.h */,
 				BCE23262122C6CF300D5C35A /* WebCoreArgumentCodersMac.mm */,
@@ -1448,6 +1471,8 @@
 		BCE23276122C718F00D5C35A /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				BCF5072C12432A97005955AE /* WKCertificateInfoMac.h */,
+				BCF5072D12432A97005955AE /* WKCertificateInfoMac.mm */,
 				BCE23277122C71AC00D5C35A /* WKURLRequestNS.h */,
 				BCE23278122C71AC00D5C35A /* WKURLRequestNS.mm */,
 				BC90A1DE122DD8EE00CC8C50 /* WKURLResponseNS.h */,
@@ -1633,6 +1658,10 @@
 				BC33DE8E12385C3300360F3F /* WKNumber.h in Headers */,
 				BC33DF061238677F00360F3F /* WKSerializedScriptValue.h in Headers */,
 				BCF50121123ED3B3005955AE /* ThreadLauncher.h in Headers */,
+				BCF505E71243047B005955AE /* PlatformCertificateInfo.h in Headers */,
+				BCF50724124328A9005955AE /* WKCertificateInfo.h in Headers */,
+				BCF50728124329AA005955AE /* WebCertificateInfo.h in Headers */,
+				BCF5072E12432A97005955AE /* WKCertificateInfoMac.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1880,6 +1909,9 @@
 				BC33DE8F12385C3300360F3F /* WKNumber.cpp in Sources */,
 				BCF50122123ED3B3005955AE /* ThreadLauncher.cpp in Sources */,
 				BCF501B4123EF602005955AE /* ThreadLauncherMac.mm in Sources */,
+				BCF505E81243047B005955AE /* PlatformCertificateInfo.mm in Sources */,
+				BCF50725124328A9005955AE /* WKCertificateInfo.cpp in Sources */,
+				BCF5072F12432A97005955AE /* WKCertificateInfoMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

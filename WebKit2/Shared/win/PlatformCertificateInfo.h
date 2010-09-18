@@ -23,39 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKFrame_h
-#define WKFrame_h
+#ifndef PlatformCertificateInfo_h
+#define PlatformCertificateInfo_h
 
-#include <WebKit2/WKBase.h>
+#include "ArgumentDecoder.h"
+#include "ArgumentEncoder.h"
+#include <WebCore/ResourceResponse.h>
 
-#ifndef __cplusplus
-#include <stdbool.h>
-#endif
+namespace WebKit {
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+class PlatformCertificateInfo {
+public:
+    PlatformCertificateInfo()
+    {
+    }
 
-enum WKFrameLoadState {
-    kWKFrameLoadStateProvisional = 0,
-    kWKFrameLoadStateCommitted = 1,
-    kWKFrameLoadStateFinished = 2
+    explicit PlatformCertificateInfo(const WebCore::ResourceResponse&)
+    {
+    }
+
+    void encode(CoreIPC::ArgumentEncoder*) const
+    {
+    }
+
+    static bool decode(CoreIPC::ArgumentDecoder*, PlatformCertificateInfo&)
+    {
+        
+    }
 };
-typedef enum WKFrameLoadState WKFrameLoadState;
 
-WK_EXPORT WKTypeID WKFrameGetTypeID();
- 
-WK_EXPORT bool WKFrameIsMainFrame(WKFrameRef frame);
-WK_EXPORT WKFrameLoadState WKFrameGetFrameLoadState(WKFrameRef frame);
-WK_EXPORT WKURLRef WKFrameCopyProvisionalURL(WKFrameRef frame);
-WK_EXPORT WKURLRef WKFrameCopyURL(WKFrameRef frame);
+} // namespace WebKit
 
-WK_EXPORT WKPageRef WKFrameGetPage(WKFrameRef frame);
-
-WK_EXPORT WKCertificateInfoRef WKFrameGetCertificateInfo(WKFrameRef frame);
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* WKFrame_h */
+#endif // PlatformCertificateInfo_h

@@ -461,6 +461,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\WebCertificateInfo.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\WebEvent.h"
 				>
 			</File>
@@ -573,6 +577,10 @@
 				</File>
 				<File
 					RelativePath="..\Shared\win\WebEventFactory.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\win\PlatformCertificateInfo.h"
 					>
 				</File>
 				<File
@@ -1328,6 +1336,14 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKBase.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKCertificateInfo.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKCertificateInfo.h"
 						>
 					</File>
 					<File

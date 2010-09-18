@@ -23,39 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKFrame_h
-#define WKFrame_h
+#ifndef PlatformCertificateInfo_h
+#define PlatformCertificateInfo_h
 
-#include <WebKit2/WKBase.h>
+#include <WebCore/ResourceResponse.h>
+#include <wtf/RetainPtr.h>
 
-#ifndef __cplusplus
-#include <stdbool.h>
-#endif
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-enum WKFrameLoadState {
-    kWKFrameLoadStateProvisional = 0,
-    kWKFrameLoadStateCommitted = 1,
-    kWKFrameLoadStateFinished = 2
-};
-typedef enum WKFrameLoadState WKFrameLoadState;
-
-WK_EXPORT WKTypeID WKFrameGetTypeID();
- 
-WK_EXPORT bool WKFrameIsMainFrame(WKFrameRef frame);
-WK_EXPORT WKFrameLoadState WKFrameGetFrameLoadState(WKFrameRef frame);
-WK_EXPORT WKURLRef WKFrameCopyProvisionalURL(WKFrameRef frame);
-WK_EXPORT WKURLRef WKFrameCopyURL(WKFrameRef frame);
-
-WK_EXPORT WKPageRef WKFrameGetPage(WKFrameRef frame);
-
-WK_EXPORT WKCertificateInfoRef WKFrameGetCertificateInfo(WKFrameRef frame);
-
-#ifdef __cplusplus
+namespace CoreIPC {
+    class ArgumentDecoder;
+    class ArgumentEncoder;
 }
+
+namespace WebKit {
+
+class PlatformCertificateInfo {
+public:
+    PlatformCertificateInfo();
+    explicit PlatformCertificateInfo(const WebCore::ResourceResponse&);
+
+    CFArrayRef peerCertificates() const { return m_peerCertificates.get(); }
+
+    void encode(CoreIPC::ArgumentEncoder* encoder) const;
+    static bool decode(CoreIPC::ArgumentDecoder* decoder, PlatformCertificateInfo& t);
+
+#ifndef NDEBUG
+    void dump() const;
 #endif
 
-#endif /* WKFrame_h */
+private:
+    RetainPtr<CFArrayRef> m_peerCertificates;
+};
+
+} // namespace WebKit
+
+#endif // PlatformCertificateInfo_h

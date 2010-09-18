@@ -23,39 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKFrame_h
-#define WKFrame_h
+#ifndef WebCertificateInfo_h
+#define WebCertificateInfo_h
 
-#include <WebKit2/WKBase.h>
+#include "APIObject.h"
+#include "PlatformCertificateInfo.h"
+#include <wtf/PassRefPtr.h>
 
-#ifndef __cplusplus
-#include <stdbool.h>
-#endif
+namespace WebKit {
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+class WebCertificateInfo : public APIObject {
+public:
+    static const Type APIType = TypeCertificateInfo;
 
-enum WKFrameLoadState {
-    kWKFrameLoadStateProvisional = 0,
-    kWKFrameLoadStateCommitted = 1,
-    kWKFrameLoadStateFinished = 2
+    static PassRefPtr<WebCertificateInfo> create(const PlatformCertificateInfo& info)
+    {
+        return adoptRef(new WebCertificateInfo(info));
+    }
+
+    const PlatformCertificateInfo& platformCertificateInfo() const { return m_platformCertificateInfo; }
+
+private:
+    explicit WebCertificateInfo(const PlatformCertificateInfo& info)
+        : m_platformCertificateInfo(info)
+    {
+    }
+
+    virtual Type type() const { return APIType; }
+
+    PlatformCertificateInfo m_platformCertificateInfo;
 };
-typedef enum WKFrameLoadState WKFrameLoadState;
 
-WK_EXPORT WKTypeID WKFrameGetTypeID();
- 
-WK_EXPORT bool WKFrameIsMainFrame(WKFrameRef frame);
-WK_EXPORT WKFrameLoadState WKFrameGetFrameLoadState(WKFrameRef frame);
-WK_EXPORT WKURLRef WKFrameCopyProvisionalURL(WKFrameRef frame);
-WK_EXPORT WKURLRef WKFrameCopyURL(WKFrameRef frame);
+} // namespace WebKit
 
-WK_EXPORT WKPageRef WKFrameGetPage(WKFrameRef frame);
-
-WK_EXPORT WKCertificateInfoRef WKFrameGetCertificateInfo(WKFrameRef frame);
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* WKFrame_h */
+#endif // WebCertificateInfo_h

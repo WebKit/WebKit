@@ -23,39 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKFrame_h
-#define WKFrame_h
+#ifndef WKCertificateInfo_h
+#define WKCertificateInfo_h
 
 #include <WebKit2/WKBase.h>
-
-#ifndef __cplusplus
-#include <stdbool.h>
-#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-enum WKFrameLoadState {
-    kWKFrameLoadStateProvisional = 0,
-    kWKFrameLoadStateCommitted = 1,
-    kWKFrameLoadStateFinished = 2
-};
-typedef enum WKFrameLoadState WKFrameLoadState;
-
-WK_EXPORT WKTypeID WKFrameGetTypeID();
- 
-WK_EXPORT bool WKFrameIsMainFrame(WKFrameRef frame);
-WK_EXPORT WKFrameLoadState WKFrameGetFrameLoadState(WKFrameRef frame);
-WK_EXPORT WKURLRef WKFrameCopyProvisionalURL(WKFrameRef frame);
-WK_EXPORT WKURLRef WKFrameCopyURL(WKFrameRef frame);
-
-WK_EXPORT WKPageRef WKFrameGetPage(WKFrameRef frame);
-
-WK_EXPORT WKCertificateInfoRef WKFrameGetCertificateInfo(WKFrameRef frame);
+WK_EXPORT WKTypeID WKCertificateInfoGetTypeID();
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* WKFrame_h */
+#endif /* WKCertificateInfo_h */

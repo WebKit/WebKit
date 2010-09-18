@@ -34,8 +34,9 @@ class APIObject : public RefCounted<APIObject> {
 public:
     enum Type {
         // Base types
-        TypeNull,
+        TypeNull = 0,
         TypeArray,
+        TypeCertificateInfo,
         TypeData,
         TypeDictionary,
         TypeError,

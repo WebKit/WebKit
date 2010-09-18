@@ -64,6 +64,7 @@ namespace WebKit {
 
 class DrawingAreaProxy;
 class PageClient;
+class PlatformCertificateInfo;
 class WebBackForwardList;
 class WebBackForwardListItem;
 class WebData;
@@ -206,7 +207,7 @@ private:
     void didStartProvisionalLoadForFrame(WebFrameProxy*, const String&);
     void didReceiveServerRedirectForProvisionalLoadForFrame(WebFrameProxy*, const String&);
     void didFailProvisionalLoadForFrame(WebFrameProxy*);
-    void didCommitLoadForFrame(WebFrameProxy*);
+    void didCommitLoadForFrame(WebFrameProxy*, const PlatformCertificateInfo&);
     void didFinishDocumentLoadForFrame(WebFrameProxy*);
     void didFinishLoadForFrame(WebFrameProxy*);
     void didFailLoadForFrame(WebFrameProxy*);

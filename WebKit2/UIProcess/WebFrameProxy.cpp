@@ -25,6 +25,7 @@
 
 #include "WebFrameProxy.h"
 
+#include "WebCertificateInfo.h"
 #include "WebFormSubmissionListenerProxy.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebPageProxy.h"
@@ -60,6 +61,11 @@ bool WebFrameProxy::isMainFrame() const
         return false;
 
     return this == m_page->mainFrame();
+}
+
+void WebFrameProxy::setCertificateInfo(PassRefPtr<WebCertificateInfo> certificateInfo)
+{
+    m_certificateInfo = certificateInfo;
 }
 
 void WebFrameProxy::didStartProvisionalLoad(const String& url)

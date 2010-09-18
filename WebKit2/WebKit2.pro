@@ -162,9 +162,11 @@ HEADERS += \
     Shared/MutableArray.h \
     Shared/MutableDictionary.h \
     Shared/NotImplemented.h \
+    Shared/qt/PlatformCertificateInfo.h \
     Shared/qt/WebEventFactoryQt.h \
     Shared/UserMessageCoders.h \
     Shared/VisitedLinkTable.h \
+    Shared/WebCertificateInfo.h \
     Shared/WebEventConversion.h \
     Shared/WebEvent.h \
     Shared/WebNumber.h \
@@ -178,6 +180,7 @@ HEADERS += \
     UIProcess/API/C/WebKit2.h \
     UIProcess/API/C/WKAPICast.h \
     UIProcess/API/C/WKBase.h \
+    UIProcess/API/C/WKCertificateInfo.h \
     UIProcess/API/C/WKContext.h \
     UIProcess/API/C/WKContextPrivate.h \
     UIProcess/API/C/WKFrame.h \
@@ -292,6 +295,7 @@ SOURCES += \
     Shared/qt/WebCoreArgumentCodersQt.cpp \
     Shared/qt/WebURLRequestQt.cpp \
     Shared/qt/WebURLResponseQt.cpp \
+    UIProcess/API/C/WKCertificateInfo.cpp \
     UIProcess/API/C/WKContext.cpp \
     UIProcess/API/C/WKFrame.cpp \
     UIProcess/API/C/WKFramePolicyListener.cpp \
