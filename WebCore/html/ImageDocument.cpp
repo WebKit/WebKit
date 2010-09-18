@@ -117,10 +117,10 @@ inline PassRefPtr<ImageDocumentElement> ImageDocumentElement::create(ImageDocume
 
 // --------
 
-static float pageZoomFactor(Document* document)
+static float pageZoomFactor(const Document* document)
 {
-    FrameView* view = document->view();
-    return view ? view->pageZoomFactor() : 1;
+    Frame* frame = document->frame();
+    return frame ? frame->pageZoomFactor() : 1;
 }
 
 void ImageDocumentParser::appendBytes(DocumentWriter*, const char*, int, bool)
@@ -231,7 +231,7 @@ float ImageDocument::scale() const
     if (!view)
         return 1;
 
-    IntSize imageSize = m_imageElement->cachedImage()->imageSize(view->pageZoomFactor());
+    IntSize imageSize = m_imageElement->cachedImage()->imageSize(pageZoomFactor(this));
     IntSize windowSize = IntSize(view->width(), view->height());
     
     float widthScale = (float)windowSize.width() / imageSize.width();
@@ -319,8 +319,10 @@ bool ImageDocument::imageFitsInWindow() const
         return true;
 
     FrameView* view = frame()->view();
+    if (!view)
+        return true;
 
-    IntSize imageSize = m_imageElement->cachedImage()->imageSize(view->pageZoomFactor());
+    IntSize imageSize = m_imageElement->cachedImage()->imageSize(pageZoomFactor(this));
     IntSize windowSize = IntSize(view->width(), view->height());
     
     return imageSize.width() <= windowSize.width() && imageSize.height() <= windowSize.height();    

@@ -3320,16 +3320,14 @@ static bool needsWebViewInitThreadWorkaround()
     _private->zoomMultiplier = multiplier;
     _private->zoomsTextOnly = isTextOnly;
 
-    // FIXME: It would be nice to rework this code so that _private->zoomMultiplier doesn't exist
-    // and instead FrameView::zoomFactor is used.
+    // FIXME: It might be nice to rework this code so that _private->zoomMultiplier doesn't exist
+    // and instead the zoom factors stored in Frame are used.
     Frame* coreFrame = [self _mainCoreFrame];
     if (coreFrame) {
-        if (FrameView* view = coreFrame->view()) {
-            if (_private->zoomsTextOnly)
-                view->setPageAndTextZoomFactors(1, multiplier);
-            else
-                view->setPageAndTextZoomFactors(multiplier, 1);
-        }
+        if (_private->zoomsTextOnly)
+            coreFrame->setPageAndTextZoomFactors(1, multiplier);
+        else
+            coreFrame->setPageAndTextZoomFactors(multiplier, 1);
     }
 }
 

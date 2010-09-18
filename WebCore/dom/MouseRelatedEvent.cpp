@@ -57,7 +57,7 @@ static int contentsX(AbstractView* abstractView)
     FrameView* frameView = frame->view();
     if (!frameView)
         return 0;
-    return frameView->scrollX() / frameView->pageZoomFactor();
+    return frameView->scrollX() / frame->pageZoomFactor();
 }
 
 static int contentsY(AbstractView* abstractView)
@@ -70,7 +70,7 @@ static int contentsY(AbstractView* abstractView)
     FrameView* frameView = frame->view();
     if (!frameView)
         return 0;
-    return frameView->scrollY() / frameView->pageZoomFactor();
+    return frameView->scrollY() / frame->pageZoomFactor();
 }
 
 MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, bool canBubble, bool cancelable, PassRefPtr<AbstractView> viewArg,
@@ -126,10 +126,7 @@ static float pageZoomFactor(UIEvent* event)
     Frame* frame = window->frame();
     if (!frame)
         return 1;
-    FrameView* view = frame->view();
-    if (!view)
-        return 1;
-    return view->pageZoomFactor();
+    return frame->pageZoomFactor();
 }
 
 void MouseRelatedEvent::computePageLocation()

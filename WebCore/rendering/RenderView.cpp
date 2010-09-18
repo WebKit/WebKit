@@ -664,7 +664,8 @@ int RenderView::viewWidth() const
 
 float RenderView::zoomFactor() const
 {
-    return m_frameView->pageZoomFactor();
+    Frame* frame = m_frameView->frame();
+    return frame ? frame->pageZoomFactor() : 1;
 }
 
 // The idea here is to take into account what object is moving the pagination point, and

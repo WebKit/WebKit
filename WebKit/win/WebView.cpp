@@ -2936,12 +2936,10 @@ void WebView::setZoomMultiplier(float multiplier, bool isTextOnly)
     m_zoomsTextOnly = isTextOnly;
 
     if (Frame* coreFrame = core(m_mainFrame)) {
-        if (FrameView* view = coreFrame->view()) {
-            if (m_zoomsTextOnly)
-                view->setPageAndTextZoomFactors(1, multiplier);
-            else
-                view->setPageAndTextZoomFactors(multiplier, 1);
-        }
+        if (m_zoomsTextOnly)
+            coreFrame->setPageAndTextZoomFactors(1, multiplier);
+        else
+            coreFrame->setPageAndTextZoomFactors(multiplier, 1);
     }
 }
 

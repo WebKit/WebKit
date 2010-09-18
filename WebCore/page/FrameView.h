@@ -217,12 +217,6 @@ public:
     bool isFrameViewScrollCorner(RenderScrollbarPart* scrollCorner) const { return m_scrollCorner == scrollCorner; }
     void invalidateScrollCorner();
 
-    void setPageZoomFactor(float factor);
-    float pageZoomFactor() const { return m_pageZoomFactor; }
-    void setTextZoomFactor(float factor);
-    float textZoomFactor() const { return m_textZoomFactor; }
-    void setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor);
-
     // Normal delay
     static void setRepaintThrottlingDeferredRepaintDelay(double p);
     // Negative value would mean that first few repaints happen without a delay
@@ -372,9 +366,6 @@ private:
 
     // Renderer to hold our custom scroll corner.
     RenderScrollbarPart* m_scrollCorner;
-
-    float m_pageZoomFactor;
-    float m_textZoomFactor;
 
     static double s_deferredRepaintDelay;
     static double s_initialDeferredRepaintDelayDuringLoading;

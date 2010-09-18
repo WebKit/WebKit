@@ -1020,13 +1020,10 @@ float ewk_frame_zoom_get(const Evas_Object* o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, -1.0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, -1.0);
-    WebCore::FrameView* view = sd->frame->view();
-    if (!view)
-        return -1;
 
     if (sd->textZoom)
-        return view->textZoomFactor();
-    return view->pageZoomFactor();
+        return sd->frame->textZoomFactor();
+    return sd->frame->pageZoomFactor();
 }
 
 /**
@@ -1043,13 +1040,10 @@ Eina_Bool ewk_frame_zoom_set(Evas_Object* o, float zoom)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, EINA_FALSE);
-    WebCore::FrameView* view = sd->frame->view();
-    if (!view)
-        return EINA_FALSE;
     if (sd->textZoom)
-        view->setTextZoomFactor(zoom);
+        sd->frame->setTextZoomFactor(zoom);
     else
-        view->setPageZoomFactor(zoom);
+        sd->frame->setPageZoomFactor(zoom);
     return EINA_TRUE;
 }
 
@@ -1081,16 +1075,12 @@ Eina_Bool ewk_frame_zoom_text_only_set(Evas_Object* o, Eina_Bool setting)
     if (sd->textZoom == setting)
         return EINA_TRUE;
 
-    WebCore::FrameView* view = sd->frame->view();
-    if (!view)
-        return EINA_FALSE;
-
-    float zoom_level = sd->textZoom ? view->textZoomFactor() : view->pageZoomFactor();
+    float zoom_level = sd->textZoom ? sd->frame->textZoomFactor() : sd->frame->pageZoomFactor();
     sd->textZoom = setting;
     if (sd->textZoom)
-        view->setPageAndTextZoomFactors(1, zoom_level);
+        sd->frame->setPageAndTextZoomFactors(1, zoom_level);
     else
-        view->setPageAndTextZoomFactors(zoom_level, 1);
+        sd->frame->setPageAndTextZoomFactors(zoom_level, 1);
     return EINA_TRUE;
 }
 

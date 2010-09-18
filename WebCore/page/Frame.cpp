@@ -129,6 +129,22 @@ static inline Frame* parentFromOwnerElement(HTMLFrameOwnerElement* ownerElement)
     return ownerElement->document()->frame();
 }
 
+static inline float parentPageZoomFactor(Frame* frame)
+{
+    Frame* parent = frame->tree()->parent();
+    if (!parent)
+        return 1;
+    return frame->pageZoomFactor();
+}
+
+static inline float parentTextZoomFactor(Frame* frame)
+{
+    Frame* parent = frame->tree()->parent();
+    if (!parent)
+        return 1;
+    return frame->textZoomFactor();
+}
+
 inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient* frameLoaderClient)
     : m_page(page)
     , m_treeNode(this, parentFromOwnerElement(ownerElement))
@@ -141,6 +157,8 @@ inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoader
     , m_eventHandler(this)
     , m_animationController(this)
     , m_lifeSupportTimer(this, &Frame::lifeSupportTimerFired)
+    , m_pageZoomFactor(parentPageZoomFactor(this))
+    , m_textZoomFactor(parentTextZoomFactor(this))
 #if ENABLE(ORIENTATION_EVENTS)
     , m_orientation(0)
 #endif
@@ -880,6 +898,63 @@ String Frame::layerTreeAsText() const
 #else
     return String();
 #endif
+}
+
+void Frame::setPageZoomFactor(float factor)
+{
+    setPageAndTextZoomFactors(factor, m_textZoomFactor);
+}
+
+void Frame::setTextZoomFactor(float factor)
+{
+    setPageAndTextZoomFactors(m_pageZoomFactor, factor);
+}
+
+void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor)
+{
+    if (m_pageZoomFactor == pageZoomFactor && m_textZoomFactor == textZoomFactor)
+        return;
+
+    Page* page = this->page();
+    if (!page)
+        return;
+
+    Document* document = this->document();
+    if (!document)
+        return;
+
+#if ENABLE(SVG)
+    // Respect SVGs zoomAndPan="disabled" property in standalone SVG documents.
+    // FIXME: How to handle compound documents + zoomAndPan="disabled"? Needs SVG WG clarification.
+    if (document->isSVGDocument()) {
+        if (!static_cast<SVGDocument*>(document)->zoomAndPanEnabled())
+            return;
+        if (document->renderer())
+            document->renderer()->setNeedsLayout(true);
+    }
+#endif
+
+    if (m_pageZoomFactor != pageZoomFactor) {
+        if (FrameView* view = this->view()) {
+            // Update the scroll position when doing a full page zoom, so the content stays in relatively the same position.
+            IntPoint scrollPosition = view->scrollPosition();
+            float percentDifference = (pageZoomFactor / m_pageZoomFactor);
+            view->setScrollPosition(IntPoint(scrollPosition.x() * percentDifference, scrollPosition.y() * percentDifference));
+        }
+    }
+
+    m_pageZoomFactor = pageZoomFactor;
+    m_textZoomFactor = textZoomFactor;
+
+    document->recalcStyle(Node::Force);
+
+    for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
+        child->setPageAndTextZoomFactors(m_pageZoomFactor, m_textZoomFactor);
+
+    if (FrameView* view = this->view()) {
+        if (document->renderer() && document->renderer()->needsLayout() && view->didFirstLayout())
+            view->layout();
+    }
 }
 
 } // namespace WebCore

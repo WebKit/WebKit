@@ -111,28 +111,6 @@ struct ScheduledEvent : Noncopyable {
     RefPtr<Node> m_eventTarget;
 };
 
-static inline float parentPageZoomFactor(Frame* frame)
-{
-    Frame* parent = frame->tree()->parent();
-    if (!parent)
-        return 1;
-    FrameView* parentView = parent->view();
-    if (!parentView)
-        return 1;
-    return parentView->pageZoomFactor();
-}
-
-static inline float parentTextZoomFactor(Frame* frame)
-{
-    Frame* parent = frame->tree()->parent();
-    if (!parent)
-        return 1;
-    FrameView* parentView = parent->view();
-    if (!parentView)
-        return 1;
-    return parentView->textZoomFactor();
-}
-
 FrameView::FrameView(Frame* frame)
     : m_frame(frame)
     , m_canHaveScrollbars(true)
@@ -156,9 +134,6 @@ FrameView::FrameView(Frame* frame)
     , m_deferSetNeedsLayouts(0)
     , m_setNeedsLayoutWasDeferred(false)
     , m_scrollCorner(0)
-    , m_pageZoomFactor(parentPageZoomFactor(frame))
-    , m_textZoomFactor(parentTextZoomFactor(frame))
-
 {
     init();
 }
@@ -2293,64 +2268,6 @@ IntPoint FrameView::convertFromContainingView(const IntPoint& parentPoint) const
     }
     
     return parentPoint;
-}
-
-void FrameView::setPageZoomFactor(float factor)
-{
-    setPageAndTextZoomFactors(factor, m_textZoomFactor);
-}
-
-void FrameView::setTextZoomFactor(float factor)
-{
-    setPageAndTextZoomFactors(m_pageZoomFactor, factor);
-}
-
-void FrameView::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor)
-{
-    if (m_pageZoomFactor == pageZoomFactor && m_textZoomFactor == textZoomFactor)
-        return;
-
-    if (!m_frame)
-        return;
-
-    Page* page = m_frame->page();
-    if (!page)
-        return;
-
-    Document* document = m_frame->document();
-    if (!document)
-        return;
-
-#if ENABLE(SVG)
-    // Respect SVGs zoomAndPan="disabled" property in standalone SVG documents.
-    // FIXME: How to handle compound documents + zoomAndPan="disabled"? Needs SVG WG clarification.
-    if (document->isSVGDocument()) {
-        if (!static_cast<SVGDocument*>(document)->zoomAndPanEnabled())
-            return;
-        if (document->renderer())
-            document->renderer()->setNeedsLayout(true);
-    }
-#endif
-
-    if (m_pageZoomFactor != pageZoomFactor) {
-        // Update the scroll position when doing a full page zoom, so the content stays in relatively the same position.
-        IntPoint scrollPosition = this->scrollPosition();
-        float percentDifference = (pageZoomFactor / m_pageZoomFactor);
-        setScrollPosition(IntPoint(scrollPosition.x() * percentDifference, scrollPosition.y() * percentDifference));
-    }
-
-    m_pageZoomFactor = pageZoomFactor;
-    m_textZoomFactor = textZoomFactor;
-
-    document->recalcStyle(Node::Force);
-
-    for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling()) {
-        if (FrameView* childView = child->view())
-            childView->setPageAndTextZoomFactors(m_pageZoomFactor, m_textZoomFactor);
-    }
-
-    if (document->renderer() && document->renderer()->needsLayout() && didFirstLayout())
-        layout();
 }
 
 // Normal delay

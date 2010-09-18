@@ -1540,16 +1540,13 @@ int WebViewImpl::setZoomLevel(bool textOnly, int zoomLevel)
                           maxTextSizeMultiplier),
                  minTextSizeMultiplier));
     Frame* frame = mainFrameImpl()->frame();
-    FrameView* view = frame->view();
-    if (!view)
-        return m_zoomLevel;
 
-    float oldZoomFactor = m_zoomTextOnly ? view->textZoomFactor() : view->pageZoomFactor();
+    float oldZoomFactor = m_zoomTextOnly ? frame->textZoomFactor() : frame->pageZoomFactor();
 
     if (textOnly)
-        view->setPageAndTextZoomFactors(1, zoomFactor);
+        frame->setPageAndTextZoomFactors(1, zoomFactor);
     else
-        view->setPageAndTextZoomFactors(zoomFactor, 1);
+        frame->setPageAndTextZoomFactors(zoomFactor, 1);
 
     if (oldZoomFactor != zoomFactor || textOnly != m_zoomTextOnly) {
         WebPluginContainerImpl* pluginContainer = WebFrameImpl::pluginContainerFromFrame(frame);

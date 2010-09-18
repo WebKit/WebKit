@@ -1,3 +1,74 @@
+2010-09-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        REGRESSION (r60104): Zoom level is unexpectedly reset on page reload
+        https://bugs.webkit.org/show_bug.cgi?id=42863
+
+        Moved zoom level back from FrameView to Frame.
+        I had forgotten that FrameView's lifetime is much shorter than
+        Frame's, and until that is fixed it's best to leave this on Frame.
+
+        * WebCore.exp.in: Updated.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForDocument):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::getComputedSizeFromSpecifiedSize):
+        * dom/Document.cpp:
+        (WebCore::Document::nodesFromRect):
+        (WebCore::Document::elementFromPoint):
+        (WebCore::Document::caretRangeFromPoint):
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::contentsX):
+        (WebCore::contentsY):
+        (WebCore::pageZoomFactor):
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchMouseEvent):
+        (WebCore::Node::dispatchWheelEvent):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::adjustForZoom):
+        (WebCore::HTMLBodyElement::scrollLeft):
+        (WebCore::HTMLBodyElement::setScrollLeft):
+        (WebCore::HTMLBodyElement::scrollTop):
+        (WebCore::HTMLBodyElement::setScrollTop):
+        (WebCore::HTMLBodyElement::scrollHeight):
+        (WebCore::HTMLBodyElement::scrollWidth):
+        * html/ImageDocument.cpp:
+        (WebCore::pageZoomFactor):
+        (WebCore::ImageDocument::scale):
+        (WebCore::ImageDocument::imageFitsInWindow):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::innerHeight):
+        (WebCore::DOMWindow::innerWidth):
+        (WebCore::DOMWindow::scrollX):
+        (WebCore::DOMWindow::scrollY):
+        (WebCore::DOMWindow::scrollTo):
+        * page/DragController.cpp:
+        (WebCore::elementUnderMouse):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::zoomFactor):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::currentScale):
+        (WebCore::SVGSVGElement::setCurrentScale):
+        Get zoom factor from Frame rather than FrameView.
+
+        * page/Frame.cpp:
+        (WebCore::parentPageZoomFactor): Moved back here from FrameView.
+        (WebCore::parentTextZoomFactor): Ditto.
+        (WebCore::Frame::Frame): Ditto.
+        (WebCore::Frame::setPageZoomFactor): Ditto.
+        (WebCore::Frame::setTextZoomFactor): Ditto.
+        (WebCore::Frame::setPageAndTextZoomFactors): Ditto.
+
+        * page/Frame.h: Moved functions and data for zooming back here
+        from FrameView.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        * page/FrameView.h:
+        Removed code from here.
+
 2010-09-17  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.

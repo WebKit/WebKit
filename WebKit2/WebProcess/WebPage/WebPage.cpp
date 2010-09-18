@@ -305,46 +305,42 @@ void WebPage::drawRect(GraphicsContext& graphicsContext, const IntRect& rect)
 
 double WebPage::textZoomFactor() const
 {
-    if (Frame* coreFrame = m_mainFrame->coreFrame()) {
-        if (FrameView* view = coreFrame->view())
-            return view->textZoomFactor();
-    }
-    
-    return 1;
+    Frame* frame = m_mainFrame->coreFrame();
+    if (!frame)
+        return 1;
+    return frame->textZoomFactor();
 }
 
 void WebPage::setTextZoomFactor(double zoomFactor)
 {
-    if (Frame* coreFrame = m_mainFrame->coreFrame()) {
-        if (FrameView* view = coreFrame->view())
-            return view->setTextZoomFactor(static_cast<float>(zoomFactor));
-    }
+    Frame* frame = m_mainFrame->coreFrame();
+    if (!frame)
+        return;
+    frame->setTextZoomFactor(static_cast<float>(zoomFactor));
 }
 
 double WebPage::pageZoomFactor() const
 {
-    if (Frame* coreFrame = m_mainFrame->coreFrame()) {
-        if (FrameView* view = coreFrame->view())
-            return view->pageZoomFactor();
-    }
-    
-    return 1;
+    Frame* frame = m_mainFrame->coreFrame();
+    if (!frame)
+        return 1;
+    return frame->pageZoomFactor();
 }
 
 void WebPage::setPageZoomFactor(double zoomFactor)
 {
-    if (Frame* coreFrame = m_mainFrame->coreFrame()) {
-        if (FrameView* view = coreFrame->view())
-            return view->setPageZoomFactor(static_cast<float>(zoomFactor));
-    }
+    Frame* frame = m_mainFrame->coreFrame();
+    if (!frame)
+        return;
+    frame->setPageZoomFactor(static_cast<float>(zoomFactor));
 }
 
 void WebPage::setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor)
 {
-    if (Frame* coreFrame = m_mainFrame->coreFrame()) {
-        if (FrameView* view = coreFrame->view())
-            return view->setPageAndTextZoomFactors(static_cast<float>(pageZoomFactor), static_cast<float>(textZoomFactor));
-    }
+    Frame* frame = m_mainFrame->coreFrame();
+    if (!frame)
+        return;
+    return frame->setPageAndTextZoomFactors(static_cast<float>(pageZoomFactor), static_cast<float>(textZoomFactor));
 }
 
 // Events 
