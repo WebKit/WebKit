@@ -1327,9 +1327,7 @@ SET(WebCore_SOURCES
     plugins/DOMPluginArray.cpp
     plugins/DOMPlugin.cpp
     plugins/PluginData.cpp
-    plugins/PluginDataNone.cpp
     plugins/PluginMainThreadScheduler.cpp
-    plugins/PluginViewNone.cpp
 
     rendering/AutoTableLayout.cpp
     rendering/BidiRun.cpp
