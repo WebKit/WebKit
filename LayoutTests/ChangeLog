@@ -1,3 +1,14 @@
+2010-09-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Canvas sizing ignores intrinsic size
+        https://bugs.webkit.org/show_bug.cgi?id=46024
+
+        * fast/replaced/table-percent-height-expected.txt: Updated.
+        * fast/replaced/table-percent-height.html: Changed to expect canvas to maintain
+        its intrinsic ratio.
+
 2010-09-17  Adam Barth  <abarth@webkit.org>
 
         Remove Leopard specific expected results because these now match Snow

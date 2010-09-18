@@ -79,8 +79,6 @@ private:
     virtual int calcReplacedWidth(bool includeMaxWidth = true) const;
     virtual int calcReplacedHeight() const;
 
-    virtual void calcPrefWidths();
-
     int calcAspectRatioWidth() const;
     int calcAspectRatioHeight() const;
 

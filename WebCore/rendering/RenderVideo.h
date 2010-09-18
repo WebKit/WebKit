@@ -74,9 +74,6 @@ private:
     virtual int calcReplacedHeight() const;
     virtual int minimumReplacedHeight() const;
 
-    int calcAspectRatioWidth() const;
-    int calcAspectRatioHeight() const;
-
     void updatePlayer();
 
     IntSize m_cachedImageSize;

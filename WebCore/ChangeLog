@@ -1,3 +1,47 @@
+2010-09-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Canvas sizing ignores intrinsic size
+        https://bugs.webkit.org/show_bug.cgi?id=46024
+
+        Updated fast/replaced/table-percent-height.html
+
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::RenderEmbeddedObject): If this is used as a proxy
+        for <video>, behave like it has an intrinsic size (e.g. preserve aspect ratio when
+        width is auto and height is specified).
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::calcAspectRatioWidth): Changed to explicitly invoke
+        RenderBox::calcReplacedHeight(), now that RenderReplaced has its own implementation
+        which we don’t want.
+        (WebCore::RenderImage::calcAspectRatioHeight): Similarly with calcReplacedWidth().
+        * rendering/RenderImage.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::RenderReplaced): Initialize m_hasIntrinsicSize.
+        (WebCore::lengthIsSpecified): Added this helper function, based on RenderImage’s
+        is{Width,Height}Specified().
+        (WebCore::RenderReplaced::calcReplacedWidth): Moved from RenderVideo all the way
+        up here so other replaced objects could use this logic.
+        (WebCore::RenderReplaced::calcReplacedHeight): Ditto.
+        (WebCore::RenderReplaced::calcAspectRatioWidth): Ditto.
+        (WebCore::RenderReplaced::calcAspectRatioHeight): Ditto.
+        (WebCore::RenderReplaced::calcPrefWidths): Replaced with the RenderImage version
+        of the logic.
+        (WebCore::RenderReplaced::setIntrinsicSize): Added an assertion.
+        * rendering/RenderReplaced.h:
+        (WebCore::RenderReplaced::minimumReplacedHeight): Promoted from private to protected
+        to allow RenderVideo to call through.
+        (WebCore::RenderReplaced::setHasIntrinsicSize): Added this setter.
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::updateIntrinsicSize): Factor zoom into the intrinsic size,
+        the way other RenderReplaced objects do.
+        (WebCore::RenderVideo::calcReplacedWidth): Invoke the RenderReplaced implementation,
+        which matches what used to be here, skipping over the RenderImage implementation.
+        (WebCore::RenderVideo::calcReplacedHeight): Ditto.
+        (WebCore::RenderVideo::minimumReplacedHeight): Ditto.
+        * rendering/RenderVideo.h:
+
 2010-09-17  Darin Adler  <darin@apple.com>
 
         Build fix for platforms that compile Touch.

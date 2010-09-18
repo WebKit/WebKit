@@ -80,6 +80,7 @@ void RenderVideo::intrinsicSizeChanged()
 void RenderVideo::updateIntrinsicSize()
 {
     IntSize size = calculateIntrinsicSize();
+    size.scale(style()->effectiveZoom());
 
     // Never set the element size to zero when in a media document.
     if (size.isEmpty() && node()->ownerDocument() && node()->ownerDocument()->isMediaDocument())
@@ -250,53 +251,17 @@ void RenderVideo::updatePlayer()
 
 int RenderVideo::calcReplacedWidth(bool includeMaxWidth) const
 {
-    int width;
-    if (isWidthSpecified())
-        width = calcReplacedWidthUsing(style()->width());
-    else
-        width = calcAspectRatioWidth() * style()->effectiveZoom();
-
-    int minW = calcReplacedWidthUsing(style()->minWidth());
-    int maxW = !includeMaxWidth || style()->maxWidth().isUndefined() ? width : calcReplacedWidthUsing(style()->maxWidth());
-
-    return max(minW, min(width, maxW));
+    return RenderReplaced::calcReplacedWidth(includeMaxWidth);
 }
 
 int RenderVideo::calcReplacedHeight() const
 {
-    int height;
-    if (isHeightSpecified())
-        height = calcReplacedHeightUsing(style()->height());
-    else
-        height = calcAspectRatioHeight() * style()->effectiveZoom();
-
-    int minH = calcReplacedHeightUsing(style()->minHeight());
-    int maxH = style()->maxHeight().isUndefined() ? height : calcReplacedHeightUsing(style()->maxHeight());
-
-    return max(minH, min(height, maxH));
-}
-
-int RenderVideo::calcAspectRatioWidth() const
-{
-    int intrinsicWidth = intrinsicSize().width();
-    int intrinsicHeight = intrinsicSize().height();
-    if (!intrinsicHeight)
-        return 0;
-    return RenderBox::calcReplacedHeight() * intrinsicWidth / intrinsicHeight;
-}
-
-int RenderVideo::calcAspectRatioHeight() const
-{
-    int intrinsicWidth = intrinsicSize().width();
-    int intrinsicHeight = intrinsicSize().height();
-    if (!intrinsicWidth)
-        return 0;
-    return RenderBox::calcReplacedWidth() * intrinsicHeight / intrinsicWidth;
+    return RenderReplaced::calcReplacedHeight();
 }
 
 int RenderVideo::minimumReplacedHeight() const 
 {
-    return 0; 
+    return RenderReplaced::minimumReplacedHeight(); 
 }
 
 #if USE(ACCELERATED_COMPOSITING)

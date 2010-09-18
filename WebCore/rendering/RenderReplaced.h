@@ -37,6 +37,10 @@ protected:
 
     virtual IntSize intrinsicSize() const;
 
+    virtual int calcReplacedWidth(bool includeMaxWidth = true) const;
+    virtual int calcReplacedHeight() const;
+    virtual int minimumReplacedHeight() const { return 0; }
+
     virtual void setSelectionState(SelectionState);
 
     bool isSelected() const;
@@ -45,6 +49,7 @@ protected:
 
     void setIntrinsicSize(const IntSize&);
     virtual void intrinsicSizeChanged();
+    void setHasIntrinsicSize() { m_hasIntrinsicSize = true; }
 
     virtual void paint(PaintInfo&, int tx, int ty);
     bool shouldPaint(PaintInfo&, int& tx, int& ty);
@@ -60,7 +65,8 @@ private:
 
     virtual void calcPrefWidths();
 
-    virtual int minimumReplacedHeight() const { return 0; }
+    int calcAspectRatioWidth() const;
+    int calcAspectRatioHeight() const;
 
     virtual void paintReplaced(PaintInfo&, int /*tx*/, int /*ty*/) { }
 
@@ -74,6 +80,7 @@ private:
     virtual IntRect selectionRectForRepaint(RenderBoxModelObject* repaintContainer, bool clipToVisibleContent = true);
 
     IntSize m_intrinsicSize;
+    bool m_hasIntrinsicSize;
 };
 
 }
