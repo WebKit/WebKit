@@ -1,3 +1,16 @@
+2010-09-17  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45993, convert printing to the new pagination model.
+
+        Make printing store the page height in the RenderView and push that into the layout state to
+        use the new pagination model.  The old pagination model is retained because it is still used
+        for embedded WebViews.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _adjustedBottomOfPageWithTop:bottom:limit:]):
+
 2010-09-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

@@ -159,6 +159,8 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
     if (!firstLineBox())
         return;
 
+    // FIXME: Paint-time pagination is obsolete and is now only used by embedded WebViews inside AppKit
+    // NSViews.  Do not add any more code for this.
     RenderView* v = renderer->view();
     bool usePrintRect = !v->printRect().isEmpty();
     

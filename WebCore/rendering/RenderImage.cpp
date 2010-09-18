@@ -214,9 +214,6 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
     int leftPad = paddingLeft();
     int topPad = paddingTop();
 
-    if (document()->printing() && !view()->printImages())
-        return;
-
     GraphicsContext* context = paintInfo.context;
 
     if (!m_imageResource->hasImage() || m_imageResource->errorOccurred()) {

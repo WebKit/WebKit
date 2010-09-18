@@ -1,8 +1,8 @@
-layer at (0,0) size 1000x600
-  RenderView at (0,0) size 1000x600
-layer at (0,0) size 1000x600
-  RenderBlock {HTML} at (0,0) size 1000x600
-    RenderBody {BODY} at (8,8) size 984x584
+layer at (0,0) size 1000x134
+  RenderView at (0,0) size 1000x134
+layer at (0,0) size 1000x134
+  RenderBlock {HTML} at (0,0) size 1000x134
+    RenderBody {BODY} at (8,8) size 984x118
       RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#008000]
       RenderBlock (anonymous) at (0,100) size 984x18
         RenderInline {SPAN} at (0,0) size 533x18

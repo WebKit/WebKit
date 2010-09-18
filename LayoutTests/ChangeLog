@@ -1,3 +1,14 @@
+2010-09-17  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45993, convert printing to the new pagination model.
+
+        Remove the overflow test, since the new model treats overflow:auto/scroll as unsplittable.
+
+        * printing/page-break-always-for-overflow-expected.txt: Removed.
+        * printing/page-break-always-for-overflow.html: Removed.
+
 2010-09-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

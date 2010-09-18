@@ -77,17 +77,6 @@ public:
     void selectionStartEnd(int& startPos, int& endPos) const;
 
     bool printing() const;
-    void setPrintImages(bool enable) { m_printImages = enable; }
-    bool printImages() const { return m_printImages; }
-
-    IntRect printRect() const { return m_printRect; }
-    void setPrintRect(const IntRect& r) { m_printRect = r; }
-
-    void setTruncatedAt(int y) { m_truncatedAt = y; m_bestTruncatedAt = m_truncatorWidth = 0; m_forcedPageBreak = false; }
-    void setBestTruncatedAt(int y, RenderBoxModelObject* forRenderer, bool forcedBreak = false);
-    int bestTruncatedAt() const { return m_bestTruncatedAt; }
-    
-    int truncatedAt() const { return m_truncatedAt; }
 
     virtual void absoluteRects(Vector<IntRect>&, int tx, int ty);
     virtual void absoluteQuads(Vector<FloatQuad>&);
@@ -120,23 +109,9 @@ public:
 
     bool doingFullRepaint() const { return m_frameView->needsFullRepaint(); }
 
-    void pushLayoutState(RenderBox* renderer, const IntSize& offset, int pageHeight = 0, ColumnInfo* colInfo = 0)
-    {
-        // We push LayoutState even if layoutState is disabled because it stores layoutDelta too.
-        if (!doingFullRepaint() || renderer->hasColumns() || m_layoutState->isPaginated())
-            m_layoutState = new (renderArena()) LayoutState(m_layoutState, renderer, offset, pageHeight, colInfo);
-    }
-
+    // Subtree push/pop
     void pushLayoutState(RenderObject*);
-
-    void popLayoutState()
-    {
-        LayoutState* state = m_layoutState;
-        if (doingFullRepaint() && !m_layoutState->isPaginated())
-            return;
-        m_layoutState = state->m_next;
-        state->destroy(renderArena());
-    }
+    void popLayoutState(RenderObject*) { return popLayoutState(); } // Just doing this to keep popLayoutState() private and to make the subtree calls symmetrical.
 
     bool shouldDisableLayoutStateForSubtree(RenderObject*) const;
 
@@ -152,6 +127,30 @@ public:
     void enableLayoutState() { ASSERT(m_layoutStateDisableCount > 0); m_layoutStateDisableCount--; }
 
     virtual void updateHitTestResult(HitTestResult&, const IntPoint&);
+
+    unsigned pageHeight() const { return m_pageHeight; }
+    void setPageHeight(unsigned height)
+    {
+        if (m_pageHeight != height) {
+            m_pageHeight = height;
+            markDescendantBlocksAndLinesForLayout();
+        }
+    }
+
+    // FIXME: These functions are deprecated. No code should be added that uses these.
+    int bestTruncatedAt() const { return m_legacyPrinting.m_bestTruncatedAt; }
+    void setBestTruncatedAt(int y, RenderBoxModelObject* forRenderer, bool forcedBreak = false);
+    int truncatedAt() const { return m_legacyPrinting.m_truncatedAt; }
+    void setTruncatedAt(int y)
+    { 
+        m_legacyPrinting.m_truncatedAt = y;
+        m_legacyPrinting.m_bestTruncatedAt = 0;
+        m_legacyPrinting.m_truncatorWidth = 0;
+        m_legacyPrinting.m_forcedPageBreak = false;
+    }
+    const IntRect& printRect() const { return m_legacyPrinting.m_printRect; }
+    void setPrintRect(const IntRect& r) { m_legacyPrinting.m_printRect = r; }
+    // End deprecated functions.
 
     // Notifications that this view became visible in a window, or will be
     // removed from the window.
@@ -173,6 +172,26 @@ private:
     int docHeight() const;
     int docWidth() const;
 
+    // These functions may only be accessed by LayoutStateMaintainer.
+    bool pushLayoutState(RenderBox* renderer, const IntSize& offset, int pageHeight = 0, ColumnInfo* colInfo = 0)
+    {
+        // We push LayoutState even if layoutState is disabled because it stores layoutDelta too.
+        if (!doingFullRepaint() || renderer->hasColumns() || m_layoutState->isPaginated()) {
+            m_layoutState = new (renderArena()) LayoutState(m_layoutState, renderer, offset, pageHeight, colInfo);
+            return true;
+        }
+        return false;
+    }
+
+    void popLayoutState()
+    {
+        LayoutState* state = m_layoutState;
+        m_layoutState = state->m_next;
+        state->destroy(renderArena());
+    }
+    
+    friend class LayoutStateMaintainer;
+        
 protected:
     FrameView* m_frameView;
 
@@ -181,21 +200,31 @@ protected:
     int m_selectionStartPos;
     int m_selectionEndPos;
 
-    // used to ignore viewport width when printing to the printer
-    bool m_printImages;
-    int m_truncatedAt;
+    // FIXME: Only used by embedded WebViews inside AppKit NSViews.  Find a way to remove.
+    struct LegacyPrinting {
+        LegacyPrinting()
+            : m_bestTruncatedAt(0)
+            , m_truncatedAt(0)
+            , m_truncatorWidth(0)
+            , m_forcedPageBreak(false)
+        { }
+
+        int m_bestTruncatedAt;
+        int m_truncatedAt;
+        int m_truncatorWidth;
+        IntRect m_printRect;
+        bool m_forcedPageBreak;
+    };
+    LegacyPrinting m_legacyPrinting;
+    // End deprecated members.
 
     int m_maximalOutlineSize; // Used to apply a fudge factor to dirty-rect checks on blocks/tables.
-    IntRect m_printRect; // Used when printing.
 
     typedef HashSet<RenderWidget*> RenderWidgetSet;
-
     RenderWidgetSet m_widgets;
-
+    
 private:
-    int m_bestTruncatedAt;
-    int m_truncatorWidth;
-    bool m_forcedPageBreak;
+    unsigned m_pageHeight;
     LayoutState* m_layoutState;
     unsigned m_layoutStateDisableCount;
 #if USE(ACCELERATED_COMPOSITING)
@@ -228,6 +257,7 @@ public:
         , m_disabled(disableState)
         , m_didStart(false)
         , m_didEnd(false)
+        , m_didCreateLayoutState(false)
     {
         push(root, offset, pageHeight, colInfo);
     }
@@ -238,6 +268,7 @@ public:
         , m_disabled(false)
         , m_didStart(false)
         , m_didEnd(false)
+        , m_didCreateLayoutState(false)
     {
     }
     
@@ -250,8 +281,8 @@ public:
     {
         ASSERT(!m_didStart);
         // We push state even if disabled, because we still need to store layoutDelta
-        m_view->pushLayoutState(root, offset, pageHeight, colInfo);
-        if (m_disabled)
+        m_didCreateLayoutState = m_view->pushLayoutState(root, offset, pageHeight, colInfo);
+        if (m_disabled && m_didCreateLayoutState)
             m_view->disableLayoutState();
         m_didStart = true;
     }
@@ -260,9 +291,12 @@ public:
     {
         if (m_didStart) {
             ASSERT(!m_didEnd);
-            m_view->popLayoutState();
-            if (m_disabled)
-                m_view->enableLayoutState();
+            if (m_didCreateLayoutState) {
+                m_view->popLayoutState();
+                if (m_disabled)
+                    m_view->enableLayoutState();
+            }
+            
             m_didEnd = true;
         }
     }
@@ -274,6 +308,7 @@ private:
     bool m_disabled : 1;        // true if the offset and clip part of layoutState is disabled
     bool m_didStart : 1;        // true if we did a push or disable
     bool m_didEnd : 1;          // true if we popped or re-enabled
+    bool m_didCreateLayoutState : 1; // true if we actually made a layout state.
 };
 
 } // namespace WebCore

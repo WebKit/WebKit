@@ -1,3 +1,51 @@
+2010-09-17  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45993, convert printing to the new pagination model.
+
+        Make printing store the page height in the RenderView and push that into the layout state to
+        use the new pagination model.  The old pagination model is retained because it is still used
+        for embedded WebViews.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::reset):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::forceLayout):
+        (WebCore::FrameView::forceLayoutForPagination):
+        (WebCore::FrameView::adjustPageHeight):
+        * page/FrameView.h:
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::computePageRectsWithPageSizeInternal):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintChildren):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcHeight):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::paint):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::paintReplaced):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        (WebCore::RenderView::layout):
+        (WebCore::RenderView::paint):
+        (WebCore::RenderView::setBestTruncatedAt):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::popLayoutState):
+        (WebCore::RenderView::pageHeight):
+        (WebCore::RenderView::setPageHeight):
+        (WebCore::RenderView::bestTruncatedAt):
+        (WebCore::RenderView::truncatedAt):
+        (WebCore::RenderView::setTruncatedAt):
+        (WebCore::RenderView::printRect):
+        (WebCore::RenderView::setPrintRect):
+        (WebCore::RenderView::pushLayoutState):
+        (WebCore::LayoutStateMaintainer::LayoutStateMaintainer):
+        (WebCore::LayoutStateMaintainer::push):
+        (WebCore::LayoutStateMaintainer::pop):
+
 2010-09-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

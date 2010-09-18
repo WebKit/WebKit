@@ -188,9 +188,6 @@ void RenderVideo::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
     MediaPlayer* mediaPlayer = player();
     bool displayingPoster = videoElement()->shouldDisplayPosterImage();
 
-    if (displayingPoster && document()->printing() && !view()->printImages())
-        return;
-
     if (!displayingPoster) {
         if (!mediaPlayer)
             return;

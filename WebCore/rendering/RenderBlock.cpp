@@ -2208,14 +2208,14 @@ void RenderBlock::paintChildren(PaintInfo& paintInfo, int tx, int ty)
     info.phase = newPhase;
     info.updatePaintingRootForChildren(this);
     
+    // FIXME: Paint-time pagination is obsolete and is now only used by embedded WebViews inside AppKit
+    // NSViews.  Do not add any more code for this.
     RenderView* renderView = view();
     bool usePrintRect = !renderView->printRect().isEmpty();
     
-    bool checkPageBreaks = document()->paginated() && !document()->settings()->paginateDuringLayoutEnabled();
-
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {        
         // Check for page-break-before: always, and if it's set, break and bail.
-        bool checkBeforeAlways = !childrenInline() && (checkPageBreaks && child->style()->pageBreakBefore() == PBALWAYS);
+        bool checkBeforeAlways = !childrenInline() && (usePrintRect && child->style()->pageBreakBefore() == PBALWAYS);
         if (checkBeforeAlways
             && (ty + child->y()) > paintInfo.rect.y()
             && (ty + child->y()) < paintInfo.rect.bottom()) {
@@ -2238,7 +2238,7 @@ void RenderBlock::paintChildren(PaintInfo& paintInfo, int tx, int ty)
             child->paint(info, tx, ty);
 
         // Check for page-break-after: always, and if it's set, break and bail.
-        bool checkAfterAlways = !childrenInline() && (checkPageBreaks && child->style()->pageBreakAfter() == PBALWAYS);
+        bool checkAfterAlways = !childrenInline() && (usePrintRect && child->style()->pageBreakAfter() == PBALWAYS);
         if (checkAfterAlways
             && (ty + child->y() + child->height()) > paintInfo.rect.y()
             && (ty + child->y() + child->height()) < paintInfo.rect.bottom()) {
@@ -5907,7 +5907,8 @@ int RenderBlock::applyBeforeBreak(RenderBox* child, int yPos)
 {
     // FIXME: Add page break checking here when we support printing.
     bool checkColumnBreaks = view()->layoutState()->isPaginatingColumns();
-    bool checkBeforeAlways = checkColumnBreaks && child->style()->columnBreakBefore() == PBALWAYS;
+    bool checkPageBreaks = !checkColumnBreaks && view()->layoutState()->m_pageHeight; // FIXME: Once columns can print we have to check this.
+    bool checkBeforeAlways = (checkColumnBreaks && child->style()->columnBreakBefore() == PBALWAYS) || (checkPageBreaks && child->style()->pageBreakBefore() == PBALWAYS);
     if (checkBeforeAlways && inNormalFlow(child)) {
         if (checkColumnBreaks)
             view()->layoutState()->addForcedColumnBreak(yPos);
@@ -5920,7 +5921,8 @@ int RenderBlock::applyAfterBreak(RenderBox* child, int yPos, MarginInfo& marginI
 {
     // FIXME: Add page break checking here when we support printing.
     bool checkColumnBreaks = view()->layoutState()->isPaginatingColumns();
-    bool checkAfterAlways = checkColumnBreaks && child->style()->columnBreakAfter() == PBALWAYS;
+    bool checkPageBreaks = !checkColumnBreaks && view()->layoutState()->m_pageHeight; // FIXME: Once columns can print we have to check this.
+    bool checkAfterAlways = (checkColumnBreaks && child->style()->columnBreakAfter() == PBALWAYS) || (checkPageBreaks && child->style()->pageBreakAfter() == PBALWAYS);
     if (checkAfterAlways && inNormalFlow(child)) {
         marginInfo.setBottomQuirk(true); // Cause margins to be discarded for any following content.
         if (checkColumnBreaks)

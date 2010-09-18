@@ -95,26 +95,22 @@ void PrintContext::computePageRectsWithPageSizeInternal(const FloatSize& pageSiz
 {
     if (!m_frame->document() || !m_frame->view() || !m_frame->document()->renderer())
         return;
+
     RenderView* root = toRenderView(m_frame->document()->renderer());
 
-    const float pageWidth = pageSizeInPixels.width();
-    const float docWidth = root->layer()->width();
-    const float docHeight = root->layer()->height();
-    float currPageHeight = pageSizeInPixels.height();
+    int docWidth = root->layer()->width();
+    int docHeight = root->layer()->height();
+    int pageWidth = pageSizeInPixels.width();
+    int pageHeight = pageSizeInPixels.height();
 
-    // always return at least one page, since empty files should print a blank page
-    float printedPagesHeight = 0;
-    do {
-        float proposedBottom = std::min(docHeight, printedPagesHeight + pageSizeInPixels.height());
-        m_frame->view()->adjustPageHeight(&proposedBottom, printedPagesHeight, proposedBottom, printedPagesHeight);
-        currPageHeight = max(1.0f, proposedBottom - printedPagesHeight);
+    unsigned pageCount = ceilf((float)docHeight / pageHeight);
+    for (unsigned i = 0; i < pageCount; ++i) {
         if (allowHorizontalMultiPages) {
-            for (float curWidth = 0; curWidth < docWidth; curWidth += pageWidth)
-                m_pageRects.append(IntRect(curWidth, (int)printedPagesHeight, (int)pageWidth, (int)currPageHeight));
+            for (int currWidth = 0; currWidth < docWidth; currWidth += pageWidth)
+                m_pageRects.append(IntRect(currWidth, i * pageHeight, pageWidth, pageHeight));
         } else
-            m_pageRects.append(IntRect(0, (int)printedPagesHeight, (int)pageWidth, (int)currPageHeight));
-        printedPagesHeight += currPageHeight;
-    } while (printedPagesHeight < docHeight);
+            m_pageRects.append(IntRect(0, i * pageHeight, pageWidth, pageHeight));
+    }
 }
 
 void PrintContext::begin(float width, float height)

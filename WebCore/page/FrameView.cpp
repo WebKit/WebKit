@@ -205,7 +205,6 @@ void FrameView::reset()
     m_wasScrolledByUser = false;
     m_lastLayoutSize = IntSize();
     m_lastZoomFactor = 1.0f;
-    m_pageHeight = 0;
     m_deferringRepaints = 0;
     m_repaintCount = 0;
     m_repaintRects.clear();
@@ -770,7 +769,7 @@ void FrameView::layout(bool allowSubtree)
 
     if (subtree) {
         RenderView* view = root->view();
-        view->popLayoutState();
+        view->popLayoutState(root);
         if (disableLayoutState)
             view->enableLayoutState();
     }
@@ -2076,12 +2075,6 @@ void FrameView::flushDeferredRepaints()
 void FrameView::forceLayout(bool allowSubtree)
 {
     layout(allowSubtree);
-    // We cannot unschedule a pending relayout, since the force can be called with
-    // a tiny rectangle from a drawRect update.  By unscheduling we in effect
-    // "validate" and stop the necessary full repaint from occurring.  Basically any basic
-    // append/remove DHTML is broken by this call.  For now, I have removed the optimization
-    // until we have a better invalidation stategy. -dwh
-    //unscheduleRelayout();
 }
 
 void FrameView::forceLayoutForPagination(const FloatSize& pageSize, float maximumShrinkFactor, Frame::AdjustViewSizeOrNot shouldAdjustViewSize)
@@ -2091,8 +2084,8 @@ void FrameView::forceLayoutForPagination(const FloatSize& pageSize, float maximu
     RenderView *root = toRenderView(m_frame->document()->renderer());
     if (root) {
         int pageW = ceilf(pageSize.width());
-        m_pageHeight = pageSize.height() ? pageSize.height() : visibleHeight();
         root->setWidth(pageW);
+        root->setPageHeight(pageSize.height());
         root->setNeedsLayoutAndPrefWidthsRecalc();
         forceLayout();
 
@@ -2104,7 +2097,7 @@ void FrameView::forceLayoutForPagination(const FloatSize& pageSize, float maximu
         if (rightmostPos > pageSize.width()) {
             pageW = std::min<int>(rightmostPos, ceilf(pageSize.width() * maximumShrinkFactor));
             if (pageSize.height())
-                m_pageHeight = pageW / pageSize.width() * pageSize.height();
+                root->setPageHeight(pageW / pageSize.width() * pageSize.height());
             root->setWidth(pageW);
             root->setNeedsLayoutAndPrefWidthsRecalc();
             forceLayout();
@@ -2113,10 +2106,9 @@ void FrameView::forceLayoutForPagination(const FloatSize& pageSize, float maximu
 
     if (shouldAdjustViewSize)
         adjustViewSize();
-    m_pageHeight = 0;
 }
 
-void FrameView::adjustPageHeight(float *newBottom, float oldTop, float oldBottom, float /*bottomLimit*/)
+void FrameView::adjustPageHeightDeprecated(float *newBottom, float oldTop, float oldBottom, float /*bottomLimit*/)
 {
     RenderView* root = m_frame->contentRenderer();
     if (root) {
@@ -2124,10 +2116,12 @@ void FrameView::adjustPageHeight(float *newBottom, float oldTop, float oldBottom
         GraphicsContext context((PlatformGraphicsContext*)0);
         root->setTruncatedAt((int)floorf(oldBottom));
         IntRect dirtyRect(0, (int)floorf(oldTop), root->rightLayoutOverflow(), (int)ceilf(oldBottom - oldTop));
+        root->setPrintRect(dirtyRect);
         root->layer()->paint(&context, dirtyRect);
         *newBottom = root->bestTruncatedAt();
         if (*newBottom == 0)
             *newBottom = oldBottom;
+        root->setPrintRect(IntRect());
     } else
         *newBottom = oldBottom;
 }

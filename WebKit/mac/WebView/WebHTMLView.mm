@@ -2302,7 +2302,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
         return bottom;
 
     float newBottom;
-    view->adjustPageHeight(&newBottom, top, bottom, bottomLimit);
+    view->adjustPageHeightDeprecated(&newBottom, top, bottom, bottomLimit);
 
 #ifdef __LP64__
     // If the new bottom is equal to the old bottom (when both are treated as floats), we just return the original
