@@ -299,12 +299,7 @@ bool WebChromeClient::tabsToLinks() const
 
 IntRect WebChromeClient::windowResizerRect() const
 {
-    IntSize pageSize = m_page->size();
-    
-    static const int windowResizerSize = 15;
-    
-    return IntRect(pageSize.width() - windowResizerSize, pageSize.height() - windowResizerSize, 
-                   windowResizerSize, windowResizerSize);
+    return m_page->windowResizerRect();
 }
 
 void WebChromeClient::invalidateWindow(const IntRect& rect, bool immediate)

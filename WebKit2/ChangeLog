@@ -2,6 +2,23 @@
 
         Reviewed by Anders Carlsson.
 
+        Resize corner jiggles when resizing slowly in WebKit2
+        <rdar://problem/7897425>
+        https://bugs.webkit.org/show_bug.cgi?id=45601
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::windowResizerRect):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::windowResizerRect):
+        * WebProcess/WebPage/WebPage.h:
+        Move resize corner logic to WebPage and use the FrameView's size instead of the WebPages
+        stored size, which doesn't get updated at the right time. This is in line with all other
+        scrollbar metrics which are in terms of the FrameView's size.
+
+2010-09-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Make certificate data available to the WKFrameRef after it is committed
         Part of <rdar://problem/8350189>
         https://bugs.webkit.org/show_bug.cgi?id=45998

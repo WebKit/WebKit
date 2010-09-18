@@ -97,6 +97,7 @@ public:
     bool handleEditingKeyboardEvent(WebCore::KeyboardEvent*);
     void show();
     String userAgent() const;
+    WebCore::IntRect windowResizerRect() const;
 
     WebEditCommand* webEditCommand(uint64_t);
     void addWebEditCommand(uint64_t, WebEditCommand*);

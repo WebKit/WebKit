@@ -518,6 +518,25 @@ String WebPage::userAgent() const
     return "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6; en-us) AppleWebKit/531.4 (KHTML, like Gecko) Version/4.0.3 Safari/531.4";
 }
 
+IntRect WebPage::windowResizerRect() const
+{
+    // FIXME: This function should conditionally return a null IntRect for circumstances when
+    // you don't always want to show a resizer rect (i.e. you never want to show one on windows
+    // and you don't want to show one in Safari when the status bar is visible).
+
+    // FIXME: This should be either platform specific or based off the width of the scrollbar. 
+    static const int windowResizerSize = 15;
+
+    IntSize frameViewSize;
+    if (Frame* coreFrame = m_mainFrame->coreFrame()) {
+        if (FrameView* view = coreFrame->view())
+            frameViewSize = view->size();
+    }
+
+    return IntRect(frameViewSize.width() - windowResizerSize, frameViewSize.height() - windowResizerSize, 
+                   windowResizerSize, windowResizerSize);
+}
+
 void WebPage::runJavaScriptInMainFrame(const WTF::String& script, uint64_t callbackID)
 {
     // NOTE: We need to be careful when running scripts that the objects we depend on don't
