@@ -201,7 +201,7 @@ def build(bld):
     features = [build_port]
     exclude_patterns = ['*AllInOne.cpp', '*Brew.cpp', '*CFNet.cpp', '*Chromium*.cpp', 
             '*Efl.cpp', '*Gtk.cpp', '*Haiku.cpp', '*Mac.cpp', '*None.cpp', '*Qt.cpp', '*Safari.cpp',
-            'test*bindings.*', '*Wince.cpp', "WebDOMCanvas*.cpp", "WebDOMSVG*.cpp"]
+            'test*bindings.*', '*WinCE.cpp', "WebDOMCanvas*.cpp", "WebDOMSVG*.cpp"]
     if build_port == 'wx':
         features.append('curl')
         exclude_patterns.append('*Win.cpp')
