@@ -2199,22 +2199,6 @@ BUG31997 DEBUG WIN : fast/body-propagation/overflow/004-xhtml.xhtml = IMAGE+TEXT
 BUG35329 WIN : http/tests/appcache/resource-redirect-2.html = TIMEOUT PASS
 
 // Webkit Roll to r51875
-BUG29748 LINUX : tables/mozilla/bugs/bug137388-2.html = IMAGE
-BUG29748 LINUX : tables/mozilla/bugs/bug2479-1.html = IMAGE
-BUG29748 LINUX : tables/mozilla/bugs/bug29314.html = IMAGE
-BUG29748 LINUX : tables/mozilla/bugs/bug2997.html = IMAGE
-BUG29748 LINUX : tables/mozilla/bugs/bug32205-2.html = IMAGE
-BUG29748 LINUX : tables/mozilla/bugs/bug3977.html = IMAGE
-BUG29748 LINUX : tables/mozilla/bugs/bug43854-1.html = IMAGE
-BUG29748 LINUX : tables/mozilla/bugs/bug650.html = IMAGE
-BUG29748 LINUX : tables/mozilla/bugs/bug73321.html = IMAGE
-BUG29748 LINUX : tables/mozilla/core/captions.html = IMAGE
-BUG29748 LINUX : tables/mozilla/core/cell_heights.html = IMAGE
-BUG29748 LINUX : tables/mozilla/marvin/backgr_simple-table-column.html = IMAGE
-BUG29748 LINUX : tables/mozilla/marvin/backgr_simple-table-row.html = IMAGE
-BUG29748 LINUX : tables/mozilla/marvin/x_table_bgcolor_rgb.xml = IMAGE
-BUG29748 LINUX : tables/mozilla/other/nestedTables.html = IMAGE
-BUG29748 LINUX : tables/mozilla/other/test3.html = IMAGE
 BUG29748 LINUX : tables/mozilla_expected_failures/bugs/bug10140.html = IMAGE
 BUG29748 LINUX : tables/mozilla_expected_failures/bugs/bug1055-2.html = IMAGE
 BUG29748 LINUX : tables/mozilla_expected_failures/bugs/bug106966.html = IMAGE

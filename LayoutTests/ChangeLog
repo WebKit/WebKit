@@ -1,5 +1,46 @@
 2010-09-17  Tony Chang  <tony@chromium.org>
 
+        Reviewed by Kent Tamura.
+
+        [chromium] 16 more chromium linux baselines (scrollbars change)
+        https://bugs.webkit.org/show_bug.cgi?id=46009
+
+        * platform/chromium-linux/tables/mozilla/bugs/bug137388-2-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug137388-2-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug2479-1-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug2479-1-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug29314-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug29314-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug2997-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug2997-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug32205-2-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug32205-2-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug3977-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug3977-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug43854-1-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug43854-1-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug650-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug650-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug73321-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug73321-expected.png:
+        * platform/chromium-linux/tables/mozilla/core/captions-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/core/captions-expected.png:
+        * platform/chromium-linux/tables/mozilla/core/cell_heights-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/core/cell_heights-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/backgr_simple-table-column-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/backgr_simple-table-column-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/backgr_simple-table-row-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/backgr_simple-table-row-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/x_table_bgcolor_rgb-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/x_table_bgcolor_rgb-expected.png:
+        * platform/chromium-linux/tables/mozilla/other/nestedTables-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/other/nestedTables-expected.png:
+        * platform/chromium-linux/tables/mozilla/other/test3-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/other/test3-expected.png:
+        * platform/chromium/test_expectations.txt:
+
+2010-09-17  Tony Chang  <tony@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         [chromium] rebaseline tests that are only scrollbar differences on Linux
