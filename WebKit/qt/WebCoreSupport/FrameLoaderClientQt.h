@@ -220,6 +220,10 @@ public:
     // This context is not tied to the lifetime of its frame, and is destroyed
     // in garbage collection.
     virtual void didCreateIsolatedScriptContext();
+
+    // Returns true if we should allow the given V8 extension to be added to
+    // the script context at the currently loading page and given extension group.
+    virtual bool allowScriptExtension(const String& extensionName, int extensionGroup) { return false; }
 #endif
 
     virtual void registerForIconNotification(bool);

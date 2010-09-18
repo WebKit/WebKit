@@ -1,3 +1,16 @@
+2010-09-18  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] V8 port: Add FrameLoaderClientQt::allowScriptExtension()
+        https://bugs.webkit.org/show_bug.cgi?id=46034
+
+        r67749 added FrameLoaderClient::allowScriptExtension() (V8-specific)
+        Add a stub implementation that simply returns false for now.
+
+        * WebCoreSupport/FrameLoaderClientQt.h:
+        (WebCore::FrameLoaderClientQt::allowScriptExtension):
+
 2010-09-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
