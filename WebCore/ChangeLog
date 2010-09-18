@@ -1,3 +1,14 @@
+2010-09-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION (r67762): Over 160 layout tests failing due to incorrect zoom factors in subframes
+        https://bugs.webkit.org/show_bug.cgi?id=46031
+
+        * page/Frame.cpp:
+        (WebCore::parentPageZoomFactor): Return the zoom factor of the parent frame.
+        (WebCore::parentTextZoomFactor): Ditto.
+
 2010-09-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Jon Honeycutt.
