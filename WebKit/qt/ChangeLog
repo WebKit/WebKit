@@ -1,3 +1,108 @@
+2010-09-18  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Enable Platform Strategies on Qt
+
+        [Qt] Turn on PLATFORM_STRATEGIES
+        https://bugs.webkit.org/show_bug.cgi?id=45831
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate): Initialize the PlatformStrategy
+        singleton.
+        * WebCoreSupport/WebPlatformStrategies.cpp: Added, code was moved
+        from platform/qt/Localizations.cpp and plugins/qt/PluginDataQt.cpp
+        (WebPlatformStrategies::initialize): create the singleton,
+        following the same "pattern" used by Mac and Win ports.
+        (WebPlatformStrategies::WebPlatformStrategies):
+        (WebPlatformStrategies::createPluginStrategy):
+        (WebPlatformStrategies::createLocalizationStrategy):
+        (WebPlatformStrategies::createVisitedLinkStrategy):
+        (WebPlatformStrategies::refreshPlugins):
+        (WebPlatformStrategies::getPluginInfo):
+        (WebPlatformStrategies::inputElementAltText):
+        (WebPlatformStrategies::resetButtonDefaultLabel):
+        (WebPlatformStrategies::searchableIndexIntroduction):
+        (WebPlatformStrategies::submitButtonDefaultLabel):
+        (WebPlatformStrategies::fileButtonChooseFileLabel):
+        (WebPlatformStrategies::fileButtonNoFileSelectedLabel):
+        (WebPlatformStrategies::contextMenuItemTagOpenLinkInNewWindow):
+        (WebPlatformStrategies::contextMenuItemTagDownloadLinkToDisk):
+        (WebPlatformStrategies::contextMenuItemTagCopyLinkToClipboard):
+        (WebPlatformStrategies::contextMenuItemTagOpenImageInNewWindow):
+        (WebPlatformStrategies::contextMenuItemTagDownloadImageToDisk):
+        (WebPlatformStrategies::contextMenuItemTagCopyImageToClipboard):
+        (WebPlatformStrategies::contextMenuItemTagOpenFrameInNewWindow):
+        (WebPlatformStrategies::contextMenuItemTagCopy):
+        (WebPlatformStrategies::contextMenuItemTagGoBack):
+        (WebPlatformStrategies::contextMenuItemTagGoForward):
+        (WebPlatformStrategies::contextMenuItemTagStop):
+        (WebPlatformStrategies::contextMenuItemTagReload):
+        (WebPlatformStrategies::contextMenuItemTagCut):
+        (WebPlatformStrategies::contextMenuItemTagPaste):
+        (WebPlatformStrategies::contextMenuItemTagNoGuessesFound):
+        (WebPlatformStrategies::contextMenuItemTagIgnoreSpelling):
+        (WebPlatformStrategies::contextMenuItemTagLearnSpelling):
+        (WebPlatformStrategies::contextMenuItemTagSearchWeb):
+        (WebPlatformStrategies::contextMenuItemTagLookUpInDictionary):
+        (WebPlatformStrategies::contextMenuItemTagOpenLink):
+        (WebPlatformStrategies::contextMenuItemTagIgnoreGrammar):
+        (WebPlatformStrategies::contextMenuItemTagSpellingMenu):
+        (WebPlatformStrategies::contextMenuItemTagShowSpellingPanel):
+        (WebPlatformStrategies::contextMenuItemTagCheckSpelling):
+        (WebPlatformStrategies::contextMenuItemTagCheckSpellingWhileTyping):
+        (WebPlatformStrategies::contextMenuItemTagCheckGrammarWithSpelling):
+        (WebPlatformStrategies::contextMenuItemTagFontMenu):
+        (WebPlatformStrategies::contextMenuItemTagBold):
+        (WebPlatformStrategies::contextMenuItemTagItalic):
+        (WebPlatformStrategies::contextMenuItemTagUnderline):
+        (WebPlatformStrategies::contextMenuItemTagOutline):
+        (WebPlatformStrategies::contextMenuItemTagWritingDirectionMenu):
+        (WebPlatformStrategies::contextMenuItemTagTextDirectionMenu):
+        (WebPlatformStrategies::contextMenuItemTagDefaultDirection):
+        (WebPlatformStrategies::contextMenuItemTagLeftToRight):
+        (WebPlatformStrategies::contextMenuItemTagRightToLeft):
+        (WebPlatformStrategies::contextMenuItemTagInspectElement):
+        (WebPlatformStrategies::searchMenuNoRecentSearchesText):
+        (WebPlatformStrategies::searchMenuRecentSearchesText):
+        (WebPlatformStrategies::searchMenuClearRecentSearchesText):
+        (WebPlatformStrategies::AXWebAreaText):
+        (WebPlatformStrategies::AXLinkText):
+        (WebPlatformStrategies::AXListMarkerText):
+        (WebPlatformStrategies::AXImageMapText):
+        (WebPlatformStrategies::AXHeadingText):
+        (WebPlatformStrategies::AXDefinitionListTermText):
+        (WebPlatformStrategies::AXDefinitionListDefinitionText):
+        (WebPlatformStrategies::AXButtonActionVerb):
+        (WebPlatformStrategies::AXRadioButtonActionVerb):
+        (WebPlatformStrategies::AXTextFieldActionVerb):
+        (WebPlatformStrategies::AXCheckedCheckBoxActionVerb):
+        (WebPlatformStrategies::AXUncheckedCheckBoxActionVerb):
+        (WebPlatformStrategies::AXMenuListActionVerb):
+        (WebPlatformStrategies::AXMenuListPopupActionVerb):
+        (WebPlatformStrategies::AXLinkActionVerb):
+        (WebPlatformStrategies::missingPluginText):
+        (WebPlatformStrategies::crashedPluginText):
+        (WebPlatformStrategies::multipleFileUploadText):
+        (WebPlatformStrategies::unknownFileSizeText):
+        (WebPlatformStrategies::imageTitle):
+        (WebPlatformStrategies::mediaElementLoadingStateText):
+        (WebPlatformStrategies::mediaElementLiveBroadcastStateText):
+        (WebPlatformStrategies::localizedMediaControlElementString):
+        (WebPlatformStrategies::localizedMediaControlElementHelpText):
+        (WebPlatformStrategies::localizedMediaTimeDescription):
+        (WebPlatformStrategies::validationMessageValueMissingText):
+        (WebPlatformStrategies::validationMessageTypeMismatchText):
+        (WebPlatformStrategies::validationMessagePatternMismatchText):
+        (WebPlatformStrategies::validationMessageTooLongText):
+        (WebPlatformStrategies::validationMessageRangeUnderflowText):
+        (WebPlatformStrategies::validationMessageRangeOverflowText):
+        (WebPlatformStrategies::validationMessageStepMismatchText):
+        (WebPlatformStrategies::isLinkVisited):
+        (WebPlatformStrategies::addVisitedLink):
+        * WebCoreSupport/WebPlatformStrategies.h: Added, based on Mac and Win
+        versions.
+
 2010-09-18  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Antonio Gomes.

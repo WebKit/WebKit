@@ -1180,6 +1180,8 @@ SOURCES += \
     platform/text/transcoder/FontTranscoder.cpp \
     platform/UUID.cpp \
     platform/Widget.cpp \
+    platform/PlatformStrategies.cpp \
+    platform/LocalizedStrings.cpp \
     plugins/PluginDatabase.cpp \
     plugins/PluginDebug.cpp \
     plugins/PluginPackage.cpp \
@@ -2034,6 +2036,7 @@ HEADERS += \
     platform/text/LineEnding.h \
     platform/LinkHash.h \
     platform/Logging.h \
+    platform/Language.h \
     platform/MIMETypeRegistry.h \
     platform/network/AuthenticationChallengeBase.h \
     platform/network/AuthenticationClient.h \
@@ -2096,6 +2099,8 @@ HEADERS += \
     platform/ThreadTimers.h \
     platform/Timer.h \
     platform/Widget.h \
+    platform/PlatformStrategies.h \
+    platform/LocalizedStrings.h \
     plugins/DOMMimeTypeArray.h \
     plugins/DOMMimeType.h \
     plugins/DOMPluginArray.h \
@@ -2507,6 +2512,7 @@ HEADERS += \
     $$PWD/../WebKit/qt/WebCoreSupport/QtPlatformPlugin.h \
     $$PWD/../WebKit/qt/WebCoreSupport/PopupMenuQt.h \
     $$PWD/../WebKit/qt/WebCoreSupport/SearchPopupMenuQt.h \
+    $$PWD/../WebKit/qt/WebCoreSupport/WebPlatformStrategies.h \
     $$PWD/platform/network/qt/DnsPrefetchHelper.h
 
 v8 {
@@ -2571,7 +2577,6 @@ SOURCES += \
     platform/graphics/qt/SimpleFontDataQt.cpp \
     platform/graphics/qt/TileQt.cpp \
     platform/qt/KURLQt.cpp \
-    platform/qt/Localizations.cpp \
     platform/qt/MIMETypeRegistryQt.cpp \
     platform/qt/PasteboardQt.cpp \
     platform/qt/PlatformKeyboardEventQt.cpp \
@@ -2586,13 +2591,13 @@ SOURCES += \
     platform/qt/SharedTimerQt.cpp \
     platform/qt/SoundQt.cpp \
     platform/qt/LoggingQt.cpp \
+    platform/qt/Language.cpp \
     platform/qt/TemporaryLinkStubsQt.cpp \
     platform/text/qt/TextBoundariesQt.cpp \
     platform/text/qt/TextBreakIteratorQt.cpp \
     platform/text/qt/TextCodecQt.cpp \
     platform/qt/WheelEventQt.cpp \
     platform/qt/WidgetQt.cpp \
-    plugins/qt/PluginDataQt.cpp \
     ../WebKit/qt/WebCoreSupport/QtFallbackWebPopup.cpp \
     ../WebKit/qt/WebCoreSupport/ChromeClientQt.cpp \
     ../WebKit/qt/WebCoreSupport/ContextMenuClientQt.cpp \
@@ -2609,6 +2614,7 @@ SOURCES += \
     ../WebKit/qt/WebCoreSupport/PopupMenuQt.cpp \
     ../WebKit/qt/WebCoreSupport/QtPlatformPlugin.cpp \
     ../WebKit/qt/WebCoreSupport/SearchPopupMenuQt.cpp \
+    ../WebKit/qt/WebCoreSupport/WebPlatformStrategies.cpp \
     ../WebKit/qt/Api/qwebframe.cpp \
     ../WebKit/qt/Api/qgraphicswebview.cpp \
     ../WebKit/qt/Api/qwebpage.cpp \

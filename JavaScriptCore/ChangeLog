@@ -1,3 +1,14 @@
+2010-09-18  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Enable Platform Strategies on Qt
+
+        [Qt] Turn on PLATFORM_STRATEGIES
+        https://bugs.webkit.org/show_bug.cgi?id=45831
+
+        * wtf/Platform.h: Enable Platform Strategies when building QtWebkit
+
 2010-09-17  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

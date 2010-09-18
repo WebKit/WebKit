@@ -1,8 +1,9 @@
 /*
  * Copyright (C) 2007 Staikos Computing Services Inc. <info@staikos.net>
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
- *
- * All rights reserved.
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2008 Collabora Ltd. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 INdT - Instituto Nokia de Tecnologia
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -13,383 +14,491 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
- * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
-#include "LocalizedStrings.h"
+#include "WebPlatformStrategies.h"
 
-#include "IntSize.h"
 #include "NotImplemented.h"
-#include "PlatformString.h"
+#include <IntSize.h>
+#include <Page.h>
+#include <PageGroup.h>
+#include <PluginDatabase.h>
 #include <QCoreApplication>
 #include <QLocale>
+#include <qwebpage.h>
+#include <qwebpluginfactory.h>
 #include <wtf/MathExtras.h>
 
+using namespace WebCore;
 
-namespace WebCore {
-
-String submitButtonDefaultLabel()
+void WebPlatformStrategies::initialize(QWebPage* webPage)
 {
-    return QCoreApplication::translate("QWebPage", "Submit", "default label for Submit buttons in forms on web pages");
+    DEFINE_STATIC_LOCAL(WebPlatformStrategies, platformStrategies, (webPage));
+    Q_UNUSED(platformStrategies);
 }
 
-String inputElementAltText()
+WebPlatformStrategies::WebPlatformStrategies(QWebPage* webPage)
+    : m_page(webPage)
+{
+    setPlatformStrategies(this);
+}
+
+
+// PluginStrategy
+
+PluginStrategy* WebPlatformStrategies::createPluginStrategy()
+{
+    return this;
+}
+
+LocalizationStrategy* WebPlatformStrategies::createLocalizationStrategy()
+{
+    return this;
+}
+
+VisitedLinkStrategy* WebPlatformStrategies::createVisitedLinkStrategy()
+{
+    return this;
+}
+
+void WebPlatformStrategies::refreshPlugins()
+{
+    PluginDatabase::installedPlugins()->refresh();
+}
+
+void WebPlatformStrategies::getPluginInfo(Vector<WebCore::PluginInfo>& outPlugins)
+{
+    QWebPluginFactory* factory = m_page->pluginFactory();
+    if (factory) {
+
+        QList<QWebPluginFactory::Plugin> qplugins = factory->plugins();
+        for (int i = 0; i < qplugins.count(); ++i) {
+            const QWebPluginFactory::Plugin& qplugin = qplugins.at(i);
+            PluginInfo info;
+            info.name = qplugin.name;
+            info.desc = qplugin.description;
+
+            for (int j = 0; j < qplugin.mimeTypes.count(); ++j) {
+                const QWebPluginFactory::MimeType& mimeType = qplugin.mimeTypes.at(j);
+
+                MimeClassInfo mimeInfo;
+                mimeInfo.type = mimeType.name;
+                mimeInfo.desc = mimeType.description;
+                for (int k = 0; k < mimeType.fileExtensions.count(); ++k)
+                  mimeInfo.extensions.append(mimeType.fileExtensions.at(k));
+
+                info.mimes.append(mimeInfo);
+            }
+            outPlugins.append(info);
+        }
+    }
+
+    PluginDatabase* db = PluginDatabase::installedPlugins();
+    const Vector<PluginPackage*> &plugins = db->plugins();
+
+    outPlugins.resize(plugins.size());
+
+    for (unsigned int i = 0; i < plugins.size(); ++i) {
+        PluginInfo info;
+        PluginPackage* package = plugins[i];
+
+        info.name = package->name();
+        info.file = package->fileName();
+        info.desc = package->description();
+
+        const MIMEToDescriptionsMap& mimeToDescriptions = package->mimeToDescriptions();
+        MIMEToDescriptionsMap::const_iterator end = mimeToDescriptions.end();
+        for (MIMEToDescriptionsMap::const_iterator it = mimeToDescriptions.begin(); it != end; ++it) {
+            MimeClassInfo mime;
+
+            mime.type = it->first;
+            mime.desc = it->second;
+            mime.extensions = package->mimeToExtensions().get(mime.type);
+
+            info.mimes.append(mime);
+        }
+
+        outPlugins.append(info);
+    }
+
+}
+
+
+// LocalizationStrategy
+
+String WebPlatformStrategies::inputElementAltText()
 {
     return QCoreApplication::translate("QWebPage", "Submit", "Submit (input element) alt text for <input> elements with no alt, title, or value");
 }
 
-String resetButtonDefaultLabel()
+String WebPlatformStrategies::resetButtonDefaultLabel()
 {
     return QCoreApplication::translate("QWebPage", "Reset", "default label for Reset buttons in forms on web pages");
 }
 
-String defaultLanguage()
-{
-    QLocale locale;
-    return locale.name().replace("_", "-");
-}
-
-String searchableIndexIntroduction()
+String WebPlatformStrategies::searchableIndexIntroduction()
 {
     return QCoreApplication::translate("QWebPage", "This is a searchable index. Enter search keywords: ", "text that appears at the start of nearly-obsolete web pages in the form of a 'searchable index'");
 }
 
-String fileButtonChooseFileLabel()
+String WebPlatformStrategies::submitButtonDefaultLabel()
+{
+    return QCoreApplication::translate("QWebPage", "Submit", "default label for Submit buttons in forms on web pages");
+}
+
+String WebPlatformStrategies::fileButtonChooseFileLabel()
 {
     return QCoreApplication::translate("QWebPage", "Choose File", "title for file button used in HTML forms");
 }
 
-String fileButtonNoFileSelectedLabel()
+String WebPlatformStrategies::fileButtonNoFileSelectedLabel()
 {
     return QCoreApplication::translate("QWebPage", "No file selected", "text to display in file button used in HTML forms when no file is selected");
 }
 
-String contextMenuItemTagOpenLinkInNewWindow()
+String WebPlatformStrategies::contextMenuItemTagOpenLinkInNewWindow()
 {
     return QCoreApplication::translate("QWebPage", "Open in New Window", "Open in New Window context menu item");
 }
 
-String contextMenuItemTagDownloadLinkToDisk()
+String WebPlatformStrategies::contextMenuItemTagDownloadLinkToDisk()
 {
     return QCoreApplication::translate("QWebPage", "Save Link...", "Download Linked File context menu item");
 }
 
-String contextMenuItemTagCopyLinkToClipboard()
+String WebPlatformStrategies::contextMenuItemTagCopyLinkToClipboard()
 {
     return QCoreApplication::translate("QWebPage", "Copy Link", "Copy Link context menu item");
 }
 
-String contextMenuItemTagOpenImageInNewWindow()
+String WebPlatformStrategies::contextMenuItemTagOpenImageInNewWindow()
 {
     return QCoreApplication::translate("QWebPage", "Open Image", "Open Image in New Window context menu item");
 }
 
-String contextMenuItemTagDownloadImageToDisk()
+String WebPlatformStrategies::contextMenuItemTagDownloadImageToDisk()
 {
     return QCoreApplication::translate("QWebPage", "Save Image", "Download Image context menu item");
 }
 
-String contextMenuItemTagCopyImageToClipboard()
+String WebPlatformStrategies::contextMenuItemTagCopyImageToClipboard()
 {
     return QCoreApplication::translate("QWebPage", "Copy Image", "Copy Link context menu item");
 }
 
-String contextMenuItemTagOpenFrameInNewWindow()
+String WebPlatformStrategies::contextMenuItemTagOpenFrameInNewWindow()
 {
     return QCoreApplication::translate("QWebPage", "Open Frame", "Open Frame in New Window context menu item");
 }
 
-String contextMenuItemTagCopy()
+String WebPlatformStrategies::contextMenuItemTagCopy()
 {
     return QCoreApplication::translate("QWebPage", "Copy", "Copy context menu item");
 }
 
-String contextMenuItemTagGoBack()
+String WebPlatformStrategies::contextMenuItemTagGoBack()
 {
     return QCoreApplication::translate("QWebPage", "Go Back", "Back context menu item");
 }
 
-String contextMenuItemTagGoForward()
+String WebPlatformStrategies::contextMenuItemTagGoForward()
 {
     return QCoreApplication::translate("QWebPage", "Go Forward", "Forward context menu item");
 }
 
-String contextMenuItemTagStop()
+String WebPlatformStrategies::contextMenuItemTagStop()
 {
     return QCoreApplication::translate("QWebPage", "Stop", "Stop context menu item");
 }
 
-String contextMenuItemTagReload()
+String WebPlatformStrategies::contextMenuItemTagReload()
 {
     return QCoreApplication::translate("QWebPage", "Reload", "Reload context menu item");
 }
 
-String contextMenuItemTagCut()
+String WebPlatformStrategies::contextMenuItemTagCut()
 {
     return QCoreApplication::translate("QWebPage", "Cut", "Cut context menu item");
 }
 
-String contextMenuItemTagPaste()
+String WebPlatformStrategies::contextMenuItemTagPaste()
 {
     return QCoreApplication::translate("QWebPage", "Paste", "Paste context menu item");
 }
 
-String contextMenuItemTagNoGuessesFound()
+String WebPlatformStrategies::contextMenuItemTagNoGuessesFound()
 {
     return QCoreApplication::translate("QWebPage", "No Guesses Found", "No Guesses Found context menu item");
 }
 
-String contextMenuItemTagIgnoreSpelling()
+String WebPlatformStrategies::contextMenuItemTagIgnoreSpelling()
 {
     return QCoreApplication::translate("QWebPage", "Ignore", "Ignore Spelling context menu item");
 }
 
-String contextMenuItemTagLearnSpelling()
+String WebPlatformStrategies::contextMenuItemTagLearnSpelling()
 {
     return QCoreApplication::translate("QWebPage", "Add To Dictionary", "Learn Spelling context menu item");
 }
 
-String contextMenuItemTagSearchWeb()
+String WebPlatformStrategies::contextMenuItemTagSearchWeb()
 {
     return QCoreApplication::translate("QWebPage", "Search The Web", "Search The Web context menu item");
 }
 
-String contextMenuItemTagLookUpInDictionary()
+String WebPlatformStrategies::contextMenuItemTagLookUpInDictionary()
 {
     return QCoreApplication::translate("QWebPage", "Look Up In Dictionary", "Look Up in Dictionary context menu item");
 }
 
-String contextMenuItemTagOpenLink()
+String WebPlatformStrategies::contextMenuItemTagOpenLink()
 {
     return QCoreApplication::translate("QWebPage", "Open Link", "Open Link context menu item");
 }
 
-String contextMenuItemTagIgnoreGrammar()
+String WebPlatformStrategies::contextMenuItemTagIgnoreGrammar()
 {
     return QCoreApplication::translate("QWebPage", "Ignore", "Ignore Grammar context menu item");
 }
 
-String contextMenuItemTagSpellingMenu()
+String WebPlatformStrategies::contextMenuItemTagSpellingMenu()
 {
     return QCoreApplication::translate("QWebPage", "Spelling", "Spelling and Grammar context sub-menu item");
 }
 
-String contextMenuItemTagShowSpellingPanel(bool show)
+String WebPlatformStrategies::contextMenuItemTagShowSpellingPanel(bool show)
 {
     return show ? QCoreApplication::translate("QWebPage", "Show Spelling and Grammar", "menu item title") :
                   QCoreApplication::translate("QWebPage", "Hide Spelling and Grammar", "menu item title");
 }
 
-String contextMenuItemTagCheckSpelling()
+String WebPlatformStrategies::contextMenuItemTagCheckSpelling()
 {
     return QCoreApplication::translate("QWebPage", "Check Spelling", "Check spelling context menu item");
 }
 
-String contextMenuItemTagCheckSpellingWhileTyping()
+String WebPlatformStrategies::contextMenuItemTagCheckSpellingWhileTyping()
 {
     return QCoreApplication::translate("QWebPage", "Check Spelling While Typing", "Check spelling while typing context menu item");
 }
 
-String contextMenuItemTagCheckGrammarWithSpelling()
+String WebPlatformStrategies::contextMenuItemTagCheckGrammarWithSpelling()
 {
     return QCoreApplication::translate("QWebPage", "Check Grammar With Spelling", "Check grammar with spelling context menu item");
 }
 
-String contextMenuItemTagFontMenu()
+String WebPlatformStrategies::contextMenuItemTagFontMenu()
 {
     return QCoreApplication::translate("QWebPage", "Fonts", "Font context sub-menu item");
 }
 
-String contextMenuItemTagBold()
+String WebPlatformStrategies::contextMenuItemTagBold()
 {
     return QCoreApplication::translate("QWebPage", "Bold", "Bold context menu item");
 }
 
-String contextMenuItemTagItalic()
+String WebPlatformStrategies::contextMenuItemTagItalic()
 {
     return QCoreApplication::translate("QWebPage", "Italic", "Italic context menu item");
 }
 
-String contextMenuItemTagUnderline()
+String WebPlatformStrategies::contextMenuItemTagUnderline()
 {
     return QCoreApplication::translate("QWebPage", "Underline", "Underline context menu item");
 }
 
-String contextMenuItemTagOutline()
+String WebPlatformStrategies::contextMenuItemTagOutline()
 {
     return QCoreApplication::translate("QWebPage", "Outline", "Outline context menu item");
 }
 
-String contextMenuItemTagWritingDirectionMenu()
+String WebPlatformStrategies::contextMenuItemTagWritingDirectionMenu()
 {
     return QCoreApplication::translate("QWebPage", "Direction", "Writing direction context sub-menu item");
 }
 
-String contextMenuItemTagTextDirectionMenu()
+String WebPlatformStrategies::contextMenuItemTagTextDirectionMenu()
 {
     return QCoreApplication::translate("QWebPage", "Text Direction", "Text direction context sub-menu item");
 }
 
-String contextMenuItemTagDefaultDirection()
+String WebPlatformStrategies::contextMenuItemTagDefaultDirection()
 {
     return QCoreApplication::translate("QWebPage", "Default", "Default writing direction context menu item");
 }
 
-String contextMenuItemTagLeftToRight()
+String WebPlatformStrategies::contextMenuItemTagLeftToRight()
 {
     return QCoreApplication::translate("QWebPage", "Left to Right", "Left to Right context menu item");
 }
 
-String contextMenuItemTagRightToLeft()
+String WebPlatformStrategies::contextMenuItemTagRightToLeft()
 {
     return QCoreApplication::translate("QWebPage", "Right to Left", "Right to Left context menu item");
 }
 
-String contextMenuItemTagInspectElement()
+String WebPlatformStrategies::contextMenuItemTagInspectElement()
 {
     return QCoreApplication::translate("QWebPage", "Inspect", "Inspect Element context menu item");
 }
 
-String searchMenuNoRecentSearchesText()
+String WebPlatformStrategies::searchMenuNoRecentSearchesText()
 {
     return QCoreApplication::translate("QWebPage", "No recent searches", "Label for only item in menu that appears when clicking on the search field image, when no searches have been performed");
 }
 
-String searchMenuRecentSearchesText()
+String WebPlatformStrategies::searchMenuRecentSearchesText()
 {
     return QCoreApplication::translate("QWebPage", "Recent searches", "label for first item in the menu that appears when clicking on the search field image, used as embedded menu title");
 }
 
-String searchMenuClearRecentSearchesText()
+String WebPlatformStrategies::searchMenuClearRecentSearchesText()
 {
     return QCoreApplication::translate("QWebPage", "Clear recent searches", "menu item in Recent Searches menu that empties menu's contents");
 }
 
-String AXWebAreaText()
-{
-    return String();
-}
-
-String AXLinkText()
-{
-    return String();
-}
-
-String AXListMarkerText()
-{
-    return String();
-}
-
-String AXImageMapText()
-{
-    return String();
-}
-
-String AXHeadingText()
-{
-    return String();
-}
-
-String AXDefinitionListTermText()
-{
-    return String();
-}
-
-String AXDefinitionListDefinitionText()
-{
-    return String();
-}
-
-String AXButtonActionVerb()
-{
-    return String();
-}
-
-String AXRadioButtonActionVerb()
-{
-    return String();
-}
-
-String AXTextFieldActionVerb()
-{
-    return String();
-}
-
-String AXCheckedCheckBoxActionVerb()
-{
-    return String();
-}
-
-String AXUncheckedCheckBoxActionVerb()
-{
-    return String();
-}
-
-String AXLinkActionVerb()
-{
-    return String();
-}
-
-String AXMenuListPopupActionVerb()
-{
-    return String();
-}
-
-String AXMenuListActionVerb()
-{
-    return String();
-}
-
-String missingPluginText()
-{
-    return QCoreApplication::translate("QWebPage", "Missing Plug-in", "Label text to be used when a plug-in is missing");
-}
-
-String crashedPluginText()
+String WebPlatformStrategies::AXWebAreaText()
 {
     notImplemented();
     return String();
 }
 
-String multipleFileUploadText(unsigned)
+String WebPlatformStrategies::AXLinkText()
 {
+    notImplemented();
     return String();
 }
 
-String unknownFileSizeText()
+String WebPlatformStrategies::AXListMarkerText()
+{
+    notImplemented();
+    return String();
+}
+
+String WebPlatformStrategies::AXImageMapText()
+{
+    notImplemented();
+    return String();
+}
+
+String WebPlatformStrategies::AXHeadingText()
+{
+    notImplemented();
+    return String();
+}
+
+String WebPlatformStrategies::AXDefinitionListTermText()
+{
+    notImplemented();
+    return String();
+}
+
+String WebPlatformStrategies::AXDefinitionListDefinitionText()
+{
+    notImplemented();
+    return String();
+}
+
+String WebPlatformStrategies::AXButtonActionVerb()
+{
+    notImplemented();
+    return String();
+}
+
+String WebPlatformStrategies::AXRadioButtonActionVerb()
+{
+    notImplemented();
+    return String();
+}
+
+String WebPlatformStrategies::AXTextFieldActionVerb()
+{
+    notImplemented();
+    return String();
+}
+
+String WebPlatformStrategies::AXCheckedCheckBoxActionVerb()
+{
+    notImplemented();
+    return String();
+}
+
+String WebPlatformStrategies::AXUncheckedCheckBoxActionVerb()
+{
+    notImplemented();
+    return String();
+}
+
+String WebPlatformStrategies::AXMenuListActionVerb()
+{
+    notImplemented();
+    return String();
+}
+
+String WebPlatformStrategies::AXMenuListPopupActionVerb()
+{
+    notImplemented();
+    return String();
+}
+
+String WebPlatformStrategies::AXLinkActionVerb()
+{
+    notImplemented();
+    return String();
+}
+
+String WebPlatformStrategies::missingPluginText()
+{
+    return QCoreApplication::translate("QWebPage", "Missing Plug-in", "Label text to be used when a plug-in is missing");
+}
+
+String WebPlatformStrategies::crashedPluginText()
+{
+    notImplemented();
+    return String();
+}
+
+String WebPlatformStrategies::multipleFileUploadText(unsigned)
+{
+    notImplemented();
+    return String();
+}
+
+String WebPlatformStrategies::unknownFileSizeText()
 {
     return QCoreApplication::translate("QWebPage", "Unknown", "Unknown filesize FTP directory listing item");
 }
 
-String imageTitle(const String& filename, const IntSize& size)
+String WebPlatformStrategies::imageTitle(const String& filename, const IntSize& size)
 {
     return QCoreApplication::translate("QWebPage", "%1 (%2x%3 pixels)", "Title string for images").arg(filename).arg(size.width()).arg(size.height());
 }
 
-String mediaElementLoadingStateText()
+String WebPlatformStrategies::mediaElementLoadingStateText()
 {
     return QCoreApplication::translate("QWebPage", "Loading...", "Media controller status message when the media is loading");
 }
 
-String mediaElementLiveBroadcastStateText()
+String WebPlatformStrategies::mediaElementLiveBroadcastStateText()
 {
     return QCoreApplication::translate("QWebPage", "Live Broadcast", "Media controller status message when watching a live broadcast");
 }
 
 #if ENABLE(VIDEO)
 
-String localizedMediaControlElementString(const String& name)
+String WebPlatformStrategies::localizedMediaControlElementString(const String& name)
 {
     if (name == "AudioElement")
         return QCoreApplication::translate("QWebPage", "Audio Element", "Media controller element");
@@ -427,7 +536,7 @@ String localizedMediaControlElementString(const String& name)
     return String();
 }
 
-String localizedMediaControlElementHelpText(const String& name)
+String WebPlatformStrategies::localizedMediaControlElementHelpText(const String& name)
 {
     if (name == "AudioElement")
         return QCoreApplication::translate("QWebPage", "Audio element playback controls and status display", "Media controller element");
@@ -466,7 +575,7 @@ String localizedMediaControlElementHelpText(const String& name)
     return String();
 }
 
-String localizedMediaTimeDescription(float time)
+String WebPlatformStrategies::localizedMediaTimeDescription(float time)
 {
     if (!isfinite(time))
         return QCoreApplication::translate("QWebPage", "Indefinite time", "Media time description");
@@ -488,49 +597,79 @@ String localizedMediaTimeDescription(float time)
 
     return QCoreApplication::translate("QWebPage", "%1 seconds", "Media time description").arg(seconds);
 }
+
+#else // ENABLE(VIDEO)
+// FIXME: #if ENABLE(VIDEO) should be in the base class
+
+String WebPlatformStrategies::localizedMediaControlElementString(const String& name)
+{
+    return String();
+}
+
+String WebPlatformStrategies::localizedMediaControlElementHelpText(const String& name)
+{
+    return String();
+}
+
+String WebPlatformStrategies::localizedMediaTimeDescription(float time)
+{
+    return String();
+}
+
 #endif // ENABLE(VIDEO)
 
-String validationMessageValueMissingText()
+
+String WebPlatformStrategies::validationMessageValueMissingText()
 {
     notImplemented();
     return String();
 }
 
-String validationMessageTypeMismatchText()
+String WebPlatformStrategies::validationMessageTypeMismatchText()
 {
     notImplemented();
     return String();
 }
 
-String validationMessagePatternMismatchText()
+String WebPlatformStrategies::validationMessagePatternMismatchText()
 {
     notImplemented();
     return String();
 }
 
-String validationMessageTooLongText()
+String WebPlatformStrategies::validationMessageTooLongText()
 {
     notImplemented();
     return String();
 }
 
-String validationMessageRangeUnderflowText()
+String WebPlatformStrategies::validationMessageRangeUnderflowText()
 {
     notImplemented();
     return String();
 }
 
-String validationMessageRangeOverflowText()
+String WebPlatformStrategies::validationMessageRangeOverflowText()
 {
     notImplemented();
     return String();
 }
 
-String validationMessageStepMismatchText()
+String WebPlatformStrategies::validationMessageStepMismatchText()
 {
     notImplemented();
     return String();
 }
 
+
+// VisitedLinkStrategy
+
+bool WebPlatformStrategies::isLinkVisited(Page* page, LinkHash hash)
+{
+    return page->group().isLinkVisited(hash);
 }
-// vim: ts=4 sw=4 et
+
+void WebPlatformStrategies::addVisitedLink(Page* page, LinkHash hash)
+{
+    page->group().addVisitedLinkHash(hash);
+}

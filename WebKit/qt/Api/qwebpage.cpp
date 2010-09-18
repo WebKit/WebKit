@@ -78,6 +78,7 @@
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "WindowFeatures.h"
+#include "WebPlatformStrategies.h"
 #include "LocalizedStrings.h"
 #include "Cache.h"
 #include "runtime/InitializeThreading.h"
@@ -270,6 +271,8 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
 #if QT_VERSION < QT_VERSION_CHECK(4, 7, 0)
     WebCore::Font::setCodePath(WebCore::Font::Complex);
 #endif
+
+    WebPlatformStrategies::initialize(qq);
 
     Page::PageClients pageClients;
     pageClients.chromeClient = new ChromeClientQt(q);

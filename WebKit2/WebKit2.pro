@@ -259,6 +259,7 @@ HEADERS += \
     WebProcess/WebCoreSupport/WebInspectorClient.h \
     WebProcess/WebCoreSupport/WebPopupMenu.h \
     WebProcess/WebCoreSupport/WebSearchPopupMenu.h \
+    WebProcess/WebCoreSupport/WebPlatformStrategies.h \
     WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.h \
     WebProcess/WebPage/ChunkedUpdateDrawingArea.h \
     WebProcess/WebPage/DrawingArea.h \
@@ -374,6 +375,7 @@ SOURCES += \
     WebProcess/WebCoreSupport/WebBackForwardControllerClient.cpp \
     WebProcess/WebCoreSupport/WebPopupMenu.cpp \
     WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp \
+    WebProcess/WebCoreSupport/WebPlatformStrategies.cpp \
     WebProcess/WebCoreSupport/qt/WebErrorsQt.cpp \
     WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.cpp \
     WebProcess/WebPage/ChunkedUpdateDrawingArea.cpp \
