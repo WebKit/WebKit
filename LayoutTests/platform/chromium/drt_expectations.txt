@@ -157,13 +157,5 @@ BUG_DRT WIN : svg/text/text-intro-05-t.svg = IMAGE
 BUG_DRT WIN : userscripts/user-script-audio-document.html = TEXT
 BUG_DRT WIN : userscripts/user-script-video-document.html = TEXT
 
-// Windows failures from the new build slave (some may be Vista/XP diffs)
-BUG_DRT WIN : css2.1/t0805-c5519-brdr-r-01-e.html = IMAGE+TEXT
-BUG_DRT WIN : css2.1/t0905-c414-flt-fit-01-d-g.html = IMAGE+TEXT
-BUG_DRT WIN : css2.1/t0905-c5525-fltblck-00-d-ag.html = IMAGE+TEXT
-BUG_DRT WIN : css2.1/t0905-c5525-flthw-00-c-g.html = IMAGE+TEXT
-BUG_DRT WIN : css2.1/t0905-c5526-flthw-00-c-g.html = IMAGE+TEXT
-
-
 // Pass with DRT though FAIL on test_shell
 BUG_DRT : platform/chromium/accessibility = PASS
