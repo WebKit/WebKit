@@ -96,7 +96,7 @@ void computePageRectsForFrame(Frame* frame, const IntRect& printRect, float head
     float printedPagesHeight = 0.0;
     do {
         float proposedBottom = min(docHeight, printedPagesHeight + pageHeight);
-        frame->view()->adjustPageHeight(&proposedBottom, printedPagesHeight, proposedBottom, printedPagesHeight);
+        frame->view()->adjustPageHeightDeprecated(&proposedBottom, printedPagesHeight, proposedBottom, printedPagesHeight);
         currPageHeight = max(1.0f, proposedBottom - printedPagesHeight);
 
         pages.append(IntRect(0, printedPagesHeight, currPageWidth, currPageHeight));
@@ -109,7 +109,7 @@ HBITMAP imageFromSelection(Frame* frame, bool forceBlackText)
     if (!frame->view())
         return 0;
 
-    frame->view()->setPaintRestriction(forceBlackText ? PaintRestrictionSelectionOnlyBlackText : PaintRestrictionSelectionOnly);
+    frame->view()->setPaintBehavior(PaintBehaviorSelectionOnly | (forceBlackText ? PaintBehaviorForceBlackText : 0));
     FloatRect fr = frame->selection()->bounds();
     IntRect ir((int)fr.x(), (int)fr.y(), (int)fr.width(), (int)fr.height());
     if (ir.isEmpty())
@@ -120,8 +120,8 @@ HBITMAP imageFromSelection(Frame* frame, bool forceBlackText)
     FrameView* view = frame->view();
     if (view->parent()) {
         ir.setLocation(view->parent()->convertChildToSelf(view, ir.location()));
-        w = ir.width() * view->zoomFactor() + 0.5;
-        h = ir.height() * view->zoomFactor() + 0.5;
+        w = ir.width() * frame->pageZoomFactor() + 0.5;
+        h = ir.height() * frame->pageZoomFactor() + 0.5;
     } else {
         ir = view->contentsToWindow(ir);
         w = ir.width();
@@ -143,7 +143,7 @@ HBITMAP imageFromSelection(Frame* frame, bool forceBlackText)
 
     SelectObject(bmpDC.get(), hbmpOld);
 
-    frame->view()->setPaintRestriction(PaintRestrictionNone);
+    frame->view()->setPaintBehavior(PaintBehaviorNormal);
 
     return hBmp;
 }

@@ -1,3 +1,13 @@
+2010-09-18  Patrick Gansterer  <paroga@paroga.com>
+
+        Unreviewed.
+
+        [WINCE] Buildfix for FrameWince.cpp after r51353, r67762 and r67771.
+
+        * page/wince/FrameWince.cpp:
+        (WebCore::computePageRectsForFrame):
+        (WebCore::imageFromSelection):
+
 2010-09-18  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, a trivial change.
