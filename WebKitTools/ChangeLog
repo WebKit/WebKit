@@ -1,3 +1,11 @@
+2010-09-17  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Adding a shell script I use to run the
+        commit-queue. Now that multiple machines run the cq,
+        it makes sense to share the script between them.
+
+        * EWSTools/start-commit-queue.sh: Added.
+
 2010-09-17  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Jon Honeycutt.
