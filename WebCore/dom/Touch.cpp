@@ -40,7 +40,7 @@ static int contentsX(Frame* frame)
     FrameView* frameView = frame->view();
     if (!frameView)
         return 0;
-    return frameView->scrollX() / frameView->pageZoomFactor();
+    return frameView->scrollX() / frame->pageZoomFactor();
 }
 
 static int contentsY(Frame* frame)
@@ -50,11 +50,10 @@ static int contentsY(Frame* frame)
     FrameView* frameView = frame->view();
     if (!frameView)
         return 0;
-    return frameView->scrollY() / frameView->pageZoomFactor();
+    return frameView->scrollY() / frame->pageZoomFactor();
 }
 
-Touch::Touch(Frame* frame, EventTarget* target, unsigned identifier, 
-        int screenX, int screenY, int pageX, int pageY)
+Touch::Touch(Frame* frame, EventTarget* target, unsigned identifier, int screenX, int screenY, int pageX, int pageY)
     : m_target(target)
     , m_identifier(identifier)
     , m_clientX(pageX - contentsX(frame))
@@ -69,4 +68,3 @@ Touch::Touch(Frame* frame, EventTarget* target, unsigned identifier,
 } // namespace WebCore
 
 #endif
-

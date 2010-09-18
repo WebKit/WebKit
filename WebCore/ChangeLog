@@ -1,5 +1,14 @@
 2010-09-17  Darin Adler  <darin@apple.com>
 
+        Build fix for platforms that compile Touch.
+
+        * dom/Touch.cpp:
+        (WebCore::contentsX):
+        (WebCore::contentsY):
+        Get zoom factor from Frame rather than FrameView.
+
+2010-09-17  Darin Adler  <darin@apple.com>
+
         Reviewed by Sam Weinig.
 
         REGRESSION (r60104): Zoom level is unexpectedly reset on page reload
