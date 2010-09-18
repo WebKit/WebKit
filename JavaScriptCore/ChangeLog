@@ -1,3 +1,40 @@
+2010-09-18  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Added code to unroll regular expressions containing ^.
+        Alternatives that begin with ^ are tagged during parsing
+        and rolled up in containing sub expression structs.
+        After parsing, a regular expression flagged as containing
+        a ^ (a.k.a. BOL) is processed further in optimizeBOL().
+        A copy of the disjunction is made excluding alternatives that
+        are rooted with BOL.  The original alternatives are flagged
+        to only be executed once.  The copy of the other alternatives are
+        added to the original expression.
+        In the case that all original alternatives are flagged, there
+        won't be any looping alternatives.
+        The JIT generator will emit code accordingly, executing the
+        original alternatives once and then looping over the
+        alternatives that aren't anchored with a BOL (if any).
+        https://bugs.webkit.org/show_bug.cgi?id=45787
+
+        * yarr/RegexCompiler.cpp:
+        (JSC::Yarr::RegexPatternConstructor::assertionBOL):
+        (JSC::Yarr::RegexPatternConstructor::atomParenthesesEnd):
+        (JSC::Yarr::RegexPatternConstructor::copyDisjunction):
+        (JSC::Yarr::RegexPatternConstructor::copyTerm):
+        (JSC::Yarr::RegexPatternConstructor::optimizeBOL):
+        (JSC::Yarr::compileRegex):
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::generateDisjunction):
+        * yarr/RegexPattern.h:
+        (JSC::Yarr::PatternAlternative::PatternAlternative):
+        (JSC::Yarr::PatternAlternative::setOnceThrough):
+        (JSC::Yarr::PatternAlternative::onceThrough):
+        (JSC::Yarr::PatternDisjunction::PatternDisjunction):
+        (JSC::Yarr::RegexPattern::RegexPattern):
+        (JSC::Yarr::RegexPattern::reset):
+
 2010-09-18  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Darin Adler.

@@ -1,3 +1,15 @@
+2010-09-18  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Added new tests to check for proper handling of ^ in multiline
+        regular expressions.  Added as part of
+        https://bugs.webkit.org/show_bug.cgi?id=45787
+
+        * fast/js/regexp-bol-with-multiline-expected.txt: Added.
+        * fast/js/regexp-bol-with-multiline.html: Added.
+        * fast/js/script-tests/regexp-bol-with-multiline.js: Added.
+
 2010-09-18  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Remove duplicate expectations from platform/chromium-win-xp.

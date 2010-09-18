@@ -207,6 +207,10 @@ struct PatternTerm {
 struct PatternAlternative : FastAllocBase {
     PatternAlternative(PatternDisjunction* disjunction)
         : m_parent(disjunction)
+        , m_onceThrough(false)
+        , m_hasFixedSize(false)
+        , m_startsWithBOL(false)
+        , m_containsBOL(false)
     {
     }
 
@@ -221,16 +225,30 @@ struct PatternAlternative : FastAllocBase {
         ASSERT(m_terms.size());
         m_terms.shrink(m_terms.size() - 1);
     }
+    
+    void setOnceThrough()
+    {
+        m_onceThrough = true;
+    }
+    
+    bool onceThrough()
+    {
+        return m_onceThrough;
+    }
 
     Vector<PatternTerm> m_terms;
     PatternDisjunction* m_parent;
     unsigned m_minimumSize;
-    bool m_hasFixedSize;
+    bool m_onceThrough : 1;
+    bool m_hasFixedSize : 1;
+    bool m_startsWithBOL : 1;
+    bool m_containsBOL : 1;
 };
 
 struct PatternDisjunction : FastAllocBase {
     PatternDisjunction(PatternAlternative* parent = 0)
         : m_parent(parent)
+        , m_hasFixedSize(false)
     {
     }
     
@@ -269,9 +287,10 @@ struct RegexPattern {
     RegexPattern(bool ignoreCase, bool multiline)
         : m_ignoreCase(ignoreCase)
         , m_multiline(multiline)
+        , m_containsBackreferences(false)
+        , m_containsBOL(false)
         , m_numSubpatterns(0)
         , m_maxBackReference(0)
-        , m_containsBackreferences(false)
         , newlineCached(0)
         , digitsCached(0)
         , spacesCached(0)
@@ -294,6 +313,7 @@ struct RegexPattern {
         m_maxBackReference = 0;
 
         m_containsBackreferences = false;
+        m_containsBOL = false;
 
         newlineCached = 0;
         digitsCached = 0;
@@ -357,11 +377,12 @@ struct RegexPattern {
         return nonwordcharCached;
     }
 
-    bool m_ignoreCase;
-    bool m_multiline;
+    bool m_ignoreCase : 1;
+    bool m_multiline : 1;
+    bool m_containsBackreferences : 1;
+    bool m_containsBOL : 1;
     unsigned m_numSubpatterns;
     unsigned m_maxBackReference;
-    bool m_containsBackreferences;
     PatternDisjunction* m_body;
     Vector<PatternDisjunction*, 4> m_disjunctions;
     Vector<CharacterClass*> m_userCharacterClasses;

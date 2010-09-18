@@ -1207,21 +1207,26 @@ class RegexGenerator : private MacroAssembler {
         TermGenerationState state(disjunction, 0);
         state.resetAlternative();
 
-        // Plant a check to see if there is sufficient input available to run the first alternative.
-        // Jumping back to the label 'firstAlternative' will get to this check, jumping to
-        // 'firstAlternativeInputChecked' will jump directly to matching the alternative having
-        // skipped this check.
-
-        Label firstAlternative(this);
-
         // check availability for the next alternative
         int countCheckedForCurrentAlternative = 0;
         int countToCheckForFirstAlternative = 0;
         bool hasShorterAlternatives = false;
+        bool setRepeatAlternativeLabels = false;
         JumpList notEnoughInputForPreviousAlternative;
+        Label firstAlternative;
+        Label firstAlternativeInputChecked;
 
+        // The label 'firstAlternative' is used to plant a check to see if there is 
+        // sufficient input available to run the first repeating alternative.
+        // The label 'firstAlternativeInputChecked' will jump directly to matching 
+        // the first repeating alternative having skipped this check.
+        
         if (state.alternativeValid()) {
             PatternAlternative* alternative = state.alternative();
+            if (!alternative->onceThrough()) {
+                firstAlternative = Label(this);
+                setRepeatAlternativeLabels = true;
+            }
             countToCheckForFirstAlternative = alternative->m_minimumSize;
             state.checkedTotal += countToCheckForFirstAlternative;
             if (countToCheckForFirstAlternative)
@@ -1229,7 +1234,8 @@ class RegexGenerator : private MacroAssembler {
             countCheckedForCurrentAlternative = countToCheckForFirstAlternative;
         }
 
-        Label firstAlternativeInputChecked(this);
+        if (setRepeatAlternativeLabels)
+            firstAlternativeInputChecked = Label(this);
 
         while (state.alternativeValid()) {
             // Track whether any alternatives are shorter than the first one.
@@ -1264,6 +1270,17 @@ class RegexGenerator : private MacroAssembler {
             // if there are any more alternatives, plant the check for input before looping.
             if (state.alternativeValid()) {
                 PatternAlternative* nextAlternative = state.alternative();
+                bool setAlternativeLoopLabel = false;
+                if (!setRepeatAlternativeLabels && !nextAlternative->onceThrough()) {
+                    // We have handled non-repeating alternatives, jump to next iteration 
+                    // and loop over repeating alternatives.
+                    state.jumpToBacktrack(jump(), this);
+
+                    firstAlternative = Label(this);
+                    setRepeatAlternativeLabels = true;
+                    setAlternativeLoopLabel = true;
+                }
+                
                 int countToCheckForNextAlternative = nextAlternative->m_minimumSize;
 
                 if (countCheckedForCurrentAlternative > countToCheckForNextAlternative) { // CASE 1: current alternative was longer than the next one.
@@ -1302,6 +1319,12 @@ class RegexGenerator : private MacroAssembler {
                     state.linkAlternativeBacktracks(this);
                 }
 
+                if (setAlternativeLoopLabel) {
+                    firstAlternativeInputChecked = Label(this);
+                    countToCheckForFirstAlternative = countToCheckForNextAlternative;
+                    setAlternativeLoopLabel = true;
+                }
+                
                 state.checkedTotal -= countCheckedForCurrentAlternative;
                 countCheckedForCurrentAlternative = countToCheckForNextAlternative;
                 state.checkedTotal += countCheckedForCurrentAlternative;
@@ -1358,29 +1381,33 @@ class RegexGenerator : private MacroAssembler {
             } else
                 store32(index, Address(output));
         }
-        // Check if there is sufficent input to run the first alternative again.
-        jumpIfAvailableInput(incrementForNextIter).linkTo(firstAlternativeInputChecked, this);
-        // No - insufficent input to run the first alteranative, are there any other alternatives we
-        // might need to check?  If so, the last check will have left the index incremented by
-        // (countToCheckForFirstAlternative + 1), so we need test whether countToCheckForFirstAlternative
-        // LESS input is available, to have the effect of just progressing the start position by 1
-        // from the last iteration.  If this check passes we can just jump up to the check associated
-        // with the first alternative in the loop.  This is a bit sad, since we'll end up trying the
-        // first alternative again, and this check will fail (otherwise the check planted just above
-        // here would have passed).  This is a bit sad, however it saves trying to do something more
-        // complex here in compilation, and in the common case we should end up coallescing the checks.
-        //
-        // FIXME: a nice improvement here may be to stop trying to match sooner, based on the least
-        // of the minimum-alternative-lengths.  E.g. if I have two alternatives of length 200 and 150,
-        // and a string of length 100, we'll end up looping index from 0 to 100, checking whether there
-        // is sufficient input to run either alternative (constantly failing).  If there had been only
-        // one alternative, or if the shorter alternative had come first, we would have terminated
-        // immediately. :-/
-        if (hasShorterAlternatives)
-            jumpIfAvailableInput(-countToCheckForFirstAlternative).linkTo(firstAlternative, this);
-        // index will now be a bit garbled (depending on whether 'hasShorterAlternatives' is true,
-        // it has either been incremented by 1 or by (countToCheckForFirstAlternative + 1) ... 
-        // but since we're about to return a failure this doesn't really matter!)
+        
+        // Loop if there are repeating alternatives.
+        if (setRepeatAlternativeLabels) {
+            // Check if there is sufficent input to run the first alternative again.
+            jumpIfAvailableInput(incrementForNextIter).linkTo(firstAlternativeInputChecked, this);
+            // No - insufficent input to run the first alteranative, are there any other alternatives we
+            // might need to check?  If so, the last check will have left the index incremented by
+            // (countToCheckForFirstAlternative + 1), so we need test whether countToCheckForFirstAlternative
+            // LESS input is available, to have the effect of just progressing the start position by 1
+            // from the last iteration.  If this check passes we can just jump up to the check associated
+            // with the first alternative in the loop.  This is a bit sad, since we'll end up trying the
+            // first alternative again, and this check will fail (otherwise the check planted just above
+            // here would have passed).  This is a bit sad, however it saves trying to do something more
+            // complex here in compilation, and in the common case we should end up coallescing the checks.
+            //
+            // FIXME: a nice improvement here may be to stop trying to match sooner, based on the least
+            // of the minimum-alternative-lengths.  E.g. if I have two alternatives of length 200 and 150,
+            // and a string of length 100, we'll end up looping index from 0 to 100, checking whether there
+            // is sufficient input to run either alternative (constantly failing).  If there had been only
+            // one alternative, or if the shorter alternative had come first, we would have terminated
+            // immediately. :-/
+            if (hasShorterAlternatives)
+                jumpIfAvailableInput(-countToCheckForFirstAlternative).linkTo(firstAlternative, this);
+            // index will now be a bit garbled (depending on whether 'hasShorterAlternatives' is true,
+            // it has either been incremented by 1 or by (countToCheckForFirstAlternative + 1) ... 
+            // but since we're about to return a failure this doesn't really matter!)
+        }
 
         if (m_pattern.m_body->m_callFrameSize)
             addPtr(Imm32(m_pattern.m_body->m_callFrameSize * sizeof(void*)), stackPointerRegister);
