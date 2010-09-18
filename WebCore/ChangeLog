@@ -1,3 +1,13 @@
+2010-09-17  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, build fix.
+
+        Move calls from frameView->pageZoomFactor() to frame->pageZoomFactor().
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleTouchEvent): Removed a helper function,
+            added direct calls to frame->pageZoomFactor().
+
 2010-09-17  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.

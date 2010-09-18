@@ -2800,12 +2800,6 @@ static PassRefPtr<TouchList> assembleTargetTouches(Touch* touchTarget, TouchList
     return targetTouches.release();
 }
 
-static float pageZoomFactor(Frame* frame)
-{
-    FrameView* view = frame->view();
-    return view ? view->pageZoomFactor() : 1.0f;
-}
-
 bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
 {
     RefPtr<TouchList> touches = TouchList::create();
@@ -2862,8 +2856,8 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
             pagePoint = documentPointForWindowPoint(doc->frame(), point.pos());
         }
 
-        int adjustedPageX = lroundf(pagePoint.x() / pageZoomFactor(m_frame));
-        int adjustedPageY = lroundf(pagePoint.y() / pageZoomFactor(m_frame));
+        int adjustedPageX = lroundf(pagePoint.x() / m_frame->pageZoomFactor());
+        int adjustedPageY = lroundf(pagePoint.y() / m_frame->pageZoomFactor());
 
         // Increment the platform touch id by 1 to avoid storing a key of 0 in the hashmap.
         unsigned touchPointTargetKey = point.id() + 1;
