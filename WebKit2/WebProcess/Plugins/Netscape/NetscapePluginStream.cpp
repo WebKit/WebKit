@@ -142,7 +142,7 @@ static bool isSupportedTransferMode(uint16_t transferMode)
     return false;
 }
     
-bool NetscapePluginStream::start(const WTF::String& responseURLString, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers)
+bool NetscapePluginStream::start(const String& responseURLString, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers)
 {
     m_responseURL = responseURLString.utf8();
     m_mimeType = mimeType.utf8();

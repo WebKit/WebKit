@@ -47,9 +47,9 @@ public:
     PassRefPtr<WebPageProxy> createNewPage(WebPageProxy*);
     void showPage(WebPageProxy*);
     void close(WebPageProxy*);
-    void runJavaScriptAlert(WebPageProxy*, const WTF::String&, WebFrameProxy*);
-    bool runJavaScriptConfirm(WebPageProxy*, const WTF::String&, WebFrameProxy*);
-    WTF::String runJavaScriptPrompt(WebPageProxy*, const WTF::String&, const WTF::String&, WebFrameProxy*);
+    void runJavaScriptAlert(WebPageProxy*, const String&, WebFrameProxy*);
+    bool runJavaScriptConfirm(WebPageProxy*, const String&, WebFrameProxy*);
+    String runJavaScriptPrompt(WebPageProxy*, const String&, const String&, WebFrameProxy*);
     void setStatusText(WebPageProxy*, const String&);
     void contentsSizeChanged(WebPageProxy*, const WebCore::IntSize&, WebFrameProxy*);
 

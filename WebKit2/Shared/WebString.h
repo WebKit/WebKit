@@ -38,7 +38,7 @@ class WebString : public APIObject {
 public:
     static const Type APIType = TypeString;
 
-    static PassRefPtr<WebString> create(const WTF::String& string)
+    static PassRefPtr<WebString> create(const String& string)
     {
         return adoptRef(new WebString(string));
     }
@@ -46,17 +46,17 @@ public:
     bool isNull() const { return m_string.isNull(); }
     bool isEmpty() const { return m_string.isEmpty(); }
 
-    const WTF::String& string() const { return m_string; }
+    const String& string() const { return m_string; }
 
 private:
-    WebString(const WTF::String& string)
+    WebString(const String& string)
         : m_string(string)
     {
     }
 
     virtual Type type() const { return APIType; }
 
-    WTF::String m_string;
+    String m_string;
 };
 
 } // namespace WebKit

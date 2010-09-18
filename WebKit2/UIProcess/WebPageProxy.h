@@ -77,9 +77,9 @@ class WebURLRequest;
 class WebWheelEvent;
 struct WebNavigationDataStore;
 
-typedef GenericCallback<WKStringRef, WTF::StringImpl*> FrameSourceCallback;
-typedef GenericCallback<WKStringRef, WTF::StringImpl*> RenderTreeExternalRepresentationCallback;
-typedef GenericCallback<WKStringRef, WTF::StringImpl*> ScriptReturnValueCallback;
+typedef GenericCallback<WKStringRef, StringImpl*> FrameSourceCallback;
+typedef GenericCallback<WKStringRef, StringImpl*> RenderTreeExternalRepresentationCallback;
+typedef GenericCallback<WKStringRef, StringImpl*> ScriptReturnValueCallback;
 
 class WebPageProxy : public APIObject {
 public:
@@ -112,7 +112,7 @@ public:
     bool tryClose();
     bool isClosed() const { return m_closed; }
 
-    void loadURL(const WTF::String&);
+    void loadURL(const String&);
     void loadURLRequest(WebURLRequest*);
 
     void stopLoading();
@@ -142,8 +142,8 @@ public:
     void touchEvent(const WebTouchEvent&);
 #endif
 
-    const WTF::String& pageTitle() const { return m_pageTitle; }
-    const WTF::String& toolTip() const { return m_toolTip; }
+    const String& pageTitle() const { return m_pageTitle; }
+    const String& toolTip() const { return m_toolTip; }
 
     double estimatedProgress() const { return m_estimatedProgress; }
 
@@ -160,7 +160,7 @@ public:
     void setPageZoomFactor(double);
     void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor);
 
-    void runJavaScriptInMainFrame(const WTF::String&, PassRefPtr<ScriptReturnValueCallback>);
+    void runJavaScriptInMainFrame(const String&, PassRefPtr<ScriptReturnValueCallback>);
     void getRenderTreeExternalRepresentation(PassRefPtr<RenderTreeExternalRepresentationCallback>);
     void getSourceForFrame(WebFrameProxy*, PassRefPtr<FrameSourceCallback>);
 
@@ -190,7 +190,7 @@ public:
     bool isValid();
 
     // REMOVE: For demo purposes only.
-    const WTF::String& urlAtProcessExit() const { return m_urlAtProcessExit; }
+    const String& urlAtProcessExit() const { return m_urlAtProcessExit; }
 
     void preferencesDidChange();
 
@@ -211,25 +211,25 @@ private:
     void didFinishDocumentLoadForFrame(WebFrameProxy*);
     void didFinishLoadForFrame(WebFrameProxy*);
     void didFailLoadForFrame(WebFrameProxy*);
-    void didReceiveTitleForFrame(WebFrameProxy*, const WTF::String&);
+    void didReceiveTitleForFrame(WebFrameProxy*, const String&);
     void didFirstLayoutForFrame(WebFrameProxy*);
     void didFirstVisuallyNonEmptyLayoutForFrame(WebFrameProxy*);
     void didStartProgress();
     void didChangeProgress(double);
     void didFinishProgress();
     
-    void decidePolicyForNavigationAction(WebFrameProxy*, WebCore::NavigationType navigationType, WebEvent::Modifiers modifiers, const WTF::String& url, uint64_t listenerID);
-    void decidePolicyForNewWindowAction(WebFrameProxy*, WebCore::NavigationType navigationType, WebEvent::Modifiers modifiers, const WTF::String& url, uint64_t listenerID);
-    void decidePolicyForMIMEType(WebFrameProxy*, const WTF::String& MIMEType, const WTF::String& url, uint64_t listenerID);
+    void decidePolicyForNavigationAction(WebFrameProxy*, WebCore::NavigationType navigationType, WebEvent::Modifiers modifiers, const String& url, uint64_t listenerID);
+    void decidePolicyForNewWindowAction(WebFrameProxy*, WebCore::NavigationType navigationType, WebEvent::Modifiers modifiers, const String& url, uint64_t listenerID);
+    void decidePolicyForMIMEType(WebFrameProxy*, const String& MIMEType, const String& url, uint64_t listenerID);
 
-    void willSubmitForm(WebFrameProxy* frame, WebFrameProxy* frameSource, Vector<std::pair<WTF::String, WTF::String> >& textFieldValues, APIObject* userData, uint64_t listenerID);
+    void willSubmitForm(WebFrameProxy* frame, WebFrameProxy* frameSource, Vector<std::pair<String, String> >& textFieldValues, APIObject* userData, uint64_t listenerID);
 
     PassRefPtr<WebPageProxy> createNewPage();
     void showPage();
     void closePage();
-    void runJavaScriptAlert(WebFrameProxy*, const WTF::String&);
-    bool runJavaScriptConfirm(WebFrameProxy* frame, const WTF::String&);
-    WTF::String runJavaScriptPrompt(WebFrameProxy* frame, const WTF::String&, const WTF::String&);
+    void runJavaScriptAlert(WebFrameProxy*, const String&);
+    bool runJavaScriptConfirm(WebFrameProxy* frame, const String&);
+    String runJavaScriptPrompt(WebFrameProxy* frame, const String&, const String&);
     void setStatusText(const String&);
     void contentsSizeChanged(WebFrameProxy*, const WebCore::IntSize&);
 
@@ -242,13 +242,13 @@ private:
     void clearAllEditCommands();
 
     void takeFocus(bool direction);
-    void setToolTip(const WTF::String&);
+    void setToolTip(const String&);
     void setCursor(const WebCore::Cursor&);
 
     void didReceiveEvent(WebEvent::Type);
 
-    void didRunJavaScriptInMainFrame(const WTF::String&, uint64_t);
-    void didGetRenderTreeExternalRepresentation(const WTF::String&, uint64_t);
+    void didRunJavaScriptInMainFrame(const String&, uint64_t);
+    void didGetRenderTreeExternalRepresentation(const String&, uint64_t);
     void didGetSourceForFrame(const String&, uint64_t);
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -264,7 +264,7 @@ private:
     OwnPtr<DrawingAreaProxy> m_drawingArea;
     RefPtr<WebPageNamespace> m_pageNamespace;
     RefPtr<WebFrameProxy> m_mainFrame;
-    WTF::String m_pageTitle;
+    String m_pageTitle;
 
     HashMap<uint64_t, RefPtr<ScriptReturnValueCallback> > m_scriptReturnValueCallbacks;
     HashMap<uint64_t, RefPtr<RenderTreeExternalRepresentationCallback> > m_renderTreeExternalRepresentationCallbacks;
@@ -281,10 +281,10 @@ private:
     bool m_canGoForward;
     RefPtr<WebBackForwardList> m_backForwardList;
 
-    WTF::String m_toolTip;
+    String m_toolTip;
 
     // REMOVE: For demo purposes only.
-    WTF::String m_urlAtProcessExit;
+    String m_urlAtProcessExit;
 
     double m_textZoomFactor;
     double m_pageZoomFactor;

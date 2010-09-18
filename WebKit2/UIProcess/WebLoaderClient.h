@@ -46,7 +46,7 @@ public:
     void didFinishDocumentLoadForFrame(WebPageProxy*, WebFrameProxy*);
     void didFinishLoadForFrame(WebPageProxy*, WebFrameProxy*);
     void didFailLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*);
-    void didReceiveTitleForFrame(WebPageProxy*, WTF::StringImpl*, WebFrameProxy*);
+    void didReceiveTitleForFrame(WebPageProxy*, StringImpl*, WebFrameProxy*);
     void didFirstLayoutForFrame(WebPageProxy*, WebFrameProxy*);
     void didFirstVisuallyNonEmptyLayoutForFrame(WebPageProxy*, WebFrameProxy*);
     void didStartProgress(WebPageProxy*);

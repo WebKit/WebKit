@@ -61,7 +61,7 @@ class InjectedBundle : public APIObject {
 public:
     static const Type APIType = TypeBundle;
 
-    static PassRefPtr<InjectedBundle> create(const WTF::String& path)
+    static PassRefPtr<InjectedBundle> create(const String& path)
     {
         return adoptRef(new InjectedBundle(path));
     }
@@ -70,7 +70,7 @@ public:
     bool load();
 
 #if ENABLE(WEB_PROCESS_SANDBOX)
-    void setSandboxToken(const WTF::String& sandboxToken) { m_sandboxToken = sandboxToken; }
+    void setSandboxToken(const String& sandboxToken) { m_sandboxToken = sandboxToken; }
 #endif
 
     // API
@@ -101,20 +101,20 @@ public:
     // Callback hooks
     void didCreatePage(WebPage*);
     void willDestroyPage(WebPage*);
-    void didReceiveMessage(const WTF::String&, APIObject*);
+    void didReceiveMessage(const String&, APIObject*);
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
 private:
-    InjectedBundle(const WTF::String&);
+    InjectedBundle(const String&);
 
     virtual Type type() const { return APIType; }
 
-    WTF::String m_path;
+    String m_path;
     PlatformBundle m_platformBundle; // This is leaked right now, since we never unload the bundle/module.
 
 #if ENABLE(WEB_PROCESS_SANDBOX)
-    WTF::String m_sandboxToken;
+    String m_sandboxToken;
 #endif
 
     WKBundleClient m_client;

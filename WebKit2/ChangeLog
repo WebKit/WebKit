@@ -1,5 +1,123 @@
 2010-09-17  Sam Weinig  <sam@webkit.org>
 
+        Rubber-stamped by Anders Carlsson.
+
+        Replace all uses of WTF::String and WTF::AtomicString with
+        String and AtomicString.
+
+        * Platform/Module.h:
+        * Shared/CommandLine.h:
+        (WebKit::CommandLine::operator[]):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebEvent.h:
+        (WebKit::WebKeyboardEvent::WebKeyboardEvent):
+        (WebKit::WebKeyboardEvent::text):
+        (WebKit::WebKeyboardEvent::unmodifiedText):
+        (WebKit::WebKeyboardEvent::keyIdentifier):
+        (WebKit::WebKeyboardEvent::decode):
+        * Shared/WebNavigationDataStore.h:
+        * Shared/WebPreferencesStore.h:
+        * Shared/WebString.h:
+        (WebKit::WebString::create):
+        (WebKit::WebString::string):
+        (WebKit::WebString::WebString):
+        * Shared/WebURL.h:
+        (WebKit::WebURL::create):
+        (WebKit::WebURL::string):
+        (WebKit::WebURL::WebURL):
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toRef):
+        (WebKit::toURLRef):
+        (WebKit::toCopiedRef):
+        (WebKit::toCopiedURLRef):
+        (WebKit::toWTFString):
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextCreate):
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::nsStringFromWebCoreString):
+        * UIProcess/PageClient.h:
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::setAdditionalPluginsDirectories):
+        * UIProcess/Plugins/PluginInfoStore.h:
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::PluginInfoStore::getPluginInfo):
+        (WebKit::PluginInfoStore::getMIMETypeForExtension):
+        * UIProcess/WebBackForwardListItem.h:
+        (WebKit::WebBackForwardListItem::create):
+        (WebKit::WebBackForwardListItem::setOriginalURL):
+        (WebKit::WebBackForwardListItem::originalURL):
+        (WebKit::WebBackForwardListItem::setURL):
+        (WebKit::WebBackForwardListItem::url):
+        (WebKit::WebBackForwardListItem::setTitle):
+        (WebKit::WebBackForwardListItem::title):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::setAdditionalPluginsDirectory):
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::injectedBundlePath):
+        * UIProcess/WebContextInjectedBundleClient.h:
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::didReceiveTitle):
+        * UIProcess/WebFrameProxy.h:
+        (WebKit::WebFrameProxy::url):
+        (WebKit::WebFrameProxy::provisionalURL):
+        * UIProcess/WebHistoryClient.h:
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::didReceiveTitleForFrame):
+        * UIProcess/WebLoaderClient.h:
+        * UIProcess/WebNavigationData.h:
+        (WebKit::WebNavigationData::title):
+        (WebKit::WebNavigationData::url):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::pageTitle):
+        (WebKit::WebPageProxy::toolTip):
+        (WebKit::WebPageProxy::urlAtProcessExit):
+        * UIProcess/WebPolicyClient.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getPluginHostConnection):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebUIClient.h:
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        (WebKit::InjectedBundle::create):
+        (WebKit::InjectedBundle::setSandboxToken):
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::willPerformClientRedirectForFrame):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h:
+        * WebProcess/Plugins/NPRuntimeObjectMap.h:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/NetscapePluginModule.h:
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.cpp:
+        (WebKit::NetscapePluginStream::start):
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.h:
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/Plugins/PluginController.h:
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebContextMenuClient.h:
+        * WebProcess/WebCoreSupport/WebDragClient.h:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::showCorrectionPanel):
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebCoreSupport/WebInspectorClient.h:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        * WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp:
+        (WebKit::WebSearchPopupMenu::saveRecentSearches):
+        (WebKit::WebSearchPopupMenu::loadRecentSearches):
+        * WebProcess/WebCoreSupport/WebSearchPopupMenu.h:
+        * WebProcess/WebPage/WebFrame.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::runJavaScriptInMainFrame):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::registerURLSchemeAsEmptyDocument):
+        * WebProcess/WebProcess.h:
+
+2010-09-17  Sam Weinig  <sam@webkit.org>
+
         Fix Windows and Qt builds.
 
         * Shared/qt/PlatformCertificateInfo.h:

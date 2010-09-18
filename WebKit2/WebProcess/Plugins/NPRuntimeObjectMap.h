@@ -71,7 +71,7 @@ public:
     void convertJSValueToNPVariant(JSC::ExecState*, JSC::JSValue, NPVariant&);
     JSC::JSValue convertNPVariantToJSValue(JSC::ExecState*, JSC::JSGlobalObject*, const NPVariant&);
 
-    bool evaluate(NPObject*, const WTF::String& scriptString, NPVariant* result);
+    bool evaluate(NPObject*, const String& scriptString, NPVariant* result);
 
     // Called when the plug-in is destroyed. Will invalidate all the NPObjects.
     void invalidate();
@@ -79,7 +79,7 @@ public:
     JSC::JSGlobalObject* globalObject() const;
     JSC::ExecState* globalExec() const;
 
-    static void setGlobalException(const WTF::String& exceptionString);
+    static void setGlobalException(const String& exceptionString);
     static void moveGlobalExceptionToExecState(JSC::ExecState*);
 
 private:

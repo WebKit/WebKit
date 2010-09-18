@@ -42,7 +42,7 @@ public:
 #elif PLATFORM(WIN)
     bool parse(LPTSTR commandLineString);
 #endif
-    WTF::String operator[](const WTF::String& key) const
+    String operator[](const String& key) const
     {
         return m_args.get(key);
     }
@@ -50,7 +50,7 @@ public:
 private:
     bool m_parsedSuccessfully;
 
-    HashMap<WTF::String, WTF::String> m_args;
+    HashMap<String, String> m_args;
 };
 
 }

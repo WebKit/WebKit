@@ -38,18 +38,18 @@ class PluginInfoStore {
 public:
     PluginInfoStore();
 
-    void setAdditionalPluginsDirectories(const Vector<WTF::String>&);
+    void setAdditionalPluginsDirectories(const Vector<String>&);
 
     void refresh();
     void getPlugins(Vector<WebCore::PluginInfo>& plugins);
     
     // Represents a single plug-in.
     struct Plugin {
-        WTF::String path;
+        String path;
         WebCore::PluginInfo info;
 #if PLATFORM(MAC)
         cpu_type_t pluginArchitecture;
-        WTF::String bundleIdentifier;
+        String bundleIdentifier;
         unsigned versionNumber;
 #endif
     };
@@ -57,25 +57,25 @@ public:
     // Returns the info for a plug-in that can handle the given MIME type.
     // If the MIME type is null, the file extension of the given url will be used to infer the
     // plug-in type. In that case, mimeType will be filled in with the right MIME type.
-    Plugin findPlugin(WTF::String& mimeType, const WebCore::KURL& url);
+    Plugin findPlugin(String& mimeType, const WebCore::KURL& url);
     
 private:
 
-    Plugin findPluginForMIMEType(const WTF::String& mimeType);
-    Plugin findPluginForExtension(const WTF::String& extension, WTF::String& mimeType);
+    Plugin findPluginForMIMEType(const String& mimeType);
+    Plugin findPluginForExtension(const String& extension, String& mimeType);
 
     void loadPluginsIfNecessary();
-    void loadPluginsInDirectory(const WTF::String& directory);
-    void loadPlugin(const WTF::String& pluginPath);
+    void loadPluginsInDirectory(const String& directory);
+    void loadPlugin(const String& pluginPath);
     
     // Platform specific member functions.
-    static Vector<WTF::String> pluginsDirectories();
-    static Vector<WTF::String> pluginPathsInDirectory(const WTF::String& directory);
-    static bool getPluginInfo(const WTF::String& pluginPath, Plugin& plugin);
+    static Vector<String> pluginsDirectories();
+    static Vector<String> pluginPathsInDirectory(const String& directory);
+    static bool getPluginInfo(const String& pluginPath, Plugin& plugin);
     static bool shouldUsePlugin(const Plugin& plugin, const Vector<Plugin>& loadedPlugins);
-    static WTF::String getMIMETypeForExtension(const WTF::String& extension);
+    static String getMIMETypeForExtension(const String& extension);
 
-    Vector<WTF::String> m_additionalPluginsDirectories;
+    Vector<String> m_additionalPluginsDirectories;
     Vector<Plugin> m_plugins;
     bool m_pluginListIsUpToDate;
 };

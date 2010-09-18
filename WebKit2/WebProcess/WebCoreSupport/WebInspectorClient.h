@@ -46,9 +46,9 @@ private:
 
     virtual WebCore::Page* createPage();
     
-    virtual WTF::String localizedStringsURL();
+    virtual String localizedStringsURL();
     
-    virtual WTF::String hiddenPanels();
+    virtual String hiddenPanels();
     
     virtual void showWindow();
     virtual void closeWindow();
@@ -61,12 +61,12 @@ private:
     virtual void highlight(WebCore::Node*);
     virtual void hideHighlight();
     
-    virtual void inspectedURLChanged(const WTF::String& newURL);
+    virtual void inspectedURLChanged(const String& newURL);
 
-    virtual void populateSetting(const WTF::String& key, WTF::String* value);
-    virtual void storeSetting(const WTF::String& key, const WTF::String& value);
+    virtual void populateSetting(const String& key, String* value);
+    virtual void storeSetting(const String& key, const String& value);
 
-    virtual bool sendMessageToFrontend(const WTF::String&);
+    virtual bool sendMessageToFrontend(const String&);
 
     virtual void inspectorWindowObjectCleared();
     

@@ -155,43 +155,43 @@ inline typename ImplTypeInfo<T>::APIType toRef(T t)
 
 /* Special cases. */
 
-inline ProxyingRefPtr<WebString> toRef(WTF::StringImpl* string)
+inline ProxyingRefPtr<WebString> toRef(StringImpl* string)
 {
-    WTF::StringImpl* impl = string ? string : WTF::StringImpl::empty();
-    return ProxyingRefPtr<WebString>(WebString::create(WTF::String(impl)));
+    StringImpl* impl = string ? string : StringImpl::empty();
+    return ProxyingRefPtr<WebString>(WebString::create(String(impl)));
 }
 
-inline ProxyingRefPtr<WebURL> toURLRef(WTF::StringImpl* string)
+inline ProxyingRefPtr<WebURL> toURLRef(StringImpl* string)
 {
-    WTF::StringImpl* impl = string ? string : WTF::StringImpl::empty();
-    return ProxyingRefPtr<WebURL>(WebURL::create(WTF::String(impl)));
+    StringImpl* impl = string ? string : StringImpl::empty();
+    return ProxyingRefPtr<WebURL>(WebURL::create(String(impl)));
 }
 
-inline WKStringRef toCopiedRef(const WTF::String& string)
+inline WKStringRef toCopiedRef(const String& string)
 {
-    WTF::StringImpl* impl = string.impl() ? string.impl() : WTF::StringImpl::empty();
-    RefPtr<WebString> webString = WebString::create(WTF::String(impl));
+    StringImpl* impl = string.impl() ? string.impl() : StringImpl::empty();
+    RefPtr<WebString> webString = WebString::create(String(impl));
     return toRef(webString.release().releaseRef());
 }
 
-inline WKURLRef toCopiedURLRef(const WTF::String& string)
+inline WKURLRef toCopiedURLRef(const String& string)
 {
-    WTF::StringImpl* impl = string.impl() ? string.impl() : WTF::StringImpl::empty();
-    RefPtr<WebURL> webURL = WebURL::create(WTF::String(impl));
+    StringImpl* impl = string.impl() ? string.impl() : StringImpl::empty();
+    RefPtr<WebURL> webURL = WebURL::create(String(impl));
     return toRef(webURL.release().releaseRef());
 }
 
-inline WTF::String toWTFString(WKStringRef stringRef)
+inline String toWTFString(WKStringRef stringRef)
 {
     if (!stringRef)
-        return WTF::String();
+        return String();
     return toWK(stringRef)->string();
 }
 
-inline WTF::String toWTFString(WKURLRef urlRef)
+inline String toWTFString(WKURLRef urlRef)
 {
     if (!urlRef)
-        return WTF::String();
+        return String();
     return toWK(urlRef)->string();
 }
 

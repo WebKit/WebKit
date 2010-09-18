@@ -59,13 +59,13 @@ public:
 
     void invalidate(const NPRect*);
     const char* userAgent();
-    void loadURL(const WTF::String& method, const WTF::String& urlString, const WTF::String& target, const WebCore::HTTPHeaderMap& headerFields,
+    void loadURL(const String& method, const String& urlString, const String& target, const WebCore::HTTPHeaderMap& headerFields,
                  const Vector<char>& httpBody, bool sendNotification, void* notificationData);
     NPError destroyStream(NPStream*, NPReason);
     void setIsWindowed(bool windowed) { m_isWindowed = windowed; }
-    void setStatusbarText(const WTF::String&);
-    static void setException(const WTF::String&);
-    bool evaluate(NPObject*, const WTF::String&scriptString, NPVariant* result);
+    void setStatusbarText(const String&);
+    static void setException(const String&);
+    bool evaluate(NPObject*, const String&scriptString, NPVariant* result);
 
     // These return retained objects.
     NPObject* windowScriptNPObject();
@@ -117,14 +117,14 @@ private:
     virtual void geometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect);
     virtual void frameDidFinishLoading(uint64_t requestID);
     virtual void frameDidFail(uint64_t requestID, bool wasCancelled);
-    virtual void didEvaluateJavaScript(uint64_t requestID, const WTF::String& requestURLString, const WTF::String& result);
+    virtual void didEvaluateJavaScript(uint64_t requestID, const String& requestURLString, const String& result);
     virtual void streamDidReceiveResponse(uint64_t streamID, const WebCore::KURL& responseURL, uint32_t streamLength, 
-                                          uint32_t lastModifiedTime, const WTF::String& mimeType, const WTF::String& headers);
+                                          uint32_t lastModifiedTime, const String& mimeType, const String& headers);
     virtual void streamDidReceiveData(uint64_t streamID, const char* bytes, int length);
     virtual void streamDidFinishLoading(uint64_t streamID);
     virtual void streamDidFail(uint64_t streamID, bool wasCancelled);
     virtual void manualStreamDidReceiveResponse(const WebCore::KURL& responseURL, uint32_t streamLength, 
-                                                uint32_t lastModifiedTime, const WTF::String& mimeType, const WTF::String& headers);
+                                                uint32_t lastModifiedTime, const String& mimeType, const String& headers);
     virtual void manualStreamDidReceiveData(const char* bytes, int length);
     virtual void manualStreamDidFinishLoading();
     virtual void manualStreamDidFail(bool wasCancelled);
@@ -141,7 +141,7 @@ private:
     PluginController* m_pluginController;
     uint64_t m_nextRequestID;
 
-    typedef HashMap<uint64_t, std::pair<WTF::String, void*> > PendingURLNotifyMap;
+    typedef HashMap<uint64_t, std::pair<String, void*> > PendingURLNotifyMap;
     PendingURLNotifyMap m_pendingURLNotifications;
 
     typedef HashMap<uint64_t, RefPtr<NetscapePluginStream> > StreamsMap;

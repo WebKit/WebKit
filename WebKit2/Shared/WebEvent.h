@@ -248,7 +248,7 @@ public:
     {
     }
 
-    WebKeyboardEvent(Type type, const WTF::String& text, const WTF::String& unmodifiedText, const WTF::String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, bool isAutoRepeat, bool isKeypad, bool isSystemKey, Modifiers modifiers, double timestamp)
+    WebKeyboardEvent(Type type, const String& text, const String& unmodifiedText, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, bool isAutoRepeat, bool isKeypad, bool isSystemKey, Modifiers modifiers, double timestamp)
         : WebEvent(type, modifiers, timestamp)
         , m_text(text)
         , m_unmodifiedText(unmodifiedText)
@@ -262,9 +262,9 @@ public:
         ASSERT(isKeyboardEventType(type));
     }
 
-    const WTF::String& text() const { return m_text; }
-    const WTF::String& unmodifiedText() const { return m_unmodifiedText; }
-    const WTF::String& keyIdentifier() const { return m_keyIdentifier; }
+    const String& text() const { return m_text; }
+    const String& unmodifiedText() const { return m_unmodifiedText; }
+    const String& keyIdentifier() const { return m_keyIdentifier; }
     int32_t windowsVirtualKeyCode() const { return m_windowsVirtualKeyCode; }
     int32_t nativeVirtualKeyCode() const { return m_nativeVirtualKeyCode; }
     bool isAutoRepeat() const { return m_isAutoRepeat; }
@@ -290,17 +290,17 @@ public:
         if (!WebEvent::decode(decoder, t))
             return false;
 
-        WTF::String text;
+        String text;
         if (!decoder->decode(text))
             return false;
         t.m_text = text;
 
-        WTF::String unmodifiedText;
+        String unmodifiedText;
         if (!decoder->decode(unmodifiedText))
             return false;
         t.m_unmodifiedText = unmodifiedText;
 
-        WTF::String keyIdentifier;
+        String keyIdentifier;
         if (!decoder->decode(keyIdentifier))
             return false;
         t.m_keyIdentifier = keyIdentifier;
@@ -324,9 +324,9 @@ private:
         return type == RawKeyDown || type == KeyDown || type == KeyUp || type == Char;
     }
 
-    WTF::String m_text;
-    WTF::String m_unmodifiedText;
-    WTF::String m_keyIdentifier;
+    String m_text;
+    String m_unmodifiedText;
+    String m_keyIdentifier;
     int32_t m_windowsVirtualKeyCode;
     int32_t m_nativeVirtualKeyCode;
     bool m_isAutoRepeat;

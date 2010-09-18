@@ -313,7 +313,7 @@ static bool getPluginInfoFromCarbonResources(CFBundleRef bundle, PluginInfo& plu
     return true;
 }
 
-bool PluginInfoStore::getPluginInfo(const WTF::String& pluginPath, Plugin& plugin)
+bool PluginInfoStore::getPluginInfo(const String& pluginPath, Plugin& plugin)
 {
     RetainPtr<CFStringRef> bundlePath(AdoptCF, safeCreateCFString(pluginPath));
     RetainPtr<CFURLRef> bundleURL(AdoptCF, CFURLCreateWithFileSystemPath(kCFAllocatorDefault, bundlePath.get(), kCFURLPOSIXPathStyle, false));
@@ -371,7 +371,7 @@ bool PluginInfoStore::shouldUsePlugin(const Plugin& plugin, const Vector<Plugin>
 String PluginInfoStore::getMIMETypeForExtension(const String& extension)
 {
     // FIXME: This should just call MIMETypeRegistry::getMIMETypeForExtension and be
-    // strength reduced into the callsite once we can safely convert WTF::String
+    // strength reduced into the callsite once we can safely convert String
     // to CFStringRef off the main thread.
 
     RetainPtr<CFStringRef> extensionCFString(AdoptCF, safeCreateCFString(extension));

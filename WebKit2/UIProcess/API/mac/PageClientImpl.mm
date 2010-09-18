@@ -91,7 +91,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-NSString* nsStringFromWebCoreString(const WTF::String& string)
+NSString* nsStringFromWebCoreString(const String& string)
 {
     return string.impl() ? HardAutorelease(WKStringCopyCFString(0, toRef(string.impl()))) : @"";
 }

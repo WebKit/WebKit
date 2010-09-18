@@ -42,9 +42,9 @@ public:
     void initialize(const WKContextHistoryClient*);
 
     void didNavigateWithNavigationData(WebContext*, WebPageProxy*, const WebNavigationDataStore&, WebFrameProxy*);
-    void didPerformClientRedirect(WebContext*, WebPageProxy*, const WTF::String& sourceURL, const WTF::String& destinationURL, WebFrameProxy*);
-    void didPerformServerRedirect(WebContext*, WebPageProxy*, const WTF::String& sourceURL, const WTF::String& destinationURL, WebFrameProxy*);
-    void didUpdateHistoryTitle(WebContext*, WebPageProxy*, const WTF::String& title, const WTF::String& url, WebFrameProxy*);
+    void didPerformClientRedirect(WebContext*, WebPageProxy*, const String& sourceURL, const String& destinationURL, WebFrameProxy*);
+    void didPerformServerRedirect(WebContext*, WebPageProxy*, const String& sourceURL, const String& destinationURL, WebFrameProxy*);
+    void didUpdateHistoryTitle(WebContext*, WebPageProxy*, const String& title, const String& url, WebFrameProxy*);
     void populateVisitedLinks(WebContext*);
 
     bool shouldTrackVisitedLinks() const { return m_contextHistoryClient.populateVisitedLinks; }

@@ -40,7 +40,7 @@ PluginInfoStore::PluginInfoStore()
 {
 }
 
-void PluginInfoStore::setAdditionalPluginsDirectories(const Vector<WTF::String>& directories)
+void PluginInfoStore::setAdditionalPluginsDirectories(const Vector<String>& directories)
 {
     m_additionalPluginsDirectories = directories;
     refresh();

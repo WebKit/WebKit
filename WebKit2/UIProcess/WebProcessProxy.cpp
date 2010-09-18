@@ -205,7 +205,7 @@ void WebProcessProxy::getPlugins(bool refresh, Vector<PluginInfo>& plugins)
     m_context->pluginInfoStore()->getPlugins(plugins);
 }
 
-void WebProcessProxy::getPluginHostConnection(const String& mimeType, const KURL& url, WTF::String& pluginPath)
+void WebProcessProxy::getPluginHostConnection(const String& mimeType, const KURL& url, String& pluginPath)
 {
     String newMimeType = mimeType.lower();
 

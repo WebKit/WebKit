@@ -85,7 +85,7 @@ void WebLoaderClient::didFailLoadWithErrorForFrame(WebPageProxy* page, WebFrameP
         m_pageLoaderClient.didFailLoadWithErrorForFrame(toRef(page), toRef(frame), m_pageLoaderClient.clientInfo);
 }
 
-void WebLoaderClient::didReceiveTitleForFrame(WebPageProxy* page, WTF::StringImpl* title, WebFrameProxy* frame)
+void WebLoaderClient::didReceiveTitleForFrame(WebPageProxy* page, StringImpl* title, WebFrameProxy* frame)
 {
     if (m_pageLoaderClient.didReceiveTitleForFrame)
         m_pageLoaderClient.didReceiveTitleForFrame(toRef(page), toRef(title), toRef(frame), m_pageLoaderClient.clientInfo);

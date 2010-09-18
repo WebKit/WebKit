@@ -31,8 +31,8 @@ public:
     static PassRefPtr<WebSearchPopupMenu> create(WebCore::PopupMenuClient*);
 
     virtual WebCore::PopupMenu* popupMenu();
-    virtual void saveRecentSearches(const WTF::AtomicString& name, const Vector<WTF::String>& searchItems);
-    virtual void loadRecentSearches(const WTF::AtomicString& name, Vector<WTF::String>& searchItems);
+    virtual void saveRecentSearches(const WTF::AtomicString& name, const Vector<String>& searchItems);
+    virtual void loadRecentSearches(const WTF::AtomicString& name, Vector<String>& searchItems);
     virtual bool enabled();
 
 private:

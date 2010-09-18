@@ -51,10 +51,10 @@ public:
     void didFinishDocumentLoadForFrame(WebPage*, WebFrame*);
     void didFinishLoadForFrame(WebPage*, WebFrame*);
     void didFailLoadWithErrorForFrame(WebPage*, WebFrame*);
-    void didReceiveTitleForFrame(WebPage*, const WTF::String&, WebFrame*);
+    void didReceiveTitleForFrame(WebPage*, const String&, WebFrame*);
     void didClearWindowObjectForFrame(WebPage*, WebFrame*, WebCore::DOMWrapperWorld*);
     void didCancelClientRedirectForFrame(WebPage*, WebFrame*);
-    void willPerformClientRedirectForFrame(WebPage*, WebFrame*, const WTF::String& url, double delay, double date);
+    void willPerformClientRedirectForFrame(WebPage*, WebFrame*, const String& url, double delay, double date);
     void didChangeLocationWithinPageForFrame(WebPage*, WebFrame*);
     void didHandleOnloadEventsForFrame(WebPage*, WebFrame*);
     void didDisplayInsecureContentForFrame(WebPage*, WebFrame*);

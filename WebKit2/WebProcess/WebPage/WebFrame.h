@@ -53,7 +53,7 @@ public:
     static const Type APIType = TypeBundleFrame;
 
     static PassRefPtr<WebFrame> createMainFrame(WebPage*);
-    static PassRefPtr<WebFrame> createSubframe(WebPage*, const WTF::String& frameName, WebCore::HTMLFrameOwnerElement*);
+    static PassRefPtr<WebFrame> createSubframe(WebPage*, const String& frameName, WebCore::HTMLFrameOwnerElement*);
     ~WebFrame();
 
     // Called when the FrameLoaderClient (and therefore the WebCore::Frame) is being torn down.
@@ -72,9 +72,9 @@ public:
 
     // WKBundleFrame API and SPI functions
     bool isMainFrame() const;
-    WTF::String name() const;
-    WTF::String url() const;
-    WTF::String innerText() const;
+    String name() const;
+    String url() const;
+    String innerText() const;
     PassRefPtr<ImmutableArray> childFrames();
     JSValueRef computedStyleIncludingVisitedInfo(JSObjectRef element);
     JSGlobalContextRef jsContext();
@@ -82,11 +82,11 @@ public:
 
     JSValueRef jsWrapperForWorld(InjectedBundleNodeHandle*, InjectedBundleScriptWorld*);
 
-    static WTF::String counterValue(JSObjectRef element);
-    static WTF::String markerText(JSObjectRef element);
+    static String counterValue(JSObjectRef element);
+    static String markerText(JSObjectRef element);
 
     unsigned numberOfActiveAnimations();
-    bool pauseAnimationOnElementWithId(const WTF::String& animationName, const WTF::String& elementID, double time);
+    bool pauseAnimationOnElementWithId(const String& animationName, const String& elementID, double time);
 
     unsigned pendingUnloadCount();
 
@@ -102,8 +102,8 @@ public:
     LoadListener* loadListener() const { return m_loadListener; }
 
 private:
-    static PassRefPtr<WebFrame> create(WebPage*, const WTF::String& frameName, WebCore::HTMLFrameOwnerElement*);
-    WebFrame(WebPage*, const WTF::String& frameName, WebCore::HTMLFrameOwnerElement*);
+    static PassRefPtr<WebFrame> create(WebPage*, const String& frameName, WebCore::HTMLFrameOwnerElement*);
+    WebFrame(WebPage*, const String& frameName, WebCore::HTMLFrameOwnerElement*);
 
     virtual Type type() const { return APIType; }
 

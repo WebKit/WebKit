@@ -533,7 +533,7 @@ IntRect WebPage::windowResizerRect() const
                    windowResizerSize, windowResizerSize);
 }
 
-void WebPage::runJavaScriptInMainFrame(const WTF::String& script, uint64_t callbackID)
+void WebPage::runJavaScriptInMainFrame(const String& script, uint64_t callbackID)
 {
     // NOTE: We need to be careful when running scripts that the objects we depend on don't
     // disappear during script execution.

@@ -49,7 +49,7 @@ private:
     virtual void searchWithGoogle(const WebCore::Frame*);
     virtual void lookUpInDictionary(WebCore::Frame*);
     virtual bool isSpeaking();
-    virtual void speak(const WTF::String&);
+    virtual void speak(const String&);
     virtual void stopSpeaking();
     
 #if PLATFORM(MAC)

@@ -75,7 +75,7 @@ PassRefPtr<WebContext> WebContext::create(const String& injectedBundlePath)
     return adoptRef(new WebContext(ProcessModelSecondaryProcess, injectedBundlePath));
 }
     
-WebContext::WebContext(ProcessModel processModel, const WTF::String& injectedBundlePath)
+WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePath)
     : m_processModel(processModel)
     , m_injectedBundlePath(injectedBundlePath)
     , m_visitedLinkProvider(this)
@@ -266,7 +266,7 @@ void WebContext::getStatistics(WKContextStatistics* statistics)
         (*it)->getStatistics(statistics);
 }
 
-void WebContext::setAdditionalPluginsDirectory(const WTF::String& directory)
+void WebContext::setAdditionalPluginsDirectory(const String& directory)
 {
     Vector<String> directories;
     directories.append(directory);

@@ -36,7 +36,7 @@ namespace WebKit {
 
 // NOTE: This does not use String::operator NSString*() since that function
 // expects to be called on the thread running WebCore.
-NSString* nsStringFromWebCoreString(const WTF::String&);
+NSString* nsStringFromWebCoreString(const String&);
 
 class PageClientImpl : public PageClient {
 public:
@@ -49,7 +49,7 @@ private:
     virtual void processDidExit();
     virtual void processDidRevive();
     virtual void takeFocus(bool direction);
-    virtual void toolTipChanged(const WTF::String& oldToolTip, const WTF::String& newToolTip);
+    virtual void toolTipChanged(const String& oldToolTip, const String& newToolTip);
     virtual void setCursor(const WebCore::Cursor&);
 
     void registerEditCommand(PassRefPtr<WebEditCommandProxy>, UndoOrRedo);

@@ -44,8 +44,8 @@ template<> struct ArgumentCoder<WebCore::IntPoint> : SimpleArgumentCoder<WebCore
 template<> struct ArgumentCoder<WebCore::IntSize> : SimpleArgumentCoder<WebCore::IntSize> { };
 template<> struct ArgumentCoder<WebCore::IntRect> : SimpleArgumentCoder<WebCore::IntRect> { };
 
-template<> struct ArgumentCoder<WTF::String> {
-    static void encode(ArgumentEncoder* encoder, const WTF::String& string)
+template<> struct ArgumentCoder<String> {
+    static void encode(ArgumentEncoder* encoder, const String& string)
     {
         // Special case the null string.
         if (string.isNull()) {
@@ -58,7 +58,7 @@ template<> struct ArgumentCoder<WTF::String> {
         encoder->encodeBytes(reinterpret_cast<const uint8_t*>(string.characters()), length * sizeof(UChar));
     }
     
-    static bool decode(ArgumentDecoder* decoder, WTF::String& s)
+    static bool decode(ArgumentDecoder* decoder, String& s)
     {
         uint32_t length;
         if (!decoder->decode(length))
@@ -77,7 +77,7 @@ template<> struct ArgumentCoder<WTF::String> {
         }
         
         UChar* buffer;
-        WTF::String string = WTF::String::createUninitialized(length, buffer);
+        String string = String::createUninitialized(length, buffer);
         if (!decoder->decodeBytes(reinterpret_cast<uint8_t*>(buffer), length * sizeof(UChar)))
             return false;
         

@@ -81,12 +81,12 @@ private:
     void shutdown();
 
 #if ENABLE(WEB_PROCESS_SANDBOX)
-    void loadInjectedBundle(const WTF::String&, const WTF::String&);
+    void loadInjectedBundle(const String&, const String&);
 #else
-    void loadInjectedBundle(const WTF::String&);
+    void loadInjectedBundle(const String&);
 #endif
-    void setApplicationCacheDirectory(const WTF::String&);
-    void registerURLSchemeAsEmptyDocument(const WTF::String&);
+    void setApplicationCacheDirectory(const String&);
+    void registerURLSchemeAsEmptyDocument(const String&);
 
     void setVisitedLinkTable(const SharedMemory::Handle&);
     void visitedLinkStateChanged(const Vector<WebCore::LinkHash>& linkHashes);

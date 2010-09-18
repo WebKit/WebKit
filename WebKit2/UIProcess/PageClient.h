@@ -44,7 +44,7 @@ public:
     virtual void processDidRevive() = 0;
 
     virtual void takeFocus(bool direction) = 0;
-    virtual void toolTipChanged(const WTF::String&, const WTF::String&) = 0;
+    virtual void toolTipChanged(const String&, const String&) = 0;
 
     virtual void setCursor(const WebCore::Cursor&) = 0;
 

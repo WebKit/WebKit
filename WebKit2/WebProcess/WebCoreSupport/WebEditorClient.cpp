@@ -496,7 +496,7 @@ void WebEditorClient::setInputMethodState(bool)
 }
 
 #if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-void WebEditorClient::showCorrectionPanel(const WebCore::FloatRect& boundingBoxOfReplacedString, const WTF::String& replacedString, const WTF::String& replacementString, WebCore::Editor*)
+void WebEditorClient::showCorrectionPanel(const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, WebCore::Editor*)
 {
     notImplemented();
 }

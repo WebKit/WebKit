@@ -94,7 +94,7 @@ void WebFrameProxy::didFinishLoad()
     m_loadState = LoadStateFinished;
 }
 
-void WebFrameProxy::didReceiveTitle(const WTF::String&)
+void WebFrameProxy::didReceiveTitle(const String&)
 {
 }
 
