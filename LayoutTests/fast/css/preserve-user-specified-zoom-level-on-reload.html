@@ -13,9 +13,10 @@ function runTest()
         return
 
     layoutTestController.waitUntilDone();
-    if (sessionStorage.testCompleted)
+    if (sessionStorage.testCompleted) {
+        delete sessionStorage.testCompleted;
         layoutTestController.notifyDone();
-    else {
+    } else {
         // Note, it is sufficient to zoom-in only once, but so as to make it easier
         // for a human to compare the pixel test results we zoom-in up to Safari's
         // maximum zoom level, which at the time of writing (09/17) is 6.

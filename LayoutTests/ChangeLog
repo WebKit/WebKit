@@ -1,3 +1,16 @@
+2010-09-18  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Dirk Schulze.
+
+        fast/css/preserve-user-specified-zoom-level-on-reload.html does not clean up after itself
+        https://bugs.webkit.org/show_bug.cgi?id=46040
+
+        Delete the sessionStorage property that this test adds once it's complete.
+        Otherwise it fails when run with --iterations=2 and also causes a diff in
+        in fast/dom/prototype-inheritance-2.html (which runs after it).
+
+        * fast/css/preserve-user-specified-zoom-level-on-reload.html:
+
 2010-09-17  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
