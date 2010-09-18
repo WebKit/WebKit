@@ -1,3 +1,24 @@
+2010-09-17  Mihai Parparita  <mihaip@chromium.org>
+
+       Reviewed by James Robinson.
+
+       Remove passing animation tests from Chromium's test_expectations.txt
+       https://bugs.webkit.org/show_bug.cgi?id=45996
+
+       Update Chromium test_expectations.txt to remove tests that now pass:
+
+       animations/animation-shorthand-removed.html, animations/
+       animation-shorthand.html, and transitions/inherit-other-props.html were
+       fixed by http://trac.webkit.org/changeset/67634.
+
+       transforms/2d/transform-value-types.html has not failed in the last
+       1,500 runs.
+
+       animations/animation-drt-api.html was most likely fixed by 66641 (it
+       hasn't failed in the last 1,500 runs either).        
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-18  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -1123,10 +1123,6 @@ BUG10354 WIN LINUX : fast/layers/opacity-transforms.html = FAIL
 // anchor
 BUG10357 : fast/dom/cssTarget-crash.html = TIMEOUT PASS
 
-// MERGE 38500:39550: New tests
-// Missing expected results
-BUG10358 SKIP MAC LINUX : animations/animation-drt-api.html = PASS
-
 // New test. We should fix it, but it doesn't need to block the current release
 BUG10361 WIN : http/tests/misc/single-character-pi-stylesheet.xhtml = FAIL
 
@@ -2991,11 +2987,6 @@ BUGWK45209 WIN DEBUG SLOW : inspector/dom-breakpoints.html = PASS
 BUGWK45432 WIN MAC LINUX : fast/dom/dataset-gc.html = TEXT
 
 BUGWK45438 : editing/spelling/spelling-backspace-between-lines.html = TEXT
-
-// Regressed in webkit r54948
-BUG54948 WIN DEBUG : animations/animation-shorthand-removed.html = TEXT
-BUG54948 WIN DEBUG : animations/animation-shorthand.html = TEXT
-BUG54948 WIN DEBUG : transitions/inherit-other-props.html = TEXT
 
 // WebKit r67068
 BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-dom-azimuth-attr.html = IMAGE
