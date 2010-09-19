@@ -1,5 +1,14 @@
 2010-09-19  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Fix up expectation sadness I introduced in http://trac.webkit.org/changeset/67822, because no sadness is allowed.
+
+        * platform/chromium-win-vista/css2.1/t1202-counter-09-b-expected.checksum: Renamed from LayoutTests/platform/chromium-win-vista/css2.1/t1202-counter-09-b-checksum.png.
+        * platform/chromium-win-vista/css2.1/t1202-counters-09-b-expected.checksum: Renamed from LayoutTests/platform/chromium-win-vista/css2.1/t1202-counters-09-b-checksum.png.
+        * platform/chromium-win-xp/svg/batik/text/textFeatures-expected.checksum: Removed.
+        * platform/chromium-win-xp/svg/batik/text/textFeatures-expected.png: Removed.
+
+2010-09-19  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Create one more text baseline for win-vista.
 
         * platform/chromium-win-vista/fast/forms/search-styled-expected.txt: Added.
