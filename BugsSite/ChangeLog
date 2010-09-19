@@ -1,3 +1,11 @@
+2010-09-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Fixed a typo.
+
+        * code-review.js: Changed the label of the OK button from Ok to OK.
+
 2010-09-15  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.

@@ -105,7 +105,7 @@
     line.attr('data-has-comment', 'true');
     line.addClass('commentContext');
 
-    var comment_block = $('<div class="comment"><textarea data-comment-for="' + line.attr('id') + '"></textarea><div class="actions"><button class="ok">Ok</button><button class="discard">Discard</button></div></div>');
+    var comment_block = $('<div class="comment"><textarea data-comment-for="' + line.attr('id') + '"></textarea><div class="actions"><button class="ok">OK</button><button class="discard">Discard</button></div></div>');
     insertCommentFor(line, comment_block);
     comment_block.hide().slideDown('fast', function() {
       $(this).children('textarea').focus();
