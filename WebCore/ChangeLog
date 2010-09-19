@@ -1,3 +1,13 @@
+2010-09-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Replace WKBundleRangeRef with WKBundleRangeHandleRef.
+        https://bugs.webkit.org/show_bug.cgi?id=46054
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2010-09-19  Patrick Gansterer  <paroga@paroga.com>
 
         Unreviewed.

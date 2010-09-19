@@ -1357,7 +1357,7 @@
 		65DF31FF09D1CC60000BE325 /* JSProcessingInstruction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DF31EB09D1CC60000BE325 /* JSProcessingInstruction.cpp */; };
 		65DF320009D1CC60000BE325 /* JSProcessingInstruction.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DF31EC09D1CC60000BE325 /* JSProcessingInstruction.h */; };
 		65DF320109D1CC60000BE325 /* JSRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DF31ED09D1CC60000BE325 /* JSRange.cpp */; };
-		65DF320209D1CC60000BE325 /* JSRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DF31EE09D1CC60000BE325 /* JSRange.h */; };
+		65DF320209D1CC60000BE325 /* JSRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DF31EE09D1CC60000BE325 /* JSRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65DF320309D1CC60000BE325 /* JSText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DF31EF09D1CC60000BE325 /* JSText.cpp */; };
 		65DF320409D1CC60000BE325 /* JSText.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DF31F009D1CC60000BE325 /* JSText.h */; };
 		65DF320509D1CC60000BE325 /* JSWheelEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DF31F109D1CC60000BE325 /* JSWheelEvent.cpp */; };
