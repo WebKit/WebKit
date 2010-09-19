@@ -1,3 +1,17 @@
+2010-09-19  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] clipBoundingRect() should return rect relevant to current layer
+        https://bugs.webkit.org/show_bug.cgi?id=46059
+
+        r65791 inadvertently changed clipBoundingRect() to always use the GC painter
+        without checking the TransparencyLayer stack first.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::p):
+        (WebCore::GraphicsContextPlatformPrivate::clipBoundingRect):
+
 2010-09-19  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

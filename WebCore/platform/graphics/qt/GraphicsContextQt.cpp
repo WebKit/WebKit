@@ -174,7 +174,7 @@ public:
     GraphicsContextPlatformPrivate(QPainter* painter);
     ~GraphicsContextPlatformPrivate();
 
-    inline QPainter* p()
+    inline QPainter* p() const
     {
         if (layers.isEmpty())
             return painter;
@@ -207,9 +207,9 @@ public:
     QRectF clipBoundingRect() const
     {
 #if QT_VERSION >= QT_VERSION_CHECK(4, 8, 0)
-        return painter->clipBoundingRect();
+        return p()->clipBoundingRect();
 #else
-        return painter->clipRegion().boundingRect();
+        return p()->clipRegion().boundingRect();
 #endif
     }
 
