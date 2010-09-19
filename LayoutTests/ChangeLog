@@ -1,3 +1,11 @@
+2010-09-19  Adam Barth  <abarth@webkit.org>
+
+        Also update mac-leopard and mac-tiger.
+        See https://bugs.webkit.org/show_bug.cgi?id=46042
+
+        * platform/mac-leopard/platform/mac/fast/loader/file-url-mimetypes-2-expected.txt:
+        * platform/mac-tiger/platform/mac/fast/loader/file-url-mimetypes-2-expected.txt:
+
 2010-09-19  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Adam Barth.
