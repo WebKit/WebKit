@@ -29,13 +29,16 @@
 # Update script for the WebKit Chromium Port.
 
 use File::Path;
+use FindBin;
 use Getopt::Long;
+use lib $FindBin::Bin;
+use webkitdirs;
 
 chdir("WebKit/chromium") or die $!;
 
 # Find gclient or install it.
 my $gclientPath;
-if (`gclient --version`) {
+if (commandExists('gclient')) {
     $gclientPath = 'gclient';
 } elsif (-e 'depot_tools/gclient') {
     $gclientPath = 'depot_tools/gclient';

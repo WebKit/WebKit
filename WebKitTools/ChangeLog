@@ -1,3 +1,12 @@
+2010-09-18  Prasad Tammana  <prasadt@chromium.org>
+
+        Reviewed by David Levin.
+
+        update-webkit --chromium spitting out a spurious error
+        https://bugs.webkit.org/show_bug.cgi?id=45868
+
+        * Scripts/update-webkit-chromium: Use commandExists() function to check for existence of gclient.
+
 2010-09-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
