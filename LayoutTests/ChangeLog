@@ -1,3 +1,37 @@
+2010-09-19  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Update win-vista baselines for Chromium to make a few more tests pass.
+        https://bugs.webkit.org/show_bug.cgi?id=46056
+
+        * platform/chromium-win-vista/css2.1/t1202-counter-09-b-checksum.png: Added.
+        * platform/chromium-win-vista/css2.1/t1202-counter-09-b-expected.png: Added.
+        * platform/chromium-win-vista/css2.1/t1202-counters-09-b-checksum.png: Added.
+        * platform/chromium-win-vista/css2.1/t1202-counters-09-b-expected.png: Added.
+        * platform/chromium-win-vista/fast/text/atsui-spacing-features-expected.checksum:
+        * platform/chromium-win-vista/fast/text/atsui-spacing-features-expected.png:
+        * platform/chromium-win-vista/fast/text/backslash-to-yen-sign-expected.checksum: Added.
+        * platform/chromium-win-vista/fast/text/backslash-to-yen-sign-expected.png: Added.
+        * platform/chromium-win-vista/fast/text/backslash-to-yen-sign-expected.txt: Added.
+        * platform/chromium-win-vista/fast/text/international/bidi-mirror-he-ar-expected.checksum: Added.
+        * platform/chromium-win-vista/fast/text/international/bidi-mirror-he-ar-expected.png: Added.
+        * platform/chromium-win-vista/fast/text/international/bidi-mirror-he-ar-expected.txt: Added.
+        * platform/chromium-win-vista/fast/text/international/hindi-spacing-expected.checksum: Added.
+        * platform/chromium-win-vista/fast/text/international/hindi-spacing-expected.png: Added.
+        * platform/chromium-win-vista/fast/text/international/hindi-whitespace-expected.checksum: Added.
+        * platform/chromium-win-vista/fast/text/international/hindi-whitespace-expected.png: Added.
+        * platform/chromium-win-vista/fast/text/international/plane2-expected.checksum: Added.
+        * platform/chromium-win-vista/fast/text/international/plane2-expected.png: Added.
+        * platform/chromium-win-vista/fast/text/international/plane2-expected.txt: Added.
+        * platform/chromium-win-vista/svg/batik/text/textFeatures-expected.checksum: Removed.
+        * platform/chromium-win-vista/svg/batik/text/textFeatures-expected.png: Removed.
+        * platform/chromium-win-vista/svg/batik/text/verticalText-expected.checksum:
+        * platform/chromium-win-vista/svg/batik/text/verticalText-expected.png:
+        * platform/chromium-win-vista/svg/text/text-intro-05-t-expected.checksum: Added.
+        * platform/chromium-win-vista/svg/text/text-intro-05-t-expected.png: Added.
+        * platform/chromium/drt_expectations.txt: Removed expectations of failure, also added more info on remaining Windows failures.
+
 2010-09-19  Adam Barth  <abarth@webkit.org>
 
         Turns out these still fail.

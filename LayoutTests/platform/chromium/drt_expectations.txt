@@ -137,25 +137,20 @@ BUG_DRT MAC : media/video-controls-transformed.html = TEXT
 BUG_DRT MAC : media/video-play-empty-events.html = CRASH TIMEOUT PASS
 BUG_DRT MAC : media/video-src-change.html = CRASH TEXT PASS
 BUG_DRT MAC : svg/custom/clip-path-referencing-use2.svg = TEXT
+
+// plugin-related failures
 BUG_DRT WIN : fast/dom/object-embed-plugin-scripting.html = TEXT
-BUG_DRT WIN : fast/events/show-modal-dialog-onblur-onfocus.html = TEXT
-BUG_DRT WIN : fast/forms/search-styled.html = TEXT
-BUG_DRT WIN : fast/gradients/radial-centered.html = IMAGE+TEXT
-BUG_DRT WIN : fast/harness/show-modal-dialog.html = TEXT
-BUG_DRT WIN : fast/notifications/notifications-replace.html = TEXT
-BUG_DRT WIN : fast/text/atsui-spacing-features.html = IMAGE
-BUG_DRT WIN : fast/text/backslash-to-yen-sign.html = IMAGE+TEXT
-BUG_DRT WIN : fast/text/international/bidi-mirror-he-ar.html = IMAGE+TEXT
-BUG_DRT WIN : fast/text/international/hindi-spacing.html = IMAGE
-BUG_DRT WIN : fast/text/international/hindi-whitespace.html = IMAGE
-BUG_DRT WIN : fast/text/international/plane2.html = IMAGE+TEXT
 BUG_DRT WIN : plugins/embed-attributes-setting.html = TEXT
-BUG_DRT WIN : svg/batik/text/textFeatures.svg = IMAGE
-BUG_DRT WIN : svg/batik/text/verticalText.svg = IMAGE
-BUG_DRT WIN : svg/custom/text-linking.svg = IMAGE
-BUG_DRT WIN : svg/text/text-intro-05-t.svg = IMAGE
+
+// something to do with mime types of audio/video.
 BUG_DRT WIN : userscripts/user-script-audio-document.html = TEXT
 BUG_DRT WIN : userscripts/user-script-video-document.html = TEXT
+
+// unknown.
+BUG_DRT WIN : fast/events/show-modal-dialog-onblur-onfocus.html = TEXT
+BUG_DRT WIN : fast/forms/search-styled.html = TEXT
+BUG_DRT WIN : fast/harness/show-modal-dialog.html = TEXT
+BUG_DRT WIN : fast/notifications/notifications-replace.html = TEXT
 
 // Pass with DRT though FAIL on test_shell
 BUG_DRT : platform/chromium/accessibility = PASS
