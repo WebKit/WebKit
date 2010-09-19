@@ -9,6 +9,7 @@ WEBCORE_GENERATED_HEADERS_FOR_WEBKIT2 += \
     $$OUTPUT_DIR/WebCore/generated/JSDOMWindow.h \
     $$OUTPUT_DIR/WebCore/generated/JSElement.h \
     $$OUTPUT_DIR/WebCore/generated/JSHTMLElement.h \
+    $$OUTPUT_DIR/WebCore/generated/JSRange.h \
 
 
 QUOTE = ""

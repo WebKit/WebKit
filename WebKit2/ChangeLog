@@ -1,5 +1,14 @@
 2010-09-19  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed buildfix after r67813.
+
+        Replace WKBundleRangeRef with WKBundleRangeHandleRef.
+        https://bugs.webkit.org/show_bug.cgi?id=46054
+
+        * DerivedSources.pro: Add WebCore/generated/JSRange.h to WEBCORE_GENERATED_HEADERS_FOR_WEBKIT2
+
+2010-09-19  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed buildfix after r67802.
 
         WebKit2: Improve/unify the PageLoadClient interfaces.
