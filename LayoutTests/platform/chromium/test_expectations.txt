@@ -2544,8 +2544,6 @@ BUG43890 MAC LINUX : fast/forms/implicit-submission.html = TEXT PASS
 // Flaky crashing test. Started crashing around Chromium r47220
 BUG44150 LINUX DEBUG : fast/forms/input-text-paste-maxlength.html = CRASH PASS
 
-// Canvas test suite.  Needs baselines.
-BUG45991 : canvas/philip = TEXT
 // These appear flaky locally - will see what the bots thing.
 BUG45991 : canvas/philip/tests/2d.path.arcTo.coincide.1.html = TEXT PASS
 BUG45991 : canvas/philip/tests/2d.path.stroke.prune.arc.html = TEXT PASS

@@ -1,5 +1,11 @@
 2010-09-19  Adam Barth  <abarth@webkit.org>
 
+        These tests now pass.  Go team.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-09-19  Adam Barth  <abarth@webkit.org>
+
         Also update mac-leopard and mac-tiger.
         See https://bugs.webkit.org/show_bug.cgi?id=46042
 
