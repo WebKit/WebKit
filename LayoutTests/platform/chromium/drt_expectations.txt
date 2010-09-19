@@ -148,7 +148,6 @@ BUG_DRT WIN : userscripts/user-script-video-document.html = TEXT
 
 // unknown.
 BUG_DRT WIN : fast/events/show-modal-dialog-onblur-onfocus.html = TEXT
-BUG_DRT WIN : fast/forms/search-styled.html = TEXT
 BUG_DRT WIN : fast/harness/show-modal-dialog.html = TEXT
 BUG_DRT WIN : fast/notifications/notifications-replace.html = TEXT
 

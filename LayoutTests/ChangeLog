@@ -1,5 +1,13 @@
 2010-09-19  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Create one more text baseline for win-vista.
+
+        * platform/chromium-win-vista/fast/forms/search-styled-expected.txt: Added.
+        * platform/chromium/drt_expectations.txt: Removed search-styled as it's now passing.
+        * platform/chromium/test_expectations.txt: Removed an errant line break.
+
+2010-09-19  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Reviewed by Adam Barth.
 
         Update win-vista baselines for Chromium to make a few more tests pass.
