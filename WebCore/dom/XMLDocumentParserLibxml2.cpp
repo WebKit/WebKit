@@ -1,11 +1,12 @@
 /*
- * Copyright (C) 2000 Peter Kelly (pmk@post.com)
+ * Copyright (C) 2000 Peter Kelly <pmk@post.com>
  * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
- * Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
+ * Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
+ * Copyright (C) 2007 Samuel Weinig <sam@webkit.org>
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2008 Holger Hans Peter Freyther
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -681,6 +682,18 @@ static inline String toString(const xmlChar* string)
     return String::fromUTF8(reinterpret_cast<const char*>(string));
 }
 
+static inline AtomicString toAtomicString(const xmlChar* string, size_t size)
+{
+    // FIXME: Use AtomicString::fromUTF8.
+    return AtomicString(toString(string, size));
+}
+
+static inline AtomicString toAtomicString(const xmlChar* string)
+{
+    // FIXME: Use AtomicString::fromUTF8.
+    return AtomicString(toString(string));
+}
+
 struct _xmlSAX2Namespace {
     const xmlChar* prefix;
     const xmlChar* uri;
@@ -692,7 +705,7 @@ static inline void handleElementNamespaces(Element* newElement, const xmlChar** 
     xmlSAX2Namespace* namespaces = reinterpret_cast<xmlSAX2Namespace*>(libxmlNamespaces);
     for (int i = 0; i < nb_namespaces; i++) {
         AtomicString namespaceQName = xmlnsAtom;
-        String namespaceURI = toString(namespaces[i].uri);
+        AtomicString namespaceURI = toAtomicString(namespaces[i].uri);
         if (namespaces[i].prefix)
             namespaceQName = "xmlns:" + toString(namespaces[i].prefix);
         newElement->setAttributeNS(XMLNSNames::xmlnsNamespaceURI, namespaceQName, namespaceURI, ec, scriptingPermission);
@@ -714,12 +727,11 @@ static inline void handleElementAttributes(Element* newElement, const xmlChar** 
 {
     xmlSAX2Attributes* attributes = reinterpret_cast<xmlSAX2Attributes*>(libxmlAttributes);
     for (int i = 0; i < nb_attributes; i++) {
-        String attrLocalName = toString(attributes[i].localname);
-        int valueLength = (int) (attributes[i].end - attributes[i].value);
-        String attrValue = toString(attributes[i].value, valueLength);
+        int valueLength = static_cast<int>(attributes[i].end - attributes[i].value);
+        AtomicString attrValue = toAtomicString(attributes[i].value, valueLength);
         String attrPrefix = toString(attributes[i].prefix);
-        String attrURI = attrPrefix.isEmpty() ? String() : toString(attributes[i].uri);
-        String attrQName = attrPrefix.isEmpty() ? attrLocalName : attrPrefix + ":" + attrLocalName;
+        AtomicString attrURI = attrPrefix.isEmpty() ? AtomicString() : toAtomicString(attributes[i].uri);
+        AtomicString attrQName = attrPrefix.isEmpty() ? toAtomicString(attributes[i].localname) : AtomicString(attrPrefix + ":" + toString(attributes[i].localname));
 
         newElement->setAttributeNS(attrURI, attrQName, attrValue, ec, scriptingPermission);
         if (ec) // exception setting attributes
@@ -749,9 +761,9 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
 
     exitText();
 
-    String localName = toString(xmlLocalName);
-    String uri = toString(xmlURI);
-    String prefix = toString(xmlPrefix);
+    AtomicString localName = toAtomicString(xmlLocalName);
+    AtomicString uri = toAtomicString(xmlURI);
+    AtomicString prefix = toAtomicString(xmlPrefix);
 
     if (m_parsingFragment && uri.isNull()) {
         if (!prefix.isNull())

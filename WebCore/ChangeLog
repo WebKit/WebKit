@@ -1,3 +1,20 @@
+2010-09-18  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Darin Adler.
+
+        Use AtomicString insted of String in XMLDocumentParser
+        https://bugs.webkit.org/show_bug.cgi?id=45990
+
+        Create AtomicString as early as possible.
+        This can avoid unnecessary memcpy of String content.
+
+        * dom/XMLDocumentParser.h:
+        * dom/XMLDocumentParserLibxml2.cpp:
+        (WebCore::toAtomicString):
+        (WebCore::handleElementNamespaces):
+        (WebCore::handleElementAttributes):
+        (WebCore::XMLDocumentParser::startElementNs):
+
 2010-09-18  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Nate Chapin.
