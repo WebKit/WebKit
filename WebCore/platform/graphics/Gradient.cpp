@@ -117,9 +117,16 @@ void Gradient::sortStopsIfNecessary()
     if (m_stopsSorted)
         return;
 
-    if (m_stops.size())
-        std::stable_sort(m_stops.begin(), m_stops.end(), compareStops);
     m_stopsSorted = true;
+
+    if (!m_stops.size())
+        return;
+
+    // Shortcut for the ideal case (ordered 2-stop gradient)
+    if (m_stops.size() == 2 && compareStops(*m_stops.begin(), *m_stops.end()))
+        return;
+
+    std::stable_sort(m_stops.begin(), m_stops.end(), compareStops);
 }
 
 void Gradient::getColor(float value, float* r, float* g, float* b, float* a) const

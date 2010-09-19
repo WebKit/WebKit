@@ -1,3 +1,15 @@
+2010-09-18  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Oliver Hunt.
+
+        Gradient: Fast-path for the ideal case in sortStopsIfNecessary()
+        https://bugs.webkit.org/show_bug.cgi?id=46045
+
+        Avoid calling std::stable_sort for 2-stop gradients that are already in order.
+
+        * platform/graphics/Gradient.cpp:
+        (WebCore::Gradient::sortStopsIfNecessary):
+
 2010-09-18  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Andreas Kling.
