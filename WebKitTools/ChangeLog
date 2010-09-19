@@ -1,5 +1,12 @@
 2010-09-19  Kent Tamura  <tkent@chromium.org>
 
+        Unreviewed. Fix WebGL test regressions by r67809.
+
+        * DumpRenderTree/chromium/WebPreferences.cpp:
+        (WebPreferences::applyTo): Call setExperimentalWebGLEnabled().
+
+2010-09-19  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Adam Barth.
 
         [DRT/Chromium] Fix a WebSettings handling bug
