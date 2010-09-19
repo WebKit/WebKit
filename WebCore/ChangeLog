@@ -1,3 +1,13 @@
+2010-09-19  Patrick Gansterer  <paroga@paroga.com>
+
+        Unreviewed.
+
+        [WINCE] Buildfix for Gradient after r67801.
+
+        * platform/graphics/Gradient.h:
+        * platform/graphics/wince/GradientWinCE.cpp:
+        (WebCore::Gradient::getStops):
+
 2010-09-19  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
