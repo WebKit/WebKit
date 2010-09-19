@@ -1,3 +1,15 @@
+2010-09-18  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Oliver Hunt.
+
+        Gradient: Pre-reserve space for 2 color stops
+        https://bugs.webkit.org/show_bug.cgi?id=46044
+
+        Most gradients have only 2 color stops, pre-reserve space for these in m_stops
+        to avoid growing the vector dynamically in the common case.
+
+        * platform/graphics/Gradient.h:
+
 2010-09-18  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r67792.

@@ -142,7 +142,7 @@ namespace WebCore {
         FloatPoint m_p1;
         float m_r0;
         float m_r1;
-        mutable Vector<ColorStop> m_stops;
+        mutable Vector<ColorStop, 2> m_stops;
         mutable bool m_stopsSorted;
         mutable int m_lastStop;
         GradientSpreadMethod m_spreadMethod;
