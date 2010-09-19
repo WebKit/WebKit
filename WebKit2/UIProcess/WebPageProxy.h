@@ -205,16 +205,16 @@ private:
     void didCreateMainFrame(uint64_t frameID);
     void didCreateSubFrame(uint64_t frameID);
 
-    void didStartProvisionalLoadForFrame(WebFrameProxy*, const String&);
-    void didReceiveServerRedirectForProvisionalLoadForFrame(WebFrameProxy*, const String&);
-    void didFailProvisionalLoadForFrame(WebFrameProxy*);
-    void didCommitLoadForFrame(WebFrameProxy*, const PlatformCertificateInfo&);
-    void didFinishDocumentLoadForFrame(WebFrameProxy*);
-    void didFinishLoadForFrame(WebFrameProxy*);
-    void didFailLoadForFrame(WebFrameProxy*);
-    void didReceiveTitleForFrame(WebFrameProxy*, const String&);
-    void didFirstLayoutForFrame(WebFrameProxy*);
-    void didFirstVisuallyNonEmptyLayoutForFrame(WebFrameProxy*);
+    void didStartProvisionalLoadForFrame(WebFrameProxy*, const String&, APIObject*);
+    void didReceiveServerRedirectForProvisionalLoadForFrame(WebFrameProxy*, const String&, APIObject*);
+    void didFailProvisionalLoadForFrame(WebFrameProxy*, APIObject*);
+    void didCommitLoadForFrame(WebFrameProxy*, const PlatformCertificateInfo&, APIObject*);
+    void didFinishDocumentLoadForFrame(WebFrameProxy*, APIObject*);
+    void didFinishLoadForFrame(WebFrameProxy*, APIObject*);
+    void didFailLoadForFrame(WebFrameProxy*, APIObject*);
+    void didReceiveTitleForFrame(WebFrameProxy*, const String&, APIObject*);
+    void didFirstLayoutForFrame(WebFrameProxy*, APIObject*);
+    void didFirstVisuallyNonEmptyLayoutForFrame(WebFrameProxy*, APIObject*);
     void didStartProgress();
     void didChangeProgress(double);
     void didFinishProgress();

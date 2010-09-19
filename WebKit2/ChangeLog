@@ -1,3 +1,92 @@
+2010-09-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Improve/unify the PageLoadClient interfaces.
+        https://bugs.webkit.org/show_bug.cgi?id=46043
+
+        - Ensure that all the PageLoadClient functions (that are load related)
+          have bundle API equivalents (this meant adding didFirstLayoutForFrame
+          and didFirstVisuallyNonEmptyLayoutForFrame to the BundlePageLoadClient).
+        - Add a userData out parameters to all the now paired BundlePageLoadClient
+          functions, and a matching userData parameter to the PageLoadClient ones.
+
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/qt/ClientImpl.cpp:
+        (qt_wk_didStartProvisionalLoadForFrame):
+        (qt_wk_didReceiveServerRedirectForProvisionalLoadForFrame):
+        (qt_wk_didFailProvisionalLoadWithErrorForFrame):
+        (qt_wk_didCommitLoadForFrame):
+        (qt_wk_didFinishDocumentLoadForFrame):
+        (qt_wk_didFinishLoadForFrame):
+        (qt_wk_didFailLoadWithErrorForFrame):
+        (qt_wk_didReceiveTitleForFrame):
+        (qt_wk_didFirstLayoutForFrame):
+        (qt_wk_didFirstVisuallyNonEmptyLayoutForFrame):
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::didStartProvisionalLoadForFrame):
+        (WebKit::WebLoaderClient::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebKit::WebLoaderClient::didFailProvisionalLoadWithErrorForFrame):
+        (WebKit::WebLoaderClient::didCommitLoadForFrame):
+        (WebKit::WebLoaderClient::didFinishDocumentLoadForFrame):
+        (WebKit::WebLoaderClient::didFinishLoadForFrame):
+        (WebKit::WebLoaderClient::didFailLoadWithErrorForFrame):
+        (WebKit::WebLoaderClient::didReceiveTitleForFrame):
+        (WebKit::WebLoaderClient::didFirstLayoutForFrame):
+        (WebKit::WebLoaderClient::didFirstVisuallyNonEmptyLayoutForFrame):
+        (WebKit::WebLoaderClient::didStartProgress):
+        (WebKit::WebLoaderClient::didChangeProgress):
+        (WebKit::WebLoaderClient::didFinishProgress):
+        (WebKit::WebLoaderClient::didBecomeUnresponsive):
+        (WebKit::WebLoaderClient::didBecomeResponsive):
+        (WebKit::WebLoaderClient::processDidExit):
+        (WebKit::WebLoaderClient::didChangeBackForwardList):
+        * UIProcess/WebLoaderClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessage):
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::didFinishDocumentLoadForFrame):
+        (WebKit::WebPageProxy::didFinishLoadForFrame):
+        (WebKit::WebPageProxy::didFailLoadForFrame):
+        (WebKit::WebPageProxy::didReceiveTitleForFrame):
+        (WebKit::WebPageProxy::didFirstLayoutForFrame):
+        (WebKit::WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::didStartProvisionalLoadForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didFailProvisionalLoadWithErrorForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didCommitLoadForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didFinishDocumentLoadForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didFinishLoadForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didFailLoadWithErrorForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didReceiveTitleForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didFirstLayoutForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didFirstVisuallyNonEmptyLayoutForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didClearWindowObjectForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didCancelClientRedirectForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::willPerformClientRedirectForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didChangeLocationWithinPageForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didHandleOnloadEventsForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didDisplayInsecureContentForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didRunInsecureContentForFrame):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidStartProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveTitle):
+        (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishDocumentLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFirstLayout):
+        (WebKit::WebFrameLoaderClient::dispatchDidFirstVisuallyNonEmptyLayout):
+
 2010-09-18  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

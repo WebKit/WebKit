@@ -541,75 +541,125 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
         case WebPageProxyMessage::DidStartProvisionalLoadForFrame: {
             uint64_t frameID;
             String url;
-            if (!arguments->decode(CoreIPC::Out(frameID, url)))
+
+            RefPtr<APIObject> userData;
+            WebContextUserMessageDecoder messageDecoder(userData, pageNamespace()->context());
+
+            if (!arguments->decode(CoreIPC::Out(frameID, url, messageDecoder)))
                 return;
-            didStartProvisionalLoadForFrame(process()->webFrame(frameID), url);
+
+            didStartProvisionalLoadForFrame(process()->webFrame(frameID), url, userData.get());
             break;
         }
         case WebPageProxyMessage::DidReceiveServerRedirectForProvisionalLoadForFrame: {
             uint64_t frameID;
             String url;
-            if (!arguments->decode(CoreIPC::Out(frameID, url)))
+
+            RefPtr<APIObject> userData;
+            WebContextUserMessageDecoder messageDecoder(userData, pageNamespace()->context());
+
+            if (!arguments->decode(CoreIPC::Out(frameID, url, messageDecoder)))
                 return;
-            didReceiveServerRedirectForProvisionalLoadForFrame(process()->webFrame(frameID), url);
+
+            didReceiveServerRedirectForProvisionalLoadForFrame(process()->webFrame(frameID), url, userData.get());
             break;
         }
         case WebPageProxyMessage::DidFailProvisionalLoadForFrame: {
             uint64_t frameID;
-            if (!arguments->decode(frameID))
+            
+            RefPtr<APIObject> userData;
+            WebContextUserMessageDecoder messageDecoder(userData, pageNamespace()->context());
+
+            if (!arguments->decode(CoreIPC::Out(frameID, messageDecoder)))
                 return;
-            didFailProvisionalLoadForFrame(process()->webFrame(frameID));
+
+            didFailProvisionalLoadForFrame(process()->webFrame(frameID), userData.get());
             break;
         }
         case WebPageProxyMessage::DidCommitLoadForFrame: {
             uint64_t frameID;
             PlatformCertificateInfo certificateInfo;
-            if (!arguments->decode(CoreIPC::Out(frameID, certificateInfo)))
+
+            RefPtr<APIObject> userData;
+            WebContextUserMessageDecoder messageDecoder(userData, pageNamespace()->context());
+
+            if (!arguments->decode(CoreIPC::Out(frameID, certificateInfo, messageDecoder)))
                 return;
-            didCommitLoadForFrame(process()->webFrame(frameID), certificateInfo);
+    
+            didCommitLoadForFrame(process()->webFrame(frameID), certificateInfo, userData.get());
             break;
         }
         case WebPageProxyMessage::DidFinishDocumentLoadForFrame: {
             uint64_t frameID;
-            if (!arguments->decode(frameID))
+
+            RefPtr<APIObject> userData;
+            WebContextUserMessageDecoder messageDecoder(userData, pageNamespace()->context());
+
+            if (!arguments->decode(CoreIPC::Out(frameID, messageDecoder)))
                 return;
-            didFinishDocumentLoadForFrame(process()->webFrame(frameID));
+
+            didFinishDocumentLoadForFrame(process()->webFrame(frameID), userData.get());
             break;
         }
         case WebPageProxyMessage::DidFinishLoadForFrame: {
             uint64_t frameID;
-            if (!arguments->decode(frameID))
+
+            RefPtr<APIObject> userData;
+            WebContextUserMessageDecoder messageDecoder(userData, pageNamespace()->context());
+
+            if (!arguments->decode(CoreIPC::Out(frameID, messageDecoder)))
                 return;
-            didFinishLoadForFrame(process()->webFrame(frameID));
+
+            didFinishLoadForFrame(process()->webFrame(frameID), userData.get());
             break;
         }
         case WebPageProxyMessage::DidFailLoadForFrame: {
             uint64_t frameID;
-            if (!arguments->decode(frameID))
+
+            RefPtr<APIObject> userData;
+            WebContextUserMessageDecoder messageDecoder(userData, pageNamespace()->context());
+
+            if (!arguments->decode(CoreIPC::Out(frameID, messageDecoder)))
                 return;
-            didFailLoadForFrame(process()->webFrame(frameID));
+
+            didFailLoadForFrame(process()->webFrame(frameID), userData.get());
             break;
         }
         case WebPageProxyMessage::DidReceiveTitleForFrame: {
             uint64_t frameID;
             String title;
-            if (!arguments->decode(CoreIPC::Out(frameID, title)))
+
+            RefPtr<APIObject> userData;
+            WebContextUserMessageDecoder messageDecoder(userData, pageNamespace()->context());
+
+            if (!arguments->decode(CoreIPC::Out(frameID, title, messageDecoder)))
                 return;
-            didReceiveTitleForFrame(process()->webFrame(frameID), title);
+
+            didReceiveTitleForFrame(process()->webFrame(frameID), title, userData.get());
             break;
         }
         case WebPageProxyMessage::DidFirstLayoutForFrame: {
             uint64_t frameID;
-            if (!arguments->decode(frameID))
+
+            RefPtr<APIObject> userData;
+            WebContextUserMessageDecoder messageDecoder(userData, pageNamespace()->context());
+
+            if (!arguments->decode(CoreIPC::Out(frameID, messageDecoder)))
                 return;
-            didFirstLayoutForFrame(process()->webFrame(frameID));
+
+            didFirstLayoutForFrame(process()->webFrame(frameID), userData.get());
             break;
         }
         case WebPageProxyMessage::DidFirstVisuallyNonEmptyLayoutForFrame: {
             uint64_t frameID;
-            if (!arguments->decode(frameID))
+
+            RefPtr<APIObject> userData;
+            WebContextUserMessageDecoder messageDecoder(userData, pageNamespace()->context());
+
+            if (!arguments->decode(CoreIPC::Out(frameID, messageDecoder)))
                 return;
-            didFirstVisuallyNonEmptyLayoutForFrame(process()->webFrame(frameID));
+
+            didFirstVisuallyNonEmptyLayoutForFrame(process()->webFrame(frameID), userData.get());
             break;
         }
         case WebPageProxyMessage::DidStartProgress:
@@ -925,47 +975,47 @@ void WebPageProxy::didFinishProgress()
     m_loaderClient.didFinishProgress(this);
 }
 
-void WebPageProxy::didStartProvisionalLoadForFrame(WebFrameProxy* frame, const String& url)
+void WebPageProxy::didStartProvisionalLoadForFrame(WebFrameProxy* frame, const String& url, APIObject* userData)
 {
     frame->didStartProvisionalLoad(url);
-    m_loaderClient.didStartProvisionalLoadForFrame(this, frame);
+    m_loaderClient.didStartProvisionalLoadForFrame(this, frame, userData);
 }
 
-void WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame(WebFrameProxy* frame, const String& url)
+void WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame(WebFrameProxy* frame, const String& url, APIObject* userData)
 {
     frame->didReceiveServerRedirectForProvisionalLoad(url);
-    m_loaderClient.didReceiveServerRedirectForProvisionalLoadForFrame(this, frame);
+    m_loaderClient.didReceiveServerRedirectForProvisionalLoadForFrame(this, frame, userData);
 }
 
-void WebPageProxy::didFailProvisionalLoadForFrame(WebFrameProxy* frame)
+void WebPageProxy::didFailProvisionalLoadForFrame(WebFrameProxy* frame, APIObject* userData)
 {
-    m_loaderClient.didFailProvisionalLoadWithErrorForFrame(this, frame);
+    m_loaderClient.didFailProvisionalLoadWithErrorForFrame(this, frame, userData);
 }
 
-void WebPageProxy::didCommitLoadForFrame(WebFrameProxy* frame, const PlatformCertificateInfo& certificateInfo)
+void WebPageProxy::didCommitLoadForFrame(WebFrameProxy* frame, const PlatformCertificateInfo& certificateInfo, APIObject* userData)
 {
     frame->setCertificateInfo(WebCertificateInfo::create(certificateInfo));
     frame->didCommitLoad();
-    m_loaderClient.didCommitLoadForFrame(this, frame);
+    m_loaderClient.didCommitLoadForFrame(this, frame, userData);
 }
 
-void WebPageProxy::didFinishDocumentLoadForFrame(WebFrameProxy* frame)
+void WebPageProxy::didFinishDocumentLoadForFrame(WebFrameProxy* frame, APIObject* userData)
 {
-    m_loaderClient.didFinishDocumentLoadForFrame(this, frame);
+    m_loaderClient.didFinishDocumentLoadForFrame(this, frame, userData);
 }
 
-void WebPageProxy::didFinishLoadForFrame(WebFrameProxy* frame)
+void WebPageProxy::didFinishLoadForFrame(WebFrameProxy* frame, APIObject* userData)
 {
     frame->didFinishLoad();
-    m_loaderClient.didFinishLoadForFrame(this, frame);
+    m_loaderClient.didFinishLoadForFrame(this, frame, userData);
 }
 
-void WebPageProxy::didFailLoadForFrame(WebFrameProxy* frame)
+void WebPageProxy::didFailLoadForFrame(WebFrameProxy* frame, APIObject* userData)
 {
-    m_loaderClient.didFailLoadWithErrorForFrame(this, frame);
+    m_loaderClient.didFailLoadWithErrorForFrame(this, frame, userData);
 }
 
-void WebPageProxy::didReceiveTitleForFrame(WebFrameProxy* frame, const String& title)
+void WebPageProxy::didReceiveTitleForFrame(WebFrameProxy* frame, const String& title, APIObject* userData)
 {
     frame->didReceiveTitle(title);
 
@@ -973,17 +1023,17 @@ void WebPageProxy::didReceiveTitleForFrame(WebFrameProxy* frame, const String& t
     if (frame == m_mainFrame)
         m_pageTitle = title;
 
-    m_loaderClient.didReceiveTitleForFrame(this, title.impl(), frame);
+    m_loaderClient.didReceiveTitleForFrame(this, title, frame, userData);
 }
 
-void WebPageProxy::didFirstLayoutForFrame(WebFrameProxy* frame)
+void WebPageProxy::didFirstLayoutForFrame(WebFrameProxy* frame, APIObject* userData)
 {
-    m_loaderClient.didFirstLayoutForFrame(this, frame);
+    m_loaderClient.didFirstLayoutForFrame(this, frame, userData);
 }
 
-void WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame(WebFrameProxy* frame)
+void WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame(WebFrameProxy* frame, APIObject* userData)
 {
-    m_loaderClient.didFirstVisuallyNonEmptyLayoutForFrame(this, frame);
+    m_loaderClient.didFirstVisuallyNonEmptyLayoutForFrame(this, frame, userData);
 }
 
 // PolicyClient

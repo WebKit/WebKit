@@ -31,6 +31,7 @@
 
 namespace WebKit {
 
+class APIObject;
 class WebPageProxy;
 class WebFrameProxy;
 
@@ -39,16 +40,17 @@ public:
     WebLoaderClient();
     void initialize(const WKPageLoaderClient*);
 
-    void didStartProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*);
-    void didReceiveServerRedirectForProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*);
-    void didFailProvisionalLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*);
-    void didCommitLoadForFrame(WebPageProxy*, WebFrameProxy*);
-    void didFinishDocumentLoadForFrame(WebPageProxy*, WebFrameProxy*);
-    void didFinishLoadForFrame(WebPageProxy*, WebFrameProxy*);
-    void didFailLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*);
-    void didReceiveTitleForFrame(WebPageProxy*, StringImpl*, WebFrameProxy*);
-    void didFirstLayoutForFrame(WebPageProxy*, WebFrameProxy*);
-    void didFirstVisuallyNonEmptyLayoutForFrame(WebPageProxy*, WebFrameProxy*);
+    void didStartProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
+    void didReceiveServerRedirectForProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
+    void didFailProvisionalLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
+    void didCommitLoadForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
+    void didFinishDocumentLoadForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
+    void didFinishLoadForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
+    void didFailLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
+    void didReceiveTitleForFrame(WebPageProxy*, const String&, WebFrameProxy*, APIObject*);
+    void didFirstLayoutForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
+    void didFirstVisuallyNonEmptyLayoutForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
+
     void didStartProgress(WebPageProxy*);
     void didChangeProgress(WebPageProxy*);
     void didFinishProgress(WebPageProxy*);

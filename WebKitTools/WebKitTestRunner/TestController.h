@@ -75,7 +75,7 @@ private:
     void didReceiveMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody);
 
     // WKPageLoaderClient
-    static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, const void*);
+    static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void*);
     void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame);
 
 

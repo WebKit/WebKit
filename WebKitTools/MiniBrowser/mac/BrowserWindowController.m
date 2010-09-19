@@ -248,54 +248,54 @@
 
 #pragma mark Loader Client Callbacks
 
-static void didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
+static void didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
 {
     [(BrowserWindowController *)clientInfo didStartProvisionalLoadForFrame:frame];
 }
 
-static void didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
+static void didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
 {
     [(BrowserWindowController *)clientInfo didReceiveServerRedirectForProvisionalLoadForFrame:frame];
 }
 
-static void didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
+static void didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
 {
     [(BrowserWindowController *)clientInfo didFailProvisionalLoadWithErrorForFrame:frame];
 }
 
-static void didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
+static void didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
 {
     [(BrowserWindowController *)clientInfo didCommitLoadForFrame:frame];
 }
 
-static void didFinishDocumentLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
+static void didFinishDocumentLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
 {
     LOG(@"didFinishDocumentLoadForFrame");
 }
 
-static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
+static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
 {
     LOG(@"didFinishLoadForFrame");
 }
 
-static void didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
+static void didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
 {
     [(BrowserWindowController *)clientInfo didFailLoadWithErrorForFrame:frame];
 }
 
-static void didReceiveTitleForFrame(WKPageRef page, WKStringRef title, WKFrameRef frame, const void *clientInfo)
+static void didReceiveTitleForFrame(WKPageRef page, WKStringRef title, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
 {
     CFStringRef cfTitle = WKStringCopyCFString(0, title);
     LOG(@"didReceiveTitleForFrame \"%@\"", (NSString *)cfTitle);
     CFRelease(cfTitle);
 }
 
-static void didFirstLayoutForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
+static void didFirstLayoutForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
 {
     LOG(@"didFirstLayoutForFrame");
 }
 
-static void didFirstVisuallyNonEmptyLayoutForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
+static void didFirstVisuallyNonEmptyLayoutForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
 {
     LOG(@"didFirstVisuallyNonEmptyLayoutForFrame");
 }
