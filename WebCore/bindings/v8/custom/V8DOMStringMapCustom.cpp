@@ -33,6 +33,7 @@
 
 #include "DOMStringMap.h"
 #include "V8Binding.h"
+#include "V8DOMWrapper.h"
 
 namespace WebCore {
 
@@ -91,6 +92,18 @@ v8::Handle<v8::Value> V8DOMStringMap::namedPropertySetter(v8::Local<v8::String> 
     if (ec)
         return throwError(ec);
     return value;
+}
+
+v8::Handle<v8::Value> toV8(DOMStringMap* impl)
+{
+    if (!impl)
+        return v8::Null();
+    v8::Handle<v8::Object> wrapper = V8DOMStringMap::wrap(impl);
+    // Add a hidden reference from the element to the DOMStringMap.
+    Element* element = impl->element();
+    if (!wrapper.IsEmpty() && element)
+        V8DOMWrapper::setHiddenWindowReference(element->document()->frame(), wrapper);
+    return wrapper;
 }
 
 } // namespace WebCore

@@ -1,3 +1,12 @@
+2010-09-18  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        [Chromium] fast/dom/dataset-gc.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=45426
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-18  Adam Barth  <abarth@webkit.org>
 
         Also update the snow-leopard result.

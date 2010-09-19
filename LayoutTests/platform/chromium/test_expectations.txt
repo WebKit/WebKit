@@ -2983,9 +2983,6 @@ BUGWK45193 LINUX : fast/text/decomposed-after-stacked-diacritics.html = TEXT
 BUGWK45209 WIN DEBUG SLOW : inspector/debugger-autocontinue-on-syntax-error.html = PASS
 BUGWK45209 WIN DEBUG SLOW : inspector/dom-breakpoints.html = PASS
 
-// Regressed in r66954
-BUGWK45432 WIN MAC LINUX : fast/dom/dataset-gc.html = TEXT
-
 BUGWK45438 : editing/spelling/spelling-backspace-between-lines.html = TEXT
 
 // WebKit r67068

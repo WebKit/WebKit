@@ -2508,6 +2508,7 @@ sub HasCustomToV8Implementation {
     # We generate a custom converter (but JSC doesn't) for the following:
     return 1 if $interfaceName eq "CSSStyleSheet";
     return 1 if $interfaceName eq "CanvasPixelArray";
+    return 1 if $interfaceName eq "DOMStringMap";
     return 1 if $interfaceName eq "DOMWindow";
     return 1 if $interfaceName eq "Element";
     return 1 if $interfaceName eq "HTMLDocument";
