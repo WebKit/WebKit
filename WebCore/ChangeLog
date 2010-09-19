@@ -1,3 +1,18 @@
+2010-09-18  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Path: Remove unused member variable
+        https://bugs.webkit.org/show_bug.cgi?id=46048
+
+        Path::m_lastMoveToIndex is not used for anything, so remove it.
+
+        * platform/graphics/Path.h:
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::Path::Path):
+        (WebCore::Path::operator=):
+        (WebCore::Path::moveTo):
+
 2010-09-18  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Darin Adler.
