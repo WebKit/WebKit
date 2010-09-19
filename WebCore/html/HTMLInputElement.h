@@ -110,6 +110,7 @@ public:
     virtual bool isPasswordField() const { return m_type == PASSWORD; }
     virtual bool isCheckbox() const { return m_type == CHECKBOX; }
 
+    bool isText() const { return m_type == TEXT; }
     bool isEmailField() const { return m_type == EMAIL; }
     bool isFileUpload() const { return m_type == FILE; }
     bool isImageButton() const { return m_type == IMAGE; }

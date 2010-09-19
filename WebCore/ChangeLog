@@ -1,3 +1,13 @@
+2010-09-19  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] Add is<input type>() functions to WebInputElement
+        https://bugs.webkit.org/show_bug.cgi?id=46035
+
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::isText): Added. It is used by WebKit/chromium.
+
 2010-09-18  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Antonio Gomes.

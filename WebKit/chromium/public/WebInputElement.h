@@ -79,9 +79,17 @@ namespace WebKit {
             Week
         };
 
+        // This returns true for all of textfield-looking types such as text,
+        // password, search, email, url, and number.
+        WEBKIT_API bool isTextField() const;
+        // This returns true only for type=text.
+        WEBKIT_API bool isText() const;
+        WEBKIT_API bool isPasswordField() const;
+        WEBKIT_API bool isImageButton() const;
         WEBKIT_API bool autoComplete() const;
         WEBKIT_API bool isReadOnly() const;
         WEBKIT_API bool isEnabledFormControl() const;
+        // Deperated.
         WEBKIT_API InputType inputType() const;
         WEBKIT_API int maxLength() const;
         WEBKIT_API bool isActivatedSubmit() const;

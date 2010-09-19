@@ -40,6 +40,26 @@ using namespace WebCore;
 
 namespace WebKit {
 
+bool WebInputElement::isTextField() const
+{
+    return constUnwrap<HTMLInputElement>()->isTextField();
+}
+
+bool WebInputElement::isText() const
+{
+    return constUnwrap<HTMLInputElement>()->isText();
+}
+
+bool WebInputElement::isPasswordField() const
+{
+    return constUnwrap<HTMLInputElement>()->isPasswordField();
+}
+
+bool WebInputElement::isImageButton() const
+{
+    return constUnwrap<HTMLInputElement>()->isImageButton();
+}
+
 bool WebInputElement::autoComplete() const
 {
     return constUnwrap<HTMLInputElement>()->autoComplete();
