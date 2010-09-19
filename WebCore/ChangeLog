@@ -1,3 +1,15 @@
+2010-09-18  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Andreas Kling.
+
+        [BREWMP] Fix a typo in key code name
+        https://bugs.webkit.org/show_bug.cgi?id=46003
+
+        AVK_CLR is the right Brew MP key code name for VK_BACK.
+
+        * platform/brew/PlatformKeyboardEventBrew.cpp:
+        (WebCore::windowsKeyCodeForKeyEvent):
+
 2010-09-18  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Oliver Hunt.

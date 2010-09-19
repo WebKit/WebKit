@@ -106,7 +106,7 @@ static String keyIdentifierForBrewKeyCode(uint16 keyCode)
 static int windowsKeyCodeForKeyEvent(uint16 code)
 {
     switch (code) {
-    case AVK_A:
+    case AVK_CLR:
         return VK_BACK; // (08) BACKSPACE key
     case AVK_ENTER:
         return VK_RETURN; // (0D) Return key
