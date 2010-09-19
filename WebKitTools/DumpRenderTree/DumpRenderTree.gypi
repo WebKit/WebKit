@@ -39,6 +39,8 @@
             'chromium/TestShellWin.cpp',
             'chromium/TextInputController.cpp',
             'chromium/TextInputController.h',
+            'chromium/WebPreferences.cpp',
+            'chromium/WebPreferences.h',
             'chromium/WebViewHost.cpp',
             'chromium/WebViewHost.h',
         ],

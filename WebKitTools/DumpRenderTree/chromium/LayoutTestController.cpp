@@ -627,8 +627,10 @@ void LayoutTestController::setWindowIsKey(const CppArgumentList& arguments, CppV
 
 void LayoutTestController::setUserStyleSheetEnabled(const CppArgumentList& arguments, CppVariant* result)
 {
-    if (arguments.size() > 0 && arguments[0].isBool())
-        m_shell->webView()->settings()->setUserStyleSheetLocation(arguments[0].value.boolValue ? m_userStyleSheetLocation : WebURL());
+    if (arguments.size() > 0 && arguments[0].isBool()) {
+        m_shell->preferences()->userStyleSheetLocation = arguments[0].value.boolValue ? m_userStyleSheetLocation : WebURL();
+        m_shell->applyPreferences();
+    }
     result->setNull();
 }
 
@@ -637,15 +639,18 @@ void LayoutTestController::setUserStyleSheetLocation(const CppArgumentList& argu
     if (arguments.size() > 0 && arguments[0].isString()) {
         m_userStyleSheetLocation = webkit_support::LocalFileToDataURL(
             webkit_support::RewriteLayoutTestsURL(arguments[0].toString()));
-        m_shell->webView()->settings()->setUserStyleSheetLocation(m_userStyleSheetLocation);
+        m_shell->preferences()->userStyleSheetLocation = m_userStyleSheetLocation;
+        m_shell->applyPreferences();
     }
     result->setNull();
 }
 
 void LayoutTestController::setAuthorAndUserStylesEnabled(const CppArgumentList& arguments, CppVariant* result)
 {
-    if (arguments.size() > 0 && arguments[0].isBool())
-        m_shell->webView()->settings()->setAuthorAndUserStylesEnabled(arguments[0].value.boolValue);
+    if (arguments.size() > 0 && arguments[0].isBool()) {
+        m_shell->preferences()->authorAndUserStylesEnabled = arguments[0].value.boolValue;
+        m_shell->applyPreferences();
+    }
     result->setNull();
 }
 
@@ -682,7 +687,8 @@ void LayoutTestController::setPopupBlockingEnabled(const CppArgumentList& argume
 {
     if (arguments.size() > 0 && arguments[0].isBool()) {
         bool blockPopups = arguments[0].toBoolean();
-        m_shell->webView()->settings()->setJavaScriptCanOpenWindowsAutomatically(!blockPopups);
+        m_shell->preferences()->javaScriptCanOpenWindowsAutomatically = !blockPopups;
+        m_shell->applyPreferences();
     }
     result->setNull();
 }
@@ -955,7 +961,8 @@ void LayoutTestController::resumeAnimations(const CppArgumentList&, CppVariant* 
 
 void LayoutTestController::disableImageLoading(const CppArgumentList&, CppVariant* result)
 {
-    m_shell->webView()->settings()->setLoadsImagesAutomatically(false);
+    m_shell->preferences()->loadsImagesAutomatically = false;
+    m_shell->applyPreferences();
     result->setNull();
 }
 
@@ -1090,15 +1097,19 @@ void LayoutTestController::setPrivateBrowsingEnabled(const CppArgumentList& argu
 
 void LayoutTestController::setJavaScriptCanAccessClipboard(const CppArgumentList& arguments, CppVariant* result)
 {
-    if (arguments.size() > 0 && arguments[0].isBool())
-        m_shell->webView()->settings()->setJavaScriptCanAccessClipboard(arguments[0].value.boolValue);
+    if (arguments.size() > 0 && arguments[0].isBool()) {
+        m_shell->preferences()->javaScriptCanAccessClipboard = arguments[0].value.boolValue;
+        m_shell->applyPreferences();
+    }
     result->setNull();
 }
 
 void LayoutTestController::setXSSAuditorEnabled(const CppArgumentList& arguments, CppVariant* result)
 {
-    if (arguments.size() > 0 && arguments[0].isBool())
-        m_shell->webView()->settings()->setXSSAuditorEnabled(arguments[0].value.boolValue);
+    if (arguments.size() > 0 && arguments[0].isBool()) {
+        m_shell->preferences()->XSSAuditorEnabled = arguments[0].value.boolValue;
+        m_shell->applyPreferences();
+    }
     result->setNull();
 }
 
@@ -1115,15 +1126,19 @@ void LayoutTestController::evaluateScriptInIsolatedWorld(const CppArgumentList& 
 
 void LayoutTestController::setAllowUniversalAccessFromFileURLs(const CppArgumentList& arguments, CppVariant* result)
 {
-    if (arguments.size() > 0 && arguments[0].isBool())
-        m_shell->webView()->settings()->setAllowUniversalAccessFromFileURLs(arguments[0].value.boolValue);
+    if (arguments.size() > 0 && arguments[0].isBool()) {
+        m_shell->preferences()->allowUniversalAccessFromFileURLs = arguments[0].value.boolValue;
+        m_shell->applyPreferences();
+    }
     result->setNull();
 }
 
 void LayoutTestController::setAllowFileAccessFromFileURLs(const CppArgumentList& arguments, CppVariant* result)
 {
-    if (arguments.size() > 0 && arguments[0].isBool())
-        m_shell->webView()->settings()->setAllowFileAccessFromFileURLs(arguments[0].value.boolValue);
+    if (arguments.size() > 0 && arguments[0].isBool()) {
+        m_shell->preferences()->allowFileAccessFromFileURLs = arguments[0].value.boolValue;
+        m_shell->applyPreferences();
+    }
     result->setNull();
 }
 
@@ -1179,68 +1194,69 @@ void LayoutTestController::overridePreference(const CppArgumentList& arguments, 
 
     string key = arguments[0].toString();
     CppVariant value = arguments[1];
-    WebSettings* settings = m_shell->webView()->settings();
+    WebPreferences* prefs = m_shell->preferences();
     if (key == "WebKitStandardFont")
-        settings->setStandardFontFamily(cppVariantToWebString(value));
+        prefs->standardFontFamily = cppVariantToWebString(value);
     else if (key == "WebKitFixedFont")
-        settings->setFixedFontFamily(cppVariantToWebString(value));
+        prefs->fixedFontFamily = cppVariantToWebString(value);
     else if (key == "WebKitSerifFont")
-        settings->setSerifFontFamily(cppVariantToWebString(value));
+        prefs->serifFontFamily = cppVariantToWebString(value);
     else if (key == "WebKitSansSerifFont")
-        settings->setSansSerifFontFamily(cppVariantToWebString(value));
+        prefs->sansSerifFontFamily = cppVariantToWebString(value);
     else if (key == "WebKitCursiveFont")
-        settings->setCursiveFontFamily(cppVariantToWebString(value));
+        prefs->cursiveFontFamily = cppVariantToWebString(value);
     else if (key == "WebKitFantasyFont")
-        settings->setFantasyFontFamily(cppVariantToWebString(value));
+        prefs->fantasyFontFamily = cppVariantToWebString(value);
     else if (key == "WebKitDefaultFontSize")
-        settings->setDefaultFontSize(cppVariantToInt32(value));
+        prefs->defaultFontSize = cppVariantToInt32(value);
     else if (key == "WebKitDefaultFixedFontSize")
-        settings->setDefaultFixedFontSize(cppVariantToInt32(value));
+        prefs->defaultFixedFontSize = cppVariantToInt32(value);
     else if (key == "WebKitMinimumFontSize")
-        settings->setMinimumFontSize(cppVariantToInt32(value));
+        prefs->minimumFontSize = cppVariantToInt32(value);
     else if (key == "WebKitMinimumLogicalFontSize")
-        settings->setMinimumLogicalFontSize(cppVariantToInt32(value));
+        prefs->minimumLogicalFontSize = cppVariantToInt32(value);
     else if (key == "WebKitDefaultTextEncodingName")
-        settings->setDefaultTextEncodingName(cppVariantToWebString(value));
+        prefs->defaultTextEncodingName = cppVariantToWebString(value);
     else if (key == "WebKitJavaScriptEnabled")
-        settings->setJavaScriptEnabled(cppVariantToBool(value));
+        prefs->javaScriptEnabled = cppVariantToBool(value);
     else if (key == "WebKitWebSecurityEnabled")
-        settings->setWebSecurityEnabled(cppVariantToBool(value));
+        prefs->webSecurityEnabled = cppVariantToBool(value);
     else if (key == "WebKitJavaScriptCanOpenWindowsAutomatically")
-        settings->setJavaScriptCanOpenWindowsAutomatically(cppVariantToBool(value));
+        prefs->javaScriptCanOpenWindowsAutomatically = cppVariantToBool(value);
     else if (key == "WebKitDisplayImagesKey")
-        settings->setLoadsImagesAutomatically(cppVariantToBool(value));
+        prefs->loadsImagesAutomatically = cppVariantToBool(value);
     else if (key == "WebKitPluginsEnabled")
-        settings->setPluginsEnabled(cppVariantToBool(value));
+        prefs->pluginsEnabled = cppVariantToBool(value);
     else if (key == "WebKitDOMPasteAllowedPreferenceKey")
-        settings->setDOMPasteAllowed(cppVariantToBool(value));
+        prefs->DOMPasteAllowed = cppVariantToBool(value);
     else if (key == "WebKitDeveloperExtrasEnabledPreferenceKey")
-        settings->setDeveloperExtrasEnabled(cppVariantToBool(value));
+        prefs->developerExtrasEnabled = cppVariantToBool(value);
     else if (key == "WebKitShrinksStandaloneImagesToFit")
-        settings->setShrinksStandaloneImagesToFit(cppVariantToBool(value));
+        prefs->shrinksStandaloneImagesToFit = cppVariantToBool(value);
     else if (key == "WebKitTextAreasAreResizable")
-        settings->setTextAreasAreResizable(cppVariantToBool(value));
+        prefs->textAreasAreResizable = cppVariantToBool(value);
     else if (key == "WebKitJavaEnabled")
-        settings->setJavaEnabled(cppVariantToBool(value));
+        prefs->javaEnabled = cppVariantToBool(value);
     else if (key == "WebKitUsesPageCachePreferenceKey")
-        settings->setUsesPageCache(cppVariantToBool(value));
+        prefs->usesPageCache = cppVariantToBool(value);
     else if (key == "WebKitJavaScriptCanAccessClipboard")
-        settings->setJavaScriptCanAccessClipboard(cppVariantToBool(value));
+        prefs->javaScriptCanAccessClipboard = cppVariantToBool(value);
     else if (key == "WebKitXSSAuditorEnabled")
-        settings->setXSSAuditorEnabled(cppVariantToBool(value));
+        prefs->XSSAuditorEnabled = cppVariantToBool(value);
     else if (key == "WebKitLocalStorageEnabledPreferenceKey")
-        settings->setLocalStorageEnabled(cppVariantToBool(value));
+        prefs->localStorageEnabled = cppVariantToBool(value);
     else if (key == "WebKitOfflineWebApplicationCacheEnabled")
-        settings->setOfflineWebApplicationCacheEnabled(cppVariantToBool(value));
+        prefs->offlineWebApplicationCacheEnabled = cppVariantToBool(value);
     else if (key == "WebKitTabToLinksPreferenceKey")
-        m_shell->webView()->setTabsToLinks(cppVariantToBool(value));
+        prefs->tabsToLinks = cppVariantToBool(value);
     else if (key == "WebKitWebGLEnabled")
-        settings->setExperimentalWebGLEnabled(cppVariantToBool(value));
+        prefs->experimentalWebGLEnabled = cppVariantToBool(value);
     else {
         string message("Invalid name for preference: ");
         message.append(key);
         logErrorToConsole(message);
     }
+    m_shell->applyPreferences();
 }
 
 void LayoutTestController::fallbackMethod(const CppArgumentList&, CppVariant* result)
@@ -1432,13 +1448,14 @@ void LayoutTestController::addUserStyleSheet(const CppArgumentList& arguments, C
 
 void LayoutTestController::setEditingBehavior(const CppArgumentList& arguments, CppVariant* results)
 {
-    WebSettings* settings = m_shell->webView()->settings();
     string key = arguments[0].toString();
-    if (key == "mac")
-        settings->setEditingBehavior(WebSettings::EditingBehaviorMac);
-    else if (key == "win")
-        settings->setEditingBehavior(WebSettings::EditingBehaviorWin);
-    else
+    if (key == "mac") {
+        m_shell->preferences()->editingBehavior = WebSettings::EditingBehaviorMac;
+        m_shell->applyPreferences();
+    } else if (key == "win") {
+        m_shell->preferences()->editingBehavior = WebSettings::EditingBehaviorWin;
+        m_shell->applyPreferences();
+    } else
         logErrorToConsole("Passed invalid editing behavior. Should be 'mac' or 'win'.");
 }
 

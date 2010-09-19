@@ -1,3 +1,41 @@
+2010-09-19  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [DRT/Chromium] Fix a WebSettings handling bug
+        https://bugs.webkit.org/show_bug.cgi?id=45945
+
+        Before this change, Chromium DRT reset WebSettings for every new
+        window. It was wrong.
+        If new window is not the first one, we have to apply the same
+        settings as the first window.  So, we introduce WebPreference to
+        store the current settings, and apply it to new windows. It's same
+        as test_shell's behavior.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+          Use WebPreferences instead of WebSettings.
+        (LayoutTestController::setUserStyleSheetEnabled):
+        (LayoutTestController::setUserStyleSheetLocation):
+        (LayoutTestController::setAuthorAndUserStylesEnabled):
+        (LayoutTestController::setPopupBlockingEnabled):
+        (LayoutTestController::disableImageLoading):
+        (LayoutTestController::setJavaScriptCanAccessClipboard):
+        (LayoutTestController::setXSSAuditorEnabled):
+        (LayoutTestController::setAllowUniversalAccessFromFileURLs):
+        (LayoutTestController::setAllowFileAccessFromFileURLs):
+        (LayoutTestController::overridePreference):
+        (LayoutTestController::setEditingBehavior):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::resetWebSettings): Use WebPreferences.
+        (TestShell::runFileTest): ditto.
+        (TestShell::createNewWindow): Apply existing WebPreferences to a new WebView.
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell::preferences):
+        (TestShell::applyPreferences):
+        * DumpRenderTree/chromium/WebPreferences.cpp: Added.
+        * DumpRenderTree/chromium/WebPreferences.h: Added.
+
 2010-09-18  Prasad Tammana  <prasadt@chromium.org>
 
         Reviewed by David Levin.

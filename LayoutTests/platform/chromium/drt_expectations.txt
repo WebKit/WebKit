@@ -104,6 +104,7 @@ BUG_DRT MAC : fast/backgrounds/solid-color-context-restore.html = IMAGE
 BUG_DRT MAC : fast/reflections/inline-crash.html = IMAGE
 
 // Extra didFinishDocumentLoadForFrame line.
+// The first didFinishDocumentLoadForFrame line is for the previous test document.
 BUG_DRT WIN MAC LINUX : http/tests/loading/preload-img-test.html = TEXT
 
 // Font anti-aliasing issue
@@ -116,7 +117,6 @@ BUG_DRT LINUX : svg/batik/text/verticalText.svg = IMAGE+TEXT
 
 // Misc.
 BUG_DRT WIN MAC LINUX : fast/dynamic/window-resize-scrollbars-test.html = IMAGE+TEXT
-BUG_DRT WIN MAC LINUX : http/tests/security/xssAuditor/link-opens-new-window.html = TEXT
 BUG_DRT WIN MAC LINUX : storage/domstorage/quota.html = TEXT
 BUG_DRT WIN MAC LINUX : storage/indexeddb/objectstore-basics.html = TEXT
 BUG_DRT WIN MAC LINUX : userscripts/user-script-top-frame-only.html = TEXT

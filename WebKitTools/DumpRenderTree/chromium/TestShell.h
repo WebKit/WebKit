@@ -38,6 +38,7 @@
 #include "PlainTextController.h"
 #include "TestEventPrinter.h"
 #include "TextInputController.h"
+#include "WebPreferences.h"
 #include "WebViewHost.h"
 #include <string>
 #include <wtf/OwnPtr.h>
@@ -50,7 +51,6 @@ namespace WebKit {
 class WebDevToolsAgentClient;
 class WebFrame;
 class WebNotificationPresenter;
-class WebPreferences;
 class WebView;
 class WebURL;
 }
@@ -91,6 +91,9 @@ public:
     AccessibilityController* accessibilityController() const { return m_accessibilityController.get(); }
     NotificationPresenter* notificationPresenter() const { return m_notificationPresenter.get(); }
     TestEventPrinter* printer() const { return m_printer.get(); }
+
+    WebPreferences* preferences() { return &m_prefs; }
+    void applyPreferences() { m_prefs.applyTo(m_webView); }
 
     void bindJSObjectsToWindow(WebKit::WebFrame*);
     void runFileTest(const TestParams&);
@@ -148,7 +151,7 @@ public:
 private:
     void createDRTDevToolsClient(DRTDevToolsAgent*);
 
-    static void resetWebSettings(WebKit::WebView&);
+    void resetWebSettings(WebKit::WebView&);
     void dump();
     std::string dumpAllBackForwardLists();
     void dumpImage(skia::PlatformCanvas*) const;
@@ -173,6 +176,7 @@ private:
     TestParams m_params;
     int m_timeout; // timeout value in millisecond
     bool m_allowExternalPages;
+    WebPreferences m_prefs;
 
     // List of all windows in this process.
     // The main window should be put into windowList[0].

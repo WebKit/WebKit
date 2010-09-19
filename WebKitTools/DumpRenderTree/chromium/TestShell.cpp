@@ -154,84 +154,8 @@ void TestShell::closeDevTools()
 
 void TestShell::resetWebSettings(WebView& webView)
 {
-    // Match the settings used by Mac DumpRenderTree, with the exception of
-    // fonts.
-    WebSettings* settings = webView.settings();
-#if OS(MAC_OS_X)
-    WebString serif = WebString::fromUTF8("Times");
-    settings->setCursiveFontFamily(WebString::fromUTF8("Apple Chancery"));
-    settings->setFantasyFontFamily(WebString::fromUTF8("Papyrus"));
-#else
-    // NOTE: case matters here, this must be 'times new roman', else
-    // some layout tests fail.
-    WebString serif = WebString::fromUTF8("times new roman");
-
-    // These two fonts are picked from the intersection of
-    // Win XP font list and Vista font list :
-    //   http://www.microsoft.com/typography/fonts/winxp.htm
-    //   http://blogs.msdn.com/michkap/archive/2006/04/04/567881.aspx
-    // Some of them are installed only with CJK and complex script
-    // support enabled on Windows XP and are out of consideration here.
-    // (although we enabled both on our buildbots.)
-    // They (especially Impact for fantasy) are not typical cursive
-    // and fantasy fonts, but it should not matter for layout tests
-    // as long as they're available.
-    settings->setCursiveFontFamily(WebString::fromUTF8("Comic Sans MS"));
-    settings->setFantasyFontFamily(WebString::fromUTF8("Impact"));
-#endif
-    settings->setSerifFontFamily(serif);
-    settings->setStandardFontFamily(serif);
-    settings->setFixedFontFamily(WebString::fromUTF8("Courier"));
-    settings->setSansSerifFontFamily(WebString::fromUTF8("Helvetica"));
-
-    settings->setDefaultTextEncodingName(WebString::fromUTF8("ISO-8859-1"));
-    settings->setDefaultFontSize(16);
-    settings->setDefaultFixedFontSize(13);
-    settings->setMinimumFontSize(1);
-    settings->setMinimumLogicalFontSize(9);
-    settings->setJavaScriptCanOpenWindowsAutomatically(true);
-    settings->setJavaScriptCanAccessClipboard(true);
-    settings->setDOMPasteAllowed(true);
-    settings->setDeveloperExtrasEnabled(false);
-    settings->setNeedsSiteSpecificQuirks(true);
-    settings->setShrinksStandaloneImagesToFit(false);
-    settings->setUsesEncodingDetector(false);
-    settings->setTextAreasAreResizable(false);
-    settings->setJavaEnabled(false);
-    settings->setAllowScriptsToCloseWindows(false);
-    settings->setXSSAuditorEnabled(false);
-    settings->setDownloadableBinaryFontsEnabled(true);
-    settings->setLocalStorageEnabled(true);
-    settings->setOfflineWebApplicationCacheEnabled(true);
-    settings->setAllowFileAccessFromFileURLs(true);
-    settings->setUserStyleSheetLocation(WebURL());
-
-    // LayoutTests were written with Safari Mac in mind which does not allow
-    // tabbing to links by default.
-    webView.setTabsToLinks(false);
-
-    // Allow those layout tests running as local files, i.e. under
-    // LayoutTests/http/tests/local, to access http server.
-    settings->setAllowUniversalAccessFromFileURLs(true);
-
-    settings->setJavaScriptEnabled(true);
-    settings->setPluginsEnabled(true);
-    settings->setWebSecurityEnabled(true);
-    settings->setEditableLinkBehaviorNeverLive();
-    settings->setFontRenderingModeNormal();
-    settings->setShouldPaintCustomScrollbars(true);
-    settings->setTextDirectionSubmenuInclusionBehaviorNeverIncluded();
-
-    settings->setLoadsImagesAutomatically(true);
-    settings->setImagesEnabled(true);
-
-#if OS(DARWIN)
-    settings->setEditingBehavior(WebSettings::EditingBehaviorMac);
-#else
-    settings->setEditingBehavior(WebSettings::EditingBehaviorWin);
-#endif
-    // FIXME: crbug.com/51879
-    settings->setAcceleratedCompositingEnabled(false);
+    m_prefs.reset();
+    m_prefs.applyTo(&webView);
 }
 
 void TestShell::runFileTest(const TestParams& params)
@@ -243,7 +167,8 @@ void TestShell::runFileTest(const TestParams& params)
 
     bool inspectorTestMode = testUrl.find("/inspector/") != string::npos
         || testUrl.find("\\inspector\\") != string::npos;
-    m_webView->settings()->setDeveloperExtrasEnabled(inspectorTestMode);
+    m_prefs.developerExtrasEnabled = inspectorTestMode;
+    applyPreferences();
 
     if (testUrl.find("loading/") != string::npos
         || testUrl.find("loading\\") != string::npos)
@@ -639,7 +564,7 @@ WebViewHost* TestShell::createNewWindow(const WebURL& url)
     WebViewHost* host = new WebViewHost(this);
     WebView* view = WebView::create(host, m_drtDevToolsAgent.get());
     host->setWebWidget(view);
-    resetWebSettings(*view);
+    m_prefs.applyTo(view);
     view->initializeMainFrame(host);
     m_windowList.append(host);
     host->loadURLForFrame(url, WebString());
