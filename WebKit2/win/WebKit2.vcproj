@@ -938,11 +938,11 @@
 							>
 						</File>
 						<File
-							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleRange.cpp"
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleRangeHandle.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleRange.h"
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleRangeHandle.h"
 							>
 						</File>
 						<File
@@ -964,6 +964,14 @@
 					</File>
 					<File
 						RelativePath="..\WebProcess\InjectedBundle\DOM\InjectedBundleNodeHandle.h"
+						>
+					</File>
+					<File
+						RelativePath="..\WebProcess\InjectedBundle\DOM\InjectedBundleRangeHandle.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\WebProcess\InjectedBundle\DOM\InjectedBundleRangeHandle.h"
 						>
 					</File>
 				</Filter>

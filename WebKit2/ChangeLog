@@ -1,3 +1,53 @@
+2010-09-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Replace WKBundleRangeRef with WKBundleRangeHandleRef.
+        https://bugs.webkit.org/show_bug.cgi?id=46054
+
+        The new one acts like WKBundleNodeHandleRef and allows for getting a
+        wrapper in a specific world for the handle.
+
+        * Shared/APIObject.h:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleBase.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameGetJavaScriptWrapperForRangeForWorld):
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleRange.cpp: Removed.
+        * WebProcess/InjectedBundle/API/c/WKBundleRange.h: Removed.
+        * WebProcess/InjectedBundle/API/c/WKBundleRangeHandle.cpp: Added.
+        (WKBundleRangeHandleGetTypeID):
+        * WebProcess/InjectedBundle/API/c/WKBundleRangeHandle.h: Added.
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::getOrCreate):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h:
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp: Added.
+        (WebKit::domHandleCache):
+        (WebKit::InjectedBundleRangeHandle::getOrCreate):
+        (WebKit::InjectedBundleRangeHandle::create):
+        (WebKit::InjectedBundleRangeHandle::InjectedBundleRangeHandle):
+        (WebKit::InjectedBundleRangeHandle::~InjectedBundleRangeHandle):
+        (WebKit::InjectedBundleRangeHandle::coreRange):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.h: Added.
+        (WebKit::InjectedBundleRangeHandle::type):
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp:
+        (WebKit::InjectedBundlePageEditorClient::shouldBeginEditing):
+        (WebKit::InjectedBundlePageEditorClient::shouldEndEditing):
+        (WebKit::InjectedBundlePageEditorClient::shouldInsertNode):
+        (WebKit::InjectedBundlePageEditorClient::shouldInsertText):
+        (WebKit::InjectedBundlePageEditorClient::shouldDeleteRange):
+        (WebKit::InjectedBundlePageEditorClient::shouldChangeSelectedRange):
+        (WebKit::InjectedBundlePageEditorClient::shouldApplyStyle):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::jsWrapperForWorld):
+        * WebProcess/WebPage/WebFrame.h:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.make:
+
 2010-09-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

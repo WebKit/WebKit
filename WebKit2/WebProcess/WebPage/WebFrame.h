@@ -45,6 +45,7 @@ namespace WebCore {
 namespace WebKit {
 
 class InjectedBundleNodeHandle;
+class InjectedBundleRangeHandle;
 class InjectedBundleScriptWorld;
 class WebPage;
 
@@ -81,6 +82,7 @@ public:
     JSGlobalContextRef jsContextForWorld(InjectedBundleScriptWorld*);
 
     JSValueRef jsWrapperForWorld(InjectedBundleNodeHandle*, InjectedBundleScriptWorld*);
+    JSValueRef jsWrapperForWorld(InjectedBundleRangeHandle*, InjectedBundleScriptWorld*);
 
     static String counterValue(JSObjectRef element);
     static String markerText(JSObjectRef element);

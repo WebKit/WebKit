@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKBundleFrame_h
-#define WKBundleFrame_h
+#ifndef WKBundleRangeHandle_h
+#define WKBundleRangeHandle_h
 
 #include <JavaScriptCore/JavaScript.h>
 #include <WebKit2/WKBase.h>
@@ -34,22 +34,10 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKBundleFrameGetTypeID();
-
-WK_EXPORT bool WKBundleFrameIsMainFrame(WKBundleFrameRef frame);
-WK_EXPORT WKArrayRef WKBundleFrameCopyChildFrames(WKBundleFrameRef frame);
-
-WK_EXPORT WKStringRef WKBundleFrameCopyName(WKBundleFrameRef frame);
-WK_EXPORT WKURLRef WKBundleFrameCopyURL(WKBundleFrameRef frame);
-
-WK_EXPORT JSGlobalContextRef WKBundleFrameGetJavaScriptContext(WKBundleFrameRef frame);
-WK_EXPORT JSGlobalContextRef WKBundleFrameGetJavaScriptContextForWorld(WKBundleFrameRef frame, WKBundleScriptWorldRef world);
-
-WK_EXPORT JSValueRef WKBundleFrameGetJavaScriptWrapperForNodeForWorld(WKBundleFrameRef frame, WKBundleNodeHandleRef nodeHandle, WKBundleScriptWorldRef world);
-WK_EXPORT JSValueRef WKBundleFrameGetJavaScriptWrapperForRangeForWorld(WKBundleFrameRef frame, WKBundleRangeHandleRef rangeHandle, WKBundleScriptWorldRef world);
+WK_EXPORT WKTypeID WKBundleRangeHandleGetTypeID();
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* WKBundleFrame_h */
+#endif /* WKBundleRangeHandle_h */

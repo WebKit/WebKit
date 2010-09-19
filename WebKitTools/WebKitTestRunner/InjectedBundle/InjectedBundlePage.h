@@ -91,24 +91,24 @@ private:
     void willRunJavaScriptPrompt(WKStringRef message, WKStringRef defaultValue, WKBundleFrameRef);
 
     // Editor client
-    static bool shouldBeginEditing(WKBundlePageRef, WKBundleRangeRef, const void* clientInfo);
-    static bool shouldEndEditing(WKBundlePageRef, WKBundleRangeRef, const void* clientInfo);
-    static bool shouldInsertNode(WKBundlePageRef, WKBundleNodeHandleRef, WKBundleRangeRef rangeToReplace, WKInsertActionType, const void* clientInfo);
-    static bool shouldInsertText(WKBundlePageRef, WKStringRef, WKBundleRangeRef rangeToReplace, WKInsertActionType, const void* clientInfo);
-    static bool shouldDeleteRange(WKBundlePageRef, WKBundleRangeRef, const void* clientInfo);
-    static bool shouldChangeSelectedRange(WKBundlePageRef, WKBundleRangeRef fromRange, WKBundleRangeRef toRange, WKAffinityType, bool stillSelecting, const void* clientInfo);
-    static bool shouldApplyStyle(WKBundlePageRef, WKBundleCSSStyleDeclarationRef style, WKBundleRangeRef range, const void* clientInfo);
+    static bool shouldBeginEditing(WKBundlePageRef, WKBundleRangeHandleRef, const void* clientInfo);
+    static bool shouldEndEditing(WKBundlePageRef, WKBundleRangeHandleRef, const void* clientInfo);
+    static bool shouldInsertNode(WKBundlePageRef, WKBundleNodeHandleRef, WKBundleRangeHandleRef rangeToReplace, WKInsertActionType, const void* clientInfo);
+    static bool shouldInsertText(WKBundlePageRef, WKStringRef, WKBundleRangeHandleRef rangeToReplace, WKInsertActionType, const void* clientInfo);
+    static bool shouldDeleteRange(WKBundlePageRef, WKBundleRangeHandleRef, const void* clientInfo);
+    static bool shouldChangeSelectedRange(WKBundlePageRef, WKBundleRangeHandleRef fromRange, WKBundleRangeHandleRef toRange, WKAffinityType, bool stillSelecting, const void* clientInfo);
+    static bool shouldApplyStyle(WKBundlePageRef, WKBundleCSSStyleDeclarationRef style, WKBundleRangeHandleRef range, const void* clientInfo);
     static void didBeginEditing(WKBundlePageRef, WKStringRef notificationName, const void* clientInfo);
     static void didEndEditing(WKBundlePageRef, WKStringRef notificationName, const void* clientInfo);
     static void didChange(WKBundlePageRef, WKStringRef notificationName, const void* clientInfo);
     static void didChangeSelection(WKBundlePageRef, WKStringRef notificationName, const void* clientInfo);
-    bool shouldBeginEditing(WKBundleRangeRef);
-    bool shouldEndEditing(WKBundleRangeRef);
-    bool shouldInsertNode(WKBundleNodeHandleRef, WKBundleRangeRef rangeToReplace, WKInsertActionType);
-    bool shouldInsertText(WKStringRef, WKBundleRangeRef rangeToReplace, WKInsertActionType);
-    bool shouldDeleteRange(WKBundleRangeRef);
-    bool shouldChangeSelectedRange(WKBundleRangeRef fromRange, WKBundleRangeRef toRange, WKAffinityType, bool stillSelecting);
-    bool shouldApplyStyle(WKBundleCSSStyleDeclarationRef style, WKBundleRangeRef range);
+    bool shouldBeginEditing(WKBundleRangeHandleRef);
+    bool shouldEndEditing(WKBundleRangeHandleRef);
+    bool shouldInsertNode(WKBundleNodeHandleRef, WKBundleRangeHandleRef rangeToReplace, WKInsertActionType);
+    bool shouldInsertText(WKStringRef, WKBundleRangeHandleRef rangeToReplace, WKInsertActionType);
+    bool shouldDeleteRange(WKBundleRangeHandleRef);
+    bool shouldChangeSelectedRange(WKBundleRangeHandleRef fromRange, WKBundleRangeHandleRef toRange, WKAffinityType, bool stillSelecting);
+    bool shouldApplyStyle(WKBundleCSSStyleDeclarationRef style, WKBundleRangeHandleRef range);
     void didBeginEditing(WKStringRef notificationName);
     void didEndEditing(WKStringRef notificationName);
     void didChange(WKStringRef notificationName);

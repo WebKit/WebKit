@@ -45,7 +45,7 @@ all:
     xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundlePage.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundlePagePrivate.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundlePrivate.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
-    xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundleRange.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
+    xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundleRangeHandle.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundleScriptWorld.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     -del "$(WEBKITOUTPUTDIR)\buildfailed"
 

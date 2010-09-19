@@ -233,6 +233,7 @@ HEADERS += \
     WebProcess/InjectedBundle/API/c/WKBundleBase.h \
     WebProcess/InjectedBundle/API/c/WKBundlePage.h \
     WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h \
+    WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.h \
     WebProcess/InjectedBundle/InjectedBundle.h \
     WebProcess/InjectedBundle/InjectedBundlePageFormClient.h \
     WebProcess/InjectedBundle/InjectedBundlePageUIClient.h \
@@ -347,6 +348,7 @@ SOURCES += \
     UIProcess/WebProcessProxy.cpp \
     UIProcess/WebUIClient.cpp \
     WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp \
+    WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp \
     WebProcess/InjectedBundle/InjectedBundle.cpp \
     WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp \
     WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp \

@@ -79,6 +79,11 @@ JSValueRef WKBundleFrameGetJavaScriptWrapperForNodeForWorld(WKBundleFrameRef fra
     return toWK(frameRef)->jsWrapperForWorld(toWK(nodeHandleRef), toWK(worldRef));
 }
 
+JSValueRef WKBundleFrameGetJavaScriptWrapperForRangeForWorld(WKBundleFrameRef frameRef, WKBundleRangeHandleRef rangeHandleRef, WKBundleScriptWorldRef worldRef)
+{
+    return toWK(frameRef)->jsWrapperForWorld(toWK(rangeHandleRef), toWK(worldRef));
+}
+
 WKStringRef WKBundleFrameCopyName(WKBundleFrameRef frameRef)
 {
     return toCopiedRef(toWK(frameRef)->name());

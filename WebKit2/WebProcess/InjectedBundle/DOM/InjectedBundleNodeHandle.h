@@ -24,7 +24,6 @@
  */
 
 #include "APIObject.h"
-#include <JavaScriptCore/JSBase.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 

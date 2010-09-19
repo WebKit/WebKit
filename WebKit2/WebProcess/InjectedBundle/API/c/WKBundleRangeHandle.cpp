@@ -23,33 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WKBundleRange.h"
+#include "WKBundleRangeHandle.h"
 
-#include "InjectedBundleNodeHandle.h"
+#include "InjectedBundleRangeHandle.h"
+#include "WKAPICast.h"
 #include "WKBundleAPICast.h"
-#include <WebCore/Range.h>
 
-using namespace WebCore;
 using namespace WebKit;
 
-unsigned WKBundleRangeGetStartOffset(WKBundleRangeRef range)
+WKTypeID WKBundleRangeHandleGetTypeID()
 {
-    return toWK(range)->startOffset();
-}
-
-WKBundleNodeHandleRef WKBundleRangeCopyStartContainer(WKBundleRangeRef range)
-{
-    RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(toWK(range)->startContainer());
-    return toRef(nodeHandle.release().leakRef());
-}
-
-unsigned WKBundleRangeGetEndOffset(WKBundleRangeRef range)
-{
-    return toWK(range)->endOffset();
-}
-
-WKBundleNodeHandleRef WKBundleRangeCopyEndContainer(WKBundleRangeRef range)
-{
-    RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(toWK(range)->endContainer());
-    return toRef(nodeHandle.release().leakRef());
+    return toRef(InjectedBundleRangeHandle::APIType);
 }

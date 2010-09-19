@@ -23,30 +23,55 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKBundleRange_h
-#define WKBundleRange_h
+#include "InjectedBundleRangeHandle.h"
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKBundleBase.h>
+#include <WebCore/Range.h>
+#include <wtf/HashMap.h>
 
-#ifndef __cplusplus
-#include <stdbool.h>
-#endif
+using namespace WebCore;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace WebKit {
 
-WK_EXPORT unsigned WKBundleRangeGetStartOffset(WKBundleRangeRef range);
+typedef HashMap<Range*, InjectedBundleRangeHandle*> DOMHandleCache;
 
-WK_EXPORT WKBundleNodeHandleRef WKBundleRangeCopyStartContainer(WKBundleRangeRef range);
-
-WK_EXPORT unsigned WKBundleRangeGetEndOffset(WKBundleRangeRef range);
-
-WK_EXPORT WKBundleNodeHandleRef WKBundleRangeCopyEndContainer(WKBundleRangeRef range);
-
-#ifdef __cplusplus
+static DOMHandleCache& domHandleCache()
+{
+    DEFINE_STATIC_LOCAL(DOMHandleCache, cache, ());
+    return cache;
 }
-#endif
 
-#endif /* WKBundleRange_h */
+PassRefPtr<InjectedBundleRangeHandle> InjectedBundleRangeHandle::getOrCreate(Range* range)
+{
+    if (!range)
+        return 0;
+
+    std::pair<DOMHandleCache::iterator, bool> result = domHandleCache().add(range, 0);
+    if (!result.second)
+        return PassRefPtr<InjectedBundleRangeHandle>(result.first->second);
+
+    RefPtr<InjectedBundleRangeHandle> rangeHandle = InjectedBundleRangeHandle::create(range);
+    result.first->second = rangeHandle.get();
+    return rangeHandle.release();
+}
+
+PassRefPtr<InjectedBundleRangeHandle> InjectedBundleRangeHandle::create(Range* range)
+{
+    return adoptRef(new InjectedBundleRangeHandle(range));
+}
+
+InjectedBundleRangeHandle::InjectedBundleRangeHandle(Range* range)
+    : m_range(range)
+{
+}
+
+InjectedBundleRangeHandle::~InjectedBundleRangeHandle()
+{
+    domHandleCache().remove(m_range.get());
+}
+
+Range* InjectedBundleRangeHandle::coreRange() const
+{
+    return m_range.get();
+}
+
+} // namespace WebKit

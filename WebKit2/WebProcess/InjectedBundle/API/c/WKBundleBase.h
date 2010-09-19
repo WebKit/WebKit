@@ -30,10 +30,10 @@ typedef const struct OpaqueWKBundle* WKBundleRef;
 typedef const struct OpaqueWKBundleFrame* WKBundleFrameRef;
 typedef const struct OpaqueWKBundleNodeHandle* WKBundleNodeHandleRef;
 typedef const struct OpaqueWKBundlePage* WKBundlePageRef;
+typedef const struct OpaqueWKBundleRangeHandle* WKBundleRangeHandleRef;
 typedef const struct OpaqueWKBundleScriptWorld* WKBundleScriptWorldRef;
 
 typedef const struct OpaqueWKBundleDOMCSSStyleDeclaration* WKBundleCSSStyleDeclarationRef;
-typedef const struct OpaqueWKBundleRange* WKBundleRangeRef;
 
 #undef WK_EXPORT
 #if defined(WK_NO_EXPORT)

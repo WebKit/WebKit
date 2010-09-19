@@ -23,33 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKBundleFrame_h
-#define WKBundleFrame_h
+#ifndef InjectedBundleRangeHandle_h
+#define InjectedBundleRangeHandle_h
 
-#include <JavaScriptCore/JavaScript.h>
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKBundleBase.h>
+#include "APIObject.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-WK_EXPORT WKTypeID WKBundleFrameGetTypeID();
-
-WK_EXPORT bool WKBundleFrameIsMainFrame(WKBundleFrameRef frame);
-WK_EXPORT WKArrayRef WKBundleFrameCopyChildFrames(WKBundleFrameRef frame);
-
-WK_EXPORT WKStringRef WKBundleFrameCopyName(WKBundleFrameRef frame);
-WK_EXPORT WKURLRef WKBundleFrameCopyURL(WKBundleFrameRef frame);
-
-WK_EXPORT JSGlobalContextRef WKBundleFrameGetJavaScriptContext(WKBundleFrameRef frame);
-WK_EXPORT JSGlobalContextRef WKBundleFrameGetJavaScriptContextForWorld(WKBundleFrameRef frame, WKBundleScriptWorldRef world);
-
-WK_EXPORT JSValueRef WKBundleFrameGetJavaScriptWrapperForNodeForWorld(WKBundleFrameRef frame, WKBundleNodeHandleRef nodeHandle, WKBundleScriptWorldRef world);
-WK_EXPORT JSValueRef WKBundleFrameGetJavaScriptWrapperForRangeForWorld(WKBundleFrameRef frame, WKBundleRangeHandleRef rangeHandle, WKBundleScriptWorldRef world);
-
-#ifdef __cplusplus
+namespace WebCore {
+    class Range;
 }
-#endif
 
-#endif /* WKBundleFrame_h */
+namespace WebKit {
+
+class InjectedBundleScriptWorld;
+
+class InjectedBundleRangeHandle : public APIObject {
+public:
+    static const Type APIType = TypeBundleRangeHandle;
+
+    static PassRefPtr<InjectedBundleRangeHandle> getOrCreate(WebCore::Range*);
+    ~InjectedBundleRangeHandle();
+
+    WebCore::Range* coreRange() const;
+
+private:
+    static PassRefPtr<InjectedBundleRangeHandle> create(WebCore::Range*);
+    InjectedBundleRangeHandle(WebCore::Range*);
+
+    virtual Type type() const { return APIType; }
+
+    RefPtr<WebCore::Range> m_range;
+};
+
+} // namespace WebKit
+
+#endif // InjectedBundleRangeHandle_h

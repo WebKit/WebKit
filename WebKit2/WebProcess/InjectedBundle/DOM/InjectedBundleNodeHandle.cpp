@@ -25,7 +25,6 @@
 
 #include "InjectedBundleNodeHandle.h"
 
-#include "InjectedBundleScriptWorld.h"
 #include <WebCore/Node.h>
 #include <wtf/HashMap.h>
 
@@ -43,6 +42,9 @@ static DOMHandleCache& domHandleCache()
 
 PassRefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::getOrCreate(Node* node)
 {
+    if (!node)
+        return 0;
+
     std::pair<DOMHandleCache::iterator, bool> result = domHandleCache().add(node, 0);
     if (!result.second)
         return PassRefPtr<InjectedBundleNodeHandle>(result.first->second);

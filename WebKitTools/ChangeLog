@@ -1,3 +1,28 @@
+2010-09-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Replace WKBundleRangeRef with WKBundleRangeHandleRef.
+        https://bugs.webkit.org/show_bug.cgi?id=46054
+
+        The new one acts like WKBundleNodeHandleRef and allows for getting a
+        wrapper in a specific world for the handle.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::propertyValue):
+        (WTR::propertyValueDouble):
+        (WTR::propertyValueInt):
+        (WTR::numericWindowPropertyValue):
+        (WTR::toStr):
+        (WTR::InjectedBundlePage::shouldBeginEditing):
+        (WTR::InjectedBundlePage::shouldEndEditing):
+        (WTR::InjectedBundlePage::shouldInsertNode):
+        (WTR::InjectedBundlePage::shouldInsertText):
+        (WTR::InjectedBundlePage::shouldDeleteRange):
+        (WTR::InjectedBundlePage::shouldChangeSelectedRange):
+        (WTR::InjectedBundlePage::shouldApplyStyle):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+
 2010-09-19  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed. Fix WebGL test regressions by r67809.
