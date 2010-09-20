@@ -1335,55 +1335,59 @@ class RegexGenerator : private MacroAssembler {
 
         state.checkedTotal -= countCheckedForCurrentAlternative;
 
-        // How much more input need there be to be able to retry from the first alternative?
-        // examples:
-        //   /yarr_jit/ or /wrec|pcre/
-        //     In these examples we need check for one more input before looping.
-        //   /yarr_jit|pcre/
-        //     In this case we need check for 5 more input to loop (+4 to allow for the first alterative
-        //     being four longer than the last alternative checked, and another +1 to effectively move
-        //     the start position along by one).
-        //   /yarr|rules/ or /wrec|notsomuch/
-        //     In these examples, provided that there was sufficient input to have just been matching for
-        //     the second alternative we can loop without checking for available input (since the second
-        //     alternative is longer than the first).  In the latter example we need to decrement index
-        //     (by 4) so the start position is only progressed by 1 from the last iteration.
-        int incrementForNextIter = (countToCheckForFirstAlternative - countCheckedForCurrentAlternative) + 1;
-
-        // First, deal with the cases where there was sufficient input to try the last alternative.
-        if (incrementForNextIter > 0) // We need to check for more input anyway, fall through to the checking below.
+        if (!setRepeatAlternativeLabels) {
+            // If there are no alternatives that need repeating (all are marked 'onceThrough') then just link
+            // the match failures to this point, and fall through to the return below.
             state.linkAlternativeBacktracks(this);
-        else if (m_pattern.m_body->m_hasFixedSize && !incrementForNextIter) // No need to update anything, link these backtracks straight to the to pof the loop!
-            state.linkAlternativeBacktracksTo(firstAlternativeInputChecked, this);
-        else { // no need to check the input, but we do have some bookkeeping to do first.
-            state.linkAlternativeBacktracks(this);
+            notEnoughInputForPreviousAlternative.link(this);
+        } else {
+            // How much more input need there be to be able to retry from the first alternative?
+            // examples:
+            //   /yarr_jit/ or /wrec|pcre/
+            //     In these examples we need check for one more input before looping.
+            //   /yarr_jit|pcre/
+            //     In this case we need check for 5 more input to loop (+4 to allow for the first alterative
+            //     being four longer than the last alternative checked, and another +1 to effectively move
+            //     the start position along by one).
+            //   /yarr|rules/ or /wrec|notsomuch/
+            //     In these examples, provided that there was sufficient input to have just been matching for
+            //     the second alternative we can loop without checking for available input (since the second
+            //     alternative is longer than the first).  In the latter example we need to decrement index
+            //     (by 4) so the start position is only progressed by 1 from the last iteration.
+            int incrementForNextIter = (countToCheckForFirstAlternative - countCheckedForCurrentAlternative) + 1;
 
-            // Where necessary update our preserved start position.
-            if (!m_pattern.m_body->m_hasFixedSize) {
-                move(index, regT0);
-                sub32(Imm32(countCheckedForCurrentAlternative - 1), regT0);
-                store32(regT0, Address(output));
+            // First, deal with the cases where there was sufficient input to try the last alternative.
+            if (incrementForNextIter > 0) // We need to check for more input anyway, fall through to the checking below.
+                state.linkAlternativeBacktracks(this);
+            else if (m_pattern.m_body->m_hasFixedSize && !incrementForNextIter) // No need to update anything, link these backtracks straight to the to pof the loop!
+                state.linkAlternativeBacktracksTo(firstAlternativeInputChecked, this);
+            else { // no need to check the input, but we do have some bookkeeping to do first.
+                state.linkAlternativeBacktracks(this);
+
+                // Where necessary update our preserved start position.
+                if (!m_pattern.m_body->m_hasFixedSize) {
+                    move(index, regT0);
+                    sub32(Imm32(countCheckedForCurrentAlternative - 1), regT0);
+                    store32(regT0, Address(output));
+                }
+
+                // Update index if necessary, and loop (without checking).
+                if (incrementForNextIter)
+                    add32(Imm32(incrementForNextIter), index);
+                jump().linkTo(firstAlternativeInputChecked, this);
             }
 
-            // Update index if necessary, and loop (without checking).
-            if (incrementForNextIter)
-                add32(Imm32(incrementForNextIter), index);
-            jump().linkTo(firstAlternativeInputChecked, this);
-        }
-
-        notEnoughInputForPreviousAlternative.link(this);
-        // Update our idea of the start position, if we're tracking this.
-        if (!m_pattern.m_body->m_hasFixedSize) {
-            if (countCheckedForCurrentAlternative - 1) {
-                move(index, regT0);
-                sub32(Imm32(countCheckedForCurrentAlternative - 1), regT0);
-                store32(regT0, Address(output));
-            } else
-                store32(index, Address(output));
-        }
+            notEnoughInputForPreviousAlternative.link(this);
+            // Update our idea of the start position, if we're tracking this.
+            if (!m_pattern.m_body->m_hasFixedSize) {
+                if (countCheckedForCurrentAlternative - 1) {
+                    move(index, regT0);
+                    sub32(Imm32(countCheckedForCurrentAlternative - 1), regT0);
+                    store32(regT0, Address(output));
+                } else
+                    store32(index, Address(output));
+            }
         
-        // Loop if there are repeating alternatives.
-        if (setRepeatAlternativeLabels) {
             // Check if there is sufficent input to run the first alternative again.
             jumpIfAvailableInput(incrementForNextIter).linkTo(firstAlternativeInputChecked, this);
             // No - insufficent input to run the first alteranative, are there any other alternatives we

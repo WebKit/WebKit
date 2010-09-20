@@ -1,3 +1,17 @@
+2010-09-20  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 46077 - ASSERT failure in YARR JIT
+
+        We will currently attempt to loop if there are multiple alternatives, they are all
+        BOL predicated, and the last alternative is longer then the first - however if all
+        alternatives are BOL predicated the head of loop label will not have been set, and
+        we'll try to link a jump to an undefined label. Stop doing so.
+
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::generateDisjunction):
+
 2010-09-20  Adam Roben  <aroben@apple.com>
 
         Export RegExpObject::info from JavaScriptCore
