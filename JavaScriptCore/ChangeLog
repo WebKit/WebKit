@@ -1,3 +1,19 @@
+2010-09-20  Adam Roben  <aroben@apple.com>
+
+        Export RegExpObject::info from JavaScriptCore
+
+        This allows obj->inherits(&RegExpObject::info) to work correctly from
+        outside JavaScriptCore.dll on Windows.
+
+        Fixes <http://webkit.org/b/46098>
+        fast/loader/stateobjects/pushstate-object-types.html fails on Windows
+
+        Reviewed by John Sullivan.
+
+        * runtime/RegExpObject.h: Added JS_EXPORTDATA to the info member, as
+        we already have for some other classes whose info members have to be
+        used from outside the DLL.
+
 2010-09-19  Gavin Barraclough  <barraclough@apple.com>
 
         Windows build fix pt 2.

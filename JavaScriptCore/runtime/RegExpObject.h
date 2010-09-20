@@ -45,7 +45,7 @@ namespace JSC {
         virtual void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
 
         virtual const ClassInfo* classInfo() const { return &info; }
-        static const ClassInfo info;
+        static JS_EXPORTDATA const ClassInfo info;
 
         static PassRefPtr<Structure> createStructure(JSValue prototype)
         {
