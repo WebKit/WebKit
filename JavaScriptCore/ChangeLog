@@ -1,3 +1,16 @@
+2010-09-20  Peter Varga  <pvarga@inf.u-szeged.hu>
+
+        Reviewed by Geoffrey Garen.
+
+        REGRESSION(67790): jsc tests are failed with YARR interpreter
+        https://bugs.webkit.org/show_bug.cgi?id=46083
+
+        Fix the initializing of the lastSubpatternId member of
+        parentheses.
+
+        * yarr/RegexCompiler.cpp:
+        (JSC::Yarr::RegexPatternConstructor::atomParenthesesEnd):
+
 2010-09-20  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
