@@ -27,35 +27,32 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from google.appengine.ext import db
-from google.appengine.ext import webapp
 
-from model.workitems import WorkItems
-from model.activeworkitems import ActiveWorkItems
-from model import queuestatus
-
-from datetime import datetime, timedelta
+from datetime import timedelta
+import time
 
 
-class NextPatch(webapp.RequestHandler):
-    def _get_next_patch_id(self, queue_name):
-        work_items = WorkItems.all().filter("queue_name =", queue_name).get()
-        if not work_items:
-            return None
-        active_work_items = ActiveWorkItems.get_or_insert(key_name=queue_name, queue_name=queue_name)
-        return db.run_in_transaction(self._assign_patch, active_work_items.key(), work_items.item_ids)
+class ActiveWorkItems(db.Model):
+    queue_name = db.StringProperty()
+    item_ids = db.ListProperty(int)
+    item_dates = db.ListProperty(float)
+    date = db.DateTimeProperty(auto_now_add=True)
 
-    def get(self, queue_name):
-        patch_id = self._get_next_patch_id(queue_name)
-        if not patch_id:
-            self.error(404)
-            return
-        self.response.out.write(patch_id)
+    def deactivate_expired(self, now):
+        one_hour_ago = time.mktime((now - timedelta(minutes=60)).timetuple())
+        nonexpired_item_ids = []
+        nonexpired_item_dates = []
+        for i in range(len(self.item_ids)):
+            if self.item_dates[i] > one_hour_ago:
+                nonexpired_item_ids.append(self.item_ids[i])
+                nonexpired_item_dates.append(self.item_dates[i])
+        self.item_ids = nonexpired_item_ids
+        self.item_dates = nonexpired_item_dates
 
-    @staticmethod
-    def _assign_patch(key, work_item_ids):
-        now = datetime.now()
-        active_work_items = db.get(key)
-        active_work_items.deactivate_expired(now)
-        next_item = active_work_items.next_item(work_item_ids, now)
-        active_work_items.put()
-        return next_item
+    def next_item(self, work_item_ids, now):
+        for item_id in work_item_ids:
+            if item_id not in self.item_ids:
+                self.item_ids.append(item_id)
+                self.item_dates.append(time.mktime(now.timetuple()))
+                return item_id
+        return None

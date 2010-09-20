@@ -1,3 +1,19 @@
+2010-09-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        The commit-cluster bots still race to lock patch_ids
+        https://bugs.webkit.org/show_bug.cgi?id=46130
+
+        It turns out we need to use a transaction object to make the
+        read/modify/write lock operation atomic.  From reading the AppEngine
+        documentation, I think this patch should do what we want.  It's hard to
+        test locally because the test instance isn't distributed in the same
+        way the production instance is.
+
+        * QueueStatusServer/handlers/nextpatch.py:
+        * QueueStatusServer/model/activeworkitems.py: Added.
+
 2010-09-20  Andy Estes  <aestes@apple.com>
 
         Reviewed by Adam Barth.
