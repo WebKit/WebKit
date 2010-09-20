@@ -90,8 +90,15 @@ public:
 
     void markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove = 0, bool inLayout = true);
     void markPositionedObjectsForLayout();
+    void markForPaginationRelayout()
+    { 
+        if (isTable())
+            markDescendantBlocksAndLinesForLayout();
+        else
+            setChildNeedsLayout(true, false);
+    }
     virtual void markDescendantBlocksAndLinesForLayout(bool inLayout = true);
-
+    
     bool containsFloats() { return m_floatingObjects && !m_floatingObjects->isEmpty(); }
     bool containsFloat(RenderObject*);
 

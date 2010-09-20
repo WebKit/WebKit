@@ -1848,7 +1848,7 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, int
 
     bool paginated = view()->layoutState()->isPaginated();
     if (!child->needsLayout() && paginated && view()->layoutState()->m_pageHeight && childRenderBlock && view()->layoutState()->pageY(child->y()) != childRenderBlock->pageY())
-        childRenderBlock->setChildNeedsLayout(true, false);
+        childRenderBlock->markForPaginationRelayout();
 
     bool childHadLayout = child->m_everHadLayout;
     bool childNeededLayout = child->needsLayout();
@@ -1916,7 +1916,7 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, int
             if (!child->avoidsFloats() && childRenderBlock->containsFloats())
                 childRenderBlock->markAllDescendantsWithFloatsForLayout();
             if (paginated && !child->needsLayout() && view()->layoutState()->m_pageHeight && view()->layoutState()->pageY(child->y()) != childRenderBlock->pageY())
-                child->setChildNeedsLayout(true, false);
+                childRenderBlock->markForPaginationRelayout();
         }
 
         // Our guess was wrong. Make the child lay itself out again.
@@ -2018,7 +2018,7 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
             if (!r->needsLayout() && paginated && view()->layoutState()->m_pageHeight) {
                 RenderBlock* childRenderBlock = r->isRenderBlock() ? toRenderBlock(r) : 0;
                 if (childRenderBlock && view()->layoutState()->pageY(childRenderBlock->y()) != childRenderBlock->pageY())
-                    childRenderBlock->setChildNeedsLayout(true, false);
+                    childRenderBlock->markForPaginationRelayout();
             }
 
             // We don't have to do a full layout.  We just have to update our position. Try that first. If we have shrink-to-fit width
@@ -3051,7 +3051,7 @@ bool RenderBlock::positionNewFloats()
             RenderBlock* childBlock = o->isRenderBlock() ? toRenderBlock(o) : 0;
 
             if (childBlock && view()->layoutState()->m_pageHeight && view()->layoutState()->pageY(o->y()) != childBlock->pageY())
-                childBlock->setChildNeedsLayout(true, false);
+                childBlock->markForPaginationRelayout();
             o->layoutIfNeeded();
 
             // If we are unsplittable and don't fit, then we need to move down.

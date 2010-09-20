@@ -2101,6 +2101,9 @@ void FrameView::forceLayoutForPagination(const FloatSize& pageSize, float maximu
             root->setWidth(pageW);
             root->setNeedsLayoutAndPrefWidthsRecalc();
             forceLayout();
+            int docHeight = root->bottomLayoutOverflow();
+            root->clearLayoutOverflow();
+            root->addLayoutOverflow(IntRect(0, 0, pageW, docHeight)); // This is how we clip in case we overflow again.
         }
     }
 

@@ -602,15 +602,6 @@ int RenderTableSection::layoutRows(int toAdd)
             int be = rHeight - heightWithoutIntrinsicPadding - te;
             cell->setIntrinsicPaddingTop(te);
             cell->setIntrinsicPaddingBottom(be);
-            if (te != oldTe || be != oldBe) {
-                cell->setNeedsLayout(true, false);
-                cell->layoutIfNeeded();
-                if (view()->layoutState()->m_pageHeight && cell->height() != rHeight)
-                    cell->setHeight(rHeight); // FIXME: Pagination might have made us change size.  For now just shrink or grow the cell to fit without doing a relayout.
-            }
-
-            if ((te != oldTe || be > oldBe) && !table()->selfNeedsLayout() && cell->checkForRepaintDuringLayout())
-                cell->repaint();
             
             IntRect oldCellRect(cell->x(), cell->y() , cell->width(), cell->height());
         
@@ -618,6 +609,20 @@ int RenderTableSection::layoutRows(int toAdd)
                 cell->setLocation(table()->columnPositions()[nEffCols] - table()->columnPositions()[table()->colToEffCol(cell->col() + cell->colSpan())] + hspacing, m_rowPos[rindx]);
             else
                 cell->setLocation(table()->columnPositions()[c] + hspacing, m_rowPos[rindx]);
+
+            if (te != oldTe || be != oldBe)
+                cell->setNeedsLayout(true, false);
+            
+            if (!cell->needsLayout() && view()->layoutState()->m_pageHeight && view()->layoutState()->pageY(cell->y()) != cell->pageY())
+                cell->setChildNeedsLayout(true, false);
+                
+            cell->layoutIfNeeded();
+            
+            if (view()->layoutState()->m_pageHeight && cell->height() != rHeight)
+                cell->setHeight(rHeight); // FIXME: Pagination might have made us change size.  For now just shrink or grow the cell to fit without doing a relayout.
+
+            if ((te != oldTe || be > oldBe) && !table()->selfNeedsLayout() && cell->checkForRepaintDuringLayout())
+                cell->repaint();
 
             // If the cell moved, we have to repaint it as well as any floating/positioned
             // descendants.  An exception is if we need a layout.  In this case, we know we're going to

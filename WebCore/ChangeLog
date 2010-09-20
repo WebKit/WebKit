@@ -1,3 +1,34 @@
+2010-09-18  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46030, aintitcool.com doesn't paginate correctly when printed.
+        
+        This happens because the site always has a document width that will exceed the page width.
+        We incorrectly apply a double scale instead of clipping after the first scale still doesn't fit.
+        The fix for the issue is to cap the right layout overflow to the page width and to just clip out
+        any additional excess.  This is the code in FrameView.cpp.
+        
+        This patch also cleans up table cell invalidation to reduce the # of relayouts.  This change is not
+        a correctness fix.  It's just performance.
+        
+        I'm not sure how to write a test for this, since the double scale is an artifact of how WebKit mac calls
+        back in when really printing.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::forceLayoutForPagination):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlockChild):
+        (WebCore::RenderBlock::layoutPositionedObjects):
+        (WebCore::RenderBlock::positionNewFloats):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::markForPaginationRelayout):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderFlexibleBox::layoutVerticalBox):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows):
+
 2010-09-20  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.
