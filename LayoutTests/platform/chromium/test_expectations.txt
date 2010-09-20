@@ -3157,3 +3157,4 @@ BUGWEBGL WIN LINUX : fast/canvas/webgl/point-size.html = TEXT
 BUGWEBGL MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html = TEXT PASS
 BUGWEBGL MAC : fast/canvas/webgl/texture-npot.html = TEXT
 BUGWEBGL WIN LINUX : fast/canvas/webgl/uniform-location.html = TEXT
+BUG56220 : userscripts/user-script-top-frame-only.html = TEXT

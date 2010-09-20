@@ -119,7 +119,6 @@ BUG_DRT LINUX : svg/batik/text/verticalText.svg = IMAGE+TEXT
 BUG_DRT WIN MAC LINUX : fast/dynamic/window-resize-scrollbars-test.html = IMAGE+TEXT
 BUG_DRT WIN MAC LINUX : storage/domstorage/quota.html = TEXT
 BUG_DRT WIN MAC LINUX : storage/indexeddb/objectstore-basics.html = TEXT
-BUG_DRT WIN MAC LINUX : userscripts/user-script-top-frame-only.html = TEXT
 BUG_DRT MAC LINUX : http/tests/misc/slow-loading-image-in-pattern.html = IMAGE PASS
 BUG_DRT MAC LINUX : http/tests/plugins/post-url-file.html = TIMEOUT
 BUG_DRT LINUX : fast/events/select-onchange-crash.html = CRASH
@@ -153,3 +152,4 @@ BUG_DRT WIN : fast/notifications/notifications-replace.html = TEXT
 
 // Pass with DRT though FAIL on test_shell
 BUG_DRT : platform/chromium/accessibility = PASS
+BUG_DRT : userscripts/user-script-top-frame-only.html = PASS
