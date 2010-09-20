@@ -1,3 +1,9 @@
+2010-09-20  James Robinson  <jamesr@chromium.org>
+
+        Fix bad merge in chromium test_expectations.txt
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-17  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Andreas Kling

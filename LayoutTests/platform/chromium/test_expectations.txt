@@ -2662,8 +2662,6 @@ BUG45991 MAC : canvas/philip/tests/2d.shadow.enable.y.html = TEXT
 BUG45991 MAC : canvas/philip/tests/2d.strokeRect.zero.4.html = TEXT
 BUG45991 MAC : canvas/philip/tests/toDataURL.jpeg.alpha.html = TEXT
 
-BUG45991 WIN : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
-
 // Many of these are skipped on the mac platform.
 BUG45991 MAC : canvas/philip/tests/2d.gradient.radial.cone.front.html = TEXT
 BUG45991 MAC : canvas/philip/tests/2d.gradient.radial.inside2.html = TEXT
