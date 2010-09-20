@@ -1,5 +1,12 @@
 2010-09-20  Martin Robinson  <mrobinson@igalia.com>
 
+        Correct a GTK+ baseline. These issues should hopefully be mitigated
+        by upcoming font fixes.
+
+        * platform/gtk/fast/events/keydown-1-expected.txt: Updated baseline.
+
+2010-09-20  Martin Robinson  <mrobinson@igalia.com>
+
         Reviewed by Daniel Bates.
 
         [GTK] fast/forms/listbox-selection.html fails
