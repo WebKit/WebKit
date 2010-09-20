@@ -1,3 +1,21 @@
+2010-09-19  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r67749.
+        http://trac.webkit.org/changeset/67749
+        https://bugs.webkit.org/show_bug.cgi?id=46068
+
+        breaking ToT chromium canary build (Requested by shans on
+        #webkit).
+
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::createNewContext):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::registeredExtensionWithV8):
+        (WebCore::V8Proxy::registerExtension):
+        * bindings/v8/V8Proxy.h:
+        * loader/EmptyClients.h:
+        * loader/FrameLoaderClient.h:
+
 2010-09-19  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

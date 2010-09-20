@@ -253,7 +253,6 @@ namespace WebCore {
         virtual void didCreateScriptContextForFrame() = 0;
         virtual void didDestroyScriptContextForFrame() = 0;
         virtual void didCreateIsolatedScriptContext() = 0;
-        virtual bool allowScriptExtension(const String& extensionName, int extensionGroup) = 0;
 #endif
 
         virtual void registerForIconNotification(bool listen = true) = 0;

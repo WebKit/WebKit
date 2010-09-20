@@ -301,9 +301,6 @@ public:
     // scripts.
     virtual void didCreateIsolatedScriptContext(WebFrame*) { }
 
-    // Controls whether the given script extension should run in this frame.
-    virtual bool allowScriptExtension(WebFrame*, const WebString& extensionName, int extensionGroup) { return false; }
-
 
     // Geometry notifications ----------------------------------------------
 
