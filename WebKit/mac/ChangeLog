@@ -1,3 +1,24 @@
+2010-09-20  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION (HTML5 Parser): Pages broken due to <tag<tag> parsing changes
+        https://bugs.webkit.org/show_bug.cgi?id=40961
+
+        Implement WebKitUsePreHTML5ParserQuirks preference.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): Default WebKitUsePreHTML5ParserQuirks to
+        false.
+        (-[WebPreferences usePreHTML5ParserQuirks]):
+        (-[WebPreferences setUsePreHTML5ParserQuirks:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]): Update WebCore::Settings
+        with the value of WebKitUsePreHTML5ParserQuirks when a preference
+        changes.
+
 2010-09-20  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Sam Weinig.

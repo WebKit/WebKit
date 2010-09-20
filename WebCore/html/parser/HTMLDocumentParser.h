@@ -66,6 +66,8 @@ public:
     void resumeParsingAfterYield();
 
     static void parseDocumentFragment(const String&, DocumentFragment*, Element* contextElement, FragmentScriptingPermission = FragmentScriptingAllowed);
+    
+    static bool usePreHTML5ParserQuirks(Document*);
 
 protected:
     virtual void insert(const SegmentedString&);

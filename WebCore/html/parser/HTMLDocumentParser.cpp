@@ -37,6 +37,7 @@
 #include "HTMLTreeBuilder.h"
 #include "HTMLDocument.h"
 #include "NestingLevelIncrementer.h"
+#include "Settings.h"
 #include "XSSAuditor.h"
 #include <wtf/CurrentTime.h>
 
@@ -79,7 +80,7 @@ HTMLTokenizer::State tokenizerStateForContextElement(Element* contextElement, bo
 
 HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors)
     : ScriptableDocumentParser(document)
-    , m_tokenizer(HTMLTokenizer::create())
+    , m_tokenizer(HTMLTokenizer::create(usePreHTML5ParserQuirks(document)))
     , m_scriptRunner(HTMLScriptRunner::create(document, this))
     , m_treeBuilder(HTMLTreeBuilder::create(m_tokenizer.get(), document, reportErrors))
     , m_parserScheduler(HTMLParserScheduler::create(this))
@@ -92,7 +93,7 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors
 // minimize code duplication between these constructors.
 HTMLDocumentParser::HTMLDocumentParser(DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission scriptingPermission)
     : ScriptableDocumentParser(fragment->document())
-    , m_tokenizer(HTMLTokenizer::create())
+    , m_tokenizer(HTMLTokenizer::create(usePreHTML5ParserQuirks(fragment->document())))
     , m_treeBuilder(HTMLTreeBuilder::create(m_tokenizer.get(), fragment, contextElement, scriptingPermission))
     , m_endWasDelayed(false)
     , m_writeNestingLevel(0)
@@ -516,6 +517,12 @@ void HTMLDocumentParser::parseDocumentFragment(const String& source, DocumentFra
     parser->finish();
     ASSERT(!parser->processingData()); // Make sure we're done. <rdar://problem/3963151>
     parser->detach(); // Allows ~DocumentParser to assert it was detached before destruction.
+}
+    
+bool HTMLDocumentParser::usePreHTML5ParserQuirks(Document* document)
+{
+    ASSERT(document);
+    return document->settings() && document->settings()->usePreHTML5ParserQuirks();
 }
 
 }

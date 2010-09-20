@@ -1,3 +1,16 @@
+2010-09-20  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION (HTML5 Parser): Pages broken due to <tag<tag> parsing changes
+        https://bugs.webkit.org/show_bug.cgi?id=40961
+
+        Implement WebKitUsePreHTML5ParserQuirks preference.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues): Reset WebKitUsePreHTML5ParserQuirks
+        to false after a test finishes.
+
 2010-09-20  Adam Roben  <aroben@apple.com>
 
         Windows build fix

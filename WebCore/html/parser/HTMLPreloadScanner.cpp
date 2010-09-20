@@ -31,6 +31,7 @@
 #include "CSSHelper.h"
 #include "CachedResourceLoader.h"
 #include "Document.h"
+#include "HTMLDocumentParser.h"
 #include "HTMLTokenizer.h"
 #include "HTMLLinkElement.h"
 #include "HTMLNames.h"
@@ -120,7 +121,7 @@ private:
 HTMLPreloadScanner::HTMLPreloadScanner(Document* document)
     : m_document(document)
     , m_cssScanner(document)
-    , m_tokenizer(HTMLTokenizer::create())
+    , m_tokenizer(HTMLTokenizer::create(HTMLDocumentParser::usePreHTML5ParserQuirks(document)))
     , m_bodySeen(false)
     , m_inStyle(false)
 {

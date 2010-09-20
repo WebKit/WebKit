@@ -2065,3 +2065,6 @@ platform/mac/fast/events/objc-event-api.html
 # WebKitTestRunner doesn't have eventSender.fireKeyboardEventsToElement
 platform/mac/fast/events/objc-keyboard-event-creation.html
 
+# WebKit2 does not (should not?) support setting WebKitUsePreHTML5ParserQuirks
+# in its WebPreferences implementation.
+fast/parser/pre-html5-parser-quirks.html

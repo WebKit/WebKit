@@ -326,6 +326,9 @@ namespace WebCore {
         // and http://webkit.org/b/40908
         void setInteractiveFormValidationEnabled(bool flag) { m_interactiveFormValidation = flag; }
         bool interactiveFormValidationEnabled() const { return m_interactiveFormValidation; }
+        
+        void setUsePreHTML5ParserQuirks(bool flag) { m_usePreHTML5ParserQuirks = flag; }
+        bool usePreHTML5ParserQuirks() const { return m_usePreHTML5ParserQuirks; }
 
     private:
         Page* m_page;
@@ -413,6 +416,7 @@ namespace WebCore {
 #endif
         bool m_memoryInfoEnabled: 1;
         bool m_interactiveFormValidation: 1;
+        bool m_usePreHTML5ParserQuirks: 1;
 
 #if USE(SAFARI_THEME)
         static bool gShouldPaintNativeControls;

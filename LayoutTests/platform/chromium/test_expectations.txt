@@ -3178,3 +3178,6 @@ BUGWEBGL MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html = TE
 BUGWEBGL MAC : fast/canvas/webgl/texture-npot.html = TEXT
 BUGWEBGL WIN LINUX : fast/canvas/webgl/uniform-location.html = TEXT
 
+// Pre-HTML5 parser quirks only apply to the mac port for now.
+WONTFIX SKIP : fast/parser/pre-html5-parser-quirks.html = FAIL
+

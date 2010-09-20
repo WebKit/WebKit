@@ -1,3 +1,42 @@
+2010-09-20  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION (HTML5 Parser): Pages broken due to <tag<tag> parsing changes
+        https://bugs.webkit.org/show_bug.cgi?id=40961
+
+        Add an optional quirk to the HTML5 tokenizer that reverts it to WebKit's
+        legacy behavior when the start of a new token is encountered before the
+        current token is finished parsing. The legacy behavior is to emit the
+        current token as if it were properly closed and being parsing the new
+        token.
+
+        Test: fast/parser/pre-html5-parser-quirks.html
+
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::HTMLDocumentParser): Instantiate
+        m_tokenizer with the value of Settings::usePreHTML5ParserQuirks().
+        (WebCore::usePreHTMLParserQuirks): Add a helper function to return the
+        value of Settings::usePreHTML5ParserQuirks() if Settings is non-NULL.
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::HTMLPreloadScanner::HTMLPreloadScanner): Instantiate
+        m_tokenizer with the value of Settings::usePreHTML5ParserQuirks().
+        * html/parser/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::HTMLTokenizer):
+        (WebCore::HTMLTokenizer::nextToken): If the quirk is enabled and an
+        unexpected '<' is encountered in certain states, emit the current token
+        and reprocess the '<' as the start of a new token.
+        * html/parser/HTMLTokenizer.h:
+        (WebCore::HTMLTokenizer::create):
+        * html/parser/HTMLViewSourceParser.cpp:
+        (WebCore::HTMLViewSourceParser::HTMLViewSourceParser): Instantiate
+        m_tokenizer with the value of Settings::usePreHTML5ParserQuirks().
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (WebCore::Settings::setUsePreHTML5ParserQuirks):
+        (WebCore::Settings::usePreHTML5ParserQuirks):
+
 2010-09-20  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

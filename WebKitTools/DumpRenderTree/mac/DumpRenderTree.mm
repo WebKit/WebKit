@@ -457,6 +457,7 @@ static void resetDefaultsToConsistentValues()
     [preferences setUsesPageCache:NO];
     [preferences setAcceleratedCompositingEnabled:YES];
     [preferences setWebGLEnabled:NO];
+    [preferences setUsePreHTML5ParserQuirks:NO];
 
     [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
 

@@ -368,6 +368,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:YES],  WebKitDNSPrefetchingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitFullScreenEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitMemoryInfoEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitUsePreHTML5ParserQuirksKey,
         [NSNumber numberWithLongLong:WebCore::ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
         [NSNumber numberWithLongLong:WebCore::ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
         nil];
@@ -1339,6 +1340,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setEditingBehavior:(WebKitEditingBehavior)behavior
 {
     [self _setIntegerValue:behavior forKey:WebKitEditingBehaviorPreferenceKey];
+}
+
+- (BOOL)usePreHTML5ParserQuirks
+{
+    return [self _boolValueForKey:WebKitUsePreHTML5ParserQuirksKey];
+}
+
+- (void)setUsePreHTML5ParserQuirks:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitUsePreHTML5ParserQuirksKey];
 }
 
 - (void)didRemoveFromWebView

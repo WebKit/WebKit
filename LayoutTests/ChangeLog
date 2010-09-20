@@ -1,3 +1,25 @@
+2010-09-20  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION (HTML5 Parser): Pages broken due to <tag<tag> parsing changes
+        https://bugs.webkit.org/show_bug.cgi?id=40961
+
+        * fast/parser/pre-html5-parser-quirks-expected.txt: Added.
+        * fast/parser/pre-html5-parser-quirks.html: Added.
+        * fast/parser/resources/pre-html5-parser-quirk-after-attribute-name-state.html: Added.
+        * fast/parser/resources/pre-html5-parser-quirk-after-attribute-value-quoted-state.html: Added.
+        * fast/parser/resources/pre-html5-parser-quirk-after-attribute-value-unquoted-state.html: Added.
+        * fast/parser/resources/pre-html5-parser-quirk-attribute-name-state.html: Added.
+        * fast/parser/resources/pre-html5-parser-quirk-before-attribute-name-state.html: Added.
+        * fast/parser/resources/pre-html5-parser-quirk-document-fragment.html: Added.
+        * fast/parser/resources/pre-html5-parser-quirk-tag-name-state.html: Added.
+        * platform/chromium/test_expectations.txt: Skip pre-html5-parser-quirks.html.
+        * platform/gtk/Skipped: Skip pre-html5-parser-quirks.html.
+        * platform/mac-wk2/Skipped: Skip pre-html5-parser-quirks.html.
+        * platform/qt/Skipped: Skip pre-html5-parser-quirks.html.
+        * platform/win/Skipped: Skip pre-html5-parser-quirks.html.
+
 2010-09-20  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

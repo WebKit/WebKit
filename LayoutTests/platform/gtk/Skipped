@@ -5923,3 +5923,6 @@ websocket/tests
 
 # viewport meta tag support
 fast/viewport
+
+# Pre-HMTL5 parser quirks only apply to the mac port for now.
+fast/parser/pre-html5-parser-quirks.html

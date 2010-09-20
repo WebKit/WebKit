@@ -5475,3 +5475,7 @@ http/tests/misc/iframe404.html
 http/tests/misc/location-replace-crossdomain.html
 http/tests/misc/slow-loading-image-in-pattern.html
 http/tests/uri/css-href.php
+
+# Pre-HMTL5 parser quirks only apply to the mac port for now.
+fast/parser/pre-html5-parser-quirks.html
+

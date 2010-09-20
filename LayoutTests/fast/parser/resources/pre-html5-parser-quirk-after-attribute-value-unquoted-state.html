@@ -1,0 +1,13 @@
+<div>
+    AfterAttributeValueUnquotedState:
+    <div style="visibility:hidden">
+        <p></p id=unquoted</div>
+    FAIL
+</div>
+<div id="console"></div>
+
+<script>
+    var console = document.getElementById("console");
+    if (!document.getElementById("unquoted"))
+        console.innerHTML = "PASS";
+</script>

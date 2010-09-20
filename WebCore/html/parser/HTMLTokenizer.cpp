@@ -103,8 +103,9 @@ inline bool isEndTagBufferingState(HTMLTokenizer::State state)
 
 }
 
-HTMLTokenizer::HTMLTokenizer()
+HTMLTokenizer::HTMLTokenizer(bool usePreHTML5ParserQuirks)
     : m_inputStreamPreprocessor(this)
+    , m_usePreHTML5ParserQuirks(usePreHTML5ParserQuirks)
 {
     reset();
 }
@@ -436,6 +437,8 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             ADVANCE_TO(SelfClosingStartTagState);
         else if (cc == '>')
             return emitAndResumeIn(source, DataState);
+        else if (m_usePreHTML5ParserQuirks && cc == '<')
+            return emitAndReconsumeIn(source, DataState);
         else if (isASCIIUpper(cc)) {
             m_token->appendToName(toLowerCase(cc));
             ADVANCE_TO(TagNameState);
@@ -877,6 +880,8 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             ADVANCE_TO(SelfClosingStartTagState);
         else if (cc == '>')
             return emitAndResumeIn(source, DataState);
+        else if (m_usePreHTML5ParserQuirks && cc == '<')
+            return emitAndReconsumeIn(source, DataState);
         else if (isASCIIUpper(cc)) {
             m_token->addNewAttribute();
             m_token->beginAttributeName(source.numberOfCharactersConsumed());
@@ -909,6 +914,9 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
         } else if (cc == '>') {
             m_token->endAttributeName(source.numberOfCharactersConsumed());
             return emitAndResumeIn(source, DataState);
+        } else if (m_usePreHTML5ParserQuirks && cc == '<') {
+            m_token->endAttributeName(source.numberOfCharactersConsumed());
+            return emitAndReconsumeIn(source, DataState);
         } else if (isASCIIUpper(cc)) {
             m_token->appendToAttributeName(toLowerCase(cc));
             ADVANCE_TO(AttributeNameState);
@@ -934,6 +942,8 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             ADVANCE_TO(BeforeAttributeValueState);
         else if (cc == '>')
             return emitAndResumeIn(source, DataState);
+        else if (m_usePreHTML5ParserQuirks && cc == '<')
+            return emitAndReconsumeIn(source, DataState);
         else if (isASCIIUpper(cc)) {
             m_token->addNewAttribute();
             m_token->beginAttributeName(source.numberOfCharactersConsumed());
@@ -1076,6 +1086,8 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             ADVANCE_TO(SelfClosingStartTagState);
         else if (cc == '>')
             return emitAndResumeIn(source, DataState);
+        else if (m_usePreHTML5ParserQuirks && cc == '<')
+            return emitAndReconsumeIn(source, DataState);
         else if (cc == InputStreamPreprocessor::endOfFileMarker) {
             parseError();
             RECONSUME_IN(DataState);

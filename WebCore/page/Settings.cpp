@@ -146,6 +146,7 @@ Settings::Settings(Page* page)
 #endif
     , m_memoryInfoEnabled(false)
     , m_interactiveFormValidation(false)
+    , m_usePreHTML5ParserQuirks(false)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 
     // hash before trying to use it.

@@ -119,7 +119,7 @@ public:
         CDATASectionDoubleRightSquareBracketState,
     };
 
-    static PassOwnPtr<HTMLTokenizer> create() { return adoptPtr(new HTMLTokenizer); }
+    static PassOwnPtr<HTMLTokenizer> create(bool usePreHTML5ParserQuirks) { return adoptPtr(new HTMLTokenizer(usePreHTML5ParserQuirks)); }
     ~HTMLTokenizer();
 
     void reset();
@@ -254,7 +254,7 @@ private:
         bool m_skipNextNewLine;
     };
 
-    HTMLTokenizer();
+    HTMLTokenizer(bool usePreHTML5ParserQuirks);
 
     inline bool processEntity(SegmentedString&);
 
@@ -307,6 +307,8 @@ private:
 
     // http://www.whatwg.org/specs/web-apps/current-work/#preprocessing-the-input-stream
     InputStreamPreprocessor m_inputStreamPreprocessor;
+    
+    bool m_usePreHTML5ParserQuirks;
 };
 
 }

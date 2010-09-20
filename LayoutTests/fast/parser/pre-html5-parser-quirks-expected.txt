@@ -1,0 +1,45 @@
+This tests that certain pre-HTML5 parser rules are applied when the WebKitUsePreHTML5ParserQuirks preference is set. See https://webkit.org/b/40961 for details.
+
+      
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+AfterAttributeNameState:
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame1-->-->'
+--------
+AfterAttributeValueQuotedState:
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame2-->-->'
+--------
+AfterAttributeValueUnquotedState:
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame3-->-->'
+--------
+AttributeNameState:
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame4-->-->'
+--------
+BeforeAttributeNameState:
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame5-->-->'
+--------
+Document fragment:
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame6-->-->'
+--------
+TagNameState:
+PASS
