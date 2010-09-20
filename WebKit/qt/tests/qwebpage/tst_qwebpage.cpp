@@ -97,6 +97,7 @@ private slots:
     void backActionUpdate();
     void frameAt();
     void requestCache();
+    void loadCachedPage();
     void protectBindingsRuntimeObjectsFromCollector();
     void localURLSchemes();
     void testOptionalJSObjects();
@@ -1288,6 +1289,37 @@ void tst_QWebPage::requestCache()
              (int)QNetworkRequest::PreferCache);
 }
 
+void tst_QWebPage::loadCachedPage()
+{
+    TestPage page;
+    QSignalSpy loadSpy(&page, SIGNAL(loadFinished(bool)));
+    page.settings()->setMaximumPagesInCache(3);
+
+    page.mainFrame()->load(QUrl("data:text/html,This is first page"));
+
+    QTRY_COMPARE(loadSpy.count(), 1);
+    QTRY_COMPARE(page.navigations.count(), 1);
+
+    QUrl firstPageUrl = page.mainFrame()->url();
+    page.mainFrame()->load(QUrl("data:text/html,This is second page"));
+
+    QTRY_COMPARE(loadSpy.count(), 2);
+    QTRY_COMPARE(page.navigations.count(), 2);
+
+    page.triggerAction(QWebPage::Stop);
+    QVERIFY(page.history()->canGoBack());
+
+    QSignalSpy urlSpy(page.mainFrame(), SIGNAL(urlChanged(QUrl)));
+    QVERIFY(urlSpy.isValid());
+
+    page.triggerAction(QWebPage::Back);
+    ::waitForSignal(page.mainFrame(), SIGNAL(urlChanged(QUrl)));
+    QCOMPARE(urlSpy.size(), 1);
+
+    QList<QVariant> arguments1 = urlSpy.takeFirst();
+    QCOMPARE(arguments1.at(0).toUrl(), firstPageUrl);
+
+}
 void tst_QWebPage::backActionUpdate()
 {
     QWebView view;

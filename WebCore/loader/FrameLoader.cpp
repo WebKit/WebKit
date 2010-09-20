@@ -1848,6 +1848,14 @@ void FrameLoader::commitProvisionalLoad()
     if (cachedPage && cachedPage->document()) {
         prepareForCachedPageRestore();
         cachedPage->restore(m_frame->page());
+
+        dispatchDidCommitLoad();
+
+        // If we have a title let the WebView know about it. 
+        String title = m_documentLoader->title();
+        if (!title.isNull()) 
+            m_client->dispatchDidReceiveTitle(title);         
+
         checkCompleted();
     } else {        
         KURL url = pdl->substituteData().responseURL();
@@ -1928,7 +1936,6 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
 
     // Handle adding the URL to the back/forward list.
     DocumentLoader* dl = m_documentLoader.get();
-    String ptitle = dl->title(); 
 
     switch (m_loadType) {
         case FrameLoadTypeForward:
@@ -2005,14 +2012,6 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
 
     if (!m_client->hasHTMLView())
         receivedFirstData();
-    else if (cachedPage) {
-        // For non-cached HTML pages, these methods are called in receivedFirstData().
-        dispatchDidCommitLoad();
-
-        // If we have a title let the WebView know about it. 
-        if (!ptitle.isNull()) 
-            m_client->dispatchDidReceiveTitle(ptitle);         
-    }
 }
 
 void FrameLoader::clientRedirectCancelledOrFinished(bool cancelWithLoadInProgress)

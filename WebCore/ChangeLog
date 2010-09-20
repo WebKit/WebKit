@@ -1,3 +1,16 @@
+2010-09-20  Jacob Dinu  <dinu.jacob@nokia.com>
+
+        Reviewed by Adam Barth.
+
+        When loading a cached page, dispatchDidCommitLoad is called after FrameLoader::open so
+        that all initialzations are done before calling client dispatchDidCommitLoad to avoid
+        client from accessing incorrect data.
+        https://bugs.webkit.org/show_bug.cgi?id=41155
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::transitionToCommitted):
+
 2010-09-20  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Adam Roben.
