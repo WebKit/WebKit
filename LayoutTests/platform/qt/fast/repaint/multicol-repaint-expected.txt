@@ -9,6 +9,6 @@ layer at (8,8) size 402x102
       text run at (1,1) width 13: " "
     RenderBR {BR} at (14,1) size 0x65
     RenderInline {SPAN} at (0,0) size 300x49
-      RenderText {#text} at (1,74) size 300x49
-        text run at (1,74) width 300: "XXXXXX"
+      RenderText {#text} at (1,109) size 300x49
+        text run at (1,109) width 300: "XXXXXX"
     RenderText {#text} at (0,0) size 0x0

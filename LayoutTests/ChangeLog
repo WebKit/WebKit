@@ -1,3 +1,29 @@
+2010-09-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed. Update Qt specific expected results after r67660.
+
+        Paginate and column-break at layout time rather than when painting
+        https://bugs.webkit.org/show_bug.cgi?id=38402
+
+        * platform/qt/fast/multicol/client-rects-expected.txt:
+        * platform/qt/fast/multicol/column-count-with-rules-expected.txt:
+        * platform/qt/fast/multicol/float-paginate-expected.txt:
+        * platform/qt/fast/multicol/layers-in-multicol-expected.txt:
+        * platform/qt/fast/multicol/nested-columns-expected.txt:
+        * platform/qt/fast/multicol/paginate-block-replaced-expected.txt:
+        * platform/qt/fast/multicol/positioned-with-constrained-height-expected.txt:
+        * platform/qt/fast/multicol/span/anonymous-style-inheritance-expected.txt:
+        * platform/qt/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.txt:
+        * platform/qt/fast/multicol/span/span-as-immediate-child-generated-content-expected.txt:
+        * platform/qt/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt:
+        * platform/qt/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.txt:
+        * platform/qt/fast/multicol/span/span-as-immediate-columns-child-expected.txt:
+        * platform/qt/fast/multicol/span/span-as-immediate-columns-child-removal-expected.txt:
+        * platform/qt/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.txt:
+        * platform/qt/fast/multicol/span/span-as-nested-columns-child-expected.txt:
+        * platform/qt/fast/multicol/span/span-margin-collapsing-expected.txt:
+        * platform/qt/fast/repaint/multicol-repaint-expected.txt:
+
 2010-09-20  James Kozianski  <koz@chromium.org>
 
         Reviewed by Ojan Vafai.

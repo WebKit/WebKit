@@ -71,7 +71,7 @@ layer at (8,514) size 136x76
       RenderImage {IMG} at (0,25) size 25x25 [bgcolor=#ADD8E6]
 layer at (8,643) size 136x76
   RenderBlock {DIV} at (0,635) size 136x76 [color=#ADD8E6] [border: (3px solid #000000)]
-    RenderBlock {DIV} at (13,53) size 25x25 [bgcolor=#ADD8E6]
+    RenderBlock {DIV} at (13,13) size 25x25 [bgcolor=#ADD8E6]
 layer at (21,122) size 25x24
   RenderBlock (positioned) {DIV} at (21,122) size 25x24 [border: (3px solid #0000FF7F)]
 layer at (81,97) size 25x24
@@ -98,5 +98,5 @@ layer at (83,443) size 25x25
   RenderBlock (positioned) {DIV} at (83,443) size 25x25 [border: (3px solid #0000FF7F)]
 layer at (81,527) size 25x25
   RenderBlock (positioned) {DIV} at (81,527) size 25x25 [border: (3px solid #0000FF7F)]
-layer at (81,646) size 25x25
-  RenderBlock (positioned) {DIV} at (81,646) size 25x25 [border: (3px solid #0000FF7F)]
+layer at (21,656) size 25x25
+  RenderBlock (positioned) {DIV} at (21,656) size 25x25 [border: (3px solid #0000FF7F)]
