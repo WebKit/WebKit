@@ -1,3 +1,10 @@
+2010-09-20  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Fix up the goober from http://trac.webkit.org/changeset/67856.
+
+        * platform/chromium-win-xp/css2.1/hindi-spacing-expected.png: Removed.
+        * platform/chromium-win-xp/fast/text/international/hindi-spacing-expected.checksum: Renamed from LayoutTests/platform/chromium-win-xp/css2.1/hindi-spacing-expected.checksum.
+
 2010-09-20  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
