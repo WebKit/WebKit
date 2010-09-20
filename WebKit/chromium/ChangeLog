@@ -1,3 +1,22 @@
+2010-09-20  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: merge Inspector client runtime events into the serialized inspector state object.
+
+        Drive-by rename getBackendSettings -> getInspectorState to better reflect the nature of the data.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45974
+
+        * src/InspectorClientImpl.cpp:
+        (WebKit::InspectorClientImpl::updateInspectorStateCookie):
+        * src/InspectorClientImpl.h:
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::setRuntimeProperty):
+        (WebKit::WebDevToolsAgentImpl::setApuAgentEnabled):
+        (WebKit::WebDevToolsAgentImpl::updateInspectorStateCookie):
+        * src/WebDevToolsAgentImpl.h:
+
 2010-09-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r67749.

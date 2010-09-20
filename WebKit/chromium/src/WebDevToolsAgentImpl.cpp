@@ -36,7 +36,6 @@
 #include "InjectedScriptHost.h"
 #include "InspectorBackendDispatcher.h"
 #include "InspectorController.h"
-#include "InspectorValues.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "PlatformString.h"
@@ -68,8 +67,6 @@ using WebCore::InjectedScriptHost;
 using WebCore::InspectorArray;
 using WebCore::InspectorBackendDispatcher;
 using WebCore::InspectorController;
-using WebCore::InspectorObject;
-using WebCore::InspectorValue;
 using WebCore::Node;
 using WebCore::Page;
 using WebCore::ResourceError;
@@ -83,10 +80,9 @@ namespace WebKit {
 
 namespace {
 
-static const char kFrontendConnectedFeatureName[] = "frontend-connected";
-static const char kResourceTrackingFeatureName[] = "resource-tracking";
-static const char kTimelineFeatureName[] = "timeline-profiler";
 static const char kApuAgentFeatureName[] = "apu-agent";
+static const char kFrontendConnectedFeatureName[] = "frontend-connected";
+static const char kInspectorStateFeatureName[] = "inspector-state";
 
 class ClientMessageLoopAdapter : public WebCore::ScriptDebugServer::ClientMessageLoop {
 public:
@@ -252,11 +248,9 @@ void WebDevToolsAgentImpl::setRuntimeProperty(const WebString& name, const WebSt
 {
     if (name == kApuAgentFeatureName)
         setApuAgentEnabled(value == "true");
-    else if (name == kTimelineFeatureName)
-        setTimelineProfilingEnabled(value == "true");
-    else if (name == kResourceTrackingFeatureName) {
+    else if (name == kInspectorStateFeatureName) {
         InspectorController* ic = inspectorController();
-        ic->setResourceTracking(value == "true");
+        ic->restoreInspectorStateFromCookie(value);
     } else if (name == kFrontendConnectedFeatureName && !inspectorController()->hasFrontend()) {
         inspectorController()->injectedScriptHost()->setInjectedScriptSource(value);
         connectFrontend(true);
@@ -275,13 +269,13 @@ void WebDevToolsAgentImpl::setApuAgentEnabled(bool enabled)
         if (!m_resourceTrackingWasEnabled) {
             // TODO(knorton): Introduce some kind of agents dependency here so that
             // user could turn off resource tracking while apu agent is on.
-            ic->setResourceTracking(true);
+            ic->setResourceTrackingEnabled(true);
         }
         m_debuggerAgentImpl->setAutoContinueOnException(true);
     } else {
       ic->stopTimelineProfiler();
       if (!m_resourceTrackingWasEnabled)
-          ic->setResourceTracking(false);
+          ic->setResourceTrackingEnabled(false);
       m_resourceTrackingWasEnabled = false;
     }
     m_client->runtimePropertyChanged(
@@ -408,24 +402,9 @@ bool WebDevToolsAgentImpl::sendMessageToFrontend(const WTF::String& message)
     return true;
 }
 
-void WebDevToolsAgentImpl::resourceTrackingWasEnabled()
+void WebDevToolsAgentImpl::updateInspectorStateCookie(const WTF::String& state)
 {
-    m_client->runtimePropertyChanged(kResourceTrackingFeatureName, "true");
-}
-
-void WebDevToolsAgentImpl::resourceTrackingWasDisabled()
-{
-    m_client->runtimePropertyChanged(kResourceTrackingFeatureName, "false");
-}
-
-void WebDevToolsAgentImpl::timelineProfilerWasStarted()
-{
-    m_client->runtimePropertyChanged(kTimelineFeatureName, "true");
-}
-
-void WebDevToolsAgentImpl::timelineProfilerWasStopped()
-{
-    m_client->runtimePropertyChanged(kTimelineFeatureName, "false");
+    m_client->runtimePropertyChanged(kInspectorStateFeatureName, state);
 }
 
 void WebDevToolsAgentImpl::evaluateInWebInspector(long callId, const WebString& script)

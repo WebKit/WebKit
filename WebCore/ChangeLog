@@ -1,3 +1,44 @@
+2010-09-20  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: merge Inspector client runtime events into the serialized inspector state object.
+
+        Drive-by rename getBackendSettings -> getInspectorState to better reflect the nature of the data.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45974
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorClient.h:
+        (WebCore::InspectorClient::updateInspectorStateCookie):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::saveApplicationSettings):
+        (WebCore::InspectorController::getInspectorState):
+        (WebCore::InspectorController::updateInspectorStateCookie):
+        (WebCore::InspectorController::restoreInspectorStateFromCookie):
+        (WebCore::InspectorController::getSettings):
+        (WebCore::InspectorController::setMonitoringXHREnabled):
+        (WebCore::InspectorController::restoreDebugger):
+        (WebCore::InspectorController::restoreProfiler):
+        (WebCore::InspectorController::setResourceTrackingEnabled):
+        (WebCore::InspectorController::ensureSettingsLoaded):
+        (WebCore::InspectorController::startTimelineProfiler):
+        (WebCore::InspectorController::stopTimelineProfiler):
+        (WebCore::InspectorController::enableProfiler):
+        (WebCore::InspectorController::disableProfiler):
+        (WebCore::InspectorController::enableDebuggerFromFrontend):
+        (WebCore::InspectorController::disableDebugger):
+        * inspector/InspectorController.h:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._handleContextMenuEvent):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype._toggleResourceTracking):
+        * inspector/front-end/Settings.js:
+        (WebInspector.Settings.initialize):
+        * inspector/front-end/inspector.js:
+        (WebInspector.doLoadedDone.populateInspectorState):
+        (WebInspector.doLoadedDone):
+
 2010-09-20  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

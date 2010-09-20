@@ -100,28 +100,10 @@ bool InspectorClientImpl::sendMessageToFrontend(const WTF::String& message)
     return false;
 }
 
-void InspectorClientImpl::resourceTrackingWasEnabled()
+void InspectorClientImpl::updateInspectorStateCookie(const WTF::String& inspectorState)
 {
     if (WebDevToolsAgentImpl* agent = devToolsAgent())
-        agent->resourceTrackingWasEnabled();
-}
-
-void InspectorClientImpl::resourceTrackingWasDisabled()
-{
-    if (WebDevToolsAgentImpl* agent = devToolsAgent())
-        agent->resourceTrackingWasDisabled();
-}
-
-void InspectorClientImpl::timelineProfilerWasStarted()
-{
-    if (WebDevToolsAgentImpl* agent = devToolsAgent())
-        agent->timelineProfilerWasStarted();
-}
-
-void InspectorClientImpl::timelineProfilerWasStopped()
-{
-    if (WebDevToolsAgentImpl* agent = devToolsAgent())
-        agent->timelineProfilerWasStopped();
+        agent->updateInspectorStateCookie(inspectorState);
 }
 
 WebDevToolsAgentImpl* InspectorClientImpl::devToolsAgent()

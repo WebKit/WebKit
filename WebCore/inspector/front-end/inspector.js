@@ -582,6 +582,16 @@ WebInspector.doLoadedDone = function()
 
     this.extensionServer.initExtensions();
 
+    function populateInspectorState(inspectorState)
+    {
+        WebInspector.monitoringXHREnabled = inspectorState.monitoringXHREnabled;
+        if (inspectorState.resourceTrackingEnabled)
+            WebInspector.panels.resources.resourceTrackingWasEnabled();
+        else
+            WebInspector.panels.resources.resourceTrackingWasDisabled();
+    }
+    InspectorBackend.getInspectorState(populateInspectorState);
+
     InspectorBackend.populateScriptObjects();
 
     // As a DOMAgent method, this needs to happen after the frontend has loaded and the agent is available.

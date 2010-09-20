@@ -765,11 +765,11 @@ WebInspector.ResourcesPanel.prototype = {
             this.sortingSelectElement.visible = false;
             WebInspector.resources = {};
             WebInspector.resourceURLMap = {};
-            InspectorBackend.setResourceTracking(false, true, callback);
+            InspectorBackend.setResourceTrackingEnabled(false, true, callback);
         } else {
             this.largerResourcesButton.visible = true;
             this.sortingSelectElement.visible = true;
-            InspectorBackend.setResourceTracking(true, !!optionalAlways, callback);
+            InspectorBackend.setResourceTrackingEnabled(true, !!optionalAlways, callback);
         }
     },
 

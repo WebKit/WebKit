@@ -1,7 +1,7 @@
 Tests that InspectorBackendStub is catching incorrect arguments.
 
-Protocol Error: Invalid type of argument 'enable' for 'InspectorBackend.setMonitoringXHR' call. It should be 'boolean' but it is 'number'.
-Protocol Error: Invalid number of arguments for 'InspectorBackend.setMonitoringXHR' call. It should have the next arguments '{"enable":"boolean"}'.
-Protocol Error: Optional callback argument for 'InspectorBackend.setMonitoringXHR' call should be a function but its type is 'string'.
+Protocol Error: Invalid type of argument 'enable' for 'InspectorBackend.setMonitoringXHREnabled' call. It should be 'boolean' but it is 'number'.
+Protocol Error: Invalid number of arguments for 'InspectorBackend.setMonitoringXHREnabled' call. It should have the next arguments '{"enable":"boolean"}'.
+Protocol Error: Optional callback argument for 'InspectorBackend.setMonitoringXHREnabled' call should be a function but its type is 'string'.
 Protocol Error: Attempted to dispatch an unimplemented WebInspector method 'something-strange'
 

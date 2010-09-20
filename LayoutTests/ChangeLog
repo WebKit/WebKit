@@ -1,3 +1,17 @@
+2010-09-20  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: merge Inspector client runtime events into the serialized inspector state object.
+
+        Drive-by rename getBackendSettings -> getInspectorState to better reflect the nature of the data.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45974
+
+        * http/tests/inspector/console-xhr-logging.html:
+        * inspector/report-API-errors-expected.txt:
+        * inspector/report-API-errors.html:
+
 2010-09-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt]REGRESSION? (r67762): 23 layout tests fail

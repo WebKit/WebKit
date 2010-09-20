@@ -58,10 +58,7 @@ public:
 
     virtual bool sendMessageToFrontend(const WTF::String&);
 
-    virtual void resourceTrackingWasEnabled();
-    virtual void resourceTrackingWasDisabled();
-    virtual void timelineProfilerWasStarted();
-    virtual void timelineProfilerWasStopped();
+    virtual void updateInspectorStateCookie(const WTF::String&);
 private:
     WebDevToolsAgentImpl* devToolsAgent();
 

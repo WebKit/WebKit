@@ -45,7 +45,7 @@ function requestHelper(method, url)
 
 function frontend_enableXMLHttpRequestLogging(testController)
 {
-    InspectorBackend.setMonitoringXHR(true, function(newStatus) {
+    InspectorBackend.setMonitoringXHREnabled(true, function(newStatus) {
          if (newStatus)
             testController.notifyDone("enabled");
     });
@@ -58,7 +58,7 @@ function frontend_enableXMLHttpRequestLogging(testController)
 
 function frontend_disableXMLHttpRequestLogging(testController)
 {
-    InspectorBackend.setMonitoringXHR(false, function(newStatus) {
+    InspectorBackend.setMonitoringXHREnabled(false, function(newStatus) {
         if (!newStatus)
             testController.notifyDone("disabled");
     });

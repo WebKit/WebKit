@@ -98,6 +98,7 @@ module core {
         [handler=Controller] void populateScriptObjects();
 
         [handler=Controller] void getSettings(out Object settings);
+        [handler=Controller] void getInspectorState(out Object state);
         [handler=Controller] void storeLastActivePanel(in String panelName);
 
         [handler=Controller] void saveApplicationSettings(in String settings);
@@ -106,9 +107,9 @@ module core {
         [handler=Controller] void enableSearchingForNode();
         [handler=Controller] void disableSearchingForNode();
 
-        [handler=Controller] void setMonitoringXHR(in boolean enable, out boolean newState);
+        [handler=Controller] void setMonitoringXHREnabled(in boolean enable, out boolean newState);
 
-        [handler=Controller] void setResourceTracking(in boolean enable, in boolean always, out boolean newState);
+        [handler=Controller] void setResourceTrackingEnabled(in boolean enabled, in boolean always, out boolean newState);
         [handler=Controller] void getResourceContent(in unsigned long identifier, out String content);
         [handler=Controller] void reloadPage();
 

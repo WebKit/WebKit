@@ -54,10 +54,7 @@ public:
     // Navigation can cause some WebKit implementations to change the view / page / inspector controller instance.
     // However, there are some inspector controller states that should survive navigation (such as tracking resources
     // or recording timeline). Following callbacks allow embedders to track these states.
-    virtual void resourceTrackingWasEnabled() { };
-    virtual void resourceTrackingWasDisabled() { };
-    virtual void timelineProfilerWasStarted() { };
-    virtual void timelineProfilerWasStopped() { };
+    virtual void updateInspectorStateCookie(const String&) { };
 };
 
 } // namespace WebCore
