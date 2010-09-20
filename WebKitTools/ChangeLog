@@ -1,3 +1,64 @@
+2010-09-20  Adam Roben  <aroben@apple.com>
+
+        Make WebKitTestRunner's wait-to-dump watchdog timer work on Windows
+
+        We were previously trying to use a CFRunLoopTimer, but since Windows
+        doesn't use CFRunLoop on most threads this doesn't work. Now we use a
+        Windows-style timer on Windows.
+
+        I also replaced all uses of "watchdog" with "watchdog timer".
+
+        Fixes <http://webkit.org/b/46101> WebKitTestRunner's wait-to-dump
+        watchdog timer doesn't work on Windows
+
+        Reviewed by Anders Carlsson.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::dump): Updated for rename.
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp: Removed
+        platform-specific functions.
+        (WTR::LayoutTestController::LayoutTestController): Added call to
+        platformInitialize.
+        (WTR::LayoutTestController::waitUntilDone): Changed to call
+        initializeWaitToDumpWatchdogTimerIfNeeded instead of doing the work
+        right in this function.
+        (WTR::LayoutTestController::waitToDumpWatchdogTimerFired): Updated for
+        rename.
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h: Added new
+        members needed to support the watchdog timer abstraction. Replaced
+        some "watchdog"s with "watchdog timer".
+
+        * WebKitTestRunner/InjectedBundle/mac/LayoutTestControllerMac.mm:
+        Added.
+        (WTR::LayoutTestController::platformInitialize): Does nothing on this
+        platform.
+        (WTR::LayoutTestController::invalidateWaitToDumpWatchdog): Moved here
+        from LayoutTestController.cpp and changed to use an early return.
+        (WTR::waitUntilDoneWatchdogTimerFired): Moved here from
+        LayoutTestController.cpp.
+        (WTR::LayoutTestController::initializeWaitToDumpWatchdogTimerIfNeeded):
+        Moved code here from LayoutTestController::waitUntilDone and changed
+        to use an early return.
+
+        * WebKitTestRunner/InjectedBundle/win/LayoutTestControllerWin.cpp:
+        Added.
+        (WTR::LayoutTestController::platformInitialize): Initialize our
+        watchdog timer.
+        (WTR::LayoutTestController::invalidateWaitToDumpWatchdog): Added.
+        Kills and clears the watchdog timer.
+        (WTR::waitToDumpWatchdogTimerFired): Added. Calls through to the
+        LayoutTestController member function of the same name.
+        (WTR::LayoutTestController::initializeWaitToDumpWatchdogTimerIfNeeded):
+        Added. Sets up the timer if it isn't already set.
+
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj: Added
+        LayoutTestControllerMac.mm.
+
+        * WebKitTestRunner/win/InjectedBundle.vcproj: Added
+        LayoutTestControllerWin.cpp.
+
 2010-09-20  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Daniel Bates.

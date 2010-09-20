@@ -54,6 +54,7 @@
 		BCC9981811D3F51E0017BCA2 /* LayoutTestController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC9981711D3F51E0017BCA2 /* LayoutTestController.cpp */; };
 		BCD7D2F811921278006DB7EE /* TestInvocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD7D2F711921278006DB7EE /* TestInvocation.cpp */; };
 		BCDA2B9A1191051F00C3BC47 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCDA2B991191051F00C3BC47 /* JavaScriptCore.framework */; };
+		C0CE720B1247C93300BC0EC4 /* LayoutTestControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0CE720A1247C93300BC0EC4 /* LayoutTestControllerMac.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -132,6 +133,7 @@
 		BCD7D2F611921278006DB7EE /* TestInvocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestInvocation.h; sourceTree = "<group>"; };
 		BCD7D2F711921278006DB7EE /* TestInvocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestInvocation.cpp; sourceTree = "<group>"; };
 		BCDA2B991191051F00C3BC47 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C0CE720A1247C93300BC0EC4 /* LayoutTestControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = LayoutTestControllerMac.mm; path = mac/LayoutTestControllerMac.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -223,6 +225,7 @@
 				BC14E4D8120E02D000826C0C /* GCController.h */,
 				BCC9981711D3F51E0017BCA2 /* LayoutTestController.cpp */,
 				BCC9981611D3F51E0017BCA2 /* LayoutTestController.h */,
+				C0CE720A1247C93300BC0EC4 /* LayoutTestControllerMac.mm */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -443,6 +446,7 @@
 				BC14E4EA120E03D800826C0C /* JSGCController.cpp in Sources */,
 				BC8FD8CA120E527F00F3E71A /* EventSendingController.cpp in Sources */,
 				BC8FD8D2120E545B00F3E71A /* JSEventSendingController.cpp in Sources */,
+				C0CE720B1247C93300BC0EC4 /* LayoutTestControllerMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

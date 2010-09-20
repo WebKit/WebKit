@@ -388,7 +388,7 @@ void InjectedBundlePage::dump()
 {
     ASSERT(InjectedBundle::shared().isTestRunning());
 
-    InjectedBundle::shared().layoutTestController()->invalidateWaitToDumpWatchdog();
+    InjectedBundle::shared().layoutTestController()->invalidateWaitToDumpWatchdogTimer();
 
     switch (InjectedBundle::shared().layoutTestController()->whatToDump()) {
     case LayoutTestController::RenderTree: {

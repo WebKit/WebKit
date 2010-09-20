@@ -317,6 +317,22 @@
 			>
 		</File>
 		<File
+			RelativePath="..\InjectedBundle\EventSendingController.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\InjectedBundle\EventSendingController.h"
+			>
+		</File>
+		<File
+			RelativePath="..\InjectedBundle\GCController.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\InjectedBundle\GCController.h"
+			>
+		</File>
+		<File
 			RelativePath="..\InjectedBundle\InjectedBundle.cpp"
 			>
 		</File>
@@ -337,27 +353,15 @@
 			>
 		</File>
 		<File
-			RelativePath="..\InjectedBundle\EventSendingController.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\InjectedBundle\EventSendingController.h"
-			>
-		</File>
-		<File
-			RelativePath="..\InjectedBundle\GCController.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\InjectedBundle\GCController.h"
-			>
-		</File>
-		<File
 			RelativePath="..\InjectedBundle\LayoutTestController.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\InjectedBundle\LayoutTestController.h"
+			>
+		</File>
+		<File
+			RelativePath="..\InjectedBundle\win\LayoutTestControllerWin.cpp"
 			>
 		</File>
 	</Files>

@@ -41,7 +41,7 @@ namespace WTR {
 
 // This is lower than DumpRenderTree's timeout, to make it easier to work through the failures
 // Eventually it should be changed to match.
-static const CFTimeInterval waitToDumpWatchdogInterval = 6.0;
+const double LayoutTestController::waitToDumpWatchdogTimerInterval = 6;
 
 static JSValueRef propertyValue(JSContextRef context, JSObjectRef object, const char* propertyName)
 {
@@ -94,6 +94,7 @@ LayoutTestController::LayoutTestController()
     , m_testRepaint(false)
     , m_testRepaintSweepHorizontally(false)
 {
+    platformInitialize();
 }
 
 LayoutTestController::~LayoutTestController()
@@ -110,32 +111,15 @@ void LayoutTestController::display()
     // FIXME: actually implement, once we want pixel tests
 }
 
-void LayoutTestController::invalidateWaitToDumpWatchdog()
-{
-    if (m_waitToDumpWatchdog) {
-        CFRunLoopTimerInvalidate(m_waitToDumpWatchdog.get());
-        m_waitToDumpWatchdog = 0;
-    }
-}
-
-static void waitUntilDoneWatchdogFired(CFRunLoopTimerRef timer, void* info)
-{
-    InjectedBundle::shared().layoutTestController()->waitToDumpWatchdogTimerFired();
-}
-
 void LayoutTestController::waitUntilDone()
 {
     m_waitToDump = true;
-    if (!m_waitToDumpWatchdog) {
-        m_waitToDumpWatchdog.adoptCF(CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + waitToDumpWatchdogInterval, 
-                                                      0, 0, 0, waitUntilDoneWatchdogFired, NULL));
-        CFRunLoopAddTimer(CFRunLoopGetCurrent(), m_waitToDumpWatchdog.get(), kCFRunLoopCommonModes);
-    }
+    initializeWaitToDumpWatchdogTimerIfNeeded();
 }
 
 void LayoutTestController::waitToDumpWatchdogTimerFired()
 {
-    invalidateWaitToDumpWatchdog();
+    invalidateWaitToDumpWatchdogTimer();
     const char* message = "FAIL: Timed out waiting for notifyDone to be called\n";
     InjectedBundle::shared().os() << message << "\n";
     InjectedBundle::shared().done();
