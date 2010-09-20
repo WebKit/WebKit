@@ -432,7 +432,7 @@ int RenderBoxModelObject::paddingTop(bool) const
     int w = 0;
     Length padding = style()->paddingTop();
     if (padding.isPercent())
-        w = containingBlock()->availableWidth();
+        w = containingBlock()->availableLogicalWidth();
     return padding.calcMinValue(w);
 }
 
@@ -441,7 +441,7 @@ int RenderBoxModelObject::paddingBottom(bool) const
     int w = 0;
     Length padding = style()->paddingBottom();
     if (padding.isPercent())
-        w = containingBlock()->availableWidth();
+        w = containingBlock()->availableLogicalWidth();
     return padding.calcMinValue(w);
 }
 
@@ -450,7 +450,7 @@ int RenderBoxModelObject::paddingLeft(bool) const
     int w = 0;
     Length padding = style()->paddingLeft();
     if (padding.isPercent())
-        w = containingBlock()->availableWidth();
+        w = containingBlock()->availableLogicalWidth();
     return padding.calcMinValue(w);
 }
 
@@ -459,7 +459,43 @@ int RenderBoxModelObject::paddingRight(bool) const
     int w = 0;
     Length padding = style()->paddingRight();
     if (padding.isPercent())
-        w = containingBlock()->availableWidth();
+        w = containingBlock()->availableLogicalWidth();
+    return padding.calcMinValue(w);
+}
+
+int RenderBoxModelObject::paddingBefore(bool) const
+{
+    int w = 0;
+    Length padding = style()->paddingBefore();
+    if (padding.isPercent())
+        w = containingBlock()->availableLogicalWidth();
+    return padding.calcMinValue(w);
+}
+
+int RenderBoxModelObject::paddingAfter(bool) const
+{
+    int w = 0;
+    Length padding = style()->paddingAfter();
+    if (padding.isPercent())
+        w = containingBlock()->availableLogicalWidth();
+    return padding.calcMinValue(w);
+}
+
+int RenderBoxModelObject::paddingStart(bool) const
+{
+    int w = 0;
+    Length padding = style()->paddingStart();
+    if (padding.isPercent())
+        w = containingBlock()->availableLogicalWidth();
+    return padding.calcMinValue(w);
+}
+
+int RenderBoxModelObject::paddingEnd(bool) const
+{
+    int w = 0;
+    Length padding = style()->paddingEnd();
+    if (padding.isPercent())
+        w = containingBlock()->availableLogicalWidth();
     return padding.calcMinValue(w);
 }
 

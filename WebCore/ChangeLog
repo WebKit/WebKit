@@ -2,6 +2,27 @@
 
         Reviewed by Dan Bernstein.
 
+        https://bugs.webkit.org/show_bug.cgi?id=46124, add support for logical padding accessors to
+        RenderBoxModelObject.
+
+        Added fast/blockflow/percentage-padding.html even though it fails, so that when more of layout is patched
+        we can see it start passing.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paddingTop):
+        (WebCore::RenderBoxModelObject::paddingBottom):
+        (WebCore::RenderBoxModelObject::paddingLeft):
+        (WebCore::RenderBoxModelObject::paddingRight):
+        (WebCore::RenderBoxModelObject::paddingBefore):
+        (WebCore::RenderBoxModelObject::paddingAfter):
+        (WebCore::RenderBoxModelObject::paddingStart):
+        (WebCore::RenderBoxModelObject::paddingEnd):
+        * rendering/RenderBoxModelObject.h:
+
+2010-09-20  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         https://bugs.webkit.org/show_bug.cgi?id=46126, add availableLogicalWidth() to RenderBox.
         
         * rendering/RenderBlock.cpp:

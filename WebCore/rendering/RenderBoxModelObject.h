@@ -70,6 +70,10 @@ public:
     virtual int paddingBottom(bool includeIntrinsicPadding = true) const;
     virtual int paddingLeft(bool includeIntrinsicPadding = true) const;
     virtual int paddingRight(bool includeIntrinsicPadding = true) const;
+    virtual int paddingBefore(bool includeIntrinsicPadding = true) const;
+    virtual int paddingAfter(bool includeIntrinsicPadding = true) const;
+    virtual int paddingStart(bool includeIntrinsicPadding = true) const;
+    virtual int paddingEnd(bool includeIntrinsicPadding = true) const;
 
     virtual int borderTop() const { return style()->borderTopWidth(); }
     virtual int borderBottom() const { return style()->borderBottomWidth(); }

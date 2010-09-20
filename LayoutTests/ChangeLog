@@ -1,3 +1,17 @@
+2010-09-20  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46124, add support for logical padding accessors to
+        RenderBoxModelObject.
+
+        Added fast/blockflow/percentage-padding.html even though it fails, so that when more of layout is patched
+        we can see it start passing.
+
+        * fast/blockflow: Added.
+        * fast/blockflow/percentage-padding-expected.txt: Added.
+        * fast/blockflow/percentage-padding.html: Added.
+
 2010-09-20  Eric Carlson  <eric.carlson@apple.com>
 
         Rubber-stamped by by Simon Fraser.
