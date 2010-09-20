@@ -1,3 +1,13 @@
+2010-09-20  Adam Roben  <aroben@apple.com>
+
+        Skip some failing animation tests on Windows
+
+        The failures are covered by http://webkit.org/b/46017
+
+        Rubber-stamped by Simon Fraser.
+
+        * platform/win/Skipped:
+
 2010-09-20  Martin Robinson  <mrobinson@igalia.com>
 
         Correct a GTK+ baseline. These issues should hopefully be mitigated
