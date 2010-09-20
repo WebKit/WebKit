@@ -507,3 +507,14 @@ console.log("FOO<span>BAR</span>BAZ");
 |       <svg title>
 |         <svg svg>
 |         <div>
+
+#data
+<img <="" FAIL>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <img>
+|       <=""
+|       fail=""

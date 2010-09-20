@@ -1,3 +1,15 @@
+2010-09-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Attributes not interpreted correctly if there is a syntax error
+        https://bugs.webkit.org/show_bug.cgi?id=16254
+
+        The underlying bug was fixed by the HTML5 parser, but I don't think we
+        have a test for this particular tokenization behavior.
+
+        * html5lib/resources/webkit01.dat:
+
 2010-09-20  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
