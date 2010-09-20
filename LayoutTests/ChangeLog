@@ -1,3 +1,15 @@
+2010-09-17  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Andreas Kling
+
+        [chromium] Add specific expectations for canvas/philip tests
+        https://bugs.webkit.org/show_bug.cgi?id=45991
+
+        Instead of marking all of canvas/philip and http/tests/canvas/philip/ as
+        TEXT failures, this marks each test exactly.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-20  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Fix up the goober from http://trac.webkit.org/changeset/67856.
