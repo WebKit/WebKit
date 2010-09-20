@@ -1,3 +1,9 @@
+2010-09-20  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Update a win-xp-specific baseline.
+
+        * platform/chromium-win-xp/fast/text/international/hindi-spacing-expected.png: Updated.
+
 2010-09-20  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
