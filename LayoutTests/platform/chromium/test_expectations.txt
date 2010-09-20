@@ -2659,6 +2659,9 @@ BUG45991 MAC : canvas/philip/tests/2d.shadow.enable.y.html = TEXT
 BUG45991 MAC : canvas/philip/tests/2d.strokeRect.zero.4.html = TEXT
 BUG45991 MAC : canvas/philip/tests/toDataURL.jpeg.alpha.html = TEXT
 
+// This seems to be failing on windows only.
+BUG45991 WIN : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
+
 // Need to dump context menu items on eventSender.contextClick(true).
 BUGWK39105 : editing/spelling/context-menu-suggestions.html = TEXT
 
@@ -3172,3 +3175,10 @@ BUGWEBGL MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html = TE
 BUGWEBGL MAC : fast/canvas/webgl/texture-npot.html = TEXT
 BUGWEBGL WIN LINUX : fast/canvas/webgl/uniform-location.html = TEXT
 BUG56220 : userscripts/user-script-top-frame-only.html = TEXT
+
+// Regressions after r67771
+BUG56246 : printing/css2.1/page-break-after-000.html = TEXT
+BUG56246 : printing/css2.1/page-break-after-003.html = TEXT
+BUG56246 : printing/css2.1/page-break-after-004.html = TEXT
+BUG56246 : printing/css2.1/page-break-before-000.html = TEXT
+
