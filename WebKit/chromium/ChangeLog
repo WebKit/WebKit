@@ -1,3 +1,12 @@
+2010-09-20  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] Roll forward Chromium DEPS to pick up WebGraphicsContext3D implementation changes
+        https://bugs.webkit.org/show_bug.cgi?id=46115
+
+        * DEPS:
+
 2010-09-20  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.
