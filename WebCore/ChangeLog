@@ -1,3 +1,35 @@
+2010-09-20  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: highlight DOM node when hover on link element or DOM breakpoint
+        https://bugs.webkit.org/show_bug.cgi?id=45897
+
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.BreakpointItem):
+        (WebInspector.JSBreakpointItem):
+        (WebInspector.DOMBreakpointItem):
+        (WebInspector.DOMBreakpointItem.prototype.compareTo):
+        (WebInspector.DOMBreakpointItem.prototype._breakpointClicked):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.hide):
+        (WebInspector.ElementsPanel.prototype.reset):
+        (WebInspector.ElementsPanel.prototype.setDocument.selectNode):
+        (WebInspector.ElementsPanel.prototype._mouseMovedInCrumbs):
+        (WebInspector.ElementsPanel.prototype._mouseMovedOutOfCrumbs):
+        (WebInspector.ElementsPanel.prototype.linkifyNodeReference):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype.set focusedDOMNode):
+        (WebInspector.ElementsTreeOutline.prototype._onmousemove):
+        (WebInspector.ElementsTreeOutline.prototype._onmouseout):
+        * inspector/front-end/inspector.js:
+        (WebInspector.highlightDOMNode):
+        (WebInspector.highlightDOMNodeForTwoSeconds):
+        (WebInspector.wireElementWithDOMNode):
+        (WebInspector._updateFocusedNode):
+        (WebInspector.reset):
+        (WebInspector.updateFocusedNode):
+
 2010-09-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r67749.

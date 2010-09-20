@@ -97,6 +97,7 @@ WebInspector.BreakpointItem = function(breakpoint)
     this._breakpoint = breakpoint;
 
     this._element = document.createElement("li");
+    this._element.addEventListener("click", this._breakpointClicked.bind(this), false);
 
     var checkboxElement = document.createElement("input");
     checkboxElement.className = "checkbox-elem";
@@ -141,8 +142,6 @@ WebInspector.JSBreakpointItem = function(breakpoint)
 {
     WebInspector.BreakpointItem.call(this, breakpoint);
 
-    this._element.addEventListener("click", this._breakpointClicked.bind(this), false);
-
     var displayName = this._breakpoint.url ? WebInspector.displayNameForURL(this._breakpoint.url) : WebInspector.UIString("(program)");
     var labelElement = document.createTextNode(displayName + ":" + this._breakpoint.line);
     this._element.appendChild(labelElement);
@@ -183,8 +182,7 @@ WebInspector.DOMBreakpointItem = function(breakpoint)
 {
     WebInspector.BreakpointItem.call(this, breakpoint);
 
-    var node = WebInspector.domAgent.nodeForId(this._breakpoint.nodeId);
-    var link = WebInspector.panels.elements.linkifyNodeReference(node);
+    var link = WebInspector.panels.elements.linkifyNodeById(this._breakpoint.nodeId);
     this._element.appendChild(link);
 
     var type = WebInspector.DOMBreakpoint.labelForType(this._breakpoint.type);
@@ -198,6 +196,11 @@ WebInspector.DOMBreakpointItem.prototype = {
         if (this._breakpoint.type != other._breakpoint.type)
             return this._breakpoint.type < other._breakpoint.type ? -1 : 1;
         return 0;
+    },
+
+    _breakpointClicked: function()
+    {
+        WebInspector.updateFocusedNode(this._breakpoint.nodeId);
     }
 }
 

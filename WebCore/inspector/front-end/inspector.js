@@ -403,45 +403,44 @@ var WebInspector = {
         }
     },
 
-    get hoveredDOMNode()
+    highlightDOMNode: function(nodeId)
     {
-        return this._hoveredDOMNode;
-    },
+        if ("_hideDOMNodeHighlightTimeout" in this) {
+            clearTimeout(this._hideDOMNodeHighlightTimeout);
+            delete this._hideDOMNodeHighlightTimeout;
+        }
 
-    set hoveredDOMNode(x)
-    {
-        if (this._hoveredDOMNode === x)
+        if (this._highlightedDOMNodeId === nodeId)
             return;
 
-        this._hoveredDOMNode = x;
-
-        if (this._hoveredDOMNode)
-            this._updateHoverHighlightSoon(this.showingDOMNodeHighlight ? 50 : 500);
+        this._highlightedDOMNodeId = nodeId;
+        if (nodeId)
+            InspectorBackend.highlightDOMNode(nodeId);
         else
-            this._updateHoverHighlight();
-    },
-
-    _updateHoverHighlightSoon: function(delay)
-    {
-        if ("_updateHoverHighlightTimeout" in this)
-            clearTimeout(this._updateHoverHighlightTimeout);
-        this._updateHoverHighlightTimeout = setTimeout(this._updateHoverHighlight.bind(this), delay);
-    },
-
-    _updateHoverHighlight: function()
-    {
-        if ("_updateHoverHighlightTimeout" in this) {
-            clearTimeout(this._updateHoverHighlightTimeout);
-            delete this._updateHoverHighlightTimeout;
-        }
-
-        if (this._hoveredDOMNode) {
-            InspectorBackend.highlightDOMNode(this._hoveredDOMNode.id);
-            this.showingDOMNodeHighlight = true;
-        } else {
             InspectorBackend.hideDOMNodeHighlight();
-            this.showingDOMNodeHighlight = false;
-        }
+    },
+
+    highlightDOMNodeForTwoSeconds: function(nodeId)
+    {
+        this.highlightDOMNode(nodeId);
+        this._hideDOMNodeHighlightTimeout = setTimeout(this.highlightDOMNode.bind(this, 0), 2000);
+    },
+
+    wireElementWithDOMNode: function(element, nodeId)
+    {
+        element.addEventListener("click", this._updateFocusedNode.bind(this, nodeId), false);
+        element.addEventListener("mouseover", this.highlightDOMNode.bind(this, nodeId), false);
+        element.addEventListener("mouseout", this.highlightDOMNode.bind(this, 0), false);
+    },
+
+    _updateFocusedNode: function(nodeId)
+    {
+        var node = WebInspector.domAgent.nodeForId(nodeId);
+        if (!node)
+            return;
+
+        this.currentPanel = this.panels.elements;
+        this.panels.elements.focusedDOMNode = node;
     }
 }
 
@@ -1457,7 +1456,7 @@ WebInspector.reset = function()
     this.resourceURLMap = {};
     this.cookieDomains = {};
     this.applicationCacheDomains = {};
-    this.hoveredDOMNode = null;
+    this.highlightDOMNode(0);
 
     delete this.mainResource;
 
@@ -1666,13 +1665,8 @@ WebInspector.drawLoadingPieChart = function(canvas, percent) {
 
 WebInspector.updateFocusedNode = function(nodeId)
 {
-    var node = WebInspector.domAgent.nodeForId(nodeId);
-    if (!node)
-        // FIXME: Should we deselect if null is passed in?
-        return;
-
-    this.currentPanel = this.panels.elements;
-    this.panels.elements.focusedDOMNode = node;
+    this._updateFocusedNode(nodeId);
+    this.highlightDOMNodeForTwoSeconds(nodeId);
 }
 
 WebInspector.displayNameForURL = function(url)

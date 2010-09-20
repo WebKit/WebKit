@@ -147,7 +147,7 @@ WebInspector.ElementsPanel.prototype = {
     {
         WebInspector.Panel.prototype.hide.call(this);
 
-        WebInspector.hoveredDOMNode = null;
+        WebInspector.highlightDOMNode(0);
         InspectorBackend.disableSearchingForNode();
     },
 
@@ -165,7 +165,7 @@ WebInspector.ElementsPanel.prototype = {
         this.rootDOMNode = null;
         this.focusedDOMNode = null;
 
-        WebInspector.hoveredDOMNode = null;
+        WebInspector.highlightDOMNode(0);
 
         this.recentlyModifiedNodes = [];
 
@@ -187,9 +187,7 @@ WebInspector.ElementsPanel.prototype = {
         inspectedRootDocument.addEventListener("DOMNodeRemoved", this._nodeRemoved.bind(this));
         inspectedRootDocument.addEventListener("DOMAttrModified", this._attributesUpdated.bind(this));
 
-        this.treeOutline.suppressSelectHighlight = true;
         this.rootDOMNode = inspectedRootDocument;
-        this.treeOutline.suppressSelectHighlight = false;
 
         function selectNode(candidateFocusNode)
         {
@@ -199,11 +197,9 @@ WebInspector.ElementsPanel.prototype = {
             if (!candidateFocusNode)
                 return;
 
-            this.treeOutline.suppressSelectHighlight = true;
             this.focusedDOMNode = candidateFocusNode;
             if (this.treeOutline.selectedTreeElement)
                 this.treeOutline.selectedTreeElement.expand();
-            this.treeOutline.suppressSelectHighlight = false;
         }
 
         function selectLastSelectedNode(nodeId)
@@ -578,7 +574,7 @@ WebInspector.ElementsPanel.prototype = {
         var nodeUnderMouse = document.elementFromPoint(event.pageX, event.pageY);
         var crumbElement = nodeUnderMouse.enclosingNodeOrSelfWithClass("crumb");
 
-        WebInspector.hoveredDOMNode = (crumbElement ? crumbElement.representedObject : null);
+        WebInspector.highlightDOMNode(crumbElement ? crumbElement.representedObject.id : 0);
 
         if ("_mouseOutOfCrumbsTimeout" in this) {
             clearTimeout(this._mouseOutOfCrumbsTimeout);
@@ -592,7 +588,7 @@ WebInspector.ElementsPanel.prototype = {
         if (nodeUnderMouse && nodeUnderMouse.isDescendant(this.crumbsElement))
             return;
 
-        WebInspector.hoveredDOMNode = null;
+        WebInspector.highlightDOMNode(0);
 
         this._mouseOutOfCrumbsTimeout = setTimeout(this.updateBreadcrumbSizes.bind(this), 1000);
     },
@@ -778,8 +774,8 @@ WebInspector.ElementsPanel.prototype = {
     {
         var link = document.createElement("span");
         link.className = "node-link";
-        link.addEventListener("click", WebInspector.updateFocusedNode.bind(WebInspector, node.id), false);
         this.decorateNodeLabel(node, link);
+        WebInspector.wireElementWithDOMNode(link, node.id);
         return link;
     },
 

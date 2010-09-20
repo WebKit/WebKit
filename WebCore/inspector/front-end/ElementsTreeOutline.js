@@ -93,27 +93,8 @@ WebInspector.ElementsTreeOutline.prototype = {
         // and the select() call would change the focusedDOMNode and reenter this setter. So to
         // avoid calling focusedNodeChanged() twice, first check if _focusedDOMNode is the same
         // node as the one passed in.
-        if (this._focusedDOMNode === x) {
+        if (this._focusedDOMNode === x)
             this.focusedNodeChanged();
-
-            if (x && !this.suppressSelectHighlight) {
-                InspectorBackend.highlightDOMNode(x.id);
-
-                if ("_restorePreviousHighlightNodeTimeout" in this)
-                    clearTimeout(this._restorePreviousHighlightNodeTimeout);
-
-                function restoreHighlightToHoveredNode()
-                {
-                    var hoveredNode = WebInspector.hoveredDOMNode;
-                    if (hoveredNode)
-                        InspectorBackend.highlightDOMNode(hoveredNode.id);
-                    else
-                        InspectorBackend.hideDOMNodeHighlight();
-                }
-
-                this._restorePreviousHighlightNodeTimeout = setTimeout(restoreHighlightToHoveredNode, 2000);
-            }
-        }
     },
 
     get editing()
@@ -260,7 +241,7 @@ WebInspector.ElementsTreeOutline.prototype = {
                 element._createTooltipForNode();
         }
 
-        WebInspector.hoveredDOMNode = (element ? element.representedObject : null);
+        WebInspector.highlightDOMNode(element ? element.representedObject.id : 0);
     },
 
     _onmouseout: function(event)
@@ -274,7 +255,7 @@ WebInspector.ElementsTreeOutline.prototype = {
             delete this._previousHoveredElement;
         }
 
-        WebInspector.hoveredDOMNode = null;
+        WebInspector.highlightDOMNode(0);
     },
 
     _contextMenuEventFired: function(event)
