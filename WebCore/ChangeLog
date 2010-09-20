@@ -1,3 +1,18 @@
+2010-09-20  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46114, two tables repaint tests failing on bots.
+
+        Patch layoutRows to apply the layout delta when setting a new cell location prior to laying out the cell.
+        
+        The layout delta is then removed after layout has happened when the repaint check is done.  This change
+        makes cell layout match block child layout, and now the cells have the correct new location up front
+        when laying out (a necessity for pagination).
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows):
+
 2010-09-20  Jacob Dinu  <dinu.jacob@nokia.com>
 
         Reviewed by Adam Barth.

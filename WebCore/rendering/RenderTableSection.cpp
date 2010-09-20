@@ -604,31 +604,34 @@ int RenderTableSection::layoutRows(int toAdd)
             cell->setIntrinsicPaddingBottom(be);
             
             IntRect oldCellRect(cell->x(), cell->y() , cell->width(), cell->height());
-        
+            
             if (style()->direction() == RTL)
                 cell->setLocation(table()->columnPositions()[nEffCols] - table()->columnPositions()[table()->colToEffCol(cell->col() + cell->colSpan())] + hspacing, m_rowPos[rindx]);
             else
                 cell->setLocation(table()->columnPositions()[c] + hspacing, m_rowPos[rindx]);
+            view()->addLayoutDelta(IntSize(oldCellRect.x() - cell->x(), oldCellRect.y() - cell->y()));
 
             if (te != oldTe || be != oldBe)
                 cell->setNeedsLayout(true, false);
             
             if (!cell->needsLayout() && view()->layoutState()->m_pageHeight && view()->layoutState()->pageY(cell->y()) != cell->pageY())
                 cell->setChildNeedsLayout(true, false);
-                
+            
             cell->layoutIfNeeded();
             
             if (view()->layoutState()->m_pageHeight && cell->height() != rHeight)
                 cell->setHeight(rHeight); // FIXME: Pagination might have made us change size.  For now just shrink or grow the cell to fit without doing a relayout.
+        
+            IntSize childOffset(cell->x() - oldCellRect.x(), cell->y() - oldCellRect.y());
+            if (childOffset.width() || childOffset.height()) {
+                view()->addLayoutDelta(childOffset);
 
-            if ((te != oldTe || be > oldBe) && !table()->selfNeedsLayout() && cell->checkForRepaintDuringLayout())
-                cell->repaint();
-
-            // If the cell moved, we have to repaint it as well as any floating/positioned
-            // descendants.  An exception is if we need a layout.  In this case, we know we're going to
-            // repaint ourselves (and the cell) anyway.
-            if (!table()->selfNeedsLayout() && cell->checkForRepaintDuringLayout())
-                cell->repaintDuringLayoutIfMoved(oldCellRect);
+                // If the child moved, we have to repaint it as well as any floating/positioned
+                // descendants.  An exception is if we need a layout.  In this case, we know we're going to
+                // repaint ourselves (and the child) anyway.
+                if (!table()->selfNeedsLayout() && cell->checkForRepaintDuringLayout())
+                    cell->repaintDuringLayoutIfMoved(oldCellRect);
+            }
         }
     }
 
