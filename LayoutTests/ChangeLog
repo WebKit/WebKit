@@ -1,3 +1,16 @@
+2010-09-20  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Move a few more xp-specific results to win-xp and clean up test expectations.
+
+        * platform/chromium-win-vista/fast/text/international/hindi-whitespace-expected.txt: Copied from LayoutTests/platform/chromium-win-xp/fast/text/international/hindi-whitespace-expected.txt.
+        * platform/chromium-win-xp/css2.1/hindi-spacing-expected.checksum: Renamed from LayoutTests/platform/chromium-win/fast/text/international/hindi-spacing-expected.checksum.
+        * platform/chromium-win-xp/css2.1/hindi-spacing-expected.png: Renamed from LayoutTests/platform/chromium-win/fast/text/international/hindi-spacing-expected.png.
+        * platform/chromium-win-xp/css2.1/t1202-counter-09-b-expected.checksum: Renamed from LayoutTests/platform/chromium-win/css2.1/t1202-counter-09-b-expected.checksum.
+        * platform/chromium-win-xp/css2.1/t1202-counter-09-b-expected.png: Renamed from LayoutTests/platform/chromium-win/css2.1/t1202-counter-09-b-expected.png.
+        * platform/chromium-win-xp/css2.1/t1202-counters-09-b-expected.checksum: Renamed from LayoutTests/platform/chromium-win/css2.1/t1202-counters-09-b-expected.checksum.
+        * platform/chromium-win-xp/css2.1/t1202-counters-09-b-expected.png: Renamed from LayoutTests/platform/chromium-win/css2.1/t1202-counters-09-b-expected.png.
+        * platform/chromium/test_expectations.txt:
+
 2010-09-20  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.
