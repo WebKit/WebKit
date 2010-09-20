@@ -1736,7 +1736,7 @@ int RenderBox::availableHeightUsing(const Length& h) const
 
 int RenderBox::availableLogicalWidth() const
 {
-    if (style()->blockFlow() == TopToBottomBlockFlow || style()->blockFlow() == BottomToTopBlockFlow)
+    if (style()->isVerticalBlockFlow())
         return contentWidth();
     return contentHeight();
 }

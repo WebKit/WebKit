@@ -739,6 +739,7 @@ public:
     ETextSecurity textSecurity() const { return static_cast<ETextSecurity>(rareInheritedData->textSecurity); }
 
     EBlockFlowDirection blockFlow() const { return static_cast<EBlockFlowDirection>(inherited_flags._blockFlow); }
+    bool isVerticalBlockFlow() const { return blockFlow() == TopToBottomBlockFlow || blockFlow() == BottomToTopBlockFlow; }
 
 // attribute setter methods
 

@@ -1066,42 +1066,42 @@ const Color RenderStyle::visitedDependentColor(int colorProperty) const
 
 Length RenderStyle::logicalWidth() const
 {
-    if (blockFlow() == TopToBottomBlockFlow || blockFlow() == BottomToTopBlockFlow)
+    if (isVerticalBlockFlow())
         return width();
     return height();
 }
 
 Length RenderStyle::logicalHeight() const
 {
-    if (blockFlow() == TopToBottomBlockFlow || blockFlow() == BottomToTopBlockFlow)
+    if (isVerticalBlockFlow())
         return height();
     return width();
 }
 
 Length RenderStyle::logicalMinWidth() const
 {
-    if (blockFlow() == TopToBottomBlockFlow || blockFlow() == BottomToTopBlockFlow)
+    if (isVerticalBlockFlow())
         return minWidth();
     return minHeight();
 }
 
 Length RenderStyle::logicalMaxWidth() const
 {
-    if (blockFlow() == TopToBottomBlockFlow || blockFlow() == BottomToTopBlockFlow)
+    if (isVerticalBlockFlow())
         return maxWidth();
     return maxHeight();
 }
 
 Length RenderStyle::logicalMinHeight() const
 {
-    if (blockFlow() == TopToBottomBlockFlow || blockFlow() == BottomToTopBlockFlow)
+    if (isVerticalBlockFlow())
         return minHeight();
     return minWidth();
 }
 
 Length RenderStyle::logicalMaxHeight() const
 {
-    if (blockFlow() == TopToBottomBlockFlow || blockFlow() == BottomToTopBlockFlow)
+    if (isVerticalBlockFlow())
         return maxHeight();
     return maxWidth();
 }
@@ -1140,14 +1140,14 @@ unsigned short RenderStyle::borderAfterWidth() const
 
 unsigned short RenderStyle::borderStartWidth() const
 {
-    if (blockFlow() == TopToBottomBlockFlow || blockFlow() == BottomToTopBlockFlow)
+    if (isVerticalBlockFlow())
         return direction() == LTR ? borderLeftWidth() : borderRightWidth();
     return direction() == LTR ? borderTopWidth() : borderBottomWidth();
 }
 
 unsigned short RenderStyle::borderEndWidth() const
 {
-    if (blockFlow() == TopToBottomBlockFlow || blockFlow() == BottomToTopBlockFlow)
+    if (isVerticalBlockFlow())
         return direction() == LTR ? borderRightWidth() : borderLeftWidth();
     return direction() == LTR ? borderBottomWidth() : borderTopWidth();
 }
@@ -1186,14 +1186,14 @@ Length RenderStyle::marginAfter() const
 
 Length RenderStyle::marginStart() const
 {
-    if (blockFlow() == TopToBottomBlockFlow || blockFlow() == BottomToTopBlockFlow)
+    if (isVerticalBlockFlow())
         return direction() == LTR ? marginLeft() : marginRight();
     return direction() == LTR ? marginTop() : marginBottom();
 }
 
 Length RenderStyle::marginEnd() const
 {
-    if (blockFlow() == TopToBottomBlockFlow || blockFlow() == BottomToTopBlockFlow)
+    if (isVerticalBlockFlow())
         return direction() == LTR ? marginRight() : marginLeft();
     return direction() == LTR ? marginBottom() : marginTop();
 }
@@ -1232,14 +1232,14 @@ Length RenderStyle::paddingAfter() const
 
 Length RenderStyle::paddingStart() const
 {
-    if (blockFlow() == TopToBottomBlockFlow || blockFlow() == BottomToTopBlockFlow)
+    if (isVerticalBlockFlow())
         return direction() == LTR ? paddingLeft() : paddingRight();
     return direction() == LTR ? paddingTop() : paddingBottom();
 }
 
 Length RenderStyle::paddingEnd() const
 {
-    if (blockFlow() == TopToBottomBlockFlow || blockFlow() == BottomToTopBlockFlow)
+    if (isVerticalBlockFlow())
         return direction() == LTR ? paddingRight() : paddingLeft();
     return direction() == LTR ? paddingBottom() : paddingTop();
 }

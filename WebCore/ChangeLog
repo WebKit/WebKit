@@ -2,6 +2,31 @@
 
         Reviewed by Dan Bernstein.
 
+        https://bugs.webkit.org/show_bug.cgi?id=46132, add an isVerticalBlockFlow() method to RenderStyle and
+        patch callers so that they don't have to check both top-to-bottom and bottom-to-top block flow.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::availableLogicalWidth):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::logicalWidth):
+        (WebCore::RenderStyle::logicalHeight):
+        (WebCore::RenderStyle::logicalMinWidth):
+        (WebCore::RenderStyle::logicalMaxWidth):
+        (WebCore::RenderStyle::logicalMinHeight):
+        (WebCore::RenderStyle::logicalMaxHeight):
+        (WebCore::RenderStyle::borderStartWidth):
+        (WebCore::RenderStyle::borderEndWidth):
+        (WebCore::RenderStyle::marginStart):
+        (WebCore::RenderStyle::marginEnd):
+        (WebCore::RenderStyle::paddingStart):
+        (WebCore::RenderStyle::paddingEnd):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::isVerticalBlockFlow):
+
+2010-09-20  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         https://bugs.webkit.org/show_bug.cgi?id=46124, add support for logical padding accessors to
         RenderBoxModelObject.
 
