@@ -1,3 +1,24 @@
+2010-09-19  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Move win-xp-specific baselines to their proper places.
+
+        * platform/chromium-win-xp/fast/forms/search-styled-expected.txt: Renamed from LayoutTests/platform/chromium-win/fast/forms/search-styled-expected.txt.
+        * platform/chromium-win-xp/fast/text/backslash-to-yen-sign-expected.checksum: Renamed from LayoutTests/platform/chromium-win/fast/text/backslash-to-yen-sign-expected.checksum.
+        * platform/chromium-win-xp/fast/text/backslash-to-yen-sign-expected.png: Renamed from LayoutTests/platform/chromium-win/fast/text/backslash-to-yen-sign-expected.png.
+        * platform/chromium-win-xp/fast/text/backslash-to-yen-sign-expected.txt: Renamed from LayoutTests/platform/chromium-win/fast/text/backslash-to-yen-sign-expected.txt.
+        * platform/chromium-win-xp/fast/text/international/bidi-mirror-he-ar-expected.checksum: Renamed from LayoutTests/platform/chromium-win/fast/text/international/bidi-mirror-he-ar-expected.checksum.
+        * platform/chromium-win-xp/fast/text/international/bidi-mirror-he-ar-expected.png: Renamed from LayoutTests/platform/chromium-win/fast/text/international/bidi-mirror-he-ar-expected.png.
+        * platform/chromium-win-xp/fast/text/international/bidi-mirror-he-ar-expected.txt: Renamed from LayoutTests/platform/chromium-win/fast/text/international/bidi-mirror-he-ar-expected.txt.
+        * platform/chromium-win-xp/fast/text/international/hindi-whitespace-expected.checksum: Renamed from LayoutTests/platform/chromium-win/fast/text/international/hindi-whitespace-expected.checksum.
+        * platform/chromium-win-xp/fast/text/international/hindi-whitespace-expected.png: Renamed from LayoutTests/platform/chromium-win/fast/text/international/hindi-whitespace-expected.png.
+        * platform/chromium-win-xp/fast/text/international/hindi-whitespace-expected.txt: Renamed from LayoutTests/platform/chromium-win/fast/text/international/hindi-whitespace-expected.txt.
+        * platform/chromium-win-xp/fast/text/international/plane2-expected.checksum: Renamed from LayoutTests/platform/chromium-win/fast/text/international/plane2-expected.checksum.
+        * platform/chromium-win-xp/fast/text/international/plane2-expected.png: Renamed from LayoutTests/platform/chromium-win/fast/text/international/plane2-expected.png.
+        * platform/chromium-win-xp/fast/text/international/plane2-expected.txt: Renamed from LayoutTests/platform/chromium-win/fast/text/international/plane2-expected.txt.
+        * platform/chromium-win-xp/svg/text/text-intro-05-t-expected.checksum: Renamed from LayoutTests/platform/chromium-win/svg/text/text-intro-05-t-expected.checksum.
+        * platform/chromium-win-xp/svg/text/text-intro-05-t-expected.png: Renamed from LayoutTests/platform/chromium-win/svg/text/text-intro-05-t-expected.png.
+        * platform/chromium-win-xp/svg/text/text-intro-05-t-expected.txt: Renamed from LayoutTests/platform/chromium-win/svg/text/text-intro-05-t-expected.txt.
+
 2010-09-19  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Dimitri Glazkov.
