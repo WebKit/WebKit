@@ -1,3 +1,11 @@
+2010-09-20  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed.
+
+        Adding myself as a comitter.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-09-20  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
