@@ -238,9 +238,10 @@ public:
     int calcPercentageHeight(const Length& height);
 
     // Block flows subclass availableWidth to handle multi column layout (shrinking the width available to children when laying out.)
-    virtual int availableWidth() const { return contentWidth(); }
+    virtual int availableWidth() const { return contentWidth(); } // FIXME: Investigate removing eventually. https://bugs.webkit.org/show_bug.cgi?id=46127
     virtual int availableHeight() const;
     int availableHeightUsing(const Length&) const;
+    virtual int availableLogicalWidth() const;
 
     void calcVerticalMargins();
 

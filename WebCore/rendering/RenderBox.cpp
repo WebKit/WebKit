@@ -1734,6 +1734,13 @@ int RenderBox::availableHeightUsing(const Length& h) const
     return containingBlock()->availableHeight();
 }
 
+int RenderBox::availableLogicalWidth() const
+{
+    if (style()->blockFlow() == TopToBottomBlockFlow || style()->blockFlow() == BottomToTopBlockFlow)
+        return contentWidth();
+    return contentHeight();
+}
+
 void RenderBox::calcVerticalMargins()
 {
     if (isTableCell()) {

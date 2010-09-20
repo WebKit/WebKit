@@ -1,3 +1,18 @@
+2010-09-20  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46126, add availableLogicalWidth() to RenderBox.
+        
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::availableWidth):
+        (WebCore::RenderBlock::availableLogicalWidth):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::availableLogicalWidth):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::availableWidth):
+
 2010-09-20  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.
