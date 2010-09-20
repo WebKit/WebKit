@@ -2,6 +2,19 @@
 
         Reviewed by Eric Seidel.
 
+        [reviewtool] Publish button should actually publish the review comments
+        https://bugs.webkit.org/show_bug.cgi?id=46074
+
+        Instead of showing the confirmation lightbox, the Publish button now
+        publishes the comments directly.  If there's demand for a "Preview"
+        button, we can find a way to add that feature.
+
+        * code-review.js:
+
+2010-09-19  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Move reviewtool to action=review
         https://bugs.webkit.org/show_bug.cgi?id=46071
 

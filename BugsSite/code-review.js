@@ -452,7 +452,6 @@
       comment_with_context.push('\n' + comment);
       comments_in_context.push(comment_with_context.join('\n'));
     });
-    $('#comment_form').removeClass('inactive');
     var comment = $('.overallComments textarea').val().trim();
     if (comment != '')
       comment += '\n\n';
@@ -467,5 +466,6 @@
         return;
       $(this).attr('selectedIndex', control.attr('selectedIndex'));
     });
+    review_form.find('form').submit();
   });
 })();
