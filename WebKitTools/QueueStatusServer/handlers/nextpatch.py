@@ -48,9 +48,17 @@ class NextPatch(webapp.RequestHandler):
         # Either there were no work items, or they're all active.
         return None
 
+    def _assign(self, queue_name, patch_id):
+        queue_status = queuestatus.QueueStatus()
+        queue_status.queue_name = queue_name
+        queue_status.active_patch_id = patch_id
+        queue_status.message = "Assigned for processing"
+        queue_status.put()
+
     def get(self, queue_name):
         patch_id = self._get_next_patch_id(queue_name)
         if not patch_id:
             self.error(404)
             return
+        self._assign(queue_name, patch_id)
         self.response.out.write(patch_id)

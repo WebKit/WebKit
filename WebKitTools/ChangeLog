@@ -1,3 +1,15 @@
+2010-09-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Two instances of commit-queue try to process the same patch
+        https://bugs.webkit.org/show_bug.cgi?id=46113
+
+        This patch makes next-patch atomic so that the server won't vend the
+        same patch twice in the same hour.
+
+        * QueueStatusServer/handlers/nextpatch.py:
+
 2010-09-20  Adam Roben  <aroben@apple.com>
 
         Make WebKitTestRunner's wait-to-dump watchdog timer work on Windows
