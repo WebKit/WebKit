@@ -56,6 +56,7 @@ namespace WebCore {
     class KeyboardEvent;
     class Page;
     class ResourceRequest;
+    class SharedBuffer;
 }
 
 namespace WebKit {
@@ -153,11 +154,14 @@ private:
 
     String sourceForFrame(WebFrame*);
 
+    void loadData(PassRefPtr<WebCore::SharedBuffer>, const String& MIMEType, const String& encodingName, const WebCore::KURL& baseURL, const WebCore::KURL& failingURL);
+
     // Actions
     void tryClose();
     void loadURL(const String&);
     void loadURLRequest(const WebCore::ResourceRequest&);
     void loadHTMLString(const String& htmlString, const String& baseURL);
+    void loadPlainTextString(const String&);
     void reload(bool reloadFromOrigin);
     void goForward(uint64_t);
     void goBack(uint64_t);

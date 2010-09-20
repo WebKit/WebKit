@@ -115,6 +115,7 @@ public:
     void loadURL(const String&);
     void loadURLRequest(WebURLRequest*);
     void loadHTMLString(const String& htmlString, const String& baseURL);
+    void loadPlainTextString(const String& string);
 
     void stopLoading();
     void reload(bool reloadFromOrigin);

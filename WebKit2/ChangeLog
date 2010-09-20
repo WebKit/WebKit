@@ -1,3 +1,24 @@
+2010-09-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Add WebKit2 API to load a string as plain text
+        https://bugs.webkit.org/show_bug.cgi?id=46091
+
+        * Shared/CoreIPCSupport/WebPageMessageKinds.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageLoadPlainTextString):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadPlainTextString):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadData):
+        (WebKit::WebPage::loadHTMLString):
+        (WebKit::WebPage::loadPlainTextString):
+        (WebKit::WebPage::didReceiveMessage):
+        * WebProcess/WebPage/WebPage.h:
+
 2010-09-19  Sam Weinig  <sam@webkit.org>
 
         Fix windows build.

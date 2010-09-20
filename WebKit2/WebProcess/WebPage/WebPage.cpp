@@ -249,18 +249,24 @@ void WebPage::loadURLRequest(const ResourceRequest& request)
     m_mainFrame->coreFrame()->loader()->load(request, false);
 }
 
+void WebPage::loadData(PassRefPtr<SharedBuffer> sharedBuffer, const String& MIMEType, const String& encodingName, const KURL& baseURL, const KURL& failingURL)
+{
+    ResourceRequest request(baseURL);
+    SubstituteData substituteData(sharedBuffer, MIMEType, encodingName, failingURL);
+    m_mainFrame->coreFrame()->loader()->load(request, substituteData, false);
+}
+
 void WebPage::loadHTMLString(const String& htmlString, const String& baseURLString)
 {
     RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(reinterpret_cast<const char*>(htmlString.characters()), htmlString.length() * sizeof(UChar));
-    String MIMEType("text/html");
-    String encodingName("utf-16");
     KURL baseURL = baseURLString.isEmpty() ? blankURL() : KURL(KURL(), baseURLString);
-    KURL failingURL;
+    loadData(sharedBuffer, "text/html", "utf-16", baseURL, KURL());
+}
 
-    ResourceRequest request(baseURL);
-    SubstituteData substituteData(sharedBuffer.release(), MIMEType, encodingName, failingURL);
-
-    m_mainFrame->coreFrame()->loader()->load(request, substituteData, false);
+void WebPage::loadPlainTextString(const String& string)
+{
+    RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(reinterpret_cast<const char*>(string.characters()), string.length() * sizeof(UChar));
+    loadData(sharedBuffer, "text/plain", "utf-16", blankURL(), KURL());
 }
 
 void WebPage::stopLoading()
@@ -765,10 +771,18 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
         case WebPageMessage::LoadHTMLString: {
             String htmlString;
             String baseURL;
-            if (!arguments->decode(CoreIPC::In(htmlString, baseURL)))
+            if (!arguments->decode(CoreIPC::Out(htmlString, baseURL)))
                 return;
             
             loadHTMLString(htmlString, baseURL);
+            return;
+        }
+        case WebPageMessage::LoadPlainTextString: {
+            String string;
+            if (!arguments->decode(CoreIPC::Out(string)))
+                return;
+            
+            loadPlainTextString(string);
             return;
         }
         case WebPageMessage::StopLoading:

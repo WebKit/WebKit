@@ -251,6 +251,13 @@ void WebPageProxy::loadHTMLString(const String& htmlString, const String& baseUR
     process()->send(WebPageMessage::LoadHTMLString, m_pageID, CoreIPC::In(htmlString, baseURL));
 }
 
+void WebPageProxy::loadPlainTextString(const String& string)
+{
+    if (!isValid())
+        return;
+    process()->send(WebPageMessage::LoadPlainTextString, m_pageID, CoreIPC::In(string));
+}
+
 void WebPageProxy::stopLoading()
 {
     if (!isValid())

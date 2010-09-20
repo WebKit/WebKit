@@ -62,6 +62,11 @@ void WKPageLoadHTMLString(WKPageRef pageRef, WKStringRef htmlStringRef, WKURLRef
     toWK(pageRef)->loadHTMLString(toWTFString(htmlStringRef), toWTFString(baseURLRef));    
 }
 
+void WKPageLoadPlainTextString(WKPageRef pageRef, WKStringRef plainTextStringRef)
+{
+    toWK(pageRef)->loadPlainTextString(toWTFString(plainTextStringRef));    
+}
+
 void WKPageStopLoading(WKPageRef pageRef)
 {
     toWK(pageRef)->stopLoading();
