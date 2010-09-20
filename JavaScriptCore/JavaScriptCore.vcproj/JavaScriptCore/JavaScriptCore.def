@@ -304,6 +304,7 @@ EXPORTS
     ?toBoolean@JSCell@JSC@@UBE_NPAVExecState@2@@Z
     ?toBoolean@JSObject@JSC@@UBE_NPAVExecState@2@@Z
     ?toBoolean@JSString@JSC@@EBE_NPAVExecState@2@@Z
+    ?toInt32@JSC@@YAHN@Z
     ?toInteger@JSValue@JSC@@QBENPAVExecState@2@@Z
     ?toNumber@JSCell@JSC@@UBENPAVExecState@2@@Z
     ?toNumber@JSObject@JSC@@UBENPAVExecState@2@@Z
