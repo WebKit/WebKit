@@ -1,3 +1,16 @@
+2010-09-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Adam Roben.
+
+        REGRESSION: alternating animation direction doesn't work on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=46017
+        
+        Add test for animation-direction.
+
+        * animations/animation-direction-expected.txt: Added.
+        * animations/animation-direction.html: Added.
+        * platform/win/Skipped: Re-enable skipped tests.
+
 2010-09-20  James Robinson  <jamesr@chromium.org>
 
         Fix bad merge in chromium test_expectations.txt

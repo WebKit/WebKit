@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style type="text/css" media="screen">
+  
+    #container {
+      position: relative;
+      border: 1px solid black;
+      height: 100px;
+      width: 500px;
+    }
+    
+    #box {
+      position: absolute;
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+      -webkit-animation-name: move;
+      -webkit-animation-duration: 2s;
+      -webkit-animation-direction: alternate;
+      -webkit-animation-iteration-count: 2;
+      -webkit-animation-timing-function: linear;
+    }
+
+    @-webkit-keyframes move {
+      0%   {
+        left: 0;
+      }
+      100% {
+        left: 400px;
+      }
+    }
+    
+  </style>
+  <script src="animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["move", 0.5, "box", "left", 100, 20],
+      ["move", 1.5, "box", "left", 300, 20],
+
+      ["move", 2.5, "box", "left", 300, 20],
+      ["move", 3.5, "box", "left", 100, 20],
+    ];
+    
+    runAnimationTest(expectedValues);
+  </script>
+</head>
+<body>
+
+<!-- Test animation-direction: alternate -->
+<div id="container">
+  <div id="box"></div>
+</div>
+
+<div id="result"></div>
+
+</body>
+</html>

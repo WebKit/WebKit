@@ -1,3 +1,21 @@
+2010-09-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Adam Roben.
+
+        REGRESSION: alternating animation direction doesn't work on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=46017
+        
+        Animation-direction on Windows was broken because bitfields on
+        Windows are signed.
+        
+        Fixed by making m_direction an unsigned in the bitfield, and
+        casting in the accessor.
+
+        Test: animations/animation-direction.html
+
+        * platform/animation/Animation.h:
+        (WebCore::Animation::direction):
+
 2010-09-20  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Sam Weinig.

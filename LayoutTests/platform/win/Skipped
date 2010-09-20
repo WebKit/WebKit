@@ -299,12 +299,6 @@ http/tests/css/css-image-loading.html
 # missing DRT feature, see also https://bugs.webkit.org/show_bug.cgi?id=39102
 editing/selection/context-menu-on-text.html
 
-# animation-fill-mode: both seems to be broken <http://webkit.org/b/46017>
-animations/fill-mode-missing-from-to-keyframes.html
-animations/fill-mode-multiple-keyframes.html
-animations/fill-mode-transform.html
-animations/fill-mode.html
-
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
