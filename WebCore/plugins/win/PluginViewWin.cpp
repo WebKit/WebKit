@@ -520,7 +520,9 @@ bool PluginView::dispatchNPEvent(NPEvent& npEvent)
 void PluginView::paintIntoTransformedContext(HDC hdc)
 {
     if (m_isWindowed) {
+#if !OS(WINCE)
         SendMessage(platformPluginWidget(), WM_PRINTCLIENT, reinterpret_cast<WPARAM>(hdc), PRF_CLIENT | PRF_CHILDREN | PRF_OWNED);
+#endif
         return;
     }
 
@@ -1010,7 +1012,7 @@ void PluginView::platformDestroy()
 
 PassRefPtr<Image> PluginView::snapshot()
 {
-#if !PLATFORM(WX)
+#if !PLATFORM(WX) && !OS(WINCE)
     OwnPtr<HDC> hdc(CreateCompatibleDC(0));
 
     if (!m_isWindowed) {

@@ -1,3 +1,14 @@
+2010-09-20  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Adam Roben.
+
+        [WINCE] Buildfix for PluginViewWin.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=46033
+
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::paintIntoTransformedContext):
+        (WebCore::PluginView::snapshot):
+
 2010-09-18  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
