@@ -45,16 +45,20 @@ class MockQueueEngine(object):
 
 class MockPatch():
     def id(self):
-        return 1234
+        return 197
 
     def bug_id(self):
-        return 345
+        return 142
+
+    def is_rollout(self):
+        return False
 
 
 class QueuesTest(unittest.TestCase):
+    # Ids match patch1 in mocktool.py
     mock_work_item = Attachment({
-        "id": 1234,
-        "bug_id": 345,
+        "id": 197,
+        "bug_id": 142,
         "name": "Patch",
         "attacher_email": "adam@example.com",
     }, None)

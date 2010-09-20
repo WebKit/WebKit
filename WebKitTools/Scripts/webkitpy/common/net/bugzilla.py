@@ -175,6 +175,20 @@ class Bug(object):
     def is_unassigned(self):
         return self.assigned_to_email() in self.unassigned_emails
 
+    def status(self):
+        return self.bug_dictionary["bug_status"]
+
+    # Bugzilla has many status states we don't really use in WebKit:
+    # https://bugs.webkit.org/page.cgi?id=fields.html#status
+    _open_states = ["UNCONFIRMED", "NEW", "ASSIGNED", "REOPENED"]
+    _closed_states = ["RESOLVED", "VERIFIED", "CLOSED"]
+
+    def is_open(self):
+        return self.status() in self._open_states
+
+    def is_closed(self):
+        return not self.is_open()
+
     # Rarely do we actually want obsolete attachments
     def attachments(self, include_obsolete=False):
         attachments = self.bug_dictionary["attachments"]
@@ -357,15 +371,14 @@ class CommitterValidator(object):
             return False
         return True
 
+    def _reject_patch_if_flags_are_invalid(self, patch):
+        return (self._validate_setter_email(
+                patch, "reviewer", self.reject_patch_from_review_queue)
+            and self._validate_setter_email(
+                patch, "committer", self.reject_patch_from_commit_queue))
+
     def patches_after_rejecting_invalid_commiters_and_reviewers(self, patches):
-        validated_patches = []
-        for patch in patches:
-            if (self._validate_setter_email(
-                    patch, "reviewer", self.reject_patch_from_review_queue)
-                and self._validate_setter_email(
-                    patch, "committer", self.reject_patch_from_commit_queue)):
-                validated_patches.append(patch)
-        return validated_patches
+        return [patch for patch in patches if self._reject_patch_if_flags_are_invalid(patch)]
 
     def reject_patch_from_commit_queue(self,
                                        attachment_id,

@@ -161,6 +161,7 @@ _bug1 = {
              "invalid commit-queue setter.",
     "assigned_to_email": _unassigned_email,
     "attachments": [_patch1, _patch2],
+    "bug_status": "UNCONFIRMED",
 }
 
 
@@ -169,6 +170,7 @@ _bug2 = {
     "title": "Bug with a patch needing review.",
     "assigned_to_email": "foo@foo.com",
     "attachments": [_patch3],
+    "bug_status": "ASSIGNED",
 }
 
 
@@ -177,6 +179,7 @@ _bug3 = {
     "title": "The third bug",
     "assigned_to_email": _unassigned_email,
     "attachments": [_patch7],
+    "bug_status": "NEW",
 }
 
 
@@ -185,6 +188,7 @@ _bug4 = {
     "title": "The fourth bug",
     "assigned_to_email": "foo@foo.com",
     "attachments": [_patch4, _patch5, _patch6],
+    "bug_status": "REOPENED",
 }
 
 
@@ -254,8 +258,8 @@ class MockBugzilla(Mock):
     def __init__(self):
         Mock.__init__(self)
         self.queries = MockBugzillaQueries(self)
-        self.committers = CommitterList(reviewers=[Reviewer("Foo Bar",
-                                                            "foo@bar.com")])
+        self.committers = CommitterList(reviewers=[Reviewer("Foo Bar", "foo@bar.com")])
+        self._override_patch = None
 
     def create_bug(self,
                    bug_title,
@@ -277,7 +281,13 @@ class MockBugzilla(Mock):
     def fetch_bug(self, bug_id):
         return Bug(self.bug_cache.get(bug_id), self)
 
+    def set_override_patch(self, patch):
+        self._override_patch = patch
+
     def fetch_attachment(self, attachment_id):
+        if self._override_patch:
+            return self._override_patch
+
         # This could be changed to .get() if we wish to allow failed lookups.
         attachment_dictionary = self.attachment_cache[attachment_id]
         bug = self.fetch_bug(attachment_dictionary["bug_id"])

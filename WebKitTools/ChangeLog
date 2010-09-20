@@ -1,3 +1,26 @@
+2010-09-20  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        commit-queue should check commit-queue+ again just before committing
+        https://bugs.webkit.org/show_bug.cgi?id=32679
+
+        Added a _revalidate_patch check, right before landing.
+
+        Since _revalidate_patch passes the patch_id from the work item
+        back to bugzilla, I had to fix all of the previous queue tests to
+        use valid attachment ids (that's the majority of this change).
+
+        In order to validate that the bug was still open, I had to teach
+        bugzilla.Bug about open/closed states.
+
+        * Scripts/webkitpy/common/net/bugzilla.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/commands/queuestest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
 2010-09-20  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed.

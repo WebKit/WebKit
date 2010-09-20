@@ -119,8 +119,8 @@ class AbstractQueue(Command, QueueEngineDelegate):
     # Command methods
 
     def execute(self, options, args, tool, engine=QueueEngine):
-        self.options = options
-        self.tool = tool
+        self.options = options  # FIXME: This code is wrong.  Command.options is a list, this assumes an Options element!
+        self.tool = tool  # FIXME: This code is wrong too!  Command.bind_to_tool handles this!
         return engine(self.name, self, self.tool.wakeup_event).run()
 
     @classmethod
@@ -273,6 +273,19 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
             self._did_fail(patch)
             raise
 
+    def _revalidate_patch(self, patch):
+        # Bugs might get closed, or patches might be obsoleted or r-'d while the
+        # commit-queue is processing.  Do one last minute check before landing.
+        patch = self.tool.bugs.fetch_attachment(patch.id())
+        if patch.is_obsolete():
+            return None
+        if patch.bug().is_closed():
+            return None
+        if not patch.committer():
+            return None
+        # Reviewer is not required.  Misisng reviewers will be caught during the ChangeLog check during landing.
+        return patch
+
     def _land(self, patch):
         try:
             args = [
@@ -307,6 +320,11 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
             # to build and test again. If it fails a second time, we're pretty
             # sure its a bad test and re can reject it outright.
             self._build_and_test_patch(patch)
+        # Do one last check to catch any bug changes (cq-, closed, reviewer changed, etc.)
+        # This helps catch races between the bots if locks expire.
+        patch = self._revalidate_patch(patch)
+        if not patch:
+            return False
         self._land(patch)
         return True
 
