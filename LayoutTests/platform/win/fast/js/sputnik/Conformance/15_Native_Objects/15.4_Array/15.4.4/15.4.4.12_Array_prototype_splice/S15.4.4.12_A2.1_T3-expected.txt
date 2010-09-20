@@ -1,6 +1,0 @@
-S15.4.4.12_A2.1_T3
-
-FAIL SputnikError: #2: var x = [0,1,2,3]; var arr = x.splice(Number.POSITIVE_INFINITY,3); arr.length === 0. Actual: 3
-
-TEST COMPLETE
-

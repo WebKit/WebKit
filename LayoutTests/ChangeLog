@@ -1,3 +1,12 @@
+2010-09-20  Adam Roben  <aroben@apple.com>
+
+        Remove no-longer-needed Windows-specific results for a Sputnik
+        Array.prototype.splice test
+
+        Rubber-stamped by Anders Carlsson.
+
+        * platform/win/fast/js/sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.12_Array_prototype_splice/S15.4.4.12_A2.1_T3-expected.txt: Removed.
+
 2010-09-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed, update Qt specific expected result after r67770.
