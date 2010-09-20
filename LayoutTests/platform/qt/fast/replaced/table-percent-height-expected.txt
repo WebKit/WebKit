@@ -28,7 +28,7 @@ Note, some of the button height tests fail on the Windows ports. See bug #34071.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS getWidth('canvas-75') is '300px'
+PASS getWidth('canvas-75') is '224px'
 PASS getHeight('canvas-75') is '112px'
 PASS getWidth('canvas-100') is '300px'
 PASS getHeight('canvas-100') is '150px'

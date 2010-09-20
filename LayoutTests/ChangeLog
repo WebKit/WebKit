@@ -1,3 +1,12 @@
+2010-09-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, update Qt specific expected result after r67770.
+
+        Canvas sizing ignores intrinsic size
+        https://bugs.webkit.org/show_bug.cgi?id=46024
+
+        * platform/qt/fast/replaced/table-percent-height-expected.txt: Updated.
+
 2010-09-20  Satish Sampath  <satish@chromium.org>
 
         Unreviewed, updating baselines for a layout test and setting expectations for 3 others.
