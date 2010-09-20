@@ -355,15 +355,14 @@ static bool fillStructuresUsingDateArgs(ExecState *exec, int maxArgs, double *ms
     if (maxArgs >= 3 && idx < numArgs) {
         double years = exec->argument(idx++).toIntegerPreserveNaN(exec);
         ok = isfinite(years);
-        t->year = years - 1900;
+        t->year = toInt32(years - 1900);
     }
     // months
     if (maxArgs >= 2 && idx < numArgs && ok) {
         double months = exec->argument(idx++).toIntegerPreserveNaN(exec);
         ok = isfinite(months);
-        t->month = months;
+        t->month = toInt32(months);
     }
-
     // days
     if (idx < numArgs && ok) {
         double days = exec->argument(idx++).toIntegerPreserveNaN(exec);
@@ -1046,7 +1045,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncSetYear(ExecState* exec)
         return JSValue::encode(result);
     }
             
-    gregorianDateTime.year = (year > 99 || year < 0) ? year - 1900 : year;
+    gregorianDateTime.year = toInt32((year > 99 || year < 0) ? year - 1900 : year);
     JSValue result = jsNumber(exec, gregorianDateTimeToMS(exec, gregorianDateTime, ms, false));
     thisDateObj->setInternalValue(result);
     return JSValue::encode(result);

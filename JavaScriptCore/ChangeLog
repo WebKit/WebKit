@@ -1,5 +1,13 @@
 2010-09-19  Gavin Barraclough  <barraclough@apple.com>
 
+        Build fix - implicit double-to-int conversion invalid on 32-bit.
+
+        * runtime/DatePrototype.cpp:
+        (JSC::fillStructuresUsingDateArgs):
+        (JSC::dateProtoFuncSetYear):
+
+2010-09-19  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Bug 46065 - Unify implementation of ToInt32 and ToUInt32, don't use fmod.
