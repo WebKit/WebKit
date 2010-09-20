@@ -435,7 +435,7 @@ public:
     virtual void markedTextAbandoned(Frame*) { }
 
     virtual NSString* userVisibleString(NSURL*) { return 0; }
-    virtual DocumentFragment* documentFragmentFromAttributedString(NSAttributedString*, Vector<ArchiveResource*>&) { return 0; };
+    virtual DocumentFragment* documentFragmentFromAttributedString(NSAttributedString*, Vector<RefPtr<ArchiveResource> >&) { return 0; };
     virtual void setInsertionPasteboard(NSPasteboard*) { };
 #ifdef BUILDING_ON_TIGER
     virtual NSArray* pasteboardTypesForSelection(Frame*) { return 0; }

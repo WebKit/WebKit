@@ -78,8 +78,8 @@ using namespace WTF;
 using namespace HTMLNames;
 
 @interface NSAttributedString (WebNSAttributedStringDetails)
-- (id)_initWithDOMRange:(DOMRange *)range;
-- (DOMDocumentFragment *)_documentFromRange:(NSRange)range document:(DOMDocument *)document documentAttributes:(NSDictionary *)dict subresources:(NSArray **)subresources;
+- (id)_initWithDOMRange:(DOMRange*)range;
+- (DOMDocumentFragment*)_documentFromRange:(NSRange)range document:(DOMDocument*)document documentAttributes:(NSDictionary *)dict subresources:(NSArray **)subresources;
 @end
 
 static WebViewInsertAction kit(EditorInsertAction coreAction)
@@ -336,59 +336,54 @@ void WebEditorClient::didSetSelectionTypesForPasteboard()
     [[m_webView _editingDelegateForwarder] webView:m_webView didSetSelectionTypesForPasteboard:[NSPasteboard generalPasteboard]];
 }
 
-NSString* WebEditorClient::userVisibleString(NSURL *URL)
+NSString *WebEditorClient::userVisibleString(NSURL *URL)
 {
     return [URL _web_userVisibleString];
 }
 
-static NSArray* excludedElementsForAttributedStringConversion()
+static NSArray *createExcludedElementsForAttributedStringConversion()
 {
-    static NSArray *elements = nil;
-    if (elements == nil) {
-        elements = [[NSArray alloc] initWithObjects:
-                    // Omit style since we want style to be inline so the fragment can be easily inserted.
-                    @"style",
-                    // Omit xml so the result is not XHTML.
-                    @"xml", 
-                    // Omit tags that will get stripped when converted to a fragment anyway.
-                    @"doctype", @"html", @"head", @"body",
-                    // Omit deprecated tags.
-                    @"applet", @"basefont", @"center", @"dir", @"font", @"isindex", @"menu", @"s", @"strike", @"u",
-                    // Omit object so no file attachments are part of the fragment.
-                    @"object", nil];
-        CFRetain(elements);
-    }
+    NSArray *elements = [[NSArray alloc] initWithObjects: 
+        // Omit style since we want style to be inline so the fragment can be easily inserted.
+        @"style", 
+        // Omit xml so the result is not XHTML.
+        @"xml", 
+        // Omit tags that will get stripped when converted to a fragment anyway.
+        @"doctype", @"html", @"head", @"body", 
+        // Omit deprecated tags.
+        @"applet", @"basefont", @"center", @"dir", @"font", @"isindex", @"menu", @"s", @"strike", @"u", 
+        // Omit object so no file attachments are part of the fragment.
+        @"object", nil];
+    CFRetain(elements);
     return elements;
 }
 
-DocumentFragment* WebEditorClient::documentFragmentFromAttributedString(NSAttributedString* string, Vector<ArchiveResource*>& resources)
+DocumentFragment* WebEditorClient::documentFragmentFromAttributedString(NSAttributedString *string, Vector<RefPtr<ArchiveResource> >& resources)
 {
-    NSDictionary *dictionary = [[NSDictionary alloc] initWithObjectsAndKeys:
-                                        excludedElementsForAttributedStringConversion(), NSExcludedElementsDocumentAttribute,
-                                        m_webView, @"WebResourceHandler", nil];
+    static NSArray *excludedElements = createExcludedElementsForAttributedStringConversion();
     
-    NSArray* s;
-    DOMDocumentFragment* fragment = [string _documentFromRange:NSMakeRange(0, [string length]) 
-                                                      document:[[m_webView mainFrame] DOMDocument] 
+    NSDictionary *dictionary = [[NSDictionary alloc] initWithObjectsAndKeys: excludedElements, NSExcludedElementsDocumentAttribute, 
+        nil, @"WebResourceHandler", nil];
+    
+    NSArray *subResources;
+    DOMDocumentFragment* fragment = [string _documentFromRange:NSMakeRange(0, [string length])
+                                                      document:[[m_webView mainFrame] DOMDocument]
                                             documentAttributes:dictionary
-                                                  subresources:&s];
-    NSEnumerator *e = [s objectEnumerator];
-    WebResource *r;
-    while ((r = [e nextObject])) {
-        RefPtr<ArchiveResource>  ar = [r _coreResource];
-        resources.append(ar.get());
-    }
+                                                  subresources:&subResources];
+    for (WebResource* resource in subResources)
+        resources.append([resource _coreResource]);
+    
     [dictionary release];
     return core(fragment);
 }
 
-void WebEditorClient::setInsertionPasteboard(NSPasteboard* pasteboard)
+void WebEditorClient::setInsertionPasteboard(NSPasteboard *pasteboard)
 {
     [m_webView _setInsertionPasteboard:pasteboard];
 }
 
 #ifdef BUILDING_ON_TIGER
-NSArray* WebEditorClient::pasteboardTypesForSelection(Frame* selectedFrame)
+NSArray *WebEditorClient::pasteboardTypesForSelection(Frame* selectedFrame)
 {
     WebFrame* frame = kit(selectedFrame);
     return [[[frame frameView] documentView] pasteboardTypesForSelection];

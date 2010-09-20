@@ -340,125 +340,6 @@ void WebEditorClient::textWillBeDeletedInTextField(Element* element)
     m_page->injectedBundleFormClient().shouldPerformActionInTextField(m_page, static_cast<HTMLInputElement*>(element), WKInputFieldActionTypeInsertDelete, webFrame);
 }
 
-
-#if PLATFORM(MAC)
-NSString* WebEditorClient::userVisibleString(NSURL*)
-{
-    notImplemented();
-    return nil;
-}
-
-DocumentFragment* WebEditorClient::documentFragmentFromAttributedString(NSAttributedString*, Vector<ArchiveResource*>&)
-{
-    // FIXME: add code here to create fake WebView and load WebKit 1
-    // This is needed to support RTF and RTFD in the pasteboard
-    return 0;
-}
-
-void WebEditorClient::setInsertionPasteboard(NSPasteboard*)
-{
-    // This is used only by Mail, no need to implement it now.
-    notImplemented();
-}
-
-#ifdef BUILDING_ON_TIGER
-NSArray* WebEditorClient::pasteboardTypesForSelection(Frame*)
-{
-    notImplemented();
-    return nil;
-}
-#endif
-#endif
-
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
-void WebEditorClient::uppercaseWord()
-{
-    notImplemented();
-}
-
-void WebEditorClient::lowercaseWord()
-{
-    notImplemented();
-}
-
-void WebEditorClient::capitalizeWord()
-{
-    notImplemented();
-}
-
-void WebEditorClient::showSubstitutionsPanel(bool)
-{
-    notImplemented();
-}
-
-bool WebEditorClient::substitutionsPanelIsShowing()
-{
-    notImplemented();
-    return false;
-}
-
-void WebEditorClient::toggleSmartInsertDelete()
-{
-    notImplemented();
-}
-
-bool WebEditorClient::isAutomaticQuoteSubstitutionEnabled()
-{
-    notImplemented();
-    return false;
-}
-
-void WebEditorClient::toggleAutomaticQuoteSubstitution()
-{
-    notImplemented();
-}
-
-bool WebEditorClient::isAutomaticLinkDetectionEnabled()
-{
-    notImplemented();
-    return false;
-}
-
-void WebEditorClient::toggleAutomaticLinkDetection()
-{
-    notImplemented();
-}
-
-bool WebEditorClient::isAutomaticDashSubstitutionEnabled()
-{
-    notImplemented();
-    return false;
-}
-
-void WebEditorClient::toggleAutomaticDashSubstitution()
-{
-    notImplemented();
-}
-
-bool WebEditorClient::isAutomaticTextReplacementEnabled()
-{
-    notImplemented();
-    return false;
-}
-
-void WebEditorClient::toggleAutomaticTextReplacement()
-{
-    notImplemented();
-}
-
-bool WebEditorClient::isAutomaticSpellingCorrectionEnabled()
-{
-    notImplemented();
-    return false;
-}
-
-void WebEditorClient::toggleAutomaticSpellingCorrection()
-{
-    notImplemented();
-}
-
-#endif
-
 void WebEditorClient::ignoreWordInSpellDocument(const String&)
 {
     notImplemented();
@@ -484,13 +365,6 @@ void WebEditorClient::checkGrammarOfString(const UChar*, int, Vector<GrammarDeta
 {
     notImplemented();
 }
-
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
-void WebEditorClient::checkTextOfParagraph(const UChar*, int length, uint64_t, Vector<TextCheckingResult>&)
-{
-    notImplemented();
-}
-#endif
 
 void WebEditorClient::updateSpellingUIWithGrammarString(const String&, const GrammarDetail&)
 {
@@ -527,23 +401,5 @@ void WebEditorClient::setInputMethodState(bool)
 {
     notImplemented();
 }
-
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-void WebEditorClient::showCorrectionPanel(const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, WebCore::Editor*)
-{
-    notImplemented();
-}
-
-void WebEditorClient::dismissCorrectionPanel(bool correctionAccepted)
-{
-    notImplemented();
-}
-
-bool WebEditorClient::isShowingCorrectionPanel()
-{
-    notImplemented();
-    return false;
-}
-#endif
 
 } // namespace WebKit

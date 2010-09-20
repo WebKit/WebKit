@@ -1,3 +1,18 @@
+2010-09-20  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Pasteboard doesn't work in WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=42317
+        <rdar://problem/7660537>
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyEditorClient::documentFragmentFromAttributedString): Changed parameter to
+        be a Vector of RefPtr.
+        * page/EditorClient.h:
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::documentFragmentWithRtf): Stylistic changes.
+
 2010-09-20  Yong Li  <yoli@rim.com>
 
         Reviewed by Alexey Proskuryakov.

@@ -1,3 +1,47 @@
+2010-09-20  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Pasteboard doesn't work in WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=42317
+        <rdar://problem/7660537>
+
+        Adding support for RTF, RTFD and NSUrl formats on the Mac.
+        Still missing the selective enabling of the menu entries.
+
+        * WebKit2.xcodeproj/project.pbxproj: Added WebEditorClientMac.mm.
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp: Removed Mac only methods
+        that are now in WebEditorClientMac.mm
+        * WebProcess/WebCoreSupport/WebEditorClient.h: Fixed style and changed parameter
+        type in documentFragmentFromAttributedString to be a Vector of RefPtr.
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm: Added.
+        All the following methods have been moved from WebEditorClient.cpp.
+        (WebKit::WebEditorClient::userVisibleString): Added implementation.
+        (WebKit::createExcludedElementsForAttributedStringConversion): Added.
+        (WebKit::WebEditorClient::documentFragmentFromAttributedString): Added implementation.
+        (WebKit::WebEditorClient::setInsertionPasteboard):
+        (WebKit::WebEditorClient::pasteboardTypesForSelection):
+        (WebKit::WebEditorClient::uppercaseWord):
+        (WebKit::WebEditorClient::lowercaseWord):
+        (WebKit::WebEditorClient::capitalizeWord):
+        (WebKit::WebEditorClient::showSubstitutionsPanel):
+        (WebKit::WebEditorClient::substitutionsPanelIsShowing):
+        (WebKit::WebEditorClient::toggleSmartInsertDelete):
+        (WebKit::WebEditorClient::isAutomaticQuoteSubstitutionEnabled):
+        (WebKit::WebEditorClient::toggleAutomaticQuoteSubstitution):
+        (WebKit::WebEditorClient::isAutomaticLinkDetectionEnabled):
+        (WebKit::WebEditorClient::toggleAutomaticLinkDetection):
+        (WebKit::WebEditorClient::isAutomaticDashSubstitutionEnabled):
+        (WebKit::WebEditorClient::toggleAutomaticDashSubstitution):
+        (WebKit::WebEditorClient::isAutomaticTextReplacementEnabled):
+        (WebKit::WebEditorClient::toggleAutomaticTextReplacement):
+        (WebKit::WebEditorClient::isAutomaticSpellingCorrectionEnabled):
+        (WebKit::WebEditorClient::toggleAutomaticSpellingCorrection):
+        (WebKit::WebEditorClient::checkTextOfParagraph):
+        (WebKit::WebEditorClient::showCorrectionPanel):
+        (WebKit::WebEditorClient::dismissCorrectionPanel):
+        (WebKit::WebEditorClient::isShowingCorrectionPanel):
+
 2010-09-20  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.

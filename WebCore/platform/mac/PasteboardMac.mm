@@ -407,7 +407,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragmentWithRtf(Frame* frame, N
     if (!wasDeferringCallbacks)
         frame->page()->setDefersLoading(true);
 
-    Vector<ArchiveResource*> resources;
+    Vector<RefPtr<ArchiveResource> > resources;
     RefPtr<DocumentFragment> fragment = frame->editor()->client()->documentFragmentFromAttributedString(string, resources);
 
     size_t size = resources.size();
