@@ -1,3 +1,19 @@
+2010-09-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        script element created with html element as parent
+        https://bugs.webkit.org/show_bug.cgi?id=17023
+
+        The underlying bug is fixed by the HTML5 parser.  We have lots of tests
+        for the resulting DOM in this case, but we don't have a test for what
+        the DOM looks like to a script running inline at that time.  Since
+        that's how the test case attached to the bug was written, it seems
+        worth adding.
+
+        * fast/parser/parent-of-script-before-head-expected.txt: Added.
+        * fast/parser/parent-of-script-before-head.html: Added.
+
 2010-09-20  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Move a few more xp-specific results to win-xp and clean up test expectations.
