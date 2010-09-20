@@ -1,5 +1,13 @@
 2010-09-20  Satish Sampath  <satish@chromium.org>
 
+        Unreviewed, updating baselines for a layout test and setting expectations for 3 others.
+
+        * platform/chromium-linux/animations/animation-drt-api-expected.checksum: Added.
+        * platform/chromium-linux/animations/animation-drt-api-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
+2010-09-20  Satish Sampath  <satish@chromium.org>
+
         Unreviewed, updating baselines for a layout test and adding 5 others to the skip list.
 
         * platform/chromium-linux/fast/css/preserve-user-specified-zoom-level-on-reload-expected.checksum: Added.

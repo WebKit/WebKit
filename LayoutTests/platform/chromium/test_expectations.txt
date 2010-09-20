@@ -3182,3 +3182,10 @@ BUG56246 : printing/css2.1/page-break-after-003.html = TEXT
 BUG56246 : printing/css2.1/page-break-after-004.html = TEXT
 BUG56246 : printing/css2.1/page-break-before-000.html = TEXT
 
+// These tests have the correct baselines but fail on the canaries, rebaseline doesn't pull
+// anything new either. Satish is investigating this.
+// Regression since r67824
+BUG56254 WIN : css2.1/t1202-counter-09-b.html = IMAGE
+BUG56254 WIN : css2.1/t1202-counters-09-b.html = IMAGE
+// Regression since r67822
+BUG56254 WIN : fast/text/international/hindi-spacing.html = IMAGE
