@@ -1,5 +1,18 @@
 2010-09-19  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Move reviewtool to action=review
+        https://bugs.webkit.org/show_bug.cgi?id=46071
+
+        This patch removes the old Review Patch screen and moves the new
+        reviewtool from Pretty Diff to Review Patch.
+
+        * attachment.cgi:
+        * code-review.js:
+
+2010-09-19  Adam Barth  <abarth@webkit.org>
+
         Review tool UI tweak.  This patch lengthens the status bubbles so all
         the bubble fit (even when they have numbers inside).
 

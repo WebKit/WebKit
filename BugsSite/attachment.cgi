@@ -129,7 +129,7 @@ elsif ($action eq "edit")
 #if WEBKIT_CHANGES
 elsif ($action eq "review")
 {
-    edit("review");
+    prettyPatch();
 }
 elsif ($action eq "reviewform")
 {

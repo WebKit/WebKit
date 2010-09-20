@@ -31,8 +31,10 @@
     }
   }
 
-  // Attempt to activate only in the "Formatted Diff" context.
+  // Attempt to activate only in the "Review Patch" context.
   if (window.top != window)
+    return;
+  if (!window.location.search.match(/action=review/))
     return;
   var attachment_id = determineAttachmentID();
   if (!attachment_id)
