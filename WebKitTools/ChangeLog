@@ -1,3 +1,22 @@
+2010-09-19  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Martin Robinson.
+
+        Add unit tests for diffs that delete or modify a change log entry
+        or describe changes that are far apart
+        https://bugs.webkit.org/show_bug.cgi?id=46046
+
+        Add additional unit tests to test change log diffs that contain
+        deletions or changes that are far apart from each other in the
+        ChangeLog file.
+
+        * Scripts/webkitperl/VCSUtils_unittest/fixChangeLogPatch.pl:
+          - Added the following unit tests:
+          "fixChangeLogPatch: [no change] In-place change."
+          "fixChangeLogPatch: [no change] Remove first entry."
+          "fixChangeLogPatch: [no change] Remove entry in the middle."
+          "fixChangeLogPatch: [no change] Far apart changes (i.e. more than one chunk)."
+
 2010-09-19  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

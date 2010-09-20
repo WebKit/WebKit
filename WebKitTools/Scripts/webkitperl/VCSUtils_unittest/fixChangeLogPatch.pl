@@ -30,7 +30,7 @@
 
 # Unit tests of VCSUtils::fixChangeLogPatch().
 
-use Test::Simple tests => 8;
+use Test::Simple tests => 12;
 use VCSUtils;
 
 # The source ChangeLog for these tests is the following:
@@ -56,6 +56,93 @@ use VCSUtils;
 my $title;
 my $in;
 my $out;
+
+# New test
+$title = "fixChangeLogPatch: [no change] In-place change.";
+
+$in = <<'END';
+--- ChangeLog
++++ ChangeLog
+@@ -1,5 +1,5 @@
+ 2010-12-22  Bob  <bob@email.address>
+ 
+-        Reviewed by Sue.
++        Reviewed by Ray.
+ 
+         Changed some code on 2010-12-22.
+END
+
+ok(fixChangeLogPatch($in) eq $in, $title);
+
+# New test
+$title = "fixChangeLogPatch: [no change] Remove first entry.";
+
+$in = <<'END';
+--- ChangeLog
++++ ChangeLog
+@@ -1,11 +1,3 @@
+-2010-12-22  Bob  <bob@email.address>
+-
+-        Reviewed by Ray.
+-
+-        Changed some code on 2010-12-22.
+-
+-        * File:
+-
+ 2010-12-22  Alice  <alice@email.address>
+ 
+         Reviewed by Ray.
+END
+
+ok(fixChangeLogPatch($in) eq $in, $title);
+
+# New test
+$title = "fixChangeLogPatch: [no change] Remove entry in the middle.";
+
+$in = <<'END';
+--- ChangeLog
++++ ChangeLog
+@@@ -7,10 +7,6 @@
+ 
+         * File:
+ 
+-2010-12-22  Bob  <bob@email.address>
+-
+-        Changed some code on 2010-12-22.
+-
+ 2010-12-22  Alice  <alice@email.address>
+ 
+         Reviewed by Ray.
+END
+
+ok(fixChangeLogPatch($in) eq $in, $title);
+
+# New test
+$title = "fixChangeLogPatch: [no change] Far apart changes (i.e. more than one chunk).";
+
+$in = <<'END';
+--- ChangeLog
++++ ChangeLog
+@@ -7,7 +7,7 @@
+ 
+         * File:
+ 
+-2010-12-22  Bob  <bob@email.address>
++2010-12-22  Bobby <bob@email.address>
+ 
+         Changed some code on 2010-12-22.
+ 
+@@ -21,7 +21,7 @@
+ 
+         * File2:
+ 
+-2010-12-21  Bob  <bob@email.address>
++2010-12-21  Bobby <bob@email.address>
+ 
+         Changed some code on 2010-12-21.
+END
+
+ok(fixChangeLogPatch($in) eq $in, $title);
 
 # New test
 $title = "fixChangeLogPatch: [no change] First line is new line.";
