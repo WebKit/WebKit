@@ -1,5 +1,11 @@
 2010-09-19  Sam Weinig  <sam@webkit.org>
 
+        Fix windows build.
+
+        * UIProcess/API/C/WKPage.h:
+
+2010-09-19  Sam Weinig  <sam@webkit.org>
+
         Attempt to fix Qt build.
 
         * WebProcess/WebCoreSupport/WebEditorClient.cpp:

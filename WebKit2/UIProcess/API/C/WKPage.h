@@ -62,7 +62,7 @@ enum {
     kWKEventMouseButtonMiddleButton = 1,
     kWKEventMouseButtonRightButton = 2,
 };
-typedef uint32_t WKEventMouseButton;
+typedef int32_t WKEventMouseButton;
 
 // FrameLoad Client
 typedef void (*WKPageDidStartProvisionalLoadForFrameCallback)(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo);
