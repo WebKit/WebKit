@@ -1,3 +1,17 @@
+2010-09-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Don't use bufferIsLargeEnoughToContain for Vectors with variable sized elements
+        https://bugs.webkit.org/show_bug.cgi?id=46109
+
+        Add a new VectorArgumentCoder class template, with specializations based on whether the
+        element is fixed size or not. Then update the ArgumentEncoder<Vector<T>> specialization to choose the
+        right VectorArgumentCoder specialization. To determine this, we use the "IsArithmetic" type trait, 
+        which holds true for all integer types and all floating point types. 
+        
+        * Platform/CoreIPC/ArgumentCoders.h:
+
 2010-09-20  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Sam Weinig.

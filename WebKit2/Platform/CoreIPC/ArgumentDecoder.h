@@ -29,6 +29,7 @@
 #include "ArgumentCoder.h"
 #include "Attachment.h"
 #include <wtf/Deque.h>
+#include <wtf/TypeTraits.h>
 #include <wtf/Vector.h>
 
 namespace CoreIPC {
@@ -58,6 +59,8 @@ public:
     template<typename T>
     bool bufferIsLargeEnoughToContain(size_t numElements) const
     {
+        COMPILE_ASSERT(WTF::IsArithmetic<T>::value, type_must_have_known_encoded_size);
+      
         if (numElements > std::numeric_limits<size_t>::max() / sizeof(T))
             return false;
 

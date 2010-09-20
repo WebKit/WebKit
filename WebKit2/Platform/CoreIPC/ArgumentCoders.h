@@ -30,6 +30,7 @@
 #include "ArgumentEncoder.h"
 #include <utility>
 #include <wtf/HashMap.h>
+#include <wtf/TypeTraits.h>
 #include <wtf/Vector.h>
 
 namespace CoreIPC {
@@ -69,7 +70,9 @@ template<typename T, typename U> struct ArgumentCoder<std::pair<T, U> > {
     }
 };
 
-template<typename T> struct ArgumentCoder<Vector<T> > {
+template<bool fixedSizeElements, typename T> struct VectorArgumentCoder;
+
+template<typename T> struct VectorArgumentCoder<false, T> {
     static void encode(ArgumentEncoder* encoder, const Vector<T>& vector)
     {
         encoder->encodeUInt64(vector.size());
@@ -83,7 +86,39 @@ template<typename T> struct ArgumentCoder<Vector<T> > {
         if (!decoder->decodeUInt64(size))
             return false;
 
-        // Before allocating the vector, make sure that the decoder buffer is big enough.
+        Vector<T> tmp;
+        for (size_t i = 0; i < size; ++i) {
+            T element;
+            if (!decoder->decode(element))
+                return false;
+            
+            tmp.append(element);
+        }
+
+        tmp.shrinkToFit();
+        vector.swap(tmp);
+        return true;
+    }
+};
+
+template<typename T> struct VectorArgumentCoder<true, T> {
+    static void encode(ArgumentEncoder* encoder, const Vector<T>& vector)
+    {
+        encoder->encodeUInt64(vector.size());
+        // FIXME: If we could tell the encoder to align the buffer, we could just do an encodeBytes here.
+        for (size_t i = 0; i < vector.size(); ++i)
+            encoder->encode(vector[i]);
+    }
+    
+    static bool decode(ArgumentDecoder* decoder, Vector<T>& vector)
+    {
+        uint64_t size;
+        if (!decoder->decodeUInt64(size))
+            return false;
+
+        // Since we know the total size of the elements, we can allocate the vector in
+        // one fell swoop. Before allocating we must however make sure that the decoder buffer
+        // is big enough.
         if (!decoder->bufferIsLargeEnoughToContain<T>(size)) {
             decoder->markInvalid();
             return false;
@@ -104,6 +139,8 @@ template<typename T> struct ArgumentCoder<Vector<T> > {
         return true;
     }
 };
+
+template<typename T> struct ArgumentCoder<Vector<T> > : VectorArgumentCoder<WTF::IsArithmetic<T>::value, T> { };
 
 // Specialization for Vector<uint8_t>
 template<> struct ArgumentCoder<Vector<uint8_t> > {
