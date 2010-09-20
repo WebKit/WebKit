@@ -1,5 +1,12 @@
 2010-09-19  Sam Weinig  <sam@webkit.org>
 
+        Attempt to fix Qt build.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::doTextFieldCommandFromEvent):
+
+2010-09-19  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Add WebKit2 equivalent of the WebFormDelegate's doCommandBySelector
