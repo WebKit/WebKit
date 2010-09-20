@@ -36,7 +36,7 @@ namespace WebCore {
 
     class FEMorphology : public FilterEffect {
     public:
-        static PassRefPtr<FEMorphology> create(FilterEffect*, MorphologyOperatorType, float radiusX, float radiusY);  
+        static PassRefPtr<FEMorphology> create(MorphologyOperatorType, float radiusX, float radiusY);  
         MorphologyOperatorType morphologyOperator() const;
         void setMorphologyOperator(MorphologyOperatorType);
 
@@ -46,15 +46,13 @@ namespace WebCore {
         float radiusY() const;
         void setRadiusY(float);
 
-        virtual FloatRect uniteChildEffectSubregions(Filter* filter) { return calculateUnionOfChildEffectSubregions(filter, m_in.get()); }
         void apply(Filter*);
         void dump();
         TextStream& externalRepresentation(TextStream&, int indent) const;
 
     private:
-        FEMorphology(FilterEffect*, MorphologyOperatorType, float radiusX, float radiusY);
+        FEMorphology(MorphologyOperatorType, float radiusX, float radiusY);
         
-        RefPtr<FilterEffect> m_in;
         MorphologyOperatorType m_type;
         float m_radiusX;
         float m_radiusY;

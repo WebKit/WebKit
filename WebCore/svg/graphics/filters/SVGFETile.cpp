@@ -31,40 +31,42 @@
 
 namespace WebCore {
 
-FETile::FETile(FilterEffect* in)
+FETile::FETile()
     : FilterEffect()
-    , m_in(in)
 {
 }
 
-PassRefPtr<FETile> FETile::create(FilterEffect* in)
+PassRefPtr<FETile> FETile::create()
 {
-    return adoptRef(new FETile(in));
+    return adoptRef(new FETile);
 }
 
-FloatRect FETile::uniteChildEffectSubregions(Filter* filter)
+FloatRect FETile::determineFilterPrimitiveSubregion(Filter* filter)
 {
-    m_in->calculateEffectRect(filter);
-    return filter->filterRegion();
+    inputEffect(0)->determineFilterPrimitiveSubregion(filter);
+
+    filter->determineFilterPrimitiveSubregion(this, filter->filterRegion());
+    return filterPrimitiveSubregion();
 }
 
 void FETile::apply(Filter* filter)
 {
-    m_in->apply(filter);
-    if (!m_in->resultImage())
+    FilterEffect* in = inputEffect(0);
+    in->apply(filter);
+    if (!in->resultImage())
         return;
 
     GraphicsContext* filterContext = getEffectContext();
     if (!filterContext)
         return;
 
-    setIsAlphaImage(m_in->isAlphaImage());
+    setIsAlphaImage(in->isAlphaImage());
 
-    IntRect tileRect = enclosingIntRect(m_in->scaledSubRegion());
+    IntRect tileRect = enclosingIntRect(in->repaintRectInLocalCoordinates());
 
     // Source input needs more attention. It has the size of the filterRegion but gives the
     // size of the cutted sourceImage back. This is part of the specification and optimization.
-    if (m_in->isSourceInput()) {
+    if (in->isSourceInput()) {
         FloatRect filterRegion = filter->filterRegion();
         filterRegion.scale(filter->filterResolution().width(), filter->filterResolution().height());
         tileRect = enclosingIntRect(filterRegion);
@@ -72,15 +74,16 @@ void FETile::apply(Filter* filter)
 
     OwnPtr<ImageBuffer> tileImage = ImageBuffer::create(tileRect.size());
     GraphicsContext* tileImageContext = tileImage->context();
-    tileImageContext->drawImageBuffer(m_in->resultImage(), DeviceColorSpace, IntPoint());
+    tileImageContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, IntPoint());
     RefPtr<Pattern> pattern = Pattern::create(tileImage->copyImage(), true, true);
 
     AffineTransform matrix;
-    matrix.translate(m_in->scaledSubRegion().x() - scaledSubRegion().x(), m_in->scaledSubRegion().y() - scaledSubRegion().y());
+    matrix.translate(in->repaintRectInLocalCoordinates().x() - repaintRectInLocalCoordinates().x(),
+                     in->repaintRectInLocalCoordinates().y() - repaintRectInLocalCoordinates().y());
     pattern.get()->setPatternSpaceTransform(matrix);
 
     filterContext->setFillPattern(pattern);
-    filterContext->fillRect(FloatRect(FloatPoint(), scaledSubRegion().size()));
+    filterContext->fillRect(FloatRect(FloatPoint(), repaintRectInLocalCoordinates().size()));
 }
 
 void FETile::dump()
@@ -93,7 +96,7 @@ TextStream& FETile::externalRepresentation(TextStream& ts, int indent) const
     ts << "[feTile";
     FilterEffect::externalRepresentation(ts);
     ts << "]\n";
-    m_in->externalRepresentation(ts, indent + 1);
+    inputEffect(0)->externalRepresentation(ts, indent + 1);
 
     return ts;
 }

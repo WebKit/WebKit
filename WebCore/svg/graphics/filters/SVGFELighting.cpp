@@ -35,12 +35,11 @@
 
 namespace WebCore {
 
-FELighting::FELighting(LightingType lightingType, FilterEffect* in, const Color& lightingColor, float surfaceScale,
+FELighting::FELighting(LightingType lightingType, const Color& lightingColor, float surfaceScale,
     float diffuseConstant, float specularConstant, float specularExponent,
     float kernelUnitLengthX, float kernelUnitLengthY, PassRefPtr<LightSource> lightSource)
     : FilterEffect()
     , m_lightingType(lightingType)
-    , m_in(in)
     , m_lightSource(lightSource)
     , m_lightingColor(lightingColor)
     , m_surfaceScale(surfaceScale)
@@ -243,8 +242,9 @@ bool FELighting::drawLighting(CanvasPixelArray* pixels, int width, int height)
 
 void FELighting::apply(Filter* filter)
 {
-    m_in->apply(filter);
-    if (!m_in->resultImage())
+    FilterEffect* in = inputEffect(0);
+    in->apply(filter);
+    if (!in->resultImage())
         return;
 
     if (!getEffectContext())
@@ -252,8 +252,8 @@ void FELighting::apply(Filter* filter)
 
     setIsAlphaImage(false);
 
-    IntRect effectDrawingRect = calculateDrawingIntRect(m_in->scaledSubRegion());
-    RefPtr<ImageData> srcImageData(m_in->resultImage()->getUnmultipliedImageData(effectDrawingRect));
+    IntRect effectDrawingRect = calculateDrawingIntRect(in->repaintRectInLocalCoordinates());
+    RefPtr<ImageData> srcImageData(in->resultImage()->getUnmultipliedImageData(effectDrawingRect));
     CanvasPixelArray* srcPixelArray(srcImageData->data());
 
     // FIXME: support kernelUnitLengths other than (1,1). The issue here is that the W3

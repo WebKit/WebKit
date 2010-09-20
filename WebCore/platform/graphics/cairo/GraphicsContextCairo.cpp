@@ -973,18 +973,20 @@ PlatformRefPtr<cairo_surface_t> GraphicsContext::createShadowMask(PassOwnPtr<Ima
         return buffer->m_data.m_surface;
 
     FloatPoint blurRadius = FloatPoint(radius, radius);
-    float sd = FEGaussianBlur::calculateStdDeviation(radius);
-    if (!sd)
+    float stdDeviation = FEGaussianBlur::calculateStdDeviation(radius);
+    if (!stdDeviation)
         return buffer->m_data.m_surface;
 
     // create filter
     RefPtr<Filter> filter = ImageBufferFilter::create();
     filter->setSourceImage(buffer);
     RefPtr<FilterEffect> source = SourceGraphic::create();
-    source->setScaledSubRegion(FloatRect(FloatPoint(), shadowRect.size()));
+    source->setRepaintRectInLocalCoordinates(FloatRect(FloatPoint(), shadowRect.size()));
     source->setIsAlphaImage(true);
-    RefPtr<FilterEffect> blur = FEGaussianBlur::create(source.get(), sd, sd);
-    blur->setScaledSubRegion(FloatRect(FloatPoint(), shadowRect.size()));
+    RefPtr<FilterEffect> blur = FEGaussianBlur::create(stdDeviation, stdDeviation);
+    FilterEffectVector& inputEffects = blur->inputEffects();
+    inputEffects.append(source.get());
+    blur->setRepaintRectInLocalCoordinates(FloatRect(FloatPoint(), shadowRect.size()));
     blur->apply(filter.get());
     return blur->resultImage()->m_data.m_surface;
 #endif

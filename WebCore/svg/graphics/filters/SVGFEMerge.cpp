@@ -30,46 +30,24 @@
 
 namespace WebCore {
 
-FEMerge::FEMerge(const Vector<RefPtr<FilterEffect> >& mergeInputs) 
+FEMerge::FEMerge() 
     : FilterEffect()
-    , m_mergeInputs(mergeInputs)
 {
 }
 
-PassRefPtr<FEMerge> FEMerge::create(const Vector<RefPtr<FilterEffect> >& mergeInputs)
+PassRefPtr<FEMerge> FEMerge::create()
 {
-    return adoptRef(new FEMerge(mergeInputs));
-}
-
-const Vector<RefPtr<FilterEffect> >& FEMerge::mergeInputs() const
-{
-    return m_mergeInputs;
-}
-
-void FEMerge::setMergeInputs(const Vector<RefPtr<FilterEffect> >& mergeInputs)
-{
-    m_mergeInputs = mergeInputs;
-}
-
-FloatRect FEMerge::uniteChildEffectSubregions(Filter* filter)
-{
-    ASSERT(!m_mergeInputs.isEmpty());
-
-    FloatRect uniteEffectRect = m_mergeInputs[0]->calculateEffectRect(filter);
-
-    for (unsigned i = 1; i < m_mergeInputs.size(); i++)
-        uniteEffectRect.unite(m_mergeInputs[i]->calculateEffectRect(filter));
-
-    return uniteEffectRect;
+    return adoptRef(new FEMerge);
 }
 
 void FEMerge::apply(Filter* filter)
 {
-    ASSERT(!m_mergeInputs.isEmpty());
-
-    for (unsigned i = 0; i < m_mergeInputs.size(); i++) {
-        m_mergeInputs[i]->apply(filter);
-        if (!m_mergeInputs[i]->resultImage())
+    unsigned size = numberOfEffectInputs();
+    ASSERT(size > 0);
+    for (unsigned i = 0; i < size; ++i) {
+        FilterEffect* in = inputEffect(i);
+        in->apply(filter);
+        if (!in->resultImage())
             return;
     }
 
@@ -77,9 +55,9 @@ void FEMerge::apply(Filter* filter)
     if (!filterContext)
         return;
 
-    for (unsigned i = 0; i < m_mergeInputs.size(); i++) {
-        FloatRect destRect = calculateDrawingRect(m_mergeInputs[i]->scaledSubRegion());
-        filterContext->drawImageBuffer(m_mergeInputs[i]->resultImage(), DeviceColorSpace, destRect);
+    for (unsigned i = 0; i < size; ++i) {
+        FilterEffect* in = inputEffect(i);
+        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, calculateDrawingRect(in->repaintRectInLocalCoordinates()));
     }
 }
 
@@ -92,12 +70,11 @@ TextStream& FEMerge::externalRepresentation(TextStream& ts, int indent) const
     writeIndent(ts, indent);
     ts << "[feMerge";
     FilterEffect::externalRepresentation(ts);
-    ts << " mergeNodes=\"" << m_mergeInputs.size() << "\"]\n";
-    if (!m_mergeInputs.isEmpty()) {
-        const Vector<RefPtr<FilterEffect> >::const_iterator end = m_mergeInputs.end();
-        for (Vector<RefPtr<FilterEffect> >::const_iterator it = m_mergeInputs.begin(); it != end; ++it)
-            (*it)->externalRepresentation(ts, indent + 1);
-    }
+    unsigned size = numberOfEffectInputs();
+    ASSERT(size > 0);
+    ts << " mergeNodes=\"" << size << "\"]\n";
+    for (unsigned i = 0; i < size; ++i)
+        inputEffect(i)->externalRepresentation(ts, indent + 1);
     return ts;
 }
 

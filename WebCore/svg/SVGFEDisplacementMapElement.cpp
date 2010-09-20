@@ -101,10 +101,14 @@ PassRefPtr<FilterEffect> SVGFEDisplacementMapElement::build(SVGFilterBuilder* fi
     
     if (!input1 || !input2)
         return 0;
-        
-    
-    return FEDisplacementMap::create(input1, input2, static_cast<ChannelSelectorType>(xChannelSelector()), 
-                                     static_cast<ChannelSelectorType>(yChannelSelector()), scale());
+
+    RefPtr<FilterEffect> effect = FEDisplacementMap::create(static_cast<ChannelSelectorType>(xChannelSelector()), 
+                                                                static_cast<ChannelSelectorType>(yChannelSelector()), scale());
+    FilterEffectVector& inputEffects = effect->inputEffects();
+    inputEffects.reserveCapacity(2);
+    inputEffects.append(input1);
+    inputEffects.append(input2);    
+    return effect.release();
 }
 
 }

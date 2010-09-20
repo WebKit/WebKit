@@ -31,7 +31,7 @@ class LightSource;
 
 class FEDiffuseLighting : public FELighting {
 public:
-    static PassRefPtr<FEDiffuseLighting> create(FilterEffect*, const Color&, float, float,
+    static PassRefPtr<FEDiffuseLighting> create(const Color&, float, float,
         float, float, PassRefPtr<LightSource>);
     virtual ~FEDiffuseLighting();
 
@@ -57,7 +57,7 @@ public:
     TextStream& externalRepresentation(TextStream&, int indent) const;
 
 private:
-    FEDiffuseLighting(FilterEffect*, const Color&, float, float,
+    FEDiffuseLighting(const Color&, float, float,
         float, float, PassRefPtr<LightSource>);
 };
 

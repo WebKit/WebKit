@@ -33,11 +33,10 @@
 
 namespace WebCore {
 
-FEConvolveMatrix::FEConvolveMatrix(FilterEffect* in, const IntSize& kernelSize,
+FEConvolveMatrix::FEConvolveMatrix(const IntSize& kernelSize,
     float divisor, float bias, const IntPoint& targetOffset, EdgeModeType edgeMode,
     const FloatPoint& kernelUnitLength, bool preserveAlpha, const Vector<float>& kernelMatrix)
     : FilterEffect()
-    , m_in(in)
     , m_kernelSize(kernelSize)
     , m_divisor(divisor)
     , m_bias(bias)
@@ -49,11 +48,11 @@ FEConvolveMatrix::FEConvolveMatrix(FilterEffect* in, const IntSize& kernelSize,
 {
 }
 
-PassRefPtr<FEConvolveMatrix> FEConvolveMatrix::create(FilterEffect* in, const IntSize& kernelSize,
+PassRefPtr<FEConvolveMatrix> FEConvolveMatrix::create(const IntSize& kernelSize,
     float divisor, float bias, const IntPoint& targetOffset, EdgeModeType edgeMode,
     const FloatPoint& kernelUnitLength, bool preserveAlpha, const Vector<float>& kernelMatrix)
 {
-    return adoptRef(new FEConvolveMatrix(in, kernelSize, divisor, bias, targetOffset, edgeMode, kernelUnitLength,
+    return adoptRef(new FEConvolveMatrix(kernelSize, divisor, bias, targetOffset, edgeMode, kernelUnitLength,
         preserveAlpha, kernelMatrix));
 }
 
@@ -374,21 +373,22 @@ ALWAYS_INLINE void FEConvolveMatrix::setOuterPixels(PaintingData& paintingData, 
 
 void FEConvolveMatrix::apply(Filter* filter)
 {
-    m_in->apply(filter);
-    if (!m_in->resultImage())
+    FilterEffect* in = inputEffect(0);
+    in->apply(filter);
+    if (!in->resultImage())
         return;
 
     if (!getEffectContext())
         return;
 
     IntRect imageRect(IntPoint(), resultImage()->size());
-    IntRect effectDrawingRect = calculateDrawingIntRect(m_in->subRegion());
+    IntRect effectDrawingRect = calculateDrawingIntRect(in->filterPrimitiveSubregion());
 
     RefPtr<CanvasPixelArray> srcPixelArray;
     if (m_preserveAlpha)
-        srcPixelArray = m_in->resultImage()->getUnmultipliedImageData(effectDrawingRect)->data();
+        srcPixelArray = in->resultImage()->getUnmultipliedImageData(effectDrawingRect)->data();
     else
-        srcPixelArray = m_in->resultImage()->getPremultipliedImageData(effectDrawingRect)->data();
+        srcPixelArray = in->resultImage()->getPremultipliedImageData(effectDrawingRect)->data();
 
     RefPtr<ImageData> imageData = ImageData::create(imageRect.width(), imageRect.height());
 
@@ -463,7 +463,7 @@ TextStream& FEConvolveMatrix::externalRepresentation(TextStream& ts, int indent)
        << "edgeMode=\"" << m_edgeMode << "\" "
        << "kernelUnitLength=\"" << m_kernelUnitLength << "\" "
        << "preserveAlpha=\"" << m_preserveAlpha << "\"]\n";
-    m_in->externalRepresentation(ts, indent + 1);
+    inputEffect(0)->externalRepresentation(ts, indent + 1);
     return ts;
 }
 

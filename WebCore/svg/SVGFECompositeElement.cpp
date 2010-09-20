@@ -109,9 +109,14 @@ PassRefPtr<FilterEffect> SVGFECompositeElement::build(SVGFilterBuilder* filterBu
     
     if (!input1 || !input2)
         return 0;
-    
-    return FEComposite::create(input1, input2, static_cast<CompositeOperationType>(_operator()),
-                                        k1(), k2(), k3(), k4());
+
+    RefPtr<FilterEffect> effect = FEComposite::create(static_cast<CompositeOperationType>(_operator()),
+                                                          k1(), k2(), k3(), k4());
+    FilterEffectVector& inputEffects = effect->inputEffects();
+    inputEffects.reserveCapacity(2);
+    inputEffects.append(input1);
+    inputEffects.append(input2);    
+    return effect.release();
 }
 
 }

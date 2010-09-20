@@ -35,27 +35,15 @@ typedef unsigned char (*BlendType)(unsigned char colorA, unsigned char colorB, u
 
 namespace WebCore {
 
-FEBlend::FEBlend(FilterEffect* in, FilterEffect* in2, BlendModeType mode)
+FEBlend::FEBlend(BlendModeType mode)
     : FilterEffect()
-    , m_in(in)
-    , m_in2(in2)
     , m_mode(mode)
 {
 }
 
-PassRefPtr<FEBlend> FEBlend::create(FilterEffect* in, FilterEffect* in2, BlendModeType mode)
+PassRefPtr<FEBlend> FEBlend::create(BlendModeType mode)
 {
-    return adoptRef(new FEBlend(in, in2, mode));
-}
-
-FilterEffect* FEBlend::in2() const
-{
-    return m_in2.get();
-}
-
-void FEBlend::setIn2(FilterEffect* in2)
-{
-    m_in2 = in2;
+    return adoptRef(new FEBlend(mode));
 }
 
 BlendModeType FEBlend::blendMode() const
@@ -100,9 +88,11 @@ static unsigned char lighten(unsigned char colorA, unsigned char colorB, unsigne
 
 void FEBlend::apply(Filter* filter)
 {
-    m_in->apply(filter);
-    m_in2->apply(filter);
-    if (!m_in->resultImage() || !m_in2->resultImage())
+    FilterEffect* in = inputEffect(0);
+    FilterEffect* in2 = inputEffect(1);
+    in->apply(filter);
+    in2->apply(filter);
+    if (!in->resultImage() || !in2->resultImage())
         return;
 
     if (m_mode == FEBLEND_MODE_UNKNOWN)
@@ -111,11 +101,11 @@ void FEBlend::apply(Filter* filter)
     if (!getEffectContext())
         return;
 
-    IntRect effectADrawingRect = calculateDrawingIntRect(m_in->scaledSubRegion());
-    RefPtr<CanvasPixelArray> srcPixelArrayA(m_in->resultImage()->getPremultipliedImageData(effectADrawingRect)->data());
+    IntRect effectADrawingRect = calculateDrawingIntRect(in->repaintRectInLocalCoordinates());
+    RefPtr<CanvasPixelArray> srcPixelArrayA(in->resultImage()->getPremultipliedImageData(effectADrawingRect)->data());
 
-    IntRect effectBDrawingRect = calculateDrawingIntRect(m_in2->scaledSubRegion());
-    RefPtr<CanvasPixelArray> srcPixelArrayB(m_in2->resultImage()->getPremultipliedImageData(effectBDrawingRect)->data());
+    IntRect effectBDrawingRect = calculateDrawingIntRect(in2->repaintRectInLocalCoordinates());
+    RefPtr<CanvasPixelArray> srcPixelArrayB(in2->resultImage()->getPremultipliedImageData(effectBDrawingRect)->data());
 
     IntRect imageRect(IntPoint(), resultImage()->size());
     RefPtr<ImageData> imageData = ImageData::create(imageRect.width(), imageRect.height());
@@ -176,8 +166,8 @@ TextStream& FEBlend::externalRepresentation(TextStream& ts, int indent) const
     ts << "[feBlend";
     FilterEffect::externalRepresentation(ts);
     ts << " mode=\"" << m_mode << "\"]\n";
-    m_in->externalRepresentation(ts, indent + 1);
-    m_in2->externalRepresentation(ts, indent + 1);
+    inputEffect(0)->externalRepresentation(ts, indent + 1);
+    inputEffect(1)->externalRepresentation(ts, indent + 1);
     return ts;
 }
 

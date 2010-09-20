@@ -86,7 +86,9 @@ PassRefPtr<FilterEffect> SVGFEOffsetElement::build(SVGFilterBuilder* filterBuild
     if (!input1)
         return 0;
 
-    return FEOffset::create(input1, dx(), dy());
+    RefPtr<FilterEffect> effect = FEOffset::create(dx(), dy());
+    effect->inputEffects().append(input1);
+    return effect.release();
 }
 
 }

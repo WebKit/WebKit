@@ -44,7 +44,7 @@ class CanvasPixelArray;
 
 class FEConvolveMatrix : public FilterEffect {
 public:
-    static PassRefPtr<FEConvolveMatrix> create(FilterEffect*, const IntSize&,
+    static PassRefPtr<FEConvolveMatrix> create(const IntSize&,
             float, float, const IntPoint&, EdgeModeType, const FloatPoint&,
             bool, const Vector<float>&);
 
@@ -72,13 +72,12 @@ public:
     bool preserveAlpha() const;
     void setPreserveAlpha(bool);
 
-    virtual FloatRect uniteChildEffectSubregions(Filter* filter) { return calculateUnionOfChildEffectSubregions(filter, m_in.get()); }
     void apply(Filter*);
     void dump();
     TextStream& externalRepresentation(TextStream&, int indent) const;
 
 private:
-    FEConvolveMatrix(FilterEffect*, const IntSize&, float, float,
+    FEConvolveMatrix(const IntSize&, float, float,
             const IntPoint&, EdgeModeType, const FloatPoint&, bool, const Vector<float>&);
 
     struct PaintingData {
@@ -101,7 +100,6 @@ private:
     ALWAYS_INLINE void setInteriorPixels(PaintingData& paintingData, int clipRight, int clipBottom);
     ALWAYS_INLINE void setOuterPixels(PaintingData& paintingData, int x1, int y1, int x2, int y2);
 
-    RefPtr<FilterEffect> m_in;
     IntSize m_kernelSize;
     float m_divisor;
     float m_bias;

@@ -29,18 +29,18 @@
 
 namespace WebCore {
 
-FESpecularLighting::FESpecularLighting(FilterEffect* in, const Color& lightingColor, float surfaceScale,
+FESpecularLighting::FESpecularLighting(const Color& lightingColor, float surfaceScale,
     float specularConstant, float specularExponent, float kernelUnitLengthX,
     float kernelUnitLengthY, PassRefPtr<LightSource> lightSource)
-    : FELighting(SpecularLighting, in, lightingColor, surfaceScale, 0.0f, specularConstant, specularExponent, kernelUnitLengthX, kernelUnitLengthY, lightSource)
+    : FELighting(SpecularLighting, lightingColor, surfaceScale, 0, specularConstant, specularExponent, kernelUnitLengthX, kernelUnitLengthY, lightSource)
 {
 }
 
-PassRefPtr<FESpecularLighting> FESpecularLighting::create(FilterEffect* in, const Color& lightingColor,
+PassRefPtr<FESpecularLighting> FESpecularLighting::create(const Color& lightingColor,
     float surfaceScale, float specularConstant, float specularExponent,
     float kernelUnitLengthX, float kernelUnitLengthY, PassRefPtr<LightSource> lightSource)
 {
-    return adoptRef(new FESpecularLighting(in, lightingColor, surfaceScale, specularConstant, specularExponent,
+    return adoptRef(new FESpecularLighting(lightingColor, surfaceScale, specularConstant, specularExponent,
         kernelUnitLengthX, kernelUnitLengthY, lightSource));
 }
 
@@ -130,7 +130,7 @@ TextStream& FESpecularLighting::externalRepresentation(TextStream& ts, int inden
     ts << " surfaceScale=\"" << m_surfaceScale << "\" "
        << "specualConstant=\"" << m_specularConstant << "\" "
        << "specularExponent=\"" << m_specularExponent << "\"]\n";
-    m_in->externalRepresentation(ts, indent + 1);
+    inputEffect(0)->externalRepresentation(ts, indent + 1);
     return ts;
 }
 

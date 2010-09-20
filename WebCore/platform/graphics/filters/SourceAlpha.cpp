@@ -42,16 +42,16 @@ const AtomicString& SourceAlpha::effectName()
     return s_effectName;
 }
 
-FloatRect SourceAlpha::calculateEffectRect(Filter* filter)
+FloatRect SourceAlpha::determineFilterPrimitiveSubregion(Filter* filter)
 {
     FloatRect clippedSourceRect = filter->sourceImageRect();
     if (filter->sourceImageRect().x() < filter->filterRegion().x())
         clippedSourceRect.setX(filter->filterRegion().x());
     if (filter->sourceImageRect().y() < filter->filterRegion().y())
         clippedSourceRect.setY(filter->filterRegion().y());
-    setSubRegion(clippedSourceRect);
+    setFilterPrimitiveSubregion(clippedSourceRect);
     clippedSourceRect.scale(filter->filterResolution().width(), filter->filterResolution().height());
-    setScaledSubRegion(clippedSourceRect);
+    setRepaintRectInLocalCoordinates(clippedSourceRect);
     return filter->filterRegion();
 }
 

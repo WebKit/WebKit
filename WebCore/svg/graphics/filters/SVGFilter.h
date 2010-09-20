@@ -39,16 +39,17 @@ namespace WebCore {
         virtual bool effectBoundingBoxMode() const { return m_effectBBoxMode; }
 
         virtual FloatRect filterRegion() const { return m_filterRect; }
-        virtual FloatRect sourceImageRect() const { return m_itemBox; }
+        
+        virtual FloatRect sourceImageRect() const { return m_targetBoundingBox; }
 
         virtual FloatSize maxImageSize() const { return m_maxImageSize; }
-        virtual void calculateEffectSubRegion(FilterEffect*);
+        virtual void determineFilterPrimitiveSubregion(FilterEffect*, const FloatRect&);
 
     private:
-        SVGFilter(const FloatRect& itemBox, const FloatRect& filterRect, bool effectBBoxMode);
+        SVGFilter(const FloatRect& targetBoundingBox, const FloatRect& filterRect, bool effectBBoxMode);
 
         FloatSize m_maxImageSize;
-        FloatRect m_itemBox;
+        FloatRect m_targetBoundingBox;
         FloatRect m_filterRect;
         bool m_effectBBoxMode;
     };

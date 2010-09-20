@@ -1,3 +1,187 @@
+2010-09-20  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG Filter cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=45612
+        
+        All effect inputs are stored in a Vector in FilterEffect instead of passing them via constructors to every effect type.
+        This simplifies the primitive subregion logic and centralizes it in determineFilterPrimitiveSubregion.
+        Just SourceGraphic, SourceAlpha and FETile still calculate filter primitive subregions on
+        their own. Working on it in a followup patch.
+        The subregions code is SVG specific and moving this calculation to FilterEffect is an
+        intermediate step before moving it to RenderSVGResourceFilterPrimitive in a following patch.
+        The new FilterEffectVector will also make it possible to add code to determine the
+        smallest used region of an effect and will help save memory and resources in the future.
+        subRegion got renamed to filterPrimitiveSubregion to match the name scheme. scaledSubRegion got
+        renamed to repaintRectInLocalCoordinates since this is its proper meaning.
+        Removed unnecessary member variables and functions from FilterEffect.
+
+        No new tests added since the functionality didn't change.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp: scaledSubRegion was renamed to repaintRectInLocalCoordinates.
+        (WebCore::GraphicsContext::createShadowMask):
+        * platform/graphics/filters/FEBlend.cpp: Removed Filter effect inputs from constructor.
+        (WebCore::FEBlend::FEBlend):
+        (WebCore::FEBlend::create):
+        (WebCore::FEBlend::apply): Call inputFilterEffects to get input filter primitives.
+        (WebCore::FEBlend::externalRepresentation): Call inputFilterEffects to get input filter primitives.
+        * platform/graphics/filters/FEBlend.h:
+        * platform/graphics/filters/FEColorMatrix.cpp: Ditto.
+        (WebCore::FEColorMatrix::FEColorMatrix):
+        (WebCore::FEColorMatrix::create):
+        (WebCore::FEColorMatrix::apply):
+        (WebCore::FEColorMatrix::externalRepresentation):
+        * platform/graphics/filters/FEColorMatrix.h:
+        * platform/graphics/filters/FEComponentTransfer.cpp: Ditto.
+        (WebCore::FEComponentTransfer::FEComponentTransfer):
+        (WebCore::FEComponentTransfer::create):
+        (WebCore::FEComponentTransfer::apply):
+        (WebCore::FEComponentTransfer::externalRepresentation):
+        * platform/graphics/filters/FEComponentTransfer.h:
+        * platform/graphics/filters/FEComposite.cpp: Ditto.
+        (WebCore::FEComposite::FEComposite):
+        (WebCore::FEComposite::create):
+        (WebCore::FEComposite::apply):
+        (WebCore::FEComposite::externalRepresentation):
+        * platform/graphics/filters/FEComposite.h:
+        * platform/graphics/filters/FEGaussianBlur.cpp: Ditto.
+        (WebCore::FEGaussianBlur::FEGaussianBlur):
+        (WebCore::FEGaussianBlur::create):
+        (WebCore::FEGaussianBlur::apply):
+        (WebCore::FEGaussianBlur::externalRepresentation):
+        * platform/graphics/filters/FEGaussianBlur.h:
+        * platform/graphics/filters/Filter.h:
+        (WebCore::Filter::determineFilterPrimitiveSubregion): Renamed from calculateEffectSubRegion to match name scheme.
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::FilterEffect):
+        (WebCore::FilterEffect::determineFilterPrimitiveSubregion): The main place for subregion calculation.
+        (WebCore::FilterEffect::calculateDrawingIntRect): Takes repaintRectInLocalCoordinates now.
+        (WebCore::FilterEffect::calculateDrawingRect): ditto.
+        (WebCore::FilterEffect::getEffectContext): Check if ImageBuffer was created.
+        * platform/graphics/filters/FilterEffect.h: Changed names to match name scheme. Removed unnecessary member variables and functions.
+            Seperate SVG specific member variables and functions. Will get removed in followup patches.
+        (WebCore::FilterEffect::resultImage):
+        (WebCore::FilterEffect::setEffectBuffer):
+        (WebCore::FilterEffect::inputEffect):
+        (WebCore::FilterEffect::inputEffects):
+        (WebCore::FilterEffect::numberOfinputEffects):
+        (WebCore::FilterEffect::isAlphaImage):
+        (WebCore::FilterEffect::setIsAlphaImage):
+        (WebCore::FilterEffect::repaintRectInLocalCoordinates):
+        (WebCore::FilterEffect::setRepaintRectInLocalCoordinates):
+        (WebCore::FilterEffect::isSourceInput):
+        (WebCore::FilterEffect::hasX):
+        (WebCore::FilterEffect::setHasX):
+        (WebCore::FilterEffect::hasY):
+        (WebCore::FilterEffect::setHasY):
+        (WebCore::FilterEffect::hasWidth):
+        (WebCore::FilterEffect::setHasWidth):
+        (WebCore::FilterEffect::hasHeight):
+        (WebCore::FilterEffect::setHasHeight):
+        (WebCore::FilterEffect::filterPrimitiveSubregion):
+        (WebCore::FilterEffect::setFilterPrimitiveSubregion):
+        (WebCore::FilterEffect::effectBoundaries):
+        (WebCore::FilterEffect::setEffectBoundaries):
+        * platform/graphics/filters/SourceAlpha.cpp:
+        (WebCore::SourceAlpha::determineFilterPrimitiveSubregion): Renamed to match name scheme.
+        * platform/graphics/filters/SourceAlpha.h:
+        (WebCore::SourceAlpha::isSourceInput):
+        * platform/graphics/filters/SourceGraphic.cpp:
+        (WebCore::SourceGraphic::determineFilterPrimitiveSubregion): Ditto.
+        * platform/graphics/filters/SourceGraphic.h:
+        (WebCore::SourceGraphic::isSourceInput):
+        * rendering/RenderSVGResourceFilter.cpp: Adapt to renames in FilterEffect.
+        (WebCore::RenderSVGResourceFilter::applyResource):
+        (WebCore::RenderSVGResourceFilter::postApplyResource):
+        * svg/SVGFEBlendElement.cpp: Constructor of FEBlend doesn't take input effects. Adding them afterwards.
+        (WebCore::SVGFEBlendElement::build):
+        * svg/SVGFEColorMatrixElement.cpp: Ditto.
+        (WebCore::SVGFEColorMatrixElement::build):
+        * svg/SVGFEComponentTransferElement.cpp: Ditto.
+        (WebCore::SVGFEComponentTransferElement::build):
+        * svg/SVGFECompositeElement.cpp: Ditto.
+        (WebCore::SVGFECompositeElement::build):
+        * svg/SVGFEConvolveMatrixElement.cpp: Ditto.
+        (WebCore::SVGFEConvolveMatrixElement::build):
+        * svg/SVGFEDiffuseLightingElement.cpp: Ditto.
+        (WebCore::SVGFEDiffuseLightingElement::build):
+        * svg/SVGFEDisplacementMapElement.cpp: Ditto.
+        (WebCore::SVGFEDisplacementMapElement::build):
+        * svg/SVGFEGaussianBlurElement.cpp: Ditto.
+        (WebCore::SVGFEGaussianBlurElement::build):
+        * svg/SVGFEMergeElement.cpp: Ditto.
+        (WebCore::SVGFEMergeElement::build):
+        * svg/SVGFEMorphologyElement.cpp: Ditto.
+        (WebCore::SVGFEMorphologyElement::build):
+        * svg/SVGFEOffsetElement.cpp: Ditto.
+        (WebCore::SVGFEOffsetElement::build):
+        * svg/SVGFESpecularLightingElement.cpp: Ditto.
+        (WebCore::SVGFESpecularLightingElement::build):
+        * svg/SVGFETileElement.cpp: Ditto.
+        (WebCore::SVGFETileElement::build):
+        * svg/graphics/filters/SVGFEConvolveMatrix.cpp: Ditto.
+        (WebCore::FEConvolveMatrix::FEConvolveMatrix):
+        (WebCore::FEConvolveMatrix::create):
+        (WebCore::FEConvolveMatrix::apply):
+        (WebCore::FEConvolveMatrix::externalRepresentation):
+        * svg/graphics/filters/SVGFEConvolveMatrix.h:
+        * svg/graphics/filters/SVGFEDiffuseLighting.cpp: Ditto.
+        (WebCore::FEDiffuseLighting::FEDiffuseLighting):
+        (WebCore::FEDiffuseLighting::create):
+        (WebCore::FEDiffuseLighting::externalRepresentation):
+        * svg/graphics/filters/SVGFEDiffuseLighting.h:
+        * svg/graphics/filters/SVGFEDisplacementMap.cpp: Ditto.
+        (WebCore::FEDisplacementMap::FEDisplacementMap):
+        (WebCore::FEDisplacementMap::create):
+        (WebCore::FEDisplacementMap::apply):
+        (WebCore::FEDisplacementMap::externalRepresentation):
+        * svg/graphics/filters/SVGFEDisplacementMap.h:
+        * svg/graphics/filters/SVGFEFlood.cpp: Ditto.
+        (WebCore::FEFlood::apply):
+        * svg/graphics/filters/SVGFEImage.cpp: Ditto.
+        (WebCore::FEImage::apply):
+        * svg/graphics/filters/SVGFELighting.cpp: Ditto.
+        (WebCore::FELighting::FELighting):
+        (WebCore::FELighting::apply):
+        * svg/graphics/filters/SVGFELighting.h:
+        * svg/graphics/filters/SVGFEMerge.cpp: Ditto.
+        (WebCore::FEMerge::FEMerge):
+        (WebCore::FEMerge::create):
+        (WebCore::FEMerge::apply):
+        (WebCore::FEMerge::externalRepresentation):
+        * svg/graphics/filters/SVGFEMerge.h:
+        * svg/graphics/filters/SVGFEMorphology.cpp: Ditto.
+        (WebCore::FEMorphology::FEMorphology):
+        (WebCore::FEMorphology::create):
+        (WebCore::FEMorphology::apply):
+        (WebCore::FEMorphology::externalRepresentation):
+        * svg/graphics/filters/SVGFEMorphology.h:
+        * svg/graphics/filters/SVGFEOffset.cpp: Ditto.
+        (WebCore::FEOffset::FEOffset):
+        (WebCore::FEOffset::create):
+        (WebCore::FEOffset::apply):
+        (WebCore::FEOffset::externalRepresentation):
+        * svg/graphics/filters/SVGFEOffset.h:
+        * svg/graphics/filters/SVGFESpecularLighting.cpp: Ditto.
+        (WebCore::FESpecularLighting::FESpecularLighting):
+        (WebCore::FESpecularLighting::create):
+        (WebCore::FESpecularLighting::externalRepresentation):
+        * svg/graphics/filters/SVGFESpecularLighting.h:
+        * svg/graphics/filters/SVGFETile.cpp: Ditto.
+        (WebCore::FETile::FETile):
+        (WebCore::FETile::create):
+        (WebCore::FETile::determineFilterPrimitiveSubregion): Renamed to match name scheme.
+        (WebCore::FETile::apply):
+        (WebCore::FETile::externalRepresentation):
+        * svg/graphics/filters/SVGFETile.h:
+        * svg/graphics/filters/SVGFilter.cpp: Renamed itemBox to targetBoundingBox to match name scheme.
+        (WebCore::SVGFilter::SVGFilter):
+        (WebCore::SVGFilter::determineFilterPrimitiveSubregion): Renamed to match name scheme.
+        (WebCore::SVGFilter::create):
+        * svg/graphics/filters/SVGFilter.h:
+        (WebCore::SVGFilter::sourceImageRect):
+
 2010-09-20  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

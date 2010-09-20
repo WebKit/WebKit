@@ -38,17 +38,16 @@ static const float gGaussianKernelFactor = (3 * sqrtf(2 * piFloat) / 4.f);
 
 namespace WebCore {
 
-FEGaussianBlur::FEGaussianBlur(FilterEffect* in, const float& x, const float& y)
+FEGaussianBlur::FEGaussianBlur(float x, float y)
     : FilterEffect()
-    , m_in(in)
     , m_stdX(x)
     , m_stdY(y)
 {
 }
 
-PassRefPtr<FEGaussianBlur> FEGaussianBlur::create(FilterEffect* in, const float& x, const float& y)
+PassRefPtr<FEGaussianBlur> FEGaussianBlur::create(float x, float y)
 {
-    return adoptRef(new FEGaussianBlur(in, x, y));
+    return adoptRef(new FEGaussianBlur(x, y));
 }
 
 float FEGaussianBlur::stdDeviationX() const
@@ -128,17 +127,18 @@ void FEGaussianBlur::kernelPosition(int boxBlur, unsigned& std, int& dLeft, int&
 
 void FEGaussianBlur::apply(Filter* filter)
 {
-    m_in->apply(filter);
-    if (!m_in->resultImage())
+    FilterEffect* in = inputEffect(0);
+    in->apply(filter);
+    if (!in->resultImage())
         return;
 
     if (!getEffectContext())
         return;
 
-    setIsAlphaImage(m_in->isAlphaImage());
+    setIsAlphaImage(in->isAlphaImage());
 
-    IntRect effectDrawingRect = calculateDrawingIntRect(m_in->scaledSubRegion());
-    RefPtr<ImageData> srcImageData(m_in->resultImage()->getPremultipliedImageData(effectDrawingRect));
+    IntRect effectDrawingRect = calculateDrawingIntRect(in->repaintRectInLocalCoordinates());
+    RefPtr<ImageData> srcImageData(in->resultImage()->getPremultipliedImageData(effectDrawingRect));
     IntRect imageRect(IntPoint(), resultImage()->size());
 
     if (!m_stdX && !m_stdY) {
@@ -196,7 +196,7 @@ TextStream& FEGaussianBlur::externalRepresentation(TextStream& ts, int indent) c
     ts << "[feGaussianBlur";
     FilterEffect::externalRepresentation(ts);
     ts << " stdDeviation=\"" << m_stdX << ", " << m_stdY << "\"]\n";
-    m_in->externalRepresentation(ts, indent + 1);
+    inputEffect(0)->externalRepresentation(ts, indent + 1);
     return ts;
 }
 

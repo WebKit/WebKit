@@ -37,18 +37,17 @@ using std::max;
 
 namespace WebCore {
 
-FEMorphology::FEMorphology(FilterEffect* in, MorphologyOperatorType type, float radiusX, float radiusY)
+FEMorphology::FEMorphology(MorphologyOperatorType type, float radiusX, float radiusY)
     : FilterEffect()
-    , m_in(in)
     , m_type(type)
     , m_radiusX(radiusX)
     , m_radiusY(radiusY)
 {
 }
 
-PassRefPtr<FEMorphology> FEMorphology::create(FilterEffect* in, MorphologyOperatorType type, float radiusX, float radiusY)
+PassRefPtr<FEMorphology> FEMorphology::create(MorphologyOperatorType type, float radiusX, float radiusY)
 {
-    return adoptRef(new FEMorphology(in, type, radiusX, radiusY));
+    return adoptRef(new FEMorphology(type, radiusX, radiusY));
 }
 
 MorphologyOperatorType FEMorphology::morphologyOperator() const
@@ -83,14 +82,15 @@ void FEMorphology::setRadiusY(float radiusY)
 
 void FEMorphology::apply(Filter* filter)
 {
-    m_in->apply(filter);
-    if (!m_in->resultImage())
+    FilterEffect* in = inputEffect(0);
+    in->apply(filter);
+    if (!in->resultImage())
         return;
-    
+
     if (!getEffectContext())
         return;
 
-    setIsAlphaImage(m_in->isAlphaImage());
+    setIsAlphaImage(in->isAlphaImage());
 
     int radiusX = static_cast<int>(m_radiusX * filter->filterResolution().width());
     int radiusY = static_cast<int>(m_radiusY * filter->filterResolution().height());
@@ -98,8 +98,8 @@ void FEMorphology::apply(Filter* filter)
         return;
 
     IntRect imageRect(IntPoint(), resultImage()->size());
-    IntRect effectDrawingRect = calculateDrawingIntRect(m_in->scaledSubRegion());
-    RefPtr<CanvasPixelArray> srcPixelArray(m_in->resultImage()->getPremultipliedImageData(effectDrawingRect)->data());
+    IntRect effectDrawingRect = calculateDrawingIntRect(in->repaintRectInLocalCoordinates());
+    RefPtr<CanvasPixelArray> srcPixelArray(in->resultImage()->getPremultipliedImageData(effectDrawingRect)->data());
     RefPtr<ImageData> imageData = ImageData::create(imageRect.width(), imageRect.height());
 
     int effectWidth = effectDrawingRect.width() * 4;
@@ -179,8 +179,8 @@ TextStream& FEMorphology::externalRepresentation(TextStream& ts, int indent) con
     ts << "[feMorphology";
     FilterEffect::externalRepresentation(ts);
     ts << " operator=\"" << morphologyOperator() << "\" "
-       << "radius=\"" << radiusX() << ", " << radiusY() << "\"]\n";     
-    m_in->externalRepresentation(ts, indent + 1);
+       << "radius=\"" << radiusX() << ", " << radiusY() << "\"]\n";    
+    inputEffect(0)->externalRepresentation(ts, indent + 1);
     return ts;
 }
 

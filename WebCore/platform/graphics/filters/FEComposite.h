@@ -42,8 +42,7 @@ enum CompositeOperationType {
 
 class FEComposite : public FilterEffect {
 public:
-    static PassRefPtr<FEComposite> create(FilterEffect*, FilterEffect*, const CompositeOperationType&,
-            const float&, const float&, const float&, const float&);
+    static PassRefPtr<FEComposite> create(const CompositeOperationType&, float, float, float, float);
 
     CompositeOperationType operation() const;
     void setOperation(CompositeOperationType);
@@ -60,17 +59,13 @@ public:
     float k4() const;
     void setK4(float);
 
-    virtual FloatRect uniteChildEffectSubregions(Filter* filter) { return calculateUnionOfChildEffectSubregions(filter, m_in.get(), m_in2.get()); }
     void apply(Filter*);
     void dump();
     TextStream& externalRepresentation(TextStream&, int indent) const;
 
 private:
-    FEComposite(FilterEffect*, FilterEffect*, const CompositeOperationType&,
-            const float&, const float&, const float&, const float&);
+    FEComposite(const CompositeOperationType&, float, float, float, float);
 
-    RefPtr<FilterEffect> m_in;
-    RefPtr<FilterEffect> m_in2;
     CompositeOperationType m_type;
     float m_k1;
     float m_k2;

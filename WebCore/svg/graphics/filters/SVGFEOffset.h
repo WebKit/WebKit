@@ -30,7 +30,7 @@ namespace WebCore {
 
     class FEOffset : public FilterEffect {
     public:
-        static PassRefPtr<FEOffset> create(FilterEffect*, const float&, const float&);
+        static PassRefPtr<FEOffset> create(float, float);
 
         float dx() const;
         void setDx(float);
@@ -38,15 +38,13 @@ namespace WebCore {
         float dy() const;
         void setDy(float);
 
-        virtual FloatRect uniteChildEffectSubregions(Filter* filter) { return calculateUnionOfChildEffectSubregions(filter, m_in.get()); }
         void apply(Filter*);
         void dump();
         TextStream& externalRepresentation(TextStream&, int indent) const;
 
     private:
-        FEOffset(FilterEffect*, const float&, const float&);
+        FEOffset(float, float);
 
-        RefPtr<FilterEffect> m_in;
         float m_dx;
         float m_dy;
     };

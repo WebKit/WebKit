@@ -40,24 +40,18 @@ namespace WebCore {
 
     class FEBlend : public FilterEffect {
     public:
-        static PassRefPtr<FEBlend> create(FilterEffect*, FilterEffect*, BlendModeType);
-
-        FilterEffect* in2() const;
-        void setIn2(FilterEffect*);
+        static PassRefPtr<FEBlend> create(BlendModeType);
 
         BlendModeType blendMode() const;
         void setBlendMode(BlendModeType);
 
-        virtual FloatRect uniteChildEffectSubregions(Filter* filter) { return calculateUnionOfChildEffectSubregions(filter, m_in.get(), m_in2.get()); }
         void apply(Filter*);
         void dump();
         TextStream& externalRepresentation(TextStream&, int indent) const;
 
     private:
-        FEBlend(FilterEffect*, FilterEffect*, BlendModeType);
+        FEBlend(BlendModeType);
 
-        RefPtr<FilterEffect> m_in;
-        RefPtr<FilterEffect> m_in2;
         BlendModeType m_mode;
     };
 

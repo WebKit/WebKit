@@ -30,17 +30,16 @@ namespace WebCore {
     
     class FETile : public FilterEffect {
     public:
-        static PassRefPtr<FETile> create(FilterEffect*);
+        static PassRefPtr<FETile> create();
 
-        virtual FloatRect uniteChildEffectSubregions(Filter*);
         void apply(Filter*);
         void dump();
         TextStream& externalRepresentation(TextStream&, int indent) const;
+
+        virtual FloatRect determineFilterPrimitiveSubregion(Filter*);
         
     private:
-        FETile(FilterEffect*);
-        
-        RefPtr<FilterEffect> m_in;
+        FETile();
     };
 
 } // namespace WebCore

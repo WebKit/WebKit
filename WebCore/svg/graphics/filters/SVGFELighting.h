@@ -42,7 +42,6 @@ class CanvasPixelArray;
 
 class FELighting : public FilterEffect {
 public:
-    virtual FloatRect uniteChildEffectSubregions(Filter* filter) { return calculateUnionOfChildEffectSubregions(filter, m_in.get()); }
     void apply(Filter*);
 
 protected:
@@ -72,15 +71,13 @@ protected:
         ALWAYS_INLINE int downRightPixelValue();
     };
 
-    FELighting(LightingType, FilterEffect*, const Color&, float, float, float,
-        float, float, float, PassRefPtr<LightSource>);
+    FELighting(LightingType, const Color&, float, float, float, float, float, float, PassRefPtr<LightSource>);
 
     bool drawLighting(CanvasPixelArray*, int, int);
     ALWAYS_INLINE void setPixel(LightingData&, LightSource::PaintingData&,
         int lightX, int lightY, float factorX, int normalX, float factorY, int normalY);
 
     LightingType m_lightingType;
-    RefPtr<FilterEffect> m_in;
     RefPtr<LightSource> m_lightSource;
 
     Color m_lightingColor;

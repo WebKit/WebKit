@@ -151,10 +151,12 @@ PassRefPtr<FilterEffect> SVGFEConvolveMatrixElement::build(SVGFilterBuilder* fil
             divisorValue = 1;
     }
 
-    return FEConvolveMatrix::create(
-        input1, IntSize(orderXValue, orderYValue), divisorValue,
-        bias(), IntPoint(targetXValue, targetYValue), static_cast<EdgeModeType>(edgeMode()),
-        FloatPoint(kernelUnitLengthX(), kernelUnitLengthX()), preserveAlpha(), kernelMatrixValues);
+    RefPtr<FilterEffect> effect = FEConvolveMatrix::create(
+                    IntSize(orderXValue, orderYValue), divisorValue,
+                    bias(), IntPoint(targetXValue, targetYValue), static_cast<EdgeModeType>(edgeMode()),
+                    FloatPoint(kernelUnitLengthX(), kernelUnitLengthX()), preserveAlpha(), kernelMatrixValues);
+    effect->inputEffects().append(input1);
+    return effect.release();
 }
 
 } // namespace WebCore

@@ -24,60 +24,64 @@
 
 namespace WebCore {
 
-SVGFilter::SVGFilter(const FloatRect& itemBox, const FloatRect& filterRect, bool effectBBoxMode)
+SVGFilter::SVGFilter(const FloatRect& targetBoundingBox, const FloatRect& filterRect, bool effectBBoxMode)
     : Filter()
-    , m_itemBox(itemBox)
+    , m_targetBoundingBox(targetBoundingBox)
     , m_filterRect(filterRect)
     , m_effectBBoxMode(effectBBoxMode)
 {
 }
 
-void SVGFilter::calculateEffectSubRegion(FilterEffect* effect)
+void SVGFilter::determineFilterPrimitiveSubregion(FilterEffect* effect, const FloatRect& unionOfPreviousPrimitiveSubregions)
 {
     FloatRect subRegionBBox = effect->effectBoundaries();
-    FloatRect useBBox = effect->unionOfChildEffectSubregions();
     FloatRect newSubRegion = subRegionBBox;
 
     if (m_effectBBoxMode) {
-        newSubRegion = useBBox;
+        newSubRegion = unionOfPreviousPrimitiveSubregions;
 
         if (effect->hasX())
-            newSubRegion.setX(m_itemBox.x() + subRegionBBox.x() * m_itemBox.width());
+            newSubRegion.setX(m_targetBoundingBox.x() + subRegionBBox.x() * m_targetBoundingBox.width());
 
-        if (effect->hasY())
-            newSubRegion.setY(m_itemBox.y() + subRegionBBox.y() * m_itemBox.height());
+       if (effect->hasY())
+            newSubRegion.setY(m_targetBoundingBox.y() + subRegionBBox.y() * m_targetBoundingBox.height());
 
         if (effect->hasWidth())
-            newSubRegion.setWidth(subRegionBBox.width() * m_itemBox.width());
+            newSubRegion.setWidth(subRegionBBox.width() * m_targetBoundingBox.width());
 
         if (effect->hasHeight())
-            newSubRegion.setHeight(subRegionBBox.height() * m_itemBox.height());
+            newSubRegion.setHeight(subRegionBBox.height() * m_targetBoundingBox.height());
     } else {
         if (!effect->hasX())
-            newSubRegion.setX(useBBox.x());
+            newSubRegion.setX(unionOfPreviousPrimitiveSubregions.x());
 
         if (!effect->hasY())
-            newSubRegion.setY(useBBox.y());
+            newSubRegion.setY(unionOfPreviousPrimitiveSubregions.y());
 
         if (!effect->hasWidth())
-            newSubRegion.setWidth(useBBox.width());
+            newSubRegion.setWidth(unionOfPreviousPrimitiveSubregions.width());
 
         if (!effect->hasHeight())
-            newSubRegion.setHeight(useBBox.height());
+            newSubRegion.setHeight(unionOfPreviousPrimitiveSubregions.height());
     }
 
     // clip every filter effect to the filter region
     newSubRegion.intersect(m_filterRect);
 
-    effect->setSubRegion(newSubRegion);
+    effect->setFilterPrimitiveSubregion(newSubRegion);
+    
+    // TODO: Everything above should be moved to a first phase of layout in RenderSVGResourceFilterPrimitive.
+    // The scaling of the subregion to the repaint rect should be merged with a more intelligent repaint logic
+    // and moved to the second phase of layout in RenderSVGResourceFilterPrimitive.
+    // See bug https://bugs.webkit.org/show_bug.cgi?id=45614.
     newSubRegion.scale(filterResolution().width(), filterResolution().height());
-    effect->setScaledSubRegion(newSubRegion);
+    effect->setRepaintRectInLocalCoordinates(newSubRegion);
     m_maxImageSize = m_maxImageSize.expandedTo(newSubRegion.size()); 
 }
 
-PassRefPtr<SVGFilter> SVGFilter::create(const FloatRect& itemBox, const FloatRect& filterRect, bool effectBBoxMode)
+PassRefPtr<SVGFilter> SVGFilter::create(const FloatRect& targetBoundingBox, const FloatRect& filterRect, bool effectBBoxMode)
 {
-    return adoptRef(new SVGFilter(itemBox, filterRect, effectBBoxMode));
+    return adoptRef(new SVGFilter(targetBoundingBox, filterRect, effectBBoxMode));
 }
 
 } // namespace WebCore

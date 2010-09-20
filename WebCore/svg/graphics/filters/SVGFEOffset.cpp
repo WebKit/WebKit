@@ -31,17 +31,16 @@
 
 namespace WebCore {
 
-FEOffset::FEOffset(FilterEffect* in, const float& dx, const float& dy)
+FEOffset::FEOffset(float dx, float dy)
     : FilterEffect()
-    , m_in(in)
     , m_dx(dx)
     , m_dy(dy)
 {
 }
 
-PassRefPtr<FEOffset> FEOffset::create(FilterEffect* in, const float& dx, const float& dy)
+PassRefPtr<FEOffset> FEOffset::create(float dx, float dy)
 {
-    return adoptRef(new FEOffset(in, dx, dy));
+    return adoptRef(new FEOffset(dx, dy));
 }
 
 float FEOffset::dx() const
@@ -66,15 +65,16 @@ void FEOffset::setDy(float dy)
 
 void FEOffset::apply(Filter* filter)
 {
-    m_in->apply(filter);
-    if (!m_in->resultImage())
+    FilterEffect* in = inputEffect(0);
+    in->apply(filter);
+    if (!in->resultImage())
         return;
 
     GraphicsContext* filterContext = getEffectContext();
     if (!filterContext)
         return;
 
-    setIsAlphaImage(m_in->isAlphaImage());
+    setIsAlphaImage(in->isAlphaImage());
 
     FloatRect sourceImageRect = filter->sourceImageRect();
     sourceImageRect.scale(filter->filterResolution().width(), filter->filterResolution().height());
@@ -86,12 +86,12 @@ void FEOffset::apply(Filter* filter)
     m_dx *= filter->filterResolution().width();
     m_dy *= filter->filterResolution().height();
 
-    FloatRect dstRect = FloatRect(m_dx + m_in->scaledSubRegion().x() - scaledSubRegion().x(),
-                                  m_dy + m_in->scaledSubRegion().y() - scaledSubRegion().y(),
-                                  m_in->scaledSubRegion().width(),
-                                  m_in->scaledSubRegion().height());
+    FloatRect dstRect = FloatRect(m_dx + in->repaintRectInLocalCoordinates().x() - repaintRectInLocalCoordinates().x(),
+                                  m_dy + in->repaintRectInLocalCoordinates().y() - repaintRectInLocalCoordinates().y(),
+                                  in->repaintRectInLocalCoordinates().width(),
+                                  in->repaintRectInLocalCoordinates().height());
 
-    filterContext->drawImageBuffer(m_in->resultImage(), DeviceColorSpace, dstRect);
+    filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, dstRect);
 }
 
 void FEOffset::dump()
@@ -104,7 +104,7 @@ TextStream& FEOffset::externalRepresentation(TextStream& ts, int indent) const
     ts << "[feOffset"; 
     FilterEffect::externalRepresentation(ts);
     ts << " dx=\"" << dx() << "\" dy=\"" << dy() << "\"]\n";
-    m_in->externalRepresentation(ts, indent + 1);
+    inputEffect(0)->externalRepresentation(ts, indent + 1);
     return ts;
 }
 

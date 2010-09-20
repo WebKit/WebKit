@@ -1,21 +1,23 @@
 /*
-    Copyright (C) Alex Mathews <possessedpenguinbob@gmail.com>
-
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Library General Public
-    License as published by the Free Software Foundation; either
-    version 2 of the License, or (at your option) any later version.
-
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Library General Public License for more details.
-
-    You should have received a copy of the GNU Library General Public License
-    aint with this library; see the file COPYING.LIB.  If not, write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA 02110-1301, USA.
-*/
+ * Copyright (C) 2008 Alex Mathews <possessedpenguinbob@gmail.com>
+ * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
 
 #include "config.h"
 
@@ -25,11 +27,11 @@
 namespace WebCore {
 
 FilterEffect::FilterEffect()
-    : m_hasX(false)
+    : m_alphaImage(false)
+    , m_hasX(false)
     , m_hasY(false)
     , m_hasWidth(false)
     , m_hasHeight(false)
-    , m_alphaImage(false)
 {
 }
 
@@ -37,43 +39,49 @@ FilterEffect::~FilterEffect()
 {
 }
 
-FloatRect FilterEffect::calculateUnionOfChildEffectSubregions(Filter* filter, FilterEffect* in)
+FloatRect FilterEffect::determineFilterPrimitiveSubregion(Filter* filter)
 {
-    return in->calculateEffectRect(filter);
+    FloatRect uniteRect;
+    unsigned size = m_inputEffects.size();
+
+    // FETurbulence, FEImage and FEFlood don't have input effects, take the filter region as unite rect.
+    if (!size)
+        uniteRect = filter->filterRegion();
+    else {
+        for (unsigned i = 0; i < size; ++i)
+            uniteRect.unite(m_inputEffects.at(i)->determineFilterPrimitiveSubregion(filter));
+    }
+
+    filter->determineFilterPrimitiveSubregion(this, uniteRect);
+    return m_filterPrimitiveSubregion;
 }
 
-FloatRect FilterEffect::calculateUnionOfChildEffectSubregions(Filter* filter, FilterEffect* in, FilterEffect* in2)
+IntRect FilterEffect::calculateDrawingIntRect(const FloatRect& effectRect) const
 {
-    FloatRect uniteEffectRect = in->calculateEffectRect(filter);
-    uniteEffectRect.unite(in2->calculateEffectRect(filter));
-    return uniteEffectRect;
+    ASSERT(m_effectBuffer);
+    FloatPoint location = m_repaintRectInLocalCoordinates.location();
+    location.move(-effectRect.x(), -effectRect.y());
+    return IntRect(roundedIntPoint(location), m_effectBuffer->size());
 }
 
-FloatRect FilterEffect::calculateEffectRect(Filter* filter)
+FloatRect FilterEffect::calculateDrawingRect(const FloatRect& srcRect) const
 {
-    setUnionOfChildEffectSubregions(uniteChildEffectSubregions(filter));
-    filter->calculateEffectSubRegion(this);
-    return subRegion();
+    return FloatRect(FloatPoint(srcRect.x() - m_repaintRectInLocalCoordinates.x(),
+                                srcRect.y() - m_repaintRectInLocalCoordinates.y()), srcRect.size());
 }
 
-IntRect FilterEffect::calculateDrawingIntRect(const FloatRect& effectRect)
+FilterEffect* FilterEffect::inputEffect(unsigned number) const
 {
-    IntPoint location = roundedIntPoint(FloatPoint(scaledSubRegion().x() - effectRect.x(),
-                                                   scaledSubRegion().y() - effectRect.y()));
-    return IntRect(location, resultImage()->size());
-}
-
-FloatRect FilterEffect::calculateDrawingRect(const FloatRect& srcRect)
-{
-    FloatPoint startPoint = FloatPoint(srcRect.x() - scaledSubRegion().x(), srcRect.y() - scaledSubRegion().y());
-    FloatRect drawingRect = FloatRect(startPoint, srcRect.size());
-    return drawingRect;
+    ASSERT(number < m_inputEffects.size());
+    return m_inputEffects.at(number).get();
 }
 
 GraphicsContext* FilterEffect::getEffectContext()
 {
-    IntRect bufferRect = enclosingIntRect(scaledSubRegion());
+    IntRect bufferRect = enclosingIntRect(m_repaintRectInLocalCoordinates);
     m_effectBuffer = ImageBuffer::create(bufferRect.size(), LinearRGB);
+    if (!m_effectBuffer)
+        return 0;
     return m_effectBuffer->context();
 }
 

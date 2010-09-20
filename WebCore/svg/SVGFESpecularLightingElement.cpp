@@ -118,9 +118,11 @@ PassRefPtr<FilterEffect> SVGFESpecularLightingElement::build(SVGFilterBuilder* f
     RefPtr<RenderStyle> filterStyle = styleForRenderer();    
     
     Color color = filterStyle->svgStyle()->lightingColor();
-    
-    return FESpecularLighting::create(input1, color, surfaceScale(), specularConstant(), 
-                                      specularExponent(), kernelUnitLengthX(), kernelUnitLengthY(), findLights());
+
+    RefPtr<FilterEffect> effect = FESpecularLighting::create(color, surfaceScale(), specularConstant(), 
+                                          specularExponent(), kernelUnitLengthX(), kernelUnitLengthY(), findLights());
+    effect->inputEffects().append(input1);
+    return effect.release();
 }
 
 }

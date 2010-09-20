@@ -39,8 +39,7 @@ namespace WebCore {
     
     class FEDisplacementMap : public FilterEffect {
     public:
-        static PassRefPtr<FEDisplacementMap> create(FilterEffect*, FilterEffect*, ChannelSelectorType,
-                ChannelSelectorType, const float&);
+        static PassRefPtr<FEDisplacementMap> create(ChannelSelectorType, ChannelSelectorType, float);
 
         ChannelSelectorType xChannelSelector() const;
         void setXChannelSelector(const ChannelSelectorType);
@@ -51,17 +50,13 @@ namespace WebCore {
         float scale() const;
         void setScale(float scale);
 
-        virtual FloatRect uniteChildEffectSubregions(Filter* filter) { return calculateUnionOfChildEffectSubregions(filter, m_in.get(), m_in2.get()); }
         void apply(Filter*);
         void dump();
         TextStream& externalRepresentation(TextStream&, int indent) const;
 
     private:
-        FEDisplacementMap(FilterEffect*, FilterEffect*, ChannelSelectorType,
-            ChannelSelectorType, const float&);
+        FEDisplacementMap(ChannelSelectorType, ChannelSelectorType, float);
 
-        RefPtr<FilterEffect> m_in;
-        RefPtr<FilterEffect> m_in2;
         ChannelSelectorType m_xChannelSelector;
         ChannelSelectorType m_yChannelSelector;
         float m_scale;

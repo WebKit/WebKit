@@ -41,16 +41,16 @@ const AtomicString& SourceGraphic::effectName()
     return s_effectName;
 }
 
-FloatRect SourceGraphic::calculateEffectRect(Filter* filter)
+FloatRect SourceGraphic::determineFilterPrimitiveSubregion(Filter* filter)
 {
     FloatRect clippedSourceRect = filter->sourceImageRect();
     if (filter->sourceImageRect().x() < filter->filterRegion().x())
         clippedSourceRect.setX(filter->filterRegion().x());
     if (filter->sourceImageRect().y() < filter->filterRegion().y())
         clippedSourceRect.setY(filter->filterRegion().y());
-    setSubRegion(clippedSourceRect);
+    setFilterPrimitiveSubregion(clippedSourceRect);
     clippedSourceRect.scale(filter->filterResolution().width(), filter->filterResolution().height());
-    setScaledSubRegion(clippedSourceRect);
+    setRepaintRectInLocalCoordinates(clippedSourceRect);
     return filter->filterRegion();
 }
 

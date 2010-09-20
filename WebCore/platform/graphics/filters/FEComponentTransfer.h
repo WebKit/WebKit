@@ -63,7 +63,7 @@ namespace WebCore {
 
     class FEComponentTransfer : public FilterEffect {
     public:
-        static PassRefPtr<FEComponentTransfer> create(FilterEffect*, const ComponentTransferFunction&, 
+        static PassRefPtr<FEComponentTransfer> create(const ComponentTransferFunction&, 
                 const ComponentTransferFunction&, const ComponentTransferFunction&, const ComponentTransferFunction&);
 
         ComponentTransferFunction redFunction() const;
@@ -78,16 +78,14 @@ namespace WebCore {
         ComponentTransferFunction alphaFunction() const;
         void setAlphaFunction(const ComponentTransferFunction&);
 
-        virtual FloatRect uniteChildEffectSubregions(Filter* filter) { return calculateUnionOfChildEffectSubregions(filter, m_in.get()); }
         void apply(Filter*);
         void dump();
         TextStream& externalRepresentation(TextStream&, int indent) const;
 
     private:
-        FEComponentTransfer(FilterEffect*,const ComponentTransferFunction&, const ComponentTransferFunction&,
-                const ComponentTransferFunction&, const ComponentTransferFunction&);
+        FEComponentTransfer(const ComponentTransferFunction&, const ComponentTransferFunction&,
+                            const ComponentTransferFunction&, const ComponentTransferFunction&);
 
-        RefPtr<FilterEffect> m_in;
         ComponentTransferFunction m_redFunc;
         ComponentTransferFunction m_greenFunc;
         ComponentTransferFunction m_blueFunc;

@@ -32,11 +32,8 @@
 
 namespace WebCore {
 
-FEComposite::FEComposite(FilterEffect* in, FilterEffect* in2, const CompositeOperationType& type,
-    const float& k1, const float& k2, const float& k3, const float& k4)
+FEComposite::FEComposite(const CompositeOperationType& type, float k1, float k2, float k3, float k4)
     : FilterEffect()
-    , m_in(in)
-    , m_in2(in2)
     , m_type(type)
     , m_k1(k1)
     , m_k2(k2)
@@ -45,10 +42,9 @@ FEComposite::FEComposite(FilterEffect* in, FilterEffect* in2, const CompositeOpe
 {
 }
 
-PassRefPtr<FEComposite> FEComposite::create(FilterEffect* in, FilterEffect* in2, const CompositeOperationType& type,
-    const float& k1, const float& k2, const float& k3, const float& k4)
+PassRefPtr<FEComposite> FEComposite::create(const CompositeOperationType& type, float k1, float k2, float k3, float k4)
 {
-    return adoptRef(new FEComposite(in, in2, type, k1, k2, k3, k4));
+    return adoptRef(new FEComposite(type, k1, k2, k3, k4));
 }
 
 CompositeOperationType FEComposite::operation() const
@@ -119,9 +115,11 @@ inline void arithmetic(const RefPtr<CanvasPixelArray>& srcPixelArrayA, CanvasPix
 
 void FEComposite::apply(Filter* filter)
 {
-    m_in->apply(filter);
-    m_in2->apply(filter);
-    if (!m_in->resultImage() || !m_in2->resultImage())
+    FilterEffect* in = inputEffect(0);
+    FilterEffect* in2 = inputEffect(1);
+    in->apply(filter);
+    in2->apply(filter);
+    if (!in->resultImage() || !in2->resultImage())
         return;
 
     GraphicsContext* filterContext = getEffectContext();
@@ -131,33 +129,33 @@ void FEComposite::apply(Filter* filter)
     FloatRect srcRect = FloatRect(0.f, 0.f, -1.f, -1.f);
     switch (m_type) {
     case FECOMPOSITE_OPERATOR_OVER:
-        filterContext->drawImageBuffer(m_in2->resultImage(), DeviceColorSpace, calculateDrawingRect(m_in2->scaledSubRegion()));
-        filterContext->drawImageBuffer(m_in->resultImage(), DeviceColorSpace, calculateDrawingRect(m_in->scaledSubRegion()));
+        filterContext->drawImageBuffer(in2->resultImage(), DeviceColorSpace, calculateDrawingRect(in2->repaintRectInLocalCoordinates()));
+        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, calculateDrawingRect(in->repaintRectInLocalCoordinates()));
         break;
     case FECOMPOSITE_OPERATOR_IN:
         filterContext->save();
-        filterContext->clipToImageBuffer(m_in2->resultImage(), calculateDrawingRect(m_in2->scaledSubRegion()));
-        filterContext->drawImageBuffer(m_in->resultImage(), DeviceColorSpace, calculateDrawingRect(m_in->scaledSubRegion()));
+        filterContext->clipToImageBuffer(in2->resultImage(), calculateDrawingRect(in2->repaintRectInLocalCoordinates()));
+        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, calculateDrawingRect(in->repaintRectInLocalCoordinates()));
         filterContext->restore();
         break;
     case FECOMPOSITE_OPERATOR_OUT:
-        filterContext->drawImageBuffer(m_in->resultImage(), DeviceColorSpace, calculateDrawingRect(m_in->scaledSubRegion()));
-        filterContext->drawImageBuffer(m_in2->resultImage(), DeviceColorSpace, calculateDrawingRect(m_in2->scaledSubRegion()), srcRect, CompositeDestinationOut);
+        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, calculateDrawingRect(in->repaintRectInLocalCoordinates()));
+        filterContext->drawImageBuffer(in2->resultImage(), DeviceColorSpace, calculateDrawingRect(in2->repaintRectInLocalCoordinates()), srcRect, CompositeDestinationOut);
         break;
     case FECOMPOSITE_OPERATOR_ATOP:
-        filterContext->drawImageBuffer(m_in2->resultImage(), DeviceColorSpace, calculateDrawingRect(m_in2->scaledSubRegion()));
-        filterContext->drawImageBuffer(m_in->resultImage(), DeviceColorSpace, calculateDrawingRect(m_in->scaledSubRegion()), srcRect, CompositeSourceAtop);
+        filterContext->drawImageBuffer(in2->resultImage(), DeviceColorSpace, calculateDrawingRect(in2->repaintRectInLocalCoordinates()));
+        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, calculateDrawingRect(in->repaintRectInLocalCoordinates()), srcRect, CompositeSourceAtop);
         break;
     case FECOMPOSITE_OPERATOR_XOR:
-        filterContext->drawImageBuffer(m_in2->resultImage(), DeviceColorSpace, calculateDrawingRect(m_in2->scaledSubRegion()));
-        filterContext->drawImageBuffer(m_in->resultImage(), DeviceColorSpace, calculateDrawingRect(m_in->scaledSubRegion()), srcRect, CompositeXOR);
+        filterContext->drawImageBuffer(in2->resultImage(), DeviceColorSpace, calculateDrawingRect(in2->repaintRectInLocalCoordinates()));
+        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, calculateDrawingRect(in->repaintRectInLocalCoordinates()), srcRect, CompositeXOR);
         break;
     case FECOMPOSITE_OPERATOR_ARITHMETIC: {
-        IntRect effectADrawingRect = calculateDrawingIntRect(m_in->scaledSubRegion());
-        RefPtr<CanvasPixelArray> srcPixelArrayA(m_in->resultImage()->getPremultipliedImageData(effectADrawingRect)->data());
+        IntRect effectADrawingRect = calculateDrawingIntRect(in->repaintRectInLocalCoordinates());
+        RefPtr<CanvasPixelArray> srcPixelArrayA(in->resultImage()->getPremultipliedImageData(effectADrawingRect)->data());
 
-        IntRect effectBDrawingRect = calculateDrawingIntRect(m_in2->scaledSubRegion());
-        RefPtr<ImageData> imageData(m_in2->resultImage()->getPremultipliedImageData(effectBDrawingRect));
+        IntRect effectBDrawingRect = calculateDrawingIntRect(in2->repaintRectInLocalCoordinates());
+        RefPtr<ImageData> imageData(in2->resultImage()->getPremultipliedImageData(effectBDrawingRect));
         CanvasPixelArray* srcPixelArrayB(imageData->data());
 
         arithmetic(srcPixelArrayA, srcPixelArrayB, m_k1, m_k2, m_k3, m_k4);
@@ -210,8 +208,8 @@ TextStream& FEComposite::externalRepresentation(TextStream& ts, int indent) cons
     if (m_type == FECOMPOSITE_OPERATOR_ARITHMETIC)
         ts << " k1=\"" << m_k1 << "\" k2=\"" << m_k2 << "\" k3=\"" << m_k3 << "\" k4=\"" << m_k4 << "\"";
     ts << "]\n";
-    m_in->externalRepresentation(ts, indent + 1);
-    m_in2->externalRepresentation(ts, indent + 1);
+    inputEffect(0)->externalRepresentation(ts, indent + 1);
+    inputEffect(1)->externalRepresentation(ts, indent + 1);
     return ts;
 }
 

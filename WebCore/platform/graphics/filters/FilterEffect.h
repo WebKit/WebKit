@@ -1,22 +1,23 @@
 /*
-    Copyright (C) 2008 Alex Mathews <possessedpenguinbob@gmail.com>
-                  2009 Dirk Schulze <krit@webkit.org>
-
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Library General Public
-    License as published by the Free Software Foundation; either
-    version 2 of the License, or (at your option) any later version.
-
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Library General Public License for more details.
-
-    You should have received a copy of the GNU Library General Public License
-    aint with this library; see the file COPYING.LIB.  If not, write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA 02110-1301, USA.
-*/
+ * Copyright (C) 2008 Alex Mathews <possessedpenguinbob@gmail.com>
+ * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
 
 #ifndef FilterEffect_h
 #define FilterEffect_h
@@ -32,84 +33,97 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-    class FilterEffect : public RefCounted<FilterEffect> {
-    public:
-        virtual ~FilterEffect();
+typedef Vector<RefPtr<FilterEffect> > FilterEffectVector;
 
-        void setUnionOfChildEffectSubregions(const FloatRect& uniteRect) { m_unionOfChildEffectSubregions = uniteRect; }
-        FloatRect unionOfChildEffectSubregions() const { return m_unionOfChildEffectSubregions; }
+class FilterEffect : public RefCounted<FilterEffect> {
+public:
+    virtual ~FilterEffect();
 
-        FloatRect subRegion() const { return m_subRegion; }
-        void setSubRegion(const FloatRect& subRegion) { m_subRegion = subRegion; }
+    // The result is bounded to the size of the filter primitive to save resources.
+    ImageBuffer* resultImage() const { return m_effectBuffer.get(); }
+    void setEffectBuffer(PassOwnPtr<ImageBuffer> effectBuffer) { m_effectBuffer = effectBuffer; }
 
-        FloatRect scaledSubRegion() const { return m_scaledSubRegion; }
-        void setScaledSubRegion(const FloatRect& scaledSubRegion) { m_scaledSubRegion = scaledSubRegion; }
+    // Creates the ImageBuffer for the current filter primitive result in the size of the
+    // repaintRect. Gives back the GraphicsContext of the own ImageBuffer.
+    GraphicsContext* getEffectContext();
 
-        FloatRect effectBoundaries() const { return m_effectBoundaries; }
-        void setEffectBoundaries(const FloatRect& effectBoundaries) { m_effectBoundaries = effectBoundaries; }
+    FilterEffectVector& inputEffects() { return m_inputEffects; }
+    FilterEffect* inputEffect(unsigned) const;
+    unsigned numberOfEffectInputs() const { return m_inputEffects.size(); }
 
-        bool hasX() { return m_hasX; }
-        void setHasX(bool value) { m_hasX = value; }
+    FloatRect calculateDrawingRect(const FloatRect&) const;
+    IntRect calculateDrawingIntRect(const FloatRect&) const;
 
-        bool hasY() { return m_hasY; }
-        void setHasY(bool value) { m_hasY = value; }
+    // Solid black image with different alpha values.
+    bool isAlphaImage() const { return m_alphaImage; }
+    void setIsAlphaImage(bool alphaImage) { m_alphaImage = alphaImage; }
 
-        bool hasWidth() { return m_hasWidth; }
-        void setHasWidth(bool value) { m_hasWidth = value; }
+    FloatRect repaintRectInLocalCoordinates() const { return m_repaintRectInLocalCoordinates; }
+    void setRepaintRectInLocalCoordinates(const FloatRect& repaintRectInLocalCoordinates) { m_repaintRectInLocalCoordinates = repaintRectInLocalCoordinates; }
 
-        bool hasHeight() { return m_hasHeight; }
-        void setHasHeight(bool value) { m_hasHeight = value; }
+    virtual void apply(Filter*) = 0;
+    virtual void dump() = 0;
 
-        // The result is bounded by the size of the filter primitive to save resources
-        ImageBuffer* resultImage() { return m_effectBuffer.get(); }
-        void setEffectBuffer(PassOwnPtr<ImageBuffer> effectBuffer) { m_effectBuffer = effectBuffer; }
+    virtual bool isSourceInput() const { return false; }
 
-        FloatRect calculateUnionOfChildEffectSubregions(Filter*, FilterEffect*, FilterEffect*);
-        FloatRect calculateUnionOfChildEffectSubregions(Filter*, FilterEffect*);
+    virtual TextStream& externalRepresentation(TextStream&, int indention = 0) const;
 
-        GraphicsContext* getEffectContext();
-        FloatRect calculateDrawingRect(const FloatRect&);
-        IntRect calculateDrawingIntRect(const FloatRect&);
+public:
+    // The following functions are SVG specific and will move to RenderSVGResourceFilterPrimitive.
+    // See bug https://bugs.webkit.org/show_bug.cgi?id=45614.
+    bool hasX() const { return m_hasX; }
+    void setHasX(bool value) { m_hasX = value; }
 
-        // black image with different alpha values
-        bool isAlphaImage() { return m_alphaImage; }
-        void setIsAlphaImage(bool alphaImage) { m_alphaImage = alphaImage; }
+    bool hasY() const { return m_hasY; }
+    void setHasY(bool value) { m_hasY = value; }
 
-        virtual FloatRect uniteChildEffectSubregions(Filter* filter) { return filter->filterRegion(); }
-        virtual FloatRect calculateEffectRect(Filter*);
-        virtual void apply(Filter*) = 0;
-        virtual void dump() = 0;
+    bool hasWidth() const { return m_hasWidth; }
+    void setHasWidth(bool value) { m_hasWidth = value; }
 
-        virtual bool isSourceInput() { return false; }
+    bool hasHeight() const { return m_hasHeight; }
+    void setHasHeight(bool value) { m_hasHeight = value; }
 
-        virtual TextStream& externalRepresentation(TextStream&, int indention = 0) const;
-    protected:
-        FilterEffect();
+    // FIXME: Pseudo primitives like SourceGraphic and SourceAlpha as well as FETile still need special handling.
+    virtual FloatRect determineFilterPrimitiveSubregion(Filter*);
 
-    private:
+    FloatRect filterPrimitiveSubregion() const { return m_filterPrimitiveSubregion; }
+    void setFilterPrimitiveSubregion(const FloatRect& filterPrimitiveSubregion) { m_filterPrimitiveSubregion = filterPrimitiveSubregion; }
 
-        bool m_xBBoxMode : 1;
-        bool m_yBBoxMode : 1;
-        bool m_widthBBoxMode : 1;
-        bool m_heightBBoxMode : 1;
+    FloatRect effectBoundaries() const { return m_effectBoundaries; }
+    void setEffectBoundaries(const FloatRect& effectBoundaries) { m_effectBoundaries = effectBoundaries; }
 
-        bool m_hasX : 1;
-        bool m_hasY : 1;
-        bool m_hasWidth : 1;
-        bool m_hasHeight : 1;
+protected:
+    FilterEffect();
 
-        bool m_alphaImage;
+private:
+    OwnPtr<ImageBuffer> m_effectBuffer;
+    FilterEffectVector m_inputEffects;
 
-        FloatRect m_effectBoundaries;
-        FloatRect m_subRegion;
-        FloatRect m_scaledSubRegion;
-        FloatRect m_unionOfChildEffectSubregions;
+    bool m_alphaImage;
 
-        mutable OwnPtr<ImageBuffer> m_effectBuffer;
-    };
+    // FIXME: Should be the paint region of the filter primitive, instead of the scaled subregion on use of filterRes.
+    FloatRect m_repaintRectInLocalCoordinates;
+
+private:
+    // The following member variables are SVG specific and will move to RenderSVGResourceFilterPrimitive.
+    // See bug https://bugs.webkit.org/show_bug.cgi?id=45614.
+
+    // The subregion of a filter primitive according to the SVG Filter specification in local coordinates.
+    // This is SVG specific and needs to move to RenderSVGResourceFilterPrimitive.
+    FloatRect m_filterPrimitiveSubregion;
+
+    // x, y, width and height of the actual SVGFE*Element. Is needed to determine the subregion of the
+    // filter primitive on a later step.
+    FloatRect m_effectBoundaries;
+    bool m_hasX;
+    bool m_hasY;
+    bool m_hasWidth;
+    bool m_hasHeight;
+};
 
 } // namespace WebCore
 

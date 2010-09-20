@@ -83,7 +83,9 @@ PassRefPtr<FilterEffect> SVGFEComponentTransferElement::build(SVGFilterBuilder* 
             alpha = static_cast<SVGFEFuncAElement*>(n)->transferFunction();
     }
     
-    return FEComponentTransfer::create(input1, red, green, blue, alpha);
+    RefPtr<FilterEffect> effect = FEComponentTransfer::create(red, green, blue, alpha);
+    effect->inputEffects().append(input1);
+    return effect.release();
 }
 
 }

@@ -87,7 +87,12 @@ PassRefPtr<FilterEffect> SVGFEBlendElement::build(SVGFilterBuilder* filterBuilde
     if (!input1 || !input2)
         return 0;
 
-    return FEBlend::create(input1, input2, static_cast<BlendModeType>(mode()));
+    RefPtr<FilterEffect> effect = FEBlend::create(static_cast<BlendModeType>(mode()));
+    FilterEffectVector& inputEffects = effect->inputEffects();
+    inputEffects.reserveCapacity(2);
+    inputEffects.append(input1);
+    inputEffects.append(input2);    
+    return effect.release();
 }
 
 }

@@ -33,21 +33,18 @@
 
 namespace WebCore {
 
-FEDisplacementMap::FEDisplacementMap(FilterEffect* in, FilterEffect* in2, ChannelSelectorType xChannelSelector,
-    ChannelSelectorType yChannelSelector, const float& scale)
+FEDisplacementMap::FEDisplacementMap(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float scale)
     : FilterEffect()
-    , m_in(in)
-    , m_in2(in2)
     , m_xChannelSelector(xChannelSelector)
     , m_yChannelSelector(yChannelSelector)
     , m_scale(scale)
 {
 }
 
-PassRefPtr<FEDisplacementMap> FEDisplacementMap::create(FilterEffect* in, FilterEffect* in2,
-    ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, const float& scale)
+PassRefPtr<FEDisplacementMap> FEDisplacementMap::create(ChannelSelectorType xChannelSelector,
+    ChannelSelectorType yChannelSelector, float scale)
 {
-    return adoptRef(new FEDisplacementMap(in, in2, xChannelSelector, yChannelSelector, scale));
+    return adoptRef(new FEDisplacementMap(xChannelSelector, yChannelSelector, scale));
 }
 
 ChannelSelectorType FEDisplacementMap::xChannelSelector() const
@@ -82,9 +79,11 @@ void FEDisplacementMap::setScale(float scale)
 
 void FEDisplacementMap::apply(Filter* filter)
 {
-    m_in->apply(filter);
-    m_in2->apply(filter);
-    if (!m_in->resultImage() || !m_in2->resultImage())
+    FilterEffect* in = inputEffect(0);
+    FilterEffect* in2 = inputEffect(1);
+    in->apply(filter);
+    in2->apply(filter);
+    if (!in->resultImage() || !in2->resultImage())
         return;
 
     if (m_xChannelSelector == CHANNEL_UNKNOWN || m_yChannelSelector == CHANNEL_UNKNOWN)
@@ -93,11 +92,11 @@ void FEDisplacementMap::apply(Filter* filter)
     if (!getEffectContext())
         return;
 
-    IntRect effectADrawingRect = calculateDrawingIntRect(m_in->scaledSubRegion());
-    RefPtr<CanvasPixelArray> srcPixelArrayA(m_in->resultImage()->getPremultipliedImageData(effectADrawingRect)->data());
+    IntRect effectADrawingRect = calculateDrawingIntRect(in->repaintRectInLocalCoordinates());
+    RefPtr<CanvasPixelArray> srcPixelArrayA(in->resultImage()->getPremultipliedImageData(effectADrawingRect)->data());
 
-    IntRect effectBDrawingRect = calculateDrawingIntRect(m_in2->scaledSubRegion());
-    RefPtr<CanvasPixelArray> srcPixelArrayB(m_in2->resultImage()->getUnmultipliedImageData(effectBDrawingRect)->data());
+    IntRect effectBDrawingRect = calculateDrawingIntRect(in2->repaintRectInLocalCoordinates());
+    RefPtr<CanvasPixelArray> srcPixelArrayB(in2->resultImage()->getUnmultipliedImageData(effectBDrawingRect)->data());
 
     IntRect imageRect(IntPoint(), resultImage()->size());
     RefPtr<ImageData> imageData = ImageData::create(imageRect.width(), imageRect.height());
@@ -163,8 +162,8 @@ TextStream& FEDisplacementMap::externalRepresentation(TextStream& ts, int indent
     ts << " scale=\"" << m_scale << "\" "
        << "xChannelSelector=\"" << m_xChannelSelector << "\" "
        << "yChannelSelector=\"" << m_yChannelSelector << "\"]\n";
-    m_in->externalRepresentation(ts, indent + 1);
-    m_in2->externalRepresentation(ts, indent + 1);
+    inputEffect(0)->externalRepresentation(ts, indent + 1);
+    inputEffect(1)->externalRepresentation(ts, indent + 1);
     return ts;
 }
 

@@ -35,12 +35,13 @@ namespace WebCore {
 
         static const AtomicString& effectName();
 
-        virtual bool isSourceInput() { return true; }
-        virtual FloatRect calculateEffectRect(Filter*);
         void apply(Filter*);
         void dump();
         TextStream& externalRepresentation(TextStream&, int indent) const;
-    
+
+        virtual bool isSourceInput() const { return true; }
+        virtual FloatRect determineFilterPrimitiveSubregion(Filter*);
+
     private:
         SourceGraphic() { }
     };
