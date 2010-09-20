@@ -1,3 +1,10 @@
+2010-09-19  Adam Barth  <abarth@webkit.org>
+
+        Review tool UI tweak.  This patch lengthens the status bubbles so all
+        the bubble fit (even when they have numbers inside).
+
+        * PrettyPatch/PrettyPatch.rb:
+
 2010-09-19  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.

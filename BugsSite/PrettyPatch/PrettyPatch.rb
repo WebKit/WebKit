@@ -299,7 +299,7 @@ body {
 
 .statusBubble {
   margin-left: 5px;
-  width: 175px;
+  width: 300px;
   height: 20px;
   border: none;
   vertical-align: middle;
