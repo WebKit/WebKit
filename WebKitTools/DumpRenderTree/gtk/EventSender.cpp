@@ -458,30 +458,7 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
 {
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
-
-    static const JSStringRef lengthProperty = JSStringCreateWithUTF8CString("length");
-
-    webkit_web_frame_layout(mainFrame);
-
-    // handle modifier keys.
-    int state = 0;
-    if (argumentCount > 1) {
-        JSObjectRef modifiersArray = JSValueToObject(context, arguments[1], exception);
-        if (modifiersArray) {
-            for (int i = 0; i < JSValueToNumber(context, JSObjectGetProperty(context, modifiersArray, lengthProperty, 0), 0); ++i) {
-                JSValueRef value = JSObjectGetPropertyAtIndex(context, modifiersArray, i, 0);
-                JSStringRef string = JSValueToStringCopy(context, value, 0);
-                if (JSStringIsEqualToUTF8CString(string, "ctrlKey"))
-                    state |= GDK_CONTROL_MASK;
-                else if (JSStringIsEqualToUTF8CString(string, "shiftKey"))
-                    state |= GDK_SHIFT_MASK;
-                else if (JSStringIsEqualToUTF8CString(string, "altKey"))
-                    state |= GDK_MOD1_MASK;
-
-                JSStringRelease(string);
-            }
-        }
-    }
+    guint modifiers = argumentCount >= 2 ? gdkModifersFromJSValue(context, arguments[1]) : 0;
 
     // handle location argument.
     int location = DOM_KEY_LOCATION_STANDARD;
@@ -574,7 +551,7 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
             else {
                 gdkKeySym = gdk_unicode_to_keyval(charCode);
                 if (WTF::isASCIIUpper(charCode))
-                    state |= GDK_SHIFT_MASK;
+                    modifiers |= GDK_SHIFT_MASK;
             }
         }
     }
@@ -587,7 +564,7 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
     // create and send the event
     GdkEvent* pressEvent = gdk_event_new(GDK_KEY_PRESS);
     pressEvent->key.keyval = gdkKeySym;
-    pressEvent->key.state = state;
+    pressEvent->key.state = modifiers;
     pressEvent->key.window = gtk_widget_get_window(GTK_WIDGET(view));
     g_object_ref(pressEvent->key.window);
 #ifndef GTK_API_VERSION_2

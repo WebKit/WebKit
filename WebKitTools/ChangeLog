@@ -1,3 +1,17 @@
+2010-09-20  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Daniel Bates.
+
+        [GTK] fast/forms/listbox-selection.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=45942
+
+        Use the gdkModifersFromJSValue helper to parse all appropriate modifier
+        strings in keyDownCallback.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (keyDownCallback): Use the gdkModifersFromJSValue instead of duplicating the 
+        modifier parsing logic.
+
 2010-09-19  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

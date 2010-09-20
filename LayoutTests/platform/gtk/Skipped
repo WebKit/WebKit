@@ -1166,7 +1166,6 @@ fast/forms/get-file-upload.html
 fast/forms/input-file-re-render.html
 fast/forms/legend-access-key.html
 fast/forms/listbox-onchange.html
-fast/forms/listbox-selection.html
 fast/forms/onchange-enter-submit.html
 fast/forms/onselect-textarea.html
 fast/forms/onselect-textfield.html
@@ -1918,7 +1917,6 @@ fast/events/autoscroll.html
 fast/events/context-no-deselect.html
 fast/events/event-listener-on-link.html
 fast/events/focusingUnloadedFrame.html
-fast/events/keydown-1.html
 fast/events/label-focus.html
 fast/events/onload-re-entry.html
 fast/events/onloadFrameCrash.html

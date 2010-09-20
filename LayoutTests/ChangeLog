@@ -1,3 +1,13 @@
+2010-09-20  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Daniel Bates.
+
+        [GTK] fast/forms/listbox-selection.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=45942
+
+        * platform/gtk/Skipped: Unskip test which is now passing.
+        * platform/gtk/fast/events/keydown-1-expected.txt: Added.
+
 2010-09-20  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Update a win-xp-specific baseline.
