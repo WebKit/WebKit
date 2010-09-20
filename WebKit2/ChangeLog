@@ -1,3 +1,15 @@
+2010-09-20  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix a style issue and add a FIXME to make the AppleConnect plug-in
+        workaround dependent on site-specific quirks being enabled, which
+        WebKit2 does not yet support in its WebPreferences implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=45960
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createPlugin):
+
 2010-09-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

@@ -990,9 +990,13 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugIn
     // understand the parameter names specified in the <object> element that
     // embeds its plug-in. This hack works around the issue by converting the
     // parameter names to lowercase before passing them to the plug-in.
-    if (equalIgnoringCase(mimeType, "application/x-snkp"))
+    // FIXME: This workaround should be dependent on site-specific quirks being
+    // enabled. This requires adding this setting to WebKit2's WebPreferences
+    // implementation. See <https://bugs.webkit.org/show_bug.cgi?id=46076>.
+    if (equalIgnoringCase(mimeType, "application/x-snkp")) {
         for (size_t i = 0; i < paramNames.size(); ++i)
             parameters.names[i] = paramNames[i].lower();
+    }
 
     RefPtr<Plugin> plugin = NetscapePlugin::create(pluginModule.release());
     return PluginView::create(pluginElement, plugin.release(), parameters);
