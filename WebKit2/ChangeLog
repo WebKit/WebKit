@@ -2,6 +2,26 @@
 
         Reviewed by Anders Carlsson.
 
+        Add WebKit2 equivalent of the WebFormDelegate's doCommandBySelector
+        <rdar://problem/8377088>
+        https://bugs.webkit.org/show_bug.cgi?id=46073
+
+        Add bundle client to match the behavior of:
+          - (BOOL)textField:(DOMHTMLInputElement *)element doCommandBySelector:(SEL)commandSelector inFrame:(WebFrame *)frame;
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp:
+        (WebKit::InjectedBundlePageFormClient::shouldPerformActionInTextField):
+        * WebProcess/InjectedBundle/InjectedBundlePageFormClient.h:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::getActionTypeForKeyEvent):
+        (WebKit::WebEditorClient::doTextFieldCommandFromEvent):
+        (WebKit::WebEditorClient::textWillBeDeletedInTextField):
+
+2010-09-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         WebKit2 decidePolicyForNavigationAction should include mouse button information
         <rdar://problem/8413165>
         https://bugs.webkit.org/show_bug.cgi?id=46060

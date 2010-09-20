@@ -28,6 +28,11 @@
 
 #include <WebKit2/WKBase.h>
 #include <WebKit2/WKBundleBase.h>
+
+#ifndef __cplusplus
+#include <stdbool.h>
+#endif
+
 #include <stdint.h>
 
 #ifdef __cplusplus
@@ -46,6 +51,17 @@ enum {
     kWKAffinityDownstream
 };
 typedef uint32_t WKAffinityType;
+
+enum {
+    WKInputFieldActionTypeMoveUp,
+    WKInputFieldActionTypeMoveDown,
+    WKInputFieldActionTypeCancel,
+    WKInputFieldActionTypeInsertTab,
+    WKInputFieldActionTypeInsertBacktab,
+    WKInputFieldActionTypeInsertNewline,
+    WKInputFieldActionTypeInsertDelete
+};
+typedef uint32_t WKInputFieldActionType;
 
 // Loader Client
 typedef void (*WKBundlePageDidStartProvisionalLoadForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userData, const void *clientInfo);
@@ -144,6 +160,7 @@ typedef void (*WKBundlePageTextFieldDidBeginEditingCallback)(WKBundlePageRef pag
 typedef void (*WKBundlePageTextFieldDidEndEditingCallback)(WKBundlePageRef page, WKBundleNodeHandleRef htmlInputElementHandle, WKBundleFrameRef frame, const void* clientInfo);
 typedef void (*WKBundlePageTextDidChangeInTextFieldCallback)(WKBundlePageRef page, WKBundleNodeHandleRef htmlInputElementHandle, WKBundleFrameRef frame, const void* clientInfo);
 typedef void (*WKBundlePageTextDidChangeInTextAreaCallback)(WKBundlePageRef page, WKBundleNodeHandleRef htmlTextAreaElementHandle, WKBundleFrameRef frame, const void* clientInfo);
+typedef bool (*WKBundlePageShouldPerformActionInTextFieldCallback)(WKBundlePageRef page, WKBundleNodeHandleRef htmlInputElementHandle, WKInputFieldActionType actionType, WKBundleFrameRef frame, const void* clientInfo);
 typedef void (*WKBundlePageWillSubmitFormCallback)(WKBundlePageRef page, WKBundleNodeHandleRef htmlFormElementHandle, WKBundleFrameRef frame, WKBundleFrameRef sourceFrame, WKDictionaryRef values, WKTypeRef* userData, const void* clientInfo);
 
 struct WKBundlePageFormClient {
@@ -153,6 +170,7 @@ struct WKBundlePageFormClient {
     WKBundlePageTextFieldDidEndEditingCallback                          textFieldDidEndEditing;
     WKBundlePageTextDidChangeInTextFieldCallback                        textDidChangeInTextField;
     WKBundlePageTextDidChangeInTextAreaCallback                         textDidChangeInTextArea;
+    WKBundlePageShouldPerformActionInTextFieldCallback                  shouldPerformActionInTextField;
     WKBundlePageWillSubmitFormCallback                                  willSubmitForm;
 };
 typedef struct WKBundlePageFormClient WKBundlePageFormClient;

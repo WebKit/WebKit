@@ -296,15 +296,48 @@ void WebEditorClient::textDidChangeInTextArea(Element* element)
     m_page->injectedBundleFormClient().textDidChangeInTextArea(m_page, static_cast<HTMLTextAreaElement*>(element), webFrame);
 }
 
-bool WebEditorClient::doTextFieldCommandFromEvent(Element*, KeyboardEvent*)
+static bool getActionTypeForKeyEvent(KeyboardEvent* event, WKInputFieldActionType& type)
 {
-    notImplemented();
-    return false;
+    String key = event->keyIdentifier();
+    if (key == "Up")
+        type = WKInputFieldActionTypeMoveUp;
+    else if (key == "Down")
+        type = WKInputFieldActionTypeMoveDown;
+    else if (key == "U+001B")
+        type = WKInputFieldActionTypeCancel;
+    else if (key == "U+0009") {
+        if (event->shiftKey())
+            type = WKInputFieldActionTypeInsertBacktab;
+        else
+            type = WKInputFieldActionTypeInsertTab;
+    } else if (key == "Enter")
+        type = WKInputFieldActionTypeInsertNewline;
+    else
+        return false;
+
+    return true;
 }
 
-void WebEditorClient::textWillBeDeletedInTextField(Element*)
+bool WebEditorClient::doTextFieldCommandFromEvent(Element* element, KeyboardEvent* event)
 {
-    notImplemented();
+    if (!element->hasTagName(inputTag))
+        return false;
+
+    WKInputFieldActionType actionType;
+    if (!getActionTypeForKeyEvent(event, actionType))
+        return false;
+
+    WebFrame* webFrame =  static_cast<WebFrameLoaderClient*>(element->document()->frame()->loader()->client())->webFrame();
+    return m_page->injectedBundleFormClient().shouldPerformActionInTextField(m_page, static_cast<HTMLInputElement*>(element), actionType, webFrame);
+}
+
+void WebEditorClient::textWillBeDeletedInTextField(Element* element)
+{
+    if (!element->hasTagName(inputTag))
+        return;
+
+    WebFrame* webFrame =  static_cast<WebFrameLoaderClient*>(element->document()->frame()->loader()->client())->webFrame();
+    m_page->injectedBundleFormClient().shouldPerformActionInTextField(m_page, static_cast<HTMLInputElement*>(element), WKInputFieldActionTypeInsertDelete, webFrame);
 }
 
 

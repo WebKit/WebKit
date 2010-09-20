@@ -53,7 +53,7 @@ public:
     void textFieldDidEndEditing(WebPage*, WebCore::HTMLInputElement*, WebFrame*);
     void textDidChangeInTextField(WebPage*, WebCore::HTMLInputElement*, WebFrame*);
     void textDidChangeInTextArea(WebPage*, WebCore::HTMLTextAreaElement*, WebFrame*);
-
+    bool shouldPerformActionInTextField(WebPage*, WebCore::HTMLInputElement*, WKInputFieldActionType, WebFrame*);    
     void willSubmitForm(WebPage*, WebCore::HTMLFormElement*, WebFrame*, WebFrame* sourceFrame, const Vector<std::pair<String, String> >&, RefPtr<APIObject>& userData);
 
 private:
