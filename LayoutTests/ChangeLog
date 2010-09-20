@@ -1,3 +1,14 @@
+2010-09-20  James Kozianski  <koz@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        [chromium] Unskip the canvas philip suite
+        https://bugs.webkit.org/show_bug.cgi?id=45991
+
+        Adds failing mac canvas/philip tests to test_expectations.txt.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-19  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Move win-xp-specific baselines to their proper places.

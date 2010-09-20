@@ -2645,6 +2645,20 @@ BUG45991 : canvas/philip/tests/type.prototype.html = TEXT
 BUG45991 : canvas/philip/tests/2d.path.arcTo.coincide.1.html = TEXT PASS
 BUG45991 : canvas/philip/tests/2d.path.stroke.prune.arc.html = TEXT PASS
 
+// Many of these are skipped on the mac platform.
+BUG45991 MAC : canvas/philip/tests/2d.gradient.radial.cone.front.html = TEXT
+BUG45991 MAC : canvas/philip/tests/2d.gradient.radial.inside2.html = TEXT
+BUG45991 MAC : canvas/philip/tests/2d.gradient.radial.inside3.html = TEXT
+BUG45991 MAC : canvas/philip/tests/2d.gradient.radial.outside1.html = TEXT
+BUG45991 MAC : canvas/philip/tests/2d.imageData.get.source.outside.html = TEXT
+BUG45991 MAC : canvas/philip/tests/2d.line.cap.closed.html = TEXT
+BUG45991 MAC : canvas/philip/tests/2d.line.join.parallel.html = TEXT
+BUG45991 MAC : canvas/philip/tests/2d.line.miter.lineedge.html = TEXT
+BUG45991 MAC : canvas/philip/tests/2d.shadow.enable.x.html = TEXT
+BUG45991 MAC : canvas/philip/tests/2d.shadow.enable.y.html = TEXT
+BUG45991 MAC : canvas/philip/tests/2d.strokeRect.zero.4.html = TEXT
+BUG45991 MAC : canvas/philip/tests/toDataURL.jpeg.alpha.html = TEXT
+
 // Need to dump context menu items on eventSender.contextClick(true).
 BUGWK39105 : editing/spelling/context-menu-suggestions.html = TEXT
 
