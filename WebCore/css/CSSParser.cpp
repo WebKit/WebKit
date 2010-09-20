@@ -776,6 +776,8 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyBorderLeftStyle:
     case CSSPropertyWebkitBorderStartStyle:
     case CSSPropertyWebkitBorderEndStyle:
+    case CSSPropertyWebkitBorderBeforeStyle:
+    case CSSPropertyWebkitBorderAfterStyle:
     case CSSPropertyWebkitColumnRuleStyle:
         if (id >= CSSValueNone && id <= CSSValueDouble)
             validPrimitive = true;
@@ -822,6 +824,8 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyBorderLeftColor:
     case CSSPropertyWebkitBorderStartColor:
     case CSSPropertyWebkitBorderEndColor:
+    case CSSPropertyWebkitBorderBeforeColor:
+    case CSSPropertyWebkitBorderAfterColor:
     case CSSPropertyColor: // <color> | inherit
     case CSSPropertyTextLineThroughColor: // CSS3 text decoration colors
     case CSSPropertyTextUnderlineColor:
@@ -973,6 +977,8 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyBorderLeftWidth:
     case CSSPropertyWebkitBorderStartWidth:
     case CSSPropertyWebkitBorderEndWidth:
+    case CSSPropertyWebkitBorderBeforeWidth:
+    case CSSPropertyWebkitBorderAfterWidth:
     case CSSPropertyWebkitColumnRuleWidth:
         if (id == CSSValueThin || id == CSSValueMedium || id == CSSValueThick)
             validPrimitive = true;
@@ -1008,11 +1014,15 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyPaddingLeft:         ////
     case CSSPropertyWebkitPaddingStart:
     case CSSPropertyWebkitPaddingEnd:
+    case CSSPropertyWebkitPaddingBefore:
+    case CSSPropertyWebkitPaddingAfter:
         validPrimitive = (!id && validUnit(value, FLength | FPercent | FNonNeg, m_strict));
         break;
 
     case CSSPropertyMaxHeight:           // <length> | <percentage> | none | inherit
     case CSSPropertyMaxWidth:            // <length> | <percentage> | none | inherit
+    case CSSPropertyWebkitMaxLogicalWidth:
+    case CSSPropertyWebkitMaxLogicalHeight:
         if (id == CSSValueNone || id == CSSValueIntrinsic || id == CSSValueMinIntrinsic) {
             validPrimitive = true;
             break;
@@ -1020,6 +1030,8 @@ bool CSSParser::parseValue(int propId, bool important)
         /* nobreak */
     case CSSPropertyMinHeight:           // <length> | <percentage> | inherit
     case CSSPropertyMinWidth:            // <length> | <percentage> | inherit
+    case CSSPropertyWebkitMinLogicalWidth:
+    case CSSPropertyWebkitMinLogicalHeight:
         if (id == CSSValueIntrinsic || id == CSSValueMinIntrinsic)
             validPrimitive = true;
         else
@@ -1052,6 +1064,8 @@ bool CSSParser::parseValue(int propId, bool important)
 
     case CSSPropertyHeight:               // <length> | <percentage> | auto | inherit
     case CSSPropertyWidth:                // <length> | <percentage> | auto | inherit
+    case CSSPropertyWebkitLogicalWidth:  
+    case CSSPropertyWebkitLogicalHeight:
         if (id == CSSValueAuto || id == CSSValueIntrinsic || id == CSSValueMinIntrinsic)
             validPrimitive = true;
         else
@@ -1069,6 +1083,8 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyMarginLeft:          ////
     case CSSPropertyWebkitMarginStart:
     case CSSPropertyWebkitMarginEnd:
+    case CSSPropertyWebkitMarginBefore:
+    case CSSPropertyWebkitMarginAfter:
         if (id == CSSValueAuto)
             validPrimitive = true;
         else
@@ -1638,17 +1654,27 @@ bool CSSParser::parseValue(int propId, bool important)
         return parseShorthand(propId, properties, 3, important);
     }
     case CSSPropertyWebkitBorderStart:
-        // [ '-webkit-border-start-width' || 'border-style' || <color> ] | inherit
     {
         const int properties[3] = { CSSPropertyWebkitBorderStartWidth, CSSPropertyWebkitBorderStartStyle,
             CSSPropertyWebkitBorderStartColor };
         return parseShorthand(propId, properties, 3, important);
     }
     case CSSPropertyWebkitBorderEnd:
-        // [ '-webkit-border-end-width' || 'border-style' || <color> ] | inherit
     {
         const int properties[3] = { CSSPropertyWebkitBorderEndWidth, CSSPropertyWebkitBorderEndStyle,
             CSSPropertyWebkitBorderEndColor };
+        return parseShorthand(propId, properties, 3, important);
+    }
+    case CSSPropertyWebkitBorderBefore:
+    {
+        const int properties[3] = { CSSPropertyWebkitBorderBeforeWidth, CSSPropertyWebkitBorderBeforeStyle,
+            CSSPropertyWebkitBorderBeforeColor };
+        return parseShorthand(propId, properties, 3, important);
+    }
+    case CSSPropertyWebkitBorderAfter:
+    {
+        const int properties[3] = { CSSPropertyWebkitBorderAfterWidth, CSSPropertyWebkitBorderAfterStyle,
+            CSSPropertyWebkitBorderAfterColor };
         return parseShorthand(propId, properties, 3, important);
     }
     case CSSPropertyOutline:

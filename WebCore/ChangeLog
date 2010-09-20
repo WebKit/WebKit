@@ -1,5 +1,29 @@
 2010-09-20  David Hyatt  <hyatt@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46116, implement block-flow-aware logical properties.
+        
+        This patch adds all the logical properties from the CSS3 Writing Mode draft for margins, padding, border,
+        width and height.
+
+        Added fast/css/logical-property-resolution.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSProperty.cpp:
+        (WebCore::resolveToPhysicalProperty):
+        (WebCore::CSSProperty::resolveDirectionAwareProperty):
+        * css/CSSProperty.h:
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyDeclarations):
+        (WebCore::CSSStyleSelector::applyProperty):
+
+2010-09-20  David Hyatt  <hyatt@apple.com>
+
         Reviewed by Beth Dakin.
 
         https://bugs.webkit.org/show_bug.cgi?id=46114, two tables repaint tests failing on bots.

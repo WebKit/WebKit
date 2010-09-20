@@ -20,8 +20,10 @@ font-style
 font-variant
 font-weight
 text-rendering
+-webkit-block-flow
 -webkit-font-smoothing
 -webkit-text-size-adjust
+-webkit-writing-mode
 zoom
 
 # line height needs to be right after the above high-priority properties
@@ -173,8 +175,14 @@ z-index
 # a single value: -webkit-background-size: l; is equivalent to background-size: l l;
 # whereas background-size: l; is equivalent to background-size: l auto;
 -webkit-background-size
-# CSS Text Layout Module Level 3: Vertical writing support
--webkit-block-flow
+-webkit-border-after
+-webkit-border-after-color
+-webkit-border-after-style
+-webkit-border-after-width
+-webkit-border-before
+-webkit-border-before-color
+-webkit-border-before-style
+-webkit-border-before-width
 -webkit-border-end
 -webkit-border-end-color
 -webkit-border-end-style
@@ -222,8 +230,12 @@ z-index
 -webkit-hyphens
 -webkit-line-break
 -webkit-line-clamp
+-webkit-logical-width
+-webkit-logical-height
 -webkit-margin-bottom-collapse
 -webkit-margin-collapse
+-webkit-margin-after
+-webkit-margin-before
 -webkit-margin-end
 -webkit-margin-start
 -webkit-margin-top-collapse
@@ -248,7 +260,13 @@ z-index
 -webkit-mask-repeat-y
 -webkit-mask-size
 -webkit-match-nearest-mail-blockquote-color
+-webkit-max-logical-width
+-webkit-max-logical-height
+-webkit-min-logical-width
+-webkit-min-logical-height
 -webkit-nbsp-mode
+-webkit-padding-after
+-webkit-padding-before
 -webkit-padding-end
 -webkit-padding-start
 -webkit-perspective
@@ -277,5 +295,3 @@ z-index
 -webkit-user-modify
 -webkit-user-select
 -webkit-variable-declaration-block
-# CSS Text Layout Module Level 3: Vertical writing support
--webkit-writing-mode

@@ -733,7 +733,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
     if (!style)
         return 0;
 
-    propertyID = CSSProperty::resolveDirectionAwareProperty(propertyID, style->direction());
+    propertyID = CSSProperty::resolveDirectionAwareProperty(propertyID, style->direction(), style->blockFlow());
 
     switch (static_cast<CSSPropertyID>(propertyID)) {
         case CSSPropertyInvalid:
@@ -1504,10 +1504,28 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitBorderStartColor:
         case CSSPropertyWebkitBorderStartStyle:
         case CSSPropertyWebkitBorderStartWidth:
+        case CSSPropertyWebkitBorderAfter:
+        case CSSPropertyWebkitBorderAfterColor:
+        case CSSPropertyWebkitBorderAfterStyle:
+        case CSSPropertyWebkitBorderAfterWidth:
+        case CSSPropertyWebkitBorderBefore:
+        case CSSPropertyWebkitBorderBeforeColor:
+        case CSSPropertyWebkitBorderBeforeStyle:
+        case CSSPropertyWebkitBorderBeforeWidth:
         case CSSPropertyWebkitMarginEnd:
         case CSSPropertyWebkitMarginStart:
+        case CSSPropertyWebkitMarginAfter:
+        case CSSPropertyWebkitMarginBefore:
         case CSSPropertyWebkitPaddingEnd:
         case CSSPropertyWebkitPaddingStart:
+        case CSSPropertyWebkitPaddingAfter:
+        case CSSPropertyWebkitPaddingBefore:
+        case CSSPropertyWebkitLogicalWidth:
+        case CSSPropertyWebkitLogicalHeight:
+        case CSSPropertyWebkitMinLogicalWidth:
+        case CSSPropertyWebkitMinLogicalHeight:
+        case CSSPropertyWebkitMaxLogicalWidth:
+        case CSSPropertyWebkitMaxLogicalHeight:
             ASSERT_NOT_REACHED();
             break;
 
