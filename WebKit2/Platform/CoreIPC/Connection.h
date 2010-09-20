@@ -53,6 +53,11 @@ namespace CoreIPC {
 
 class MessageID;
     
+enum SyncReplyMode {
+    AutomaticReply,
+    ManualReply
+};
+    
 class Connection : public ThreadSafeShared<Connection> {
 public:
     class MessageReceiver {
@@ -61,7 +66,7 @@ public:
 
     public:
         virtual void didReceiveMessage(Connection*, MessageID, ArgumentDecoder*) = 0;
-        virtual void didReceiveSyncMessage(Connection*, MessageID, ArgumentDecoder*, ArgumentEncoder*) { ASSERT_NOT_REACHED(); }
+        virtual SyncReplyMode didReceiveSyncMessage(Connection*, MessageID, ArgumentDecoder*, ArgumentEncoder*) { ASSERT_NOT_REACHED(); return AutomaticReply; }
     };
     
     class Client : public MessageReceiver {
@@ -97,6 +102,8 @@ public:
     template<typename E> PassOwnPtr<ArgumentDecoder> waitFor(E messageID, uint64_t destinationID, double timeout);
 
     bool sendMessage(MessageID, PassOwnPtr<ArgumentEncoder>);
+
+    bool sendSyncReply(PassOwnPtr<ArgumentEncoder>);
 
 private:
     template<typename T> class Message {

@@ -2,6 +2,34 @@
 
         Reviewed by Adam Roben.
 
+        Add a way to delay sending replies to sync requests
+        https://bugs.webkit.org/show_bug.cgi?id=46117
+
+        Change the didReceiveSyncMessage client message to return a SyncReplyMode. If the SyncReplyMode is 
+        AutomaticReply, the reply will be sent when the didReceiveSyncMessage function returns. However, if it is
+        ManualReply, then the client is handed ownership of the reply ArgumentEncoder and can choose to send it 
+        at a later time using Connection::sendSyncReply.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::sendSyncReply):
+        Send the message as a sync reply.
+
+        (CoreIPC::Connection::dispatchMessages):
+        Check the return value of didReceiveSyncMessage. If it is AutomaticReply, immediately send the reply.
+
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC::Connection::MessageReceiver::didReceiveSyncMessage):
+        Change return type.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveSyncMessage):
+        * UIProcess/WebProcessProxy.h:
+        Update for changed return type.
+
+2010-09-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
         Don't use bufferIsLargeEnoughToContain for Vectors with variable sized elements
         https://bugs.webkit.org/show_bug.cgi?id=46109
 

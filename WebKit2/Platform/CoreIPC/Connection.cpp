@@ -90,6 +90,11 @@ bool Connection::sendMessage(MessageID messageID, PassOwnPtr<ArgumentEncoder> ar
     return true;
 }
 
+bool Connection::sendSyncReply(PassOwnPtr<ArgumentEncoder> arguments)
+{
+    return sendMessage(MessageID(CoreIPCMessage::SyncMessageReply), arguments);
+}
+
 PassOwnPtr<ArgumentDecoder> Connection::waitForMessage(MessageID messageID, uint64_t destinationID, double timeout)
 {
     // First, check if this message is already in the incoming messages queue.
@@ -254,16 +259,21 @@ void Connection::dispatchMessages()
             }
 
             // Create our reply encoder.
-            OwnPtr<ArgumentEncoder> replyEncoder(new ArgumentEncoder(syncRequestID));
+            ArgumentEncoder* replyEncoder = new ArgumentEncoder(syncRequestID);
             
             // Hand off both the decoder and encoder to the client..
-            m_client->didReceiveSyncMessage(this, message.messageID(), arguments.get(), replyEncoder.get());
+            SyncReplyMode syncReplyMode = m_client->didReceiveSyncMessage(this, message.messageID(), arguments.get(), replyEncoder);
             
             // FIXME: If the message was invalid, we should send back a SyncMessageError.
             ASSERT(!arguments->isInvalid());
 
-            // Send the reply.
-            sendMessage(MessageID(CoreIPCMessage::SyncMessageReply), replyEncoder.release());
+            if (syncReplyMode == AutomaticReply) {
+                // Send the reply.
+                sendSyncReply(replyEncoder);
+            } else {
+                // The client will take ownership of the reply encoder and send it at some point in the future.
+                // We won't do anything here.
+            }
         } else
             m_client->didReceiveMessage(this, message.messageID(), arguments.get());
 
