@@ -1064,4 +1064,184 @@ const Color RenderStyle::visitedDependentColor(int colorProperty) const
     return Color(visitedColor.red(), visitedColor.green(), visitedColor.blue(), unvisitedColor.alpha());
 }
 
+Length RenderStyle::logicalWidth() const
+{
+    if (blockFlow() == TopToBottomBlockFlow || blockFlow() == BottomToTopBlockFlow)
+        return width();
+    return height();
+}
+
+Length RenderStyle::logicalHeight() const
+{
+    if (blockFlow() == TopToBottomBlockFlow || blockFlow() == BottomToTopBlockFlow)
+        return height();
+    return width();
+}
+
+Length RenderStyle::logicalMinWidth() const
+{
+    if (blockFlow() == TopToBottomBlockFlow || blockFlow() == BottomToTopBlockFlow)
+        return minWidth();
+    return minHeight();
+}
+
+Length RenderStyle::logicalMaxWidth() const
+{
+    if (blockFlow() == TopToBottomBlockFlow || blockFlow() == BottomToTopBlockFlow)
+        return maxWidth();
+    return maxHeight();
+}
+
+Length RenderStyle::logicalMinHeight() const
+{
+    if (blockFlow() == TopToBottomBlockFlow || blockFlow() == BottomToTopBlockFlow)
+        return minHeight();
+    return minWidth();
+}
+
+Length RenderStyle::logicalMaxHeight() const
+{
+    if (blockFlow() == TopToBottomBlockFlow || blockFlow() == BottomToTopBlockFlow)
+        return maxHeight();
+    return maxWidth();
+}
+
+unsigned short RenderStyle::borderBeforeWidth() const
+{
+    switch (blockFlow()) {
+    case TopToBottomBlockFlow:
+        return borderTopWidth();
+    case BottomToTopBlockFlow:
+        return borderBottomWidth();
+    case LeftToRightBlockFlow:
+        return borderLeftWidth();
+    case RightToLeftBlockFlow:
+        return borderRightWidth();
+    }
+    ASSERT_NOT_REACHED();
+    return borderTopWidth();
+}
+
+unsigned short RenderStyle::borderAfterWidth() const
+{
+    switch (blockFlow()) {
+    case TopToBottomBlockFlow:
+        return borderBottomWidth();
+    case BottomToTopBlockFlow:
+        return borderTopWidth();
+    case LeftToRightBlockFlow:
+        return borderRightWidth();
+    case RightToLeftBlockFlow:
+        return borderLeftWidth();
+    }
+    ASSERT_NOT_REACHED();
+    return borderBottomWidth();
+}
+
+unsigned short RenderStyle::borderStartWidth() const
+{
+    if (blockFlow() == TopToBottomBlockFlow || blockFlow() == BottomToTopBlockFlow)
+        return direction() == LTR ? borderLeftWidth() : borderRightWidth();
+    return direction() == LTR ? borderTopWidth() : borderBottomWidth();
+}
+
+unsigned short RenderStyle::borderEndWidth() const
+{
+    if (blockFlow() == TopToBottomBlockFlow || blockFlow() == BottomToTopBlockFlow)
+        return direction() == LTR ? borderRightWidth() : borderLeftWidth();
+    return direction() == LTR ? borderBottomWidth() : borderTopWidth();
+}
+    
+Length RenderStyle::marginBefore() const
+{
+    switch (blockFlow()) {
+    case TopToBottomBlockFlow:
+        return marginTop();
+    case BottomToTopBlockFlow:
+        return marginBottom();
+    case LeftToRightBlockFlow:
+        return marginLeft();
+    case RightToLeftBlockFlow:
+        return marginRight();
+    }
+    ASSERT_NOT_REACHED();
+    return marginTop();
+}
+
+Length RenderStyle::marginAfter() const
+{
+    switch (blockFlow()) {
+    case TopToBottomBlockFlow:
+        return marginBottom();
+    case BottomToTopBlockFlow:
+        return marginTop();
+    case LeftToRightBlockFlow:
+        return marginRight();
+    case RightToLeftBlockFlow:
+        return marginLeft();
+    }
+    ASSERT_NOT_REACHED();
+    return marginBottom();
+}
+
+Length RenderStyle::marginStart() const
+{
+    if (blockFlow() == TopToBottomBlockFlow || blockFlow() == BottomToTopBlockFlow)
+        return direction() == LTR ? marginLeft() : marginRight();
+    return direction() == LTR ? marginTop() : marginBottom();
+}
+
+Length RenderStyle::marginEnd() const
+{
+    if (blockFlow() == TopToBottomBlockFlow || blockFlow() == BottomToTopBlockFlow)
+        return direction() == LTR ? marginRight() : marginLeft();
+    return direction() == LTR ? marginBottom() : marginTop();
+}
+    
+Length RenderStyle::paddingBefore() const
+{
+    switch (blockFlow()) {
+    case TopToBottomBlockFlow:
+        return paddingTop();
+    case BottomToTopBlockFlow:
+        return paddingBottom();
+    case LeftToRightBlockFlow:
+        return paddingLeft();
+    case RightToLeftBlockFlow:
+        return paddingRight();
+    }
+    ASSERT_NOT_REACHED();
+    return paddingTop();
+}
+
+Length RenderStyle::paddingAfter() const
+{
+    switch (blockFlow()) {
+    case TopToBottomBlockFlow:
+        return paddingBottom();
+    case BottomToTopBlockFlow:
+        return paddingTop();
+    case LeftToRightBlockFlow:
+        return paddingRight();
+    case RightToLeftBlockFlow:
+        return paddingLeft();
+    }
+    ASSERT_NOT_REACHED();
+    return paddingBottom();
+}
+
+Length RenderStyle::paddingStart() const
+{
+    if (blockFlow() == TopToBottomBlockFlow || blockFlow() == BottomToTopBlockFlow)
+        return direction() == LTR ? paddingLeft() : paddingRight();
+    return direction() == LTR ? paddingTop() : paddingBottom();
+}
+
+Length RenderStyle::paddingEnd() const
+{
+    if (blockFlow() == TopToBottomBlockFlow || blockFlow() == BottomToTopBlockFlow)
+        return direction() == LTR ? paddingRight() : paddingLeft();
+    return direction() == LTR ? paddingBottom() : paddingTop();
+}
+
 } // namespace WebCore

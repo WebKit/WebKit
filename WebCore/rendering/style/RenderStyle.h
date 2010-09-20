@@ -390,6 +390,13 @@ public:
     Length maxWidth() const { return m_box->maxWidth(); }
     Length minHeight() const { return m_box->minHeight(); }
     Length maxHeight() const { return m_box->maxHeight(); }
+    
+    Length logicalWidth() const;
+    Length logicalHeight() const;
+    Length logicalMinWidth() const;
+    Length logicalMaxWidth() const;
+    Length logicalMinHeight() const;
+    Length logicalMaxHeight() const;
 
     const BorderData& border() const { return surround->border; }
     const BorderValue& borderLeft() const { return surround->border.left(); }
@@ -417,6 +424,11 @@ public:
     unsigned short borderBottomWidth() const { return surround->border.borderBottomWidth(); }
     EBorderStyle borderBottomStyle() const { return surround->border.bottom().style(); }
     bool borderBottomIsTransparent() const { return surround->border.bottom().isTransparent(); }
+    
+    unsigned short borderBeforeWidth() const;
+    unsigned short borderAfterWidth() const;
+    unsigned short borderStartWidth() const;
+    unsigned short borderEndWidth() const;
 
     unsigned short outlineSize() const { return max(0, outlineWidth() + outlineOffset()); }
     unsigned short outlineWidth() const
@@ -582,12 +594,20 @@ public:
     Length marginBottom() const { return surround->margin.bottom(); }
     Length marginLeft() const { return surround->margin.left(); }
     Length marginRight() const { return surround->margin.right(); }
+    Length marginBefore() const;
+    Length marginAfter() const;
+    Length marginStart() const;
+    Length marginEnd() const;
 
     LengthBox paddingBox() const { return surround->padding; }
     Length paddingTop() const { return surround->padding.top(); }
     Length paddingBottom() const { return surround->padding.bottom(); }
     Length paddingLeft() const { return surround->padding.left(); }
     Length paddingRight() const { return surround->padding.right(); }
+    Length paddingBefore() const;
+    Length paddingAfter() const;
+    Length paddingStart() const;
+    Length paddingEnd() const;
 
     ECursor cursor() const { return static_cast<ECursor>(inherited_flags._cursor_style); }
 

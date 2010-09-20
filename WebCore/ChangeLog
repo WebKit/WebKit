@@ -2,6 +2,34 @@
 
         Reviewed by Dan Bernstein.
 
+        https://bugs.webkit.org/show_bug.cgi?id=46119, add logical accessors to RenderStyle.  Not used by any RenderObjects yet, so no tests
+        until then.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::logicalWidth):
+        (WebCore::RenderStyle::logicalHeight):
+        (WebCore::RenderStyle::logicalMinWidth):
+        (WebCore::RenderStyle::logicalMaxWidth):
+        (WebCore::RenderStyle::logicalMinHeight):
+        (WebCore::RenderStyle::logicalMaxHeight):
+        (WebCore::RenderStyle::borderBeforeWidth):
+        (WebCore::RenderStyle::borderAfterWidth):
+        (WebCore::RenderStyle::borderStartWidth):
+        (WebCore::RenderStyle::borderEndWidth):
+        (WebCore::RenderStyle::marginBefore):
+        (WebCore::RenderStyle::marginAfter):
+        (WebCore::RenderStyle::marginStart):
+        (WebCore::RenderStyle::marginEnd):
+        (WebCore::RenderStyle::paddingBefore):
+        (WebCore::RenderStyle::paddingAfter):
+        (WebCore::RenderStyle::paddingStart):
+        (WebCore::RenderStyle::paddingEnd):
+        * rendering/style/RenderStyle.h:
+
+2010-09-20  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         https://bugs.webkit.org/show_bug.cgi?id=46116, implement block-flow-aware logical properties.
         
         This patch adds all the logical properties from the CSS3 Writing Mode draft for margins, padding, border,
