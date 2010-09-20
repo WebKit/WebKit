@@ -1,3 +1,11 @@
+2010-09-20  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * MiniBrowser/Configurations/MiniBrowserCommon.vsprops: Put
+        $(WebKitOutputDir)\include before $(WebKitLibrariesDir)\include so
+        we'll pick up the most recent versions of the headers.
+
 2010-09-20  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

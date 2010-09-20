@@ -6,7 +6,7 @@
 	>
 	<Tool
 		Name="VCCLCompilerTool"
-		AdditionalIncludeDirectories="&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include&quot;"
+		AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;"
 		UsePrecompiledHeader="2"
 	/>
 	<Tool
