@@ -350,7 +350,6 @@ class Port(object):
         """Relative unix-style path for a filename under the LayoutTests
         directory. Filenames outside the LayoutTests directory should raise
         an error."""
-        assert(filename.startswith(self.layout_tests_dir()))
         return filename[len(self.layout_tests_dir()) + 1:]
 
     def results_directory(self):
