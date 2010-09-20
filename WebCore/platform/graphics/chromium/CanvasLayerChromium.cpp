@@ -34,16 +34,16 @@
 
 #include "CanvasLayerChromium.h"
 
+#include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
-
-#include <GLES2/gl2.h>
 
 namespace WebCore {
 
 unsigned CanvasLayerChromium::m_shaderProgramId = 0;
 
-CanvasLayerChromium::SharedValues::SharedValues()
-    : m_canvasShaderProgram(0)
+CanvasLayerChromium::SharedValues::SharedValues(GraphicsContext3D* context)
+    : m_context(context)
+    , m_canvasShaderProgram(0)
     , m_shaderSamplerLocation(-1)
     , m_shaderMatrixLocation(-1)
     , m_shaderAlphaLocation(-1)
@@ -73,15 +73,15 @@ CanvasLayerChromium::SharedValues::SharedValues()
         "  gl_FragColor = vec4(texColor.x, texColor.y, texColor.z, texColor.w) * alpha; \n"
         "}                                                   \n";
 
-    m_canvasShaderProgram = createShaderProgram(vertexShaderString, fragmentShaderString);
+    m_canvasShaderProgram = createShaderProgram(m_context, vertexShaderString, fragmentShaderString);
     if (!m_canvasShaderProgram) {
         LOG_ERROR("CanvasLayerChromium: Failed to create shader program");
         return;
     }
 
-    m_shaderSamplerLocation = glGetUniformLocation(m_canvasShaderProgram, "s_texture");
-    m_shaderMatrixLocation = glGetUniformLocation(m_canvasShaderProgram, "matrix");
-    m_shaderAlphaLocation = glGetUniformLocation(m_canvasShaderProgram, "alpha");
+    m_shaderSamplerLocation = m_context->getUniformLocation(m_canvasShaderProgram, "s_texture");
+    m_shaderMatrixLocation = m_context->getUniformLocation(m_canvasShaderProgram, "matrix");
+    m_shaderAlphaLocation = m_context->getUniformLocation(m_canvasShaderProgram, "alpha");
     ASSERT(m_shaderSamplerLocation != -1);
     ASSERT(m_shaderMatrixLocation != -1);
     ASSERT(m_shaderAlphaLocation != -1);
@@ -92,7 +92,7 @@ CanvasLayerChromium::SharedValues::SharedValues()
 CanvasLayerChromium::SharedValues::~SharedValues()
 {
     if (m_canvasShaderProgram)
-        GLC(glDeleteProgram(m_canvasShaderProgram));
+        GLC(m_context, m_context->deleteProgram(m_canvasShaderProgram));
 }
 
 CanvasLayerChromium::CanvasLayerChromium(GraphicsLayerChromium* owner)
@@ -111,11 +111,12 @@ void CanvasLayerChromium::draw()
     ASSERT(layerRenderer());
     const CanvasLayerChromium::SharedValues* sv = layerRenderer()->canvasLayerSharedValues();
     ASSERT(sv && sv->initialized());
-    GLC(glActiveTexture(GL_TEXTURE0));
-    GLC(glBindTexture(GL_TEXTURE_2D, m_textureId));
+    GraphicsContext3D* context = layerRendererContext();
+    GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
+    GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_textureId));
     layerRenderer()->useShader(sv->canvasShaderProgram());
-    GLC(glUniform1i(sv->shaderSamplerLocation(), 0));
-    drawTexturedQuad(layerRenderer()->projectionMatrix(), drawTransform(),
+    GLC(context, context->uniform1i(sv->shaderSamplerLocation(), 0));
+    drawTexturedQuad(context, layerRenderer()->projectionMatrix(), drawTransform(),
                      bounds().width(), bounds().height(), drawOpacity(),
                      sv->shaderMatrixLocation(), sv->shaderAlphaLocation());
 

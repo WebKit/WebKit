@@ -35,8 +35,7 @@
 #include "Canvas2DLayerChromium.h"
 
 #include "DrawingBuffer.h"
-
-#include <GLES2/gl2.h>
+#include "GraphicsContext3D.h"
 
 namespace WebCore {
 
@@ -54,7 +53,7 @@ Canvas2DLayerChromium::Canvas2DLayerChromium(DrawingBuffer* drawingBuffer, Graph
 Canvas2DLayerChromium::~Canvas2DLayerChromium()
 {
     if (m_textureId)
-        glDeleteTextures(1, &m_textureId);
+        layerRendererContext()->deleteTexture(m_textureId);
 }
 
 void Canvas2DLayerChromium::updateContents()
@@ -62,26 +61,27 @@ void Canvas2DLayerChromium::updateContents()
     if (!m_drawingBuffer)
         return;
     if (m_textureChanged) { // We have to generate a new backing texture.
+        GraphicsContext3D* context = layerRendererContext();
         if (m_textureId)
-            glDeleteTextures(1, &m_textureId);
-        glGenTextures(1, &m_textureId);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, m_textureId);
+            context->deleteTexture(m_textureId);
+        m_textureId = context->createTexture();
+        context->activeTexture(GraphicsContext3D::TEXTURE0);
+        context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_textureId);
         IntSize size = m_drawingBuffer->size();
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size.width(), size.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-        // Set the min-mag filters to linear and wrap modes to GL_CLAMP_TO_EDGE
+        context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, size.width(), size.height(), 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, 0);
+        // Set the min-mag filters to linear and wrap modes to GraphicsContext3D::CLAMP_TO_EDGE
         // to get around NPOT texture limitations of GLES.
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR);
+        context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR);
+        context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE);
+        context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE);
         m_textureChanged = false;
-        // FIXME: The glFinish() here is required because we have to make sure that the texture created in this
+        // FIXME: The finish() here is required because we have to make sure that the texture created in this
         // context (the compositor context) is actually created by the service side before the child context
-        // attempts to use it (in publishToPlatformLayer).  glFinish() is currently the only call with strong
+        // attempts to use it (in publishToPlatformLayer).  finish() is currently the only call with strong
         // enough semantics to promise this, but is actually much stronger.  Ideally we'd do something like
         // inserting a fence here and waiting for it before trying to publish.
-        glFinish();
+        context->finish();
     }
     // Update the contents of the texture used by the compositor.
     if (m_contentsDirty) {

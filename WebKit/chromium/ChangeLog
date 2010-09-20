@@ -1,5 +1,35 @@
 2010-09-20  Kenneth Russell  <kbr@google.com>
 
+        Reviewed by James Robinson.
+
+        [chromium] Change compositor to use GraphicsContext3D rather than GLES2Context
+        https://bugs.webkit.org/show_bug.cgi?id=45912
+
+        Switched Chromium's compositor to use GraphicsContext3D to issue
+        its OpenGL rendering calls rather than the Chromium-specific
+        GLES2Context and command buffer OpenGL implementation.
+
+        The in-process software rendering path for GraphicsContext3D does
+        not yet work with the compositor, at least not on Mac OS X. This
+        will be worked on in subsequent bugs.
+
+        Tested manually with 3D CSS, WebGL and video content on Mac OS X
+        and Linux. No new tests.
+
+        * src/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3DInternal::initialize):
+        (WebCore::GraphicsContext3DInternal::extractWebGraphicsContext3D):
+        (WebCore::GraphicsContext3D::create):
+        * src/GraphicsContext3DInternal.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::resize):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit::WebViewImpl::gles2Context):
+        (WebKit::WebViewImpl::graphicsContext3D):
+        * src/WebViewImpl.h:
+
+2010-09-20  Kenneth Russell  <kbr@google.com>
+
         Reviewed by Dimitri Glazkov.
 
         [chromium] Roll forward Chromium DEPS to pick up WebGraphicsContext3D implementation changes

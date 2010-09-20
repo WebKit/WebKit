@@ -34,6 +34,7 @@
 
 #include "ContentLayerChromium.h"
 
+#include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
 #include "RenderLayerBacking.h"
 
@@ -47,12 +48,11 @@
 #include <CoreGraphics/CGBitmapContext.h>
 #endif
 
-#include <GLES2/gl2.h>
-
 namespace WebCore {
 
-ContentLayerChromium::SharedValues::SharedValues()
-    : m_contentShaderProgram(0)
+ContentLayerChromium::SharedValues::SharedValues(GraphicsContext3D* context)
+    : m_context(context)
+    , m_contentShaderProgram(0)
     , m_shaderSamplerLocation(-1)
     , m_shaderMatrixLocation(-1)
     , m_shaderAlphaLocation(-1)
@@ -90,15 +90,15 @@ ContentLayerChromium::SharedValues::SharedValues()
 #endif
         "}                                                   \n";
 
-    m_contentShaderProgram = createShaderProgram(vertexShaderString, fragmentShaderString);
+    m_contentShaderProgram = createShaderProgram(m_context, vertexShaderString, fragmentShaderString);
     if (!m_contentShaderProgram) {
         LOG_ERROR("ContentLayerChromium: Failed to create shader program");
         return;
     }
 
-    m_shaderSamplerLocation = glGetUniformLocation(m_contentShaderProgram, "s_texture");
-    m_shaderMatrixLocation = glGetUniformLocation(m_contentShaderProgram, "matrix");
-    m_shaderAlphaLocation = glGetUniformLocation(m_contentShaderProgram, "alpha");
+    m_shaderSamplerLocation = m_context->getUniformLocation(m_contentShaderProgram, "s_texture");
+    m_shaderMatrixLocation = m_context->getUniformLocation(m_contentShaderProgram, "matrix");
+    m_shaderAlphaLocation = m_context->getUniformLocation(m_contentShaderProgram, "alpha");
     ASSERT(m_shaderSamplerLocation != -1);
     ASSERT(m_shaderMatrixLocation != -1);
     ASSERT(m_shaderAlphaLocation != -1);
@@ -109,7 +109,7 @@ ContentLayerChromium::SharedValues::SharedValues()
 ContentLayerChromium::SharedValues::~SharedValues()
 {
     if (m_contentShaderProgram)
-        GLC(glDeleteProgram(m_contentShaderProgram));
+        GLC(m_context, m_context->deleteProgram(m_contentShaderProgram));
 }
 
 
@@ -127,7 +127,7 @@ ContentLayerChromium::ContentLayerChromium(GraphicsLayerChromium* owner)
 ContentLayerChromium::~ContentLayerChromium()
 {
     if (m_contentsTexture)
-        GLC(glDeleteTextures(1, &m_contentsTexture));
+        GLC(layerRendererContext(), layerRendererContext()->deleteTexture(m_contentsTexture));
 }
 
 
@@ -236,20 +236,21 @@ void ContentLayerChromium::updateTextureRect(void* pixels, const IntSize& bitmap
     if (!pixels)
         return;
 
-    glBindTexture(GL_TEXTURE_2D, textureId);
+    GraphicsContext3D* context = layerRendererContext();
+    context->bindTexture(GraphicsContext3D::TEXTURE_2D, textureId);
 
     // If the texture id or size changed since last time then we need to tell GL
     // to re-allocate a texture.
     if (m_contentsTexture != textureId || requiredTextureSize != m_allocatedTextureSize) {
         ASSERT(bitmapSize == requiredTextureSize);
-        GLC(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, requiredTextureSize.width(), requiredTextureSize.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
+        GLC(context, context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, requiredTextureSize.width(), requiredTextureSize.height(), 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, pixels));
 
         m_contentsTexture = textureId;
         m_allocatedTextureSize = requiredTextureSize;
     } else {
         ASSERT(updateRect.width() <= m_allocatedTextureSize.width() && updateRect.height() <= m_allocatedTextureSize.height());
         ASSERT(updateRect.width() == bitmapSize.width() && updateRect.height() == bitmapSize.height());
-        GLC(glTexSubImage2D(GL_TEXTURE_2D, 0, updateRect.x(), updateRect.y(), updateRect.width(), updateRect.height(), GL_RGBA, GL_UNSIGNED_BYTE, pixels));
+        GLC(context, context->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, updateRect.x(), updateRect.y(), updateRect.width(), updateRect.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, pixels));
     }
 
     m_dirtyRect.setSize(FloatSize());
@@ -264,11 +265,12 @@ void ContentLayerChromium::draw()
     ASSERT(layerRenderer());
     const ContentLayerChromium::SharedValues* sv = layerRenderer()->contentLayerSharedValues();
     ASSERT(sv && sv->initialized());
-    GLC(glActiveTexture(GL_TEXTURE0));
-    GLC(glBindTexture(GL_TEXTURE_2D, m_contentsTexture));
+    GraphicsContext3D* context = layerRendererContext();
+    GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
+    GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_contentsTexture));
     layerRenderer()->useShader(sv->contentShaderProgram());
-    GLC(glUniform1i(sv->shaderSamplerLocation(), 0));
-    drawTexturedQuad(layerRenderer()->projectionMatrix(), drawTransform(),
+    GLC(context, context->uniform1i(sv->shaderSamplerLocation(), 0));
+    drawTexturedQuad(context, layerRenderer()->projectionMatrix(), drawTransform(),
                      bounds().width(), bounds().height(), drawOpacity(),
                      sv->shaderMatrixLocation(), sv->shaderAlphaLocation());
 }

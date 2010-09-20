@@ -31,7 +31,6 @@
 #ifndef WebViewImpl_h
 #define WebViewImpl_h
 
-#include "WebGLES2Context.h"
 #include "WebNavigationPolicy.h"
 #include "WebPoint.h"
 #include "WebRect.h"
@@ -44,6 +43,7 @@
 #include "ContextMenuClientImpl.h"
 #include "DragClientImpl.h"
 #include "EditorClientImpl.h"
+#include "GraphicsContext3D.h"
 #include "GraphicsLayer.h"
 #include "InspectorClientImpl.h"
 #include "IntRect.h"
@@ -56,7 +56,6 @@
 namespace WebCore {
 class ChromiumDataObject;
 class Frame;
-class GLES2Context;
 class HistoryItem;
 class HitTestResult;
 class KeyboardEvent;
@@ -333,14 +332,8 @@ public:
     void scrollRootLayerRect(const WebCore::IntSize& scrollDelta, const WebCore::IntRect& clipRect);
     void invalidateRootLayerRect(const WebCore::IntRect&);
 #endif
-    // Onscreen contexts display to the screen associated with this view.
-    // Offscreen contexts render offscreen but can share resources with the
-    // onscreen context and thus can be composited.
-    // FIXME: remove this once the compositor is switched to use GraphicsContext3D.
-    PassOwnPtr<WebCore::GLES2Context> getOnscreenGLES2Context();
-
-    // Returns an onscreen context
-    // FIXME: remove this once the compositor is switched to use GraphicsContext3D.
+    // FIXME: remove this method once the compositor is fully switched
+    // over to GraphicsContext3D.
     virtual WebGLES2Context* gles2Context();
 
     // Returns the onscreen 3D context used by the compositor. This is
@@ -543,8 +536,10 @@ private:
 #if ENABLE(INPUT_SPEECH)
     SpeechInputClientImpl m_speechInputClient;
 #endif
-
-    OwnPtr<WebGLES2Context> m_gles2Context;
+    // If we attempt to fetch the on-screen GraphicsContext3D before
+    // the compositor has been turned on, we need to instantiate it
+    // early. This member holds on to the GC3D in this case.
+    OwnPtr<WebCore::GraphicsContext3D> m_temporaryOnscreenGraphicsContext3D;
 
     RefPtr<WebCore::SharedGraphicsContext3D> m_sharedContext3D;
 

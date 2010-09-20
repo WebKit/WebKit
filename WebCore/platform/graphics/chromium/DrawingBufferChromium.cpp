@@ -39,12 +39,6 @@
 #include "Canvas2DLayerChromium.h"
 #endif
 
-#include <GLES2/gl2.h>
-#ifndef GL_GLEXT_PROTOTYPES
-#define GL_GLEXT_PROTOTYPES 1
-#endif
-#include <GLES2/gl2ext.h>
-
 namespace WebCore {
 
 struct DrawingBufferInternal {
@@ -105,8 +99,8 @@ void DrawingBuffer::publishToPlatformLayer()
     // happens before the compositor draws.  This means we might draw stale frames sometimes.  Ideally this
     // would insert a fence into the child command stream that the compositor could wait for.
     m_context->makeContextCurrent();
-    glCopyTextureToParentTexture(m_internal->offscreenColorTexture, parentTexture);
-    glFlush();
+    m_context->copyTextureToParentTextureCHROMIUM(m_internal->offscreenColorTexture, parentTexture);
+    m_context->flush();
 }
 #endif
 

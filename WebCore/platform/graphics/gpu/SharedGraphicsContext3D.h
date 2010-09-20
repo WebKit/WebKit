@@ -70,6 +70,7 @@ public:
     void drawArrays(unsigned long mode, long first, long count);
     unsigned long getError();
     void getIntegerv(unsigned long pname, int* value);
+    void flush();
 
     unsigned createFramebuffer();
     unsigned createTexture();
@@ -97,6 +98,10 @@ public:
     void bindTexture(unsigned target, unsigned texture);
 
     bool supportsBGRA();
+
+    // GL_CHROMIUM_copy_texture_to_parent_texture
+    bool supportsCopyTextureToParentTextureCHROMIUM();
+    void copyTextureToParentTextureCHROMIUM(unsigned texture, unsigned parentTexture);
 
     // Creates a texture associated with the given image.  Is owned by this context's
     // TextureHashMap.

@@ -36,7 +36,6 @@
 
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
-#include <GLES2/gl2.h>
 
 namespace WebCore {
 
@@ -53,15 +52,16 @@ WebGLLayerChromium::WebGLLayerChromium(GraphicsLayerChromium* owner)
 
 void WebGLLayerChromium::updateContents()
 {
+    GraphicsContext3D* rendererContext = layerRendererContext();
     ASSERT(m_context);
     if (m_textureChanged) {
-        glBindTexture(GL_TEXTURE_2D, m_textureId);
+        rendererContext->bindTexture(GraphicsContext3D::TEXTURE_2D, m_textureId);
         // Set the min-mag filters to linear and wrap modes to GL_CLAMP_TO_EDGE
         // to get around NPOT texture limitations of GLES.
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        rendererContext->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR);
+        rendererContext->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR);
+        rendererContext->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE);
+        rendererContext->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE);
         m_textureChanged = false;
     }
     // Update the contents of the texture used by the compositor.

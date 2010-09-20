@@ -1,3 +1,83 @@
+2010-09-20  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Change compositor to use GraphicsContext3D rather than GLES2Context
+        https://bugs.webkit.org/show_bug.cgi?id=45912
+
+        Switched Chromium's compositor to use GraphicsContext3D to issue
+        its OpenGL rendering calls rather than the Chromium-specific
+        GLES2Context and command buffer OpenGL implementation.
+
+        The in-process software rendering path for GraphicsContext3D does
+        not yet work with the compositor, at least not on Mac OS X. This
+        will be worked on in subsequent bugs.
+
+        Tested manually with 3D CSS, WebGL and video content on Mac OS X
+        and Linux. No new tests.
+
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::~Canvas2DLayerChromium):
+        (WebCore::Canvas2DLayerChromium::updateContents):
+        * platform/graphics/chromium/CanvasLayerChromium.cpp:
+        (WebCore::CanvasLayerChromium::SharedValues::SharedValues):
+        (WebCore::CanvasLayerChromium::SharedValues::~SharedValues):
+        (WebCore::CanvasLayerChromium::draw):
+        * platform/graphics/chromium/CanvasLayerChromium.h:
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::SharedValues::SharedValues):
+        (WebCore::ContentLayerChromium::SharedValues::~SharedValues):
+        (WebCore::ContentLayerChromium::~ContentLayerChromium):
+        (WebCore::ContentLayerChromium::updateTextureRect):
+        (WebCore::ContentLayerChromium::draw):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        * platform/graphics/chromium/DrawingBufferChromium.cpp:
+        (WebCore::DrawingBuffer::publishToPlatformLayer):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::loadShader):
+        (WebCore::LayerChromium::SharedValues::SharedValues):
+        (WebCore::LayerChromium::SharedValues::~SharedValues):
+        (WebCore::LayerChromium::createShaderProgram):
+        (WebCore::LayerChromium::layerRendererContext):
+        (WebCore::LayerChromium::drawTexturedQuad):
+        (WebCore::LayerChromium::drawDebugBorder):
+        (WebCore::LayerChromium::drawAsMask):
+        (WebCore::LayerChromium::prepareForDraw):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::SharedValues::context):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::create):
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::context):
+        (WebCore::LayerRendererChromium::debugGLCall):
+        (WebCore::LayerRendererChromium::useShader):
+        (WebCore::LayerRendererChromium::prepareToDrawLayers):
+        (WebCore::LayerRendererChromium::updateRootLayerTextureRect):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::finish):
+        (WebCore::LayerRendererChromium::present):
+        (WebCore::LayerRendererChromium::getFramebufferPixels):
+        (WebCore::LayerRendererChromium::createLayerTexture):
+        (WebCore::LayerRendererChromium::drawLayerIntoStencilBuffer):
+        (WebCore::LayerRendererChromium::drawLayersRecursive):
+        (WebCore::LayerRendererChromium::drawLayer):
+        (WebCore::LayerRendererChromium::scissorToRect):
+        (WebCore::LayerRendererChromium::makeContextCurrent):
+        (WebCore::LayerRendererChromium::resizeOnscreenContent):
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        (WebCore::LayerRendererChromium::cleanupSharedObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::createTextureRect):
+        (WebCore::VideoLayerChromium::updateTextureRect):
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::updateContents):
+        * platform/graphics/gpu/SharedGraphicsContext3D.cpp:
+        (WebCore::SharedGraphicsContext3D::flush):
+        (WebCore::SharedGraphicsContext3D::supportsCopyTextureToParentTextureCHROMIUM):
+        (WebCore::SharedGraphicsContext3D::copyTextureToParentTextureCHROMIUM):
+        * platform/graphics/gpu/SharedGraphicsContext3D.h:
+
 2010-09-20  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

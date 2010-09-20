@@ -100,8 +100,7 @@ GraphicsContext3DInternal::~GraphicsContext3DInternal()
 #endif
 }
 
-bool GraphicsContext3DInternal::initialize(GraphicsContext3D::Attributes attrs,
-                                           HostWindow* hostWindow)
+bool GraphicsContext3DInternal::initialize(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow, bool renderDirectlyToHostWindow)
 {
     WebKit::WebGraphicsContext3D::Attributes webAttributes;
     webAttributes.alpha = attrs.alpha;
@@ -120,7 +119,7 @@ bool GraphicsContext3DInternal::initialize(GraphicsContext3D::Attributes attrs,
 
     if (!m_webViewImpl)
         return false;
-    if (!webContext->initialize(webAttributes, m_webViewImpl)) {
+    if (!webContext->initialize(webAttributes, m_webViewImpl, renderDirectlyToHostWindow)) {
         delete webContext;
         return false;
     }
@@ -130,6 +129,13 @@ bool GraphicsContext3DInternal::initialize(GraphicsContext3D::Attributes attrs,
     m_compositingLayer = WebGLLayerChromium::create(0);
 #endif
     return true;
+}
+
+WebKit::WebGraphicsContext3D* GraphicsContext3DInternal::extractWebGraphicsContext3D(GraphicsContext3D* context)
+{
+    if (!context)
+        return 0;
+    return context->m_internal->m_impl.get();
 }
 
 PlatformGraphicsContext3D GraphicsContext3DInternal::platformGraphicsContext3D() const
@@ -797,14 +803,11 @@ GraphicsContext3D::~GraphicsContext3D()
 
 PassOwnPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow, GraphicsContext3D::RenderStyle renderStyle)
 {
-    // FIXME: must pass down renderStyle argument when switching compositor to GraphicsContext3D.
-    if (renderStyle == RenderDirectlyToHostWindow)
-        return 0;
     OwnPtr<GraphicsContext3DInternal> internal = adoptPtr(new GraphicsContext3DInternal());
-    if (!internal->initialize(attrs, hostWindow)) {
+    if (!internal->initialize(attrs, hostWindow, renderStyle == RenderDirectlyToHostWindow)) {
         return 0;
     }
-    PassOwnPtr<GraphicsContext3D> result = new GraphicsContext3D(attrs, hostWindow, false);
+    PassOwnPtr<GraphicsContext3D> result = new GraphicsContext3D(attrs, hostWindow, renderStyle == RenderDirectlyToHostWindow);
     result->m_internal = internal.release();
     return result;
 }

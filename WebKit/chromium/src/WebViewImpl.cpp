@@ -56,10 +56,9 @@
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "FrameView.h"
-#include "GLES2Context.h"
-#include "GLES2ContextInternal.h"
 #include "GraphicsContext.h"
 #include "GraphicsContext3D.h"
+#include "GraphicsContext3DInternal.h"
 #include "HTMLInputElement.h"
 #include "HTMLMediaElement.h"
 #include "HitTestResult.h"
@@ -927,9 +926,9 @@ void WebViewImpl::resize(const WebSize& newSize)
     }
 
 #if OS(DARWIN)
-    if (m_gles2Context) {
-        m_gles2Context->resizeOnscreenContent(WebSize(std::max(1, m_size.width),
-                                                      std::max(1, m_size.height)));
+    if (m_layerRenderer) {
+        m_layerRenderer->resizeOnscreenContent(WebCore::IntSize(std::max(1, m_size.width),
+                                                                std::max(1, m_size.height)));
     }
 #endif
 }
@@ -2303,7 +2302,13 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         return;
 
     if (active) {
-        m_layerRenderer = LayerRendererChromium::create(getOnscreenGLES2Context());
+        OwnPtr<GraphicsContext3D> context = m_temporaryOnscreenGraphicsContext3D.release();
+        if (!context) {
+            context = GraphicsContext3D::create(GraphicsContext3D::Attributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
+            if (context)
+                context->reshape(std::max(1, m_size.width), std::max(1, m_size.height));
+        }
+        m_layerRenderer = LayerRendererChromium::create(context.release());
         if (m_layerRenderer) {
             m_isAcceleratedCompositingActive = true;
         } else {
@@ -2413,14 +2418,6 @@ void WebViewImpl::doComposite()
 #endif
 
 
-PassOwnPtr<GLES2Context> WebViewImpl::getOnscreenGLES2Context()
-{
-    WebGLES2Context* context = gles2Context();
-    if (!context)
-        return 0;
-    return GLES2Context::create(GLES2ContextInternal::create(context, false));
-}
-
 SharedGraphicsContext3D* WebViewImpl::getSharedGraphicsContext3D()
 {
     if (!m_sharedContext3D) {
@@ -2434,32 +2431,32 @@ SharedGraphicsContext3D* WebViewImpl::getSharedGraphicsContext3D()
     return m_sharedContext3D.get();
 }
 
-// Returns the GLES2 context associated with this View. If one doesn't exist
-// it will get created first.
 WebGLES2Context* WebViewImpl::gles2Context()
 {
-    if (!m_gles2Context) {
-        m_gles2Context = webKitClient()->createGLES2Context();
-        if (!m_gles2Context)
-            return 0;
-
-        if (!m_gles2Context->initialize(this, 0)) {
-            m_gles2Context.clear();
-            return 0;
-        }
-
-#if OS(DARWIN)
-        m_gles2Context->resizeOnscreenContent(WebSize(std::max(1, m_size.width),
-                                                      std::max(1, m_size.height)));
-#endif
-    }
-    return m_gles2Context.get();
+    return 0;
 }
 
 WebGraphicsContext3D* WebViewImpl::graphicsContext3D()
 {
-    // FIXME: implement this.
+#if USE(ACCELERATED_COMPOSITING)
+    GraphicsContext3D* context = 0;
+    if (m_layerRenderer)
+        context = m_layerRenderer->context();
+    else if (m_temporaryOnscreenGraphicsContext3D)
+        context = m_temporaryOnscreenGraphicsContext3D.get();
+    else {
+        GraphicsContext3D::Attributes attributes;
+        m_temporaryOnscreenGraphicsContext3D = GraphicsContext3D::create(GraphicsContext3D::Attributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
+#if OS(DARWIN)
+        if (m_temporaryOnscreenGraphicsContext3D)
+            m_temporaryOnscreenGraphicsContext3D->reshape(std::max(1, m_size.width), std::max(1, m_size.height));
+#endif
+        context = m_temporaryOnscreenGraphicsContext3D.get();
+    }
+    return GraphicsContext3DInternal::extractWebGraphicsContext3D(context);
+#else
     return 0;
+#endif
 }
 
 } // namespace WebKit

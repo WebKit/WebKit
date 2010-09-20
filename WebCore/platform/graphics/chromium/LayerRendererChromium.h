@@ -51,15 +51,17 @@
 
 namespace WebCore {
 
-class GLES2Context;
+class GraphicsContext3D;
 
 // Class that handles drawing of composited render layers using GL.
 class LayerRendererChromium : public Noncopyable {
 public:
-    static PassOwnPtr<LayerRendererChromium> create(PassOwnPtr<GLES2Context> gles2Context);
+    static PassOwnPtr<LayerRendererChromium> create(PassOwnPtr<GraphicsContext3D> graphicsContext3D);
 
-    LayerRendererChromium(PassOwnPtr<GLES2Context> gles2Context);
+    LayerRendererChromium(PassOwnPtr<GraphicsContext3D> graphicsContext3D);
     ~LayerRendererChromium();
+
+    GraphicsContext3D* context();
 
     // updates size of root texture, if needed, and scrolls the backbuffer.
     void prepareToDrawLayers(const IntRect& visibleRect, const IntRect& contentRect, const IntPoint& scrollPosition);
@@ -89,7 +91,7 @@ public:
 
     unsigned createLayerTexture();
 
-    static void debugGLCall(const char* command, const char* file, int line);
+    static void debugGLCall(GraphicsContext3D*, const char* command, const char* file, int line);
 
     const TransformationMatrix& projectionMatrix() const { return m_projectionMatrix; }
 
@@ -100,6 +102,8 @@ public:
     const LayerChromium::SharedValues* layerSharedValues() const { return m_layerSharedValues.get(); }
     const ContentLayerChromium::SharedValues* contentLayerSharedValues() const { return m_contentLayerSharedValues.get(); }
     const CanvasLayerChromium::SharedValues* canvasLayerSharedValues() const { return m_canvasLayerSharedValues.get(); }
+
+    void resizeOnscreenContent(const IntSize&);
 
     IntSize rootLayerTextureSize() const { return IntSize(m_rootLayerTextureWidth, m_rootLayerTextureHeight); }
     void getFramebufferPixels(void *pixels, const IntRect& rect);
@@ -167,7 +171,7 @@ private:
     OwnPtr<ContentLayerChromium::SharedValues> m_contentLayerSharedValues;
     OwnPtr<CanvasLayerChromium::SharedValues> m_canvasLayerSharedValues;
 
-    OwnPtr<GLES2Context> m_gles2Context;
+    OwnPtr<GraphicsContext3D> m_context;
 };
 
 // Setting DEBUG_GL_CALLS to 1 will call glGetError() after almost every GL
@@ -176,9 +180,9 @@ private:
 #define DEBUG_GL_CALLS 0
 
 #if DEBUG_GL_CALLS && !defined ( NDEBUG )
-#define GLC(x) { (x), LayerRendererChromium::debugGLCall(#x, __FILE__, __LINE__); }
+#define GLC(context, x) { (x), LayerRendererChromium::debugGLCall(context, #x, __FILE__, __LINE__); }
 #else
-#define GLC(x) (x)
+#define GLC(context, x) (x)
 #endif
 
 

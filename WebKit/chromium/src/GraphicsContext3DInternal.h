@@ -48,7 +48,12 @@ public:
     GraphicsContext3DInternal();
     ~GraphicsContext3DInternal();
 
-    bool initialize(GraphicsContext3D::Attributes, HostWindow*);
+    bool initialize(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow, bool renderDirectlyToHostWindow);
+
+    // Helper function to provide access to the lower-level WebGraphicsContext3D,
+    // which is needed for subordinate contexts like WebGL's to share resources
+    // with the compositor's context.
+    static WebKit::WebGraphicsContext3D* extractWebGraphicsContext3D(GraphicsContext3D* context);
 
     PlatformGraphicsContext3D platformGraphicsContext3D() const;
     Platform3DObject platformTexture() const;
