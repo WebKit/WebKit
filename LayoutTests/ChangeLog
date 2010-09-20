@@ -1,3 +1,10 @@
+2010-09-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt]REGRESSION? (r67762): 23 layout tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=46093
+
+        * platform/qt/Skipped: Skip failing tests until fix.
+
 2010-09-20  Adam Roben  <aroben@apple.com>
 
         Remove no-longer-needed Windows-specific results for a Sputnik

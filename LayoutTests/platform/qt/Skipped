@@ -5449,3 +5449,29 @@ fast/viewport/viewport-127.html
 fast/viewport/viewport-6.html
 fast/viewport/viewport-45.html
 fast/viewport/viewport-58.html
+
+# [Qt]REGRESSION? (r67762): 23 layout tests fail
+# https://bugs.webkit.org/show_bug.cgi?id=46093
+svg/custom/use-font-face-crash.svg
+svg/zoom/text/zoom-coords-viewattr-01-b.svg
+tables/layering/paint-test-layering-1.html
+tables/layering/paint-test-layering-2.html
+tables/mozilla/bugs/adforce_imgis_com.html
+tables/mozilla/bugs/bug50695-2.html
+tables/mozilla/bugs/bug56201.html
+tables/mozilla/bugs/bug92647-2.html
+tables/mozilla/bugs/bug196870.html
+tables/mozilla/other/slashlogo.html
+tables/mozilla_expected_failures/bugs/bug23847.html
+transforms/2d/transform-2d.html
+transforms/2d/transform-fixed-container.html
+transitions/font-family-during-transition.html
+transitions/svg-text-shadow-transition.html
+http/tests/local/file-url-sent-as-referer.html
+http/tests/misc/error404.pl
+http/tests/misc/frame-access-during-load.html
+http/tests/misc/generated-content-inside-table.html
+http/tests/misc/iframe404.html
+http/tests/misc/location-replace-crossdomain.html
+http/tests/misc/slow-loading-image-in-pattern.html
+http/tests/uri/css-href.php
