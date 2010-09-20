@@ -42,8 +42,8 @@ public:
     WebPolicyClient();
     void initialize(const WKPagePolicyClient*);
 
-    bool decidePolicyForNavigationAction(WebPageProxy*, WebCore::NavigationType, WebEvent::Modifiers, const String& url, WebFrameProxy*, WebFramePolicyListenerProxy*);
-    bool decidePolicyForNewWindowAction(WebPageProxy*, WebCore::NavigationType, WebEvent::Modifiers, const String& url, WebFrameProxy*, WebFramePolicyListenerProxy*);
+    bool decidePolicyForNavigationAction(WebPageProxy*, WebCore::NavigationType, WebEvent::Modifiers, WebMouseEvent::Button, const String& url, WebFrameProxy*, WebFramePolicyListenerProxy*);
+    bool decidePolicyForNewWindowAction(WebPageProxy*, WebCore::NavigationType, WebEvent::Modifiers, WebMouseEvent::Button, const String& url, WebFrameProxy*, WebFramePolicyListenerProxy*);
     bool decidePolicyForMIMEType(WebPageProxy*, const String&, const String& url, WebFrameProxy*, WebFramePolicyListenerProxy*);
 
 private:

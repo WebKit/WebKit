@@ -1,3 +1,15 @@
+2010-09-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2 decidePolicyForNavigationAction should include mouse button information
+        <rdar://problem/8413165>
+        https://bugs.webkit.org/show_bug.cgi?id=46060
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (decidePolicyForNavigationAction):
+        (decidePolicyForNewWindowAction):
+
 2010-09-19  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Martin Robinson.

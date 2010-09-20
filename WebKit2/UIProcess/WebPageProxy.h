@@ -219,8 +219,8 @@ private:
     void didChangeProgress(double);
     void didFinishProgress();
     
-    void decidePolicyForNavigationAction(WebFrameProxy*, WebCore::NavigationType navigationType, WebEvent::Modifiers modifiers, const String& url, uint64_t listenerID);
-    void decidePolicyForNewWindowAction(WebFrameProxy*, WebCore::NavigationType navigationType, WebEvent::Modifiers modifiers, const String& url, uint64_t listenerID);
+    void decidePolicyForNavigationAction(WebFrameProxy*, WebCore::NavigationType, WebEvent::Modifiers, WebMouseEvent::Button, const String& url, uint64_t listenerID);
+    void decidePolicyForNewWindowAction(WebFrameProxy*, WebCore::NavigationType, WebEvent::Modifiers, WebMouseEvent::Button, const String& url, uint64_t listenerID);
     void decidePolicyForMIMEType(WebFrameProxy*, const String& MIMEType, const String& url, uint64_t listenerID);
 
     void willSubmitForm(WebFrameProxy* frame, WebFrameProxy* frameSource, Vector<std::pair<String, String> >& textFieldValues, APIObject* userData, uint64_t listenerID);

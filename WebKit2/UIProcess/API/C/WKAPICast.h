@@ -244,6 +244,28 @@ inline WKEventModifiers toRef(WebEvent::Modifiers modifiers)
     return wkModifiers;
 }
 
+inline WKEventMouseButton toRef(WebMouseEvent::Button mouseButton)
+{
+    WKEventMouseButton wkMouseButton = kWKEventMouseButtonNoButton;
+
+    switch (mouseButton) {
+    case WebMouseEvent::NoButton:
+        wkMouseButton = kWKEventMouseButtonNoButton;
+        break;
+    case WebMouseEvent::LeftButton:
+        wkMouseButton = kWKEventMouseButtonLeftButton;
+        break;
+    case WebMouseEvent::MiddleButton:
+        wkMouseButton = kWKEventMouseButtonMiddleButton;
+        break;
+    case WebMouseEvent::RightButton:
+        wkMouseButton = kWKEventMouseButtonRightButton;
+        break;
+    }
+
+    return wkMouseButton;
+}
+
 } // namespace WebKit
 
 #endif // WKAPICast_h
