@@ -119,7 +119,7 @@ static JSC::JSValue getItem(JSPODListType* wrapper, JSC::ExecState* exec,
                             typename JSSVGPODListTraits<PODType>::ConversionCallback)
 {
     bool indexOk = false;
-    unsigned index = exec->argument(0).toUInt32(exec, indexOk);
+    unsigned index = finiteInt32Value(exec->argument(0), exec, indexOk);
     if (!indexOk) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return JSC::jsUndefined();
@@ -136,7 +136,7 @@ static JSC::JSValue insertItemBefore(JSPODListType* wrapper, JSC::ExecState* exe
                                      typename JSSVGPODListTraits<PODType>::ConversionCallback conversion)
 {
     bool indexOk = false;
-    unsigned index = exec->argument(1).toUInt32(exec, indexOk);
+    unsigned index = finiteInt32Value(exec->argument(1), exec, indexOk);
     if (!indexOk) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return JSC::jsUndefined();
@@ -153,7 +153,7 @@ static JSC::JSValue replaceItem(JSPODListType* wrapper, JSC::ExecState* exec,
                                 typename JSSVGPODListTraits<PODType>::ConversionCallback conversion)
 {
     bool indexOk = false;
-    unsigned index = exec->argument(1).toUInt32(exec, indexOk);
+    unsigned index = finiteInt32Value(exec->argument(1), exec, indexOk);
     if (!indexOk) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return JSC::jsUndefined();
@@ -170,7 +170,7 @@ static JSC::JSValue removeItem(JSPODListType* wrapper, JSC::ExecState* exec,
                                typename JSSVGPODListTraits<PODType>::ConversionCallback)
 {
     bool indexOk = false;
-    unsigned index = exec->argument(0).toUInt32(exec, indexOk);
+    unsigned index = finiteInt32Value(exec->argument(0), exec, indexOk);
     if (!indexOk) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return JSC::jsUndefined();

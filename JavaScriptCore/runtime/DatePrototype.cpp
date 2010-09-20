@@ -301,19 +301,25 @@ static bool fillStructuresUsingTimeArgs(ExecState* exec, int maxArgs, double* ms
     // hours
     if (maxArgs >= 4 && idx < numArgs) {
         t->hour = 0;
-        milliseconds += exec->argument(idx++).toInt32(exec, ok) * msPerHour;
+        double hours = exec->argument(idx++).toIntegerPreserveNaN(exec);
+        ok = isfinite(hours);
+        milliseconds += hours * msPerHour;
     }
 
     // minutes
     if (maxArgs >= 3 && idx < numArgs && ok) {
         t->minute = 0;
-        milliseconds += exec->argument(idx++).toInt32(exec, ok) * msPerMinute;
+        double minutes = exec->argument(idx++).toIntegerPreserveNaN(exec);
+        ok = isfinite(minutes);
+        milliseconds += minutes * msPerMinute;
     }
     
     // seconds
     if (maxArgs >= 2 && idx < numArgs && ok) {
         t->second = 0;
-        milliseconds += exec->argument(idx++).toInt32(exec, ok) * msPerSecond;
+        double seconds = exec->argument(idx++).toIntegerPreserveNaN(exec);
+        ok = isfinite(seconds);
+        milliseconds += seconds * msPerSecond;
     }
     
     if (!ok)
@@ -321,7 +327,7 @@ static bool fillStructuresUsingTimeArgs(ExecState* exec, int maxArgs, double* ms
         
     // milliseconds
     if (idx < numArgs) {
-        double millis = exec->argument(idx).toNumber(exec);
+        double millis = exec->argument(idx).toIntegerPreserveNaN(exec);
         ok = isfinite(millis);
         milliseconds += millis;
     } else
@@ -346,17 +352,24 @@ static bool fillStructuresUsingDateArgs(ExecState *exec, int maxArgs, double *ms
         numArgs = maxArgs;
   
     // years
-    if (maxArgs >= 3 && idx < numArgs)
-        t->year = exec->argument(idx++).toInt32(exec, ok) - 1900;
-    
+    if (maxArgs >= 3 && idx < numArgs) {
+        double years = exec->argument(idx++).toIntegerPreserveNaN(exec);
+        ok = isfinite(years);
+        t->year = years - 1900;
+    }
     // months
-    if (maxArgs >= 2 && idx < numArgs && ok)   
-        t->month = exec->argument(idx++).toInt32(exec, ok);
-    
+    if (maxArgs >= 2 && idx < numArgs && ok) {
+        double months = exec->argument(idx++).toIntegerPreserveNaN(exec);
+        ok = isfinite(months);
+        t->month = months;
+    }
+
     // days
-    if (idx < numArgs && ok) {   
+    if (idx < numArgs && ok) {
+        double days = exec->argument(idx++).toIntegerPreserveNaN(exec);
+        ok = isfinite(days);
         t->monthDay = 0;
-        *ms += exec->argument(idx).toInt32(exec, ok) * msPerDay;
+        *ms += days * msPerDay;
     }
     
     return ok;
@@ -1026,9 +1039,8 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncSetYear(ExecState* exec)
             gregorianDateTime.copyFrom(*other);
     }
     
-    bool ok = true;
-    int32_t year = exec->argument(0).toInt32(exec, ok);
-    if (!ok) {
+    double year = exec->argument(0).toIntegerPreserveNaN(exec);
+    if (!isfinite(year)) {
         JSValue result = jsNaN(exec);
         thisDateObj->setInternalValue(result);
         return JSValue::encode(result);

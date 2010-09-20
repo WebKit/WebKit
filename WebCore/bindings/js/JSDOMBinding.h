@@ -267,6 +267,13 @@ namespace WebCore {
     String valueToStringWithNullCheck(JSC::ExecState*, JSC::JSValue); // null if the value is null
     String valueToStringWithUndefinedOrNullCheck(JSC::ExecState*, JSC::JSValue); // null if the value is null or undefined
 
+    inline int32_t finiteInt32Value(JSC::JSValue value, JSC::ExecState* exec, bool& okay)
+    {
+        double number = value.toNumber(exec);
+        okay = isfinite(number);
+        return JSC::toInt32(number);
+    }
+
     // Returns a Date instance for the specified value, or null if the value is NaN or infinity.
     JSC::JSValue jsDateOrNull(JSC::ExecState*, double);
     // NaN if the value can't be converted to a date.

@@ -76,7 +76,7 @@ JSValue JSHTMLOptionsCollection::add(ExecState* exec)
         imp->add(option, ec);
     else {
         bool ok;
-        int index = exec->argument(1).toInt32(exec, ok);
+        int index = finiteInt32Value(exec->argument(1), exec, ok);
         if (exec->hadException())
             return jsUndefined();
         if (!ok)

@@ -1,3 +1,36 @@
+2010-09-19  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 46065 - Unify implementation of ToInt32 and ToUInt32, don't use fmod.
+
+        These methods implement the same conversion (see discussion in the notes
+        of sections of 9.5 and 9.6 of the spec), only differing in how the result
+        is interpretted.
+
+        Removing JSValue::toInt32 (since this has weird, non-spec function).
+        A couple of places in the binding are using this method, so adding
+        finiteInt32Value to the bindings to maintain current behaviour.
+
+        Test: fast/js/toInt32UInt32.html
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::finiteInt32Value):
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        (WebCore::JSHTMLOptionsCollection::add):
+        * bindings/js/JSSQLResultSetRowListCustom.cpp:
+        (WebCore::JSSQLResultSetRowList::item):
+        * bindings/js/JSSVGPODListCustom.h:
+        (WebCore::JSSVGPODListCustom::getItem):
+        (WebCore::JSSVGPODListCustom::insertItemBefore):
+        (WebCore::JSSVGPODListCustom::replaceItem):
+        (WebCore::JSSVGPODListCustom::removeItem):
+        * bindings/js/JSSVGPathSegListCustom.cpp:
+        (WebCore::JSSVGPathSegList::getItem):
+        (WebCore::JSSVGPathSegList::insertItemBefore):
+        (WebCore::JSSVGPathSegList::replaceItem):
+        (WebCore::JSSVGPathSegList::removeItem):
+
 2010-09-19  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

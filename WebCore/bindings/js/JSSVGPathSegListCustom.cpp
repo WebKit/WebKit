@@ -71,7 +71,7 @@ JSValue JSSVGPathSegList::getItem(ExecState* exec)
     ExceptionCode ec = 0;
 
     bool indexOk;
-    unsigned index = exec->argument(0).toInt32(exec, indexOk);
+    unsigned index = finiteInt32Value(exec->argument(0), exec, indexOk);
     if (!indexOk) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return jsUndefined();
@@ -92,7 +92,7 @@ JSValue JSSVGPathSegList::insertItemBefore(ExecState* exec)
     SVGPathSeg* newItem = toSVGPathSeg(exec->argument(0));
 
     bool indexOk;
-    unsigned index = exec->argument(1).toInt32(exec, indexOk);
+    unsigned index = finiteInt32Value(exec->argument(1), exec, indexOk);
     if (!indexOk) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return jsUndefined();
@@ -114,7 +114,7 @@ JSValue JSSVGPathSegList::replaceItem(ExecState* exec)
     SVGPathSeg* newItem = toSVGPathSeg(exec->argument(0));
     
     bool indexOk;
-    unsigned index = exec->argument(1).toInt32(exec, indexOk);
+    unsigned index = finiteInt32Value(exec->argument(1), exec, indexOk);
     if (!indexOk) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return jsUndefined();
@@ -135,7 +135,7 @@ JSValue JSSVGPathSegList::removeItem(ExecState* exec)
     ExceptionCode ec = 0;
     
     bool indexOk;
-    unsigned index = exec->argument(0).toInt32(exec, indexOk);
+    unsigned index = finiteInt32Value(exec->argument(0), exec, indexOk);
     if (!indexOk) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return jsUndefined();

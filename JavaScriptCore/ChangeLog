@@ -1,3 +1,33 @@
+2010-09-19  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 46065 - Unify implementation of ToInt32 and ToUInt32, don't use fmod.
+
+        These methods implement the same conversion (see discussion in the notes
+        of sections of 9.5 and 9.6 of the spec), only differing in how the result
+        is interpretted.
+
+        Date prototype is incorrectly using toInt32, and this is causing us to
+        provide an output value indicating whether the input to ToInt32 was finite
+        (the corresponding methods on Date are actually spec'ed to use ToInteger,
+        not ToInt32).  This patch partially fixes this in order to remove this
+        bogus output value, hoewever more work will be require to bring Date
+        fully up to spec compliance (the constructor is still performing ToInt32
+        conversions).
+
+        * JavaScriptCore.exp:
+        * runtime/DatePrototype.cpp:
+        (JSC::fillStructuresUsingTimeArgs):
+        (JSC::fillStructuresUsingDateArgs):
+        (JSC::dateProtoFuncSetYear):
+        * runtime/JSValue.cpp:
+        (JSC::toInt32):
+        * runtime/JSValue.h:
+        (JSC::toUInt32):
+        (JSC::JSValue::toInt32):
+        (JSC::JSValue::toUInt32):
+
 2010-09-18  Darin Adler  <darin@apple.com>
 
         First step in fixing Windows build.

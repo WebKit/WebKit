@@ -1,3 +1,19 @@
+2010-09-19  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 46065 - Unify implementation of ToInt32 and ToUInt32, don't use fmod.
+
+        These methods implement the same conversion (see discussion in the notes
+        of sections of 9.5 and 9.6 of the spec), only differing in how the result
+        is interpretted.
+
+        Add test cases for ToInt32 / ToUInt32 functionality.
+
+        * fast/js/script-tests/toInt32UInt32.js: Added.
+        * fast/js/toInt32UInt32-expected.txt: Added.
+        * fast/js/toInt32UInt32.html: Added.
+
 2010-09-19  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Fix up expectation sadness I introduced in http://trac.webkit.org/changeset/67822, because no sadness is allowed.

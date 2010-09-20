@@ -56,8 +56,17 @@ namespace JSC {
 #endif
 
     double nonInlineNaN();
-    int32_t toInt32SlowCase(double, bool& ok);
-    uint32_t toUInt32SlowCase(double, bool& ok);
+
+    // This implements ToInt32, defined in ECMA-262 9.5.
+    int32_t toInt32(double);
+
+    // This implements ToUInt32, defined in ECMA-262 9.6.
+    inline uint32_t toUInt32(double number)
+    {
+        // As commented in the spec, the operation of ToInt32 and ToUint32 only differ
+        // in how the result is interpreted; see NOTEs in sections 9.5 and 9.6.
+        return toInt32(number);
+    }
 
     class JSValue {
         friend class JSImmediate;
@@ -163,9 +172,7 @@ namespace JSC {
         double toInteger(ExecState*) const;
         double toIntegerPreserveNaN(ExecState*) const;
         int32_t toInt32(ExecState*) const;
-        int32_t toInt32(ExecState*, bool& ok) const;
         uint32_t toUInt32(ExecState*) const;
-        uint32_t toUInt32(ExecState*, bool& ok) const;
 
 #if ENABLE(JSC_ZOMBIES)
         bool isZombie() const;
@@ -367,24 +374,6 @@ namespace JSC {
     inline bool operator!=(const JSValue a, const JSCell* b) { return a != JSValue(b); }
     inline bool operator!=(const JSCell* a, const JSValue b) { return JSValue(a) != b; }
 
-    inline int32_t toInt32(double val)
-    {
-        if (!(val >= -2147483648.0 && val < 2147483648.0)) {
-            bool ignored;
-            return toInt32SlowCase(val, ignored);
-        }
-        return static_cast<int32_t>(val);
-    }
-
-    inline uint32_t toUInt32(double val)
-    {
-        if (!(val >= 0.0 && val < 4294967296.0)) {
-            bool ignored;
-            return toUInt32SlowCase(val, ignored);
-        }
-        return static_cast<uint32_t>(val);
-    }
-
     // FIXME: We should deprecate this and just use JSValue::asCell() instead.
     JSCell* asCell(JSValue);
 
@@ -397,62 +386,13 @@ namespace JSC {
     {
         if (isInt32())
             return asInt32();
-
-        double val = toNumber(exec);
-
-        if (val >= -2147483648.0 && val < 2147483648.0)
-            return static_cast<int32_t>(val);
-
-        bool ignored;
-        return toInt32SlowCase(val, ignored);
+        return JSC::toInt32(toNumber(exec));
     }
 
     inline uint32_t JSValue::toUInt32(ExecState* exec) const
     {
-        if (isUInt32())
-            return asUInt32();
-
-        double val = toNumber(exec);
-
-        if (val >= 0.0 && val < 4294967296.0)
-            return static_cast<uint32_t>(val);
-
-        bool ignored;
-        return toUInt32SlowCase(val, ignored);
-    }
-
-    inline int32_t JSValue::toInt32(ExecState* exec, bool& ok) const
-    {
-        if (isInt32()) {
-            ok = true;
-            return asInt32();
-        }
-
-        double val = toNumber(exec);
-
-        if (val >= -2147483648.0 && val < 2147483648.0) {
-            ok = true;
-            return static_cast<int32_t>(val);
-        }
-
-        return toInt32SlowCase(val, ok);
-    }
-
-    inline uint32_t JSValue::toUInt32(ExecState* exec, bool& ok) const
-    {
-        if (isUInt32()) {
-            ok = true;
-            return asInt32();
-        }
-
-        double val = toNumber(exec);
-
-        if (val >= 0.0 && val < 4294967296.0) {
-            ok = true;
-            return static_cast<uint32_t>(val);
-        }
-
-        return toUInt32SlowCase(val, ok);
+        // See comment on JSC::toUInt32, above.
+        return toInt32(exec);
     }
 
 #if USE(JSVALUE32_64)
