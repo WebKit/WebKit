@@ -1,3 +1,13 @@
+2010-09-08  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix forward includes generation for MSVC when sh is in PATH.
+
+        MSVC's nmake isn't affected by having sh in PATH.
+
+        * Api/DerivedSources.pro:
+
 2010-09-18  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
