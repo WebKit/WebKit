@@ -1,3 +1,17 @@
+2010-09-21  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Cleaned up LayerRendererChromium::prepareToDrawLayers
+        logic to avoid unnecessary copy operations if the existing root layer
+        contents aren't useful for scrolling. Also removed call to updateLayersRecursive()
+        as the composited layer update is actually happening in the drawLayers() method.
+        https://bugs.webkit.org/show_bug.cgi?id=46199
+
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::prepareToDrawLayers):
+
 2010-09-21  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Tony Chang.
