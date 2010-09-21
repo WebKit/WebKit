@@ -1238,12 +1238,13 @@ class RegexGenerator : private MacroAssembler {
             firstAlternativeInputChecked = Label(this);
 
         while (state.alternativeValid()) {
-            // Track whether any alternatives are shorter than the first one.
-            hasShorterAlternatives = hasShorterAlternatives || (countCheckedForCurrentAlternative < countToCheckForFirstAlternative);
-
             PatternAlternative* alternative = state.alternative();
             optimizeAlternative(alternative);
 
+            // Track whether any alternatives are shorter than the first one.
+            if (!alternative->onceThrough())
+                hasShorterAlternatives = hasShorterAlternatives || (countCheckedForCurrentAlternative < countToCheckForFirstAlternative);
+            
             for (state.resetTerm(); state.termValid(); state.nextTerm())
                 generateTerm(state);
 

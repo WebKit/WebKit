@@ -1,3 +1,14 @@
+2010-09-20  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Fixed detection of alternative smaller than the first alternative
+        to only check looping alternatives.
+        https://bugs.webkit.org/show_bug.cgi?id=46049
+
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::generateDisjunction):
+
 2010-09-20  Peter Varga  <pvarga@inf.u-szeged.hu>
 
         Reviewed by Geoffrey Garen.
