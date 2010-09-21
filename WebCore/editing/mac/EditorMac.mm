@@ -42,7 +42,7 @@ namespace WebCore {
 
 PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy, Frame* frame)
 {
-    return ClipboardMac::create(false, [NSPasteboard generalPasteboard], policy, frame);
+    return ClipboardMac::create(Clipboard::CopyAndPaste, [NSPasteboard generalPasteboard], policy, frame);
 }
 
 void Editor::showFontPanel()

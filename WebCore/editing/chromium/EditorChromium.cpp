@@ -39,7 +39,7 @@ namespace WebCore {
 
 PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy, Frame* frame)
 {
-    return ClipboardChromium::create(false, ChromiumDataObject::create(), policy, frame);
+    return ClipboardChromium::create(Clipboard::CopyAndPaste, ChromiumDataObject::create(), policy, frame);
 }
 
 } // namespace WebCore

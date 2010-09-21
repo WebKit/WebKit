@@ -37,7 +37,7 @@ class CachedImage;
 
 class ClipboardAndroid : public Clipboard, public CachedResourceClient {
 public:
-    ClipboardAndroid(ClipboardAccessPolicy policy, bool isForDragging);
+    ClipboardAndroid(ClipboardAccessPolicy policy, ClipboardType);
     ~ClipboardAndroid();
 
     void clearData(const String&);

@@ -712,7 +712,7 @@ PassRefPtr<Clipboard> EventHandler::createDraggingClipboard() const
     // Must be done before ondragstart adds types and data to the pboard,
     // also done for security, as it erases data from the last drag
     [pasteboard declareTypes:[NSArray array] owner:nil];
-    return ClipboardMac::create(true, pasteboard, ClipboardWritable, m_frame);
+    return ClipboardMac::create(Clipboard::DragAndDrop, pasteboard, ClipboardWritable, m_frame);
 }
 
 #endif

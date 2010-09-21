@@ -44,9 +44,9 @@ namespace WebCore {
         {
             return adoptRef(new ClipboardQt(policy, readableClipboard));
         }
-        static PassRefPtr<ClipboardQt> create(ClipboardAccessPolicy policy, bool forDragging = false)
+        static PassRefPtr<ClipboardQt> create(ClipboardAccessPolicy policy, ClipboardType clipboardType = CopyAndPaste)
         {
-            return adoptRef(new ClipboardQt(policy, forDragging));
+            return adoptRef(new ClipboardQt(policy, clipboardType));
         }
         virtual ~ClipboardQt();
 
@@ -77,7 +77,7 @@ namespace WebCore {
         ClipboardQt(ClipboardAccessPolicy, const QMimeData* readableClipboard);
 
         // Clipboard is writable so it will create its own QMimeData object
-        ClipboardQt(ClipboardAccessPolicy, bool forDragging);
+        ClipboardQt(ClipboardAccessPolicy, ClipboardType);
 
         void setDragImage(CachedImage*, Node*, const IntPoint& loc);
 

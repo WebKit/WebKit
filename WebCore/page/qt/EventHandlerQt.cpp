@@ -113,7 +113,7 @@ bool EventHandler::passWheelEventToWidget(PlatformWheelEvent& event, Widget* wid
 
 PassRefPtr<Clipboard> EventHandler::createDraggingClipboard() const
 {
-    return ClipboardQt::create(ClipboardWritable, true);
+    return ClipboardQt::create(ClipboardWritable, Clipboard::DragAndDrop);
 }
 
 bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)

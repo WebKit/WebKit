@@ -50,11 +50,11 @@ namespace WebCore {
 
 PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy policy, DragData* dragData, Frame* frame)
 {
-    return ClipboardMac::create(true, [dragData->platformData() draggingPasteboard], policy, frame);
+    return ClipboardMac::create(DragAndDrop, [dragData->platformData() draggingPasteboard], policy, frame);
 }
 
-ClipboardMac::ClipboardMac(bool forDragging, NSPasteboard *pasteboard, ClipboardAccessPolicy policy, Frame *frame)
-    : Clipboard(policy, forDragging)
+ClipboardMac::ClipboardMac(ClipboardType clipboardType, NSPasteboard *pasteboard, ClipboardAccessPolicy policy, Frame *frame)
+    : Clipboard(policy, clipboardType)
     , m_pasteboard(pasteboard)
     , m_frame(frame)
 {

@@ -116,7 +116,7 @@ bool EventHandler::eventActivatedView(const PlatformMouseEvent&) const
 
 PassRefPtr<Clipboard> EventHandler::createDraggingClipboard() const 
 {
-    return ClipboardWx::create(ClipboardWritable, true);
+    return ClipboardWx::create(ClipboardWritable, Clipboard::DragAndDrop);
 }
 
 unsigned EventHandler::accessKeyModifiers()

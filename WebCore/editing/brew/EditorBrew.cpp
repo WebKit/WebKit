@@ -33,7 +33,7 @@ namespace WebCore {
 
 PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy, Frame*)
 {
-    return new ClipboardBrew(policy, false);
+    return new ClipboardBrew(policy, Clipboard::CopyAndPaste);
 }
 
 } // namespace WebCore

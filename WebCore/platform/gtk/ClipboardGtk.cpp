@@ -37,27 +37,27 @@
 
 namespace WebCore {
 
-enum ClipboardType {
-    ClipboardTypeText,
-    ClipboardTypeMarkup,
-    ClipboardTypeURIList,
-    ClipboardTypeURL,
-    ClipboardTypeImage,
-    ClipboardTypeUnknown
+enum ClipboardDataType {
+    ClipboardDataTypeText,
+    ClipboardDataTypeMarkup,
+    ClipboardDataTypeURIList,
+    ClipboardDataTypeURL,
+    ClipboardDataTypeImage,
+    ClipboardDataTypeUnknown
 };
 
 PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy, Frame* frame)
 {
-    return ClipboardGtk::create(policy, gtk_clipboard_get_for_display(gdk_display_get_default(), GDK_SELECTION_CLIPBOARD), false, frame);
+    return ClipboardGtk::create(policy, gtk_clipboard_get_for_display(gdk_display_get_default(), GDK_SELECTION_CLIPBOARD), frame);
 }
 
 PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy policy, DragData* dragData, Frame* frame)
 {
-    return ClipboardGtk::create(policy, dragData->platformData(), true, frame);
+    return ClipboardGtk::create(policy, dragData->platformData(), DragAndDrop, frame);
 }
 
 ClipboardGtk::ClipboardGtk(ClipboardAccessPolicy policy, GtkClipboard* clipboard, Frame* frame)
-    : Clipboard(policy, false)
+    : Clipboard(policy, CopyAndPaste)
     , m_dataObject(DataObjectGtk::forClipboard(clipboard))
     , m_clipboard(clipboard)
     , m_helper(Pasteboard::generalPasteboard()->helper())
@@ -65,8 +65,8 @@ ClipboardGtk::ClipboardGtk(ClipboardAccessPolicy policy, GtkClipboard* clipboard
 {
 }
 
-ClipboardGtk::ClipboardGtk(ClipboardAccessPolicy policy, PassRefPtr<DataObjectGtk> dataObject, bool forDragging, Frame* frame)
-    : Clipboard(policy, forDragging)
+ClipboardGtk::ClipboardGtk(ClipboardAccessPolicy policy, PassRefPtr<DataObjectGtk> dataObject, ClipboardType clipboardType, Frame* frame)
+    : Clipboard(policy, clipboardType)
     , m_dataObject(dataObject)
     , m_clipboard(0)
     , m_helper(Pasteboard::generalPasteboard()->helper())
@@ -78,27 +78,27 @@ ClipboardGtk::~ClipboardGtk()
 {
 }
 
-static ClipboardType dataObjectTypeFromHTMLClipboardType(const String& rawType)
+static ClipboardDataType dataObjectTypeFromHTMLClipboardType(const String& rawType)
 {
     String type(rawType.stripWhiteSpace());
 
     // Two special cases for IE compatibility
     if (type == "Text")
-        return ClipboardTypeText;
+        return ClipboardDataTypeText;
     if (type == "URL")
-        return ClipboardTypeURL;
+        return ClipboardDataTypeURL;
 
     // From the Mac port: Ignore any trailing charset - JS strings are
     // Unicode, which encapsulates the charset issue.
     if (type == "text/plain" || type.startsWith("text/plain;"))
-        return ClipboardTypeText;
+        return ClipboardDataTypeText;
     if (type == "text/html" || type.startsWith("text/html;"))
-        return ClipboardTypeMarkup;
+        return ClipboardDataTypeMarkup;
     if (type == "Files" || type == "text/uri-list" || type.startsWith("text/uri-list;"))
-        return ClipboardTypeURIList;
+        return ClipboardDataTypeURIList;
 
     // Not a known type, so just default to using the text portion.
-    return ClipboardTypeUnknown;
+    return ClipboardDataTypeUnknown;
 }
 
 void ClipboardGtk::clearData(const String& typeString)
@@ -106,19 +106,19 @@ void ClipboardGtk::clearData(const String& typeString)
     if (policy() != ClipboardWritable)
         return;
 
-    ClipboardType type = dataObjectTypeFromHTMLClipboardType(typeString);
+    ClipboardDataType type = dataObjectTypeFromHTMLClipboardType(typeString);
     switch (type) {
-    case ClipboardTypeURIList:
-    case ClipboardTypeURL:
+    case ClipboardDataTypeURIList:
+    case ClipboardDataTypeURL:
         m_dataObject->clearURIList();
         break;
-    case ClipboardTypeMarkup:
+    case ClipboardDataTypeMarkup:
         m_dataObject->clearMarkup();
         break;
-    case ClipboardTypeText:
+    case ClipboardDataTypeText:
         m_dataObject->clearText();
         break;
-    case ClipboardTypeUnknown:
+    case ClipboardDataTypeUnknown:
     default:
         m_dataObject->clear();
     }
@@ -162,29 +162,29 @@ String ClipboardGtk::getData(const String& typeString, bool& success) const
     if (m_clipboard)
         m_helper->getClipboardContents(m_clipboard);
 
-    ClipboardType type = dataObjectTypeFromHTMLClipboardType(typeString);
-    if (type == ClipboardTypeURIList) {
+    ClipboardDataType type = dataObjectTypeFromHTMLClipboardType(typeString);
+    if (type == ClipboardDataTypeURIList) {
         if (!m_dataObject->hasURIList())
             return String();
         success = true;
         return joinURIList(m_dataObject->uriList());
     }
 
-    if (type == ClipboardTypeURL) {
+    if (type == ClipboardDataTypeURL) {
         if (!m_dataObject->hasURL())
             return String();
         success = true;
         return m_dataObject->url();
     }
 
-    if (type == ClipboardTypeMarkup) {
+    if (type == ClipboardDataTypeMarkup) {
         if (!m_dataObject->hasMarkup())
             return String();
         success = true;
         return m_dataObject->markup();
     }
 
-    if (type == ClipboardTypeText) {
+    if (type == ClipboardDataTypeText) {
         if (!m_dataObject->hasText())
                 return String();
         success = true;
@@ -200,8 +200,8 @@ bool ClipboardGtk::setData(const String& typeString, const String& data)
         return false;
 
     bool success = false;
-    ClipboardType type = dataObjectTypeFromHTMLClipboardType(typeString);
-    if (type == ClipboardTypeURIList || type == ClipboardTypeURL) {
+    ClipboardDataType type = dataObjectTypeFromHTMLClipboardType(typeString);
+    if (type == ClipboardDataTypeURIList || type == ClipboardDataTypeURL) {
         Vector<KURL> uriList;
         gchar** uris = g_uri_list_extract_uris(data.utf8().data());
         if (uris) {
@@ -214,10 +214,10 @@ bool ClipboardGtk::setData(const String& typeString, const String& data)
             m_dataObject->setURIList(uriList);
             success = true;
         }
-    } else if (type == ClipboardTypeMarkup) {
+    } else if (type == ClipboardDataTypeMarkup) {
         m_dataObject->setMarkup(data);
         success = true;
-    } else if (type == ClipboardTypeText) {
+    } else if (type == ClipboardDataTypeText) {
         m_dataObject->setText(data);
         success = true;
     }

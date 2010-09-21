@@ -36,7 +36,7 @@ class CachedImage;
 
 class ClipboardBrew : public Clipboard, public CachedResourceClient {
 public:
-    ClipboardBrew(ClipboardAccessPolicy policy, bool isForDragging);
+    ClipboardBrew(ClipboardAccessPolicy policy, ClipboardType);
     ~ClipboardBrew();
 
     void clearData(const String&);

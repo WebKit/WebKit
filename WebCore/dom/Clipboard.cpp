@@ -33,12 +33,12 @@
 
 namespace WebCore {
 
-Clipboard::Clipboard(ClipboardAccessPolicy policy, bool isForDragging) 
+Clipboard::Clipboard(ClipboardAccessPolicy policy, ClipboardType clipboardType) 
     : m_policy(policy)
     , m_dropEffect("uninitialized")
     , m_effectAllowed("uninitialized")
     , m_dragStarted(false)
-    , m_forDragging(isForDragging)
+    , m_clipboardType(clipboardType)
     , m_dragImage(0)
 {
 }
@@ -127,7 +127,7 @@ void Clipboard::setDestinationOperation(DragOperation op)
 
 void Clipboard::setDropEffect(const String &effect)
 {
-    if (!m_forDragging)
+    if (!isForDragAndDrop())
         return;
 
     // The attribute must ignore any attempts to set it to a value other than none, copy, link, and move. 
@@ -140,7 +140,7 @@ void Clipboard::setDropEffect(const String &effect)
 
 void Clipboard::setEffectAllowed(const String &effect)
 {
-    if (!m_forDragging)
+    if (!isForDragAndDrop())
         return;
 
     if (dragOpFromIEOp(effect) == DragOperationPrivate) {

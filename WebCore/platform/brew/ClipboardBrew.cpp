@@ -41,8 +41,8 @@ PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy, DragData*, Frame*
     return 0;
 }
 
-ClipboardBrew::ClipboardBrew(ClipboardAccessPolicy policy, bool isForDragging)
-    : Clipboard(policy, isForDragging)
+ClipboardBrew::ClipboardBrew(ClipboardAccessPolicy policy, ClipboardType clipboardType)
+    : Clipboard(clipboardType, isForDragging)
 {
 }
 
@@ -52,12 +52,12 @@ ClipboardBrew::~ClipboardBrew()
 
 void ClipboardBrew::clearData(const String&)
 {
-    ASSERT(isForDragging());
+    ASSERT(isForDragAndDrop());
 }
 
 void ClipboardBrew::clearAllData()
 {
-    ASSERT(isForDragging());
+    ASSERT(isForDragAndDrop());
 }
 
 String ClipboardBrew::getData(const String&, bool& success) const
@@ -68,7 +68,7 @@ String ClipboardBrew::getData(const String&, bool& success) const
 
 bool ClipboardBrew::setData(const String&, const String&)
 {
-    ASSERT(isForDragging());
+    ASSERT(isForDragAndDrop());
     return false;
 }
 

@@ -40,14 +40,14 @@ namespace WebCore {
     // Created from the EventHandlerGtk to be used by the dom
     class ClipboardGtk : public Clipboard, public CachedResourceClient {
     public:
-        static PassRefPtr<ClipboardGtk> create(ClipboardAccessPolicy policy, GtkClipboard* clipboard, bool isForDragging, Frame* frame)
+        static PassRefPtr<ClipboardGtk> create(ClipboardAccessPolicy policy, GtkClipboard* clipboard, Frame* frame)
         {
             return adoptRef(new ClipboardGtk(policy, clipboard, frame));
         }
 
-        static PassRefPtr<ClipboardGtk> create(ClipboardAccessPolicy policy, PassRefPtr<DataObjectGtk> dataObject, bool isForDragging, Frame* frame)
+        static PassRefPtr<ClipboardGtk> create(ClipboardAccessPolicy policy, PassRefPtr<DataObjectGtk> dataObject, ClipboardType clipboardType, Frame* frame)
         {
-            return adoptRef(new ClipboardGtk(policy, dataObject, isForDragging, frame));
+            return adoptRef(new ClipboardGtk(policy, dataObject, clipboardType, frame));
         }
         virtual ~ClipboardGtk();
 
@@ -78,7 +78,7 @@ namespace WebCore {
 
     private:
         ClipboardGtk(ClipboardAccessPolicy, GtkClipboard*, Frame*);
-        ClipboardGtk(ClipboardAccessPolicy, PassRefPtr<DataObjectGtk>, bool, Frame*);
+        ClipboardGtk(ClipboardAccessPolicy, PassRefPtr<DataObjectGtk>, ClipboardType, Frame*);
 
         RefPtr<DataObjectGtk> m_dataObject;
         GtkClipboard* m_clipboard;

@@ -42,8 +42,8 @@ PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy, DragData*, Frame*
     return 0;
 }
 
-ClipboardWx::ClipboardWx(ClipboardAccessPolicy policy, bool forDragging) 
-    : Clipboard(policy, forDragging)
+ClipboardWx::ClipboardWx(ClipboardAccessPolicy policy, ClipboardType clipboardType) 
+    : Clipboard(policy, clipboardType)
 {
 }
 

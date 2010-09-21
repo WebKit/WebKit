@@ -397,19 +397,19 @@ exit:
 
 PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy policy, DragData* dragData, Frame* frame)
 {
-    return ClipboardWin::create(true, dragData->platformData(), policy, frame);
+    return ClipboardWin::create(DragAndDrop, dragData->platformData(), policy, frame);
 }
 
-ClipboardWin::ClipboardWin(bool isForDragging, IDataObject* dataObject, ClipboardAccessPolicy policy, Frame* frame)
-    : Clipboard(policy, isForDragging)
+ClipboardWin::ClipboardWin(ClipboardType clipboardType, IDataObject* dataObject, ClipboardAccessPolicy policy, Frame* frame)
+    : Clipboard(policy, clipboardType)
     , m_dataObject(dataObject)
     , m_writableDataObject(0)
     , m_frame(frame)
 {
 }
 
-ClipboardWin::ClipboardWin(bool isForDragging, WCDataObject* dataObject, ClipboardAccessPolicy policy, Frame* frame)
-    : Clipboard(policy, isForDragging)
+ClipboardWin::ClipboardWin(ClipboardType clipboardType, WCDataObject* dataObject, ClipboardAccessPolicy policy, Frame* frame)
+    : Clipboard(policy, clipboardType)
     , m_dataObject(dataObject)
     , m_writableDataObject(dataObject)
     , m_frame(frame)
@@ -467,7 +467,7 @@ static bool writeURL(WCDataObject *data, const KURL& url, String title, bool wit
 void ClipboardWin::clearData(const String& type)
 {
     // FIXME: Need to be able to write to the system clipboard <rdar://problem/5015941>
-    ASSERT(isForDragging());
+    ASSERT(isForDragAndDrop());
     if (policy() != ClipboardWritable || !m_writableDataObject)
         return;
 
@@ -487,7 +487,7 @@ void ClipboardWin::clearData(const String& type)
 void ClipboardWin::clearAllData()
 {
     // FIXME: Need to be able to write to the system clipboard <rdar://problem/5015941>
-    ASSERT(isForDragging());
+    ASSERT(isForDragAndDrop());
     if (policy() != ClipboardWritable)
         return;
     
@@ -520,7 +520,7 @@ String ClipboardWin::getData(const String& type, bool& success) const
 bool ClipboardWin::setData(const String& type, const String& data)
 {
     // FIXME: Need to be able to write to the system clipboard <rdar://problem/5015941>
-    ASSERT(isForDragging());
+    ASSERT(isForDragAndDrop());
     if (policy() != ClipboardWritable || !m_writableDataObject)
         return false;
 
@@ -831,7 +831,7 @@ bool ClipboardWin::hasData()
 
 void ClipboardWin::setExternalDataObject(IDataObject *dataObject)
 {
-    ASSERT(isForDragging());
+    ASSERT(isForDragAndDrop());
 
     m_writableDataObject = 0;
     m_dataObject = dataObject;

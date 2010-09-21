@@ -101,7 +101,7 @@ JSValue JSClipboard::setDragImage(ExecState* exec)
 {
     Clipboard* clipboard = impl();
 
-    if (!clipboard->isForDragging())
+    if (!clipboard->isForDragAndDrop())
         return jsUndefined();
 
     // FIXME: It does not match the rest of the JS bindings to throw on invalid number of arguments. 

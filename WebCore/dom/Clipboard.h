@@ -40,12 +40,17 @@ namespace WebCore {
     // State available during IE's events for drag and drop and copy/paste
     class Clipboard : public RefCounted<Clipboard> {
     public:
+        // Whether this clipboard is serving a drag-drop or copy-paste request.
+        enum ClipboardType {
+            CopyAndPaste,
+            DragAndDrop,
+        };
         static PassRefPtr<Clipboard> create(ClipboardAccessPolicy, DragData*, Frame*);
 
         virtual ~Clipboard() { }
 
-        // Is this operation a drag-drop or a copy-paste?
-        bool isForDragging() const { return m_forDragging; }
+        bool isForCopyAndPaste() const { return m_clipboardType == CopyAndPaste; }
+        bool isForDragAndDrop() const { return m_clipboardType == DragAndDrop; }
 
         String dropEffect() const { return dropEffectIsUninitialized() ? "none" : m_dropEffect; }
         void setDropEffect(const String&);
@@ -88,7 +93,7 @@ namespace WebCore {
         void setDragHasStarted() { m_dragStarted = true; }
         
     protected:
-        Clipboard(ClipboardAccessPolicy, bool isForDragging);
+        Clipboard(ClipboardAccessPolicy, ClipboardType);
 
         ClipboardAccessPolicy policy() const { return m_policy; }
         bool dragStarted() const { return m_dragStarted; }
@@ -98,9 +103,9 @@ namespace WebCore {
         String m_dropEffect;
         String m_effectAllowed;
         bool m_dragStarted;
+        ClipboardType m_clipboardType;
         
     protected:
-        bool m_forDragging;
         IntPoint m_dragLoc;
         CachedResourceHandle<CachedImage> m_dragImage;
         RefPtr<Node> m_dragImageElement;

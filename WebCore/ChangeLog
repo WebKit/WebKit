@@ -1,3 +1,122 @@
+2010-09-21  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Change Clipboard to use an enum instead of isForDragging = true/false
+        https://bugs.webkit.org/show_bug.cgi?id=46004
+
+        No new tests, since it's just a refactoring change.
+
+        * bindings/js/JSClipboardCustom.cpp:
+        (WebCore::JSClipboard::setDragImage):
+        * bindings/v8/custom/V8ClipboardCustom.cpp:
+        (WebCore::V8Clipboard::setDragImageCallback):
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::Clipboard):
+        (WebCore::Clipboard::setDropEffect):
+        (WebCore::Clipboard::setEffectAllowed):
+        * dom/Clipboard.h:
+        (WebCore::Clipboard::isForCopyAndPaste):
+        (WebCore::Clipboard::isForDragAndDrop):
+        * editing/android/EditorAndroid.cpp:
+        (WebCore::Editor::newGeneralClipboard):
+        * editing/brew/EditorBrew.cpp:
+        (WebCore::Editor::newGeneralClipboard):
+        * editing/chromium/EditorChromium.cpp:
+        (WebCore::Editor::newGeneralClipboard):
+        * editing/haiku/EditorHaiku.cpp:
+        (WebCore::Editor::newGeneralClipboard):
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::newGeneralClipboard):
+        * editing/wx/EditorWx.cpp:
+        (WebCore::Editor::newGeneralClipboard):
+        * page/chromium/EventHandlerChromium.cpp:
+        (WebCore::EventHandler::createDraggingClipboard):
+        * page/efl/EventHandlerEfl.cpp:
+        (WebCore::EventHandler::createDraggingClipboard):
+        * page/gtk/EventHandlerGtk.cpp:
+        (WebCore::EventHandler::createDraggingClipboard):
+        * page/haiku/EventHandlerHaiku.cpp:
+        (WebCore::EventHandler::createDraggingClipboard):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::createDraggingClipboard):
+        * page/qt/EventHandlerQt.cpp:
+        (WebCore::EventHandler::createDraggingClipboard):
+        * page/win/EventHandlerWin.cpp:
+        (WebCore::EventHandler::createDraggingClipboard):
+        * page/wx/EventHandlerWx.cpp:
+        (WebCore::EventHandler::createDraggingClipboard):
+        * platform/android/ClipboardAndroid.cpp:
+        (WebCore::ClipboardAndroid::ClipboardAndroid):
+        (WebCore::ClipboardAndroid::clearData):
+        (WebCore::ClipboardAndroid::clearAllData):
+        (WebCore::ClipboardAndroid::setData):
+        * platform/android/ClipboardAndroid.h:
+        * platform/brew/ClipboardBrew.cpp:
+        (WebCore::ClipboardBrew::ClipboardBrew):
+        (WebCore::ClipboardBrew::clearData):
+        (WebCore::ClipboardBrew::clearAllData):
+        (WebCore::ClipboardBrew::setData):
+        * platform/brew/ClipboardBrew.h:
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::Clipboard::create):
+        (WebCore::ClipboardChromium::ClipboardChromium):
+        (WebCore::ClipboardChromium::create):
+        (WebCore::ClipboardChromium::getData):
+        * platform/chromium/ClipboardChromium.h:
+        * platform/efl/ClipboardEfl.cpp:
+        (WebCore::Editor::newGeneralClipboard):
+        (WebCore::ClipboardEfl::ClipboardEfl):
+        * platform/efl/ClipboardEfl.h:
+        (WebCore::ClipboardEfl::create):
+        * platform/gtk/ClipboardGtk.cpp:
+        (WebCore::Editor::newGeneralClipboard):
+        (WebCore::Clipboard::create):
+        (WebCore::ClipboardGtk::ClipboardGtk):
+        (WebCore::dataObjectTypeFromHTMLClipboardType):
+        (WebCore::ClipboardGtk::clearData):
+        (WebCore::ClipboardGtk::getData):
+        (WebCore::ClipboardGtk::setData):
+        * platform/gtk/ClipboardGtk.h:
+        (WebCore::ClipboardGtk::create):
+        * platform/haiku/ClipboardHaiku.cpp:
+        (WebCore::Clipboard::create):
+        (WebCore::ClipboardHaiku::ClipboardHaiku):
+        * platform/haiku/ClipboardHaiku.h:
+        (WebCore::ClipboardHaiku::create):
+        * platform/mac/ClipboardMac.h:
+        (WebCore::ClipboardMac::create):
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::Clipboard::create):
+        (WebCore::ClipboardMac::ClipboardMac):
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::ClipboardQt):
+        (WebCore::ClipboardQt::~ClipboardQt):
+        (WebCore::ClipboardQt::clearData):
+        (WebCore::ClipboardQt::clearAllData):
+        (WebCore::ClipboardQt::setData):
+        (WebCore::ClipboardQt::declareAndWriteDragImage):
+        (WebCore::ClipboardQt::writeURL):
+        (WebCore::ClipboardQt::writeRange):
+        (WebCore::ClipboardQt::writePlainText):
+        * platform/qt/ClipboardQt.h:
+        (WebCore::ClipboardQt::create):
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::Clipboard::create):
+        (WebCore::ClipboardWin::ClipboardWin):
+        (WebCore::ClipboardWin::clearData):
+        (WebCore::ClipboardWin::clearAllData):
+        (WebCore::ClipboardWin::setData):
+        (WebCore::ClipboardWin::setExternalDataObject):
+        * platform/win/ClipboardWin.h:
+        (WebCore::ClipboardWin::create):
+        * platform/win/EditorWin.cpp:
+        (WebCore::Editor::newGeneralClipboard):
+        * platform/wx/ClipboardWx.cpp:
+        (WebCore::ClipboardWx::ClipboardWx):
+        * platform/wx/ClipboardWx.h:
+        (WebCore::ClipboardWx::create):
+
 2010-09-21  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dave Hyatt.

@@ -96,7 +96,7 @@ bool EventHandler::passWheelEventToWidget(PlatformWheelEvent& event, Widget* wid
 
 PassRefPtr<Clipboard> EventHandler::createDraggingClipboard() const
 {
-    return ClipboardGtk::create(ClipboardWritable, DataObjectGtk::create(), true, m_frame);
+    return ClipboardGtk::create(ClipboardWritable, DataObjectGtk::create(), Clipboard::DragAndDrop, m_frame);
 }
 
 bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)

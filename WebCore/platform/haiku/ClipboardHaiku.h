@@ -36,9 +36,9 @@ namespace WebCore {
     // State available during IE's events for drag and drop and copy/paste.
     class ClipboardHaiku : public Clipboard {
     public:
-        static PassRefPtr<ClipboardHaiku> create(ClipboardAccessPolicy policy, bool forDragging)
+        static PassRefPtr<ClipboardHaiku> create(ClipboardAccessPolicy policy, ClipboardType clipboardType)
         {
-            return adoptRef(new ClipboardHaiku(policy, forDragging));
+            return adoptRef(new ClipboardHaiku(policy, clipboardType));
         }
         ~ClipboardHaiku() { }
 
@@ -66,7 +66,7 @@ namespace WebCore {
         virtual bool hasData();
 
     private:
-        ClipboardHaiku(ClipboardAccessPolicy, bool forDragging);
+        ClipboardHaiku(ClipboardAccessPolicy, ClipboardType);
     };
 } // namespace WebCore
 

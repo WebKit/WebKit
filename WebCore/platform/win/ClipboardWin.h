@@ -42,13 +42,13 @@ class WCDataObject;
 // State available during IE's events for drag and drop and copy/paste
 class ClipboardWin : public Clipboard, public CachedResourceClient {
 public:
-    static PassRefPtr<ClipboardWin> create(bool isForDragging, IDataObject* dataObject, ClipboardAccessPolicy policy, Frame* frame)
+    static PassRefPtr<ClipboardWin> create(ClipboardType clipboardType, IDataObject* dataObject, ClipboardAccessPolicy policy, Frame* frame)
     {
-        return adoptRef(new ClipboardWin(isForDragging, dataObject, policy, frame));
+        return adoptRef(new ClipboardWin(clipboardType, dataObject, policy, frame));
     }
-    static PassRefPtr<ClipboardWin> create(bool isForDragging, WCDataObject* dataObject, ClipboardAccessPolicy policy, Frame* frame)
+    static PassRefPtr<ClipboardWin> create(ClipboardType clipboardType, WCDataObject* dataObject, ClipboardAccessPolicy policy, Frame* frame)
     {
-        return adoptRef(new ClipboardWin(isForDragging, dataObject, policy, frame));
+        return adoptRef(new ClipboardWin(clipboardType, dataObject, policy, frame));
     }
     ~ClipboardWin();
 
@@ -77,8 +77,8 @@ public:
     void setExternalDataObject(IDataObject *dataObject);
 
 private:
-    ClipboardWin(bool isForDragging, IDataObject*, ClipboardAccessPolicy, Frame*);
-    ClipboardWin(bool isForDragging, WCDataObject*, ClipboardAccessPolicy, Frame*);
+    ClipboardWin(ClipboardType, IDataObject*, ClipboardAccessPolicy, Frame*);
+    ClipboardWin(ClipboardType, WCDataObject*, ClipboardAccessPolicy, Frame*);
 
     void resetFromClipboard();
     void setDragImage(CachedImage*, Node*, const IntPoint&);
