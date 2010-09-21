@@ -1,3 +1,9 @@
+2010-09-20  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed; an attempt to fix Windows build.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2010-09-20  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -33969,11 +33969,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\InputElement.h"
+				RelativePath="..\dom\HashChangeEvent.h"
 				>
 			</File>
 			<File
-				RelativePath="..\dom\HashChangeEvent.cpp"
+				RelativePath="..\dom\InputElement.h"
 				>
 			</File>
 			<File
