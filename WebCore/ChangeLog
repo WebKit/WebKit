@@ -1,3 +1,14 @@
+2010-09-20  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Unreviewed, rolling out r67906.
+        http://trac.webkit.org/changeset/67906
+        https://bugs.webkit.org/show_bug.cgi?id=46139
+
+        Change causes chromium to crash when switching pages
+
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        * platform/graphics/chromium/LayerChromium.h:
+
 2010-09-19  Antonio Gomes  <agomes@rim.com>
 
         Reviewed by Ojan Vafai.
