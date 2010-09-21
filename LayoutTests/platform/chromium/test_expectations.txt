@@ -3181,3 +3181,13 @@ BUGWEBGL WIN LINUX : fast/canvas/webgl/uniform-location.html = TEXT
 // Pre-HTML5 parser quirks only apply to the mac port for now.
 WONTFIX SKIP : fast/parser/pre-html5-parser-quirks.html = FAIL
 
+// Fails due to r67862.
+BUGWK39966 : fast/repaint/table-cell-collapsed-border.html = IMAGE
+
+// Regressions after r67771
+BUG56246 : printing/css2.1/page-break-after-000.html = TEXT
+BUG56246 : printing/css2.1/page-break-after-003.html = TEXT
+BUG56246 : printing/css2.1/page-break-after-004.html = TEXT
+BUG56246 : printing/css2.1/page-break-before-000.html = TEXT
+
+BUG56220 : userscripts/user-script-top-frame-only.html = TEXT

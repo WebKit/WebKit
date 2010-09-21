@@ -48,6 +48,12 @@
 
 2010-09-20  Andrew Wilson  <atwilson@chromium.org>
 
+        Unreviewed expectations changes (added back mistakenly-deleted lines).
+
+        * platform/chromium/test_expectations.txt:
+
+2010-09-20  Andrew Wilson  <atwilson@chromium.org>
+
         Revert r67892 (expectations update) as the expectations are out-of-date due to r67879.
 
         * platform/chromium-mac/fast/repaint/table-cell-move-expected.checksum: Removed.
