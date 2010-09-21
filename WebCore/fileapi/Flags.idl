@@ -31,7 +31,8 @@
 module storage {
     interface [
         Conditional=FILE_SYSTEM,
-        CanBeConstructed
+        CanBeConstructed,
+        NoStaticTables
     ] Flags {
         attribute boolean create;
         attribute boolean exclusive;

@@ -30,7 +30,8 @@
 
 module storage {
     interface [
-        Conditional=FILE_SYSTEM
+        Conditional=FILE_SYSTEM,
+        NoStaticTables
     ] DOMFileSystem {
         readonly attribute DOMString name;
         readonly attribute DirectoryEntry root;

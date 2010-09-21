@@ -32,6 +32,7 @@ module storage {
     interface [
         Conditional=FILE_SYSTEM,
         HasIndexGetter,
+        NoStaticTables
     ] EntryArray {
         readonly attribute unsigned long length;
         Entry item(in [IsIndex] unsigned long index);

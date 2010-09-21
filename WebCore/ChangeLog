@@ -1,3 +1,22 @@
+2010-09-20  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add NoStaticTables attributes to IDLs of FileSystem API for Worker support
+        https://bugs.webkit.org/show_bug.cgi?id=46021
+
+        Added NoStaticTables attributes to IDLs except for ones for Callbacks.
+        (As NoStaticTables only affects non-callback interfaces.)
+
+        * fileapi/DOMFileSystem.idl:
+        * fileapi/DirectoryEntry.idl:
+        * fileapi/DirectoryReader.idl:
+        * fileapi/Entry.idl:
+        * fileapi/EntryArray.idl:
+        * fileapi/FileEntry.idl:
+        * fileapi/Flags.idl:
+        * fileapi/Metadata.idl:
+
 2010-09-20  Nico Weber  <thakis@chromium.org>
 
         Reviewed by Adam Barth.

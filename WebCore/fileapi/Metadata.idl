@@ -30,7 +30,8 @@
 
 module storage {
     interface [
-        Conditional=FILE_SYSTEM
+        Conditional=FILE_SYSTEM,
+        NoStaticTables
     ] Metadata {
         readonly attribute Date modificationTime;
     };

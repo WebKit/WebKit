@@ -30,7 +30,8 @@
 
 module storage {
     interface [
-        Conditional=FILE_SYSTEM
+        Conditional=FILE_SYSTEM,
+        NoStaticTables
     ] DirectoryReader {
         void readEntries(in [Callback] EntriesCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
     };
