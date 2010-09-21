@@ -45,6 +45,7 @@ public:
 
     WEBKIT_API static WebAccessibilityCache* create();
     WEBKIT_API static void enableAccessibility();
+    WEBKIT_API static bool accessibilityEnabled();
 
     virtual void initialize(WebView* view) = 0;
     virtual bool isInitialized() const = 0;

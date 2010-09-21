@@ -1,2 +1,3 @@
 AccessibilityNotification - LiveRegionChanged - id:ul-for-LiveRegionChanged
+AccessibilityNotification - LoadComplete
 This tests that chromium correctly recieves the LiveRegionChanged notification.

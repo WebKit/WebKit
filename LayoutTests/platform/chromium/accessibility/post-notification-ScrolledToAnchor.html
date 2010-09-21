@@ -2,12 +2,17 @@
 <head>
 <script>
     function testNotification() {
-        // Not sent to the chromium port - see handleScrolledToAnchor
+        window.location.href = '#a-for-ScrolledToAnchor';
+
+        // Remove element to prevent another scroll notification. Appears to repro when test is run in isolation.
+        document.body.removeChild(document.body.children[0]);
     }
 </script>
 </head>
 <body onload="test()">
 This tests that chromium correctly recieves the ScrolledToAnchor notification.
+
+<a id="a-for-ScrolledToAnchor" aria-help="a-for-ScrolledToAnchor"></a>
 
 <script type="text/javascript" src="post-notification.js"></script>
 </body>

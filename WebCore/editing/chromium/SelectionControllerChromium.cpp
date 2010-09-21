@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,36 +28,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ChromeClientChromium_h
-#define ChromeClientChromium_h
+#include "config.h"
+#include "SelectionController.h"
 
 #include "AXObjectCache.h"
-#include "ChromeClient.h"
-#include <wtf/Forward.h>
+#include "Frame.h"
 
 namespace WebCore {
-class AccessibilityObject;
-class IntRect;
-class PopupContainer;
 
-// Contains Chromium-specific extensions to the ChromeClient.  Only put
-// things here that don't make sense for other ports.
-class ChromeClientChromium : public ChromeClient {
-public:
-    // Notifies the client of a new popup widget.  The client should place
-    // and size the widget with the given bounds, relative to the screen.
-    // If handleExternal is true, then drawing and input handling for the
-    // popup will be handled by the external embedder.
-    virtual void popupOpened(PopupContainer* popupContainer, const IntRect& bounds,
-                             bool handleExternal) = 0;
-                             
-    // Notifies the client a popup was closed.
-    virtual void popupClosed(PopupContainer* popupContainer) = 0;
-
-    // Notifies embedder about an accessibility notification.
-    virtual void postAccessibilityNotification(AccessibilityObject*, AXObjectCache::AXNotification) = 0;
-};
+void SelectionController::notifyAccessibilityForSelectionChange()
+{
+    // FIXME: Support editable text in chromium.
+    if (AXObjectCache::accessibilityEnabled() && m_selection.start().isNotNull() && m_selection.end().isNotNull()) {
+        Document* document = m_frame->document();
+        document->axObjectCache()->postNotification(m_selection.start().node()->renderer(), AXObjectCache::AXSelectedTextChanged, false);
+    }
+}
 
 } // namespace WebCore
-
-#endif

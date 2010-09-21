@@ -21,5 +21,5 @@ function test() {
   testNotification();
 
   // Use setTimeout so that asynchronous accessibility notifications can be processed.
-  setTimeout(testDone, 0);
+  setTimeout("setTimeout(testDone, 0);", 0);
 }

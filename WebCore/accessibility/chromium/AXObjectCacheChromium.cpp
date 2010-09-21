@@ -63,15 +63,17 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
     if (!client)
         return;
 
-    // TODO: Remove after the new postAccessibilityNotification is used downstream.
     switch (notification) {
-    case AXCheckedStateChanged:
-        client->didChangeAccessibilityObjectState(obj);
-        break;
-    case AXChildrenChanged:
-        client->didChangeAccessibilityObjectChildren(obj);
-        break;
     case AXActiveDescendantChanged:
+        if (!obj->document()->focusedNode() || (obj->node() != obj->document()->focusedNode()))
+            break;
+
+        // Calling handleFocusedUIElementChanged will focus the new active
+        // descendant and send the AXFocusedUIElementChanged notification.
+        handleFocusedUIElementChanged(0, obj->document()->focusedNode()->renderer());
+        break;
+    case AXCheckedStateChanged:
+    case AXChildrenChanged:
     case AXFocusedUIElementChanged:
     case AXLayoutComplete:
     case AXLiveRegionChanged:
@@ -90,12 +92,27 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
     client->postAccessibilityNotification(obj, notification);        
 }
 
-void AXObjectCache::handleFocusedUIElementChanged(RenderObject*, RenderObject*)
+void AXObjectCache::handleFocusedUIElementChanged(RenderObject*, RenderObject* newFocusedRenderer)
 {
+    if (!newFocusedRenderer)
+        return;
+
+    Page* page = newFocusedRenderer->document()->page();
+    if (!page)
+        return;
+
+    AccessibilityObject* focusedObject = focusedUIElementForPage(page);
+    if (!focusedObject)
+        return;
+
+    postPlatformNotification(focusedObject, AXFocusedUIElementChanged);
 }
 
-void AXObjectCache::handleScrolledToAnchor(const Node*)
+void AXObjectCache::handleScrolledToAnchor(const Node* anchorNode)
 {
+    // The anchor node may not be accessible. Post the notification for the
+    // first accessible object.
+    postPlatformNotification(AccessibilityObject::firstAccessibleObjectFromNode(anchorNode), AXScrolledToAnchor);
 }
 
 } // namespace WebCore

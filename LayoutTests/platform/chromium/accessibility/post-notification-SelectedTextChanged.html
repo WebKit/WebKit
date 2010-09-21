@@ -2,12 +2,14 @@
 <head>
 <script>
     function testNotification() {
-        // Mac specific - see notifyAccessibilityForSelectionChange
+        document.getElementById("text-for-SelectedTextChanged").select();
     }
 </script>
 </head>
 <body onload="test()">
 This tests that chromium correctly recieves the SelectedTextChanged notification.
+
+<input id="text-for-SelectedTextChanged" aria-help="text-for-SelectedTextChanged" value="text" type=text />
 
 <script type="text/javascript" src="post-notification.js"></script>
 </body>

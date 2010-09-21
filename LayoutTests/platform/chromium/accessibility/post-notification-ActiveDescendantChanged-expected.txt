@@ -1,3 +1,6 @@
+AccessibilityNotification - FocusedUIElementChanged - id:ul-for-ActiveDescendantChanged
+AccessibilityNotification - FocusedUIElementChanged - id:r1
 AccessibilityNotification - ActiveDescendantChanged - id:ul-for-ActiveDescendantChanged
+AccessibilityNotification - LoadComplete
 This tests that chromium correctly recieves the ActiveDescendantChanged notification.
 li1

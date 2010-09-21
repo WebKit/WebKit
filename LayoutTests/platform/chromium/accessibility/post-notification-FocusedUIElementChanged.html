@@ -2,12 +2,14 @@
 <head>
 <script>
     function testNotification() {
-        // Not sent to the chromium port - see handleFocusedUIElementChanged
+        document.body.children[0].focus();
     }
 </script>
 </head>
 <body onload="test()">
 This tests that chromium correctly recieves the FocusedUIElementChanged notification.
+
+<div id="div-for-FocusedUIElementChanged" aria-help="div-for-FocusedUIElementChanged" tabindex="-1">div</div>
 
 <script type="text/javascript" src="post-notification.js"></script>
 </body>

@@ -1,3 +1,5 @@
 AccessibilityNotification - ChildrenChanged - id:div-for-ChildrenChanged
+AccessibilityNotification - LayoutComplete
+AccessibilityNotification - LoadComplete
 This tests that chromium correctly recieves the ChildrenChanged notification.
 text
