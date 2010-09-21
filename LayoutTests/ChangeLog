@@ -1,5 +1,12 @@
 2010-09-21  Satish Sampath  <satish@chromium.org>
 
+        Unreviewed, rename a test baseline to the correct name and update a test's expectation for chromium linux.
+
+        * platform/chromium-linux/svg/custom/js-late-pattern-and-object-creation-expected.txt: Renamed from LayoutTests/platform/chromium-linux/svg/custom/js-late-pattern-and-object-creation-actual.txt.
+        * platform/chromium/test_expectations.txt:
+
+2010-09-21  Satish Sampath  <satish@chromium.org>
+
         Unreviewed, disable a test in chromium per the original author and added missing expectations for another.
 
         * platform/chromium-linux/svg/custom/js-late-pattern-and-object-creation-actual.txt: Added.
