@@ -4,13 +4,31 @@ WebKitGTK+ 1.3.4
 
 What's new in WebKitGTK+ 1.3.4?
 
-  - Fixes to compile with latest GTK+ changes.
   - File reader/writer APIs are now enabled.
   - The javascript JIT is now enabled by default on ARM.
   - Clipboard data is no longer lost when the process exists.
   - Image DnD support.
   - GSettings support to save/restore Web Inspector settings.
+  - Add WebSocket support, now enabled by default.
+  - Added WebKitWebView::frame-created signal, emitted when a frame
+    other than the main frame is created in a view.
+  - Added WebKitWebView::view-mode, holding information about how the
+    view is being presented. See the property documentation and
+    http://www.w3.org/TR/view-mode/ for details.
   - Fullscreen support for HTML5 media player.
+  - Identify as WebKit/Safari in Google domains when
+    enable-site-specific-quirks is activated. Otherwise we'll get a
+    degraded user experience due to their poor UA detection
+    algorihtms.
+  - Added simple media playback options in the context menu for the
+    media elements.
+  - Update (and require) to work with gobjet-introspection 0.9.5.
+  - Updated to work with GTK+ 3.x 2.90.7 when in GTK+ 3.x mode.
+  - Require libsoup 2.30.0 or newer.
+  - Make --disable-jit actually work.
+  - Add --enable-opcode-stats configure flag. When enabled, statistics
+    about opcode generation will be printed by JSC.
+  - Many a11y fixes, particularly in the AtkText interface.
   - Many other bugfixes.
 
 ================

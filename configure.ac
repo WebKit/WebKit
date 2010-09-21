@@ -34,8 +34,8 @@ AC_SUBST(WEBKIT_USER_AGENT_MINOR_VERSION)
 AC_CONFIG_SRCDIR([WebCore/config.h])
 
 dnl # Libtool library version, not to confuse with API version
-dnl # see http://www.gnu.org/software/libtool/manual/html_node/Libtool-versioning.html#Libtool-versioning
-LIBWEBKITGTK_VERSION=1:0:1
+dnl # see http://www.gnu.org/software/libtool/manual/html_node/Libtool-versioning.html
+LIBWEBKITGTK_VERSION=2:0:2
 AC_SUBST([LIBWEBKITGTK_VERSION])
 
 AM_INIT_AUTOMAKE([foreign subdir-objects tar-ustar])

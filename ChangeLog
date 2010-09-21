@@ -1,5 +1,13 @@
 2010-09-21  Xan Lopez  <xlopez@igalia.com>
 
+        Reviewed by Gustavo Noronha.
+
+        Update for 1.3.4 release.
+
+        * configure.ac:
+
+2010-09-21  Xan Lopez  <xlopez@igalia.com>
+
         Reviewed by Martin Robinson.
 
         [GTK] Configure flag for Opcode stats
