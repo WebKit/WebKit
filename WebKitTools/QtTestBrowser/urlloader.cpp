@@ -31,16 +31,31 @@
 #include <QFile>
 #include <QDebug>
 
-UrlLoader::UrlLoader(QWebFrame* frame, const QString& inputFileName)
+UrlLoader::UrlLoader(QWebFrame* frame, const QString& inputFileName, int timeoutSeconds, int extraTimeSeconds)
     : m_frame(frame)
     , m_stdOut(stdout)
     , m_loaded(0)
 {
-    init(inputFileName);
+    if (timeoutSeconds) {
+        m_timeoutTimer.setInterval(timeoutSeconds * 1000);
+        m_timeoutTimer.setSingleShot(true);
+        connect(frame, SIGNAL(loadStarted()), &m_timeoutTimer, SLOT(start()));
+        connect(&m_timeoutTimer, SIGNAL(timeout()), this, SLOT(loadNext()));
+    }
+    if (extraTimeSeconds) {
+        m_extraTimeTimer.setInterval(extraTimeSeconds * 1000);
+        m_extraTimeTimer.setSingleShot(true);
+        connect(frame, SIGNAL(loadFinished(bool)), &m_extraTimeTimer, SLOT(start()));
+        connect(&m_extraTimeTimer, SIGNAL(timeout()), this, SLOT(loadNext()));
+    } else
+        connect(frame, SIGNAL(loadFinished(bool)), this, SLOT(loadNext()));
+    loadUrlList(inputFileName);
 }
 
 void UrlLoader::loadNext()
 {
+    m_timeoutTimer.stop();
+    m_extraTimeTimer.stop();
     QString qstr;
     if (getUrl(qstr)) {
         QUrl url(qstr, QUrl::StrictMode);
@@ -53,7 +68,7 @@ void UrlLoader::loadNext()
         disconnect(m_frame, 0, this, 0);
 }
 
-void UrlLoader::init(const QString& inputFileName)
+void UrlLoader::loadUrlList(const QString& inputFileName)
 {
     QFile inputFile(inputFileName);
     if (inputFile.open(QIODevice::ReadOnly | QIODevice::Text)) {

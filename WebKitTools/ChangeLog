@@ -1,3 +1,30 @@
+2010-09-21  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Add robot loader timeout and extra time options.
+        https://bugs.webkit.org/show_bug.cgi?id=46172
+
+        [-robot-timeout <s>]: Load the next page after s seconds if the current
+        page didn't finish loading.
+        [-robot-extra-time <s>]: Wait s seconds after the current page finished
+        loading before loading the next one. This should allow some time for the
+        page's JavaScript to execute.
+
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::applyPrefs):
+        * QtTestBrowser/main.cpp:
+        (LauncherApplication::robotTimeout):
+        (LauncherApplication::robotExtraTime):
+        (LauncherApplication::LauncherApplication):
+        (LauncherApplication::handleUserOptions):
+        (main):
+        * QtTestBrowser/urlloader.cpp:
+        (UrlLoader::UrlLoader):
+        (UrlLoader::loadNext):
+        (UrlLoader::loadUrlList):
+        * QtTestBrowser/urlloader.h:
+
 2010-09-21  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed.

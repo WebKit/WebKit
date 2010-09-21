@@ -32,19 +32,20 @@
 #include "qwebframe.h"
 
 #include <QTextStream>
+#include <QTimer>
 #include <QVector>
 
 class UrlLoader : public QObject {
     Q_OBJECT
 
 public:
-    UrlLoader(QWebFrame* frame, const QString& inputFileName);
+    UrlLoader(QWebFrame* frame, const QString& inputFileName, int timeoutSeconds, int extraTimeSeconds);
 
 public slots:
     void loadNext();
 
 private:
-    void init(const QString& inputFileName);
+    void loadUrlList(const QString& inputFileName);
     bool getUrl(QString& qstr);
 
 private:
@@ -53,6 +54,8 @@ private:
     QWebFrame* m_frame;
     QTextStream m_stdOut;
     int m_loaded;
+    QTimer m_timeoutTimer;
+    QTimer m_extraTimeTimer;
 };
 
 #endif
