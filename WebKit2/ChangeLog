@@ -1,3 +1,28 @@
+2010-09-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Zombie WebProcesses are left around
+        https://bugs.webkit.org/show_bug.cgi?id=46148
+        <rdar://problem/8455898>
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::setupTerminationNotificationHandler):
+        Register a dispatch handler that calls waitpid when the child process exits. This prevents zombies from
+        staying around after the child process has quit.
+
+        (WebKit::ProcessLauncher::launchProcess):
+        Pass POSIX_SPAWN_START_SUSPENDED to posix_spawn to avoid race conditions when setting up the termination
+        notification handler. When the handler is set up we send the SIGCONT signal to the child process.
+        
+        * mac/MainMac.cpp:
+        (main):
+        Loop through all file descriptors except for stdin, stdout and stderr and close them.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Soft-link the Web process with WebKit2. We do this so we can ensure that we won't accidentally close any
+        file descriptors opened by initialization code that would have been called before main().
+
 2010-09-21  Andras Becsi  <abecsi@inf.u-szeged.hu>
 
         Reviewed by Csaba Osztrogonác.

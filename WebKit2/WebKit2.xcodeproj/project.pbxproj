@@ -36,7 +36,6 @@
 		1A0F29CC120B37160053D1B9 /* VisitedLinkTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0F29CA120B37160053D1B9 /* VisitedLinkTable.h */; };
 		1A0F29E3120B44420053D1B9 /* VisitedLinkProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0F29E1120B44420053D1B9 /* VisitedLinkProvider.cpp */; };
 		1A0F29E4120B44420053D1B9 /* VisitedLinkProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0F29E2120B44420053D1B9 /* VisitedLinkProvider.h */; };
-		1A10475A110A5AD500A43ECD /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */; };
 		1A1C4EC810D06099005E67E7 /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1C79A100E7FC50078DEBC /* WebCore.framework */; };
 		1A1C649B11F4174200553C19 /* WebContextMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A1C648611F415B700553C19 /* WebContextMac.mm */; };
 		1A2161B011F37664008AD0F5 /* NPRuntimeObjectMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2161AE11F37664008AD0F5 /* NPRuntimeObjectMap.h */; };
@@ -90,14 +89,12 @@
 		1AEFCCBD11D02C5E008219D3 /* PluginInfoStoreMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AEFCCBC11D02C5E008219D3 /* PluginInfoStoreMac.mm */; };
 		1AEFD27911D16C81008219D3 /* ArgumentCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEFD27811D16C81008219D3 /* ArgumentCoder.h */; };
 		1AEFD2F711D1807B008219D3 /* ArgumentCoders.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEFD2F611D1807B008219D3 /* ArgumentCoders.h */; };
-		1AF3060A111B599E00F96436 /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit2.framework */; };
 		514AF6C81209EE7300A26C97 /* WKData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514AF6C61209EE7300A26C97 /* WKData.cpp */; };
 		514AF6C91209EE7300A26C97 /* WKData.h in Headers */ = {isa = PBXBuildFile; fileRef = 514AF6C71209EE7300A26C97 /* WKData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		51578B831209ECEF00A37C4A /* WebData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51578B821209ECEF00A37C4A /* WebData.h */; };
 		516A4A59120A1AB500C05B7F /* WKError.h in Headers */ = {isa = PBXBuildFile; fileRef = 516A4A57120A1AB500C05B7F /* WKError.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		516A4A5A120A1AB500C05B7F /* WKError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 516A4A58120A1AB500C05B7F /* WKError.cpp */; };
 		516A4A5D120A2CCD00C05B7F /* WebError.h in Headers */ = {isa = PBXBuildFile; fileRef = 516A4A5B120A2CCD00C05B7F /* WebError.h */; };
-		5DAD729C116FF86200EE5396 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D6A5FE840307C02AAC07 /* AppKit.framework */; };
 		6D8A91A611F0EFD100DD01FE /* com.apple.WebProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = 6D8A91A511F0EFD100DD01FE /* com.apple.WebProcess.sb */; };
 		762B748D120BC75C00819339 /* WKPreferencesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 762B7484120BBA2D00819339 /* WKPreferencesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		762B74AF120BC94F00819339 /* WKPreferencesPrivate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 762B749D120BC8EA00819339 /* WKPreferencesPrivate.cpp */; };
@@ -763,16 +760,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		1A50DB1C110A3BDC000D3FE5 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5DAD729C116FF86200EE5396 /* AppKit.framework in Frameworks */,
-				1A10475A110A5AD500A43ECD /* JavaScriptCore.framework in Frameworks */,
-				1AF3060A111B599E00F96436 /* WebKit2.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		8DC2EF560486A6940098B216 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1684,7 +1671,6 @@
 			buildPhases = (
 				1A50DB1A110A3BDC000D3FE5 /* Resources */,
 				1A50DB1B110A3BDC000D3FE5 /* Sources */,
-				1A50DB1C110A3BDC000D3FE5 /* Frameworks */,
 			);
 			buildRules = (
 			);

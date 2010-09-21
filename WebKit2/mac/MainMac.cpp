@@ -23,10 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The framework entry point.
-extern "C" int WebKitMain(int argc, char **argv);
+#include <WebCore/SoftLinking.h>
+
+SOFT_LINK_FRAMEWORK(WebKit2);
+SOFT_LINK(WebKit2, WebKitMain, int, (int argc, char **argv), (argc, argv));
 
 int main(int argc, char** argv)
 {
+    int numFDs = getdtablesize();
+
+    // Close all file descriptors except stdin, stdout and stderr.
+    for (int fd = 3; fd < numFDs; ++fd)
+        close(fd);
+
     return WebKitMain(argc, argv);
 }

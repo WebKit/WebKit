@@ -73,6 +73,22 @@ static const char* processName()
 }
 #endif
 
+static void setUpTerminationNotificationHandler(pid_t pid)
+{
+#if HAVE(DISPATCH_H)
+    dispatch_source_t processDiedSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_PROC, pid, DISPATCH_PROC_EXIT, dispatch_get_current_queue());
+    dispatch_source_set_event_handler(processDiedSource, ^{
+        int status;
+        waitpid(dispatch_source_get_handle(processDiedSource), &status, 0);
+        dispatch_source_cancel(processDiedSource);
+    });
+    dispatch_source_set_cancel_handler(processDiedSource, ^{
+        dispatch_release(processDiedSource);
+    });
+    dispatch_resume(processDiedSource);
+#endif
+}
+
 void ProcessLauncher::launchProcess()
 {
     // Create the listening port.
@@ -93,11 +109,12 @@ void ProcessLauncher::launchProcess()
 
     // Register ourselves.
     kern_return_t kr = bootstrap_register2(bootstrap_port, const_cast<char*>(serviceName.data()), listeningPort, 0);
-    if (kr)
-        NSLog(@"bootstrap_register2 result: %x", kr);
+    ASSERT_UNUSED(kr, kr == KERN_SUCCESS);
 
     posix_spawnattr_t attr;
     posix_spawnattr_init(&attr);
+
+    // FIXME: Should we restore signals here?
 
 #if CPU(X86)
     // Ensure that the child process runs as the same architecture as the parent process. 
@@ -106,14 +123,19 @@ void ProcessLauncher::launchProcess()
     posix_spawnattr_setbinpref_np(&attr, 1, cpuTypes, &outCount);
 #endif
 
+    // Start suspended so we can set up the termination notification handler.
+    posix_spawnattr_setflags(&attr, POSIX_SPAWN_START_SUSPENDED);
+
     pid_t processIdentifier;
     int result = posix_spawn(&processIdentifier, path, 0, &attr, (char *const*)args, *_NSGetEnviron());
+    ASSERT_UNUSED(result, !result);
 
     posix_spawnattr_destroy(&attr);
 
-    if (result)
-        NSLog(@"posix_spawn result: %d", result);
-
+    // Set up the termination notification handler and then ask the child process to continue.
+    setUpTerminationNotificationHandler(processIdentifier);
+    kill(processIdentifier, SIGCONT);
+    
     // We've finished launching the process, message back to the main run loop.
     RunLoop::main()->scheduleWork(WorkItem::create(this, &ProcessLauncher::didFinishLaunchingProcess, processIdentifier, listeningPort));
 }
