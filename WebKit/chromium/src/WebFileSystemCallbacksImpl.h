@@ -43,7 +43,7 @@ class AsyncFileSystemCallbacks;
 namespace WebKit {
 
 struct WebFileInfo;
-class WebFileSystemEntry;
+struct WebFileSystemEntry;
 class WebString;
 
 class WebFileSystemCallbacksImpl : public WebFileSystemCallbacks {

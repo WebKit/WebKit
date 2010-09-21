@@ -1,3 +1,12 @@
+2010-09-20  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Trivial clang warning fix
+        https://bugs.webkit.org/show_bug.cgi?id=46143
+
+        * src/WebFileSystemCallbacksImpl.h:
+
 2010-09-20  Darin Adler  <darin@apple.com>
 
         Reviewed by James Robinson.
