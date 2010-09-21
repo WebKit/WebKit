@@ -60,6 +60,11 @@ DeviceOrientation* WebDeviceOrientationClient::lastOrientation() const
     return core([getProvider() lastOrientation]);
 }
 
+void WebDeviceOrientationClient::deviceOrientationControllerDestroyed()
+{
+      delete this;
+}
+
 id<WebDeviceOrientationProvider> WebDeviceOrientationClient::getProvider() const
 {
     if (!m_provider) {

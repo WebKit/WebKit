@@ -38,6 +38,7 @@ class DeviceMotionClient;
 class DeviceMotionController {
 public:
     DeviceMotionController(DeviceMotionClient*);
+    ~DeviceMotionController();
 
     void addListener(DOMWindow*);
     void removeListener(DOMWindow*);

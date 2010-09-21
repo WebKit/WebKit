@@ -71,4 +71,9 @@ WebCore::DeviceOrientation* DeviceOrientationClientProxy::lastOrientation() cons
     return m_lastOrientation.get();
 }
 
+void DeviceOrientationClientProxy::deviceOrientationControllerDestroyed()
+{
+    // Our lifetime is bound to the WebViewImpl.
+}
+
 } // namespace WebKit

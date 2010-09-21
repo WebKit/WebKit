@@ -1,3 +1,16 @@
+2010-09-21  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        DeviceOrientationClient and DeviceMotionClient should have controllerDestroyed() methods
+        https://bugs.webkit.org/show_bug.cgi?id=45891
+
+        Implements WebDeviceOrientationClient::deviceOrientationControllerDestroyed to delete the client.
+
+        * WebCoreSupport/WebDeviceOrientationClient.h:
+        * WebCoreSupport/WebDeviceOrientationClient.mm:
+        (WebDeviceOrientationClient::deviceOrientationControllerDestroyed):
+
 2010-09-20  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Carlson.

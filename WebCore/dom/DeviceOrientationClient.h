@@ -39,6 +39,7 @@ public:
     virtual void startUpdating() = 0;
     virtual void stopUpdating() = 0;
     virtual DeviceOrientation* lastOrientation() const = 0;
+    virtual void deviceOrientationControllerDestroyed() = 0;
 };
 
 } // namespace WebCore

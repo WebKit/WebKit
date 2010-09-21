@@ -40,6 +40,11 @@ DeviceMotionController::DeviceMotionController(DeviceMotionClient* client)
     m_client->setController(this);
 }
 
+DeviceMotionController::~DeviceMotionController()
+{
+    m_client->deviceMotionControllerDestroyed();
+}
+
 void DeviceMotionController::timerFired(Timer<DeviceMotionController>* timer)
 {
     ASSERT_UNUSED(timer, timer == &m_timer);

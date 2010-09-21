@@ -40,6 +40,7 @@ class Page;
 class DeviceOrientationController {
 public:
     DeviceOrientationController(Page*, DeviceOrientationClient*);
+    ~DeviceOrientationController();
 
     void addListener(DOMWindow*);
     void removeListener(DOMWindow*);

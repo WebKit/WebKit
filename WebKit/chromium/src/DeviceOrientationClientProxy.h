@@ -48,6 +48,7 @@ public:
     void startUpdating();
     void stopUpdating();
     WebCore::DeviceOrientation* lastOrientation() const;
+    virtual void deviceOrientationControllerDestroyed();
 
 private:
     WebDeviceOrientationClient* m_client;
