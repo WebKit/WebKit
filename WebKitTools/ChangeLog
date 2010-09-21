@@ -1,3 +1,12 @@
+2010-09-21  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        add a script for running webkit_unit_tests
+        https://bugs.webkit.org/show_bug.cgi?id=46014
+
+        * Scripts/run-chromium-webkit-unit-tests: Added.
+
 2010-09-21  Fridrich Strba  <fridrich.strba@bluewin.ch>
 
         Reviewed by Martin Robinson.
