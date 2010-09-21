@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -234,15 +235,15 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 
 #elif COMPILER(GCC) && CPU(ARM_THUMB2)
 
-#define THUNK_RETURN_ADDRESS_OFFSET      0x40
-#define PRESERVED_RETURN_ADDRESS_OFFSET  0x44
-#define PRESERVED_R4_OFFSET              0x48
-#define PRESERVED_R5_OFFSET              0x4C
-#define PRESERVED_R6_OFFSET              0x50
-#define REGISTER_FILE_OFFSET             0x54
-#define CALLFRAME_OFFSET                 0x58
-#define EXCEPTION_OFFSET                 0x5C
-#define ENABLE_PROFILER_REFERENCE_OFFSET 0x64
+#define THUNK_RETURN_ADDRESS_OFFSET      0x38
+#define PRESERVED_RETURN_ADDRESS_OFFSET  0x3C
+#define PRESERVED_R4_OFFSET              0x40
+#define PRESERVED_R5_OFFSET              0x44
+#define PRESERVED_R6_OFFSET              0x48
+#define REGISTER_FILE_OFFSET             0x4C
+#define CALLFRAME_OFFSET                 0x50
+#define EXCEPTION_OFFSET                 0x54
+#define ENABLE_PROFILER_REFERENCE_OFFSET 0x58
 
 #elif (COMPILER(GCC) || COMPILER(RVCT)) && CPU(ARM_TRADITIONAL)
 
@@ -467,14 +468,14 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 
 #elif COMPILER(GCC) && CPU(ARM_THUMB2)
 
-#define THUNK_RETURN_ADDRESS_OFFSET      0x1C
-#define PRESERVED_RETURN_ADDRESS_OFFSET  0x20
-#define PRESERVED_R4_OFFSET              0x24
-#define PRESERVED_R5_OFFSET              0x28
-#define PRESERVED_R6_OFFSET              0x2C
-#define REGISTER_FILE_OFFSET             0x30
-#define CALLFRAME_OFFSET                 0x34
-#define EXCEPTION_OFFSET                 0x38
+#define THUNK_RETURN_ADDRESS_OFFSET      0x20
+#define PRESERVED_RETURN_ADDRESS_OFFSET  0x24
+#define PRESERVED_R4_OFFSET              0x28
+#define PRESERVED_R5_OFFSET              0x2C
+#define PRESERVED_R6_OFFSET              0x30
+#define REGISTER_FILE_OFFSET             0x34
+#define CALLFRAME_OFFSET                 0x38
+#define EXCEPTION_OFFSET                 0x3C
 #define ENABLE_PROFILER_REFERENCE_OFFSET 0x40
 
 #elif (COMPILER(GCC) || COMPILER(RVCT)) && CPU(ARM_TRADITIONAL)

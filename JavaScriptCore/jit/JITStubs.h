@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -146,8 +147,8 @@ namespace JSC {
     struct JITStackFrame {
         JITStubArg reserved; // Unused
         JITStubArg args[6];
-#if USE(JSVALUE32_64)
-        void* padding[2]; // Maintain 16-byte stack alignment.
+#if !USE(JSVALUE32_64)
+        void* padding; // Maintain 16-byte stack alignment.
 #endif
 
         ReturnAddressPtr thunkReturnAddress;
@@ -161,8 +162,6 @@ namespace JSC {
         RegisterFile* registerFile;
         CallFrame* callFrame;
         JSValue* exception;
-
-        void* padding2;
 
         // These arguments passed on the stack.
         Profiler** enabledProfilerReference;

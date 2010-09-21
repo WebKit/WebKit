@@ -1,3 +1,19 @@
+2010-09-21  Dave Tapuska  <dtapuska@rim.com>
+
+        Reviewed by Csaba Osztrogonác.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45673
+
+        r65596 caused ENABLE_PROFILER_REFERENCE_OFFSET to not be
+        8 byte aligned. A non 8 byte divisible value for this will
+        cause the sp to become non 8 byte aligned.
+
+        Verify and correct offset values that r65596 effected that
+        weren't updated.
+
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+
 2010-09-21  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.
