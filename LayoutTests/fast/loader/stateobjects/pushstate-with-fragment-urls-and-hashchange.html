@@ -39,9 +39,9 @@ function runTest()
     history.back();
 }
 
-function lastPathComponent()
+function lastPathComponent(url)
 {
-    return window.location.href.split('/').pop();
+    return url.split('/').pop();
 }
 
 var beganTest = false;
@@ -56,16 +56,16 @@ onpopstate = function(event)
         return;
     }
 
-    log("State popped with event " + event.state + " (type " + typeof event.state + ") and last path component " + lastPathComponent());
+    log("State popped with event " + event.state + " (type " + typeof event.state + ") and last path component " + lastPathComponent(location.href));
     if (event.state != "OriginalEntry")
         setTimeout("history.back();", 0);
     else if (window.layoutTestController)
         layoutTestController.notifyDone();
 }
 
-onhashchange = function()
+onhashchange = function(event)
 {
-    log("Hash change fired and last path component is " + lastPathComponent());
+    log("Hash change fired and last path component is " + lastPathComponent(event.newURL));
 }
 
 </script>

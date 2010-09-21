@@ -164,6 +164,7 @@ SET(WebCore_IDL_FILES
     dom/ErrorEvent.idl
     dom/EventException.idl
     dom/Event.idl
+    dom/HashChangeEvent.idl
     dom/KeyboardEvent.idl
     dom/MessageChannel.idl
     dom/MessageEvent.idl

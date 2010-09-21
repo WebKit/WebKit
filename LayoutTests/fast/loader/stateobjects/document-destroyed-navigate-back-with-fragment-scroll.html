@@ -9,11 +9,16 @@ if (window.layoutTestController) {
     layoutTestController.waitUntilDone();
 }
 
-function lastPathComponent()
+function lastPathComponent(url)
 {
-    return window.location.href.split('/').pop();
+    return url.split('/').pop();
 }
 
+function hashOf(url)
+{
+    return url.substring(url.lastIndexOf('#'));
+}
+ 
 function runFirstStageOfTest()
 {   
     history.replaceState("FirstEntry", null, "#FirstEntry");
@@ -23,7 +28,7 @@ function runFirstStageOfTest()
 
 function runSecondStageOfTest()
 {
-    alert("Last path component of location is " + lastPathComponent());
+    alert("Last path component of location is " + lastPathComponent(location.href));
     setTimeout("history.back();", 0);
 }
 
@@ -45,7 +50,7 @@ function runTest()
 
 var beganTest = false;
 
-function statePopped()
+onpopstate = function()
 {
     // The first time popstate fires, it's because the page has finished loading.
     // Only then can we begin the test.
@@ -79,10 +84,10 @@ function statePopped()
     }, 0);
 }
 
-function hashChanged()
+onhashchange = function(event)
 {
-    alert("hashChanged - Last path component of location is " + lastPathComponent());
-    if (window.location.hash == "#FirstEntryWillLaterBeReactivated") {
+   alert("hashChanged - Last path component of location is " + lastPathComponent(event.newURL));
+   if (hashOf(event.newURL) == "#FirstEntryWillLaterBeReactivated") {
         alert("Test complete");
         sessionStorage.clear();
         if (window.layoutTestController)
@@ -91,7 +96,7 @@ function hashChanged()
 }
 
 </script>
-<body onpopstate="statePopped();" onhashchange="hashChanged();" onunload="/* disable page cache */">
+<body onunload="/* disable page cache */">
 <pre>
 This test:
 -Builds up a list of state object entries with fragment URLs.

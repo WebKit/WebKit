@@ -1,3 +1,25 @@
+2010-09-20  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Hashchange event is no longer a simple event, needs to be its own interface
+        https://bugs.webkit.org/show_bug.cgi?id=36335
+        
+        Add explicit test for newURL and oldURL properties of hashchange events.
+        Add HashChangeEvent to expected global objects.
+        Update stateobjects tests to also check newURL on the hashchange event.
+
+        The original version of this patch was written by
+        Steven Lai <s3lance@hotmail.com>.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/prototype-inheritance-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+        * fast/loader/hashchange-event-properties-expected.txt: Added.
+        * fast/loader/hashchange-event-properties.html: Added.
+        * fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.html:
+        * fast/loader/stateobjects/pushstate-with-fragment-urls-and-hashchange.html:
+
 2010-09-20  Andrew Wilson  <atwilson@chromium.org>
 
         Revert r67892 (expectations update) as the expectations are out-of-date due to r67879.

@@ -43,6 +43,7 @@
 #include "V8DeviceMotionEvent.h"
 #include "V8DeviceOrientationEvent.h"
 #include "V8ErrorEvent.h"
+#include "V8HashChangeEvent.h"
 #include "V8IDBErrorEvent.h"
 #include "V8IDBSuccessEvent.h"
 #include "V8KeyboardEvent.h"
@@ -120,6 +121,8 @@ v8::Handle<v8::Value> toV8(Event* impl)
 #endif
         return toV8(static_cast<UIEvent*>(impl));
     }
+    if (impl->isHashChangeEvent())
+        return toV8(static_cast<HashChangeEvent*>(impl));
     if (impl->isMutationEvent())
         return toV8(static_cast<MutationEvent*>(impl));
     if (impl->isOverflowEvent())

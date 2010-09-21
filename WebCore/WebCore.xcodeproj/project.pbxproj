@@ -1488,6 +1488,9 @@
 		8476C9F011DF6A5800555B02 /* SVGPathParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 8476C9EE11DF6A5800555B02 /* SVGPathParser.h */; };
 		84801954108BAFB300CB2B1F /* FEGaussianBlur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84801952108BAFB300CB2B1F /* FEGaussianBlur.cpp */; };
 		84801955108BAFB300CB2B1F /* FEGaussianBlur.h in Headers */ = {isa = PBXBuildFile; fileRef = 84801953108BAFB300CB2B1F /* FEGaussianBlur.h */; };
+		8482B7461198C35400BFB005 /* HashChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 2442BBF81194C9D300D49469 /* HashChangeEvent.h */; };
+		8482B7511198CB6B00BFB005 /* JSHashChangeEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8482B74F1198CB6B00BFB005 /* JSHashChangeEvent.cpp */; };
+		8482B7521198CB6B00BFB005 /* JSHashChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 8482B7501198CB6B00BFB005 /* JSHashChangeEvent.h */; };
 		8485227B1190162C006EDC7F /* JSSVGHKernElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 848522771190162C006EDC7F /* JSSVGHKernElement.cpp */; };
 		8485227C1190162C006EDC7F /* JSSVGHKernElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 848522781190162C006EDC7F /* JSSVGHKernElement.h */; };
 		8485227D1190162C006EDC7F /* JSSVGVKernElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 848522791190162C006EDC7F /* JSSVGVKernElement.cpp */; };
@@ -6496,6 +6499,7 @@
 		1CFAE3220A6D6A3F0032593D /* libobjc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libobjc.dylib; path = /usr/lib/libobjc.dylib; sourceTree = "<absolute>"; };
 		200B190811C277D900DCCD3A /* ScriptBreakpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptBreakpoint.cpp; sourceTree = "<group>"; };
 		228C284410D82500009D0D0E /* ScriptWrappable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptWrappable.h; sourceTree = "<group>"; };
+		2442BBF81194C9D300D49469 /* HashChangeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HashChangeEvent.h; sourceTree = "<group>"; };
 		24F54EAA101FE914000AE741 /* ApplicationCacheHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApplicationCacheHost.cpp; sourceTree = "<group>"; };
 		24F54EAB101FE914000AE741 /* ApplicationCacheHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationCacheHost.h; sourceTree = "<group>"; };
 		2542F4D81166C25A00E89A86 /* UserGestureIndicator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserGestureIndicator.cpp; sourceTree = "<group>"; };
@@ -7447,6 +7451,9 @@
 		8476C9EE11DF6A5800555B02 /* SVGPathParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathParser.h; sourceTree = "<group>"; };
 		84801952108BAFB300CB2B1F /* FEGaussianBlur.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FEGaussianBlur.cpp; path = filters/FEGaussianBlur.cpp; sourceTree = "<group>"; };
 		84801953108BAFB300CB2B1F /* FEGaussianBlur.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FEGaussianBlur.h; path = filters/FEGaussianBlur.h; sourceTree = "<group>"; };
+		8482B7441198C32E00BFB005 /* HashChangeEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HashChangeEvent.idl; sourceTree = "<group>"; };
+		8482B74F1198CB6B00BFB005 /* JSHashChangeEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHashChangeEvent.cpp; sourceTree = "<group>"; };
+		8482B7501198CB6B00BFB005 /* JSHashChangeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHashChangeEvent.h; sourceTree = "<group>"; };
 		848522771190162C006EDC7F /* JSSVGHKernElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGHKernElement.cpp; sourceTree = "<group>"; };
 		848522781190162C006EDC7F /* JSSVGHKernElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGHKernElement.h; sourceTree = "<group>"; };
 		848522791190162C006EDC7F /* JSSVGVKernElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGVKernElement.cpp; sourceTree = "<group>"; };
@@ -15229,6 +15236,8 @@
 				14E8378D09F85D4F00B85AE4 /* JSEvent.h */,
 				BC60D9BD0D2A269A00B9918F /* JSEventException.cpp */,
 				BC60D9BE0D2A269A00B9918F /* JSEventException.h */,
+				8482B74F1198CB6B00BFB005 /* JSHashChangeEvent.cpp */,
+				8482B7501198CB6B00BFB005 /* JSHashChangeEvent.h */,
 				A86629CE09DA2B47009633A5 /* JSKeyboardEvent.cpp */,
 				A86629CD09DA2B47009633A5 /* JSKeyboardEvent.h */,
 				E107400B0E77BDC00033AF24 /* JSMessageChannel.cpp */,
@@ -17609,6 +17618,8 @@
 				93831B560D087D6000E5C984 /* ExceptionCode.cpp */,
 				935FBCF109BA143B00E230B1 /* ExceptionCode.h */,
 				A853123C11D0471B00D4D077 /* FragmentScriptingPermission.h */,
+				8482B7441198C32E00BFB005 /* HashChangeEvent.idl */,
+				2442BBF81194C9D300D49469 /* HashChangeEvent.h */,
 				08700BE60F086C5300919419 /* InputElement.cpp */,
 				08591AA40F085C4E009BACB1 /* InputElement.h */,
 				85031B2D0A44EFC700F992E0 /* KeyboardEvent.cpp */,
@@ -18998,6 +19009,7 @@
 				B2A015AB0AF6CD53006BCE0E /* GraphicsTypes.h in Headers */,
 				C50B561712119D23008B46E0 /* GroupSettings.h in Headers */,
 				7693BAD2106C2DCA007B0823 /* HaltablePlugin.h in Headers */,
+				8482B7461198C35400BFB005 /* HashChangeEvent.h in Headers */,
 				BC94D1540C275C8B006BC617 /* History.h in Headers */,
 				97DCE20210807C750057D394 /* HistoryController.h in Headers */,
 				51741D110B07259A00ED442C /* HistoryItem.h in Headers */,
@@ -19328,6 +19340,7 @@
 				49EECF03105070C400099FAB /* JSFloat32Array.h in Headers */,
 				FE80DA640E9C4703000D6F75 /* JSGeolocation.h in Headers */,
 				FE80DA660E9C4703000D6F75 /* JSGeoposition.h in Headers */,
+				8482B7521198CB6B00BFB005 /* JSHashChangeEvent.h in Headers */,
 				BC94D14F0C275C68006BC617 /* JSHistory.h in Headers */,
 				BC97E413109154FA0010D361 /* JSHTMLAllCollection.h in Headers */,
 				1A4A2DF00A1B852A00C807F8 /* JSHTMLAnchorElement.h in Headers */,
@@ -21859,6 +21872,7 @@
 				FE80DA630E9C4703000D6F75 /* JSGeolocation.cpp in Sources */,
 				FE80D7AB0E9C1ED2000D6F75 /* JSGeolocationCustom.cpp in Sources */,
 				FE80DA650E9C4703000D6F75 /* JSGeoposition.cpp in Sources */,
+				8482B7511198CB6B00BFB005 /* JSHashChangeEvent.cpp in Sources */,
 				BC94D14E0C275C68006BC617 /* JSHistory.cpp in Sources */,
 				BCE7B1930D4E86960075A539 /* JSHistoryCustom.cpp in Sources */,
 				BC97E412109154FA0010D361 /* JSHTMLAllCollection.cpp in Sources */,

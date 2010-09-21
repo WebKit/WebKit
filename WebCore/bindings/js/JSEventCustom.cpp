@@ -42,6 +42,7 @@
 #include "JSDeviceMotionEvent.h"
 #include "JSDeviceOrientationEvent.h"
 #include "JSErrorEvent.h"
+#include "JSHashChangeEvent.h"
 #include "JSKeyboardEvent.h"
 #include "JSMessageEvent.h"
 #include "JSMouseEvent.h"
@@ -58,6 +59,7 @@
 #include "JSXMLHttpRequestProgressEvent.h"
 #include "BeforeLoadEvent.h"
 #include "ErrorEvent.h"
+#include "HashChangeEvent.h"
 #include "KeyboardEvent.h"
 #include "MessageEvent.h"
 #include "MouseEvent.h"
@@ -170,6 +172,8 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Event* event)
     else if (event->isErrorEvent())
         wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, ErrorEvent, event);
 #endif
+    else if (event->isHashChangeEvent())
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, HashChangeEvent, event);
     else if (event->isPopStateEvent())
         wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, PopStateEvent, event);
     else if (event->isCustomEvent())

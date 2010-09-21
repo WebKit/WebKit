@@ -164,6 +164,8 @@ DOM_CLASSES = \
     Flags \
     Geolocation \
     Geoposition \
+    HashChangeEvent \
+    History \
     HTMLAllCollection \
     HTMLAnchorElement \
     HTMLAppletElement \
@@ -236,7 +238,6 @@ DOM_CLASSES = \
     HTMLTitleElement \
     HTMLUListElement \
     HTMLVideoElement \
-    History \
     IDBAny \
     IDBCursor \
     IDBDatabaseError \

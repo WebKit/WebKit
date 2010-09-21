@@ -118,6 +118,7 @@
 #include "JSFlags.cpp"
 #include "JSGeolocation.cpp"
 #include "JSGeoposition.cpp"
+#include "JSHashChangeEvent.cpp"
 #include "JSHistory.cpp"
 #include "JSHTMLAllCollection.cpp"
 #include "JSHTMLAnchorElement.cpp"

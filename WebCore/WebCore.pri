@@ -123,6 +123,7 @@ IDL_BINDINGS += \
     dom/EventException.idl \
 #    dom/EventListener.idl \
 #    dom/EventTarget.idl \
+    dom/HashChangeEvent.idl \
     dom/KeyboardEvent.idl \
     dom/MouseEvent.idl \
     dom/MessageChannel.idl \

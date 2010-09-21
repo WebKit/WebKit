@@ -1,3 +1,44 @@
+2010-09-20  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Hashchange event is no longer a simple event, needs to be its own interface
+        https://bugs.webkit.org/show_bug.cgi?id=36335
+        
+        Add HashChangeEvent.idl and supporting files/changes.
+
+        Test: fast/loader/hashchange-event-properties.html
+
+        The original version of this patch was written by
+        Steven Lai <s3lance@hotmail.com>.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * bindings/v8/custom/V8EventCustom.cpp:
+        (WebCore::toV8):
+        * dom/Document.cpp:
+        (WebCore::Document::enqueueHashchangeEvent):
+        * dom/Event.cpp:
+        (WebCore::Event::isHashChangeEvent):
+        * dom/Event.h:
+        * dom/HashChangeEvent.h: Added.
+        (WebCore::HashChangeEvent::isHashChangeEvent):
+        (WebCore::HashChangeEvent::create):
+        (WebCore::HashChangeEvent::initHashChangeEvent):
+        (WebCore::HashChangeEvent::oldURL):
+        (WebCore::HashChangeEvent::newURL):
+        (WebCore::HashChangeEvent::HashChangeEvent):
+        * dom/HashChangeEvent.idl: Added.
+        * page/DOMWindow.idl:
+
 2010-09-20  Andy Estes  <aestes@apple.com>
 
         Reviewed by Adam Barth.

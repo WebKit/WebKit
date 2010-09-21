@@ -65,6 +65,7 @@
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "HashChangeEvent.h"
 #include "HTMLAllCollection.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLBodyElement.h"
@@ -4638,11 +4639,9 @@ void Document::enqueuePageshowEvent(PageshowEventPersistence persisted)
     dispatchWindowEvent(PageTransitionEvent::create(eventNames().pageshowEvent, persisted), this);
 }
 
-void Document::enqueueHashchangeEvent(const String& /*oldURL*/, const String& /*newURL*/)
+void Document::enqueueHashchangeEvent(const String& oldURL, const String& newURL)
 {
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=36335 Hashchange event is now its own interface and takes two
-    //   URL arguments which we need to pass in here.
-    enqueueEvent(Event::create(eventNames().hashchangeEvent, false, false));
+    enqueueEvent(HashChangeEvent::create(oldURL, newURL));
 }
 
 void Document::enqueuePopstateEvent(PassRefPtr<SerializedScriptValue> stateObject)

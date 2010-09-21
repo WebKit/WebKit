@@ -497,6 +497,7 @@ module window {
 
         attribute EventConstructor Event;
         attribute BeforeLoadEventConstructor BeforeLoadEvent;
+        attribute HashChangeEventConstructor HashChangeEvent;
         attribute KeyboardEventConstructor KeyboardEvent;
         attribute MouseEventConstructor MouseEvent;
         attribute MutationEventConstructor MutationEvent;

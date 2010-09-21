@@ -246,6 +246,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSGeolocation.h \
 	DerivedSources/WebCore/JSGeoposition.cpp \
 	DerivedSources/WebCore/JSGeoposition.h \
+	DerivedSources/WebCore/JSHashChangeEvent.cpp \
+	DerivedSources/WebCore/JSHashChangeEvent.h \
 	DerivedSources/WebCore/JSHistory.cpp \
 	DerivedSources/WebCore/JSHistory.h \
 	DerivedSources/WebCore/JSHTMLAllCollection.cpp \
@@ -1126,6 +1128,7 @@ webcore_sources += \
 	WebCore/dom/FragmentScriptingPermission.h \
 	WebCore/dom/InputElement.cpp \
 	WebCore/dom/InputElement.h \
+	WebCore/dom/HashChangeEvent.h \
 	WebCore/dom/KeyboardEvent.cpp \
 	WebCore/dom/KeyboardEvent.h \
 	WebCore/dom/MappedAttributeEntry.h \
