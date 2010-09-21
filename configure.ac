@@ -705,6 +705,8 @@ if test "$enable_jit" = "yes"; then
             enable_jit="no (CPU '$host_cpu' not supported)"
         ;;
     esac
+else
+        AC_DEFINE([ENABLE_JIT], [0], [Define to enable JIT])
 fi
 AC_MSG_RESULT([$enable_jit])
 

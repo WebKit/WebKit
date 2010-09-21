@@ -1,3 +1,18 @@
+2010-09-21  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Fix --disable-jit
+        https://bugs.webkit.org/show_bug.cgi?id=46080
+
+        Manually define ENABLE_JIT to 0 when we want the feature disabled.
+
+        If the value is undefined Platform.h will enable it again
+        automatically in some platforms, which is probably not what the
+        user wanted if he passed --disable-jit.
+
+        * configure.ac:
+
 2010-09-18  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, fix use of wrong case in name.
