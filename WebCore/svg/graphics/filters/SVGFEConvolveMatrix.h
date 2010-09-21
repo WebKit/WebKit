@@ -72,9 +72,10 @@ public:
     bool preserveAlpha() const;
     void setPreserveAlpha(bool);
 
-    void apply(Filter*);
-    void dump();
-    TextStream& externalRepresentation(TextStream&, int indent) const;
+    virtual void apply(Filter*);
+    virtual void dump();
+
+    virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
 private:
     FEConvolveMatrix(const IntSize&, float, float,

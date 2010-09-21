@@ -1,24 +1,24 @@
 /*
-    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
-                  2005 Eric Seidel <eric@webkit.org>
-                  2009 Dirk Schulze <krit@webkit.org>
-
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Library General Public
-    License as published by the Free Software Foundation; either
-    version 2 of the License, or (at your option) any later version.
-
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Library General Public License for more details.
-
-    You should have received a copy of the GNU Library General Public License
-    aint with this library; see the file COPYING.LIB.  If not, write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA 02110-1301, USA.
-*/
+ * Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
+ * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
 
 #include "config.h"
 
@@ -122,39 +122,39 @@ void FEComposite::apply(Filter* filter)
     if (!in->resultImage() || !in2->resultImage())
         return;
 
-    GraphicsContext* filterContext = getEffectContext();
+    GraphicsContext* filterContext = effectContext();
     if (!filterContext)
         return;
 
-    FloatRect srcRect = FloatRect(0.f, 0.f, -1.f, -1.f);
+    FloatRect srcRect = FloatRect(0, 0, -1, -1);
     switch (m_type) {
     case FECOMPOSITE_OPERATOR_OVER:
-        filterContext->drawImageBuffer(in2->resultImage(), DeviceColorSpace, calculateDrawingRect(in2->repaintRectInLocalCoordinates()));
-        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, calculateDrawingRect(in->repaintRectInLocalCoordinates()));
+        filterContext->drawImageBuffer(in2->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in2->repaintRectInLocalCoordinates()));
+        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in->repaintRectInLocalCoordinates()));
         break;
     case FECOMPOSITE_OPERATOR_IN:
         filterContext->save();
-        filterContext->clipToImageBuffer(in2->resultImage(), calculateDrawingRect(in2->repaintRectInLocalCoordinates()));
-        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, calculateDrawingRect(in->repaintRectInLocalCoordinates()));
+        filterContext->clipToImageBuffer(in2->resultImage(), drawingRegionOfInputImage(in2->repaintRectInLocalCoordinates()));
+        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in->repaintRectInLocalCoordinates()));
         filterContext->restore();
         break;
     case FECOMPOSITE_OPERATOR_OUT:
-        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, calculateDrawingRect(in->repaintRectInLocalCoordinates()));
-        filterContext->drawImageBuffer(in2->resultImage(), DeviceColorSpace, calculateDrawingRect(in2->repaintRectInLocalCoordinates()), srcRect, CompositeDestinationOut);
+        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in->repaintRectInLocalCoordinates()));
+        filterContext->drawImageBuffer(in2->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in2->repaintRectInLocalCoordinates()), srcRect, CompositeDestinationOut);
         break;
     case FECOMPOSITE_OPERATOR_ATOP:
-        filterContext->drawImageBuffer(in2->resultImage(), DeviceColorSpace, calculateDrawingRect(in2->repaintRectInLocalCoordinates()));
-        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, calculateDrawingRect(in->repaintRectInLocalCoordinates()), srcRect, CompositeSourceAtop);
+        filterContext->drawImageBuffer(in2->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in2->repaintRectInLocalCoordinates()));
+        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in->repaintRectInLocalCoordinates()), srcRect, CompositeSourceAtop);
         break;
     case FECOMPOSITE_OPERATOR_XOR:
-        filterContext->drawImageBuffer(in2->resultImage(), DeviceColorSpace, calculateDrawingRect(in2->repaintRectInLocalCoordinates()));
-        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, calculateDrawingRect(in->repaintRectInLocalCoordinates()), srcRect, CompositeXOR);
+        filterContext->drawImageBuffer(in2->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in2->repaintRectInLocalCoordinates()));
+        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in->repaintRectInLocalCoordinates()), srcRect, CompositeXOR);
         break;
     case FECOMPOSITE_OPERATOR_ARITHMETIC: {
-        IntRect effectADrawingRect = calculateDrawingIntRect(in->repaintRectInLocalCoordinates());
+        IntRect effectADrawingRect = requestedRegionOfInputImageData(in->repaintRectInLocalCoordinates());
         RefPtr<CanvasPixelArray> srcPixelArrayA(in->resultImage()->getPremultipliedImageData(effectADrawingRect)->data());
 
-        IntRect effectBDrawingRect = calculateDrawingIntRect(in2->repaintRectInLocalCoordinates());
+        IntRect effectBDrawingRect = requestedRegionOfInputImageData(in2->repaintRectInLocalCoordinates());
         RefPtr<ImageData> imageData(in2->resultImage()->getPremultipliedImageData(effectBDrawingRect));
         CanvasPixelArray* srcPixelArrayB(imageData->data());
 

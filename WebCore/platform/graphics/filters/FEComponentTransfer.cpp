@@ -1,25 +1,25 @@
 /*
-    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
-                  2005 Eric Seidel <eric@webkit.org>
-                  2009 Dirk Schulze <krit@webkit.org>
-    Copyright (C) Research In Motion Limited 2010. All rights reserved.
-
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Library General Public
-    License as published by the Free Software Foundation; either
-    version 2 of the License, or (at your option) any later version.
-
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Library General Public License for more details.
-
-    You should have received a copy of the GNU Library General Public License
-    aint with this library; see the file COPYING.LIB.  If not, write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA 02110-1301, USA.
-*/
+ * Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
+ * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
 
 #include "config.h"
 
@@ -36,8 +36,8 @@ namespace WebCore {
 
 typedef void (*TransferType)(unsigned char*, const ComponentTransferFunction&);
 
-FEComponentTransfer::FEComponentTransfer(const ComponentTransferFunction& redFunc, 
-    const ComponentTransferFunction& greenFunc, const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc)
+FEComponentTransfer::FEComponentTransfer(const ComponentTransferFunction& redFunc, const ComponentTransferFunction& greenFunc,
+                                         const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc)
     : FilterEffect()
     , m_redFunc(redFunc)
     , m_greenFunc(greenFunc)
@@ -154,7 +154,7 @@ void FEComponentTransfer::apply(Filter* filter)
     if (!in->resultImage())
         return;
 
-    if (!getEffectContext())
+    if (!effectContext())
         return;
 
     unsigned char rValues[256], gValues[256], bValues[256], aValues[256];
@@ -167,7 +167,7 @@ void FEComponentTransfer::apply(Filter* filter)
     for (unsigned channel = 0; channel < 4; channel++)
         (*callEffect[transferFunction[channel].type])(tables[channel], transferFunction[channel]);
 
-    IntRect drawingRect = calculateDrawingIntRect(in->repaintRectInLocalCoordinates());
+    IntRect drawingRect = requestedRegionOfInputImageData(in->repaintRectInLocalCoordinates());
     RefPtr<ImageData> imageData(in->resultImage()->getUnmultipliedImageData(drawingRect));
     CanvasPixelArray* srcPixelArray(imageData->data());
 

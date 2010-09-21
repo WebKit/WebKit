@@ -25,7 +25,6 @@
 #include "SVGFEDiffuseLighting.h"
 
 #include "SVGLightSource.h"
-#include "SVGRenderTreeAsText.h"
 
 namespace WebCore {
 

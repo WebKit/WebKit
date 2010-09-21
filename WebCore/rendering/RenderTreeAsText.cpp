@@ -46,7 +46,6 @@
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "SelectionController.h"
-#include "TextStream.h"
 #include <wtf/UnusedParam.h>
 #include <wtf/Vector.h>
 
@@ -75,12 +74,52 @@ using namespace HTMLNames;
 
 static void writeLayers(TextStream&, const RenderLayer* rootLayer, RenderLayer*, const IntRect& paintDirtyRect, int indent = 0, RenderAsTextBehavior behavior = RenderAsTextBehaviorNormal);
 
-#if !ENABLE(SVG)
-static TextStream &operator<<(TextStream& ts, const IntRect& r)
+bool hasFractions(double val)
+{
+    int ival = static_cast<int>(val);
+    double dval = static_cast<double>(ival);
+    return fabs(val - dval) > std::numeric_limits<double>::epsilon();
+}
+
+TextStream& operator<<(TextStream& ts, const IntRect& r)
 {
     return ts << "at (" << r.x() << "," << r.y() << ") size " << r.width() << "x" << r.height();
 }
-#endif
+
+TextStream& operator<<(TextStream& ts, const IntPoint& p)
+{
+    return ts << "(" << p.x() << "," << p.y() << ")";
+}
+
+TextStream& operator<<(TextStream& ts, const FloatPoint& p)
+{
+    ts << "(";    
+    if (hasFractions(p.x()))
+        ts << p.x();
+    else 
+        ts << int(p.x());    
+    ts << ",";
+    if (hasFractions(p.y())) 
+        ts << p.y();
+    else 
+        ts << int(p.y());    
+    return ts << ")";
+}
+
+TextStream& operator<<(TextStream& ts, const FloatSize& s)
+{
+    ts << "width=";
+    if (hasFractions(s.width()))
+        ts << s.width();
+    else
+        ts << int(s.width());
+    ts << " height=";
+    if (hasFractions(s.height())) 
+        ts << s.height();
+    else
+        ts << int(s.height());
+    return ts;
+}
 
 void writeIndent(TextStream& ts, int indent)
 {

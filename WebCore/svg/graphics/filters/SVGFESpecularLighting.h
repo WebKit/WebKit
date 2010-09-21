@@ -54,8 +54,9 @@ public:
     const LightSource* lightSource() const;
     void setLightSource(PassRefPtr<LightSource>);
 
-    void dump();
-    TextStream& externalRepresentation(TextStream&, int indent) const;
+    virtual void dump();
+
+    virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
 private:
     FESpecularLighting(const Color&, float, float, float, float, float, PassRefPtr<LightSource>);

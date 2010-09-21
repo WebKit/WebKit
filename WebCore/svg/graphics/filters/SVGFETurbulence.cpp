@@ -29,7 +29,6 @@
 #include "CanvasPixelArray.h"
 #include "Filter.h"
 #include "ImageData.h"
-#include "SVGRenderTreeAsText.h"
 
 #include <wtf/MathExtras.h>
 
@@ -322,7 +321,7 @@ unsigned char FETurbulence::calculateTurbulenceValueForPoint(PaintingData& paint
 
 void FETurbulence::apply(Filter* filter)
 {
-    if (!getEffectContext())
+    if (!effectContext())
         return;
 
     IntRect imageRect(IntPoint(), resultImage()->size());

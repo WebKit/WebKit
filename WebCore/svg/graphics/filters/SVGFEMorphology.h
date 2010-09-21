@@ -28,35 +28,36 @@
 
 namespace WebCore {
 
-    enum MorphologyOperatorType {
-        FEMORPHOLOGY_OPERATOR_UNKNOWN = 0,
-        FEMORPHOLOGY_OPERATOR_ERODE   = 1,
-        FEMORPHOLOGY_OPERATOR_DILATE  = 2
-    };
+enum MorphologyOperatorType {
+    FEMORPHOLOGY_OPERATOR_UNKNOWN = 0,
+    FEMORPHOLOGY_OPERATOR_ERODE = 1,
+    FEMORPHOLOGY_OPERATOR_DILATE = 2
+};
 
-    class FEMorphology : public FilterEffect {
-    public:
-        static PassRefPtr<FEMorphology> create(MorphologyOperatorType, float radiusX, float radiusY);  
-        MorphologyOperatorType morphologyOperator() const;
-        void setMorphologyOperator(MorphologyOperatorType);
+class FEMorphology : public FilterEffect {
+public:
+    static PassRefPtr<FEMorphology> create(MorphologyOperatorType, float radiusX, float radiusY);  
+    MorphologyOperatorType morphologyOperator() const;
+    void setMorphologyOperator(MorphologyOperatorType);
 
-        float radiusX() const;
-        void setRadiusX(float);
+    float radiusX() const;
+    void setRadiusX(float);
 
-        float radiusY() const;
-        void setRadiusY(float);
+    float radiusY() const;
+    void setRadiusY(float);
 
-        void apply(Filter*);
-        void dump();
-        TextStream& externalRepresentation(TextStream&, int indent) const;
+    virtual void apply(Filter*);
+    virtual void dump();
 
-    private:
-        FEMorphology(MorphologyOperatorType, float radiusX, float radiusY);
-        
-        MorphologyOperatorType m_type;
-        float m_radiusX;
-        float m_radiusY;
-    };
+    virtual TextStream& externalRepresentation(TextStream&, int indention) const;
+
+private:
+    FEMorphology(MorphologyOperatorType, float radiusX, float radiusY);
+    
+    MorphologyOperatorType m_type;
+    float m_radiusX;
+    float m_radiusY;
+};
 
 } // namespace WebCore
 

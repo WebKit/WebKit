@@ -26,7 +26,6 @@
 
 #include "Filter.h"
 #include "GraphicsContext.h"
-#include "SVGRenderTreeAsText.h"
 
 namespace WebCore {
 
@@ -51,13 +50,13 @@ void FEMerge::apply(Filter* filter)
             return;
     }
 
-    GraphicsContext* filterContext = getEffectContext();
+    GraphicsContext* filterContext = effectContext();
     if (!filterContext)
         return;
 
     for (unsigned i = 0; i < size; ++i) {
         FilterEffect* in = inputEffect(i);
-        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, calculateDrawingRect(in->repaintRectInLocalCoordinates()));
+        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in->repaintRectInLocalCoordinates()));
     }
 }
 

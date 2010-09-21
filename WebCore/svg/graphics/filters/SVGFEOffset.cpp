@@ -27,7 +27,6 @@
 
 #include "Filter.h"
 #include "GraphicsContext.h"
-#include "SVGRenderTreeAsText.h"
 
 namespace WebCore {
 
@@ -70,7 +69,7 @@ void FEOffset::apply(Filter* filter)
     if (!in->resultImage())
         return;
 
-    GraphicsContext* filterContext = getEffectContext();
+    GraphicsContext* filterContext = effectContext();
     if (!filterContext)
         return;
 

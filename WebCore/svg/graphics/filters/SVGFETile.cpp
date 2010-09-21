@@ -27,7 +27,6 @@
 #include "Filter.h"
 #include "GraphicsContext.h"
 #include "Pattern.h"
-#include "SVGRenderTreeAsText.h"
 
 namespace WebCore {
 
@@ -56,7 +55,7 @@ void FETile::apply(Filter* filter)
     if (!in->resultImage())
         return;
 
-    GraphicsContext* filterContext = getEffectContext();
+    GraphicsContext* filterContext = effectContext();
     if (!filterContext)
         return;
 

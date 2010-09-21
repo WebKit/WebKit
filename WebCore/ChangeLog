@@ -1,3 +1,93 @@
+2010-09-21  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG Filter cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=45612
+
+        Second cleanup patch. Modified files to follow webkit style. Removed dependencies
+        to SVG of most of the filter effects and prepared them to move from WebCore/svg/graphics/filters
+        to WebCore/platform/graphics/filters/.
+        Renamed calculateDrawingIntRect and calculateDrawingRect to requestedRegionOfInputImageData and
+        drawingRegionOfInputImage to clarify the functionality and make both functions distinguishable.
+
+        * platform/graphics/filters/FEBlend.cpp:
+        (WebCore::FEBlend::apply):
+        * platform/graphics/filters/FEBlend.h:
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        (WebCore::FEColorMatrix::apply):
+        * platform/graphics/filters/FEColorMatrix.h:
+        * platform/graphics/filters/FEComponentTransfer.cpp:
+        (WebCore::FEComponentTransfer::apply):
+        * platform/graphics/filters/FEComponentTransfer.h:
+        (WebCore::ComponentTransferFunction::ComponentTransferFunction):
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::FEComposite::apply):
+        * platform/graphics/filters/FEComposite.h:
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::apply):
+        * platform/graphics/filters/FEGaussianBlur.h:
+        * platform/graphics/filters/Filter.h:
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::requestedRegionOfInputImageData):
+        (WebCore::FilterEffect::drawingRegionOfInputImage):
+        (WebCore::FilterEffect::effectContext):
+        * platform/graphics/filters/FilterEffect.h:
+        * platform/graphics/filters/ImageBufferFilter.cpp:
+        * platform/graphics/filters/ImageBufferFilter.h:
+        * platform/graphics/filters/SourceAlpha.cpp:
+        (WebCore::SourceAlpha::apply):
+        * platform/graphics/filters/SourceAlpha.h:
+        (WebCore::SourceAlpha::isSourceInput):
+        (WebCore::SourceAlpha::SourceAlpha):
+        * platform/graphics/filters/SourceGraphic.cpp:
+        (WebCore::SourceGraphic::apply):
+        * platform/graphics/filters/SourceGraphic.h:
+        (WebCore::SourceGraphic::isSourceInput):
+        (WebCore::SourceGraphic::SourceGraphic):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::hasFractions):
+        (WebCore::operator<<):
+        * rendering/RenderTreeAsText.h:
+        (WebCore::operator<<):
+        * rendering/SVGRenderTreeAsText.cpp:
+        * rendering/SVGRenderTreeAsText.h:
+        * svg/graphics/filters/SVGFEConvolveMatrix.cpp:
+        (WebCore::FEConvolveMatrix::apply):
+        * svg/graphics/filters/SVGFEConvolveMatrix.h:
+        * svg/graphics/filters/SVGFEDiffuseLighting.cpp:
+        * svg/graphics/filters/SVGFEDiffuseLighting.h:
+        * svg/graphics/filters/SVGFEDisplacementMap.cpp:
+        (WebCore::FEDisplacementMap::apply):
+        * svg/graphics/filters/SVGFEDisplacementMap.h:
+        * svg/graphics/filters/SVGFEFlood.cpp:
+        (WebCore::FEFlood::apply):
+        (WebCore::FEFlood::externalRepresentation):
+        * svg/graphics/filters/SVGFEFlood.h:
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::apply):
+        * svg/graphics/filters/SVGFEImage.h:
+        * svg/graphics/filters/SVGFELighting.cpp:
+        (WebCore::FELighting::apply):
+        * svg/graphics/filters/SVGFELighting.h:
+        * svg/graphics/filters/SVGFEMerge.cpp:
+        (WebCore::FEMerge::apply):
+        * svg/graphics/filters/SVGFEMerge.h:
+        * svg/graphics/filters/SVGFEMorphology.cpp:
+        (WebCore::FEMorphology::apply):
+        * svg/graphics/filters/SVGFEMorphology.h:
+        * svg/graphics/filters/SVGFEOffset.cpp:
+        (WebCore::FEOffset::apply):
+        * svg/graphics/filters/SVGFEOffset.h:
+        * svg/graphics/filters/SVGFESpecularLighting.cpp:
+        * svg/graphics/filters/SVGFESpecularLighting.h:
+        * svg/graphics/filters/SVGFETile.cpp:
+        (WebCore::FETile::apply):
+        * svg/graphics/filters/SVGFETile.h:
+        * svg/graphics/filters/SVGFETurbulence.cpp:
+        (WebCore::FETurbulence::apply):
+        * svg/graphics/filters/SVGFETurbulence.h:
+
 2010-09-20  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Carlson.

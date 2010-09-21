@@ -25,13 +25,19 @@
 
 #ifndef RenderTreeAsText_h
 #define RenderTreeAsText_h
+#include "TextStream.h"
 
 #include <wtf/Forward.h>
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
 class Element;
+class FloatPoint;
+class FloatSize;
 class Frame;
+class IntPoint;
+class IntRect;
 class RenderObject;
 class TextStream;
 
@@ -59,12 +65,35 @@ public:
 static void writeRenderObject(TextStream& ts, const RenderObject& o, RenderAsTextBehavior behavior);
 };
 
+TextStream& operator<<(TextStream&, const IntPoint&);
+TextStream& operator<<(TextStream&, const IntRect&);
+TextStream& operator<<(TextStream&, const FloatPoint&);
+TextStream& operator<<(TextStream&, const FloatSize&);
+
+template<typename Item>
+TextStream& operator<<(TextStream& ts, const Vector<Item>& vector)
+{
+    ts << "[";
+
+    unsigned size = vector.size();
+    for (unsigned i = 0; i < size; ++i) {
+        ts << vector[i];
+        if (i < size - 1)
+            ts << ", ";
+    }
+
+    ts << "]";
+    return ts;
+}
+
 // Helper function shared with SVGRenderTreeAsText
 String quoteAndEscapeNonPrintables(const String&);
 
 String counterValueForElement(Element*);
 
 String markerTextForListItem(Element*);
+
+bool hasFractions(double val);
 
 } // namespace WebCore
 

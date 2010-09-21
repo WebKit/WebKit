@@ -28,26 +28,27 @@
 
 namespace WebCore {
 
-    class FEOffset : public FilterEffect {
-    public:
-        static PassRefPtr<FEOffset> create(float, float);
+class FEOffset : public FilterEffect {
+public:
+    static PassRefPtr<FEOffset> create(float dx, float dy);
 
-        float dx() const;
-        void setDx(float);
+    float dx() const;
+    void setDx(float);
 
-        float dy() const;
-        void setDy(float);
+    float dy() const;
+    void setDy(float);
 
-        void apply(Filter*);
-        void dump();
-        TextStream& externalRepresentation(TextStream&, int indent) const;
+    virtual void apply(Filter*);
+    virtual void dump();
 
-    private:
-        FEOffset(float, float);
+    virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
-        float m_dx;
-        float m_dy;
-    };
+private:
+    FEOffset(float dx, float dy);
+
+    float m_dx;
+    float m_dy;
+};
 
 } // namespace WebCore
 

@@ -28,19 +28,20 @@
 
 namespace WebCore {
     
-    class FETile : public FilterEffect {
-    public:
-        static PassRefPtr<FETile> create();
+class FETile : public FilterEffect {
+public:
+    static PassRefPtr<FETile> create();
 
-        void apply(Filter*);
-        void dump();
-        TextStream& externalRepresentation(TextStream&, int indent) const;
+    virtual void apply(Filter*);
+    virtual void dump();
 
-        virtual FloatRect determineFilterPrimitiveSubregion(Filter*);
-        
-    private:
-        FETile();
-    };
+    virtual TextStream& externalRepresentation(TextStream&, int indention) const;
+
+    virtual FloatRect determineFilterPrimitiveSubregion(Filter*);
+    
+private:
+    FETile();
+};
 
 } // namespace WebCore
 

@@ -29,38 +29,39 @@
 
 namespace WebCore {
 
-    enum ChannelSelectorType {
-        CHANNEL_UNKNOWN = 0,
-        CHANNEL_R       = 1,
-        CHANNEL_G       = 2,
-        CHANNEL_B       = 3,
-        CHANNEL_A       = 4
-    };
-    
-    class FEDisplacementMap : public FilterEffect {
-    public:
-        static PassRefPtr<FEDisplacementMap> create(ChannelSelectorType, ChannelSelectorType, float);
+enum ChannelSelectorType {
+    CHANNEL_UNKNOWN = 0,
+    CHANNEL_R = 1,
+    CHANNEL_G = 2,
+    CHANNEL_B = 3,
+    CHANNEL_A = 4
+};
 
-        ChannelSelectorType xChannelSelector() const;
-        void setXChannelSelector(const ChannelSelectorType);
+class FEDisplacementMap : public FilterEffect {
+public:
+    static PassRefPtr<FEDisplacementMap> create(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float);
 
-        ChannelSelectorType yChannelSelector() const;
-        void setYChannelSelector(const ChannelSelectorType);
+    ChannelSelectorType xChannelSelector() const;
+    void setXChannelSelector(const ChannelSelectorType);
 
-        float scale() const;
-        void setScale(float scale);
+    ChannelSelectorType yChannelSelector() const;
+    void setYChannelSelector(const ChannelSelectorType);
 
-        void apply(Filter*);
-        void dump();
-        TextStream& externalRepresentation(TextStream&, int indent) const;
+    float scale() const;
+    void setScale(float scale);
 
-    private:
-        FEDisplacementMap(ChannelSelectorType, ChannelSelectorType, float);
+    virtual void apply(Filter*);
+    virtual void dump();
 
-        ChannelSelectorType m_xChannelSelector;
-        ChannelSelectorType m_yChannelSelector;
-        float m_scale;
-    };
+    virtual TextStream& externalRepresentation(TextStream&, int indention) const;
+
+private:
+    FEDisplacementMap(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float);
+
+    ChannelSelectorType m_xChannelSelector;
+    ChannelSelectorType m_yChannelSelector;
+    float m_scale;
+};
 
 } // namespace WebCore
 

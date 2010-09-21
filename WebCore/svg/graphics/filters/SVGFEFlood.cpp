@@ -27,18 +27,17 @@
 
 #include "Filter.h"
 #include "GraphicsContext.h"
-#include "SVGRenderTreeAsText.h"
 
 namespace WebCore {
 
-FEFlood::FEFlood(const Color& floodColor, const float& floodOpacity)
+FEFlood::FEFlood(const Color& floodColor, float floodOpacity)
     : FilterEffect()
     , m_floodColor(floodColor)
     , m_floodOpacity(floodOpacity)
 {
 }
 
-PassRefPtr<FEFlood> FEFlood::create(const Color& floodColor, const float& floodOpacity)
+PassRefPtr<FEFlood> FEFlood::create(const Color& floodColor, float floodOpacity)
 {
     return adoptRef(new FEFlood(floodColor, floodOpacity));
 }
@@ -65,7 +64,7 @@ void FEFlood::setFloodOpacity(float floodOpacity)
 
 void FEFlood::apply(Filter*)
 {
-    GraphicsContext* filterContext = getEffectContext();
+    GraphicsContext* filterContext = effectContext();
     if (!filterContext)
         return;
 
@@ -82,7 +81,7 @@ TextStream& FEFlood::externalRepresentation(TextStream& ts, int indent) const
     writeIndent(ts, indent);
     ts << "[feFlood";
     FilterEffect::externalRepresentation(ts);
-    ts << " flood-color=\"" << floodColor() << "\" "
+    ts << " flood-color=\"" << floodColor().name() << "\" "
        << "flood-opacity=\"" << floodOpacity() << "\"]\n";
     return ts;
 }

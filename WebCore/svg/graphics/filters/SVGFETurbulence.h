@@ -58,9 +58,10 @@ public:
     bool stitchTiles() const;
     void setStitchTiles(bool);
 
-    void apply(Filter*);
-    void dump();
-    TextStream& externalRepresentation(TextStream&, int indent) const;
+    virtual void apply(Filter*);
+    virtual void dump();
+
+    virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
 private:
     static const int s_blockSize = 256;

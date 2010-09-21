@@ -42,7 +42,7 @@ class CanvasPixelArray;
 
 class FELighting : public FilterEffect {
 public:
-    void apply(Filter*);
+    virtual void apply(Filter*);
 
 protected:
     enum LightingType {

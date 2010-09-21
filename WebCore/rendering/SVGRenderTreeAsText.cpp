@@ -124,24 +124,6 @@ static void writeIfNotDefault(TextStream& ts, const char* name, ValueType value,
         writeNameValuePair(ts, name, value);
 }
 
-TextStream& operator<<(TextStream& ts, const IntPoint& p)
-{
-    return ts << "(" << p.x() << "," << p.y() << ")";
-}
-
-TextStream& operator<<(TextStream& ts, const IntRect& r)
-{
-    return ts << "at (" << r.x() << "," << r.y() << ") size " << r.width() << "x" << r.height();
-}
-
-static bool hasFractions(double val)
-{
-    double epsilon = 0.0001;
-    int ival = static_cast<int>(val);
-    double dval = static_cast<double>(ival);
-    return fabs(val - dval) > epsilon;
-}
-
 TextStream& operator<<(TextStream& ts, const FloatRect &r)
 {
     ts << "at ("; 
@@ -164,36 +146,6 @@ TextStream& operator<<(TextStream& ts, const FloatRect &r)
         ts << r.height();
     else 
         ts << int(r.height());
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, const FloatPoint& p)
-{
-    ts << "(";    
-    if (hasFractions(p.x()))
-        ts << p.x();
-    else 
-        ts << int(p.x());    
-    ts << ",";
-    if (hasFractions(p.y())) 
-        ts << p.y();
-    else 
-        ts << int(p.y());    
-    return ts << ")";
-}
-
-TextStream& operator<<(TextStream& ts, const FloatSize& s)
-{
-    ts << "width=";
-    if (hasFractions(s.width()))
-        ts << s.width();
-    else
-        ts << int(s.width());
-    ts << " height=";
-    if (hasFractions(s.height())) 
-        ts << s.height();
-    else
-        ts << int(s.height());
     return ts;
 }
 

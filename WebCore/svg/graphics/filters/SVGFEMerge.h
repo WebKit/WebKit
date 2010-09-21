@@ -29,17 +29,18 @@
 
 namespace WebCore {
 
-    class FEMerge : public FilterEffect {
-    public:
-        static PassRefPtr<FEMerge> create();
+class FEMerge : public FilterEffect {
+public:
+    static PassRefPtr<FEMerge> create();
 
-        void apply(Filter*);
-        void dump();
-        TextStream& externalRepresentation(TextStream&, int indent) const;
+    virtual void apply(Filter*);
+    virtual void dump();
 
-    private:
-        FEMerge();
-    };
+    virtual TextStream& externalRepresentation(TextStream&, int indention) const;
+
+private:
+    FEMerge();
+};
 
 } // namespace WebCore
 

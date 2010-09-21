@@ -29,26 +29,27 @@
 
 namespace WebCore {
 
-    class FEFlood : public FilterEffect {
-    public:
-        static PassRefPtr<FEFlood> create(const Color&, const float&);
+class FEFlood : public FilterEffect {
+public:
+    static PassRefPtr<FEFlood> create(const Color&, float);
 
-        Color floodColor() const;
-        void setFloodColor(const Color &);
+    Color floodColor() const;
+    void setFloodColor(const Color &);
 
-        float floodOpacity() const;
-        void setFloodOpacity(float);
+    float floodOpacity() const;
+    void setFloodOpacity(float);
 
-        void apply(Filter*);
-        void dump();
-        TextStream& externalRepresentation(TextStream&, int indent) const;
+    virtual void apply(Filter*);
+    virtual void dump();
 
-    private:
-        FEFlood(const Color&, const float&);
+    virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
-        Color m_floodColor;
-        float m_floodOpacity;
-    };
+private:
+    FEFlood(const Color&, float);
+
+    Color m_floodColor;
+    float m_floodOpacity;
+};
 
 } // namespace WebCore
 

@@ -49,14 +49,14 @@ public:
 
     // Creates the ImageBuffer for the current filter primitive result in the size of the
     // repaintRect. Gives back the GraphicsContext of the own ImageBuffer.
-    GraphicsContext* getEffectContext();
+    GraphicsContext* effectContext();
 
     FilterEffectVector& inputEffects() { return m_inputEffects; }
     FilterEffect* inputEffect(unsigned) const;
     unsigned numberOfEffectInputs() const { return m_inputEffects.size(); }
 
-    FloatRect calculateDrawingRect(const FloatRect&) const;
-    IntRect calculateDrawingIntRect(const FloatRect&) const;
+    FloatRect drawingRegionOfInputImage(const FloatRect&) const;
+    IntRect requestedRegionOfInputImageData(const FloatRect&) const;
 
     // Solid black image with different alpha values.
     bool isAlphaImage() const { return m_alphaImage; }

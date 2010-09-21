@@ -56,7 +56,7 @@ FloatRect FilterEffect::determineFilterPrimitiveSubregion(Filter* filter)
     return m_filterPrimitiveSubregion;
 }
 
-IntRect FilterEffect::calculateDrawingIntRect(const FloatRect& effectRect) const
+IntRect FilterEffect::requestedRegionOfInputImageData(const FloatRect& effectRect) const
 {
     ASSERT(m_effectBuffer);
     FloatPoint location = m_repaintRectInLocalCoordinates.location();
@@ -64,7 +64,7 @@ IntRect FilterEffect::calculateDrawingIntRect(const FloatRect& effectRect) const
     return IntRect(roundedIntPoint(location), m_effectBuffer->size());
 }
 
-FloatRect FilterEffect::calculateDrawingRect(const FloatRect& srcRect) const
+FloatRect FilterEffect::drawingRegionOfInputImage(const FloatRect& srcRect) const
 {
     return FloatRect(FloatPoint(srcRect.x() - m_repaintRectInLocalCoordinates.x(),
                                 srcRect.y() - m_repaintRectInLocalCoordinates.y()), srcRect.size());
@@ -76,7 +76,7 @@ FilterEffect* FilterEffect::inputEffect(unsigned number) const
     return m_inputEffects.at(number).get();
 }
 
-GraphicsContext* FilterEffect::getEffectContext()
+GraphicsContext* FilterEffect::effectContext()
 {
     IntRect bufferRect = enclosingIntRect(m_repaintRectInLocalCoordinates);
     m_effectBuffer = ImageBuffer::create(bufferRect.size(), LinearRGB);
