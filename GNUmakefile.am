@@ -397,19 +397,23 @@ JSCORE_GIRSOURCES += JSCore-@WEBKITGTK_API_VERSION@.gir
 WEBKIT_GIRSOURCES += WebKit-@WEBKITGTK_API_VERSION@.gir
 
 $(WEBKIT_GIRSOURCES): $(G_IR_SCANNER) $(JSCORE_GIRSOURCES) libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la
-	$(AM_V_GEN)$(G_IR_SCANNER) -v --namespace WebKit --nsversion=@WEBKITGTK_API_VERSION@ \
+	$(AM_V_GEN)$(G_IR_SCANNER) -v --warn-all \
+	     --symbol-prefix=webkit \
+	     --identifier-prefix=WebKit \
+	     --namespace=WebKit \
+	     --nsversion=@WEBKITGTK_API_VERSION@ \
 	     --include=GObject-2.0 \
 	     --include=Gtk-@GTK_API_VERSION@ \
 	     --include=JSCore-@WEBKITGTK_API_VERSION@ \
 	     --include=Soup-2.4 \
 	     --library=webkitgtk-@WEBKITGTK_API_VERSION@ \
 	     --libtool="$(LIBTOOL)" \
-	     --pkg gobject-2.0 \
-	     --pkg gtk+-@GTK_API_VERSION@ \
-	     --pkg libsoup-2.4 \
-	     --output $@ \
-	     --add-include-path $(top_srcdir)/WebKit/gtk \
-	     --add-include-path $(builddir) \
+	     --pkg=gobject-2.0 \
+	     --pkg=gtk+-@GTK_API_VERSION@ \
+	     --pkg=libsoup-2.4 \
+	     --output=$@ \
+	     --add-include-path=$(top_srcdir)/WebKit/gtk \
+	     --add-include-path=$(builddir) \
 	     -I$(top_srcdir)/WebKit/gtk \
 	     -I$(top_builddir)/WebKit/gtk \
 	     -I$(top_builddir)/DerivedSources \
