@@ -1,3 +1,15 @@
+2010-09-21  Jochen Eisinger  <jochen@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        [chromium] expose the filename used for a given indexed DB
+        https://bugs.webkit.org/show_bug.cgi?id=46090
+
+        * WebKit.gyp:
+        * public/WebIDBFactory.h:
+        * src/WebIDBFactory.cpp:
+        (WebKit::WebIDBFactory::databaseFileName):
+
 2010-09-20  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Carlson.

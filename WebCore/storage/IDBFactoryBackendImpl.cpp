@@ -62,9 +62,7 @@ static PassOwnPtr<SQLiteDatabase> openSQLiteDatabase(SecurityOrigin* securityOri
             return 0;
         }
 
-        String databaseIdentifier = securityOrigin->databaseIdentifier();
-        String santizedName = encodeForFileName(name);
-        path = pathByAppendingComponent(pathBase, databaseIdentifier + "_" + santizedName + ".indexeddb");
+        path = pathByAppendingComponent(pathBase, IDBFactoryBackendImpl::databaseFileName(name, securityOrigin));
     }
 
     OwnPtr<SQLiteDatabase> sqliteDatabase = adoptPtr(new SQLiteDatabase());
@@ -146,6 +144,13 @@ void IDBFactoryBackendImpl::abortPendingTransactions(const Vector<int>& pendingI
 {
     for (size_t i = 0; i < pendingIDs.size(); ++i)
         m_transactionCoordinator->abort(pendingIDs.at(i));
+}
+
+String IDBFactoryBackendImpl::databaseFileName(const String& name, SecurityOrigin* securityOrigin)
+{
+    String databaseIdentifier = securityOrigin->databaseIdentifier();
+    String santizedName = encodeForFileName(name);
+    return databaseIdentifier + "_" + santizedName + ".indexeddb";
 }
 
 } // namespace WebCore

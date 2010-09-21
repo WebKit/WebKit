@@ -1,3 +1,15 @@
+2010-09-21  Jochen Eisinger  <jochen@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Factor out the file name used for a given indexed database to a static method.
+        https://bugs.webkit.org/show_bug.cgi?id=46090
+
+        * storage/IDBFactoryBackendImpl.cpp:
+        (WebCore::openSQLiteDatabase):
+        (WebCore::IDBFactoryBackendImpl::databaseFileName):
+        * storage/IDBFactoryBackendImpl.h:
+
 2010-09-21  Dirk Schulze  <krit@webkit.org>
 
         SVG Filter cleanup

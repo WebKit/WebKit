@@ -447,6 +447,7 @@
                 'src/WebIDBDatabaseError.cpp',
                 'src/WebIDBDatabaseImpl.cpp',
                 'src/WebIDBDatabaseImpl.h',
+                'src/WebIDBFactory.cpp',
                 'src/WebIDBFactoryImpl.cpp',
                 'src/WebIDBFactoryImpl.h',
                 'src/WebIDBIndexImpl.cpp',
