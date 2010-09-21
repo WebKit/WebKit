@@ -1,3 +1,17 @@
+2010-09-20  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add explicit --force-patch flag to webkitpy tools
+        https://bugs.webkit.org/show_bug.cgi?id=46103
+        
+        It wasn't obvious until I read the applypatch.py source code that
+        --non-interfactive implies passing --force to patch. Add --force-patch
+        as an alias to the flag, so that this behavior is more discoverable.
+
+        * Scripts/webkitpy/tool/steps/applypatch.py:
+        * Scripts/webkitpy/tool/steps/options.py:
+
 2010-09-20  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, adding a line which got dropped and is trivially correct (and tested).
