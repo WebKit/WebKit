@@ -1,3 +1,10 @@
+2010-09-20  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed expectations update for r67898.
+
+        * platform/chromium/fast/dom/prototype-inheritance-expected.txt:
+        Updated to reflect r67898.
+
 2010-09-20  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by James Robinson.
