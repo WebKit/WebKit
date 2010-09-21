@@ -1,5 +1,12 @@
 2010-09-21  Satish Sampath  <satish@chromium.org>
 
+        Unreviewed, disable a test in chromium per the original author and added missing expectations for another.
+
+        * platform/chromium-linux/svg/custom/js-late-pattern-and-object-creation-actual.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
+2010-09-21  Satish Sampath  <satish@chromium.org>
+
         Unreviewed, move an xp-specific results to win-xp
 
         * platform/chromium-win-xp/svg/custom/js-late-pattern-and-object-creation-expected.checksum: Renamed from LayoutTests/platform/chromium-win/svg/custom/js-late-pattern-and-object-creation-expected.checksum.

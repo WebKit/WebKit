@@ -3165,3 +3165,7 @@ BUG56246 : printing/css2.1/page-break-after-004.html = TEXT
 BUG56246 : printing/css2.1/page-break-before-000.html = TEXT
 
 BUG56220 : userscripts/user-script-top-frame-only.html = TEXT
+
+// This test needs enhanced eventSender.contextMenu() return value.
+// See https://bugs.webkit.org/show_bug.cgi?id=45021 for more info.
+BUGWK45021 : media/context-menu-actions.html = TIMEOUT
