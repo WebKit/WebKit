@@ -3032,17 +3032,8 @@ BUG52573 LINUX RELEASE : fast/js/array-every.html = PASS CRASH
 
 BUGWK44199 : perf = PASS TEXT
 
-// Tests are failing after http://trac.webkit.org/changeset/65665/
-// Does not seem to be just a rebaseline situation.
-BUGWK44278 WIN LINUX : svg/batik/paints/patternRegions-positioned-objects.svg = IMAGE+TEXT
-BUGWK44278 WIN LINUX : svg/custom/pattern-incorrect-tiling.svg = IMAGE+TEXT
+// Failing after http://trac.webkit.org/changeset/65665/
 BUGWK44278 WIN LINUX : svg/transforms/text-with-mask-with-svg-transform.svg = IMAGE+TEXT
-BUGWK44278 WIN LINUX : svg/batik/paints/patternRegions.svg = IMAGE
-BUGWK44278 WIN LINUX : svg/custom/js-late-pattern-and-object-creation.svg = IMAGE
-BUGWK44278 WIN LINUX : svg/custom/js-late-pattern-creation.svg = IMAGE
-BUGWK44278 WIN LINUX : svg/custom/non-scaling-stroke.svg = IMAGE
-BUGWK44278 WIN LINUX : svg/custom/pattern-no-pixelation.svg = IMAGE
-BUGWK44278 WIN LINUX : svg/custom/stroked-pattern.svg = IMAGE
 
 // Clip paths aren't working after http://trac.webkit.org/changeset/65729
 BUGWK44341 WIN LINUX : svg/clip-path/clip-path-pixelation.svg = IMAGE+TEXT
@@ -3056,9 +3047,12 @@ BUG53131 LINUX : fast/js/array-iterate-backwards.html = CRASH PASS
 BUG53073 DEBUG : storage/change-version.html = CRASH PASS
 BUG53073 LINUX : svg/custom/clip-path-units-changes.svg = TEXT PASS
 
-// Failing after r66144
-BUG53546 LINUX : userscripts/user-script-audio-document.html = TEXT
-BUG53546 LINUX : userscripts/user-script-video-document.html = TEXT
+// r66144 added tests to test user scripts on special documents, and Linux can't
+// pass them because they rely on QuickTime being installed. We wontfix these
+// tests and let the Mac/Win coverage ensure that the (cross-platform)
+// special-document machinery still works. 
+BUG53546 WONTFIX LINUX : userscripts/user-script-audio-document.html = TEXT
+BUG53546 WONTFIX LINUX : userscripts/user-script-video-document.html = TEXT
 
 // These tests are flaky on Mac and Linux.
 BUG53554 MAC LINUX : svg/W3C-SVG-1.1/fonts-elem-07-b.svg = PASS IMAGE

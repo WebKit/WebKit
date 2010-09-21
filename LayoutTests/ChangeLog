@@ -1,3 +1,46 @@
+2010-09-20  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Create Chromium/Skia baselines for tests, affected by http://trac.webkit.org/changeset/65665.
+        https://bugs.webkit.org/show_bug.cgi?id=46062
+
+        * platform/chromium-linux/svg/batik/paints/patternRegions-expected.checksum:
+        * platform/chromium-linux/svg/batik/paints/patternRegions-expected.png:
+        * platform/chromium-linux/svg/batik/paints/patternRegions-positioned-objects-expected.checksum: Added.
+        * platform/chromium-linux/svg/batik/paints/patternRegions-positioned-objects-expected.png: Added.
+        * platform/chromium-linux/svg/batik/paints/patternRegions-positioned-objects-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/js-late-pattern-and-object-creation-expected.checksum:
+        * platform/chromium-linux/svg/custom/js-late-pattern-and-object-creation-expected.png:
+        * platform/chromium-linux/svg/custom/js-late-pattern-creation-expected.checksum:
+        * platform/chromium-linux/svg/custom/js-late-pattern-creation-expected.png:
+        * platform/chromium-linux/svg/custom/pattern-incorrect-tiling-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/pattern-incorrect-tiling-expected.png: Added.
+        * platform/chromium-linux/svg/custom/pattern-incorrect-tiling-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/pattern-no-pixelation-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/pattern-no-pixelation-expected.png: Added.
+        * platform/chromium-linux/svg/custom/stroked-pattern-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/stroked-pattern-expected.png: Added.
+        * platform/chromium-win/svg/batik/paints/patternRegions-expected.checksum:
+        * platform/chromium-win/svg/batik/paints/patternRegions-expected.png:
+        * platform/chromium-win/svg/batik/paints/patternRegions-positioned-objects-expected.checksum: Added.
+        * platform/chromium-win/svg/batik/paints/patternRegions-positioned-objects-expected.png: Added.
+        * platform/chromium-win/svg/batik/paints/patternRegions-positioned-objects-expected.txt: Added.
+        * platform/chromium-win/svg/custom/js-late-pattern-and-object-creation-expected.checksum:
+        * platform/chromium-win/svg/custom/js-late-pattern-and-object-creation-expected.png:
+        * platform/chromium-win/svg/custom/js-late-pattern-creation-expected.checksum:
+        * platform/chromium-win/svg/custom/js-late-pattern-creation-expected.png:
+        * platform/chromium-win/svg/custom/non-scaling-stroke-expected.checksum:
+        * platform/chromium-win/svg/custom/non-scaling-stroke-expected.png:
+        * platform/chromium-win/svg/custom/pattern-incorrect-tiling-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/pattern-incorrect-tiling-expected.png: Added.
+        * platform/chromium-win/svg/custom/pattern-incorrect-tiling-expected.txt: Added.
+        * platform/chromium-win/svg/custom/pattern-no-pixelation-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/pattern-no-pixelation-expected.png: Added.
+        * platform/chromium-win/svg/custom/stroked-pattern-expected.checksum:
+        * platform/chromium-win/svg/custom/stroked-pattern-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2010-09-20  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed expectations update for r67898.
