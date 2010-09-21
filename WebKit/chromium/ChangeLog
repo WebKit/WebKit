@@ -1,3 +1,14 @@
+2010-09-21  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Roll forward Chromium DEPS to pick up removal of WebGLES2Context dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=46231
+
+        Ran build-webkit --chromium --debug on Mac OS X to test the roll-forward.
+
+        * DEPS:
+
 2010-09-21  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Nate Chapin.
