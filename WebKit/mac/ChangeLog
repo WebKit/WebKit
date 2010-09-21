@@ -1,3 +1,25 @@
+2010-09-20  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Carlson.
+
+        [GTK] enhanced context menu for media elements
+        https://bugs.webkit.org/show_bug.cgi?id=45021
+
+        New localized strings for the media element context-menu.
+
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::contextMenuItemTagOpenVideoInNewWindow):
+        (WebPlatformStrategies::contextMenuItemTagOpenAudioInNewWindow):
+        (WebPlatformStrategies::contextMenuItemTagCopyVideoLinkToClipboard):
+        (WebPlatformStrategies::contextMenuItemTagCopyAudioLinkToClipboard):
+        (WebPlatformStrategies::contextMenuItemTagToggleMediaControls):
+        (WebPlatformStrategies::contextMenuItemTagToggleMediaLoop):
+        (WebPlatformStrategies::contextMenuItemTagEnterVideoFullscreen):
+        (WebPlatformStrategies::contextMenuItemTagMediaPlay):
+        (WebPlatformStrategies::contextMenuItemTagMediaPause):
+        (WebPlatformStrategies::contextMenuItemTagMediaMute):
+
 2010-09-20  Andy Estes  <aestes@apple.com>
 
         Reviewed by Adam Barth.

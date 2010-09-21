@@ -265,6 +265,16 @@ String contextMenuItemTagInspectElement() { return String(); }
 String contextMenuItemTagShowSpellingPanel(bool show) { return String(); }
 String mediaElementLiveBroadcastStateText() { return String(); }
 String mediaElementLoadingStateText() { return String(); }
+String contextMenuItemTagOpenVideoInNewWindow() { return String(); }
+String contextMenuItemTagOpenAudioInNewWindow() { return String(); }
+String contextMenuItemTagCopyVideoLinkToClipboard() { return String(); }
+String contextMenuItemTagCopyAudioLinkToClipboard() { return String(); }
+String contextMenuItemTagToggleMediaControls() { return String(); }
+String contextMenuItemTagToggleMediaLoop() { return String(); }
+String contextMenuItemTagEnterVideoFullscreen() { return String(); }
+String contextMenuItemTagMediaPlay() { return String(); }
+String contextMenuItemTagMediaPause() { return String(); }
+String contextMenuItemTagMediaMute() { return String(); }
 
 String localizedMediaControlElementString(const String& /*name*/)
 {

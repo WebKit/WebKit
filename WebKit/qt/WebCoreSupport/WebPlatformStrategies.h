@@ -95,6 +95,16 @@ private:
     virtual WTF::String contextMenuItemTagLeftToRight();
     virtual WTF::String contextMenuItemTagRightToLeft();
     virtual WTF::String contextMenuItemTagInspectElement();
+    virtual WTF::String contextMenuItemTagOpenVideoInNewWindow();
+    virtual WTF::String contextMenuItemTagOpenAudioInNewWindow();
+    virtual WTF::String contextMenuItemTagCopyVideoLinkToClipboard();
+    virtual WTF::String contextMenuItemTagCopyAudioLinkToClipboard();
+    virtual WTF::String contextMenuItemTagToggleMediaControls();
+    virtual WTF::String contextMenuItemTagToggleMediaLoop();
+    virtual WTF::String contextMenuItemTagEnterVideoFullscreen();
+    virtual WTF::String contextMenuItemTagMediaPlay();
+    virtual WTF::String contextMenuItemTagMediaPause();
+    virtual WTF::String contextMenuItemTagMediaMute();
     virtual WTF::String searchMenuNoRecentSearchesText();
     virtual WTF::String searchMenuRecentSearchesText();
     virtual WTF::String searchMenuClearRecentSearchesText();

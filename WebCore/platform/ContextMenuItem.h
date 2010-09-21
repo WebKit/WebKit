@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2010 Igalia S.L
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -143,6 +144,13 @@ namespace WebCore {
         ContextMenuItemTagCapitalize,
         ContextMenuItemTagChangeBack,
 #endif
+        ContextMenuItemTagOpenMediaInNewWindow,
+        ContextMenuItemTagCopyMediaLinkToClipboard,
+        ContextMenuItemTagToggleMediaControls,
+        ContextMenuItemTagToggleMediaLoop,
+        ContextMenuItemTagEnterVideoFullscreen,
+        ContextMenuItemTagMediaPlayPause,
+        ContextMenuItemTagMediaMute,
         ContextMenuItemBaseCustomTag = 5000,
         ContextMenuItemCustomTagNoAction = 5998,
         ContextMenuItemLastCustomTag = 5999,

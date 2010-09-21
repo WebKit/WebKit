@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Igalia S.L
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -185,6 +186,27 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         // FIXME: The Pasteboard class is not written yet
         // For now, call into the client. This is temporary!
         frame->editor()->copyImage(result);
+        break;
+    case ContextMenuItemTagOpenMediaInNewWindow:
+        openNewWindow(result.absoluteMediaURL(), frame);
+        break;
+    case ContextMenuItemTagCopyMediaLinkToClipboard:
+        frame->editor()->copyURL(result.absoluteMediaURL(), result.textContent());
+        break;
+    case ContextMenuItemTagToggleMediaControls:
+        result.toggleMediaControlsDisplay();
+        break;
+    case ContextMenuItemTagToggleMediaLoop:
+        result.toggleMediaLoopPlayback();
+        break;
+    case ContextMenuItemTagEnterVideoFullscreen:
+        result.enterFullscreenForVideo();
+        break;
+    case ContextMenuItemTagMediaPlayPause:
+        result.toggleMediaPlayState();
+        break;
+    case ContextMenuItemTagMediaMute:
+        result.toggleMediaMuteState();
         break;
     case ContextMenuItemTagOpenFrameInNewWindow: {
         DocumentLoader* loader = frame->loader()->documentLoader();

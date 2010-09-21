@@ -1,3 +1,14 @@
+2010-09-20  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Carlson.
+
+        [GTK] enhanced context menu for media elements
+        https://bugs.webkit.org/show_bug.cgi?id=45021
+
+        Updated localizable strings.
+
+        * English.lproj/Localizable.strings:
+
 2010-09-17  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/45989> Add WebArchiveInternal.h to Xcode project

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2003, 2006, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Igalia S.L
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -362,6 +363,56 @@ String contextMenuItemTagChangeBack(const String& replacedString)
 }
 
 #endif // PLATFORM(MAC)
+
+String contextMenuItemTagOpenVideoInNewWindow()
+{
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagOpenVideoInNewWindow();
+}
+
+String contextMenuItemTagOpenAudioInNewWindow()
+{
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagOpenAudioInNewWindow();
+}
+
+String contextMenuItemTagCopyVideoLinkToClipboard()
+{
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagCopyVideoLinkToClipboard();
+}
+
+String contextMenuItemTagCopyAudioLinkToClipboard()
+{
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagCopyAudioLinkToClipboard();
+}
+
+String contextMenuItemTagToggleMediaControls()
+{
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagToggleMediaControls();
+}
+
+String contextMenuItemTagToggleMediaLoop()
+{
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagToggleMediaLoop();
+}
+
+String contextMenuItemTagEnterVideoFullscreen()
+{
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagEnterVideoFullscreen();
+}
+
+String contextMenuItemTagMediaPlay()
+{
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagMediaPlay();
+}
+
+String contextMenuItemTagMediaPause()
+{
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagMediaPause();
+}
+
+String contextMenuItemTagMediaMute()
+{
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagMediaMute();
+}
     
 String contextMenuItemTagInspectElement()
 {

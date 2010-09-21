@@ -198,6 +198,56 @@ String WebPlatformStrategies::contextMenuItemTagCopyImageToClipboard()
     return QCoreApplication::translate("QWebPage", "Copy Image", "Copy Link context menu item");
 }
 
+String WebPlatformStrategies::contextMenuItemTagOpenVideoInNewWindow()
+{
+    return QCoreApplication::translate("QWebPage", "Open Video", "Open Video in New Window");
+}
+
+String WebPlatformStrategies::contextMenuItemTagOpenAudioInNewWindow()
+{
+    return QCoreApplication::translate("QWebPage", "Open Audio", "Open Audio in New Window");
+}
+
+String WebPlatformStrategies::contextMenuItemTagCopyVideoLinkToClipboard()
+{
+    return QCoreApplication::translate("QWebPage", "Copy Video", "Copy Video Link Location");
+}
+
+String WebPlatformStrategies::contextMenuItemTagCopyAudioLinkToClipboard()
+{
+    return QCoreApplication::translate("QWebPage", "Copy Audio", "Copy Audio Link Location");
+}
+
+String WebPlatformStrategies::contextMenuItemTagToggleMediaControls()
+{
+    return QCoreApplication::translate("QWebPage", "Toggle Controls", "Toggle Media Controls");
+}
+
+String WebPlatformStrategies::contextMenuItemTagToggleMediaLoop()
+{
+    return QCoreApplication::translate("QWebPage", "Toggle Loop", "Toggle Media Loop Playback");
+}
+
+String WebPlatformStrategies::contextMenuItemTagEnterVideoFullscreen()
+{
+    return QCoreApplication::translate("QWebPage", "Enter Fullscreen", "Switch Video to Fullscreen");
+}
+
+String WebPlatformStrategies::contextMenuItemTagMediaPlay()
+{
+    return QCoreApplication::translate("QWebPage", "Play", "Play");
+}
+
+String WebPlatformStrategies::contextMenuItemTagMediaPause()
+{
+    return QCoreApplication::translate("QWebPage", "Pause", "Pause");
+}
+
+String WebPlatformStrategies::contextMenuItemTagMediaMute()
+{
+    return QCoreApplication::translate("QWebPage", "Mute", "Mute");
+}
+
 String WebPlatformStrategies::contextMenuItemTagOpenFrameInNewWindow()
 {
     return QCoreApplication::translate("QWebPage", "Open Frame", "Open Frame in New Window context menu item");

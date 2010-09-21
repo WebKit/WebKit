@@ -180,6 +180,56 @@ String WebPlatformStrategies::contextMenuItemTagCopyImageToClipboard()
     return UI_STRING("Copy Image", "Copy Image context menu item");
 }
 
+String WebPlatformStrategies::contextMenuItemTagOpenVideoInNewWindow()
+{
+    return UI_STRING("Open Video in New Window", "Open Video in New Window context menu item");
+}
+
+String WebPlatformStrategies::contextMenuItemTagOpenAudioInNewWindow()
+{
+    return UI_STRING("Open Audio in New Window", "Open Audio in New Window context menu item");
+}
+
+String WebPlatformStrategies::contextMenuItemTagCopyVideoLinkToClipboard()
+{
+    return UI_STRING("Copy Video Address", "Copy Video Address Location context menu item");
+}
+
+String WebPlatformStrategies::contextMenuItemTagCopyAudioLinkToClipboard()
+{
+    return UI_STRING("Copy Audio Address", "Copy Audio Address Location context menu item");
+}
+
+String WebPlatformStrategies::contextMenuItemTagToggleMediaControls()
+{
+    return UI_STRING("Controls", "Media Controls context menu item");
+}
+
+String WebPlatformStrategies::contextMenuItemTagToggleMediaLoop()
+{
+    return UI_STRING("Loop", "Media Loop context menu item");
+}
+
+String WebPlatformStrategies::contextMenuItemTagEnterVideoFullscreen()
+{
+    return UI_STRING("Enter Fullscreen", "Video Enter Fullscreen context menu item");
+}
+
+String WebPlatformStrategies::contextMenuItemTagMediaPlay()
+{
+    return UI_STRING("Play", "Media Play context menu item");
+}
+
+String WebPlatformStrategies::contextMenuItemTagMediaPause()
+{
+    return UI_STRING("Pause", "Media Pause context menu item");
+}
+
+String WebPlatformStrategies::contextMenuItemTagMediaMute()
+{
+    return UI_STRING("Mute", "Media Mute context menu item");
+}
+
 String WebPlatformStrategies::contextMenuItemTagOpenFrameInNewWindow()
 {
     return UI_STRING("Open Frame in New Window", "Open Frame in New Window context menu item");

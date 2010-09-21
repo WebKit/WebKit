@@ -310,3 +310,7 @@ fast/files/workers
 
 # viewport meta tag support
 fast/viewport
+
+# needs enhanced eventSender.contextMenu() return value
+# see also https://bugs.webkit.org/show_bug.cgi?id=45021
+media/context-menu-actions.html

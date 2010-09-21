@@ -127,6 +127,16 @@ private:
     virtual String contextMenuItemTagChangeBack(const String& replacedString);
 #endif
     virtual String contextMenuItemTagInspectElement();
+    virtual String contextMenuItemTagOpenVideoInNewWindow();
+    virtual String contextMenuItemTagOpenAudioInNewWindow();
+    virtual String contextMenuItemTagCopyVideoLinkToClipboard();
+    virtual String contextMenuItemTagCopyAudioLinkToClipboard();
+    virtual String contextMenuItemTagToggleMediaControls();
+    virtual String contextMenuItemTagToggleMediaLoop();
+    virtual String contextMenuItemTagEnterVideoFullscreen();
+    virtual String contextMenuItemTagMediaPlay();
+    virtual String contextMenuItemTagMediaPause();
+    virtual String contextMenuItemTagMediaMute();
 #endif // ENABLE(CONTEXT_MENUS)
     virtual String searchMenuNoRecentSearchesText();
     virtual String searchMenuRecentSearchesText();

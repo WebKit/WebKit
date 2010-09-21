@@ -81,6 +81,66 @@ String contextMenuItemTagCopyImageToClipboard()
     return String();
 }
 
+String contextMenuItemTagOpenVideoInNewWindow()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagOpenAudioInNewWindow()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagCopyVideoLinkToClipboard()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagCopyAudioLinkToClipboard()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagToggleMediaControls()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagToggleMediaLoop()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagEnterVideoFullscreen()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagMediaPlay()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagMediaPause()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagMediaMute()
+{
+    notImplemented();
+    return String();
+}
+
 String contextMenuItemTagOpenFrameInNewWindow()
 {
     notImplemented();
