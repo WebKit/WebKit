@@ -1,3 +1,16 @@
+2010-09-21  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Take isValueList() checks out of the asserts for memory safety.
+        https://bugs.webkit.org/show_bug.cgi?id=46194
+
+        Test: editing/execCommand/apply-style-text-decoration-crash.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::StyleChange::extractTextStyles):
+        (WebCore::ApplyStyleCommand::applyInlineStyleToPushDown):
+
 2010-09-21  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Kenneth Russell.

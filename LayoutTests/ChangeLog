@@ -1,3 +1,13 @@
+2010-09-21  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Tests that applying a text decoration style does not result in crash.
+        https://bugs.webkit.org/show_bug.cgi?id=46194
+
+        * editing/execCommand/apply-style-text-decoration-crash-expected.txt: Added.
+        * editing/execCommand/apply-style-text-decoration-crash.html: Added.
+
 2010-09-21  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
