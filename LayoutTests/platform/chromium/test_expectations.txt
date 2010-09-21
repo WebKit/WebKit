@@ -1953,10 +1953,6 @@ BUG18116 MAC LINUX : fast/dom/prototype-inheritance-2.html = TEXT CRASH
 // New in WebKit r52559
 BUG18116 : svg/custom/global-constructors.html = TEXT
 
-// Flaky.  Timing?
-BUG18584 WIN DEBUG : animations/combo-transform-translate+scale.html = FAIL PASS
-BUG18584 WIN DEBUG : animations/change-one-anim.html = PASS TEXT
-
 // Flaky crashes
 BUG18656 MAC RELEASE : fast/dom/Window/window-lookup-precedence.html = FAIL
 BUG18656 MAC DEBUG : fast/dom/Window/window-lookup-precedence.html = FAIL
@@ -3099,12 +3095,6 @@ BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-dom-azimuth-
 BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-dom-elevation-attr.html = IMAGE
 BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-svgdom-azimuth-prop.html = IMAGE
 BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-svgdom-elevation-prop.html = IMAGE
-
-// Regressed in webkit r67098
-BUGWK45512 WIN : animations/fill-mode-missing-from-to-keyframes.html = TEXT
-BUGWK45512 WIN : animations/fill-mode-multiple-keyframes.html = TEXT
-BUGWK45512 WIN : animations/fill-mode-transform.html = TEXT
-BUGWK45512 WIN : animations/fill-mode.html = TEXT
 
 //  Added in r67084
 BUGWK45513 WIN : inspector/extensions-resources.html = TIMEOUT CRASH

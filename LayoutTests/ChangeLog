@@ -1,5 +1,15 @@
 2010-09-20  Mihai Parparita  <mihaip@chromium.org>
 
+        Unreviewed Chromium test_expectations.txt update.
+        
+        All of the fill-mode tests that used to fail on Windows were fixed by
+        r67877. change-one-anim.html and combo-transform-translate+scale.html
+        haven't failed in the past 750 runs.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-09-20  Mihai Parparita  <mihaip@chromium.org>
+
         Unreviewed expectations update for Windows for r67898.
 
         * platform/win/fast/dom/Window/window-property-descriptors-expected.txt:
