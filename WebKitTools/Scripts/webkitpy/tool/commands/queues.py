@@ -27,6 +27,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import time
 import traceback
 import os
 
@@ -39,6 +40,7 @@ from webkitpy.common.net.statusserver import StatusServer
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.deprecated_logging import error, log
 from webkitpy.tool.commands.stepsequence import StepSequenceErrorHandler
+from webkitpy.tool.bot.feeders import CommitQueueFeeder
 from webkitpy.tool.bot.patchcollection import PersistentPatchCollection, PersistentPatchCollectionDelegate
 from webkitpy.tool.bot.queueengine import QueueEngine, QueueEngineDelegate
 from webkitpy.tool.grammar import pluralize
@@ -144,17 +146,52 @@ class AbstractQueue(Command, QueueEngineDelegate):
         return tool.status_server.update_status(cls.name, message, state["patch"], failure_log)
 
 
+class FeederQueue(AbstractQueue):
+    name = "feeder-queue"
+
+    _sleep_duration = 30  # seconds
+
+    # AbstractPatchQueue methods
+
+    def begin_work_queue(self):
+        AbstractQueue.begin_work_queue(self)
+        self.feeders = [
+            CommitQueueFeeder(self.tool),
+        ]
+
+    def next_work_item(self):
+        # This really show inherit from some more basic class that doesn't
+        # understand work items, but the base class in the heirarchy currently
+        # understands work items.
+        return "synthetic-work-item"
+
+    def should_proceed_with_work_item(self, work_item):
+        return True
+
+    def process_work_item(self, work_item):
+        self._update_checkout()
+        for feeder in self.feeders:
+            feeder.feed()
+        time.sleep(self._sleep_duration)
+        return True
+
+    def work_item_log_path(self, work_item):
+        return None
+
+    def handle_unexpected_error(self, work_item, message):
+        log(message)
+
+    def _checkout_update(self):
+        self.run_webkit_patch([
+            "update",
+            "--force-clean",
+            "--quiet",
+        ])
+
+
 class AbstractPatchQueue(AbstractQueue):
     def _update_status(self, message, patch=None, results_file=None):
         self.tool.status_server.update_status(self.name, message, patch, results_file)
-
-    # Note, eventually this will be done by a separate "feeder" queue
-    # whose job it is to poll bugzilla and feed work items into the
-    # status server for other queues to munch on.
-    def _update_work_items(self, patch_ids):
-        self.tool.status_server.update_work_items(self.name, patch_ids)
-        if patch_ids:
-            self.log_progress(patch_ids)
 
     def _fetch_next_work_item(self):
         return self.tool.status_server.next_work_item(self.name)
@@ -172,14 +209,9 @@ class AbstractPatchQueue(AbstractQueue):
     def work_item_log_path(self, patch):
         return os.path.join(self._log_directory(), "%s.log" % patch.bug_id())
 
-    def log_progress(self, patch_ids):
-        log("%s in %s [%s]" % (pluralize("patch", len(patch_ids)), self.name, ", ".join(map(str, patch_ids))))
-
 
 class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
     name = "commit-queue"
-    def __init__(self):
-        AbstractPatchQueue.__init__(self)
 
     # AbstractPatchQueue methods
 
@@ -187,30 +219,7 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
         AbstractPatchQueue.begin_work_queue(self)
         self.committer_validator = CommitterValidator(self.tool.bugs)
 
-    def _validate_patches_in_commit_queue(self):
-        # Not using BugzillaQueries.fetch_patches_from_commit_queue() so we can reject patches with invalid committers/reviewers.
-        bug_ids = self.tool.bugs.queries.fetch_bug_ids_from_commit_queue()
-        all_patches = sum([self.tool.bugs.fetch_bug(bug_id).commit_queued_patches(include_invalid=True) for bug_id in bug_ids], [])
-        return self.committer_validator.patches_after_rejecting_invalid_commiters_and_reviewers(all_patches)
-
-    def _patch_cmp(self, a, b):
-        # Sort first by is_rollout, then by attach_date.
-        # Reversing the order so that is_rollout is first.
-        rollout_cmp = cmp(b.is_rollout(), a.is_rollout())
-        if (rollout_cmp != 0):
-            return rollout_cmp
-        return cmp(a.attach_date(), b.attach_date())
-
-    def _feed_work_items_to_server(self):
-        # Grab the set of patches from bugzilla, sort them, and update the status server.
-        # Eventually this will all be done by a separate feeder queue.
-        patches = self._validate_patches_in_commit_queue()
-        patches = sorted(patches, self._patch_cmp)
-        self._update_work_items([patch.id() for patch in patches])
-
     def next_work_item(self):
-        self._feed_work_items_to_server()
-        # The grab the next patch to work on back from the status server.
         patch_id = self._fetch_next_work_item()
         if not patch_id:
             return None

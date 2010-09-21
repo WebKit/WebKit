@@ -1,3 +1,20 @@
+2010-09-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add a feeder queue that polls bugs.webkit.org for the commit-cluster
+        https://bugs.webkit.org/show_bug.cgi?id=46141
+
+        The feeder-queue polls bugs.webkit.org every 30 seconds and updates the
+        list of work items on the status server.  The individual commit-cluster
+        nodes then grab the patches from the server and process them.
+
+        * Scripts/webkitpy/tool/bot/feeders.py: Added.
+        * Scripts/webkitpy/tool/bot/feeders_unittest.py: Added.
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/commands/queuestest.py:
+
 2010-09-20  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Darin Adler.

@@ -141,6 +141,8 @@ class QueueEngine:
 
     def _open_work_log(self, work_item):
         work_item_log_path = self._delegate.work_item_log_path(work_item)
+        if not work_item_log_path:
+            return
         self._work_log = self._output_tee.add_log(work_item_log_path)
 
     def _ensure_work_log_closed(self):
