@@ -1,3 +1,11 @@
+2010-09-21  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed, skipped crashing test:
+        media/video-controls-with-mutation-event-handler.html. Added the
+        bug: https://bugs.webkit.org/show_bug.cgi?id=46169
+
+        * platform/gtk/Skipped:
+
 2010-09-20  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Carlson.

@@ -5926,3 +5926,6 @@ fast/viewport
 
 # Pre-HMTL5 parser quirks only apply to the mac port for now.
 fast/parser/pre-html5-parser-quirks.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=46169
+media/video-controls-with-mutation-event-handler.html
