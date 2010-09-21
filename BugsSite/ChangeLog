@@ -1,3 +1,15 @@
+2010-09-21  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        [reviewtool] Publish button doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=46168
+
+        Darin's recent patch had a runtime error.  Sadly, we don't have any
+        testing for this code.
+
+        * code-review.js:
+
 2010-09-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Barth.

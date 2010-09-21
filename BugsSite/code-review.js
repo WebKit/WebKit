@@ -475,6 +475,6 @@
 
   $('#post_comments').live('click', function() {
     fillInReviewForm();
-    review_form.find('form').submit();
+    $('#reviewform').contents().find('form').submit();
   });
 })();
