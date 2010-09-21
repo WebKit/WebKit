@@ -1,3 +1,41 @@
+2010-09-20  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        new-run-webkit-tests: refactor command line args getting passed to DRT
+
+        This change cleans up some argument parsing between functions to get
+        rid of some overlapping data structures. There should be no functional
+        changes in this patch; it is pure refactoring in preparation for
+        landing the Chrome GPU port and adding a generic way to pass
+        args to DRT/TestShell.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46135
+
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+          - pass the options argument explicitly to the threads and drivers,
+            also consolidate the passing of options to the driver.
+          - pass options directly to process_output() to remove a couple
+            parameters (minor cleanup).
+        * Scripts/webkitpy/layout_tests/port/base.py:
+          - pass the options argument to Port.create_driver().
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+          - update Port.create_driver() test
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+          - pass the options argument to Port.create_driver(), and clean up
+            building of the cmd line for DRT.
+        * Scripts/webkitpy/layout_tests/port/dryrun.py:
+          - pass the options argument to Port.create_driver()
+        * Scripts/webkitpy/layout_tests/port/test.py:
+          - pass the options argument to Port.create_driver()
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+          - pass the options argument to Port.create_driver(), and clean up
+            building of the cmd line for DRT.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+          - consolidate args in _get_dump_render_tree_args and rename to
+            _get_test_args(); move all of the command-line args to the
+            Port implementations.
+
 2010-09-20  Andrew Wilson  <atwilson@chromium.org>
 
         Revert change which was accidentally committed along with some expectation changes.

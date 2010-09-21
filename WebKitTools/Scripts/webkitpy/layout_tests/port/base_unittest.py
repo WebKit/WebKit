@@ -250,8 +250,8 @@ class VirtualTest(unittest.TestCase):
         self.assertVirtual(port._shut_down_http_server, None)
 
     def test_virtual_driver_method(self):
-        self.assertRaises(NotImplementedError, base.Driver, base.Port, "", None)
-        self.assertVirtual(base.Driver, base.Port, "", None)
+        self.assertRaises(NotImplementedError, base.Driver, base.Port(),
+                          "", None, None)
 
     def test_virtual_driver_methods(self):
         class VirtualDriver(base.Driver):

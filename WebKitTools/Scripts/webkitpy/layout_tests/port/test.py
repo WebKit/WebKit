@@ -97,7 +97,7 @@ class TestPort(base.Port):
         pass
 
     def create_driver(self, image_path, options):
-        return TestDriver(image_path, options, self)
+        return TestDriver(self, image_path, options, executive=None)
 
     def start_http_server(self):
         pass
@@ -139,10 +139,11 @@ class TestPort(base.Port):
 class TestDriver(base.Driver):
     """Test/Dummy implementation of the DumpRenderTree interface."""
 
-    def __init__(self, image_path, test_driver_options, port):
-        self._driver_options = test_driver_options
-        self._image_path = image_path
+    def __init__(self, port, image_path, options, executive):
         self._port = port
+        self._image_path = image_path
+        self._options = options
+        self._executive = executive
         self._image_written = False
 
     def poll(self):
@@ -204,7 +205,7 @@ class TestDriver(base.Driver):
             crash = False
             timeout = False
             output = basename + '-txt\n'
-            if self._port.options().pixel_tests and (
+            if self._options.pixel_tests and (
                 'image' in basename or 'check' in basename):
                 checksum = basename + '-checksum\n'
                 with open(self._image_path, "w") as f:

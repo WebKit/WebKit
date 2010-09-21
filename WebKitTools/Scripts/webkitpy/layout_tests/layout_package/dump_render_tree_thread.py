@@ -72,20 +72,19 @@ def log_stack(stack):
             _log.error('  %s' % line.strip())
 
 
-def _process_output(port, test_info, test_types, test_args, configuration,
-                    output_dir, crash, timeout, test_run_time, actual_checksum,
+def _process_output(port, options, test_info, test_types, test_args,
+                    crash, timeout, test_run_time, actual_checksum,
                     output, error):
     """Receives the output from a DumpRenderTree process, subjects it to a
     number of tests, and returns a list of failure types the test produced.
 
     Args:
       port: port-specific hooks
+      options: command line options argument from optparse
       proc: an active DumpRenderTree process
       test_info: Object containing the test filename, uri and timeout
       test_types: list of test types to subject the output to
       test_args: arguments to be passed to each test
-      configuration: Debug or Release
-      output_dir: directory to put crash stack traces into
 
     Returns: a TestResult object
     """
@@ -106,7 +105,8 @@ def _process_output(port, test_info, test_types, test_args, configuration,
         _log.debug("Stacktrace for %s:\n%s" % (test_info.filename, error))
         # Strip off "file://" since RelativeTestFilename expects
         # filesystem paths.
-        filename = os.path.join(output_dir, port.relative_test_filename(
+        filename = os.path.join(options.results_directory,
+                                port.relative_test_filename(
                                 test_info.filename))
         filename = os.path.splitext(filename)[0] + "-stack.txt"
         port.maybe_make_directory(os.path.split(filename)[0])
@@ -122,7 +122,7 @@ def _process_output(port, test_info, test_types, test_args, configuration,
         start_diff_time = time.time()
         new_failures = test_type.compare_output(port, test_info.filename,
                                                 output, local_test_args,
-                                                configuration)
+                                                options.configuration)
         # Don't add any more failures if we already have a crash, so we don't
         # double-report those tests. We do double-report for timeouts since
         # we still want to see the text and image output.
@@ -166,25 +166,23 @@ class TestResult(object):
 class SingleTestThread(threading.Thread):
     """Thread wrapper for running a single test file."""
 
-    def __init__(self, port, image_path, shell_args, test_info,
-        test_types, test_args, configuration, output_dir):
+    def __init__(self, port, options, test_info, test_types, test_args):
         """
         Args:
           port: object implementing port-specific hooks
+          options: command line argument object from optparse
           test_info: Object containing the test filename, uri and timeout
-          output_dir: Directory to put crash stacks into.
-          See TestShellThread for documentation of the remaining arguments.
+          test_types: A list of TestType objects to run the test output
+              against.
+          test_args: A TestArguments object to pass to each TestType.
         """
 
         threading.Thread.__init__(self)
         self._port = port
-        self._image_path = image_path
-        self._shell_args = shell_args
+        self._options = options
         self._test_info = test_info
         self._test_types = test_types
         self._test_args = test_args
-        self._configuration = configuration
-        self._output_dir = output_dir
         self._driver = None
 
     def run(self):
@@ -194,17 +192,17 @@ class SingleTestThread(threading.Thread):
         # FIXME: this is a separate routine to work around a bug
         # in coverage: see http://bitbucket.org/ned/coveragepy/issue/85.
         test_info = self._test_info
-        self._driver = self._port.create_driver(self._image_path,
-                                                self._shell_args)
+        self._driver = self._port.create_driver(self._test_args.png_path,
+                                                self._options)
         self._driver.start()
         start = time.time()
         crash, timeout, actual_checksum, output, error = \
             self._driver.run_test(test_info.uri.strip(), test_info.timeout,
                                   test_info.image_hash())
         end = time.time()
-        self._test_result = _process_output(self._port,
+        self._test_result = _process_output(self._port, self._options,
             test_info, self._test_types, self._test_args,
-            self._configuration, self._output_dir, crash, timeout, end - start,
+            crash, timeout, end - start,
             actual_checksum, output, error)
         self._driver.stop()
 
@@ -248,12 +246,13 @@ class WatchableThread(threading.Thread):
 
 
 class TestShellThread(WatchableThread):
-    def __init__(self, port, filename_list_queue, result_queue,
-                 test_types, test_args, image_path, shell_args, options):
+    def __init__(self, port, options, filename_list_queue, result_queue,
+                 test_types, test_args):
         """Initialize all the local state for this DumpRenderTree thread.
 
         Args:
           port: interface to port-specific hooks
+          options: command line options argument from optparse
           filename_list_queue: A thread safe Queue class that contains lists
               of tuples of (filename, uri) pairs.
           result_queue: A thread safe Queue class that will contain tuples of
@@ -261,22 +260,17 @@ class TestShellThread(WatchableThread):
           test_types: A list of TestType objects to run the test output
               against.
           test_args: A TestArguments object to pass to each TestType.
-          shell_args: Any extra arguments to be passed to DumpRenderTree.
-          options: A property dictionary as produced by optparse. The
-              command-line options should match those expected by
-              run_webkit_tests; they are typically passed via the
-              run_webkit_tests.TestRunner class."""
+
+        """
         WatchableThread.__init__(self)
         self._port = port
+        self._options = options
         self._filename_list_queue = filename_list_queue
         self._result_queue = result_queue
         self._filename_list = []
         self._test_types = test_types
         self._test_args = test_args
         self._driver = None
-        self._image_path = image_path
-        self._shell_args = shell_args
-        self._options = options
         self._directory_timing_stats = {}
         self._test_results = []
         self._num_tests = 0
@@ -433,13 +427,11 @@ class TestShellThread(WatchableThread):
           A TestResult
 
         """
-        worker = SingleTestThread(self._port, self._image_path,
-                                  self._shell_args,
+        worker = SingleTestThread(self._port,
+                                  self._options,
                                   test_info,
                                   self._test_types,
-                                  self._test_args,
-                                  self._options.configuration,
-                                  self._options.results_directory)
+                                  self._test_args)
 
         worker.start()
 
@@ -503,11 +495,11 @@ class TestShellThread(WatchableThread):
            self._driver.run_test(test_info.uri, test_info.timeout, image_hash)
         end = time.time()
 
-        result = _process_output(self._port, test_info, self._test_types,
-                                self._test_args, self._options.configuration,
-                                self._options.results_directory, crash,
-                                timeout, end - start, actual_checksum,
-                                output, error)
+        result = _process_output(self._port, self._options,
+                                 test_info, self._test_types,
+                                 self._test_args, crash,
+                                 timeout, end - start, actual_checksum,
+                                 output, error)
         self._test_results.append(result)
         return result
 
@@ -521,7 +513,8 @@ class TestShellThread(WatchableThread):
         # poll() is not threadsafe and can throw OSError due to:
         # http://bugs.python.org/issue1731717
         if (not self._driver or self._driver.poll() is not None):
-            self._driver = self._port.create_driver(self._image_path, self._shell_args)
+            self._driver = self._port.create_driver(self._test_args.png_path,
+                                                    self._options)
             self._driver.start()
 
     def _kill_dump_render_tree(self):

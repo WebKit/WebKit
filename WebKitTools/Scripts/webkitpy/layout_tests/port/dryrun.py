@@ -86,6 +86,7 @@ class DryRunPort(object):
             port_name = port_name[len(pfx):]
         else:
             port_name = None
+        self._options = options
         self.__delegate = factory.get(port_name, options)
 
     def __getattr__(self, name):
@@ -116,16 +117,17 @@ class DryRunPort(object):
         pass
 
     def create_driver(self, image_path, options):
-        return DryrunDriver(self, image_path, options)
+        return DryrunDriver(self, image_path, options, executive=None)
 
 
 class DryrunDriver(base.Driver):
     """Dryrun implementation of the DumpRenderTree / Driver interface."""
 
-    def __init__(self, port, image_path, test_driver_options):
+    def __init__(self, port, image_path, options, executive):
         self._port = port
-        self._driver_options = test_driver_options
+        self._options = options
         self._image_path = image_path
+        self._executive = executive
         self._layout_tests_dir = None
 
     def poll(self):

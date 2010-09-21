@@ -199,7 +199,8 @@ class WebKitPort(base.Port):
         webbrowser.open(uri, new=1)
 
     def create_driver(self, image_path, options):
-        return WebKitDriver(self, image_path, options, executive=self._executive)
+        return WebKitDriver(self, image_path, options,
+                            executive=self._executive)
 
     def test_base_platform_names(self):
         # At the moment we don't use test platform names, but we have
@@ -405,22 +406,31 @@ class WebKitPort(base.Port):
 class WebKitDriver(base.Driver):
     """WebKit implementation of the DumpRenderTree interface."""
 
-    def __init__(self, port, image_path, driver_options, executive=Executive()):
+    def __init__(self, port, image_path, options, executive=Executive()):
         self._port = port
-        # FIXME: driver_options is never used.
         self._image_path = image_path
+        self._options = options
+        self._executive = executive
         self._driver_tempdir = tempfile.mkdtemp(prefix='DumpRenderTree-')
 
     def __del__(self):
         shutil.rmtree(self._driver_tempdir)
 
-    def start(self):
-        command = []
-        # FIXME: We should not be grabbing at self._port._options.wrapper directly.
-        command += self._command_wrapper(self._port._options.wrapper)
-        command += [self._port._path_to_driver(), '-']
+    def _driver_args(self):
+        driver_args = []
         if self._image_path:
-            command.append('--pixel-tests')
+            driver_args.append('--pixel-tests')
+
+        # These are used by the Chromium DRT port
+        if self._options.use_drt:
+            driver_args.append('--test-shell')
+        return driver_args
+
+    def start(self):
+        command = self._command_wrapper(self._options.wrapper)
+        command += [self._port._path_to_driver(), '-']
+        command += self._driver_args()
+
         environment = self._port.setup_environ_for_server()
         environment['DYLD_FRAMEWORK_PATH'] = self._port._build_path()
         environment['DUMPRENDERTREE_TEMP'] = self._driver_tempdir

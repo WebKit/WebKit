@@ -194,13 +194,11 @@ class ChromiumPort(base.Port):
 
     def create_driver(self, image_path, options):
         """Starts a new Driver and returns a handle to it."""
-        if self._options.use_drt and sys.platform == 'darwin':
-            return webkit.WebKitDriver(self, image_path, options, executive=self._executive)
-        if self._options.use_drt:
-            options += ['--test-shell']
-        else:
-            options += ['--layout-tests']
-        return ChromiumDriver(self, image_path, options, executive=self._executive)
+        if options.use_drt and sys.platform == 'darwin':
+            return webkit.WebKitDriver(self, image_path, options,
+                                       executive=self._executive)
+        return ChromiumDriver(self, image_path, options,
+                              executive=self._executive)
 
     def start_helper(self):
         helper_path = self._path_to_helper()
@@ -337,22 +335,32 @@ class ChromiumDriver(base.Driver):
 
     def __init__(self, port, image_path, options, executive=Executive()):
         self._port = port
-        self._configuration = port._options.configuration
-        # FIXME: _options is very confusing, because it's not an Options() element.
-        # FIXME: These don't need to be passed into the constructor, but could rather
-        # be passed into .start()
         self._options = options
         self._image_path = image_path
         self._executive = executive
 
+    def _driver_args(self):
+        driver_args = []
+        if self._image_path:
+            driver_args.append("--pixel-tests=" + self._image_path)
+
+        if self._options.use_drt:
+            driver_args.append('--test-shell')
+        else:
+            driver_args.append('--layout-tests')
+
+        if self._options.startup_dialog:
+            driver_args.append('--testshell-startup-dialog')
+
+        if self._options.gp_fault_error_box:
+            driver_args.append('--gp-fault-error-box')
+        return driver_args
+
     def start(self):
         # FIXME: Should be an error to call this method twice.
-        cmd = []
-        # FIXME: We should not be grabbing at self._port._options.wrapper directly.
-        cmd += self._command_wrapper(self._port._options.wrapper)
-        cmd += [self._port._path_to_driver()]
-        if self._options:
-            cmd += self._options
+        cmd = self._command_wrapper(self._options.wrapper)
+        cmd.append(self._port._path_to_driver())
+        cmd += self._driver_args()
 
         # We need to pass close_fds=True to work around Python bug #2320
         # (otherwise we can hang when we kill DumpRenderTree when we are running

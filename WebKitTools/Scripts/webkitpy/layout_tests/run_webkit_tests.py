@@ -564,27 +564,18 @@ class TestRunner:
             filename_queue.put(item)
         return filename_queue
 
-    def _get_dump_render_tree_args(self, index):
+    def _get_test_args(self, index):
         """Returns the tuple of arguments for tests and for DumpRenderTree."""
-        shell_args = []
         test_args = test_type_base.TestArguments()
-        png_path = None
+        test_args.png_path = None
         if self._options.pixel_tests:
             png_path = os.path.join(self._options.results_directory,
                                     "png_result%s.png" % index)
-            shell_args.append("--pixel-tests=" + png_path)
             test_args.png_path = png_path
-
         test_args.new_baseline = self._options.new_baseline
         test_args.reset_results = self._options.reset_results
 
-        if self._options.startup_dialog:
-            shell_args.append('--testshell-startup-dialog')
-
-        if self._options.gp_fault_error_box:
-            shell_args.append('--gp-fault-error-box')
-
-        return test_args, png_path, shell_args
+        return test_args
 
     def _contains_tests(self, subdir):
         for test_file in self._test_files:
@@ -610,11 +601,10 @@ class TestRunner:
                 test_types.append(test_type(self._port,
                                     self._options.results_directory))
 
-            test_args, png_path, shell_args = \
-                self._get_dump_render_tree_args(i)
+            test_args = self._get_test_args(i)
             thread = dump_render_tree_thread.TestShellThread(self._port,
-                filename_queue, self._result_queue, test_types, test_args,
-                png_path, shell_args, self._options)
+                self._options, filename_queue, self._result_queue,
+                test_types, test_args)
             if self._is_single_threaded():
                 thread.run_in_main_thread(self, result_summary)
             else:
