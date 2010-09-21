@@ -40,7 +40,7 @@ class VisibleSelection;
 
 class HTMLInputElement : public HTMLTextFormControlElement, public InputElement {
 public:
-    enum InputType {
+    enum DeprecatedInputType {
         TEXT = 0, // TEXT must be 0.
         PASSWORD,
         ISINDEX,
@@ -65,9 +65,9 @@ public:
         MONTH,
         TIME,
         WEEK,
-        // If you add new types or change the order of enum values, update numberOfTypes below.
+        // If you add new types or change the order of enum values, update deprecatedNumberOfTypes below.
     };
-    static const int numberOfTypes = WEEK + 1;
+    static const int deprecatedNumberOfTypes = WEEK + 1;
 
     static PassRefPtr<HTMLInputElement> create(const QualifiedName&, Document*, HTMLFormElement*);
     virtual ~HTMLInputElement();
@@ -101,23 +101,28 @@ public:
     // stepUp()/stepDown() for user-interaction.
     void stepUpFromRenderer(int);
 
-    bool isTextButton() const { return m_type == SUBMIT || m_type == RESET || m_type == BUTTON; }
+    bool isTextButton() const { return deprecatedInputType() == SUBMIT || deprecatedInputType() == RESET || deprecatedInputType() == BUTTON; }
 
-    virtual bool isRadioButton() const { return m_type == RADIO; }
+    virtual bool isRadioButton() const { return deprecatedInputType() == RADIO; }
     virtual bool isTextField() const;
-    virtual bool isSearchField() const { return m_type == SEARCH; }
-    virtual bool isInputTypeHidden() const { return m_type == HIDDEN; }
-    virtual bool isPasswordField() const { return m_type == PASSWORD; }
-    virtual bool isCheckbox() const { return m_type == CHECKBOX; }
+    virtual bool isSearchField() const { return deprecatedInputType() == SEARCH; }
+    virtual bool isInputTypeHidden() const { return deprecatedInputType() == HIDDEN; }
+    virtual bool isPasswordField() const { return deprecatedInputType() == PASSWORD; }
+    virtual bool isCheckbox() const { return deprecatedInputType() == CHECKBOX; }
 
-    bool isText() const { return m_type == TEXT; }
-    bool isEmailField() const { return m_type == EMAIL; }
-    bool isFileUpload() const { return m_type == FILE; }
-    bool isImageButton() const { return m_type == IMAGE; }
-    bool isNumberField() const { return m_type == NUMBER; }
-    bool isSubmitButton() const { return m_type == SUBMIT; }
-    bool isTelephoneField() const { return m_type == TELEPHONE; }
-    bool isURLField() const { return m_type == URL; }
+    // FIXME: It's highly likely that any call site calling this function should instead
+    // be using a different one. Many input elements behave like text fields, and in addition
+    // any unknown input type is treated as text. Consider, for example, isTextField or
+    // isTextField && !isPasswordField.
+    bool isText() const { return deprecatedInputType() == TEXT; }
+
+    bool isEmailField() const { return deprecatedInputType() == EMAIL; }
+    bool isFileUpload() const { return deprecatedInputType() == FILE; }
+    bool isImageButton() const { return deprecatedInputType() == IMAGE; }
+    bool isNumberField() const { return deprecatedInputType() == NUMBER; }
+    bool isSubmitButton() const { return deprecatedInputType() == SUBMIT; }
+    bool isTelephoneField() const { return deprecatedInputType() == TELEPHONE; }
+    bool isURLField() const { return deprecatedInputType() == URL; }
 
 #if ENABLE(INPUT_SPEECH)
     virtual bool isSpeechEnabled() const;
@@ -171,8 +176,7 @@ public:
     virtual bool isActivatedSubmit() const;
     virtual void setActivatedSubmit(bool flag);
 
-    InputType inputType() const { return static_cast<InputType>(m_type); }
-    void setInputType(const String&);
+    DeprecatedInputType deprecatedInputType() const { return static_cast<DeprecatedInputType>(m_deprecatedTypeNumber); }
 
     String altText() const;
 
@@ -209,10 +213,10 @@ public:
     void addSearchResult();
     void onSearch();
 
-    // Parses the specified string as the InputType, and returns true if it is successfully parsed.
+    // Parses the specified string as the DeprecatedInputType, and returns true if it is successfully parsed.
     // An instance pointed by the DateComponents* parameter will have parsed values and be
     // modified even if the parsing fails.  The DateComponents* parameter may be 0.
-    static bool parseToDateComponents(InputType, const String&, DateComponents*);
+    static bool parseToDateComponents(DeprecatedInputType, const String&, DateComponents*);
 
 #if ENABLE(DATALIST)
     HTMLElement* list() const;
@@ -236,7 +240,7 @@ private:
 
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;
-    virtual bool isEnumeratable() const { return inputType() != IMAGE; }
+    virtual bool isEnumeratable() const { return deprecatedInputType() != IMAGE; }
     virtual void updateFocusAppearance(bool restorePreviousSelection);
     virtual void aboutToUnload();
     virtual bool shouldUseInputMethod() const;
@@ -244,15 +248,15 @@ private:
     virtual const AtomicString& formControlName() const;
  
     // isChecked is used by the rendering tree/CSS while checked() is used by JS to determine checked state
-    virtual bool isChecked() const { return checked() && (inputType() == CHECKBOX || inputType() == RADIO); }
+    virtual bool isChecked() const { return checked() && (deprecatedInputType() == CHECKBOX || deprecatedInputType() == RADIO); }
     virtual bool isIndeterminate() const { return indeterminate(); }
     
     virtual bool isTextFormControl() const { return isTextField(); }
 
-    virtual bool hasSpinButton() const { return m_type == NUMBER || m_type == DATE || m_type == DATETIME || m_type == DATETIMELOCAL || m_type == MONTH || m_type == TIME || m_type == WEEK; }
+    virtual bool hasSpinButton() const { return deprecatedInputType() == NUMBER || deprecatedInputType() == DATE || deprecatedInputType() == DATETIME || deprecatedInputType() == DATETIMELOCAL || deprecatedInputType() == MONTH || deprecatedInputType() == TIME || deprecatedInputType() == WEEK; }
     virtual bool canTriggerImplicitSubmission() const { return isTextField(); }
 
-    bool allowsIndeterminate() const { return inputType() == CHECKBOX || inputType() == RADIO; }
+    bool allowsIndeterminate() const { return deprecatedInputType() == CHECKBOX || deprecatedInputType() == RADIO; }
 
     virtual const AtomicString& formControlType() const;
 
@@ -277,7 +281,7 @@ private:
     virtual bool isSuccessfulSubmitButton() const;
 
     // Report if this input type uses height & width attributes
-    bool respectHeightAndWidthAttrs() const { return inputType() == IMAGE || inputType() == HIDDEN; }
+    bool respectHeightAndWidthAttrs() const { return deprecatedInputType() == IMAGE || deprecatedInputType() == HIDDEN; }
 
     virtual void reset();
 
@@ -305,7 +309,7 @@ private:
     virtual bool supportsMaxLength() const { return isTextType(); }
     bool isTextType() const;
 
-    virtual bool supportsPlaceholder() const { return isTextType() || inputType() == ISINDEX; }
+    virtual bool supportsPlaceholder() const { return isTextType() || deprecatedInputType() == ISINDEX; }
     virtual bool isEmptyValue() const { return value().isEmpty(); }
     virtual void handleFocusEvent();
     virtual void handleBlurEvent();
@@ -315,6 +319,8 @@ private:
     virtual bool isOptionalFormControl() const { return !isRequiredFormControl(); }
     virtual bool isRequiredFormControl() const;
     virtual bool recalcWillValidate() const;
+
+    void updateType();
 
     void updateCheckedRadioButtons();
     
@@ -355,7 +361,7 @@ private:
     short m_maxResults;
     OwnPtr<HTMLImageLoader> m_imageLoader;
     RefPtr<FileList> m_fileList;
-    unsigned m_type : 5; // InputType 
+    unsigned m_deprecatedTypeNumber : 5; // DeprecatedInputType 
     bool m_checked : 1;
     bool m_defaultChecked : 1;
     bool m_useDefaultChecked : 1;

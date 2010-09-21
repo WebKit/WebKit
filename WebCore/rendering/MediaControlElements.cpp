@@ -350,7 +350,7 @@ MediaControlInputElement::MediaControlInputElement(HTMLMediaElement* mediaElemen
     , m_mediaElement(mediaElement)
     , m_pseudoStyleId(pseudo)
 {
-    setInputType(type);
+    setType(type);
     setInDocument();
 
     switch (pseudo) {

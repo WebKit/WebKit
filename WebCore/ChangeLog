@@ -1256,6 +1256,90 @@
 
 2010-09-17  Darin Adler  <darin@apple.com>
 
+        Reviewed by James Robinson.
+
+        Deprecate the inputType function on HTMLInputElement
+        https://bugs.webkit.org/show_bug.cgi?id=46023
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::HTMLInputElement): Use m_deprecatedTypeNumber.
+        (WebCore::HTMLInputElement::isValidValue): Use deprecatedInputType.
+        (WebCore::HTMLInputElement::typeMismatch): Ditto.
+        (WebCore::HTMLInputElement::valueMissing): Ditto.
+        (WebCore::HTMLInputElement::rangeUnderflow): Ditto.
+        (WebCore::HTMLInputElement::rangeOverflow): Ditto.
+        (WebCore::HTMLInputElement::minimum): Ditto.
+        (WebCore::HTMLInputElement::maximum): Ditto.
+        (WebCore::HTMLInputElement::stepBase): Ditto.
+        (WebCore::HTMLInputElement::stepMismatch): Ditto.
+        (WebCore::HTMLInputElement::getStepParameters): Ditto.
+        (WebCore::HTMLInputElement::getAllowedValueStep): Ditto.
+        (WebCore::HTMLInputElement::isKeyboardFocusable): Ditto.
+        (WebCore::HTMLInputElement::shouldUseInputMethod): Ditto.
+        (WebCore::HTMLInputElement::handleBlurEvent): Ditto.
+        (WebCore::HTMLInputElement::setType): Added a comment.
+        (WebCore::HTMLInputElement::updateType): Replaced the setInputType function
+        with this. The type is always the type attribute value, so there is no value
+        in passing the type string in, and this is an internal implementation detail,
+        not a public function.
+        (WebCore::createFormControlTypes): Use deprecatedNumberOfTypes.
+        (WebCore::HTMLInputElement::formControlType): Use deprecatedInputType.
+        (WebCore::HTMLInputElement::saveFormControlState): Ditto.
+        (WebCore::HTMLInputElement::restoreFormControlState): Ditto.
+        (WebCore::HTMLInputElement::accessKeyAction): Ditto.
+        (WebCore::HTMLInputElement::mapToEntry): Ditto.
+        (WebCore::HTMLInputElement::parseMappedAttribute): Ditto.
+        (WebCore::HTMLInputElement::rendererIsNeeded): Ditto.
+        (WebCore::HTMLInputElement::createRenderer): Ditto.
+        (WebCore::HTMLInputElement::attach): Ditto.
+        (WebCore::HTMLInputElement::isSuccessfulSubmitButton): Ditto.
+        (WebCore::HTMLInputElement::appendFormData): Ditto.
+        (WebCore::HTMLInputElement::isTextField): Ditto.
+        (WebCore::HTMLInputElement::isTextType): Ditto.
+        (WebCore::HTMLInputElement::setChecked): Ditto.
+        (WebCore::HTMLInputElement::value): Ditto.
+        (WebCore::HTMLInputElement::valueWithDefault): Ditto.
+        (WebCore::HTMLInputElement::setSuggestedValue): Ditto.
+        (WebCore::HTMLInputElement::setValue): Ditto.
+        (WebCore::HTMLInputElement::parseToDouble): Ditto.
+        (WebCore::HTMLInputElement::valueAsDate): Ditto.
+        (WebCore::HTMLInputElement::setValueAsDate): Ditto.
+        (WebCore::HTMLInputElement::valueAsNumber): Ditto.
+        (WebCore::HTMLInputElement::setValueAsNumber): Ditto.
+        (WebCore::HTMLInputElement::serializeForDateTimeTypes): Ditto.
+        (WebCore::HTMLInputElement::serialize): Ditto.
+        (WebCore::HTMLInputElement::setValueFromRenderer): Ditto.
+        (WebCore::HTMLInputElement::storesValueSeparateFromAttribute): Ditto.
+        (WebCore::HTMLInputElement::preDispatchEventHandler): Ditto.
+        (WebCore::HTMLInputElement::postDispatchEventHandler): Ditto.
+        (WebCore::HTMLInputElement::defaultEventHandler): Ditto.
+        (WebCore::HTMLInputElement::handleBeforeTextInsertedEvent): Ditto.
+        (WebCore::HTMLInputElement::files): Ditto.
+        (WebCore::HTMLInputElement::isAcceptableValue): Ditto.
+        (WebCore::HTMLInputElement::sanitizeValue): Ditto.
+        (WebCore::HTMLInputElement::hasUnacceptableValue): Ditto.
+        (WebCore::HTMLInputElement::needsActivationCallback): Ditto.
+        (WebCore::HTMLInputElement::isRequiredFormControl): Ditto.
+        (WebCore::HTMLInputElement::recalcWillValidate): Ditto.
+        (WebCore::HTMLInputElement::parseToDateComponents): Ditto.
+        (WebCore::HTMLInputElement::dataList): Ditto.
+        (WebCore::HTMLInputElement::isSpeechEnabled): Ditto.
+
+        * html/HTMLInputElement.h: Renamed InputType to DeprecatedInputType since it
+        should not be used outside this class. Renamed numberOfTypes to
+        dprecatedNumberOfTypes for the same reason. Changed all code to use
+        deprecatedInputType function instead of m_type. Renamed inputType function
+        to deprecatedInputType. Replaced public setInputType function with private
+        updateType function. Renamed m_type data member to m_deprecatedTypeNumber.
+
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlInputElement::MediaControlInputElement):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::updateFromElement):
+        Use setType instead of setInputType.
+
+2010-09-17  Darin Adler  <darin@apple.com>
+
         Build fix for platforms that compile Touch.
 
         * dom/Touch.cpp:

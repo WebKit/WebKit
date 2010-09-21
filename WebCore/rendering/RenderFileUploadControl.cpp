@@ -146,7 +146,7 @@ void RenderFileUploadControl::updateFromElement()
     
     if (!m_button) {
         m_button = ShadowInputElement::create(inputElement);
-        m_button->setInputType("button");
+        m_button->setType("button");
         m_button->setValue(fileButtonChooseFileLabel());
         RefPtr<RenderStyle> buttonStyle = createButtonStyle(style());
         RenderObject* renderer = m_button->createRenderer(renderArena(), buttonStyle.get());

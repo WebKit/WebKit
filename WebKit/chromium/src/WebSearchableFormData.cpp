@@ -176,9 +176,9 @@ bool HasSuitableTextElement(const HTMLFormElement* form, Vector<char>* encodedSt
                 return 0;
             }
 
-            // FIXME: This needs to use a function on HTMLInputElement other than inputType.
+            // FIXME: This needs to use a function on HTMLInputElement other than deprecatedInputType.
             // Also, it's not clear why TEXT should be handled differently than, say, SEARCH.
-            switch (static_cast<const HTMLInputElement*>(formElement)->inputType()) {
+            switch (static_cast<const HTMLInputElement*>(formElement)->deprecatedInputType()) {
             case HTMLInputElement::TEXT:
             case HTMLInputElement::ISINDEX:
                 isTextElement = true;
