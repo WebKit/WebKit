@@ -98,6 +98,11 @@ public:
             encoder->encode(uint64Object->value());
             return true;
         }
+        case APIObject::TypeBoolean: {
+            WebBoolean* booleanObject = static_cast<WebBoolean*>(m_root);
+            encoder->encode(booleanObject->value());
+            return true;
+        }
         case APIObject::TypeURL: {
             WebURL* urlObject = static_cast<WebURL*>(m_root);
             encoder->encode(urlObject->string());
@@ -209,6 +214,13 @@ public:
             if (!decoder->decode(value))
                 return false;
             coder.m_root = WebUInt64::create(value);
+            break;
+        }
+        case APIObject::TypeBoolean: {
+            bool value;
+            if (!decoder->decode(value))
+                return false;
+            coder.m_root = WebBoolean::create(value);
             break;
         }
         case APIObject::TypeURL: {
