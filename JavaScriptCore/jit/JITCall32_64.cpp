@@ -180,18 +180,6 @@ void JIT::emit_op_call_eval(Instruction* currentInstruction)
     compileOpCall(op_call_eval, currentInstruction, m_callLinkInfoIndex++);
 }
 
-void JIT::emit_op_load_varargs(Instruction* currentInstruction)
-{
-    int argCountDst = currentInstruction[1].u.operand;
-    int argsOffset = currentInstruction[2].u.operand;
-
-    JITStubCall stubCall(this, cti_op_load_varargs);
-    stubCall.addArgument(Imm32(argsOffset));
-    stubCall.call();
-    // Stores a naked int32 in the register file.
-    store32(returnValueRegister, Address(callFrameRegister, argCountDst * sizeof(Register)));
-}
-
 void JIT::emit_op_call_varargs(Instruction* currentInstruction)
 {
     compileOpCallVarargs(currentInstruction);

@@ -28,6 +28,7 @@
 #if ENABLE(JIT)
 #include "JIT.h"
 
+#include "Arguments.h"
 #include "JITInlineMethods.h"
 #include "JITStubCall.h"
 #include "JSArray.h"
@@ -436,18 +437,6 @@ void JIT::emit_op_call(Instruction* currentInstruction)
 void JIT::emit_op_call_eval(Instruction* currentInstruction)
 {
     compileOpCall(op_call_eval, currentInstruction, m_callLinkInfoIndex++);
-}
-
-void JIT::emit_op_load_varargs(Instruction* currentInstruction)
-{
-    int argCountDst = currentInstruction[1].u.operand;
-    int argsOffset = currentInstruction[2].u.operand;
-
-    JITStubCall stubCall(this, cti_op_load_varargs);
-    stubCall.addArgument(Imm32(argsOffset));
-    stubCall.call();
-    // Stores a naked int32 in the register file.
-    store32(returnValueRegister, Address(callFrameRegister, argCountDst * sizeof(Register)));
 }
 
 void JIT::emit_op_call_varargs(Instruction* currentInstruction)
@@ -1526,6 +1515,70 @@ void JIT::emit_op_new_regexp(Instruction* currentInstruction)
     JITStubCall stubCall(this, cti_op_new_regexp);
     stubCall.addArgument(ImmPtr(m_codeBlock->regexp(currentInstruction[2].u.operand)));
     stubCall.call(currentInstruction[1].u.operand);
+}
+
+void JIT::emit_op_load_varargs(Instruction* currentInstruction)
+{
+    int argCountDst = currentInstruction[1].u.operand;
+    int argsOffset = currentInstruction[2].u.operand;
+    int expectedParams = m_codeBlock->m_numParameters - 1;
+    // Don't do inline copying if we aren't guaranteed to have a single stream
+    // of arguments
+    if (expectedParams) {
+        JITStubCall stubCall(this, cti_op_load_varargs);
+        stubCall.addArgument(Imm32(argsOffset));
+        stubCall.call();
+        // Stores a naked int32 in the register file.
+        store32(returnValueRegister, Address(callFrameRegister, argCountDst * sizeof(Register)));
+        return;
+    }
+
+#if USE(JSVALUE32_64)
+    addSlowCase(branch32(NotEqual, tagFor(argsOffset), Imm32(JSValue::EmptyValueTag)));
+#else
+    addSlowCase(branchTestPtr(NonZero, addressFor(argsOffset)));
+#endif
+    // Load arg count into regT0
+    emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT0);
+    storePtr(regT0, addressFor(argCountDst));
+    Jump endBranch = branch32(Equal, regT0, Imm32(1));
+
+    mul32(Imm32(sizeof(Register)), regT0, regT3);
+    addPtr(Imm32(static_cast<unsigned>(sizeof(Register) - RegisterFile::CallFrameHeaderSize * sizeof(Register))), callFrameRegister, regT1);
+    subPtr(regT3, regT1); // regT1 is now the start of the out of line arguments
+    addPtr(Imm32(argsOffset * sizeof(Register)), callFrameRegister, regT2); // regT2 is the target buffer
+    
+    // Bounds check the registerfile
+    addPtr(regT2, regT3);
+    addSlowCase(branchPtr(Below, AbsoluteAddress(&m_globalData->interpreter->registerFile().m_end), regT3));
+
+    sub32(Imm32(1), regT0);
+    Label loopStart = label();
+    loadPtr(BaseIndex(regT1, regT0, TimesEight, static_cast<unsigned>(0 - 2 * sizeof(Register))), regT3);
+    storePtr(regT3, BaseIndex(regT2, regT0, TimesEight, static_cast<unsigned>(0 - sizeof(Register))));
+#if USE(JSVALUE32_64)
+    loadPtr(BaseIndex(regT1, regT0, TimesEight, static_cast<unsigned>(sizeof(void*) - 2 * sizeof(Register))), regT3);
+    storePtr(regT3, BaseIndex(regT2, regT0, TimesEight, static_cast<unsigned>(sizeof(void*) - sizeof(Register))));
+#endif
+    branchSubPtr(NonZero, Imm32(1), regT0).linkTo(loopStart, this);
+    endBranch.link(this);
+}
+
+void JIT::emitSlow_op_load_varargs(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    int argCountDst = currentInstruction[1].u.operand;
+    int argsOffset = currentInstruction[2].u.operand;
+    int expectedParams = m_codeBlock->m_numParameters - 1;
+    if (expectedParams)
+        return;
+    
+    linkSlowCase(iter);
+    linkSlowCase(iter);
+    JITStubCall stubCall(this, cti_op_load_varargs);
+    stubCall.addArgument(Imm32(argsOffset));
+    stubCall.call();
+    // Stores a naked int32 in the register file.
+    store32(returnValueRegister, Address(callFrameRegister, argCountDst * sizeof(Register)));
 }
 
 // For both JSValue32_64 and JSValue32
