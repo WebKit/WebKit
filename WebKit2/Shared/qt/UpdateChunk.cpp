@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2010 University of Szeged
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,36 +32,22 @@
 #include "Attachment.h"
 #include "WebCoreArgumentCoders.h"
 #include <QDebug>
-#include <QFile>
+#include <QDir>
 #include <QImage>
 #include <QTemporaryFile>
 #include <WebCore/FloatRect.h>
 #include <wtf/text/WTFString.h>
-#include <wtf/Vector.h>
 
 using namespace WebCore;
 using namespace std;
 
 namespace WebKit {
-    
-struct MappedMemory {
-    QFile* file;
-    uchar* data;
-    size_t size;
-    void markUsed() { *reinterpret_cast<uint64_t*>(data) = 0; }
-    void markFree() { *reinterpret_cast<uint64_t*>(data) = 0xdeadbeef; }
-    bool isFree() { return *reinterpret_cast<uint64_t*>(data) == 0xdeadbeef; }
-};
 
-static Vector<MappedMemory>* mmapPool;
-    
 static MappedMemory* mapMemory(size_t size)
 {
-    if (!mmapPool)
-        mmapPool = new Vector<MappedMemory>;
-        
-    for (unsigned n = 0; n < mmapPool->size(); ++n) {
-        MappedMemory& current = mmapPool->at(n);
+    MappedMemoryPool* pool = MappedMemoryPool::instance();
+    for (unsigned n = 0; n < pool->size(); ++n) {
+        MappedMemory& current = pool->at(n);
         if (current.size >= size && current.isFree()) {
             current.markUsed();
             return &current;
@@ -68,23 +55,20 @@ static MappedMemory* mapMemory(size_t size)
     }
     MappedMemory newMap;
     newMap.size = size;
-    // FIXME: Clean up or reuse leftover map files from the disk.
-    newMap.file = new QTemporaryFile("WebKit2UpdateChunk");
+    newMap.file = new QTemporaryFile(QDir::tempPath() + "/WebKit2UpdateChunk");
     newMap.file->open(QIODevice::ReadWrite);
     newMap.file->resize(newMap.size);
     newMap.data = newMap.file->map(0, newMap.size);
     newMap.file->close();
     newMap.markUsed();
-    mmapPool->append(newMap);
-    return &mmapPool->last();
+    return &pool->append(newMap);
 }
     
 static MappedMemory* mapFile(QString fileName, size_t size)
 {
-    if (!mmapPool)
-        mmapPool = new Vector<MappedMemory>;
-    for (unsigned n = 0; n < mmapPool->size(); ++n) {
-        MappedMemory& current = mmapPool->at(n);
+    MappedMemoryPool* pool = MappedMemoryPool::instance();
+    for (unsigned n = 0; n < pool->size(); ++n) {
+        MappedMemory& current = pool->at(n);
         if (current.file->fileName() == fileName) {
             ASSERT(!current.isFree());
             return &current;
@@ -97,8 +81,7 @@ static MappedMemory* mapFile(QString fileName, size_t size)
     newMap.data = newMap.file->map(0, size);
     ASSERT(!newMap.isFree());
     newMap.file->close();
-    mmapPool->append(newMap);
-    return &mmapPool->last();
+    return &pool->append(newMap);
 }
 
 UpdateChunk::UpdateChunk()

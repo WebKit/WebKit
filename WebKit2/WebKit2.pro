@@ -162,7 +162,9 @@ HEADERS += \
     Shared/MutableArray.h \
     Shared/MutableDictionary.h \
     Shared/NotImplemented.h \
+    Shared/qt/MappedMemory.h \
     Shared/qt/PlatformCertificateInfo.h \
+    Shared/qt/UpdateChunk.h \
     Shared/qt/WebEventFactoryQt.h \
     Shared/UserMessageCoders.h \
     Shared/VisitedLinkTable.h \
@@ -292,6 +294,7 @@ SOURCES += \
     Shared/WebPreferencesStore.cpp \
     Shared/WebURLRequest.cpp \
     Shared/WebURLResponse.cpp \
+    Shared/qt/MappedMemoryPool.cpp \
     Shared/qt/UpdateChunk.cpp \
     Shared/qt/WebEventFactoryQt.cpp \
     Shared/qt/WebCoreArgumentCodersQt.cpp \

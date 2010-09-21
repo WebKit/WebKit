@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2010 University of Szeged
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,43 +25,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UpdateChunk_h
-#define UpdateChunk_h
+#ifndef MappedMemory_h
+#define MappedMemory_h
 
-#include "MappedMemory.h"
-#include <QImage>
-#include <WebCore/IntRect.h>
-
-namespace CoreIPC {
-class ArgumentEncoder;
-class ArgumentDecoder;
-}
+#include <QCoreApplication>
+#include <QFile>
+#include <wtf/Vector.h>
 
 namespace WebKit {
-
-class UpdateChunk {
-public:
-    UpdateChunk();
-    UpdateChunk(const WebCore::IntRect&);
-    ~UpdateChunk();
-
-    uint8_t* data();
-    const WebCore::IntRect& rect() const { return m_rect; }
-    bool isEmpty() const { return m_rect.isEmpty(); }
-
-    void encode(CoreIPC::ArgumentEncoder*) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, UpdateChunk&);
-    
-    QImage createImage();
-    
-private:
-    size_t size() const { return m_rect.width() * 4 * m_rect.height(); }
-
-    WebCore::IntRect m_rect;
-
-    mutable MappedMemory* m_mappedMemory;
+struct MappedMemory {
+    QFile* file;
+    uchar* data;
+    size_t size;
+    void markUsed() { *reinterpret_cast<uint64_t*>(data) = 0; }
+    void markFree() { *reinterpret_cast<uint64_t*>(data) = 0xdeadbeef; }
+    bool isFree() { return *reinterpret_cast<uint64_t*>(data) == 0xdeadbeef; }
 };
 
-} // namespace WebKit
+class MappedMemoryPool : public QObject {
+    Q_OBJECT
+public:
+    static MappedMemoryPool* instance();
+    size_t size() const;
+    MappedMemory& at(size_t i);
+    MappedMemory& append(const MappedMemory&);
 
-#endif // UpdateChunk_h
+private:
+    MappedMemoryPool();
+    Q_SLOT void cleanUp();
+
+    Vector<MappedMemory> m_pool;
+};
+} // namespace WebKit
+#endif // MappedMemory_h

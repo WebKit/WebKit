@@ -1,3 +1,31 @@
+2010-09-21  Andras Becsi  <abecsi@inf.u-szeged.hu>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] QtWebProcess should clean up shared memory map files on close
+        https://bugs.webkit.org/show_bug.cgi?id=45984
+
+        Relocate MappedMemory struct code to it's own header and implement
+        a singleton pool class (MappedMemoryPool) which tracks shared memory
+        to be able to clean up map files from disk if RunLoop stops.
+
+        * Shared/qt/MappedMemory.h: Added.
+        (WebKit::MappedMemory::markUsed):
+        (WebKit::MappedMemory::markFree):
+        (WebKit::MappedMemory::isFree):
+        * Shared/qt/MappedMemoryPool.cpp: Added.
+        (WebKit::MappedMemoryPool::MappedMemoryPool):
+        (WebKit::MappedMemoryPool::instance):
+        (WebKit::MappedMemoryPool::size):
+        (WebKit::MappedMemoryPool::at):
+        (WebKit::MappedMemoryPool::append):
+        (WebKit::MappedMemoryPool::cleanUp):
+        * Shared/qt/UpdateChunk.cpp:
+        (WebKit::mapMemory):
+        (WebKit::mapFile):
+        * Shared/qt/UpdateChunk.h:
+        * WebKit2.pro:
+
 2010-09-20  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Carlson.
