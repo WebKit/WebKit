@@ -235,19 +235,17 @@ void ResourceHandle::onHandleCreated(LPARAM lParam)
         headers += d->m_postReferrer;
         headers += "\n";
         const CString& headersLatin1 = headers.latin1();
-        String formData = request().httpBody()->flattenToString();
+        if (firstRequest().httpBody()) {
+            firstRequest().httpBody()->flatten(d->m_formData);
+            d->m_bytesRemainingToWrite = d->m_formData.size();
+        }
         INTERNET_BUFFERSA buffers;
         memset(&buffers, 0, sizeof(buffers));
         buffers.dwStructSize = sizeof(INTERNET_BUFFERSA);
         buffers.lpcszHeader = headersLatin1.data();
         buffers.dwHeadersLength = headers.length();
-        buffers.dwBufferTotal = formData.length();
+        buffers.dwBufferTotal = d->m_bytesRemainingToWrite;
         
-        d->m_bytesRemainingToWrite = formData.length();
-        d->m_formDataString = (char*)malloc(formData.length());
-        d->m_formDataLength = formData.length();
-        strncpy(d->m_formDataString, formData.latin1().data(), formData.length());
-        d->m_writing = true;
         HttpSendRequestExA(d->m_secondaryHandle, &buffers, 0, 0, (DWORD_PTR)d->m_jobId);
         // FIXME: add proper error handling
     }
@@ -266,20 +264,21 @@ void ResourceHandle::onRequestRedirected(LPARAM lParam)
 
 void ResourceHandle::onRequestComplete(LPARAM lParam)
 {
-    if (d->m_writing) {
+    if (d->m_bytesRemainingToWrite) {
         DWORD bytesWritten;
-        InternetWriteFile(d->m_secondaryHandle,
-                          d->m_formDataString + (d->m_formDataLength - d->m_bytesRemainingToWrite),
+        InternetWriteFile(d->m_requestHandle,
+                          d->m_formData.data() + (d->m_formData.size() - d->m_bytesRemainingToWrite),
                           d->m_bytesRemainingToWrite,
                           &bytesWritten);
         d->m_bytesRemainingToWrite -= bytesWritten;
-        if (!d->m_bytesRemainingToWrite) {
-            // End the request.
-            d->m_writing = false;
-            HttpEndRequest(d->m_secondaryHandle, 0, 0, (DWORD_PTR)d->m_jobId);
-            free(d->m_formDataString);
-            d->m_formDataString = 0;
-        }
+        if (d->m_bytesRemainingToWrite)
+            return;
+        d->m_formData.clear();
+    }
+
+    if (!d->m_sentEndRequest) {
+        HttpEndRequestW(d->m_requestHandle, 0, 0, reinterpret_cast<DWORD_PTR>(this));
+        d->m_sentEndRequest = true;
         return;
     }
 

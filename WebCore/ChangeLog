@@ -1,3 +1,16 @@
+2010-09-21  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Use WTF::Vector for storing formData in ResourceHandleWin.
+        https://bugs.webkit.org/show_bug.cgi?id=46180
+
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/win/ResourceHandleWin.cpp:
+        (WebCore::ResourceHandle::onHandleCreated):
+        (WebCore::ResourceHandle::onRequestComplete):
+
 2010-09-21  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Andreas Kling.

@@ -96,9 +96,7 @@ namespace WebCore {
             , m_secondaryHandle(0)
             , m_jobId(0)
             , m_threadId(0)
-            , m_writing(false)
-            , m_formDataString(0)
-            , m_formDataLength(0)
+            , m_sentEndRequest(false)
             , m_bytesRemainingToWrite(0)
             , m_hasReceivedResponse(false)
             , m_resend(false)
@@ -171,9 +169,8 @@ namespace WebCore {
         HINTERNET m_secondaryHandle;
         unsigned m_jobId;
         DWORD m_threadId;
-        bool m_writing;
-        char* m_formDataString;
-        int m_formDataLength;
+        bool m_sentEndRequest;
+        Vector<char> m_formData;
         int m_bytesRemainingToWrite;
         String m_postReferrer;
         bool m_hasReceivedResponse;
