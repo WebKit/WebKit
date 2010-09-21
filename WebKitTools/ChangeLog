@@ -1,3 +1,10 @@
+2010-09-20  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed.
+        Adding myself to the committers list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-09-20  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
