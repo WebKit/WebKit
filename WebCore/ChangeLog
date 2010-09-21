@@ -1,3 +1,25 @@
+2010-09-19  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Ojan Vafai.
+
+        SelectionController::modify should ask EditingBehavior for platform specific behavior
+        https://bugs.webkit.org/show_bug.cgi?id=41975
+
+        As a follow up of the refactoring work in bug 39854, patch makes SelectionController::modify()
+        stop accessing EditingBehaviorType values directly, and replaces its use by the EditingBehavior
+        class.
+
+        Since the "Settings*" parameter of the private SelectionController::modify() method becomes unneeded
+        with this change (it was used to query the editingBehaviorType), patch merges two modify() methods.
+
+        No behavior change, so no new tests.
+
+        * editing/EditingBehavior.h:
+        (WebCore::EditingBehavior::shouldAlwaysGrowSelectionWhenExtendingToBoundary):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::modify):
+        * editing/SelectionController.h:
+
 2010-09-20  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by James Robinson.

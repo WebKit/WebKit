@@ -622,24 +622,18 @@ VisiblePosition SelectionController::modifyMovingBackward(TextGranularity granul
     return pos;
 }
 
-bool SelectionController::modify(EAlteration alter, EDirection dir, TextGranularity granularity, bool userTriggered)
-{
-    Settings* settings = m_frame ? m_frame->settings() : 0;
-    return modify(alter, dir, granularity, userTriggered, settings);
-}
-    
 static bool isBoundary(TextGranularity granularity)
 {
     return granularity == LineBoundary || granularity == ParagraphBoundary || granularity == DocumentBoundary;
 }    
     
-bool SelectionController::modify(EAlteration alter, EDirection direction, TextGranularity granularity, bool userTriggered, Settings* settings)
+bool SelectionController::modify(EAlteration alter, EDirection direction, TextGranularity granularity, bool userTriggered)
 {
     if (userTriggered) {
         SelectionController trialSelectionController;
         trialSelectionController.setSelection(m_selection);
         trialSelectionController.setIsDirectional(m_isDirectional);
-        trialSelectionController.modify(alter, direction, granularity, false, settings);
+        trialSelectionController.modify(alter, direction, granularity, false);
 
         bool change = shouldChangeSelection(trialSelectionController.selection());
         if (!change)
@@ -690,16 +684,17 @@ bool SelectionController::modify(EAlteration alter, EDirection direction, TextGr
         moveTo(position, userTriggered);
         break;
     case AlterationExtend:
-        if (!settings || settings->editingBehaviorType() != EditingMacBehavior || m_selection.isCaret() || !isBoundary(granularity))
+        // Standard Mac behavior when extending to a boundary is grow the selection rather than leaving the
+        // base in place and moving the extent. Matches NSTextView.
+        if (!m_frame || !m_frame->editor()->behavior().shouldAlwaysGrowSelectionWhenExtendingToBoundary() || m_selection.isCaret() || !isBoundary(granularity))
             setExtent(position, userTriggered);
         else {
-            // Standard Mac behavior when extending to a boundary is grow the selection rather
-            // than leaving the base in place and moving the extent. Matches NSTextView.
             if (direction == DirectionForward || direction == DirectionRight)
                 setEnd(position, userTriggered);
             else
                 setStart(position, userTriggered);
         }
+        break;
     }
     
     if (granularity == LineGranularity || granularity == ParagraphGranularity)

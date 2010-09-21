@@ -53,6 +53,10 @@ public:
     // style has to be present throughout the selection.
     bool shouldToggleStyleBasedOnStartOfSelection() const { return m_type == EditingMacBehavior; }
 
+    // Standard Mac behavior when extending to a boundary is grow the selection rather than leaving the base
+    // in place and moving the extent. Matches NSTextView.
+    bool shouldAlwaysGrowSelectionWhenExtendingToBoundary() const { return m_type == EditingMacBehavior; }
+
 private:
     EditingBehaviorType m_type;
 };

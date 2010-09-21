@@ -181,8 +181,6 @@ private:
     VisiblePosition startForPlatform() const;
     VisiblePosition endForPlatform() const;
 
-    bool modify(EAlteration, EDirection, TextGranularity, bool userTriggered, Settings*);
-
     VisiblePosition modifyExtendingRight(TextGranularity);
     VisiblePosition modifyExtendingForward(TextGranularity);
     VisiblePosition modifyMovingRight(TextGranularity);
