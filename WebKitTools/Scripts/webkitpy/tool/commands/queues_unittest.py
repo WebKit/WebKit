@@ -119,8 +119,7 @@ class FeederQueueTest(QueuesTest):
             "begin_work_queue": self._default_begin_work_queue_stderr("feeder-queue", MockSCM.fake_checkout_root),
             "should_proceed_with_work_item": "",
             "next_work_item": "",
-            "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'update', '--force-clean', '--quiet']
-Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
+            "process_work_item": """Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
 Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
 MOCK setting flag 'commit-queue' to '-' on attachment '128' with comment 'Rejecting patch 128 from commit-queue.' and additional comment 'non-committer@example.com does not have committer permissions according to http://trac.webkit.org/browser/trunk/WebKitTools/Scripts/webkitpy/common/config/committers.py.
 

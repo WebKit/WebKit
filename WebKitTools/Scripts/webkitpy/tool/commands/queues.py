@@ -169,7 +169,6 @@ class FeederQueue(AbstractQueue):
         return True
 
     def process_work_item(self, work_item):
-        self._update_checkout()
         for feeder in self.feeders:
             feeder.feed()
         time.sleep(self._sleep_duration)
@@ -180,13 +179,6 @@ class FeederQueue(AbstractQueue):
 
     def handle_unexpected_error(self, work_item, message):
         log(message)
-
-    def _update_checkout(self):
-        self.run_webkit_patch([
-            "update",
-            "--force-clean",
-            "--quiet",
-        ])
 
 
 class AbstractPatchQueue(AbstractQueue):

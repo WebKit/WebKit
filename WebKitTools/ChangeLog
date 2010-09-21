@@ -1,3 +1,16 @@
+2010-09-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        feeder-queue svn updates more often than needed
+        https://bugs.webkit.org/show_bug.cgi?id=46171
+
+        We don't need to poll SVN every time we feed the feeders.  Rather, we
+        can count on the wrapper shell script to auto-update the queue.
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
 2010-09-21  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Andreas Kling.
