@@ -1,3 +1,16 @@
+2010-09-20  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r67918.
+        http://trac.webkit.org/changeset/67918
+        https://bugs.webkit.org/show_bug.cgi?id=46162
+
+        Broke chromium win compile (Requested by jamesr on #webkit).
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * platform/graphics/chromium/GlyphPageTreeNodeLinux.cpp: Renamed from WebCore/platform/graphics/skia/GlyphPageTreeNodeSkia.cpp.
+        (WebCore::GlyphPage::fill):
+
 2010-09-20  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Dan Bernstein.
