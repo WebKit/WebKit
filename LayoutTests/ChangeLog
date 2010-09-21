@@ -1,5 +1,19 @@
 2010-09-20  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        When PDF image is directly composited, it does not display
+        https://bugs.webkit.org/show_bug.cgi?id=46144
+        
+        Testcase with an unadorned PDF image on a layer.
+        
+        * compositing/images/direct-pdf-image-expected.checksum: Added.
+        * compositing/images/direct-pdf-image-expected.png: Added.
+        * compositing/images/direct-pdf-image-expected.txt: Added.
+        * compositing/images/direct-pdf-image.html: Added.
+
+2010-09-20  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Darin Adler.
 
         Crash when div with content set to image gets composited (Vimeo).

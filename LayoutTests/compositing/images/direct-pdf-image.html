@@ -1,0 +1,40 @@
+<!DOCTYPE>
+
+<html>
+<head>
+  <style type="text/css" media="screen">
+    body {
+        margin: 0;
+    }
+
+    img {
+        position: relative;
+        display: block;
+        width: 100px;
+        height: 100px;
+    }
+    
+    .composited {
+        -webkit-transform: translateZ(0);
+    }
+    
+    #indicator {
+        position: absolute;
+        top: 0;
+        background-color: red;
+        width: 100px;
+        height: 200px;
+    }
+  </style>
+</head>
+<body>
+
+    <div id="indicator"></div>
+
+    <img src="../../fast/images/resources/green_rectangle.pdf">
+    <img class="composited" src="../../fast/images/resources/green_rectangle.pdf">
+
+    <!-- You should see two no red above -->
+
+</body>
+</html>

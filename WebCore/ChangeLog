@@ -1,5 +1,21 @@
 2010-09-20  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        When PDF image is directly composited, it does not display
+        https://bugs.webkit.org/show_bug.cgi?id=46144
+        
+        In the "direct image compositing" code path, we set the image directly
+        as the contents of the GraphicsLayer. However, this only works with
+        bitmap images, so we have to check that the image is a bitmap image.
+
+        Test: compositing/images/direct-pdf-image.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::isDirectlyCompositedImage):
+
+2010-09-20  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Darin Adler.
 
         Crash when div with content set to image gets composited (Vimeo).
