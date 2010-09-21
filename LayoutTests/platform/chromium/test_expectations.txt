@@ -3181,5 +3181,3 @@ BUGWEBGL WIN LINUX : fast/canvas/webgl/uniform-location.html = TEXT
 // Pre-HTML5 parser quirks only apply to the mac port for now.
 WONTFIX SKIP : fast/parser/pre-html5-parser-quirks.html = FAIL
 
-// Failing after 67748:67845 roll
-BUG56277 : canvas/philip/tests/2d.imageData.get.source.outside.html = FAIL

@@ -1,5 +1,19 @@
 2010-09-20  Andrew Wilson  <atwilson@chromium.org>
 
+        Revert r67892 (expectations update) as the expectations are out-of-date due to r67879.
+
+        * platform/chromium-mac/fast/repaint/table-cell-move-expected.checksum: Removed.
+        * platform/chromium-mac/fast/repaint/table-cell-move-expected.png: Removed.
+        * platform/chromium-mac/fast/repaint/table-extra-bottom-grow-expected.checksum: Removed.
+        * platform/chromium-mac/fast/repaint/table-extra-bottom-grow-expected.png: Removed.
+        * platform/chromium-win/fast/repaint/table-cell-move-expected.checksum:
+        * platform/chromium-win/fast/repaint/table-cell-move-expected.png:
+        * platform/chromium-win/fast/repaint/table-extra-bottom-grow-expected.checksum:
+        * platform/chromium-win/fast/repaint/table-extra-bottom-grow-expected.png:
+        * platform/chromium/test_expectations.txt:
+
+2010-09-20  Andrew Wilson  <atwilson@chromium.org>
+
         Unreviewed expectations update for chromium.
 
         * platform/chromium-mac/fast/repaint/table-cell-move-expected.checksum: Added.

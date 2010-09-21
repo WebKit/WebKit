@@ -1,3 +1,9 @@
+2010-09-20  Andrew Wilson  <atwilson@chromium.org>
+
+        Revert change which was accidentally committed along with some expectation changes.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+
 2010-09-20  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.
