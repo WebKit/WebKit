@@ -29,6 +29,7 @@
 #include "DrawingArea.h"
 #include "InjectedBundle.h"
 #include "MessageID.h"
+#include "PluginView.h"
 #include "WebBackForwardControllerClient.h"
 #include "WebBackForwardListProxy.h"
 #include "WebChromeClient.h"
@@ -88,6 +89,9 @@ WebPage::WebPage(uint64_t pageID, const IntSize& viewSize, const WebPreferencesS
     : m_viewSize(viewSize)
     , m_drawingArea(DrawingArea::create(drawingAreaInfo.type, drawingAreaInfo.id, this))
     , m_isInRedo(false)
+#if PLATFORM(MAC)
+    , m_windowIsVisible(false)
+#endif
     , m_pageID(pageID)
 {
     ASSERT(m_pageID);
@@ -135,6 +139,10 @@ WebPage::WebPage(uint64_t pageID, const IntSize& viewSize, const WebPreferencesS
 WebPage::~WebPage()
 {
     ASSERT(!m_page);
+#if PLATFORM(MAC)
+    ASSERT(m_pluginViews.isEmpty());
+#endif
+
 #ifndef NDEBUG
     webPageCounter.decrement();
 #endif
@@ -664,6 +672,41 @@ void WebPage::didRemoveEditCommand(uint64_t commandID)
     removeWebEditCommand(commandID);
 }
 
+#if PLATFORM(MAC)
+void WebPage::addPluginView(PluginView* pluginView)
+{
+    ASSERT(!m_pluginViews.contains(pluginView));
+
+    m_pluginViews.add(pluginView);
+}
+
+void WebPage::removePluginView(PluginView* pluginView)
+{
+    ASSERT(m_pluginViews.contains(pluginView));
+
+    m_pluginViews.remove(pluginView);
+}
+
+void WebPage::setWindowIsVisible(bool windowIsVisible)
+{
+    m_windowIsVisible = windowIsVisible;
+
+    // Tell all our plug-in views that the window visibility changed.
+    for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
+        (*it)->setWindowIsVisible(windowIsVisible);
+}
+
+void WebPage::setWindowFrame(const IntRect& windowFrame)
+{
+    m_windowFrame = windowFrame;
+
+    // Tell all our plug-in views that the window frame changed.
+    for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
+        (*it)->setWindowFrame(windowFrame);
+}
+
+#endif
+
 void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     if (messageID.is<CoreIPC::MessageClassDrawingArea>()) {
@@ -697,6 +740,23 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
             setIsInWindow(isInWindow);
             return;
         }
+#if PLATFORM(MAC)
+        case WebPageMessage::SetWindowIsVisible: {
+            bool windowIsVisible;
+            if (!arguments->decode(windowIsVisible))
+                return;
+            setWindowIsVisible(windowIsVisible);
+            return;
+        }
+        
+        case WebPageMessage::SetWindowFrame: {
+            IntRect windowFrame;
+            if (!arguments->decode(windowFrame))
+                return;
+            setWindowFrame(windowFrame);
+            return;
+        }
+#endif
         case WebPageMessage::MouseEvent: {
             WebMouseEvent event;
             if (!arguments->decode(event))

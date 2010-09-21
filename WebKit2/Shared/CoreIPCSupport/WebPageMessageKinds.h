@@ -55,6 +55,10 @@ enum Kind {
     SetCustomUserAgent,
     SetFocused,
     SetIsInWindow,
+#if PLATFORM(MAC)
+    SetWindowIsVisible,
+    SetWindowFrame,
+#endif
     SetPageAndTextZoomFactors,
     SetPageZoomFactor,
     SetTextZoomFactor,

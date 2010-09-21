@@ -132,6 +132,12 @@ public:
     void setActive(bool active);
     void setIsInWindow(bool isInWindow);
 
+// These are only used on Mac currently.
+#if PLATFORM(MAC)
+    void setWindowIsVisible(bool windowIsVisible);
+    void setWindowFrame(const WebCore::IntRect&);
+#endif
+
     void selectAll();
     void copy();
     void cut();

@@ -221,6 +221,14 @@ void PluginView::Stream::didFinishLoading(NetscapePlugInStreamLoader*)
     m_pluginView = 0;
 }
 
+static inline WebPage* webPage(Frame* frame)
+{
+    WebPage* webPage = static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame()->page();
+    ASSERT(webPage);
+
+    return webPage;
+}
+
 PluginView::PluginView(WebCore::HTMLPlugInElement* pluginElement, PassRefPtr<Plugin> plugin, const Plugin::Parameters& parameters)
     : PluginViewBase(0)
     , m_pluginElement(pluginElement)
@@ -232,10 +240,17 @@ PluginView::PluginView(WebCore::HTMLPlugInElement* pluginElement, PassRefPtr<Plu
     , m_pendingURLRequestsTimer(RunLoop::main(), this, &PluginView::pendingURLRequestsTimerFired)
     , m_npRuntimeObjectMap(this)
 {
+#if PLATFORM(MAC)
+    webPage(frame())->addPluginView(this);
+#endif
 }
 
 PluginView::~PluginView()
 {
+#if PLATFORM(MAC)
+    webPage(frame())->removePluginView(this);
+#endif
+
     ASSERT(!m_isBeingDestroyed);
 
     if (m_isWaitingUntilMediaCanStart)
@@ -294,7 +309,25 @@ void PluginView::manualLoadDidFail(const ResourceError& error)
 {
     m_plugin->manualStreamDidFail(error.isCancellation());
 }
-    
+
+#if PLATFORM(MAC)    
+void PluginView::setWindowIsVisible(bool windowIsVisible)
+{
+    if (!m_plugin)
+        return;
+
+    // FIXME: Implement.
+}
+
+void PluginView::setWindowFrame(const IntRect& windowFrame)
+{
+    if (!m_plugin)
+        return;
+        
+    // FIXME: Implement.
+}
+#endif
+
 void PluginView::initializePlugin()
 {
     if (m_isInitialized)

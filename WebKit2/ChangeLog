@@ -1,5 +1,68 @@
 2010-09-21  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Adam Roben.
+
+        Send window visibility and window frame change sizes to the plug-in
+        https://bugs.webkit.org/show_bug.cgi?id=46202
+
+        * Shared/CoreIPCSupport/WebPageMessageKinds.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _updateWindowVisibility]):
+        Call WebPageProxy::setWindowIsVisible.
+
+        (-[WKView addWindowObserversForWindow:]):
+        Add additional observers.
+
+        (-[WKView removeWindowObservers]):
+        Remove observers.
+
+        (-[WKView _updateWindowFrame]):
+        Call WebPageProxy::setWindowFrame.
+
+        (-[WKView viewDidMoveToWindow]):
+        Update the window visibility and the web frame.
+
+        (-[WKView _windowDidMiniaturize:]):
+        (-[WKView _windowDidDeminiaturize:]):
+        Update the window visibility.
+
+        (-[WKView _windowFrameDidChange:]):
+        Update the window frame.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setWindowIsVisible):
+        (WebKit::WebPageProxy::setWindowFrame):
+        Send messages along to the web process.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::PluginView):
+        Register the plug-in view.
+
+        (WebKit::PluginView::~PluginView):
+        Unregister the plug-in view.
+
+        (WebKit::PluginView::setWindowIsVisible):
+        (WebKit::PluginView::setWindowFrame):
+        Add empty stubs.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        Initialize m_windowIsVisible.
+
+        (WebKit::WebPage::~WebPage):
+        Assert that all plug-in views have been removed.
+
+        (WebKit::WebPage::setWindowIsVisible):
+        Notify all plug-ins about the window visibility change.
+        
+        (WebKit::WebPage::setWindowFrame):
+        Notify all plug-ins about the window frame change.
+        
+        (WebKit::WebPage::didReceiveMessage):
+        Handle setWindowIsVisible and setWindowFrame.
+
+2010-09-21  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Mark Rowe.
 
         * Configurations/WebKit2.xcconfig:

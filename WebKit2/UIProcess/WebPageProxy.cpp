@@ -373,7 +373,24 @@ void WebPageProxy::setIsInWindow(bool isInWindow)
         return;
     process()->send(WebPageMessage::SetIsInWindow, m_pageID, CoreIPC::In(isInWindow));
 }
-    
+
+#if PLATFORM(MAC)
+void WebPageProxy::setWindowIsVisible(bool windowIsVisible)
+{
+    if (!isValid())
+        return;
+    process()->send(WebPageMessage::SetWindowIsVisible, m_pageID, CoreIPC::In(windowIsVisible));
+}
+
+void WebPageProxy::setWindowFrame(const IntRect& windowFrame)
+{
+    if (!isValid())
+        return;
+    process()->send(WebPageMessage::SetWindowFrame, m_pageID, CoreIPC::In(windowFrame));
+}
+
+#endif
+
 void WebPageProxy::mouseEvent(const WebMouseEvent& event)
 {
     if (!isValid())

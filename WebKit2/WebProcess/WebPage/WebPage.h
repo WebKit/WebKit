@@ -62,6 +62,7 @@ namespace WebCore {
 namespace WebKit {
 
 class DrawingArea;
+class PluginView;
 class WebEvent;
 class WebFrame;
 class WebKeyboardEvent;
@@ -141,6 +142,11 @@ public:
     void exitAcceleratedCompositingMode();
 #endif
 
+#if PLATFORM(MAC)
+    void addPluginView(PluginView*);
+    void removePluginView(PluginView*);
+#endif
+
     static const WebEvent* currentEvent();
 
 private:
@@ -187,6 +193,11 @@ private:
     void didReceivePolicyDecision(WebFrame*, uint64_t listenerID, WebCore::PolicyAction policyAction);
     void setCustomUserAgent(const String&);
 
+#if PLATFORM(MAC)
+    void setWindowIsVisible(bool windowIsVisible);
+    void setWindowFrame(const WebCore::IntRect&);
+#endif
+
     void unapplyEditCommand(uint64_t commandID);
     void reapplyEditCommand(uint64_t commandID);
     void didRemoveEditCommand(uint64_t commandID);
@@ -200,6 +211,18 @@ private:
     RefPtr<DrawingArea> m_drawingArea;
 
     bool m_isInRedo;
+
+#if PLATFORM(MAC)
+    // Whether the containing window is visible or not.
+    bool m_windowIsVisible;
+
+    // The frame of the containing window.
+    WebCore::IntRect m_windowFrame;
+
+    // All plug-in views on this web page.
+    HashSet<PluginView*> m_pluginViews;
+#endif
+    
     HashMap<uint64_t, RefPtr<WebEditCommand> > m_editCommandMap;
 
     InjectedBundlePageEditorClient m_editorClient;

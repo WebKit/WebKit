@@ -236,25 +236,39 @@ using namespace WebCore;
     _data->_page->setActive([[self window] isKeyWindow]);
 }
 
+- (void)_updateWindowVisibility
+{
+    _data->_page->setWindowIsVisible(![[self window] isMiniaturized]);
+}
+
 - (void)addWindowObserversForWindow:(NSWindow *)window
 {
     if (window) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidBecomeKey:)
-            name:NSWindowDidBecomeKeyNotification object:nil];
+                                                     name:NSWindowDidBecomeKeyNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidResignKey:)
-            name:NSWindowDidResignKeyNotification object:nil];
+                                                     name:NSWindowDidResignKeyNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidMiniaturize:) 
+                                                     name:NSWindowDidMiniaturizeNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidDeminiaturize:)
+                                                     name:NSWindowDidDeminiaturizeNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowFrameDidChange:)
+                                                     name:NSWindowDidMoveNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowFrameDidChange:) 
+                                                     name:NSWindowDidResizeNotification object:nil];
     }
 }
 
 - (void)removeWindowObservers
 {
     NSWindow *window = [self window];
-    if (window) {
-        [[NSNotificationCenter defaultCenter] removeObserver:self
-            name:NSWindowDidBecomeKeyNotification object:nil];
-        [[NSNotificationCenter defaultCenter] removeObserver:self
-            name:NSWindowDidResignKeyNotification object:nil];
-    }
+    if (!window)
+        return;
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidBecomeKeyNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidResignKeyNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidMiniaturizeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidDeminiaturizeNotification object:nil];
 }
 
 static bool isViewVisible(NSView *view)
@@ -273,6 +287,13 @@ static bool isViewVisible(NSView *view)
     _data->_page->setIsInWindow([self window]);
     if (DrawingAreaProxy* area = _data->_page->drawingArea())
         area->setPageIsVisible(isViewVisible(self));
+}
+
+- (void)_updateWindowFrame
+{
+    ASSERT([self window]);
+
+    _data->_page->setWindowFrame(enclosingIntRect([[self window] frame]));
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)window
@@ -295,6 +316,9 @@ static bool isViewVisible(NSView *view)
         [self _updateVisibility];
         [self _updateActiveState];
     }
+
+    [self _updateWindowVisibility];
+    [self _updateWindowFrame];
 }
 
 - (void)_windowDidBecomeKey:(NSNotification *)notification
@@ -309,6 +333,21 @@ static bool isViewVisible(NSView *view)
     NSWindow *formerKeyWindow = [notification object];
     if (formerKeyWindow == [self window] || formerKeyWindow == [[self window] attachedSheet])
         [self _updateActiveState];
+}
+
+- (void)_windowDidMiniaturize:(NSNotification *)notification
+{
+    [self _updateWindowVisibility];
+}
+
+- (void)_windowDidDeminiaturize:(NSNotification *)notification
+{
+    [self _updateWindowVisibility];
+}
+
+- (void)_windowFrameDidChange:(NSNotification *)notification
+{
+    [self _updateWindowFrame];
 }
 
 - (void)drawRect:(NSRect)rect

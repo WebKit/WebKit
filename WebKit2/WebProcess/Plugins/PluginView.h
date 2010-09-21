@@ -60,7 +60,12 @@ public:
     void manualLoadDidReceiveData(const char* bytes, int length);
     void manualLoadDidFinishLoading();
     void manualLoadDidFail(const WebCore::ResourceError&);
-    
+
+#if PLATFORM(MAC)
+    void setWindowIsVisible(bool);
+    void setWindowFrame(const WebCore::IntRect&);
+#endif
+
 private:
     PluginView(WebCore::HTMLPlugInElement*, PassRefPtr<Plugin>, const Plugin::Parameters& parameters);
     virtual ~PluginView();
