@@ -246,6 +246,9 @@ void QNetworkReplyHandler::finish()
     if (m_shouldFinish)
         return;
 
+    if (!m_reply)
+        return;
+
     sendResponseIfNeeded();
 
     if (!m_resourceHandle)

@@ -1,3 +1,19 @@
+2010-09-21  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Check if the reply has been deleted before finishing a network request
+        https://bugs.webkit.org/show_bug.cgi?id=46174
+
+        A crash can happen with the following sequence:
+        1. QNetworkReplyHandler::abort() emits reply->deleteLater()
+        2. QNAM emits QNetworkReply::finished() -> calls QNetworkReplyHandler::finish()
+        3. event loop would call reply->deleteLater()
+        However a crash occurs since m_reply == 0 on step 2.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::finish):
+
 2010-09-21  Jochen Eisinger  <jochen@chromium.org>
 
         Reviewed by Jeremy Orlow.
