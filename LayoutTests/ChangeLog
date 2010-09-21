@@ -1,3 +1,22 @@
+2010-09-20  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Rebaseline tests after HashChangeEvent was added by r67898
+        https://bugs.webkit.org/show_bug.cgi?id=46155
+        
+        GTK and Qt changes that mirror the changes from r67898, plus a missed
+        test window-property-descriptors from the original change.
+
+        * fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/gtk/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/gtk/fast/dom/prototype-inheritance-expected.txt:
+        * platform/gtk/fast/js/global-constructors-expected.txt:
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/qt/fast/dom/prototype-inheritance-expected.txt:
+        * platform/qt/fast/js/global-constructors-expected.txt:
+
 2010-09-20  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
