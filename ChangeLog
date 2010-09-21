@@ -2,6 +2,18 @@
 
         Reviewed by Martin Robinson.
 
+        [GTK] Configure flag for Opcode stats
+        https://bugs.webkit.org/show_bug.cgi?id=46081
+
+        Opcode stats won't work with JIT enabled, so bail out if both are
+        enabled at the same time.
+
+        * configure.ac:
+
+2010-09-21  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         [GTK] Fix --disable-jit
         https://bugs.webkit.org/show_bug.cgi?id=46080
 

@@ -710,6 +710,20 @@ else
 fi
 AC_MSG_RESULT([$enable_jit])
 
+# Opcode stats
+AC_MSG_CHECKING([whether to enable opcode stats])
+AC_ARG_ENABLE([opcode-stats],
+  [AS_HELP_STRING([--enable-opcode-stats], [Enable Opcode statistics (default: disabled)])],
+  [], [enable_opcode_stats=no])
+AC_MSG_RESULT([$enable_opcode_stats])
+
+if test "$enable_opcode_stats" = "yes"; then
+  if test "$enable_jit" = "yes"; then
+    AC_MSG_ERROR([JIT must be disabled for Opcode stats to work.])
+  fi
+  AC_DEFINE([ENABLE_OPCODE_STATS], [1], [Define to enable Opcode statistics])
+fi
+
 # GObject Introspection
 AC_MSG_CHECKING([whether to enable GObject introspection support])
 AC_ARG_ENABLE([introspection],
@@ -926,6 +940,7 @@ AM_CONDITIONAL([SVG_FLAGS],[test "$svg_flags" = "yes"])
 AM_CONDITIONAL([HTML_FLAGS],[test "$html_flags" = "yes"])
 AM_CONDITIONAL([ENABLE_WEB_SOCKETS],[test "$enable_web_sockets" = "yes"])
 AM_CONDITIONAL([ENABLE_WEB_TIMING],[test "$enable_web_timing" = "yes"])
+AM_CONDITIONAL([ENABLE_OPCODE_STATS],[test "$enable_opcode_stats" = "yes"])
 
 # Gtk conditionals
 AM_CONDITIONAL([ENABLE_INTROSPECTION],[test "$enable_introspection" = "yes"])
@@ -980,6 +995,7 @@ Features:
  HTML5 video element support                              : $enable_video
  Icon database support                                    : $enable_icon_database
  Image resizer support                                    : $enable_image_resizer
+ Opcode stats                                             : $enable_opcode_stats
  SharedWorkers support                                    : $enable_shared_workers
  Speech input support                                     : $enable_input_speech
  SVG support                                              : $enable_svg
