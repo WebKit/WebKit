@@ -1,3 +1,17 @@
+2010-09-21  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2 should look for WebKit2WebProcess.exe next to WebKit.dll
+        https://bugs.webkit.org/show_bug.cgi?id=46209
+        <rdar://problem/8445639>
+        
+        Find WebKit2WebProcess.exe by getting the full path to WebKit.dll, and then
+        removing the last path component and replacing it with WebKit2WebProcess.exe.
+
+        * UIProcess/Launcher/win/ProcessLauncherWin.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+
 2010-09-21  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.
