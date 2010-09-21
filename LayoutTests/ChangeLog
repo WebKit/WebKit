@@ -1,3 +1,16 @@
+2010-09-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        HTML parser double quote error recovery doesn't match Firefox 3.0.x
+        https://bugs.webkit.org/show_bug.cgi?id=23970
+
+        This bug is fixed by the HTML5 parser.  Adding test.
+
+        * fast/tokenizer/unterminated-quote-in-noscript-expected.txt: Added.
+        * fast/tokenizer/unterminated-quote-in-noscript.html: Added.
+        * html5lib/resources/webkit02.dat:
+
 2010-09-17  Tony Chang  <tony@chromium.org>
 
         Reviewed by Adam Barth.

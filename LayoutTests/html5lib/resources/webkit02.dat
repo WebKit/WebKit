@@ -32,3 +32,11 @@
 |     <div>
 |       <sarcasm>
 |         <div>
+
+#data
+<html><body><img src="" border="0" alt="><div>A</div></body></html>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
