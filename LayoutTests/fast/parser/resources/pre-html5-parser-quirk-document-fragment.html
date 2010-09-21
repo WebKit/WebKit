@@ -1,7 +1,6 @@
 Document fragment:
-<div id="wrapper">
-</div>
-
+<div id="wrapper"></div>
 <script>
-    document.getElementById("wrapper").innerHTML = "<div style='visibility:hidden'><p></p</div>PASS";
+    document.getElementById("wrapper").innerHTML += "<div style='visibility:hidden'><p</div>Start Tag: PASS<br>";
+    document.getElementById("wrapper").innerHTML += "<div style='visibility:hidden'><p></p</div>End Tag: PASS<br>";
 </script>

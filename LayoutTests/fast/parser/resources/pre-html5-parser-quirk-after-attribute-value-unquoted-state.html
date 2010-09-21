@@ -1,13 +1,19 @@
-<div>
-    AfterAttributeValueUnquotedState:
-    <div style="visibility:hidden">
-        <p></p id=unquoted</div>
-    FAIL
-</div>
+AfterAttributeValueUnquotedState:
 <div id="console"></div>
-
+<div>
+    <div style="visibility:hidden">
+        <p id=start</div>
+    Start Tag: FAIL
+</div>
+<div>
+    <div style="visibility:hidden">
+        <p></p id=end</div>
+    End Tag: FAIL
+</div>
 <script>
     var console = document.getElementById("console");
-    if (!document.getElementById("unquoted"))
-        console.innerHTML = "PASS";
+    if (!document.getElementById("start"))
+        console.innerHTML += "Start Tag: PASS<br>";
+    if (!document.getElementById("end"))
+        console.innerHTML += "End Tag: PASS<br>";
 </script>

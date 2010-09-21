@@ -1,3 +1,19 @@
+2010-09-21  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Test that parser quirks apply when processing both start and end tags.
+        https://bugs.webkit.org/show_bug.cgi?id=40961
+
+        * fast/parser/pre-html5-parser-quirks-expected.txt:
+        * fast/parser/resources/pre-html5-parser-quirk-after-attribute-name-state.html:
+        * fast/parser/resources/pre-html5-parser-quirk-after-attribute-value-quoted-state.html:
+        * fast/parser/resources/pre-html5-parser-quirk-after-attribute-value-unquoted-state.html:
+        * fast/parser/resources/pre-html5-parser-quirk-attribute-name-state.html:
+        * fast/parser/resources/pre-html5-parser-quirk-before-attribute-name-state.html:
+        * fast/parser/resources/pre-html5-parser-quirk-document-fragment.html:
+        * fast/parser/resources/pre-html5-parser-quirk-tag-name-state.html:
+
 2010-09-21  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed.

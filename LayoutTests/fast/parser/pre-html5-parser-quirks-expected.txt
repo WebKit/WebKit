@@ -6,40 +6,50 @@ This tests that certain pre-HTML5 parser rules are applied when the WebKitUsePre
 Frame: '<!--framePath //<!--frame0-->-->'
 --------
 AfterAttributeNameState:
-PASS
+Start Tag: PASS
+End Tag: PASS
 
 --------
 Frame: '<!--framePath //<!--frame1-->-->'
 --------
 AfterAttributeValueQuotedState:
-PASS
+Start Tag: PASS
+End Tag: PASS
 
 --------
 Frame: '<!--framePath //<!--frame2-->-->'
 --------
 AfterAttributeValueUnquotedState:
-PASS
+Start Tag: PASS
+End Tag: PASS
+
+
 
 --------
 Frame: '<!--framePath //<!--frame3-->-->'
 --------
 AttributeNameState:
-PASS
+Start Tag: PASS
+End Tag: PASS
 
 --------
 Frame: '<!--framePath //<!--frame4-->-->'
 --------
 BeforeAttributeNameState:
-PASS
+Start Tag: PASS
+End Tag: PASS
 
 --------
 Frame: '<!--framePath //<!--frame5-->-->'
 --------
 Document fragment:
-PASS
+Start Tag: PASS
+End Tag: PASS
+
 
 --------
 Frame: '<!--framePath //<!--frame6-->-->'
 --------
 TagNameState:
-PASS
+Start Tag: PASS
+End Tag: PASS
