@@ -60,10 +60,11 @@ public:
         return false;
     }
 
-    virtual void openObjectCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void openCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void getObject(const WebIDBKey&, WebIDBCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void get(const WebIDBKey&, WebIDBCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
+    // FIXME: Remove the default parameters for transactionIds.
+    virtual void openObjectCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*, int transactionId = 0) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void openCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*, int transactionId = 0) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void getObject(const WebIDBKey&, WebIDBCallbacks*, int transactionId = 0) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void get(const WebIDBKey&, WebIDBCallbacks*, int transactionId = 0) { WEBKIT_ASSERT_NOT_REACHED(); }
 };
 
 } // namespace WebKit

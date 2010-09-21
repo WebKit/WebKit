@@ -1,3 +1,43 @@
+2010-09-21  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        [Chromium] Plumb the IDBTransansaction's id
+        https://bugs.webkit.org/show_bug.cgi?id=46197
+
+        Next step, add the plumbing to Chromium.  Then we add code to WebKit
+        that uses it (and take out the default IDBTransaction param).
+
+        * public/WebIDBCursor.h:
+        (WebKit::WebIDBCursor::key):
+        (WebKit::WebIDBCursor::value):
+        * public/WebIDBFactory.h:
+        (WebKit::WebIDBFactory::open):
+        * public/WebIDBIndex.h:
+        (WebKit::WebIDBIndex::openObjectCursor):
+        (WebKit::WebIDBIndex::openCursor):
+        (WebKit::WebIDBIndex::getObject):
+        (WebKit::WebIDBIndex::get):
+        * public/WebIDBObjectStore.h:
+        (WebKit::WebIDBObjectStore::get):
+        (WebKit::WebIDBObjectStore::put):
+        (WebKit::WebIDBObjectStore::remove):
+        (WebKit::WebIDBObjectStore::createIndex):
+        (WebKit::WebIDBObjectStore::removeIndex):
+        (WebKit::WebIDBObjectStore::openCursor):
+        * src/WebIDBIndexImpl.cpp:
+        (WebKit::WebIDBIndexImpl::openCursor):
+        (WebKit::WebIDBIndexImpl::openObjectCursor):
+        (WebKit::WebIDBIndexImpl::getObject):
+        (WebKit::WebIDBIndexImpl::get):
+        * src/WebIDBIndexImpl.h:
+        * src/WebIDBObjectStoreImpl.cpp:
+        (WebKit::WebIDBObjectStoreImpl::get):
+        (WebKit::WebIDBObjectStoreImpl::put):
+        (WebKit::WebIDBObjectStoreImpl::remove):
+        (WebKit::WebIDBObjectStoreImpl::openCursor):
+        * src/WebIDBObjectStoreImpl.h:
+
 2010-09-21  Chris Guillory   <chris.guillory@google.com>
 
         Reviewed by Chris Fleizach.

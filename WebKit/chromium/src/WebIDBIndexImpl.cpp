@@ -68,23 +68,27 @@ bool WebIDBIndexImpl::unique() const
     return m_backend->unique();
 }
 
-void WebIDBIndexImpl::openCursor(const WebIDBKeyRange& keyRange, unsigned short direction, WebIDBCallbacks* callbacks)
+void WebIDBIndexImpl::openCursor(const WebIDBKeyRange& keyRange, unsigned short direction, WebIDBCallbacks* callbacks, int transactionId)
 {
+    ASSERT_UNUSED(transactionId, !transactionId); // FIXME: Pass the transaction in.
     m_backend->openCursor(keyRange, direction, IDBCallbacksProxy::create(callbacks));
 }
 
-void WebIDBIndexImpl::openObjectCursor(const WebIDBKeyRange& keyRange, unsigned short direction, WebIDBCallbacks* callbacks)
+void WebIDBIndexImpl::openObjectCursor(const WebIDBKeyRange& keyRange, unsigned short direction, WebIDBCallbacks* callbacks, int transactionId)
 {
+    ASSERT_UNUSED(transactionId, !transactionId); // FIXME: Pass the transaction in.
     m_backend->openObjectCursor(keyRange, direction, IDBCallbacksProxy::create(callbacks));
 }
 
-void WebIDBIndexImpl::getObject(const WebIDBKey& keyRange, WebIDBCallbacks* callbacks)
+void WebIDBIndexImpl::getObject(const WebIDBKey& keyRange, WebIDBCallbacks* callbacks, int transactionId)
 {
+    ASSERT_UNUSED(transactionId, !transactionId); // FIXME: Pass the transaction in.
     m_backend->getObject(keyRange, IDBCallbacksProxy::create(callbacks));
 }
 
-void WebIDBIndexImpl::get(const WebIDBKey& keyRange, WebIDBCallbacks* callbacks)
+void WebIDBIndexImpl::get(const WebIDBKey& keyRange, WebIDBCallbacks* callbacks, int transactionId)
 {
+    ASSERT_UNUSED(transactionId, !transactionId); // FIXME: Pass the transaction in.
     m_backend->get(keyRange, IDBCallbacksProxy::create(callbacks));
 }
 

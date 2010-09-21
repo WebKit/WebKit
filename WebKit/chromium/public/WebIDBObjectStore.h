@@ -55,36 +55,20 @@ public:
         WEBKIT_ASSERT_NOT_REACHED();
         return WebDOMStringList();
     }
-    virtual void get(const WebIDBKey& key, WebIDBCallbacks*)
-    {
-        WEBKIT_ASSERT_NOT_REACHED();
-    }
-    virtual void put(const WebSerializedScriptValue& value, const WebIDBKey& key, bool addOnly, WebIDBCallbacks*)
-    {
-        WEBKIT_ASSERT_NOT_REACHED();
-    }
-    virtual void remove(const WebIDBKey& key, WebIDBCallbacks*)
-    {
-        WEBKIT_ASSERT_NOT_REACHED();
-    }
-    virtual void createIndex(const WebString& name, const WebString& keyPath, bool unique, WebIDBCallbacks*)
-    {
-        WEBKIT_ASSERT_NOT_REACHED();
-    }
+
+    // FIXME: Remove the default parameters for transactionIds.
+    virtual void get(const WebIDBKey& key, WebIDBCallbacks*, int transactionId = 0) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void put(const WebSerializedScriptValue& value, const WebIDBKey& key, bool addOnly, WebIDBCallbacks*, int transactionId = 0) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void remove(const WebIDBKey& key, WebIDBCallbacks*, int transactionId = 0) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void createIndex(const WebString& name, const WebString& keyPath, bool unique, WebIDBCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
     // Transfers ownership of the WebIDBIndex to the caller.
     virtual WebIDBIndex* index(const WebString& name)
     {
         WEBKIT_ASSERT_NOT_REACHED();
         return 0;
     }
-    virtual void removeIndex(const WebString& name, WebIDBCallbacks*)
-    {
-        WEBKIT_ASSERT_NOT_REACHED();
-    }
-    virtual void openCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*)
-    {
-        WEBKIT_ASSERT_NOT_REACHED();
-    }
+    virtual void removeIndex(const WebString& name, WebIDBCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void openCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*, int transactionId = 0) { WEBKIT_ASSERT_NOT_REACHED(); }
     // FIXME: finish.
 };
 
