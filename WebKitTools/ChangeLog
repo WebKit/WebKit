@@ -1,3 +1,15 @@
+2010-09-20  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, adding a line which got dropped and is trivially correct (and tested).
+
+        commit-queue can't land patches
+        https://bugs.webkit.org/show_bug.cgi?id=46138
+
+        Add a line of code I forgot in my last commit.
+
+        * Scripts/webkitpy/common/net/bugzilla.py:
+        * Scripts/webkitpy/common/net/bugzilla_unittest.py:
+
 2010-09-20  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

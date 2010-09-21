@@ -213,6 +213,7 @@ ZEZpbmlzaExvYWRXaXRoUmVhc29uOnJlYXNvbl07Cit9CisKIEBlbmQKIAogI2VuZGlmCg==
         "cc_emails" : ["foo@bar.com", "example@example.com"],
         "reporter_email" : "eric@webkit.org",
         "assigned_to_email" : "webkit-unassigned@lists.webkit.org",
+        "bug_status": "NEW",
         "attachments" : [{
             "attach_date": datetime.datetime(2009, 12, 27, 23, 51),
             'name': u'Patch',

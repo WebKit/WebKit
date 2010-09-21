@@ -513,6 +513,7 @@ class Bugzilla(object):
         bug = {}
         bug["id"] = int(soup.find("bug_id").string)
         bug["title"] = self._string_contents(soup.find("short_desc"))
+        bug["bug_status"] = self._string_contents(soup.find("bug_status"))
         bug["reporter_email"] = self._string_contents(soup.find("reporter"))
         bug["assigned_to_email"] = self._string_contents(soup.find("assigned_to"))
         bug["cc_emails"] = [self._string_contents(element)
