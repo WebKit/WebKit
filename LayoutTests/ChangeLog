@@ -1,3 +1,44 @@
+2010-09-17  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [chromium] last 16 linux baselines due to scrollbar arrows
+        https://bugs.webkit.org/show_bug.cgi?id=46019
+
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug10140-expected.checksum:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug10140-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug1055-2-expected.checksum:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug1055-2-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug106966-expected.checksum:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug106966-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug22122-expected.checksum:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug22122-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug80762-2-expected.checksum:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug80762-2-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug91057-expected.checksum:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug91057-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/core/backgrounds-expected.checksum:
+        * platform/chromium-linux/tables/mozilla_expected_failures/core/backgrounds-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/core/captions1-expected.checksum:
+        * platform/chromium-linux/tables/mozilla_expected_failures/core/captions1-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/core/col_span2-expected.checksum:
+        * platform/chromium-linux/tables/mozilla_expected_failures/core/col_span2-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_border-table-row-group-expected.checksum:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_border-table-row-group-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_position-table-cell-expected.checksum:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_position-table-cell-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_position-table-column-group-expected.checksum:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_position-table-column-group-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_position-table-row-expected.checksum:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_position-table-row-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_row-expected.checksum:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_row-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/other/empty_cells-expected.checksum:
+        * platform/chromium-linux/tables/mozilla_expected_failures/other/empty_cells-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/other/test4-expected.checksum:
+        * platform/chromium-linux/tables/mozilla_expected_failures/other/test4-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2010-09-21  Satish Sampath  <satish@chromium.org>
 
         Unreviewed, rename a test baseline to the correct name and update a test's expectation for chromium linux.

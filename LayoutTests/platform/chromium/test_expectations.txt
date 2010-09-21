@@ -2188,22 +2188,6 @@ BUG31997 DEBUG WIN : fast/body-propagation/overflow/004-xhtml.xhtml = IMAGE+TEXT
 BUG35329 WIN : http/tests/appcache/resource-redirect-2.html = TIMEOUT PASS
 
 // Webkit Roll to r51875
-BUG29748 LINUX : tables/mozilla_expected_failures/bugs/bug10140.html = IMAGE
-BUG29748 LINUX : tables/mozilla_expected_failures/bugs/bug1055-2.html = IMAGE
-BUG29748 LINUX : tables/mozilla_expected_failures/bugs/bug106966.html = IMAGE
-BUG29748 LINUX : tables/mozilla_expected_failures/bugs/bug22122.html = IMAGE
-BUG29748 LINUX : tables/mozilla_expected_failures/bugs/bug80762-2.html = IMAGE
-BUG29748 LINUX : tables/mozilla_expected_failures/bugs/bug91057.html = IMAGE
-BUG29748 LINUX : tables/mozilla_expected_failures/core/backgrounds.html = IMAGE
-BUG29748 LINUX : tables/mozilla_expected_failures/core/captions1.html = IMAGE
-BUG29748 LINUX : tables/mozilla_expected_failures/core/col_span2.html = IMAGE
-BUG29748 LINUX : tables/mozilla_expected_failures/marvin/backgr_border-table-row-group.html = IMAGE
-BUG29748 LINUX : tables/mozilla_expected_failures/marvin/backgr_position-table-cell.html = IMAGE
-BUG29748 LINUX : tables/mozilla_expected_failures/marvin/backgr_position-table-column-group.html = IMAGE
-BUG29748 LINUX : tables/mozilla_expected_failures/marvin/backgr_position-table-row.html = IMAGE
-BUG29748 LINUX : tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_row.html = IMAGE
-BUG29748 LINUX : tables/mozilla_expected_failures/other/empty_cells.html = IMAGE
-BUG29748 LINUX : tables/mozilla_expected_failures/other/test4.html = IMAGE
 BUG29748 WIN DEBUG : fast/forms/input-align-image.html = IMAGE+TEXT PASS
 
 // The scrollbar arrows exceed the height of the iframe.
