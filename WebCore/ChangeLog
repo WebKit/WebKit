@@ -1,3 +1,16 @@
+2010-09-21  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r61285): AIM 2.1.296: Code rendered as text in Welcome screen
+        https://bugs.webkit.org/show_bug.cgi?id=46134
+
+        * WebCore.exp.in: Export __ZN7WebCore32applicationIsAOLInstantMessengerEv.
+        * platform/mac/RuntimeApplicationChecks.h:
+        * platform/mac/RuntimeApplicationChecks.mm:
+        (WebCore::applicationIsAOLInstantMessenger): Determine if the embedding
+        application is AOL Instant Messenger by checking the bundle identifier.
+
 2010-09-21  Chris Guillory   <chris.guillory@google.com>
 
         Reviewed by Chris Fleizach.

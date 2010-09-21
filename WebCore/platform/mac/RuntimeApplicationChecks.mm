@@ -52,5 +52,11 @@ bool applicationIsAdobeInstaller()
     static bool isAdobeInstaller = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.adobe.Installers.Setup"];
     return isAdobeInstaller;
 }
+    
+bool applicationIsAOLInstantMessenger()
+{
+    static bool isAOLInstantMessenger = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.aol.aim.desktop"];
+    return isAOLInstantMessenger;
+}
 
 } // namespace WebCore

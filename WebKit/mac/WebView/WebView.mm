@@ -609,6 +609,16 @@ static bool coreVideoHas7228836Fix()
     return true;
 }
 
+static bool shouldUsePreHTML5ParserQuirks(WebPreferences* preferences)
+{
+    // AIM clients linked against versions of WebKit prior to the introduction
+    // of the HTML5 parser contain markup incompatible with the new parser.
+    // Enable parser quirks to remain compatible with these clients. See
+    // <https://bugs.webkit.org/show_bug.cgi?id=46134>.
+    static bool isAIMAndNeedsParserQuirks = applicationIsAOLInstantMessenger() && !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_HTML5_PARSER);
+    return isAIMAndNeedsParserQuirks || [preferences usePreHTML5ParserQuirks];
+}
+
 static bool shouldEnableLoadDeferring()
 {
     return !applicationIsAdobeInstaller();
@@ -1453,7 +1463,7 @@ static bool fastDocumentTeardownEnabled()
     settings->setFullScreenEnabled([preferences fullScreenEnabled]);
 #endif
     settings->setMemoryInfoEnabled([preferences memoryInfoEnabled]);
-    settings->setUsePreHTML5ParserQuirks([preferences usePreHTML5ParserQuirks]);
+    settings->setUsePreHTML5ParserQuirks(shouldUsePreHTML5ParserQuirks(preferences));
 
     // Application Cache Preferences are stored on the global cache storage manager, not in Settings.
     [WebApplicationCache setDefaultOriginQuota:[preferences applicationCacheDefaultOriginQuota]];

@@ -32,6 +32,7 @@ bool applicationIsAppleMail();
 bool applicationIsSafari();
 bool applicationIsMicrosoftMessenger();
 bool applicationIsAdobeInstaller();
+bool applicationIsAOLInstantMessenger();
 
 } // namespace WebCore
 

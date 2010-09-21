@@ -1,3 +1,23 @@
+2010-09-21  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r61285): AIM 2.1.296: Code rendered as text in Welcome screen
+        https://bugs.webkit.org/show_bug.cgi?id=46134
+
+        AIM clients linked against versions of WebKit prior to the introduction
+        of the HTML5 parser contain markup incompatible with the new parser.
+        Enable parser quirks in this case to remain compatible with these
+        clients.
+
+        * WebView/WebView.mm:
+        (shouldUsePreHTML5ParserQuirks): Returns true if the embedding
+        application is AIM and was linked against a version of WebKit prior to
+        the introduction of the HTML5 parser, or if the
+        WebKitPreHTML5ParserQuirks WebPreference is enabled.
+        (-[WebView _preferencesChangedNotification:]): Call
+        WebCore::Settings::setUsePreHTML5ParserQuirks().
+
 2010-09-21  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.
