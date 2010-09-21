@@ -2,6 +2,21 @@
 
         Reviewed by Alexey Proskuryakov.
 
+        [html-parsing] make entity handling match IE7 / HTML5
+        https://bugs.webkit.org/show_bug.cgi?id=14391
+
+        This patch adds more test coverage of entity parsing.  We seem to have
+        a bug with AElig, but I'll fix that in a future patch.
+
+        * fast/tokenizer/entities-01.html: Added.
+        * fast/tokenizer/entities-02.html: Added.
+        * fast/tokenizer/entities-03.html: Added.
+        * fast/tokenizer/entities-04.html: Added.
+
+2010-09-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
         Closing <li> should close nested <div>
         https://bugs.webkit.org/show_bug.cgi?id=26170
 

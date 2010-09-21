@@ -1,0 +1,4 @@
+FAIL:
+
+AElig (was: &AElig, expected: Æ (\uc6))
+
