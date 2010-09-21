@@ -101,7 +101,7 @@ global_cxxflags += \
 # It breaks the build on other platforms, so we use it conditionally
 if OS_WIN32
 no_undefined = -no-undefined
-version_script = -export-symbols-regex "^(webkit_|JS).*"
+version_script = -export-symbols-regex "^(webkit_|k?JS).*"
 endif
 
 if OS_GNU
@@ -245,7 +245,10 @@ libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LIBA
 	$(PNG_LIBS) \
 	$(SQLITE3_LIBS) \
 	$(UNICODE_LIBS) \
-	$(XT_LIBS)
+	$(XT_LIBS) \
+	$(WINMM_LIBS) \
+	$(SHLWAPI_LIBS) \
+	$(OLE32_LIBS)
 
 #
 # Extra checks and flags

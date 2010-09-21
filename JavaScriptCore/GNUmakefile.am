@@ -546,7 +546,6 @@ javascriptcore_sources += \
 
 if TARGET_WIN32
 javascriptcore_sources += \
-	JavaScriptCore/wtf/ThreadSpecificWin.cpp \
 	JavaScriptCore/runtime/MarkStackWin.cpp
 else
 javascriptcore_sources += \
@@ -586,7 +585,7 @@ JavaScriptCore/pcre/chartables.c: $(srcdir)/JavaScriptCore/pcre/dftables
 	$(AM_V_GEN)$(PERL) $^ $@
 
 bin_PROGRAMS += \
-	Programs/jsc-@WEBKITGTK_API_MAJOR_VERSION@
+	Programs/jsc-@WEBKITGTK_API_MAJOR_VERSION@$(EXEEXT)
 
 noinst_PROGRAMS += \
 	Programs/jsc \
@@ -616,6 +615,7 @@ Programs_minidom_CFLAGS = \
 
 Programs_minidom_LDADD = \
 	 libJavaScriptCore.la \
+	 $(WINMM_LIBS) \
 	 -lm \
 	 -lstdc++
 
@@ -624,8 +624,8 @@ Programs_minidom_LDFLAGS = \
 	-no-fast-install
 
 # jsc
-Programs/jsc-@WEBKITGTK_API_MAJOR_VERSION@: Programs/jsc
-	$(AM_V_GEN)cp -f Programs/jsc Programs/jsc-@WEBKITGTK_API_MAJOR_VERSION@
+Programs/jsc-@WEBKITGTK_API_MAJOR_VERSION@$(EXEEXT): Programs/jsc$(EXEEXT)
+	$(AM_V_GEN)cp -f Programs/jsc$(EXEEXT) Programs/jsc-@WEBKITGTK_API_MAJOR_VERSION@$(EXEEXT)
 Programs_jsc_@WEBKITGTK_API_MAJOR_VERSION@_LDADD =
 Programs_jsc_@WEBKITGTK_API_MAJOR_VERSION@_SOURCES =
 
@@ -644,7 +644,8 @@ Programs_jsc_CXXFLAGS = \
 	$(UNICODE_CFLAGS)
 
 Programs_jsc_LDADD = \
-	libJavaScriptCore.la
+	libJavaScriptCore.la \
+	$(WINMM_LIBS)
 
 EXTRA_DIST += \
 	JavaScriptCore/AUTHORS \

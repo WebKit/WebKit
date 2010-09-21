@@ -24,7 +24,8 @@ Programs_GtkLauncher_CFLAGS = \
 Programs_GtkLauncher_LDADD = \
 	libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	$(GTK_LIBS) \
-	$(GLIB_LIBS)
+	$(GLIB_LIBS) \
+	$(WINMM_LIBS)
 
 Programs_GtkLauncher_LDFLAGS = \
 	-no-fast-install \
@@ -100,7 +101,8 @@ Programs_DumpRenderTree_LDADD = \
 	$(GTK_LIBS) \
 	$(GLIB_LIBS) \
 	$(LIBSOUP_LIBS) \
-	$(FREETYPE_LIBS)
+	$(FREETYPE_LIBS) \
+	$(WINMM_LIBS)
 
 Programs_DumpRenderTree_LDFLAGS = \
 	-no-fast-install \

@@ -167,6 +167,17 @@ if test "$png_ok" != yes; then
 fi
 AC_SUBST([PNG_LIBS])
 
+
+if test "$os_win32" = "yes"; then
+  WINMM_LIBS=-lwinmm
+  SHLWAPI_LIBS=-lshlwapi
+  OLE32_LIBS=-lole32
+fi
+AC_SUBST([WINMM_LIBS])
+AC_SUBST([SHLWAPI_LIBS])
+AC_SUBST([OLE32_LIBS])
+
+
 # determine the GTK+ version to use
 AC_MSG_CHECKING([the GTK+ version to use])
 AC_ARG_WITH([gtk],

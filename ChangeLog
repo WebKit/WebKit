@@ -1,3 +1,14 @@
+2010-09-21  Fridrich Strba  <fridrich.strba@bluewin.ch>
+
+        Reviewed by Martin Robinson.
+
+        Fix linking issues of the GTK+ port on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=45844
+
+        * GNUmakefile.am: link on Windows with ole32.dll, winmm.dll and shlwapi.dll
+        * configure.ac: link on Windows with ole32.dll, winmm.dll and shlwapi.dll
+        and export correctly all needed symbols from the libwebkitgtk DLL.
+
 2010-09-21  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.

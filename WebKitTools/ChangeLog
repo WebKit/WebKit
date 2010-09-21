@@ -1,3 +1,12 @@
+2010-09-21  Fridrich Strba  <fridrich.strba@bluewin.ch>
+
+        Reviewed by Martin Robinson.
+
+        Fix linking problems on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=45844
+
+        * GNUmakefile.am: link the executables with winmm.dll
+
 2010-09-21  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

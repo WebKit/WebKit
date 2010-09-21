@@ -1,3 +1,19 @@
+2010-09-21  Fridrich Strba  <fridrich.strba@bluewin.ch>
+
+        Reviewed by Martin Robinson.
+
+        Build issues with Windows versions of the GTK+ port
+        https://bugs.webkit.org/show_bug.cgi?id=45844
+
+        Link with winmm.dll when necessary and specify the executable extension
+        explicitely so that the Programs/jsc-@WEBKITGTK_API_MAJOR_VERSION@
+        rule actually works.
+
+        Don't try to build the ThreadSpecificWin.cpp since GTK+ port uses
+        a section in ThreadSpecific.cpp
+
+        * GNUmakefile.am:
+
 2010-09-21  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
