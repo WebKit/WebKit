@@ -3121,8 +3121,7 @@ BUGDPRANKE LINUX MAC : http/tests/navigation/postredirect-frames.html = IMAGE
 BUGWK45667 LINUX : fast/files/read-file-async.html = CRASH PASS
 BUGWK45667 LINUX : fast/files/read-blob-async.html = CRASH PASS
 
-// Regressed after r67179:r67353 roll
-BUGWK45737 DEBUG SLOW : fast/frames/frame-limit.html = CRASH PASS
+BUGWK45737 DEBUG SLOW : fast/frames/frame-limit.html = PASS
 
 BUGWK45753 WIN LINUX : fast/repaint/block-layout-inline-children-float-positioned.html = IMAGE+TEXT
 BUGWK45753 MAC : fast/repaint/block-layout-inline-children-float-positioned.html = IMAGE
@@ -3130,15 +3129,6 @@ BUGWK45753 WIN LINUX : fast/repaint/block-layout-inline-children-replaced.html =
 BUGWK45753 MAC : fast/repaint/block-layout-inline-children-replaced.html = IMAGE
 
 // Regressions from webkit roll r67178:t67358
-BUGDPRANKE WIN DEBUG : fast/dom/node-filter-detached-iframe-crash.html = CRASH
-BUGDPRANKE WIN DEBUG : fast/dynamic/insertAdjacentHTML-allowed-parents.html = CRASH
-BUGDPRANKE WIN DEBUG : fast/forms/textarea-and-mutation-events.html = CRASH
-BUGDPRANKE WIN DEBUG : fast/parser/fragment-parser.html = CRASH
-BUGDPRANKE WIN DEBUG : fast/xpath/xpath-detached-iframe-resolver-crash.html = CRASH
-BUGDPRANKE WIN DEBUG : traversal/acid3-test-2.html = CRASH
-BUGDPRANKE WIN DEBUG : fast/dom/Document/document-write-doctype.html = CRASH
-BUGDPRANKE WIN DEBUG : fast/dom/URL-attribute-reflection.html = CRASH
-BUGDPRANKE WIN DEBUG : fast/dom/Window/window-function-frame-getter-precedence.html = CRASH
 BUGDPRANKE WIN LINUX DEBUG : fast/forms/select-set-length-with-mutation-remove.html = TIMEOUT PASS
 BUGDPRANKE LINUX DEBUG : http/tests/incremental/slow-utf8-text.pl = TIMEOUT PASS
 BUGDPRANKE LINUX DEBUG : fast/forms/restore-selection-after-layout.html = TEXT

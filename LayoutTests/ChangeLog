@@ -1,3 +1,11 @@
+2010-09-21  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed.
+
+        [Chromium] remove test expectations for tests regressed in r67178:r67358 (fixed in r67659)
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-21  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed, skipped crashing test:
