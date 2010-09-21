@@ -159,6 +159,7 @@ committers_unable_to_review = [
     Committer("Noam Rosenthal", "noam.rosenthal@nokia.com", "noamr"),
     Committer("Pam Greene", "pam@chromium.org", "pamg"),
     Committer("Patrick Gansterer", ["paroga@paroga.com", "paroga@webkit.org"], "paroga"),
+    Committer("Pavel Podivilov", "podivilov@chromium.org", "podivilov"),
     Committer("Peter Kasting", ["pkasting@google.com", "pkasting@chromium.org"], "pkasting"),
     Committer("Philippe Normand", ["pnormand@igalia.com", "philn@webkit.org"], "philn-tp"),
     Committer("Pierre d'Herbemont", ["pdherbemont@free.fr", "pdherbemont@apple.com"], "pdherbemont"),

@@ -1,3 +1,11 @@
+2010-09-21  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed.
+
+        Adding myself to the committers list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-09-20  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Carlson.
