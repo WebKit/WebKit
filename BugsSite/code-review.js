@@ -254,7 +254,7 @@
   $(document).ready(function() {
     crawlDiff();
     fetchHistory();
-    $(document.body).prepend('<div id="toolbar"><div class="actions"><button id="post_comments">Publish</button></div><div class="message"><span class="commentStatus"></span> <span class="help">Double-click a line to add a comment.</span></div></div>');
+    $(document.body).prepend('<div id="toolbar"><div class="actions"><button id="preview_comments">Preview</button><button id="post_comments">Publish</button></div><div class="message"> <span class="commentStatus"></span> <span class="help">Double-click a line or click or drag on line numbers to add a comment.</span></div></div>');
     $(document.body).prepend('<div id="comment_form" class="inactive"><div class="winter"></div><div class="lightbox"><iframe id="reviewform" src="attachment.cgi?id=' + attachment_id + '&action=reviewform"></iframe></div></div>');
     $(document.body).append('<div class="overallComments"><div class="description">Overall comments:</div><textarea></textarea></div>');
   });
@@ -434,7 +434,7 @@
     $('#comment_form').addClass('inactive');
   });
 
-  $('#post_comments').live('click', function() {
+  function fillInReviewForm() {
     var comments_in_context = []
     forEachLine(function(line) {
       if (line.attr('data-has-comment') != 'true')
@@ -466,6 +466,15 @@
         return;
       $(this).attr('selectedIndex', control.attr('selectedIndex'));
     });
+  }
+
+  $('#preview_comments').live('click', function() {
+    fillInReviewForm();
+    $('#comment_form').removeClass('inactive');
+  });
+
+  $('#post_comments').live('click', function() {
+    fillInReviewForm();
     review_form.find('form').submit();
   });
 })();
