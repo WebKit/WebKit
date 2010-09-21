@@ -1,3 +1,15 @@
+2010-09-21  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Fixing double translation of composited layers when scrolling.
+        The scrolling transform is now applied by a separate layer maintained in
+        the RenderLayerCompositor.
+        https://bugs.webkit.org/show_bug.cgi?id=46193
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawLayers):
+
 2010-09-21  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

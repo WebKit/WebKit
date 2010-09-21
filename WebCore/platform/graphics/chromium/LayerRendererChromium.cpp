@@ -306,16 +306,13 @@ void LayerRendererChromium::drawLayers(const IntRect& visibleRect, const IntRect
     // Set the rootVisibleRect --- used by subsequent drawLayers calls
     m_rootVisibleRect = visibleRect;
 
-    // Translate all the composited layers by the scroll position.
-    TransformationMatrix matrix;
-    matrix.translate3d(-m_scrollPosition.x(), -m_scrollPosition.y(), 0);
-
     // Traverse the layer tree and update the layer transforms.
     float opacity = 1;
     const Vector<RefPtr<LayerChromium> >& sublayers = m_rootLayer->getSublayers();
     size_t i;
+    TransformationMatrix identityMatrix;
     for (i = 0; i < sublayers.size(); i++)
-        updateLayersRecursive(sublayers[i].get(), matrix, opacity);
+        updateLayersRecursive(sublayers[i].get(), identityMatrix, opacity);
 
     // Enable scissoring to avoid rendering composited layers over the scrollbars.
     GLC(m_context, m_context->enable(GraphicsContext3D::SCISSOR_TEST));
