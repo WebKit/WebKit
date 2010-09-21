@@ -38,7 +38,7 @@ int main(int argc, char** argv)
 {
     closeUnusedFileDescriptors();
 
-    static void* frameworkLibrary = dlopen("/System/Library/Frameworks/WebKit2.framework/WebKit2", RTLD_NOW);
+    static void* frameworkLibrary = dlopen("/System/Library/PrivateFrameworks/WebKit2.framework/WebKit2", RTLD_NOW);
     if (!frameworkLibrary) {
         fprintf(stderr, "Unable to load WebKit2.framework: %s\n", dlerror());
         return EXIT_FAILURE;

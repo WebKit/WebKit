@@ -1,5 +1,16 @@
 2010-09-21  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Mark Rowe.
+
+        * Configurations/WebKit2.xcconfig:
+        Add a note about keeping the path in MainMac.cpp in sync with the install path.
+
+        * mac/MainMac.cpp:
+        (main):
+        Use the correct framework path.
+
+2010-09-21  Anders Carlsson  <andersca@apple.com>
+
         Fix build.
 
         * mac/MainMac.cpp:
