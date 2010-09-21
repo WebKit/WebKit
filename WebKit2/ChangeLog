@@ -1,3 +1,14 @@
+2010-09-21  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * mac/MainMac.cpp:
+        (closeUnusedFileDescriptors):
+        Move this out into a separate function.
+
+        (main):
+        Don't use the soft linking macros, they were bringing in WTFReportAssertionFailure.
+
 2010-09-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
