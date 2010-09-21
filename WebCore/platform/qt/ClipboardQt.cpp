@@ -91,7 +91,7 @@ ClipboardQt::ClipboardQt(ClipboardAccessPolicy policy, ClipboardType clipboardTy
 
 #ifndef QT_NO_CLIPBOARD
     if (policy != ClipboardWritable) {
-        Q_ASSERT(!forDragging);
+        Q_ASSERT(isForCopyAndPaste());
         m_readableData = QApplication::clipboard()->mimeData();
     }
 #endif

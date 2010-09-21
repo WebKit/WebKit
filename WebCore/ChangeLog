@@ -1,3 +1,10 @@
+2010-09-21  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, QT build fix.
+
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::ClipboardQt):
+
 2010-09-21  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.
