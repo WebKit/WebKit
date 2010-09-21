@@ -351,11 +351,20 @@ class Printer(object):
         filename = result.filename
         test_name = self._port.relative_test_filename(filename)
         self._write('trace: %s' % test_name)
-        self._write('  txt: %s' %
-                  self._port.relative_test_filename(
-                       self._port.expected_filename(filename, '.txt')))
+        txt_file = self._port.expected_filename(filename, '.txt')
+        if self._port.path_exists(txt_file):
+            self._write('  txt: %s' %
+                        self._port.relative_test_filename(txt_file))
+        else:
+            self._write('  txt: <none>')
+        checksum_file = self._port.expected_filename(filename, '.checksum')
+        if self._port.path_exists(checksum_file):
+            self._write('  sum: %s' %
+                        self._port.relative_test_filename(checksum_file))
+        else:
+            self._write('  sum: <none>')
         png_file = self._port.expected_filename(filename, '.png')
-        if os.path.exists(png_file):
+        if self._port.path_exists(png_file):
             self._write('  png: %s' %
                         self._port.relative_test_filename(png_file))
         else:

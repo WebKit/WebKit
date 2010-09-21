@@ -46,35 +46,11 @@
 
 from __future__ import with_statement
 
+import os
 import sys
 
 import base
 import factory
-
-
-def _read_file(path, mode='r'):
-    """Return the contents of a file as a string.
-
-    Returns '' if anything goes wrong, instead of throwing an IOError.
-
-    """
-    contents = ''
-    try:
-        with open(path, mode) as f:
-            contents = f.read()
-    except IOError:
-        pass
-    return contents
-
-
-def _write_file(path, contents, mode='w'):
-    """Write the string to the specified path.
-
-    Writes should never fail, so we may raise IOError.
-
-    """
-    with open(path, mode) as f:
-            f.write(contents)
 
 
 class DryRunPort(object):
@@ -134,19 +110,16 @@ class DryrunDriver(base.Driver):
         return None
 
     def run_test(self, uri, timeoutms, image_hash):
-        test_name = self._uri_to_test(uri)
-
-        text_filename = self._port.expected_filename(test_name, '.txt')
-        text_output = _read_file(text_filename)
+        test_name = self._port.uri_to_test_name(uri)
+        path = os.path.join(self._port.layout_tests_dir(), test_name)
+        text_output = self._port.expected_text(path)
 
         if image_hash is not None:
-            image_filename = self._port.expected_filename(test_name, '.png')
-            image = _read_file(image_filename, 'rb')
-            if self._image_path:
-                _write_file(self._image_path, image)
-            hash_filename = self._port.expected_filename(test_name,
-                '.checksum')
-            hash = _read_file(hash_filename)
+            image = self._port.expected_image(path)
+            if image and self._image_path:
+                with open(self._image_path, 'w') as f:
+                    f.write(image)
+            hash = self._port.expected_checksum(path)
         else:
             hash = None
         return (False, False, hash, text_output, None)
@@ -156,39 +129,3 @@ class DryrunDriver(base.Driver):
 
     def stop(self):
         pass
-
-    def _uri_to_test(self, uri):
-        """Return the base layout test name for a given URI.
-
-        This returns the test name for a given URI, e.g., if you passed in
-        "file:///src/LayoutTests/fast/html/keygen.html" it would return
-        "fast/html/keygen.html".
-
-        """
-        if not self._layout_tests_dir:
-            self._layout_tests_dir = self._port.layout_tests_dir()
-        test = uri
-
-        if uri.startswith("file:///"):
-            if sys.platform == 'win32':
-                test = test.replace('file:///', '')
-                test = test.replace('/', '\\')
-            else:
-                test = test.replace('file://', '')
-            return test
-        elif uri.startswith("http://127.0.0.1:8880/"):
-            # websocket tests
-            test = test.replace('http://127.0.0.1:8880/',
-                                self._layout_tests_dir + '/')
-            return test
-        elif uri.startswith("http://"):
-            # regular HTTP test
-            test = test.replace('http://127.0.0.1:8000/',
-                                self._layout_tests_dir + '/http/tests/')
-            return test
-        elif uri.startswith("https://"):
-            test = test.replace('https://127.0.0.1:8443/',
-                                self._layout_tests_dir + '/http/tests/')
-            return test
-        else:
-            raise NotImplementedError('unknown url type: %s' % uri)

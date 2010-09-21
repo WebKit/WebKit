@@ -42,6 +42,7 @@ import sys
 import time
 
 import apache_http_server
+import test_files
 import http_server
 import websocket_server
 
@@ -130,11 +131,11 @@ class Port(object):
         interface so that it can be overriden for testing purposes."""
         return expected_text != actual_text
 
-    def diff_image(self, expected_filename, actual_filename,
+    def diff_image(self, expected_contents, actual_contents,
                    diff_filename=None, tolerance=0):
-        """Compare two image files and produce a delta image file.
+        """Compare two images and produce a delta image file.
 
-        Return True if the two files are different, False if they are the same.
+        Return True if the two images are different, False if they are the same.
         Also produce a delta image of the two images and write that into
         |diff_filename| if it is not None.
 
@@ -252,6 +253,31 @@ class Port(object):
             return os.path.join(platform_dir, baseline_filename)
         return os.path.join(self.layout_tests_dir(), baseline_filename)
 
+    def _expected_file_contents(self, test, extension, encoding):
+        path = self.expected_filename(test, extension)
+        if not os.path.exists(path):
+            return None
+        with codecs.open(path, 'r', encoding) as file:
+            return file.read()
+
+    def expected_checksum(self, test):
+        """Returns the checksum of the image we expect the test to produce, or None if it is a text-only test."""
+        return self._expected_file_contents(test, '.checksum', 'ascii')
+
+    def expected_image(self, test):
+        """Returns the image we expect the test to produce."""
+        return self._expected_file_contents(test, '.png', None)
+
+    def expected_text(self, test):
+        """Returns the text output we expect the test to produce."""
+        # NOTE: -expected.txt files are ALWAYS utf-8.  However,
+        # we do not decode the output from DRT, so we should not
+        # decode the -expected.txt values either to allow comparisons.
+        text = self._expected_file_contents(test, '.txt', None)
+        if not text:
+            return ''
+        return text.strip("\r\n").replace("\r\n", "\n") + "\n"
+
     def filename_to_uri(self, filename):
         """Convert a test file to a URI."""
         LAYOUTTEST_HTTP_DIR = "http/tests/"
@@ -286,6 +312,73 @@ class Port(object):
         if sys.platform in ('cygwin', 'win32'):
             return "file:///" + self.get_absolute_path(filename)
         return "file://" + self.get_absolute_path(filename)
+
+    def tests(self, paths):
+        """Return the list of tests found (relative to layout_tests_dir()."""
+        return test_files.find(self, paths)
+
+    def test_dirs(self):
+        """Returns the list of top-level test directories.
+
+        Used by --clobber-old-results."""
+        layout_tests_dir = self.layout_tests_dir()
+        return filter(lambda x: os.path.isdir(os.path.join(layout_tests_dir, x)),
+                      os.listdir(layout_tests_dir))
+
+    def path_isdir(self, path):
+        """Returns whether the path refers to a directory of tests.
+
+        Used by test_expectations.py to apply rules to whole directories."""
+        return os.path.isdir(path)
+
+    def path_exists(self, path):
+        """Returns whether the path refers to an existing test or baseline."""
+        # Used by test_expectations.py to determine if an entry refers to a
+        # valid test and by printing.py to determine if baselines exist."""
+        return os.path.exists(path)
+
+    def update_baseline(self, path, data, encoding):
+        """Updates the baseline for a test.
+
+        Args:
+            path: the actual path to use for baseline, not the path to
+              the test. This function is used to update either generic or
+              platform-specific baselines, but we can't infer which here.
+            data: contents of the baseline.
+            encoding: file encoding to use for the baseline.
+        """
+        with codecs.open(path, "w", encoding=encoding) as file:
+            file.write(data)
+
+    def uri_to_test_name(self, uri):
+        """Return the base layout test name for a given URI.
+
+        This returns the test name for a given URI, e.g., if you passed in
+        "file:///src/LayoutTests/fast/html/keygen.html" it would return
+        "fast/html/keygen.html".
+
+        """
+        test = uri
+        if uri.startswith("file:///"):
+            if sys.platform == 'win32':
+                test = test.replace('file:///', '')
+                test = test.replace('/', '\\')
+            else:
+                test = test.replace('file://', '')
+            return self.relative_test_filename(test)
+
+        if uri.startswith("http://127.0.0.1:8880/"):
+            # websocket tests
+            return test.replace('http://127.0.0.1:8880/', '')
+
+        if uri.startswith("http://"):
+            # regular HTTP test
+            return test.replace('http://127.0.0.1:8000/', 'http/tests/')
+
+        if uri.startswith("https://"):
+            return test.replace('https://127.0.0.1:8443/', 'http/tests/')
+
+        raise NotImplementedError('unknown url type: %s' % uri)
 
     def get_absolute_path(self, filename):
         """Return the absolute path in unix format for the given filename.

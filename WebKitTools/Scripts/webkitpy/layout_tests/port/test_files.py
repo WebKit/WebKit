@@ -27,11 +27,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""This module is used to find all of the layout test files used by Chromium
-(across all platforms). It exposes one public function - GatherTestFiles() -
+"""This module is used to find all of the layout test files used by
+run-webkit-tests. It exposes one public function - find() -
 which takes an optional list of paths. If a list is passed in, the returned
 list of test files is constrained to those found under the paths passed in,
-i.e. calling GatherTestFiles(["LayoutTests/fast"]) will only return files
+i.e. calling find(["LayoutTests/fast"]) will only return files
 under that directory."""
 
 import glob
@@ -51,12 +51,12 @@ _supported_file_extensions = set(['.html', '.shtml', '.xml', '.xhtml', '.xhtmlmp
 _skipped_directories = set(['.svn', '_svn', 'resources', 'script-tests'])
 
 
-def gather_test_files(port, paths):
-    """Generate a set of test files and return them.
+def find(port, paths):
+    """Finds the set of tests under port.layout_tests_dir().
 
     Args:
-      paths: a list of command line paths relative to the webkit/tests
-          directory. glob patterns are ok.
+      paths: a list of command line paths relative to the layout_tests_dir()
+          to limit the search to. glob patterns are ok.
     """
     gather_start_time = time.time()
     paths_to_walk = set()

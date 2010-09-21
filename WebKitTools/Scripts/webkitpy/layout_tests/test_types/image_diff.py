@@ -103,7 +103,11 @@ class ImageDiff(test_type_base.TestTypeBase):
         expected_filename = self.output_filename(filename,
           self.FILENAME_SUFFIX_EXPECTED + '.png')
 
-        result = port.diff_image(expected_filename, actual_filename,
+        expected_image = port.expected_image(filename)
+        with codecs.open(actual_filename, 'r', None) as file:
+            actual_image = file.read()
+
+        result = port.diff_image(expected_image, actual_image,
                                  diff_filename)
         return result
 
@@ -124,19 +128,12 @@ class ImageDiff(test_type_base.TestTypeBase):
             return failures
 
         # Compare hashes.
-        expected_hash_file = self._port.expected_filename(filename,
-                                                          '.checksum')
-        expected_png_file = self._port.expected_filename(filename, '.png')
+        expected_hash = self._port.expected_checksum(filename)
+        expected_png = self._port.expected_image(filename)
 
-        # FIXME: We repeat this pattern often, we should share code.
-        expected_hash = ''
-        if os.path.exists(expected_hash_file):
-            with codecs.open(expected_hash_file, "r", "ascii") as file:
-                expected_hash = file.read()
-
-        if not os.path.isfile(expected_png_file):
+        if not expected_png:
             # Report a missing expected PNG file.
-            self.write_output_files(port, filename, '.checksum',
+            self.write_output_files(filename, '.checksum',
                                     test_args.hash, expected_hash,
                                     encoding="ascii",
                                     print_text_diffs=False)
@@ -147,17 +144,21 @@ class ImageDiff(test_type_base.TestTypeBase):
             # Hash matched (no diff needed, okay to return).
             return failures
 
-        self.write_output_files(port, filename, '.checksum',
+        self.write_output_files(filename, '.checksum',
                                 test_args.hash, expected_hash,
                                 encoding="ascii",
                                 print_text_diffs=False)
+
+        # FIXME: combine next two lines
         self._copy_output_png(filename, test_args.png_path, '-actual.png')
-        self._copy_output_png(filename, expected_png_file, '-expected.png')
+        self.write_output_files(filename, '.png', output=None,
+                                expected=expected_png,
+                                encoding=None, print_text_diffs=False)
 
         # Even though we only use the result in one codepath below but we
         # still need to call CreateImageDiff for other codepaths.
         images_are_different = self._create_image_diff(port, filename, configuration)
-        if expected_hash == '':
+        if not expected_hash:
             failures.append(test_failures.FailureMissingImageHash())
         elif test_args.hash != expected_hash:
             if images_are_different:

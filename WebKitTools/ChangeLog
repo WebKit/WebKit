@@ -1,3 +1,110 @@
+2010-09-17  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        new-run-webkit-tests: pull the list of tests from the Port, and
+           make it possible to run with no actual test files in the filesystem.
+
+        This set of changes allows us to delete the special
+        webkitpy/layout_tests/data directory and test the generic code without
+        touching the filesystem (except to write results). This speeds up
+        test-webkitpy substantially.
+
+        This also cleans up and removes several code paths in the generic
+        code and fixes some minor bugs, notably in the test_expectations
+        parsing, which was previously fragile if the tests weren't present.
+
+        We also change the way we diff image results to be able to do so
+        in memory, without relying on files. This slows down chromium
+        test_shell, which always writes images to files, but should speed
+        up DRT and ImageDiff-based implementations slightly.
+
+        Note that pulling the list of tests to run from the Port will allow
+        ports to specify what tests to run as an inclusive list; previously
+        you could only do this as an exclusive list by using a 
+        test_expectations file or Skipped files; nothing actually uses this
+        feature yet and it's unclear if it should be used.
+
+        Note that there are no functional changes -- apart from now 
+        always printing out the location of the checksum file when we are
+        tracing test runs -- and the total number of lines of non-test code
+        actually drops by two.
+
+        There is some more cleanup that can be done in the Port/Driver 
+        interface and in some handling of filenames, but I'll save that
+        for another change.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45801
+
+        * Scripts/webkitpy/layout_tests/data/*: Removed.
+            - no longer need special mock layout_tests_directory in the
+              repository.
+        * Scripts/webkitpy/layout_tests/layout_package/printing.py:
+            - add code to display missing text files, checksums when tracing
+            - update to not look at the filesystem directly.
+        * Scripts/webkitpy/layout_tests/layout_package/printing_unittest.py:
+            - add more unit tests
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations.py:
+            - remove tests_are_present flag
+            - update with changes in Port interface - no longer access
+              the filesystem directly, although we still use os.path for
+              filename manipulation.
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations_unittest.py:
+            - add more unit tests
+        * Scripts/webkitpy/layout_tests/layout_package/test_files.py: Removed.
+            - renamed to port/test_files.py
+        * Scripts/webkitpy/layout_tests/port/base.py:
+            - change diff_image() to expect actual image data, not filenames
+            - add expected_checksum(), expected_image(), expected_text() to
+              return the content of the files so that we don't need a filesystem
+            - add path_exists(), path_isdir() for filesystem-like access.
+            - add test_dirs() to keep clobber-test-results from needing to
+              actually look at a real layout tests dir
+            - add tests() to return the list of tests to run on the port
+              (calls port/test_files to do the work).
+            - add update_baseline() to be able to save new baselines
+            - add uri_to_test_name() from port/dryrun.py so we can easily check
+              filename_to_uri()
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+            - add more unit tests
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+            - change diff_image() to accept image content, not filenames.
+              This will be slower for test_shell/image_diff, but faster
+              for DRT/ImageDiff.
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+            - add more unit tests
+        * Scripts/webkitpy/layout_tests/port/dryrun.py:
+            - simplify greatly
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+            - add more unit tests
+        * Scripts/webkitpy/layout_tests/port/test.py:
+            - massive rewrite to use in-script list of tests and expectations
+        * Scripts/webkitpy/layout_tests/port/test_files.py:
+            - rename from layout_package/test_files.
+        * Scripts/webkitpy/layout_tests/port/test_files_unittest.py:
+            - add unit tests
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+            - update diff_image() to take image contents, not files. Should
+              make things slightly faster.
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+            - update with changes to diff_image()
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests_unittest.py:
+            - update with changes to diff_image()
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+            - remove tests_are_present from test_expectations
+            - pull the list of tests from port.tests() instead
+              of calling test_files.py directly.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+            - update unit tests
+        * Scripts/webkitpy/layout_tests/test_types/image_diff.py:
+            - update with changes to 
+        * Scripts/webkitpy/layout_tests/test_types/test_type_base.py:
+            - update with change in Port interface
+        * Scripts/webkitpy/layout_tests/test_types/text_diff.py:
+            - update with change in Port interface
+        * Scripts/webkitpy/style/checkers/test_expectations.py:
+            - remove the tests_are_present flag
+
 2010-09-21  Anders Carlsson  <andersca@apple.com>
 
         Disable logging.

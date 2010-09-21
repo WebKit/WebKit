@@ -214,6 +214,11 @@ class PortTest(unittest.TestCase):
         # This routine is a no-op. We just test it for coverage.
         port.setup_test_run()
 
+    def test_test_dirs(self):
+        port = base.Port()
+        dirs = port.test_dirs()
+        self.assertTrue('canvas' in dirs)
+        self.assertTrue('css2.1' in dirs)
 
 class VirtualTest(unittest.TestCase):
     """Tests that various methods expected to be virtual are."""

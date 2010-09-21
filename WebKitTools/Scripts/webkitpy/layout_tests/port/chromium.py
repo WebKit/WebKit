@@ -46,7 +46,6 @@ import base
 import http_server
 
 from webkitpy.common.system.executive import Executive
-from webkitpy.layout_tests.layout_package import test_files
 from webkitpy.layout_tests.layout_package import test_expectations
 
 # Chromium DRT on OSX uses WebKitDriver.
@@ -126,14 +125,18 @@ class ChromiumPort(base.Port):
         return check_file_exists(image_diff_path, 'image diff exe',
                                  override_step, logging)
 
-    def diff_image(self, expected_filename, actual_filename,
+    def diff_image(self, expected_contents, actual_contents,
                    diff_filename=None, tolerance=0):
         executable = self._path_to_image_diff()
+        expected_tmpfile = tempfile.NamedTemporaryFile()
+        expected_tmpfile.write(expected_contents)
+        actual_tmpfile = tempfile.NamedTemporaryFile()
+        actual_tmpfile.write(actual_contents)
         if diff_filename:
-            cmd = [executable, '--diff', expected_filename, actual_filename,
-                   diff_filename]
+            cmd = [executable, '--diff', expected_tmpfile.name,
+                   actual_tmpfile.name, diff_filename]
         else:
-            cmd = [executable, expected_filename, actual_filename]
+            cmd = [executable, expected_tmpfile.name, actual_tmpfile.name]
 
         result = True
         try:
@@ -144,6 +147,9 @@ class ChromiumPort(base.Port):
                 _compare_available = False
             else:
                 raise e
+        finally:
+            expected_tmpfile.close()
+            actual_tmpfile.close()
         return result
 
     def driver_name(self):
@@ -259,14 +265,13 @@ class ChromiumPort(base.Port):
         test_platform_name = self.test_platform_name()
         is_debug_mode = False
 
-        all_test_files = test_files.gather_test_files(self, '*')
+        all_test_files = self.tests([])
         if extra_test_files:
             all_test_files.update(extra_test_files)
 
         expectations = test_expectations.TestExpectations(
             self, all_test_files, expectations_str, test_platform_name,
-            is_debug_mode, is_lint_mode=True,
-            tests_are_present=False, overrides=overrides_str)
+            is_debug_mode, is_lint_mode=True, overrides=overrides_str)
         tests_dir = self.layout_tests_dir()
         return [self.relative_test_filename(test)
                 for test in expectations.get_tests_with_result_type(test_expectations.SKIP)]

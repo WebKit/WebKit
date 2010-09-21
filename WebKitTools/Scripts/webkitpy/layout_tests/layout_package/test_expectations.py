@@ -87,8 +87,7 @@ class TestExpectations:
     TEST_LIST = "test_expectations.txt"
 
     def __init__(self, port, tests, expectations, test_platform_name,
-                 is_debug_mode, is_lint_mode, tests_are_present=True,
-                 overrides=None):
+                 is_debug_mode, is_lint_mode, overrides=None):
         """Loads and parses the test expectations given in the string.
         Args:
             port: handle to object containing platform-specific functionality
@@ -101,10 +100,6 @@ class TestExpectations:
                 in the expectations
             is_lint_mode: If True, just parse the expectations string
                 looking for errors.
-            tests_are_present: whether the test files exist in the file
-                system and can be probed for. This is useful for distinguishing
-                test files from directories, and is needed by the LTTF
-                dashboard, where the files aren't actually locally present.
             overrides: test expectations that are allowed to override any
                 entries in |expectations|. This is used by callers
                 that need to manage two sets of expectations (e.g., upstream
@@ -112,7 +107,7 @@ class TestExpectations:
         """
         self._expected_failures = TestExpectationsFile(port, expectations,
             tests, test_platform_name, is_debug_mode, is_lint_mode,
-            tests_are_present=tests_are_present, overrides=overrides)
+            overrides=overrides)
 
     # TODO(ojan): Allow for removing skipped tests when getting the list of
     # tests to run, but not when getting metrics.
@@ -302,8 +297,7 @@ class TestExpectationsFile:
                     'flaky': FLAKY}
 
     def __init__(self, port, expectations, full_test_list, test_platform_name,
-        is_debug_mode, is_lint_mode, suppress_errors=False,
-        tests_are_present=True, overrides=None):
+        is_debug_mode, is_lint_mode, suppress_errors=False, overrides=None):
         """
         expectations: Contents of the expectations file
         full_test_list: The list of all tests to be run pending processing of
@@ -314,9 +308,6 @@ class TestExpectationsFile:
         is_debug_mode: Whether we testing a test_shell built debug mode.
         is_lint_mode: Whether this is just linting test_expecatations.txt.
         suppress_errors: Whether to suppress lint errors.
-        tests_are_present: Whether the test files are present in the local
-            filesystem. The LTTF Dashboard uses False here to avoid having to
-            keep a local copy of the tree.
         overrides: test expectations that are allowed to override any
             entries in |expectations|. This is used by callers
             that need to manage two sets of expectations (e.g., upstream
@@ -329,7 +320,6 @@ class TestExpectationsFile:
         self._test_platform_name = test_platform_name
         self._is_debug_mode = is_debug_mode
         self._is_lint_mode = is_lint_mode
-        self._tests_are_present = tests_are_present
         self._overrides = overrides
         self._suppress_errors = suppress_errors
         self._errors = []
@@ -462,7 +452,7 @@ class TestExpectationsFile:
 
     def remove_platform_from_expectations(self, tests, platform):
         """Returns a copy of the expectations with the tests matching the
-        platform remove.
+        platform removed.
 
         If a test is in the test list and has an option that matches the given
         platform, remove the matching platform and save the updated test back
@@ -699,8 +689,8 @@ class TestExpectationsFile:
             # WebKit's way of skipping tests is to add a -disabled suffix.
             # So we should consider the path existing if the path or the
             # -disabled version exists.
-            if (self._tests_are_present and not os.path.exists(full_path)
-                and not os.path.exists(full_path + '-disabled')):
+            if (not self._port.path_exists(full_path)
+                and not self._port.path_exists(full_path + '-disabled')):
                 # Log a non fatal error here since you hit this case any
                 # time you update test_expectations.txt without syncing
                 # the LayoutTests directory
@@ -735,27 +725,14 @@ class TestExpectationsFile:
         path and make sure directories end with the OS path separator."""
         path = os.path.join(self._port.layout_tests_dir(), test_list_path)
         path = os.path.normpath(path)
-        path = self._fix_dir(path)
+        if self._port.path_isdir(path):
+            path = os.path.join(path, '')
 
         result = []
         for test in self._full_test_list:
             if test.startswith(path):
                 result.append(test)
         return result
-
-    def _fix_dir(self, path):
-        """Check to see if the path points to a directory, and if so, append
-        the directory separator if necessary."""
-        if self._tests_are_present:
-            if os.path.isdir(path):
-                path = os.path.join(path, '')
-        else:
-            # If we can't check the filesystem to see if this is a directory,
-            # we assume that files w/o an extension are directories.
-            # TODO(dpranke): What happens w/ LayoutTests/css2.1 ?
-            if os.path.splitext(path)[1] == '':
-                path = os.path.join(path, '')
-        return path
 
     def _add_tests(self, tests, expectations, test_list_path, lineno,
                    modifiers, options, overrides_allowed):

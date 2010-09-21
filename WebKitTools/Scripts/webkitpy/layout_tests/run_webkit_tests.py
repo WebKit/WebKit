@@ -68,7 +68,6 @@ from layout_package import json_layout_results_generator
 from layout_package import printing
 from layout_package import test_expectations
 from layout_package import test_failures
-from layout_package import test_files
 from layout_package import test_results_uploader
 from test_types import image_diff
 from test_types import text_diff
@@ -96,28 +95,21 @@ class TestInfo:
           timeout: Timeout for running the test in TestShell.
           """
         self.filename = filename
+        self._port = port
         self.uri = port.filename_to_uri(filename)
         self.timeout = timeout
-        # FIXME: Confusing that the file is .checksum and we call it "hash"
-        self._expected_hash_path = port.expected_filename(filename, '.checksum')
-        self._have_read_expected_hash = False
-        self._image_hash = None
-
-    def _read_image_hash(self):
-        if not os.path.exists(self._expected_hash_path):
-            return None
-
-        with codecs.open(self._expected_hash_path, "r", "ascii") as hash_file:
-            return hash_file.read()
+        self._image_checksum = -1
 
     def image_hash(self):
         # Read the image_hash lazily to reduce startup time.
         # This class is accessed across threads, but only one thread should
         # ever be dealing with any given TestInfo so no locking is needed.
-        if not self._have_read_expected_hash:
-            self._have_read_expected_hash = True
-            self._image_hash = self._read_image_hash()
-        return self._image_hash
+        #
+        # Note that we use -1 to indicate that we haven't read the value,
+        # because expected_checksum() returns a string or None.
+        if self._image_checksum == -1:
+            self._image_checksum = self._port.expected_checksum(self.filename)
+        return self._image_checksum
 
 
 class ResultSummary(object):
@@ -292,7 +284,7 @@ class TestRunner:
         paths += last_unexpected_results
         if self._options.test_list:
             paths += read_test_files(self._options.test_list)
-        self._test_files = test_files.gather_test_files(self._port, paths)
+        self._test_files = self._port.tests(paths)
 
     def lint(self):
         # Creating the expecations for each platform/configuration pair does
@@ -321,7 +313,7 @@ class TestRunner:
             self._expectations = test_expectations.TestExpectations(
                 self._port, test_files, expectations_str, test_platform_name,
                 is_debug_mode, self._options.lint_test_files,
-                tests_are_present=True, overrides=overrides_str)
+                overrides=overrides_str)
             return self._expectations
         except SyntaxError, err:
             if self._options.lint_test_files:
@@ -865,7 +857,7 @@ class TestRunner:
         self._printer.print_update("Clobbering old results in %s" %
                                    self._options.results_directory)
         layout_tests_dir = self._port.layout_tests_dir()
-        possible_dirs = os.listdir(layout_tests_dir)
+        possible_dirs = self._port.test_dirs()
         for dirname in possible_dirs:
             if os.path.isdir(os.path.join(layout_tests_dir, dirname)):
                 shutil.rmtree(os.path.join(self._options.results_directory,

@@ -120,7 +120,7 @@ class TestTypeBase(object):
             output_path = self._port.expected_filename(filename, modifier)
             _log.debug('resetting baseline result "%s"' % output_path)
 
-        self._write_into_file_at_path(output_path, data, encoding)
+        self._port.update_baseline(output_path, data, encoding)
 
     def output_filename(self, filename, modifier):
         """Returns a filename inside the output dir that contains modifier.
@@ -164,7 +164,7 @@ class TestTypeBase(object):
         with codecs.open(file_path, "w", encoding=encoding) as file:
             file.write(contents)
 
-    def write_output_files(self, port, filename, file_type,
+    def write_output_files(self, filename, file_type,
                            output, expected, encoding,
                            print_text_diffs=False):
         """Writes the test output, the expected output and optionally the diff
@@ -201,16 +201,16 @@ class TestTypeBase(object):
         # Note: We pass encoding=None for all diff writes, as we treat diff
         # output as binary.  Diff output may contain multiple files in
         # conflicting encodings.
-        diff = port.diff_text(expected, output, expected_filename, actual_filename)
+        diff = self._port.diff_text(expected, output, expected_filename, actual_filename)
         diff_filename = self.output_filename(filename, self.FILENAME_SUFFIX_DIFF + file_type)
         self._write_into_file_at_path(diff_filename, diff, encoding=None)
 
         # Shell out to wdiff to get colored inline diffs.
-        wdiff = port.wdiff_text(expected_filename, actual_filename)
+        wdiff = self._port.wdiff_text(expected_filename, actual_filename)
         wdiff_filename = self.output_filename(filename, self.FILENAME_SUFFIX_WDIFF)
         self._write_into_file_at_path(wdiff_filename, wdiff, encoding=None)
 
         # Use WebKit's PrettyPatch.rb to get an HTML diff.
-        pretty_patch = port.pretty_patch_text(diff_filename)
+        pretty_patch = self._port.pretty_patch_text(diff_filename)
         pretty_patch_filename = self.output_filename(filename, self.FILENAME_SUFFIX_PRETTY_PATCH)
         self._write_into_file_at_path(pretty_patch_filename, pretty_patch, encoding=None)

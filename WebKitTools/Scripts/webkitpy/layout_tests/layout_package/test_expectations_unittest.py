@@ -106,14 +106,13 @@ BUG_TEST WONTFIX WIN : failures/expected/image.html = IMAGE
 """
 
     def parse_exp(self, expectations, overrides=None, is_lint_mode=False,
-                  is_debug_mode=False, tests_are_present=True):
+                  is_debug_mode=False):
         self._exp = TestExpectations(self._port,
              tests=self.get_basic_tests(),
              expectations=expectations,
              test_platform_name=self._port.test_platform_name(),
              is_debug_mode=is_debug_mode,
              is_lint_mode=is_lint_mode,
-             tests_are_present=tests_are_present,
              overrides=overrides)
 
     def assert_exp(self, test, result):
@@ -148,10 +147,6 @@ BUGX : failures/expected/text.html = TEXT
 BUGX DEFER : failures/expected = IMAGE
 """
         self.parse_exp(exp_str)
-        self.assert_exp('failures/expected/text.html', TEXT)
-        self.assert_exp('failures/expected/crash.html', IMAGE)
-
-        self.parse_exp(exp_str, tests_are_present=False)
         self.assert_exp('failures/expected/text.html', TEXT)
         self.assert_exp('failures/expected/crash.html', IMAGE)
 

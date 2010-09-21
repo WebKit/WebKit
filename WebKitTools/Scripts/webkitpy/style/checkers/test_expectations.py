@@ -93,8 +93,7 @@ class TestExpectationsChecker(object):
             expectations = test_expectations.TestExpectationsFile(
                 port=self._port_obj, expectations=expectations_str, full_test_list=tests,
                 test_platform_name=self._port_to_check, is_debug_mode=False,
-                is_lint_mode=True, suppress_errors=False, tests_are_present=True,
-                overrides=overrides)
+                is_lint_mode=True, suppress_errors=False, overrides=overrides)
         except SyntaxError, error:
             errors = str(error).splitlines()
 

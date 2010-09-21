@@ -151,7 +151,7 @@ class  Testprinter(unittest.TestCase):
         expectations = test_expectations.TestExpectations(
             self._port, test_paths, expectations_str,
             self._port.test_platform_name(), is_debug_mode=False,
-            is_lint_mode=False, tests_are_present=False)
+            is_lint_mode=False)
 
         rs = run_webkit_tests.ResultSummary(expectations, test_paths)
         return test_paths, rs, expectations
@@ -318,6 +318,16 @@ class  Testprinter(unittest.TestCase):
         self.assertFalse(err.empty())
 
         printer, err, out = self.get_printer(['--print', 'trace-everything'])
+        result = self.get_result('passes/image.html')
+        printer.print_test_result(result, expected=True, exp_str='',
+                                  got_str='')
+        result = self.get_result('failures/expected/missing_text.html')
+        printer.print_test_result(result, expected=True, exp_str='',
+                                  got_str='')
+        result = self.get_result('failures/expected/missing_check.html')
+        printer.print_test_result(result, expected=True, exp_str='',
+                                  got_str='')
+        result = self.get_result('failures/expected/missing_image.html')
         printer.print_test_result(result, expected=True, exp_str='',
                                   got_str='')
         self.assertFalse(err.empty())

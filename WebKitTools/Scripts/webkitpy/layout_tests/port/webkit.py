@@ -119,7 +119,7 @@ class WebKitPort(base.Port):
             return False
         return True
 
-    def diff_image(self, expected_filename, actual_filename,
+    def diff_image(self, expected_contents, actual_contents,
                    diff_filename=None, tolerance=0.1):
         """Return True if the two files are different. Also write a delta
         image of the two images into |diff_filename| if it is not None."""
@@ -128,31 +128,24 @@ class WebKitPort(base.Port):
         # parameter, or make it go away and always use exact matches.
 
         # Handle the case where the test didn't actually generate an image.
-        actual_length = os.stat(actual_filename).st_size
-        if actual_length == 0:
-            if diff_filename:
-                shutil.copyfile(actual_filename, expected_filename)
+        if not actual_contents:
             return True
 
-        sp = self._diff_image_request(expected_filename, actual_filename, tolerance)
-        return self._diff_image_reply(sp, expected_filename, diff_filename)
+        sp = self._diff_image_request(expected_contents, actual_contents,
+                                      tolerance)
+        return self._diff_image_reply(sp, diff_filename)
 
-    def _diff_image_request(self, expected_filename, actual_filename, tolerance):
+    def _diff_image_request(self, expected_contents, actual_contents, tolerance):
         command = [self._path_to_image_diff(), '--tolerance', str(tolerance)]
         sp = server_process.ServerProcess(self, 'ImageDiff', command)
 
-        actual_length = os.stat(actual_filename).st_size
-        with open(actual_filename) as file:
-            actual_file = file.read()
-        expected_length = os.stat(expected_filename).st_size
-        with open(expected_filename) as file:
-            expected_file = file.read()
         sp.write('Content-Length: %d\n%sContent-Length: %d\n%s' %
-                 (actual_length, actual_file, expected_length, expected_file))
+                 (len(actual_contents), actual_contents,
+                  len(expected_contents), expected_contents))
 
         return sp
 
-    def _diff_image_reply(self, sp, expected_filename, diff_filename):
+    def _diff_image_reply(self, sp, diff_filename):
         timeout = 2.0
         deadline = time.time() + timeout
         output = sp.read_line(timeout)
@@ -178,7 +171,7 @@ class WebKitPort(base.Port):
             with open(diff_filename, 'w') as file:
                 file.write(output)
         elif sp.timed_out:
-            _log.error("ImageDiff timed out on %s" % expected_filename)
+            _log.error("ImageDiff timed out")
         elif sp.crashed:
             _log.error("ImageDiff crashed")
         sp.stop()
@@ -194,9 +187,8 @@ class WebKitPort(base.Port):
         pass
 
     def show_results_html_file(self, results_filename):
-        uri = self.filename_to_uri(results_filename)
         # FIXME: We should open results in the version of WebKit we built.
-        webbrowser.open(uri, new=1)
+        webbrowser.open(results_filename, new=1)
 
     def create_driver(self, image_path, options):
         return WebKitDriver(self, image_path, options,

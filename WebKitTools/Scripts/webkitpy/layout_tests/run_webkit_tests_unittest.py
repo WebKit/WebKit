@@ -77,7 +77,7 @@ def logging_run(args=[], tests_included=False):
     new_args.extend(args)
     if not tests_included:
         new_args.extend(['passes',
-                         'http/tests'
+                         'http/tests',
                          'websocket/tests',
                          'failures/expected/*'])
     options, parsed_args = run_webkit_tests.parse_args(new_args)
@@ -308,7 +308,7 @@ class DryrunTest(unittest.TestCase):
     def test_test(self):
         res, out, err = logging_run(['--platform', 'dryrun-test',
                                      '--pixel-tests'])
-        self.assertEqual(res, 2)
+        self.assertEqual(res, 0)
         self.assertFalse(out.empty())
         self.assertFalse(err.empty())
 

@@ -68,14 +68,20 @@ class PortTestCase(unittest.TestCase):
 
         dir = port.layout_tests_dir()
         file1 = os.path.join(dir, 'fast', 'css', 'button_center.png')
+        fh1 = file(file1)
+        contents1 = fh1.read()
         file2 = os.path.join(dir, 'fast', 'css',
                              'remove-shorthand-expected.png')
+        fh2 = file(file2)
+        contents2 = fh2.read()
         tmpfile = tempfile.mktemp()
 
-        self.assertFalse(port.diff_image(file1, file1))
-        self.assertTrue(port.diff_image(file1, file2))
+        self.assertFalse(port.diff_image(contents1, contents1))
+        self.assertTrue(port.diff_image(contents1, contents2))
 
-        self.assertTrue(port.diff_image(file1, file2, tmpfile))
+        self.assertTrue(port.diff_image(contents1, contents2, tmpfile))
+        fh1.close()
+        fh2.close()
         # FIXME: this may not be being written?
         # self.assertTrue(os.path.exists(tmpfile))
         # os.remove(tmpfile)

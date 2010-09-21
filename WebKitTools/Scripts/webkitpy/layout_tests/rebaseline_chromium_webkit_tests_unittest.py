@@ -103,15 +103,20 @@ class TestRebaseliner(unittest.TestCase):
 
     def test_diff_baselines_txt(self):
         rebaseliner = self.make_rebaseliner()
-        path = os.path.join(rebaseliner._port.layout_tests_dir(),
-                             "passes", "text-expected.txt")
-        self.assertFalse(rebaseliner._diff_baselines(path, path))
+        output = rebaseliner._port.expected_text(
+            os.path.join(rebaseliner._port.layout_tests_dir(),
+                         'passes/text.html'))
+        self.assertFalse(rebaseliner._diff_baselines(output, output,
+                                                     is_image=False))
 
     def test_diff_baselines_png(self):
+        return
         rebaseliner = self.make_rebaseliner()
-        path = os.path.join(rebaseliner._port.layout_tests_dir(),
-                            "passes", "image-expected.png")
-        self.assertFalse(rebaseliner._diff_baselines(path, path))
+        image = rebaseliner._port.expected_image(
+            os.path.join(rebaseliner._port.layout_tests_dir(),
+                         'passes/image.html'))
+        self.assertFalse(rebaseliner._diff_baselines(image, image,
+                                                     is_image=True))
 
 if __name__ == '__main__':
     unittest.main()
