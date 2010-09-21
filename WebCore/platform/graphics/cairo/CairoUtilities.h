@@ -26,6 +26,11 @@
 #ifndef CairoUtilities_h
 #define CairoUtilities_h
 
-GdkPixbuf* cairoImageSurfaceToGdkPixbuf(cairo_surface_t* surface);
+typedef struct _cairo cairo_t;
+
+namespace WebCore {
+
+void copyContextProperties(cairo_t* srcCr, cairo_t* dstCr);
+} // namespace WebCore
 
 #endif // CairoUtilities_h

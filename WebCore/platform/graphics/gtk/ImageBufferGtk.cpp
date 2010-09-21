@@ -21,7 +21,7 @@
 #include "ImageBuffer.h"
 
 #include "Base64.h"
-#include "CairoUtilities.h"
+#include "GdkCairoUtilities.h"
 #include "GOwnPtr.h"
 #include "GRefPtrGtk.h"
 #include "MIMETypeRegistry.h"

@@ -1,3 +1,30 @@
+2010-09-21  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [gtk] Move copyContextProperties outside the GraphicsContextCairo
+        https://bugs.webkit.org/show_bug.cgi?id=46179.
+
+        Moved the copyContextProperties function to the CairoUtilities so
+        we can use it outside GraphicsContextCairo. We moved also the old
+        gtk CairoUtilities file to GdkCairoUtilities and added the new
+        file in the cairo directory.
+
+        * GNUmakefile.am:
+        * platform/graphics/cairo/CairoUtilities.cpp: Added.
+        (WebCore::copyContextProperties):
+        * platform/graphics/cairo/CairoUtilities.h: Added.
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        * platform/graphics/gtk/CairoUtilities.cpp: Removed.
+        * platform/graphics/gtk/CairoUtilities.h: Removed.
+        * platform/graphics/gtk/GdkCairoUtilities.cpp: Added.
+        (getCairoSurfacePixel):
+        (getGdkPixbufPixel):
+        (cairoImageSurfaceToGdkPixbuf):
+        * platform/graphics/gtk/GdkCairoUtilities.h: Added.
+        * platform/graphics/gtk/ImageBufferGtk.cpp:
+        * platform/graphics/gtk/ImageGtk.cpp:
+
 2010-09-21  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by James Robinson.

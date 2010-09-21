@@ -35,6 +35,7 @@
 
 #include "AffineTransform.h"
 #include "CairoPath.h"
+#include "CairoUtilities.h"
 #include "FEGaussianBlur.h"
 #include "FloatRect.h"
 #include "Font.h"
@@ -129,23 +130,6 @@ static inline void fillRectSourceOver(cairo_t* cr, const FloatRect& rect, const 
     cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
     cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
     cairo_fill(cr);
-}
-
-static inline void copyContextProperties(cairo_t* srcCr, cairo_t* dstCr)
-{
-    cairo_set_antialias(dstCr, cairo_get_antialias(srcCr));
-
-    size_t dashCount = cairo_get_dash_count(srcCr);
-    Vector<double> dashes(dashCount);
-
-    double offset;
-    cairo_get_dash(srcCr, dashes.data(), &offset);
-    cairo_set_dash(dstCr, dashes.data(), dashCount, offset);
-    cairo_set_line_cap(dstCr, cairo_get_line_cap(srcCr));
-    cairo_set_line_join(dstCr, cairo_get_line_join(srcCr));
-    cairo_set_line_width(dstCr, cairo_get_line_width(srcCr));
-    cairo_set_miter_limit(dstCr, cairo_get_miter_limit(srcCr));
-    cairo_set_fill_rule(dstCr, cairo_get_fill_rule(srcCr));
 }
 
 static void appendPathToCairoContext(cairo_t* to, cairo_t* from)

@@ -26,7 +26,7 @@
 #include "config.h"
 
 #include "BitmapImage.h"
-#include "CairoUtilities.h"
+#include "GdkCairoUtilities.h"
 #include "GOwnPtrGtk.h"
 #include "SharedBuffer.h"
 #include <wtf/text/CString.h>

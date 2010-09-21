@@ -3354,6 +3354,8 @@ webcoregtk_sources += \
 	WebCore/page/gtk/EventHandlerGtk.cpp \
 	WebCore/page/gtk/FrameGtk.cpp \
 	WebCore/platform/graphics/cairo/CairoPath.h \
+	WebCore/platform/graphics/cairo/CairoUtilities.cpp \
+	WebCore/platform/graphics/cairo/CairoUtilities.h \
 	WebCore/platform/graphics/cairo/FontCairo.cpp \
 	WebCore/platform/graphics/cairo/FontCustomPlatformData.h \
 	WebCore/platform/graphics/cairo/FontPlatformData.h \
@@ -3386,10 +3388,10 @@ webcoregtk_sources += \
 	WebCore/platform/graphics/gstreamer/VideoSinkGStreamer.h \
 	WebCore/platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp \
 	WebCore/platform/graphics/gstreamer/WebKitWebSourceGStreamer.h \
-	WebCore/platform/graphics/gtk/CairoUtilities.cpp \
-	WebCore/platform/graphics/gtk/CairoUtilities.h \
 	WebCore/platform/graphics/gtk/ColorGtk.cpp \
 	WebCore/platform/graphics/gtk/FontGtk.cpp \
+	WebCore/platform/graphics/gtk/GdkCairoUtilities.cpp \
+	WebCore/platform/graphics/gtk/GdkCairoUtilities.h \
 	WebCore/platform/graphics/gtk/IconGtk.cpp \
 	WebCore/platform/graphics/gtk/ImageBufferGtk.cpp \
 	WebCore/platform/graphics/gtk/ImageGtk.cpp \
