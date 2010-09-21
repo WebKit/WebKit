@@ -53,7 +53,7 @@ class Command(object):
         self.required_arguments = self._parse_required_arguments(argument_names)
         self.options = options
         self.requires_local_commits = requires_local_commits
-        self.tool = None
+        self._tool = None
         # option_parser can be overriden by the tool using set_option_parser
         # This default parser will be used for standalone_help printing.
         self.option_parser = HelpPrintingOptionParser(usage=SUPPRESS_USAGE, add_help_option=False, option_list=self.options)
@@ -73,9 +73,9 @@ class Command(object):
     # The tool calls bind_to_tool on each Command after adding it to its list.
     def bind_to_tool(self, tool):
         # Command instances can only be bound to one tool at a time.
-        if self.tool and tool != self.tool:
+        if self._tool and tool != self._tool:
             raise Exception("Command already bound to tool!")
-        self.tool = tool
+        self._tool = tool
 
     @staticmethod
     def _parse_required_arguments(argument_names):
@@ -179,17 +179,17 @@ class HelpCommand(AbstractDeclarativeCommand):
         # Only show commands which are relevant to this checkout's SCM system.  Might this be confusing to some users?
         if self.show_all_commands:
             epilog = "All %prog commands:\n"
-            relevant_commands = self.tool.commands[:]
+            relevant_commands = self._tool.commands[:]
         else:
             epilog = "Common %prog commands:\n"
-            relevant_commands = filter(self.tool.should_show_in_main_help, self.tool.commands)
+            relevant_commands = filter(self._tool.should_show_in_main_help, self._tool.commands)
         longest_name_length = max(map(lambda command: len(command.name), relevant_commands))
         relevant_commands.sort(lambda a, b: cmp(a.name, b.name))
         command_help_texts = map(lambda command: "   %s   %s\n" % (command.name.ljust(longest_name_length), command.help_text), relevant_commands)
         epilog += "%s\n" % "".join(command_help_texts)
         epilog += "See '%prog help --all-commands' to list all commands.\n"
         epilog += "See '%prog help COMMAND' for more information on a specific command.\n"
-        return epilog.replace("%prog", self.tool.name()) # Use of %prog here mimics OptionParser.expand_prog_name().
+        return epilog.replace("%prog", self._tool.name()) # Use of %prog here mimics OptionParser.expand_prog_name().
 
     # FIXME: This is a hack so that we don't show --all-commands as a global option:
     def _remove_help_options(self):
@@ -198,7 +198,7 @@ class HelpCommand(AbstractDeclarativeCommand):
 
     def execute(self, options, args, tool):
         if args:
-            command = self.tool.command_by_name(args[0])
+            command = self._tool.command_by_name(args[0])
             if command:
                 print command.standalone_help()
                 return 0

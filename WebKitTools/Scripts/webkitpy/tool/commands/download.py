@@ -289,7 +289,7 @@ class AbstractRolloutPrepCommand(AbstractSequencedCommand):
     argument_names = "REVISION REASON"
 
     def _commit_info(self, revision):
-        commit_info = self.tool.checkout().commit_info_for_revision(revision)
+        commit_info = self._tool.checkout().commit_info_for_revision(revision)
         if commit_info and commit_info.bug_id():
             # Note: Don't print a bug URL here because it will confuse the
             #       SheriffBot because the SheriffBot just greps the output

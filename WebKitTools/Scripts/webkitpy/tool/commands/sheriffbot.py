@@ -50,9 +50,9 @@ class SheriffBot(AbstractQueue, StepSequenceErrorHandler):
 
     def begin_work_queue(self):
         AbstractQueue.begin_work_queue(self)
-        self._sheriff = Sheriff(self.tool, self)
-        self._irc_bot = SheriffIRCBot(self.tool, self._sheriff)
-        self.tool.ensure_irc_connected(self._irc_bot.irc_delegate())
+        self._sheriff = Sheriff(self._tool, self)
+        self._irc_bot = SheriffIRCBot(self._tool, self._sheriff)
+        self._tool.ensure_irc_connected(self._irc_bot.irc_delegate())
 
     def work_item_log_path(self, new_failures):
         return os.path.join("%s-logs" % self.name, "%s.log" % new_failures.keys()[0])
@@ -86,12 +86,12 @@ class SheriffBot(AbstractQueue, StepSequenceErrorHandler):
         self._update()
 
         # We do one read from buildbot to ensure a consistent view.
-        revisions_causing_failures = self.tool.buildbot.revisions_causing_failures()
+        revisions_causing_failures = self._tool.buildbot.revisions_causing_failures()
 
         # Similarly, we read once from our the status_server.
         old_failing_svn_revisions = []
         for svn_revision in revisions_causing_failures.keys():
-            if self.tool.status_server.svn_revision(svn_revision):
+            if self._tool.status_server.svn_revision(svn_revision):
                 old_failing_svn_revisions.append(svn_revision)
 
         new_failures = self._new_failures(revisions_causing_failures,
@@ -108,7 +108,7 @@ class SheriffBot(AbstractQueue, StepSequenceErrorHandler):
         blame_list = new_failures.keys()
         for svn_revision, builders in new_failures.items():
             try:
-                commit_info = self.tool.checkout().commit_info_for_revision(svn_revision)
+                commit_info = self._tool.checkout().commit_info_for_revision(svn_revision)
                 if not commit_info:
                     print "FAILED to fetch CommitInfo for r%s, likely missing ChangeLog" % revision
                     continue
@@ -120,7 +120,7 @@ class SheriffBot(AbstractQueue, StepSequenceErrorHandler):
                                                            builders)
             finally:
                 for builder in builders:
-                    self.tool.status_server.update_svn_revision(svn_revision,
+                    self._tool.status_server.update_svn_revision(svn_revision,
                                                                 builder.name())
         return True
 

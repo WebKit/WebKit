@@ -82,14 +82,14 @@ class CleanPendingCommit(AbstractDeclarativeCommand):
     def execute(self, options, args, tool):
         committers = CommitterList()
         for bug_id in tool.bugs.queries.fetch_bug_ids_from_pending_commit_list():
-            bug = self.tool.bugs.fetch_bug(bug_id)
+            bug = self._tool.bugs.fetch_bug(bug_id)
             patches = bug.patches(include_obsolete=True)
             for patch in patches:
                 flags_to_clear = self._flags_to_clear_on_patch(patch)
                 if not flags_to_clear:
                     continue
                 message = "Cleared %s from obsolete attachment %s so that this bug does not appear in http://webkit.org/pending-commit." % (flags_to_clear, patch.id())
-                self.tool.bugs.obsolete_attachment(patch.id(), message)
+                self._tool.bugs.obsolete_attachment(patch.id(), message)
 
 
 class AssignToCommitter(AbstractDeclarativeCommand):
@@ -104,7 +104,7 @@ class AssignToCommitter(AbstractDeclarativeCommand):
 
     def _assign_bug_to_last_patch_attacher(self, bug_id):
         committers = CommitterList()
-        bug = self.tool.bugs.fetch_bug(bug_id)
+        bug = self._tool.bugs.fetch_bug(bug_id)
         if not bug.is_unassigned():
             assigned_to_email = bug.assigned_to_email()
             log("Bug %s is already assigned to %s (%s)." % (bug_id, assigned_to_email, committers.committer_by_email(assigned_to_email)))
@@ -128,7 +128,7 @@ class AssignToCommitter(AbstractDeclarativeCommand):
             return
 
         reassign_message = "Attachment %s was posted by a committer and has review+, assigning to %s for commit." % (latest_patch.id(), committer.full_name)
-        self.tool.bugs.reassign_bug(bug_id, committer.bugzilla_email(), reassign_message)
+        self._tool.bugs.reassign_bug(bug_id, committer.bugzilla_email(), reassign_message)
 
     def execute(self, options, args, tool):
         for bug_id in tool.bugs.queries.fetch_bug_ids_from_pending_commit_list():

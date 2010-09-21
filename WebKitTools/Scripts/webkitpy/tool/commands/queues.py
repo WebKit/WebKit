@@ -64,20 +64,20 @@ class AbstractQueue(Command, QueueEngineDelegate):
 
     def _cc_watchers(self, bug_id):
         try:
-            self.tool.bugs.add_cc_to_bug(bug_id, self.watchers)
+            self._tool.bugs.add_cc_to_bug(bug_id, self.watchers)
         except Exception, e:
             traceback.print_exc()
             log("Failed to CC watchers.")
 
     def run_webkit_patch(self, args):
-        webkit_patch_args = [self.tool.path()]
+        webkit_patch_args = [self._tool.path()]
         # FIXME: This is a hack, we should have a more general way to pass global options.
         # FIXME: We must always pass global options and their value in one argument
         # because our global option code looks for the first argument which does
         # not begin with "-" and assumes that is the command name.
-        webkit_patch_args += ["--status-host=%s" % self.tool.status_server.host]
+        webkit_patch_args += ["--status-host=%s" % self._tool.status_server.host]
         webkit_patch_args.extend(args)
-        return self.tool.executive.run_and_throw_if_fail(webkit_patch_args)
+        return self._tool.executive.run_and_throw_if_fail(webkit_patch_args)
 
     def _log_directory(self):
         return "%s-logs" % self.name
@@ -91,16 +91,16 @@ class AbstractQueue(Command, QueueEngineDelegate):
         raise NotImplementedError, "subclasses must implement"
 
     def begin_work_queue(self):
-        log("CAUTION: %s will discard all local changes in \"%s\"" % (self.name, self.tool.scm().checkout_root))
+        log("CAUTION: %s will discard all local changes in \"%s\"" % (self.name, self._tool.scm().checkout_root))
         if self.options.confirm:
-            response = self.tool.user.prompt("Are you sure?  Type \"yes\" to continue: ")
+            response = self._tool.user.prompt("Are you sure?  Type \"yes\" to continue: ")
             if (response != "yes"):
                 error("User declined.")
         log("Running WebKit %s." % self.name)
-        self.tool.status_server.update_status(self.name, "Starting Queue")
+        self._tool.status_server.update_status(self.name, "Starting Queue")
 
     def stop_work_queue(self, reason):
-        self.tool.status_server.update_status(self.name, "Stopping Queue, reason: %s" % reason)
+        self._tool.status_server.update_status(self.name, "Stopping Queue, reason: %s" % reason)
 
     def should_continue_work_queue(self):
         self._iteration_count += 1
@@ -122,8 +122,8 @@ class AbstractQueue(Command, QueueEngineDelegate):
 
     def execute(self, options, args, tool, engine=QueueEngine):
         self.options = options  # FIXME: This code is wrong.  Command.options is a list, this assumes an Options element!
-        self.tool = tool  # FIXME: This code is wrong too!  Command.bind_to_tool handles this!
-        return engine(self.name, self, self.tool.wakeup_event).run()
+        self._tool = tool  # FIXME: This code is wrong too!  Command.bind_to_tool handles this!
+        return engine(self.name, self, self._tool.wakeup_event).run()
 
     @classmethod
     def _log_from_script_error_for_upload(cls, script_error, output_limit=None):
@@ -156,7 +156,7 @@ class FeederQueue(AbstractQueue):
     def begin_work_queue(self):
         AbstractQueue.begin_work_queue(self)
         self.feeders = [
-            CommitQueueFeeder(self.tool),
+            CommitQueueFeeder(self._tool),
         ]
 
     def next_work_item(self):
@@ -191,10 +191,10 @@ class FeederQueue(AbstractQueue):
 
 class AbstractPatchQueue(AbstractQueue):
     def _update_status(self, message, patch=None, results_file=None):
-        self.tool.status_server.update_status(self.name, message, patch, results_file)
+        self._tool.status_server.update_status(self.name, message, patch, results_file)
 
     def _fetch_next_work_item(self):
-        return self.tool.status_server.next_work_item(self.name)
+        return self._tool.status_server.next_work_item(self.name)
 
     def _did_pass(self, patch):
         self._update_status(self._pass_status, patch)
@@ -217,13 +217,13 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
 
     def begin_work_queue(self):
         AbstractPatchQueue.begin_work_queue(self)
-        self.committer_validator = CommitterValidator(self.tool.bugs)
+        self.committer_validator = CommitterValidator(self._tool.bugs)
 
     def next_work_item(self):
         patch_id = self._fetch_next_work_item()
         if not patch_id:
             return None
-        return self.tool.bugs.fetch_attachment(patch_id)
+        return self._tool.bugs.fetch_attachment(patch_id)
 
     def _can_build_and_test_without_patch(self):
         try:
@@ -285,7 +285,7 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
     def _revalidate_patch(self, patch):
         # Bugs might get closed, or patches might be obsoleted or r-'d while the
         # commit-queue is processing.  Do one last minute check before landing.
-        patch = self.tool.bugs.fetch_attachment(patch.id())
+        patch = self._tool.bugs.fetch_attachment(patch.id())
         if patch.is_obsolete():
             return None
         if patch.bug().is_closed():
@@ -377,7 +377,7 @@ class RietveldUploadQueue(AbstractPatchQueue, StepSequenceErrorHandler):
     # AbstractPatchQueue methods
 
     def next_work_item(self):
-        patch_id = self.tool.bugs.queries.fetch_first_patch_from_rietveld_queue()
+        patch_id = self._tool.bugs.queries.fetch_first_patch_from_rietveld_queue()
         if patch_id:
             return patch_id
         self._update_status("Empty queue")
@@ -402,7 +402,7 @@ class RietveldUploadQueue(AbstractPatchQueue, StepSequenceErrorHandler):
 
     def handle_unexpected_error(self, patch, message):
         log(message)
-        self._reject_patch(self.tool, patch.id())
+        self._reject_patch(self._tool, patch.id())
 
     # StepSequenceErrorHandler methods
 
@@ -426,10 +426,10 @@ class AbstractReviewQueue(AbstractPatchQueue, PersistentPatchCollectionDelegate,
         return self.name
 
     def fetch_potential_patch_ids(self):
-        return self.tool.bugs.queries.fetch_attachment_ids_from_review_queue()
+        return self._tool.bugs.queries.fetch_attachment_ids_from_review_queue()
 
     def status_server(self):
-        return self.tool.status_server
+        return self._tool.status_server
 
     def is_terminal_status(self, status):
         return status == "Pass" or status == "Fail" or status.startswith("Error:")
@@ -443,7 +443,7 @@ class AbstractReviewQueue(AbstractPatchQueue, PersistentPatchCollectionDelegate,
     def next_work_item(self):
         patch_id = self._patches.next()
         if patch_id:
-            return self.tool.bugs.fetch_attachment(patch_id)
+            return self._tool.bugs.fetch_attachment(patch_id)
 
     def should_proceed_with_work_item(self, patch):
         raise NotImplementedError, "subclasses must implement"

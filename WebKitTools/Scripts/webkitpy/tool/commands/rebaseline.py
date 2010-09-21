@@ -72,15 +72,15 @@ class Rebaseline(AbstractDeclarativeCommand):
 
     # FIXME: This should share more code with FailureReason._builder_to_explain
     def _builder_to_pull_from(self):
-        builder_statuses = self.tool.buildbot.builder_statuses()
+        builder_statuses = self._tool.buildbot.builder_statuses()
         red_statuses = [status for status in builder_statuses if not status["is_green"]]
         print "%s failing" % (pluralize("builder", len(red_statuses)))
         builder_choices = [status["name"] for status in red_statuses]
-        chosen_name = self.tool.user.prompt_with_list("Which builder to pull results from:", builder_choices)
+        chosen_name = self._tool.user.prompt_with_list("Which builder to pull results from:", builder_choices)
         # FIXME: prompt_with_list should really take a set of objects and a set of names and then return the object.
         for status in red_statuses:
             if status["name"] == chosen_name:
-                return (self.tool.buildbot.builder_with_name(chosen_name), status["build_number"])
+                return (self._tool.buildbot.builder_with_name(chosen_name), status["build_number"])
 
     def _replace_expectation_with_remote_result(self, local_file, remote_file):
         (downloaded_file, headers) = urllib.urlretrieve(remote_file)

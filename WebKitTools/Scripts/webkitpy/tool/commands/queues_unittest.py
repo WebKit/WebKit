@@ -187,7 +187,7 @@ class SecondThoughtsCommitQueue(CommitQueue):
             "attacher_email": "Contributer1",
         }
         patch = Attachment(attachment_dictionary, None)
-        self.tool.bugs.set_override_patch(patch)
+        self._tool.bugs.set_override_patch(patch)
         return True
 
 

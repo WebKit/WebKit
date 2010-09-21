@@ -41,8 +41,8 @@ class OpenBugs(AbstractDeclarativeCommand):
 
     def _open_bugs(self, bug_ids):
         for bug_id in bug_ids:
-            bug_url = self.tool.bugs.bug_url_for_bug_id(bug_id)
-            self.tool.user.open_url(bug_url)
+            bug_url = self._tool.bugs.bug_url_for_bug_id(bug_id)
+            self._tool.user.open_url(bug_url)
 
     # _find_bugs_in_string mostly exists for easy unit testing.
     def _find_bugs_in_string(self, string):

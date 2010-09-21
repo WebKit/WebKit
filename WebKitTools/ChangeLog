@@ -1,5 +1,24 @@
 2010-09-20  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        The tool member variable should be called _tool
+        https://bugs.webkit.org/show_bug.cgi?id=46160
+
+        Created by find-and-replace.
+
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/commands/openbugs.py:
+        * Scripts/webkitpy/tool/commands/queries.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        * Scripts/webkitpy/tool/commands/sheriffbot.py:
+        * Scripts/webkitpy/tool/commands/upload.py:
+        * Scripts/webkitpy/tool/multicommandtool.py:
+
+2010-09-20  Adam Barth  <abarth@webkit.org>
+
         I ran the tests before landing but ignored the fact that they failed.  :(
 
         * Scripts/webkitpy/tool/commands/queues.py:
