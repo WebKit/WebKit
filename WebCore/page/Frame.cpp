@@ -499,8 +499,9 @@ void Frame::setPrinting(bool printing, const FloatSize& pageSize, float maximumS
     m_doc->styleSelectorChanged(RecalcStyleImmediately);
     view()->forceLayoutForPagination(pageSize, maximumShrinkRatio, shouldAdjustViewSize);
 
+    // Subframes of the one we're printing don't lay out to the page size.
     for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
-        child->setPrinting(printing, pageSize, maximumShrinkRatio, shouldAdjustViewSize);
+        child->setPrinting(printing, IntSize(), 0, shouldAdjustViewSize);
 }
 
 void Frame::injectUserScripts(UserScriptInjectionTime injectionTime)
