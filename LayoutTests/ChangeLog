@@ -1,3 +1,9 @@
+2010-09-21  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed chromium expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-21  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

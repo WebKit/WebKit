@@ -2633,7 +2633,7 @@ BUG45991 MAC : canvas/philip/tests/2d.gradient.radial.cone.front.html = TEXT
 BUG45991 MAC : canvas/philip/tests/2d.gradient.radial.inside2.html = TEXT
 BUG45991 MAC : canvas/philip/tests/2d.gradient.radial.inside3.html = TEXT
 BUG45991 MAC : canvas/philip/tests/2d.gradient.radial.outside1.html = TEXT
-BUG45991 MAC : canvas/philip/tests/2d.imageData.get.source.outside.html = TEXT
+BUG45991 : canvas/philip/tests/2d.imageData.get.source.outside.html = TEXT
 BUG45991 MAC : canvas/philip/tests/2d.line.cap.closed.html = TEXT
 BUG45991 MAC : canvas/philip/tests/2d.line.join.parallel.html = TEXT
 BUG45991 MAC : canvas/philip/tests/2d.line.miter.lineedge.html = TEXT
@@ -3039,7 +3039,7 @@ BUG53554 MAC LINUX : svg/W3C-SVG-1.1/fonts-elem-07-b.svg = PASS IMAGE
 BUG53554 MAC LINUX : svg/custom/svg-fonts-without-missing-glyph.xhtml = PASS IMAGE
 
 // New test, need to verify if it's safe to rebaseline.
-BUGWK44770 WIN LINUX : svg/repaint/filter-repaint.svg = IMAGE+TEXT
+BUGWK44770 WIN LINUX : svg/repaint/filter-repaint.svg = IMAGE+TEXT CRASH
 
 // Full Screen JS API is not yet enabled.
 BUGWK44797 : fullscreen = FAIL
@@ -3153,3 +3153,5 @@ BUG56220 : userscripts/user-script-top-frame-only.html = TEXT
 // This test needs enhanced eventSender.contextMenu() return value.
 // See https://bugs.webkit.org/show_bug.cgi?id=45021 for more info.
 BUGWK45021 : media/context-menu-actions.html = TIMEOUT
+
+BUGWK46163 : media/video-controls-with-mutation-event-handler.html = CRASH
