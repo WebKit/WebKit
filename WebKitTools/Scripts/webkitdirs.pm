@@ -1408,6 +1408,72 @@ sub buildAutotoolsProject($@)
     return $result;
 }
 
+sub buildCMakeProject($@)
+{
+    my ($port, $clean, @buildParams) = @_;
+    my $dir = File::Spec->canonpath(baseProductDir());
+    my $config = configuration();
+    my $result;
+    my $makeArgs = "";
+    my @buildArgs;
+    
+    $makeArgs .= " -j" . numberOfCPUs() if ($makeArgs !~ m/-j\s*\d+/);
+
+    if ($clean) {
+        print "Cleaning the build directory '$dir'\n";
+        $dir = File::Spec->catfile($dir, $config);
+        File::Path::remove_tree($dir, {keep_root => 1});
+        $result = 0;
+    } else {
+        my $cmakebin = "cmake";
+        my $make = "make";
+
+        push @buildArgs, "-DPORT=$port";
+
+        for my $i (0 .. $#buildParams) {
+            my $opt = $buildParams[$i];
+            if ($opt =~ /^--makeargs=(.*)/i ) {
+                $makeArgs = $1;
+            } elsif ($opt =~ /^--prefix=(.*)/i ) {
+                push @buildArgs, "-DCMAKE_INSTALL_PREFIX=$1";
+            } else {
+                push @buildArgs, $opt;
+            }
+        }
+
+        if ($config =~ m/debug/i) {
+            push @buildArgs, "-DCMAKE_BUILD_TYPE=Debug";
+        } elsif ($config =~ m/release/i) {
+            push @buildArgs, "-DCMAKE_BUILD_TYPE=Release";
+        }
+
+        push @buildArgs, sourceDir();
+
+        $dir = File::Spec->catfile($dir, $config);
+        File::Path::mkpath($dir);
+        chdir $dir or die "Failed to cd into " . $dir . "\n";
+        
+        print "Calling '$cmakebin @buildArgs' in " . $dir . "\n\n";
+        my $result = system "$cmakebin @buildArgs";
+        if ($result ne 0) {
+            die "Failed while running $cmakebin to generate makefiles!\n";
+        }
+
+        print "Calling '$make $makeArgs' in " . $dir . "\n\n";
+        $result = system "$make $makeArgs";
+
+        chdir ".." or die;
+    }
+
+    return $result; 
+}
+
+sub buildCMakeEflProject($@)
+{
+    my ($clean, @buildArgs) = @_;
+    return buildCMakeProject("Efl", $clean, @buildArgs);
+}
+
 sub buildQMakeProject($@)
 {
     my ($clean, @buildParams) = @_;

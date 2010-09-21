@@ -106,7 +106,7 @@ my @features = (
       define => "ENABLE_EVENTSOURCE", default => 1, value => \$eventsourceSupport },
 
     { option => "filters", desc => "Toggle Filters support",
-      define => "ENABLE_FILTERS", default => (isAppleWebKit() || isGtk() || isQt()), value => \$filtersSupport },
+      define => "ENABLE_FILTERS", default => (isAppleWebKit() || isGtk() || isQt() || isEfl()), value => \$filtersSupport },
 
     { option => "geolocation", desc => "Toggle Geolocation support",
       define => "ENABLE_GEOLOCATION", default => (isAppleWebKit() || isGtk()), value => \$geolocationSupport },
@@ -245,13 +245,14 @@ Usage: $programName [options] [options to pass to build system]
   --chromium                        Build the Chromium port on Mac/Win/Linux
   --gtk                             Build the GTK+ port
   --qt                              Build the Qt port
+  --efl                             Build the EFL port
   --inspector-frontend              Copy changes to the inspector front-end files to the build directory
 
   --install-headers=<path>          Set installation path for the headers (Qt only)
   --install-libs=<path>             Set installation path for the libraries (Qt only)
   --v8                              Use V8 as JavaScript engine (Qt only)
 
-  --prefix=<path>                   Set installation prefix to the given path (Gtk only)
+  --prefix=<path>                   Set installation prefix to the given path (Gtk/Efl only)
   --makeargs=<arguments>            Optional Makefile flags
 
   --minimal                         No optional features, unless explicitly enabled.
@@ -425,6 +426,22 @@ if (isChromium()) {
     # Chromium doesn't build by project directories.
     @projects = ();
     my $result = buildChromium($clean, @options);
+    exit exitStatus($result) if exitStatus($result);
+}
+
+if (isEfl()) {
+    @options = ();
+    @projects = ();
+    foreach (@features) {
+        my $featureName = $_->{define};
+        if ($featureName) {
+            my $featureEnabled = ${$_->{value}} ? "ON" : "OFF";
+            push @options, "-D$featureName=$featureEnabled";
+        }
+    }
+    push @options, "--makeargs=" . $makeArgs if defined($makeArgs);
+    push @options, "--prefix=" . $prefixPath if defined($prefixPath);
+    my $result = buildCMakeEflProject($clean, @options);
     exit exitStatus($result) if exitStatus($result);
 }
 

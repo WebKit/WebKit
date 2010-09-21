@@ -1,3 +1,15 @@
+2010-09-20  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Darin Adler.
+
+        build-webkit: Add support for CMake build system
+        https://bugs.webkit.org/show_bug.cgi?id=44979
+
+        * Scripts/build-webkit: Add "--efl" command-line option to build the
+        EFL port of WebKit.
+        * Scripts/webkitdirs.pm: Define buildCMakeProject() and
+        buildEflCMakeProject() subroutines.
+
 2010-09-20  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Ojan Vafai.
