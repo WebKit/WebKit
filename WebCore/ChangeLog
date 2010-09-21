@@ -98,7 +98,7 @@
         SVG Filter cleanup
         https://bugs.webkit.org/show_bug.cgi?id=45612
 
-        Unreviewed change of episolon back to a more tolerant value in RenderTreeAsText and made it a static const.
+        Unreviewed change of epsilon back to a more tolerant value in RenderTreeAsText and made it a static const.
         This should turn the bots green again.
 
         * rendering/RenderTreeAsText.cpp:
