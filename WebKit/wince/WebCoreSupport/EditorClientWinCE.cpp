@@ -32,282 +32,282 @@ using namespace WebCore;
 
 namespace WebKit {
 
-EditorClient::EditorClient(WebView* webView)
+EditorClientWinCE::EditorClientWinCE(WebView* webView)
     : m_webView(webView)
 {
 }
 
-EditorClient::~EditorClient()
+EditorClientWinCE::~EditorClientWinCE()
 {
 }
 
-void EditorClient::setInputMethodState(bool active)
+void EditorClientWinCE::setInputMethodState(bool active)
 {
     notImplemented();
 }
 
-bool EditorClient::shouldDeleteRange(Range*)
+bool EditorClientWinCE::shouldDeleteRange(Range*)
 {
     notImplemented();
     return true;
 }
 
-bool EditorClient::shouldShowDeleteInterface(HTMLElement*)
+bool EditorClientWinCE::shouldShowDeleteInterface(HTMLElement*)
 {
     return false;
 }
 
-bool EditorClient::isContinuousSpellCheckingEnabled()
-{
-    notImplemented();
-    return false;
-}
-
-bool EditorClient::isGrammarCheckingEnabled()
+bool EditorClientWinCE::isContinuousSpellCheckingEnabled()
 {
     notImplemented();
     return false;
 }
 
-int EditorClient::spellCheckerDocumentTag()
+bool EditorClientWinCE::isGrammarCheckingEnabled()
+{
+    notImplemented();
+    return false;
+}
+
+int EditorClientWinCE::spellCheckerDocumentTag()
 {
     notImplemented();
     return 0;
 }
 
-bool EditorClient::shouldBeginEditing(WebCore::Range*)
+bool EditorClientWinCE::shouldBeginEditing(WebCore::Range*)
 {
     notImplemented();
     return true;
 }
 
-bool EditorClient::shouldEndEditing(WebCore::Range*)
+bool EditorClientWinCE::shouldEndEditing(WebCore::Range*)
 {
     notImplemented();
     return true;
 }
 
-bool EditorClient::shouldInsertText(const String&, Range*, EditorInsertAction)
+bool EditorClientWinCE::shouldInsertText(const String&, Range*, EditorInsertAction)
 {
     notImplemented();
     return true;
 }
 
-bool EditorClient::shouldChangeSelectedRange(Range*, Range*, EAffinity, bool)
+bool EditorClientWinCE::shouldChangeSelectedRange(Range*, Range*, EAffinity, bool)
 {
     notImplemented();
     return true;
 }
 
-bool EditorClient::shouldApplyStyle(WebCore::CSSStyleDeclaration*, WebCore::Range*)
+bool EditorClientWinCE::shouldApplyStyle(WebCore::CSSStyleDeclaration*, WebCore::Range*)
 {
     notImplemented();
     return true;
 }
 
-bool EditorClient::shouldMoveRangeAfterDelete(WebCore::Range*, WebCore::Range*)
+bool EditorClientWinCE::shouldMoveRangeAfterDelete(WebCore::Range*, WebCore::Range*)
 {
     notImplemented();
     return true;
 }
 
-void EditorClient::didBeginEditing()
+void EditorClientWinCE::didBeginEditing()
 {
     notImplemented();
 }
 
-void EditorClient::respondToChangedContents()
+void EditorClientWinCE::respondToChangedContents()
 {
     notImplemented();
 }
 
-void EditorClient::respondToChangedSelection()
+void EditorClientWinCE::respondToChangedSelection()
 {
     notImplemented();
 }
 
-void EditorClient::didEndEditing()
+void EditorClientWinCE::didEndEditing()
 {
     notImplemented();
 }
 
-void EditorClient::didWriteSelectionToPasteboard()
+void EditorClientWinCE::didWriteSelectionToPasteboard()
 {
     notImplemented();
 }
 
-void EditorClient::didSetSelectionTypesForPasteboard()
+void EditorClientWinCE::didSetSelectionTypesForPasteboard()
 {
     notImplemented();
 }
 
-bool EditorClient::isEditable()
+bool EditorClientWinCE::isEditable()
 {
     notImplemented();
     return false;
 }
 
-void EditorClient::registerCommandForUndo(WTF::PassRefPtr<WebCore::EditCommand> command)
+void EditorClientWinCE::registerCommandForUndo(WTF::PassRefPtr<WebCore::EditCommand> command)
 {
     notImplemented();
 }
 
-void EditorClient::registerCommandForRedo(WTF::PassRefPtr<WebCore::EditCommand> command)
+void EditorClientWinCE::registerCommandForRedo(WTF::PassRefPtr<WebCore::EditCommand> command)
 {
     notImplemented();
 }
 
-void EditorClient::clearUndoRedoOperations()
+void EditorClientWinCE::clearUndoRedoOperations()
 {
     notImplemented();
 }
 
-bool EditorClient::canUndo() const
-{
-    notImplemented();
-    return false;
-}
-
-bool EditorClient::canRedo() const
+bool EditorClientWinCE::canUndo() const
 {
     notImplemented();
     return false;
 }
 
-void EditorClient::undo()
+bool EditorClientWinCE::canRedo() const
+{
+    notImplemented();
+    return false;
+}
+
+void EditorClientWinCE::undo()
 {
     notImplemented();
 }
 
-void EditorClient::redo()
+void EditorClientWinCE::redo()
 {
     notImplemented();
 }
 
-bool EditorClient::shouldInsertNode(Node*, Range*, EditorInsertAction)
+bool EditorClientWinCE::shouldInsertNode(Node*, Range*, EditorInsertAction)
 {
     notImplemented();
     return true;
 }
 
-void EditorClient::pageDestroyed()
+void EditorClientWinCE::pageDestroyed()
 {
     delete this;
 }
 
-bool EditorClient::smartInsertDeleteEnabled()
+bool EditorClientWinCE::smartInsertDeleteEnabled()
 {
     notImplemented();
     return false;
 }
 
-bool EditorClient::isSelectTrailingWhitespaceEnabled()
+bool EditorClientWinCE::isSelectTrailingWhitespaceEnabled()
 {
     notImplemented();
     return false;
 }
 
-void EditorClient::toggleContinuousSpellChecking()
+void EditorClientWinCE::toggleContinuousSpellChecking()
 {
     notImplemented();
 }
 
-void EditorClient::toggleGrammarChecking()
+void EditorClientWinCE::toggleGrammarChecking()
 {
     notImplemented();
 }
 
-void EditorClient::handleKeyboardEvent(KeyboardEvent* event)
+void EditorClientWinCE::handleKeyboardEvent(KeyboardEvent* event)
 {
     notImplemented();
 }
 
-void EditorClient::handleInputMethodKeydown(KeyboardEvent* event)
+void EditorClientWinCE::handleInputMethodKeydown(KeyboardEvent* event)
 {
     notImplemented();
 }
 
-void EditorClient::textFieldDidBeginEditing(Element*)
+void EditorClientWinCE::textFieldDidBeginEditing(Element*)
 {
 }
 
-void EditorClient::textFieldDidEndEditing(Element*)
+void EditorClientWinCE::textFieldDidEndEditing(Element*)
 {
 }
 
-void EditorClient::textDidChangeInTextField(Element*)
+void EditorClientWinCE::textDidChangeInTextField(Element*)
 {
 }
 
-bool EditorClient::doTextFieldCommandFromEvent(Element*, KeyboardEvent*)
+bool EditorClientWinCE::doTextFieldCommandFromEvent(Element*, KeyboardEvent*)
 {
     return false;
 }
 
-void EditorClient::textWillBeDeletedInTextField(Element*)
+void EditorClientWinCE::textWillBeDeletedInTextField(Element*)
 {
     notImplemented();
 }
 
-void EditorClient::textDidChangeInTextArea(Element*)
+void EditorClientWinCE::textDidChangeInTextArea(Element*)
 {
     notImplemented();
 }
 
-void EditorClient::ignoreWordInSpellDocument(const String& text)
+void EditorClientWinCE::ignoreWordInSpellDocument(const String& text)
 {
     notImplemented();
 }
 
-void EditorClient::learnWord(const String& text)
+void EditorClientWinCE::learnWord(const String& text)
 {
     notImplemented();
 }
 
-void EditorClient::checkSpellingOfString(const UChar* text, int length, int* misspellingLocation, int* misspellingLength)
+void EditorClientWinCE::checkSpellingOfString(const UChar* text, int length, int* misspellingLocation, int* misspellingLength)
 {
     notImplemented();
 }
 
-String EditorClient::getAutoCorrectSuggestionForMisspelledWord(const String& inputWord)
+String EditorClientWinCE::getAutoCorrectSuggestionForMisspelledWord(const String& inputWord)
 {
     // This method can be implemented using customized algorithms for the particular browser.
     // Currently, it computes an empty string.
     return String();
 }
 
-void EditorClient::checkGrammarOfString(const UChar*, int, Vector<GrammarDetail>&, int*, int*)
+void EditorClientWinCE::checkGrammarOfString(const UChar*, int, Vector<GrammarDetail>&, int*, int*)
 {
     notImplemented();
 }
 
-void EditorClient::updateSpellingUIWithGrammarString(const String&, const GrammarDetail&)
+void EditorClientWinCE::updateSpellingUIWithGrammarString(const String&, const GrammarDetail&)
 {
     notImplemented();
 }
 
-void EditorClient::updateSpellingUIWithMisspelledWord(const String&)
+void EditorClientWinCE::updateSpellingUIWithMisspelledWord(const String&)
 {
     notImplemented();
 }
 
-void EditorClient::showSpellingUI(bool)
+void EditorClientWinCE::showSpellingUI(bool)
 {
     notImplemented();
 }
 
-bool EditorClient::spellingUIIsShowing()
+bool EditorClientWinCE::spellingUIIsShowing()
 {
     notImplemented();
     return false;
 }
 
-void EditorClient::getGuessesForWord(const String& word, WTF::Vector<String>& guesses)
+void EditorClientWinCE::getGuessesForWord(const String& word, WTF::Vector<String>& guesses)
 {
     notImplemented();
 }
 
-void EditorClient::willSetInputMethodState()
+void EditorClientWinCE::willSetInputMethodState()
 {
     notImplemented();
 }

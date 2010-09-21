@@ -31,10 +31,10 @@ class WebView;
 
 namespace WebKit {
 
-class InspectorClient : public WebCore::InspectorClient {
+class InspectorClientWinCE : public WebCore::InspectorClient {
 public:
-    InspectorClient(WebView* webView);
-    ~InspectorClient();
+    InspectorClientWinCE(WebView* webView);
+    ~InspectorClientWinCE();
 
     virtual void inspectorDestroyed();
 

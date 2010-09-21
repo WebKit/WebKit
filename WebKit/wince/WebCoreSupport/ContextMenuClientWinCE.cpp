@@ -32,57 +32,57 @@ using namespace WebCore;
 
 namespace WebKit {
 
-ContextMenuClient::ContextMenuClient(WebView *webView)
+ContextMenuClientWinCE::ContextMenuClientWinCE(WebView *webView)
     : m_webView(webView)
 {
 }
 
-void ContextMenuClient::contextMenuDestroyed()
+void ContextMenuClientWinCE::contextMenuDestroyed()
 {
     delete this;
 }
 
-PlatformMenuDescription ContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu* menu)
+PlatformMenuDescription ContextMenuClientWinCE::getCustomMenuFromDefaultItems(ContextMenu* menu)
 {
     return menu->releasePlatformDescription();
 }
 
-void ContextMenuClient::contextMenuItemSelected(ContextMenuItem*, const ContextMenu*)
+void ContextMenuClientWinCE::contextMenuItemSelected(ContextMenuItem*, const ContextMenu*)
 {
     notImplemented();
 }
 
-void ContextMenuClient::downloadURL(const KURL& url)
+void ContextMenuClientWinCE::downloadURL(const KURL& url)
 {
     notImplemented();
 }
 
-void ContextMenuClient::copyImageToClipboard(const HitTestResult&)
+void ContextMenuClientWinCE::copyImageToClipboard(const HitTestResult&)
 {
     notImplemented();
 }
 
-void ContextMenuClient::searchWithGoogle(const Frame*)
+void ContextMenuClientWinCE::searchWithGoogle(const Frame*)
 {
     notImplemented();
 }
 
-void ContextMenuClient::lookUpInDictionary(Frame*)
+void ContextMenuClientWinCE::lookUpInDictionary(Frame*)
 {
     notImplemented();
 }
 
-void ContextMenuClient::speak(const String&)
+void ContextMenuClientWinCE::speak(const String&)
 {
     notImplemented();
 }
 
-void ContextMenuClient::stopSpeaking()
+void ContextMenuClientWinCE::stopSpeaking()
 {
     notImplemented();
 }
 
-bool ContextMenuClient::isSpeaking()
+bool ContextMenuClientWinCE::isSpeaking()
 {
     notImplemented();
     return false;

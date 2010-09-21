@@ -31,51 +31,51 @@ using namespace WebCore;
 
 namespace WebKit {
 
-InspectorClient::InspectorClient(WebView* webView)
+InspectorClientWinCE::InspectorClientWinCE(WebView* webView)
     : m_inspectedWebView(webView)
 {
 }
 
-InspectorClient::~InspectorClient()
+InspectorClientWinCE::~InspectorClientWinCE()
 {
 }
 
-void InspectorClient::inspectorDestroyed()
+void InspectorClientWinCE::inspectorDestroyed()
 {
     delete this;
 }
 
-void InspectorClient::openInspectorFrontend(InspectorController* controller)
+void InspectorClientWinCE::openInspectorFrontend(InspectorController* controller)
 {
     notImplemented();
 }
 
-void InspectorClient::releaseFrontendPage()
+void InspectorClientWinCE::releaseFrontendPage()
 {
     notImplemented();
 }
 
-void InspectorClient::highlight(Node* node)
+void InspectorClientWinCE::highlight(Node* node)
 {
     notImplemented();
 }
 
-void InspectorClient::hideHighlight()
+void InspectorClientWinCE::hideHighlight()
 {
     notImplemented();
 }
 
-void InspectorClient::populateSetting(const String& key, String* value)
+void InspectorClientWinCE::populateSetting(const String& key, String* value)
 {
     notImplemented();
 }
 
-void InspectorClient::storeSetting(const String& key, const String& value)
+void InspectorClientWinCE::storeSetting(const String& key, const String& value)
 {
     notImplemented();
 }
 
-bool InspectorClient::sendMessageToFrontend(const String& message)
+bool InspectorClientWinCE::sendMessageToFrontend(const String& message)
 {
     notImplemented();
     return false;

@@ -31,10 +31,10 @@ class WebView;
 
 namespace WebKit {
 
-class EditorClient : public WebCore::EditorClient {
+class EditorClientWinCE : public WebCore::EditorClient {
 public:
-    EditorClient(WebView*);
-    ~EditorClient();
+    EditorClientWinCE(WebView*);
+    ~EditorClientWinCE();
 
     virtual void pageDestroyed();
 

@@ -31,9 +31,9 @@ class WebView;
 
 namespace WebKit {
 
-class ContextMenuClient : public WebCore::ContextMenuClient {
+class ContextMenuClientWinCE : public WebCore::ContextMenuClient {
 public:
-    ContextMenuClient(WebView*);
+    ContextMenuClientWinCE(WebView*);
 
     virtual void contextMenuDestroyed();
 
