@@ -2,6 +2,18 @@
 
         Reviewed by Alexey Proskuryakov.
 
+        stray param elements are dropped during parsing
+        https://bugs.webkit.org/show_bug.cgi?id=14551
+
+        This bug was fixed by the HTML5 parser.  Add tests from bug.
+
+        * fast/parser/stray-param-expected.txt: Added.
+        * fast/parser/stray-param.html: Added.
+
+2010-09-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
         [html-parsing] make entity handling match IE7 / HTML5
         https://bugs.webkit.org/show_bug.cgi?id=14391
 
