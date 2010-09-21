@@ -568,9 +568,9 @@ endif # USE_ICU_UNICODE
 # ----
 if USE_GLIB_UNICODE
 javascriptcore_sources += \
+	JavaScriptCore/wtf/unicode/UnicodeMacrosFromICU.h \
 	JavaScriptCore/wtf/unicode/glib/UnicodeGLib.h \
-	JavaScriptCore/wtf/unicode/glib/UnicodeGLib.cpp \
-	JavaScriptCore/wtf/unicode/glib/UnicodeMacrosFromICU.h
+	JavaScriptCore/wtf/unicode/glib/UnicodeGLib.cpp
 endif
 
 JavaScriptCore/Lexer.lut.h: $(srcdir)/JavaScriptCore/create_hash_table $(srcdir)/JavaScriptCore/parser/Keywords.table

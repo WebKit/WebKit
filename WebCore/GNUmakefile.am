@@ -645,11 +645,13 @@ webcore_sources += \
 	WebCore/bindings/js/DOMWrapperWorld.h \
 	WebCore/bindings/js/GCController.cpp \
 	WebCore/bindings/js/GCController.h \
+	WebCore/bindings/js/IDBBindingUtilities.h \
 	WebCore/bindings/js/JavaScriptCallFrame.cpp \
 	WebCore/bindings/js/JavaScriptCallFrame.h \
 	WebCore/bindings/js/JSAttrCustom.cpp \
 	WebCore/bindings/js/JSAudioConstructor.cpp \
 	WebCore/bindings/js/JSAudioConstructor.h \
+	WebCore/bindings/js/JSBinding.h \
 	WebCore/bindings/js/JSCallbackData.cpp \
 	WebCore/bindings/js/JSCallbackData.h \
 	WebCore/bindings/js/JSCanvasRenderingContext2DCustom.cpp \
@@ -2781,6 +2783,8 @@ webcore_sources += \
 	WebCore/storage/IDBIndex.cpp \
 	WebCore/storage/IDBIndex.h \
 	WebCore/storage/IDBKey.h \
+	WebCore/storage/IDBKeyPath.h \
+	WebCore/storage/IDBKeyPathBackendImpl.h \
 	WebCore/storage/IDBKeyRange.cpp \
 	WebCore/storage/IDBKeyRange.h \
 	WebCore/storage/IDBObjectStoreBackendImpl.cpp \
@@ -2794,6 +2798,7 @@ webcore_sources += \
 	WebCore/storage/IDBSuccessEvent.cpp \
 	WebCore/storage/IDBSuccessEvent.h \
 	WebCore/storage/IDBTransactionBackendInterface.h \
+	WebCore/storage/IDBTransactionCoordinator.h \
 	WebCore/storage/IDBTransaction.cpp \
 	WebCore/storage/IDBTransaction.h \
 	WebCore/storage/LocalStorageTask.cpp \
@@ -3544,6 +3549,7 @@ webcoregtk_sources += \
 	WebCore/platform/graphics/cairo/FontCacheFreeType.cpp \
 	WebCore/platform/graphics/cairo/FontCustomPlatformData.cpp \
 	WebCore/platform/graphics/cairo/FontPlatformDataFreeType.cpp \
+	WebCore/platform/graphics/cairo/FontPlatformDataFreeType.h \
 	WebCore/platform/graphics/cairo/GlyphPageTreeNodeCairo.cpp \
 	WebCore/platform/graphics/cairo/SimpleFontDataCairo.cpp
 endif # END USE_FREETYPE
@@ -3557,6 +3563,7 @@ webcoregtk_sources += \
 	WebCore/platform/graphics/gtk/FontCachePango.cpp \
 	WebCore/platform/graphics/gtk/FontCustomPlatformDataPango.cpp \
 	WebCore/platform/graphics/gtk/FontPlatformDataPango.cpp \
+	WebCore/platform/graphics/gtk/FontPlatformDataPango.h \
 	WebCore/platform/graphics/gtk/GlyphPageTreeNodePango.cpp \
 	WebCore/platform/graphics/gtk/SimpleFontDataPango.cpp
 endif # END USE_PANGO

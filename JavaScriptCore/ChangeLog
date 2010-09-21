@@ -1,3 +1,12 @@
+2010-09-21  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] 'make dist' should be fixed in preparation for the next release
+        https://bugs.webkit.org/show_bug.cgi?id=46129
+
+        * GNUmakefile.am: Update the sources list to include missing headers.
+
 2010-09-21  Dave Tapuska  <dtapuska@rim.com>
 
         Reviewed by Csaba Osztrogonác.
