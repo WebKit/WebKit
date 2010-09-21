@@ -1,3 +1,20 @@
+2010-09-20  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Dan Bernstein.
+
+        Cleanup: Extract common border radii expansion code in
+        RenderBoxModelObject::paintBoxShadow() into function
+        https://bugs.webkit.org/show_bug.cgi?id=45934
+
+        Extracted code for expanding and clamping the border radii
+        into common function to remove duplicate code.
+
+        No functionality was changed. So, no new tests.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::uniformlyExpandBorderRadii): Added.
+        (WebCore::RenderBoxModelObject::paintBoxShadow): Moved common code to uniformlyExpandBorderRadii().
+
 2010-09-20  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by James Robinson.
