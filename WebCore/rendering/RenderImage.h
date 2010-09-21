@@ -41,7 +41,7 @@ public:
 
     RenderImageResource* imageResource() { return m_imageResource.get(); }
     const RenderImageResource* imageResource() const { return m_imageResource.get(); }
-    CachedImage* cachedImage() const { return m_imageResource->cachedImage(); }
+    CachedImage* cachedImage() const { return m_imageResource ? m_imageResource->cachedImage() : 0; }
 
     bool setImageSizeForAltText(CachedImage* newImage = 0);
 

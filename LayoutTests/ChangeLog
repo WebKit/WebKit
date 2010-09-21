@@ -1,3 +1,15 @@
+2010-09-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Crash when div with content set to image gets composited (Vimeo).
+        https://bugs.webkit.org/show_bug.cgi?id=46140
+
+        Test with a compositing div with content set to an image.
+        
+        * compositing/images/content-image-expected.txt: Copied from LayoutTests/fast/forms/select-change-popup-to-listbox-in-event-handler-expected.txt.
+        * compositing/images/content-image.html: Added.
+
 2010-09-20  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Dimitri Glazkov.

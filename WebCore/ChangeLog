@@ -1,3 +1,22 @@
+2010-09-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Crash when div with content set to image gets composited (Vimeo).
+        https://bugs.webkit.org/show_bug.cgi?id=46140
+        
+        When CSS specifies that the content of an element is an image, we make
+        a RenderImage, and setStyle() before setting the image resource. In this
+        case the compositing code can attempt to access the cached image, which
+        would crash with a null deref.
+        
+        Fix by null-checking m_imageResource.
+
+        Test: compositing/images/content-image.html
+
+        * rendering/RenderImage.h:
+        (WebCore::RenderImage::cachedImage):
+
 2010-09-20  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Dimitri Glazkov.
