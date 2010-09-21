@@ -1,3 +1,23 @@
+2010-09-21  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46190, add borderStart/Before/End/After accessors to RenderBoxModelObject.
+
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::RenderBoxModelObject::borderBefore):
+        (WebCore::RenderBoxModelObject::borderAfter):
+        (WebCore::RenderBoxModelObject::borderStart):
+        (WebCore::RenderBoxModelObject::borderEnd):
+        (WebCore::RenderBoxModelObject::borderAndPaddingLogicalHeight):
+        (WebCore::RenderBoxModelObject::borderAndPaddingLogicalWidth):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::borderStart):
+        (WebCore::RenderTableCell::borderEnd):
+        (WebCore::RenderTableCell::borderBefore):
+        (WebCore::RenderTableCell::borderAfter):
+        * rendering/RenderTableCell.h:
+
 2010-09-21  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

@@ -690,6 +690,28 @@ int RenderTableCell::borderBottom() const
     return table()->collapseBorders() ? borderHalfBottom(false) : RenderBlock::borderBottom();
 }
 
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=46191, make the collapsed border drawing
+// work with different block flow values instead of being hard-coded to top-to-bottom.
+int RenderTableCell::borderStart() const
+{
+    return table()->collapseBorders() ? borderHalfLeft(false) : RenderBlock::borderStart();
+}
+
+int RenderTableCell::borderEnd() const
+{
+    return table()->collapseBorders() ? borderHalfRight(false) : RenderBlock::borderEnd();
+}
+
+int RenderTableCell::borderBefore() const
+{
+    return table()->collapseBorders() ? borderHalfTop(false) : RenderBlock::borderBefore();
+}
+
+int RenderTableCell::borderAfter() const
+{
+    return table()->collapseBorders() ? borderHalfBottom(false) : RenderBlock::borderAfter();
+}
+
 int RenderTableCell::borderHalfLeft(bool outer) const
 {
     CollapsedBorderValue border = collapsedLeftBorder(table()->style()->direction() == RTL);
