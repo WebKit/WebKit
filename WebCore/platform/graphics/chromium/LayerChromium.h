@@ -62,7 +62,7 @@ class LayerChromium : public RefCounted<LayerChromium> {
 public:
     static PassRefPtr<LayerChromium> create(GraphicsLayerChromium* owner = 0);
 
-    ~LayerChromium();
+    virtual ~LayerChromium();
 
     const LayerChromium* rootLayer() const;
     LayerChromium* superlayer() const;

@@ -44,7 +44,7 @@ class ContentLayerChromium : public LayerChromium {
 public:
     static PassRefPtr<ContentLayerChromium> create(GraphicsLayerChromium* owner = 0);
 
-    ~ContentLayerChromium();
+    virtual ~ContentLayerChromium();
 
     virtual void updateContents();
     virtual void draw();

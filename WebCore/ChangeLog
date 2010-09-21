@@ -1,3 +1,14 @@
+2010-09-20  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Making destructors of LayerChromium and ContentLayerChromium virtual
+        so that the derived class' destructor code gets called.
+        https://bugs.webkit.org/show_bug.cgi?id=46139
+
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        * platform/graphics/chromium/LayerChromium.h:
+
 2010-09-20  Darin Adler  <darin@apple.com>
 
         Reviewed by James Robinson.
