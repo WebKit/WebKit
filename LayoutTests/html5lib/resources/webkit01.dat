@@ -518,3 +518,20 @@ console.log("FOO<span>BAR</span>BAZ");
 |     <img>
 |       <=""
 |       fail=""
+
+#data
+<ul><li><div id='foo'/>A</li><li>B<div>C</div></li></ul>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <ul>
+|       <li>
+|         <div>
+|           id="foo"
+|           "A"
+|       <li>
+|         "B"
+|         <div>
+|           "C"

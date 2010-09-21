@@ -1,3 +1,16 @@
+2010-09-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Closing <li> should close nested <div>
+        https://bugs.webkit.org/show_bug.cgi?id=26170
+
+        This bug is fixed by the HTML5 parser.  Adding test.  (We have lots of
+        variations of this test, but I'm adding another one to make Alexey
+        happy.)
+
+        * html5lib/resources/webkit01.dat:
+
 2010-09-21  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dave Hyatt.
