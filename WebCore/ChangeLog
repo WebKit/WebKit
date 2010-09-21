@@ -1,3 +1,15 @@
+2010-09-21  Jochen Eisinger  <jochen@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Use @ to concatenate the database name and the database identifier when building
+        the filename to use for indexed databases. That character is valid for filenames
+        but cannot occur in a database identifier derived from a security origin.
+        https://bugs.webkit.org/show_bug.cgi?id=46178
+
+        * storage/IDBFactoryBackendImpl.cpp:
+        (WebCore::IDBFactoryBackendImpl::databaseFileName):
+
 2010-09-21  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

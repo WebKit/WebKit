@@ -150,7 +150,7 @@ String IDBFactoryBackendImpl::databaseFileName(const String& name, SecurityOrigi
 {
     String databaseIdentifier = securityOrigin->databaseIdentifier();
     String santizedName = encodeForFileName(name);
-    return databaseIdentifier + "_" + santizedName + ".indexeddb";
+    return databaseIdentifier + "@" + santizedName + ".indexeddb";
 }
 
 } // namespace WebCore
