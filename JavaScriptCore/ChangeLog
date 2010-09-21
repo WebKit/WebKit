@@ -1,3 +1,16 @@
+2010-09-21  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        Fix Opcode stats compilation
+        https://bugs.webkit.org/show_bug.cgi?id=46079
+
+        The FixedArray API had changed, and <stdio.h> was not included for
+        printf.
+
+        * bytecode/Opcode.cpp:
+        (JSC::OpcodeStats::~OpcodeStats):
+
 2010-09-20  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Gavin Barraclough.
