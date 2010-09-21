@@ -1,5 +1,50 @@
 2010-09-21  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Forward window focus changes to the plug-in
+        https://bugs.webkit.org/show_bug.cgi?id=46227
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::windowFocusChanged):
+        Send the NPCocoaEventWindowFocusChanged event.
+
+        (WebKit::NetscapePlugin::windowFrameChanged):
+        (WebKit::NetscapePlugin::windowVisibilityChanged):
+        Add stubs.
+
+        * WebProcess/Plugins/Plugin.h:
+        Add windowFocusChanged, windowFrameChanged and windowVisibilityChanged.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::webPage):
+        Make webPage a member function instead.
+
+        (WebKit::PluginView::setWindowIsFocused):
+        Call the plug-in member function.
+
+        (WebKit::PluginView::initializePlugin):
+        When the plug-in has been initialized, update its window frame, window visibility 
+        and window focus states.
+
+        (WebKit::PluginView::setParent):
+        Move viewGeometryDidChange to initializePlugin.
+        
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setActive):
+        Tell all plug-in views about the new window focus state.
+
+        (WebKit::WebPage::windowIsFocused):
+        Return whether the window is focused or not.
+
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::windowIsVisible):
+        (WebKit::WebPage::windowFrame):
+        Add getters.
+
+2010-09-21  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by John Sullivan.
 
         Handle booleans in injected bundle messages

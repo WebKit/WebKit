@@ -221,14 +221,6 @@ void PluginView::Stream::didFinishLoading(NetscapePlugInStreamLoader*)
     m_pluginView = 0;
 }
 
-static inline WebPage* webPage(Frame* frame)
-{
-    WebPage* webPage = static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame()->page();
-    ASSERT(webPage);
-
-    return webPage;
-}
-
 PluginView::PluginView(WebCore::HTMLPlugInElement* pluginElement, PassRefPtr<Plugin> plugin, const Plugin::Parameters& parameters)
     : PluginViewBase(0)
     , m_pluginElement(pluginElement)
@@ -241,14 +233,14 @@ PluginView::PluginView(WebCore::HTMLPlugInElement* pluginElement, PassRefPtr<Plu
     , m_npRuntimeObjectMap(this)
 {
 #if PLATFORM(MAC)
-    webPage(frame())->addPluginView(this);
+    webPage()->addPluginView(this);
 #endif
 }
 
 PluginView::~PluginView()
 {
 #if PLATFORM(MAC)
-    webPage(frame())->removePluginView(this);
+    webPage()->removePluginView(this);
 #endif
 
     ASSERT(!m_isBeingDestroyed);
@@ -277,6 +269,14 @@ PluginView::~PluginView()
 Frame* PluginView::frame()
 {
     return m_pluginElement->document()->frame();
+}
+
+WebPage* PluginView::webPage()
+{
+    WebPage* webPage = static_cast<WebFrameLoaderClient*>(frame()->loader()->client())->webFrame()->page();
+    ASSERT(webPage);
+    
+    return webPage;
 }
 
 void PluginView::manualLoadDidReceiveResponse(const ResourceResponse& response)
@@ -319,6 +319,14 @@ void PluginView::setWindowIsVisible(bool windowIsVisible)
     // FIXME: Implement.
 }
 
+void PluginView::setWindowIsFocused(bool windowIsFocused)
+{
+    if (!m_plugin)
+        return;
+
+    m_plugin->windowFocusChanged(windowIsFocused);    
+}
+
 void PluginView::setWindowFrame(const IntRect& windowFrame)
 {
     if (!m_plugin)
@@ -326,6 +334,7 @@ void PluginView::setWindowFrame(const IntRect& windowFrame)
         
     // FIXME: Implement.
 }
+
 #endif
 
 void PluginView::initializePlugin()
@@ -362,15 +371,19 @@ void PluginView::initializePlugin()
     
     m_isInitialized = true;
 
+    viewGeometryDidChange();
+
 #if PLATFORM(MAC)
-    if (!m_plugin->pluginLayer())
-        return;
+    if (m_plugin->pluginLayer()) {
+        if (frame()) {
+            frame()->view()->enterCompositingMode();
+            m_pluginElement->setNeedsStyleRecalc(SyntheticStyleChange);
+        }
+    }
 
-    if (!frame())
-        return;
-
-    frame()->view()->enterCompositingMode();
-    m_pluginElement->setNeedsStyleRecalc(SyntheticStyleChange);
+    setWindowFrame(webPage()->windowFrame());
+    setWindowIsVisible(webPage()->windowIsVisible());
+    setWindowIsFocused(webPage()->windowIsFocused());
 #endif
 }
 
@@ -436,8 +449,6 @@ void PluginView::setParent(ScrollView* scrollView)
     
     if (scrollView)
         initializePlugin();
-
-    viewGeometryDidChange();
 }
 
 void PluginView::handleEvent(Event* event)

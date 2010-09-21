@@ -123,11 +123,22 @@ public:
     // Tells the plug-in to handle the passed in mouse leave event. The plug-in should return true if it processed the event.
     virtual bool handleMouseLeaveEvent(const WebMouseEvent&) = 0;
 
-    // Tells the focus about focus changes.
+    // Tells the plug-in about focus changes.
     virtual void setFocus(bool) = 0;
 
     // Get the NPObject that corresponds to the plug-in's scriptable object. Returns a retained object.
     virtual NPObject* pluginScriptableNPObject() = 0;
+
+#if PLATFORM(MAC)
+    // Tells the plug-in about window focus changes.
+    virtual void windowFocusChanged(bool) = 0;
+
+    // Tells the plug-in about window frame changes.
+    virtual void windowFrameChanged(const WebCore::IntRect&) = 0;
+
+    // Tells the plug-in about window visibility changes.
+    virtual void windowVisibilityChanged(bool) = 0;
+#endif
 
     // Returns the plug-in controller for this plug-in.
     // FIXME: We could just have the controller be a member variable of Plugin.

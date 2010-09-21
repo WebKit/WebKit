@@ -324,6 +324,35 @@ void NetscapePlugin::platformSetFocus(bool hasFocus)
     }
 }
 
+#if PLATFORM(MAC)
+void NetscapePlugin::windowFocusChanged(bool hasFocus)
+{
+    switch (m_eventModel) {
+        case NPEventModelCocoa: {
+            NPCocoaEvent event = initializeEvent(NPCocoaEventWindowFocusChanged);
+            
+            event.data.focus.hasFocus = hasFocus;
+            NPP_HandleEvent(&event);
+            break;
+        }
+
+        default:
+            ASSERT_NOT_REACHED();
+    }
+}
+
+void NetscapePlugin::windowFrameChanged(const IntRect&)
+{
+    // FIXME: Implement.
+}
+    
+void NetscapePlugin::windowVisibilityChanged(bool)
+{
+    // FIXME: Implement.
+}
+    
+#endif
+
 PlatformLayer* NetscapePlugin::pluginLayer()
 {
     return static_cast<PlatformLayer*>(m_pluginLayer.get());

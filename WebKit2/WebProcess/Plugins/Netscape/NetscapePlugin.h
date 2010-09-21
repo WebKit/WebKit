@@ -134,6 +134,13 @@ private:
     virtual bool handleMouseEnterEvent(const WebMouseEvent&);
     virtual bool handleMouseLeaveEvent(const WebMouseEvent&);
     virtual void setFocus(bool);
+
+#if PLATFORM(MAC)
+    virtual void windowFocusChanged(bool);
+    virtual void windowFrameChanged(const WebCore::IntRect&);
+    virtual void windowVisibilityChanged(bool);
+#endif
+
     virtual NPObject* pluginScriptableNPObject();
 
     virtual PluginController* controller();

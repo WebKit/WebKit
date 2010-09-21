@@ -63,12 +63,15 @@ public:
 
 #if PLATFORM(MAC)
     void setWindowIsVisible(bool);
+    void setWindowIsFocused(bool);
     void setWindowFrame(const WebCore::IntRect&);
 #endif
 
 private:
     PluginView(WebCore::HTMLPlugInElement*, PassRefPtr<Plugin>, const Plugin::Parameters& parameters);
     virtual ~PluginView();
+
+    WebPage* webPage();
 
     void initializePlugin();
     void destroyPlugin();

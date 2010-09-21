@@ -500,6 +500,12 @@ void WebPage::touchEvent(const WebTouchEvent& touchEvent)
 void WebPage::setActive(bool isActive)
 {
     m_page->focusController()->setActive(isActive);
+
+#if PLATFORM(MAC)    
+    // Tell all our plug-in views that the window focus changed.
+    for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
+        (*it)->setWindowIsFocused(isActive);
+#endif
 }
 
 void WebPage::setFocused(bool isFocused)
@@ -704,6 +710,11 @@ void WebPage::setWindowFrame(const IntRect& windowFrame)
     for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
         (*it)->setWindowFrame(windowFrame);
 }
+
+bool WebPage::windowIsFocused() const
+{
+    return m_page->focusController()->isActive();
+}   
 
 #endif
 
