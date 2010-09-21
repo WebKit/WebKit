@@ -234,7 +234,7 @@ QPainter* ContextShadow::beginShadowLayer(QPainter* p, const QRectF &rect)
     QRect clipRect;
     if (p->hasClipping())
 #if QT_VERSION >= QT_VERSION_CHECK(4, 8, 0)
-        clipRect = p->clipBoundingRect();
+        clipRect = p->clipBoundingRect().toAlignedRect();
 #else
         clipRect = p->clipRegion().boundingRect();
 #endif
