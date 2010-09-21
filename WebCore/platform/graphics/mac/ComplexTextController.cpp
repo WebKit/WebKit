@@ -382,9 +382,9 @@ void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
             unsigned glyphEndOffset;
             if (complexTextRun.isMonotonic()) {
                 if (ltr)
-                    glyphEndOffset = max<unsigned>(glyphStartOffset, g + 1 < glyphCount ? complexTextRun.indexAt(g + 1) : complexTextRun.stringLength());
+                    glyphEndOffset = max<unsigned>(glyphStartOffset, g + 1 < glyphCount ? static_cast<unsigned>(complexTextRun.indexAt(g + 1)) : complexTextRun.stringLength());
                 else
-                    glyphEndOffset = max<unsigned>(glyphStartOffset, g > 0 ? complexTextRun.indexAt(g - 1) : complexTextRun.stringLength());
+                    glyphEndOffset = max<unsigned>(glyphStartOffset, g > 0 ? static_cast<unsigned>(complexTextRun.indexAt(g - 1)) : complexTextRun.stringLength());
             } else
                 glyphEndOffset = complexTextRun.endOffsetAt(g);
 

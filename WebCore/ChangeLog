@@ -1,3 +1,15 @@
+2010-09-20  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix "operands of ? are integers of different signs" clang warnings
+        https://bugs.webkit.org/show_bug.cgi?id=46157
+
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::advance):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcHeight):
+
 2010-09-20  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Unreviewed, rolling out r67906.
