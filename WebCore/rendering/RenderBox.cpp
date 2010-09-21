@@ -83,6 +83,52 @@ RenderBox::~RenderBox()
 {
 }
 
+int RenderBox::marginBefore() const
+{
+    switch (style()->blockFlow()) {
+    case TopToBottomBlockFlow:
+        return m_marginTop;
+    case BottomToTopBlockFlow:
+        return m_marginBottom;
+    case LeftToRightBlockFlow:
+        return m_marginLeft;
+    case RightToLeftBlockFlow:
+        return m_marginRight;
+    }
+    ASSERT_NOT_REACHED();
+    return m_marginTop;
+}
+
+int RenderBox::marginAfter() const
+{
+    switch (style()->blockFlow()) {
+    case TopToBottomBlockFlow:
+        return m_marginBottom;
+    case BottomToTopBlockFlow:
+        return m_marginTop;
+    case LeftToRightBlockFlow:
+        return m_marginRight;
+    case RightToLeftBlockFlow:
+        return m_marginLeft;
+    }
+    ASSERT_NOT_REACHED();
+    return m_marginBottom;
+}
+
+int RenderBox::marginStart() const
+{
+    if (style()->isVerticalBlockFlow())
+        return style()->direction() == LTR ? m_marginLeft : m_marginRight;
+    return style()->direction() == LTR ? m_marginTop : m_marginBottom;
+}
+
+int RenderBox::marginEnd() const
+{
+    if (style()->isVerticalBlockFlow())
+        return style()->direction() == LTR ? m_marginRight : m_marginLeft;
+    return style()->direction() == LTR ? m_marginBottom : m_marginTop;
+}
+
 void RenderBox::destroy()
 {
     // A lot of the code in this function is just pasted into

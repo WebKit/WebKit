@@ -40,7 +40,13 @@ public:
 
     virtual int marginLeft() const;
     virtual int marginRight() const;
-    
+    virtual int marginTop() const;
+    virtual int marginBottom() const;
+    virtual int marginBefore() const { return 0; }
+    virtual int marginAfter() const { return 0; }
+    virtual int marginStart() const;
+    virtual int marginEnd() const;
+
     virtual void absoluteRects(Vector<IntRect>&, int tx, int ty);
     virtual void absoluteQuads(Vector<FloatQuad>&);
 
@@ -108,9 +114,6 @@ private:
     virtual int offsetWidth() const { return linesBoundingBox().width(); }
     virtual int offsetHeight() const { return linesBoundingBox().height(); }
 
-    // Just ignore top/bottom margins on RenderInlines.
-    virtual int marginTop() const { return 0; }
-    virtual int marginBottom() const { return 0; }
     virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
     virtual IntRect rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, int outlineWidth);
     virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& rect, bool fixed);

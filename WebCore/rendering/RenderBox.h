@@ -139,6 +139,10 @@ public:
     virtual int marginBottom() const { return m_marginBottom; }
     virtual int marginLeft() const { return m_marginLeft; }
     virtual int marginRight() const { return m_marginRight; }
+    virtual int marginBefore() const;
+    virtual int marginAfter() const;
+    virtual int marginStart() const;
+    virtual int marginEnd() const;
 
     // The following five functions are used to implement collapsing margins.
     // All objects know their maximal positive and negative margins.  The

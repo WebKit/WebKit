@@ -93,6 +93,10 @@ public:
     virtual int marginBottom() const = 0;
     virtual int marginLeft() const = 0;
     virtual int marginRight() const = 0;
+    virtual int marginBefore() const = 0;
+    virtual int marginAfter() const = 0;
+    virtual int marginStart() const = 0;
+    virtual int marginEnd() const = 0;
 
     bool hasHorizontalBordersPaddingOrMargin() const { return hasHorizontalBordersOrPadding() || marginLeft() != 0 || marginRight() != 0; }
     bool hasHorizontalBordersOrPadding() const { return borderLeft() != 0 || borderRight() != 0 || paddingLeft() != 0 || paddingRight() != 0; }
