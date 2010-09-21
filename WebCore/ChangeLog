@@ -1,3 +1,14 @@
+2010-09-21  Dirk Schulze  <krit@webkit.org>
+
+        SVG Filter cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=45612
+
+        Unreviewed change of episolon back to a more tolerant value in RenderTreeAsText and made it a static const.
+        This should turn the bots green again.
+
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::hasFractions):
+
 2010-09-21  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

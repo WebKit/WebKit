@@ -76,9 +76,10 @@ static void writeLayers(TextStream&, const RenderLayer* rootLayer, RenderLayer*,
 
 bool hasFractions(double val)
 {
+    static const double s_epsilon = 0.0001;
     int ival = static_cast<int>(val);
     double dval = static_cast<double>(ival);
-    return fabs(val - dval) > std::numeric_limits<double>::epsilon();
+    return fabs(val - dval) > s_epsilon;
 }
 
 TextStream& operator<<(TextStream& ts, const IntRect& r)
