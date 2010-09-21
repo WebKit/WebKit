@@ -1,3 +1,32 @@
+2010-09-21  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46125, convert table cell intrinsic padding from top/bottom-based
+        to before/after-based.  A vertical text table can have intrinsic padding built into the left/right
+        direction (and this allows the base class logical padding methods on RenderBoxModelObject to be safe to use).
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::RenderTableCell):
+        (WebCore::RenderTableCell::paddingTop):
+        (WebCore::RenderTableCell::paddingBottom):
+        (WebCore::RenderTableCell::paddingLeft):
+        (WebCore::RenderTableCell::paddingRight):
+        (WebCore::RenderTableCell::paddingBefore):
+        (WebCore::RenderTableCell::paddingAfter):
+        * rendering/RenderTableCell.h:
+        (WebCore::RenderTableCell::setIntrinsicPaddingBefore):
+        (WebCore::RenderTableCell::setIntrinsicPaddingAfter):
+        (WebCore::RenderTableCell::setIntrinsicPadding):
+        (WebCore::RenderTableCell::intrinsicPaddingBefore):
+        (WebCore::RenderTableCell::intrinsicPaddingAfter):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::calcRowHeight):
+        (WebCore::RenderTableSection::layoutRows):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        (WebCore::writeTextRun):
+
 2010-09-21  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

@@ -45,8 +45,8 @@ RenderTableCell::RenderTableCell(Node* node)
     , m_column(-1)
     , m_rowSpan(1)
     , m_columnSpan(1)
-    , m_intrinsicPaddingTop(0)
-    , m_intrinsicPaddingBottom(0)
+    , m_intrinsicPaddingBefore(0)
+    , m_intrinsicPaddingAfter(0)
     , m_percentageHeight(0)
 {
     updateFromElement();
@@ -164,12 +164,51 @@ void RenderTableCell::layout()
 
 int RenderTableCell::paddingTop(bool includeIntrinsicPadding) const
 {
-    return RenderBlock::paddingTop() + (includeIntrinsicPadding ? intrinsicPaddingTop() : 0);
+    int result = RenderBlock::paddingTop();
+    if (!includeIntrinsicPadding || !style()->isVerticalBlockFlow())
+        return result;
+    return result + (style()->blockFlow() == TopToBottomBlockFlow ? intrinsicPaddingBefore() : intrinsicPaddingAfter());
 }
 
 int RenderTableCell::paddingBottom(bool includeIntrinsicPadding) const
 {
-    return RenderBlock::paddingBottom() + (includeIntrinsicPadding ? intrinsicPaddingBottom() : 0);
+    int result = RenderBlock::paddingBottom();
+    if (!includeIntrinsicPadding || !style()->isVerticalBlockFlow())
+        return result;
+    return result + (style()->blockFlow() == TopToBottomBlockFlow ? intrinsicPaddingAfter() : intrinsicPaddingBefore());
+}
+
+int RenderTableCell::paddingLeft(bool includeIntrinsicPadding) const
+{
+    int result = RenderBlock::paddingLeft();
+    if (!includeIntrinsicPadding || style()->isVerticalBlockFlow())
+        return result;
+    return result + (style()->blockFlow() == LeftToRightBlockFlow ? intrinsicPaddingBefore() : intrinsicPaddingAfter());
+    
+}
+
+int RenderTableCell::paddingRight(bool includeIntrinsicPadding) const
+{   
+    int result = RenderBlock::paddingRight();
+    if (!includeIntrinsicPadding || style()->isVerticalBlockFlow())
+        return result;
+    return result + (style()->blockFlow() == LeftToRightBlockFlow ? intrinsicPaddingAfter() : intrinsicPaddingBefore());
+}
+
+int RenderTableCell::paddingBefore(bool includeIntrinsicPadding) const
+{
+    int result = RenderBlock::paddingBefore();
+    if (!includeIntrinsicPadding)
+        return result;
+    return result + intrinsicPaddingBefore();
+}
+
+int RenderTableCell::paddingAfter(bool includeIntrinsicPadding) const
+{
+    int result = RenderBlock::paddingAfter();
+    if (!includeIntrinsicPadding)
+        return result;
+    return result + intrinsicPaddingAfter();
 }
 
 void RenderTableCell::setOverrideSize(int size)
