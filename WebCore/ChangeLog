@@ -1,3 +1,17 @@
+2010-09-20  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Daniel Bates.
+
+        [BREWMP] Handle tab key
+        https://bugs.webkit.org/show_bug.cgi?id=46104
+
+        In Brew MP, AVK_FUNCTION is the key code for tab.
+        Process AVK_FUNCTION as tab in PlatformKeyboardEvent.
+
+        * platform/brew/PlatformKeyboardEventBrew.cpp:
+        (WebCore::keyIdentifierForBrewKeyCode):
+        (WebCore::windowsKeyCodeForKeyEvent):
+
 2010-09-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r67918.

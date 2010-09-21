@@ -98,6 +98,8 @@ static String keyIdentifierForBrewKeyCode(uint16 keyCode)
         return "PageUp";
     case AVK_TXPGDOWN:
         return "PageDown";
+    case AVK_FUNCTION:
+        return "U+0009";
     default:
         return String::format("U+%04X", toASCIIUpper(keyCode));
     }
@@ -132,6 +134,8 @@ static int windowsKeyCodeForKeyEvent(uint16 code)
         return VK_INSERT; // (2D) INS key
     case AVK_TXDELETE:
         return VK_DELETE; // (2E) DEL key
+    case AVK_FUNCTION:
+        return VK_TAB; // (09) TAB key
     default:
         return 0;
     }
