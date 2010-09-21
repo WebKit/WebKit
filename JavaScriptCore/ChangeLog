@@ -1,3 +1,19 @@
+2010-09-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/8363003> REGRESSION: ~1.4% sunspider regression in
+        interpreter due to 54724 and 54596
+        
+        Fixed a typo (using "UNLIKELY" instead of "LIKELY").
+        
+        * wtf/PassRefPtr.h:
+        (WTF::refIfNotNull):
+        (WTF::derefIfNotNull): It is likely that m_ptr != 0 because most RefPtrs
+        hold real data. Also, in cases where they do not hold real data, the
+        compiler usually sees a call to release() right before the call to the
+        destructor, so it can probably optimize out the test completely.
+
 2010-09-21  Fridrich Strba  <fridrich.strba@bluewin.ch>
 
         Reviewed by Martin Robinson.
