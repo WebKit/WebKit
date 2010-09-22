@@ -312,13 +312,13 @@ static bool isViewVisible(NSView *view)
     if ([self window]) {
         [self _updateActiveState];
         [self _updateVisibility];
+        [self _updateWindowVisibility];
+        [self _updateWindowFrame];
     } else {
         [self _updateVisibility];
         [self _updateActiveState];
     }
 
-    [self _updateWindowVisibility];
-    [self _updateWindowFrame];
 }
 
 - (void)_windowDidBecomeKey:(NSNotification *)notification

@@ -1,3 +1,15 @@
+2010-09-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Assertion fails in [WKView _updateWindowFrame] when closing a WebKit2 window
+        https://bugs.webkit.org/show_bug.cgi?id=46264
+        <rdar://problem/8463534>
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView viewDidMoveToWindow]):
+        Only update window visibility and frame when we're moving to a window.
+
 2010-09-22  Balazs Kelemen  <kb@inf.u-szeged.hu>
 
         Reviewed by Kenneth Rohde Christiansen.
