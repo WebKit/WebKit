@@ -1,3 +1,11 @@
+2010-09-22  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        Added information about drop shadow improvements to the NEWS file.
+
+        * NEWS: Added information about drop shadow improvements.
+
 2010-09-21  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.
