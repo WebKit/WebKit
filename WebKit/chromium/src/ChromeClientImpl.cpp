@@ -44,7 +44,6 @@
 #include "FloatRect.h"
 #include "FrameLoadRequest.h"
 #include "FrameView.h"
-#include "GLES2Context.h"
 #include "Geolocation.h"
 #include "GeolocationService.h"
 #include "GeolocationServiceChromium.h"

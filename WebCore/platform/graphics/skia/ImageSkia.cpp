@@ -36,7 +36,6 @@
 #include "FloatConversion.h"
 #include "FloatRect.h"
 #include "GLES2Canvas.h"
-#include "GLES2Context.h"
 #include "GraphicsContext.h"
 #include "Logging.h"
 #include "NativeImageSkia.h"

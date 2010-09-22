@@ -1,3 +1,18 @@
+2010-09-21  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Remove GLES2Context and WebGLES2Context
+        https://bugs.webkit.org/show_bug.cgi?id=46131
+
+        Removed now-obsolete GLES2Context and WebGLES2Context classes, and
+        dependency on command buffer client code from WebCore. Built and
+        tested 3D CSS and WebGL content on Mac OS X to test.
+
+        * WebCore.gypi:
+        * platform/chromium/GLES2Context.h: Removed.
+        * platform/graphics/skia/ImageSkia.cpp:
+
 2010-09-21  Geoffrey Garen  <ggaren@apple.com>
 
         Try to fix the Windows build.

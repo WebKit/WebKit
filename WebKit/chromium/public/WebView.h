@@ -44,7 +44,6 @@ class WebDevToolsAgentClient;
 class WebDragData;
 class WebFrame;
 class WebFrameClient;
-class WebGLES2Context;
 class WebGraphicsContext3D;
 class WebNode;
 class WebSettings;
@@ -340,12 +339,6 @@ public:
     WEBKIT_API static void didExitModalLoop();
 
     // GPU acceleration support --------------------------------------------
-
-    // Returns the GLES2Context associated with this WebView. One will be
-    // created if it doesn't already exist.
-    // FIXME: remove this method once the compositor is fully switched
-    // over to GraphicsContext3D.
-    virtual WebGLES2Context* gles2Context() = 0;
 
     // Returns the (on-screen) WebGraphicsContext3D associated with
     // this WebView. One will be created if it doesn't already exist.

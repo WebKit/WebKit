@@ -2,6 +2,31 @@
 
         Reviewed by James Robinson.
 
+        [chromium] Remove GLES2Context and WebGLES2Context
+        https://bugs.webkit.org/show_bug.cgi?id=46131
+
+        Removed now-obsolete GLES2Context and WebGLES2Context classes, and
+        dependency on command buffer client code from WebCore. Built and
+        tested 3D CSS and WebGL content on Mac OS X to test.
+
+        * WebKit.gyp:
+        * public/WebGLES2Context.h: Removed.
+        * public/WebGraphicsContext3D.h:
+        * public/WebKitClient.h:
+        * public/WebView.h:
+        * src/ChromeClientImpl.cpp:
+        * src/GLES2Context.cpp: Removed.
+        * src/GLES2ContextInternal.cpp: Removed.
+        * src/GLES2ContextInternal.h: Removed.
+        * src/WebGraphicsContext3DDefaultImpl.cpp:
+        * src/WebGraphicsContext3DDefaultImpl.h:
+        * src/WebViewImpl.cpp:
+        * src/WebViewImpl.h:
+
+2010-09-21  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
         [chromium] Roll forward Chromium DEPS to pick up removal of WebGLES2Context dependencies
         https://bugs.webkit.org/show_bug.cgi?id=46231
 

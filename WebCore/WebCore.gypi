@@ -2221,7 +2221,6 @@
             'platform/chromium/FramelessScrollViewClient.h',
             'platform/chromium/GeolocationServiceChromium.cpp',
             'platform/chromium/GeolocationServiceChromium.h',
-            'platform/chromium/GLES2Context.h',
             'platform/chromium/KeyCodeConversion.h',
             'platform/chromium/KeyCodeConversionGtk.cpp',
             'platform/chromium/Language.cpp',

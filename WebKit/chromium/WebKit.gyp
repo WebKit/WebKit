@@ -170,7 +170,6 @@
                 'public/WebGeolocationServiceBridge.h',
                 'public/WebGeolocationServiceMock.h',
                 'public/WebGlyphCache.h',
-                'public/WebGLES2Context.h',
                 'public/WebGraphicsContext3D.h',
                 'public/WebHistoryItem.h',
                 'public/WebHTTPBody.h',
@@ -323,9 +322,6 @@
                 'src/FrameLoaderClientImpl.cpp',
                 'src/FrameLoaderClientImpl.h',
                 'src/FrameNetworkingContextImpl.h',
-                'src/GLES2Context.cpp',
-                'src/GLES2ContextInternal.cpp',
-                'src/GLES2ContextInternal.h',
                 'src/GraphicsContext3D.cpp',
                 'src/GraphicsContext3DInternal.h',
                 'src/gtk/WebFontInfo.cpp',
@@ -551,7 +547,6 @@
                             'dependencies': [
                                 '../../WebCore/WebCore.gyp/WebCore.gyp:webcore_bindings',
                                 '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
-                                '<(chromium_src_dir)/gpu/gpu.gyp:gles2_c_lib',
                                 '<(chromium_src_dir)/third_party/icu/icu.gyp:*',
                                 '<(chromium_src_dir)/third_party/libjpeg/libjpeg.gyp:libjpeg',
                                 '<(chromium_src_dir)/third_party/libpng/libpng.gyp:libpng',
@@ -731,7 +726,6 @@
                         '<(chromium_src_dir)/base/base.gyp:base',
                         '<(chromium_src_dir)/base/base.gyp:base_i18n',
                         '<(chromium_src_dir)/base/base.gyp:test_support_base',
-                        '<(chromium_src_dir)/gpu/gpu.gyp:gles2_c_lib',
                         '<(chromium_src_dir)/webkit/support/webkit_support.gyp:blob',
                         '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
                     ],
@@ -813,7 +807,6 @@
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:blob',
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:copy_npapi_layout_test_plugin',
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
-                '<(chromium_src_dir)/gpu/gpu.gyp:gles2_c_lib'
             ],
             'include_dirs': [
                 '.',

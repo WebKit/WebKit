@@ -85,11 +85,6 @@ public:
     // on newly-constructed instances. Returns true on success.
     virtual bool initialize(Attributes, WebView*, bool renderDirectlyToWebView) = 0;
 
-    // Initializes the graphics context; should be the first operation performed
-    // on newly-constructed instances. Returns true on success.
-    // FIXME: remove this entry point once the compositor is switched to use GraphicsContext3D.
-    virtual bool initialize(Attributes, WebView*) = 0;
-
     // Makes the OpenGL context current on the current thread. Returns true on
     // success.
     virtual bool makeContextCurrent() = 0;

@@ -119,11 +119,6 @@ bool WebGraphicsContext3DDefaultImpl::initialize(WebGraphicsContext3D::Attribute
     return true;
 }
 
-bool WebGraphicsContext3DDefaultImpl::initialize(WebGraphicsContext3D::Attributes attributes, WebView* webView)
-{
-    return initialize(attributes, webView, false);
-}
-
 void WebGraphicsContext3DDefaultImpl::validateAttributes()
 {
     const char* extensions = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
