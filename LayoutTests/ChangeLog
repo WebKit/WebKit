@@ -1,3 +1,14 @@
+2010-09-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        [JIT] fast/js/sputnik/Conformance/15_Native_Objects/15.3_Function/15.3.5/S15.3.5.3_A2_T6.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=44246
+
+        Correct expected output from this test.
+
+        * fast/js/sputnik/Conformance/15_Native_Objects/15.3_Function/15.3.5/S15.3.5.3_A2_T6-expected.txt:
+
 2010-09-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

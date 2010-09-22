@@ -1,6 +1,6 @@
 S15.3.5.3_A2_T6
 
-FAIL SputnikError: #1.1: O is not an object, throw a TypeError exception
+PASS 
 
 TEST COMPLETE
 

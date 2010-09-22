@@ -1,3 +1,20 @@
+2010-09-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        [JIT] fast/js/sputnik/Conformance/15_Native_Objects/15.3_Function/15.3.5/S15.3.5.3_A2_T6.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=44246
+
+        JIT code generated for instanceof was not checking to ensure that the prototype property was
+        an object, this patch ensures that it does.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emitSlow_op_instanceof):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emitSlow_op_instanceof):
+
 2010-09-22  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Darin Adler.

@@ -397,6 +397,10 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(regT0, baseVal);
     emitJumpSlowCaseIfNotJSCell(regT1, proto);
 
+    // Check that prototype is an object
+    loadPtr(Address(regT1, OBJECT_OFFSETOF(JSCell, m_structure)), regT3);
+    addSlowCase(branch8(NotEqual, Address(regT3, OBJECT_OFFSETOF(Structure, m_typeInfo.m_type)), Imm32(ObjectType)));
+    
     // Check that baseVal 'ImplementsDefaultHasInstance'.
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT0);
     addSlowCase(branchTest8(Zero, Address(regT0, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(ImplementsDefaultHasInstance)));
@@ -1435,6 +1439,7 @@ void JIT::emitSlow_op_instanceof(Instruction* currentInstruction, Vector<SlowCas
     linkSlowCaseIfNotJSCell(iter, value);
     linkSlowCaseIfNotJSCell(iter, baseVal);
     linkSlowCaseIfNotJSCell(iter, proto);
+    linkSlowCase(iter);
     linkSlowCase(iter);
     JITStubCall stubCall(this, cti_op_instanceof);
     stubCall.addArgument(value, regT2);
