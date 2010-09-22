@@ -1,3 +1,11 @@
+2010-09-22  İsmail Dönmez  <ismail@namtrac.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Buildfix for WinCE
+
+        * Api/DerivedSources.pro:
+
 2010-09-20  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Carlson.
