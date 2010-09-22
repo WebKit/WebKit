@@ -1,3 +1,17 @@
+2010-09-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        REGRESSION: HTMLElement.localName returns lowercase, breaks Jira
+        https://bugs.webkit.org/show_bug.cgi?id=14114
+
+        Add tests from bug.
+
+        * fast/parser/localname-case-expected.txt: Added.
+        * fast/parser/localname-case-strict-expected.txt: Added.
+        * fast/parser/localname-case-strict.html: Added.
+        * fast/parser/localname-case.html: Added.
+
 2010-09-22  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Chris Fleizach.
