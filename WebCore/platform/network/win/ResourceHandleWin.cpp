@@ -556,14 +556,14 @@ void ResourceHandle::cancel()
         client()->didFail(this, ResourceError());
 }
 
-void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data, Frame* frame)
+void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     UNUSED_PARAM(storedCredentials);
 
     WebCoreSynchronousLoader syncLoader(error, response, data, request.httpUserAgent());
     ResourceHandle handle(request, &syncLoader, true, false);
 
-    handle.start(frame);
+    handle.start(context);
 }
 
 void ResourceHandle::setHasReceivedResponse(bool b)

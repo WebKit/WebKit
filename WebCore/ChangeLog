@@ -1,3 +1,12 @@
+2010-09-22  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed.
+
+        [WINCE] Build fix for ResourceHandleWin after r67291.
+
+        * platform/network/win/ResourceHandleWin.cpp:
+        (WebCore::ResourceHandle::loadResourceSynchronously): Replace Frame* parameter with NetworkingContext*.
+
 2010-09-22  Chris Guillory   <chris.guillory@google.com>
 
         Reviewed by Chris Fleizach.
