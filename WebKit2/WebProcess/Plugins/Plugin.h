@@ -33,6 +33,11 @@
 
 struct NPObject;
 
+namespace CoreIPC {
+    class ArgumentEncoder;
+    class ArgumentDecoder;
+}
+
 namespace WebCore {
     class GraphicsContext;
     class IntRect;
@@ -53,6 +58,9 @@ public:
         Vector<String> values;
         String mimeType;
         bool loadManually;
+
+        void encode(CoreIPC::ArgumentEncoder*) const;
+        static bool decode(CoreIPC::ArgumentDecoder*, Parameters&);
     };
 
     virtual ~Plugin();

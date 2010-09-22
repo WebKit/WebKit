@@ -123,6 +123,7 @@ private:
     virtual bool evaluate(NPObject*, const String&scriptString, NPVariant* result, bool allowPopups);
     virtual void setStatusbarText(const String&);
     virtual bool isAcceleratedCompositingEnabled();
+    virtual void pluginProcessCrashed();
 
     // WebFrame::LoadListener
     virtual void didFinishLoad(WebFrame*);

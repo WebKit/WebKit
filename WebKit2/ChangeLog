@@ -1,5 +1,27 @@
 2010-09-22  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Random plug-in cleanups
+        https://bugs.webkit.org/show_bug.cgi?id=46279
+
+        * WebProcess/Plugins/Plugin.cpp:
+        (WebKit::Plugin::Parameters::encode):
+        (WebKit::Plugin::Parameters::decode):
+        Add CoreIPC coding support for the Plugin::Parameters struct.
+
+        * WebProcess/Plugins/PluginController.h:
+        Add pluginProcessCrashed pure virtual member function.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::handleEvent):
+        handleEvent can be called when m_plugin is null.
+
+        (WebKit::PluginView::pluginProcessCrashed):
+        Ask the renderer to show the crashed plug-in indicator.
+        
+2010-09-22  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by John Sullivan.
 
         Don't listen for some window notifications on all windows

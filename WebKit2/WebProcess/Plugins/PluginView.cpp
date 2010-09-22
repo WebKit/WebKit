@@ -40,6 +40,7 @@
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/HostWindow.h>
 #include <WebCore/NetscapePlugInStreamLoader.h>
+#include <WebCore/RenderEmbeddedObject.h>
 #include <WebCore/RenderLayer.h>
 #include <WebCore/ScrollView.h>
 #include <WebCore/Settings.h>
@@ -457,6 +458,9 @@ void PluginView::setParent(ScrollView* scrollView)
 
 void PluginView::handleEvent(Event* event)
 {
+    if (!m_plugin)
+        return;
+
     const WebEvent* currentEvent = WebPage::currentEvent();
     if (!currentEvent)
         return;
@@ -803,6 +807,14 @@ bool PluginView::isAcceleratedCompositingEnabled()
         return false;
 
     return settings->acceleratedCompositingEnabled();
+}
+
+void PluginView::pluginProcessCrashed()
+{
+    if (RenderEmbeddedObject* renderer = toRenderEmbeddedObject(m_pluginElement->renderer()))
+        renderer->setShowsCrashedPluginIndicator();
+    
+    invalidateRect(frameRect());
 }
 
 void PluginView::didFinishLoad(WebFrame* webFrame)
