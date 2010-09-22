@@ -2,6 +2,17 @@
 
         Reviewed by Kent Tamura.
 
+        Each EntityMaskIn* needs explanation
+        https://bugs.webkit.org/show_bug.cgi?id=44833
+
+        Added a description as to why we escape nbsp when serializing HTML documents but not when serializing XML documents.
+
+        * editing/markup.cpp:
+
+2010-09-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Kent Tamura.
+
         cleanup: removeInlineStyleFromElement and extractInlineStyleToPushDown should be merged
         https://bugs.webkit.org/show_bug.cgi?id=46205
 

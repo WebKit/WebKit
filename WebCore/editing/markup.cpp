@@ -93,14 +93,15 @@ private:
 };
     
 enum EntityMask {
-    EntityNone = 0x0000,
     EntityAmp = 0x0001,
     EntityLt = 0x0002,
     EntityGt = 0x0004,
     EntityQuot = 0x0008,
     EntityNbsp = 0x0010,
 
-    EntityMaskInCDATA = EntityNone,
+    // Non-breaking space needs to be escaped in innerHTML for compatibility reason. See http://trac.webkit.org/changeset/32879
+    // However, we cannot do this in a XML document because it does not have the entity reference defined (See the bug 19215).
+    EntityMaskInCDATA = 0,
     EntityMaskInPCDATA = EntityAmp | EntityLt | EntityGt,
     EntityMaskInHTMLPCDATA = EntityMaskInPCDATA | EntityNbsp,
     EntityMaskInAttributeValue = EntityAmp | EntityLt | EntityGt | EntityQuot,
