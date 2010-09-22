@@ -2434,24 +2434,25 @@ SharedGraphicsContext3D* WebViewImpl::getSharedGraphicsContext3D()
 WebGraphicsContext3D* WebViewImpl::graphicsContext3D()
 {
 #if USE(ACCELERATED_COMPOSITING)
-    GraphicsContext3D* context = 0;
-    if (m_layerRenderer)
-        context = m_layerRenderer->context();
-    else if (m_temporaryOnscreenGraphicsContext3D)
-        context = m_temporaryOnscreenGraphicsContext3D.get();
-    else {
-        GraphicsContext3D::Attributes attributes;
-        m_temporaryOnscreenGraphicsContext3D = GraphicsContext3D::create(GraphicsContext3D::Attributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
+    if (m_page->settings()->acceleratedCompositingEnabled() && allowsAcceleratedCompositing()) {
+        GraphicsContext3D* context = 0;
+        if (m_layerRenderer)
+            context = m_layerRenderer->context();
+        else if (m_temporaryOnscreenGraphicsContext3D)
+            context = m_temporaryOnscreenGraphicsContext3D.get();
+        else {
+            GraphicsContext3D::Attributes attributes;
+            m_temporaryOnscreenGraphicsContext3D = GraphicsContext3D::create(GraphicsContext3D::Attributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
 #if OS(DARWIN)
-        if (m_temporaryOnscreenGraphicsContext3D)
-            m_temporaryOnscreenGraphicsContext3D->reshape(std::max(1, m_size.width), std::max(1, m_size.height));
+            if (m_temporaryOnscreenGraphicsContext3D)
+                m_temporaryOnscreenGraphicsContext3D->reshape(std::max(1, m_size.width), std::max(1, m_size.height));
 #endif
-        context = m_temporaryOnscreenGraphicsContext3D.get();
+            context = m_temporaryOnscreenGraphicsContext3D.get();
+        }
+        return GraphicsContext3DInternal::extractWebGraphicsContext3D(context);
     }
-    return GraphicsContext3DInternal::extractWebGraphicsContext3D(context);
-#else
-    return 0;
 #endif
+    return 0;
 }
 
 } // namespace WebKit

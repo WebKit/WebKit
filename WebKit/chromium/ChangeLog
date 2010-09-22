@@ -1,3 +1,22 @@
+2010-09-21  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Check if the acceleratedCompositingEnabled setting is active in WebViewImpl::graphicsContext3D()
+        https://bugs.webkit.org/show_bug.cgi?id=46239
+
+        This adds a check for whether acceleratedCompositingEnabled is true on the Page's Settings
+        object before creating and vending a GraphicsContext3D object.  This is needed because when
+        an offscreen WebGraphicsContext3DCommandBufferImpl is initialized it first asks the WebViewImpl
+        for the compositor context.  WebGraphicsContext3DCommandBufferImpl::initialize checks if the
+        disable accelerated compositing command line switch is set, but this is insufficient as sometimes
+        the Setting object does not agree exactly with the command line switches.  For example,
+        we explicitly toggle accelerated compositing for some chrome UI URLs regardless of what the
+        flag says.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::graphicsContext3D):
+
 2010-09-21  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by David Levin.
