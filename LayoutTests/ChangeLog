@@ -1,3 +1,12 @@
+2010-09-22  Tony Chang  <tony@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] remove commented out test failures from test_expectations.txt
+        https://bugs.webkit.org/show_bug.cgi?id=46313
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-22  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed chromium test expectation changes.

@@ -81,7 +81,6 @@ BUG24182 SLOW WIN DEBUG : svg/carto.net/window.svg = PASS
 BUG24182 SLOW LINUX DEBUG : fast/xpath/4XPath/Borrowed/cz_20030217.html = PASS
 BUG24182 SLOW WIN MAC DEBUG : tables/mozilla/bugs/45621.html = PASS
 //BUG24852 started failing since webkit 49583
-//BUG24182 SLOW WIN : css1/font_properties/font.html = PASS
 BUG24182 SLOW WIN : http/tests/security/xssAuditor/meta-tag-http-refresh-javascript-url.html = PASS
 BUG24182 SLOW WIN RELEASE : http/tests/security/cross-origin-css.html = PASS
 BUG24182 SLOW WIN RELEASE : fast/loader/local-CSS-from-local.html = PASS
@@ -89,12 +88,9 @@ BUG24182 WIN RELEASE SLOW : http/tests/incremental/split-hex-entities.pl = PASS
 BUG24182 WIN RELEASE SLOW : http/tests/xmlhttprequest/XMLHttpRequestException.html = PASS
 BUG24182 WIN RELEASE SLOW : http/tests/xmlhttprequest/connection-error-sync.html = PASS
 BUG24182 WIN RELEASE SLOW : http/tests/loading/onload-vs-immediate-refresh.pl = PASS
-//BUG24182 WIN LINUX SLOW : editing/selection/extend-selection.html = PASS
 BUG24182 SLOW WIN : fast/images/svg-as-background.html = PASS
 BUG24182 SLOW WIN : fast/backgrounds/svg-as-background-5.html = PASS
 BUG24182 WIN DEBUG SLOW: inspector/console-dirxml.html = PASS
-// BUG24182 DEBUG SLOW : fast/dom/Window/window-function-frame-getter-precedence.html = PASS
-// BUG24182 SLOW DEBUG : fast/frames/frame-limit.html = PASS
 BUG24182 SLOW : http/tests/cache/subresource-failover-to-network.html = PASS
 
 // Usually <1s in release, ~1s in debug, but occasionally >5s in release.
@@ -602,10 +598,6 @@ BUG24195 WIN LINUX : fast/repaint/bugzilla-6473.html = IMAGE+TEXT
 BUG24195 MAC : fast/repaint/bugzilla-6473.html = IMAGE
 
 // -----------------------------------------------------------------
-// Tests deferred until we provide support for a particular feature.
-// -----------------------------------------------------------------
-
-// -----------------------------------------------------------------
 // Tests requiring features not currently in test_shell.
 // -----------------------------------------------------------------
 
@@ -627,8 +619,7 @@ BUG8630 LINUX : svg/custom/use-detach.svg = FAIL PASS
 // layoutTestController. Now we have preference to enable/disable user
 // styles(not work now), we still need to add a preference to enable/disable
 // styles of both author and user.
-// Deferring, we don't support user-controlled UA stylesheets (in beta)
-// Actually, gonna SKIP because it causes an additional error message in:
+// SKIP because it causes an additional error message in:
 // fast/css/display-none-inline-style-change-crash.html   somehow
 // the message is dumped after the #EOF, which causes an additional
 // error in the header of the following test.
@@ -1098,7 +1089,6 @@ BUG15797 LINUX : plugins/embed-attributes-setting.html = FAIL
 BUG10351 SKIP MAC : http/tests/plugins/geturlnotify-from-npp-destroystream.html = FAIL
 BUG10351 MAC : plugins/inner-html-display-none.html = FAIL
 BUG10351 MAC : plugins/mouse-events.html = FAIL
-// BUG10667 SLOW MAC RELEASE : plugins/iframe-shims.html = FAIL
 
 // NEW FOR MERGE 36102:37604
 
@@ -1203,7 +1193,6 @@ BUG23498 MAC : css1/color_and_background/background_position.html = IMAGE
 BUG23498 MAC : css1/color_and_background/background_repeat.html = IMAGE
 BUG23498 MAC : css1/conformance/forward_compatible_parsing.html = IMAGE
 BUG23498 MAC : css1/font_properties/font.html = IMAGE
-// BUG23498 MAC : css1/font_properties/font_family.html = IMAGE
 BUG23498 MAC : css1/font_properties/font_size.html = IMAGE
 BUG23498 MAC : css1/font_properties/font_weight.html = IMAGE
 BUG23498 MAC : css1/formatting_model/floating_elements.html = IMAGE
@@ -1251,7 +1240,6 @@ BUG23498 MAC : editing/selection/select-all-002.html = IMAGE
 BUG23498 MAC : editing/selection/select-all-003.html = IMAGE
 BUG23498 MAC : editing/selection/select-all-004.html = IMAGE
 BUG23498 MAC : editing/selection/unrendered-001.html = IMAGE
-// BUG23498 MAC : editing/selection/unrendered-002.html = IMAGE
 BUG23498 MAC : editing/selection/unrendered-003.html = IMAGE
 BUG23498 MAC : editing/selection/unrendered-004.html = IMAGE
 BUG23498 MAC : editing/selection/unrendered-005.html = IMAGE
@@ -1270,9 +1258,7 @@ BUG23498 MAC : fast/block/float/028.html = IMAGE
 BUG23498 MAC : fast/block/float/032.html = IMAGE
 BUG23498 MAC : fast/block/float/033.html = IMAGE
 BUG23498 MAC : fast/block/float/035.html = IMAGE
-// BUG23498 MAC : fast/block/float/avoidance-percent-width-strict.html = IMAGE
 BUG23498 MAC : fast/block/float/br-with-clear-2.html = IMAGE
-// BUG23498 MAC : fast/block/float/float-avoidance.html = IMAGE
 BUG23498 MAC : fast/block/float/nested-clearance.html = IMAGE
 BUG23498 MAC : fast/block/float/relative-painted-twice.html = IMAGE
 BUG23498 MAC : fast/block/margin-collapse/103.html = IMAGE
@@ -1292,8 +1278,6 @@ BUG23498 MAC : fast/body-propagation/overflow/001.html = IMAGE
 BUG23498 MAC : fast/body-propagation/overflow/005-declarative.xhtml = IMAGE
 BUG23498 MAC : fast/body-propagation/overflow/005-xhtml.xhtml = IMAGE
 BUG23498 MAC : fast/body-propagation/overflow/005.html = IMAGE
-// BUG23498 MAC : fast/borders/inline-mask-overlay-image.html = IMAGE
-// BUG23498 MAC : fast/box-shadow/basic-shadows.html = IMAGE
 BUG23498 MAC : fast/box-sizing/box-sizing.html = IMAGE
 BUG23498 MAC : fast/canvas/canvas-bg.html = IMAGE
 BUG23498 MAC : fast/canvas/canvas-text-alignment.html = IMAGE
@@ -1311,7 +1295,6 @@ BUG23498 MAC : fast/css/nested-floating-relative-position-percentages.html = IMA
 BUG23498 MAC : fast/css/only-child-pseudo-class.html = IMAGE
 BUG23498 MAC : fast/css/only-of-type-pseudo-class.html = IMAGE
 BUG23498 MAC : fast/css/percentage-non-integer.html = IMAGE
-// BUG23498 MAC : fast/css/shadow-multiple.html = IMAGE
 BUG23498 MAC : fast/css/text-overflow-ellipsis-strict.html = IMAGE
 BUG23498 MAC : fast/css/text-overflow-ellipsis.html = IMAGE
 BUG23498 MAC : fast/css/word-space-extra.html = IMAGE
@@ -1337,7 +1320,6 @@ BUG23498 MAC : fast/frames/frame-scrolling-attribute.html = IMAGE
 BUG23498 MAC : fast/frames/iframe-scrolling-attribute.html = IMAGE
 BUG23498 BUG26044 MAC RELEASE : fast/frames/invalid.html = IMAGE CRASH
 BUG23498 BUG26044 SLOW MAC DEBUG : fast/frames/invalid.html = IMAGE
-// BUG23498 MAC : fast/frames/onlyCommentInIFrame.html = IMAGE
 BUG23498 MAC DEBUG : fast/frames/valid.html = IMAGE
 BUG23498 MAC RELEASE : fast/frames/valid.html = IMAGE CRASH
 BUG23498 MAC : fast/gradients/background-clipped.html = IMAGE
@@ -1350,18 +1332,14 @@ BUG23498 MAC : fast/layers/scroll-rect-to-visible.html = IMAGE
 BUG23498 MAC : fast/lists/001.html = IMAGE
 BUG23498 MAC : fast/lists/008.html = IMAGE
 BUG23498 MAC : fast/lists/li-br.html = IMAGE
-// BUG23498 MAC : fast/lists/ol-start-parsing.html = IMAGE
 BUG23498 MAC : fast/lists/olstart.html = IMAGE
 BUG23498 MAC : fast/multicol/columns-shorthand-parsing.html = IMAGE
 BUG23498 MAC : fast/multicol/float-multicol.html = IMAGE
-// BUG23498 MAC : fast/multicol/positioned-with-constrained-height.html = IMAGE
-// BUG23498 MAC : fast/overflow/004.html = IMAGE
 BUG23498 MAC : fast/overflow/006.html = IMAGE
 BUG23498 MAC : fast/overflow/clip-rects-fixed-ancestor.html = IMAGE
 BUG23498 MAC : fast/overflow/overflow-auto-table.html = IMAGE
 BUG23498 MAC : fast/overflow/overflow-stacking.html = IMAGE
 BUG23498 MAC : fast/overflow/overflow-x-y.html = IMAGE
-// BUG23498 MAC : fast/overflow/position-fixed-transform-clipping.html = IMAGE
 BUG23498 MAC : fast/overflow/scrollRevealButton.html = IMAGE
 BUG23498 MAC : fast/reflections/reflection-direction.html = IMAGE
 BUG23498 MAC : fast/replaced/005.html = IMAGE
@@ -1397,7 +1375,6 @@ BUG23498 MAC : fonts/serif.html = IMAGE
 BUG9798 BUG23498 MAC DEBUG : http/tests/navigation/error404-frames.html = TIMEOUT IMAGE
 BUG9798 BUG23498 MAC RELEASE : http/tests/navigation/error404-frames.html = IMAGE
 BUG23498 MAC : http/tests/navigation/error404-subframeload.html = IMAGE
-// BUG23498 MAC : http/tests/navigation/javascriptlink-frames.html = IMAGE
 BUG23498 MAC : svg/custom/altglyph.svg = IMAGE
 BUG23498 MAC : svg/hixie/links/003-broken.xml = IMAGE
 BUG23498 MAC : svg/text/multichar-glyph.svg = IMAGE
@@ -1494,8 +1471,6 @@ BUG23498 MAC : tables/mozilla_expected_failures/bugs/bug85016.html = IMAGE
 BUG23498 MAC : tables/mozilla_expected_failures/bugs/bug89315.html = IMAGE
 BUG23498 MAC : tables/mozilla_expected_failures/bugs/bug91057.html = IMAGE
 BUG23498 BUG32193 MAC : tables/mozilla_expected_failures/core/backgrounds.html = IMAGE IMAGE+TEXT
-// BUG23498 MAC : tables/mozilla_expected_failures/core/captions1.html = IMAGE
-// BUG23498 MAC : tables/mozilla_expected_failures/core/captions2.html = IMAGE
 BUG23498 MAC : tables/mozilla_expected_failures/core/captions3.html = IMAGE
 BUG23498 MAC : tables/mozilla_expected_failures/core/col_span2.html = IMAGE
 BUG23498 MAC : tables/mozilla_expected_failures/core/columns.html = IMAGE
@@ -1533,7 +1508,6 @@ BUG23496 MAC : css2.1/t09-c5526c-display-00-e.html = IMAGE
 BUG23496 MAC : fast/block/basic/011.html = IMAGE
 BUG23496 MAC : fast/forms/001.html = IMAGE
 BUG23496 MAC : fast/forms/basic-inputs.html = IMAGE
-// BUG23496 MAC : fast/forms/box-shadow-override.html = IMAGE
 BUG23496 MAC : fast/forms/checkbox-radio-onchange.html = IMAGE
 BUG23496 MAC : fast/forms/file-input-disabled.html = IMAGE+TEXT
 BUG23496 MAC : fast/forms/form-element-geometry.html = IMAGE+TEXT
@@ -1543,12 +1517,10 @@ BUG23496 MAC : fast/forms/formmove2.html = IMAGE
 BUG23496 MAC : fast/forms/indeterminate.html = IMAGE
 BUG23496 MAC : fast/forms/input-appearance-height.html = IMAGE+TEXT
 BUG23496 MAC : fast/forms/input-value.html = IMAGE+TEXT
-// BUG23496 MAC : fast/forms/menulist-narrow-width.html = IMAGE
 BUG23496 MAC : fast/forms/radio-attr-order.html = IMAGE
 BUG23496 MAC : fast/forms/radio-nested-labels.html = IMAGE
 BUG23496 MAC : fast/forms/radio_checked.html = IMAGE
 BUG23496 MAC : fast/forms/radio_checked_dynamic.html = IMAGE
-// BUG23496 MAC : fast/forms/search-vertical-alignment.html = IMAGE
 BUG23496 MAC : fast/inline/positionedLifetime.html = IMAGE
 BUG23496 MAC : fast/parser/bad-xml-slash.html = IMAGE
 BUG23496 MAC : fast/replaced/replaced-breaking.html = IMAGE
@@ -1675,9 +1647,6 @@ BUG23473 MAC : fast/repaint/view-background-from-body-2.html = PASS
 
 // Thicker shadow than expected
 BUG23471 MAC : fast/text/stroking.html = IMAGE
-
-// Missing baselines
-// BUG23557 MAC : fast/text/text-letter-spacing.html = IMAGE
 
 // Failing on the bots but not locally; need investigation
 BUG23560 MAC : fast/images/animated-svg-as-image.html = IMAGE PASS
@@ -1981,8 +1950,7 @@ BUG10480 LINUX : editing/selection/move-by-line-001.html = FAIL
 // The linux layout result in build bot shows the changed method does not
 // executed.
 BUG21141 LINUX : fast/forms/select-double-onchange.html = FAIL
-BUG21141 LINUX RELEASE : fast/forms/select-script-onchange.html = FAIL
-BUG21141 LINUX DEBUG : fast/forms/select-script-onchange.html = FAIL
+BUG21141 LINUX : fast/forms/select-script-onchange.html = FAIL
 
 // Flaky, not clear as of when.
 BUG21411 WIN LINUX DEBUG : svg/dom/SVGScriptElement/script-load-and-error-events.svg = TEXT PASS
@@ -2971,7 +2939,7 @@ BUG51161 LINUX DEBUG : svg/clip-path/clip-path-text.svg = CRASH
 
 // Fixed only on Mac
 // This test has not landed yet, though the fix has.
-//BUG41968 LINUX WIN : svg/hittest/svg-rect-hit.html = TEXT
+//BUGWK41968 LINUX WIN : svg/hittest/svg-rect-hit.html = TEXT
 
 // Speech input tests sending click events to HTML elements, being investigated.
 BUGWK45296: fast/speech/input-text-speechbutton.html = TIMEOUT
