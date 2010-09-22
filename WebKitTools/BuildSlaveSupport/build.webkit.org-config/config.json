@@ -16,6 +16,7 @@
                     { "name": "apple-macpro-2", "platform": "mac-snowleopard" },
                     { "name": "apple-macpro-3", "platform": "mac-snowleopard" },
                     { "name": "apple-macpro-4", "platform": "mac-leopard" },
+                    { "name": "apple-macpro-5", "platform": "mac-leopard" },	
 
                     { "name": "apple-windows-1", "platform": "win"},
                     { "name": "apple-windows-2", "platform": "win"},
@@ -64,7 +65,7 @@
                     },
                     { "name": "Leopard Intel Debug (Tests)", "type": "Test", "builddir": "leopard-intel-debug-tests",
                       "platform": "mac-leopard", "configuration": "debug", "architectures": ["i386"],
-                      "slavenames": ["apple-xserve-3", "test-slave"]
+                      "slavenames": ["apple-xserve-3", "test-slave", "apple-macpro-5"]
                     },
                     { "name": "SnowLeopard Intel Release (Build)", "type": "Build", "builddir": "snowleopard-intel-release",
                       "platform": "mac-snowleopard", "configuration": "release", "architectures": ["x86_64"],
