@@ -129,13 +129,20 @@ INCLUDEPATH = \
 
 INCLUDEPATH += \
     $$OUTPUT_DIR/include \
-    $$OUTPUT_DIR/WebCore/generated
+    $$OUTPUT_DIR/WebCore/generated \
+    $$OUTPUT_DIR/WebKit2/generated
 
 
 PREFIX_HEADER = $$PWD/../WebKit2/WebKit2Prefix.h
 QMAKE_CXXFLAGS += "-include $$PREFIX_HEADER"
 
 DEFINES += BUILDING_QT__
+
+WEBKIT2_GENERATED_HEADERS = \
+    $$OUTPUT_DIR/WebKit2/generated/WebPageMessages.h
+
+WEBKIT2_GENERATED_SOURCES = \
+    $$OUTPUT_DIR/WebKit2/generated/WebPageMessageReceiver.cpp
 
 HEADERS += \
     Platform/CoreIPC/ArgumentDecoder.h \
@@ -144,6 +151,7 @@ HEADERS += \
     Platform/CoreIPC/Attachment.h \
     Platform/CoreIPC/Connection.h \
     Platform/CoreIPC/CoreIPCMessageKinds.h \
+    Platform/CoreIPC/HandleMessage.h \
     Platform/CoreIPC/MessageID.h \
     Platform/Module.h \
     Platform/PlatformProcessIdentifier.h \
@@ -153,7 +161,6 @@ HEADERS += \
     Platform/WorkQueue.h \
     Shared/CoreIPCSupport/DrawingAreaMessageKinds.h \
     Shared/CoreIPCSupport/DrawingAreaProxyMessageKinds.h \
-    Shared/CoreIPCSupport/WebPageMessageKinds.h \
     Shared/CoreIPCSupport/WebPageProxyMessageKinds.h \
     Shared/CoreIPCSupport/WebProcessMessageKinds.h \
     Shared/DrawingAreaBase.h \
@@ -270,6 +277,7 @@ HEADERS += \
     WebProcess/WebPage/WebFrame.h \
     WebProcess/WebPage/WebPage.h \
     WebProcess/WebProcess.h \
+    $$WEBKIT2_GENERATED_HEADERS
 
 SOURCES += \
     Platform/CoreIPC/ArgumentDecoder.cpp \
@@ -395,3 +403,4 @@ SOURCES += \
     UIProcess/qt/ChunkedUpdateDrawingAreaProxyQt.cpp \
     UIProcess/qt/WebContextQt.cpp \
     WebProcess/qt/WebProcessMainQt.cpp \
+    $$WEBKIT2_GENERATED_SOURCES

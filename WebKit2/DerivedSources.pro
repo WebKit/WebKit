@@ -29,7 +29,8 @@ win32-msvc*|symbian {
 DIRS = \
     $$OUTPUT_DIR/include/JavaScriptCore \
     $$OUTPUT_DIR/include/WebCore \
-    $$OUTPUT_DIR/include/WebKit2
+    $$OUTPUT_DIR/include/WebKit2 \
+    $$OUTPUT_DIR/WebKit2/generated
 
 for(DIR, DIRS) {
     !exists($$DIR): system($$QMAKE_MKDIR $$DIR)
@@ -38,6 +39,16 @@ for(DIR, DIRS) {
 QMAKE_EXTRA_TARGETS += createdirs
 
 SRC_ROOT_DIR = $$replace(PWD, /WebKit2, /)
+
+messageheader_generator.commands = python $${SRC_ROOT_DIR}/WebKit2/Scripts/generate-messages-header.py  $${SRC_ROOT_DIR}/WebKit2/WebProcess/WebPage/WebPage.messages.in > $$OUTPUT_DIR/WebKit2/generated/WebPageMessages.h
+messageheader_generator.depends  = $${SRC_ROOT_DIR}/WebKit2/Scripts/generate-messages-header.py $${SRC_ROOT_DIR}/WebKit2/WebProcess/WebPage/WebPage.messages.in
+generated_files.depends          += messageheader_generator
+QMAKE_EXTRA_TARGETS              += messageheader_generator
+
+messagereceiver_generator.commands = python $${SRC_ROOT_DIR}/WebKit2/Scripts/generate-message-receiver.py  $${SRC_ROOT_DIR}/WebKit2/WebProcess/WebPage/WebPage.messages.in > $$OUTPUT_DIR/WebKit2/generated/WebPageMessageReceiver.cpp
+messagereceiver_generator.depends  = $${SRC_ROOT_DIR}/WebKit2/Scripts/generate-message-receiver.py $${SRC_ROOT_DIR}/WebKit2/WebProcess/WebPage/WebPage.messages.in
+generated_files.depends            += messagereceiver_generator
+QMAKE_EXTRA_TARGETS                += messagereceiver_generator
 
 fwheader_generator.commands = perl $${SRC_ROOT_DIR}/WebKit2/generate-forwarding-headers.pl $${OUTPUT_DIR}/include qt
 fwheader_generator.depends  = $${SRC_ROOT_DIR}/WebKit2/generate-forwarding-headers.pl
