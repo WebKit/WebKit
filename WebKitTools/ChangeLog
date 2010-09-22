@@ -1,3 +1,14 @@
+2010-09-21  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, build fix.
+
+        Don't pass the --test-shell arg to the Chromium Mac port of DRT;
+        it just confuses it.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46230
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
 2010-09-21  Lucas Forschler  <lforschler@apple.com>
 
         Reviewed by Stephanie Lewis.
