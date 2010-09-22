@@ -1508,6 +1508,20 @@ def parse_args(args=None):
         optparse.make_option("--use-drt", action="store_true",
             default=False,
             help="Use DumpRenderTree instead of test_shell"),
+        optparse.make_option("--accelerated-compositing",
+            action="store_true",
+            help="Use hardware-accelated compositing for rendering"),
+        optparse.make_option("--no-accelerated-compositing",
+            action="store_false",
+            dest="accelerated_compositing",
+            help="Don't use hardware-accelerated compositing for rendering"),
+        optparse.make_option("--accelerated-2d-canvas",
+            action="store_true",
+            help="Use hardware-accelerated 2D Canvas calls"),
+        optparse.make_option("--no-accelerated-2d-canvas",
+            action="store_false",
+            dest="accelerated_2d_canvas",
+            help="Don't use hardware-accelerated 2D Canvas calls"),
     ]
 
     # Missing Mac-specific old-run-webkit-tests options:

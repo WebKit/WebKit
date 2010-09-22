@@ -72,37 +72,40 @@ def _get_kwargs(**kwargs):
 
     if port_to_use == 'test':
         import test
-        cls = test.TestPort
+        maker = test.TestPort
     elif port_to_use.startswith('dryrun'):
         import dryrun
-        cls = dryrun.DryRunPort
+        maker = dryrun.DryRunPort
     elif port_to_use.startswith('mac'):
         import mac
-        cls = mac.MacPort
+        maker = mac.MacPort
     elif port_to_use.startswith('win'):
         import win
-        cls = win.WinPort
+        maker = win.WinPort
     elif port_to_use.startswith('gtk'):
         import gtk
-        cls = gtk.GtkPort
+        maker = gtk.GtkPort
     elif port_to_use.startswith('qt'):
         import qt
-        cls = qt.QtPort
+        maker = qt.QtPort
+    elif port_to_use.startswith('chromium-gpu'):
+        import chromium_gpu
+        maker = chromium_gpu.get
     elif port_to_use.startswith('chromium-mac'):
         import chromium_mac
-        cls = chromium_mac.ChromiumMacPort
+        maker = chromium_mac.ChromiumMacPort
     elif port_to_use.startswith('chromium-linux'):
         import chromium_linux
-        cls = chromium_linux.ChromiumLinuxPort
+        maker = chromium_linux.ChromiumLinuxPort
     elif port_to_use.startswith('chromium-win'):
         import chromium_win
-        cls = chromium_win.ChromiumWinPort
+        maker = chromium_win.ChromiumWinPort
     elif port_to_use.startswith('google-chrome'):
         import google_chrome
-        cls = google_chrome.GetGoogleChromePort
+        maker = google_chrome.GetGoogleChromePort
     else:
         raise NotImplementedError('unsupported port: %s' % port_to_use)
-    return cls(**kwargs)
+    return maker(**kwargs)
 
 def get_all(options=None):
     """Returns all the objects implementing the Port interface."""

@@ -239,7 +239,7 @@ class ChromiumPort(base.Port):
         # FIXME: This drt_overrides handling should be removed when we switch
         # from tes_shell to DRT.
         drt_overrides = ''
-        if self._options.use_drt:
+        if self._options and self._options.use_drt:
             drt_overrides_path = self.path_from_webkit_base('LayoutTests',
                 'platform', 'chromium', 'drt_expectations.txt')
             if os.path.exists(drt_overrides_path):
@@ -356,6 +356,12 @@ class ChromiumDriver(base.Driver):
 
         if self._options.gp_fault_error_box:
             driver_args.append('--gp-fault-error-box')
+
+        if self._options.accelerated_compositing:
+            driver_args.append('--enable-accelerated-compositing')
+
+        if self._options.accelerated_2d_canvas:
+            driver_args.append('--enable-accelerated-2d-canvas')
         return driver_args
 
     def start(self):

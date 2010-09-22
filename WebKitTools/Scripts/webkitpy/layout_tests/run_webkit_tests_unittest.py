@@ -102,6 +102,16 @@ def logging_run(args=[], tests_included=False):
 
 
 class MainTest(unittest.TestCase):
+    def test_accelerated_compositing(self):
+        # This just tests that we recognize the command line args
+        self.assertTrue(passing_run(['--accelerated-compositing']))
+        self.assertTrue(passing_run(['--no-accelerated-compositing']))
+
+    def test_accelerated_2d_canvas(self):
+        # This just tests that we recognize the command line args
+        self.assertTrue(passing_run(['--accelerated-2d-canvas']))
+        self.assertTrue(passing_run(['--no-accelerated-2d-canvas']))
+
     def test_basic(self):
         self.assertTrue(passing_run())
 

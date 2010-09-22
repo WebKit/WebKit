@@ -410,6 +410,13 @@ class WebKitDriver(base.Driver):
         if self._image_path:
             driver_args.append('--pixel-tests')
 
+        if self._options.use_drt:
+            if self._options.accelerated_compositing:
+                driver_args.append('--enable-accelerated-compositing')
+
+            if self._options.accelerated_2d_canvas:
+                driver_args.append('--enable-accelerated-2d-canvas')
+
         return driver_args
 
     def start(self):

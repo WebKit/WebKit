@@ -1,0 +1,53 @@
+// This file indicates the expectations for running Chromium under
+// the GPU-accelerated codepaths as defined in
+// WebKitTools/Scripts/webkitpy/layout_tests/port/chromium_gpu.py
+//
+// We skip most of the tests in the repository because they don't trigger
+// the accelerated code paths. We actually only run the canvas and
+// compositing tests.
+WONTFIX SKIP : accessibility = PASS FAIL
+WONTFIX SKIP : animations = PASS FAIL
+WONTFIX SKIP : canvas = PASS FAIL
+WONTFIX SKIP : css1 = PASS FAIL
+WONTFIX SKIP : css2.1 = PASS FAIL
+WONTFIX SKIP : css3 = PASS FAIL
+WONTFIX SKIP : dom = PASS FAIL
+WONTFIX SKIP : editing = PASS FAIL
+WONTFIX SKIP : fast = PASS FAIL
+
+WONTFIX SKIP : fonts = PASS FAIL
+WONTFIX SKIP : fullscreen = PASS FAIL
+WONTFIX SKIP : html5lib = PASS FAIL
+WONTFIX SKIP : http = PASS FAIL
+WONTFIX SKIP : ietestcenter = PASS FAIL
+WONTFIX SKIP : inspector = PASS FAIL
+WONTFIX SKIP : java = PASS FAIL
+WONTFIX SKIP : loader = PASS FAIL
+WONTFIX SKIP : mathml = PASS FAIL
+WONTFIX SKIP : media = PASS FAIL
+WONTFIX SKIP : perf = PASS FAIL
+WONTFIX SKIP : platform = PASS FAIL
+WONTFIX SKIP : plugins = PASS FAIL
+WONTFIX SKIP : printing = PASS FAIL
+WONTFIX SKIP : resources = PASS FAIL
+WONTFIX SKIP : scrollbars = PASS FAIL
+WONTFIX SKIP : security = PASS FAIL
+WONTFIX SKIP : storage = PASS FAIL
+WONTFIX SKIP : svg = PASS FAIL
+WONTFIX SKIP : tables = PASS FAIL
+WONTFIX SKIP : transforms = PASS FAIL
+WONTFIX SKIP : transitions = PASS FAIL
+WONTFIX SKIP : traversal = PASS FAIL
+WONTFIX SKIP : userscripts = PASS FAIL
+WONTFIX SKIP : webarchive = PASS FAIL
+WONTFIX SKIP : websocket = PASS FAIL
+WONTFIX SKIP : wml = PASS FAIL
+
+// (These are the tests we actually run and expect to pass)
+BUGNONE : compositing = PASS FAIL
+BUGNONE : fast/canvas = PASS FAIL
+BUGNONE : canvas/philip = PASS FAIL
+
+//
+// Actual failure suppressions should go below this line
+//

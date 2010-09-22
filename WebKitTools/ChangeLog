@@ -1,3 +1,34 @@
+2010-09-22  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Add a 'chromium-gpu' set of ports that will test the accelerated
+        GPU paths. This patch adds:
+
+        - support for the '--accelerated-compositing' and
+          'accelerated-2d-canvas' flags to new-run-webkit-tests (and the
+          'no-' flags)
+        - adds a new set of Ports that will look under
+          platform/chromium-gpu-$OS/ for baselines before looking in the
+          regular chromium search path
+        - adds a new test_expectations.txt file in platform/chromium-gpu
+          that skips all but the tests we actually want to run with
+          acceleration.
+
+        This patch will allow us to run both with and without acceleration
+        and to change the defaults for both the regular and -gpu options
+        as the code evolves.
+
+        We plan to add both --chromium-$OS and --chromium-gpu-$OS runs to
+        each test bot.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46225
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
 2010-09-22  Jamey Hicks  <jamey.hicks@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

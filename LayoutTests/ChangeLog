@@ -1,3 +1,17 @@
+2010-09-22  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Adds platform/chromium-gpu-* directories for holding the
+        GPU-accelerated baselines and expectations for Chromium.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46225
+
+        * platform/chromium-gpu/test_expectations.txt: Added.
+        * platform/chromium-gpu-mac/README.txt: Added.
+        * platform/chromium-gpu-win/README.txt: Added.
+        * platform/chromium-gpu-linux/README.txt: Added.
+
 2010-09-22  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dave Hyatt.

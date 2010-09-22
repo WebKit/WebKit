@@ -29,6 +29,7 @@
 import sys
 import unittest
 
+import chromium_gpu
 import chromium_linux
 import chromium_mac
 import chromium_win
@@ -132,6 +133,15 @@ class FactoryTest(unittest.TestCase):
 
     def test_qt(self):
         self.assert_port("qt", qt.QtPort)
+
+    def test_chromium_gpu_linux(self):
+        self.assert_port("chromium-gpu-linux", chromium_gpu.ChromiumGpuLinuxPort)
+
+    def test_chromium_gpu_mac(self):
+        self.assert_port("chromium-gpu-mac", chromium_gpu.ChromiumGpuMacPort)
+
+    def test_chromium_gpu_win(self):
+        self.assert_port("chromium-gpu-win", chromium_gpu.ChromiumGpuWinPort)
 
     def test_chromium_mac(self):
         self.assert_port("chromium-mac", chromium_mac.ChromiumMacPort)
