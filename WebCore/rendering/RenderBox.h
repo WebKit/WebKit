@@ -44,11 +44,16 @@ public:
     int y() const { return m_frameRect.y(); }
     int width() const { return m_frameRect.width(); }
     int height() const { return m_frameRect.height(); }
-    
+
     void setX(int x) { m_frameRect.setX(x); }
     void setY(int y) { m_frameRect.setY(y); }
     void setWidth(int width) { m_frameRect.setWidth(width); }
     void setHeight(int height) { m_frameRect.setHeight(height); }
+
+    int logicalWidth() const;
+    int logicalHeight() const;
+    void setLogicalWidth(int);
+    void setLogicalHeight(int);
     
     IntPoint location() const { return m_frameRect.location(); }
     IntSize locationOffset() const { return IntSize(x(), y()); }

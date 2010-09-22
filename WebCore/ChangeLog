@@ -1,3 +1,16 @@
+2010-09-22  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46298, add logicalWidth/Height getters/setters to RenderBox.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::logicalWidth):
+        (WebCore::RenderBox::logicalHeight):
+        (WebCore::RenderBox::setLogicalWidth):
+        (WebCore::RenderBox::setLogicalHeight):
+        * rendering/RenderBox.h:
+
 2010-09-22  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Oliver Hunt.
