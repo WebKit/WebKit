@@ -144,6 +144,7 @@ namespace JSC {
             , m_features(0)
         {
 #if ENABLE(CODEBLOCK_SAMPLING)
+            relaxAdoptionRequirement();
             if (SamplingTool* sampler = globalData->interpreter->sampler())
                 sampler->notifyOfScope(this);
 #else
@@ -157,6 +158,7 @@ namespace JSC {
             , m_features(0)
         {
 #if ENABLE(CODEBLOCK_SAMPLING)
+            relaxAdoptionRequirement();
             if (SamplingTool* sampler = exec->globalData().interpreter->sampler())
                 sampler->notifyOfScope(this);
 #else

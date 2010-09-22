@@ -1,5 +1,16 @@
 2010-09-21  Oliver Hunt  <oliver@apple.com>
 
+        RS=Gavin Barraclough.
+
+        Fix codeblock dumping
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * runtime/Executable.h:
+        (JSC::ScriptExecutable::ScriptExecutable):
+
+2010-09-21  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Geoffrey Garen.
 
         Speed up function.apply(..., arguments)
