@@ -2,6 +2,19 @@
 
         Reviewed by Tony Chang.
 
+        new-run-webkit-tests: r68063 broke linux python tests
+
+        Add a missing "from __future__ import with_statement" to this
+        new file; the perils of testing only on the Mac and by review :(
+
+        https://bugs.webkit.org/show_bug.cgi?id=46293
+
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+
+2010-09-22  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
         Add a 'chromium-gpu' set of ports that will test the accelerated
         GPU paths. This patch adds:
 
