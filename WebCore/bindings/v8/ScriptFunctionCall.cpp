@@ -45,14 +45,7 @@
 
 namespace WebCore {
 
-ScriptFunctionCall::ScriptFunctionCall(const ScriptObject& thisObject, const String& name)
-    : m_scriptState(thisObject.scriptState())
-    , m_thisObject(thisObject)
-    , m_name(name)
-{
-}
-
-void ScriptFunctionCall::appendArgument(const ScriptObject& argument)
+void ScriptCallArgumentHandler::appendArgument(const ScriptObject& argument)
 {
     if (argument.scriptState() != m_scriptState) {
         ASSERT_NOT_REACHED();
@@ -61,62 +54,69 @@ void ScriptFunctionCall::appendArgument(const ScriptObject& argument)
     m_arguments.append(argument);
 }
 
-void ScriptFunctionCall::appendArgument(const ScriptString& argument)
+void ScriptCallArgumentHandler::appendArgument(const ScriptString& argument)
 {
     ScriptScope scope(m_scriptState);
     m_arguments.append(v8String(argument));
 }
 
-void ScriptFunctionCall::appendArgument(const ScriptValue& argument)
+void ScriptCallArgumentHandler::appendArgument(const ScriptValue& argument)
 {
     m_arguments.append(argument);
 }
 
-void ScriptFunctionCall::appendArgument(const String& argument)
+void ScriptCallArgumentHandler::appendArgument(const String& argument)
 {
     ScriptScope scope(m_scriptState);
     m_arguments.append(v8String(argument));
 }
 
-void ScriptFunctionCall::appendArgument(const char* argument)
+void ScriptCallArgumentHandler::appendArgument(const char* argument)
 {
     ScriptScope scope(m_scriptState);
     m_arguments.append(v8String(argument));
 }
 
-void ScriptFunctionCall::appendArgument(long argument)
+void ScriptCallArgumentHandler::appendArgument(long argument)
 {
     ScriptScope scope(m_scriptState);
     m_arguments.append(v8::Number::New(argument));
 }
 
-void ScriptFunctionCall::appendArgument(long long argument)
+void ScriptCallArgumentHandler::appendArgument(long long argument)
 {
     ScriptScope scope(m_scriptState);
     m_arguments.append(v8::Number::New(argument));
 }
 
-void ScriptFunctionCall::appendArgument(unsigned int argument)
+void ScriptCallArgumentHandler::appendArgument(unsigned int argument)
 {
     ScriptScope scope(m_scriptState);
     m_arguments.append(v8::Number::New(argument));
 }
 
-void ScriptFunctionCall::appendArgument(unsigned long argument)
+void ScriptCallArgumentHandler::appendArgument(unsigned long argument)
 {
     ScriptScope scope(m_scriptState);
     m_arguments.append(v8::Number::New(argument));
 }
 
-void ScriptFunctionCall::appendArgument(int argument)
+void ScriptCallArgumentHandler::appendArgument(int argument)
 {
     ScriptScope scope(m_scriptState);
     m_arguments.append(v8::Number::New(argument));
 }
 
-void ScriptFunctionCall::appendArgument(bool argument)
+void ScriptCallArgumentHandler::appendArgument(bool argument)
 {
     m_arguments.append(v8Boolean(argument));
+}
+
+ScriptFunctionCall::ScriptFunctionCall(const ScriptObject& thisObject, const String& name)
+    : ScriptCallArgumentHandler(thisObject.scriptState())
+    , m_thisObject(thisObject)
+    , m_name(name)
+{
 }
 
 ScriptValue ScriptFunctionCall::call(bool& hadException, bool reportExceptions)
@@ -177,6 +177,42 @@ ScriptObject ScriptFunctionCall::construct(bool& hadException, bool reportExcept
     }
 
     return ScriptObject(m_scriptState, result);
+}
+
+ScriptCallback::ScriptCallback(ScriptState* state, ScriptValue function)
+    : ScriptCallArgumentHandler(state)
+    , m_function(function)
+{
+}
+
+ScriptValue ScriptCallback::call()
+{
+    bool hadException = false;
+    return call(hadException);
+}
+
+ScriptValue ScriptCallback::call(bool& hadException)
+{
+    ASSERT(v8::Context::InContext());
+    ASSERT(m_function.v8Value()->IsFunction());
+
+    v8::TryCatch exceptionCatcher;
+    v8::Handle<v8::Object> object = v8::Context::GetCurrent()->Global();
+    v8::Handle<v8::Function> function = v8::Handle<v8::Function>::Cast(m_function.v8Value());
+
+    OwnArrayPtr<v8::Handle<v8::Value> > args(new v8::Handle<v8::Value>[m_arguments.size()]);
+    for (size_t i = 0; i < m_arguments.size(); ++i)
+        args[i] = m_arguments[i].v8Value();
+
+    v8::Handle<v8::Value> result = V8Proxy::callFunctionWithoutFrame(function, object, m_arguments.size(), args.get());
+
+    if (exceptionCatcher.HasCaught()) {
+        hadException = true;
+        m_scriptState->setException(exceptionCatcher.Exception());
+        return ScriptValue();
+    }
+
+    return ScriptValue(result);
 }
 
 } // namespace WebCore

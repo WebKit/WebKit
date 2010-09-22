@@ -41,10 +41,9 @@ namespace WebCore {
     class ScriptState;
     class ScriptString;
 
-    class ScriptFunctionCall {
+    class ScriptCallArgumentHandler {
     public:
-        ScriptFunctionCall(const ScriptObject& thisObject, const String& name);
-        virtual ~ScriptFunctionCall() {};
+        ScriptCallArgumentHandler(ScriptState* scriptState) : m_scriptState(scriptState) { }
 
         void appendArgument(const ScriptObject&);
         void appendArgument(const ScriptString&);
@@ -57,15 +56,33 @@ namespace WebCore {
         void appendArgument(unsigned long);
         void appendArgument(int);
         void appendArgument(bool);
+
+    protected:
+        ScriptState* m_scriptState;
+        Vector<ScriptValue> m_arguments;
+    };
+
+    class ScriptFunctionCall : public ScriptCallArgumentHandler {
+    public:
+        ScriptFunctionCall(const ScriptObject& thisObject, const String& name);
         ScriptValue call(bool& hadException, bool reportExceptions = true);
         ScriptValue call();
         ScriptObject construct(bool& hadException, bool reportExceptions = true);
 
     protected:
-        ScriptState* m_scriptState;
         ScriptObject m_thisObject;
         String m_name;
-        Vector<ScriptValue> m_arguments;
+    };
+
+    class ScriptCallback : public ScriptCallArgumentHandler {
+    public:
+        ScriptCallback(ScriptState*, ScriptValue);
+
+        ScriptValue call();
+        ScriptValue call(bool& hadException);
+
+    private:
+        ScriptValue m_function;
     };
 
 } // namespace WebCore

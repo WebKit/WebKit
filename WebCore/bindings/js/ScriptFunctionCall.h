@@ -46,10 +46,9 @@ namespace WebCore {
     class ScriptValue;
     class ScriptString;
 
-    class ScriptFunctionCall {
+    class ScriptCallArgumentHandler {
     public:
-        ScriptFunctionCall(const ScriptObject& thisObject, const String& name);
-        virtual ~ScriptFunctionCall() {};
+        ScriptCallArgumentHandler(ScriptState* state) : m_exec(state) { }
 
         void appendArgument(const ScriptObject&);
         void appendArgument(const ScriptString&);
@@ -64,21 +63,39 @@ namespace WebCore {
         void appendArgument(unsigned long);
         void appendArgument(int);
         void appendArgument(bool);
-        ScriptValue call(bool& hadException, bool reportExceptions = true);
-        ScriptValue call();
-        ScriptObject construct(bool& hadException, bool reportExceptions = true);
 
     protected:
-        ScriptState* m_exec;
-        ScriptObject m_thisObject;
-        String m_name;
         JSC::MarkedArgumentBuffer m_arguments;
+        ScriptState* m_exec;
 
     private:
         // MarkedArgumentBuffer must be stack allocated, so prevent heap
         // alloc of ScriptFunctionCall as well.
         void* operator new(size_t) { ASSERT_NOT_REACHED(); return reinterpret_cast<void*>(0xbadbeef); }
         void* operator new[](size_t) { ASSERT_NOT_REACHED(); return reinterpret_cast<void*>(0xbadbeef); }
+    };
+
+    class ScriptFunctionCall : public ScriptCallArgumentHandler {
+    public:
+        ScriptFunctionCall(const ScriptObject& thisObject, const String& name);
+        ScriptValue call(bool& hadException, bool reportExceptions = true);
+        ScriptValue call();
+        ScriptObject construct(bool& hadException, bool reportExceptions = true);
+
+    protected:
+        ScriptObject m_thisObject;
+        String m_name;
+    };
+
+    class ScriptCallback : public ScriptCallArgumentHandler {
+    public:
+        ScriptCallback(ScriptState*, ScriptValue);
+
+        ScriptValue call();
+        ScriptValue call(bool& hadException);
+
+    private:
+        ScriptValue m_function;
     };
 
 } // namespace WebCore

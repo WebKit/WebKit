@@ -1,3 +1,28 @@
+2010-09-22  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Oliver Hunt.
+
+        Script engine agnostic ScriptCallback class
+        https://bugs.webkit.org/show_bug.cgi?id=43216
+
+        Refactoring class ScriptFunctionCall to create a class (ScriptCallback) that
+        receives a script function as a ScriptValue and calls that function with provided parameters.
+
+        * bindings/js/ScriptFunctionCall.cpp:
+        (WebCore::ScriptCallArgumentHandler::appendArgument):
+        (WebCore::ScriptFunctionCall::ScriptFunctionCall):
+        (WebCore::ScriptCallback::ScriptCallback):
+        (WebCore::ScriptCallback::call):
+        * bindings/js/ScriptFunctionCall.h:
+        (WebCore::ScriptCallArgumentHandler::ScriptCallArgumentHandler):
+        * bindings/v8/ScriptFunctionCall.cpp:
+        (WebCore::ScriptCallArgumentHandler::appendArgument):
+        (WebCore::ScriptFunctionCall::ScriptFunctionCall):
+        (WebCore::ScriptCallback::ScriptCallback):
+        (WebCore::ScriptCallback::call):
+        * bindings/v8/ScriptFunctionCall.h:
+        (WebCore::ScriptCallArgumentHandler::ScriptCallArgumentHandler):
+
 2010-09-22  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed.
