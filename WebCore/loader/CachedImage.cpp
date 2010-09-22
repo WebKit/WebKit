@@ -331,7 +331,8 @@ void CachedImage::destroyDecodedData()
         // Invoking addClient() will reconstruct the image object.
         m_image = 0;
         setDecodedSize(0);
-        makePurgeable(true);
+        if (!Cache::shouldMakeResourcePurgeableOnEviction())
+            makePurgeable(true);
     } else if (m_image && !errorOccurred())
         m_image->destroyDecodedData();
 }

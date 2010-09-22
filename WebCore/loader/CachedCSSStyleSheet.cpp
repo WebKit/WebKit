@@ -27,6 +27,7 @@
 #include "config.h"
 #include "CachedCSSStyleSheet.h"
 
+#include "Cache.h"
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "HTTPParsers.h"
@@ -58,7 +59,7 @@ void CachedCSSStyleSheet::didAddClient(CachedResourceClient *c)
 
 void CachedCSSStyleSheet::allClientsRemoved()
 {
-    if (isSafeToMakePurgeable())
+    if (!Cache::shouldMakeResourcePurgeableOnEviction() && isSafeToMakePurgeable())
         makePurgeable(true);
 }
 

@@ -238,11 +238,15 @@ void Cache::revalidationFailed(CachedResource* revalidatingResource)
 CachedResource* Cache::resourceForURL(const String& url)
 {
     CachedResource* resource = m_resources.get(url);
+    bool wasPurgeable = Cache::shouldMakeResourcePurgeableOnEviction() && resource && resource->isPurgeable();
     if (resource && !resource->makePurgeable(false)) {
         ASSERT(!resource->hasClients());
         evict(resource);
         return 0;
     }
+    // Add the size back since we had subtracted it when we marked the memory as purgeable.
+    if (wasPurgeable)
+        adjustSize(resource->hasClients(), resource->size());
     return resource;
 }
 
@@ -363,7 +367,9 @@ void Cache::pruneDeadResources()
         while (current) {
             CachedResource* prev = current->m_prevInAllResourcesList;
             if (!current->hasClients() && !current->isPreloaded() && !current->isCacheValidator()) {
-                evict(current);
+                if (!makeResourcePurgeable(current))
+                    evict(current);
+
                 // If evict() caused pruneDeadResources() to be re-entered, bail out. This can happen when removing an
                 // SVG CachedImage that has subresources.
                 if (!m_inPruneDeadResources)
@@ -397,6 +403,25 @@ void Cache::setCapacities(unsigned minDeadBytes, unsigned maxDeadBytes, unsigned
     prune();
 }
 
+bool Cache::makeResourcePurgeable(CachedResource* resource)
+{
+    if (!Cache::shouldMakeResourcePurgeableOnEviction())
+        return false;
+
+    if (!resource->inCache())
+        return false;
+
+    if (!resource->isSafeToMakePurgeable())
+        return false;
+
+    if (!resource->makePurgeable(true))
+        return false;
+
+    adjustSize(resource->hasClients(), -resource->size());
+
+    return true;
+}
+
 void Cache::evict(CachedResource* resource)
 {
     // The resource may have already been removed by someone other than our caller,
@@ -410,10 +435,10 @@ void Cache::evict(CachedResource* resource)
         removeFromLRUList(resource);
         removeFromLiveDecodedResourcesList(resource);
 
-        // Subtract from our size totals.
-        int delta = -static_cast<int>(resource->size());
-        if (delta)
-            adjustSize(resource->hasClients(), delta);
+        // If the resource was purged, it means we had already decremented the size when we made the
+        // resource purgeable in makeResourcePurgeable().
+        if (!Cache::shouldMakeResourcePurgeableOnEviction() || !resource->wasPurged())
+            adjustSize(resource->hasClients(), -resource->size());
     } else
         ASSERT(m_resources.get(resource->url()) != resource);
 
@@ -725,7 +750,7 @@ void Cache::dumpStats()
 
 void Cache::dumpLRULists(bool includeLive) const
 {
-    printf("LRU-SP lists in eviction order (Kilobytes decoded, Kilobytes encoded, Access count, Referenced):\n");
+    printf("LRU-SP lists in eviction order (Kilobytes decoded, Kilobytes encoded, Access count, Referenced, isPurgeable, wasPurged):\n");
 
     int size = m_allResources.size();
     for (int i = size - 1; i >= 0; i--) {
@@ -734,7 +759,8 @@ void Cache::dumpLRULists(bool includeLive) const
         while (current) {
             CachedResource* prev = current->m_prevInAllResourcesList;
             if (includeLive || !current->hasClients())
-                printf("(%.1fK, %.1fK, %uA, %dR); ", current->decodedSize() / 1024.0f, (current->encodedSize() + current->overheadSize()) / 1024.0f, current->accessCount(), current->hasClients());
+                printf("(%.1fK, %.1fK, %uA, %dR, %d, %d); ", current->decodedSize() / 1024.0f, (current->encodedSize() + current->overheadSize()) / 1024.0f, current->accessCount(), current->hasClients(), current->isPurgeable(), current->wasPurged());
+
             current = prev;
         }
     }

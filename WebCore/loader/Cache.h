@@ -55,6 +55,22 @@ class KURL;
 // -------|-----+++++++++++++++|
 // -------|-----+++++++++++++++|+++++
 
+// The behavior of the cache changes in the following way if shouldMakeResourcePurgeableOnEviction
+// returns true.
+//
+// 1. Dead resources in the cache are kept in non-purgeable memory.
+// 2. When we prune dead resources, instead of freeing them, we mark their memory as purgeable and
+//    keep the resources until the kernel reclaims the purgeable memory.
+//
+// By leaving the in-cache dead resources in dirty resident memory, we decrease the likelihood of
+// the kernel claiming that memory and forcing us to refetch the resource (for example when a user
+// presses back).
+//
+// And by having an unbounded number of resource objects using purgeable memory, we can use as much
+// memory as is available on the machine. The trade-off here is that the CachedResource object (and
+// its member variables) are allocated in non-purgeable TC-malloc'd memory so we would see slightly
+// more memory use due to this.
+
 class Cache : public Noncopyable {
 public:
     friend Cache* cache();
@@ -148,6 +164,8 @@ public:
     void addToLiveResourcesSize(CachedResource*);
     void removeFromLiveResourcesSize(CachedResource*);
 
+    static bool shouldMakeResourcePurgeableOnEviction();
+
     // Function to collect cache statistics for the caches window in the Safari Debug menu.
     Statistics getStatistics();
 
@@ -168,6 +186,7 @@ private:
     void pruneDeadResources(); // Flush decoded and encoded data from resources not referenced by Web pages.
     void pruneLiveResources(); // Flush decoded data from resources still referenced by Web pages.
 
+    bool makeResourcePurgeable(CachedResource*);
     void evict(CachedResource*);
 
     // Member variables.
@@ -198,6 +217,15 @@ private:
     // referenced by a Web page).
     HashMap<String, CachedResource*> m_resources;
 };
+
+inline bool Cache::shouldMakeResourcePurgeableOnEviction()
+{
+#if PLATFORM(IOS)
+    return true;
+#else
+    return false;
+#endif
+}
 
 // Function to obtain the global cache.
 Cache* cache();

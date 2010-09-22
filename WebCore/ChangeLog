@@ -1,3 +1,48 @@
+2010-09-21  Pratik Solanki  <psolanki@apple.com>
+
+        Reviewed by Geoffrey Garen and Darin Adler.
+
+        Use purgeable memory to keep more dead resources in cache
+        https://bugs.webkit.org/show_bug.cgi?id=44806
+        <rdar://problem/8350901>
+
+        This changes the behavior of dead resources in the WebCore cache to be the following if
+        shouldMakeResourcePurgeableOnEviction() returns true.
+
+        1. Dead resources in the cache are kept in non-purgeable memory.
+        2. When we prune dead resources, instead of freeing them, we mark their memory as purgeable
+        and keep the resources until the kernel reclaims the purgeable memory.
+
+        By leaving the in-cache dead resources in dirty resident memory, we decrease the likelihood
+        of the kernel claiming that memory and forcing us to refetch the resource (for example when
+        a user presses back).
+
+        And by having an unbounded number of resource objects using purgeable memory, we can use
+        as much memory as is available on the machine. The trade-off is that the CachedResource
+        object (and its member variables) are allocated in non-purgeable TC-malloc'd memory so
+        we would see slightly more memory use due to this.
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::resourceForURL): Adjust sizes appropriately if we made resource memory
+        non-purgeable.
+        (WebCore::Cache::pruneDeadResources): When removing dead resources, try first to mark their
+        memory as purgeable. If not, evict the resource.
+        (WebCore::Cache::makeResourcePurgeable): Added. Try to mark resource
+        memory as purgeable. If successful, adjust the sizes so that we don't
+        factor this resources size in the Cache size calculation.
+        (WebCore::Cache::evict): Don't decrement size if we already did it in makeResourcePurgeable.
+        (WebCore::Cache::dumpLRULists): Extra debug logging.
+        * loader/Cache.h:
+        (WebCore::Cache::shouldMakeResourcePurgeableOnEviction): Added. Indicates if the new
+        behaviour is enabled.
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::allClientsRemoved): Do not mark memory as purgeable. The
+        Cache class takes care of this.
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::destroyDecodedData): Ditto.
+        * loader/CachedScript.cpp:
+        (WebCore::CachedScript::destroyDecodedData): Ditto.
+
 2010-09-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

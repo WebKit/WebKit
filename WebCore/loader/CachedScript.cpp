@@ -27,6 +27,7 @@
 #include "config.h"
 #include "CachedScript.h"
 
+#include "Cache.h"
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "SharedBuffer.h"
@@ -110,7 +111,7 @@ void CachedScript::destroyDecodedData()
 {
     m_script = String();
     setDecodedSize(0);
-    if (isSafeToMakePurgeable())
+    if (!Cache::shouldMakeResourcePurgeableOnEviction() && isSafeToMakePurgeable())
         makePurgeable(true);
 }
 
