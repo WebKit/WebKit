@@ -72,7 +72,7 @@ void WebPlatformStrategies::refreshPlugins()
     [[WebPluginDatabase sharedDatabase] refresh];
 }
 
-void WebPlatformStrategies::getPluginInfo(Vector<WebCore::PluginInfo>& plugins)
+void WebPlatformStrategies::getPluginInfo(const WebCore::Page*, Vector<WebCore::PluginInfo>& plugins)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 

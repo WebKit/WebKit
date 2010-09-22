@@ -1,3 +1,15 @@
+2010-09-22  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        PluginStrategy should satisfy the needs of Qt
+        https://bugs.webkit.org/show_bug.cgi?id=45857
+        No new functionality so no new tests.
+
+        * plugins/PluginData.cpp:
+        (WebCore::PluginData::initPlugins):
+        * plugins/PluginStrategy.h: Added a |const Page*| argument to getPluginInfo.
+
 2010-09-22  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

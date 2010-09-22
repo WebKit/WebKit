@@ -32,10 +32,12 @@
 
 namespace WebCore {
 
+class Page;
+
 class PluginStrategy {
 public:
     virtual void refreshPlugins() = 0;
-    virtual void getPluginInfo(Vector<PluginInfo>&) = 0;
+    virtual void getPluginInfo(const Page*, Vector<PluginInfo>&) = 0;
 
 protected:
     virtual ~PluginStrategy() { }

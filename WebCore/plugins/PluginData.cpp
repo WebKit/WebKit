@@ -75,7 +75,7 @@ void PluginData::initPlugins()
 {
     ASSERT(m_plugins.isEmpty());
     
-    platformStrategies()->pluginStrategy()->getPluginInfo(m_plugins);
+    platformStrategies()->pluginStrategy()->getPluginInfo(m_page, m_plugins);
 }
 #endif
 

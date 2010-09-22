@@ -49,7 +49,7 @@ private:
 
     // WebCore::PluginStrategy
     virtual void refreshPlugins();
-    virtual void getPluginInfo(Vector<WebCore::PluginInfo>&);
+    virtual void getPluginInfo(const WebCore::Page*, Vector<WebCore::PluginInfo>&);
 
     // WebCore::LocalizationStrategy    
     virtual String inputElementAltText();

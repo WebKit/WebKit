@@ -102,7 +102,7 @@ void WebPlatformStrategies::refreshPlugins()
     populatePluginCache();
 }
 
-void WebPlatformStrategies::getPluginInfo(Vector<WebCore::PluginInfo>& plugins)
+void WebPlatformStrategies::getPluginInfo(const WebCore::Page*, Vector<WebCore::PluginInfo>& plugins)
 {
     populatePluginCache();
     plugins = m_cachedPlugins;

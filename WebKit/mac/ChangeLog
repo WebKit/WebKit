@@ -1,3 +1,15 @@
+2010-09-22  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        PluginStrategy should satisfy the needs of Qt
+        https://bugs.webkit.org/show_bug.cgi?id=45857
+        No new functionality so no new tests.
+
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::getPluginInfo):
+
 2010-09-22  Paul Knight  <pknight@apple.com>
 
         Reviewed by Simon Fraser.
