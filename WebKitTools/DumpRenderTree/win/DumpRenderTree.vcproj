@@ -242,7 +242,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="%SystemDrive%\cygwin\bin\which.exe bash&#x0D;&#x0A;if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;cmd /c&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders\wtf&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\ForwardingHeaders\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders\wtf&quot;&#x0D;&#x0A;"
+				CommandLine="%SystemDrive%\cygwin\bin\which.exe bash&#x0D;&#x0A;if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;cmd /c&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders\wtf&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\ForwardingHeaders\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders\wtf&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(TargetDir)\..\include\WebCore\ForwardingHeaders\wtf\MD5.h&quot; &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders\wtf&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -316,7 +316,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="%SystemDrive%\cygwin\bin\which.exe bash&#x0D;&#x0A;if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;cmd /c&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders\wtf&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\ForwardingHeaders\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders\wtf&quot;&#x0D;&#x0A;"
+				CommandLine="%SystemDrive%\cygwin\bin\which.exe bash&#x0D;&#x0A;if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;cmd /c&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders\wtf&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\ForwardingHeaders\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders\wtf&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(TargetDir)\..\include\WebCore\ForwardingHeaders\wtf\MD5.h&quot; &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders\wtf&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -566,6 +566,14 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath="..\AccessibilityTextMarker.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\AccessibilityTextMarker.h"
+			>
+		</File>
+		<File
 			RelativePath="..\AccessibilityUIElement.cpp"
 			>
 		</File>
@@ -575,14 +583,6 @@
 		</File>
 		<File
 			RelativePath=".\AccessibilityUIElementWin.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\AccessibilityTextMarker.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\AccessibilityTextMarker.h"
 			>
 		</File>
 		<File
@@ -608,10 +608,42 @@
 		<File
 			RelativePath=".\MD5.cpp"
 			>
+			<FileConfiguration
+				Name="Debug_Cairo|Win32"
+				ExcludedFromBuild="true"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release_Cairo|Win32"
+				ExcludedFromBuild="true"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+				/>
+			</FileConfiguration>
 		</File>
 		<File
 			RelativePath=".\MD5.h"
 			>
+			<FileConfiguration
+				Name="Debug_Cairo|Win32"
+				ExcludedFromBuild="true"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release_Cairo|Win32"
+				ExcludedFromBuild="true"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+				/>
+			</FileConfiguration>
 		</File>
 		<File
 			RelativePath="..\PixelDumpSupport.cpp"

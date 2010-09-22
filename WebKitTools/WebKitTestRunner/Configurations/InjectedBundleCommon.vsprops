@@ -10,11 +10,6 @@
 		ForcedIncludeFiles="WebKitTestRunnerPrefix.h"
 	/>
 	<Tool
-		Name="VCLinkerTool"
-		AdditionalDependencies="JavaScriptCore$(WebKitDLLConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib"
-		OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
-	/>
-	<Tool
 		Name="VCPostBuildEventTool"
 		CommandLine="if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;"
 	/>

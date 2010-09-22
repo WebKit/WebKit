@@ -1,3 +1,17 @@
+2010-09-22  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Martin Robinson.
+
+        [WinCairo] Update WebKitTestRunner and DumpRenderTree Build.
+        https://bugs.webkit.org/show_bug.cgi?id=46303.
+
+        * DumpRenderTree/win/DumpRenderTree.vcproj: Disable local MD5 sources
+        for Cairo build. Copy wtf MD5 header to ForwardingHeaders for the
+        WinCairo build.
+        * WebKitTestRunner/Configurations/InjectedBundleCFLite.vsprops: Added.
+        * WebKitTestRunner/win/InjectedBundle.vcproj: Update win new *_Cairo
+        build targets that use the new InjectedBundleCFLite.vsprops file.
+
 2010-09-22  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, build fix.
