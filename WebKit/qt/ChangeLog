@@ -1,3 +1,9 @@
+2010-09-22  Andras Becsi  <abecsi@webkit.org>
+
+        Speculative build fix for the Qt Windows bots.
+
+        * Api/DerivedSources.pro:
+
 2010-09-22  Jamey Hicks  <jamey.hicks@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
