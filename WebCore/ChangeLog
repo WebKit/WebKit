@@ -1,3 +1,17 @@
+2010-09-22  İsmail Dönmez  <ismail@namtrac.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Build fix for WinCE
+
+        Add two missing stubs:
+        - privateBrowsingStateChanged(bool)
+        - bindingInstance()
+
+        * platform/qt/TemporaryLinkStubsQt.cpp:
+        (PluginView::privateBrowsingStateChanged):
+        (PluginView::bindingInstance):
+
 2010-09-22  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

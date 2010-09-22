@@ -87,6 +87,15 @@ bool PluginDatabase::isPreferredPluginDirectory(const String& directory)
     notImplemented();
     return false;
 }
+
+void PluginView::privateBrowsingStateChanged(bool)
+{
+}
+
+PassRefPtr<JSC::Bindings::Instance> PluginView::bindingInstance()
+{
+    return 0;
+}
 #endif
 
 namespace WebCore {
