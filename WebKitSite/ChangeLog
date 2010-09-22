@@ -1,3 +1,9 @@
+2010-09-22  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Unreviewed HTML syntax fix for my recent change in the coding-style.
+
+        * coding/coding-style.html: Change "&gt" and "&lt" to "&gt;" and "&lt;".
+
 2010-09-22  Balazs Kelemen  <kb@inf.u-szeged.hu>
 
         Reviewed by Darin Adler.
