@@ -1,3 +1,24 @@
+2010-09-22  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Kent Tamura.
+
+        [BREWMP] Add dummy Pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=46107
+
+        Pasteboard is not supported yet. Add dummy implementation to avoid link errors.
+
+        * platform/brew/PasteboardBrew.cpp: Added.
+        (WebCore::Pasteboard::generalPasteboard):
+        (WebCore::Pasteboard::Pasteboard):
+        (WebCore::Pasteboard::clear):
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::writePlainText):
+        (WebCore::Pasteboard::writeURL):
+        (WebCore::Pasteboard::writeImage):
+        (WebCore::Pasteboard::canSmartReplace):
+        (WebCore::Pasteboard::plainText):
+        (WebCore::Pasteboard::documentFragment):
+
 2010-09-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Kent Tamura.
