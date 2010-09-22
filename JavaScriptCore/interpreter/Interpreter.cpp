@@ -3832,10 +3832,8 @@ skip_id_custom_self:
                     CHECK_FOR_EXCEPTION();
                 }
             } else {
-                if (!arguments.isObject()) {
-                    exceptionValue = createInvalidParamError(callFrame, "Function.prototype.apply", arguments, vPC - codeBlock->instructions().begin(), codeBlock);
-                    goto vm_throw;
-                }
+                exceptionValue = createInvalidParamError(callFrame, "Function.prototype.apply", arguments, vPC - codeBlock->instructions().begin(), codeBlock);
+                goto vm_throw;
             }
         }
         CHECK_FOR_EXCEPTION();

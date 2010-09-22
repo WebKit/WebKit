@@ -2,6 +2,18 @@
 
         Reviewed by Gavin Barraclough.
 
+        [INTERPRETER] Two tests fail with SputnikError: #1.1: if argArray is neither an array nor an arguments object (see 10.1.8), a TypeError exception is thrown
+        https://bugs.webkit.org/show_bug.cgi?id=44245
+
+        Remove incorrect code from op_load_varargs in the interpreter.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+
+2010-09-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
         [JIT] fast/js/sputnik/Conformance/15_Native_Objects/15.3_Function/15.3.5/S15.3.5.3_A2_T6.html fails
         https://bugs.webkit.org/show_bug.cgi?id=44246
 
