@@ -1,5 +1,16 @@
 2010-09-22  Kwang Yul Seo  <skyul@company100.net>
 
+        Reviewed by Chris Fleizach.
+
+        [chromium] Remove unused sys/types.h in VDMXParser.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=46136
+
+        sys/types.h is not needed here.
+
+        * platform/graphics/chromium/VDMXParser.cpp:
+
+2010-09-22  Kwang Yul Seo  <skyul@company100.net>
+
         Reviewed by Kent Tamura.
 
         [BREWMP] Change the home directory path to the WebKit module directory
