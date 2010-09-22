@@ -95,16 +95,16 @@ function test()
 
     // test 8 - Sentence does not go upstream?
     actual = expandRangeString(range, 'multilineSentence', 0, 'multilineSentence', 0, 'sentence', false);
-    assertEqual("sentence8", actual, "Now, a sentence\x0Ais divided into\x0Amultiple lines.\x0A\x0A");
+    assertEqual("sentence8", actual, "Now, a sentence\x0Ais divided into\x0Amultiple lines.");
     
     actual = expandRangeString(range, 'multilineSentence', 1, 'multilineSentence', 5, 'sentence', true);
-    assertEqual("sentence9", actual, "Now, a sentence\x0Ais divided into\x0Amultiple lines.\x0A\x0A");
+    assertEqual("sentence9", actual, "Now, a sentence\x0Ais divided into\x0Amultiple lines.");
     
     actual = expandRangeString(range, 'multilineSentence', 20, 'multilineSentence', 20, 'sentence', true);
-    assertEqual("sentence10", actual, "is divided into\x0Amultiple lines.\x0A\x0A");
+    assertEqual("sentence10", actual, "is divided into\x0Amultiple lines.");
     
     actual = expandRangeString(range, 'multilineSentence', 40, 'multilineSentence', 40, 'sentence', true);
-    assertEqual("sentence11", actual, "multiple lines.\x0A\x0A");
+    assertEqual("sentence11", actual, "multiple lines.");
     
     // Expand word.
     // Same range start and end, both at the begin of word.

@@ -1,3 +1,12 @@
+2010-09-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Updated test after r67994.
+
+        * fast/dom/Range/range-expand.html: Do not expect sentence selections to include
+        trailing newline characters.
+
 2010-09-21  John Gregg  <johnnyg@google.com>
 
         Unreviewed, chromium test expecations.
