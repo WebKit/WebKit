@@ -1,3 +1,12 @@
+2010-09-22  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Move the accelerated compositing build flag to the right place
+        https://bugs.webkit.org/show_bug.cgi?id=43882
+
+        * WebKit.pri: Removed the redundant version check.
+
 2010-09-21  Fridrich Strba  <fridrich.strba@bluewin.ch>
 
         Reviewed by Martin Robinson.

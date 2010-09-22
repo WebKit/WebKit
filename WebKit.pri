@@ -46,7 +46,6 @@ building-libs {
     }
     DEPENDPATH += $$PWD/WebKit/qt/Api
 }
-greaterThan(QT_MINOR_VERSION, 5):DEFINES += WTF_USE_ACCELERATED_COMPOSITING
 
 !mac:!unix|symbian {
     DEFINES += USE_SYSTEM_MALLOC
