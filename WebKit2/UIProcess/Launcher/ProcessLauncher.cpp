@@ -36,8 +36,9 @@ static WorkQueue& processLauncherWorkQueue()
     return processLauncherWorkQueue;
 }
 
-ProcessLauncher::ProcessLauncher(Client* client)
+ProcessLauncher::ProcessLauncher(Client* client, const LaunchOptions& launchOptions)
     : m_client(client)
+    , m_launchOptions(launchOptions)
     , m_processIdentifier(0)
 {
     // Launch the process.
@@ -61,6 +62,34 @@ void ProcessLauncher::didFinishLaunchingProcess(PlatformProcessIdentifier proces
 void ProcessLauncher::invalidate()
 {
     m_client = 0;
+}
+
+const char* ProcessLauncher::processTypeAsString(ProcessType processType)
+{
+    switch (processType) {
+    case WebProcess:
+        return "webprocess";
+    case PluginProcess:
+        return "pluginprocess";
+    }
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+bool ProcessLauncher::getProcessTypeFromString(const char* string, ProcessType& processType)
+{
+    if (!strcmp(string, "webprocess")) {
+        processType = WebProcess;
+        return true;
+    }
+
+    if (!strcmp(string, "pluginprocess")) {
+        processType = PluginProcess;
+        return true;
+    }
+
+    return false;
 }
 
 } // namespace WebKit

@@ -1,5 +1,47 @@
 2010-09-22  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Enhance ProcessLauncher to be able to launch plug-in processes
+        https://bugs.webkit.org/show_bug.cgi?id=46295
+
+        * UIProcess/Launcher/ProcessLauncher.cpp:
+        (WebKit::ProcessLauncher::ProcessLauncher):
+        Make the ProcessLauncher constructor take a LaunchOptions struct.
+
+        (WebKit::ProcessLauncher::processTypeAsString):
+        Given a process type, return its string representation.
+
+        (WebKit::ProcessLauncher::getProcessTypeFromString):
+        And vice versa.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+        Rename "mode" to "type" and pass the type as a string based on the LaunchOptions struct.
+        Also, set the launch architecture from the LaunchOptions struct.
+
+        * UIProcess/Launcher/win/ProcessLauncherWin.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        Rename "mode" to "type."
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::connect):
+        Initialize a LaunchOptions struct.
+
+        * WebProcess/WebKitMain.cpp:
+        (WebKitMain):
+        Factor code that can be shared between the mac and windows WebKitMain code out into a
+        WebKitMain overload that takes a CommandLine.
+
+        * WebProcess/WebProcessMain.h:
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMain):
+        * WebProcess/win/WebProcessMainWin.cpp:
+        (WebKit::WebProcessMain):
+        Change WebProcessMain to take a const CommandLine reference instead of a pointer.
+
+2010-09-22  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam Roben.
 
         Rename GetPluginHostConnection to GetPluginPath

@@ -56,7 +56,7 @@ static void initializeSafariTheme()
 }
 #endif // USE(SAFARI_THEME)
 
-int WebProcessMain(CommandLine* commandLine)
+int WebProcessMain(const CommandLine& commandLine)
 {
     ::OleInitialize(0);
 
@@ -68,7 +68,7 @@ int WebProcessMain(CommandLine* commandLine)
     WTF::initializeMainThread();
     RunLoop::initializeMainRunLoop();
 
-    const String& identifierString = (*commandLine)["clientIdentifier"];
+    const String& identifierString = commandLine["clientIdentifier"];
 
     // FIXME: Should we return an error code here?
     HANDLE clientIdentifier = reinterpret_cast<HANDLE>(identifierString.toUInt64Strict());

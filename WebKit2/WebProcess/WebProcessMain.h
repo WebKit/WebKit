@@ -29,6 +29,6 @@ namespace WebKit {
 
 class CommandLine;
 
-int WebProcessMain(CommandLine*);
+int WebProcessMain(const CommandLine&);
 
 } // namespace WebKit

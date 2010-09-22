@@ -115,7 +115,14 @@ void WebProcessProxy::connect()
         m_threadLauncher = ThreadLauncher::create(this);
     } else {
         ASSERT(!m_processLauncher);
-        m_processLauncher = ProcessLauncher::create(this);
+
+        ProcessLauncher::LaunchOptions launchOptions;
+        launchOptions.processType = ProcessLauncher::WebProcess;
+#if PLATFORM(MAC)
+        // We want the web process to match the architecture of the UI process.
+        launchOptions.architecture = ProcessLauncher::LaunchOptions::MatchCurrentArchitecture;
+#endif
+        m_processLauncher = ProcessLauncher::create(this, launchOptions);
     }
 }
 

@@ -105,7 +105,7 @@ void ProcessLauncher::launchProcess()
     CString serviceName = String::format("com.apple.WebKit.WebProcess-%d-%p", getpid(), this).utf8();
 
     const char* path = [webProcessAppExecutablePath fileSystemRepresentation];
-    const char* args[] = { path, "-mode", "legacywebprocess", "-servicename", serviceName.data(), "-parentprocessname", processName(), 0 };
+    const char* args[] = { path, "-type", processTypeAsString(m_launchOptions.processType), "-servicename", serviceName.data(), "-parentprocessname", processName(), 0 };
 
     // Register ourselves.
     kern_return_t kr = bootstrap_register2(bootstrap_port, const_cast<char*>(serviceName.data()), listeningPort, 0);
@@ -116,12 +116,14 @@ void ProcessLauncher::launchProcess()
 
     // FIXME: Should we restore signals here?
 
-#if CPU(X86)
-    // Ensure that the child process runs as the same architecture as the parent process. 
-    cpu_type_t cpuTypes[] = { CPU_TYPE_X86 };    
+    // Determine the architecture to use.
+    cpu_type_t architecture = m_launchOptions.architecture;
+    if (architecture == LaunchOptions::MatchCurrentArchitecture)
+        architecture = _NSGetMachExecuteHeader()->cputype;
+
+    cpu_type_t cpuTypes[] = { architecture };    
     size_t outCount = 0;
     posix_spawnattr_setbinpref_np(&attr, 1, cpuTypes, &outCount);
-#endif
 
     // Start suspended so we can set up the termination notification handler.
     posix_spawnattr_setflags(&attr, POSIX_SPAWN_START_SUSPENDED);

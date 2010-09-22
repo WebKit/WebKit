@@ -46,9 +46,22 @@ public:
         virtual void didFinishLaunching(ProcessLauncher*, CoreIPC::Connection::Identifier) = 0;
     };
     
-    static PassRefPtr<ProcessLauncher> create(Client* client)
+    enum ProcessType {
+        WebProcess,
+        PluginProcess
+    };
+
+    struct LaunchOptions {
+        ProcessType processType;
+#if PLATFORM(MAC)
+        static const cpu_type_t MatchCurrentArchitecture = 0;
+        cpu_type_t architecture;
+#endif
+    };
+
+    static PassRefPtr<ProcessLauncher> create(Client* client, const LaunchOptions& launchOptions)
     {
-        return adoptRef(new ProcessLauncher(client));
+        return adoptRef(new ProcessLauncher(client, launchOptions));
     }
 
     bool isLaunching() const { return m_isLaunching; }
@@ -57,19 +70,24 @@ public:
     void terminateProcess();
     void invalidate();
 
+    static bool getProcessTypeFromString(const char*, ProcessType&);
+
 #if PLATFORM(QT)
     friend class ProcessLauncherHelper;
     static QLocalSocket* takePendingConnection();
 #endif
 
 private:
-    explicit ProcessLauncher(Client*);
+    ProcessLauncher(Client*, const LaunchOptions& launchOptions);
+
+    static const char* processTypeAsString(ProcessType);
 
     void launchProcess();
     void didFinishLaunchingProcess(PlatformProcessIdentifier, CoreIPC::Connection::Identifier);
 
     Client* m_client;
 
+    const LaunchOptions m_launchOptions;
     bool m_isLaunching;
     PlatformProcessIdentifier m_processIdentifier;
 };

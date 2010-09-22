@@ -55,7 +55,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-int WebProcessMain(CommandLine* commandLine)
+int WebProcessMain(const CommandLine& commandLine)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
@@ -71,7 +71,7 @@ int WebProcessMain(CommandLine* commandLine)
     }
 #endif
 
-    String serviceName = (*commandLine)["servicename"];
+    String serviceName = commandLine["servicename"];
     if (serviceName.isEmpty())
         return EXIT_FAILURE;
 
@@ -97,7 +97,7 @@ int WebProcessMain(CommandLine* commandLine)
     RunLoop::initializeMainRunLoop();
 
     // Set the visible application name.
-    String parentProcessName = (*commandLine)["parentprocessname"];
+    String parentProcessName = commandLine["parentprocessname"];
     if (!parentProcessName.isNull()) {
         // FIXME: Localization!
         NSString *applicationName = [NSString stringWithFormat:@"%@ Web Content", (NSString *)parentProcessName];
