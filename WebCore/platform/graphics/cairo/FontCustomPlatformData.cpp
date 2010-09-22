@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Alp Toker <alp@atoker.com>
+ * Copyright (C) 2010 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,8 +27,32 @@
 
 namespace WebCore {
 
+static void releaseCustomFontData(void* data)
+{
+    static_cast<SharedBuffer*>(data)->deref();
+}
+
+FontCustomPlatformData::FontCustomPlatformData(FT_Face freeTypeFace, SharedBuffer* buffer)
+    : m_freeTypeFace(freeTypeFace)
+    , m_fontFace(cairo_ft_font_face_create_for_ft_face(freeTypeFace, 0))
+{
+    // FIXME Should we be setting some hinting options here?
+
+    buffer->ref(); // This is balanced by the buffer->deref() in releaseCustomFontData.
+    static cairo_user_data_key_t bufferKey;
+    cairo_font_face_set_user_data(m_fontFace, &bufferKey, buffer,
+         static_cast<cairo_destroy_func_t>(releaseCustomFontData));
+
+    // Cairo doesn't do FreeType reference counting, so we need to ensure that when
+    // this cairo_font_face_t is destroyed, it cleans up the FreeType face as well.
+    static cairo_user_data_key_t freeTypeFaceKey;
+    cairo_font_face_set_user_data(m_fontFace, &freeTypeFaceKey, freeTypeFace,
+         reinterpret_cast<cairo_destroy_func_t>(FT_Done_Face));
+}
+
 FontCustomPlatformData::~FontCustomPlatformData()
 {
+    // m_freeTypeFace will be destroyed along with m_fontFace. See the constructor.
     cairo_font_face_destroy(m_fontFace);
 }
 
@@ -36,38 +61,20 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, b
     return FontPlatformData(m_fontFace, size, bold, italic);
 }
 
-static void releaseData(void* data)
-{
-    static_cast<SharedBuffer*>(data)->deref();
-}
-
 FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
 {
     ASSERT_ARG(buffer, buffer);
 
-    int error;
-
     static FT_Library library = 0;
-    if (!library) {
-        error = FT_Init_FreeType(&library);
-        if (error) {
-            library = 0;
-            return 0;
-        }
+    if (!library && FT_Init_FreeType(&library)) {
+        library = 0;
+        return 0;
     }
 
-    FT_Face face;
-    error = FT_New_Memory_Face(library, reinterpret_cast<const FT_Byte*>(buffer->data()), buffer->size(), 0, &face);
-    if (error)
+    FT_Face freeTypeFace;
+    if (FT_New_Memory_Face(library, reinterpret_cast<const FT_Byte*>(buffer->data()), buffer->size(), 0, &freeTypeFace))
         return 0;
-
-    buffer->ref();
-    cairo_font_face_t* fontFace = cairo_ft_font_face_create_for_ft_face(face, 0);
-
-    static cairo_user_data_key_t bufferKey;
-    cairo_font_face_set_user_data(fontFace, &bufferKey, buffer, releaseData);
-
-    return new FontCustomPlatformData(fontFace);
+    return new FontCustomPlatformData(freeTypeFace, buffer);
 }
 
 bool FontCustomPlatformData::supportsFormat(const String& format)

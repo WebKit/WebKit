@@ -1,3 +1,28 @@
+2010-09-22  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] FontCustomPlatformData.cpp leaks FT_Faces
+        https://bugs.webkit.org/show_bug.cgi?id=16941
+
+        Attach lifetime of the FontCustomPlatformData FT_Face to the resulting cairo_font_face_t.
+        This will free the memory associated with the FT_Face once the cairo_font_face_t is 
+        destroyed.
+
+        No new tests as functionality should not change.
+
+        * platform/graphics/cairo/FontCustomPlatformData.cpp:
+        (WebCore::releaseCustomFontData): Moved this helper method to the top of the file
+        and gave it a more descriptive name.
+        (WebCore::FontCustomPlatformData::FontCustomPlatformData): Changed the constructor to
+        take the FT_Face and the buffer, so to better encapsulate the creation of the cairo
+        face.
+        (WebCore::FontCustomPlatformData::~FontCustomPlatformData): Added a comment about the
+        fate of the FT_Face to the destructor.
+        (WebCore::createFontCustomPlatformData): Cleaned up the code here and moved some of the
+        logic into the constructor.
+        * platform/graphics/cairo/FontCustomPlatformData.h: Updated method definitions.
+
 2010-09-22  Balazs Kelemen  <kb@inf.u-szeged.hu>
 
         Reviewed by Kenneth Rohde Christiansen.

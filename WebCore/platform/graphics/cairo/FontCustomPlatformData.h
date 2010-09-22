@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Alp Toker <alp@atoker.com>
+ * Copyright (C) 2010 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,6 +26,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
+typedef struct FT_FaceRec_*  FT_Face;
 typedef struct _cairo_font_face cairo_font_face_t;
 
 namespace WebCore {
@@ -33,16 +35,14 @@ class FontPlatformData;
 class SharedBuffer;
 
 struct FontCustomPlatformData : Noncopyable {
-    FontCustomPlatformData(cairo_font_face_t* fontFace)
-    : m_fontFace(fontFace)
-    {}
-
+public:
+    FontCustomPlatformData(FT_Face, SharedBuffer*);
     ~FontCustomPlatformData();
-
     FontPlatformData fontPlatformData(int size, bool bold, bool italic, FontRenderingMode = NormalRenderingMode);
-
     static bool supportsFormat(const String&);
 
+private:
+    FT_Face m_freeTypeFace;
     cairo_font_face_t* m_fontFace;
 };
 
