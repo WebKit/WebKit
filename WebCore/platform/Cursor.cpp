@@ -253,11 +253,15 @@ Cursor::Cursor(Type type)
 {
 }
 
+#if !PLATFORM(MAC)
+
 PlatformCursor Cursor::platformCursor() const
 {
     ensurePlatformCursor();
     return m_platformCursor;
 }
+
+#endif
 
 const Cursor& pointerCursor()
 {

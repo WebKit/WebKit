@@ -375,7 +375,7 @@ static const int* buttonMargins(NSControlSize controlSize)
     return margins[controlSize];
 }
 
-static void setupButtonCell(NSButtonCell *&buttonCell, ControlPart part, ControlStates states, const IntRect& zoomedRect, float zoomFactor)
+static NSButtonCell *setUpButtonCell(NSButtonCell *buttonCell, ControlPart part, ControlStates states, const IntRect& zoomedRect, float zoomFactor)
 {
     if (!buttonCell) {
         buttonCell = [[NSButtonCell alloc] init];
@@ -404,14 +404,25 @@ static void setupButtonCell(NSButtonCell *&buttonCell, ControlPart part, Control
 
     // Update the various states we respond to.
     updateStates(buttonCell, states);
+
+    return buttonCell;
 }
     
+static NSButtonCell *nonDefaultButton(ControlPart part, ControlStates states, const IntRect& zoomedRect, float zoomFactor)
+{
+    static NSButtonCell *cell = setUpButtonCell(cell, part, states, zoomedRect, zoomFactor);    
+    return cell;
+}
+
+static NSButtonCell *defaultButton(ControlPart part, ControlStates states, const IntRect& zoomedRect, float zoomFactor)
+{
+    static NSButtonCell *cell = setUpButtonCell(cell, part, states, zoomedRect, zoomFactor);    
+    return cell;
+}
+
 static NSButtonCell *button(ControlPart part, ControlStates states, const IntRect& zoomedRect, float zoomFactor)
 {
-    bool isDefault = states & DefaultState;
-    static NSButtonCell *cells[2];
-    setupButtonCell(cells[isDefault], part, states, zoomedRect, zoomFactor);    
-    return cells[isDefault];
+    return ((states & DefaultState) ? nonDefaultButton : defaultButton)(part, states, zoomedRect, zoomFactor);
 }
 
 static void paintButton(ControlPart part, ControlStates states, GraphicsContext* context, const IntRect& zoomedRect, float zoomFactor, ScrollView* scrollView)

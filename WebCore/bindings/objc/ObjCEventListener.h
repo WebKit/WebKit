@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2008 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2008, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,8 +28,8 @@
 #define ObjCEventListener_h
 
 #include "EventListener.h"
-
-#include <wtf/PassRefPtr.h>
+#include <wtf/Forward.h>
+#include <wtf/RetainPtr.h>
 
 @protocol DOMEventListener;
 
@@ -37,7 +37,8 @@ namespace WebCore {
 
     class ObjCEventListener : public EventListener {
     public:
-        static PassRefPtr<ObjCEventListener> wrap(id <DOMEventListener>);
+        typedef id<DOMEventListener> ObjCListener;
+        static PassRefPtr<ObjCEventListener> wrap(ObjCListener);
 
         static const ObjCEventListener* cast(const EventListener* listener)
         {
@@ -46,17 +47,15 @@ namespace WebCore {
                 : 0;
         }
 
-        virtual bool operator==(const EventListener& other);
-
     private:
-        static ObjCEventListener* find(id <DOMEventListener>);
+        static ObjCEventListener* find(ObjCListener);
 
-        ObjCEventListener(id <DOMEventListener>);
+        ObjCEventListener(ObjCListener);
         virtual ~ObjCEventListener();
-
+        virtual bool operator==(const EventListener&);
         virtual void handleEvent(ScriptExecutionContext*, Event*);
 
-        id <DOMEventListener> m_listener;
+        RetainPtr<ObjCListener> m_listener;
     };
 
 } // namespace WebCore

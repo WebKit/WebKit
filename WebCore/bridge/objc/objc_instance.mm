@@ -27,7 +27,6 @@
 #import "objc_instance.h"
 
 #import "runtime_method.h"
-#import "FoundationExtras.h"
 #import "ObjCRuntimeObject.h"
 #import "WebScriptObject.h"
 #import <objc/objc-auto.h>
@@ -70,9 +69,9 @@ RuntimeObject* ObjcInstance::newRuntimeObject(ExecState* exec)
 
 void ObjcInstance::setGlobalException(NSString* exception, JSGlobalObject* exceptionEnvironment)
 {
-    HardRelease(s_exception);
-    HardRetain(exception);
-    s_exception = exception;
+    NSString *oldException = s_exception;
+    s_exception = [exception copy];
+    [oldException release];
 
     s_exceptionEnvironment = exceptionEnvironment;
 }
@@ -89,9 +88,8 @@ void ObjcInstance::moveGlobalExceptionToExecState(ExecState* exec)
         throwError(exec, s_exception);
     }
 
-    HardRelease(s_exception);
-    s_exception = 0;
-
+    [s_exception release];
+    s_exception = nil;
     s_exceptionEnvironment = 0;
 }
 

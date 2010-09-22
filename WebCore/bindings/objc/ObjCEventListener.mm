@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2006 James G. Speth (speth@end.com)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  *
@@ -40,7 +40,7 @@ namespace WebCore {
 typedef HashMap<id, ObjCEventListener*> ListenerMap;
 static ListenerMap* listenerMap;
 
-ObjCEventListener* ObjCEventListener::find(id <DOMEventListener> listener)
+ObjCEventListener* ObjCEventListener::find(ObjCListener listener)
 {
     ListenerMap* map = listenerMap;
     if (!map)
@@ -48,7 +48,7 @@ ObjCEventListener* ObjCEventListener::find(id <DOMEventListener> listener)
     return map->get(listener);
 }
 
-PassRefPtr<ObjCEventListener> ObjCEventListener::wrap(id <DOMEventListener> listener)
+PassRefPtr<ObjCEventListener> ObjCEventListener::wrap(ObjCListener listener)
 {
     RefPtr<ObjCEventListener> wrapper = find(listener);
     if (wrapper)
@@ -56,9 +56,9 @@ PassRefPtr<ObjCEventListener> ObjCEventListener::wrap(id <DOMEventListener> list
     return adoptRef(new ObjCEventListener(listener));
 }
 
-ObjCEventListener::ObjCEventListener(id <DOMEventListener> listener)
+ObjCEventListener::ObjCEventListener(ObjCListener listener)
     : EventListener(ObjCEventListenerType)
-    , m_listener([listener retain])
+    , m_listener(listener)
 {
     ListenerMap* map = listenerMap;
     if (!map) {
@@ -70,13 +70,13 @@ ObjCEventListener::ObjCEventListener(id <DOMEventListener> listener)
 
 ObjCEventListener::~ObjCEventListener()
 {
-    listenerMap->remove(m_listener);
-    [m_listener release];
+    listenerMap->remove(m_listener.get());
 }
 
 void ObjCEventListener::handleEvent(ScriptExecutionContext*, Event* event)
 {
-    [m_listener handleEvent:kit(event)];
+    ObjCListener listener = m_listener.get();
+    [listener handleEvent:kit(event)];
 }
 
 bool ObjCEventListener::operator==(const EventListener& listener)

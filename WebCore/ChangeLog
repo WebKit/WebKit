@@ -1,3 +1,79 @@
+2010-09-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Fix some Objective-C GC problems and use RetainPtr instead of HardRetain/Release
+        https://bugs.webkit.org/show_bug.cgi?id=46220
+
+        * WebCore.exp.in: Updated.
+
+        * bindings/objc/ObjCEventListener.h: Use a RetainPtr for m_listener, since that
+        will do a CFRetain, which is right for GC rather than an -[NSObject retain],
+        which is not.
+        * bindings/objc/ObjCEventListener.mm:
+        (WebCore::ObjCEventListener::ObjCEventListener): Removed explicit retain.
+        (WebCore::ObjCEventListener::~ObjCEventListener): Removed explicit release and
+        added get().
+        (WebCore::ObjCEventListener::handleEvent): Added get();
+
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::setGlobalException): Use copy/release instead of
+        HardRetain/HardRelease.
+        (ObjcInstance::moveGlobalExceptionToExecState): Ditto.
+
+        * platform/Cursor.h: Use RetainPtr for PlatformCursor on Mac.
+
+        * platform/Cursor.cpp:
+        (WebCore::Cursor::platformCursor): Moved this to CursorMac for the Mac.
+
+        * platform/Widget.cpp: Removed retain/releasePlatformWidget and made them
+        both inlines in the header file.
+
+        * platform/Widget.h: Fixed includes and added an include of RetainPtr.
+        Made platformWidget and setPlatformWidget non-inline on the Mac platform.
+        Made releasePlatformWidget and retainPlatformWidget empty inline functions
+        for non-GTK platforms.
+
+        * platform/graphics/mac/ImageMac.mm: Removed unneeded FoundationExtras.h
+        include.
+
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::cocoaTypeFromHTMLClipboardType): use RetainPtr for the return type.
+        (WebCore::ClipboardMac::clearData): Use RetainPtr.
+        (WebCore::ClipboardMac::getData): Ditto.
+        (WebCore::ClipboardMac::setData): Ditto.
+
+        * platform/mac/CursorMac.mm:
+        (WebCore::createCustomCursor): Use RetainPtr for the return type.
+        (WebCore::Cursor::ensurePlatformCursor): Removed all the calls to HardRetain
+        since m_platformCursor is now a RetainPtr.
+        (WebCore::Cursor::Cursor): Ditto.
+        (WebCore::Cursor::operator=): Ditto. Also HardRelease.
+        (WebCore::Cursor::~Cursor): Ditto.
+        (WebCore::Cursor::platformCursor): Use get here.
+
+        * platform/mac/FoundationExtras.h: Removed all the functions except for
+        HardAutorelease. Later we can remove that one too.
+
+        * platform/mac/ThemeMac.mm:
+        (WebCore::setUpButtonCell): Changed this function to have a return value.
+        Otherwise we end up taking a pointer (actually a reference) to a global
+        variable, which does not do the right thing for GC.
+        (WebCore::nonDefaultButton): Added.
+        (WebCore::defaultButton): Added.
+        (WebCore::button): Changed to call two separate functions with two separate
+        global variables to avoid the problem with pointers to globals.
+
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::~Widget): Removed unneeded call to releasePlatformWidget.
+        (WebCore::Widget::platformWidget): Non-inline so we can comipile the header
+        plain non-Objective-C C++.
+        (WebCore::Widget::setPlatformWidget): Ditto.
+
+        * platform/network/mac/WebCoreURLResponse.mm:
+        (mimeTypeFromUTITree): Use RetainPtr for the return type.
+        (-[NSURLResponse adjustMIMETypeIfNecessary]): Use RetainPtr.
+
 2010-09-22  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

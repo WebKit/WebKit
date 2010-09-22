@@ -29,7 +29,6 @@
 #import "config.h"
 #import "WebCoreURLResponse.h"
 
-#import "FoundationExtras.h"
 #import "MIMETypeRegistry.h"
 #import <objc/objc-class.h>
 #import <wtf/Assertions.h>
@@ -327,12 +326,12 @@ static NSDictionary *createExtensionToMIMETypeMap()
     ];
 }
 
-static NSString *mimeTypeFromUTITree(CFStringRef uti)
+static RetainPtr<NSString> mimeTypeFromUTITree(CFStringRef uti)
 {
     // Check if this UTI has a MIME type.
     RetainPtr<CFStringRef> mimeType(AdoptCF, UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType));
     if (mimeType)
-        return (NSString *)HardAutorelease(mimeType.releaseRef());
+        return (NSString *)mimeType.get();
     
     // If not, walk the ancestory of this UTI via its "ConformsTo" tags and return the first MIME type we find.
     RetainPtr<CFDictionaryRef> decl(AdoptCF, UTTypeCopyDeclaration(uti));
@@ -354,7 +353,7 @@ static NSString *mimeTypeFromUTITree(CFStringRef uti)
             if (CFGetTypeID(object) != CFStringGetTypeID())
                 continue;
 
-            if (NSString *mimeType = mimeTypeFromUTITree((CFStringRef)object))
+            if (RetainPtr<NSString> mimeType = mimeTypeFromUTITree((CFStringRef)object))
                 return mimeType;
         }
     }
@@ -366,13 +365,13 @@ static NSString *mimeTypeFromUTITree(CFStringRef uti)
 
 -(void)adjustMIMETypeIfNecessary
 {
-    NSString *result = [self MIMEType];
-    NSString *originalResult = result;
+    RetainPtr<NSString> result = [self MIMEType];
+    RetainPtr<NSString> originalResult = result;
 
 #ifdef BUILDING_ON_TIGER
     // When content sniffing is disabled, Tiger's CFNetwork automatically returns application/octet-stream for certain
     // extensions even when scouring the UTI maps would end up with a better result, so we'll give a chance for that to happen.
-    if ([[self URL] isFileURL] && [result caseInsensitiveCompare:@"application/octet-stream"] == NSOrderedSame)
+    if ([[self URL] isFileURL] && [result.get() caseInsensitiveCompare:@"application/octet-stream"] == NSOrderedSame)
         result = nil;
 #endif
 
@@ -403,7 +402,7 @@ static NSString *mimeTypeFromUTITree(CFStringRef uti)
 #ifndef BUILDING_ON_TIGER
     // <rdar://problem/5321972> Plain text document from HTTP server detected as application/octet-stream
     // Make the best guess when deciding between "generic binary" and "generic text" using a table of known binary MIME types.
-    if ([result isEqualToString:@"application/octet-stream"] && [self respondsToSelector:@selector(allHeaderFields)] && [[[self performSelector:@selector(allHeaderFields)] objectForKey:@"Content-Type"] hasPrefix:@"text/plain"]) {
+    if ([result.get() isEqualToString:@"application/octet-stream"] && [self respondsToSelector:@selector(allHeaderFields)] && [[[self performSelector:@selector(allHeaderFields)] objectForKey:@"Content-Type"] hasPrefix:@"text/plain"]) {
         static NSSet *binaryExtensions = createBinaryExtensionsSet();
         if (![binaryExtensions containsObject:[[[self suggestedFilename] pathExtension] lowercaseString]])
             result = @"text/plain";
@@ -413,12 +412,12 @@ static NSString *mimeTypeFromUTITree(CFStringRef uti)
 
 #ifdef BUILDING_ON_LEOPARD
     // Workaround for <rdar://problem/5539824>
-    if ([result isEqualToString:@"text/xml"])
+    if ([result.get() isEqualToString:@"text/xml"])
         result = @"application/xml";
 #endif
 
     if (result != originalResult)
-        [self _setMIMEType:result];
+        [self _setMIMEType:result.get()];
 }
 
 @end

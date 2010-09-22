@@ -1,3 +1,15 @@
+2010-09-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Fix some Objective-C GC problems and use RetainPtr instead of HardRetain/Release
+        https://bugs.webkit.org/show_bug.cgi?id=46220
+
+        * Misc/WebNSFileManagerExtras.m:
+        (setMetaData): Use CFRelease instead of HardRelease.
+        (-[NSFileManager _webkit_setMetadataURL:referrer:atPath:]): Use CFStringCreateCopy
+        instead of -[NSObject copy] combined with HardRetainWithNSRelease.
+
 2010-09-22  Balazs Kelemen  <kb@inf.u-szeged.hu>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2008, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,6 @@
 #import "DragController.h"
 #import "DragData.h"
 #import "Editor.h"
-#import "FoundationExtras.h"
 #import "FileList.h"
 #import "Frame.h"
 #import "Image.h"
@@ -70,7 +69,7 @@ bool ClipboardMac::hasData()
     return m_pasteboard && [m_pasteboard.get() types] && [[m_pasteboard.get() types] count] > 0;
 }
     
-static NSString *cocoaTypeFromHTMLClipboardType(const String& type)
+static RetainPtr<NSString> cocoaTypeFromHTMLClipboardType(const String& type)
 {
     String qType = type.stripWhiteSpace();
 
@@ -93,11 +92,11 @@ static NSString *cocoaTypeFromHTMLClipboardType(const String& type)
     if (utiType) {
         CFStringRef pbType = UTTypeCopyPreferredTagWithClass(utiType.get(), kUTTagClassNSPboardType);
         if (pbType)
-            return HardAutorelease(pbType);
+            return (NSString *)pbType;
     }
 
-   // No mapping, just pass the whole string though
-    return qType;
+    // No mapping, just pass the whole string though
+    return (NSString *)qType;
 }
 
 static String utiTypeFromCocoaType(NSString *type)
@@ -151,9 +150,8 @@ void ClipboardMac::clearData(const String& type)
 
     // note NSPasteboard enforces changeCount itself on writing - can't write if not the owner
 
-    NSString *cocoaType = cocoaTypeFromHTMLClipboardType(type);
-    if (cocoaType)
-        [m_pasteboard.get() setString:@"" forType:cocoaType];
+    if (RetainPtr<NSString> cocoaType = cocoaTypeFromHTMLClipboardType(type))
+        [m_pasteboard.get() setString:@"" forType:cocoaType.get()];
 }
 
 void ClipboardMac::clearAllData()
@@ -218,19 +216,19 @@ String ClipboardMac::getData(const String& type, bool& success) const
     if (policy() != ClipboardReadable)
         return String();
 
-    NSString *cocoaType = cocoaTypeFromHTMLClipboardType(type);
+    RetainPtr<NSString> cocoaType = cocoaTypeFromHTMLClipboardType(type);
     NSString *cocoaValue = nil;
 
     // Grab the value off the pasteboard corresponding to the cocoaType
-    if ([cocoaType isEqualToString:NSURLPboardType]) {
+    if ([cocoaType.get() isEqualToString:NSURLPboardType]) {
         // "URL" and "text/url-list" both map to NSURLPboardType in cocoaTypeFromHTMLClipboardType(), "URL" only wants the first URL
         bool onlyFirstURL = (type == "URL");
         NSArray *absoluteURLs = absoluteURLsFromPasteboard(m_pasteboard.get(), onlyFirstURL);
         cocoaValue = [absoluteURLs componentsJoinedByString:@"\n"];
-    } else if ([cocoaType isEqualToString:NSStringPboardType]) {
-        cocoaValue = [[m_pasteboard.get() stringForType:cocoaType] precomposedStringWithCanonicalMapping];
+    } else if ([cocoaType.get() isEqualToString:NSStringPboardType]) {
+        cocoaValue = [[m_pasteboard.get() stringForType:cocoaType.get()] precomposedStringWithCanonicalMapping];
     } else if (cocoaType)
-        cocoaValue = [m_pasteboard.get() stringForType:cocoaType];
+        cocoaValue = [m_pasteboard.get() stringForType:cocoaType.get()];
 
     // Enforce changeCount ourselves for security.  We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.
@@ -248,10 +246,10 @@ bool ClipboardMac::setData(const String &type, const String &data)
         return false;
     // note NSPasteboard enforces changeCount itself on writing - can't write if not the owner
 
-    NSString *cocoaType = cocoaTypeFromHTMLClipboardType(type);
+    RetainPtr<NSString> cocoaType = cocoaTypeFromHTMLClipboardType(type);
     NSString *cocoaData = data;
 
-    if ([cocoaType isEqualToString:NSURLPboardType]) {
+    if ([cocoaType.get() isEqualToString:NSURLPboardType]) {
         [m_pasteboard.get() addTypes:[NSArray arrayWithObject:NSURLPboardType] owner:nil];
         NSURL *url = [[NSURL alloc] initWithString:cocoaData];
         [url writeToPasteboard:m_pasteboard.get()];
@@ -268,8 +266,8 @@ bool ClipboardMac::setData(const String &type, const String &data)
 
     if (cocoaType) {
         // everything else we know of goes on the pboard as a string
-        [m_pasteboard.get() addTypes:[NSArray arrayWithObject:cocoaType] owner:nil];
-        return [m_pasteboard.get() setString:cocoaData forType:cocoaType];
+        [m_pasteboard.get() addTypes:[NSArray arrayWithObject:cocoaType.get()] owner:nil];
+        return [m_pasteboard.get() setString:cocoaData forType:cocoaType.get()];
     }
 
     return false;

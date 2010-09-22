@@ -35,6 +35,8 @@ typedef struct HICON__* HICON;
 typedef HICON HCURSOR;
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#elif PLATFORM(MAC)
+#include <wtf/RetainPtr.h>
 #elif PLATFORM(GTK)
 #include "GRefPtrGtk.h"
 #elif PLATFORM(QT)
@@ -82,7 +84,7 @@ namespace WebCore {
     };
     typedef RefPtr<SharedCursor> PlatformCursor;
 #elif PLATFORM(MAC)
-    typedef NSCursor* PlatformCursor;
+    typedef NSCursor *PlatformCursor;
 #elif PLATFORM(GTK)
     typedef PlatformRefPtr<GdkCursor> PlatformCursor;
 #elif PLATFORM(EFL)
@@ -183,7 +185,11 @@ namespace WebCore {
         IntPoint m_hotSpot;
 #endif
 
+#if !PLATFORM(MAC)
         mutable PlatformCursor m_platformCursor;
+#else
+        mutable RetainPtr<NSCursor> m_platformCursor;
+#endif
     };
 
     IntPoint determineHotSpot(Image*, const IntPoint& specifiedHotSpot);

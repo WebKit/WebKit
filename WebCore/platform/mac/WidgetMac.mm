@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2008, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,6 @@
 #import "Cursor.h"
 #import "Document.h"
 #import "Font.h"
-#import "FoundationExtras.h"
 #import "Frame.h"
 #import "GraphicsContext.h"
 #import "NotImplemented.h"
@@ -100,7 +99,6 @@ Widget::Widget(NSView *view)
 
 Widget::~Widget()
 {
-    releasePlatformWidget();
     delete m_data;
 }
 
@@ -354,16 +352,18 @@ IntPoint Widget::convertFromContainingWindowToRoot(const Widget* rootWidget, con
     return point;
 }
 
-void Widget::releasePlatformWidget()
+NSView *Widget::platformWidget() const
 {
-    HardRelease(m_widget);
+    return m_widget.get();
+}
+
+void Widget::setPlatformWidget(NSView *widget)
+{
+    if (widget == m_widget)
+        return;
+
+    m_widget = widget;
     m_data->previousVisibleRect = NSZeroRect;
 }
 
-void Widget::retainPlatformWidget()
-{
-    HardRetain(m_widget);
-}
-
 } // namespace WebCore
-

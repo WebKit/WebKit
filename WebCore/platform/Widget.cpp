@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -124,16 +124,6 @@ IntPoint Widget::convertFromRootToContainingWindow(const Widget*, const IntPoint
 IntPoint Widget::convertFromContainingWindowToRoot(const Widget*, const IntPoint& point)
 {
     return point;
-}
-#endif
-
-#if !PLATFORM(MAC) && !PLATFORM(GTK)
-void Widget::releasePlatformWidget()
-{
-}
-
-void Widget::retainPlatformWidget()
-{
 }
 #endif
 
