@@ -1,0 +1,17 @@
+Test for beginning of line (BOL or ^) matching
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS s.match(/^notHere/) is null
+PASS s.match(/^abc/) is ["abc"]
+PASS s.match(/(^|X)abc/) is ["abc",""]
+PASS s.match(/^longer|123/) is ["123"]
+PASS s.match(/(^abc|c)123/) is ["abc123","abc"]
+PASS s.match(/(c|^abc)123/) is ["abc123","abc"]
+PASS s.match(/(^ab|abc)123/) is ["abc123","abc"]
+PASS s.match(/(bc|^abc)([0-9]*)a/) is ["bc789a","bc","789"]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
