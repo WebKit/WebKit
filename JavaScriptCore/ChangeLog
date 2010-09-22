@@ -1,3 +1,13 @@
+2010-09-22  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Inline UTF8SequenceLength
+        https://bugs.webkit.org/show_bug.cgi?id=45589
+
+        * wtf/unicode/UTF8.cpp:
+        (WTF::Unicode::convertUTF8ToUTF16): Use inline version of UTF8SequenceLength to improve performance.
+
 2010-09-21  Oliver Hunt  <oliver@apple.com>
 
         RS=Gavin Barraclough.
