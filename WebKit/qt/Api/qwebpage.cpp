@@ -272,7 +272,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     WebCore::Font::setCodePath(WebCore::Font::Complex);
 #endif
 
-    WebPlatformStrategies::initialize(qq);
+    WebPlatformStrategies::initialize();
 
     Page::PageClients pageClients;
     pageClients.chromeClient = new ChromeClientQt(q);

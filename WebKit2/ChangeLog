@@ -2,6 +2,19 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        [Qt] PluginStrategy implementation is broken
+        https://bugs.webkit.org/show_bug.cgi?id=46078
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::QWKPagePrivate):
+        Initialize the WebPlatformStrategies at the UI side as well because
+        we are using the LocalizationStrategy in the UI process.
+        Added a FIXME since this should be fixed in the future.
+
+2010-09-22  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         PluginStrategy should satisfy the needs of Qt
         https://bugs.webkit.org/show_bug.cgi?id=45857
         No new functionality so no new tests.
