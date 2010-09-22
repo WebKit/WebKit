@@ -29,9 +29,9 @@
 #include "CairoPath.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
+#include "OwnPtrCairo.h"
 #include "PlatformString.h"
 #include "StrokeStyleApplier.h"
-
 #include <cairo.h>
 #include <math.h>
 #include <wtf/MathExtras.h>

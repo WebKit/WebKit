@@ -1,3 +1,16 @@
+2010-09-22  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] r68027 caused many crashes on the bots
+        https://bugs.webkit.org/show_bug.cgi?id=46268
+
+        Add the appropriate OwnPtrCairo.h include which has the OwnPtr
+        specialization for Cairo paths. Without it, we will have memory
+        corruption.
+
+        * platform/graphics/cairo/PathCairo.cpp: Add OwnPtrCairo.h include.
+
 2010-09-22  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
