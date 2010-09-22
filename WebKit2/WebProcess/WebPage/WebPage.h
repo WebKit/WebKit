@@ -32,6 +32,7 @@
 #include "InjectedBundlePageFormClient.h"
 #include "InjectedBundlePageLoaderClient.h"
 #include "InjectedBundlePageUIClient.h"
+#include "Plugin.h"
 #include "WebEditCommand.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
@@ -121,6 +122,7 @@ public:
     InjectedBundlePageUIClient& injectedBundleUIClient() { return m_uiClient; }
 
     WebFrame* mainFrame() const { return m_mainFrame.get(); }
+    PassRefPtr<Plugin> createPlugin(const Plugin::Parameters&);
 
     String renderTreeExternalRepresentation() const;
     void executeEditingCommand(const String& commandName, const String& argument);

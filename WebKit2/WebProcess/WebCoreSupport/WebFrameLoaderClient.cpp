@@ -29,7 +29,6 @@
 #include "NotImplemented.h"
 
 #include "InjectedBundleUserMessageCoders.h"
-#include "NetscapePlugin.h"
 #include "PlatformCertificateInfo.h"
 #include "PluginView.h"
 #include "WebCoreArgumentCoders.h"
@@ -962,30 +961,16 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugIn
 {
     ASSERT(paramNames.size() == paramValues.size());
     
-    String pluginPath;
-
-    // FIXME: In the future, this should return a real CoreIPC connection to the plug-in host, but for now we just
-    // return the path and load the plug-in in the web process.
-    if (!WebProcess::shared().connection()->sendSync(WebProcessProxyMessage::GetPluginHostConnection, 0, 
-                                                     CoreIPC::In(mimeType, url.string()), 
-                                                     CoreIPC::Out(pluginPath), 
-                                                     CoreIPC::Connection::NoTimeout))
-        return 0;
-
-    if (pluginPath.isNull())
-        return 0;
-
-    RefPtr<NetscapePluginModule> pluginModule = NetscapePluginModule::getOrCreate(pluginPath);
-    if (!pluginModule)
-        return 0;
-
+    WebPage* webPage = m_frame->page();
+    ASSERT(webPage);
+    
     Plugin::Parameters parameters;
     parameters.url = url;
     parameters.names = paramNames;
     parameters.values = paramValues;
     parameters.mimeType = mimeType;
     parameters.loadManually = loadManually;
-    
+
     // <rdar://problem/8440903>: AppleConnect has a bug where it does not
     // understand the parameter names specified in the <object> element that
     // embeds its plug-in. This hack works around the issue by converting the
@@ -998,7 +983,10 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugIn
             parameters.names[i] = paramNames[i].lower();
     }
 
-    RefPtr<Plugin> plugin = NetscapePlugin::create(pluginModule.release());
+    RefPtr<Plugin> plugin = webPage->createPlugin(parameters);
+    if (!plugin)
+        return 0;
+    
     return PluginView::create(pluginElement, plugin.release(), parameters);
 }
 

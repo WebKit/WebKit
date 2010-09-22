@@ -29,6 +29,7 @@
 #include "DrawingArea.h"
 #include "InjectedBundle.h"
 #include "MessageID.h"
+#include "NetscapePlugin.h"
 #include "PluginView.h"
 #include "WebBackForwardControllerClient.h"
 #include "WebBackForwardListProxy.h"
@@ -43,6 +44,7 @@
 #include "WebInspectorClient.h"
 #include "WebPageMessageKinds.h"
 #include "WebPageProxyMessageKinds.h"
+#include "WebProcessProxyMessageKinds.h"
 #include "WebPreferencesStore.h"
 #include "WebProcess.h"
 #include <WebCore/EventHandler.h>
@@ -166,6 +168,28 @@ void WebPage::initializeInjectedBundleLoaderClient(WKBundlePageLoaderClient* cli
 void WebPage::initializeInjectedBundleUIClient(WKBundlePageUIClient* client)
 {
     m_uiClient.initialize(client);
+}
+
+PassRefPtr<Plugin> WebPage::createPlugin(const Plugin::Parameters& parameters)
+{
+    String pluginPath;
+
+    // FIXME: In the future, this should return a real CoreIPC connection to the plug-in host, but for now we just
+    // return the path and load the plug-in in the web process.
+    if (!WebProcess::shared().connection()->sendSync(WebProcessProxyMessage::GetPluginHostConnection, 0, 
+                                                     CoreIPC::In(parameters.mimeType, parameters.url.string()), 
+                                                     CoreIPC::Out(pluginPath), 
+                                                     CoreIPC::Connection::NoTimeout))
+        return 0;
+
+    if (pluginPath.isNull())
+        return 0;
+
+    RefPtr<NetscapePluginModule> pluginModule = NetscapePluginModule::getOrCreate(pluginPath);
+    if (!pluginModule)
+        return 0;
+
+    return NetscapePlugin::create(pluginModule.release());
 }
 
 String WebPage::renderTreeExternalRepresentation() const
