@@ -1,3 +1,12 @@
+2010-09-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Try to fix the Windows build.
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::makeResourcePurgeable):
+        (WebCore::Cache::evict): Cast to int before using unary '-', to avoid an
+        MSVC warning.
+
 2010-09-21  Pratik Solanki  <psolanki@apple.com>
 
         Reviewed by Geoffrey Garen and Darin Adler.
