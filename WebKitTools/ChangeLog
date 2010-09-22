@@ -1,5 +1,12 @@
 2010-09-22  Adam Roben  <aroben@apple.com>
 
+        Unbreak test-webkitpy
+
+        * Scripts/webkitpy/test/main.py:
+        (Tester.run_tests): Add a line that mysteriously got deleted.
+
+2010-09-22  Adam Roben  <aroben@apple.com>
+
         Make test-webkitpy test WebKit2's scripts
 
         These scripts can't be in WebKitTools due to limitations of Apple's

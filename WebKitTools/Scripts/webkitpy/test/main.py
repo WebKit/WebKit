@@ -103,6 +103,7 @@ class Tester(object):
 
         webkitpy_dir = os.path.dirname(webkitpy.__file__)
 
+        modules = []
         for path in [webkitpy_dir] + external_package_paths:
             modules.extend(self._modules_from_paths(path, self._find_unittest_files(path)))
         modules.sort()
