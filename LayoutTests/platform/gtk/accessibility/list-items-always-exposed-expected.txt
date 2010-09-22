@@ -1,0 +1,16 @@
+plain text
+text in a paragraph
+
+This tests a list item is always exposed regardless of having inline children or not.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS list.role is 'AXRole: list'
+PASS item1.role is 'AXRole: list item'
+PASS item2.role is 'AXRole: list item'
+PASS paragraph.role is 'AXRole: paragraph'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

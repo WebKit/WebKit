@@ -1,3 +1,15 @@
+2010-09-22  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Chris Fleizach.
+
+        [Gtk] Incorrect exposure of list items whose children are elements
+        https://bugs.webkit.org/show_bug.cgi?id=45383
+
+        Check that list items will be always exposed like that for GTK
+
+        * platform/gtk/accessibility/list-items-always-exposed-expected.txt: Added.
+        * platform/gtk/accessibility/list-items-always-exposed.html: Added.
+
 2010-09-22  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Darin Adler.

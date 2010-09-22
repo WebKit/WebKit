@@ -1,3 +1,21 @@
+2010-09-22  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Chris Fleizach.
+
+        [Gtk] Incorrect exposure of list items whose children are elements
+        https://bugs.webkit.org/show_bug.cgi?id=45383
+
+        Set ATK_ROLE_LIST_ITEM looking for the role of the parent object
+
+        Test: platform/gtk/accessibility/list-items-always-exposed.html
+
+        * accessibility/gtk/AccessibilityObjectAtk.cpp:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+        Always include objects with ListItemRole in accessibility for GTK.
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (getInterfaceMaskFromObject): Add some specific code to handle the
+        special case of list markers by implementing AtkText when needed.
+
 2010-09-22  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

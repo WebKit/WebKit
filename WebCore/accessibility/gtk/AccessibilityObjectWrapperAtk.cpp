@@ -2026,8 +2026,21 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
             interfaceMask |= 1 << WAI_TEXT;
             if (!coreObject->isReadOnly())
                 interfaceMask |= 1 << WAI_EDITABLE_TEXT;
-        } else if (role != TableRole && static_cast<AccessibilityRenderObject*>(coreObject)->renderer()->childrenInline())
-            interfaceMask |= 1 << WAI_TEXT;
+        } else {
+            AccessibilityRenderObject* axRenderObject = static_cast<AccessibilityRenderObject*>(coreObject);
+            RenderObject* renderer = axRenderObject->renderer();
+            if (role != TableRole && renderer && renderer->childrenInline())
+                interfaceMask |= 1 << WAI_TEXT;
+            else if (role == ListItemRole) {
+                // Add the TEXT interface for list items whose
+                // first accessible child has a text renderer
+                AccessibilityObject::AccessibilityChildrenVector children = axRenderObject->children();
+                if (children.size()) {
+                    AccessibilityObject* axRenderChild = children.at(0).get();
+                    interfaceMask |= getInterfaceMaskFromObject(axRenderChild);
+                }
+            }
+        }
 
     // Image
     if (coreObject->isImage())
