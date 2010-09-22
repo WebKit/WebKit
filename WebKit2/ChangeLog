@@ -1,3 +1,17 @@
+2010-09-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Stub out a PluginProcessManager class
+        https://bugs.webkit.org/show_bug.cgi?id=46305
+
+        * UIProcess/Plugins/PluginProcessManager.cpp: Added.
+        (WebKit::PluginProcessManager::shared):
+        (WebKit::PluginProcessManager::getPluginProcessConnection):
+        (WebKit::PluginProcessManager::removePluginProcessProxy):
+        * UIProcess/Plugins/PluginProcessManager.h: Added.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2010-09-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Antonio Gomes.

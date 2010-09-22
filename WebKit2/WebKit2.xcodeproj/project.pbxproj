@@ -44,6 +44,8 @@
 		0F52667411DD4A490006D33C /* WebProcessProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F52667311DD4A490006D33C /* WebProcessProxyMac.mm */; };
 		0FB659231208B4DB0044816C /* DrawingAreaBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB659221208B4DB0044816C /* DrawingAreaBase.h */; };
 		0FB659A61208B9EE0044816C /* DrawingAreaBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FB659A51208B9EE0044816C /* DrawingAreaBase.cpp */; };
+		1A0EC603124A9F2C007EF4A5 /* PluginProcessManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0EC601124A9F2C007EF4A5 /* PluginProcessManager.h */; };
+		1A0EC604124A9F2C007EF4A5 /* PluginProcessManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0EC602124A9F2C007EF4A5 /* PluginProcessManager.cpp */; };
 		1A0F29CB120B37160053D1B9 /* VisitedLinkTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0F29C9120B37160053D1B9 /* VisitedLinkTable.cpp */; };
 		1A0F29CC120B37160053D1B9 /* VisitedLinkTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0F29CA120B37160053D1B9 /* VisitedLinkTable.h */; };
 		1A0F29E3120B44420053D1B9 /* VisitedLinkProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0F29E1120B44420053D1B9 /* VisitedLinkProvider.cpp */; };
@@ -435,6 +437,8 @@
 		0FB659221208B4DB0044816C /* DrawingAreaBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaBase.h; sourceTree = "<group>"; };
 		0FB659A51208B9EE0044816C /* DrawingAreaBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingAreaBase.cpp; sourceTree = "<group>"; };
 		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		1A0EC601124A9F2C007EF4A5 /* PluginProcessManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginProcessManager.h; sourceTree = "<group>"; };
+		1A0EC602124A9F2C007EF4A5 /* PluginProcessManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginProcessManager.cpp; sourceTree = "<group>"; };
 		1A0F29C9120B37160053D1B9 /* VisitedLinkTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisitedLinkTable.cpp; sourceTree = "<group>"; };
 		1A0F29CA120B37160053D1B9 /* VisitedLinkTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitedLinkTable.h; sourceTree = "<group>"; };
 		1A0F29E1120B44420053D1B9 /* VisitedLinkProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisitedLinkProvider.cpp; sourceTree = "<group>"; };
@@ -1035,6 +1039,8 @@
 				1AEFCC0D11D01F41008219D3 /* mac */,
 				1AEFCC1111D01F96008219D3 /* PluginInfoStore.cpp */,
 				1AEFCC1011D01F96008219D3 /* PluginInfoStore.h */,
+				1A0EC602124A9F2C007EF4A5 /* PluginProcessManager.cpp */,
+				1A0EC601124A9F2C007EF4A5 /* PluginProcessManager.h */,
 			);
 			path = Plugins;
 			sourceTree = "<group>";
@@ -1724,6 +1730,7 @@
 				BCF5072E12432A97005955AE /* WKCertificateInfoMac.h in Headers */,
 				C0CE72A11247E71D00BC0EC4 /* WebPageMessages.h in Headers */,
 				C0CE72AD1247E78D00BC0EC4 /* HandleMessage.h in Headers */,
+				1A0EC603124A9F2C007EF4A5 /* PluginProcessManager.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1994,6 +2001,7 @@
 				BCF50725124328A9005955AE /* WKCertificateInfo.cpp in Sources */,
 				BCF5072F12432A97005955AE /* WKCertificateInfoMac.mm in Sources */,
 				C0CE72A01247E71D00BC0EC4 /* WebPageMessageReceiver.cpp in Sources */,
+				1A0EC604124A9F2C007EF4A5 /* PluginProcessManager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
