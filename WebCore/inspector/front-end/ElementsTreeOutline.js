@@ -1125,7 +1125,7 @@ WebInspector.ElementsTreeElement.prototype = {
         delete this._editing;
 
         var textNode;
-        if (this.representedObject.nodeType == Node.ELEMENT_NODE) {
+        if (this.representedObject.nodeType === Node.ELEMENT_NODE) {
             // We only show text nodes inline in elements if the element only
             // has a single child, and that child is a text node.
             textNode = this.representedObject.firstChild;
@@ -1133,9 +1133,6 @@ WebInspector.ElementsTreeElement.prototype = {
             textNode = this.representedObject;
 
         textNode.nodeValue = newText;
-
-        // Need to restore attributes / node structure.
-        this.updateTitle();
     },
 
     _editingCancelled: function(element, context)

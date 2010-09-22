@@ -154,7 +154,9 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
         if (child->parentNode())
             break;
 
+#if ENABLE(INSPECTOR)
         InspectorController::willInsertDOMNode(child, this);
+#endif
 
         insertBeforeCommon(next.get(), child);
 
@@ -223,7 +225,9 @@ void ContainerNode::parserInsertBefore(PassRefPtr<Node> newChild, Node* nextChil
     for (NodeVector::const_iterator it = targets.begin(); it != targets.end(); ++it) {
         Node* child = it->get();
 
+#if ENABLE(INSPECTOR)
         InspectorController::willInsertDOMNode(child, this);
+#endif
 
         insertBeforeCommon(next.get(), child);
 
@@ -298,7 +302,9 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
         ASSERT(!child->nextSibling());
         ASSERT(!child->previousSibling());
 
+#if ENABLE(INSPECTOR)
         InspectorController::willInsertDOMNode(child.get(), this);
+#endif
 
         // Add child after "prev".
         forbidEventDispatch();
@@ -577,7 +583,9 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bo
                 break;
         }
 
+#if ENABLE(INSPECTOR)
         InspectorController::willInsertDOMNode(child, this);
+#endif
 
         // Append child to the end of the list
         forbidEventDispatch();
@@ -617,7 +625,9 @@ void ContainerNode::parserAddChild(PassRefPtr<Node> newChild)
     ASSERT(newChild);
     ASSERT(!newChild->parent()); // Use appendChild if you need to handle reparenting (and want DOM mutation events).
 
+#if ENABLE(INSPECTOR)
     InspectorController::willInsertDOMNode(newChild.get(), this);
+#endif
 
     forbidEventDispatch();
     Node* last = m_lastChild;
@@ -990,7 +1000,9 @@ static void notifyChildInserted(Node* child)
 {
     ASSERT(!eventDispatchForbidden());
 
+#if ENABLE(INSPECTOR)
     InspectorController::didInsertDOMNode(child);
+#endif
 
     RefPtr<Node> c = child;
     RefPtr<Document> document = child->document();
@@ -1024,7 +1036,9 @@ static void dispatchChildRemovalEvents(Node* child)
 {
     ASSERT(!eventDispatchForbidden());
 
+#if ENABLE(INSPECTOR)
     InspectorController::willRemoveDOMNode(child);
+#endif
 
     RefPtr<Node> c = child;
     RefPtr<Document> document = child->document();

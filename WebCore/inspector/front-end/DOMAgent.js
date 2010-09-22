@@ -98,13 +98,7 @@ WebInspector.DOMNode.prototype = {
     set nodeValue(value) {
         if (this.nodeType != Node.TEXT_NODE)
             return;
-        var self = this;
-        var callback = function()
-        {
-            self._nodeValue = value;
-            self.textContent = value;
-        };
-        this.ownerDocument._domAgent.setTextNodeValueAsync(this, value, callback);
+        this.ownerDocument._domAgent.setTextNodeValueAsync(this, value, function() {});
     },
 
     getAttribute: function(name)
@@ -382,6 +376,15 @@ WebInspector.DOMAgent.prototype = {
         node._setAttributesPayload(attrsArray);
         var event = {target: node};
         this.document._fireDomEvent("DOMAttrModified", event);
+    },
+
+    _characterDataModified: function(nodeId, newValue)
+    {
+        var node = this._idToDOMNode[nodeId];
+        node._nodeValue = newValue;
+        node.textContent = newValue;
+        var event = { target : node };
+        this.document._fireDomEvent("DOMCharacterDataModified", event);
     },
 
     nodeForId: function(nodeId)
@@ -689,6 +692,11 @@ WebInspector.CSSStyleDeclaration.prototype = {
 WebInspector.attributesUpdated = function()
 {
     this.domAgent._attributesUpdated.apply(this.domAgent, arguments);
+}
+
+WebInspector.characterDataModified = function()
+{
+    this.domAgent._characterDataModified.apply(this.domAgent, arguments);
 }
 
 WebInspector.setDocument = function()

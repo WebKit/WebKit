@@ -186,6 +186,7 @@ WebInspector.ElementsPanel.prototype = {
         inspectedRootDocument.addEventListener("DOMNodeInserted", this._nodeInserted.bind(this));
         inspectedRootDocument.addEventListener("DOMNodeRemoved", this._nodeRemoved.bind(this));
         inspectedRootDocument.addEventListener("DOMAttrModified", this._attributesUpdated.bind(this));
+        inspectedRootDocument.addEventListener("DOMCharacterDataModified", this._characterDataModified.bind(this));
 
         this.rootDOMNode = inspectedRootDocument;
 
@@ -485,6 +486,13 @@ WebInspector.ElementsPanel.prototype = {
     },
 
     _attributesUpdated: function(event)
+    {
+        this.recentlyModifiedNodes.push({node: event.target, updated: true});
+        if (this.visible)
+            this._updateModifiedNodesSoon();
+    },
+
+    _characterDataModified: function(event)
     {
         this.recentlyModifiedNodes.push({node: event.target, updated: true});
         if (this.visible)

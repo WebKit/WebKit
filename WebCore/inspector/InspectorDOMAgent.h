@@ -53,6 +53,7 @@ namespace WebCore {
     class CSSStyleDeclaration;
     class CSSStyleRule;
     class CSSStyleSheet;
+    class CharacterData;
     class Element;
     class Event;
     class InspectorDOMAgent;
@@ -139,6 +140,7 @@ namespace WebCore {
         void didInsertDOMNode(Node*);
         void didRemoveDOMNode(Node*);
         void didModifyDOMAttr(Element*);
+        void characterDataModified(CharacterData*);
 
         Node* nodeForId(long nodeId);
         long pushNodePathToFrontend(Node* node);

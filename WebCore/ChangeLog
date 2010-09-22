@@ -1,3 +1,32 @@
+2010-09-22  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Elements panel does not reflect changes to the text node values.
+        https://bugs.webkit.org/show_bug.cgi?id=46166
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::dispatchModifiedEvent):
+        * inspector/Inspector.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::characterDataModifiedImpl):
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::characterDataModified):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::characterDataModified):
+        * inspector/InspectorDOMAgent.h:
+        (WebCore::EventListenerInfo::EventListenerInfo):
+        (WebCore::InspectorDOMAgent::create):
+        (WebCore::InspectorDOMAgent::cast):
+        (WebCore::InspectorDOMAgent::cssStore):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent.prototype._characterDataModified):
+        (WebInspector.characterDataModified):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype._characterDataModified):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._textNodeEditingCommitted):
+
 2010-09-21  Ragner Magalhaes  <ragner.magalhaes@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

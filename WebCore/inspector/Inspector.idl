@@ -37,9 +37,11 @@ module core {
         [notify] void addNodesToSearchResult(out Array nodeIds);
         [notify] void attributesUpdated(out long id, out Array attributes);
         [notify] void bringToFront();
+        [notify] void characterDataModified(out long id, out String newValue);
         [notify] void childNodeCountUpdated(out long id, out int newValue);
         [notify] void childNodeInserted(out long parentId, out long prevId, out Object node);
         [notify] void childNodeRemoved(out long parentId, out long id);
+        [notify] void consoleMessagesCleared();
         [notify] void didCommitLoad();
         [notify] void evaluateForTestInFrontend(out long testCallId, out String script);
         [notify] void disconnectFromBackend();
@@ -59,7 +61,6 @@ module core {
         [notify] void updateConsoleMessageRepeatCount(out unsigned long count);
         [notify] void updateFocusedNode(out long nodeId);
         [notify] void updateResource(out Value resource);
-        [notify] void consoleMessagesCleared();
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
         [notify] void addProfileHeader(out Object header);
