@@ -1,3 +1,11 @@
+2010-09-22  Steve Falkenburg  <sfalken@apple.com>
+
+        Rubber stamped by Jon Honeycutt.
+
+        Allow jsc.exe to be run against unversioned ICU.
+
+        * JavaScriptCore.vcproj/jsc/jscCommon.vsprops:
+
 2010-09-22  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Laszlo Gombos.
