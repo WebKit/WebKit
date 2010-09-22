@@ -1,3 +1,15 @@
+2010-09-22  Paul Knight  <pknight@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        -[WebView _scheduleCompositingLayerSync] should wake the run loop
+        https://bugs.webkit.org/show_bug.cgi?id=46226
+
+        Call CFRunLoopWakeUp to make sure the run loop is not sleeping, which could delay layer painting.
+
+        * WebView/WebView.mm:
+        (-[WebView _scheduleCompositingLayerSync]):
+
 2010-09-21  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.

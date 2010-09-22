@@ -5869,6 +5869,11 @@ static void layerSyncRunLoopObserverCallBack(CFRunLoopObserverRef, CFRunLoopActi
 
 - (void)_scheduleCompositingLayerSync
 {
+    CFRunLoopRef currentRunLoop = CFRunLoopGetCurrent();
+
+    // Make sure we wake up the loop or the observer could be delayed until some other source fires.
+    CFRunLoopWakeUp(currentRunLoop);
+
     if (_private->layerSyncRunLoopObserver)
         return;
 
@@ -5884,7 +5889,7 @@ static void layerSyncRunLoopObserverCallBack(CFRunLoopObserverRef, CFRunLoopActi
         kCFRunLoopBeforeWaiting | kCFRunLoopExit, true /* repeats */,
         runLoopOrder, layerSyncRunLoopObserverCallBack, &context);
 
-    CFRunLoopAddObserver(CFRunLoopGetCurrent(), _private->layerSyncRunLoopObserver, kCFRunLoopCommonModes);
+    CFRunLoopAddObserver(currentRunLoop, _private->layerSyncRunLoopObserver, kCFRunLoopCommonModes);
 }
 
 #endif
