@@ -414,20 +414,27 @@ class BuildBot(object):
         build_status_url = "http://%s/one_box_per_builder" % self.buildbot_host
         return urllib2.urlopen(build_status_url)
 
+    def _file_cell_text(self, file_cell):
+        """Traverses down through firstChild elements until one containing a string is found, then returns that string"""
+        element = file_cell
+        while element.string is None and element.contents:
+            element = element.contents[0]
+        return element.string
+
     def _parse_twisted_file_row(self, file_row):
-        string_or_empty = lambda soup: unicode(soup.string) if soup.string else u""
+        string_or_empty = lambda string: unicode(string) if string else u""
         file_cells = file_row.findAll('td')
         return {
-            "filename": string_or_empty(file_cells[0].find("a")),
-            "size": string_or_empty(file_cells[1]),
-            "type": string_or_empty(file_cells[2]),
-            "encoding": string_or_empty(file_cells[3]),
+            "filename": string_or_empty(self._file_cell_text(file_cells[0])),
+            "size": string_or_empty(self._file_cell_text(file_cells[1])),
+            "type": string_or_empty(self._file_cell_text(file_cells[2])),
+            "encoding": string_or_empty(self._file_cell_text(file_cells[3])),
         }
 
     def _parse_twisted_directory_listing(self, page):
         soup = BeautifulSoup(page)
         # HACK: Match only table rows with a class to ignore twisted header/footer rows.
-        file_rows = soup.find('table').findAll('tr', { "class" : True })
+        file_rows = soup.find('table').findAll('tr', {'class': re.compile(r'\b(?:directory|file)\b')})
         return [self._parse_twisted_file_row(file_row) for file_row in file_rows]
 
     # FIXME: There should be a better way to get this information directly from twisted.

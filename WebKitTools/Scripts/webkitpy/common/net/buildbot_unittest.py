@@ -361,22 +361,19 @@ class BuildBotTest(unittest.TestCase):
 <h1>Directory listing for /results/SnowLeopard Intel Leaks/</h1>
 
 <table>
-    <thead>
-        <tr>
+        <tr class="alt">
             <th>Filename</th>
             <th>Size</th>
             <th>Content type</th>
             <th>Content encoding</th>
         </tr>
-    </thead>
-    <tbody>
-<tr class="odd">
-    <td><a href="r47483%20%281%29/">r47483 (1)/</a></td>
-    <td></td>
-    <td>[Directory]</td>
-    <td></td>
+<tr class="directory ">
+    <td><a href="r47483%20%281%29/"><b>r47483 (1)/</b></a></td>
+    <td><b></b></td>
+    <td><b>[Directory]</b></td>
+    <td><b></b></td>
 </tr>
-<tr class="odd">
+<tr class="file alt">
     <td><a href="r47484%20%282%29.zip">r47484 (2).zip</a></td>
     <td>89K</td>
     <td>[application/zip]</td>
