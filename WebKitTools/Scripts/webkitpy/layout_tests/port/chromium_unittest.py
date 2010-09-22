@@ -88,10 +88,12 @@ class ChromiumDriverTest(unittest.TestCase):
             def __init__(self):
                 self.use_drt = True
 
-        port = chromium_linux.ChromiumLinuxPort('test-port', options=MockOptions())
+        port = chromium_linux.ChromiumLinuxPort(port_name='test-port',
+                                                options=MockOptions())
         self.assertTrue(port._path_to_image_diff().endswith(
             '/out/Release/ImageDiff'))
-        port = chromium_mac.ChromiumMacPort('test-port', options=MockOptions())
+        port = chromium_mac.ChromiumMacPort(port_name='test-port',
+                                            options=MockOptions())
         self.assertTrue(port._path_to_image_diff().endswith(
             '/xcodebuild/Release/ImageDiff'))
         # FIXME: Figure out how this is going to work on Windows.
@@ -102,7 +104,8 @@ class ChromiumDriverTest(unittest.TestCase):
             def __init__(self):
                 self.use_drt = True
 
-        port = chromium_linux.ChromiumLinuxPort('test-port', options=MockOptions())
+        port = chromium_linux.ChromiumLinuxPort(port_name='test-port',
+                                                options=MockOptions())
 
         fake_test = os.path.join(port.layout_tests_dir(), "fast/js/not-good.js")
 

@@ -39,10 +39,9 @@ _log = logging.getLogger("webkitpy.layout_tests.port.gtk")
 class GtkPort(WebKitPort):
     """WebKit Gtk implementation of the Port class."""
 
-    def __init__(self, port_name=None, options=None):
-        if port_name is None:
-            port_name = 'gtk'
-        WebKitPort.__init__(self, port_name, options)
+    def __init__(self, **kwargs):
+        kwargs.setdefault('port_name', 'gtk')
+        WebKitPort.__init__(self, **kwargs)
 
     def _tests_for_other_platforms(self):
         # FIXME: This list could be dynamic based on platform name and

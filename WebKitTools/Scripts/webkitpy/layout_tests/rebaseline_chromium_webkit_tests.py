@@ -55,9 +55,9 @@ import sys
 import tempfile
 import time
 import urllib
-import webbrowser
 import zipfile
 
+from webkitpy.common.system import user
 from webkitpy.common.system.executive import run_command, ScriptError
 import webkitpy.common.checkout.scm as scm
 
@@ -730,10 +730,7 @@ class HtmlGenerator(object):
         """Launch the rebaselining html in brwoser."""
 
         _log.info('Launching html: "%s"', self._html_file)
-
-        html_uri = self._target_port.filename_to_uri(self._html_file)
-        webbrowser.open(html_uri, 1)
-
+        user.open_url(self._html_file)
         _log.info('Html launched.')
 
     def _generate_baseline_links(self, test_basename, suffix, platform):

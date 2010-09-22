@@ -82,8 +82,13 @@ def check_file_exists(path_to_file, file_description, override_step=None,
 class ChromiumPort(base.Port):
     """Abstract base class for Chromium implementations of the Port class."""
 
-    def __init__(self, port_name=None, options=None, **kwargs):
-        base.Port.__init__(self, port_name, options, **kwargs)
+    def __init__(self, **kwargs):
+        if 'options' in kwargs:
+            options = kwargs['options']
+            if (options and (not hasattr(options, 'configuration') or
+                             options.configuration is None)):
+                options.configuration = 'Release'
+        base.Port.__init__(self, **kwargs)
         self._chromium_base_dir = None
 
     def baseline_path(self):
@@ -189,15 +194,6 @@ class ChromiumPort(base.Port):
         cachedir = os.path.join(cachedir, "cache")
         if os.path.exists(cachedir):
             shutil.rmtree(cachedir)
-
-    def show_results_html_file(self, results_filename):
-        uri = self.get_absolute_path(results_filename)
-        if self._options.use_drt:
-            # FIXME: This should use User.open_url
-            webbrowser.open(uri, new=1)
-        else:
-            # Note: Not thread safe: http://bugs.python.org/issue2320
-            subprocess.Popen([self._path_to_driver(), uri])
 
     def create_driver(self, image_path, options):
         """Starts a new Driver and returns a handle to it."""

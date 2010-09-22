@@ -25,10 +25,12 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-def GetGoogleChromePort(port_name, options):
+def GetGoogleChromePort(**kwargs):
     """Some tests have slightly different results when compiled as Google
     Chrome vs Chromium.  In those cases, we prepend an additional directory to
     to the baseline paths."""
+    port_name = kwargs['port_name']
+    del kwargs['port_name']
     if port_name == 'google-chrome-linux32':
         import chromium_linux
 
@@ -39,7 +41,7 @@ def GetGoogleChromePort(port_name, options):
                 paths.insert(0, self._webkit_baseline_path(
                     'google-chrome-linux32'))
                 return paths
-        return GoogleChromeLinux32Port(None, options)
+        return GoogleChromeLinux32Port(**kwargs)
     elif port_name == 'google-chrome-linux64':
         import chromium_linux
 
@@ -50,7 +52,7 @@ def GetGoogleChromePort(port_name, options):
                 paths.insert(0, self._webkit_baseline_path(
                     'google-chrome-linux64'))
                 return paths
-        return GoogleChromeLinux64Port(None, options)
+        return GoogleChromeLinux64Port(**kwargs)
     elif port_name.startswith('google-chrome-mac'):
         import chromium_mac
 
@@ -61,7 +63,7 @@ def GetGoogleChromePort(port_name, options):
                 paths.insert(0, self._webkit_baseline_path(
                     'google-chrome-mac'))
                 return paths
-        return GoogleChromeMacPort(None, options)
+        return GoogleChromeMacPort(**kwargs)
     elif port_name.startswith('google-chrome-win'):
         import chromium_win
 
@@ -72,5 +74,5 @@ def GetGoogleChromePort(port_name, options):
                 paths.insert(0, self._webkit_baseline_path(
                     'google-chrome-win'))
                 return paths
-        return GoogleChromeWinPort(None, options)
+        return GoogleChromeWinPort(**kwargs)
     raise NotImplementedError('unsupported port: %s' % port_name)

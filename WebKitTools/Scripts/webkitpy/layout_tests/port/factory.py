@@ -37,11 +37,21 @@ ALL_PORT_NAMES = ['test', 'dryrun', 'mac', 'win', 'gtk', 'qt', 'chromium-mac',
                   'google-chrome-mac', 'google-chrome-linux32', 'google-chrome-linux64']
 
 
-def get(port_name=None, options=None):
+def get(port_name=None, options=None, **kwargs):
     """Returns an object implementing the Port interface. If
     port_name is None, this routine attempts to guess at the most
     appropriate port on this platform."""
-    port_to_use = port_name
+    # Wrapped for backwards-compatibility
+    if port_name:
+        kwargs['port_name'] = port_name
+    if options:
+        kwargs['options'] = options
+    return _get_kwargs(**kwargs)
+
+
+def _get_kwargs(**kwargs):
+    port_to_use = kwargs.get('port_name', None)
+    options = kwargs.get('options', None)
     if port_to_use is None:
         if sys.platform == 'win32' or sys.platform == 'cygwin':
             if options and hasattr(options, 'chromium') and options.chromium:
@@ -62,37 +72,37 @@ def get(port_name=None, options=None):
 
     if port_to_use == 'test':
         import test
-        return test.TestPort(port_name, options)
+        cls = test.TestPort
     elif port_to_use.startswith('dryrun'):
         import dryrun
-        return dryrun.DryRunPort(port_name, options)
+        cls = dryrun.DryRunPort
     elif port_to_use.startswith('mac'):
         import mac
-        return mac.MacPort(port_name, options)
+        cls = mac.MacPort
     elif port_to_use.startswith('win'):
         import win
-        return win.WinPort(port_name, options)
+        cls = win.WinPort
     elif port_to_use.startswith('gtk'):
         import gtk
-        return gtk.GtkPort(port_name, options)
+        cls = gtk.GtkPort
     elif port_to_use.startswith('qt'):
         import qt
-        return qt.QtPort(port_name, options)
+        cls = qt.QtPort
     elif port_to_use.startswith('chromium-mac'):
         import chromium_mac
-        return chromium_mac.ChromiumMacPort(port_name, options)
+        cls = chromium_mac.ChromiumMacPort
     elif port_to_use.startswith('chromium-linux'):
         import chromium_linux
-        return chromium_linux.ChromiumLinuxPort(port_name, options)
+        cls = chromium_linux.ChromiumLinuxPort
     elif port_to_use.startswith('chromium-win'):
         import chromium_win
-        return chromium_win.ChromiumWinPort(port_name, options)
+        cls = chromium_win.ChromiumWinPort
     elif port_to_use.startswith('google-chrome'):
         import google_chrome
-        return google_chrome.GetGoogleChromePort(port_name, options)
-
-    raise NotImplementedError('unsupported port: %s' % port_to_use)
-
+        cls = google_chrome.GetGoogleChromePort
+    else:
+        raise NotImplementedError('unsupported port: %s' % port_to_use)
+    return cls(**kwargs)
 
 def get_all(options=None):
     """Returns all the objects implementing the Port interface."""

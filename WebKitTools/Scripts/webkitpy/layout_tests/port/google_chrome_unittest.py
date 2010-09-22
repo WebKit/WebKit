@@ -41,6 +41,7 @@ class GetGoogleChromePortTest(unittest.TestCase):
         self._verify_baseline_path('google-chrome-win', 'google-chrome-win-vista')
 
     def _verify_baseline_path(self, expected_path, port_name):
-        port = google_chrome.GetGoogleChromePort(port_name, None)
+        port = google_chrome.GetGoogleChromePort(port_name=port_name,
+                                                 options=None)
         path = port.baseline_search_path()[0]
         self.assertEqual(expected_path, os.path.split(path)[1])

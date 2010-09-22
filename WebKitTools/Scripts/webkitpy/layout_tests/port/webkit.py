@@ -58,16 +58,16 @@ _log = logging.getLogger("webkitpy.layout_tests.port.webkit")
 class WebKitPort(base.Port):
     """WebKit implementation of the Port class."""
 
-    def __init__(self, port_name=None, options=None, **kwargs):
-        base.Port.__init__(self, port_name, options, **kwargs)
+    def __init__(self, **kwargs):
+        base.Port.__init__(self, **kwargs)
         self._cached_build_root = None
         self._cached_apache_path = None
 
         # FIXME: disable pixel tests until they are run by default on the
         # build machines.
-        if options and (not hasattr(options, "pixel_tests") or
-           options.pixel_tests is None):
-            options.pixel_tests = False
+        if self._options and (not hasattr(self._options, "pixel_tests") or
+           self._options.pixel_tests is None):
+            self._options.pixel_tests = False
 
     def baseline_path(self):
         return self._webkit_baseline_path(self._name)
@@ -185,10 +185,6 @@ class WebKitPort(base.Port):
     def setup_test_run(self):
         # This port doesn't require any specific configuration.
         pass
-
-    def show_results_html_file(self, results_filename):
-        # FIXME: We should open results in the version of WebKit we built.
-        webbrowser.open(results_filename, new=1)
 
     def create_driver(self, image_path, options):
         return WebKitDriver(self, image_path, options,

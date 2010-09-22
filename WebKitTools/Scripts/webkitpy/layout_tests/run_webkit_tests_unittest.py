@@ -42,11 +42,20 @@ import unittest
 
 from webkitpy.common import array_stream
 from webkitpy.common.system import outputcapture
+from webkitpy.common.system import user
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.layout_tests.layout_package import dump_render_tree_thread
 
 from webkitpy.thirdparty.mock import Mock
+
+
+class MockUser():
+    def __init__(self):
+        self.url = None
+
+    def open_url(self, url):
+        self.url = url
 
 
 def passing_run(args=[], port_obj=None, record_results=False,
@@ -65,7 +74,8 @@ def passing_run(args=[], port_obj=None, record_results=False,
                          'failures/expected/*'])
     options, parsed_args = run_webkit_tests.parse_args(new_args)
     if port_obj is None:
-        port_obj = port.get(options.platform, options)
+        port_obj = port.get(port_name=options.platform, options=options,
+                            user=MockUser())
     res = run_webkit_tests.run(port_obj, options, parsed_args)
     return res == 0
 
@@ -81,13 +91,14 @@ def logging_run(args=[], tests_included=False):
                          'websocket/tests',
                          'failures/expected/*'])
     options, parsed_args = run_webkit_tests.parse_args(new_args)
-    port_obj = port.get(options.platform, options)
+    user = MockUser()
+    port_obj = port.get(port_name=options.platform, options=options, user=user)
     buildbot_output = array_stream.ArrayStream()
     regular_output = array_stream.ArrayStream()
     res = run_webkit_tests.run(port_obj, options, parsed_args,
                                buildbot_output=buildbot_output,
                                regular_output=regular_output)
-    return (res, buildbot_output, regular_output)
+    return (res, buildbot_output, regular_output, user)
 
 
 class MainTest(unittest.TestCase):
@@ -99,13 +110,13 @@ class MainTest(unittest.TestCase):
         self.assertTrue(passing_run(['--batch-size', '2']))
 
     def test_child_process_1(self):
-        (res, buildbot_output, regular_output) = logging_run(
+        (res, buildbot_output, regular_output, user) = logging_run(
              ['--print', 'config', '--child-processes', '1'])
         self.assertTrue('Running one DumpRenderTree\n'
                         in regular_output.get())
 
     def test_child_processes_2(self):
-        (res, buildbot_output, regular_output) = logging_run(
+        (res, buildbot_output, regular_output, user) = logging_run(
              ['--print', 'config', '--child-processes', '2'])
         self.assertTrue('Running 2 DumpRenderTrees in parallel\n'
                         in regular_output.get())
@@ -119,15 +130,15 @@ class MainTest(unittest.TestCase):
         self.assertTrue(passing_run(['--full-results-html']))
 
     def test_help_printing(self):
-        res, out, err = logging_run(['--help-printing'])
+        res, out, err, user = logging_run(['--help-printing'])
         self.assertEqual(res, 0)
         self.assertTrue(out.empty())
         self.assertFalse(err.empty())
 
     def test_hung_thread(self):
-        res, out, err = logging_run(['--run-singly', '--time-out-ms=50',
-                                     'failures/expected/hang.html'],
-                                    tests_included=True)
+        res, out, err, user = logging_run(['--run-singly', '--time-out-ms=50',
+                                          'failures/expected/hang.html'],
+                                          tests_included=True)
         self.assertEqual(res, 0)
         self.assertFalse(out.empty())
         self.assertFalse(err.empty())
@@ -140,26 +151,27 @@ class MainTest(unittest.TestCase):
 
     def test_last_results(self):
         passing_run(['--clobber-old-results'], record_results=True)
-        (res, buildbot_output, regular_output) = logging_run(
+        (res, buildbot_output, regular_output, user) = logging_run(
             ['--print-last-failures'])
         self.assertEqual(regular_output.get(), ['\n\n'])
         self.assertEqual(buildbot_output.get(), [])
 
     def test_lint_test_files(self):
         # FIXME:  add errors?
-        res, out, err = logging_run(['--lint-test-files'], tests_included=True)
+        res, out, err, user = logging_run(['--lint-test-files'],
+                                          tests_included=True)
         self.assertEqual(res, 0)
         self.assertTrue(out.empty())
         self.assertTrue(any(['lint succeeded' in msg for msg in err.get()]))
 
     def test_no_tests_found(self):
-        res, out, err = logging_run(['resources'], tests_included=True)
+        res, out, err, user = logging_run(['resources'], tests_included=True)
         self.assertEqual(res, -1)
         self.assertTrue(out.empty())
         self.assertTrue('No tests to run.\n' in err.get())
 
     def test_no_tests_found_2(self):
-        res, out, err = logging_run(['foo'], tests_included=True)
+        res, out, err, user = logging_run(['foo'], tests_included=True)
         self.assertEqual(res, -1)
         self.assertTrue(out.empty())
         self.assertTrue('No tests to run.\n' in err.get())
@@ -196,17 +208,19 @@ class MainTest(unittest.TestCase):
         self.assertTrue(passing_run(['--test-list=%s' % filename],
                                     tests_included=True))
         os.remove(filename)
-        res, out, err = logging_run(['--test-list=%s' % filename],
-                                    tests_included=True)
+        res, out, err, user = logging_run(['--test-list=%s' % filename],
+                                          tests_included=True)
         self.assertEqual(res, -1)
         self.assertFalse(err.empty())
 
     def test_unexpected_failures(self):
         # Run tests including the unexpected failures.
-        res, out, err = logging_run(tests_included=True)
+        self._url_opened = None
+        res, out, err, user = logging_run(tests_included=True)
         self.assertEqual(res, 1)
         self.assertFalse(out.empty())
         self.assertFalse(err.empty())
+        self.assertEqual(user.url, '/tmp/layout-test-results/results.html')
 
 
 def _mocked_open(original_open, file_list):
@@ -269,6 +283,7 @@ class RebaselineTest(unittest.TestCase):
         finally:
             codecs.open = original_open
 
+
 class TestRunnerTest(unittest.TestCase):
     def test_results_html(self):
         mock_port = Mock()
@@ -306,11 +321,8 @@ class DryrunTest(unittest.TestCase):
                                      'fast/html']))
 
     def test_test(self):
-        res, out, err = logging_run(['--platform', 'dryrun-test',
-                                     '--pixel-tests'])
-        self.assertEqual(res, 0)
-        self.assertFalse(out.empty())
-        self.assertFalse(err.empty())
+        self.assertTrue(passing_run(['--platform', 'dryrun-test',
+                                           '--pixel-tests']))
 
 
 class TestThread(dump_render_tree_thread.WatchableThread):

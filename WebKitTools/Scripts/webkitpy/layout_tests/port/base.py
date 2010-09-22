@@ -48,6 +48,7 @@ import websocket_server
 
 from webkitpy.common.system import logutils
 from webkitpy.common.system.executive import Executive, ScriptError
+from webkitpy.common.system.user import User
 
 
 _log = logutils.get_logger(__file__)
@@ -82,14 +83,15 @@ class Port(object):
         }
         return flags_by_configuration[configuration]
 
-    def __init__(self, port_name=None, options=None, executive=Executive()):
-        self._name = port_name
-        self._options = options
+    def __init__(self, **kwargs):
+        self._name = kwargs.get('port_name', None)
+        self._options = kwargs.get('options', None)
+        self._executive = kwargs.get('executive', Executive())
+        self._user = kwargs.get('user', User())
         self._helper = None
         self._http_server = None
         self._webkit_base_dir = None
         self._websocket_server = None
-        self._executive = executive
 
     def default_child_processes(self):
         """Return the number of DumpRenderTree instances to use for this
@@ -462,10 +464,10 @@ class Port(object):
         """
         return os.environ.copy()
 
-    def show_html_results_file(self, results_filename):
+    def show_results_html_file(self, results_filename):
         """This routine should display the HTML file pointed at by
         results_filename in a users' browser."""
-        raise NotImplementedError('Port.show_html_results_file')
+        return self._user.open_url(results_filename)
 
     def create_driver(self, image_path, options):
         """Return a newly created base.Driver subclass for starting/stopping

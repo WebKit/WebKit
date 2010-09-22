@@ -1,3 +1,49 @@
+2010-09-21  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Modify the Port interface to take only a series of keyword arguments
+        in the constructor, and modify Port/factory.get() to accomodate that,
+        and to accept user=XXX as an argument so we can pass
+        webkitpy.common.system.user.User objects in.
+
+        Then, modify new-run-webkit-tests and rebaseline-chromium-webkit-tests
+        to use the common routine in webkitpy.common.system.user.open_url()
+        to display HTML files.
+
+        There was a routine in the Port interface to do the same thing,
+        but I see no need for a port-specific hook for this, since it is
+        something that will always be executed by the host environment
+        and displaying web pages has nothing to do with running layout tests.
+
+        Note that new-run-webkit-tests used to use test_shell to display
+        the page; this is potentially useful so that you can actually click
+        from a result to the broken page; however, since DumpRenderTree
+        doesn't support this functionality, it will be going away eventually.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46128
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/dryrun.py:
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        * Scripts/webkitpy/layout_tests/port/google_chrome.py:
+        * Scripts/webkitpy/layout_tests/port/google_chrome_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/port/win.py:
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2010-09-21  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.

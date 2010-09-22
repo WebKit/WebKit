@@ -56,14 +56,14 @@ import factory
 class DryRunPort(object):
     """DryRun implementation of the Port interface."""
 
-    def __init__(self, port_name=None, options=None):
+    def __init__(self, **kwargs):
         pfx = 'dryrun-'
-        if port_name.startswith(pfx):
-            port_name = port_name[len(pfx):]
-        else:
-            port_name = None
-        self._options = options
-        self.__delegate = factory.get(port_name, options)
+        if 'port_name' in kwargs:
+            if kwargs['port_name'].startswith(pfx):
+                kwargs['port_name'] = kwargs['port_name'][len(pfx):]
+            else:
+                kwargs['port_name'] = None
+        self.__delegate = factory.get(**kwargs)
 
     def __getattr__(self, name):
         return getattr(self.__delegate, name)

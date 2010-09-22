@@ -73,6 +73,7 @@ from test_types import image_diff
 from test_types import text_diff
 from test_types import test_type_base
 
+from webkitpy.common.system import user
 from webkitpy.thirdparty import simplejson
 
 import port

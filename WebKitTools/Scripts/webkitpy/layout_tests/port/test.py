@@ -85,8 +85,8 @@ class TestList:
 class TestPort(base.Port):
     """Test implementation of the Port interface."""
 
-    def __init__(self, port_name=None, options=None):
-        base.Port.__init__(self, port_name, options)
+    def __init__(self, **kwargs):
+        base.Port.__init__(self, **kwargs)
         tests = TestList(self)
         tests.add('passes/image.html')
         tests.add('passes/text.html')
@@ -225,9 +225,6 @@ class TestPort(base.Port):
         return '/tmp/' + self._options.results_directory
 
     def setup_test_run(self):
-        pass
-
-    def show_results_html_file(self, filename):
         pass
 
     def create_driver(self, image_path, options):

@@ -43,10 +43,9 @@ _log = logging.getLogger("webkitpy.layout_tests.port.mac")
 class MacPort(WebKitPort):
     """WebKit Mac implementation of the Port class."""
 
-    def __init__(self, port_name=None, options=None):
-        if port_name is None:
-            port_name = 'mac' + self.version()
-        WebKitPort.__init__(self, port_name, options)
+    def __init__(self, **kwargs):
+        kwargs.setdefault('port_name', 'mac' + self.version())
+        WebKitPort.__init__(self, **kwargs)
 
     def default_child_processes(self):
         # FIXME: new-run-webkit-tests is unstable on Mac running more than

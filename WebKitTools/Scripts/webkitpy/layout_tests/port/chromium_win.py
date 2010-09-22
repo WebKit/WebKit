@@ -41,12 +41,9 @@ _log = logging.getLogger("webkitpy.layout_tests.port.chromium_win")
 class ChromiumWinPort(chromium.ChromiumPort):
     """Chromium Win implementation of the Port class."""
 
-    def __init__(self, port_name=None, options=None):
-        if port_name is None:
-            port_name = "chromium-win" + self.version()
-        if options and not hasattr(options, "configuration"):
-            options.configuration = "Release"
-        chromium.ChromiumPort.__init__(self, port_name, options)
+    def __init__(self, **kwargs):
+        kwargs.setdefault('port_name', 'chromium-win')
+        chromium.ChromiumPort.__init__(self, **kwargs)
 
     def setup_environ_for_server(self):
         env = chromium.ChromiumPort.setup_environ_for_server(self)
