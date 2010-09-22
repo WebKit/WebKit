@@ -117,7 +117,7 @@ private:
     virtual void invalidate(const WebCore::IntRect&);
     virtual String userAgent(const WebCore::KURL&);
     virtual void loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, 
-                         const WebCore::HTTPHeaderMap& headerFields, const Vector<char>& httpBody, bool allowPopups);
+                         const WebCore::HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups);
     virtual void cancelStreamLoad(uint64_t streamID);
     virtual void cancelManualStreamLoad();
     virtual NPObject* windowScriptNPObject();

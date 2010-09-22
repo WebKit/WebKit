@@ -109,7 +109,7 @@ const char* NetscapePlugin::userAgent()
     return m_userAgent.data();
 }
 
-void NetscapePlugin::loadURL(const String& method, const String& urlString, const String& target, const HTTPHeaderMap& headerFields, const Vector<char>& httpBody,
+void NetscapePlugin::loadURL(const String& method, const String& urlString, const String& target, const HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody,
                              bool sendNotification, void* notificationData)
 {
     uint64_t requestID = ++m_nextRequestID;
@@ -358,7 +358,7 @@ bool NetscapePlugin::initialize(PluginController* pluginController, const Parame
 
     // Load the src URL if needed.
     if (!parameters.loadManually && !parameters.url.isEmpty() && shouldLoadSrcURL())
-        loadURL("GET", parameters.url.string(), String(), HTTPHeaderMap(), Vector<char>(), false, 0);
+        loadURL("GET", parameters.url.string(), String(), HTTPHeaderMap(), Vector<uint8_t>(), false, 0);
     
     return true;
 }

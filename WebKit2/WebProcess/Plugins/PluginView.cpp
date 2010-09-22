@@ -701,7 +701,7 @@ String PluginView::userAgent(const KURL& url)
 }
 
 void PluginView::loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, 
-                         const HTTPHeaderMap& headerFields, const Vector<char>& httpBody, bool allowPopups)
+                         const HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups)
 {
     FrameLoadRequest frameLoadRequest;
     frameLoadRequest.setFrameName(target);

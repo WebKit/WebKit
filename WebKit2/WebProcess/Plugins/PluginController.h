@@ -55,7 +55,7 @@ public:
     //
     // If the URL is a JavaScript URL, the JavaScript code will be evaluated and the result sent back using Plugin::didEvaluateJavaScript.
     virtual void loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, 
-                         const WebCore::HTTPHeaderMap& headerFields, const Vector<char>& httpBody, bool allowPopups) = 0;
+                         const WebCore::HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups) = 0;
 
     /// Cancels the load of a stream that was requested by loadURL.
     virtual void cancelStreamLoad(uint64_t streamID) = 0;

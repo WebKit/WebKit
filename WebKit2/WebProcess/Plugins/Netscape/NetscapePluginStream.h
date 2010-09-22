@@ -103,7 +103,7 @@ private:
     CString m_headers;
 
     RunLoop::Timer<NetscapePluginStream> m_deliveryDataTimer;
-    OwnPtr< Vector<char> > m_deliveryData;
+    OwnPtr< Vector<uint8_t> > m_deliveryData;
     bool m_stopStreamWhenDoneDelivering;
 };
 

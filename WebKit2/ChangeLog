@@ -2,6 +2,32 @@
 
         Reviewed by Adam Roben.
 
+        Change a bunch of Vector<char> to Vector<uint8_t> to better indicate that we're
+        dealing with raw bytes.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::parsePostBuffer):
+        (WebKit::NPN_GetURL):
+        (WebKit::NPN_PostURL):
+        (WebKit::NPN_GetURLNotify):
+        (WebKit::NPN_PostURLNotify):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::loadURL):
+        (WebKit::NetscapePlugin::initialize):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.cpp:
+        (WebKit::NetscapePluginStream::deliverData):
+        (WebKit::NetscapePluginStream::deliverDataToPlugin):
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.h:
+        * WebProcess/Plugins/PluginController.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::loadURL):
+        * WebProcess/Plugins/PluginView.h:
+
+2010-09-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
         Assertion fails in [WKView _updateWindowFrame] when closing a WebKit2 window
         https://bugs.webkit.org/show_bug.cgi?id=46264
         <rdar://problem/8463534>

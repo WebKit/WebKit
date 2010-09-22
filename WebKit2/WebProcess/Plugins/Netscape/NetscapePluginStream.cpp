@@ -182,7 +182,7 @@ void NetscapePluginStream::deliverData(const char* bytes, int length)
 
     if (m_transferMode != NP_ASFILEONLY) {
         if (!m_deliveryData)
-            m_deliveryData.set(new Vector<char>);
+            m_deliveryData.set(new Vector<uint8_t>);
 
         m_deliveryData->reserveCapacity(m_deliveryData->size() + length);
         m_deliveryData->append(bytes, length);
@@ -216,7 +216,7 @@ void NetscapePluginStream::deliverDataToPlugin()
 
         // Figure out how much data to send to the plug-in.
         int32_t dataLength = min(numBytesPluginCanHandle, numBytesToDeliver - numBytesDelivered);
-        char* data = m_deliveryData->data() + numBytesDelivered;
+        uint8_t* data = m_deliveryData->data() + numBytesDelivered;
 
         int32_t numBytesWritten = m_plugin->NPP_Write(&m_npStream, m_offset, dataLength, data);
         if (numBytesWritten < 0) {

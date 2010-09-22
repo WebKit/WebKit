@@ -60,7 +60,7 @@ public:
     void invalidate(const NPRect*);
     const char* userAgent();
     void loadURL(const String& method, const String& urlString, const String& target, const WebCore::HTTPHeaderMap& headerFields,
-                 const Vector<char>& httpBody, bool sendNotification, void* notificationData);
+                 const Vector<uint8_t>& httpBody, bool sendNotification, void* notificationData);
     NPError destroyStream(NPStream*, NPReason);
     void setIsWindowed(bool windowed) { m_isWindowed = windowed; }
     void setStatusbarText(const String&);
