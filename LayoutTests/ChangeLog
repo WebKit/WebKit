@@ -1,3 +1,14 @@
+2010-09-22  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed.
+
+        Rebaseline multicol/span tests for GTK, QT platforms as part of r68062.
+
+        * platform/gtk/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt:
+        * platform/gtk/fast/multicol/span/span-as-immediate-columns-child-removal-expected.txt:
+        * platform/qt/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt:
+        * platform/qt/fast/multicol/span/span-as-immediate-columns-child-removal-expected.txt:
+
 2010-09-22  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.
