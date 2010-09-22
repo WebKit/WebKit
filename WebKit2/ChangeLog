@@ -2,6 +2,27 @@
 
         Reviewed by Adam Roben.
 
+        Crash when running plug-in layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=46269
+
+        Store the web page directly in the PluginView class, instead of getting it from the frame
+        of the plug-in element; this fixes two crashes, one where the plug-in element had been deallocated
+        before the plug-in view, and another where the plug-in element's document did not have a frame.
+
+        This also makes things more robust since we're asserting in the WebPage destructor that no plug-ins have
+        an outstanding reference to it.
+        
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::webPage):
+        (WebKit::PluginView::PluginView):
+        (WebKit::PluginView::~PluginView):
+        (WebKit::PluginView::initializePlugin):
+        * WebProcess/Plugins/PluginView.h:
+
+2010-09-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
         Change a bunch of Vector<char> to Vector<uint8_t> to better indicate that we're
         dealing with raw bytes.
 

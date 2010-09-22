@@ -71,8 +71,6 @@ private:
     PluginView(WebCore::HTMLPlugInElement*, PassRefPtr<Plugin>, const Plugin::Parameters& parameters);
     virtual ~PluginView();
 
-    WebPage* webPage();
-
     void initializePlugin();
     void destroyPlugin();
 
@@ -132,6 +130,7 @@ private:
 
     WebCore::HTMLPlugInElement* m_pluginElement;
     RefPtr<Plugin> m_plugin;
+    WebPage* m_webPage;
     Plugin::Parameters m_parameters;
     
     bool m_isInitialized;
