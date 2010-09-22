@@ -1,3 +1,12 @@
+2010-09-21  John Gregg  <johnnyg@google.com>
+
+        Unreviewed, chromium test expecations.
+
+        [chromium] update test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=46235
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
