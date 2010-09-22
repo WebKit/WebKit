@@ -1,3 +1,47 @@
+2010-09-22  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: implement pausing on XHR
+        https://bugs.webkit.org/show_bug.cgi?id=46086
+
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+        (WebCore::V8XMLHttpRequest::sendCallback):
+        * inspector/Inspector.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::setNativeBreakpoint):
+        (WebCore::InspectorController::removeNativeBreakpoint):
+        (WebCore::InspectorController::willInsertDOMNodeImpl):
+        (WebCore::InspectorController::willRemoveDOMNodeImpl):
+        (WebCore::InspectorController::willModifyDOMAttrImpl):
+        (WebCore::InspectorController::instrumentWillSendXMLHttpRequestImpl):
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::instrumentWillSendXMLHttpRequest):
+        (WebCore::InspectorController::inspectorControllerForScriptExecutionContext):
+        (WebCore::InspectorController::inspectorControllerForNode):
+        (WebCore::InspectorController::inspectorControllerForDocument):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::InspectorDebuggerAgent):
+        (WebCore::InspectorDebuggerAgent::didPause):
+        (WebCore::InspectorDebuggerAgent::breakProgram):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane.prototype.updateStatus):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel):
+        (WebInspector.ElementsPanel.prototype.reset):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._populateTagContextMenu):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype.debuggerPaused):
+        (WebInspector.ScriptsPanel.prototype.reset):
+        * inspector/front-end/Settings.js:
+        * xml/XMLHttpRequest.h:
+        (WebCore::XMLHttpRequest::url):
+
 2010-09-22  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.

@@ -1,3 +1,13 @@
+2010-09-22  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: implement pausing on XHR
+        https://bugs.webkit.org/show_bug.cgi?id=46086
+
+        * src/js/DevTools.js:
+        ():
+
 2010-09-21  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Darin Fisher.

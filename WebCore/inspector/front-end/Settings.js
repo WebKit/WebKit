@@ -44,7 +44,7 @@ var Preferences = {
     profilerAlwaysEnabled: false,
     auditsPanelEnabled: true,
     onlineDetectionEnabled: true,
-    domBreakpointsEnabled: false,
+    nativeInstrumentationEnabled: false,
     resourceExportEnabled: false
 }
 

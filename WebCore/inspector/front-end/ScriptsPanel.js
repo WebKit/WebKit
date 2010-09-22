@@ -133,8 +133,11 @@ WebInspector.ScriptsPanel = function()
     this.sidebarPanes.callstack = new WebInspector.CallStackSidebarPane();
     this.sidebarPanes.scopechain = new WebInspector.ScopeChainSidebarPane();
     this.sidebarPanes.jsBreakpoints = WebInspector.createJSBreakpointsSidebarPane();
-    if (Preferences.domBreakpointsEnabled)
+    if (Preferences.nativeInstrumentationEnabled) {
         this.sidebarPanes.domBreakpoints = WebInspector.createDOMBreakpointsSidebarPane();
+        this.sidebarPanes.domBreakpoints.expanded = true;
+    }
+
     this.sidebarPanes.workers = new WebInspector.WorkersSidebarPane();
 
     for (var pane in this.sidebarPanes)
@@ -145,8 +148,6 @@ WebInspector.ScriptsPanel = function()
 
     this.sidebarPanes.scopechain.expanded = true;
     this.sidebarPanes.jsBreakpoints.expanded = true;
-    if (Preferences.domBreakpointsEnabled)
-        this.sidebarPanes.domBreakpoints.expanded = true;
 
     var panelEnablerHeading = WebInspector.UIString("You need to enable debugging before you can use the Scripts panel.");
     var panelEnablerDisclaimer = WebInspector.UIString("Enabling debugging will make scripts run slower.");
@@ -387,8 +388,8 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.callstack.update(details.callFrames, this._sourceIDMap);
         this.sidebarPanes.callstack.selectedCallFrame = details.callFrames[0];
 
-        if (details.status)
-            this.sidebarPanes.callstack.updateStatus(details.status);
+        if ("eventType" in details)
+            this.sidebarPanes.callstack.updateStatus(details.eventType, details.eventData);
 
         WebInspector.currentPanel = this;
         window.focus();
@@ -467,7 +468,7 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.watchExpressions.refreshExpressions();
         if (!preserveItems) {
             this.sidebarPanes.jsBreakpoints.reset();
-            if (Preferences.domBreakpointsEnabled)
+            if (Preferences.nativeInstrumentationEnabled)
                 this.sidebarPanes.domBreakpoints.reset();
             this.sidebarPanes.workers.reset();
         }

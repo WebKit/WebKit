@@ -45,7 +45,7 @@ var context = {};  // Used by WebCore's inspector routines.
     Preferences.profilerAlwaysEnabled = true;
     Preferences.canEditScriptSource = true;
     Preferences.onlineDetectionEnabled = false;
-    Preferences.domBreakpointsEnabled = true;
+    Preferences.nativeInstrumentationEnabled = true;
 })();
 
 var devtools = devtools || {};

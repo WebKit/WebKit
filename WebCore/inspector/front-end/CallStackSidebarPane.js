@@ -82,13 +82,13 @@ WebInspector.CallStackSidebarPane.prototype = {
         }
     },
 
-    updateStatus:  function(status)
+    updateStatus:  function(eventType, eventData)
     {
         var statusElement = document.createElement("div");
         statusElement.className = "info";
 
-        var breakpointType = status.breakpoint.type;
-        var substitutions = [WebInspector.DOMBreakpoint.labelForType(breakpointType), WebInspector.panels.elements.linkifyNodeById(status.breakpoint.nodeId)];
+        var breakpoint = eventData.breakpoint;
+        var substitutions = [WebInspector.DOMBreakpoint.labelForType(breakpoint.type), WebInspector.panels.elements.linkifyNodeById(breakpoint.nodeId)];
         var formatters = {
             s: function(substitution)
             {
@@ -101,10 +101,10 @@ WebInspector.CallStackSidebarPane.prototype = {
                 b = document.createTextNode(b);
             statusElement.appendChild(b);
         }
-        if (breakpointType === WebInspector.DOMBreakpoint.Types.SubtreeModified) {
-            var targetNode = WebInspector.panels.elements.linkifyNodeById(status.targetNodeId);
-            if (status.insertion) {
-                if (status.targetNodeId !== status.breakpoint.nodeId)
+        if (breakpoint.type === WebInspector.DOMBreakpoint.Types.SubtreeModified) {
+            var targetNode = WebInspector.panels.elements.linkifyNodeById(eventData.targetNodeId);
+            if (eventData.insertion) {
+                if (eventData.targetNodeId !== breakpoint.nodeId)
                     WebInspector.formatLocalized("Paused on a \"%s\" breakpoint set on %s, because a new child was added to its descendant %s.", substitutions.concat(targetNode), formatters, "", append);
                 else
                     WebInspector.formatLocalized("Paused on a \"%s\" breakpoint set on %s, because a new child was added to that node.", substitutions, formatters, "", append);
@@ -112,6 +112,7 @@ WebInspector.CallStackSidebarPane.prototype = {
                 WebInspector.formatLocalized("Paused on a \"%s\" breakpoint set on %s, because its descendant %s was removed.", substitutions.concat(targetNode), formatters, "", append);
         } else
             WebInspector.formatLocalized("Paused on a \"%s\" breakpoint set on %s.", substitutions, formatters, "", append);
+
         this.bodyElement.appendChild(statusElement);
     },
 

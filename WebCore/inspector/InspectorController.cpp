@@ -153,7 +153,7 @@ static const float maximumAttachedHeightRatio = 0.75f;
 static const unsigned maximumConsoleMessages = 1000;
 static const unsigned expireConsoleMessagesStep = 100;
 
-static unsigned s_inspectorControllerCount;
+unsigned InspectorController::s_inspectorControllerCount = 0;
 
 InspectorController::InspectorController(Page* page, InspectorClient* client)
     : m_inspectedPage(page)
@@ -174,6 +174,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_injectedScriptHost(InjectedScriptHost::create(this))
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_attachDebuggerWhenShown(false)
+    , m_lastBreakpointId(0)
     , m_profilerAgent(InspectorProfilerAgent::create(this))
 #endif
 {
@@ -1672,6 +1673,29 @@ void InspectorController::resume()
         m_debuggerAgent->resume();
 }
 
+void InspectorController::setNativeBreakpoint(PassRefPtr<InspectorObject> breakpoint, unsigned int* breakpointId)
+{
+    *breakpointId = 0;
+    String type;
+    if (!breakpoint->getString("type", &type))
+        return;
+    if (type == "XHR") {
+        RefPtr<InspectorObject> condition = breakpoint->getObject("condition");
+        if (!condition)
+            return;
+        String url;
+        if (!condition->getString("url", &url))
+            return;
+        *breakpointId = ++m_lastBreakpointId;
+        m_XHRBreakpoints.set(*breakpointId, url);
+    }
+}
+
+void InspectorController::removeNativeBreakpoint(unsigned int breakpointId)
+{
+    m_XHRBreakpoints.remove(breakpointId);
+}
+
 #endif
 
 void InspectorController::evaluateForTestInFrontend(long callId, const String& script)
@@ -2085,9 +2109,9 @@ void InspectorController::willInsertDOMNodeImpl(Node* node, Node* parent)
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     if (!m_debuggerAgent || !m_domAgent)
         return;
-    PassRefPtr<InspectorValue> details;
-    if (m_domAgent->shouldBreakOnNodeInsertion(node, parent, &details))
-        m_debuggerAgent->breakProgram(details);
+    PassRefPtr<InspectorValue> eventData;
+    if (m_domAgent->shouldBreakOnNodeInsertion(node, parent, &eventData))
+        m_debuggerAgent->breakProgram(DOMBreakpointDebuggerEventType, eventData);
 #endif
 }
 
@@ -2102,9 +2126,9 @@ void InspectorController::willRemoveDOMNodeImpl(Node* node)
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     if (!m_debuggerAgent || !m_domAgent)
         return;
-    PassRefPtr<InspectorValue> details;
-    if (m_domAgent->shouldBreakOnNodeRemoval(node, &details))
-        m_debuggerAgent->breakProgram(details);
+    PassRefPtr<InspectorValue> eventData;
+    if (m_domAgent->shouldBreakOnNodeRemoval(node, &eventData))
+        m_debuggerAgent->breakProgram(DOMBreakpointDebuggerEventType, eventData);
 #endif
 }
 
@@ -2119,9 +2143,9 @@ void InspectorController::willModifyDOMAttrImpl(Element* element)
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     if (!m_debuggerAgent || !m_domAgent)
         return;
-    PassRefPtr<InspectorValue> details;
-    if (m_domAgent->shouldBreakOnAttributeModification(element, &details))
-        m_debuggerAgent->breakProgram(details);
+    PassRefPtr<InspectorValue> eventData;
+    if (m_domAgent->shouldBreakOnAttributeModification(element, &eventData))
+        m_debuggerAgent->breakProgram(DOMBreakpointDebuggerEventType, eventData);
 #endif
 }
 
@@ -2136,6 +2160,21 @@ void InspectorController::characterDataModifiedImpl(CharacterData* characterData
     if (m_domAgent)
         m_domAgent->characterDataModified(characterData);
 }
+
+void InspectorController::instrumentWillSendXMLHttpRequestImpl(const KURL& url)
+{
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    if (m_debuggerAgent) {
+        if (!m_XHRBreakpoints.size())
+            return;
+        RefPtr<InspectorObject> eventData = InspectorObject::create();
+        eventData->setNumber("recordType", XHRSendRecordType);
+        eventData->setString("url", url);
+        m_debuggerAgent->breakProgram(NativeBreakpointDebuggerEventType, eventData);
+    }
+#endif
+}
+
 
 } // namespace WebCore
 

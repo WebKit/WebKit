@@ -74,7 +74,7 @@ WebInspector.ElementsPanel = function()
     this.sidebarPanes.styles = new WebInspector.StylesSidebarPane(this.sidebarPanes.computedStyle);
     this.sidebarPanes.metrics = new WebInspector.MetricsSidebarPane();
     this.sidebarPanes.properties = new WebInspector.PropertiesSidebarPane();
-    if (Preferences.domBreakpointsEnabled)
+    if (Preferences.nativeInstrumentationEnabled)
         this.sidebarPanes.domBreakpoints = WebInspector.createDOMBreakpointsSidebarPane();
     this.sidebarPanes.eventListeners = new WebInspector.EventListenersSidebarPane();
 
@@ -171,7 +171,7 @@ WebInspector.ElementsPanel.prototype = {
 
         delete this.currentQuery;
 
-        if (Preferences.domBreakpointsEnabled)
+        if (Preferences.nativeInstrumentationEnabled)
             this.sidebarPanes.domBreakpoints.reset();
     },
 
