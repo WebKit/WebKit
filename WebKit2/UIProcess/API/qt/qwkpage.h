@@ -15,6 +15,7 @@
 class QCursor;
 class QWKGraphicsWidget;
 class QWKPagePrivate;
+class QtViewportConfigurationPrivate;
 
 class QWEBKIT_EXPORT QWKPage : public QObject {
     Q_OBJECT
@@ -33,6 +34,36 @@ public:
         WebActionCount
     };
 
+    class ViewportConfiguration {
+    public:
+        ViewportConfiguration();
+        ViewportConfiguration(const QWKPage::ViewportConfiguration& other);
+
+        ~ViewportConfiguration();
+
+        QWKPage::ViewportConfiguration& operator=(const QWKPage::ViewportConfiguration& other);
+
+        inline qreal initialScaleFactor() const { return m_initialScaleFactor; };
+        inline qreal minimumScaleFactor() const { return m_minimumScaleFactor; };
+        inline qreal maximumScaleFactor() const { return m_maximumScaleFactor; };
+        inline qreal devicePixelRatio() const { return m_devicePixelRatio; };
+        inline bool isUserScalable() const { return m_isUserScalable; };
+        inline bool isValid() const { return m_isValid; };
+        inline QSize size() const { return m_size; };
+
+    private:
+        QSharedDataPointer<QtViewportConfigurationPrivate> d;
+        qreal m_initialScaleFactor;
+        qreal m_minimumScaleFactor;
+        qreal m_maximumScaleFactor;
+        qreal m_devicePixelRatio;
+        bool m_isUserScalable;
+        bool m_isValid;
+        QSize m_size;
+
+        friend class QWKPage;
+    };
+
     QWKPage(WKPageNamespaceRef);
     virtual ~QWKPage();
 
@@ -45,6 +76,7 @@ public:
     QString title() const;
 
     void setViewportSize(const QSize&);
+    ViewportConfiguration viewportConfigurationForSize(QSize availableSize) const;
 
     QAction* action(WebAction action) const;
     void triggerAction(WebAction action, bool checked = false);

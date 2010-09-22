@@ -85,4 +85,14 @@ public:
     QBasicTimer tripleClickTimer;
 };
 
+class QtViewportConfigurationPrivate : public QSharedData {
+public:
+    QtViewportConfigurationPrivate(QWKPage::ViewportConfiguration* qq)
+        : q(qq)
+    { }
+
+    QWKPage::ViewportConfiguration* q;
+};
+
+
 #endif /* qkpage_p_h */

@@ -28,6 +28,7 @@
 #include "WebPlatformStrategies.h"
 #include "WKStringQt.h"
 #include "WKURLQt.h"
+#include "ViewportArguments.h"
 #include <QAction>
 #include <QApplication>
 #include <QGraphicsSceneMouseEvent>
@@ -273,6 +274,78 @@ QWKPage::QWKPage(WKPageNamespaceRef namespaceRef)
 QWKPage::~QWKPage()
 {
     delete d;
+}
+
+QWKPage::ViewportConfiguration::ViewportConfiguration()
+    : d(0)
+    , m_initialScaleFactor(-1.0)
+    , m_minimumScaleFactor(-1.0)
+    , m_maximumScaleFactor(-1.0)
+    , m_devicePixelRatio(-1.0)
+    , m_isUserScalable(true)
+    , m_isValid(false)
+{
+
+}
+
+QWKPage::ViewportConfiguration::ViewportConfiguration(const QWKPage::ViewportConfiguration& other)
+    : d(other.d)
+    , m_initialScaleFactor(other.m_initialScaleFactor)
+    , m_minimumScaleFactor(other.m_minimumScaleFactor)
+    , m_maximumScaleFactor(other.m_maximumScaleFactor)
+    , m_devicePixelRatio(other.m_devicePixelRatio)
+    , m_isUserScalable(other.m_isUserScalable)
+    , m_isValid(other.m_isValid)
+    , m_size(other.m_size)
+{
+
+}
+
+QWKPage::ViewportConfiguration::~ViewportConfiguration()
+{
+
+}
+
+QWKPage::ViewportConfiguration& QWKPage::ViewportConfiguration::operator=(const QWKPage::ViewportConfiguration& other)
+{
+    if (this != &other) {
+        d = other.d;
+        m_initialScaleFactor = other.m_initialScaleFactor;
+        m_minimumScaleFactor = other.m_minimumScaleFactor;
+        m_maximumScaleFactor = other.m_maximumScaleFactor;
+        m_devicePixelRatio = other.m_devicePixelRatio;
+        m_isUserScalable = other.m_isUserScalable;
+        m_isValid = other.m_isValid;
+        m_size = other.m_size;
+    }
+
+    return *this;
+}
+
+QWKPage::ViewportConfiguration QWKPage::viewportConfigurationForSize(QSize availableSize) const
+{
+    static int desktopWidth = 980;
+    static int deviceDPI = 160;
+
+    // FIXME: Add a way to get these data via the platform plugin and fall back
+    // to the size of the view.
+    int deviceWidth = 480;
+    int deviceHeight = 864;
+
+    ViewportArguments args;
+
+    WebCore::ViewportConfiguration conf = WebCore::findConfigurationForViewportData(args, desktopWidth, deviceWidth, deviceHeight, deviceDPI, availableSize);
+
+    ViewportConfiguration result;
+
+    result.m_isValid = true;
+    result.m_size = conf.layoutViewport;
+    result.m_initialScaleFactor = conf.initialScale;
+    result.m_minimumScaleFactor = conf.minimumScale;
+    result.m_maximumScaleFactor = conf.maximumScale;
+    result.m_devicePixelRatio = conf.devicePixelRatio;
+
+    return result;
 }
 
 void QWKPage::timerEvent(QTimerEvent* ev)

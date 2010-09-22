@@ -1,3 +1,19 @@
+2010-09-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        Add a ViewportConfiguration class for the Qt WebKit2 API, which
+        currently calculated a fallback viewport configuration.
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::ViewportConfiguration::ViewportConfiguration):
+        (QWKPage::ViewportConfiguration::~ViewportConfiguration):
+        (QWKPage::ViewportConfiguration::operator=):
+        (QWKPage::viewportConfigurationForSize):
+        * UIProcess/API/qt/qwkpage.h:
+        * UIProcess/API/qt/qwkpage_p.h:
+        (QtViewportConfigurationPrivate::QtViewportConfigurationPrivate):
+
 2010-09-22  Adam Roben  <aroben@apple.com>
 
         Windows build fix
