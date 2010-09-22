@@ -26,12 +26,12 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
-#include "SVGFELighting.h"
+#if ENABLE(FILTERS)
+#include "FELighting.h"
 
 #include "CanvasPixelArray.h"
 #include "ImageData.h"
-#include "SVGLightSource.h"
+#include "LightSource.h"
 
 namespace WebCore {
 
@@ -267,4 +267,4 @@ void FELighting::apply(Filter* filter)
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(FILTERS)
+#endif // ENABLE(FILTERS)

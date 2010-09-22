@@ -21,10 +21,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGLightSource_h
-#define SVGLightSource_h
+#ifndef LightSource_h
+#define LightSource_h
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
+#if ENABLE(FILTERS)
 #include "FloatPoint3D.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -79,6 +79,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(FILTERS)
+#endif // ENABLE(FILTERS)
 
-#endif // SVGLightSource_h
+#endif // LightSource_h

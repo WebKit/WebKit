@@ -21,7 +21,7 @@
 #define SVGFEMorphologyElement_h
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
-#include "SVGFEMorphology.h"
+#include "FEMorphology.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {

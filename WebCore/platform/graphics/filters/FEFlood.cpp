@@ -22,8 +22,8 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
-#include "SVGFEFlood.h"
+#if ENABLE(FILTERS)
+#include "FEFlood.h"
 
 #include "Filter.h"
 #include "GraphicsContext.h"
@@ -88,4 +88,4 @@ TextStream& FEFlood::externalRepresentation(TextStream& ts, int indent) const
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(FILTERS)
+#endif // ENABLE(FILTERS)

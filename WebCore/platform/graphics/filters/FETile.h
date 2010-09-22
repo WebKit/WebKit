@@ -19,48 +19,32 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGFEMorphology_h
-#define SVGFEMorphology_h
+#ifndef FETile_h
+#define FETile_h
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
+#if ENABLE(FILTERS)
 #include "FilterEffect.h"
 #include "Filter.h"
 
 namespace WebCore {
-
-enum MorphologyOperatorType {
-    FEMORPHOLOGY_OPERATOR_UNKNOWN = 0,
-    FEMORPHOLOGY_OPERATOR_ERODE = 1,
-    FEMORPHOLOGY_OPERATOR_DILATE = 2
-};
-
-class FEMorphology : public FilterEffect {
+    
+class FETile : public FilterEffect {
 public:
-    static PassRefPtr<FEMorphology> create(MorphologyOperatorType, float radiusX, float radiusY);  
-    MorphologyOperatorType morphologyOperator() const;
-    void setMorphologyOperator(MorphologyOperatorType);
-
-    float radiusX() const;
-    void setRadiusX(float);
-
-    float radiusY() const;
-    void setRadiusY(float);
+    static PassRefPtr<FETile> create();
 
     virtual void apply(Filter*);
     virtual void dump();
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
-private:
-    FEMorphology(MorphologyOperatorType, float radiusX, float radiusY);
+    virtual FloatRect determineFilterPrimitiveSubregion(Filter*);
     
-    MorphologyOperatorType m_type;
-    float m_radiusX;
-    float m_radiusY;
+private:
+    FETile();
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(FILTERS)
+#endif // ENABLE(FILTERS)
 
-#endif // SVGFEMorphology_h
+#endif // FETile_h

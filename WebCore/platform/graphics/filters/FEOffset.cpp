@@ -22,8 +22,8 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
-#include "SVGFEOffset.h"
+#if ENABLE(FILTERS)
+#include "FEOffset.h"
 
 #include "Filter.h"
 #include "GraphicsContext.h"
@@ -109,4 +109,4 @@ TextStream& FEOffset::externalRepresentation(TextStream& ts, int indent) const
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(FILTERS)
+#endif // ENABLE(FILTERS)

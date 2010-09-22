@@ -22,7 +22,7 @@
 #define SVGFETurbulenceElement_h
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
-#include "SVGFETurbulence.h"
+#include "FETurbulence.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {

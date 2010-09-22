@@ -21,7 +21,8 @@
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFEDistantLightElement.h"
-#include "SVGDistantLightSource.h"
+
+#include "DistantLightSource.h"
 
 namespace WebCore {
 

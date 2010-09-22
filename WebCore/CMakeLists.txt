@@ -1257,9 +1257,21 @@ SET(WebCore_SOURCES
     platform/graphics/filters/FEColorMatrix.cpp
     platform/graphics/filters/FEComponentTransfer.cpp
     platform/graphics/filters/FEComposite.cpp
+    platform/graphics/filters/FEConvolveMatrix.cpp
+    platform/graphics/filters/FEDiffuseLighting.cpp
+    platform/graphics/filters/FEDisplacementMap.cpp
+    platform/graphics/filters/FEFlood.cpp
     platform/graphics/filters/FEGaussianBlur.cpp
+    platform/graphics/filters/FELighting.cpp
+    platform/graphics/filters/FEMerge.cpp
+    platform/graphics/filters/FEMorphology.cpp
+    platform/graphics/filters/FEOffset.cpp
+    platform/graphics/filters/FESpecularLighting.cpp
+    platform/graphics/filters/FETile.cpp
+    platform/graphics/filters/FETurbulence.cpp
     platform/graphics/filters/FilterEffect.cpp
     platform/graphics/filters/ImageBufferFilter.cpp
+    platform/graphics/filters/LightSource.cpp
     platform/graphics/filters/SourceAlpha.cpp
     platform/graphics/filters/SourceGraphic.cpp
 
@@ -1812,21 +1824,9 @@ IF (ENABLE_SVG)
         svg/animation/SMILTimeContainer.cpp
         svg/animation/SVGSMILElement.cpp
         svg/graphics/SVGImage.cpp
-        svg/graphics/filters/SVGFEConvolveMatrix.cpp
-        svg/graphics/filters/SVGFEDiffuseLighting.cpp
-        svg/graphics/filters/SVGFEDisplacementMap.cpp
-        svg/graphics/filters/SVGFEFlood.cpp
         svg/graphics/filters/SVGFEImage.cpp
-        svg/graphics/filters/SVGFELighting.cpp
-        svg/graphics/filters/SVGFEMerge.cpp
-        svg/graphics/filters/SVGFEMorphology.cpp
-        svg/graphics/filters/SVGFEOffset.cpp
-        svg/graphics/filters/SVGFESpecularLighting.cpp
-        svg/graphics/filters/SVGFETile.cpp
-        svg/graphics/filters/SVGFETurbulence.cpp
         svg/graphics/filters/SVGFilter.cpp
         svg/graphics/filters/SVGFilterBuilder.cpp
-        svg/graphics/filters/SVGLightSource.cpp
     )
 ENDIF()
 

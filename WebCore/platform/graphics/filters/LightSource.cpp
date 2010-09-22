@@ -22,13 +22,13 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
-#include "SVGLightSource.h"
+#if ENABLE(FILTERS)
+#include "LightSource.h"
 
-#include "SVGDistantLightSource.h"
-#include "SVGPointLightSource.h"
-#include "SVGRenderTreeAsText.h"
-#include "SVGSpotLightSource.h"
+#include "DistantLightSource.h"
+#include "PointLightSource.h"
+#include "RenderTreeAsText.h"
+#include "SpotLightSource.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -166,4 +166,4 @@ TextStream& DistantLightSource::externalRepresentation(TextStream& ts) const
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(FILTERS)
+#endif // ENABLE(FILTERS)

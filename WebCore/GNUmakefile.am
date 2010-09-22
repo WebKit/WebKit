@@ -2087,6 +2087,7 @@ webcore_sources += \
 	WebCore/platform/graphics/Color.h \
 	WebCore/platform/graphics/ColorSpace.h \
 	WebCore/platform/graphics/DashArray.h \
+	WebCore/platform/graphics/filters/DistantLightSource.h \
 	WebCore/platform/graphics/filters/FEBlend.cpp \
 	WebCore/platform/graphics/filters/FEBlend.h \
 	WebCore/platform/graphics/filters/FEColorMatrix.cpp \
@@ -2095,17 +2096,43 @@ webcore_sources += \
 	WebCore/platform/graphics/filters/FEComponentTransfer.h \
 	WebCore/platform/graphics/filters/FEComposite.cpp \
 	WebCore/platform/graphics/filters/FEComposite.h \
+	WebCore/platform/graphics/filters/FEConvolveMatrix.cpp \
+	WebCore/platform/graphics/filters/FEConvolveMatrix.h \
+	WebCore/platform/graphics/filters/FEDiffuseLighting.cpp \
+	WebCore/platform/graphics/filters/FEDiffuseLighting.h \
+	WebCore/platform/graphics/filters/FEDisplacementMap.cpp \
+	WebCore/platform/graphics/filters/FEDisplacementMap.h \
 	WebCore/platform/graphics/filters/FEGaussianBlur.cpp \
 	WebCore/platform/graphics/filters/FEGaussianBlur.h \
+	WebCore/platform/graphics/filters/FEFlood.cpp \
+	WebCore/platform/graphics/filters/FEFlood.h \
+	WebCore/platform/graphics/filters/FELighting.cpp \
+	WebCore/platform/graphics/filters/FELighting.h \
+	WebCore/platform/graphics/filters/FEMerge.cpp \
+	WebCore/platform/graphics/filters/FEMerge.h \
+	WebCore/platform/graphics/filters/FEMorphology.cpp \
+	WebCore/platform/graphics/filters/FEMorphology.h \
+	WebCore/platform/graphics/filters/FEOffset.cpp \
+	WebCore/platform/graphics/filters/FEOffset.h \
+	WebCore/platform/graphics/filters/FESpecularLighting.cpp \
+	WebCore/platform/graphics/filters/FESpecularLighting.h \
+	WebCore/platform/graphics/filters/FETile.cpp \
+	WebCore/platform/graphics/filters/FETile.h \
+	WebCore/platform/graphics/filters/FETurbulence.cpp \
+	WebCore/platform/graphics/filters/FETurbulence.h \
 	WebCore/platform/graphics/filters/FilterEffect.cpp \
 	WebCore/platform/graphics/filters/FilterEffect.h \
 	WebCore/platform/graphics/filters/Filter.h \
 	WebCore/platform/graphics/filters/ImageBufferFilter.cpp \
 	WebCore/platform/graphics/filters/ImageBufferFilter.h \
+	WebCore/platform/graphics/filters/LightSource.cpp \
+	WebCore/platform/graphics/filters/LightSource.h \
+	WebCore/platform/graphics/filters/PointLightSource.h \
 	WebCore/platform/graphics/filters/SourceAlpha.cpp \
 	WebCore/platform/graphics/filters/SourceAlpha.h \
 	WebCore/platform/graphics/filters/SourceGraphic.cpp \
 	WebCore/platform/graphics/filters/SourceGraphic.h \
+	WebCore/platform/graphics/filters/SpotLightSource.h \
 	WebCore/platform/graphics/FloatPoint3D.cpp \
 	WebCore/platform/graphics/FloatPoint3D.h \
 	WebCore/platform/graphics/FloatPoint.cpp \
@@ -2861,39 +2888,12 @@ webcore_sources += \
 	WebCore/svg/ColorDistance.h \
 	WebCore/svg/ElementTimeControl.h \
 	WebCore/svg/GradientAttributes.h \
-	WebCore/svg/graphics/filters/SVGDistantLightSource.h \
-	WebCore/svg/graphics/filters/SVGFEConvolveMatrix.cpp \
-	WebCore/svg/graphics/filters/SVGFEConvolveMatrix.h \
-	WebCore/svg/graphics/filters/SVGFEDiffuseLighting.cpp \
-	WebCore/svg/graphics/filters/SVGFEDiffuseLighting.h \
-	WebCore/svg/graphics/filters/SVGFEDisplacementMap.cpp \
-	WebCore/svg/graphics/filters/SVGFEDisplacementMap.h \
-	WebCore/svg/graphics/filters/SVGFEFlood.cpp \
-	WebCore/svg/graphics/filters/SVGFEFlood.h \
 	WebCore/svg/graphics/filters/SVGFEImage.cpp \
 	WebCore/svg/graphics/filters/SVGFEImage.h \
-	WebCore/svg/graphics/filters/SVGFELighting.cpp \
-	WebCore/svg/graphics/filters/SVGFELighting.h \
-	WebCore/svg/graphics/filters/SVGFEMerge.cpp \
-	WebCore/svg/graphics/filters/SVGFEMerge.h \
-	WebCore/svg/graphics/filters/SVGFEMorphology.cpp \
-	WebCore/svg/graphics/filters/SVGFEMorphology.h \
-	WebCore/svg/graphics/filters/SVGFEOffset.cpp \
-	WebCore/svg/graphics/filters/SVGFEOffset.h \
-	WebCore/svg/graphics/filters/SVGFESpecularLighting.cpp \
-	WebCore/svg/graphics/filters/SVGFESpecularLighting.h \
-	WebCore/svg/graphics/filters/SVGFETile.cpp \
-	WebCore/svg/graphics/filters/SVGFETile.h \
-	WebCore/svg/graphics/filters/SVGFETurbulence.cpp \
-	WebCore/svg/graphics/filters/SVGFETurbulence.h \
 	WebCore/svg/graphics/filters/SVGFilterBuilder.cpp \
 	WebCore/svg/graphics/filters/SVGFilterBuilder.h \
 	WebCore/svg/graphics/filters/SVGFilter.cpp \
 	WebCore/svg/graphics/filters/SVGFilter.h \
-	WebCore/svg/graphics/filters/SVGLightSource.cpp \
-	WebCore/svg/graphics/filters/SVGLightSource.h \
-	WebCore/svg/graphics/filters/SVGPointLightSource.h \
-	WebCore/svg/graphics/filters/SVGSpotLightSource.h \
 	WebCore/svg/graphics/SVGImage.cpp \
 	WebCore/svg/graphics/SVGImage.h \
 	WebCore/svg/LinearGradientAttributes.h \

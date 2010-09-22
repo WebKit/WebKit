@@ -1479,6 +1479,33 @@
 		845E72F80FD261EE00A87D79 /* Filter.h in Headers */ = {isa = PBXBuildFile; fileRef = 845E72F70FD261EE00A87D79 /* Filter.h */; };
 		845E72FB0FD2623900A87D79 /* SVGFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 845E72F90FD2623900A87D79 /* SVGFilter.cpp */; };
 		845E72FC0FD2623900A87D79 /* SVGFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 845E72FA0FD2623900A87D79 /* SVGFilter.h */; };
+		84730D771248F0B300D3A9C9 /* DistantLightSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 84730D5A1248F0B300D3A9C9 /* DistantLightSource.h */; };
+		84730D781248F0B300D3A9C9 /* FEConvolveMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84730D5B1248F0B300D3A9C9 /* FEConvolveMatrix.cpp */; };
+		84730D791248F0B300D3A9C9 /* FEConvolveMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 84730D5C1248F0B300D3A9C9 /* FEConvolveMatrix.h */; };
+		84730D7A1248F0B300D3A9C9 /* FEDiffuseLighting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84730D5D1248F0B300D3A9C9 /* FEDiffuseLighting.cpp */; };
+		84730D7B1248F0B300D3A9C9 /* FEDiffuseLighting.h in Headers */ = {isa = PBXBuildFile; fileRef = 84730D5E1248F0B300D3A9C9 /* FEDiffuseLighting.h */; };
+		84730D7C1248F0B300D3A9C9 /* FEDisplacementMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84730D5F1248F0B300D3A9C9 /* FEDisplacementMap.cpp */; };
+		84730D7D1248F0B300D3A9C9 /* FEDisplacementMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 84730D601248F0B300D3A9C9 /* FEDisplacementMap.h */; };
+		84730D7E1248F0B300D3A9C9 /* FEFlood.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84730D611248F0B300D3A9C9 /* FEFlood.cpp */; };
+		84730D7F1248F0B300D3A9C9 /* FEFlood.h in Headers */ = {isa = PBXBuildFile; fileRef = 84730D621248F0B300D3A9C9 /* FEFlood.h */; };
+		84730D801248F0B300D3A9C9 /* FELighting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84730D631248F0B300D3A9C9 /* FELighting.cpp */; };
+		84730D811248F0B300D3A9C9 /* FELighting.h in Headers */ = {isa = PBXBuildFile; fileRef = 84730D641248F0B300D3A9C9 /* FELighting.h */; };
+		84730D821248F0B300D3A9C9 /* FEMerge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84730D651248F0B300D3A9C9 /* FEMerge.cpp */; };
+		84730D831248F0B300D3A9C9 /* FEMerge.h in Headers */ = {isa = PBXBuildFile; fileRef = 84730D661248F0B300D3A9C9 /* FEMerge.h */; };
+		84730D841248F0B300D3A9C9 /* FEMorphology.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84730D671248F0B300D3A9C9 /* FEMorphology.cpp */; };
+		84730D851248F0B300D3A9C9 /* FEMorphology.h in Headers */ = {isa = PBXBuildFile; fileRef = 84730D681248F0B300D3A9C9 /* FEMorphology.h */; };
+		84730D861248F0B300D3A9C9 /* FEOffset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84730D691248F0B300D3A9C9 /* FEOffset.cpp */; };
+		84730D871248F0B300D3A9C9 /* FEOffset.h in Headers */ = {isa = PBXBuildFile; fileRef = 84730D6A1248F0B300D3A9C9 /* FEOffset.h */; };
+		84730D881248F0B300D3A9C9 /* FESpecularLighting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84730D6B1248F0B300D3A9C9 /* FESpecularLighting.cpp */; };
+		84730D891248F0B300D3A9C9 /* FESpecularLighting.h in Headers */ = {isa = PBXBuildFile; fileRef = 84730D6C1248F0B300D3A9C9 /* FESpecularLighting.h */; };
+		84730D8A1248F0B300D3A9C9 /* FETile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84730D6D1248F0B300D3A9C9 /* FETile.cpp */; };
+		84730D8B1248F0B300D3A9C9 /* FETile.h in Headers */ = {isa = PBXBuildFile; fileRef = 84730D6E1248F0B300D3A9C9 /* FETile.h */; };
+		84730D8C1248F0B300D3A9C9 /* FETurbulence.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84730D6F1248F0B300D3A9C9 /* FETurbulence.cpp */; };
+		84730D8D1248F0B300D3A9C9 /* FETurbulence.h in Headers */ = {isa = PBXBuildFile; fileRef = 84730D701248F0B300D3A9C9 /* FETurbulence.h */; };
+		84730D901248F0B300D3A9C9 /* LightSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84730D731248F0B300D3A9C9 /* LightSource.cpp */; };
+		84730D911248F0B300D3A9C9 /* LightSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 84730D741248F0B300D3A9C9 /* LightSource.h */; };
+		84730D921248F0B300D3A9C9 /* PointLightSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 84730D751248F0B300D3A9C9 /* PointLightSource.h */; };
+		84730D931248F0B300D3A9C9 /* SpotLightSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 84730D761248F0B300D3A9C9 /* SpotLightSource.h */; };
 		8476C9E511DF6A0B00555B02 /* SVGPathSegListBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8476C9E311DF6A0B00555B02 /* SVGPathSegListBuilder.cpp */; };
 		8476C9E611DF6A0B00555B02 /* SVGPathSegListBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 8476C9E411DF6A0B00555B02 /* SVGPathSegListBuilder.h */; };
 		8476C9EA11DF6A2900555B02 /* SVGPathBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8476C9E711DF6A2900555B02 /* SVGPathBuilder.cpp */; };
@@ -2908,7 +2935,6 @@
 		A7D20F62107F406900A80392 /* JSWebGLActiveInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D20F60107F406900A80392 /* JSWebGLActiveInfo.cpp */; };
 		A7D20F63107F406900A80392 /* JSWebGLActiveInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D20F61107F406900A80392 /* JSWebGLActiveInfo.h */; };
 		A7D20F6D107F438B00A80392 /* WebGLActiveInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D20F6B107F438B00A80392 /* WebGLActiveInfo.h */; };
-		A7D27FC40E0A599F0079AD2B /* SVGFETile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D27FC30E0A599F0079AD2B /* SVGFETile.cpp */; };
 		A7D3C5240B576B4B002CA450 /* PasteboardHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D3C5230B576B4B002CA450 /* PasteboardHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7D6B3490F61104500B79FD1 /* WorkerScriptLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D6B3470F61104500B79FD1 /* WorkerScriptLoader.h */; };
 		A7D6B34A0F61104500B79FD1 /* WorkerScriptLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D6B3480F61104500B79FD1 /* WorkerScriptLoader.cpp */; };
@@ -4048,32 +4074,8 @@
 		B237C8A80D344D110013F707 /* SVGFontData.h in Headers */ = {isa = PBXBuildFile; fileRef = B237C8A60D344D110013F707 /* SVGFontData.h */; };
 		B24055650B5BE640002A28C0 /* DOMSVGElementInstanceInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = B24055630B5BE640002A28C0 /* DOMSVGElementInstanceInternal.h */; };
 		B24055660B5BE640002A28C0 /* DOMSVGElementInstanceListInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = B24055640B5BE640002A28C0 /* DOMSVGElementInstanceListInternal.h */; };
-		B25599710D00D8BA00BB825C /* SVGDistantLightSource.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598D70D00D8B900BB825C /* SVGDistantLightSource.h */; };
-		B255997A0D00D8BA00BB825C /* SVGFEConvolveMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598E00D00D8B900BB825C /* SVGFEConvolveMatrix.cpp */; };
-		B255997B0D00D8BA00BB825C /* SVGFEConvolveMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598E10D00D8B900BB825C /* SVGFEConvolveMatrix.h */; };
-		B255997C0D00D8BA00BB825C /* SVGFEDiffuseLighting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598E20D00D8B900BB825C /* SVGFEDiffuseLighting.cpp */; };
-		B255997D0D00D8BA00BB825C /* SVGFEDiffuseLighting.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598E30D00D8B900BB825C /* SVGFEDiffuseLighting.h */; };
-		B255997E0D00D8BA00BB825C /* SVGFEDisplacementMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598E40D00D8B900BB825C /* SVGFEDisplacementMap.cpp */; };
-		B255997F0D00D8BA00BB825C /* SVGFEDisplacementMap.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598E50D00D8B900BB825C /* SVGFEDisplacementMap.h */; };
-		B25599800D00D8BA00BB825C /* SVGFEFlood.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598E60D00D8B900BB825C /* SVGFEFlood.cpp */; };
-		B25599810D00D8BA00BB825C /* SVGFEFlood.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598E70D00D8B900BB825C /* SVGFEFlood.h */; };
 		B25599840D00D8BA00BB825C /* SVGFEImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598EA0D00D8B900BB825C /* SVGFEImage.cpp */; };
 		B25599850D00D8BA00BB825C /* SVGFEImage.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598EB0D00D8B900BB825C /* SVGFEImage.h */; };
-		B25599860D00D8BA00BB825C /* SVGFEMerge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598EC0D00D8B900BB825C /* SVGFEMerge.cpp */; };
-		B25599870D00D8BA00BB825C /* SVGFEMerge.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598ED0D00D8B900BB825C /* SVGFEMerge.h */; };
-		B25599880D00D8BA00BB825C /* SVGFEMorphology.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598EE0D00D8B900BB825C /* SVGFEMorphology.cpp */; };
-		B25599890D00D8BA00BB825C /* SVGFEMorphology.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598EF0D00D8B900BB825C /* SVGFEMorphology.h */; };
-		B255998A0D00D8BA00BB825C /* SVGFEOffset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598F00D00D8B900BB825C /* SVGFEOffset.cpp */; };
-		B255998B0D00D8BA00BB825C /* SVGFEOffset.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598F10D00D8B900BB825C /* SVGFEOffset.h */; };
-		B255998C0D00D8BA00BB825C /* SVGFESpecularLighting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598F20D00D8B900BB825C /* SVGFESpecularLighting.cpp */; };
-		B255998D0D00D8BA00BB825C /* SVGFESpecularLighting.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598F30D00D8B900BB825C /* SVGFESpecularLighting.h */; };
-		B255998E0D00D8BA00BB825C /* SVGFETile.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598F40D00D8B900BB825C /* SVGFETile.h */; };
-		B255998F0D00D8BA00BB825C /* SVGFETurbulence.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598F50D00D8B900BB825C /* SVGFETurbulence.cpp */; };
-		B25599900D00D8BA00BB825C /* SVGFETurbulence.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598F60D00D8B900BB825C /* SVGFETurbulence.h */; };
-		B25599930D00D8BA00BB825C /* SVGLightSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598F90D00D8B900BB825C /* SVGLightSource.cpp */; };
-		B25599940D00D8BA00BB825C /* SVGLightSource.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598FA0D00D8B900BB825C /* SVGLightSource.h */; };
-		B25599950D00D8BA00BB825C /* SVGPointLightSource.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598FB0D00D8B900BB825C /* SVGPointLightSource.h */; };
-		B25599960D00D8BA00BB825C /* SVGSpotLightSource.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598FC0D00D8B900BB825C /* SVGSpotLightSource.h */; };
 		B25599A30D00D8BA00BB825C /* SVGImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B255990B0D00D8B900BB825C /* SVGImage.cpp */; };
 		B25599A40D00D8BA00BB825C /* SVGImage.h in Headers */ = {isa = PBXBuildFile; fileRef = B255990C0D00D8B900BB825C /* SVGImage.h */; };
 		B25599A50D00D8BA00BB825C /* EmptyClients.h in Headers */ = {isa = PBXBuildFile; fileRef = B255990D0D00D8B900BB825C /* EmptyClients.h */; };
@@ -5291,8 +5293,6 @@
 		E1FF57A60F01256B00891EBB /* ThreadGlobalData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FF57A50F01256B00891EBB /* ThreadGlobalData.cpp */; };
 		E415F1690D9A165D0033CE97 /* DOMElementTimeControl.h in Headers */ = {isa = PBXBuildFile; fileRef = E415F1680D9A165D0033CE97 /* DOMElementTimeControl.h */; };
 		E415F1840D9A1A830033CE97 /* ElementTimeControl.h in Headers */ = {isa = PBXBuildFile; fileRef = E415F1830D9A1A830033CE97 /* ElementTimeControl.h */; };
-		E440A2D51191A50B000820B0 /* SVGFELighting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E440A2D41191A50B000820B0 /* SVGFELighting.cpp */; };
-		E440A2D71191A523000820B0 /* SVGFELighting.h in Headers */ = {isa = PBXBuildFile; fileRef = E440A2D61191A523000820B0 /* SVGFELighting.h */; };
 		E44613A10CD6331000FADA75 /* HTMLAudioElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E446138F0CD6331000FADA75 /* HTMLAudioElement.cpp */; };
 		E44613A20CD6331000FADA75 /* HTMLAudioElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E44613900CD6331000FADA75 /* HTMLAudioElement.h */; };
 		E44613A40CD6331000FADA75 /* HTMLMediaElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E44613920CD6331000FADA75 /* HTMLMediaElement.cpp */; };
@@ -7442,6 +7442,33 @@
 		845E72F70FD261EE00A87D79 /* Filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Filter.h; path = filters/Filter.h; sourceTree = "<group>"; };
 		845E72F90FD2623900A87D79 /* SVGFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFilter.cpp; sourceTree = "<group>"; };
 		845E72FA0FD2623900A87D79 /* SVGFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFilter.h; sourceTree = "<group>"; };
+		84730D5A1248F0B300D3A9C9 /* DistantLightSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DistantLightSource.h; path = filters/DistantLightSource.h; sourceTree = "<group>"; };
+		84730D5B1248F0B300D3A9C9 /* FEConvolveMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FEConvolveMatrix.cpp; path = filters/FEConvolveMatrix.cpp; sourceTree = "<group>"; };
+		84730D5C1248F0B300D3A9C9 /* FEConvolveMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FEConvolveMatrix.h; path = filters/FEConvolveMatrix.h; sourceTree = "<group>"; };
+		84730D5D1248F0B300D3A9C9 /* FEDiffuseLighting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FEDiffuseLighting.cpp; path = filters/FEDiffuseLighting.cpp; sourceTree = "<group>"; };
+		84730D5E1248F0B300D3A9C9 /* FEDiffuseLighting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FEDiffuseLighting.h; path = filters/FEDiffuseLighting.h; sourceTree = "<group>"; };
+		84730D5F1248F0B300D3A9C9 /* FEDisplacementMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FEDisplacementMap.cpp; path = filters/FEDisplacementMap.cpp; sourceTree = "<group>"; };
+		84730D601248F0B300D3A9C9 /* FEDisplacementMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FEDisplacementMap.h; path = filters/FEDisplacementMap.h; sourceTree = "<group>"; };
+		84730D611248F0B300D3A9C9 /* FEFlood.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FEFlood.cpp; path = filters/FEFlood.cpp; sourceTree = "<group>"; };
+		84730D621248F0B300D3A9C9 /* FEFlood.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FEFlood.h; path = filters/FEFlood.h; sourceTree = "<group>"; };
+		84730D631248F0B300D3A9C9 /* FELighting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FELighting.cpp; path = filters/FELighting.cpp; sourceTree = "<group>"; };
+		84730D641248F0B300D3A9C9 /* FELighting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FELighting.h; path = filters/FELighting.h; sourceTree = "<group>"; };
+		84730D651248F0B300D3A9C9 /* FEMerge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FEMerge.cpp; path = filters/FEMerge.cpp; sourceTree = "<group>"; };
+		84730D661248F0B300D3A9C9 /* FEMerge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FEMerge.h; path = filters/FEMerge.h; sourceTree = "<group>"; };
+		84730D671248F0B300D3A9C9 /* FEMorphology.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FEMorphology.cpp; path = filters/FEMorphology.cpp; sourceTree = "<group>"; };
+		84730D681248F0B300D3A9C9 /* FEMorphology.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FEMorphology.h; path = filters/FEMorphology.h; sourceTree = "<group>"; };
+		84730D691248F0B300D3A9C9 /* FEOffset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FEOffset.cpp; path = filters/FEOffset.cpp; sourceTree = "<group>"; };
+		84730D6A1248F0B300D3A9C9 /* FEOffset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FEOffset.h; path = filters/FEOffset.h; sourceTree = "<group>"; };
+		84730D6B1248F0B300D3A9C9 /* FESpecularLighting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FESpecularLighting.cpp; path = filters/FESpecularLighting.cpp; sourceTree = "<group>"; };
+		84730D6C1248F0B300D3A9C9 /* FESpecularLighting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FESpecularLighting.h; path = filters/FESpecularLighting.h; sourceTree = "<group>"; };
+		84730D6D1248F0B300D3A9C9 /* FETile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FETile.cpp; path = filters/FETile.cpp; sourceTree = "<group>"; };
+		84730D6E1248F0B300D3A9C9 /* FETile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FETile.h; path = filters/FETile.h; sourceTree = "<group>"; };
+		84730D6F1248F0B300D3A9C9 /* FETurbulence.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FETurbulence.cpp; path = filters/FETurbulence.cpp; sourceTree = "<group>"; };
+		84730D701248F0B300D3A9C9 /* FETurbulence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FETurbulence.h; path = filters/FETurbulence.h; sourceTree = "<group>"; };
+		84730D731248F0B300D3A9C9 /* LightSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LightSource.cpp; path = filters/LightSource.cpp; sourceTree = "<group>"; };
+		84730D741248F0B300D3A9C9 /* LightSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LightSource.h; path = filters/LightSource.h; sourceTree = "<group>"; };
+		84730D751248F0B300D3A9C9 /* PointLightSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PointLightSource.h; path = filters/PointLightSource.h; sourceTree = "<group>"; };
+		84730D761248F0B300D3A9C9 /* SpotLightSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotLightSource.h; path = filters/SpotLightSource.h; sourceTree = "<group>"; };
 		8476C9E311DF6A0B00555B02 /* SVGPathSegListBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathSegListBuilder.cpp; sourceTree = "<group>"; };
 		8476C9E411DF6A0B00555B02 /* SVGPathSegListBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathSegListBuilder.h; sourceTree = "<group>"; };
 		8476C9E711DF6A2900555B02 /* SVGPathBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathBuilder.cpp; sourceTree = "<group>"; };
@@ -8817,7 +8844,6 @@
 		A7D20F60107F406900A80392 /* JSWebGLActiveInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLActiveInfo.cpp; sourceTree = "<group>"; };
 		A7D20F61107F406900A80392 /* JSWebGLActiveInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLActiveInfo.h; sourceTree = "<group>"; };
 		A7D20F6B107F438B00A80392 /* WebGLActiveInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLActiveInfo.h; path = canvas/WebGLActiveInfo.h; sourceTree = "<group>"; };
-		A7D27FC30E0A599F0079AD2B /* SVGFETile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFETile.cpp; sourceTree = "<group>"; };
 		A7D3C5230B576B4B002CA450 /* PasteboardHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasteboardHelper.h; sourceTree = "<group>"; };
 		A7D6B3470F61104500B79FD1 /* WorkerScriptLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkerScriptLoader.h; path = workers/WorkerScriptLoader.h; sourceTree = "<group>"; };
 		A7D6B3480F61104500B79FD1 /* WorkerScriptLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WorkerScriptLoader.cpp; path = workers/WorkerScriptLoader.cpp; sourceTree = "<group>"; };
@@ -9844,32 +9870,8 @@
 		B237C8A60D344D110013F707 /* SVGFontData.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFontData.h; sourceTree = "<group>"; };
 		B24055630B5BE640002A28C0 /* DOMSVGElementInstanceInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGElementInstanceInternal.h; sourceTree = "<group>"; };
 		B24055640B5BE640002A28C0 /* DOMSVGElementInstanceListInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGElementInstanceListInternal.h; sourceTree = "<group>"; };
-		B25598D70D00D8B900BB825C /* SVGDistantLightSource.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGDistantLightSource.h; sourceTree = "<group>"; };
-		B25598E00D00D8B900BB825C /* SVGFEConvolveMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEConvolveMatrix.cpp; sourceTree = "<group>"; };
-		B25598E10D00D8B900BB825C /* SVGFEConvolveMatrix.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEConvolveMatrix.h; sourceTree = "<group>"; };
-		B25598E20D00D8B900BB825C /* SVGFEDiffuseLighting.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEDiffuseLighting.cpp; sourceTree = "<group>"; };
-		B25598E30D00D8B900BB825C /* SVGFEDiffuseLighting.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEDiffuseLighting.h; sourceTree = "<group>"; };
-		B25598E40D00D8B900BB825C /* SVGFEDisplacementMap.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEDisplacementMap.cpp; sourceTree = "<group>"; };
-		B25598E50D00D8B900BB825C /* SVGFEDisplacementMap.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEDisplacementMap.h; sourceTree = "<group>"; };
-		B25598E60D00D8B900BB825C /* SVGFEFlood.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEFlood.cpp; sourceTree = "<group>"; };
-		B25598E70D00D8B900BB825C /* SVGFEFlood.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEFlood.h; sourceTree = "<group>"; };
 		B25598EA0D00D8B900BB825C /* SVGFEImage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEImage.cpp; sourceTree = "<group>"; };
 		B25598EB0D00D8B900BB825C /* SVGFEImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEImage.h; sourceTree = "<group>"; };
-		B25598EC0D00D8B900BB825C /* SVGFEMerge.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEMerge.cpp; sourceTree = "<group>"; };
-		B25598ED0D00D8B900BB825C /* SVGFEMerge.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEMerge.h; sourceTree = "<group>"; };
-		B25598EE0D00D8B900BB825C /* SVGFEMorphology.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEMorphology.cpp; sourceTree = "<group>"; };
-		B25598EF0D00D8B900BB825C /* SVGFEMorphology.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEMorphology.h; sourceTree = "<group>"; };
-		B25598F00D00D8B900BB825C /* SVGFEOffset.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEOffset.cpp; sourceTree = "<group>"; };
-		B25598F10D00D8B900BB825C /* SVGFEOffset.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEOffset.h; sourceTree = "<group>"; };
-		B25598F20D00D8B900BB825C /* SVGFESpecularLighting.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFESpecularLighting.cpp; sourceTree = "<group>"; };
-		B25598F30D00D8B900BB825C /* SVGFESpecularLighting.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFESpecularLighting.h; sourceTree = "<group>"; };
-		B25598F40D00D8B900BB825C /* SVGFETile.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFETile.h; sourceTree = "<group>"; };
-		B25598F50D00D8B900BB825C /* SVGFETurbulence.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFETurbulence.cpp; sourceTree = "<group>"; };
-		B25598F60D00D8B900BB825C /* SVGFETurbulence.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFETurbulence.h; sourceTree = "<group>"; };
-		B25598F90D00D8B900BB825C /* SVGLightSource.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGLightSource.cpp; sourceTree = "<group>"; };
-		B25598FA0D00D8B900BB825C /* SVGLightSource.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGLightSource.h; sourceTree = "<group>"; };
-		B25598FB0D00D8B900BB825C /* SVGPointLightSource.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGPointLightSource.h; sourceTree = "<group>"; };
-		B25598FC0D00D8B900BB825C /* SVGSpotLightSource.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGSpotLightSource.h; sourceTree = "<group>"; };
 		B255990B0D00D8B900BB825C /* SVGImage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGImage.cpp; sourceTree = "<group>"; };
 		B255990C0D00D8B900BB825C /* SVGImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGImage.h; sourceTree = "<group>"; };
 		B255990D0D00D8B900BB825C /* EmptyClients.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EmptyClients.h; sourceTree = "<group>"; };
@@ -11159,8 +11161,6 @@
 		E415F1830D9A1A830033CE97 /* ElementTimeControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementTimeControl.h; sourceTree = "<group>"; };
 		E41EA038119836DB00710BC5 /* CSSPropertyNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSPropertyNames.cpp; sourceTree = "<group>"; };
 		E41EA0391198374900710BC5 /* CSSValueKeywords.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSValueKeywords.cpp; sourceTree = "<group>"; };
-		E440A2D41191A50B000820B0 /* SVGFELighting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFELighting.cpp; sourceTree = "<group>"; };
-		E440A2D61191A523000820B0 /* SVGFELighting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFELighting.h; sourceTree = "<group>"; };
 		E446138F0CD6331000FADA75 /* HTMLAudioElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLAudioElement.cpp; sourceTree = "<group>"; };
 		E44613900CD6331000FADA75 /* HTMLAudioElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLAudioElement.h; sourceTree = "<group>"; };
 		E44613910CD6331000FADA75 /* HTMLAudioElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLAudioElement.idl; sourceTree = "<group>"; };
@@ -14565,6 +14565,33 @@
 		A75E8B7F0E1DE2B0007F2481 /* filters */ = {
 			isa = PBXGroup;
 			children = (
+				84730D5A1248F0B300D3A9C9 /* DistantLightSource.h */,
+				84730D5B1248F0B300D3A9C9 /* FEConvolveMatrix.cpp */,
+				84730D5C1248F0B300D3A9C9 /* FEConvolveMatrix.h */,
+				84730D5D1248F0B300D3A9C9 /* FEDiffuseLighting.cpp */,
+				84730D5E1248F0B300D3A9C9 /* FEDiffuseLighting.h */,
+				84730D5F1248F0B300D3A9C9 /* FEDisplacementMap.cpp */,
+				84730D601248F0B300D3A9C9 /* FEDisplacementMap.h */,
+				84730D611248F0B300D3A9C9 /* FEFlood.cpp */,
+				84730D621248F0B300D3A9C9 /* FEFlood.h */,
+				84730D631248F0B300D3A9C9 /* FELighting.cpp */,
+				84730D641248F0B300D3A9C9 /* FELighting.h */,
+				84730D651248F0B300D3A9C9 /* FEMerge.cpp */,
+				84730D661248F0B300D3A9C9 /* FEMerge.h */,
+				84730D671248F0B300D3A9C9 /* FEMorphology.cpp */,
+				84730D681248F0B300D3A9C9 /* FEMorphology.h */,
+				84730D691248F0B300D3A9C9 /* FEOffset.cpp */,
+				84730D6A1248F0B300D3A9C9 /* FEOffset.h */,
+				84730D6B1248F0B300D3A9C9 /* FESpecularLighting.cpp */,
+				84730D6C1248F0B300D3A9C9 /* FESpecularLighting.h */,
+				84730D6D1248F0B300D3A9C9 /* FETile.cpp */,
+				84730D6E1248F0B300D3A9C9 /* FETile.h */,
+				84730D6F1248F0B300D3A9C9 /* FETurbulence.cpp */,
+				84730D701248F0B300D3A9C9 /* FETurbulence.h */,
+				84730D731248F0B300D3A9C9 /* LightSource.cpp */,
+				84730D741248F0B300D3A9C9 /* LightSource.h */,
+				84730D751248F0B300D3A9C9 /* PointLightSource.h */,
+				84730D761248F0B300D3A9C9 /* SpotLightSource.h */,
 				A75E8B800E1DE2D6007F2481 /* FEBlend.cpp */,
 				A75E8B810E1DE2D6007F2481 /* FEBlend.h */,
 				A75E8B820E1DE2D6007F2481 /* FEColorMatrix.cpp */,
@@ -15857,39 +15884,12 @@
 		B255989C0D00D8B800BB825C /* filters */ = {
 			isa = PBXGroup;
 			children = (
-				B25598D70D00D8B900BB825C /* SVGDistantLightSource.h */,
-				B25598E00D00D8B900BB825C /* SVGFEConvolveMatrix.cpp */,
-				B25598E10D00D8B900BB825C /* SVGFEConvolveMatrix.h */,
-				B25598E20D00D8B900BB825C /* SVGFEDiffuseLighting.cpp */,
-				B25598E30D00D8B900BB825C /* SVGFEDiffuseLighting.h */,
-				B25598E40D00D8B900BB825C /* SVGFEDisplacementMap.cpp */,
-				B25598E50D00D8B900BB825C /* SVGFEDisplacementMap.h */,
-				B25598E60D00D8B900BB825C /* SVGFEFlood.cpp */,
-				B25598E70D00D8B900BB825C /* SVGFEFlood.h */,
 				B25598EA0D00D8B900BB825C /* SVGFEImage.cpp */,
 				B25598EB0D00D8B900BB825C /* SVGFEImage.h */,
-				E440A2D41191A50B000820B0 /* SVGFELighting.cpp */,
-				E440A2D61191A523000820B0 /* SVGFELighting.h */,
-				B25598EC0D00D8B900BB825C /* SVGFEMerge.cpp */,
-				B25598ED0D00D8B900BB825C /* SVGFEMerge.h */,
-				B25598EE0D00D8B900BB825C /* SVGFEMorphology.cpp */,
-				B25598EF0D00D8B900BB825C /* SVGFEMorphology.h */,
-				B25598F00D00D8B900BB825C /* SVGFEOffset.cpp */,
-				B25598F10D00D8B900BB825C /* SVGFEOffset.h */,
-				B25598F20D00D8B900BB825C /* SVGFESpecularLighting.cpp */,
-				B25598F30D00D8B900BB825C /* SVGFESpecularLighting.h */,
-				A7D27FC30E0A599F0079AD2B /* SVGFETile.cpp */,
-				B25598F40D00D8B900BB825C /* SVGFETile.h */,
-				B25598F50D00D8B900BB825C /* SVGFETurbulence.cpp */,
-				B25598F60D00D8B900BB825C /* SVGFETurbulence.h */,
 				845E72F90FD2623900A87D79 /* SVGFilter.cpp */,
 				845E72FA0FD2623900A87D79 /* SVGFilter.h */,
 				081EBF380FD34F4100DA7559 /* SVGFilterBuilder.cpp */,
 				081EBF390FD34F4100DA7559 /* SVGFilterBuilder.h */,
-				B25598F90D00D8B900BB825C /* SVGLightSource.cpp */,
-				B25598FA0D00D8B900BB825C /* SVGLightSource.h */,
-				B25598FB0D00D8B900BB825C /* SVGPointLightSource.h */,
-				B25598FC0D00D8B900BB825C /* SVGSpotLightSource.h */,
 			);
 			path = filters;
 			sourceTree = "<group>";
@@ -20184,7 +20184,6 @@
 				B22279A80D00BF220071B782 /* SVGCursorElement.h in Headers */,
 				B22279AE0D00BF220071B782 /* SVGDefsElement.h in Headers */,
 				B22279B10D00BF220071B782 /* SVGDescElement.h in Headers */,
-				B25599710D00D8BA00BB825C /* SVGDistantLightSource.h in Headers */,
 				B22279B40D00BF220071B782 /* SVGDocument.h in Headers */,
 				B28C6A280D00C44800334AA4 /* SVGDocumentExtensions.h in Headers */,
 				B22279B70D00BF220071B782 /* SVGElement.h in Headers */,
@@ -20199,14 +20198,10 @@
 				B22279CB0D00BF220071B782 /* SVGFEColorMatrixElement.h in Headers */,
 				B22279CE0D00BF220071B782 /* SVGFEComponentTransferElement.h in Headers */,
 				B22279D10D00BF220071B782 /* SVGFECompositeElement.h in Headers */,
-				B255997B0D00D8BA00BB825C /* SVGFEConvolveMatrix.h in Headers */,
 				1921327511C0E6BB00456238 /* SVGFEConvolveMatrixElement.h in Headers */,
-				B255997D0D00D8BA00BB825C /* SVGFEDiffuseLighting.h in Headers */,
 				B22279D40D00BF220071B782 /* SVGFEDiffuseLightingElement.h in Headers */,
-				B255997F0D00D8BA00BB825C /* SVGFEDisplacementMap.h in Headers */,
 				B22279D70D00BF220071B782 /* SVGFEDisplacementMapElement.h in Headers */,
 				B22279DA0D00BF220071B782 /* SVGFEDistantLightElement.h in Headers */,
-				B25599810D00D8BA00BB825C /* SVGFEFlood.h in Headers */,
 				B22279DD0D00BF220071B782 /* SVGFEFloodElement.h in Headers */,
 				B22279E00D00BF220071B782 /* SVGFEFuncAElement.h in Headers */,
 				B22279E30D00BF220071B782 /* SVGFEFuncBElement.h in Headers */,
@@ -20216,21 +20211,14 @@
 				B25599850D00D8BA00BB825C /* SVGFEImage.h in Headers */,
 				B22279EF0D00BF220071B782 /* SVGFEImageElement.h in Headers */,
 				B22279F20D00BF220071B782 /* SVGFELightElement.h in Headers */,
-				E440A2D71191A523000820B0 /* SVGFELighting.h in Headers */,
-				B25599870D00D8BA00BB825C /* SVGFEMerge.h in Headers */,
 				B22279F40D00BF220071B782 /* SVGFEMergeElement.h in Headers */,
 				B22279F70D00BF220071B782 /* SVGFEMergeNodeElement.h in Headers */,
-				B25599890D00D8BA00BB825C /* SVGFEMorphology.h in Headers */,
 				84224194107E78A700766A87 /* SVGFEMorphologyElement.h in Headers */,
-				B255998B0D00D8BA00BB825C /* SVGFEOffset.h in Headers */,
 				B22279FA0D00BF220071B782 /* SVGFEOffsetElement.h in Headers */,
 				B22279FD0D00BF220071B782 /* SVGFEPointLightElement.h in Headers */,
-				B255998D0D00D8BA00BB825C /* SVGFESpecularLighting.h in Headers */,
 				B2227A000D00BF220071B782 /* SVGFESpecularLightingElement.h in Headers */,
 				B2227A030D00BF220071B782 /* SVGFESpotLightElement.h in Headers */,
-				B255998E0D00D8BA00BB825C /* SVGFETile.h in Headers */,
 				B2227A060D00BF220071B782 /* SVGFETileElement.h in Headers */,
-				B25599900D00D8BA00BB825C /* SVGFETurbulence.h in Headers */,
 				B2227A090D00BF220071B782 /* SVGFETurbulenceElement.h in Headers */,
 				845E72FC0FD2623900A87D79 /* SVGFilter.h in Headers */,
 				081EBF3B0FD34F4100DA7559 /* SVGFilterBuilder.h in Headers */,
@@ -20259,7 +20247,6 @@
 				B2227A300D00BF220071B782 /* SVGLangSpace.h in Headers */,
 				B2227A330D00BF220071B782 /* SVGLength.h in Headers */,
 				B2227A360D00BF220071B782 /* SVGLengthList.h in Headers */,
-				B25599940D00D8BA00BB825C /* SVGLightSource.h in Headers */,
 				B2227A390D00BF220071B782 /* SVGLinearGradientElement.h in Headers */,
 				B2227A3C0D00BF220071B782 /* SVGLineElement.h in Headers */,
 				B2227A3E0D00BF220071B782 /* SVGList.h in Headers */,
@@ -20303,7 +20290,6 @@
 				84300BD6120C9AAC0021954A /* SVGPathStringSource.h in Headers */,
 				84C5B2FB1216DC810088B53A /* SVGPathTraversalStateBuilder.h in Headers */,
 				B2227A880D00BF220071B782 /* SVGPatternElement.h in Headers */,
-				B25599950D00D8BA00BB825C /* SVGPointLightSource.h in Headers */,
 				B2227A8C0D00BF220071B782 /* SVGPointList.h in Headers */,
 				B2227A8F0D00BF220071B782 /* SVGPolyElement.h in Headers */,
 				B2227A910D00BF220071B782 /* SVGPolygonElement.h in Headers */,
@@ -20324,7 +20310,6 @@
 				B2227AA60D00BF220071B782 /* SVGSetElement.h in Headers */,
 				08DAB9C31103D9C1003E7ABA /* SVGShadowTreeElements.h in Headers */,
 				E4AFD0100DAF335500F5F55C /* SVGSMILElement.h in Headers */,
-				B25599960D00D8BA00BB825C /* SVGSpotLightSource.h in Headers */,
 				B2227AA90D00BF220071B782 /* SVGStopElement.h in Headers */,
 				B2227AAC0D00BF220071B782 /* SVGStringList.h in Headers */,
 				B2227AAF0D00BF220071B782 /* SVGStylable.h in Headers */,
@@ -20582,6 +20567,21 @@
 				93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */,
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
+				84730D771248F0B300D3A9C9 /* DistantLightSource.h in Headers */,
+				84730D791248F0B300D3A9C9 /* FEConvolveMatrix.h in Headers */,
+				84730D7B1248F0B300D3A9C9 /* FEDiffuseLighting.h in Headers */,
+				84730D7D1248F0B300D3A9C9 /* FEDisplacementMap.h in Headers */,
+				84730D7F1248F0B300D3A9C9 /* FEFlood.h in Headers */,
+				84730D811248F0B300D3A9C9 /* FELighting.h in Headers */,
+				84730D831248F0B300D3A9C9 /* FEMerge.h in Headers */,
+				84730D851248F0B300D3A9C9 /* FEMorphology.h in Headers */,
+				84730D871248F0B300D3A9C9 /* FEOffset.h in Headers */,
+				84730D891248F0B300D3A9C9 /* FESpecularLighting.h in Headers */,
+				84730D8B1248F0B300D3A9C9 /* FETile.h in Headers */,
+				84730D8D1248F0B300D3A9C9 /* FETurbulence.h in Headers */,
+				84730D911248F0B300D3A9C9 /* LightSource.h in Headers */,
+				84730D921248F0B300D3A9C9 /* PointLightSource.h in Headers */,
+				84730D931248F0B300D3A9C9 /* SpotLightSource.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -22724,14 +22724,10 @@
 				B22279CA0D00BF220071B782 /* SVGFEColorMatrixElement.cpp in Sources */,
 				B22279CD0D00BF220071B782 /* SVGFEComponentTransferElement.cpp in Sources */,
 				B22279D00D00BF220071B782 /* SVGFECompositeElement.cpp in Sources */,
-				B255997A0D00D8BA00BB825C /* SVGFEConvolveMatrix.cpp in Sources */,
 				1921327411C0E6BB00456238 /* SVGFEConvolveMatrixElement.cpp in Sources */,
-				B255997C0D00D8BA00BB825C /* SVGFEDiffuseLighting.cpp in Sources */,
 				B22279D30D00BF220071B782 /* SVGFEDiffuseLightingElement.cpp in Sources */,
-				B255997E0D00D8BA00BB825C /* SVGFEDisplacementMap.cpp in Sources */,
 				B22279D60D00BF220071B782 /* SVGFEDisplacementMapElement.cpp in Sources */,
 				B22279D90D00BF220071B782 /* SVGFEDistantLightElement.cpp in Sources */,
-				B25599800D00D8BA00BB825C /* SVGFEFlood.cpp in Sources */,
 				B22279DC0D00BF220071B782 /* SVGFEFloodElement.cpp in Sources */,
 				B22279DF0D00BF220071B782 /* SVGFEFuncAElement.cpp in Sources */,
 				B22279E20D00BF220071B782 /* SVGFEFuncBElement.cpp in Sources */,
@@ -22741,21 +22737,14 @@
 				B25599840D00D8BA00BB825C /* SVGFEImage.cpp in Sources */,
 				B22279EE0D00BF220071B782 /* SVGFEImageElement.cpp in Sources */,
 				B22279F10D00BF220071B782 /* SVGFELightElement.cpp in Sources */,
-				E440A2D51191A50B000820B0 /* SVGFELighting.cpp in Sources */,
-				B25599860D00D8BA00BB825C /* SVGFEMerge.cpp in Sources */,
 				B22279F30D00BF220071B782 /* SVGFEMergeElement.cpp in Sources */,
 				B22279F60D00BF220071B782 /* SVGFEMergeNodeElement.cpp in Sources */,
-				B25599880D00D8BA00BB825C /* SVGFEMorphology.cpp in Sources */,
 				84224193107E78A700766A87 /* SVGFEMorphologyElement.cpp in Sources */,
-				B255998A0D00D8BA00BB825C /* SVGFEOffset.cpp in Sources */,
 				B22279F90D00BF220071B782 /* SVGFEOffsetElement.cpp in Sources */,
 				B22279FC0D00BF220071B782 /* SVGFEPointLightElement.cpp in Sources */,
-				B255998C0D00D8BA00BB825C /* SVGFESpecularLighting.cpp in Sources */,
 				B22279FF0D00BF220071B782 /* SVGFESpecularLightingElement.cpp in Sources */,
 				B2227A020D00BF220071B782 /* SVGFESpotLightElement.cpp in Sources */,
-				A7D27FC40E0A599F0079AD2B /* SVGFETile.cpp in Sources */,
 				B2227A050D00BF220071B782 /* SVGFETileElement.cpp in Sources */,
-				B255998F0D00D8BA00BB825C /* SVGFETurbulence.cpp in Sources */,
 				B2227A080D00BF220071B782 /* SVGFETurbulenceElement.cpp in Sources */,
 				845E72FB0FD2623900A87D79 /* SVGFilter.cpp in Sources */,
 				081EBF3A0FD34F4100DA7559 /* SVGFilterBuilder.cpp in Sources */,
@@ -22784,7 +22773,6 @@
 				B2227A2F0D00BF220071B782 /* SVGLangSpace.cpp in Sources */,
 				B2227A320D00BF220071B782 /* SVGLength.cpp in Sources */,
 				B2227A350D00BF220071B782 /* SVGLengthList.cpp in Sources */,
-				B25599930D00D8BA00BB825C /* SVGLightSource.cpp in Sources */,
 				B2227A380D00BF220071B782 /* SVGLinearGradientElement.cpp in Sources */,
 				B2227A3B0D00BF220071B782 /* SVGLineElement.cpp in Sources */,
 				B2227A400D00BF220071B782 /* SVGLocatable.cpp in Sources */,
@@ -23061,6 +23049,18 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
+				84730D781248F0B300D3A9C9 /* FEConvolveMatrix.cpp in Sources */,
+				84730D7A1248F0B300D3A9C9 /* FEDiffuseLighting.cpp in Sources */,
+				84730D7C1248F0B300D3A9C9 /* FEDisplacementMap.cpp in Sources */,
+				84730D7E1248F0B300D3A9C9 /* FEFlood.cpp in Sources */,
+				84730D801248F0B300D3A9C9 /* FELighting.cpp in Sources */,
+				84730D821248F0B300D3A9C9 /* FEMerge.cpp in Sources */,
+				84730D841248F0B300D3A9C9 /* FEMorphology.cpp in Sources */,
+				84730D861248F0B300D3A9C9 /* FEOffset.cpp in Sources */,
+				84730D881248F0B300D3A9C9 /* FESpecularLighting.cpp in Sources */,
+				84730D8A1248F0B300D3A9C9 /* FETile.cpp in Sources */,
+				84730D8C1248F0B300D3A9C9 /* FETurbulence.cpp in Sources */,
+				84730D901248F0B300D3A9C9 /* LightSource.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

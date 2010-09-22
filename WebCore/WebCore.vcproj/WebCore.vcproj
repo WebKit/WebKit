@@ -26947,6 +26947,98 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\filters\DistantLightSource.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FEConvolveMatrix.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FEConvolveMatrix.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FEDiffuseLighting.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FEDiffuseLighting.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FEDisplacementMap.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FEDisplacementMap.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FEFlood.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FEFlood.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FELighting.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FELighting.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FEMerge.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FEMerge.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FEMorphology.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FEMorphology.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FEOffset.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FEOffset.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FESpecularLighting.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FESpecularLighting.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FETile.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FETile.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FETurbulence.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FETurbulence.h"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\filters\Filter.h"
 						>
 					</File>
@@ -26967,6 +27059,18 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\filters\LightSource.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\LightSource.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\PointLightSource.h"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\filters\SourceAlpha.cpp"
 						>
 					</File>
@@ -26980,6 +27084,10 @@
 					</File>
 					<File
 						RelativePath="..\platform\graphics\filters\SourceGraphic.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\SpotLightSource.h"
 						>
 					</File>
 				</Filter>
@@ -51143,103 +51251,11 @@
 					Name="filters"
 					>
 					<File
-						RelativePath="..\svg\graphics\filters\SVGDistantLightSource.h"
-						>
-					</File>
-					<File
-						RelativePath="..\svg\graphics\filters\SVGFEConvolveMatrix.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\svg\graphics\filters\SVGFEConvolveMatrix.h"
-						>
-					</File>
-					<File
-						RelativePath="..\svg\graphics\filters\SVGFEDiffuseLighting.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\svg\graphics\filters\SVGFEDiffuseLighting.h"
-						>
-					</File>
-					<File
-						RelativePath="..\svg\graphics\filters\SVGFEDisplacementMap.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\svg\graphics\filters\SVGFEDisplacementMap.h"
-						>
-					</File>
-					<File
-						RelativePath="..\svg\graphics\filters\SVGFEFlood.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\svg\graphics\filters\SVGFEFlood.h"
-						>
-					</File>
-					<File
 						RelativePath="..\svg\graphics\filters\SVGFEImage.cpp"
 						>
 					</File>
 					<File
 						RelativePath="..\svg\graphics\filters\SVGFEImage.h"
-						>
-					</File>
-					<File
-						RelativePath="..\svg\graphics\filters\SVGFELighting.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\svg\graphics\filters\SVGFELighting.h"
-						>
-					</File>
-					<File
-						RelativePath="..\svg\graphics\filters\SVGFEMerge.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\svg\graphics\filters\SVGFEMerge.h"
-						>
-					</File>
-					<File
-						RelativePath="..\svg\graphics\filters\SVGFEMorphology.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\svg\graphics\filters\SVGFEMorphology.h"
-						>
-					</File>
-					<File
-						RelativePath="..\svg\graphics\filters\SVGFEOffset.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\svg\graphics\filters\SVGFEOffset.h"
-						>
-					</File>
-					<File
-						RelativePath="..\svg\graphics\filters\SVGFESpecularLighting.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\svg\graphics\filters\SVGFESpecularLighting.h"
-						>
-					</File>
-					<File
-						RelativePath="..\svg\graphics\filters\SVGFETile.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\svg\graphics\filters\SVGFETile.h"
-						>
-					</File>
-					<File
-						RelativePath="..\svg\graphics\filters\SVGFETurbulence.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\svg\graphics\filters\SVGFETurbulence.h"
 						>
 					</File>
 					<File
@@ -51256,22 +51272,6 @@
 					</File>
 					<File
 						RelativePath="..\svg\graphics\filters\SVGFilterBuilder.h"
-						>
-					</File>
-					<File
-						RelativePath="..\svg\graphics\filters\SVGLightSource.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\svg\graphics\filters\SVGLightSource.h"
-						>
-					</File>
-					<File
-						RelativePath="..\svg\graphics\filters\SVGPointLightSource.h"
-						>
-					</File>
-					<File
-						RelativePath="..\svg\graphics\filters\SVGSpotLightSource.h"
 						>
 					</File>
 				</Filter>

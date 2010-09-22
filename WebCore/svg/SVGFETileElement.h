@@ -22,8 +22,8 @@
 #define SVGFETileElement_h
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
+#include "FETile.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
-#include "SVGFETile.h"
 
 namespace WebCore {
 

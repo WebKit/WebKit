@@ -1,3 +1,89 @@
+2010-09-22  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Make FilterEffects independent of SVG
+        https://bugs.webkit.org/show_bug.cgi?id=46177
+
+        Moving all FilterEffects from svg/graphics/filters to platform/graphics/filters, now that they
+        are independent of SVG. Removed the SVG prefix of the files and updated the headers.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/filters/DistantLightSource.h: Copied from WebCore/svg/graphics/filters/SVGDistantLightSource.h.
+        * platform/graphics/filters/FEConvolveMatrix.cpp: Copied from WebCore/svg/graphics/filters/SVGFEConvolveMatrix.cpp.
+        * platform/graphics/filters/FEConvolveMatrix.h: Copied from WebCore/svg/graphics/filters/SVGFEConvolveMatrix.h.
+        * platform/graphics/filters/FEDiffuseLighting.cpp: Copied from WebCore/svg/graphics/filters/SVGFEDiffuseLighting.cpp.
+        * platform/graphics/filters/FEDiffuseLighting.h: Copied from WebCore/svg/graphics/filters/SVGFEDiffuseLighting.h.
+        * platform/graphics/filters/FEDisplacementMap.cpp: Copied from WebCore/svg/graphics/filters/SVGFEDisplacementMap.cpp.
+        * platform/graphics/filters/FEDisplacementMap.h: Copied from WebCore/svg/graphics/filters/SVGFEDisplacementMap.h.
+        * platform/graphics/filters/FEFlood.cpp: Copied from WebCore/svg/graphics/filters/SVGFEFlood.cpp.
+        * platform/graphics/filters/FEFlood.h: Copied from WebCore/svg/graphics/filters/SVGFEFlood.h.
+        * platform/graphics/filters/FELighting.cpp: Copied from WebCore/svg/graphics/filters/SVGFELighting.cpp.
+        * platform/graphics/filters/FELighting.h: Copied from WebCore/svg/graphics/filters/SVGFELighting.h.
+        * platform/graphics/filters/FEMerge.cpp: Copied from WebCore/svg/graphics/filters/SVGFEMerge.cpp.
+        * platform/graphics/filters/FEMerge.h: Copied from WebCore/svg/graphics/filters/SVGFEMerge.h.
+        * platform/graphics/filters/FEMorphology.cpp: Copied from WebCore/svg/graphics/filters/SVGFEMorphology.cpp.
+        * platform/graphics/filters/FEMorphology.h: Copied from WebCore/svg/graphics/filters/SVGFEMorphology.h.
+        * platform/graphics/filters/FEOffset.cpp: Copied from WebCore/svg/graphics/filters/SVGFEOffset.cpp.
+        * platform/graphics/filters/FEOffset.h: Copied from WebCore/svg/graphics/filters/SVGFEOffset.h.
+        * platform/graphics/filters/FESpecularLighting.cpp: Copied from WebCore/svg/graphics/filters/SVGFESpecularLighting.cpp.
+        * platform/graphics/filters/FESpecularLighting.h: Copied from WebCore/svg/graphics/filters/SVGFESpecularLighting.h.
+        * platform/graphics/filters/FETile.cpp: Copied from WebCore/svg/graphics/filters/SVGFETile.cpp.
+        * platform/graphics/filters/FETile.h: Copied from WebCore/svg/graphics/filters/SVGFETile.h.
+        * platform/graphics/filters/FETurbulence.cpp: Copied from WebCore/svg/graphics/filters/SVGFETurbulence.cpp.
+        * platform/graphics/filters/FETurbulence.h: Copied from WebCore/svg/graphics/filters/SVGFETurbulence.h.
+        * platform/graphics/filters/LightSource.cpp: Copied from WebCore/svg/graphics/filters/SVGLightSource.cpp.
+        * platform/graphics/filters/LightSource.h: Copied from WebCore/svg/graphics/filters/SVGLightSource.h.
+        * platform/graphics/filters/PointLightSource.h: Copied from WebCore/svg/graphics/filters/SVGPointLightSource.h.
+        * platform/graphics/filters/SpotLightSource.h: Copied from WebCore/svg/graphics/filters/SVGSpotLightSource.h.
+        * svg/SVGFEConvolveMatrixElement.h:
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        * svg/SVGFEDisplacementMapElement.h:
+        * svg/SVGFEDistantLightElement.cpp:
+        * svg/SVGFEFloodElement.h:
+        * svg/SVGFELightElement.h:
+        * svg/SVGFEMergeElement.h:
+        * svg/SVGFEMorphologyElement.h:
+        * svg/SVGFEOffsetElement.h:
+        * svg/SVGFEPointLightElement.cpp:
+        * svg/SVGFESpecularLightingElement.h:
+        * svg/SVGFESpotLightElement.cpp:
+        * svg/SVGFETileElement.h:
+        * svg/SVGFETurbulenceElement.h:
+        * svg/graphics/filters/SVGDistantLightSource.h: Removed.
+        * svg/graphics/filters/SVGFEConvolveMatrix.cpp: Removed.
+        * svg/graphics/filters/SVGFEConvolveMatrix.h: Removed.
+        * svg/graphics/filters/SVGFEDiffuseLighting.cpp: Removed.
+        * svg/graphics/filters/SVGFEDiffuseLighting.h: Removed.
+        * svg/graphics/filters/SVGFEDisplacementMap.cpp: Removed.
+        * svg/graphics/filters/SVGFEDisplacementMap.h: Removed.
+        * svg/graphics/filters/SVGFEFlood.cpp: Removed.
+        * svg/graphics/filters/SVGFEFlood.h: Removed.
+        * svg/graphics/filters/SVGFELighting.cpp: Removed.
+        * svg/graphics/filters/SVGFELighting.h: Removed.
+        * svg/graphics/filters/SVGFEMerge.cpp: Removed.
+        * svg/graphics/filters/SVGFEMerge.h: Removed.
+        * svg/graphics/filters/SVGFEMorphology.cpp: Removed.
+        * svg/graphics/filters/SVGFEMorphology.h: Removed.
+        * svg/graphics/filters/SVGFEOffset.cpp: Removed.
+        * svg/graphics/filters/SVGFEOffset.h: Removed.
+        * svg/graphics/filters/SVGFESpecularLighting.cpp: Removed.
+        * svg/graphics/filters/SVGFESpecularLighting.h: Removed.
+        * svg/graphics/filters/SVGFETile.cpp: Removed.
+        * svg/graphics/filters/SVGFETile.h: Removed.
+        * svg/graphics/filters/SVGFETurbulence.cpp: Removed.
+        * svg/graphics/filters/SVGFETurbulence.h: Removed.
+        * svg/graphics/filters/SVGLightSource.cpp: Removed.
+        * svg/graphics/filters/SVGLightSource.h: Removed.
+        * svg/graphics/filters/SVGPointLightSource.h: Removed.
+        * svg/graphics/filters/SVGSpotLightSource.h: Removed.
+
 2010-09-22  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Roben.

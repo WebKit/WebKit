@@ -1981,8 +1981,20 @@ HEADERS += \
     platform/graphics/filters/FEColorMatrix.h \
     platform/graphics/filters/FEComponentTransfer.h \
     platform/graphics/filters/FEComposite.h \
+    platform/graphics/filters/FEConvolveMatrix.h \
+    platform/graphics/filters/FEDiffuseLighting.h \
+    platform/graphics/filters/FEDisplacementMap.h \
+    platform/graphics/filters/FEFlood.h \
     platform/graphics/filters/FEGaussianBlur.h \
+    platform/graphics/filters/FELighting.h \
+    platform/graphics/filters/FEMerge.h \
+    platform/graphics/filters/FEMorphology.h \
+    platform/graphics/filters/FEOffset.h \
+    platform/graphics/filters/FESpecularLighting.h \
+    platform/graphics/filters/FETile.h \
+    platform/graphics/filters/FETurbulence.h \
     platform/graphics/filters/FilterEffect.h \
+    platform/graphics/filters/LightSource.h \
     platform/graphics/filters/SourceAlpha.h \
     platform/graphics/filters/SourceGraphic.h \
     platform/graphics/FloatPoint3D.h \
@@ -2274,21 +2286,9 @@ HEADERS += \
     svg/animation/SMILTime.h \
     svg/animation/SVGSMILElement.h \
     svg/ColorDistance.h \
-    svg/graphics/filters/SVGFEConvolveMatrix.h \
-    svg/graphics/filters/SVGFEDiffuseLighting.h \
-    svg/graphics/filters/SVGFEDisplacementMap.h \
-    svg/graphics/filters/SVGFEFlood.h \
     svg/graphics/filters/SVGFEImage.h \
-    svg/graphics/filters/SVGFELighting.h \
-    svg/graphics/filters/SVGFEMerge.h \
-    svg/graphics/filters/SVGFEMorphology.h \
-    svg/graphics/filters/SVGFEOffset.h \
-    svg/graphics/filters/SVGFESpecularLighting.h \
-    svg/graphics/filters/SVGFETile.h \
-    svg/graphics/filters/SVGFETurbulence.h \
     svg/graphics/filters/SVGFilterBuilder.h \
     svg/graphics/filters/SVGFilter.h \
-    svg/graphics/filters/SVGLightSource.h \
     svg/graphics/SVGImage.h \
     svg/SVGAElement.h \
     svg/SVGAltGlyphElement.h \
@@ -3106,8 +3106,20 @@ contains(DEFINES, ENABLE_FILTERS=1) {
         platform/graphics/filters/FEColorMatrix.cpp \
         platform/graphics/filters/FEComponentTransfer.cpp \
         platform/graphics/filters/FEComposite.cpp \
+        platform/graphics/filters/FEConvolveMatrix.cpp \
+        platform/graphics/filters/FEDiffuseLighting.cpp \
+        platform/graphics/filters/FEDisplacementMap.cpp \
+        platform/graphics/filters/FEFlood.cpp \
         platform/graphics/filters/FEGaussianBlur.cpp \
+        platform/graphics/filters/FELighting.cpp \
+        platform/graphics/filters/FEMerge.cpp \
+        platform/graphics/filters/FEMorphology.cpp \
+        platform/graphics/filters/FEOffset.cpp \
+        platform/graphics/filters/FESpecularLighting.cpp \
+        platform/graphics/filters/FETile.cpp \
+        platform/graphics/filters/FETurbulence.cpp \
         platform/graphics/filters/FilterEffect.cpp \
+        platform/graphics/filters/LightSource.cpp \
         platform/graphics/filters/SourceAlpha.cpp \
         platform/graphics/filters/SourceGraphic.cpp
 }
@@ -3376,21 +3388,9 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/animation/SMILTime.cpp \
         svg/animation/SMILTimeContainer.cpp \
         svg/animation/SVGSMILElement.cpp \
-        svg/graphics/filters/SVGFEConvolveMatrix.cpp \
-        svg/graphics/filters/SVGFEDiffuseLighting.cpp \
-        svg/graphics/filters/SVGFEDisplacementMap.cpp \
-        svg/graphics/filters/SVGFEFlood.cpp \
         svg/graphics/filters/SVGFEImage.cpp \
-        svg/graphics/filters/SVGFELighting.cpp \
-        svg/graphics/filters/SVGFEMerge.cpp \
-        svg/graphics/filters/SVGFEMorphology.cpp \
-        svg/graphics/filters/SVGFEOffset.cpp \
-        svg/graphics/filters/SVGFESpecularLighting.cpp \
-        svg/graphics/filters/SVGFETile.cpp \
-        svg/graphics/filters/SVGFETurbulence.cpp \
         svg/graphics/filters/SVGFilter.cpp \
         svg/graphics/filters/SVGFilterBuilder.cpp \
-        svg/graphics/filters/SVGLightSource.cpp \
         svg/graphics/SVGImage.cpp \
         rendering/RenderForeignObject.cpp \
         rendering/RenderPath.cpp \

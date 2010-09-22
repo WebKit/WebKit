@@ -22,8 +22,8 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
-#include "SVGFEMorphology.h"
+#if ENABLE(FILTERS)
+#include "FEMorphology.h"
 
 #include "CanvasPixelArray.h"
 #include "Filter.h"
@@ -185,4 +185,4 @@ TextStream& FEMorphology::externalRepresentation(TextStream& ts, int indent) con
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(FILTERS)
+#endif // ENABLE(FILTERS)

@@ -20,22 +20,27 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGPointLightSource_h
-#define SVGPointLightSource_h
+#ifndef SpotLightSource_h
+#define SpotLightSource_h
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
-#include "SVGLightSource.h"
+#if ENABLE(FILTERS)
+#include "LightSource.h"
 
 namespace WebCore {
 
-class PointLightSource : public LightSource {
+class SpotLightSource : public LightSource {
 public:
-    static PassRefPtr<PointLightSource> create(const FloatPoint3D& position)
+    static PassRefPtr<SpotLightSource> create(const FloatPoint3D& position,
+        const FloatPoint3D& direction, float specularExponent, float limitingConeAngle)
     {
-        return adoptRef(new PointLightSource(position));
+        return adoptRef(new SpotLightSource(position, direction, specularExponent, limitingConeAngle));
     }
 
     const FloatPoint3D& position() const { return m_position; }
+    const FloatPoint3D& direction() const { return m_direction; }
+
+    float specularExponent() const { return m_specularExponent; }
+    float limitingConeAngle() const { return m_limitingConeAngle; }
 
     virtual void initPaintingData(PaintingData&);
     virtual void updatePaintingData(PaintingData&, int x, int y, float z);
@@ -43,17 +48,25 @@ public:
     virtual TextStream& externalRepresentation(TextStream&) const;
 
 private:
-    PointLightSource(const FloatPoint3D& position)
-        : LightSource(LS_POINT)
+    SpotLightSource(const FloatPoint3D& position, const FloatPoint3D& direction,
+        float specularExponent, float limitingConeAngle)
+        : LightSource(LS_SPOT)
         , m_position(position)
+        , m_direction(direction)
+        , m_specularExponent(specularExponent)
+        , m_limitingConeAngle(limitingConeAngle)
     {
     }
 
     FloatPoint3D m_position;
+    FloatPoint3D m_direction;
+
+    float m_specularExponent;
+    float m_limitingConeAngle;
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(FILTERS)
+#endif // ENABLE(FILTERS)
 
-#endif // SVGPointLightSource_h
+#endif // SpotLightSource_h

@@ -20,10 +20,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGFEConvolveMatrix_h
-#define SVGFEConvolveMatrix_h
+#ifndef FEConvolveMatrix_h
+#define FEConvolveMatrix_h
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
+#if ENABLE(FILTERS)
 #include "FilterEffect.h"
 #include "FloatPoint.h"
 #include "FloatSize.h"
@@ -113,6 +113,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(FILTERS)
+#endif // ENABLE(FILTERS)
 
-#endif // SVGFEConvolveMatrix_h
+#endif // FEConvolveMatrix_h

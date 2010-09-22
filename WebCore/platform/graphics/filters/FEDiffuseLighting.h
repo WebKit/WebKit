@@ -19,31 +19,50 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGFEMerge_h
-#define SVGFEMerge_h
+#ifndef FEDiffuseLighting_h
+#define FEDiffuseLighting_h
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
-#include "FilterEffect.h"
-#include "Filter.h"
-#include <wtf/Vector.h>
+#if ENABLE(FILTERS)
+#include "FELighting.h"
 
 namespace WebCore {
 
-class FEMerge : public FilterEffect {
-public:
-    static PassRefPtr<FEMerge> create();
+class LightSource;
 
-    virtual void apply(Filter*);
+class FEDiffuseLighting : public FELighting {
+public:
+    static PassRefPtr<FEDiffuseLighting> create(const Color&, float, float,
+        float, float, PassRefPtr<LightSource>);
+    virtual ~FEDiffuseLighting();
+
+    Color lightingColor() const;
+    void setLightingColor(const Color&);
+
+    float surfaceScale() const;
+    void setSurfaceScale(float);
+
+    float diffuseConstant() const;
+    void setDiffuseConstant(float);
+
+    float kernelUnitLengthX() const;
+    void setKernelUnitLengthX(float);
+
+    float kernelUnitLengthY() const;
+    void setKernelUnitLengthY(float);
+
+    const LightSource* lightSource() const;
+    void setLightSource(PassRefPtr<LightSource>);
+
     virtual void dump();
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
 private:
-    FEMerge();
+    FEDiffuseLighting(const Color&, float, float, float, float, PassRefPtr<LightSource>);
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(FILTERS)
+#endif // ENABLE(FILTERS)
 
-#endif // SVGFEMerge_h
+#endif // FEDiffuseLighting_h

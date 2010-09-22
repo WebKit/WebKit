@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2008 Alex Mathews <possessedpenguinbob@gmail.com>
  * Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
@@ -20,43 +19,48 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGDistantLightSource_h
-#define SVGDistantLightSource_h
+#ifndef FEMorphology_h
+#define FEMorphology_h
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
-#include "SVGLightSource.h"
+#if ENABLE(FILTERS)
+#include "FilterEffect.h"
+#include "Filter.h"
 
 namespace WebCore {
 
-class DistantLightSource : public LightSource {
+enum MorphologyOperatorType {
+    FEMORPHOLOGY_OPERATOR_UNKNOWN = 0,
+    FEMORPHOLOGY_OPERATOR_ERODE = 1,
+    FEMORPHOLOGY_OPERATOR_DILATE = 2
+};
+
+class FEMorphology : public FilterEffect {
 public:
-    static PassRefPtr<DistantLightSource> create(float azimuth, float elevation)
-    {
-        return adoptRef(new DistantLightSource(azimuth, elevation));
-    }
+    static PassRefPtr<FEMorphology> create(MorphologyOperatorType, float radiusX, float radiusY);  
+    MorphologyOperatorType morphologyOperator() const;
+    void setMorphologyOperator(MorphologyOperatorType);
 
-    float azimuth() const { return m_azimuth; }
-    float elevation() const { return m_elevation; }
+    float radiusX() const;
+    void setRadiusX(float);
 
-    virtual void initPaintingData(PaintingData&);
-    virtual void updatePaintingData(PaintingData&, int x, int y, float z);
+    float radiusY() const;
+    void setRadiusY(float);
 
-    virtual TextStream& externalRepresentation(TextStream&) const;
+    virtual void apply(Filter*);
+    virtual void dump();
+
+    virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
 private:
-    DistantLightSource(float azimuth, float elevation)
-        : LightSource(LS_DISTANT)
-        , m_azimuth(azimuth)
-        , m_elevation(elevation)
-    {
-    }
-
-    float m_azimuth;
-    float m_elevation;
+    FEMorphology(MorphologyOperatorType, float radiusX, float radiusY);
+    
+    MorphologyOperatorType m_type;
+    float m_radiusX;
+    float m_radiusY;
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(FILTERS)
+#endif // ENABLE(FILTERS)
 
-#endif // SVGDistantLightSource_h
+#endif // FEMorphology_h

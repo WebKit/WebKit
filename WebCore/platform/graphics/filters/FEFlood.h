@@ -19,50 +19,40 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGFEDiffuseLighting_h
-#define SVGFEDiffuseLighting_h
+#ifndef FEFlood_h
+#define FEFlood_h
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
-#include "SVGFELighting.h"
+#if ENABLE(FILTERS)
+#include "Color.h"
+#include "Filter.h"
+#include "FilterEffect.h"
 
 namespace WebCore {
 
-class LightSource;
-
-class FEDiffuseLighting : public FELighting {
+class FEFlood : public FilterEffect {
 public:
-    static PassRefPtr<FEDiffuseLighting> create(const Color&, float, float,
-        float, float, PassRefPtr<LightSource>);
-    virtual ~FEDiffuseLighting();
+    static PassRefPtr<FEFlood> create(const Color&, float);
 
-    Color lightingColor() const;
-    void setLightingColor(const Color&);
+    Color floodColor() const;
+    void setFloodColor(const Color &);
 
-    float surfaceScale() const;
-    void setSurfaceScale(float);
+    float floodOpacity() const;
+    void setFloodOpacity(float);
 
-    float diffuseConstant() const;
-    void setDiffuseConstant(float);
-
-    float kernelUnitLengthX() const;
-    void setKernelUnitLengthX(float);
-
-    float kernelUnitLengthY() const;
-    void setKernelUnitLengthY(float);
-
-    const LightSource* lightSource() const;
-    void setLightSource(PassRefPtr<LightSource>);
-
+    virtual void apply(Filter*);
     virtual void dump();
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
 private:
-    FEDiffuseLighting(const Color&, float, float, float, float, PassRefPtr<LightSource>);
+    FEFlood(const Color&, float);
+
+    Color m_floodColor;
+    float m_floodOpacity;
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(FILTERS)
+#endif // ENABLE(FILTERS)
 
-#endif // SVGFEDiffuseLighting_h
+#endif // FEFlood_h

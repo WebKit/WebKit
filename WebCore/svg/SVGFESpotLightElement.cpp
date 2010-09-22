@@ -21,7 +21,8 @@
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFESpotLightElement.h"
-#include "SVGSpotLightSource.h"
+
+#include "SpotLightSource.h"
 
 namespace WebCore {
 

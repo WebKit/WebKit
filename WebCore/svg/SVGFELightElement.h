@@ -23,8 +23,8 @@
 #define SVGFELightElement_h
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
+#include "LightSource.h"
 #include "SVGElement.h"
-#include "SVGLightSource.h"
 #include "SVGNames.h"
 
 namespace WebCore {

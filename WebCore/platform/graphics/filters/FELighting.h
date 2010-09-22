@@ -24,14 +24,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SVGFELighting_h
-#define SVGFELighting_h
+#ifndef FELighting_h
+#define FELighting_h
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
+#if ENABLE(FILTERS)
 #include "Color.h"
 #include "Filter.h"
 #include "FilterEffect.h"
-#include "SVGLightSource.h"
+#include "LightSource.h"
 #include <wtf/AlwaysInline.h>
 
 // Common base class for FEDiffuseLighting and FESpecularLighting
@@ -91,6 +91,6 @@ protected:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(FILTERS)
+#endif // ENABLE(FILTERS)
 
-#endif // SVGFELighting_h
+#endif // FELighting_h

@@ -21,10 +21,10 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
-#include "SVGFEDiffuseLighting.h"
+#if ENABLE(FILTERS)
+#include "FEDiffuseLighting.h"
 
-#include "SVGLightSource.h"
+#include "LightSource.h"
 
 namespace WebCore {
 
@@ -123,4 +123,4 @@ TextStream& FEDiffuseLighting::externalRepresentation(TextStream& ts, int indent
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(FILTERS)
+#endif // ENABLE(FILTERS)

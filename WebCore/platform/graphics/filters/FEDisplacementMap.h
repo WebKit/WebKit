@@ -19,10 +19,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGFEDisplacementMap_h
-#define SVGFEDisplacementMap_h
+#ifndef FEDisplacementMap_h
+#define FEDisplacementMap_h
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
+#if ENABLE(FILTERS)
 #include "PlatformString.h"
 #include "FilterEffect.h"
 #include "Filter.h"
@@ -65,6 +65,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(FILTERS)
+#endif // ENABLE(FILTERS)
 
-#endif // SVGFEDisplacementMap_h
+#endif // FEDisplacementMap_h

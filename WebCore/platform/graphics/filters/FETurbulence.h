@@ -21,10 +21,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGFETurbulence_h
-#define SVGFETurbulence_h
+#ifndef FETurbulence_h
+#define FETurbulence_h
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
+#if ENABLE(FILTERS)
 #include "FilterEffect.h"
 #include "Filter.h"
 
@@ -98,6 +98,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(FILTERS)
+#endif // ENABLE(FILTERS)
 
-#endif // SVGFETurbulence_h
+#endif // FETurbulence_h

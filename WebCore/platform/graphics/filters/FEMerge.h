@@ -19,24 +19,19 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGFEOffset_h
-#define SVGFEOffset_h
+#ifndef FEMerge_h
+#define EMerge_h
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
+#if ENABLE(FILTERS)
 #include "FilterEffect.h"
 #include "Filter.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class FEOffset : public FilterEffect {
+class FEMerge : public FilterEffect {
 public:
-    static PassRefPtr<FEOffset> create(float dx, float dy);
-
-    float dx() const;
-    void setDx(float);
-
-    float dy() const;
-    void setDy(float);
+    static PassRefPtr<FEMerge> create();
 
     virtual void apply(Filter*);
     virtual void dump();
@@ -44,14 +39,11 @@ public:
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
 private:
-    FEOffset(float dx, float dy);
-
-    float m_dx;
-    float m_dy;
+    FEMerge();
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(FILTERS)
+#endif // ENABLE(FILTERS)
 
-#endif // SVGFEOffset_h
+#endif // FEMerge_h

@@ -19,40 +19,51 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGFEFlood_h
-#define SVGFEFlood_h
+#ifndef FESpecularLighting_h
+#define FESpecularLighting_h
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
-#include "Color.h"
-#include "Filter.h"
-#include "FilterEffect.h"
+#if ENABLE(FILTERS)
+#include "FELighting.h"
 
 namespace WebCore {
 
-class FEFlood : public FilterEffect {
+class FESpecularLighting : public FELighting {
 public:
-    static PassRefPtr<FEFlood> create(const Color&, float);
+    static PassRefPtr<FESpecularLighting> create(const Color&, float, float,
+        float, float, float, PassRefPtr<LightSource>);
+    virtual ~FESpecularLighting();
 
-    Color floodColor() const;
-    void setFloodColor(const Color &);
+    Color lightingColor() const;
+    void setLightingColor(const Color&);
 
-    float floodOpacity() const;
-    void setFloodOpacity(float);
+    float surfaceScale() const;
+    void setSurfaceScale(float);
 
-    virtual void apply(Filter*);
+    float specularConstant() const;
+    void setSpecularConstant(float);
+
+    float specularExponent() const;
+    void setSpecularExponent(float);
+
+    float kernelUnitLengthX() const;
+    void setKernelUnitLengthX(float);
+
+    float kernelUnitLengthY() const;
+    void setKernelUnitLengthY(float);
+
+    const LightSource* lightSource() const;
+    void setLightSource(PassRefPtr<LightSource>);
+
     virtual void dump();
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
 private:
-    FEFlood(const Color&, float);
-
-    Color m_floodColor;
-    float m_floodOpacity;
+    FESpecularLighting(const Color&, float, float, float, float, float, PassRefPtr<LightSource>);
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(FILTERS)
+#endif // ENABLE(FILTERS)
 
-#endif // SVGFEFlood_h
+#endif // FESpecularLighting_h

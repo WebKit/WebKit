@@ -21,7 +21,7 @@
 #define SVGFEConvolveMatrixElement_h
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
-#include "SVGFEConvolveMatrix.h"
+#include "FEConvolveMatrix.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGNumberList.h"
 

@@ -23,8 +23,8 @@
 #include "SVGFEDiffuseLightingElement.h"
 
 #include "Attr.h"
+#include "FEDiffuseLighting.h"
 #include "SVGColor.h"
-#include "SVGFEDiffuseLighting.h"
 #include "SVGFELightElement.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"

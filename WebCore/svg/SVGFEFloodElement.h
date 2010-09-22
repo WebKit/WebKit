@@ -22,7 +22,7 @@
 #define SVGFEFloodElement_h
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
-#include "SVGFEFlood.h"
+#include "FEFlood.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
