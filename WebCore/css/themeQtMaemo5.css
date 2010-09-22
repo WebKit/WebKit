@@ -66,6 +66,12 @@ select:active:disabled {
 input:not([type]),
 input[type="text"],
 input[type="password"],
+input[type="email"],
+input[type="color"],
+input[type="search"],
+input[type="date"],
+input[type="number"],
+input[type="url"],
 textarea {
     border: 1px solid black;
 }
@@ -73,6 +79,12 @@ textarea {
 input:not([type]):disabled,
 input[type="text"]:disabled,
 input[type="password"]:disabled,
+input[type="email"]:disabled,
+input[type="color"]:disabled,
+input[type="search"]:disabled,
+input[type="date"]:disabled,
+input[type="number"]:disabled,
+input[type="url"]:disabled,
 textarea:disabled {
     border: 1px solid grey;
     background-color:ButtonHighlight;
@@ -81,6 +93,12 @@ textarea:disabled {
 input:not([type]):active,
 input[type="text"]:active,
 input[type="password"]:active,
+input[type="email"]:active,
+input[type="color"]:active,
+input[type="search"]:active,
+input[type="date"]:active,
+input[type="number"]:active,
+input[type="url"]:active,
 textarea:active {
     background-color:ButtonShadow;
 }

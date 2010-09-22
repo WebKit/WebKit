@@ -1,3 +1,12 @@
+2010-09-21  Ragner Magalhaes  <ragner.magalhaes@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] On Maemo platform, web style is missing for some inputs
+        https://bugs.webkit.org/show_bug.cgi?id=46182
+
+        * css/themeQtMaemo5.css:
+
 2010-09-22  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed.
