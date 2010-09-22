@@ -2266,6 +2266,11 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
             return;
         }
     }
+    if (deprecatedInputType() == RANGE && evt->isKeyboardEvent()) {
+        handleKeyEventForRange(static_cast<KeyboardEvent*>(evt));
+        if (evt->defaultHandled())
+            return;
+    }
  
    if (isTextField()
             && evt->type() == eventNames().keydownEvent
@@ -2570,6 +2575,47 @@ void HTMLInputElement::handleBeforeTextInsertedEvent(Event* event)
         }
     }
     InputElement::handleBeforeTextInsertedEvent(m_data, this, this, event);
+}
+
+void HTMLInputElement::handleKeyEventForRange(KeyboardEvent* event)
+{
+    if (event->type() != eventNames().keydownEvent)
+        return;
+    String key = event->keyIdentifier();
+    if (key != "Up" && key != "Right" && key != "Down" && key != "Left")
+        return;
+
+    ExceptionCode ec;
+    if (equalIgnoringCase(getAttribute(stepAttr), "any")) {
+        double min = minimum();
+        double max = maximum();
+        // FIXME: Is 1/100 reasonable?
+        double step = (max - min) / 100;
+        double current = parseToDouble(value(), numeric_limits<double>::quiet_NaN());
+        ASSERT(isfinite(current));
+        double newValue;
+        if (key == "Up" || key == "Right") {
+            newValue = current + step;
+            if (newValue > max)
+                newValue = max;
+        } else {
+            newValue = current - step;
+            if (newValue < min)
+                newValue = min;
+        }
+        if (newValue != current) {
+            setValueAsNumber(newValue, ec);
+            dispatchFormControlChangeEvent();
+        }
+    } else {
+        int stepMagnification = (key == "Up" || key == "Right") ? 1 : -1;
+        String lastStringValue = value();
+        stepUp(stepMagnification, ec);
+        if (lastStringValue != value())
+            dispatchFormControlChangeEvent();
+    }
+    event->setDefaultHandled();
+    return;
 }
 
 PassRefPtr<HTMLFormElement> HTMLInputElement::createTemporaryFormForIsIndex()

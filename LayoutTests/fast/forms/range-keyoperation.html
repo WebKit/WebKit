@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description">Test for keyboard operations of &lt;input type=range></p>
+<div id="console"></div>
+<script>
+
+function sendKey(element, keyName) {
+    var event = document.createEvent('KeyboardEvent');
+    event.initKeyboardEvent('keydown', true, true, document.defaultView, keyName);
+    element.dispatchEvent(event);
+}
+
+var changeEventCounter = 0;
+function handleChange() {
+  changeEventCounter++;
+}
+
+var parent = document.createElement('div');
+document.body.appendChild(parent);
+parent.innerHTML = '<input type=range id=range min=0 max=100 value=50>';
+
+var input = document.getElementById('range');
+input.onchange = handleChange;
+input.focus();
+
+debug('Tests for a horizontal range');
+debug('Press the up arrow key:');
+var lastChangeEventCounter = changeEventCounter;
+sendKey(input, 'Up');
+shouldBe('input.value', '"51"');
+shouldBe('changeEventCounter', 'lastChangeEventCounter + 1');
+
+debug('Press the down arrow key:');
+sendKey(input, 'Down');
+shouldBe('input.value', '"50"');
+
+debug('Press the left arrow key:');
+sendKey(input, 'Left');
+shouldBe('input.value', '"49"');
+
+debug('Press the right arrow key:');
+sendKey(input, 'Right');
+shouldBe('input.value', '"50"');
+
+debug('Edge cases');
+input.valueAsNumber = 0;
+lastChangeEventCounter = changeEventCounter;
+sendKey(input, 'Left');
+shouldBe('input.value', '"0"');
+shouldBe('changeEventCounter', 'lastChangeEventCounter');
+sendKey(input, 'Right');
+shouldBe('input.value', '"1"');
+input.valueAsNumber = 100;
+sendKey(input, 'Right');
+shouldBe('input.value', '"100"');
+sendKey(input, 'Left');
+shouldBe('input.value', '"99"');
+
+
+debug('');
+input.setAttribute('style', '-webkit-appearance:slider-vertical; height: 40px;');
+input.valueAsNumber = 50;
+debug('Tests for a vertical range');
+debug('Press the up arrow key:');
+sendKey(input, 'Up');
+shouldBe('input.value', '"51"');
+
+debug('Press the down arrow key:');
+sendKey(input, 'Down');
+shouldBe('input.value', '"50"');
+
+debug('Press the left arrow key:');
+sendKey(input, 'Left');
+shouldBe('input.value', '"49"');
+
+debug('Press the right arrow key:');
+sendKey(input, 'Right');
+shouldBe('input.value', '"50"');
+
+debug('');
+debug('step=any cases');
+input.step = 'any';
+input.min = '0';
+input.max = '200';
+input.valueAsNumber = 100;
+
+debug('Press the up arrow key:');
+lastChangeEventCounter = changeEventCounter;
+sendKey(input, 'Up');
+shouldBe('input.value', '"102"');
+shouldBe('changeEventCounter', 'lastChangeEventCounter + 1');
+
+debug('Press the down arrow key:');
+lastChangeEventCounter = changeEventCounter;
+sendKey(input, 'Down');
+shouldBe('input.value', '"100"');
+shouldBe('changeEventCounter', 'lastChangeEventCounter + 1');
+
+debug('Edge cases');
+input.valueAsNumber = 199;
+sendKey(input, 'Up');
+shouldBe('input.value', '"200"');
+lastChangeEventCounter = changeEventCounter;
+sendKey(input, 'Up');
+shouldBe('input.value', '"200"');
+shouldBe('changeEventCounter', 'lastChangeEventCounter');
+sendKey(input, 'Down');
+shouldBe('input.value', '"198"');
+input.valueAsNumber = 1;
+sendKey(input, 'Down');
+shouldBe('input.value', '"0"');
+lastChangeEventCounter = changeEventCounter;
+sendKey(input, 'Down');
+shouldBe('input.value', '"0"');
+shouldBe('changeEventCounter', 'lastChangeEventCounter');
+sendKey(input, 'Up');
+shouldBe('input.value', '"2"');
+
+debug('');
+var successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

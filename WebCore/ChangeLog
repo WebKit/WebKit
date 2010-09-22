@@ -1,3 +1,25 @@
+2010-09-22  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Chris Fleizach.
+
+        Support keyboard operations for <input type=range>.
+        https://bugs.webkit.org/show_bug.cgi?id=45803
+
+        Increasing the value with Up/Right arrow keys by its step value,
+        and decreasing with Down/Left arrow keys. If an input element has
+        step=any attribute, increasing/decreasing by 1/100 of max-min.
+
+        Note: This change is not useful on Mac because users can't set
+        focus on range controls.
+
+        Test: fast/forms/range-keyoperation.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler):
+          Calls handleKeyEventForRange() for RANGE and key events.
+        (WebCore::HTMLInputElement::handleKeyEventForRange):
+        * html/HTMLInputElement.h: Add handleKeyEventForRange() declaration.
+
 2010-09-22  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Chris Fleizach.

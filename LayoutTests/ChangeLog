@@ -1,3 +1,13 @@
+2010-09-22  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Chris Fleizach.
+
+        Support keyboard operations for <input type=range>.
+        https://bugs.webkit.org/show_bug.cgi?id=45803
+
+        * fast/forms/range-keyoperation-expected.txt: Added.
+        * fast/forms/range-keyoperation.html: Added.
+
 2010-09-22  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Chris Fleizach.

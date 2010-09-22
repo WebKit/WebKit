@@ -1,0 +1,50 @@
+Test for keyboard operations of <input type=range>
+
+Tests for a horizontal range
+Press the up arrow key:
+PASS input.value is "51"
+PASS changeEventCounter is lastChangeEventCounter + 1
+Press the down arrow key:
+PASS input.value is "50"
+Press the left arrow key:
+PASS input.value is "49"
+Press the right arrow key:
+PASS input.value is "50"
+Edge cases
+PASS input.value is "0"
+PASS changeEventCounter is lastChangeEventCounter
+PASS input.value is "1"
+PASS input.value is "100"
+PASS input.value is "99"
+
+Tests for a vertical range
+Press the up arrow key:
+PASS input.value is "51"
+Press the down arrow key:
+PASS input.value is "50"
+Press the left arrow key:
+PASS input.value is "49"
+Press the right arrow key:
+PASS input.value is "50"
+
+step=any cases
+Press the up arrow key:
+PASS input.value is "102"
+PASS changeEventCounter is lastChangeEventCounter + 1
+Press the down arrow key:
+PASS input.value is "100"
+PASS changeEventCounter is lastChangeEventCounter + 1
+Edge cases
+PASS input.value is "200"
+PASS input.value is "200"
+PASS changeEventCounter is lastChangeEventCounter
+PASS input.value is "198"
+PASS input.value is "0"
+PASS input.value is "0"
+PASS changeEventCounter is lastChangeEventCounter
+PASS input.value is "2"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
