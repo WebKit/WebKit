@@ -34,6 +34,7 @@
 #include "DOMStringMap.h"
 #include "V8Binding.h"
 #include "V8DOMWrapper.h"
+#include "V8Element.h"
 
 namespace WebCore {
 
@@ -101,8 +102,11 @@ v8::Handle<v8::Value> toV8(DOMStringMap* impl)
     v8::Handle<v8::Object> wrapper = V8DOMStringMap::wrap(impl);
     // Add a hidden reference from the element to the DOMStringMap.
     Element* element = impl->element();
-    if (!wrapper.IsEmpty() && element)
-        V8DOMWrapper::setHiddenWindowReference(element->document()->frame(), wrapper);
+    if (!wrapper.IsEmpty() && element) {
+        v8::Handle<v8::Value> elementValue = toV8(element);
+        if (!elementValue.IsEmpty() && elementValue->IsObject())
+            V8DOMWrapper::setHiddenReference(elementValue.As<v8::Object>(), wrapper);
+    }
     return wrapper;
 }
 

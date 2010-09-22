@@ -1,3 +1,15 @@
+2010-09-22  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        [Chromium] Fix memory model for dataset
+        https://bugs.webkit.org/show_bug.cgi?id=46280
+
+        This is covered by existing tests.
+
+        * bindings/v8/custom/V8DOMStringMapCustom.cpp:
+        (WebCore::toV8):
+
 2010-09-22  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dave Hyatt.
