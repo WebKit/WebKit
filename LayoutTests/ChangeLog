@@ -1,3 +1,16 @@
+2010-09-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46222
+        <rdar://problem/8461701> Document.getElementById() malfunctions if ID was changed via Attr node modification.
+
+        Firefox fails many of the subtests, because it doesn't let one manipulate child nodes of Attr.
+        We allow that, so we need to pass them.
+
+        * fast/dom/Attr/change-id-via-attr-node-value-expected.txt: Added.
+        * fast/dom/Attr/change-id-via-attr-node-value.html: Added.
+
 2010-09-22  Tony Chang  <tony@chromium.org>
 
         Reviewed by Dimitri Glazkov.

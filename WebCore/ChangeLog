@@ -1,3 +1,26 @@
+2010-09-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46222
+        <rdar://problem/8461701> Document.getElementById() malfunctions if ID was changed via Attr node modification.
+
+        Test: fast/dom/Attr/change-id-via-attr-node-value.html
+
+        * dom/Attr.h:
+        * dom/Attr.cpp:
+        (WebCore::Attr::setValue): Separated a version callable from WebCore from one avaiable to JS.
+        Attr::setValue() can be called from Element::setAttribute(), and we don't want to update
+        m_elementsById (or to call attributeChanged()) twice in that case.
+        (WebCore::Attr::childrenChanged): If Attr's node children change, id changes.
+
+        * dom/Document.cpp: (WebCore::Document::removeElementById): Added an assertion that we are
+        not trying to remove something that isn't there. If we are, we probably failed to update
+        m_elementsById earlier.
+
+        * dom/Element.cpp: (WebCore::Element::setAttribute): If the attribute has an Attr node, its
+        children should be updated to match attribute value.
+
 2010-09-22  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

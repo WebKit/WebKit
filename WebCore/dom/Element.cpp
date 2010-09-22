@@ -578,7 +578,10 @@ void Element::setAttribute(const AtomicString& name, const AtomicString& value, 
     else if (!old && !value.isNull())
         m_attributeMap->addAttribute(createAttribute(QualifiedName(nullAtom, localName, nullAtom), value));
     else if (old && !value.isNull()) {
-        old->setValue(value);
+        if (Attr* attrNode = old->attr())
+            attrNode->setValue(value);
+        else
+            old->setValue(value);
         attributeChanged(old);
     }
 
@@ -608,7 +611,10 @@ void Element::setAttribute(const QualifiedName& name, const AtomicString& value,
     else if (!old && !value.isNull())
         m_attributeMap->addAttribute(createAttribute(name, value));
     else if (old) {
-        old->setValue(value);
+        if (Attr* attrNode = old->attr())
+            attrNode->setValue(value);
+        else
+            old->setValue(value);
         attributeChanged(old);
     }
 
