@@ -40,7 +40,7 @@ enum Kind {
     DidPerformServerRedirect,
     DidUpdateHistoryTitle,
     DidDestroyFrame,
-    GetPluginHostConnection,
+    GetPluginPath,
     GetPlugins
 };
 

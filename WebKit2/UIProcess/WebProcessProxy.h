@@ -105,7 +105,7 @@ private:
     bool sendMessage(CoreIPC::MessageID, PassOwnPtr<CoreIPC::ArgumentEncoder>);
 
     void getPlugins(bool refresh, Vector<WebCore::PluginInfo>&);
-    void getPluginHostConnection(const String& mimeType, const WebCore::KURL& url, String& pluginPath);
+    void getPluginPath(const String& mimeType, const WebCore::KURL& url, String& pluginPath);
 
     void addOrUpdateBackForwardListItem(uint64_t itemID, const String& originalURLString, const String& urlString, const String& title);
     void addVisitedLink(WebCore::LinkHash);

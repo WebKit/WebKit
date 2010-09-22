@@ -2,6 +2,25 @@
 
         Reviewed by Adam Roben.
 
+        Rename GetPluginHostConnection to GetPluginPath
+        https://bugs.webkit.org/show_bug.cgi?id=46292
+
+        Rename GetPluginHostConnection to GetPluginPath since this message will always get the
+        plug-in path. We'll add another message to actually get the connection.
+
+        * Shared/CoreIPCSupport/WebProcessProxyMessageKinds.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getPluginPath):
+        (WebKit::WebProcessProxy::didReceiveMessage):
+        (WebKit::WebProcessProxy::didReceiveSyncMessage):
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+
+2010-09-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
         Move plug-in creation to WebPage::createPlugin
         https://bugs.webkit.org/show_bug.cgi?id=46289
 
