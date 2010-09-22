@@ -1,3 +1,11 @@
+2010-09-21  Steve Falkenburg  <sfalken@apple.com>
+
+        Rubber stamped by Simon Fraser.
+
+        Add DirectX SDK include path.
+
+        * win/WebKit2DirectX.vsprops:
+
 2010-09-21  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

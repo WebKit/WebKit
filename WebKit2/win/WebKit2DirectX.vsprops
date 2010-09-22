@@ -4,7 +4,11 @@
 	Version="8.00"
 	Name="WebKit2DirectX"
 	>
-	<Tool
+  <Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="&quot;$(DXSDK_DIR)\Include&quot;"
+	/>
+  <Tool
 		Name="VCLinkerTool"
 		AdditionalLibraryDirectories="$(DXSDK_DIR)\Lib\x86"
 	/>
