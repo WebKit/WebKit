@@ -42,7 +42,7 @@ class ChromiumWinPort(chromium.ChromiumPort):
     """Chromium Win implementation of the Port class."""
 
     def __init__(self, **kwargs):
-        kwargs.setdefault('port_name', 'chromium-win')
+        kwargs.setdefault('port_name', 'chromium-win' + self.version())
         chromium.ChromiumPort.__init__(self, **kwargs)
 
     def setup_environ_for_server(self):
