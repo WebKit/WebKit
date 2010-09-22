@@ -57,6 +57,13 @@ RenderReplaced::~RenderReplaced()
 {
 }
 
+void RenderReplaced::setStyle(PassRefPtr<RenderStyle> newStyle)
+{
+    if (newStyle->blockFlow() != TopToBottomBlockFlow)
+        newStyle->setBlockFlow(TopToBottomBlockFlow);
+    RenderBox::setStyle(newStyle);
+}
+
 void RenderReplaced::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBox::styleDidChange(diff, oldStyle);

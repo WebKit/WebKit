@@ -2,6 +2,22 @@
 
         Reviewed by Dan Bernstein.
 
+        https://bugs.webkit.org/show_bug.cgi?id=46311, lock form controls and replaced elements to vertical block flow.
+
+        Patch form controls that don't use RenderReplaced by hand in html.css.  Patch all RenderReplaced elements
+        with an override of setStyle that forces the new style to have a vertical block flow.  We have to do something like
+        this to cover the CSS3 content: url(img) method of image replacement.
+        
+        * css/html.css:
+        (input, textarea, keygen, select, button, isindex, meter, progress):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::setStyle):
+        * rendering/RenderReplaced.h:
+
+2010-09-22  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         https://bugs.webkit.org/show_bug.cgi?id=46304
         
         display:inline should become display:inline-block when an object's block flow does not match its parent's block flow.

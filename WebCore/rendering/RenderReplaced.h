@@ -32,6 +32,8 @@ public:
     RenderReplaced(Node*, const IntSize& intrinsicSize);
     virtual ~RenderReplaced();
 
+    virtual void setStyle(PassRefPtr<RenderStyle>);
+
 protected:
     virtual void layout();
 

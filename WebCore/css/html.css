@@ -301,6 +301,11 @@ button {
     -webkit-appearance: button;
 }
 
+/* Form controls don't go vertical. */
+input, textarea, keygen, select, button, isindex, meter, progress {
+    -webkit-block-flow: tb !important;
+}
+
 input, textarea, keygen, select, button, isindex, datagrid {
     margin: 0__qem;
     font: -webkit-small-control;
