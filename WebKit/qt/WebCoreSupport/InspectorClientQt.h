@@ -42,8 +42,10 @@ class QWebView;
 
 namespace WebCore {
 class InspectorFrontendClientQt;
+class InspectorServerRequestHandlerQt;
 class Node;
 class Page;
+class RemoteFrontendChannel;
 
 class InspectorClientQt : public InspectorClient {
 public:
@@ -63,10 +65,16 @@ public:
 
     void releaseFrontendPage();
 
+    void attachAndReplaceRemoteFrontend(RemoteFrontendChannel *channel);
+    void detachRemoteFrontend();
+
 private:
     QWebPage* m_inspectedWebPage;
     QWebPage* m_frontendWebPage;
     InspectorFrontendClientQt* m_frontendClient;
+    bool m_remoteInspector;
+
+    friend class InspectorServerRequestHandlerQt;
 };
 
 class InspectorFrontendClientQt : public InspectorFrontendClientLocal {

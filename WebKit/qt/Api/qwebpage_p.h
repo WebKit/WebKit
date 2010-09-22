@@ -139,6 +139,7 @@ public:
     void setInspector(QWebInspector*);
     QWebInspector* getOrCreateInspector();
     WebCore::InspectorController* inspectorController();
+    quint16 inspectorServerPort();
 
 #ifndef QT_NO_SHORTCUT
     static QWebPage::WebAction editorActionForKeyEvent(QKeyEvent* event);

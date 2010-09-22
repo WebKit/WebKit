@@ -2503,6 +2503,7 @@ HEADERS += \
     xml/XSLTProcessor.h \
     xml/XSLTUnicodeSort.h \
     $$PWD/../WebKit/qt/Api/qwebplugindatabase_p.h \
+    $$PWD/../WebKit/qt/WebCoreSupport/InspectorServerQt.h \
     $$PWD/../WebKit/qt/WebCoreSupport/QtFallbackWebPopup.h \
     $$PWD/../WebKit/qt/WebCoreSupport/FrameLoaderClientQt.h \
     $$PWD/../WebKit/qt/WebCoreSupport/FrameNetworkingContextQt.h \
@@ -2609,6 +2610,7 @@ SOURCES += \
     ../WebKit/qt/WebCoreSupport/FrameNetworkingContextQt.cpp \
     ../WebKit/qt/WebCoreSupport/GeolocationPermissionClientQt.cpp \
     ../WebKit/qt/WebCoreSupport/InspectorClientQt.cpp \
+    ../WebKit/qt/WebCoreSupport/InspectorServerQt.cpp \
     ../WebKit/qt/WebCoreSupport/NotificationPresenterClientQt.cpp \
     ../WebKit/qt/WebCoreSupport/PageClientQt.cpp \
     ../WebKit/qt/WebCoreSupport/PopupMenuQt.cpp \

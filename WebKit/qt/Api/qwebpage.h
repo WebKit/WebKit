@@ -55,6 +55,7 @@ namespace WebCore {
     class EditorClientQt;
     class FrameLoaderClientQt;
     class InspectorClientQt;
+    class InspectorServerRequestHandlerQt;
     class InspectorFrontendClientQt;
     class NotificationPresenterClientQt;
     class GeolocationPermissionClientQt;
@@ -425,6 +426,7 @@ private:
     friend class WebCore::EditorClientQt;
     friend class WebCore::FrameLoaderClientQt;
     friend class WebCore::InspectorClientQt;
+    friend class WebCore::InspectorServerRequestHandlerQt;
     friend class WebCore::InspectorFrontendClientQt;
     friend class WebCore::NotificationPresenterClientQt;
     friend class WebCore::GeolocationPermissionClientQt;

@@ -77,6 +77,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
+#include "InspectorServerQt.h"
 #include "WindowFeatures.h"
 #include "WebPlatformStrategies.h"
 #include "LocalizedStrings.h"
@@ -1302,6 +1303,10 @@ void QWebPagePrivate::dynamicPropertyChangeEvent(QDynamicPropertyChangeEvent* ev
         frame->tiledBackingStore()->setKeepAndCoverAreaMultipliers(keepMultiplier, coverMultiplier);
     }
 #endif
+    else if (event->propertyName() == "_q_webInspectorServerPort") {
+        InspectorServerQt* inspectorServer = InspectorServerQt::server();
+        inspectorServer->listen(inspectorServerPort());
+    }
 }
 #endif
 
@@ -1559,6 +1564,14 @@ InspectorController* QWebPagePrivate::inspectorController()
 #endif
 }
 
+quint16 QWebPagePrivate::inspectorServerPort()
+{
+#if ENABLE(INSPECTOR) && !defined(QT_NO_PROPERTIES)
+    if (q && q->property("_q_webInspectorServerPort").isValid())
+        return q->property("_q_webInspectorServerPort").toInt();
+#endif
+    return 0;
+}
 
 /*!
    \enum QWebPage::FindFlag

@@ -110,6 +110,7 @@ public:
     bool useQGLWidgetViewport;
 #endif
     QUrl inspectorUrl;
+    quint16 remoteInspectorPort;
 };
 
 class LauncherWindow : public MainWindow {

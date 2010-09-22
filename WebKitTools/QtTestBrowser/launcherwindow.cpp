@@ -91,6 +91,9 @@ void LauncherWindow::init()
     m_inspector->hide();
     connect(this, SIGNAL(destroyed()), m_inspector, SLOT(deleteLater()));
 
+    if (m_windowOptions.remoteInspectorPort)
+        page()->setProperty("_q_webInspectorServerPort", m_windowOptions.remoteInspectorPort);
+
     // the zoom values are chosen to be like in Mozilla Firefox 3
     if (!m_zoomLevels.count()) {
         m_zoomLevels << 30 << 50 << 67 << 80 << 90;

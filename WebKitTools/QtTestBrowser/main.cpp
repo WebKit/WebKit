@@ -188,6 +188,11 @@ void LauncherApplication::handleUserOptions()
     if (inspectorUrlIndex != -1)
        windowOptions.inspectorUrl = takeOptionValue(&args, inspectorUrlIndex);
 
+    QString remoteInspectorPortArg("-remote-inspector-port");
+    int remoteInspectorPortIndex = args.indexOf(remoteInspectorPortArg);
+    if (remoteInspectorPortIndex != -1)
+        windowOptions.remoteInspectorPort = takeOptionValue(&args, remoteInspectorPortIndex).toInt();
+
     int robotIndex = args.indexOf("-r");
     if (robotIndex != -1) {
         QString listFile = takeOptionValue(&args, robotIndex);

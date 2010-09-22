@@ -1,3 +1,63 @@
+2010-09-22  Jamey Hicks  <jamey.hicks@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Web Inspector: Remote Web Inspector support for QtWebKit
+        https://bugs.webkit.org/show_bug.cgi?id=43988
+
+        Runs a web debug server on port specified by QtTestBrowser
+        argument -remote-inspector-port. Property
+        _q_webInspectorServerPort of the QWebPage instance will be set
+        according to the argument. All pages with that property set will
+        be remotely inspectable.
+
+        URL for remote inspection of first QWebPage is
+            http://localhost:9222/webkit/inspector/inspector.html?page=1
+        where 1 is the number of the QWebPage instance.
+
+        The base URL yields an index page with links to the individual inspectors:
+            http://localhost:9222/
+
+        * Api/qwebinspector.cpp:
+        (QWebInspectorPrivate::attachAndReplaceRemoteFrontend):
+        (QWebInspectorPrivate::detachRemoteFrontend):
+        * Api/qwebinspector_p.h:
+        (QWebInspectorPrivate::QWebInspectorPrivate):
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::dynamicPropertyChangeEvent):
+        (QWebPagePrivate::inspectorServerPort):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (WebCore::InspectorClientQt::InspectorClientQt):
+        (WebCore::InspectorClientQt::inspectorDestroyed):
+        (WebCore::InspectorClientQt::openInspectorFrontend):
+        (WebCore::InspectorClientQt::attachAndReplaceRemoteFrontend):
+        (WebCore::InspectorClientQt::detachRemoteFrontend):
+        (WebCore::InspectorClientQt::sendMessageToFrontend):
+        * WebCoreSupport/InspectorClientQt.h:
+        * WebCoreSupport/InspectorServerQt.cpp: Added.
+        (WebCore::generateWebSocketChallengeResponse):
+        (WebCore::parseWebSocketChallengeNumber):
+        (WebCore::InspectorServerQt::server):
+        (WebCore::InspectorServerQt::InspectorServerQt):
+        (WebCore::InspectorServerQt::~InspectorServerQt):
+        (WebCore::InspectorServerQt::listen):
+        (WebCore::InspectorServerQt::close):
+        (WebCore::InspectorServerQt::inspectorClientForPage):
+        (WebCore::InspectorServerQt::registerClient):
+        (WebCore::InspectorServerQt::unregisterClient):
+        (WebCore::InspectorServerQt::newConnection):
+        (WebCore::InspectorServerRequestHandlerQt::InspectorServerRequestHandlerQt):
+        (WebCore::InspectorServerRequestHandlerQt::~InspectorServerRequestHandlerQt):
+        (WebCore::InspectorServerRequestHandlerQt::tcpReadyRead):
+        (WebCore::InspectorServerRequestHandlerQt::tcpConnectionDisconnected):
+        (WebCore::InspectorServerRequestHandlerQt::webSocketSend):
+        (WebCore::InspectorServerRequestHandlerQt::webSocketReadyRead):
+        (WebCore::RemoteFrontendChannel::RemoteFrontendChannel):
+        (WebCore::RemoteFrontendChannel::sendMessageToFrontend):
+        * WebCoreSupport/InspectorServerQt.h: Added.
+
 2010-09-22  Balazs Kelemen  <kb@inf.u-szeged.hu>
 
         Reviewed by Kenneth Rohde Christiansen.

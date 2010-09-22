@@ -32,7 +32,10 @@
 #include "InspectorClientQt.h"
 
 #include "Frame.h"
+#include "InspectorBackendDispatcher.h"
 #include "InspectorController.h"
+#include "InspectorFrontend.h"
+#include "InspectorServerQt.h"
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PlatformString.h"
@@ -115,17 +118,26 @@ InspectorClientQt::InspectorClientQt(QWebPage* page)
     : m_inspectedWebPage(page)
     , m_frontendWebPage(0)
     , m_frontendClient(0)
-{}
+{
+    InspectorServerQt* webInspectorServer = InspectorServerQt::server();
+    if (webInspectorServer)
+        webInspectorServer->registerClient(this);
+}
 
 void InspectorClientQt::inspectorDestroyed()
 {
     if (m_frontendClient)
         m_frontendClient->inspectorClientDestroyed();
+
+    InspectorServerQt* webInspectorServer = InspectorServerQt::server();
+    if (webInspectorServer)
+        webInspectorServer->unregisterClient(this);
+
     delete this;
 }
 
     
-void InspectorClientQt::openInspectorFrontend(WebCore::InspectorController*)
+void InspectorClientQt::openInspectorFrontend(WebCore::InspectorController* inspectorController)
 {
 #if USE(V8)
     ensureDebuggerScriptLoaded();
@@ -136,6 +148,10 @@ void InspectorClientQt::openInspectorFrontend(WebCore::InspectorController*)
     inspectorView->setPage(inspectorPage);
 
     QWebInspector* inspector = m_inspectedWebPage->d->getOrCreateInspector();
+    // Remote frontend was attached.
+    if (m_inspectedWebPage->d->inspector->d->remoteFrontend)
+        return;
+
     // This is a known hook that allows changing the default URL for the
     // Web inspector. This is used for SDK purposes. Please keep this hook
     // around and don't remove it.
@@ -165,6 +181,23 @@ void InspectorClientQt::releaseFrontendPage()
 {
     m_frontendWebPage = 0;
     m_frontendClient = 0;
+}
+
+void InspectorClientQt::attachAndReplaceRemoteFrontend(RemoteFrontendChannel* channel)
+{
+#if ENABLE(INSPECTOR)
+    // Channel was allocated by InspectorServerQt. Here we transfer ownership to inspector.
+    m_inspectedWebPage->d->inspector->d->attachAndReplaceRemoteFrontend(channel);
+    m_inspectedWebPage->d->inspectorController()->connectFrontend();
+#endif
+}
+
+void InspectorClientQt::detachRemoteFrontend()
+{
+#if ENABLE(INSPECTOR)
+    m_inspectedWebPage->d->inspector->d->detachRemoteFrontend();
+    m_inspectedWebPage->d->inspectorController()->disconnectFrontend();
+#endif
 }
 
 void InspectorClientQt::highlight(Node*)
@@ -223,6 +256,12 @@ void InspectorClientQt::storeSetting(const String& key, const String& setting)
 
 bool InspectorClientQt::sendMessageToFrontend(const String& message)
 {
+    if (m_inspectedWebPage->d->inspector->d->remoteFrontend) {
+        RemoteFrontendChannel* session = qobject_cast<RemoteFrontendChannel*>(m_inspectedWebPage->d->inspector->d->remoteFrontend);
+        if (session)
+            session->sendMessageToFrontend(message);
+        return true;
+    }
     if (!m_frontendWebPage)
         return false;
 
