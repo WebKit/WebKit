@@ -54,6 +54,12 @@ public:
     // Notifies the client a popup was closed.
     virtual void popupClosed(PopupContainer* popupContainer) = 0;
 
+    // Notifies embedder that the state of an accessibility object has changed.
+    virtual void didChangeAccessibilityObjectState(AccessibilityObject*) = 0;
+    
+    // Notified embedder that the children of an accessibility object has changed.
+    virtual void didChangeAccessibilityObjectChildren(AccessibilityObject*) = 0;
+    
     // Notifies embedder about an accessibility notification.
     virtual void postAccessibilityNotification(AccessibilityObject*, AXObjectCache::AXNotification) = 0;
 };

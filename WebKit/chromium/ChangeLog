@@ -1,3 +1,22 @@
+2010-09-21  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed, rolling out r67982.
+        http://trac.webkit.org/changeset/67982
+        https://bugs.webkit.org/show_bug.cgi?id=45156
+
+        Causes crashes on chromium testshell
+
+        * public/WebAccessibilityCache.h:
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::didChangeAccessibilityObjectState):
+        (WebKit::WebViewClient::didChangeAccessibilityObjectChildren):
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::focusedNodeChanged):
+        (WebKit::ChromeClientImpl::didChangeAccessibilityObjectState):
+        (WebKit::ChromeClientImpl::didChangeAccessibilityObjectChildren):
+        * src/ChromeClientImpl.h:
+        * src/WebAccessibilityCache.cpp:
+
 2010-09-21  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.

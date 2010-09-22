@@ -247,7 +247,7 @@ inline void SelectionController::setTypingStyle(PassRefPtr<CSSMutableStyleDeclar
     m_typingStyle = style;
 }
 
-#if !(PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(CHROMIUM))
+#if !(PLATFORM(MAC) || PLATFORM(GTK))
 inline void SelectionController::notifyAccessibilityForSelectionChange()
 {
 }

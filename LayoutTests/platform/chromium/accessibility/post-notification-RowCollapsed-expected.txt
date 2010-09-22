@@ -1,3 +1,2 @@
 AccessibilityNotification - RowCollapsed - id:div-for-RowCollapsed
-AccessibilityNotification - LoadComplete
 This tests that chromium correctly recieves the RowCollapsed notification.

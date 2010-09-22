@@ -1,3 +1,2 @@
 AccessibilityNotification - CheckedStateChanged - id:checkbox-for-CheckedStateChanged
-AccessibilityNotification - LoadComplete
 This tests that chromium correctly recieves the CheckedStateChanged notification.  

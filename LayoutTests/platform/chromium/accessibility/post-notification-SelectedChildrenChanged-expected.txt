@@ -1,3 +1,2 @@
 AccessibilityNotification - SelectedChildrenChanged - id:select-for-SelectedChildrenChanged
-AccessibilityNotification - LoadComplete
 This tests that chromium correctly recieves the SelectedChildrenChanged notification.  

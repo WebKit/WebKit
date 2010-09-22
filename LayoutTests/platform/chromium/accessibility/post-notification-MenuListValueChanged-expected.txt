@@ -1,3 +1,2 @@
 AccessibilityNotification - MenuListValueChanged - id:select-for-MenuListValueChanged
-AccessibilityNotification - LoadComplete
 This tests that chromium correctly recieves the MenuListValueChanged notification.  

@@ -42,9 +42,4 @@ void WebAccessibilityCache::enableAccessibility()
     AXObjectCache::enableAccessibility();
 }
 
-bool WebAccessibilityCache::accessibilityEnabled()
-{
-    return AXObjectCache::accessibilityEnabled();
-}
-
 }

@@ -256,9 +256,7 @@ void ChromeClientImpl::focusedNodeChanged(Node* node)
     if (!document) {
         ASSERT_NOT_REACHED();
         return;
-    }
-
-    // TODO: Remove once the FocusedUIElementChanged notification is handled downstream.
+    } 
     if (document && document->axObjectCache()->accessibilityEnabled()) {
         // Retrieve the focused AccessibilityObject.
         AccessibilityObject* focusedAccObj =
@@ -759,6 +757,20 @@ void ChromeClientImpl::getPopupMenuInfo(PopupContainer* popupContainer,
     info->selectedIndex = popupContainer->selectedIndex();
     info->items.swap(outputItems);
     info->rightAligned = popupContainer->menuStyle().textDirection() == RTL;
+}
+
+void ChromeClientImpl::didChangeAccessibilityObjectState(AccessibilityObject* obj)
+{
+    // Alert assistive technology about the accessibility object state change
+    if (obj)
+        m_webView->client()->didChangeAccessibilityObjectState(WebAccessibilityObject(obj));
+}
+
+void ChromeClientImpl::didChangeAccessibilityObjectChildren(WebCore::AccessibilityObject* obj)
+{
+    // Alert assistive technology about the accessibility object children change
+    if (obj)
+        m_webView->client()->didChangeAccessibilityObjectChildren(WebAccessibilityObject(obj));
 }
 
 void ChromeClientImpl::postAccessibilityNotification(AccessibilityObject* obj, AXObjectCache::AXNotification notification)
