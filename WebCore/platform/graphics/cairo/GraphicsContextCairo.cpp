@@ -134,9 +134,8 @@ static inline void fillRectSourceOver(cairo_t* cr, const FloatRect& rect, const 
 
 static void appendPathToCairoContext(cairo_t* to, cairo_t* from)
 {
-    cairo_path_t* cairoPath = cairo_copy_path(from);
-    cairo_append_path(to, cairoPath);
-    cairo_path_destroy(cairoPath);
+    OwnPtr<cairo_path_t> cairoPath(cairo_copy_path(from));
+    cairo_append_path(to, cairoPath.get());
 }
 
 // We apply the pending path built via addPath to the Cairo context
@@ -1166,9 +1165,8 @@ void GraphicsContext::clip(const Path& path)
         return;
 
     cairo_t* cr = m_data->cr;
-    cairo_path_t* p = cairo_copy_path(path.platformPath()->context());
-    cairo_append_path(cr, p);
-    cairo_path_destroy(p);
+    OwnPtr<cairo_path_t> p(cairo_copy_path(path.platformPath()->context()));
+    cairo_append_path(cr, p.get());
     cairo_fill_rule_t savedFillRule = cairo_get_fill_rule(cr);
     cairo_set_fill_rule(cr, CAIRO_FILL_RULE_WINDING);
     cairo_clip(cr);
@@ -1325,9 +1323,8 @@ void GraphicsContext::drawTiledShadow(const IntRect& rect, const FloatSize& topL
         copyContextProperties(cr, shadowContext);
         cairo_translate(shadowContext, -rect.x() + blurRadius, -rect.y() + blurRadius);
         cairo_new_path(shadowContext);
-        cairo_path_t* path = cairo_copy_path(cr);
-        cairo_append_path(shadowContext, path);
-        cairo_path_destroy(path);
+        OwnPtr<cairo_path_t> path(cairo_copy_path(cr));
+        cairo_append_path(shadowContext, path.get());
 
         setPlatformFill(this, shadowContext, m_common);
 

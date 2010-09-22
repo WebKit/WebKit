@@ -1,3 +1,23 @@
+2010-09-22  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [gtk] Use the smart pointers to handle cairo_path_t
+        https://bugs.webkit.org/show_bug.cgi?id=46212
+
+        Modified the code to use smart pointers with cairo_path_t
+        variables.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::appendPathToCairoContext):
+        (WebCore::GraphicsContext::clip):
+        (WebCore::GraphicsContext::drawTiledShadow):
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::Path):
+        (WebCore::Path::operator=):
+        (WebCore::Path::apply):
+        (WebCore::Path::debugString):
+
 2010-09-22  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Kent Tamura.

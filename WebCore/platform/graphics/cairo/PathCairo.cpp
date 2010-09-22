@@ -52,9 +52,8 @@ Path::Path(const Path& other)
     : m_path(new CairoPath())
 {
     cairo_t* cr = platformPath()->context();
-    cairo_path_t* p = cairo_copy_path(other.platformPath()->context());
-    cairo_append_path(cr, p);
-    cairo_path_destroy(p);
+    OwnPtr<cairo_path_t> p(cairo_copy_path(other.platformPath()->context()));
+    cairo_append_path(cr, p.get());
 }
 
 Path& Path::operator=(const Path& other)
@@ -64,9 +63,8 @@ Path& Path::operator=(const Path& other)
 
     clear();
     cairo_t* cr = platformPath()->context();
-    cairo_path_t* p = cairo_copy_path(other.platformPath()->context());
-    cairo_append_path(cr, p);
-    cairo_path_destroy(p);
+    OwnPtr<cairo_path_t> p(cairo_copy_path(other.platformPath()->context()));
+    cairo_append_path(cr, p.get());
     return *this;
 }
 
@@ -297,7 +295,7 @@ bool Path::strokeContains(StrokeStyleApplier* applier, const FloatPoint& point) 
 void Path::apply(void* info, PathApplierFunction function) const
 {
     cairo_t* cr = platformPath()->context();
-    cairo_path_t* path = cairo_copy_path(cr);
+    OwnPtr<cairo_path_t> path(cairo_copy_path(cr));
     cairo_path_data_t* data;
     PathElement pelement;
     FloatPoint points[3];
@@ -329,7 +327,6 @@ void Path::apply(void* info, PathApplierFunction function) const
             break;
         }
     }
-    cairo_path_destroy(path);
 }
 
 void Path::transform(const AffineTransform& trans)
@@ -346,7 +343,7 @@ String Path::debugString() const
         return String();
 
     String pathString;
-    cairo_path_t* path = cairo_copy_path(platformPath()->context());
+    OwnPtr<cairo_path_t> path(cairo_copy_path(platformPath()->context()));
     cairo_path_data_t* data;
 
     for (int i = 0; i < path->num_data; i += path->data[i].header.length) {
@@ -373,7 +370,6 @@ String Path::debugString() const
         }
     }
 
-    cairo_path_destroy(path);
     return pathString.simplifyWhiteSpace();
 }
 
