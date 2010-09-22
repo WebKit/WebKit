@@ -1161,19 +1161,22 @@ bool ApplyStyleCommand::removeStyleFromRunBeforeApplyingStyle(CSSMutableStyleDec
     return true;
 }
 
-bool ApplyStyleCommand::removeInlineStyleFromElement(CSSMutableStyleDeclaration* style, HTMLElement* element, InlineStyleRemovalMode mode)
+bool ApplyStyleCommand::removeInlineStyleFromElement(CSSMutableStyleDeclaration* style, HTMLElement* element, InlineStyleRemovalMode mode, CSSMutableStyleDeclaration* extractedStyle)
 {
     ASSERT(style);
     ASSERT(element);
 
     if (m_styledInlineElement && element->hasTagName(m_styledInlineElement->tagQName())) {
-        if (mode != RemoveNone)
+        if (mode != RemoveNone) {
+            if (extractedStyle && element->inlineStyleDecl())
+                extractedStyle->merge(element->inlineStyleDecl());
             removeNodePreservingChildren(element);
+        }
         return true;
     }
 
     bool removed = false;
-    if (removeImplicitlyStyledElement(style, element, mode))
+    if (removeImplicitlyStyledElement(style, element, mode, extractedStyle))
         removed = true;
 
     if (!element->inDocument())
@@ -1181,7 +1184,7 @@ bool ApplyStyleCommand::removeInlineStyleFromElement(CSSMutableStyleDeclaration*
 
     // If the node was converted to a span, the span may still contain relevant
     // styles which must be removed (e.g. <b style='font-weight: bold'>)
-    if (removeCSSStyle(style, element, mode))
+    if (removeCSSStyle(style, element, mode, extractedStyle))
         removed = true;
 
     return removed;
@@ -1313,27 +1316,35 @@ void ApplyStyleCommand::replaceWithSpanOrRemoveIfWithoutAttributes(HTMLElement*&
     }
 }
 
-bool ApplyStyleCommand::removeCSSStyle(CSSMutableStyleDeclaration* style, HTMLElement* elem, InlineStyleRemovalMode mode)
+bool ApplyStyleCommand::removeCSSStyle(CSSMutableStyleDeclaration* style, HTMLElement* element, InlineStyleRemovalMode mode, CSSMutableStyleDeclaration* extractedStyle)
 {
     ASSERT(style);
-    ASSERT(elem);
+    ASSERT(element);
 
-    CSSMutableStyleDeclaration* decl = elem->inlineStyleDecl();
+    CSSMutableStyleDeclaration* decl = element->inlineStyleDecl();
     if (!decl)
         return false;
 
     bool removed = false;
     CSSMutableStyleDeclaration::const_iterator end = style->end();
     for (CSSMutableStyleDeclaration::const_iterator it = style->begin(); it != end; ++it) {
-        CSSPropertyID propertyID = static_cast<CSSPropertyID>((*it).id());
+        CSSPropertyID propertyID = static_cast<CSSPropertyID>(it->id());
         RefPtr<CSSValue> value = decl->getPropertyCSSValue(propertyID);
-        if (value && (propertyID != CSSPropertyWhiteSpace || !isTabSpanNode(elem))) {
+        if (value && (propertyID != CSSPropertyWhiteSpace || !isTabSpanNode(element))) {
             removed = true;
             if (mode == RemoveNone)
                 return true;
-            removeCSSProperty(elem, propertyID);
-            if (propertyID == CSSPropertyUnicodeBidi && !decl->getPropertyValue(CSSPropertyDirection).isEmpty())
-                removeCSSProperty(elem, CSSPropertyDirection);
+
+            ExceptionCode ec = 0;
+            if (extractedStyle)
+                extractedStyle->setProperty(propertyID, value->cssText(), decl->getPropertyPriority(propertyID), ec);
+            removeCSSProperty(element, propertyID);
+
+            if (propertyID == CSSPropertyUnicodeBidi && !decl->getPropertyValue(CSSPropertyDirection).isEmpty()) {
+                if (extractedStyle)
+                    extractedStyle->setProperty(CSSPropertyDirection, decl->getPropertyValue(CSSPropertyDirection), decl->getPropertyPriority(CSSPropertyDirection), ec);
+                removeCSSProperty(element, CSSPropertyDirection);
+            }
         }
     }
 
@@ -1342,10 +1353,10 @@ bool ApplyStyleCommand::removeCSSStyle(CSSMutableStyleDeclaration* style, HTMLEl
 
     // No need to serialize <foo style=""> if we just removed the last css property
     if (decl->isEmpty())
-        removeNodeAttribute(elem, styleAttr);
+        removeNodeAttribute(element, styleAttr);
 
-    if (isSpanWithoutAttributesOrUnstyleStyleSpan(elem))
-        removeNodePreservingChildren(elem);
+    if (isSpanWithoutAttributesOrUnstyleStyleSpan(element))
+        removeNodePreservingChildren(element);
 
     return removed;
 }
@@ -1368,51 +1379,6 @@ HTMLElement* ApplyStyleCommand::highestAncestorWithConflictingInlineStyle(CSSMut
     }
 
     return result;
-}
-
-PassRefPtr<CSSMutableStyleDeclaration> ApplyStyleCommand::extractInlineStyleToPushDown(CSSMutableStyleDeclaration* styleToApply, Node* node, bool isStyledElement)
-{
-    ASSERT(node);
-    ASSERT(node->isElementNode());
-    
-    // non-html elements not handled yet
-    if (!node->isHTMLElement())
-        return 0;
-
-    HTMLElement* element = static_cast<HTMLElement*>(node);
-    RefPtr<CSSMutableStyleDeclaration> style = element->inlineStyleDecl();
-    if (isStyledElement) {
-        removeNodePreservingChildren(element);
-        return style.release();
-    }
-
-    if (!style) {
-        style = CSSMutableStyleDeclaration::create();
-        removeImplicitlyStyledElement(styleToApply, element, RemoveIfNeeded, style.get());
-        return style.release();
-    }
-
-    Vector<int> properties;
-    CSSMutableStyleDeclaration::const_iterator end = styleToApply->end();
-    for (CSSMutableStyleDeclaration::const_iterator it = styleToApply->begin(); it != end; ++it)
-        properties.append(it->id());
-
-    style = style->copyPropertiesInSet(properties.data(), properties.size());
-    for (size_t i = 0; i < properties.size(); i++) {
-        RefPtr<CSSValue> property = style->getPropertyCSSValue(properties[i]);
-        if (property)
-            removeCSSProperty(element, static_cast<CSSPropertyID>(properties[i]));
-    }
-
-    if (element->inlineStyleDecl() && element->inlineStyleDecl()->isEmpty())
-        removeNodeAttribute(element, styleAttr);
-
-    if (isSpanWithoutAttributesOrUnstyleStyleSpan(element))
-        removeNodePreservingChildren(element);
-
-    removeImplicitlyStyledElement(styleToApply, element, RemoveIfNeeded, style.get());
-
-    return style.release();
 }
 
 void ApplyStyleCommand::applyInlineStyleToPushDown(Node* node, CSSMutableStyleDeclaration* style)
@@ -1490,7 +1456,8 @@ void ApplyStyleCommand::pushDownInlineStyleAroundNode(CSSMutableStyleDeclaration
         RefPtr<StyledElement> styledElement;
         if (current->isStyledElement() && m_styledInlineElement && current->hasTagName(m_styledInlineElement->tagQName()))
             styledElement = static_cast<StyledElement*>(current);
-        RefPtr<CSSMutableStyleDeclaration> styleToPushDown = extractInlineStyleToPushDown(style, current, styledElement);
+        RefPtr<CSSMutableStyleDeclaration> styleToPushDown = CSSMutableStyleDeclaration::create();
+        removeInlineStyleFromElement(style, static_cast<HTMLElement*>(current), RemoveIfNeeded, styleToPushDown.get());
 
         // The inner loop will go through children on each level
         // FIXME: we should aggregate inline child elements together so that we don't wrap each child separately.
