@@ -170,7 +170,8 @@ bool makeAllDirectories(const String& path)
 
 String homeDirectoryPath()
 {
-    return String(AEEFS_HOME_DIR);
+    const int webViewClassId = 0x010aa04c;
+    return String::format("fs:/~0X%08X/", webViewClassId);
 }
 
 String pathGetFileName(const String& path)

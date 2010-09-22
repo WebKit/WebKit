@@ -2,6 +2,19 @@
 
         Reviewed by Kent Tamura.
 
+        [BREWMP] Change the home directory path to the WebKit module directory
+        https://bugs.webkit.org/show_bug.cgi?id=45895
+
+        AEEFS_HOME_DIR denotes the currently running application's directory. 
+        Change it to fs:/~<clsid> to use the WebKit module directory as home.
+
+        * platform/brew/FileSystemBrew.cpp:
+        (WebCore::homeDirectoryPath):
+
+2010-09-22  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Kent Tamura.
+
         [BREWMP] Add dummy Pasteboard
         https://bugs.webkit.org/show_bug.cgi?id=46107
 
