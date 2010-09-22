@@ -103,6 +103,10 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
     NotifyWinEvent(msaaEvent, page->chrome()->platformPageClient(), OBJID_CLIENT, -static_cast<LONG>(obj->axObjectID()));
 }
 
+void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, unsigned)
+{
+}
+
 AXID AXObjectCache::platformGenerateAXID() const
 {
     static AXID lastUsedID = 0;

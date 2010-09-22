@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DeleteFromTextNodeCommand.h"
 
+#include "AXObjectCache.h"
 #include "Text.h"
 
 namespace WebCore {
@@ -53,6 +54,10 @@ void DeleteFromTextNodeCommand::doApply()
     if (ec)
         return;
     
+    // Need to notify this before actually deleting the text
+    if (AXObjectCache::accessibilityEnabled())
+        document()->axObjectCache()->nodeTextChangeNotification(m_node->renderer(), AXObjectCache::AXTextDeleted, m_offset, m_count);
+
     m_node->deleteData(m_offset, m_count, ec);
 }
 
@@ -65,6 +70,9 @@ void DeleteFromTextNodeCommand::doUnapply()
         
     ExceptionCode ec;
     m_node->insertData(m_offset, m_text, ec);
+
+    if (AXObjectCache::accessibilityEnabled())
+        document()->axObjectCache()->nodeTextChangeNotification(m_node->renderer(), AXObjectCache::AXTextInserted, m_offset, m_count);
 }
 
 } // namespace WebCore

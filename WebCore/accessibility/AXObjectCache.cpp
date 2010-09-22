@@ -465,6 +465,16 @@ void AXObjectCache::selectedChildrenChanged(RenderObject* renderer)
     // to find the container which should send out the notification.
     postNotification(renderer, AXSelectedChildrenChanged, false);
 }
+
+void AXObjectCache::nodeTextChangeNotification(RenderObject* renderer, AXTextChange textChange, unsigned offset, unsigned count)
+{
+    if (!renderer)
+        return;
+
+    // Delegate on the right platform
+    AccessibilityObject* obj = getOrCreate(renderer);
+    nodeTextChangePlatformNotification(obj, textChange, offset, count);
+}
 #endif
 
 #if HAVE(ACCESSIBILITY)

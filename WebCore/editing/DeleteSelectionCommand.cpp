@@ -443,11 +443,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
         return;
 
     if (startNode == m_downstreamEnd.node()) {
-        // The selection to delete is all in one node.
-        if (!startNode->renderer() || (startOffset == 0 && m_downstreamEnd.atLastEditingPositionForNode())) {
-            // just delete
-            removeNode(startNode);
-        } else if (m_downstreamEnd.deprecatedEditingOffset() - startOffset > 0) {
+        if (m_downstreamEnd.deprecatedEditingOffset() - startOffset > 0) {
             if (startNode->isTextNode()) {
                 // in a text node that needs to be trimmed
                 Text* text = static_cast<Text*>(startNode);
@@ -457,6 +453,10 @@ void DeleteSelectionCommand::handleGeneralDelete()
                 m_endingPosition = m_upstreamStart;
             }
         }
+
+        // The selection to delete is all in one node.
+        if (!startNode->renderer() || (!startOffset && m_downstreamEnd.atLastEditingPositionForNode()))
+            removeNode(startNode);
     }
     else {
         bool startNodeWasDescendantOfEndNode = m_upstreamStart.node()->isDescendantOf(m_downstreamEnd.node());
@@ -472,6 +472,9 @@ void DeleteSelectionCommand::handleGeneralDelete()
             } else {
                 node = startNode->childNode(startOffset);
             }
+        } else if (startNode == m_upstreamEnd.node() && startNode->isTextNode()) {
+            Text* text = static_cast<Text*>(m_upstreamEnd.node());
+            deleteTextFromNode(text, 0, m_upstreamEnd.deprecatedEditingOffset());
         }
         
         // handle deleting all nodes that are completely selected

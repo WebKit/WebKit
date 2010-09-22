@@ -22,6 +22,10 @@
 
 #include "AccessibilityObject.h"
 #include "AccessibilityObjectWrapperAtk.h"
+#include "AccessibilityRenderObject.h"
+#include "GOwnPtr.h"
+#include "Range.h"
+#include "TextIterator.h"
 
 namespace WebCore {
 
@@ -48,6 +52,39 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* coreObject, AX
             return;
         g_signal_emit_by_name(coreObject->wrapper(), "selection-changed");
     }
+}
+
+static void emitTextChanged(AccessibilityRenderObject* object, AXObjectCache::AXTextChange textChange, unsigned offset, unsigned count)
+{
+    // Get the axObject for the parent object
+    AtkObject* wrapper = object->parentObjectUnignored()->wrapper();
+    if (!wrapper || !ATK_IS_TEXT(wrapper))
+        return;
+
+    // Select the right signal to be emitted
+    CString detail;
+    switch (textChange) {
+    case AXObjectCache::AXTextInserted:
+        detail = "text-changed::insert";
+        break;
+    case AXObjectCache::AXTextDeleted:
+        detail = "text-changed::delete";
+        break;
+    }
+
+    if (!detail.isNull())
+        g_signal_emit_by_name(wrapper, detail.data(), offset, count);
+}
+
+void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject* object, AXTextChange textChange, unsigned offset, unsigned count)
+{
+    // Sanity check
+    if (count < 1 || !object || !object->isAccessibilityRenderObject())
+        return;
+
+    Node* node = object->node();
+    RefPtr<Range> range = Range::create(node->document(),  Position(node->parentNode(), 0), Position(node, 0));
+    emitTextChanged(toAccessibilityRenderObject(object), textChange, offset + TextIterator::rangeLength(range.get()), count);
 }
 
 void AXObjectCache::handleFocusedUIElementChanged(RenderObject* oldFocusedRender, RenderObject* newFocusedRender)

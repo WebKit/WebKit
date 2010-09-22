@@ -1,3 +1,20 @@
+2010-09-22  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] object:text-changed events should be emitted for entries and password text
+        https://bugs.webkit.org/show_bug.cgi?id=25898
+
+        New unit test to make sure text-changed signals are emitted
+
+        * tests/testatk.c:
+        (textChangedCb): New. Signal handler for the
+        text-changed::insert and text-changed::delete signals.
+        (checkTextChangesAndBailOut): New. Source function to check
+        the global result of the test and quit from the main loop.
+        (testWebkitAtkTextChangedNotifications): New test.
+        (main):
+
 2010-09-22  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

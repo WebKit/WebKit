@@ -1,3 +1,66 @@
+2010-09-22 Mario Sanchez Prada <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] object:text-changed events should be emitted for entries and password text
+        https://bugs.webkit.org/show_bug.cgi?id=25898
+
+        Implement proper 'text-changed' signal emission for the GTK port
+
+        Call deleteTextFromNode() when needed while removing text nodes.
+        Do it even when removeNode() is going to be called afterwards, in
+        order to allow accessibility to get properly notified about the
+        text being removed alongside with that node.
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete):
+
+        New function in AXObjectCache to call when text changes in a node.
+        Added one new function to allow notifying something changed in a
+        text node through the associated RenderObject, making such a
+        function dependant on the platform-specific implementation,
+        provided through a protected function (provided a proper
+        implementation for the GTK port and a dummy one for the others).
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::nodeTextChangeNotification): New
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::AXTextChange): New enumeration
+        (WebCore::AXObjectCache::nodeTextChangeNotification): New
+        (WebCore::AXObjectCache::nodeTextChangePlatformNotification): New
+        * accessibility/AccessibilityRenderObject.h:
+        (WebCore::toAccessibilityRenderObject):
+        * accessibility/chromium/AXObjectCacheChromium.cpp:
+        (WebCore::AXObjectCache::nodeTextChangePlatformNotification): New
+        * accessibility/gtk/AXObjectCacheAtk.cpp:
+        (WebCore::emitTextChanged):
+        (WebCore::AXObjectCache::nodeTextChangePlatformNotification): New
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::nodeTextChangePlatformNotification): New
+        * accessibility/win/AXObjectCacheWin.cpp:
+        (WebCore::AXObjectCache::nodeTextChangePlatformNotification): New
+
+        Notify accessibility when something changes in a text node.
+        Call to AXObjectCache::nodeTextChangeNotification() to notify when
+        text was inserted/deleted when applying/unapplying a text edition
+        command, along with the offset in the original text where the
+        change took place and the number of characters that got affected.
+
+        * editing/AppendNodeCommand.cpp:
+        (WebCore::sendAXTextChangedIgnoringLineBreaks):
+        (WebCore::AppendNodeCommand::doApply):
+        (WebCore::AppendNodeCommand::doUnapply):
+        * editing/DeleteFromTextNodeCommand.cpp:
+        (WebCore::DeleteFromTextNodeCommand::doApply):
+        (WebCore::DeleteFromTextNodeCommand::doUnapply):
+        * editing/InsertIntoTextNodeCommand.cpp:
+        (WebCore::InsertIntoTextNodeCommand::doApply):
+        (WebCore::InsertIntoTextNodeCommand::doUnapply):
+        * editing/InsertNodeBeforeCommand.cpp:
+        (WebCore::InsertNodeBeforeCommand::doApply):
+        (WebCore::InsertNodeBeforeCommand::doUnapply):
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete):
+
 2010-09-22  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

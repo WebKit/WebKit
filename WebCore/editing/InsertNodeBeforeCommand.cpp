@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InsertNodeBeforeCommand.h"
 
+#include "AXObjectCache.h"
 #include "htmlediting.h"
 
 namespace WebCore {
@@ -51,6 +52,9 @@ void InsertNodeBeforeCommand::doApply()
 
     ExceptionCode ec;
     parent->insertBefore(m_insertChild.get(), m_refChild.get(), ec);
+
+    if (AXObjectCache::accessibilityEnabled())
+        document()->axObjectCache()->nodeTextChangeNotification(m_insertChild->renderer(), AXObjectCache::AXTextInserted, 0, m_insertChild->nodeValue().length());
 }
 
 void InsertNodeBeforeCommand::doUnapply()
@@ -58,6 +62,10 @@ void InsertNodeBeforeCommand::doUnapply()
     if (!m_insertChild->isContentEditable())
         return;
         
+    // Need to notify this before actually deleting the text
+    if (AXObjectCache::accessibilityEnabled())
+        document()->axObjectCache()->nodeTextChangeNotification(m_insertChild->renderer(), AXObjectCache::AXTextDeleted, 0, m_insertChild->nodeValue().length());
+
     ExceptionCode ec;
     m_insertChild->remove(ec);
 }
