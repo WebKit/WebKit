@@ -1,3 +1,13 @@
+2010-09-22  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed.
+
+        Build fix for invalid assertion after r68059.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::getPropertiesNotIn): Correct assertion target after
+        name change.
+
 2010-09-22  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.

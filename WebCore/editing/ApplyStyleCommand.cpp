@@ -391,7 +391,7 @@ static bool fontWeightIsBold(CSSStyleDeclaration* style)
 RefPtr<CSSMutableStyleDeclaration> getPropertiesNotIn(CSSStyleDeclaration* styleWithRedundantProperties, CSSStyleDeclaration* baseStyle)
 {
     ASSERT(styleWithRedundantProperties);
-    ASSERT(computedStyle);
+    ASSERT(baseStyle);
     RefPtr<CSSMutableStyleDeclaration> result = styleWithRedundantProperties->copy();
     baseStyle->diff(result.get());
 
