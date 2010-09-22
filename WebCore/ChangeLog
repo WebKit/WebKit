@@ -1,3 +1,19 @@
+2010-09-22  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Fix wrong casts for table cell since its parent is not a RenderBlock. Remove
+        the redundant destroy call for empty anonymous columns or column span block.
+        https://bugs.webkit.org/show_bug.cgi?id=46245
+
+        Tests: fast/table/table-anonymous-block-destroy-crash.html
+               fast/table/table-columns-blocks-calc-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addChildToAnonymousColumnBlocks):
+        (WebCore::RenderBlock::columnsBlockForSpanningElement):
+        (WebCore::RenderBlock::removeChild):
+
 2010-09-22  Matt Perry  <mpcomplete@chromium.org>
 
         Reviewed by Darin Fisher.

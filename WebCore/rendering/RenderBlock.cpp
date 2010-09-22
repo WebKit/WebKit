@@ -333,7 +333,7 @@ void RenderBlock::addChildToAnonymousColumnBlocks(RenderObject* newChild, Render
     ASSERT(!continuation()); // We don't yet support column spans that aren't immediate children of the multi-column block.
         
     // The goal is to locate a suitable box in which to place our child.
-    RenderBlock* beforeChildParent = toRenderBlock(beforeChild ? beforeChild->parent() : lastChild());
+    RenderBlock* beforeChildParent = toRenderBlock(beforeChild && beforeChild->parent()->isRenderBlock() ? beforeChild->parent() : lastChild());
     
     // If the new child is floating or positioned it can just go in that block.
     if (newChild->isFloatingOrPositioned())
@@ -610,7 +610,7 @@ RenderBlock* RenderBlock::columnsBlockForSpanningElement(RenderObject* newChild)
         && !newChild->isInline() && !isAnonymousColumnSpanBlock()) {
         if (style()->specifiesColumns())
             columnsBlockAncestor = this;
-        else
+        else if (parent() && parent()->isRenderBlock())
             columnsBlockAncestor = toRenderBlock(parent())->containingColumnsBlock(false);
     }
     return columnsBlockAncestor;
@@ -1007,9 +1007,6 @@ void RenderBlock::removeChild(RenderObject* oldChild)
         // If this was our last child be sure to clear out our line boxes.
         if (childrenInline())
             lineBoxes()->deleteLineBoxes(renderArena());
-        // If we're now an empty anonymous columns or column span block, then go ahead and delete ourselves.
-        else if ((isAnonymousColumnsBlock() || isAnonymousColumnSpanBlock()) && parent() && parent()->isRenderBlock() && !continuation())
-            destroy();
     }
 }
 

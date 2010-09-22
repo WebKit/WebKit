@@ -1,3 +1,24 @@
+2010-09-22  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Tests that removing an anonymous block from a table cell does not result in crash.
+        Also, tests that calculating columns block for a table cell does not result in crash.
+        Rebaseline existing multicol span tests since we don't explicitly remove an empty 
+        anonymous columns or column span blocks.  
+        https://bugs.webkit.org/show_bug.cgi?id=46245
+
+        * fast/table/table-anonymous-block-destroy-crash-expected.txt: Added.
+        * fast/table/table-anonymous-block-destroy-crash.html: Added.
+        * fast/table/table-columns-blocks-calc-crash-expected.txt: Added.
+        * fast/table/table-columns-blocks-calc-crash.html: Added.
+        * platform/mac/fast/multicol/span/span-as-immediate-child-property-removal-expected.checksum:
+        * platform/mac/fast/multicol/span/span-as-immediate-child-property-removal-expected.png:
+        * platform/mac/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-immediate-columns-child-removal-expected.checksum:
+        * platform/mac/fast/multicol/span/span-as-immediate-columns-child-removal-expected.png:
+        * platform/mac/fast/multicol/span/span-as-immediate-columns-child-removal-expected.txt:
+
 2010-09-22  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
