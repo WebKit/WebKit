@@ -249,13 +249,13 @@ using namespace WebCore;
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidResignKey:)
                                                      name:NSWindowDidResignKeyNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidMiniaturize:) 
-                                                     name:NSWindowDidMiniaturizeNotification object:nil];
+                                                     name:NSWindowDidMiniaturizeNotification object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidDeminiaturize:)
-                                                     name:NSWindowDidDeminiaturizeNotification object:nil];
+                                                     name:NSWindowDidDeminiaturizeNotification object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowFrameDidChange:)
-                                                     name:NSWindowDidMoveNotification object:nil];
+                                                     name:NSWindowDidMoveNotification object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowFrameDidChange:) 
-                                                     name:NSWindowDidResizeNotification object:nil];
+                                                     name:NSWindowDidResizeNotification object:window];
     }
 }
 
@@ -267,8 +267,10 @@ using namespace WebCore;
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidBecomeKeyNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidResignKeyNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidMiniaturizeNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidDeminiaturizeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidMiniaturizeNotification object:window];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidDeminiaturizeNotification object:window];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidMoveNotification object:window];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidResizeNotification object:window];
 }
 
 static bool isViewVisible(NSView *view)
