@@ -1,0 +1,19 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController)
+  window.layoutTestController.dumpAsText();
+
+function runTest()
+{
+   elt = document.getElementById('test');
+   if (getComputedStyle(elt, 0).getPropertyValue("display") == "inline-block")
+     document.getElementById('console').innerHTML = "PASS";
+   else
+     document.getElementById('console').innerHTML = "FAIL";
+}
+</script>
+</head>
+<body onload="runTest()">
+<span id="test" style="-webkit-block-flow:lr"></span>
+<div id="console"></div>

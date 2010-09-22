@@ -181,7 +181,7 @@ public:
         void checkForZoomChange(RenderStyle*, RenderStyle* parentStyle);
         void checkForTextSizeAdjust();
 
-        void adjustRenderStyle(RenderStyle*, Element*);
+        void adjustRenderStyle(RenderStyle* styleToAdjust, RenderStyle* parentStyle, Element*);
 
         void addMatchedRule(CSSRuleData* rule) { m_matchedRules.append(rule); }
         void addMatchedDeclaration(CSSMutableStyleDeclaration* decl);

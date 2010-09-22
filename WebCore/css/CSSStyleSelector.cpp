@@ -1344,7 +1344,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
         updateFont();
     
     // Clean up our style object's display and text decorations (among other fixups).
-    adjustRenderStyle(style(), e);
+    adjustRenderStyle(style(), m_parentStyle, e);
 
     // Start loading images referenced by this style.
     loadPendingImages();
@@ -1562,7 +1562,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
         updateFont();
 
     // Clean up our style object's display and text decorations (among other fixups).
-    adjustRenderStyle(style(), 0);
+    adjustRenderStyle(style(), parentStyle, 0);
 
     // Start loading images referenced by this style.
     loadPendingImages();
@@ -1646,7 +1646,7 @@ static void addIntrinsicMargins(RenderStyle* style)
     }
 }
 
-void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
+void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, RenderStyle* parentStyle, Element *e)
 {
     // Cache our original display.
     style->setOriginalDisplay(style->display());
@@ -1716,6 +1716,11 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
                 style->setDisplay(BLOCK);
         }
         
+        // FIXME: Don't support this mutation for pseudo styles like first-letter or first-line, since it's not completely
+        // clear how that should work.
+        if (style->display() == INLINE && style->styleType() == NOPSEUDO && parentStyle && style->blockFlow() != parentStyle->blockFlow())
+            style->setDisplay(INLINE_BLOCK);
+            
         // After performing the display mutation, check table rows.  We do not honor position:relative on
         // table rows or cells.  This has been established in CSS2.1 (and caused a crash in containingBlock()
         // on some sites).
