@@ -1,3 +1,19 @@
+2010-09-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7729077> Extending the selection to sentence boundary after a line break may select extra character
+        https://bugs.webkit.org/show_bug.cgi?id=46232
+
+        Test: editing/selection/extend-by-sentence-002.html
+
+        * editing/visible_units.cpp:
+        (WebCore::nextBoundary): The text iterator’s range end can be the position after
+        the line break, in which case the next visible is actually after the first character
+        of the next sentence. Instead, advance the text iterator past the newline character
+        and return the beginning of its range, which is guaranteed to still be before the
+        next sentence.
+
 2010-09-21  Robert Hogan  <robert@webkit.org>
 
         Rubber-stamped by Ariya Hidayat.

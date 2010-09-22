@@ -222,13 +222,16 @@ static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunc
         // Use the character iterator to translate the next value into a DOM position.
         CharacterIterator charIt(searchRange.get(), TextIteratorEmitsCharactersBetweenAllVisiblePositions);
         charIt.advance(next - prefixLength - 1);
-        pos = charIt.range()->endPosition();
+        RefPtr<Range> characterRange = charIt.range();
+        pos = characterRange->endPosition();
         
         if (*charIt.characters() == '\n') {
             // FIXME: workaround for collapsed range (where only start position is correct) emitted for some emitted newlines (see rdar://5192593)
             VisiblePosition visPos = VisiblePosition(pos);
-            if (visPos == VisiblePosition(charIt.range()->startPosition()))
-                pos = visPos.next(true).deepEquivalent();
+            if (visPos == VisiblePosition(characterRange->startPosition())) {
+                charIt.advance(1);
+                pos = charIt.range()->startPosition();
+            }
         }
     }
 

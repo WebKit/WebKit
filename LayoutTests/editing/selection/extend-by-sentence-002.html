@@ -1,0 +1,20 @@
+<div id="target">All of this should be selected</div><div>None of this should be selected.</div>
+<p id="result"></p>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    var target = document.getElementById("target");
+    var result = document.getElementById("result");
+    var sel = getSelection();
+    sel.setBaseAndExtent(target, 0, target, 1);
+    sel.modify("extend", "forward", "sentence");
+    var selectedRange = sel.getRangeAt(0);
+
+    if (selectedRange.startContainer === target.firstChild && selectedRange.startOffset === 0
+        && selectedRange.endContainer === target.nextSibling && selectedRange.endOffset === 0) {
+        result.innerText = "PASS";
+    } else {
+        result.innerText = "FAIL: Selected range is '" + selectedRange + "'";
+    }
+</script>
