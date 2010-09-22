@@ -1,3 +1,28 @@
+2010-09-21  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Get fresh theme when running EWebLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=46210
+
+        If user tried to run EWebLauncher outside of the build tree, it would
+        not find the theme and fallback to the installed one. However, since
+        EWebLauncher is not installed, we always want to take the theme from
+        the just compiled source code. If user had never installed WebKit's
+        EFL port it could even receive a segv since no theme would be found.
+
+        Now EWebLauncher does not fallback to the installed theme and CMake
+        gives as DATA_DIR the directory of the theme it has just built.
+
+        * CMakeListsEfl.txt: Pass the build directory as DATA_DIR to
+        EWebLauncher.
+        * EWebLauncher/main.c: Use only the theme from build director. Do not
+        fallback to others as this could hide real bugs.
+        (quit):
+        (browserCreate):
+        (findThemePath):
+        (main):
+
 2010-09-21  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, build fix.

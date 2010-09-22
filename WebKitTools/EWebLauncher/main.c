@@ -605,7 +605,10 @@ quit(Eina_Bool success, const char *msg)
     if (msg)
         fputs(msg, (success) ? stdout : stderr);
 
-    free(themePath);
+    if (themePath) {
+        free(themePath);
+        themePath = NULL;
+    }
 
     if (!success)
         return EXIT_FAILURE;
@@ -641,9 +644,6 @@ browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Re
 
     if (!app->evas)
         return quit(EINA_FALSE, "ERROR: could not get evas from evas-ecore\n");
-
-    if (!theme)
-        theme = themePath;
 
     app->theme = theme;
     app->userAgent = userAgent;
@@ -741,26 +741,25 @@ main_signal_exit(void *data, int ev_type, void *ev)
 }
 
 static char *
-findThemePath(void)
+findThemePath(const char *theme)
 {
-    const char **itr, *locations[] = {
-        "./default.edj",
-        "./WebKit/efl/DefaultTheme/default.edj",
-        "../WebKit/efl/DefaultTheme/default.edj",
-        DATA_DIR"/themes/default.edj",
-        NULL
-    };
+    const char *defaultTheme = DATA_DIR"/default.edj";
+    char *rpath;
+    struct stat st;
 
-    for (itr = locations; *itr; itr++) {
-        struct stat st;
-        if (!stat(*itr, &st)) {
-            char path[PATH_MAX];
-            if (realpath(*itr, path))
-                return strdup(path);
-        }
+    if (!theme)
+        theme = defaultTheme;
+
+    rpath = realpath(theme, NULL);
+    if (!rpath)
+        return NULL;
+
+    if (stat(rpath, &st)) {
+        free(rpath);
+        return NULL;
     }
 
-    return NULL;
+    return rpath;
 }
 
 int
@@ -824,7 +823,9 @@ main(int argc, char *argv[])
     if (sudoWorkaround)
         strcat(getenv("HOME"), "blah");
 
-    themePath = findThemePath();
+    themePath = findThemePath(theme);
+    if (!themePath)
+        return quit(EINA_FALSE, "ERROR: could not find theme.\n");
 
     ewk_init();
     tmp = getenv("TMPDIR");
@@ -839,7 +840,7 @@ main(int argc, char *argv[])
     if (proxyUri)
         ewk_settings_proxy_uri_set(proxyUri);
 
-    browserCreate(url, theme, userAgent, geometry, engine, isFullscreen);
+    browserCreate(url, themePath, userAgent, geometry, engine, isFullscreen);
     ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, main_signal_exit, &windows);
 
     ecore_main_loop_begin();

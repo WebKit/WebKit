@@ -1,5 +1,4 @@
 SET(EWebLauncher_SOURCES
-    ${WebKit_THEME}
     ${WEBKITTOOLS_DIR}/EWebLauncher/main.c
 )
 
@@ -49,6 +48,10 @@ IF (WTF_USE_CURL)
   LIST(APPEND EWebLauncher_LIBRARIES ${CURL_LIBRARIES})
   LIST(APPEND EWebLauncher_LINK_FLAGS ${CURL_LDFLAGS})
 ENDIF ()
+
+# Override data directory. We always want to get a fresh theme.
+REMOVE_DEFINITIONS(-DDATA_DIR=\"${DATA_DIR}\")
+ADD_DEFINITIONS(-DDATA_DIR=\"${BUILD_DATA_DIR}\")
 
 INCLUDE_DIRECTORIES(${EWebLauncher_INCLUDE_DIRECTORIES})
 ADD_EXECUTABLE(Programs/EWebLauncher ${EWebLauncher_SOURCES})
