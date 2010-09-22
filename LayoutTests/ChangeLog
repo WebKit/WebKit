@@ -1,3 +1,12 @@
+2010-09-22  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45957, fix regression in column rules stacking test.
+
+        * platform/mac/fast/multicol/column-rules-stacking-expected.checksum:
+        * platform/mac/fast/multicol/column-rules-stacking-expected.png:
+
 2010-09-22  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.
