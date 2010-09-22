@@ -131,8 +131,8 @@ static bool executeApplyStyle(Frame* frame, EditorCommandSource source, EditActi
 static bool executeToggleStyleInList(Frame* frame, EditorCommandSource source, EditAction action, int propertyID, CSSValue* value)
 {
     ExceptionCode ec = 0;
-    Node* nodeToRemove = 0;
-    RefPtr<CSSComputedStyleDeclaration> selectionStyle = frame->editor()->selectionComputedStyle(nodeToRemove);
+    bool shouldUseFixedFontDefaultSize;
+    RefPtr<CSSMutableStyleDeclaration> selectionStyle = frame->editor()->selectionComputedStyle(shouldUseFixedFontDefaultSize);
     if (!selectionStyle)
         return false;
 
@@ -147,12 +147,6 @@ static bool executeToggleStyleInList(Frame* frame, EditorCommandSource source, E
 
     } else if (selectedCSSValue->cssText() == "none")
         newStyle = value->cssText();
-
-    ASSERT(!ec);
-    if (nodeToRemove) {
-        nodeToRemove->remove(ec);
-        ASSERT(!ec);
-    }
 
     // FIXME: We shouldn't be having to convert new style into text.  We should have setPropertyCSSValue.
     RefPtr<CSSMutableStyleDeclaration> newMutableStyle = CSSMutableStyleDeclaration::create();

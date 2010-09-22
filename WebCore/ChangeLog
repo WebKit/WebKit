@@ -1,3 +1,40 @@
+2010-09-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        queryCommandState returns false for Underline command when no selection is made
+        https://bugs.webkit.org/show_bug.cgi?id=17594
+
+        The bug was caused by selectionComputedStyle's adding -webkit-text-decorations-in-effect property
+        to a dummy span used to obtain the computed style when there is a typing style.
+        Since this property is for internal use only, the CSS parser always stripped the property.
+        As a result, we were always ignoring the text decorations set by the typing style.
+
+        Fixed the bug by making selectionComputedStyle directly merge the computed style of the current
+        caret position and the typing style. This also eliminates the need for a dummy span element.
+        Due to the merge, the return value of selectionComputedStyle had to be changed to CSSMutableStyleDeclaration
+        from CSSComputedStyleDeclaration.
+
+        Test: editing/execCommand/query-text-decoration-with-typing-style.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::StyleChange::init): Calls getPropertiesNotIn.
+        (WebCore::getPropertiesNotIn): Renamed from getPropertiesNotInComputedStyle since it takes
+        CSSStyleDeclaration* instead of CSSComputedStyleDeclaration* for the second argument.
+        (WebCore::ApplyStyleCommand::removeNonEditingProperties): Extracted from editingStyleAtPosition.
+        (WebCore::ApplyStyleCommand::editingStyleAtPosition): Calls removeNonEditingProperties.
+        * editing/ApplyStyleCommand.h:
+        * editing/Editor.cpp:
+        (WebCore::triStateOfStyle): Calls getPropertiesNotIn. Renamed from triStateOfStyleInComputedStyle
+        since it no longer takes CSSComputedStyleDeclaration.
+        (WebCore::Editor::selectionStartHasStyle): Calls selectionComputedStyle and triStateOfStyle.
+        (WebCore::Editor::selectionHasStyle): Ditto.
+        (WebCore::Editor::selectionStartCSSPropertyValue): Calls selectionComputedStyle.
+        (WebCore::Editor::selectionComputedStyle): See above.
+        * editing/Editor.h:
+        * editing/EditorCommand.cpp:
+        (WebCore::executeToggleStyleInList): Calls selectionComputedStyle.
+
 2010-09-22  Jamey Hicks  <jamey.hicks@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

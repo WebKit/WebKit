@@ -57,7 +57,8 @@ public:
     {
         return adoptRef(new ApplyStyleCommand(element, removeOnly, action));
     }
-    
+
+    static RefPtr<CSSMutableStyleDeclaration> removeNonEditingProperties(CSSStyleDeclaration* style);
     static PassRefPtr<CSSMutableStyleDeclaration> editingStyleAtPosition(Position pos, ShouldIncludeTypingStyle shouldIncludeTypingStyle = IgnoreTypingStyle);
 
 private:
@@ -125,7 +126,7 @@ private:
 
 bool isStyleSpan(const Node*);
 PassRefPtr<HTMLElement> createStyleSpanElement(Document*);
-RefPtr<CSSMutableStyleDeclaration> getPropertiesNotInComputedStyle(CSSStyleDeclaration* style, CSSComputedStyleDeclaration* computedStyle);
+RefPtr<CSSMutableStyleDeclaration> getPropertiesNotIn(CSSStyleDeclaration* styleWithRedundantProperties, CSSStyleDeclaration* baseStyle);
 
 void prepareEditingStyleToApplyAt(CSSMutableStyleDeclaration*, Position);
 void removeStylesAddedByNode(CSSMutableStyleDeclaration*, Node*);

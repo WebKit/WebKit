@@ -1,3 +1,16 @@
+2010-09-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        queryCommandState returns false for Underline command when no selection is made
+        https://bugs.webkit.org/show_bug.cgi?id=17594
+
+        Added a test to ensure queryCommandValue('underline') and queryCommandValue('strikeThrough')
+        correctly incorporates the typing style.
+
+        * editing/execCommand/query-text-decoration-with-typing-style-expected.txt: Added.
+        * editing/execCommand/query-text-decoration-with-typing-style.html: Added.
+
 2010-09-22  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
