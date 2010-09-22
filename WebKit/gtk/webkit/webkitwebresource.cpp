@@ -285,8 +285,9 @@ WebKitWebResource* webkit_web_resource_new(const gchar* data,
  *
  * Returns the data of the @webResource.
  *
- * Return value: a #GString containing the character data of the @webResource.
- * The string is owned by WebKit and should not be freed or destroyed.
+ * Return value: (transfer none): a #GString containing the character
+ * data of the @webResource.  The string is owned by WebKit and should
+ * not be freed or destroyed.
  *
  * Since: 1.1.14
  */

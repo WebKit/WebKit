@@ -449,7 +449,7 @@ G_CONST_RETURN gchar* webkit_web_frame_get_uri(WebKitWebFrame* frame)
  * The #WebKitWebView returned manages the entire hierarchy of #WebKitWebFrame
  * objects that contains @frame.
  *
- * Return value: the #WebKitWebView that manages @frame
+ * Return value: (transfer none): the #WebKitWebView that manages @frame
  */
 WebKitWebView* webkit_web_frame_get_web_view(WebKitWebFrame* frame)
 {
@@ -491,7 +491,7 @@ G_CONST_RETURN gchar* webkit_web_frame_get_name(WebKitWebFrame* frame)
  *
  * Returns the @frame's parent frame, or %NULL if it has none.
  *
- * Return value: the parent #WebKitWebFrame or %NULL in case there is none
+ * Return value: (transfer none): the parent #WebKitWebFrame or %NULL in case there is none
  */
 WebKitWebFrame* webkit_web_frame_get_parent(WebKitWebFrame* frame)
 {
@@ -662,7 +662,7 @@ void webkit_web_frame_reload(WebKitWebFrame* frame)
  * hierarchy, this function will search for a matching frame in other main
  * frame hierarchies. Returns %NULL if no match is found.
  *
- * Return value: the found #WebKitWebFrame or %NULL in case none is found
+ * Return value: (transfer none): the found #WebKitWebFrame or %NULL in case none is found
  */
 WebKitWebFrame* webkit_web_frame_find_frame(WebKitWebFrame* frame, const gchar* name)
 {
@@ -684,7 +684,7 @@ WebKitWebFrame* webkit_web_frame_find_frame(WebKitWebFrame* frame, const gchar* 
  * Gets the global JavaScript execution context. Use this function to bridge
  * between the WebKit and JavaScriptCore APIs.
  *
- * Return value: the global JavaScript context
+ * Return value: (transfer none): the global JavaScript context
  */
 JSGlobalContextRef webkit_web_frame_get_global_context(WebKitWebFrame* frame)
 {
@@ -703,7 +703,7 @@ JSGlobalContextRef webkit_web_frame_get_global_context(WebKitWebFrame* frame)
  *
  * Returns the committed data source.
  *
- * Return value: the committed #WebKitWebDataSource.
+ * Return value: (transfer none): the committed #WebKitWebDataSource.
  *
  * Since: 1.1.14
  */
@@ -724,7 +724,7 @@ WebKitWebDataSource* webkit_web_frame_get_data_source(WebKitWebFrame* frame)
  * transition to a committed data source once any data has been received. Use
  * webkit_web_frame_get_data_source to get the committed data source.
  *
- * Return value: the provisional #WebKitWebDataSource or %NULL if a load
+ * Return value: (transfer none): the provisional #WebKitWebDataSource or %NULL if a load
  * request is not in progress.
  *
  * Since: 1.1.14
@@ -1199,7 +1199,7 @@ GtkPolicyType webkit_web_frame_get_vertical_scrollbar_policy(WebKitWebFrame* fra
  *
  * Returns the @frame's security origin.
  *
- * Return value: the security origin of @frame
+ * Return value: (transfer none): the security origin of @frame
  *
  * Since: 1.1.14
  */
@@ -1241,7 +1241,7 @@ void webkit_web_frame_layout(WebKitWebFrame* frame)
  * frame was not created by a load. You must unref the object when you
  * are done with it.
  *
- * Return value: a #WebKitNetworkResponse object
+ * Return value: (transfer full): a #WebKitNetworkResponse object
  *
  * Since: 1.1.18
  */

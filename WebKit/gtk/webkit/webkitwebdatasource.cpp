@@ -194,14 +194,15 @@ WebKitWebDataSource* webkit_web_data_source_new_with_request(WebKitNetworkReques
 }
 
 /**
- * webkit_web_data_source_get_web_frame
+ * webkit_web_data_source_get_web_frame:
  * @data_source: a #WebKitWebDataSource
  *
  * Returns the #WebKitWebFrame that represents this data source
  *
- * Return value: the #WebKitWebFrame that represents the @data_source. The
- * #WebKitWebFrame is owned by WebKit and should not be freed or destroyed.
- * This will return %NULL of the @data_source is not attached to a frame.
+ * Return value: (transfer none): the #WebKitWebFrame that represents
+ * the @data_source. The #WebKitWebFrame is owned by WebKit and should
+ * not be freed or destroyed.  This will return %NULL if the
+ * @data_source is not attached to a frame.
  *
  * Since: 1.1.14
  */
@@ -227,7 +228,7 @@ WebKitWebFrame* webkit_web_data_source_get_web_frame(WebKitWebDataSource* webDat
  * prior to the "committed" load state. See webkit_web_data_source_get_request
  * for getting the "committed" request.
  *
- * Return value: the original #WebKitNetworkRequest
+ * Return value: (transfer none): the original #WebKitNetworkRequest
  *
  * Since: 1.1.14
  */
@@ -254,9 +255,9 @@ WebKitNetworkRequest* webkit_web_data_source_get_initial_request(WebKitWebDataSo
  * the request that was "committed", and hence, different from the request you
  * get from the webkit_web_data_source_get_initial_request method.
  *
- * Return value: the #WebKitNetworkRequest that created the @data_source or
- * %NULL if the @data_source is not attached to the frame or the frame hasn't
- * been loaded.
+ * Return value: (transfer none): the #WebKitNetworkRequest that
+ * created the @data_source or %NULL if the @data_source is not
+ * attached to the frame or the frame hasn't been loaded.
  *
  * Since: 1.1.14
  */
@@ -333,8 +334,9 @@ gboolean webkit_web_data_source_is_loading(WebKitWebDataSource* webDataSource)
  * frame hasn't loaded any data. Use webkit_web_data_source_is_loading to test
  * if data source is in the process of loading.
  *
- * Return value: a #GString which contains the raw data that represents the @data_source or %NULL if the
- * @data_source hasn't loaded any data.
+ * Return value: (transfer none): a #GString which contains the raw
+ * data that represents the @data_source or %NULL if the @data_source
+ * hasn't loaded any data.
  *
  * Since: 1.1.14
  */
@@ -364,8 +366,8 @@ GString* webkit_web_data_source_get_data(WebKitWebDataSource* webDataSource)
  *
  * Returns the main resource of the @data_source
  *
- * Return value: a new #WebKitWebResource representing the main resource of
- * the @data_source.
+ * Return value: (transfer none): a new #WebKitWebResource
+ * representing the main resource of the @data_source.
  *
  * Since: 1.1.14
  */
@@ -414,14 +416,15 @@ G_CONST_RETURN gchar* webkit_web_data_source_get_unreachable_uri(WebKitWebDataSo
 }
 
 /**
- * webkit_web_data_source_get_subresources
+ * webkit_web_data_source_get_subresources:
  * @data_source: a #WebKitWebDataSource
  *
  * Gives you a #GList of #WebKitWebResource objects that compose the
  * #WebKitWebView to which this #WebKitWebDataSource is attached.
  *
- * Return value: a #GList of #WebKitWebResource objects; the objects are
- * owned by WebKit, but the GList must be freed.
+ * Return value: (element-type WebKitWebResource) (transfer container):
+ * a #GList of #WebKitWebResource objects; the objects are owned by
+ * WebKit, but the GList must be freed.
  *
  * Since: 1.1.15
  */

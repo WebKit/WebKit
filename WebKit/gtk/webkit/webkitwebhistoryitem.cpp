@@ -433,14 +433,14 @@ gdouble webkit_web_history_item_get_last_visited_time(WebKitWebHistoryItem* webH
 }
 
 /**
- * webkit_web_history_item_copy :
+ * webkit_web_history_item_copy:
  * @web_history_item: a #WebKitWebHistoryItem
  *
  * Makes a copy of the item for use with other WebView objects.
  *
  * Since: 1.1.18
  *
- * Return value: the new #WebKitWebHistoryItem.
+ * Return value: (transfer full): the new #WebKitWebHistoryItem.
  */
 WebKitWebHistoryItem* webkit_web_history_item_copy(WebKitWebHistoryItem* self)
 {

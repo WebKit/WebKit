@@ -241,7 +241,7 @@ G_CONST_RETURN gchar* webkit_network_request_get_uri(WebKitNetworkRequest* reque
 }
 
 /**
- * webkit_network_request_get_soup_message:
+ * webkit_network_request_get_message:
  * @request: a #WebKitNetworkRequest
  *
  * Obtains the #SoupMessage held and used by the given request. Notice
@@ -249,7 +249,7 @@ G_CONST_RETURN gchar* webkit_network_request_get_uri(WebKitNetworkRequest* reque
  * handlers is only supported (as in, will only affect what is
  * actually sent to the server) where explicitly documented.
  *
- * Returns: the #SoupMessage
+ * Returns: (transfer none): the #SoupMessage
  * Since: 1.1.9
  */
 SoupMessage* webkit_network_request_get_message(WebKitNetworkRequest* request)

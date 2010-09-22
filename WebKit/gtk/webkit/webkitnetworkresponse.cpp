@@ -241,14 +241,14 @@ G_CONST_RETURN gchar* webkit_network_response_get_uri(WebKitNetworkResponse* res
 }
 
 /**
- * webkit_network_response_get_soup_message:
+ * webkit_network_response_get_message:
  * @response: a #WebKitNetworkResponse
  *
  * Obtains the #SoupMessage that represents the given response. Notice
  * that only the response side of the HTTP conversation is
  * represented.
  *
- * Returns: the #SoupMessage
+ * Returns: (transfer none): the #SoupMessage
  * Since: 1.1.14
  */
 SoupMessage* webkit_network_response_get_message(WebKitNetworkResponse* response)

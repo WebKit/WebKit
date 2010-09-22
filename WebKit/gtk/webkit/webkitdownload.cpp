@@ -559,7 +559,7 @@ const gchar* webkit_download_get_uri(WebKitDownload* download)
  * Retrieves the #WebKitNetworkRequest object that backs the download
  * process.
  *
- * Returns: the #WebKitNetworkRequest instance
+ * Returns: (transfer none): the #WebKitNetworkRequest instance
  *
  * Since: 1.1.2
  */
@@ -578,7 +578,7 @@ WebKitNetworkRequest* webkit_download_get_network_request(WebKitDownload* downlo
  * Retrieves the #WebKitNetworkResponse object that backs the download
  * process.
  *
- * Returns: the #WebKitNetworkResponse instance
+ * Returns: (transfer none): the #WebKitNetworkResponse instance
  *
  * Since: 1.1.16
  */

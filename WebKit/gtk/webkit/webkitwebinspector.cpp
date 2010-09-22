@@ -426,8 +426,8 @@ void webkit_web_inspector_set_web_view(WebKitWebInspector *web_inspector, WebKit
  * that this method may return %NULL if the user hasn't inspected
  * anything.
  *
- * Returns: the #WebKitWebView instance that is used to render the
- * inspector or %NULL if it is not yet created.
+ * Returns: (transfer none): the #WebKitWebView instance that is used
+ * to render the inspector or %NULL if it is not yet created.
  *
  * Since: 1.0.3
  **/

@@ -1248,7 +1248,7 @@ WebKitWebSettings* webkit_web_settings_new()
  *
  * Copies an existing #WebKitWebSettings instance.
  *
- * Returns: a new #WebKitWebSettings instance
+ * Returns: (transfer full): a new #WebKitWebSettings instance
  **/
 WebKitWebSettings* webkit_web_settings_copy(WebKitWebSettings* web_settings)
 {

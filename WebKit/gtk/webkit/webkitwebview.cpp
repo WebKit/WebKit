@@ -1503,7 +1503,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * the new #WebKitWebView. The widget to which the widget is added will
      * handle that.
      *
-     * Return value: a newly allocated #WebKitWebView, or %NULL
+     * Return value: (transfer full): a newly allocated #WebKitWebView, or %NULL
      *
      * Since: 1.0.3
      */
@@ -2264,7 +2264,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * to set the property value of "webkit-widget-is-selected". This can
      * be used to draw a visual indicator of the selection.
      *
-     * Return value: a new #GtkWidget, or %NULL
+     * Return value: (transfer full): a new #GtkWidget, or %NULL
      *
      * Since: 1.1.8
      */
@@ -3217,7 +3217,7 @@ static void webkit_web_view_set_window_features(WebKitWebView* webView, WebKitWe
 }
 
 /**
- * webkit_web_view_get_window_features
+ * webkit_web_view_get_window_features:
  * @web_view: a #WebKitWebView
  *
  * Returns the instance of #WebKitWebWindowFeatures held by the given
@@ -3642,12 +3642,19 @@ void webkit_web_view_unmark_text_matches(WebKitWebView* webView)
     return core(webView)->unmarkAllTextMatches();
 }
 
+/**
+ * webkit_web_view_get_main_frame:
+ * @webView: a #WebKitWebView
+ *
+ * Returns the main frame for the @webView.
+ *
+ * Return value: (transfer none): the main #WebKitWebFrame for @webView
+ */
 WebKitWebFrame* webkit_web_view_get_main_frame(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), NULL);
 
-    WebKitWebViewPrivate* priv = webView->priv;
-    return priv->mainFrame;
+    return webView->priv->mainFrame;
 }
 
 /**
@@ -3656,7 +3663,7 @@ WebKitWebFrame* webkit_web_view_get_main_frame(WebKitWebView* webView)
  *
  * Returns the frame that has focus or an active text selection.
  *
- * Return value: The focused #WebKitWebFrame or %NULL if no frame is focused
+ * Return value: (transfer none): The focused #WebKitWebFrame or %NULL if no frame is focused
  */
 WebKitWebFrame* webkit_web_view_get_focused_frame(WebKitWebView* webView)
 {
@@ -4532,7 +4539,7 @@ void webkit_web_view_set_tooltip_text(WebKitWebView* webView, const char* toolti
  * Does a 'hit test' in the coordinates specified by @event to figure
  * out context information about that position in the @webView.
  * 
- * Returns: a newly created #WebKitHitTestResult with the context of the
+ * Returns: (transfer none): a newly created #WebKitHitTestResult with the context of the
  * specified position.
  *
  * Since: 1.1.15
@@ -4574,7 +4581,7 @@ G_CONST_RETURN gchar* webkit_web_view_get_icon_uri(WebKitWebView* webView)
  * webkit_web_view_get_dom_document:
  * @webView: a #WebKitWebView
  * 
- * Returns: the #WebKitDOMDocument currently loaded in the @webView
+ * Returns: (transfer none): the #WebKitDOMDocument currently loaded in the @webView
  *
  * Since: 1.3.1
  **/
