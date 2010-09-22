@@ -518,12 +518,15 @@ class Rebaseliner(object):
                 fallback_fullpath = os.path.normpath(
                     os.path.join(fallback_dir, fallback_file))
                 if fallback_fullpath.lower() != baseline_path.lower():
-                    with codecs.open(file1, "r", "utf8") as file_handle1:
-                        output1 = file_handle1.read()
-                    with codecs.open(file2, "r", "utf8") as file_handle2:
-                        output2 = file_handle2.read()
-                    if not self._diff_baselines(new_baseline,
-                                                fallback_fullpath):
+                    with codecs.open(new_baseline, "r",
+                                     None) as file_handle1:
+                        new_output = file_handle1.read()
+                    with codecs.open(fallback_fullpath, "r",
+                                     None) as file_handle2:
+                        fallback_output = file_handle2.read()
+                    is_image = baseline_path.lower().endswith('.png')
+                    if not self._diff_baselines(new_output, fallback_output,
+                                                is_image):
                         _log.info('  Found same baseline at %s',
                                   fallback_fullpath)
                         return True
@@ -586,7 +589,7 @@ class Rebaseliner(object):
             # Or is new_expectations always a byte array?
             with open(path, "w") as file:
                 file.write(new_expectations)
-            self._scm.add(path)
+            # self._scm.add(path)
         else:
             _log.info('No test was rebaselined so nothing to remove.')
 
@@ -730,7 +733,7 @@ class HtmlGenerator(object):
         """Launch the rebaselining html in brwoser."""
 
         _log.info('Launching html: "%s"', self._html_file)
-        user.open_url(self._html_file)
+        user.User().open_url(self._html_file)
         _log.info('Html launched.')
 
     def _generate_baseline_links(self, test_basename, suffix, platform):
