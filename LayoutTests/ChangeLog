@@ -1,3 +1,15 @@
+2010-09-21  Cosmin Truta  <ctruta@chromium.org>
+
+        Reviewed by James Robinson.
+
+        RenderImage::intrinsicSizeChanged crashes when m_imageResource is missing
+        https://bugs.webkit.org/show_bug.cgi?id=46120
+
+        Test a style change applied to a zoomed image.
+
+        * css3/style-zoomed-image.html: Added.
+        * css3/style-zoomed-image-expected.txt: Added.
+
 2010-09-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Geoffrey Garen.

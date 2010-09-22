@@ -1,3 +1,17 @@
+2010-09-21  Cosmin Truta  <ctruta@chromium.org>
+
+        Reviewed by James Robinson.
+
+        RenderImage::intrinsicSizeChanged crashes when m_imageResource is missing
+        https://bugs.webkit.org/show_bug.cgi?id=46120
+
+        Avoid applying operator -> to m_imageResource when its underlying pointer is NULL.
+
+        * rendering/RenderImage.h:
+        (WebCore::RenderImage::intrinsicSizeChanged): Checked m_imageResource.
+        * html/HTMLImageElement.cpp:
+        (HTMLImageElement::createRenderer): Fixed indentation.
+
 2010-09-21  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.
