@@ -26,6 +26,7 @@
 #ifndef WebIDBIndex_h
 #define WebIDBIndex_h
 
+#include "WebIDBTransaction.h"
 #include "WebString.h"
 
 namespace WebKit {
@@ -60,11 +61,43 @@ public:
         return false;
     }
 
-    // FIXME: Remove the default parameters for transactionIds.
-    virtual void openObjectCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*, int transactionId = 0) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void openCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*, int transactionId = 0) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void getObject(const WebIDBKey&, WebIDBCallbacks*, int transactionId = 0) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void get(const WebIDBKey&, WebIDBCallbacks*, int transactionId = 0) { WEBKIT_ASSERT_NOT_REACHED(); }
+    // FIXME: Remove the versions without transaction parameters.
+    virtual void openObjectCursor(const WebIDBKeyRange& range, unsigned short direction, WebIDBCallbacks* callbacks, const WebIDBTransaction&)
+    {
+        openObjectCursor(range, direction, callbacks);
+    }
+    virtual void openObjectCursor(const WebIDBKeyRange& range, unsigned short direction, WebIDBCallbacks* callbacks)
+    {
+        WebIDBTransaction transaction;
+        openObjectCursor(range, direction, callbacks, transaction);
+    }
+    virtual void openCursor(const WebIDBKeyRange& range, unsigned short direction, WebIDBCallbacks* callbacks, const WebIDBTransaction&)
+    {
+        openCursor(range, direction, callbacks);
+    }
+    virtual void openCursor(const WebIDBKeyRange& range, unsigned short direction, WebIDBCallbacks* callbacks)
+    {
+        WebIDBTransaction transaction;
+        openCursor(range, direction, callbacks, transaction);
+    }
+    virtual void getObject(const WebIDBKey& key, WebIDBCallbacks* callbacks, const WebIDBTransaction&)
+    {
+        getObject(key, callbacks);
+    }
+    virtual void getObject(const WebIDBKey& key, WebIDBCallbacks* callbacks)
+    {
+        WebIDBTransaction transaction;
+        getObject(key, callbacks, transaction);
+    }
+    virtual void get(const WebIDBKey& key, WebIDBCallbacks* callbacks, const WebIDBTransaction&)
+    {
+        get(key, callbacks);
+    }
+    virtual void get(const WebIDBKey& key, WebIDBCallbacks* callbacks)
+    {
+        WebIDBTransaction transaction;
+        get(key, callbacks, transaction);
+    }
 };
 
 } // namespace WebKit

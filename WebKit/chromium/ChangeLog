@@ -1,3 +1,33 @@
+2010-09-22  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Change WebKit API for IDBTransaciton to new style
+        https://bugs.webkit.org/show_bug.cgi?id=46263
+
+        * public/WebIDBIndex.h:
+        (WebKit::WebIDBIndex::openObjectCursor):
+        (WebKit::WebIDBIndex::openCursor):
+        (WebKit::WebIDBIndex::getObject):
+        (WebKit::WebIDBIndex::get):
+        * public/WebIDBObjectStore.h:
+        (WebKit::WebIDBObjectStore::get):
+        (WebKit::WebIDBObjectStore::put):
+        (WebKit::WebIDBObjectStore::remove):
+        (WebKit::WebIDBObjectStore::openCursor):
+        * src/WebIDBIndexImpl.cpp:
+        (WebKit::WebIDBIndexImpl::openCursor):
+        (WebKit::WebIDBIndexImpl::openObjectCursor):
+        (WebKit::WebIDBIndexImpl::getObject):
+        (WebKit::WebIDBIndexImpl::get):
+        * src/WebIDBIndexImpl.h:
+        * src/WebIDBObjectStoreImpl.cpp:
+        (WebKit::WebIDBObjectStoreImpl::get):
+        (WebKit::WebIDBObjectStoreImpl::put):
+        (WebKit::WebIDBObjectStoreImpl::remove):
+        (WebKit::WebIDBObjectStoreImpl::openCursor):
+        * src/WebIDBObjectStoreImpl.h:
+
 2010-09-22  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

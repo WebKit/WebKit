@@ -65,21 +65,18 @@ WebDOMStringList WebIDBObjectStoreImpl::indexNames() const
     return m_objectStore->indexNames();
 }
 
-void WebIDBObjectStoreImpl::get(const WebIDBKey& key, WebIDBCallbacks* callbacks, int transactionId)
+void WebIDBObjectStoreImpl::get(const WebIDBKey& key, WebIDBCallbacks* callbacks)
 {
-    ASSERT_UNUSED(transactionId, !transactionId); // FIXME: Pass the transaction in.
     m_objectStore->get(key, IDBCallbacksProxy::create(callbacks));
 }
 
-void WebIDBObjectStoreImpl::put(const WebSerializedScriptValue& value, const WebIDBKey& key, bool addOnly, WebIDBCallbacks* callbacks, int transactionId)
+void WebIDBObjectStoreImpl::put(const WebSerializedScriptValue& value, const WebIDBKey& key, bool addOnly, WebIDBCallbacks* callbacks)
 {
-    ASSERT_UNUSED(transactionId, !transactionId); // FIXME: Pass the transaction in.
     m_objectStore->put(value, key, addOnly, IDBCallbacksProxy::create(callbacks));
 }
 
-void WebIDBObjectStoreImpl::remove(const WebIDBKey& key, WebIDBCallbacks* callbacks, int transactionId)
+void WebIDBObjectStoreImpl::remove(const WebIDBKey& key, WebIDBCallbacks* callbacks)
 {
-    ASSERT_UNUSED(transactionId, !transactionId); // FIXME: Pass the transaction in.
     m_objectStore->remove(key, IDBCallbacksProxy::create(callbacks));
 }
 
@@ -101,9 +98,8 @@ void WebIDBObjectStoreImpl::removeIndex(const WebString& name, WebIDBCallbacks* 
     m_objectStore->removeIndex(name, IDBCallbacksProxy::create(callbacks));
 }
 
-void WebIDBObjectStoreImpl::openCursor(const WebIDBKeyRange& keyRange, unsigned short direction, WebIDBCallbacks* callbacks, int transactionId)
+void WebIDBObjectStoreImpl::openCursor(const WebIDBKeyRange& keyRange, unsigned short direction, WebIDBCallbacks* callbacks)
 {
-    ASSERT_UNUSED(transactionId, !transactionId); // FIXME: Pass the transaction in.
     m_objectStore->openCursor(IDBKeyRange::create(keyRange.left(), keyRange.right(), keyRange.flags()), direction, IDBCallbacksProxy::create(callbacks));
 }
 
