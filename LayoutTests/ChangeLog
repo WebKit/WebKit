@@ -1,3 +1,26 @@
+2010-09-22  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed chromium test expectation changes.
+
+        * platform/chromium-linux/fast/multicol/span/span-as-immediate-child-property-removal-expected.checksum:
+        * platform/chromium-linux/fast/multicol/span/span-as-immediate-child-property-removal-expected.png:
+        * platform/chromium-linux/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt:
+        * platform/chromium-linux/fast/multicol/span/span-as-immediate-columns-child-removal-expected.checksum:
+        * platform/chromium-linux/fast/multicol/span/span-as-immediate-columns-child-removal-expected.png:
+        * platform/chromium-linux/fast/multicol/span/span-as-immediate-columns-child-removal-expected.txt:
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-child-property-removal-expected.checksum:
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-child-property-removal-expected.png:
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt: Removed.
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-columns-child-removal-expected.checksum:
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-columns-child-removal-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-columns-child-removal-expected.txt: Removed.
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-child-property-removal-expected.checksum:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-child-property-removal-expected.png:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-columns-child-removal-expected.checksum:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-columns-child-removal-expected.png:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-columns-child-removal-expected.txt:
+
 2010-09-22  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
