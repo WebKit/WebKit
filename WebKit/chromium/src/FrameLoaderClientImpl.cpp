@@ -147,6 +147,14 @@ void FrameLoaderClientImpl::didCreateIsolatedScriptContext()
         m_webFrame->client()->didCreateIsolatedScriptContext(m_webFrame);
 }
 
+bool FrameLoaderClientImpl::allowScriptExtension(const String& extensionName,
+                                                 int extensionGroup)
+{
+    if (m_webFrame->client())
+        return m_webFrame->client()->allowScriptExtension(m_webFrame, extensionName, extensionGroup);
+    return false;
+}
+
 void FrameLoaderClientImpl::didPerformFirstNavigation() const
 {
 }

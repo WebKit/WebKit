@@ -43,7 +43,7 @@ namespace WebKit {
 
 void WebScriptController::registerExtension(v8::Extension* extension)
 {
-    V8Proxy::registerExtension(extension, WebString());
+    V8Proxy::registerExtension(extension);
 }
 
 void WebScriptController::registerExtension(v8::Extension* extension,

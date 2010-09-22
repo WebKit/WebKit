@@ -340,11 +340,18 @@ v8::Persistent<v8::Context> V8DOMWindowShell::createNewContext(v8::Handle<v8::Ob
         if (extensions[i].group && extensions[i].group != extensionGroup)
             continue;
 
-        // Note: we check the loader URL here instead of the document URL
-        // because we might be currently loading an URL into a blank page.
-        // See http://code.google.com/p/chromium/issues/detail?id=10924
-        if (extensions[i].scheme.length() > 0 && (extensions[i].scheme != m_frame->loader()->activeDocumentLoader()->url().protocol()))
-            continue;
+        if (extensions[i].useCallback) {
+            // Ensure our date extension is always allowed.
+            if (extensions[i].extension != DateExtension::get()
+                && !m_frame->loader()->client()->allowScriptExtension(extensions[i].extension->name(), extensionGroup))
+                continue;
+        } else {
+            // Note: we check the loader URL here instead of the document URL
+            // because we might be currently loading an URL into a blank page.
+            // See http://code.google.com/p/chromium/issues/detail?id=10924
+            if (extensions[i].scheme.length() > 0 && (extensions[i].scheme != m_frame->loader()->activeDocumentLoader()->url().protocol()))
+                continue;
+        }
 
         extensionNames[index++] = extensions[i].extension->name();
     }

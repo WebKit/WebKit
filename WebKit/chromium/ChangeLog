@@ -1,3 +1,21 @@
+2010-09-22  Matt Perry  <mpcomplete@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Trying to reland a version of r67749:
+        Have V8DOMWindowShell ask the embedder whether to run a V8 extension
+        in a particular script context.
+        https://bugs.webkit.org/show_bug.cgi?id=45721
+
+        * public/WebFrameClient.h:
+        (WebKit::WebFrameClient::allowScriptExtension):
+        * public/WebScriptController.h:
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::allowScriptExtension):
+        * src/FrameLoaderClientImpl.h:
+        * src/WebScriptController.cpp:
+        (WebKit::WebScriptController::registerExtension):
+
 2010-09-22  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.

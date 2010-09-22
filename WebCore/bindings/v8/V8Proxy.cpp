@@ -842,14 +842,21 @@ bool V8Proxy::registeredExtensionWithV8(v8::Extension* extension)
 void V8Proxy::registerExtension(v8::Extension* extension, const String& schemeRestriction)
 {
     registerExtensionWithV8(extension);
-    V8ExtensionInfo info = {schemeRestriction, 0, extension};
+    V8ExtensionInfo info = {schemeRestriction, 0, extension, false};
     m_extensions.append(info);
 }
 
 void V8Proxy::registerExtension(v8::Extension* extension, int extensionGroup)
 {
     registerExtensionWithV8(extension);
-    V8ExtensionInfo info = {String(), extensionGroup, extension};
+    V8ExtensionInfo info = {String(), extensionGroup, extension, false};
+    m_extensions.append(info);
+}
+
+void V8Proxy::registerExtension(v8::Extension* extension)
+{
+    registerExtensionWithV8(extension);
+    V8ExtensionInfo info = {String(), 0, extension, true};
     m_extensions.append(info);
 }
 

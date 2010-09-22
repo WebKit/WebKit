@@ -301,6 +301,13 @@ public:
     // scripts.
     virtual void didCreateIsolatedScriptContext(WebFrame*) { }
 
+    // Controls whether the given script extension should run in a new script
+    // context in this frame. If extensionGroup is 0, the script context is the
+    // frame's main context. Otherwise, it is a context created by
+    // WebFrame::executeScriptInIsolatedWorld with that same extensionGroup
+    // value.
+    virtual bool allowScriptExtension(WebFrame*, const WebString& extensionName, int extensionGroup) { return true; }
+
 
     // Geometry notifications ----------------------------------------------
 

@@ -1,3 +1,21 @@
+2010-09-22  Matt Perry  <mpcomplete@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Trying to reland a version of r67749:
+        Have V8DOMWindowShell ask the embedder whether to run a V8 extension
+        in a particular script context.
+        https://bugs.webkit.org/show_bug.cgi?id=45721
+
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::createNewContext):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::registerExtension):
+        * bindings/v8/V8Proxy.h:
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::allowScriptExtension):
+        * loader/FrameLoaderClient.h:
+
 2010-09-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
