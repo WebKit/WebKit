@@ -1,3 +1,16 @@
+2010-09-21  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by David Levin.
+
+        [Chromium] Remove WebInputElement::InputType and inputType()
+        https://bugs.webkit.org/show_bug.cgi?id=46238
+
+        * DEPS: Roll Chromium revision to 60132, which removed all usage of inputType().
+        * public/WebInputElement.h: Remove InputType and inputType().
+        * src/AssertMatchingEnums.cpp: Remove WebInputElement::InputType -
+          HTMLInputElement::InputType matching tests.
+        * src/WebInputElement.cpp: Remove inputType().
+
 2010-09-21  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed, rolling out r67982.

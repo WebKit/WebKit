@@ -75,11 +75,6 @@ bool WebInputElement::isEnabledFormControl() const
     return constUnwrap<HTMLInputElement>()->isEnabledFormControl();
 }
 
-WebInputElement::InputType WebInputElement::inputType() const
-{
-    return static_cast<InputType>(constUnwrap<HTMLInputElement>()->deprecatedInputType());
-}
-
 int WebInputElement::maxLength() const
 {
     return constUnwrap<HTMLInputElement>()->maxLength();

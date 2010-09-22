@@ -52,33 +52,6 @@ namespace WebKit {
         }
         WEBKIT_API void assign(const WebInputElement& e) { WebFormControlElement::assign(e); }
 
-        enum InputType {
-            Text = 0,
-            Password,
-            IsIndex,
-            CheckBox,
-            Radio,
-            Submit,
-            Reset,
-            File,
-            Hidden,
-            Image,
-            Button,
-            Search,
-            Range,
-            Email,
-            Number,
-            Telephone,
-            URL,
-            Color,
-            Date,
-            DateTime,
-            DateTimeLocal,
-            Month,
-            Time,
-            Week
-        };
-
         // This returns true for all of textfield-looking types such as text,
         // password, search, email, url, and number.
         WEBKIT_API bool isTextField() const;
@@ -89,8 +62,6 @@ namespace WebKit {
         WEBKIT_API bool autoComplete() const;
         WEBKIT_API bool isReadOnly() const;
         WEBKIT_API bool isEnabledFormControl() const;
-        // Deperated.
-        WEBKIT_API InputType inputType() const;
         WEBKIT_API int maxLength() const;
         WEBKIT_API bool isActivatedSubmit() const;
         WEBKIT_API void setActivatedSubmit(bool);
