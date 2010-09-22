@@ -1,3 +1,12 @@
+2010-09-22  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed.
+
+        [WinCairo] Build fix for platform/cairo stuff after r67981.
+
+        * WebCore.vcproj/WebCore.vcproj: Add new files needed by all cairo
+        ports.
+
 2010-09-22  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Nate Chapin.

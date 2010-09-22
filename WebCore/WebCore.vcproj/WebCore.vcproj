@@ -5300,7 +5300,7 @@
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSGeoposition.h"
 				>
 			</File>
- 			<File
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHashChangeEvent.cpp"
 				>
 				<FileConfiguration
@@ -26343,6 +26343,78 @@
 						</FileConfiguration>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\cairo\CairoUtilities.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_All|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\cairo\CairoUtilities.h"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_All|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\cairo\DrawErrorUnderline.h"
 						>
 						<FileConfiguration
@@ -26667,6 +26739,42 @@
 						</FileConfiguration>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\cairo\OwnPtrCairo.h"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_All|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\cairo\PathCairo.cpp"
 						>
 						<FileConfiguration
@@ -26771,6 +26879,42 @@
 							>
 							<Tool
 								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\cairo\PlatformRefPtrCairo.h"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_All|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
 							/>
 						</FileConfiguration>
 					</File>
@@ -26907,6 +27051,10 @@
 					Name="filters"
 					>
 					<File
+						RelativePath="..\platform\graphics\filters\DistantLightSource.h"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\filters\FEBlend.cpp"
 						>
 					</File>
@@ -26939,18 +27087,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\platform\graphics\filters\FEGaussianBlur.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\filters\FEGaussianBlur.h"
-						>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\filters\DistantLightSource.h"
-						>
-					</File>
-					<File
 						RelativePath="..\platform\graphics\filters\FEConvolveMatrix.cpp"
 						>
 					</File>
@@ -26980,6 +27116,14 @@
 					</File>
 					<File
 						RelativePath="..\platform\graphics\filters\FEFlood.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FEGaussianBlur.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FEGaussianBlur.h"
 						>
 					</File>
 					<File
@@ -34073,11 +34217,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\InputElement.cpp"
+				RelativePath="..\dom\HashChangeEvent.h"
 				>
 			</File>
 			<File
-				RelativePath="..\dom\HashChangeEvent.h"
+				RelativePath="..\dom\InputElement.cpp"
 				>
 			</File>
 			<File
@@ -43984,6 +44128,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSDirectoryEntryCustom.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSDocumentCustom.cpp"
 					>
 					<FileConfiguration
@@ -46953,10 +47101,6 @@
 				</File>
 				<File
 					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSIDBTransaction.h"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JSDirectoryEntryCustom.cpp"
 					>
 				</File>
 				<File
