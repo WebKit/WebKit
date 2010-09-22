@@ -1,5 +1,11 @@
 2010-09-21  Kent Tamura  <tkent@chromium.org>
 
+        Unreviewed, text expectation update.
+
+        * platform/chromium/drt_expectations.txt:
+
+2010-09-21  Kent Tamura  <tkent@chromium.org>
+
         Unreviewed, test expectation update.
 
         * platform/chromium/drt_expectations.txt:
