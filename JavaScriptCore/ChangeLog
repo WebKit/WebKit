@@ -1,3 +1,16 @@
+2010-09-22  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Laszlo Gombos.
+
+        Use "typedef wchar_t JSChar" when compiled with RVCT
+        https://bugs.webkit.org/show_bug.cgi?id=40651
+
+        Use wchar_t for JSChar and UChar when compiled with RVCT.
+        Linux is the exception for this rule.
+
+        * API/JSStringRef.h:
+        * wtf/unicode/qt4/UnicodeQt4.h:
+
 2010-09-22  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
