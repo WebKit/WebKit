@@ -1,5 +1,12 @@
 2010-09-22  Adam Roben  <aroben@apple.com>
 
+        Windows build fix
+
+        * WebProcess/WebKitMain.cpp:
+        (WebKitMain): Fix typo
+
+2010-09-22  Adam Roben  <aroben@apple.com>
+
         Autogenerate WebPage's message-receiving code and message types
 
         This patch encompasses several changes that allow message types and

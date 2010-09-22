@@ -141,7 +141,7 @@ int WebKitMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpstrCmdLine
     if (!commandLine.parse(lpstrCmdLine))
         return EXIT_FAILURE;
 
-    return WebKitMain(commandLine):
+    return WebKitMain(commandLine);
 }
 
 #endif
