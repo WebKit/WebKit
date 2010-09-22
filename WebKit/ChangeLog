@@ -1,3 +1,9 @@
+2010-09-22  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Unreviewed, EFL build fix.
+
+        * CMakeLists.txt:
+
 2010-09-20  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Carlson.

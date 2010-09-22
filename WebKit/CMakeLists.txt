@@ -1,6 +1,7 @@
 SET(WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}"
     "${WEBCORE_DIR}"
+    "${WEBCORE_DIR}/accessibility"
     "${WEBCORE_DIR}/bindings/js"
     "${WEBCORE_DIR}/bindings"
     "${WEBCORE_DIR}/bridge"

@@ -1,3 +1,11 @@
+2010-09-22  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Unreviewed, EFL build fix.
+
+        * CMakeListsEfl.txt:
+        * platform/efl/ClipboardEfl.cpp:
+        (WebCore::ClipboardEfl::ClipboardEfl):
+
 2010-09-22  İsmail Dönmez  <ismail@namtrac.org>
 
         Reviewed by Andreas Kling.
