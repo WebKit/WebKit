@@ -65,6 +65,23 @@ static const ResourceHandleEventHandler messageHandlers[] = {
     &ResourceHandle::onRequestComplete
 };
 
+static inline HINTERNET createInternetHandle(const String& userAgent, bool asynchronous)
+{
+    String userAgentString = userAgent;
+    HINTERNET internetHandle = InternetOpenW(userAgentString.charactersWithNullTermination(), INTERNET_OPEN_TYPE_PRECONFIG, 0, 0, asynchronous ? INTERNET_FLAG_ASYNC : 0);
+
+    if (asynchronous)
+        InternetSetStatusCallback(internetHandle, &ResourceHandle::internetStatusCallback);
+
+    return internetHandle;
+}
+
+static HINTERNET asynchronousInternetHandle(const String& userAgent)
+{
+    static HINTERNET internetHandle = createInternetHandle(userAgent, true);
+    return internetHandle;
+}
+
 static String queryHTTPHeader(HINTERNET requestHandle, DWORD infoLevel)
 {
     DWORD bufferSize = 0;
@@ -142,6 +159,9 @@ static void initializeOffScreenResourceHandleWindow()
 class WebCoreSynchronousLoader : public ResourceHandleClient, public Noncopyable {
 public:
     WebCoreSynchronousLoader(ResourceError&, ResourceResponse&, Vector<char>&, const String& userAgent);
+    ~WebCoreSynchronousLoader();
+
+    HINTERNET internetHandle() const { return m_internetHandle; }
 
     virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
     virtual void didReceiveData(ResourceHandle*, const char*, int, int lengthReceived);
@@ -152,13 +172,20 @@ private:
     ResourceError& m_error;
     ResourceResponse& m_response;
     Vector<char>& m_data;
+    HINTERNET m_internetHandle;
 };
 
 WebCoreSynchronousLoader::WebCoreSynchronousLoader(ResourceError& error, ResourceResponse& response, Vector<char>& data, const String& userAgent)
     : m_error(error)
     , m_response(response)
     , m_data(data)
+    , m_internetHandle(createInternetHandle(userAgent, false))
 {
+}
+
+WebCoreSynchronousLoader::~WebCoreSynchronousLoader()
+{
+    InternetCloseHandle(m_internetHandle);
 }
 
 void WebCoreSynchronousLoader::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
