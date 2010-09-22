@@ -1,3 +1,30 @@
+2010-09-22  Adam Roben  <aroben@apple.com>
+
+        Make test-webkitpy test WebKit2's scripts
+
+        These scripts can't be in WebKitTools due to limitations of Apple's
+        build process. But that doesn't mean we can't test them!
+
+        Fixes <http://webkit.org/b/46297> test-webkitpy should test code in
+        WebKit2/Scripts
+
+        Reviewed by Adam Barth.
+
+        * Scripts/test-webkitpy:
+        (_clean_packages_with_test): Renamed from _clean_webkitpy_with_test.
+        Now takes an external_package_paths parameter and cleans both webkitpy
+        and any external packages.
+        (init): Added an external_package_paths parameter which we pass along
+        to _clean_packages_with_test.
+        (top level): Add WebKit2/Scripts/webkit2 as our only external package
+        and pass it along to init and Tester.run_tests.
+
+        * Scripts/webkitpy/test/main.py:
+        (Tester.run_tests): Added an optional external_package_paths
+        parameter. We modify sys.path so that the external packages can be
+        imported, and search for unittest files inside all external packages
+        in addition to inside webkitpy.
+
 2010-09-22  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.

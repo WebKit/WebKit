@@ -78,7 +78,7 @@ class Tester(object):
 
         return modules
 
-    def run_tests(self, sys_argv):
+    def run_tests(self, sys_argv, external_package_paths=None):
         """Run the unit tests in all *_unittest.py modules in webkitpy.
 
         This method excludes "webkitpy.common.checkout.scm_unittest" unless
@@ -88,6 +88,11 @@ class Tester(object):
           sys_argv: A reference to sys.argv.
 
         """
+        if external_package_paths is None:
+            external_package_paths = []
+        else:
+            sys.path.extend(set(os.path.dirname(path) for path in external_package_paths))
+
         if len(sys_argv) > 1 and not sys_argv[-1].startswith("-"):
             # Then explicit modules or test names were provided, which
             # the unittest module is equipped to handle.
@@ -97,9 +102,9 @@ class Tester(object):
         # Otherwise, auto-detect all unit tests.
 
         webkitpy_dir = os.path.dirname(webkitpy.__file__)
-        unittest_paths = self._find_unittest_files(webkitpy_dir)
 
-        modules = self._modules_from_paths(webkitpy_dir, unittest_paths)
+        for path in [webkitpy_dir] + external_package_paths:
+            modules.extend(self._modules_from_paths(path, self._find_unittest_files(path)))
         modules.sort()
 
         # This is a sanity check to ensure that the unit-test discovery

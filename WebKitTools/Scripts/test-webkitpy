@@ -137,8 +137,9 @@ def _clean_pyc_files(dir_to_clean, paths_not_to_log):
 # As a substitute for a unit test, this method tests _clean_pyc_files()
 # in addition to calling it.  We chose not to use the unittest module
 # because _clean_pyc_files() is called only once and is not used elsewhere.
-def _clean_webkitpy_with_test():
+def _clean_packages_with_test(external_package_paths):
     webkitpy_dir = os.path.join(os.path.dirname(__file__), "webkitpy")
+    package_paths = [webkitpy_dir] + external_package_paths
 
     # The test .pyc file is--
     # webkitpy/python24/TEMP_test-webkitpy_test_pyc_file.pyc.
@@ -156,13 +157,14 @@ def _clean_webkitpy_with_test():
     if not os.path.exists(test_path):
         raise Exception("Test .pyc file not created: %s" % test_path)
 
-    _clean_pyc_files(webkitpy_dir, [test_path])
+    for path in package_paths:
+        _clean_pyc_files(path, [test_path])
 
     if os.path.exists(test_path):
         raise Exception("Test .pyc file not deleted: %s" % test_path)
 
 
-def init(command_args):
+def init(command_args, external_package_paths):
     """Execute code prior to importing from webkitpy.unittests.
 
     Args:
@@ -186,8 +188,8 @@ def init(command_args):
     configure_logging(is_verbose_logging)
     _log.debug("Verbose WebKit logging enabled.")
 
-    # We clean orphaned *.pyc files from webkitpy prior to importing from
-    # webkitpy to make sure that no import statements falsely succeed.
+    # We clean orphaned *.pyc files from the packages prior to importing from
+    # them to make sure that no import statements falsely succeed.
     # This helps to check that import statements have been updated correctly
     # after any file moves.  Otherwise, incorrect import statements can
     # be masked.
@@ -208,7 +210,7 @@ def init(command_args):
     #
     # Deleting the orphaned .pyc file prior to importing, however, would
     # cause an ImportError to occur on import as desired.
-    _clean_webkitpy_with_test()
+    _clean_packages_with_test(external_package_paths)
 
     import webkitpy.python24.versioning as versioning
 
@@ -227,7 +229,8 @@ def init(command_args):
 
 if __name__ == "__main__":
 
-    init(sys.argv[1:])
+    external_package_paths = [os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'WebKit2', 'Scripts', 'webkit2')]
+    init(sys.argv[1:], external_package_paths)
 
     # We import the unit test code after init() to ensure that any
     # Python version warnings are displayed in case an error occurs
@@ -237,4 +240,4 @@ if __name__ == "__main__":
     # running the unit tests.
     from webkitpy.test.main import Tester
 
-    Tester().run_tests(sys.argv)
+    Tester().run_tests(sys.argv, external_package_paths)
