@@ -1,0 +1,23 @@
+Test 1
+PASS rect.left is 8
+PASS rect.top is 8
+PASS rect.width is 400
+PASS rect.height is 160
+Test 2
+PASS rect.left is 8
+FAIL rect.top should be 215. Was 218.
+FAIL rect.width should be 398. Was 380.
+FAIL rect.height should be 138. Was 139.
+Test 3
+PASS rect.left is 8
+FAIL rect.top should be 451. Was 458.
+FAIL rect.width should be 398. Was 378.
+FAIL rect.height should be 58. Was 59.
+Test 4
+PASS rect.left is 76
+FAIL rect.top should be 578. Was 589.
+FAIL rect.width should be 361. Was 351.
+FAIL rect.height should be 343. Was 356.
+PASS successfullyParsed is true
+
+TEST COMPLETE

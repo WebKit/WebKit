@@ -1945,8 +1945,6 @@ BUG20345 : fast/dom/Window/window-property-descriptors.html = TEXT
 // Failures from Webkit merger 51724 -> 51772
 BUG20345 : http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html = TEXT
 
-BUG10480 LINUX : editing/selection/move-by-line-001.html = FAIL
-
 // The linux layout result in build bot shows the changed method does not
 // executed.
 BUG21141 LINUX : fast/forms/select-double-onchange.html = FAIL
@@ -1974,8 +1972,7 @@ BUG22526 : http/tests/security/xss-DENIED-defineProperty.html = FAIL
 BUG22554 SKIP : mathml = FAIL
 
 // WebKit update 48796:48820
-BUG23956 WIN LINUX : fast/dom/Element/getBoundingClientRect.html = FAIL
-BUG23956 WIN LINUX : fast/dom/Range/getBoundingClientRect.html = FAIL
+// Test #9 throws an exception.
 BUG23956 WIN LINUX : fast/dom/Range/getClientRects.html = FAIL
 BUG24126 : fast/dom/HTMLInputElement/size-attribute.html = FAIL
 

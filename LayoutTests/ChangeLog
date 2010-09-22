@@ -1,5 +1,18 @@
 2010-09-22  Tony Chang  <tony@chromium.org>
 
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] Rebaseline 3 tests on win/linux
+        https://bugs.webkit.org/show_bug.cgi?id=46315
+
+        * platform/chromium-linux/editing/selection/move-by-line-001-expected.checksum: Minor differences in how text and borders are anti-aliased.
+        * platform/chromium-linux/editing/selection/move-by-line-001-expected.png:
+        * platform/chromium-win/fast/dom/Element/getBoundingClientRect-expected.txt: This test is sensitive to font metrics.  They appear correct visually, just positioned slightly different vertically.
+        * platform/chromium-win/fast/dom/Range/getBoundingClientRect-expected.txt: Same as above.
+        * platform/chromium/test_expectations.txt:
+
+2010-09-22  Tony Chang  <tony@chromium.org>
+
         Reviewed by David Levin.
 
         [chromium] remove commented out test failures from test_expectations.txt
