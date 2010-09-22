@@ -28,19 +28,10 @@
 #include "AXObjectCache.h"
 #include "AccessibilityObject.h"
 #include "Chrome.h"
-#include "ChromeClientChromium.h"
+#include "ChromeClient.h"
 #include "FrameView.h"
 
 namespace WebCore {
-
-static ChromeClientChromium* toChromeClientChromium(FrameView* view)
-{
-    Page* page = view->frame() ? view->frame()->page() : 0;
-    if (!page)
-        return 0;
-
-    return static_cast<ChromeClientChromium*>(page->chrome()->client());
-}
 
 void AXObjectCache::detachWrapper(AccessibilityObject* obj)
 {
@@ -56,10 +47,10 @@ void AXObjectCache::attachWrapper(AccessibilityObject*)
 
 void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotification notification)
 {
-    if (!obj || !obj->document() || !obj->documentFrameView())
+    if (!obj || !obj->document() || !obj->documentFrameView() || !obj->documentFrameView()->frame() || !obj->documentFrameView()->frame()->page())
         return;
 
-    ChromeClientChromium* client = toChromeClientChromium(obj->documentFrameView());
+    ChromeClient* client = obj->documentFrameView()->frame()->page()->chrome()->client();
     if (!client)
         return;
 

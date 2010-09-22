@@ -1,3 +1,18 @@
+2010-09-22  Chris Guillory   <chris.guillory@google.com>
+
+        Reviewed by Chris Fleizach.
+
+        Crash due to bad cast in AXObjectCacheChromium.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=46237
+
+        * accessibility/chromium/AXObjectCacheChromium.cpp:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::postAccessibilityNotification):
+        (WebCore::ChromeClient::didChangeAccessibilityObjectState):
+        (WebCore::ChromeClient::didChangeAccessibilityObjectChildren):
+        * page/chromium/ChromeClientChromium.h:
+
 2010-09-22  Chris Rogers  <crogers@google.com>
 
         Reviewed by James Robinson.
