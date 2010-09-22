@@ -410,12 +410,17 @@ class WebKitDriver(base.Driver):
 
     def _driver_args(self):
         driver_args = []
-        if self._image_path:
-            driver_args.append('--pixel-tests')
 
-        # These are used by the Chromium DRT port
         if self._options.use_drt:
+            # These are used by the Chromium DRT port
             driver_args.append('--test-shell')
+            if self._image_path:
+                driver_args.append('--pixel-tests' % image_path)
+        else:
+            # Regular DRT ports.
+            if self._image_path:
+                driver_args.append('--pixel-tests')
+
         return driver_args
 
     def start(self):
