@@ -457,11 +457,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Shared\WebCoreTypeArgumentMarshalling.h"
+				RelativePath="..\Shared\WebCertificateInfo.h"
 				>
 			</File>
 			<File
-				RelativePath="..\Shared\WebCertificateInfo.h"
+				RelativePath="..\Shared\WebCoreTypeArgumentMarshalling.h"
 				>
 			</File>
 			<File
@@ -536,10 +536,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\Shared\CoreIPCSupport\WebPageMessageKinds.h"
-					>
-				</File>
-				<File
 					RelativePath="..\Shared\CoreIPCSupport\WebPageProxyMessageKinds.h"
 					>
 				</File>
@@ -560,6 +556,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Shared\win\PlatformCertificateInfo.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Shared\win\UpdateChunk.cpp"
 					>
 				</File>
@@ -577,10 +577,6 @@
 				</File>
 				<File
 					RelativePath="..\Shared\win\WebEventFactory.h"
-					>
-				</File>
-				<File
-					RelativePath="..\Shared\win\PlatformCertificateInfo.h"
 					>
 				</File>
 				<File
@@ -1812,6 +1808,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Platform\CoreIPC\HandleMessage.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Platform\CoreIPC\MessageID.h"
 					>
 				</File>
@@ -1936,6 +1936,46 @@
 				RelativePath=".\zoomOutCursor.png"
 				>
 			</File>
+		</Filter>
+		<Filter
+			Name="Derived Sources"
+			>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebPageMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebPageMessages.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Scripts"
+			>
+			<File
+				RelativePath="..\Scripts\generate-message-receiver.py"
+				>
+			</File>
+			<File
+				RelativePath="..\Scripts\generate-messages-header.py"
+				>
+			</File>
+			<Filter
+				Name="webkit2"
+				>
+				<File
+					RelativePath="..\Scripts\webkit2\__init__.py"
+					>
+				</File>
+				<File
+					RelativePath="..\Scripts\webkit2\messages.py"
+					>
+				</File>
+				<File
+					RelativePath="..\Scripts\webkit2\messages_unittest.py"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<File
 			RelativePath="..\WebKit2Prefix.cpp"

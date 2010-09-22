@@ -161,6 +161,9 @@ private:
     virtual Type type() const { return APIType; }
 
     void platformInitialize();
+
+    void didReceiveWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+
     static const char* interpretKeyEvent(const WebCore::KeyboardEvent*);
     bool performDefaultBehaviorForKeyEvent(const WebKeyboardEvent&);
 
@@ -193,10 +196,10 @@ private:
 #endif
     void runJavaScriptInMainFrame(const String&, uint64_t callbackID);
     void getRenderTreeExternalRepresentation(uint64_t callbackID);
-    void getSourceForFrame(WebFrame*, uint64_t callbackID);
+    void getSourceForFrame(uint64_t frameID, uint64_t callbackID);
     void preferencesDidChange(const WebPreferencesStore&);
     void platformPreferencesDidChange(const WebPreferencesStore&);
-    void didReceivePolicyDecision(WebFrame*, uint64_t listenerID, WebCore::PolicyAction policyAction);
+    void didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction);
     void setCustomUserAgent(const String&);
 
 #if PLATFORM(MAC)

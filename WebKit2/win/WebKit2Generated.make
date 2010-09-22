@@ -47,6 +47,7 @@ all:
     xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundlePrivate.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundleRangeHandle.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundleScriptWorld.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
+    bash build-generated-files.sh "$(WEBKITOUTPUTDIR)"
     -del "$(WEBKITOUTPUTDIR)\buildfailed"
 
 clean:

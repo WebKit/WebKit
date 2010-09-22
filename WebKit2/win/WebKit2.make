@@ -15,3 +15,5 @@ install:
 	xcopy "$(OBJROOT)\include\*" "$(DSTROOT)\AppleInternal\include\" /e/v/i/h/y	
 	xcopy "$(OBJROOT)\lib\*" "$(DSTROOT)\AppleInternal\lib\" /e/v/i/h/y
 	-xcopy "$(OBJROOT)\bin\WebKit2.resources\*" "$(DSTROOT)\AppleInternal\bin\WebKit2.resources" /e/v/i/h/y
+	-mkdir "$(DSTROOT)\AppleInternal\Sources\WebKit2"
+	xcopy "$(OBJROOT)\obj\WebKit\DerivedSources\*" "$(DSTROOT)\AppleInternal\Sources\WebKit2" /e/v/i/h/y

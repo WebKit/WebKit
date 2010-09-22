@@ -40,6 +40,10 @@
 	</References>
 	<Files>
 		<File
+			RelativePath=".\build-generated-files.sh"
+			>
+		</File>
+		<File
 			RelativePath=".\WebKit2Generated.make"
 			>
 		</File>

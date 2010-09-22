@@ -42,7 +42,6 @@
 #include "WebEventConversion.h"
 #include "WebFrame.h"
 #include "WebInspectorClient.h"
-#include "WebPageMessageKinds.h"
 #include "WebPageProxyMessageKinds.h"
 #include "WebProcessProxyMessageKinds.h"
 #include "WebPreferencesStore.h"
@@ -546,11 +545,12 @@ void WebPage::setIsInWindow(bool isInWindow)
     }
 }
 
-void WebPage::didReceivePolicyDecision(WebFrame* frame, uint64_t listenerID, WebCore::PolicyAction policyAction)
+void WebPage::didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction)
 {
+    WebFrame* frame = WebProcess::shared().webFrame(frameID);
     if (!frame)
         return;
-    frame->didReceivePolicyDecision(listenerID, policyAction);
+    frame->didReceivePolicyDecision(listenerID, static_cast<WebCore::PolicyAction>(policyAction));
 }
 
 void WebPage::show()
@@ -609,10 +609,10 @@ void WebPage::getRenderTreeExternalRepresentation(uint64_t callbackID)
     WebProcess::shared().connection()->send(WebPageProxyMessage::DidGetRenderTreeExternalRepresentation, m_pageID, CoreIPC::In(resultString, callbackID));
 }
 
-void WebPage::getSourceForFrame(WebFrame* frame, uint64_t callbackID)
+void WebPage::getSourceForFrame(uint64_t frameID, uint64_t callbackID)
 {
     String resultString;
-    if (frame)
+    if (WebFrame* frame = WebProcess::shared().webFrame(frameID))
        resultString = frame->source();
     WebProcess::shared().connection()->send(WebPageProxyMessage::DidGetSourceForFrame, m_pageID, CoreIPC::In(resultString, callbackID));
 }
@@ -748,261 +748,7 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
         return;
     }
 
-    switch (messageID.get<WebPageMessage::Kind>()) {
-        case WebPageMessage::SetActive: {
-            bool active;
-            if (!arguments->decode(active))
-                return;
-         
-            setActive(active);
-            return;
-        }
-        case WebPageMessage::SetFocused: {
-            bool focused;
-            if (!arguments->decode(focused))
-                return;
-            
-            setFocused(focused);
-            return;
-        }
-        case WebPageMessage::SetIsInWindow: {
-            bool isInWindow;
-            if (!arguments->decode(isInWindow))
-                return;
-            
-            setIsInWindow(isInWindow);
-            return;
-        }
-#if PLATFORM(MAC)
-        case WebPageMessage::SetWindowIsVisible: {
-            bool windowIsVisible;
-            if (!arguments->decode(windowIsVisible))
-                return;
-            setWindowIsVisible(windowIsVisible);
-            return;
-        }
-        
-        case WebPageMessage::SetWindowFrame: {
-            IntRect windowFrame;
-            if (!arguments->decode(windowFrame))
-                return;
-            setWindowFrame(windowFrame);
-            return;
-        }
-#endif
-        case WebPageMessage::MouseEvent: {
-            WebMouseEvent event;
-            if (!arguments->decode(event))
-                return;
-            mouseEvent(event);
-            return;
-        }
-        case WebPageMessage::PreferencesDidChange: {
-            WebPreferencesStore store;
-            if (!arguments->decode(store))
-                return;
-            
-            preferencesDidChange(store);
-            return;
-        }
-        case WebPageMessage::WheelEvent: {
-            WebWheelEvent event;
-            if (!arguments->decode(event))
-                return;
-
-            wheelEvent(event);
-            return;
-        }
-        case WebPageMessage::KeyEvent: {
-            WebKeyboardEvent event;
-            if (!arguments->decode(event))
-                return;
-
-            keyEvent(event);
-            return;
-        }
-        case WebPageMessage::SelectAll: {
-            selectAll();
-            return;
-        }
-        case WebPageMessage::Copy: {
-            copy();
-            return;
-        }
-        case WebPageMessage::Cut: {
-            cut();
-            return;
-        }
-        case WebPageMessage::Paste: {
-            paste();
-            return;
-        }            
-#if ENABLE(TOUCH_EVENTS)
-        case WebPageMessage::TouchEvent: {
-            WebTouchEvent event;
-            if (!arguments->decode(event))
-                return;
-            touchEvent(event);
-        }
-#endif
-        case WebPageMessage::LoadURL: {
-            String url;
-            if (!arguments->decode(url))
-                return;
-            
-            loadURL(url);
-            return;
-        }
-        case WebPageMessage::LoadURLRequest: {
-            ResourceRequest request;
-            if (!arguments->decode(request))
-                return;
-            
-            loadURLRequest(request);
-            return;
-        }
-        case WebPageMessage::LoadHTMLString: {
-            String htmlString;
-            String baseURL;
-            if (!arguments->decode(CoreIPC::Out(htmlString, baseURL)))
-                return;
-            
-            loadHTMLString(htmlString, baseURL);
-            return;
-        }
-        case WebPageMessage::LoadPlainTextString: {
-            String string;
-            if (!arguments->decode(CoreIPC::Out(string)))
-                return;
-            
-            loadPlainTextString(string);
-            return;
-        }
-        case WebPageMessage::StopLoading:
-            stopLoading();
-            return;
-        case WebPageMessage::Reload: {
-            bool reloadFromOrigin;
-            if (!arguments->decode(CoreIPC::Out(reloadFromOrigin)))
-                return;
-
-            reload(reloadFromOrigin);
-            return;
-        }
-        case WebPageMessage::GoForward: {
-            uint64_t backForwardItemID;
-            if (!arguments->decode(CoreIPC::Out(backForwardItemID)))
-                return;
-            goForward(backForwardItemID);
-            return;
-        }
-        case WebPageMessage::GoBack: {
-            uint64_t backForwardItemID;
-            if (!arguments->decode(CoreIPC::Out(backForwardItemID)))
-                return;
-            goBack(backForwardItemID);
-            return;
-        }
-       case WebPageMessage::GoToBackForwardItem: {
-            uint64_t backForwardItemID;
-            if (!arguments->decode(CoreIPC::Out(backForwardItemID)))
-                return;
-            goToBackForwardItem(backForwardItemID);
-            return;
-        }
-        case WebPageMessage::DidReceivePolicyDecision: {
-            uint64_t frameID;
-            uint64_t listenerID;
-            uint32_t policyAction;
-            if (!arguments->decode(CoreIPC::Out(frameID, listenerID, policyAction)))
-                return;
-            didReceivePolicyDecision(WebProcess::shared().webFrame(frameID), listenerID, (WebCore::PolicyAction)policyAction);
-            return;
-        }
-        case WebPageMessage::RunJavaScriptInMainFrame: {
-            String script;
-            uint64_t callbackID;
-            if (!arguments->decode(CoreIPC::Out(script, callbackID)))
-                return;
-            runJavaScriptInMainFrame(script, callbackID);
-            return;
-        }
-        case WebPageMessage::GetRenderTreeExternalRepresentation: {
-            uint64_t callbackID;
-            if (!arguments->decode(callbackID))
-                return;
-            getRenderTreeExternalRepresentation(callbackID);
-            return;
-        }
-        case WebPageMessage::GetSourceForFrame: {
-            uint64_t frameID;
-            uint64_t callbackID;
-            if (!arguments->decode(CoreIPC::Out(frameID, callbackID)))
-                return;
-            getSourceForFrame(WebProcess::shared().webFrame(frameID), callbackID);
-            return;
-        }
-        case WebPageMessage::Close: {
-            close();
-            return;
-        }
-        case WebPageMessage::TryClose: {
-            tryClose();
-            return;
-        }
-        case WebPageMessage::SetCustomUserAgent: {
-            String customUserAgent;
-            if (!arguments->decode(CoreIPC::Out(customUserAgent)))
-                return;
-            setCustomUserAgent(customUserAgent);
-            return;
-        }
-        case WebPageMessage::UnapplyEditCommand: {
-            uint64_t commandID;
-            if (!arguments->decode(CoreIPC::Out(commandID)))
-                return;
-            unapplyEditCommand(commandID);
-            return;
-        }
-        case WebPageMessage::ReapplyEditCommand: {
-            uint64_t commandID;
-            if (!arguments->decode(CoreIPC::Out(commandID)))
-                return;
-            reapplyEditCommand(commandID);
-            return;
-        }
-        case WebPageMessage::DidRemoveEditCommand: {
-            uint64_t commandID;
-            if (!arguments->decode(CoreIPC::Out(commandID)))
-                return;
-            didRemoveEditCommand(commandID);
-            return;
-        }
-        case WebPageMessage::SetPageZoomFactor: {
-            double zoomFactor;
-            if (!arguments->decode(CoreIPC::Out(zoomFactor)))
-                return;
-            setPageZoomFactor(zoomFactor);
-            return;
-        }
-        case WebPageMessage::SetTextZoomFactor: {
-            double zoomFactor;
-            if (!arguments->decode(CoreIPC::Out(zoomFactor)))
-                return;
-            setTextZoomFactor(zoomFactor);
-            return;
-        }
-        case WebPageMessage::SetPageAndTextZoomFactors: {
-            double pageZoomFactor;
-            double textZoomFactor;
-            if (!arguments->decode(CoreIPC::Out(pageZoomFactor, textZoomFactor)))
-                return;
-            setPageAndTextZoomFactors(pageZoomFactor, textZoomFactor);
-            return;
-        }
-    }
-
-    ASSERT_NOT_REACHED();
+    didReceiveWebPageMessage(connection, messageID, arguments);
 }
 
 } // namespace WebKit

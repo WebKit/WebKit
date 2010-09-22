@@ -14,11 +14,23 @@
 				1A50DB70110A3D67000D3FE5 /* CopyFiles */,
 			);
 			dependencies = (
+				C0CE72931247E6CD00BC0EC4 /* PBXTargetDependency */,
 				1A50DB3E110A3C1C000D3FE5 /* PBXTargetDependency */,
 				1A50DB3C110A3C19000D3FE5 /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = WebKit2;
+		};
+		C0CE72851247E66800BC0EC4 /* Derived Sources */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = C0CE72891247E68600BC0EC4 /* Build configuration list for PBXAggregateTarget "Derived Sources" */;
+			buildPhases = (
+				C0CE72841247E66800BC0EC4 /* Generate Derived Sources */,
+			);
+			dependencies = (
+			);
+			name = "Derived Sources";
+			productName = "Derived Sources";
 		};
 /* End PBXAggregateTarget section */
 
@@ -149,7 +161,6 @@
 		BC111B51112F619200337BAB /* PageClientImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC111B4C112F619200337BAB /* PageClientImpl.mm */; };
 		BC111B5D112F629800337BAB /* WebEventFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = BC111B5B112F629800337BAB /* WebEventFactory.h */; };
 		BC111B5E112F629800337BAB /* WebEventFactory.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC111B5C112F629800337BAB /* WebEventFactory.mm */; };
-		BC111B63112F638300337BAB /* WebPageMessageKinds.h in Headers */ = {isa = PBXBuildFile; fileRef = BC111B60112F638300337BAB /* WebPageMessageKinds.h */; };
 		BC111B64112F638300337BAB /* WebPageProxyMessageKinds.h in Headers */ = {isa = PBXBuildFile; fileRef = BC111B61112F638300337BAB /* WebPageProxyMessageKinds.h */; };
 		BC111B65112F638300337BAB /* WebProcessMessageKinds.h in Headers */ = {isa = PBXBuildFile; fileRef = BC111B62112F638300337BAB /* WebProcessMessageKinds.h */; };
 		BC131BC911726C2800B69727 /* CoreIPCMessageKinds.h in Headers */ = {isa = PBXBuildFile; fileRef = BC131BC811726C2800B69727 /* CoreIPCMessageKinds.h */; };
@@ -352,6 +363,9 @@
 		BCF69FA31176D01400471A52 /* WebNavigationData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF69FA11176D01400471A52 /* WebNavigationData.cpp */; };
 		BCF69FA91176D1CB00471A52 /* WKNavigationData.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF69FA71176D1CB00471A52 /* WKNavigationData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BCF69FAA1176D1CB00471A52 /* WKNavigationData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF69FA81176D1CB00471A52 /* WKNavigationData.cpp */; };
+		C0CE72A01247E71D00BC0EC4 /* WebPageMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0CE729E1247E71D00BC0EC4 /* WebPageMessageReceiver.cpp */; };
+		C0CE72A11247E71D00BC0EC4 /* WebPageMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = C0CE729F1247E71D00BC0EC4 /* WebPageMessages.h */; };
+		C0CE72AD1247E78D00BC0EC4 /* HandleMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = C0CE72AC1247E78D00BC0EC4 /* HandleMessage.h */; };
 		C0E3AA7A1209E83000A49D01 /* ModuleMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0E3AA481209E45000A49D01 /* ModuleMac.mm */; };
 		C0E3AA7B1209E83500A49D01 /* Module.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0E3AA451209E2BA00A49D01 /* Module.cpp */; };
 		C0E3AA7C1209E83C00A49D01 /* Module.h in Headers */ = {isa = PBXBuildFile; fileRef = C0E3AA441209E2BA00A49D01 /* Module.h */; };
@@ -385,6 +399,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
 			remoteInfo = WebKit2;
+		};
+		C0CE72921247E6CD00BC0EC4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C0CE72851247E66800BC0EC4;
+			remoteInfo = "Derived Sources";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -542,7 +563,6 @@
 		BC111B4C112F619200337BAB /* PageClientImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PageClientImpl.mm; sourceTree = "<group>"; };
 		BC111B5B112F629800337BAB /* WebEventFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebEventFactory.h; sourceTree = "<group>"; };
 		BC111B5C112F629800337BAB /* WebEventFactory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebEventFactory.mm; sourceTree = "<group>"; };
-		BC111B60112F638300337BAB /* WebPageMessageKinds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageMessageKinds.h; sourceTree = "<group>"; };
 		BC111B61112F638300337BAB /* WebPageProxyMessageKinds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageProxyMessageKinds.h; sourceTree = "<group>"; };
 		BC111B62112F638300337BAB /* WebProcessMessageKinds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessMessageKinds.h; sourceTree = "<group>"; };
 		BC131BC811726C2800B69727 /* CoreIPCMessageKinds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreIPCMessageKinds.h; sourceTree = "<group>"; };
@@ -747,6 +767,16 @@
 		BCF69FA11176D01400471A52 /* WebNavigationData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebNavigationData.cpp; sourceTree = "<group>"; };
 		BCF69FA71176D1CB00471A52 /* WKNavigationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationData.h; sourceTree = "<group>"; };
 		BCF69FA81176D1CB00471A52 /* WKNavigationData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKNavigationData.cpp; sourceTree = "<group>"; };
+		C08FDE87124A851C007645BD /* messages_unittest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = messages_unittest.py; sourceTree = "<group>"; };
+		C0CE72581247E4DA00BC0EC4 /* WebPage.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebPage.messages.in; sourceTree = "<group>"; };
+		C0CE729E1247E71D00BC0EC4 /* WebPageMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageMessageReceiver.cpp; sourceTree = "<group>"; };
+		C0CE729F1247E71D00BC0EC4 /* WebPageMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageMessages.h; sourceTree = "<group>"; };
+		C0CE72AC1247E78D00BC0EC4 /* HandleMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandleMessage.h; sourceTree = "<group>"; };
+		C0CE72DB1247E8F700BC0EC4 /* DerivedSources.make */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DerivedSources.make; sourceTree = "<group>"; };
+		C0CE73361247F70E00BC0EC4 /* generate-message-receiver.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "generate-message-receiver.py"; sourceTree = "<group>"; };
+		C0CE73371247F70E00BC0EC4 /* generate-messages-header.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "generate-messages-header.py"; sourceTree = "<group>"; };
+		C0CE73391247F70E00BC0EC4 /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = __init__.py; sourceTree = "<group>"; };
+		C0CE734612480B7D00BC0EC4 /* messages.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = messages.py; sourceTree = "<group>"; };
 		C0E3AA441209E2BA00A49D01 /* Module.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Module.h; sourceTree = "<group>"; };
 		C0E3AA451209E2BA00A49D01 /* Module.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Module.cpp; sourceTree = "<group>"; };
 		C0E3AA481209E45000A49D01 /* ModuleMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModuleMac.mm; sourceTree = "<group>"; };
@@ -791,11 +821,14 @@
 		0867D691FE84028FC02AAC07 /* WebKit2 */ = {
 			isa = PBXGroup;
 			children = (
+				C0CE72DB1247E8F700BC0EC4 /* DerivedSources.make */,
 				BC2E6E74114196F000A63B1E /* Platform */,
 				1AADDF4B10D82AF000D3D63D /* Shared */,
 				BC032D5C10F436D50058C15A /* WebProcess */,
 				BC032DC310F438260058C15A /* UIProcess */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
+				C0CE729D1247E71D00BC0EC4 /* Derived Sources */,
+				C0CE73351247F70E00BC0EC4 /* Scripts */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				1A4F9769100E7B6600637A18 /* Configurations */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
@@ -990,6 +1023,7 @@
 				BC032DA210F437D10058C15A /* Connection.cpp */,
 				BC032DA310F437D10058C15A /* Connection.h */,
 				BC131BC811726C2800B69727 /* CoreIPCMessageKinds.h */,
+				C0CE72AC1247E78D00BC0EC4 /* HandleMessage.h */,
 				BC032DA410F437D10058C15A /* MessageID.h */,
 			);
 			path = CoreIPC;
@@ -1085,6 +1119,7 @@
 				BC032D8910F437A00058C15A /* WebFrame.h */,
 				BC963D6A113DD19200574BE2 /* WebPage.cpp */,
 				BC032D8B10F437A00058C15A /* WebPage.h */,
+				C0CE72581247E4DA00BC0EC4 /* WebPage.messages.in */,
 			);
 			path = WebPage;
 			sourceTree = "<group>";
@@ -1298,7 +1333,6 @@
 				BC9E969911457EDE00870E71 /* DrawingAreaProxyMessageKinds.h */,
 				BCB28CBF120233D9007D99BC /* InjectedBundleMessageKinds.h */,
 				BCCB75C51203A1CE00222D1B /* WebContextMessageKinds.h */,
-				BC111B60112F638300337BAB /* WebPageMessageKinds.h */,
 				BC111B61112F638300337BAB /* WebPageProxyMessageKinds.h */,
 				BC111B62112F638300337BAB /* WebProcessMessageKinds.h */,
 				BCB7346D11CEE3FF00EC5002 /* WebProcessProxyMessageKinds.h */,
@@ -1477,6 +1511,36 @@
 			path = mac;
 			sourceTree = "<group>";
 		};
+		C0CE729D1247E71D00BC0EC4 /* Derived Sources */ = {
+			isa = PBXGroup;
+			children = (
+				C0CE729E1247E71D00BC0EC4 /* WebPageMessageReceiver.cpp */,
+				C0CE729F1247E71D00BC0EC4 /* WebPageMessages.h */,
+			);
+			name = "Derived Sources";
+			path = DerivedSources/WebKit2;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		C0CE73351247F70E00BC0EC4 /* Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				C0CE73371247F70E00BC0EC4 /* generate-messages-header.py */,
+				C0CE73361247F70E00BC0EC4 /* generate-message-receiver.py */,
+				C0CE73381247F70E00BC0EC4 /* webkit2 */,
+			);
+			path = Scripts;
+			sourceTree = "<group>";
+		};
+		C0CE73381247F70E00BC0EC4 /* webkit2 */ = {
+			isa = PBXGroup;
+			children = (
+				C0CE73391247F70E00BC0EC4 /* __init__.py */,
+				C0CE734612480B7D00BC0EC4 /* messages.py */,
+				C08FDE87124A851C007645BD /* messages_unittest.py */,
+			);
+			path = webkit2;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -1551,7 +1615,6 @@
 				BCF69FA21176D01400471A52 /* WebNavigationData.h in Headers */,
 				BCF69F9A1176CED600471A52 /* WebNavigationDataStore.h in Headers */,
 				BC032D8F10F437A00058C15A /* WebPage.h in Headers */,
-				BC111B63112F638300337BAB /* WebPageMessageKinds.h in Headers */,
 				BCEE98C7113314D7006BCC24 /* WebPageNamespace.h in Headers */,
 				BC032DD110F4389F0058C15A /* WebPageProxy.h in Headers */,
 				BC111B64112F638300337BAB /* WebPageProxyMessageKinds.h in Headers */,
@@ -1659,6 +1722,8 @@
 				BCF50724124328A9005955AE /* WKCertificateInfo.h in Headers */,
 				BCF50728124329AA005955AE /* WebCertificateInfo.h in Headers */,
 				BCF5072E12432A97005955AE /* WKCertificateInfoMac.h in Headers */,
+				C0CE72A11247E71D00BC0EC4 /* WebPageMessages.h in Headers */,
+				C0CE72AD1247E78D00BC0EC4 /* HandleMessage.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1708,7 +1773,6 @@
 			isa = PBXProject;
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "WebKit2" */;
 			compatibilityVersion = "Xcode 3.1";
-			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -1724,6 +1788,7 @@
 				1A50DB38110A3C13000D3FE5 /* All */,
 				8DC2EF4F0486A6940098B216 /* WebKit2 */,
 				1A50DB1D110A3BDC000D3FE5 /* WebProcess */,
+				C0CE72851247E66800BC0EC4 /* Derived Sources */,
 			);
 		};
 /* End PBXProject section */
@@ -1746,6 +1811,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		C0CE72841247E66800BC0EC4 /* Generate Derived Sources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate Derived Sources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2\"\n\nexport WebKit2=\"${SRCROOT}\"\n\nif [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" ]; then\n    make -f \"${WebKit2}/DerivedSources.make\" -j `/usr/sbin/sysctl -n hw.availcpu`\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1A50DB1B110A3BDC000D3FE5 /* Sources */ = {
@@ -1911,6 +1993,7 @@
 				BCF505E81243047B005955AE /* PlatformCertificateInfo.mm in Sources */,
 				BCF50725124328A9005955AE /* WKCertificateInfo.cpp in Sources */,
 				BCF5072F12432A97005955AE /* WKCertificateInfoMac.mm in Sources */,
+				C0CE72A01247E71D00BC0EC4 /* WebPageMessageReceiver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1931,6 +2014,11 @@
 			isa = PBXTargetDependency;
 			target = 8DC2EF4F0486A6940098B216 /* WebKit2 */;
 			targetProxy = 1A50DB3D110A3C1C000D3FE5 /* PBXContainerItemProxy */;
+		};
+		C0CE72931247E6CD00BC0EC4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C0CE72851247E66800BC0EC4 /* Derived Sources */;
+			targetProxy = C0CE72921247E6CD00BC0EC4 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -2046,6 +2134,34 @@
 			};
 			name = Production;
 		};
+		C0CE72861247E66800BC0EC4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = "Derived Sources";
+			};
+			name = Debug;
+		};
+		C0CE72871247E66800BC0EC4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = "Derived Sources";
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		C0CE72881247E66800BC0EC4 /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Derived Sources";
+			};
+			name = Production;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2085,6 +2201,16 @@
 				1DEB91B208733DA50010E9CD /* Debug */,
 				1DEB91B308733DA50010E9CD /* Release */,
 				5D22D69B11A7534600BF30E5 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		C0CE72891247E68600BC0EC4 /* Build configuration list for PBXAggregateTarget "Derived Sources" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C0CE72861247E66800BC0EC4 /* Debug */,
+				C0CE72871247E66800BC0EC4 /* Release */,
+				C0CE72881247E66800BC0EC4 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

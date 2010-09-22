@@ -25,7 +25,7 @@
 
 #include "WebEditCommandProxy.h"
 
-#include "WebPageMessageKinds.h"
+#include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 
@@ -52,7 +52,7 @@ void WebEditCommandProxy::unapply()
     if (!m_page || !m_page->isValid())
         return;
 
-    m_page->process()->connection()->send(WebPageMessage::UnapplyEditCommand, m_page->pageID(), CoreIPC::In(m_commandID));
+    m_page->process()->send(Messages::WebPage::UnapplyEditCommand(m_commandID), m_page->pageID());
     m_page->registerEditCommandForRedo(this);
 }
 
@@ -61,7 +61,7 @@ void WebEditCommandProxy::reapply()
     if (!m_page || !m_page->isValid())
         return;
 
-    m_page->process()->connection()->send(WebPageMessage::ReapplyEditCommand, m_page->pageID(), CoreIPC::In(m_commandID));
+    m_page->process()->send(Messages::WebPage::ReapplyEditCommand(m_commandID), m_page->pageID());
     m_page->registerEditCommandForUndo(this);
 }
 

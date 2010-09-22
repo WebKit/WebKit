@@ -55,6 +55,8 @@ inline Arguments0 Out()
 
 template<typename T1> class Arguments1 {
 public:
+    typedef T1 FirstArgumentType;
+
     Arguments1(T1 t1) 
         : m_value(t1)
     {
@@ -86,6 +88,9 @@ template<typename T1> Arguments1<T1&> Out(T1& t1)
 
 template<typename T1, typename T2> class Arguments2 : Arguments1<T1> {
 public:
+    typedef T1 FirstArgumentType;
+    typedef T2 SecondArgumentType;
+
     Arguments2(T1 t1, T2 t2) 
         : Arguments1<T1>(t1)
         , m_value(t2)
@@ -122,6 +127,10 @@ template<typename T1, typename T2> Arguments2<T1&, T2&> Out(T1& t1, T2& t2)
 
 template<typename T1, typename T2, typename T3> class Arguments3 : Arguments2<T1, T2> {
 public:
+    typedef T1 FirstArgumentType;
+    typedef T2 SecondArgumentType;
+    typedef T3 ThirdArgumentType;
+
     Arguments3(T1 t1, T2 t2, T3 t3) 
         : Arguments2<T1, T2>(t1, t2)
         , m_value(t3)
