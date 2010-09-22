@@ -122,6 +122,12 @@ public:
         LeftButtonDown   = 1 << 6,
         MiddleButtonDown = 1 << 7,
         RightButtonDown  = 1 << 8,
+
+        // Toggle modifiers for all events. Danger: these are not reflected
+        // into WebCore, so round-tripping from WebInputEvent to a WebCore
+        // event and back will not preserve these flags.
+        CapsLockOn       = 1 << 9,
+        NumLockOn        = 1 << 10,
     };
 
     unsigned size;   // The size of this structure, for serialization.

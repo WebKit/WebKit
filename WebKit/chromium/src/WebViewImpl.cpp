@@ -1041,8 +1041,6 @@ void WebViewImpl::composite(bool finish)
 #endif
 }
 
-// FIXME: m_currentInputEvent should be removed once ChromeClient::show() can
-// get the current-event information from WebCore.
 const WebInputEvent* WebViewImpl::m_currentInputEvent = 0;
 
 bool WebViewImpl::handleInputEvent(const WebInputEvent& inputEvent)
@@ -1056,6 +1054,8 @@ bool WebViewImpl::handleInputEvent(const WebInputEvent& inputEvent)
 
     if (m_ignoreInputEvents)
         return true;
+
+    m_currentInputEvent = &inputEvent;
 
     if (m_mouseCaptureNode.get() && WebInputEvent::isMouseEventType(inputEvent.type)) {
         // Save m_mouseCaptureNode since mouseCaptureLost() will clear it.
@@ -1086,16 +1086,9 @@ bool WebViewImpl::handleInputEvent(const WebInputEvent& inputEvent)
         node->dispatchMouseEvent(
               PlatformMouseEventBuilder(mainFrameImpl()->frameView(), *static_cast<const WebMouseEvent*>(&inputEvent)),
               eventType);
+        m_currentInputEvent = 0;
         return true;
     }
-
-    // FIXME: Remove m_currentInputEvent.
-    // This only exists to allow ChromeClient::show() to know which mouse button
-    // triggered a window.open event.
-    // Safari must perform a similar hack, ours is in our WebKit glue layer
-    // theirs is in the application.  This should go when WebCore can be fixed
-    // to pass more event information to ChromeClient::show()
-    m_currentInputEvent = &inputEvent;
 
     bool handled = true;
 

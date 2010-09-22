@@ -1,3 +1,22 @@
+2010-09-21  Brett Wilson  <brettw@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add caps log and num lock toggle state to WebInputEvent.
+        https://bugs.webkit.org/show_bug.cgi?id=46229
+
+        * public/WebInputEvent.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleInputEvent):
+        * src/WebViewImpl.h:
+        * src/gtk/WebInputEventFactory.cpp:
+        (WebKit::gdkStateToWebEventModifiers):
+        * src/win/WebInputEventFactory.cpp:
+        (WebKit::SetToggleKeyState):
+        (WebKit::WebInputEventFactory::keyboardEvent):
+        (WebKit::WebInputEventFactory::mouseEvent):
+        (WebKit::WebInputEventFactory::mouseWheelEvent):
+
 2010-09-21  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.

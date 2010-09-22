@@ -317,9 +317,8 @@ public:
 
     void hideAutoFillPopup();
 
-    // HACK: currentInputEvent() is for ChromeClientImpl::show(), until we can
-    // fix WebKit to pass enough information up into ChromeClient::show() so we
-    // can decide if the window.open event was caused by a middle-mouse click
+    // Returns the input event we're currently processing. This is used in some
+    // cases where the WebCore DOM event doesn't have the information we need.
     static const WebInputEvent* currentInputEvent()
     {
         return m_currentInputEvent;

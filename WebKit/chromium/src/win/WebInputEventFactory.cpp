@@ -86,6 +86,16 @@ static bool isKeyPad(WPARAM wparam, LPARAM lparam)
     return keypad;
 }
 
+// Loads the state for toggle keys into the event.
+static void SetToggleKeyState(WebInputEvent* event)
+{
+    // Low bit set from GetKeyState indicates "toggled".
+    if (::GetKeyState(VK_NUMLOCK) & 1)
+        event->modifiers |= WebInputEvent::NumLockOn;
+    if (::GetKeyState(VK_CAPITAL) & 1)
+        event->modifiers |= WebInputEvent::CapsLockOn;
+}
+
 WebKeyboardEvent WebInputEventFactory::keyboardEvent(HWND hwnd, UINT message,
                                                      WPARAM wparam, LPARAM lparam)
 {
@@ -144,6 +154,7 @@ WebKeyboardEvent WebInputEventFactory::keyboardEvent(HWND hwnd, UINT message,
     if (isKeyPad(wparam, lparam))
         result.modifiers |= WebInputEvent::IsKeyPad;
 
+    SetToggleKeyState(&result);
     return result;
 }
 
@@ -289,6 +300,7 @@ WebMouseEvent WebInputEventFactory::mouseEvent(HWND hwnd, UINT message,
     if (wparam & MK_RBUTTON)
         result.modifiers |= WebInputEvent::RightButtonDown;
 
+    SetToggleKeyState(&result);
     return result;
 }
 
@@ -385,6 +397,8 @@ WebMouseWheelEvent WebInputEventFactory::mouseWheelEvent(HWND hwnd, UINT message
         result.modifiers |= WebInputEvent::MiddleButtonDown;
     if (keyState & MK_RBUTTON)
         result.modifiers |= WebInputEvent::RightButtonDown;
+
+    SetToggleKeyState(&result);
 
     // Set coordinates by translating event coordinates from screen to client.
     POINT clientPoint = { result.globalX, result.globalY };

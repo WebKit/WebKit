@@ -85,6 +85,10 @@ static int gdkStateToWebEventModifiers(guint state)
         modifiers |= WebInputEvent::MiddleButtonDown;
     if (state & GDK_BUTTON3_MASK)
         modifiers |= WebInputEvent::RightButtonDown;
+    if (state & GDK_LOCK_MASK)
+        modifiers |= WebInputEvent::CapsLockOn;
+    if (state & GDK_MOD2_MASK)
+        modifiers |= WebInputEvent::NumLockOn;
     return modifiers;
 }
 
