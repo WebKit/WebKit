@@ -925,7 +925,7 @@ void WebViewImpl::resize(const WebSize& newSize)
             m_client->didInvalidateRect(damagedRect);
     }
 
-#if OS(DARWIN)
+#if USE(ACCELERATED_COMPOSITING) && OS(DARWIN)
     if (m_layerRenderer) {
         m_layerRenderer->resizeOnscreenContent(WebCore::IntSize(std::max(1, m_size.width),
                                                                 std::max(1, m_size.height)));

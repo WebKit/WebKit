@@ -1,3 +1,11 @@
+2010-09-22  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, Chromium build fix. Fix build when accelerated
+        compositing is not enabled at compile time.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::resize):
+
 2010-09-22  Matt Perry  <mpcomplete@chromium.org>
 
         Reviewed by Darin Fisher.
