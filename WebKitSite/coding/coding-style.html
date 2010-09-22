@@ -755,6 +755,33 @@ Don't bother to organize them in a logical order.
 #include "QualifiedName.h"
 #include "Attribute.h"
 </pre>
+
+<li>Includes of system headers must come after includes of other headers.
+
+<h4 class="right">Right:</h4>
+<pre class="code">
+// ConnectionQt.cpp
+#include "ArgumentEncoder.h"
+#include "ProcessLauncher.h"
+#include "WebPageProxyMessageKinds.h"
+#include "WorkItem.h"
+#include &ltQApplication&gt
+#include &ltQLocalServer&gt
+#include &ltQLocalSocket&gt
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+// ConnectionQt.cpp
+#include "ArgumentEncoder.h"
+#include "ProcessLauncher.h"
+#include &ltQApplication&gt
+#include &ltQLocalServer&gt
+#include &ltQLocalSocket&gt
+#include "WebPageProxyMessageKinds.h"
+#include "WorkItem.h"
+</pre>
+</li>
 </ol>
 
 <h3>"using" Statements</h3>

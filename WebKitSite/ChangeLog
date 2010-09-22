@@ -1,3 +1,13 @@
+2010-09-22  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Reviewed by Darin Adler.
+
+        check-webkit-style and the coding style guidelines page are inconsistent
+        https://bugs.webkit.org/show_bug.cgi?id=46099
+
+        * coding/coding-style.html:
+        Making clear that includes of system headers must come after includes of other headers.
+
 2010-09-16  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Adam Barth.
