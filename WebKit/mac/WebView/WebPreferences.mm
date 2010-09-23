@@ -368,6 +368,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:YES],  WebKitDNSPrefetchingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitFullScreenEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitMemoryInfoEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitHyperlinkAuditingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitUsePreHTML5ParserQuirksKey,
         [NSNumber numberWithLongLong:WebCore::ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
         [NSNumber numberWithLongLong:WebCore::ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
@@ -1330,6 +1331,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setMemoryInfoEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitMemoryInfoEnabledPreferenceKey];
+}
+
+- (BOOL)hyperlinkAuditingEnabled
+{
+    return [self _boolValueForKey:WebKitHyperlinkAuditingEnabledPreferenceKey];
+}
+
+- (void)setHyperlinkAuditingEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitHyperlinkAuditingEnabledPreferenceKey];
 }
 
 - (WebKitEditingBehavior)editingBehavior

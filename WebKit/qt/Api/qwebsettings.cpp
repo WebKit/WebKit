@@ -174,6 +174,11 @@ void QWebSettingsPrivate::apply()
 
         settings->setWebGLEnabled(value);
 #endif
+
+        value = attributes.value(QWebSettings::HyperlinkAuditingEnabled,
+                                 global->attributes.value(QWebSettings::HyperlinkAuditingEnabled));
+
+        settings->setHyperlinkAuditingEnabled(value);
  
         value = attributes.value(QWebSettings::JavascriptCanOpenWindows,
                                       global->attributes.value(QWebSettings::JavascriptCanOpenWindows));
@@ -495,6 +500,7 @@ QWebSettings::QWebSettings()
     d->attributes.insert(QWebSettings::LocalContentCanAccessFileUrls, true);
     d->attributes.insert(QWebSettings::AcceleratedCompositingEnabled, true);
     d->attributes.insert(QWebSettings::WebGLEnabled, false);
+    d->attributes.insert(QWebSettings::HyperlinkAuditingEnabled, false);
     d->attributes.insert(QWebSettings::TiledBackingStoreEnabled, false);
     d->attributes.insert(QWebSettings::FrameFlatteningEnabled, false);
     d->attributes.insert(QWebSettings::SiteSpecificQuirksEnabled, true);

@@ -1,3 +1,23 @@
+2010-09-23  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Darin Fisher.
+      
+        Tests for <a ping>, plus a rewrite of the other test of similar
+        load functionality (image-load-in-unload-handler.html). All these tests
+        now dump their interesting http headers (content type, request method,
+        referrer, and ping-specific headers).
+        https://bugs.webkit.org/show_bug.cgi?id=30458
+
+        * http/tests/navigation/image-load-in-unload-handler-expected.txt:
+        * http/tests/navigation/ping-cross-origin-expected.txt: Added.
+        * http/tests/navigation/ping-cross-origin-from-https-expected.txt: Added.
+        * http/tests/navigation/ping-cross-origin-from-https.html: Added.
+        * http/tests/navigation/ping-cross-origin.html: Added.
+        * http/tests/navigation/ping-same-origin-expected.txt: Added.
+        * http/tests/navigation/ping-same-origin.html: Added.
+        * http/tests/navigation/resources/check-ping.php:
+        * http/tests/navigation/resources/save-ping.php:
+  
 2010-09-23  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.

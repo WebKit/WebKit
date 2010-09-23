@@ -75,6 +75,7 @@ struct WebPreferences {
     bool allowUniversalAccessFromFileURLs;
     WebKit::WebSettings::EditingBehavior editingBehavior;
     bool tabsToLinks;
+    bool hyperlinkAuditingEnabled;
     bool accelerated2dCanvasEnabled;
 
     WebPreferences() { reset(); }

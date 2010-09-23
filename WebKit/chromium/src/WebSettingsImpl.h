@@ -89,6 +89,7 @@ public:
     virtual void setAcceleratedCompositingEnabled(bool);
     virtual void setAccelerated2dCanvasEnabled(bool);
     virtual void setMemoryInfoEnabled(bool);
+    virtual void setHyperlinkAuditingEnabled(bool);
 
 private:
     WebCore::Settings* m_settings;

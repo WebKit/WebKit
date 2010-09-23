@@ -1,0 +1,5 @@
+Ping sent successfully
+CONTENT_TYPE: text/ping
+HTTP_PING_TO: http://127.0.0.1:8000/navigation/resources/check-ping.php
+HTTP_REFERER: http://127.0.0.1:8000/navigation/ping-cross-origin.html
+REQUEST_METHOD: POST

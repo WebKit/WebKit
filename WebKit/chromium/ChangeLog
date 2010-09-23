@@ -1,3 +1,15 @@
+2010-09-23  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add hyperlink auditing settings (i.e., <a ping>).
+        https://bugs.webkit.org/show_bug.cgi?id=30458
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setHyperlinkAuditingEnabled):
+        * src/WebSettingsImpl.h:
+
 2010-09-23  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed build fix ("WTF/" -> "wtf/" in include, broke Arm build)

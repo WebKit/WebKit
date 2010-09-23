@@ -1463,6 +1463,7 @@ static bool fastDocumentTeardownEnabled()
     settings->setFullScreenEnabled([preferences fullScreenEnabled]);
 #endif
     settings->setMemoryInfoEnabled([preferences memoryInfoEnabled]);
+    settings->setHyperlinkAuditingEnabled([preferences hyperlinkAuditingEnabled]);
     settings->setUsePreHTML5ParserQuirks(shouldUsePreHTML5ParserQuirks(preferences));
 
     // Application Cache Preferences are stored on the global cache storage manager, not in Settings.

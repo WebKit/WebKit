@@ -330,6 +330,9 @@ namespace WebCore {
         void setUsePreHTML5ParserQuirks(bool flag) { m_usePreHTML5ParserQuirks = flag; }
         bool usePreHTML5ParserQuirks() const { return m_usePreHTML5ParserQuirks; }
 
+        void setHyperlinkAuditingEnabled(bool flag) { m_hyperlinkAuditingEnabled = flag; }
+        bool hyperlinkAuditingEnabled() const { return m_hyperlinkAuditingEnabled; }
+
     private:
         Page* m_page;
 
@@ -417,6 +420,7 @@ namespace WebCore {
         bool m_memoryInfoEnabled: 1;
         bool m_interactiveFormValidation: 1;
         bool m_usePreHTML5ParserQuirks: 1;
+        bool m_hyperlinkAuditingEnabled : 1;
 
 #if USE(SAFARI_THEME)
         static bool gShouldPaintNativeControls;

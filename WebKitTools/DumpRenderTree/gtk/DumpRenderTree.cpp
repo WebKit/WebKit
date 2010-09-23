@@ -336,6 +336,7 @@ static void resetDefaultsToConsistentValues()
                  "auto-resize-window", TRUE,
                  "enable-java-applet", FALSE,
                  "enable-plugins", TRUE,
+                 "enable-hyperlink-auditing", FALSE,
                  "editing-behavior", WEBKIT_EDITING_BEHAVIOR_MAC,
                  NULL);
 

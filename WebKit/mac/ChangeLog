@@ -1,3 +1,20 @@
+2010-09-23  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add hyperlink auditing settings (i.e., <a ping>).
+        https://bugs.webkit.org/show_bug.cgi?id=30458
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences setMemoryInfoEnabled:]):
+        (-[WebPreferences hyperlinkAuditingEnabled]):
+        (-[WebPreferences setHyperlinkAuditingEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]):
+
 2010-09-22  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Anders Carlsson.

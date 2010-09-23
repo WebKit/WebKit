@@ -4778,6 +4778,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setMemoryInfoEnabled(enabled);
 
+    hr = prefsPrivate->hyperlinkAuditingEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setHyperlinkAuditingEnabled(enabled);
+
     if (!m_closeWindowTimer)
         m_mainFrame->invalidate(); // FIXME
 

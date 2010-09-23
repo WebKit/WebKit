@@ -289,4 +289,9 @@ void WebSettingsImpl::setMemoryInfoEnabled(bool enabled)
     m_settings->setMemoryInfoEnabled(enabled);
 }
 
+void WebSettingsImpl::setHyperlinkAuditingEnabled(bool enabled)
+{
+    m_settings->setHyperlinkAuditingEnabled(enabled);
+}
+
 } // namespace WebKit

@@ -591,6 +591,8 @@ void LayoutTestController::overridePreference(const QString& name, const QVarian
         settings->setAttribute(QWebSettings::PluginsEnabled, value.toBool());
     else if (name == "WebKitWebGLEnabled")
         settings->setAttribute(QWebSettings::WebGLEnabled, value.toBool());
+    else if (name == "WebKitHyperlinkAuditingEnabled")
+        settings->setAttribute(QWebSettings::HyperlinkAuditingEnabled, value.toBool());
     else
         printf("ERROR: LayoutTestController::overridePreference() does not support the '%s' preference\n",
             name.toLatin1().data());

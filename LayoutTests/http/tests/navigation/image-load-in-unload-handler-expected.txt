@@ -1,2 +1,4 @@
 main frame - has 1 onunload handler(s)
-PASS
+Ping sent successfully
+HTTP_REFERER: http://127.0.0.1:8000/navigation/image-load-in-unload-handler.html
+REQUEST_METHOD: GET

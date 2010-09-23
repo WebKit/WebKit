@@ -33,6 +33,7 @@
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "Page.h"
+#include "PingLoader.h"
 #include "RenderImage.h"
 #include "ResourceHandle.h"
 #include "Settings.h"
@@ -147,6 +148,7 @@ void HTMLAnchorElement::defaultEventHandler(Event* event)
             String url = deprecatedParseURL(getAttribute(hrefAttr));
             appendServerMapMousePosition(url, event);
             handleLinkClick(event, document(), url, getAttribute(targetAttr), hasRel(RelationNoReferrer));
+            sendPings(document()->completeURL(url));
             return;
         }
 
@@ -463,6 +465,16 @@ String HTMLAnchorElement::toString() const
 bool HTMLAnchorElement::isLiveLink() const
 {
     return isLink() && treatLinkAsLiveForEventType(m_wasShiftKeyDownOnMouseDown ? MouseEventWithShiftKey : MouseEventWithoutShiftKey);
+}
+
+void HTMLAnchorElement::sendPings(const KURL& destinationURL)
+{
+    if (!hasAttribute(pingAttr) || !document()->settings()->hyperlinkAuditingEnabled())
+        return;
+
+    SpaceSplitString pingURLs(getAttribute(pingAttr), true);
+    for (unsigned i = 0; i < pingURLs.size(); i++)
+        PingLoader::sendPing(document()->frame(), document()->completeURL(pingURLs[i]), destinationURL);
 }
 
 HTMLAnchorElement::EventType HTMLAnchorElement::eventType(Event* event)

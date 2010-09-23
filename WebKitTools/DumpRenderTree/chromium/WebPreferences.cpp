@@ -100,6 +100,7 @@ void WebPreferences::reset()
 #endif
 
     tabsToLinks = false;
+    hyperlinkAuditingEnabled = false;
     accelerated2dCanvasEnabled = false;
 }
 
@@ -140,6 +141,7 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setWebSecurityEnabled(webSecurityEnabled);
     settings->setAllowUniversalAccessFromFileURLs(allowUniversalAccessFromFileURLs);
     settings->setEditingBehavior(editingBehavior);
+    settings->setHyperlinkAuditingEnabled(hyperlinkAuditingEnabled);
     // LayoutTests were written with Safari Mac in mind which does not allow
     // tabbing to links by default.
     webView->setTabsToLinks(tabsToLinks);

@@ -33,6 +33,7 @@
 #define PingLoader_h
 
 #include "ResourceHandleClient.h"
+#include "Timer.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 
@@ -52,6 +53,7 @@ class ResourceResponse;
 class PingLoader : private ResourceHandleClient, public Noncopyable {
 public:
     static void loadImage(Frame*, const KURL& url);
+    static void sendPing(Frame*, const KURL& pingURL, const KURL& destinationURL);
 
     ~PingLoader();
 
@@ -62,8 +64,10 @@ private:
     void didReceiveData(ResourceHandle*, const char*, int) { delete this; }
     void didFinishLoading(ResourceHandle*, double) { delete this; }
     void didFail(ResourceHandle*, const ResourceError&) { delete this; }
+    void timeout(Timer<PingLoader>*) { delete this; }
 
     RefPtr<ResourceHandle> m_handle;
+    Timer<PingLoader> m_timeout;
 };
 
 }

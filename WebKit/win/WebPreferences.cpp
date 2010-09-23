@@ -264,6 +264,7 @@ void WebPreferences::initializeDefaultSettings()
     CFDictionaryAddValue(defaults, CFSTR(WebKitDNSPrefetchingEnabledPreferenceKey), kCFBooleanTrue);
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitMemoryInfoEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults, CFSTR(WebKitHyperlinkAuditingEnabledPreferenceKey), kCFBooleanFalse);
 
     defaultSettings = defaults;
 }
@@ -1148,6 +1149,19 @@ HRESULT STDMETHODCALLTYPE WebPreferences::setEditingBehavior(
     return S_OK;
 }
 
+HRESULT STDMETHODCALLTYPE WebPreferences::hyperlinkAuditingEnabled(
+    /* [in] */ BOOL* enabled)
+{
+    *enabled = boolValueForKey(CFSTR(WebKitHyperlinkAuditingEnabledPreferenceKey));
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebPreferences::setHyperlinkAuditingEnabled(
+    /* [retval][out] */ BOOL enabled)
+{
+    setBoolValue(CFSTR(WebKitHyperlinkAuditingEnabledPreferenceKey), enabled);
+    return S_OK;
+}
 
 HRESULT STDMETHODCALLTYPE WebPreferences::cookieStorageAcceptPolicy( 
         /* [retval][out] */ WebKitCookieStorageAcceptPolicy *acceptPolicy )

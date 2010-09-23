@@ -8,11 +8,18 @@ if (!file_exists("ping.txt")) {
     return;
 }
 
+echo "<html><body>\n";
+echo "Ping sent successfully";
+$pingFile = fopen("ping.txt", 'r');
+while ($line = fgets($pingFile)) {
+    echo "<br>";
+    echo trim($line);
+}
+fclose($pingFile);
 unlink("ping.txt");
-
-echo "PASS\n";
-echo "<script>\n";
-echo "if (window.layoutTestController)\n";
-echo "    layoutTestController.notifyDone();\n";
+echo "<script>";
+echo "if (window.layoutTestController)";
+echo "    layoutTestController.notifyDone();";
 echo "</script>";
+echo "</body></html>";
 ?>

@@ -2853,7 +2853,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
         javaScriptCanAccessClipboard, enableOfflineWebAppCache,
         enableUniversalAccessFromFileURI, enableFileAccessFromFileURI,
         enableDOMPaste, tabKeyCyclesThroughElements,
-        enableSiteSpecificQuirks, usePageCache, enableJavaApplet;
+        enableSiteSpecificQuirks, usePageCache, enableJavaApplet, enableHyperlinkAuditing;
 
     WebKitEditingBehavior editingBehavior;
 
@@ -2890,6 +2890,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
                  "enable-site-specific-quirks", &enableSiteSpecificQuirks,
                  "enable-page-cache", &usePageCache,
                  "enable-java-applet", &enableJavaApplet,
+                 "enable-hyperlink-auditing", &enableHyperlinkAuditing,
                  NULL);
 
     settings->setDefaultTextEncodingName(defaultEncoding);
@@ -2925,6 +2926,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     settings->setNeedsSiteSpecificQuirks(enableSiteSpecificQuirks);
     settings->setUsesPageCache(usePageCache);
     settings->setJavaEnabled(enableJavaApplet);
+    settings->setHyperlinkAuditingEnabled(enableHyperlinkAuditing);
 
     Page* page = core(webView);
     if (page)
@@ -3036,6 +3038,8 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
         settings->setUsesPageCache(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-java-applet"))
         settings->setJavaEnabled(g_value_get_boolean(&value));
+    else if (name == g_intern_string("enable-hyperlink-auditing"))
+        settings->setHyperlinkAuditingEnabled(g_value_get_boolean(&value));
     else if (!g_object_class_find_property(G_OBJECT_GET_CLASS(webSettings), name))
         g_warning("Unexpected setting '%s'", name);
     g_value_unset(&value);

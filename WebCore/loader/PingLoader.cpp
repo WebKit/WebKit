@@ -32,6 +32,7 @@
 #include "config.h"
 #include "PingLoader.h"
 
+#include "FormData.h"
 #include "Frame.h"
 #include "ResourceHandle.h"
 #include "SecurityOrigin.h"
@@ -60,9 +61,40 @@ void PingLoader::loadImage(Frame* frame, const KURL& url)
     UNUSED_PARAM(leakedPingLoader);
 }
 
+// http://www.whatwg.org/specs/web-apps/current-work/multipage/links.html#hyperlink-auditing
+void PingLoader::sendPing(Frame* frame, const KURL& pingURL, const KURL& destinationURL)
+{
+    ResourceRequest request(pingURL);
+    request.setTargetType(ResourceRequest::TargetIsSubresource);
+    request.setHTTPMethod("POST");
+    request.setHTTPContentType("text/ping");
+    request.setHTTPBody(FormData::create("PING"));
+    request.setHTTPHeaderField("Cache-Control", "max-age=0");
+    frame->loader()->addExtraFieldsToSubresourceRequest(request);
+
+    SecurityOrigin* sourceOrigin = frame->document()->securityOrigin();
+    RefPtr<SecurityOrigin> pingOrigin = SecurityOrigin::create(pingURL);
+    FrameLoader::addHTTPOriginIfNeeded(request, sourceOrigin->toString());
+    request.setHTTPHeaderField("Ping-To", destinationURL);
+    if (sourceOrigin->isSameSchemeHostPort(pingOrigin.get()))
+        request.setHTTPHeaderField("Ping-From", frame->document()->url());
+    else if (!SecurityOrigin::shouldHideReferrer(pingURL, frame->loader()->outgoingReferrer()))
+        request.setHTTPReferrer(frame->loader()->outgoingReferrer());
+    OwnPtr<PingLoader> pingLoader = adoptPtr(new PingLoader(frame, request));
+    
+    // Leak the ping loader, since it will kill itself as soon as it receives a response.
+    PingLoader* leakedPingLoader = pingLoader.leakPtr();
+    UNUSED_PARAM(leakedPingLoader);
+}
+
 PingLoader::PingLoader(Frame* frame, const ResourceRequest& request)
+    : m_timeout(this, &PingLoader::timeout)
 {
     m_handle = ResourceHandle::create(frame->loader()->networkingContext(), request, this, false, false);
+
+    // If the server never responds, FrameLoader won't be able to cancel this load and
+    // we'll sit here waiting forever. Set a very generous timeout, just in case.
+    m_timeout.startOneShot(60000);
 }
 
 PingLoader::~PingLoader()

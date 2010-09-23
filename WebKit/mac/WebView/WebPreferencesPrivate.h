@@ -196,6 +196,9 @@ extern NSString *WebPreferencesRemovedNotification;
 - (BOOL)memoryInfoEnabled;
 - (void)setMemoryInfoEnabled:(BOOL)enabled;
 
+- (BOOL)hyperlinkAuditingEnabled;
+- (void)setHyperlinkAuditingEnabled:(BOOL)enabled;
+
 // Other private methods
 - (void)_postPreferencesChangesNotification;
 + (WebPreferences *)_getInstanceForIdentifier:(NSString *)identifier;

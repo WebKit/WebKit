@@ -1,3 +1,28 @@
+2010-09-23  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Darin Fisher.
+        
+        Implement <a ping> (disabled by default).
+        https://bugs.webkit.org/show_bug.cgi?id=30458
+        
+        Tests: http/tests/navigation/ping-cross-origin-from-https.html
+               http/tests/navigation/ping-cross-origin.html
+               http/tests/navigation/ping-same-origin.html
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::defaultEventHandler):
+        (WebCore::HTMLAnchorElement::sendPings):
+        * html/HTMLAnchorElement.h:
+        * html/HTMLAttributeNames.in:
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::sendPing): Set ping-specific headers.
+        (WebCore::PingLoader::PingLoader):
+        * loader/PingLoader.h:
+        (WebCore::PingLoader::timeout): Ensure pings eventually timeout, since
+            the normal cancel mechanism can't stop them.
+        * page/Settings.cpp:
+        * page/Settings.h: Add hyperlinkAuditingEnabled.
+
 2010-09-23  Steve VanDeBogart  <vandebo@chromium.org>
 
         Reviewed by David Levin.

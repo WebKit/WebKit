@@ -1,0 +1,5 @@
+Ping sent successfully
+CONTENT_TYPE: text/ping
+HTTP_PING_FROM: http://127.0.0.1:8000/navigation/ping-same-origin.html
+HTTP_PING_TO: http://127.0.0.1:8000/navigation/resources/check-ping.php
+REQUEST_METHOD: POST
