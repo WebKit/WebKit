@@ -1,3 +1,17 @@
+2010-09-23  Brad Moore  <bradm@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Address a remaining discrepancy in piecewise text measurement
+        https://bugs.webkit.org/show_bug.cgi?id=45796
+
+        Don't include always-integral space widths in the floating point accumulator designed
+        to minimize precision loss.  This brings whole-string measurement in line with piecewise
+        text measurement when dealing with fonts with fractional advances.
+
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advance): Change the associativity of width addition to minimize precision loss.
+
 2010-09-23  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Roben.

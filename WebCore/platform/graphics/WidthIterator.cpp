@@ -212,20 +212,29 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
 
         // Force characters that are used to determine word boundaries for the rounding hack
         // to be integer width, so following words will start on an integer boundary.
-        if (m_run.applyWordRounding() && Font::isRoundingHackCharacter(c))
+        if (m_run.applyWordRounding() && Font::isRoundingHackCharacter(c)) {
             width = ceilf(width);
 
-        // Check to see if the next character is a "rounding hack character", if so, adjust
-        // width so that the total run width will be on an integer boundary.
-        if ((m_run.applyWordRounding() && currentCharacter < m_run.length() && Font::isRoundingHackCharacter(*cp))
-                || (m_run.applyRunRounding() && currentCharacter >= m_end)) {
-            float totalWidth = widthSinceLastRounding + width;
-            widthSinceLastRounding = ceilf(totalWidth);
-            width += widthSinceLastRounding - totalWidth;
-            m_runWidthSoFar += widthSinceLastRounding;
-            widthSinceLastRounding = 0;
-        } else
-            widthSinceLastRounding += width;
+            // Since widthSinceLastRounding can lose precision if we include measurements for
+            // preceding whitespace, we bypass it here.
+            m_runWidthSoFar += width;
+
+            // Since this is a rounding hack character, we should have reset this sum on the previous
+            // iteration.
+            ASSERT(!widthSinceLastRounding);
+        } else {
+            // Check to see if the next character is a "rounding hack character", if so, adjust
+            // width so that the total run width will be on an integer boundary.
+            if ((m_run.applyWordRounding() && currentCharacter < m_run.length() && Font::isRoundingHackCharacter(*cp))
+                    || (m_run.applyRunRounding() && currentCharacter >= m_end)) {
+                float totalWidth = widthSinceLastRounding + width;
+                widthSinceLastRounding = ceilf(totalWidth);
+                width += widthSinceLastRounding - totalWidth;
+                m_runWidthSoFar += widthSinceLastRounding;
+                widthSinceLastRounding = 0;
+            } else
+                widthSinceLastRounding += width;
+        }
 
         if (glyphBuffer)
             glyphBuffer->add(glyph, fontData, (rtl ? oldWidth + lastRoundingWidth : width));
