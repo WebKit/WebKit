@@ -31,6 +31,9 @@
 
 namespace WebCore {
 
+enum UserStyleInjectionTime { InjectInExistingDocuments, InjectInSubsequentDocuments };
+enum UserStyleLevel { UserStyleUserLevel, UserStyleAuthorLevel };
+
 class DOMWrapperWorld;
 class UserStyleSheet;
 

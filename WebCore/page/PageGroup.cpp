@@ -240,7 +240,8 @@ void PageGroup::addUserScriptToWorld(DOMWrapperWorld* world, const String& sourc
 void PageGroup::addUserStyleSheetToWorld(DOMWrapperWorld* world, const String& source, const KURL& url,
                                          PassOwnPtr<Vector<String> > whitelist, PassOwnPtr<Vector<String> > blacklist,
                                          UserContentInjectedFrames injectedFrames,
-                                         UserStyleSheet::Level level)
+                                         UserStyleLevel level,
+                                         UserStyleInjectionTime injectionTime)
 {
     ASSERT_ARG(world, world);
 
@@ -252,7 +253,8 @@ void PageGroup::addUserStyleSheetToWorld(DOMWrapperWorld* world, const String& s
         styleSheetsInWorld = new UserStyleSheetVector;
     styleSheetsInWorld->append(userStyleSheet.release());
 
-    resetUserStyleCacheInAllFrames();
+    if (injectionTime == InjectInExistingDocuments)
+        resetUserStyleCacheInAllFrames();
 }
 
 void PageGroup::removeUserScriptFromWorld(DOMWrapperWorld* world, const KURL& url)
@@ -358,14 +360,12 @@ void PageGroup::removeAllUserContent()
 
 void PageGroup::resetUserStyleCacheInAllFrames()
 {
-#if !PLATFORM(CHROMIUM)
     // Clear our cached sheets and have them just reparse.
     HashSet<Page*>::const_iterator end = m_pages.end();
     for (HashSet<Page*>::const_iterator it = m_pages.begin(); it != end; ++it) {
         for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext())
             frame->document()->updatePageGroupUserSheets();
     }
-#endif
 }
 
 } // namespace WebCore

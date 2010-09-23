@@ -1,3 +1,22 @@
+2010-09-22  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] User style layout tests don't pass on Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=46069
+
+        User style tests should now pass with the Chromium DRT since we now
+        apply the styles immediately, just like the other ports (once we also
+        remove some bad baselines for user-style-top-frame-only added by 
+        r62958).
+        
+        Tests still don't pass with test_shell until it starts to use 
+        InjectInExistingDocuments too.
+
+        * platform/chromium-mac/userscripts/user-style-top-frame-only-expected.txt: Removed.
+        * platform/chromium-win/userscripts/user-style-top-frame-only-expected.txt: Removed.
+        * platform/chromium/drt_expectations.txt:
+        
 2010-09-22  Kinuko Yasuda  <kinuko@chromium.org>
 
         Unreviewed, temporarily disabling the new filesystem test on chromium.

@@ -2015,7 +2015,8 @@ void WebView::addUserScript(const WebString& sourceCode,
 
 void WebView::addUserStyleSheet(const WebString& sourceCode,
                                 const WebVector<WebString>& patternsIn,
-                                WebView::UserContentInjectIn injectIn)
+                                WebView::UserContentInjectIn injectIn,
+                                WebView::UserStyleInjectionTime injectionTime)
 {
     OwnPtr<Vector<String> > patterns(new Vector<String>);
     for (size_t i = 0; i < patternsIn.size(); ++i)
@@ -2030,7 +2031,8 @@ void WebView::addUserStyleSheet(const WebString& sourceCode,
     // FIXME: It would be nice to populate the URL correctly, instead of passing an empty URL.
     pageGroup->addUserStyleSheetToWorld(world.get(), sourceCode, WebURL(), patterns.release(), 0,
                                         static_cast<UserContentInjectedFrames>(injectIn),
-                                        UserStyleSheet::AuthorLevel);
+                                        UserStyleAuthorLevel,
+                                        static_cast<WebCore::UserStyleInjectionTime>(injectionTime));
 }
 
 void WebView::removeAllUserContent()

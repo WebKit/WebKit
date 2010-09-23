@@ -1,3 +1,27 @@
+2010-09-22  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] User style layout tests don't pass on Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=46069
+        
+        Instead of making resetUserStyleCacheInAllFrames be a no-op for
+        Chromium, have it be controlled by a UserStyleInjectionTime enum.
+        
+        Also move the UserStyleSheet::Level enum to be inside
+        UserStyleSheetTypes for consistency.
+
+        * WebCore.exp.in:
+        * dom/Document.cpp:
+        (WebCore::Document::pageGroupUserSheets):
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::addUserStyleSheetToWorld):
+        * page/PageGroup.h:
+        * page/UserStyleSheet.h:
+        (WebCore::UserStyleSheet::UserStyleSheet):
+        (WebCore::UserStyleSheet::level):
+        * page/UserStyleSheetTypes.h:
+
 2010-09-22  Ruben  <chromium@hybridsource.org>
 
         Reviewed by Tony Chang.

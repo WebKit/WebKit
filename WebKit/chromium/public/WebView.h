@@ -65,6 +65,13 @@ public:
         UserContentInjectInAllFrames,
         UserContentInjectInTopFrameOnly
     };
+    
+    // Controls which documents user styles are injected into.
+    enum UserStyleInjectionTime {
+        UserStyleInjectInExistingDocuments,
+        UserStyleInjectInSubsequentDocuments
+    };
+    
 
     // Initialization ------------------------------------------------------
 
@@ -328,7 +335,8 @@ public:
                                          UserContentInjectIn injectIn);
     WEBKIT_API static void addUserStyleSheet(const WebString& sourceCode,
                                              const WebVector<WebString>& patterns,
-                                             UserContentInjectIn injectIn);
+                                             UserContentInjectIn injectIn,
+                                             UserStyleInjectionTime injectionTime = UserStyleInjectInSubsequentDocuments);
     WEBKIT_API static void removeAllUserContent();
 
     // Modal dialog support ------------------------------------------------

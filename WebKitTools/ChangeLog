@@ -1,3 +1,17 @@
+2010-09-22  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] User style layout tests don't pass on Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=46069
+
+        Fix a typo in LayoutTestController::addUserStyleSheet that was causing a
+        crash the Chromium DRT. Pass InjectInExistingDocuments to mimic DRT
+        behavior from other ports.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::addUserStyleSheet):
+
 2010-09-22  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Martin Robinson.

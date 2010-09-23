@@ -140,3 +140,7 @@ BUG_DRT WIN : fast/notifications/notifications-replace.html = TEXT
 // PASS with DRT though FAIL on test_shell
 BUG_DRT : platform/chromium/accessibility = PASS
 BUG_DRT : userscripts/user-script-top-frame-only.html = PASS
+BUG_DRT : userscripts/mixed-case-stylesheet.html = PASS
+BUG_DRT : userscripts/simple-stylesheet.html = PASS
+BUG_DRT : userscripts/user-style-all-frames.html = PASS
+BUG_DRT : userscripts/user-style-top-frame-only.html = PASS

@@ -83,8 +83,8 @@ namespace WebCore {
         void addUserStyleSheetToWorld(DOMWrapperWorld*, const String& source, const KURL&,
                                       PassOwnPtr<Vector<String> > whitelist, PassOwnPtr<Vector<String> > blacklist,
                                       UserContentInjectedFrames,
-                                      UserStyleSheet::Level level = UserStyleSheet::UserLevel);
-
+                                      UserStyleLevel level = UserStyleUserLevel,
+                                      UserStyleInjectionTime injectionTime = InjectInExistingDocuments);
         void removeUserScriptFromWorld(DOMWrapperWorld*, const KURL&);
         void removeUserStyleSheetFromWorld(DOMWrapperWorld*, const KURL&);
 
