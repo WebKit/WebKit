@@ -1,5 +1,14 @@
 2010-09-22  Andy Estes  <aestes@apple.com>
 
+        Rubber-stamped by Darin Adler.
+
+        Fix a typo and correct an inaccurate phrase in a comment.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processEndTag):
+
+2010-09-22  Andy Estes  <aestes@apple.com>
+
         Reviewed by Adam Barth.
 
         REGRESSION (r61285): <script /> parses differently in HTML5
