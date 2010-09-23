@@ -63,6 +63,11 @@
 #include <runtime/JSLock.h>
 #include <runtime/JSValue.h>
 
+#if ENABLE(PLUGIN_PROCESS)
+// FIXME: This is currently mac specific!
+#include "MachPort.h"
+#endif
+
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
 #endif
@@ -182,11 +187,24 @@ PassRefPtr<Plugin> WebPage::createPlugin(const Plugin::Parameters& parameters)
     if (pluginPath.isNull())
         return 0;
 
+#if ENABLE(PLUGIN_PROCESS)
+    // FIXME: This is currently Mac specific.
+    CoreIPC::MachPort connectionMachPort;
+
+    if (!WebProcess::shared().connection()->sendSync(WebProcessProxyMessage::GetPluginProcessConnection, 0,
+                                                     CoreIPC::In(pluginPath),
+                                                     CoreIPC::Out(connectionMachPort),
+                                                     CoreIPC::Connection::NoTimeout))
+        return 0;
+
+    return 0;
+#else
     RefPtr<NetscapePluginModule> pluginModule = NetscapePluginModule::getOrCreate(pluginPath);
     if (!pluginModule)
         return 0;
 
     return NetscapePlugin::create(pluginModule.release());
+#endif
 }
 
 String WebPage::renderTreeExternalRepresentation() const

@@ -1,3 +1,29 @@
+2010-09-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Implement handlers for the GetPluginProcessConnection message
+        https://bugs.webkit.org/show_bug.cgi?id=46415
+
+        * Shared/CoreIPCSupport/WebProcessProxyMessageKinds.h:
+        Add GetPluginProcessConnection message kind
+
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        (WebKit::PluginProcessManager::PluginProcessManager):
+        Add missing constructor.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getPluginProcessConnection):
+        Ask the plug-in process manager for a connection.
+        
+        (WebKit::WebProcessProxy::didReceiveSyncMessage):
+        Call getPluginProcessConnection.
+
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+        Send the GetPluginProcessConnection message.
+
 2010-09-23  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.

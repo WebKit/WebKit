@@ -26,6 +26,7 @@
 #include "WebProcessProxy.h"
 
 #include "PluginInfoStore.h"
+#include "PluginProcessManager.h"
 #include "WebBackForwardListItem.h"
 #include "WebContext.h"
 #include "WebNavigationDataStore.h"
@@ -212,6 +213,13 @@ void WebProcessProxy::getPlugins(bool refresh, Vector<PluginInfo>& plugins)
     m_context->pluginInfoStore()->getPlugins(plugins);
 }
 
+#if ENABLE(PLUGIN_PROCESS)
+void WebProcessProxy::getPluginProcessConnection(const String& pluginPath, CoreIPC::ArgumentEncoder* reply)
+{
+    PluginProcessManager::shared().getPluginProcessConnection(pluginPath, this, reply);
+}
+#endif
+
 void WebProcessProxy::getPluginPath(const String& mimeType, const KURL& url, String& pluginPath)
 {
     String newMimeType = mimeType.lower();
@@ -323,6 +331,9 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
             // These are synchronous messages and should never be handled here.
             case WebProcessProxyMessage::GetPlugins:
             case WebProcessProxyMessage::GetPluginPath:
+#if ENABLE(PLUGIN_PROCESS)
+            case WebProcessProxyMessage::GetPluginProcessConnection:
+#endif
                 ASSERT_NOT_REACHED();
                 break;
         }
@@ -370,9 +381,22 @@ CoreIPC::SyncReplyMode WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connectio
                 
                 String pluginPath;
                 getPluginPath(mimeType, KURL(ParsedURLString, urlString), pluginPath);
+
                 reply->encode(CoreIPC::In(pluginPath));
                 return CoreIPC::AutomaticReply;
             }
+
+#if ENABLE(PLUGIN_PROCESS)
+            case WebProcessProxyMessage::GetPluginProcessConnection: {
+                String pluginPath;
+                
+                if (!arguments->decode(CoreIPC::Out(pluginPath)))
+                    return CoreIPC::AutomaticReply;
+
+                getPluginProcessConnection(pluginPath, reply);
+                return CoreIPC::ManualReply;
+            }
+#endif
 
             // These are asynchronous messages and should never be handled here.
             case WebProcessProxyMessage::DidNavigateWithNavigationData:

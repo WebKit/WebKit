@@ -41,6 +41,9 @@ enum Kind {
     DidUpdateHistoryTitle,
     DidDestroyFrame,
     GetPluginPath,
+#if ENABLE(PLUGIN_PROCESS)
+    GetPluginProcessConnection,
+#endif
     GetPlugins
 };
 
