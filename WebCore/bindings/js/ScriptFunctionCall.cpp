@@ -215,8 +215,8 @@ ScriptValue ScriptCallback::call(bool& hadException)
 
     CallData callData;
     CallType callType = getCallData(m_function.jsValue(), callData);
-
-    ASSERT(callType != CallTypeNone);
+    if (callType == CallTypeNone)
+        return ScriptValue();
 
     JSValue result = JSC::call(m_exec, m_function.jsValue(), callType, callData, m_function.jsValue(), m_arguments);
     hadException = m_exec->hadException();

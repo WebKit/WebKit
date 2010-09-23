@@ -1,3 +1,15 @@
+2010-09-23  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        Invalid assertion in ScriptCallback
+        https://bugs.webkit.org/show_bug.cgi?id=46348
+
+        Removing invalid ASSERT from method ScriptCallback::call().
+
+        * bindings/js/ScriptFunctionCall.cpp:
+        (WebCore::ScriptCallback::call):
+
 2010-09-23  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Ariya Hidayat.
