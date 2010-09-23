@@ -323,6 +323,11 @@ void ResourceHandle::onRedirect()
 
 bool ResourceHandle::onRequestComplete()
 {
+    if (!d->m_internetHandle) { // 0 if canceled.
+        deref(); // balances ref in start
+        return false;
+    }
+
     if (d->m_bytesRemainingToWrite) {
         DWORD bytesWritten;
         InternetWriteFile(d->m_requestHandle,
@@ -572,17 +577,12 @@ void ResourceHandle::fileLoadTimer(Timer<ResourceHandle>*)
 
 void ResourceHandle::cancel()
 {
-    if (d->m_resourceHandle)
-        InternetCloseHandle(d->m_resourceHandle);
-    else
+    if (d->m_requestHandle) {
+        d->m_internetHandle = 0;
+        InternetCloseHandle(d->m_requestHandle);
+        InternetCloseHandle(d->m_connectHandle);
+    } else
         d->m_fileLoadTimer.stop();
-
-    client()->didFinishLoading(this, 0); 
-
-    if (!d->m_resourceHandle)
-        // Async load canceled before we have a handle -- mark ourselves as in error, to be deleted later.
-        // FIXME: need real cancel error
-        client()->didFail(this, ResourceError());
 }
 
 void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
