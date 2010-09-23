@@ -25,6 +25,7 @@
 
 #include "CommandLine.h"
 
+#include "PluginProcessMain.h"
 #include "ProcessLauncher.h"
 #include "WebProcessMain.h"
 #include <wtf/text/CString.h>
@@ -45,8 +46,11 @@ static int WebKitMain(const CommandLine& commandLine)
         case ProcessLauncher::WebProcess:
             return WebProcessMain(commandLine);
         case ProcessLauncher::PluginProcess:
-            // FIXME: Handle this.
+#if ENABLE(PLUGIN_PROCESS)
+            return PluginProcessMain(commandLine);
+#else
             break;
+#endif
     }
 
     return EXIT_FAILURE;

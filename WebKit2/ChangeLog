@@ -2,6 +2,24 @@
 
         Reviewed by Sam Weinig.
 
+        Add PluginProcessMain files
+        https://bugs.webkit.org/show_bug.cgi?id=46379
+
+        * PluginProcess/PluginProcessMain.h: Added.
+        * PluginProcess/mac/PluginProcessMainMac.mm: Added.
+        
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add PluginProcessMain files. Remove PluginProcess.messages.in from the target so it
+        won't be installed in the WebKit2.framework bundle.
+
+        * WebProcess/WebKitMain.cpp:
+        (WebKitMain):
+        Call PluginProcessMain if the process type is ProcessLauncher::PluginProcess.
+
+2010-09-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add PluginProcessProxy class
         https://bugs.webkit.org/show_bug.cgi?id=46377
 
