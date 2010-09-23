@@ -1,3 +1,69 @@
+2010-09-23  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Add AudioContext files
+        https://bugs.webkit.org/show_bug.cgi?id=44890
+
+        No new tests since audio API is not yet implemented.
+
+        * webaudio/AudioContext.cpp: Added.
+        (WebCore::AudioContext::createAudioRequest):
+        (WebCore::AudioContext::create):
+        (WebCore::AudioContext::AudioContext):
+        (WebCore::AudioContext::~AudioContext):
+        (WebCore::AudioContext::lazyInitialize):
+        (WebCore::AudioContext::uninitialize):
+        (WebCore::AudioContext::isInitialized):
+        (WebCore::AudioContext::isRunnable):
+        (WebCore::AudioContext::stop):
+        (WebCore::AudioContext::document):
+        (WebCore::AudioContext::hasDocument):
+        (WebCore::AudioContext::refBuffer):
+        (WebCore::AudioContext::createBuffer):
+        (WebCore::AudioContext::createBufferSource):
+        (WebCore::AudioContext::createJavaScriptNode):
+        (WebCore::AudioContext::createLowPass2Filter):
+        (WebCore::AudioContext::createHighPass2Filter):
+        (WebCore::AudioContext::createPanner):
+        (WebCore::AudioContext::createConvolver):
+        (WebCore::AudioContext::createAnalyser):
+        (WebCore::AudioContext::createGainNode):
+        (WebCore::AudioContext::createDelayNode):
+        (WebCore::AudioContext::createChannelSplitter):
+        (WebCore::AudioContext::createChannelMerger):
+        (WebCore::AudioContext::notifyNodeFinishedProcessing):
+        (WebCore::AudioContext::derefFinishedSourceNodes):
+        (WebCore::AudioContext::refNode):
+        (WebCore::AudioContext::derefNode):
+        (WebCore::AudioContext::derefUnfinishedSourceNodes):
+        (WebCore::AudioContext::lock):
+        (WebCore::AudioContext::tryLock):
+        (WebCore::AudioContext::unlock):
+        (WebCore::AudioContext::isAudioThread):
+        (WebCore::AudioContext::isGraphOwner):
+        (WebCore::AudioContext::addDeferredFinishDeref):
+        (WebCore::AudioContext::handlePostRenderTasks):
+        (WebCore::AudioContext::handleDeferredFinishDerefs):
+        (WebCore::AudioContext::markForDeletion):
+        (WebCore::AudioContext::deleteMarkedNodes):
+        * webaudio/AudioContext.h: Added.
+        (WebCore::AudioContext::destination):
+        (WebCore::AudioContext::currentTime):
+        (WebCore::AudioContext::sampleRate):
+        (WebCore::AudioContext::listener):
+        (WebCore::AudioContext::temporaryMonoBus):
+        (WebCore::AudioContext::temporaryStereoBus):
+        (WebCore::AudioContext::incrementConnectionCount):
+        (WebCore::AudioContext::connectionCount):
+        (WebCore::AudioContext::setAudioThread):
+        (WebCore::AudioContext::audioThread):
+        (WebCore::AudioContext::isAudioThreadFinished):
+        (WebCore::AudioContext::AutoLocker::AutoLocker):
+        (WebCore::AudioContext::AutoLocker::~AutoLocker):
+        (WebCore::AudioContext::RefInfo::RefInfo):
+        * webaudio/AudioContext.idl: Added.
+
 2010-09-23  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.
