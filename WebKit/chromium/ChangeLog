@@ -1,3 +1,15 @@
+2010-09-23  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by David Levin.
+
+        Rename FileWriterClient to AsyncFileWriterClient.
+        https://bugs.webkit.org/show_bug.cgi?id=46325
+
+        * src/AsyncFileSystemChromium.cpp:
+        * src/AsyncFileSystemChromium.h:
+        * src/AsyncFileWriterChromium.cpp:
+        * src/AsyncFileWriterChromium.h:
+
 2010-09-23  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Darin Fisher.

@@ -1,3 +1,20 @@
+2010-09-23  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by David Levin.
+
+        Rename FileWriterClient to AsyncFileWriterClient.
+        https://bugs.webkit.org/show_bug.cgi?id=46325
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * fileapi/AsyncFileWriter.h:
+        * fileapi/AsyncFileWriterClient.h: Copied from WebCore/fileapi/FileWriterClient.h.
+        * fileapi/FileWriter.h:
+        * fileapi/FileWriterClient.h: Removed.
+        * platform/AsyncFileSystem.h:
+
 2010-09-23  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

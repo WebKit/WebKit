@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FileWriterClient_h
-#define FileWriterClient_h
+#ifndef AsyncFileWriterClient_h
+#define AsyncFileWriterClient_h
 
 #if ENABLE(FILE_SYSTEM)
 
@@ -37,9 +37,9 @@
 
 namespace WebCore {
 
-class FileWriterClient {
+class AsyncFileWriterClient {
 public:
-    virtual ~FileWriterClient() {}
+    virtual ~AsyncFileWriterClient() {}
 
     virtual void didWrite(long long bytes, bool complete) = 0;
     virtual void didTruncate(long long position) = 0;
@@ -50,4 +50,4 @@ public:
 
 #endif // ENABLE(FILE_SYSTEM)
 
-#endif // FileWriterClient_h
+#endif // AsyncFileWriterClient_h

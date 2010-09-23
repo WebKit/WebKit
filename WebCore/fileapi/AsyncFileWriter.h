@@ -39,7 +39,6 @@
 namespace WebCore {
 
 class Blob;
-class FileWriterClient;
 
 class AsyncFileWriter {
 public:

@@ -37521,6 +37521,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\fileapi\AsyncFileWriterClient.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\AsyncImageResizer.cpp"
 				>
 			</File>
@@ -37822,10 +37826,6 @@
 			</File>
 			<File
 				RelativePath="..\fileapi\FileWriterCallback.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\FileWriterClient.h"
 				>
 			</File>
 			<File

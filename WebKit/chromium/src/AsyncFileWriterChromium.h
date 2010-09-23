@@ -45,11 +45,11 @@ class WebFileWriter;
 namespace WebCore {
 
 class Blob;
-class FileWriterClient;
+class AsyncFileWriterClient;
 
 class AsyncFileWriterChromium : public AsyncFileWriter, public WebKit::WebFileWriterClient {
 public:
-    AsyncFileWriterChromium(FileWriterClient* client);
+    AsyncFileWriterChromium(AsyncFileWriterClient* client);
     ~AsyncFileWriterChromium();
     
     void setWebFileWriter(PassOwnPtr<WebKit::WebFileWriter> writer);
@@ -66,7 +66,7 @@ public:
 
 private:
     OwnPtr<WebKit::WebFileWriter> m_writer;
-    FileWriterClient* m_client;
+    AsyncFileWriterClient* m_client;
 };
 
 } // namespace

@@ -1350,6 +1350,7 @@ webcore_sources += \
 	WebCore/editing/WrapContentsInDummySpanCommand.cpp \
 	WebCore/editing/WrapContentsInDummySpanCommand.h \
 	WebCore/fileapi/AsyncFileWriter.h \
+	WebCore/fileapi/AsyncFileWriterClient.h \
 	WebCore/fileapi/BlobBuilder.cpp \
 	WebCore/fileapi/BlobBuilder.h \
 	WebCore/fileapi/Blob.cpp \
@@ -1393,7 +1394,6 @@ webcore_sources += \
 	WebCore/fileapi/FileThread.h \
 	WebCore/fileapi/FileThreadTask.h \
 	WebCore/fileapi/FileWriterCallback.h \
-	WebCore/fileapi/FileWriterClient.h \
 	WebCore/fileapi/FileWriter.cpp \
 	WebCore/fileapi/FileWriter.h \
 	WebCore/fileapi/Flags.h \

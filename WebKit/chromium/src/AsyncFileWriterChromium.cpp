@@ -33,14 +33,14 @@
 
 #if ENABLE(FILE_SYSTEM)
 
+#include "AsyncFileWriterClient.h"
 #include "Blob.h"
-#include "FileWriterClient.h"
 #include "WebFileWriter.h"
 #include "WebURL.h"
 
 namespace WebCore {
 
-AsyncFileWriterChromium::AsyncFileWriterChromium(FileWriterClient* client)
+AsyncFileWriterChromium::AsyncFileWriterChromium(AsyncFileWriterClient* client)
     : m_client(client)
 {
 }

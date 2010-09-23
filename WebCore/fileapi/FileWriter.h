@@ -34,8 +34,8 @@
 #if ENABLE(FILE_SYSTEM)
 
 #include "ActiveDOMObject.h"
+#include "AsyncFileWriterClient.h"
 #include "EventTarget.h"
-#include "FileWriterClient.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -49,7 +49,7 @@ class Blob;
 class FileError;
 class ScriptExecutionContext;
 
-class FileWriter : public RefCounted<FileWriter>, public ActiveDOMObject, public EventTarget, public FileWriterClient {
+class FileWriter : public RefCounted<FileWriter>, public ActiveDOMObject, public EventTarget, public AsyncFileWriterClient {
 public:
     static PassRefPtr<FileWriter> create(ScriptExecutionContext* context)
     {
@@ -74,7 +74,7 @@ public:
     long long position() const { return m_position; }
     long long length() const { return m_length; }
 
-    // FileWriterClient
+    // AsyncFileWriterClient
     void didWrite(long long bytes, bool complete);
     void didTruncate(long long length);
     void didFail(ExceptionCode ec);
