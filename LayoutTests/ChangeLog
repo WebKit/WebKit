@@ -27,6 +27,23 @@
 
 2010-09-23  Andrew Wilson  <atwilson@chromium.org>
 
+        Unreviewed chromium expectations update.
+
+        * platform/chromium-win/svg/dynamic-updates/SVGFEMorphologyElement-dom-in-attr-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEMorphologyElement-dom-in-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEMorphologyElement-dom-operator-attr-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEMorphologyElement-dom-operator-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEMorphologyElement-dom-radius-attr-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEMorphologyElement-dom-radius-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEMorphologyElement-svgdom-in-prop-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEMorphologyElement-svgdom-in-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEMorphologyElement-svgdom-operator-prop-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEMorphologyElement-svgdom-operator-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEMorphologyElement-svgdom-radius-call-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEMorphologyElement-svgdom-radius-call-expected.png: Added.
+
+2010-09-23  Andrew Wilson  <atwilson@chromium.org>
+
         Unreviewed chromium expecations update.
 
         * platform/chromium-linux/svg/dynamic-updates/SVGFEMorphologyElement-dom-in-attr-expected.checksum: Added.
