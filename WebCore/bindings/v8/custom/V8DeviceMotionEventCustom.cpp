@@ -37,66 +37,109 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8DeviceMotionEvent::xAccelerationAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+namespace {
+
+v8::Handle<v8::Value> createAccelerationObject(PassRefPtr<DeviceMotionData::Acceleration> acceleration)
 {
-    INC_STATS("DOM.DeviceMotionEvent.xAcceleration._get");
-    v8::Handle<v8::Object> holder = info.Holder();
-    DeviceMotionEvent* imp = V8DeviceMotionEvent::toNative(holder);
-    if (!imp->deviceMotionData()->canProvideXAcceleration())
-        return v8::Null();
-    return v8::Number::New(imp->deviceMotionData()->xAcceleration());
+    v8::Local<v8::Object> object = v8::Object::New();
+    object->Set(v8::String::New("x"), acceleration->canProvideX() ? v8::Number::New(acceleration->x()) : v8::Null());
+    object->Set(v8::String::New("y"), acceleration->canProvideY() ? v8::Number::New(acceleration->y()) : v8::Null());
+    object->Set(v8::String::New("z"), acceleration->canProvideZ() ? v8::Number::New(acceleration->z()) : v8::Null());
+    return object;
 }
 
-v8::Handle<v8::Value> V8DeviceMotionEvent::yAccelerationAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+v8::Handle<v8::Value> createRotationRateObject(PassRefPtr<DeviceMotionData::RotationRate> rotationRate)
 {
-    INC_STATS("DOM.DeviceMotionEvent.yAcceleration._get");
-    v8::Handle<v8::Object> holder = info.Holder();
-    DeviceMotionEvent* imp = V8DeviceMotionEvent::toNative(holder);
-    if (!imp->deviceMotionData()->canProvideYAcceleration())
-        return v8::Null();
-    return v8::Number::New(imp->deviceMotionData()->yAcceleration());
+    v8::Local<v8::Object> object = v8::Object::New();
+    object->Set(v8::String::New("alpha"), rotationRate->canProvideAlpha() ? v8::Number::New(rotationRate->alpha()) : v8::Null());
+    object->Set(v8::String::New("beta"),  rotationRate->canProvideBeta()  ? v8::Number::New(rotationRate->beta())  : v8::Null());
+    object->Set(v8::String::New("gamma"), rotationRate->canProvideGamma() ? v8::Number::New(rotationRate->gamma()) : v8::Null());
+    return object;
 }
 
-v8::Handle<v8::Value> V8DeviceMotionEvent::zAccelerationAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+RefPtr<DeviceMotionData::Acceleration> readAccelerationArgument(v8::Local<v8::Value> value)
 {
-    INC_STATS("DOM.DeviceMotionEvent.zAcceleration._get");
-    v8::Handle<v8::Object> holder = info.Holder();
-    DeviceMotionEvent* imp = V8DeviceMotionEvent::toNative(holder);
-    if (!imp->deviceMotionData()->canProvideZAcceleration())
-        return v8::Null();
-    return v8::Number::New(imp->deviceMotionData()->zAcceleration());
+    if (isUndefinedOrNull(value))
+        return 0;
+
+    // Given the test above, this will always yield an object.
+    v8::Local<v8::Object> object = value->ToObject();
+
+    v8::Local<v8::Value> xValue = object->Get(v8::String::New("x"));
+    bool canProvideX = !isUndefinedOrNull(xValue);
+    double x = static_cast<double>(xValue->NumberValue());
+
+    v8::Local<v8::Value> yValue = object->Get(v8::String::New("y"));
+    bool canProvideY = !isUndefinedOrNull(yValue);
+    double y = static_cast<double>(yValue->NumberValue());
+
+    v8::Local<v8::Value> zValue = object->Get(v8::String::New("z"));
+    bool canProvideZ = !isUndefinedOrNull(zValue);
+    double z = static_cast<double>(zValue->NumberValue());
+
+    if (!canProvideX && !canProvideY && !canProvideZ)
+        return 0;
+
+    return DeviceMotionData::Acceleration::create(canProvideX, x, canProvideY, y, canProvideZ, z);
 }
 
-v8::Handle<v8::Value> V8DeviceMotionEvent::xRotationRateAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+RefPtr<DeviceMotionData::RotationRate> readRotationRateArgument(v8::Local<v8::Value> value)
 {
-    INC_STATS("DOM.DeviceMotionEvent.xRotationRate._get");
-    v8::Handle<v8::Object> holder = info.Holder();
-    DeviceMotionEvent* imp = V8DeviceMotionEvent::toNative(holder);
-    if (!imp->deviceMotionData()->canProvideXRotationRate())
-        return v8::Null();
-    return v8::Number::New(imp->deviceMotionData()->xRotationRate());
+    if (isUndefinedOrNull(value))
+        return 0;
+
+    // Given the test above, this will always yield an object.
+    v8::Local<v8::Object> object = value->ToObject();
+
+    v8::Local<v8::Value> alphaValue = object->Get(v8::String::New("alpha"));
+    bool canProvideAlpha = !isUndefinedOrNull(alphaValue);
+    double alpha = static_cast<double>(alphaValue->NumberValue());
+
+    v8::Local<v8::Value> betaValue = object->Get(v8::String::New("beta"));
+    bool canProvideBeta = !isUndefinedOrNull(betaValue);
+    double beta = static_cast<double>(betaValue->NumberValue());
+
+    v8::Local<v8::Value> gammaValue = object->Get(v8::String::New("gamma"));
+    bool canProvideGamma = !isUndefinedOrNull(gammaValue);
+    double gamma = static_cast<double>(gammaValue->NumberValue());
+
+    if (!canProvideAlpha && !canProvideBeta && !canProvideGamma)
+        return 0;
+
+    return DeviceMotionData::RotationRate::create(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma);
 }
 
-v8::Handle<v8::Value> V8DeviceMotionEvent::yRotationRateAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+} // namespace
+
+v8::Handle<v8::Value> V8DeviceMotionEvent::accelerationAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.DeviceMotionEvent.yRotationRate._get");
+    INC_STATS("DOM.DeviceMotionEvent.acceleration._get");
     v8::Handle<v8::Object> holder = info.Holder();
     DeviceMotionEvent* imp = V8DeviceMotionEvent::toNative(holder);
-    if (!imp->deviceMotionData()->canProvideYRotationRate())
+    if (!imp->deviceMotionData()->acceleration())
         return v8::Null();
-    return v8::Number::New(imp->deviceMotionData()->yRotationRate());
+    return createAccelerationObject(imp->deviceMotionData()->acceleration());
 }
 
-v8::Handle<v8::Value> V8DeviceMotionEvent::zRotationRateAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+v8::Handle<v8::Value> V8DeviceMotionEvent::accelerationIncludingGravityAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.DeviceMotionEvent.zRotationRate._get");
+    INC_STATS("DOM.DeviceMotionEvent.accelerationIncludingGravity._get");
     v8::Handle<v8::Object> holder = info.Holder();
     DeviceMotionEvent* imp = V8DeviceMotionEvent::toNative(holder);
-    if (!imp->deviceMotionData()->canProvideZRotationRate())
+    if (!imp->deviceMotionData()->accelerationIncludingGravity())
         return v8::Null();
-    return v8::Number::New(imp->deviceMotionData()->zRotationRate());
+    return createAccelerationObject(imp->deviceMotionData()->accelerationIncludingGravity());
 }
 
+v8::Handle<v8::Value> V8DeviceMotionEvent::rotationRateAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.DeviceMotionEvent.rotationRate._get");
+    v8::Handle<v8::Object> holder = info.Holder();
+    DeviceMotionEvent* imp = V8DeviceMotionEvent::toNative(holder);
+    if (!imp->deviceMotionData()->rotationRate())
+        return v8::Null();
+    return createRotationRateObject(imp->deviceMotionData()->rotationRate());
+}
 
 v8::Handle<v8::Value> V8DeviceMotionEvent::intervalAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
@@ -114,23 +157,15 @@ v8::Handle<v8::Value> V8DeviceMotionEvent::initDeviceMotionEventCallback(const v
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, type, args[0]);
     bool bubbles = args[1]->BooleanValue();
     bool cancelable = args[2]->BooleanValue();
-    // If any of the parameters are null or undefined, mark them as not provided.
-    // Otherwise, use the standard JavaScript conversion.
-    bool xAccelerationProvided = !isUndefinedOrNull(args[3]);
-    double xAcceleration = static_cast<double>(args[3]->NumberValue());
-    bool yAccelerationProvided = !isUndefinedOrNull(args[4]);
-    double yAcceleration = static_cast<double>(args[4]->NumberValue());
-    bool zAccelerationProvided = !isUndefinedOrNull(args[5]);
-    double zAcceleration = static_cast<double>(args[5]->NumberValue());
-    bool xRotationRateProvided = !isUndefinedOrNull(args[6]);
-    double xRotationRate = static_cast<double>(args[6]->NumberValue());
-    bool yRotationRateProvided = !isUndefinedOrNull(args[7]);
-    double yRotationRate = static_cast<double>(args[7]->NumberValue());
-    bool zRotationRateProvided = !isUndefinedOrNull(args[8]);
-    double zRotationRate = static_cast<double>(args[8]->NumberValue());
-    bool intervalProvided = !isUndefinedOrNull(args[9]);
-    double interval = static_cast<double>(args[9]->NumberValue());
-    RefPtr<DeviceMotionData> deviceMotionData = DeviceMotionData::create(xAccelerationProvided, xAcceleration, yAccelerationProvided, yAcceleration, zAccelerationProvided, zAcceleration, xRotationRateProvided, xRotationRate, yRotationRateProvided, yRotationRate, zRotationRateProvided, zRotationRate, intervalProvided, interval);
+    RefPtr<DeviceMotionData::Acceleration> acceleration = readAccelerationArgument(args[3]);
+    RefPtr<DeviceMotionData::Acceleration> accelerationIncludingGravity = readAccelerationArgument(args[4]);
+    RefPtr<DeviceMotionData::RotationRate> rotationRate = readRotationRateArgument(args[5]);
+    bool intervalProvided = !isUndefinedOrNull(args[6]);
+    double interval = static_cast<double>(args[6]->NumberValue());
+    RefPtr<DeviceMotionData> deviceMotionData = DeviceMotionData::create(acceleration,
+                                                                         accelerationIncludingGravity,
+                                                                         rotationRate,
+                                                                         intervalProvided, interval);
     imp->initDeviceMotionEvent(type, bubbles, cancelable, deviceMotionData.get());
     return v8::Handle<v8::Value>();
 }

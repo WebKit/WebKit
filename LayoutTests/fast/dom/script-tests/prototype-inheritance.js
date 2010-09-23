@@ -23,6 +23,7 @@ var skippedProperties = [
     "showModalDialog",
     "createBlobURL", "revokeBlobURL",
     "DeviceOrientationEvent",
+    "DeviceMotionEvent",
     "TEMPORARY", "PERSISTENT",
     "Flags",
     // Ignore this property because it only appears in debug builds.

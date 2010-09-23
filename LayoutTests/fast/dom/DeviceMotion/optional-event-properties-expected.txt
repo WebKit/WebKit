@@ -4,62 +4,57 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 event = document.createEvent('DeviceMotionEvent')
-PASS event.xAcceleration == null is true
-PASS event.yAcceleration == null is true
-PASS event.zAcceleration == null is true
-PASS event.xRotationRate == null is true
-PASS event.yRotationRate == null is true
-PASS event.zRotationRate == null is true
+PASS event.acceleration == null is true
+PASS event.accelerationIncludingGravity == null is true
+PASS event.rotationRate == null is true
 PASS event.interval == null is true
-event.initDeviceMotionEvent('', false, false, 0, 1, 2, 3, 4, 5, 6)
-PASS event.xAcceleration == 0 is true
-PASS event.yAcceleration == 1 is true
-PASS event.zAcceleration == 2 is true
-PASS event.xRotationRate == 3 is true
-PASS event.yRotationRate == 4 is true
-PASS event.zRotationRate == 5 is true
-PASS event.interval == 6 is true
+event.initDeviceMotionEvent('', false, false, {x: 0, y: 1, z: 2}, {x: 3, y: 4, z: 5}, {alpha: 6, beta: 7, gamma: 8}, 9)
+PASS event.acceleration.x == 0 is true
+PASS event.acceleration.y == 1 is true
+PASS event.acceleration.z == 2 is true
+PASS event.accelerationIncludingGravity.x == 3 is true
+PASS event.accelerationIncludingGravity.y == 4 is true
+PASS event.accelerationIncludingGravity.z == 5 is true
+PASS event.rotationRate.alpha == 6 is true
+PASS event.rotationRate.beta == 7 is true
+PASS event.rotationRate.gamma == 8 is true
+PASS event.interval == 9 is true
+event.initDeviceMotionEvent('', false, false, {y: 1, x: 0}, {x: 3, z: 5}, {gamma: 8, beta: 7}, 9)
+PASS event.acceleration.x == 0 is true
+PASS event.acceleration.y == 1 is true
+PASS event.acceleration.z == null is true
+PASS event.accelerationIncludingGravity.x == 3 is true
+PASS event.accelerationIncludingGravity.y == null is true
+PASS event.accelerationIncludingGravity.z == 5 is true
+PASS event.rotationRate.alpha == null is true
+PASS event.rotationRate.beta == 7 is true
+PASS event.rotationRate.gamma == 8 is true
+PASS event.interval == 9 is true
 event.initDeviceMotionEvent()
-PASS event.xAcceleration == null is true
-PASS event.yAcceleration == null is true
-PASS event.zAcceleration == null is true
-PASS event.xRotationRate == null is true
-PASS event.yRotationRate == null is true
-PASS event.zRotationRate == null is true
+PASS event.acceleration == null is true
+PASS event.accelerationIncludingGravity == null is true
+PASS event.rotationRate == null is true
 PASS event.interval == null is true
 event.initDeviceMotionEvent('', false, false, [], [], [], [], [], [], [])
-PASS event.xAcceleration == 0 is true
-PASS event.yAcceleration == 0 is true
-PASS event.zAcceleration == 0 is true
-PASS event.xRotationRate == 0 is true
-PASS event.yRotationRate == 0 is true
-PASS event.zRotationRate == 0 is true
+PASS event.acceleration == null is true
+PASS event.accelerationIncludingGravity == null is true
+PASS event.rotationRate == null is true
 PASS event.interval == 0 is true
 event.initDeviceMotionEvent('', false, false, undefined, undefined, undefined, undefined, undefined, undefined, undefined)
-PASS event.xAcceleration == null is true
-PASS event.yAcceleration == null is true
-PASS event.zAcceleration == null is true
-PASS event.xRotationRate == null is true
-PASS event.yRotationRate == null is true
-PASS event.zRotationRate == null is true
+PASS event.acceleration == null is true
+PASS event.accelerationIncludingGravity == null is true
+PASS event.rotationRate == null is true
 PASS event.interval == null is true
 event.initDeviceMotionEvent('', false, false, '', '', '', '', '', '', '')
-PASS event.xAcceleration == 0 is true
-PASS event.yAcceleration == 0 is true
-PASS event.zAcceleration == 0 is true
-PASS event.xRotationRate == 0 is true
-PASS event.yRotationRate == 0 is true
-PASS event.zRotationRate == 0 is true
+PASS event.acceleration == null is true
+PASS event.accelerationIncludingGravity == null is true
+PASS event.rotationRate == null is true
 PASS event.interval == 0 is true
 event.initDeviceMotionEvent('', false, false, null, null, null, null, null, null, null)
-PASS event.xAcceleration == null is true
-PASS event.yAcceleration == null is true
-PASS event.zAcceleration == null is true
-PASS event.xRotationRate == null is true
-PASS event.yRotationRate == null is true
-PASS event.zRotationRate == null is true
+PASS event.acceleration == null is true
+PASS event.accelerationIncludingGravity == null is true
+PASS event.rotationRate == null is true
 PASS event.interval == null is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
