@@ -4028,6 +4028,11 @@ SVGDocumentExtensions* Document::accessSVGExtensions()
         m_svgExtensions = adoptPtr(new SVGDocumentExtensions(this));
     return m_svgExtensions.get();
 }
+
+bool Document::hasSVGRootNode() const
+{
+    return documentElement() && documentElement()->hasTagName(SVGNames::svgTag);
+}
 #endif
 
 PassRefPtr<HTMLCollection> Document::images()
