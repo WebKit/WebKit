@@ -1,3 +1,20 @@
+2010-09-22  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Adam Barth.
+
+        [BREWMP] Enable touch events
+        https://bugs.webkit.org/show_bug.cgi?id=46321
+
+        Enable TOUCH_EVENTS by porting PlatformTouchEvent and PlatformTouchPoint.
+        Brew MP does not support multi touch, so enable only single touch for now.
+
+        * platform/PlatformTouchEvent.h:
+        * platform/PlatformTouchPoint.h:
+        * platform/brew/PlatformTouchEventBrew.cpp: Added.
+        (WebCore::PlatformTouchEvent::PlatformTouchEvent):
+        * platform/brew/PlatformTouchPointBrew.cpp: Added.
+        (WebCore::PlatformTouchPoint::PlatformTouchPoint):
+
 2010-09-22  Andy Estes  <aestes@apple.com>
 
         Rubber-stamped by Darin Adler.

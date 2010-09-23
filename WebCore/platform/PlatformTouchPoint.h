@@ -48,6 +48,8 @@ public:
     PlatformTouchPoint() {};
 #elif PLATFORM(ANDROID)
     PlatformTouchPoint(const IntPoint& windowPos, State);
+#elif PLATFORM(BREWMP)
+    PlatformTouchPoint(int id, const IntPoint& windowPos, State);
 #endif
 
     unsigned id() const { return m_id; }
