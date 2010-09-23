@@ -42,7 +42,7 @@ namespace WebCore {
 void Gradient::platformDestroy()
 {
     if (m_gradient)
-        m_gradient->safeUnref();
+        SkSafeUnref(m_gradient);
     m_gradient = 0;
 }
 

@@ -162,19 +162,19 @@ PlatformContextSkia::State::State(const State& other)
     , m_interpolationQuality(other.m_interpolationQuality)
     , m_canvasClipApplied(other.m_canvasClipApplied)
 {
-    // Up the ref count of these. saveRef does nothing if 'this' is NULL.
-    m_looper->safeRef();
-    m_dash->safeRef();
-    m_fillShader->safeRef();
-    m_strokeShader->safeRef();
+    // Up the ref count of these. SkSafeRef does nothing if its argument is 0.
+    SkSafeRef(m_looper);
+    SkSafeRef(m_dash);
+    SkSafeRef(m_fillShader);
+    SkSafeRef(m_strokeShader);
 }
 
 PlatformContextSkia::State::~State()
 {
-    m_looper->safeUnref();
-    m_dash->safeUnref();
-    m_fillShader->safeUnref();
-    m_strokeShader->safeUnref();
+    SkSafeUnref(m_looper);
+    SkSafeUnref(m_dash);
+    SkSafeUnref(m_fillShader);
+    SkSafeUnref(m_strokeShader);
 }
 
 // Returns a new State with all of this object's inherited properties copied.
@@ -327,7 +327,7 @@ void PlatformContextSkia::drawRect(SkRect rect)
 
         // setFillColor() will set the shader to NULL, so save a ref to it now.
         SkShader* oldFillShader = m_state->m_fillShader;
-        oldFillShader->safeRef();
+        SkSafeRef(oldFillShader);
         setFillColor(m_state->m_strokeColor);
         paint.reset();
         setupPaintForFilling(&paint);
@@ -341,7 +341,7 @@ void PlatformContextSkia::drawRect(SkRect rect)
         canvas()->drawRect(rightBorder, paint);
         setFillColor(oldFillColor);
         setFillShader(oldFillShader);
-        oldFillShader->safeUnref();
+        SkSafeUnref(oldFillShader);
     }
 }
 
@@ -487,9 +487,9 @@ void PlatformContextSkia::setStrokeThickness(float thickness)
 void PlatformContextSkia::setStrokeShader(SkShader* strokeShader)
 {
     if (strokeShader != m_state->m_strokeShader) {
-        m_state->m_strokeShader->safeUnref();
+        SkSafeUnref(m_state->m_strokeShader);
         m_state->m_strokeShader = strokeShader;
-        m_state->m_strokeShader->safeRef();
+        SkSafeRef(m_state->m_strokeShader);
     }
 }
 
@@ -561,9 +561,9 @@ void PlatformContextSkia::setFillRule(SkPath::FillType fr)
 void PlatformContextSkia::setFillShader(SkShader* fillShader)
 {
     if (fillShader != m_state->m_fillShader) {
-        m_state->m_fillShader->safeUnref();
+        SkSafeUnref(m_state->m_fillShader);
         m_state->m_fillShader = fillShader;
-        m_state->m_fillShader->safeRef();
+        SkSafeRef(m_state->m_fillShader);
     }
 }
 
@@ -580,7 +580,7 @@ void PlatformContextSkia::setInterpolationQuality(InterpolationQuality interpola
 void PlatformContextSkia::setDashPathEffect(SkDashPathEffect* dash)
 {
     if (dash != m_state->m_dash) {
-        m_state->m_dash->safeUnref();
+        SkSafeUnref(m_state->m_dash);
         m_state->m_dash = dash;
     }
 }

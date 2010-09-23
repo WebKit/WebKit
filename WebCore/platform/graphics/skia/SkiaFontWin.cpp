@@ -340,7 +340,7 @@ bool paintSkiaText(GraphicsContext* context,
             // thing would be to draw to a new layer and then draw that layer
             // with a shadow. But this is a lot of extra work for something
             // that isn't normally an issue.
-            paint.setLooper(0)->safeUnref();
+            SkSafeUnref(paint.setLooper(0));
         }
 
         if (!skiaDrawText(hfont, dc, platformContext->canvas(), *origin, &paint,

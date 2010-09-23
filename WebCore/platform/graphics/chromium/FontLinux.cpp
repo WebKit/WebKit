@@ -130,7 +130,7 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
         if (textMode & cTextFill) {
             // If we also filled, we don't want to draw shadows twice.
             // See comment in FontChromiumWin.cpp::paintSkiaText() for more details.
-            paint.setLooper(0)->safeUnref();
+            SkSafeUnref(paint.setLooper(0));
         }
 
         canvas->drawPosText(glyphs, numGlyphs << 1, pos, paint);

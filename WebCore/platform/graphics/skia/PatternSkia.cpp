@@ -42,7 +42,7 @@ namespace WebCore {
 
 void Pattern::platformDestroy()
 {
-    m_pattern->safeUnref();
+    SkSafeUnref(m_pattern);
     m_pattern = 0;
 }
 
