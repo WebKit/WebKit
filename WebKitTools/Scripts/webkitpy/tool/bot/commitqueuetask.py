@@ -50,9 +50,10 @@ class CommitQueueTask(object):
         # the ChangeLog check during landing.
         return True
 
-    def _run_command(self, command, failure_message):
+    def _run_command(self, command, success_message, failure_message):
         try:
             self._commit_queue.run_webkit_patch(command)
+            self._commit_queue.command_passed(success_message, patch=self._patch)
             return True
         except ScriptError, e:
             self._script_error = e
@@ -66,7 +67,9 @@ class CommitQueueTask(object):
             "--non-interactive",
             "--quiet",
             self._patch.id(),
-        ], "Patch does not apply")
+        ],
+        "Applied patch",
+        "Patch does not apply")
 
     def _build(self):
         return self._run_command([
@@ -76,7 +79,9 @@ class CommitQueueTask(object):
             "--build",
             "--build-style=both",
             "--quiet",
-        ], "Patch does not build")
+        ],
+        "Built patch",
+        "Patch does not build")
 
     def _build_without_patch(self):
         return self._run_command([
@@ -86,7 +91,9 @@ class CommitQueueTask(object):
             "--build",
             "--build-style=both",
             "--quiet",
-        ], "Unable to build without patch")
+        ],
+        "Able to build without patch",
+        "Unable to build without patch")
 
     def _test(self):
         return self._run_command([
@@ -97,7 +104,9 @@ class CommitQueueTask(object):
             "--test",
             "--quiet",
             "--non-interactive",
-        ], "Patch does not pass tests")
+        ],
+        "Passed tests",
+        "Patch does not pass tests")
 
     def _build_and_test_without_patch(self):
         return self._run_command([
@@ -108,7 +117,9 @@ class CommitQueueTask(object):
             "--test",
             "--quiet",
             "--non-interactive",
-        ], "Unable to pass tests without patch")
+        ],
+        "Able to pass tests without patch",
+        "Unable to pass tests without patch (tree is red?)")
 
     def _land(self):
         return self._run_command([
@@ -119,7 +130,9 @@ class CommitQueueTask(object):
             "--non-interactive",
             "--parent-command=commit-queue",
             self._patch.id(),
-        ], "Unable to land patch")
+        ],
+        "Landed patch",
+        "Unable to land patch")
 
     def run(self):
         if not self._validate():

@@ -243,6 +243,9 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
     def handle_unexpected_error(self, patch, message):
         self.committer_validator.reject_patch_from_commit_queue(patch.id(), message)
 
+    def command_passed(self, message, patch):
+        self._update_status(message, patch=patch)
+
     def command_failed(message, script_error, patch):
         failure_log = self._log_from_script_error_for_upload(script_error)
         return self._update_status(message, patch=patch, results_file=failure_log)

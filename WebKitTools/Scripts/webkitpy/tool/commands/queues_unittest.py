@@ -196,7 +196,12 @@ class CommitQueueTest(QueuesTest):
             "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue", MockSCM.fake_checkout_root),
             "should_proceed_with_work_item": "MOCK: update_status: commit-queue Landing patch\n",
             "next_work_item": "",
-            "process_work_item": "MOCK: update_status: commit-queue Pass\n",
+            "process_work_item": """MOCK: update_status: commit-queue Applied patch
+MOCK: update_status: commit-queue Built patch
+MOCK: update_status: commit-queue Passed tests
+MOCK: update_status: commit-queue Landed patch
+MOCK: update_status: commit-queue Pass
+""",
             "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Rejecting patch 197 from commit-queue.' and additional comment 'Mock error message'\n",
             "handle_script_error": "ScriptError error message\n",
         }
@@ -210,9 +215,13 @@ class CommitQueueTest(QueuesTest):
             "should_proceed_with_work_item": "MOCK: update_status: commit-queue Landing patch\n",
             "next_work_item": "",
             "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--force-clean', '--non-interactive', '--quiet', 197]
+MOCK: update_status: commit-queue Applied patch
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build', '--no-clean', '--no-update', '--build', '--build-style=both', '--quiet']
+MOCK: update_status: commit-queue Built patch
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build-and-test', '--no-clean', '--no-update', '--test', '--quiet', '--non-interactive']
+MOCK: update_status: commit-queue Passed tests
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--ignore-builders', '--quiet', '--non-interactive', '--parent-command=commit-queue', 197]
+MOCK: update_status: commit-queue Landed patch
 MOCK: update_status: commit-queue Pass
 """,
             "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Rejecting patch 197 from commit-queue.' and additional comment 'Mock error message'\n",
@@ -229,9 +238,13 @@ MOCK: update_status: commit-queue Pass
             "should_proceed_with_work_item": "MOCK: update_status: commit-queue Landing rollout patch\n",
             "next_work_item": "",
             "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--force-clean', '--non-interactive', '--quiet', 197]
+MOCK: update_status: commit-queue Applied patch
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build', '--no-clean', '--no-update', '--build', '--build-style=both', '--quiet']
+MOCK: update_status: commit-queue Built patch
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build-and-test', '--no-clean', '--no-update', '--test', '--quiet', '--non-interactive']
+MOCK: update_status: commit-queue Passed tests
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--ignore-builders', '--quiet', '--non-interactive', '--parent-command=commit-queue', 197]
+MOCK: update_status: commit-queue Landed patch
 MOCK: update_status: commit-queue Pass
 """,
             "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Rejecting patch 197 from commit-queue.' and additional comment 'Mock error message'\n",
@@ -257,7 +270,13 @@ MOCK: update_status: commit-queue Pass
     def test_manual_reject_during_processing(self):
         queue = SecondThoughtsCommitQueue()
         queue.bind_to_tool(MockTool())
-        queue.process_work_item(MockPatch())
+        expected_stderr = """MOCK: update_status: commit-queue Applied patch
+MOCK: update_status: commit-queue Built patch
+MOCK: update_status: commit-queue Passed tests
+MOCK: update_status: commit-queue Landed patch
+MOCK: update_status: commit-queue Pass
+"""
+        OutputCapture().assert_outputs(self, queue.process_work_item, [MockPatch()], expected_stderr=expected_stderr)
 
 
 class RietveldUploadQueueTest(QueuesTest):
