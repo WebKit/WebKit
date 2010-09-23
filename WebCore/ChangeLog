@@ -1,3 +1,35 @@
+2010-09-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris Fleizach.
+
+        media/video-controls-with-mutation-event-handler.html crashing
+        https://bugs.webkit.org/show_bug.cgi?id=46169
+
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlInputElement::MediaControlInputElement): Don't take a type argument.
+        We can't set the type until after the element is created beacuse of reference counting rules.
+        (WebCore::MediaControlMuteButtonElement::MediaControlMuteButtonElement): Don't pass the type.
+        (WebCore::MediaControlMuteButtonElement::create): Set the type.
+        (WebCore::MediaControlPlayButtonElement::MediaControlPlayButtonElement): More of the same.
+        (WebCore::MediaControlPlayButtonElement::create): Ditto.
+        (WebCore::MediaControlSeekButtonElement::MediaControlSeekButtonElement): Ditto.
+        (WebCore::MediaControlSeekButtonElement::create): Ditto.
+        (WebCore::MediaControlRewindButtonElement::MediaControlRewindButtonElement): Ditto.
+        (WebCore::MediaControlRewindButtonElement::create): Ditto.
+        (WebCore::MediaControlReturnToRealtimeButtonElement::MediaControlReturnToRealtimeButtonElement): Ditto.
+        (WebCore::MediaControlReturnToRealtimeButtonElement::create): Ditto.
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::MediaControlToggleClosedCaptionsButtonElement): Ditto.
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::create): Ditto.
+        (WebCore::MediaControlTimelineElement::MediaControlTimelineElement): Ditto.
+        (WebCore::MediaControlTimelineElement::create): Ditto.
+        (WebCore::MediaControlVolumeSliderElement::MediaControlVolumeSliderElement): Ditto.
+        (WebCore::MediaControlVolumeSliderElement::create): Ditto.
+        (WebCore::MediaControlFullscreenButtonElement::MediaControlFullscreenButtonElement): Ditto.
+        (WebCore::MediaControlFullscreenButtonElement::create): Ditto.
+
+        * rendering/MediaControlElements.h: Removed the type argument from the MediaControlInputElement
+        constructor.
+
 2010-09-22  Luke Macpherson  <macpherson@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

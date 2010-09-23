@@ -178,7 +178,7 @@ public:
     HTMLMediaElement* mediaElement() const { return m_mediaElement; }
 
 protected:
-    MediaControlInputElement(HTMLMediaElement*, PseudoId, const String& type);
+    MediaControlInputElement(HTMLMediaElement*, PseudoId);
 
     void setDisplayType(MediaControlElementType);
 
