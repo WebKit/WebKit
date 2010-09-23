@@ -1546,7 +1546,6 @@ sub buildQMakeProject($@)
         }
     }
 
-    push @buildArgs, sourceDir() . "/WebKit.pro";
     if ($config =~ m/debug/i) {
         push @buildArgs, "CONFIG-=release";
         push @buildArgs, "CONFIG+=debug";
@@ -1561,6 +1560,8 @@ sub buildQMakeProject($@)
         }
     }
 
+    push @buildArgs, sourceDir() . "/WebKit.pro";
+
     print "Calling '$qmakebin @buildArgs' in " . $dir . "\n\n";
     print "Installation headers directory: $installHeaders\n" if(defined($installHeaders));
     print "Installation libraries directory: $installLibs\n" if(defined($installLibs));
@@ -1569,6 +1570,16 @@ sub buildQMakeProject($@)
     if ($result ne 0) {
        die "Failed to setup build environment using $qmakebin!\n";
     }
+
+    # Manually create makefiles for the examples so we don't build by default
+    my $examplesDir = $dir . "/WebKit/qt/examples";
+    File::Path::mkpath($examplesDir);
+    $buildArgs[-1] = sourceDir() . "/WebKit/qt/examples/examples.pro";
+    chdir $examplesDir or die;
+    print "Calling '$qmakebin @buildArgs' in " . $examplesDir . "\n\n";
+    $result = system "$qmakebin @buildArgs";
+    die "Failed to create makefiles for the examples!\n" if $result ne 0;
+    chdir $dir or die;
 
     if ($clean) {
       print "Calling '$make $makeargs distclean' in " . $dir . "\n\n";

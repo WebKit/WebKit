@@ -1,3 +1,17 @@
+2010-09-23  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Refactor QtWebKitPlatformPlugin interface
+
+        Make it easier to keep source-compability for the
+        QtWebKitPlatformPlugin interface, and run qmake
+        on the example (but not build) for convenience. 
+
+        https://bugs.webkit.org/show_bug.cgi?id=46345
+
+        * Scripts/webkitdirs.pm:
+
 2010-09-23  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

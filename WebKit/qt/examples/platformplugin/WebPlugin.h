@@ -87,14 +87,8 @@ class WebPlugin : public QObject, public QWebKitPlatformPlugin
     Q_OBJECT
     Q_INTERFACES(QWebKitPlatformPlugin)
 public:
-    virtual QWebSelectMethod* createSelectInputMethod() const { return new WebPopup(); }
     virtual bool supportsExtension(Extension extension) const;
-    virtual QWebNotificationPresenter* createNotificationPresenter() const {
-        return new WebNotificationPresenter();
-    }
-    virtual QWebHapticFeedbackPlayer* createHapticFeedbackPlayer() const {
-        return 0;
-    }
+    virtual QObject* createExtension(Extension extension) const;
 };
 
 #endif // WEBPLUGIN_H

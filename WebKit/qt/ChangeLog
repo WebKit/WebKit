@@ -1,3 +1,22 @@
+2010-09-23  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Refactor QtWebKitPlatformPlugin interface
+
+        Make it easier to keep source-compability for the 
+        QtWebKitPlatformPlugin interface, and run qmake
+        on the example (but not build) for convenience.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46345
+
+        * Api/qwebkitplatformplugin.h:
+        * WebCoreSupport/QtPlatformPlugin.cpp:
+        * examples/platformplugin/README:
+        * examples/platformplugin/WebPlugin.cpp:
+        * examples/platformplugin/WebPlugin.h:
+        * examples/platformplugin/qwebkitplatformplugin.h:
+
 2010-09-22  Andras Becsi  <abecsi@webkit.org>
 
         Speculative build fix for the Qt Windows bots.

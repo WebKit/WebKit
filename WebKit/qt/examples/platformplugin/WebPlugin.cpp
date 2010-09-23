@@ -210,15 +210,30 @@ MultipleSelectionPopup::MultipleSelectionPopup(const QWebSelectData& data)
 
 bool WebPlugin::supportsExtension(Extension extension) const
 {
-    if (extension == MultipleSelections)
+    switch (extension) {
+    case MultipleSelections:
         return true;
-    if (extension == Notifications)
 #if ENABLE_NOTIFICATIONS
+    case Notifications:
         return true;
-#else
-        return false;
 #endif
-    return false;
+    default:
+        return false;
+    }
+}
+
+QObject* WebPlugin::createExtension(Extension extension) const
+{
+    switch (extension) {
+    case MultipleSelections:
+        return new WebPopup();
+#if ENABLE_NOTIFICATIONS
+    case Notifications:
+        return new WebNotificationPresenter();
+#endif
+    default:
+        return 0;
+    }
 }
 
 Q_EXPORT_PLUGIN2(platformplugin, WebPlugin)
