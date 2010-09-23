@@ -224,7 +224,7 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
 
     def should_proceed_with_work_item(self, patch):
         patch_text = "rollout patch" if patch.is_rollout() else "patch"
-        self._update_status("Landing %s" % patch_text, patch)
+        self._update_status("Processing %s" % patch_text, patch)
         return True
 
     def process_work_item(self, patch):

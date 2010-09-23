@@ -194,7 +194,7 @@ class CommitQueueTest(QueuesTest):
     def test_commit_queue(self):
         expected_stderr = {
             "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue", MockSCM.fake_checkout_root),
-            "should_proceed_with_work_item": "MOCK: update_status: commit-queue Landing patch\n",
+            "should_proceed_with_work_item": "MOCK: update_status: commit-queue Processing patch\n",
             "next_work_item": "",
             "process_work_item": """MOCK: update_status: commit-queue Applied patch
 MOCK: update_status: commit-queue Built patch
@@ -210,7 +210,7 @@ MOCK: update_status: commit-queue Pass
     def test_commit_queue_failure(self):
         expected_stderr = {
             "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue", MockSCM.fake_checkout_root),
-            "should_proceed_with_work_item": "MOCK: update_status: commit-queue Landing patch\n",
+            "should_proceed_with_work_item": "MOCK: update_status: commit-queue Processing patch\n",
             "next_work_item": "",
             "process_work_item": """MOCK: update_status: commit-queue Patch does not apply
 MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Rejecting patch 197 from commit-queue.' and additional comment 'MOCK script error'
@@ -232,7 +232,7 @@ MOCK: update_status: commit-queue Fail
         tool.buildbot.light_tree_on_fire()
         expected_stderr = {
             "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue", MockSCM.fake_checkout_root),
-            "should_proceed_with_work_item": "MOCK: update_status: commit-queue Landing patch\n",
+            "should_proceed_with_work_item": "MOCK: update_status: commit-queue Processing patch\n",
             "next_work_item": "",
             "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--force-clean', '--non-interactive', '--quiet', 197]
 MOCK: update_status: commit-queue Applied patch
@@ -255,7 +255,7 @@ MOCK: update_status: commit-queue Pass
         rollout_patch = MockRolloutPatch()
         expected_stderr = {
             "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue", MockSCM.fake_checkout_root),
-            "should_proceed_with_work_item": "MOCK: update_status: commit-queue Landing rollout patch\n",
+            "should_proceed_with_work_item": "MOCK: update_status: commit-queue Processing rollout patch\n",
             "next_work_item": "",
             "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--force-clean', '--non-interactive', '--quiet', 197]
 MOCK: update_status: commit-queue Applied patch

@@ -1,3 +1,13 @@
+2010-09-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Tweak some status messages that Eric thought were confusing
+        https://bugs.webkit.org/show_bug.cgi?id=46342
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
 2010-09-22  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
