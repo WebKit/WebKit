@@ -67,6 +67,8 @@
 #include "JIT.h"
 #endif
 
+#define WTF_USE_GCC_COMPUTED_GOTO_WORKAROUND (ENABLE(COMPUTED_GOTO_INTERPRETER) && !defined(__llvm__))
+
 using namespace std;
 
 namespace JSC {
@@ -2473,7 +2475,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         uncacheGetByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
-#if ENABLE(COMPUTED_GOTO_INTERPRETER)
+#if USE(GCC_COMPUTED_GOTO_WORKAROUND)
     goto *(&&skip_id_getter_proto);
 #endif
     DEFINE_OPCODE(op_get_by_id_getter_proto) {
@@ -2515,10 +2517,10 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         uncacheGetByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
-#if ENABLE(COMPUTED_GOTO_INTERPRETER)
+#if USE(GCC_COMPUTED_GOTO_WORKAROUND)
     skip_id_getter_proto:
 #endif
-#if ENABLE(COMPUTED_GOTO_INTERPRETER)
+#if USE(GCC_COMPUTED_GOTO_WORKAROUND)
     goto *(&&skip_id_custom_proto);
 #endif
     DEFINE_OPCODE(op_get_by_id_custom_proto) {
@@ -2557,7 +2559,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         uncacheGetByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
-#if ENABLE(COMPUTED_GOTO_INTERPRETER)
+#if USE(GCC_COMPUTED_GOTO_WORKAROUND)
     skip_id_custom_proto:
 #endif
     DEFINE_OPCODE(op_get_by_id_self_list) {
@@ -2648,7 +2650,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         uncacheGetByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
-#if ENABLE(COMPUTED_GOTO_INTERPRETER)
+#if USE(GCC_COMPUTED_GOTO_WORKAROUND)
     goto *(&&skip_id_getter_self);
 #endif
     DEFINE_OPCODE(op_get_by_id_getter_self) {
@@ -2688,10 +2690,10 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         uncacheGetByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
-#if ENABLE(COMPUTED_GOTO_INTERPRETER)
+#if USE(GCC_COMPUTED_GOTO_WORKAROUND)
     skip_id_getter_self:
 #endif
-#if ENABLE(COMPUTED_GOTO_INTERPRETER)
+#if USE(GCC_COMPUTED_GOTO_WORKAROUND)
     goto *(&&skip_id_custom_self);
 #endif
     DEFINE_OPCODE(op_get_by_id_custom_self) {
@@ -2725,7 +2727,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         uncacheGetByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
-#if ENABLE(COMPUTED_GOTO_INTERPRETER)
+#if USE(GCC_COMPUTED_GOTO_WORKAROUND)
 skip_id_custom_self:
 #endif
     DEFINE_OPCODE(op_get_by_id_generic) {
@@ -2748,7 +2750,7 @@ skip_id_custom_self:
         vPC += OPCODE_LENGTH(op_get_by_id_generic);
         NEXT_INSTRUCTION();
     }
-#if ENABLE(COMPUTED_GOTO_INTERPRETER)
+#if USE(GCC_COMPUTED_GOTO_WORKAROUND)
     goto *(&&skip_id_getter_chain);
 #endif
     DEFINE_OPCODE(op_get_by_id_getter_chain) {
@@ -2800,10 +2802,10 @@ skip_id_custom_self:
         uncacheGetByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
-#if ENABLE(COMPUTED_GOTO_INTERPRETER)
+#if USE(GCC_COMPUTED_GOTO_WORKAROUND)
     skip_id_getter_chain:
 #endif
-#if ENABLE(COMPUTED_GOTO_INTERPRETER)
+#if USE(GCC_COMPUTED_GOTO_WORKAROUND)
     goto *(&&skip_id_custom_chain);
 #endif
     DEFINE_OPCODE(op_get_by_id_custom_chain) {
@@ -2852,7 +2854,7 @@ skip_id_custom_self:
         uncacheGetByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
-#if ENABLE(COMPUTED_GOTO_INTERPRETER)
+#if USE(GCC_COMPUTED_GOTO_WORKAROUND)
     skip_id_custom_chain:
 #endif
     DEFINE_OPCODE(op_get_array_length) {
