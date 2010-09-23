@@ -47,21 +47,48 @@ IDBTransactionCoordinator::~IDBTransactionCoordinator()
 
 PassRefPtr<IDBTransactionBackendInterface> IDBTransactionCoordinator::createTransaction(DOMStringList* objectStores, unsigned short mode, unsigned long timeout, IDBDatabaseBackendImpl* database)
 {
-    RefPtr<IDBTransactionBackendInterface> transaction = IDBTransactionBackendImpl::create(objectStores, mode, timeout, ++m_nextID, database);
-    m_transactionQueue.add(transaction.get());
-    m_idMap.add(m_nextID, transaction);
+    RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::create(objectStores, mode, timeout, ++m_nextID, database);
+    m_transactions.add(m_nextID, transaction);
     return transaction.release();
 }
 
-void IDBTransactionCoordinator::abort(int id)
+void IDBTransactionCoordinator::didStartTransaction(IDBTransactionBackendImpl* transaction)
 {
-    ASSERT(m_idMap.contains(id));
-    RefPtr<IDBTransactionBackendInterface> transaction = m_idMap.get(id);
-    ASSERT(transaction);
-    m_transactionQueue.remove(transaction.get());
-    m_idMap.remove(id);
-    transaction->abort();
-    // FIXME: this will change once we have transactions actually running.
+    ASSERT(m_transactions.contains(transaction->id()));
+
+    m_startedTransactions.add(transaction);
+    processStartedTransactions();
+}
+
+void IDBTransactionCoordinator::didFinishTransaction(IDBTransactionBackendImpl* transaction)
+{
+    ASSERT(m_transactions.contains(transaction->id()));
+
+    if (m_startedTransactions.contains(transaction)) {
+        ASSERT(!m_runningTransactions.contains(transaction));
+        m_startedTransactions.remove(transaction);
+    } else {
+        ASSERT(m_runningTransactions.contains(transaction));
+        m_runningTransactions.remove(transaction);
+    }
+    m_transactions.remove(transaction->id());
+
+    processStartedTransactions();
+}
+
+void IDBTransactionCoordinator::processStartedTransactions()
+{
+    // FIXME: This should allocate a thread to the next transaction that's
+    // ready to run. For now we only have a single running transaction.
+    if (m_startedTransactions.isEmpty() || !m_runningTransactions.isEmpty())
+        return;
+
+    ASSERT(m_transactions.contains(transaction->id()));
+
+    IDBTransactionBackendImpl* transaction = *m_startedTransactions.begin();
+    m_startedTransactions.remove(transaction);
+    m_runningTransactions.add(transaction);
+    transaction->run();
 }
 
 };

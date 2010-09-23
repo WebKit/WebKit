@@ -36,6 +36,7 @@
 #include "IDBKeyRange.h"
 #include "IDBObjectStoreBackendImpl.h"
 #include "IDBRequest.h"
+#include "IDBTransactionBackendInterface.h"
 #include "SQLiteDatabase.h"
 #include "SQLiteStatement.h"
 #include "SerializedScriptValue.h"

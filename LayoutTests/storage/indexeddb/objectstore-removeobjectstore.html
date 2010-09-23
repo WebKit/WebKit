@@ -49,7 +49,11 @@ function getValue()
 {
     verifySuccessEvent(event);
 
-    result = evalAndLog("event.source.get('key')");
+    transaction = evalAndLog("db.transaction()");
+    transaction.onabort = unexpectedErrorCallback;
+    var store = evalAndLog("store = transaction.objectStore('storeName')");
+
+    result = evalAndLog("store.get('key')");
     verifyResult(result);
     result.onsuccess = addIndex;
     result.onerror = unexpectedErrorCallback;
@@ -62,15 +66,20 @@ function addIndex()
 
     result = evalAndLog("event.source.createIndex('indexName', '')");
     verifyResult(result);
-    result.onsuccess = removeObjectStore;
+    result.onsuccess = commitTransaction;
     result.onerror = unexpectedErrorCallback;
+}
+
+function commitTransaction()
+{
+    verifySuccessEvent(event);
+    shouldBeTrue("event.source.indexNames.contains('indexName')");
+    // Let the transaction commit.
+    window.setTimeout('removeObjectStore()', 0);
 }
 
 function removeObjectStore()
 {
-    verifySuccessEvent(event);
-    shouldBeTrue("event.source.indexNames.contains('indexName')");
-
     result = evalAndLog("db.removeObjectStore('storeName')");
     verifyResult(result);
     result.onsuccess = createObjectStoreAgain;
@@ -91,7 +100,11 @@ function getValueAgain()
 {
     verifySuccessEvent(event);
 
-    result = evalAndLog("event.result.get('key')");
+    transaction = evalAndLog("db.transaction()");
+    transaction.onabort = unexpectedErrorCallback;
+    var store = evalAndLog("store = transaction.objectStore('storeName')");
+
+    result = evalAndLog("store.get('key')");
     verifyResult(result);
     result.onsuccess = unexpectedSuccessCallback;
     result.onerror = verifyError;
@@ -100,7 +113,6 @@ function getValueAgain()
 function verifyError()
 {
     verifyErrorEvent(event);
-    // FIXME: Should just be IDBDatabaseException.NOT_FOUND_ERR but that doesn't work yet.
     shouldBe("event.code", "2");
     shouldBeFalse("event.source.indexNames.contains('indexName')");
 

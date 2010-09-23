@@ -62,6 +62,8 @@ public:
     virtual void setVersion(const String& version, PassRefPtr<IDBCallbacks>);
     virtual PassRefPtr<IDBTransactionBackendInterface> transaction(DOMStringList* storeNames, unsigned short mode, unsigned long timeout);
 
+    IDBTransactionCoordinator* transactionCoordinator() const { return m_transactionCoordinator.get(); }
+
 private:
     IDBDatabaseBackendImpl(const String& name, const String& description, PassOwnPtr<SQLiteDatabase> database, IDBTransactionCoordinator*);
 

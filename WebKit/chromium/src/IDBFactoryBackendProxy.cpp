@@ -65,14 +65,6 @@ void IDBFactoryBackendProxy::open(const String& name, const String& description,
     m_webIDBFactory->open(name, description, new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir);
 }
 
-void IDBFactoryBackendProxy::abortPendingTransactions(const Vector<int>& pendingIDs)
-{
-    ASSERT(pendingIDs.size());
-    WebKit::WebVector<int> ids = pendingIDs;
-
-    m_webIDBFactory->abortPendingTransactions(ids);
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

@@ -25,47 +25,48 @@
 
 #include "config.h"
 #include "IDBPendingTransactionMonitor.h"
+#include "IDBTransactionBackendInterface.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-Vector<int>* IDBPendingTransactionMonitor::m_ids = 0;
+Vector<IDBTransactionBackendInterface*>* IDBPendingTransactionMonitor::m_transactions = 0;
 
-bool IDBPendingTransactionMonitor::hasPendingTransactions()
+void IDBPendingTransactionMonitor::addPendingTransaction(IDBTransactionBackendInterface* transaction)
 {
-    return m_ids && m_ids->size();
+    if (!m_transactions)
+        m_transactions = new Vector<IDBTransactionBackendInterface*>();
+    m_transactions->append(transaction);
 }
 
-void IDBPendingTransactionMonitor::addPendingTransaction(int id)
+void IDBPendingTransactionMonitor::removePendingTransaction(IDBTransactionBackendInterface* transaction)
 {
-    if (!m_ids)
-        m_ids = new Vector<int>();
-    m_ids->append(id);
-}
+    if (!m_transactions)
+        return;
 
-void IDBPendingTransactionMonitor::removePendingTransaction(int id)
-{
-    m_ids->remove(id);
-    if (!m_ids->size()) {
-        delete m_ids;
-        m_ids = 0;
+    size_t pos = m_transactions->find(transaction);
+    if (pos == notFound)
+        return;
+
+    m_transactions->remove(pos);
+
+    if (!m_transactions->size()) {
+        delete m_transactions;
+        m_transactions = 0;
     }
 }
 
-void IDBPendingTransactionMonitor::clearPendingTransactions()
+void IDBPendingTransactionMonitor::abortPendingTransactions()
 {
-    if (!m_ids)
+    if (!m_transactions)
         return;
 
-    m_ids->clear();
-    delete m_ids;
-    m_ids = 0;
-}
+    for (size_t i = 0; i < m_transactions->size(); ++i)
+        m_transactions->at(i)->abort();
 
-const Vector<int>& IDBPendingTransactionMonitor::pendingTransactions()
-{
-    return *m_ids;
+    delete m_transactions;
+    m_transactions = 0;
 }
 
 };

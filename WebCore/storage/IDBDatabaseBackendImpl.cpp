@@ -148,11 +148,12 @@ void IDBDatabaseBackendImpl::createObjectStore(const String& name, const String&
     callbacks->onSuccess(objectStore.get());
 }
 
+// FIXME: Do not expose this method via IDL.
 PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::objectStore(const String& name, unsigned short mode)
 {
-    // FIXME: If no transaction is running, this should implicitly start one.
-    ASSERT_UNUSED(mode, !mode); // FIXME: Handle non-standard modes.
-    return m_objectStores.get(name);
+    ASSERT_UNUSED(mode, !mode); // FIXME: Remove the mode parameter. Transactions have modes, not object stores.
+    RefPtr<IDBObjectStoreBackendInterface> objectStore = m_objectStores.get(name);
+    return objectStore.release();
 }
 
 static void doDelete(SQLiteDatabase& db, const char* sql, int64_t id)

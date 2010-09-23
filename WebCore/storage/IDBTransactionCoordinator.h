@@ -35,6 +35,7 @@
 
 namespace WebCore {
 
+class IDBTransactionBackendImpl;
 class IDBTransactionCallbacks;
 class IDBDatabaseBackendImpl;
 
@@ -55,14 +56,21 @@ public:
     virtual ~IDBTransactionCoordinator();
 
     PassRefPtr<IDBTransactionBackendInterface> createTransaction(DOMStringList* objectStores, unsigned short mode, unsigned long timeout, IDBDatabaseBackendImpl*);
-    void abort(int transactionId);
+
+    // Called by transactions as they start and finish.
+    void didStartTransaction(IDBTransactionBackendImpl*);
+    void didFinishTransaction(IDBTransactionBackendImpl*);
 
 private:
     IDBTransactionCoordinator();
 
-    ListHashSet<IDBTransactionBackendInterface*> m_transactionQueue;
-    typedef HashMap<int, RefPtr<IDBTransactionBackendInterface> > IdToTransactionMap;
-    IdToTransactionMap m_idMap;
+    void processStartedTransactions();
+
+    // This map owns all transactions known to the coordinator.
+    HashMap<int, RefPtr<IDBTransactionBackendImpl> > m_transactions;
+    // Transactions in different states are grouped below.
+    ListHashSet<IDBTransactionBackendImpl* > m_startedTransactions;
+    HashSet<IDBTransactionBackendImpl* > m_runningTransactions;
     int m_nextID;
 };
 

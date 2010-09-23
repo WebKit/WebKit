@@ -31,6 +31,8 @@
 #include "DOMStringList.h"
 #include "IDBTransactionBackendInterface.h"
 #include "IDBTransactionCallbacks.h"
+#include <SQLiteTransaction.h>
+#include <wtf/Deque.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -39,26 +41,51 @@ class IDBDatabaseBackendImpl;
 
 class IDBTransactionBackendImpl : public IDBTransactionBackendInterface {
 public:
-    static PassRefPtr<IDBTransactionBackendInterface> create(DOMStringList* objectStores, unsigned short mode, unsigned long timeout, int id, IDBDatabaseBackendImpl*);
-    virtual ~IDBTransactionBackendImpl() { }
+    static PassRefPtr<IDBTransactionBackendImpl> create(DOMStringList* objectStores, unsigned short mode, unsigned long timeout, int id, IDBDatabaseBackendImpl*);
+    virtual ~IDBTransactionBackendImpl() { abort(); }
 
     virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name);
     virtual unsigned short mode() const { return m_mode; }
-    virtual void scheduleTask(PassOwnPtr<ScriptExecutionContext::Task>);
+    virtual bool scheduleTask(PassOwnPtr<ScriptExecutionContext::Task>);
+    virtual void didCompleteTaskEvents();
     virtual void abort();
     virtual int id() const { return m_id; }
     virtual void setCallbacks(IDBTransactionCallbacks* callbacks) { m_callbacks = callbacks; }
 
+    void run();
+    bool isFinished() const { return m_state == Finished; }
+
 private:
     IDBTransactionBackendImpl(DOMStringList* objectStores, unsigned short mode, unsigned long timeout, int id, IDBDatabaseBackendImpl*);
+
+    enum State {
+        NotStarted,
+        Started,
+        Finished,
+    };
+
+    void start();
+    void commit();
+
+    void timerFired(Timer<IDBTransactionBackendImpl>*);
 
     RefPtr<DOMStringList> m_objectStoreNames;
     unsigned short m_mode;
     unsigned long m_timeout;
     int m_id;
-    bool m_aborted;
+
+    State m_state;
     RefPtr<IDBTransactionCallbacks> m_callbacks;
     RefPtr<IDBDatabaseBackendImpl> m_database;
+
+    typedef Deque<OwnPtr<ScriptExecutionContext::Task> > TaskQueue;
+    TaskQueue m_taskQueue;
+
+    OwnPtr<SQLiteTransaction> m_transaction;
+
+    // FIXME: delete the timer once we have threads instead.
+    Timer<IDBTransactionBackendImpl> m_timer;
+    int m_pendingEvents;
 };
 
 } // namespace WebCore

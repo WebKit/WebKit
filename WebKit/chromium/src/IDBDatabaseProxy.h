@@ -47,7 +47,7 @@ public:
     virtual String version() const;
     virtual PassRefPtr<DOMStringList> objectStores() const;
 
-    // FIXME: Add transaction and setVersion.
+    // FIXME: Add setVersion.
 
     virtual void createObjectStore(const String& name, const String& keyPath, bool autoIncrement, PassRefPtr<IDBCallbacks>);
     virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name, unsigned short mode);

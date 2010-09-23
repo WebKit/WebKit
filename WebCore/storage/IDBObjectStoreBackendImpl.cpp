@@ -36,6 +36,8 @@
 #include "IDBKeyPath.h"
 #include "IDBKeyPathBackendImpl.h"
 #include "IDBKeyRange.h"
+#include "IDBTransactionBackendInterface.h"
+#include "ScriptExecutionContext.h"
 #include "SQLiteDatabase.h"
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
@@ -43,6 +45,33 @@
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
+
+template <class T, class Method, class Param1, class Param2>
+class IDBTask : public ScriptExecutionContext::Task {
+public:
+    IDBTask(T* obj, Method method, const Param1& param1, const Param2& param2)
+        : m_obj(obj), m_method(method), m_param1(param1), m_param2(param2) 
+    {
+    }
+
+    virtual void performTask(ScriptExecutionContext*) 
+    {
+        if (m_obj)
+            (m_obj->*m_method)(m_param1, m_param2);
+    }
+
+private:
+    T* m_obj;
+    Method m_method;
+    Param1 m_param1;
+    Param2 m_param2;
+};
+
+template <class T, class Method, class Param1, class Param2>
+PassOwnPtr<ScriptExecutionContext::Task> createTask(T* object, Method method, const Param1& param1, const Param2& param2)
+{
+    return adoptPtr(new IDBTask<T, Method, Param1, Param2>(object, method, param1, param2));
+}
 
 IDBObjectStoreBackendImpl::~IDBObjectStoreBackendImpl()
 {
@@ -77,7 +106,13 @@ static void bindWhereClause(SQLiteStatement& query, int64_t id, IDBKey* key)
     key->bind(query, 2);
 }
 
-void IDBObjectStoreBackendImpl::get(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
+void IDBObjectStoreBackendImpl::get(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction)
+{
+    if (!transaction->scheduleTask(createTask(this, &IDBObjectStoreBackendImpl::getInternal, key, callbacks)))
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::NOT_ALLOWED_ERR, "Get must be called in the context of a transaction."));
+}
+
+void IDBObjectStoreBackendImpl::getInternal(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
 {
     SQLiteStatement query(sqliteDatabase(), "SELECT keyString, keyDate, keyNumber, value FROM ObjectStoreData " + whereClause(key.get()));
     bool ok = query.prepare() == SQLResultOk;

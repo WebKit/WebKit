@@ -31,6 +31,7 @@
 #include "IDBIndex.h"
 #include "IDBKey.h"
 #include "IDBKeyRange.h"
+#include "IDBTransactionBackendInterface.h"
 #include "SerializedScriptValue.h"
 #include <wtf/UnusedParam.h>
 
@@ -38,8 +39,9 @@
 
 namespace WebCore {
 
-IDBObjectStore::IDBObjectStore(PassRefPtr<IDBObjectStoreBackendInterface> idbObjectStore)
+IDBObjectStore::IDBObjectStore(PassRefPtr<IDBObjectStoreBackendInterface> idbObjectStore, IDBTransactionBackendInterface* transaction)
     : m_objectStore(idbObjectStore)
+    , m_transaction(transaction)
 {
     // We pass a reference to this object before it can be adopted.
     relaxAdoptionRequirement();
@@ -62,9 +64,9 @@ PassRefPtr<DOMStringList> IDBObjectStore::indexNames() const
 
 PassRefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context, PassRefPtr<IDBKey> key)
 {
-    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this));
-    m_objectStore->get(key, request);
-    return request;
+    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
+    m_objectStore->get(key, request, m_transaction.get());
+    return request.release();
 }
 
 PassRefPtr<IDBRequest> IDBObjectStore::add(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key)

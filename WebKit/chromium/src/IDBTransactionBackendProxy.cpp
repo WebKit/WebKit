@@ -69,11 +69,17 @@ void IDBTransactionBackendProxy::abort()
     m_webIDBTransaction->abort();
 }
 
-void IDBTransactionBackendProxy::scheduleTask(PassOwnPtr<ScriptExecutionContext::Task>)
+bool IDBTransactionBackendProxy::scheduleTask(PassOwnPtr<ScriptExecutionContext::Task>)
 {
     // This should never be reached as it's the impl objects who get to
     // execute tasks in the browser process.
     ASSERT_NOT_REACHED();
+    return false;
+}
+
+void IDBTransactionBackendProxy::didCompleteTaskEvents()
+{
+    m_webIDBTransaction->didCompleteTaskEvents();
 }
 
 int IDBTransactionBackendProxy::id() const

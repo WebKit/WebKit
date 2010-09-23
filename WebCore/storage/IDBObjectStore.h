@@ -43,13 +43,14 @@ class DOMStringList;
 class IDBAny;
 class IDBIndexRequest;
 class IDBKey;
+class IDBTransactionBackendInterface;
 class SerializedScriptValue;
 
 class IDBObjectStore : public RefCounted<IDBObjectStore> {
 public:
-    static PassRefPtr<IDBObjectStore> create(PassRefPtr<IDBObjectStoreBackendInterface> idbObjectStore)
+    static PassRefPtr<IDBObjectStore> create(PassRefPtr<IDBObjectStoreBackendInterface> idbObjectStore, IDBTransactionBackendInterface* transaction)
     {
-        return adoptRef(new IDBObjectStore(idbObjectStore));
+        return adoptRef(new IDBObjectStore(idbObjectStore, transaction));
     }
     ~IDBObjectStore() { }
 
@@ -69,9 +70,11 @@ public:
     PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, PassRefPtr<IDBKeyRange> = 0, unsigned short direction = IDBCursor::NEXT);
 
 private:
-    IDBObjectStore(PassRefPtr<IDBObjectStoreBackendInterface>);
+    IDBObjectStore(PassRefPtr<IDBObjectStoreBackendInterface>, IDBTransactionBackendInterface* transaction);
+    void removeTransactionFromPendingList();
 
     RefPtr<IDBObjectStoreBackendInterface> m_objectStore;
+    RefPtr<IDBTransactionBackendInterface> m_transaction;
 };
 
 } // namespace WebCore

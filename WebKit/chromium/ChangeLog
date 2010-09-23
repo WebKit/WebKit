@@ -1,3 +1,36 @@
+2010-09-23  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        IDBObjectStore::get should run in a transaction.
+        https://bugs.webkit.org/show_bug.cgi?id=44700
+
+        * public/WebIDBFactory.h:
+        * public/WebIDBObjectStore.h:
+        * public/WebIDBTransaction.h:
+        (WebKit::WebIDBTransaction::didCompleteTaskEvents):
+        (WebKit::WebIDBTransaction::getIDBTransactionBackendInterface):
+        * src/IDBDatabaseProxy.h:
+        * src/IDBFactoryBackendProxy.cpp:
+        * src/IDBFactoryBackendProxy.h:
+        * src/IDBObjectStoreProxy.cpp:
+        (WebCore::IDBObjectStoreProxy::get):
+        * src/IDBObjectStoreProxy.h:
+        * src/IDBTransactionBackendProxy.cpp:
+        (WebCore::IDBTransactionBackendProxy::scheduleTask):
+        (WebCore::IDBTransactionBackendProxy::didCompleteTaskEvents):
+        * src/IDBTransactionBackendProxy.h:
+        (WebCore::IDBTransactionBackendProxy::getWebIDBTransaction):
+        * src/WebIDBFactoryImpl.cpp:
+        * src/WebIDBFactoryImpl.h:
+        * src/WebIDBObjectStoreImpl.cpp:
+        (WebKit::WebIDBObjectStoreImpl::get):
+        * src/WebIDBObjectStoreImpl.h:
+        * src/WebIDBTransactionImpl.cpp:
+        (WebKit::WebIDBTransactionImpl::didCompleteTaskEvents):
+        (WebKit::WebIDBTransactionImpl::getIDBTransactionBackendInterface):
+        * src/WebIDBTransactionImpl.h:
+
 2010-09-23  Jeremy Orlow  <jorlow@chromium.org>
 
         Unreviewed small fix for my last patch.

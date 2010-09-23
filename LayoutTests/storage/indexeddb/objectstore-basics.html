@@ -85,7 +85,10 @@ function addAgainFailure()
     verifyErrorEvent(event);
     // FIXME: This error code needs to be specced.
     shouldBe("event.code", "IDBDatabaseException.UNKNOWN_ERR");
-    var store = evalAndLog("store = event.source");
+
+    transaction = evalAndLog("db.transaction()");
+    transaction.onabort = unexpectedErrorCallback;
+    var store = evalAndLog("store = transaction.objectStore('storeName')");
 
     result = evalAndLog("store.get('key')");
     verifyResult(result);

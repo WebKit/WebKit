@@ -55,11 +55,12 @@ PassRefPtr<IDBRequest> IDBDatabase::createObjectStore(ScriptExecutionContext* co
     return request;
 }
 
+// FIXME: remove this method.
 PassRefPtr<IDBObjectStore> IDBDatabase::objectStore(const String& name, unsigned short mode)
 {
     RefPtr<IDBObjectStoreBackendInterface> objectStore = m_backend->objectStore(name, mode);
     ASSERT(objectStore); // FIXME: If this is null, we should raise a NOT_FOUND_ERR.
-    return IDBObjectStore::create(objectStore.release());
+    return IDBObjectStore::create(objectStore.release(), 0);
 }
 
 PassRefPtr<IDBRequest> IDBDatabase::removeObjectStore(ScriptExecutionContext* context, const String& name)

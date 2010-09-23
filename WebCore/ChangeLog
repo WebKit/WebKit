@@ -1,3 +1,76 @@
+2010-09-23  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        IDBObjectStore::get should run in a transaction.
+        https://bugs.webkit.org/show_bug.cgi?id=44700
+
+        Implements logic for running IDBObjectStore::get() in a transaction.
+        Refactors the pending transaction monitor and the transaction coordinator
+        to use pointers instead of transaction IDs.
+ 
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::didLeaveScriptContext):
+        * storage/IDBCursorBackendImpl.cpp:
+        * storage/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::objectStore):
+        * storage/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::objectStore):
+        * storage/IDBDatabaseBackendImpl.h:
+        (WebCore::IDBDatabaseBackendImpl::transactionCoordinator):
+        * storage/IDBFactoryBackendImpl.cpp:
+        * storage/IDBFactoryBackendImpl.h:
+        * storage/IDBFactoryBackendInterface.h:
+        * storage/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::IDBObjectStore):
+        (WebCore::IDBObjectStore::get):
+        * storage/IDBObjectStore.h:
+        (WebCore::IDBObjectStore::create):
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBTask::IDBTask):
+        (WebCore::IDBTask::performTask):
+        (WebCore::createTask):
+        (WebCore::IDBObjectStoreBackendImpl::get):
+        (WebCore::IDBObjectStoreBackendImpl::getInternal):
+        * storage/IDBObjectStoreBackendImpl.h:
+        * storage/IDBObjectStoreBackendInterface.h:
+        * storage/IDBPendingTransactionMonitor.cpp:
+        (WebCore::IDBPendingTransactionMonitor::addPendingTransaction):
+        (WebCore::IDBPendingTransactionMonitor::removePendingTransaction):
+        (WebCore::IDBPendingTransactionMonitor::abortPendingTransactions):
+        * storage/IDBPendingTransactionMonitor.h:
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::IDBRequest):
+        (WebCore::IDBRequest::~IDBRequest):
+        (WebCore::IDBRequest::onSuccess):
+        (WebCore::IDBRequest::timerFired):
+        * storage/IDBRequest.h:
+        (WebCore::IDBRequest::create):
+        * storage/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::IDBTransaction):
+        (WebCore::IDBTransaction::objectStore):
+        * storage/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::create):
+        (WebCore::IDBTransactionBackendImpl::IDBTransactionBackendImpl):
+        (WebCore::IDBTransactionBackendImpl::objectStore):
+        (WebCore::IDBTransactionBackendImpl::scheduleTask):
+        (WebCore::IDBTransactionBackendImpl::abort):
+        (WebCore::IDBTransactionBackendImpl::didCompleteTaskEvents):
+        (WebCore::IDBTransactionBackendImpl::run):
+        (WebCore::IDBTransactionBackendImpl::start):
+        (WebCore::IDBTransactionBackendImpl::commit):
+        (WebCore::IDBTransactionBackendImpl::timerFired):
+        * storage/IDBTransactionBackendImpl.h:
+        (WebCore::IDBTransactionBackendImpl::~IDBTransactionBackendImpl):
+        (WebCore::IDBTransactionBackendImpl::isFinished):
+        * storage/IDBTransactionBackendInterface.h:
+        * storage/IDBTransactionCoordinator.cpp:
+        (WebCore::IDBTransactionCoordinator::createTransaction):
+        (WebCore::IDBTransactionCoordinator::didStartTransaction):
+        (WebCore::IDBTransactionCoordinator::didFinishTransaction):
+        (WebCore::IDBTransactionCoordinator::processStartedTransactions):
+        * storage/IDBTransactionCoordinator.h:
+
 2010-09-23  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Roben.

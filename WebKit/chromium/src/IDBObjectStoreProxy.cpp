@@ -30,11 +30,13 @@
 #include "IDBCallbacks.h"
 #include "IDBIndexBackendProxy.h"
 #include "IDBKeyRange.h"
+#include "IDBTransactionBackendProxy.h"
 #include "WebIDBCallbacksImpl.h"
 #include "WebIDBKeyRange.h"
 #include "WebIDBIndex.h"
 #include "WebIDBKey.h"
 #include "WebIDBObjectStore.h"
+#include "WebIDBTransactionImpl.h"
 #include "WebSerializedScriptValue.h"
 
 #if ENABLE(INDEXED_DATABASE)
@@ -70,9 +72,12 @@ PassRefPtr<DOMStringList> IDBObjectStoreProxy::indexNames() const
     return m_webIDBObjectStore->indexNames();
 }
 
-void IDBObjectStoreProxy::get(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
+void IDBObjectStoreProxy::get(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction)
 {
-    m_webIDBObjectStore->get(key, new WebIDBCallbacksImpl(callbacks));
+    // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,
+    // all implementations of IDB interfaces are proxy objects.
+    IDBTransactionBackendProxy* transactionProxy = static_cast<IDBTransactionBackendProxy*>(transaction);
+    m_webIDBObjectStore->get(key, new WebIDBCallbacksImpl(callbacks), *transactionProxy->getWebIDBTransaction());
 }
 
 void IDBObjectStoreProxy::put(PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key, bool addOnly, PassRefPtr<IDBCallbacks> callbacks)

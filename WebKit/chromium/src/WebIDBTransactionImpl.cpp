@@ -64,6 +64,11 @@ void WebIDBTransactionImpl::abort()
     m_backend->abort();
 }
 
+void WebIDBTransactionImpl::didCompleteTaskEvents()
+{
+    m_backend->didCompleteTaskEvents();
+}
+
 int WebIDBTransactionImpl::id() const
 {
     return m_backend->id();
@@ -73,6 +78,11 @@ void WebIDBTransactionImpl::setCallbacks(WebIDBTransactionCallbacks* callbacks)
 {
     RefPtr<IDBTransactionCallbacks> idbCallbacks = IDBTransactionCallbacksProxy::create(callbacks);
     m_backend->setCallbacks(idbCallbacks.get());
+}
+
+IDBTransactionBackendInterface* WebIDBTransactionImpl::getIDBTransactionBackendInterface() const
+{
+    return m_backend.get();
 }
 
 } // namespace WebKit

@@ -50,7 +50,6 @@ public:
     virtual ~IDBFactoryBackendImpl();
 
     virtual void open(const String& name, const String& description, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir);
-    virtual void abortPendingTransactions(const Vector<int>& pendingIDs);
 
     static String databaseFileName(const String& name, SecurityOrigin*);
 

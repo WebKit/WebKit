@@ -33,27 +33,27 @@
 
 namespace WebCore {
 
+class IDBTransactionBackendInterface;
+
 // This class keeps track of the transactions created during the current
 // Javascript execution context. A transaction is 'pending' if no asynchronous
 // operation is currently queued for it (e.g. an IDBObjectStore::put() or similar).
 // All pending transactions are aborted as soon as execution returns from
 // the script engine.
 //
-// FIXME: move the vector of transaction IDs to TLS. Keeping it static
+// FIXME: move the vector of transactions to TLS. Keeping it static
 // will not work once we add support for workers. Another possible
 // solution is to keep the vector in the ScriptExecutionContext.
 class IDBPendingTransactionMonitor : public Noncopyable {
 public:
-    static bool hasPendingTransactions();
-    static void addPendingTransaction(int id);
-    static void removePendingTransaction(int id);
-    static void clearPendingTransactions();
-    static const Vector<int>& pendingTransactions();
+    static void addPendingTransaction(IDBTransactionBackendInterface*);
+    static void removePendingTransaction(IDBTransactionBackendInterface*);
+    static void abortPendingTransactions();
 
 private:
     IDBPendingTransactionMonitor();
 
-    static Vector<int>* m_ids;
+    static Vector<IDBTransactionBackendInterface*>* m_transactions;
 };
 
 } // namespace WebCore

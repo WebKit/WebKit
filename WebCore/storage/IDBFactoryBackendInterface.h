@@ -52,7 +52,6 @@ public:
     virtual ~IDBFactoryBackendInterface() { }
 
     virtual void open(const String& name, const String& description, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir) = 0;
-    virtual void abortPendingTransactions(const Vector<int>& ids) = 0;
 };
 
 } // namespace WebCore

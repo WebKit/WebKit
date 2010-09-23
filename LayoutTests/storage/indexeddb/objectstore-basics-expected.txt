@@ -113,7 +113,8 @@ PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
 PASS event.code is IDBDatabaseException.UNKNOWN_ERR
-store = event.source
+db.transaction()
+store = transaction.objectStore('storeName')
 store.get('key')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true

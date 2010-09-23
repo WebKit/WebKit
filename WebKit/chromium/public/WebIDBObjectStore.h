@@ -35,6 +35,7 @@
 namespace WebKit {
 
 class WebIDBKeyRange;
+class WebIDBTransaction;
 
 // See comment in WebIndexedDatabase for a high level overview these classes.
 class WebIDBObjectStore {
