@@ -637,10 +637,12 @@ WebInspector.ElementsTreeElement.prototype = {
             this.listItemElement.scrollIntoViewIfNeeded(false);
     },
 
-    onselect: function()
+    onselect: function(treeElement, selectedByUser)
     {
         this.treeOutline.suppressRevealAndSelect = true;
         this.treeOutline.focusedDOMNode = this.representedObject;
+        if (selectedByUser)
+            WebInspector.highlightDOMNode(this.representedObject.id);
         this.updateSelection();
         this.treeOutline.suppressRevealAndSelect = false;
     },

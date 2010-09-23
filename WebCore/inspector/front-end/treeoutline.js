@@ -399,7 +399,7 @@ TreeOutline.prototype._treeKeyDown = function(event)
 
     if (nextSelectedElement) {
         nextSelectedElement.reveal();
-        nextSelectedElement.select();
+        nextSelectedElement.select(false, true);
     }
 
     if (handled) {
@@ -794,10 +794,10 @@ TreeElement.prototype.revealed = function()
 
 TreeElement.prototype.selectOnMouseDown = function(event)
 {
-    this.select();
+    this.select(false, true);
 }
 
-TreeElement.prototype.select = function(supressOnSelect)
+TreeElement.prototype.select = function(supressOnSelect, selectedByUser)
 {
     if (!this.treeOutline || !this.selectable || this.selected)
         return;
@@ -812,7 +812,7 @@ TreeElement.prototype.select = function(supressOnSelect)
         this._listItemNode.addStyleClass("selected");
 
     if (this.onselect && !supressOnSelect)
-        this.onselect(this);
+        this.onselect(this, selectedByUser);
 }
 
 TreeElement.prototype.deselect = function(supressOnDeselect)
