@@ -1,3 +1,19 @@
+2010-09-22  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Dumitru Daniliuc.
+
+        [FileSystem] Fix Flags handling in DirectoryEntry custom binding code
+        https://bugs.webkit.org/show_bug.cgi?id=46028
+
+        * fast/filesystem/flags-passing-expected.txt: Added.
+        * fast/filesystem/flags-passing.html: Added.
+        * fast/filesystem/script-tests/TEMPLATE.html: Added.
+        * fast/filesystem/script-tests/flags-passing.js: Added.
+        * platform/gtk/Skipped: FileSystem API not supported on gtk.
+        * platform/mac/Skipped: FileSystem API not supported on mac.
+        * platform/qt/Skipped: FileSystem API not supported on qt.
+        * platform/win/Skipped: FileSystem API not supported on win.
+
 2010-09-22  Tony Chang  <tony@chromium.org>
 
         Reviewed by David Levin.

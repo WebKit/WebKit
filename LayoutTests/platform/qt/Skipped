@@ -5481,3 +5481,5 @@ http/tests/uri/css-href.php
 # Pre-HMTL5 parser quirks only apply to the mac port for now.
 fast/parser/pre-html5-parser-quirks.html
 
+# FileSystem API is not supported.
+fast/filesystem

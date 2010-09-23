@@ -1,3 +1,22 @@
+2010-09-22  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Dumitru Daniliuc.
+
+        [FileSystem] Fix Flags handling in DirectoryEntry custom binding code
+        https://bugs.webkit.org/show_bug.cgi?id=46028
+
+        Do not use adoptRef to get RefPtr from a raw pointer that is already
+        adopted in toNative/toJS.
+
+        Test: fast/filesystem/flags-passing.html
+
+        * bindings/js/JSDirectoryEntryCustom.cpp:
+        (WebCore::JSDirectoryEntry::getFile):
+        (WebCore::JSDirectoryEntry::getDirectory):
+        * bindings/v8/custom/V8DirectoryEntryCustom.cpp:
+        (WebCore::V8DirectoryEntry::getDirectoryCallback):
+        (WebCore::V8DirectoryEntry::getFileCallback):
+
 2010-09-22  Jia Pu  <jpu@apple.com>
 
         Reviewed by Dan Bernstein.

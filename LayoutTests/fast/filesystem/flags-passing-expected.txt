@@ -1,0 +1,17 @@
+Passing Flags parameter tests. This test checks if passing Flags parameters (in Object format or in JSON format) to DirectoryEntry.getFile does not crash and works as expected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+* Passing a Flags object.
+* Recycling the same Flags object.
+* Passing a Flags object (with exclusive=true).
+* Passing JSON Flags object.
+* Passing JSON Flags object (with exclusive=true).
+Finished running tests.
+PASS expectedCallbacksCount is 3
+PASS unexpectedCallbacksCount is 0
+

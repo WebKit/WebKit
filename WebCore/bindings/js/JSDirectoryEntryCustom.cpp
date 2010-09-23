@@ -66,7 +66,7 @@ JSValue JSDirectoryEntry::getFile(ExecState* exec)
         JSValue jsExclusive = object->get(exec, Identifier(exec, "exclusive"));
         flags->setExclusive(jsExclusive.toBoolean(exec));
     } else
-        flags = adoptRef(toFlags(exec->argument(1)));
+        flags = toFlags(exec->argument(1));
     if (exec->hadException())
         return jsUndefined();
     RefPtr<EntryCallback> successCallback;
@@ -112,7 +112,7 @@ JSValue JSDirectoryEntry::getDirectory(ExecState* exec)
         JSValue jsExclusive = object->get(exec, Identifier(exec, "exclusive"));
         flags->setExclusive(jsExclusive.toBoolean(exec));
     } else
-        flags = adoptRef(toFlags(exec->argument(1)));
+        flags = toFlags(exec->argument(1));
     if (exec->hadException())
         return jsUndefined();
     RefPtr<EntryCallback> successCallback;

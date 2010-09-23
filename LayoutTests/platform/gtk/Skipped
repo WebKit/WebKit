@@ -5929,3 +5929,6 @@ fast/parser/pre-html5-parser-quirks.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=46169
 media/video-controls-with-mutation-event-handler.html
+
+# FileSystem API is not supported.
+fast/filesystem
