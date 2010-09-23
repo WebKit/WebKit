@@ -1,3 +1,22 @@
+2010-09-23  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix QWebHapticFeedbackPlayer exposure via QWebKitPlatformPlugin
+
+        [Qt] QWebHapticFeedbackPlayer needs correct exposure through QWebKitPlatformPlugin
+        https://bugs.webkit.org/show_bug.cgi?id=46402
+
+        QWebHapticFeedbackPlayer is exported through
+        QWebKitPlatformPlugin::createExtension(), but
+        createHapticFeedbackPlayer() and the correct
+        inheritage are missing.
+
+        * Api/qwebkitplatformplugin.h:
+        * WebCoreSupport/QtPlatformPlugin.cpp:
+        (WebCore::QtPlatformPlugin::createHapticFeedbackPlayer):
+        * WebCoreSupport/QtPlatformPlugin.h:
+
 2010-09-23  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Darin Fisher.

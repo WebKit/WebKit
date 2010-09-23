@@ -101,4 +101,10 @@ QWebNotificationPresenter* QtPlatformPlugin::createNotificationPresenter()
     return p ? qobject_cast<QWebNotificationPresenter*>(p->createExtension(QWebKitPlatformPlugin::Notifications)) : 0;
 }
 
+QWebHapticFeedbackPlayer* QtPlatformPlugin::createHapticFeedbackPlayer()
+{
+    QWebKitPlatformPlugin* p = plugin();
+    return p ? qobject_cast<QWebHapticFeedbackPlayer*>(p->createExtension(QWebKitPlatformPlugin::Haptics)) : 0;
+}
+
 }
