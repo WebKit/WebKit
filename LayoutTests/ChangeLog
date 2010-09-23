@@ -1,3 +1,42 @@
+2010-09-22  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Rebaseline a few repainting tests for Chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=46337
+
+        * platform/chromium-linux/fast/repaint/block-layout-inline-children-float-positioned-expected.checksum: Added.
+        * platform/chromium-linux/fast/repaint/block-layout-inline-children-float-positioned-expected.png: Added.
+        * platform/chromium-linux/fast/repaint/block-layout-inline-children-float-positioned-expected.txt: Added.
+        * platform/chromium-linux/fast/repaint/block-layout-inline-children-replaced-expected.checksum: Added.
+        * platform/chromium-linux/fast/repaint/block-layout-inline-children-replaced-expected.png: Added.
+        * platform/chromium-linux/fast/repaint/block-layout-inline-children-replaced-expected.txt: Added.
+        * platform/chromium-linux/fast/repaint/list-marker-expected.checksum:
+        * platform/chromium-linux/fast/repaint/list-marker-expected.png:
+        * platform/chromium-mac/fast/repaint/background-misaligned-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/background-misaligned-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/block-layout-inline-children-float-positioned-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/block-layout-inline-children-float-positioned-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/block-layout-inline-children-replaced-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/block-layout-inline-children-replaced-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/continuation-after-outline-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/continuation-after-outline-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/inline-outline-repaint-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/inline-outline-repaint-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/opacity-change-on-overflow-float-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/opacity-change-on-overflow-float-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/subtree-root-clip-3-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/subtree-root-clip-3-expected.png: Added.
+        * platform/chromium-win/fast/repaint/block-layout-inline-children-float-positioned-expected.checksum: Added.
+        * platform/chromium-win/fast/repaint/block-layout-inline-children-float-positioned-expected.png: Added.
+        * platform/chromium-win/fast/repaint/block-layout-inline-children-float-positioned-expected.txt: Added.
+        * platform/chromium-win/fast/repaint/block-layout-inline-children-replaced-expected.checksum: Added.
+        * platform/chromium-win/fast/repaint/block-layout-inline-children-replaced-expected.png: Added.
+        * platform/chromium-win/fast/repaint/block-layout-inline-children-replaced-expected.txt: Added.
+        * platform/chromium-win/fast/repaint/list-marker-expected.checksum:
+        * platform/chromium-win/fast/repaint/list-marker-expected.png:
+        * platform/chromium/test_expectations.txt: Updated, removed crazy comment.
+
 2010-09-22  Andy Estes  <aestes@apple.com>
 
         Reviewed by Adam Barth.

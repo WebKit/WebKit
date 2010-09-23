@@ -789,11 +789,6 @@ BUG11153 WIN LINUX : fast/canvas/canvas-incremental-repaint.html = FAIL
 
 // Repaint issues are revealed by these tests.
 BUG28183 LINUX WIN : fast/repaint/box-shadow-v.html = IMAGE
-// The difference of positions of texts after the list markers is NOT
-// an issue. The behavior of the expectations was wrong. The real
-// problem is the change of the 'p' in italic "properly". Note that
-// upstream expectation image has the same issue.
-BUG28183 WIN LINUX : fast/repaint/list-marker.html = IMAGE
 
 BUG20507 : http/tests/uri/resolve-encoding-relative.html = FAIL
 
@@ -1642,6 +1637,11 @@ BUG23473 MAC : fast/repaint/text-shadow.html = PASS
 BUG23473 MAC : fast/repaint/text-shadow-horizontal.html = PASS
 BUG23473 MAC : fast/repaint/view-background-from-body-1.html = PASS
 BUG23473 MAC : fast/repaint/view-background-from-body-2.html = PASS
+BUG23473 MAC : fast/repaint/inline-outline-repaint.html = PASS
+BUG23473 MAC : fast/repaint/subtree-root-clip-3.html = PASS
+BUG23473 MAC : fast/repaint/opacity-change-on-overflow-float.html = PASS
+BUG23473 MAC : fast/repaint/background-misaligned.html = PASS
+BUG23473 MAC : fast/repaint/continuation-after-outline.html = PASS
 
 // Thicker shadow than expected
 BUG23471 MAC : fast/text/stroking.html = IMAGE
@@ -3069,11 +3069,6 @@ BUGWK45667 LINUX : fast/files/read-file-async.html = CRASH PASS
 BUGWK45667 LINUX : fast/files/read-blob-async.html = CRASH PASS
 
 BUGWK45737 DEBUG SLOW : fast/frames/frame-limit.html = PASS
-
-BUGWK45753 WIN LINUX : fast/repaint/block-layout-inline-children-float-positioned.html = IMAGE+TEXT
-BUGWK45753 MAC : fast/repaint/block-layout-inline-children-float-positioned.html = IMAGE
-BUGWK45753 WIN LINUX : fast/repaint/block-layout-inline-children-replaced.html = IMAGE+TEXT
-BUGWK45753 MAC : fast/repaint/block-layout-inline-children-replaced.html = IMAGE
 
 // Regressions from webkit roll r67178:t67358
 BUGDPRANKE WIN LINUX DEBUG : fast/forms/select-set-length-with-mutation-remove.html = TIMEOUT PASS
