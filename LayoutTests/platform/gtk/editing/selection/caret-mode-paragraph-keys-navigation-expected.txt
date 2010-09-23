@@ -1,0 +1,29 @@
+This tests that keys navigation through a paragraph work as expected when in caret mode, also with shift and ctrl modifiers.
+
+This tests that keys navigation through a paragraph work as expected when in caret mode, also with shift and ctrl modifiers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getSelection().baseOffset is 15
+PASS getSelection().baseOffset is 16
+PASS getSelection().baseOffset is 15
+PASS getSelection().baseOffset is 15
+PASS getSelection().extentOffset is 18
+PASS getSelection().baseOffset is 15
+PASS getSelection().extentOffset is 17
+PASS getSelection().baseOffset is 20
+PASS getSelection().baseOffset is 16
+PASS getSelection().baseOffset is 16
+PASS getSelection().extentOffset is 31
+PASS getSelection().baseOffset is 21
+PASS getSelection().baseOffset is 0
+PASS getSelection().extentOffset is 0
+PASS getSelection().baseOffset is 124
+PASS getSelection().extentOffset is 124
+PASS getSelection().baseOffset is 124
+PASS getSelection().extentOffset is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

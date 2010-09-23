@@ -1,3 +1,17 @@
+2010-09-23  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Chris Fleizach.
+
+        [Regression][Gtk] Left and Right Arrows no longer function when caret browsing is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=45375
+
+        Added the following test to make sure key navigation across a
+        paragraph always work as expected, both with and without the shift
+        and ctrl modifiers.
+
+        * platform/gtk/editing/selection/caret-mode-paragraph-keys-navigation-expected.txt: Added.
+        * platform/gtk/editing/selection/caret-mode-paragraph-keys-navigation.html: Added.
+
 2010-09-23  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Jeremy Orlow.

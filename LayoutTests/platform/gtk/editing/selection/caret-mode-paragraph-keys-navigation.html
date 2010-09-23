@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="target">This tests that keys navigation through a paragraph work as expected when in caret mode, also with shift and ctrl modifiers.</p>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("This tests that keys navigation through a paragraph work as expected when in caret mode, also with shift and ctrl modifiers.");
+
+if (window.layoutTestController) {
+  layoutTestController.overridePreference("WebKitEnableCaretBrowsing", true);
+  layoutTestController.dumpAsText();
+
+  var target = document.getElementById("target");
+  target.focus();
+  window.getSelection().setPosition(target.childNodes.item(0), 15);
+
+  // check left/right arrows
+  shouldBe("getSelection().baseOffset", "15");
+  eventSender.keyDown("rightArrow");
+  shouldBe("getSelection().baseOffset", "16");
+  eventSender.keyDown("leftArrow");
+  shouldBe("getSelection().baseOffset", "15");
+
+  // check left/right arrows + Shift
+  eventSender.keyDown("rightArrow", ["shiftKey"]);
+  eventSender.keyDown("rightArrow", ["shiftKey"]);
+  eventSender.keyDown("rightArrow", ["shiftKey"]);
+  shouldBe("getSelection().baseOffset", "15");
+  shouldBe("getSelection().extentOffset", "18");
+  eventSender.keyDown("leftArrow", ["shiftKey"]);
+  shouldBe("getSelection().baseOffset", "15");
+  shouldBe("getSelection().extentOffset", "17");
+
+  // check left/right arrows + Ctrl
+  eventSender.keyDown("rightArrow", ["ctrlKey"]);
+  shouldBe("getSelection().baseOffset", "20");
+  eventSender.keyDown("leftArrow", ["ctrlKey"]);
+  shouldBe("getSelection().baseOffset", "16");
+
+  // check left/right arrows + Ctrl + Shift
+  eventSender.keyDown("rightArrow", ["ctrlKey", "shiftKey"]);
+  eventSender.keyDown("rightArrow", ["ctrlKey", "shiftKey"]);
+  shouldBe("getSelection().baseOffset", "16");
+  shouldBe("getSelection().extentOffset", "31");
+  eventSender.keyDown("leftArrow", ["ctrlKey"]);
+  shouldBe("getSelection().baseOffset", "21");
+
+  // check home/end keys both for caret and range selections
+  eventSender.keyDown("home");
+  shouldBe("getSelection().baseOffset", "0");
+  shouldBe("getSelection().extentOffset", "0");
+  eventSender.keyDown("end");
+  shouldBe("getSelection().baseOffset", "124");
+  shouldBe("getSelection().extentOffset", "124");
+  eventSender.keyDown("home", ["shiftKey"]);
+  shouldBe("getSelection().baseOffset", "124");
+  shouldBe("getSelection().extentOffset", "0");
+}
+
+successfullyParsed = true;
+</script>
+<script src="../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
