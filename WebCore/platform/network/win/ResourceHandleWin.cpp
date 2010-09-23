@@ -357,8 +357,9 @@ bool ResourceHandle::onRequestComplete()
 
     BOOL ok = FALSE;
     while ((ok = InternetReadFileExA(d->m_requestHandle, &buffers, d->m_loadSynchronously ? 0 : IRF_NO_WAIT, reinterpret_cast<DWORD_PTR>(this))) && buffers.dwBufferLength) {
-        if (!hasReceivedResponse()) {
-            setHasReceivedResponse();
+        if (!d->m_hasReceivedResponse) {
+            d->m_hasReceivedResponse = true;
+
             ResourceResponse response;
             response.setURL(firstRequest().url());
 
@@ -598,16 +599,6 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const
     ResourceHandle handle(request, &syncLoader, true, false);
 
     handle.start(context);
-}
-
-void ResourceHandle::setHasReceivedResponse(bool b)
-{
-    d->m_hasReceivedResponse = b;
-}
-
-bool ResourceHandle::hasReceivedResponse() const
-{
-    return d->m_hasReceivedResponse;
 }
 
 bool ResourceHandle::willLoadFromCache(ResourceRequest&, Frame*)
