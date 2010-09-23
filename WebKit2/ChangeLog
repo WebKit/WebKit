@@ -1,3 +1,18 @@
+2010-09-23  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        Add a preference class for Qt for WebKit2.
+
+        * UIProcess/API/qt/qwkpreferences.cpp: Added.
+        (QWKPreferences::globalPreferences):
+        (QWKPreferences::QWKPreferences):
+        (QWKPreferences::~QWKPreferences):
+        (QWKPreferences::testAttribute):
+        (QWKPreferences::setAttribute):
+        * UIProcess/API/qt/qwkpreferences.h: Added.
+        * WebKit2.pro:
+
 2010-09-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

@@ -209,6 +209,7 @@ HEADERS += \
     UIProcess/API/qt/qgraphicswkview.h \
     UIProcess/API/qt/qwkpage.h \
     UIProcess/API/qt/qwkpage_p.h \
+    UIProcess/API/qt/qwkpreferences.h \
     UIProcess/ChunkedUpdateDrawingAreaProxy.h \
     UIProcess/DrawingAreaProxy.h \
     UIProcess/GenericCallback.h \
@@ -326,6 +327,7 @@ SOURCES += \
     UIProcess/API/qt/ClientImpl.cpp \
     UIProcess/API/qt/qgraphicswkview.cpp \
     UIProcess/API/qt/qwkpage.cpp \
+    UIProcess/API/qt/qwkpreferences.cpp \
     UIProcess/API/cpp/qt/WKStringQt.cpp \
     UIProcess/API/cpp/qt/WKURLQt.cpp \
     UIProcess/ChunkedUpdateDrawingAreaProxy.cpp \
