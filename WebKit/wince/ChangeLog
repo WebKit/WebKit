@@ -2,6 +2,16 @@
 
         Reviewed by Adam Roben.
 
+        Add PlatformStrategiesWinCE
+        https://bugs.webkit.org/show_bug.cgi?id=46371
+
+        * WebCoreSupport/PlatformStrategiesWinCE.cpp: Copied from WebKit/win/WebCoreSupport/WebPlatformStrategies.cpp.
+        * WebCoreSupport/PlatformStrategiesWinCE.h: Copied from WebKit/win/WebCoreSupport/WebPlatformStrategies.h.
+
+2010-09-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
         Add ChromeClientWinCE
         https://bugs.webkit.org/show_bug.cgi?id=46294
 
