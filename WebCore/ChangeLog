@@ -1,3 +1,19 @@
+2010-09-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Cleanup network communication code in ResourceHandleWin
+        https://bugs.webkit.org/show_bug.cgi?id=46200
+
+        Add logic for request handling directly into ResourceHandle::start and fix style.
+        Use Unicode instead of ASCII Windows API functions.
+
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/win/ResourceHandleWin.cpp:
+        (WebCore::ResourceHandle::onRequestComplete):
+        (WebCore::ResourceHandle::start):
+
 2010-09-23  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Andreas Kling.

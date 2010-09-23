@@ -381,35 +381,14 @@ void ResourceHandle::onRequestComplete(LPARAM lParam)
         buffers.dwBufferLength = bufferSize;
     }
 
-    PlatformDataStruct platformData;
-    platformData.errorString = 0;
-    platformData.error = 0;
-    platformData.loaded = ok;
-
-    if (!ok) {
-        int error = GetLastError();
-        if (error == ERROR_IO_PENDING)
-            return;
-        DWORD errorStringChars = 0;
-        if (!InternetGetLastResponseInfo(&platformData.error, 0, &errorStringChars)) {
-            if (GetLastError() == ERROR_INSUFFICIENT_BUFFER) {
-                platformData.errorString = new TCHAR[errorStringChars];
-                InternetGetLastResponseInfo(&platformData.error, platformData.errorString, &errorStringChars);
-            }
-        }
-#ifdef RESOURCE_LOADER_DEBUG
-        char buf[64];
-        _snprintf(buf, sizeof(buf), "Load error: %i\n", error);
-        OutputDebugStringA(buf);
-#endif 
-    }
-    
-    if (d->m_secondaryHandle)
-        InternetCloseHandle(d->m_secondaryHandle);
-    InternetCloseHandle(d->m_resourceHandle);
+    if (!ok && GetLastError() == ERROR_IO_PENDING)
+        return;
 
     client()->didFinishLoading(this, 0);
-    delete this;
+    InternetCloseHandle(d->m_requestHandle);
+    InternetCloseHandle(d->m_connectHandle);
+    deref(); // balances ref in start
+    return;
 }
 
 static void __stdcall transferJobStatusCallback(HINTERNET internetHandle,
@@ -467,68 +446,58 @@ static void __stdcall transferJobStatusCallback(HINTERNET internetHandle,
 
 bool ResourceHandle::start(NetworkingContext* context)
 {
-    ref();
     if (request().url().isLocalFile()) {
+        ref(); // balanced by deref in fileLoadTimer
         d->m_fileLoadTimer.startOneShot(0.0);
         return true;
-    } else {
-        static HINTERNET internetHandle = 0;
-        if (!internetHandle) {
-            String userAgentStr = context->userAgent() + String("", 1);
-            LPCWSTR userAgent = reinterpret_cast<const WCHAR*>(userAgentStr.characters());
-            // leak the Internet for now
-            internetHandle = InternetOpen(userAgent, INTERNET_OPEN_TYPE_PRECONFIG, 0, 0, INTERNET_FLAG_ASYNC);
-        }
-        if (!internetHandle) {
-            delete this;
-            return false;
-        }
-        static INTERNET_STATUS_CALLBACK callbackHandle = 
-            InternetSetStatusCallback(internetHandle, transferJobStatusCallback);
-
-        initializeOffScreenResourceHandleWindow();
-        d->m_jobId = addToOutstandingJobs(this);
-
-        DWORD flags =
-            INTERNET_FLAG_KEEP_CONNECTION |
-            INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTPS |
-            INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTP;
-
-        // For form posting, we can't use InternetOpenURL.  We have to use
-        // InternetConnect followed by HttpSendRequest.
-        HINTERNET urlHandle;
-        String referrer = context->referrer();
-        if (request().httpMethod() == "POST") {
-            d->m_postReferrer = referrer;
-            String host = request().url().host();
-            urlHandle = InternetConnectA(internetHandle, host.latin1().data(),
-                                         request().url().port(),
-                                         NULL, // no username
-                                         NULL, // no password
-                                         INTERNET_SERVICE_HTTP,
-                                         flags, (DWORD_PTR)d->m_jobId);
-        } else {
-            String urlStr = request().url().string();
-            int fragmentIndex = urlStr.find('#');
-            if (fragmentIndex != -1)
-                urlStr = urlStr.left(fragmentIndex);
-            String headers;
-            if (!referrer.isEmpty())
-                headers += String("Referer: ") + referrer + "\r\n";
-
-            urlHandle = InternetOpenUrlA(internetHandle, urlStr.latin1().data(),
-                                         headers.latin1().data(), headers.length(),
-                                         flags, (DWORD_PTR)d->m_jobId);
-        }
-
-        if (urlHandle == INVALID_HANDLE_VALUE) {
-            delete this;
-            return false;
-        }
-        d->m_threadId = GetCurrentThreadId();
-
-        return true;
     }
+
+    if (!d->m_internetHandle)
+        d->m_internetHandle = asynchronousInternetHandle(context->userAgent());
+
+    if (!d->m_internetHandle)
+        return false;
+
+    DWORD flags = INTERNET_FLAG_KEEP_CONNECTION
+        | INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTPS
+        | INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTP;
+
+    d->m_connectHandle = InternetConnectW(d->m_internetHandle, firstRequest().url().host().charactersWithNullTermination(), firstRequest().url().port(),
+                                          0, 0, INTERNET_SERVICE_HTTP, flags, reinterpret_cast<DWORD_PTR>(this));
+
+    if (!d->m_connectHandle)
+        return false;
+
+    String urlStr = firstRequest().url().path();
+    String urlQuery = firstRequest().url().query();
+
+    if (!urlQuery.isEmpty()) {
+        urlStr.append('?');
+        urlStr.append(urlQuery);
+    }
+
+    String httpMethod = firstRequest().httpMethod();
+    String httpReferrer = firstRequest().httpReferrer();
+
+    LPCWSTR httpAccept[] = { L"*/*", 0 };
+
+    d->m_requestHandle = HttpOpenRequestW(d->m_connectHandle, httpMethod.charactersWithNullTermination(), urlStr.charactersWithNullTermination(),
+                                          0, httpReferrer.charactersWithNullTermination(), httpAccept, flags, reinterpret_cast<DWORD_PTR>(this));
+
+    if (!d->m_requestHandle) {
+        InternetCloseHandle(d->m_connectHandle);
+        return false;
+    }
+
+    INTERNET_BUFFERSW internetBuffers;
+    ZeroMemory(&internetBuffers, sizeof(internetBuffers));
+    internetBuffers.dwStructSize = sizeof(internetBuffers);
+
+    HttpSendRequestExW(d->m_requestHandle, &internetBuffers, 0, 0, reinterpret_cast<DWORD_PTR>(this));
+
+    ref(); // balanced by deref in onRequestComplete
+
+    return true;
 }
 
 void ResourceHandle::fileLoadTimer(Timer<ResourceHandle>*)
