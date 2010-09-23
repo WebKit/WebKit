@@ -459,7 +459,10 @@ bool ResourceHandle::start(NetworkingContext* context)
 {
     if (request().url().isLocalFile()) {
         ref(); // balanced by deref in fileLoadTimer
-        d->m_fileLoadTimer.startOneShot(0.0);
+        if (d->m_loadSynchronously)
+            fileLoadTimer(0);
+        else
+            d->m_fileLoadTimer.startOneShot(0.0);
         return true;
     }
 
