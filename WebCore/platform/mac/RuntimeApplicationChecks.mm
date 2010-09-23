@@ -59,4 +59,10 @@ bool applicationIsAOLInstantMessenger()
     return isAOLInstantMessenger;
 }
 
+bool applicationIsMicrosoftMyDay()
+{
+    static bool isMicrosoftMyDay = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.microsoft.myday"];
+    return isMicrosoftMyDay;
+}
+
 } // namespace WebCore

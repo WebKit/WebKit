@@ -611,12 +611,22 @@ static bool coreVideoHas7228836Fix()
 
 static bool shouldUsePreHTML5ParserQuirks(WebPreferences* preferences)
 {
+    static bool webKitLinkedBeforeHTML5Parser = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_HTML5_PARSER);
+    
     // AIM clients linked against versions of WebKit prior to the introduction
     // of the HTML5 parser contain markup incompatible with the new parser.
     // Enable parser quirks to remain compatible with these clients. See
     // <https://bugs.webkit.org/show_bug.cgi?id=46134>.
-    static bool isAIMAndNeedsParserQuirks = applicationIsAOLInstantMessenger() && !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_HTML5_PARSER);
-    return isAIMAndNeedsParserQuirks || [preferences usePreHTML5ParserQuirks];
+    static bool isAIMAndNeedsParserQuirks = applicationIsAOLInstantMessenger() && webKitLinkedBeforeHTML5Parser;
+    
+    // Microsoft My Day loads scripts using self-closing script tags, markup
+    // which is incompatible with the HTML5 parser. Enable parser quirks for
+    // this application. See <https://bugs.webkit.org/show_bug.cgi?id=46334>.
+    static bool isMicrosoftMyDayAndNeedsParserQuirks = applicationIsMicrosoftMyDay() && webKitLinkedBeforeHTML5Parser;
+    
+    return isAIMAndNeedsParserQuirks
+        || isMicrosoftMyDayAndNeedsParserQuirks
+        || [preferences usePreHTML5ParserQuirks];
 }
 
 static bool shouldEnableLoadDeferring()

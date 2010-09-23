@@ -1,3 +1,19 @@
+2010-09-22  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r61285): Microsoft Entourage 2008 does not invoke My Day window
+        https://bugs.webkit.org/show_bug.cgi?id=46334
+
+        Microsoft My Day loads scripts using self-closing script tags, markup
+        which is incompatible with the HTML5 parser. Enable parser quirks for
+        this application.
+
+        * WebView/WebView.mm:
+        (shouldUsePreHTML5ParserQuirks): Return true if the application is
+        Microsoft My Day and was linked against a version of WebKit prior to the
+        introduction of the HTML5 parser.
+
 2010-09-23  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Darin Fisher.
