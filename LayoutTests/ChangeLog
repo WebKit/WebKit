@@ -1,5 +1,11 @@
 2010-09-22  Kinuko Yasuda  <kinuko@chromium.org>
 
+        Unreviewed, temporarily disabling the new filesystem test on chromium.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-09-22  Kinuko Yasuda  <kinuko@chromium.org>
+
         Reviewed by Dumitru Daniliuc.
 
         [FileSystem] Fix Flags handling in DirectoryEntry custom binding code

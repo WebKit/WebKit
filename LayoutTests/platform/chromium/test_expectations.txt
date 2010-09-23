@@ -3118,3 +3118,5 @@ BUG56220 : userscripts/user-script-top-frame-only.html = TEXT
 BUGWK45021 : media/context-menu-actions.html = TIMEOUT
 
 BUGWK46163 : media/video-controls-with-mutation-event-handler.html = CRASH
+
+BUGWK46328 : fast/filesystem/flags-passing.html = TEXT
