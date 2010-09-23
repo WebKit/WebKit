@@ -1,3 +1,21 @@
+2010-09-22  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Martin Robinson.
+
+        [WinCairo] Part 2: Update WebKitTestRunner and DumpRenderTree Build.
+        https://bugs.webkit.org/show_bug.cgi?id=46303.
+
+        * MiniBrowser/Configurations/MiniBrowserCFLite.vsprops: Added.
+        * MiniBrowser/Configurations/MiniBrowserCommon.vsprops: Moved
+        CoreFoundation-specific stuff to new MiniBrowserCoreFoundation
+        property sheet.
+        * MiniBrowser/Configurations/MiniBrowserCoreFoundation.vsprops: Added.
+        * MiniBrowser/MiniBrowser.vcproj: Updated configuration to use
+        appropriate property sheet for the build types.
+        * WebKitTestRunner/win/WebKitTestRunner.vcproj: Updated the
+        configuration to use appropriate property sheet for CoreFoundation
+        and CFLite-style builds.
+
 2010-09-22  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
