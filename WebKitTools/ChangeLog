@@ -2,6 +2,19 @@
 
         Reviewed by Eric Seidel.
 
+        Fix comm-queue typo
+        https://bugs.webkit.org/show_bug.cgi?id=46339
+
+        We were missing a "self".  The real problem is that we didn't have an
+        integration test for the failure case.
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
+2010-09-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         commit-queue should log more detailed messages to the QueueStatusServer
         https://bugs.webkit.org/show_bug.cgi?id=46333
 

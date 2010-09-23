@@ -246,7 +246,7 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
     def command_passed(self, message, patch):
         self._update_status(message, patch=patch)
 
-    def command_failed(message, script_error, patch):
+    def command_failed(self, message, script_error, patch):
         failure_log = self._log_from_script_error_for_upload(script_error)
         return self._update_status(message, patch=patch, results_file=failure_log)
 

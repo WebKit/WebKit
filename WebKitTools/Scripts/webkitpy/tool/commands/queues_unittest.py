@@ -207,6 +207,26 @@ MOCK: update_status: commit-queue Pass
         }
         self.assert_queue_outputs(CommitQueue(), expected_stderr=expected_stderr)
 
+    def test_commit_queue_failure(self):
+        expected_stderr = {
+            "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue", MockSCM.fake_checkout_root),
+            "should_proceed_with_work_item": "MOCK: update_status: commit-queue Landing patch\n",
+            "next_work_item": "",
+            "process_work_item": """MOCK: update_status: commit-queue Patch does not apply
+MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Rejecting patch 197 from commit-queue.' and additional comment 'MOCK script error'
+MOCK: update_status: commit-queue Fail
+""",
+            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Rejecting patch 197 from commit-queue.' and additional comment 'Mock error message'\n",
+            "handle_script_error": "ScriptError error message\n",
+        }
+        queue = CommitQueue()
+
+        def mock_run_webkit_patch(command):
+            raise ScriptError('MOCK script error')
+
+        queue.run_webkit_patch = mock_run_webkit_patch
+        self.assert_queue_outputs(queue, expected_stderr=expected_stderr)
+
     def test_rollout(self):
         tool = MockTool(log_executive=True)
         tool.buildbot.light_tree_on_fire()
