@@ -1,3 +1,16 @@
+2010-09-23  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by David Levin.
+
+        Fix a condition check in ServerProcess, which becomes relevant when reading binary data.
+        https://bugs.webkit.org/show_bug.cgi?id=46406
+
+        This breaks when the method is called with specified size of data (image data), and the
+        buffer hasn't yet reached this size.
+
+        * Scripts/webkitpy/layout_tests/port/server_process.py: Changed to check for values of
+          index larger than 0.
+
 2010-09-23  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Nate Chapin.

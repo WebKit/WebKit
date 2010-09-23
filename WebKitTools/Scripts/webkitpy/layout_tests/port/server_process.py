@@ -179,7 +179,7 @@ class ServerProcess:
             elif size == 0:
                 index = self._output.find('\n') + 1
 
-            if index or self.crashed or self.timed_out:
+            if index > 0 or self.crashed or self.timed_out:
                 output = self._output[0:index]
                 self._output = self._output[index:]
                 return output
