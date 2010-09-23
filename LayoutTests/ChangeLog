@@ -56,6 +56,14 @@
 
 2010-09-23  Andrew Wilson  <atwilson@chromium.org>
 
+        Unreviewed chromium expectations update.
+
+        * platform/chromium-linux/svg/in-html/by-reference-expected.txt: Added.
+        * platform/chromium-win/svg/in-html/by-reference-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
+2010-09-23  Andrew Wilson  <atwilson@chromium.org>
+
         Unreviewed, rolling out r68197.
         http://trac.webkit.org/changeset/68197
         https://bugs.webkit.org/show_bug.cgi?id=46344

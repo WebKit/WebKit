@@ -3107,3 +3107,6 @@ BUGWK46328 : fast/filesystem/flags-passing.html = TEXT
 BUGJAPHET : http/tests/navigation/ping-cross-origin-from-https.html = TEXT TIMEOUT
 BUGJAPHET : http/tests/navigation/ping-same-origin.html = TEXT TIMEOUT
 BUGJAPHET : http/tests/navigation/ping-cross-origin.html = TEXT TIMEOUT
+
+// Started crashing as part of the WK roll 68100:68178.
+BUG56732 : storage/indexeddb/transaction-basics.html = CRASH
