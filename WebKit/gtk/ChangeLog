@@ -1,3 +1,15 @@
+2010-09-23  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Nate Chapin.
+
+        [GTK] Some tests from r68174 fail on the GTK+ bots
+        https://bugs.webkit.org/show_bug.cgi?id=46396
+
+        Fix since version number in this new WebKitWebSettings property.
+
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_class_init): Fix the since version number.
+
 2010-09-23  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, build fix.

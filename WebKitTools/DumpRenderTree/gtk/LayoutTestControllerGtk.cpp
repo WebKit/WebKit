@@ -38,7 +38,6 @@
 #include "WorkQueueItem.h"
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
-
 #include <cstring>
 #include <iostream>
 #include <sstream>
@@ -46,6 +45,7 @@
 #include <glib.h>
 #include <libsoup/soup.h>
 #include <webkit/webkit.h>
+#include <wtf/gobject/GOwnPtr.h>
 
 extern "C" {
 bool webkit_web_frame_pause_animation(WebKitWebFrame* frame, const gchar* name, double time, const gchar* element);
@@ -64,24 +64,6 @@ void webkit_web_inspector_execute_script(WebKitWebInspector* inspector, long cal
 gchar* webkit_web_frame_marker_text_for_list_item(WebKitWebFrame* frame, JSContextRef context, JSValueRef nodeObject);
 void webkit_web_view_execute_core_command_by_name(WebKitWebView* webView, const gchar* name, const gchar* value);
 gboolean webkit_web_view_is_command_enabled(WebKitWebView* webView, const gchar* name);
-}
-
-static gchar* copyWebSettingKey(gchar* preferenceKey)
-{
-    static GHashTable* keyTable;
-
-    if (!keyTable) {
-        // If you add a pref here, make sure you reset the value in
-        // DumpRenderTree::resetDefaultsToConsistentValues.
-        keyTable = g_hash_table_new(g_str_hash, g_str_equal);
-        g_hash_table_insert(keyTable, g_strdup("WebKitJavaScriptEnabled"), g_strdup("enable-scripts"));
-        g_hash_table_insert(keyTable, g_strdup("WebKitDefaultFontSize"), g_strdup("default-font-size"));
-        g_hash_table_insert(keyTable, g_strdup("WebKitEnableCaretBrowsing"), g_strdup("enable-caret-browsing"));
-        g_hash_table_insert(keyTable, g_strdup("WebKitUsesPageCachePreferenceKey"), g_strdup("enable-page-cache"));
-        g_hash_table_insert(keyTable, g_strdup("WebKitPluginsEnabled"), g_strdup("enable-plugins"));
-    }
-
-    return g_strdup(static_cast<gchar*>(g_hash_table_lookup(keyTable, preferenceKey)));
 }
 
 LayoutTestController::~LayoutTestController()
@@ -664,48 +646,53 @@ void LayoutTestController::resumeAnimations() const
 
 void LayoutTestController::overridePreference(JSStringRef key, JSStringRef value)
 {
-    gchar* name = JSStringCopyUTF8CString(key);
-    gchar* strValue = JSStringCopyUTF8CString(value);
+    GOwnPtr<gchar> originalName(JSStringCopyUTF8CString(key));
+    GOwnPtr<gchar> valueAsString(JSStringCopyUTF8CString(value));
 
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
     ASSERT(view);
 
-    WebKitWebSettings* settings = webkit_web_view_get_settings(view);
-    gchar* webSettingKey = copyWebSettingKey(name);
-
-    if (webSettingKey) {
-        GValue stringValue = { 0, { { 0 } } };
-        g_value_init(&stringValue, G_TYPE_STRING);
-        g_value_set_string(&stringValue, const_cast<gchar*>(strValue));
-
-        WebKitWebSettingsClass* klass = WEBKIT_WEB_SETTINGS_GET_CLASS(settings);
-        GParamSpec* pspec = g_object_class_find_property(G_OBJECT_CLASS(klass), webSettingKey);
-        GValue propValue = { 0, { { 0 } } };
-        g_value_init(&propValue, pspec->value_type);
-
-        if (g_value_type_transformable(G_TYPE_STRING, pspec->value_type)) {
-            g_value_transform(const_cast<GValue*>(&stringValue), &propValue);
-            g_object_set_property(G_OBJECT(settings), webSettingKey, const_cast<GValue*>(&propValue));
-        } else if (G_VALUE_HOLDS_BOOLEAN(&propValue)) {
-            char* lowered = g_utf8_strdown(strValue, -1);
-            g_object_set(G_OBJECT(settings), webSettingKey,
-                         g_str_equal(lowered, "true")
-                         || g_str_equal(strValue, "1"),
-                         NULL);
-            g_free(lowered);
-        } else if (G_VALUE_HOLDS_INT(&propValue)) {
-            std::string str(strValue);
-            std::stringstream ss(str);
-            int val = 0;
-            if (!(ss >> val).fail())
-                g_object_set(G_OBJECT(settings), webSettingKey, val, NULL);
-        } else
-            printf("LayoutTestController::overridePreference failed to override preference '%s'.\n", name);
+    // This transformation could be handled by a hash table (and it once was), but
+    // having it prominent, makes it easier for people from other ports to keep the
+    // list up to date.
+    const gchar* propertyName = 0;
+    if (g_str_equal(originalName.get(), "WebKitJavaScriptEnabled"))
+        propertyName = "enable-scripts";
+    else if (g_str_equal(originalName.get(), "WebKitDefaultFontSize"))
+        propertyName = "default-font-size";
+    else if (g_str_equal(originalName.get(), "WebKitEnableCaretBrowsing"))
+        propertyName = "enable-caret-browsing";
+    else if (g_str_equal(originalName.get(), "WebKitUsesPageCachePreferenceKey"))
+        propertyName = "enable-page-cache";
+    else if (g_str_equal(originalName.get(), "WebKitPluginsEnabled"))
+         propertyName = "enable-plugins";
+    else if (g_str_equal(originalName.get(), "WebKitHyperlinkAuditingEnabled"))
+         propertyName = "enable-hyperlink-auditing";
+    else {
+        fprintf(stderr, "LayoutTestController::overridePreference tried to override "
+                "unknown preference '%s'.\n", originalName.get());
+        return;
     }
 
-    g_free(webSettingKey);
-    g_free(name);
-    g_free(strValue);
+    WebKitWebSettings* settings = webkit_web_view_get_settings(view);
+    GParamSpec* pspec = g_object_class_find_property(G_OBJECT_CLASS(
+        WEBKIT_WEB_SETTINGS_GET_CLASS(settings)), propertyName);
+    GValue currentPropertyValue = { 0, { { 0 } } };
+    g_value_init(&currentPropertyValue, pspec->value_type);
+
+    if (G_VALUE_HOLDS_STRING(&currentPropertyValue))
+        g_object_set(settings, propertyName, valueAsString.get(), NULL);
+    else if (G_VALUE_HOLDS_BOOLEAN(&currentPropertyValue))
+        g_object_set(G_OBJECT(settings), propertyName, g_ascii_strcasecmp(valueAsString.get(), "true") 
+                        || g_ascii_strcasecmp(valueAsString.get(), "1"), NULL);
+    else if (G_VALUE_HOLDS_INT(&currentPropertyValue))
+        g_object_set(G_OBJECT(settings), propertyName, atoi(valueAsString.get()), NULL);
+    else if (G_VALUE_HOLDS_FLOAT(&currentPropertyValue)) {
+        gfloat newValue = g_ascii_strtod(valueAsString.get(), 0);
+        g_object_set(G_OBJECT(settings), propertyName, newValue, NULL);
+    } else
+        fprintf(stderr, "LayoutTestController::overridePreference failed to override "
+                "preference '%s'.\n", originalName.get());
 }
 
 void LayoutTestController::addUserScript(JSStringRef source, bool runAtStart, bool allFrames)

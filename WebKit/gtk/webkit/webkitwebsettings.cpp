@@ -870,7 +870,7 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
     *
     * Enable or disable support for <a ping>.
     *
-    * Since: 1.1.22
+    * Since: 1.2.5
     */
     g_object_class_install_property(gobject_class,
                                     PROP_ENABLE_HYPERLINK_AUDITING,

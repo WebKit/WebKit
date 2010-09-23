@@ -1,3 +1,19 @@
+2010-09-23  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Nate Chapin.
+
+        [GTK] Some tests from r68174 fail on the GTK+ bots
+        https://bugs.webkit.org/show_bug.cgi?id=46396
+
+        Simplify LayoutTestController::overridePreference to make it easier for
+        people unfamiliar with the code to keep the list of preferences up to date.
+        Add the conversion for enable-hyperlink-auditing.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::overridePreference): Use a simple if-else block to determine
+        out the property name for overrridePreference. Also simplify the logic for setting
+        string properties. Add the conversion for enable-hyperlink-auditing.
+
 2010-09-23  Tony Chang  <tony@chromium.org>
 
         Reviewed by David Levin.
