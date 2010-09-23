@@ -1,3 +1,21 @@
+2010-09-23  Tony Chang  <tony@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] make fast/events/standalone-image-drag-to-editable.html non-flakey
+        https://bugs.webkit.org/show_bug.cgi?id=46381
+
+        In chromium, the image that was dropped sometimes hasn't loaded when
+        the pixel results are taken.  This results in a 0x0 image and makes
+        the test flakey.  The fix is to wait for the image load event if it's
+        not already loaded.
+
+        * fast/events/resources/standalone-image-drag-to-editable-frame.html:
+        * fast/events/standalone-image-drag-to-editable.html:
+        * platform/chromium-linux/fast/events/standalone-image-drag-to-editable-expected.checksum: Image result with dropped image loaded.
+        * platform/chromium-linux/fast/events/standalone-image-drag-to-editable-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2010-09-23  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Tony Chang.

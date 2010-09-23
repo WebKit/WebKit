@@ -2315,12 +2315,6 @@ BUG36019 WIN LINUX : fast/images/svg-as-tiled-background.html = IMAGE
 // WebKit roll 55250 to 55339
 BUG36966 : fast/loader/about-blank-hash-kept.html = FAIL
 
-// Bugs that went unreported when we upstreamed run_webkit_tests
-// This one may be an actual regression! Started being flaky after
-// http://trac.webkit.org/log/?verbose=on&rev=55742&stop_rev=55710
-BUG37896 LINUX : fast/events/standalone-image-drag-to-editable.html = IMAGE IMAGE+TEXT PASS TEXT
-BUG37896 WIN : fast/events/standalone-image-drag-to-editable.html = IMAGE+TEXT PASS TEXT
-BUG37896 MAC DEBUG : fast/events/standalone-image-drag-to-editable.html = IMAGE+TEXT PASS
 // New test, added http://trac.webkit.org/changeset/55546
 BUG37896 WIN LINUX : fast/multicol/hit-test-above-or-below.html = TEXT
 // Added in http://trac.webkit.org/changeset/55669

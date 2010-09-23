@@ -1,4 +1,21 @@
 <html><body style='margin: 0 0 0 0;'><div style='height: 100px; border: solid 1px black;' contenteditable=true>
 This layout test is checks that we don't crash when a stand alone image is dragged into a content editable div. <br />
 <a href='rdar://problem/5021127'>rdar://problem/5021127</a>
-</div></body></html>
+</div></body>
+<script>
+function waitForImageLoad()
+{
+    if (!window.layoutTestController)
+        return;
+
+    var img = document.body.getElementsByTagName("img")[0];
+    if (img.width != 0)
+        layoutTestController.notifyDone();
+    else {
+        img.addEventListener("load", function() {
+            layoutTestController.notifyDone();
+        }, false);
+    }
+}
+</script>
+</html>

@@ -10,6 +10,7 @@
       eventSender.leapForward(500);
       eventSender.mouseMoveTo(200, 50);
       eventSender.mouseUp();
+      frames[0].waitForImageLoad();
     }
     var numFramesLoaded = 0;
     function frameLoaded()
@@ -17,6 +18,8 @@
       if (++numFramesLoaded == 2)
         runTest();
     }
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
   </script>
   <frameset rows="100px, 100px, *">
     <frame onload="frameLoaded()" src="resources/standalone-image-drag-to-editable-frame.html">
