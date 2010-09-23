@@ -54,6 +54,12 @@ messages -> WebPage {
 #endif
     DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction)
     Close()
+
+    SendInts(Vector<uint64_t> ints)
+
+    RunJavaScriptAlert(uint64_t frameID, WTF::String message) -> ()
+    GetPlugins(bool refresh) -> (Vector<WebCore::PluginInfo> plugins)
+    GetPluginProcessConnection(WTF::String pluginPath) -> (CoreIPC::Connection::Handle connectionHandle) delayed
 }
 """
 
@@ -92,6 +98,50 @@ _expected_results = {
             'condition': None,
             'base_class': 'CoreIPC::Arguments0',
         },
+        {
+            'name': 'SendInts',
+            'parameters': (
+                ('Vector<uint64_t>', 'ints'),
+            ),
+            'condition': None,
+            'base_class': 'CoreIPC::Arguments1<const Vector<uint64_t>&>',
+        },
+        {
+            'name': 'RunJavaScriptAlert',
+            'parameters': (
+                ('uint64_t', 'frameID'),
+                ('WTF::String', 'message')
+            ),
+            'reply_parameters': (),
+            'condition': None,
+            'base_class': 'CoreIPC::Arguments2<uint64_t, const WTF::String&>',
+            'reply_base_class': 'CoreIPC::Arguments0',
+        },
+        {
+            'name': 'GetPlugins',
+            'parameters': (
+                ('bool', 'refresh'),
+            ),
+            'reply_parameters': (
+                ('Vector<WebCore::PluginInfo>', 'plugins'),
+            ),
+            'condition': None,
+            'base_class': 'CoreIPC::Arguments1<bool>',
+            'reply_base_class': 'CoreIPC::Arguments1<Vector<WebCore::PluginInfo>&>',
+        },
+        {
+            'name': 'GetPluginProcessConnection',
+            'parameters': (
+                ('WTF::String', 'pluginPath'),
+            ),
+            'reply_parameters': (
+                ('CoreIPC::Connection::Handle', 'connectionHandle'),
+            ),
+            'condition': None,
+            'base_class': 'CoreIPC::Arguments1<const WTF::String&>',
+            'reply_base_class': 'CoreIPC::Arguments1<CoreIPC::Connection::Handle&>',
+            'delayed_reply_base_class': 'CoreIPC::Arguments1<const CoreIPC::Connection::Handle&>',
+        }
     ),
 }
 
@@ -108,6 +158,12 @@ class ParsingTest(MessagesTest):
         for index, parameter in enumerate(message.parameters):
             self.assertEquals(parameter.type, expected_message['parameters'][index][0])
             self.assertEquals(parameter.name, expected_message['parameters'][index][1])
+        if message.reply_parameters != None:
+            for index, parameter in enumerate(message.reply_parameters):
+                self.assertEquals(parameter.type, expected_message['reply_parameters'][index][0])
+                self.assertEquals(parameter.name, expected_message['reply_parameters'][index][1])
+        else:
+            self.assertFalse('reply_parameters' in expected_message)
         self.assertEquals(message.condition, expected_message['condition'])
 
     def test_receiver(self):
@@ -123,6 +179,12 @@ class HeaderTest(MessagesTest):
         """Base classes for message structs should match expectations"""
         for index, message in enumerate(self.receiver.messages):
             self.assertEquals(messages.base_class(message), _expected_results['messages'][index]['base_class'])
+            if message.reply_parameters != None:
+                self.assertEquals(messages.reply_base_class(message), _expected_results['messages'][index]['reply_base_class'])
+                if message.delayed:
+                    self.assertEquals(messages.delayed_reply_base_class(message), _expected_results['messages'][index]['delayed_reply_base_class'])
+            else:
+                self.assertFalse('reply_parameters' in _expected_results['messages'][index])
 
 class ReceiverImplementationTest(unittest.TestCase):
     def setUp(self):

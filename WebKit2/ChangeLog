@@ -1,3 +1,19 @@
+2010-09-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Message autogeneration script should parse sync message syntax
+        https://bugs.webkit.org/show_bug.cgi?id=46359
+
+        * Scripts/webkit2/messages.py:
+        (MessageReceiver.parse): Expand the regular expression to handle sync messages.
+        (function_parameter_type): Use a const reference for all parameters except the known builtins.
+        (base_class): Returns the base class for a sync message reply struct.
+        (delayed_base_class): Returns the base class for a delayed sync message reply struct.
+        
+        * Scripts/webkit2/messages_unittest.py:
+        Add unit tests for various sync messages.
+
 2010-09-22  Andras Becsi  <abecsi@webkit.org>
 
         Unreviewed build fix after r68079.

@@ -73,21 +73,34 @@ class MessageReceiver(object):
                 elif line.startswith('#endif'):
                     condition = None
                 continue
-            match = re.search(r'([A-Za-z_0-9]+)\((.*)\)', line)
+            match = re.search(r'([A-Za-z_0-9]+)\((.*?)\)(?:(?:\s+->\s+)\((.*?)\)(?:\s+(delayed))?)?', line)
             if match:
-                name, parameters_string = match.groups()
+                name, parameters_string, reply_parameters_string, delayed_string = match.groups()
                 if parameters_string:
-                    parameters = [Parameter(*type_and_name.split(' ')) for type_and_name in parameters_string.split(', ')]
+                    parameters = parse_parameter_string(parameters_string)
                 else:
                     parameters = []
-                messages.append(Message(name, parameters, condition))
+
+                delayed = delayed_string == 'delayed'
+
+                if reply_parameters_string:
+                    reply_parameters = parse_parameter_string(reply_parameters_string)
+                elif reply_parameters_string == '':
+                    reply_parameters = []
+                else:
+                    reply_parameters = None
+
+                messages.append(Message(name, parameters, reply_parameters, delayed, condition))
         return MessageReceiver(destination, messages)
 
 
 class Message(object):
-    def __init__(self, name, parameters, condition):
+    def __init__(self, name, parameters, reply_parameters, delayed, condition):
         self.name = name
         self.parameters = parameters
+        self.reply_parameters = reply_parameters
+        if self.reply_parameters is not None:
+            self.delayed = delayed
         self.condition = condition
 
     def id(self):
@@ -98,6 +111,10 @@ class Parameter(object):
     def __init__(self, type, name):
         self.type = type
         self.name = name
+
+
+def parse_parameter_string(parameter_string):
+    return [Parameter(*type_and_name.split(' ')) for type_and_name in parameter_string.split(', ')]
 
 
 def messages_header_filename(receiver):
@@ -119,18 +136,47 @@ def messages_to_kind_enum(messages):
 
 
 def function_parameter_type(type):
-    # We assume that we must use a reference for a type iff it contains a scope
-    # resolution operator (::).
-    if re.search(r'::', type):
-        return 'const %s&' % type
-    return type
+    # Don't use references for built-in types.
+    builtin_types = frozenset([
+        'bool',
+        'uint8_t',
+        'uint16_t',
+        'uint32_t',
+        'uint64_t',
+    ])
+
+    if type in builtin_types:
+        return type
+
+    return 'const %s&' % type
+
+
+def reply_parameter_type(type):
+    return '%s&' % type
+
+
+def arguments_base_class(parameters, parameter_type_function):
+    arguments_class = 'CoreIPC::Arguments%d' % len(parameters)
+    if len(parameters):
+        arguments_class = '%s<%s>' % (arguments_class, ', '.join(parameter_type_function(parameter.type) for parameter in parameters))
+    return arguments_class
 
 
 def base_class(message):
+    return arguments_base_class(message.parameters, function_parameter_type)
+
     base_class = 'CoreIPC::Arguments%d' % len(message.parameters)
     if len(message.parameters):
         base_class = '%s<%s>' % (base_class, ', '.join(function_parameter_type(parameter.type) for parameter in message.parameters))
     return base_class
+
+
+def reply_base_class(message):
+    return arguments_base_class(message.reply_parameters, reply_parameter_type)
+
+
+def delayed_reply_base_class(message):
+    return arguments_base_class(message.reply_parameters, function_parameter_type)
 
 
 def message_to_struct_declaration(message):
