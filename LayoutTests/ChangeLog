@@ -1,5 +1,14 @@
 2010-09-23  Mihai Parparita  <mihaip@chromium.org>
 
+        Unreviewed chromium text_expectations.txt change.
+        
+        Unskip traversal/node-iterator-prototype.html on Chromium, so we can
+        get updated expectations for it from the bots.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-09-23  Mihai Parparita  <mihaip@chromium.org>
+
         Reviewed by David Levin.
 
         [Chromium] remove incorrect baselines for two WebGL tests
