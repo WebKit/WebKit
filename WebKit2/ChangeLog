@@ -1,3 +1,10 @@
+2010-09-23  Adam Roben  <aroben@apple.com>
+
+        Try to fix the Windows build
+
+        * win/WebKit2Common.vsprops: Add WebKit2/PluginProcess to the include
+        path.
+
 2010-09-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
