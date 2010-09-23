@@ -38,7 +38,19 @@ struct WebFileInfo {
     // The value 0.0 means that the time is not set.
     double modificationTime;
 
-    WebFileInfo() : modificationTime(0.0) { }
+    // The length of the file in bytes.
+    // The value -1 means that the length is not set.
+    long long length;
+
+    enum Type {
+        TypeUnknown = 0,
+        TypeFile,
+        TypeDirectory
+    };
+
+    Type type;
+
+    WebFileInfo() : modificationTime(0.0), length(-1), type(TypeUnknown) { }
 };
 
 } // namespace WebKit

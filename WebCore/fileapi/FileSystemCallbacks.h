@@ -40,12 +40,15 @@
 
 namespace WebCore {
 
+class AsyncFileWriter;
 class DOMFileSystem;
 class ErrorCallback;
 class EntriesCallback;
 class EntryArray;
 class EntryCallback;
 class FileSystemCallback;
+class FileWriter;
+class FileWriterCallback;
 class MetadataCallback;
 class ScriptExecutionContext;
 class VoidCallback;
@@ -66,6 +69,9 @@ public:
     // For EntriesCallbacks. didReadDirectoryEntry is called each time the API reads an entry, and didReadDirectoryDone is called when a chunk of entries have been read (i.e. good time to call back to the application).  If hasMore is true there can be more chunks.
     virtual void didReadDirectoryEntry(const String& name, bool isDirectory);
     virtual void didReadDirectoryEntries(bool hasMore);
+
+    // For createFileWriter.
+    virtual void didCreateFileWriter(PassOwnPtr<AsyncFileWriter>, long long length);
 
     // For ErrorCallback.
     virtual void didFail(int code);
@@ -119,6 +125,16 @@ public:
 
 private:
     RefPtr<MetadataCallback> m_successCallback;
+};
+
+class FileWriterCallbacks : public FileSystemCallbacksBase {
+public:
+    FileWriterCallbacks(PassRefPtr<FileWriter>, PassRefPtr<FileWriterCallback>, PassRefPtr<ErrorCallback>);
+    virtual void didCreateFileWriter(PassOwnPtr<AsyncFileWriter>, long long length);
+
+private:
+    RefPtr<FileWriter> m_fileWriter;
+    RefPtr<FileWriterCallback> m_successCallback;
 };
 
 class VoidCallbacks : public FileSystemCallbacksBase {

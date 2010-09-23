@@ -45,8 +45,6 @@ class AsyncFileWriter {
 public:
     virtual ~AsyncFileWriter() {}
 
-    virtual void setFileWriterClient(FileWriterClient* client) = 0;
-
     virtual void write(long long position, Blob* data) = 0;
     virtual void truncate(long long length) = 0;
     virtual void abort() = 0;

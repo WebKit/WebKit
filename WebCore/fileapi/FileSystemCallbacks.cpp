@@ -34,6 +34,7 @@
 #if ENABLE(FILE_SYSTEM)
 
 #include "AsyncFileSystem.h"
+#include "AsyncFileWriter.h"
 #include "DOMFilePath.h"
 #include "DOMFileSystem.h"
 #include "DirectoryEntry.h"
@@ -45,6 +46,8 @@
 #include "FileEntry.h"
 #include "FileError.h"
 #include "FileSystemCallback.h"
+#include "FileWriter.h"
+#include "FileWriterCallback.h"
 #include "Metadata.h"
 #include "MetadataCallback.h"
 #include "ScriptExecutionContext.h"
@@ -86,6 +89,12 @@ void FileSystemCallbacksBase::didReadDirectoryEntries(bool)
 }
 
 void FileSystemCallbacksBase::didReadDirectoryEntry(const String&, bool)
+{
+    // Each subclass must implement an appropriate one.
+    ASSERT_NOT_REACHED();
+}
+
+void FileSystemCallbacksBase::didCreateFileWriter(PassOwnPtr<AsyncFileWriter>, long long)
 {
     // Each subclass must implement an appropriate one.
     ASSERT_NOT_REACHED();
@@ -184,6 +193,23 @@ void MetadataCallbacks::didReadMetadata(double modificationTime)
 {
     if (m_successCallback)
         m_successCallback->handleEvent(Metadata::create(modificationTime).get());
+    m_successCallback.clear();
+}
+
+// FileWriterCallbacks ----------------------------------------------------------
+
+FileWriterCallbacks::FileWriterCallbacks(PassRefPtr<FileWriter> fileWriter, PassRefPtr<FileWriterCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+    : FileSystemCallbacksBase(errorCallback)
+    , m_fileWriter(fileWriter)
+    , m_successCallback(successCallback)
+{
+}
+
+void FileWriterCallbacks::didCreateFileWriter(PassOwnPtr<AsyncFileWriter> asyncFileWriter, long long length)
+{
+    m_fileWriter->initialize(asyncFileWriter, length);
+    if (m_successCallback)
+        m_successCallback->handleEvent(m_fileWriter.release().get());
     m_successCallback.clear();
 }
 

@@ -48,6 +48,8 @@ class Entry;
 class EntryCallback;
 class EntriesCallback;
 class ErrorCallback;
+class FileEntry;
+class FileWriterCallback;
 class MetadataCallback;
 class VoidCallback;
 
@@ -77,6 +79,7 @@ public:
     void getFile(const Entry* base, const String& path, PassRefPtr<Flags>, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);
     void getDirectory(const Entry* base, const String& path, PassRefPtr<Flags>, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);
     void readDirectory(const String& path, PassRefPtr<EntriesCallback>, PassRefPtr<ErrorCallback>);
+    void createWriter(const FileEntry* file, PassRefPtr<FileWriterCallback>, PassRefPtr<ErrorCallback>);
 
     // Schedule a callback. This should not cross threads (should be called on the same context thread).
     template <typename CB, typename CBArg>

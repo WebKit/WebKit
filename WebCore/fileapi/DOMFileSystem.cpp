@@ -40,8 +40,11 @@
 #include "Entry.h"
 #include "EntryCallback.h"
 #include "ErrorCallback.h"
+#include "FileEntry.h"
 #include "FileError.h"
 #include "FileSystemCallbacks.h"
+#include "FileWriter.h"
+#include "FileWriterCallback.h"
 #include "MetadataCallback.h"
 #include "ScriptExecutionContext.h"
 #include "VoidCallback.h"
@@ -197,6 +200,17 @@ void DOMFileSystem::getDirectory(const Entry* base, const String& path, PassRefP
         m_asyncFileSystem->createDirectory(platformPath, flags->isExclusive(), callbacks.release());
     else
         m_asyncFileSystem->directoryExists(platformPath, callbacks.release());
+}
+
+void DOMFileSystem::createWriter(const FileEntry* file, PassRefPtr<FileWriterCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+{
+    ASSERT(file);
+
+    String platformPath = m_asyncFileSystem->virtualToPlatformPath(file->fullPath());
+
+    RefPtr<FileWriter> fileWriter = FileWriter::create(scriptExecutionContext());
+    OwnPtr<FileWriterCallbacks> callbacks = adoptPtr(new FileWriterCallbacks(fileWriter, successCallback, errorCallback));
+    m_asyncFileSystem->createWriter(fileWriter.get(), platformPath, callbacks.release());
 }
 
 void DOMFileSystem::readDirectory(const String& path, PassRefPtr<EntriesCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)

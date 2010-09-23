@@ -33,9 +33,11 @@
 #if ENABLE(FILE_SYSTEM)
 
 #include "AsyncFileSystemCallbacks.h"
-#include "FileSystem.h"
+#include "AsyncFileWriterChromium.h"
+#include "WebFileInfo.h"
 #include "WebFileSystem.h"
 #include "WebFileSystemCallbacksImpl.h"
+#include "WebFileWriter.h"
 #include "WebKit.h"
 #include "WebKitClient.h"
 
@@ -97,6 +99,65 @@ void AsyncFileSystemChromium::directoryExists(const String& path, PassOwnPtr<Asy
 void AsyncFileSystemChromium::readDirectory(const String& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     m_webFileSystem->readDirectory(path, new WebKit::WebFileSystemCallbacksImpl(callbacks));
+}
+
+class FileWriterHelperCallbacks : public WebKit::WebFileSystemCallbacks {
+public:
+    FileWriterHelperCallbacks(FileWriterClient* client, const String& path, WebKit::WebFileSystem* webFileSystem, PassOwnPtr<WebCore::AsyncFileSystemCallbacks> callbacks)
+        : m_client(client)
+        , m_path(path)
+        , m_webFileSystem(webFileSystem)
+        , m_callbacks(callbacks)
+    {
+    }
+
+    virtual void didSucceed()
+    {
+        ASSERT_NOT_REACHED();
+        delete this;
+    }
+    virtual void didReadMetadata(const WebKit::WebFileInfo& info)
+    {
+        ASSERT(m_callbacks);
+        if (info.type != WebKit::WebFileInfo::TypeFile || info.length < 0)
+            m_callbacks->didFail(WebKit::WebFileErrorInvalidState);
+        else {
+            OwnPtr<AsyncFileWriterChromium> asyncFileWriterChromium = adoptPtr(new AsyncFileWriterChromium(m_client));
+            OwnPtr<WebKit::WebFileWriter> webFileWriter = adoptPtr(m_webFileSystem->createFileWriter(m_path, asyncFileWriterChromium.get()));
+            asyncFileWriterChromium->setWebFileWriter(webFileWriter.release());
+            m_callbacks->didCreateFileWriter(asyncFileWriterChromium.release(), info.length);
+        }
+        delete this;
+    }
+
+    virtual void didReadDirectory(const WebKit::WebVector<WebKit::WebFileSystemEntry>& entries, bool hasMore)
+    {
+        ASSERT_NOT_REACHED();
+        delete this;
+    }
+    virtual void didOpenFileSystem(const WebKit::WebString& name, const WebKit::WebString& rootPath)
+    {
+        ASSERT_NOT_REACHED();
+        delete this;
+    }
+
+    virtual void didFail(WebKit::WebFileError error)
+    {
+        ASSERT(m_callbacks);
+        m_callbacks->didFail(error);
+        delete this;
+    }
+
+private:
+    FileWriterClient* m_client;
+    String m_path;
+    WebKit::WebFileSystem* m_webFileSystem;
+    OwnPtr<WebCore::AsyncFileSystemCallbacks> m_callbacks;
+};
+
+void AsyncFileSystemChromium::createWriter(FileWriterClient* client, const String& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+{
+    m_webFileSystem->readMetadata(path, new FileWriterHelperCallbacks(client, path, m_webFileSystem, callbacks));
 }
 
 } // namespace WebCore

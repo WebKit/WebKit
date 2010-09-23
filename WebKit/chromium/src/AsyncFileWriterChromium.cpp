@@ -38,25 +38,26 @@
 #include "WebFileWriter.h"
 #include "WebURL.h"
 
-using namespace WebCore;
-
-namespace WebKit {
+namespace WebCore {
 
 AsyncFileWriterChromium::AsyncFileWriterChromium(FileWriterClient* client)
     : m_client(client)
 {
 }
 
-void AsyncFileWriterChromium::setWebFileWriter(WebFileWriter* writer)
+AsyncFileWriterChromium::~AsyncFileWriterChromium()
 {
-    ASSERT(!m_writer);
+}
+
+void AsyncFileWriterChromium::setWebFileWriter(PassOwnPtr<WebKit::WebFileWriter> writer)
+{
     m_writer = writer;
 }
 
 void AsyncFileWriterChromium::write(long long position, Blob* data)
 {
     ASSERT(m_writer);
-    m_writer->write(position, WebURL(data->url()));
+    m_writer->write(position, WebKit::WebURL(data->url()));
 }
 
 void AsyncFileWriterChromium::truncate(long long length)
@@ -82,7 +83,7 @@ void AsyncFileWriterChromium::didTruncate(long long length)
     m_client->didTruncate(length);
 }
 
-void AsyncFileWriterChromium::didFail(WebFileError error)
+void AsyncFileWriterChromium::didFail(WebKit::WebFileError error)
 {
     m_client->didFail(error);
 }

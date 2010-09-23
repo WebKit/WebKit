@@ -38,6 +38,7 @@
 namespace WebCore {
 
 class AsyncFileSystem;
+class AsyncFileWriter;
 
 class AsyncFileSystemCallbacks : public Noncopyable {
 public:
@@ -55,6 +56,9 @@ public:
 
     // Called after a chunk of directory entries have been read (i.e. indicates it's good time to call back to the application).  If hasMore is true there can be more chunks.
     virtual void didReadDirectoryEntries(bool hasMore) = 0;
+
+    // Called when an AsyncFileWrter has been created successfully.
+    virtual void didCreateFileWriter(PassOwnPtr<AsyncFileWriter> writer, long long length) = 0;
 
     // Called when there was an error.
     virtual void didFail(int code) = 0;

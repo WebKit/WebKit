@@ -1,3 +1,44 @@
+2010-09-22  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by Dumitru Daniliuc.
+
+        Add Chromium implementation for FileWriter
+        https://bugs.webkit.org/show_bug.cgi?id=44361
+
+        No new tests; the implementation's not yet far enough along for that.
+
+        This makes a chain of construction-and-linking-up for various sorts of
+        FileWriter interfaces to call through to Chromium, and for various
+        sorts of FileWriterClients to call back, with object ownership always
+        pointing towards the Chromium API.  That is, the DOM object owns an
+        AsyncFileWriter, which owns its implementation object, and the reverse
+        (client) direction is raw pointers.
+
+        File metadata is looked up before the FileWriter is returned, so that
+        we know the file exists and can cache its length.
+
+        The WebKit/chromium interface here is modeled after that of the
+        FileSystem.
+        
+        * public/WebFileInfo.h:
+        (WebKit::WebFileInfo::WebFileInfo):
+        * src/AsyncFileSystemChromium.cpp:
+        (WebCore::FileWriterHelperCallbacks::FileWriterHelperCallbacks):
+        (WebCore::FileWriterHelperCallbacks::didSucceed):
+        (WebCore::FileWriterHelperCallbacks::didReadMetadata):
+        (WebCore::FileWriterHelperCallbacks::didReadDirectory):
+        (WebCore::FileWriterHelperCallbacks::didOpenFileSystem):
+        (WebCore::FileWriterHelperCallbacks::didCreateFileWriter):
+        (WebCore::FileWriterHelperCallbacks::didFail):
+        (WebCore::AsyncFileSystemChromium::createWriter):
+        * src/AsyncFileSystemChromium.h:
+        * src/AsyncFileWriterChromium.cpp:
+        (WebCore::AsyncFileWriterChromium::setWebFileWriter):
+        (WebCore::AsyncFileWriterChromium::write):
+        (WebCore::AsyncFileWriterChromium::didFail):
+        * src/AsyncFileWriterChromium.h:
+        * src/WebFileSystemCallbacksImpl.h:
+
 2010-09-22  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, Chromium build fix. Fix build when accelerated

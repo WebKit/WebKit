@@ -36,35 +36,37 @@
 #include "AsyncFileWriter.h"
 #include "WebFileError.h"
 #include "WebFileWriterClient.h"
-
-namespace WebCore {
-class Blob;
-class FileWriterClient;
-}
+#include <WTF/PassOwnPtr.h>
 
 namespace WebKit {
-
 class WebFileWriter;
+}
 
-class AsyncFileWriterChromium : public WebCore::AsyncFileWriter, public WebFileWriterClient {
+namespace WebCore {
+
+class Blob;
+class FileWriterClient;
+
+class AsyncFileWriterChromium : public AsyncFileWriter, public WebKit::WebFileWriterClient {
 public:
-    AsyncFileWriterChromium(WebCore::FileWriterClient* client);
-
-    void setWebFileWriter(WebFileWriter* writer);
+    AsyncFileWriterChromium(FileWriterClient* client);
+    ~AsyncFileWriterChromium();
+    
+    void setWebFileWriter(PassOwnPtr<WebKit::WebFileWriter> writer);
 
     // FileWriter
-    virtual void write(long long position, WebCore::Blob* data);
+    virtual void write(long long position, Blob* data);
     virtual void truncate(long long length);
     virtual void abort();
 
     // WebFileWriterClient
     virtual void didWrite(long long bytes, bool complete);
     virtual void didTruncate(long long length);
-    virtual void didFail(WebFileError);
+    virtual void didFail(WebKit::WebFileError);
 
 private:
-    OwnPtr<WebFileWriter> m_writer;
-    WebCore::FileWriterClient* m_client;
+    OwnPtr<WebKit::WebFileWriter> m_writer;
+    FileWriterClient* m_client;
 };
 
 } // namespace
