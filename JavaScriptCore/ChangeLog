@@ -1,3 +1,28 @@
+2010-09-23  Peter Varga  <pvarga@inf.u-szeged.hu>
+
+        Reviewed by Gavin Barraclough.
+
+        Reduce the number of BOL checks in YARR Interpreter
+        https://bugs.webkit.org/show_bug.cgi?id=46260
+
+        Extend the YARR Interpreter with an optimization which reduces the number of
+        BOL assertion checks. If a "TypeBodyAlternative" byteTerm is followed by a
+        "TypeAssertionBOL" byteTerm it will be checked just one time.
+
+        * yarr/RegexInterpreter.cpp:
+        (JSC::Yarr::Interpreter::matchDisjunction):
+        (JSC::Yarr::ByteCompiler::compile):
+        (JSC::Yarr::ByteCompiler::regexBegin):
+        (JSC::Yarr::ByteCompiler::alternativeBodyDisjunction):
+        (JSC::Yarr::ByteCompiler::emitDisjunction):
+        * yarr/RegexInterpreter.h:
+        (JSC::Yarr::ByteTerm::BodyAlternativeBegin):
+        (JSC::Yarr::ByteTerm::BodyAlternativeDisjunction):
+        (JSC::Yarr::ByteTerm::BodyAlternativeEnd):
+        (JSC::Yarr::ByteTerm::AlternativeBegin):
+        (JSC::Yarr::ByteTerm::AlternativeDisjunction):
+        (JSC::Yarr::ByteTerm::AlternativeEnd):
+
 2010-09-22  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Gavin Barraclough.
