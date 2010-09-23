@@ -1186,17 +1186,20 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
         || !isfinite(srcRect.x()) || !isfinite(srcRect.y()) || !isfinite(srcRect.width()) || !isfinite(srcRect.height()))
         return;
 
+    if (!dstRect.width() || !dstRect.height())
+        return;
+
     if (!image->complete())
         return;
 
+    FloatRect normalizedSrcRect = normalizeRect(srcRect);
+    FloatRect normalizedDstRect = normalizeRect(dstRect);
+
     FloatRect imageRect = FloatRect(FloatPoint(), size(image));
-    if (!imageRect.contains(normalizeRect(srcRect)) || !srcRect.width() || !srcRect.height()) {
+    if (!imageRect.contains(normalizedSrcRect) || !srcRect.width() || !srcRect.height()) {
         ec = INDEX_SIZE_ERR;
         return;
     }
-
-    if (!dstRect.width() || !dstRect.height())
-        return;
 
     GraphicsContext* c = drawingContext();
     if (!c)
@@ -1214,8 +1217,8 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
     if (canvas()->originClean() && !cachedImage->image()->hasSingleSecurityOrigin())
         canvas()->setOriginTainted();
 
-    FloatRect sourceRect = c->roundToDevicePixels(srcRect);
-    FloatRect destRect = c->roundToDevicePixels(dstRect);
+    FloatRect sourceRect = c->roundToDevicePixels(normalizedSrcRect);
+    FloatRect destRect = c->roundToDevicePixels(normalizedDstRect);
     c->drawImage(cachedImage->image(), DeviceColorSpace, destRect, sourceRect, state().m_globalComposite);
     didDraw(destRect);
 }

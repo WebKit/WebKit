@@ -1,3 +1,19 @@
+2010-09-23  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        context.drawImage with (source rect's height) = -(input image's native height) draws nothing
+        https://bugs.webkit.org/show_bug.cgi?id=46243
+
+        These test simply exercise using negative widths and heights for the source rect in ctx.drawImage calls.
+
+        * canvas/philip/tests/2d.drawImage.negativeSourceHeight-expected.txt: Added.
+        * canvas/philip/tests/2d.drawImage.negativeSourceHeight.html: Added.
+        * canvas/philip/tests/2d.drawImage.negativeSourceHeight2-expected.txt: Added.
+        * canvas/philip/tests/2d.drawImage.negativeSourceHeight2.html: Added.
+        * canvas/philip/tests/2d.drawImage.negativeSourceHeightAndWidth-expected.txt: Added.
+        * canvas/philip/tests/2d.drawImage.negativeSourceHeightAndWidth.html: Added.
+
 2010-09-23  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, Chromium expectations tweak.

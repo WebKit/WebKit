@@ -1,3 +1,22 @@
+2010-09-23  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        context.drawImage with (source rect's height) = -(input image's native height) draws nothing
+        https://bugs.webkit.org/show_bug.cgi?id=46243
+
+        This patch changes canvasrenderingcontext2d's drawImage with an image element to
+        normalize the source and dest rects to acheive the desired canvas spec behavior
+        of allowing negative widths and heights that don't cause flipping and fix the
+        adverse behavior of specifying a source rect height of negative the source image's height
+
+        Tests: canvas/philip/tests/2d.drawImage.negativeSourceHeight.html
+               canvas/philip/tests/2d.drawImage.negativeSourceHeight2.html
+               canvas/philip/tests/2d.drawImage.negativeSourceHeightAndWidth.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp: Normalize rects in drawImage before calling
+        lower level draw calls.
+
 2010-09-23  Renata Hodovan  <reni@inf.u-szeged.hu>
 
         Reviewed by Dirk Schulze.
