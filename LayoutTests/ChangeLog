@@ -1,3 +1,13 @@
+2010-09-23  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Tests that we donot assert on object->isBox.
+        https://bugs.webkit.org/show_bug.cgi?id=46365
+
+        * compositing/overflow/get-transform-from-non-box-container-expected.txt: Added.
+        * compositing/overflow/get-transform-from-non-box-container.html: Added.
+
 2010-09-23  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Remove passing tests. These were failing because the bot was missing QuickTime.
