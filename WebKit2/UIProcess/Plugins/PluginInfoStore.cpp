@@ -190,4 +190,15 @@ PluginInfoStore::Plugin PluginInfoStore::findPlugin(String& mimeType, const KURL
     return Plugin();
 }
 
+PluginInfoStore::Plugin PluginInfoStore::infoForPluginWithPath(const String& pluginPath)
+{
+    for (size_t i = 0; i < m_plugins.size(); ++i) {
+        if (m_plugins[i].path == pluginPath)
+            return m_plugins[i];
+    }
+    
+    ASSERT_NOT_REACHED();
+    return Plugin();
+}
+
 } // namespace WebKit

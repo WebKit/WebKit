@@ -94,8 +94,11 @@ public:
     bool open();
     void invalidate();
 
+    // FIXME: This variant of send is deprecated, all clients should move to the overload that takes a message.
     template<typename E, typename T> bool send(E messageID, uint64_t destinationID, const T& arguments);
     
+    template<typename T> bool send(const T& message, uint64_t destinationID);
+
     static const unsigned long long NoTimeout = 10000000000ULL;
     template<typename E, typename T, typename U> bool sendSync(E messageID, uint64_t destinationID, const T& arguments, const U& reply, double timeout);
 
@@ -217,6 +220,14 @@ bool Connection::send(E messageID, uint64_t destinationID, const T& arguments)
     argumentEncoder->encode(arguments);
 
     return sendMessage(MessageID(messageID), argumentEncoder.release());
+}
+
+template<typename T> bool Connection::send(const T& message, uint64_t destinationID)
+{
+    OwnPtr<ArgumentEncoder> argumentEncoder(new ArgumentEncoder(destinationID));
+    argumentEncoder->encode(message);
+    
+    return sendMessage(MessageID(T::messageID), argumentEncoder.release());
 }
 
 template<typename E, typename T, typename U>

@@ -23,55 +23,53 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef PluginProcessProxy_h
+#define PluginProcessProxy_h
+
 #if ENABLE(PLUGIN_PROCESS)
 
-#include "PluginProcessManager.h"
-
+#include "Connection.h"
 #include "PluginInfoStore.h"
-#include "PluginProcessProxy.h"
-#include "WebContext.h"
-#include <wtf/StdLibExtras.h>
-#include <wtf/text/WTFString.h>
+#include "ProcessLauncher.h"
+#include <wtf/Deque.h>
 
 namespace WebKit {
 
-PluginProcessManager& PluginProcessManager::shared()
-{
-    DEFINE_STATIC_LOCAL(PluginProcessManager, pluginProcessManager, ());
-    return pluginProcessManager;
-}
-
-void PluginProcessManager::getPluginProcessConnection(const String& pluginPath, WebProcessProxy* webProcessProxy, CoreIPC::ArgumentEncoder* reply)
-{
-    ASSERT(!pluginPath.isNull());
-
-    PluginInfoStore::Plugin plugin = webProcessProxy->context()->pluginInfoStore()->infoForPluginWithPath(pluginPath);
-
-    PluginProcessProxy* pluginProcess = 0;
+class PluginProcessManager;
+class WebProcessProxy;
     
-    for (size_t i = 0; i < m_pluginProcesses.size(); ++i) {
-        if (m_pluginProcesses[i]->pluginInfo().path == plugin.path) {
-            pluginProcess = m_pluginProcesses[i];
-            break;
-        }
-    }
+class PluginProcessProxy : CoreIPC::Connection::Client, ProcessLauncher::Client {
+public:
+    static PassOwnPtr<PluginProcessProxy> create(PluginProcessManager*, const PluginInfoStore::Plugin&);
 
-    if (!pluginProcess) {
-        pluginProcess = PluginProcessProxy::create(this, plugin).leakPtr();
-        m_pluginProcesses.append(pluginProcess);
-    }
+    const PluginInfoStore::Plugin& pluginInfo() const { return m_pluginInfo; }
 
-    // FIXME: Ask the plug-in process for a connection
-}
+private:
+    PluginProcessProxy(PluginProcessManager*, const PluginInfoStore::Plugin&);
 
-void PluginProcessManager::removePluginProcessProxy(PluginProcessProxy* pluginProcessProxy)
-{
-    size_t vectorIndex = m_pluginProcesses.find(pluginProcessProxy);
-    ASSERT(vectorIndex != notFound);
+    // CoreIPC::Connection::Client
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    virtual void didClose(CoreIPC::Connection*);
+    virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID);
 
-    m_pluginProcesses.remove(vectorIndex);
-}
+    // ProcessLauncher::Client
+    virtual void didFinishLaunching(ProcessLauncher*, CoreIPC::Connection::Identifier);
+    
+    // The plug-in host process manager.
+    PluginProcessManager* m_pluginProcessManager;
+    
+    // Information about the plug-in.
+    PluginInfoStore::Plugin m_pluginInfo;
+
+    // The connection to the plug-in host process.
+    RefPtr<CoreIPC::Connection> m_connection;
+
+    // The process launcher for the plug-in host process.
+    RefPtr<ProcessLauncher> m_processLauncher;
+};
 
 } // namespace WebKit
 
 #endif // ENABLE(PLUGIN_PROCESS)
+
+#endif // PluginProcessProxy_h

@@ -1,8 +1,10 @@
 VPATH = \
+    $(WebKit2)/PluginProcess \
     $(WebKit2)/WebProcess/WebPage \
 #
 
 MESSAGE_RECEIVERS = \
+    PluginProcess \
     WebPage \
 #
 

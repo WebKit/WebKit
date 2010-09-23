@@ -59,6 +59,9 @@ public:
     // plug-in type. In that case, mimeType will be filled in with the right MIME type.
     Plugin findPlugin(String& mimeType, const WebCore::KURL& url);
     
+    // Returns the info for the plug-in with the given path.
+    Plugin infoForPluginWithPath(const String& pluginPath);
+
 private:
 
     Plugin findPluginForMIMEType(const String& mimeType);

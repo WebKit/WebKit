@@ -71,6 +71,8 @@ public:
         return m_connection.get(); 
     }
 
+    WebContext* context() const { return m_context; }
+
     PlatformProcessIdentifier processIdentifier() const { return m_processLauncher->processIdentifier(); }
 
     WebPageProxy* webPage(uint64_t pageID) const;

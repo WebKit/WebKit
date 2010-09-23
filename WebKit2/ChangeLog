@@ -1,3 +1,57 @@
+2010-09-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add PluginProcessProxy class
+        https://bugs.webkit.org/show_bug.cgi?id=46377
+
+        * DerivedSources.make:
+        Add PluginProcess.
+
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC::Connection::send):
+        Add send overload that takes a message.
+
+        * Platform/CoreIPC/MessageID.h:
+        Add MessageClassPluginProcess message kind.
+
+        * PluginProcess/PluginProcess.messages.in: Added.
+        Add PluginProcess messages.
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::infoForPluginWithPath):
+        * UIProcess/Plugins/PluginInfoStore.h:
+        New function that returns the plug-in info for a plug-in with the given path.
+
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        (WebKit::PluginProcessManager::getPluginProcessConnection):
+        Look for an existing plug-in process proxy.
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp: Added.
+        (WebKit::PluginProcessProxy::create):
+        Launch the process.
+
+        (WebKit::PluginProcessProxy::didReceiveMessage):
+        (WebKit::PluginProcessProxy::didReceiveInvalidMessage):
+        Add stubbed out functions.
+
+        (WebKit::PluginProcessProxy::didClose):
+        Delete the plug-in process proxy.
+        
+        (WebKit::PluginProcessProxy::didFinishLaunching):
+        Open a connection to the plug-in process proxy.
+
+        * UIProcess/Plugins/PluginProcessProxy.h: Added.
+        (WebKit::PluginProcessProxy::pluginInfo):
+        Return the plug-in info.
+
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::context):
+        Add a context getter.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
 2010-09-23  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Sam Weinig.
