@@ -198,7 +198,4 @@ interface IWebPreferences : IUnknown
 
     HRESULT editingBehavior([out, retval] WebKitEditingBehavior* editingBehavior);
     HRESULT setEditingBehavior([in] WebKitEditingBehavior behavior);
-
-    HRESULT hyperlinkAuditingEnabled(BOOL *hyperlinkAuditingEnabled);
-    HRESULT setHyperlinkAuditingEnabled(BOOL hyperlinkAuditingEnabled);
 }

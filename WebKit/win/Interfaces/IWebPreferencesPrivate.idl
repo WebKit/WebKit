@@ -118,4 +118,7 @@ interface IWebPreferencesPrivate : IUnknown
 
     HRESULT memoryInfoEnabled([out, retval] BOOL *enabled);
     HRESULT setMemoryInfoEnabled([in] BOOL enabled);
+
+    HRESULT hyperlinkAuditingEnabled(BOOL *hyperlinkAuditingEnabled);
+    HRESULT setHyperlinkAuditingEnabled(BOOL hyperlinkAuditingEnabled);
 }
