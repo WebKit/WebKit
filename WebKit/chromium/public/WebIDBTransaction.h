@@ -51,7 +51,8 @@ public:
     virtual void abort() { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual int id() const
     {
-        WEBKIT_ASSERT_NOT_REACHED();
+        // FIXME: Uncomment this after the next Chromium WebKit roll.
+        //WEBKIT_ASSERT_NOT_REACHED();
         return 0;
     }
     virtual void setCallbacks(WebIDBTransactionCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }

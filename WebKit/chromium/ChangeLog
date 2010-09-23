@@ -1,3 +1,10 @@
+2010-09-23  Jeremy Orlow  <jorlow@chromium.org>
+
+        Unreviewed small fix for my last patch.
+
+        * public/WebIDBTransaction.h:
+        (WebKit::WebIDBTransaction::id):
+
 2010-09-22  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Darin Fisher.
