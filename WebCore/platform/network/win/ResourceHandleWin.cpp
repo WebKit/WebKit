@@ -380,16 +380,21 @@ bool ResourceHandle::onRequestComplete()
                 response.setTextEncodingName(extractCharsetFromMediaType(httpContentType));
             }
 
-            client()->didReceiveResponse(this, response);
+            if (ResourceHandleClient* resourceHandleClient = client())
+                resourceHandleClient->didReceiveResponse(this, response);
         }
-        client()->didReceiveData(this, buffer, buffers.dwBufferLength, 0);
+
+        if (ResourceHandleClient* resourceHandleClient = client())
+            resourceHandleClient->didReceiveData(this, buffer, buffers.dwBufferLength, 0);
         buffers.dwBufferLength = bufferSize;
     }
 
     if (!ok && GetLastError() == ERROR_IO_PENDING)
         return true;
 
-    client()->didFinishLoading(this, 0);
+    if (ResourceHandleClient* resourceHandleClient = client())
+        resourceHandleClient->didFinishLoading(this, 0);
+
     InternetCloseHandle(d->m_requestHandle);
     InternetCloseHandle(d->m_connectHandle);
     deref(); // balances ref in start
