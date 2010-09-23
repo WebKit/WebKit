@@ -1,3 +1,26 @@
+2010-09-23  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Sync HTML5lib tests with upstream.
+
+        * html5lib/resources/comments01.dat:
+        * html5lib/resources/pending-spec-changes-plain-text-unsafe.dat: Added.
+        * html5lib/resources/pending-spec-changes.dat: Added.
+        * html5lib/resources/plain-text-unsafe.dat: Added.
+        * html5lib/resources/tests1.dat:
+        * html5lib/resources/tests10.dat:
+        * html5lib/resources/tests13.dat: Removed.
+        * html5lib/resources/tests14.dat:
+        * html5lib/resources/tests15.dat:
+        * html5lib/resources/tests17.dat:
+        * html5lib/resources/tests19.dat:
+        * html5lib/resources/tests20.dat:
+        * html5lib/resources/tests21.dat:
+        * html5lib/resources/tests9.dat:
+        * html5lib/resources/tests_innerHTML_1.dat:
+        * html5lib/runner-expected.txt:
+
 2010-09-22  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Adam Barth.

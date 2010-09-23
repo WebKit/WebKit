@@ -1,0 +1,45 @@
+#data
+FOO<!-- BAR -- <QUX> -- MUX -- >BAZ
+#errors
+3: Non-space characters found without seeing a doctype first. Expected “<!DOCTYPE html>”.
+15: Consecutive hyphens did not terminate a comment. “--” is not permitted inside a comment, but e.g. “- -” is.
+24: Consecutive hyphens did not terminate a comment. “--” is not permitted inside a comment, but e.g. “- -” is.
+31: Consecutive hyphens did not terminate a comment. “--” is not permitted inside a comment, but e.g. “- -” is.
+35: End of file inside comment.
+#document
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     <!--  BAR -- <QUX> -- MUX -- >BAZ -->
+
+#data
+FOO<!-- BAR --   >BAZ
+#errors
+3: Non-space characters found without seeing a doctype first. Expected “<!DOCTYPE html>”.
+15: Consecutive hyphens did not terminate a comment. “--” is not permitted inside a comment, but e.g. “- -” is.
+21: End of file inside comment.
+#document
+| <html>
+|   <head>
+|   <body>
+|     "FOO"
+|     <!--  BAR --   >BAZ -->
+
+#data
+<svg><![CDATA[]]
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+
+#data
+<svg><![CDATA[]
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>

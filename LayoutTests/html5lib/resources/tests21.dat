@@ -87,26 +87,6 @@
 |       "]] >"
 
 #data
-<svg><![CDATA[]]
-#errors
-#document
-| <html>
-|   <head>
-|   <body>
-|     <svg svg>
-|       "]]"
-
-#data
-<svg><![CDATA[]
-#errors
-#document
-| <html>
-|   <head>
-|   <body>
-|     <svg svg>
-|       "]"
-
-#data
 <svg><![CDATA[]>a
 #errors
 #document

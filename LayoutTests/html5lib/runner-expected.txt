@@ -9,6 +9,41 @@ CONSOLE MESSAGE: line 1: SyntaxError: Parse error
 CONSOLE MESSAGE: line 1: SyntaxError: Parse error
 CONSOLE MESSAGE: line 2: PASS
 CONSOLE MESSAGE: line 2: FOO<span>BAR</span>BAZ
+resources/pending-spec-changes-plain-text-unsafe.dat: PASS
+
+resources/pending-spec-changes.dat:
+3
+4
+
+Test 3 of 4 in resources/pending-spec-changes.dat failed. Input:
+<svg><![CDATA[]]
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|       "]]"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+
+Test 4 of 4 in resources/pending-spec-changes.dat failed. Input:
+<svg><![CDATA[]
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|       "]"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+resources/plain-text-unsafe.dat: PASS
+
 resources/tests1.dat: PASS
 
 resources/tests2.dat: PASS
@@ -49,11 +84,11 @@ resources/tests8.dat: PASS
 resources/tests9.dat: PASS
 
 resources/tests10.dat:
-35
-48
-49
+38
+51
+52
 
-Test 35 of 49 in resources/tests10.dat failed. Input:
+Test 38 of 52 in resources/tests10.dat failed. Input:
 <svg><script></script><path>
 Got:
 | <html>
@@ -70,7 +105,7 @@ Expected:
 |       <svg script>
 |       <svg path>
 
-Test 48 of 49 in resources/tests10.dat failed. Input:
+Test 51 of 52 in resources/tests10.dat failed. Input:
 <math><annotation-xml><svg><foreignObject><div><math><mi></mi></math><span></span></div></foreignObject><path></path></svg></annotation-xml><mi>
 Got:
 | <html>
@@ -101,7 +136,7 @@ Expected:
 |           <svg path>
 |       <math mi>
 
-Test 49 of 49 in resources/tests10.dat failed. Input:
+Test 52 of 52 in resources/tests10.dat failed. Input:
 <math><annotation-xml><svg><foreignObject><math><mi><svg></svg></mi><mo></mo></math><span></span></foreignObject><path></path></svg></annotation-xml><mi>
 Got:
 | <html>
@@ -150,7 +185,7 @@ resources/tests18.dat: PASS
 resources/tests19.dat:
 63
 
-Test 63 of 102 in resources/tests19.dat failed. Input:
+Test 63 of 97 in resources/tests19.dat failed. Input:
 <!doctype html><keygen><frameset>
 Got:
 | <!DOCTYPE html>
@@ -190,41 +225,8 @@ resources/entities01.dat: PASS
 
 resources/entities02.dat: PASS
 
-resources/comments01.dat:
-3
-6
+resources/comments01.dat: PASS
 
-Test 3 of 13 in resources/comments01.dat failed. Input:
-FOO<!-- BAR --   >BAZ
-Got:
-| <html>
-|   <head>
-|   <body>
-|     "FOO"
-|     <!--  BAR --   >BAZ -->
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     "FOO"
-|     <!--  BAR --    -->
-|     "BAZ"
-
-Test 6 of 13 in resources/comments01.dat failed. Input:
-FOO<!-- BAR -- <QUX> -- MUX -- >BAZ
-Got:
-| <html>
-|   <head>
-|   <body>
-|     "FOO"
-|     <!--  BAR -- <QUX> -- MUX -- >BAZ -->
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     "FOO"
-|     <!--  BAR -- <QUX> -- MUX --  -->
-|     "BAZ"
 resources/adoption01.dat: PASS
 
 resources/adoption02.dat:

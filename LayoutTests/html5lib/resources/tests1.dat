@@ -1262,6 +1262,18 @@ Line: 1 Col: 49 Unexpected end tag (code). Ignored.
 |         <strike>
 
 #data
+<!DOCTYPE html><spacer>foo
+#errors
+26: End of file seen and there were open elements.
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <spacer>
+|       "foo"
+
+#data
 <title><meta></title><link><title><meta></title>
 #errors
 Line: 1 Col: 7 Unexpected start tag (title). Expected DOCTYPE.

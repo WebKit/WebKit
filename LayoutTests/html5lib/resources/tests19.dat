@@ -831,48 +831,6 @@
 |     "a "
 
 #data
-<html>�<frameset></frameset>
-#errors
-#document
-| <html>
-|   <head>
-|   <frameset>
-
-#data
-<html> � <frameset></frameset>
-#errors
-#document
-| <html>
-|   <head>
-|   <frameset>
-
-#data
-<html>a�a<frameset></frameset>
-#errors
-#document
-| <html>
-|   <head>
-|   <body>
-|     "a�a"
-
-#data
-<html>��<frameset></frameset>
-#errors
-#document
-| <html>
-|   <head>
-|   <frameset>
-
-#data
-<html>�
- <frameset></frameset>
-#errors
-#document
-| <html>
-|   <head>
-|   <frameset>
-
-#data
 <!doctype html><p><math></p>a
 #errors
 #document
