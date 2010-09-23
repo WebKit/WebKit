@@ -213,18 +213,15 @@ body {
   right: 0;
   border-top: 1px solid #ddd;
   background-color: #eee;
+  font-family: sans-serif;
 }
 
 #toolbar .actions {
   float: left;
 }
 
-#toolbar .message {
+#toolbar .links {
   float: right;
-}
-
-#toolbar .commentStatus {
-  font-style:italic
 }
 
 .winter {
@@ -271,6 +268,15 @@ body {
  font-style: italic;
 }
 
+.message {
+  font-size: small;
+  font-family: sans-serif;
+}
+
+.commentStatus {
+  font-style: italic;
+}
+
 .description {
   font-style: italic;
 }
@@ -306,7 +312,7 @@ body {
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
-<script src="code-review.js?version=11"></script> 
+<script src="code-review.js?version=12"></script> 
 EOF
 
     def self.revisionOrDescription(string)

@@ -161,7 +161,7 @@
     descriptor = comments.length + ' comment';
     if (comments.length > 1)
       descriptor += 's';
-    $('#toolbar .commentStatus').text('This patch has ' + descriptor + '.  Scroll through them with the "n" and "p" keys.');
+    $('.message .commentStatus').text('This patch has ' + descriptor + '.  Scroll through them with the "n" and "p" keys.');
   }
 
   function scanForComments(author, text) {
@@ -240,6 +240,7 @@
       var details = $(data);
       addFlagsForAttachment(details);
       $('#toolbar .actions').append($('<iframe class="statusBubble" src="https://webkit-commit-queue.appspot.com/status-bubble/' + attachment_id + '" scrolling="no"></iframe>'));
+      $('#toolbar .bugLink').html('<a href="/show_bug.cgi?id=' + bug_id + '" target="_blank">Bug ' + bug_id + '</a>');
     });
   }
 
@@ -254,7 +255,8 @@
   $(document).ready(function() {
     crawlDiff();
     fetchHistory();
-    $(document.body).prepend('<div id="toolbar"><div class="actions"><button id="preview_comments">Preview</button><button id="post_comments">Publish</button></div><div class="message"> <span class="commentStatus"></span> <span class="help">Double-click a line or click or drag on line numbers to add a comment.</span></div></div>');
+    $(document.body).prepend('<div id="message"><div class="help">Double-click a line or select line numbers to add a comment.</div><div class="commentStatus"></div></div>');
+    $(document.body).prepend('<div id="toolbar"><div class="actions"><button id="preview_comments">Preview</button><button id="post_comments">Publish</button></div><div class="links"><span class="bugLink"></span></div>');
     $(document.body).prepend('<div id="comment_form" class="inactive"><div class="winter"></div><div class="lightbox"><iframe id="reviewform" src="attachment.cgi?id=' + attachment_id + '&action=reviewform"></iframe></div></div>');
     $(document.body).append('<div class="overallComments"><div class="description">Overall comments:</div><textarea></textarea></div>');
   });
