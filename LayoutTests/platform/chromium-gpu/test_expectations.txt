@@ -3,8 +3,8 @@
 // WebKitTools/Scripts/webkitpy/layout_tests/port/chromium_gpu.py
 //
 // We skip most of the tests in the repository because they don't trigger
-// the accelerated code paths. We actually only run the canvas and
-// compositing tests.
+// the accelerated code paths. We actually only run some of the canvas and
+// compositing tests (as listed below).
 WONTFIX SKIP : accessibility = PASS FAIL
 WONTFIX SKIP : animations = PASS FAIL
 WONTFIX SKIP : canvas = PASS FAIL

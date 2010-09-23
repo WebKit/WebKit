@@ -1,3 +1,14 @@
+2010-09-22  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
+        Update the comments to more accurately reflect which tests we expect
+        to run and pass.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46331
+
+        * platform/chromium-gpu/test_expectations.txt:
+
 2010-09-23  Jeff Schiller  <jeffschiller@google.com>
 
         Reviewed by David Hyatt.
