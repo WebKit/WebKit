@@ -3,4 +3,6 @@ Document fragment:
 <script>
     document.getElementById("wrapper").innerHTML += "<div style='visibility:hidden'><p</div>Start Tag: PASS<br>";
     document.getElementById("wrapper").innerHTML += "<div style='visibility:hidden'><p></p</div>End Tag: PASS<br>";
+    document.getElementById("wrapper").innerHTML += "<script />&lt;script /&gt;: PASS<br>";
+    document.getElementById("wrapper").innerHTML += "<script/>&lt;script/&gt;: PASS<br>";
 </script>

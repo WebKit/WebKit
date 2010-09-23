@@ -82,7 +82,7 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors
     : ScriptableDocumentParser(document)
     , m_tokenizer(HTMLTokenizer::create(usePreHTML5ParserQuirks(document)))
     , m_scriptRunner(HTMLScriptRunner::create(document, this))
-    , m_treeBuilder(HTMLTreeBuilder::create(m_tokenizer.get(), document, reportErrors))
+    , m_treeBuilder(HTMLTreeBuilder::create(m_tokenizer.get(), document, reportErrors, usePreHTML5ParserQuirks(document)))
     , m_parserScheduler(HTMLParserScheduler::create(this))
     , m_endWasDelayed(false)
     , m_writeNestingLevel(0)
@@ -94,7 +94,7 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors
 HTMLDocumentParser::HTMLDocumentParser(DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission scriptingPermission)
     : ScriptableDocumentParser(fragment->document())
     , m_tokenizer(HTMLTokenizer::create(usePreHTML5ParserQuirks(fragment->document())))
-    , m_treeBuilder(HTMLTreeBuilder::create(m_tokenizer.get(), fragment, contextElement, scriptingPermission))
+    , m_treeBuilder(HTMLTreeBuilder::create(m_tokenizer.get(), fragment, contextElement, scriptingPermission, usePreHTML5ParserQuirks(fragment->document())))
     , m_endWasDelayed(false)
     , m_writeNestingLevel(0)
 {

@@ -1,6 +1,6 @@
-This tests that certain pre-HTML5 parser rules are applied when the WebKitUsePreHTML5ParserQuirks preference is set. See https://webkit.org/b/40961 for details.
+This tests that certain pre-HTML5 parser rules are applied when the WebKitUsePreHTML5ParserQuirks preference is set. See https://webkit.org/b/40961 and https://webkit.org/b/42909 for details.
 
-      
+        
 
 --------
 Frame: '<!--framePath //<!--frame0-->-->'
@@ -45,6 +45,8 @@ Frame: '<!--framePath //<!--frame5-->-->'
 Document fragment:
 Start Tag: PASS
 End Tag: PASS
+<script />: PASS
+<script/>: PASS
 
 
 --------
@@ -53,3 +55,17 @@ Frame: '<!--framePath //<!--frame6-->-->'
 TagNameState:
 Start Tag: PASS
 End Tag: PASS
+
+--------
+Frame: '<!--framePath //<!--frame7-->-->'
+--------
+Self-closing <script> in head:
+Parsing: PASS
+External script loading: PASS
+
+--------
+Frame: '<!--framePath //<!--frame8-->-->'
+--------
+Self-closing <script> in body:
+Parsing: PASS
+External script loading: PASS

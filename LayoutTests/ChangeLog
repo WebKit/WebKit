@@ -1,3 +1,20 @@
+2010-09-22  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION (r61285): <script /> parses differently in HTML5
+        https://bugs.webkit.org/show_bug.cgi?id=42909
+
+        Add tests for the self-closing script tag quirk.
+
+        * fast/parser/pre-html5-parser-quirks-expected.txt:
+        * fast/parser/pre-html5-parser-quirks.html:
+        * fast/parser/resources/pre-html5-parser-quirk-document-fragment.html:
+        * fast/parser/resources/pre-html5-parser-quirk-self-closing-script-in-body.html: Added.
+        * fast/parser/resources/pre-html5-parser-quirk-self-closing-script-in-head.html: Added.
+        * fast/parser/resources/pre-html5-parser-quirk-self-closing-script.js: Added.
+        (printToConsole):
+
 2010-09-22  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Darin Fisher.

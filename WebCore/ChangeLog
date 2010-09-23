@@ -1,3 +1,30 @@
+2010-09-22  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION (r61285): <script /> parses differently in HTML5
+        https://bugs.webkit.org/show_bug.cgi?id=42909
+
+        If pre-HTML5 parser quirks are enabled, the HTMLTreeBuilder should
+        handle self-closing script tags like the old parser did. Specifically,
+        "<script />" should be treated as "<script></script>".
+
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::HTMLDocumentParser): Instantiate
+        HTMLTreeBuilder with the value of usePreHTML5ParserQuirks().
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+        (WebCore::HTMLTreeBuilder::processEndTag): If the tokenizer is not
+        currently in DataState, this means that the current end token is fake
+        and was created by the tree builder to handle a self-closing script tag.
+        Assert that pre-HTML5 quirks are enabled and set the tokenizer's state
+        to DataState in this case.
+        (WebCore::HTMLTreeBuilder::processStartTagForInHead): If pre-HTML5
+        parser quirks are enabled and the script tag is self-closing, create and
+        procses a fake script end tag.
+        * html/parser/HTMLTreeBuilder.h:
+        (WebCore::HTMLTreeBuilder::create):
+
 2010-09-22  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Darin Fisher.

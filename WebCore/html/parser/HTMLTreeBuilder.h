@@ -51,13 +51,13 @@ class Node;
 
 class HTMLTreeBuilder : public Noncopyable {
 public:
-    static PassOwnPtr<HTMLTreeBuilder> create(HTMLTokenizer* tokenizer, HTMLDocument* document, bool reportErrors)
+    static PassOwnPtr<HTMLTreeBuilder> create(HTMLTokenizer* tokenizer, HTMLDocument* document, bool reportErrors, bool usePreHTML5ParserQuirks)
     {
-        return adoptPtr(new HTMLTreeBuilder(tokenizer, document, reportErrors));
+        return adoptPtr(new HTMLTreeBuilder(tokenizer, document, reportErrors, usePreHTML5ParserQuirks));
     }
-    static PassOwnPtr<HTMLTreeBuilder> create(HTMLTokenizer* tokenizer, DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission scriptingPermission)
+    static PassOwnPtr<HTMLTreeBuilder> create(HTMLTokenizer* tokenizer, DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission scriptingPermission, bool usePreHTML5ParserQuirks)
     {
-        return adoptPtr(new HTMLTreeBuilder(tokenizer, fragment, contextElement, scriptingPermission));
+        return adoptPtr(new HTMLTreeBuilder(tokenizer, fragment, contextElement, scriptingPermission, usePreHTML5ParserQuirks));
     }
     ~HTMLTreeBuilder();
 
@@ -110,8 +110,8 @@ private:
         AfterAfterFramesetMode,
     };
 
-    HTMLTreeBuilder(HTMLTokenizer*, HTMLDocument*, bool reportErrors);
-    HTMLTreeBuilder(HTMLTokenizer*, DocumentFragment*, Element* contextElement, FragmentScriptingPermission);
+    HTMLTreeBuilder(HTMLTokenizer*, HTMLDocument*, bool reportErrors, bool usePreHTML5ParserQuirks);
+    HTMLTreeBuilder(HTMLTokenizer*, DocumentFragment*, Element* contextElement, FragmentScriptingPermission, bool usePreHTML5ParserQuirks);
 
     bool isParsingFragment() const { return !!m_fragmentContext.fragment(); }
 
@@ -252,6 +252,8 @@ private:
     // created to service the legacy tree builder, but it seems to be used for
     // some other things now.
     int m_lastScriptElementStartLine;
+    
+    bool m_usePreHTML5ParserQuirks;
 };
 
 }
