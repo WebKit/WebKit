@@ -1,3 +1,22 @@
+2010-09-23  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46326
+        Crash when trying to create a NodeIterator rooted at a document-less DocumentType node
+
+        Test: fast/dom/node-iterator-with-doctype-root.html
+
+        * dom/Document.cpp: (WebCore::Document::detachNodeIterator): Added a comment explaining that
+        attach/detach may not always be paired.
+
+        * dom/NodeIterator.cpp:
+        (WebCore::NodeIterator::NodeIterator): Don't try to register with the document if there is none.
+        (WebCore::NodeIterator::~NodeIterator): Ditto.
+        (WebCore::NodeIterator::detach): Ditto.
+        (WebCore::NodeIterator::updateForNodeRemoval): There should be a document if we're getting a
+        notification.
+
 2010-09-23  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Roben.

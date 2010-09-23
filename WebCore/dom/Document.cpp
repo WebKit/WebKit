@@ -3214,6 +3214,8 @@ void Document::attachNodeIterator(NodeIterator* ni)
 
 void Document::detachNodeIterator(NodeIterator* ni)
 {
+    // The node iterator can be detached without having been attached if its root node didn't have a document
+    // when the iterator was created, but has it now.
     m_nodeIterators.remove(ni);
 }
 

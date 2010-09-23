@@ -1,0 +1,35 @@
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+var dt = document.implementation.createDocumentType("foo", "", "");
+var iter = document.createNodeIterator(dt, NodeFilter.SHOW_ALL, null, true);
+debug("NodeIterator rooted at a DocumentType node not yet associated with a document:");
+shouldBe('iter.referenceNode.ownerDocument', 'null');
+shouldBe('iter.nextNode()', 'dt');
+shouldBe('iter.nextNode()', 'null');
+shouldBe('iter.previousNode()', 'dt');
+shouldBe('iter.previousNode()', 'null');
+iter.detach();
+
+iter = document.createNodeIterator(dt, NodeFilter.SHOW_ALL, null, true);
+var d = document.implementation.createDocument(null, "doc", dt);
+debug("\nNodeIterator rooted at a DocumentType node that becomes used by a document after the iterator has been created:");
+shouldBe('iter.nextNode()', 'dt');
+shouldBe('iter.previousNode()', 'dt');
+debug("..and after removing it from the document:");
+d.removeChild(dt);
+shouldBe('iter.nextNode()', 'dt');
+shouldBe('iter.previousNode()', 'dt');
+iter.detach();
+
+var successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

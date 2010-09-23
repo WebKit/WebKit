@@ -1,3 +1,13 @@
+2010-09-23  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46326
+        Crash when trying to create a NodeIterator rooted at a document-less DocumentType node
+
+        * fast/dom/node-iterator-with-doctype-root-expected.txt: Added.
+        * fast/dom/node-iterator-with-doctype-root.html: Added.
+
 2010-09-23  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed chromium text_expectations.txt change.
