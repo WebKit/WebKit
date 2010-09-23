@@ -1,3 +1,10 @@
+2010-09-23  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Remove passing tests. These were failing because the bot was missing QuickTime.
+
+        * platform/chromium/drt_expectations.txt: Removed QuickTime-dependent tests
+          after installing QuickTime on the build bot.
+
 2010-09-23  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Chris Fleizach.

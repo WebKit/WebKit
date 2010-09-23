@@ -100,14 +100,6 @@ BUG_DRT LINUX : fast/text/international/003.html = IMAGE
 // CJK characters are not rotated.
 BUG_DRT LINUX : svg/batik/text/verticalText.svg = IMAGE+TEXT
 
-// plugin-related failures
-BUG_DRT WIN : fast/dom/object-embed-plugin-scripting.html = TEXT
-BUG_DRT WIN : plugins/embed-attributes-setting.html = TEXT
-
-// something to do with mime types of audio/video.
-BUG_DRT WIN : userscripts/user-script-audio-document.html = TEXT
-BUG_DRT WIN : userscripts/user-script-video-document.html = TEXT
-
 // Need modal dialog support.
 BUG_DRT WIN : fast/events/show-modal-dialog-onblur-onfocus.html = TEXT
 BUG_DRT WIN : fast/harness/show-modal-dialog.html = TEXT
