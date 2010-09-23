@@ -1,3 +1,40 @@
+2010-09-08  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Add chromium port API for accessing Web Timing information
+        https://bugs.webkit.org/show_bug.cgi?id=45428
+
+        * WebKit.gyp:
+        * public/WebFrame.h:
+        * public/WebPerformance.h: Added.
+        (WebKit::WebPerformance::WebPerformance):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::performance):
+        * src/WebFrameImpl.h:
+        * src/WebPerformance.cpp: Added.
+        (WebKit::WebPerformance::WebPerformance):
+        (WebKit::WebPerformance::~WebPerformance):
+        (WebKit::WebPerformance::operator=):
+        (WebKit::WebPerformance::navigationType):
+        (WebKit::WebPerformance::navigationStart):
+        (WebKit::WebPerformance::unloadEventEnd):
+        (WebKit::WebPerformance::redirectStart):
+        (WebKit::WebPerformance::redirectEnd):
+        (WebKit::WebPerformance::redirectCount):
+        (WebKit::WebPerformance::fetchStart):
+        (WebKit::WebPerformance::domainLookupStart):
+        (WebKit::WebPerformance::domainLookupEnd):
+        (WebKit::WebPerformance::connectStart):
+        (WebKit::WebPerformance::connectEnd):
+        (WebKit::WebPerformance::requestStart):
+        (WebKit::WebPerformance::requestEnd):
+        (WebKit::WebPerformance::responseStart):
+        (WebKit::WebPerformance::responseEnd):
+        (WebKit::WebPerformance::loadEventStart):
+        (WebKit::WebPerformance::loadEventEnd):
+        (WebKit::WebPerformance::operator PassRefPtr<Performance>):
+
 2010-09-23  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Jeremy Orlow.

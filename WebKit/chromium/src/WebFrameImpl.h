@@ -56,6 +56,7 @@ class WebDataSourceImpl;
 class WebInputElement;
 class WebFrameClient;
 class WebPasswordAutocompleteListener;
+class WebPerformance;
 class WebPluginContainerImpl;
 class WebView;
 class WebViewImpl;
@@ -90,6 +91,7 @@ public:
     virtual WebDocument document() const;
     virtual void forms(WebVector<WebFormElement>&) const;
     virtual WebAnimationController* animationController();
+    virtual WebPerformance performance() const;
     virtual WebSecurityOrigin securityOrigin() const;
     virtual void grantUniversalAccess();
     virtual NPObject* windowObject() const;

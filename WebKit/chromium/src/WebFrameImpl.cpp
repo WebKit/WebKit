@@ -99,6 +99,7 @@
 #include "HistoryItem.h"
 #include "InspectorController.h"
 #include "Page.h"
+#include "Performance.h"
 #include "PlatformContextSkia.h"
 #include "PluginDocument.h"
 #include "PrintContext.h"
@@ -130,6 +131,7 @@
 #include "WebHistoryItem.h"
 #include "WebInputElement.h"
 #include "WebPasswordAutocompleteListener.h"
+#include "WebPerformance.h"
 #include "WebPlugin.h"
 #include "WebPluginContainerImpl.h"
 #include "WebRange.h"
@@ -690,6 +692,14 @@ void WebFrameImpl::forms(WebVector<WebFormElement>& results) const
 WebAnimationController* WebFrameImpl::animationController()
 {
     return &m_animationController;
+}
+
+WebPerformance WebFrameImpl::performance() const
+{
+    if (!m_frame || !m_frame->domWindow())
+        return WebPerformance();
+
+    return WebPerformance(m_frame->domWindow()->webkitPerformance());
 }
 
 WebSecurityOrigin WebFrameImpl::securityOrigin() const
