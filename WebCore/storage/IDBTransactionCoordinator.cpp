@@ -83,8 +83,6 @@ void IDBTransactionCoordinator::processStartedTransactions()
     if (m_startedTransactions.isEmpty() || !m_runningTransactions.isEmpty())
         return;
 
-    ASSERT(m_transactions.contains(transaction->id()));
-
     IDBTransactionBackendImpl* transaction = *m_startedTransactions.begin();
     m_startedTransactions.remove(transaction);
     m_runningTransactions.add(transaction);
