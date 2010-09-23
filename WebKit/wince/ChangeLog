@@ -1,3 +1,13 @@
+2010-09-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed.
+
+        Build fix for FrameLoaderClientWinCE.
+
+        * WebCoreSupport/FrameLoaderClientWinCE.cpp:
+        (WebKit::FrameLoaderClientWinCE::canShowMIMETypeAsHTML): Add missing method.
+        * WebCoreSupport/FrameLoaderClientWinCE.h:
+
 2010-09-21  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Roben.

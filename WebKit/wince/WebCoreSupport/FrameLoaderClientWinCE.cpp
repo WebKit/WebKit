@@ -424,6 +424,12 @@ bool FrameLoaderClientWinCE::canShowMIMEType(const String& type) const
             || PluginDatabase::installedPlugins()->isMIMETypeRegistered(type));
 }
 
+bool FrameLoaderClientWinCE::canShowMIMETypeAsHTML(const String&) const
+{
+    notImplemented();
+    return false;
+}
+
 bool FrameLoaderClientWinCE::representationExistsForURLScheme(const String&) const
 {
     notImplemented();
