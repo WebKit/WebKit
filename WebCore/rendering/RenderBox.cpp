@@ -1855,11 +1855,11 @@ int RenderBox::containingBlockWidthForPositioned(const RenderBoxModelObject* con
     int fromLeft;
     int fromRight;
     if (containingBlock->style()->direction() == LTR) {
-        fromLeft = first->x() + first->borderLeft();
-        fromRight = last->x() + last->logicalWidth() - last->borderRight();
+        fromLeft = first->logicalLeft() + first->borderLogicalLeft();
+        fromRight = last->logicalLeft() + last->logicalWidth() - last->borderLogicalRight();
     } else {
-        fromRight = first->x() + first->logicalWidth() - first->borderRight();
-        fromLeft = last->x() + last->borderLeft();
+        fromRight = first->logicalLeft() + first->logicalWidth() - first->borderLogicalRight();
+        fromLeft = last->logicalLeft() + last->borderLogicalLeft();
     }
 
     return max(0, (fromRight - fromLeft));
@@ -2201,7 +2201,7 @@ void RenderBox::calcAbsoluteHorizontalValues(Length width, const RenderBoxModelO
         InlineFlowBox* firstLine = flow->firstLineBox();
         InlineFlowBox* lastLine = flow->lastLineBox();
         if (firstLine && lastLine && firstLine != lastLine) {
-            xPos = leftValue + marginLeftValue + lastLine->borderLeft() + (lastLine->x() - firstLine->x());
+            xPos = leftValue + marginLeftValue + lastLine->borderLogicalLeft() + (lastLine->x() - firstLine->x());
             return;
         }
     }
@@ -2607,7 +2607,7 @@ void RenderBox::calcAbsoluteHorizontalReplaced()
         InlineFlowBox* firstLine = flow->firstLineBox();
         InlineFlowBox* lastLine = flow->lastLineBox();
         if (firstLine && lastLine && firstLine != lastLine) {
-            m_frameRect.setX(leftValue + m_marginLeft + lastLine->borderLeft() + (lastLine->x() - firstLine->x()));
+            m_frameRect.setX(leftValue + m_marginLeft + lastLine->borderLogicalLeft() + (lastLine->x() - firstLine->x()));
             return;
         }
     }

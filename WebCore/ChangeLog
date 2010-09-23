@@ -1,3 +1,38 @@
+2010-09-23  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46403, convert the margin/border/padding accessors
+        to be logical.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::getFlowSpacingLogicalWidth):
+        (WebCore::InlineFlowBox::placeBoxesHorizontally):
+        (WebCore::InlineFlowBox::paintBoxShadow):
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        (WebCore::InlineFlowBox::paintTextDecorations):
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::InlineFlowBox):
+        (WebCore::InlineFlowBox::marginBorderPaddingLogicalLeft):
+        (WebCore::InlineFlowBox::marginBorderPaddingLogicalRight):
+        (WebCore::InlineFlowBox::marginLogicalLeft):
+        (WebCore::InlineFlowBox::marginLogicalRight):
+        (WebCore::InlineFlowBox::borderLogicalLeft):
+        (WebCore::InlineFlowBox::borderLogicalRight):
+        (WebCore::InlineFlowBox::paddingLogicalLeft):
+        (WebCore::InlineFlowBox::paddingLogicalRight):
+        (WebCore::InlineFlowBox::includeLogicalLeftEdge):
+        (WebCore::InlineFlowBox::includeLogicalRightEdge):
+        (WebCore::InlineFlowBox::setEdges):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::containingBlockWidthForPositioned):
+        (WebCore::RenderBox::calcAbsoluteHorizontalValues):
+        (WebCore::RenderBox::calcAbsoluteHorizontalReplaced):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+
 2010-09-23  Jeff Schiller  <jeffschiller@google.com>
 
         Reviewed by David Hyatt.
