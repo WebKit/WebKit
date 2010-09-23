@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Sencha, Inc.
+ * Copyright (C) 2010 Igalia S.L.
  *
  * All rights reserved.
  *
@@ -28,7 +29,22 @@
 #ifndef ContextShadow_h
 #define ContextShadow_h
 
-#include <QPainter>
+#include "Color.h"
+#include "FloatRect.h"
+#include "IntRect.h"
+#include "RefCounted.h"
+
+#if PLATFORM(CAIRO)
+typedef struct _cairo cairo_t;
+typedef struct _cairo_surface cairo_surface_t;
+typedef cairo_surface_t* PlatformImage;
+typedef cairo_t* PlatformContext;
+#elif PLATFORM(QT)
+#include <QImage>
+class QPainter;
+typedef QImage PlatformImage;
+typedef QPainter* PlatformContext;
+#endif
 
 namespace WebCore {
 
@@ -44,49 +60,57 @@ class ContextShadow {
 public:
     enum {
         NoShadow,
-        OpaqueSolidShadow,
-        AlphaSolidShadow,
+        SolidShadow,
         BlurShadow
-    } type;
+    } m_type;
 
-    QColor color;
-    int blurRadius;
-    QPointF offset;
+    Color m_color;
+    int m_blurRadius;
+    FloatSize m_offset;
 
     ContextShadow();
-    ContextShadow(const QColor& c, float r, qreal dx, qreal dy);
+    ContextShadow(const Color&, float radius, const FloatSize& offset);
 
     void clear();
 
     // The pair beginShadowLayer and endShadowLayer creates a temporary image
-    // where the caller can draw onto, using the returned QPainter. This
-    // QPainter instance must be used only to draw between the call to
-    // beginShadowLayer and endShadowLayer.
+    // where the caller can draw onto, using the returned context. This context
+    // must be used only to draw between the call to beginShadowLayer and
+    // endShadowLayer.
     //
-    // Note: multiple/nested shadow layer is NOT allowed.
+    // Note: multiple/nested shadow layers are NOT allowed.
     //
     // The current clip region will be used to optimize the size of the
-    // temporary image. Thus, the original painter should not change any
-    // clipping until endShadowLayer.
-    // If the shadow will be completely outside the clipping region,
-    // beginShadowLayer will return 0.
+    // temporary image. Thus, the original context should not change any
+    // clipping until endShadowLayer. If the shadow will be completely outside
+    // the clipping region, beginShadowLayer will return 0.
     //
-    // The returned QPainter will have the transformation matrix and clipping
-    // properly initialized to start doing the painting (no need to account
-    // for the shadow offset), however it will not have the same render hints,
-    // pen, brush, etc as the passed QPainter. This is intentional, usually
-    // shadow has different properties than the shape which casts the shadow.
+    // The returned context will have the transformation matrix and clipping
+    // properly initialized to start doing the painting (no need to account for
+    // the shadow offset), however it will not have the same render hints, pen,
+    // brush, etc as the passed context. This is intentional, usually shadows
+    // have different properties than the shapes which cast them.
     //
-    // Once endShadowLayer is called, the temporary image will be drawn
-    // with the original painter. If blur radius is specified, the shadow
-    // will be filtered first.
-    QPainter* beginShadowLayer(QPainter* p, const QRectF& rect);
-    void endShadowLayer(QPainter* p);
+    // Once endShadowLayer is called, the temporary image will be drawn with the
+    // original context. If blur radius is specified, the shadow will be
+    // filtered first.
+
+    PlatformContext beginShadowLayer(PlatformContext, const FloatRect& layerArea);
+    void endShadowLayer(PlatformContext);
+    static void purgeScratchBuffer();
+
+#if PLATFORM(QT)
+    QPointF offset() { return QPointF(m_offset.width(), m_offset.height()); }
+#endif
+
 
 private:
-    QRect m_layerRect;
-    QImage m_layerImage;
-    QPainter* m_layerPainter;
+    IntRect m_layerRect;
+    PlatformImage m_layerImage;
+    PlatformContext m_layerContext;
+
+    void blurLayerImage(unsigned char*, const IntSize& imageSize, int stride);
+    void calculateLayerBoundingRect(const FloatRect& layerArea, const IntRect& clipRect);
 };
 
 } // namespace WebCore

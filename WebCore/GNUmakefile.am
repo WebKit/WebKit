@@ -2086,6 +2086,8 @@ webcore_sources += \
 	WebCore/platform/graphics/Color.cpp \
 	WebCore/platform/graphics/Color.h \
 	WebCore/platform/graphics/ColorSpace.h \
+	WebCore/platform/graphics/ContextShadow.cpp \
+	WebCore/platform/graphics/ContextShadow.h \
 	WebCore/platform/graphics/DashArray.h \
 	WebCore/platform/graphics/filters/DistantLightSource.h \
 	WebCore/platform/graphics/filters/FEBlend.cpp \
@@ -3356,6 +3358,7 @@ webcoregtk_sources += \
 	WebCore/platform/graphics/cairo/CairoPath.h \
 	WebCore/platform/graphics/cairo/CairoUtilities.cpp \
 	WebCore/platform/graphics/cairo/CairoUtilities.h \
+	WebCore/platform/graphics/cairo/ContextShadowCairo.cpp \
 	WebCore/platform/graphics/cairo/FontCairo.cpp \
 	WebCore/platform/graphics/cairo/FontCustomPlatformData.h \
 	WebCore/platform/graphics/cairo/FontPlatformData.h \

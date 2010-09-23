@@ -1095,6 +1095,7 @@ SOURCES += \
     platform/graphics/FontFamily.cpp \
     platform/graphics/BitmapImage.cpp \
     platform/graphics/Color.cpp \
+    platform/graphics/ContextShadow.cpp \
     platform/graphics/FloatPoint3D.cpp \
     platform/graphics/FloatPoint.cpp \
     platform/graphics/FloatQuad.cpp \
@@ -1977,6 +1978,7 @@ HEADERS += \
     platform/mock/SpeechInputClientMock.h \
     platform/graphics/BitmapImage.h \
     platform/graphics/Color.h \
+    platform/graphics/ContextShadow.h \
     platform/graphics/filters/FEBlend.h \
     platform/graphics/filters/FEColorMatrix.h \
     platform/graphics/filters/FEComponentTransfer.h \
@@ -2022,7 +2024,6 @@ HEADERS += \
     platform/graphics/PathTraversalState.h \
     platform/graphics/Pattern.h \
     platform/graphics/Pen.h \
-    platform/graphics/qt/ContextShadow.h \
     platform/graphics/qt/FontCustomPlatformData.h \
     platform/graphics/qt/GraphicsLayerQt.h \
     platform/graphics/qt/ImageDecoderQt.h \
@@ -2536,7 +2537,7 @@ SOURCES += \
     page/qt/FrameQt.cpp \
     platform/graphics/qt/TransformationMatrixQt.cpp \
     platform/graphics/qt/ColorQt.cpp \
-    platform/graphics/qt/ContextShadow.cpp \
+    platform/graphics/qt/ContextShadowQt.cpp \
     platform/graphics/qt/FontQt.cpp \
     platform/graphics/qt/FontPlatformDataQt.cpp \
     platform/graphics/qt/FloatPointQt.cpp \

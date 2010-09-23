@@ -1,3 +1,64 @@
+2010-09-23  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Cairo] Generalize ContextShadow from the Qt port and use it for shadow code
+        https://bugs.webkit.org/show_bug.cgi?id=45599
+
+        Make ContextShadow platform-independent and add a Cairo implementation. This is currently
+        disabled for Cairo, but will be enabled in a followup patch with new baselines.
+
+        No new tests as this does not change functionality.
+
+        * GNUmakefile.am: Update source lists.
+        * WebCore.pro: Update source lists.
+        * platform/graphics/ContextShadow.cpp: Added. A generalized version of Qt's ContextShadow.
+        (WebCore::ContextShadow::ContextShadow):
+        (WebCore::ContextShadow::clear):
+        (WebCore::ContextShadow::blurLayerImage):
+        (WebCore::ContextShadow::calculateMinimalLayerRect):
+        * platform/graphics/ContextShadow.h: Added.
+        (WebCore::ContextShadow::offset):
+        * platform/graphics/cairo/CairoUtilities.cpp: Added. 
+        (WebCore::setSourceRGBAFromColor): A utility to set the source RGBA on a Cairo surface from a WebCore color.
+        * platform/graphics/cairo/CairoUtilities.h: Added.
+        * platform/graphics/cairo/ContextShadowCairo.cpp: Added.
+        (WebCore::purgeScratchBuffer): Static function to purge the shadow buffer.
+        (WebCore::PurgeScratchBufferTimer::fired): Timer callback.
+        (WebCore::scheduleScratchBufferPurge): Schedule's a WebCore timer to purge the shadow buffer.
+        (WebCore::getScratchBuffer): Create or reuse the scratch buffer.
+        (WebCore::ContextShadow::beginShadowLayer): Added.
+        (WebCore::ContextShadow::endShadowLayer): Added.
+        * platform/graphics/gtk/CairoUtilities.cpp: Removed.
+        * platform/graphics/gtk/CairoUtilities.h: Removed.
+        * platform/graphics/gtk/GdkCairoUtilities.cpp: Renamed from CairoUtilities.cpp.
+        (getCairoSurfacePixel):
+        (getGdkPixbufPixel):
+        (cairoImageSurfaceToGdkPixbuf):
+        * platform/graphics/gtk/GdkCairoUtilities.h: Added.
+        * platform/graphics/gtk/ImageBufferGtk.cpp:
+        * platform/graphics/gtk/ImageGtk.cpp:
+        * platform/graphics/qt/ContextShadow.cpp: Removed.
+        * platform/graphics/qt/ContextShadow.h: Removed.
+        * platform/graphics/qt/ContextShadowQt.cpp: Added. Adapted from code originally in ContextShadow.cpp.
+        (WebCore::ShadowBuffer::ShadowBuffer):
+        (WebCore::ShadowBuffer::scratchImage):
+        (WebCore::ShadowBuffer::schedulePurge):
+        (WebCore::ShadowBuffer::timerEvent):
+        (WebCore::ContextShadow::beginShadowLayer):
+        (WebCore::ContextShadow::endShadowLayer):
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::drawTextCommon): Updated to reflect new ContextShadow members.
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::hasShadow): Updated to reflect new ContextShadow members.
+        (WebCore::GraphicsContext::strokeArc): Ditto.
+        (WebCore::GraphicsContext::drawConvexPolygon): Ditto.
+        (WebCore::GraphicsContext::fillPath): Ditto.
+        (WebCore::GraphicsContext::strokePath): Ditto.
+        (WebCore::GraphicsContext::fillRect): Ditto.
+        (WebCore::GraphicsContext::fillRoundedRect): Ditto.
+        (WebCore::GraphicsContext::setPlatformShadow): Ditto.
+
 2010-09-23  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Roben.

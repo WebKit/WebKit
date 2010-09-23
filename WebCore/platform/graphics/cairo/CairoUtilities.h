@@ -29,8 +29,11 @@
 typedef struct _cairo cairo_t;
 
 namespace WebCore {
+class Color;
 
 void copyContextProperties(cairo_t* srcCr, cairo_t* dstCr);
+void setSourceRGBAFromColor(cairo_t*, const Color&);
+
 } // namespace WebCore
 
 #endif // CairoUtilities_h

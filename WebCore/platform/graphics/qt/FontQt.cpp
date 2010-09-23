@@ -125,37 +125,38 @@ static void drawTextCommon(GraphicsContext* ctx, const TextRun& run, const Float
 
             ContextShadow* ctxShadow = ctx->contextShadow();
 
-            if (ctxShadow->type != ContextShadow::NoShadow) {
+            if (ctxShadow->m_type != ContextShadow::NoShadow) {
                 qreal dx1 = 0, dx2 = 0, dy1 = 0, dy2 = 0;
-                if (ctxShadow->offset.x() > 0)
-                    dx2 = ctxShadow->offset.x();
+                if (ctxShadow->offset().x() > 0)
+                    dx2 = ctxShadow->offset().x();
                 else
-                    dx1 = -ctxShadow->offset.x();
-                if (ctxShadow->offset.y() > 0)
-                    dy2 = ctxShadow->offset.y();
+                    dx1 = -ctxShadow->offset().x();
+                if (ctxShadow->offset().y() > 0)
+                    dy2 = ctxShadow->offset().y();
                 else
-                    dy1 = -ctxShadow->offset.y();
+                    dy1 = -ctxShadow->offset().y();
                 // expand the clip rect to include the text shadow as well
                 clip.adjust(dx1, dx2, dy1, dy2);
-                clip.adjust(-ctxShadow->blurRadius, -ctxShadow->blurRadius, ctxShadow->blurRadius, ctxShadow->blurRadius);
+                clip.adjust(-ctxShadow->m_blurRadius, -ctxShadow->m_blurRadius, ctxShadow->m_blurRadius, ctxShadow->m_blurRadius);
             }
             p->save();
             p->setClipRect(clip.toRect(), Qt::IntersectClip);
             pt.setY(pt.y() - ascent);
 
-            if (ctxShadow->type != ContextShadow::NoShadow) {
+            if (ctxShadow->m_type != ContextShadow::NoShadow) {
                 ContextShadow* ctxShadow = ctx->contextShadow();
-                if (ctxShadow->type != ContextShadow::BlurShadow) {
+                if (ctxShadow->m_type != ContextShadow::BlurShadow) {
                     p->save();
-                    p->setPen(ctxShadow->color);
-                    p->translate(ctxShadow->offset);
+                    p->setPen(ctxShadow->m_color);
+                    p->translate(ctxShadow->offset());
                     line.draw(p, pt);
                     p->restore();
                 } else {
                     QPainter* shadowPainter = ctxShadow->beginShadowLayer(p, boundingRect);
                     if (shadowPainter) {
                         // Since it will be blurred anyway, we don't care about render hints.
-                        shadowPainter->setPen(ctxShadow->color);
+                        shadowPainter->setFont(p->font());
+                        shadowPainter->setPen(ctxShadow->m_color);
                         line.draw(shadowPainter, pt);
                         ctxShadow->endShadowLayer(p);
                     }
@@ -181,12 +182,12 @@ static void drawTextCommon(GraphicsContext* ctx, const TextRun& run, const Float
     if (!isComplexText && !(ctx->textDrawingMode() & cTextStroke))
         flags |= Qt::TextBypassShaping;
 #endif
-    if (ctx->contextShadow()->type != ContextShadow::NoShadow) {
+    if (ctx->contextShadow()->m_type != ContextShadow::NoShadow) {
         ContextShadow* ctxShadow = ctx->contextShadow();
-        if (ctxShadow->type != ContextShadow::BlurShadow) {
+        if (ctxShadow->m_type != ContextShadow::BlurShadow) {
             p->save();
-            p->setPen(ctxShadow->color);
-            p->translate(ctxShadow->offset);
+            p->setPen(ctxShadow->m_color);
+            p->translate(ctxShadow->offset());
             p->drawText(pt, string, flags, run.padding());
             p->restore();
         } else {
@@ -196,7 +197,7 @@ static void drawTextCommon(GraphicsContext* ctx, const TextRun& run, const Float
             if (shadowPainter) {
                 // Since it will be blurred anyway, we don't care about render hints.
                 shadowPainter->setFont(p->font());
-                shadowPainter->setPen(ctxShadow->color);
+                shadowPainter->setPen(ctxShadow->m_color);
                 shadowPainter->drawText(pt, string, flags, run.padding());
                 ctxShadow->endShadowLayer(p);
             }
