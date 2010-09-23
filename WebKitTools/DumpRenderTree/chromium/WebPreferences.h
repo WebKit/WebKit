@@ -76,6 +76,7 @@ struct WebPreferences {
     WebKit::WebSettings::EditingBehavior editingBehavior;
     bool tabsToLinks;
     bool hyperlinkAuditingEnabled;
+    bool caretBrowsingEnabled;
     bool accelerated2dCanvasEnabled;
 
     WebPreferences() { reset(); }

@@ -88,6 +88,7 @@ void WebPreferences::reset()
     userStyleSheetLocation = WebURL();
     usesPageCache = false;
     webSecurityEnabled = true;
+    caretBrowsingEnabled = false;
 
     // Allow those layout tests running as local files, i.e. under
     // LayoutTests/http/tests/local, to access http server.
@@ -145,6 +146,7 @@ void WebPreferences::applyTo(WebView* webView)
     // LayoutTests were written with Safari Mac in mind which does not allow
     // tabbing to links by default.
     webView->setTabsToLinks(tabsToLinks);
+    settings->setCaretBrowsingEnabled(caretBrowsingEnabled);
 
     // Fixed values.
     settings->setShouldPaintCustomScrollbars(true);

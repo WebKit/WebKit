@@ -94,6 +94,7 @@ public:
     virtual void setAccelerated2dCanvasEnabled(bool) = 0;
     virtual void setMemoryInfoEnabled(bool) = 0;
     virtual void setHyperlinkAuditingEnabled(bool) = 0;
+    virtual void setCaretBrowsingEnabled(bool) = 0;
 
 protected:
     ~WebSettings() { }

@@ -1,3 +1,15 @@
+2010-09-23  Tony Chang  <tony@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] add caretBrowsingEnabled to WebSettings and DRT
+        https://bugs.webkit.org/show_bug.cgi?id=46388
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setCaretBrowsingEnabled):
+        * src/WebSettingsImpl.h:
+
 2010-09-23  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by David Levin.

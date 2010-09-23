@@ -90,6 +90,7 @@ public:
     virtual void setAccelerated2dCanvasEnabled(bool);
     virtual void setMemoryInfoEnabled(bool);
     virtual void setHyperlinkAuditingEnabled(bool);
+    virtual void setCaretBrowsingEnabled(bool);
 
 private:
     WebCore::Settings* m_settings;

@@ -294,4 +294,9 @@ void WebSettingsImpl::setHyperlinkAuditingEnabled(bool enabled)
     m_settings->setHyperlinkAuditingEnabled(enabled);
 }
 
+void WebSettingsImpl::setCaretBrowsingEnabled(bool enabled)
+{
+    m_settings->setCaretBrowsingEnabled(enabled);
+}
+
 } // namespace WebKit

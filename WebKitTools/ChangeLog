@@ -1,3 +1,17 @@
+2010-09-23  Tony Chang  <tony@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] add caretBrowsingEnabled to WebSettings and DRT
+        https://bugs.webkit.org/show_bug.cgi?id=46388
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::overridePreference):
+        * DumpRenderTree/chromium/WebPreferences.cpp:
+        (WebPreferences::reset):
+        (WebPreferences::applyTo):
+        * DumpRenderTree/chromium/WebPreferences.h:
+
 2010-09-23  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Darin Fisher.

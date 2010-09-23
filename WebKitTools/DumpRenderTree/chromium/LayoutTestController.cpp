@@ -1253,6 +1253,8 @@ void LayoutTestController::overridePreference(const CppArgumentList& arguments, 
         prefs->experimentalWebGLEnabled = cppVariantToBool(value);
     else if (key == "WebKitHyperlinkAuditingEnabled")
         prefs->hyperlinkAuditingEnabled = cppVariantToBool(value);
+    else if (key == "WebKitEnableCaretBrowsing")
+        prefs->caretBrowsingEnabled = cppVariantToBool(value);
     else {
         string message("Invalid name for preference: ");
         message.append(key);
