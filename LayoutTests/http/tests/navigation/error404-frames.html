@@ -1,6 +1,15 @@
-<script type="text/javascript" src="resources/testcode.js"></script>
-<script>
-    runBasicTest("resources/frameset.pl?frameURL=error404.pl", "none");
-</script>
-This page just kicks off a test, and should not appear in the expected test output.
-The files in the resources dir have comments about the tests.
+<html>
+  <!-- Tests that 404s in frames are handled correctly -->
+  <script>
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.dumpChildFramesAsText();
+        layoutTestController.clearBackForwardList();
+        layoutTestController.dumpBackForwardList();        
+    }
+  </script>
+  <frameset rows="90%,10%">
+    <frame src="resources/error404.pl" name="main">
+    <frame src="resources/otherpage.html" name="footer">
+  </frameset>
+</html>
