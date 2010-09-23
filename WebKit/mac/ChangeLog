@@ -1,3 +1,14 @@
+2010-09-23  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Reduce minimum DOMTimer interval
+        https://bugs.webkit.org/show_bug.cgi?id=45362
+
+        * WebView/WebView.mm:
+        Updating set interval call to use Settings' static version inside
+        one time init block.
+
 2010-09-22  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.

@@ -695,6 +695,7 @@ static bool shouldEnableLoadDeferring()
         
         // Initialize our platform strategies.
         WebPlatformStrategies::initialize();
+        Settings::setMinDOMTimerInterval(0.004);
 
         didOneTimeInitialization = true;
     }
@@ -716,7 +717,6 @@ static bool shouldEnableLoadDeferring()
 
     _private->page->setCanStartMedia([self window]);
     _private->page->settings()->setLocalStorageDatabasePath([[self preferences] _localStorageDatabasePath]);
-    _private->page->settings()->setMinDOMTimerInterval(0.004);
 
     [WebFrame _createMainFrameWithPage:_private->page frameName:frameName frameView:frameView];
 

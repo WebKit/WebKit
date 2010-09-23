@@ -1,3 +1,13 @@
+2010-09-23  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Reduce minimum DOMTimer interval
+        https://bugs.webkit.org/show_bug.cgi?id=45362
+
+        * WebProcess/WebPage/WebPage.cpp:
+        Updating set interval call to use Settings' static version.
+
 2010-09-23  Adam Roben  <aroben@apple.com>
 
         Try to fix the Windows build

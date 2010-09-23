@@ -1,3 +1,19 @@
+2010-09-23  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Reduce minimum DOMTimer interval
+        https://bugs.webkit.org/show_bug.cgi?id=45362
+
+        Since the setInterval call is meant to reflect a global change for
+        all pages' DOMTimers, it's misleading to have it be a method on a
+        given page's settings' object. Thus, this patch changes the call to be static.
+
+        This simple change to using a static call instead of the page's setting's
+        method doesn't warrant a test.
+
+        * page/Settings.h: Changed the setInterval call to be static.
+
 2010-09-23  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
