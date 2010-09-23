@@ -37,8 +37,8 @@ class SVGInlineTextBox;
 
 class SVGRootInlineBox : public RootInlineBox {
 public:
-    SVGRootInlineBox(RenderObject* obj)
-        : RootInlineBox(obj)
+    SVGRootInlineBox(RenderBlock* block)
+        : RootInlineBox(block)
         , m_logicalHeight(0)
     {
     }

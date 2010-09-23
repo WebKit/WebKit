@@ -39,6 +39,18 @@ namespace WebCore {
 typedef WTF::HashMap<const RootInlineBox*, EllipsisBox*> EllipsisBoxMap;
 static EllipsisBoxMap* gEllipsisBoxMap = 0;
 
+RootInlineBox::RootInlineBox(RenderBlock* block)
+    : InlineFlowBox(block)
+    , m_lineBreakObj(0)
+    , m_lineBreakPos(0)
+    , m_lineTop(0)
+    , m_lineBottom(0)
+    , m_paginationStrut(0)
+{
+    setIsVertical(!block->style()->isVerticalBlockFlow());
+}
+
+
 void RootInlineBox::destroy(RenderArena* arena)
 {
     detachEllipsisBox(arena);
@@ -86,8 +98,7 @@ void RootInlineBox::placeEllipsis(const AtomicString& ellipsisStr,  bool ltr, in
     // Create an ellipsis box.
     EllipsisBox* ellipsisBox = new (renderer()->renderArena()) EllipsisBox(renderer(), ellipsisStr, this,
                                                               ellipsisWidth - (markupBox ? markupBox->logicalWidth() : 0), logicalHeight(),
-                                                              y(), !prevRootBox(),
-                                                              markupBox);
+                                                              y(), !prevRootBox(), isVertical(), markupBox);
     
     if (!gEllipsisBoxMap)
         gEllipsisBoxMap = new EllipsisBoxMap();

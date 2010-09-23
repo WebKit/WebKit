@@ -1,3 +1,31 @@
+2010-09-23  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46386, give line boxes a vertical bit so that it's easy to know
+        the overall direction of the line without having to ask the containing block.
+
+        Also couldn't resist some cleanup.  Tightened up the type of the renderobject passed to RootInlineBox's
+        constructor to be a RenderBlock.  Moved all the virtual logical height stuff outside of the SVG ifdef
+        since TrailingFloatsRootInlineBox uses it and should work without SVG enabled.
+
+        * rendering/EllipsisBox.h:
+        (WebCore::EllipsisBox::EllipsisBox):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::InlineBox):
+        (WebCore::InlineBox::isVertical):
+        (WebCore::InlineBox::setIsVertical):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::addToLine):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::RootInlineBox):
+        (WebCore::RootInlineBox::placeEllipsis):
+        * rendering/RootInlineBox.h:
+        * rendering/SVGRootInlineBox.h:
+        (WebCore::SVGRootInlineBox::SVGRootInlineBox):
+        * rendering/TrailingFloatsRootInlineBox.h:
+        (WebCore::TrailingFloatsRootInlineBox::TrailingFloatsRootInlineBox):
+
 2010-09-23  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Roben.

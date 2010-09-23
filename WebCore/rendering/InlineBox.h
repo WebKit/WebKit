@@ -30,7 +30,6 @@ class HitTestRequest;
 class HitTestResult;
 class RootInlineBox;
 
-
 // InlineBox represents a rectangle that occurs on a line.  It corresponds to
 // some RenderObject (i.e., it represents a portion of that RenderObject).
 class InlineBox {
@@ -51,6 +50,7 @@ public:
 #if ENABLE(SVG)
         , m_hasVirtualLogicalHeight(false)
 #endif
+        , m_isVertical(false)
         , m_endsWithBreak(false)
         , m_hasSelectedChildren(false)
         , m_hasEllipsisBoxOrHyphen(false)
@@ -68,7 +68,7 @@ public:
     }
 
     InlineBox(RenderObject* obj, int x, int y, int logicalWidth, bool firstLine, bool constructed,
-              bool dirty, bool extracted, InlineBox* next, InlineBox* prev, InlineFlowBox* parent)
+              bool dirty, bool extracted, bool isVertical, InlineBox* next, InlineBox* prev, InlineFlowBox* parent)
         : m_next(next)
         , m_prev(prev)
         , m_parent(parent)
@@ -84,6 +84,7 @@ public:
 #if ENABLE(SVG)
         , m_hasVirtualLogicalHeight(false)
 #endif
+        , m_isVertical(isVertical)
         , m_endsWithBreak(false)
         , m_hasSelectedChildren(false)   
         , m_hasEllipsisBoxOrHyphen(false)
@@ -139,6 +140,7 @@ public:
 #if ENABLE(SVG)
     virtual bool isSVGInlineTextBox() const { return false; }
     virtual bool isSVGRootInlineBox() const { return false; }
+#endif
 
     bool hasVirtualLogicalHeight() const { return m_hasVirtualLogicalHeight; }
     void setHasVirtualLogicalHeight() { m_hasVirtualLogicalHeight = true; }
@@ -147,7 +149,9 @@ public:
         ASSERT_NOT_REACHED();
         return 0;
     }
-#endif
+
+    bool isVertical() const { return m_isVertical; }
+    void setIsVertical(bool v) { m_isVertical = v; }
 
     virtual IntRect calculateBoundaries() const
     {
@@ -283,6 +287,8 @@ protected:
     bool m_extracted : 1;
     bool m_hasVirtualLogicalHeight : 1;
 
+    bool m_isVertical;
+
     // for RootInlineBox
     bool m_endsWithBreak : 1;  // Whether the line ends with a <br>.
     bool m_hasSelectedChildren : 1; // Whether we have any children selected (this bit will also be set if the <br> that terminates our line is selected).
@@ -297,7 +303,7 @@ protected:
     mutable bool m_determinedIfPrevOnLineExists : 1;
     mutable bool m_nextOnLineExists : 1;
     mutable bool m_prevOnLineExists : 1;
-    int m_toAdd : 12; // for justified text
+    int m_toAdd : 11; // for justified text
 
 #ifndef NDEBUG
 private:

@@ -34,15 +34,7 @@ struct GapRects;
 
 class RootInlineBox : public InlineFlowBox {
 public:
-    RootInlineBox(RenderObject* obj)
-        : InlineFlowBox(obj)
-        , m_lineBreakObj(0)
-        , m_lineBreakPos(0)
-        , m_lineTop(0)
-        , m_lineBottom(0)
-        , m_paginationStrut(0)
-    {
-    }
+    RootInlineBox(RenderBlock* block);
 
     virtual void destroy(RenderArena*);
 

@@ -80,6 +80,7 @@ void InlineFlowBox::addToLine(InlineBox* child)
         m_lastChild = child;
     }
     child->setFirstLineStyleBit(m_firstLine);
+    child->setIsVertical(m_isVertical);
     if (child->isText())
         m_hasTextChildren = true;
     if (child->renderer()->selectionState() != RenderObject::SelectionNone)

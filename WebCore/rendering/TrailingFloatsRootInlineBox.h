@@ -32,11 +32,10 @@ namespace WebCore {
 
 class TrailingFloatsRootInlineBox : public RootInlineBox {
 public:
-    TrailingFloatsRootInlineBox(RenderObject* object) : RootInlineBox(object)
+    TrailingFloatsRootInlineBox(RenderBlock* block)
+        : RootInlineBox(block)
     {
-#if ENABLE(SVG)
         setHasVirtualLogicalHeight();
-#endif
     }
 
 private:
