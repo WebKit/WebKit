@@ -151,7 +151,7 @@
 #include "LocalCurrentGraphicsContext.h"
 #endif
 
-#if OS(LINUX)
+#if OS(LINUX) || OS(FREEBSD)
 #include <gdk/gdk.h>
 #endif
 
@@ -307,7 +307,7 @@ public:
         float scale = m_printedPageWidth / pageRect.width();
 
         ctx.save();
-#if OS(LINUX)
+#if OS(LINUX) || OS(FREEBSD)
         ctx.scale(WebCore::FloatSize(scale, scale));
 #endif
         ctx.translate(static_cast<float>(-pageRect.x()),

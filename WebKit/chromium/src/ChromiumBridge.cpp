@@ -66,7 +66,7 @@
 #include "WebThemeEngine.h"
 #endif
 
-#if OS(LINUX)
+#if OS(LINUX) || OS(FREEBSD)
 #include "WebFontInfo.h"
 #include "WebFontRenderStyle.h"
 #endif
@@ -422,7 +422,7 @@ bool ChromiumBridge::ensureFontLoaded(HFONT font)
 }
 #endif
 
-#if OS(LINUX)
+#if OS(LINUX) || OS(FREEBSD)
 String ChromiumBridge::getFontFamilyForCharacters(const UChar* characters, size_t numCharacters)
 {
     if (webKitClient()->sandboxSupport())

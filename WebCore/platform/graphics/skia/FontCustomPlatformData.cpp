@@ -36,7 +36,7 @@
 #include "Base64.h"
 #include "ChromiumBridge.h"
 #include "OpenTypeUtilities.h"
-#elif OS(LINUX)
+#elif OS(LINUX) || OS(FREEBSD)
 #include "SkStream.h"
 #endif
 
@@ -47,7 +47,7 @@
 
 #if OS(WINDOWS)
 #include <objbase.h>
-#elif OS(LINUX)
+#elif OS(LINUX) || OS(FREEBSD)
 #include <cstring>
 #endif
 
@@ -58,7 +58,7 @@ FontCustomPlatformData::~FontCustomPlatformData()
 #if OS(WINDOWS)
     if (m_fontReference)
         RemoveFontMemResourceEx(m_fontReference);
-#elif OS(LINUX)
+#elif OS(LINUX) || OS(FREEBSD)
     if (m_fontReference)
         m_fontReference->unref();
 #endif
@@ -99,7 +99,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, b
 
     HFONT hfont = CreateFontIndirect(&logFont);
     return FontPlatformData(hfont, size);
-#elif OS(LINUX)
+#elif OS(LINUX) || OS(FREEBSD)
     ASSERT(m_fontReference);
     return FontPlatformData(m_fontReference, "", size, bold && !m_fontReference->isBold(), italic && !m_fontReference->isItalic());
 #else
@@ -123,7 +123,7 @@ static String createUniqueFontName()
 }
 #endif
 
-#if OS(LINUX)
+#if OS(LINUX) || OS(FREEBSD)
 class RemoteFontStream : public SkStream {
 public:
     explicit RemoteFontStream(PassRefPtr<SharedBuffer> buffer)
@@ -189,7 +189,7 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
     if (!fontReference)
         return 0;
     return new FontCustomPlatformData(fontReference, fontName);
-#elif OS(LINUX)
+#elif OS(LINUX) || OS(FREEBSD)
     RemoteFontStream* stream = new RemoteFontStream(buffer);
     SkTypeface* typeface = SkTypeface::CreateFromStream(stream);
     if (!typeface)

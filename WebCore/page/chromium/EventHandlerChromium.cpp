@@ -154,7 +154,7 @@ unsigned EventHandler::accessKeyModifiers()
 #endif
 }
 
-#if OS(LINUX)
+#if OS(LINUX) || OS(FREEBSD)
 // GTK+ must scroll horizontally if the mouse pointer is on top of the
 // horizontal scrollbar while scrolling with the wheel.
 // This code comes from gtk/EventHandlerGtk.cpp.

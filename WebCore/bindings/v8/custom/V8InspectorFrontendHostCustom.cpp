@@ -47,6 +47,8 @@ v8::Handle<v8::Value> V8InspectorFrontendHost::platformCallback(const v8::Argume
     return v8String("mac");
 #elif defined(OS_LINUX)
     return v8String("linux");
+#elif defined(OS_FREEBSD)
+    return v8String("freebsd");
 #elif defined(OS_WIN)
     return v8String("windows");
 #else

@@ -58,6 +58,8 @@ JSValue JSInspectorFrontendHost::platform(ExecState* execState)
     DEFINE_STATIC_LOCAL(const String, platform, ("windows"));
 #elif OS(LINUX)
     DEFINE_STATIC_LOCAL(const String, platform, ("linux"));
+#elif OS(FREEBSD)
+    DEFINE_STATIC_LOCAL(const String, platform, ("freebsd"));
 #else
     DEFINE_STATIC_LOCAL(const String, platform, ("unknown"));
 #endif

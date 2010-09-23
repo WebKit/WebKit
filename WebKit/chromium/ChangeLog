@@ -1,3 +1,22 @@
+2010-09-22  Ruben  <chromium@hybridsource.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] added ifdefs for FreeBSD support
+        https://bugs.webkit.org/show_bug.cgi?id=46316
+
+        * WebKit.gyp:
+        * features.gypi:
+        * src/ChromiumBridge.cpp:
+        * src/WebFrameImpl.cpp:
+        (WebKit::ChromePrintContext::spoolPage):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::mouseDown):
+        (WebKit::WebViewImpl::mouseUp):
+        (WebKit::WebViewImpl::keyEvent):
+        (WebKit::WebViewImpl::setScrollbarColors):
+        (WebKit::WebViewImpl::setSelectionColors):
+
 2010-09-22  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by Dumitru Daniliuc.

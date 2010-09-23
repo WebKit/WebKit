@@ -764,7 +764,7 @@
                                 'tests/DragImageTest.cpp',
                             ],
                         }],
-                        ['OS=="linux"', {
+                        ['OS=="linux" or OS=="freebsd"', {
                             'sources': [
                                 'tests/WebInputEventFactoryTestGtk.cpp',
                             ],

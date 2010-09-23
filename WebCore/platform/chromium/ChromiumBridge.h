@@ -143,7 +143,7 @@ namespace WebCore {
 #if OS(WINDOWS)
         static bool ensureFontLoaded(HFONT font);
 #endif
-#if OS(LINUX)
+#if OS(LINUX) || OS(FREEBSD)
         static void getRenderStyleForStrike(const char* family, int sizeAndStyle, FontRenderStyle* result);
         static String getFontFamilyForCharacters(const UChar*, size_t numCharacters);
 #endif

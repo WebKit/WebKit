@@ -40,6 +40,7 @@
       # features_override.gypi inline documentation for more details.
       'feature_defines': [
         'ENABLE_3D_CANVAS=1',
+        'ENABLE_3D_RENDERING=1',
         'ENABLE_BLOB=1',
         'ENABLE_BLOB_SLICE=1',
         'ENABLE_CHANNEL_MESSAGING=1',
@@ -84,15 +85,7 @@
         'ENABLE_XHR_RESPONSE_BLOB=1',
         'ENABLE_XPATH=1',
         'ENABLE_XSLT=1',
-      ],
-
-      'conditions': [
-        ['OS=="win" or OS=="linux" or OS=="mac"', {
-          'feature_defines': [
-           'WTF_USE_ACCELERATED_COMPOSITING=1',
-           'ENABLE_3D_RENDERING=1',
-          ],
-        }],
+        'WTF_USE_ACCELERATED_COMPOSITING=1',
       ],
 
       'use_accelerated_compositing%': 1,

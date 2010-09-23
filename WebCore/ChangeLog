@@ -1,3 +1,27 @@
+2010-09-22  Ruben  <chromium@hybridsource.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] added ifdefs for FreeBSD support
+        https://bugs.webkit.org/show_bug.cgi?id=46316
+
+        * bindings/js/JSInspectorFrontendHostCustom.cpp:
+        (WebCore::JSInspectorFrontendHost::platform):
+        * bindings/v8/custom/V8InspectorFrontendHostCustom.cpp:
+        (WebCore::V8InspectorFrontendHost::platformCallback):
+        * dom/SelectElement.cpp:
+        * loader/CachedFont.cpp:
+        * page/EventHandler.cpp:
+        * page/chromium/EventHandlerChromium.cpp:
+        * platform/Scrollbar.cpp:
+        * platform/chromium/ChromiumBridge.h:
+        * platform/graphics/chromium/FontPlatformData.h:
+        * platform/graphics/skia/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::~FontCustomPlatformData):
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        (WebCore::createFontCustomPlatformData):
+        * platform/graphics/skia/FontCustomPlatformData.h:
+
 2010-09-22  Rafael Antognolli  <antognolli@profusion.mobi>
 
         Unreviewed build fix.
