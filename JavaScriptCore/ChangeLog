@@ -1,3 +1,11 @@
+2010-09-23  Ismail Dönmez  <ismail@namtrac.org>
+
+        Unreviewed.
+
+        JIT should be disabled on Windows CE. Broken in r64176.
+
+        * wtf/Platform.h:
+
 2010-09-23  Peter Varga  <pvarga@inf.u-szeged.hu>
 
         Reviewed by Gavin Barraclough.

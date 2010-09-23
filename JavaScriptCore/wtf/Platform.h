@@ -952,7 +952,8 @@
 /* The JIT is enabled by default on all x86, x64-64, ARM & MIPS platforms. */
 #if !defined(ENABLE_JIT) \
     && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(MIPS)) \
-    && (OS(DARWIN) || !COMPILER(GCC) || GCC_VERSION_AT_LEAST(4,1,0))
+    && (OS(DARWIN) || !COMPILER(GCC) || GCC_VERSION_AT_LEAST(4,1,0)) \
+    && !OS(WINCE)
 #define ENABLE_JIT 1
 #endif
 
