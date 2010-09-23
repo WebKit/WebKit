@@ -1,3 +1,26 @@
+2010-09-23  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        [Chromium] convert clientWidthAfterDocumentIsRemoved to dumpAsText
+        https://bugs.webkit.org/show_bug.cgi?id=46397
+        
+        As suggested in http://crbug.com/9613, this should just be a text-only
+        test.
+
+        * fast/dom/clientWidthAfterDocumentIsRemoved-expected.txt: Added.
+        * fast/dom/clientWidthAfterDocumentIsRemoved.html:
+        * platform/chromium-linux/fast/dom/clientWidthAfterDocumentIsRemoved-expected.checksum: Removed.
+        * platform/chromium-linux/fast/dom/clientWidthAfterDocumentIsRemoved-expected.png: Removed.
+        * platform/chromium-mac/fast/dom/clientWidthAfterDocumentIsRemoved-expected.txt: Removed.
+        * platform/chromium-win/fast/dom/clientWidthAfterDocumentIsRemoved-expected.checksum: Removed.
+        * platform/chromium-win/fast/dom/clientWidthAfterDocumentIsRemoved-expected.png: Removed.
+        * platform/chromium-win/fast/dom/clientWidthAfterDocumentIsRemoved-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/fast/dom/clientWidthAfterDocumentIsRemoved-expected.checksum: Removed.
+        * platform/mac/fast/dom/clientWidthAfterDocumentIsRemoved-expected.png: Removed.
+        * platform/mac/fast/dom/clientWidthAfterDocumentIsRemoved-expected.txt: Removed.
+
 2010-09-23  Tony Chang  <tony@chromium.org>
 
         Reviewed by David Levin.

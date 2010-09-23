@@ -1754,9 +1754,6 @@ BUG10473 LINUX : fast/replaced/width100percent-searchfield.html = FAIL
 // This test isn't just slow -- sometimes it times out indefinitely.
 BUG27569 LINUX MAC WIN : http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html = TIMEOUT PASS
 
-BUG9613 WIN LINUX : fast/dom/clientWidthAfterDocumentIsRemoved.html = IMAGE+TEXT TEXT
-BUG9613 MAC : fast/dom/clientWidthAfterDocumentIsRemoved.html = TEXT
-
 // Merge WebKit 42133:42199 regressions
 BUG20570 LINUX : fast/events/context-no-deselect.html = FAIL
 

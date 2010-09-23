@@ -6,6 +6,9 @@
 </iframe>
 
 <script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
 window.onload = function() {
     var iframe = document.getElementById("onlybear");
     var doc = iframe.contentDocument;
