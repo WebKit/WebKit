@@ -1,5 +1,15 @@
 2010-09-23  Patrick Gansterer  <paroga@webkit.org>
 
+        Reviewed by Adam Roben.
+
+        Add ChromeClientWinCE
+        https://bugs.webkit.org/show_bug.cgi?id=46294
+
+        * WebCoreSupport/ChromeClientWinCE.cpp: Added.
+        * WebCoreSupport/ChromeClientWinCE.h: Added.
+
+2010-09-23  Patrick Gansterer  <paroga@webkit.org>
+
         Unreviewed.
 
         Build fix for FrameLoaderClientWinCE.
