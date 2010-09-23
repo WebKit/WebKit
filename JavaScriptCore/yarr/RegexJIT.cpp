@@ -986,10 +986,8 @@ class RegexGenerator : private MacroAssembler {
             parenthesesState.plantJumpToBacktrackIfExists(this);
             // A failure WITHIN the parens jumps here
             parenthesesState.linkAlternativeBacktracks(this);
-            if (term.invertOrCapture) {
+            if (term.invertOrCapture)
                 store32(Imm32(-1), Address(output, (term.parentheses.subpatternId << 1) * sizeof(int)));
-                store32(Imm32(-1), Address(output, ((term.parentheses.subpatternId << 1) + 1) * sizeof(int)));
-            }
 
             if (term.quantityType == QuantifierGreedy)
                 storeToFrame(Imm32(0), parenthesesFrameLocation);

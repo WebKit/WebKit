@@ -1,3 +1,19 @@
+2010-09-23  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Removed extraneous truncation of ovector on entry and error exit.
+        Changed the initialization to -1 of vector to only initialize
+        the start indecies, which is sufficient for the pattern/subpatterns.
+        Changed the JIT code to not clear the end index for subpatterns
+        as it isn't needed.  These changes are worth ~2.7% on v8-regexp.
+        https://bugs.webkit.org/show_bug.cgi?id=46404
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::match):
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::generateParenthesesSingle):
+
 2010-09-22  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.
