@@ -1,3 +1,48 @@
+2010-09-23  Renata Hodovan  <reni@inf.u-szeged.hu>
+
+        Reviewed by Dirk Schulze.
+
+        SVGFEMorphologyElement doesn't support dynamic invalidation, when attributes change.
+        https://bugs.webkit.org/show_bug.cgi?id=46363
+        Adding layout tests for feMorphology dynamic changes.
+
+        * platform/mac/svg/dynamic-updates/SVGFEMorphologyElement-dom-in-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEMorphologyElement-dom-in-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEMorphologyElement-dom-operator-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEMorphologyElement-dom-operator-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEMorphologyElement-dom-radius-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEMorphologyElement-dom-radius-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEMorphologyElement-svgdom-in-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEMorphologyElement-svgdom-in-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEMorphologyElement-svgdom-operator-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEMorphologyElement-svgdom-operator-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEMorphologyElement-svgdom-radius-call-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEMorphologyElement-svgdom-radius-call-expected.png: Added.
+        * svg/dynamic-updates/SVGFEMorphologyElement-dom-in-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEMorphologyElement-dom-in-attr.html: Added.
+        * svg/dynamic-updates/SVGFEMorphologyElement-dom-operator-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEMorphologyElement-dom-operator-attr.html: Added.
+        * svg/dynamic-updates/SVGFEMorphologyElement-dom-radius-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEMorphologyElement-dom-radius-attr.html: Added.
+        * svg/dynamic-updates/SVGFEMorphologyElement-svgdom-in-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEMorphologyElement-svgdom-in-prop.html: Added.
+        * svg/dynamic-updates/SVGFEMorphologyElement-svgdom-operator-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEMorphologyElement-svgdom-operator-prop.html: Added.
+        * svg/dynamic-updates/SVGFEMorphologyElement-svgdom-radius-call-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEMorphologyElement-svgdom-radius-call.html: Added.
+        * svg/dynamic-updates/script-tests/SVGFEMorphologyElement-dom-in-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEMorphologyElement-dom-operator-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEMorphologyElement-dom-radius-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEMorphologyElement-svgdom-in-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEMorphologyElement-svgdom-operator-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEMorphologyElement-svgdom-radius-call.js: Added.
+        (executeTest):
+
 2010-09-23  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Darin Fisher.

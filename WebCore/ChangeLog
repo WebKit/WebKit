@@ -1,3 +1,23 @@
+2010-09-23  Renata Hodovan  <reni@inf.u-szeged.hu>
+
+        Reviewed by Dirk Schulze.
+
+        SVGFEMorphologyElement doesn't support dynamic invalidation, when attributes change.
+        https://bugs.webkit.org/show_bug.cgi?id=46363
+        The patch also implements the simple setRadius method.
+
+        Tests: svg/dynamic-updates/SVGFEMorphologyElement-dom-in-attr.html
+               svg/dynamic-updates/SVGFEMorphologyElement-dom-operator-attr.html
+               svg/dynamic-updates/SVGFEMorphologyElement-dom-radius-attr.html
+               svg/dynamic-updates/SVGFEMorphologyElement-svgdom-in-prop.html
+               svg/dynamic-updates/SVGFEMorphologyElement-svgdom-operator-prop.html
+               svg/dynamic-updates/SVGFEMorphologyElement-svgdom-radius-call.html
+
+        * svg/SVGFEMorphologyElement.cpp:
+        (WebCore::SVGFEMorphologyElement::setRadius):
+        (WebCore::SVGFEMorphologyElement::svgAttributeChanged):
+        * svg/SVGFEMorphologyElement.h:
+
 2010-09-23  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Roben.

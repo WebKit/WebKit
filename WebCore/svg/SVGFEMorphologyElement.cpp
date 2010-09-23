@@ -42,9 +42,11 @@ PassRefPtr<SVGFEMorphologyElement> SVGFEMorphologyElement::create(const Qualifie
     return adoptRef(new SVGFEMorphologyElement(tagName, document));
 }
 
-void SVGFEMorphologyElement::setRadius(float, float)
+void SVGFEMorphologyElement::setRadius(float x, float y)
 {
-    // FIXME: Needs an implementation.
+    setRadiusXBaseValue(x);
+    setRadiusYBaseValue(y);
+    invalidate();
 }
 
 void SVGFEMorphologyElement::parseMappedAttribute(Attribute* attr)
@@ -65,6 +67,16 @@ void SVGFEMorphologyElement::parseMappedAttribute(Attribute* attr)
         }
     } else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+}
+
+void SVGFEMorphologyElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+
+    if (attrName == SVGNames::inAttr
+        || attrName == SVGNames::operatorAttr
+        || attrName == SVGNames::radiusAttr)
+        invalidate();
 }
 
 void SVGFEMorphologyElement::synchronizeProperty(const QualifiedName& attrName)
