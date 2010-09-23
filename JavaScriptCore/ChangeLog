@@ -1,3 +1,16 @@
+2010-09-22  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Fixed the cross over from alternatives executed once and
+        those that loop.  This fixed the problem where the index
+        was getting messed up for looping alternatives causing an
+        infinite loop.
+        https://bugs.webkit.org/show_bug.cgi?id=46189
+
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::generateDisjunction):
+
 2010-09-22  Steve Falkenburg  <sfalken@apple.com>
 
         Rubber stamped by Jon Honeycutt.

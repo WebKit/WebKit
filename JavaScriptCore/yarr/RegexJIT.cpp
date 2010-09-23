@@ -1271,64 +1271,75 @@ class RegexGenerator : private MacroAssembler {
             // if there are any more alternatives, plant the check for input before looping.
             if (state.alternativeValid()) {
                 PatternAlternative* nextAlternative = state.alternative();
-                bool setAlternativeLoopLabel = false;
                 if (!setRepeatAlternativeLabels && !nextAlternative->onceThrough()) {
                     // We have handled non-repeating alternatives, jump to next iteration 
                     // and loop over repeating alternatives.
                     state.jumpToBacktrack(jump(), this);
+                    
+                    countToCheckForFirstAlternative = nextAlternative->m_minimumSize;
+                    
+                    // If we get here, there the last input checked failed.
+                    notEnoughInputForPreviousAlternative.link(this);
+                    
+                    state.linkAlternativeBacktracks(this);
 
+                    // Back up to start the looping alternatives.
+                    if (countCheckedForCurrentAlternative)
+                        sub32(Imm32(countCheckedForCurrentAlternative), index);
+                    
                     firstAlternative = Label(this);
-                    setRepeatAlternativeLabels = true;
-                    setAlternativeLoopLabel = true;
-                }
-                
-                int countToCheckForNextAlternative = nextAlternative->m_minimumSize;
-
-                if (countCheckedForCurrentAlternative > countToCheckForNextAlternative) { // CASE 1: current alternative was longer than the next one.
-                    // If we get here, there the last input checked failed.
-                    notEnoughInputForPreviousAlternative.link(this);
-
-                    // Check if sufficent input available to run the next alternative 
-                    notEnoughInputForPreviousAlternative.append(jumpIfNoAvailableInput(countToCheckForNextAlternative - countCheckedForCurrentAlternative));
-                    // We are now in the correct state to enter the next alternative; this add is only required
-                    // to mirror and revert operation of the sub32, just below.
-                    add32(Imm32(countCheckedForCurrentAlternative - countToCheckForNextAlternative), index);
-
-                    // If we get here, there the last input checked passed.
-                    state.linkAlternativeBacktracks(this);
-                    // No need to check if we can run the next alternative, since it is shorter -
-                    // just update index.
-                    sub32(Imm32(countCheckedForCurrentAlternative - countToCheckForNextAlternative), index);
-                } else if (countCheckedForCurrentAlternative < countToCheckForNextAlternative) { // CASE 2: next alternative is longer than the current one.
-                    // If we get here, there the last input checked failed.
-                    // If there is insufficient input to run the current alternative, and the next alternative is longer,
-                    // then there is definitely not enough input to run it - don't even check. Just adjust index, as if
-                    // we had checked.
-                    notEnoughInputForPreviousAlternative.link(this);
-                    add32(Imm32(countToCheckForNextAlternative - countCheckedForCurrentAlternative), index);
-                    notEnoughInputForPreviousAlternative.append(jump());
-
-                    // The next alternative is longer than the current one; check the difference.
-                    state.linkAlternativeBacktracks(this);
-                    notEnoughInputForPreviousAlternative.append(jumpIfNoAvailableInput(countToCheckForNextAlternative - countCheckedForCurrentAlternative));
-                } else { // CASE 3: Both alternatives are the same length.
-                    ASSERT(countCheckedForCurrentAlternative == countToCheckForNextAlternative);
-
-                    // If the next alterative is the same length as this one, then no need to check the input -
-                    // if there was sufficent input to run the current alternative then there is sufficient
-                    // input to run the next one; if not, there isn't.
-                    state.linkAlternativeBacktracks(this);
-                }
-
-                if (setAlternativeLoopLabel) {
+                    
+                    state.checkedTotal = countToCheckForFirstAlternative;
+                    if (countToCheckForFirstAlternative)
+                        notEnoughInputForPreviousAlternative.append(jumpIfNoAvailableInput(countToCheckForFirstAlternative));
+                    
+                    countCheckedForCurrentAlternative = countToCheckForFirstAlternative;
+                    
                     firstAlternativeInputChecked = Label(this);
-                    countToCheckForFirstAlternative = countToCheckForNextAlternative;
-                    setAlternativeLoopLabel = true;
+
+                    setRepeatAlternativeLabels = true;
+                } else {
+                    int countToCheckForNextAlternative = nextAlternative->m_minimumSize;
+                    
+                    if (countCheckedForCurrentAlternative > countToCheckForNextAlternative) { // CASE 1: current alternative was longer than the next one.
+                        // If we get here, then the last input checked failed.
+                        notEnoughInputForPreviousAlternative.link(this);
+                        
+                        // Check if sufficent input available to run the next alternative 
+                        notEnoughInputForPreviousAlternative.append(jumpIfNoAvailableInput(countToCheckForNextAlternative - countCheckedForCurrentAlternative));
+                        // We are now in the correct state to enter the next alternative; this add is only required
+                        // to mirror and revert operation of the sub32, just below.
+                        add32(Imm32(countCheckedForCurrentAlternative - countToCheckForNextAlternative), index);
+                        
+                        // If we get here, then the last input checked passed.
+                        state.linkAlternativeBacktracks(this);
+                        // No need to check if we can run the next alternative, since it is shorter -
+                        // just update index.
+                        sub32(Imm32(countCheckedForCurrentAlternative - countToCheckForNextAlternative), index);
+                    } else if (countCheckedForCurrentAlternative < countToCheckForNextAlternative) { // CASE 2: next alternative is longer than the current one.
+                        // If we get here, then the last input checked failed.
+                        // If there is insufficient input to run the current alternative, and the next alternative is longer,
+                        // then there is definitely not enough input to run it - don't even check. Just adjust index, as if
+                        // we had checked.
+                        notEnoughInputForPreviousAlternative.link(this);
+                        add32(Imm32(countToCheckForNextAlternative - countCheckedForCurrentAlternative), index);
+                        notEnoughInputForPreviousAlternative.append(jump());
+                        
+                        // The next alternative is longer than the current one; check the difference.
+                        state.linkAlternativeBacktracks(this);
+                        notEnoughInputForPreviousAlternative.append(jumpIfNoAvailableInput(countToCheckForNextAlternative - countCheckedForCurrentAlternative));
+                    } else { // CASE 3: Both alternatives are the same length.
+                        ASSERT(countCheckedForCurrentAlternative == countToCheckForNextAlternative);
+                        
+                        // If the next alterative is the same length as this one, then no need to check the input -
+                        // if there was sufficent input to run the current alternative then there is sufficient
+                        // input to run the next one; if not, there isn't.
+                        state.linkAlternativeBacktracks(this);
+                    }
+                    state.checkedTotal -= countCheckedForCurrentAlternative;
+                    countCheckedForCurrentAlternative = countToCheckForNextAlternative;
+                    state.checkedTotal += countCheckedForCurrentAlternative;
                 }
-                
-                state.checkedTotal -= countCheckedForCurrentAlternative;
-                countCheckedForCurrentAlternative = countToCheckForNextAlternative;
-                state.checkedTotal += countCheckedForCurrentAlternative;
             }
         }
         

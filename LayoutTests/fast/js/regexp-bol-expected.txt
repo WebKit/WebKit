@@ -11,6 +11,19 @@ PASS s.match(/(^abc|c)123/) is ["abc123","abc"]
 PASS s.match(/(c|^abc)123/) is ["abc123","abc"]
 PASS s.match(/(^ab|abc)123/) is ["abc123","abc"]
 PASS s.match(/(bc|^abc)([0-9]*)a/) is ["bc789a","bc","789"]
+PASS /(?:(Y)X)|(X)/.exec("abc") is null
+PASS /(?:(?:^|Y)X)|(X)/.exec("abc") is null
+PASS /(?:(?:^|Y)X)|(X)/.exec("abcd") is null
+PASS /(?:(?:^|Y)X)|(X)/.exec("Xabcd") is ["X",undefined]
+PASS /(?:(?:^|Y)X)|(X)/.exec("aXbcd") is ["X","X"]
+PASS /(?:(?:^|Y)X)|(X)/.exec("abXcd") is ["X","X"]
+PASS /(?:(?:^|Y)X)|(X)/.exec("abcXd") is ["X","X"]
+PASS /(?:(?:^|Y)X)|(X)/.exec("abcdX") is ["X","X"]
+PASS /(?:(?:^|Y)X)|(X)/.exec("YXabcd") is ["YX",undefined]
+PASS /(?:(?:^|Y)X)|(X)/.exec("aYXbcd") is ["YX",undefined]
+PASS /(?:(?:^|Y)X)|(X)/.exec("abYXcd") is ["YX",undefined]
+PASS /(?:(?:^|Y)X)|(X)/.exec("abcYXd") is ["YX",undefined]
+PASS /(?:(?:^|Y)X)|(X)/.exec("abcdYX") is ["YX",undefined]
 PASS successfullyParsed is true
 
 TEST COMPLETE
