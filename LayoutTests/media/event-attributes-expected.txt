@@ -25,6 +25,7 @@ EVENT(pause)
 
 *** seeking
 RUN(video.currentTime = 5.6)
+EVENT(seeking)
 EVENT(seeked)
 
 *** beginning playback

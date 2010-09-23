@@ -963,22 +963,16 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
         return;
 
     if (m_seeking) {
-        // 4.8.10.10, step 8
+        // 4.8.10.9, step 11
         if (wasPotentiallyPlaying && m_readyState < HAVE_FUTURE_DATA)
             scheduleEvent(eventNames().waitingEvent);
 
-        // 4.8.10.10, step 9
-        if (m_readyState < HAVE_CURRENT_DATA) {
-            if (oldState >= HAVE_CURRENT_DATA)
-                scheduleEvent(eventNames().seekingEvent);
-        } else {
-            // 4.8.10.10 step 12 & 13.
+        // 4.8.10.10 step 14 & 15.
+        if (m_readyState >= HAVE_CURRENT_DATA)
             finishSeek();
-        }
-
     } else {
         if (wasPotentiallyPlaying && m_readyState < HAVE_FUTURE_DATA) {
-            // 4.8.10.9
+            // 4.8.10.8
             scheduleTimeupdateEvent(false);
             scheduleEvent(eventNames().waitingEvent);
         }
@@ -1101,27 +1095,39 @@ void HTMLMediaElement::seek(float time, ExceptionCode& ec)
     // Get the current time before setting m_seeking, m_lastSeekTime is returned once it is set.
     float now = currentTime();
 
+    // 2 - If the element's seeking IDL attribute is true, then another instance of this algorithm is
+    // already running. Abort that other instance of the algorithm without waiting for the step that
+    // it is running to complete.
+    // Nothing specific to be done here.
+
     // 3 - Set the seeking IDL attribute to true.
-    // The flag will be cleared when the engine tells is the time has actually changed
+    // The flag will be cleared when the engine tells us the time has actually changed.
     m_seeking = true;
 
-    // 4 - Queue a task to fire a simple event named timeupdate at the element.
-    scheduleTimeupdateEvent(false);
-
-    // 6 - If the new playback position is later than the end of the media resource, then let it be the end 
+    // 5 - If the new playback position is later than the end of the media resource, then let it be the end 
     // of the media resource instead.
     time = min(time, duration());
 
-    // 7 - If the new playback position is less than the earliest possible position, let it be that position instead.
+    // 6 - If the new playback position is less than the earliest possible position, let it be that position instead.
     float earliestTime = m_player->startTime();
     time = max(time, earliestTime);
 
-    // 8 - If the (possibly now changed) new playback position is not in one of the ranges given in the 
+    // 7 - If the (possibly now changed) new playback position is not in one of the ranges given in the 
     // seekable attribute, then let it be the position in one of the ranges given in the seekable attribute 
     // that is the nearest to the new playback position. ... If there are no ranges given in the seekable
     // attribute then set the seeking IDL attribute to false and abort these steps.
     RefPtr<TimeRanges> seekableRanges = seekable();
-    if (!seekableRanges->length() || time == now) {
+
+    // Short circuit seeking to the current time by just firing the events if no seek is required.
+    // Don't skip calling the media engine if we are in poster mode because a seek should always 
+    // cancel poster display.
+    bool noSeekRequired = !seekableRanges->length() || (time == now && displayMode() != Poster);
+    if (noSeekRequired) {
+        if (time == now) {
+            scheduleEvent(eventNames().seekingEvent);
+            scheduleTimeupdateEvent(false);
+            scheduleEvent(eventNames().seekedEvent);
+        }
         m_seeking = false;
         return;
     }
@@ -1134,20 +1140,26 @@ void HTMLMediaElement::seek(float time, ExceptionCode& ec)
     m_lastSeekTime = time;
     m_sentEndEvent = false;
 
-    // 9 - Set the current playback position to the given new playback position
+    // 8 - Set the current playback position to the given new playback position
     m_player->seek(time);
 
-    // 10-15 are handled, if necessary, when the engine signals a readystate change.
+    // 9 - Queue a task to fire a simple event named seeking at the element.
+    scheduleEvent(eventNames().seekingEvent);
+
+    // 10 - Queue a task to fire a simple event named timeupdate at the element.
+    scheduleTimeupdateEvent(false);
+
+    // 11-15 are handled, if necessary, when the engine signals a readystate change.
 }
 
 void HTMLMediaElement::finishSeek()
 {
     LOG(Media, "HTMLMediaElement::finishSeek");
 
-    // 4.8.10.10 Seeking step 12
+    // 4.8.10.9 Seeking step 14
     m_seeking = false;
 
-    // 4.8.10.10 Seeking step 13
+    // 4.8.10.9 Seeking step 15
     scheduleEvent(eventNames().seekedEvent);
 
     setDisplayMode(Video);
@@ -1660,8 +1672,8 @@ void HTMLMediaElement::mediaPlayerTimeChanged(MediaPlayer*)
     // movie time.
     scheduleTimeupdateEvent(false);
 
-    // 4.8.10.10 step 12 & 13.  Needed if no ReadyState change is associated with the seek.
-    if (m_readyState >= HAVE_CURRENT_DATA && m_seeking)
+    // 4.8.10.9 step 14 & 15.  Needed if no ReadyState change is associated with the seek.
+    if (m_seeking && m_readyState >= HAVE_CURRENT_DATA)
         finishSeek();
     
     float now = currentTime();

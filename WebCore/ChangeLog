@@ -1,3 +1,18 @@
+2010-09-23  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser
+
+        'seeking' event should always fire
+        https://bugs.webkit.org/show_bug.cgi?id=45694
+
+        Update seek algorithm to match current spec.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setReadyState): Don't need to fire 'seeking' event here.
+        (WebCore::HTMLMediaElement::seek): Always fire 'seeking'. Update comments.
+        (WebCore::HTMLMediaElement::finishSeek): Update comments.
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged): Ditto.
+
 2010-09-23  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by David Levin.
