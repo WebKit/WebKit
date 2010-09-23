@@ -56,7 +56,7 @@ void RenderSVGInlineText::styleDidChange(StyleDifference diff, const RenderStyle
 InlineTextBox* RenderSVGInlineText::createTextBox()
 {
     InlineTextBox* box = new (renderArena()) SVGInlineTextBox(this);
-    box->setHasVirtualHeight();
+    box->setHasVirtualLogicalHeight();
     return box;
 }
 

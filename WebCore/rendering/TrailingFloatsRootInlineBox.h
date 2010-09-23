@@ -35,12 +35,12 @@ public:
     TrailingFloatsRootInlineBox(RenderObject* object) : RootInlineBox(object)
     {
 #if ENABLE(SVG)
-        setHasVirtualHeight();
+        setHasVirtualLogicalHeight();
 #endif
     }
 
 private:
-    virtual int virtualHeight() const { return 0; }
+    virtual int virtualLogicalHeight() const { return 0; }
 };
 
 } // namespace WebCore

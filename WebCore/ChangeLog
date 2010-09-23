@@ -1,3 +1,125 @@
+2010-09-23  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46378, rename width/height on line boxes to logicalWidth/logicalHeight.
+
+        * editing/visible_units.cpp:
+        (WebCore::previousLinePosition):
+        (WebCore::nextLinePosition):
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint):
+        (WebCore::EllipsisBox::paintSelection):
+        (WebCore::EllipsisBox::nodeAtPoint):
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::logicalHeight):
+        (WebCore::InlineBox::canAccommodateEllipsis):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::InlineBox):
+        (WebCore::InlineBox::hasVirtualLogicalHeight):
+        (WebCore::InlineBox::setHasVirtualLogicalHeight):
+        (WebCore::InlineBox::virtualLogicalHeight):
+        (WebCore::InlineBox::setLogicalWidth):
+        (WebCore::InlineBox::logicalWidth):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesHorizontally):
+        (WebCore::InlineFlowBox::placeBoxesVertically):
+        (WebCore::InlineFlowBox::computeVerticalOverflow):
+        (WebCore::InlineFlowBox::nodeAtPoint):
+        (WebCore::InlineFlowBox::paintFillLayer):
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        (WebCore::InlineFlowBox::paintMask):
+        (WebCore::InlineFlowBox::paintTextDecorations):
+        (WebCore::InlineFlowBox::placeEllipsisBox):
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::visibleOverflowRect):
+        (WebCore::InlineFlowBox::bottomLayoutOverflow):
+        (WebCore::InlineFlowBox::rightLayoutOverflow):
+        (WebCore::InlineFlowBox::layoutOverflowRect):
+        (WebCore::InlineFlowBox::bottomVisualOverflow):
+        (WebCore::InlineFlowBox::rightVisualOverflow):
+        (WebCore::InlineFlowBox::visualOverflowRect):
+        (WebCore::InlineFlowBox::setHorizontalOverflowPositions):
+        (WebCore::InlineFlowBox::setVerticalOverflowPositions):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionRect):
+        (WebCore::InlineTextBox::placeEllipsisBox):
+        (WebCore::InlineTextBox::nodeAtPoint):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintCustomHighlight):
+        (WebCore::InlineTextBox::paintDecoration):
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::paintCompositionUnderline):
+        * rendering/InlineTextBox.h:
+        (WebCore::InlineTextBox::calculateBoundaries):
+        (WebCore::InlineTextBox::setSpaceAdd):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintEllipsisBoxes):
+        (WebCore::RenderBlock::rightmostPosition):
+        (WebCore::RenderBlock::adjustForBorderFit):
+        (WebCore::RenderBlock::addFocusRingRects):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine):
+        (WebCore::RenderBlock::checkLinesForTextOverflow):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintCustomHighlight):
+        (WebCore::RenderBox::containingBlockWidthForPositioned):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::applyLineClamp):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::absoluteRects):
+        (WebCore::RenderInline::absoluteQuads):
+        (WebCore::RenderInline::linesBoundingBox):
+        (WebCore::RenderInline::addFocusRingRects):
+        (WebCore::RenderInline::paintOutline):
+        * rendering/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::createInlineFlowBox):
+        (WebCore::RenderSVGInline::absoluteQuads):
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::createTextBox):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::createRootInlineBox):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::absoluteRects):
+        (WebCore::RenderText::absoluteRectsForRange):
+        (WebCore::RenderText::absoluteQuadsForRange):
+        (WebCore::RenderText::positionForPoint):
+        (WebCore::RenderText::localCaretRect):
+        (WebCore::RenderText::linesBoundingBox):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeTextRun):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::canAccommodateEllipsis):
+        (WebCore::RootInlineBox::placeEllipsis):
+        (WebCore::RootInlineBox::addHighlightOverflow):
+        (WebCore::RootInlineBox::paintCustomHighlight):
+        (WebCore::RootInlineBox::fillLineSelectionGap):
+        (WebCore::RootInlineBox::closestLeafChildForXPos):
+        * rendering/SVGInlineFlowBox.h:
+        (WebCore::SVGInlineFlowBox::SVGInlineFlowBox):
+        (WebCore::SVGInlineFlowBox::virtualLogicalHeight):
+        (WebCore::SVGInlineFlowBox::setLogicalHeight):
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::SVGInlineTextBox):
+        * rendering/SVGInlineTextBox.h:
+        (WebCore::SVGInlineTextBox::virtualLogicalHeight):
+        (WebCore::SVGInlineTextBox::setLogicalHeight):
+        (WebCore::SVGInlineTextBox::selectionHeight):
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::writeRenderSVGTextBox):
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::layoutChildBoxes):
+        (WebCore::SVGRootInlineBox::layoutRootBox):
+        * rendering/SVGRootInlineBox.h:
+        (WebCore::SVGRootInlineBox::SVGRootInlineBox):
+        (WebCore::SVGRootInlineBox::virtualLogicalHeight):
+        (WebCore::SVGRootInlineBox::setLogicalHeight):
+        * rendering/TrailingFloatsRootInlineBox.h:
+        (WebCore::TrailingFloatsRootInlineBox::TrailingFloatsRootInlineBox):
+        (WebCore::TrailingFloatsRootInlineBox::virtualLogicalHeight):
+
 2010-09-23  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Oliver Hunt.

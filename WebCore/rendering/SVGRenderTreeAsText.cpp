@@ -392,7 +392,7 @@ static void writeRenderSVGTextBox(TextStream& ts, const RenderBlock& text)
         return;
 
     Vector<SVGTextChunk>& chunks = const_cast<Vector<SVGTextChunk>& >(box->svgTextChunks());
-    ts << " at (" << text.x() << "," << text.y() << ") size " << box->width() << "x" << box->height() << " contains " << chunks.size() << " chunk(s)";
+    ts << " at (" << text.x() << "," << text.y() << ") size " << box->logicalWidth() << "x" << box->logicalHeight() << " contains " << chunks.size() << " chunk(s)";
 
     if (text.parent() && (text.parent()->style()->visitedDependentColor(CSSPropertyColor) != text.style()->visitedDependentColor(CSSPropertyColor)))
         writeNameValuePair(ts, "color", text.style()->visitedDependentColor(CSSPropertyColor).name());

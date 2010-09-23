@@ -39,7 +39,7 @@ RenderSVGInline::RenderSVGInline(Node* n)
 InlineFlowBox* RenderSVGInline::createInlineFlowBox()
 {
     InlineFlowBox* box = new (renderArena()) SVGInlineFlowBox(this);
-    box->setHasVirtualHeight();
+    box->setHasVirtualLogicalHeight();
     return box;
 }
 
@@ -90,7 +90,7 @@ void RenderSVGInline::absoluteQuads(Vector<FloatQuad>& quads)
 
     FloatRect textBoundingBox = object->strokeBoundingBox();
     for (InlineFlowBox* box = firstLineBox(); box; box = box->nextLineBox())
-        quads.append(localToAbsoluteQuad(FloatRect(textBoundingBox.x() + box->x(), textBoundingBox.y() + box->y(), box->width(), box->height())));
+        quads.append(localToAbsoluteQuad(FloatRect(textBoundingBox.x() + box->x(), textBoundingBox.y() + box->y(), box->logicalWidth(), box->logicalHeight())));
 }
 
 void RenderSVGInline::destroy()

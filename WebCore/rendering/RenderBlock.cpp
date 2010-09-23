@@ -2400,7 +2400,7 @@ void RenderBlock::paintEllipsisBoxes(PaintInfo& paintInfo, int tx, int ty)
         // We can check the first box and last box and avoid painting if we don't
         // intersect.
         int yPos = ty + firstLineBox()->y();
-        int h = lastLineBox()->y() + lastLineBox()->height() - firstLineBox()->y();
+        int h = lastLineBox()->y() + lastLineBox()->logicalHeight() - firstLineBox()->y();
         if (yPos >= paintInfo.rect.bottom() || yPos + h <= paintInfo.rect.y())
             return;
 
@@ -2409,7 +2409,7 @@ void RenderBlock::paintEllipsisBoxes(PaintInfo& paintInfo, int tx, int ty)
         // based off positions of our first line box or our last line box.
         for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
             yPos = ty + curr->y();
-            h = curr->height();
+            h = curr->logicalHeight();
             if (curr->ellipsisBox() && yPos < paintInfo.rect.bottom() && yPos + h > paintInfo.rect.y())
                 curr->paintEllipsisBox(paintInfo, tx, ty);
         }
@@ -3477,7 +3477,7 @@ int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSel
         right = max(right, borderLeft() + paddingLeft() + paddingRight() + relativeOffset);
         if (childrenInline()) {
             for (InlineFlowBox* currBox = firstLineBox(); currBox; currBox = currBox->nextLineBox()) {
-                int childRightEdge = currBox->x() + currBox->width();
+                int childRightEdge = currBox->x() + currBox->logicalWidth();
                 
                 // If this node is a root editable element, then the rightmostPosition should account for a caret at the end.
                 // FIXME: Need to find another way to do this, since scrollbars could show when we don't want them to.
@@ -5519,7 +5519,7 @@ void RenderBlock::adjustForBorderFit(int x, int& left, int& right) const
                 if (box->firstChild())
                     left = min(left, x + box->firstChild()->x());
                 if (box->lastChild())
-                    right = max(right, x + box->lastChild()->x() + box->lastChild()->width());
+                    right = max(right, x + box->lastChild()->x() + box->lastChild()->logicalWidth());
             }
         }
         else {
@@ -5814,8 +5814,8 @@ void RenderBlock::addFocusRingRects(Vector<IntRect>& rects, int tx, int ty)
     if (!hasOverflowClip() && !hasControlClip()) {
         for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
             int top = max(curr->lineTop(), curr->y());
-            int bottom = min(curr->lineBottom(), curr->y() + curr->height());
-            IntRect rect(tx + curr->x(), ty + top, curr->width(), bottom - top);
+            int bottom = min(curr->lineBottom(), curr->y() + curr->logicalHeight());
+            IntRect rect(tx + curr->x(), ty + top, curr->logicalWidth(), bottom - top);
             if (!rect.isEmpty())
                 rects.append(rect);
         }

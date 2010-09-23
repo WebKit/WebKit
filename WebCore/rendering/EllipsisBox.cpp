@@ -62,7 +62,7 @@ void EllipsisBox::paint(PaintInfo& paintInfo, int tx, int ty)
 
     if (m_markupBox) {
         // Paint the markup box
-        tx += m_x + m_width - m_markupBox->x();
+        tx += m_x + m_logicalWidth - m_markupBox->x();
         ty += m_y + style->font().ascent() - (m_markupBox->y() + m_markupBox->renderer()->style(m_firstLine)->font().ascent());
         m_markupBox->paint(paintInfo, tx, ty);
     }
@@ -91,7 +91,7 @@ void EllipsisBox::paintSelection(GraphicsContext* context, int tx, int ty, Rende
     context->save();
     int y = root()->selectionTop();
     int h = root()->selectionHeight();
-    context->clip(IntRect(m_x + tx, y + ty, m_width, h));
+    context->clip(IntRect(m_x + tx, y + ty, m_logicalWidth, h));
     context->drawHighlightForText(font, TextRun(m_str.characters(), m_str.length(), false, 0, 0, false, style->visuallyOrdered()),
         IntPoint(m_x + tx, m_y + ty + y), h, c, style->colorSpace());
     context->restore();
@@ -105,7 +105,7 @@ bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     // Hit test the markup box.
     if (m_markupBox) {
         RenderStyle* style = m_renderer->style(m_firstLine);
-        int mtx = tx + m_width - m_markupBox->x();
+        int mtx = tx + m_logicalWidth - m_markupBox->x();
         int mty = ty + style->font().ascent() - (m_markupBox->y() + m_markupBox->renderer()->style(m_firstLine)->font().ascent());
         if (m_markupBox->nodeAtPoint(request, result, x, y, mtx, mty)) {
             renderer()->updateHitTestResult(result, IntPoint(x - mtx, y - mty));
@@ -113,7 +113,7 @@ bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         }
     }
 
-    IntRect boundsRect = IntRect(tx, ty, m_width, m_height);
+    IntRect boundsRect = IntRect(tx, ty, m_logicalWidth, m_height);
     if (visibleToHitTesting() && boundsRect.intersects(result.rectFromPoint(x, y))) {
         renderer()->updateHitTestResult(result, IntPoint(x - tx, y - ty));
         if (!result.addNodeToRectBasedTestResult(renderer()->node(), x, y, boundsRect))

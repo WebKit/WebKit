@@ -40,7 +40,7 @@ namespace WebCore {
 
 SVGInlineTextBox::SVGInlineTextBox(RenderObject* object)
     : InlineTextBox(object)
-    , m_height(0)
+    , m_logicalHeight(0)
     , m_paintingResource(0)
     , m_paintingResourceMode(ApplyToDefaultMode)
 {

@@ -358,7 +358,7 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, bool
                 const AtomicString& hyphenString = rt->style()->hyphenString();
                 hyphenWidth = rt->style(firstLine)->font().width(TextRun(hyphenString.characters(), hyphenString.length()));
             }
-            r->m_box->setWidth(rt->width(r->m_start, r->m_stop - r->m_start, totWidth, firstLine, &fallbackFonts, &glyphOverflow) + hyphenWidth);
+            r->m_box->setLogicalWidth(rt->width(r->m_start, r->m_stop - r->m_start, totWidth, firstLine, &fallbackFonts, &glyphOverflow) + hyphenWidth);
             if (!fallbackFonts.isEmpty()) {
                 ASSERT(r->m_box->isText());
                 GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(static_cast<InlineTextBox*>(r->m_box), make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).first;
@@ -373,11 +373,11 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, bool
         } else if (!r->m_object->isRenderInline()) {
             RenderBox* renderBox = toRenderBox(r->m_object);
             renderBox->calcWidth();
-            r->m_box->setWidth(renderBox->width());
+            r->m_box->setLogicalWidth(renderBox->width());
             totWidth += renderBox->marginLeft() + renderBox->marginRight();
         }
 
-        totWidth += r->m_box->width();
+        totWidth += r->m_box->logicalWidth();
     }
 
     // Armed with the total width of the line (without justification),
@@ -392,10 +392,10 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, bool
             // particular with RTL blocks, wide lines should still spill out to the left.
             if (style()->direction() == LTR) {
                 if (totWidth > availableWidth && trailingSpaceRun)
-                    trailingSpaceRun->m_box->setWidth(max(0, trailingSpaceRun->m_box->width() - totWidth + availableWidth));
+                    trailingSpaceRun->m_box->setLogicalWidth(max(0, trailingSpaceRun->m_box->logicalWidth() - totWidth + availableWidth));
             } else {
                 if (trailingSpaceRun)
-                    trailingSpaceRun->m_box->setWidth(0);
+                    trailingSpaceRun->m_box->setLogicalWidth(0);
                 else if (totWidth > availableWidth)
                     x -= (totWidth - availableWidth);
             }
@@ -403,8 +403,8 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, bool
         case JUSTIFY:
             if (numSpaces && !reachedEnd && !lineBox->endsWithBreak()) {
                 if (trailingSpaceRun) {
-                    totWidth -= trailingSpaceRun->m_box->width();
-                    trailingSpaceRun->m_box->setWidth(0);
+                    totWidth -= trailingSpaceRun->m_box->logicalWidth();
+                    trailingSpaceRun->m_box->setLogicalWidth(0);
                 }
                 break;
             }
@@ -414,7 +414,7 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, bool
             // for right to left fall through to right aligned
             if (style()->direction() == LTR) {
                 if (totWidth > availableWidth && trailingSpaceRun)
-                    trailingSpaceRun->m_box->setWidth(max(0, trailingSpaceRun->m_box->width() - totWidth + availableWidth));
+                    trailingSpaceRun->m_box->setLogicalWidth(max(0, trailingSpaceRun->m_box->logicalWidth() - totWidth + availableWidth));
                 break;
             }
         case RIGHT:
@@ -424,15 +424,15 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, bool
             // side of the block.
             if (style()->direction() == LTR) {
                 if (trailingSpaceRun) {
-                    totWidth -= trailingSpaceRun->m_box->width();
-                    trailingSpaceRun->m_box->setWidth(0);
+                    totWidth -= trailingSpaceRun->m_box->logicalWidth();
+                    trailingSpaceRun->m_box->setLogicalWidth(0);
                 }
                 if (totWidth < availableWidth)
                     x += availableWidth - totWidth;
             } else {
                 if (totWidth > availableWidth && trailingSpaceRun) {
-                    trailingSpaceRun->m_box->setWidth(max(0, trailingSpaceRun->m_box->width() - totWidth + availableWidth));
-                    totWidth -= trailingSpaceRun->m_box->width();
+                    trailingSpaceRun->m_box->setLogicalWidth(max(0, trailingSpaceRun->m_box->logicalWidth() - totWidth + availableWidth));
+                    totWidth -= trailingSpaceRun->m_box->logicalWidth();
                 } else
                     x += availableWidth - totWidth;
             }
@@ -441,9 +441,9 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, bool
         case WEBKIT_CENTER:
             int trailingSpaceWidth = 0;
             if (trailingSpaceRun) {
-                totWidth -= trailingSpaceRun->m_box->width();
-                trailingSpaceWidth = min(trailingSpaceRun->m_box->width(), (availableWidth - totWidth + 1) / 2);
-                trailingSpaceRun->m_box->setWidth(max(0, trailingSpaceWidth));
+                totWidth -= trailingSpaceRun->m_box->logicalWidth();
+                trailingSpaceWidth = min(trailingSpaceRun->m_box->logicalWidth(), (availableWidth - totWidth + 1) / 2);
+                trailingSpaceRun->m_box->setLogicalWidth(max(0, trailingSpaceWidth));
             }
             if (style()->direction() == LTR)
                 x += max((availableWidth - totWidth) / 2, 0);
@@ -2104,7 +2104,7 @@ void RenderBlock::checkLinesForTextOverflow()
     for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
         int blockRightEdge = rightOffset(curr->y(), curr == firstRootBox());
         int blockLeftEdge = leftOffset(curr->y(), curr == firstRootBox());
-        int lineBoxEdge = ltr ? curr->x() + curr->width() : curr->x();
+        int lineBoxEdge = ltr ? curr->x() + curr->logicalWidth() : curr->x();
         if ((ltr && lineBoxEdge > blockRightEdge) || (!ltr && lineBoxEdge < blockLeftEdge)) {
             // This line spills out of our box in the appropriate direction.  Now we need to see if the line
             // can be truncated.  In order for truncation to be possible, the line must have sufficient space to

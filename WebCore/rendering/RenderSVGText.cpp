@@ -124,7 +124,7 @@ void RenderSVGText::layout()
 RootInlineBox* RenderSVGText::createRootInlineBox() 
 {
     RootInlineBox* box = new (renderArena()) SVGRootInlineBox(this);
-    box->setHasVirtualHeight();
+    box->setHasVirtualLogicalHeight();
     return box;
 }
 

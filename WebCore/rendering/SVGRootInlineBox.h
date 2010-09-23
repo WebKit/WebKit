@@ -39,14 +39,14 @@ class SVGRootInlineBox : public RootInlineBox {
 public:
     SVGRootInlineBox(RenderObject* obj)
         : RootInlineBox(obj)
-        , m_height(0)
+        , m_logicalHeight(0)
     {
     }
 
     virtual bool isSVGRootInlineBox() const { return true; }
 
-    virtual int virtualHeight() const { return m_height; }
-    void setHeight(int height) { m_height = height; }
+    virtual int virtualLogicalHeight() const { return m_logicalHeight; }
+    void setLogicalHeight(int height) { m_logicalHeight = height; }
 
     virtual void paint(PaintInfo&, int tx, int ty);
 
@@ -66,7 +66,7 @@ private:
     void layoutChildBoxes(InlineFlowBox* start);
 
 private:
-    int m_height;
+    int m_logicalHeight;
     Vector<SVGChar> m_svgChars;
     Vector<SVGTextChunk> m_svgTextChunks;
 };
