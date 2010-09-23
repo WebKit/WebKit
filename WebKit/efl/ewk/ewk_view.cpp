@@ -3769,7 +3769,7 @@ uint64_t ewk_view_exceeded_database_quota(Evas_Object* o, Evas_Object* frame, co
     if (!sd->api->exceeded_database_quota)
         return 0;
 
-    INF("current_size=%"PRIu64" expected_size="PRIu64, current_size, expected_size);
+    INF("current_size=%"PRIu64" expected_size=%"PRIu64, current_size, expected_size);
     return sd->api->exceeded_database_quota(sd, frame, databaseName, current_size, expected_size);
 }
 

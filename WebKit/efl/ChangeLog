@@ -1,3 +1,19 @@
+2010-09-23  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [EFL] Fix warnings during build
+        https://bugs.webkit.org/show_bug.cgi?id=46354
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_text_matches_nth_pos_get): Change argument type because
+        it's meant to be always positive.
+        * ewk/ewk_frame.h: Ditto.
+        * ewk/ewk_view.cpp:
+        (ewk_view_exceeded_database_quota): Add missing "%" causing warning about number of
+        arguments to printf-like function.
+        * ewk/ewk_view.h: Add missing initialization.
+
 2010-09-21  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.

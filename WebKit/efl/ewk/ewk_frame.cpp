@@ -847,7 +847,7 @@ static bool _ewk_frame_rect_is_negative_value(const WebCore::IntRect& i)
  * @return @c EINA_TRUE on success, @c EINA_FALSE for failure - when no matches found or 
  *         n bigger than search results.
  */
-Eina_Bool ewk_frame_text_matches_nth_pos_get(Evas_Object* o, int n, int* x, int* y)
+Eina_Bool ewk_frame_text_matches_nth_pos_get(Evas_Object* o, size_t n, int* x, int* y)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, EINA_FALSE);
