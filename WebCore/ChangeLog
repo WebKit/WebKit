@@ -1,3 +1,17 @@
+2010-09-22  Luke Macpherson  <macpherson@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Don't allow empty strings as tokens in xmlhttprequest, as per rfc2616 section 2.2.
+
+        XMLHttpRequest: setRequestHeader() does not throw SYNTAX_ERR exception if the header field name is empty
+        https://bugs.webkit.org/show_bug.cgi?id=46151
+
+        Test: http/tests/xmlhttprequest/xmlhttprequest-setrequestheader-no-name.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::isValidToken):
+
 2010-09-22  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Adam Barth.

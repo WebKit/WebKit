@@ -115,7 +115,7 @@ static bool isValidToken(const String& name)
             return false;
     }
 
-    return true;
+    return length > 0;
 }
 
 static bool isValidHeaderValue(const String& name)

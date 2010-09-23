@@ -1,0 +1,19 @@
+<html>
+<body>
+<p>Test that open throws a SYNTAX_ERR exception when called with an empty method.</p>
+<pre id="result">FAIL: script didn't run or raised an unexpected exception.</pre>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    var result = "FAIL: no exception was caught";
+    var req = new XMLHttpRequest;
+    try {
+        req.open("", "resources/print-headers.cgi", false);
+    } catch (ex) {
+        result = "SUCCESS: got exception " + ex;
+    }
+    document.getElementById("result").textContent = result;
+</script>
+</body>
+</html>
