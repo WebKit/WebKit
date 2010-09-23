@@ -20,6 +20,9 @@ MACRO(WEBKIT_SET_EXTRA_COMPILER_FLAGS _target)
 
     SET(OLD_COMPILE_FLAGS "-fno-exceptions -fno-strict-aliasing ${OLD_COMPILE_FLAGS}")
 
+    # Enable warnings by default
+    SET(OLD_COMPILE_FLAGS "-W -DANOTHER_BRICK_IN_THE -Wall -Wextra -Wcast-align -Wchar-subscripts -Wformat -Wformat-security -Wmissing-format-attribute -Wno-format-y2k -Wno-parentheses -Wno-unused-parameter -Wpointer-arith  -Wreturn-type -Wundef -Wwrite-strings ${OLD_COMPILE_FLAGS}")
+
     SET_TARGET_PROPERTIES (${_target} PROPERTIES
 	COMPILE_FLAGS "${OLD_COMPILE_FLAGS}")
 

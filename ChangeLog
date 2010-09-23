@@ -1,3 +1,16 @@
+2010-09-23  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Enable warnings during build by default
+        https://bugs.webkit.org/show_bug.cgi?id=46351
+
+        Change default build to enable several warnings like other ports do.
+        We need to pay special attention to "-Wall" in order to produce better
+        code, so highlight this keyword, too.
+
+        * cmake/WebKitHelpers.cmake:
+
 2010-09-22  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Antonio Gomes.
