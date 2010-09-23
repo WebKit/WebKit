@@ -278,15 +278,47 @@ void ResourceHandle::onHandleCreated(LPARAM lParam)
     }
 }
 
-void ResourceHandle::onRequestRedirected(LPARAM lParam)
+static void callOnRedirect(void* context)
 {
-    // If already canceled, then ignore this event.
-    if (d->status != 0)
-        return;
+    ResourceHandle* handle = static_cast<ResourceHandle*>(context);
+    handle->onRedirect();
+}
 
-    ResourceRequest request((StringImpl*) lParam);
-    ResourceResponse redirectResponse;
-    client()->willSendRequest(this, request, redirectResponse);
+static void callOnRequestComplete(void* context)
+{
+    ResourceHandle* handle = static_cast<ResourceHandle*>(context);
+    handle->onRequestComplete();
+}
+
+void ResourceHandle::internetStatusCallback(HINTERNET internetHandle, DWORD_PTR context, DWORD internetStatus,
+                                                     LPVOID statusInformation, DWORD statusInformationLength)
+{
+    ResourceHandle* handle = reinterpret_cast<ResourceHandle*>(context);
+
+    switch (internetStatus) {
+    case INTERNET_STATUS_REDIRECT:
+        handle->d->m_redirectUrl = String(static_cast<UChar*>(statusInformation), statusInformationLength);
+        callOnMainThread(callOnRedirect, handle);
+        break;
+
+    case INTERNET_STATUS_REQUEST_COMPLETE:
+        callOnMainThread(callOnRequestComplete, handle);
+        break;
+
+    default:
+        break;
+    }
+}
+
+void ResourceHandle::onRedirect()
+{
+    ResourceRequest newRequest = firstRequest();
+    newRequest.setURL(KURL(ParsedURLString, d->m_redirectUrl));
+
+    ResourceResponse response(firstRequest().url(), String(), 0, String(), String());
+
+    if (ResourceHandleClient* resourceHandleClient = client())
+        resourceHandleClient->willSendRequest(this, newRequest, response);
 }
 
 void ResourceHandle::onRequestComplete(LPARAM lParam)

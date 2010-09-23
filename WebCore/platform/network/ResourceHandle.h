@@ -172,8 +172,9 @@ public:
     bool hasReceivedResponse() const;
     void fileLoadTimer(Timer<ResourceHandle>*);
     void onHandleCreated(LPARAM);
-    void onRequestRedirected(LPARAM);
+    void onRedirect();
     void onRequestComplete(LPARAM);
+    static void CALLBACK internetStatusCallback(HINTERNET, DWORD_PTR, DWORD, LPVOID, DWORD);
     friend void __stdcall transferJobStatusCallback(HINTERNET, DWORD_PTR, DWORD, LPVOID, DWORD);
     friend LRESULT __stdcall ResourceHandleWndProc(HWND, unsigned message, WPARAM, LPARAM);
 #endif

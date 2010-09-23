@@ -1,3 +1,20 @@
+2010-09-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Add internetStatusCallback to ResourceHandleWin.
+        https://bugs.webkit.org/show_bug.cgi?id=46187
+
+        Add callback for asynchronous network transfer.
+
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleInternal.h:
+        * platform/network/win/ResourceHandleWin.cpp:
+        (WebCore::callOnRedirect):
+        (WebCore::callOnRequestComplete):
+        (WebCore::ResourceHandle::internetStatusCallback):
+        (WebCore::ResourceHandle::onRedirect):
+
 2010-09-23  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Jeremy Orlow.
