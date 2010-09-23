@@ -1,3 +1,16 @@
+2010-09-23  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Nate Chapin.
+
+        [GTK] r68199 introduced two test failures
+        https://bugs.webkit.org/show_bug.cgi?id=46424
+
+        Fix a regression handling preference overrides that are attached to boolean properties.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::overridePreference): g_strcasecmp returns 0 when strings match
+        so we must check for that when converting a string to a boolean.
+
 2010-09-23  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by David Levin.
