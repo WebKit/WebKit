@@ -601,7 +601,14 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const
     WebCoreSynchronousLoader syncLoader(error, response, data, request.httpUserAgent());
     ResourceHandle handle(request, &syncLoader, true, false);
 
+    handle.setSynchronousInternetHandle(syncLoader.internetHandle());
     handle.start(context);
+}
+
+void ResourceHandle::setSynchronousInternetHandle(HINTERNET internetHandle)
+{
+    d->m_internetHandle = internetHandle;
+    d->m_loadSynchronously = true;
 }
 
 bool ResourceHandle::willLoadFromCache(ResourceRequest&, Frame*)

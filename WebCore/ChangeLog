@@ -1,3 +1,17 @@
+2010-09-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Set synchronous handle in ResourceHandleWin
+        https://bugs.webkit.org/show_bug.cgi?id=46395
+
+        When loading synchronous network resources, we need to use a synchronous internet handle.
+
+        * platform/network/ResourceHandle.h:
+        * platform/network/win/ResourceHandleWin.cpp:
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+        (WebCore::ResourceHandle::setSynchronousInternetHandle):
+
 2010-09-23  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
