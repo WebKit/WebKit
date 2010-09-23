@@ -538,14 +538,12 @@ BUG20404 : editing/execCommand/copy-without-selection.html = FAIL
 // (Note that lighttpd is only used on Windows at this point.)
 
 // LightTPD doesn't accept unknown HTTP methods
-BUG30536 SKIP : http/tests/xmlhttprequest/methods-lower-case.html = TIMEOUT CRASH
-BUG30536 LINUX MAC : http/tests/xmlhttprequest/methods-async.html = TEXT
-BUG30536 WIN       : http/tests/xmlhttprequest/methods-async.html = TIMEOUT
+BUG30536 WIN SKIP : http/tests/xmlhttprequest/methods-lower-case.html = TIMEOUT CRASH
+BUG30536 WIN : http/tests/xmlhttprequest/methods-async.html = TIMEOUT
 BUG30536 WIN SLOW : http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-invalidation-by-method.html = FAIL
 // LightTPD doesn't accept unknown HTTP methods and passes CGIs a Content-Type
 // even when a request didn't send the header.
 BUG30536 WIN SLOW : http/tests/xmlhttprequest/methods.html = FAIL
-BUG30536 MAC LINUX : http/tests/xmlhttprequest/methods.html = FAIL
 // Webkit 50667:50696 (Lighttpd related?)
 BUG30536 WIN : http/tests/xmlhttprequest/xmlhttprequest-setrequestheader-no-value.html = TEXT
 

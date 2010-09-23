@@ -1,3 +1,14 @@
+2010-09-22  Tony Chang  <tony@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] add baselines for xmlhttprequest tests for chromium
+        https://bugs.webkit.org/show_bug.cgi?id=46281
+
+        * platform/chromium/http/tests/xmlhttprequest/methods-async-expected.txt: Allow no content-length for non-get/post requests
+        * platform/chromium/http/tests/xmlhttprequest/methods-expected.txt: Allow no content-length for non-get/post requests
+        * platform/chromium/test_expectations.txt: Enable 3 tests on linux + mac
+
 2010-09-22  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Gavin Barraclough.
