@@ -1,3 +1,21 @@
+2010-09-23  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by David Levin.
+
+        [Chromium] remove incorrect baselines for two WebGL tests
+        https://bugs.webkit.org/show_bug.cgi?id=46372
+        
+        As far as I can tell, these tests were not failing because of
+        "new-run-webkit-tests's diff trimming line ends", but because they had
+        chromium-mac baselines checked in with r56251, but then the test was
+        changed since then, with the chromium-mac baselines not being updated.
+        The test seems to pass on chromium-mac (both test_shell and DRT) with
+        the regular baselines.        
+
+        * platform/chromium-mac/fast/canvas/webgl/null-object-behaviour-expected.txt: Removed.
+        * platform/chromium-mac/fast/canvas/webgl/uniform-location-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2010-09-23  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser

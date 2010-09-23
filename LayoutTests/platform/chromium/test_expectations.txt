@@ -3079,10 +3079,6 @@ BUGDPRANKE WIN LINUX : media/video-poster.html = PASS TEXT
 
 BUGWK45898 : editing/selection/context-menu-on-text.html = TEXT
 
-// These are failing due to new-run-webkit-tests's diff trimming line ends.
-BUGWEBGL MAC : fast/canvas/webgl/null-object-behaviour.html = TEXT
-BUGWEBGL MAC : fast/canvas/webgl/uniform-location.html = TEXT
-
 BUGWEBGL WIN LINUX : fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html = TEXT
 BUGWEBGL : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
 BUGWEBGL : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
