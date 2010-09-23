@@ -268,7 +268,7 @@ body {
  font-style: italic;
 }
 
-.message {
+#message {
   font-size: small;
   font-family: sans-serif;
 }

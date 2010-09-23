@@ -1,5 +1,11 @@
 2010-09-22  Adam Barth  <abarth@webkit.org>
 
+        Fix typo in CSS.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2010-09-22  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Add link to bug to review page
