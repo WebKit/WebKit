@@ -1,3 +1,14 @@
+2010-09-23  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Expose the BundlePage on the BundleFrame in the API.
+        https://bugs.webkit.org/show_bug.cgi?id=46366
+
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameGetPage):
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.h:
+
 2010-09-23  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         Reviewed by Andreas Kling.

@@ -113,3 +113,8 @@ unsigned WKBundleFrameGetPendingUnloadCount(WKBundleFrameRef frameRef)
 {
     return toWK(frameRef)->pendingUnloadCount();
 }
+
+WKBundlePageRef WKBundleFrameGetPage(WKBundleFrameRef frameRef)
+{
+    return toRef(toWK(frameRef)->page());
+}
