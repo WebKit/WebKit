@@ -1,3 +1,21 @@
+2010-09-22  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Unreviewed build fix.
+
+        [EFL] Fix build due to latest EFL (Edje) changes.
+        https://bugs.webkit.org/show_bug.cgi?id=46317
+
+        Make the change int -> Edje_Load_Error (enum).
+
+        No new functionality, so no new tests.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::themePartCacheEntryReset):
+        (WebCore::RenderThemeEfl::createEdje):
+        (WebCore::RenderThemeEfl::applyPartDescriptions):
+        * platform/efl/ScrollbarEfl.cpp:
+        (ScrollbarEfl::setParent):
+
 2010-09-22  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

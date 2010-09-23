@@ -78,7 +78,7 @@ bool RenderThemeEfl::themePartCacheEntryReset(struct ThemePartCacheEntry* ce, Fo
     ASSERT(group);
 
     if (!edje_object_file_set(ce->o, file, group)) {
-        int err = edje_object_load_error_get(ce->o);
+        Edje_Load_Error err = edje_object_load_error_get(ce->o);
         const char *errmsg = edje_load_error_str(err);
         EINA_LOG_ERR("Could not load '%s' from theme %s: %s",
                      group, file, errmsg);
@@ -421,7 +421,7 @@ void RenderThemeEfl::createEdje()
         if (!m_edje)
             EINA_LOG_ERR("Could not create base edje object.");
         else if (!edje_object_file_set(m_edje, theme.utf8().data(), "webkit/base")) {
-            int err = edje_object_load_error_get(m_edje);
+            Edje_Load_Error err = edje_object_load_error_get(m_edje);
             const char* errmsg = edje_load_error_str(err);
             EINA_LOG_ERR("Could not load 'webkit/base' from theme %s: %s",
                          theme.utf8().data(), errmsg);
@@ -600,7 +600,7 @@ void RenderThemeEfl::applyPartDescriptions()
         const char* group = edjeGroupFromFormType(type);
         m_partDescs[i].type = type;
         if (!edje_object_file_set(o, file, group)) {
-            int err = edje_object_load_error_get(o);
+            Edje_Load_Error err = edje_object_load_error_get(o);
             const char* errmsg = edje_load_error_str(err);
             EINA_LOG_ERR("Could not set theme group '%s' of file '%s': %s",
                          group, file, errmsg);
