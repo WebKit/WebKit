@@ -2332,6 +2332,16 @@
 
 2010-09-15  Chris Fleizach  <cfleizach@apple.com>
 
+        Reviewed by Darin Adler.
+
+        AX: aria-hidden change doesn't update the ax tree
+        https://bugs.webkit.org/show_bug.cgi?id=45836
+
+        * accessibility/aria-hidden-update-expected.txt: Added.
+        * accessibility/aria-hidden-update.html: Added.
+
+2010-09-15  Chris Fleizach  <cfleizach@apple.com>
+
         AX: when text is auto-truncated, accessibility bounds are wrong
         https://bugs.webkit.org/show_bug.cgi?id=45793
 
