@@ -28,12 +28,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define __STDC_FORMAT_MACROS
 #include "config.h"
 #include "SQLiteFileSystem.h"
 
 #include "FileSystem.h"
 #include "SQLiteDatabase.h"
 #include "SQLiteStatement.h"
+#include <inttypes.h>
 #include <sqlite3.h>
 
 namespace WebCore {
@@ -73,10 +75,10 @@ String SQLiteFileSystem::getFileNameForNewDatabase(const String& dbDir, const St
     String fileName;
     do {
         ++seq;
-        fileName = pathByAppendingComponent(dbDir, String::format("%016llx.db", seq));
+        fileName = pathByAppendingComponent(dbDir, String::format("%016"PRIx64".db", seq));
     } while (fileExists(fileName));
 
-    return String::format("%016llx.db", seq);
+    return String::format("%016"PRIx64".db", seq);
 }
 
 String SQLiteFileSystem::appendDatabaseFileNameToPath(const String& path, const String& fileName)
