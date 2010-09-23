@@ -2561,12 +2561,17 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     sharedPreferences->willAddToWebView();
     m_preferences = sharedPreferences;
 
-    InitializeLoggingChannelsIfNecessary();
+    static bool didOneTimeInitialization;
+    if (!didOneTimeInitialization) {
+        InitializeLoggingChannelsIfNecessary();
 #if ENABLE(DATABASE)
-    WebKitInitializeWebDatabasesIfNecessary();
+        WebKitInitializeWebDatabasesIfNecessary();
 #endif
-    WebKitSetApplicationCachePathIfNecessary();
-    WebPlatformStrategies::initialize();
+        WebKitSetApplicationCachePathIfNecessary();
+        WebPlatformStrategies::initialize();
+
+        didOneTimeInitialization = true;
+     }
 
 #if USE(SAFARI_THEME)
     BOOL shouldPaintNativeControls;

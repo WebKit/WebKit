@@ -1,3 +1,14 @@
+2010-09-23  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Create one time initialization block for WebView's initWithFrame
+        https://bugs.webkit.org/show_bug.cgi?id=46307
+
+        * WebView.cpp: Added one time initialization block for webview code
+        that needs only be run once and not for each webview. This is just as
+        the mac version WebView.mm does.
+
 2010-09-22  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Martin Robinson.
