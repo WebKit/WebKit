@@ -1,3 +1,17 @@
+2010-09-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        [WINCE] Remove usage of MemoryManager
+        https://bugs.webkit.org/show_bug.cgi?id=46206
+
+        MemoryManager does not provide any extra value, so remove it.
+
+        * page/wince/FrameWinCE.cpp:
+        (WebCore::imageFromSelection):
+        * platform/graphics/wince/PlatformPathWinCE.cpp:
+        (WebCore::drawPolygons):
+
 2010-09-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris Fleizach.

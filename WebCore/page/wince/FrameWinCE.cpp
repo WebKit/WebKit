@@ -129,11 +129,11 @@ HBITMAP imageFromSelection(Frame* frame, bool forceBlackText)
     }
 
     OwnPtr<HDC> bmpDC(CreateCompatibleDC(g_screenDC));
-    HBITMAP hBmp = MemoryManager::createCompatibleBitmap(g_screenDC, w, h);
+    HBITMAP hBmp = CreateCompatibleBitmap(g_screenDC, w, h);
     if (!hBmp)
         return 0;
 
-    HBITMAP hbmpOld = (HBITMAP)SelectObject(bmpDC.get(), hBmp);
+    HGDIOBJ hbmpOld = SelectObject(bmpDC.get(), hBmp);
 
     {
         GraphicsContext gc(bmpDC.get());

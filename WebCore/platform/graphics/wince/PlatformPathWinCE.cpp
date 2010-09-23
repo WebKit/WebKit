@@ -234,7 +234,6 @@ static void addArcPoints(PathPolygon& poly, const PlatformPathElement::ArcTo& da
 
 static void drawPolygons(HDC dc, const Vector<PathPolygon>& polygons, bool fill, const AffineTransform* transformation)
 {
-    MemoryAllocationCanFail canFail;
     for (Vector<PathPolygon>::const_iterator i = polygons.begin(); i != polygons.end(); ++i) {
         int npoints = i->size();
         if (!npoints)
