@@ -47,6 +47,8 @@ _messages_file_contents = """# Copyright (C) 2010 Apple Inc. All rights reserved
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#if ENABLE(WEBKIT2)
+
 messages -> WebPage {
     LoadURL(WTF::String url)
 #if ENABLE(TOUCH_EVENTS)
@@ -55,16 +57,20 @@ messages -> WebPage {
     DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction)
     Close()
 
+    SendDoubleAndFloat(double d, float f)
     SendInts(Vector<uint64_t> ints)
 
     RunJavaScriptAlert(uint64_t frameID, WTF::String message) -> ()
     GetPlugins(bool refresh) -> (Vector<WebCore::PluginInfo> plugins)
     GetPluginProcessConnection(WTF::String pluginPath) -> (CoreIPC::Connection::Handle connectionHandle) delayed
 }
+
+#endif
 """
 
 _expected_results = {
     'name': 'WebPage',
+    'condition': 'ENABLE(WEBKIT2)',
     'messages': (
         {
             'name': 'LoadURL',
@@ -97,6 +103,15 @@ _expected_results = {
             'parameters': (),
             'condition': None,
             'base_class': 'CoreIPC::Arguments0',
+        },
+        {
+            'name': 'SendDoubleAndFloat',
+            'parameters': (
+                ('double', 'd'),
+                ('float', 'f'),
+            ),
+            'condition': None,
+            'base_class': 'CoreIPC::Arguments2<double, float>',
         },
         {
             'name': 'SendInts',
@@ -169,6 +184,7 @@ class ParsingTest(MessagesTest):
     def test_receiver(self):
         """Receiver should be parsed as expected"""
         self.assertEquals(self.receiver.name, _expected_results['name'])
+        self.assertEquals(self.receiver.condition, _expected_results['condition'])
         self.assertEquals(len(self.receiver.messages), len(_expected_results['messages']))
         for index, message in enumerate(self.receiver.messages):
             self.check_message(message, _expected_results['messages'][index])

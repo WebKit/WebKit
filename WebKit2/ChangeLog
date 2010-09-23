@@ -17,6 +17,20 @@
 
         Reviewed by Adam Roben.
 
+        It should be possible to conditionally define an entire group of messages
+        https://bugs.webkit.org/show_bug.cgi?id=46368
+
+        * Scripts/webkit2/messages.py:
+        Check for a condition when parsing the "messages -> " string and set it as the
+        message receiver condition.
+
+        * Scripts/webkit2/messages_unittest.py:
+        Add test.
+
+2010-09-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
         Message autogeneration script should parse sync message syntax
         https://bugs.webkit.org/show_bug.cgi?id=46359
 

@@ -50,9 +50,10 @@ _license_header = """/*
 """
 
 class MessageReceiver(object):
-    def __init__(self, name, messages):
+    def __init__(self, name, messages, condition):
         self.name = name
         self.messages = messages
+        self.condition = condition
 
     def iterparameters(self):
         return (parameter for message in self.messages for parameter in message.parameters)
@@ -62,9 +63,13 @@ class MessageReceiver(object):
         destination = None
         messages = []
         condition = None
+        master_condition = None
         for line in file:
             match = re.search(r'messages -> ([A-Za-z_0-9]+) {', line)
             if match:
+                if condition:
+                    master_condition = condition
+                    condition = None
                 destination = match.group(1)
                 continue
             if line.startswith('#'):
@@ -91,7 +96,7 @@ class MessageReceiver(object):
                     reply_parameters = None
 
                 messages.append(Message(name, parameters, reply_parameters, delayed, condition))
-        return MessageReceiver(destination, messages)
+        return MessageReceiver(destination, messages, master_condition)
 
 
 class Message(object):
@@ -139,6 +144,8 @@ def function_parameter_type(type):
     # Don't use references for built-in types.
     builtin_types = frozenset([
         'bool',
+        'float',
+        'double',
         'uint8_t',
         'uint16_t',
         'uint32_t',
@@ -232,6 +239,9 @@ def generate_messages_header(file):
     result.append('#ifndef %s\n' % header_guard)
     result.append('#define %s\n\n' % header_guard)
 
+    if receiver.condition:
+        result.append('#if %s\n\n' % receiver.condition)
+
     result += ['#include %s\n' % header for header in sorted(headers)]
     result.append('\n')
 
@@ -250,7 +260,11 @@ def generate_messages_header(file):
     result.append('};\n')
     result.append('\n} // namespace CoreIPC\n')
 
+    if receiver.condition:
+        result.append('\n#endif // %s\n' % receiver.condition)
+
     result.append('\n#endif // %s\n' % header_guard)
+
     return ''.join(result)
 
 
@@ -301,6 +315,9 @@ def generate_message_handler(file):
     result.append(_license_header)
     result.append('\n')
 
+    if receiver.condition:
+        result.append('#if %s\n\n' % receiver.condition)
+
     result.append('#include "%s.h"\n\n' % receiver.name)
     result += ['#include %s\n' % header for header in sorted(headers)]
     result.append('\n')
@@ -316,5 +333,8 @@ def generate_message_handler(file):
     result.append('}\n')
 
     result.append('\n} // namespace WebKit\n')
+
+    if receiver.condition:
+        result.append('\n#endif // %s\n' % receiver.condition)
 
     return ''.join(result)
