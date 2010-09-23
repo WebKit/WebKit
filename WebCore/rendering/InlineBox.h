@@ -206,13 +206,33 @@ public:
     const RootInlineBox* root() const;
     RootInlineBox* root();
 
-    // x() is the left side of the box in the parent's coordinate system.
+    // x() is the left side of the box in the containing block's coordinate system.
     void setX(int x) { m_x = x; }
     int x() const { return m_x; }
 
-    // y() is the top of the box in the parent's coordinate system.
+    // y() is the top side of the box in the containing block's coordinate system.
     void setY(int y) { m_y = y; }
     int y() const { return m_y; }
+
+    // The logicalLeft position is the left edge of the line box in a horizontal line and the top edge in a vertical line.
+    int logicalLeft() const { return !m_isVertical ? m_x : m_y; }
+    void setLogicalLeft(int left)
+    {
+        if (!m_isVertical)
+            m_x = left;
+        else
+            m_y = left;
+    }
+
+    // The logicalTop[ position is the top edge of the line box in a horizontal line and the left edge in a vertical line.
+    int logicalTop() const { return !m_isVertical ? m_y : m_x; }
+    void setLogicalTop(int top)
+    {
+        if (!m_isVertical)
+            m_y = top;
+        else
+            m_x = top;
+    }
 
     // The logical width is our extent in the line's overall inline direction, i.e., width for horizontal text and height for vertical text.
     void setLogicalWidth(int w) { m_logicalWidth = w; }

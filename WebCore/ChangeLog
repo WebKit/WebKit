@@ -1,3 +1,17 @@
+2010-09-23  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46400
+        
+        Add logicalLeft/Top getter/setters to line boxes.
+
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::logicalLeft):
+        (WebCore::InlineBox::setLogicalLeft):
+        (WebCore::InlineBox::logicalTop):
+        (WebCore::InlineBox::setLogicalTop):
+
 2010-09-23  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.
