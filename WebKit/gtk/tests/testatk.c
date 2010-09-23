@@ -763,7 +763,7 @@ static void testWekitAtkTextSelections(void)
     webkit_web_view_load_string(webView, textForSelections, NULL, NULL, NULL);
     loop = g_main_loop_new(NULL, TRUE);
 
-    g_timeout_add(100, (GSourceFunc)bail_out, loop);
+    g_idle_add((GSourceFunc)bail_out, loop);
     g_main_loop_run(loop);
 
     obj = gtk_widget_get_accessible(GTK_WIDGET(webView));
@@ -861,7 +861,7 @@ static void testWekitAtkTextSelections(void)
     g_object_unref(webView);
 }
 
-static void test_webkit_atk_get_extents(void)
+static void testWebkitAtkGetExtents(void)
 {
     WebKitWebView* webView;
     AtkObject* obj;
@@ -874,7 +874,7 @@ static void test_webkit_atk_get_extents(void)
     webkit_web_view_load_string(webView, centeredContents, NULL, NULL, NULL);
     loop = g_main_loop_new(NULL, TRUE);
 
-    g_timeout_add(100, (GSourceFunc)bail_out, loop);
+    g_idle_add((GSourceFunc)bail_out, loop);
     g_main_loop_run(loop);
 
     obj = gtk_widget_get_accessible(GTK_WIDGET(webView));
@@ -982,7 +982,7 @@ static void testWebkitAtkListsOfItems(void)
     webkit_web_view_load_string(webView, listsOfItems, NULL, NULL, NULL);
     loop = g_main_loop_new(NULL, TRUE);
 
-    g_timeout_add(100, (GSourceFunc)bail_out, loop);
+    g_idle_add((GSourceFunc)bail_out, loop);
     g_main_loop_run(loop);
 
     obj = gtk_widget_get_accessible(GTK_WIDGET(webView));
@@ -1118,7 +1118,7 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/atk/getHeadersInTable", testWebkitAtkGetHeadersInTable);
     g_test_add_func("/webkit/atk/textAttributes", testWebkitAtkTextAttributes);
     g_test_add_func("/webkit/atk/textSelections", testWekitAtkTextSelections);
-    g_test_add_func("/webkit/atk/get_extents", test_webkit_atk_get_extents);
+    g_test_add_func("/webkit/atk/getExtents", testWebkitAtkGetExtents);
     g_test_add_func("/webkit/atk/listsOfItems", testWebkitAtkListsOfItems);
     g_test_add_func("/webkit/atk/textChangedNotifications", testWebkitAtkTextChangedNotifications);
     return g_test_run ();

@@ -2,6 +2,26 @@
 
         Reviewed by Martin Robinson.
 
+        [GTK] Replace instances of g_timeout_add() with g_idle_add() in testatk.c
+        https://bugs.webkit.org/show_bug.cgi?id=46284
+
+        Use g_idle_add() whenever g_timeout_add() was being used.
+
+        This is desired because it's better to rely on the main loop to
+        decide when it's a good moment to execute the task (when idle)
+        than manually setting a timeout, which also sets a minimum amount
+        of time needed to get the function executed.
+
+        * tests/testatk.c:
+        (testWekitAtkTextSelections):
+        (testWebkitAtkGetExtents):
+        (testWebkitAtkListsOfItems):
+        (main):
+
+2010-09-22  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         [Gtk] object:text-changed events should be emitted for entries and password text
         https://bugs.webkit.org/show_bug.cgi?id=25898
 
