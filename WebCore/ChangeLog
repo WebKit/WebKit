@@ -1,3 +1,46 @@
+2010-09-23  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed, rolling out r68197.
+        http://trac.webkit.org/changeset/68197
+        https://bugs.webkit.org/show_bug.cgi?id=46344
+
+        Breaks
+
+        * WebCore.exp.in:
+        * bindings/js/JSDeviceMotionEventCustom.cpp:
+        (WebCore::JSDeviceMotionEvent::xAcceleration):
+        (WebCore::JSDeviceMotionEvent::yAcceleration):
+        (WebCore::JSDeviceMotionEvent::zAcceleration):
+        (WebCore::JSDeviceMotionEvent::xRotationRate):
+        (WebCore::JSDeviceMotionEvent::yRotationRate):
+        (WebCore::JSDeviceMotionEvent::zRotationRate):
+        (WebCore::JSDeviceMotionEvent::initDeviceMotionEvent):
+        * bindings/v8/custom/V8DeviceMotionEventCustom.cpp:
+        (WebCore::V8DeviceMotionEvent::xAccelerationAccessorGetter):
+        (WebCore::V8DeviceMotionEvent::yAccelerationAccessorGetter):
+        (WebCore::V8DeviceMotionEvent::zAccelerationAccessorGetter):
+        (WebCore::V8DeviceMotionEvent::xRotationRateAccessorGetter):
+        (WebCore::V8DeviceMotionEvent::yRotationRateAccessorGetter):
+        (WebCore::V8DeviceMotionEvent::zRotationRateAccessorGetter):
+        (WebCore::V8DeviceMotionEvent::initDeviceMotionEventCallback):
+        * dom/DeviceMotionData.cpp:
+        (WebCore::DeviceMotionData::create):
+        (WebCore::DeviceMotionData::DeviceMotionData):
+        * dom/DeviceMotionData.h:
+        (WebCore::DeviceMotionData::xAcceleration):
+        (WebCore::DeviceMotionData::yAcceleration):
+        (WebCore::DeviceMotionData::zAcceleration):
+        (WebCore::DeviceMotionData::xRotationRate):
+        (WebCore::DeviceMotionData::yRotationRate):
+        (WebCore::DeviceMotionData::zRotationRate):
+        (WebCore::DeviceMotionData::canProvideXAcceleration):
+        (WebCore::DeviceMotionData::canProvideYAcceleration):
+        (WebCore::DeviceMotionData::canProvideZAcceleration):
+        (WebCore::DeviceMotionData::canProvideXRotationRate):
+        (WebCore::DeviceMotionData::canProvideYRotationRate):
+        (WebCore::DeviceMotionData::canProvideZRotationRate):
+        * dom/DeviceMotionEvent.idl:
+
 2010-09-23  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Adele Peterson.
