@@ -4663,6 +4663,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     if (FAILED(hr))
         return hr;
     settings->setFontRenderingMode(smoothingType != FontSmoothingTypeWindows ? NormalRenderingMode : AlternateRenderingMode);
+    
+    hr = preferences->hyperlinkAuditingEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setHyperlinkAuditingEnabled(enabled);
 
     COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
     if (prefsPrivate) {
@@ -4777,11 +4782,6 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     if (FAILED(hr))
         return hr;
     settings->setMemoryInfoEnabled(enabled);
-
-    hr = prefsPrivate->hyperlinkAuditingEnabled(&enabled);
-    if (FAILED(hr))
-        return hr;
-    settings->setHyperlinkAuditingEnabled(enabled);
 
     if (!m_closeWindowTimer)
         m_mainFrame->invalidate(); // FIXME
