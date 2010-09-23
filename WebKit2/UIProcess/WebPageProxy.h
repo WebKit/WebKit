@@ -105,7 +105,7 @@ public:
 
     void revive();
 
-    void initializeWebPage(const WebCore::IntSize&, PassOwnPtr<DrawingAreaProxy>);
+    void initializeWebPage(const WebCore::IntSize&);
     void reinitializeWebPage(const WebCore::IntSize&);
 
     void close();

@@ -88,7 +88,8 @@ using namespace WebCore;
     _data->_pageClient = PageClientImpl::create(self);
     _data->_page = toWK(pageNamespaceRef)->createWebPage();
     _data->_page->setPageClient(_data->_pageClient.get());
-    _data->_page->initializeWebPage(IntSize(frame.size), ChunkedUpdateDrawingAreaProxy::create(self));
+    _data->_page->setDrawingArea(ChunkedUpdateDrawingAreaProxy::create(self));
+    _data->_page->initializeWebPage(IntSize(frame.size));
     _data->_page->setIsInWindow([self window]);
 
     return self;

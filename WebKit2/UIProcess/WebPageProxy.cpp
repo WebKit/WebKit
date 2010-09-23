@@ -145,15 +145,14 @@ void WebPageProxy::revive()
     processDidRevive();
 }
 
-void WebPageProxy::initializeWebPage(const IntSize& size, PassOwnPtr<DrawingAreaProxy> drawingArea)
+void WebPageProxy::initializeWebPage(const IntSize& size)
 {
     if (!isValid()) {
-        puts("initializeWebPage called with a dead WebProcess");
         revive();
         return;
     }
 
-    m_drawingArea = drawingArea;
+    ASSERT(m_drawingArea);
     process()->send(WebProcessMessage::Create, m_pageID, CoreIPC::In(size, pageNamespace()->context()->preferences()->store(), *(m_drawingArea.get())));
 }
 

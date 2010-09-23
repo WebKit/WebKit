@@ -64,7 +64,8 @@ QWKPagePrivate::~QWKPagePrivate()
 
 void QWKPagePrivate::init(const QSize& viewportSize, PassOwnPtr<DrawingAreaProxy> proxy)
 {
-    page->initializeWebPage(IntSize(viewportSize), proxy);
+    page->setDrawingArea(proxy);
+    page->initializeWebPage(IntSize(viewportSize));
 }
 
 void QWKPagePrivate::setCursor(const WebCore::Cursor& cursor)

@@ -1,3 +1,35 @@
+2010-09-23  Adam Roben  <aroben@apple.com>
+
+        Remove the DrawingAreaProxy parameter to
+        WebPagProxy::initializeWebPage
+
+        Callers are now required to set the drawing area via
+        WebPageProxy::setDrawingArea before calling initializeWebPage. This
+        will allow us to delay calling initializeWebPage on Windows until
+        after we've created the WebView's HWND, which in turn will allow us to
+        send the HWND over to the web process when the page is created. (The
+        drawing area must be set before creating the HWND so that its size can
+        be updated, etc., as the window is created.)
+
+        Fixes <http://webkit.org/b/46409> DrawingAreaProxy parameter to
+        initializeWebPage is unnecessary, and causes problems on Windows
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:pageNamespaceRef:]):
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::init):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::WebView):
+        Added explicit calls to setDrawingArea.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeWebPage):
+        * UIProcess/WebPageProxy.h:
+        Removed the DrawingAreaProxy parameter and a stray puts(), and added
+        an assertion.
+
 2010-09-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.
