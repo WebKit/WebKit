@@ -321,7 +321,7 @@ void ResourceHandle::onRedirect()
         resourceHandleClient->willSendRequest(this, newRequest, response);
 }
 
-void ResourceHandle::onRequestComplete(LPARAM lParam)
+bool ResourceHandle::onRequestComplete()
 {
     if (d->m_bytesRemainingToWrite) {
         DWORD bytesWritten;
@@ -331,14 +331,14 @@ void ResourceHandle::onRequestComplete(LPARAM lParam)
                           &bytesWritten);
         d->m_bytesRemainingToWrite -= bytesWritten;
         if (d->m_bytesRemainingToWrite)
-            return;
+            return true;
         d->m_formData.clear();
     }
 
     if (!d->m_sentEndRequest) {
         HttpEndRequestW(d->m_requestHandle, 0, 0, reinterpret_cast<DWORD_PTR>(this));
         d->m_sentEndRequest = true;
-        return;
+        return true;
     }
 
     HINTERNET handle = (request().httpMethod() == "POST") ? d->m_secondaryHandle : d->m_resourceHandle;
@@ -351,7 +351,7 @@ void ResourceHandle::onRequestComplete(LPARAM lParam)
     buffers.dwBufferLength = bufferSize;
 
     BOOL ok = FALSE;
-    while ((ok = InternetReadFileExA(handle, &buffers, IRF_NO_WAIT, (DWORD_PTR)this)) && buffers.dwBufferLength) {
+    while ((ok = InternetReadFileExA(d->m_requestHandle, &buffers, d->m_loadSynchronously ? 0 : IRF_NO_WAIT, reinterpret_cast<DWORD_PTR>(this))) && buffers.dwBufferLength) {
         if (!hasReceivedResponse()) {
             setHasReceivedResponse();
             ResourceResponse response;
@@ -382,13 +382,13 @@ void ResourceHandle::onRequestComplete(LPARAM lParam)
     }
 
     if (!ok && GetLastError() == ERROR_IO_PENDING)
-        return;
+        return true;
 
     client()->didFinishLoading(this, 0);
     InternetCloseHandle(d->m_requestHandle);
     InternetCloseHandle(d->m_connectHandle);
     deref(); // balances ref in start
-    return;
+    return false;
 }
 
 static void __stdcall transferJobStatusCallback(HINTERNET internetHandle,
@@ -496,6 +496,11 @@ bool ResourceHandle::start(NetworkingContext* context)
     HttpSendRequestExW(d->m_requestHandle, &internetBuffers, 0, 0, reinterpret_cast<DWORD_PTR>(this));
 
     ref(); // balanced by deref in onRequestComplete
+
+    if (d->m_loadSynchronously)
+        while (onRequestComplete()) {
+            // Loop until finished.
+        }
 
     return true;
 }

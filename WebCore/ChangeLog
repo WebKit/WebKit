@@ -1,3 +1,18 @@
+2010-09-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Add synchronous loading for network resources to ResourceHandleWin
+        https://bugs.webkit.org/show_bug.cgi?id=46364
+
+        Use return value of onRequestComplete() to indicate that an additional
+        call to it is required for receiving remaining network data.
+
+        * platform/network/ResourceHandle.h:
+        * platform/network/win/ResourceHandleWin.cpp:
+        (WebCore::ResourceHandle::onRequestComplete):
+        (WebCore::ResourceHandle::start):
+
 2010-09-23  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Darin Fisher.
