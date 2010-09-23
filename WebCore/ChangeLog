@@ -1,3 +1,26 @@
+2010-09-23  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46414, rename line box methods that refer specifically to
+        "horizontal" and "vertical."  Replace those terms with "inline direction" and "block direction."
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesInInlineDirection):
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        (WebCore::InlineFlowBox::computeBlockDirectionOverflow):
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::setInlineDirectionOverflowPositions):
+        (WebCore::InlineFlowBox::setBlockDirectionOverflowPositions):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine):
+        (WebCore::RenderBlock::computeBlockDirectionPositionsForLine):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::alignBoxesInBlockDirection):
+        * rendering/RootInlineBox.h:
+
 2010-09-23  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed, rolling out r68197.

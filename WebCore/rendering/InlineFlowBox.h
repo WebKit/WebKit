@@ -154,13 +154,13 @@ public:
     void determineSpacingForFlowBoxes(bool lastLine, RenderObject* endObject);
     int getFlowSpacingLogicalWidth();
     bool onEndChain(RenderObject* endObject);
-    int placeBoxesHorizontally(int x, bool& needsWordSpacing, GlyphOverflowAndFallbackFontsMap&);
+    int placeBoxesInInlineDirection(int x, bool& needsWordSpacing, GlyphOverflowAndFallbackFontsMap&);
     void computeLogicalBoxHeights(int& maxPositionTop, int& maxPositionBottom,
                                   int& maxAscent, int& maxDescent, bool strictMode, GlyphOverflowAndFallbackFontsMap&);
     void adjustMaxAscentAndDescent(int& maxAscent, int& maxDescent,
                                    int maxPositionTop, int maxPositionBottom);
-    void placeBoxesVertically(int y, int maxHeight, int maxAscent, bool strictMode, int& lineTop, int& lineBottom);
-    void computeVerticalOverflow(int lineTop, int lineBottom, bool strictMode, GlyphOverflowAndFallbackFontsMap&);
+    void placeBoxesInBlockDirection(int y, int maxHeight, int maxAscent, bool strictMode, int& lineTop, int& lineBottom);
+    void computeBlockDirectionOverflow(int lineTop, int lineBottom, bool strictMode, GlyphOverflowAndFallbackFontsMap&);
 
     void removeChild(InlineBox* child);
 
@@ -192,8 +192,8 @@ public:
     int rightVisualOverflow() const { return m_overflow ? m_overflow->rightVisualOverflow() : m_x + m_logicalWidth; }
     IntRect visualOverflowRect() const { return m_overflow ? m_overflow->visualOverflowRect() : IntRect(m_x, m_y, m_logicalWidth, logicalHeight()); }
 
-    void setHorizontalOverflowPositions(int leftLayoutOverflow, int rightLayoutOverflow, int leftVisualOverflow, int rightVisualOverflow);
-    void setVerticalOverflowPositions(int topLayoutOverflow, int bottomLayoutOverflow, int topVisualOverflow, int bottomVisualOverflow, int boxHeight);
+    void setInlineDirectionOverflowPositions(int leftLayoutOverflow, int rightLayoutOverflow, int leftVisualOverflow, int rightVisualOverflow);
+    void setBlockDirectionOverflowPositions(int topLayoutOverflow, int bottomLayoutOverflow, int topVisualOverflow, int bottomVisualOverflow, int boxHeight);
 
 protected:
     OwnPtr<RenderOverflow> m_overflow;
@@ -215,7 +215,7 @@ protected:
 #endif
 };
 
-inline void InlineFlowBox::setHorizontalOverflowPositions(int leftLayoutOverflow, int rightLayoutOverflow, int leftVisualOverflow, int rightVisualOverflow) 
+inline void InlineFlowBox::setInlineDirectionOverflowPositions(int leftLayoutOverflow, int rightLayoutOverflow, int leftVisualOverflow, int rightVisualOverflow) 
 { 
     if (!m_overflow) {
         if (leftLayoutOverflow == m_x && rightLayoutOverflow == m_x + m_logicalWidth && leftVisualOverflow == m_x && rightVisualOverflow == m_x + m_logicalWidth)
@@ -229,7 +229,7 @@ inline void InlineFlowBox::setHorizontalOverflowPositions(int leftLayoutOverflow
     m_overflow->setRightVisualOverflow(rightVisualOverflow);  
 }
 
-inline void InlineFlowBox::setVerticalOverflowPositions(int topLayoutOverflow, int bottomLayoutOverflow, int topVisualOverflow, int bottomVisualOverflow, int boxHeight)
+inline void InlineFlowBox::setBlockDirectionOverflowPositions(int topLayoutOverflow, int bottomLayoutOverflow, int topVisualOverflow, int bottomVisualOverflow, int boxHeight)
 {
     if (!m_overflow) {
         if (topLayoutOverflow == m_y && bottomLayoutOverflow == m_y + boxHeight && topVisualOverflow == m_y && bottomVisualOverflow == m_y + boxHeight)

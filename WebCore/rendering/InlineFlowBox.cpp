@@ -253,7 +253,7 @@ void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, RenderObject* en
     }
 }
 
-int InlineFlowBox::placeBoxesHorizontally(int xPos, bool& needsWordSpacing, GlyphOverflowAndFallbackFontsMap& textBoxDataMap)
+int InlineFlowBox::placeBoxesInInlineDirection(int xPos, bool& needsWordSpacing, GlyphOverflowAndFallbackFontsMap& textBoxDataMap)
 {
     // Set our x position.
     setX(xPos);
@@ -321,7 +321,7 @@ int InlineFlowBox::placeBoxesHorizontally(int xPos, bool& needsWordSpacing, Glyp
             if (curr->renderer()->isRenderInline()) {
                 InlineFlowBox* flow = static_cast<InlineFlowBox*>(curr);
                 xPos += flow->marginLogicalLeft();
-                xPos = flow->placeBoxesHorizontally(xPos, needsWordSpacing, textBoxDataMap);
+                xPos = flow->placeBoxesInInlineDirection(xPos, needsWordSpacing, textBoxDataMap);
                 xPos += flow->marginLogicalRight();
                 leftLayoutOverflow = min(leftLayoutOverflow, flow->leftLayoutOverflow());
                 rightLayoutOverflow = max(rightLayoutOverflow, flow->rightLayoutOverflow());
@@ -351,7 +351,7 @@ int InlineFlowBox::placeBoxesHorizontally(int xPos, bool& needsWordSpacing, Glyp
     rightVisualOverflow = max(x() + logicalWidth() + boxShadowRight, rightVisualOverflow);
     rightLayoutOverflow = max(x() + logicalWidth(), rightLayoutOverflow);
 
-    setHorizontalOverflowPositions(leftLayoutOverflow, rightLayoutOverflow, leftVisualOverflow, rightVisualOverflow);
+    setInlineDirectionOverflowPositions(leftLayoutOverflow, rightLayoutOverflow, leftVisualOverflow, rightVisualOverflow);
     return xPos;
 }
 
@@ -476,7 +476,7 @@ void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositi
     }
 }
 
-void InlineFlowBox::placeBoxesVertically(int yPos, int maxHeight, int maxAscent, bool strictMode, int& selectionTop, int& selectionBottom)
+void InlineFlowBox::placeBoxesInBlockDirection(int yPos, int maxHeight, int maxAscent, bool strictMode, int& selectionTop, int& selectionBottom)
 {
     if (isRootInlineBox())
         setY(yPos + maxAscent - baselinePosition(true)); // Place our root box.
@@ -489,7 +489,7 @@ void InlineFlowBox::placeBoxesVertically(int yPos, int maxHeight, int maxAscent,
         // line-height).
         bool isInlineFlow = curr->isInlineFlowBox();
         if (isInlineFlow)
-            static_cast<InlineFlowBox*>(curr)->placeBoxesVertically(yPos, maxHeight, maxAscent, strictMode, selectionTop, selectionBottom);
+            static_cast<InlineFlowBox*>(curr)->placeBoxesInBlockDirection(yPos, maxHeight, maxAscent, strictMode, selectionTop, selectionBottom);
 
         bool childAffectsTopBottomPos = true;
         if (curr->y() == PositionTop)
@@ -533,7 +533,7 @@ void InlineFlowBox::placeBoxesVertically(int yPos, int maxHeight, int maxAscent,
     }
 }
 
-void InlineFlowBox::computeVerticalOverflow(int lineTop, int lineBottom, bool strictMode, GlyphOverflowAndFallbackFontsMap& textBoxDataMap)
+void InlineFlowBox::computeBlockDirectionOverflow(int lineTop, int lineBottom, bool strictMode, GlyphOverflowAndFallbackFontsMap& textBoxDataMap)
 {
     int boxHeight = logicalHeight();
 
@@ -587,7 +587,7 @@ void InlineFlowBox::computeVerticalOverflow(int lineTop, int lineBottom, bool st
             bottomVisualOverflow = max(curr->y() + text->logicalHeight() + childOverflowBottom, bottomVisualOverflow);
         } else  if (curr->renderer()->isRenderInline()) {
             InlineFlowBox* flow = static_cast<InlineFlowBox*>(curr);
-            flow->computeVerticalOverflow(lineTop, lineBottom, strictMode, textBoxDataMap);
+            flow->computeBlockDirectionOverflow(lineTop, lineBottom, strictMode, textBoxDataMap);
             topLayoutOverflow = min(topLayoutOverflow, flow->topLayoutOverflow());
             bottomLayoutOverflow = max(bottomLayoutOverflow, flow->bottomLayoutOverflow());
             topVisualOverflow = min(topVisualOverflow, flow->topVisualOverflow());
@@ -605,7 +605,7 @@ void InlineFlowBox::computeVerticalOverflow(int lineTop, int lineBottom, bool st
         }
     }
     
-    setVerticalOverflowPositions(topLayoutOverflow, bottomLayoutOverflow, topVisualOverflow, bottomVisualOverflow, boxHeight);
+    setBlockDirectionOverflowPositions(topLayoutOverflow, bottomLayoutOverflow, topVisualOverflow, bottomVisualOverflow, boxHeight);
 }
 
 bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty)

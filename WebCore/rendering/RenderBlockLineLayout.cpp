@@ -320,7 +320,7 @@ RootInlineBox* RenderBlock::constructLine(unsigned runCount, BidiRun* firstRun, 
     return lastRootBox();
 }
 
-void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, bool firstLine, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd, GlyphOverflowAndFallbackFontsMap& textBoxDataMap)
+void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox, bool firstLine, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd, GlyphOverflowAndFallbackFontsMap& textBoxDataMap)
 {
     // First determine our total width.
     int availableWidth = lineWidth(height(), firstLine);
@@ -485,12 +485,12 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, bool
     // The widths of all runs are now known.  We can now place every inline box (and
     // compute accurate widths for the inline flow boxes).
     needsWordSpacing = false;
-    lineBox->placeBoxesHorizontally(x, needsWordSpacing, textBoxDataMap);
+    lineBox->placeBoxesInInlineDirection(x, needsWordSpacing, textBoxDataMap);
 }
 
-void RenderBlock::computeVerticalPositionsForLine(RootInlineBox* lineBox, BidiRun* firstRun, GlyphOverflowAndFallbackFontsMap& textBoxDataMap)
+void RenderBlock::computeBlockDirectionPositionsForLine(RootInlineBox* lineBox, BidiRun* firstRun, GlyphOverflowAndFallbackFontsMap& textBoxDataMap)
 {
-    setHeight(lineBox->verticallyAlignBoxes(height(), textBoxDataMap));
+    setHeight(lineBox->alignBoxesInBlockDirection(height(), textBoxDataMap));
     lineBox->setBlockHeight(height());
 
     // Now make sure we place replaced render objects correctly.
@@ -764,10 +764,10 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
 
                         // Now we position all of our text runs horizontally.
                         if (!isSVGRootInlineBox)
-                            computeHorizontalPositionsForLine(lineBox, firstLine, resolver.firstRun(), trailingSpaceRun, end.atEnd(), textBoxDataMap);
+                            computeInlineDirectionPositionsForLine(lineBox, firstLine, resolver.firstRun(), trailingSpaceRun, end.atEnd(), textBoxDataMap);
 
                         // Now position our text runs vertically.
-                        computeVerticalPositionsForLine(lineBox, resolver.firstRun(), textBoxDataMap);
+                        computeBlockDirectionPositionsForLine(lineBox, resolver.firstRun(), textBoxDataMap);
 
 #if ENABLE(SVG)
                         // SVG text layout code computes vertical & horizontal positions on its own.
@@ -898,8 +898,8 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                 m_lineBoxes.appendLineBox(trailingFloatsLineBox);
                 trailingFloatsLineBox->setConstructed();
                 GlyphOverflowAndFallbackFontsMap textBoxDataMap;
-                trailingFloatsLineBox->verticallyAlignBoxes(height(), textBoxDataMap);
-                trailingFloatsLineBox->setVerticalOverflowPositions(height(), bottomLayoutOverflow, height(), bottomVisualOverflow, 0);
+                trailingFloatsLineBox->alignBoxesInBlockDirection(height(), textBoxDataMap);
+                trailingFloatsLineBox->setBlockDirectionOverflowPositions(height(), bottomLayoutOverflow, height(), bottomVisualOverflow, 0);
                 trailingFloatsLineBox->setBlockHeight(height());
             }
             if (lastFloat) {

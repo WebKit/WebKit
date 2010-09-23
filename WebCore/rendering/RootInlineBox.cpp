@@ -147,8 +147,8 @@ void RootInlineBox::addHighlightOverflow()
     // Highlight acts as a selection inflation.
     FloatRect rootRect(0, selectionTop(), logicalWidth(), selectionHeight());
     IntRect inflatedRect = enclosingIntRect(page->chrome()->client()->customHighlightRect(renderer()->node(), renderer()->style()->highlight(), rootRect));
-    setHorizontalOverflowPositions(leftLayoutOverflow(), rightLayoutOverflow(), min(leftVisualOverflow(), inflatedRect.x()), max(rightVisualOverflow(), inflatedRect.right()));
-    setVerticalOverflowPositions(topLayoutOverflow(), bottomLayoutOverflow(), min(topVisualOverflow(), inflatedRect.y()), max(bottomVisualOverflow(), inflatedRect.bottom()), logicalHeight());
+    setInlineDirectionOverflowPositions(leftLayoutOverflow(), rightLayoutOverflow(), min(leftVisualOverflow(), inflatedRect.x()), max(rightVisualOverflow(), inflatedRect.right()));
+    setBlockDirectionOverflowPositions(topLayoutOverflow(), bottomLayoutOverflow(), min(topVisualOverflow(), inflatedRect.y()), max(bottomVisualOverflow(), inflatedRect.bottom()), logicalHeight());
 }
 
 void RootInlineBox::paintCustomHighlight(PaintInfo& paintInfo, int tx, int ty, const AtomicString& highlightType)
@@ -213,7 +213,7 @@ void RootInlineBox::childRemoved(InlineBox* box)
     }
 }
 
-int RootInlineBox::verticallyAlignBoxes(int heightOfBlock, GlyphOverflowAndFallbackFontsMap& textBoxDataMap)
+int RootInlineBox::alignBoxesInBlockDirection(int heightOfBlock, GlyphOverflowAndFallbackFontsMap& textBoxDataMap)
 {
 #if ENABLE(SVG)
     // SVG will handle vertical alignment on its own.
@@ -237,8 +237,8 @@ int RootInlineBox::verticallyAlignBoxes(int heightOfBlock, GlyphOverflowAndFallb
     int maxHeight = maxAscent + maxDescent;
     int lineTop = heightOfBlock;
     int lineBottom = heightOfBlock;
-    placeBoxesVertically(heightOfBlock, maxHeight, maxAscent, noQuirksMode, lineTop, lineBottom);
-    computeVerticalOverflow(lineTop, lineBottom, noQuirksMode, textBoxDataMap);
+    placeBoxesInBlockDirection(heightOfBlock, maxHeight, maxAscent, noQuirksMode, lineTop, lineBottom);
+    computeBlockDirectionOverflow(lineTop, lineBottom, noQuirksMode, textBoxDataMap);
     setLineTopBottomPositions(lineTop, lineBottom);
     
     heightOfBlock += maxHeight;
