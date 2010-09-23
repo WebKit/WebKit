@@ -40,6 +40,7 @@ from webkitpy.common.net.statusserver import StatusServer
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.deprecated_logging import error, log
 from webkitpy.tool.commands.stepsequence import StepSequenceErrorHandler
+from webkitpy.tool.bot.commitqueuetask import CommitQueueTask
 from webkitpy.tool.bot.feeders import CommitQueueFeeder
 from webkitpy.tool.bot.patchcollection import PersistentPatchCollection, PersistentPatchCollectionDelegate
 from webkitpy.tool.bot.queueengine import QueueEngine, QueueEngineDelegate
@@ -52,6 +53,7 @@ class AbstractQueue(Command, QueueEngineDelegate):
 
     _pass_status = "Pass"
     _fail_status = "Fail"
+    _retry_status = "Retry"
     _error_status = "Error"
 
     def __init__(self, options=None): # Default values should never be collections (like []) as default values are shared between invocations
@@ -183,7 +185,7 @@ class FeederQueue(AbstractQueue):
 
 class AbstractPatchQueue(AbstractQueue):
     def _update_status(self, message, patch=None, results_file=None):
-        self._tool.status_server.update_status(self.name, message, patch, results_file)
+        return self._tool.status_server.update_status(self.name, message, patch, results_file)
 
     def _fetch_next_work_item(self):
         return self._tool.status_server.next_work_item(self.name)
@@ -193,6 +195,9 @@ class AbstractPatchQueue(AbstractQueue):
 
     def _did_fail(self, patch):
         self._update_status(self._fail_status, patch)
+
+    def _did_retry(self, patch):
+        self._update_status(self._retry_status, patch)
 
     def _did_error(self, patch, reason):
         message = "%s: %s" % (self._error_status, reason)
@@ -217,134 +222,44 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
             return None
         return self._tool.bugs.fetch_attachment(patch_id)
 
-    def _can_build_and_test_without_patch(self):
-        try:
-            self.run_webkit_patch([
-                "build-and-test",
-                "--force-clean",
-                "--build",
-                "--test",
-                "--non-interactive",
-                "--no-update",
-                "--build-style=both",
-                "--quiet"])
-            return True
-        except ScriptError, e:
-            failure_log = self._log_from_script_error_for_upload(e)
-            self._update_status("Unable to build and test without patch", results_file=failure_log)
-            return False
-
     def should_proceed_with_work_item(self, patch):
         patch_text = "rollout patch" if patch.is_rollout() else "patch"
         self._update_status("Landing %s" % patch_text, patch)
         return True
 
-    def _build_and_test_patch(self, patch, first_run=False):
-        try:
-            args = [
-                "build-and-test-attachment",
-                "--force-clean",
-                "--build",
-                "--non-interactive",
-                "--build-style=both",
-                "--quiet",
-                patch.id()
-            ]
-            # We don't bother to run tests for rollouts as that makes them too slow.
-            if not patch.is_rollout():
-                args.append("--test")
-            if not first_run:
-                # The first time through, we don't reject the patch from the
-                # commit queue because we want to make sure we can build and
-                # test ourselves. However, the second time through, we
-                # register ourselves as the parent-command so we can reject
-                # the patch on failure.
-                args.append("--parent-command=commit-queue")
-                # The second time through, we also don't want to update so we
-                # know we're testing the same revision that we successfully
-                # built and tested.
-                args.append("--no-update")
-            self.run_webkit_patch(args)
-            return True
-        except ScriptError, e:
-            failure_log = self._log_from_script_error_for_upload(e)
-            self._update_status("Unable to build and test patch", patch=patch, results_file=failure_log)
-            if first_run:
-                return False
-            self._did_fail(patch)
-            raise
-
-    def _revalidate_patch(self, patch):
-        # Bugs might get closed, or patches might be obsoleted or r-'d while the
-        # commit-queue is processing.  Do one last minute check before landing.
-        patch = self._tool.bugs.fetch_attachment(patch.id())
-        if patch.is_obsolete():
-            return None
-        if patch.bug().is_closed():
-            return None
-        if not patch.committer():
-            return None
-        # Reviewer is not required.  Misisng reviewers will be caught during the ChangeLog check during landing.
-        return patch
-
-    def _land(self, patch):
-        try:
-            args = [
-                "land-attachment",
-                "--force-clean",
-                "--non-interactive",
-                "--ignore-builders",
-                "--quiet",
-                "--parent-command=commit-queue",
-                patch.id(),
-            ]
-            self.run_webkit_patch(args)
-            self._did_pass(patch)
-        except ScriptError, e:
-            failure_log = self._log_from_script_error_for_upload(e)
-            self._update_status("Unable to land patch", patch=patch, results_file=failure_log)
-            self._did_fail(patch)
-            raise
-
     def process_work_item(self, patch):
         self._cc_watchers(patch.bug_id())
-        if not self._build_and_test_patch(patch, first_run=True):
-            self._update_status("Building and testing without the patch as a sanity check", patch)
-            # The patch failed to build and test. It's possible that the
-            # tree is busted. To check that case, we try to build and test
-            # without the patch.
-            if not self._can_build_and_test_without_patch():
-                return False
-            self._update_status("Build and test succeeded, trying again with patch", patch)
-            # Hum, looks like the patch is actually bad. Of course, we could
-            # have been bitten by a flaky test the first time around.  We try
-            # to build and test again. If it fails a second time, we're pretty
-            # sure its a bad test and re can reject it outright.
-            self._build_and_test_patch(patch)
-        # Do one last check to catch any bug changes (cq-, closed, reviewer changed, etc.)
-        # This helps catch races between the bots if locks expire.
-        patch = self._revalidate_patch(patch)
-        if not patch:
-            return False
-        self._land(patch)
-        return True
+        task = CommitQueueTask(self._tool, self, patch)
+        try:
+            if task.run():
+                self._did_pass(patch)
+                return True
+            self._did_retry(patch)
+        except ScriptError, e:
+            validator = CommitterValidator(self._tool.bugs)
+            validator.reject_patch_from_commit_queue(patch.id(), self._error_message_for_bug(task.failure_status_id, e))
+            self._did_fail(patch)
 
     def handle_unexpected_error(self, patch, message):
         self.committer_validator.reject_patch_from_commit_queue(patch.id(), message)
 
-    # StepSequenceErrorHandler methods
-    @staticmethod
-    def _error_message_for_bug(tool, status_id, script_error):
+    def command_failed(message, script_error, patch):
+        failure_log = self._log_from_script_error_for_upload(script_error)
+        return self._update_status(message, patch=patch, results_file=failure_log)
+
+    def _error_message_for_bug(self, status_id, script_error):
         if not script_error.output:
             return script_error.message_with_output()
-        results_link = tool.status_server.results_url_for_status(status_id)
+        results_link = self._tool.status_server.results_url_for_status(status_id)
         return "%s\nFull output: %s" % (script_error.message_with_output(), results_link)
 
-    @classmethod
+    # StepSequenceErrorHandler methods
+
     def handle_script_error(cls, tool, state, script_error):
-        status_id = cls._update_status_for_script_error(tool, state, script_error)
-        validator = CommitterValidator(tool.bugs)
-        validator.reject_patch_from_commit_queue(state["patch"].id(), cls._error_message_for_bug(tool, status_id, script_error))
+        # Hitting this error handler should be pretty rare.  It does occur,
+        # however, when a patch no longer applies to top-of-tree in the final
+        # land step.
+        log(script_error.message_with_output())
 
     @classmethod
     def handle_checkout_needs_update(cls, tool, state, options, error):

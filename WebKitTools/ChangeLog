@@ -1,3 +1,29 @@
+2010-09-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Optimize commit-queue performance for green trees
+        https://bugs.webkit.org/show_bug.cgi?id=46254
+
+        This patch redesigns the controller logic for the commit-queue.  In the
+        new design, the controller exercises much finer-grained control over
+        the landing process.  In particular:
+
+        - Patches that fail to apply now get rejected almost immediately.
+        - Patches that fail to build get rejects after two builds (instead of
+          three builds and one test run).
+        - Patches that run into a flaky test now get accepted after one build
+          and two test runs instead of three full build-and-test runs.
+
+        The main cost of these optimizations is that we don't find out the tree
+        has a failing test until the very end of the process, but if the tree
+        has a busted test, there's not much we can do anyway.  We might as well
+        burn commit-queue resources spinning optimisticly.
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask.py: Added.
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py: Added.
+        * Scripts/webkitpy/tool/commands/queues.py:
+
 2010-09-22  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Martin Robinson.
