@@ -498,7 +498,8 @@ WebInspector.SourceFrame.prototype = {
                 self._hidePopup();
                 delete self._hidePopupTimer;
             }
-            this._hidePopupTimer = setTimeout(doHide, 500);
+            if (!("_hidePopupTimer" in this))
+                this._hidePopupTimer = setTimeout(doHide, 500);
         }
 
         this._hoverElement = event.target;

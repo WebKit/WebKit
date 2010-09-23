@@ -1,3 +1,13 @@
+2010-09-23  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: source frame popups shouldn't disappear when hovered
+        https://bugs.webkit.org/show_bug.cgi?id=46358
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._mouseMove):
+
 2010-09-23  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Chris Fleizach.
