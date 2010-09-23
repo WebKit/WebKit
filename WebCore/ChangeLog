@@ -2,6 +2,19 @@
 
         Reviewed by Jeremy Orlow.
 
+        [Chromium] Build broken due to missing include in IDBTransactionBackendImpl.h
+        https://bugs.webkit.org/show_bug.cgi?id=46352
+
+        No new tests needed, build fix.
+
+        * storage/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::objectStore):
+        * storage/IDBTransactionBackendImpl.h:
+
+2010-09-23  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
         IDBObjectStore::get should run in a transaction.
         https://bugs.webkit.org/show_bug.cgi?id=44700
 
