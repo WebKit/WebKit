@@ -1,3 +1,21 @@
+2010-09-22  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Need to stop autocorrection panel timer when selection changes.
+        https://bugs.webkit.org/show_bug.cgi?id=46201
+        <rdar://problem/8441042>
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::appliedEditing): Stop correction timer after editing.
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges): When text checking is done for
+          showing autocorrection panel, we suppress all corrections that are not at the end of
+          text checking range. So that we don't replace other words while showing correction panel
+          for the last word.
+        (WebCore::Editor::stopCorrectionPanelTimer): Stop correction timer.
+
+        * editing/Editor.h: Added stopCorrectionPanelTimer() method.
+
 2010-09-22  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by Dumitru Daniliuc.

@@ -1010,7 +1010,8 @@ void Editor::appliedEditing(PassRefPtr<EditCommand> cmd)
         if (client())
             client()->registerCommandForUndo(m_lastEditCommand);
     }
-    respondToChangedContents(newSelection);    
+    respondToChangedContents(newSelection);
+    stopCorrectionPanelTimer();
 }
 
 void Editor::unappliedEditing(PassRefPtr<EditCommand> cmd)
@@ -2658,6 +2659,10 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
                     || result->type == TextCheckingTypeCorrection)) {
             // In this case the result range just has to touch the spelling range, so we can handle replacing non-word text such as punctuation.
             ASSERT(resultLength > 0 && resultLocation >= 0);
+
+            if (shouldShowCorrectionPanel && resultLocation + resultLength < spellingRangeEndOffset)
+                continue;
+
             int replacementLength = result->replacement.length();
             bool doReplacement = (replacementLength > 0);
             RefPtr<Range> rangeToReplace = TextIterator::subrange(paragraphRange.get(), resultLocation, resultLength);
@@ -2824,6 +2829,13 @@ void Editor::startCorrectionPanelTimer()
         client()->dismissCorrectionPanel(true);
     if (isAutomaticSpellingCorrectionEnabled())
         m_correctionPanelTimer.startOneShot(correctionPanelTimerInterval);
+#endif
+}
+
+void Editor::stopCorrectionPanelTimer()
+{
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    m_correctionPanelTimer.stop();
 #endif
 }
 
