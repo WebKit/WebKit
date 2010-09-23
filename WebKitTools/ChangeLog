@@ -1,3 +1,33 @@
+2010-09-21  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by David Levin.
+
+        Implement --enable-accelerated-2d-canvas flag in DumpRenderTree.
+        https://bugs.webkit.org/show_bug.cgi?id=46208
+
+        This flag allows the layout tests to be run with or without accelerated
+        2D canvas rendering.
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (main):
+        Declare the new flag string, and check for it on startup.
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        Add a boolean for the new flag, in order to preserve its value over
+        preferences reset.
+        (TestShell::resetWebSettings):
+        Set the new flag to the stored value on reset.
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell::setAccelerated2dCanvasEnabled):
+        Add an accessor for the new flag.
+        * DumpRenderTree/chromium/WebPreferences.cpp:
+        (WebPreferences::reset):
+        Initialize the new flag to false.
+        (WebPreferences::applyTo):
+        Copy the flag's value to the WebSettings.
+        * DumpRenderTree/chromium/WebPreferences.h:
+        Add the new flag.
+
 2010-09-23  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.

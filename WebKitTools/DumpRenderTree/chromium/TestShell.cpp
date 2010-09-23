@@ -83,6 +83,7 @@ TestShell::TestShell(bool testShellMode)
     , m_focusedWidget(0)
     , m_testShellMode(testShellMode)
     , m_allowExternalPages(false)
+    , m_accelerated2dCanvasEnabled(false)
     , m_devTools(0)
 {
     WebRuntimeFeatures::enableGeolocation(true);
@@ -155,6 +156,7 @@ void TestShell::closeDevTools()
 void TestShell::resetWebSettings(WebView& webView)
 {
     m_prefs.reset();
+    m_prefs.accelerated2dCanvasEnabled = m_accelerated2dCanvasEnabled;
     m_prefs.applyTo(&webView);
 }
 

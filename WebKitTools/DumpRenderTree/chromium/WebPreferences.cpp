@@ -100,6 +100,7 @@ void WebPreferences::reset()
 #endif
 
     tabsToLinks = false;
+    accelerated2dCanvasEnabled = false;
 }
 
 void WebPreferences::applyTo(WebView* webView)
@@ -157,5 +158,7 @@ void WebPreferences::applyTo(WebView* webView)
 
     // FIXME: crbug.com/51879
     settings->setAcceleratedCompositingEnabled(false);
+
+    settings->setAccelerated2dCanvasEnabled(accelerated2dCanvasEnabled);
 }
 
