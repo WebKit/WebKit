@@ -49,6 +49,16 @@ function createSuccess()
     shouldBe("storeNames.length", "1");
     // FIXME: test all of object store's methods.
 
+    debug("Ask for a store that doesn't exist:");
+    try {
+        index = evalAndLog("index = store.index('asdf')");
+        shouldBeNull("index"); // Returning null is wrong, but less wrong than returning an actual object!
+        testFailed("Asking for a store that doesn't exist should have thrown.");
+    } catch (err) {
+        testPassed("Error thrown.");
+        // FIXME: Verify the correct exception thrown.
+    }
+
     result = evalAndLog("event.result.createIndex('indexName', 'x', true)"); // true == unique requirement.
     verifyResult(result);
     result.onsuccess = addIndexSuccess;
@@ -59,7 +69,20 @@ function addIndexSuccess()
 {
     debug("addIndexSuccess():");
     verifySuccessEvent(event);
+    shouldBeTrue("event.result !== null");
     shouldBeTrue("event.source.indexNames.contains('indexName')");
+    index = evalAndLog("index = event.source.index('indexName')");
+    shouldBeTrue("index !== null");
+
+    debug("Ask for a store that doesn't exist:");
+    try {
+        index = evalAndLog("index = store.index('asdf')");
+        shouldBeNull("index"); // Returning null is wrong, but less wrong than returning an actual object!
+        testFailed("Asking for a store that doesn't exist should have thrown.");
+    } catch (err) {
+        testPassed("Error thrown.");
+        // FIXME: Verify the correct exception thrown.
+    }
 
     result = evalAndLog("event.source.add({x: 'value'}, 'key')");
     verifyResult(result);

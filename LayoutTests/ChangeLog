@@ -1,3 +1,13 @@
+2010-09-23  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        IndexedDB shouldn't crash on invalid index names
+        https://bugs.webkit.org/show_bug.cgi?id=46362
+
+        * storage/indexeddb/objectstore-basics-expected.txt:
+        * storage/indexeddb/objectstore-basics.html:
+
 2010-09-22  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Anders Carlsson.

@@ -99,8 +99,10 @@ PassRefPtr<IDBRequest> IDBObjectStore::createIndex(ScriptExecutionContext* conte
 
 PassRefPtr<IDBIndex> IDBObjectStore::index(const String& name)
 {
+    // FIXME: If this is null, we should raise a NOT_FOUND_ERR.
     RefPtr<IDBIndexBackendInterface> index = m_objectStore->index(name);
-    ASSERT(index); // FIXME: If this is null, we should raise a NOT_FOUND_ERR.
+    if (!index)
+        return 0;
     return IDBIndex::create(index.release());
 }
 

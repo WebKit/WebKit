@@ -50,6 +50,10 @@ PASS store.name is "storeName"
 PASS store.keyPath is null
 PASS storeNames.contains('storeName') is true
 PASS storeNames.length is 1
+Ask for a store that doesn't exist:
+index = store.index('asdf')
+PASS index is null
+FAIL Asking for a store that doesn't exist should have thrown.
 event.result.createIndex('indexName', 'x', true)
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
@@ -70,7 +74,14 @@ PASS 'abort' in event.target is true
 PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
+PASS event.result !== null is true
 PASS event.source.indexNames.contains('indexName') is true
+index = event.source.index('indexName')
+PASS index !== null is true
+Ask for a store that doesn't exist:
+index = store.index('asdf')
+PASS index is null
+FAIL Asking for a store that doesn't exist should have thrown.
 event.source.add({x: 'value'}, 'key')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true

@@ -1,3 +1,15 @@
+2010-09-23  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        IndexedDB shouldn't crash on invalid index names
+        https://bugs.webkit.org/show_bug.cgi?id=46362
+
+        For now, return null.  In a later patch, we'll do proper exception raising.
+
+        * storage/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::index):
+
 2010-09-23  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dave Hyatt.
