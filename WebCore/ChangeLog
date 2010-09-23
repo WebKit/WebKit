@@ -1,3 +1,23 @@
+2010-09-23  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46314.
+        
+        The RenderView's block-flow should match the root element's block-flow.  When we create (or re-create) the style for the document, take
+        the block-flow from the document element's style and use it if it's available.
+        
+        Also patch styleDidChange so that if the block-flow changes dynamically after we have already made the document style, we'll propagate
+        the change back up to the RenderView and have it do a relayout.
+
+        No tests possible yet, since you can't see the document's style anywhere, and block-flow isn't doing anything to affect layout
+        yet.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForDocument):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+
 2010-09-23  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

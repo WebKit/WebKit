@@ -260,6 +260,12 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
     // Set the text color if we're the body.
     if (isBody())
         document()->setTextColor(style()->visitedDependentColor(CSSPropertyColor));
+    else if (oldStyle && isRoot() && oldStyle->blockFlow() != style()->blockFlow()) {
+        // Propagate the new block flow up to the RenderView.
+        RenderView* viewRenderer = view();
+        viewRenderer->style()->setBlockFlow(style()->blockFlow());
+        viewRenderer->setNeedsLayoutAndPrefWidthsRecalc();
+    }
 }
 
 void RenderBox::updateBoxModelInfoFromStyle()

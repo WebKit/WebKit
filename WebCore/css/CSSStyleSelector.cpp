@@ -1106,6 +1106,10 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForDocument(Document* document)
     documentStyle->setVisuallyOrdered(document->visuallyOrdered());
     documentStyle->setZoom(frame ? frame->pageZoomFactor() : 1);
     
+    Element* docElement = document->documentElement();
+    if (docElement && docElement->renderer())
+        documentStyle->setBlockFlow(docElement->renderer()->style()->blockFlow());
+
     FontDescription fontDescription;
     fontDescription.setUsePrinterFont(document->printing());
     if (Settings* settings = document->settings()) {
