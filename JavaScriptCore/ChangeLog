@@ -1,4 +1,12 @@
-2010-09-23  Ismail Dönmez  <ismail@namtrac.org>
+2010-09-23  Ismail Donmez  <ismail@namtrac.org>
+
+        Reviewed by Andreas Kling.
+
+        Fix jsc.exe build for Windows CE
+
+        * jsc.pro: Add mmtimer.lib for Windows CE.
+
+2010-09-23  Ismail Donmez  <ismail@namtrac.org>
 
         Unreviewed.
 
