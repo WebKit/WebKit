@@ -1,3 +1,13 @@
+2010-09-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43667
+        ASSERT failure in NetscapePluginInstanceProxy::disconnectStream
+
+        * plugins/get-javascript-url-expected.txt: Added.
+        * plugins/get-javascript-url.html: Added.
+
 2010-09-23  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dave Hyatt.

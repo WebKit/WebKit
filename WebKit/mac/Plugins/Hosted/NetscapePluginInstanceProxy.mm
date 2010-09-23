@@ -704,6 +704,7 @@ void NetscapePluginInstanceProxy::evaluateJavaScript(PluginRequest* pluginReques
         NSData *JSData = [result dataUsingEncoding:NSUTF8StringEncoding];
         
         RefPtr<HostedNetscapePluginStream> stream = HostedNetscapePluginStream::create(this, pluginRequest->requestID(), pluginRequest->request());
+        m_streams.add(stream->streamID(), stream);
         
         RetainPtr<NSURLResponse> response(AdoptNS, [[NSURLResponse alloc] initWithURL:URL 
                                                                              MIMEType:@"text/plain" 

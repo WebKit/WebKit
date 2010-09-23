@@ -1,3 +1,16 @@
+2010-09-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43667
+        ASSERT failure in NetscapePluginInstanceProxy::disconnectStream
+
+        Test: plugins/get-javascript-url.html
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::evaluateJavaScript): Add the stream to m_streams, just
+        like any other one.
+
 2010-09-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders Carlsson.
