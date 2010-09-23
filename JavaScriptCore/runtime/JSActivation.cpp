@@ -62,10 +62,63 @@ void JSActivation::markChildren(MarkStack& markStack)
     size_t count = numParametersMinusThis;
     markStack.appendValues(registerArray, count);
 
-    size_t numVars = d()->functionExecutable->variableCount();
+    size_t numVars = d()->functionExecutable->capturedVariableCount();
 
     // Skip the call frame, which sits between the parameters and vars.
     markStack.appendValues(registerArray + count + RegisterFile::CallFrameHeaderSize, numVars, MayContainNullValues);
+}
+
+inline bool JSActivation::symbolTableGet(const Identifier& propertyName, PropertySlot& slot)
+{
+    SymbolTableEntry entry = symbolTable().inlineGet(propertyName.impl());
+    if (!entry.isNull()) {
+        ASSERT(entry.getIndex() < static_cast<int>(d()->functionExecutable->capturedVariableCount()));
+        slot.setRegisterSlot(&registerAt(entry.getIndex()));
+        return true;
+    }
+    return false;
+}
+
+inline bool JSActivation::symbolTablePut(const Identifier& propertyName, JSValue value)
+{
+    ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
+    
+    SymbolTableEntry entry = symbolTable().inlineGet(propertyName.impl());
+    if (entry.isNull())
+        return false;
+    if (entry.isReadOnly())
+        return true;
+    ASSERT(entry.getIndex() < static_cast<int>(d()->functionExecutable->capturedVariableCount()));
+    registerAt(entry.getIndex()) = value;
+    return true;
+}
+
+void JSActivation::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+{
+    SymbolTable::const_iterator end = symbolTable().end();
+    for (SymbolTable::const_iterator it = symbolTable().begin(); it != end; ++it) {
+        ASSERT(it->second.getIndex() < static_cast<int>(d()->functionExecutable->capturedVariableCount()));
+        if (!(it->second.getAttributes() & DontEnum) || (mode == IncludeDontEnumProperties))
+            propertyNames.add(Identifier(exec, it->first.get()));
+    }
+    // Skip the JSVariableObject implementation of getOwnPropertyNames
+    JSObject::getOwnPropertyNames(exec, propertyNames, mode);
+}
+
+inline bool JSActivation::symbolTablePutWithAttributes(const Identifier& propertyName, JSValue value, unsigned attributes)
+{
+    ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
+    
+    SymbolTable::iterator iter = symbolTable().find(propertyName.impl());
+    if (iter == symbolTable().end())
+        return false;
+    SymbolTableEntry& entry = iter->second;
+    ASSERT(!entry.isNull());
+    if (entry.getIndex() >= static_cast<int>(d()->functionExecutable->capturedVariableCount()))
+        return false;
+    entry.setAttributes(attributes);
+    registerAt(entry.getIndex()) = value;
+    return true;
 }
 
 bool JSActivation::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

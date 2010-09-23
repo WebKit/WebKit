@@ -1,3 +1,41 @@
+2010-09-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Only copy captured variables into activation
+        https://bugs.webkit.org/show_bug.cgi?id=46330
+
+        We now track free variable information which means that
+        we no longer need to copy every variable defined in a
+        function.  With this patch activations only retain those
+        variables needed for correctness.  In order to interact
+        safely with the inspector this means that JSActivation
+        now provides its own lookup functions so it can avoid 
+        trying to read or write to variables that have been
+        optimised out.
+
+        * bytecode/CodeBlock.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * parser/Nodes.h:
+        (JSC::ScopeNode::capturedVariableCount):
+        (JSC::ScopeNode::captures):
+        * runtime/Arguments.h:
+        (JSC::JSActivation::copyRegisters):
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::FunctionExecutable):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+        * runtime/Executable.h:
+        (JSC::FunctionExecutable::capturedVariableCount):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::markChildren):
+        (JSC::JSActivation::symbolTableGet):
+        (JSC::JSActivation::symbolTablePut):
+        (JSC::JSActivation::getOwnPropertyNames):
+        (JSC::JSActivation::symbolTablePutWithAttributes):
+        * runtime/JSActivation.h:
+
 2010-09-23  Ismail Donmez  <ismail@namtrac.org>
 
         Reviewed by Andreas Kling.

@@ -65,7 +65,7 @@ ProgramExecutable::~ProgramExecutable()
 
 FunctionExecutable::FunctionExecutable(JSGlobalData* globalData, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, int firstLine, int lastLine)
     : ScriptExecutable(globalData, source)
-    , m_numVariables(0)
+    , m_numCapturedVariables(0)
     , m_forceUsesArguments(forceUsesArguments)
     , m_parameters(parameters)
     , m_name(name)
@@ -77,7 +77,7 @@ FunctionExecutable::FunctionExecutable(JSGlobalData* globalData, const Identifie
 
 FunctionExecutable::FunctionExecutable(ExecState* exec, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, int firstLine, int lastLine)
     : ScriptExecutable(exec, source)
-    , m_numVariables(0)
+    , m_numCapturedVariables(0)
     , m_forceUsesArguments(forceUsesArguments)
     , m_parameters(parameters)
     , m_name(name)
@@ -197,7 +197,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
     generator->generate();
     m_numParametersForCall = m_codeBlockForCall->m_numParameters;
     ASSERT(m_numParametersForCall);
-    m_numVariables = m_codeBlockForCall->m_numVars;
+    m_numCapturedVariables = m_codeBlockForCall->m_numCapturedVars;
     m_symbolTable = m_codeBlockForCall->sharedSymbolTable();
 
     body->destroyData();
@@ -238,7 +238,7 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
     generator->generate();
     m_numParametersForConstruct = m_codeBlockForConstruct->m_numParameters;
     ASSERT(m_numParametersForConstruct);
-    m_numVariables = m_codeBlockForConstruct->m_numVars;
+    m_numCapturedVariables = m_codeBlockForConstruct->m_numCapturedVars;
     m_symbolTable = m_codeBlockForConstruct->sharedSymbolTable();
 
     body->destroyData();

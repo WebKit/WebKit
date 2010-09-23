@@ -287,6 +287,7 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, const Debugger* d
 
         preserveLastVar();
     }
+    codeBlock->m_numCapturedVars = codeBlock->m_numVars;
 }
 
 BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, const Debugger* debugger, const ScopeChain& scopeChain, SymbolTable* symbolTable, CodeBlock* codeBlock)
@@ -347,16 +348,43 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, const Debug
     }
 
     const DeclarationStacks::FunctionStack& functionStack = functionBody->functionStack();
+    const DeclarationStacks::VarStack& varStack = functionBody->varStack();
+
+    // Captured variables and functions go first so that activations don't have
+    // to step over the non-captured locals to mark them.
+    if (functionBody->hasCapturedVariables()) {
+        for (size_t i = 0; i < functionStack.size(); ++i) {
+            FunctionBodyNode* function = functionStack[i];
+            const Identifier& ident = function->ident();
+            if (functionBody->captures(ident)) {
+                m_functions.add(ident.impl());
+                emitNewFunction(addVar(ident, false), function);
+            }
+        }
+        for (size_t i = 0; i < varStack.size(); ++i) {
+            const Identifier& ident = *varStack[i].first;
+            if (functionBody->captures(ident))
+                addVar(ident, varStack[i].second & DeclarationStacks::IsConstant);
+        }
+    }
+    codeBlock->m_numCapturedVars = codeBlock->m_numVars;
     for (size_t i = 0; i < functionStack.size(); ++i) {
         FunctionBodyNode* function = functionStack[i];
         const Identifier& ident = function->ident();
-        m_functions.add(ident.impl());
-        emitNewFunction(addVar(ident, false), function);
+        if (!functionBody->captures(ident)) {
+            m_functions.add(ident.impl());
+            emitNewFunction(addVar(ident, false), function);
+        }
     }
-
-    const DeclarationStacks::VarStack& varStack = functionBody->varStack();
-    for (size_t i = 0; i < varStack.size(); ++i)
-        addVar(*varStack[i].first, varStack[i].second & DeclarationStacks::IsConstant);
+    for (size_t i = 0; i < varStack.size(); ++i) {
+        const Identifier& ident = *varStack[i].first;
+        if (!functionBody->captures(ident))
+            addVar(ident, varStack[i].second & DeclarationStacks::IsConstant);
+    }
+    
+    if (debugger)
+        codeBlock->m_numCapturedVars = codeBlock->m_numVars;
+        
 
     FunctionParameters& parameters = *functionBody->parameters();
     size_t parameterCount = parameters.size();
@@ -430,7 +458,7 @@ BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, const Debugger* debugge
     for (size_t i = 0; i < numVariables; ++i)
         variables.append(*varStack[i].first);
     codeBlock->adoptVariables(variables);
-
+    codeBlock->m_numCapturedVars = codeBlock->m_numVars;
     preserveLastVar();
 }
 

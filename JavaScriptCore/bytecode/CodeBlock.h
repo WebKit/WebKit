@@ -514,6 +514,7 @@ namespace JSC {
 
         int m_numCalleeRegisters;
         int m_numVars;
+        int m_numCapturedVars;
         int m_numParameters;
         bool m_isConstructor;
 

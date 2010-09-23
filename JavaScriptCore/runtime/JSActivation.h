@@ -52,6 +52,7 @@ namespace JSC {
         virtual bool isActivationObject() const { return true; }
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+        virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode);
 
         virtual void put(ExecState*, const Identifier&, JSValue, PutPropertySlot&);
 
@@ -87,7 +88,13 @@ namespace JSC {
 
             RefPtr<FunctionExecutable> functionExecutable;
         };
-        
+
+        bool symbolTableGet(const Identifier&, PropertySlot&);
+        bool symbolTableGet(const Identifier&, PropertyDescriptor&);
+        bool symbolTableGet(const Identifier&, PropertySlot&, bool& slotIsWriteable);
+        bool symbolTablePut(const Identifier&, JSValue);
+        bool symbolTablePutWithAttributes(const Identifier&, JSValue, unsigned attributes);
+
         static JSValue argumentsGetter(ExecState*, JSValue, const Identifier&);
         NEVER_INLINE PropertySlot::GetValueFunc getArgumentsGetter();
 
