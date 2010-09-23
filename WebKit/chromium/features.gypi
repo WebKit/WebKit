@@ -41,6 +41,7 @@
       'feature_defines': [
         'ENABLE_3D_CANVAS=1',
         'ENABLE_3D_RENDERING=1',
+        'ENABLE_ACCELERATED_2D_CANVAS=1',
         'ENABLE_BLOB=1',
         'ENABLE_BLOB_SLICE=1',
         'ENABLE_CHANNEL_MESSAGING=1',

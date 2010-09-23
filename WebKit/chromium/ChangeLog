@@ -1,3 +1,9 @@
+2010-09-22  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Re-synchronizes features.gypi with upstream feature_overrides.gypi.
+
+        * features.gypi:
+
 2010-09-22  Ruben  <chromium@hybridsource.org>
 
         Reviewed by Tony Chang.
