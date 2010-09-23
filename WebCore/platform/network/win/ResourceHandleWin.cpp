@@ -489,9 +489,32 @@ bool ResourceHandle::start(NetworkingContext* context)
         return false;
     }
 
+    if (firstRequest().httpBody()) {
+        firstRequest().httpBody()->flatten(d->m_formData);
+        d->m_bytesRemainingToWrite = d->m_formData.size();
+    }
+
+    Vector<UChar> httpHeaders;
+    const HTTPHeaderMap& httpHeaderFields = firstRequest().httpHeaderFields();
+
+    for (HTTPHeaderMap::const_iterator it = httpHeaderFields.begin(); it != httpHeaderFields.end(); ++it) {
+        if (equalIgnoringCase(it->first, "Accept") || equalIgnoringCase(it->first, "Referer") || equalIgnoringCase(it->first, "User-Agent"))
+            continue;
+
+        if (!httpHeaders.isEmpty())
+            httpHeaders.append('\n');
+
+        httpHeaders.append(it->first.characters(), it->first.length());
+        httpHeaders.append(':');
+        httpHeaders.append(it->second.characters(), it->second.length());
+    }
+
     INTERNET_BUFFERSW internetBuffers;
     ZeroMemory(&internetBuffers, sizeof(internetBuffers));
     internetBuffers.dwStructSize = sizeof(internetBuffers);
+    internetBuffers.lpcszHeader = httpHeaders.data();
+    internetBuffers.dwHeadersLength = httpHeaders.size();
+    internetBuffers.dwBufferTotal = d->m_bytesRemainingToWrite;
 
     HttpSendRequestExW(d->m_requestHandle, &internetBuffers, 0, 0, reinterpret_cast<DWORD_PTR>(this));
 

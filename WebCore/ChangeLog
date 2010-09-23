@@ -1,3 +1,13 @@
+2010-09-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Add handling for form data and additional HTTP headers in ResourceHandleWin
+        https://bugs.webkit.org/show_bug.cgi?id=46369
+
+        * platform/network/win/ResourceHandleWin.cpp:
+        (WebCore::ResourceHandle::start):
+
 2010-09-23  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser
