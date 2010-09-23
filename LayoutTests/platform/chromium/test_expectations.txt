@@ -3115,3 +3115,8 @@ BUGWK45021 : media/context-menu-actions.html = TIMEOUT
 BUGWK46163 : media/video-controls-with-mutation-event-handler.html = CRASH
 
 BUGWK46328 : fast/filesystem/flags-passing.html = TEXT
+
+// These 3 tests need a downstream test_shell change to work.
+BUGJAPHET : http/tests/navigation/ping-cross-origin-from-https.html = TEXT TIMEOUT
+BUGJAPHET : http/tests/navigation/ping-same-origin.html = TEXT TIMEOUT
+BUGJAPHET : http/tests/navigation/ping-cross-origin.html = TEXT TIMEOUT

@@ -1,3 +1,11 @@
+2010-09-23  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, Chromium expectations tweak.
+
+        Temporarily add http/tests/navigation/ping-*.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-23  Renata Hodovan  <reni@inf.u-szeged.hu>
 
         Reviewed by Dirk Schulze.
