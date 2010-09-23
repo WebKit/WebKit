@@ -2446,9 +2446,6 @@ BUG42875 SKIP DEFER : fast/js/sputnik = TEXT
 BUGWK38360 WIN LINUX SKIP : fast/images/svg-background-partial-redraw.html = TEXT
 BUGWK38360 WIN LINUX SKIP : svg/carto.net/tabgroup.svg = TEXT
 
-// Needs updated Chromium baselines
-BUGMIHAIP : traversal/node-iterator-prototype.html = TEXT
-
 BUG42895 : media/audio-only-video-intrinsic-size.html = TIMEOUT
 BUG42895 : media/media-document-audio-size.html = TIMEOUT
 BUGYAAR MAC : svg/custom/dominant-baseline-hanging.svg = MISSING

@@ -1,3 +1,18 @@
+2010-09-23  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [Chromium] traversal/node-iterator-prototype.html has incorrect baselines
+        https://bugs.webkit.org/show_bug.cgi?id=46413
+        
+        Chromium/V8 actually gets this test right (unlike JSC), but had 
+        incorrect baselines for it checked in by r58524.
+
+        * platform/chromium-mac/traversal/node-iterator-prototype-expected.txt: Removed.
+        * platform/chromium-win/traversal/node-iterator-prototype-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/chromium/traversal/node-iterator-prototype-expected.txt: Added.
+
 2010-09-23  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed, rolling out r68197.
