@@ -1,3 +1,18 @@
+2010-09-22  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Fix build with GCC 4.4.x
+        https://bugs.webkit.org/show_bug.cgi?id=40826
+
+        Change the -fstrict-aliasing flag to -fno-strict-aliasing as other
+        ports like GTK and QT are using in their build systems. It was failing
+        to execute when compiled with GCC 4.4.x in Release mode.
+
+        Refactor the flags in order to be more readable.
+
+        * cmake/WebKitHelpers.cmake:
+
 2010-09-22  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
