@@ -1,3 +1,23 @@
+2010-09-23  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Darin Adler.
+
+        Fix usage of enum as if it was a define
+        https://bugs.webkit.org/show_bug.cgi?id=46355
+
+        pthread.h defines PTHREAD_MUTEX_DEFAULT and PTHREAD_MUTEX_NORMAL as an
+        enum.  Hence, it cannot be used by the preprocessor which always
+        evaluates that condition as true. This was giving a warning when
+        compiling with gcc and "-Wundef" flag.
+
+        The second path, when PTHREAD_MUTEX_DEFAULT is not the same of
+        PTHREAD_MUTEX_NORMAL, is not slow. So, let's eliminate the first path
+        and get rid of that #if.
+
+        * wtf/ThreadingPthreads.cpp: Always call pthread_mutexattr_init() to
+        set mutex type to PTHREAD_MUTEX_NORMAL.
+        (WTF::Mutex::Mutex):
+
 2010-09-23  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Geoffrey Garen.

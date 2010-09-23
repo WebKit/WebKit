@@ -241,12 +241,6 @@ ThreadIdentifier currentThread()
 
 Mutex::Mutex()
 {
-#if PTHREAD_MUTEX_NORMAL == PTHREAD_MUTEX_DEFAULT
-
-    pthread_mutex_init(&m_mutex, 0);
-
-#else
-
     pthread_mutexattr_t attr;
     pthread_mutexattr_init(&attr);
     pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_NORMAL);
@@ -254,8 +248,6 @@ Mutex::Mutex()
     pthread_mutex_init(&m_mutex, &attr);
 
     pthread_mutexattr_destroy(&attr);
-
-#endif
 }
 
 Mutex::~Mutex()
