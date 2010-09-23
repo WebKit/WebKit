@@ -2120,8 +2120,6 @@ BUG28646 : editing/selection/transformed-selection-rects.html = FAIL
 // New failures from merge 51412:51455.
 BUG28916 MAC : editing/pasteboard/paste-xml.xhtml = TEXT
 
-// New failures from WebKit r51534:r51576
-BUG29157 WIN LINUX MAC :  svg/animations/animVal-basics.html = TIMEOUT
 
 // New failures from WebKit r51577
 BUG29164 WIN LINUX MAC : fast/frames/sandboxed-iframe-plugins.html = TEXT
@@ -2372,11 +2370,11 @@ BUG_39423 : security/block-test.html = TIMEOUT
 
 BUGWK36666 : storage/open-database-over-quota.html = TEXT
 
-// Caused by http://trac.webkit.org/changeset/56795
-// These are new tests that are failing in Chromium because of a missing API.
-BUG39904 : svg/animations/animate-points.html = TIMEOUT
-BUG39904 : svg/animations/animate-keySplines.html = TIMEOUT
-BUG39904 : svg/animations/animate-gradient-transform.html = TIMEOUT
+// These tests pass in DRT but timeout in test_shell.
+BUG29157 : svg/animations/animVal-basics.html = TIMEOUT PASS
+BUG39904 : svg/animations/animate-points.html = TIMEOUT PASS
+BUG39904 : svg/animations/animate-keySplines.html = TIMEOUT PASS
+BUG39904 : svg/animations/animate-gradient-transform.html = TIMEOUT PASS
 
 BUGWK37283 : fast/overflow/scrollbar-restored-and-then-locked.html = TEXT
 

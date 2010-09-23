@@ -185,6 +185,9 @@ public:
     virtual WebRect selectionBoundsRect() const;
 
     virtual bool selectionStartHasSpellingMarkerFor(int from, int length) const;
+    virtual bool pauseSVGAnimation(const WebString& animationId,
+                                   double time,
+                                   const WebString& elementId);
 
     static PassRefPtr<WebFrameImpl> create(WebFrameClient* client);
     ~WebFrameImpl();

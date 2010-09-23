@@ -126,6 +126,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("removeOriginAccessWhitelistEntry", &LayoutTestController::removeOriginAccessWhitelistEntry);
     bindMethod("repaintSweepHorizontally", &LayoutTestController::repaintSweepHorizontally);
     bindMethod("resumeAnimations", &LayoutTestController::resumeAnimations);
+    bindMethod("sampleSVGAnimationForElementAtTime", &LayoutTestController::sampleSVGAnimationForElementAtTime);
     bindMethod("setAcceptsEditing", &LayoutTestController::setAcceptsEditing);
     bindMethod("setAllowFileAccessFromFileURLs", &LayoutTestController::setAllowFileAccessFromFileURLs);
     bindMethod("setAllowUniversalAccessFromFileURLs", &LayoutTestController::setAllowUniversalAccessFromFileURLs);
@@ -957,6 +958,19 @@ void LayoutTestController::resumeAnimations(const CppArgumentList&, CppVariant* 
 {
     resumeAnimations();
     result->setNull();
+}
+
+void LayoutTestController::sampleSVGAnimationForElementAtTime(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() != 3) {
+        result->setNull();
+        return;
+    }
+    WebString animationId = cppVariantToWebString(arguments[0]);
+    double time = arguments[1].toDouble();
+    WebString elementId = cppVariantToWebString(arguments[2]);
+    bool success = m_shell->webView()->mainFrame()->pauseSVGAnimation(animationId, time, elementId);
+    result->set(success);
 }
 
 void LayoutTestController::disableImageLoading(const CppArgumentList&, CppVariant* result)
