@@ -218,7 +218,15 @@
       $('<span class="commitQueue"> cq: ' + flag_control + '</span>'));
 
     details.find('#flags select').each(function() {
-      findControlForFlag(this).attr('selectedIndex', $(this).attr('selectedIndex'));
+      var requestee = $(this).parent().siblings('td:first-child').text().trim();
+      if (requestee.length) {
+        // Remove trailing ':'.
+        requestee = requestee.substr(0, requestee.length - 1);
+        requestee = ' (' + requestee + ')';
+      }
+      var control = findControlForFlag(this)
+      control.attr('selectedIndex', $(this).attr('selectedIndex'));
+      control.parent().prepend(requestee);
     });
   }
 
