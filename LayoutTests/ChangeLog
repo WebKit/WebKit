@@ -1,5 +1,11 @@
 2010-09-23  Tony Chang  <tony@chromium.org>
 
+        Unreviewed.  Fix a test expecatation for no-caret-repaint-in-non-content-editable-element.html (should be TEXT not TEXT+IMAGE).
+
+        * platform/chromium/test_expectations.txt:
+
+2010-09-23  Tony Chang  <tony@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         [chromium] add baselines for no-caret-repaint-in-non-content-editable-element.html

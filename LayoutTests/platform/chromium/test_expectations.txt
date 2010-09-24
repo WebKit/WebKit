@@ -2320,7 +2320,7 @@ BUG37962 LINUX DEBUG : fast/forms/multiple-form-submission-protection-mouse.html
 BUG37962 MAC : plugins/iframe-shims.html = TEXT PASS
 
 // Passing in DRT.  Pending change in test_shell for this.
-BUG37896 : fast/repaint/no-caret-repaint-in-non-content-editable-element.html = IMAGE+TEXT PASS
+BUG37896 : fast/repaint/no-caret-repaint-in-non-content-editable-element.html = TEXT PASS
 
 // WebKit roll r55853 -> 55940
 // Flaky test
