@@ -1,3 +1,14 @@
+2010-09-24  James Kozianski  <koz@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        [chromium] Updated test expectations to match the bots using new auto-update script.
+        https://bugs.webkit.org/show_bug.cgi?id=46452
+
+        Updated expectations to match the bots using the new auto-update script.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r68236.
