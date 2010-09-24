@@ -17,39 +17,12 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef QWKPREFERENCES_H
-#define QWKPREFERENCES_H
+#include "WKPreferences.h"
 
-#include "qwebkitglobal.h"
-
-class QWKPage;
-class QWKPreferencesPrivate;
-
-class QWEBKIT_EXPORT QWKPreferences {
+class QWKPreferencesPrivate {
 public:
-    enum WebAttribute {
-        AutoLoadImages,
-        JavascriptEnabled,
-        OfflineWebApplicationCacheEnabled,
-        LocalStorageEnabled,
-        XSSAuditingEnabled
-    };
+    static QWKPreferences* createPreferences(WKContextRef contextRef);
+    static QWKPreferences* createSharedPreferences();
 
-    static QWKPreferences* sharedPreferences();
-
-    void setAttribute(WebAttribute attr, bool on);
-    bool testAttribute(WebAttribute attr) const;
-
-private:
-    Q_DISABLE_COPY(QWKPreferences)
-
-    QWKPreferences();
-    ~QWKPreferences();
-
-    QWKPreferencesPrivate *d;
-
-    friend class QWKPage;
-    friend class QWKPreferencesPrivate;
+    WKPreferencesRef ref;
 };
-
-#endif // QWKPREFERENCES_H

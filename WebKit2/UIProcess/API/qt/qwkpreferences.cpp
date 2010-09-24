@@ -18,26 +18,37 @@
 */
 
 #include "qwkpreferences.h"
+
+#include "WKContext.h"
 #include "WKPreferences.h"
+#include "qwkpreferences_p.h"
 
-class QWKPreferencesPrivate {
-public:
-    WKPreferencesRef ref;
-};
+QWKPreferences* QWKPreferencesPrivate::createPreferences(WKContextRef contextRef)
+{
+    QWKPreferences* prefs = new QWKPreferences;
+    prefs->d->ref = WKContextGetPreferences(contextRef);
+    return prefs;
+}
 
-QWKPreferences* QWKPreferences::globalPreferences()
+QWKPreferences* QWKPreferencesPrivate::createSharedPreferences()
+{
+    QWKPreferences* prefs = new QWKPreferences;
+    prefs->d->ref = WKPreferencesCreate();
+    return prefs;
+}
+
+QWKPreferences* QWKPreferences::sharedPreferences()
 {
     static QWKPreferences* instance = 0;
 
     if (!instance)
-        instance = new QWKPreferences;
+        instance = QWKPreferencesPrivate::createSharedPreferences();
     return instance;
 }
 
 QWKPreferences::QWKPreferences()
     : d(new QWKPreferencesPrivate)
 {
-    d->ref = WKPreferencesCreate();
 }
 
 QWKPreferences::~QWKPreferences()

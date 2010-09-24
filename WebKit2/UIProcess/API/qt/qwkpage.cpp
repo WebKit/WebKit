@@ -21,6 +21,8 @@
 #include "qwkpage.h"
 #include "qwkpage_p.h"
 
+#include "qwkpreferences_p.h"
+
 #include "ClientImpl.h"
 #include "LocalizedStrings.h"
 #include "WebContext.h"
@@ -46,6 +48,7 @@ using namespace WebCore;
 
 QWKPagePrivate::QWKPagePrivate(QWKPage* qq, WKPageNamespaceRef namespaceRef)
     : q(qq)
+    , preferences(0)
     , createNewPageFn(0)
 {
     // We want to use the LocalizationStrategy at the UI side as well.
@@ -55,6 +58,7 @@ QWKPagePrivate::QWKPagePrivate(QWKPage* qq, WKPageNamespaceRef namespaceRef)
     memset(actions, 0, sizeof(actions));
     page = toWK(namespaceRef)->createWebPage();
     page->setPageClient(this);
+    pageNamespaceRef = namespaceRef;
 }
 
 QWKPagePrivate::~QWKPagePrivate()
@@ -362,6 +366,16 @@ void QWKPage::timerEvent(QTimerEvent* ev)
 WKPageRef QWKPage::pageRef() const
 {
     return toRef(d->page.get());
+}
+
+QWKPreferences* QWKPage::preferences() const
+{
+    if (!d->preferences) {
+        WKContextRef contextRef = WKPageNamespaceGetContext(d->pageNamespaceRef);
+        d->preferences = QWKPreferencesPrivate::createPreferences(contextRef);
+    }
+
+    return d->preferences;
 }
 
 void QWKPage::setCreateNewPageFunction(CreateNewPageFn function)

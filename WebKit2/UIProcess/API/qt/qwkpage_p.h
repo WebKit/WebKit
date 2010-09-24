@@ -32,6 +32,8 @@
 #include <QGraphicsView>
 #include <QKeyEvent>
 
+class QWKPreferences;
+
 class QWKPagePrivate : WebKit::PageClient {
 public:
     QWKPagePrivate(QWKPage*, WKPageNamespaceRef);
@@ -74,10 +76,13 @@ public:
     void touchEvent(QTouchEvent*);
 #endif
 
-    QAction* actions[QWKPage::WebActionCount];
-
     QWKPage* q;
+
+    QAction* actions[QWKPage::WebActionCount];
+    QWKPreferences* preferences;
+
     RefPtr<WebKit::WebPageProxy> page;
+    WKPageNamespaceRef pageNamespaceRef;
 
     QWKPage::CreateNewPageFn createNewPageFn;
 

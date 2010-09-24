@@ -14,6 +14,7 @@
 
 class QCursor;
 class QWKGraphicsWidget;
+class QWKPreferences;
 class QWKPagePrivate;
 class QtViewportConfigurationPrivate;
 
@@ -68,6 +69,8 @@ public:
     virtual ~QWKPage();
 
     WKPageRef pageRef() const;
+
+    QWKPreferences* preferences() const;
 
     void load(const QUrl& url);
     void setUrl(const QUrl& url);

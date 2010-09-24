@@ -1,5 +1,23 @@
 2010-09-24  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
+        Reviewed by Antonio Gomes.
+
+        Make it possible to get the page preferences for Qt WebKit2 port.
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::QWKPagePrivate):
+        (QWKPage::preferences):
+        * UIProcess/API/qt/qwkpage.h:
+        * UIProcess/API/qt/qwkpage_p.h:
+        * UIProcess/API/qt/qwkpreferences.cpp:
+        (QWKPreferencesPrivate::createPreferences):
+        (QWKPreferencesPrivate::createSharedPreferences):
+        (QWKPreferences::sharedPreferences):
+        (QWKPreferences::QWKPreferences):
+        * UIProcess/API/qt/qwkpreferences.h:
+
+2010-09-24  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
         Reviewed by Sam Weinig.
 
         Add WebKit2 C API for setting/getting frame flattening and plugin settings.
