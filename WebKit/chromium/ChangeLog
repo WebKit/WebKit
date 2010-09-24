@@ -1,3 +1,13 @@
+2010-09-23  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] Fix some IndexedDB tests for DRT
+        https://bugs.webkit.org/show_bug.cgi?id=46444
+
+        * DEPS: Roll Chromium revision to 60394, which added
+        WebKitClient::createIDBKeysFromSerializedValuesAndKeyPath() implementation.
+
 2010-09-23  Kinuko Yasuda  <kinuko@chromium.org>
 
         Unreviewed, another attempt to fix build.  The code didn't have proper if-defs.

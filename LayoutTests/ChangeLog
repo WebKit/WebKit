@@ -1,3 +1,12 @@
+2010-09-23  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] Fix some IndexedDB tests for DRT
+        https://bugs.webkit.org/show_bug.cgi?id=46444
+
+        * platform/chromium/drt_expectations.txt:
+
 2010-09-23  Tony Chang  <tony@chromium.org>
 
         Reviewed by Dimitri Glazkov.

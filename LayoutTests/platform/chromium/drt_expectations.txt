@@ -107,9 +107,6 @@ BUG_DRT WIN : fast/harness/show-modal-dialog.html = TEXT
 // Not investigated.
 BUG_DRT WIN MAC LINUX : fast/dynamic/window-resize-scrollbars-test.html = IMAGE+TEXT
 BUG_DRT WIN MAC LINUX : storage/domstorage/quota.html = TEXT
-BUG_DRT WIN MAC LINUX : storage/indexeddb/index-basics.html = TEXT
-BUG_DRT WIN MAC LINUX : storage/indexeddb/index-cursor.html = TIMEOUT
-BUG_DRT WIN MAC LINUX : storage/indexeddb/objectstore-basics.html = TEXT
 BUG_DRT WIN MAC LINUX : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
 BUG_DRT MAC LINUX : http/tests/misc/slow-loading-image-in-pattern.html = IMAGE PASS
 BUG_DRT MAC LINUX : http/tests/plugins/post-url-file.html = TIMEOUT
