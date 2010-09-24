@@ -356,12 +356,7 @@ fast/events/window-events-bubble.html
 fast/events/window-events-bubble2.html
 fast/events/window-events-capture.html
 fast/events/zoom-dblclick.html
-fast/files/read-blob-async.html
-fast/files/read-file-async.html
-fast/files/apply-blob-url-to-img.html
-fast/files/apply-blob-url-to-xhr.html
-fast/files/create-blob-url-crash.html
-fast/files/workers
+fast/files
 fast/forms/25153.html
 fast/forms/access-key.html
 fast/forms/button-enter-click.html

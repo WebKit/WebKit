@@ -1599,7 +1599,7 @@ String DOMWindow::createBlobURL(Blob* blob)
 
 void DOMWindow::revokeBlobURL(const String& blobURLString)
 {
-    scriptExecutionContext()->revokePublicBlobURL(KURL(ParsedURLString, blobURLString));
+    scriptExecutionContext()->revokePublicBlobURL(KURL(KURL(), blobURLString));
 }
 #endif
 

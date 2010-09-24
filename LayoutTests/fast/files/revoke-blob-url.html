@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function log(message)
+{
+    document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
+}
+
+function test()
+{
+    log("Test calling revokeBlobURL with no argument.");
+    var url = revokeBlobURL();
+    log(url == undefined ? "PASS" : "FAIL");
+
+    log("Test calling revokeBlobURL with empty URL.");
+    revokeBlobURL("");
+    log("PASS");
+
+    log("Test calling revokeBlobURL with invalid URL.");
+    revokeBlobURL("[foo bar]");
+    log("PASS");
+
+    log("Test calling revokeBlobURL with non-existent URL.");
+    revokeBlobURL("blob:non-existent");
+    log("PASS");
+
+    log("DONE");
+}
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+</head>
+<body onload="test()">
+<pre id='console'></pre>
+</body>
+</html>

@@ -1,0 +1,10 @@
+Test calling revokeBlobURL with no argument.
+PASS
+Test calling revokeBlobURL with empty URL.
+PASS
+Test calling revokeBlobURL with invalid URL.
+PASS
+Test calling revokeBlobURL with non-existent URL.
+PASS
+DONE
+

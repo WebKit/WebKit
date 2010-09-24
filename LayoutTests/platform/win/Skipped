@@ -195,12 +195,9 @@ fast/forms/input-file-re-render.html
 http/tests/security/clipboard/clipboard-file-access.html
 fast/events/drag-file-crash.html
 fast/dom/Window/window-postmessage-clone.html
-fast/files/read-blob-async.html
-fast/files/read-file-async.html
-fast/files/apply-blob-url-to-img.html
-fast/files/apply-blob-url-to-xhr.html
-fast/files/create-blob-url-crash.html
-fast/files/workers
+
+# File API is not supported yet
+fast/files
 
 # Need to add functionality to DumpRenderTree to test IDN <rdar://problem/5301954>
 fast/encoding/idn-security.html

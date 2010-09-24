@@ -769,12 +769,9 @@ http/tests/security/isolatedWorld/world-reuse.html
 
 # Missing eventSender.beginDragWithFiles()
 fast/dom/Window/window-postmessage-clone-frames.html
-fast/files/read-blob-async.html
-fast/files/read-file-async.html
-fast/files/apply-blob-url-to-img.html
-fast/files/apply-blob-url-to-xhr.html
-fast/files/create-blob-url-crash.html
-fast/files/workers
+
+# File API is not supported yet
+fast/files
 
 # Missing layoutTestController.setAlwaysAcceptCookies()
 http/tests/plugins/third-party-cookie-accept-policy.html

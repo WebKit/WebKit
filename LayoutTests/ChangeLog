@@ -1,3 +1,19 @@
+2010-09-24  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        DOMWindow::revokeBlobURL erroneously uses ParsedURLString.
+        https://bugs.webkit.org/show_bug.cgi?id=46434
+
+        Add a test. Also update Skipped files for those not-supported platforms.
+
+        * fast/files/revoke-blob-url-expected.txt: Added.
+        * fast/files/revoke-blob-url.html: Added.
+        * platform/gtk/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2010-09-24  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed.
