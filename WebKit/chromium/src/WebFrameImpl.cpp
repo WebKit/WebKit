@@ -553,7 +553,7 @@ WebSize WebFrameImpl::contentsSize() const
 int WebFrameImpl::contentsPreferredWidth() const
 {
     if (m_frame->document() && m_frame->document()->renderView())
-        return m_frame->document()->renderView()->minPrefWidth();
+        return m_frame->document()->renderView()->minPreferredLogicalWidth();
     return 0;
 }
 
