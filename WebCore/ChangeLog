@@ -1,3 +1,15 @@
+2010-09-24  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Comply with spec by generalizing container on which transforms can be applied.
+        https://bugs.webkit.org/show_bug.cgi?id=46485
+
+        Already covered by existing tests.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::getTransformFromContainer):
+
 2010-09-24  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.
