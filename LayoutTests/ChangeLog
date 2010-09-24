@@ -1,5 +1,43 @@
 2010-09-23  Tony Chang  <tony@chromium.org>
 
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] layout test rebaselines
+        https://bugs.webkit.org/show_bug.cgi?id=46440
+
+        These 2 tests were being skipped for an unknown reason.  Remove the results
+        and mark as failing so we can see it on the flakiness dashboard.
+        * platform/chromium-linux/fast/images/svg-background-partial-redraw-expected.checksum: Removed.
+        * platform/chromium-linux/fast/images/svg-background-partial-redraw-expected.png: Removed.
+        * platform/chromium-win/fast/images/svg-background-partial-redraw-expected.checksum: Removed.
+        * platform/chromium-win/fast/images/svg-background-partial-redraw-expected.png: Removed.
+        * platform/chromium-win/fast/images/svg-background-partial-redraw-expected.txt: Removed.
+        * platform/chromium-win/svg/carto.net/tabgroup-expected.png: Removed.
+
+        Small antialiasing difference in borders and font metric differences.
+        * platform/chromium-linux/svg/custom/broken-internal-references-expected.png: Added.
+        * platform/chromium-linux/svg/custom/broken-internal-references-expected.txt: Added.
+        * platform/chromium-win/svg/custom/broken-internal-references-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/broken-internal-references-expected.png: Added.
+        * platform/chromium-win/svg/custom/broken-internal-references-expected.txt: Added.
+
+        This test passes once these bad baselines are removed.
+        * platform/chromium-mac/svg/clip-path/clip-path-child-clipped-expected.txt: Removed.
+        * platform/chromium-win/svg/clip-path/clip-path-child-clipped-expected.txt: Removed.
+
+        I don't think this is correct, so I'm removing the baseline and I
+        updated test_expecations.txt with a note.
+        * platform/chromium-win/svg/custom/use-font-face-crash-expected.checksum: Removed.
+        * platform/chromium-win/svg/custom/use-font-face-crash-expected.png: Removed.
+        * platform/chromium-win/svg/custom/use-font-face-crash-expected.txt: Removed.
+
+        This is just a difference it error text between V8 and JSC.
+        * platform/chromium/fast/dom/Window/invalid-protocol-expected.txt: Added.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-09-23  Tony Chang  <tony@chromium.org>
+
         Unreviewed.  Fix a test expecatation for no-caret-repaint-in-non-content-editable-element.html (should be TEXT not TEXT+IMAGE).
 
         * platform/chromium/test_expectations.txt:

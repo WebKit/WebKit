@@ -1,0 +1,25 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (19,9) size 102x102
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderPath {rect} at (0,0) size 60x10 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L60.00,0.00 L60.00,10.00 L0.00,10.00 Z"]
+      RenderSVGResourceLinearGradient {linearGradient} [id="grad-that-is-never-referred"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
+      RenderPath {path} at (198,13) size 221x99 [stroke={[type=SOLID] [color=#0000FF]}] [data="M199.00,89.30 C206.60,66.60,235.80,13.20,270.00,30.30 C286.60,38.60,298.90,59.40,310.00,73.30 C321.70,87.90,338.60,99.00,356.00,103.30 C387.30,111.10,396.60,90.40,418.00,74.30"]
+      RenderSVGText {text} at (0,-15) size 128x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 128x19
+          chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 19 width 128.00: "Shoud not be shown."
+      RenderSVGResourceLinearGradient {linearGradient} [id="grad-with-invalid-href"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
+    RenderSVGContainer {use} at (0,0) size 0x0
+      RenderSVGContainer {g} at (0,0) size 0x0
+    RenderPath {rect} at (19,9) size 102x102 [stroke={[type=SOLID] [color=#0000FF] [stroke width=1.33]}] [fill={[type=LINEAR-GRADIENT] [id="grad-with-invalid-href"]}] [data="M20.00,10.00 L120.00,10.00 L120.00,110.00 L20.00,110.00 Z"]
+    RenderSVGText {text} at (0,0) size 0x0 contains 1 chunk(s)
+      RenderSVGTextPath {textPath} at (0,0) size 0x0
+        RenderSVGInlineText {#text} at (0,0) size 0x0
+          chunk 1 text run 1 at (340282346638528859811704183484516925440.00,340282346638528859811704183484516925440.00) startOffset 0 endOffset 18 width 322.00: "Shoud not be shown"
+      RenderSVGInlineText {#text} at (0,0) size 0x0
+    RenderSVGText {text}
+      RenderSVGInline {tref} at (0,0) size 0x0
+      RenderSVGInlineText {#text} at (0,0) size 0x0

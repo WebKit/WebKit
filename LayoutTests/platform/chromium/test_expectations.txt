@@ -2259,9 +2259,6 @@ BUG32864 WIN LINUX MAC : plugins/mouse-events-fixedpos.html = TEXT
 // WebKit roll 53655 -> 53704
 BUG32900 WIN LINUX : http/tests/misc/slow-loading-mask.html = IMAGE+TEXT
 
-// WebKit roll 53704 -> 53747
-BUG32949 WIN LINUX MAC : fast/dom/Window/invalid-protocol.html = TEXT
-
 // WebKit roll 53941 -> 54015
 BUG33358 WIN LINUX : fast/dom/Window/window-postmessage-clone-frames.html = TEXT
 
@@ -2418,7 +2415,6 @@ BUGWK38038 WIN LINUX MAC : fast/url/file-http-base.html = TEXT
 BUGWK38100 WIN LINUX MAC : editing/inserting/caret-position.html = TEXT
 
 // New test, may be safe to just rebaseline.
-BUGWK38099 WIN LINUX : svg/custom/broken-internal-references.svg = IMAGE+TEXT
 
 // Started failing at 58212
 BUGWK38108 MAC : fast/backgrounds/size/contain-and-cover.html = IMAGE
@@ -2430,9 +2426,9 @@ BUGUKAI WIN MAC SKIP : fast/text/international/bold-bengali.html = FAIL
 // WebKit roll 58400:58523
 // We probably don't want to run these massive amount of new ECMA script conformance tests:
 BUG42875 SKIP DEFER : fast/js/sputnik = TEXT
-// Other failing layout test
-BUGWK38360 WIN LINUX SKIP : fast/images/svg-background-partial-redraw.html = TEXT
-BUGWK38360 WIN LINUX SKIP : svg/carto.net/tabgroup.svg = TEXT
+// These tests may just need to be rebaselined.
+BUGWK38360 WIN LINUX : fast/images/svg-background-partial-redraw.html = FAIL
+BUGWK38360 WIN LINUX : svg/carto.net/tabgroup.svg = FAIL
 
 BUG42895 : media/audio-only-video-intrinsic-size.html = TIMEOUT
 BUG42895 : media/media-document-audio-size.html = TIMEOUT
@@ -2443,10 +2439,6 @@ BUG39855 LINUX RELEASE : editing/selection/extend-selection.html = PASS TIMEOUT
 
 // Failing a few times, flak dashboard seems to agree.
 BUG41973 MAC : svg/text/text-text-05-t.svg = IMAGE PASS
-
-// Rolling Skia forward in Chrome tree to get new baselines to check
-// in upstream.
-BUGEVAN : svg/clip-path/clip-path-child-clipped.svg = PASS FAIL
 
 // WebKit roll 58626:58719
 BUG43963 WIN : fast/forms/searchfield-heights.html = IMAGE
@@ -2705,8 +2697,9 @@ BUG48239 : fast/js/function-apply.html = TEXT
 BUG48239 WIN LINUX : fast/js/function-apply-aliased.html = TEXT PASS
 BUG48239 : fast/js/function-apply-many-args.html = TEXT
 
-// Needs rebaselining after http://trac.webkit.org/changeset/62662/
-BUG48452 LINUX MAC : svg/custom/use-font-face-crash.svg = IMAGE+TEXT IMAGE
+// The error gives a different line number than upstream.  Maybe a V8/JSC
+// difference?
+BUG48452 : svg/custom/use-font-face-crash.svg = FAIL
 
 // Times out after http://trac.webkit.org/changeset/62739/
 BUG48550 SKIP : plugins/return-negative-one-from-write.html = TIMEOUT
