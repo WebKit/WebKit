@@ -28,59 +28,63 @@
 
 namespace WebCore {
 
+PassRefPtr<DeviceMotionData::Acceleration> DeviceMotionData::Acceleration::create(bool canProvideX, double x,
+                                                                                  bool canProvideY, double y,
+                                                                                  bool canProvideZ, double z)
+{
+    return adoptRef(new DeviceMotionData::Acceleration(canProvideX, x, canProvideY, y, canProvideZ, z));
+}
+
+DeviceMotionData::Acceleration::Acceleration(bool canProvideX, double x, bool canProvideY, double y, bool canProvideZ, double z)
+    : m_x(x)
+    , m_y(y)
+    , m_z(z)
+    , m_canProvideX(canProvideX)
+    , m_canProvideY(canProvideY)
+    , m_canProvideZ(canProvideZ)
+
+{
+}
+
+PassRefPtr<DeviceMotionData::RotationRate> DeviceMotionData::RotationRate::create(bool canProvideAlpha, double alpha,
+                                                                                  bool canProvideBeta, double beta,
+                                                                                  bool canProvideGamma, double gamma)
+{
+    return adoptRef(new DeviceMotionData::RotationRate(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma));
+}
+
+DeviceMotionData::RotationRate::RotationRate(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
+    : m_alpha(alpha)
+    , m_beta(beta)
+    , m_gamma(gamma)
+    , m_canProvideAlpha(canProvideAlpha)
+    , m_canProvideBeta(canProvideBeta)
+    , m_canProvideGamma(canProvideGamma)
+{
+}
+
 PassRefPtr<DeviceMotionData> DeviceMotionData::create()
 {
     return adoptRef(new DeviceMotionData);
 }
 
-PassRefPtr<DeviceMotionData> DeviceMotionData::create(bool canProvideXAcceleration, double xAcceleration,
-                                                      bool canProvideYAcceleration, double yAcceleration,
-                                                      bool canProvideZAcceleration, double zAcceleration,
-                                                      bool canProvideXRotationRate, double xRotationRate,
-                                                      bool canProvideYRotationRate, double yRotationRate,
-                                                      bool canProvideZRotationRate, double zRotationRate,
-                                                      bool canProvideInterval, double interval)
+PassRefPtr<DeviceMotionData> DeviceMotionData::create(PassRefPtr<Acceleration> acceleration, PassRefPtr<Acceleration> accelerationIncludingGravity,
+                                                      PassRefPtr<RotationRate> rotationRate, bool canProvideInterval, double interval)
 {
-    return adoptRef(new DeviceMotionData(canProvideXAcceleration, xAcceleration,
-                                         canProvideYAcceleration, yAcceleration,
-                                         canProvideZAcceleration, zAcceleration,
-                                         canProvideXRotationRate, xRotationRate,
-                                         canProvideYRotationRate, yRotationRate,
-                                         canProvideZRotationRate, zRotationRate,
-                                         canProvideInterval, interval));
+    return adoptRef(new DeviceMotionData(acceleration, accelerationIncludingGravity, rotationRate, canProvideInterval, interval));
 }
 
 DeviceMotionData::DeviceMotionData()
-    : m_canProvideXAcceleration(false)
-    , m_canProvideYAcceleration(false)
-    , m_canProvideZAcceleration(false)
-    , m_canProvideXRotationRate(false)
-    , m_canProvideYRotationRate(false)
-    , m_canProvideZRotationRate(false)
-    , m_canProvideInterval(false)
+    : m_canProvideInterval(false)
 {
 }
 
-DeviceMotionData::DeviceMotionData(bool canProvideXAcceleration, double xAcceleration,
-                                   bool canProvideYAcceleration, double yAcceleration,
-                                   bool canProvideZAcceleration, double zAcceleration,
-                                   bool canProvideXRotationRate, double xRotationRate,
-                                   bool canProvideYRotationRate, double yRotationRate,
-                                   bool canProvideZRotationRate, double zRotationRate,
-                                   bool canProvideInterval, double interval)
-    : m_canProvideXAcceleration(canProvideXAcceleration)
-    , m_canProvideYAcceleration(canProvideYAcceleration)
-    , m_canProvideZAcceleration(canProvideZAcceleration)
-    , m_canProvideXRotationRate(canProvideXRotationRate)
-    , m_canProvideYRotationRate(canProvideYRotationRate)
-    , m_canProvideZRotationRate(canProvideZRotationRate)
+DeviceMotionData::DeviceMotionData(PassRefPtr<Acceleration> acceleration, PassRefPtr<Acceleration> accelerationIncludingGravity,
+                                   PassRefPtr<RotationRate> rotationRate, bool canProvideInterval, double interval)
+    : m_acceleration(acceleration)
+    , m_accelerationIncludingGravity(accelerationIncludingGravity)
+    , m_rotationRate(rotationRate)
     , m_canProvideInterval(canProvideInterval)
-    , m_xAcceleration(xAcceleration)
-    , m_yAcceleration(yAcceleration)
-    , m_zAcceleration(zAcceleration)
-    , m_xRotationRate(xRotationRate)
-    , m_yRotationRate(yRotationRate)
-    , m_zRotationRate(zRotationRate)
     , m_interval(interval)
 {
 }
