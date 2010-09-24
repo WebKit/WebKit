@@ -98,6 +98,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_isInRedo(false)
 #if PLATFORM(MAC)
     , m_windowIsVisible(false)
+#elif PLATFORM(WIN)
+    , m_nativeWindow(parameters.nativeWindow)
 #endif
     , m_pageID(pageID)
 {

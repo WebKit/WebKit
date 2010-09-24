@@ -56,6 +56,10 @@ public:
     virtual void pageDidEnterAcceleratedCompositing() = 0;
     virtual void pageDidLeaveAcceleratedCompositing() = 0;
 #endif
+
+#if PLATFORM(WIN)
+    virtual HWND nativeWindow() = 0;
+#endif
 };
 
 } // namespace WebKit

@@ -44,6 +44,9 @@ struct WebPageCreationParameters {
     WebCore::IntSize viewSize;
     WebPreferencesStore store;
     DrawingAreaBase::DrawingAreaInfo drawingAreaInfo;
+#if PLATFORM(WIN)
+    HWND nativeWindow;
+#endif
 };
 
 } // namespace WebKit

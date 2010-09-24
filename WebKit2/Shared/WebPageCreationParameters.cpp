@@ -34,6 +34,10 @@ void WebPageCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(viewSize);
     encoder->encode(store);
     encoder->encode(drawingAreaInfo);
+
+#if PLATFORM(WIN)
+    encoder->encode(reinterpret_cast<uint64_t>(nativeWindow));
+#endif
 }
 
 bool WebPageCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, WebPageCreationParameters& parameters)
@@ -44,6 +48,14 @@ bool WebPageCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, WebPag
         return false;
     if (!decoder->decode(parameters.drawingAreaInfo))
         return false;
+
+#if PLATFORM(WIN)
+    uint64_t nativeWindow;
+    if (!decoder->decode(nativeWindow))
+        return false;
+    parameters.nativeWindow = reinterpret_cast<HWND>(nativeWindow);
+#endif
+
     return true;
 }
 

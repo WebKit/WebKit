@@ -1,5 +1,46 @@
 2010-09-24  Adam Roben  <aroben@apple.com>
 
+        Pass the WebView's HWND over to the web process
+
+        The HWND is packaged up in the WebPageCreationParameters and stored in
+        the WebPage. It will eventually be used by windowed plugins.
+
+        Fixes <http://webkit.org/b/46512> WebPage needs access to its
+        corresponding HWND from the UI process
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        Encode and decode the HWND as a uint64_t.
+
+        * Shared/WebPageCreationParameters.h: Added a nativeWindow member to
+        store the HWND.
+
+        * UIProcess/PageClient.h: Added a nativeWindow function on Windows.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters): Store the HWND from the
+        page client in the struct to be sent to the web process.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::WebView): Moved the call to initializeWebPage after
+        we've created our window so that our window will be ready when
+        WebPageProxy asks for it to send it to the web process.
+        (WebKit::WebView::nativeWindow): Added. Just returns our window.
+
+        * UIProcess/win/WebView.h: Added nativeWindow.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Store the HWND in the new m_nativeWindow
+        member.
+
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::nativeWindow): Added this simple getter.
+
+2010-09-24  Adam Roben  <aroben@apple.com>
+
         Add WebPageProxy::creationParameters
 
         Fixes <http://webkit.org/b/46510> WebPageProxy has a bunch of

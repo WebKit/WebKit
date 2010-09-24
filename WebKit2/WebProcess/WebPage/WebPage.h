@@ -152,6 +152,8 @@ public:
     bool windowIsVisible() const { return m_windowIsVisible; }
     const WebCore::IntRect& windowFrame() const { return m_windowFrame; }
     bool windowIsFocused() const;
+#elif PLATFORM(WIN)
+    HWND nativeWindow() const { return m_nativeWindow; }
 #endif
 
     static const WebEvent* currentEvent();
@@ -231,6 +233,9 @@ private:
 
     // All plug-in views on this web page.
     HashSet<PluginView*> m_pluginViews;
+#elif PLATFORM(WIN)
+    // Our view's window (in the UI process).
+    HWND m_nativeWindow;
 #endif
     
     HashMap<uint64_t, RefPtr<WebEditCommand> > m_editCommandMap;

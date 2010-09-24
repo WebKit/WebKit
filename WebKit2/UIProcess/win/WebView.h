@@ -103,6 +103,8 @@ private:
     virtual void pageDidLeaveAcceleratedCompositing();
 #endif
 
+    virtual HWND nativeWindow();
+
     // WebCore::WindowMessageListener
     virtual void windowReceivedMessage(HWND, UINT message, WPARAM, LPARAM);
 
