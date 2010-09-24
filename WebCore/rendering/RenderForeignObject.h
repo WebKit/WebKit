@@ -57,8 +57,8 @@ public:
     virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }
 
  private:
-    virtual void calcWidth();
-    virtual void calcHeight();
+    virtual void computeLogicalWidth();
+    virtual void computeLogicalHeight();
 
     virtual const AffineTransform& localToParentTransform() const;
     virtual AffineTransform localTransform() const { return m_localTransform; }

@@ -82,13 +82,13 @@ const AffineTransform& RenderForeignObject::localToParentTransform() const
     return m_localToParentTransform;
 }
 
-void RenderForeignObject::calcWidth()
+void RenderForeignObject::computeLogicalWidth()
 {
     // FIXME: Investigate in size rounding issues
     setWidth(static_cast<int>(roundf(m_viewport.width())));
 }
 
-void RenderForeignObject::calcHeight()
+void RenderForeignObject::computeLogicalHeight()
 {
     // FIXME: Investigate in size rounding issues
     setHeight(static_cast<int>(roundf(m_viewport.height())));

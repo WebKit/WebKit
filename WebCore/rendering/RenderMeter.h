@@ -40,8 +40,8 @@ public:
 private:
     virtual const char* renderName() const { return "RenderMeter"; }
     virtual bool isMeter() const { return true; }
-    virtual void calcWidth();
-    virtual void calcHeight();
+    virtual void computeLogicalWidth();
+    virtual void computeLogicalHeight();
 
     virtual void layoutParts();
     virtual bool shouldHaveParts() const;

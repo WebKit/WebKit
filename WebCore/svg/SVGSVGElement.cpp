@@ -299,7 +299,7 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
 
     // FIXME: Ugly, ugly hack to around that parseMappedAttribute is not called
     // when svg.width.baseValue = 100 is evaluated.
-    // Thus the CSS length value for width is not updated, and width() calcWidth()
+    // Thus the CSS length value for width is not updated, and width() computeLogicalWidth()
     // calculations on RenderSVGRoot will be wrong.
     // https://bugs.webkit.org/show_bug.cgi?id=25387
     bool updateRelativeLengths = false;

@@ -85,7 +85,7 @@ protected:
     virtual RenderStyle* textBaseStyle() const = 0;
 
     virtual void updateFromElement();
-    virtual void calcHeight();
+    virtual void computeLogicalHeight();
 
     friend class TextIterator;
     HTMLElement* innerTextElement() const;

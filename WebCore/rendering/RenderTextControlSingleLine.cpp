@@ -227,10 +227,10 @@ void RenderTextControlSingleLine::addFocusRingRects(Vector<IntRect>& rects, int 
 void RenderTextControlSingleLine::layout()
 {
     int oldHeight = height();
-    calcHeight();
+    computeLogicalHeight();
 
     int oldWidth = width();
-    calcWidth();
+    computeLogicalWidth();
 
     bool relayoutChildren = oldHeight != height() || oldWidth != width();
 
@@ -479,23 +479,23 @@ int RenderTextControlSingleLine::textBlockWidth() const
     int width = RenderTextControl::textBlockWidth();
 
     if (RenderBox* resultsRenderer = m_resultsButton ? m_resultsButton->renderBox() : 0) {
-        resultsRenderer->calcWidth();
+        resultsRenderer->computeLogicalWidth();
         width -= resultsRenderer->width() + resultsRenderer->marginLeft() + resultsRenderer->marginRight();
     }
 
     if (RenderBox* cancelRenderer = m_cancelButton ? m_cancelButton->renderBox() : 0) {
-        cancelRenderer->calcWidth();
+        cancelRenderer->computeLogicalWidth();
         width -= cancelRenderer->width() + cancelRenderer->marginLeft() + cancelRenderer->marginRight();
     }
 
     if (RenderBox* spinRenderer = m_innerSpinButton ? m_innerSpinButton->renderBox() : 0) {
-        spinRenderer->calcWidth();
+        spinRenderer->computeLogicalWidth();
         width -= spinRenderer->width() + spinRenderer->marginLeft() + spinRenderer->marginRight();
     }
 
 #if ENABLE(INPUT_SPEECH)
     if (RenderBox* speechRenderer = m_speechButton ? m_speechButton->renderBox() : 0) {
-        speechRenderer->calcWidth();
+        speechRenderer->computeLogicalWidth();
         width -= speechRenderer->width() + speechRenderer->marginLeft() + speechRenderer->marginRight();
     }
 #endif
@@ -507,7 +507,7 @@ int RenderTextControlSingleLine::decorationWidthRight() const
 {
     int width = 0;
     if (RenderBox* spinRenderer = m_outerSpinButton ? m_outerSpinButton->renderBox() : 0) {
-        spinRenderer->calcWidth();
+        spinRenderer->computeLogicalWidth();
         width += spinRenderer->width() + spinRenderer->marginLeft() + spinRenderer->marginRight();
     }
     if (width > 0)
@@ -574,7 +574,7 @@ int RenderTextControlSingleLine::preferredDecorationWidthRight() const
 {
     int width = 0;
     if (RenderBox* spinRenderer = m_outerSpinButton ? m_outerSpinButton->renderBox() : 0) {
-        spinRenderer->calcWidth();
+        spinRenderer->computeLogicalWidth();
         width += spinRenderer->minPrefWidth() + spinRenderer->marginLeft() + spinRenderer->marginRight();
     }
     if (width > 0)
@@ -585,7 +585,7 @@ int RenderTextControlSingleLine::preferredDecorationWidthRight() const
 void RenderTextControlSingleLine::adjustControlHeightBasedOnLineHeight(int lineHeight)
 {
     if (RenderBox* resultsRenderer = m_resultsButton ? m_resultsButton->renderBox() : 0) {
-        toRenderBlock(resultsRenderer)->calcHeight();
+        toRenderBlock(resultsRenderer)->computeLogicalHeight();
         setHeight(max(height(),
                   resultsRenderer->borderTop() + resultsRenderer->borderBottom() +
                   resultsRenderer->paddingTop() + resultsRenderer->paddingBottom() +
@@ -594,7 +594,7 @@ void RenderTextControlSingleLine::adjustControlHeightBasedOnLineHeight(int lineH
     }
 
     if (RenderBox* cancelRenderer = m_cancelButton ? m_cancelButton->renderBox() : 0) {
-        toRenderBlock(cancelRenderer)->calcHeight();
+        toRenderBlock(cancelRenderer)->computeLogicalHeight();
         setHeight(max(height(),
                   cancelRenderer->borderTop() + cancelRenderer->borderBottom() +
                   cancelRenderer->paddingTop() + cancelRenderer->paddingBottom() +

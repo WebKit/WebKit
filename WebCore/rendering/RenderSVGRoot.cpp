@@ -115,8 +115,8 @@ void RenderSVGRoot::layout()
     LayoutRepainter repainter(*this, needsLayout && m_everHadLayout && checkForRepaintDuringLayout());
 
     IntSize oldSize(width(), height());
-    calcWidth();
-    calcHeight();
+    computeLogicalWidth();
+    computeLogicalHeight();
     calcViewport();
 
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());

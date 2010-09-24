@@ -401,7 +401,7 @@ int RenderTextControl::scrollbarThickness() const
     return ScrollbarTheme::nativeTheme()->scrollbarThickness();
 }
 
-void RenderTextControl::calcHeight()
+void RenderTextControl::computeLogicalHeight()
 {
     setHeight(m_innerText->renderBox()->borderTop() + m_innerText->renderBox()->borderBottom() +
               m_innerText->renderBox()->paddingTop() + m_innerText->renderBox()->paddingBottom() +
@@ -414,7 +414,7 @@ void RenderTextControl::calcHeight()
     if (style()->overflowX() == OSCROLL ||  (style()->overflowX() == OAUTO && m_innerText->renderer()->style()->wordWrap() == NormalWordWrap))
         setHeight(height() + scrollbarThickness());
 
-    RenderBlock::calcHeight();
+    RenderBlock::computeLogicalHeight();
 }
 
 void RenderTextControl::hitInnerTextElement(HitTestResult& result, int xPos, int yPos, int tx, int ty)

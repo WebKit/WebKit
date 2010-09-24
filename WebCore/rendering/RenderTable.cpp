@@ -194,7 +194,7 @@ void RenderTable::removeChild(RenderObject* oldChild)
     setNeedsSectionRecalc();
 }
 
-void RenderTable::calcWidth()
+void RenderTable::computeLogicalWidth()
 {
     if (isPositioned())
         calcAbsoluteHorizontal();
@@ -252,7 +252,7 @@ void RenderTable::layout()
     initMaxMarginValues();
     
     int oldWidth = width();
-    calcWidth();
+    computeLogicalWidth();
 
     if (m_caption && width() != oldWidth)
         m_caption->setNeedsLayout(true, false);
@@ -318,7 +318,7 @@ void RenderTable::layout()
     setHeight(height() + bpTop);
 
     if (!isPositioned())
-        calcHeight();
+        computeLogicalHeight();
 
     Length h = style()->height();
     int th = 0;
@@ -371,7 +371,7 @@ void RenderTable::layout()
     }
 
     if (isPositioned())
-        calcHeight();
+        computeLogicalHeight();
 
     // table can be containing block of positioned elements.
     // FIXME: Only pass true if width or height changed.

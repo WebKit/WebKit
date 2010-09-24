@@ -1123,7 +1123,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, int pageHeight)
     int oldWidth = width();
     int oldColumnWidth = desiredColumnWidth();
 
-    calcWidth();
+    computeLogicalWidth();
     calcColumnWidth();
 
     m_overflow.clear();
@@ -1141,7 +1141,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, int pageHeight)
         if (!pageHeight) {
             // We need to go ahead and set our explicit page height if one exists, so that we can
             // avoid doing two layout passes.
-            calcHeight();
+            computeLogicalHeight();
             int columnHeight = contentHeight();
             if (columnHeight > 0) {
                 pageHeight = columnHeight;
@@ -1215,7 +1215,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, int pageHeight)
  
     // Calculate our new height.
     int oldHeight = height();
-    calcHeight();
+    computeLogicalHeight();
     if (oldHeight != height()) {
         if (oldHeight > height() && maxFloatBottom > height() && !childrenInline()) {
             // One of our children's floats may have become an overhanging float for us. We need to look for it.
@@ -2924,7 +2924,7 @@ RenderBlock::FloatingObject* RenderBlock::insertFloatingObject(RenderBox* o)
     if (!affectedByPagination)
         o->layoutIfNeeded();
     else {
-        o->calcWidth();
+        o->computeLogicalWidth();
         o->calcVerticalMargins();
     }
     newObj->m_width = o->width() + o->marginLeft() + o->marginRight();
@@ -3945,7 +3945,7 @@ int RenderBlock::getClearDelta(RenderBox* child, int yPos)
             int oldChildY = child->y();
             int oldChildWidth = child->width();
             child->setY(y);
-            child->calcWidth();
+            child->computeLogicalWidth();
             int childWidthAtY = child->width();
             child->setY(oldChildY);
             child->setWidth(oldChildWidth);

@@ -1347,7 +1347,7 @@ void RenderBox::repaintDuringLayoutIfMoved(const IntRect& rect)
     }
 }
 
-void RenderBox::calcWidth()
+void RenderBox::computeLogicalWidth()
 {
     if (isPositioned()) {
         calcAbsoluteHorizontal();
@@ -1527,7 +1527,7 @@ void RenderBox::calcHorizontalMargins(const Length& marginLeft, const Length& ma
     }
 }
 
-void RenderBox::calcHeight()
+void RenderBox::computeLogicalHeight()
 {
     // Cell height is managed by the table and inline non-replaced elements do not support a height property.
     if (isTableCell() || (isInline() && !isReplaced()))
@@ -1681,7 +1681,7 @@ int RenderBox::calcPercentageHeight(const Length& height)
         // Don't allow this to affect the block' height() member variable, since this
         // can get called while the block is still laying out its kids.
         int oldHeight = cb->height();
-        cb->calcHeight();
+        cb->computeLogicalHeight();
         result = cb->contentHeight();
         cb->setHeight(oldHeight);
     } else if (cb->isRoot() && isPositioned())
@@ -1753,7 +1753,7 @@ int RenderBox::calcReplacedHeightUsing(Length height) const
                 ASSERT(cb->isRenderBlock());
                 RenderBlock* block = toRenderBlock(cb);
                 int oldHeight = block->height();
-                block->calcHeight();
+                block->computeLogicalHeight();
                 int newHeight = block->calcContentBoxHeight(block->contentHeight());
                 block->setHeight(oldHeight);
                 return calcContentBoxHeight(height.calcValue(newHeight));
@@ -1803,7 +1803,7 @@ int RenderBox::availableHeightUsing(const Length& h) const
     if (isRenderBlock() && isPositioned() && style()->height().isAuto() && !(style()->top().isAuto() || style()->bottom().isAuto())) {
         RenderBlock* block = const_cast<RenderBlock*>(toRenderBlock(this));
         int oldHeight = block->height();
-        block->calcHeight();
+        block->computeLogicalHeight();
         int newHeight = block->calcContentBoxHeight(block->contentHeight());
         block->setHeight(oldHeight);
         return calcContentBoxHeight(newHeight);
@@ -1890,7 +1890,7 @@ void RenderBox::calcAbsoluteHorizontal()
     // was previously done in calculating the static distances, or ourself, which
     // was also previously done for deciding what to override when you had
     // over-constrained margins?  Also note that the container block is used
-    // in similar situations in other parts of the RenderBox class (see calcWidth()
+    // in similar situations in other parts of the RenderBox class (see computeLogicalWidth()
     // and calcHorizontalMargins()). For now we are using the parent for quirks
     // mode and the containing block for strict mode.
 

@@ -41,9 +41,9 @@ RenderIFrame::RenderIFrame(Element* element)
 {
 }
 
-void RenderIFrame::calcHeight()
+void RenderIFrame::computeLogicalHeight()
 {
-    RenderPart::calcHeight();
+    RenderPart::computeLogicalHeight();
     if (!flattenFrame())
          return;
 
@@ -59,9 +59,9 @@ void RenderIFrame::calcHeight()
     }
 }
 
-void RenderIFrame::calcWidth()
+void RenderIFrame::computeLogicalWidth()
 {
-    RenderPart::calcWidth();
+    RenderPart::computeLogicalWidth();
     if (!flattenFrame())
         return;
 
@@ -107,8 +107,8 @@ void RenderIFrame::layout()
 {
     ASSERT(needsLayout());
 
-    RenderPart::calcWidth();
-    RenderPart::calcHeight();
+    RenderPart::computeLogicalWidth();
+    RenderPart::computeLogicalHeight();
 
     if (flattenFrame()) {
         layoutWithFlattening(style()->width().isFixed(), style()->height().isFixed());

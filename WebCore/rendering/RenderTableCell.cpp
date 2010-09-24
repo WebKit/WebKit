@@ -144,7 +144,7 @@ void RenderTableCell::calcPrefWidths()
     }
 }
 
-void RenderTableCell::calcWidth()
+void RenderTableCell::computeLogicalWidth()
 {
 }
 

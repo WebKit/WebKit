@@ -48,15 +48,15 @@ RenderMeter::~RenderMeter()
         m_barPart->detach();
 }
 
-void RenderMeter::calcWidth()
+void RenderMeter::computeLogicalWidth()
 {
-    RenderBox::calcWidth();
+    RenderBox::computeLogicalWidth();
     setWidth(theme()->meterSizeForBounds(this, frameRect()).width());
 }
 
-void RenderMeter::calcHeight()
+void RenderMeter::computeLogicalHeight()
 {
-    RenderBox::calcHeight();
+    RenderBox::computeLogicalHeight();
     setHeight(theme()->meterSizeForBounds(this, frameRect()).height());
 }
 

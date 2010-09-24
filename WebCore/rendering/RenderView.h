@@ -47,8 +47,8 @@ public:
     virtual bool requiresLayer() const { return true; }
 
     virtual void layout();
-    virtual void calcWidth();
-    virtual void calcHeight();
+    virtual void computeLogicalWidth();
+    virtual void computeLogicalHeight();
     virtual void calcPrefWidths();
 
     // The same as the FrameView's layoutHeight/layoutWidth but with null check guards.

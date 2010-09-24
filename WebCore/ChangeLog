@@ -1,3 +1,85 @@
+2010-09-23  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46451
+        
+        Rename calcWidth to computeLogicalWidth.  Rename calcHeight to computeLogicalHeight.
+
+        * rendering/RenderApplet.cpp:
+        (WebCore::RenderApplet::layout):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::insertFloatingObject):
+        (WebCore::RenderBlock::getClearDelta):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeLogicalWidth):
+        (WebCore::RenderBox::computeLogicalHeight):
+        (WebCore::RenderBox::calcPercentageHeight):
+        (WebCore::RenderBox::calcReplacedHeightUsing):
+        (WebCore::RenderBox::availableHeightUsing):
+        (WebCore::RenderBox::calcAbsoluteHorizontal):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::tryLayoutDoingPositionedMovementOnly):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::layout):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        (WebCore::RenderFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderFlexibleBox::layoutVerticalBox):
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::computeLogicalWidth):
+        (WebCore::RenderForeignObject::computeLogicalHeight):
+        * rendering/RenderForeignObject.h:
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::canvasSizeChanged):
+        * rendering/RenderIFrame.cpp:
+        (WebCore::RenderIFrame::computeLogicalHeight):
+        (WebCore::RenderIFrame::computeLogicalWidth):
+        (WebCore::RenderIFrame::layout):
+        * rendering/RenderIFrame.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageChanged):
+        * rendering/RenderIndicator.cpp:
+        (WebCore::RenderIndicator::layout):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::computeLogicalHeight):
+        * rendering/RenderListBox.h:
+        * rendering/RenderMeter.cpp:
+        (WebCore::RenderMeter::computeLogicalWidth):
+        (WebCore::RenderMeter::computeLogicalHeight):
+        * rendering/RenderMeter.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::layout):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::layout):
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::layout):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::computeLogicalWidth):
+        (WebCore::RenderTable::layout):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::computeLogicalWidth):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::computeLogicalHeight):
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::layout):
+        (WebCore::RenderTextControlSingleLine::textBlockWidth):
+        (WebCore::RenderTextControlSingleLine::decorationWidthRight):
+        (WebCore::RenderTextControlSingleLine::preferredDecorationWidthRight):
+        (WebCore::RenderTextControlSingleLine::adjustControlHeightBasedOnLineHeight):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::computeLogicalHeight):
+        (WebCore::RenderView::computeLogicalWidth):
+        * rendering/RenderView.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::svgAttributeChanged):
+
 2010-09-23  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Simon Fraser.

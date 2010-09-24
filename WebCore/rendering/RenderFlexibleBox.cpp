@@ -214,8 +214,8 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int /*pageHeight FIXM
     int previousWidth = width();
     int previousHeight = height();
     
-    calcWidth();
-    calcHeight();
+    computeLogicalWidth();
+    computeLogicalHeight();
     
     m_overflow.clear();
 
@@ -243,7 +243,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int /*pageHeight FIXM
     else
         layoutVerticalBox(relayoutChildren);
 
-    calcHeight();
+    computeLogicalHeight();
 
     if (previousHeight != height())
         relayoutChildren = true;
@@ -404,7 +404,7 @@ void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
         setHeight(height() + toAdd);
         
         oldHeight = height();
-        calcHeight();
+        computeLogicalHeight();
 
         relayoutChildren = false;
         if (oldHeight != height())
@@ -436,7 +436,7 @@ void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
             // fill the height of a containing box by default.
             // Now do a layout.
             int oldChildHeight = child->height();
-            child->calcHeight();
+            child->computeLogicalHeight();
             if (oldChildHeight != child->height())
                 child->setChildNeedsLayout(true, false);
                 
@@ -761,7 +761,7 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
 
         // Now we have to calc our height, so we know how much space we have remaining.
         oldHeight = height();
-        calcHeight();
+        computeLogicalHeight();
         if (oldHeight != height())
             heightSpecified = true;
 

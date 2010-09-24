@@ -372,7 +372,7 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
             }
         } else if (!r->m_object->isRenderInline()) {
             RenderBox* renderBox = toRenderBox(r->m_object);
-            renderBox->calcWidth();
+            renderBox->computeLogicalWidth();
             r->m_box->setLogicalWidth(renderBox->width());
             totWidth += renderBox->marginLeft() + renderBox->marginRight();
         }

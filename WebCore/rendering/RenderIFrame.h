@@ -39,8 +39,8 @@ public:
 #endif
 
 private:
-    virtual void calcHeight();
-    virtual void calcWidth();
+    virtual void computeLogicalHeight();
+    virtual void computeLogicalWidth();
 
     virtual void layout();
 

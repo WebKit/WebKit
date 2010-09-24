@@ -82,8 +82,8 @@ void RenderReplaced::layout()
     
     setHeight(minimumReplacedHeight());
 
-    calcWidth();
-    calcHeight();
+    computeLogicalWidth();
+    computeLogicalHeight();
 
     m_overflow.clear();
     addShadowOverflow();

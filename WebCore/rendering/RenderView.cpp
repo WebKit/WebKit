@@ -72,13 +72,13 @@ RenderView::~RenderView()
 {
 }
 
-void RenderView::calcHeight()
+void RenderView::computeLogicalHeight()
 {
     if (!printing() && m_frameView)
         setHeight(viewHeight());
 }
 
-void RenderView::calcWidth()
+void RenderView::computeLogicalWidth()
 {
     if (!printing() && m_frameView)
         setWidth(viewWidth());
