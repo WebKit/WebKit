@@ -44,6 +44,7 @@ namespace WebKit {
 class InjectedBundle;
 class WebFrame;
 class WebPage;
+struct WebPageCreationParameters;
 struct WebPreferencesStore;
 
 class WebProcess : CoreIPC::Connection::Client {
@@ -56,7 +57,7 @@ public:
     RunLoop* runLoop() const { return m_runLoop; }
 
     WebPage* webPage(uint64_t pageID) const;
-    WebPage* createWebPage(uint64_t pageID, const WebCore::IntSize& viewSize, const WebPreferencesStore&, const DrawingAreaBase::DrawingAreaInfo&);
+    WebPage* createWebPage(uint64_t pageID, const WebPageCreationParameters&);
     void removeWebPage(uint64_t pageID);
 
     InjectedBundle* injectedBundle() const { return m_injectedBundle.get(); }

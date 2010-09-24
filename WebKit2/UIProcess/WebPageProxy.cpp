@@ -39,6 +39,7 @@
 #include "WebEvent.h"
 #include "WebFormSubmissionListenerProxy.h"
 #include "WebFramePolicyListenerProxy.h"
+#include "WebPageCreationParameters.h"
 #include "WebPageMessages.h"
 #include "WebPageNamespace.h"
 #include "WebPageProxyMessageKinds.h"
@@ -153,7 +154,12 @@ void WebPageProxy::initializeWebPage(const IntSize& size)
     }
 
     ASSERT(m_drawingArea);
-    process()->send(WebProcessMessage::Create, m_pageID, CoreIPC::In(size, pageNamespace()->context()->preferences()->store(), m_drawingArea->info()));
+
+    WebPageCreationParameters parameters;
+    parameters.viewSize = size;
+    parameters.store = pageNamespace()->context()->preferences()->store();
+    parameters.drawingAreaInfo = m_drawingArea->info();
+    process()->send(WebProcessMessage::Create, m_pageID, CoreIPC::In(parameters));
 }
 
 void WebPageProxy::reinitializeWebPage(const WebCore::IntSize& size)
@@ -162,7 +168,12 @@ void WebPageProxy::reinitializeWebPage(const WebCore::IntSize& size)
         return;
 
     ASSERT(m_drawingArea);
-    process()->send(WebProcessMessage::Create, m_pageID, CoreIPC::In(size, pageNamespace()->context()->preferences()->store(), m_drawingArea->info()));
+
+    WebPageCreationParameters parameters;
+    parameters.viewSize = size;
+    parameters.store = pageNamespace()->context()->preferences()->store();
+    parameters.drawingAreaInfo = m_drawingArea->info();
+    process()->send(WebProcessMessage::Create, m_pageID, CoreIPC::In(parameters));
 }
 
 void WebPageProxy::close()
@@ -879,13 +890,15 @@ void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIP
     switch (messageID.get<WebPageProxyMessage::Kind>()) {
         case WebPageProxyMessage::CreateNewPage: {
             RefPtr<WebPageProxy> newPage = createNewPage();
+            WebPageCreationParameters parameters;
             if (newPage) {
                 // FIXME: Pass the real size.
-                reply->encode(CoreIPC::In(newPage->pageID(), IntSize(100, 100), 
-                                          newPage->pageNamespace()->context()->preferences()->store(),
-                                          newPage->drawingArea()->info()));
+                parameters.viewSize = IntSize(100, 100);
+                parameters.store = newPage->pageNamespace()->context()->preferences()->store();
+                parameters.drawingAreaInfo = newPage->drawingArea()->info();
+                reply->encode(CoreIPC::In(newPage->pageID(), parameters));
             } else {
-                reply->encode(CoreIPC::In(static_cast<uint64_t>(0), IntSize(), WebPreferencesStore(), DrawingAreaBase::DrawingAreaInfo()));
+                reply->encode(CoreIPC::In(static_cast<uint64_t>(0), parameters));
             }
             break;
         }

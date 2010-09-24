@@ -481,6 +481,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\WebPageCreationParameters.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\WebPageCreationParameters.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\WebPreferencesStore.cpp"
 				>
 			</File>

@@ -1,5 +1,43 @@
 2010-09-24  Adam Roben  <aroben@apple.com>
 
+        Add WebPageCreationParameters
+
+        This struct is used in any messages that end up creating a WebPage.
+        Using a struct instead of individual parameters will make it easier to
+        add platform-specific data, such as an HWND on Windows.
+
+        Fixes <http://webkit.org/b/46470> Pass parameters for creating a
+        WebPage in a single struct
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebPageCreationParameters.cpp: Added.
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        Simple encode/decode functions.
+
+        * Shared/WebPageCreationParameters.h: Added.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeWebPage):
+        (WebKit::WebPageProxy::reinitializeWebPage):
+        (WebKit::WebPageProxy::didReceiveSyncMessage):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createWindow):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::createWebPage):
+        (WebKit::WebProcess::didReceiveMessage):
+        * WebProcess/WebProcess.h:
+        Changed to use WebPageCreationParameters instead of passing the
+        values individually.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        Added WebPageCreationParameters.
+
+2010-09-24  Adam Roben  <aroben@apple.com>
+
         Stop pretending that we know how to encode a DrawingArea and just
         encode the DrawingAreaInfo directly
 

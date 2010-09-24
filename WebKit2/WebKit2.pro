@@ -180,6 +180,7 @@ HEADERS += \
     Shared/WebEvent.h \
     Shared/WebNumber.h \
     Shared/WebNavigationDataStore.h \
+    Shared/WebPageCreationParameters.h \
     Shared/WebPreferencesStore.h \
     Shared/WebURLRequest.h \
     Shared/WebURLResponse.h \
@@ -299,6 +300,7 @@ SOURCES += \
     Shared/MutableDictionary.cpp \
     Shared/VisitedLinkTable.cpp \
     Shared/WebEventConversion.cpp \
+    Shared/WebPageCreationParameters.cpp \
     Shared/WebPreferencesStore.cpp \
     Shared/WebURLRequest.cpp \
     Shared/WebURLResponse.cpp \
