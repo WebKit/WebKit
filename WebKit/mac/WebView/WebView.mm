@@ -2676,7 +2676,7 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     if (![[NSUserDefaults standardUserDefaults] objectForKey:WebAutomaticTextReplacementEnabled])
         automaticTextReplacementEnabled = [NSSpellChecker isAutomaticTextReplacementEnabled];
     if (![[NSUserDefaults standardUserDefaults] objectForKey:WebAutomaticSpellingCorrectionEnabled])
-        automaticTextReplacementEnabled = [NSSpellChecker isAutomaticSpellingCorrectionEnabled];
+        automaticSpellingCorrectionEnabled = [NSSpellChecker isAutomaticSpellingCorrectionEnabled];
 #endif
 }
 

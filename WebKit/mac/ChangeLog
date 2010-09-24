@@ -1,3 +1,15 @@
+2010-09-24  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        automaticSpellingCorrectionEnabled isn't updated.
+        https://bugs.webkit.org/show_bug.cgi?id=46486
+        <rdar://problem/8475212>
+
+        * WebView/WebView.mm:
+        (+[WebView initialize]): Should update "automaticSpellingCorrectionEnabled"
+          instead of "automaticTextReplacementEnabled".
+
 2010-09-23  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
