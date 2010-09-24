@@ -1,3 +1,20 @@
+2010-09-24  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed test expectations update after new tests in 68233.
+
+        * platform/chromium-linux/animations/suspend-transform-animation-expected.png: Added.
+        * platform/chromium-linux/transitions/suspend-transform-transition-expected.png: Added.
+        * platform/chromium-mac/animations/suspend-transform-animation-expected.checksum: Added.
+        * platform/chromium-mac/animations/suspend-transform-animation-expected.png: Added.
+        * platform/chromium-mac/transitions/suspend-transform-transition-expected.checksum: Added.
+        * platform/chromium-mac/transitions/suspend-transform-transition-expected.png: Added.
+        * platform/chromium-win-xp/animations/suspend-transform-animation-expected.png: Added.
+        * platform/chromium-win-xp/transitions/suspend-transform-transition-expected.png: Added.
+        * platform/chromium-win/animations/suspend-transform-animation-expected.checksum: Added.
+        * platform/chromium-win/animations/suspend-transform-animation-expected.png: Added.
+        * platform/chromium-win/transitions/suspend-transform-transition-expected.checksum: Added.
+        * platform/chromium-win/transitions/suspend-transform-transition-expected.png: Added.
+
 2010-09-24  James Kozianski  <koz@chromium.org>
 
         Reviewed by Ojan Vafai.
