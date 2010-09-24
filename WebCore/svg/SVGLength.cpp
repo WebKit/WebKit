@@ -86,28 +86,41 @@ static inline String lengthTypeToString(SVGLengthType type)
     return String();
 }
 
-inline SVGLengthType stringToLengthType(const String& string)
+inline SVGLengthType stringToLengthType(const UChar*& ptr, const UChar* end)
 {
-    if (string.endsWith("%"))
-        return LengthTypePercentage;
-    else if (string.endsWith("em"))
-        return LengthTypeEMS;
-    else if (string.endsWith("ex"))
-        return LengthTypeEXS;
-    else if (string.endsWith("px"))
-        return LengthTypePX;
-    else if (string.endsWith("cm"))
-        return LengthTypeCM;
-    else if (string.endsWith("mm"))
-        return LengthTypeMM;
-    else if (string.endsWith("in"))
-        return LengthTypeIN;
-    else if (string.endsWith("pt"))
-        return LengthTypePT;
-    else if (string.endsWith("pc"))
-        return LengthTypePC;
-    else if (!string.isEmpty())
+    if (ptr == end)
         return LengthTypeNumber;
+
+    const UChar firstChar = *ptr;
+    ++ptr;
+
+    if (firstChar == '%') {
+        if (ptr == end)
+            return LengthTypePercentage;
+        return LengthTypeUnknown;
+    }
+
+    const UChar secondChar = *ptr;
+
+    if (++ptr != end)
+        return LengthTypeUnknown;
+
+    if (firstChar == 'e' && secondChar == 'm')
+        return LengthTypeEMS;
+    if (firstChar == 'e' && secondChar == 'x')
+        return LengthTypeEXS;
+    if (firstChar == 'p' && secondChar == 'x')
+        return LengthTypePX;
+    if (firstChar == 'c' && secondChar == 'm')
+        return LengthTypeCM;
+    if (firstChar == 'm' && secondChar == 'm')
+        return LengthTypeMM;
+    if (firstChar == 'i' && secondChar == 'n')
+        return LengthTypeIN;
+    if (firstChar == 'p' && secondChar == 't')
+        return LengthTypePT;
+    if (firstChar == 'p' && secondChar == 'c')
+        return LengthTypePC;
 
     return LengthTypeUnknown;
 }
@@ -260,8 +273,8 @@ bool SVGLength::setValueAsString(const String& s)
     if (!parseNumber(ptr, end, convertedNumber, false))
         return false;
 
-    SVGLengthType type = stringToLengthType(s);
-    if (ptr != end && type == LengthTypeNumber)
+    SVGLengthType type = stringToLengthType(ptr, end);
+    if (type == LengthTypeUnknown)
         return false;
 
     m_unit = storeUnit(extractMode(m_unit), type);

@@ -1,3 +1,17 @@
+2010-09-24  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Dirk Schulze.
+
+        SVG: Make SVGLength's stringToLengthType() stricter and faster
+        https://bugs.webkit.org/show_bug.cgi?id=46066
+
+        Add test coverage for handling of invalid SVGLength units.
+
+        * svg/custom/invalid-length-units-expected.txt: Added.
+        * svg/custom/invalid-length-units.html: Added.
+        * svg/custom/script-tests/invalid-length-units.js: Added.
+        (trySettingLength):
+
 2010-09-24  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.

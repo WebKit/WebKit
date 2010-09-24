@@ -1,3 +1,24 @@
+2010-09-24  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Dirk Schulze.
+
+        SVG: Make SVGLength's stringToLengthType() stricter and faster
+        https://bugs.webkit.org/show_bug.cgi?id=46066
+
+        Only accept unit names immediately following the numeric value.
+        This behavior matches Gecko.
+
+        Also, using String::endsWith("foo") caused a temporary WTF::String to be created.
+        Avoid this by comparing characters directly.
+
+        10.5% speedup on <http://data.xeoh.net/svg.benchmark/>
+
+        Test: svg/custom/invalid-length-units.html
+
+        * svg/SVGLength.cpp:
+        (WebCore::stringToLengthType):
+        (WebCore::SVGLength::setValueAsString):
+
 2010-09-24  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
