@@ -1,3 +1,13 @@
+2010-09-24  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium test_expectations.txt and drt_expectations.txt update.
+        
+        Userscript test now pass with both the Chromium DRT and test_shell
+        (as of http://crrev.com/60526).
+
+        * platform/chromium/drt_expectations.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-09-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.
