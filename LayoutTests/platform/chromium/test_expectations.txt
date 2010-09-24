@@ -3109,9 +3109,3 @@ BUG_AUTO LINUX RELEASE : animations/3d/transform-origin-vs-functions.html = PASS
 BUG_AUTO WIN DEBUG : animations/3d/transform-origin-vs-functions.html = PASS TEXT
 BUG_AUTO WIN DEBUG : animations/multiple-keyframes.html = PASS TEXT
 BUG_AUTO WIN DEBUG : canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
-
-// These tests will fail with an image mismatch until a related chromium change is
-// also landed. Once that lands this block will get removed.
-BUG53598 : fast/speech/input-appearance-numberandspeech.html = IMAGE
-BUG53598 : fast/speech/input-appearance-searchandspeech.html = IMAGE
-BUG53598 : fast/speech/input-appearance-speechbutton.html = IMAGE
