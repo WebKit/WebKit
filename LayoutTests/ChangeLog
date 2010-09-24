@@ -1,3 +1,11 @@
+2010-09-24  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed.
+
+        Remove outdated WebGL linux entries from chromium/drt_expectations.txt.
+
+        * platform/chromium/drt_expectations.txt:
+
 2010-09-24  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
