@@ -99,6 +99,26 @@ bool WKPreferencesGetXSSAuditorEnabled(WKPreferencesRef preferencesRef)
     return toWK(preferencesRef)->xssAuditorEnabled();
 }
 
+void WKPreferencesSetFrameFlatteningEnabled(WKPreferencesRef preferencesRef, bool frameFlatteningEnabled)
+{
+    toWK(preferencesRef)->setFrameFlatteningEnabled(frameFlatteningEnabled);
+}
+
+bool WKPreferencesGetFrameFlatteningEnabled(WKPreferencesRef preferencesRef)
+{
+    return toWK(preferencesRef)->frameFlatteningEnabled();
+}
+
+void WKPreferencesSetPluginsEnabled(WKPreferencesRef preferencesRef, bool pluginsEnabled)
+{
+    toWK(preferencesRef)->setPluginsEnabled(pluginsEnabled);
+}
+
+bool WKPreferencesGetPluginsEnabled(WKPreferencesRef preferencesRef)
+{
+    return toWK(preferencesRef)->pluginsEnabled();
+}
+
 void WKPreferencesSetStandardFontFamily(WKPreferencesRef preferencesRef, WKStringRef family)
 {
     toWK(preferencesRef)->setStandardFontFamily(toWTFString(family));

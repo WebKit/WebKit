@@ -119,6 +119,28 @@ bool WebPreferences::xssAuditorEnabled() const
     return m_store.xssAuditorEnabled;
 }
 
+void WebPreferences::setFrameFlatteningEnabled(bool b)
+{
+    m_store.frameFlatteningEnabled = b;
+    update();
+}
+
+bool WebPreferences::frameFlatteningEnabled() const
+{
+    return m_store.frameFlatteningEnabled;
+}
+
+void WebPreferences::setPluginsEnabled(bool b)
+{
+    m_store.pluginsEnabled = b;
+    update();
+}
+
+bool WebPreferences::pluginsEnabled() const
+{
+    return m_store.pluginsEnabled;
+}
+
 void WebPreferences::setFontSmoothingLevel(FontSmoothingLevel level)
 {
     m_store.fontSmoothingLevel = level;

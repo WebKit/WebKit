@@ -1,3 +1,33 @@
+2010-09-24  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Sam Weinig.
+
+        Add WebKit2 C API for setting/getting frame flattening and plugin settings.
+        http://webkit.org/b/46477
+
+        NOTE: The plugin setting was partly done but there was no C API.
+
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::WebPreferencesStore::WebPreferencesStore):
+        (WebKit::WebPreferencesStore::encode):
+        (WebKit::WebPreferencesStore::decode):
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetFrameFlatteningEnabled):
+        (WKPreferencesGetFrameFlatteningEnabled):
+        (WKPreferencesSetPluginsEnabled):
+        (WKPreferencesGetPluginsEnabled):
+        * UIProcess/API/C/WKPreferences.h:
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::setFrameFlatteningEnabled):
+        (WebKit::WebPreferences::frameFlatteningEnabled):
+        (WebKit::WebPreferences::setPluginsEnabled):
+        (WebKit::WebPreferences::pluginsEnabled):
+        * UIProcess/WebPreferences.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::preferencesDidChange):
+
 2010-09-24  Adam Roben  <aroben@apple.com>
 
         Add WebPageCreationParameters

@@ -48,6 +48,7 @@ struct WebPreferencesStore {
     bool offlineWebApplicationCacheEnabled;
     bool localStorageEnabled;
     bool xssAuditorEnabled;
+    bool frameFlatteningEnabled;
 
     uint32_t fontSmoothingLevel;
 
