@@ -1,3 +1,11 @@
+2010-09-24  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Support Unicode-strings in committers-autocomplete script
+
+        * committers-autocomplete.js:
+
 2010-09-22  Adam Barth  <abarth@webkit.org>
 
         Reviewed by John Sullivan.

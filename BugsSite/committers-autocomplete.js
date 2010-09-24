@@ -55,7 +55,7 @@ WebKitCommitters = (function() {
         var parsedResult = {};
 
         // full name
-        var param = /^\s*((\[[^\]]+\])|("[^"]+"))\s*/g; // For emacs " to balance the quotes.
+        var param = /^\s*((\[[^\]]+\])|u?("[^"]+"))\s*/g; // For emacs " to balance the quotes.
         param.lastIndex = 0;
         var nameParam = param.exec(record);
         if (!nameParam)
@@ -63,7 +63,7 @@ WebKitCommitters = (function() {
         record = record.substring(param.lastIndex);
 
         // Save the name without the quotes.
-        parsedResult.name = nameParam[0].slice(1, nameParam[0].length - 1);
+        parsedResult.name = nameParam[3].slice(1, nameParam[3].length - 1);
 
         var paramSeparator = /^\s*,\s*/g;
         paramSeparator.lastIndex = 0;
