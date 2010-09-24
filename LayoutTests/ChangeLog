@@ -1,3 +1,30 @@
+2010-09-24  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Update speech button image baselines for chromium port.
+        https://bugs.webkit.org/show_bug.cgi?id=46457
+
+        * platform/chromium-linux/fast/speech/input-appearance-numberandspeech-expected.checksum:
+        * platform/chromium-linux/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-linux/fast/speech/input-appearance-searchandspeech-expected.checksum:
+        * platform/chromium-linux/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-linux/fast/speech/input-appearance-speechbutton-expected.checksum:
+        * platform/chromium-linux/fast/speech/input-appearance-speechbutton-expected.png:
+        * platform/chromium-mac/fast/speech/input-appearance-numberandspeech-expected.checksum:
+        * platform/chromium-mac/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-mac/fast/speech/input-appearance-searchandspeech-expected.checksum:
+        * platform/chromium-mac/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-mac/fast/speech/input-appearance-speechbutton-expected.checksum:
+        * platform/chromium-mac/fast/speech/input-appearance-speechbutton-expected.png:
+        * platform/chromium-win/fast/speech/input-appearance-numberandspeech-expected.checksum:
+        * platform/chromium-win/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-win/fast/speech/input-appearance-searchandspeech-expected.checksum:
+        * platform/chromium-win/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-win/fast/speech/input-appearance-speechbutton-expected.checksum:
+        * platform/chromium-win/fast/speech/input-appearance-speechbutton-expected.png:
+        * platform/chromium/test_expectations.txt: Disables above tests, they will get enabled again after the chromium patch is submitted.
+
 2010-09-24  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed test expectations update after new tests in 68233.
