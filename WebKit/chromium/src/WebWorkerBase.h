@@ -91,8 +91,10 @@ public:
     // Controls whether access to Web Databases is allowed for this worker.
     virtual bool allowDatabase(WebFrame*, const WebString& name, const WebString& displayName, unsigned long estimatedSize);
 
+#if ENABLE(FILE_SYSTEM)
     // Requests to open a file system for this worker. (Note that this is not the implementation for WebFrameClient::openFileSystem.)
     void openFileSystem(WebFileSystem::Type, long long size, WebFileSystemCallbacks*);
+#endif
 
     // Executes the given task on the main thread.
     static void dispatchTaskToMainThread(PassOwnPtr<WebCore::ScriptExecutionContext::Task>);
