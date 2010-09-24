@@ -190,7 +190,8 @@ WebInspector.AuditLauncherView.prototype = {
 
         var element = document.createElement("input");
         element.type = "checkbox";
-        element.addEventListener("click", this._boundCategoryClickListener, false);
+        if (id !== "")
+            element.addEventListener("click", this._boundCategoryClickListener, false);
         labelElement.appendChild(element);
         labelElement.appendChild(document.createTextNode(title));
 
