@@ -2316,9 +2316,6 @@ BUG37962 MAC LINUX DEBUG : fast/dom/HTMLElement/bdo.html = CRASH PASS
 BUG37962 LINUX DEBUG : fast/forms/multiple-form-submission-protection-mouse.html = CRASH PASS
 BUG37962 MAC : plugins/iframe-shims.html = TEXT PASS
 
-// Passing in DRT.  Pending change in test_shell for this.
-BUG37896 : fast/repaint/no-caret-repaint-in-non-content-editable-element.html = TEXT PASS
-
 // WebKit roll r55853 -> 55940
 // Flaky test
 BUG_JIANLI MAC : fast/forms/select-style.html = IMAGE PASS
@@ -2365,12 +2362,6 @@ BUG_JAPHET WIN : http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch
 BUG39423 : security/block-test.html = TIMEOUT
 
 BUGWK36666 : storage/open-database-over-quota.html = TEXT
-
-// These tests pass in DRT but timeout in test_shell.
-BUG29157 : svg/animations/animVal-basics.html = TIMEOUT PASS
-BUG39904 : svg/animations/animate-points.html = TIMEOUT PASS
-BUG39904 : svg/animations/animate-keySplines.html = TIMEOUT PASS
-BUG39904 : svg/animations/animate-gradient-transform.html = TIMEOUT PASS
 
 BUGWK37283 : fast/overflow/scrollbar-restored-and-then-locked.html = TEXT
 
