@@ -134,8 +134,9 @@ static gboolean mime_type_policy_decision_requested_cb(WebKitWebView* view, WebK
     return FALSE;
 }
 
-static void test_mime_type(const char* name)
+static void testRemoteMimeType(const void* data)
 {
+    const char* name = (const char*) data;
     WebKitWebView* view = WEBKIT_WEB_VIEW(webkit_web_view_new());
     g_object_ref_sink(G_OBJECT(view));
 
@@ -155,24 +156,31 @@ static void test_mime_type(const char* name)
     g_object_unref(view);
 }
 
-static void test_mime_pdf()
+static void testLocalMimeType(const void* data)
 {
-    test_mime_type("pdf");
-}
+     const char* typeName = (const char*) data;
+     WebKitWebView* view = WEBKIT_WEB_VIEW(webkit_web_view_new());
+     g_object_ref_sink(G_OBJECT(view));
 
-static void test_mime_html()
-{
-    test_mime_type("html");
-}
+     loop = g_main_loop_new(NULL, TRUE);
 
-static void test_mime_text()
-{
-    test_mime_type("text");
-}
+     g_object_connect(G_OBJECT(view),
+                      "signal::notify::load-status", idle_quit_loop_cb, NULL,
+                      "signal::mime-type-policy-decision-requested", mime_type_policy_decision_requested_cb, g_strdup(typeName),
+                      NULL);
 
-static void test_mime_ogg()
-{
-    test_mime_type("ogg");
+     gchar* filename = g_strdup_printf("test.%s", typeName);
+     GFile* file = g_file_new_for_path(filename);
+     g_free(filename);
+
+     gchar* fileURI = g_file_get_uri(file);
+     g_object_unref(file);
+
+     webkit_web_view_load_uri(view, fileURI);
+     g_free(fileURI);
+ 
+     g_main_loop_run(loop);
+     g_object_unref(view);
 }
 
 int main(int argc, char** argv)
@@ -198,10 +206,14 @@ int main(int argc, char** argv)
     soup_uri_free(soup_uri);
 
     g_test_bug_base("https://bugs.webkit.org/");
-    g_test_add_func("/webkit/mime/PDF", test_mime_pdf);
-    g_test_add_func("/webkit/mime/HTML", test_mime_html);
-    g_test_add_func("/webkit/mime/TEXT", test_mime_text);
-    g_test_add_func("/webkit/mime/OGG", test_mime_ogg);
+    g_test_add_data_func("/webkit/mime/remote-PDF", "pdf", testRemoteMimeType);
+    g_test_add_data_func("/webkit/mime/remote-HTML", "html", testRemoteMimeType);
+    g_test_add_data_func("/webkit/mime/remote-TEXT", "text", testRemoteMimeType);
+    g_test_add_data_func("/webkit/mime/remote-OGG", "ogg", testRemoteMimeType);
+    g_test_add_data_func("/webkit/mime/local-PDF", "pdf", testLocalMimeType);
+    g_test_add_data_func("/webkit/mime/local-HTML", "html", testLocalMimeType);
+    g_test_add_data_func("/webkit/mime/local-TEXT", "text", testLocalMimeType);
+    g_test_add_data_func("/webkit/mime/local-OGG", "ogg", testLocalMimeType);
 
     return g_test_run();
 }

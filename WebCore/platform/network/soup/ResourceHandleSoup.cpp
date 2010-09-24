@@ -866,7 +866,10 @@ static void queryInfoCallback(GObject* source, GAsyncResult* res, gpointer)
         return;
     }
 
-    response.setMimeType(g_file_info_get_content_type(info));
+    // According to http://library.gnome.org/devel/gio/stable/gio-GContentType.html
+    // GContentType on Unix is the mime type, but not on Win32.
+    GOwnPtr<gchar> mimeType(g_content_type_get_mime_type(g_file_info_get_content_type(info)));
+    response.setMimeType(mimeType.get());
     response.setExpectedContentLength(g_file_info_get_size(info));
 
     GTimeVal tv;

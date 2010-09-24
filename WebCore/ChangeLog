@@ -1,3 +1,15 @@
+2010-09-24  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] opening local files on win32
+        https://bugs.webkit.org/show_bug.cgi?id=31066
+
+        This is tested by changes to the testmimehandling API test.
+
+        * platform/network/soup/ResourceHandleSoup.cpp: Properly convert the GContentType
+        of a file into a mime type. This is important for non-Unix platforms.
+
 2010-09-24  Pawel Hajdan  <phajdan.jr@chromium.org>
 
         Reviewed by Dumitru Daniliuc.

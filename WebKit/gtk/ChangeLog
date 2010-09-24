@@ -1,3 +1,18 @@
+2010-09-24  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] opening local files on win32
+        https://bugs.webkit.org/show_bug.cgi?id=31066
+
+        Add tests that check the mime type returned by local files loaded via file URLs.
+
+        * tests/testmimehandling.c:
+        (testRemoteMimeType): Added.
+        (testLocalMimeType): Added.
+        (main): Run tests by using g_test_add_data_func with either 
+        testRemoteMimeType or testLocalMimeType.
+
 2010-09-23  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Nate Chapin.
