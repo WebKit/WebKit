@@ -1,3 +1,12 @@
+2010-09-24  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] add individual entries for repaint failures on mac
+        https://bugs.webkit.org/show_bug.cgi?id=46517
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-24  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Dirk Schulze.

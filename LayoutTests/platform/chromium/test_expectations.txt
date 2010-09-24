@@ -592,6 +592,8 @@ BUG24203 : fast/events/stopPropagation-submit.html = FAIL
 
 // These tests don't work with fast timers due to setTimeout
 // races. See https://bugs.webkit.org/show_bug.cgi?id=21536
+// We currently match upstream except for font differences, but we should
+// probably rewrite the test as suggested in the webkit bug.
 BUG24195 WIN LINUX : fast/repaint/bugzilla-6473.html = IMAGE+TEXT
 BUG24195 MAC : fast/repaint/bugzilla-6473.html = IMAGE
 
@@ -1584,62 +1586,113 @@ BUG23475 MAC : fast/invalid/missing-end-tag.xhtml = IMAGE
 BUG23475 MAC : fast/parser/xhtml-alternate-entities.xml = IMAGE
 BUG23475 MAC : fast/xsl/xslt-extra-content-at-end.xml = IMAGE
 
-// 116/136 of the repaint tests fail due to invalidation that doesn't match; further triage necessary
-BUG23473 MAC : fast/repaint = IMAGE
-BUG23473 MAC : fast/repaint/block-no-inflow-children.html = PASS
-BUG23473 MAC : fast/repaint/block-selection-gap-stale-cache.html = PASS
-BUG23473 MAC : fast/repaint/block-selection-gap-stale-cache-2.html = PASS
-BUG23473 MAC : fast/repaint/box-shadow-h.html = PASS
-BUG23473 MAC : fast/repaint/box-shadow-v.html = PASS
-BUG23473 MAC : fast/repaint/caret-outside-block.html = PASS
-BUG23473 MAC : fast/repaint/fixed.html = PASS
-BUG23473 MAC : fast/repaint/fixed-move-after-keyboard-scroll.html = PASS
-BUG23473 MAC : fast/repaint/fixed-tranformed.html = PASS
-BUG23473 MAC : fast/repaint/flexible-box-overflow.html = PASS
-BUG23473 MAC : fast/repaint/flexible-box-overflow-horizontal.html = PASS
-BUG23473 MAC : fast/repaint/float-new-in-block.html = PASS
-BUG23473 MAC : fast/repaint/focus-layers.html = PASS
-BUG23473 MAC : fast/repaint/focus-ring.html = PASS
-BUG23473 MAC : fast/repaint/inline-block-overflow.html = PASS
-BUG23473 MAC : fast/repaint/layer-child-outline.html = PASS
-BUG23473 MAC : fast/repaint/layer-outline.html = PASS
-BUG23473 MAC : fast/repaint/layer-outline-horizontal.html = PASS
-BUG23473 MAC : fast/repaint/layout-state-scrolloffset.html = PASS
-BUG23473 MAC : fast/repaint/layout-state-scrolloffset2.html = PASS
-BUG23473 MAC : fast/repaint/layout-state-scrolloffset3.html = PASS
-BUG23473 MAC : fast/repaint/line-flow-with-floats-1.html = PASS
-BUG23473 MAC : fast/repaint/line-flow-with-floats-10.html = PASS
-BUG23473 MAC : fast/repaint/line-flow-with-floats-2.html = PASS
-BUG23473 MAC : fast/repaint/line-flow-with-floats-3.html = PASS
-BUG23473 MAC : fast/repaint/line-flow-with-floats-4.html = PASS
-BUG23473 MAC : fast/repaint/line-flow-with-floats-5.html = PASS
-BUG23473 MAC : fast/repaint/line-flow-with-floats-6.html = PASS
-BUG23473 MAC : fast/repaint/line-flow-with-floats-7.html = PASS
-BUG23473 MAC : fast/repaint/line-flow-with-floats-8.html = PASS
-BUG23473 MAC : fast/repaint/line-flow-with-floats-9.html = PASS
-BUG23473 MAC : fast/repaint/list-marker.html = PASS
-BUG23473 MAC : fast/repaint/moving-shadow-on-path.html = PASS
-BUG23473 MAC : fast/repaint/multicol-repaint.html = PASS
-BUG23473 MAC : fast/repaint/overflow-scroll-body-appear.html = PASS
-BUG23473 MAC : fast/repaint/positioned-document-element.html = PASS
-BUG23473 MAC : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = PASS
-BUG23473 MAC : fast/repaint/repaint-during-scroll.html = PASS
-BUG23473 MAC : fast/repaint/selection-gap-overflow-scroll-2.html = PASS
-BUG23473 MAC : fast/repaint/shadow-multiple-horizontal.html = PASS
-BUG23473 MAC : fast/repaint/shadow-multiple-strict-horizontal.html = PASS
-BUG23473 MAC : fast/repaint/shadow-multiple-strict-vertical.html = PASS
-BUG23473 MAC : fast/repaint/shadow-multiple-vertical.html = PASS
-BUG23473 MAC : fast/repaint/svg-layout-root-style-attr-update.html = PASS
-BUG23473 MAC : fast/repaint/table-cell-vertical-overflow.html = PASS
-BUG23473 MAC : fast/repaint/text-shadow.html = PASS
-BUG23473 MAC : fast/repaint/text-shadow-horizontal.html = PASS
-BUG23473 MAC : fast/repaint/view-background-from-body-1.html = PASS
-BUG23473 MAC : fast/repaint/view-background-from-body-2.html = PASS
-BUG23473 MAC : fast/repaint/inline-outline-repaint.html = PASS
-BUG23473 MAC : fast/repaint/subtree-root-clip-3.html = PASS
-BUG23473 MAC : fast/repaint/opacity-change-on-overflow-float.html = PASS
-BUG23473 MAC : fast/repaint/background-misaligned.html = PASS
-BUG23473 MAC : fast/repaint/continuation-after-outline.html = PASS
+// Repaint tests failing on Mac.  Need to be manually triaged.
+BUG23473 MAC : fast/repaint/4774354.html = IMAGE
+BUG23473 MAC : fast/repaint/4776765.html = IMAGE
+BUG23473 MAC : fast/repaint/background-generated.html = IMAGE
+BUG23473 MAC : fast/repaint/backgroundSizeRepaint.html = IMAGE
+BUG23473 MAC : fast/repaint/block-layout-inline-children-float-positioned.html = IMAGE
+BUG23473 MAC : fast/repaint/block-layout-inline-children-replaced.html = IMAGE
+BUG23473 MAC : fast/repaint/block-selection-gap-in-composited-layer.html = IMAGE
+BUG23473 MAC : fast/repaint/block-selection-gap-in-table-cell.html = IMAGE
+BUG23473 MAC : fast/repaint/body-background-image.html = IMAGE
+BUG23473 MAC : fast/repaint/border-fit-lines.html = IMAGE
+BUG23473 MAC : fast/repaint/border-radius-repaint.html = IMAGE
+BUG23473 MAC : fast/repaint/border-repaint-glitch.html = IMAGE
+BUG23473 MAC : fast/repaint/box-shadow-dynamic.html = IMAGE
+BUG23473 MAC : fast/repaint/bugzilla-3509.html = IMAGE
+BUG23473 MAC : fast/repaint/bugzilla-5699.html = IMAGE
+BUG23473 MAC : fast/repaint/bugzilla-6278.html = IMAGE
+BUG23473 MAC : fast/repaint/bugzilla-6388.html = IMAGE
+BUG23473 MAC : fast/repaint/bugzilla-7235.html = IMAGE
+BUG23473 MAC : fast/repaint/button-spurious-layout-hint.html = IMAGE
+BUG23473 MAC : fast/repaint/change-transform.html = IMAGE
+BUG23473 MAC : fast/repaint/clipped-relative.html = IMAGE
+BUG23473 MAC : fast/repaint/clip-with-layout-delta.html = IMAGE
+BUG23473 MAC : fast/repaint/containing-block-position-change.html = IMAGE
+BUG23473 MAC : fast/repaint/content-into-overflow.html = IMAGE
+BUG23473 MAC : fast/repaint/control-clip.html = IMAGE
+BUG23473 MAC : fast/repaint/create-layer-repaint.html = IMAGE
+BUG23473 MAC : fast/repaint/delete-into-nested-block.html = IMAGE
+BUG23473 MAC : fast/repaint/dynamic-table-vertical-alignment-change.html = IMAGE
+BUG23473 MAC : fast/repaint/erase-overflow.html = IMAGE
+BUG23473 MAC : fast/repaint/fixed-child-move-after-scroll.html = IMAGE
+BUG23473 MAC : fast/repaint/fixed-child-of-fixed-move-after-scroll.html = IMAGE
+BUG23473 MAC : fast/repaint/fixed-child-of-transformed-move-after-scroll.html = IMAGE
+BUG23473 MAC : fast/repaint/fixed-move-after-scroll.html = IMAGE
+BUG23473 MAC : fast/repaint/float-in-new-block-with-layout-delta.html = IMAGE
+BUG23473 MAC : fast/repaint/float-move-during-layout.html = IMAGE
+BUG23473 MAC : fast/repaint/float-overflow.html = IMAGE
+BUG23473 MAC : fast/repaint/float-overflow-right.html = IMAGE
+BUG23473 MAC : fast/repaint/inline-block-resize.html = IMAGE
+BUG23473 MAC : fast/repaint/inline-color-change.html = IMAGE
+BUG23473 MAC : fast/repaint/inline-overflow.html = IMAGE
+BUG23473 MAC : fast/repaint/inline-relative-positioned.html = IMAGE
+BUG23473 MAC : fast/repaint/intermediate-layout-position-clip.html = IMAGE
+BUG23473 MAC : fast/repaint/intermediate-layout-position.html = IMAGE
+BUG23473 MAC : fast/repaint/invisible-objects.html = IMAGE
+BUG23473 MAC : fast/repaint/layer-full-repaint.html = IMAGE
+BUG23473 MAC : fast/repaint/layer-hide-when-needs-layout.html = IMAGE
+BUG23473 MAC : fast/repaint/layer-visibility.html = IMAGE
+BUG23473 MAC : fast/repaint/layout-state-only-positioned.html = IMAGE
+BUG23473 MAC : fast/repaint/layout-state-relative.html = IMAGE
+BUG23473 MAC : fast/repaint/line-in-scrolled-clipped-block.html = IMAGE
+BUG23473 MAC : fast/repaint/line-overflow.html = IMAGE
+BUG23473 MAC : fast/repaint/lines-with-layout-delta.html = IMAGE
+BUG23473 MAC : fast/repaint/list-marker-2.html = IMAGE
+BUG23473 MAC : fast/repaint/make-children-non-inline.html = IMAGE
+BUG23473 MAC : fast/repaint/no-caret-repaint-in-non-content-editable-element.html = IMAGE
+BUG23473 MAC : fast/repaint/outline-child-repaint.html = IMAGE
+BUG23473 MAC : fast/repaint/outline-inset.html = IMAGE
+BUG23473 MAC : fast/repaint/outline-repaint-glitch.html = IMAGE
+BUG23473 MAC : fast/repaint/outline-shrinking.html = IMAGE
+BUG23473 MAC : fast/repaint/overflow-clip-subtree-layout.html = IMAGE
+BUG23473 MAC : fast/repaint/overflow-delete-line.html = IMAGE
+BUG23473 MAC : fast/repaint/overflow-into-content.html = IMAGE
+BUG23473 MAC : fast/repaint/overflow-outline-repaint.html = IMAGE
+BUG23473 MAC : fast/repaint/overflow-scroll-delete.html = IMAGE
+BUG23473 MAC : fast/repaint/reflection-redraw.html = IMAGE
+BUG23473 MAC : fast/repaint/reflection-repaint-test.html = IMAGE
+BUG23473 MAC : fast/repaint/rel-positioned-inline-with-overflow.html = IMAGE
+BUG23473 MAC : fast/repaint/repaint-resized-overflow.html = IMAGE
+BUG23473 MAC : fast/repaint/search-field-cancel.html = IMAGE
+BUG23473 MAC : fast/repaint/selected-replaced.html = IMAGE
+BUG23473 MAC : fast/repaint/selection-after-delete.html = IMAGE
+BUG23473 MAC : fast/repaint/selection-after-remove.html = IMAGE
+BUG23473 MAC : fast/repaint/selection-clear.html = IMAGE
+BUG23473 MAC : fast/repaint/selection-gap-overflow-scroll.html = IMAGE
+BUG23473 MAC : fast/repaint/stacked-diacritics.html = IMAGE
+BUG23473 MAC : fast/repaint/static-to-positioned.html = IMAGE
+BUG23473 MAC : fast/repaint/subtree-layoutstate-transform.html = IMAGE
+BUG23473 MAC : fast/repaint/subtree-root-clip-2.html = IMAGE
+BUG23473 MAC : fast/repaint/subtree-root-clip.html = IMAGE
+BUG23473 MAC : fast/repaint/subtree-root-skipped.html = IMAGE
+BUG23473 MAC : fast/repaint/table-cell-move.html = IMAGE
+BUG23473 MAC : fast/repaint/table-cell-overflow.html = IMAGE
+BUG23473 MAC : fast/repaint/table-col-background.html = IMAGE
+BUG23473 MAC : fast/repaint/table-collapsed-border.html = IMAGE
+BUG23473 MAC : fast/repaint/table-extra-bottom-grow.html = IMAGE
+BUG23473 MAC : fast/repaint/table-outer-border.html = IMAGE
+BUG23473 MAC : fast/repaint/table-row.html = IMAGE
+BUG23473 MAC : fast/repaint/table-section-overflow.html = IMAGE
+BUG23473 MAC : fast/repaint/table-section-repaint.html = IMAGE
+BUG23473 MAC : fast/repaint/table-two-pass-layout-overpaint.html = IMAGE
+BUG23473 MAC : fast/repaint/text-append-dirty-lines.html = IMAGE
+BUG23473 MAC : fast/repaint/text-selection-rect-in-overflow-2.html = IMAGE
+BUG23473 MAC : fast/repaint/text-selection-rect-in-overflow.html = IMAGE
+BUG23473 MAC : fast/repaint/trailing-floats-root-line-box-overflow.html = IMAGE
+BUG23473 MAC : fast/repaint/transform-absolute-child.html = IMAGE
+BUG23473 MAC : fast/repaint/transform-absolute-in-positioned-container.html = IMAGE
+BUG23473 MAC : fast/repaint/transform-disable-layoutstate.html = IMAGE
+BUG23473 MAC : fast/repaint/transform-layout-repaint.html = IMAGE
+BUG23473 MAC : fast/repaint/transform-relative-position.html = IMAGE
+BUG23473 MAC : fast/repaint/transform-repaint-descendants.html = IMAGE
+BUG23473 MAC : fast/repaint/transform-replaced-shadows.html = IMAGE
+BUG23473 MAC : fast/repaint/transform-translate.html = IMAGE
+
+BUGWK42249 MAC : fast/repaint/moving-shadow-on-container.html = IMAGE
+// Fails due to r67862.
+BUGWK39966 : fast/repaint/table-cell-collapsed-border.html = IMAGE
 
 // Thicker shadow than expected
 BUG23471 MAC : fast/text/stroking.html = IMAGE
@@ -2747,8 +2800,6 @@ BUG49021 : userscripts/user-style-top-frame-only.html = TEXT
 
 BUGWK42241 LINUX : svg/custom/text-rotated-gradient.svg = IMAGE PASS
 
-BUGWK42249 MAC : fast/repaint/moving-shadow-on-container.html = IMAGE
-
 // These tests all fail because the expected output is wrong. The
 // reason is that JSC does not currently implement Object.freeze and
 // Object.isFrozen. These test has intentionally been marked as FAIL,
@@ -3064,9 +3115,6 @@ BUGWEBGL WIN LINUX : fast/canvas/webgl/uniform-location.html = TEXT
 
 // Pre-HTML5 parser quirks only apply to the mac port for now.
 WONTFIX SKIP : fast/parser/pre-html5-parser-quirks.html = FAIL
-
-// Fails due to r67862.
-BUGWK39966 : fast/repaint/table-cell-collapsed-border.html = IMAGE
 
 // Regressions after r67771
 BUG56246 : printing/css2.1/page-break-after-000.html = TEXT
