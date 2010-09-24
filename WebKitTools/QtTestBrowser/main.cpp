@@ -233,9 +233,9 @@ int main(int argc, char **argv)
     QStringList urls = app.urls();
 
     if (urls.isEmpty()) {
-        QString defaultUrl = QString("file://%1/%2").arg(QDir::homePath()).arg(QLatin1String("index.html"));
-        if (QDir(defaultUrl).exists())
-            urls.append(defaultUrl);
+        QString defaultIndexFile = QString("%1/%2").arg(QDir::homePath()).arg(QLatin1String("index.html"));
+        if (QFile(defaultIndexFile).exists())
+            urls.append(QString("file://") + defaultIndexFile);
         else
             urls.append("");
     }
