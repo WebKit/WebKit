@@ -1,3 +1,12 @@
+2010-09-24  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        messages_unittest.py should compare the generated results against expected results
+        https://bugs.webkit.org/show_bug.cgi?id=46490
+
+        * Scripts/webkit2/messages_unittest.py:
+
 2010-09-24  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         Reviewed by Antonio Gomes.

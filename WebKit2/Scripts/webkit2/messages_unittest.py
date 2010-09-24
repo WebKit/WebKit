@@ -189,30 +189,251 @@ class ParsingTest(MessagesTest):
         for index, message in enumerate(self.receiver.messages):
             self.check_message(message, _expected_results['messages'][index])
 
+_expected_header = """/*
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
-class HeaderTest(MessagesTest):
-    def test_base_class(self):
-        """Base classes for message structs should match expectations"""
-        for index, message in enumerate(self.receiver.messages):
-            self.assertEquals(messages.base_class(message), _expected_results['messages'][index]['base_class'])
-            if message.reply_parameters != None:
-                self.assertEquals(messages.reply_base_class(message), _expected_results['messages'][index]['reply_base_class'])
-                if message.delayed:
-                    self.assertEquals(messages.delayed_reply_base_class(message), _expected_results['messages'][index]['delayed_reply_base_class'])
-            else:
-                self.assertFalse('reply_parameters' in _expected_results['messages'][index])
+#ifndef WebPageMessages_h
+#define WebPageMessages_h
 
-class ReceiverImplementationTest(unittest.TestCase):
-    def setUp(self):
-        self.file_contents = messages.generate_message_handler(StringIO(_messages_file_contents))
+#if ENABLE(WEBKIT2)
 
-    def test_receiver_header_listed_first(self):
-        """Receiver's header file should be the first included header"""
-        self.assertEquals(self.file_contents.index('#include'), self.file_contents.index('#include "%s.h"' % _expected_results['name']))
+#include "Arguments.h"
+#include "MessageID.h"
 
-    def test_receiver_header_listed_separately(self):
-        """Receiver's header should be in its own paragraph"""
-        self.assertTrue(self.file_contents.find('\n\n#include "%s.h"\n\n' % _expected_results['name']))
+namespace WTF {
+    class String;
+}
+
+namespace WebKit {
+    class WebTouchEvent;
+}
+
+namespace Messages {
+
+namespace WebPage {
+
+enum Kind {
+    LoadURLID,
+#if ENABLE(TOUCH_EVENTS)
+    TouchEventID,
+#endif
+    DidReceivePolicyDecisionID,
+    CloseID,
+    SendDoubleAndFloatID,
+    SendIntsID,
+    RunJavaScriptAlertID,
+    GetPluginsID,
+    GetPluginProcessConnectionID,
+};
+
+struct LoadURL : CoreIPC::Arguments1<const WTF::String&> {
+    static const Kind messageID = LoadURLID;
+    explicit LoadURL(const WTF::String& url)
+        : CoreIPC::Arguments1<const WTF::String&>(url)
+    {
+    }
+};
+
+#if ENABLE(TOUCH_EVENTS)
+struct TouchEvent : CoreIPC::Arguments1<const WebKit::WebTouchEvent&> {
+    static const Kind messageID = TouchEventID;
+    explicit TouchEvent(const WebKit::WebTouchEvent& event)
+        : CoreIPC::Arguments1<const WebKit::WebTouchEvent&>(event)
+    {
+    }
+};
+#endif
+
+struct DidReceivePolicyDecision : CoreIPC::Arguments3<uint64_t, uint64_t, uint32_t> {
+    static const Kind messageID = DidReceivePolicyDecisionID;
+    DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction)
+        : CoreIPC::Arguments3<uint64_t, uint64_t, uint32_t>(frameID, listenerID, policyAction)
+    {
+    }
+};
+
+struct Close : CoreIPC::Arguments0 {
+    static const Kind messageID = CloseID;
+};
+
+struct SendDoubleAndFloat : CoreIPC::Arguments2<double, float> {
+    static const Kind messageID = SendDoubleAndFloatID;
+    SendDoubleAndFloat(double d, float f)
+        : CoreIPC::Arguments2<double, float>(d, f)
+    {
+    }
+};
+
+struct SendInts : CoreIPC::Arguments1<const Vector<uint64_t>&> {
+    static const Kind messageID = SendIntsID;
+    explicit SendInts(const Vector<uint64_t>& ints)
+        : CoreIPC::Arguments1<const Vector<uint64_t>&>(ints)
+    {
+    }
+};
+
+struct RunJavaScriptAlert : CoreIPC::Arguments2<uint64_t, const WTF::String&> {
+    static const Kind messageID = RunJavaScriptAlertID;
+    RunJavaScriptAlert(uint64_t frameID, const WTF::String& message)
+        : CoreIPC::Arguments2<uint64_t, const WTF::String&>(frameID, message)
+    {
+    }
+};
+
+struct GetPlugins : CoreIPC::Arguments1<bool> {
+    static const Kind messageID = GetPluginsID;
+    explicit GetPlugins(bool refresh)
+        : CoreIPC::Arguments1<bool>(refresh)
+    {
+    }
+};
+
+struct GetPluginProcessConnection : CoreIPC::Arguments1<const WTF::String&> {
+    static const Kind messageID = GetPluginProcessConnectionID;
+    explicit GetPluginProcessConnection(const WTF::String& pluginPath)
+        : CoreIPC::Arguments1<const WTF::String&>(pluginPath)
+    {
+    }
+};
+
+} // namespace WebPage
+
+} // namespace Messages
+
+namespace CoreIPC {
+
+template<> struct MessageKindTraits<Messages::WebPage::Kind> {
+    static const MessageClass messageClass = MessageClassWebPage;
+};
+
+} // namespace CoreIPC
+
+#endif // ENABLE(WEBKIT2)
+
+#endif // WebPageMessages_h
+"""
+
+_expected_receiver_implementation = """/*
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#if ENABLE(WEBKIT2)
+
+#include "WebPage.h"
+
+#include "ArgumentDecoder.h"
+#include "HandleMessage.h"
+#include "WebEvent.h"
+#include "WebPageMessages.h"
+#include <wtf/text/WTFString.h>
+
+namespace WebKit {
+
+void WebPage::didReceiveWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+{
+    switch (messageID.get<Messages::WebPage::Kind>()) {
+    case Messages::WebPage::LoadURLID:
+        CoreIPC::handleMessage<Messages::WebPage::LoadURL>(arguments, this, &WebPage::loadURL);
+        return;
+#if ENABLE(TOUCH_EVENTS)
+    case Messages::WebPage::TouchEventID:
+        CoreIPC::handleMessage<Messages::WebPage::TouchEvent>(arguments, this, &WebPage::touchEvent);
+        return;
+#endif
+    case Messages::WebPage::DidReceivePolicyDecisionID:
+        CoreIPC::handleMessage<Messages::WebPage::DidReceivePolicyDecision>(arguments, this, &WebPage::didReceivePolicyDecision);
+        return;
+    case Messages::WebPage::CloseID:
+        CoreIPC::handleMessage<Messages::WebPage::Close>(arguments, this, &WebPage::close);
+        return;
+    case Messages::WebPage::SendDoubleAndFloatID:
+        CoreIPC::handleMessage<Messages::WebPage::SendDoubleAndFloat>(arguments, this, &WebPage::sendDoubleAndFloat);
+        return;
+    case Messages::WebPage::SendIntsID:
+        CoreIPC::handleMessage<Messages::WebPage::SendInts>(arguments, this, &WebPage::sendInts);
+        return;
+    case Messages::WebPage::RunJavaScriptAlertID:
+        CoreIPC::handleMessage<Messages::WebPage::RunJavaScriptAlert>(arguments, this, &WebPage::runJavaScriptAlert);
+        return;
+    case Messages::WebPage::GetPluginsID:
+        CoreIPC::handleMessage<Messages::WebPage::GetPlugins>(arguments, this, &WebPage::getPlugins);
+        return;
+    case Messages::WebPage::GetPluginProcessConnectionID:
+        CoreIPC::handleMessage<Messages::WebPage::GetPluginProcessConnection>(arguments, this, &WebPage::getPluginProcessConnection);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(WEBKIT2)
+"""
+
+
+class GeneratedFileContentsTest(unittest.TestCase):
+    def assertGeneratedFileContentsEqual(self, first, second):
+        first_list = first.split('\n')
+        second_list = second.split('\n')
+
+        for index, first_line in enumerate(first_list):
+            self.assertEquals(first_line, second_list[index])
+
+        self.assertEquals(len(first_list), len(second_list))
+
+
+class HeaderTest(GeneratedFileContentsTest):
+    def test_header(self):
+        file_contents = messages.generate_messages_header(StringIO(_messages_file_contents))
+        self.assertGeneratedFileContentsEqual(file_contents, _expected_header)
+
+
+class ReceiverImplementationTest(GeneratedFileContentsTest):
+    def test_receiver_implementation(self):
+        file_contents = messages.generate_message_handler(StringIO(_messages_file_contents))
+        self.assertGeneratedFileContentsEqual(file_contents, _expected_receiver_implementation)
 
 
 if __name__ == '__main__':
