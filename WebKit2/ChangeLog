@@ -2,6 +2,20 @@
 
         Reviewed by Sam Weinig.
 
+        Add WebProcessConnection class
+        https://bugs.webkit.org/show_bug.cgi?id=46478
+
+        * PluginProcess/WebProcessConnection.cpp: Added.
+        * PluginProcess/WebProcessConnection.h: Added.
+        Add stubbed out WebProcessConnection class.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add files.
+
+2010-09-24  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add PluginProcess class
         https://bugs.webkit.org/show_bug.cgi?id=46476
 
