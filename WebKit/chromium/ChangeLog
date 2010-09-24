@@ -1,3 +1,27 @@
+2010-09-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] Implement TextInputController::firstRectForCharacterRange
+        https://bugs.webkit.org/show_bug.cgi?id=38100
+
+        Implemented TextInputController::firstRectForCharacterRange for chromium platform.
+        Because the function needs to return an array of integers, added makeIntArray to WebBindings.
+        makeIntArray does not take Vector because WebBindings.h is included in plugin glue code
+        where it cannot find wtf/Vector.h.
+
+        No new tests are added since we need to implement the same feature in chromium side
+        in order to enable any tests that uses this function.
+
+        * public/WebBindings.h:
+        * public/WebFrame.h:
+        * src/WebBindings.cpp:
+        (WebKit::makeIntArrayImpl): Added.
+        (WebKit::WebBindings::makeIntArray): Added.
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::firstRectForCharacterRange): Added.
+        * src/WebFrameImpl.h:
+
 2010-09-24  Tony Chang  <tony@chromium.org>
 
         Unreviewed, fix chromium compile after r68276 which renamed

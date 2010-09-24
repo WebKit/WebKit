@@ -1082,6 +1082,22 @@ WebRange WebFrameImpl::markedRange() const
     return frame()->editor()->compositionRange();
 }
 
+bool WebFrameImpl::firstRectForCharacterRange(unsigned location, unsigned length, WebRect& rect) const
+{
+    if ((location + length < location) && (location + length))
+        length = 0;
+
+    Element* selectionRoot = frame()->selection()->rootEditableElement();
+    Element* scope = selectionRoot ? selectionRoot : frame()->document()->documentElement();
+    RefPtr<Range> range = TextIterator::rangeFromLocationAndLength(scope, location, length);
+    if (!range)
+        return false;
+    IntRect intRect = frame()->editor()->firstRectForRange(range.get());
+    rect = WebRect(intRect.x(), intRect.y(), intRect.width(), intRect.height());
+
+    return true;
+}
+
 bool WebFrameImpl::executeCommand(const WebString& name)
 {
     ASSERT(frame());

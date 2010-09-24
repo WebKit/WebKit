@@ -1,3 +1,18 @@
+2010-09-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] Implement TextInputController::firstRectForCharacterRange
+        https://bugs.webkit.org/show_bug.cgi?id=38100
+
+        The following test now passes on chromium DumpRenderTree:
+        platform/mac/editing/input/caret-primary-bidi.html
+        platform/mac/editing/input/firstrectforcharacterrange-plain.html
+        platform/mac/editing/input/range-for-empty-document.html
+        editing/inserting/caret-position.html
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-24  Tony Chang  <tony@chromium.org>
 
         Reviewed by Dimitri Glazkov.

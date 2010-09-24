@@ -964,9 +964,11 @@ BUG10318 WIN LINUX : fast/canvas/toDataURL-supportedTypes.html = FAIL
 
 // Issue 3273: TextInputController::firstRectForCharacterRange not implemented.
 BUG3273 : editing/selection/move-left-right.html = FAIL
-BUG3273 MAC : platform/mac/editing/input/caret-primary-bidi.html = FAIL
-BUG3273 MAC : platform/mac/editing/input/firstrectforcharacterrange-plain.html = FAIL
-BUG3273 MAC : platform/mac/editing/input/range-for-empty-document.html = FAIL
+BUG3273 MAC : platform/mac/editing/input/caret-primary-bidi.html = FAIL PASS
+BUG3273 MAC : platform/mac/editing/input/firstrectforcharacterrange-plain.html = FAIL PASS
+BUG3273 MAC : platform/mac/editing/input/range-for-empty-document.html = FAIL PASS
+BUGWK38100 : editing/inserting/caret-position.html = TEXT PASS
+
 // WebKit 50358:50395
 BUG3273 : fast/text/international/thai-cursor-position.html = TEXT
 // WebKit roll 51512:51524
@@ -2454,9 +2456,6 @@ BUG8729 MAC : http/tests/multipart/invalid-image-data.html = IMAGE
 
 // Started failing at r58152
 BUGWK38038 WIN LINUX MAC : fast/url/file-http-base.html = TEXT
-
-// Started failing at r58191
-BUGWK38100 WIN LINUX MAC : editing/inserting/caret-position.html = TEXT
 
 // New test, may be safe to just rebaseline.
 

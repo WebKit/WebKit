@@ -32,6 +32,7 @@
 #include "TextInputController.h"
 
 #include "TestShell.h"
+#include "public/WebBindings.h"
 #include "public/WebFrame.h"
 #include "public/WebRange.h"
 #include "public/WebString.h"
@@ -186,10 +187,27 @@ void TextInputController::selectedRange(const CppArgumentList&, CppVariant* resu
     result->set(string(buffer));
 }
 
-void TextInputController::firstRectForCharacterRange(const CppArgumentList&, CppVariant* result)
+void TextInputController::firstRectForCharacterRange(const CppArgumentList& arguments, CppVariant* result)
 {
-    // FIXME: Implement this.
     result->setNull();
+
+    WebFrame* mainFrame = getMainFrame();
+    if (!mainFrame)
+        return;
+
+    if (arguments.size() < 2 || !arguments[0].isNumber() || !arguments[1].isNumber())
+        return;
+
+    WebRect rect;
+    if (!mainFrame->firstRectForCharacterRange(arguments[0].toInt32(), arguments[1].toInt32(), rect))
+        return;
+
+    Vector<int> intArray(4);
+    intArray[0] = rect.x;
+    intArray[1] = rect.y;
+    intArray[2] = rect.width;
+    intArray[3] = rect.height;
+    result->set(WebBindings::makeIntArray(intArray));
 }
 
 void TextInputController::characterIndexForPoint(const CppArgumentList&, CppVariant* result)

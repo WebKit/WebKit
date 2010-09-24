@@ -355,6 +355,8 @@ public:
 
     virtual WebRange markedRange() const = 0;
 
+    virtual bool firstRectForCharacterRange(unsigned location, unsigned length, WebRect&) const = 0;
+
     // Supports commands like Undo, Redo, Cut, Copy, Paste, SelectAll,
     // Unselect, etc. See EditorCommand.cpp for the full list of supported
     // commands.

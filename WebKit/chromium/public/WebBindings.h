@@ -32,6 +32,7 @@
 #define WebBindings_h
 
 #include "WebCommon.h"
+#include "WebVector.h"
 #include <bindings/npruntime.h>
 
 namespace WebKit {
@@ -143,6 +144,8 @@ public:
     // Return true (success) if the given npobj is an element.
     // If so, return that element as a WebElement object.
     WEBKIT_API static bool getElement(NPObject* element, WebElement*);
+
+    WEBKIT_API static NPObject* makeIntArray(const WebVector<int>&);
 
     // Exceptions -------------------------------------------------------------
 

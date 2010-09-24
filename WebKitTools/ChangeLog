@@ -1,3 +1,17 @@
+2010-09-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] Implement TextInputController::firstRectForCharacterRange
+        https://bugs.webkit.org/show_bug.cgi?id=38100
+
+        Implemented TextInputController::firstRectForCharacterRange for chromium platform.
+        No new tests are added since we need to implement the same feature in chromium side
+        in order to enable any tests that uses this function.
+
+        * DumpRenderTree/chromium/TextInputController.cpp:
+        (TextInputController::firstRectForCharacterRange): Added.
+
 2010-09-24  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

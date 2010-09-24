@@ -137,6 +137,7 @@ public:
     virtual void unmarkText();
     virtual bool hasMarkedText() const;
     virtual WebRange markedRange() const;
+    virtual bool firstRectForCharacterRange(unsigned location, unsigned length, WebRect&) const;
     virtual bool executeCommand(const WebString&);
     virtual bool executeCommand(const WebString&, const WebString& value);
     virtual bool isCommandEnabled(const WebString&) const;

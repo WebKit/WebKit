@@ -312,6 +312,17 @@ static bool getElementImpl(NPObject* npObj, WebElement* webElement)
     return true;
 }
 
+static NPObject* makeIntArrayImpl(const WebVector<int>& data)
+{
+    v8::HandleScope handleScope;
+    v8::Handle<v8::Array> result = v8::Array::New(data.size());
+    for (size_t i = 0; i < data.size(); i++)
+        result->Set(i, v8::Number::New(data[i]));
+
+    WebCore::DOMWindow* window = WebCore::V8Proxy::retrieveWindow(WebCore::V8Proxy::currentContext());
+    return npCreateV8ScriptObject(0, result, window);
+}
+
 #endif
 
 bool WebBindings::getDragData(NPObject* event, int* eventId, WebDragData* data)
@@ -347,6 +358,16 @@ bool WebBindings::getElement(NPObject* element, WebElement* webElement)
 #else
     // Not supported on other ports (JSC, etc.).
     return false;
+#endif
+}
+
+NPObject* WebBindings::makeIntArray(const WebVector<int> & data)
+{
+#if USE(V8)
+    return makeIntArrayImpl(data);
+#else
+    // Not supported on other ports (JSC, etc.).
+    return 0;
 #endif
 }
 
