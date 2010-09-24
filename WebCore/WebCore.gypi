@@ -1333,6 +1333,7 @@
             'dom/XMLDocumentParserQt.cpp',
             'editing/android/EditorAndroid.cpp',
             'editing/chromium/EditorChromium.cpp',
+            'editing/chromium/SelectionControllerChromium.cpp',
             'editing/mac/EditorMac.mm',
             'editing/mac/SelectionControllerMac.mm',
             'editing/qt/EditorQt.cpp',

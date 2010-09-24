@@ -1,1 +1,3 @@
+AccessibilityNotification - LayoutComplete
+AccessibilityNotification - LoadComplete
 This tests that chromium correctly recieves the LayoutComplete notification.

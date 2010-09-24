@@ -1,2 +1,3 @@
 AccessibilityNotification - RowExpanded - id:div-for-RowExpanded
+AccessibilityNotification - LoadComplete
 This tests that chromium correctly recieves the RowExpanded notification.

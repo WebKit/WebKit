@@ -1,3 +1,24 @@
+2010-09-24  Chris Guillory   <chris.guillory@google.com>
+
+        Reviewed by Chris Fleizach.
+
+        Send webkit accessibility notifications to Chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=45156
+
+        * WebCore.gypi:
+        * accessibility/chromium/AXObjectCacheChromium.cpp:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        (WebCore::AXObjectCache::handleFocusedUIElementChanged):
+        (WebCore::AXObjectCache::handleScrolledToAnchor):
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+        (WebCore::Document::setFocusedNode):
+        * editing/SelectionController.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::postAccessibilityNotification):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+
 2010-09-24  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Maciej Stachowiak.

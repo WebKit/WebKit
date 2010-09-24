@@ -2,12 +2,15 @@
 <head>
 <script>
     function testNotification() {
-        // Mac specific
+        // Triger layout operation.
+        document.body.children[0].style.width = 500;
     }
 </script>
 </head>
 <body onload="test()">
 This tests that chromium correctly recieves the LayoutComplete notification.
+
+<div id="div-for-LayoutComplete" aria-help="div-for-LayoutComplete"><div></div></div>
 
 <script type="text/javascript" src="post-notification.js"></script>
 </body>

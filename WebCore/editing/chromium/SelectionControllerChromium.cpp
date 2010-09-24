@@ -1,10 +1,10 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
- *
+ * Copyright (C) 2010 Google Inc. All rights reserved.
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- *
+ * 
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -29,22 +29,20 @@
  */
 
 #include "config.h"
-#include "WebAccessibilityCache.h"
+#include "SelectionController.h"
 
 #include "AXObjectCache.h"
+#include "Frame.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-namespace WebKit {
-
-void WebAccessibilityCache::enableAccessibility()
+void SelectionController::notifyAccessibilityForSelectionChange()
 {
-    AXObjectCache::enableAccessibility();
+    // FIXME: Support editable text in chromium.
+    if (AXObjectCache::accessibilityEnabled() && m_selection.start().isNotNull() && m_selection.end().isNotNull()) {
+        Document* document = m_frame->document();
+        document->axObjectCache()->postNotification(m_selection.start().node()->renderer(), AXObjectCache::AXSelectedTextChanged, false);
+    }
 }
 
-bool WebAccessibilityCache::accessibilityEnabled()
-{
-    return AXObjectCache::accessibilityEnabled();
-}
-
-}
+} // namespace WebCore

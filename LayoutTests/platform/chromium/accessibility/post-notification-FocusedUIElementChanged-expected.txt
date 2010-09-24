@@ -1,1 +1,4 @@
+AccessibilityNotification - FocusedUIElementChanged - id:div-for-FocusedUIElementChanged
+AccessibilityNotification - LoadComplete
 This tests that chromium correctly recieves the FocusedUIElementChanged notification.
+div

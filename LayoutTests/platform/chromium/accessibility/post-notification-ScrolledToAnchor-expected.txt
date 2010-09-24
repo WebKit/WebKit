@@ -1,1 +1,6 @@
+AccessibilityNotification - ScrolledToAnchor - id:a-for-ScrolledToAnchor
+AccessibilityNotification - ChildrenChanged
+AccessibilityNotification - ChildrenChanged
+AccessibilityNotification - LayoutComplete
+AccessibilityNotification - LoadComplete
 This tests that chromium correctly recieves the ScrolledToAnchor notification.

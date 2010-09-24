@@ -1,3 +1,33 @@
+2010-09-24  Chris Guillory   <chris.guillory@google.com>
+
+        Reviewed by Chris Fleizach.
+
+        Send webkit accessibility notifications to Chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=45156
+
+        * platform/chromium/accessibility/post-notification-ActiveDescendantChanged-expected.txt:
+        * platform/chromium/accessibility/post-notification-CheckedStateChanged-expected.txt:
+        * platform/chromium/accessibility/post-notification-ChildrenChanged-expected.txt:
+        * platform/chromium/accessibility/post-notification-FocusedUIElementChanged-expected.txt:
+        * platform/chromium/accessibility/post-notification-FocusedUIElementChanged.html:
+        * platform/chromium/accessibility/post-notification-LayoutComplete-expected.txt:
+        * platform/chromium/accessibility/post-notification-LayoutComplete.html:
+        * platform/chromium/accessibility/post-notification-LiveRegionChanged-expected.txt:
+        * platform/chromium/accessibility/post-notification-LoadComplete-expected.txt:
+        * platform/chromium/accessibility/post-notification-LoadComplete.html:
+        * platform/chromium/accessibility/post-notification-MenuListValueChanged-expected.txt:
+        * platform/chromium/accessibility/post-notification-RowCollapsed-expected.txt:
+        * platform/chromium/accessibility/post-notification-RowCountChanged-expected.txt:
+        * platform/chromium/accessibility/post-notification-RowExpanded-expected.txt:
+        * platform/chromium/accessibility/post-notification-ScrolledToAnchor-expected.txt:
+        * platform/chromium/accessibility/post-notification-ScrolledToAnchor.html:
+        * platform/chromium/accessibility/post-notification-SelectedChildrenChanged-expected.txt:
+        * platform/chromium/accessibility/post-notification-SelectedTextChanged-expected.txt:
+        * platform/chromium/accessibility/post-notification-SelectedTextChanged.html:
+        * platform/chromium/accessibility/post-notification-ValueChanged-expected.txt:
+        * platform/chromium/accessibility/post-notification.js:
+        (test):
+
 2010-09-23  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Simon Fraser.

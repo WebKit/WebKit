@@ -1,3 +1,19 @@
+2010-09-24  Chris Guillory   <chris.guillory@google.com>
+
+        Reviewed by Chris Fleizach.
+
+        Send webkit accessibility notifications to Chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=45156
+
+        * public/WebAccessibilityCache.h:
+        * public/WebViewClient.h:
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::focusedNodeChanged):
+        (WebKit::ChromeClientImpl::getPopupMenuInfo):
+        * src/ChromeClientImpl.h:
+        * src/WebAccessibilityCache.cpp:
+        (WebKit::WebAccessibilityCache::accessibilityEnabled):
+
 2010-09-23  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

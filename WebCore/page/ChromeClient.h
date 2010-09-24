@@ -271,8 +271,6 @@ namespace WebCore {
         virtual PassRefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const = 0;
 
         virtual void postAccessibilityNotification(AccessibilityObject*, AXObjectCache::AXNotification) { }
-        virtual void didChangeAccessibilityObjectState(AccessibilityObject*) { }
-        virtual void didChangeAccessibilityObjectChildren(AccessibilityObject*) { }
 
     protected:
         virtual ~ChromeClient() { }
