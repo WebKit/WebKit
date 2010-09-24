@@ -23,11 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "PluginProcess.h"
-
 #if ENABLE(PLUGIN_PROCESS)
 
+#include "PluginProcess.h"
+
+#include "MachPort.h"
+#include "NetscapePluginModule.h"
+#include "PluginProcessProxyMessages.h"
+#include "WebProcessConnection.h"
+
 namespace WebKit {
+
+static const double shutdownTimeout = 15.0;
 
 PluginProcess& PluginProcess::shared()
 {
@@ -36,6 +43,7 @@ PluginProcess& PluginProcess::shared()
 }
 
 PluginProcess::PluginProcess()
+    : m_shutdownTimer(RunLoop::main(), this, &PluginProcess::shutdownTimerFired)
 {
 }
 
@@ -43,12 +51,25 @@ PluginProcess::~PluginProcess()
 {
 }
 
-void PluginProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier)
+void PluginProcess::initializeConnection(CoreIPC::Connection::Identifier serverIdentifier)
 {
     ASSERT(!m_connection);
 
     m_connection = CoreIPC::Connection::createClientConnection(serverIdentifier, this, RunLoop::main());
     m_connection->open();
+}
+
+void PluginProcess::removeWebProcessConnection(WebProcessConnection* webProcessConnection)
+{
+    size_t vectorIndex = m_webProcessConnections.find(webProcessConnection);
+    ASSERT(vectorIndex != notFound);
+
+    m_webProcessConnections.remove(vectorIndex);
+
+    if (m_webProcessConnections.isEmpty()) {
+        // Start the shutdown timer.
+        m_shutdownTimer.startOneShot(shutdownTimeout);
+    }
 }
 
 void PluginProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
@@ -64,6 +85,37 @@ void PluginProcess::didClose(CoreIPC::Connection*)
 
 void PluginProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID)
 {
+}
+
+void PluginProcess::initialize(const String& pluginPath)
+{
+    ASSERT(!m_pluginModule);
+
+    m_pluginModule = NetscapePluginModule::getOrCreate(pluginPath);
+}
+
+void PluginProcess::createWebProcessConnection()
+{
+    // FIXME: This is platform specific!
+
+    // Create the listening port.
+    mach_port_t listeningPort;
+    mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
+
+    // Create a listening connection.
+    RefPtr<WebProcessConnection> connection = WebProcessConnection::create(listeningPort);
+    m_webProcessConnections.append(connection.release());
+
+    CoreIPC::MachPort clientPort(listeningPort, MACH_MSG_TYPE_MAKE_SEND);
+    m_connection->send(Messages::PluginProcessProxy::DidCreateWebProcessConnection(clientPort), 0);
+
+    // Stop the shutdown timer.
+    m_shutdownTimer.stop();
+}
+
+void PluginProcess::shutdownTimerFired()
+{
+    RunLoop::current()->stop();
 }
 
 } // namespace WebKit

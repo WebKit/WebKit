@@ -33,6 +33,11 @@
 #include "ProcessLauncher.h"
 #include <wtf/Deque.h>
 
+// FIXME: This is platform specific.
+namespace CoreIPC {
+    class MachPort;
+}
+
 namespace WebKit {
 
 class PluginProcessManager;
@@ -54,7 +59,11 @@ private:
 
     // ProcessLauncher::Client
     virtual void didFinishLaunching(ProcessLauncher*, CoreIPC::Connection::Identifier);
-    
+
+    // Message handlers
+    void didReceivePluginProcessProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void didCreateWebProcessConnection(const CoreIPC::MachPort&);
+
     // The plug-in host process manager.
     PluginProcessManager* m_pluginProcessManager;
     

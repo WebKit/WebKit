@@ -282,6 +282,7 @@ def case_statement(receiver, message):
 
 def header_for_type(type):
     special_cases = {
+        'CoreIPC::MachPort': '"MachPort.h"',
         'WTF::String': '<wtf/text/WTFString.h>',
         'WebKit::WebKeyboardEvent': '"WebEvent.h"',
         'WebKit::WebMouseEvent': '"WebEvent.h"',

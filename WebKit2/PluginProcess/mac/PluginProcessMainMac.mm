@@ -71,8 +71,8 @@ int PluginProcessMain(const CommandLine& commandLine)
     WTF::initializeMainThread();
     RunLoop::initializeMainRunLoop();
 
-    // Initialize the plug-in host process.
-    PluginProcess::shared().initialize(serverPort);
+    // Initialize the plug-in process connection.
+    PluginProcess::shared().initializeConnection(serverPort);
 
     [NSApplication sharedApplication];
 

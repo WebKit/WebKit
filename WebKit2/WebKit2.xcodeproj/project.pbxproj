@@ -47,6 +47,9 @@
 		1A043977124D034800FFBFB5 /* PluginProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A043975124D034800FFBFB5 /* PluginProcess.cpp */; };
 		1A043A09124D11A900FFBFB5 /* WebProcessConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A043A07124D11A900FFBFB5 /* WebProcessConnection.h */; };
 		1A043A0A124D11A900FFBFB5 /* WebProcessConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A043A08124D11A900FFBFB5 /* WebProcessConnection.cpp */; };
+		1A043B4D124D5E3600FFBFB5 /* PluginProcessProxy.messages.in in Resources */ = {isa = PBXBuildFile; fileRef = 1A043B4C124D5E3600FFBFB5 /* PluginProcessProxy.messages.in */; };
+		1A043B5D124D5E9D00FFBFB5 /* PluginProcessProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A043B5B124D5E9D00FFBFB5 /* PluginProcessProxyMessageReceiver.cpp */; };
+		1A043B5E124D5E9D00FFBFB5 /* PluginProcessProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A043B5C124D5E9D00FFBFB5 /* PluginProcessProxyMessages.h */; };
 		1A0EC603124A9F2C007EF4A5 /* PluginProcessManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0EC601124A9F2C007EF4A5 /* PluginProcessManager.h */; };
 		1A0EC604124A9F2C007EF4A5 /* PluginProcessManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0EC602124A9F2C007EF4A5 /* PluginProcessManager.cpp */; };
 		1A0EC6C0124BBD9B007EF4A5 /* PluginProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0EC6BE124BBD9B007EF4A5 /* PluginProcessMessages.h */; };
@@ -453,6 +456,9 @@
 		1A043975124D034800FFBFB5 /* PluginProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginProcess.cpp; sourceTree = "<group>"; };
 		1A043A07124D11A900FFBFB5 /* WebProcessConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessConnection.h; sourceTree = "<group>"; };
 		1A043A08124D11A900FFBFB5 /* WebProcessConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebProcessConnection.cpp; sourceTree = "<group>"; };
+		1A043B4C124D5E3600FFBFB5 /* PluginProcessProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PluginProcessProxy.messages.in; sourceTree = "<group>"; };
+		1A043B5B124D5E9D00FFBFB5 /* PluginProcessProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PluginProcessProxyMessageReceiver.cpp; path = /Users/andersca/Build/Debug/DerivedSources/WebKit2/PluginProcessProxyMessageReceiver.cpp; sourceTree = "<absolute>"; };
+		1A043B5C124D5E9D00FFBFB5 /* PluginProcessProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PluginProcessProxyMessages.h; path = /Users/andersca/Build/Debug/DerivedSources/WebKit2/PluginProcessProxyMessages.h; sourceTree = "<absolute>"; };
 		1A0EC601124A9F2C007EF4A5 /* PluginProcessManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginProcessManager.h; sourceTree = "<group>"; };
 		1A0EC602124A9F2C007EF4A5 /* PluginProcessManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginProcessManager.cpp; sourceTree = "<group>"; };
 		1A0EC6B1124BBD36007EF4A5 /* PluginProcess.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PluginProcess.messages.in; sourceTree = "<group>"; };
@@ -1100,6 +1106,7 @@
 				1A0EC601124A9F2C007EF4A5 /* PluginProcessManager.h */,
 				1A0EC75D124BC7B2007EF4A5 /* PluginProcessProxy.cpp */,
 				1A0EC75C124BC7B2007EF4A5 /* PluginProcessProxy.h */,
+				1A043B4C124D5E3600FFBFB5 /* PluginProcessProxy.messages.in */,
 			);
 			path = Plugins;
 			sourceTree = "<group>";
@@ -1581,6 +1588,8 @@
 			children = (
 				1A0EC6BD124BBD9B007EF4A5 /* PluginProcessMessageReceiver.cpp */,
 				1A0EC6BE124BBD9B007EF4A5 /* PluginProcessMessages.h */,
+				1A043B5B124D5E9D00FFBFB5 /* PluginProcessProxyMessageReceiver.cpp */,
+				1A043B5C124D5E9D00FFBFB5 /* PluginProcessProxyMessages.h */,
 				C0CE729E1247E71D00BC0EC4 /* WebPageMessageReceiver.cpp */,
 				C0CE729F1247E71D00BC0EC4 /* WebPageMessages.h */,
 			);
@@ -1799,6 +1808,7 @@
 				1A0EC90F124C0AF5007EF4A5 /* PluginProcessConnectionManager.h in Headers */,
 				1A043976124D034800FFBFB5 /* PluginProcess.h in Headers */,
 				1A043A09124D11A900FFBFB5 /* WebProcessConnection.h in Headers */,
+				1A043B5E124D5E9D00FFBFB5 /* PluginProcessProxyMessages.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1883,6 +1893,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
+				1A043B4D124D5E3600FFBFB5 /* PluginProcessProxy.messages.in in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2077,6 +2088,7 @@
 				1A043977124D034800FFBFB5 /* PluginProcess.cpp in Sources */,
 				1A043A0A124D11A900FFBFB5 /* WebProcessConnection.cpp in Sources */,
 				C06C6095124C144B0001682F /* WebPageCreationParameters.cpp in Sources */,
+				1A043B5D124D5E9D00FFBFB5 /* PluginProcessProxyMessageReceiver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

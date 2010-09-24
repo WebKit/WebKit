@@ -63,6 +63,8 @@ messages -> WebPage {
     RunJavaScriptAlert(uint64_t frameID, WTF::String message) -> ()
     GetPlugins(bool refresh) -> (Vector<WebCore::PluginInfo> plugins)
     GetPluginProcessConnection(WTF::String pluginPath) -> (CoreIPC::Connection::Handle connectionHandle) delayed
+
+    DidCreateWebProcessConnection(CoreIPC::MachPort connectionIdentifier)
 }
 
 #endif
@@ -156,7 +158,15 @@ _expected_results = {
             'base_class': 'CoreIPC::Arguments1<const WTF::String&>',
             'reply_base_class': 'CoreIPC::Arguments1<CoreIPC::Connection::Handle&>',
             'delayed_reply_base_class': 'CoreIPC::Arguments1<const CoreIPC::Connection::Handle&>',
-        }
+        },
+        {
+            'name': 'DidCreateWebProcessConnection',
+            'parameters': (
+                ('CoreIPC::MachPort', 'connectionIdentifier'),
+            ),
+            'condition': None,
+            'base_class': 'CoreIPC::Arguments2<double, float>',
+        },
     ),
 }
 
@@ -221,6 +231,10 @@ _expected_header = """/*
 #include "Arguments.h"
 #include "MessageID.h"
 
+namespace CoreIPC {
+    class MachPort;
+}
+
 namespace WTF {
     class String;
 }
@@ -245,6 +259,7 @@ enum Kind {
     RunJavaScriptAlertID,
     GetPluginsID,
     GetPluginProcessConnectionID,
+    DidCreateWebProcessConnectionID,
 };
 
 struct LoadURL : CoreIPC::Arguments1<const WTF::String&> {
@@ -317,6 +332,14 @@ struct GetPluginProcessConnection : CoreIPC::Arguments1<const WTF::String&> {
     }
 };
 
+struct DidCreateWebProcessConnection : CoreIPC::Arguments1<const CoreIPC::MachPort&> {
+    static const Kind messageID = DidCreateWebProcessConnectionID;
+    explicit DidCreateWebProcessConnection(const CoreIPC::MachPort& connectionIdentifier)
+        : CoreIPC::Arguments1<const CoreIPC::MachPort&>(connectionIdentifier)
+    {
+    }
+};
+
 } // namespace WebPage
 
 } // namespace Messages
@@ -364,6 +387,7 @@ _expected_receiver_implementation = """/*
 
 #include "ArgumentDecoder.h"
 #include "HandleMessage.h"
+#include "MachPort.h"
 #include "WebEvent.h"
 #include "WebPageMessages.h"
 #include <wtf/text/WTFString.h>
@@ -401,6 +425,9 @@ void WebPage::didReceiveWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageID 
         return;
     case Messages::WebPage::GetPluginProcessConnectionID:
         CoreIPC::handleMessage<Messages::WebPage::GetPluginProcessConnection>(arguments, this, &WebPage::getPluginProcessConnection);
+        return;
+    case Messages::WebPage::DidCreateWebProcessConnectionID:
+        CoreIPC::handleMessage<Messages::WebPage::DidCreateWebProcessConnection>(arguments, this, &WebPage::didCreateWebProcessConnection);
         return;
     }
 

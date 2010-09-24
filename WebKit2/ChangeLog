@@ -154,6 +154,59 @@
 
         Reviewed by Adam Roben.
 
+        Fill in more of PluginProcess
+        https://bugs.webkit.org/show_bug.cgi?id=46534
+
+        * DerivedSources.make:
+        Add PluginProcessProxy.
+
+        * Platform/CoreIPC/MessageID.h:
+        Add a MessageClassPluginProcessProxy message class.
+
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::PluginProcess):
+        Initialize the shutdown timer.
+
+        (WebKit::PluginProcess::initializeConnection):
+        Rename this to initializeConnection to avoid conflicts in the CoreIPC message handler.
+
+        (WebKit::PluginProcess::removeWebProcessConnection):
+        Remove the given web process connection from our vector.
+
+        (WebKit::PluginProcess::initialize):
+        Create the plug-in module.
+
+        (WebKit::PluginProcess::createWebProcessConnection):
+        Create a connection handle and send it to the UI process.
+
+        (WebKit::PluginProcess::shutdownTimerFired):
+        Quit.
+
+        * PluginProcess/mac/PluginProcessMainMac.mm:
+        (WebKit::PluginProcessMain):
+        Call initializeConnection.
+
+        * Scripts/webkit2/messages.py:
+        Add CoreIPC::MachPort as a special case.
+
+        * Scripts/webkit2/messages_unittest.py:
+        Add test case.
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::didCreateWebProcessConnection):
+        Add empty function.
+
+        * UIProcess/Plugins/PluginProcessProxy.messages.in: Added.
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add PluginProcessProxy.messages.in.
+
+        * WebKit2Prefix.h:
+        Add an ENABLE_PLUGIN_PROCESS #define which is 0 for now.
+
+2010-09-24  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
         messages_unittest.py should compare the generated results against expected results
         https://bugs.webkit.org/show_bug.cgi?id=46490
 

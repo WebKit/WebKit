@@ -43,6 +43,9 @@
 #define ENABLE_WEB_PROCESS_SANDBOX 1
 #endif
 
+// FIXME: Enable once this works well enough.
+#define ENABLE_PLUGIN_PROCESS 0
+
 #import <CoreGraphics/CoreGraphics.h>
 
 #ifdef __OBJC__

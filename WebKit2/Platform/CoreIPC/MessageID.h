@@ -48,6 +48,9 @@ enum MessageClass {
     
     // Messages sent by the UI process to the plug-in process.
     MessageClassPluginProcess,
+
+    // Messages sent by the plug-in process to the UI process.
+    MessageClassPluginProcessProxy,
 };
 
 template<typename> struct MessageKindTraits { };
