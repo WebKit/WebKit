@@ -426,6 +426,13 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
     emitPutVirtualRegister(dst);
 }
 
+void JIT::emit_op_new_func(Instruction* currentInstruction)
+{
+    JITStubCall stubCall(this, cti_op_new_func);
+    stubCall.addArgument(ImmPtr(m_codeBlock->functionDecl(currentInstruction[2].u.operand)));
+    stubCall.call(currentInstruction[1].u.operand);
+}
+
 void JIT::emit_op_call(Instruction* currentInstruction)
 {
     compileOpCall(op_call, currentInstruction, m_callLinkInfoIndex++);
@@ -1211,11 +1218,12 @@ void JIT::emit_op_create_arguments(Instruction* currentInstruction)
     argsCreated.link(this);
 }
 
-void JIT::emit_op_init_lazy_reg(Instruction* currentInstruction)
+void JIT::emit_op_init_arguments(Instruction* currentInstruction)
 {
     unsigned dst = currentInstruction[1].u.operand;
 
     storePtr(ImmPtr(0), Address(callFrameRegister, sizeof(Register) * dst));
+    storePtr(ImmPtr(0), Address(callFrameRegister, sizeof(Register) * (unmodifiedArgumentsRegister(dst))));
 }
 
 void JIT::emit_op_convert_this(Instruction* currentInstruction)
@@ -1576,24 +1584,6 @@ void JIT::emitSlow_op_load_varargs(Instruction* currentInstruction, Vector<SlowC
     stubCall.call();
     // Stores a naked int32 in the register file.
     store32(returnValueRegister, Address(callFrameRegister, argCountDst * sizeof(Register)));
-}
-
-void JIT::emit_op_new_func(Instruction* currentInstruction)
-{
-    Jump lazyJump;
-    int dst = currentInstruction[1].u.operand;
-    if (currentInstruction[3].u.operand) {
-#if USE(JSVALUE32_64)
-        lazyJump = branch32(NotEqual, tagFor(dst), Imm32(JSValue::EmptyValueTag));
-#else
-        lazyJump = branchTestPtr(NonZero, addressFor(dst));
-#endif
-    }
-    JITStubCall stubCall(this, cti_op_new_func);
-    stubCall.addArgument(ImmPtr(m_codeBlock->functionDecl(currentInstruction[2].u.operand)));
-    stubCall.call(currentInstruction[1].u.operand);
-    if (currentInstruction[3].u.operand)
-        lazyJump.link(this);
 }
 
 // For both JSValue32_64 and JSValue32

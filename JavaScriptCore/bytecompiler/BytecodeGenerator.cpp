@@ -214,8 +214,6 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, const Debugger* d
     , m_nextGlobalIndex(-1)
     , m_nextConstantOffset(0)
     , m_globalConstantIndex(0)
-    , m_firstLazyFunction(0)
-    , m_lastLazyFunction(0)
     , m_globalData(&scopeChain.globalObject()->globalExec()->globalData())
     , m_lastOpcodeID(op_end)
 #ifndef NDEBUG
@@ -306,8 +304,6 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, const Debug
     , m_codeType(FunctionCode)
     , m_nextConstantOffset(0)
     , m_globalConstantIndex(0)
-    , m_firstLazyFunction(0)
-    , m_lastLazyFunction(0)
     , m_globalData(&scopeChain.globalObject()->globalExec()->globalData())
     , m_lastOpcodeID(op_end)
     , m_emitNodeDepth(0)
@@ -339,8 +335,8 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, const Debug
         codeBlock->setArgumentsRegister(argumentsRegister->index());
         ASSERT_UNUSED(unmodifiedArgumentsRegister, unmodifiedArgumentsRegister->index() == JSC::unmodifiedArgumentsRegister(codeBlock->argumentsRegister()));
 
-        emitInitLazyRegister(argumentsRegister);
-        emitInitLazyRegister(unmodifiedArgumentsRegister);
+        emitOpcode(op_init_arguments);
+        instructions().append(argumentsRegister->index());
 
         // The debugger currently retrieves the arguments object from an activation rather than pulling
         // it from a call frame.  In the long-term it should stop doing that (<rdar://problem/6911886>),
@@ -371,24 +367,15 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, const Debug
                 addVar(ident, varStack[i].second & DeclarationStacks::IsConstant);
         }
     }
-    bool canLazilyCreateFunctions = !functionBody->needsActivationForMoreThanVariables();
     codeBlock->m_numCapturedVars = codeBlock->m_numVars;
-    m_firstLazyFunction = codeBlock->m_numVars;
     for (size_t i = 0; i < functionStack.size(); ++i) {
         FunctionBodyNode* function = functionStack[i];
         const Identifier& ident = function->ident();
         if (!functionBody->captures(ident)) {
             m_functions.add(ident.impl());
-            RefPtr<RegisterID> reg = addVar(ident, false);
-            if (!canLazilyCreateFunctions)
-                emitNewFunction(reg.get(), function);
-            else {
-                emitInitLazyRegister(reg.get());
-                m_lazyFunctions.set(reg->index(), function);
-            }
+            emitNewFunction(addVar(ident, false), function);
         }
     }
-    m_lastLazyFunction = canLazilyCreateFunctions ? codeBlock->m_numVars : m_firstLazyFunction;
     for (size_t i = 0; i < varStack.size(); ++i) {
         const Identifier& ident = *varStack[i].first;
         if (!functionBody->captures(ident))
@@ -446,8 +433,6 @@ BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, const Debugger* debugge
     , m_codeType(EvalCode)
     , m_nextConstantOffset(0)
     , m_globalConstantIndex(0)
-    , m_firstLazyFunction(0)
-    , m_lastLazyFunction(0)
     , m_globalData(&scopeChain.globalObject()->globalExec()->globalData())
     , m_lastOpcodeID(op_end)
     , m_emitNodeDepth(0)
@@ -475,13 +460,6 @@ BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, const Debugger* debugge
     codeBlock->adoptVariables(variables);
     codeBlock->m_numCapturedVars = codeBlock->m_numVars;
     preserveLastVar();
-}
-
-RegisterID* BytecodeGenerator::emitInitLazyRegister(RegisterID* reg)
-{
-    emitOpcode(op_init_lazy_reg);
-    instructions().append(reg->index());
-    return reg;
 }
 
 void BytecodeGenerator::addParameter(const Identifier& ident, int parameterIndex)
@@ -514,7 +492,7 @@ RegisterID* BytecodeGenerator::registerFor(const Identifier& ident)
     if (ident == propertyNames().arguments)
         createArgumentsIfNecessary();
 
-    return createLazyRegisterIfNecessary(&registerFor(entry.getIndex()));
+    return &registerFor(entry.getIndex());
 }
 
 bool BytecodeGenerator::willResolveToArguments(const Identifier& ident)
@@ -544,14 +522,6 @@ RegisterID* BytecodeGenerator::uncheckedRegisterForArguments()
     return &registerFor(entry.getIndex());
 }
 
-RegisterID* BytecodeGenerator::createLazyRegisterIfNecessary(RegisterID* reg)
-{
-    if (m_lastLazyFunction <= reg->index() || reg->index() < m_firstLazyFunction)
-        return reg;
-    emitLazyNewFunction(reg, m_lazyFunctions.get(reg->index()));
-    return reg;
-}
-
 RegisterID* BytecodeGenerator::constRegisterFor(const Identifier& ident)
 {
     if (m_codeType == EvalCode)
@@ -561,7 +531,7 @@ RegisterID* BytecodeGenerator::constRegisterFor(const Identifier& ident)
     if (entry.isNull())
         return 0;
 
-    return createLazyRegisterIfNecessary(&registerFor(entry.getIndex()));
+    return &registerFor(entry.getIndex());
 }
 
 bool BytecodeGenerator::isLocal(const Identifier& ident)
@@ -1469,23 +1439,11 @@ RegisterID* BytecodeGenerator::emitNewArray(RegisterID* dst, ElementNode* elemen
 
 RegisterID* BytecodeGenerator::emitNewFunction(RegisterID* dst, FunctionBodyNode* function)
 {
-    return emitNewFunctionInternal(dst, m_codeBlock->addFunctionDecl(makeFunction(m_globalData, function)), false);
-}
+    unsigned index = m_codeBlock->addFunctionDecl(makeFunction(m_globalData, function));
 
-RegisterID* BytecodeGenerator::emitLazyNewFunction(RegisterID* dst, FunctionBodyNode* function)
-{
-    std::pair<FunctionOffsetMap::iterator, bool> ptr = m_functionOffsets.add(function, 0);
-    if (ptr.second)
-        ptr.first->second = m_codeBlock->addFunctionDecl(makeFunction(m_globalData, function));
-    return emitNewFunctionInternal(dst, ptr.first->second, true);
-}
-
-RegisterID* BytecodeGenerator::emitNewFunctionInternal(RegisterID* dst, unsigned index, bool doNullCheck)
-{
     emitOpcode(op_new_func);
     instructions().append(dst->index());
     instructions().append(index);
-    instructions().append(doNullCheck);
     return dst;
 }
 

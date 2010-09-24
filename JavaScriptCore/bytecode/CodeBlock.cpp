@@ -495,9 +495,9 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printf("[%4d] create_arguments\t %s\n", location, registerName(exec, r0).data());
             break;
         }
-        case op_init_lazy_reg: {
+        case op_init_arguments: {
             int r0 = (++it)->u.operand;
-            printf("[%4d] init_lazy_reg\t %s\n", location, registerName(exec, r0).data());
+            printf("[%4d] init_arguments\t %s\n", location, registerName(exec, r0).data());
             break;
         }
         case op_get_callee: {
@@ -713,7 +713,9 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
         case op_resolve_global: {
             int r0 = (++it)->u.operand;
             int id0 = (++it)->u.operand;
-            printf("[%4d] resolve_global\t %s, %s\n", location, registerName(exec, r0).data(), idName(id0, m_identifiers[id0]).data());
+            JSValue scope = JSValue((++it)->u.jsCell);
+            ++it;
+            printf("[%4d] resolve_global\t %s, %s, %s\n", location, registerName(exec, r0).data(), valueToSourceString(exec, scope).utf8().data(), idName(id0, m_identifiers[id0]).data());
             it += 2;
             break;
         }
@@ -1028,8 +1030,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
         case op_new_func: {
             int r0 = (++it)->u.operand;
             int f0 = (++it)->u.operand;
-            int shouldCheck = (++it)->u.operand;
-            printf("[%4d] new_func\t\t %s, f%d, %s\n", location, registerName(exec, r0).data(), f0, shouldCheck ? "<Checked>" : "<Unchecked>");
+            printf("[%4d] new_func\t\t %s, f%d\n", location, registerName(exec, r0).data(), f0);
             break;
         }
         case op_new_func_exp: {
