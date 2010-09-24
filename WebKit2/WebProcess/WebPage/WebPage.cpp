@@ -42,6 +42,7 @@
 #include "WebEventConversion.h"
 #include "WebFrame.h"
 #include "WebInspectorClient.h"
+#include "WebPageCreationParameters.h"
 #include "WebPageProxyMessageKinds.h"
 #include "WebProcessProxyMessageKinds.h"
 #include "WebPreferencesStore.h"
@@ -81,9 +82,9 @@ namespace WebKit {
 static WTF::RefCountedLeakCounter webPageCounter("WebPage");
 #endif
 
-PassRefPtr<WebPage> WebPage::create(uint64_t pageID, const IntSize& viewSize, const WebPreferencesStore& store, const DrawingAreaBase::DrawingAreaInfo& drawingAreaInfo)
+PassRefPtr<WebPage> WebPage::create(uint64_t pageID, const WebPageCreationParameters& parameters)
 {
-    RefPtr<WebPage> page = adoptRef(new WebPage(pageID, viewSize, store, drawingAreaInfo));
+    RefPtr<WebPage> page = adoptRef(new WebPage(pageID, parameters));
 
     if (WebProcess::shared().injectedBundle())
         WebProcess::shared().injectedBundle()->didCreatePage(page.get());
@@ -91,9 +92,9 @@ PassRefPtr<WebPage> WebPage::create(uint64_t pageID, const IntSize& viewSize, co
     return page.release();
 }
 
-WebPage::WebPage(uint64_t pageID, const IntSize& viewSize, const WebPreferencesStore& store, const DrawingAreaBase::DrawingAreaInfo& drawingAreaInfo)
-    : m_viewSize(viewSize)
-    , m_drawingArea(DrawingArea::create(drawingAreaInfo.type, drawingAreaInfo.id, this))
+WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
+    : m_viewSize(parameters.viewSize)
+    , m_drawingArea(DrawingArea::create(parameters.drawingAreaInfo.type, parameters.drawingAreaInfo.id, this))
     , m_isInRedo(false)
 #if PLATFORM(MAC)
     , m_windowIsVisible(false)
@@ -111,23 +112,23 @@ WebPage::WebPage(uint64_t pageID, const IntSize& viewSize, const WebPreferencesS
     pageClients.backForwardControllerClient = new WebBackForwardControllerClient(this);
     m_page = adoptPtr(new Page(pageClients));
 
-    m_page->settings()->setJavaScriptEnabled(store.javaScriptEnabled);
-    m_page->settings()->setLoadsImagesAutomatically(store.loadsImagesAutomatically);
-    m_page->settings()->setPluginsEnabled(store.pluginsEnabled);
-    m_page->settings()->setOfflineWebApplicationCacheEnabled(store.offlineWebApplicationCacheEnabled);
-    m_page->settings()->setLocalStorageEnabled(store.localStorageEnabled);
-    m_page->settings()->setXSSAuditorEnabled(store.xssAuditorEnabled);
-    m_page->settings()->setFrameFlatteningEnabled(store.frameFlatteningEnabled);
-    m_page->settings()->setMinimumFontSize(store.minimumFontSize);
-    m_page->settings()->setMinimumLogicalFontSize(store.minimumLogicalFontSize);
-    m_page->settings()->setDefaultFontSize(store.defaultFontSize);
-    m_page->settings()->setDefaultFixedFontSize(store.defaultFixedFontSize);
-    m_page->settings()->setStandardFontFamily(store.standardFontFamily);
-    m_page->settings()->setCursiveFontFamily(store.cursiveFontFamily);
-    m_page->settings()->setFantasyFontFamily(store.fantasyFontFamily);
-    m_page->settings()->setFixedFontFamily(store.fixedFontFamily);
-    m_page->settings()->setSansSerifFontFamily(store.sansSerifFontFamily);
-    m_page->settings()->setSerifFontFamily(store.serifFontFamily);
+    m_page->settings()->setJavaScriptEnabled(parameters.store.javaScriptEnabled);
+    m_page->settings()->setLoadsImagesAutomatically(parameters.store.loadsImagesAutomatically);
+    m_page->settings()->setPluginsEnabled(parameters.store.pluginsEnabled);
+    m_page->settings()->setOfflineWebApplicationCacheEnabled(parameters.store.offlineWebApplicationCacheEnabled);
+    m_page->settings()->setLocalStorageEnabled(parameters.store.localStorageEnabled);
+    m_page->settings()->setXSSAuditorEnabled(parameters.store.xssAuditorEnabled);
+    m_page->settings()->setFrameFlatteningEnabled(parameters.store.frameFlatteningEnabled);
+    m_page->settings()->setMinimumFontSize(parameters.store.minimumFontSize);
+    m_page->settings()->setMinimumLogicalFontSize(parameters.store.minimumLogicalFontSize);
+    m_page->settings()->setDefaultFontSize(parameters.store.defaultFontSize);
+    m_page->settings()->setDefaultFixedFontSize(parameters.store.defaultFixedFontSize);
+    m_page->settings()->setStandardFontFamily(parameters.store.standardFontFamily);
+    m_page->settings()->setCursiveFontFamily(parameters.store.cursiveFontFamily);
+    m_page->settings()->setFantasyFontFamily(parameters.store.fantasyFontFamily);
+    m_page->settings()->setFixedFontFamily(parameters.store.fixedFontFamily);
+    m_page->settings()->setSansSerifFontFamily(parameters.store.sansSerifFontFamily);
+    m_page->settings()->setSerifFontFamily(parameters.store.serifFontFamily);
     m_page->settings()->setJavaScriptCanOpenWindowsAutomatically(true);
 
     m_page->setGroupName("WebKit2Group");

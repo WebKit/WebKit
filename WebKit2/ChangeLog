@@ -1,3 +1,23 @@
+2010-09-24  Adam Roben  <aroben@apple.com>
+
+        Make WebPage::create take a WebPageCreationParameter struct
+
+        It only makes sense, after all.
+
+        Fixes <http://webkit.org/b/46502>.
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::create):
+        (WebKit::WebPage::WebPage):
+        * WebProcess/WebPage/WebPage.h:
+        Changed to take a WebPageCreationParameters struct.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::createWebPage): Changed to pass a
+        WebPageCreationParameters struct.
+
 2010-09-24  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         Reviewed by Andreas Kling.

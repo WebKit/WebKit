@@ -193,7 +193,7 @@ WebPage* WebProcess::createWebPage(uint64_t pageID, const WebPageCreationParamet
     std::pair<HashMap<uint64_t, RefPtr<WebPage> >::iterator, bool> result = m_pageMap.add(pageID, 0);
     if (result.second) {
         ASSERT(!result.first->second);
-        result.first->second = WebPage::create(pageID, parameters.viewSize, parameters.store, parameters.drawingAreaInfo);
+        result.first->second = WebPage::create(pageID, parameters);
     }
 
     ASSERT(result.first->second);
