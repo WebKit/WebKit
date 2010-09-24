@@ -105,11 +105,13 @@ public:
     void rendererContentChanged();
 
     // Interface to start, finish, suspend and resume animations and transitions
-    bool startAnimation(double timeOffset, const Animation* anim, const KeyframeList& keyframes);
     bool startTransition(double timeOffset, int property, const RenderStyle* fromStyle, const RenderStyle* toStyle);
-    void animationFinished(const String& name);
-    void animationPaused(double timeOffset, const String& name);
+    void transitionPaused(double timeOffset, int property);
     void transitionFinished(int property);
+
+    bool startAnimation(double timeOffset, const Animation* anim, const KeyframeList& keyframes);
+    void animationPaused(double timeOffset, const String& name);
+    void animationFinished(const String& name);
 
     void suspendAnimations(double time = 0);
     void resumeAnimations();

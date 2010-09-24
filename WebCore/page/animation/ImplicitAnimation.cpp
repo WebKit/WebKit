@@ -120,6 +120,25 @@ bool ImplicitAnimation::startAnimation(double timeOffset)
     return false;
 }
 
+void ImplicitAnimation::pauseAnimation(double timeOffset)
+{
+    if (!m_object)
+        return;
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_object->hasLayer()) {
+        RenderLayer* layer = toRenderBoxModelObject(m_object)->layer();
+        if (layer->isComposited())
+            layer->backing()->transitionPaused(timeOffset, m_animatingProperty);
+    }
+#else
+    UNUSED_PARAM(timeOffset);
+#endif
+    // Restore the original (unanimated) style
+    if (!paused())
+        setNeedsStyleRecalc(m_object->node());
+}
+
 void ImplicitAnimation::endAnimation()
 {
 #if USE(ACCELERATED_COMPOSITING)

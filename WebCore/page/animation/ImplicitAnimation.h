@@ -48,7 +48,7 @@ public:
 
     virtual void onAnimationEnd(double elapsedTime);
     virtual bool startAnimation(double timeOffset);
-    virtual void pauseAnimation(double /*timeOffset*/) { }
+    virtual void pauseAnimation(double /*timeOffset*/);
     virtual void endAnimation();
 
     virtual void animate(CompositeAnimation*, RenderObject*, const RenderStyle* currentStyle, RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle);

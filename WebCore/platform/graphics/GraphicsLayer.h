@@ -284,13 +284,16 @@ public:
     IntRect contentsRect() const { return m_contentsRect; }
     virtual void setContentsRect(const IntRect& r) { m_contentsRect = r; }
     
+    // Transitions are identified by a special animation name that cannot clash with a keyframe identifier.
+    static String animationNameForTransition(AnimatedPropertyID);
+    
     // Return true if the animation is handled by the compositing system. If this returns
     // false, the animation will be run by AnimationController.
-    virtual bool addAnimation(const KeyframeValueList&, const IntSize& /*boxSize*/, const Animation*, const String& /*keyframesName*/, double /*timeOffset*/) { return false; }
-    virtual void removeAnimationsForProperty(AnimatedPropertyID) { }
-    virtual void removeAnimationsForKeyframes(const String& /* keyframesName */) { }
-    virtual void pauseAnimation(const String& /* keyframesName */, double /*timeOffset*/) { }
-    
+    // These methods handle both transitions and keyframe animations.
+    virtual bool addAnimation(const KeyframeValueList&, const IntSize& /*boxSize*/, const Animation*, const String& /*animationName*/, double /*timeOffset*/)  { return false; }
+    virtual void pauseAnimation(const String& /*animationName*/, double /*timeOffset*/) { }
+    virtual void removeAnimation(const String& /*animationName*/) { }
+
     virtual void suspendAnimations(double time);
     virtual void resumeAnimations();
     

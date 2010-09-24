@@ -12,6 +12,11 @@
   <script type="text/javascript" charset="utf-8">
     function checkRunning()
     {
+      if (!window.layoutTestController) {
+        document.getElementById('result').innerHTML = "This test must be run in DRT."
+        return;
+      }
+        
       var current = layoutTestController.numberOfActiveAnimations();
       if (current == 0)
         document.getElementById('result').innerHTML = "Number of active transitions is (0) as expected";

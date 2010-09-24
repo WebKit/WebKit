@@ -96,11 +96,10 @@ public:
     virtual void suspendAnimations(double time);
     virtual void resumeAnimations();
 
-    virtual bool addAnimation(const KeyframeValueList&, const IntSize& boxSize, const Animation*, const String& keyframesName, double timeOffset);
-    virtual void removeAnimationsForProperty(AnimatedPropertyID);
-    virtual void removeAnimationsForKeyframes(const String& keyframesName);
-    virtual void pauseAnimation(const String& keyframesName, double timeOffset);
-    
+    virtual bool addAnimation(const KeyframeValueList&, const IntSize& boxSize, const Animation*, const String& animationName, double timeOffset);
+    virtual void pauseAnimation(const String& animationName, double timeOffset);
+    virtual void removeAnimation(const String& animationName);
+
     virtual void setContentsToImage(Image*);
     virtual void setContentsToMedia(PlatformLayer*);
     virtual void setContentsToCanvas(PlatformLayer*);
@@ -128,17 +127,17 @@ private:
     CALayer* primaryLayer() const { return m_structuralLayer.get() ? m_structuralLayer.get() : m_layer.get(); }
     CALayer* hostLayerForSublayers() const;
     CALayer* layerForSuperlayer() const;
-    CALayer* animatedLayer(AnimatedPropertyID property) const;
+    CALayer* animatedLayer(AnimatedPropertyID) const;
 
     typedef String CloneID; // Identifier for a given clone, based on original/replica branching down the tree.
     static bool isReplicatedRootClone(const CloneID& cloneID) { return cloneID[0U] & 1; }
 
     typedef HashMap<CloneID, RetainPtr<CALayer> > LayerMap;
     LayerMap* primaryLayerClones() const { return m_structuralLayer.get() ? m_structuralLayerClones.get() : m_layerClones.get(); }
-    LayerMap* animatedLayerClones(AnimatedPropertyID property) const;
+    LayerMap* animatedLayerClones(AnimatedPropertyID) const;
 
-    bool createAnimationFromKeyframes(const KeyframeValueList&, const Animation*, const String& keyframesName, double timeOffset);
-    bool createTransformAnimationsFromKeyframes(const KeyframeValueList&, const Animation*, const String& keyframesName, double timeOffset, const IntSize& boxSize);
+    bool createAnimationFromKeyframes(const KeyframeValueList&, const Animation*, const String& animationName, double timeOffset);
+    bool createTransformAnimationsFromKeyframes(const KeyframeValueList&, const Animation*, const String& animationName, double timeOffset, const IntSize& boxSize);
 
     // Return autoreleased animation (use RetainPtr?)
     CABasicAnimation* createBasicAnimation(const Animation*, AnimatedPropertyID, bool additive);
@@ -153,9 +152,9 @@ private:
     bool setTransformAnimationEndpoints(const KeyframeValueList&, const Animation*, CABasicAnimation*, int functionIndex, TransformOperation::OperationType, bool isMatrixAnimation, const IntSize& boxSize);
     bool setTransformAnimationKeyframes(const KeyframeValueList&, const Animation*, CAKeyframeAnimation*, int functionIndex, TransformOperation::OperationType, bool isMatrixAnimation, const IntSize& boxSize);
     
-    bool animationIsRunning(const String& keyframesName) const
+    bool animationIsRunning(const String& animationName) const
     {
-        return m_runningKeyframeAnimations.find(keyframesName) != m_runningKeyframeAnimations.end();
+        return m_runningAnimations.find(animationName) != m_runningAnimations.end();
     }
 
     void commitLayerChangesBeforeSublayers();
@@ -271,13 +270,13 @@ private:
     void ensureStructuralLayer(StructuralLayerPurpose);
     StructuralLayerPurpose structuralLayerPurpose() const;
 
-    void setAnimationOnLayer(CAPropertyAnimation*, AnimatedPropertyID, const String& keyframesName, int index, double timeOffset);
-    bool removeAnimationFromLayer(AnimatedPropertyID, const String& keyframesName, int index);
-    void pauseAnimationOnLayer(AnimatedPropertyID, const String& keyframesName, int index, double timeOffset);
+    void setCAAnimationOnLayer(CAPropertyAnimation*, AnimatedPropertyID, const String& animationName, int index, double timeOffset);
+    bool removeCAAnimationFromLayer(AnimatedPropertyID, const String& animationName, int index);
+    void pauseCAAnimationOnLayer(AnimatedPropertyID, const String& animationName, int index, double timeOffset);
 
     enum MoveOrCopy { Move, Copy };
-    void moveOrCopyAnimationsForProperty(MoveOrCopy, AnimatedPropertyID property, CALayer * fromLayer, CALayer * toLayer);
-    static void moveOrCopyAllAnimationsForProperty(MoveOrCopy operation, AnimatedPropertyID property, const String& keyframesName, CALayer * fromLayer, CALayer * toLayer);
+    static void moveOrCopyLayerAnimation(MoveOrCopy, const String& animationIdentifier, CALayer *fromLayer, CALayer *toLayer);
+    void moveOrCopyAnimationsForProperty(MoveOrCopy, AnimatedPropertyID, CALayer * fromLayer, CALayer * toLayer);
     
     enum LayerChange {
         NoChange = 0,
@@ -335,29 +334,29 @@ private:
     RetainPtr<CGImageRef> m_uncorrectedContentsImage;
     RetainPtr<CGImageRef> m_pendingContentsImage;
     
-    struct LayerAnimation {
-        LayerAnimation(CAPropertyAnimation* caAnim, const String& keyframesName, AnimatedPropertyID property, int index, double timeOffset)
-        : m_animation(caAnim)
-        , m_keyframesName(keyframesName)
+    // This represents the animation of a single property. There may be multiple transform animations for
+    // a single transition or keyframe animation, so index is used to distinguish these.
+    struct LayerPropertyAnimation {
+        LayerPropertyAnimation(CAPropertyAnimation* caAnimation, const String& animationName, AnimatedPropertyID property, int index, double timeOffset)
+        : m_animation(caAnimation)
+        , m_name(animationName)
         , m_property(property)
         , m_index(index)
         , m_timeOffset(timeOffset)
         { }
 
         RetainPtr<CAPropertyAnimation*> m_animation;
-        String m_keyframesName;
+        String m_name;
         AnimatedPropertyID m_property;
         int m_index;
         double m_timeOffset;
     };
     
-    Vector<LayerAnimation> m_uncomittedAnimations;
-    
-    // Animations on the layer are identified by property + index.
-    typedef int AnimatedProperty;   // std containers choke on the AnimatedPropertyID enum
-    typedef pair<AnimatedProperty, int> AnimationPair;
+    // Uncommitted transitions and animations.
+    Vector<LayerPropertyAnimation> m_uncomittedAnimations;
 
-    HashSet<AnimatedProperty> m_transitionPropertiesToRemove;
+    typedef int AnimatedProperty; // std containers choke on the AnimatedPropertyID enum
+    typedef pair<AnimatedProperty, int> PropertyAnimationPair; // pair of property, index
     
     enum Action { Remove, Pause };
     struct AnimationProcessingAction {
@@ -367,15 +366,15 @@ private:
         {
         }
         Action action;
-        double timeOffset;      // only used for pause
+        double timeOffset; // only used for pause
     };
     typedef HashMap<String, AnimationProcessingAction> AnimationsToProcessMap;
-    AnimationsToProcessMap m_keyframeAnimationsToProcess;
+    AnimationsToProcessMap m_animationsToProcess;
 
-    // Map of keyframe names to their associated lists of animations for running animations, so we can remove/pause them.
-    typedef HashMap<String, Vector<AnimationPair> > KeyframeAnimationsMap;
-    KeyframeAnimationsMap m_runningKeyframeAnimations;
-    
+    // Map of animation names to their associated lists of property animations, so we can remove/pause them.
+    typedef HashMap<String, Vector<PropertyAnimationPair> > AnimationsMap;
+    AnimationsMap m_runningAnimations;
+
     Vector<FloatRect> m_dirtyRects;
     
     LayerChangeFlags m_uncommittedChanges;

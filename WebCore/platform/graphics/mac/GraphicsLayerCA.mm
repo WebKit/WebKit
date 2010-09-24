@@ -197,7 +197,7 @@ static NSValue* getTransformFunctionValue(const TransformOperation* transformOp,
 }
 
 #if HAVE_MODERN_QUARTZCORE
-static NSString* getValueFunctionNameForTransformOperation(TransformOperation::OperationType transformType)
+static NSString *getValueFunctionNameForTransformOperation(TransformOperation::OperationType transformType)
 {
     // Use literal strings to avoid link-time dependency on those symbols.
     switch (transformType) {
@@ -247,17 +247,11 @@ static String propertyIdToString(AnimatedPropertyID property)
     return "";
 }
 
-static String animationIdentifier(AnimatedPropertyID property, const String& keyframesName, int index)
+static String animationIdentifier(const String& animationName, int index)
 {
     StringBuilder builder;
 
-    builder.append(propertyIdToString(property));
-    builder.append("_");
-
-    if (!keyframesName.isEmpty()) {
-        builder.append(keyframesName);
-        builder.append("_");
-    }
+    builder.append(animationName);
     builder.append("_");
     builder.append(String::number(index));
     return builder.toString();
@@ -550,39 +544,40 @@ void GraphicsLayerCA::setChildrenTransform(const TransformationMatrix& t)
     noteLayerPropertyChanged(ChildrenTransformChanged);
 }
 
-void GraphicsLayerCA::moveOrCopyAllAnimationsForProperty(MoveOrCopy operation, AnimatedPropertyID property, const String& keyframesName, CALayer *fromLayer, CALayer *toLayer)
+void GraphicsLayerCA::moveOrCopyLayerAnimation(MoveOrCopy operation, const String& animationIdentifier, CALayer *fromLayer, CALayer *toLayer)
 {
-    for (int index = 0; ; ++index) {
-        String animName = animationIdentifier(property, keyframesName, index);
+    NSString *animationID = animationIdentifier;
+    CAAnimation *anim = [fromLayer animationForKey:animationID];
+    if (!anim)
+        return;
 
-        CAAnimation* anim = [fromLayer animationForKey:animName];
-        if (!anim)
+    switch (operation) {
+        case Move:
+            [anim retain];
+            [fromLayer removeAnimationForKey:animationID];
+            [toLayer addAnimation:anim forKey:animationID];
+            [anim release];
             break;
 
-        switch (operation) {
-            case Move:
-                [anim retain];
-                [fromLayer removeAnimationForKey:animName];
-                [toLayer addAnimation:anim forKey:animName];
-                [anim release];
-                break;
-
-            case Copy:
-                [toLayer addAnimation:anim forKey:animName];
-                break;
-        }
+        case Copy:
+            [toLayer addAnimation:anim forKey:animationID];
+            break;
     }
 }
 
 void GraphicsLayerCA::moveOrCopyAnimationsForProperty(MoveOrCopy operation, AnimatedPropertyID property, CALayer *fromLayer, CALayer *toLayer)
 {
-    // Move transitions for this property.
-    moveOrCopyAllAnimationsForProperty(operation, property, "", fromLayer, toLayer);
-    
     // Look for running animations affecting this property.
-    KeyframeAnimationsMap::const_iterator end = m_runningKeyframeAnimations.end();
-    for (KeyframeAnimationsMap::const_iterator it = m_runningKeyframeAnimations.begin(); it != end; ++it)
-        moveOrCopyAllAnimationsForProperty(operation, property, it->first, fromLayer, toLayer);
+    AnimationsMap::const_iterator end = m_runningAnimations.end();
+    for (AnimationsMap::const_iterator it = m_runningAnimations.begin(); it != end; ++it) {
+        const Vector<PropertyAnimationPair>& propertyAnimations = it->second;
+        size_t numAnimations = propertyAnimations.size();
+        for (size_t i = 0; i < numAnimations; ++i) {
+            const PropertyAnimationPair& currPair = propertyAnimations[i];
+            if (currPair.first == property)
+                moveOrCopyLayerAnimation(operation, animationIdentifier(it->first, currPair.second), fromLayer, toLayer);
+        }
+    }
 }
 
 void GraphicsLayerCA::setPreserves3D(bool preserves3D)
@@ -704,8 +699,10 @@ void GraphicsLayerCA::setContentsRect(const IntRect& rect)
     noteLayerPropertyChanged(ContentsRectChanged);
 }
 
-bool GraphicsLayerCA::addAnimation(const KeyframeValueList& valueList, const IntSize& boxSize, const Animation* anim, const String& keyframesName, double timeOffset)
+bool GraphicsLayerCA::addAnimation(const KeyframeValueList& valueList, const IntSize& boxSize, const Animation* anim, const String& animationName, double timeOffset)
 {
+    ASSERT(!animationName.isEmpty());
+
     if (forceSoftwareAnimation() || !anim || anim->isEmptyOrZeroDuration() || valueList.size() < 2)
         return false;
 
@@ -723,9 +720,9 @@ bool GraphicsLayerCA::addAnimation(const KeyframeValueList& valueList, const Int
 
     bool createdAnimations = false;
     if (valueList.property() == AnimatedPropertyWebkitTransform)
-        createdAnimations = createTransformAnimationsFromKeyframes(valueList, anim, keyframesName, timeOffset, boxSize);
+        createdAnimations = createTransformAnimationsFromKeyframes(valueList, anim, animationName, timeOffset, boxSize);
     else
-        createdAnimations = createAnimationFromKeyframes(valueList, anim, keyframesName, timeOffset);
+        createdAnimations = createAnimationFromKeyframes(valueList, anim, animationName, timeOffset);
 
     if (createdAnimations)
         noteLayerPropertyChanged(AnimationChanged);
@@ -733,38 +730,29 @@ bool GraphicsLayerCA::addAnimation(const KeyframeValueList& valueList, const Int
     return createdAnimations;
 }
 
-void GraphicsLayerCA::removeAnimationsForProperty(AnimatedPropertyID property)
-{
-    if (m_transitionPropertiesToRemove.find(property) != m_transitionPropertiesToRemove.end())
-        return;
-
-    m_transitionPropertiesToRemove.add(property);
-    noteLayerPropertyChanged(AnimationChanged);
-}
-
-void GraphicsLayerCA::removeAnimationsForKeyframes(const String& animationName)
+void GraphicsLayerCA::pauseAnimation(const String& animationName, double timeOffset)
 {
     if (!animationIsRunning(animationName))
         return;
 
-    m_keyframeAnimationsToProcess.add(animationName, AnimationProcessingAction(Remove));
-    noteLayerPropertyChanged(AnimationChanged);
-}
-
-void GraphicsLayerCA::pauseAnimation(const String& keyframesName, double timeOffset)
-{
-    if (!animationIsRunning(keyframesName))
-        return;
-
-    AnimationsToProcessMap::iterator it = m_keyframeAnimationsToProcess.find(keyframesName);
-    if (it != m_keyframeAnimationsToProcess.end()) {
+    AnimationsToProcessMap::iterator it = m_animationsToProcess.find(animationName);
+    if (it != m_animationsToProcess.end()) {
         AnimationProcessingAction& processingInfo = it->second;
         // If an animation is scheduled to be removed, don't change the remove to a pause.
         if (processingInfo.action != Remove)
             processingInfo.action = Pause;
     } else
-        m_keyframeAnimationsToProcess.add(keyframesName, AnimationProcessingAction(Pause, timeOffset));
+        m_animationsToProcess.add(animationName, AnimationProcessingAction(Pause, timeOffset));
 
+    noteLayerPropertyChanged(AnimationChanged);
+}
+
+void GraphicsLayerCA::removeAnimation(const String& animationName)
+{
+    if (!animationIsRunning(animationName))
+        return;
+
+    m_animationsToProcess.add(animationName, AnimationProcessingAction(Remove));
     noteLayerPropertyChanged(AnimationChanged);
 }
 
@@ -1496,68 +1484,49 @@ CALayer *GraphicsLayerCA::replicatedLayerRoot(ReplicaState& replicaState)
 
 void GraphicsLayerCA::updateLayerAnimations()
 {
-    if (m_transitionPropertiesToRemove.size()) {
-        HashSet<int>::const_iterator end = m_transitionPropertiesToRemove.end();
-        for (HashSet<AnimatedProperty>::const_iterator it = m_transitionPropertiesToRemove.begin(); it != end; ++it) {
-            AnimatedPropertyID currProperty = static_cast<AnimatedPropertyID>(*it);
-            // Remove all animations with this property in the key.
-            for (int index = 0; ; ++index) {
-                if (!removeAnimationFromLayer(currProperty, "", index))
-                    break;
-            }
-        }
-
-        m_transitionPropertiesToRemove.clear();
-    }
-
-    if (m_keyframeAnimationsToProcess.size()) {
-        AnimationsToProcessMap::const_iterator end = m_keyframeAnimationsToProcess.end();
-        for (AnimationsToProcessMap::const_iterator it = m_keyframeAnimationsToProcess.begin(); it != end; ++it) {
-            const String& currKeyframeName = it->first;
-            KeyframeAnimationsMap::iterator animationIt = m_runningKeyframeAnimations.find(currKeyframeName);
-            if (animationIt == m_runningKeyframeAnimations.end())
+    if (m_animationsToProcess.size()) {
+        AnimationsToProcessMap::const_iterator end = m_animationsToProcess.end();
+        for (AnimationsToProcessMap::const_iterator it = m_animationsToProcess.begin(); it != end; ++it) {
+            const String& currAnimationName = it->first;
+            AnimationsMap::iterator animationIt = m_runningAnimations.find(currAnimationName);
+            if (animationIt == m_runningAnimations.end())
                 continue;
 
             const AnimationProcessingAction& processingInfo = it->second;
-            const Vector<AnimationPair>& animations = animationIt->second;
+            const Vector<PropertyAnimationPair>& animations = animationIt->second;
             for (size_t i = 0; i < animations.size(); ++i) {
-                const AnimationPair& currPair = animations[i];
+                const PropertyAnimationPair& currPair = animations[i];
                 switch (processingInfo.action) {
                     case Remove:
-                        removeAnimationFromLayer(static_cast<AnimatedPropertyID>(currPair.first), currKeyframeName, currPair.second);
+                        removeCAAnimationFromLayer(static_cast<AnimatedPropertyID>(currPair.first), currAnimationName, currPair.second);
                         break;
                     case Pause:
-                        pauseAnimationOnLayer(static_cast<AnimatedPropertyID>(currPair.first), currKeyframeName, currPair.second, processingInfo.timeOffset);
+                        pauseCAAnimationOnLayer(static_cast<AnimatedPropertyID>(currPair.first), currAnimationName, currPair.second, processingInfo.timeOffset);
                         break;
                 }
             }
 
             if (processingInfo.action == Remove)
-                m_runningKeyframeAnimations.remove(currKeyframeName);
+                m_runningAnimations.remove(currAnimationName);
         }
     
-        m_keyframeAnimationsToProcess.clear();
+        m_animationsToProcess.clear();
     }
     
     size_t numAnimations;
     if ((numAnimations = m_uncomittedAnimations.size())) {
         for (size_t i = 0; i < numAnimations; ++i) {
-            const LayerAnimation& pendingAnimation = m_uncomittedAnimations[i];
-            setAnimationOnLayer(pendingAnimation.m_animation.get(), pendingAnimation.m_property, pendingAnimation.m_keyframesName, pendingAnimation.m_index, pendingAnimation.m_timeOffset);
+            const LayerPropertyAnimation& pendingAnimation = m_uncomittedAnimations[i];
+            setCAAnimationOnLayer(pendingAnimation.m_animation.get(), pendingAnimation.m_property, pendingAnimation.m_name, pendingAnimation.m_index, pendingAnimation.m_timeOffset);
             
-            if (!pendingAnimation.m_keyframesName.isEmpty()) {
-                // If this is a keyframe anim, we have to remember the association of keyframes name to property/index pairs,
-                // so we can remove the animations later if needed.
-                // For transitions, we can just generate animation names with property and index.
-                KeyframeAnimationsMap::iterator it = m_runningKeyframeAnimations.find(pendingAnimation.m_keyframesName);
-                if (it == m_runningKeyframeAnimations.end()) {
-                    Vector<AnimationPair> firstPair;
-                    firstPair.append(AnimationPair(pendingAnimation.m_property, pendingAnimation.m_index));
-                    m_runningKeyframeAnimations.add(pendingAnimation.m_keyframesName, firstPair);
-                } else {
-                    Vector<AnimationPair>& animPairs = it->second;
-                    animPairs.append(AnimationPair(pendingAnimation.m_property, pendingAnimation.m_index));
-                }
+            AnimationsMap::iterator it = m_runningAnimations.find(pendingAnimation.m_name);
+            if (it == m_runningAnimations.end()) {
+                Vector<PropertyAnimationPair> firstPair;
+                firstPair.append(PropertyAnimationPair(pendingAnimation.m_property, pendingAnimation.m_index));
+                m_runningAnimations.add(pendingAnimation.m_name, firstPair);
+            } else {
+                Vector<PropertyAnimationPair>& animPairs = it->second;
+                animPairs.append(PropertyAnimationPair(pendingAnimation.m_property, pendingAnimation.m_index));
             }
         }
         
@@ -1565,16 +1534,16 @@ void GraphicsLayerCA::updateLayerAnimations()
     }
 }
 
-void GraphicsLayerCA::setAnimationOnLayer(CAPropertyAnimation* caAnim, AnimatedPropertyID property, const String& keyframesName, int index, double timeOffset)
+void GraphicsLayerCA::setCAAnimationOnLayer(CAPropertyAnimation* caAnim, AnimatedPropertyID property, const String& animationName, int index, double timeOffset)
 {
     PlatformLayer* layer = animatedLayer(property);
 
     [caAnim setTimeOffset:timeOffset];
     
-    String animationName = animationIdentifier(property, keyframesName, index);
+    String animationID = animationIdentifier(animationName, index);
     
-    [layer removeAnimationForKey:animationName];
-    [layer addAnimation:caAnim forKey:animationName];
+    [layer removeAnimationForKey:animationID];
+    [layer addAnimation:caAnim forKey:animationID];
 
     if (LayerMap* layerCloneMap = animatedLayerClones(property)) {
         LayerMap::const_iterator end = layerCloneMap->end();
@@ -1583,8 +1552,8 @@ void GraphicsLayerCA::setAnimationOnLayer(CAPropertyAnimation* caAnim, AnimatedP
             if (m_replicaLayer && isReplicatedRootClone(it->first))
                 continue;
             CALayer *currLayer = it->second.get();
-            [currLayer removeAnimationForKey:animationName];
-            [currLayer addAnimation:caAnim forKey:animationName];
+            [currLayer removeAnimationForKey:animationID];
+            [currLayer addAnimation:caAnim forKey:animationID];
         }
     }
 }
@@ -1604,16 +1573,16 @@ static void bug7311367Workaround(CALayer* transformLayer, const TransformationMa
     [transformLayer setTransform:caTransform];
 }
 
-bool GraphicsLayerCA::removeAnimationFromLayer(AnimatedPropertyID property, const String& keyframesName, int index)
+bool GraphicsLayerCA::removeCAAnimationFromLayer(AnimatedPropertyID property, const String& animationName, int index)
 {
     PlatformLayer* layer = animatedLayer(property);
 
-    String animationName = animationIdentifier(property, keyframesName, index);
+    String animationID = animationIdentifier(animationName, index);
 
-    if (![layer animationForKey:animationName])
+    if (![layer animationForKey:animationID])
         return false;
     
-    [layer removeAnimationForKey:animationName];
+    [layer removeAnimationForKey:animationID];
     bug7311367Workaround(m_structuralLayer.get(), m_transform);
 
     if (LayerMap* layerCloneMap = animatedLayerClones(property)) {
@@ -1624,7 +1593,7 @@ bool GraphicsLayerCA::removeAnimationFromLayer(AnimatedPropertyID property, cons
                 continue;
 
             CALayer *currLayer = it->second.get();
-            [currLayer removeAnimationForKey:animationName];
+            [currLayer removeAnimationForKey:animationID];
         }
     }
     return true;
@@ -1646,13 +1615,13 @@ static void copyAnimationProperties(CAPropertyAnimation* from, CAPropertyAnimati
 #endif
 }
 
-void GraphicsLayerCA::pauseAnimationOnLayer(AnimatedPropertyID property, const String& keyframesName, int index, double timeOffset)
+void GraphicsLayerCA::pauseCAAnimationOnLayer(AnimatedPropertyID property, const String& animationName, int index, double timeOffset)
 {
     PlatformLayer* layer = animatedLayer(property);
 
-    String animationName = animationIdentifier(property, keyframesName, index);
+    String animationID = animationIdentifier(animationName, index);
 
-    CAAnimation* caAnim = [layer animationForKey:animationName];
+    CAAnimation *caAnim = [layer animationForKey:animationID];
     if (!caAnim)
         return;
 
@@ -1679,7 +1648,7 @@ void GraphicsLayerCA::pauseAnimationOnLayer(AnimatedPropertyID property, const S
     [pausedAnim setSpeed:0];
     [pausedAnim setTimeOffset:timeOffset];
     
-    [layer addAnimation:pausedAnim forKey:animationName];  // This will replace the running animation.
+    [layer addAnimation:pausedAnim forKey:animationID];  // This will replace the running animation.
 
     // Pause the animations on the clones too.
     if (LayerMap* layerCloneMap = animatedLayerClones(property)) {
@@ -1689,7 +1658,7 @@ void GraphicsLayerCA::pauseAnimationOnLayer(AnimatedPropertyID property, const S
             if (m_replicaLayer && isReplicatedRootClone(it->first))
                 continue;
             CALayer *currLayer = it->second.get();
-            [currLayer addAnimation:pausedAnim forKey:animationName];
+            [currLayer addAnimation:pausedAnim forKey:animationID];
         }
     }
 }
@@ -1726,7 +1695,7 @@ void GraphicsLayerCA::updateContentsNeedsDisplay()
         [m_contentsLayer.get() setNeedsDisplay];
 }
 
-bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& keyframesName, double timeOffset)
+bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, double timeOffset)
 {
     ASSERT(valueList.property() != AnimatedPropertyWebkitTransform);
 
@@ -1752,14 +1721,14 @@ bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList& valu
     if (!valuesOK)
         return false;
 
-    m_uncomittedAnimations.append(LayerAnimation(caAnimation, keyframesName, valueList.property(), animationIndex, timeOffset));
+    m_uncomittedAnimations.append(LayerPropertyAnimation(caAnimation, animationName, valueList.property(), animationIndex, timeOffset));
     
     END_BLOCK_OBJC_EXCEPTIONS;
 
     return true;
 }
 
-bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& keyframesName, double timeOffset, const IntSize& boxSize)
+bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, double timeOffset, const IntSize& boxSize)
 {
     ASSERT(valueList.property() == AnimatedPropertyWebkitTransform);
 
@@ -1810,7 +1779,7 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
         if (!validMatrices)
             break;
     
-        m_uncomittedAnimations.append(LayerAnimation(caAnimation, keyframesName, valueList.property(), animationIndex, timeOffset));
+        m_uncomittedAnimations.append(LayerPropertyAnimation(caAnimation, animationName, valueList.property(), animationIndex, timeOffset));
     }
 
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -1844,7 +1813,7 @@ void GraphicsLayerCA::setupAnimation(CAPropertyAnimation* propertyAnim, const An
     else if (anim->direction() == Animation::AnimationDirectionAlternate)
         repeatCount /= 2;
 
-    NSString* fillMode = 0;
+    NSString *fillMode = 0;
     switch (anim->fillMode()) {
     case AnimationFillModeNone:
         fillMode = kCAFillModeForwards; // Use "forwards" rather than "removed" because the style system will remove the animation when it is finished. This avoids a flash.
@@ -1983,7 +1952,7 @@ bool GraphicsLayerCA::setTransformAnimationEndpoints(const KeyframeValueList& va
     [basicAnim setToValue:toValue];
 
 #if HAVE_MODERN_QUARTZCORE
-    if (NSString* valueFunctionName = getValueFunctionNameForTransformOperation(transformOp))
+    if (NSString *valueFunctionName = getValueFunctionNameForTransformOperation(transformOp))
         [basicAnim setValueFunction:[CAValueFunction functionWithName:valueFunctionName]];
 #endif
 
@@ -2028,7 +1997,7 @@ bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& va
     [keyframeAnim setTimingFunctions:timingFunctions.get()];
 
 #if HAVE_MODERN_QUARTZCORE
-    if (NSString* valueFunctionName = getValueFunctionNameForTransformOperation(transformOpType))
+    if (NSString *valueFunctionName = getValueFunctionNameForTransformOperation(transformOpType))
         [keyframeAnim setValueFunction:[CAValueFunction functionWithName:valueFunctionName]];
 #endif
     return true;
@@ -2045,7 +2014,7 @@ void GraphicsLayerCA::suspendAnimations(double time)
         LayerMap::const_iterator end = layerCloneMap->end();
         for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it) {
             CALayer *currLayer = it->second.get();
-            [currLayer setSpeed:0 ];
+            [currLayer setSpeed:0];
             [currLayer setTimeOffset:t];
         }
     }

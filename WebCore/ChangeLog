@@ -1,3 +1,67 @@
+2010-09-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Accelerated transitions do not suspend/resume properly.
+        https://bugs.webkit.org/show_bug.cgi?id=43792
+        
+        Fix suspending of accelerated transitions.
+        
+        GraphicsLayer changes unify the handling of transitions and animations
+        in GraphicsLayer. Both are now identified by name, so the code
+        now refers to "animationName" rather than "keyframesName". Transitions
+        use a dummy name which is not a valid keyframe identifier.
+
+        Tests: animations/suspend-transform-animation.html
+               transitions/suspend-transform-transition.html
+
+        * page/animation/ImplicitAnimation.h:
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::pauseAnimation): Call down to the RenderLayerBacking
+        to tell it that an accelerated transition was paused.
+
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::animationNameForTransition): Create a name
+        for the transition of the given property.
+        (WebCore::GraphicsLayer::addAnimation): Generalize "keyframe" to "animation" in the parameter names.
+        (WebCore::GraphicsLayer::pauseAnimation): ditto
+        (WebCore::GraphicsLayer::removeAnimation): ditto
+
+        * platform/graphics/mac/GraphicsLayerCA.h: Parameter renaming, and some method renames for clarity.
+        (WebCore::GraphicsLayerCA::animationIsRunning):
+        (WebCore::GraphicsLayerCA::LayerPropertyAnimation::LayerPropertyAnimation): struct rename for clarity.
+
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::animationIdentifier): the animationName already has the property baked in.
+        (WebCore::GraphicsLayerCA::moveOrCopyLayerAnimation): just deals with one animation now.
+        (WebCore::GraphicsLayerCA::moveOrCopyAnimationsForProperty): we have to trawl through
+        m_runningAnimations to get the identifiers for the animations that need to be copied.
+        (WebCore::GraphicsLayerCA::addAnimation): rename parameters.
+        (WebCore::GraphicsLayerCA::pauseAnimation): re-ordered methods here. member var renames.
+        (WebCore::GraphicsLayerCA::removeAnimation): ditto.
+        (WebCore::GraphicsLayerCA::updateLayerAnimations): no need to iterate over m_transitionPropertiesToRemove,
+        and no more divergence between transitions and animations.
+        (WebCore::GraphicsLayerCA::setCAAnimationOnLayer): renames for clarity.
+        (WebCore::GraphicsLayerCA::removeCAAnimationFromLayer): ditto
+        (WebCore::GraphicsLayerCA::pauseCAAnimationOnLayer): ditto
+        (WebCore::GraphicsLayerCA::createAnimationFromKeyframes): renames
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes): renames
+        (WebCore::GraphicsLayerCA::suspendAnimations): whitespace.
+
+        * rendering/RenderLayerBacking.h: Group the transition and animation methods together.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::animationPaused): Re-ordered methods for clarity.
+        (WebCore::RenderLayerBacking::animationFinished): ditto
+        (WebCore::RenderLayerBacking::startTransition): Use animationNameForTransition() to generate
+        the animation identifier.
+        (WebCore::RenderLayerBacking::transitionPaused): Call pauseAnimation, using animationNameForTransition()
+        to generate the animation identifier.
+        (WebCore::RenderLayerBacking::transitionFinished): Call removeAnimation, using animationNameForTransition()
+        to generate the animation identifier.
+        (WebCore::RenderLayerBacking::notifyAnimationStarted): Moved.
+        (WebCore::RenderLayerBacking::notifySyncRequired): Moved.
+
 2010-09-23  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.

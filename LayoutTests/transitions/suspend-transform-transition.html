@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style type="text/css" media="screen">
+    #box {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100px;
+        width: 100px;
+        background-color: red;
+        -webkit-transition: -webkit-transform 0.5s linear;
+        -webkit-transform: translateX(0) scale(1);
+    }
+    
+    #box.move {
+        -webkit-transform: translateX(400px) scale(1);
+    }
+
+    #safezone {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100px;
+        width: 300px;
+        left: 100px;
+        background-color: green;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+    
+    function suspendAndWaitForCompletion()
+    {
+        if (window.layoutTestController)
+            layoutTestController.suspendAnimations();
+
+        window.setTimeout(function() {
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }, 250);
+    }
+    
+    function doTest()
+    {
+        document.getElementById('box').className = 'move';
+        window.setTimeout(function() {
+            // Wait for the box to animate into the safe zone (to test that it doesn't snap back to the start).
+            window.setTimeout(suspendAndWaitForCompletion, 250);
+        }, 0); // give the accelerated transition a chance to kick off.
+    }
+
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+<body>
+
+<!-- When suspended, the red box should be hidden by the green box. You should see no red. -->
+<div id="box"></div>
+<div id="safezone"></div>
+
+<div id="result"></div>
+
+</body>
+</html>
