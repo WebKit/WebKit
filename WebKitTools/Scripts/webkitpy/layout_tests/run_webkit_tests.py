@@ -1401,6 +1401,7 @@ def run(port, options, args, regular_output=sys.stderr,
 
         printer.print_update("Checking build ...")
         if not port.check_build(test_runner.needs_http()):
+            _log.error("Build check failed")
             return -1
 
         result_summary = test_runner.set_up_run()

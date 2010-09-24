@@ -84,10 +84,14 @@ class WebKitPort(base.Port):
         return ''
 
     def _build_driver(self):
-        return not self._executive.run_command([
+        exit_code = self._executive.run_command([
             self.script_path("build-dumprendertree"),
             self.flag_from_configuration(self._options.configuration),
         ], return_exit_code=True)
+        if exit_code != 0:
+            _log.error("Failed to build DumpRenderTree")
+            return False
+        return True
 
     def _check_driver(self):
         driver_path = self._path_to_driver()

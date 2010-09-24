@@ -1,3 +1,15 @@
+2010-09-24  Kenichi Ishibashi  <bashi@google.com>
+
+        Reviewed by Eric Seidel.
+
+        new-run-webkit-tests prints out nothing when build-dumprendertree fails
+        https://bugs.webkit.org/show_bug.cgi?id=37563
+
+        Print error message when build-dumprendertree fails.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2010-09-24  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Tony Chang.
