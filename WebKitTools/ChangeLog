@@ -1,3 +1,16 @@
+2010-09-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        commit-queue reports land failures as "PASS"
+        https://bugs.webkit.org/show_bug.cgi?id=46530
+
+        We were ignoring the return value of land instead of passing it back to
+        CommitQueue.  Of course, this was the one case I forgot to test!
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask.py:
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+
 2010-09-24  Kenichi Ishibashi  <bashi@google.com>
 
         Reviewed by Eric Seidel.

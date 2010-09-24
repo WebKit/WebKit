@@ -153,5 +153,4 @@ class CommitQueueTask(object):
         # no one has set commit-queue- since we started working on the patch.)
         if not self._validate():
             return False
-        self._land()
-        return True
+        return self._land()

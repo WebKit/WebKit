@@ -174,3 +174,21 @@ run_webkit_patch: ['build-and-test', '--force-clean', '--no-update', '--build', 
 command_failed: failure_message='Unable to pass tests without patch (tree is red?)' script_error='MOCK clean test failure' patch='197'
 """
         self._run_through_task(commit_queue, expected_stderr)
+
+    def test_land_failure(self):
+        commit_queue = MockCommitQueue([
+            None,
+            None,
+            None,
+            ScriptError("MOCK land failure"),
+        ])
+        expected_stderr = """run_webkit_patch: ['apply-attachment', '--force-clean', '--non-interactive', '--quiet', 197]
+command_passed: success_message='Applied patch' patch='197'
+run_webkit_patch: ['build', '--no-clean', '--no-update', '--build', '--build-style=both', '--quiet']
+command_passed: success_message='Built patch' patch='197'
+run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--quiet', '--non-interactive']
+command_passed: success_message='Passed tests' patch='197'
+run_webkit_patch: ['land-attachment', '--force-clean', '--ignore-builders', '--quiet', '--non-interactive', '--parent-command=commit-queue', 197]
+command_failed: failure_message='Unable to land patch' script_error='MOCK land failure' patch='197'
+"""
+        self._run_through_task(commit_queue, expected_stderr)
