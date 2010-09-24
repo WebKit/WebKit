@@ -609,26 +609,6 @@ static bool coreVideoHas7228836Fix()
     return true;
 }
 
-static bool shouldUsePreHTML5ParserQuirks(WebPreferences* preferences)
-{
-    static bool webKitLinkedBeforeHTML5Parser = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_HTML5_PARSER);
-    
-    // AIM clients linked against versions of WebKit prior to the introduction
-    // of the HTML5 parser contain markup incompatible with the new parser.
-    // Enable parser quirks to remain compatible with these clients. See
-    // <https://bugs.webkit.org/show_bug.cgi?id=46134>.
-    static bool isAIMAndNeedsParserQuirks = applicationIsAOLInstantMessenger() && webKitLinkedBeforeHTML5Parser;
-    
-    // Microsoft My Day loads scripts using self-closing script tags, markup
-    // which is incompatible with the HTML5 parser. Enable parser quirks for
-    // this application. See <https://bugs.webkit.org/show_bug.cgi?id=46334>.
-    static bool isMicrosoftMyDayAndNeedsParserQuirks = applicationIsMicrosoftMyDay() && webKitLinkedBeforeHTML5Parser;
-    
-    return isAIMAndNeedsParserQuirks
-        || isMicrosoftMyDayAndNeedsParserQuirks
-        || [preferences usePreHTML5ParserQuirks];
-}
-
 static bool shouldEnableLoadDeferring()
 {
     return !applicationIsAdobeInstaller();
@@ -1378,6 +1358,27 @@ static bool fastDocumentTeardownEnabled()
     return needsQuirk;
 }
 
+
+- (BOOL)_needsPreHTML5ParserQuirks
+{    
+    // AOL Instant Messenger and Microsoft My Day contain markup incompatible
+    // with the new HTML5 parser. If these applications were linked against a
+    // version of WebKit prior to the introduction of the HTML5 parser, enable
+    // parser quirks to maintain compatibility. For details, see 
+    // <https://bugs.webkit.org/show_bug.cgi?id=46134> and
+    // <https://bugs.webkit.org/show_bug.cgi?id=46334>.
+    static bool isApplicationNeedingParserQuirks = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_HTML5_PARSER)
+        && (applicationIsAOLInstantMessenger() || applicationIsMicrosoftMyDay());
+
+    return isApplicationNeedingParserQuirks
+#if ENABLE(DASHBOARD_SUPPORT)
+        // Pre-HTML5 parser quirks are required to remain compatible with many
+        // Dashboard widgets. See <rdar://problem/8175982>.
+        || (_private->page && _private->page->settings()->usesDashboardBackwardCompatibilityMode())
+#endif
+        || [[self preferences] usePreHTML5ParserQuirks];
+}
+
 - (void)_preferencesChangedNotification:(NSNotification *)notification
 {
     WebPreferences *preferences = (WebPreferences *)[notification object];
@@ -1474,7 +1475,7 @@ static bool fastDocumentTeardownEnabled()
 #endif
     settings->setMemoryInfoEnabled([preferences memoryInfoEnabled]);
     settings->setHyperlinkAuditingEnabled([preferences hyperlinkAuditingEnabled]);
-    settings->setUsePreHTML5ParserQuirks(shouldUsePreHTML5ParserQuirks(preferences));
+    settings->setUsePreHTML5ParserQuirks([self _needsPreHTML5ParserQuirks]);
 
     // Application Cache Preferences are stored on the global cache storage manager, not in Settings.
     [WebApplicationCache setDefaultOriginQuota:[preferences applicationCacheDefaultOriginQuota]];
@@ -2004,6 +2005,11 @@ static inline IMP getMethod(id o, SEL s)
             break;
         }
     }
+
+    // Pre-HTML5 parser quirks should be enabled if Dashboard is in backward
+    // compatibility mode. See <rdar://problem/8175982>.
+    if (_private->page)
+        _private->page->settings()->setUsePreHTML5ParserQuirks([self _needsPreHTML5ParserQuirks]);
 }
 
 - (BOOL)_dashboardBehavior:(WebDashboardBehavior)behavior

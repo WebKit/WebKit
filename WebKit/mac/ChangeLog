@@ -1,3 +1,22 @@
+2010-09-23  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r61285): some Dashboard widgets are always invisible due to
+        HTML parser changes.
+        https://bugs.webkit.org/show_bug.cgi?id=46435
+
+        Enable pre-HTML5 parser quirks if Dashboard is in backward compatibility
+        mode.
+
+        * WebView/WebView.mm:
+        (-[WebView _needsPreHTML5ParserQuirks]): Renamed from
+        shouldUsePreHTML5ParserQuirks(). Return true if
+        WebCore::Settings::usesDashboardCompatibilityMode() is true.
+        (-[WebView _preferencesChangedNotification:]):
+        (-[WebView _setDashboardBehavior:to:]): Enable pre-HTML5 parser quirks
+        if Dashboard behavior is set to backward compatibility mode.
+
 2010-09-23  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.
