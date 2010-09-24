@@ -204,6 +204,7 @@ private:
         Scope()
             : m_usesEval(false)
             , m_needsFullActivation(false)
+            , m_allowsNewDecls(true)
         {
         }
         
@@ -212,6 +213,9 @@ private:
             m_declaredVariables.add(ident->ustring().impl());
         }
         
+        void preventNewDecls() { m_allowsNewDecls = false; }
+        bool allowsNewDecls() const { return m_allowsNewDecls; }
+
         void useVariable(const Identifier* ident, bool isEval)
         {
             m_usesEval |= isEval;
@@ -249,6 +253,7 @@ private:
     private:
         bool m_usesEval;
         bool m_needsFullActivation;
+        bool m_allowsNewDecls;
         IdentifierSet m_declaredVariables;
         IdentifierSet m_usedVariables;
         IdentifierSet m_closedVariables;
@@ -286,6 +291,17 @@ private:
         ASSERT(m_scopeStack.size() > 1);
         m_scopeStack[m_scopeStack.size() - 2].collectFreeVariables(&m_scopeStack.last(), shouldTrackClosedVariables);
         m_scopeStack.removeLast();
+    }
+    
+    void declareVariable(const Identifier* ident)
+    {
+        unsigned i = m_scopeStack.size() - 1;
+        ASSERT(i < m_scopeStack.size());
+        while (!m_scopeStack[i].allowsNewDecls()) {
+            i--;
+            ASSERT(i < m_scopeStack.size());
+        }
+        m_scopeStack[i].declareVariable(ident);
     }
 
     ScopeStack m_scopeStack;
@@ -425,7 +441,7 @@ template <class TreeBuilder> TreeExpression JSParser::parseVarDeclarationList(Tr
         lastIdent = name;
         next();
         bool hasInitializer = match(EQUAL);
-        currentScope()->declareVariable(name);
+        declareVariable(name);
         context.addVar(name, (hasInitializer || (!m_allowsIn && match(INTOKEN))) ? DeclarationStacks::HasInitializer : 0);
         if (hasInitializer) {
             int varDivot = tokenStart() + 1;
@@ -457,7 +473,7 @@ template <class TreeBuilder> TreeConstDeclList JSParser::parseConstDeclarationLi
         const Identifier* name = m_token.m_data.ident;
         next();
         bool hasInitializer = match(EQUAL);
-        currentScope()->declareVariable(name);
+        declareVariable(name);
         context.addVar(name, DeclarationStacks::IsConstant | (hasInitializer ? DeclarationStacks::HasInitializer : 0));
         TreeExpression initializer = 0;
         if (hasInitializer) {
@@ -759,6 +775,7 @@ template <class TreeBuilder> TreeStatement JSParser::parseTryStatement(TreeBuild
         next();
         ScopeRef catchScope = pushScope();
         catchScope->declareVariable(ident);
+        catchScope->preventNewDecls();
         consumeOrFail(CLOSEPAREN);
         matchOrFail(OPENBRACE);
         int initialEvalCount = context.evalCount();
@@ -862,7 +879,7 @@ template <class TreeBuilder> TreeFormalParameterList JSParser::parseFormalParame
 {
     matchOrFail(IDENT);
     usesArguments = m_globalData->propertyNames->arguments == *m_token.m_data.ident;
-    currentScope()->declareVariable(m_token.m_data.ident);
+    declareVariable(m_token.m_data.ident);
     TreeFormalParameterList list = context.createFormalParameterList(*m_token.m_data.ident);
     TreeFormalParameterList tail = list;
     next();
@@ -870,7 +887,7 @@ template <class TreeBuilder> TreeFormalParameterList JSParser::parseFormalParame
         next();
         matchOrFail(IDENT);
         const Identifier* ident = m_token.m_data.ident;
-        currentScope()->declareVariable(ident);
+        declareVariable(ident);
         next();
         usesArguments = usesArguments || m_globalData->propertyNames->arguments == *ident;
         tail = context.createFormalParameterList(tail, *ident);
@@ -933,7 +950,7 @@ template <class TreeBuilder> TreeStatement JSParser::parseFunctionDeclaration(Tr
     int bodyStartLine = 0;
     failIfFalse((parseFunctionInfo<FunctionNeedsName, true>(context, name, parameters, body, openBracePos, closeBracePos, bodyStartLine)));
     failIfFalse(name);
-    currentScope()->declareVariable(name);
+    declareVariable(name);
     return context.createFuncDeclStatement(name, body, parameters, openBracePos, closeBracePos, bodyStartLine, m_lastLine);
 }
 

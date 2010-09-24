@@ -1,3 +1,28 @@
+2010-09-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Variable declarations inside a catch scope don't get propogated to the parent scope
+        https://bugs.webkit.org/show_bug.cgi?id=46501
+
+        Add logic to make variable declaration look for a scope for the
+        new variable.  This allows us to create a scope (eg. for catch)
+        and then seal it, so that additional variable declarations
+        contained are propogated to the correct target.  Strangely this
+        comes out as a performance win, but I think it's mostly cache
+        effects.
+
+        * parser/JSParser.cpp:
+        (JSC::JSParser::Scope::Scope):
+        (JSC::JSParser::Scope::preventNewDecls):
+        (JSC::JSParser::Scope::allowsNewDecls):
+        (JSC::JSParser::declareVariable):
+        (JSC::JSParser::parseVarDeclarationList):
+        (JSC::JSParser::parseConstDeclarationList):
+        (JSC::JSParser::parseTryStatement):
+        (JSC::JSParser::parseFormalParameters):
+        (JSC::JSParser::parseFunctionDeclaration):
+
 2010-09-24  İsmail Dönmez  <ismail@namtrac.org>
 
        Reviewed by Csaba Osztrogonác.
