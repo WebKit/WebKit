@@ -3096,11 +3096,6 @@ BUGWK46163 : media/video-controls-with-mutation-event-handler.html = CRASH
 
 BUGWK46328 : fast/filesystem/flags-passing.html = TEXT
 
-// These 3 tests need a downstream test_shell change to work.
-BUGJAPHET : http/tests/navigation/ping-cross-origin-from-https.html = TEXT TIMEOUT
-BUGJAPHET : http/tests/navigation/ping-same-origin.html = TEXT TIMEOUT
-BUGJAPHET : http/tests/navigation/ping-cross-origin.html = TEXT TIMEOUT
-
 // Started crashing as part of the WK roll 68100:68178.
 BUG56732 : storage/indexeddb/transaction-basics.html = CRASH
 

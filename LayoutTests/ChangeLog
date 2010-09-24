@@ -1,3 +1,12 @@
+2010-09-24  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, chromium expectations update.
+
+        http/tests/navigation/ping-* are passing now
+        that they have had their LayoutTestController patch.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-24  Satish Sampath  <satish@chromium.org>
 
         Unreviewed, updating the baseline for a speech input layout test.
