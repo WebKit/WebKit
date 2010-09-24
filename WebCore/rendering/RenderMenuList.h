@@ -74,7 +74,7 @@ private:
 
     virtual const char* renderName() const { return "RenderMenuList"; }
 
-    virtual void calcPrefWidths();
+    virtual void computePreferredLogicalWidths();
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 

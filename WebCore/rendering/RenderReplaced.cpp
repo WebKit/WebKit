@@ -257,24 +257,24 @@ int RenderReplaced::calcAspectRatioHeight() const
     return RenderBox::computeReplacedWidth() * intrinsicHeight / intrinsicWidth;
 }
 
-void RenderReplaced::calcPrefWidths()
+void RenderReplaced::computePreferredLogicalWidths()
 {
-    ASSERT(prefWidthsDirty());
+    ASSERT(preferredLogicalWidthsDirty());
 
     int borderAndPadding = borderAndPaddingWidth();
-    m_maxPrefWidth = computeReplacedWidth(false) + borderAndPadding;
+    m_maxPreferredLogicalWidth = computeReplacedWidth(false) + borderAndPadding;
 
     if (style()->maxWidth().isFixed() && style()->maxWidth().value() != undefinedLength)
-        m_maxPrefWidth = min(m_maxPrefWidth, style()->maxWidth().value() + (style()->boxSizing() == CONTENT_BOX ? borderAndPadding : 0));
+        m_maxPreferredLogicalWidth = min(m_maxPreferredLogicalWidth, style()->maxWidth().value() + (style()->boxSizing() == CONTENT_BOX ? borderAndPadding : 0));
 
     if (style()->width().isPercent() || style()->height().isPercent()
         || style()->maxWidth().isPercent() || style()->maxHeight().isPercent()
         || style()->minWidth().isPercent() || style()->minHeight().isPercent())
-        m_minPrefWidth = 0;
+        m_minPreferredLogicalWidth = 0;
     else
-        m_minPrefWidth = m_maxPrefWidth;
+        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth;
 
-    setPrefWidthsDirty(false);
+    setPreferredLogicalWidthsDirty(false);
 }
 
 int RenderReplaced::lineHeight(bool, bool) const

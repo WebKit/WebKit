@@ -394,7 +394,7 @@ public:
     bool posChildNeedsLayout() const { return m_posChildNeedsLayout; }
     bool normalChildNeedsLayout() const { return m_normalChildNeedsLayout; }
     
-    bool prefWidthsDirty() const { return m_prefWidthsDirty; }
+    bool preferredLogicalWidthsDirty() const { return m_preferredLogicalWidthsDirty; }
 
     bool isSelectionBorder() const;
 
@@ -455,13 +455,13 @@ public:
     void setNeedsLayout(bool b, bool markParents = true);
     void setChildNeedsLayout(bool b, bool markParents = true);
     void setNeedsPositionedMovementLayout();
-    void setPrefWidthsDirty(bool, bool markParents = true);
-    void invalidateContainerPrefWidths();
+    void setPreferredLogicalWidthsDirty(bool, bool markParents = true);
+    void invalidateContainerPreferredLogicalWidths();
     
     void setNeedsLayoutAndPrefWidthsRecalc()
     {
         setNeedsLayout(true);
-        setPrefWidthsDirty(true);
+        setPreferredLogicalWidthsDirty(true);
     }
 
     void setPositioned(bool b = true)  { m_positioned = b;  }
@@ -561,8 +561,8 @@ public:
     // the rect that will be painted if this object is passed as the paintingRoot
     IntRect paintingRootRect(IntRect& topLevelRect);
 
-    virtual int minPrefWidth() const { return 0; }
-    virtual int maxPrefWidth() const { return 0; }
+    virtual int minPreferredLogicalWidth() const { return 0; }
+    virtual int maxPreferredLogicalWidth() const { return 0; }
 
     RenderStyle* style() const { return m_style.get(); }
     RenderStyle* firstLineStyle() const { return document()->usesFirstLineRules() ? firstLineStyleSlowCase() : style(); }
@@ -812,7 +812,7 @@ private:
     bool m_needsPositionedMovementLayout :1;
     bool m_normalChildNeedsLayout    : 1;
     bool m_posChildNeedsLayout       : 1;
-    bool m_prefWidthsDirty           : 1;
+    bool m_preferredLogicalWidthsDirty           : 1;
     bool m_floating                  : 1;
 
     bool m_positioned                : 1;

@@ -35,7 +35,7 @@ public:
     AutoTableLayout(RenderTable*);
     ~AutoTableLayout();
 
-    virtual void calcPrefWidths(int& minWidth, int& maxWidth);
+    virtual void computePreferredLogicalWidths(int& minWidth, int& maxWidth);
     virtual void layout();
 
 protected:

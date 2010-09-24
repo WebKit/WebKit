@@ -60,10 +60,10 @@ RenderView::RenderView(Node* node, FrameView* view)
     // init RenderObject attributes
     setInline(false);
     
-    m_minPrefWidth = 0;
-    m_maxPrefWidth = 0;
+    m_minPreferredLogicalWidth = 0;
+    m_maxPreferredLogicalWidth = 0;
 
-    setPrefWidthsDirty(true, false);
+    setPreferredLogicalWidthsDirty(true, false);
     
     setPositioned(true); // to 0,0 :)
 }
@@ -86,13 +86,13 @@ void RenderView::computeLogicalWidth()
     m_marginRight = 0;
 }
 
-void RenderView::calcPrefWidths()
+void RenderView::computePreferredLogicalWidths()
 {
-    ASSERT(prefWidthsDirty());
+    ASSERT(preferredLogicalWidthsDirty());
 
-    RenderBlock::calcPrefWidths();
+    RenderBlock::computePreferredLogicalWidths();
 
-    m_maxPrefWidth = m_minPrefWidth;
+    m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth;
 }
 
 void RenderView::layout()
@@ -101,7 +101,7 @@ void RenderView::layout()
         setPageHeight(0);
 
     if (printing())
-        m_minPrefWidth = m_maxPrefWidth = width();
+        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = width();
 
     // Use calcWidth/Height to get the new width/height, since this will take the full page zoom factor into account.
     bool relayoutChildren = !printing() && (!m_frameView || width() != viewWidth() || height() != viewHeight());

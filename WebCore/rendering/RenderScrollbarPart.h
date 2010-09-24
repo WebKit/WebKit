@@ -43,7 +43,7 @@ public:
     virtual bool requiresLayer() const { return false; }
 
     virtual void layout();
-    virtual void calcPrefWidths();
+    virtual void computePreferredLogicalWidths();
     
     void paintIntoRect(GraphicsContext*, int tx, int ty, const IntRect&);
     

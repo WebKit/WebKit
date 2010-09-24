@@ -33,7 +33,7 @@ class FixedTableLayout : public TableLayout {
 public:
     FixedTableLayout(RenderTable*);
 
-    virtual void calcPrefWidths(int& minWidth, int& maxWidth);
+    virtual void computePreferredLogicalWidths(int& minWidth, int& maxWidth);
     virtual void layout();
 
 protected:

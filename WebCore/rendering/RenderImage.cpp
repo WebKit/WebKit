@@ -151,8 +151,8 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
             // lets see if we need to relayout at all..
             int oldwidth = width();
             int oldheight = height();
-            if (!prefWidthsDirty())
-                setPrefWidthsDirty(true);
+            if (!preferredLogicalWidthsDirty())
+                setPreferredLogicalWidthsDirty(true);
             computeLogicalWidth();
             computeLogicalHeight();
 

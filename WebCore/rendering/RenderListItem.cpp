@@ -210,7 +210,7 @@ void RenderListItem::updateMarkerLocation()
                 lineBoxParent = this;
         }
 
-        if (markerPar != lineBoxParent || m_marker->prefWidthsDirty()) {
+        if (markerPar != lineBoxParent || m_marker->preferredLogicalWidthsDirty()) {
             // Removing and adding the marker can trigger repainting in
             // containers other than ourselves, so we need to disable LayoutState.
             view()->disableLayoutState();
@@ -219,20 +219,20 @@ void RenderListItem::updateMarkerLocation()
             if (!lineBoxParent)
                 lineBoxParent = this;
             lineBoxParent->addChild(m_marker, firstNonMarkerChild(lineBoxParent));
-            if (m_marker->prefWidthsDirty())
-                m_marker->calcPrefWidths();
+            if (m_marker->preferredLogicalWidthsDirty())
+                m_marker->computePreferredLogicalWidths();
             view()->enableLayoutState();
         }
     }
 }
 
-void RenderListItem::calcPrefWidths()
+void RenderListItem::computePreferredLogicalWidths()
 {
-    ASSERT(prefWidthsDirty());
+    ASSERT(preferredLogicalWidthsDirty());
     
     updateMarkerLocation();
 
-    RenderBlock::calcPrefWidths();
+    RenderBlock::computePreferredLogicalWidths();
 }
 
 void RenderListItem::layout()

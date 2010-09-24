@@ -36,7 +36,7 @@ public:
 
     virtual const char* renderName() const;
 
-    virtual void calcPrefWidths();
+    virtual void computePreferredLogicalWidths();
     void calcHorizontalPrefWidths();
     void calcVerticalPrefWidths();
 

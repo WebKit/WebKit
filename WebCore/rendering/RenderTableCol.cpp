@@ -88,12 +88,12 @@ void RenderTableCol::imageChanged(WrappedImagePtr, const IntRect*)
     repaint();
 }
 
-void RenderTableCol::calcPrefWidths()
+void RenderTableCol::computePreferredLogicalWidths()
 {
-    setPrefWidthsDirty(false);
+    setPreferredLogicalWidthsDirty(false);
 
     for (RenderObject* child = firstChild(); child; child = child->nextSibling())
-        child->setPrefWidthsDirty(false);
+        child->setPreferredLogicalWidthsDirty(false);
 }
 
 RenderTable* RenderTableCol::table() const

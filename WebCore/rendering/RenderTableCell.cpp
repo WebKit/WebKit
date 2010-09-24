@@ -122,14 +122,14 @@ Length RenderTableCell::styleOrColWidth() const
     return w;
 }
 
-void RenderTableCell::calcPrefWidths()
+void RenderTableCell::computePreferredLogicalWidths()
 {
-    // The child cells rely on the grids up in the sections to do their calcPrefWidths work.  Normally the sections are set up early, as table
+    // The child cells rely on the grids up in the sections to do their computePreferredLogicalWidths work.  Normally the sections are set up early, as table
     // cells are added, but relayout can cause the cells to be freed, leaving stale pointers in the sections'
     // grids.  We must refresh those grids before the child cells try to use them.
     table()->recalcSectionsIfNeeded();
 
-    RenderBlock::calcPrefWidths();
+    RenderBlock::computePreferredLogicalWidths();
     if (node() && style()->autoWrap()) {
         // See if nowrap was set.
         Length w = styleOrColWidth();
@@ -140,7 +140,7 @@ void RenderTableCell::calcPrefWidths()
             // to make the minwidth of the cell into the fixed width.  They do this
             // even in strict mode, so do not make this a quirk.  Affected the top
             // of hiptop.com.
-            m_minPrefWidth = max(w.value(), m_minPrefWidth);
+            m_minPreferredLogicalWidth = max(w.value(), m_minPreferredLogicalWidth);
     }
 }
 

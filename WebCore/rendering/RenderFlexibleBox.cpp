@@ -132,8 +132,8 @@ void RenderFlexibleBox::calcHorizontalPrefWidths()
             marginRight += mr.value();
         margin = marginLeft + marginRight;
 
-        m_minPrefWidth += child->minPrefWidth() + margin;
-        m_maxPrefWidth += child->maxPrefWidth() + margin;
+        m_minPreferredLogicalWidth += child->minPreferredLogicalWidth() + margin;
+        m_maxPreferredLogicalWidth += child->maxPreferredLogicalWidth() + margin;
     }    
 }
 
@@ -155,39 +155,39 @@ void RenderFlexibleBox::calcVerticalPrefWidths()
         if (mr.isFixed())
             margin += mr.value();
         
-        int w = child->minPrefWidth() + margin;
-        m_minPrefWidth = max(w, m_minPrefWidth);
+        int w = child->minPreferredLogicalWidth() + margin;
+        m_minPreferredLogicalWidth = max(w, m_minPreferredLogicalWidth);
         
-        w = child->maxPrefWidth() + margin;
-        m_maxPrefWidth = max(w, m_maxPrefWidth);
+        w = child->maxPreferredLogicalWidth() + margin;
+        m_maxPreferredLogicalWidth = max(w, m_maxPreferredLogicalWidth);
     }    
 }
 
-void RenderFlexibleBox::calcPrefWidths()
+void RenderFlexibleBox::computePreferredLogicalWidths()
 {
-    ASSERT(prefWidthsDirty());
+    ASSERT(preferredLogicalWidthsDirty());
 
     if (style()->width().isFixed() && style()->width().value() > 0)
-        m_minPrefWidth = m_maxPrefWidth = computeContentBoxLogicalWidth(style()->width().value());
+        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = computeContentBoxLogicalWidth(style()->width().value());
     else {
-        m_minPrefWidth = m_maxPrefWidth = 0;
+        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = 0;
 
         if (hasMultipleLines() || isVertical())
             calcVerticalPrefWidths();
         else
             calcHorizontalPrefWidths();
 
-        m_maxPrefWidth = max(m_minPrefWidth, m_maxPrefWidth);
+        m_maxPreferredLogicalWidth = max(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
     }
 
     if (style()->minWidth().isFixed() && style()->minWidth().value() > 0) {
-        m_maxPrefWidth = max(m_maxPrefWidth, computeContentBoxLogicalWidth(style()->minWidth().value()));
-        m_minPrefWidth = max(m_minPrefWidth, computeContentBoxLogicalWidth(style()->minWidth().value()));
+        m_maxPreferredLogicalWidth = max(m_maxPreferredLogicalWidth, computeContentBoxLogicalWidth(style()->minWidth().value()));
+        m_minPreferredLogicalWidth = max(m_minPreferredLogicalWidth, computeContentBoxLogicalWidth(style()->minWidth().value()));
     }
     
     if (style()->maxWidth().isFixed() && style()->maxWidth().value() != undefinedLength) {
-        m_maxPrefWidth = min(m_maxPrefWidth, computeContentBoxLogicalWidth(style()->maxWidth().value()));
-        m_minPrefWidth = min(m_minPrefWidth, computeContentBoxLogicalWidth(style()->maxWidth().value()));
+        m_maxPreferredLogicalWidth = min(m_maxPreferredLogicalWidth, computeContentBoxLogicalWidth(style()->maxWidth().value()));
+        m_minPreferredLogicalWidth = min(m_minPreferredLogicalWidth, computeContentBoxLogicalWidth(style()->maxWidth().value()));
     }
 
     int toAdd = borderAndPaddingWidth();
@@ -195,10 +195,10 @@ void RenderFlexibleBox::calcPrefWidths()
     if (hasOverflowClip() && style()->overflowY() == OSCROLL)
         toAdd += verticalScrollbarWidth();
 
-    m_minPrefWidth += toAdd;
-    m_maxPrefWidth += toAdd;
+    m_minPreferredLogicalWidth += toAdd;
+    m_maxPreferredLogicalWidth += toAdd;
 
-    setPrefWidthsDirty(false);
+    setPreferredLogicalWidthsDirty(false);
 }
 
 void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int /*pageHeight FIXME: Implement */)
@@ -1054,9 +1054,9 @@ int RenderFlexibleBox::allowedChildFlex(RenderBox* child, bool expanding, unsign
                 child->style()->maxWidth().isFixed())
                 maxW = child->style()->maxWidth().value();
             else if (child->style()->maxWidth().type() == Intrinsic)
-                maxW = child->maxPrefWidth();
+                maxW = child->maxPreferredLogicalWidth();
             else if (child->style()->maxWidth().type() == MinIntrinsic)
-                maxW = child->minPrefWidth();
+                maxW = child->minPreferredLogicalWidth();
             if (maxW == INT_MAX)
                 return maxW;
             return max(0, maxW - w);
@@ -1075,14 +1075,14 @@ int RenderFlexibleBox::allowedChildFlex(RenderBox* child, bool expanding, unsign
 
     // FIXME: For now just handle fixed values.
     if (isHorizontal()) {
-        int minW = child->minPrefWidth();
+        int minW = child->minPreferredLogicalWidth();
         int w = child->overrideWidth() - child->borderAndPaddingWidth();
         if (child->style()->minWidth().isFixed())
             minW = child->style()->minWidth().value();
         else if (child->style()->minWidth().type() == Intrinsic)
-            minW = child->maxPrefWidth();
+            minW = child->maxPreferredLogicalWidth();
         else if (child->style()->minWidth().type() == MinIntrinsic)
-            minW = child->minPrefWidth();
+            minW = child->minPreferredLogicalWidth();
             
         int allowedShrinkage = min(0, minW - w);
         return allowedShrinkage;

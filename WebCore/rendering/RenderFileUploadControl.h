@@ -51,7 +51,7 @@ private:
     virtual const char* renderName() const { return "RenderFileUploadControl"; }
 
     virtual void updateFromElement();
-    virtual void calcPrefWidths();
+    virtual void computePreferredLogicalWidths();
     virtual void paintObject(PaintInfo&, int tx, int ty);
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);

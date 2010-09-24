@@ -328,10 +328,10 @@ PassRefPtr<StringImpl> RenderCounter::originalText() const
     return text.impl();
 }
 
-void RenderCounter::calcPrefWidths(int lead)
+void RenderCounter::computePreferredLogicalWidths(int lead)
 {
     setTextInternal(originalText());
-    RenderText::calcPrefWidths(lead);
+    RenderText::computePreferredLogicalWidths(lead);
 }
 
 void RenderCounter::invalidate(const AtomicString& identifier)

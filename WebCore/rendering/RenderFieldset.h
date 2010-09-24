@@ -40,7 +40,7 @@ private:
 
     virtual RenderObject* layoutLegend(bool relayoutChildren);
 
-    virtual void calcPrefWidths();
+    virtual void computePreferredLogicalWidths();
     virtual bool avoidsFloats() const { return true; }
     virtual bool stretchesToMinIntrinsicWidth() const { return true; }
 

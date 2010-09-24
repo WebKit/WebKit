@@ -1,3 +1,135 @@
+2010-09-24  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46482, rename the various prefWidth functions to use
+        preferredLogicalWidth.
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+        (WebCore::AutoTableLayout::computePreferredLogicalWidths):
+        (WebCore::AutoTableLayout::calcEffectiveWidth):
+        * rendering/AutoTableLayout.h:
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::calcWidthArray):
+        (WebCore::FixedTableLayout::computePreferredLogicalWidths):
+        * rendering/FixedTableLayout.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlockChildren):
+        (WebCore::RenderBlock::layoutPositionedObjects):
+        (WebCore::RenderBlock::getClearDelta):
+        (WebCore::RenderBlock::computePreferredLogicalWidths):
+        (WebCore::RenderBlock::computeInlinePreferredLogicalWidths):
+        (WebCore::RenderBlock::computeBlockPreferredLogicalWidths):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::dirtyLineBoxesForRenderer):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::RenderBox):
+        (WebCore::RenderBox::minPreferredLogicalWidth):
+        (WebCore::RenderBox::maxPreferredLogicalWidth):
+        (WebCore::RenderBox::computeLogicalWidth):
+        (WebCore::RenderBox::computeLogicalWidthUsing):
+        (WebCore::RenderBox::computePositionedLogicalWidth):
+        (WebCore::RenderBox::computePositionedLogicalWidthUsing):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::computePreferredLogicalWidths):
+        * rendering/RenderCounter.cpp:
+        (WebCore::RenderCounter::computePreferredLogicalWidths):
+        * rendering/RenderCounter.h:
+        * rendering/RenderDataGrid.cpp:
+        (WebCore::RenderDataGrid::computePreferredLogicalWidths):
+        * rendering/RenderDataGrid.h:
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::computePreferredLogicalWidths):
+        * rendering/RenderFieldset.h:
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::computePreferredLogicalWidths):
+        * rendering/RenderFileUploadControl.h:
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::calcHorizontalPrefWidths):
+        (WebCore::RenderFlexibleBox::calcVerticalPrefWidths):
+        (WebCore::RenderFlexibleBox::computePreferredLogicalWidths):
+        (WebCore::RenderFlexibleBox::allowedChildFlex):
+        * rendering/RenderFlexibleBox.h:
+        * rendering/RenderFrameBase.cpp:
+        (WebCore::RenderFrameBase::layoutWithFlattening):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::canvasSizeChanged):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageChanged):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::computePreferredLogicalWidths):
+        * rendering/RenderListBox.h:
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::updateMarkerLocation):
+        (WebCore::RenderListItem::computePreferredLogicalWidths):
+        * rendering/RenderListItem.h:
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::layout):
+        (WebCore::RenderListMarker::computePreferredLogicalWidths):
+        (WebCore::RenderListMarker::updateMargins):
+        * rendering/RenderListMarker.h:
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::computePreferredLogicalWidths):
+        * rendering/RenderMenuList.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::RenderObject):
+        (WebCore::RenderObject::setPreferredLogicalWidthsDirty):
+        (WebCore::RenderObject::invalidateContainerPreferredLogicalWidths):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::preferredLogicalWidthsDirty):
+        (WebCore::RenderObject::setNeedsLayoutAndPrefWidthsRecalc):
+        (WebCore::RenderObject::minPreferredLogicalWidth):
+        (WebCore::RenderObject::maxPreferredLogicalWidth):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computePreferredLogicalWidths):
+        * rendering/RenderReplaced.h:
+        * rendering/RenderReplica.cpp:
+        (WebCore::RenderReplica::computePreferredLogicalWidths):
+        * rendering/RenderReplica.h:
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::computePreferredLogicalWidths):
+        * rendering/RenderSVGRoot.h:
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::RenderScrollbarPart::computePreferredLogicalWidths):
+        * rendering/RenderScrollbarPart.h:
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::computePreferredLogicalWidths):
+        * rendering/RenderSlider.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::computeLogicalWidth):
+        (WebCore::RenderTable::computePreferredLogicalWidths):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::computePreferredLogicalWidths):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::computePreferredLogicalWidths):
+        * rendering/RenderTableCol.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::trimmedPrefWidths):
+        (WebCore::RenderText::minPreferredLogicalWidth):
+        (WebCore::RenderText::maxPreferredLogicalWidth):
+        (WebCore::RenderText::computePreferredLogicalWidths):
+        (WebCore::RenderText::width):
+        * rendering/RenderText.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::computePreferredLogicalWidths):
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::preferredContentWidth):
+        (WebCore::RenderTextControlSingleLine::preferredDecorationWidthRight):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::updateIntrinsicSize):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        (WebCore::RenderView::computePreferredLogicalWidths):
+        (WebCore::RenderView::layout):
+        * rendering/RenderView.h:
+        * rendering/TableLayout.h:
+
 2010-09-24  Jian Li  <jianli@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

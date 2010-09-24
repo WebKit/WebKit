@@ -95,7 +95,7 @@ protected:
 private:
     virtual const char* renderName() const { return "RenderTextControl"; }
     virtual bool isTextControl() const { return true; }
-    virtual void calcPrefWidths();
+    virtual void computePreferredLogicalWidths();
     virtual void removeLeftoverAnonymousBlock(RenderBlock*) { }
     virtual bool canHaveChildren() const { return false; }
     virtual bool avoidsFloats() const { return true; }

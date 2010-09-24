@@ -39,7 +39,7 @@ public:
     const RenderObjectChildList* children() const { return &m_children; }
     RenderObjectChildList* children() { return &m_children; }
 
-    virtual void calcPrefWidths();
+    virtual void computePreferredLogicalWidths();
 
     int span() const { return m_span; }
     void setSpan(int span) { m_span = span; }

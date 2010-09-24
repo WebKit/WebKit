@@ -206,7 +206,7 @@ void RenderTable::computeLogicalWidth()
     if (widthType > Relative && style()->width().isPositive()) {
         // Percent or fixed table
         setWidth(style()->width().calcMinValue(availableWidth));
-        setWidth(max(minPrefWidth(), width()));
+        setWidth(max(minPreferredLogicalWidth(), width()));
     } else {
         // An auto width table should shrink to fit within the line width if necessary in order to 
         // avoid overlapping floats.
@@ -223,10 +223,10 @@ void RenderTable::computeLogicalWidth()
         int availContentWidth = max(0, availableWidth - marginTotal);
         
         // Ensure we aren't bigger than our max width or smaller than our min width.
-        setWidth(min(availContentWidth, maxPrefWidth()));
+        setWidth(min(availContentWidth, maxPreferredLogicalWidth()));
     }
     
-    setWidth(max(width(), minPrefWidth()));
+    setWidth(max(width(), minPreferredLogicalWidth()));
 
     // Finally, with our true width determined, compute our margins for real.
     m_marginRight = 0;
@@ -533,19 +533,19 @@ void RenderTable::paintMask(PaintInfo& paintInfo, int tx, int ty)
     paintMaskImages(paintInfo, tx, ty, w, h);
 }
 
-void RenderTable::calcPrefWidths()
+void RenderTable::computePreferredLogicalWidths()
 {
-    ASSERT(prefWidthsDirty());
+    ASSERT(preferredLogicalWidthsDirty());
 
     recalcSectionsIfNeeded();
     recalcHorizontalBorders();
 
-    m_tableLayout->calcPrefWidths(m_minPrefWidth, m_maxPrefWidth);
+    m_tableLayout->computePreferredLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
 
     if (m_caption)
-        m_minPrefWidth = max(m_minPrefWidth, m_caption->minPrefWidth());
+        m_minPreferredLogicalWidth = max(m_minPreferredLogicalWidth, m_caption->minPreferredLogicalWidth());
 
-    setPrefWidthsDirty(false);
+    setPreferredLogicalWidthsDirty(false);
 }
 
 void RenderTable::splitColumn(int pos, int firstSpan)

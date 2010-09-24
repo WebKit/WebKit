@@ -227,7 +227,7 @@ protected:
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
-    virtual void calcPrefWidths();
+    virtual void computePreferredLogicalWidths();
 
     virtual int firstLineBoxBaseline() const;
     virtual int lastLineBoxBaseline() const;
@@ -417,8 +417,8 @@ private:
 
     virtual bool isPointInOverflowControl(HitTestResult&, int x, int y, int tx, int ty);
 
-    void calcInlinePrefWidths();
-    void calcBlockPrefWidths();
+    void computeInlinePreferredLogicalWidths();
+    void computeBlockPreferredLogicalWidths();
 
     // Obtains the nearest enclosing block (including this block) that contributes a first-line style to our inline
     // children.

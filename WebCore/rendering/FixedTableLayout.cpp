@@ -126,7 +126,7 @@ int FixedTableLayout::calcWidthArray(int)
                     currentEffectiveColumn++;
                 }
             }
-            toRenderTableCol(child)->calcPrefWidths();
+            toRenderTableCol(child)->computePreferredLogicalWidths();
         } else
             break;
 
@@ -155,8 +155,8 @@ int FixedTableLayout::calcWidthArray(int)
         while (child) {
             if (child->isTableCell()) {
                 RenderTableCell* cell = toRenderTableCell(child);
-                if (cell->prefWidthsDirty())
-                    cell->calcPrefWidths();
+                if (cell->preferredLogicalWidthsDirty())
+                    cell->computePreferredLogicalWidths();
 
                 Length w = cell->styleOrColWidth();
                 int span = cell->colSpan();
@@ -190,7 +190,7 @@ int FixedTableLayout::calcWidthArray(int)
 // Keep this in synch with BLOCK_MAX_WIDTH in RenderBlock.cpp
 #define TABLE_MAX_WIDTH 15000
 
-void FixedTableLayout::calcPrefWidths(int& minWidth, int& maxWidth)
+void FixedTableLayout::computePreferredLogicalWidths(int& minWidth, int& maxWidth)
 {
     // FIXME: This entire calculation is incorrect for both minwidth and maxwidth.
     

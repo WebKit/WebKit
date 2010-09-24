@@ -49,7 +49,7 @@ private:
     virtual bool isCounter() const;
     virtual PassRefPtr<StringImpl> originalText() const;
     
-    virtual void calcPrefWidths(int leadWidth);
+    virtual void computePreferredLogicalWidths(int leadWidth);
 
     CounterContent m_counter;
     mutable CounterNode* m_counterNode;

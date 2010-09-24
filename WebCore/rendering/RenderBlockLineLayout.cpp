@@ -202,8 +202,8 @@ static inline InlineBox* createInlineBoxForRenderer(RenderObject* obj, bool isRo
 static inline void dirtyLineBoxesForRenderer(RenderObject* o, bool fullLayout)
 {
     if (o->isText()) {
-        if (o->prefWidthsDirty() && o->isCounter())
-            toRenderText(o)->calcPrefWidths(0); // FIXME: Counters depend on this hack. No clue why. Should be investigated and removed.
+        if (o->preferredLogicalWidthsDirty() && o->isCounter())
+            toRenderText(o)->computePreferredLogicalWidths(0); // FIXME: Counters depend on this hack. No clue why. Should be investigated and removed.
         toRenderText(o)->dirtyLineBoxes(fullLayout);
     } else
         toRenderInline(o)->dirtyLineBoxes(fullLayout);
@@ -571,7 +571,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                     
                 // If relayoutChildren is set and we have percentage padding, we also need to invalidate the child's pref widths.
                 if (relayoutChildren && (o->style()->paddingLeft().isPercent() || o->style()->paddingRight().isPercent()))
-                    o->setPrefWidthsDirty(true, false);
+                    o->setPreferredLogicalWidthsDirty(true, false);
             
                 if (o->isPositioned())
                     o->containingBlock()->insertPositionedObject(box);

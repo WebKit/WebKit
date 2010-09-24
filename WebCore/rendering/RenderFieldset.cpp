@@ -44,11 +44,11 @@ RenderFieldset::RenderFieldset(Node* element)
 {
 }
 
-void RenderFieldset::calcPrefWidths()
+void RenderFieldset::computePreferredLogicalWidths()
 {
-    RenderBlock::calcPrefWidths();
+    RenderBlock::computePreferredLogicalWidths();
     if (RenderBox* legend = findLegend()) {
-        int legendMinWidth = legend->minPrefWidth();
+        int legendMinWidth = legend->minPreferredLogicalWidth();
 
         Length legendMarginLeft = legend->style()->marginLeft();
         Length legendMarginRight = legend->style()->marginLeft();
@@ -59,7 +59,7 @@ void RenderFieldset::calcPrefWidths()
         if (legendMarginRight.isFixed())
             legendMinWidth += legendMarginRight.value();
 
-        m_minPrefWidth = max(m_minPrefWidth, legendMinWidth + borderAndPaddingWidth());
+        m_minPreferredLogicalWidth = max(m_minPreferredLogicalWidth, legendMinWidth + borderAndPaddingWidth());
     }
 }
 

@@ -175,8 +175,8 @@ public:
 
     virtual void destroy();
 
-    virtual int minPrefWidth() const;
-    virtual int maxPrefWidth() const;
+    virtual int minPreferredLogicalWidth() const;
+    virtual int maxPreferredLogicalWidth() const;
 
     int overrideSize() const;
     int overrideWidth() const;
@@ -358,7 +358,7 @@ private:
     // This function calculates the minimum and maximum preferred widths for an object.
     // These values are used in shrink-to-fit layout systems.
     // These include tables, positioned objects, floats and flexible boxes.
-    virtual void calcPrefWidths() { setPrefWidthsDirty(false); }
+    virtual void computePreferredLogicalWidths() { setPreferredLogicalWidthsDirty(false); }
 
 private:
     // The width/height of the contents + borders + padding.  The x/y location is relative to our container (which is not always our parent).
@@ -370,11 +370,11 @@ protected:
     int m_marginTop;
     int m_marginBottom;
 
-    // The preferred width of the element if it were to break its lines at every possible opportunity.
-    int m_minPrefWidth;
+    // The preferred logical width of the element if it were to break its lines at every possible opportunity.
+    int m_minPreferredLogicalWidth;
     
-    // The preferred width of the element if it never breaks any lines at all.
-    int m_maxPrefWidth;
+    // The preferred logical width of the element if it never breaks any lines at all.
+    int m_maxPreferredLogicalWidth;
 
     // For inline replaced elements, the inline box that owns us.
     InlineBox* m_inlineBoxWrapper;

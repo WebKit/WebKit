@@ -60,7 +60,7 @@ void AutoTableLayout::recalcColumn(int effCol)
 
     while (child) {
         if (child->isTableCol())
-            toRenderTableCol(child)->calcPrefWidths();
+            toRenderTableCol(child)->computePreferredLogicalWidths();
         else if (child->isTableSection()) {
             RenderTableSection* section = toRenderTableSection(child);
             int numRows = section->numRows();
@@ -79,11 +79,11 @@ void AutoTableLayout::recalcColumn(int effCol)
                     // a min/max width of at least 1px for this column now.
                     l.minWidth = max(l.minWidth, cellHasContent ? 1 : 0);
                     l.maxWidth = max(l.maxWidth, 1);
-                    if (cell->prefWidthsDirty())
-                        cell->calcPrefWidths();
-                    l.minWidth = max(cell->minPrefWidth(), l.minWidth);
-                    if (cell->maxPrefWidth() > l.maxWidth) {
-                        l.maxWidth = cell->maxPrefWidth();
+                    if (cell->preferredLogicalWidthsDirty())
+                        cell->computePreferredLogicalWidths();
+                    l.minWidth = max(cell->minPreferredLogicalWidth(), l.minWidth);
+                    if (cell->maxPreferredLogicalWidth() > l.maxWidth) {
+                        l.maxWidth = cell->maxPreferredLogicalWidth();
                         maxContributor = cell;
                     }
 
@@ -239,7 +239,7 @@ static bool shouldScaleColumns(RenderTable* table)
     return scale;
 }
 
-void AutoTableLayout::calcPrefWidths(int& minWidth, int& maxWidth)
+void AutoTableLayout::computePreferredLogicalWidths(int& minWidth, int& maxWidth)
 {
     fullRecalc();
 
@@ -317,8 +317,8 @@ int AutoTableLayout::calcEffectiveWidth()
 
         int col = m_table->colToEffCol(cell->col());
         unsigned int lastCol = col;
-        int cMinWidth = cell->minPrefWidth() + hspacing;
-        float cMaxWidth = cell->maxPrefWidth() + hspacing;
+        int cMinWidth = cell->minPreferredLogicalWidth() + hspacing;
+        float cMaxWidth = cell->maxPreferredLogicalWidth() + hspacing;
         int totalPercent = 0;
         int minWidth = 0;
         float maxWidth = 0;
