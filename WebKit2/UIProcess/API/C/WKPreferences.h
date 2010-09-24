@@ -70,7 +70,7 @@ WK_EXPORT void WKPreferencesSetPluginsEnabled(WKPreferencesRef preferences, bool
 WK_EXPORT bool WKPreferencesGetPluginsEnabled(WKPreferencesRef preferences);
 
 WK_EXPORT void WKPreferencesSetStandardFontFamily(WKPreferencesRef preferencesRef, WKStringRef family);
-WK_EXPORT WKStringRef WebPreferencesCopyStandardFontFamily(WKPreferencesRef preferencesRef);
+WK_EXPORT WKStringRef WKPreferencesCopyStandardFontFamily(WKPreferencesRef preferencesRef);
 
 WK_EXPORT void WKPreferencesSetFixedFontFamily(WKPreferencesRef preferencesRef, WKStringRef family);
 WK_EXPORT WKStringRef WKPreferencesCopyFixedFontFamily(WKPreferencesRef preferencesRef);

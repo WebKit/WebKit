@@ -27,15 +27,29 @@ class QWKPreferencesPrivate;
 
 class QWEBKIT_EXPORT QWKPreferences {
 public:
+    enum FontFamily {
+        StandardFont,
+        FixedFont,
+        SerifFont,
+        SansSerifFont,
+        CursiveFont,
+        FantasyFont
+    };
+
     enum WebAttribute {
         AutoLoadImages,
         JavascriptEnabled,
+        PluginsEnabled,
         OfflineWebApplicationCacheEnabled,
         LocalStorageEnabled,
-        XSSAuditingEnabled
+        XSSAuditingEnabled,
+        FrameFlatteningEnabled
     };
 
     static QWKPreferences* sharedPreferences();
+
+    void setFontFamily(FontFamily which, const QString& family);
+    QString fontFamily(FontFamily which) const;
 
     void setAttribute(WebAttribute attr, bool on);
     bool testAttribute(WebAttribute attr) const;

@@ -1,3 +1,21 @@
+2010-09-24  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        Expose all WebKit2 C API preferences via the Qt API.
+
+        Also rename a wrongly named C method (was using Web instead of WK).
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesCopyStandardFontFamily):
+        * UIProcess/API/C/WKPreferences.h:
+        * UIProcess/API/qt/qwkpreferences.cpp:
+        (QWKPreferences::setFontFamily):
+        (QWKPreferences::fontFamily):
+        (QWKPreferences::testAttribute):
+        (QWKPreferences::setAttribute):
+        * UIProcess/API/qt/qwkpreferences.h:
+
 2010-09-24  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

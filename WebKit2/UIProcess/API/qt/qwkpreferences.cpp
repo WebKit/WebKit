@@ -21,7 +21,10 @@
 
 #include "WKContext.h"
 #include "WKPreferences.h"
+#include "WKStringQt.h"
+#include "WKRetainPtr.h"
 #include "qwkpreferences_p.h"
+
 
 QWKPreferences* QWKPreferencesPrivate::createPreferences(WKContextRef contextRef)
 {
@@ -56,6 +59,64 @@ QWKPreferences::~QWKPreferences()
     delete d;
 }
 
+void QWKPreferences::setFontFamily(FontFamily which, const QString& family)
+{
+    switch (which) {
+    case StandardFont:
+        WKPreferencesSetStandardFontFamily(d->ref, WKStringCreateWithQString(family));
+        break;
+    case FixedFont:
+        WKPreferencesSetFixedFontFamily(d->ref, WKStringCreateWithQString(family));
+        break;
+    case SerifFont:
+        WKPreferencesSetSerifFontFamily(d->ref, WKStringCreateWithQString(family));
+        break;
+    case SansSerifFont:
+        WKPreferencesSetSansSerifFontFamily(d->ref, WKStringCreateWithQString(family));
+        break;
+    case CursiveFont:
+        WKPreferencesSetCursiveFontFamily(d->ref, WKStringCreateWithQString(family));
+        break;
+    case FantasyFont:
+        WKPreferencesSetFantasyFontFamily(d->ref, WKStringCreateWithQString(family));
+        break;
+    default:
+        break;
+    }
+}
+
+QString QWKPreferences::fontFamily(FontFamily which) const
+{
+    switch (which) {
+    case StandardFont: {
+        WKRetainPtr<WKStringRef> stringRef(AdoptWK, WKPreferencesCopyStandardFontFamily(d->ref));
+        return WKStringCopyQString(stringRef.get());
+    }
+    case FixedFont: {
+        WKRetainPtr<WKStringRef> stringRef(AdoptWK, WKPreferencesCopyFixedFontFamily(d->ref));
+        return WKStringCopyQString(stringRef.get());
+    }
+    case SerifFont: {
+        WKRetainPtr<WKStringRef> stringRef(AdoptWK, WKPreferencesCopySerifFontFamily(d->ref));
+        return WKStringCopyQString(stringRef.get());
+    }
+    case SansSerifFont: {
+        WKRetainPtr<WKStringRef> stringRef(AdoptWK, WKPreferencesCopySansSerifFontFamily(d->ref));
+        return WKStringCopyQString(stringRef.get());
+    }
+    case CursiveFont: {
+        WKRetainPtr<WKStringRef> stringRef(AdoptWK, WKPreferencesCopyCursiveFontFamily(d->ref));
+        return WKStringCopyQString(stringRef.get());
+    }
+    case FantasyFont: {
+        WKRetainPtr<WKStringRef> stringRef(AdoptWK, WKPreferencesCopyFantasyFontFamily(d->ref));
+        return WKStringCopyQString(stringRef.get());
+    }
+    default:
+        return QString();
+    }
+}
+
 bool QWKPreferences::testAttribute(WebAttribute attr) const
 {
     switch (attr) {
@@ -63,12 +124,16 @@ bool QWKPreferences::testAttribute(WebAttribute attr) const
         return WKPreferencesGetLoadsImagesAutomatically(d->ref);
     case JavascriptEnabled:
         return WKPreferencesGetJavaScriptEnabled(d->ref);
+    case PluginsEnabled:
+        return WKPreferencesGetPluginsEnabled(d->ref);
     case OfflineWebApplicationCacheEnabled:
         return WKPreferencesGetOfflineWebApplicationCacheEnabled(d->ref);
     case LocalStorageEnabled:
         return WKPreferencesGetLocalStorageEnabled(d->ref);
     case XSSAuditingEnabled:
         return WKPreferencesGetXSSAuditorEnabled(d->ref);
+    case FrameFlatteningEnabled:
+        return WKPreferencesGetFrameFlatteningEnabled(d->ref);
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -79,15 +144,26 @@ void QWKPreferences::setAttribute(WebAttribute attr, bool on)
 {
     switch (attr) {
     case AutoLoadImages:
-        return WKPreferencesSetLoadsImagesAutomatically(d->ref, on);
+        WKPreferencesSetLoadsImagesAutomatically(d->ref, on);
+        break;
     case JavascriptEnabled:
-        return WKPreferencesSetJavaScriptEnabled(d->ref, on);
+        WKPreferencesSetJavaScriptEnabled(d->ref, on);
+        break;
+    case PluginsEnabled:
+        WKPreferencesSetPluginsEnabled(d->ref, on);
+        break;
     case OfflineWebApplicationCacheEnabled:
-        return WKPreferencesSetOfflineWebApplicationCacheEnabled(d->ref, on);
+        WKPreferencesSetOfflineWebApplicationCacheEnabled(d->ref, on);
+        break;
     case LocalStorageEnabled:
-        return WKPreferencesSetLocalStorageEnabled(d->ref, on);
+        WKPreferencesSetLocalStorageEnabled(d->ref, on);
+        break;
     case XSSAuditingEnabled:
-        return WKPreferencesSetXSSAuditorEnabled(d->ref, on);
+        WKPreferencesSetXSSAuditorEnabled(d->ref, on);
+        break;
+    case FrameFlatteningEnabled:
+        WKPreferencesSetFrameFlatteningEnabled(d->ref, on);
+        break;
     default:
         ASSERT_NOT_REACHED();
     }
