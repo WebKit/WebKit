@@ -2355,14 +2355,14 @@ BUG40680 SKIP : fast/media/view-mode-media-feature.html = FAIL
 BUG38706 : svg/custom/deep-dynamic-updates.svg = IMAGE+TEXT IMAGE PASS
 
 // Caused by http://trac.webkit.org/changeset/56288/
-BUG_JSCHUH WIN LINUX : svg/filters/filterRes.svg = IMAGE+TEXT TEXT
+BUG29737 WIN LINUX : svg/filters/filterRes.svg = IMAGE
 
 // Caused by http://trac.webkit.org/changeset/56394.
 BUG_JAPHET WIN : http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html = TEXT
 
-// Due to the differences in iniialization checks in KURL and googleurl.
+// Due to the differences in initialization checks in KURL and googleurl.
 // Note: this test was also marked as flaky on WIN RELEASE above, BUG31342.
-BUG_39423 : security/block-test.html = TIMEOUT
+BUG39423 : security/block-test.html = TIMEOUT
 
 BUGWK36666 : storage/open-database-over-quota.html = TEXT
 

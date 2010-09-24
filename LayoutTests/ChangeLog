@@ -1,3 +1,17 @@
+2010-09-24  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] Remove a bad baseline and clean up a comment
+        https://bugs.webkit.org/show_bug.cgi?id=46446
+
+        * platform/chromium-linux/svg/filters/filterRes-expected.checksum: Removed.
+        * platform/chromium-linux/svg/filters/filterRes-expected.png: Removed.
+        * platform/chromium-win/svg/filters/filterRes-expected.checksum: Removed.
+        * platform/chromium-win/svg/filters/filterRes-expected.png: Removed.
+        * platform/chromium-win/svg/filters/filterRes-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2010-09-24  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, chromium expectations update.
