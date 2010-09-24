@@ -1,3 +1,45 @@
+2010-09-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Delay construction of functions that aren't captured
+        https://bugs.webkit.org/show_bug.cgi?id=46433
+
+        If a function isn't captured by an activation there's no
+        way it can be accessed indirectly, so we can delay the
+        construction until it's used (similar to what we do with
+        arguments).  We rename the existing op_init_arguments to
+        op_init_lazy_reg and removed its implicit handling of
+        the anonymous argument register, and make op_new_function
+        take a parameter to indicate whether it should null check
+        the target slot before creating the function object.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitInitLazyRegister):
+        (JSC::BytecodeGenerator::registerFor):
+        (JSC::BytecodeGenerator::createLazyRegisterIfNecessary):
+        (JSC::BytecodeGenerator::constRegisterFor):
+        (JSC::BytecodeGenerator::emitNewFunction):
+        (JSC::BytecodeGenerator::emitLazyNewFunction):
+        (JSC::BytecodeGenerator::emitNewFunctionInternal):
+        * bytecompiler/BytecodeGenerator.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_init_lazy_reg):
+        (JSC::JIT::emit_op_new_func):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_init_lazy_reg):
+        * parser/Nodes.h:
+        (JSC::ScopeNode::needsActivationForMoreThanVariables):
+
 2010-09-23  David Kilzer  <ddkilzer@apple.com>
 
         <rdar://problem/8460731> ~9.9% speedup when compiling interpreter with llvm-gcc-4.2

@@ -3612,8 +3612,10 @@ skip_id_custom_self:
         */
         int dst = vPC[1].u.operand;
         int func = vPC[2].u.operand;
+        int shouldCheck = vPC[3].u.operand;
 
-        callFrame->r(dst) = JSValue(codeBlock->functionDecl(func)->make(callFrame, callFrame->scopeChain()));
+        if (!shouldCheck || !callFrame->r(dst).jsValue())
+            callFrame->r(dst) = JSValue(codeBlock->functionDecl(func)->make(callFrame, callFrame->scopeChain()));
 
         vPC += OPCODE_LENGTH(op_new_func);
         NEXT_INSTRUCTION();
@@ -4137,18 +4139,17 @@ skip_id_custom_self:
         vPC += OPCODE_LENGTH(op_convert_this);
         NEXT_INSTRUCTION();
     }
-    DEFINE_OPCODE(op_init_arguments) {
-        /* create_arguments dst(r)
+    DEFINE_OPCODE(op_init_lazy_reg) {
+        /* init_lazy_reg dst(r)
 
-           Initialises 'arguments' to JSValue().
+           Initialises dst(r) to JSValue().
 
            This opcode appears only at the beginning of a code block.
          */
         int dst = vPC[1].u.operand;
 
         callFrame->r(dst) = JSValue();
-        callFrame->r(unmodifiedArgumentsRegister(dst)) = JSValue();
-        vPC += OPCODE_LENGTH(op_init_arguments);
+        vPC += OPCODE_LENGTH(op_init_lazy_reg);
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_create_arguments) {
