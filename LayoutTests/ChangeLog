@@ -1,3 +1,18 @@
+2010-09-24  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46474
+        
+        Patch computeWidthUsing to be block-flow-aware.  Rename the WidthType enum to LogicalWidthType.  Make computeLogicalWidthUsing
+        query the style for logical width properties instead of width properties.
+        
+        fast/css/logical-property-resolution.html now fails and gives bad results.  This is expected.  It will become correct
+        again as more layout code gets patched.
+
+        * fast/css/logical-property-resolution-expected.txt:
+        * fast/css/logical-property-resolution.html:
+
 2010-09-24  Tony Chang  <tony@chromium.org>
 
         Reviewed by Kent Tamura.

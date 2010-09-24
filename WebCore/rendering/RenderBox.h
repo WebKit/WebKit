@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-enum WidthType { Width, MinWidth, MaxWidth };
+enum LogicalWidthType { LogicalWidth, MinLogicalWidth, MaxLogicalWidth };
 
 class RenderBox : public RenderBoxModelObject {
 public:
@@ -233,10 +233,10 @@ public:
 
     // Whether or not the element shrinks to its intrinsic width (rather than filling the width
     // of a containing block).  HTML4 buttons, <select>s, <input>s, legends, and floating/compact elements do this.
-    bool sizesToIntrinsicWidth(WidthType) const;
+    bool sizesToIntrinsicWidth(LogicalWidthType) const;
     virtual bool stretchesToMinIntrinsicWidth() const { return false; }
 
-    int computeLogicalWidthUsing(WidthType, int containerWidth);
+    int computeLogicalWidthUsing(LogicalWidthType, int availableLogicalWidth);
     int computeLogicalHeightUsing(const Length& height);
     int computeReplacedWidthUsing(Length width) const;
     int computeReplacedHeightUsing(Length height) const;
