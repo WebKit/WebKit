@@ -1,3 +1,17 @@
+2010-09-24  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; new test baselines and test_expectations update.
+
+        [CHROMIUM] Rebaseline some fast/speech test results for chromium-mac.  Also mark svg/clip-path/clip-path-text-and-stroke.svg as crashing intermittently.
+
+        * platform/chromium-mac/fast/speech/input-appearance-numberandspeech-expected.checksum:
+        * platform/chromium-mac/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-mac/fast/speech/input-appearance-searchandspeech-expected.checksum:
+        * platform/chromium-mac/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-mac/fast/speech/input-appearance-speechbutton-expected.checksum:
+        * platform/chromium-mac/fast/speech/input-appearance-speechbutton-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2010-09-24  Tony Chang  <tony@chromium.org>
 
         Unreviewed, updating test_expectations.txt.

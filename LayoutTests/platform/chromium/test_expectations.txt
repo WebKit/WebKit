@@ -3095,3 +3095,6 @@ BUG_AUTO LINUX RELEASE : animations/3d/transform-origin-vs-functions.html = PASS
 BUG_AUTO WIN DEBUG : animations/3d/transform-origin-vs-functions.html = PASS TEXT
 BUG_AUTO WIN DEBUG : animations/multiple-keyframes.html = PASS TEXT
 BUG_AUTO WIN DEBUG : canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
+
+// Seems to have been crashing intermittently for as long as we have test history.
+BUG_SENORBLANCO WIN LINUX : svg/clip-path/clip-path-text-and-stroke.svg = CRASH PASS
