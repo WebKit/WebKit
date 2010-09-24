@@ -36,6 +36,10 @@
 #include "SharedWorkerRepository.h"
 #include "WebSocket.h"
 
+#if ENABLE(FILE_SYSTEM)
+#include "AsyncFileSystem.h"
+#endif
+
 namespace WebCore {
 
 bool RuntimeEnabledFeatures::isLocalStorageEnabled = true;
@@ -57,6 +61,11 @@ bool RuntimeEnabledFeatures::isXHRResponseBlobEnabled = false;
 
 #if ENABLE(FILE_SYSTEM)
 bool RuntimeEnabledFeatures::isFileSystemEnabled = false;
+
+bool RuntimeEnabledFeatures::fileSystemEnabled()
+{
+    return isFileSystemEnabled && AsyncFileSystem::isAvailable();
+}
 #endif
 
 #if ENABLE(VIDEO)

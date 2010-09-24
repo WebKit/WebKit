@@ -498,11 +498,6 @@ void Settings::setLocalStorageDatabasePath(const String& path)
     m_localStorageDatabasePath = path;
 }
 
-void Settings::setFileSystemRootPath(const String& path)
-{
-    m_fileSystemRootPath = path;
-}
-
 void Settings::setApplicationChromeMode(bool mode)
 {
     m_inApplicationChromeMode = mode;

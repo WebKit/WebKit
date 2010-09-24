@@ -57,6 +57,8 @@ public:
     virtual void stop() { }
     virtual bool hasPendingActivity() { return false; }
 
+    static bool isAvailable();
+
     // Creates and returns a new platform-specific AsyncFileSystem instance if the platform has its own implementation.
     static PassOwnPtr<AsyncFileSystem> create(const String& rootPath);
 

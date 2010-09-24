@@ -148,7 +148,7 @@ public:
 #endif
 
 #if ENABLE(FILE_SYSTEM)
-    static bool fileSystemEnabled() { return isFileSystemEnabled; }
+    static bool fileSystemEnabled();
     static void setFileSystemEnabled(bool isEnabled) { isFileSystemEnabled = isEnabled; }
     static bool requestFileSystemEnabled() { return isFileSystemEnabled; }
 #endif

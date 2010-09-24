@@ -532,6 +532,8 @@
                 'src/WebWorkerClientImpl.h',
                 'src/WebWorkerImpl.cpp',
                 'src/WebWorkerImpl.h',
+                'src/WorkerFileSystemCallbacksBridge.cpp',
+                'src/WorkerFileSystemCallbacksBridge.h',
                 'src/WrappedResourceRequest.h',
                 'src/WrappedResourceResponse.h',
                 'src/win/WebInputEventFactory.cpp',

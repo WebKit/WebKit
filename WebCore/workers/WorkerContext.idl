@@ -104,6 +104,14 @@ module threads {
         DOMString createBlobURL(in Blob blob);
         void revokeBlobURL(in DOMString blobURL);
 #endif
+
+#if defined(ENABLE_FILE_SYSTEM) && ENABLE_FILE_SYSTEM
+        const unsigned short TEMPORARY = 0;
+        const unsigned short PERSISTENT = 1;
+        [EnabledAtRuntime] void requestFileSystem(in unsigned short type, in long long size, in [Callback, Optional] FileSystemCallback successCallback, in [Callback, Optional] ErrorCallback errorCallback);
+
+                 attribute [EnabledAtRuntime=FileSystem] FlagsConstructor Flags;
+#endif
     };
 
 }

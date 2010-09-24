@@ -63,6 +63,15 @@
 #include "NotificationCenter.h"
 #endif
 
+#if ENABLE(FILE_SYSTEM)
+#include "AsyncFileSystem.h"
+#include "DOMFileSystem.h"
+#include "ErrorCallback.h"
+#include "FileError.h"
+#include "FileSystemCallback.h"
+#include "LocalFileSystem.h"
+#endif
+
 namespace WebCore {
 
 class CloseWorkerContextTask : public ScriptExecutionContext::Task {
@@ -100,6 +109,10 @@ WorkerContext::~WorkerContext()
 #if ENABLE(NOTIFICATIONS)
     m_notifications.clear();
 #endif
+
+    // Make sure we have no observers.
+    notifyObserversOfStop();
+
     // Notify proxy that we are going away. This can free the WorkerThread object, so do not access it after this.
     thread()->workerReportingProxy().workerContextDestroyed();
 }
@@ -334,6 +347,68 @@ void WorkerContext::revokeBlobURL(const String& blobURLString)
     scriptExecutionContext()->revokePublicBlobURL(KURL(ParsedURLString, blobURLString));
 }
 #endif
+
+#if ENABLE(FILE_SYSTEM)
+void WorkerContext::requestFileSystem(int type, long long size, PassRefPtr<FileSystemCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+{
+    if (!AsyncFileSystem::isAvailable() || !securityOrigin()->canAccessFileSystem()) {
+        DOMFileSystem::scheduleCallback(this, errorCallback, FileError::create(SECURITY_ERR));
+        return;
+    }
+
+    LocalFileSystem::localFileSystem().requestFileSystem(this, static_cast<AsyncFileSystem::Type>(type), size, successCallback, errorCallback);
+}
+
+COMPILE_ASSERT(static_cast<int>(WorkerContext::TEMPORARY) == static_cast<int>(AsyncFileSystem::Temporary), enum_mismatch);
+COMPILE_ASSERT(static_cast<int>(WorkerContext::PERSISTENT) == static_cast<int>(AsyncFileSystem::Persistent), enum_mismatch);
+#endif
+
+WorkerContext::Observer::Observer(WorkerContext* context)
+    : m_context(context)
+{
+    ASSERT(m_context && m_context->isContextThread());
+    m_context->registerObserver(this);
+}
+
+WorkerContext::Observer::~Observer()
+{
+    if (!m_context)
+        return;
+    ASSERT(m_context->isContextThread());
+    m_context->unregisterObserver(this);
+}
+
+void WorkerContext::Observer::stopObserving()
+{
+    if (!m_context)
+        return;
+    ASSERT(m_context->isContextThread());
+    m_context->unregisterObserver(this);
+    m_context = 0;
+}
+
+void WorkerContext::registerObserver(Observer* observer)
+{
+    ASSERT(observer);
+    m_workerObservers.add(observer);
+}
+
+void WorkerContext::unregisterObserver(Observer* observer)
+{
+    ASSERT(observer);
+    m_workerObservers.remove(observer);
+}
+
+void WorkerContext::notifyObserversOfStop()
+{
+    HashSet<Observer*>::iterator iter = m_workerObservers.begin();
+    while (iter != m_workerObservers.end()) {
+        WorkerContext::Observer* observer = *iter;
+        observer->stopObserving();
+        observer->notifyStop();
+        iter = m_workerObservers.begin();
+    }
+}
 
 } // namespace WebCore
 

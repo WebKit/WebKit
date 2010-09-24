@@ -202,6 +202,8 @@ public:
 
         workerContext->stopActiveDOMObjects();
 
+        workerContext->notifyObserversOfStop();
+
         // Event listeners would keep DOMWrapperWorld objects alive for too long. Also, they have references to JS objects,
         // which become dangling once Heap is destroyed.
         workerContext->removeAllEventListeners();

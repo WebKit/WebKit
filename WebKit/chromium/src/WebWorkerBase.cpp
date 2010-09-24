@@ -37,6 +37,7 @@
 #include "PlatformMessagePortChannel.h"
 
 #include "WebDataSourceImpl.h"
+#include "WebFileError.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
 #include "WebMessagePortChannel.h"
@@ -45,6 +46,8 @@
 #include "WebView.h"
 #include "WebWorkerClient.h"
 
+#include "WorkerContext.h"
+#include "WorkerFileSystemCallbacksBridge.h"
 #include "WorkerScriptController.h"
 #include "WorkerThread.h"
 #include <wtf/MainThread.h>
@@ -56,6 +59,7 @@ namespace WebKit {
 #if ENABLE(WORKERS)
 
 static const char allowDatabaseMode[] = "allowDatabaseMode";
+static const char openFileSystemMode[] = "openFileSystemMode";
 
 namespace {
 
@@ -114,6 +118,7 @@ private:
     WebWorkerBase* m_worker;
     WTF::String m_mode;
 };
+
 }
 
 // This function is called on the main thread to force to initialize some static
@@ -229,6 +234,16 @@ bool WebWorkerBase::allowDatabase(WebFrame*, const WebString& name, const WebStr
     }
 
     return bridge->result();
+}
+
+void WebWorkerBase::openFileSystem(WebFileSystem::Type type, long long size, WebFileSystemCallbacks* callbacks)
+{
+    WorkerRunLoop& runLoop = m_workerThread->runLoop();
+    WorkerScriptController* controller = WorkerScriptController::controllerForContext();
+    WorkerContext* workerContext = controller->workerContext();
+
+    RefPtr<WorkerFileSystemCallbacksBridge> bridge = WorkerFileSystemCallbacksBridge::create(this, workerContext, callbacks);
+    bridge->postOpenFileSystemToMainThread(commonClient(), type, size, openFileSystemMode);
 }
 
 // WorkerObjectProxy -----------------------------------------------------------

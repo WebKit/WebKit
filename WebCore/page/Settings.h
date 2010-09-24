@@ -241,9 +241,6 @@ namespace WebCore {
         void setLocalStorageDatabasePath(const String&);
         const String& localStorageDatabasePath() const { return m_localStorageDatabasePath; }
 
-        void setFileSystemRootPath(const String&);
-        const String& fileSystemRootPath() const { return m_fileSystemRootPath; }
-
         void setApplicationChromeMode(bool);
         bool inApplicationChromeMode() const { return m_inApplicationChromeMode; }
 
@@ -339,7 +336,6 @@ namespace WebCore {
         String m_defaultTextEncodingName;
         String m_ftpDirectoryTemplatePath;
         String m_localStorageDatabasePath;
-        String m_fileSystemRootPath;
         KURL m_userStyleSheetLocation;
         AtomicString m_standardFontFamily;
         AtomicString m_fixedFontFamily;

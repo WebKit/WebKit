@@ -45,6 +45,11 @@
 
 namespace WebCore {
 
+bool AsyncFileSystem::isAvailable()
+{
+    return true;
+}
+
 AsyncFileSystemChromium::AsyncFileSystemChromium(const String& rootPath)
     : AsyncFileSystem(rootPath)
     , m_webFileSystem(WebKit::webKitClient()->fileSystem())

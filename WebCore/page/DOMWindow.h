@@ -58,7 +58,6 @@ namespace WebCore {
     class History;
     class IDBFactory;
     class InspectorTimelineAgent;
-    class LocalFileSystem;
     class Location;
     class StyleMedia;
     class Navigator;
@@ -443,9 +442,6 @@ namespace WebCore {
 #endif
 #if ENABLE(INDEXED_DATABASE)
         mutable RefPtr<IDBFactory> m_idbFactory;
-#endif
-#if ENABLE(FILE_SYSTEM)
-        RefPtr<LocalFileSystem> m_localFileSystem;
 #endif
 
         EventTargetData m_eventTargetData;

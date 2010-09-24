@@ -1,3 +1,55 @@
+2010-09-23  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add Worker support for FileSystem API
+        https://bugs.webkit.org/show_bug.cgi?id=45808
+
+        Exposed requestFileSystem and Flags constructor on worker contexts.
+
+        Also changed how to get the base path for Web file systems (in
+        non-chromium ports) so that it works for workers too.
+        This patch assumes each port calls
+        LocalFileSystem::initializeLocalFileSystem() in its initialization
+        phase.
+
+        No new tests; tests will be added when we have complete implementation.
+
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::fileSystemEnabled): Changed to
+        reflect AsyncFileSystem::isAvailable
+        * bindings/generic/RuntimeEnabledFeatures.h: Moved the implementation
+        of fileSystemEnabled to .cpp.
+        * fileapi/LocalFileSystem.cpp:
+        (WebCore::LocalFileSystem::initializeLocalFileSystem): Added.
+        (WebCore::LocalFileSystem::localFileSystem): Added.
+        (WebCore::LocalFileSystem::fileSystemBasePath): Added.
+        * fileapi/LocalFileSystem.h:
+        (WebCore::LocalFileSystem::~LocalFileSystem): Removed. (As now it's
+        going to be used as a singleton.)
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::requestFileSystem): Changed to use a singleton
+        instance of LocalFileSystem.
+        * page/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::canAccessFileSystem): Added.
+        * page/Settings.cpp: Removed fileSystemRootPath method.
+        * page/Settings.h: Removed fileSystemRootPath method.
+        * platform/AsyncFileSystem.cpp:
+        (WebCore::AsyncFileSystem::isAvailable): Added.
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::requestFileSystem): Added to expose
+        requestFileSystem method in worker contexts.
+        (WebCore::WorkerContext::Observer): Added.
+        (WebCore::WorkerContext::registerObserver): Added.
+        (WebCore::WorkerContext::unregisterObserver): Added.
+        (WebCore::WorkerContext::notifyObserversOfStop): Added.
+        * workers/WorkerContext.h:
+        * workers/WorkerContext.idl:
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThreadShutdownStartTask::performTask): Modified to
+        call workerContext->notifyObserversOfStop to notify worker observers
+        of the worker thread termination.
+
 2010-09-23  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Oliver Hunt.

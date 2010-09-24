@@ -44,20 +44,44 @@ class ErrorCallback;
 class FileSystemCallback;
 class ScriptExecutionContext;
 
-class LocalFileSystem : public RefCounted<LocalFileSystem> {
+// Keeps per-process information and provides an entry point to open a file system.
+class LocalFileSystem : public Noncopyable {
 public:
-    static PassRefPtr<LocalFileSystem> create(const String& basePath);
-    virtual ~LocalFileSystem() { }
+    // Returns a per-process instance of LocalFileSystem.
+    // Note that LocalFileSystem::initializeLocalFileSystem must be called before
+    // calling this one.
+    static LocalFileSystem& localFileSystem();
 
     void requestFileSystem(ScriptExecutionContext*, AsyncFileSystem::Type, long long size, PassRefPtr<FileSystemCallback>, PassRefPtr<ErrorCallback>);
 
-protected:
+#if !PLATFORM(CHROMIUM)
+    // This call is not thread-safe; must be called before any worker threads are created.
+    void initializeLocalFileSystem(const String&);
+
+    String fileSystemBasePath() const;
+#endif
+
+private:
     LocalFileSystem(const String& basePath)
         : m_basePath(basePath)
     {
     }
 
-    String m_basePath;
+    static LocalFileSystem* s_instance;
+
+    // An inner class that enforces thread-safe string access.
+    class SystemBasePath {
+    public:
+        explicit SystemBasePath(const String& path) : m_value(path) { }
+        operator String() const
+        {
+            return m_value.threadsafeCopy();
+        }
+    private:
+        String m_value;
+    };
+
+    SystemBasePath m_basePath;
 };
 
 } // namespace

@@ -35,6 +35,7 @@
 #include "ScriptExecutionContext.h"
 #include "WorkerScriptController.h"
 #include <wtf/Assertions.h>
+#include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -47,6 +48,8 @@ namespace WebCore {
     class Database;
     class DatabaseCallback;
     class DatabaseSync;
+    class ErrorCallback;
+    class FileSystemCallback;
     class NotificationCenter;
     class ScheduledAction;
     class WorkerLocation;
@@ -121,6 +124,14 @@ namespace WebCore {
         void revokeBlobURL(const String&);
 #endif
 
+#if ENABLE(FILE_SYSTEM)
+        enum FileSystemType {
+            TEMPORARY,
+            PERSISTENT,
+        };
+        void requestFileSystem(int type, long long size, PassRefPtr<FileSystemCallback>, PassRefPtr<ErrorCallback>);
+#endif
+
         // These methods are used for GC marking. See JSWorkerContext::markChildren(MarkStack&) in
         // JSWorkerContextCustom.cpp.
         WorkerNavigator* optionalNavigator() const { return m_navigator.get(); }
@@ -130,6 +141,21 @@ namespace WebCore {
         using RefCounted<WorkerContext>::deref;
 
         bool isClosing() { return m_closing; }
+
+        // An observer interface to be notified when the worker thread is getting stopped.
+        class Observer : public Noncopyable {
+        public:
+            Observer(WorkerContext*);
+            virtual ~Observer();
+            virtual void notifyStop() = 0;
+            void stopObserving();
+        private:
+            WorkerContext* m_context;
+        };
+        friend class Observer;
+        void registerObserver(Observer*);
+        void unregisterObserver(Observer*);
+        void notifyObserversOfStop();
 
     protected:
         WorkerContext(const KURL&, const String&, WorkerThread*);
@@ -161,6 +187,8 @@ namespace WebCore {
         bool m_closing;
         bool m_reportingException;
         EventTargetData m_eventTargetData;
+
+        HashSet<Observer*> m_workerObservers;
     };
 
 } // namespace WebCore

@@ -1,3 +1,35 @@
+2010-09-23  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add Worker support for FileSystem API
+        https://bugs.webkit.org/show_bug.cgi?id=45808
+
+        Added WebWorkerBase::openFileSystem and WebCommonWorkerClient::
+        openFileSystem to call in to the browser via Worker stub/proxy
+        in the chromium.
+
+        Also added WorkerFileSystemCallbacksBridge class that proxies
+        requests and callbacks between from/to worker thread to/from the
+        main thread.
+
+        * public/WebCommonWorkerClient.h:
+        (WebKit::WebCommonWorkerClient::openFileSystem): Added.
+        * src/LocalFileSystemChromium.cpp:
+        (WebCore::LocalFileSystem::localFileSystem): Added.
+        (WebCore::LocalFileSystem::requestFileSystem): Added implementation
+        for workers. In worker case this calls WebWorkerBase::openFileSystem.
+        * src/WebWorkerBase.cpp:
+        (WebKit::WebWorkerBase::openFileSystem): Added. This is called from
+        LocalFileSystem::requestFileSystem on the worker thread and creates
+        a bridge to call WebCommonWorkerClient::openFileSystem on the main
+        thread.
+        * src/WebWorkerBase.h:
+        * src/WebWorkerClientImpl.h:
+        (WebKit::WebWorkerClientImpl::openFileSystem): Added.
+        * src/WorkerFileSystemCallbacksBridge.cpp: Added.
+        * src/WorkerFileSystemCallbacksBridge.h: Added.
+
 2010-09-23  Tony Chang  <tony@chromium.org>
 
         Reviewed by Dimitri Glazkov.
