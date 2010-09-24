@@ -2310,8 +2310,6 @@ BUG36966 : fast/loader/about-blank-hash-kept.html = FAIL
 
 // New test, added http://trac.webkit.org/changeset/55546
 BUG37896 WIN LINUX : fast/multicol/hit-test-above-or-below.html = TEXT
-// Added in http://trac.webkit.org/changeset/55669
-BUG37896 : fast/repaint/no-caret-repaint-in-non-content-editable-element.html = IMAGE+TEXT
 BUG37896 WIN DEBUG : fast/text/firstline/001.html = PASS CRASH
 BUG37896 LINUX MAC DEBUG : fast/text/firstline/001.html = PASS CRASH TIMEOUT
 // Added in http://trac.webkit.org/changeset/55587
@@ -2320,6 +2318,9 @@ BUG37896 LINUX DEBUG : fast/images/svg-as-background.html = TIMEOUT
 BUG37962 MAC LINUX DEBUG : fast/dom/HTMLElement/bdo.html = CRASH PASS
 BUG37962 LINUX DEBUG : fast/forms/multiple-form-submission-protection-mouse.html = CRASH PASS
 BUG37962 MAC : plugins/iframe-shims.html = TEXT PASS
+
+// Passing in DRT.  Pending change in test_shell for this.
+BUG37896 : fast/repaint/no-caret-repaint-in-non-content-editable-element.html = IMAGE+TEXT PASS
 
 // WebKit roll r55853 -> 55940
 // Flaky test

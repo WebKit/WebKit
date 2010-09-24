@@ -1,3 +1,19 @@
+2010-09-23  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] add baselines for no-caret-repaint-in-non-content-editable-element.html
+        https://bugs.webkit.org/show_bug.cgi?id=46428
+
+        * platform/chromium-linux/fast/repaint/no-caret-repaint-in-non-content-editable-element-expected.checksum: Added.
+        * platform/chromium-linux/fast/repaint/no-caret-repaint-in-non-content-editable-element-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/no-caret-repaint-in-non-content-editable-element-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/no-caret-repaint-in-non-content-editable-element-expected.png: Added.
+        * platform/chromium-win/fast/repaint/no-caret-repaint-in-non-content-editable-element-expected.checksum: Added.
+        * platform/chromium-win/fast/repaint/no-caret-repaint-in-non-content-editable-element-expected.png: Added.
+        * platform/chromium-win/fast/repaint/no-caret-repaint-in-non-content-editable-element-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-09-23  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Dimitri Glazkov.
