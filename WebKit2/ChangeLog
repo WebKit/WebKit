@@ -1,3 +1,24 @@
+2010-09-24  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add PluginProcess class
+        https://bugs.webkit.org/show_bug.cgi?id=46476
+
+        * PluginProcess/PluginProcess.cpp: Added.
+        * PluginProcess/PluginProcess.h: Added.
+        Add stubbed out PluginProcess class.
+
+        * PluginProcess/mac/PluginProcessMainMac.mm:
+        (WebKit::PluginProcessMain):
+        Initialize the plug-in process.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add files.
+
+        * WebProcess/Plugins/PluginProcessConnection.h:
+        Add a comment about which connection this is.
+
 2010-09-24  Sam Weinig  <sam@webkit.org>
 
         Fix windows build.

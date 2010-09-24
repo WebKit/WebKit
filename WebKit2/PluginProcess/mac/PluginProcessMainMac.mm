@@ -28,6 +28,7 @@
 #include "PluginProcessMain.h"
 
 #include "CommandLine.h"
+#include "PluginProcess.h"
 #include "RunLoop.h"
 #include <runtime/InitializeThreading.h>
 #include <servers/bootstrap.h>
@@ -70,7 +71,8 @@ int PluginProcessMain(const CommandLine& commandLine)
     WTF::initializeMainThread();
     RunLoop::initializeMainRunLoop();
 
-    // FIXME: Actually Initialize the plug-in host process.
+    // Initialize the plug-in host process.
+    PluginProcess::shared().initialize(serverPort);
 
     [NSApplication sharedApplication];
 

@@ -23,48 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PluginProcessConnection_h
-#define PluginProcessConnection_h
+#ifndef PluginProcess_h
+#define PluginProcess_h
 
 #if ENABLE(PLUGIN_PROCESS)
 
 #include "Connection.h"
-#include "Plugin.h"
-
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
-
-// A CoreIPC connection to a plug-in process.
+#include "RunLoop.h"
 
 namespace WebKit {
 
-class PluginInstanceProxy;
-class PluginProcessConnectionManager;
-    
-class PluginProcessConnection : public RefCounted<PluginProcessConnection>, CoreIPC::Connection::Client {
+class PluginProcess : Noncopyable, CoreIPC::Connection::Client {
 public:
-    static PassRefPtr<PluginProcessConnection> create(PluginProcessConnectionManager* pluginProcessConnectionManager, const String& pluginPath, CoreIPC::Connection::Identifier connectionIdentifier)
-    {
-        return adoptRef(new PluginProcessConnection(pluginProcessConnectionManager, pluginPath, connectionIdentifier));
-    }
-    ~PluginProcessConnection();
+    static PluginProcess& shared();
 
-    const String& pluginPath() const { return m_pluginPath; }
-
-    CoreIPC::Connection* connection() const { return m_connection.get(); }
+    void initialize(CoreIPC::Connection::Identifier);
 
 private:
-    PluginProcessConnection(PluginProcessConnectionManager* pluginProcessConnectionManager, const String& pluginPath, CoreIPC::Connection::Identifier connectionIdentifier);
+    PluginProcess();
+    ~PluginProcess();
 
     // CoreIPC::Connection::Client
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     virtual void didClose(CoreIPC::Connection*);
     virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID);
-    
-    PluginProcessConnectionManager* m_pluginProcessConnectionManager;
-    String m_pluginPath;
 
-    // The connection from the web process to the plug-in process.
+    // The connection to the UI process.
     RefPtr<CoreIPC::Connection> m_connection;
 };
 
@@ -72,4 +56,4 @@ private:
 
 #endif // ENABLE(PLUGIN_PROCESS)
 
-#endif // PluginProcessConnection_h
+#endif // PluginProcess_h
