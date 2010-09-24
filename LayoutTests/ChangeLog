@@ -1,5 +1,11 @@
 2010-09-24  Satish Sampath  <satish@chromium.org>
 
+        Unreviewed, updating the baseline for a speech input layout test.
+
+        * fast/speech/input-text-speechbutton-expected.txt:
+
+2010-09-24  Satish Sampath  <satish@chromium.org>
+
         Unreviewed, chromium test expectations fix.
 
         Remove chromium test expectation entries for 3 tests which pass now.

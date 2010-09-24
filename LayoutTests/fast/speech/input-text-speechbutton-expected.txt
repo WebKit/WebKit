@@ -3,7 +3,8 @@ Tests for speech button click with <input type="text" speech>.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS input.value is "Pictures of the moon"
+PASS document.getElementById("speechInput").value is "Pictures of the moon"
+PASS document.getElementById("speechInput").value is "Pictures of the moon"
 PASS successfullyParsed is true
 
 TEST COMPLETE
