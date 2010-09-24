@@ -1,3 +1,12 @@
+2010-09-24  İsmail Dönmez  <ismail@namtrac.org>
+
+       Reviewed by Csaba Osztrogonác.
+
+       Add a Windows compatible inttypes.h header to fix WinCE build.
+       https://bugs.webkit.org/show_bug.cgi?id=46463
+
+       * os-win32/inttypes.h: Added.
+
 2010-09-24  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
