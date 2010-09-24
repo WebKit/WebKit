@@ -128,7 +128,7 @@ CONFIG(release):!CONFIG(standalone_package) {
 DEFINES += BUILD_WEBKIT
 
 # Remove whole program optimizations due to miscompilations
-win32-msvc2005|win32-msvc2008:{
+win32-msvc2005|win32-msvc2008|wince*:{
     QMAKE_CFLAGS_RELEASE -= -GL
     QMAKE_CXXFLAGS_RELEASE -= -GL
 }

@@ -1,3 +1,11 @@
+2010-09-24  Romain Pokrzywka  <romain@kdab.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix the Wince build.
+
+        * WebCore.pro: Apply msvc flags to wince, too.
+
 2010-09-24  Anders Bakken  <agbakken@gmail.com>
 
         Reviewed by Simon Hausmann.
