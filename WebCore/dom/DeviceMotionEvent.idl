@@ -28,14 +28,11 @@ module core {
     interface [
         Conditional=DEVICE_ORIENTATION
     ] DeviceMotionEvent : Event {
-        readonly attribute [Custom] double xAcceleration;
-        readonly attribute [Custom] double yAcceleration;
-        readonly attribute [Custom] double zAcceleration;
-        readonly attribute [Custom] double xRotationRate;
-        readonly attribute [Custom] double yRotationRate;
-        readonly attribute [Custom] double zRotationRate;
+        readonly attribute [Custom] Acceleration acceleration;
+        readonly attribute [Custom] Acceleration accelerationIncludingGravity;
+        readonly attribute [Custom] RotationRate rotationRate;
         readonly attribute [Custom] double interval;
-        [Custom] void initDeviceMotionEvent(in DOMString type, in boolean bubbles, in boolean cancelable, in double xAcceleration, in double yAcceleration, in double zAcceleration, in double xRotationRate, in double yRotationRate, in double zRotationRate, in double interval);
+        [Custom] void initDeviceMotionEvent(in DOMString type, in boolean bubbles, in boolean cancelable, in Acceleration acceleration, in Acceleration accelerationIncludingGravity, in RotationRate rotationRate, in double interval);
     };
 
 }

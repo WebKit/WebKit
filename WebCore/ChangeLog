@@ -1,3 +1,65 @@
+2010-09-23  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Update DeviceMotionEvent to spec
+        https://bugs.webkit.org/show_bug.cgi?id=46344
+
+        The spec has changed: the DeviceMotionEvent attributes accelerationX,
+        accelerationY, etc. have been baked into an 'acceleration' attribute
+        which returns an object with x, y, and z values. Likewise for the
+        rotation rate. The 'accelerationIncludingGravity' attribute is new.
+
+        * WebCore.exp.in:
+        The DeviceMotionData::create member function has changed. Also export
+        create functions for DeviceMotionData::Acceleration and RotationRate.
+
+        * bindings/js/JSDeviceMotionEventCustom.cpp:
+        (WebCore::JSDeviceMotionEvent::acceleration):
+        (WebCore::JSDeviceMotionEvent::accelerationIncludingGravity):
+        (WebCore::JSDeviceMotionEvent::rotationRate):
+        (WebCore::JSDeviceMotionEvent::initDeviceMotionEvent):
+        Manually create and return objects with the right attributes for
+        acceleration, accelerationIncludingGravity, and rotationRate.
+        When creating the DeviceMotionData object in initDeviceMotionEvent,
+        accept any input objects that have the right attributes.
+
+        * bindings/v8/custom/V8DeviceMotionEventCustom.cpp:
+        (WebCore::V8DeviceMotionEvent::accelerationAccessorGetter):
+        (WebCore::V8DeviceMotionEvent::accelerationIncludingGravityAccessorGetter):
+        (WebCore::V8DeviceMotionEvent::rotationRateAccessorGetter):
+        (WebCore::V8DeviceMotionEvent::initDeviceMotionEventCallback):
+        V8 counterpart to the JSC code above.
+
+        * dom/DeviceMotionData.cpp:
+        (WebCore::DeviceMotionData::Acceleration::create):
+        (WebCore::DeviceMotionData::Acceleration::Acceleration):
+        (WebCore::DeviceMotionData::RotationRate::create):
+        (WebCore::DeviceMotionData::RotationRate::RotationRate):
+        (WebCore::DeviceMotionData::create):
+        (WebCore::DeviceMotionData::DeviceMotionData):
+        * dom/DeviceMotionData.h:
+        (WebCore::DeviceMotionData::Acceleration::canProvideX):
+        (WebCore::DeviceMotionData::Acceleration::canProvideY):
+        (WebCore::DeviceMotionData::Acceleration::canProvideZ):
+        (WebCore::DeviceMotionData::Acceleration::x):
+        (WebCore::DeviceMotionData::Acceleration::y):
+        (WebCore::DeviceMotionData::Acceleration::z):
+        (WebCore::DeviceMotionData::RotationRate::canProvideAlpha):
+        (WebCore::DeviceMotionData::RotationRate::canProvideBeta):
+        (WebCore::DeviceMotionData::RotationRate::canProvideGamma):
+        (WebCore::DeviceMotionData::RotationRate::alpha):
+        (WebCore::DeviceMotionData::RotationRate::beta):
+        (WebCore::DeviceMotionData::RotationRate::gamma):
+        (WebCore::DeviceMotionData::acceleration):
+        (WebCore::DeviceMotionData::accelerationIncludingGravity):
+        (WebCore::DeviceMotionData::rotationRate):
+        Add member classes Acceleration and RotationRate to DeviceMotionData.
+
+        * dom/DeviceMotionEvent.idl:
+        Update according to the spec. Acceleration and RotationRate need not
+        be backed by native classes.
+
 2010-09-23  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

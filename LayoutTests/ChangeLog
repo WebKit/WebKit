@@ -1,3 +1,21 @@
+2010-09-23  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Update DeviceMotionEvent to spec
+        https://bugs.webkit.org/show_bug.cgi?id=46344
+
+        * fast/dom/DeviceMotion/script-tests/create-event.js:
+        * fast/dom/DeviceMotion/create-event-expected.txt:
+        Look for the new attributes.
+
+        * fast/dom/DeviceMotion/script-tests/optional-event-properties.js:
+        * fast/dom/DeviceMotion/optional-event-properties-expected.txt:
+        Test the new attributes.
+
+        * fast/dom/script-tests/prototype-inheritance.js:
+        DeviceMotionEvent is not implemented on all platforms, so it should be skipped in this test.
+
 2010-09-23  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
