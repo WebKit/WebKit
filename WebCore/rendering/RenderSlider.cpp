@@ -166,21 +166,21 @@ void RenderSlider::calcPrefWidths()
     m_maxPrefWidth = 0;
 
     if (style()->width().isFixed() && style()->width().value() > 0)
-        m_minPrefWidth = m_maxPrefWidth = calcContentBoxWidth(style()->width().value());
+        m_minPrefWidth = m_maxPrefWidth = computeContentBoxLogicalWidth(style()->width().value());
     else
         m_maxPrefWidth = defaultTrackLength * style()->effectiveZoom();
 
     if (style()->minWidth().isFixed() && style()->minWidth().value() > 0) {
-        m_maxPrefWidth = max(m_maxPrefWidth, calcContentBoxWidth(style()->minWidth().value()));
-        m_minPrefWidth = max(m_minPrefWidth, calcContentBoxWidth(style()->minWidth().value()));
+        m_maxPrefWidth = max(m_maxPrefWidth, computeContentBoxLogicalWidth(style()->minWidth().value()));
+        m_minPrefWidth = max(m_minPrefWidth, computeContentBoxLogicalWidth(style()->minWidth().value()));
     } else if (style()->width().isPercent() || (style()->width().isAuto() && style()->height().isPercent()))
         m_minPrefWidth = 0;
     else
         m_minPrefWidth = m_maxPrefWidth;
     
     if (style()->maxWidth().isFixed() && style()->maxWidth().value() != undefinedLength) {
-        m_maxPrefWidth = min(m_maxPrefWidth, calcContentBoxWidth(style()->maxWidth().value()));
-        m_minPrefWidth = min(m_minPrefWidth, calcContentBoxWidth(style()->maxWidth().value()));
+        m_maxPrefWidth = min(m_maxPrefWidth, computeContentBoxLogicalWidth(style()->maxWidth().value()));
+        m_minPrefWidth = min(m_minPrefWidth, computeContentBoxLogicalWidth(style()->maxWidth().value()));
     }
 
     int toAdd = borderAndPaddingWidth();

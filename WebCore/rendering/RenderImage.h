@@ -80,8 +80,8 @@ private:
     virtual void notifyFinished(CachedResource*);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
-    virtual int calcReplacedWidth(bool includeMaxWidth = true) const;
-    virtual int calcReplacedHeight() const;
+    virtual int computeReplacedWidth(bool includeMaxWidth = true) const;
+    virtual int computeReplacedHeight() const;
 
     int calcAspectRatioWidth() const;
     int calcAspectRatioHeight() const;

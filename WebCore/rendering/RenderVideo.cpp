@@ -246,14 +246,14 @@ void RenderVideo::updatePlayer()
     mediaPlayer->setVisible(true);
 }
 
-int RenderVideo::calcReplacedWidth(bool includeMaxWidth) const
+int RenderVideo::computeReplacedWidth(bool includeMaxWidth) const
 {
-    return RenderReplaced::calcReplacedWidth(includeMaxWidth);
+    return RenderReplaced::computeReplacedWidth(includeMaxWidth);
 }
 
-int RenderVideo::calcReplacedHeight() const
+int RenderVideo::computeReplacedHeight() const
 {
-    return RenderReplaced::calcReplacedHeight();
+    return RenderReplaced::computeReplacedHeight();
 }
 
 int RenderVideo::minimumReplacedHeight() const 

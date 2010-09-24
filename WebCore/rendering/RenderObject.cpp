@@ -2095,8 +2095,8 @@ RenderObject* RenderObject::container(RenderBoxModelObject* repaintContainer, bo
     // (2) For normal flow elements, it just returns the parent.
     // (3) For absolute positioned elements, it will return a relative positioned inline.
     // containingBlock() simply skips relpositioned inlines and lets an enclosing block handle
-    // the layout of the positioned object.  This does mean that calcAbsoluteHorizontal and
-    // calcAbsoluteVertical have to use container().
+    // the layout of the positioned object.  This does mean that computePositionedLogicalWidth and
+    // computePositionedLogicalHeight have to use container().
     RenderObject* o = parent();
 
     if (isText())

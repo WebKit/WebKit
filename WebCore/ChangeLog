@@ -1,3 +1,122 @@
+2010-09-24  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46454, rename a bunch of the width and height calculation methods.
+
+        calcReplacedWidth -> computeReplacedWidth
+
+        calcHorizontalMargins -> computeInlineDirectionMargins
+
+        calcVerticalMargins -> computeBlockDirectionMargins
+
+        calcWidthUsing -> computeLogicalWidthUsing
+
+        calcHeightUsing -> computeLogicalHeightUsing
+
+        calcReplacedHeight/HeightUsing -> computeReplacedHeight/HeightUsing
+
+        calcAbsoluteHorizontalValues -> computePositionedLogicalWidthUsing
+
+        calcAbsoluteVerticalValues -> computePositionedLogicalHeightUsing
+
+        calcAbsoluteHorizontal -> computePositionedLogicalWIdth
+
+        calcAbsoluteVertical -> computePositionedLogicalHeight
+
+        calcAbsoluteHorizontalReplaced -> computePositionedLogicalWidthReplaced
+
+        calcAbsoluteVerticalReplaced -> computePositionedLogicalHeightReplaced
+
+        calcBorderBoxWidth/Height -> computeBorderBoxLogicalWidth/LogicalHeight
+
+        calcContentBoxWidth/Height -> computeContentBoxLogicalWidth/LogicalHeight
+
+        shouldCalculateSizeAsReplaced -> shouldComputeSizeAsReplaced
+
+        calcPercentageHeight -> computePercentageLogicalHeight
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::adjustPositionedBlock):
+        (WebCore::RenderBlock::determineHorizontalPosition):
+        (WebCore::RenderBlock::layoutBlockChild):
+        (WebCore::RenderBlock::insertFloatingObject):
+        (WebCore::RenderBlock::calcPrefWidths):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeBorderBoxLogicalWidth):
+        (WebCore::RenderBox::computeBorderBoxLogicalHeight):
+        (WebCore::RenderBox::computeContentBoxLogicalWidth):
+        (WebCore::RenderBox::computeContentBoxLogicalHeight):
+        (WebCore::RenderBox::computeLogicalWidth):
+        (WebCore::RenderBox::computeLogicalWidthUsing):
+        (WebCore::RenderBox::computeInlineDirectionMargins):
+        (WebCore::RenderBox::computeLogicalHeight):
+        (WebCore::RenderBox::computeLogicalHeightUsing):
+        (WebCore::RenderBox::computePercentageLogicalHeight):
+        (WebCore::RenderBox::computeReplacedWidth):
+        (WebCore::RenderBox::computeReplacedWidthUsing):
+        (WebCore::RenderBox::computeReplacedHeight):
+        (WebCore::RenderBox::computeReplacedHeightUsing):
+        (WebCore::RenderBox::availableHeightUsing):
+        (WebCore::RenderBox::computeBlockDirectionMargins):
+        (WebCore::RenderBox::computePositionedLogicalWidth):
+        (WebCore::RenderBox::computePositionedLogicalWidthUsing):
+        (WebCore::RenderBox::computePositionedLogicalHeight):
+        (WebCore::RenderBox::computePositionedLogicalHeightUsing):
+        (WebCore::RenderBox::computePositionedLogicalWidthReplaced):
+        (WebCore::RenderBox::computePositionedLogicalHeightReplaced):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::shouldComputeSizeAsReplaced):
+        * rendering/RenderDataGrid.cpp:
+        (WebCore::RenderDataGrid::calcPrefWidths):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::calcPrefWidths):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::calcPrefWidths):
+        (WebCore::RenderFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderFlexibleBox::layoutVerticalBox):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::computeReplacedWidth):
+        (WebCore::RenderImage::computeReplacedHeight):
+        (WebCore::RenderImage::calcAspectRatioWidth):
+        (WebCore::RenderImage::calcAspectRatioHeight):
+        * rendering/RenderImage.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::calcPrefWidths):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::calcPrefWidths):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::container):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::computeBlockDirectionMargins):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computeReplacedWidth):
+        (WebCore::RenderReplaced::computeReplacedHeight):
+        (WebCore::RenderReplaced::calcAspectRatioWidth):
+        (WebCore::RenderReplaced::calcAspectRatioHeight):
+        (WebCore::RenderReplaced::calcPrefWidths):
+        * rendering/RenderReplaced.h:
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::calcPrefWidths):
+        (WebCore::RenderSVGRoot::computeReplacedWidth):
+        (WebCore::RenderSVGRoot::computeReplacedHeight):
+        * rendering/RenderSVGRoot.h:
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::calcPrefWidths):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::computeLogicalWidth):
+        (WebCore::RenderTable::layout):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::layout):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::calcPrefWidths):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::computeReplacedWidth):
+        (WebCore::RenderVideo::computeReplacedHeight):
+        * rendering/RenderVideo.h:
+
 2010-09-23  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.

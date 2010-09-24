@@ -97,7 +97,7 @@ void AutoTableLayout::recalcColumn(int effCol)
                     case Fixed:
                         // ignore width=0
                         if (w.value() > 0 && (int)l.width.type() != Percent) {
-                            int wval = cell->calcBorderBoxWidth(w.value());
+                            int wval = cell->computeBorderBoxLogicalWidth(w.value());
                             if (l.width.isFixed()) {
                                 // Nav/IE weirdness
                                 if ((wval > l.width.value()) ||

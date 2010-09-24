@@ -587,7 +587,7 @@ int RenderBox::overrideHeight() const
     return hasOverrideSize() ? overrideSize() : height();
 }
 
-int RenderBox::calcBorderBoxWidth(int width) const
+int RenderBox::computeBorderBoxLogicalWidth(int width) const
 {
     int bordersPlusPadding = borderAndPaddingWidth();
     if (style()->boxSizing() == CONTENT_BOX)
@@ -595,7 +595,7 @@ int RenderBox::calcBorderBoxWidth(int width) const
     return max(width, bordersPlusPadding);
 }
 
-int RenderBox::calcBorderBoxHeight(int height) const
+int RenderBox::computeBorderBoxLogicalHeight(int height) const
 {
     int bordersPlusPadding = borderAndPaddingHeight();
     if (style()->boxSizing() == CONTENT_BOX)
@@ -603,14 +603,14 @@ int RenderBox::calcBorderBoxHeight(int height) const
     return max(height, bordersPlusPadding);
 }
 
-int RenderBox::calcContentBoxWidth(int width) const
+int RenderBox::computeContentBoxLogicalWidth(int width) const
 {
     if (style()->boxSizing() == BORDER_BOX)
         width -= borderAndPaddingWidth();
     return max(0, width);
 }
 
-int RenderBox::calcContentBoxHeight(int height) const
+int RenderBox::computeContentBoxLogicalHeight(int height) const
 {
     if (style()->boxSizing() == BORDER_BOX)
         height -= borderAndPaddingHeight();
@@ -1350,7 +1350,7 @@ void RenderBox::repaintDuringLayoutIfMoved(const IntRect& rect)
 void RenderBox::computeLogicalWidth()
 {
     if (isPositioned()) {
-        calcAbsoluteHorizontal();
+        computePositionedLogicalWidth();
         return;
     }
 
@@ -1368,9 +1368,9 @@ void RenderBox::computeLogicalWidth()
 
     bool inVerticalBox = parent()->isFlexibleBox() && (parent()->style()->boxOrient() == VERTICAL);
     bool stretching = (parent()->style()->boxAlign() == BSTRETCH);
-    bool treatAsReplaced = shouldCalculateSizeAsReplaced() && (!inVerticalBox || !stretching);
+    bool treatAsReplaced = shouldComputeSizeAsReplaced() && (!inVerticalBox || !stretching);
 
-    Length w = (treatAsReplaced) ? Length(calcReplacedWidth(), Fixed) : style()->width();
+    Length w = (treatAsReplaced) ? Length(computeReplacedWidth(), Fixed) : style()->width();
 
     RenderBlock* cb = containingBlock();
     int containerWidth = max(0, containingBlockWidthForContent());
@@ -1393,11 +1393,11 @@ void RenderBox::computeLogicalWidth()
         setWidth(w.value() + borderAndPaddingWidth());
     else {
         // Calculate Width
-        setWidth(calcWidthUsing(Width, containerWidth));
+        setWidth(computeLogicalWidthUsing(Width, containerWidth));
 
         // Calculate MaxWidth
         if (!style()->maxWidth().isUndefined()) {
-            int maxW = calcWidthUsing(MaxWidth, containerWidth);
+            int maxW = computeLogicalWidthUsing(MaxWidth, containerWidth);
             if (width() > maxW) {
                 setWidth(maxW);
                 w = style()->maxWidth();
@@ -1405,7 +1405,7 @@ void RenderBox::computeLogicalWidth()
         }
 
         // Calculate MinWidth
-        int minW = calcWidthUsing(MinWidth, containerWidth);
+        int minW = computeLogicalWidthUsing(MinWidth, containerWidth);
         if (width() < minW) {
             setWidth(minW);
             w = style()->minWidth();
@@ -1424,7 +1424,7 @@ void RenderBox::computeLogicalWidth()
     } else {
         m_marginLeft = 0;
         m_marginRight = 0;
-        calcHorizontalMargins(marginLeft, marginRight, containerWidth);
+        computeInlineDirectionMargins(marginLeft, marginRight, containerWidth);
     }
 
     if (containerWidth && containerWidth != (width() + m_marginLeft + m_marginRight)
@@ -1436,7 +1436,7 @@ void RenderBox::computeLogicalWidth()
     }
 }
 
-int RenderBox::calcWidthUsing(WidthType widthType, int cw)
+int RenderBox::computeLogicalWidthUsing(WidthType widthType, int cw)
 {
     int widthResult = width();
     Length w;
@@ -1458,7 +1458,7 @@ int RenderBox::calcWidthUsing(WidthType widthType, int cw)
             widthResult = min(widthResult, maxPrefWidth());
         }
     } else
-        widthResult = calcBorderBoxWidth(w.calcValue(cw));
+        widthResult = computeBorderBoxLogicalWidth(w.calcValue(cw));
 
     return widthResult;
 }
@@ -1499,7 +1499,7 @@ bool RenderBox::sizesToIntrinsicWidth(WidthType widthType) const
     return false;
 }
 
-void RenderBox::calcHorizontalMargins(const Length& marginLeft, const Length& marginRight, int containerWidth)
+void RenderBox::computeInlineDirectionMargins(const Length& marginLeft, const Length& marginRight, int containerWidth)
 {
     if (isFloating() || isInline()) {
         // Inline blocks/tables and floats don't have their margins increased.
@@ -1535,9 +1535,9 @@ void RenderBox::computeLogicalHeight()
 
     Length h;
     if (isPositioned())
-        calcAbsoluteVertical();
+        computePositionedLogicalHeight();
     else {
-        calcVerticalMargins();
+        computeBlockDirectionMargins();
 
         // For tables, calculate margins only.
         if (isTable())
@@ -1545,7 +1545,7 @@ void RenderBox::computeLogicalHeight()
 
         bool inHorizontalBox = parent()->isFlexibleBox() && parent()->style()->boxOrient() == HORIZONTAL;
         bool stretching = parent()->style()->boxAlign() == BSTRETCH;
-        bool treatAsReplaced = shouldCalculateSizeAsReplaced() && (!inHorizontalBox || !stretching);
+        bool treatAsReplaced = shouldComputeSizeAsReplaced() && (!inHorizontalBox || !stretching);
         bool checkMinMaxHeight = false;
 
         // The parent box is flexing us, so it has increased or decreased our height.  We have to
@@ -1554,7 +1554,7 @@ void RenderBox::computeLogicalHeight()
                 && parent()->isFlexingChildren())
             h = Length(overrideSize() - borderAndPaddingHeight(), Fixed);
         else if (treatAsReplaced)
-            h = Length(calcReplacedHeight(), Fixed);
+            h = Length(computeReplacedHeight(), Fixed);
         else {
             h = style()->height();
             checkMinMaxHeight = true;
@@ -1569,11 +1569,11 @@ void RenderBox::computeLogicalHeight()
 
         int heightResult;
         if (checkMinMaxHeight) {
-            heightResult = calcHeightUsing(style()->height());
+            heightResult = computeLogicalHeightUsing(style()->height());
             if (heightResult == -1)
                 heightResult = height();
-            int minH = calcHeightUsing(style()->minHeight()); // Leave as -1 if unset.
-            int maxH = style()->maxHeight().isUndefined() ? heightResult : calcHeightUsing(style()->maxHeight());
+            int minH = computeLogicalHeightUsing(style()->minHeight()); // Leave as -1 if unset.
+            int maxH = style()->maxHeight().isUndefined() ? heightResult : computeLogicalHeightUsing(style()->maxHeight());
             if (maxH == -1)
                 maxH = heightResult;
             heightResult = min(maxH, heightResult);
@@ -1607,23 +1607,23 @@ void RenderBox::computeLogicalHeight()
     }
 }
 
-int RenderBox::calcHeightUsing(const Length& h)
+int RenderBox::computeLogicalHeightUsing(const Length& h)
 {
     int height = -1;
     if (!h.isAuto()) {
         if (h.isFixed())
             height = h.value();
         else if (h.isPercent())
-            height = calcPercentageHeight(h);
+            height = computePercentageLogicalHeight(h);
         if (height != -1) {
-            height = calcBorderBoxHeight(height);
+            height = computeBorderBoxLogicalHeight(height);
             return height;
         }
     }
     return height;
 }
 
-int RenderBox::calcPercentageHeight(const Length& height)
+int RenderBox::computePercentageLogicalHeight(const Length& height)
 {
     int result = -1;
     bool skippedAutoHeightContainingBlock = false;
@@ -1671,12 +1671,12 @@ int RenderBox::calcPercentageHeight(const Length& height)
     // Otherwise we only use our percentage height if our containing block had a specified
     // height.
     else if (cb->style()->height().isFixed())
-        result = cb->calcContentBoxHeight(cb->style()->height().value());
+        result = cb->computeContentBoxLogicalHeight(cb->style()->height().value());
     else if (cb->style()->height().isPercent() && !isPositionedWithSpecifiedHeight) {
         // We need to recur and compute the percentage height for our containing block.
-        result = cb->calcPercentageHeight(cb->style()->height());
+        result = cb->computePercentageLogicalHeight(cb->style()->height());
         if (result != -1)
-            result = cb->calcContentBoxHeight(result);
+            result = cb->computeContentBoxLogicalHeight(result);
     } else if (cb->isRenderView() || (cb->isBody() && document()->inQuirksMode()) || isPositionedWithSpecifiedHeight) {
         // Don't allow this to affect the block' height() member variable, since this
         // can get called while the block is still laying out its kids.
@@ -1686,8 +1686,8 @@ int RenderBox::calcPercentageHeight(const Length& height)
         cb->setHeight(oldHeight);
     } else if (cb->isRoot() && isPositioned())
         // Match the positioned objects behavior, which is that positioned objects will fill their viewport
-        // always.  Note we could only hit this case by recurring into calcPercentageHeight on a positioned containing block.
-        result = cb->calcContentBoxHeight(cb->availableHeight());
+        // always.  Note we could only hit this case by recurring into computePercentageLogicalHeight on a positioned containing block.
+        result = cb->computeContentBoxLogicalHeight(cb->availableHeight());
 
     if (result != -1) {
         result = height.calcValue(result);
@@ -1702,24 +1702,24 @@ int RenderBox::calcPercentageHeight(const Length& height)
     return result;
 }
 
-int RenderBox::calcReplacedWidth(bool includeMaxWidth) const
+int RenderBox::computeReplacedWidth(bool includeMaxWidth) const
 {
-    int width = calcReplacedWidthUsing(style()->width());
-    int minW = calcReplacedWidthUsing(style()->minWidth());
-    int maxW = !includeMaxWidth || style()->maxWidth().isUndefined() ? width : calcReplacedWidthUsing(style()->maxWidth());
+    int width = computeReplacedWidthUsing(style()->width());
+    int minW = computeReplacedWidthUsing(style()->minWidth());
+    int maxW = !includeMaxWidth || style()->maxWidth().isUndefined() ? width : computeReplacedWidthUsing(style()->maxWidth());
 
     return max(minW, min(width, maxW));
 }
 
-int RenderBox::calcReplacedWidthUsing(Length width) const
+int RenderBox::computeReplacedWidthUsing(Length width) const
 {
     switch (width.type()) {
         case Fixed:
-            return calcContentBoxWidth(width.value());
+            return computeContentBoxLogicalWidth(width.value());
         case Percent: {
             const int cw = isPositioned() ? containingBlockWidthForPositioned(toRenderBoxModelObject(container())) : containingBlockWidthForContent();
             if (cw > 0)
-                return calcContentBoxWidth(width.calcMinValue(cw));
+                return computeContentBoxLogicalWidth(width.calcMinValue(cw));
         }
         // fall through
         default:
@@ -1727,20 +1727,20 @@ int RenderBox::calcReplacedWidthUsing(Length width) const
      }
 }
 
-int RenderBox::calcReplacedHeight() const
+int RenderBox::computeReplacedHeight() const
 {
-    int height = calcReplacedHeightUsing(style()->height());
-    int minH = calcReplacedHeightUsing(style()->minHeight());
-    int maxH = style()->maxHeight().isUndefined() ? height : calcReplacedHeightUsing(style()->maxHeight());
+    int height = computeReplacedHeightUsing(style()->height());
+    int minH = computeReplacedHeightUsing(style()->minHeight());
+    int maxH = style()->maxHeight().isUndefined() ? height : computeReplacedHeightUsing(style()->maxHeight());
 
     return max(minH, min(height, maxH));
 }
 
-int RenderBox::calcReplacedHeightUsing(Length height) const
+int RenderBox::computeReplacedHeightUsing(Length height) const
 {
     switch (height.type()) {
         case Fixed:
-            return calcContentBoxHeight(height.value());
+            return computeContentBoxLogicalHeight(height.value());
         case Percent:
         {
             RenderObject* cb = isPositioned() ? container() : containingBlock();
@@ -1754,9 +1754,9 @@ int RenderBox::calcReplacedHeightUsing(Length height) const
                 RenderBlock* block = toRenderBlock(cb);
                 int oldHeight = block->height();
                 block->computeLogicalHeight();
-                int newHeight = block->calcContentBoxHeight(block->contentHeight());
+                int newHeight = block->computeContentBoxLogicalHeight(block->contentHeight());
                 block->setHeight(oldHeight);
-                return calcContentBoxHeight(height.calcValue(newHeight));
+                return computeContentBoxLogicalHeight(height.calcValue(newHeight));
             }
             
             int availableHeight = isPositioned() ? containingBlockHeightForPositioned(toRenderBoxModelObject(cb)) : toRenderBox(cb)->availableHeight();
@@ -1771,7 +1771,7 @@ int RenderBox::calcReplacedHeightUsing(Length height) const
                 return height.calcValue(availableHeight - borderAndPaddingHeight());
             }
 
-            return calcContentBoxHeight(height.calcValue(availableHeight));
+            return computeContentBoxLogicalHeight(height.calcValue(availableHeight));
         }
         default:
             return intrinsicSize().height();
@@ -1786,7 +1786,7 @@ int RenderBox::availableHeight() const
 int RenderBox::availableHeightUsing(const Length& h) const
 {
     if (h.isFixed())
-        return calcContentBoxHeight(h.value());
+        return computeContentBoxLogicalHeight(h.value());
 
     if (isRenderView())
         return toRenderView(this)->frameView()->visibleHeight();
@@ -1798,15 +1798,15 @@ int RenderBox::availableHeightUsing(const Length& h) const
         return overrideSize() - borderAndPaddingWidth();
 
     if (h.isPercent())
-       return calcContentBoxHeight(h.calcValue(containingBlock()->availableHeight()));
+       return computeContentBoxLogicalHeight(h.calcValue(containingBlock()->availableHeight()));
 
     if (isRenderBlock() && isPositioned() && style()->height().isAuto() && !(style()->top().isAuto() || style()->bottom().isAuto())) {
         RenderBlock* block = const_cast<RenderBlock*>(toRenderBlock(this));
         int oldHeight = block->height();
         block->computeLogicalHeight();
-        int newHeight = block->calcContentBoxHeight(block->contentHeight());
+        int newHeight = block->computeContentBoxLogicalHeight(block->contentHeight());
         block->setHeight(oldHeight);
-        return calcContentBoxHeight(newHeight);
+        return computeContentBoxLogicalHeight(newHeight);
     }
 
     return containingBlock()->availableHeight();
@@ -1819,7 +1819,7 @@ int RenderBox::availableLogicalWidth() const
     return contentHeight();
 }
 
-void RenderBox::calcVerticalMargins()
+void RenderBox::computeBlockDirectionMargins()
 {
     if (isTableCell()) {
         m_marginTop = 0;
@@ -1877,10 +1877,10 @@ int RenderBox::containingBlockHeightForPositioned(const RenderBoxModelObject* co
     return heightResult - containingBlock->borderTop() - containingBlock->borderBottom();
 }
 
-void RenderBox::calcAbsoluteHorizontal()
+void RenderBox::computePositionedLogicalWidth()
 {
     if (isReplaced()) {
-        calcAbsoluteHorizontalReplaced();
+        computePositionedLogicalWidthReplaced();
         return;
     }
 
@@ -1891,7 +1891,7 @@ void RenderBox::calcAbsoluteHorizontal()
     // was also previously done for deciding what to override when you had
     // over-constrained margins?  Also note that the container block is used
     // in similar situations in other parts of the RenderBox class (see computeLogicalWidth()
-    // and calcHorizontalMargins()). For now we are using the parent for quirks
+    // and computeInlineDirectionMargins()). For now we are using the parent for quirks
     // mode and the containing block for strict mode.
 
     // FIXME 2: Should we still deal with these the cases of 'left' or 'right' having
@@ -1905,7 +1905,7 @@ void RenderBox::calcAbsoluteHorizontal()
     // The following is based off of the W3C Working Draft from April 11, 2006 of
     // CSS 2.1: Section 10.3.7 "Absolutely positioned, non-replaced elements"
     // <http://www.w3.org/TR/CSS21/visudet.html#abs-non-replaced-width>
-    // (block-style-comments in this function and in calcAbsoluteHorizontalValues()
+    // (block-style-comments in this function and in computePositionedLogicalWidthUsing()
     // correspond to text from the spec)
 
 
@@ -1977,7 +1977,7 @@ void RenderBox::calcAbsoluteHorizontal()
     // Calculate constraint equation values for 'width' case.
     int widthResult;
     int xResult;
-    calcAbsoluteHorizontalValues(style()->width(), containerBlock, containerDirection,
+    computePositionedLogicalWidthUsing(style()->width(), containerBlock, containerDirection,
                                  containerWidth, bordersPlusPadding,
                                  left, right, marginLeft, marginRight,
                                  widthResult, m_marginLeft, m_marginRight, xResult);
@@ -1991,7 +1991,7 @@ void RenderBox::calcAbsoluteHorizontal()
         int maxMarginRight;
         int maxXPos;
 
-        calcAbsoluteHorizontalValues(style()->maxWidth(), containerBlock, containerDirection,
+        computePositionedLogicalWidthUsing(style()->maxWidth(), containerBlock, containerDirection,
                                      containerWidth, bordersPlusPadding,
                                      left, right, marginLeft, marginRight,
                                      maxWidth, maxMarginLeft, maxMarginRight, maxXPos);
@@ -2011,7 +2011,7 @@ void RenderBox::calcAbsoluteHorizontal()
         int minMarginRight;
         int minXPos;
 
-        calcAbsoluteHorizontalValues(style()->minWidth(), containerBlock, containerDirection,
+        computePositionedLogicalWidthUsing(style()->minWidth(), containerBlock, containerDirection,
                                      containerWidth, bordersPlusPadding,
                                      left, right, marginLeft, marginRight,
                                      minWidth, minMarginLeft, minMarginRight, minXPos);
@@ -2025,7 +2025,7 @@ void RenderBox::calcAbsoluteHorizontal()
     }
 
     if (stretchesToMinIntrinsicWidth() && width() < minPrefWidth() - bordersPlusPadding) {
-        calcAbsoluteHorizontalValues(Length(minPrefWidth() - bordersPlusPadding, Fixed), containerBlock, containerDirection,
+        computePositionedLogicalWidthUsing(Length(minPrefWidth() - bordersPlusPadding, Fixed), containerBlock, containerDirection,
                                      containerWidth, bordersPlusPadding,
                                      left, right, marginLeft, marginRight,
                                      widthResult, m_marginLeft, m_marginRight, xResult);
@@ -2037,7 +2037,7 @@ void RenderBox::calcAbsoluteHorizontal()
     setWidth(width() + bordersPlusPadding);
 }
 
-void RenderBox::calcAbsoluteHorizontalValues(Length width, const RenderBoxModelObject* containerBlock, TextDirection containerDirection,
+void RenderBox::computePositionedLogicalWidthUsing(Length width, const RenderBoxModelObject* containerBlock, TextDirection containerDirection,
                                              const int containerWidth, const int bordersPlusPadding,
                                              const Length left, const Length right, const Length marginLeft, const Length marginRight,
                                              int& widthValue, int& marginLeftValue, int& marginRightValue, int& xPos)
@@ -2069,7 +2069,7 @@ void RenderBox::calcAbsoluteHorizontalValues(Length width, const RenderBoxModelO
         // case because the value is not used for any further calculations.
 
         leftValue = left.calcValue(containerWidth);
-        widthValue = calcContentBoxWidth(width.calcValue(containerWidth));
+        widthValue = computeContentBoxLogicalWidth(width.calcValue(containerWidth));
 
         const int availableSpace = containerWidth - (leftValue + widthValue + right.calcValue(containerWidth) + bordersPlusPadding);
 
@@ -2177,7 +2177,7 @@ void RenderBox::calcAbsoluteHorizontalValues(Length width, const RenderBoxModelO
             widthValue = min(max(preferredMinWidth, availableWidth), preferredWidth);
         } else if (leftIsAuto && !width.isAuto() && !rightIsAuto) {
             // RULE 4: (solve for left)
-            widthValue = calcContentBoxWidth(width.calcValue(containerWidth));
+            widthValue = computeContentBoxLogicalWidth(width.calcValue(containerWidth));
             leftValue = availableSpace - (widthValue + right.calcValue(containerWidth));
         } else if (!leftIsAuto && widthIsAuto && !rightIsAuto) {
             // RULE 5: (solve for width)
@@ -2186,7 +2186,7 @@ void RenderBox::calcAbsoluteHorizontalValues(Length width, const RenderBoxModelO
         } else if (!leftIsAuto&& !widthIsAuto && rightIsAuto) {
             // RULE 6: (no need solve for right)
             leftValue = left.calcValue(containerWidth);
-            widthValue = calcContentBoxWidth(width.calcValue(containerWidth));
+            widthValue = computeContentBoxLogicalWidth(width.calcValue(containerWidth));
         }
     }
 
@@ -2209,17 +2209,17 @@ void RenderBox::calcAbsoluteHorizontalValues(Length width, const RenderBoxModelO
     xPos = leftValue + marginLeftValue + containerBlock->borderLeft();
 }
 
-void RenderBox::calcAbsoluteVertical()
+void RenderBox::computePositionedLogicalHeight()
 {
     if (isReplaced()) {
-        calcAbsoluteVerticalReplaced();
+        computePositionedLogicalHeightReplaced();
         return;
     }
 
     // The following is based off of the W3C Working Draft from April 11, 2006 of
     // CSS 2.1: Section 10.6.4 "Absolutely positioned, non-replaced elements"
     // <http://www.w3.org/TR/2005/WD-CSS21-20050613/visudet.html#abs-non-replaced-height>
-    // (block-style-comments in this function and in calcAbsoluteVerticalValues()
+    // (block-style-comments in this function and in computePositionedLogicalHeightUsing()
     // correspond to text from the spec)
 
 
@@ -2268,7 +2268,7 @@ void RenderBox::calcAbsoluteVertical()
     int y;
 
     // Calculate constraint equation values for 'height' case.
-    calcAbsoluteVerticalValues(style()->height(), containerBlock, containerHeight, bordersPlusPadding,
+    computePositionedLogicalHeightUsing(style()->height(), containerBlock, containerHeight, bordersPlusPadding,
                                top, bottom, marginTop, marginBottom,
                                h, m_marginTop, m_marginBottom, y);
     setY(y);
@@ -2283,7 +2283,7 @@ void RenderBox::calcAbsoluteVertical()
         int maxMarginBottom;
         int maxYPos;
 
-        calcAbsoluteVerticalValues(style()->maxHeight(), containerBlock, containerHeight, bordersPlusPadding,
+        computePositionedLogicalHeightUsing(style()->maxHeight(), containerBlock, containerHeight, bordersPlusPadding,
                                    top, bottom, marginTop, marginBottom,
                                    maxHeight, maxMarginTop, maxMarginBottom, maxYPos);
 
@@ -2302,7 +2302,7 @@ void RenderBox::calcAbsoluteVertical()
         int minMarginBottom;
         int minYPos;
 
-        calcAbsoluteVerticalValues(style()->minHeight(), containerBlock, containerHeight, bordersPlusPadding,
+        computePositionedLogicalHeightUsing(style()->minHeight(), containerBlock, containerHeight, bordersPlusPadding,
                                    top, bottom, marginTop, marginBottom,
                                    minHeight, minMarginTop, minMarginBottom, minYPos);
 
@@ -2318,13 +2318,13 @@ void RenderBox::calcAbsoluteVertical()
     setHeight(h + bordersPlusPadding);
 }
 
-void RenderBox::calcAbsoluteVerticalValues(Length h, const RenderBoxModelObject* containerBlock,
+void RenderBox::computePositionedLogicalHeightUsing(Length h, const RenderBoxModelObject* containerBlock,
                                            const int containerHeight, const int bordersPlusPadding,
                                            const Length top, const Length bottom, const Length marginTop, const Length marginBottom,
                                            int& heightValue, int& marginTopValue, int& marginBottomValue, int& yPos)
 {
     // 'top' and 'bottom' cannot both be 'auto' because 'top would of been
-    // converted to the static position in calcAbsoluteVertical()
+    // converted to the static position in computePositionedLogicalHeight()
     ASSERT(!(top.isAuto() && bottom.isAuto()));
 
     int contentHeight = height() - bordersPlusPadding;
@@ -2353,7 +2353,7 @@ void RenderBox::calcAbsoluteVerticalValues(Length h, const RenderBoxModelObject*
         // NOTE:  It is not necessary to solve for 'bottom' in the over constrained
         // case because the value is not used for any further calculations.
 
-        heightValue = calcContentBoxHeight(h.calcValue(containerHeight));
+        heightValue = computeContentBoxLogicalHeight(h.calcValue(containerHeight));
         topValue = top.calcValue(containerHeight);
 
         const int availableSpace = containerHeight - (topValue + heightValue + bottom.calcValue(containerHeight) + bordersPlusPadding);
@@ -2420,7 +2420,7 @@ void RenderBox::calcAbsoluteVerticalValues(Length h, const RenderBoxModelObject*
             heightValue = contentHeight;
         } else if (topIsAuto && !heightIsAuto && !bottomIsAuto) {
             // RULE 4: (solve of top)
-            heightValue = calcContentBoxHeight(h.calcValue(containerHeight));
+            heightValue = computeContentBoxLogicalHeight(h.calcValue(containerHeight));
             topValue = availableSpace - (heightValue + bottom.calcValue(containerHeight));
         } else if (!topIsAuto && heightIsAuto && !bottomIsAuto) {
             // RULE 5: (solve of height)
@@ -2428,7 +2428,7 @@ void RenderBox::calcAbsoluteVerticalValues(Length h, const RenderBoxModelObject*
             heightValue = max(0, availableSpace - (topValue + bottom.calcValue(containerHeight)));
         } else if (!topIsAuto && !heightIsAuto && bottomIsAuto) {
             // RULE 6: (no need solve of bottom)
-            heightValue = calcContentBoxHeight(h.calcValue(containerHeight));
+            heightValue = computeContentBoxLogicalHeight(h.calcValue(containerHeight));
             topValue = top.calcValue(containerHeight);
         }
     }
@@ -2437,7 +2437,7 @@ void RenderBox::calcAbsoluteVerticalValues(Length h, const RenderBoxModelObject*
     yPos = topValue + marginTopValue + containerBlock->borderTop();
 }
 
-void RenderBox::calcAbsoluteHorizontalReplaced()
+void RenderBox::computePositionedLogicalWidthReplaced()
 {
     // The following is based off of the W3C Working Draft from April 11, 2006 of
     // CSS 2.1: Section 10.3.8 "Absolutely positioned, replaced elements"
@@ -2467,9 +2467,9 @@ void RenderBox::calcAbsoluteHorizontalReplaced()
      *    elements.
     \*-----------------------------------------------------------------------*/
     // NOTE: This value of width is FINAL in that the min/max width calculations
-    // are dealt with in calcReplacedWidth().  This means that the steps to produce
+    // are dealt with in computeReplacedWidth().  This means that the steps to produce
     // correct max/min in the non-replaced version, are not necessary.
-    setWidth(calcReplacedWidth() + borderAndPaddingWidth());
+    setWidth(computeReplacedWidth() + borderAndPaddingWidth());
     const int availableSpace = containerWidth - width();
 
     /*-----------------------------------------------------------------------*\
@@ -2615,7 +2615,7 @@ void RenderBox::calcAbsoluteHorizontalReplaced()
     m_frameRect.setX(leftValue + m_marginLeft + containerBlock->borderLeft());
 }
 
-void RenderBox::calcAbsoluteVerticalReplaced()
+void RenderBox::computePositionedLogicalHeightReplaced()
 {
     // The following is based off of the W3C Working Draft from April 11, 2006 of
     // CSS 2.1: Section 10.6.5 "Absolutely positioned, replaced elements"
@@ -2640,9 +2640,9 @@ void RenderBox::calcAbsoluteVerticalReplaced()
      *    elements.
     \*-----------------------------------------------------------------------*/
     // NOTE: This value of height is FINAL in that the min/max height calculations
-    // are dealt with in calcReplacedHeight().  This means that the steps to produce
+    // are dealt with in computeReplacedHeight().  This means that the steps to produce
     // correct max/min in the non-replaced version, are not necessary.
-    setHeight(calcReplacedHeight() + borderAndPaddingHeight());
+    setHeight(computeReplacedHeight() + borderAndPaddingHeight());
     const int availableSpace = containerHeight - height();
 
     /*-----------------------------------------------------------------------*\

@@ -68,7 +68,7 @@ void RenderSVGRoot::calcPrefWidths()
     ASSERT(prefWidthsDirty());
 
     int borderAndPadding = borderAndPaddingWidth();
-    int width = calcReplacedWidth(false) + borderAndPadding;
+    int width = computeReplacedWidth(false) + borderAndPadding;
 
     if (style()->maxWidth().isFixed() && style()->maxWidth().value() != undefinedLength)
         width = min(width, style()->maxWidth().value() + (style()->boxSizing() == CONTENT_BOX ? borderAndPadding : 0));
@@ -82,9 +82,9 @@ void RenderSVGRoot::calcPrefWidths()
     setPrefWidthsDirty(false);
 }
 
-int RenderSVGRoot::calcReplacedWidth(bool includeMaxWidth) const
+int RenderSVGRoot::computeReplacedWidth(bool includeMaxWidth) const
 {
-    int replacedWidth = RenderBox::calcReplacedWidth(includeMaxWidth);
+    int replacedWidth = RenderBox::computeReplacedWidth(includeMaxWidth);
     if (!style()->width().isPercent())
         return replacedWidth;
 
@@ -93,9 +93,9 @@ int RenderSVGRoot::calcReplacedWidth(bool includeMaxWidth) const
     return static_cast<int>(roundf(replacedWidth * svg->currentScale()));
 }
 
-int RenderSVGRoot::calcReplacedHeight() const
+int RenderSVGRoot::computeReplacedHeight() const
 {
-    int replacedHeight = RenderBox::calcReplacedHeight();
+    int replacedHeight = RenderBox::computeReplacedHeight();
     if (!style()->height().isPercent())
         return replacedHeight;
 

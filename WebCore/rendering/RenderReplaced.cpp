@@ -207,34 +207,34 @@ static inline bool lengthIsSpecified(Length length)
     return lengthType == Fixed || lengthType == Percent;
 }
 
-int RenderReplaced::calcReplacedWidth(bool includeMaxWidth) const
+int RenderReplaced::computeReplacedWidth(bool includeMaxWidth) const
 {
     int width;
     if (lengthIsSpecified(style()->width()))
-        width = calcReplacedWidthUsing(style()->width());
+        width = computeReplacedWidthUsing(style()->width());
     else if (m_hasIntrinsicSize)
         width = calcAspectRatioWidth();
     else
         width = intrinsicSize().width();
 
-    int minW = calcReplacedWidthUsing(style()->minWidth());
-    int maxW = !includeMaxWidth || style()->maxWidth().isUndefined() ? width : calcReplacedWidthUsing(style()->maxWidth());
+    int minW = computeReplacedWidthUsing(style()->minWidth());
+    int maxW = !includeMaxWidth || style()->maxWidth().isUndefined() ? width : computeReplacedWidthUsing(style()->maxWidth());
 
     return max(minW, min(width, maxW));
 }
 
-int RenderReplaced::calcReplacedHeight() const
+int RenderReplaced::computeReplacedHeight() const
 {
     int height;
     if (lengthIsSpecified(style()->height()))
-        height = calcReplacedHeightUsing(style()->height());
+        height = computeReplacedHeightUsing(style()->height());
     else if (m_hasIntrinsicSize)
         height = calcAspectRatioHeight();
     else
         height = intrinsicSize().height();
 
-    int minH = calcReplacedHeightUsing(style()->minHeight());
-    int maxH = style()->maxHeight().isUndefined() ? height : calcReplacedHeightUsing(style()->maxHeight());
+    int minH = computeReplacedHeightUsing(style()->minHeight());
+    int maxH = style()->maxHeight().isUndefined() ? height : computeReplacedHeightUsing(style()->maxHeight());
 
     return max(minH, min(height, maxH));
 }
@@ -245,7 +245,7 @@ int RenderReplaced::calcAspectRatioWidth() const
     int intrinsicHeight = intrinsicSize().height();
     if (!intrinsicHeight)
         return 0;
-    return RenderBox::calcReplacedHeight() * intrinsicWidth / intrinsicHeight;
+    return RenderBox::computeReplacedHeight() * intrinsicWidth / intrinsicHeight;
 }
 
 int RenderReplaced::calcAspectRatioHeight() const
@@ -254,7 +254,7 @@ int RenderReplaced::calcAspectRatioHeight() const
     int intrinsicHeight = intrinsicSize().height();
     if (!intrinsicWidth)
         return 0;
-    return RenderBox::calcReplacedWidth() * intrinsicHeight / intrinsicWidth;
+    return RenderBox::computeReplacedWidth() * intrinsicHeight / intrinsicWidth;
 }
 
 void RenderReplaced::calcPrefWidths()
@@ -262,7 +262,7 @@ void RenderReplaced::calcPrefWidths()
     ASSERT(prefWidthsDirty());
 
     int borderAndPadding = borderAndPaddingWidth();
-    m_maxPrefWidth = calcReplacedWidth(false) + borderAndPadding;
+    m_maxPrefWidth = computeReplacedWidth(false) + borderAndPadding;
 
     if (style()->maxWidth().isFixed() && style()->maxWidth().value() != undefinedLength)
         m_maxPrefWidth = min(m_maxPrefWidth, style()->maxWidth().value() + (style()->boxSizing() == CONTENT_BOX ? borderAndPadding : 0));
