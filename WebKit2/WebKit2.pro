@@ -293,7 +293,6 @@ SOURCES += \
     Platform/qt/RunLoopQt.cpp \
     Platform/qt/SharedMemoryQt.cpp \
     Platform/qt/WorkQueueQt.cpp \
-    Shared/DrawingAreaBase.cpp \
     Shared/ImmutableArray.cpp \
     Shared/ImmutableDictionary.cpp \
     Shared/MutableArray.cpp \

@@ -61,12 +61,6 @@ public:
 
     virtual ~ChunkedUpdateDrawingAreaProxy();
 
-    // The DrawingAreaProxy should never be decoded itself. Instead, the DrawingArea should be decoded.
-    virtual void encode(CoreIPC::ArgumentEncoder* encoder) const
-    {
-        DrawingAreaProxy::encode(encoder);
-    }
-
 private:
     ChunkedUpdateDrawingAreaProxy(PlatformWebView*);
 

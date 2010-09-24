@@ -397,10 +397,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Shared\DrawingAreaBase.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\Shared\DrawingAreaBase.h"
 				>
 			</File>

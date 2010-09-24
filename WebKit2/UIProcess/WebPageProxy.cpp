@@ -153,7 +153,7 @@ void WebPageProxy::initializeWebPage(const IntSize& size)
     }
 
     ASSERT(m_drawingArea);
-    process()->send(WebProcessMessage::Create, m_pageID, CoreIPC::In(size, pageNamespace()->context()->preferences()->store(), *(m_drawingArea.get())));
+    process()->send(WebProcessMessage::Create, m_pageID, CoreIPC::In(size, pageNamespace()->context()->preferences()->store(), m_drawingArea->info()));
 }
 
 void WebPageProxy::reinitializeWebPage(const WebCore::IntSize& size)
@@ -162,7 +162,7 @@ void WebPageProxy::reinitializeWebPage(const WebCore::IntSize& size)
         return;
 
     ASSERT(m_drawingArea);
-    process()->send(WebProcessMessage::Create, m_pageID, CoreIPC::In(size, pageNamespace()->context()->preferences()->store(), *(m_drawingArea.get())));
+    process()->send(WebProcessMessage::Create, m_pageID, CoreIPC::In(size, pageNamespace()->context()->preferences()->store(), m_drawingArea->info()));
 }
 
 void WebPageProxy::close()
@@ -883,7 +883,7 @@ void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIP
                 // FIXME: Pass the real size.
                 reply->encode(CoreIPC::In(newPage->pageID(), IntSize(100, 100), 
                                           newPage->pageNamespace()->context()->preferences()->store(),
-                                          *(newPage->drawingArea())));
+                                          newPage->drawingArea()->info()));
             } else {
                 reply->encode(CoreIPC::In(static_cast<uint64_t>(0), IntSize(), WebPreferencesStore(), DrawingAreaBase::DrawingAreaInfo()));
             }
@@ -966,7 +966,7 @@ void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIP
                 return;
 
             didChangeAcceleratedCompositing(compositing);
-            reply->encode(*(drawingArea()));
+            reply->encode(drawingArea()->info());
             break;
         }
 #endif // USE(ACCELERATED_COMPOSITING)

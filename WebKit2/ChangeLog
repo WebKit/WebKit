@@ -1,5 +1,34 @@
 2010-09-24  Adam Roben  <aroben@apple.com>
 
+        Stop pretending that we know how to encode a DrawingArea and just
+        encode the DrawingAreaInfo directly
+
+        DrawingAreaBase and friends were trying to hide the fact that they
+        were just encoding/decoding a DrawingAreaInfo behind the scenes, but
+        everyone knew what was going on and it was getting embarassing.
+
+        Fixes <http://webkit.org/b/46469> Code to encode/decode a
+        DrawingAreaInfo is confusing
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/DrawingAreaBase.cpp: Removed.
+        * Shared/DrawingAreaBase.h: Removed encode/decode.
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.h: Removed encode override.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeWebPage):
+        (WebKit::WebPageProxy::reinitializeWebPage):
+        (WebKit::WebPageProxy::didReceiveSyncMessage):
+        Changed to encode the DrawingAreaInfo directly.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        Removed DrawingAreaBase.cpp.
+
+2010-09-24  Adam Roben  <aroben@apple.com>
+
         Expose a whole DrawingAreaInfo instead of its constituent parts from
         DrawingAreaBase
 
