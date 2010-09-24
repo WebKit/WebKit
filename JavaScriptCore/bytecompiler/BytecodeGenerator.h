@@ -307,6 +307,8 @@ namespace JSC {
         RegisterID* emitNewArray(RegisterID* dst, ElementNode*); // stops at first elision
 
         RegisterID* emitNewFunction(RegisterID* dst, FunctionBodyNode* body);
+        RegisterID* emitLazyNewFunction(RegisterID* dst, FunctionBodyNode* body);
+        RegisterID* emitNewFunctionInternal(RegisterID* dst, unsigned index, bool shouldNullCheck);
         RegisterID* emitNewFunctionExpression(RegisterID* dst, FuncExprNode* func);
         RegisterID* emitNewRegExp(RegisterID* dst, RegExp* regExp);
 
@@ -441,7 +443,7 @@ namespace JSC {
         typedef HashMap<StringImpl*, JSString*, IdentifierRepHash> IdentifierStringMap;
         
         RegisterID* emitCall(OpcodeID, RegisterID* dst, RegisterID* func, CallArguments&, unsigned divot, unsigned startOffset, unsigned endOffset);
-        
+
         RegisterID* newRegister();
 
         // Adds a var slot and maps it to the name ident in symbolTable().
@@ -503,6 +505,8 @@ namespace JSC {
             return FunctionExecutable::create(globalData, body->ident(), body->source(), body->usesArguments(), body->parameters(), body->lineNo(), body->lastLine());
         }
 
+        RegisterID* emitInitLazyRegister(RegisterID*);
+
         Vector<Instruction>& instructions() { return m_codeBlock->instructions(); }
         SymbolTable& symbolTable() { return *m_symbolTable; }
 
@@ -512,6 +516,7 @@ namespace JSC {
         RegisterID* emitThrowExpressionTooDeepException();
 
         void createArgumentsIfNecessary();
+        RegisterID* createLazyRegisterIfNecessary(RegisterID*);
 
         bool m_shouldEmitDebugHooks;
         bool m_shouldEmitProfileHooks;
@@ -551,6 +556,12 @@ namespace JSC {
 
         int m_globalVarStorageOffset;
 
+        int m_firstLazyFunction;
+        int m_lastLazyFunction;
+        HashMap<unsigned int, FunctionBodyNode*, WTF::IntHash<unsigned int>, WTF::UnsignedWithZeroKeyHashTraits<unsigned int> > m_lazyFunctions;
+        typedef HashMap<FunctionBodyNode*, unsigned> FunctionOffsetMap;
+        FunctionOffsetMap m_functionOffsets;
+        
         // Constant pool
         IdentifierMap m_identifierMap;
         JSValueMap m_jsValueMap;

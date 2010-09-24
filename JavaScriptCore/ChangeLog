@@ -1,3 +1,39 @@
+2010-09-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        REGRESSION(r68223): It broke 2-3 tests on bots (Requested by Ossy on #webkit).
+        https://bugs.webkit.org/show_bug.cgi?id=46448
+
+        Roll this back in, with additional logic to prevent us from delaying construction
+        of functions named "arguments"
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitInitLazyRegister):
+        (JSC::BytecodeGenerator::registerFor):
+        (JSC::BytecodeGenerator::createLazyRegisterIfNecessary):
+        (JSC::BytecodeGenerator::constRegisterFor):
+        (JSC::BytecodeGenerator::emitNewFunction):
+        (JSC::BytecodeGenerator::emitLazyNewFunction):
+        (JSC::BytecodeGenerator::emitNewFunctionInternal):
+        * bytecompiler/BytecodeGenerator.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_init_lazy_reg):
+        (JSC::JIT::emit_op_new_func):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_init_lazy_reg):
+        * parser/Nodes.h:
+        (JSC::ScopeNode::needsActivationForMoreThanVariables):
+
 2010-09-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r68223.
