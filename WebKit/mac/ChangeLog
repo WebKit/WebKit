@@ -1,3 +1,21 @@
+2010-09-24  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: CRASH at node highlight on MAC Safari.
+        1) run-safari --debug
+        2) open inspector
+        3) open elements panel
+        4) hover mouse over elements panel items multiple times
+        5) CRASH
+        Looks like it is a race condition. WebNodeHighlightView doesn't check
+        the pointer to WebNodeHighligh object and it can be nil.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46261
+
+        * WebInspector/WebNodeHighlightView.mm:
+        (-[WebNodeHighlightView drawRect:]):
+
 2010-09-23  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.

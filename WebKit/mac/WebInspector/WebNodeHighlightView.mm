@@ -67,14 +67,15 @@ using namespace WebCore;
 
 - (void)drawRect:(NSRect)rect 
 {
-    [NSGraphicsContext saveGraphicsState];
+    if (_webNodeHighlight) {
+        [NSGraphicsContext saveGraphicsState];
 
-    ASSERT([[NSGraphicsContext currentContext] isFlipped]);
+        ASSERT([[NSGraphicsContext currentContext] isFlipped]);
 
-    GraphicsContext context((PlatformGraphicsContext*)[[NSGraphicsContext currentContext] graphicsPort]);
-    [_webNodeHighlight inspectorController]->drawNodeHighlight(context);
-
-    [NSGraphicsContext restoreGraphicsState];
+        GraphicsContext context((PlatformGraphicsContext*)[[NSGraphicsContext currentContext] graphicsPort]);
+        [_webNodeHighlight inspectorController]->drawNodeHighlight(context);
+        [NSGraphicsContext restoreGraphicsState];
+    }
 }
 
 - (WebNodeHighlight *)webNodeHighlight
