@@ -83,19 +83,39 @@ class ChromiumDriverTest(unittest.TestCase):
         self.driver._proc.stdout.readline = mock_readline
         self._assert_write_command_and_read_line(expected_crash=True)
 
+
+class ChromiumPortTest(unittest.TestCase):
+    class TestMacPort(chromium_mac.ChromiumMacPort):
+        def __init__(self, options):
+            chromium_mac.ChromiumMacPort.__init__(self,
+                                                  port_name='test-port',
+                                                  options=options)
+
+        def default_configuration(self):
+            self.default_configuration_called = True
+            return 'default'
+
+    class TestLinuxPort(chromium_linux.ChromiumLinuxPort):
+        def __init__(self, options):
+            chromium_linux.ChromiumLinuxPort.__init__(self,
+                                                      port_name='test-port',
+                                                      options=options)
+
+        def default_configuration(self):
+            self.default_configuration_called = True
+            return 'default'
+
     def test_path_to_image_diff(self):
         class MockOptions:
             def __init__(self):
                 self.use_drt = True
 
-        port = chromium_linux.ChromiumLinuxPort(port_name='test-port',
-                                                options=MockOptions())
+        port = ChromiumPortTest.TestLinuxPort(options=MockOptions())
         self.assertTrue(port._path_to_image_diff().endswith(
-            '/out/Release/ImageDiff'))
-        port = chromium_mac.ChromiumMacPort(port_name='test-port',
-                                            options=MockOptions())
+            '/out/default/ImageDiff'), msg=port._path_to_image_diff())
+        port = ChromiumPortTest.TestMacPort(options=MockOptions())
         self.assertTrue(port._path_to_image_diff().endswith(
-            '/xcodebuild/Release/ImageDiff'))
+            '/xcodebuild/default/ImageDiff'))
         # FIXME: Figure out how this is going to work on Windows.
         #port = chromium_win.ChromiumWinPort('test-port', options=MockOptions())
 
@@ -104,8 +124,7 @@ class ChromiumDriverTest(unittest.TestCase):
             def __init__(self):
                 self.use_drt = True
 
-        port = chromium_linux.ChromiumLinuxPort(port_name='test-port',
-                                                options=MockOptions())
+        port = ChromiumPortTest.TestLinuxPort(options=MockOptions())
 
         fake_test = os.path.join(port.layout_tests_dir(), "fast/js/not-good.js")
 
@@ -117,6 +136,25 @@ DEFER LINUX WIN : fast/js/very-good.js = TIMEOUT PASS"""
 
         skipped_tests = port.skipped_layout_tests(extra_test_files=[fake_test, ])
         self.assertTrue("fast/js/not-good.js" in skipped_tests)
+
+    def test_default_configuration(self):
+        class EmptyOptions:
+            def __init__(self):
+                pass
+
+        options = EmptyOptions()
+        port = ChromiumPortTest.TestLinuxPort(options)
+        self.assertEquals(options.configuration, 'default')
+        self.assertTrue(port.default_configuration_called)
+
+        class OptionsWithUnsetConfiguration:
+            def __init__(self):
+                self.configuration = None
+
+        options = OptionsWithUnsetConfiguration()
+        port = ChromiumPortTest.TestLinuxPort(options)
+        self.assertEquals(options.configuration, 'default')
+        self.assertTrue(port.default_configuration_called)
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,3 +1,17 @@
+2010-09-24  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        NRWT doesn't respect config set with set-webkit-configuration
+        https://bugs.webkit.org/show_bug.cgi?id=46278
+        
+        Use Port.default_configuration() instead of hardcoding Release in
+        ChromiumPort configuration initialization, so that we still inherit the
+        configuration set by set-webkit-configuration.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+
 2010-09-24  Chang Shu  <chang.shu@nokia.com>
 
         Reviewed by Csaba Osztrogonác.
