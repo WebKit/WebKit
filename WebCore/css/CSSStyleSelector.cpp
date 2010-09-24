@@ -1724,7 +1724,7 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, RenderStyle* parent
         // clear how that should work.
         if (style->display() == INLINE && style->styleType() == NOPSEUDO && parentStyle && style->blockFlow() != parentStyle->blockFlow())
             style->setDisplay(INLINE_BLOCK);
-            
+        
         // After performing the display mutation, check table rows.  We do not honor position:relative on
         // table rows or cells.  This has been established in CSS2.1 (and caused a crash in containingBlock()
         // on some sites).
@@ -1732,6 +1732,16 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, RenderStyle* parent
              style->display() == TABLE_FOOTER_GROUP || style->display() == TABLE_ROW || style->display() == TABLE_CELL) &&
              style->position() == RelativePosition)
             style->setPosition(StaticPosition);
+        
+        // FIXME: Since we don't support block-flow on either tables or flexible boxes yet, disallow setting
+        // of block-flow to anything other than TopToBottomBlockFlow.
+        // https://bugs.webkit.org/show_bug.cgi?id=46417 - Tables support
+        // https://bugs.webkit.org/show_bug.cgi?id=46418 - Flexible box support.
+        if (style->blockFlow() != TopToBottomBlockFlow && (style->display() == TABLE || style->display() == INLINE_TABLE
+            || style->display() == TABLE_HEADER_GROUP || style->display() == TABLE_ROW_GROUP
+            || style->display() == TABLE_FOOTER_GROUP || style->display() == TABLE_ROW || style->display() == TABLE_CELL
+            || style->display() == BOX || style->display() == INLINE_BOX))
+            style->setBlockFlow(TopToBottomBlockFlow);
     }
 
     // Make sure our z-index value is only applied if the object is positioned.

@@ -1,3 +1,17 @@
+2010-09-23  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46442
+
+        Disallow the setting of block-flow to anything other than "tb" for all table-related display types
+        and flexible box display types.  By disallowing block-flow on the subclasses of RenderBlock like tables
+        and flexible boxes, we ensure that alterations to the RenderBlock base class won't result in misrenderings
+        in tables and flexible boxes that try to specify other block flow values.
+ 
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+
 2010-09-23  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by David Levin.
