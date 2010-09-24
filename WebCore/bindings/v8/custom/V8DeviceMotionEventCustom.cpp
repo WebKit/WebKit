@@ -69,19 +69,19 @@ RefPtr<DeviceMotionData::Acceleration> readAccelerationArgument(v8::Local<v8::Va
     if (xValue.IsEmpty())
         return 0;
     bool canProvideX = !isUndefinedOrNull(xValue);
-    double x = static_cast<double>(xValue->NumberValue());
+    double x = xValue->NumberValue();
 
     v8::Local<v8::Value> yValue = object->Get(v8::String::New("y"));
     if (yValue.IsEmpty())
         return 0;
     bool canProvideY = !isUndefinedOrNull(yValue);
-    double y = static_cast<double>(yValue->NumberValue());
+    double y = yValue->NumberValue();
 
     v8::Local<v8::Value> zValue = object->Get(v8::String::New("z"));
     if (zValue.IsEmpty())
         return 0;
     bool canProvideZ = !isUndefinedOrNull(zValue);
-    double z = static_cast<double>(zValue->NumberValue());
+    double z = zValue->NumberValue();
 
     if (!canProvideX && !canProvideY && !canProvideZ)
         return 0;
@@ -101,19 +101,19 @@ RefPtr<DeviceMotionData::RotationRate> readRotationRateArgument(v8::Local<v8::Va
     if (alphaValue.IsEmpty())
         return 0;
     bool canProvideAlpha = !isUndefinedOrNull(alphaValue);
-    double alpha = static_cast<double>(alphaValue->NumberValue());
+    double alpha = alphaValue->NumberValue();
 
     v8::Local<v8::Value> betaValue = object->Get(v8::String::New("beta"));
     if (betaValue.IsEmpty())
         return 0;
     bool canProvideBeta = !isUndefinedOrNull(betaValue);
-    double beta = static_cast<double>(betaValue->NumberValue());
+    double beta = betaValue->NumberValue();
 
     v8::Local<v8::Value> gammaValue = object->Get(v8::String::New("gamma"));
     if (gammaValue.IsEmpty())
         return 0;
     bool canProvideGamma = !isUndefinedOrNull(gammaValue);
-    double gamma = static_cast<double>(gammaValue->NumberValue());
+    double gamma = gammaValue->NumberValue();
 
     if (!canProvideAlpha && !canProvideBeta && !canProvideGamma)
         return 0;
@@ -173,7 +173,7 @@ v8::Handle<v8::Value> V8DeviceMotionEvent::initDeviceMotionEventCallback(const v
     RefPtr<DeviceMotionData::Acceleration> accelerationIncludingGravity = readAccelerationArgument(args[4]);
     RefPtr<DeviceMotionData::RotationRate> rotationRate = readRotationRateArgument(args[5]);
     bool intervalProvided = !isUndefinedOrNull(args[6]);
-    double interval = static_cast<double>(args[6]->NumberValue());
+    double interval = args[6]->NumberValue();
     RefPtr<DeviceMotionData> deviceMotionData = DeviceMotionData::create(acceleration, accelerationIncludingGravity, rotationRate, intervalProvided, interval);
     imp->initDeviceMotionEvent(type, bubbles, cancelable, deviceMotionData.get());
     return v8::Handle<v8::Value>();

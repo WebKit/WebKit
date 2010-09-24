@@ -76,11 +76,11 @@ v8::Handle<v8::Value> V8DeviceOrientationEvent::initDeviceOrientationEventCallba
     // If alpha, beta or gamma are null or undefined, mark them as not provided.
     // Otherwise, use the standard JavaScript conversion.
     bool alphaProvided = !isUndefinedOrNull(args[3]);
-    double alpha = static_cast<double>(args[3]->NumberValue());
+    double alpha = args[3]->NumberValue();
     bool betaProvided = !isUndefinedOrNull(args[4]);
-    double beta = static_cast<double>(args[4]->NumberValue());
+    double beta = args[4]->NumberValue();
     bool gammaProvided = !isUndefinedOrNull(args[5]);
-    double gamma = static_cast<double>(args[5]->NumberValue());
+    double gamma = args[5]->NumberValue();
     RefPtr<DeviceOrientation> orientation = DeviceOrientation::create(alphaProvided, alpha, betaProvided, beta, gammaProvided, gamma);
     imp->initDeviceOrientationEvent(type, bubbles, cancelable, orientation.get());
     return v8::Handle<v8::Value>();
