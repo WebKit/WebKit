@@ -169,6 +169,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         didReceiveTitleForFrame,
         0,
         0,
+        0,
         didClearWindowForFrame,
         didCancelClientRedirectForFrame,
         willPerformClientRedirectForFrame,

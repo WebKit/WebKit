@@ -147,6 +147,16 @@ void InjectedBundlePageLoaderClient::didFirstVisuallyNonEmptyLayoutForFrame(WebP
     userData = adoptRef(toWK(userDataToPass));
 }
 
+void InjectedBundlePageLoaderClient::didRemoveFrameFromHierarchy(WebPage* page , WebFrame* frame, RefPtr<APIObject>& userData)
+{
+    if (!m_client.didRemoveFrameFromHierarchy)
+        return;
+
+    WKTypeRef userDataToPass = 0;
+    m_client.didRemoveFrameFromHierarchy(toRef(page), toRef(frame), &userDataToPass, m_client.clientInfo);
+    userData = adoptRef(toWK(userDataToPass));
+}
+
 void InjectedBundlePageLoaderClient::didClearWindowObjectForFrame(WebPage* page, WebFrame* frame, DOMWrapperWorld* world)
 {
     if (!m_client.didClearWindowObjectForFrame)

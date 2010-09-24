@@ -186,6 +186,7 @@ void TestController::initialize(int argc, const char* argv[])
         0,
         0,
         0,
+        0,
         0
     };
     WKPageSetPageLoaderClient(m_mainWebView->page(), &pageLoaderClient);

@@ -685,6 +685,18 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
             didFirstVisuallyNonEmptyLayoutForFrame(process()->webFrame(frameID), userData.get());
             break;
         }
+        case WebPageProxyMessage::DidRemoveFrameFromHierarchy: {
+            uint64_t frameID;
+
+            RefPtr<APIObject> userData;
+            WebContextUserMessageDecoder messageDecoder(userData, pageNamespace()->context());
+
+            if (!arguments->decode(CoreIPC::Out(frameID, messageDecoder)))
+                return;
+
+            didRemoveFrameFromHierarchy(process()->webFrame(frameID), userData.get());
+            break;
+        }
         case WebPageProxyMessage::DidStartProgress:
             didStartProgress();
             break;
@@ -1059,6 +1071,11 @@ void WebPageProxy::didFirstLayoutForFrame(WebFrameProxy* frame, APIObject* userD
 void WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame(WebFrameProxy* frame, APIObject* userData)
 {
     m_loaderClient.didFirstVisuallyNonEmptyLayoutForFrame(this, frame, userData);
+}
+
+void WebPageProxy::didRemoveFrameFromHierarchy(WebFrameProxy* frame, APIObject* userData)
+{
+    m_loaderClient.didRemoveFrameFromHierarchy(this, frame, userData);
 }
 
 // PolicyClient

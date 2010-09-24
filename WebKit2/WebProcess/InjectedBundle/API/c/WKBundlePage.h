@@ -75,6 +75,7 @@ typedef void (*WKBundlePageDidFailLoadWithErrorForFrameCallback)(WKBundlePageRef
 typedef void (*WKBundlePageDidReceiveTitleForFrameCallback)(WKBundlePageRef page, WKStringRef title, WKBundleFrameRef frame, WKTypeRef* userData, const void *clientInfo);
 typedef void (*WKBundlePageDidFirstLayoutForFrame)(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userData, const void *clientInfo);
 typedef void (*WKBundlePageDidFirstVisuallyNonEmptyLayoutForFrame)(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userData, const void *clientInfo);
+typedef void (*WKBundlePageDidRemoveFrameFromHierarchyCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userData, const void *clientInfo);
 // FIXME: There are no WKPage equivilent of these functions yet.
 typedef void (*WKBundlePageDidClearWindowObjectForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKBundleScriptWorldRef world, const void *clientInfo);
 typedef void (*WKBundlePageDidCancelClientRedirectForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo);
@@ -98,6 +99,7 @@ struct WKBundlePageLoaderClient {
     WKBundlePageDidReceiveTitleForFrameCallback                         didReceiveTitleForFrame;
     WKBundlePageDidFirstLayoutForFrame                                  didFirstLayoutForFrame;
     WKBundlePageDidFirstVisuallyNonEmptyLayoutForFrame                  didFirstVisuallyNonEmptyLayoutForFrame;
+    WKBundlePageDidRemoveFrameFromHierarchyCallback                     didRemoveFrameFromHierarchy;
 
     // FIXME: There are no WKPage equivilent of these functions yet.
     WKBundlePageDidClearWindowObjectForFrameCallback                    didClearWindowObjectForFrame;

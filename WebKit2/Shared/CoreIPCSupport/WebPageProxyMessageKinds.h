@@ -60,6 +60,7 @@ enum Kind {
     DidReceiveEvent,
     DidReceiveServerRedirectForProvisionalLoadForFrame,
     DidReceiveTitleForFrame,
+    DidRemoveFrameFromHierarchy,
     DidRunJavaScriptInMainFrame,
     DidSetFrame,
     DidStartProgress,

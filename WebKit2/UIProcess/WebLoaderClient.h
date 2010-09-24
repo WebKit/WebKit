@@ -50,6 +50,7 @@ public:
     void didReceiveTitleForFrame(WebPageProxy*, const String&, WebFrameProxy*, APIObject*);
     void didFirstLayoutForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
     void didFirstVisuallyNonEmptyLayoutForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
+    void didRemoveFrameFromHierarchy(WebPageProxy*, WebFrameProxy*, APIObject*);
 
     void didStartProgress(WebPageProxy*);
     void didChangeProgress(WebPageProxy*);

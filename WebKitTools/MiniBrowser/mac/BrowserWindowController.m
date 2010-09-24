@@ -300,6 +300,11 @@ static void didFirstVisuallyNonEmptyLayoutForFrame(WKPageRef page, WKFrameRef fr
     LOG(@"didFirstVisuallyNonEmptyLayoutForFrame");
 }
 
+static void didRemoveFrameFromHierarchy(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
+{
+    LOG(@"didRemoveFrameFromHierarchy");
+}
+
 static void didStartProgress(WKPageRef page, const void *clientInfo)
 {
     [(BrowserWindowController *)clientInfo didStartProgress];
@@ -496,6 +501,7 @@ static void contentsSizeChanged(WKPageRef page, int width, int height, WKFrameRe
         didReceiveTitleForFrame,
         didFirstLayoutForFrame,
         didFirstVisuallyNonEmptyLayoutForFrame,
+        didRemoveFrameFromHierarchy,
         didStartProgress,
         didChangeProgress,
         didFinishProgress,

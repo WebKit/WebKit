@@ -1,3 +1,19 @@
+2010-09-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2 API: Need way to know when a frame is removed from the hierarchy
+        <rdar://problem/8414062>
+        https://bugs.webkit.org/show_bug.cgi?id=46432
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (didRemoveFrameFromHierarchy):
+        (-[BrowserWindowController awakeFromNib]):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+
 2010-09-23  Tony Chang  <tony@chromium.org>
 
         Reviewed by Dimitri Glazkov.
