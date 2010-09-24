@@ -48,11 +48,6 @@ public:
     
     typedef uint64_t DrawingAreaID;
     
-    virtual ~DrawingAreaBase() { }
-    
-    Type type() const { return m_type; }
-    DrawingAreaID id() const { return m_id; }
-
     struct DrawingAreaInfo {
         Type type;
         DrawingAreaID id;
@@ -64,19 +59,21 @@ public:
         }
     };
     
+    virtual ~DrawingAreaBase() { }
+    
+    const DrawingAreaInfo& info() const { return m_info; }
+    
     // The DrawingAreaProxy should never be decoded itself. Instead, the DrawingArea should be decoded.
     void encode(CoreIPC::ArgumentEncoder* encoder) const;
     static bool decode(CoreIPC::ArgumentDecoder*, DrawingAreaInfo&);
 
 protected:
     DrawingAreaBase(Type type, DrawingAreaID identifier)
-        : m_type(type)
-        , m_id(identifier)
+        : m_info(type, identifier)
     {
     }
 
-    Type m_type;
-    DrawingAreaID m_id;
+    DrawingAreaInfo m_info;
 };
 
 } // namespace WebKit

@@ -29,8 +29,7 @@ namespace WebKit {
 
 void DrawingAreaBase::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    DrawingAreaInfo info(type(), id());
-    encoder->encode(info);
+    encoder->encode(info());
 }
 
 bool DrawingAreaBase::decode(CoreIPC::ArgumentDecoder* decoder, DrawingAreaInfo& info)

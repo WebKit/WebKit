@@ -592,7 +592,7 @@ static bool isViewVisible(NSView *view)
 
 - (void)_switchToDrawingAreaTypeIfNecessary:(DrawingAreaProxy::Type)type
 {
-    DrawingAreaProxy::Type existingDrawingAreaType = _data->_page->drawingArea() ? _data->_page->drawingArea()->type() : DrawingAreaProxy::None;
+    DrawingAreaProxy::Type existingDrawingAreaType = _data->_page->drawingArea() ? _data->_page->drawingArea()->info().type : DrawingAreaProxy::None;
     if (existingDrawingAreaType == type)
         return;
 

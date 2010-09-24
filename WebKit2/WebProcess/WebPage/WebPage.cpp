@@ -240,7 +240,7 @@ void WebPage::changeAcceleratedCompositingMode(WebCore::GraphicsLayer* layer)
                                                 CoreIPC::Out(newDrawingAreaInfo),
                                                 CoreIPC::Connection::NoTimeout);
     
-    if (newDrawingAreaInfo.type != drawingArea()->type()) {
+    if (newDrawingAreaInfo.type != drawingArea()->info().type) {
         m_drawingArea = DrawingArea::create(newDrawingAreaInfo.type, newDrawingAreaInfo.id, this);
         m_drawingArea->setNeedsDisplay(IntRect(IntPoint(0, 0), m_viewSize));
     }

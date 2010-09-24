@@ -1,3 +1,32 @@
+2010-09-24  Adam Roben  <aroben@apple.com>
+
+        Expose a whole DrawingAreaInfo instead of its constituent parts from
+        DrawingAreaBase
+
+        This is just a step toward cleaning up how drawing areas are
+        encoded/ecoded.
+
+        Fixes <http://webkit.org/b/46468> DrawingAreaInfo should be used in
+        more places
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/DrawingAreaBase.cpp:
+        (WebKit::DrawingAreaBase::encode): Changed to use info().
+
+        * Shared/DrawingAreaBase.h:
+        (WebKit::DrawingAreaBase::info): Added. Replaces type() and id().
+        (WebKit::DrawingAreaBase::DrawingAreaBase): Changed to store a
+        DrawingAreaInfo instead of storing its constituent parts.
+
+        * UIProcess/API/mac/WKView.mm:
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.cpp:
+        * UIProcess/LayerBackedDrawingAreaProxy.cpp:
+        * WebProcess/WebPage/ChunkedUpdateDrawingArea.cpp:
+        * WebProcess/WebPage/LayerBackedDrawingArea.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        Updated to use info().
+
 2010-09-24  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
