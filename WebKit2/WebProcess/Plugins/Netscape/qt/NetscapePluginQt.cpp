@@ -40,6 +40,16 @@ bool NetscapePlugin::platformPostInitialize()
     return true;
 }
 
+void NetscapePlugin::platformDestroy()
+{
+    notImplemented();
+}
+
+void NetscapePlugin::platformGeometryDidChange()
+{
+    notImplemented();
+}
+
 void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirtyRect)
 {
     notImplemented();

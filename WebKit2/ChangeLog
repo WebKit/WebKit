@@ -1,5 +1,59 @@
 2010-09-24  Adam Roben  <aroben@apple.com>
 
+        Give windowed Netscape plugins their own window
+
+        The plugin window is a child of the WebView's window. The WebView's
+        window is in the UI process, and the plugin's window is in the web
+        process (though someday it will be in the plugin process), but Windows
+        mostly handles this just fine. Right now we move the plugin's window
+        in the web process, but we need to do it at paint time in the UI
+        process instead so that the plugin windows will stay in sync with the
+        web page's contents. There are also a whole bunch of plugin quirks
+        that WebKit1 supports that we don't support yet, but that's a task for
+        another day.
+
+        Fixes <http://webkit.org/b/44428> Get basic in-process windowed
+        plugins working in WebKit2 on Windows
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::destroy):
+        (WebKit::NetscapePlugin::geometryDidChange):
+        Call the new platform-specific functions.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h: Added
+        platformDestroy/platformGeometryDidChange, and an m_window member on
+        Windows to hold our window.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformDestroy):
+        (WebKit::NetscapePlugin::platformGeometryDidChange):
+        * WebProcess/Plugins/Netscape/qt/NetscapePluginQt.cpp:
+        (WebKit::NetscapePlugin::platformDestroy):
+        (WebKit::NetscapePlugin::platformGeometryDidChange):
+        Stubbed these out.
+
+        * WebProcess/Plugins/Netscape/win/NetscapePluginWin.cpp:
+        (WebKit::registerPluginView): Added. The code came from
+        WebCore's PluginViewWin.cpp, though I changed it to add one to
+        COLOR_WINDOW, since that's what MSDN says we should do.
+        (WebKit::NetscapePlugin::platformPostInitialize): If we're windowed,
+        create a window for the plugin and make it a child of the WebView's
+        window. If we're not windowed, just set m_window to 0.
+        (WebKit::NetscapePlugin::platformDestroy): Destroy our window if we
+        have one and it hasn't been destroyed already.
+        (WebKit::NetscapePlugin::platformGeometryDidChange): Update our
+        window's size and position.
+
+        * WebProcess/Plugins/PluginController.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::nativeParentWindow):
+        * WebProcess/Plugins/PluginView.h:
+        Added nativeParentWindow on Windows to return the WebView's window.
+
+2010-09-24  Adam Roben  <aroben@apple.com>
+
         Pass the WebView's HWND over to the web process
 
         The HWND is packaged up in the WebPageCreationParameters and stored in

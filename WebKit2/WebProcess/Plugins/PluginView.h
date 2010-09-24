@@ -124,6 +124,9 @@ private:
     virtual void setStatusbarText(const String&);
     virtual bool isAcceleratedCompositingEnabled();
     virtual void pluginProcessCrashed();
+#if PLATFORM(WIN)
+    virtual HWND nativeParentWindow();
+#endif
 
     // WebFrame::LoadListener
     virtual void didFinishLoad(WebFrame*);

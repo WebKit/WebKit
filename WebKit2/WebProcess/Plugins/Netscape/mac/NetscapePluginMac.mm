@@ -125,6 +125,14 @@ bool NetscapePlugin::platformPostInitialize()
     return true;
 }
 
+void NetscapePlugin::platformDestroy()
+{
+}
+
+void NetscapePlugin::platformGeometryDidChange()
+{
+}
+
 static inline NPCocoaEvent initializeEvent(NPCocoaEventType type)
 {
     NPCocoaEvent event;

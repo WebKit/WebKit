@@ -26,6 +26,7 @@
 #include "NetscapePlugin.h"
 
 #include "NotImplemented.h"
+#include "PluginController.h"
 #include "WebEvent.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/LocalWindowsContext.h>
@@ -34,10 +35,69 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static LPCWSTR windowClassName = L"org.webkit.NetscapePluginWindow";
+
+static void registerPluginView()
+{
+    static bool didRegister;
+    if (didRegister)
+        return;
+    didRegister = true;
+
+    WNDCLASSW windowClass = {0};
+    windowClass.style = CS_DBLCLKS | CS_PARENTDC;
+    windowClass.lpfnWndProc = ::DefWindowProcW;
+    windowClass.hCursor = ::LoadCursorW(0, IDC_ARROW);
+    windowClass.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
+    windowClass.lpszClassName = windowClassName;
+
+    ::RegisterClassW(&windowClass);
+}
+
 bool NetscapePlugin::platformPostInitialize()
 {
-    notImplemented();
+    if (!m_isWindowed) {
+        m_window = 0;
+        return true;
+    }
+
+    registerPluginView();
+
+    m_window = ::CreateWindowExW(0, windowClassName, 0, WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, m_pluginController->nativeParentWindow(), 0, 0, 0);
+    if (!m_window)
+        return false;
+
+    // FIXME: Do we need to pass our window to setPlatformWidget?
+    // FIXME: WebCore::PluginView sets the window proc to DefWindowProcA here for Shockwave Director.
+
+    m_npWindow.type = NPWindowTypeWindow;
+    m_npWindow.window = m_window;
+
     return true;
+}
+
+void NetscapePlugin::platformDestroy()
+{
+    if (!m_isWindowed) {
+        ASSERT(!m_window);
+        return;
+    }
+
+    if (!::IsWindow(m_window))
+        return;
+    ::DestroyWindow(m_window);
+}
+
+void NetscapePlugin::platformGeometryDidChange()
+{
+    if (!m_isWindowed)
+        return;
+
+    // FIXME: We should only update the size here and let the UI process update our position so
+    // that we can keep our position in sync when scrolling, etc.
+    // FIXME: We should also set a window region based on m_clipRect. Perhaps that should happen in
+    // the UI process, too.
+    ::MoveWindow(m_window, m_frameRect.x(), m_frameRect.y(), m_frameRect.width(), m_frameRect.height(), TRUE);
 }
 
 void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirtyRect)

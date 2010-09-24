@@ -374,6 +374,8 @@ void NetscapePlugin::destroy()
 
     m_isStarted = false;
     m_pluginController = 0;
+
+    platformDestroy();
 }
     
 void NetscapePlugin::paint(GraphicsContext* context, const IntRect& dirtyRect)
@@ -396,6 +398,7 @@ void NetscapePlugin::geometryDidChange(const IntRect& frameRect, const IntRect& 
     m_clipRect = clipRect;
 
     callSetWindow();
+    platformGeometryDidChange();
 }
 
 void NetscapePlugin::frameDidFinishLoading(uint64_t requestID)

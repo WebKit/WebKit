@@ -99,6 +99,8 @@ private:
     bool allowPopups() const;
 
     bool platformPostInitialize();
+    void platformDestroy();
+    void platformGeometryDidChange();
     void platformPaint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect);
 
     bool platformHandleMouseEvent(const WebMouseEvent&);
@@ -173,6 +175,8 @@ private:
     NPDrawingModel m_drawingModel;
     NPEventModel m_eventModel;
     RetainPtr<PlatformLayer> m_pluginLayer;
+#elif PLATFORM(WIN)
+    HWND m_window;
 #endif
 };
 
