@@ -1,5 +1,24 @@
 2010-09-24  Adam Roben  <aroben@apple.com>
 
+        Add WebPageProxy::creationParameters
+
+        Fixes <http://webkit.org/b/46510> WebPageProxy has a bunch of
+        duplicated WebPageCreationParameters code
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeWebPage):
+        (WebKit::WebPageProxy::reinitializeWebPage):
+        (WebKit::WebPageProxy::didReceiveSyncMessage):
+        Use creationParameters.
+
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        Added creationParameters.
+
+2010-09-24  Adam Roben  <aroben@apple.com>
+
         Make WebPage::create take a WebPageCreationParameter struct
 
         It only makes sense, after all.

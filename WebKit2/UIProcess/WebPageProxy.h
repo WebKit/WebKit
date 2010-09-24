@@ -76,6 +76,7 @@ class WebProcessProxy;
 class WebURLRequest;
 class WebWheelEvent;
 struct WebNavigationDataStore;
+struct WebPageCreationParameters;
 
 typedef GenericCallback<WKStringRef, StringImpl*> FrameSourceCallback;
 typedef GenericCallback<WKStringRef, StringImpl*> RenderTreeExternalRepresentationCallback;
@@ -259,6 +260,8 @@ private:
     void didRunJavaScriptInMainFrame(const String&, uint64_t);
     void didGetRenderTreeExternalRepresentation(const String&, uint64_t);
     void didGetSourceForFrame(const String&, uint64_t);
+
+    WebPageCreationParameters creationParameters(const WebCore::IntSize&) const;
 
 #if USE(ACCELERATED_COMPOSITING)
     void didChangeAcceleratedCompositing(bool compositing);

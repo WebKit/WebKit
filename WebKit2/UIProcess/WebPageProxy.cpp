@@ -155,11 +155,7 @@ void WebPageProxy::initializeWebPage(const IntSize& size)
 
     ASSERT(m_drawingArea);
 
-    WebPageCreationParameters parameters;
-    parameters.viewSize = size;
-    parameters.store = pageNamespace()->context()->preferences()->store();
-    parameters.drawingAreaInfo = m_drawingArea->info();
-    process()->send(WebProcessMessage::Create, m_pageID, CoreIPC::In(parameters));
+    process()->send(WebProcessMessage::Create, m_pageID, CoreIPC::In(creationParameters(size)));
 }
 
 void WebPageProxy::reinitializeWebPage(const WebCore::IntSize& size)
@@ -169,11 +165,7 @@ void WebPageProxy::reinitializeWebPage(const WebCore::IntSize& size)
 
     ASSERT(m_drawingArea);
 
-    WebPageCreationParameters parameters;
-    parameters.viewSize = size;
-    parameters.store = pageNamespace()->context()->preferences()->store();
-    parameters.drawingAreaInfo = m_drawingArea->info();
-    process()->send(WebProcessMessage::Create, m_pageID, CoreIPC::In(parameters));
+    process()->send(WebProcessMessage::Create, m_pageID, CoreIPC::In(creationParameters(size)));
 }
 
 void WebPageProxy::close()
@@ -893,9 +885,7 @@ void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIP
             WebPageCreationParameters parameters;
             if (newPage) {
                 // FIXME: Pass the real size.
-                parameters.viewSize = IntSize(100, 100);
-                parameters.store = newPage->pageNamespace()->context()->preferences()->store();
-                parameters.drawingAreaInfo = newPage->drawingArea()->info();
+                parameters = newPage->creationParameters(IntSize(100, 100));
                 reply->encode(CoreIPC::In(newPage->pageID(), parameters));
             } else {
                 reply->encode(CoreIPC::In(static_cast<uint64_t>(0), parameters));
@@ -1352,6 +1342,15 @@ void WebPageProxy::processDidRevive()
 {
     ASSERT(m_pageClient);
     m_pageClient->processDidRevive();
+}
+
+WebPageCreationParameters WebPageProxy::creationParameters(const IntSize& size) const
+{
+    WebPageCreationParameters parameters;
+    parameters.viewSize = size;
+    parameters.store = pageNamespace()->context()->preferences()->store();
+    parameters.drawingAreaInfo = m_drawingArea->info();
+    return parameters;
 }
 
 #if USE(ACCELERATED_COMPOSITING)
