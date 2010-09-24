@@ -127,9 +127,10 @@ static const char* const monitoringXHRSettingName = "xhrMonitor";
 static const char* const resourceTrackingAlwaysEnabledSettingName = "resourceTrackingEnabled";
 static const char* const profilerAlwaysEnabledSettingName = "profilerEnabled";
 
-static const char* const timelineProfilerEnabledStateName = "timelineProfilerEnabled";
-static const char* const resourceTrackingEnabledStateName = "resourceTrackingEnabled";
 static const char* const monitoringXHRStateName = "monitoringXHREnabled";
+static const char* const resourceTrackingEnabledStateName = "resourceTrackingEnabled";
+static const char* const searchingForNodeEnabledStateName = "searchingForNodeEnabled";
+static const char* const timelineProfilerEnabledStateName = "timelineProfilerEnabled";
 
 static const char* const inspectorAttachedHeightName = "inspectorAttachedHeight";
 
@@ -265,6 +266,7 @@ void InspectorController::updateInspectorStateCookie()
     state->setBoolean(monitoringXHRStateName, m_monitoringXHR);
     state->setBoolean(resourceTrackingEnabledStateName, m_resourceTrackingEnabled);
     state->setBoolean(timelineProfilerEnabledStateName, m_timelineAgent);
+    state->setBoolean(searchingForNodeEnabledStateName, m_searchingForNode);
     m_client->updateInspectorStateCookie(state->toJSONString());
 }
 
@@ -280,6 +282,7 @@ void InspectorController::restoreInspectorStateFromCookie(const String& inspecto
 
     inspectorState->getBoolean(monitoringXHRStateName, &m_monitoringXHR);
     inspectorState->getBoolean(resourceTrackingEnabledStateName, &m_resourceTrackingEnabled);
+    inspectorState->getBoolean(searchingForNodeEnabledStateName, &m_searchingForNode);
 
     bool timelineProfilerEnabled = false;
     inspectorState->getBoolean(timelineProfilerEnabledStateName, &timelineProfilerEnabled);
@@ -493,12 +496,13 @@ void InspectorController::setSearchingForNode(bool enabled)
     m_searchingForNode = enabled;
     if (!m_searchingForNode)
         hideHighlight();
-    if (m_frontend) {
-        if (enabled)
-            m_frontend->searchingForNodeWasEnabled();
-        else
-            m_frontend->searchingForNodeWasDisabled();
-    }
+    updateInspectorStateCookie();
+}
+
+void InspectorController::setSearchingForNode(bool enabled, bool* newState)
+{
+    *newState = enabled;
+    setSearchingForNode(enabled);
 }
 
 void InspectorController::setMonitoringXHREnabled(bool enabled, bool* newState)
@@ -650,10 +654,6 @@ void InspectorController::populateScriptObjects()
         m_showAfterVisible = setting(lastActivePanel);
 
     showPanel(m_showAfterVisible);
-
-    if (m_searchingForNode)
-        m_frontend->searchingForNodeWasEnabled();
-
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     if (m_profilerAgent->enabled())

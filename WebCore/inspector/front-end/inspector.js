@@ -435,12 +435,8 @@ var WebInspector = {
 
     _updateFocusedNode: function(nodeId)
     {
-        var node = WebInspector.domAgent.nodeForId(nodeId);
-        if (!node)
-            return;
-
         this.currentPanel = this.panels.elements;
-        this.panels.elements.focusedDOMNode = node;
+        this.panels.elements.updateFocusedNode(nodeId);
     }
 }
 

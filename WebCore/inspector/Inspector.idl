@@ -49,8 +49,6 @@ module core {
         [notify] void removeResource(out unsigned long identifier);
         [notify] void reset();
         [notify] void resetProfilesPanel();
-        [notify] void searchingForNodeWasEnabled();
-        [notify] void searchingForNodeWasDisabled();
         [notify] void setChildNodes(out long parentId, out Array nodes);
         [notify] void setDetachedRoot(out Object root);
         [notify] void setDocument(out Value root);
@@ -105,8 +103,7 @@ module core {
         [handler=Controller] void saveApplicationSettings(in String settings);
         [handler=Controller] void saveSessionSettings(in String settings);
 
-        [handler=Controller] void enableSearchingForNode();
-        [handler=Controller] void disableSearchingForNode();
+        [handler=Controller] void setSearchingForNode(in boolean enabled, out boolean newState);
 
         [handler=Controller] void setMonitoringXHREnabled(in boolean enable, out boolean newState);
 

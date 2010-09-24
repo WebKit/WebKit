@@ -148,7 +148,7 @@ WebInspector.ElementsPanel.prototype = {
         WebInspector.Panel.prototype.hide.call(this);
 
         WebInspector.highlightDOMNode(0);
-        InspectorBackend.disableSearchingForNode();
+        this.setSearchingForNode(false);
     },
 
     resize: function()
@@ -246,16 +246,6 @@ WebInspector.ElementsPanel.prototype = {
         this._searchQuery = query;
 
         InspectorBackend.performSearch(whitespaceTrimmedQuery, false);
-    },
-
-    searchingForNodeWasEnabled: function()
-    {
-        this._nodeSearchButton.toggled = true;
-    },
-
-    searchingForNodeWasDisabled: function()
-    {
-        this._nodeSearchButton.toggled = false;
     },
 
     populateHrefContextMenu: function(contextMenu, event, anchorElement)
@@ -1160,12 +1150,29 @@ WebInspector.ElementsPanel.prototype = {
         this.treeOutline.updateSelection();
     },
 
+    updateFocusedNode: function(nodeId)
+    {
+        var node = WebInspector.domAgent.nodeForId(nodeId);
+        if (!node)
+            return;
+
+        this.focusedDOMNode = node;
+        this._nodeSearchButton.toggled = false;
+    },
+
+    _setSearchingForNode: function(enabled)
+    {
+        this._nodeSearchButton.toggled = enabled;
+    },
+
+    setSearchingForNode: function(enabled)
+    {
+        InspectorBackend.setSearchingForNode(enabled, this._setSearchingForNode.bind(this));
+    },
+
     toggleSearchingForNode: function()
     {
-        if (!this._nodeSearchButton.toggled)
-            InspectorBackend.enableSearchingForNode();
-        else
-            InspectorBackend.disableSearchingForNode();
+        this.setSearchingForNode(!this._nodeSearchButton.toggled);
     },
 
     elementsToRestoreScrollPositionsFor: function()

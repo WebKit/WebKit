@@ -1,3 +1,30 @@
+2010-09-24  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: move searchingForNode flag in InspectorController under control of InspectorCookies.
+
+        Four functions from Inspector IDL go away.
+        Searching for node feature of Inspector keeps alive even after navigation.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46462
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::updateInspectorStateCookie):
+        (WebCore::InspectorController::restoreInspectorStateFromCookie):
+        (WebCore::InspectorController::setSearchingForNode):
+        (WebCore::InspectorController::populateScriptObjects):
+        * inspector/InspectorController.h:
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.hide):
+        (WebInspector.ElementsPanel.prototype.updateFocusedNode):
+        (WebInspector.ElementsPanel.prototype._setSearchingForNode):
+        (WebInspector.ElementsPanel.prototype.setSearchingForNode):
+        (WebInspector.ElementsPanel.prototype.toggleSearchingForNode):
+        * inspector/front-end/inspector.js:
+        (WebInspector._updateFocusedNode):
+
 2010-09-24  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Jeremy Orlow.
