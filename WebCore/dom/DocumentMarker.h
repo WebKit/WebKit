@@ -40,6 +40,7 @@ struct DocumentMarker {
         Grammar,
         TextMatch,
         Replacement,
+        CorrectionIndicator,
         RejectedCorrection
     };
 

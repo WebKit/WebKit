@@ -2741,6 +2741,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
                             // Add a marker so that corrections can easily be undone and won't be re-corrected.
                             RefPtr<Range> replacedRange = TextIterator::subrange(paragraphRange.get(), resultLocation, replacementLength);
                             replacedRange->startContainer()->document()->markers()->addMarker(replacedRange.get(), DocumentMarker::Replacement, replacedString);
+                            replacedRange->startContainer()->document()->markers()->addMarker(replacedRange.get(), DocumentMarker::CorrectionIndicator);
                         }
                     }
                 }
@@ -3121,6 +3122,13 @@ void Editor::changeSelectionAfterCommand(const VisibleSelection& newSelection, b
     // If the new selection is orphaned, then don't update the selection.
     if (newSelection.start().isOrphan() || newSelection.end().isOrphan())
         return;
+
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    // Check to see if the command introduced paragraph separator. If it did, we remove existing autocorrection underlines.
+    // This is in consistency with the behavior in AppKit
+    if (!inSameParagraph(m_frame->selection()->selection().visibleStart(), newSelection.visibleEnd()))
+        m_frame->document()->markers()->removeMarkers(DocumentMarker::CorrectionIndicator);
+#endif
 
     // If there is no selection change, don't bother sending shouldChangeSelection, but still call setSelection,
     // because there is work that it must do in this situation.

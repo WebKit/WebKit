@@ -1,3 +1,30 @@
+2010-09-24  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Need to remove autocorrection underlines in current line when newline is entered.
+        https://bugs.webkit.org/show_bug.cgi?id=45709
+        <rdar://problem/8335576>
+
+        This change affects only Mac OSX build.
+
+        * dom/DocumentMarker.h: Added "CorrectionIndicator" to indicate the words on which we need
+          to draw autocorrection underline. We cannot use existing "Replacement" for this purpose,
+          since it is not meant to be removed once it is added. But we need to remove all autocorrection
+          underlines when a line break or paragraph separator is inserted, which is the behavior in
+          NSTextView. Hence we need a separate marker value for drawing autocorrection underline.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges): Add "CorrectionIndicator" when
+          autocorrection takes place.
+        (WebCore::Editor::changeSelectionAfterCommand): Remove "CorrectionIndicator" markers if the
+          command results in inserting paragraph separator.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::textCheckingLineStyleForMarkerType): Use "CorrectionIndicator" marker instead of
+          "Replacement" to draw autocorrection underline.
+        (WebCore::InlineTextBox::paintDocumentMarkers): Ditto.
+
 2010-09-24  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by David Levin.
