@@ -556,6 +556,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Shared\win\PlatformCertificateInfo.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Shared\win\PlatformCertificateInfo.h"
 					>
 				</File>
@@ -1348,6 +1352,14 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKCertificateInfo.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\win\WKCertificateInfoWin.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\win\WKCertificateInfoWin.h"
 						>
 					</File>
 					<File

@@ -23,35 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformCertificateInfo_h
-#define PlatformCertificateInfo_h
+#include "WKCertificateInfoWin.h"
 
-namespace CoreIPC {
-    class ArgumentDecoder;
-    class ArgumentEncoder;
+#include "WKAPICast.h"
+#include "WebCertificateInfo.h"
+
+using namespace WebKit;
+
+PCCERT_CONTEXT WKCertificateInfoGetCertificateContext(WKCertificateInfoRef certificateInfoRef)
+{
+    return toWK(certificateInfoRef)->platformCertificateInfo().certificateContext();
 }
-
-namespace WebCore {
-    class ResourceResponse;
-}
-
-namespace WebKit {
-
-class PlatformCertificateInfo {
-public:
-    PlatformCertificateInfo();
-    explicit PlatformCertificateInfo(const WebCore::ResourceResponse&);    
-    ~PlatformCertificateInfo();
-
-    PCCERT_CONTEXT certificateContext() const { return m_certificateContext; }
-
-    void encode(CoreIPC::ArgumentEncoder* encoder) const;
-    static bool decode(CoreIPC::ArgumentDecoder* decoder, PlatformCertificateInfo& t);
-
-private:
-    PCCERT_CONTEXT m_certificateContext;
-};
-
-} // namespace WebKit
-
-#endif // PlatformCertificateInfo_h

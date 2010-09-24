@@ -1,3 +1,25 @@
+2010-09-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Add Windows implementation of PlatformCertificateInfo
+        Part of < rdar://problem/8350189>
+        https://bugs.webkit.org/show_bug.cgi?id=46450
+
+        * Shared/win/PlatformCertificateInfo.cpp: Added.
+        (WebKit::PlatformCertificateInfo::PlatformCertificateInfo):
+        (WebKit::PlatformCertificateInfo::~PlatformCertificateInfo):
+        (WebKit::PlatformCertificateInfo::encode):
+        (WebKit::PlatformCertificateInfo::decode):
+        (WebKit::organizationNameForCertificate):
+        * Shared/win/PlatformCertificateInfo.h:
+        (WebKit::PlatformCertificateInfo::certificateContext):
+        * UIProcess/API/C/win/WKCertificateInfoWin.cpp: Added.
+        (WKCertificateInfoGetCertificateContext):
+        * UIProcess/API/C/win/WKCertificateInfoWin.h: Added.
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.make:
+
 2010-09-23  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         Reviewed by Sam Weinig.
