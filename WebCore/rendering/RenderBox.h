@@ -219,7 +219,7 @@ public:
 
     virtual void repaintDuringLayoutIfMoved(const IntRect&);
 
-    virtual int containingBlockWidthForContent() const;
+    virtual int containingBlockLogicalWidthForContent() const;
 
     virtual void computeLogicalWidth();
     virtual void computeLogicalHeight();

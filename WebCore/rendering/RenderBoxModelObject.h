@@ -101,7 +101,7 @@ public:
     bool hasHorizontalBordersPaddingOrMargin() const { return hasHorizontalBordersOrPadding() || marginLeft() != 0 || marginRight() != 0; }
     bool hasHorizontalBordersOrPadding() const { return borderLeft() != 0 || borderRight() != 0 || paddingLeft() != 0 || paddingRight() != 0; }
 
-    virtual int containingBlockWidthForContent() const;
+    virtual int containingBlockLogicalWidthForContent() const;
 
     virtual void childBecameNonInline(RenderObject* /*child*/) { }
 

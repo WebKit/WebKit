@@ -1035,12 +1035,12 @@ IntRect RenderBox::clipRect(int tx, int ty)
     return IntRect(clipX, clipY, clipWidth, clipHeight);
 }
 
-int RenderBox::containingBlockWidthForContent() const
+int RenderBox::containingBlockLogicalWidthForContent() const
 {
     RenderBlock* cb = containingBlock();
     if (shrinkToAvoidFloats())
         return cb->availableLogicalWidthForLine(y(), false);
-    return cb->availableWidth();
+    return cb->availableLogicalWidth();
 }
 
 void RenderBox::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState& transformState) const
@@ -1360,12 +1360,16 @@ void RenderBox::computeLogicalWidth()
 
     // The parent box is flexing us, so it has increased or decreased our
     // width.  Use the width from the style context.
+    // FIXME: Account for block-flow in flexible boxes.
+    // https://bugs.webkit.org/show_bug.cgi?id=46418
     if (hasOverrideSize() &&  parent()->style()->boxOrient() == HORIZONTAL
             && parent()->isFlexibleBox() && parent()->isFlexingChildren()) {
         setWidth(overrideSize());
         return;
     }
 
+    // FIXME: Account for block-flow in flexible boxes.
+    // https://bugs.webkit.org/show_bug.cgi?id=46418
     bool inVerticalBox = parent()->isFlexibleBox() && (parent()->style()->boxOrient() == VERTICAL);
     bool stretching = (parent()->style()->boxAlign() == BSTRETCH);
     bool treatAsReplaced = shouldComputeSizeAsReplaced() && (!inVerticalBox || !stretching);
@@ -1373,7 +1377,7 @@ void RenderBox::computeLogicalWidth()
     Length w = (treatAsReplaced) ? Length(computeReplacedWidth(), Fixed) : style()->width();
 
     RenderBlock* cb = containingBlock();
-    int containerWidth = max(0, containingBlockWidthForContent());
+    int containerWidth = max(0, containingBlockLogicalWidthForContent());
 
     Length marginLeft = style()->marginLeft();
     Length marginRight = style()->marginRight();
@@ -1724,7 +1728,10 @@ int RenderBox::computeReplacedWidthUsing(Length width) const
         case Fixed:
             return computeContentBoxLogicalWidth(width.value());
         case Percent: {
-            const int cw = isPositioned() ? containingBlockWidthForPositioned(toRenderBoxModelObject(container())) : containingBlockWidthForContent();
+            // FIXME: containingBlockLogicalWidthForContent() is wrong if the replaced element's block-flow is perpendicular to the
+            // containing block's block-flow.
+            // https://bugs.webkit.org/show_bug.cgi?id=46496
+            const int cw = isPositioned() ? containingBlockWidthForPositioned(toRenderBoxModelObject(container())) : containingBlockLogicalWidthForContent();
             if (cw > 0)
                 return computeContentBoxLogicalWidth(width.calcMinValue(cw));
         }

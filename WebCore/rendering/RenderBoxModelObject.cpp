@@ -320,7 +320,7 @@ int RenderBoxModelObject::relativePositionOffsetX() const
 {
     // Objects that shrink to avoid floats normally use available line width when computing containing block width.  However
     // in the case of relative positioning using percentages, we can't do this.  The offset should always be resolved using the
-    // available width of the containing block.  Therefore we don't use containingBlockWidthForContent() here, but instead explicitly
+    // available width of the containing block.  Therefore we don't use containingBlockLogicalWidthForContent() here, but instead explicitly
     // call availableWidth on our containing block.
     if (!style()->left().isAuto()) {
         RenderBlock* cb = containingBlock();
@@ -1781,9 +1781,9 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
     }
 }
 
-int RenderBoxModelObject::containingBlockWidthForContent() const
+int RenderBoxModelObject::containingBlockLogicalWidthForContent() const
 {
-    return containingBlock()->availableWidth();
+    return containingBlock()->availableLogicalWidth();
 }
 
 } // namespace WebCore

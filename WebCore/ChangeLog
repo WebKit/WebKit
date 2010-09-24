@@ -2,6 +2,25 @@
 
         Reviewed by Sam Weinig.
 
+        https://bugs.webkit.org/show_bug.cgi?id=46496, rename containingBlockWidthForContent to
+        containingBlockLogicalWidthForContent.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::localCaretRect):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::containingBlockLogicalWidthForContent):
+        (WebCore::RenderBox::computeLogicalWidth):
+        (WebCore::RenderBox::computeReplacedWidthUsing):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::relativePositionOffsetX):
+        (WebCore::RenderBoxModelObject::containingBlockLogicalWidthForContent):
+        * rendering/RenderBoxModelObject.h:
+
+2010-09-24  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
         https://bugs.webkit.org/show_bug.cgi?id=46489, rename the lineWidth and left/RightOffset methods
         to reflect that they will be logical.
 
