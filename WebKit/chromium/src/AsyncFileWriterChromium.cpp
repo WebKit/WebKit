@@ -78,9 +78,9 @@ void AsyncFileWriterChromium::didWrite(long long bytes, bool complete)
     m_client->didWrite(bytes, complete);
 }
 
-void AsyncFileWriterChromium::didTruncate(long long length)
+void AsyncFileWriterChromium::didTruncate()
 {
-    m_client->didTruncate(length);
+    m_client->didTruncate();
 }
 
 void AsyncFileWriterChromium::didFail(WebKit::WebFileError error)

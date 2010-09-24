@@ -42,7 +42,7 @@ public:
     virtual ~AsyncFileWriterClient() {}
 
     virtual void didWrite(long long bytes, bool complete) = 0;
-    virtual void didTruncate(long long position) = 0;
+    virtual void didTruncate() = 0;
     virtual void didFail(ExceptionCode) = 0;
 };
 

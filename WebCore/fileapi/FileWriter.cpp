@@ -48,6 +48,7 @@ FileWriter::FileWriter(ScriptExecutionContext* context)
     , m_position(0)
     , m_bytesWritten(0)
     , m_bytesToWrite(0)
+    , m_truncateLength(-1)
 {
 }
 
@@ -122,7 +123,7 @@ void FileWriter::seek(long long position, ExceptionCode& ec)
 void FileWriter::truncate(long long position, ExceptionCode& ec)
 {
     ASSERT(m_writer);
-    if (m_readyState == WRITING || position >= m_length) {
+    if (m_readyState == WRITING || position < 0) {
         ec = INVALID_STATE_ERR;
         m_error = FileError::create(ec);
         return;
@@ -130,6 +131,7 @@ void FileWriter::truncate(long long position, ExceptionCode& ec)
     m_readyState = WRITING;
     m_bytesWritten = 0;
     m_bytesToWrite = 0;
+    m_truncateLength = position;
     fireEvent(eventNames().writestartEvent);
     m_writer->truncate(position);
 }
@@ -167,15 +169,14 @@ void FileWriter::didWrite(long long bytes, bool complete)
         fireEvent(eventNames().writeendEvent);
 }
 
-void FileWriter::didTruncate(long long length)
+void FileWriter::didTruncate()
 {
-    ASSERT(length > 0);
-    ASSERT(length >= 0);
-    ASSERT(length < m_length);
-    m_length = length;
+    ASSERT(m_truncateLength >= 0);
+    m_length = m_truncateLength;
     if (m_position > m_length)
         m_position = m_length;
     m_readyState = DONE;
+    m_truncateLength = -1;
     fireEvent(eventNames().writeEvent);
     fireEvent(eventNames().writeendEvent);
 }

@@ -76,7 +76,7 @@ public:
 
     // AsyncFileWriterClient
     void didWrite(long long bytes, bool complete);
-    void didTruncate(long long length);
+    void didTruncate();
     void didFail(ExceptionCode ec);
 
     // ActiveDOMObject
@@ -121,6 +121,7 @@ private:
     long long m_length;
     long long m_bytesWritten;
     long long m_bytesToWrite;
+    long long m_truncateLength;
 };
 
 } // namespace WebCore

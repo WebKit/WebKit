@@ -1,3 +1,14 @@
+2010-09-24  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by David Levin.
+
+        Remove unnecessary parameter from AsyncFileWriterClient::didTruncate
+        https://bugs.webkit.org/show_bug.cgi?id=46390
+
+        * public/WebFileWriterClient.h:
+        * src/AsyncFileWriterChromium.cpp:
+        * src/AsyncFileWriterChromium.h:
+
 2010-09-24  Chris Guillory   <chris.guillory@google.com>
 
         Reviewed by Chris Fleizach.
