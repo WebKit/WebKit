@@ -3687,7 +3687,7 @@ HEADERS += $$WEBKIT_API_HEADERS
     }
 }
 
-CONFIG(QTDIR_build) {
+!CONFIG(webkit-debug):CONFIG(QTDIR_build) {
     # Remove the following 2 lines if you want debug information in WebCore
     CONFIG -= separate_debug_info
     CONFIG += no_debug_info

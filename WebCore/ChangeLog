@@ -1,3 +1,14 @@
+2010-09-24  Anders Bakken  <agbakken@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Enable building Qt/Webkit with debug symbols
+
+        With this patch one can configure with -webkit-debug to build Webkit
+        with debug symbols without having to manually edit WebCore.pro.
+
+        * WebCore.pro:
+
 2010-09-24  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
