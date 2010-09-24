@@ -1,3 +1,17 @@
+2010-09-24  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        IDBTransactionCoordinator incorrectly assumes that aborted transactions must have been started or running.
+        https://bugs.webkit.org/show_bug.cgi?id=46459
+
+        No new tests, storage/indexeddb/transaction-basics.html covers this.
+
+        Also fixes http://code.google.com/p/chromium/issues/detail?id=56732
+
+        * storage/IDBTransactionCoordinator.cpp:
+        (WebCore::IDBTransactionCoordinator::didFinishTransaction):
+
 2010-09-24  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Steve Block.

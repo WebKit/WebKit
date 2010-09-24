@@ -67,10 +67,9 @@ void IDBTransactionCoordinator::didFinishTransaction(IDBTransactionBackendImpl* 
     if (m_startedTransactions.contains(transaction)) {
         ASSERT(!m_runningTransactions.contains(transaction));
         m_startedTransactions.remove(transaction);
-    } else {
-        ASSERT(m_runningTransactions.contains(transaction));
+    } else if (m_runningTransactions.contains(transaction))
         m_runningTransactions.remove(transaction);
-    }
+
     m_transactions.remove(transaction->id());
 
     processStartedTransactions();
