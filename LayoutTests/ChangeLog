@@ -1,3 +1,17 @@
+2010-09-24  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Keep viewport information in Document
+        https://bugs.webkit.org/show_bug.cgi?id=46385
+
+        The viewport meta data (layout viewport, scale) needs to be set again when bringing
+        back a page from the page cache. As the viewport metadata is only retrieved while parsing
+        the document, we need to store it in the Document class.
+
+        * fast/viewport/viewport-128-expected.txt: Copied from LayoutTests/fast/viewport/viewport-19-expected.txt.
+        * fast/viewport/viewport-128.html: Added.
+
 2010-09-24  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; new test baselines and test_expectations update.

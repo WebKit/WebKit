@@ -1,3 +1,26 @@
+2010-09-24  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Keep viewport information in Document
+        https://bugs.webkit.org/show_bug.cgi?id=46385
+
+        The viewport meta data (layout viewport, scale) needs to be set again when bringing
+        back a page from the page cache. As the viewport metadata is only retrieved while parsing
+        the document, we need to store it in the Document class.
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::viewportArguments):
+        * Api/qwebframe_p.h:
+        * Api/qwebpage.cpp:
+        (QWebPage::viewportConfigurationForSize):
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::didReceiveViewportArguments):
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::viewportAsText):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDidCommitLoad):
+
 2010-09-23  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

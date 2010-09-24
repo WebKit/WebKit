@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <title>Viewport meta data stored in page cache.</title>
+        <meta name="viewport" content="width=100, initial-scale=2">
+
+        <script>
+            // The objective is to test if the viewport meta tag information is stored in page cache
+
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.waitUntilDone();
+                layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+            }
+
+            function pageshow(evt)
+            {
+                if (!evt.persisted) {
+                    // this will run only when the page is loaded for the first time.
+                    setTimeout('window.location = "data:text/html,<script>history.back()<" + "/script>"', 0);
+
+                } else {
+                    // if this point is reached the page is comming from the page cache.
+                    layoutTestController.dumpConfigurationForViewport(320, 352);
+                    setTimeout(function() { if (window.layoutTestController) layoutTestController.notifyDone(); }, 0);
+
+                }
+            }
+
+            window.onpageshow = pageshow;
+        </script>
+    </head>
+</html>
+

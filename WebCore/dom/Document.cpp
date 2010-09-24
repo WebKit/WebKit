@@ -129,7 +129,6 @@
 #include "TreeWalker.h"
 #include "UIEvent.h"
 #include "UserContentURLPattern.h"
-#include "ViewportArguments.h"
 #include "WebKitAnimationEvent.h"
 #include "WebKitTransitionEvent.h"
 #include "WheelEvent.h"
@@ -2590,16 +2589,14 @@ void Document::processViewport(const String& features)
 {
     ASSERT(!features.isNull());
 
+    m_viewportArguments = ViewportArguments();
+    processArguments(features, (void*)&m_viewportArguments, &setViewportFeature);
+
     Frame* frame = this->frame();
-    if (!frame)
+    if (!frame || !frame->page())
         return;
 
-    if (frame->page()) {
-        ViewportArguments arguments;
-        processArguments(features, (void*)&arguments, &setViewportFeature);
-
-        frame->page()->chrome()->client()->didReceiveViewportArguments(frame, arguments);
-    }
+    frame->page()->chrome()->client()->didReceiveViewportArguments(frame, m_viewportArguments);
 }
 
 MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& request, const IntPoint& documentPoint, const PlatformMouseEvent& event)
@@ -3815,6 +3812,10 @@ void Document::setInPageCache(bool flag)
         ASSERT(m_renderArena);
         setRenderer(m_savedRenderer);
         m_savedRenderer = 0;
+
+        if (frame() && frame()->page())
+            frame()->page()->chrome()->client()->didReceiveViewportArguments(frame(), m_viewportArguments);
+
         if (childNeedsStyleRecalc())
             scheduleStyleRecalc();
     }

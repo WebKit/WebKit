@@ -1,3 +1,23 @@
+2010-09-24  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Keep viewport information in Document
+        https://bugs.webkit.org/show_bug.cgi?id=46385
+
+        The viewport meta data (layout viewport, scale) needs to be set again when bringing
+        back a page from the page cache. As the viewport metadata is only retrieved while parsing
+        the document, we need to store it in the Document class.
+
+        Test: fast/viewport/viewport-128.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::processViewport):
+        (WebCore::Document::setInPageCache):
+        * dom/Document.h:
+        (WebCore::Document::viewportArguments):
+
 2010-09-24  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.

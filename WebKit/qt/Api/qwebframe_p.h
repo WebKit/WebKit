@@ -90,6 +90,8 @@ public:
     void renderFromTiledBackingStore(WebCore::GraphicsContext*, const QRegion& clip);
 #endif
 
+    WebCore::ViewportArguments viewportArguments();
+
     QWebFrame *q;
     Qt::ScrollBarPolicy horizontalScrollBarPolicy;
     Qt::ScrollBarPolicy verticalScrollBarPolicy;
@@ -101,7 +103,6 @@ public:
     int marginWidth;
     int marginHeight;
     bool zoomTextOnly;
-    WebCore::ViewportArguments viewportArguments;
 };
 
 class QWebHitTestResultPrivate {

@@ -442,9 +442,6 @@ void FrameLoaderClientQt::dispatchDidCommitLoad()
     if (m_frame->tree()->parent() || !m_webFrame)
         return;
 
-    // Clear the viewport arguments.
-    m_webFrame->d->viewportArguments = WebCore::ViewportArguments();
-
     emit m_webFrame->urlChanged(m_webFrame->url());
     m_webFrame->page()->d->updateNavigationActions();
 

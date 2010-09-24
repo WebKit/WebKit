@@ -5172,7 +5172,7 @@
 		CEA3949C11D45CDA003094CF /* StaticHashSetNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEA3949A11D45CDA003094CF /* StaticHashSetNodeList.cpp */; };
 		CEA3949D11D45CDA003094CF /* StaticHashSetNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = CEA3949B11D45CDA003094CF /* StaticHashSetNodeList.h */; };
 		CEF418CE1179678C009D112C /* ViewportArguments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF418CC1179678C009D112C /* ViewportArguments.cpp */; };
-		CEF418CF1179678C009D112C /* ViewportArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = CEF418CD1179678C009D112C /* ViewportArguments.h */; };
+		CEF418CF1179678C009D112C /* ViewportArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = CEF418CD1179678C009D112C /* ViewportArguments.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D000EBA211BDAFD400C47726 /* FrameLoaderStateMachine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D000EBA011BDAFD400C47726 /* FrameLoaderStateMachine.cpp */; };
 		D000EBA311BDAFD400C47726 /* FrameLoaderStateMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = D000EBA111BDAFD400C47726 /* FrameLoaderStateMachine.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D000ED2711C1B9CD00C47726 /* SubframeLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D000ED2511C1B9CD00C47726 /* SubframeLoader.cpp */; };
