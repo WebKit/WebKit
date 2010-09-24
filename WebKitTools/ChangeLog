@@ -1,3 +1,15 @@
+2010-09-23  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, build fix.
+
+        r68008 broke new-run-webkit-tests in that the chromium ports no
+        longer respect set-webkit-configuration. The correct fix for this
+        is being pursued in bug 46278 (along with a bunch of unit tests),
+        but in the meantime I'm reverting the particular lines that broke
+        things. This was tested by hand.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+
 2010-09-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
