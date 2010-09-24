@@ -238,7 +238,6 @@ bool WebWorkerBase::allowDatabase(WebFrame*, const WebString& name, const WebStr
 
 void WebWorkerBase::openFileSystem(WebFileSystem::Type type, long long size, WebFileSystemCallbacks* callbacks)
 {
-    WorkerRunLoop& runLoop = m_workerThread->runLoop();
     WorkerScriptController* controller = WorkerScriptController::controllerForContext();
     WorkerContext* workerContext = controller->workerContext();
 

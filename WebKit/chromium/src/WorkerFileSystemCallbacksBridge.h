@@ -70,6 +70,7 @@ public:
     {
         return WTF::adoptRef(new WorkerFileSystemCallbacksBridge(worker, workerContext, callbacks));
     }
+    ~WorkerFileSystemCallbacksBridge();
 
     // WorkerContext::Observer method.
     virtual void notifyStop()
@@ -88,9 +89,6 @@ public:
 
 private:
     WorkerFileSystemCallbacksBridge(WebWorkerBase*, WebCore::ScriptExecutionContext*, WebFileSystemCallbacks*);
-    ~WorkerFileSystemCallbacksBridge();
-
-    friend class ThreadSafeShared<WorkerFileSystemCallbacksBridge>;
 
     // Method that is to be called on the main thread.
     static void openFileSystemOnMainThread(WebCore::ScriptExecutionContext*, WebCommonWorkerClient*, WebFileSystem::Type, long long size, WorkerFileSystemCallbacksBridge*, const String& mode);
