@@ -51,6 +51,10 @@
 		1A0EC75F124BC7B2007EF4A5 /* PluginProcessProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0EC75D124BC7B2007EF4A5 /* PluginProcessProxy.cpp */; };
 		1A0EC7FB124BD3B6007EF4A5 /* PluginProcessMain.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0EC7FA124BD3B6007EF4A5 /* PluginProcessMain.h */; };
 		1A0EC803124BD41E007EF4A5 /* PluginProcessMainMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A0EC802124BD41E007EF4A5 /* PluginProcessMainMac.mm */; };
+		1A0EC906124C0AB8007EF4A5 /* PluginProcessConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0EC904124C0AB8007EF4A5 /* PluginProcessConnection.h */; };
+		1A0EC907124C0AB8007EF4A5 /* PluginProcessConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0EC905124C0AB8007EF4A5 /* PluginProcessConnection.cpp */; };
+		1A0EC90F124C0AF5007EF4A5 /* PluginProcessConnectionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0EC90D124C0AF5007EF4A5 /* PluginProcessConnectionManager.h */; };
+		1A0EC910124C0AF5007EF4A5 /* PluginProcessConnectionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0EC90E124C0AF5007EF4A5 /* PluginProcessConnectionManager.cpp */; };
 		1A0F29CB120B37160053D1B9 /* VisitedLinkTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0F29C9120B37160053D1B9 /* VisitedLinkTable.cpp */; };
 		1A0F29CC120B37160053D1B9 /* VisitedLinkTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0F29CA120B37160053D1B9 /* VisitedLinkTable.h */; };
 		1A0F29E3120B44420053D1B9 /* VisitedLinkProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0F29E1120B44420053D1B9 /* VisitedLinkProvider.cpp */; };
@@ -451,6 +455,10 @@
 		1A0EC75D124BC7B2007EF4A5 /* PluginProcessProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginProcessProxy.cpp; sourceTree = "<group>"; };
 		1A0EC7FA124BD3B6007EF4A5 /* PluginProcessMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginProcessMain.h; sourceTree = "<group>"; };
 		1A0EC802124BD41E007EF4A5 /* PluginProcessMainMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginProcessMainMac.mm; sourceTree = "<group>"; };
+		1A0EC904124C0AB8007EF4A5 /* PluginProcessConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginProcessConnection.h; sourceTree = "<group>"; };
+		1A0EC905124C0AB8007EF4A5 /* PluginProcessConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginProcessConnection.cpp; sourceTree = "<group>"; };
+		1A0EC90D124C0AF5007EF4A5 /* PluginProcessConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginProcessConnectionManager.h; sourceTree = "<group>"; };
+		1A0EC90E124C0AF5007EF4A5 /* PluginProcessConnectionManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginProcessConnectionManager.cpp; sourceTree = "<group>"; };
 		1A0F29C9120B37160053D1B9 /* VisitedLinkTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisitedLinkTable.cpp; sourceTree = "<group>"; };
 		1A0F29CA120B37160053D1B9 /* VisitedLinkTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitedLinkTable.h; sourceTree = "<group>"; };
 		1A0F29E1120B44420053D1B9 /* VisitedLinkProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisitedLinkProvider.cpp; sourceTree = "<group>"; };
@@ -955,6 +963,10 @@
 				1A6FB7D011E651E200DB1371 /* Plugin.cpp */,
 				1A6FB7D111E651E200DB1371 /* Plugin.h */,
 				1AA56F2811E92BC80061B882 /* PluginController.h */,
+				1A0EC905124C0AB8007EF4A5 /* PluginProcessConnection.cpp */,
+				1A0EC904124C0AB8007EF4A5 /* PluginProcessConnection.h */,
+				1A0EC90E124C0AF5007EF4A5 /* PluginProcessConnectionManager.cpp */,
+				1A0EC90D124C0AF5007EF4A5 /* PluginProcessConnectionManager.h */,
 				1A6FB7AC11E64B6800DB1371 /* PluginView.cpp */,
 				1A6FB7AD11E64B6800DB1371 /* PluginView.h */,
 			);
@@ -1769,6 +1781,8 @@
 				1A0EC6C0124BBD9B007EF4A5 /* PluginProcessMessages.h in Headers */,
 				1A0EC75E124BC7B2007EF4A5 /* PluginProcessProxy.h in Headers */,
 				1A0EC7FB124BD3B6007EF4A5 /* PluginProcessMain.h in Headers */,
+				1A0EC906124C0AB8007EF4A5 /* PluginProcessConnection.h in Headers */,
+				1A0EC90F124C0AF5007EF4A5 /* PluginProcessConnectionManager.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2043,6 +2057,8 @@
 				1A0EC604124A9F2C007EF4A5 /* PluginProcessManager.cpp in Sources */,
 				1A0EC75F124BC7B2007EF4A5 /* PluginProcessProxy.cpp in Sources */,
 				1A0EC803124BD41E007EF4A5 /* PluginProcessMainMac.mm in Sources */,
+				1A0EC907124C0AB8007EF4A5 /* PluginProcessConnection.cpp in Sources */,
+				1A0EC910124C0AF5007EF4A5 /* PluginProcessConnectionManager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

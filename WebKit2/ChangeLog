@@ -1,3 +1,27 @@
+2010-09-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add PluginProcessConnection and PluginProcessConnectionManager
+        https://bugs.webkit.org/show_bug.cgi?id=46425
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add files.
+
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        Add empty file for now.
+        
+        * WebProcess/Plugins/PluginProcessConnection.h:
+        Add header.
+
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp: Added.
+        (WebKit::PluginProcessConnectionManager::getPluginProcessConnection):
+        Check for an existing plug-in process connection. If we don't have one, ask the 
+        UI process to create one.
+        
+        (WebKit::PluginProcessConnectionManager::removePluginProcessConnection):
+        Remove the connection from our global vector.
+
 2010-09-23  Adam Roben  <aroben@apple.com>
 
         Remove the DrawingAreaProxy parameter to
