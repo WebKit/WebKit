@@ -83,11 +83,10 @@ class ChromiumPort(base.Port):
     """Abstract base class for Chromium implementations of the Port class."""
 
     def __init__(self, **kwargs):
-        import pdb
-        pdb.set_trace()
         if 'options' in kwargs:
             options = kwargs['options']
-            if (options and not hasattr(options, 'configuration')):
+            if (options and (not hasattr(options, 'configuration') or
+                             options.configuration is None)):
                 options.configuration = 'Release'
         base.Port.__init__(self, **kwargs)
         self._chromium_base_dir = None

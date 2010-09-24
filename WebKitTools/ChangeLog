@@ -1,3 +1,12 @@
+2010-09-23  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, rolling out r68232.
+        http://trac.webkit.org/changeset/68232
+
+        Broken NRWT on the canary bots.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+
 2010-09-23  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, build fix.
