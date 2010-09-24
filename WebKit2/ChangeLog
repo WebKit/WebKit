@@ -1,3 +1,18 @@
+2010-09-23  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed buildfix after r68220 on WebKit2.
+
+        WebKit2 API: Need way to know when a frame is removed from the hierarchy
+        https://bugs.webkit.org/show_bug.cgi?id=46432
+
+        [Qt] qt_wk_didRemoveFrameFromHierarchy needs to be implemented
+
+        * UIProcess/API/qt/ClientImpl.cpp:
+        (qt_wk_didRemoveFrameFromHierarchy):
+        * UIProcess/API/qt/ClientImpl.h:
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::QWKPage):
+
 2010-09-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
