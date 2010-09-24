@@ -645,6 +645,13 @@ void WebPage::preferencesDidChange(const WebPreferencesStore& store)
     m_page->settings()->setLocalStorageEnabled(store.localStorageEnabled);
     m_page->settings()->setXSSAuditorEnabled(store.xssAuditorEnabled);
 
+    m_page->settings()->setStandardFontFamily(store.standardFontFamily);
+    m_page->settings()->setCursiveFontFamily(store.cursiveFontFamily);
+    m_page->settings()->setFantasyFontFamily(store.fantasyFontFamily);
+    m_page->settings()->setFixedFontFamily(store.fixedFontFamily);
+    m_page->settings()->setSansSerifFontFamily(store.sansSerifFontFamily);
+    m_page->settings()->setSerifFontFamily(store.serifFontFamily);
+
     platformPreferencesDidChange(store);
 }
 

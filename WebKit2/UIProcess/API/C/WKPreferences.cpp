@@ -98,3 +98,63 @@ bool WKPreferencesGetXSSAuditorEnabled(WKPreferencesRef preferencesRef)
 {
     return toWK(preferencesRef)->xssAuditorEnabled();
 }
+
+void WKPreferencesSetStandardFontFamily(WKPreferencesRef preferencesRef, WKStringRef family)
+{
+    toWK(preferencesRef)->setStandardFontFamily(toWTFString(family));
+}
+
+WKStringRef WebPreferencesCopyStandardFontFamily(WKPreferencesRef preferencesRef)
+{
+    return toCopiedRef(toWK(preferencesRef)->standardFontFamily());
+}
+
+void WKPreferencesSetFixedFontFamily(WKPreferencesRef preferencesRef, WKStringRef family)
+{
+    toWK(preferencesRef)->setFixedFontFamily(toWTFString(family));
+}
+
+WKStringRef WKPreferencesCopyFixedFontFamily(WKPreferencesRef preferencesRef)
+{
+    return toCopiedRef(toWK(preferencesRef)->fixedFontFamily());
+}
+
+void WKPreferencesSetSerifFontFamily(WKPreferencesRef preferencesRef, WKStringRef family)
+{
+    toWK(preferencesRef)->setSerifFontFamily(toWTFString(family));
+}
+
+WKStringRef WKPreferencesCopySerifFontFamily(WKPreferencesRef preferencesRef)
+{
+    return toCopiedRef(toWK(preferencesRef)->serifFontFamily());
+}
+
+void WKPreferencesSetSansSerifFontFamily(WKPreferencesRef preferencesRef, WKStringRef family)
+{
+    toWK(preferencesRef)->setSansSerifFontFamily(toWTFString(family));
+}
+
+WKStringRef WKPreferencesCopySansSerifFontFamily(WKPreferencesRef preferencesRef)
+{
+    return toCopiedRef(toWK(preferencesRef)->sansSerifFontFamily());
+}
+
+void WKPreferencesSetCursiveFontFamily(WKPreferencesRef preferencesRef, WKStringRef family)
+{
+    toWK(preferencesRef)->setCursiveFontFamily(toWTFString(family));
+}
+
+WKStringRef WKPreferencesCopyCursiveFontFamily(WKPreferencesRef preferencesRef)
+{
+    return toCopiedRef(toWK(preferencesRef)->cursiveFontFamily());
+}
+
+void WKPreferencesSetFantasyFontFamily(WKPreferencesRef preferencesRef, WKStringRef family)
+{
+    toWK(preferencesRef)->setFantasyFontFamily(toWTFString(family));
+}
+
+WKStringRef WKPreferencesCopyFantasyFontFamily(WKPreferencesRef preferencesRef)
+{
+    return toCopiedRef(toWK(preferencesRef)->fantasyFontFamily());
+}

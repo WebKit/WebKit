@@ -91,7 +91,7 @@ void WebPreferences::setOfflineWebApplicationCacheEnabled(bool b)
     m_store.offlineWebApplicationCacheEnabled = b;
     update();
 }
-    
+
 bool WebPreferences::offlineWebApplicationCacheEnabled() const
 {
     return m_store.offlineWebApplicationCacheEnabled;
@@ -128,6 +128,72 @@ void WebPreferences::setFontSmoothingLevel(FontSmoothingLevel level)
 FontSmoothingLevel WebPreferences::fontSmoothingLevel() const
 {
     return static_cast<FontSmoothingLevel>(m_store.fontSmoothingLevel);
+}
+
+void WebPreferences::setStandardFontFamily(const String& family)
+{
+    m_store.standardFontFamily = family;
+    update();
+}
+
+const String& WebPreferences::standardFontFamily() const
+{
+    return m_store.standardFontFamily;
+}
+
+void WebPreferences::setFixedFontFamily(const String& family)
+{
+    m_store.fixedFontFamily = family;
+    update();
+}
+
+const String& WebPreferences::fixedFontFamily() const
+{
+    return m_store.fixedFontFamily;
+}
+
+void WebPreferences::setSerifFontFamily(const String& family)
+{
+    m_store.serifFontFamily = family;
+    update();
+}
+
+const String& WebPreferences::serifFontFamily() const
+{
+    return m_store.serifFontFamily;
+}
+
+void WebPreferences::setSansSerifFontFamily(const String& family)
+{
+    m_store.sansSerifFontFamily = family;
+    update();
+}
+
+const String& WebPreferences::sansSerifFontFamily() const
+{
+    return m_store.sansSerifFontFamily;
+}
+
+void WebPreferences::setCursiveFontFamily(const String& family)
+{
+    m_store.cursiveFontFamily = family;
+    update();
+}
+
+const String& WebPreferences::cursiveFontFamily() const
+{
+    return m_store.cursiveFontFamily;
+}
+
+void WebPreferences::setFantasyFontFamily(const String& family)
+{
+    m_store.fantasyFontFamily = family;
+    update();
+}
+
+const String& WebPreferences::fantasyFontFamily() const
+{
+    return m_store.fantasyFontFamily;
 }
 
 } // namespace WebKit

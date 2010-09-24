@@ -1,3 +1,41 @@
+2010-09-23  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Sam Weinig.
+
+        Add WebKit2 C API for setting the font families.
+        https://bugs.webkit.org/show_bug.cgi?id=46408
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetStandardFontFamily):
+        (WebPreferencesCopyStandardFontFamily):
+        (WKPreferencesSetFixedFontFamily):
+        (WKPreferencesCopyFixedFontFamily):
+        (WKPreferencesSetSerifFontFamily):
+        (WKPreferencesCopySerifFontFamily):
+        (WKPreferencesSetSansSerifFontFamily):
+        (WKPreferencesCopySansSerifFontFamily):
+        (WKPreferencesSetCursiveFontFamily):
+        (WKPreferencesCopyCursiveFontFamily):
+        (WKPreferencesSetFantasyFontFamily):
+        (WKPreferencesCopyFantasyFontFamily):
+        * UIProcess/API/C/WKPreferences.h:
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::setStandardFontFamily):
+        (WebKit::WebPreferences::standardFontFamily):
+        (WebKit::WebPreferences::setFixedFontFamily):
+        (WebKit::WebPreferences::fixedFontFamily):
+        (WebKit::WebPreferences::setSerifFontFamily):
+        (WebKit::WebPreferences::serifFontFamily):
+        (WebKit::WebPreferences::setSansSerifFontFamily):
+        (WebKit::WebPreferences::sansSerifFontFamily):
+        (WebKit::WebPreferences::setCursiveFontFamily):
+        (WebKit::WebPreferences::cursiveFontFamily):
+        (WebKit::WebPreferences::setFantasyFontFamily):
+        (WebKit::WebPreferences::fantasyFontFamily):
+        * UIProcess/WebPreferences.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::preferencesDidChange):
+
 2010-09-23  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed buildfix after r68220 on WebKit2.
