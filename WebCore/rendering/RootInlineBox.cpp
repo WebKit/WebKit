@@ -353,10 +353,10 @@ int RootInlineBox::selectionTop() const
         // This line has actually been moved further down, probably from a large line-height, but possibly because the
         // line was forced to clear floats.  If so, let's check the offsets, and only be willing to use the previous
         // line's bottom overflow if the offsets are greater on both sides.
-        int prevLeft = block()->leftOffset(prevBottom, !prevRootBox());
-        int prevRight = block()->rightOffset(prevBottom, !prevRootBox());
-        int newLeft = block()->leftOffset(selectionTop, !prevRootBox());
-        int newRight = block()->rightOffset(selectionTop, !prevRootBox());
+        int prevLeft = block()->logicalLeftOffsetForLine(prevBottom, !prevRootBox());
+        int prevRight = block()->logicalRightOffsetForLine(prevBottom, !prevRootBox());
+        int newLeft = block()->logicalLeftOffsetForLine(selectionTop, !prevRootBox());
+        int newRight = block()->logicalRightOffsetForLine(selectionTop, !prevRootBox());
         if (prevLeft > newLeft || prevRight < newRight)
             return selectionTop;
     }

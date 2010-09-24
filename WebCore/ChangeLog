@@ -1,3 +1,43 @@
+2010-09-24  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46489, rename the lineWidth and left/RightOffset methods
+        to reflect that they will be logical.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::determineHorizontalPosition):
+        (WebCore::RenderBlock::leftSelectionOffset):
+        (WebCore::RenderBlock::rightSelectionOffset):
+        (WebCore::RenderBlock::positionNewFloats):
+        (WebCore::RenderBlock::logicalLeftOffsetForContent):
+        (WebCore::RenderBlock::logicalLeftOffsetForLine):
+        (WebCore::RenderBlock::logicalRightOffsetForContent):
+        (WebCore::RenderBlock::logicalRightOffsetForLine):
+        (WebCore::RenderBlock::availableLogicalWidthForLine):
+        (WebCore::RenderBlock::getClearDelta):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::logicalRightOffsetForLine):
+        (WebCore::RenderBlock::logicalLeftOffsetForLine):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::skipTrailingWhitespace):
+        (WebCore::RenderBlock::skipLeadingWhitespace):
+        (WebCore::RenderBlock::fitBelowFloats):
+        (WebCore::RenderBlock::findNextLineBreak):
+        (WebCore::RenderBlock::checkLinesForTextOverflow):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::containingBlockWidthForContent):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::applyLineClamp):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::positionListMarker):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::computeLogicalWidth):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::selectionTop):
+
 2010-09-24  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Simon Fraser.

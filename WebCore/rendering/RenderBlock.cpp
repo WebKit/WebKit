@@ -1649,7 +1649,7 @@ void RenderBlock::determineHorizontalPosition(RenderBox* child)
         // Some objects (e.g., tables, horizontal rules, overflow:auto blocks) avoid floats.  They need
         // to shift over as necessary to dodge any floats that might get in the way.
         if (child->avoidsFloats()) {
-            int leftOff = leftOffset(height(), false);
+            int leftOff = logicalLeftOffsetForLine(height(), false);
             if (style()->textAlign() != WEBKIT_CENTER && child->style()->marginLeft().type() != Auto) {
                 if (child->marginLeft() < 0)
                     leftOff += child->marginLeft();
@@ -1661,7 +1661,7 @@ void RenderBlock::determineHorizontalPosition(RenderBox* child)
                 // width computation will take into account the delta between |leftOff| and |xPos|
                 // so that we can just pass the content width in directly to the |computeInlineDirectionMargins|
                 // function.
-                child->computeInlineDirectionMargins(child->style()->marginLeft(), child->style()->marginRight(), lineWidth(child->y(), false));
+                child->computeInlineDirectionMargins(child->style()->marginLeft(), child->style()->marginRight(), availableLogicalWidthForLine(child->y(), false));
                 chPos = leftOff + child->marginLeft();
             }
         }
@@ -1671,7 +1671,7 @@ void RenderBlock::determineHorizontalPosition(RenderBox* child)
         xPos += availableWidth();
         int chPos = xPos - (child->width() + child->marginRight());
         if (child->avoidsFloats()) {
-            int rightOff = rightOffset(height(), false);
+            int rightOff = logicalRightOffsetForLine(height(), false);
             if (style()->textAlign() != WEBKIT_CENTER && child->style()->marginRight().type() != Auto) {
                 if (child->marginRight() < 0)
                     rightOff -= child->marginRight();
@@ -1682,7 +1682,7 @@ void RenderBlock::determineHorizontalPosition(RenderBox* child)
                 // width computation will take into account the delta between |rightOff| and |xPos|
                 // so that we can just pass the content width in directly to the |computeInlineDirectionMargins|
                 // function.
-                child->computeInlineDirectionMargins(child->style()->marginLeft(), child->style()->marginRight(), lineWidth(child->y(), false));
+                child->computeInlineDirectionMargins(child->style()->marginLeft(), child->style()->marginRight(), availableLogicalWidthForLine(child->y(), false));
                 chPos = rightOff - child->marginRight() - child->width();
             }
         }
@@ -2807,7 +2807,7 @@ void RenderBlock::getHorizontalSelectionGapInfo(SelectionState state, bool& left
 
 int RenderBlock::leftSelectionOffset(RenderBlock* rootBlock, int yPos)
 {
-    int left = leftOffset(yPos, false);
+    int left = logicalLeftOffsetForLine(yPos, false);
     if (left == borderLeft() + paddingLeft()) {
         if (rootBlock != this)
             // The border can potentially be further extended by our containingBlock().
@@ -2827,7 +2827,7 @@ int RenderBlock::leftSelectionOffset(RenderBlock* rootBlock, int yPos)
 
 int RenderBlock::rightSelectionOffset(RenderBlock* rootBlock, int yPos)
 {
-    int right = rightOffset(yPos, false);
+    int right = logicalRightOffsetForLine(yPos, false);
     if (right == (contentWidth() + (borderLeft() + paddingLeft()))) {
         if (rootBlock != this)
             // The border can potentially be further extended by our containingBlock().
@@ -3008,8 +3008,8 @@ bool RenderBlock::positionNewFloats()
 
         RenderBox* o = f->m_renderer;
 
-        int ro = rightOffset(); // Constant part of right offset.
-        int lo = leftOffset(); // Constant part of left offset.
+        int ro = logicalRightOffsetForContent(); // Constant part of right offset.
+        int lo = logicalLeftOffsetForContent(); // Constant part of left offset.
         int fwidth = f->m_width; // The width we look for.
         if (ro - lo < fwidth)
             fwidth = ro - lo; // Never look for more than what will be available.
@@ -3024,10 +3024,10 @@ bool RenderBlock::positionNewFloats()
         if (o->style()->floating() == FLEFT) {
             int heightRemainingLeft = 1;
             int heightRemainingRight = 1;
-            int fx = leftRelOffset(y, lo, false, &heightRemainingLeft);
-            while (rightRelOffset(y, ro, false, &heightRemainingRight)-fx < fwidth) {
+            int fx = logicalLeftOffsetForLine(y, lo, false, &heightRemainingLeft);
+            while (logicalRightOffsetForLine(y, ro, false, &heightRemainingRight)-fx < fwidth) {
                 y += min(heightRemainingLeft, heightRemainingRight);
-                fx = leftRelOffset(y, lo, false, &heightRemainingLeft);
+                fx = logicalLeftOffsetForLine(y, lo, false, &heightRemainingLeft);
             }
             fx = max(0, fx);
             f->m_left = fx;
@@ -3035,10 +3035,10 @@ bool RenderBlock::positionNewFloats()
         } else {
             int heightRemainingLeft = 1;
             int heightRemainingRight = 1;
-            int fx = rightRelOffset(y, ro, false, &heightRemainingRight);
-            while (fx - leftRelOffset(y, lo, false, &heightRemainingLeft) < fwidth) {
+            int fx = logicalRightOffsetForLine(y, ro, false, &heightRemainingRight);
+            while (fx - logicalLeftOffsetForLine(y, lo, false, &heightRemainingLeft) < fwidth) {
                 y += min(heightRemainingLeft, heightRemainingRight);
-                fx = rightRelOffset(y, ro, false, &heightRemainingRight);
+                fx = logicalRightOffsetForLine(y, ro, false, &heightRemainingRight);
             }
             f->m_left = fx - f->m_width;
             o->setLocation(fx - o->marginRight() - o->width(), y + o->marginTop());
@@ -3201,12 +3201,12 @@ HashSet<RenderBox*>* RenderBlock::percentHeightDescendants() const
     return gPercentHeightDescendantsMap ? gPercentHeightDescendantsMap->get(this) : 0;
 }
 
-int RenderBlock::leftOffset() const
+int RenderBlock::logicalLeftOffsetForContent() const
 {
     return borderLeft() + paddingLeft();
 }
 
-int RenderBlock::leftRelOffset(int y, int fixedOffset, bool applyTextIndent, int* heightRemaining) const
+int RenderBlock::logicalLeftOffsetForLine(int y, int fixedOffset, bool applyTextIndent, int* heightRemaining) const
 {
     int left = fixedOffset;
     if (m_floatingObjects) {
@@ -3234,12 +3234,12 @@ int RenderBlock::leftRelOffset(int y, int fixedOffset, bool applyTextIndent, int
     return left;
 }
 
-int RenderBlock::rightOffset() const
+int RenderBlock::logicalRightOffsetForContent() const
 {
     return borderLeft() + paddingLeft() + availableWidth();
 }
 
-int RenderBlock::rightRelOffset(int y, int fixedOffset, bool applyTextIndent, int* heightRemaining) const
+int RenderBlock::logicalRightOffsetForLine(int y, int fixedOffset, bool applyTextIndent, int* heightRemaining) const
 {
     int right = fixedOffset;
 
@@ -3269,9 +3269,9 @@ int RenderBlock::rightRelOffset(int y, int fixedOffset, bool applyTextIndent, in
 }
 
 int
-RenderBlock::lineWidth(int y, bool firstLine) const
+RenderBlock::availableLogicalWidthForLine(int position, bool firstLine) const
 {
-    int result = rightOffset(y, firstLine) - leftOffset(y, firstLine);
+    int result = logicalRightOffsetForLine(position, firstLine) - logicalLeftOffsetForLine(position, firstLine);
     return (result < 0) ? 0 : result;
 }
 
@@ -3938,7 +3938,7 @@ int RenderBlock::getClearDelta(RenderBox* child, int yPos)
 
         int y = yPos;
         while (true) {
-            int widthAtY = lineWidth(y, false);
+            int widthAtY = availableLogicalWidthForLine(y, false);
             if (widthAtY == availableWidth)
                 return y - yPos;
 

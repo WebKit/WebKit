@@ -1010,8 +1010,8 @@ void RenderFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool relayoutC
                 continue;
             int ltr = true;
             
-            int blockRightEdge = destBlock->rightOffset(lastVisibleLine->y(), false);
-            int blockLeftEdge = destBlock->leftOffset(lastVisibleLine->y(), false);
+            int blockRightEdge = destBlock->logicalRightOffsetForLine(lastVisibleLine->y(), false);
+            int blockLeftEdge = destBlock->logicalLeftOffsetForLine(lastVisibleLine->y(), false);
             
             int blockEdge = ltr ? blockRightEdge : blockLeftEdge;
             if (!lastVisibleLine->canAccommodateEllipsis(ltr, blockEdge,

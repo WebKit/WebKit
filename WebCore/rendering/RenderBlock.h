@@ -102,15 +102,14 @@ public:
     bool containsFloats() { return m_floatingObjects && !m_floatingObjects->isEmpty(); }
     bool containsFloat(RenderObject*);
 
-    int lineWidth(int y, bool firstLine) const;
+    int availableLogicalWidthForLine(int position, bool firstLine) const;
+    int logicalRightOffsetForLine(int position, bool firstLine) const { return logicalRightOffsetForLine(position, logicalRightOffsetForContent(), firstLine); }
+    int logicalLeftOffsetForLine(int position, bool firstLine) const { return logicalLeftOffsetForLine(position, logicalLeftOffsetForContent(), firstLine); }
     
     virtual int lowestPosition(bool includeOverflowInterior = true, bool includeSelf = true) const;
     virtual int rightmostPosition(bool includeOverflowInterior = true, bool includeSelf = true) const;
     virtual int leftmostPosition(bool includeOverflowInterior = true, bool includeSelf = true) const;
-
-    int rightOffset(int y, bool firstLine) const { return rightRelOffset(y, rightOffset(), firstLine); }
-    int leftOffset(int y, bool firstLine) const { return leftRelOffset(y, leftOffset(), firstLine); }
-
+    
     virtual VisiblePosition positionForPoint(const IntPoint&);
     
     // Block flows subclass availableWidth to handle multi column layout (shrinking the width available to children when laying out.)
@@ -222,8 +221,10 @@ protected:
     virtual void paint(PaintInfo&, int tx, int ty);
     virtual void paintObject(PaintInfo&, int tx, int ty);
 
-    int rightRelOffset(int y, int fixedOffset, bool applyTextIndent = true, int* heightRemaining = 0) const;
-    int leftRelOffset(int y, int fixedOffset, bool applyTextIndent = true, int* heightRemaining = 0) const;
+    int logicalRightOffsetForContent() const;
+    int logicalLeftOffsetForContent() const;
+    int logicalRightOffsetForLine(int position, int fixedOffset, bool applyTextIndent = true, int* logicalHeightRemaining = 0) const;
+    int logicalLeftOffsetForLine(int position, int fixedOffset, bool applyTextIndent = true, int* logicalHeightRemaining = 0) const;
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
@@ -409,8 +410,6 @@ private:
     inline int leftBottom();
     inline int rightBottom();
 
-    int rightOffset() const;
-    int leftOffset() const;
     virtual bool hitTestColumns(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
     virtual bool hitTestContents(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
     bool hitTestFloats(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty);
