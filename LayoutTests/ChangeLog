@@ -1,3 +1,17 @@
+2010-09-24  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r68236.
+        http://trac.webkit.org/changeset/68236
+        https://bugs.webkit.org/show_bug.cgi?id=46449
+
+        compile fix didn't work (Requested by dino___ on #webkit).
+
+        * fast/dom/DeviceMotion/create-event-expected.txt:
+        * fast/dom/DeviceMotion/optional-event-properties-expected.txt:
+        * fast/dom/DeviceMotion/script-tests/create-event.js:
+        * fast/dom/DeviceMotion/script-tests/optional-event-properties.js:
+        * fast/dom/script-tests/prototype-inheritance.js:
+
 2010-09-24  Chris Guillory   <chris.guillory@google.com>
 
         Reviewed by Chris Fleizach.
