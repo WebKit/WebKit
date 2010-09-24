@@ -148,12 +148,9 @@ void SocketStreamHandlePrivate::socketErrorCallback(int error)
 }
 
 #ifndef QT_NO_OPENSSL
-void SocketStreamHandlePrivate::socketSslErrors(const QList<QSslError>&)
+void SocketStreamHandlePrivate::socketSslErrors(const QList<QSslError>& error)
 {
-    // FIXME: based on http://tools.ietf.org/html/draft-hixie-thewebsocketprotocol-68#page-15
-    // we should abort on certificate errors.
-    // We don't abort while this is still work in progress.
-    static_cast<QSslSocket*>(m_socket)->ignoreSslErrors();
+    QMetaObject::invokeMethod(this, "socketErrorCallback", Qt::QueuedConnection, Q_ARG(int, error[0].error()));
 }
 #endif
 
