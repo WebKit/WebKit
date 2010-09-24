@@ -1,3 +1,56 @@
+2010-09-24  Pawel Hajdan  <phajdan.jr@chromium.org>
+
+        Reviewed by Dumitru Daniliuc.
+
+        Move the implementation of chromium_vfs to webkit for POSIX.
+        This allows us to link Chrome with system-provided SQLite on Linux.
+        See also http://code.google.com/p/chromium/issues/detail?id=22208.
+        https://bugs.webkit.org/show_bug.cgi?id=45416
+
+        No new tests.
+
+        * platform/sql/chromium/SQLiteFileSystemChromiumPosix.cpp:
+        (sqliteErrorFromPosixError):
+        (releaseLockInfo):
+        (releaseOpenInfo):
+        (findLockInfo):
+        (chromiumCheckReservedLock):
+        (rangeLock):
+        (chromiumLock):
+        (closePendingFds):
+        (chromiumUnlock):
+        (chromiumCloseNoLock):
+        (chromiumClose):
+        (chromiumCheckReservedLockNoop):
+        (chromiumLockNoop):
+        (chromiumUnlockNoop):
+        (seekAndRead):
+        (chromiumRead):
+        (seekAndWrite):
+        (chromiumWrite):
+        (syncWrapper):
+        (chromiumSync):
+        (chromiumTruncate):
+        (chromiumFileSize):
+        (chromiumFileControl):
+        (chromiumSectorSize):
+        (chromiumDeviceCharacteristics):
+        (fillInChromiumFile):
+        (findReusableFd):
+        (chromiumOpen):
+        (chromiumDelete):
+        (chromiumAccess):
+        (chromiumFullPathname):
+        (chromiumDlOpen):
+        (chromiumDlError):
+        (chromiumDlSym):
+        (chromiumDlClose):
+        (chromiumRandomness):
+        (chromiumSleep):
+        (chromiumCurrentTime):
+        (chromiumGetLastError):
+        (WebCore::SQLiteFileSystem::registerSQLiteVFS):
+
 2010-09-24  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Dirk Schulze.
