@@ -1,3 +1,18 @@
+2010-09-24  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Layout test html5lib/runner.html failing on Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=42845
+        
+        Rebaseline html5lib tests (diffs from upstream are still only due to V8
+        differences).
+
+        * platform/chromium-mac/html5lib/runner-expected.txt: Removed.
+        * platform/chromium-win/html5lib/runner-expected.txt: Removed.
+        * platform/chromium/html5lib/runner-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-09-24  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

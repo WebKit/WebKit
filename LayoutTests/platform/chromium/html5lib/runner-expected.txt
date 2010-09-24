@@ -1,457 +1,308 @@
 CONSOLE MESSAGE: line 1: Uncaught SyntaxError: Unexpected token <
 CONSOLE MESSAGE: line 1: Uncaught SyntaxError: Unexpected token <
+CONSOLE MESSAGE: line 0: Warning: Problem parsing viewBox=""
+CONSOLE MESSAGE: line 0: Warning: Problem parsing viewBox=""
+CONSOLE MESSAGE: line 0: Warning: Problem parsing viewBox=""
+CONSOLE MESSAGE: line 1: Uncaught SyntaxError: Unexpected token <
+CONSOLE MESSAGE: line 1: Uncaught SyntaxError: Unexpected token <
+CONSOLE MESSAGE: line 1: Uncaught SyntaxError: Unexpected token <
+CONSOLE MESSAGE: line 1: Uncaught SyntaxError: Unexpected token <
 CONSOLE MESSAGE: line 2: PASS
 CONSOLE MESSAGE: line 2: FOO<span>BAR</span>BAZ
-resources/tests1.dat:
-25
-27
-29
-30
-32
-33
-34
-35
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-57
-59
-77
-78
-79
-80
-81
-82
-84
-87
-90
-91
-92
-96
-98
-101
-104
-106
-109
-113
+resources/pending-spec-changes-plain-text-unsafe.dat: PASS
 
-resources/tests2.dat:
-2
-6
-7
-8
-9
-10
-11
-16
-17
-18
-19
-20
-21
-22
-29
-32
-33
-36
-40
-42
-44
-45
-53
-54
-56
-57
-59
-
-resources/tests3.dat:
-14
-15
-16
-17
-18
-19
-
-resources/tests4.dat:
+resources/pending-spec-changes.dat:
 3
-5
-6
-7
-
-resources/tests5.dat:
-2
-6
-7
-8
-9
-14
-15
-16
-
-resources/tests6.dat:
-1
 4
-5
-6
-8
-9
-10
-11
-12
-27
-29
-30
-31
-37
-44
-45
-46
-47
-48
-49
-50
-51
+
+Test 3 of 4 in resources/pending-spec-changes.dat failed. Input:
+<svg><![CDATA[]]
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|       "]]"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+
+Test 4 of 4 in resources/pending-spec-changes.dat failed. Input:
+<svg><![CDATA[]
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|       "]"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+resources/plain-text-unsafe.dat: PASS
+
+resources/tests1.dat: PASS
+
+resources/tests2.dat: PASS
+
+resources/tests3.dat: PASS
+
+resources/tests4.dat: PASS
+
+resources/tests5.dat: PASS
+
+resources/tests6.dat: PASS
 
 resources/tests7.dat:
-1
-2
-5
-6
-9
-14
-15
-16
-17
-18
-19
-22
-23
-24
-25
-27
-28
-29
 30
 
-resources/tests8.dat:
-1
-2
-3
-4
-5
-6
-8
-9
+Test 30 of 30 in resources/tests7.dat failed. Input:
+<select><keygen>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|     <keygen>
+|       <option>
+|         "2048 (High Grade)"
+|       <option>
+|         "1024 (Medium Grade)"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|     <keygen>
+resources/tests8.dat: PASS
 
-resources/tests9.dat:
-1
-2
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
+resources/tests9.dat: PASS
 
 resources/tests10.dat:
-1
-2
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
+38
+51
+52
 
-resources/tests11.dat:
-1
-2
-3
-4
-5
-6
-7
-8
-9
+Test 38 of 52 in resources/tests10.dat failed. Input:
+<svg><script></script><path>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|       <svg script>
+|         <svg path>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|       <svg script>
+|       <svg path>
 
-resources/tests12.dat:
-1
-2
+Test 51 of 52 in resources/tests10.dat failed. Input:
+<math><annotation-xml><svg><foreignObject><div><math><mi></mi></math><span></span></div></foreignObject><path></path></svg></annotation-xml><mi>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       <math annotation-xml>
+|         <svg svg>
+|           <svg foreignObject>
+|             <div>
+|               <math math>
+|                 <math mi>
+|               <span>
+|             <path>
+|       <math mi>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       <math annotation-xml>
+|         <svg svg>
+|           <svg foreignObject>
+|             <div>
+|               <math math>
+|                 <math mi>
+|               <span>
+|           <svg path>
+|       <math mi>
+
+Test 52 of 52 in resources/tests10.dat failed. Input:
+<math><annotation-xml><svg><foreignObject><math><mi><svg></svg></mi><mo></mo></math><span></span></foreignObject><path></path></svg></annotation-xml><mi>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       <math annotation-xml>
+|         <svg svg>
+|           <svg foreignObject>
+|             <math math>
+|               <math mi>
+|                 <svg svg>
+|               <math mo>
+|             <span>
+|             <path>
+|       <math mi>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       <math annotation-xml>
+|         <svg svg>
+|           <svg foreignObject>
+|             <math math>
+|               <math mi>
+|                 <svg svg>
+|               <math mo>
+|             <span>
+|           <svg path>
+|       <math mi>
+resources/tests11.dat: PASS
+
+resources/tests12.dat: PASS
 
 resources/tests14.dat: PASS
 
-resources/tests15.dat:
-3
-4
-5
-6
-7
-11
-12
-13
+resources/tests15.dat: PASS
 
-resources/tests16.dat:
-2
-3
-4
-5
-6
-7
-8
-9
-10
-12
-13
-14
-15
-16
-17
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-64
-65
-66
-67
-68
-69
-70
-71
-72
-73
-75
-78
-79
-81
-83
-84
-85
-86
-87
-88
-89
-91
-92
-94
-96
-97
-98
-99
-100
-101
-102
-103
-104
-106
-107
-108
-109
-110
-111
-113
-114
-115
-116
-117
-118
-119
-120
-121
-122
-123
-124
-125
-126
-127
-128
-129
-130
-131
-132
-133
-134
-135
-136
-137
-138
-139
-140
-141
-142
-143
-144
-145
-146
-147
-148
-149
-150
-151
-152
-156
-157
-158
-159
-160
-161
-162
-163
-164
-165
-167
-170
-171
-173
-175
-176
-177
-178
-179
-180
-181
-183
-184
-186
+resources/tests16.dat: PASS
+
+resources/tests17.dat: PASS
+
+resources/tests18.dat: PASS
+
+resources/tests19.dat:
+63
+
+Test 63 of 97 in resources/tests19.dat failed. Input:
+<!doctype html><keygen><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <keygen>
+|       <option>
+|         "2048 (High Grade)"
+|       <option>
+|         "1024 (Medium Grade)"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <keygen>
+resources/tests20.dat: PASS
+
+resources/tests21.dat: PASS
+
+resources/tests_innerHTML_1.dat: PASS
 
 resources/webkit01.dat: PASS
 
-resources/doctype01.dat:
+resources/webkit02.dat: PASS
+
+resources/doctype01.dat: PASS
+
+resources/scriptdata01.dat: PASS
+
+resources/html5test-com.dat: PASS
+
+resources/entities01.dat: PASS
+
+resources/entities02.dat: PASS
+
+resources/comments01.dat: PASS
+
+resources/adoption01.dat: PASS
+
+resources/adoption02.dat:
 2
-4
-5
-8
-9
-10
-11
-12
-13
-17
-18
-19
-20
-21
-22
-24
-26
-27
-31
-33
 
-resources/scriptdata01.dat:
-6
-17
-18
-19
-21
-22
-23
-24
-26
+Test 2 of 3 in resources/adoption02.dat failed. Input:
+<b id="b">1<i id="i">2<p>3<script>document.getElementById("b").id = "c";document.getElementById("i").id = "j"</script></b>4
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <b>
+|       id="c"
+|       "1"
+|       <i>
+|         id="j"
+|         "2"
+|     <i>
+|       id="j"
+|       <p>
+|         <b>
+|           id="c"
+|           "3"
+|           <script>
+|             "document.getElementById("b").id = "c";document.getElementById("i").id = "j""
+|         "4"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <b>
+|       id="c"
+|       "1"
+|       <i>
+|         id="j"
+|         "2"
+|     <i>
+|       id="i"
+|       <p>
+|         <b>
+|           id="b"
+|           "3"
+|           <script>
+|             "document.getElementById("b").id = "c";document.getElementById("i").id = "j""
+|         "4"
+resources/inbody01.dat: PASS
 
-resources/entities01.dat:
-2
-5
-21
-22
-59
-60
-61
-62
-67
-68
+resources/isindex.dat: PASS
 
-resources/entities02.dat:
-5
+resources/tables01.dat: PASS
 
-resources/comments01.dat:
-3
-6
-8
-9
-10
-11
-12
+resources/tricky01.dat: PASS
+
+resources/scripted/adoption01.dat:
+1
+
+Test 1 of 1 in resources/scripted/adoption01.dat failed. Input:
+<p><b id="A"><script>document.getElementById("A").id = "B"</script></p>TEXT</b>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <b>
+|         id="B"
+|         <script>
+|           "document.getElementById("A").id = "B""
+|     <b>
+|       id="B"
+|       "TEXT"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <b>
+|         id="B"
+|         <script>
+|           "document.getElementById("A").id = "B""
+|     <b>
+|       id="A"
+|       "TEXT"
+resources/scripted/webkit01.dat: PASS

@@ -2872,9 +2872,6 @@ BUG49343 : fast/js/reserved-words-as-property.html = TEXT
 BUG42598 : http/tests/misc/401-alternative-content.php = TEXT
 BUG42598 : http/tests/xmlhttprequest/failed-auth.html = TEXT
 
-// This one started failing at r63728.
-BUGWK42845 : html5lib/runner.html = TEXT
-
 BUGWK42769 : http/tests/xmlhttprequest/remember-bad-password.html = TEXT
 BUGWK42769 : http/tests/security/401-logout/401-logout.php = TIMEOUT
 
