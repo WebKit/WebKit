@@ -100,12 +100,6 @@ typedef unsigned char UInt8;
 #endif
 #endif
 
-#if PLATFORM(CHROMIUM)
-#define CanvasInterpolationQuality InterpolationMedium
-#else
-#define CanvasInterpolationQuality InterpolationDefault
-#endif
-
 #if PLATFORM(QT) && defined(Q_WS_WIN)
 #include <windows.h>
 #endif

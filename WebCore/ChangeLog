@@ -1,3 +1,19 @@
+2010-09-23  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Lower the default canvas interpolation quality for platforms that use CG
+        https://bugs.webkit.org/show_bug.cgi?id=45722
+
+        Lowered the default image interpolation quality for platforms that
+        use CG down to low since this is as good as if not better than
+        other graphics platforms defaults (being bilinear interpolation).
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::createImageBuffer):
+        * html/HTMLCanvasElement.h: Moved in macros for default canvas interp quality.
+        * platform/graphics/GraphicsContext.h: Moved out macros for default canvas interp quality. It makes more sense for them to be housed where they're used.
+
 2010-09-23  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Adele Peterson.

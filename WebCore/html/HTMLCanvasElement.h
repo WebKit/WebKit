@@ -32,6 +32,14 @@
 #include "HTMLElement.h"
 #include "IntSize.h"
 
+#if PLATFORM(CHROMIUM)
+#define DefaultInterpolationQuality InterpolationMedium
+#elif PLATFORM(CG)
+#define DefaultInterpolationQuality InterpolationLow
+#else
+#define DefaultInterpolationQuality InterpolationDefault
+#endif
+
 namespace WebCore {
 
 class CanvasContextAttributes;
