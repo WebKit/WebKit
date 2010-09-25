@@ -118,6 +118,9 @@ public:
     virtual void syncCompositingState();
     virtual void syncCompositingStateForThisLayerOnly();
 
+    // Should only be called by animationDidStart: callback
+    void animationDidStart(CAAnimation*);
+    
 protected:
     virtual void setOpacityInternal(float);
 
@@ -354,9 +357,6 @@ private:
     
     // Uncommitted transitions and animations.
     Vector<LayerPropertyAnimation> m_uncomittedAnimations;
-
-    typedef int AnimatedProperty; // std containers choke on the AnimatedPropertyID enum
-    typedef pair<AnimatedProperty, int> PropertyAnimationPair; // pair of property, index
     
     enum Action { Remove, Pause };
     struct AnimationProcessingAction {
@@ -372,7 +372,7 @@ private:
     AnimationsToProcessMap m_animationsToProcess;
 
     // Map of animation names to their associated lists of property animations, so we can remove/pause them.
-    typedef HashMap<String, Vector<PropertyAnimationPair> > AnimationsMap;
+    typedef HashMap<String, Vector<LayerPropertyAnimation> > AnimationsMap;
     AnimationsMap m_runningAnimations;
 
     Vector<FloatRect> m_dirtyRects;

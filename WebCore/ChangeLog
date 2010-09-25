@@ -1,3 +1,53 @@
+2010-09-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Accelerated transitions do not suspend/resume properly.
+        https://bugs.webkit.org/show_bug.cgi?id=43792
+        
+        (1) Fix regression from r68233, where if an animation affected two
+        properties, only one would animate. The testcase tests this.
+        
+        (2) Fix a flash at the end of an animation or transition that has been
+        paused and resumed. The flash occurred because we used CAAnimation's
+        timeOffset when resuming to push the start of the animation into
+        the past. However, timeOffset does not play nicely with fill modes,
+        causing a single frame of animation with the element in its unanimated state.
+        
+        Fixed this by offsetting the beginTime into the past, rather than setting
+        timeOffset. Normally we submit animations with beginTime == 0, and rely
+        on CA assigning a beginTime when the animation is committed. This beginTime
+        is then passed to AnimationController to sync hardware and software animations.
+        However, since the code now assigns beginTimes in the past (on resume),
+        we now have to denote whether we've done this, and send an appropriate
+        timestamp back to AnimationController.
+        
+        (3) Finally, the patch removes PropertyAnimationPair and just uses LayerPropertyAnimation
+        instead. This is just cleanup.
+
+        Test: animations/opacity-transform-animation.html
+
+        * platform/graphics/mac/GraphicsLayerCA.h: Remove PropertyAnimationPair,
+        and change AnimationsMap to store a vector of LayerPropertyAnimation.
+        New method, animationDidStart(), is called from the -animationDidStart: callback.
+        
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (-[WebAnimationDelegate animationDidStart:]): Just call m_graphicsLayer->animationDidStart()
+        now.
+        (WebCore::animationIdentifier): We need to pass in the property, to fix (1)
+        (WebCore::GraphicsLayerCA::moveOrCopyAnimationsForProperty): Copy the WebKitAnimationBeginTimeSet
+        value, if present.
+        (WebCore::GraphicsLayerCA::animationDidStart): Call notifyAnimationStarted() on the client,
+        after testing if we set a non-zero beginTime on this particular animation.
+        (WebCore::GraphicsLayerCA::updateLayerAnimations): Change to use LayerPropertyAnimation.
+        (WebCore::GraphicsLayerCA::setCAAnimationOnLayer): Set value for WebKitAnimationBeginTimeSetKey
+        if we have a non-zero timeOffset. Make animationID an NSString, to avoid several conversions.
+        (WebCore::GraphicsLayerCA::removeCAAnimationFromLayer):  Make animationID an NSString, to
+        avoid several conversions.
+        (WebCore::copyAnimationProperties): Copy WebKitAnimationBeginTimeSetKey if present.
+        (WebCore::GraphicsLayerCA::pauseCAAnimationOnLayer): Make animationID an NSString, to avoid
+        several conversions.
+
 2010-09-24  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

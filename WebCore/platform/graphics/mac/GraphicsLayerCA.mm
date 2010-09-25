@@ -55,6 +55,8 @@ using namespace std;
 
 namespace WebCore {
 
+static NSString * const WebKitAnimationBeginTimeSetKey = @"WebKitAnimationBeginTimeSet";
+
 // The threshold width or height above which a tiled layer will be used. This should be
 // large enough to avoid tiled layers for most GraphicsLayers, but less than the OpenGL
 // texture size limit on all supported hardware.
@@ -101,11 +103,8 @@ static double mediaTimeToCurrentTime(CFTimeInterval t)
 
 - (void)animationDidStart:(CAAnimation *)animation
 {
-    if (!m_graphicsLayer)
-        return;
-
-    double startTime = WebCore::mediaTimeToCurrentTime([animation beginTime]);
-    m_graphicsLayer->client()->notifyAnimationStarted(m_graphicsLayer, startTime);
+    if (m_graphicsLayer)
+        m_graphicsLayer->animationDidStart(animation);
 }
 
 - (WebCore::GraphicsLayerCA*)graphicsLayer
@@ -247,14 +246,9 @@ static String propertyIdToString(AnimatedPropertyID property)
     return "";
 }
 
-static String animationIdentifier(const String& animationName, int index)
+static String animationIdentifier(const String& animationName, AnimatedPropertyID property, int index)
 {
-    StringBuilder builder;
-
-    builder.append(animationName);
-    builder.append("_");
-    builder.append(String::number(index));
-    return builder.toString();
+    return animationName + String::format("_%d_%d", property, index);
 }
 
 static CAMediaTimingFunction* getCAMediaTimingFunction(const TimingFunction* timingFunction)
@@ -570,12 +564,12 @@ void GraphicsLayerCA::moveOrCopyAnimationsForProperty(MoveOrCopy operation, Anim
     // Look for running animations affecting this property.
     AnimationsMap::const_iterator end = m_runningAnimations.end();
     for (AnimationsMap::const_iterator it = m_runningAnimations.begin(); it != end; ++it) {
-        const Vector<PropertyAnimationPair>& propertyAnimations = it->second;
+        const Vector<LayerPropertyAnimation>& propertyAnimations = it->second;
         size_t numAnimations = propertyAnimations.size();
         for (size_t i = 0; i < numAnimations; ++i) {
-            const PropertyAnimationPair& currPair = propertyAnimations[i];
-            if (currPair.first == property)
-                moveOrCopyLayerAnimation(operation, animationIdentifier(it->first, currPair.second), fromLayer, toLayer);
+            const LayerPropertyAnimation& currAnimation = propertyAnimations[i];
+            if (currAnimation.m_property == property)
+                moveOrCopyLayerAnimation(operation, animationIdentifier(currAnimation.m_name, currAnimation.m_property, currAnimation.m_index), fromLayer, toLayer);
         }
     }
 }
@@ -754,6 +748,22 @@ void GraphicsLayerCA::removeAnimation(const String& animationName)
 
     m_animationsToProcess.add(animationName, AnimationProcessingAction(Remove));
     noteLayerPropertyChanged(AnimationChanged);
+}
+
+void GraphicsLayerCA::animationDidStart(CAAnimation* caAnimation)
+{
+    bool hadNonZeroBeginTime = [[caAnimation valueForKey:WebKitAnimationBeginTimeSetKey] boolValue];
+
+    double startTime;
+    if (hadNonZeroBeginTime) {
+        // We don't know what time CA used to commit the animation, so just use the current time
+        // (even though this will be slightly off).
+        startTime = WebCore::mediaTimeToCurrentTime(CACurrentMediaTime());
+    } else
+        startTime = WebCore::mediaTimeToCurrentTime([caAnimation beginTime]);
+
+    if (m_client)
+        m_client->notifyAnimationStarted(this, startTime);
 }
 
 void GraphicsLayerCA::setContentsToImage(Image* image)
@@ -1493,15 +1503,15 @@ void GraphicsLayerCA::updateLayerAnimations()
                 continue;
 
             const AnimationProcessingAction& processingInfo = it->second;
-            const Vector<PropertyAnimationPair>& animations = animationIt->second;
+            const Vector<LayerPropertyAnimation>& animations = animationIt->second;
             for (size_t i = 0; i < animations.size(); ++i) {
-                const PropertyAnimationPair& currPair = animations[i];
+                const LayerPropertyAnimation& currAnimation = animations[i];
                 switch (processingInfo.action) {
                     case Remove:
-                        removeCAAnimationFromLayer(static_cast<AnimatedPropertyID>(currPair.first), currAnimationName, currPair.second);
+                        removeCAAnimationFromLayer(currAnimation.m_property, currAnimationName, currAnimation.m_index);
                         break;
                     case Pause:
-                        pauseCAAnimationOnLayer(static_cast<AnimatedPropertyID>(currPair.first), currAnimationName, currPair.second, processingInfo.timeOffset);
+                        pauseCAAnimationOnLayer(currAnimation.m_property, currAnimationName, currAnimation.m_index, processingInfo.timeOffset);
                         break;
                 }
             }
@@ -1521,12 +1531,12 @@ void GraphicsLayerCA::updateLayerAnimations()
             
             AnimationsMap::iterator it = m_runningAnimations.find(pendingAnimation.m_name);
             if (it == m_runningAnimations.end()) {
-                Vector<PropertyAnimationPair> firstPair;
-                firstPair.append(PropertyAnimationPair(pendingAnimation.m_property, pendingAnimation.m_index));
-                m_runningAnimations.add(pendingAnimation.m_name, firstPair);
+                Vector<LayerPropertyAnimation> animations;
+                animations.append(pendingAnimation);
+                m_runningAnimations.add(pendingAnimation.m_name, animations);
             } else {
-                Vector<PropertyAnimationPair>& animPairs = it->second;
-                animPairs.append(PropertyAnimationPair(pendingAnimation.m_property, pendingAnimation.m_index));
+                Vector<LayerPropertyAnimation>& animations = it->second;
+                animations.append(pendingAnimation);
             }
         }
         
@@ -1538,10 +1548,13 @@ void GraphicsLayerCA::setCAAnimationOnLayer(CAPropertyAnimation* caAnim, Animate
 {
     PlatformLayer* layer = animatedLayer(property);
 
-    [caAnim setTimeOffset:timeOffset];
-    
-    String animationID = animationIdentifier(animationName, index);
-    
+    if (timeOffset) {
+        [caAnim setBeginTime:CACurrentMediaTime() - timeOffset];
+        [caAnim setValue:[NSNumber numberWithBool:YES] forKey:WebKitAnimationBeginTimeSetKey];
+    }
+
+    NSString *animationID = animationIdentifier(animationName, property, index);
+
     [layer removeAnimationForKey:animationID];
     [layer addAnimation:caAnim forKey:animationID];
 
@@ -1577,7 +1590,7 @@ bool GraphicsLayerCA::removeCAAnimationFromLayer(AnimatedPropertyID property, co
 {
     PlatformLayer* layer = animatedLayer(property);
 
-    String animationID = animationIdentifier(animationName, index);
+    NSString *animationID = animationIdentifier(animationName, property, index);
 
     if (![layer animationForKey:animationID])
         return false;
@@ -1613,13 +1626,16 @@ static void copyAnimationProperties(CAPropertyAnimation* from, CAPropertyAnimati
 #if HAVE_MODERN_QUARTZCORE
     [to setValueFunction:[from valueFunction]];
 #endif
+
+    if (id object = [from valueForKey:WebKitAnimationBeginTimeSetKey])
+        [to setValue:object forKey:WebKitAnimationBeginTimeSetKey];
 }
 
 void GraphicsLayerCA::pauseCAAnimationOnLayer(AnimatedPropertyID property, const String& animationName, int index, double timeOffset)
 {
     PlatformLayer* layer = animatedLayer(property);
 
-    String animationID = animationIdentifier(animationName, index);
+    NSString *animationID = animationIdentifier(animationName, property, index);
 
     CAAnimation *caAnim = [layer animationForKey:animationID];
     if (!caAnim)

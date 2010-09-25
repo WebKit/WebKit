@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style type="text/css" media="screen">
+    #box {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100px;
+        width: 100px;
+        background-color: green;
+        -webkit-animation-name: move;
+        -webkit-animation-duration: 1s;
+        -webkit-animation-timing-function: linear;
+        -webkit-animation-iteration-count: 1;
+    }
+
+    @-webkit-keyframes move {
+        from {
+            -webkit-transform: translateX(0) scale(1);
+            opacity: 0.8;
+        }
+        to {
+            -webkit-transform: translateX(400px) scale(1);
+            opacity: 0.9;
+        }
+    }
+    
+    #indicator {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100px;
+        width: 100px;
+        left: 200px;
+        background-color: red;
+    }
+    
+    #result {
+        display: none; /* only the pixel output is valuable */
+    }
+  </style>
+  <script src="animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["move", 0.5, "box", "webkitTransform.4", 200, 2],
+    ];
+
+    var disablePauseAnimationAPI = false;
+    var doPixelTest = true;
+    runAnimationTest(expectedValues, null, null, disablePauseAnimationAPI, doPixelTest);
+    
+  </script>
+</head>
+<body>
+
+<!-- In the pixel results, the green square should overlay the red square -->
+<div id="indicator"></div>
+<div id="box"></div>
+<div id="result"></div>
+
+</body>
+</html>

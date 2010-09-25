@@ -1,3 +1,17 @@
+2010-09-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Accelerated transitions do not suspend/resume properly.
+        https://bugs.webkit.org/show_bug.cgi?id=43792
+        
+        Testcase with an animation that has two accelerated properties changing.
+
+        * animations/opacity-transform-animation-expected.checksum: Added.
+        * animations/opacity-transform-animation-expected.png: Added.
+        * animations/opacity-transform-animation-expected.txt: Added.
+        * animations/opacity-transform-animation.html: Added.
+
 2010-09-24  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium test_expectations.txt and drt_expectations.txt update.
