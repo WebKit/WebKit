@@ -113,7 +113,10 @@ template <typename FloatType> static bool genericParseNumber(const UChar*& ptr, 
     }
 
     number = integer + decimal;
-    number *= sign * static_cast<FloatType>(pow(10.0, expsign * exponent));
+    number *= sign;
+
+    if (exponent)
+        number *= static_cast<FloatType>(pow(10.0, expsign * exponent));
 
     if (start == ptr)
         return false;

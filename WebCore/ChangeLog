@@ -1,3 +1,15 @@
+2010-09-24  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        SVG: Avoid calling pow() in genericParseNumber() unless necessary
+        https://bugs.webkit.org/show_bug.cgi?id=46537
+
+        0.4% speedup on <http://themaninblue.com/experiment/AnimationBenchmark/svg/>
+
+        * svg/SVGParserUtilities.cpp:
+        (WebCore::genericParseNumber): Only call pow() when we have an exponent.
+
 2010-09-24  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
