@@ -1562,6 +1562,89 @@ void JIT::emit_op_profile_did_call(Instruction* currentInstruction)
     noProfiler.link(this);
 }
 
+void JIT::emit_op_get_arguments_length(Instruction* currentInstruction)
+{
+    int dst = currentInstruction[1].u.operand;
+    int argumentsRegister = currentInstruction[2].u.operand;
+    addSlowCase(branch32(NotEqual, tagFor(argumentsRegister), Imm32(JSValue::EmptyValueTag)));
+    emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT0);
+    sub32(Imm32(1), regT0);
+    emitStoreInt32(dst, regT0);
+}
+
+void JIT::emitSlow_op_get_arguments_length(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkSlowCase(iter);
+    int dst = currentInstruction[1].u.operand;
+    int base = currentInstruction[2].u.operand;
+    int ident = currentInstruction[3].u.operand;
+    
+    JITStubCall stubCall(this, cti_op_get_by_id_generic);
+    stubCall.addArgument(base);
+    stubCall.addArgument(ImmPtr(&(m_codeBlock->identifier(ident))));
+    stubCall.call(dst);
+}
+
+void JIT::emit_op_get_argument_by_val(Instruction* currentInstruction)
+{
+    int dst = currentInstruction[1].u.operand;
+    int argumentsRegister = currentInstruction[2].u.operand;
+    int property = currentInstruction[3].u.operand;
+    addSlowCase(branch32(NotEqual, tagFor(argumentsRegister), Imm32(JSValue::EmptyValueTag)));
+    emitLoad(property, regT1, regT2);
+    addSlowCase(branch32(NotEqual, regT1, Imm32(JSValue::Int32Tag)));
+    add32(Imm32(1), regT2);
+    // regT2 now contains the integer index of the argument we want, including this
+    emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT3);
+    addSlowCase(branch32(AboveOrEqual, regT2, regT3));
+    
+    Jump skipOutofLineParams;
+    int numArgs = m_codeBlock->m_numParameters;
+    if (numArgs) {
+        Jump notInInPlaceArgs = branch32(AboveOrEqual, regT2, Imm32(numArgs));
+        addPtr(Imm32(static_cast<unsigned>(-(RegisterFile::CallFrameHeaderSize + numArgs) * sizeof(Register))), callFrameRegister, regT1);
+        loadPtr(BaseIndex(regT1, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0);
+        loadPtr(BaseIndex(regT1, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1);
+        skipOutofLineParams = jump();
+        notInInPlaceArgs.link(this);
+    }
+
+    addPtr(Imm32(static_cast<unsigned>(-(RegisterFile::CallFrameHeaderSize + numArgs) * sizeof(Register))), callFrameRegister, regT1);
+    mul32(Imm32(sizeof(Register)), regT3, regT3);
+    subPtr(regT3, regT1);
+    loadPtr(BaseIndex(regT1, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0);
+    loadPtr(BaseIndex(regT1, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1);
+    if (numArgs)
+        skipOutofLineParams.link(this);
+    emitStore(dst, regT1, regT0);
+}
+
+void JIT::emitSlow_op_get_argument_by_val(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    unsigned dst = currentInstruction[1].u.operand;
+    unsigned arguments = currentInstruction[2].u.operand;
+    unsigned property = currentInstruction[3].u.operand;
+
+    linkSlowCase(iter);
+    Jump skipArgumentsCreation = jump();
+
+    linkSlowCase(iter);
+    linkSlowCase(iter);
+    if (m_codeBlock->m_numParameters == 1)
+        JITStubCall(this, cti_op_create_arguments_no_params).call();
+    else
+        JITStubCall(this, cti_op_create_arguments).call();
+    
+    emitStore(arguments, regT1, regT0);
+    emitStore(unmodifiedArgumentsRegister(arguments), regT1, regT0);
+    
+    skipArgumentsCreation.link(this);
+    JITStubCall stubCall(this, cti_op_get_by_val);
+    stubCall.addArgument(arguments);
+    stubCall.addArgument(property);
+    stubCall.call(dst);
+}
+
 } // namespace JSC
 
 #endif // USE(JSVALUE32_64)

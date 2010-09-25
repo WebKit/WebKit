@@ -1470,6 +1470,88 @@ void JIT::emitSlow_op_to_jsnumber(Instruction* currentInstruction, Vector<SlowCa
     stubCall.call(currentInstruction[1].u.operand);
 }
 
+void JIT::emit_op_get_arguments_length(Instruction* currentInstruction)
+{
+    int dst = currentInstruction[1].u.operand;
+    int argumentsRegister = currentInstruction[2].u.operand;
+    addSlowCase(branchTestPtr(NonZero, addressFor(argumentsRegister)));
+    emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT0);
+    sub32(Imm32(1), regT0);
+    emitFastArithReTagImmediate(regT0, regT0);
+    emitPutVirtualRegister(dst, regT0);
+}
+
+void JIT::emitSlow_op_get_arguments_length(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkSlowCase(iter);
+    unsigned dst = currentInstruction[1].u.operand;
+    unsigned base = currentInstruction[2].u.operand;
+    Identifier* ident = &(m_codeBlock->identifier(currentInstruction[3].u.operand));
+    
+    emitGetVirtualRegister(base, regT0);
+    JITStubCall stubCall(this, cti_op_get_by_id_generic);
+    stubCall.addArgument(regT0);
+    stubCall.addArgument(ImmPtr(ident));
+    stubCall.call(dst);
+}
+
+void JIT::emit_op_get_argument_by_val(Instruction* currentInstruction)
+{
+    int dst = currentInstruction[1].u.operand;
+    int argumentsRegister = currentInstruction[2].u.operand;
+    int property = currentInstruction[3].u.operand;
+    addSlowCase(branchTestPtr(NonZero, addressFor(argumentsRegister)));
+    emitGetVirtualRegister(property, regT1);
+    addSlowCase(emitJumpIfNotImmediateInteger(regT1));
+    add32(Imm32(1), regT1);
+    // regT1 now contains the integer index of the argument we want, including this
+    emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT2);
+    addSlowCase(branch32(AboveOrEqual, regT1, regT2));
+    
+    Jump skipOutofLineParams;
+    int numArgs = m_codeBlock->m_numParameters;
+    if (numArgs) {
+        Jump notInInPlaceArgs = branch32(AboveOrEqual, regT1, Imm32(numArgs));
+        addPtr(Imm32(static_cast<unsigned>(-(RegisterFile::CallFrameHeaderSize + numArgs) * sizeof(Register))), callFrameRegister, regT0);
+        loadPtr(BaseIndex(regT0, regT1, TimesEight, 0), regT0);
+        skipOutofLineParams = jump();
+        notInInPlaceArgs.link(this);
+    }
+    
+    addPtr(Imm32(static_cast<unsigned>(-(RegisterFile::CallFrameHeaderSize + numArgs) * sizeof(Register))), callFrameRegister, regT0);
+    mul32(Imm32(sizeof(Register)), regT2, regT2);
+    subPtr(regT2, regT0);
+    loadPtr(BaseIndex(regT0, regT1, TimesEight, 0), regT0);
+    if (numArgs)
+        skipOutofLineParams.link(this);
+    emitPutVirtualRegister(dst, regT0);
+}
+
+void JIT::emitSlow_op_get_argument_by_val(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    unsigned dst = currentInstruction[1].u.operand;
+    unsigned arguments = currentInstruction[2].u.operand;
+    unsigned property = currentInstruction[3].u.operand;
+    
+    linkSlowCase(iter);
+    Jump skipArgumentsCreation = jump();
+    
+    linkSlowCase(iter);
+    linkSlowCase(iter);
+    if (m_codeBlock->m_numParameters == 1)
+        JITStubCall(this, cti_op_create_arguments_no_params).call();
+    else
+        JITStubCall(this, cti_op_create_arguments).call();
+    emitPutVirtualRegister(dst);
+    emitPutVirtualRegister(unmodifiedArgumentsRegister(dst));
+    
+    skipArgumentsCreation.link(this);
+    JITStubCall stubCall(this, cti_op_get_by_val);
+    stubCall.addArgument(arguments, regT2);
+    stubCall.addArgument(property, regT2);
+    stubCall.call(dst);
+}
+
 #endif // !USE(JSVALUE32_64)
 
 void JIT::emit_op_resolve_global_dynamic(Instruction* currentInstruction)

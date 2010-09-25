@@ -3091,6 +3091,46 @@ skip_id_custom_self:
         vPC += OPCODE_LENGTH(op_get_by_pname);
         NEXT_INSTRUCTION();
     }
+    DEFINE_OPCODE(op_get_arguments_length) {
+        int dst = vPC[1].u.operand;
+        int argumentsRegister = vPC[2].u.operand;
+        int property = vPC[3].u.operand;
+        JSValue arguments = callFrame->r(argumentsRegister).jsValue();
+        if (arguments) {
+            Identifier& ident = codeBlock->identifier(property);
+            PropertySlot slot(arguments);
+            JSValue result = arguments.get(callFrame, ident, slot);
+            CHECK_FOR_EXCEPTION();
+            callFrame->r(dst) = result;
+        } else
+            callFrame->r(dst) = jsNumber(callFrame, callFrame->argumentCount());
+
+        vPC += OPCODE_LENGTH(op_get_arguments_length);
+        NEXT_INSTRUCTION();
+    }
+    DEFINE_OPCODE(op_get_argument_by_val) {
+        int dst = vPC[1].u.operand;
+        int argumentsRegister = vPC[2].u.operand;
+        int property = vPC[3].u.operand;
+        JSValue arguments = callFrame->r(argumentsRegister).jsValue();
+        JSValue subscript = callFrame->r(property).jsValue();
+        if (!arguments && subscript.isUInt32() && subscript.asUInt32() < callFrame->argumentCount()) {
+            unsigned arg = subscript.asUInt32() + 1;
+            unsigned numParameters = callFrame->codeBlock()->m_numParameters;
+            if (arg < numParameters)
+                callFrame->r(dst) = callFrame->r(arg - RegisterFile::CallFrameHeaderSize - numParameters);
+            else
+                callFrame->r(dst) = callFrame->r(arg - RegisterFile::CallFrameHeaderSize - numParameters - callFrame->argumentCount() - 1);
+            vPC += OPCODE_LENGTH(op_get_argument_by_val);
+            NEXT_INSTRUCTION();
+        }
+        if (!arguments) {
+            Arguments* arguments = new (globalData) Arguments(callFrame);
+            callFrame->r(dst) = JSValue(arguments);
+            callFrame->r(unmodifiedArgumentsRegister(dst)) = JSValue(arguments);
+        }
+        // fallthrough
+    }
     DEFINE_OPCODE(op_get_by_val) {
         /* get_by_val dst(r) base(r) property(r)
 

@@ -290,6 +290,12 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
 
 RegisterID* BracketAccessorNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
+    if (m_base->isResolveNode() && generator.willResolveToArguments(static_cast<ResolveNode*>(m_base)->identifier())) {
+        RegisterID* property = generator.emitNode(m_subscript);
+        generator.emitExpressionInfo(divot(), startOffset(), endOffset());    
+        return generator.emitGetArgumentByVal(generator.finalDestination(dst), generator.uncheckedRegisterForArguments(), property);
+    }
+
     RefPtr<RegisterID> base = generator.emitNodeForLeftHandSide(m_base, m_subscriptHasAssignments, m_subscript->isPure(generator));
     RegisterID* property = generator.emitNode(m_subscript);
     generator.emitExpressionInfo(divot(), startOffset(), endOffset());
@@ -300,6 +306,17 @@ RegisterID* BracketAccessorNode::emitBytecode(BytecodeGenerator& generator, Regi
 
 RegisterID* DotAccessorNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
+    if (m_ident == generator.propertyNames().length) {
+        if (!m_base->isResolveNode())
+            goto nonArgumentsPath;
+        ResolveNode* resolveNode = static_cast<ResolveNode*>(m_base);
+        if (!generator.willResolveToArguments(resolveNode->identifier()))
+            goto nonArgumentsPath;
+        generator.emitExpressionInfo(divot(), startOffset(), endOffset());    
+        return generator.emitGetArgumentsLength(generator.finalDestination(dst), generator.uncheckedRegisterForArguments());
+    }
+
+nonArgumentsPath:
     RegisterID* base = generator.emitNode(m_base);
     generator.emitExpressionInfo(divot(), startOffset(), endOffset());
     return generator.emitGetById(generator.finalDestination(dst), base, m_ident);

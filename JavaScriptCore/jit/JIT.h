@@ -748,7 +748,9 @@ namespace JSC {
         void emit_op_eq(Instruction*);
         void emit_op_eq_null(Instruction*);
         void emit_op_get_by_id(Instruction*);
+        void emit_op_get_arguments_length(Instruction*);
         void emit_op_get_by_val(Instruction*);
+        void emit_op_get_argument_by_val(Instruction*);
         void emit_op_get_by_pname(Instruction*);
         void emit_op_get_global_var(Instruction*);
         void emit_op_get_scoped_var(Instruction*);
@@ -846,7 +848,9 @@ namespace JSC {
         void emitSlow_op_div(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_eq(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_by_id(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_get_arguments_length(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_by_val(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_get_argument_by_val(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_by_pname(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_instanceof(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jfalse(Instruction*, Vector<SlowCaseEntry>::iterator&);

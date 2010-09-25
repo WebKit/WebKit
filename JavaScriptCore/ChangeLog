@@ -1,3 +1,44 @@
+2010-09-25  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Avoid constructing arguments object when accessing length and index properties
+        https://bugs.webkit.org/show_bug.cgi?id=46572
+
+        Add opcodes to read argument length and properties, and then implement them.
+        Much like other lazy opcodes these opcodes take a fast path when the arguments
+        object has not been instantiated, and fall back on generic access mechanisms
+        if they are acting on an instantiated object.
+
+        3% win on v8-earleyboyer, no change elsewhere.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitGetArgumentsLength):
+        (JSC::BytecodeGenerator::emitGetArgumentByVal):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BracketAccessorNode::emitBytecode):
+        (JSC::DotAccessorNode::emitBytecode):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_get_arguments_length):
+        (JSC::JIT::emitSlow_op_get_arguments_length):
+        (JSC::JIT::emit_op_get_argument_by_val):
+        (JSC::JIT::emitSlow_op_get_argument_by_val):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_get_arguments_length):
+        (JSC::JIT::emitSlow_op_get_arguments_length):
+        (JSC::JIT::emit_op_get_argument_by_val):
+        (JSC::JIT::emitSlow_op_get_argument_by_val):
+
 2010-09-25  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed.
