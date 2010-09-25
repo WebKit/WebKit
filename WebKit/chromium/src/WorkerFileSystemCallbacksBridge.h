@@ -50,9 +50,9 @@ class MainThreadFileSystemCallbacks;
 class ThreadableCallbacksBridgeWrapper;
 class WebCommonWorkerClient;
 class WebFileSystemCallbacks;
-class WebFileSystemEntry;
 class WebWorkerBase;
 struct WebFileInfo;
+struct WebFileSystemEntry;
 
 // This class is used to post a openFileSystem request to the main thread and get called back for the request. This must be destructed on the worker thread.
 //
