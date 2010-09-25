@@ -90,7 +90,8 @@ class Rebaseline(AbstractDeclarativeCommand):
         parsed_results = build.layout_test_results().parsed_results()
         # FIXME: This probably belongs as API on LayoutTestResults
         # but .failing_tests() already means something else.
-        return parsed_results[LayoutTestResults.fail_key]
+        failing_tests = parsed_results[LayoutTestResults.fail_key]
+        return self._tool.user.prompt_with_list("Which test(s) to rebaseline:", failing_tests, can_choose_multiple=True)
 
     def _results_url_for_test(self, build, test):
         test_base = os.path.splitext(test)[0]

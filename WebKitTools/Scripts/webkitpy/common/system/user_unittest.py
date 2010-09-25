@@ -50,5 +50,22 @@ class UserTest(unittest.TestCase):
             return None
         self.assertEqual(User.prompt("input", repeat=self.repeatsRemaining, raw_input=mock_raw_input), None)
 
+    def test_prompt_with_list(self):
+        def run_prompt_test(options, inputs, expected_result, can_choose_multiple=False):
+            def mock_raw_input(message):
+                return inputs.pop(0)
+            self.assertEqual(User.prompt_with_list("title", options, can_choose_multiple=can_choose_multiple, raw_input=mock_raw_input), expected_result)
+            self.assertEqual(len(inputs), 0)
+
+        run_prompt_test(["foo", "bar"], ["1"], "foo")
+        run_prompt_test(["foo", "bar"], ["badinput", "2"], "bar")
+
+        run_prompt_test(["foo", "bar"], ["1,2"], ["foo", "bar"], can_choose_multiple=True)
+        run_prompt_test(["foo", "bar"], ["  1,  2   "], ["foo", "bar"], can_choose_multiple=True)
+        run_prompt_test(["foo", "bar"], ["all"], ["foo", "bar"], can_choose_multiple=True)
+        run_prompt_test(["foo", "bar"], [""], ["foo", "bar"], can_choose_multiple=True)
+        run_prompt_test(["foo", "bar"], ["  "], ["foo", "bar"], can_choose_multiple=True)
+        run_prompt_test(["foo", "bar"], ["badinput", "all"], ["foo", "bar"], can_choose_multiple=True)
+
 if __name__ == '__main__':
     unittest.main()

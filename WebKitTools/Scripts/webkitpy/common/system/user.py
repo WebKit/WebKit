@@ -28,6 +28,7 @@
 
 import logging
 import os
+import re
 import shlex
 import subprocess
 import sys
@@ -61,14 +62,30 @@ class User(object):
         return response
 
     @classmethod
-    def prompt_with_list(cls, list_title, list_items):
+    def prompt_with_list(cls, list_title, list_items, can_choose_multiple=False, raw_input=raw_input):
         print list_title
         i = 0
         for item in list_items:
             i += 1
             print "%2d. %s" % (i, item)
-        result = int(cls.prompt("Enter a number: ")) - 1
-        return list_items[result]
+
+        # Loop until we get valid input
+        while True:
+            if can_choose_multiple:
+                response = cls.prompt("Enter one or more numbers (comma-separated), or \"all\": ", raw_input=raw_input)
+                if not response.strip() or response == "all":
+                    return list_items
+                try:
+                    indices = [int(r) - 1 for r in re.split("\s*,\s*", response)]
+                except ValueError, err:
+                    continue
+                return [list_items[i] for i in indices]
+            else:
+                try:
+                    result = int(cls.prompt("Enter a number: ", raw_input=raw_input)) - 1
+                except ValueError, err:
+                    continue
+                return list_items[result]
 
     def edit(self, files):
         editor = os.environ.get("EDITOR") or "vi"

@@ -1,3 +1,16 @@
+2010-09-24  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Allow rebaselines for webkit-patch rebaseline to be chosen
+        https://bugs.webkit.org/show_bug.cgi?id=46407
+        
+        Instead of always rebaselining all failing tests, allow a subset to be
+        chosen.
+
+        * Scripts/webkitpy/common/system/user.py:
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+
 2010-09-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.
