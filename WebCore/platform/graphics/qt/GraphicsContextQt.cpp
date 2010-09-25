@@ -1002,7 +1002,7 @@ void GraphicsContext::setLineDash(const DashArray& dashes, float dashOffset)
             pattern.append(dashes[i % dashLength] / penWidth);
 
         pen.setDashPattern(pattern);
-        pen.setDashOffset(dashOffset);
+        pen.setDashOffset(dashOffset / penWidth);
     } else
         pen.setStyle(Qt::SolidLine);
     p->setPen(pen);

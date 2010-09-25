@@ -1,3 +1,17 @@
+2010-09-25  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] GraphicsContext::setLineDash() should scale dashOffset to penWidth
+        https://bugs.webkit.org/show_bug.cgi?id=46548
+
+        Fixes incorrect rendering of <http://www.carto.net/svg/samples/animated_bustrack.shtml>
+
+        This is covered by existing layout tests which need to be rebaselined.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::setLineDash):
+
 2010-09-24  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Dan Bernstein.
