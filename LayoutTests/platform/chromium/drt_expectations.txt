@@ -62,6 +62,7 @@ BUG_DRT MAC : fast/canvas/webgl/index-validation-with-resized-buffer.html = TEXT
 BUG_DRT MAC : fast/canvas/webgl/index-validation.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/invalid-UTF-16.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/invalid-passed-params.html = TEXT PASS
+BUG_DRT MAC : fast/canvas/webgl/null-object-behaviour.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/null-uniform-location.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/point-size.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/program-test.html = TEXT PASS
@@ -81,6 +82,7 @@ BUG_DRT MAC : fast/canvas/webgl/texture-complete.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/texture-npot.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/texture-transparent-pixels-initialized.html = TEXT PASS TIMEOUT
 BUG_DRT MAC : fast/canvas/webgl/triangle.html = TEXT PASS
+BUG_DRT MAC : fast/canvas/webgl/uniform-location.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/viewport-unchanged-upon-resize.html = TEXT PASS
 
 // Background color is wrong.

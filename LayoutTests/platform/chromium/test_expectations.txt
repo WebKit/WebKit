@@ -3078,6 +3078,7 @@ BUGWK45652 SKIP : fast/viewport/viewport-84.html = TEXT
 BUGWK45652 SKIP : fast/viewport/viewport-87.html = TEXT
 BUGWK45652 SKIP : fast/viewport/viewport-126.html = TEXT
 BUGWK45652 SKIP : fast/viewport/viewport-127.html = TEXT
+BUGWK45652 SKIP : fast/viewport/viewport-128.html = TIMEOUT TEXT
 
 // Regressions from r67349?
 BUGDPRANKE LINUX MAC : http/tests/navigation/postredirect-frames.html = IMAGE
@@ -3135,3 +3136,5 @@ BUG_AUTO WIN DEBUG : canvas/philip/tests/2d.text.draw.align.center.html = PASS T
 
 // Seems to have been crashing intermittently for as long as we have test history.
 BUG_SENORBLANCO WIN LINUX : svg/clip-path/clip-path-text-and-stroke.svg = CRASH PASS
+
+BUGWK46557 : animations/opacity-transform-animation.html = IMAGE

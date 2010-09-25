@@ -1,3 +1,21 @@
+2010-09-24  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium test_expectations.txt and drt_expectations.txt update.
+        
+        fast/canvas/webgl/null-object-behaviour.html and
+        fast/canvas/webgl/uniform-location.html were unskipped with r68187,
+        however, they still fail with the DRT (only on the bot, presumably due
+        to a Leopard-only issue), just like a lot of other WebGL tests.
+        
+        fast/viewport/viewport-128.html is yet another viewport test that only
+        the Qt port supports.
+        
+        animations/opacity-transform-animation.html hasn't passed since it was
+        committed with r68323.
+
+        * platform/chromium/drt_expectations.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-09-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.
