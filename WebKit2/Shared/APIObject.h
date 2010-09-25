@@ -66,6 +66,7 @@ public:
         // Bundle types
         TypeBundle,
         TypeBundleFrame,
+        TypeBundleHitTestResult,
         TypeBundleNodeHandle,
         TypeBundlePage,
         TypeBundleRangeHandle,

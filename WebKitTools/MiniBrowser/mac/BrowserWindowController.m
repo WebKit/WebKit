@@ -474,6 +474,11 @@ static void setStatusText(WKPageRef page, WKStringRef text, const void* clientIn
     LOG(@"setStatusText");
 }
 
+static void mouseDidMoveOverElement(WKPageRef page, WKEventModifiers modifiers, WKTypeRef userData, const void *clientInfo)
+{
+    LOG(@"mouseDidMoveOverElement");
+}
+
 static void contentsSizeChanged(WKPageRef page, int width, int height, WKFrameRef frame, const void *clientInfo)
 {
     LOG(@"contentsSizeChanged");
@@ -531,6 +536,7 @@ static void contentsSizeChanged(WKPageRef page, int width, int height, WKFrameRe
         runJavaScriptConfirm,
         runJavaScriptPrompt,
         setStatusText,
+        mouseDidMoveOverElement,
         contentsSizeChanged
     };
     WKPageSetPageUIClient(_webView.pageRef, &uiClient);

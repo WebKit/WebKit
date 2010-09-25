@@ -1,3 +1,54 @@
+2010-09-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Implement WebKit2 callback equivalent to -[WebUIDelegate mouseDidMoveOverElement:modifierFlags:]
+        <rdar://problem/8359279>
+        https://bugs.webkit.org/show_bug.cgi?id=46546
+
+        - Adds new WKBundleHitTestResultRef object to represent a content under a cursor.
+        - Adds new Bundle and UI level mouseDidMoveOverElement UIClient callbacks, with
+          pass through userData to communicate context up to the UIProcess
+
+        * Shared/APIObject.h:
+        * Shared/CoreIPCSupport/WebPageProxyMessageKinds.h:
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::QWKPage):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessage):
+        (WebKit::WebPageProxy::mouseDidMoveOverElement):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::mouseDidMoveOverElement):
+        * UIProcess/WebUIClient.h:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleBase.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp: Added.
+        (WKBundleHitTestResultGetTypeID):
+        (WKBundleHitTestResultGetNodeHandle):
+        (WKBundleHitTestResultGetFrame):
+        (WKBundleHitTestResultCopyAbsoluteLinkURL):
+        * WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h: Added.
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp: Added.
+        (WebKit::InjectedBundleHitTestResult::create):
+        (WebKit::InjectedBundleHitTestResult::nodeHandle):
+        (WebKit::InjectedBundleHitTestResult::webFrame):
+        (WebKit::InjectedBundleHitTestResult::absoluteLinkURL):
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.h: Added.
+        (WebKit::InjectedBundleHitTestResult::coreHitTestResult):
+        (WebKit::InjectedBundleHitTestResult::InjectedBundleHitTestResult):
+        (WebKit::InjectedBundleHitTestResult::type):
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp:
+        (WebKit::InjectedBundlePageUIClient::mouseDidMoveOverElement):
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::mouseDidMoveOverElement):
+        * win/WebKit2.vcproj:
+
 2010-09-24  Enrica Casucci  <enrica@apple.com>
 
         Build fix.

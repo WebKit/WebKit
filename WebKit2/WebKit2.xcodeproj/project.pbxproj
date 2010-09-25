@@ -226,6 +226,10 @@
 		BC33DF061238677F00360F3F /* WKSerializedScriptValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A72D5F2E1236F9E800A88B15 /* WKSerializedScriptValue.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC33E0D112408E8600360F3F /* InjectedBundleRangeHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = BC33E0CF12408E8600360F3F /* InjectedBundleRangeHandle.h */; };
 		BC33E0D212408E8600360F3F /* InjectedBundleRangeHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC33E0D012408E8600360F3F /* InjectedBundleRangeHandle.cpp */; };
+		BC498618124D10E200D834E1 /* InjectedBundleHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = BC498616124D10E200D834E1 /* InjectedBundleHitTestResult.h */; };
+		BC498619124D10E200D834E1 /* InjectedBundleHitTestResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC498617124D10E200D834E1 /* InjectedBundleHitTestResult.cpp */; };
+		BC49862F124D18C100D834E1 /* WKBundleHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = BC49862D124D18C100D834E1 /* WKBundleHitTestResult.h */; };
+		BC498630124D18C100D834E1 /* WKBundleHitTestResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC49862E124D18C100D834E1 /* WKBundleHitTestResult.cpp */; };
 		BC4BEEAB120A0A5F00FBA0C7 /* InjectedBundleNodeHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4BEEA9120A0A5E00FBA0C7 /* InjectedBundleNodeHandle.h */; };
 		BC4BEEAC120A0A5F00FBA0C7 /* InjectedBundleNodeHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4BEEAA120A0A5F00FBA0C7 /* InjectedBundleNodeHandle.cpp */; };
 		BC4BEFE1120A1A4C00FBA0C7 /* WKBundleNodeHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4BEFDF120A1A4C00FBA0C7 /* WKBundleNodeHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -647,6 +651,10 @@
 		BC33DE8D12385C3300360F3F /* WKNumber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKNumber.cpp; sourceTree = "<group>"; };
 		BC33E0CF12408E8600360F3F /* InjectedBundleRangeHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleRangeHandle.h; sourceTree = "<group>"; };
 		BC33E0D012408E8600360F3F /* InjectedBundleRangeHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleRangeHandle.cpp; sourceTree = "<group>"; };
+		BC498616124D10E200D834E1 /* InjectedBundleHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleHitTestResult.h; sourceTree = "<group>"; };
+		BC498617124D10E200D834E1 /* InjectedBundleHitTestResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleHitTestResult.cpp; sourceTree = "<group>"; };
+		BC49862D124D18C100D834E1 /* WKBundleHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleHitTestResult.h; sourceTree = "<group>"; };
+		BC49862E124D18C100D834E1 /* WKBundleHitTestResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleHitTestResult.cpp; sourceTree = "<group>"; };
 		BC4BEEA9120A0A5E00FBA0C7 /* InjectedBundleNodeHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleNodeHandle.h; sourceTree = "<group>"; };
 		BC4BEEAA120A0A5F00FBA0C7 /* InjectedBundleNodeHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleNodeHandle.cpp; sourceTree = "<group>"; };
 		BC4BEFDF120A1A4C00FBA0C7 /* WKBundleNodeHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleNodeHandle.h; sourceTree = "<group>"; };
@@ -1420,6 +1428,8 @@
 				BC4BEE96120A091700FBA0C7 /* DOM */,
 				BC204EE011C83E98008F3375 /* InjectedBundle.cpp */,
 				BC204EE111C83E98008F3375 /* InjectedBundle.h */,
+				BC498617124D10E200D834E1 /* InjectedBundleHitTestResult.cpp */,
+				BC498616124D10E200D834E1 /* InjectedBundleHitTestResult.h */,
 				E1EE53E611F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp */,
 				E1EE53DC11F8CF9F00CCBEE4 /* InjectedBundlePageEditorClient.h */,
 				BC14E107120B905E00826C0C /* InjectedBundlePageFormClient.cpp */,
@@ -1461,6 +1471,8 @@
 				BCD25F1611D6BDE100169B0E /* WKBundleFrame.cpp */,
 				BCD25F1511D6BDE100169B0E /* WKBundleFrame.h */,
 				BCF049E411FE20F600F86A58 /* WKBundleFramePrivate.h */,
+				BC49862E124D18C100D834E1 /* WKBundleHitTestResult.cpp */,
+				BC49862D124D18C100D834E1 /* WKBundleHitTestResult.h */,
 				BC204EED11C83EC8008F3375 /* WKBundleInitialize.h */,
 				BC4BEFE0120A1A4C00FBA0C7 /* WKBundleNodeHandle.cpp */,
 				BC4BEFDF120A1A4C00FBA0C7 /* WKBundleNodeHandle.h */,
@@ -1806,6 +1818,8 @@
 				1A0EC7FB124BD3B6007EF4A5 /* PluginProcessMain.h in Headers */,
 				1A0EC906124C0AB8007EF4A5 /* PluginProcessConnection.h in Headers */,
 				1A0EC90F124C0AF5007EF4A5 /* PluginProcessConnectionManager.h in Headers */,
+				BC498618124D10E200D834E1 /* InjectedBundleHitTestResult.h in Headers */,
+				BC49862F124D18C100D834E1 /* WKBundleHitTestResult.h in Headers */,
 				1A043976124D034800FFBFB5 /* PluginProcess.h in Headers */,
 				1A043A09124D11A900FFBFB5 /* WebProcessConnection.h in Headers */,
 				1A043B5E124D5E9D00FFBFB5 /* PluginProcessProxyMessages.h in Headers */,
@@ -1858,7 +1872,6 @@
 			isa = PBXProject;
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "WebKit2" */;
 			compatibilityVersion = "Xcode 3.1";
-			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -2085,6 +2098,8 @@
 				1A0EC803124BD41E007EF4A5 /* PluginProcessMainMac.mm in Sources */,
 				1A0EC907124C0AB8007EF4A5 /* PluginProcessConnection.cpp in Sources */,
 				1A0EC910124C0AF5007EF4A5 /* PluginProcessConnectionManager.cpp in Sources */,
+				BC498619124D10E200D834E1 /* InjectedBundleHitTestResult.cpp in Sources */,
+				BC498630124D18C100D834E1 /* WKBundleHitTestResult.cpp in Sources */,
 				1A043977124D034800FFBFB5 /* PluginProcess.cpp in Sources */,
 				1A043A0A124D11A900FFBFB5 /* WebProcessConnection.cpp in Sources */,
 				C06C6095124C144B0001682F /* WebPageCreationParameters.cpp in Sources */,

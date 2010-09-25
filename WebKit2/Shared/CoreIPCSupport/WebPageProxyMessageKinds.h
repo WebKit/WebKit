@@ -66,6 +66,7 @@ enum Kind {
     DidStartProgress,
     DidStartProvisionalLoadForFrame,
     DidValidateMenuItem,
+    MouseDidMoveOverElement,
     SetCursor,
     SetStatusText,
     SetToolTip,

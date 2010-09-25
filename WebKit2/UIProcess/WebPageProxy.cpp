@@ -858,6 +858,17 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
             m_pageClient->setEditCommandState(commandName, isEnabled, state);
             break;
         }
+        case WebPageProxyMessage::MouseDidMoveOverElement: {
+            uint32_t modifiers;
+            RefPtr<APIObject> userData;
+            WebContextUserMessageDecoder messageDecoder(userData, pageNamespace()->context());
+
+            if (!arguments->decode(CoreIPC::Out(modifiers, messageDecoder)))
+                return;
+
+            mouseDidMoveOverElement(static_cast<WebEvent::Modifiers>(modifiers), userData.get());
+            break;
+        }
         default:
             ASSERT_NOT_REACHED();
             break;
@@ -1140,6 +1151,11 @@ String WebPageProxy::runJavaScriptPrompt(WebFrameProxy* frame, const String& mes
 void WebPageProxy::setStatusText(const String& text)
 {
     m_uiClient.setStatusText(this, text);
+}
+
+void WebPageProxy::mouseDidMoveOverElement(WebEvent::Modifiers modifiers, APIObject* userData)
+{
+    m_uiClient.mouseDidMoveOverElement(this, modifiers, userData);
 }
 
 void WebPageProxy::contentsSizeChanged(WebFrameProxy* frame, const WebCore::IntSize& size)

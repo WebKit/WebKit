@@ -28,6 +28,7 @@
 
 typedef const struct OpaqueWKBundle* WKBundleRef;
 typedef const struct OpaqueWKBundleFrame* WKBundleFrameRef;
+typedef const struct OpaqueWKBundleHitTestResult* WKBundleHitTestResultRef;
 typedef const struct OpaqueWKBundleNodeHandle* WKBundleNodeHandleRef;
 typedef const struct OpaqueWKBundlePage* WKBundlePageRef;
 typedef const struct OpaqueWKBundleRangeHandle* WKBundleRangeHandleRef;

@@ -23,43 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebUIClient_h
-#define WebUIClient_h
+#ifndef InjectedBundleHitTestResult_h
+#define InjectedBundleHitTestResult_h
 
-#include "WKPage.h"
-#include "WebEvent.h"
+#include "APIObject.h"
+#include <WebCore/HitTestResult.h>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
-
-namespace WebCore {
-class IntSize;
-}
+#include <wtf/RefPtr.h>
 
 namespace WebKit {
 
-class APIObject;
-class WebFrameProxy;
-class WebPageProxy;
+class InjectedBundleNodeHandle;
+class WebFrame;
 
-class WebUIClient {
+class InjectedBundleHitTestResult : public APIObject {
 public:
-    WebUIClient();
-    void initialize(const WKPageUIClient*);
+    static const Type APIType = TypeBundleHitTestResult;
 
-    PassRefPtr<WebPageProxy> createNewPage(WebPageProxy*);
-    void showPage(WebPageProxy*);
-    void close(WebPageProxy*);
-    void runJavaScriptAlert(WebPageProxy*, const String&, WebFrameProxy*);
-    bool runJavaScriptConfirm(WebPageProxy*, const String&, WebFrameProxy*);
-    String runJavaScriptPrompt(WebPageProxy*, const String&, const String&, WebFrameProxy*);
-    void setStatusText(WebPageProxy*, const String&);
-    void mouseDidMoveOverElement(WebPageProxy*, WebEvent::Modifiers, APIObject*);
-    void contentsSizeChanged(WebPageProxy*, const WebCore::IntSize&, WebFrameProxy*);
+    static PassRefPtr<InjectedBundleHitTestResult> create(const WebCore::HitTestResult&);
+
+    const WebCore::HitTestResult& coreHitTestResult() const { return m_hitTestResult; }
+
+    PassRefPtr<InjectedBundleNodeHandle> nodeHandle() const; 
+    WebFrame* webFrame() const;
+    const String& absoluteLinkURL() const;
 
 private:
-    WKPageUIClient m_pageUIClient;
+    explicit InjectedBundleHitTestResult(const WebCore::HitTestResult& hitTestResult)
+        : m_hitTestResult(hitTestResult)
+    {
+    }
+
+    virtual Type type() const { return APIType; }
+
+    WebCore::HitTestResult m_hitTestResult;
 };
 
 } // namespace WebKit
 
-#endif // WebUIClient_h
+#endif // InjectedBundleHitTestResult_h

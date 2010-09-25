@@ -239,6 +239,7 @@ private:
     bool runJavaScriptConfirm(WebFrameProxy* frame, const String&);
     String runJavaScriptPrompt(WebFrameProxy* frame, const String&, const String&);
     void setStatusText(const String&);
+    void mouseDidMoveOverElement(WebEvent::Modifiers, APIObject*);
     void contentsSizeChanged(WebFrameProxy*, const WebCore::IntSize&);
 
     // Back/Forward list management

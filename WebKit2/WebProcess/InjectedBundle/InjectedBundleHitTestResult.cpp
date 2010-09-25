@@ -23,43 +23,51 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebUIClient_h
-#define WebUIClient_h
+#include "InjectedBundleHitTestResult.h"
 
-#include "WKPage.h"
-#include "WebEvent.h"
-#include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
+#include "InjectedBundleNodeHandle.h"
+#include "WebFrame.h"
+#include "WebFrameLoaderClient.h"
+#include <WebCore/Document.h>
+#include <WebCore/Frame.h>
+#include <WebCore/FrameLoader.h>
+#include <WebCore/KURL.h>
+#include <wtf/text/WTFString.h>
 
-namespace WebCore {
-class IntSize;
-}
+using namespace WebCore;
 
 namespace WebKit {
 
-class APIObject;
-class WebFrameProxy;
-class WebPageProxy;
+PassRefPtr<InjectedBundleHitTestResult> InjectedBundleHitTestResult::create(const WebCore::HitTestResult& hitTestResult)
+{
+    return adoptRef(new InjectedBundleHitTestResult(hitTestResult));
+}
 
-class WebUIClient {
-public:
-    WebUIClient();
-    void initialize(const WKPageUIClient*);
+PassRefPtr<InjectedBundleNodeHandle> InjectedBundleHitTestResult::nodeHandle() const
+{
+    return InjectedBundleNodeHandle::getOrCreate(m_hitTestResult.innerNonSharedNode());
+}
 
-    PassRefPtr<WebPageProxy> createNewPage(WebPageProxy*);
-    void showPage(WebPageProxy*);
-    void close(WebPageProxy*);
-    void runJavaScriptAlert(WebPageProxy*, const String&, WebFrameProxy*);
-    bool runJavaScriptConfirm(WebPageProxy*, const String&, WebFrameProxy*);
-    String runJavaScriptPrompt(WebPageProxy*, const String&, const String&, WebFrameProxy*);
-    void setStatusText(WebPageProxy*, const String&);
-    void mouseDidMoveOverElement(WebPageProxy*, WebEvent::Modifiers, APIObject*);
-    void contentsSizeChanged(WebPageProxy*, const WebCore::IntSize&, WebFrameProxy*);
+WebFrame* InjectedBundleHitTestResult::webFrame() const
+{
+    Node* node = m_hitTestResult.innerNonSharedNode();
+    if (!node)
+        return 0;
 
-private:
-    WKPageUIClient m_pageUIClient;
-};
+    Document* document = node->document();
+    if (!document)
+        return 0;
 
-} // namespace WebKit
+    Frame* frame = document->frame();
+    if (!frame)
+        return 0;
 
-#endif // WebUIClient_h
+    return static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
+}
+
+const String& InjectedBundleHitTestResult::absoluteLinkURL() const
+{
+    return m_hitTestResult.absoluteLinkURL().string();
+}
+
+} // WebKit

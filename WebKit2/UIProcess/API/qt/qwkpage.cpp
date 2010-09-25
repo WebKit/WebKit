@@ -272,6 +272,7 @@ QWKPage::QWKPage(WKPageNamespaceRef namespaceRef)
         0,  /* runJavaScriptConfirm */
         0,  /* runJavaScriptPrompt */
         0,  /* setStatusText */
+        0,  /* mouseDidMoveOverElement */
         0   /* contentsSizeChanged */
     };
     WKPageSetPageUIClient(pageRef(), &uiClient);

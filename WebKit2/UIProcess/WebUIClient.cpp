@@ -111,6 +111,15 @@ void WebUIClient::setStatusText(WebPageProxy* page, const String& text)
     m_pageUIClient.setStatusText(toRef(page), toRef(text.impl()), m_pageUIClient.clientInfo);
 }
 
+void WebUIClient::mouseDidMoveOverElement(WebPageProxy* page, WebEvent::Modifiers modifiers, APIObject* userData)
+{
+    if (!m_pageUIClient.mouseDidMoveOverElement)
+        return;
+
+    m_pageUIClient.mouseDidMoveOverElement(toRef(page), toRef(modifiers), toRef(userData), m_pageUIClient.clientInfo);
+}
+
+
 void WebUIClient::contentsSizeChanged(WebPageProxy* page, const IntSize& size, WebFrameProxy* frame)
 {
     if (!m_pageUIClient.contentsSizeChanged)

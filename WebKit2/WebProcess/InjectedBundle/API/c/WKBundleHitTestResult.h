@@ -23,43 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebUIClient_h
-#define WebUIClient_h
+#ifndef WKBundleHitTestResult_h
+#define WKBundleHitTestResult_h
 
-#include "WKPage.h"
-#include "WebEvent.h"
-#include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
+#include <WebKit2/WKBase.h>
+#include <WebKit2/WKBundleBase.h>
 
-namespace WebCore {
-class IntSize;
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+WK_EXPORT WKTypeID WKBundleHitTestResultGetTypeID();
+
+WK_EXPORT WKBundleNodeHandleRef WKBundleHitTestResultGetNodeHandle(WKBundleHitTestResultRef hitTestResult);
+WK_EXPORT WKBundleFrameRef WKBundleHitTestResultGetFrame(WKBundleHitTestResultRef hitTestResult);
+WK_EXPORT WKURLRef WKBundleHitTestResultCopyAbsoluteLinkURL(WKBundleHitTestResultRef hitTestResult);
+
+#ifdef __cplusplus
 }
+#endif
 
-namespace WebKit {
-
-class APIObject;
-class WebFrameProxy;
-class WebPageProxy;
-
-class WebUIClient {
-public:
-    WebUIClient();
-    void initialize(const WKPageUIClient*);
-
-    PassRefPtr<WebPageProxy> createNewPage(WebPageProxy*);
-    void showPage(WebPageProxy*);
-    void close(WebPageProxy*);
-    void runJavaScriptAlert(WebPageProxy*, const String&, WebFrameProxy*);
-    bool runJavaScriptConfirm(WebPageProxy*, const String&, WebFrameProxy*);
-    String runJavaScriptPrompt(WebPageProxy*, const String&, const String&, WebFrameProxy*);
-    void setStatusText(WebPageProxy*, const String&);
-    void mouseDidMoveOverElement(WebPageProxy*, WebEvent::Modifiers, APIObject*);
-    void contentsSizeChanged(WebPageProxy*, const WebCore::IntSize&, WebFrameProxy*);
-
-private:
-    WKPageUIClient m_pageUIClient;
-};
-
-} // namespace WebKit
-
-#endif // WebUIClient_h
+#endif /* WKBundleHitTestResult_h */

@@ -187,7 +187,8 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         willSetStatusbarText,
         willRunJavaScriptAlert,
         willRunJavaScriptConfirm,
-        willRunJavaScriptPrompt
+        willRunJavaScriptPrompt,
+        0 /*mouseDidMoveOverElement*/
     };
     WKBundlePageSetUIClient(m_page, &uiClient);
 

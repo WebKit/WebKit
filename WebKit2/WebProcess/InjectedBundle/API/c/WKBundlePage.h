@@ -118,6 +118,8 @@ typedef void (*WKBundlePageWillSetStatusbarTextCallback)(WKBundlePageRef page, W
 typedef void (*WKBundlePageWillRunJavaScriptAlertCallback)(WKBundlePageRef page, WKStringRef alertText, WKBundleFrameRef frame, const void *clientInfo);
 typedef void (*WKBundlePageWillRunJavaScriptConfirmCallback)(WKBundlePageRef page, WKStringRef message, WKBundleFrameRef frame, const void *clientInfo);
 typedef void (*WKBundlePageWillRunJavaScriptPromptCallback)(WKBundlePageRef page, WKStringRef message, WKStringRef defaultValue, WKBundleFrameRef frame, const void *clientInfo);
+typedef void (*WKBundlePageWillRunJavaScriptPromptCallback)(WKBundlePageRef page, WKStringRef message, WKStringRef defaultValue, WKBundleFrameRef frame, const void *clientInfo);
+typedef void (*WKBundlePageMouseDidMoveOverElementCallback)(WKBundlePageRef page, WKBundleHitTestResultRef hitTestResult, WKTypeRef* userData, const void *clientInfo);
 
 struct WKBundlePageUIClient {
     int                                                                 version;
@@ -127,6 +129,7 @@ struct WKBundlePageUIClient {
     WKBundlePageWillRunJavaScriptAlertCallback                          willRunJavaScriptAlert;
     WKBundlePageWillRunJavaScriptConfirmCallback                        willRunJavaScriptConfirm;
     WKBundlePageWillRunJavaScriptPromptCallback                         willRunJavaScriptPrompt;
+    WKBundlePageMouseDidMoveOverElementCallback                         mouseDidMoveOverElement;
 };
 typedef struct WKBundlePageUIClient WKBundlePageUIClient;
 

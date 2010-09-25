@@ -1,3 +1,23 @@
+2010-09-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Implement WebKit2 callback equivalent to -[WebUIDelegate mouseDidMoveOverElement:modifierFlags:]
+        <rdar://problem/8359279>
+        https://bugs.webkit.org/show_bug.cgi?id=46546
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (mouseDidMoveOverElement):
+        (-[BrowserWindowController awakeFromNib]):
+        * MiniBrowser/win/BrowserView.cpp:
+        (mouseDidMoveOverElement):
+        (BrowserView::create):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::createOtherPage):
+        (WTR::TestController::initialize):
+
 2010-09-24  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.
