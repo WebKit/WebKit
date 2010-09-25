@@ -1,3 +1,18 @@
+2010-09-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/8478182> Make canHyphenate() return false for unsupported locales
+
+        No change in functionality, hence no new test.
+
+        * platform/text/cf/HyphenationCF.cpp:
+        (WebCore::::createValueForKey): Return 0 if hyphenation is not available for the locale.
+        (WebCore::cfLocaleCache): Moved the definition of the cache from lastHyphenLocation() to
+        this new getter to allow canHyphenate() to share it.
+        (WebCore::canHyphenate): Now returns true only if hyphenation is available.
+        (WebCore::lastHyphenLocation): Added an assertion.
+
 2010-09-25  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

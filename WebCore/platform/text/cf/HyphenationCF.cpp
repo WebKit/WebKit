@@ -48,20 +48,27 @@ RetainPtr<CFLocaleRef> AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef> >::creat
 {
     RetainPtr<CFStringRef> cfLocaleIdentifier(AdoptCF, localeIdentifier.createCFString());
     RetainPtr<CFLocaleRef> locale(AdoptCF, CFLocaleCreate(kCFAllocatorDefault, cfLocaleIdentifier.get()));
-    return locale;
+    
+    return CFStringIsHyphenationAvailableForLocale(locale.get()) ? locale : 0;
 }
 
-bool canHyphenate(const AtomicString& /* localeIdentifer */)
+static AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef> >& cfLocaleCache()
 {
-    return true;
+    DEFINE_STATIC_LOCAL(AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef> >, cache, ());
+    return cache;
+}
+
+bool canHyphenate(const AtomicString& localeIdentifier)
+{
+    return cfLocaleCache().get(localeIdentifier);
 }
 
 size_t lastHyphenLocation(const UChar* characters, size_t length, size_t beforeIndex, const AtomicString& localeIdentifier)
 {
     RetainPtr<CFStringRef> string(AdoptCF, CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, characters, length, kCFAllocatorNull));
 
-    DEFINE_STATIC_LOCAL(AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef> >, cfLocaleCache, ());
-    RetainPtr<CFLocaleRef> locale = cfLocaleCache.get(localeIdentifier);
+    RetainPtr<CFLocaleRef> locale = cfLocaleCache().get(localeIdentifier);
+    ASSERT(locale);
 
     CFIndex result = CFStringGetHyphenationLocationBeforeIndex(string.get(), beforeIndex, CFRangeMake(0, length), 0, locale.get(), 0);
     return result == kCFNotFound ? 0 : result;
