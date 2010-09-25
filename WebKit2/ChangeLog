@@ -1,3 +1,9 @@
+2010-09-24  Sam Weinig  <sam@webkit.org>
+
+        Fix release build.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+
 2010-09-24  Enrica Casucci  <enrica@apple.com>
 
         One more build fix.
