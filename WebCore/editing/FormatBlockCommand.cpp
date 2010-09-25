@@ -41,33 +41,6 @@ FormatBlockCommand::FormatBlockCommand(Document* document, const AtomicString& t
 {
 }
 
-bool FormatBlockCommand::modifyRange()
-{
-    ASSERT(endingSelection().isRange());
-    VisiblePosition visibleStart = endingSelection().visibleStart();
-    VisiblePosition visibleEnd = endingSelection().visibleEnd();
-    VisiblePosition startOfLastParagraph = startOfParagraph(visibleEnd);
-    
-    if (startOfParagraph(visibleStart) == startOfLastParagraph)
-        return false;
-
-    setEndingSelection(visibleStart);
-    doApply();
-    visibleStart = endingSelection().visibleStart();
-    VisiblePosition nextParagraph = endOfParagraph(visibleStart).next();
-    while (nextParagraph.isNotNull() && nextParagraph != startOfLastParagraph) {
-        setEndingSelection(nextParagraph);
-        doApply();
-        nextParagraph = endOfParagraph(endingSelection().visibleStart()).next();
-    }
-    setEndingSelection(visibleEnd);
-    doApply();
-    visibleEnd = endingSelection().visibleEnd();
-    setEndingSelection(VisibleSelection(visibleStart.deepEquivalent(), visibleEnd.deepEquivalent(), DOWNSTREAM));
-
-    return true;
-}
-
 void FormatBlockCommand::doApply()
 {
     if (!endingSelection().isNonOrphanedCaretOrRange())
@@ -86,12 +59,35 @@ void FormatBlockCommand::doApply()
     // FIXME: We paint the gap before some paragraphs that are indented with left 
     // margin/padding, but not others.  We should make the gap painting more consistent and 
     // then use a left margin/padding rule here.
-    if (visibleEnd != visibleStart && isStartOfParagraph(visibleEnd))
+    if (visibleEnd != visibleStart && isStartOfParagraph(visibleEnd)) {
         setEndingSelection(VisibleSelection(visibleStart, visibleEnd.previous(true)));
+        visibleEnd = endingSelection().visibleEnd();
+    }
 
-    if (endingSelection().isRange() && modifyRange())
+    VisiblePosition startOfLastParagraph = startOfParagraph(visibleEnd);
+    if (endingSelection().isCaret() || startOfParagraph(visibleStart) == startOfLastParagraph) {
+        doApplyForSingleParagraph();
         return;
+    }
 
+    setEndingSelection(visibleStart);
+    doApplyForSingleParagraph();
+    visibleStart = endingSelection().visibleStart();
+    VisiblePosition nextParagraph = endOfParagraph(visibleStart).next();
+    while (nextParagraph.isNotNull() && nextParagraph != startOfLastParagraph) {
+        setEndingSelection(nextParagraph);
+        doApplyForSingleParagraph();
+        nextParagraph = endOfParagraph(endingSelection().visibleStart()).next();
+    }
+    setEndingSelection(visibleEnd);
+    doApplyForSingleParagraph();
+    visibleEnd = endingSelection().visibleEnd();
+
+    setEndingSelection(VisibleSelection(visibleStart.deepEquivalent(), visibleEnd.deepEquivalent(), DOWNSTREAM));
+}
+
+void FormatBlockCommand::doApplyForSingleParagraph()
+{
     ExceptionCode ec;
     String localName, prefix;
     if (!Document::parseQualifiedName(m_tagName, prefix, localName, ec))
@@ -102,14 +98,14 @@ void FormatBlockCommand::doApply()
     if (refNode->hasTagName(qTypeOfBlock))
         // We're already in a block with the format we want, so we don't have to do anything
         return;
-    
+
     VisiblePosition paragraphStart = startOfParagraph(endingSelection().visibleStart());
     VisiblePosition paragraphEnd = endOfParagraph(endingSelection().visibleStart());
     VisiblePosition blockStart = startOfBlock(endingSelection().visibleStart());
     VisiblePosition blockEnd = endOfBlock(endingSelection().visibleStart());
     RefPtr<Element> blockNode = createHTMLElement(document(), m_tagName);
     RefPtr<Element> placeholder = createBreakElement(document());
-    
+
     Node* root = endingSelection().start().node()->rootEditableElement();
     if (validBlockTag(refNode->nodeName().lower()) && 
         paragraphStart == blockStart && paragraphEnd == blockEnd && 
@@ -122,7 +118,7 @@ void FormatBlockCommand::doApply()
         insertNodeAt(blockNode, paragraphStart.deepEquivalent().upstream());
     }
     appendNode(placeholder, blockNode);
-    
+
     VisiblePosition destination(Position(placeholder.get(), 0));
     if (paragraphStart == paragraphEnd && !lineBreakExistsAtVisiblePosition(paragraphStart)) {
         setEndingSelection(destination);

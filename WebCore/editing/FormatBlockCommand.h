@@ -41,9 +41,9 @@ private:
     FormatBlockCommand(Document*, const AtomicString& tagName);
 
     virtual void doApply();
+    void doApplyForSingleParagraph();
     virtual EditAction editingAction() const { return EditActionFormatBlock; }
 
-    bool modifyRange();
     AtomicString m_tagName;
 };
 
