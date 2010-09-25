@@ -1,3 +1,16 @@
+2010-09-24  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Andreas Kling.
+
+        [wx] ChromeClientWx::scaleFactor must return 1.0
+        https://bugs.webkit.org/show_bug.cgi?id=46542
+
+        The default value of ChromeClientWx::scaleFactor must be 1.0.
+        Otherwise, canvas element won't be painted.
+
+        * WebKitSupport/ChromeClientWx.cpp:
+        (WebCore::ChromeClientWx::scaleFactor):
+
 2010-09-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

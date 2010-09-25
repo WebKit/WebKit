@@ -108,7 +108,7 @@ FloatRect ChromeClientWx::pageRect()
 float ChromeClientWx::scaleFactor()
 {
     notImplemented();
-    return 0.0;
+    return 1.0;
 }
 
 void ChromeClientWx::focus()
