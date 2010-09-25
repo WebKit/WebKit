@@ -87,32 +87,32 @@ public:
         return result;
     }
 
-    template<typename T, UChar Coverter(T)> static inline unsigned createHash(const T* data, unsigned length)
+    template<typename T, UChar Converter(T)> static inline unsigned createHash(const T* data, unsigned length)
     {
         StringHasher hasher;
         bool rem = length & 1;
         length >>= 1;
 
         while (length--) {
-            hasher.addCharacters(Coverter(data[0]), Coverter(data[1]));
+            hasher.addCharacters(Converter(data[0]), Converter(data[1]));
             data += 2;
         }
 
         if (rem)
-            hasher.addCharacter(Coverter(*data));
+            hasher.addCharacter(Converter(*data));
 
         return hasher.hash();
     }
 
-    template<typename T, UChar Coverter(T)> static inline unsigned createHash(const T* data)
+    template<typename T, UChar Converter(T)> static inline unsigned createHash(const T* data)
     {
         StringHasher hasher;
 
         while (true) {
-            UChar b0 = Coverter(*data++);
+            UChar b0 = Converter(*data++);
             if (!b0)
                 break;
-            UChar b1 = Coverter(*data++);
+            UChar b1 = Converter(*data++);
             if (!b1) {
                 hasher.addCharacter(b0);
                 break;
