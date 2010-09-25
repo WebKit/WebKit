@@ -580,6 +580,10 @@ void WebView::clearAllEditCommands()
 {
 }
 
+void WebView::setEditCommandState(const WTF::String&, bool, int)
+{
+}
+
 #if USE(ACCELERATED_COMPOSITING)
 void WebView::pageDidEnterAcceleratedCompositing()
 {

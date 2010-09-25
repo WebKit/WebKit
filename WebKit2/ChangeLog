@@ -1,5 +1,14 @@
 2010-09-24  Enrica Casucci  <enrica@apple.com>
 
+        Build fix.
+
+        * UIProcess/API/qt/qwkpage_p.h:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::setEditCommandState):
+        * UIProcess/win/WebView.h:
+
+2010-09-24  Enrica Casucci  <enrica@apple.com>
+
         Reviewed by Darin Adler.
 
         Maui: Pasteboard support (42317)
