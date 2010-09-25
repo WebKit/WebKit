@@ -1,3 +1,9 @@
+2010-09-24  Anders Carlsson  <andersca@apple.com>
+
+        Build fix.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2010-09-24  Adam Roben  <aroben@apple.com>
 
         Give windowed Netscape plugins their own window
