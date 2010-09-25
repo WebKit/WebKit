@@ -218,14 +218,22 @@ String WebPage::renderTreeExternalRepresentation() const
 
 void WebPage::executeEditingCommand(const String& commandName, const String& argument)
 {
-    m_mainFrame->coreFrame()->editor()->command(commandName).execute(argument);
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+    frame->editor()->command(commandName).execute(argument);
 }
 
 bool WebPage::isEditingCommandEnabled(const String& commandName)
 {
-    return m_mainFrame->coreFrame()->editor()->command(commandName).isEnabled();
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    if (!frame)
+        return false;
+    
+    Editor::Command command = frame->editor()->command(commandName);
+    return command.isSupported() && command.isEnabled();
 }
-
+    
 void WebPage::clearMainFrameName()
 {
     mainFrame()->coreFrame()->tree()->clearName();
@@ -502,30 +510,25 @@ void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
     (void)handled;
 }
 
-void WebPage::selectAll()
+void WebPage::validateMenuItem(const String& commandName)
 {
-    if (m_page->focusController()->focusedOrMainFrame())
-        m_page->focusController()->focusedOrMainFrame()->selection()->selectAll();
-}
-
-void WebPage::copy()
-{
-    if (m_page->focusController()->focusedOrMainFrame())
-        m_page->focusController()->focusedOrMainFrame()->editor()->copy();
-}
-
-void WebPage::cut()
-{
-    if (m_page->focusController()->focusedOrMainFrame())
-        m_page->focusController()->focusedOrMainFrame()->editor()->cut();
-}
-
-void WebPage::paste()
-{
-    if (m_page->focusController()->focusedOrMainFrame())
-        m_page->focusController()->focusedOrMainFrame()->editor()->paste();
-}    
+    bool isEnabled = false;
+    int state = 0;
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    if (frame) {
+        Editor::Command command = frame->editor()->command(commandName);
+        state = command.state();
+        isEnabled = command.isSupported() && command.isEnabled();
+    }
     
+    WebProcess::shared().connection()->send(WebPageProxyMessage::DidValidateMenuItem, m_pageID, CoreIPC::In(commandName, isEnabled, state));
+}
+
+void WebPage::executeEditCommand(const String& commandName)
+{
+    executeEditingCommand(commandName, String());
+}
+
 #if ENABLE(TOUCH_EVENTS)
 void WebPage::touchEvent(const WebTouchEvent& touchEvent)
 {

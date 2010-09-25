@@ -57,10 +57,8 @@ messages -> WebPage {
     Close()
     TryClose()
 
-    Copy()
-    Cut()
-    Paste()
-    SelectAll()
+    ValidateMenuItem(WTF::String name)
+    ExecuteEditCommand(WTF::String name)
 
     DidRemoveEditCommand(uint64_t commandID)
     ReapplyEditCommand(uint64_t commandID)

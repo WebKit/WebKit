@@ -201,6 +201,11 @@ void PageClientImpl::clearAllEditCommands()
     [[m_wkView undoManager] removeAllActionsWithTarget:m_undoTarget.get()];
 }
 
+void PageClientImpl::setEditCommandState(const String& commandName, bool isEnabled, int newState)
+{
+    [m_wkView _setUserInterfaceItemState:commandName enabled:isEnabled state:newState];
+}
+
 #if USE(ACCELERATED_COMPOSITING)
 void PageClientImpl::pageDidEnterAcceleratedCompositing()
 {

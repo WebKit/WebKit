@@ -413,6 +413,10 @@ void QWKPage::setViewportSize(const QSize& size)
         d->page->drawingArea()->setSize(IntSize(size));
 }
 
+void QWKPage::setEditCommandState(const WTF::String&, bool, int)
+{
+}
+
 #ifndef QT_NO_ACTION
 void QWKPage::triggerAction(WebAction action, bool)
 {

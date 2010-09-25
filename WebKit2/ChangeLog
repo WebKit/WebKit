@@ -1,3 +1,51 @@
+2010-09-24  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Maui: Pasteboard support (42317)
+        <rdar://problem/7660537>
+        https://bugs.webkit.org/show_bug.cgi?id=42317
+        
+        This is the final piece of the pasteboard support for WebKit2.
+        The menu validation has been hooked up for Mac. The validation is
+        performed asynchronously and the menu entries updated while the menu
+        is visible. I've created a generic mechanism to call editing commands
+        that will make it easy to add new commands we will support in the future.
+        The commands supported now are copy, cut, paste, pasteAsPlainText, delete
+        and selectAll.
+
+        * Shared/CoreIPCSupport/WebPageProxyMessageKinds.h: Added DidValidateMenuItem.
+        * UIProcess/API/mac/PageClientImpl.h: Added setEditCommandState.
+        * UIProcess/API/mac/PageClientImpl.mm: Added setEditCommandState implementation.
+        (WebKit::PageClientImpl::setEditCommandState): Added.
+        * UIProcess/API/mac/WKView.mm:
+        (WebCore::MenuItemInfo::MenuItemInfo):
+        (-[WKView initWithFrame:pageNamespaceRef:]):
+        (createSelectorExceptionMap): Added.
+        (commandNameForSelector): Added.
+        (-[WKView validateUserInterfaceItem:]): Added implementation.
+        (-[WKView _setUserInterfaceItemState:enabled:state:]): Added.
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::validateMenuItem):
+        (WebKit::WebPageProxy::executeEditCommand):
+        (WebKit::WebPageProxy::didReceiveMessage): Now processing also
+        DidValidateMenuItem.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::executeEditingCommand): Fixed.
+        (WebKit::WebPage::isEditingCommandEnabled): Fixed.
+        (WebKit::WebPage::validateMenuItem): Added.
+        (WebKit::WebPage::executeEditCommand): Added.
+        * WebProcess/WebPage/WebPage.h: Removed cut, copy, paste, selectAll.
+        Added validateMenuItem and executeEditCommand.
+        * WebProcess/WebPage/WebPage.messages.in: Added new messages.
+        * UIProcess/API/qt/qwkpage.cpp:
+        (WebKit::QWKPage::setEditCommandState): Added.
+        * UIProcess/API/qt/qwkpage_p.h: Added 
+        
+
 2010-09-24  Anders Carlsson  <andersca@apple.com>
 
         Build fix.

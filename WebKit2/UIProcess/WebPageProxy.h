@@ -133,17 +133,15 @@ public:
     void setActive(bool active);
     void setIsInWindow(bool isInWindow);
 
+    void executeEditCommand(const String& commandName);
+    void validateMenuItem(const String& commandName);
+
 // These are only used on Mac currently.
 #if PLATFORM(MAC)
     void setWindowIsVisible(bool windowIsVisible);
     void setWindowFrame(const WebCore::IntRect&);
 #endif
 
-    void selectAll();
-    void copy();
-    void cut();
-    void paste();
-    
     void mouseEvent(const WebMouseEvent&);
     void wheelEvent(const WebWheelEvent&);
     void keyEvent(const WebKeyboardEvent&);

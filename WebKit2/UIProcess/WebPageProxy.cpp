@@ -333,36 +333,19 @@ void WebPageProxy::setActive(bool active)
     process()->send(Messages::WebPage::SetActive(active), m_pageID);
 }
 
-void WebPageProxy::selectAll()
+void WebPageProxy::validateMenuItem(const String& commandName)
 {
     if (!isValid())
         return;
-
-    process()->send(Messages::WebPage::SelectAll(), m_pageID);
+    process()->send(Messages::WebPage::ValidateMenuItem(commandName), m_pageID);
 }
-
-void WebPageProxy::copy()
+    
+void WebPageProxy::executeEditCommand(const String& commandName)
 {
     if (!isValid())
         return;
 
-    process()->send(Messages::WebPage::Copy(), m_pageID);
-}
-
-void WebPageProxy::cut()
-{
-    if (!isValid())
-        return;
-
-    process()->send(Messages::WebPage::Cut(), m_pageID);
-}
-
-void WebPageProxy::paste()
-{
-    if (!isValid())
-        return;
-
-    process()->send(Messages::WebPage::Paste(), m_pageID);
+    process()->send(Messages::WebPage::ExecuteEditCommand(commandName), m_pageID);
 }
     
 void WebPageProxy::setIsInWindow(bool isInWindow)
@@ -866,6 +849,15 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
         case WebPageProxyMessage::ClearAllEditCommands:
             clearAllEditCommands();
             break;
+        case WebPageProxyMessage::DidValidateMenuItem: {
+            int state;
+            bool isEnabled;
+            String commandName;
+            if (!arguments->decode(CoreIPC::Out(commandName, isEnabled, state)))
+                return;
+            m_pageClient->setEditCommandState(commandName, isEnabled, state);
+            break;
+        }
         default:
             ASSERT_NOT_REACHED();
             break;

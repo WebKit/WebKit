@@ -54,6 +54,7 @@ private:
 
     void registerEditCommand(PassRefPtr<WebEditCommandProxy>, UndoOrRedo);
     void clearAllEditCommands();
+    void setEditCommandState(const String& commandName, bool isEnabled, int state);
 
 #if USE(ACCELERATED_COMPOSITING)
     void pageDidEnterAcceleratedCompositing();

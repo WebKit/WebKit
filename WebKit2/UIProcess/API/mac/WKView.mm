@@ -43,9 +43,17 @@
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/IntRect.h>
 #import <wtf/RefPtr.h>
+#import <wtf/RetainPtr.h>
 
 using namespace WebKit;
 using namespace WebCore;
+
+struct EditCommandState {
+    EditCommandState() : m_isEnabled(false), m_state(0) {};
+    EditCommandState(bool isEnabled, int state) : m_isEnabled(isEnabled), m_state(state) { }
+    bool m_isEnabled;
+    int m_state;
+};
 
 @interface WKViewData : NSObject {
 @public
@@ -60,6 +68,12 @@ using namespace WebCore;
 #if USE(ACCELERATED_COMPOSITING)
     NSView *_layerHostingView;
 #endif
+    // For Menus.
+    int _menuEntriesCount;
+    Vector<RetainPtr<NSMenu> > _menuList;
+    bool _isPerformingUpdate;
+    
+    HashMap<String, EditCommandState> _menuMap;
 }
 @end
 
@@ -91,6 +105,9 @@ using namespace WebCore;
     _data->_page->setDrawingArea(ChunkedUpdateDrawingAreaProxy::create(self));
     _data->_page->initializeWebPage(IntSize(frame.size));
     _data->_page->setIsInWindow([self window]);
+    
+    _data->_menuEntriesCount = 0;
+    _data->_isPerformingUpdate = false;
 
     return self;
 }
@@ -147,32 +164,82 @@ using namespace WebCore;
     _data->_page->drawingArea()->setSize(IntSize(size));
 }
 
-- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
+typedef HashMap<SEL, String> SelectorNameMap;
+
+// Map selectors into Editor command names.
+// This is not needed for any selectors that have the same name as the Editor command.
+static const SelectorNameMap* createSelectorExceptionMap()
 {
-    // FIXME: this needs to be implemented
-    return YES;
+    SelectorNameMap* map = new HashMap<SEL, String>;
+    
+    map->add(@selector(insertNewlineIgnoringFieldEditor:), "InsertNewline");
+    map->add(@selector(insertParagraphSeparator:), "InsertNewline");
+    map->add(@selector(insertTabIgnoringFieldEditor:), "InsertTab");
+    map->add(@selector(pageDown:), "MovePageDown");
+    map->add(@selector(pageDownAndModifySelection:), "MovePageDownAndModifySelection");
+    map->add(@selector(pageUp:), "MovePageUp");
+    map->add(@selector(pageUpAndModifySelection:), "MovePageUpAndModifySelection");
+    
+    return map;
+}
+
+static String commandNameForSelector(SEL selector)
+{
+    // Check the exception map first.
+    static const SelectorNameMap* exceptionMap = createSelectorExceptionMap();
+    SelectorNameMap::const_iterator it = exceptionMap->find(selector);
+    if (it != exceptionMap->end())
+        return it->second;
+    
+    // Remove the trailing colon.
+    // No need to capitalize the command name since Editor command names are
+    // not case sensitive.
+    const char* selectorName = sel_getName(selector);
+    size_t selectorNameLength = strlen(selectorName);
+    if (selectorNameLength < 2 || selectorName[selectorNameLength - 1] != ':')
+        return String();
+    return String(selectorName, selectorNameLength - 1);
 }
 
 // Editing commands
+// FIXME: we should add all the commands here as we implement them.
 
-- (void)copy:(id)sender
-{ 
-    _data->_page->copy();
-}
+#define WEBCORE_COMMAND(command) - (void)command:(id)sender { _data->_page->executeEditCommand(commandNameForSelector(_cmd)); }
 
-- (void)cut:(id)sender
-{ 
-    _data->_page->cut();
-}
+WEBCORE_COMMAND(copy)
+WEBCORE_COMMAND(cut)
+WEBCORE_COMMAND(paste)
+WEBCORE_COMMAND(delete)
+WEBCORE_COMMAND(pasteAsPlainText)
+WEBCORE_COMMAND(selectAll)
 
-- (void)paste:(id)sender
-{ 
-    _data->_page->paste();
-}
+#undef WEBCORE_COMMAND
 
-- (void)selectAll:(id)sender
+// Menu items validation
+
+- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
 {
-    _data->_page->selectAll();
+    String commandName = commandNameForSelector([item action]);
+    NSMenuItem *menuItem = (NSMenuItem *)item;
+    if (![menuItem isKindOfClass:[NSMenuItem class]])
+        return NO; // FIXME: We need to be able to handle other user interface elements.
+    
+    RetainPtr<NSMenu> menu = [menuItem menu];
+    if (!_data->_isPerformingUpdate) {
+        if (_data->_menuList.find(menu) == notFound)
+            _data->_menuList.append(menu);
+        _data->_menuMap.add(commandName, EditCommandState(false, 0));
+        _data->_menuEntriesCount++;
+        _data->_page->validateMenuItem(commandName);
+    } else {
+        EditCommandState info = _data->_menuMap.take(commandName);
+        [menuItem setState:info.m_state];
+        if (_data->_menuMap.isEmpty())
+            _data->_isPerformingUpdate = false;
+        return info.m_isEnabled;
+    }
+
+    return NO;
 }
 
 // Events
@@ -412,6 +479,23 @@ static bool isViewVisible(NSView *view)
     if ([NSCursor currentCursor] == cursor)
         return;
     [cursor set];
+}
+
+- (void)_setUserInterfaceItemState:(NSString *)commandName enabled:(BOOL)isEnabled state:(int)newState
+{
+    ASSERT(_data->_menuEntriesCount);
+    _data->_menuMap.set(commandName, EditCommandState(isEnabled, newState));
+    if (--_data->_menuEntriesCount)
+        return;
+    
+    // All the menu entries have been validated.
+    // Calling update will trigger the validation
+    // to be performed with the acquired data.
+    _data->_isPerformingUpdate = true;
+    for (size_t i = 0; i < _data->_menuList.size(); i++)
+        [_data->_menuList[i].get() update];
+    
+    _data->_menuList.clear();
 }
 
 // Any non-zero value will do, but using something recognizable might help us debug some day.

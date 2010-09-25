@@ -51,6 +51,7 @@ public:
     enum UndoOrRedo { Undo, Redo };
     virtual void registerEditCommand(PassRefPtr<WebEditCommandProxy>, UndoOrRedo) = 0;
     virtual void clearAllEditCommands() = 0;
+    virtual void setEditCommandState(const String& commandName, bool isEnabled, int state) = 0;
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual void pageDidEnterAcceleratedCompositing() = 0;
