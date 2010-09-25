@@ -166,6 +166,10 @@ void QWKPagePrivate::wheelEvent(QGraphicsSceneWheelEvent* ev)
     page->wheelEvent(wheelEvent);
 }
 
+void QWKPagePrivate::setEditCommandState(const WTF::String&, bool, int)
+{
+}
+
 void QWKPagePrivate::updateAction(QWKPage::WebAction action)
 {
 #ifdef QT_NO_ACTION
@@ -412,10 +416,6 @@ void QWKPage::setViewportSize(const QSize& size)
 {
     if (d->page->drawingArea())
         d->page->drawingArea()->setSize(IntSize(size));
-}
-
-void QWKPage::setEditCommandState(const WTF::String&, bool, int)
-{
 }
 
 #ifndef QT_NO_ACTION
