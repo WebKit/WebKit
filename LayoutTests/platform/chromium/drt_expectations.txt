@@ -13,9 +13,9 @@ BUG_DRT MAC LINUX : fast/backgrounds/animated-gif-as-background.html = IMAGE
 
 // input-speech related failures
 BUG_DRT WIN MAC LINUX : fast/speech/input-text-speechbutton.html = TEXT
-BUG_DRT WIN MAC : fast/speech/input-appearance-numberandspeech.html = IMAGE
-BUG_DRT WIN MAC : fast/speech/input-appearance-searchandspeech.html = IMAGE
-BUG_DRT WIN MAC : fast/speech/input-appearance-speechbutton.html = IMAGE
+BUG_DRT WIN MAC LINUX : fast/speech/input-appearance-numberandspeech.html = IMAGE
+BUG_DRT WIN MAC LINUX : fast/speech/input-appearance-searchandspeech.html = IMAGE
+BUG_DRT WIN MAC LINUX : fast/speech/input-appearance-speechbutton.html = IMAGE
 
 BUG48431 WIN MAC LINUX : plugins/geturlnotify-during-document-teardown.html = TEXT
 BUG48431 WIN MAC LINUX : plugins/open-and-close-window-with-plugin.html = TEXT

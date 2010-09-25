@@ -1,3 +1,11 @@
+2010-09-25  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium drt_expectations.txt update.
+
+        Speech input appearance tests have image diffs on Linux too.
+
+        * platform/chromium/drt_expectations.txt:
+
 2010-09-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.
