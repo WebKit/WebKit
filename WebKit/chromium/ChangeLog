@@ -1,3 +1,16 @@
+2010-09-24  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Unnecessary blob dependency in WebKit.gyp
+        https://bugs.webkit.org/show_bug.cgi?id=46488
+        
+        r66322 shouldn't have added a blob dependency by hand to targets in
+        WebKit.gyp, instead blob should be a dependency of webkit_support.
+        http://crrev.com/59406 did that, so we can now remove these deps.
+
+        * WebKit.gyp:
+
 2010-09-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.

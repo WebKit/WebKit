@@ -730,7 +730,6 @@
                         '<(chromium_src_dir)/base/base.gyp:base',
                         '<(chromium_src_dir)/base/base.gyp:base_i18n',
                         '<(chromium_src_dir)/base/base.gyp:test_support_base',
-                        '<(chromium_src_dir)/webkit/support/webkit_support.gyp:blob',
                         '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
                     ],
                     'include_dirs': [
@@ -786,7 +785,6 @@
             'dependencies': [
                 'webkit',
                 '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
-                '<(chromium_src_dir)/webkit/support/webkit_support.gyp:blob',
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
             ],
             'include_dirs': [
