@@ -1,3 +1,13 @@
+2010-09-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/8478160> Null deref in InlineBox::height()
+        https://bugs.webkit.org/show_bug.cgi?id=45344
+
+        * fast/css/first-line-parent-style-different-expected.txt: Added.
+        * fast/css/first-line-parent-style-different.html: Added.
+
 2010-09-25  Andreas Kling  <andreas.kling@nokia.com>
 
         Unreviewed, Qt rebaseline after r68331 which fixed dash offset rendering.

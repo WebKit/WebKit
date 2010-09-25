@@ -2,6 +2,20 @@
 
         Reviewed by John Sullivan.
 
+        <rdar://problem/8478160> Null deref in InlineBox::height()
+        https://bugs.webkit.org/show_bug.cgi?id=45344
+
+        Test: fast/css/first-line-parent-style-different.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::firstLineStyleSlowCase): Set the pseudo style bit on the RenderStyle
+        which is going to supply the first-line style rather than on this object’s RenderStyle. The
+        styles may differ.
+
+2010-09-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
         <rdar://problem/8478182> Make canHyphenate() return false for unsupported locales
 
         No change in functionality, hence no new test.

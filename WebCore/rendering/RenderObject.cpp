@@ -2342,7 +2342,7 @@ RenderStyle* RenderObject::firstLineStyleSlowCase() const
         RenderStyle* parentStyle = renderer->parent()->firstLineStyle();
         if (parentStyle != renderer->parent()->style()) {
             // A first-line style is in effect. Cache a first-line style for ourselves.
-            style->setHasPseudoStyle(FIRST_LINE_INHERITED);
+            renderer->style()->setHasPseudoStyle(FIRST_LINE_INHERITED);
             style = renderer->getCachedPseudoStyle(FIRST_LINE_INHERITED, parentStyle);
         }
     }
