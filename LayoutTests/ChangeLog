@@ -1,3 +1,9 @@
+2010-09-25  Andreas Kling  <andreas.kling@nokia.com>
+
+        Unreviewed, Qt rebaseline after r68331 which fixed dash offset rendering.
+
+        * platform/qt/svg/custom/js-repaint-rect-on-path-with-stroke-expected.txt:
+
 2010-09-24  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium test_expectations.txt and drt_expectations.txt update.
