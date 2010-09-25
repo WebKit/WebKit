@@ -1,3 +1,12 @@
+2010-09-24  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Fix accidental increase in the size of InlineBox by using a bit
+        field to indicate that a bool should only take up 1 bit.
+
+        * rendering/InlineBox.h:
+
 2010-09-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.
