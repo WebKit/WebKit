@@ -844,6 +844,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
         }
         case op_get_arguments_length: {
             printUnaryOp(exec, location, it, "get_arguments_length");
+            it++;
             break;
         }
         case op_put_by_id: {

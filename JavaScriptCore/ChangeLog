@@ -1,5 +1,18 @@
 2010-09-25  Oliver Hunt  <oliver@apple.com>
 
+        Fix various builds
+
+        Relearning the lesson that last minute changes are bad.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitGetArgumentsLength):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emitSlow_op_get_argument_by_val):
+
+2010-09-25  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Cameron Zwarich.
 
         Avoid constructing arguments object when accessing length and index properties
