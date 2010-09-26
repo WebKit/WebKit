@@ -48,6 +48,11 @@ SharedMemory::Handle::~Handle()
         mach_port_deallocate(mach_task_self(), m_port);
 }
 
+bool SharedMemory::Handle::isNull() const
+{
+    return !m_port;
+}
+
 void SharedMemory::Handle::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     encoder->encodeUInt64(m_size);

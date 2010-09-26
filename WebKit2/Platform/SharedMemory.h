@@ -49,7 +49,7 @@ public:
         Handle();
         ~Handle();
 
-        bool isNull() const { return !m_port; }
+        bool isNull() const;
 
         void encode(CoreIPC::ArgumentEncoder*) const;
         static bool decode(CoreIPC::ArgumentDecoder*, Handle&);

@@ -1,5 +1,13 @@
 2010-09-26  Anders Carlsson  <andersca@apple.com>
 
+        Fix non-Mac builds.
+
+        * Platform/SharedMemory.h:
+        * Platform/mac/SharedMemoryMac.cpp:
+        (WebKit::SharedMemory::Handle::isNull):
+
+2010-09-26  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Make it possible to encode null SharedMemory::Handle objects
