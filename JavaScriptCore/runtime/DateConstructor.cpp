@@ -90,25 +90,34 @@ JSObject* constructDate(ExecState* exec, const ArgList& args)
                 value = primitive.toNumber(exec);
         }
     } else {
-        if (isnan(args.at(0).toNumber(exec))
-                || isnan(args.at(1).toNumber(exec))
-                || (numArgs >= 3 && isnan(args.at(2).toNumber(exec)))
-                || (numArgs >= 4 && isnan(args.at(3).toNumber(exec)))
-                || (numArgs >= 5 && isnan(args.at(4).toNumber(exec)))
-                || (numArgs >= 6 && isnan(args.at(5).toNumber(exec)))
-                || (numArgs >= 7 && isnan(args.at(6).toNumber(exec))))
+        double doubleArguments[7] = {
+            args.at(0).toNumber(exec), 
+            args.at(1).toNumber(exec), 
+            args.at(2).toNumber(exec), 
+            args.at(3).toNumber(exec), 
+            args.at(4).toNumber(exec), 
+            args.at(5).toNumber(exec), 
+            args.at(6).toNumber(exec)
+        };
+        if (isnan(doubleArguments[0])
+                || isnan(doubleArguments[1])
+                || (numArgs >= 3 && isnan(doubleArguments[2]))
+                || (numArgs >= 4 && isnan(doubleArguments[3]))
+                || (numArgs >= 5 && isnan(doubleArguments[4]))
+                || (numArgs >= 6 && isnan(doubleArguments[5]))
+                || (numArgs >= 7 && isnan(doubleArguments[6])))
             value = NaN;
         else {
             GregorianDateTime t;
-            int year = args.at(0).toInt32(exec);
+            int year = JSC::toInt32(doubleArguments[0]);
             t.year = (year >= 0 && year <= 99) ? year : year - 1900;
-            t.month = args.at(1).toInt32(exec);
-            t.monthDay = (numArgs >= 3) ? args.at(2).toInt32(exec) : 1;
-            t.hour = args.at(3).toInt32(exec);
-            t.minute = args.at(4).toInt32(exec);
-            t.second = args.at(5).toInt32(exec);
+            t.month = JSC::toInt32(doubleArguments[1]);
+            t.monthDay = (numArgs >= 3) ? JSC::toInt32(doubleArguments[2]) : 1;
+            t.hour = JSC::toInt32(doubleArguments[3]);
+            t.minute = JSC::toInt32(doubleArguments[4]);
+            t.second = JSC::toInt32(doubleArguments[5]);
             t.isDST = -1;
-            double ms = (numArgs >= 7) ? args.at(6).toNumber(exec) : 0;
+            double ms = (numArgs >= 7) ? doubleArguments[6] : 0;
             value = gregorianDateTimeToMS(exec, t, ms, false);
         }
     }
@@ -160,25 +169,34 @@ static EncodedJSValue JSC_HOST_CALL dateNow(ExecState* exec)
 
 static EncodedJSValue JSC_HOST_CALL dateUTC(ExecState* exec) 
 {
+    double doubleArguments[7] = {
+        exec->argument(0).toNumber(exec), 
+        exec->argument(1).toNumber(exec), 
+        exec->argument(2).toNumber(exec), 
+        exec->argument(3).toNumber(exec), 
+        exec->argument(4).toNumber(exec), 
+        exec->argument(5).toNumber(exec), 
+        exec->argument(6).toNumber(exec)
+    };
     int n = exec->argumentCount();
-    if (isnan(exec->argument(0).toNumber(exec))
-            || isnan(exec->argument(1).toNumber(exec))
-            || (n >= 3 && isnan(exec->argument(2).toNumber(exec)))
-            || (n >= 4 && isnan(exec->argument(3).toNumber(exec)))
-            || (n >= 5 && isnan(exec->argument(4).toNumber(exec)))
-            || (n >= 6 && isnan(exec->argument(5).toNumber(exec)))
-            || (n >= 7 && isnan(exec->argument(6).toNumber(exec))))
+    if (isnan(doubleArguments[0])
+            || isnan(doubleArguments[1])
+            || (n >= 3 && isnan(doubleArguments[2]))
+            || (n >= 4 && isnan(doubleArguments[3]))
+            || (n >= 5 && isnan(doubleArguments[4]))
+            || (n >= 6 && isnan(doubleArguments[5]))
+            || (n >= 7 && isnan(doubleArguments[6])))
         return JSValue::encode(jsNaN(exec));
 
     GregorianDateTime t;
-    int year = exec->argument(0).toInt32(exec);
+    int year = JSC::toInt32(doubleArguments[0]);
     t.year = (year >= 0 && year <= 99) ? year : year - 1900;
-    t.month = exec->argument(1).toInt32(exec);
-    t.monthDay = (n >= 3) ? exec->argument(2).toInt32(exec) : 1;
-    t.hour = exec->argument(3).toInt32(exec);
-    t.minute = exec->argument(4).toInt32(exec);
-    t.second = exec->argument(5).toInt32(exec);
-    double ms = (n >= 7) ? exec->argument(6).toNumber(exec) : 0;
+    t.month = JSC::toInt32(doubleArguments[1]);
+    t.monthDay = (n >= 3) ? JSC::toInt32(doubleArguments[2]) : 1;
+    t.hour = JSC::toInt32(doubleArguments[3]);
+    t.minute = JSC::toInt32(doubleArguments[4]);
+    t.second = JSC::toInt32(doubleArguments[5]);
+    double ms = (n >= 7) ? doubleArguments[6] : 0;
     return JSValue::encode(jsNumber(exec, timeClip(gregorianDateTimeToMS(exec, t, ms, true))));
 }
 

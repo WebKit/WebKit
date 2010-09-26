@@ -40,4 +40,22 @@ shouldBe('new Date(new Date(1111, 1, 1, 1, 1, 1, 1, 1, 1)).getTime() - timeZoneO
 // shouldBe('new Date(1111, 1111, 1111, 1111, 1111, 1111, 1111, 1111).getTime() - timeZoneOffset', '-24085894227889');
 // shouldBe('new Date(new Date(1111, 1111, 1111, 1111, 1111, 1111, 1111, 1111)).getTime() - timeZoneOffset', '-24085894227889');
 
+// Regression test for Bug 26978 (https://bugs.webkit.org/show_bug.cgi?id=26978)
+var testStr = "";
+var year = { valueOf: function() { testStr += 1; return 2007; } };
+var month = { valueOf: function() { testStr += 2; return 2; } };
+var date = { valueOf: function() { testStr += 3; return 4; } };
+var hours = { valueOf: function() { testStr += 4; return 13; } };
+var minutes = { valueOf: function() { testStr += 5; return 50; } };
+var seconds = { valueOf: function() { testStr += 6; return 0; } };
+var ms = { valueOf: function() { testStr += 7; return 999; } };
+
+testStr = "";
+new Date(year, month, date, hours, minutes, seconds, ms);
+shouldBe('testStr', '\"1234567\"');
+
+testStr = "";
+Date.UTC(year, month, date, hours, minutes, seconds, ms);
+shouldBe('testStr', '\"1234567\"');
+
 var successfullyParsed = true;

@@ -1,3 +1,17 @@
+2010-09-26  Mark Hahnenberg  <mhahnenb@gmail.com>
+
+        Reviewed by Oliver Hunt.
+
+        valueOf called in wrong order in atan2 and date constructors.
+        https://bugs.webkit.org/show_bug.cgi?id=26978
+
+        Fixed the issue where the parameters to the Date constructor
+        were being evaluated to numbers more than once.
+
+        * runtime/DateConstructor.cpp:
+        (JSC::constructDate):
+        (JSC::dateUTC):
+
 2010-09-25  Oliver Hunt  <oliver@apple.com>
 
         Fix various builds

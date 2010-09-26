@@ -1,3 +1,22 @@
+2010-09-26  Mark Hahnenberg  <mhahnenb@gmail.com>
+
+        Reviewed by Oliver Hunt.
+
+        valueOf called in wrong order in atan2 and date constructors.
+        https://bugs.webkit.org/show_bug.cgi?id=26978
+
+        Added regression test for the Date constructor issue.
+
+        * fast/js/date-constructor-expected.txt:
+        * fast/js/script-tests/date-constructor.js:
+        (year.valueOf):
+        (month.valueOf):
+        (date.valueOf):
+        (hours.valueOf):
+        (minutes.valueOf):
+        (seconds.valueOf):
+        (ms.valueOf):
+
 2010-09-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r68343.
