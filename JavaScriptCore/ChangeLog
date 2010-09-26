@@ -5,6 +5,19 @@
         valueOf called in wrong order in atan2 and date constructors.
         https://bugs.webkit.org/show_bug.cgi?id=26978
 
+        Fixed the bug where the arguments to atan2 were being evaluated 
+        out of order.
+
+        * runtime/MathObject.cpp:
+        (JSC::mathProtoFuncATan2):
+
+2010-09-26  Mark Hahnenberg  <mhahnenb@gmail.com>
+
+        Reviewed by Oliver Hunt.
+
+        valueOf called in wrong order in atan2 and date constructors.
+        https://bugs.webkit.org/show_bug.cgi?id=26978
+
         Fixed the issue where the parameters to the Date constructor
         were being evaluated to numbers more than once.
 

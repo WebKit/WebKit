@@ -5,6 +5,21 @@
         valueOf called in wrong order in atan2 and date constructors.
         https://bugs.webkit.org/show_bug.cgi?id=26978
 
+        Regression test for the issue where the arguments to atan2 were
+        evaluated out of order.
+
+        * fast/js/math-expected.txt:
+        * fast/js/script-tests/math.js:
+        (v.valueOf):
+        (w.valueOf):
+
+2010-09-26  Mark Hahnenberg  <mhahnenb@gmail.com>
+
+        Reviewed by Oliver Hunt.
+
+        valueOf called in wrong order in atan2 and date constructors.
+        https://bugs.webkit.org/show_bug.cgi?id=26978
+
         Added regression test for the Date constructor issue.
 
         * fast/js/date-constructor-expected.txt:

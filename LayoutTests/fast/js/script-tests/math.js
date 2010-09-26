@@ -50,6 +50,13 @@ shouldBe("Math.atan2(1, NaN)", "NaN");
 shouldBe("Math.atan2(Infinity, NaN)", "NaN");
 shouldBe("Math.atan2(-Infinity, NaN)", "NaN");
 
+// Regression test for Bug 26978 (https://bugs.webkit.org/show_bug.cgi?id=26978)
+var testStr = "";
+var v = { valueOf: function() { testStr += "one"; return 1; } };
+var w = { valueOf: function() { testStr += "two"; return 2; } };
+Math.atan2(v, w);
+shouldBe('testStr', '\"onetwo\"');
+
 /*
 • Ify>0andxis+0, theresult isanimplementation-dependent approximationto +π/2. 
 • Ify>0andxis−0, theresult isanimplementation-dependent approximationto +π/2. 

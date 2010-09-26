@@ -135,7 +135,9 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncATan(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncATan2(ExecState* exec)
 {
-    return JSValue::encode(jsDoubleNumber(exec, atan2(exec->argument(0).toNumber(exec), exec->argument(1).toNumber(exec))));
+    double arg0 = exec->argument(0).toNumber(exec);
+    double arg1 = exec->argument(1).toNumber(exec);
+    return JSValue::encode(jsDoubleNumber(exec, atan2(arg0, arg1)));
 }
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncCeil(ExecState* exec)

@@ -44,6 +44,7 @@ PASS Math.atan2(-0, NaN) is NaN
 PASS Math.atan2(1, NaN) is NaN
 PASS Math.atan2(Infinity, NaN) is NaN
 PASS Math.atan2(-Infinity, NaN) is NaN
+PASS testStr is "onetwo"
 PASS Math.ceil(NaN) is NaN
 PASS Math.ceil(0) is 0
 PASS Math.ceil(-0) is -0
