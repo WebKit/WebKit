@@ -1,3 +1,20 @@
+2010-09-25  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Fix the macro to bail out after setting the SVG style to 'initial'. Check that color is
+        SVGColor before calling colorFromSVGColorCSSValue which makes sure we don't set invalid
+        color. Also, doing the static cast in the caller and keeping the function
+        colorFromSVGColorCSSValue clean to accept only take SVGColor objects.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=46471
+
+        Test: svg/css/invalid-color-crash.svg
+
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::colorFromSVGColorCSSValue):
+        (WebCore::CSSStyleSelector::applySVGProperty):
+
 2010-09-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.

@@ -48,15 +48,17 @@
 
 #define HANDLE_INHERIT(prop, Prop) \
 if (isInherit) \
-{\
-    svgstyle->set##Prop(m_parentStyle->svgStyle()->prop());\
-    return;\
+{ \
+    svgstyle->set##Prop(m_parentStyle->svgStyle()->prop()); \
+    return; \
 }
 
 #define HANDLE_INHERIT_AND_INITIAL(prop, Prop) \
 HANDLE_INHERIT(prop, Prop) \
-else if (isInitial) \
-    svgstyle->set##Prop(SVGRenderStyle::initial##Prop());
+if (isInitial) { \
+    svgstyle->set##Prop(SVGRenderStyle::initial##Prop()); \
+    return; \
+}
 
 namespace WebCore {
 
@@ -90,15 +92,13 @@ static int angleToGlyphOrientation(float angle)
     return -1;
 }
 
-static Color colorFromSVGColorCSSValue(CSSValue* value, const Color& fgColor)
+static Color colorFromSVGColorCSSValue(SVGColor* svgColor, const Color& fgColor)
 {
-    ASSERT(value->isSVGColor());
-    SVGColor* c = static_cast<SVGColor*>(value);
     Color color;
-    if (c->colorType() == SVGColor::SVG_COLORTYPE_CURRENTCOLOR)
+    if (svgColor->colorType() == SVGColor::SVG_COLORTYPE_CURRENTCOLOR)
         color = fgColor;
     else
-        color = c->color();
+        color = svgColor->color();
     return color;
 }
 
@@ -468,13 +468,15 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
         case CSSPropertyStopColor:
         {
             HANDLE_INHERIT_AND_INITIAL(stopColor, StopColor);
-            svgstyle->setStopColor(colorFromSVGColorCSSValue(value, m_style->color()));
+            if (value->isSVGColor())
+                svgstyle->setStopColor(colorFromSVGColorCSSValue(static_cast<SVGColor*>(value), m_style->color()));
             break;
         }
        case CSSPropertyLightingColor:
         {
             HANDLE_INHERIT_AND_INITIAL(lightingColor, LightingColor);
-            svgstyle->setLightingColor(colorFromSVGColorCSSValue(value, m_style->color()));
+            if (value->isSVGColor())
+                svgstyle->setLightingColor(colorFromSVGColorCSSValue(static_cast<SVGColor*>(value), m_style->color()));
             break;
         }
         case CSSPropertyFloodOpacity:
@@ -497,11 +499,9 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
         }
         case CSSPropertyFloodColor:
         {
-            if (isInitial) {
-                svgstyle->setFloodColor(SVGRenderStyle::initialFloodColor());
-                return;
-            }
-            svgstyle->setFloodColor(colorFromSVGColorCSSValue(value, m_style->color()));
+            HANDLE_INHERIT_AND_INITIAL(floodColor, FloodColor);
+            if (value->isSVGColor())
+                svgstyle->setFloodColor(colorFromSVGColorCSSValue(static_cast<SVGColor*>(value), m_style->color()));
             break;
         }
         case CSSPropertyGlyphOrientationHorizontal:

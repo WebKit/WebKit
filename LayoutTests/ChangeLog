@@ -1,3 +1,13 @@
+2010-09-25  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Tests that we dont crash when setting color to initial for SVG.
+        https://bugs.webkit.org/show_bug.cgi?id=46471
+
+        * svg/css/invalid-color-crash-expected.txt: Added.
+        * svg/css/invalid-color-crash.svg: Added.
+
 2010-09-25  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium drt_expectations.txt update.
