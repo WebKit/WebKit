@@ -280,7 +280,18 @@ def case_statement(receiver, message):
     return surround_in_condition(''.join(result), message.condition)
 
 
-def header_for_type(type):
+def argument_coder_headers_for_type(type):
+    special_cases = {
+        'WTF::String': '"WebCoreArgumentCoders.h"',
+    }
+
+    if type in special_cases:
+        return [special_cases[type]]
+
+    return []
+
+
+def headers_for_type(type):
     special_cases = {
         'CoreIPC::MachPort': '"MachPort.h"',
         'WTF::String': '<wtf/text/WTFString.h>',
@@ -290,16 +301,16 @@ def header_for_type(type):
         'WebKit::WebTouchEvent': '"WebEvent.h"',
     }
     if type in special_cases:
-        return special_cases[type]
+        return [special_cases[type]]
 
     # We assume that we must include a header for a type iff it has a scope
     # resolution operator (::).
     split = type.split('::')
     if len(split) != 2:
-        return None
+        return []
     if split[0] == 'WebKit':
-        return '"%s.h"' % split[1]
-    return '<%s/%s.h>' % tuple(split)
+        return ['"%s.h"' % split[1]]
+    return ['<%s/%s.h>' % tuple(split)]
 
 
 def generate_message_handler(file):
@@ -309,7 +320,16 @@ def generate_message_handler(file):
         '"HandleMessage.h"',
         '"ArgumentDecoder.h"',
     ])
-    [headers.add(header) for header in [header_for_type(parameter.type) for parameter in receiver.iterparameters()] if header]
+
+    for parameter in receiver.iterparameters():
+        type = parameter.type
+        argument_encoder_headers = argument_coder_headers_for_type(parameter.type)
+        if argument_encoder_headers:
+            headers.update(argument_encoder_headers)
+            continue
+
+        type_headers = headers_for_type(type)
+        headers.update(type_headers)
 
     result = []
 

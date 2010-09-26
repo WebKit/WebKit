@@ -1,3 +1,17 @@
+2010-09-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Generated message handlers should include argument coder headers for some types
+        https://bugs.webkit.org/show_bug.cgi?id=46582
+
+        * Scripts/webkit2/messages.py:
+        When determining which headers to use when generating a message handler, consider the
+        argument coder headers.
+
+        * Scripts/webkit2/messages_unittest.py:
+        Update test result.
+
 2010-09-24  Sam Weinig  <sam@webkit.org>
 
         Fix release build.

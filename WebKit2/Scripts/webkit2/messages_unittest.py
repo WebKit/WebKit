@@ -388,9 +388,9 @@ _expected_receiver_implementation = """/*
 #include "ArgumentDecoder.h"
 #include "HandleMessage.h"
 #include "MachPort.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebEvent.h"
 #include "WebPageMessages.h"
-#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
