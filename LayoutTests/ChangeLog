@@ -1,3 +1,17 @@
+2010-09-26  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] fix http/tests/uri/escaped-entity.html
+
+        Replace invalid encodings with the appropriate escaped entity.
+
+        See also http://bugreports.qt.nokia.com/browse/QTBUG-13412
+
+        https://bugs.webkit.org/show_bug.cgi?id=45245
+
+        * platform/qt/Skipped:
+
 2010-09-25  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Nikolas Zimmermann.

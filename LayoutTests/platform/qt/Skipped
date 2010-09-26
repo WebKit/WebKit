@@ -178,9 +178,6 @@ http/tests/security/originHeader/origin-header-for-empty.html
 http/tests/media
 http/tests/wml
 
-# not utf8-encoding urls as expected
-http/tests/uri/escaped-entity.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=44282
 http/tests/incremental/slow-utf8-text.pl
 
