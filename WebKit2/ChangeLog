@@ -2,6 +2,39 @@
 
         Reviewed by Sam Weinig.
 
+        Add BackingStore class
+        https://bugs.webkit.org/show_bug.cgi?id=46584
+
+        * Shared/BackingStore.cpp: Added.
+        (WebKit::BackingStore::create):
+        Create a backing store backed by fastMalloc memory.
+
+        (WebKit::BackingStore::createSharable):
+        Create a backing store backed by shared memory.
+
+        (WebKit::BackingStore::createHandle):
+        Create a handle that can be sent over the wire.
+
+        (WebKit::BackingStore::resize):
+        Resize the backing store memory.
+
+        (WebKit::BackingStore::data):
+        Return the backing store data.
+
+        * Shared/mac/BackingStoreMac.mm: Added.
+        (WebKit::BackingStore::createGraphicsContext):
+        Create a graphics context that will paint into the backing store.
+
+        (WebKit::BackingStore::paint):
+        Paint the backing store in a graphics context.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add files.
+
+2010-09-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Establish a connection between the plug-in process and the web process
         https://bugs.webkit.org/show_bug.cgi?id=46583
 
