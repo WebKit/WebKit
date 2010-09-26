@@ -131,7 +131,7 @@ static String canonicalPath(const String& path)
     return canonPath;
 }
 
-static bool makeAllDirectories(PassOwnPtr<IFileMgr> fileMgr, const String& path)
+static bool makeAllDirectories(IFileMgr* fileManager, const String& path)
 {
     if (path == canonicalPath(AEEFS_HOME_DIR))
         return true;
@@ -144,7 +144,7 @@ static bool makeAllDirectories(PassOwnPtr<IFileMgr> fileMgr, const String& path)
     }
 
     if (lastDivPos > 0) {
-        if (!makeAllDirectories(fileMgr.release(), path.substring(0, lastDivPos)))
+        if (!makeAllDirectories(fileManager, path.substring(0, lastDivPos)))
             return false;
     }
 
@@ -152,10 +152,10 @@ static bool makeAllDirectories(PassOwnPtr<IFileMgr> fileMgr, const String& path)
 
     // IFILEMGR_MkDir return SUCCESS when the file is successfully created or if file already exists.
     // So we need to check fileinfo.attrib.
-    IFILEMGR_MkDir(fileMgr.get(), folder.utf8().data());
+    IFILEMGR_MkDir(fileManager, folder.utf8().data());
 
     FileInfo fileInfo;
-    if (IFILEMGR_GetInfo(fileMgr.get(), folder.utf8().data(), &fileInfo) != SUCCESS)
+    if (IFILEMGR_GetInfo(fileManager, folder.utf8().data(), &fileInfo) != SUCCESS)
         return false;
 
     return fileInfo.attrib & _FA_DIR;
@@ -165,7 +165,7 @@ bool makeAllDirectories(const String& path)
 {
     OwnPtr<IFileMgr> fileMgr = createInstance<IFileMgr>(AEECLSID_FILEMGR);
 
-    return makeAllDirectories(fileMgr.release(), canonicalPath(path));
+    return makeAllDirectories(fileMgr.get(), canonicalPath(path));
 }
 
 String homeDirectoryPath()
