@@ -5928,3 +5928,6 @@ media/video-controls-with-mutation-event-handler.html
 
 # FileSystem API is not supported.
 fast/filesystem
+
+# LayoutTestController::nodesFromRect is not supported.
+fast/dom/nodesFromRect-basic.html

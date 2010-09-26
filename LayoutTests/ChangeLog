@@ -1,3 +1,20 @@
+2010-09-25  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Kenneth Christiansen and Andreas Kling.
+
+        document.nodesFromRect() needs to be removed from Document.idl
+        https://bugs.webkit.org/show_bug.cgi?id=46492
+
+        Skip the tests relying on document.nodesFromRect in all platform for
+        the moment, and adjusting the expected results tests also accordingly.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+        * platform/win/Skipped:
+
 2010-09-26  Renata Hodovan  <reni@inf.u-szeged.hu>
 
         Reviewed by Dirk Schulze.

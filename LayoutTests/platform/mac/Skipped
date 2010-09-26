@@ -317,3 +317,6 @@ media/context-menu-actions.html
 
 # FileSystem API is not supported.
 fast/filesystem
+
+# LayoutTestController::nodesFromRect is not supported.
+fast/dom/nodesFromRect-basic.html

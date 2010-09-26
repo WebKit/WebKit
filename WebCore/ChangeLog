@@ -1,3 +1,20 @@
+2010-09-25  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Kenneth Christiansen and Andreas Kling.
+
+        document.nodesFromRect() needs to be removed from Document.idl
+        https://bugs.webkit.org/show_bug.cgi?id=46492
+
+        As discussed with Sam Weinig on IRC, it was decided to removed
+        nodesFromRect() from the Document.idl, and that way, not exposing
+        it to Web content.
+
+        Reason: there is no plan to make it standard at the moment, and at the
+        very least, the method should had been originally added with the "webkit"
+        prefix, which was not the case.
+
+        * dom/Document.idl:
+
 2010-09-26  Renata Hodovan  <reni@inf.u-szeged.hu>
 
         Reviewed by Dirk Schulze.

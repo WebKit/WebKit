@@ -186,11 +186,6 @@ module core {
         readonly attribute [ConvertNullStringTo=Undefined] DOMString defaultCharset;
         readonly attribute [ConvertNullStringTo=Undefined] DOMString readyState;
 
-
-        NodeList           nodesFromRect(in long x, in long y,
-                                         in unsigned long hPadding,
-                                         in unsigned long vPadding,
-                                         in boolean ignoreClipping);
         Element            elementFromPoint(in long x, in long y);
         Range              caretRangeFromPoint(in long x, in long y);
 
