@@ -1,5 +1,11 @@
 2010-09-26  Adam Barth  <abarth@webkit.org>
 
+        Rebaseline Qt results.
+
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+
+2010-09-26  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Dimitri Glazkov.
 
         Implement location.origin and HTMLAnchorElement.origin
