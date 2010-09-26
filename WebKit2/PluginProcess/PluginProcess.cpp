@@ -74,6 +74,7 @@ void PluginProcess::removeWebProcessConnection(WebProcessConnection* webProcessC
 
 void PluginProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
+    didReceivePluginProcessMessage(connection, messageID, arguments);
 }
 
 void PluginProcess::didClose(CoreIPC::Connection*)

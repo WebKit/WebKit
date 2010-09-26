@@ -56,6 +56,7 @@ private:
     virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID);
 
     // Message handlers.
+    void didReceivePluginProcessMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     void initialize(const String& pluginPath);
     void createWebProcessConnection();
     

@@ -46,9 +46,14 @@ class WebProcessProxy;
 class PluginProcessProxy : CoreIPC::Connection::Client, ProcessLauncher::Client {
 public:
     static PassOwnPtr<PluginProcessProxy> create(PluginProcessManager*, const PluginInfoStore::Plugin&);
+    ~PluginProcessProxy();
 
     const PluginInfoStore::Plugin& pluginInfo() const { return m_pluginInfo; }
 
+    // Asks the plug-in process to create a new connection to a web process. The connection identifier will be 
+    // encoded in the given argument encoder and sent back to the connection of the given web process.
+    void createWebProcessConnection(WebProcessProxy*, CoreIPC::ArgumentEncoder* reply);
+    
 private:
     PluginProcessProxy(PluginProcessManager*, const PluginInfoStore::Plugin&);
 
@@ -75,6 +80,13 @@ private:
 
     // The process launcher for the plug-in host process.
     RefPtr<ProcessLauncher> m_processLauncher;
+
+    Deque<std::pair<RefPtr<WebProcessProxy>, CoreIPC::ArgumentEncoder*> > m_pendingConnectionReplies;
+
+    // If createPluginConnection is called while the process is still launching we'll keep count of it and send a bunch of requests
+    // when the process finishes launching.
+    unsigned m_numPendingConnectionRequests;
+   
 };
 
 } // namespace WebKit

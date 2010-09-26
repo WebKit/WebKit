@@ -50,6 +50,7 @@
 		1A043B4D124D5E3600FFBFB5 /* PluginProcessProxy.messages.in in Resources */ = {isa = PBXBuildFile; fileRef = 1A043B4C124D5E3600FFBFB5 /* PluginProcessProxy.messages.in */; };
 		1A043B5D124D5E9D00FFBFB5 /* PluginProcessProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A043B5B124D5E9D00FFBFB5 /* PluginProcessProxyMessageReceiver.cpp */; };
 		1A043B5E124D5E9D00FFBFB5 /* PluginProcessProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A043B5C124D5E9D00FFBFB5 /* PluginProcessProxyMessages.h */; };
+		1A043CEB124FE38F00FFBFB5 /* PluginProcessMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0EC6BD124BBD9B007EF4A5 /* PluginProcessMessageReceiver.cpp */; };
 		1A0EC603124A9F2C007EF4A5 /* PluginProcessManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0EC601124A9F2C007EF4A5 /* PluginProcessManager.h */; };
 		1A0EC604124A9F2C007EF4A5 /* PluginProcessManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0EC602124A9F2C007EF4A5 /* PluginProcessManager.cpp */; };
 		1A0EC6C0124BBD9B007EF4A5 /* PluginProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0EC6BE124BBD9B007EF4A5 /* PluginProcessMessages.h */; };
@@ -1872,6 +1873,7 @@
 			isa = PBXProject;
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "WebKit2" */;
 			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -2104,6 +2106,7 @@
 				1A043A0A124D11A900FFBFB5 /* WebProcessConnection.cpp in Sources */,
 				C06C6095124C144B0001682F /* WebPageCreationParameters.cpp in Sources */,
 				1A043B5D124D5E9D00FFBFB5 /* PluginProcessProxyMessageReceiver.cpp in Sources */,
+				1A043CEB124FE38F00FFBFB5 /* PluginProcessMessageReceiver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

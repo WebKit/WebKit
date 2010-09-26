@@ -46,6 +46,28 @@ WebProcessConnection::WebProcessConnection(CoreIPC::Connection::Identifier conne
     m_connection->open();
 }
 
+void WebProcessConnection::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+{
+    // FIXME: Implement.
+}
+
+CoreIPC::SyncReplyMode WebProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
+{
+    // FIXME: Implement.
+    return CoreIPC::AutomaticReply;
+}
+
+void WebProcessConnection::didClose(CoreIPC::Connection*)
+{
+    // FIXME: Implement.
+}
+
+void WebProcessConnection::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID)
+{
+    // FIXME: Implement.
+}
+
+
 } // namespace WebKit
 
 #endif // ENABLE(PLUGIN_PROCESS)

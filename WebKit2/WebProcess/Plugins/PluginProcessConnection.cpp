@@ -23,5 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if ENABLE(PLUGIN_PROCESS)
+
 #include "PluginProcessConnection.h"
 
+#include "WebProcess.h"
+
+namespace WebKit {
+
+PluginProcessConnection::PluginProcessConnection(PluginProcessConnectionManager* pluginProcessConnectionManager, const String& pluginPath, CoreIPC::Connection::Identifier connectionIdentifier)
+    : m_pluginProcessConnectionManager(pluginProcessConnectionManager)
+    , m_pluginPath(pluginPath)
+{
+    m_connection = CoreIPC::Connection::createClientConnection(connectionIdentifier, this, WebProcess::shared().runLoop());
+    m_connection->open();
+}
+
+PluginProcessConnection::~PluginProcessConnection()
+{
+}
+
+void PluginProcessConnection::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+{
+    // FIXME: Implement.
+}
+
+void PluginProcessConnection::didClose(CoreIPC::Connection*)
+{
+    // FIXME: Implement.
+}
+
+void PluginProcessConnection::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID)
+{
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(PLUGIN_PROCESS)

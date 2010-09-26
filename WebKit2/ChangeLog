@@ -2,6 +2,65 @@
 
         Reviewed by Sam Weinig.
 
+        Establish a connection between the plug-in process and the web process
+        https://bugs.webkit.org/show_bug.cgi?id=46583
+
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::didReceiveMessage):
+        Call the auto-generated didReceivePluginProcessMessage.
+
+        * PluginProcess/PluginProcess.h:
+        Add didReceivePluginProcessMessage declaration.
+
+        * PluginProcess/PluginProcess.messages.in:
+        Add new "CreateWebProcessConnection" message.
+
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::didReceiveMessage):
+        (WebKit::WebProcessConnection::didReceiveSyncMessage):
+        (WebKit::WebProcessConnection::didClose):
+        (WebKit::WebProcessConnection::didReceiveInvalidMessage):
+        Add stubbed out member functions.
+
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        (WebKit::PluginProcessManager::getPluginProcessConnection):
+        Ask the plug-in process proxy to create a connection.
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::createWebProcessConnection):
+        Add the WebProcessProxy and the reply encoder to the queue of pending replies.
+        If the process is still launching, keep track of how many pending requests we have, otherwise
+        just send the request.
+
+        (WebKit::PluginProcessProxy::didReceiveMessage):
+        Call the auto-generated didReceivePluginProcessMessage.
+
+        (WebKit::PluginProcessProxy::didFinishLaunching):
+        Send all pending connection requests.
+
+        (WebKit::PluginProcessProxy::didCreateWebProcessConnection):
+        Get the first pending reply and send it with the mach port.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Actually compile PluginProcessMessageReceiver.
+
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        (WebKit::PluginProcessConnection::PluginProcessConnection):
+        Create a CoreIPC connection.
+
+        (WebKit::PluginProcessConnection::didReceiveMessage):
+        (WebKit::PluginProcessConnection::didClose):
+        (WebKit::PluginProcessConnection::didReceiveInvalidMessage):
+        Add stubbed out member functions.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+        Ask the plug-in process connection manager for a connection.
+
+2010-09-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Generated message handlers should include argument coder headers for some types
         https://bugs.webkit.org/show_bug.cgi?id=46582
 

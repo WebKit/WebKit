@@ -30,6 +30,7 @@
 #include "InjectedBundle.h"
 #include "MessageID.h"
 #include "NetscapePlugin.h"
+#include "PluginProcessConnectionManager.h"
 #include "PluginView.h"
 #include "WebBackForwardControllerClient.h"
 #include "WebBackForwardListProxy.h"
@@ -192,15 +193,12 @@ PassRefPtr<Plugin> WebPage::createPlugin(const Plugin::Parameters& parameters)
         return 0;
 
 #if ENABLE(PLUGIN_PROCESS)
-    // FIXME: This is currently Mac specific.
-    CoreIPC::MachPort connectionMachPort;
+    PluginProcessConnection* pluginProcessConnection = PluginProcessConnectionManager::shared().getPluginProcessConnection(pluginPath);
 
-    if (!WebProcess::shared().connection()->sendSync(WebProcessProxyMessage::GetPluginProcessConnection, 0,
-                                                     CoreIPC::In(pluginPath),
-                                                     CoreIPC::Out(connectionMachPort),
-                                                     CoreIPC::Connection::NoTimeout))
+    if (!pluginProcessConnection)
         return 0;
 
+    // FIXME: Create a wrapper plug-in.
     return 0;
 #else
     RefPtr<NetscapePluginModule> pluginModule = NetscapePluginModule::getOrCreate(pluginPath);
