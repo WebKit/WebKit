@@ -1690,8 +1690,10 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
     // Map the <canvas> font into the text style. If the font uses keywords like larger/smaller, these will work
     // relative to the canvas.
     RefPtr<RenderStyle> newStyle = RenderStyle::create();
-    if (RenderStyle* computedStyle = canvas()->computedStyle())
+    if (RenderStyle* computedStyle = canvas()->computedStyle()) {
         newStyle->setFontDescription(computedStyle->fontDescription());
+        newStyle->font().update(newStyle->font().fontSelector());
+    }
 
     // Now map the font property into the style.
     CSSStyleSelector* styleSelector = canvas()->styleSelector();
