@@ -82,6 +82,8 @@ public:
     String search() const;
     void setSearch(const String&);
 
+    String origin() const;
+
     String text() const;
 
     String toString() const;

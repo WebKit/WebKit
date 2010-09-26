@@ -58,6 +58,8 @@ module window {
                  attribute [CustomSetter] DOMString pathname;
                  attribute [CustomSetter] DOMString search;
                  attribute [CustomSetter] DOMString hash;
+
+                 readonly attribute DOMString origin;
 #endif
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT

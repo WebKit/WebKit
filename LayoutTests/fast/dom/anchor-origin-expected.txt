@@ -1,0 +1,13 @@
+Link
+Link
+Link
+Link
+Link
+Link
+http://example.com/foo/bar => http://example.com
+HTTP://example.com/foo/bar => http://example.com
+https://example.com/ttt?ggg => https://example.com
+ftp://example.com/ttt?ggg => ftp://example.com
+file:///home/abarth => file://
+data:text/html,%3Cb%3Efoo%3C/b%3E => null
+

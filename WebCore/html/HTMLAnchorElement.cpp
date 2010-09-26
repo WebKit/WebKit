@@ -442,6 +442,12 @@ String HTMLAnchorElement::search() const
     return query.isEmpty() ? "" : "?" + query;
 }
 
+String HTMLAnchorElement::origin() const
+{
+    RefPtr<SecurityOrigin> origin = SecurityOrigin::create(href());
+    return origin->toString();
+}
+
 void HTMLAnchorElement::setSearch(const String& value)
 {
     KURL url = href();

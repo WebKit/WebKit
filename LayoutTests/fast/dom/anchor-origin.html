@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var cases = [
+    "http://example.com/foo/bar",
+    "HTTP://example.com/foo/bar",
+    "https://example.com/ttt?ggg",
+    "ftp://example.com/ttt?ggg",
+    "file:///home/abarth",
+    "data:text/html,<b>foo</b>"
+];
+
+for (var i = 0; i < cases.length; ++i)
+    document.write('<a href="' + cases[i] + '">Link</a><br>');
+
+var elmts = document.getElementsByTagName('a');
+for (var i = 0; i < elmts.length; ++i)
+    document.write(elmts[i].href + ' => ' + elmts[i].origin + '<br>');
+</script>
+</body>
+</html>

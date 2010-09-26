@@ -81,7 +81,7 @@ PASS DOMWindow from inner
 PASS DOMWindowPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.__proto__
 PASS DocumentPrototype from inner.document.forms.testForm.0.ownerDocument.__proto__.__proto__
 PASS ElementPrototype from inner.document.forms.testForm.0.__proto__.__proto__.__proto__
-FAIL Function from inner.document.location.pathname.constructor
+FAIL Function from inner.document.location.protocol.constructor
 PASS HTMLAnchorElement from inner.document.forms.testForm.0.parentNode.firstElementChild
 PASS HTMLAnchorElementConstructor from inner.document.forms.testForm.0.parentNode.firstElementChild.constructor
 PASS HTMLAnchorElementPrototype from inner.document.forms.testForm.0.parentNode.firstElementChild.__proto__
@@ -189,7 +189,7 @@ PASS ScreenPrototype from inner.document.forms.testForm.0.ownerDocument.defaultV
 PASS Storage from inner.document.forms.testForm.0.ownerDocument.defaultView.localStorage
 PASS StorageConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.localStorage.constructor
 PASS StoragePrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.localStorage.__proto__
-FAIL String from inner.document.location.pathname
+FAIL String from inner.document.location.protocol
 PASS StyleMedia from inner.document.forms.testForm.0.ownerDocument.defaultView.styleMedia
 PASS StyleMediaConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.styleMedia.constructor
 PASS StyleMediaPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.styleMedia.__proto__

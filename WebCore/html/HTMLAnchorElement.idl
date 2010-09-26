@@ -49,6 +49,8 @@ module html {
         attribute [ConvertNullToNullString] DOMString port;
         attribute [ConvertNullToNullString] DOMString protocol;
         attribute [ConvertNullToNullString] DOMString search;
+
+        readonly attribute [ConvertNullToNullString] DOMString origin;
 #endif
 
         readonly attribute DOMString text;

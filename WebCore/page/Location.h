@@ -55,6 +55,7 @@ namespace WebCore {
         String pathname() const;
         String search() const;
         String hash() const;
+        String origin() const;
 
         String toString() const;
 

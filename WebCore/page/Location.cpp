@@ -120,6 +120,15 @@ String Location::search() const
     return url.query().isEmpty() ? "" : "?" + url.query();
 }
 
+String Location::origin() const
+{
+    if (!m_frame)
+        return String();
+
+    RefPtr<SecurityOrigin> origin = SecurityOrigin::create(url());
+    return origin->toString();
+}
+
 String Location::hash() const
 {
     if (!m_frame)

@@ -1,3 +1,30 @@
+2010-09-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Implement location.origin and HTMLAnchorElement.origin
+        https://bugs.webkit.org/show_bug.cgi?id=46558
+
+        These attributes are part of my proposed URL API:
+        https://docs.google.com/document/edit?id=1r_VTFKApVOaNIkocrg0z-t7lZgzisTuGTXkdzAk4gLU&hl=en
+
+        Hixie thought we should implement as much of this API as makes sense on
+        Location and HTMLAnchorElement as well.  I'm starting with the origin
+        attribute, because that seems like the biggest bang for the buck.
+
+        Tests: fast/dom/anchor-origin.html
+               http/tests/misc/location-origin.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::origin):
+        * html/HTMLAnchorElement.h:
+        * html/HTMLAnchorElement.idl:
+        * page/Location.cpp:
+        (WebCore::Location::origin):
+        * page/Location.h:
+        * page/Location.idl:
+
 2010-09-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r68343.

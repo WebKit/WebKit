@@ -9,6 +9,7 @@ PASS location.hash == "LEFTOVER" is false
 PASS location.host == "LEFTOVER" is false
 PASS location.hostname == "LEFTOVER" is false
 PASS location.href == "LEFTOVER" is false
+PASS location.origin == "LEFTOVER" is false
 PASS location.pathname == "LEFTOVER" is false
 PASS location.port == "LEFTOVER" is false
 PASS location.protocol == "LEFTOVER" is false

@@ -1,3 +1,17 @@
+2010-09-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Implement location.origin and HTMLAnchorElement.origin
+        https://bugs.webkit.org/show_bug.cgi?id=46558
+
+        Test the origin attribute of Location and HTMLAnchorElement.
+
+        * fast/dom/anchor-origin-expected.txt: Added.
+        * fast/dom/anchor-origin.html: Added.
+        * http/tests/misc/location-origin-expected.txt: Added.
+        * http/tests/misc/location-origin.html: Added.
+
 2010-09-26  Mark Hahnenberg  <mhahnenb@gmail.com>
 
         Reviewed by Oliver Hunt.
