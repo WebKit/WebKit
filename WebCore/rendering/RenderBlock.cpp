@@ -1659,9 +1659,9 @@ void RenderBlock::determineHorizontalPosition(RenderBox* child)
                 // The object is shifting right. The object might be centered, so we need to
                 // recalculate our horizontal margins. Note that the containing block content
                 // width computation will take into account the delta between |leftOff| and |xPos|
-                // so that we can just pass the content width in directly to the |computeInlineDirectionMargins|
+                // so that we can just pass the content width in directly to the |computeMarginsInContainingBlockInlineDirection|
                 // function.
-                child->computeInlineDirectionMargins(child->style()->marginLeft(), child->style()->marginRight(), availableLogicalWidthForLine(child->y(), false));
+                child->computeMarginsInContainingBlockInlineDirection(this, availableLogicalWidthForLine(child->y(), false), child->width());
                 chPos = leftOff + child->marginLeft();
             }
         }
@@ -1682,7 +1682,7 @@ void RenderBlock::determineHorizontalPosition(RenderBox* child)
                 // width computation will take into account the delta between |rightOff| and |xPos|
                 // so that we can just pass the content width in directly to the |computeInlineDirectionMargins|
                 // function.
-                child->computeInlineDirectionMargins(child->style()->marginLeft(), child->style()->marginRight(), availableLogicalWidthForLine(child->y(), false));
+                child->computeMarginsInContainingBlockInlineDirection(this, availableLogicalWidthForLine(child->y(), false), child->width());
                 chPos = rightOff - child->marginRight() - child->width();
             }
         }

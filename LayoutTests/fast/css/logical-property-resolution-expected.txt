@@ -12,16 +12,16 @@ Borders: 3px dashed rgb(255, 255, 0), 2px dotted rgb(0, 128, 0), 1px solid rgb(0
 Width: 100px
 Height: 50px
 Block #3:
-Margins: 4px 3px 2px 1px
+Margins: 4px 0px 2px 0px
 Padding: 1px 2px 3px 4px
 Borders: 4px double rgb(128, 0, 128), 3px dashed rgb(255, 255, 0), 2px dotted rgb(0, 128, 0), 1px solid rgb(0, 0, 0)
-Width: 100px
+Width: -10px
 Height: 100px
 Block #4:
-Margins: 4px 1px 2px 3px
+Margins: 4px 0px 2px 0px
 Padding: 1px 4px 3px 2px
 Borders: 4px double rgb(128, 0, 128), 1px solid rgb(0, 0, 0), 2px dotted rgb(0, 128, 0), 3px dashed rgb(255, 255, 0)
-Width: 100px
+Width: -10px
 Height: 100px
 Block #5:
 Margins: 1px 4px 3px 2px
@@ -36,15 +36,15 @@ Borders: 3px dashed rgb(255, 255, 0), 4px double rgb(128, 0, 128), 1px solid rgb
 Width: 100px
 Height: 50px
 Block #7:
-Margins: 2px 3px 4px 1px
+Margins: 2px 0px 4px 0px
 Padding: 3px 2px 1px 4px
 Borders: 2px dotted rgb(0, 128, 0), 3px dashed rgb(255, 255, 0), 4px double rgb(128, 0, 128), 1px solid rgb(0, 0, 0)
-Width: 100px
+Width: -10px
 Height: 100px
 Block #8:
-Margins: 2px 1px 4px 3px
+Margins: 2px 0px 4px 0px
 Padding: 3px 4px 1px 2px
 Borders: 2px dotted rgb(0, 128, 0), 1px solid rgb(0, 0, 0), 4px double rgb(128, 0, 128), 3px dashed rgb(255, 255, 0)
-Width: 100px
+Width: -10px
 Height: 100px
 

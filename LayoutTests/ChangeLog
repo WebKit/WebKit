@@ -1,3 +1,16 @@
+2010-09-24  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46519
+
+        Convert the implementation of computeLogicalWidth to work with block-flow.
+
+        * fast/css/logical-property-resolution-expected.txt:
+        * platform/mac/fast/block/basic/016-expected.checksum:
+        * platform/mac/fast/block/basic/016-expected.png:
+        * platform/mac/fast/block/basic/016-expected.txt:
+
 2010-09-26  Antonio Gomes  <agomes@rim.com>
 
         Reviewed by Kenneth Rohde Christiansen.

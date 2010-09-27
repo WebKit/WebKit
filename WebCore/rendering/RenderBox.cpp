@@ -143,16 +143,66 @@ int RenderBox::marginAfter() const
 
 int RenderBox::marginStart() const
 {
-    if (style()->isVerticalBlockFlow())
-        return style()->direction() == LTR ? m_marginLeft : m_marginRight;
-    return style()->direction() == LTR ? m_marginTop : m_marginBottom;
+    return marginStartUsing(style());
+}
+
+int RenderBox::marginStartUsing(const RenderStyle* s) const
+{
+    if (s->isVerticalBlockFlow())
+        return s->direction() == LTR ? m_marginLeft : m_marginRight;
+    return s->direction() == LTR ? m_marginTop : m_marginBottom;
 }
 
 int RenderBox::marginEnd() const
 {
-    if (style()->isVerticalBlockFlow())
-        return style()->direction() == LTR ? m_marginRight : m_marginLeft;
-    return style()->direction() == LTR ? m_marginBottom : m_marginTop;
+    return marginEndUsing(style());
+}
+
+int RenderBox::marginEndUsing(const RenderStyle* s) const
+{
+    if (s->isVerticalBlockFlow())
+        return s->direction() == LTR ? m_marginRight : m_marginLeft;
+    return s->direction() == LTR ? m_marginBottom : m_marginTop;
+}
+
+void RenderBox::setMarginStart(int margin)
+{
+    setMarginStartUsing(style(), margin);
+}
+
+void RenderBox::setMarginEnd(int margin)
+{
+    setMarginEndUsing(style(), margin);
+}
+
+void RenderBox::setMarginStartUsing(const RenderStyle* s, int margin)
+{
+    if (s->isVerticalBlockFlow()) {
+        if (s->direction() == LTR)
+            m_marginLeft = margin;
+        else
+            m_marginRight = margin;
+    } else {
+        if (s->direction() == LTR)
+            m_marginTop = margin;
+        else
+            m_marginBottom = margin;
+    }
+}
+
+void RenderBox::setMarginEndUsing(const RenderStyle* s, int margin)
+{
+    if (s->isVerticalBlockFlow()) {
+        if (s->direction() == LTR)
+            m_marginRight = margin;
+        else
+            m_marginLeft = margin;
+    } else {
+        if (s->direction() == LTR)
+            m_marginBottom = margin;
+        else
+            m_marginTop = margin;
+    }
 }
 
 void RenderBox::destroy()
@@ -589,7 +639,7 @@ int RenderBox::overrideHeight() const
 
 int RenderBox::computeBorderBoxLogicalWidth(int width) const
 {
-    int bordersPlusPadding = borderAndPaddingWidth();
+    int bordersPlusPadding = borderAndPaddingLogicalWidth();
     if (style()->boxSizing() == CONTENT_BOX)
         return width + bordersPlusPadding;
     return max(width, bordersPlusPadding);
@@ -597,7 +647,7 @@ int RenderBox::computeBorderBoxLogicalWidth(int width) const
 
 int RenderBox::computeBorderBoxLogicalHeight(int height) const
 {
-    int bordersPlusPadding = borderAndPaddingHeight();
+    int bordersPlusPadding = borderAndPaddingLogicalHeight();
     if (style()->boxSizing() == CONTENT_BOX)
         return height + bordersPlusPadding;
     return max(height, bordersPlusPadding);
@@ -606,14 +656,14 @@ int RenderBox::computeBorderBoxLogicalHeight(int height) const
 int RenderBox::computeContentBoxLogicalWidth(int width) const
 {
     if (style()->boxSizing() == BORDER_BOX)
-        width -= borderAndPaddingWidth();
+        width -= borderAndPaddingLogicalWidth();
     return max(0, width);
 }
 
 int RenderBox::computeContentBoxLogicalHeight(int height) const
 {
     if (style()->boxSizing() == BORDER_BOX)
-        height -= borderAndPaddingHeight();
+        height -= borderAndPaddingLogicalHeight();
     return max(0, height);
 }
 
@@ -1043,6 +1093,24 @@ int RenderBox::containingBlockLogicalWidthForContent() const
     return cb->availableLogicalWidth();
 }
 
+int RenderBox::perpendicularContainingBlockLogicalHeight() const
+{
+    RenderBlock* cb = containingBlock();
+    RenderStyle* containingBlockStyle = cb->style();
+    Length logicalHeightLength = containingBlockStyle->logicalHeight();
+    
+    // FIXME: For now just support fixed heights.  Eventually should support percentage heights as well.
+    if (!logicalHeightLength.isFixed()) {
+        // Rather than making the child be completely unconstrained, WinIE uses the viewport width and height
+        // as a constraint.  We do that for now as well even though it's likely being unconstrained is what the spec
+        // will decide.
+        return containingBlockStyle->isVerticalBlockFlow() ? view()->frameView()->visibleHeight() : view()->frameView()->visibleWidth();
+    }
+    
+    // Use the content box logical height as specified by the style.
+    return cb->computeContentBoxLogicalHeight(logicalHeightLength.value());
+}
+
 void RenderBox::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState& transformState) const
 {
     if (repaintContainer == this)
@@ -1350,11 +1418,13 @@ void RenderBox::repaintDuringLayoutIfMoved(const IntRect& rect)
 void RenderBox::computeLogicalWidth()
 {
     if (isPositioned()) {
+        // FIXME: This calculation is not patched for block-flow yet.
+        // https://bugs.webkit.org/show_bug.cgi?id=46500
         computePositionedLogicalWidth();
         return;
     }
 
-    // If layout is limited to a subtree, the subtree root's width does not change.
+    // If layout is limited to a subtree, the subtree root's logical width does not change.
     if (node() && view()->frameView() && view()->frameView()->layoutRoot(true) == this)
         return;
 
@@ -1364,7 +1434,7 @@ void RenderBox::computeLogicalWidth()
     // https://bugs.webkit.org/show_bug.cgi?id=46418
     if (hasOverrideSize() &&  parent()->style()->boxOrient() == HORIZONTAL
             && parent()->isFlexibleBox() && parent()->isFlexingChildren()) {
-        setWidth(overrideSize());
+        setLogicalWidth(overrideSize());
         return;
     }
 
@@ -1374,70 +1444,64 @@ void RenderBox::computeLogicalWidth()
     bool stretching = (parent()->style()->boxAlign() == BSTRETCH);
     bool treatAsReplaced = shouldComputeSizeAsReplaced() && (!inVerticalBox || !stretching);
 
-    Length w = (treatAsReplaced) ? Length(computeReplacedWidth(), Fixed) : style()->width();
+    Length logicalWidthLength = (treatAsReplaced) ? Length(computeReplacedWidth(), Fixed) : style()->logicalWidth();
 
     RenderBlock* cb = containingBlock();
-    int containerWidth = max(0, containingBlockLogicalWidthForContent());
-
-    Length marginLeft = style()->marginLeft();
-    Length marginRight = style()->marginRight();
-
+    int containerLogicalWidth = max(0, containingBlockLogicalWidthForContent());
+    bool hasPerpendicularContainingBlock = cb->style()->isVerticalBlockFlow() != style()->isVerticalBlockFlow();
+    int containerWidthInInlineDirection = containerLogicalWidth;
+    if (hasPerpendicularContainingBlock)
+        containerWidthInInlineDirection = perpendicularContainingBlockLogicalHeight();
+    
     if (isInline() && !isInlineBlockOrInlineTable()) {
         // just calculate margins
-        m_marginLeft = marginLeft.calcMinValue(containerWidth);
-        m_marginRight = marginRight.calcMinValue(containerWidth);
+        setMarginStart(style()->marginStart().calcMinValue(containerLogicalWidth));
+        setMarginEnd(style()->marginEnd().calcMinValue(containerLogicalWidth));
         if (treatAsReplaced)
-            setWidth(max(w.value() + borderAndPaddingWidth(), minPreferredLogicalWidth()));
-
+            setLogicalWidth(max(logicalWidthLength.value() + borderAndPaddingLogicalWidth(), minPreferredLogicalWidth()));
         return;
     }
 
     // Width calculations
     if (treatAsReplaced)
-        setWidth(w.value() + borderAndPaddingWidth());
+        setLogicalWidth(logicalWidthLength.value() + borderAndPaddingLogicalWidth());
     else {
-        // Calculate Width
-        setWidth(computeLogicalWidthUsing(LogicalWidth, containerWidth));
+        // Calculate LogicalWidth
+        setLogicalWidth(computeLogicalWidthUsing(LogicalWidth, containerWidthInInlineDirection));
 
-        // Calculate MaxWidth
-        if (!style()->maxWidth().isUndefined()) {
-            int maxW = computeLogicalWidthUsing(MaxLogicalWidth, containerWidth);
-            if (width() > maxW) {
-                setWidth(maxW);
-                w = style()->maxWidth();
+        // Calculate MaxLogicalWidth
+        if (!style()->logicalMaxWidth().isUndefined()) {
+            int maxLogicalWidth = computeLogicalWidthUsing(MaxLogicalWidth, containerWidthInInlineDirection);
+            if (logicalWidth() > maxLogicalWidth) {
+                setLogicalWidth(maxLogicalWidth);
+                logicalWidthLength = style()->logicalMaxWidth();
             }
         }
 
-        // Calculate MinWidth
-        int minW = computeLogicalWidthUsing(MinLogicalWidth, containerWidth);
-        if (width() < minW) {
-            setWidth(minW);
-            w = style()->minWidth();
+        // Calculate MinLogicalWidth
+        int minLogicalWidth = computeLogicalWidthUsing(MinLogicalWidth, containerWidthInInlineDirection);
+        if (logicalWidth() < minLogicalWidth) {
+            setLogicalWidth(minLogicalWidth);
+            logicalWidthLength = style()->logicalMinWidth();
         }
     }
 
-    if (stretchesToMinIntrinsicWidth()) {
-        setWidth(max(width(), minPreferredLogicalWidth()));
-        w = Length(width(), Fixed);
+    // Fieldsets are currently the only objects that stretch to their minimum width.
+    if (stretchesToMinIntrinsicLogicalWidth()) {
+        setLogicalWidth(max(logicalWidth(), minPreferredLogicalWidth()));
+        logicalWidthLength = Length(logicalWidth(), Fixed);
     }
 
-    // Margin calculations
-    if (w.isAuto()) {
-        m_marginLeft = marginLeft.calcMinValue(containerWidth);
-        m_marginRight = marginRight.calcMinValue(containerWidth);
-    } else {
-        m_marginLeft = 0;
-        m_marginRight = 0;
-        computeInlineDirectionMargins(marginLeft, marginRight, containerWidth);
-    }
+    // Margin calculations.
+    if (logicalWidthLength.isAuto() || hasPerpendicularContainingBlock || isFloating() || isInline()) {
+        setMarginStart(style()->marginStart().calcMinValue(containerLogicalWidth));
+        setMarginEnd(style()->marginEnd().calcMinValue(containerLogicalWidth));
+    } else
+        computeMarginsInContainingBlockInlineDirection(cb, containerLogicalWidth, logicalWidth());
 
-    if (containerWidth && containerWidth != (width() + m_marginLeft + m_marginRight)
-            && !isFloating() && !isInline() && !cb->isFlexibleBox()) {
-        if (cb->style()->direction() == LTR)
-            m_marginRight = containerWidth - width() - m_marginLeft;
-        else
-            m_marginLeft = containerWidth - width() - m_marginRight;
-    }
+    if (!hasPerpendicularContainingBlock && containerLogicalWidth && containerLogicalWidth != (logicalWidth() + marginStart() + marginEnd())
+            && !isFloating() && !isInline() && !cb->isFlexibleBox())
+        setMarginEndUsing(cb->style(), containerLogicalWidth - logicalWidth() - marginStartUsing(cb->style()));
 }
 
 int RenderBox::computeLogicalWidthUsing(LogicalWidthType widthType, int availableLogicalWidth)
@@ -1457,7 +1521,7 @@ int RenderBox::computeLogicalWidthUsing(LogicalWidthType widthType, int availabl
         if (availableLogicalWidth)
             logicalWidthResult = availableLogicalWidth - marginStart - marginEnd;
 
-        if (sizesToIntrinsicWidth(widthType)) {
+        if (sizesToIntrinsicLogicalWidth(widthType)) {
             logicalWidthResult = max(logicalWidthResult, minPreferredLogicalWidth());
             logicalWidthResult = min(logicalWidthResult, maxPreferredLogicalWidth());
         }
@@ -1467,7 +1531,7 @@ int RenderBox::computeLogicalWidthUsing(LogicalWidthType widthType, int availabl
     return logicalWidthResult;
 }
 
-bool RenderBox::sizesToIntrinsicWidth(LogicalWidthType widthType) const
+bool RenderBox::sizesToIntrinsicLogicalWidth(LogicalWidthType widthType) const
 {
     // Marquees in WinIE are like a mixture of blocks and inline-blocks.  They size as though they're blocks,
     // but they allow text to sit on the same line as the marquee.
@@ -1510,32 +1574,40 @@ bool RenderBox::sizesToIntrinsicWidth(LogicalWidthType widthType) const
     return false;
 }
 
-void RenderBox::computeInlineDirectionMargins(const Length& marginLeft, const Length& marginRight, int containerWidth)
+void RenderBox::computeMarginsInContainingBlockInlineDirection(RenderBlock* containingBlock, int containerWidth, int childWidth)
 {
-    if (isFloating() || isInline()) {
-        // Inline blocks/tables and floats don't have their margins increased.
-        m_marginLeft = marginLeft.calcMinValue(containerWidth);
-        m_marginRight = marginRight.calcMinValue(containerWidth);
-        return;
-    }
+    Length marginStartLength = style()->marginStartUsing(containingBlock->style());
+    Length marginEndLength = style()->marginEndUsing(containingBlock->style());
+    const RenderStyle* containingBlockStyle = containingBlock->style();
 
-    if ((marginLeft.isAuto() && marginRight.isAuto() && width() < containerWidth)
-            || (!marginLeft.isAuto() && !marginRight.isAuto() && containingBlock()->style()->textAlign() == WEBKIT_CENTER)) {
-        m_marginLeft = max(0, (containerWidth - width()) / 2);
-        m_marginRight = containerWidth - width() - m_marginLeft;
-    } else if ((marginRight.isAuto() && width() < containerWidth)
-            || (!marginLeft.isAuto() && containingBlock()->style()->direction() == RTL && containingBlock()->style()->textAlign() == WEBKIT_LEFT)) {
-        m_marginLeft = marginLeft.calcValue(containerWidth);
-        m_marginRight = containerWidth - width() - m_marginLeft;
-    } else if ((marginLeft.isAuto() && width() < containerWidth)
-            || (!marginRight.isAuto() && containingBlock()->style()->direction() == LTR && containingBlock()->style()->textAlign() == WEBKIT_RIGHT)) {
-        m_marginRight = marginRight.calcValue(containerWidth);
-        m_marginLeft = containerWidth - width() - m_marginRight;
-    } else {
-        // This makes auto margins 0 if we failed a width() < containerWidth test above (css2.1, 10.3.3).
-        m_marginLeft = marginLeft.calcMinValue(containerWidth);
-        m_marginRight = marginRight.calcMinValue(containerWidth);
-    }
+    // Case One: The object is being centered in the containing block's available logical width.
+    if ((marginStartLength.isAuto() && marginEndLength.isAuto() && childWidth < containerWidth)
+        || (!marginStartLength.isAuto() && !marginEndLength.isAuto() && containingBlock->style()->textAlign() == WEBKIT_CENTER)) {
+        setMarginStartUsing(containingBlockStyle, max(0, (containerWidth - childWidth) / 2));
+        setMarginEndUsing(containingBlockStyle, containerWidth - childWidth - marginStartUsing(containingBlockStyle));
+        return;
+    } 
+    
+    // Case Two: The object is being pushed to the start of the containing block's available logical width.
+    if (marginEndLength.isAuto() && childWidth < containerWidth) {
+        setMarginStartUsing(containingBlockStyle, marginStartLength.calcValue(containerWidth));
+        setMarginEndUsing(containingBlockStyle, containerWidth - childWidth - marginStartUsing(containingBlockStyle));
+        return;
+    } 
+    
+    // Case Three: The object is being pushed to the end of the containing block's available logical width.
+    bool pushToEndFromTextAlign = !marginEndLength.isAuto() && ((containingBlockStyle->direction() == RTL && containingBlockStyle->textAlign() == WEBKIT_LEFT)
+        || (containingBlockStyle->direction() == LTR && containingBlockStyle->textAlign() == WEBKIT_RIGHT));
+    if ((marginStartLength.isAuto() && childWidth < containerWidth) || pushToEndFromTextAlign) {
+        setMarginEndUsing(containingBlockStyle, marginEndLength.calcValue(containerWidth));
+        setMarginStartUsing(containingBlockStyle, containerWidth - childWidth - marginEndUsing(containingBlockStyle));
+        return;
+    } 
+    
+    // Case Four: Either no auto margins, or our width is >= the container width (css2.1, 10.3.3).  In that case
+    // auto margins will just turn into 0.
+    setMarginStartUsing(containingBlockStyle, marginStartLength.calcMinValue(containerWidth));
+    setMarginEndUsing(containingBlockStyle, marginEndLength.calcMinValue(containerWidth));
 }
 
 void RenderBox::computeLogicalHeight()
@@ -1905,7 +1977,7 @@ void RenderBox::computePositionedLogicalWidth()
     // was also previously done for deciding what to override when you had
     // over-constrained margins?  Also note that the container block is used
     // in similar situations in other parts of the RenderBox class (see computeLogicalWidth()
-    // and computeInlineDirectionMargins()). For now we are using the parent for quirks
+    // and computeMarginsInContainingBlockInlineDirection()). For now we are using the parent for quirks
     // mode and the containing block for strict mode.
 
     // FIXME 2: Should we still deal with these the cases of 'left' or 'right' having
@@ -2038,7 +2110,7 @@ void RenderBox::computePositionedLogicalWidth()
         }
     }
 
-    if (stretchesToMinIntrinsicWidth() && width() < minPreferredLogicalWidth() - bordersPlusPadding) {
+    if (stretchesToMinIntrinsicLogicalWidth() && width() < minPreferredLogicalWidth() - bordersPlusPadding) {
         computePositionedLogicalWidthUsing(Length(minPreferredLogicalWidth() - bordersPlusPadding, Fixed), containerBlock, containerDirection,
                                      containerWidth, bordersPlusPadding,
                                      left, right, marginLeft, marginRight,

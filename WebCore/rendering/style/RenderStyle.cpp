@@ -1198,6 +1198,20 @@ Length RenderStyle::marginEnd() const
     return direction() == LTR ? marginBottom() : marginTop();
 }
     
+Length RenderStyle::marginStartUsing(const RenderStyle* otherStyle) const
+{
+    if (otherStyle->isVerticalBlockFlow())
+        return otherStyle->direction() == LTR ? marginLeft() : marginRight();
+    return otherStyle->direction() == LTR ? marginTop() : marginBottom();
+}
+
+Length RenderStyle::marginEndUsing(const RenderStyle* otherStyle) const
+{
+    if (otherStyle->isVerticalBlockFlow())
+        return otherStyle->direction() == LTR ? marginRight() : marginLeft();
+    return otherStyle->direction() == LTR ? marginBottom() : marginTop();
+}
+
 Length RenderStyle::paddingBefore() const
 {
     switch (blockFlow()) {

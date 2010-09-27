@@ -231,7 +231,7 @@ void RenderTable::computeLogicalWidth()
     // Finally, with our true width determined, compute our margins for real.
     m_marginRight = 0;
     m_marginLeft = 0;
-    computeInlineDirectionMargins(style()->marginLeft(), style()->marginRight(), availableWidth);
+    computeMarginsInContainingBlockInlineDirection(cb, availableWidth, width());
 }
 
 void RenderTable::layout()

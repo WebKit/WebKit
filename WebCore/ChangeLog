@@ -1,3 +1,80 @@
+2010-09-26  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46519
+
+        Convert the implementation of computeLogicalWidth to work with block-flow.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::determineHorizontalPosition):
+        Patched to call the new computeMarginsInContainingBlockInlineDirection.  Eventually determineHorizontalPosition will
+        be placing children along the inline direction of the containing block, and those children may have mismatched
+        block flows.  The new computeMarginsInContainingBlockInlineDirection function is designed to handle that.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::marginStart):
+        (WebCore::RenderBox::marginStartUsing):
+        (WebCore::RenderBox::marginEnd):
+        (WebCore::RenderBox::marginEndUsing):
+        (WebCore::RenderBox::setMarginStart):
+        (WebCore::RenderBox::setMarginEnd):
+        (WebCore::RenderBox::setMarginStartUsing):
+        (WebCore::RenderBox::setMarginEndUsing):
+        Helpers that allow for marginStart/End access and that also allow for marginStart/End to be computed based off another
+        element's block-flow and direction (typically the containing block).
+        
+        (WebCore::RenderBox::computeBorderBoxLogicalWidth):
+        (WebCore::RenderBox::computeBorderBoxLogicalHeight):
+        (WebCore::RenderBox::computeContentBoxLogicalWidth):
+        (WebCore::RenderBox::computeContentBoxLogicalHeight):
+        Patched to use logical border/padding widths and heights.
+
+        (WebCore::RenderBox::perpendicularContainingBlockLogicalHeight):
+        A function for returning the available logical height of a perpendicular containing block.  If a child has vertical
+        text for example and its block-flow is "lr", its available logical width is determined by the logical
+        height of the containing block when that containing block is perpendicular, e.g. "tb".
+        
+        (WebCore::RenderBox::computeLogicalWidth):
+        (WebCore::RenderBox::computeLogicalWidthUsing):
+        Patched to be block-flow-aware and to use logical width values everywhere.
+    
+        (WebCore::RenderBox::sizesToIntrinsicLogicalWidth):
+        Patched to use logical widths.
+        
+        (WebCore::RenderBox::computeMarginsInContainingBlockInlineDirection):
+        A new function that is directionally abstract and that can handle the computation of margins in the containing
+        block's inline direction.  This function is written such that a perpendicular child block flow can still be 
+        pushed to the center, left or right in the containing block's inline direction.
+        
+        (WebCore::RenderBox::computePositionedLogicalWidth):
+        This function is still largely unpatched.  A future patch will address positioend elements.
+        
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::stretchesToMinIntrinsicLogicalWidth):
+        * rendering/RenderFieldset.h:
+        (WebCore::RenderFieldset::stretchesToMinIntrinsicLogicalWidth):
+        Renames.
+        
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::computeLogicalWidth):
+        Renames, but not converted yet. Tables will happen in a future patch.
+        
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::marginStartUsing):
+        (WebCore::RenderStyle::marginEndUsing):
+        * rendering/style/RenderStyle.h:
+        Added helpers for accessing marginStart and End using another style's direction and block flow (typically will
+        be the containing block's).
+
+        fast/block/basic/016.html changed, since centering now always awards the extra pixel for odd widths to the end margin
+        instead of the right margin.  This is a progression.
+        
+        fast/css/logical-property-values.html is now reporting garbage results, which is expected now that some of the core layout
+        functions have been patched.
+
+        Horizontal block flows are untestable still, since the normal layout process incorrectly blows away any computed height values.
+
 2010-09-26  Antonio Gomes  <agomes@rim.comg>
 
         Reviewed by Kenneth Rohde Christiansen.
@@ -384,7 +461,7 @@
         (WebCore::Document::setInPageCache):
         * dom/Document.h:
         (WebCore::Document::viewportArguments):
-
+        
 2010-09-24  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.

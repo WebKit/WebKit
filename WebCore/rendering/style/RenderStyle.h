@@ -598,6 +598,8 @@ public:
     Length marginAfter() const;
     Length marginStart() const;
     Length marginEnd() const;
+    Length marginStartUsing(const RenderStyle* otherStyle) const;
+    Length marginEndUsing(const RenderStyle* otherStyle) const;
 
     LengthBox paddingBox() const { return surround->padding; }
     Length paddingTop() const { return surround->padding.top(); }
