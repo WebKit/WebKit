@@ -7,6 +7,7 @@ open OUTPUT, ">" . $ARGV[1];
 
 my @undocumented = ();
 
+print OUTPUT "<!-- Generated from Interpreter.cpp by make-bytecode-docs.pl. -->\n";
 print OUTPUT "<style>p code \{ font-size: 14px; \}</style>\n";
 
 while (<MACHINE>) {

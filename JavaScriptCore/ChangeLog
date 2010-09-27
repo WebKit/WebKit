@@ -1,3 +1,15 @@
+2010-09-21  Holger Hans Peter Freyther  <holger@moiji-mobile.com>
+
+        Reviewed by Adam Barth.
+
+        make-bytecode-docs.pl: Add a comment to the generated HTML
+        https://bugs.webkit.org/show_bug.cgi?id=46570
+
+        Generate an HTML Comment that this file was generated from
+        Interpreter.cpp with the make-bytecode-docs.pl script.
+
+        * docs/make-bytecode-docs.pl:
+
 2010-09-27  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Barth.
