@@ -1,3 +1,65 @@
+2010-09-27  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Merge AbstractTimelinePanel into ResourcesPanel.
+        https://bugs.webkit.org/show_bug.cgi?id=46612
+
+        I am refactoring resources panel and would like to merge abstract
+        one back in since it is not use anywhere else.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/AbstractTimelinePanel.js: Removed.
+        * inspector/front-end/ResourceCategory.js:
+        (WebInspector.ResourceCategory):
+        (WebInspector.ResourceCategory.prototype.toString):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel):
+        (WebInspector.ResourcesPanel.prototype.get items):
+        (WebInspector.ResourcesPanel.prototype.createInterface):
+        (WebInspector.ResourcesPanel.prototype.createFilterPanel.createFilterElement):
+        (WebInspector.ResourcesPanel.prototype.createFilterPanel):
+        (WebInspector.ResourcesPanel.prototype.showCategory):
+        (WebInspector.ResourcesPanel.prototype.hideCategory):
+        (WebInspector.ResourcesPanel.prototype.filter):
+        (WebInspector.ResourcesPanel.prototype._updateFilter):
+        (WebInspector.ResourcesPanel.prototype._updateDividersLabelBarPosition):
+        (WebInspector.ResourcesPanel.prototype.get needsRefresh):
+        (WebInspector.ResourcesPanel.prototype.set needsRefresh):
+        (WebInspector.ResourcesPanel.prototype.refreshIfNeeded):
+        (WebInspector.ResourcesPanel.prototype.resize):
+        (WebInspector.ResourcesPanel.prototype.invalidateAllItems):
+        (WebInspector.ResourcesPanel.prototype.get calculator):
+        (WebInspector.ResourcesPanel.prototype.set calculator):
+        (WebInspector.ResourcesPanel.prototype.addItem):
+        (WebInspector.ResourcesPanel.prototype.removeItem):
+        (WebInspector.ResourcesPanel.prototype.refreshItem):
+        (WebInspector.ResourcesPanel.prototype.revealAndSelectItem):
+        (WebInspector.ResourcesPanel.prototype.sortItems):
+        (WebInspector.ResourcesPanel.prototype.adjustScrollPosition):
+        (WebInspector.ResourcesPanel.prototype.addEventDivider):
+        (WebInspector.ResourcesPanel.prototype.hideEventDividers):
+        (WebInspector.ResourcesPanel.prototype.showEventDividers):
+        (WebInspector.ResourcesPanel.prototype.show):
+        (WebInspector.ResourcesPanel.prototype.refresh):
+        (WebInspector.ResourcesPanel.prototype.reset):
+        (WebInspector.ResourcesPanel.prototype.updateGraphDividersIfNeeded):
+        (WebInspector.ResourcesPanel.prototype.updateMainViewWidth):
+        (WebInspector.ResourceBaseCalculator):
+        (WebInspector.ResourceBaseCalculator.prototype.computeSummaryValues):
+        (WebInspector.ResourceBaseCalculator.prototype.computeBarGraphPercentages):
+        (WebInspector.ResourceBaseCalculator.prototype.computeBarGraphLabels):
+        (WebInspector.ResourceBaseCalculator.prototype.get boundarySpan):
+        (WebInspector.ResourceBaseCalculator.prototype.updateBoundaries):
+        (WebInspector.ResourceBaseCalculator.prototype.reset):
+        (WebInspector.ResourceBaseCalculator.prototype._value):
+        (WebInspector.ResourceBaseCalculator.prototype.formatValue):
+        (WebInspector.ResourceTimeCalculator):
+        (WebInspector.ResourceTransferSizeCalculator):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2010-09-27  Ragner Magalhaes  <ragner.magalhaes@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

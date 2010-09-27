@@ -4224,7 +4224,6 @@
         'webinspector_files': [
 
             'inspector/front-end/inspector.html',
-            'inspector/front-end/AbstractTimelinePanel.js',
             'inspector/front-end/ApplicationCacheItemsView.js',
             'inspector/front-end/AuditCategories.js',
             'inspector/front-end/AuditFormatters.js',

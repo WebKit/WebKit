@@ -1,7 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/webkit/inspector">
     <file>inspector.html</file>
-    <file>AbstractTimelinePanel.js</file>
     <file>ApplicationCacheItemsView.js</file>
     <file>AuditCategories.js</file>
     <file>AuditFormatters.js</file>
