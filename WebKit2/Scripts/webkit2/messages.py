@@ -162,28 +162,23 @@ def reply_parameter_type(type):
     return '%s&' % type
 
 
-def arguments_base_class(parameters, parameter_type_function):
-    arguments_class = 'CoreIPC::Arguments%d' % len(parameters)
+def arguments_type(parameters, parameter_type_function):
+    arguments_type = 'CoreIPC::Arguments%d' % len(parameters)
     if len(parameters):
-        arguments_class = '%s<%s>' % (arguments_class, ', '.join(parameter_type_function(parameter.type) for parameter in parameters))
-    return arguments_class
+        arguments_type = '%s<%s>' % (arguments_type, ', '.join(parameter_type_function(parameter.type) for parameter in parameters))
+    return arguments_type
 
 
 def base_class(message):
-    return arguments_base_class(message.parameters, function_parameter_type)
-
-    base_class = 'CoreIPC::Arguments%d' % len(message.parameters)
-    if len(message.parameters):
-        base_class = '%s<%s>' % (base_class, ', '.join(function_parameter_type(parameter.type) for parameter in message.parameters))
-    return base_class
+    return arguments_type(message.parameters, function_parameter_type)
 
 
-def reply_base_class(message):
-    return arguments_base_class(message.reply_parameters, reply_parameter_type)
+def reply_type(message):
+    return arguments_type(message.reply_parameters, reply_parameter_type)
 
 
-def delayed_reply_base_class(message):
-    return arguments_base_class(message.reply_parameters, function_parameter_type)
+def delayed_reply_type(message):
+    return arguments_type(message.reply_parameters, function_parameter_type)
 
 
 def message_to_struct_declaration(message):
@@ -192,6 +187,8 @@ def message_to_struct_declaration(message):
     result.append('struct %s : %s' % (message.name, base_class(message)))
     result.append(' {\n')
     result.append('    static const Kind messageID = %s;\n' % message.id())
+    if message.reply_parameters != None:
+        result.append('    typedef %s Reply;\n' % reply_type(message))
     if len(function_parameters):
         result.append('    %s%s(%s)' % (len(function_parameters) == 1 and 'explicit ' or '', message.name, ', '.join([' '.join(x) for x in function_parameters])))
         result.append('\n        : %s(%s)\n' % (base_class(message), ', '.join([x[1] for x in function_parameters])))
@@ -272,11 +269,20 @@ def handler_function(receiver, message):
     return '%s::%s' % (receiver.name, message.name[0].lower() + message.name[1:])
 
 
-def case_statement(receiver, message):
+def async_case_statement(receiver, message):
     result = []
     result.append('    case Messages::%s::%s:\n' % (receiver.name, message.id()))
     result.append('        CoreIPC::handleMessage<Messages::%s::%s>(arguments, this, &%s);\n' % (receiver.name, message.name, handler_function(receiver, message)))
     result.append('        return;\n')
+    return surround_in_condition(''.join(result), message.condition)
+
+
+def sync_case_statement(receiver, message):
+    result = []
+    result.append('    case Messages::%s::%s:\n' % (receiver.name, message.id()))
+    result.append('        CoreIPC::handleMessage<Messages::%s::%s>(arguments, reply, this, &%s);\n' % (receiver.name, message.name, handler_function(receiver, message)))
+    # FIXME: Handle delayed replies
+    result.append('        return CoreIPC::AutomaticReply;\n')
     return surround_in_condition(''.join(result), message.condition)
 
 
@@ -345,13 +351,37 @@ def generate_message_handler(file):
 
     result.append('namespace WebKit {\n\n')
 
-    result.append('void %s::didReceive%sMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)\n' % (receiver.name, receiver.name))
-    result.append('{\n')
-    result.append('    switch (messageID.get<Messages::%s::Kind>()) {\n' % receiver.name)
-    result += [case_statement(receiver, message) for message in receiver.messages]
-    result.append('    }\n\n')
-    result.append('    ASSERT_NOT_REACHED();\n')
-    result.append('}\n')
+    async_messages = []
+    sync_messages = []
+    for message in receiver.messages:
+        if message.reply_parameters is not None:
+            sync_messages.append(message)
+        else:
+            async_messages.append(message)
+
+    if async_messages:
+        result.append('void %s::didReceive%sMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)\n' % (receiver.name, receiver.name))
+        result.append('{\n')
+        result.append('    switch (messageID.get<Messages::%s::Kind>()) {\n' % receiver.name)
+        result += [async_case_statement(receiver, message) for message in async_messages]
+        result.append('    default:\n')
+        result.append('        break;\n')
+        result.append('    }\n\n')
+        result.append('    ASSERT_NOT_REACHED();\n')
+        result.append('}\n')
+
+    if sync_messages:
+        result.append('\n')
+        result.append('CoreIPC::SyncReplyMode %s::didReceiveSync%sMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)\n' % (receiver.name, receiver.name))
+        result.append('{\n')
+        result.append('    switch (messageID.get<Messages::%s::Kind>()) {\n' % receiver.name)
+        result += [sync_case_statement(receiver, message) for message in sync_messages]
+        result.append('    default:\n')
+        result.append('        break;\n')
+        result.append('    }\n\n')
+        result.append('    ASSERT_NOT_REACHED();\n')
+        result.append('    return CoreIPC::AutomaticReply;\n')
+        result.append('}\n')
 
     result.append('\n} // namespace WebKit\n')
 

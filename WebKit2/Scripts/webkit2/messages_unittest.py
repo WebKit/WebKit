@@ -310,6 +310,7 @@ struct SendInts : CoreIPC::Arguments1<const Vector<uint64_t>&> {
 
 struct RunJavaScriptAlert : CoreIPC::Arguments2<uint64_t, const WTF::String&> {
     static const Kind messageID = RunJavaScriptAlertID;
+    typedef CoreIPC::Arguments0 Reply;
     RunJavaScriptAlert(uint64_t frameID, const WTF::String& message)
         : CoreIPC::Arguments2<uint64_t, const WTF::String&>(frameID, message)
     {
@@ -318,6 +319,7 @@ struct RunJavaScriptAlert : CoreIPC::Arguments2<uint64_t, const WTF::String&> {
 
 struct GetPlugins : CoreIPC::Arguments1<bool> {
     static const Kind messageID = GetPluginsID;
+    typedef CoreIPC::Arguments1<Vector<WebCore::PluginInfo>&> Reply;
     explicit GetPlugins(bool refresh)
         : CoreIPC::Arguments1<bool>(refresh)
     {
@@ -326,6 +328,7 @@ struct GetPlugins : CoreIPC::Arguments1<bool> {
 
 struct GetPluginProcessConnection : CoreIPC::Arguments1<const WTF::String&> {
     static const Kind messageID = GetPluginProcessConnectionID;
+    typedef CoreIPC::Arguments1<CoreIPC::Connection::Handle&> Reply;
     explicit GetPluginProcessConnection(const WTF::String& pluginPath)
         : CoreIPC::Arguments1<const WTF::String&>(pluginPath)
     {
@@ -417,21 +420,34 @@ void WebPage::didReceiveWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageID 
     case Messages::WebPage::SendIntsID:
         CoreIPC::handleMessage<Messages::WebPage::SendInts>(arguments, this, &WebPage::sendInts);
         return;
-    case Messages::WebPage::RunJavaScriptAlertID:
-        CoreIPC::handleMessage<Messages::WebPage::RunJavaScriptAlert>(arguments, this, &WebPage::runJavaScriptAlert);
-        return;
-    case Messages::WebPage::GetPluginsID:
-        CoreIPC::handleMessage<Messages::WebPage::GetPlugins>(arguments, this, &WebPage::getPlugins);
-        return;
-    case Messages::WebPage::GetPluginProcessConnectionID:
-        CoreIPC::handleMessage<Messages::WebPage::GetPluginProcessConnection>(arguments, this, &WebPage::getPluginProcessConnection);
-        return;
     case Messages::WebPage::DidCreateWebProcessConnectionID:
         CoreIPC::handleMessage<Messages::WebPage::DidCreateWebProcessConnection>(arguments, this, &WebPage::didCreateWebProcessConnection);
         return;
+    default:
+        break;
     }
 
     ASSERT_NOT_REACHED();
+}
+
+CoreIPC::SyncReplyMode WebPage::didReceiveSyncWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
+{
+    switch (messageID.get<Messages::WebPage::Kind>()) {
+    case Messages::WebPage::RunJavaScriptAlertID:
+        CoreIPC::handleMessage<Messages::WebPage::RunJavaScriptAlert>(arguments, reply, this, &WebPage::runJavaScriptAlert);
+        return CoreIPC::AutomaticReply;
+    case Messages::WebPage::GetPluginsID:
+        CoreIPC::handleMessage<Messages::WebPage::GetPlugins>(arguments, reply, this, &WebPage::getPlugins);
+        return CoreIPC::AutomaticReply;
+    case Messages::WebPage::GetPluginProcessConnectionID:
+        CoreIPC::handleMessage<Messages::WebPage::GetPluginProcessConnection>(arguments, reply, this, &WebPage::getPluginProcessConnection);
+        return CoreIPC::AutomaticReply;
+    default:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return CoreIPC::AutomaticReply;
 }
 
 } // namespace WebKit
