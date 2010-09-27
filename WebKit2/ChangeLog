@@ -1,5 +1,11 @@
 2010-09-26  Sam Weinig  <sam@webkit.org>
 
+        Attempt to fix Qt build.
+
+        * WebKit2.pro:
+
+2010-09-26  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Move shared WebKit2 API (used by both bundle and main API) to WebKit2/Shared/API

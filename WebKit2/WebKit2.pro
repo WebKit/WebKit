@@ -106,6 +106,7 @@ INCLUDEPATH = \
     Platform \
     Platform/CoreIPC \
     Shared \
+    Shared/API/c \
     Shared/CoreIPCSupport \
     Shared/qt \
     UIProcess \
