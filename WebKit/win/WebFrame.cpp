@@ -89,7 +89,6 @@
 #include <WebCore/PluginView.h>
 #include <WebCore/PrintContext.h>
 #include <WebCore/ResourceHandle.h>
-#include <WebCore/ResourceHandleWin.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/RenderTreeAsText.h>
