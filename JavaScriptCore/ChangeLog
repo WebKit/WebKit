@@ -1,3 +1,13 @@
+2010-09-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Try to fix Windows build.
+
+        * runtime/JSCell.h:
+        (JSC::MSVCBugWorkaround::MSVCBugWorkaround):
+        (JSC::MSVCBugWorkaround::~MSVCBugWorkaround):
+
 2010-09-27  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Darin Adler.
