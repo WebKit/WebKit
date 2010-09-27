@@ -1,311 +1,308 @@
-layer at (0,0) size 888x2015
+layer at (0,0) size 888x1908
   RenderView at (0,0) size 781x581
-layer at (0,0) size 888x2015
-  RenderBlock {HTML} at (0,0) size 781x2015
-    RenderBody {BODY} at (8,8) size 765x1999 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 765x20
-        RenderText {#text} at (0,0) size 355x20
-          text run at (0,0) width 355: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,36) size 765x240
-        RenderText {#text} at (0,0) size 880x239
+layer at (0,0) size 888x1908
+  RenderBlock {HTML} at (0,0) size 781x1908
+    RenderBody {BODY} at (8,8) size 765x1892 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 765x19
+        RenderText {#text} at (0,0) size 337x19
+          text run at (0,0) width 337: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,35) size 765x225
+        RenderText {#text} at (0,0) size 880x225
           text run at (0,0) width 672: ".one {background-image: url(../resources/oransqr.gif); background-repeat: repeat-y;}"
           text run at (672,0) width 0: " "
-          text run at (0,16) width 672: ".two {background-image: url(../resources/oransqr.gif); background-repeat: repeat-x;}"
-          text run at (672,16) width 0: " "
-          text run at (0,32) width 696: ".three {background-image: url(../resources/oransqr.gif); background-repeat: no-repeat;}"
-          text run at (696,32) width 0: " "
-          text run at (0,48) width 880: ".four {background-image: url(../resources/bg.gif); background-position: 50% 50%; background-repeat: repeat-y;}"
-          text run at (880,48) width 0: " "
-          text run at (0,64) width 704: ".five {background-image: url(../resources/crosshair2.gif); background-position: 50% 50%;"
-          text run at (704,64) width 0: " "
-          text run at (0,80) width 240: "       background-color: red;}"
-          text run at (240,80) width 0: " "
-          text run at (0,96) width 720: ".six {background-image: url(../resources/crosshair2.gif); background-position: center top;"
-          text run at (720,96) width 0: " "
-          text run at (0,112) width 232: "      background-color: red;}"
-          text run at (232,112) width 0: " "
-          text run at (0,128) width 720: ".seven {background-image: url(../resources/crosshair2.gif); background-position: top left;"
-          text run at (720,128) width 0: " "
-          text run at (0,144) width 248: "        background-color: red;}"
-          text run at (248,144) width 0: " "
-          text run at (0,160) width 752: ".eight {background-image: url(../resources/crosshair2.gif); background-position: bottom right;"
-          text run at (752,160) width 0: " "
-          text run at (0,176) width 248: "        background-color: red;}"
-          text run at (248,176) width 0: " "
-          text run at (0,192) width 704: ".nine {background-image: url(../resources/crosshair2.gif); background-position: 50% 50%;"
-          text run at (704,192) width 0: " "
-          text run at (0,208) width 240: "       background-color: red;}"
-          text run at (240,208) width 0: " "
-          text run at (0,224) width 0: " "
-      RenderBlock {HR} at (0,289) size 765x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,307) size 765x60
-        RenderText {#text} at (0,0) size 762x40
-          text run at (0,0) width 762: "This sentence should have an orange stripe repeated in the \"y\" direction, starting at the upper left corner (since the default"
-          text run at (0,20) width 22: "for "
+          text run at (0,15) width 672: ".two {background-image: url(../resources/oransqr.gif); background-repeat: repeat-x;}"
+          text run at (672,15) width 0: " "
+          text run at (0,30) width 696: ".three {background-image: url(../resources/oransqr.gif); background-repeat: no-repeat;}"
+          text run at (696,30) width 0: " "
+          text run at (0,45) width 880: ".four {background-image: url(../resources/bg.gif); background-position: 50% 50%; background-repeat: repeat-y;}"
+          text run at (880,45) width 0: " "
+          text run at (0,60) width 704: ".five {background-image: url(../resources/crosshair2.gif); background-position: 50% 50%;"
+          text run at (704,60) width 0: " "
+          text run at (0,75) width 240: "       background-color: red;}"
+          text run at (240,75) width 0: " "
+          text run at (0,90) width 720: ".six {background-image: url(../resources/crosshair2.gif); background-position: center top;"
+          text run at (720,90) width 0: " "
+          text run at (0,105) width 232: "      background-color: red;}"
+          text run at (232,105) width 0: " "
+          text run at (0,120) width 720: ".seven {background-image: url(../resources/crosshair2.gif); background-position: top left;"
+          text run at (720,120) width 0: " "
+          text run at (0,135) width 248: "        background-color: red;}"
+          text run at (248,135) width 0: " "
+          text run at (0,150) width 752: ".eight {background-image: url(../resources/crosshair2.gif); background-position: bottom right;"
+          text run at (752,150) width 0: " "
+          text run at (0,165) width 248: "        background-color: red;}"
+          text run at (248,165) width 0: " "
+          text run at (0,180) width 704: ".nine {background-image: url(../resources/crosshair2.gif); background-position: 50% 50%;"
+          text run at (704,180) width 0: " "
+          text run at (0,195) width 240: "       background-color: red;}"
+          text run at (240,195) width 0: " "
+          text run at (0,210) width 0: " "
+      RenderBlock {HR} at (0,273) size 765x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,291) size 765x57
+        RenderText {#text} at (0,0) size 744x19
+          text run at (0,0) width 744: "This sentence should have an orange stripe repeated in the \"y\" direction, starting at the upper left corner (since the default for"
         RenderInline {CODE} at (0,0) size 152x15
-          RenderText {#text} at (22,24) size 152x15
-            text run at (22,24) width 152: "background-position"
-        RenderText {#text} at (174,20) size 730x40
-          text run at (174,20) width 320: " is '0% 0%' and that property is not declared here). "
-          text run at (494,20) width 236: "This is extra text included for the sole"
-          text run at (0,40) width 260: "purpose of making the paragraph longer. "
-          text run at (260,40) width 221: "Thank you for your understanding."
-      RenderBlock {P} at (0,383) size 765x60
-        RenderText {#text} at (0,0) size 762x40
-          text run at (0,0) width 762: "This sentence should have an orange stripe repeated in the \"x\" direction, starting at the upper left corner (since the default"
-          text run at (0,20) width 22: "for "
+          RenderText {#text} at (0,23) size 152x15
+            text run at (0,23) width 152: "background-position"
+        RenderText {#text} at (152,19) size 756x38
+          text run at (152,19) width 312: " is '0% 0%' and that property is not declared here). "
+          text run at (464,19) width 292: "This is extra text included for the sole purpose of"
+          text run at (0,38) width 179: "making the paragraph longer. "
+          text run at (179,38) width 207: "Thank you for your understanding."
+      RenderBlock {P} at (0,364) size 765x57
+        RenderText {#text} at (0,0) size 744x19
+          text run at (0,0) width 744: "This sentence should have an orange stripe repeated in the \"x\" direction, starting at the upper left corner (since the default for"
         RenderInline {CODE} at (0,0) size 152x15
-          RenderText {#text} at (22,24) size 152x15
-            text run at (22,24) width 152: "background-position"
-        RenderText {#text} at (174,20) size 730x40
-          text run at (174,20) width 320: " is '0% 0%' and that property is not declared here). "
-          text run at (494,20) width 236: "This is extra text included for the sole"
-          text run at (0,40) width 260: "purpose of making the paragraph longer. "
-          text run at (260,40) width 221: "Thank you for your understanding."
-      RenderBlock {P} at (0,459) size 765x60
-        RenderText {#text} at (0,0) size 697x20
-          text run at (0,0) width 697: "This sentence should have a single orange square behind it, placed at the upper left corner (since the default for"
-        RenderInline {CODE} at (0,0) size 152x15
-          RenderText {#text} at (0,24) size 152x15
-            text run at (0,24) width 152: "background-position"
-        RenderText {#text} at (152,20) size 762x40
-          text run at (152,20) width 320: " is '0% 0%' and that property is not declared here). "
-          text run at (472,20) width 290: "This is extra text included for the sole purpose"
-          text run at (0,40) width 206: "of making the paragraph longer. "
-          text run at (206,40) width 221: "Thank you for your understanding."
-      RenderBlock {P} at (0,535) size 765x80
-        RenderText {#text} at (0,0) size 762x40
-          text run at (0,0) width 762: "This sentence should have a green-hatch stripe running vertically down the center of the paragraph, with the origin image"
-          text run at (0,20) width 216: "exactly centered in the paragraph. "
-          text run at (216,20) width 100: "This is because "
+          RenderText {#text} at (0,23) size 152x15
+            text run at (0,23) width 152: "background-position"
+        RenderText {#text} at (152,19) size 756x38
+          text run at (152,19) width 312: " is '0% 0%' and that property is not declared here). "
+          text run at (464,19) width 292: "This is extra text included for the sole purpose of"
+          text run at (0,38) width 179: "making the paragraph longer. "
+          text run at (179,38) width 207: "Thank you for your understanding."
+      RenderBlock {P} at (0,437) size 765x57
+        RenderText {#text} at (0,0) size 667x19
+          text run at (0,0) width 667: "This sentence should have a single orange square behind it, placed at the upper left corner (since the default for "
+        RenderInline {CODE} at (0,0) size 755x34
+          RenderText {#text} at (667,4) size 755x34
+            text run at (667,4) width 88: "background-"
+            text run at (0,23) width 64: "position"
+        RenderText {#text} at (64,19) size 737x38
+          text run at (64,19) width 312: " is '0% 0%' and that property is not declared here). "
+          text run at (376,19) width 361: "This is extra text included for the sole purpose of making the"
+          text run at (0,38) width 110: "paragraph longer. "
+          text run at (110,38) width 207: "Thank you for your understanding."
+      RenderBlock {P} at (0,510) size 765x76
+        RenderText {#text} at (0,0) size 764x38
+          text run at (0,0) width 764: "This sentence should have a green-hatch stripe running vertically down the center of the paragraph, with the origin image exactly"
+          text run at (0,19) width 161: "centered in the paragraph. "
+          text run at (161,19) width 95: "This is because "
         RenderInline {CODE} at (0,0) size 64x15
-          RenderText {#text} at (316,24) size 64x15
-            text run at (316,24) width 64: "repeat-y"
-        RenderText {#text} at (380,20) size 114x20
-          text run at (380,20) width 114: " specifies tiling in "
-        RenderInline {EM} at (0,0) size 28x20
-          RenderText {#text} at (494,20) size 28x20
-            text run at (494,20) width 28: "both"
-        RenderText {#text} at (522,20) size 764x40
-          text run at (522,20) width 158: " directions on the y-axis. "
-          text run at (680,20) width 84: "Note that this"
-          text run at (0,40) width 267: "test is only valid if the user agent supports "
+          RenderText {#text} at (256,23) size 64x15
+            text run at (256,23) width 64: "repeat-y"
+        RenderText {#text} at (320,19) size 104x19
+          text run at (320,19) width 104: " specifies tiling in "
+        RenderInline {EM} at (0,0) size 29x19
+          RenderText {#text} at (424,19) size 29x19
+            text run at (424,19) width 29: "both"
+        RenderText {#text} at (453,19) size 752x38
+          text run at (453,19) width 151: " directions on the y-axis. "
+          text run at (604,19) width 148: "Note that this test is only"
+          text run at (0,38) width 186: "valid if the user agent supports "
         RenderInline {CODE} at (0,0) size 152x15
-          RenderText {#text} at (267,44) size 152x15
-            text run at (267,44) width 152: "background-position"
-        RenderText {#text} at (419,40) size 33x20
-          text run at (419,40) width 33: " (see "
-        RenderInline {A} at (0,0) size 57x20 [color=#0000FF]
-          RenderText {#text} at (452,40) size 57x20
-            text run at (452,40) width 57: "test 5.3.6"
-        RenderText {#text} at (509,40) size 759x40
-          text run at (509,40) width 13: "). "
-          text run at (522,40) width 237: "I'll fill the paragraph with extra text to"
-          text run at (0,60) width 342: "make the conformance (or lack thereof) more obvious."
-      RenderBlock {P} at (0,631) size 765x100 [bgcolor=#FF0000]
-        RenderText {#text} at (0,0) size 754x20
-          text run at (0,0) width 658: "This paragraph should have a tiled background, with the origin image exactly centered in the paragraph. "
-          text run at (658,0) width 96: "This is because"
+          RenderText {#text} at (186,42) size 152x15
+            text run at (186,42) width 152: "background-position"
+        RenderText {#text} at (338,38) size 33x19
+          text run at (338,38) width 33: " (see "
+        RenderInline {A} at (0,0) size 57x19 [color=#0000FF]
+          RenderText {#text} at (371,38) size 57x19
+            text run at (371,38) width 57: "test 5.3.6"
+        RenderText {#text} at (428,38) size 723x38
+          text run at (428,38) width 13: "). "
+          text run at (441,38) width 282: "I'll fill the paragraph with extra text to make the"
+          text run at (0,57) width 270: "conformance (or lack thereof) more obvious."
+      RenderBlock {P} at (0,602) size 765x95 [bgcolor=#FF0000]
+        RenderText {#text} at (0,0) size 714x19
+          text run at (0,0) width 623: "This paragraph should have a tiled background, with the origin image exactly centered in the paragraph. "
+          text run at (623,0) width 91: "This is because"
         RenderInline {CODE} at (0,0) size 136x15
-          RenderText {#text} at (0,24) size 136x15
-            text run at (0,24) width 136: "background-repeat"
-        RenderText {#text} at (136,20) size 114x20
-          text run at (136,20) width 114: " specifies tiling in "
-        RenderInline {EM} at (0,0) size 16x20
-          RenderText {#text} at (250,20) size 16x20
-            text run at (250,20) width 16: "all"
-        RenderText {#text} at (266,20) size 750x40
-          text run at (266,20) width 361: " directions, regardless of the position of the origin image. "
-          text run at (627,20) width 123: "Note that this test is"
-          text run at (0,40) width 228: "only valid if the user agent supports "
+          RenderText {#text} at (0,23) size 136x15
+            text run at (0,23) width 136: "background-repeat"
+        RenderText {#text} at (136,19) size 104x19
+          text run at (136,19) width 104: " specifies tiling in "
+        RenderInline {EM} at (0,0) size 16x19
+          RenderText {#text} at (240,19) size 16x19
+            text run at (240,19) width 16: "all"
+        RenderText {#text} at (256,19) size 746x38
+          text run at (256,19) width 342: " directions, regardless of the position of the origin image. "
+          text run at (598,19) width 148: "Note that this test is only"
+          text run at (0,38) width 186: "valid if the user agent supports "
         RenderInline {CODE} at (0,0) size 152x15
-          RenderText {#text} at (228,44) size 152x15
-            text run at (228,44) width 152: "background-position"
-        RenderText {#text} at (380,40) size 33x20
-          text run at (380,40) width 33: " (see "
-        RenderInline {A} at (0,0) size 57x20 [color=#0000FF]
-          RenderText {#text} at (413,40) size 57x20
-            text run at (413,40) width 57: "test 5.3.6"
-        RenderText {#text} at (470,40) size 758x60
-          text run at (470,40) width 13: "). "
-          text run at (483,40) width 275: "I'll fill the paragraph with extra text to make"
-          text run at (0,60) width 308: "the conformance (or lack thereof) more obvious. "
-          text run at (308,60) width 433: "A background color is present, although if it is visible then the image"
-          text run at (0,80) width 165: "has not bee correctly tiled."
-      RenderBlock {P} at (0,747) size 765x60 [bgcolor=#FF0000]
-        RenderText {#text} at (0,0) size 764x60
-          text run at (0,0) width 764: "This sentence should have a fully tiled background which starts at its center top; that is, the background's origin should be"
-          text run at (0,20) width 277: "the exact center of the top of the paragraph. "
-          text run at (277,20) width 447: "I'll fill it with extra text to make the conformance (or lack thereof) more"
-          text run at (0,40) width 58: "obvious. "
-          text run at (58,40) width 654: "A background color is present, although if it is visible, then the image may not have been tiled correctly."
-      RenderBlock {P} at (0,823) size 765x60 [bgcolor=#FF0000]
-        RenderText {#text} at (0,0) size 753x60
-          text run at (0,0) width 488: "This sentence should have a fully tiled background which starts at its top left. "
-          text run at (488,0) width 220: "I'll fill it with extra text to make the"
-          text run at (0,20) width 285: "conformance (or lack thereof) more obvious. "
-          text run at (285,20) width 468: "A background color is present, although if it is visible, then the image may"
-          text run at (0,40) width 182: "not have been tiled correctly."
-      RenderBlock {P} at (0,899) size 765x80 [bgcolor=#FF0000]
-        RenderText {#text} at (0,0) size 760x80
-          text run at (0,0) width 760: "This sentence should have a fully tiled background which starts at its bottom right; in other words, a complete instance of"
-          text run at (0,20) width 688: "the image should be anchored in the bottom right corner, with the tiled background extending out from there. "
-          text run at (688,20) width 49: "I'll fill it"
-          text run at (0,40) width 456: "with extra text to make the conformance (or lack thereof) more obvious. "
-          text run at (456,40) width 292: "A background color is present, although if it is"
-          text run at (0,60) width 358: "visible, then the image may not have been tiled correctly."
-      RenderBlock {P} at (0,995) size 765x120 [bgcolor=#FF0000]
-        RenderText {#text} at (0,0) size 765x120
-          text run at (0,0) width 718: "This sentence should have a fully tiled background which starts at its center and is tiled in all directions; that is, the"
-          text run at (0,20) width 407: "background's origin should be the exact center of the paragraph. "
-          text run at (407,20) width 358: "I'll fill it with extra text to make the conformance (or lack"
-          text run at (0,40) width 147: "thereof) more obvious. "
-          text run at (147,40) width 442: "In fact, a lot of extra text will be necessary to make this at all obvious. "
-          text run at (589,40) width 156: "This is true because I am"
-          text run at (0,60) width 748: "not able to increase the text size without resorting to either headings or other CSS properties, neither of which I want to"
-          text run at (0,80) width 157: "use in this circumstance. "
-          text run at (157,80) width 241: "This ought to be enough text, though. "
-          text run at (398,80) width 341: "A background color is present, although if it is visible,"
-          text run at (0,100) width 309: "then the image may not have been tiled correctly."
-      RenderTable {TABLE} at (0,1131) size 765x868 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 763x866
-          RenderTableRow {TR} at (0,0) size 763x30
-            RenderTableCell {TD} at (0,0) size 763x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x22
-                RenderText {#text} at (4,4) size 163x22
-                  text run at (4,4) width 163: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,30) size 763x836
-            RenderTableCell {TD} at (0,434) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x20
+          RenderText {#text} at (186,42) size 152x15
+            text run at (186,42) width 152: "background-position"
+        RenderText {#text} at (338,38) size 33x19
+          text run at (338,38) width 33: " (see "
+        RenderInline {A} at (0,0) size 57x19 [color=#0000FF]
+          RenderText {#text} at (371,38) size 57x19
+            text run at (371,38) width 57: "test 5.3.6"
+        RenderText {#text} at (428,38) size 754x57
+          text run at (428,38) width 13: "). "
+          text run at (441,38) width 282: "I'll fill the paragraph with extra text to make the"
+          text run at (0,57) width 274: "conformance (or lack thereof) more obvious. "
+          text run at (274,57) width 480: "A background color is present, although if it is visible then the image has not bee"
+          text run at (0,76) width 86: "correctly tiled."
+      RenderBlock {P} at (0,713) size 765x57 [bgcolor=#FF0000]
+        RenderText {#text} at (0,0) size 747x57
+          text run at (0,0) width 747: "This sentence should have a fully tiled background which starts at its center top; that is, the background's origin should be the"
+          text run at (0,19) width 246: "exact center of the top of the paragraph. "
+          text run at (246,19) width 484: "I'll fill it with extra text to make the conformance (or lack thereof) more obvious. "
+          text run at (730,19) width 11: "A"
+          text run at (0,38) width 603: "background color is present, although if it is visible, then the image may not have been tiled correctly."
+      RenderBlock {P} at (0,786) size 765x57 [bgcolor=#FF0000]
+        RenderText {#text} at (0,0) size 749x57
+          text run at (0,0) width 461: "This sentence should have a fully tiled background which starts at its top left. "
+          text run at (461,0) width 288: "I'll fill it with extra text to make the conformance"
+          text run at (0,19) width 192: "(or lack thereof) more obvious. "
+          text run at (192,19) width 557: "A background color is present, although if it is visible, then the image may not have been tiled"
+          text run at (0,38) width 57: "correctly."
+      RenderBlock {P} at (0,859) size 765x76 [bgcolor=#FF0000]
+        RenderText {#text} at (0,0) size 762x76
+          text run at (0,0) width 743: "This sentence should have a fully tiled background which starts at its bottom right; in other words, a complete instance of the"
+          text run at (0,19) width 631: "image should be anchored in the bottom right corner, with the tiled background extending out from there. "
+          text run at (631,19) width 131: "I'll fill it with extra text"
+          text run at (0,38) width 349: "to make the conformance (or lack thereof) more obvious. "
+          text run at (349,38) width 411: "A background color is present, although if it is visible, then the image"
+          text run at (0,57) width 203: "may not have been tiled correctly."
+      RenderBlock {P} at (0,951) size 765x114 [bgcolor=#FF0000]
+        RenderText {#text} at (0,0) size 763x114
+          text run at (0,0) width 763: "This sentence should have a fully tiled background which starts at its center and is tiled in all directions; that is, the background's"
+          text run at (0,19) width 305: "origin should be the exact center of the paragraph. "
+          text run at (305,19) width 425: "I'll fill it with extra text to make the conformance (or lack thereof) more"
+          text run at (0,38) width 55: "obvious. "
+          text run at (55,38) width 422: "In fact, a lot of extra text will be necessary to make this at all obvious. "
+          text run at (477,38) width 270: "This is true because I am not able to increase"
+          text run at (0,57) width 742: "the text size without resorting to either headings or other CSS properties, neither of which I want to use in this circumstance."
+          text run at (0,76) width 226: "This ought to be enough text, though. "
+          text run at (226,76) width 528: "A background color is present, although if it is visible, then the image may not have been"
+          text run at (0,95) width 86: "tiled correctly."
+      RenderTable {TABLE} at (0,1081) size 765x811 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 763x809
+          RenderTableRow {TR} at (0,0) size 763x27
+            RenderTableCell {TD} at (0,0) size 763x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 159x19
+                RenderText {#text} at (4,4) size 159x19
+                  text run at (4,4) width 159: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,27) size 763x782
+            RenderTableCell {TD} at (0,404) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x19
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,30) size 751x836 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 743x60
-                RenderText {#text} at (0,0) size 715x40
-                  text run at (0,0) width 715: "This sentence should have an orange stripe repeated in the \"y\" direction, starting at the upper left corner (since the"
-                  text run at (0,20) width 69: "default for "
+            RenderTableCell {TD} at (12,27) size 751x782 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 743x57
+                RenderText {#text} at (0,0) size 723x38
+                  text run at (0,0) width 723: "This sentence should have an orange stripe repeated in the \"y\" direction, starting at the upper left corner (since the default"
+                  text run at (0,19) width 21: "for "
                 RenderInline {CODE} at (0,0) size 152x15
-                  RenderText {#text} at (69,24) size 152x15
-                    text run at (69,24) width 152: "background-position"
-                RenderText {#text} at (221,20) size 725x40
-                  text run at (221,20) width 320: " is '0% 0%' and that property is not declared here). "
-                  text run at (541,20) width 184: "This is extra text included for"
-                  text run at (0,40) width 312: "the sole purpose of making the paragraph longer. "
-                  text run at (312,40) width 221: "Thank you for your understanding."
-              RenderBlock {P} at (4,80) size 743x60
-                RenderText {#text} at (0,0) size 715x40
-                  text run at (0,0) width 715: "This sentence should have an orange stripe repeated in the \"x\" direction, starting at the upper left corner (since the"
-                  text run at (0,20) width 69: "default for "
+                  RenderText {#text} at (21,23) size 152x15
+                    text run at (21,23) width 152: "background-position"
+                RenderText {#text} at (173,19) size 708x38
+                  text run at (173,19) width 312: " is '0% 0%' and that property is not declared here). "
+                  text run at (485,19) width 223: "This is extra text included for the sole"
+                  text run at (0,38) width 248: "purpose of making the paragraph longer. "
+                  text run at (248,38) width 207: "Thank you for your understanding."
+              RenderBlock {P} at (4,77) size 743x57
+                RenderText {#text} at (0,0) size 723x38
+                  text run at (0,0) width 723: "This sentence should have an orange stripe repeated in the \"x\" direction, starting at the upper left corner (since the default"
+                  text run at (0,19) width 21: "for "
                 RenderInline {CODE} at (0,0) size 152x15
-                  RenderText {#text} at (69,24) size 152x15
-                    text run at (69,24) width 152: "background-position"
-                RenderText {#text} at (221,20) size 725x40
-                  text run at (221,20) width 320: " is '0% 0%' and that property is not declared here). "
-                  text run at (541,20) width 184: "This is extra text included for"
-                  text run at (0,40) width 312: "the sole purpose of making the paragraph longer. "
-                  text run at (312,40) width 221: "Thank you for your understanding."
-              RenderBlock {P} at (4,156) size 743x60
-                RenderText {#text} at (0,0) size 697x20
-                  text run at (0,0) width 697: "This sentence should have a single orange square behind it, placed at the upper left corner (since the default for"
+                  RenderText {#text} at (21,23) size 152x15
+                    text run at (21,23) width 152: "background-position"
+                RenderText {#text} at (173,19) size 708x38
+                  text run at (173,19) width 312: " is '0% 0%' and that property is not declared here). "
+                  text run at (485,19) width 223: "This is extra text included for the sole"
+                  text run at (0,38) width 248: "purpose of making the paragraph longer. "
+                  text run at (248,38) width 207: "Thank you for your understanding."
+              RenderBlock {P} at (4,150) size 743x57
+                RenderText {#text} at (0,0) size 663x19
+                  text run at (0,0) width 663: "This sentence should have a single orange square behind it, placed at the upper left corner (since the default for"
                 RenderInline {CODE} at (0,0) size 152x15
-                  RenderText {#text} at (0,24) size 152x15
-                    text run at (0,24) width 152: "background-position"
-                RenderText {#text} at (152,20) size 708x40
-                  text run at (152,20) width 320: " is '0% 0%' and that property is not declared here). "
-                  text run at (472,20) width 236: "This is extra text included for the sole"
-                  text run at (0,40) width 260: "purpose of making the paragraph longer. "
-                  text run at (260,40) width 221: "Thank you for your understanding."
-              RenderBlock {P} at (4,232) size 743x80
-                RenderText {#text} at (0,0) size 720x40
-                  text run at (0,0) width 720: "This sentence should have a green-hatch stripe running vertically down the center of the paragraph, with the origin"
-                  text run at (0,20) width 258: "image exactly centered in the paragraph. "
-                  text run at (258,20) width 100: "This is because "
+                  RenderText {#text} at (0,23) size 152x15
+                    text run at (0,23) width 152: "background-position"
+                RenderText {#text} at (152,19) size 740x38
+                  text run at (152,19) width 312: " is '0% 0%' and that property is not declared here). "
+                  text run at (464,19) width 276: "This is extra text included for the sole purpose"
+                  text run at (0,38) width 195: "of making the paragraph longer. "
+                  text run at (195,38) width 207: "Thank you for your understanding."
+              RenderBlock {P} at (4,223) size 743x76
+                RenderText {#text} at (0,0) size 718x38
+                  text run at (0,0) width 718: "This sentence should have a green-hatch stripe running vertically down the center of the paragraph, with the origin image"
+                  text run at (0,19) width 207: "exactly centered in the paragraph. "
+                  text run at (207,19) width 95: "This is because "
                 RenderInline {CODE} at (0,0) size 64x15
-                  RenderText {#text} at (358,24) size 64x15
-                    text run at (358,24) width 64: "repeat-y"
-                RenderText {#text} at (422,20) size 114x20
-                  text run at (422,20) width 114: " specifies tiling in "
-                RenderInline {EM} at (0,0) size 28x20
-                  RenderText {#text} at (536,20) size 28x20
-                    text run at (536,20) width 28: "both"
-                RenderText {#text} at (564,20) size 718x40
-                  text run at (564,20) width 154: " directions on the y-axis."
-                  text run at (0,40) width 355: "Note that this test is only valid if the user agent supports "
+                  RenderText {#text} at (302,23) size 64x15
+                    text run at (302,23) width 64: "repeat-y"
+                RenderText {#text} at (366,19) size 104x19
+                  text run at (366,19) width 104: " specifies tiling in "
+                RenderInline {EM} at (0,0) size 29x19
+                  RenderText {#text} at (470,19) size 29x19
+                    text run at (470,19) width 29: "both"
+                RenderText {#text} at (499,19) size 731x38
+                  text run at (499,19) width 151: " directions on the y-axis. "
+                  text run at (650,19) width 81: "Note that this"
+                  text run at (0,38) width 253: "test is only valid if the user agent supports "
                 RenderInline {CODE} at (0,0) size 152x15
-                  RenderText {#text} at (355,44) size 152x15
-                    text run at (355,44) width 152: "background-position"
-                RenderText {#text} at (507,40) size 33x20
-                  text run at (507,40) width 33: " (see "
-                RenderInline {A} at (0,0) size 57x20 [color=#0000FF]
-                  RenderText {#text} at (540,40) size 57x20
-                    text run at (540,40) width 57: "test 5.3.6"
-                RenderText {#text} at (597,40) size 737x40
-                  text run at (597,40) width 13: "). "
-                  text run at (610,40) width 127: "I'll fill the paragraph"
-                  text run at (0,60) width 452: "with extra text to make the conformance (or lack thereof) more obvious."
-              RenderBlock {P} at (4,328) size 743x100 [bgcolor=#FF0000]
-                RenderText {#text} at (0,0) size 700x40
-                  text run at (0,0) width 658: "This paragraph should have a tiled background, with the origin image exactly centered in the paragraph. "
-                  text run at (658,0) width 42: "This is"
-                  text run at (0,20) width 54: "because "
+                  RenderText {#text} at (253,42) size 152x15
+                    text run at (253,42) width 152: "background-position"
+                RenderText {#text} at (405,38) size 33x19
+                  text run at (405,38) width 33: " (see "
+                RenderInline {A} at (0,0) size 57x19 [color=#0000FF]
+                  RenderText {#text} at (438,38) size 57x19
+                    text run at (438,38) width 57: "test 5.3.6"
+                RenderText {#text} at (495,38) size 731x38
+                  text run at (495,38) width 13: "). "
+                  text run at (508,38) width 223: "I'll fill the paragraph with extra text to"
+                  text run at (0,57) width 329: "make the conformance (or lack thereof) more obvious."
+              RenderBlock {P} at (4,315) size 743x95 [bgcolor=#FF0000]
+                RenderText {#text} at (0,0) size 714x19
+                  text run at (0,0) width 623: "This paragraph should have a tiled background, with the origin image exactly centered in the paragraph. "
+                  text run at (623,0) width 91: "This is because"
                 RenderInline {CODE} at (0,0) size 136x15
-                  RenderText {#text} at (54,24) size 136x15
-                    text run at (54,24) width 136: "background-repeat"
-                RenderText {#text} at (190,20) size 114x20
-                  text run at (190,20) width 114: " specifies tiling in "
-                RenderInline {EM} at (0,0) size 16x20
-                  RenderText {#text} at (304,20) size 16x20
-                    text run at (304,20) width 16: "all"
-                RenderText {#text} at (320,20) size 739x40
-                  text run at (320,20) width 361: " directions, regardless of the position of the origin image. "
-                  text run at (681,20) width 58: "Note that"
-                  text run at (0,40) width 293: "this test is only valid if the user agent supports "
+                  RenderText {#text} at (0,23) size 136x15
+                    text run at (0,23) width 136: "background-repeat"
+                RenderText {#text} at (136,19) size 104x19
+                  text run at (136,19) width 104: " specifies tiling in "
+                RenderInline {EM} at (0,0) size 16x19
+                  RenderText {#text} at (240,19) size 16x19
+                    text run at (240,19) width 16: "all"
+                RenderText {#text} at (256,19) size 717x38
+                  text run at (256,19) width 342: " directions, regardless of the position of the origin image. "
+                  text run at (598,19) width 119: "Note that this test is"
+                  text run at (0,38) width 215: "only valid if the user agent supports "
                 RenderInline {CODE} at (0,0) size 152x15
-                  RenderText {#text} at (293,44) size 152x15
-                    text run at (293,44) width 152: "background-position"
-                RenderText {#text} at (445,40) size 33x20
-                  text run at (445,40) width 33: " (see "
-                RenderInline {A} at (0,0) size 57x20 [color=#0000FF]
-                  RenderText {#text} at (478,40) size 57x20
-                    text run at (478,40) width 57: "test 5.3.6"
-                RenderText {#text} at (535,40) size 742x60
-                  text run at (535,40) width 13: "). "
-                  text run at (548,40) width 194: "I'll fill the paragraph with extra"
-                  text run at (0,60) width 389: "text to make the conformance (or lack thereof) more obvious. "
-                  text run at (389,60) width 337: "A background color is present, although if it is visible"
-                  text run at (0,80) width 261: "then the image has not bee correctly tiled."
-              RenderBlock {P} at (4,444) size 743x80 [bgcolor=#FF0000]
-                RenderText {#text} at (0,0) size 738x80
-                  text run at (0,0) width 699: "This sentence should have a fully tiled background which starts at its center top; that is, the background's origin"
-                  text run at (0,20) width 342: "should be the exact center of the top of the paragraph. "
-                  text run at (342,20) width 358: "I'll fill it with extra text to make the conformance (or lack"
-                  text run at (0,40) width 147: "thereof) more obvious. "
-                  text run at (147,40) width 591: "A background color is present, although if it is visible, then the image may not have been tiled"
-                  text run at (0,60) width 59: "correctly."
-              RenderBlock {P} at (4,540) size 743x60 [bgcolor=#FF0000]
-                RenderText {#text} at (0,0) size 722x60
-                  text run at (0,0) width 488: "This sentence should have a fully tiled background which starts at its top left. "
-                  text run at (488,0) width 220: "I'll fill it with extra text to make the"
-                  text run at (0,20) width 285: "conformance (or lack thereof) more obvious. "
-                  text run at (285,20) width 437: "A background color is present, although if it is visible, then the image"
-                  text run at (0,40) width 213: "may not have been tiled correctly."
-              RenderBlock {P} at (4,616) size 743x80 [bgcolor=#FF0000]
-                RenderText {#text} at (0,0) size 743x80
-                  text run at (0,0) width 743: "This sentence should have a fully tiled background which starts at its bottom right; in other words, a complete instance"
-                  text run at (0,20) width 705: "of the image should be anchored in the bottom right corner, with the tiled background extending out from there. "
-                  text run at (705,20) width 37: "I'll fill"
-                  text run at (0,40) width 468: "it with extra text to make the conformance (or lack thereof) more obvious. "
-                  text run at (468,40) width 266: "A background color is present, although if"
-                  text run at (0,60) width 384: "it is visible, then the image may not have been tiled correctly."
-              RenderBlock {P} at (4,712) size 743x120 [bgcolor=#FF0000]
-                RenderText {#text} at (0,0) size 743x120
-                  text run at (0,0) width 718: "This sentence should have a fully tiled background which starts at its center and is tiled in all directions; that is, the"
-                  text run at (0,20) width 407: "background's origin should be the exact center of the paragraph. "
-                  text run at (407,20) width 328: "I'll fill it with extra text to make the conformance (or"
-                  text run at (0,40) width 177: "lack thereof) more obvious. "
-                  text run at (177,40) width 442: "In fact, a lot of extra text will be necessary to make this at all obvious. "
-                  text run at (619,40) width 124: "This is true because"
-                  text run at (0,60) width 729: "I am not able to increase the text size without resorting to either headings or other CSS properties, neither of which I"
-                  text run at (0,80) width 208: "want to use in this circumstance. "
-                  text run at (208,80) width 241: "This ought to be enough text, though. "
-                  text run at (449,80) width 292: "A background color is present, although if it is"
-                  text run at (0,100) width 358: "visible, then the image may not have been tiled correctly."
+                  RenderText {#text} at (215,42) size 152x15
+                    text run at (215,42) width 152: "background-position"
+                RenderText {#text} at (367,38) size 33x19
+                  text run at (367,38) width 33: " (see "
+                RenderInline {A} at (0,0) size 57x19 [color=#0000FF]
+                  RenderText {#text} at (400,38) size 57x19
+                    text run at (400,38) width 57: "test 5.3.6"
+                RenderText {#text} at (457,38) size 730x57
+                  text run at (457,38) width 13: "). "
+                  text run at (470,38) width 260: "I'll fill the paragraph with extra text to make"
+                  text run at (0,57) width 296: "the conformance (or lack thereof) more obvious. "
+                  text run at (296,57) width 431: "A background color is present, although if it is visible then the image has"
+                  text run at (0,76) width 135: "not bee correctly tiled."
+              RenderBlock {P} at (4,426) size 743x57 [bgcolor=#FF0000]
+                RenderText {#text} at (0,0) size 725x57
+                  text run at (0,0) width 725: "This sentence should have a fully tiled background which starts at its center top; that is, the background's origin should be"
+                  text run at (0,19) width 268: "the exact center of the top of the paragraph. "
+                  text run at (268,19) width 425: "I'll fill it with extra text to make the conformance (or lack thereof) more"
+                  text run at (0,38) width 55: "obvious. "
+                  text run at (55,38) width 618: "A background color is present, although if it is visible, then the image may not have been tiled correctly."
+              RenderBlock {P} at (4,499) size 743x57 [bgcolor=#FF0000]
+                RenderText {#text} at (0,0) size 737x57
+                  text run at (0,0) width 461: "This sentence should have a fully tiled background which starts at its top left. "
+                  text run at (461,0) width 206: "I'll fill it with extra text to make the"
+                  text run at (0,19) width 274: "conformance (or lack thereof) more obvious. "
+                  text run at (274,19) width 463: "A background color is present, although if it is visible, then the image may not"
+                  text run at (0,38) width 151: "have been tiled correctly."
+              RenderBlock {P} at (4,572) size 743x76 [bgcolor=#FF0000]
+                RenderText {#text} at (0,0) size 743x76
+                  text run at (0,0) width 743: "This sentence should have a fully tiled background which starts at its bottom right; in other words, a complete instance of the"
+                  text run at (0,19) width 631: "image should be anchored in the bottom right corner, with the tiled background extending out from there. "
+                  text run at (631,19) width 105: "I'll fill it with extra"
+                  text run at (0,38) width 375: "text to make the conformance (or lack thereof) more obvious. "
+                  text run at (375,38) width 350: "A background color is present, although if it is visible, then"
+                  text run at (0,57) width 264: "the image may not have been tiled correctly."
+              RenderBlock {P} at (4,664) size 743x114 [bgcolor=#FF0000]
+                RenderText {#text} at (0,0) size 735x114
+                  text run at (0,0) width 678: "This sentence should have a fully tiled background which starts at its center and is tiled in all directions; that is, the"
+                  text run at (0,19) width 390: "background's origin should be the exact center of the paragraph. "
+                  text run at (390,19) width 339: "I'll fill it with extra text to make the conformance (or lack"
+                  text run at (0,38) width 141: "thereof) more obvious. "
+                  text run at (141,38) width 422: "In fact, a lot of extra text will be necessary to make this at all obvious. "
+                  text run at (563,38) width 172: "This is true because I am not"
+                  text run at (0,57) width 730: "able to increase the text size without resorting to either headings or other CSS properties, neither of which I want to use in"
+                  text run at (0,76) width 110: "this circumstance. "
+                  text run at (110,76) width 226: "This ought to be enough text, though. "
+                  text run at (336,76) width 372: "A background color is present, although if it is visible, then the"
+                  text run at (0,95) width 242: "image may not have been tiled correctly."

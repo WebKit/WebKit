@@ -3,37 +3,37 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {UL} at (0,0) size 784x144
-        RenderListItem {LI} at (40,0) size 744x52
-          RenderListMarker at (-18,32) size 7x20: bullet
-          RenderText {#text} at (0,32) size 268x20
-            text run at (0,32) width 268: "Giving style statically : background-color: "
-          RenderProgress {PROGRESS} at (268,0) size 300x50 [bgcolor=#0000FF]
+      RenderBlock {UL} at (0,0) size 784x139
+        RenderListItem {LI} at (40,0) size 744x51
+          RenderListMarker at (-18,32) size 7x19: bullet
+          RenderText {#text} at (0,32) size 251x19
+            text run at (0,32) width 251: "Giving style statically : background-color: "
+          RenderProgress {PROGRESS} at (251,0) size 300x50 [bgcolor=#0000FF]
             RenderBlock {DIV} at (0,0) size 210x50 [bgcolor=#D3D3D3]
-        RenderListItem {LI} at (40,52) size 744x24
-          RenderListMarker at (-18,4) size 7x20: bullet
-          RenderText {#text} at (0,4) size 197x20
-            text run at (0,4) width 197: "Giving style statically : border: "
-          RenderProgress {PROGRESS} at (197,0) size 166x22 [bgcolor=#808080] [border: (3px solid #FF0000)]
+        RenderListItem {LI} at (40,51) size 744x23
+          RenderListMarker at (-18,4) size 7x19: bullet
+          RenderText {#text} at (0,4) size 183x19
+            text run at (0,4) width 183: "Giving style statically : border: "
+          RenderProgress {PROGRESS} at (183,0) size 166x22 [bgcolor=#808080] [border: (3px solid #FF0000)]
             RenderBlock {DIV} at (3,3) size 80x16 [bgcolor=#D3D3D3]
-        RenderListItem {LI} at (40,76) size 744x20
-          RenderListMarker at (-18,0) size 7x20: bullet
-          RenderText {#text} at (0,0) size 376x20
-            text run at (0,0) width 376: "Giving style statically, only for -webkit-progress-bar-value: "
-          RenderProgress {PROGRESS} at (376,2) size 160x16 [bgcolor=#808080]
+        RenderListItem {LI} at (40,74) size 744x19
+          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderText {#text} at (0,0) size 357x19
+            text run at (0,0) width 357: "Giving style statically, only for -webkit-progress-bar-value: "
+          RenderProgress {PROGRESS} at (357,2) size 160x16 [bgcolor=#808080]
             RenderBlock {DIV} at (0,0) size 80x16 [bgcolor=#D3D3D3]
           RenderText {#text} at (0,0) size 0x0
-        RenderListItem {LI} at (40,96) size 744x24
-          RenderListMarker at (-18,4) size 7x20: bullet
-          RenderText {#text} at (0,4) size 170x20
-            text run at (0,4) width 170: "Adding style dynamically: "
-          RenderProgress {PROGRESS} at (170,0) size 166x22 [bgcolor=#00FFFF] [border: (3px dotted #FF0000)]
+        RenderListItem {LI} at (40,93) size 744x23
+          RenderListMarker at (-18,4) size 7x19: bullet
+          RenderText {#text} at (0,4) size 156x19
+            text run at (0,4) width 156: "Adding style dynamically: "
+          RenderProgress {PROGRESS} at (156,0) size 166x22 [bgcolor=#00FFFF] [border: (3px dotted #FF0000)]
             RenderBlock {DIV} at (3,3) size 80x16 [bgcolor=#00008B]
           RenderText {#text} at (0,0) size 0x0
-        RenderListItem {LI} at (40,120) size 744x24
-          RenderListMarker at (-18,4) size 7x20: bullet
-          RenderText {#text} at (0,4) size 184x20
-            text run at (0,4) width 184: "Changing style dynamically: "
-          RenderProgress {PROGRESS} at (184,0) size 166x22 [bgcolor=#00FFFF] [border: (3px dotted #FF0000)]
+        RenderListItem {LI} at (40,116) size 744x23
+          RenderListMarker at (-18,4) size 7x19: bullet
+          RenderText {#text} at (0,4) size 168x19
+            text run at (0,4) width 168: "Changing style dynamically: "
+          RenderProgress {PROGRESS} at (168,0) size 166x22 [bgcolor=#00FFFF] [border: (3px dotted #FF0000)]
             RenderBlock {DIV} at (51,3) size 112x16 [bgcolor=#D3D3D3]
           RenderText {#text} at (0,0) size 0x0

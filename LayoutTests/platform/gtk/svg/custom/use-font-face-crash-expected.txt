@@ -1,23 +1,23 @@
-layer at (0,0) size 781x787
+layer at (0,0) size 781x778
   RenderView at (0,0) size 781x600
-layer at (0,0) size 781x787
-  RenderBlock {html} at (0,0) size 781x787
-    RenderBody {body} at (8,16) size 765x763
-      RenderBlock {parsererror} at (16,0) size 733x142 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
-        RenderBlock {h3} at (18,20) size 697x26
-          RenderText {#text} at (0,0) size 324x26
+layer at (0,0) size 781x778
+  RenderBlock {html} at (0,0) size 781x778
+    RenderBody {body} at (8,16) size 765x754
+      RenderBlock {parsererror} at (16,0) size 733x134 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+        RenderBlock {h3} at (18,20) size 697x22
+          RenderText {#text} at (0,0) size 324x22
             text run at (0,0) width 324: "This page contains the following errors:"
-        RenderBlock {div} at (18,64) size 697x14
+        RenderBlock {div} at (18,60) size 697x14
           RenderText {#text} at (0,0) size 497x14
             text run at (0,0) width 497: "error on line 1 at column 132: Extra content at the end of the document"
             text run at (497,0) width 0: " "
-        RenderBlock {h3} at (18,96) size 697x26
-          RenderText {#text} at (0,0) size 429x26
-            text run at (0,0) width 429: "Below is a rendering of the page up to the first error."
-      RenderBlock (anonymous) at (0,158) size 765x605
-        RenderSVGRoot {svg} at (8,179) size 335x20
-          RenderSVGText {text} at (0,5) size 335x20 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 335x20
-              chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 53 width 335.00: "This should not crash, but display an error document."
-          RenderSVGContainer {use} at (8,174) size 0x0
-            RenderSVGContainer {g} at (8,174) size 0x0
+        RenderBlock {h3} at (18,92) size 697x22
+          RenderText {#text} at (0,0) size 430x22
+            text run at (0,0) width 430: "Below is a rendering of the page up to the first error."
+      RenderBlock (anonymous) at (0,150) size 765x604
+        RenderSVGRoot {svg} at (8,171) size 319x19
+          RenderSVGText {text} at (0,5) size 319x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 319x19
+              chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 53 width 319.00: "This should not crash, but display an error document."
+          RenderSVGContainer {use} at (8,166) size 0x0
+            RenderSVGContainer {g} at (8,166) size 0x0

@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 782x40
-          text run at (0,0) width 782: "This tests for a bug where moving the selection to the end of the document would move it outside of an editable region if the"
-          text run at (0,20) width 219: "selection started just before a table."
-      RenderBlock {DIV} at (0,56) size 784x48
-        RenderTable {TABLE} at (0,0) size 29x28 [border: (1px solid #AAAAAA)]
-          RenderTableSection {TBODY} at (1,1) size 27x26
-            RenderTableRow {TR} at (0,2) size 27x22
-              RenderTableCell {TD} at (2,2) size 23x22 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 21x20
-                  text run at (1,1) width 21: "foo"
-        RenderBlock (anonymous) at (0,28) size 784x20
-          RenderText {#text} at (0,0) size 20x20
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 740x38
+          text run at (0,0) width 740: "This tests for a bug where moving the selection to the end of the document would move it outside of an editable region if the"
+          text run at (0,19) width 213: "selection started just before a table."
+      RenderBlock {DIV} at (0,54) size 784x46
+        RenderTable {TABLE} at (0,0) size 28x27 [border: (1px solid #AAAAAA)]
+          RenderTableSection {TBODY} at (1,1) size 26x25
+            RenderTableRow {TR} at (0,2) size 26x21
+              RenderTableCell {TD} at (2,2) size 22x21 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 20x19
+                  text run at (1,1) width 20: "foo"
+        RenderBlock (anonymous) at (0,27) size 784x19
+          RenderText {#text} at (0,0) size 20x19
             text run at (0,0) width 20: "bar"
-      RenderBlock {P} at (0,120) size 784x20
-        RenderText {#text} at (0,0) size 563x20
-          text run at (0,0) width 563: "In the above editable region, you should see 'foo' in the bordered table and 'bar' outside it."
+      RenderBlock {P} at (0,116) size 784x19
+        RenderText {#text} at (0,0) size 541x19
+          text run at (0,0) width 541: "In the above editable region, you should see 'foo' in the bordered table and 'bar' outside it."
 caret: position 3 of child 1 {#text} of child 2 {DIV} of body

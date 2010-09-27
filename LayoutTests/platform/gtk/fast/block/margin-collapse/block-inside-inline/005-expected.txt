@@ -1,107 +1,107 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x496
-  RenderBlock {HTML} at (0,0) size 800x496
-    RenderBody {BODY} at (8,16) size 784x464
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 504x20
-          text run at (0,0) width 504: "The following two columns should be pixel perfect identical with no red visible."
-      RenderTable {TABLE} at (0,36) size 78x392 [border: (3px solid #000000)]
-        RenderTableSection {TBODY} at (3,3) size 72x386
-          RenderTableRow {TR} at (0,0) size 72x386
-            RenderTableCell {TD} at (0,0) size 36x386 [bgcolor=#FFA500] [r=0 c=0 rs=1 cs=1]
-              RenderBlock (anonymous) at (0,0) size 36x0
+layer at (0,0) size 800x482
+  RenderBlock {HTML} at (0,0) size 800x482
+    RenderBody {BODY} at (8,16) size 784x450
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 471x19
+          text run at (0,0) width 471: "The following two columns should be pixel perfect identical with no red visible."
+      RenderTable {TABLE} at (0,35) size 76x380 [border: (3px solid #000000)]
+        RenderTableSection {TBODY} at (3,3) size 70x374
+          RenderTableRow {TR} at (0,0) size 70x374
+            RenderTableCell {TD} at (0,0) size 35x374 [bgcolor=#FFA500] [r=0 c=0 rs=1 cs=1]
+              RenderBlock (anonymous) at (0,0) size 35x0
                 RenderInline {SPAN} at (0,0) size 0x0
-              RenderBlock (anonymous) at (0,50) size 36x286
-              RenderBlock (anonymous) at (0,386) size 36x0
+              RenderBlock (anonymous) at (0,50) size 35x274
+              RenderBlock (anonymous) at (0,374) size 35x0
                 RenderInline {SPAN} at (0,0) size 0x0
-            RenderTableCell {TD} at (36,0) size 36x386 [bgcolor=#FFA500] [r=0 c=1 rs=1 cs=1]
-              RenderBlock {DIV} at (0,50) size 36x286 [bgcolor=#0000FF]
-                RenderBlock {DIV} at (0,0) size 36x62 [bgcolor=#FFFF00]
-                  RenderText {#text} at (0,0) size 36x62
-                    text run at (0,0) width 36: "A"
-                RenderBlock {DIV} at (0,112) size 36x62 [bgcolor=#00FF00]
-                  RenderText {#text} at (0,0) size 33x62
-                    text run at (0,0) width 33: "B"
-                RenderBlock {DIV} at (0,224) size 36x62 [bgcolor=#00FFFF]
-                  RenderText {#text} at (0,0) size 33x62
-                    text run at (0,0) width 33: "C"
-      RenderBlock {P} at (0,444) size 784x20
-        RenderText {#text} at (0,0) size 259x20
-          text run at (0,0) width 259: "This test is meaningless if you don't pass "
-        RenderInline {A} at (0,0) size 49x20 [color=#0000EE]
-          RenderText {#text} at (259,0) size 49x20
-            text run at (259,0) width 49: "test 006"
-        RenderText {#text} at (308,0) size 4x20
-          text run at (308,0) width 4: "."
-layer at (11,105) size 36x336
-  RenderBlock (relative positioned) {DIV} at (0,0) size 36x286 [bgcolor=#0000FF]
-    RenderBlock (anonymous) at (0,0) size 36x0
+            RenderTableCell {TD} at (35,0) size 35x374 [bgcolor=#FFA500] [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (0,50) size 35x274 [bgcolor=#0000FF]
+                RenderBlock {DIV} at (0,0) size 35x58 [bgcolor=#FFFF00]
+                  RenderText {#text} at (0,1) size 35x56
+                    text run at (0,1) width 35: "A"
+                RenderBlock {DIV} at (0,108) size 35x58 [bgcolor=#00FF00]
+                  RenderText {#text} at (0,1) size 33x56
+                    text run at (0,1) width 33: "B"
+                RenderBlock {DIV} at (0,216) size 35x58 [bgcolor=#00FFFF]
+                  RenderText {#text} at (0,1) size 33x56
+                    text run at (0,1) width 33: "C"
+      RenderBlock {P} at (0,431) size 784x19
+        RenderText {#text} at (0,0) size 244x19
+          text run at (0,0) width 244: "This test is meaningless if you don't pass "
+        RenderInline {A} at (0,0) size 49x19 [color=#0000EE]
+          RenderText {#text} at (244,0) size 49x19
+            text run at (244,0) width 49: "test 006"
+        RenderText {#text} at (293,0) size 4x19
+          text run at (293,0) width 4: "."
+layer at (11,104) size 35x324
+  RenderBlock (relative positioned) {DIV} at (0,0) size 35x274 [bgcolor=#0000FF]
+    RenderBlock (anonymous) at (0,0) size 35x0
       RenderInline {SPAN} at (0,0) size 0x0
-    RenderBlock (anonymous) at (0,0) size 36x62
-    RenderBlock (anonymous) at (0,112) size 36x0
-      RenderInline {SPAN} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
-      RenderInline {SPAN} at (0,0) size 0x0
-    RenderBlock (anonymous) at (0,112) size 36x0
-    RenderBlock (anonymous) at (0,112) size 36x0
+    RenderBlock (anonymous) at (0,0) size 35x58
+    RenderBlock (anonymous) at (0,108) size 35x0
       RenderInline {SPAN} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
       RenderInline {SPAN} at (0,0) size 0x0
-    RenderBlock (anonymous) at (0,112) size 36x0
-    RenderBlock (anonymous) at (0,112) size 36x0
+    RenderBlock (anonymous) at (0,108) size 35x0
+    RenderBlock (anonymous) at (0,108) size 35x0
       RenderInline {SPAN} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
       RenderInline {SPAN} at (0,0) size 0x0
-    RenderBlock (anonymous) at (0,112) size 36x62
-    RenderBlock (anonymous) at (0,224) size 36x0
+    RenderBlock (anonymous) at (0,108) size 35x0
+    RenderBlock (anonymous) at (0,108) size 35x0
       RenderInline {SPAN} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
       RenderInline {SPAN} at (0,0) size 0x0
-    RenderBlock (anonymous) at (0,224) size 36x62
-    RenderBlock (anonymous) at (0,336) size 36x0
+    RenderBlock (anonymous) at (0,108) size 35x58
+    RenderBlock (anonymous) at (0,216) size 35x0
       RenderInline {SPAN} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-layer at (11,105) size 36x112
-  RenderBlock (relative positioned) {DIV} at (0,0) size 36x62 [bgcolor=#FF0000]
-    RenderBlock (anonymous) at (0,0) size 36x0
       RenderInline {SPAN} at (0,0) size 0x0
-    RenderBlock (anonymous) at (0,0) size 36x62
-    RenderBlock (anonymous) at (0,112) size 36x0
+    RenderBlock (anonymous) at (0,216) size 35x58
+    RenderBlock (anonymous) at (0,324) size 35x0
+      RenderInline {SPAN} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+layer at (11,104) size 35x108
+  RenderBlock (relative positioned) {DIV} at (0,0) size 35x58 [bgcolor=#FF0000]
+    RenderBlock (anonymous) at (0,0) size 35x0
+      RenderInline {SPAN} at (0,0) size 0x0
+    RenderBlock (anonymous) at (0,0) size 35x58
+    RenderBlock (anonymous) at (0,108) size 35x0
       RenderInline {SPAN} at (0,0) size 0x0
         RenderInline {SPAN} at (0,0) size 0x0
-    RenderBlock (anonymous) at (0,112) size 36x0
-    RenderBlock (anonymous) at (0,112) size 36x0
+    RenderBlock (anonymous) at (0,108) size 35x0
+    RenderBlock (anonymous) at (0,108) size 35x0
       RenderInline {SPAN} at (0,0) size 0x0
         RenderInline {SPAN} at (0,0) size 0x0
-layer at (11,105) size 36x112
-  RenderBlock (relative positioned) {DIV} at (0,0) size 36x62 [bgcolor=#FF0000]
-    RenderBlock (anonymous) at (0,0) size 36x0
+layer at (11,104) size 35x108
+  RenderBlock (relative positioned) {DIV} at (0,0) size 35x58 [bgcolor=#FF0000]
+    RenderBlock (anonymous) at (0,0) size 35x0
       RenderInline {SPAN} at (0,0) size 0x0
-    RenderBlock (anonymous) at (0,0) size 36x62
-    RenderBlock (anonymous) at (0,112) size 36x0
+    RenderBlock (anonymous) at (0,0) size 35x58
+    RenderBlock (anonymous) at (0,108) size 35x0
       RenderInline {SPAN} at (0,0) size 0x0
-layer at (11,105) size 36x62
-  RenderBlock (relative positioned) {DIV} at (0,0) size 36x62 [bgcolor=#FFFF00]
-    RenderText {#text} at (0,0) size 36x62
-      text run at (0,0) width 36: "A"
-layer at (11,217) size 36x112
-  RenderBlock (relative positioned) {DIV} at (0,0) size 36x62 [bgcolor=#FF0000]
-    RenderBlock (anonymous) at (0,0) size 36x0
+layer at (11,104) size 35x58
+  RenderBlock (relative positioned) {DIV} at (0,0) size 35x58 [bgcolor=#FFFF00]
+    RenderText {#text} at (0,1) size 35x56
+      text run at (0,1) width 35: "A"
+layer at (11,212) size 35x108
+  RenderBlock (relative positioned) {DIV} at (0,0) size 35x58 [bgcolor=#FF0000]
+    RenderBlock (anonymous) at (0,0) size 35x0
       RenderInline {SPAN} at (0,0) size 0x0
-    RenderBlock (anonymous) at (0,0) size 36x62
-    RenderBlock (anonymous) at (0,112) size 36x0
+    RenderBlock (anonymous) at (0,0) size 35x58
+    RenderBlock (anonymous) at (0,108) size 35x0
       RenderInline {SPAN} at (0,0) size 0x0
-layer at (11,217) size 36x62
-  RenderBlock (relative positioned) {DIV} at (0,0) size 36x62 [bgcolor=#00FF00]
-    RenderBlock (anonymous) at (0,0) size 36x0
+layer at (11,212) size 35x58
+  RenderBlock (relative positioned) {DIV} at (0,0) size 35x58 [bgcolor=#00FF00]
+    RenderBlock (anonymous) at (0,0) size 35x0
       RenderInline {SPAN} at (0,0) size 0x0
-    RenderBlock (anonymous) at (0,0) size 36x0
-    RenderBlock (anonymous) at (0,0) size 36x62
+    RenderBlock (anonymous) at (0,0) size 35x0
+    RenderBlock (anonymous) at (0,0) size 35x58
       RenderInline {SPAN} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 33x62
-        text run at (0,0) width 33: "B"
-layer at (11,329) size 36x62
-  RenderBlock (relative positioned) {DIV} at (0,0) size 36x62 [bgcolor=#00FFFF]
-    RenderText {#text} at (0,0) size 33x62
-      text run at (0,0) width 33: "C"
+      RenderText {#text} at (0,1) size 33x56
+        text run at (0,1) width 33: "B"
+layer at (11,320) size 35x58
+  RenderBlock (relative positioned) {DIV} at (0,0) size 35x58 [bgcolor=#00FFFF]
+    RenderText {#text} at (0,1) size 33x56
+      text run at (0,1) width 33: "C"

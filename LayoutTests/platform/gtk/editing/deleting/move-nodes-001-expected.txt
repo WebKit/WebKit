@@ -1,18 +1,18 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x156
-  RenderBlock {HTML} at (0,0) size 800x156
-    RenderBody {BODY} at (8,8) size 784x140
-      RenderBlock {DIV} at (0,0) size 784x114 [border: (3px solid #FF0000)]
-        RenderBlock (anonymous) at (3,3) size 778x20
-          RenderText {#text} at (0,0) size 134x20
-            text run at (0,0) width 134: "Destination container"
-        RenderBlock {P} at (3,39) size 778x20
-          RenderText {#text} at (0,0) size 23x20
-            text run at (0,0) width 23: "one"
-        RenderBlock {P} at (3,75) size 778x20
-          RenderText {#text} at (0,0) size 24x20
-            text run at (0,0) width 24: "two"
-      RenderBlock {DIV} at (0,114) size 784x26 [border: (3px solid #0000FF)]
-        RenderText {#text} at (3,3) size 106x20
-          text run at (3,3) width 106: "Source container"
+layer at (0,0) size 800x152
+  RenderBlock {HTML} at (0,0) size 800x152
+    RenderBody {BODY} at (8,8) size 784x136
+      RenderBlock {DIV} at (0,0) size 784x111 [border: (3px solid #FF0000)]
+        RenderBlock (anonymous) at (3,3) size 778x19
+          RenderText {#text} at (0,0) size 126x19
+            text run at (0,0) width 126: "Destination container"
+        RenderBlock {P} at (3,38) size 778x19
+          RenderText {#text} at (0,0) size 22x19
+            text run at (0,0) width 22: "one"
+        RenderBlock {P} at (3,73) size 778x19
+          RenderText {#text} at (0,0) size 23x19
+            text run at (0,0) width 23: "two"
+      RenderBlock {DIV} at (0,111) size 784x25 [border: (3px solid #0000FF)]
+        RenderText {#text} at (3,3) size 102x19
+          text run at (3,3) width 102: "Source container"

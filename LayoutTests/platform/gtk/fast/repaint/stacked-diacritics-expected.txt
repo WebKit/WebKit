@@ -1,35 +1,34 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x332
-  RenderBlock {HTML} at (0,0) size 800x332
-    RenderBody {BODY} at (8,16) size 784x308
-      RenderBlock {P} at (0,0) size 784x42
-        RenderInline {B} at (0,0) size 62x22
-          RenderText {#text} at (0,0) size 62x22
-            text run at (0,0) width 62: "BUG ID:"
-        RenderText {#text} at (62,1) size 4x20
-          text run at (62,1) width 4: " "
-        RenderInline {A} at (0,0) size 117x20 [color=#0000EE]
-          RenderText {#text} at (66,1) size 117x20
-            text run at (66,1) width 117: "Bugzilla bug 6274"
-        RenderText {#text} at (183,1) size 777x41
-          text run at (183,1) width 594: "Text repainting does not account for glyphs which draw outside the typographic bounds of the"
-          text run at (0,22) width 29: "font."
-      RenderBlock {P} at (0,58) size 784x28 [bgcolor=#98FB98]
-        RenderInline {B} at (0,0) size 91x22
-          RenderText {#text} at (3,3) size 91x22
-            text run at (3,3) width 91: "TEST PASS:"
-        RenderText {#text} at (94,4) size 203x20
-          text run at (94,4) width 4: " "
-          text run at (98,4) width 199: "The text will entirely disappear."
-      RenderBlock {P} at (0,102) size 784x28 [bgcolor=#FF3300]
-        RenderInline {B} at (0,0) size 90x22
-          RenderText {#text} at (3,3) size 90x22
-            text run at (3,3) width 90: "TEST FAIL:"
-        RenderText {#text} at (93,4) size 561x20
-          text run at (93,4) width 4: " "
-          text run at (97,4) width 557: "Most of the text will be gone, but some artifacts will be left behind at the top of the page."
-      RenderBlock {DIV} at (0,146) size 222x142 [border: (1px solid #0000FF)]
+layer at (0,0) size 800x302
+  RenderBlock {HTML} at (0,0) size 800x302
+    RenderBody {BODY} at (8,16) size 784x278
+      RenderBlock {P} at (0,0) size 784x19
+        RenderInline {B} at (0,0) size 61x19
+          RenderText {#text} at (0,0) size 61x19
+            text run at (0,0) width 61: "BUG ID:"
+        RenderText {#text} at (61,0) size 4x19
+          text run at (61,0) width 4: " "
+        RenderInline {A} at (0,0) size 108x19 [color=#0000EE]
+          RenderText {#text} at (65,0) size 108x19
+            text run at (65,0) width 108: "Bugzilla bug 6274"
+        RenderText {#text} at (173,0) size 594x19
+          text run at (173,0) width 594: "Text repainting does not account for glyphs which draw outside the typographic bounds of the font."
+      RenderBlock {P} at (0,35) size 784x25 [bgcolor=#98FB98]
+        RenderInline {B} at (0,0) size 86x19
+          RenderText {#text} at (3,3) size 86x19
+            text run at (3,3) width 86: "TEST PASS:"
+        RenderText {#text} at (89,3) size 191x19
+          text run at (89,3) width 4: " "
+          text run at (93,3) width 187: "The text will entirely disappear."
+      RenderBlock {P} at (0,76) size 784x25 [bgcolor=#FF3300]
+        RenderInline {B} at (0,0) size 84x19
+          RenderText {#text} at (3,3) size 84x19
+            text run at (3,3) width 84: "TEST FAIL:"
+        RenderText {#text} at (87,3) size 535x19
+          text run at (87,3) width 4: " "
+          text run at (91,3) width 531: "Most of the text will be gone, but some artifacts will be left behind at the top of the page."
+      RenderBlock {DIV} at (0,117) size 222x142 [border: (1px solid #0000FF)]
         RenderBlock {DIV} at (11,11) size 200x0
-      RenderBlock (anonymous) at (0,288) size 784x20
-        RenderBR {BR} at (0,0) size 0x20
+      RenderBlock (anonymous) at (0,259) size 784x19
+        RenderBR {BR} at (0,0) size 0x19

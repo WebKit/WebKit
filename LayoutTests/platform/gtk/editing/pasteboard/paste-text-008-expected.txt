@@ -3,24 +3,24 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x146 [border: (2px solid #FF0000)]
-        RenderBlock (anonymous) at (14,14) size 756x30
-          RenderText {#text} at (0,0) size 351x30
-            text run at (0,0) width 351: "Omitted, all the voyage of their life,"
-        RenderBlock {DIV} at (14,44) size 756x58 [border: (2px solid #FF0000)]
-          RenderText {#text} at (14,14) size 114x30
-            text run at (14,14) width 114: "Is bound in "
-          RenderText {#text} at (128,14) size 243x30
-            text run at (128,14) width 243: "shallows and in miseries."
-        RenderBlock (anonymous) at (14,102) size 756x30
-          RenderText {#text} at (0,0) size 197x30
-            text run at (0,0) width 197: "Upon such a full sea"
-          RenderText {#text} at (197,0) size 243x30
-            text run at (197,0) width 243: "shallows and in miseries."
-      RenderBlock (anonymous) at (0,146) size 784x0
-      RenderBlock {DIV} at (0,146) size 784x58 [border: (2px solid #FF0000)]
-        RenderText {#text} at (14,14) size 197x30
-          text run at (14,14) width 197: "Upon such a full sea"
-        RenderText {#text} at (211,14) size 185x30
-          text run at (211,14) width 185: " are we now afloat,"
+      RenderBlock {DIV} at (0,0) size 784x140 [border: (2px solid #FF0000)]
+        RenderBlock (anonymous) at (14,14) size 756x28
+          RenderText {#text} at (0,0) size 343x28
+            text run at (0,0) width 343: "Omitted, all the voyage of their life,"
+        RenderBlock {DIV} at (14,42) size 756x56 [border: (2px solid #FF0000)]
+          RenderText {#text} at (14,14) size 113x28
+            text run at (14,14) width 113: "Is bound in "
+          RenderText {#text} at (127,14) size 237x28
+            text run at (127,14) width 237: "shallows and in miseries."
+        RenderBlock (anonymous) at (14,98) size 756x28
+          RenderText {#text} at (0,0) size 194x28
+            text run at (0,0) width 194: "Upon such a full sea"
+          RenderText {#text} at (194,0) size 237x28
+            text run at (194,0) width 237: "shallows and in miseries."
+      RenderBlock (anonymous) at (0,140) size 784x0
+      RenderBlock {DIV} at (0,140) size 784x56 [border: (2px solid #FF0000)]
+        RenderText {#text} at (14,14) size 194x28
+          text run at (14,14) width 194: "Upon such a full sea"
+        RenderText {#text} at (208,14) size 184x28
+          text run at (208,14) width 184: " are we now afloat,"
 caret: position 20 of child 0 {#text} of child 2 {DIV} of body

@@ -3,25 +3,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 759x20
-          text run at (0,0) width 759: "This tests for a bug where hitting return between two tables would add a new paragraph at the end of the editable region."
-      RenderBlock {DIV} at (0,36) size 784x96
-        RenderTable {TABLE} at (0,0) size 475x28 [border: (1px solid #AAAAAA)]
-          RenderTableSection {TBODY} at (1,1) size 473x26
-            RenderTableRow {TR} at (0,2) size 473x22
-              RenderTableCell {TD} at (2,2) size 469x22 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 467x20
-                  text run at (1,1) width 467: "There should be two empty paragraphs after this table and before the next."
-        RenderBlock (anonymous) at (0,28) size 784x20
-          RenderBR {BR} at (0,0) size 0x20
-        RenderBlock {DIV} at (0,48) size 784x48
-          RenderBlock (anonymous) at (0,0) size 784x20
-            RenderBR {BR} at (0,0) size 0x20
-          RenderTable {TABLE} at (0,20) size 276x28 [border: (1px solid #AAAAAA)]
-            RenderTableSection {TBODY} at (1,1) size 274x26
-              RenderTableRow {TR} at (0,2) size 274x22
-                RenderTableCell {TD} at (2,2) size 270x22 [r=0 c=0 rs=1 cs=1]
-                  RenderText {#text} at (1,1) size 268x20
-                    text run at (1,1) width 268: "And the caret should be in the second one."
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 724x19
+          text run at (0,0) width 724: "This tests for a bug where hitting return between two tables would add a new paragraph at the end of the editable region."
+      RenderBlock {DIV} at (0,35) size 784x92
+        RenderTable {TABLE} at (0,0) size 456x27 [border: (1px solid #AAAAAA)]
+          RenderTableSection {TBODY} at (1,1) size 454x25
+            RenderTableRow {TR} at (0,2) size 454x21
+              RenderTableCell {TD} at (2,2) size 450x21 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 448x19
+                  text run at (1,1) width 448: "There should be two empty paragraphs after this table and before the next."
+        RenderBlock (anonymous) at (0,27) size 784x19
+          RenderBR {BR} at (0,0) size 0x19
+        RenderBlock {DIV} at (0,46) size 784x46
+          RenderBlock (anonymous) at (0,0) size 784x19
+            RenderBR {BR} at (0,0) size 0x19
+          RenderTable {TABLE} at (0,19) size 265x27 [border: (1px solid #AAAAAA)]
+            RenderTableSection {TBODY} at (1,1) size 263x25
+              RenderTableRow {TR} at (0,2) size 263x21
+                RenderTableCell {TD} at (2,2) size 259x21 [r=0 c=0 rs=1 cs=1]
+                  RenderText {#text} at (1,1) size 257x19
+                    text run at (1,1) width 257: "And the caret should be in the second one."
 caret: position 0 of child 0 {BR} of child 2 {DIV} of child 2 {DIV} of body

@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {UL} at (0,0) size 784x20
-        RenderListItem {LI} at (40,0) size 744x20
-          RenderListMarker at (-18,0) size 7x20: bullet
-          RenderInline {A} at (0,0) size 736x20 [color=#0000EE]
-            RenderText {#text} at (0,0) size 736x20
-              text run at (0,0) width 336: "This tests for a crash when creating a list from a link. "
-              text run at (336,0) width 400: "This paragraph should be a link and should be inside a list item."
+      RenderBlock {UL} at (0,0) size 784x19
+        RenderListItem {LI} at (40,0) size 744x19
+          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderInline {A} at (0,0) size 696x19 [color=#0000EE]
+            RenderText {#text} at (0,0) size 696x19
+              text run at (0,0) width 318: "This tests for a crash when creating a list from a link. "
+              text run at (318,0) width 378: "This paragraph should be a link and should be inside a list item."
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,36) size 784x0
+      RenderBlock (anonymous) at (0,35) size 784x0
 selection start: position 0 of child 0 {#text} of child 0 {A} of child 0 {LI} of child 0 {UL} of body
 selection end:   position 123 of child 0 {#text} of child 0 {A} of child 0 {LI} of child 0 {UL} of body

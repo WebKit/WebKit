@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 320x20
-          text run at (0,0) width 320: "The lime div below should have a soft glow effect."
-layer at (8,28) size 220x220
-  RenderBlock {DIV} at (0,20) size 220x220 [bgcolor=#00FF00] [border: (10px solid #000000)]
+      RenderBlock (anonymous) at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 300x19
+          text run at (0,0) width 300: "The lime div below should have a soft glow effect."
+layer at (8,27) size 220x220
+  RenderBlock {DIV} at (0,19) size 220x220 [bgcolor=#00FF00] [border: (10px solid #000000)]

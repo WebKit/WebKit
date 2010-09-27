@@ -1,8 +1,8 @@
-layer at (0,0) size 800x605
+layer at (0,0) size 800x604
   RenderView at (0,0) size 781x581
-layer at (0,0) size 800x605
-  RenderBlock {html} at (0,0) size 781x605
-    RenderInline {body} at (0,0) size 800x20
+layer at (0,0) size 800x604
+  RenderBlock {html} at (0,0) size 781x604
+    RenderInline {body} at (0,0) size 800x19
       RenderText {#text} at (0,0) size 0x0
       RenderSVGRoot {svg} at (0,0) size 800x600
         RenderPath {rect} at (0,0) size 800x600 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L4000.00,0.00 L4000.00,4000.00 L0.00,4000.00 Z"]

@@ -1,19 +1,19 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x36
-  RenderBlock {HTML} at (0,0) size 800x36
-    RenderBody {BODY} at (8,8) size 784x20
-      RenderText {#text} at (0,0) size 420x20
-        text run at (0,0) width 420: "You should see the text 'after' in the inner box, no mangled pixels. "
+layer at (0,0) size 800x35
+  RenderBlock {HTML} at (0,0) size 800x35
+    RenderBody {BODY} at (8,8) size 784x19
+      RenderText {#text} at (0,0) size 397x19
+        text run at (0,0) width 397: "You should see the text 'after' in the inner box, no mangled pixels. "
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-layer at (8,28) size 302x302 clip at (9,29) size 300x300 scrollX 2 scrollY 2 scrollWidth 302 scrollHeight 302
-  RenderBlock (positioned) {DIV} at (8,28) size 302x302 [border: (1px solid #FFFF00)]
-layer at (7,27) size 302x302 backgroundClip at (9,29) size 300x300 clip at (9,29) size 299x299 outlineClip at (9,29) size 300x300 scrollX 7 scrollY 7 scrollWidth 1000 scrollHeight 1000
+layer at (8,27) size 302x302 clip at (9,28) size 300x300 scrollX 2 scrollY 2 scrollWidth 302 scrollHeight 302
+  RenderBlock (positioned) {DIV} at (8,27) size 302x302 [border: (1px solid #FFFF00)]
+layer at (7,26) size 302x302 backgroundClip at (9,28) size 300x300 clip at (9,28) size 299x299 outlineClip at (9,28) size 300x300 scrollX 7 scrollY 7 scrollWidth 1000 scrollHeight 1000
   RenderBlock (positioned) {DIV} at (1,1) size 302x302 [border: (1px solid #FF0000)]
     RenderBlock {DIV} at (1,1) size 1000x1000
-layer at (101,121) size 102x102 clip at (102,122) size 100x100
+layer at (101,120) size 102x102 clip at (102,121) size 100x100
   RenderBlock (positioned) {DIV} at (101,101) size 102x102 [border: (1px solid #008000)]
     RenderBlock {DIV} at (1,1) size 50x50
-      RenderText {#text} at (0,0) size 28x20
-        text run at (0,0) width 28: "after"
+      RenderText {#text} at (0,0) size 27x19
+        text run at (0,0) width 27: "after"

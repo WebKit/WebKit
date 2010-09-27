@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x166 [border: (2px solid #FF0000)]
-        RenderBlock {UL} at (14,38) size 756x90
-          RenderListItem {LI} at (40,0) size 716x30
-            RenderText {#text} at (0,0) size 35x30
+      RenderBlock {DIV} at (0,0) size 784x160 [border: (2px solid #FF0000)]
+        RenderBlock {UL} at (14,38) size 756x84
+          RenderListItem {LI} at (40,0) size 716x28
+            RenderText {#text} at (0,0) size 35x28
               text run at (0,0) width 35: "one"
-            RenderText {#text} at (35,0) size 49x30
+            RenderText {#text} at (35,0) size 49x28
               text run at (35,0) width 49: "three"
-          RenderListItem {LI} at (40,30) size 716x30
-            RenderText {#text} at (0,0) size 40x30
+          RenderListItem {LI} at (40,28) size 716x28
+            RenderText {#text} at (0,0) size 40x28
               text run at (0,0) width 40: "four"
-          RenderListItem {LI} at (40,60) size 716x30
-            RenderText {#text} at (0,0) size 38x30
-              text run at (0,0) width 38: "five"
+          RenderListItem {LI} at (40,56) size 716x28
+            RenderText {#text} at (0,0) size 37x28
+              text run at (0,0) width 37: "five"
 caret: position 3 of child 0 {#text} of child 1 {LI} of child 1 {UL} of child 1 {DIV} of body

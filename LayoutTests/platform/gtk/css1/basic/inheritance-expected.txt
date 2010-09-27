@@ -1,189 +1,189 @@
-layer at (0,0) size 781x785
+layer at (0,0) size 781x734
   RenderView at (0,0) size 781x600
-layer at (0,0) size 781x785
-  RenderBlock {HTML} at (0,0) size 781x785
-    RenderBody {BODY} at (8,8) size 765x769 [color=#008000] [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 765x20
-        RenderText {#text} at (0,0) size 355x20
-          text run at (0,0) width 355: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,36) size 765x112
-        RenderText {#text} at (0,0) size 272x111
+layer at (0,0) size 781x734
+  RenderBlock {HTML} at (0,0) size 781x734
+    RenderBody {BODY} at (8,8) size 765x718 [color=#008000] [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 765x19
+        RenderText {#text} at (0,0) size 337x19
+          text run at (0,0) width 337: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,35) size 765x105
+        RenderText {#text} at (0,0) size 272x105
           text run at (0,0) width 160: "BODY {color: green;}"
           text run at (160,0) width 0: " "
-          text run at (0,16) width 136: "H3 {color: blue;}"
-          text run at (136,16) width 0: " "
-          text run at (0,32) width 152: "EM {color: purple;}"
-          text run at (152,32) width 0: " "
-          text run at (0,48) width 208: ".one {font-style: italic;}"
-          text run at (208,48) width 0: " "
-          text run at (0,64) width 272: ".two {text-decoration: underline;}"
-          text run at (272,64) width 0: " "
-          text run at (0,80) width 152: "#two {color: navy;}"
-          text run at (152,80) width 0: " "
-          text run at (0,96) width 184: ".three {color: purple;}"
-          text run at (184,96) width 0: " "
-      RenderBlock {HR} at (0,161) size 765x2 [border: (1px inset #008000)]
-      RenderBlock {H3} at (0,181) size 765x26 [color=#0000FF]
-        RenderText {#text} at (0,0) size 220x26
-          text run at (0,0) width 220: "This sentence should show "
-        RenderInline {STRONG} at (0,0) size 35x26
-          RenderText {#text} at (220,0) size 35x26
-            text run at (220,0) width 35: "blue"
-        RenderText {#text} at (255,0) size 42x26
-          text run at (255,0) width 42: " and "
-        RenderInline {EM} at (0,0) size 51x26 [color=#800080]
-          RenderText {#text} at (297,0) size 51x26
-            text run at (297,0) width 51: "purple"
-        RenderText {#text} at (348,0) size 5x26
-          text run at (348,0) width 5: "."
-      RenderBlock {H3} at (0,225) size 765x26 [color=#0000FF]
-        RenderText {#text} at (0,0) size 197x26
-          text run at (0,0) width 197: "This sentence should be "
-        RenderInline {SPAN} at (0,0) size 34x26
-          RenderText {#text} at (197,0) size 34x26
-            text run at (197,0) width 34: "blue"
-        RenderText {#text} at (231,0) size 104x26
-          text run at (231,0) width 104: " throughout."
-      RenderBlock {P} at (0,269) size 765x20
-        RenderText {#text} at (0,0) size 226x20
-          text run at (0,0) width 226: "This should be green except for the "
-        RenderInline {EM} at (0,0) size 117x20 [color=#800080]
-          RenderText {#text} at (226,0) size 117x20
-            text run at (226,0) width 117: "emphasized words"
-        RenderText {#text} at (343,0) size 160x20
-          text run at (343,0) width 160: ", which should be purple."
-      RenderBlock {H3} at (0,307) size 765x26 [color=#0000FF]
-        RenderText {#text} at (0,0) size 296x26
-          text run at (0,0) width 296: "This should be blue and underlined."
-      RenderBlock {P} at (0,351) size 765x22
-        RenderText {#text} at (0,1) size 293x20
-          text run at (0,1) width 293: "This sentence should be underlined, including "
+          text run at (0,15) width 136: "H3 {color: blue;}"
+          text run at (136,15) width 0: " "
+          text run at (0,30) width 152: "EM {color: purple;}"
+          text run at (152,30) width 0: " "
+          text run at (0,45) width 208: ".one {font-style: italic;}"
+          text run at (208,45) width 0: " "
+          text run at (0,60) width 272: ".two {text-decoration: underline;}"
+          text run at (272,60) width 0: " "
+          text run at (0,75) width 152: "#two {color: navy;}"
+          text run at (152,75) width 0: " "
+          text run at (0,90) width 184: ".three {color: purple;}"
+          text run at (184,90) width 0: " "
+      RenderBlock {HR} at (0,153) size 765x2 [border: (1px inset #008000)]
+      RenderBlock {H3} at (0,173) size 765x22 [color=#0000FF]
+        RenderText {#text} at (0,0) size 221x22
+          text run at (0,0) width 221: "This sentence should show "
+        RenderInline {STRONG} at (0,0) size 34x22
+          RenderText {#text} at (221,0) size 34x22
+            text run at (221,0) width 34: "blue"
+        RenderText {#text} at (255,0) size 40x22
+          text run at (255,0) width 40: " and "
+        RenderInline {EM} at (0,0) size 52x22 [color=#800080]
+          RenderText {#text} at (295,0) size 52x22
+            text run at (295,0) width 52: "purple"
+        RenderText {#text} at (347,0) size 5x22
+          text run at (347,0) width 5: "."
+      RenderBlock {H3} at (0,213) size 765x22 [color=#0000FF]
+        RenderText {#text} at (0,0) size 198x22
+          text run at (0,0) width 198: "This sentence should be "
+        RenderInline {SPAN} at (0,0) size 35x22
+          RenderText {#text} at (198,0) size 35x22
+            text run at (198,0) width 35: "blue"
+        RenderText {#text} at (233,0) size 100x22
+          text run at (233,0) width 100: " throughout."
+      RenderBlock {P} at (0,253) size 765x19
+        RenderText {#text} at (0,0) size 215x19
+          text run at (0,0) width 215: "This should be green except for the "
+        RenderInline {EM} at (0,0) size 117x19 [color=#800080]
+          RenderText {#text} at (215,0) size 117x19
+            text run at (215,0) width 117: "emphasized words"
+        RenderText {#text} at (332,0) size 151x19
+          text run at (332,0) width 151: ", which should be purple."
+      RenderBlock {H3} at (0,290) size 765x22 [color=#0000FF]
+        RenderText {#text} at (0,0) size 288x22
+          text run at (0,0) width 288: "This should be blue and underlined."
+      RenderBlock {P} at (0,330) size 765x19
+        RenderText {#text} at (0,0) size 273x19
+          text run at (0,0) width 273: "This sentence should be underlined, including "
         RenderInline {TT} at (0,0) size 72x15
-          RenderText {#text} at (293,5) size 72x15
-            text run at (293,5) width 72: "this part"
-        RenderText {#text} at (365,1) size 8x20
-          text run at (365,1) width 8: ", "
-        RenderInline {I} at (0,0) size 52x20
-          RenderText {#text} at (373,1) size 52x20
-            text run at (373,1) width 52: "this part"
-        RenderText {#text} at (425,1) size 8x20
-          text run at (425,1) width 8: ", "
-        RenderInline {EM} at (0,0) size 52x20 [color=#800080]
-          RenderText {#text} at (433,1) size 52x20
-            text run at (433,1) width 52: "this part"
-        RenderText {#text} at (485,1) size 35x20
-          text run at (485,1) width 35: ", and "
-        RenderInline {STRONG} at (0,0) size 57x22
-          RenderText {#text} at (520,0) size 57x22
-            text run at (520,0) width 57: "this part"
-        RenderText {#text} at (577,1) size 4x20
-          text run at (577,1) width 4: "."
-      RenderBlock {P} at (0,389) size 765x20 [color=#000080]
-        RenderText {#text} at (0,0) size 436x20
-          text run at (0,0) width 436: "This sentence should also be underlined, as well as dark blue (navy), "
+          RenderText {#text} at (273,4) size 72x15
+            text run at (273,4) width 72: "this part"
+        RenderText {#text} at (345,0) size 8x19
+          text run at (345,0) width 8: ", "
+        RenderInline {I} at (0,0) size 54x19
+          RenderText {#text} at (353,0) size 54x19
+            text run at (353,0) width 54: "this part"
+        RenderText {#text} at (407,0) size 8x19
+          text run at (407,0) width 8: ", "
+        RenderInline {EM} at (0,0) size 54x19 [color=#800080]
+          RenderText {#text} at (415,0) size 54x19
+            text run at (415,0) width 54: "this part"
+        RenderText {#text} at (469,0) size 34x19
+          text run at (469,0) width 34: ", and "
+        RenderInline {STRONG} at (0,0) size 55x19
+          RenderText {#text} at (503,0) size 55x19
+            text run at (503,0) width 55: "this part"
+        RenderText {#text} at (558,0) size 4x19
+          text run at (558,0) width 4: "."
+      RenderBlock {P} at (0,365) size 765x19 [color=#000080]
+        RenderText {#text} at (0,0) size 414x19
+          text run at (0,0) width 414: "This sentence should also be underlined, as well as dark blue (navy), "
         RenderInline {TT} at (0,0) size 152x15
-          RenderText {#text} at (436,4) size 152x15
-            text run at (436,4) width 152: "including this part"
-        RenderText {#text} at (588,0) size 4x20
-          text run at (588,0) width 4: "."
-      RenderBlock {P} at (0,425) size 765x22 [color=#800080]
-        RenderText {#text} at (0,1) size 266x20
-          text run at (0,1) width 266: "This sentence should be purple, including "
-        RenderInline {STRONG} at (0,0) size 57x22
-          RenderText {#text} at (266,0) size 57x22
-            text run at (266,0) width 57: "this part"
-        RenderText {#text} at (323,1) size 31x20
-          text run at (323,1) width 31: " and "
-        RenderInline {SPAN} at (0,0) size 173x20
-          RenderText {#text} at (354,1) size 173x20
-            text run at (354,1) width 173: "this part (which is spanned)"
-        RenderText {#text} at (527,1) size 4x20
-          text run at (527,1) width 4: "."
-      RenderTable {TABLE} at (0,463) size 614x306 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 612x304
-          RenderTableRow {TR} at (0,0) size 612x30
-            RenderTableCell {TD} at (0,0) size 612x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x22
-                RenderText {#text} at (4,4) size 163x22
-                  text run at (4,4) width 163: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,30) size 612x274
-            RenderTableCell {TD} at (0,153) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x20
+          RenderText {#text} at (414,4) size 152x15
+            text run at (414,4) width 152: "including this part"
+        RenderText {#text} at (566,0) size 4x19
+          text run at (566,0) width 4: "."
+      RenderBlock {P} at (0,400) size 765x19 [color=#800080]
+        RenderText {#text} at (0,0) size 249x19
+          text run at (0,0) width 249: "This sentence should be purple, including "
+        RenderInline {STRONG} at (0,0) size 55x19
+          RenderText {#text} at (249,0) size 55x19
+            text run at (249,0) width 55: "this part"
+        RenderText {#text} at (304,0) size 30x19
+          text run at (304,0) width 30: " and "
+        RenderInline {SPAN} at (0,0) size 164x19
+          RenderText {#text} at (334,0) size 164x19
+            text run at (334,0) width 164: "this part (which is spanned)"
+        RenderText {#text} at (498,0) size 4x19
+          text run at (498,0) width 4: "."
+      RenderTable {TABLE} at (0,435) size 592x283 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 590x281
+          RenderTableRow {TR} at (0,0) size 590x27
+            RenderTableCell {TD} at (0,0) size 590x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 159x19
+                RenderText {#text} at (4,4) size 159x19
+                  text run at (4,4) width 159: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,27) size 590x254
+            RenderTableCell {TD} at (0,140) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x19
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,30) size 600x274 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {H3} at (4,4) size 592x26 [color=#0000FF]
-                RenderText {#text} at (0,0) size 220x26
-                  text run at (0,0) width 220: "This sentence should show "
-                RenderInline {STRONG} at (0,0) size 35x26
-                  RenderText {#text} at (220,0) size 35x26
-                    text run at (220,0) width 35: "blue"
-                RenderText {#text} at (255,0) size 42x26
-                  text run at (255,0) width 42: " and "
-                RenderInline {EM} at (0,0) size 51x26 [color=#800080]
-                  RenderText {#text} at (297,0) size 51x26
-                    text run at (297,0) width 51: "purple"
-                RenderText {#text} at (348,0) size 5x26
-                  text run at (348,0) width 5: "."
-              RenderBlock {H3} at (4,48) size 592x26 [color=#0000FF]
-                RenderText {#text} at (0,0) size 197x26
-                  text run at (0,0) width 197: "This sentence should be "
-                RenderInline {SPAN} at (0,0) size 34x26
-                  RenderText {#text} at (197,0) size 34x26
-                    text run at (197,0) width 34: "blue"
-                RenderText {#text} at (231,0) size 104x26
-                  text run at (231,0) width 104: " throughout."
-              RenderBlock {P} at (4,92) size 592x20
-                RenderText {#text} at (0,0) size 226x20
-                  text run at (0,0) width 226: "This should be green except for the "
-                RenderInline {EM} at (0,0) size 117x20 [color=#800080]
-                  RenderText {#text} at (226,0) size 117x20
-                    text run at (226,0) width 117: "emphasized words"
-                RenderText {#text} at (343,0) size 160x20
-                  text run at (343,0) width 160: ", which should be purple."
-              RenderBlock {H3} at (4,130) size 592x26 [color=#0000FF]
-                RenderText {#text} at (0,0) size 296x26
-                  text run at (0,0) width 296: "This should be blue and underlined."
-              RenderBlock {P} at (4,174) size 592x22
-                RenderText {#text} at (0,1) size 293x20
-                  text run at (0,1) width 293: "This sentence should be underlined, including "
+            RenderTableCell {TD} at (12,27) size 578x254 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {H3} at (4,4) size 570x22 [color=#0000FF]
+                RenderText {#text} at (0,0) size 221x22
+                  text run at (0,0) width 221: "This sentence should show "
+                RenderInline {STRONG} at (0,0) size 34x22
+                  RenderText {#text} at (221,0) size 34x22
+                    text run at (221,0) width 34: "blue"
+                RenderText {#text} at (255,0) size 40x22
+                  text run at (255,0) width 40: " and "
+                RenderInline {EM} at (0,0) size 52x22 [color=#800080]
+                  RenderText {#text} at (295,0) size 52x22
+                    text run at (295,0) width 52: "purple"
+                RenderText {#text} at (347,0) size 5x22
+                  text run at (347,0) width 5: "."
+              RenderBlock {H3} at (4,44) size 570x22 [color=#0000FF]
+                RenderText {#text} at (0,0) size 198x22
+                  text run at (0,0) width 198: "This sentence should be "
+                RenderInline {SPAN} at (0,0) size 35x22
+                  RenderText {#text} at (198,0) size 35x22
+                    text run at (198,0) width 35: "blue"
+                RenderText {#text} at (233,0) size 100x22
+                  text run at (233,0) width 100: " throughout."
+              RenderBlock {P} at (4,84) size 570x19
+                RenderText {#text} at (0,0) size 215x19
+                  text run at (0,0) width 215: "This should be green except for the "
+                RenderInline {EM} at (0,0) size 117x19 [color=#800080]
+                  RenderText {#text} at (215,0) size 117x19
+                    text run at (215,0) width 117: "emphasized words"
+                RenderText {#text} at (332,0) size 151x19
+                  text run at (332,0) width 151: ", which should be purple."
+              RenderBlock {H3} at (4,121) size 570x22 [color=#0000FF]
+                RenderText {#text} at (0,0) size 288x22
+                  text run at (0,0) width 288: "This should be blue and underlined."
+              RenderBlock {P} at (4,161) size 570x19
+                RenderText {#text} at (0,0) size 273x19
+                  text run at (0,0) width 273: "This sentence should be underlined, including "
                 RenderInline {TT} at (0,0) size 72x15
-                  RenderText {#text} at (293,5) size 72x15
-                    text run at (293,5) width 72: "this part"
-                RenderText {#text} at (365,1) size 8x20
-                  text run at (365,1) width 8: ", "
-                RenderInline {I} at (0,0) size 52x20
-                  RenderText {#text} at (373,1) size 52x20
-                    text run at (373,1) width 52: "this part"
-                RenderText {#text} at (425,1) size 8x20
-                  text run at (425,1) width 8: ", "
-                RenderInline {EM} at (0,0) size 52x20 [color=#800080]
-                  RenderText {#text} at (433,1) size 52x20
-                    text run at (433,1) width 52: "this part"
-                RenderText {#text} at (485,1) size 35x20
-                  text run at (485,1) width 35: ", and "
-                RenderInline {STRONG} at (0,0) size 57x22
-                  RenderText {#text} at (520,0) size 57x22
-                    text run at (520,0) width 57: "this part"
-                RenderText {#text} at (577,1) size 4x20
-                  text run at (577,1) width 4: "."
-              RenderBlock {P} at (4,212) size 592x20 [color=#000080]
-                RenderText {#text} at (0,0) size 436x20
-                  text run at (0,0) width 436: "This sentence should also be underlined, as well as dark blue (navy), "
+                  RenderText {#text} at (273,4) size 72x15
+                    text run at (273,4) width 72: "this part"
+                RenderText {#text} at (345,0) size 8x19
+                  text run at (345,0) width 8: ", "
+                RenderInline {I} at (0,0) size 54x19
+                  RenderText {#text} at (353,0) size 54x19
+                    text run at (353,0) width 54: "this part"
+                RenderText {#text} at (407,0) size 8x19
+                  text run at (407,0) width 8: ", "
+                RenderInline {EM} at (0,0) size 54x19 [color=#800080]
+                  RenderText {#text} at (415,0) size 54x19
+                    text run at (415,0) width 54: "this part"
+                RenderText {#text} at (469,0) size 34x19
+                  text run at (469,0) width 34: ", and "
+                RenderInline {STRONG} at (0,0) size 55x19
+                  RenderText {#text} at (503,0) size 55x19
+                    text run at (503,0) width 55: "this part"
+                RenderText {#text} at (558,0) size 4x19
+                  text run at (558,0) width 4: "."
+              RenderBlock {P} at (4,196) size 570x19 [color=#000080]
+                RenderText {#text} at (0,0) size 414x19
+                  text run at (0,0) width 414: "This sentence should also be underlined, as well as dark blue (navy), "
                 RenderInline {TT} at (0,0) size 152x15
-                  RenderText {#text} at (436,4) size 152x15
-                    text run at (436,4) width 152: "including this part"
-                RenderText {#text} at (588,0) size 4x20
-                  text run at (588,0) width 4: "."
-              RenderBlock {P} at (4,248) size 592x22 [color=#800080]
-                RenderText {#text} at (0,1) size 266x20
-                  text run at (0,1) width 266: "This sentence should be purple, including "
-                RenderInline {STRONG} at (0,0) size 57x22
-                  RenderText {#text} at (266,0) size 57x22
-                    text run at (266,0) width 57: "this part"
-                RenderText {#text} at (323,1) size 31x20
-                  text run at (323,1) width 31: " and "
-                RenderInline {SPAN} at (0,0) size 173x20
-                  RenderText {#text} at (354,1) size 173x20
-                    text run at (354,1) width 173: "this part (which is spanned)"
-                RenderText {#text} at (527,1) size 4x20
-                  text run at (527,1) width 4: "."
+                  RenderText {#text} at (414,4) size 152x15
+                    text run at (414,4) width 152: "including this part"
+                RenderText {#text} at (566,0) size 4x19
+                  text run at (566,0) width 4: "."
+              RenderBlock {P} at (4,231) size 570x19 [color=#800080]
+                RenderText {#text} at (0,0) size 249x19
+                  text run at (0,0) width 249: "This sentence should be purple, including "
+                RenderInline {STRONG} at (0,0) size 55x19
+                  RenderText {#text} at (249,0) size 55x19
+                    text run at (249,0) width 55: "this part"
+                RenderText {#text} at (304,0) size 30x19
+                  text run at (304,0) width 30: " and "
+                RenderInline {SPAN} at (0,0) size 164x19
+                  RenderText {#text} at (334,0) size 164x19
+                    text run at (334,0) width 164: "this part (which is spanned)"
+                RenderText {#text} at (498,0) size 4x19
+                  text run at (498,0) width 4: "."

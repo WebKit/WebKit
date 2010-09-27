@@ -24,6 +24,7 @@
 
 typedef struct _cairo cairo_t;
 typedef struct _cairo_surface cairo_surface_t;
+typedef struct _cairo_font_face cairo_font_face_t;
 typedef struct _cairo_scaled_font cairo_scaled_font_t;
 
 #if defined(USE_FREETYPE)
@@ -37,6 +38,9 @@ template <> void derefPlatformPtr(cairo_t* ptr);
 
 template <> cairo_surface_t* refPlatformPtr(cairo_surface_t* ptr);
 template <> void derefPlatformPtr(cairo_surface_t* ptr);
+
+template <> cairo_font_face_t* refPlatformPtr(cairo_font_face_t*);
+template <> void derefPlatformPtr(cairo_font_face_t*);
 
 template <> cairo_scaled_font_t* refPlatformPtr(cairo_scaled_font_t*);
 template <> void derefPlatformPtr(cairo_scaled_font_t*);

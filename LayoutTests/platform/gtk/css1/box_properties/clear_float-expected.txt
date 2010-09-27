@@ -1,161 +1,160 @@
-layer at (0,0) size 781x856
+layer at (0,0) size 781x794
   RenderView at (0,0) size 781x600
-layer at (0,0) size 781x856
-  RenderBlock {HTML} at (0,0) size 781x856
-    RenderBody {BODY} at (8,8) size 765x840 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 765x20
-        RenderText {#text} at (0,0) size 355x20
-          text run at (0,0) width 355: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,33) size 765x144
-        RenderText {#text} at (0,0) size 616x143
+layer at (0,0) size 781x794
+  RenderBlock {HTML} at (0,0) size 781x794
+    RenderBody {BODY} at (8,8) size 765x778 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 765x19
+        RenderText {#text} at (0,0) size 337x19
+          text run at (0,0) width 337: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,32) size 765x135
+        RenderText {#text} at (0,0) size 616x135
           text run at (0,0) width 392: "P { margin: 0; padding: 0; text-align:  justify;}"
           text run at (392,0) width 0: " "
-          text run at (0,16) width 0: " "
-          text run at (0,32) width 384: "DIV.menu {float: left; clear: left; width: 11em;"
-          text run at (384,32) width 0: " "
-          text run at (0,48) width 464: "          margin: 0; margin-bottom: 10px; padding: 0.5em;}"
-          text run at (464,48) width 0: " "
-          text run at (0,64) width 432: "DIV.menu H1 {font-size: 1.2em; margin: 0; padding: 0;}"
-          text run at (432,64) width 0: " "
-          text run at (0,80) width 448: "DIV.menu UL {margin: 0.2em 0.3em 0.2em 1em; padding: 0;}"
-          text run at (448,80) width 0: " "
-          text run at (0,96) width 616: "DIV.article {padding: 0.5em; margin: 0; margin-left: 14em; margin-right: 2em;"
-          text run at (616,96) width 0: " "
-          text run at (0,112) width 480: "             color: black; background: yellow; clear: none;}"
-          text run at (480,112) width 0: " "
-          text run at (0,128) width 0: " "
-      RenderBlock {HR} at (0,190) size 765x2 [border: (1px inset #000000)]
-      RenderBlock (floating) {DIV} at (0,200) size 192x128 [color=#FFFFFF] [bgcolor=#008000]
-        RenderBlock {H1} at (8,8) size 176x26
-          RenderText {#text} at (0,0) size 85x26
-            text run at (0,0) width 85: "Top menu"
-        RenderBlock {UL} at (24,37) size 156x80
-          RenderListItem {LI} at (0,0) size 156x20
-            RenderListMarker at (-18,0) size 7x20: bullet
-            RenderText {#text} at (0,0) size 35x20
-              text run at (0,0) width 35: "green"
-          RenderListItem {LI} at (0,20) size 156x20
-            RenderListMarker at (-18,0) size 7x20: bullet
-            RenderText {#text} at (0,0) size 62x20
-              text run at (0,0) width 62: "white text"
-          RenderListItem {LI} at (0,40) size 156x20
-            RenderListMarker at (-18,0) size 7x20: bullet
-            RenderText {#text} at (0,0) size 94x20
-              text run at (0,0) width 94: "0.5em padding"
-          RenderListItem {LI} at (0,60) size 156x20
-            RenderListMarker at (-18,0) size 7x20: bullet
-            RenderText {#text} at (0,0) size 87x20
-              text run at (0,0) width 87: "0.5em margin"
-      RenderBlock (floating) {DIV} at (0,338) size 192x128 [color=#FFFFFF] [bgcolor=#0000FF]
-        RenderBlock {H1} at (8,8) size 176x26
-          RenderText {#text} at (0,0) size 112x26
-            text run at (0,0) width 112: "Bottom menu"
-        RenderBlock {UL} at (24,37) size 156x80
-          RenderListItem {LI} at (0,0) size 156x20
-            RenderListMarker at (-18,0) size 7x20: bullet
-            RenderText {#text} at (0,0) size 106x20
-              text run at (0,0) width 106: "blue background"
-          RenderListItem {LI} at (0,20) size 156x20
-            RenderListMarker at (-18,0) size 7x20: bullet
-            RenderText {#text} at (0,0) size 62x20
-              text run at (0,0) width 62: "white text"
-          RenderListItem {LI} at (0,40) size 156x20
-            RenderListMarker at (-18,0) size 7x20: bullet
-            RenderText {#text} at (0,0) size 94x20
-              text run at (0,0) width 94: "0.5em padding"
-          RenderListItem {LI} at (0,60) size 156x20
-            RenderListMarker at (-18,0) size 7x20: bullet
-            RenderText {#text} at (0,0) size 87x20
-              text run at (0,0) width 87: "0.5em margin"
-      RenderBlock {DIV} at (224,200) size 509x240 [bgcolor=#FFFF00]
-        RenderBlock {H1} at (8,29) size 493x42
-          RenderText {#text} at (0,0) size 275x42
-            text run at (0,0) width 275: "The 'clear' property"
-        RenderBlock {P} at (8,92) size 493x100
-          RenderText {#text} at (0,0) size 493x100
-            text run at (0,0) width 493: "This page has two floating \"menus\" on the side; one has a green background,"
-            text run at (0,20) width 229: "and the other a blue background. "
-            text run at (229,20) width 264: "Due to settings on the 'float' and 'clear'"
-            text run at (0,40) width 493: "properties, the two menus should appear on the left side of the page, the blue"
-            text run at (0,60) width 493: "below the green. There should be a 10px gap between the two menus. There"
-            text run at (0,80) width 459: "should also be a 10px gap between the top menu and the top of the page."
-        RenderBlock {P} at (8,192) size 493x40
-          RenderText {#text} at (0,0) size 493x40
+          text run at (0,15) width 0: " "
+          text run at (0,30) width 384: "DIV.menu {float: left; clear: left; width: 11em;"
+          text run at (384,30) width 0: " "
+          text run at (0,45) width 464: "          margin: 0; margin-bottom: 10px; padding: 0.5em;}"
+          text run at (464,45) width 0: " "
+          text run at (0,60) width 432: "DIV.menu H1 {font-size: 1.2em; margin: 0; padding: 0;}"
+          text run at (432,60) width 0: " "
+          text run at (0,75) width 448: "DIV.menu UL {margin: 0.2em 0.3em 0.2em 1em; padding: 0;}"
+          text run at (448,75) width 0: " "
+          text run at (0,90) width 616: "DIV.article {padding: 0.5em; margin: 0; margin-left: 14em; margin-right: 2em;"
+          text run at (616,90) width 0: " "
+          text run at (0,105) width 480: "             color: black; background: yellow; clear: none;}"
+          text run at (480,105) width 0: " "
+          text run at (0,120) width 0: " "
+      RenderBlock {HR} at (0,180) size 765x2 [border: (1px inset #000000)]
+      RenderBlock (floating) {DIV} at (0,190) size 192x120 [color=#FFFFFF] [bgcolor=#008000]
+        RenderBlock {H1} at (8,8) size 176x22
+          RenderText {#text} at (0,0) size 82x22
+            text run at (0,0) width 82: "Top menu"
+        RenderBlock {UL} at (24,33) size 156x76
+          RenderListItem {LI} at (0,0) size 156x19
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 33x19
+              text run at (0,0) width 33: "green"
+          RenderListItem {LI} at (0,19) size 156x19
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 58x19
+              text run at (0,0) width 58: "white text"
+          RenderListItem {LI} at (0,38) size 156x19
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 90x19
+              text run at (0,0) width 90: "0.5em padding"
+          RenderListItem {LI} at (0,57) size 156x19
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 82x19
+              text run at (0,0) width 82: "0.5em margin"
+      RenderBlock (floating) {DIV} at (0,320) size 192x120 [color=#FFFFFF] [bgcolor=#0000FF]
+        RenderBlock {H1} at (8,8) size 176x22
+          RenderText {#text} at (0,0) size 109x22
+            text run at (0,0) width 109: "Bottom menu"
+        RenderBlock {UL} at (24,33) size 156x76
+          RenderListItem {LI} at (0,0) size 156x19
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 101x19
+              text run at (0,0) width 101: "blue background"
+          RenderListItem {LI} at (0,19) size 156x19
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 58x19
+              text run at (0,0) width 58: "white text"
+          RenderListItem {LI} at (0,38) size 156x19
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 90x19
+              text run at (0,0) width 90: "0.5em padding"
+          RenderListItem {LI} at (0,57) size 156x19
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 82x19
+              text run at (0,0) width 82: "0.5em margin"
+      RenderBlock {DIV} at (224,190) size 509x228 [bgcolor=#FFFF00]
+        RenderBlock {H1} at (8,29) size 493x37
+          RenderText {#text} at (0,0) size 274x36
+            text run at (0,0) width 274: "The 'clear' property"
+        RenderBlock {P} at (8,87) size 493x95
+          RenderText {#text} at (0,0) size 493x95
+            text run at (0,0) width 493: "This page has two floating \"menus\" on the side; one has a green background, and"
+            text run at (0,19) width 183: "the other a blue background. "
+            text run at (183,19) width 310: "Due to settings on the 'float' and 'clear' properties,"
+            text run at (0,38) width 493: "the two menus should appear on the left side of the page, the blue below the"
+            text run at (0,57) width 493: "green. There should be a 10px gap between the two menus. There should also be"
+            text run at (0,76) width 352: "a 10px gap between the top menu and the top of the page."
+        RenderBlock {P} at (8,182) size 493x38
+          RenderText {#text} at (0,0) size 493x38
             text run at (0,0) width 493: "The top of the yellow rectangle (to which this paragraph belongs) should be"
-            text run at (0,20) width 331: "vertically aligned with the top of the green rectangle."
-      RenderTable {TABLE} at (192,440) size 573x400 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 571x398
-          RenderTableRow {TR} at (0,0) size 571x30
-            RenderTableCell {TD} at (0,0) size 571x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x22
-                RenderText {#text} at (4,4) size 163x22
-                  text run at (4,4) width 163: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,30) size 571x368
-            RenderTableCell {TD} at (0,200) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x20
+            text run at (0,19) width 311: "vertically aligned with the top of the green rectangle."
+      RenderTable {TABLE} at (192,418) size 573x360 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 571x358
+          RenderTableRow {TR} at (0,0) size 571x27
+            RenderTableCell {TD} at (0,0) size 571x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 159x19
+                RenderText {#text} at (4,4) size 159x19
+                  text run at (4,4) width 159: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,27) size 571x331
+            RenderTableCell {TD} at (0,179) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x19
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,30) size 559x368 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock (floating) {DIV} at (4,4) size 192x128 [color=#FFFFFF] [bgcolor=#008000]
-                RenderBlock {H1} at (8,8) size 176x26
-                  RenderText {#text} at (0,0) size 85x26
-                    text run at (0,0) width 85: "Top menu"
-                RenderBlock {UL} at (24,37) size 156x80
-                  RenderListItem {LI} at (0,0) size 156x20
-                    RenderListMarker at (-18,0) size 7x20: bullet
-                    RenderText {#text} at (0,0) size 35x20
-                      text run at (0,0) width 35: "green"
-                  RenderListItem {LI} at (0,20) size 156x20
-                    RenderListMarker at (-18,0) size 7x20: bullet
-                    RenderText {#text} at (0,0) size 62x20
-                      text run at (0,0) width 62: "white text"
-                  RenderListItem {LI} at (0,40) size 156x20
-                    RenderListMarker at (-18,0) size 7x20: bullet
-                    RenderText {#text} at (0,0) size 94x20
-                      text run at (0,0) width 94: "0.5em padding"
-                  RenderListItem {LI} at (0,60) size 156x20
-                    RenderListMarker at (-18,0) size 7x20: bullet
-                    RenderText {#text} at (0,0) size 87x20
-                      text run at (0,0) width 87: "0.5em margin"
-              RenderBlock (floating) {DIV} at (4,142) size 192x128 [color=#FFFFFF] [bgcolor=#0000FF]
-                RenderBlock {H1} at (8,8) size 176x26
-                  RenderText {#text} at (0,0) size 112x26
-                    text run at (0,0) width 112: "Bottom menu"
-                RenderBlock {UL} at (24,37) size 156x80
-                  RenderListItem {LI} at (0,0) size 156x20
-                    RenderListMarker at (-18,0) size 7x20: bullet
-                    RenderText {#text} at (0,0) size 106x20
-                      text run at (0,0) width 106: "blue background"
-                  RenderListItem {LI} at (0,20) size 156x20
-                    RenderListMarker at (-18,0) size 7x20: bullet
-                    RenderText {#text} at (0,0) size 62x20
-                      text run at (0,0) width 62: "white text"
-                  RenderListItem {LI} at (0,40) size 156x20
-                    RenderListMarker at (-18,0) size 7x20: bullet
-                    RenderText {#text} at (0,0) size 94x20
-                      text run at (0,0) width 94: "0.5em padding"
-                  RenderListItem {LI} at (0,60) size 156x20
-                    RenderListMarker at (-18,0) size 7x20: bullet
-                    RenderText {#text} at (0,0) size 87x20
-                      text run at (0,0) width 87: "0.5em margin"
-              RenderBlock {DIV} at (228,4) size 295x360 [bgcolor=#FFFF00]
-                RenderBlock {H1} at (8,29) size 279x42
-                  RenderText {#text} at (0,0) size 275x42
-                    text run at (0,0) width 275: "The 'clear' property"
-                RenderBlock {P} at (8,92) size 279x200
-                  RenderText {#text} at (0,0) size 279x200
+            RenderTableCell {TD} at (12,27) size 559x331 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock (floating) {DIV} at (4,4) size 192x120 [color=#FFFFFF] [bgcolor=#008000]
+                RenderBlock {H1} at (8,8) size 176x22
+                  RenderText {#text} at (0,0) size 82x22
+                    text run at (0,0) width 82: "Top menu"
+                RenderBlock {UL} at (24,33) size 156x76
+                  RenderListItem {LI} at (0,0) size 156x19
+                    RenderListMarker at (-18,0) size 7x19: bullet
+                    RenderText {#text} at (0,0) size 33x19
+                      text run at (0,0) width 33: "green"
+                  RenderListItem {LI} at (0,19) size 156x19
+                    RenderListMarker at (-18,0) size 7x19: bullet
+                    RenderText {#text} at (0,0) size 58x19
+                      text run at (0,0) width 58: "white text"
+                  RenderListItem {LI} at (0,38) size 156x19
+                    RenderListMarker at (-18,0) size 7x19: bullet
+                    RenderText {#text} at (0,0) size 90x19
+                      text run at (0,0) width 90: "0.5em padding"
+                  RenderListItem {LI} at (0,57) size 156x19
+                    RenderListMarker at (-18,0) size 7x19: bullet
+                    RenderText {#text} at (0,0) size 82x19
+                      text run at (0,0) width 82: "0.5em margin"
+              RenderBlock (floating) {DIV} at (4,134) size 192x120 [color=#FFFFFF] [bgcolor=#0000FF]
+                RenderBlock {H1} at (8,8) size 176x22
+                  RenderText {#text} at (0,0) size 109x22
+                    text run at (0,0) width 109: "Bottom menu"
+                RenderBlock {UL} at (24,33) size 156x76
+                  RenderListItem {LI} at (0,0) size 156x19
+                    RenderListMarker at (-18,0) size 7x19: bullet
+                    RenderText {#text} at (0,0) size 101x19
+                      text run at (0,0) width 101: "blue background"
+                  RenderListItem {LI} at (0,19) size 156x19
+                    RenderListMarker at (-18,0) size 7x19: bullet
+                    RenderText {#text} at (0,0) size 58x19
+                      text run at (0,0) width 58: "white text"
+                  RenderListItem {LI} at (0,38) size 156x19
+                    RenderListMarker at (-18,0) size 7x19: bullet
+                    RenderText {#text} at (0,0) size 90x19
+                      text run at (0,0) width 90: "0.5em padding"
+                  RenderListItem {LI} at (0,57) size 156x19
+                    RenderListMarker at (-18,0) size 7x19: bullet
+                    RenderText {#text} at (0,0) size 82x19
+                      text run at (0,0) width 82: "0.5em margin"
+              RenderBlock {DIV} at (228,4) size 295x323 [bgcolor=#FFFF00]
+                RenderBlock {H1} at (8,29) size 279x37
+                  RenderText {#text} at (0,0) size 274x36
+                    text run at (0,0) width 274: "The 'clear' property"
+                RenderBlock {P} at (8,87) size 279x171
+                  RenderText {#text} at (0,0) size 279x171
                     text run at (0,0) width 279: "This page has two floating \"menus\" on the"
-                    text run at (0,20) width 279: "side; one has a green background, and the"
-                    text run at (0,40) width 163: "other a blue background. "
-                    text run at (163,40) width 116: "Due to settings on"
-                    text run at (0,60) width 279: "the 'float' and 'clear' properties, the two"
-                    text run at (0,80) width 279: "menus should appear on the left side of the"
-                    text run at (0,100) width 279: "page, the blue below the green. There"
-                    text run at (0,120) width 279: "should be a 10px gap between the two"
-                    text run at (0,140) width 279: "menus. There should also be a 10px gap"
-                    text run at (0,160) width 279: "between the top menu and the top of the"
-                    text run at (0,180) width 34: "page."
-                RenderBlock {P} at (8,292) size 279x60
-                  RenderText {#text} at (0,0) size 279x60
-                    text run at (0,0) width 279: "The top of the yellow rectangle (to which"
-                    text run at (0,20) width 279: "this paragraph belongs) should be vertically"
-                    text run at (0,40) width 269: "aligned with the top of the green rectangle."
+                    text run at (0,19) width 279: "side; one has a green background, and the"
+                    text run at (0,38) width 164: "other a blue background. "
+                    text run at (164,38) width 115: "Due to settings on"
+                    text run at (0,57) width 279: "the 'float' and 'clear' properties, the two menus"
+                    text run at (0,76) width 279: "should appear on the left side of the page, the"
+                    text run at (0,95) width 279: "blue below the green. There should be a 10px"
+                    text run at (0,114) width 279: "gap between the two menus. There should"
+                    text run at (0,133) width 279: "also be a 10px gap between the top menu and"
+                    text run at (0,152) width 117: "the top of the page."
+                RenderBlock {P} at (8,258) size 279x57
+                  RenderText {#text} at (0,0) size 279x57
+                    text run at (0,0) width 279: "The top of the yellow rectangle (to which this"
+                    text run at (0,19) width 279: "paragraph belongs) should be vertically"
+                    text run at (0,38) width 254: "aligned with the top of the green rectangle."

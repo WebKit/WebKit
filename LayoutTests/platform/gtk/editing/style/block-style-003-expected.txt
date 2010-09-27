@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x61 [border: (2px solid #FF0000)]
-        RenderText {#text} at (202,15) size 284x30
-          text run at (202,15) width 284: "Here is some text. Should be "
-        RenderInline {B} at (0,0) size 89x33
-          RenderText {#text} at (486,14) size 89x33
-            text run at (486,14) width 89: "centered"
-        RenderText {#text} at (575,15) size 6x30
-          text run at (575,15) width 6: "."
-      RenderBlock {DIV} at (0,61) size 784x61 [border: (2px solid #FF0000)]
-        RenderText {#text} at (202,15) size 284x30
-          text run at (202,15) width 284: "Here is some text. Should be "
-        RenderInline {B} at (0,0) size 89x33
-          RenderText {#text} at (486,14) size 89x33
-            text run at (486,14) width 89: "centered"
-        RenderText {#text} at (575,15) size 6x30
-          text run at (575,15) width 6: "."
+      RenderBlock {DIV} at (0,0) size 784x56 [border: (2px solid #FF0000)]
+        RenderText {#text} at (204,14) size 280x28
+          text run at (204,14) width 280: "Here is some text. Should be "
+        RenderInline {B} at (0,0) size 89x28
+          RenderText {#text} at (484,14) size 89x28
+            text run at (484,14) width 89: "centered"
+        RenderText {#text} at (573,14) size 6x28
+          text run at (573,14) width 6: "."
+      RenderBlock {DIV} at (0,56) size 784x56 [border: (2px solid #FF0000)]
+        RenderText {#text} at (204,14) size 280x28
+          text run at (204,14) width 280: "Here is some text. Should be "
+        RenderInline {B} at (0,0) size 89x28
+          RenderText {#text} at (484,14) size 89x28
+            text run at (484,14) width 89: "centered"
+        RenderText {#text} at (573,14) size 6x28
+          text run at (573,14) width 6: "."
 selection start: position 1 of child 0 {#text} of child 1 {DIV} of body
 selection end:   position 13 of child 0 {#text} of child 3 {DIV} of body

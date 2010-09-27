@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (125,25) size 675x22
-      RenderSVGText {text} at (75,15) size 736x13 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 736x13
-          chunk 1 text run 1 at (75.00,25.00) startOffset 0 endOffset 63 width 736.00: "Test 'tref' element pointing outside the SVG document fragment."
+    RenderSVGContainer {g} at (125,23) size 579x24
+      RenderSVGText {text} at (75,14) size 347x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 347x14
+          chunk 1 text run 1 at (75.00,25.00) startOffset 0 endOffset 63 width 347.00: "Test 'tref' element pointing outside the SVG document fragment."
       RenderSVGText {text}
         RenderSVGInline {tref} at (0,0) size 0x0
         RenderSVGInlineText {#text} at (0,0) size 0x0
@@ -15,12 +15,12 @@ layer at (0,0) size 800x600
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderForeignObject {foreignObject} at (0,0) size 0x0
           RenderSVGRoot {svg} at (0,0) size 0x0
-            RenderSVGText {text} at (0,-15) size 90x19 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 90x19
-                chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 5 width 90.00: "Hello"
+            RenderSVGText {text} at (0,-17) size 41x21 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 41x21
+                chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 5 width 41.00: "Hello"
           RenderText {#text} at (0,0) size 0x0
-    RenderSVGContainer {g} at (16,523) size 784x56
-      RenderSVGText {text} at (10,314) size 512x33 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 512x33
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 512.00: "$Revision: 1.5 $"
+    RenderSVGContainer {g} at (16,518) size 381x61
+      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 228x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.00: "$Revision: 1.5 $"
     RenderPath {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

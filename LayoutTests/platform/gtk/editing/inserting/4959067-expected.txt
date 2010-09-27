@@ -3,15 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 598x20
-          text run at (0,0) width 598: "This tests to make sure that insertion over a fully selected special element doesn't do expansion."
-      RenderBlock {DIV} at (0,36) size 784x20
-        RenderBlock {UL} at (0,0) size 784x20
-          RenderListItem {LI} at (40,0) size 744x20
-            RenderListMarker at (-18,0) size 7x20: bullet
-            RenderInline {A} at (0,0) size 21x20 [color=#0000EE]
-              RenderText {#text} at (0,0) size 21x20
-                text run at (0,0) width 21: "foo"
-      RenderBlock {UL} at (0,72) size 784x0
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 571x19
+          text run at (0,0) width 571: "This tests to make sure that insertion over a fully selected special element doesn't do expansion."
+      RenderBlock {DIV} at (0,35) size 784x19
+        RenderBlock {UL} at (0,0) size 784x19
+          RenderListItem {LI} at (40,0) size 744x19
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderInline {A} at (0,0) size 20x19 [color=#0000EE]
+              RenderText {#text} at (0,0) size 20x19
+                text run at (0,0) width 20: "foo"
+      RenderBlock {UL} at (0,70) size 784x0
 caret: position 3 of child 0 {#text} of child 0 {A} of child 0 {LI} of child 1 {UL} of child 2 {DIV} of body

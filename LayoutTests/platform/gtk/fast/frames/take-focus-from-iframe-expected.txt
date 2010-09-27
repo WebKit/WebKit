@@ -5,21 +5,21 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock (anonymous) at (0,0) size 784x44
         RenderPartObject {IFRAME} at (0,0) size 204x44 [border: (2px inset #000000)]
-          layer at (0,0) size 184x46
+          layer at (0,0) size 184x45
             RenderView at (0,0) size 184x40
-          layer at (0,0) size 184x46
-            RenderBlock {HTML} at (0,0) size 184x46
-              RenderBody {BODY} at (8,8) size 168x30
-                RenderTextControl {INPUT} at (2,2) size 168x26 [bgcolor=#FFFFFF]
-          layer at (13,13) size 162x20
-            RenderBlock {DIV} at (3,3) size 162x20
+          layer at (0,0) size 184x45
+            RenderBlock {HTML} at (0,0) size 184x45
+              RenderBody {BODY} at (8,8) size 168x29
+                RenderTextControl {INPUT} at (2,2) size 168x25 [bgcolor=#FFFFFF]
+          layer at (13,13) size 162x19
+            RenderBlock {DIV} at (3,3) size 162x19
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,60) size 784x30
-        RenderText {#text} at (0,5) size 366x20
-          text run at (0,5) width 366: "This field should look and act focused. Try to type into it: "
-        RenderTextControl {INPUT} at (368,2) size 168x26 [bgcolor=#FFFFFF]
-layer at (379,73) size 162x20
-  RenderBlock {DIV} at (3,3) size 162x20
-    RenderText {#text} at (1,0) size 39x20
-      text run at (1,0) width 39: "PASS"
+      RenderBlock {P} at (0,60) size 784x29
+        RenderText {#text} at (0,5) size 346x19
+          text run at (0,5) width 346: "This field should look and act focused. Try to type into it: "
+        RenderTextControl {INPUT} at (348,2) size 168x25 [bgcolor=#FFFFFF]
+layer at (359,73) size 162x19
+  RenderBlock {DIV} at (3,3) size 162x19
+    RenderText {#text} at (1,0) size 38x19
+      text run at (1,0) width 38: "PASS"
 caret: position 4 of child 0 {#text} of child 0 {DIV} of child 1 {INPUT} of child 3 {P} of body

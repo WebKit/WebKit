@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 294x20
-          text run at (0,0) width 294: "The caret should be at the end of this sentence."
+      RenderBlock {DIV} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 282x19
+          text run at (0,0) width 282: "The caret should be at the end of this sentence."
 caret: position 48 of child 0 {#text} of child 0 {DIV} of body

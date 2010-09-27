@@ -3,23 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock (anonymous) at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 607x20
-          text run at (0,0) width 607: "The following two lines should be visible without the white background clipping any of the text:"
-      RenderBlock {P} at (0,36) size 784x34
-        RenderInline {SPAN} at (0,0) size 78x42 [bgcolor=#FFFFFF]
+      RenderBlock (anonymous) at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 565x19
+          text run at (0,0) width 565: "The following two lines should be visible without the white background clipping any of the text:"
+      RenderBlock {P} at (0,35) size 784x30
+        RenderInline {SPAN} at (0,0) size 77x38 [bgcolor=#FFFFFF]
           RenderText {#text} at (0,0) size 0x0
-          RenderInline {SPAN} at (0,0) size 78x34
-            RenderText {#text} at (0,0) size 78x17
-              text run at (0,0) width 78: "FOOBARBAZ"
-            RenderBR {BR} at (78,13) size 0x0
-            RenderText {#text} at (0,17) size 78x17
-              text run at (0,17) width 78: "BAZBARFOO"
+          RenderInline {SPAN} at (0,0) size 77x30
+            RenderText {#text} at (0,0) size 77x15
+              text run at (0,0) width 77: "FOOBARBAZ"
+            RenderBR {BR} at (77,12) size 0x0
+            RenderText {#text} at (0,15) size 77x15
+              text run at (0,15) width 77: "BAZBARFOO"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,86) size 784x20
-        RenderText {#text} at (0,0) size 415x20
-          text run at (0,0) width 415: "The background below should be 10x10 and snugly fit the image:"
-      RenderBlock {P} at (0,122) size 784x10
-        RenderInline {SPAN} at (0,0) size 10x49 [bgcolor=#FF0000]
+      RenderBlock (anonymous) at (0,81) size 784x19
+        RenderText {#text} at (0,0) size 391x19
+          text run at (0,0) width 391: "The background below should be 10x10 and snugly fit the image:"
+      RenderBlock {P} at (0,116) size 784x10
+        RenderInline {SPAN} at (0,0) size 10x45 [bgcolor=#FF0000]
           RenderImage {IMG} at (0,0) size 10x10
         RenderText {#text} at (0,0) size 0x0

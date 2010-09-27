@@ -3,24 +3,24 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,16) size 784x568
-      RenderBlock {UL} at (16,0) size 752x61 [border: (1px solid #000000)]
-        RenderListItem {LI} at (41,1) size 710x59
-          RenderListMarker at (-38,0) size 17x59: black square
-          RenderText {#text} at (0,0) size 112x59
-            text run at (0,0) width 112: "world"
-          RenderText {#text} at (112,0) size 107x59
-            text run at (112,0) width 95: "hello"
-            text run at (207,0) width 12: " "
-      RenderBlock {P} at (0,77) size 784x80
-        RenderText {#text} at (0,0) size 768x80
-          text run at (0,0) width 562: "This is an automated test for elementAtPoint for points over position:outside list markers. "
-          text run at (562,0) width 168: "The dictionary returned by"
-          text run at (730,0) width 4: " "
-          text run at (0,20) width 743: "elementAtPoint should contain the list item as the DOMNode, not the list, for points over position:outside list markers."
-          text run at (0,40) width 743: "elementAtPoint is used to determine the drag operation that will occur when something is dropped over a given point. "
-          text run at (743,40) width 21: "So,"
-          text run at (764,40) width 4: " "
-          text run at (0,60) width 371: "this test drags a bit of text over the list marker and drops it. "
-          text run at (371,60) width 386: "It should be pasted into the list item, which is contenteditable."
+      RenderBlock {UL} at (16,0) size 752x57 [border: (1px solid #000000)]
+        RenderListItem {LI} at (41,1) size 710x55
+          RenderListMarker at (-36,0) size 16x54: black square
+          RenderText {#text} at (0,0) size 110x54
+            text run at (0,0) width 110: "world"
+          RenderText {#text} at (110,0) size 103x54
+            text run at (110,0) width 91: "hello"
+            text run at (201,0) width 12: " "
+      RenderBlock {P} at (0,73) size 784x76
+        RenderText {#text} at (0,0) size 780x76
+          text run at (0,0) width 535: "This is an automated test for elementAtPoint for points over position:outside list markers. "
+          text run at (535,0) width 159: "The dictionary returned by"
+          text run at (694,0) width 4: " "
+          text run at (0,19) width 707: "elementAtPoint should contain the list item as the DOMNode, not the list, for points over position:outside list markers."
+          text run at (0,38) width 706: "elementAtPoint is used to determine the drag operation that will occur when something is dropped over a given point. "
+          text run at (706,38) width 70: "So, this test"
+          text run at (776,38) width 4: " "
+          text run at (0,57) width 309: "drags a bit of text over the list marker and drops it. "
+          text run at (309,57) width 367: "It should be pasted into the list item, which is contenteditable."
 selection start: position 0 of child 0 {#text} of child 0 {LI} of child 1 {UL} of body
 selection end:   position 5 of child 0 {#text} of child 0 {LI} of child 1 {UL} of body

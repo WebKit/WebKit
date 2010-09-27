@@ -10,13 +10,13 @@ layer at (0,0) size 800x600
           RenderBlock {HTML} at (0,0) size 784x102
             RenderBody {BODY} at (0,0) size 784x102
               RenderBlock {DIV} at (0,0) size 784x102 [border: (1px solid #000000)]
-                RenderText {#text} at (1,1) size 689x20
-                  text run at (1,1) width 689: "This layout test is checks that we don't crash when a stand alone image is dragged into a content editable div. "
-                RenderBR {BR} at (690,16) size 0x0
-                RenderInline {A} at (0,0) size 149x20 [color=#0000EE]
-                  RenderText {#text} at (1,31) size 149x20
-                    text run at (1,31) width 149: "rdar://problem/5021127"
-                RenderImage {IMG} at (150,21) size 25x25
+                RenderText {#text} at (1,1) size 657x19
+                  text run at (1,1) width 657: "This layout test is checks that we don't crash when a stand alone image is dragged into a content editable div. "
+                RenderBR {BR} at (658,16) size 0x0
+                RenderInline {A} at (0,0) size 146x19 [color=#0000EE]
+                  RenderText {#text} at (1,30) size 146x19
+                    text run at (1,30) width 146: "rdar://problem/5021127"
+                RenderImage {IMG} at (147,20) size 25x25
       RenderFrame {FRAME} at (0,106) size 800x100
         layer at (0,0) size 800x100
           RenderView at (0,0) size 800x100

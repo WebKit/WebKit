@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 669x20
-          text run at (0,0) width 669: "This tests for a bug where deleting the contents of an editable root that's inline would introduce a new line."
-      RenderBlock {DIV} at (0,36) size 784x22 [border: (1px solid #000000)]
-        RenderInline {SPAN} at (0,0) size 387x20
-          RenderText {#text} at (1,1) size 387x20
-            text run at (1,1) width 387: "There shouldn't be any blank lines in the black bordered area."
-          RenderBR {BR} at (388,16) size 0x0
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 633x19
+          text run at (0,0) width 633: "This tests for a bug where deleting the contents of an editable root that's inline would introduce a new line."
+      RenderBlock {DIV} at (0,35) size 784x21 [border: (1px solid #000000)]
+        RenderInline {SPAN} at (0,0) size 370x19
+          RenderText {#text} at (1,1) size 370x19
+            text run at (1,1) width 370: "There shouldn't be any blank lines in the black bordered area."
+          RenderBR {BR} at (371,16) size 0x0
 caret: position 62 of child 0 {#text} of child 0 {SPAN} of child 2 {DIV} of body

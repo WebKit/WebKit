@@ -3,24 +3,24 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 633x20
-          text run at (0,0) width 633: "The test passes if all four boxes have a radial gradient that's green in the center and black at the edge."
-      RenderBlock {H1} at (0,41) size 784x42
-        RenderText {#text} at (0,0) size 727x42
-          text run at (0,0) width 727: "Radial Gradients With One Center, Inner Radius > 0"
-      RenderBlock (anonymous) at (0,104) size 784x155
+      RenderBlock (anonymous) at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 606x19
+          text run at (0,0) width 606: "The test passes if all four boxes have a radial gradient that's green in the center and black at the edge."
+      RenderBlock {H1} at (0,40) size 784x37
+        RenderText {#text} at (0,0) size 725x36
+          text run at (0,0) width 725: "Radial Gradients With One Center, Inner Radius > 0"
+      RenderBlock (anonymous) at (0,98) size 784x154
         RenderBlock {DIV} at (0,0) size 150x150
-        RenderText {#text} at (150,135) size 4x20
+        RenderText {#text} at (150,135) size 4x19
           text run at (150,135) width 4: " "
         RenderBlock {DIV} at (154,0) size 150x150
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {H1} at (0,280) size 784x42
-        RenderText {#text} at (0,0) size 643x42
-          text run at (0,0) width 643: "Radial Gradients With One, Inner Radius == 0"
-      RenderBlock (anonymous) at (0,343) size 784x155
+      RenderBlock {H1} at (0,273) size 784x37
+        RenderText {#text} at (0,0) size 641x36
+          text run at (0,0) width 641: "Radial Gradients With One, Inner Radius == 0"
+      RenderBlock (anonymous) at (0,331) size 784x154
         RenderBlock {DIV} at (0,0) size 150x150
-        RenderText {#text} at (150,135) size 4x20
+        RenderText {#text} at (150,135) size 4x19
           text run at (150,135) width 4: " "
         RenderBlock {DIV} at (154,0) size 150x150
         RenderText {#text} at (0,0) size 0x0

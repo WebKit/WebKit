@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 400x400
-  RenderSVGRoot {svg} at (10,10) size 182x185
+  RenderSVGRoot {svg} at (10,10) size 178x184
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceFilter {filter} [id="over"] [filterUnits=objectBoundingBox] [primitiveUnits=objectBoundingBox]
         [feComposite operation="OVER"]
@@ -29,31 +29,31 @@ layer at (0,0) size 400x400
           [feFlood flood-color="#FF0000" flood-opacity="0.20"]
     RenderPath {rect} at (10,10) size 50x50 [fill={[type=SOLID] [color=#000000]}] [data="M10.00,10.00 L60.00,10.00 L60.00,60.00 L10.00,60.00 Z"]
       [filter="over"] RenderSVGResourceFilter {filter} at (10,10) size 50x50
-    RenderSVGText {text} at (10,75) size 28x20 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 28x20
-        chunk 1 text run 1 at (10.00,90.00) startOffset 0 endOffset 4 width 28.00: "over"
+    RenderSVGText {text} at (10,75) size 27x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 27x19
+        chunk 1 text run 1 at (10.00,90.00) startOffset 0 endOffset 4 width 27.00: "over"
     RenderPath {rect} at (70,10) size 50x50 [fill={[type=SOLID] [color=#000000]}] [data="M70.00,10.00 L120.00,10.00 L120.00,60.00 L70.00,60.00 Z"]
       [filter="in"] RenderSVGResourceFilter {filter} at (70,10) size 50x50
-    RenderSVGText {text} at (70,75) size 12x20 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 12x20
-        chunk 1 text run 1 at (70.00,90.00) startOffset 0 endOffset 2 width 12.00: "in"
+    RenderSVGText {text} at (70,75) size 10x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 10x19
+        chunk 1 text run 1 at (70.00,90.00) startOffset 0 endOffset 2 width 10.00: "in"
     RenderPath {rect} at (130,10) size 50x50 [fill={[type=SOLID] [color=#000000]}] [data="M130.00,10.00 L180.00,10.00 L180.00,60.00 L130.00,60.00 Z"]
       [filter="out"] RenderSVGResourceFilter {filter} at (130,10) size 50x50
-    RenderSVGText {text} at (130,75) size 20x20 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 20x20
-        chunk 1 text run 1 at (130.00,90.00) startOffset 0 endOffset 3 width 20.00: "out"
+    RenderSVGText {text} at (130,75) size 19x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 19x19
+        chunk 1 text run 1 at (130.00,90.00) startOffset 0 endOffset 3 width 19.00: "out"
     RenderPath {rect} at (10,110) size 50x50 [fill={[type=SOLID] [color=#000000]}] [data="M10.00,110.00 L60.00,110.00 L60.00,160.00 L10.00,160.00 Z"]
       [filter="atop"] RenderSVGResourceFilter {filter} at (10,110) size 50x50
-    RenderSVGText {text} at (10,175) size 27x20 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 27x20
+    RenderSVGText {text} at (10,175) size 27x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 27x19
         chunk 1 text run 1 at (10.00,190.00) startOffset 0 endOffset 4 width 27.00: "atop"
     RenderPath {rect} at (70,110) size 50x50 [fill={[type=SOLID] [color=#000000]}] [data="M70.00,110.00 L120.00,110.00 L120.00,160.00 L70.00,160.00 Z"]
       [filter="xor"] RenderSVGResourceFilter {filter} at (70,110) size 50x50
-    RenderSVGText {text} at (70,175) size 21x20 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 21x20
-        chunk 1 text run 1 at (70.00,190.00) startOffset 0 endOffset 3 width 21.00: "xor"
+    RenderSVGText {text} at (70,175) size 20x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 20x19
+        chunk 1 text run 1 at (70.00,190.00) startOffset 0 endOffset 3 width 20.00: "xor"
     RenderPath {rect} at (130,110) size 50x50 [fill={[type=SOLID] [color=#000000]}] [data="M130.00,110.00 L180.00,110.00 L180.00,160.00 L130.00,160.00 Z"]
       [filter="arithmetic"] RenderSVGResourceFilter {filter} at (130,110) size 50x50
-    RenderSVGText {text} at (130,175) size 62x20 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 62x20
-        chunk 1 text run 1 at (130.00,190.00) startOffset 0 endOffset 10 width 62.00: "arithmetic"
+    RenderSVGText {text} at (130,175) size 58x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 58x19
+        chunk 1 text run 1 at (130.00,190.00) startOffset 0 endOffset 10 width 58.00: "arithmetic"

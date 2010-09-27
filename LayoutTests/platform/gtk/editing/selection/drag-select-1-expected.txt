@@ -4,18 +4,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 216x20
-          text run at (0,0) width 216: "This tests for a drag select crasher."
-      RenderBlock {DIV} at (0,36) size 784x30
-        RenderInline {SPAN} at (0,0) size 64x20
-          RenderText {#text} at (0,5) size 64x20
-            text run at (0,5) width 64: "Start here."
-        RenderText {#text} at (64,5) size 4x20
-          text run at (64,5) width 4: " "
-        RenderTextControl {INPUT} at (70,2) size 168x26 [bgcolor=#FFFFFF]
-      RenderBlock {UL} at (0,82) size 784x0
-layer at (81,49) size 162x20
-  RenderBlock {DIV} at (3,3) size 162x20
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 209x19
+          text run at (0,0) width 209: "This tests for a drag select crasher."
+      RenderBlock {DIV} at (0,35) size 784x29
+        RenderInline {SPAN} at (0,0) size 63x19
+          RenderText {#text} at (0,5) size 63x19
+            text run at (0,5) width 63: "Start here."
+        RenderText {#text} at (63,5) size 4x19
+          text run at (63,5) width 4: " "
+        RenderTextControl {INPUT} at (69,2) size 168x25 [bgcolor=#FFFFFF]
+      RenderBlock {UL} at (0,80) size 784x0
+layer at (80,48) size 162x19
+  RenderBlock {DIV} at (3,3) size 162x19
 selection start: position 5 of child 0 {#text} of child 0 {SPAN} of child 2 {DIV} of body
 selection end:   position 1 of child 1 {#text} of child 2 {DIV} of body

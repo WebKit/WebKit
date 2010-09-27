@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x123
+      RenderBlock {DIV} at (0,0) size 784x122
         RenderBlock {DIV} at (0,0) size 784x103
           RenderImage {IMG} at (708,0) size 76x103
         RenderBlock (anonymous) at (0,103) size 784x0
-        RenderBlock {DIV} at (0,103) size 784x20
-          RenderText {#text} at (22,0) size 762x20
-            text run at (22,0) width 762: "This tests for a crash when changing the alignment of content that starts with an image not inside its own block container."
+        RenderBlock {DIV} at (0,103) size 784x19
+          RenderText {#text} at (65,0) size 719x19
+            text run at (65,0) width 719: "This tests for a crash when changing the alignment of content that starts with an image not inside its own block container."
 selection start: position 0 of child 0 {IMG} of child 0 {DIV} of child 0 {DIV} of body
 selection end:   position 123 of child 0 {#text} of child 1 {DIV} of child 0 {DIV} of body

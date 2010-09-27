@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 603x20
-          text run at (0,0) width 603: "Div background should animate between red and green. DRT should snapshot when it is green."
-      RenderBlock {DIV} at (0,36) size 200x200 [bgcolor=#0000FF]
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 571x19
+          text run at (0,0) width 571: "Div background should animate between red and green. DRT should snapshot when it is green."
+      RenderBlock {DIV} at (0,35) size 200x200 [bgcolor=#0000FF]

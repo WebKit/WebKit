@@ -3,29 +3,29 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x88
   RenderBlock {html} at (0,0) size 800x88
     RenderBody {body} at (8,16) size 784x56
-      RenderBlock {p} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 291x20
-          text run at (0,0) width 291: "Following elements should use a regular font: "
-        RenderBlock {math} at (291,2) size 109x16
-          RenderInline {mn} at (0,0) size 16x17
-            RenderText {#text} at (1,0) size 16x17
-              text run at (1,0) width 16: "1"
-          RenderBlock {mo} at (17,0) size 11x16
-            RenderBlock {mo} at (0,0) size 11x16
-              RenderText {mo} at (0,0) size 11x17
-                text run at (0,0) width 11: "\x{2207}"
-          RenderInline {mtext} at (0,0) size 64x17
-            RenderText {#text} at (28,0) size 64x17
-              text run at (28,0) width 64: "text"
-          RenderInline {ms} at (0,0) size 16x17
-            RenderText {#text} at (92,0) size 16x17
-              text run at (92,0) width 16: "&"
+      RenderBlock {p} at (0,0) size 784x21
+        RenderText {#text} at (0,2) size 272x19
+          text run at (0,2) width 272: "Following elements should use a regular font: "
+        RenderBlock {math} at (272,0) size 55x19
+          RenderInline {mn} at (0,0) size 8x19
+            RenderText {#text} at (1,2) size 8x19
+              text run at (1,2) width 8: "1"
+          RenderBlock {mo} at (9,0) size 11x19
+            RenderBlock {mo} at (0,0) size 11x19
+              RenderText {mo} at (0,2) size 11x19
+                text run at (0,2) width 11: "\x{2207}"
+          RenderInline {mtext} at (0,0) size 22x19
+            RenderText {#text} at (20,2) size 22x19
+              text run at (20,2) width 22: "text"
+          RenderInline {ms} at (0,0) size 12x19
+            RenderText {#text} at (42,2) size 12x19
+              text run at (42,2) width 12: "&"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,36) size 784x20
-        RenderText {#text} at (0,0) size 241x20
-          text run at (0,0) width 241: "Following element should be in italic: "
-        RenderBlock {math} at (241,1) size 11x17
-          RenderInline {mi} at (0,0) size 9x21
-            RenderText {#text} at (1,-2) size 9x21
-              text run at (1,-2) width 9: "x"
+      RenderBlock {p} at (0,37) size 784x19
+        RenderText {#text} at (0,0) size 223x19
+          text run at (0,0) width 223: "Following element should be in italic: "
+        RenderBlock {math} at (223,1) size 10x16
+          RenderInline {mi} at (0,0) size 8x19
+            RenderText {#text} at (1,-1) size 8x19
+              text run at (1,-1) width 8: "x"
         RenderText {#text} at (0,0) size 0x0

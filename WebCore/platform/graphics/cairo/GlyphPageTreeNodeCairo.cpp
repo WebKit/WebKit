@@ -32,6 +32,9 @@
 #include "GlyphPageTreeNode.h"
 
 #include "SimpleFontData.h"
+#include <cairo-ft.h>
+#include <cairo.h>
+#include <fontconfig/fcfreetype.h>
 
 namespace WebCore {
 

@@ -3,25 +3,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x92
-        RenderBlock (anonymous) at (0,0) size 784x20
-          RenderText {#text} at (0,0) size 21x20
-            text run at (0,0) width 21: "foo"
-        RenderBlock {BLOCKQUOTE} at (40,36) size 704x20
-          RenderText {#text} at (0,0) size 20x20
+      RenderBlock {DIV} at (0,0) size 784x89
+        RenderBlock (anonymous) at (0,0) size 784x19
+          RenderText {#text} at (0,0) size 20x19
+            text run at (0,0) width 20: "foo"
+        RenderBlock {BLOCKQUOTE} at (40,35) size 704x19
+          RenderText {#text} at (0,0) size 20x19
             text run at (0,0) width 20: "bar"
-        RenderBlock (anonymous) at (0,72) size 784x20
-          RenderText {#text} at (0,0) size 22x20
-            text run at (0,0) width 22: "baz"
-          RenderText {#text} at (22,0) size 21x20
-            text run at (22,0) width 21: "foo"
-      RenderBlock (anonymous) at (0,92) size 784x0
-      RenderBlock {BLOCKQUOTE} at (40,108) size 704x20
-        RenderText {#text} at (0,0) size 20x20
+        RenderBlock (anonymous) at (0,70) size 784x19
+          RenderText {#text} at (0,0) size 21x19
+            text run at (0,0) width 21: "baz"
+          RenderText {#text} at (21,0) size 20x19
+            text run at (21,0) width 20: "foo"
+      RenderBlock (anonymous) at (0,89) size 784x0
+      RenderBlock {BLOCKQUOTE} at (40,105) size 704x19
+        RenderText {#text} at (0,0) size 20x19
           text run at (0,0) width 20: "bar"
-      RenderBlock (anonymous) at (0,144) size 784x20
-        RenderText {#text} at (0,0) size 22x20
-          text run at (0,0) width 22: "baz"
+      RenderBlock (anonymous) at (0,140) size 784x19
+        RenderText {#text} at (0,0) size 21x19
+          text run at (0,0) width 21: "baz"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

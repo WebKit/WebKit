@@ -3,19 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x245 [color=#0000007F]
-        RenderBlock {DIV} at (0,0) size 784x49
-          RenderText {#text} at (0,0) size 528x49
-            text run at (0,0) width 528: "Text shadow"
-        RenderBlock {DIV} at (0,49) size 784x49
-          RenderText {#text} at (0,0) size 528x49
-            text run at (0,0) width 528: "Text shadow"
-        RenderBlock {DIV} at (0,98) size 784x49
-          RenderText {#text} at (0,0) size 528x49
-            text run at (0,0) width 528: "Text shadow"
-        RenderBlock {DIV} at (0,147) size 784x49
-          RenderText {#text} at (0,0) size 528x49
-            text run at (0,0) width 528: "Text shadow"
-        RenderBlock {DIV} at (0,196) size 784x49
-          RenderText {#text} at (0,0) size 528x49
-            text run at (0,0) width 528: "Text shadow"
+      RenderBlock {DIV} at (0,0) size 784x275 [color=#0000007F]
+        RenderBlock {DIV} at (0,0) size 784x55
+          RenderText {#text} at (0,0) size 244x54
+            text run at (0,0) width 244: "Text shadow"
+        RenderBlock {DIV} at (0,55) size 784x55
+          RenderText {#text} at (0,0) size 244x54
+            text run at (0,0) width 244: "Text shadow"
+        RenderBlock {DIV} at (0,110) size 784x55
+          RenderText {#text} at (0,0) size 244x54
+            text run at (0,0) width 244: "Text shadow"
+        RenderBlock {DIV} at (0,165) size 784x55
+          RenderText {#text} at (0,0) size 244x54
+            text run at (0,0) width 244: "Text shadow"
+        RenderBlock {DIV} at (0,220) size 784x55
+          RenderText {#text} at (0,0) size 244x54
+            text run at (0,0) width 244: "Text shadow"

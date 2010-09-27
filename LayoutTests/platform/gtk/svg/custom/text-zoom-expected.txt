@@ -5,7 +5,7 @@ layer at (0,0) size 800x8
     RenderBody {body} at (8,8) size 784x0
 layer at (0,30) size 100x100
   RenderBlock (positioned) {div} at (0,30) size 100x100 [bgcolor=#FF0000]
-layer at (0,30) size 200x206
+layer at (0,30) size 200x205
   RenderBlock (positioned) {div} at (0,30) size 200x200
     RenderSVGRoot {svg} at (0,30) size 100x100
       RenderPath {rect} at (0,30) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]

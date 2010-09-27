@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 616x20
-          text run at (0,0) width 616: "Check you don't crash when your previous drag target frame is deleted <rdar://problem/5049842>"
-      RenderBlock {DIV} at (0,36) size 784x20
-        RenderInline {SPAN} at (0,0) size 31x20
-          RenderText {#text} at (0,0) size 31x20
-            text run at (0,0) width 31: "hello"
-      RenderBlock (anonymous) at (0,56) size 784x0
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 594x19
+          text run at (0,0) width 594: "Check you don't crash when your previous drag target frame is deleted <rdar://problem/5049842>"
+      RenderBlock {DIV} at (0,35) size 784x19
+        RenderInline {SPAN} at (0,0) size 28x19
+          RenderText {#text} at (0,0) size 28x19
+            text run at (0,0) width 28: "hello"
+      RenderBlock (anonymous) at (0,54) size 784x0
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
 selection start: position 0 of child 0 {#text} of child 0 {SPAN} of child 3 {DIV} of body

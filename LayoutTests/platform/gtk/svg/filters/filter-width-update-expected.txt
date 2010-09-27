@@ -1,14 +1,14 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 483x155
+  RenderSVGRoot {svg} at (0,0) size 458x154
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceFilter {filter} [id="blur"] [filterUnits=userSpaceOnUse] [primitiveUnits=userSpaceOnUse]
         [feGaussianBlur stdDeviation="10.00, 10.00"]
           [SourceGraphic]
     RenderPath {rect} at (0,0) size 140x140 [fill={[type=SOLID] [color=#008000]}] [data="M20.00,20.00 L120.00,20.00 L120.00,120.00 L20.00,120.00 Z"]
       [filter="blur"] RenderSVGResourceFilter {filter} at (0,0) size 140x140
-    RenderSVGText {text} at (0,135) size 483x20 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 483x20
-        chunk 1 text run 1 at (0.00,150.00) startOffset 0 endOffset 74 width 483.00: "You should see a green, blurred rectangle from 20x20 with width/height 100"
+    RenderSVGText {text} at (0,135) size 458x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 458x19
+        chunk 1 text run 1 at (0.00,150.00) startOffset 0 endOffset 74 width 458.00: "You should see a green, blurred rectangle from 20x20 with width/height 100"
 caret: position 0 of child 0 {#text} of child 5 {text} of child 0 {svg} of document

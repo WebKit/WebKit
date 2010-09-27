@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {H1} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 616x42
+      RenderBlock {H1} at (0,0) size 784x37
+        RenderText {#text} at (0,0) size 616x36
           text run at (0,0) width 616: "Testing hittest on a layer with null transform"
-      RenderBlock {P} at (0,63) size 784x20
-        RenderText {#text} at (0,0) size 305x20
-          text run at (0,0) width 305: "https://bugs.webkit.org/show_bug.cgi?id=24252"
+      RenderBlock {P} at (0,58) size 784x19
+        RenderText {#text} at (0,0) size 291x19
+          text run at (0,0) width 291: "https://bugs.webkit.org/show_bug.cgi?id=24252"
 layer at (20,96) size 400x100
   RenderBlock (positioned) {P} at (20,96) size 400x100 [bgcolor=#DDDDFF]
-    RenderText {#text} at (0,0) size 128x20
-      text run at (0,0) width 128: "transformed element"
-layer at (8,216) size 27x20
-  RenderBlock (positioned) {P} at (8,216) size 27x20
-    RenderText {#text} at (0,0) size 27x20
+    RenderText {#text} at (0,0) size 122x19
+      text run at (0,0) width 122: "transformed element"
+layer at (8,216) size 27x19
+  RenderBlock (positioned) {P} at (8,216) size 27x19
+    RenderText {#text} at (0,0) size 27x19
       text run at (0,0) width 27: "pass"

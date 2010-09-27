@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x118 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 205x90
-          RenderText {#text} at (14,14) size 15x30
+      RenderBlock {DIV} at (0,0) size 784x112 [border: (2px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 205x84
+          RenderText {#text} at (14,14) size 15x28
             text run at (14,14) width 15: "s "
-          RenderBR {BR} at (29,37) size 0x0
-          RenderBR {BR} at (14,44) size 0x30
-          RenderText {#text} at (14,74) size 205x30
-            text run at (14,74) width 94: " war. We "
-            text run at (108,74) width 111: "of that war."
+          RenderBR {BR} at (29,36) size 0x0
+          RenderBR {BR} at (14,42) size 0x28
+          RenderText {#text} at (14,70) size 205x28
+            text run at (14,70) width 94: " war. We "
+            text run at (108,70) width 111: "of that war."
         RenderText {#text} at (0,0) size 0x0
 caret: position 0 of child 4 {#text} of child 1 {SPAN} of child 1 {DIV} of body

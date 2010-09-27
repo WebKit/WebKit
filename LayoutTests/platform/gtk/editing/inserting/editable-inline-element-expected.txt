@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 371x20
-          text run at (0,0) width 371: "This tests InsertParagraph inside an editable inline element."
-      RenderBlock {DIV} at (0,36) size 784x42 [border: (1px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 21x40
-          RenderBR {BR} at (1,1) size 0x20
-          RenderText {#text} at (1,21) size 21x20
-            text run at (1,21) width 21: "foo"
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 351x19
+          text run at (0,0) width 351: "This tests InsertParagraph inside an editable inline element."
+      RenderBlock {DIV} at (0,35) size 784x40 [border: (1px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 20x38
+          RenderBR {BR} at (1,1) size 0x19
+          RenderText {#text} at (1,20) size 20x19
+            text run at (1,20) width 20: "foo"
 caret: position 0 of child 1 {#text} of child 0 {SPAN} of child 2 {DIV} of body

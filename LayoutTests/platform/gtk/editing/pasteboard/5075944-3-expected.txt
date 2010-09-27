@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 740x20
-          text run at (0,0) width 367: "This test for a bug moving a paragraph of underlined text. "
-          text run at (367,0) width 373: "The text should look the same before and after the deletion."
-      RenderBlock {DIV} at (0,36) size 784x20
-        RenderBlock {DIV} at (0,0) size 784x20
-          RenderText {#text} at (0,0) size 192x20
-            text run at (0,0) width 192: "This should not be underlined."
-          RenderInline {SPAN} at (0,0) size 168x20 [color=#0000FF]
-            RenderInline {SPAN} at (0,0) size 168x20 [color=#FF0000]
-              RenderText {#text} at (192,0) size 168x20
-                text run at (192,0) width 168: "This should be underlined."
-        RenderBlock (anonymous) at (0,20) size 784x0
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 704x19
+          text run at (0,0) width 347: "This test for a bug moving a paragraph of underlined text. "
+          text run at (347,0) width 357: "The text should look the same before and after the deletion."
+      RenderBlock {DIV} at (0,35) size 784x19
+        RenderBlock {DIV} at (0,0) size 784x19
+          RenderText {#text} at (0,0) size 180x19
+            text run at (0,0) width 180: "This should not be underlined."
+          RenderInline {SPAN} at (0,0) size 157x19 [color=#0000FF]
+            RenderInline {SPAN} at (0,0) size 157x19 [color=#FF0000]
+              RenderText {#text} at (180,0) size 157x19
+                text run at (180,0) width 157: "This should be underlined."
+        RenderBlock (anonymous) at (0,19) size 784x0
 caret: position 30 of child 0 {#text} of child 0 {DIV} of child 2 {DIV} of body

@@ -3,68 +3,69 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 355x20
-          text run at (0,0) width 355: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,36) size 784x48
-        RenderText {#text} at (0,0) size 568x47
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 337x19
+          text run at (0,0) width 337: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,35) size 784x45
+        RenderText {#text} at (0,0) size 568x45
           text run at (0,0) width 560: ".one {border-style: dashed; border-color: black; border-width: thick;}"
           text run at (560,0) width 0: " "
-          text run at (0,16) width 544: ".two {border-style: groove; border-color: red; border-width: thick;}"
-          text run at (544,16) width 0: " "
-          text run at (0,32) width 568: ".three {border-style: none; border-color: purple; border-width: thick;}"
-          text run at (568,32) width 0: " "
-      RenderBlock {HR} at (0,97) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,115) size 784x60 [bgcolor=#C0C0C0]
-        RenderText {#text} at (0,0) size 664x20
-          text run at (0,0) width 664: "This is an unstyled element, save for the background color, and it contains inline elements with classes of "
-        RenderInline {SPAN} at (0,0) size 67x30 [border: (5px dashed #000000)]
-          RenderText {#text} at (669,0) size 57x20
-            text run at (669,0) width 57: "class one"
-        RenderText {#text} at (731,0) size 778x40
-          text run at (731,0) width 47: ", which"
-          text run at (0,20) width 263: "will result in a dashed thick black border; "
-        RenderInline {SPAN} at (0,0) size 68x30 [border: (5px groove #FF0000)]
-          RenderText {#text} at (268,20) size 58x20
-            text run at (268,20) width 58: "class two"
-        RenderText {#text} at (331,20) size 373x20
-          text run at (331,20) width 373: ", which should result in a grooved thick purple border, and "
-        RenderInline {SPAN} at (0,0) size 65x20
-          RenderText {#text} at (704,20) size 65x20
-            text run at (704,20) width 65: "class three"
-        RenderText {#text} at (769,20) size 773x40
-          text run at (769,20) width 4: ","
-          text run at (0,40) width 246: "which should result in no border at all. "
-          text run at (246,40) width 433: "The line-height of the parent element should not change, on any line."
-      RenderTable {TABLE} at (0,191) size 784x100 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x98
-          RenderTableRow {TR} at (0,0) size 782x30
-            RenderTableCell {TD} at (0,0) size 782x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x22
-                RenderText {#text} at (4,4) size 163x22
-                  text run at (4,4) width 163: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,30) size 782x68
-            RenderTableCell {TD} at (0,50) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x20
+          text run at (0,15) width 544: ".two {border-style: groove; border-color: red; border-width: thick;}"
+          text run at (544,15) width 0: " "
+          text run at (0,30) width 568: ".three {border-style: none; border-color: purple; border-width: thick;}"
+          text run at (568,30) width 0: " "
+      RenderBlock {HR} at (0,93) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,111) size 784x57 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 627x19
+          text run at (0,0) width 627: "This is an unstyled element, save for the background color, and it contains inline elements with classes of "
+        RenderInline {SPAN} at (0,0) size 65x29 [border: (5px dashed #000000)]
+          RenderText {#text} at (632,0) size 55x19
+            text run at (632,0) width 55: "class one"
+        RenderText {#text} at (692,0) size 759x38
+          text run at (692,0) width 67: ", which will"
+          text run at (0,19) width 227: "result in a dashed thick black border; "
+        RenderInline {SPAN} at (0,0) size 66x29 [border: (5px groove #FF0000)]
+          RenderText {#text} at (232,19) size 56x19
+            text run at (232,19) width 56: "class two"
+        RenderText {#text} at (293,19) size 355x19
+          text run at (293,19) width 355: ", which should result in a grooved thick purple border, and "
+        RenderInline {SPAN} at (0,0) size 63x19
+          RenderText {#text} at (648,19) size 63x19
+            text run at (648,19) width 63: "class three"
+        RenderText {#text} at (711,19) size 754x38
+          text run at (711,19) width 43: ", which"
+          text run at (0,38) width 193: "should result in no border at all. "
+          text run at (193,38) width 406: "The line-height of the parent element should not change, on any line."
+      RenderTable {TABLE} at (0,184) size 784x94 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x92
+          RenderTableRow {TR} at (0,0) size 782x27
+            RenderTableCell {TD} at (0,0) size 782x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 159x19
+                RenderText {#text} at (4,4) size 159x19
+                  text run at (4,4) width 159: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,27) size 782x65
+            RenderTableCell {TD} at (0,46) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x19
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,30) size 770x68 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 762x60 [bgcolor=#C0C0C0]
-                RenderText {#text} at (0,0) size 664x20
-                  text run at (0,0) width 664: "This is an unstyled element, save for the background color, and it contains inline elements with classes of "
-                RenderInline {SPAN} at (0,0) size 67x30 [border: (5px dashed #000000)]
-                  RenderText {#text} at (669,0) size 57x20
-                    text run at (669,0) width 57: "class one"
-                RenderText {#text} at (731,0) size 735x40
-                  text run at (731,0) width 4: ","
-                  text run at (0,20) width 306: "which will result in a dashed thick black border; "
-                RenderInline {SPAN} at (0,0) size 68x30 [border: (5px groove #FF0000)]
-                  RenderText {#text} at (311,20) size 58x20
-                    text run at (311,20) width 58: "class two"
-                RenderText {#text} at (374,20) size 369x20
-                  text run at (374,20) width 369: ", which should result in a grooved thick purple border, and"
-                RenderInline {SPAN} at (0,0) size 65x20
-                  RenderText {#text} at (0,40) size 65x20
-                    text run at (0,40) width 65: "class three"
-                RenderText {#text} at (65,40) size 687x20
-                  text run at (65,40) width 254: ", which should result in no border at all. "
-                  text run at (319,40) width 433: "The line-height of the parent element should not change, on any line."
+            RenderTableCell {TD} at (12,27) size 770x65 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 762x57 [bgcolor=#C0C0C0]
+                RenderText {#text} at (0,0) size 627x19
+                  text run at (0,0) width 627: "This is an unstyled element, save for the background color, and it contains inline elements with classes of "
+                RenderInline {SPAN} at (0,0) size 65x29 [border: (5px dashed #000000)]
+                  RenderText {#text} at (632,0) size 55x19
+                    text run at (632,0) width 55: "class one"
+                RenderText {#text} at (692,0) size 759x38
+                  text run at (692,0) width 67: ", which will"
+                  text run at (0,19) width 227: "result in a dashed thick black border; "
+                RenderInline {SPAN} at (0,0) size 66x29 [border: (5px groove #FF0000)]
+                  RenderText {#text} at (232,19) size 56x19
+                    text run at (232,19) width 56: "class two"
+                RenderText {#text} at (293,19) size 355x19
+                  text run at (293,19) width 355: ", which should result in a grooved thick purple border, and "
+                RenderInline {SPAN} at (0,0) size 63x19
+                  RenderText {#text} at (648,19) size 63x19
+                    text run at (648,19) width 63: "class three"
+                RenderText {#text} at (711,19) size 754x38
+                  text run at (711,19) width 43: ", which"
+                  text run at (0,38) width 193: "should result in no border at all. "
+                  text run at (193,38) width 406: "The line-height of the parent element should not change, on any line."

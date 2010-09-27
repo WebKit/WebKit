@@ -1,11 +1,11 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x465
-  RenderBlock {HTML} at (0,0) size 800x465
-    RenderBody {BODY} at (8,16) size 784x441
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 234x20
-          text run at (0,0) width 234: "There should be no red pixels below."
-      RenderBlock (anonymous) at (0,36) size 784x405
+layer at (0,0) size 800x463
+  RenderBlock {HTML} at (0,0) size 800x463
+    RenderBody {BODY} at (8,16) size 784x439
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 223x19
+          text run at (0,0) width 223: "There should be no red pixels below."
+      RenderBlock (anonymous) at (0,35) size 784x404
         RenderHTMLCanvas {CANVAS} at (0,0) size 400x400 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 0x0

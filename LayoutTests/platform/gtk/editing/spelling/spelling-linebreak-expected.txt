@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 768x20
-          text run at (0,0) width 768: "You should see 'zz a' on the first line below, and 'a' on the second line. 'zz' (and only 'zz') should be marked as misspelled."
-      RenderBlock {DIV} at (0,20) size 784x88 [border: (2px solid #FF0000)]
-        RenderText {#text} at (14,14) size 45x30
-          text run at (14,14) width 45: "zz a "
-        RenderBR {BR} at (59,37) size 0x0
-        RenderText {#text} at (14,44) size 11x30
-          text run at (14,44) width 11: "a"
-        RenderInline {SPAN} at (0,0) size 0x30
+      RenderBlock {DIV} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 729x19
+          text run at (0,0) width 729: "You should see 'zz a' on the first line below, and 'a' on the second line. 'zz' (and only 'zz') should be marked as misspelled."
+      RenderBlock {DIV} at (0,19) size 784x84 [border: (2px solid #FF0000)]
+        RenderText {#text} at (14,14) size 43x28
+          text run at (14,14) width 43: "zz a "
+        RenderBR {BR} at (57,36) size 0x0
+        RenderText {#text} at (14,42) size 11x28
+          text run at (14,42) width 11: "a"
+        RenderInline {SPAN} at (0,0) size 0x28
 caret: position 0 of child 2 {#text} of child 3 {DIV} of body

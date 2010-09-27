@@ -1,20 +1,20 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x526
-  RenderBlock {HTML} at (0,0) size 800x526
-    RenderBody {BODY} at (8,16) size 784x480
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 600x20
-          text run at (0,0) width 600: "Tests that origin of rotation is the center of the border box, with and without -webkit-box-sizing"
-      RenderBlock {DIV} at (30,50) size 200x200 [bgcolor=#FF0000]
-      RenderBlock {DIV} at (30,280) size 200x200 [bgcolor=#FF0000]
-layer at (38,66) size 200x200
+layer at (0,0) size 800x525
+  RenderBlock {HTML} at (0,0) size 800x525
+    RenderBody {BODY} at (8,16) size 784x479
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 572x19
+          text run at (0,0) width 572: "Tests that origin of rotation is the center of the border box, with and without -webkit-box-sizing"
+      RenderBlock {DIV} at (30,49) size 200x200 [bgcolor=#FF0000]
+      RenderBlock {DIV} at (30,279) size 200x200 [bgcolor=#FF0000]
+layer at (38,65) size 200x200
   RenderBlock {DIV} at (0,0) size 200x200 [bgcolor=#008000] [border: (100px solid #808080) none]
-    RenderText {#text} at (0,0) size 82x40
+    RenderText {#text} at (0,0) size 82x38
       text run at (0,0) width 82: "-webkit-box-"
-      text run at (0,20) width 72: "sizing: auto"
-layer at (38,296) size 200x200
+      text run at (0,19) width 65: "sizing: auto"
+layer at (38,295) size 200x200
   RenderBlock {DIV} at (0,0) size 200x200 [bgcolor=#008000] [border: (100px solid #808080) none]
-    RenderText {#text} at (0,0) size 82x40
+    RenderText {#text} at (0,0) size 82x38
       text run at (0,0) width 82: "-webkit-box-"
-      text run at (0,20) width 72: "sizing: auto"
+      text run at (0,19) width 65: "sizing: auto"

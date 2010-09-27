@@ -1,31 +1,32 @@
-layer at (0,0) size 781x646
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x646
-  RenderBlock {HTML} at (0,0) size 781x646
-    RenderBody {BODY} at (8,20) size 765x576
-      RenderBlock {DIV} at (20,0) size 725x126
-        RenderInline {SPAN} at (0,0) size 109x63 [textStrokeWidth=1.00]
-          RenderText {#text} at (0,0) size 109x63
-            text run at (0,0) width 109: "This"
-        RenderText {#text} at (109,0) size 16x63
-          text run at (109,0) width 16: " "
-        RenderInline {SPAN} at (0,0) size 101x63 [textFillColor=#FFFFFF] [textStrokeWidth=1.00]
-          RenderText {#text} at (125,0) size 101x63
-            text run at (125,0) width 101: "text"
-        RenderText {#text} at (226,0) size 16x63
-          text run at (226,0) width 16: " "
-        RenderInline {SPAN} at (0,0) size 128x63 [color=#0000004C]
-          RenderText {#text} at (242,0) size 128x63
-            text run at (242,0) width 128: "casts"
-        RenderText {#text} at (370,0) size 16x63
-          text run at (370,0) width 16: " "
-        RenderInline {SPAN} at (0,0) size 210x63
-          RenderText {#text} at (386,0) size 210x63
-            text run at (386,0) width 210: "multiple"
-        RenderText {#text} at (0,63) size 210x63
-          text run at (0,63) width 210: "shadows"
-      RenderBlock {DIV} at (50,176) size 100x100
-      RenderBlock {DIV} at (50,326) size 100x100 [bgcolor=#FFFFFF]
-      RenderBlock {DIV} at (50,476) size 100x100 [bgcolor=#00000033]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,20) size 784x530
+      RenderBlock {DIV} at (20,0) size 744x55
+        RenderInline {SPAN} at (0,0) size 90x54 [textStrokeWidth=1.00]
+          RenderText {#text} at (0,0) size 90x54
+            text run at (0,0) width 90: "This"
+        RenderText {#text} at (90,0) size 12x54
+          text run at (90,0) width 12: " "
+        RenderInline {SPAN} at (0,0) size 77x54 [textFillColor=#FFFFFF] [textStrokeWidth=1.00]
+          RenderText {#text} at (102,0) size 77x54
+            text run at (102,0) width 77: "text"
+        RenderText {#text} at (179,0) size 12x54
+          text run at (179,0) width 12: " "
+        RenderInline {SPAN} at (0,0) size 99x54 [color=#0000004C]
+          RenderText {#text} at (191,0) size 99x54
+            text run at (191,0) width 99: "casts"
+        RenderText {#text} at (290,0) size 12x54
+          text run at (290,0) width 12: " "
+        RenderInline {SPAN} at (0,0) size 170x54
+          RenderText {#text} at (302,0) size 170x54
+            text run at (302,0) width 170: "multiple"
+        RenderText {#text} at (472,0) size 185x54
+          text run at (472,0) width 12: " "
+          text run at (484,0) width 173: "shadows"
+      RenderBlock {DIV} at (50,105) size 100x100
+      RenderBlock {DIV} at (50,255) size 100x100 [bgcolor=#FFFFFF]
+      RenderBlock {DIV} at (50,405) size 100x100 [bgcolor=#00000033]
 selection start: position 0 of child 0 {#text} of child 7 {SPAN} of child 0 {DIV} of body
 selection end:   position 6 of child 0 {#text} of child 7 {SPAN} of child 0 {DIV} of body

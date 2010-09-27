@@ -3,26 +3,26 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x121 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 665x92
-          RenderInline {I} at (0,0) size 117x30
-            RenderText {#text} at (14,15) size 117x30
-              text run at (14,15) width 21: "F "
-              text run at (35,15) width 96: "and seven"
-          RenderText {#text} at (131,15) size 63x30
-            text run at (131,15) width 63: " years "
-          RenderInline {B} at (0,0) size 27x33
-            RenderText {#text} at (194,14) size 27x33
+      RenderBlock {DIV} at (0,0) size 784x112 [border: (2px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 662x84
+          RenderInline {I} at (0,0) size 117x28
+            RenderText {#text} at (14,14) size 117x28
+              text run at (14,14) width 21: "F "
+              text run at (35,14) width 96: "and seven"
+          RenderText {#text} at (131,14) size 63x28
+            text run at (131,14) width 63: " years "
+          RenderInline {B} at (0,0) size 27x28
+            RenderText {#text} at (194,14) size 27x28
               text run at (194,14) width 27: "as "
-          RenderText {#text} at (221,15) size 665x62
-            text run at (221,15) width 110: "our fathers "
-            text run at (331,15) width 342: "f upon this continent, a new nation,"
-            text run at (673,15) width 6: " "
-            text run at (14,47) width 232: "conceived    in Liberty, "
-            text run at (246,47) width 392: "and dedicated to the proposition that all "
+          RenderText {#text} at (221,14) size 662x56
+            text run at (221,14) width 110: "our fathers "
+            text run at (331,14) width 339: "f upon this continent, a new nation,"
+            text run at (670,14) width 6: " "
+            text run at (14,42) width 229: "conceived    in Liberty, "
+            text run at (243,42) width 387: "and dedicated to the proposition that all "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (14,77) size 220x30
-            text run at (14,77) width 220: "men are created equal."
+          RenderText {#text} at (14,70) size 218x28
+            text run at (14,70) width 218: "men are created equal."
         RenderText {#text} at (0,0) size 0x0
 selection start: position 5 of child 0 {#text} of child 0 {I} of child 1 {SPAN} of child 1 {DIV} of body
 selection end:   position 21 of child 5 {#text} of child 1 {SPAN} of child 1 {DIV} of body

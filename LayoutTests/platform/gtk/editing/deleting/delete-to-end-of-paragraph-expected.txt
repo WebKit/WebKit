@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 600x20
-        RenderInline {SPAN} at (0,0) size 76x20
-          RenderText {#text} at (0,0) size 76x20
-            text run at (0,0) width 76: "four five six"
+      RenderBlock {DIV} at (0,0) size 600x19
+        RenderInline {SPAN} at (0,0) size 69x19
+          RenderText {#text} at (0,0) size 69x19
+            text run at (0,0) width 69: "four five six"
 caret: position 0 of child 0 {#text} of child 0 {SPAN} of child 1 {DIV} of body

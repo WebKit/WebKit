@@ -4,75 +4,75 @@ layer at (0,0) size 800x90
   RenderBlock {html} at (0,0) size 800x90
     RenderBody {body} at (8,16) size 784x58
       RenderBlock {p} at (0,0) size 784x58
-        RenderBlock {math} at (0,0) size 209x58
-          RenderBlock {mfenced} at (1,0) size 207x58
-            RenderBlock {mfenced} at (1,0) size 14x58
-            RenderBlock {div} at (15,5) size 48x48 [bgcolor=#00FF00]
-            RenderBlock {mfenced} at (63,11) size 16x36
-              RenderBlock {mfenced} at (0,0) size 16x36
-                RenderText {mfenced} at (0,20) size 16x17
-                  text run at (0,20) width 16: ","
-            RenderBlock {div} at (79,5) size 48x48 [bgcolor=#00FF00]
-            RenderBlock {mfenced} at (127,11) size 16x36
-              RenderBlock {mfenced} at (0,0) size 16x36
-                RenderText {mfenced} at (0,20) size 16x17
-                  text run at (0,20) width 16: ","
-            RenderBlock {div} at (143,5) size 48x48 [bgcolor=#00FF00]
-            RenderBlock {mfenced} at (191,0) size 14x58
+        RenderBlock {math} at (0,0) size 171x58
+          RenderBlock {mfenced} at (1,0) size 169x58
+            RenderBlock {mfenced} at (1,0) size 7x58
+            RenderBlock {div} at (8,5) size 48x48 [bgcolor=#00FF00]
+            RenderBlock {mfenced} at (56,11) size 4x36
+              RenderBlock {mfenced} at (0,0) size 4x36
+                RenderText {mfenced} at (0,19) size 4x19
+                  text run at (0,19) width 4: ","
+            RenderBlock {div} at (60,5) size 48x48 [bgcolor=#00FF00]
+            RenderBlock {mfenced} at (108,11) size 4x36
+              RenderBlock {mfenced} at (0,0) size 4x36
+                RenderText {mfenced} at (0,19) size 4x19
+                  text run at (0,19) width 4: ","
+            RenderBlock {div} at (112,5) size 48x48 [bgcolor=#00FF00]
+            RenderBlock {mfenced} at (160,0) size 7x58
         RenderText {#text} at (0,0) size 0x0
-layer at (10,16) size 14x10 scrollHeight 14
-  RenderBlock {mfenced} at (0,0) size 14x10
-layer at (10,26) size 14x10 scrollHeight 13
-  RenderBlock {mfenced} at (0,10) size 14x10
-    RenderText {mfenced} at (0,-2) size 14x15
-      text run at (0,-2) width 14: "\x{239C}"
-layer at (10,36) size 14x10 scrollHeight 13
-  RenderBlock {mfenced} at (0,20) size 14x10
-    RenderText {mfenced} at (0,-2) size 14x15
-      text run at (0,-2) width 14: "\x{239C}"
-layer at (10,46) size 14x10 scrollHeight 13
-  RenderBlock {mfenced} at (0,30) size 14x10
-    RenderText {mfenced} at (0,-2) size 14x15
-      text run at (0,-2) width 14: "\x{239C}"
-layer at (10,56) size 14x7 scrollHeight 13
-  RenderBlock {mfenced} at (0,40) size 14x7
-    RenderText {mfenced} at (0,-2) size 14x15
-      text run at (0,-2) width 14: "\x{239C}"
-layer at (10,63) size 14x11 scrollHeight 13
-  RenderBlock {mfenced} at (0,47) size 14x11
-layer at (200,16) size 14x10 scrollHeight 14
-  RenderBlock {mfenced} at (0,0) size 14x10
-layer at (200,26) size 14x10 scrollHeight 13
-  RenderBlock {mfenced} at (0,10) size 14x10
-    RenderText {mfenced} at (0,-2) size 14x15
-      text run at (0,-2) width 14: "\x{239F}"
-layer at (200,36) size 14x10 scrollHeight 13
-  RenderBlock {mfenced} at (0,20) size 14x10
-    RenderText {mfenced} at (0,-2) size 14x15
-      text run at (0,-2) width 14: "\x{239F}"
-layer at (200,46) size 14x10 scrollHeight 13
-  RenderBlock {mfenced} at (0,30) size 14x10
-    RenderText {mfenced} at (0,-2) size 14x15
-      text run at (0,-2) width 14: "\x{239F}"
-layer at (200,56) size 14x7 scrollHeight 13
-  RenderBlock {mfenced} at (0,40) size 14x7
-    RenderText {mfenced} at (0,-2) size 14x15
-      text run at (0,-2) width 14: "\x{239F}"
-layer at (200,63) size 14x11 scrollHeight 13
-  RenderBlock {mfenced} at (0,47) size 14x11
-layer at (10,17) size 14x13 backgroundClip at (10,16) size 14x10 clip at (10,16) size 14x10 outlineClip at (10,16) size 14x10
-  RenderBlock (relative positioned) {mfenced} at (0,0) size 14x11
-    RenderText {mfenced} at (0,-2) size 14x15
-      text run at (0,-2) width 14: "\x{239B}"
-layer at (10,60) size 14x13 backgroundClip at (10,63) size 14x11 clip at (10,63) size 14x11 outlineClip at (10,63) size 14x11
-  RenderBlock (relative positioned) {mfenced} at (0,0) size 14x11
-    RenderText {mfenced} at (0,-2) size 14x15
-      text run at (0,-2) width 14: "\x{239D}"
-layer at (200,17) size 14x13 backgroundClip at (200,16) size 14x10 clip at (200,16) size 14x10 outlineClip at (200,16) size 14x10
-  RenderBlock (relative positioned) {mfenced} at (0,0) size 14x11
-    RenderText {mfenced} at (0,-2) size 14x15
-      text run at (0,-2) width 14: "\x{239E}"
-layer at (200,60) size 14x13 backgroundClip at (200,63) size 14x11 clip at (200,63) size 14x11 outlineClip at (200,63) size 14x11
-  RenderBlock (relative positioned) {mfenced} at (0,0) size 14x11
-    RenderText {mfenced} at (0,-2) size 14x15
-      text run at (0,-2) width 14: "\x{23A0}"
+layer at (10,16) size 7x10 scrollHeight 15
+  RenderBlock {mfenced} at (0,0) size 7x10
+layer at (10,26) size 7x10 scrollHeight 14
+  RenderBlock {mfenced} at (0,10) size 7x10
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239C}"
+layer at (10,36) size 7x10 scrollHeight 14
+  RenderBlock {mfenced} at (0,20) size 7x10
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239C}"
+layer at (10,46) size 7x10 scrollHeight 14
+  RenderBlock {mfenced} at (0,30) size 7x10
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239C}"
+layer at (10,56) size 7x7 scrollHeight 14
+  RenderBlock {mfenced} at (0,40) size 7x7
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239C}"
+layer at (10,63) size 7x11 scrollHeight 14
+  RenderBlock {mfenced} at (0,47) size 7x11
+layer at (169,16) size 7x10 scrollHeight 15
+  RenderBlock {mfenced} at (0,0) size 7x10
+layer at (169,26) size 7x10 scrollHeight 14
+  RenderBlock {mfenced} at (0,10) size 7x10
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239F}"
+layer at (169,36) size 7x10 scrollHeight 14
+  RenderBlock {mfenced} at (0,20) size 7x10
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239F}"
+layer at (169,46) size 7x10 scrollHeight 14
+  RenderBlock {mfenced} at (0,30) size 7x10
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239F}"
+layer at (169,56) size 7x7 scrollHeight 14
+  RenderBlock {mfenced} at (0,40) size 7x7
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239F}"
+layer at (169,63) size 7x11 scrollHeight 14
+  RenderBlock {mfenced} at (0,47) size 7x11
+layer at (10,17) size 7x14 backgroundClip at (10,16) size 7x10 clip at (10,16) size 7x10 outlineClip at (10,16) size 7x10
+  RenderBlock (relative positioned) {mfenced} at (0,0) size 7x11
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239B}"
+layer at (10,60) size 7x14 backgroundClip at (10,63) size 7x11 clip at (10,63) size 7x11 outlineClip at (10,63) size 7x11
+  RenderBlock (relative positioned) {mfenced} at (0,0) size 7x11
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239D}"
+layer at (169,17) size 7x14 backgroundClip at (169,16) size 7x10 clip at (169,16) size 7x10 outlineClip at (169,16) size 7x10
+  RenderBlock (relative positioned) {mfenced} at (0,0) size 7x11
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239E}"
+layer at (169,60) size 7x14 backgroundClip at (169,63) size 7x11 clip at (169,63) size 7x11 outlineClip at (169,63) size 7x11
+  RenderBlock (relative positioned) {mfenced} at (0,0) size 7x11
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{23A0}"

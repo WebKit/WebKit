@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Alp Toker <alp@atoker.com>
+ * Copyright (C) 2010 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,13 +27,17 @@
 #include "OwnPtrCairo.h"
 #include "PlatformRefPtrCairo.h"
 #include "SimpleFontData.h"
+#include <cairo-ft.h>
+#include <cairo.h>
+#include <fontconfig/fcfreetype.h>
 #include <wtf/Assertions.h>
 
 namespace WebCore {
 
 void FontCache::platformInit()
 {
-    if (!FontPlatformData::init())
+    // It's fine to call FcInit multiple times per the documentation.
+    if (!FcInit())
         ASSERT_NOT_REACHED();
 }
 
@@ -72,9 +77,9 @@ SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)
 
 SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& fontDescription)
 {
-    // FIXME: Would be even better to somehow get the user's default font here.
-    // For now we'll pick the default that the user would get without changing any prefs.
-    static AtomicString timesStr("Times New Roman");
+    // We want to return a fallback font here, otherwise the logic preventing FontConfig
+    // matches for non-fallback fonts might return 0. See isFallbackFontAllowed.
+    static AtomicString timesStr("serif");
     return getCachedFontData(fontDescription, timesStr);
 }
 
@@ -82,54 +87,106 @@ void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigne
 {
 }
 
-static bool isWellKnownFontName(const AtomicString family)
+static CString getFamilyNameStringFromFontDescriptionAndFamily(const FontDescription& fontDescription, const AtomicString& family)
 {
-    // Fonts that are used by layout tests included. The fact that
-    // they are used in Layout Tests indicate web compatibility issues
-    // if we do not handle them correctly.
-    if (equalIgnoringCase(family, "sans-serif") || equalIgnoringCase(family, "sans")
-        || equalIgnoringCase(family, "serif") || equalIgnoringCase(family, "mono")
-        || equalIgnoringCase(family, "monospace") || equalIgnoringCase(family, "cursive")
-        || equalIgnoringCase(family, "fantasy") || equalIgnoringCase(family, "Times")
-        || equalIgnoringCase(family, "Courier") || equalIgnoringCase(family, "Helvetica")
-        || equalIgnoringCase(family, "Arial") || equalIgnoringCase(family, "Lucida Grande")
-        || equalIgnoringCase(family, "Ahem") || equalIgnoringCase(family, "Georgia")
-        || equalIgnoringCase(family, "Times New Roman"))
-        return true;
+    // If we're creating a fallback font (e.g. "-webkit-monospace"), convert the name into
+    // the fallback name (like "monospace") that fontconfig understands.
+    if (family.length() && !family.startsWith("-webkit-"))
+        return family.string().utf8();
 
-    return false;
+    switch (fontDescription.genericFamily()) {
+    case FontDescription::StandardFamily:
+    case FontDescription::SerifFamily:
+        return "serif";
+    case FontDescription::SansSerifFamily:
+        return "sans-serif";
+    case FontDescription::MonospaceFamily:
+        return "monospace";
+    case FontDescription::CursiveFamily:
+        return "cursive";
+    case FontDescription::FantasyFamily:
+        return "fantasy";
+    case FontDescription::NoFamily:
+    default:
+        return "";
+    }
+}
+
+
+static bool isFallbackFontAllowed(const CString& familyName)
+{
+    return !strcasecmp(familyName.data(), "sans")
+           || !strcasecmp(familyName.data(), "sans-serif")
+           || !strcasecmp(familyName.data(), "serif")
+           || !strcasecmp(familyName.data(), "monospace");
 }
 
 FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
 {
-    // Handle generic family types specially, because fontconfig does not know them, but we have
-    // code to fallback correctly in our platform data implementation.
-    if (!family.length() || family.startsWith("-webkit-")
-        || (fontDescription.genericFamily() != FontDescription::NoFamily)
-        || isWellKnownFontName(family))
-        return new FontPlatformData(fontDescription, family);
-
-    // First check the font exists.
-    CString familyNameString = family.string().utf8();
-    const char* fcfamily = familyNameString.data();
-
+    // The CSS font matching algorithm (http://www.w3.org/TR/css3-fonts/#font-matching-algorithm)
+    // says that we must find an exact match for font family, slant (italic or oblique can be used)
+    // and font weight (we only match bold/non-bold here).
     PlatformRefPtr<FcPattern> pattern = adoptPlatformRef(FcPatternCreate());
-    if (!FcPatternAddString(pattern.get(), FC_FAMILY, reinterpret_cast<const FcChar8*>(fcfamily)))
+    CString familyNameString = getFamilyNameStringFromFontDescriptionAndFamily(fontDescription, family);
+    if (!FcPatternAddString(pattern.get(), FC_FAMILY, reinterpret_cast<const FcChar8*>(familyNameString.data())))
         return 0;
 
-    OwnPtr<FcObjectSet> objectSet(FcObjectSetCreate());
-    if (!FcObjectSetAdd(objectSet.get(), FC_FAMILY))
+    bool italic = fontDescription.italic();
+    if (!FcPatternAddInteger(pattern.get(), FC_SLANT, italic ? FC_SLANT_ITALIC : FC_SLANT_ROMAN))
+        return 0;
+    bool bold = fontDescription.weight() >= FontWeightBold;
+    if (!FcPatternAddInteger(pattern.get(), FC_WEIGHT, bold ? FC_WEIGHT_BOLD : FC_WEIGHT_NORMAL))
+        return 0;
+    if (!FcPatternAddDouble(pattern.get(), FC_PIXEL_SIZE, fontDescription.computedPixelSize()))
         return 0;
 
-    OwnPtr<FcFontSet> fontSet(FcFontList(0, pattern.get(), objectSet.get()));
+    // The following comment and strategy are originally from Skia (src/ports/SkFontHost_fontconfig.cpp):
+    // Font matching:
+    // CSS often specifies a fallback list of families:
+    //    font-family: a, b, c, serif;
+    // However, fontconfig will always do its best to find *a* font when asked
+    // for something so we need a way to tell if the match which it has found is
+    // "good enough" for us. Otherwise, we can return null which gets piped up
+    // and lets WebKit know to try the next CSS family name. However, fontconfig
+    // configs allow substitutions (mapping "Arial -> Helvetica" etc) and we
+    // wish to support that.
+    //
+    // Thus, if a specific family is requested we set @family_requested. Then we
+    // record two strings: the family name after config processing and the
+    // family name after resolving. If the two are equal, it's a good match.
+    //
+    // So consider the case where a user has mapped Arial to Helvetica in their
+    // config.
+    //    requested family: "Arial"
+    //    post_config_family: "Helvetica"
+    //    post_match_family: "Helvetica"
+    //      -> good match
+    //
+    // and for a missing font:
+    //    requested family: "Monaco"
+    //    post_config_family: "Monaco"
+    //    post_match_family: "Times New Roman"
+    //      -> BAD match
+    //
+    FcConfigSubstitute(0, pattern.get(), FcMatchPattern);
+    FcDefaultSubstitute(pattern.get());
 
-    if (!fontSet)
+    FcChar8* familyNameAfterConfiguration;
+    FcPatternGetString(pattern.get(), FC_FAMILY, 0, &familyNameAfterConfiguration);
+
+    FcResult fontConfigResult;
+    PlatformRefPtr<FcPattern> resultPattern = adoptPlatformRef(FcFontMatch(0, pattern.get(), &fontConfigResult));
+    if (!resultPattern) // No match.
         return 0;
 
-    if (!fontSet->fonts)
+    // Properly handle the situation where Fontconfig gives us a font that has a different family than we requested.
+    FcChar8* familyNameAfterMatching;
+    FcPatternGetString(resultPattern.get(), FC_FAMILY, 0, &familyNameAfterMatching);
+    if (strcasecmp(reinterpret_cast<char*>(familyNameAfterConfiguration),
+            reinterpret_cast<char*>(familyNameAfterMatching)) && !isFallbackFontAllowed(familyNameString))
         return 0;
 
-    return new FontPlatformData(fontDescription, family);
+    return new FontPlatformData(resultPattern.get(), fontDescription);
 }
 
 }

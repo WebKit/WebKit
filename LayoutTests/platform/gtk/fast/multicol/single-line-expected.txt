@@ -1,42 +1,42 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x302
-  RenderBlock {HTML} at (0,0) size 800x302
-    RenderBody {BODY} at (8,16) size 784x270
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 764x20
-          text run at (0,0) width 389: "This test checks if CSS3 multi-column layout properly works "
-          text run at (389,0) width 375: "when the multi-column block contains only one line of text."
-      RenderBlock {P} at (0,36) size 784x20
-        RenderText {#text} at (0,0) size 555x20
-          text run at (0,0) width 298: "Test successful if the following text is readable "
-          text run at (298,0) width 257: "(i.e. not split into two different columns)."
-      RenderBlock {DIV} at (0,250) size 784x20
-layer at (8,88) size 784x20
-  RenderBlock {P} at (0,72) size 784x20 [bgcolor=#EEEEEE]
-    RenderText {#text} at (0,0) size 65x20
-      text run at (0,0) width 65: "Short text."
-layer at (8,124) size 784x37
-  RenderBlock {P} at (0,108) size 784x37 [bgcolor=#EEEEEE]
-    RenderInline {SPAN} at (0,0) size 141x37
-      RenderText {#text} at (0,0) size 141x37
-        text run at (0,0) width 141: "Bigger text."
+layer at (0,0) size 800x291
+  RenderBlock {HTML} at (0,0) size 800x291
+    RenderBody {BODY} at (8,16) size 784x259
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 721x19
+          text run at (0,0) width 370: "This test checks if CSS3 multi-column layout properly works "
+          text run at (370,0) width 351: "when the multi-column block contains only one line of text."
+      RenderBlock {P} at (0,35) size 784x19
+        RenderText {#text} at (0,0) size 522x19
+          text run at (0,0) width 280: "Test successful if the following text is readable "
+          text run at (280,0) width 242: "(i.e. not split into two different columns)."
+      RenderBlock {DIV} at (0,240) size 784x19
+layer at (8,86) size 784x19
+  RenderBlock {P} at (0,70) size 784x19 [bgcolor=#EEEEEE]
+    RenderText {#text} at (0,0) size 63x19
+      text run at (0,0) width 63: "Short text."
+layer at (8,121) size 784x34
+  RenderBlock {P} at (0,105) size 784x34 [bgcolor=#EEEEEE]
+    RenderInline {SPAN} at (0,0) size 137x34
+      RenderText {#text} at (0,0) size 137x34
+        text run at (0,0) width 137: "Bigger text."
     RenderText {#text} at (0,0) size 0x0
-layer at (8,177) size 784x37
-  RenderBlock {P} at (0,161) size 784x37 [bgcolor=#EEEEEE]
-    RenderText {#text} at (0,13) size 56x20
-      text run at (0,13) width 56: "Partially "
-    RenderInline {SPAN} at (0,0) size 38x37
-      RenderText {#text} at (56,0) size 38x37
-        text run at (56,0) width 38: "big"
-    RenderText {#text} at (94,13) size 31x20
-      text run at (94,13) width 31: " text."
-layer at (8,230) size 784x20
-  RenderBlock {DIV} at (0,214) size 784x20 [bgcolor=#EEEEEE]
-    RenderBlock {P} at (0,0) size 184x20
-      RenderText {#text} at (0,0) size 87x20
-        text run at (0,0) width 87: "Nested block."
-layer at (8,266) size 784x20
-  RenderBlock {P} at (0,0) size 784x20 [bgcolor=#EEEEEE]
-    RenderText {#text} at (0,0) size 107x20
-      text run at (0,0) width 107: "Nested block #2."
+layer at (8,171) size 784x34
+  RenderBlock {P} at (0,155) size 784x34 [bgcolor=#EEEEEE]
+    RenderText {#text} at (0,12) size 52x19
+      text run at (0,12) width 52: "Partially "
+    RenderInline {SPAN} at (0,0) size 36x34
+      RenderText {#text} at (52,0) size 36x34
+        text run at (52,0) width 36: "big"
+    RenderText {#text} at (88,12) size 30x19
+      text run at (88,12) width 30: " text."
+layer at (8,221) size 784x19
+  RenderBlock {DIV} at (0,205) size 784x19 [bgcolor=#EEEEEE]
+    RenderBlock {P} at (0,0) size 184x19
+      RenderText {#text} at (0,0) size 86x19
+        text run at (0,0) width 86: "Nested block."
+layer at (8,256) size 784x19
+  RenderBlock {P} at (0,0) size 784x19 [bgcolor=#EEEEEE]
+    RenderText {#text} at (0,0) size 106x19
+      text run at (0,0) width 106: "Nested block #2."

@@ -1,22 +1,23 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x152
-  RenderBlock {HTML} at (0,0) size 800x152
-    RenderBody {BODY} at (8,8) size 784x136
-      RenderBlock {DIV} at (0,0) size 784x46 [color=#008000]
-        RenderBlock {DIV} at (0,0) size 784x46 [color=#FF0000] [border: (3px solid #008000)]
-          RenderBlock {DIV} at (3,3) size 778x40 [color=#008000]
-            RenderText {#text} at (0,0) size 766x40
-              text run at (0,0) width 409: "This should have a green border, because the computed value of "
-              text run at (409,0) width 357: "'border-color' set to its initial value is the computed value"
-              text run at (0,20) width 274: "of 'color', which is then inherited as a color."
-      RenderBlock {DIV} at (0,62) size 784x26 [color=#008000]
-        RenderBlock {DIV} at (0,0) size 784x26 [color=#FF0000] [border: (3px solid #008000)]
-          RenderBlock {DIV} at (3,3) size 778x20 [color=#008000]
-            RenderText {#text} at (0,0) size 56x20
-              text run at (0,0) width 56: "This too."
-      RenderBlock {DIV} at (0,104) size 784x32 [color=#008000] [border: (3px solid #008000)]
-        RenderBlock {DIV} at (3,3) size 778x26 [color=#FF0000] [border: (3px solid #008000)]
-          RenderBlock {DIV} at (3,3) size 772x20 [color=#008000]
-            RenderText {#text} at (0,0) size 56x20
-              text run at (0,0) width 56: "This too."
+layer at (0,0) size 800x148
+  RenderBlock {HTML} at (0,0) size 800x148
+    RenderBody {BODY} at (8,8) size 784x132
+      RenderBlock {DIV} at (0,0) size 784x44 [color=#008000]
+        RenderBlock {DIV} at (0,0) size 784x44 [color=#FF0000] [border: (3px solid #008000)]
+          RenderBlock {DIV} at (3,3) size 778x38 [color=#008000]
+            RenderText {#text} at (0,0) size 748x38
+              text run at (0,0) width 391: "This should have a green border, because the computed value of "
+              text run at (391,0) width 345: "'border-color' set to its initial value is the computed value "
+              text run at (736,0) width 12: "of"
+              text run at (0,19) width 244: "'color', which is then inherited as a color."
+      RenderBlock {DIV} at (0,60) size 784x25 [color=#008000]
+        RenderBlock {DIV} at (0,0) size 784x25 [color=#FF0000] [border: (3px solid #008000)]
+          RenderBlock {DIV} at (3,3) size 778x19 [color=#008000]
+            RenderText {#text} at (0,0) size 53x19
+              text run at (0,0) width 53: "This too."
+      RenderBlock {DIV} at (0,101) size 784x31 [color=#008000] [border: (3px solid #008000)]
+        RenderBlock {DIV} at (3,3) size 778x25 [color=#FF0000] [border: (3px solid #008000)]
+          RenderBlock {DIV} at (3,3) size 772x19 [color=#008000]
+            RenderText {#text} at (0,0) size 53x19
+              text run at (0,0) width 53: "This too."

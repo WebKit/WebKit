@@ -3,16 +3,16 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,131) size 521x20
-        text run at (0,131) width 521: "This test checks to make sure the border-image is not clipped by the border radius. "
-      RenderBlock {DIV} at (531,10) size 126x126 [border: (21px none #000000) (30px none #000000) (21px none #000000)]
+      RenderText {#text} at (0,131) size 504x19
+        text run at (0,131) width 504: "This test checks to make sure the border-image is not clipped by the border radius. "
+      RenderBlock {DIV} at (514,10) size 126x126 [border: (21px none #000000) (30px none #000000) (21px none #000000)]
       RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (10,161) size 126x126 [border: (21px none #000000) (30px none #000000) (21px none #000000)]
-      RenderText {#text} at (146,282) size 4x20
-        text run at (146,282) width 4: " "
+      RenderBlock {DIV} at (10,160) size 126x126 [border: (21px none #000000) (30px none #000000) (21px none #000000)]
+      RenderText {#text} at (146,281) size 4x19
+        text run at (146,281) width 4: " "
       RenderBR {BR} at (0,0) size 0x0
-      RenderBlock {DIV} at (10,312) size 126x126 [border: (21px none #000000) (30px none #000000) (21px none #000000)]
-      RenderText {#text} at (146,433) size 4x20
-        text run at (146,433) width 4: " "
-      RenderBlock {DIV} at (160,312) size 126x126 [border: (21px none #000000) (30px none #000000) (21px none #000000)]
+      RenderBlock {DIV} at (10,310) size 126x126 [border: (21px none #000000) (30px none #000000) (21px none #000000)]
+      RenderText {#text} at (146,431) size 4x19
+        text run at (146,431) width 4: " "
+      RenderBlock {DIV} at (160,310) size 126x126 [border: (21px none #000000) (30px none #000000) (21px none #000000)]
       RenderText {#text} at (0,0) size 0x0

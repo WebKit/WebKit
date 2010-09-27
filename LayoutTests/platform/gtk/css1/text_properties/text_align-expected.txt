@@ -3,58 +3,56 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 355x20
-          text run at (0,0) width 355: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,36) size 784x80
-        RenderText {#text} at (0,0) size 224x79
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 337x19
+          text run at (0,0) width 337: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,35) size 784x75
+        RenderText {#text} at (0,0) size 224x75
           text run at (0,0) width 192: ".one {text-align: left;}"
           text run at (192,0) width 0: " "
-          text run at (0,16) width 200: ".two {text-align: right;}"
-          text run at (200,16) width 0: " "
-          text run at (0,32) width 224: ".three {text-align: center;}"
-          text run at (224,32) width 0: " "
-          text run at (0,48) width 224: ".four {text-align: justify;}"
-          text run at (224,48) width 0: " "
-          text run at (0,64) width 0: " "
-      RenderBlock {HR} at (0,129) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,147) size 784x20
-        RenderText {#text} at (0,0) size 234x20
-          text run at (0,0) width 234: "This sentence should be left-justified."
-      RenderBlock {P} at (0,183) size 784x20
-        RenderText {#text} at (541,0) size 243x20
-          text run at (541,0) width 243: "This sentence should be right-justified."
-      RenderBlock {P} at (0,219) size 784x20
-        RenderText {#text} at (286,0) size 212x20
-          text run at (286,0) width 212: "This sentence should be centered."
-      RenderBlock {P} at (0,255) size 784x60
-        RenderText {#text} at (0,0) size 784x60
-          text run at (0,0) width 784: "This sentence should be fully justified, which means that the right and left margins of this paragraph should line up, no"
-          text run at (0,20) width 784: "matter how long the paragraph becomes; the exception, of course, is the last line, which should be left-justified in Western"
-          text run at (0,40) width 67: "languages."
-      RenderTable {TABLE} at (0,331) size 784x208 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x206
-          RenderTableRow {TR} at (0,0) size 782x30
-            RenderTableCell {TD} at (0,0) size 782x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x22
-                RenderText {#text} at (4,4) size 163x22
-                  text run at (4,4) width 163: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,30) size 782x176
-            RenderTableCell {TD} at (0,104) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x20
+          text run at (0,15) width 200: ".two {text-align: right;}"
+          text run at (200,15) width 0: " "
+          text run at (0,30) width 224: ".three {text-align: center;}"
+          text run at (224,30) width 0: " "
+          text run at (0,45) width 224: ".four {text-align: justify;}"
+          text run at (224,45) width 0: " "
+          text run at (0,60) width 0: " "
+      RenderBlock {HR} at (0,123) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,141) size 784x19
+        RenderText {#text} at (0,0) size 221x19
+          text run at (0,0) width 221: "This sentence should be left-justified."
+      RenderBlock {P} at (0,176) size 784x19
+        RenderText {#text} at (555,0) size 229x19
+          text run at (555,0) width 229: "This sentence should be right-justified."
+      RenderBlock {P} at (0,211) size 784x19
+        RenderText {#text} at (290,0) size 203x19
+          text run at (290,0) width 203: "This sentence should be centered."
+      RenderBlock {P} at (0,246) size 784x38
+        RenderText {#text} at (0,0) size 784x38
+          text run at (0,0) width 784: "This sentence should be fully justified, which means that the right and left margins of this paragraph should line up, no matter how"
+          text run at (0,19) width 723: "long the paragraph becomes; the exception, of course, is the last line, which should be left-justified in Western languages."
+      RenderTable {TABLE} at (0,300) size 784x180 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x178
+          RenderTableRow {TR} at (0,0) size 782x27
+            RenderTableCell {TD} at (0,0) size 782x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 159x19
+                RenderText {#text} at (4,4) size 159x19
+                  text run at (4,4) width 159: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,27) size 782x151
+            RenderTableCell {TD} at (0,89) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x19
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,30) size 770x176 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 762x20
-                RenderText {#text} at (0,0) size 234x20
-                  text run at (0,0) width 234: "This sentence should be left-justified."
-              RenderBlock {P} at (4,40) size 762x20
-                RenderText {#text} at (519,0) size 243x20
-                  text run at (519,0) width 243: "This sentence should be right-justified."
-              RenderBlock {P} at (4,76) size 762x20
-                RenderText {#text} at (275,0) size 212x20
-                  text run at (275,0) width 212: "This sentence should be centered."
-              RenderBlock {P} at (4,112) size 762x60
-                RenderText {#text} at (0,0) size 762x60
-                  text run at (0,0) width 762: "This sentence should be fully justified, which means that the right and left margins of this paragraph should line up, no"
-                  text run at (0,20) width 762: "matter how long the paragraph becomes; the exception, of course, is the last line, which should be left-justified in"
-                  text run at (0,40) width 123: "Western languages."
+            RenderTableCell {TD} at (12,27) size 770x151 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 762x19
+                RenderText {#text} at (0,0) size 221x19
+                  text run at (0,0) width 221: "This sentence should be left-justified."
+              RenderBlock {P} at (4,39) size 762x19
+                RenderText {#text} at (533,0) size 229x19
+                  text run at (533,0) width 229: "This sentence should be right-justified."
+              RenderBlock {P} at (4,74) size 762x19
+                RenderText {#text} at (279,0) size 203x19
+                  text run at (279,0) width 203: "This sentence should be centered."
+              RenderBlock {P} at (4,109) size 762x38
+                RenderText {#text} at (0,0) size 762x38
+                  text run at (0,0) width 762: "This sentence should be fully justified, which means that the right and left margins of this paragraph should line up, no matter"
+                  text run at (0,19) width 753: "how long the paragraph becomes; the exception, of course, is the last line, which should be left-justified in Western languages."

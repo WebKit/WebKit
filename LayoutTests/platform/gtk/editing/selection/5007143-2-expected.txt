@@ -3,22 +3,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 759x40
-          text run at (0,0) width 759: "This tests for a bug when moving the caret forward by a line from a range selection with a horizontal position for vertical"
-          text run at (0,20) width 136: "arrow navigation set. "
-          text run at (136,20) width 601: "To match TextEdit, the caret should be between the second and third 'x's in the forth paragraph."
-      RenderBlock {DIV} at (0,56) size 784x80
-        RenderText {#text} at (0,0) size 24x20
-          text run at (0,0) width 24: "xxx"
-        RenderBR {BR} at (24,15) size 0x0
-        RenderText {#text} at (0,20) size 24x20
-          text run at (0,20) width 24: "xxx"
-        RenderBR {BR} at (24,35) size 0x0
-        RenderText {#text} at (0,40) size 8x20
-          text run at (0,40) width 8: "x"
-        RenderBR {BR} at (8,55) size 0x0
-        RenderText {#text} at (0,60) size 24x20
-          text run at (0,60) width 24: "xxx"
-        RenderBR {BR} at (24,75) size 0x0
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 756x38
+          text run at (0,0) width 756: "This tests for a bug when moving the caret forward by a line from a range selection with a horizontal position for vertical arrow"
+          text run at (0,19) width 89: "navigation set. "
+          text run at (89,19) width 575: "To match TextEdit, the caret should be between the second and third 'x's in the forth paragraph."
+      RenderBlock {DIV} at (0,54) size 784x76
+        RenderText {#text} at (0,0) size 21x19
+          text run at (0,0) width 21: "xxx"
+        RenderBR {BR} at (21,15) size 0x0
+        RenderText {#text} at (0,19) size 21x19
+          text run at (0,19) width 21: "xxx"
+        RenderBR {BR} at (21,34) size 0x0
+        RenderText {#text} at (0,38) size 7x19
+          text run at (0,38) width 7: "x"
+        RenderBR {BR} at (7,53) size 0x0
+        RenderText {#text} at (0,57) size 21x19
+          text run at (0,57) width 21: "xxx"
+        RenderBR {BR} at (21,72) size 0x0
 caret: position 3 of child 6 {#text} of child 2 {DIV} of body

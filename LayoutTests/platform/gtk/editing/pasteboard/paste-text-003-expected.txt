@@ -3,35 +3,35 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x376 [border: (2px solid #FF0000)]
-        RenderBlock (anonymous) at (14,14) size 756x30
-          RenderText {#text} at (0,0) size 63x30
-            text run at (0,0) width 63: "There "
-          RenderText {#text} at (63,0) size 285x30
-            text run at (63,0) width 285: "is a tide in the affairs of men,"
-        RenderBlock {DIV} at (14,44) size 756x58 [border: (2px solid #FF0000)]
-          RenderText {#text} at (14,14) size 434x30
-            text run at (14,14) width 434: "Which taken at the flood leads on to fortune."
-        RenderBlock (anonymous) at (14,102) size 756x0
-        RenderBlock {DIV} at (14,102) size 756x260 [border: (2px solid #FF0000)]
+      RenderBlock {DIV} at (0,0) size 784x364 [border: (2px solid #FF0000)]
+        RenderBlock (anonymous) at (14,14) size 756x28
+          RenderText {#text} at (0,0) size 62x28
+            text run at (0,0) width 62: "There "
+          RenderText {#text} at (62,0) size 280x28
+            text run at (62,0) width 280: "is a tide in the affairs of men,"
+        RenderBlock {DIV} at (14,42) size 756x56 [border: (2px solid #FF0000)]
+          RenderText {#text} at (14,14) size 431x28
+            text run at (14,14) width 431: "Which taken at the flood leads on to fortune."
+        RenderBlock (anonymous) at (14,98) size 756x0
+        RenderBlock {DIV} at (14,98) size 756x252 [border: (2px solid #FF0000)]
           RenderBlock (anonymous) at (14,14) size 728x0
-          RenderBlock {DIV} at (14,14) size 728x58 [border: (2px solid #FF0000)]
-            RenderText {#text} at (14,14) size 80x30
-              text run at (14,14) width 80: "Omitted"
-            RenderText {#text} at (94,14) size 285x30
-              text run at (94,14) width 285: "is a tide in the affairs of men,"
-          RenderBlock (anonymous) at (14,72) size 728x0
-          RenderBlock {DIV} at (14,72) size 728x58 [border: (2px solid #FF0000)]
-            RenderText {#text} at (14,14) size 434x30
-              text run at (14,14) width 434: "Which taken at the flood leads on to fortune."
-          RenderBlock (anonymous) at (14,130) size 728x0
-          RenderBlock {DIV} at (14,130) size 728x116 [border: (2px solid #FF0000)]
-            RenderBlock (anonymous) at (14,14) size 700x30
-              RenderText {#text} at (0,0) size 80x30
-                text run at (0,0) width 80: "Omitted"
-              RenderText {#text} at (80,0) size 271x30
-                text run at (80,0) width 271: ", all the voyage of their life,"
-            RenderBlock {DIV} at (14,44) size 700x58 [border: (2px solid #FF0000)]
-              RenderText {#text} at (14,14) size 357x30
-                text run at (14,14) width 357: "Is bound in shallows and in miseries."
+          RenderBlock {DIV} at (14,14) size 728x56 [border: (2px solid #FF0000)]
+            RenderText {#text} at (14,14) size 78x28
+              text run at (14,14) width 78: "Omitted"
+            RenderText {#text} at (92,14) size 280x28
+              text run at (92,14) width 280: "is a tide in the affairs of men,"
+          RenderBlock (anonymous) at (14,70) size 728x0
+          RenderBlock {DIV} at (14,70) size 728x56 [border: (2px solid #FF0000)]
+            RenderText {#text} at (14,14) size 431x28
+              text run at (14,14) width 431: "Which taken at the flood leads on to fortune."
+          RenderBlock (anonymous) at (14,126) size 728x0
+          RenderBlock {DIV} at (14,126) size 728x112 [border: (2px solid #FF0000)]
+            RenderBlock (anonymous) at (14,14) size 700x28
+              RenderText {#text} at (0,0) size 78x28
+                text run at (0,0) width 78: "Omitted"
+              RenderText {#text} at (78,0) size 265x28
+                text run at (78,0) width 265: ", all the voyage of their life,"
+            RenderBlock {DIV} at (14,42) size 700x56 [border: (2px solid #FF0000)]
+              RenderText {#text} at (14,14) size 350x28
+                text run at (14,14) width 350: "Is bound in shallows and in miseries."
 caret: position 7 of child 0 {#text} of child 2 {DIV} of child 3 {DIV} of child 1 {DIV} of body

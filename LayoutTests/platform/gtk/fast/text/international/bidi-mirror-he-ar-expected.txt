@@ -3,18 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (464,0) size 320x20
-          text run at (464,0) width 320: "This test tests bidi mirroring in Hebrew and Arabic"
-      RenderBlock {P} at (0,36) size 784x20
-        RenderText {#text} at (327,0) size 457x20
-          text run at (327,0) width 457: "The parenthesis should be displayed as \"(...)...\" visually from left to right"
-      RenderBlock {DIV} at (0,72) size 784x20
-        RenderText {#text} at (766,0) size 18x20
-          text run at (766,0) width 18 RTL: "\x{5E9}(\x{5E9})"
-      RenderBlock {DIV} at (0,92) size 784x20
-        RenderText {#text} at (728,0) size 56x20
-          text run at (728,0) width 56 RTL: "\x{5C6}(\x{5C6})"
-      RenderBlock {DIV} at (0,112) size 784x20
-        RenderText {#text} at (728,0) size 56x20
-          text run at (728,0) width 56 RTL: "\x{644}(\x{644})"
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (481,0) size 303x19
+          text run at (481,0) width 303: "This test tests bidi mirroring in Hebrew and Arabic"
+      RenderBlock {P} at (0,35) size 784x19
+        RenderText {#text} at (355,0) size 429x19
+          text run at (355,0) width 429: "The parenthesis should be displayed as \"(...)...\" visually from left to right"
+      RenderBlock {DIV} at (0,70) size 784x19
+        RenderText {#text} at (750,0) size 34x19
+          text run at (750,0) width 34 RTL: "\x{5E9}(\x{5E9})"
+      RenderBlock {DIV} at (0,89) size 784x19
+        RenderText {#text} at (760,0) size 24x19
+          text run at (760,0) width 24 RTL: "\x{5C6}(\x{5C6})"
+      RenderBlock {DIV} at (0,108) size 784x19
+        RenderText {#text} at (750,0) size 34x19
+          text run at (750,0) width 34 RTL: "\x{644}(\x{644})"

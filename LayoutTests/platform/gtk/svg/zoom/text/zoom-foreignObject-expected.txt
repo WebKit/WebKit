@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (9,9) size 791x591
     RenderForeignObject {foreignObject} at (10,10) size 580x380
-      RenderBlock {xhtml:div} at (0,0) size 580x20
-        RenderText {#text} at (0,0) size 78x20
-          text run at (0,0) width 78: "This is a test"
-      RenderBlock (anonymous) at (0,20) size 580x20
-        RenderInline {xhtml:a} at (0,0) size 66x20 [color=#0000EE]
-          RenderText {#text} at (0,0) size 66x20
-            text run at (0,0) width 66: "and a link."
-        RenderBR {xhtml:br} at (66,0) size 0x20
+      RenderBlock {xhtml:div} at (0,0) size 580x19
+        RenderText {#text} at (0,0) size 74x19
+          text run at (0,0) width 74: "This is a test"
+      RenderBlock (anonymous) at (0,19) size 580x19
+        RenderInline {xhtml:a} at (0,0) size 62x19 [color=#0000EE]
+          RenderText {#text} at (0,0) size 62x19
+            text run at (0,0) width 62: "and a link."
+        RenderBR {xhtml:br} at (62,0) size 0x19
     RenderPath {rect} at (9,9) size 582x382 [stroke={[type=SOLID] [color=#008000]}] [data="M10.00,10.00 L590.00,10.00 L590.00,390.00 L10.00,390.00 Z"]
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0

@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 477x20
-        text run at (0,0) width 477: "If running this test manually put focus inside the iframe and hit 'page down'."
-      RenderPartObject {IFRAME} at (0,20) size 504x504 [border: (2px inset #000000)]
+      RenderText {#text} at (0,0) size 446x19
+        text run at (0,0) width 446: "If running this test manually put focus inside the iframe and hit 'page down'."
+      RenderPartObject {IFRAME} at (0,19) size 504x504 [border: (2px inset #000000)]
         layer at (0,0) size 484x836
           RenderView at (0,0) size 484x500
         layer at (0,0) size 484x836 layerType: background only
@@ -14,11 +14,11 @@ layer at (0,0) size 800x600
         layer at (0,0) size 484x836 layerType: foreground only
           RenderBlock {HTML} at (0,0) size 484x836
             RenderBody {BODY} at (8,8) size 468x820
-        layer at (8,346) size 476x40
-          RenderBlock (positioned) {P} at (8,346) size 476x40
-            RenderText {#text} at (0,0) size 462x40
-              text run at (0,0) width 462: "You should see a yellow rect on the left, and a green one on the right. No"
-              text run at (0,20) width 65: "red pixels."
+        layer at (8,346) size 476x38
+          RenderBlock (positioned) {P} at (8,346) size 476x38
+            RenderText {#text} at (0,0) size 464x38
+              text run at (0,0) width 464: "You should see a yellow rect on the left, and a green one on the right. No red"
+              text run at (0,19) width 38: "pixels."
         layer at (150,406) size 100x100
           RenderBlock (positioned) {DIV} at (150,70) size 100x100 [bgcolor=#008000]
       RenderText {#text} at (0,0) size 0x0

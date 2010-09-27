@@ -3,58 +3,58 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 355x20
-          text run at (0,0) width 355: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,36) size 784x64
-        RenderText {#text} at (0,0) size 648x63
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 337x19
+          text run at (0,0) width 337: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,35) size 784x60
+        RenderText {#text} at (0,0) size 648x60
           text run at (0,0) width 648: "<LINK rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"../resources/bg.gif\">"
           text run at (648,0) width 0: " "
-          text run at (0,16) width 296: "@import url(../resources/sec642.css);"
-          text run at (296,16) width 0: " "
-          text run at (0,32) width 352: "BODY {background: url(../resources/bg.gif);}"
-          text run at (352,32) width 0: " "
-          text run at (0,48) width 0: " "
-      RenderBlock {HR} at (0,113) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,131) size 784x20
-        RenderText {#text} at (0,0) size 386x20
-          text run at (0,0) width 386: "This page should have a green grid pattern as its background."
-      RenderBlock {P} at (0,167) size 784x60 [bgcolor=#FFFFFF]
-        RenderText {#text} at (0,0) size 779x60
-          text run at (0,0) width 620: "This paragraph should have a white background, but NO image should appear in the background. "
-          text run at (620,0) width 159: "If an image, in this case a"
-          text run at (0,20) width 756: "red square-- or, indeed, any red at all-- is seen there, then the browser has incorrectly interpreted a URL in relation to the"
-          text run at (0,40) width 274: "document's URL, not the stylesheet's URL."
-      RenderBlock {P} at (0,243) size 784x60 [bgcolor=#FFFFFF]
-        RenderText {#text} at (0,0) size 779x60
-          text run at (0,0) width 620: "This paragraph should have a white background, but NO image should appear in the background. "
-          text run at (620,0) width 159: "If an image, in this case a"
-          text run at (0,20) width 756: "red square-- or, indeed, any red at all-- is seen there, then the browser has incorrectly interpreted a URL in relation to the"
-          text run at (0,40) width 274: "document's URL, not the stylesheet's URL."
-      RenderTable {TABLE} at (0,319) size 784x212 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x210
-          RenderTableRow {TR} at (0,0) size 782x30
-            RenderTableCell {TD} at (0,0) size 782x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x22
-                RenderText {#text} at (4,4) size 163x22
-                  text run at (4,4) width 163: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,30) size 782x180
-            RenderTableCell {TD} at (0,106) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x20
+          text run at (0,15) width 296: "@import url(../resources/sec642.css);"
+          text run at (296,15) width 0: " "
+          text run at (0,30) width 352: "BODY {background: url(../resources/bg.gif);}"
+          text run at (352,30) width 0: " "
+          text run at (0,45) width 0: " "
+      RenderBlock {HR} at (0,108) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,126) size 784x19
+        RenderText {#text} at (0,0) size 368x19
+          text run at (0,0) width 368: "This page should have a green grid pattern as its background."
+      RenderBlock {P} at (0,161) size 784x57 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 778x57
+          text run at (0,0) width 591: "This paragraph should have a white background, but NO image should appear in the background. "
+          text run at (591,0) width 174: "If an image, in this case a red"
+          text run at (0,19) width 778: "square-- or, indeed, any red at all-- is seen there, then the browser has incorrectly interpreted a URL in relation to the document's"
+          text run at (0,38) width 188: "URL, not the stylesheet's URL."
+      RenderBlock {P} at (0,234) size 784x57 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 778x57
+          text run at (0,0) width 591: "This paragraph should have a white background, but NO image should appear in the background. "
+          text run at (591,0) width 174: "If an image, in this case a red"
+          text run at (0,19) width 778: "square-- or, indeed, any red at all-- is seen there, then the browser has incorrectly interpreted a URL in relation to the document's"
+          text run at (0,38) width 188: "URL, not the stylesheet's URL."
+      RenderTable {TABLE} at (0,307) size 784x202 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x200
+          RenderTableRow {TR} at (0,0) size 782x27
+            RenderTableCell {TD} at (0,0) size 782x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 159x19
+                RenderText {#text} at (4,4) size 159x19
+                  text run at (4,4) width 159: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,27) size 782x173
+            RenderTableCell {TD} at (0,100) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x19
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,30) size 770x180 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 762x20
-                RenderText {#text} at (0,0) size 386x20
-                  text run at (0,0) width 386: "This page should have a green grid pattern as its background."
-              RenderBlock {P} at (4,40) size 762x60 [bgcolor=#FFFFFF]
-                RenderText {#text} at (0,0) size 759x60
-                  text run at (0,0) width 620: "This paragraph should have a white background, but NO image should appear in the background. "
-                  text run at (620,0) width 117: "If an image, in this"
-                  text run at (0,20) width 759: "case a red square-- or, indeed, any red at all-- is seen there, then the browser has incorrectly interpreted a URL in relation"
-                  text run at (0,40) width 313: "to the document's URL, not the stylesheet's URL."
-              RenderBlock {P} at (4,116) size 762x60 [bgcolor=#FFFFFF]
-                RenderText {#text} at (0,0) size 759x60
-                  text run at (0,0) width 620: "This paragraph should have a white background, but NO image should appear in the background. "
-                  text run at (620,0) width 117: "If an image, in this"
-                  text run at (0,20) width 759: "case a red square-- or, indeed, any red at all-- is seen there, then the browser has incorrectly interpreted a URL in relation"
-                  text run at (0,40) width 313: "to the document's URL, not the stylesheet's URL."
+            RenderTableCell {TD} at (12,27) size 770x173 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 762x19
+                RenderText {#text} at (0,0) size 368x19
+                  text run at (0,0) width 368: "This page should have a green grid pattern as its background."
+              RenderBlock {P} at (4,39) size 762x57 [bgcolor=#FFFFFF]
+                RenderText {#text} at (0,0) size 741x57
+                  text run at (0,0) width 591: "This paragraph should have a white background, but NO image should appear in the background. "
+                  text run at (591,0) width 150: "If an image, in this case a"
+                  text run at (0,19) width 730: "red square-- or, indeed, any red at all-- is seen there, then the browser has incorrectly interpreted a URL in relation to the"
+                  text run at (0,38) width 260: "document's URL, not the stylesheet's URL."
+              RenderBlock {P} at (4,112) size 762x57 [bgcolor=#FFFFFF]
+                RenderText {#text} at (0,0) size 741x57
+                  text run at (0,0) width 591: "This paragraph should have a white background, but NO image should appear in the background. "
+                  text run at (591,0) width 150: "If an image, in this case a"
+                  text run at (0,19) width 730: "red square-- or, indeed, any red at all-- is seen there, then the browser has incorrectly interpreted a URL in relation to the"
+                  text run at (0,38) width 260: "document's URL, not the stylesheet's URL."

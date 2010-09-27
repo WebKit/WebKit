@@ -3,22 +3,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 608x20
-          text run at (0,0) width 608: "This tests pasting a blockquote into a blockquote. Nothing below should be double-blockquoted."
-      RenderBlock {DIV} at (0,36) size 784x40
-        RenderBlock {BLOCKQUOTE} at (0,0) size 784x20 [color=#0000FF] [border: (2px solid #0000FF)]
-          RenderText {#text} at (22,0) size 27x20
-            text run at (22,0) width 27: "One"
-          RenderText {#text} at (49,0) size 30x20
-            text run at (49,0) width 30: "Two"
-        RenderBlock (anonymous) at (0,20) size 784x0
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 584x19
+          text run at (0,0) width 584: "This tests pasting a blockquote into a blockquote. Nothing below should be double-blockquoted."
+      RenderBlock {DIV} at (0,35) size 784x38
+        RenderBlock {BLOCKQUOTE} at (0,0) size 784x19 [color=#0000FF] [border: (2px solid #0000FF)]
+          RenderText {#text} at (22,0) size 26x19
+            text run at (22,0) width 26: "One"
+          RenderText {#text} at (48,0) size 28x19
+            text run at (48,0) width 28: "Two"
+        RenderBlock (anonymous) at (0,19) size 784x0
           RenderInline {SPAN} at (0,0) size 0x0
-        RenderBlock (anonymous) at (0,20) size 784x20
-          RenderBlock {BLOCKQUOTE} at (0,0) size 784x20 [color=#0000FF] [border: (2px solid #0000FF)]
-            RenderBlock {DIV} at (22,0) size 762x20
-              RenderText {#text} at (0,0) size 37x20
-                text run at (0,0) width 37: "Three"
-        RenderBlock (anonymous) at (0,40) size 784x0
+        RenderBlock (anonymous) at (0,19) size 784x19
+          RenderBlock {BLOCKQUOTE} at (0,0) size 784x19 [color=#0000FF] [border: (2px solid #0000FF)]
+            RenderBlock {DIV} at (22,0) size 762x19
+              RenderText {#text} at (0,0) size 35x19
+                text run at (0,0) width 35: "Three"
+        RenderBlock (anonymous) at (0,38) size 784x0
           RenderInline {SPAN} at (0,0) size 0x0
 caret: position 5 of child 0 {#text} of child 0 {DIV} of child 0 {BLOCKQUOTE} of child 1 {SPAN} of child 3 {DIV} of body

@@ -3,18 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 779x40
-          text run at (0,0) width 374: "This tests for a crash when pasting content into a table cell. "
-          text run at (374,0) width 405: "The table cell has some collapsed whitespace at the end of it that"
-          text run at (0,20) width 110: "tickled the crash. "
-          text run at (110,20) width 333: "You should see 'Hello World' in the table cell below."
-      RenderBlock {DIV} at (0,56) size 784x30
-        RenderTable {TABLE} at (0,0) size 89x30 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 87x28
-            RenderTableRow {TR} at (0,2) size 87x24
-              RenderTableCell {TD} at (2,2) size 83x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 79x20
-                  text run at (2,2) width 79: "Hello World"
-                  text run at (81,2) width 0: " \x{9}\x{9} \x{9}\x{9}"
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 744x38
+          text run at (0,0) width 356: "This tests for a crash when pasting content into a table cell. "
+          text run at (356,0) width 388: "The table cell has some collapsed whitespace at the end of it that"
+          text run at (0,19) width 106: "tickled the crash. "
+          text run at (106,19) width 316: "You should see 'Hello World' in the table cell below."
+      RenderBlock {DIV} at (0,54) size 784x29
+        RenderTable {TABLE} at (0,0) size 85x29 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 83x27
+            RenderTableRow {TR} at (0,2) size 83x23
+              RenderTableCell {TD} at (2,2) size 79x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 75x19
+                  text run at (2,2) width 75: "Hello World"
+                  text run at (77,2) width 0: " \x{9}\x{9} \x{9}\x{9}"
 caret: position 11 of child 0 {#text} of child 1 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 2 {DIV} of body

@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x256 [border: (2px solid #FF0000)]
-        RenderBlock {DIV} at (14,14) size 756x228
-          RenderBlock (anonymous) at (0,0) size 756x30
-            RenderText {#text} at (0,0) size 42x30
-              text run at (0,0) width 42: "Test"
-          RenderBlock {BLOCKQUOTE} at (40,54) size 676x30
-            RenderText {#text} at (0,0) size 42x30
-              text run at (0,0) width 42: "Test"
-          RenderBlock (anonymous) at (0,108) size 756x120
-            RenderBR {BR} at (0,0) size 0x30
-            RenderBR {BR} at (0,30) size 0x30
-            RenderBR {BR} at (0,60) size 0x30
-            RenderBR {BR} at (0,90) size 0x30
+      RenderBlock {DIV} at (0,0) size 784x244 [border: (2px solid #FF0000)]
+        RenderBlock {DIV} at (14,14) size 756x216
+          RenderBlock (anonymous) at (0,0) size 756x28
+            RenderText {#text} at (0,0) size 41x28
+              text run at (0,0) width 41: "Test"
+          RenderBlock {BLOCKQUOTE} at (40,52) size 676x28
+            RenderText {#text} at (0,0) size 41x28
+              text run at (0,0) width 41: "Test"
+          RenderBlock (anonymous) at (0,104) size 756x112
+            RenderBR {BR} at (0,0) size 0x28
+            RenderBR {BR} at (0,28) size 0x28
+            RenderBR {BR} at (0,56) size 0x28
+            RenderBR {BR} at (0,84) size 0x28
 caret: position 0 of child 5 {BR} of child 1 {DIV} of child 1 {DIV} of body

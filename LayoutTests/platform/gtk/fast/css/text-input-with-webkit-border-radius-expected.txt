@@ -1,26 +1,26 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x141
-  RenderBlock {HTML} at (0,0) size 800x141
-    RenderBody {BODY} at (8,16) size 784x117
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 301x20
-          text run at (0,0) width 301: "This test checks that text input fields handle the "
+layer at (0,0) size 800x139
+  RenderBlock {HTML} at (0,0) size 800x139
+    RenderBody {BODY} at (8,16) size 784x115
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 285x19
+          text run at (0,0) width 285: "This test checks that text input fields handle the "
         RenderInline {CODE} at (0,0) size 168x15
-          RenderText {#text} at (301,4) size 168x15
-            text run at (301,4) width 168: "-webkit-border-radius"
-        RenderText {#text} at (469,0) size 295x20
-          text run at (469,0) width 295: " CSS property correctly, or degrade gracefully."
-      RenderBlock {P} at (0,36) size 784x20
-        RenderText {#text} at (0,0) size 617x20
-          text run at (0,0) width 617: "If the test passes, you will see a text entry field containing \"default text\" inside the grey div below."
-      RenderBlock {DIV} at (0,72) size 163x45 [bgcolor=#888888]
-        RenderTextControl {INPUT} at (11,9) size 133x26 [bgcolor=#00FF00]
-          RenderBlock {DIV} at (3,3) size 127x20
+          RenderText {#text} at (285,4) size 168x15
+            text run at (285,4) width 168: "-webkit-border-radius"
+        RenderText {#text} at (453,0) size 285x19
+          text run at (453,0) width 285: " CSS property correctly, or degrade gracefully."
+      RenderBlock {P} at (0,35) size 784x19
+        RenderText {#text} at (0,0) size 579x19
+          text run at (0,0) width 579: "If the test passes, you will see a text entry field containing \"default text\" inside the grey div below."
+      RenderBlock {DIV} at (0,70) size 163x45 [bgcolor=#888888]
+        RenderTextControl {INPUT} at (11,9) size 133x25 [bgcolor=#00FF00]
+          RenderBlock {DIV} at (3,3) size 127x19
             RenderBlock {DIV} at (0,15) size 0x0
             RenderBlock {DIV} at (113,1) size 14x14
         RenderText {#text} at (0,0) size 0x0
-layer at (22,100) size 113x20
-  RenderBlock {DIV} at (0,0) size 113x20
-    RenderText {#text} at (1,0) size 70x20
-      text run at (1,0) width 70: "default text"
+layer at (22,98) size 113x19
+  RenderBlock {DIV} at (0,0) size 113x19
+    RenderText {#text} at (1,0) size 66x19
+      text run at (1,0) width 66: "default text"

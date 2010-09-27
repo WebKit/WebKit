@@ -3,18 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x148 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 79x120
-          RenderText {#text} at (14,14) size 79x30
+      RenderBlock {DIV} at (0,0) size 784x140 [border: (2px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 79x112
+          RenderText {#text} at (14,14) size 79x28
             text run at (14,14) width 79: "Foo xxx"
-          RenderBR {BR} at (93,37) size 0x0
-          RenderInline {I} at (0,0) size 33x30
-            RenderText {#text} at (14,44) size 33x30
-              text run at (14,44) width 33: "bar"
-          RenderText {#text} at (47,44) size 42x30
-            text run at (47,44) width 42: " xxx"
-          RenderBR {BR} at (89,67) size 0x0
-          RenderBR {BR} at (14,74) size 0x30
-          RenderText {#text} at (14,104) size 70x30
-            text run at (14,104) width 70: "bazxxx"
+          RenderBR {BR} at (93,36) size 0x0
+          RenderInline {I} at (0,0) size 34x28
+            RenderText {#text} at (14,42) size 34x28
+              text run at (14,42) width 34: "bar"
+          RenderText {#text} at (48,42) size 42x28
+            text run at (48,42) width 42: " xxx"
+          RenderBR {BR} at (90,64) size 0x0
+          RenderBR {BR} at (14,70) size 0x28
+          RenderText {#text} at (14,98) size 69x28
+            text run at (14,98) width 69: "bazxxx"
 caret: position 6 of child 6 {#text} of child 1 {SPAN} of child 1 {DIV} of body

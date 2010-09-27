@@ -3,15 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 474x20
-          text run at (0,0) width 474: "This tests to make sure that right clicking selects the word under the mouse."
-      RenderBlock {DIV} at (0,36) size 784x20
-        RenderText {#text} at (0,0) size 29x20
-          text run at (0,0) width 29: "The "
-        RenderInline {SPAN} at (0,0) size 44x20
-          RenderText {#text} at (29,0) size 44x20
-            text run at (29,0) width 44: "second"
-        RenderText {#text} at (73,0) size 260x20
-          text run at (73,0) width 260: " word in this sentence should be selected."
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 452x19
+          text run at (0,0) width 452: "This tests to make sure that right clicking selects the word under the mouse."
+      RenderBlock {DIV} at (0,35) size 784x19
+        RenderText {#text} at (0,0) size 27x19
+          text run at (0,0) width 27: "The "
+        RenderInline {SPAN} at (0,0) size 43x19
+          RenderText {#text} at (27,0) size 43x19
+            text run at (27,0) width 43: "second"
+        RenderText {#text} at (70,0) size 249x19
+          text run at (70,0) width 249: " word in this sentence should be selected."
 caret: position 3 of child 0 {#text} of child 1 {SPAN} of child 2 {DIV} of body

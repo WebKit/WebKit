@@ -3,16 +3,16 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x118 [border: (2px solid #FF0000)]
-        RenderText {#text} at (14,14) size 348x30
-          text run at (14,14) width 348: "There is a tide in the affairs of men."
-        RenderBR {BR} at (362,37) size 0x0
-        RenderBR {BR} at (14,44) size 0x30
-        RenderText {#text} at (14,74) size 74x30
-          text run at (14,74) width 74: "of men."
-        RenderText {#text} at (88,74) size 74x30
-          text run at (88,74) width 74: "of men."
-      RenderBlock (anonymous) at (0,118) size 784x0
+      RenderBlock {DIV} at (0,0) size 784x112 [border: (2px solid #FF0000)]
+        RenderText {#text} at (14,14) size 342x28
+          text run at (14,14) width 342: "There is a tide in the affairs of men."
+        RenderBR {BR} at (356,36) size 0x0
+        RenderBR {BR} at (14,42) size 0x28
+        RenderText {#text} at (14,70) size 73x28
+          text run at (14,70) width 73: "of men."
+        RenderText {#text} at (87,70) size 73x28
+          text run at (87,70) width 73: "of men."
+      RenderBlock (anonymous) at (0,112) size 784x0
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
 caret: position 7 of child 4 {#text} of child 1 {DIV} of body

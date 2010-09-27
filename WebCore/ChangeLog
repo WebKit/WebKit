@@ -1,3 +1,48 @@
+2010-09-19  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Wrong font instantiated from an unknown font family
+        https://bugs.webkit.org/show_bug.cgi?id=36548
+
+        When FontConfig returns a match for a particular family name, ensure that
+        the family name matches the configured alias for the original pattern. This
+        should prevent selecting FontConfig fallbacks in situations where the next
+        font on the CSS fallback list should be used. This requires moving all FontConfig
+        matching logic into FontCacheFreeType and out of FontPlatformDataFreeType.
+        It should be there anyway.
+
+        Test: platform/gtk/fonts/font-family-fallback.html
+
+        * platform/graphics/cairo/FontCacheFreeType.cpp:
+        (WebCore::FontCache::platformInit): Simply call FcInit here instead of
+        deferring to FontPlatformData.
+        (WebCore::FontCache::getLastResortFallbackFont): The last resort font should
+        be a fallback font or else the new FontConfig logic may result in null font data
+        if it cannot find an appropriate match.
+        (WebCore::getFamilyNameStringFromFontDescriptionAndFamily): Added. Helper function
+        which converts WebCore fallback names into ones that FontConfig understands.
+        (WebCore::isFallbackFontAllowed): Added. Helper function that allows FontConfig
+        fallbacks to be used when generic family names are specified.
+        (WebCore::FontCache::createFontPlatformData): Move all FontConfig matching logic here
+        and prevent against the situation where FontConfig returns a different family name
+        than we asked for.
+        * platform/graphics/cairo/FontCustomPlatformData.cpp: Updated FontPlatformData constructor.
+        * platform/graphics/cairo/FontPlatformDataFreeType.cpp: Update the constructor to
+        take the FcPattern returned and the original FontDescription. We no longer need the other
+        arguments, because the selection is now done by FontCacheFreeType.
+        (WebCore::FontPlatformData::FontPlatformData): Remove the FontConfig selection logic from
+        this code.
+        * platform/graphics/cairo/FontPlatformDataFreeType.h: Updated method definitions.
+        * platform/graphics/cairo/GlyphPageTreeNodeCairo.cpp: Fixed includes.
+        * platform/graphics/cairo/PlatformRefPtrCairo.cpp: Added a PlatformRefPtr specialization
+        for cairo_font_face_t.
+        (WTF::refPlatformPtr): Added.
+        (WTF::derefPlatformPtr): Added.
+        * platform/graphics/cairo/PlatformRefPtrCairo.h: Updated method definitons.
+        * platform/graphics/cairo/SimpleFontDataCairo.cpp:
+        (WebCore::SimpleFontData::smallCapsFontData): Fixed FontPlatformData constructor.
+
 2010-09-27  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.

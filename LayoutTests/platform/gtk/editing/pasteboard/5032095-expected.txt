@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 764x40
-          text run at (0,0) width 690: "This tests for a bug where content pasted at the end of a paragraph would be inserted into the next paragraph. "
-          text run at (690,0) width 74: "You should"
-          text run at (0,20) width 145: "see 'helloworld' below."
-      RenderBlock {DIV} at (0,56) size 784x20
-        RenderText {#text} at (0,0) size 31x20
-          text run at (0,0) width 31: "hello"
-        RenderText {#text} at (31,0) size 37x20
-          text run at (31,0) width 37: "world"
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 756x38
+          text run at (0,0) width 663: "This tests for a bug where content pasted at the end of a paragraph would be inserted into the next paragraph. "
+          text run at (663,0) width 93: "You should see"
+          text run at (0,19) width 114: "'helloworld' below."
+      RenderBlock {DIV} at (0,54) size 784x19
+        RenderText {#text} at (0,0) size 28x19
+          text run at (0,0) width 28: "hello"
+        RenderText {#text} at (28,0) size 35x19
+          text run at (28,0) width 35: "world"
 caret: position 5 of child 1 {#text} of child 2 {DIV} of body

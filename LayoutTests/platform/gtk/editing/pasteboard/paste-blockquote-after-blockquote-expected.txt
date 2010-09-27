@@ -3,15 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 354x20
-          text run at (0,0) width 354: "This tests pasting a blockquote after another blockquote."
-      RenderBlock {DIV} at (0,36) size 784x40
-        RenderBlock {BLOCKQUOTE} at (0,0) size 784x20 [color=#0000FF] [border: (2px solid #0000FF)]
-          RenderText {#text} at (22,0) size 41x20
-            text run at (22,0) width 41: "Line 1"
-        RenderBlock {BLOCKQUOTE} at (0,20) size 784x20 [color=#0000FF] [border: (2px solid #0000FF)]
-          RenderText {#text} at (22,0) size 41x20
-            text run at (22,0) width 41: "Line 2"
-        RenderBlock (anonymous) at (0,40) size 784x0
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 341x19
+          text run at (0,0) width 341: "This tests pasting a blockquote after another blockquote."
+      RenderBlock {DIV} at (0,35) size 784x38
+        RenderBlock {BLOCKQUOTE} at (0,0) size 784x19 [color=#0000FF] [border: (2px solid #0000FF)]
+          RenderText {#text} at (22,0) size 38x19
+            text run at (22,0) width 38: "Line 1"
+        RenderBlock {BLOCKQUOTE} at (0,19) size 784x19 [color=#0000FF] [border: (2px solid #0000FF)]
+          RenderText {#text} at (22,0) size 38x19
+            text run at (22,0) width 38: "Line 2"
+        RenderBlock (anonymous) at (0,38) size 784x0
 caret: position 6 of child 0 {#text} of child 1 {BLOCKQUOTE} of child 2 {DIV} of body

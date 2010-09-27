@@ -1,25 +1,25 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x482
-  RenderBlock {html} at (0,0) size 800x482
-    RenderBody {body} at (8,16) size 784x458
-      RenderBlock {p} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 721x40
-          text run at (0,0) width 721: "The svg area contained in the div element (red box), should fill out the whole area (two blue rectangles, first: (0,0)-"
-          text run at (0,20) width 670: "(50%,50%), second: (50%,50%)-(100%,100%)), especially after resizing the content box to a different size"
-      RenderBlock {div} at (0,56) size 402x402 [border: (1px solid #FF0000)]
-        RenderSVGRoot {svg} at (9,73) size 400x400
+layer at (0,0) size 800x480
+  RenderBlock {html} at (0,0) size 800x480
+    RenderBody {body} at (8,16) size 784x456
+      RenderBlock {p} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 761x38
+          text run at (0,0) width 761: "The svg area contained in the div element (red box), should fill out the whole area (two blue rectangles, first: (0,0)-(50%,50%),"
+          text run at (0,19) width 569: "second: (50%,50%)-(100%,100%)), especially after resizing the content box to a different size"
+      RenderBlock {div} at (0,54) size 402x402 [border: (1px solid #FF0000)]
+        RenderSVGRoot {svg} at (9,71) size 400x400
           RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-            RenderPath {rect} at (9,273) size 200x200 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,200.00 L200.00,200.00 L200.00,400.00 L0.00,400.00 Z"]
-            RenderPath {rect} at (9,73) size 200x200 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L200.00,0.00 L200.00,200.00 L0.00,200.00 Z"]
-            RenderSVGContainer {use} at (9,73) size 200x200
-              RenderSVGContainer {g} at (9,73) size 200x200
-                RenderPath {rect} at (9,73) size 200x200 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L200.00,0.00 L200.00,200.00 L0.00,200.00 Z"]
-          RenderSVGContainer {use} at (209,273) size 200x200
-            RenderSVGContainer {g} at (209,273) size 200x200 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,0.00)}]
-              RenderPath {rect} at (209,273) size 200x200 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,200.00 L200.00,200.00 L200.00,400.00 L0.00,400.00 Z"]
-          RenderSVGContainer {use} at (9,73) size 200x200
-            RenderSVGContainer {g} at (9,73) size 200x200
-              RenderSVGContainer {g} at (9,73) size 200x200
-                RenderPath {rect} at (9,73) size 200x200 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L200.00,0.00 L200.00,200.00 L0.00,200.00 Z"]
+            RenderPath {rect} at (9,271) size 200x200 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,200.00 L200.00,200.00 L200.00,400.00 L0.00,400.00 Z"]
+            RenderPath {rect} at (9,71) size 200x200 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L200.00,0.00 L200.00,200.00 L0.00,200.00 Z"]
+            RenderSVGContainer {use} at (9,71) size 200x200
+              RenderSVGContainer {g} at (9,71) size 200x200
+                RenderPath {rect} at (9,71) size 200x200 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L200.00,0.00 L200.00,200.00 L0.00,200.00 Z"]
+          RenderSVGContainer {use} at (209,271) size 200x200
+            RenderSVGContainer {g} at (209,271) size 200x200 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,0.00)}]
+              RenderPath {rect} at (209,271) size 200x200 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,200.00 L200.00,200.00 L200.00,400.00 L0.00,400.00 Z"]
+          RenderSVGContainer {use} at (9,71) size 200x200
+            RenderSVGContainer {g} at (9,71) size 200x200
+              RenderSVGContainer {g} at (9,71) size 200x200
+                RenderPath {rect} at (9,71) size 200x200 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L200.00,0.00 L200.00,200.00 L0.00,200.00 Z"]
         RenderText {#text} at (0,0) size 0x0

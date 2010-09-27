@@ -4,144 +4,144 @@ layer at (0,0) size 800x256
   RenderBlock {html} at (0,0) size 800x256
     RenderBody {body} at (8,16) size 784x224
       RenderBlock {p} at (0,0) size 784x32
-        RenderText {#text} at (0,7) size 36x20
-          text run at (0,7) width 36: "both: "
-        RenderBlock {math} at (36,0) size 24x32
-          RenderBlock {msubsup} at (1,0) size 22x32
-            RenderBlock {msubsup} at (0,5) size 9x17
-              RenderInline {mi} at (0,0) size 9x21
-                RenderText {#text} at (0,-2) size 9x21
-                  text run at (0,-2) width 9: "x"
-            RenderBlock {msubsup} at (10,0) size 12x32
-              RenderBlock {msubsup} at (0,0) size 12x16
-                RenderInline {mi} at (0,0) size 7x16
-                  RenderText {#text} at (0,1) size 7x16
-                    text run at (0,1) width 7: "k"
-              RenderBlock {msubsup} at (0,16) size 12x16
-                RenderInline {mn} at (0,0) size 12x13
-                  RenderText {#text} at (0,3) size 12x13
-                    text run at (0,3) width 12: "1"
+        RenderText {#text} at (0,8) size 34x19
+          text run at (0,8) width 34: "both: "
+        RenderBlock {math} at (34,0) size 17x32
+          RenderBlock {msubsup} at (1,0) size 15x32
+            RenderBlock {msubsup} at (0,6) size 8x16
+              RenderInline {mi} at (0,0) size 8x19
+                RenderText {#text} at (0,-1) size 8x19
+                  text run at (0,-1) width 8: "x"
+            RenderBlock {msubsup} at (9,0) size 6x32
+              RenderBlock {msubsup} at (0,0) size 6x16
+                RenderInline {mi} at (0,0) size 6x14
+                  RenderText {#text} at (0,3) size 6x14
+                    text run at (0,3) width 6: "k"
+              RenderBlock {msubsup} at (0,16) size 6x16
+                RenderInline {mn} at (0,0) size 6x14
+                  RenderText {#text} at (0,3) size 6x14
+                    text run at (0,3) width 6: "1"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,48) size 784x32
-        RenderText {#text} at (0,7) size 148x20
-          text run at (0,7) width 148: "long subscript w/ both: "
-        RenderBlock {math} at (148,0) size 56x32
-          RenderBlock {msubsup} at (1,0) size 54x32
-            RenderBlock {msubsup} at (0,5) size 9x17
-              RenderInline {mi} at (0,0) size 9x21
-                RenderText {#text} at (0,-2) size 9x21
-                  text run at (0,-2) width 9: "Z"
-            RenderBlock {msubsup} at (10,0) size 44x32
-              RenderBlock {msubsup} at (0,0) size 20x16
-                RenderInline {mi} at (0,0) size 3x16
-                  RenderText {#text} at (0,1) size 3x16
-                    text run at (0,1) width 3: "j"
-              RenderBlock {msubsup} at (0,16) size 20x16
-                RenderBlock {mrow} at (1,0) size 43x15
-                  RenderInline {mi} at (0,0) size 6x16
-                    RenderText {#text} at (0,1) size 6x16
-                      text run at (0,1) width 6: "x"
-                  RenderBlock {mo} at (6,0) size 12x15
-                    RenderBlock {mo} at (0,0) size 12x15
-                      RenderText {mo} at (0,3) size 12x13
-                        text run at (0,3) width 12: "+"
-                  RenderInline {mi} at (0,0) size 7x16
-                    RenderText {#text} at (18,1) size 7x16
-                      text run at (18,1) width 7: "y"
-                  RenderBlock {mo} at (25,0) size 12x15
-                    RenderBlock {mo} at (0,0) size 12x15
-                      RenderText {mo} at (0,3) size 12x13
-                        text run at (0,3) width 12: "+"
-                  RenderInline {mi} at (0,0) size 6x16
-                    RenderText {#text} at (37,1) size 6x16
-                      text run at (37,1) width 6: "z"
+        RenderText {#text} at (0,8) size 140x19
+          text run at (0,8) width 140: "long subscript w/ both: "
+        RenderBlock {math} at (140,0) size 42x32
+          RenderBlock {msubsup} at (1,0) size 40x32
+            RenderBlock {msubsup} at (0,6) size 9x16
+              RenderInline {mi} at (0,0) size 9x19
+                RenderText {#text} at (0,-1) size 9x19
+                  text run at (0,-1) width 9: "Z"
+            RenderBlock {msubsup} at (10,0) size 30x32
+              RenderBlock {msubsup} at (0,0) size 16x16
+                RenderInline {mi} at (0,0) size 3x14
+                  RenderText {#text} at (0,3) size 3x14
+                    text run at (0,3) width 3: "j"
+              RenderBlock {msubsup} at (0,16) size 16x16
+                RenderBlock {mrow} at (1,2) size 29x14
+                  RenderInline {mi} at (0,0) size 5x14
+                    RenderText {#text} at (0,1) size 5x14
+                      text run at (0,1) width 5: "x"
+                  RenderBlock {mo} at (5,0) size 7x14
+                    RenderBlock {mo} at (0,0) size 7x14
+                      RenderText {mo} at (0,1) size 7x14
+                        text run at (0,1) width 7: "+"
+                  RenderInline {mi} at (0,0) size 5x14
+                    RenderText {#text} at (12,1) size 5x14
+                      text run at (12,1) width 5: "y"
+                  RenderBlock {mo} at (17,0) size 7x14
+                    RenderBlock {mo} at (0,0) size 7x14
+                      RenderText {mo} at (0,1) size 7x14
+                        text run at (0,1) width 7: "+"
+                  RenderInline {mi} at (0,0) size 5x14
+                    RenderText {#text} at (24,1) size 5x14
+                      text run at (24,1) width 5: "z"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,96) size 784x32
-        RenderText {#text} at (0,7) size 160x20
-          text run at (0,7) width 160: "long superscript w/ both: "
-        RenderBlock {math} at (160,0) size 35x32
-          RenderBlock {msubsup} at (1,0) size 33x32
-            RenderBlock {msubsup} at (0,5) size 9x17
-              RenderInline {mi} at (0,0) size 9x21
-                RenderText {#text} at (0,-2) size 9x21
-                  text run at (0,-2) width 9: "Z"
-            RenderBlock {msubsup} at (10,0) size 23x32
-              RenderBlock {msubsup} at (0,0) size 11x16
-                RenderBlock {mrow} at (1,0) size 22x15
-                  RenderInline {mi} at (0,0) size 7x16
-                    RenderText {#text} at (0,1) size 7x16
-                      text run at (0,1) width 7: "k"
-                  RenderBlock {mo} at (7,0) size 12x15
-                    RenderBlock {mo} at (0,0) size 12x15
-                      RenderText {mo} at (0,3) size 12x13
-                        text run at (0,3) width 12: "+"
-                  RenderInline {mi} at (0,0) size 3x16
-                    RenderText {#text} at (19,1) size 3x16
-                      text run at (19,1) width 3: "j"
-              RenderBlock {msubsup} at (0,16) size 11x16
-                RenderInline {mi} at (0,0) size 6x16
-                  RenderText {#text} at (0,1) size 6x16
-                    text run at (0,1) width 6: "x"
+        RenderText {#text} at (0,8) size 152x19
+          text run at (0,8) width 152: "long superscript w/ both: "
+        RenderBlock {math} at (152,0) size 29x32
+          RenderBlock {msubsup} at (1,0) size 27x32
+            RenderBlock {msubsup} at (0,6) size 9x16
+              RenderInline {mi} at (0,0) size 9x19
+                RenderText {#text} at (0,-1) size 9x19
+                  text run at (0,-1) width 9: "Z"
+            RenderBlock {msubsup} at (10,0) size 17x32
+              RenderBlock {msubsup} at (0,0) size 10x16
+                RenderBlock {mrow} at (1,2) size 16x14
+                  RenderInline {mi} at (0,0) size 6x14
+                    RenderText {#text} at (0,1) size 6x14
+                      text run at (0,1) width 6: "k"
+                  RenderBlock {mo} at (6,0) size 7x14
+                    RenderBlock {mo} at (0,0) size 7x14
+                      RenderText {mo} at (0,1) size 7x14
+                        text run at (0,1) width 7: "+"
+                  RenderInline {mi} at (0,0) size 3x14
+                    RenderText {#text} at (13,1) size 3x14
+                      text run at (13,1) width 3: "j"
+              RenderBlock {msubsup} at (0,16) size 10x16
+                RenderInline {mi} at (0,0) size 5x14
+                  RenderText {#text} at (0,3) size 5x14
+                    text run at (0,3) width 5: "x"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,144) size 784x32
-        RenderText {#text} at (0,7) size 88x20
-          text run at (0,7) width 88: "long w/ both: "
-        RenderBlock {math} at (88,0) size 56x32
-          RenderBlock {msubsup} at (1,0) size 54x32
-            RenderBlock {msubsup} at (0,5) size 9x17
-              RenderInline {mi} at (0,0) size 9x21
-                RenderText {#text} at (0,-2) size 9x21
-                  text run at (0,-2) width 9: "Z"
-            RenderBlock {msubsup} at (10,0) size 44x32
-              RenderBlock {msubsup} at (0,0) size 20x16
-                RenderBlock {mrow} at (1,0) size 22x15
-                  RenderInline {mi} at (0,0) size 7x16
-                    RenderText {#text} at (0,1) size 7x16
-                      text run at (0,1) width 7: "k"
-                  RenderBlock {mo} at (7,0) size 12x15
-                    RenderBlock {mo} at (0,0) size 12x15
-                      RenderText {mo} at (0,3) size 12x13
-                        text run at (0,3) width 12: "+"
-                  RenderInline {mi} at (0,0) size 3x16
-                    RenderText {#text} at (19,1) size 3x16
-                      text run at (19,1) width 3: "j"
-              RenderBlock {msubsup} at (0,16) size 20x16
-                RenderBlock {mrow} at (1,0) size 43x15
-                  RenderInline {mi} at (0,0) size 6x16
-                    RenderText {#text} at (0,1) size 6x16
-                      text run at (0,1) width 6: "x"
-                  RenderBlock {mo} at (6,0) size 12x15
-                    RenderBlock {mo} at (0,0) size 12x15
-                      RenderText {mo} at (0,3) size 12x13
-                        text run at (0,3) width 12: "+"
-                  RenderInline {mi} at (0,0) size 7x16
-                    RenderText {#text} at (18,1) size 7x16
-                      text run at (18,1) width 7: "y"
-                  RenderBlock {mo} at (25,0) size 12x15
-                    RenderBlock {mo} at (0,0) size 12x15
-                      RenderText {mo} at (0,3) size 12x13
-                        text run at (0,3) width 12: "+"
-                  RenderInline {mi} at (0,0) size 6x16
-                    RenderText {#text} at (37,1) size 6x16
-                      text run at (37,1) width 6: "z"
+        RenderText {#text} at (0,8) size 82x19
+          text run at (0,8) width 82: "long w/ both: "
+        RenderBlock {math} at (82,0) size 42x32
+          RenderBlock {msubsup} at (1,0) size 40x32
+            RenderBlock {msubsup} at (0,6) size 9x16
+              RenderInline {mi} at (0,0) size 9x19
+                RenderText {#text} at (0,-1) size 9x19
+                  text run at (0,-1) width 9: "Z"
+            RenderBlock {msubsup} at (10,0) size 30x32
+              RenderBlock {msubsup} at (0,0) size 16x16
+                RenderBlock {mrow} at (1,2) size 16x14
+                  RenderInline {mi} at (0,0) size 6x14
+                    RenderText {#text} at (0,1) size 6x14
+                      text run at (0,1) width 6: "k"
+                  RenderBlock {mo} at (6,0) size 7x14
+                    RenderBlock {mo} at (0,0) size 7x14
+                      RenderText {mo} at (0,1) size 7x14
+                        text run at (0,1) width 7: "+"
+                  RenderInline {mi} at (0,0) size 3x14
+                    RenderText {#text} at (13,1) size 3x14
+                      text run at (13,1) width 3: "j"
+              RenderBlock {msubsup} at (0,16) size 16x16
+                RenderBlock {mrow} at (1,2) size 29x14
+                  RenderInline {mi} at (0,0) size 5x14
+                    RenderText {#text} at (0,1) size 5x14
+                      text run at (0,1) width 5: "x"
+                  RenderBlock {mo} at (5,0) size 7x14
+                    RenderBlock {mo} at (0,0) size 7x14
+                      RenderText {mo} at (0,1) size 7x14
+                        text run at (0,1) width 7: "+"
+                  RenderInline {mi} at (0,0) size 5x14
+                    RenderText {#text} at (12,1) size 5x14
+                      text run at (12,1) width 5: "y"
+                  RenderBlock {mo} at (17,0) size 7x14
+                    RenderBlock {mo} at (0,0) size 7x14
+                      RenderText {mo} at (0,1) size 7x14
+                        text run at (0,1) width 7: "+"
+                  RenderInline {mi} at (0,0) size 5x14
+                    RenderText {#text} at (24,1) size 5x14
+                      text run at (24,1) width 5: "z"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,192) size 784x32
-        RenderText {#text} at (0,7) size 123x20
-          text run at (0,7) width 123: "Wrapped in mrow: "
-        RenderBlock {math} at (123,0) size 24x32
-          RenderBlock {mrow} at (1,0) size 22x32
-            RenderBlock {msubsup} at (0,0) size 22x32
-              RenderBlock {msubsup} at (0,5) size 9x17
-                RenderInline {mi} at (0,0) size 9x21
-                  RenderText {#text} at (0,-2) size 9x21
-                    text run at (0,-2) width 9: "x"
-              RenderBlock {msubsup} at (10,0) size 12x32
-                RenderBlock {msubsup} at (0,0) size 12x16
-                  RenderInline {mi} at (0,0) size 7x16
-                    RenderText {#text} at (0,1) size 7x16
-                      text run at (0,1) width 7: "k"
-                RenderBlock {msubsup} at (0,16) size 12x16
-                  RenderInline {mn} at (0,0) size 12x13
-                    RenderText {#text} at (0,3) size 12x13
-                      text run at (0,3) width 12: "1"
+        RenderText {#text} at (0,8) size 118x19
+          text run at (0,8) width 118: "Wrapped in mrow: "
+        RenderBlock {math} at (118,0) size 17x32
+          RenderBlock {mrow} at (1,0) size 15x32
+            RenderBlock {msubsup} at (0,0) size 15x32
+              RenderBlock {msubsup} at (0,6) size 8x16
+                RenderInline {mi} at (0,0) size 8x19
+                  RenderText {#text} at (0,-1) size 8x19
+                    text run at (0,-1) width 8: "x"
+              RenderBlock {msubsup} at (9,0) size 6x32
+                RenderBlock {msubsup} at (0,0) size 6x16
+                  RenderInline {mi} at (0,0) size 6x14
+                    RenderText {#text} at (0,3) size 6x14
+                      text run at (0,3) width 6: "k"
+                RenderBlock {msubsup} at (0,16) size 6x16
+                  RenderInline {mn} at (0,0) size 6x14
+                    RenderText {#text} at (0,3) size 6x14
+                      text run at (0,3) width 6: "1"
         RenderText {#text} at (0,0) size 0x0

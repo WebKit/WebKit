@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 650x355
+  RenderSVGRoot {svg} at (0,0) size 650x354
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourcePattern {pattern} [id="pattern0"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
         RenderPath {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
@@ -56,9 +56,9 @@ layer at (0,0) size 800x600
     RenderPath {rect} at (100,200) size 100x100 [fill={[type=PATTERN] [id="pattern8"]}] [data="M100.00,200.00 L200.00,200.00 L200.00,300.00 L100.00,300.00 Z"]
     RenderPath {rect} at (200,200) size 100x100 [fill={[type=PATTERN] [id="pattern9"]}] [data="M200.00,200.00 L300.00,200.00 L300.00,300.00 L200.00,300.00 Z"]
     RenderPath {line} at (324,0) size 2x300 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M325.00,0.00 L325.00,300.00"]
-    RenderSVGText {text} at (179,335) size 292x20 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 292x20
-        chunk 1 (middle anchor) text run 1 at (179.00,350.00) startOffset 0 endOffset 48 width 292.00: "Both sides of the red line should look identical"
+    RenderSVGText {text} at (187,335) size 276x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 276x19
+        chunk 1 (middle anchor) text run 1 at (187.00,350.00) startOffset 0 endOffset 48 width 276.00: "Both sides of the red line should look identical"
     RenderSVGContainer {g} at (350,0) size 300x300 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,0.00)}]
       RenderPath {rect} at (350,0) size 100x100 [fill={[type=PATTERN] [id="pattern0"]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
       RenderPath {rect} at (450,0) size 100x100 [fill={[type=PATTERN] [id="pattern0"]}] [data="M100.00,0.00 L200.00,0.00 L200.00,100.00 L100.00,100.00 Z"]

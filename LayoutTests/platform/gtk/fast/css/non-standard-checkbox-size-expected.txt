@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,36) size 289x20
-        text run at (0,36) width 289: "The following inputs should not be stretched. "
-      RenderBlock {INPUT} at (292,3) size 15x50
-      RenderText {#text} at (310,36) size 4x20
-        text run at (310,36) width 4: " "
-      RenderBlock {INPUT} at (317,3) size 15x50
+      RenderText {#text} at (0,36) size 272x19
+        text run at (0,36) width 272: "The following inputs should not be stretched. "
+      RenderBlock {INPUT} at (276,3) size 15x50
+      RenderText {#text} at (295,36) size 4x19
+        text run at (295,36) width 4: " "
+      RenderBlock {INPUT} at (303,3) size 15x50
       RenderText {#text} at (0,0) size 0x0

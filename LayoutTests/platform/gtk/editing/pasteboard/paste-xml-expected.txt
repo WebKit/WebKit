@@ -1,15 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x74
-  RenderBlock {html} at (0,0) size 800x74
-    RenderBody {body} at (8,8) size 784x58
-      RenderBlock {div} at (0,0) size 784x58 [border: (2px solid #FF0000)]
-        RenderInline {span} at (0,0) size 140x30
-          RenderText {#text} at (14,14) size 69x30
+layer at (0,0) size 800x72
+  RenderBlock {html} at (0,0) size 800x72
+    RenderBody {body} at (8,8) size 784x56
+      RenderBlock {div} at (0,0) size 784x56 [border: (2px solid #FF0000)]
+        RenderInline {span} at (0,0) size 139x28
+          RenderText {#text} at (14,14) size 69x28
             text run at (14,14) width 69: "foo bar"
-          RenderText {#text} at (83,14) size 31x30
+          RenderText {#text} at (83,14) size 31x28
             text run at (83,14) width 31: "bar"
-          RenderText {#text} at (114,14) size 40x30
-            text run at (114,14) width 40: " baz"
+          RenderText {#text} at (114,14) size 39x28
+            text run at (114,14) width 39: " baz"
         RenderText {#text} at (0,0) size 0x0
 caret: position 3 of child 1 {#text} of child 1 {span} of child 1 {div} of body

@@ -3,18 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 691x20
-          text run at (0,0) width 292: "This tests caret movement across a select box. "
-          text run at (292,0) width 399: "The caret should skip over the select box as if it were an image."
-      RenderBlock {DIV} at (0,36) size 784x30
-        RenderBlock {DIV} at (0,0) size 784x30
-          RenderText {#text} at (0,5) size 71x20
-            text run at (0,5) width 71: "select box: "
-          RenderMenuList {SELECT} at (73,2) size 31x26 [bgcolor=#FFFFFF]
-            RenderBlock (anonymous) at (3,3) size 8x20
-              RenderText at (0,0) size 8x20
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 664x19
+          text run at (0,0) width 283: "This tests caret movement across a select box. "
+          text run at (283,0) width 381: "The caret should skip over the select box as if it were an image."
+      RenderBlock {DIV} at (0,35) size 784x29
+        RenderBlock {DIV} at (0,0) size 784x29
+          RenderText {#text} at (0,5) size 68x19
+            text run at (0,5) width 68: "select box: "
+          RenderMenuList {SELECT} at (70,2) size 31x25 [bgcolor=#FFFFFF]
+            RenderBlock (anonymous) at (3,3) size 8x19
+              RenderText at (0,0) size 8x19
                 text run at (0,0) width 8: "1"
-          RenderText {#text} at (106,5) size 66x20
-            text run at (106,5) width 66: " the end ..."
+          RenderText {#text} at (103,5) size 64x19
+            text run at (103,5) width 64: " the end ..."
 caret: position 1 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

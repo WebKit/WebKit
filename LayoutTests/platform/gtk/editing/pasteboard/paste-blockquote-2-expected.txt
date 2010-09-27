@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 360x20
-          text run at (0,0) width 360: "This tests pasting a blockquote at the start of a paragraph."
-      RenderBlock {DIV} at (0,36) size 784x20
-        RenderText {#text} at (0,0) size 203x20
-          text run at (0,0) width 203: "This should not be blockquoted."
-        RenderText {#text} at (203,0) size 207x20
-          text run at (203,0) width 207: " This should not be blockquoted."
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 348x19
+          text run at (0,0) width 348: "This tests pasting a blockquote at the start of a paragraph."
+      RenderBlock {DIV} at (0,35) size 784x19
+        RenderText {#text} at (0,0) size 194x19
+          text run at (0,0) width 194: "This should not be blockquoted."
+        RenderText {#text} at (194,0) size 198x19
+          text run at (194,0) width 198: " This should not be blockquoted."
 caret: position 31 of child 0 {#text} of child 2 {DIV} of body

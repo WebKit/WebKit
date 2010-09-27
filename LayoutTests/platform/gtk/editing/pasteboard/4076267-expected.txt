@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 383x20
-          text run at (0,0) width 383: "This tests to see if leading spaces are lost during a copy/paste"
-      RenderBlock {HR} at (0,36) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (0,46) size 784x20
-        RenderBlock {DIV} at (0,0) size 784x20
-          RenderText {#text} at (0,0) size 330x20
-            text run at (0,0) width 330: " this text should have a single leading space before it"
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 368x19
+          text run at (0,0) width 368: "This tests to see if leading spaces are lost during a copy/paste"
+      RenderBlock {HR} at (0,35) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,45) size 784x19
+        RenderBlock {DIV} at (0,0) size 784x19
+          RenderText {#text} at (0,0) size 312x19
+            text run at (0,0) width 312: " this text should have a single leading space before it"
 caret: position 55 of child 0 {#text} of child 1 {DIV} of child 5 {DIV} of body

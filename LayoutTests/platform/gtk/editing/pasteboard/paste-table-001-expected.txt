@@ -3,41 +3,41 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x222 [border: (2px solid #FF0000)]
-        RenderBlock (anonymous) at (14,14) size 756x30
-          RenderInline {SPAN} at (0,0) size 161x30
-            RenderText {#text} at (0,0) size 161x30
-              text run at (0,0) width 161: "Empty table cell"
+      RenderBlock {DIV} at (0,0) size 784x216 [border: (2px solid #FF0000)]
+        RenderBlock (anonymous) at (14,14) size 756x28
+          RenderInline {SPAN} at (0,0) size 157x28
+            RenderText {#text} at (0,0) size 157x28
+              text run at (0,0) width 157: "Empty table cell"
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {P} at (14,68) size 756x116
-          RenderTable {TABLE} at (0,0) size 292x58 [border: (2px outset #808080)]
-            RenderTableSection {TBODY} at (2,2) size 288x54
-              RenderTableRow {TR} at (0,2) size 288x24
-                RenderTableCell {TD} at (2,2) size 81x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                  RenderText {#text} at (2,2) size 77x20
-                    text run at (2,2) width 77: "Left column"
-                RenderTableCell {TD} at (85,2) size 201x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                  RenderText {#text} at (2,2) size 86x20
-                    text run at (2,2) width 86: "Right column"
-              RenderTableRow {TR} at (0,28) size 288x24
-                RenderTableCell {TD} at (2,38) size 81x4 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                RenderTableCell {TD} at (85,28) size 201x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-                  RenderText {#text} at (2,2) size 197x20
-                    text run at (2,2) width 197: "I should be in the right column."
-          RenderTable {TABLE} at (0,58) size 292x58 [border: (2px outset #808080)]
-            RenderTableSection {TBODY} at (2,2) size 288x54
-              RenderTableRow {TR} at (0,2) size 288x24
-                RenderTableCell {TD} at (2,2) size 81x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                  RenderText {#text} at (2,2) size 77x20
-                    text run at (2,2) width 77: "Left column"
-                RenderTableCell {TD} at (85,2) size 201x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                  RenderText {#text} at (2,2) size 86x20
-                    text run at (2,2) width 86: "Right column"
-              RenderTableRow {TR} at (0,28) size 288x24
-                RenderTableCell {TD} at (2,38) size 81x4 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                RenderTableCell {TD} at (85,28) size 201x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-                  RenderText {#text} at (2,2) size 197x20
-                    text run at (2,2) width 197: "I should be in the right column."
-          RenderBlock (anonymous) at (0,116) size 756x0
+        RenderBlock {P} at (14,66) size 756x112
+          RenderTable {TABLE} at (0,0) size 273x56 [border: (2px outset #808080)]
+            RenderTableSection {TBODY} at (2,2) size 269x52
+              RenderTableRow {TR} at (0,2) size 269x23
+                RenderTableCell {TD} at (2,2) size 75x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                  RenderText {#text} at (2,2) size 71x19
+                    text run at (2,2) width 71: "Left column"
+                RenderTableCell {TD} at (79,2) size 188x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                  RenderText {#text} at (2,2) size 78x19
+                    text run at (2,2) width 78: "Right column"
+              RenderTableRow {TR} at (0,27) size 269x23
+                RenderTableCell {TD} at (2,36) size 75x4 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                RenderTableCell {TD} at (79,27) size 188x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+                  RenderText {#text} at (2,2) size 184x19
+                    text run at (2,2) width 184: "I should be in the right column."
+          RenderTable {TABLE} at (0,56) size 273x56 [border: (2px outset #808080)]
+            RenderTableSection {TBODY} at (2,2) size 269x52
+              RenderTableRow {TR} at (0,2) size 269x23
+                RenderTableCell {TD} at (2,2) size 75x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                  RenderText {#text} at (2,2) size 71x19
+                    text run at (2,2) width 71: "Left column"
+                RenderTableCell {TD} at (79,2) size 188x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                  RenderText {#text} at (2,2) size 78x19
+                    text run at (2,2) width 78: "Right column"
+              RenderTableRow {TR} at (0,27) size 269x23
+                RenderTableCell {TD} at (2,36) size 75x4 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                RenderTableCell {TD} at (79,27) size 188x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+                  RenderText {#text} at (2,2) size 184x19
+                    text run at (2,2) width 184: "I should be in the right column."
+          RenderBlock (anonymous) at (0,112) size 756x0
             RenderText {#text} at (0,0) size 0x0
 caret: position 32 of child 0 {#text} of child 1 {TD} of child 1 {TR} of child 0 {TBODY} of child 2 {TABLE} of child 3 {P} of child 1 {DIV} of body

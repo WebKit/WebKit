@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 300x100
     RenderForeignObject {foreignObject} at (0,0) size 300x100
-      RenderBlock {html} at (0,0) size 300x641
-        RenderBlock {p} at (0,0) size 300x20
-          RenderText {#text} at (0,0) size 218x20
-            text run at (0,0) width 218: "Test from HTML in foreignObject"
-        RenderBlock (anonymous) at (0,36) size 300x605
-          RenderSVGRoot {svg} at (0,36) size 271x55
-            RenderPath {rect} at (0,36) size 20x20 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00 Z"]
-            RenderSVGText {text} at (0,35) size 271x20 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 271x20
-                chunk 1 text run 1 at (0.00,50.00) startOffset 0 endOffset 38 width 271.00: "Test from SVG in HTML in foreignObject"
+      RenderBlock {html} at (0,0) size 300x639
+        RenderBlock {p} at (0,0) size 300x19
+          RenderText {#text} at (0,0) size 206x19
+            text run at (0,0) width 206: "Test from HTML in foreignObject"
+        RenderBlock (anonymous) at (0,35) size 300x604
+          RenderSVGRoot {svg} at (0,35) size 255x54
+            RenderPath {rect} at (0,35) size 20x20 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00 Z"]
+            RenderSVGText {text} at (0,35) size 255x19 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 255x19
+                chunk 1 text run 1 at (0.00,50.00) startOffset 0 endOffset 38 width 255.00: "Test from SVG in HTML in foreignObject"
           RenderText {#text} at (0,0) size 0x0

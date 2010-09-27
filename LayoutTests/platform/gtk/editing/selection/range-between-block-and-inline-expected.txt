@@ -3,26 +3,26 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x96
-        RenderBlock {P} at (0,0) size 784x20
-          RenderText {#text} at (0,0) size 26x20
+      RenderBlock {DIV} at (0,0) size 784x92
+        RenderBlock {P} at (0,0) size 784x19
+          RenderText {#text} at (0,0) size 26x19
             text run at (0,0) width 26: "For "
-          RenderInline {A} at (0,0) size 71x20 [color=#0000EE]
-            RenderText {#text} at (26,0) size 71x20
-              text run at (26,0) width 71: "Bug 32123"
-          RenderText {#text} at (97,0) size 312x20
-            text run at (97,0) width 8: ". "
-            text run at (105,0) width 304: "Hightlight for Selection should fit the target line."
-        RenderBlock (anonymous) at (0,36) size 784x20
-          RenderInline {SPAN} at (0,0) size 7x20
-            RenderText {#text} at (0,0) size 7x20
+          RenderInline {A} at (0,0) size 68x19 [color=#0000EE]
+            RenderText {#text} at (26,0) size 68x19
+              text run at (26,0) width 68: "Bug 32123"
+          RenderText {#text} at (94,0) size 290x19
+            text run at (94,0) width 8: ". "
+            text run at (102,0) width 282: "Hightlight for Selection should fit the target line."
+        RenderBlock (anonymous) at (0,35) size 784x19
+          RenderInline {SPAN} at (0,0) size 7x19
+            RenderText {#text} at (0,0) size 7x19
               text run at (0,0) width 7: "a"
-        RenderBlock {DIV} at (0,56) size 784x20
-          RenderText {#text} at (0,0) size 130x20
-            text run at (0,0) width 130: "should just select me"
-        RenderBlock (anonymous) at (0,76) size 784x20
-          RenderInline {SPAN} at (0,0) size 7x20
-            RenderText {#text} at (0,0) size 7x20
+        RenderBlock {DIV} at (0,54) size 784x19
+          RenderText {#text} at (0,0) size 124x19
+            text run at (0,0) width 124: "should just select me"
+        RenderBlock (anonymous) at (0,73) size 784x19
+          RenderInline {SPAN} at (0,0) size 7x19
+            RenderText {#text} at (0,0) size 7x19
               text run at (0,0) width 7: "c"
           RenderText {#text} at (0,0) size 0x0
 selection start: position 1 of child 0 {#text} of child 3 {SPAN} of child 1 {DIV} of body

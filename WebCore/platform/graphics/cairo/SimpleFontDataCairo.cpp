@@ -38,7 +38,9 @@
 #include "FontCache.h"
 #include "FontDescription.h"
 #include "GlyphBuffer.h"
+#include <cairo-ft.h>
 #include <cairo.h>
+#include <fontconfig/fcfreetype.h>
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -81,12 +83,12 @@ void SimpleFontData::platformDestroy()
 
 SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const
 {
-    if (!m_smallCapsFontData) {
-        FontDescription desc = FontDescription(fontDescription);
-        desc.setComputedSize(0.70f * fontDescription.computedSize());
-        FontPlatformData platformData(desc, desc.family().family());
-        m_smallCapsFontData = new SimpleFontData(platformData);
-    }
+    // FIXME: I think we want to ask FontConfig for the right font again.
+    if (!m_smallCapsFontData)
+        m_smallCapsFontData = new SimpleFontData(
+            FontPlatformData(cairo_scaled_font_get_font_face(m_platformData.scaledFont()),
+            0.70f * fontDescription.computedSize(), m_platformData.syntheticBold(), m_platformData.syntheticOblique()));
+
     return m_smallCapsFontData;
 }
 

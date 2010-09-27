@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 231x20
-          text run at (0,0) width 231: "This tests styling of the slider thumb."
-      RenderBlock {P} at (0,36) size 784x20
-        RenderText {#text} at (0,0) size 258x20
-          text run at (0,0) width 258: "You should see a green 20\x{D7}20px square."
-      RenderBlock (anonymous) at (0,72) size 784x24
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 216x19
+          text run at (0,0) width 216: "This tests styling of the slider thumb."
+      RenderBlock {P} at (0,35) size 784x19
+        RenderText {#text} at (0,0) size 249x19
+          text run at (0,0) width 249: "You should see a green 20\x{D7}20px square."
+      RenderBlock (anonymous) at (0,70) size 784x24
         RenderSlider {INPUT} at (2,2) size 129x20 [bgcolor=#FFFFFF]
           RenderBlock {DIV} at (0,0) size 20x20 [bgcolor=#008000]
         RenderText {#text} at (0,0) size 0x0

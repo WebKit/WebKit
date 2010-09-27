@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x146 [border: (2px solid #FF0000)]
-        RenderBlock (anonymous) at (14,14) size 756x30
-          RenderText {#text} at (0,0) size 351x30
-            text run at (0,0) width 351: "Omitted, all the voyage of their life,"
-        RenderBlock {DIV} at (14,44) size 756x58 [border: (2px solid #FF0000)]
-          RenderText {#text} at (14,14) size 357x30
-            text run at (14,14) width 357: "Is bound in shallows and in miseries."
-        RenderBlock (anonymous) at (14,102) size 756x30
-          RenderText {#text} at (0,0) size 17x30
-            text run at (0,0) width 17: "U"
-      RenderBlock (anonymous) at (0,146) size 784x0
-      RenderBlock {DIV} at (0,146) size 784x58 [border: (2px solid #FF0000)]
-        RenderText {#text} at (14,14) size 17x30
-          text run at (14,14) width 17: "U"
-        RenderText {#text} at (31,14) size 365x30
-          text run at (31,14) width 365: "pon such a full sea are we now afloat,"
+      RenderBlock {DIV} at (0,0) size 784x140 [border: (2px solid #FF0000)]
+        RenderBlock (anonymous) at (14,14) size 756x28
+          RenderText {#text} at (0,0) size 343x28
+            text run at (0,0) width 343: "Omitted, all the voyage of their life,"
+        RenderBlock {DIV} at (14,42) size 756x56 [border: (2px solid #FF0000)]
+          RenderText {#text} at (14,14) size 350x28
+            text run at (14,14) width 350: "Is bound in shallows and in miseries."
+        RenderBlock (anonymous) at (14,98) size 756x28
+          RenderText {#text} at (0,0) size 16x28
+            text run at (0,0) width 16: "U"
+      RenderBlock (anonymous) at (0,140) size 784x0
+      RenderBlock {DIV} at (0,140) size 784x56 [border: (2px solid #FF0000)]
+        RenderText {#text} at (14,14) size 16x28
+          text run at (14,14) width 16: "U"
+        RenderText {#text} at (30,14) size 362x28
+          text run at (30,14) width 362: "pon such a full sea are we now afloat,"
 caret: position 1 of child 0 {#text} of child 2 {DIV} of body

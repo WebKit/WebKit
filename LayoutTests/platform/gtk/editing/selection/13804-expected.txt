@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 778x40
-          text run at (0,0) width 778: "This tests for a bug when moving the caret backward through a misspelled word. Once the caret is no longer adjacent to it it"
-          text run at (0,20) width 203: "should be marked as misspelled."
-      RenderBlock {DIV} at (0,56) size 784x20
-        RenderText {#text} at (0,0) size 298x20
-          text run at (0,0) width 298: "This sentence ends with a misspelled word asd."
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 743x38
+          text run at (0,0) width 743: "This tests for a bug when moving the caret backward through a misspelled word. Once the caret is no longer adjacent to it it"
+          text run at (0,19) width 195: "should be marked as misspelled."
+      RenderBlock {DIV} at (0,54) size 784x19
+        RenderText {#text} at (0,0) size 284x19
+          text run at (0,0) width 284: "This sentence ends with a misspelled word asd."
 caret: position 40 of child 0 {#text} of child 2 {DIV} of body

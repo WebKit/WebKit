@@ -54,6 +54,19 @@ template <> void derefPlatformPtr(cairo_surface_t* ptr)
         cairo_surface_destroy(ptr);
 }
 
+template <> cairo_font_face_t* refPlatformPtr(cairo_font_face_t* ptr)
+{
+    if (ptr)
+        cairo_font_face_reference(ptr);
+    return ptr;
+}
+
+template <> void derefPlatformPtr(cairo_font_face_t* ptr)
+{
+    if (ptr)
+        cairo_font_face_destroy(ptr);
+}
+
 template <> cairo_scaled_font_t* refPlatformPtr(cairo_scaled_font_t* ptr)
 {
     if (ptr)

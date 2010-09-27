@@ -3,6 +3,7 @@
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2007 Pioneer Research Center USA, Inc.
+ * Copyright (C) 2010 Igalia S.L.
  * All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -29,10 +30,9 @@
 #include "GlyphBuffer.h"
 #include "HashFunctions.h"
 #include "PlatformRefPtrCairo.h"
-#include <cairo-ft.h>
-#include <cairo.h>
-#include <fontconfig/fcfreetype.h>
 #include <wtf/Forward.h>
+
+typedef struct _FcFontSet FcFontSet;
 
 namespace WebCore {
 
@@ -53,14 +53,13 @@ public:
         , m_syntheticOblique(false)
         { }
 
-    FontPlatformData(const FontDescription&, const AtomicString& family);
+    FontPlatformData(FcPattern*, const FontDescription&);
     FontPlatformData(cairo_font_face_t* fontFace, float size, bool bold, bool italic);
     FontPlatformData(float size, bool bold, bool italic);
     FontPlatformData(const FontPlatformData&);
 
     ~FontPlatformData();
 
-    static bool init();
     bool isFixedPitch();
     float size() const { return m_size; }
     void setSize(float size) { m_size = size; }

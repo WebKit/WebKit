@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 300x100
     RenderForeignObject {foreignObject} at (0,0) size 300x100
-      RenderBlock {html} at (0,0) size 300x20
-        RenderBlock {p} at (0,0) size 300x20
-          RenderText {#text} at (0,0) size 135x20
-            text run at (0,0) width 135: "This should not crash"
-        RenderBlock (anonymous) at (0,36) size 300x0
+      RenderBlock {html} at (0,0) size 300x19
+        RenderBlock {p} at (0,0) size 300x19
+          RenderText {#text} at (0,0) size 127x19
+            text run at (0,0) width 127: "This should not crash"
+        RenderBlock (anonymous) at (0,35) size 300x0
           RenderInline {g} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
