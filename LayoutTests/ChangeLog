@@ -1,3 +1,28 @@
+2010-09-27  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46639, make computeLogicalHeight block-flow-aware.
+        
+        This patch does the following:
+            (1) Makes computeLogicalHeight block-flow-aware (patching all helper functions as needed to make this work).
+            (2) Makes block flow roots (blocks whose parent has a different block-flow directionality) establish new block formatting contexts.
+            (This causes them to not collapse their margins with their children and to avoid floats). 
+            (3) Patch all occurrences of setHeight in block and line layout to setLogicalHeight so that height doesn't get incorrectly
+            overwritten for lr/rl block-flow.  This is necessary to write tests that examine the width/height of the blocks.
+        
+        Added multiple new tests in fast/blockflow.
+        fast/css/logical-property-resolution gives the correct results now.
+
+        * fast/blockflow/auto-margins-across-boundaries-expected.txt: Added.
+        * fast/blockflow/auto-margins-across-boundaries.html: Added.
+        * fast/blockflow/block-formatting-context-expected.txt: Added.
+        * fast/blockflow/block-formatting-context.html: Added.
+        * fast/blockflow/percentage-padding.html:
+        * fast/blockflow/relative-positioning-percentages-expected.txt: Added.
+        * fast/blockflow/relative-positioning-percentages.html: Added.
+        * fast/css/logical-property-resolution-expected.txt:
+
 2010-09-27  Kinuko Yasuda  <kinuko@chromium.org>
 
         Unreviewed, updating chromium test_expectations for passing tests.

@@ -83,8 +83,9 @@ RenderBlock::MarginInfo::MarginInfo(RenderBlock* block, int top, int bottom)
     // Whether or not we can collapse our own margins with our children.  We don't do this
     // if we had any border/padding (obviously), if we're the root or HTML elements, or if
     // we're positioned, floating, a table cell.
-    m_canCollapseWithChildren = !block->isRenderView() && !block->isRoot() && !block->isPositioned() &&
-        !block->isFloating() && !block->isTableCell() && !block->hasOverflowClip() && !block->isInlineBlockOrInlineTable();
+    m_canCollapseWithChildren = !block->isRenderView() && !block->isRoot() && !block->isPositioned()
+        && !block->isFloating() && !block->isTableCell() && !block->hasOverflowClip() && !block->isInlineBlockOrInlineTable()
+        && !block->isBlockFlowRoot();
 
     m_canCollapseTopWithChildren = m_canCollapseWithChildren && (top == 0) && block->style()->marginTopCollapse() != MSEPARATE;
 
@@ -1134,7 +1135,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, int pageHeight)
     clearFloats();
 
     int previousHeight = height();
-    setHeight(0);
+    setLogicalHeight(0);
     bool hasSpecifiedPageHeight = false;
     ColumnInfo* colInfo = columnInfo();
     if (hasColumns()) {
@@ -1147,7 +1148,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, int pageHeight)
                 pageHeight = columnHeight;
                 hasSpecifiedPageHeight = true;
             }
-            setHeight(0);
+            setLogicalHeight(0);
         }
         if (colInfo->columnHeight() != pageHeight && m_everHadLayout) {
             colInfo->setColumnHeight(pageHeight);
@@ -1208,7 +1209,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, int pageHeight)
     // Expand our intrinsic height to encompass floats.
     int toAdd = borderBottom() + paddingBottom() + horizontalScrollbarHeight();
     if (floatBottom() > (height() - toAdd) && expandsToEncloseOverhangingFloats())
-        setHeight(floatBottom() + toAdd);
+        setLogicalHeight(floatBottom() + toAdd);
     
     if (layoutColumns(hasSpecifiedPageHeight, pageHeight, statePusher))
         return;
@@ -1315,7 +1316,8 @@ void RenderBlock::addOverflowFromFloats()
 
 bool RenderBlock::expandsToEncloseOverhangingFloats() const
 {
-    return isInlineBlockOrInlineTable() || isFloatingOrPositioned() || hasOverflowClip() || (parent() && parent()->isFlexibleBox()) || hasColumns() || isTableCell() || isFieldset();
+    return isInlineBlockOrInlineTable() || isFloatingOrPositioned() || hasOverflowClip() || (parent() && parent()->isFlexibleBox())
+           || hasColumns() || isTableCell() || isFieldset() || isBlockFlowRoot();
 }
 
 void RenderBlock::adjustPositionedBlock(RenderBox* child, const MarginInfo& marginInfo)
@@ -1367,9 +1369,9 @@ void RenderBlock::adjustFloatingBlock(const MarginInfo& marginInfo)
     // http://www.hixie.ch/tests/adhoc/css/box/block/margin-collapse/046.html for
     // an example of this scenario.
     int marginOffset = marginInfo.canCollapseWithTop() ? 0 : marginInfo.margin();
-    setHeight(height() + marginOffset);
+    setLogicalHeight(height() + marginOffset);
     positionNewFloats();
-    setHeight(height() - marginOffset);
+    setLogicalHeight(height() - marginOffset);
 }
 
 bool RenderBlock::handleSpecialChild(RenderBox* child, const MarginInfo& marginInfo)
@@ -1529,7 +1531,7 @@ int RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo)
     }
     else {
         if (child->style()->marginTopCollapse() == MSEPARATE) {
-            setHeight(height() + marginInfo.margin() + child->marginTop());
+            setLogicalHeight(height() + marginInfo.margin() + child->marginTop());
             ypos = height();
         }
         else if (!marginInfo.atTopOfBlock() ||
@@ -1537,7 +1539,7 @@ int RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo)
              && (!document()->inQuirksMode() || !marginInfo.quirkContainer() || !marginInfo.topQuirk()))) {
             // We're collapsing with a previous sibling's margins and not
             // with the top of the block.
-            setHeight(height() + max(marginInfo.posMargin(), posTop) - max(marginInfo.negMargin(), negTop));
+            setLogicalHeight(height() + max(marginInfo.posMargin(), posTop) - max(marginInfo.negMargin(), negTop));
             ypos = height();
         }
 
@@ -1554,7 +1556,7 @@ int RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo)
     if (paginated && ypos > beforeCollapseY) {
         int oldY = ypos;
         ypos = min(ypos, nextPageTop(beforeCollapseY));
-        setHeight(height() + (ypos - oldY));
+        setLogicalHeight(height() + (ypos - oldY));
     }
     return ypos;
 }
@@ -1588,10 +1590,10 @@ int RenderBlock::clearFloatsIfNeeded(RenderBox* child, MarginInfo& marginInfo, i
         
         // Adjust our height such that we are ready to be collapsed with subsequent siblings (or the bottom
         // of the parent block).
-        setHeight(child->y() - max(0, marginInfo.margin()));
+        setLogicalHeight(child->y() - max(0, marginInfo.margin()));
     } else
         // Increase our height by the amount we had to clear.
-        setHeight(height() + heightIncrease);
+        setLogicalHeight(height() + heightIncrease);
     
     if (marginInfo.canCollapseWithTop()) {
         // We can no longer collapse with the top of the block since a clear
@@ -1668,7 +1670,7 @@ void RenderBlock::determineHorizontalPosition(RenderBox* child)
         view()->addLayoutDelta(IntSize(child->x() - chPos, 0));
         child->setLocation(chPos, child->y());
     } else {
-        xPos += availableWidth();
+        xPos += availableLogicalWidth();
         int chPos = xPos - (child->width() + child->marginRight());
         if (child->avoidsFloats()) {
             int rightOff = logicalRightOffsetForLine(height(), false);
@@ -1716,14 +1718,14 @@ void RenderBlock::handleBottomOfBlock(int top, int bottom, MarginInfo& marginInf
     // If we can't collapse with children then go ahead and add in the bottom margin.
     if (!marginInfo.canCollapseWithBottom() && !marginInfo.canCollapseWithTop()
         && (!document()->inQuirksMode() || !marginInfo.quirkContainer() || !marginInfo.bottomQuirk()))
-        setHeight(height() + marginInfo.margin());
+        setLogicalHeight(height() + marginInfo.margin());
         
     // Now add in our bottom border/padding.
-    setHeight(height() + bottom);
+    setLogicalHeight(height() + bottom);
 
     // Negative margins can cause our height to shrink below our minimal height (border/padding).
     // If this happens, ensure that the computed height is increased to the minimal height.
-    setHeight(max(height(), top + bottom));
+    setLogicalHeight(max(height(), top + bottom));
 
     // Update our bottom collapsed margin info.
     setCollapsedBottomMargin(marginInfo);
@@ -1752,7 +1754,7 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatBottom
     int top = borderTop() + paddingTop();
     int bottom = borderBottom() + paddingBottom() + horizontalScrollbarHeight();
 
-    setHeight(top);
+    setLogicalHeight(top);
 
     // The margin struct caches all our current margin collapsing state.  The compact struct caches state when we encounter compacts,
     MarginInfo marginInfo(this, top, bottom);
@@ -1894,7 +1896,7 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, int
         }
 
         // Similar to how we apply clearance.  Go ahead and boost height() to be the place where we're going to position the child.
-        setHeight(height() + (yAfterClear - oldY));
+        setLogicalHeight(height() + (yAfterClear - oldY));
     }
 
     view()->addLayoutDelta(IntSize(0, yPosEstimate - yAfterClear));
@@ -1929,9 +1931,9 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, int
     determineHorizontalPosition(child);
 
     // Update our height now that the child has been placed in the correct position.
-    setHeight(height() + child->height());
+    setLogicalHeight(height() + child->height());
     if (child->style()->marginBottomCollapse() == MSEPARATE) {
-        setHeight(height() + child->marginBottom());
+        setLogicalHeight(height() + child->marginBottom());
         marginInfo.clearMargin();
     }
     // If the child has overhanging floats that intrude into following siblings (or possibly out
@@ -1959,7 +1961,7 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, int
         // Check for an after page/column break.
         int newHeight = applyAfterBreak(child, height(), marginInfo);
         if (newHeight != height())
-            setHeight(newHeight);
+            setLogicalHeight(newHeight);
     }
 
     ASSERT(oldLayoutDelta == view()->layoutDelta());
@@ -3114,7 +3116,7 @@ bool RenderBlock::positionNewFloatOnLine(FloatingObject* newFloat, FloatingObjec
         }
     }
         
-    setHeight(height() + paginationStrut);
+    setLogicalHeight(height() + paginationStrut);
     
     return didPosition;
 }
@@ -3138,7 +3140,7 @@ void RenderBlock::newLine(EClear clear)
             break;
     }
     if (height() < newY)
-        setHeight(newY);
+        setLogicalHeight(newY);
 }
 
 void RenderBlock::addPercentHeightDescendant(RenderBox* descendant)
@@ -3227,7 +3229,7 @@ int RenderBlock::logicalLeftOffsetForLine(int y, int fixedOffset, bool applyText
     if (applyTextIndent && style()->direction() == LTR) {
         int cw = 0;
         if (style()->textIndent().isPercent())
-            cw = containingBlock()->availableWidth();
+            cw = containingBlock()->availableLogicalWidth();
         left += style()->textIndent().calcMinValue(cw);
     }
 
@@ -3236,7 +3238,7 @@ int RenderBlock::logicalLeftOffsetForLine(int y, int fixedOffset, bool applyText
 
 int RenderBlock::logicalRightOffsetForContent() const
 {
-    return borderLeft() + paddingLeft() + availableWidth();
+    return borderLeft() + paddingLeft() + availableLogicalWidth();
 }
 
 int RenderBlock::logicalRightOffsetForLine(int y, int fixedOffset, bool applyTextIndent, int* heightRemaining) const
@@ -3261,7 +3263,7 @@ int RenderBlock::logicalRightOffsetForLine(int y, int fixedOffset, bool applyTex
     if (applyTextIndent && style()->direction() == RTL) {
         int cw = 0;
         if (style()->textIndent().isPercent())
-            cw = containingBlock()->availableWidth();
+            cw = containingBlock()->availableLogicalWidth();
         right -= style()->textIndent().calcMinValue(cw);
     }
     
@@ -3932,7 +3934,7 @@ int RenderBlock::getClearDelta(RenderBox* child, int yPos)
     // We also clear floats if we are too big to sit on the same line as a float (and wish to avoid floats by default).
     int result = clearSet ? max(0, bottom - yPos) : 0;
     if (!result && child->avoidsFloats()) {
-        int availableWidth = this->availableWidth();
+        int availableWidth = availableLogicalWidth();
         if (child->minPreferredLogicalWidth() > availableWidth)
             return 0;
 
@@ -4297,14 +4299,6 @@ void RenderBlock::offsetForContents(int& tx, int& ty) const
     ty = contentsPoint.y();
 }
 
-int RenderBlock::availableWidth() const
-{
-    // If we have multiple columns, then the available width is reduced to our column width.
-    if (hasColumns())
-        return desiredColumnWidth();
-    return RenderBox::availableWidth();
-}
-
 int RenderBlock::availableLogicalWidth() const
 {
     // If we have multiple columns, then the available logical width is reduced to our column width.
@@ -4478,7 +4472,7 @@ bool RenderBlock::layoutColumns(bool hasSpecifiedPageHeight, int pageHeight, Lay
             int overflowRight = style()->direction() == LTR ? max(width(), lastRect.x() + lastRect.width()) : 0;
             int overflowHeight = borderTop() + paddingTop() + colInfo->columnHeight();
             
-            setHeight(overflowHeight + borderBottom() + paddingBottom() + horizontalScrollbarHeight());
+            setLogicalHeight(overflowHeight + borderBottom() + paddingBottom() + horizontalScrollbarHeight());
 
             m_overflow.clear();
             addLayoutOverflow(IntRect(overflowLeft, 0, overflowRight - overflowLeft, overflowHeight));

@@ -21,12 +21,12 @@ if (window.layoutTestController)
 test = document.getElementById("test");
 rect = test.getBoundingClientRect();
 width = rect.right - rect.left;
-height = rect.top - rect.bottom;
+height = rect.bottom - rect.top;
 if (width != 300 || height != 400) {
-  document.getElementById('console').innerHTML = "FAIL: The floating block should be 300x400 pixels in size.";
+  document.getElementById('console').innerHTML = "FAIL: The block should be 300x400 pixels in size.";
   test.style.backgroundColor = 'red';
 } else
-  document.getElementById('console').innerHTML = "PASS: The floating block is the correct size.";
+  document.getElementById('console').innerHTML = "PASS: The block is the correct size.";
 </script>
 </body>
 </html>

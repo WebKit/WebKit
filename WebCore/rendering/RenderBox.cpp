@@ -111,7 +111,12 @@ void RenderBox::setLogicalHeight(int size)
 
 int RenderBox::marginBefore() const
 {
-    switch (style()->blockFlow()) {
+    return marginBeforeUsing(style());
+}
+
+int RenderBox::marginBeforeUsing(const RenderStyle* s) const
+{
+    switch (s->blockFlow()) {
     case TopToBottomBlockFlow:
         return m_marginTop;
     case BottomToTopBlockFlow:
@@ -127,7 +132,12 @@ int RenderBox::marginBefore() const
 
 int RenderBox::marginAfter() const
 {
-    switch (style()->blockFlow()) {
+    return marginAfterUsing(style());
+}
+
+int RenderBox::marginAfterUsing(const RenderStyle* s) const
+{
+    switch (s->blockFlow()) {
     case TopToBottomBlockFlow:
         return m_marginBottom;
     case BottomToTopBlockFlow:
@@ -202,6 +212,46 @@ void RenderBox::setMarginEndUsing(const RenderStyle* s, int margin)
             m_marginBottom = margin;
         else
             m_marginTop = margin;
+    }
+}
+
+void RenderBox::setMarginBefore(int margin)
+{
+    setMarginBeforeUsing(style(), margin);
+}
+
+void RenderBox::setMarginAfter(int margin)
+{
+    setMarginAfterUsing(style(), margin);
+}
+
+void RenderBox::setMarginBeforeUsing(const RenderStyle* s, int margin)
+{
+    if (s->isVerticalBlockFlow()) {
+        if (s->direction() == LTR)
+            m_marginTop = margin;
+        else
+            m_marginBottom = margin;
+    } else {
+        if (s->direction() == LTR)
+            m_marginBottom = margin;
+        else
+            m_marginTop = margin;
+    }
+}
+
+void RenderBox::setMarginAfterUsing(const RenderStyle* s, int margin)
+{
+    if (s->isVerticalBlockFlow()) {
+        if (s->direction() == LTR)
+            m_marginBottom = margin;
+        else
+            m_marginTop = margin;
+    } else {
+        if (s->direction() == LTR)
+            m_marginTop = margin;
+        else
+            m_marginBottom = margin;
     }
 }
 
@@ -1617,15 +1667,26 @@ void RenderBox::computeLogicalHeight()
         return;
 
     Length h;
-    if (isPositioned())
+    if (isPositioned()) {
+        // FIXME: This calculation is not patched for block-flow yet.
+        // https://bugs.webkit.org/show_bug.cgi?id=46500
         computePositionedLogicalHeight();
-    else {
-        computeBlockDirectionMargins();
+    } else {
+        RenderBlock* cb = containingBlock();
+        bool hasPerpendicularContainingBlock = cb->style()->isVerticalBlockFlow() != style()->isVerticalBlockFlow();
+    
+        if (!hasPerpendicularContainingBlock)
+            computeBlockDirectionMargins();
 
         // For tables, calculate margins only.
-        if (isTable())
+        if (isTable()) {
+            if (hasPerpendicularContainingBlock)
+                computeMarginsInContainingBlockInlineDirection(cb, containingBlockLogicalWidthForContent(), logicalHeight());
             return;
+        }
 
+        // FIXME: Account for block-flow in flexible boxes.
+        // https://bugs.webkit.org/show_bug.cgi?id=46418
         bool inHorizontalBox = parent()->isFlexibleBox() && parent()->style()->boxOrient() == HORIZONTAL;
         bool stretching = parent()->style()->boxAlign() == BSTRETCH;
         bool treatAsReplaced = shouldComputeSizeAsReplaced() && (!inHorizontalBox || !stretching);
@@ -1633,30 +1694,34 @@ void RenderBox::computeLogicalHeight()
 
         // The parent box is flexing us, so it has increased or decreased our height.  We have to
         // grab our cached flexible height.
+        // FIXME: Account for block-flow in flexible boxes.
+        // https://bugs.webkit.org/show_bug.cgi?id=46418
         if (hasOverrideSize() && parent()->isFlexibleBox() && parent()->style()->boxOrient() == VERTICAL
                 && parent()->isFlexingChildren())
-            h = Length(overrideSize() - borderAndPaddingHeight(), Fixed);
+            h = Length(overrideSize() - borderAndPaddingLogicalHeight(), Fixed);
         else if (treatAsReplaced)
             h = Length(computeReplacedHeight(), Fixed);
         else {
-            h = style()->height();
+            h = style()->logicalHeight();
             checkMinMaxHeight = true;
         }
 
         // Block children of horizontal flexible boxes fill the height of the box.
+        // FIXME: Account for block-flow in flexible boxes.
+        // https://bugs.webkit.org/show_bug.cgi?id=46418
         if (h.isAuto() && parent()->isFlexibleBox() && parent()->style()->boxOrient() == HORIZONTAL
                 && parent()->isStretchingChildren()) {
-            h = Length(parentBox()->contentHeight() - marginTop() - marginBottom() - borderAndPaddingHeight(), Fixed);
+            h = Length(parentBox()->contentLogicalHeight() - marginBefore() - marginAfter() - borderAndPaddingLogicalHeight(), Fixed);
             checkMinMaxHeight = false;
         }
 
         int heightResult;
         if (checkMinMaxHeight) {
-            heightResult = computeLogicalHeightUsing(style()->height());
+            heightResult = computeLogicalHeightUsing(style()->logicalHeight());
             if (heightResult == -1)
-                heightResult = height();
-            int minH = computeLogicalHeightUsing(style()->minHeight()); // Leave as -1 if unset.
-            int maxH = style()->maxHeight().isUndefined() ? heightResult : computeLogicalHeightUsing(style()->maxHeight());
+                heightResult = logicalHeight();
+            int minH = computeLogicalHeightUsing(style()->logicalMinHeight()); // Leave as -1 if unset.
+            int maxH = style()->logicalMaxHeight().isUndefined() ? heightResult : computeLogicalHeightUsing(style()->logicalMaxHeight());
             if (maxH == -1)
                 maxH = heightResult;
             heightResult = min(maxH, heightResult);
@@ -1665,10 +1730,13 @@ void RenderBox::computeLogicalHeight()
             // The only times we don't check min/max height are when a fixed length has
             // been given as an override.  Just use that.  The value has already been adjusted
             // for box-sizing.
-            heightResult = h.value() + borderAndPaddingHeight();
+            heightResult = h.value() + borderAndPaddingLogicalHeight();
         }
 
-        setHeight(heightResult);
+        setLogicalHeight(heightResult);
+        
+        if (hasPerpendicularContainingBlock)
+            computeMarginsInContainingBlockInlineDirection(cb, containingBlockLogicalWidthForContent(), heightResult);
     }
 
     // WinIE quirk: The <html> block always fills the entire canvas in quirks mode.  The <body> always fills the
@@ -1677,33 +1745,43 @@ void RenderBox::computeLogicalHeight()
     // height since we don't set a height in RenderView when we're printing. So without this quirk, the 
     // height has nothing to be a percentage of, and it ends up being 0. That is bad.
     bool paginatedContentNeedsBaseHeight = document()->printing() && h.isPercent()
-        && (isRoot() || (isBody() && document()->documentElement()->renderer()->style()->height().isPercent()));
+        && (isRoot() || (isBody() && document()->documentElement()->renderer()->style()->logicalHeight().isPercent()));
     if (stretchesToViewHeight() || paginatedContentNeedsBaseHeight) {
+        // FIXME: Finish accounting for block flow here.
+        // https://bugs.webkit.org/show_bug.cgi?id=46603
         int margins = collapsedMarginTop() + collapsedMarginBottom();
-        int visHeight = document()->printing() ? static_cast<int>(view()->pageHeight()) : view()->viewHeight();
+        int visHeight;
+        if (document()->printing())
+            visHeight = static_cast<int>(view()->pageHeight());
+        else  {
+            if (style()->isVerticalBlockFlow())
+                visHeight = view()->viewHeight();
+            else
+                visHeight = view()->viewWidth();
+        }
         if (isRoot())
-            setHeight(max(height(), visHeight - margins));
+            setLogicalHeight(max(logicalHeight(), visHeight - margins));
         else {
-            int marginsBordersPadding = margins + parentBox()->marginTop() + parentBox()->marginBottom() + parentBox()->borderAndPaddingHeight();
-            setHeight(max(height(), visHeight - marginsBordersPadding));
+            int marginsBordersPadding = margins + parentBox()->marginBefore() + parentBox()->marginAfter() + parentBox()->borderAndPaddingLogicalHeight();
+            setLogicalHeight(max(logicalHeight(), visHeight - marginsBordersPadding));
         }
     }
 }
 
 int RenderBox::computeLogicalHeightUsing(const Length& h)
 {
-    int height = -1;
+    int logicalHeight = -1;
     if (!h.isAuto()) {
         if (h.isFixed())
-            height = h.value();
+            logicalHeight = h.value();
         else if (h.isPercent())
-            height = computePercentageLogicalHeight(h);
-        if (height != -1) {
-            height = computeBorderBoxLogicalHeight(height);
-            return height;
+            logicalHeight = computePercentageLogicalHeight(h);
+        if (logicalHeight != -1) {
+            logicalHeight = computeBorderBoxLogicalHeight(logicalHeight);
+            return logicalHeight;
         }
     }
-    return height;
+    return logicalHeight;
 }
 
 int RenderBox::computePercentageLogicalHeight(const Length& height)
@@ -1716,7 +1794,7 @@ int RenderBox::computePercentageLogicalHeight(const Length& height)
         // block that may have a specified height and then use it.  In strict mode, this violates the
         // specification, which states that percentage heights just revert to auto if the containing
         // block has an auto height.
-        while (!cb->isRenderView() && !cb->isBody() && !cb->isTableCell() && !cb->isPositioned() && cb->style()->height().isAuto()) {
+        while (!cb->isRenderView() && !cb->isBody() && !cb->isTableCell() && !cb->isPositioned() && cb->style()->logicalHeight().isAuto()) {
             skippedAutoHeightContainingBlock = true;
             cb = cb->containingBlock();
             cb->addPercentHeightDescendant(this);
@@ -1725,7 +1803,9 @@ int RenderBox::computePercentageLogicalHeight(const Length& height)
 
     // A positioned element that specified both top/bottom or that specifies height should be treated as though it has a height
     // explicitly specified that can be used for any percentage computations.
-    bool isPositionedWithSpecifiedHeight = cb->isPositioned() && (!cb->style()->height().isAuto() || (!cb->style()->top().isAuto() && !cb->style()->bottom().isAuto()));
+    // FIXME: We can't just check top/bottom here.
+    // https://bugs.webkit.org/show_bug.cgi?id=46500
+    bool isPositionedWithSpecifiedHeight = cb->isPositioned() && (!cb->style()->logicalHeight().isAuto() || (!cb->style()->top().isAuto() && !cb->style()->bottom().isAuto()));
 
     bool includeBorderPadding = isTable();
 
@@ -1744,7 +1824,7 @@ int RenderBox::computePercentageLogicalHeight(const Length& height)
                 // to grow to fill the space.  This could end up being wrong in some cases, but it is
                 // preferable to the alternative (sizing intrinsically and making the row end up too big).
                 RenderTableCell* cell = toRenderTableCell(cb);
-                if (scrollsOverflowY() && (!cell->style()->height().isAuto() || !cell->table()->style()->height().isAuto()))
+                if (scrollsOverflowY() && (!cell->style()->logicalHeight().isAuto() || !cell->table()->style()->logicalHeight().isAuto()))
                     return 0;
                 return -1;
             }
@@ -1753,24 +1833,24 @@ int RenderBox::computePercentageLogicalHeight(const Length& height)
     }
     // Otherwise we only use our percentage height if our containing block had a specified
     // height.
-    else if (cb->style()->height().isFixed())
-        result = cb->computeContentBoxLogicalHeight(cb->style()->height().value());
-    else if (cb->style()->height().isPercent() && !isPositionedWithSpecifiedHeight) {
+    else if (cb->style()->logicalHeight().isFixed())
+        result = cb->computeContentBoxLogicalHeight(cb->style()->logicalHeight().value());
+    else if (cb->style()->logicalHeight().isPercent() && !isPositionedWithSpecifiedHeight) {
         // We need to recur and compute the percentage height for our containing block.
-        result = cb->computePercentageLogicalHeight(cb->style()->height());
+        result = cb->computePercentageLogicalHeight(cb->style()->logicalHeight());
         if (result != -1)
             result = cb->computeContentBoxLogicalHeight(result);
     } else if (cb->isRenderView() || (cb->isBody() && document()->inQuirksMode()) || isPositionedWithSpecifiedHeight) {
         // Don't allow this to affect the block' height() member variable, since this
         // can get called while the block is still laying out its kids.
-        int oldHeight = cb->height();
+        int oldHeight = cb->logicalHeight();
         cb->computeLogicalHeight();
-        result = cb->contentHeight();
-        cb->setHeight(oldHeight);
+        result = cb->contentLogicalHeight();
+        cb->setLogicalHeight(oldHeight);
     } else if (cb->isRoot() && isPositioned())
         // Match the positioned objects behavior, which is that positioned objects will fill their viewport
         // always.  Note we could only hit this case by recurring into computePercentageLogicalHeight on a positioned containing block.
-        result = cb->computeContentBoxLogicalHeight(cb->availableHeight());
+        result = cb->computeContentBoxLogicalHeight(cb->availableLogicalHeight());
 
     if (result != -1) {
         result = height.calcValue(result);
@@ -1778,7 +1858,7 @@ int RenderBox::computePercentageLogicalHeight(const Length& height)
             // It is necessary to use the border-box to match WinIE's broken
             // box model.  This is essential for sizing inside
             // table cells using percentage heights.
-            result -= borderAndPaddingHeight();
+            result -= borderAndPaddingLogicalHeight();
             result = max(0, result);
         }
     }
@@ -1845,7 +1925,7 @@ int RenderBox::computeReplacedHeightUsing(Length height) const
                 return computeContentBoxLogicalHeight(height.calcValue(newHeight));
             }
             
-            int availableHeight = isPositioned() ? containingBlockHeightForPositioned(toRenderBoxModelObject(cb)) : toRenderBox(cb)->availableHeight();
+            int availableHeight = isPositioned() ? containingBlockHeightForPositioned(toRenderBoxModelObject(cb)) : toRenderBox(cb)->availableLogicalHeight();
 
             // It is necessary to use the border-box to match WinIE's broken
             // box model.  This is essential for sizing inside
@@ -1864,61 +1944,58 @@ int RenderBox::computeReplacedHeightUsing(Length height) const
     }
 }
 
-int RenderBox::availableHeight() const
+int RenderBox::availableLogicalHeight() const
 {
-    return availableHeightUsing(style()->height());
+    return availableLogicalHeightUsing(style()->logicalHeight());
 }
 
-int RenderBox::availableHeightUsing(const Length& h) const
+int RenderBox::availableLogicalHeightUsing(const Length& h) const
 {
     if (h.isFixed())
         return computeContentBoxLogicalHeight(h.value());
 
     if (isRenderView())
-        return toRenderView(this)->frameView()->visibleHeight();
+        return style()->isVerticalBlockFlow() ? toRenderView(this)->frameView()->visibleHeight() : toRenderView(this)->frameView()->visibleWidth();
 
     // We need to stop here, since we don't want to increase the height of the table
     // artificially.  We're going to rely on this cell getting expanded to some new
     // height, and then when we lay out again we'll use the calculation below.
     if (isTableCell() && (h.isAuto() || h.isPercent()))
-        return overrideSize() - borderAndPaddingWidth();
+        return overrideSize() - borderAndPaddingLogicalWidth();
 
     if (h.isPercent())
-       return computeContentBoxLogicalHeight(h.calcValue(containingBlock()->availableHeight()));
+       return computeContentBoxLogicalHeight(h.calcValue(containingBlock()->availableLogicalHeight()));
 
+    // FIXME: We can't just check top/bottom here.
+    // https://bugs.webkit.org/show_bug.cgi?id=46500
     if (isRenderBlock() && isPositioned() && style()->height().isAuto() && !(style()->top().isAuto() || style()->bottom().isAuto())) {
         RenderBlock* block = const_cast<RenderBlock*>(toRenderBlock(this));
-        int oldHeight = block->height();
+        int oldHeight = block->logicalHeight();
         block->computeLogicalHeight();
-        int newHeight = block->computeContentBoxLogicalHeight(block->contentHeight());
-        block->setHeight(oldHeight);
+        int newHeight = block->computeContentBoxLogicalHeight(block->contentLogicalHeight());
+        block->setLogicalHeight(oldHeight);
         return computeContentBoxLogicalHeight(newHeight);
     }
 
-    return containingBlock()->availableHeight();
-}
-
-int RenderBox::availableLogicalWidth() const
-{
-    if (style()->isVerticalBlockFlow())
-        return contentWidth();
-    return contentHeight();
+    return containingBlock()->availableLogicalHeight();
 }
 
 void RenderBox::computeBlockDirectionMargins()
 {
     if (isTableCell()) {
-        m_marginTop = 0;
-        m_marginBottom = 0;
+        // FIXME: Not right if we allow cells to have different directionality than the table.  If we do allow this, though,
+        // we may just do it with an extra anonymous block inside the cell.
+        setMarginBefore(0);
+        setMarginAfter(0);
         return;
     }
 
-    // margins are calculated with respect to the _width_ of
+    // Margins are calculated with respect to the logical width of
     // the containing block (8.3)
-    int cw = containingBlock()->contentWidth();
+    int cw = containingBlockLogicalWidthForContent();
 
-    m_marginTop = style()->marginTop().calcMinValue(cw);
-    m_marginBottom = style()->marginBottom().calcMinValue(cw);
+    setMarginBefore(style()->marginBefore().calcMinValue(cw));
+    setMarginAfter(style()->marginAfter().calcMinValue(cw));
 }
 
 int RenderBox::containingBlockWidthForPositioned(const RenderBoxModelObject* containingBlock) const
@@ -3008,7 +3085,7 @@ bool RenderBox::shrinkToAvoidFloats() const
 
 bool RenderBox::avoidsFloats() const
 {
-    return isReplaced() || hasOverflowClip() || isHR();
+    return isReplaced() || hasOverflowClip() || isHR() || isBlockFlowRoot();
 }
 
 void RenderBox::addShadowOverflow()

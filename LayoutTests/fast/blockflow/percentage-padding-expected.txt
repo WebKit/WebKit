@@ -1,1 +1,1 @@
-FAIL: The floating block should be 300x400 pixels in size.
+PASS: The block is the correct size.

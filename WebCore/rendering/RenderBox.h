@@ -115,6 +115,8 @@ public:
 
     int contentWidth() const { return clientWidth() - paddingLeft() - paddingRight(); }
     int contentHeight() const { return clientHeight() - paddingTop() - paddingBottom(); }
+    int contentLogicalWidth() const { return style()->isVerticalBlockFlow() ? contentWidth() : contentHeight(); }
+    int contentLogicalHeight() const { return style()->isVerticalBlockFlow() ? contentHeight() : contentWidth(); }
 
     // IE extensions. Used to calculate offsetWidth/Height.  Overridden by inlines (RenderFlow)
     // to return the remaining width on a given line (and the height of a single line).
@@ -150,6 +152,8 @@ public:
     virtual int marginEnd() const;
     void setMarginStart(int);
     void setMarginEnd(int);
+    void setMarginBefore(int);
+    void setMarginAfter(int);
 
     // The following five functions are used to implement collapsing margins.
     // All objects know their maximal positive and negative margins.  The
@@ -227,7 +231,7 @@ public:
 
     bool stretchesToViewHeight() const
     {
-        return document()->inQuirksMode() && style()->height().isAuto() && !isFloatingOrPositioned() && (isRoot() || isBody());
+        return document()->inQuirksMode() && style()->height().isAuto() && !isFloatingOrPositioned() && (isRoot() || isBody()) && !isBlockFlowRoot();
     }
 
     virtual IntSize intrinsicSize() const { return IntSize(); }
@@ -248,10 +252,14 @@ public:
     int computePercentageLogicalHeight(const Length& height);
 
     // Block flows subclass availableWidth to handle multi column layout (shrinking the width available to children when laying out.)
-    virtual int availableWidth() const { return contentWidth(); } // FIXME: Investigate removing eventually. https://bugs.webkit.org/show_bug.cgi?id=46127
-    virtual int availableHeight() const;
-    int availableHeightUsing(const Length&) const;
-    virtual int availableLogicalWidth() const;
+    virtual int availableLogicalWidth() const { return contentLogicalWidth(); }
+    int availableLogicalHeight() const;
+    int availableLogicalHeightUsing(const Length&) const;
+    
+    // There are a few cases where we need to refer specifically to the available physical width and available physical height.
+    // Relative positioning is one of those cases, since left/top offsets are physical.
+    int availableWidth() const { return style()->isVerticalBlockFlow() ? availableLogicalWidth() : availableLogicalHeight(); }
+    int availableHeight() const { return style()->isVerticalBlockFlow() ? availableLogicalHeight() : availableLogicalWidth(); }
 
     void computeBlockDirectionMargins();
 
@@ -310,6 +318,8 @@ public:
 
     virtual void markDescendantBlocksAndLinesForLayout(bool inLayout = true);
     
+    bool isBlockFlowRoot() const { return !parent() || parent()->style()->blockFlow() != style()->blockFlow(); }
+
 protected:
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
@@ -363,8 +373,13 @@ private:
 
     void setMarginStartUsing(const RenderStyle*, int);
     void setMarginEndUsing(const RenderStyle*, int);
+    void setMarginBeforeUsing(const RenderStyle*, int);
+    void setMarginAfterUsing(const RenderStyle*, int);
+
     int marginStartUsing(const RenderStyle*) const;
     int marginEndUsing(const RenderStyle*) const;
+    int marginBeforeUsing(const RenderStyle*) const;
+    int marginAfterUsing(const RenderStyle*) const;
 
 private:
     // The width/height of the contents + borders + padding.  The x/y location is relative to our container (which is not always our parent).

@@ -1,3 +1,71 @@
+2010-09-27  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46639, make computeLogicalHeight block-flow-aware.
+        
+        This patch does the following:
+            (1) Makes computeLogicalHeight block-flow-aware (patching all helper functions as needed to make this work).
+            (2) Makes block flow roots (blocks whose parent has a different block-flow directionality) establish new block formatting contexts.
+            (This causes them to not collapse their margins with their children and to avoid floats). 
+            (3) Patch all occurrences of setHeight in block and line layout to setLogicalHeight so that height doesn't get incorrectly
+            overwritten for lr/rl block-flow.  This is necessary to write tests that examine the width/height of the blocks.
+        
+        Added multiple new tests in fast/blockflow.
+        fast/css/logical-property-resolution gives the correct results now.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::MarginInfo::MarginInfo):
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::expandsToEncloseOverhangingFloats):
+        (WebCore::RenderBlock::adjustFloatingBlock):
+        (WebCore::RenderBlock::collapseMargins):
+        (WebCore::RenderBlock::clearFloatsIfNeeded):
+        (WebCore::RenderBlock::determineHorizontalPosition):
+        (WebCore::RenderBlock::handleBottomOfBlock):
+        (WebCore::RenderBlock::layoutBlockChildren):
+        (WebCore::RenderBlock::layoutBlockChild):
+        (WebCore::RenderBlock::positionNewFloatOnLine):
+        (WebCore::RenderBlock::newLine):
+        (WebCore::RenderBlock::logicalLeftOffsetForLine):
+        (WebCore::RenderBlock::logicalRightOffsetForContent):
+        (WebCore::RenderBlock::logicalRightOffsetForLine):
+        (WebCore::RenderBlock::getClearDelta):
+        (WebCore::RenderBlock::layoutColumns):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::computeBlockDirectionPositionsForLine):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::determineStartPosition):
+        (WebCore::RenderBlock::fitBelowFloats):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::marginBefore):
+        (WebCore::RenderBox::marginBeforeUsing):
+        (WebCore::RenderBox::marginAfter):
+        (WebCore::RenderBox::marginAfterUsing):
+        (WebCore::RenderBox::setMarginBefore):
+        (WebCore::RenderBox::setMarginAfter):
+        (WebCore::RenderBox::setMarginBeforeUsing):
+        (WebCore::RenderBox::setMarginAfterUsing):
+        (WebCore::RenderBox::computeLogicalHeight):
+        (WebCore::RenderBox::computeLogicalHeightUsing):
+        (WebCore::RenderBox::computePercentageLogicalHeight):
+        (WebCore::RenderBox::computeReplacedHeightUsing):
+        (WebCore::RenderBox::availableLogicalHeight):
+        (WebCore::RenderBox::availableLogicalHeightUsing):
+        (WebCore::RenderBox::computeBlockDirectionMargins):
+        (WebCore::RenderBox::avoidsFloats):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::contentLogicalWidth):
+        (WebCore::RenderBox::contentLogicalHeight):
+        (WebCore::RenderBox::stretchesToViewHeight):
+        (WebCore::RenderBox::availableLogicalWidth):
+        (WebCore::RenderBox::availableWidth):
+        (WebCore::RenderBox::availableHeight):
+        (WebCore::RenderBox::isBlockFlowRoot):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::computeLogicalWidth):
+
 2010-09-27  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Chris Fleizach.
