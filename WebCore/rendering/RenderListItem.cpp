@@ -314,6 +314,29 @@ const String& RenderListItem::markerText() const
     return staticNullString;
 }
 
+String RenderListItem::markerTextWithSuffix() const
+{
+    if (!m_marker)
+        return String();
+
+    // Append the suffix for the marker in the right place depending
+    // on the direction of the text (right-to-left or left-to-right).
+
+    const String& markerText = m_marker->text();
+    const String markerSuffix = m_marker->suffix();
+    Vector<UChar> resultVector;
+
+    if (m_marker->style()->direction() == RTL)
+        resultVector.append(markerSuffix.characters(), markerSuffix.length());
+
+    resultVector.append(markerText.characters(), markerText.length());
+
+    if (m_marker->style()->direction() == LTR)
+        resultVector.append(markerSuffix.characters(), markerSuffix.length());
+
+    return String::adopt(resultVector);
+}
+
 void RenderListItem::explicitValueChanged()
 {
     if (m_marker)

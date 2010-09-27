@@ -55,6 +55,7 @@
 #include "InlineTextBox.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
+#include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderText.h"
 #include "TextEncoding.h"
@@ -878,9 +879,13 @@ gchar* textForObject(AccessibilityRenderObject* accObject)
             g_string_append(str, "\n");
             range = accObject->doAXRangeForLine(++lineNumber);
         }
-    } else if (accObject->renderer()) {
+    } else {
+        RenderObject* renderer = accObject->renderer();
+        if (!renderer)
+            return g_string_free(str, FALSE);
+
         // For RenderBlocks, piece together the text from the RenderText objects they contain.
-        for (RenderObject* obj = accObject->renderer()->firstChild(); obj; obj = obj->nextSibling()) {
+        for (RenderObject* obj = renderer->firstChild(); obj; obj = obj->nextSibling()) {
             if (obj->isBR()) {
                 g_string_append(str, "\n");
                 continue;
@@ -907,7 +912,17 @@ gchar* textForObject(AccessibilityRenderObject* accObject)
                 box = box->nextTextBox();
             }
         }
+
+        // Insert the text of the marker for list item in the right place, if present
+        if (renderer->isListItem()) {
+            String markerText = toRenderListItem(renderer)->markerTextWithSuffix();
+            if (renderer->style()->direction() == LTR)
+                g_string_prepend(str, markerText.utf8().data());
+            else
+                g_string_append(str, markerText.utf8().data());
+        }
     }
+
     return g_string_free(str, FALSE);
 }
 
@@ -939,10 +954,9 @@ static gchar* webkit_accessible_text_get_text(AtkText* text, gint startOffset, g
     // Prefix a item number/bullet if needed
     if (coreObject->roleValue() == ListItemRole) {
         RenderObject* objRenderer = static_cast<AccessibilityRenderObject*>(coreObject)->renderer();
-        RenderObject* markerRenderer = objRenderer ? objRenderer->firstChild() : 0;
-        if (markerRenderer && markerRenderer->isListMarker()) {
-            String markerTxt = toRenderListMarker(markerRenderer)->text();
-            ret = markerTxt.length() > 0 ? markerTxt + " " + ret : ret;
+        if (objRenderer && objRenderer->isListItem()) {
+            String markerText = toRenderListItem(objRenderer)->markerTextWithSuffix();
+            ret = objRenderer->style()->direction() == LTR ? markerText + ret : ret + markerText;
         }
     }
 
@@ -1185,8 +1199,29 @@ static AtkAttributeSet* attributeSetDifference(AtkAttributeSet* a1, AtkAttribute
 
 static guint accessibilityObjectLength(const AccessibilityObject* object)
 {
-    GOwnPtr<gchar> text(webkit_accessible_text_get_text(ATK_TEXT(object->wrapper()), 0, -1));
-    return g_utf8_strlen(text.get(), -1);
+    // Non render objects are not taken into account
+    if (!object->isAccessibilityRenderObject())
+        return 0;
+
+    // For those objects implementing the AtkText interface we use the
+    // well known API to always get the text in a consistent way
+    AtkObject* atkObj = ATK_OBJECT(object->wrapper());
+    if (ATK_IS_TEXT(atkObj)) {
+        GOwnPtr<gchar> text(webkit_accessible_text_get_text(ATK_TEXT(atkObj), 0, -1));
+        return g_utf8_strlen(text.get(), -1);
+    }
+
+    // Even if we don't expose list markers to Assistive
+    // Technologies, we need to have a way to measure their length
+    // for those cases when it's needed to take it into account
+    // separately (as in getAccessibilityObjectForOffset)
+    RenderObject* renderer = static_cast<const AccessibilityRenderObject*>(object)->renderer();
+    if (renderer && renderer->isListMarker()) {
+        RenderListMarker* marker = toRenderListMarker(renderer);
+        return marker->text().length() + marker->suffix().length();
+    }
+
+    return 0;
 }
 
 static const AccessibilityObject* getAccessibilityObjectForOffset(const AccessibilityObject* object, guint offset, gint* startOffset, gint* endOffset)
@@ -1321,12 +1356,7 @@ static void webkit_accessible_text_get_range_extents(AtkText* text, gint startOf
 
 static gint webkit_accessible_text_get_character_count(AtkText* text)
 {
-    AccessibilityObject* coreObject = core(text);
-
-    if (coreObject->isTextControl())
-        return coreObject->textLength();
-    else
-        return coreObject->textUnderElement().length();
+    return accessibilityObjectLength(core(text));
 }
 
 static gint webkit_accessible_text_get_offset_at_point(AtkText* text, gint x, gint y, AtkCoordType coords)

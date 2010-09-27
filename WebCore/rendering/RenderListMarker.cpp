@@ -1522,6 +1522,25 @@ int RenderListMarker::baselinePosition(bool, bool) const
     return height();
 }
 
+String RenderListMarker::suffix() const
+{
+    EListStyleType type = style()->listStyleType();
+    const UChar suffix = listMarkerSuffix(type, m_listItem->value());
+
+    Vector<UChar> resultVector;
+    resultVector.append(suffix);
+
+    // If the suffix is not ' ', an extra space is needed
+    if (suffix != ' ') {
+        if (style()->direction() == LTR)
+            resultVector.append(' ');
+        else
+            resultVector.prepend(' ');
+    }
+
+    return String::adopt(resultVector);
+}
+
 bool RenderListMarker::isInside() const
 {
     return m_listItem->notInList() || style()->listStylePosition() == INSIDE;

@@ -966,38 +966,32 @@ static void testWebkitAtkGetExtents(void)
 
 static void testWebkitAtkListsOfItems(void)
 {
-    WebKitWebView* webView;
-    AtkObject* obj;
-    AtkObject* uList;
-    AtkObject* oList;
-    AtkObject* item1;
-    AtkObject* item2;
-    AtkObject* item3;
-    GMainLoop* loop;
-
-    webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
     g_object_ref_sink(webView);
     GtkAllocation alloc = { 0, 0, 800, 600 };
     gtk_widget_size_allocate(GTK_WIDGET(webView), &alloc);
     webkit_web_view_load_string(webView, listsOfItems, NULL, NULL, NULL);
-    loop = g_main_loop_new(NULL, TRUE);
+    GMainLoop* loop = g_main_loop_new(NULL, TRUE);
 
     g_idle_add((GSourceFunc)bail_out, loop);
     g_main_loop_run(loop);
 
-    obj = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    AtkObject* obj = gtk_widget_get_accessible(GTK_WIDGET(webView));
     g_assert(obj);
 
     // Unordered list
 
-    uList = atk_object_ref_accessible_child(obj, 0);
+    AtkObject* uList = atk_object_ref_accessible_child(obj, 0);
     g_assert(ATK_OBJECT(uList));
     g_assert(atk_object_get_role(uList) == ATK_ROLE_LIST);
     g_assert_cmpint(atk_object_get_n_accessible_children(uList), ==, 3);
 
-    item1 = atk_object_ref_accessible_child(uList, 0);
-    item2 = atk_object_ref_accessible_child(uList, 1);
-    item3 = atk_object_ref_accessible_child(uList, 2);
+    AtkObject* item1 = atk_object_ref_accessible_child(uList, 0);
+    g_assert(ATK_IS_TEXT(item1));
+    AtkObject* item2 = atk_object_ref_accessible_child(uList, 1);
+    g_assert(ATK_IS_TEXT(item2));
+    AtkObject* item3 = atk_object_ref_accessible_child(uList, 2);
+    g_assert(ATK_IS_TEXT(item3));
 
     g_assert_cmpint(atk_object_get_n_accessible_children(item1), ==, 0);
     g_assert_cmpint(atk_object_get_n_accessible_children(item2), ==, 1);
@@ -1013,18 +1007,21 @@ static void testWebkitAtkListsOfItems(void)
 
     // Ordered list
 
-    oList = atk_object_ref_accessible_child(obj, 1);
+    AtkObject* oList = atk_object_ref_accessible_child(obj, 1);
     g_assert(ATK_OBJECT(oList));
     g_assert(atk_object_get_role(oList) == ATK_ROLE_LIST);
     g_assert_cmpint(atk_object_get_n_accessible_children(oList), ==, 3);
 
     item1 = atk_object_ref_accessible_child(oList, 0);
+    g_assert(ATK_IS_TEXT(item1));
     item2 = atk_object_ref_accessible_child(oList, 1);
+    g_assert(ATK_IS_TEXT(item2));
     item3 = atk_object_ref_accessible_child(oList, 2);
+    g_assert(ATK_IS_TEXT(item3));
 
-    g_assert_cmpstr(atk_text_get_text(ATK_TEXT(item1), 0, -1), ==, "1 text only");
-    g_assert_cmpstr(atk_text_get_text(ATK_TEXT(item2), 0, -1), ==, "2 link only");
-    g_assert_cmpstr(atk_text_get_text(ATK_TEXT(item3), 0, -1), ==, "3 text and a link");
+    g_assert_cmpstr(atk_text_get_text(ATK_TEXT(item1), 0, -1), ==, "1. text only");
+    g_assert_cmpstr(atk_text_get_text(ATK_TEXT(item2), 0, -1), ==, "2. link only");
+    g_assert_cmpstr(atk_text_get_text(ATK_TEXT(item3), 0, -1), ==, "3. text and a link");
 
     g_assert_cmpint(atk_object_get_n_accessible_children(item1), ==, 0);
     g_assert_cmpint(atk_object_get_n_accessible_children(item2), ==, 1);

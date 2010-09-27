@@ -1,3 +1,19 @@
+2010-09-27  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Chris Fleizach.
+
+        [Gtk] Adjust atk_text_get_text_at_offset to account for bullets/numbers in list items
+        https://bugs.webkit.org/show_bug.cgi?id=45381
+
+        Updated test to match the new exposure of list item markers.
+
+        Also, added some extra assertions in that test to make sure the
+        accessible objects associated to the items implement AtkText.
+
+        * tests/testatk.c:
+        (testWebkitAtkListsOfItems):
+        (main):
+
 2010-09-27  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.

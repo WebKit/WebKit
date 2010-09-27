@@ -1,3 +1,45 @@
+2010-09-27  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Chris Fleizach.
+
+        [Gtk] Adjust atk_text_get_text_at_offset to account for bullets/numbers in list items
+        https://bugs.webkit.org/show_bug.cgi?id=45381
+
+        Ensure list markers are consistently used in the Atk wrapper.
+
+        This patch does two things (both needed to fix the bug): It
+        improves the way list items markers are exposed through the Atk
+        Wrapper (by exposing the exact text in the marker, including the
+        marker suffix, if any) and makes sure the marker is consistently
+        considered and treated in those methods of the AtkText interface
+        that would need it (like atk_text_get_character_count or
+        atk_text_get_run_attributes, for instance).
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (textForObject):
+           Append/prepend list marker when needed.
+        (webkit_accessible_text_get_text):
+           Use the new function markerTextWithSuffix() to expose a more
+           accurate value.
+        (accessibilityObjectLength):
+           Consider list items marker to return the length of an object,
+           if needed. Also, added some extra checks.
+        (webkit_accessible_text_get_character_count):
+           Just delegate on accessibilityObjectLength, to make it
+           cleaner and more consistent.
+
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::markerTextWithSuffix):
+           New public function to return a single string with the
+           marker associated to the item and its suffix, considering
+           text direction (LTR or RTL).
+        * rendering/RenderListItem.h:
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::suffix):
+           New public function to return a String with the suffix
+           associated to the marker.
+        * rendering/RenderListMarker.h:
+
 2010-09-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r68389.
