@@ -2,6 +2,17 @@
 
         Reviewed by Sam Weinig.
 
+        https://bugs.webkit.org/show_bug.cgi?id=46659
+
+        Patch the width/height/x/y calls in layoutBlock() to be their logical equivalents instead.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+
+2010-09-27  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
         https://bugs.webkit.org/show_bug.cgi?id=46649, fix failing layout tests.
 
         The implementation of setting the before/after margins was wrong and poking the wrong margin values.
