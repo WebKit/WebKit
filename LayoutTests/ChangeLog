@@ -1,3 +1,14 @@
+2010-09-27  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Tests that positioning the list marker whose parent (child div) is not
+        a box (inline because of the run-in style) does not result in crash.
+        https://bugs.webkit.org/show_bug.cgi?id=46384
+
+        * fast/lists/parent-box-not-box-crash-expected.txt: Added.
+        * fast/lists/parent-box-not-box-crash.html: Added.
+
 2010-09-27  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed.
