@@ -1,3 +1,17 @@
+2010-09-16  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Fold getString into getParameter and implement new queries
+        https://bugs.webkit.org/show_bug.cgi?id=40321
+
+        Test: fast/canvas/webgl/gl-getstring.html
+
+        * html/canvas/WebGLRenderingContext.cpp: Merge getString enums into getParameter.
+        (WebCore::WebGLRenderingContext::getParameter):
+        * html/canvas/WebGLRenderingContext.h: Remove getString.
+        * html/canvas/WebGLRenderingContext.idl: Remove getString.
+
 2010-09-24  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

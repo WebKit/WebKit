@@ -563,7 +563,6 @@ module html {
         // void glGetShaderPrecisionFormat (GLenum shadertype, GLenum precisiontype, GLint* range, GLint* precision);
 
         [StrictTypeChecking] DOMString    getShaderSource(in WebGLShader shader) raises(DOMException);
-        [StrictTypeChecking] DOMString    getString(in unsigned long name);
 
         // any getTexParameter(in unsigned long target, in unsigned long pname) raises(DOMException);
         [StrictTypeChecking, Custom] void getTexParameter();

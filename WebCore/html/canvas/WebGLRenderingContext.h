@@ -163,7 +163,6 @@ public:
     // void glGetShaderPrecisionFormat (GLenum shadertype, GLenum precisiontype, GLint* range, GLint* precision);
 
     String getShaderSource(WebGLShader*, ExceptionCode&);
-    String getString(unsigned long name);
 
     WebGLGetInfo getTexParameter(unsigned long target, unsigned long pname, ExceptionCode&);
 

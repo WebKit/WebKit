@@ -1,3 +1,13 @@
+2010-09-16  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Fold getString into getParameter and implement new queries
+        https://bugs.webkit.org/show_bug.cgi?id=40321
+
+        * fast/canvas/webgl/gl-getstring-expected.txt: Added.
+        * fast/canvas/webgl/gl-getstring.html: Added.
+
 2010-09-24  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
