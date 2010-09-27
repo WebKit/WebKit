@@ -74,7 +74,7 @@ void RenderSVGText::mapLocalToContainer(RenderBoxModelObject* repaintContainer, 
 void RenderSVGText::layout()
 {
     ASSERT(needsLayout());
-    LayoutRepainter repainter(*this, m_everHadLayout && checkForRepaintDuringLayout());
+    LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
 
     bool updateCachedBoundariesInParents = false;
     if (m_needsTransformUpdate) {

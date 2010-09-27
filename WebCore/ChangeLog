@@ -1,3 +1,27 @@
+2010-09-27  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Revert r63307, it broke repainting dynamically changed SVG content
+        https://bugs.webkit.org/show_bug.cgi?id=46499
+
+        This patch reverts r63307 and adds a regression test for what broke.
+
+        Test: fast/repaint/repaint-svg-after-style-change.html
+
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::layout):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::layout):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::layout):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::layout):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+
 2010-09-27  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by James Robinson.

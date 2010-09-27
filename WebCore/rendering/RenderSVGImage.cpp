@@ -62,7 +62,7 @@ void RenderSVGImage::layout()
 {
     ASSERT(needsLayout());
 
-    LayoutRepainter repainter(*this, m_everHadLayout && checkForRepaintDuringLayout());
+    LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
     SVGImageElement* image = static_cast<SVGImageElement*>(node());
 
     bool updateCachedBoundariesInParents = false;

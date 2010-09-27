@@ -1,3 +1,15 @@
+2010-09-27  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Repaint test for dynamically changing an SVG element's style attribute
+        https://bugs.webkit.org/show_bug.cgi?id=46499
+
+        * fast/repaint/repaint-svg-after-style-change-expected.checksum: Added.
+        * fast/repaint/repaint-svg-after-style-change-expected.png: Added.
+        * fast/repaint/repaint-svg-after-style-change-expected.txt: Added.
+        * fast/repaint/repaint-svg-after-style-change.html: Added.
+
 2010-09-27  Martin Robinson  <mrobinson@igalia.com>
 
         Unskip a test that just needed a platform-specific baseline and add a baseline for it.
