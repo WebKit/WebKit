@@ -1,3 +1,18 @@
+2010-09-26  Jenn Braithwaite  <jennb@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        GTK client needs updating when live iframe element is moved
+        between pages.
+        https://bugs.webkit.org/show_bug.cgi?id=46300
+
+        Test: fast/frames/iframe-reparenting-adopt-node.html
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::didTransferChildFrameToNewDocument):
+        Update the webView for the frame to match the parent frame's
+        webView.
+
 2010-09-24  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

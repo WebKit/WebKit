@@ -317,3 +317,6 @@ media/context-menu-actions.html
 
 # FileSystem API is not supported.
 fast/filesystem
+
+# https://bugs.webkit.org/show_bug.cgi?id=44713
+fast/frames/iframe-reparenting-adopt-node.html

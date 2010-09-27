@@ -1,3 +1,20 @@
+2010-09-26  Jenn Braithwaite  <jennb@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        GTK client needs updating when live iframe element is moved
+        between pages.
+        https://bugs.webkit.org/show_bug.cgi?id=46300
+
+        This test case fails on mac (see related bug 44713), which will
+        be fixed in a separate patch.
+
+        * fast/frames/iframe-reparenting-adopt-node-expected.txt: Added.
+        * fast/frames/iframe-reparenting-adopt-node.html: Added.
+        * fast/frames/resources/iframe-reparenting-adopt-node-iframe-content.html: Added.
+        * fast/frames/resources/iframe-reparenting-adopt-node-new-page.html: Added.
+        * platform/mac/Skipped:
+
 2010-09-26  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Adam Barth.

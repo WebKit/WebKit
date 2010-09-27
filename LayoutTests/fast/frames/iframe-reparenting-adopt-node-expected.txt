@@ -1,0 +1,8 @@
+This test adopts an iframe from a different page into this one, closes the page that originally contained the iframe, then reloads the iframe to verify that there are no remaining dependencies on the closed page.
+
+Loaded window 2.
+Adopted iframe to first page.
+Closing window 2.
+Window 2 closed.
+PASS: iframe reloaded.
+
