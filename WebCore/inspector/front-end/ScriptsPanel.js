@@ -104,7 +104,6 @@ WebInspector.ScriptsPanel = function()
     this.sidebarButtonsElement.appendChild(this.stepOutButton);
 
     this.toggleBreakpointsButton = new WebInspector.StatusBarButton(WebInspector.UIString("Deactivate all breakpoints."), "toggle-breakpoints");
-    // Breakpoints should be activated by default, so emulate a click to toggle on.
     this.toggleBreakpointsButton.toggled = true;
     this.toggleBreakpointsButton.addEventListener("click", this.toggleBreakpointsClicked.bind(this), false);
     this.sidebarButtonsElement.appendChild(this.toggleBreakpointsButton.element);
@@ -136,6 +135,8 @@ WebInspector.ScriptsPanel = function()
     if (Preferences.nativeInstrumentationEnabled) {
         this.sidebarPanes.domBreakpoints = WebInspector.createDOMBreakpointsSidebarPane();
         this.sidebarPanes.domBreakpoints.expanded = true;
+        this.sidebarPanes.xhrBreakpoints = WebInspector.createXHRBreakpointsSidebarPane();
+        this.sidebarPanes.xhrBreakpoints.expanded = true;
     }
 
     this.sidebarPanes.workers = new WebInspector.WorkersSidebarPane();
@@ -468,8 +469,10 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.watchExpressions.refreshExpressions();
         if (!preserveItems) {
             this.sidebarPanes.jsBreakpoints.reset();
-            if (Preferences.nativeInstrumentationEnabled)
+            if (Preferences.nativeInstrumentationEnabled) {
                 this.sidebarPanes.domBreakpoints.reset();
+                this.sidebarPanes.xhrBreakpoints.reset();
+            }
             this.sidebarPanes.workers.reset();
         }
     },

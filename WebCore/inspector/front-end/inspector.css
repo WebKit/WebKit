@@ -1677,6 +1677,29 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     color: black;
 }
 
+.pane > .title > button.add {
+    float: right;
+    width: 23px;
+    height: 17px;
+    color: transparent;
+    background-color: transparent;
+    border: none;
+    background-image: url(Images/paneAddButtons.png);
+    background-repeat: no-repeat;
+    margin: 1px 0 0 0;
+    padding: 0;
+    -webkit-border-radius: 0;
+    -webkit-appearance: none;
+}
+
+.pane > .title > button.add:hover {
+    background-position: -23px 0px;
+}
+
+.pane > .title > button.add:active {
+    background-position: -46px 0px;
+}
+
 .pane > .body {
     position: relative;
     display: none;
@@ -1699,6 +1722,14 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
 
 .pane.expanded > .body, .pane.expanded > .growbar {
     display: block;
+}
+
+.pane > .body .breakpoint-condition {
+    display: block;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    margin-left: 25px;
+    margin-right: 10px;
 }
 
 .pane.expanded:nth-last-of-type(1) {

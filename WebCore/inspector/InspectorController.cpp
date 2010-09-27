@@ -791,6 +791,8 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
 #if ENABLE(JAVASCRIPT_DEBUGGER)
         if (m_debuggerAgent)
             m_debuggerAgent->clearForPageNavigation();
+
+        m_XHRBreakpoints.clear();
 #endif
 #if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
         m_profilerAgent->resetState();
@@ -2167,10 +2169,15 @@ void InspectorController::instrumentWillSendXMLHttpRequestImpl(const KURL& url)
     if (m_debuggerAgent) {
         if (!m_XHRBreakpoints.size())
             return;
-        RefPtr<InspectorObject> eventData = InspectorObject::create();
-        eventData->setNumber("recordType", XHRSendRecordType);
-        eventData->setString("url", url);
-        m_debuggerAgent->breakProgram(NativeBreakpointDebuggerEventType, eventData);
+        for (HashMap<unsigned int, String>::iterator it = m_XHRBreakpoints.begin(); it != m_XHRBreakpoints.end(); ++it) {
+            if (!url.string().contains(it->second))
+                continue;
+            RefPtr<InspectorObject> eventData = InspectorObject::create();
+            eventData->setString("type", "XHR");
+            eventData->setString("url", url);
+            m_debuggerAgent->breakProgram(NativeBreakpointDebuggerEventType, eventData);
+            break;
+        }
     }
 #endif
 }

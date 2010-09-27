@@ -92,6 +92,42 @@ WebInspector.BreakpointsSidebarPane.prototype = {
 
 WebInspector.BreakpointsSidebarPane.prototype.__proto__ = WebInspector.SidebarPane.prototype;
 
+WebInspector.XHRBreakpointsSidebarPane = function()
+{
+    WebInspector.BreakpointsSidebarPane.call(this, WebInspector.UIString("XHR Breakpoints"));
+
+    var addButton = document.createElement("button");
+    addButton.className = "add";
+    addButton.addEventListener("click", this._showEditBreakpointDialog.bind(this), false);
+    this.titleElement.appendChild(addButton);
+
+    this.urlInputElement = document.createElement("span");
+    this.urlInputElement.className = "breakpoint-condition editing";
+}
+
+WebInspector.XHRBreakpointsSidebarPane.prototype = {
+    _showEditBreakpointDialog: function(event)
+    {
+        event.stopPropagation();
+
+        if (this.urlInputElement.parentElement)
+            return;
+
+        this.urlInputElement.textContent = "";
+        this.bodyElement.insertBefore(this.urlInputElement, this.bodyElement.firstChild);
+        WebInspector.startEditing(this.urlInputElement, this._hideEditBreakpointDialog.bind(this, false), this._hideEditBreakpointDialog.bind(this, true));
+    },
+
+    _hideEditBreakpointDialog: function(discard)
+    {
+        if (!discard)
+            WebInspector.breakpointManager.createXHRBreakpoint(this.urlInputElement.textContent.toLowerCase());
+        this.bodyElement.removeChild(this.urlInputElement);
+    }
+}
+
+WebInspector.XHRBreakpointsSidebarPane.prototype.__proto__ = WebInspector.BreakpointsSidebarPane.prototype;
+
 WebInspector.BreakpointItem = function(breakpoint)
 {
     this._breakpoint = breakpoint;
@@ -116,6 +152,11 @@ WebInspector.BreakpointItem.prototype = {
         return this._element;
     },
 
+    compareTo: function(other)
+    {
+        return this._breakpoint.compareTo(other._breakpoint);
+    },
+
     remove: function()
     {
         this._breakpoint.remove();
@@ -125,7 +166,7 @@ WebInspector.BreakpointItem.prototype = {
     {
         this._breakpoint.enabled = !this._breakpoint.enabled;
 
-        // without this, we'd switch to the source of the clicked breakpoint
+        // Breakpoint element may have it's own click handler.
         event.stopPropagation();
     },
 
@@ -133,6 +174,10 @@ WebInspector.BreakpointItem.prototype = {
     {
         var checkbox = this._element.firstChild;
         checkbox.checked = this._breakpoint.enabled;
+    },
+
+    _breakpointClicked: function(event)
+    {
     }
 }
 
@@ -155,15 +200,6 @@ WebInspector.JSBreakpointItem = function(breakpoint)
 }
 
 WebInspector.JSBreakpointItem.prototype = {
-    compareTo: function(other)
-    {
-        if (this._breakpoint.url != other._breakpoint.url)
-            return this._breakpoint.url < other._breakpoint.url ? -1 : 1;
-        if (this._breakpoint.line != other._breakpoint.line)
-            return this._breakpoint.line < other._breakpoint.line ? -1 : 1;
-        return 0;
-    },
-
     _breakpointClicked: function()
     {
         WebInspector.panels.scripts.showSourceLine(this._breakpoint.url, this._breakpoint.line);
@@ -191,13 +227,6 @@ WebInspector.DOMBreakpointItem = function(breakpoint)
 }
 
 WebInspector.DOMBreakpointItem.prototype = {
-    compareTo: function(other)
-    {
-        if (this._breakpoint.type != other._breakpoint.type)
-            return this._breakpoint.type < other._breakpoint.type ? -1 : 1;
-        return 0;
-    },
-
     _breakpointClicked: function()
     {
         WebInspector.updateFocusedNode(this._breakpoint.nodeId);
@@ -205,3 +234,13 @@ WebInspector.DOMBreakpointItem.prototype = {
 }
 
 WebInspector.DOMBreakpointItem.prototype.__proto__ = WebInspector.BreakpointItem.prototype;
+
+WebInspector.XHRBreakpointItem = function(breakpoint)
+{
+    WebInspector.BreakpointItem.call(this, breakpoint);
+
+    var label = document.createTextNode(this._breakpoint.formatLabel());
+    this._element.appendChild(label);
+}
+
+WebInspector.XHRBreakpointItem.prototype.__proto__ = WebInspector.BreakpointItem.prototype;

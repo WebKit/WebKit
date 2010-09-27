@@ -219,6 +219,17 @@ var WebInspector = {
         return pane;
     },
 
+    createXHRBreakpointsSidebarPane: function()
+    {
+        var pane = new WebInspector.XHRBreakpointsSidebarPane();
+        function breakpointAdded(event)
+        {
+            pane.addBreakpoint(new WebInspector.XHRBreakpointItem(event.data));
+        }
+        WebInspector.breakpointManager.addEventListener("xhr-breakpoint-added", breakpointAdded);
+        return pane;
+    },
+
     _createPanels: function()
     {
         var hiddenPanels = (InspectorFrontendHost.hiddenPanels() || "").split(',');

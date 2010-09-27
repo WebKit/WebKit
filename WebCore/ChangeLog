@@ -1,3 +1,60 @@
+2010-09-24  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: add XHR breakpoints sidebar pane to front-end
+        https://bugs.webkit.org/show_bug.cgi?id=46483
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.gypi:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::instrumentWillSendXMLHttpRequestImpl):
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager):
+        (WebInspector.BreakpointManager.prototype._setBreakpointOnBackend):
+        (WebInspector.BreakpointManager.prototype.createXHRBreakpoint):
+        (WebInspector.BreakpointManager.prototype._xhrBreakpointRemoved):
+        (WebInspector.Breakpoint.prototype.compareTo):
+        (WebInspector.XHRBreakpoint):
+        (WebInspector.XHRBreakpoint.prototype.get enabled):
+        (WebInspector.XHRBreakpoint.prototype.set enabled):
+        (WebInspector.XHRBreakpoint.prototype.get url):
+        (WebInspector.XHRBreakpoint.prototype.formatLabel):
+        (WebInspector.XHRBreakpoint.prototype.compareTo):
+        (WebInspector.XHRBreakpoint.prototype.remove):
+        (WebInspector.XHRBreakpoint.prototype._setOnBackend.didSet):
+        (WebInspector.XHRBreakpoint.prototype._setOnBackend):
+        (WebInspector.XHRBreakpoint.prototype._removeFromBackend):
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.XHRBreakpointsSidebarPane):
+        (WebInspector.XHRBreakpointsSidebarPane.prototype._showEditBreakpointDialog):
+        (WebInspector.XHRBreakpointsSidebarPane.prototype._hideEditBreakpointDialog):
+        (WebInspector.BreakpointItem.prototype.compareTo):
+        (WebInspector.BreakpointItem.prototype._checkboxClicked):
+        (WebInspector.BreakpointItem.prototype._enableChanged):
+        (WebInspector.BreakpointItem.prototype._breakpointClicked):
+        (WebInspector.XHRBreakpointItem):
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane.prototype.updateStatus.formatters.s):
+        (WebInspector.CallStackSidebarPane.prototype.updateStatus.append):
+        (WebInspector.CallStackSidebarPane.prototype.updateStatus):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMBreakpoint.prototype.compareTo):
+        * inspector/front-end/Images/paneAddButtons.png: Added.
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype.reset):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        (.pane > .title > button.add):
+        (.pane > .title > button.add:hover):
+        (.pane > .title > button.add:active):
+        (.pane > .body .breakpoint-condition):
+        * inspector/front-end/inspector.js:
+        (WebInspector.createXHRBreakpointsSidebarPane.breakpointAdded):
+        (WebInspector.createXHRBreakpointsSidebarPane):
+
 2010-09-27  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

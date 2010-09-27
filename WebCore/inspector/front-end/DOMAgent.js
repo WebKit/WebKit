@@ -874,6 +874,13 @@ WebInspector.DOMBreakpoint.prototype = {
         this.dispatchEventToListeners("enable-changed");
     },
 
+    compareTo: function(other)
+    {
+        if (this.type != other.type)
+            return this.type < other.type ? -1 : 1;
+        return 0;
+    },
+
     remove: function()
     {
         if (this.enabled)

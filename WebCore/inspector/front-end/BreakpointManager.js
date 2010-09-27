@@ -27,6 +27,7 @@
 WebInspector.BreakpointManager = function()
 {
     this._breakpoints = {};
+    this._xhrBreakpoints = {};
 }
 
 WebInspector.BreakpointManager.prototype = {
@@ -124,6 +125,22 @@ WebInspector.BreakpointManager.prototype = {
             }
         }
         InspectorBackend.setBreakpoint(breakpoint.sourceID, breakpoint.line, breakpoint.enabled, breakpoint.condition, didSetBreakpoint.bind(this));
+    },
+
+    createXHRBreakpoint: function(url)
+    {
+        if (url in this._xhrBreakpoints)
+            return;
+        this._xhrBreakpoints[url] = true;
+
+        var breakpoint = new WebInspector.XHRBreakpoint(url);
+        breakpoint.addEventListener("removed", this._xhrBreakpointRemoved.bind(this));
+        this.dispatchEventToListeners("xhr-breakpoint-added", breakpoint);
+    },
+
+    _xhrBreakpointRemoved: function(event)
+    {
+        delete this._xhrBreakpoints[event.target.url];
     }
 }
 
@@ -189,6 +206,15 @@ WebInspector.Breakpoint.prototype = {
         this.dispatchEventToListeners("condition-changed");
     },
 
+    compareTo: function(other)
+    {
+        if (this.url != other.url)
+            return this.url < other.url ? -1 : 1;
+        if (this.line != other.line)
+            return this.line < other.line ? -1 : 1;
+        return 0;
+    },
+
     remove: function()
     {
         InspectorBackend.removeBreakpoint(this.sourceID, this.line);
@@ -199,3 +225,83 @@ WebInspector.Breakpoint.prototype = {
 }
 
 WebInspector.Breakpoint.prototype.__proto__ = WebInspector.Object.prototype;
+
+WebInspector.XHRBreakpoint = function(url)
+{
+    this._url = url;
+    this._locked = false;
+    this.enabled = true;
+}
+
+WebInspector.XHRBreakpoint.prototype = {
+    get enabled()
+    {
+        return "_id" in this;
+    },
+
+    set enabled(enabled)
+    {
+        if (this._locked)
+            return;
+        if (this.enabled === enabled)
+            return;
+        if (enabled)
+            this._setOnBackend();
+        else
+            this._removeFromBackend();
+    },
+
+    get url()
+    {
+        return this._url;
+    },
+
+    formatLabel: function()
+    {
+        var label = "";
+        if (!this.url.length)
+            label = WebInspector.UIString("Any XHR");
+        else
+            label = WebInspector.UIString("URL contains \"%s\"", this.url);
+        return label;
+    },
+
+    compareTo: function(other)
+    {
+        if (this.url != other.url)
+            return this.url < other.url ? -1 : 1;
+        return 0;
+    },
+
+    remove: function()
+    {
+        if (this._locked)
+            return;
+        if (this.enabled)
+            this._removeFromBackend();
+        this.dispatchEventToListeners("removed");
+    },
+
+    _setOnBackend: function()
+    {
+        this._locked = true;
+        var data = { type: "XHR", condition: { url: this.url } };
+        InspectorBackend.setNativeBreakpoint(data, didSet.bind(this));
+
+        function didSet(breakpointId)
+        {
+            this._locked = false;
+            this._id = breakpointId;
+            this.dispatchEventToListeners("enable-changed");
+        }
+    },
+
+    _removeFromBackend: function()
+    {
+        InspectorBackend.removeNativeBreakpoint(this._id);
+        delete this._id;
+        this.dispatchEventToListeners("enable-changed");
+    }
+}
+
+WebInspector.XHRBreakpoint.prototype.__proto__ = WebInspector.Object.prototype;

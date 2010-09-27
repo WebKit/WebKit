@@ -70,8 +70,7 @@ enum TimelineRecordType {
     GCEventTimelineRecordType = 17,
     MarkDOMContentEventType = 18,
     MarkLoadEventType = 19,
-    ScheduleResourceRequestTimelineRecordType = 20,
-    XHRSendRecordType = 21
+    ScheduleResourceRequestTimelineRecordType = 20
 };
 
 class InspectorTimelineAgent : public Noncopyable {
