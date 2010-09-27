@@ -1,3 +1,12 @@
+2010-09-26  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Adam Barth.
+
+        [Chromium] storage/indexeddb/transaction-basics.html is expected to fail but actually passes.
+        https://bugs.webkit.org/show_bug.cgi?id=46484
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-26  Shane Stephens  <shanestephens@google.com>
 
         Reviewed by Adam Barth.

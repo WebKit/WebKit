@@ -3125,9 +3125,6 @@ BUGWK46163 : media/video-controls-with-mutation-event-handler.html = CRASH
 
 BUGWK46328 : fast/filesystem/flags-passing.html = TEXT
 
-// Started crashing as part of the WK roll 68100:68178.
-BUG56732 : storage/indexeddb/transaction-basics.html = CRASH
-
 BUG_AUTO LINUX WIN DEBUG : animations/suspend-resume-animation.html = PASS TEXT
 BUG_AUTO LINUX RELEASE : animations/3d/transform-origin-vs-functions.html = PASS TEXT
 BUG_AUTO WIN DEBUG : animations/3d/transform-origin-vs-functions.html = PASS TEXT
