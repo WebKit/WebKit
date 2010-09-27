@@ -1,13 +1,13 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x462
-  RenderBlock {html} at (0,0) size 800x462
-    RenderBody {body} at (8,16) size 784x438
-      RenderBlock {p} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 676x20
-          text run at (0,0) width 676: "The svg area contained in the div element (red box), should fill out the whole area with a green shaped path"
-      RenderBlock {div} at (0,36) size 402x402 [border: (1px solid #FF0000)]
-        RenderSVGRoot {svg} at (27,69) size 364x364
-          RenderSVGViewportContainer {svg} at (27,69) size 364x366
-            RenderPath {path} at (27,69) size 364x366 [fill={[type=SOLID] [color=#008000]}] [data="M143.00,103.00 L143.00,117.00 C143.00,130.91,112.55,142.18,75.00,142.18 C37.45,142.18,7.00,130.91,7.00,117.00 L7.00,117.00 L7.00,103.00 C7.00,89.09,37.45,77.82,75.00,77.82 C112.55,77.82,143.00,89.09,143.00,103.00 L52.00,72.00 C34.31,70.66,20.85,55.57,21.52,37.84 C22.20,20.12,36.76,6.09,54.50,6.09 C72.24,6.09,86.80,20.12,87.48,37.84 C88.15,55.57,74.69,70.66,57.00,72.00"]
+layer at (0,0) size 800x461
+  RenderBlock {html} at (0,0) size 800x461
+    RenderBody {body} at (8,16) size 784x437
+      RenderBlock {p} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 641x19
+          text run at (0,0) width 641: "The svg area contained in the div element (red box), should fill out the whole area with a green shaped path"
+      RenderBlock {div} at (0,35) size 402x402 [border: (1px solid #FF0000)]
+        RenderSVGRoot {svg} at (27,68) size 364x364
+          RenderSVGViewportContainer {svg} at (27,68) size 364x366
+            RenderPath {path} at (27,68) size 364x366 [fill={[type=SOLID] [color=#008000]}] [data="M143.00,103.00 L143.00,117.00 C143.00,130.91,112.55,142.18,75.00,142.18 C37.45,142.18,7.00,130.91,7.00,117.00 L7.00,117.00 L7.00,103.00 C7.00,89.09,37.45,77.82,75.00,77.82 C112.55,77.82,143.00,89.09,143.00,103.00 L52.00,72.00 C34.31,70.66,20.85,55.57,21.52,37.84 C22.20,20.12,36.76,6.09,54.50,6.09 C72.24,6.09,86.80,20.12,87.48,37.84 C88.15,55.57,74.69,70.66,57.00,72.00"]
         RenderText {#text} at (0,0) size 0x0

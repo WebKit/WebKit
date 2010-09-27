@@ -1,3 +1,27 @@
+2010-09-27  Martin Robinson  <mrobinson@igalia.com>
+
+        Rebaseline some tests where results differ between my machines
+        and the bots. Also skip two tests which, combined with r68406
+        exposed existing bugs.
+
+        * platform/gtk/Skipped: Skip two tests with recently exposed bugs.
+        * platform/gtk/fast/events/keydown-1-expected.txt:
+        * platform/gtk/fast/frames/onlyCommentInIFrame-expected.txt:
+        * platform/gtk/media/audio-controls-rendering-expected.txt:
+        * platform/gtk/media/audio-no-installed-engines-expected.txt:
+        * platform/gtk/media/controls-after-reload-expected.txt:
+        * platform/gtk/media/controls-strict-expected.txt:
+        * platform/gtk/media/video-display-toggle-expected.txt:
+        * platform/gtk/media/video-empty-source-expected.txt:
+        * platform/gtk/media/video-no-audio-expected.txt:
+        * platform/gtk/media/video-replaces-poster-expected.txt:
+        * platform/gtk/media/video-zoom-expected.txt:
+        * platform/gtk/svg/batik/paints/patternRegions-positioned-objects-expected.txt:
+        * platform/gtk/svg/custom/relative-sized-inner-svg-expected.txt:
+        * platform/gtk/svg/custom/relative-sized-use-without-attributes-on-symbol-expected.txt:
+        * platform/gtk/svg/zoom/page/zoom-coords-viewattr-01-b-expected.txt:
+        * platform/gtk/svg/zoom/text/zoom-coords-viewattr-01-b-expected.txt:
+
 2010-09-27  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
