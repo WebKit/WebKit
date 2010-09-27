@@ -1,3 +1,15 @@
+2010-09-26  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [Chromium] Remove no longer used WebView member functions
+        https://bugs.webkit.org/show_bug.cgi?id=46515
+        
+        With http://crrev.com/60526 there's no longer any Chromium code calling
+        the non-static versions of addUserScript and addUserStyleSheet.
+
+        * public/WebView.h:
+
 2010-09-25  Nicolas Weber  <thakis@chromium.org>
 
         Reviewed by James Robinson.

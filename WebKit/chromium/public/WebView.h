@@ -317,18 +317,6 @@ public:
                                     unsigned inactiveForegroundColor) = 0;
 
     // User scripts --------------------------------------------------------
-    // FIXME: These two methods are DEPRECATED. Remove once Chromium has been rolled.
-    virtual void addUserScript(const WebString& sourceCode, bool runAtStart)
-    {
-        addUserScript(sourceCode, WebVector<WebString>(),
-                      runAtStart ? UserScriptInjectAtDocumentStart : UserScriptInjectAtDocumentEnd,
-                      UserContentInjectInAllFrames);
-    }
-    virtual void addUserStyleSheet(const WebString& sourceCode)
-    {
-        addUserStyleSheet(sourceCode, WebVector<WebString>(), UserContentInjectInAllFrames);
-    }
-
     WEBKIT_API static void addUserScript(const WebString& sourceCode,
                                          const WebVector<WebString>& patterns,
                                          UserScriptInjectAt injectAt,
