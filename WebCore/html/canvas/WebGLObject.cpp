@@ -49,10 +49,8 @@ WebGLObject::~WebGLObject()
 
 void WebGLObject::setObject(Platform3DObject object)
 {
-    if (object == m_object)
-        return;
-        
-    deleteObject();
+    // object==0 && m_deleted==false indicating an uninitialized state;
+    ASSERT(!m_object && !m_deleted);
     m_object = object;
 }
 

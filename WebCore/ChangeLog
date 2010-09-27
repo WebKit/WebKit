@@ -1,3 +1,41 @@
+2010-09-14  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Textures and renderbuffers should be detached first before deletion if they are attached to framebuffers
+        https://bugs.webkit.org/show_bug.cgi?id=43942
+
+        Test: fast/canvas/webgl/object-deletion-behaviour.html
+
+        * html/canvas/WebGLBuffer.cpp:
+        (WebCore::WebGLBuffer::deleteObjectImpl): Delete the object only once.
+        * html/canvas/WebGLFramebuffer.cpp: Use RefPtr for attachment WebGLObjects.
+        (WebCore::WebGLFramebuffer::WebGLFramebuffer):
+        (WebCore::WebGLFramebuffer::removeAttachment): Remove an attachment data ref.
+        (WebCore::WebGLFramebuffer::onAttachedObjectChange):
+        (WebCore::WebGLFramebuffer::getColorBufferFormat):
+        (WebCore::WebGLFramebuffer::deleteObjectImpl):
+        (WebCore::WebGLFramebuffer::initializeRenderbuffers):
+        * html/canvas/WebGLFramebuffer.h: Declare removeAttachment().
+        * html/canvas/WebGLObject.cpp:
+        (WebCore::WebGLObject::setObject): Make it protected and can only be called when initializing.
+        * html/canvas/WebGLObject.h:
+        (WebCore::WebGLObject::onDetached): Fix a bug.
+        (WebCore::WebGLObject::isDeleted): Expose the delete flag.
+        * html/canvas/WebGLProgram.cpp:
+        (WebCore::WebGLProgram::deleteObjectImpl): Detach shaders when deleting a program.
+        * html/canvas/WebGLRenderbuffer.cpp:
+        (WebCore::WebGLRenderbuffer::deleteObjectImpl): Delete the object only once.
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::deleteFramebuffer): Bind to internal fbo when deleting the currently-bound fbo.
+        (WebCore::WebGLRenderingContext::deleteRenderbuffer): Remove renderbuffer from currently-bound fbo upon deletion.
+        (WebCore::WebGLRenderingContext::deleteTexture): Remove texture from currently-bound fbo upon deletion.
+        (WebCore::WebGLRenderingContext::useProgram): Fix a condition.
+        * html/canvas/WebGLShader.cpp:
+        (WebCore::WebGLShader::deleteObjectImpl): Delete the object only once.
+        * html/canvas/WebGLTexture.cpp:
+        (WebCore::WebGLTexture::deleteObjectImpl): Ditto.
+
 2010-09-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Antonio Gomes.

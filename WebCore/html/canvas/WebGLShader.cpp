@@ -47,7 +47,8 @@ WebGLShader::WebGLShader(WebGLRenderingContext* ctx, GraphicsContext3D::WebGLEnu
 
 void WebGLShader::deleteObjectImpl(Platform3DObject object)
 {
-    context()->graphicsContext3D()->deleteShader(object);
+    if (!isDeleted())
+        context()->graphicsContext3D()->deleteShader(object);
 }
 
 }

@@ -44,6 +44,8 @@ public:
     bool isDepthStencilAttached() const { return (m_depthStencilAttachment && m_depthStencilAttachment->object()); }
 
     void setAttachment(unsigned long, WebGLObject*);
+    // If an object is attached to the framebuffer, remove it.
+    void removeAttachment(WebGLObject*);
 
     // This function is called right after a framebuffer is bound.
     // Because renderbuffers and textures attached to the framebuffer might
@@ -71,12 +73,10 @@ private:
     void setInitialized(WebGLObject*);
     void initializeRenderbuffers();
 
-    // These objects are kept alive by the global table in
-    // WebGLRenderingContext.
-    WebGLObject* m_colorAttachment;
-    WebGLObject* m_depthAttachment;
-    WebGLObject* m_stencilAttachment;
-    WebGLObject* m_depthStencilAttachment;
+    RefPtr<WebGLObject> m_colorAttachment;
+    RefPtr<WebGLObject> m_depthAttachment;
+    RefPtr<WebGLObject> m_stencilAttachment;
+    RefPtr<WebGLObject> m_depthStencilAttachment;
 };
 
 } // namespace WebCore

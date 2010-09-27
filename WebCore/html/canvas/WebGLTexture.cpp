@@ -29,6 +29,7 @@
 
 #include "WebGLTexture.h"
 
+#include "WebGLFramebuffer.h"
 #include "WebGLRenderingContext.h"
 
 namespace WebCore {
@@ -201,7 +202,8 @@ bool WebGLTexture::needToUseBlackTexture() const
 
 void WebGLTexture::deleteObjectImpl(Platform3DObject object)
 {
-    context()->graphicsContext3D()->deleteTexture(object);
+    if (!isDeleted())
+        context()->graphicsContext3D()->deleteTexture(object);
 }
 
 int WebGLTexture::mapTargetToIndex(unsigned long target)

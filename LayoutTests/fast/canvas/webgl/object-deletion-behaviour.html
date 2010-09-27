@@ -1,0 +1,82 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+<script src="resources/webgl-test-utils.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Tests deletion behavior for texture, renderbuffer, shader, and program");
+
+var wtu = WebGLTestUtils;
+var gl = wtu.create3DContext();
+var shouldGenerateGLError = wtu.shouldGenerateGLError;
+
+debug("");
+debug("shader and program deletion");
+
+var vertexShader = wtu.loadStandardVertexShader(gl);
+assertMsg(vertexShader, "vertex shader loaded");
+var fragmentShader = wtu.loadStandardFragmentShader(gl);
+assertMsg(fragmentShader, "fragment shader loaded");
+
+var program = gl.createProgram();
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.attachShader(program, vertexShader)");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.attachShader(program, fragmentShader)");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.linkProgram(program)");
+shouldBeTrue("gl.getProgramParameter(program, gl.LINK_STATUS)");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.useProgram(program)");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.deleteShader(vertexShader)");
+shouldBeTrue("gl.isShader(vertexShader)");
+shouldBeTrue("gl.getShaderParameter(vertexShader, gl.DELETE_STATUS)");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.detachShader(program, vertexShader)");
+shouldBeFalse("gl.isShader(vertexShader)");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.deleteShader(fragmentShader)");
+shouldBeTrue("gl.isShader(fragmentShader)");
+shouldBeTrue("gl.getShaderParameter(fragmentShader, gl.DELETE_STATUS)");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.deleteProgram(program)");
+shouldBeTrue("gl.isProgram(program)");
+shouldBeTrue("gl.getProgramParameter(program, gl.DELETE_STATUS)");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.useProgram(null)");
+shouldBeFalse("gl.isProgram(program)");
+shouldBeFalse("gl.isShader(fragmentShader)");
+
+debug("");
+debug("texture deletion");
+
+var fbo = gl.createFramebuffer();
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)");
+
+var tex = gl.createTexture();
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.bindTexture(gl.TEXTURE_2D, tex)");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0)");
+shouldBe("gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME)", "tex");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.deleteTexture(tex)");
+// Deleting a texture bound to the currently-bound fbo is the same as
+// detaching the textue from fbo first, then delete the texture.
+shouldBeNull("gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME)");
+shouldBeFalse("gl.isTexture(tex)");
+
+debug("");
+debug("renderbuffer deletion");
+
+var rbo = gl.createRenderbuffer();
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.bindRenderbuffer(gl.RENDERBUFFER, rbo)");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, rbo)");
+shouldBe("gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME)", "rbo");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.deleteRenderbuffer(rbo)");
+// Deleting a renderbuffer bound to the currently-bound fbo is the same as
+// detaching the renderbuffer from fbo first, then delete the renderbuffer.
+shouldBeNull("gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME)");
+shouldBeFalse("gl.isRenderbuffer(rbo)");
+
+successfullyParsed = true;
+</script>
+
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

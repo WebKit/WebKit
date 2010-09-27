@@ -1,0 +1,48 @@
+Tests deletion behavior for texture, renderbuffer, shader, and program
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+shader and program deletion
+PASS vertex shader loaded
+PASS fragment shader loaded
+PASS gl.attachShader(program, vertexShader) was expected value: NO_ERROR.
+PASS gl.attachShader(program, fragmentShader) was expected value: NO_ERROR.
+PASS gl.linkProgram(program) was expected value: NO_ERROR.
+PASS gl.getProgramParameter(program, gl.LINK_STATUS) is true
+PASS gl.useProgram(program) was expected value: NO_ERROR.
+PASS gl.deleteShader(vertexShader) was expected value: NO_ERROR.
+PASS gl.isShader(vertexShader) is true
+PASS gl.getShaderParameter(vertexShader, gl.DELETE_STATUS) is true
+PASS gl.detachShader(program, vertexShader) was expected value: NO_ERROR.
+PASS gl.isShader(vertexShader) is false
+PASS gl.deleteShader(fragmentShader) was expected value: NO_ERROR.
+PASS gl.isShader(fragmentShader) is true
+PASS gl.getShaderParameter(fragmentShader, gl.DELETE_STATUS) is true
+PASS gl.deleteProgram(program) was expected value: NO_ERROR.
+PASS gl.isProgram(program) is true
+PASS gl.getProgramParameter(program, gl.DELETE_STATUS) is true
+PASS gl.useProgram(null) was expected value: NO_ERROR.
+PASS gl.isProgram(program) is false
+PASS gl.isShader(fragmentShader) is false
+
+texture deletion
+PASS gl.bindFramebuffer(gl.FRAMEBUFFER, fbo) was expected value: NO_ERROR.
+PASS gl.bindTexture(gl.TEXTURE_2D, tex) was expected value: NO_ERROR.
+PASS gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0) was expected value: NO_ERROR.
+PASS gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is tex
+PASS gl.deleteTexture(tex) was expected value: NO_ERROR.
+PASS gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is null
+PASS gl.isTexture(tex) is false
+
+renderbuffer deletion
+PASS gl.bindRenderbuffer(gl.RENDERBUFFER, rbo) was expected value: NO_ERROR.
+PASS gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, rbo) was expected value: NO_ERROR.
+PASS gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is rbo
+PASS gl.deleteRenderbuffer(rbo) was expected value: NO_ERROR.
+PASS gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is null
+PASS gl.isRenderbuffer(rbo) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

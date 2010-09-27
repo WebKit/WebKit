@@ -1,3 +1,13 @@
+2010-09-14  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Textures and renderbuffers should be detached first before deletion if they are attached to framebuffers
+        https://bugs.webkit.org/show_bug.cgi?id=43942
+
+        * fast/canvas/webgl/object-deletion-behaviour-expected.txt: Added.
+        * fast/canvas/webgl/object-deletion-behaviour.html: Added.
+
 2010-09-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Antonio Gomes.

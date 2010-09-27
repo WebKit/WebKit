@@ -40,7 +40,6 @@ public:
     virtual ~WebGLObject();
 
     Platform3DObject object() const { return m_object; }
-    void setObject(Platform3DObject);
     void deleteObject();
 
     void detachContext()
@@ -64,13 +63,22 @@ public:
         if (m_attachmentCount)
             --m_attachmentCount;
         if (!m_attachmentCount && m_deleted)
-            m_object = 0;
+            deleteObject();
     }
     unsigned getAttachmentCount() { return m_attachmentCount; }
 
 protected:
     WebGLObject(WebGLRenderingContext*);
+
+    // setObject should be only called once right after creating a WebGLObject.
+    void setObject(Platform3DObject);
+
+    // deleteObjectImpl() may be called multiple times for the same object;
+    // isDeleted() needs to be tested in implementations when deciding whether
+    // to delete the OpenGL resource.
     virtual void deleteObjectImpl(Platform3DObject) = 0;
+    bool isDeleted() { return m_deleted; }
+    void setDeteled() { m_deleted = true; }
 
 private:
     Platform3DObject m_object;
