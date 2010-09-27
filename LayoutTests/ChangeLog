@@ -1,3 +1,9 @@
+2010-09-27  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Unreviewed, updating chromium test_expectations for passing tests.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-27  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dave Hyatt.
