@@ -57,7 +57,7 @@ typedef PlatformWidget PlatformPluginWidget;
 #include <QPixmap>
 #endif
 #endif
-#if PLATFORM(QT) && defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO == 5)
+#if PLATFORM(QT) && defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO >= 5)
 #include <QImage>
 class QPainter;
 #endif
@@ -402,7 +402,7 @@ private:
         void initXEvent(XEvent* event);
 #endif
 
-#if PLATFORM(QT) && defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO == 5)
+#if PLATFORM(QT) && defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO >= 5)
         QImage m_image;
         bool m_renderToImage;
         void paintUsingImageSurfaceExtension(QPainter* painter, const IntRect& exposedRect);

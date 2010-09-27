@@ -678,7 +678,7 @@ NPError PluginView::setValue(NPPVariable variable, void* value)
     }
 #endif // defined(XP_MACOSX)
 
-#if PLATFORM(QT) && defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO == 5)
+#if PLATFORM(QT) && defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO >= 5)
     case NPPVpluginWindowlessLocalBool:
         m_renderToImage = true;
         return NPERR_NO_ERROR;
@@ -873,7 +873,7 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
     , m_colormap(0)
     , m_pluginDisplay(0)
 #endif
-#if PLATFORM(QT) && defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO == 5)
+#if PLATFORM(QT) && defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO >= 5)
     , m_renderToImage(false)
 #endif
     , m_loadManually(loadManually)

@@ -115,7 +115,7 @@ void PluginView::updatePluginWidget()
         return;
 
     if (!m_isWindowed && m_windowRect.size() != oldWindowRect.size()) {
-#if defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO == 5)
+#if defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO >= 5)
         // On Maemo5, Flash always renders to 16-bit buffer
         if (m_renderToImage)
             m_image = QImage(m_windowRect.width(), m_windowRect.height(), QImage::Format_RGB16);
@@ -172,7 +172,7 @@ void PluginView::hide()
     Widget::hide();
 }
 
-#if defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO == 5)
+#if defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO >= 5)
 void PluginView::paintUsingImageSurfaceExtension(QPainter* painter, const IntRect& exposedRect)
 {
     NPImageExpose imageExpose;
@@ -253,7 +253,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
         return;
 
     if (!m_drawable
-#if defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO == 5)
+#if defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO >= 5)
         && m_image.isNull()
 #endif
        )
@@ -264,7 +264,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     exposedRect.intersect(frameRect());
     exposedRect.move(-frameRect().x(), -frameRect().y());
 
-#if defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO == 5)
+#if defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO >= 5)
     if (!m_image.isNull()) {
         paintUsingImageSurfaceExtension(painter, exposedRect);
         return;
@@ -697,7 +697,7 @@ bool PluginView::platformGetValueStatic(NPNVariable variable, void* value, NPErr
         *result = NPERR_NO_ERROR;
         return true;
 
-#if defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO == 5)
+#if defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO >= 5)
     case NPNVSupportsWindowlessLocal:
         *static_cast<NPBool*>(value) = true;
         *result = NPERR_NO_ERROR;

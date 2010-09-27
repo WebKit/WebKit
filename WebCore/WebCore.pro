@@ -2708,6 +2708,9 @@ contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
                 maemo5 {
                     DEFINES += MOZ_PLATFORM_MAEMO=5
                 }
+                contains(DEFINES, Q_WS_MAEMO_6) {
+                    DEFINES += MOZ_PLATFORM_MAEMO=6
+                }
                 SOURCES += \
                     plugins/qt/PluginContainerQt.cpp \
                     plugins/qt/PluginPackageQt.cpp \

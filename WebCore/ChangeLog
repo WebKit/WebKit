@@ -1,3 +1,22 @@
+2010-09-27  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Enable local rendering of NPAPI plugins on Maemo6.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46618
+
+        * WebCore.pro:
+        * bridge/npapi.h:
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::setValue):
+        (WebCore::PluginView::PluginView):
+        * plugins/PluginView.h:
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::platformGetValueStatic):
+
 2010-09-27  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

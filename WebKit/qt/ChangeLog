@@ -1,3 +1,14 @@
+2010-09-27  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Antonio Gomes.
+
+        Enable local rendering of NPAPI plugins on Maemo6.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46618
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createPlugin):
+
 2010-09-27  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Andreas Kling.
