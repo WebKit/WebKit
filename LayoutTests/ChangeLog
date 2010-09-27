@@ -1,3 +1,16 @@
+2010-09-27  James Kozianski  <koz@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [Chromium] fast/dom/anchor-origin.html failing since r68354
+        https://bugs.webkit.org/show_bug.cgi?id=46597
+
+        Adding expectations needed for Chrome due to URL parsing differences
+        between KURL and GURL. Once a spec for URL parsing is defined we can
+        update these expectations to conform to it.
+
+        * platform/chromium/fast/dom/anchor-origin-expected.txt: Added.
+
 2010-09-26  Jenn Braithwaite  <jennb@chromium.org>
 
         Reviewed by Adam Barth.
