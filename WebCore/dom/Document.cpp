@@ -3913,7 +3913,7 @@ bool Document::queryCommandIndeterm(const String& commandName)
 
 bool Document::queryCommandState(const String& commandName)
 {
-    return command(this, commandName).state() != FalseTriState;
+    return command(this, commandName).state() == TrueTriState;
 }
 
 bool Document::queryCommandSupported(const String& commandName)

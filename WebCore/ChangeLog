@@ -1,3 +1,26 @@
+2010-09-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        stateStyle (@EditorCommand.cpp) should ask EditingBehavior for platform specific behavior
+        https://bugs.webkit.org/show_bug.cgi?id=41989
+
+        queryCommandState returns true even when in the mixed state
+        https://bugs.webkit.org/show_bug.cgi?id=46382
+
+        Fixed stateStyle so that it calls selectionStartHasStyle when shouldToggleStyleBasedOnStartOfSelection
+        is true (Mac platforms) and calls selectionHasStyle otherwise (non-Mac platforms).
+
+        Also fixed queryCommandState so that it only returns true when the state is TrueTriState
+        as supposed to returning true whenever the state is not FalseTriState. New behavior matches that of
+        other browsers such as Firefox and Internet Explorer.
+
+        * dom/Document.cpp:
+        (WebCore::Document::queryCommandState):
+        * editing/EditorCommand.cpp:
+        (WebCore::executeToggleStyle):
+        (WebCore::stateStyle):
+
 2010-09-27  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
