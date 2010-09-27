@@ -1,3 +1,38 @@
+2010-09-27  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Added chromium expectations for SVGFEBlendElement* tests.
+
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEBlendElement-dom-in-attr-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEBlendElement-dom-in-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-in-attr-expected.checksum: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr-expected.checksum: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr-expected.checksum: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop-expected.checksum: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop-expected.checksum: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEBlendElement-dom-in-attr-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEBlendElement-dom-in-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop-expected.png: Added.
+
 2010-09-27  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, unskip fixed test. See also r68126
