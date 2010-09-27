@@ -1,3 +1,16 @@
+2010-09-24  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] remove unused gtk WebScreenInfoFactory
+        https://bugs.webkit.org/show_bug.cgi?id=46526
+
+        AFAICT these files aren't referenced in code or by gyp.
+
+        * WebKit.gyp: Remove duplicate filename.
+        * public/gtk/WebScreenInfoFactory.h: Removed.
+        * src/gtk/WebScreenInfoFactory.cpp: Removed.
+
 2010-09-26  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.

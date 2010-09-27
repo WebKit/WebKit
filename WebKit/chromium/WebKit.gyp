@@ -277,7 +277,6 @@
                 'public/win/WebInputEventFactory.h',
                 'public/win/WebSandboxSupport.h',
                 'public/win/WebScreenInfoFactory.h',
-                'public/win/WebScreenInfoFactory.h',
                 'src/ApplicationCacheHost.cpp',
                 'src/ApplicationCacheHostInternal.h',
                 'src/AssertMatchingEnums.cpp',
