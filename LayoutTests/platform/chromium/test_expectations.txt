@@ -3138,3 +3138,6 @@ BUGWK46557 : animations/opacity-transform-animation.html = IMAGE
 // nodesFromRect() removed from Document.idl and test skipped on other platforms at r68345.
 BUGWK46596 : fast/dom/nodesFromRect-basic.html = TIMEOUT
 
+// Possibly regressed within 68216:68246 (flakiness rate increased)
+BUG57056 LINUX : svg/custom/clip-path-referencing-use2.svg = PASS FAIL
+BUG57056 LINUX : svg/custom/circular-marker-reference-4.svg = PASS FAIL
