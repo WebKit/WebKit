@@ -1,3 +1,15 @@
+2010-09-27  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] tst_QWebFrame::popupFocus() randomly fail on MeeGo handset because the focus is not set on the window
+        https://bugs.webkit.org/show_bug.cgi?id=46617
+
+        This patch avoid the race condition by waiting for the window
+        to be mapped on screen before attempting any actions.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2010-09-24  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
