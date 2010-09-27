@@ -1,3 +1,12 @@
+2010-09-27  İsmail Dönmez  <ismail@namtrac.org>
+
+        Reviewed by Andreas Kling.
+
+        Add PluginView::setJavaScriptPaused(bool) stub for WinCE.
+
+        * platform/qt/TemporaryLinkStubsQt.cpp:
+        (PluginView::setJavaScriptPaused):
+
 2010-09-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Dirk Schulze.
