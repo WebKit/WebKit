@@ -85,6 +85,8 @@ private:
     void launchProcess();
     void didFinishLaunchingProcess(PlatformProcessIdentifier, CoreIPC::Connection::Identifier);
 
+    void platformInvalidate();
+
     Client* m_client;
 
     const LaunchOptions m_launchOptions;

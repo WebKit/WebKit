@@ -62,6 +62,7 @@ void ProcessLauncher::didFinishLaunchingProcess(PlatformProcessIdentifier proces
 void ProcessLauncher::invalidate()
 {
     m_client = 0;
+    platformInvalidate();
 }
 
 const char* ProcessLauncher::processTypeAsString(ProcessType processType)

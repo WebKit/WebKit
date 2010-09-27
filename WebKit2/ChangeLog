@@ -1,5 +1,28 @@
 2010-09-27  Adam Roben  <aroben@apple.com>
 
+        Stop leaking the web process's process handle on Windows
+
+        Fixes <http://webkit.org/b/46133> <rdar://problem/8455343>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/Launcher/ProcessLauncher.cpp:
+        (WebKit::ProcessLauncher::invalidate): Call platformInvalidate.
+
+        * UIProcess/Launcher/ProcessLauncher.h: Added platformInvalidate.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::platformInvalidate):
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        (WebKit::ProcessLauncher::platformInvalidate):
+        Stubbed out.
+
+        * UIProcess/Launcher/win/ProcessLauncherWin.cpp:
+        (WebKit::ProcessLauncher::platformInvalidate): Close the process
+        handle like MSDN says we should.
+
+2010-09-27  Adam Roben  <aroben@apple.com>
+
         Don't double-free CERT_CONTEXTs when copying PlatformCertificateInfos
         on Windows
 

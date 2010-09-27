@@ -150,4 +150,8 @@ void ProcessLauncher::terminateProcess()
     kill(m_processIdentifier, SIGKILL);
 }
     
+void ProcessLauncher::platformInvalidate()
+{
+}
+
 } // namespace WebKit
