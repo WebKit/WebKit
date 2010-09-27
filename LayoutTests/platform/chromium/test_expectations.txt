@@ -3138,3 +3138,10 @@ BUG_AUTO WIN DEBUG : canvas/philip/tests/2d.text.draw.align.center.html = PASS T
 BUG_SENORBLANCO WIN LINUX : svg/clip-path/clip-path-text-and-stroke.svg = CRASH PASS
 
 BUGWK46557 : animations/opacity-transform-animation.html = IMAGE
+
+// nodesFromRect() removed from Document.idl and test skipped on other platforms at r68345.
+BUGWK46596 : fast/dom/nodesFromRect-basic.html = TIMEOUT
+
+// started failing at r68354 due to URL parsing differences.
+BUGWK46597 : fast/dom/anchor-origin.html = TEXT
+
