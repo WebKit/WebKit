@@ -1,3 +1,31 @@
+2010-09-27  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Making LayerChromium's destructor virtual so that the appropriate
+        derived class destructors get called when the layer tree is taken down.
+        ContentLayerChromium and its derived types (ImageLayerChromium for now) will
+        free up the texture allocated for their contents upon destruction. To avoid
+        having the LayerRendererChromium destructor getting called before the layers
+        are destroyed and thus leaving their textures orphaned, the layers now hold
+        a ref counted pointer to the renderer that uses them.
+        https://bugs.webkit.org/show_bug.cgi?id=46139
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::~ContentLayerChromium):
+        (WebCore::ContentLayerChromium::setLayerRenderer):
+        (WebCore::ContentLayerChromium::cleanupResources):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::setLayerRenderer):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::layerRenderer):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::create):
+        (WebCore::LayerRendererChromium::deleteLayerTexture):
+        (WebCore::LayerRendererChromium::cleanupSharedObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+
 2010-09-27  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Darin Adler.

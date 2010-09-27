@@ -523,7 +523,7 @@ private:
 
 #if USE(ACCELERATED_COMPOSITING)
     WebCore::IntRect m_scrollDamage;
-    OwnPtr<WebCore::LayerRendererChromium> m_layerRenderer;
+    RefPtr<WebCore::LayerRendererChromium> m_layerRenderer;
     bool m_isAcceleratedCompositingActive;
     bool m_compositorCreationFailed;
 #endif

@@ -44,11 +44,12 @@ class ContentLayerChromium : public LayerChromium {
 public:
     static PassRefPtr<ContentLayerChromium> create(GraphicsLayerChromium* owner = 0);
 
-    ~ContentLayerChromium();
+    virtual ~ContentLayerChromium();
 
     virtual void updateContents();
     virtual void draw();
     virtual bool drawsContent() { return m_owner && m_owner->drawsContent(); }
+    virtual void setLayerRenderer(LayerRendererChromium*);
 
     // Stores values that are shared between instances of this class that are
     // associated with the same LayerRendererChromium (and hence the same GL
@@ -78,6 +79,8 @@ protected:
 
     void updateTextureRect(void* pixels, const IntSize& bitmapSize, const IntSize& requiredTextureSize,
                            const IntRect& updateRect, unsigned textureId);
+
+    void cleanupResources();
 
     unsigned m_contentsTexture;
     IntSize m_allocatedTextureSize;

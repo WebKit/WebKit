@@ -73,12 +73,12 @@ static inline bool compareLayerZ(const LayerChromium* a, const LayerChromium* b)
     return transformA.m43() < transformB.m43();
 }
 
-PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(PassOwnPtr<GraphicsContext3D> context)
+PassRefPtr<LayerRendererChromium> LayerRendererChromium::create(PassOwnPtr<GraphicsContext3D> context)
 {
     if (!context)
         return 0;
 
-    OwnPtr<LayerRendererChromium> layerRenderer(new LayerRendererChromium(context));
+    RefPtr<LayerRendererChromium> layerRenderer(adoptRef(new LayerRendererChromium(context)));
     if (!layerRenderer->hardwareCompositing())
         return 0;
 
@@ -378,6 +378,14 @@ unsigned LayerRendererChromium::createLayerTexture()
     GLC(m_context, m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE));
     GLC(m_context, m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE));
     return textureId;
+}
+
+void LayerRendererChromium::deleteLayerTexture(unsigned textureId)
+{
+    if (!textureId)
+        return;
+
+    GLC(m_context, m_context->deleteTexture(textureId));
 }
 
 // Returns true if any part of the layer falls within the visibleRect
@@ -738,7 +746,7 @@ void LayerRendererChromium::cleanupSharedObjects()
     }
 
     if (m_rootLayerTextureId) {
-        GLC(m_context, m_context->deleteTexture(m_rootLayerTextureId));
+        deleteLayerTexture(m_rootLayerTextureId);
         m_rootLayerTextureId = 0;
     }
 }

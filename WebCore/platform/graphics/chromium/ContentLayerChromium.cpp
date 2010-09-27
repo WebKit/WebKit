@@ -126,10 +126,28 @@ ContentLayerChromium::ContentLayerChromium(GraphicsLayerChromium* owner)
 
 ContentLayerChromium::~ContentLayerChromium()
 {
-    if (m_contentsTexture)
-        GLC(layerRendererContext(), layerRendererContext()->deleteTexture(m_contentsTexture));
+    cleanupResources();
 }
 
+void ContentLayerChromium::setLayerRenderer(LayerRendererChromium* renderer)
+{
+    // If we're changing layer renderers then we need to free up any resources
+    // allocated by the old renderer.
+    if (layerRenderer() && layerRenderer() != renderer)
+        cleanupResources();
+
+    LayerChromium::setLayerRenderer(renderer);
+}
+
+void ContentLayerChromium::cleanupResources()
+{
+    if (layerRenderer()) {
+        if (m_contentsTexture) {
+            layerRenderer()->deleteLayerTexture(m_contentsTexture);
+            m_contentsTexture = 0;
+        }
+    }
+}
 
 void ContentLayerChromium::updateContents()
 {

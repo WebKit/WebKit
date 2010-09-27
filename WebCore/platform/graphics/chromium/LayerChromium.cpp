@@ -174,9 +174,6 @@ LayerChromium::~LayerChromium()
 
 void LayerChromium::setLayerRenderer(LayerRendererChromium* renderer)
 {
-    // It's not expected that layers will ever switch renderers.
-    ASSERT(!renderer || !m_layerRenderer || renderer == m_layerRenderer);
-
     m_layerRenderer = renderer;
 }
 

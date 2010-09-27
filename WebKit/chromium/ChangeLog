@@ -1,3 +1,17 @@
+2010-09-27  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] WebViewImpl now holds a ref counted pointer to the LayerRendererChromium
+        to ensure that the compositor does not get destroyed before the layers used
+        by it do. This was done to ensure that layers properly clean up their texture
+        resources on destruction.
+        https://bugs.webkit.org/show_bug.cgi?id=46139
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        * src/WebViewImpl.h:
+
 2010-09-24  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

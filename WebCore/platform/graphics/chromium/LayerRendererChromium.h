@@ -42,6 +42,8 @@
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(CG)
@@ -54,9 +56,9 @@ namespace WebCore {
 class GraphicsContext3D;
 
 // Class that handles drawing of composited render layers using GL.
-class LayerRendererChromium : public Noncopyable {
+class LayerRendererChromium : public RefCounted<LayerRendererChromium> {
 public:
-    static PassOwnPtr<LayerRendererChromium> create(PassOwnPtr<GraphicsContext3D> graphicsContext3D);
+    static PassRefPtr<LayerRendererChromium> create(PassOwnPtr<GraphicsContext3D> graphicsContext3D);
 
     LayerRendererChromium(PassOwnPtr<GraphicsContext3D> graphicsContext3D);
     ~LayerRendererChromium();
@@ -90,6 +92,7 @@ public:
     GraphicsContext* rootLayerGraphicsContext() const { return m_rootLayerGraphicsContext.get(); }
 
     unsigned createLayerTexture();
+    void deleteLayerTexture(unsigned);
 
     static void debugGLCall(GraphicsContext3D*, const char* command, const char* file, int line);
 

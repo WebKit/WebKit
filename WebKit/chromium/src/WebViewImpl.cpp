@@ -2311,6 +2311,8 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
             m_compositorCreationFailed = true;
         }
     } else {
+        if (m_layerRenderer)
+            m_layerRenderer->setRootLayer(0);
         m_layerRenderer = 0;
         m_isAcceleratedCompositingActive = false;
     }
