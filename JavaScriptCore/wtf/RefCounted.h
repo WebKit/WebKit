@@ -145,7 +145,9 @@ protected:
     }
 };
 
-template<typename T> class RefCountedCustomAllocated : public RefCountedBase, public NoncopyableCustomAllocated {
+template<typename T> class RefCountedCustomAllocated : public RefCountedBase {
+    WTF_MAKE_NONCOPYABLE(RefCountedCustomAllocated);
+
 public:
     void deref()
     {

@@ -1,3 +1,24 @@
+2010-09-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Alexey Proskuryakov and Adam Barth.
+
+        Add WTF_MAKE_NONCOPYABLE macro
+        https://bugs.webkit.org/show_bug.cgi?id=46589
+
+        Going forward, we'd like to get rid of the Noncopyable and FastAllocBase classes. The
+        reason for this is that the Itanium C++ ABI states that no empty classes of the same type
+        can be laid out at the same offset in the class. This can result in objects getting larger
+        which leads to memory regressions. (One example of this is the String class which grew by
+        sizeof(void*) when both its base class and its first member variable inherited indirectly
+        from FastAllocBase).
+
+        * wtf/Noncopyable.h:
+        Add a WTF_MAKE_NONCOPYABLE macro and get rid of NoncopyableCustomAllocated.
+        
+        * runtime/JSCell.h:
+        * wtf/RefCounted.h:
+        Don't inherit from NoncopyableCustomAllocated. Instead, use WTF_MAKE_NONCOPYABLE.
+
 2010-09-27  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.
