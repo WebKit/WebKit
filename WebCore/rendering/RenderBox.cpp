@@ -83,32 +83,6 @@ RenderBox::~RenderBox()
 {
 }
 
-int RenderBox::logicalWidth() const
-{
-    return style()->isVerticalBlockFlow() ? width() : height();
-}
-
-int RenderBox::logicalHeight() const
-{
-    return style()->isVerticalBlockFlow() ? height() : width();
-}
-
-void RenderBox::setLogicalWidth(int size)
-{
-    if (style()->isVerticalBlockFlow())
-        setWidth(size);
-    else
-        setHeight(size);
-}
-
-void RenderBox::setLogicalHeight(int size)
-{
-    if (style()->isVerticalBlockFlow())
-        setHeight(size);
-    else
-        setWidth(size);
-}
-
 int RenderBox::marginBefore() const
 {
     return marginBeforeUsing(style());

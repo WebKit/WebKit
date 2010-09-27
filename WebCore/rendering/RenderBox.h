@@ -50,11 +50,46 @@ public:
     void setWidth(int width) { m_frameRect.setWidth(width); }
     void setHeight(int height) { m_frameRect.setHeight(height); }
 
-    int logicalWidth() const;
-    int logicalHeight() const;
-    void setLogicalWidth(int);
-    void setLogicalHeight(int);
-    
+    int logicalLeft() const { return style()->isVerticalBlockFlow() ? x() : y(); }
+    int logicalTop() const { return style()->isVerticalBlockFlow() ? y() : x(); }
+    int logicalWidth() const { return style()->isVerticalBlockFlow() ? width() : height(); }
+    int logicalHeight() const { return style()->isVerticalBlockFlow() ? height() : width(); }
+    void setLogicalLeft(int left)
+    {
+        if (style()->isVerticalBlockFlow())
+            setX(left);
+        else
+            setY(left);
+    }
+    void setLogicalTop(int top)
+    {
+        if (style()->isVerticalBlockFlow())
+            setY(top);
+        else
+            setX(top);
+    }
+    void setLogicalWidth(int size)
+    {
+        if (style()->isVerticalBlockFlow())
+            setWidth(size);
+        else
+            setHeight(size);
+    }
+    void setLogicalHeight(int size)
+    {
+        if (style()->isVerticalBlockFlow())
+            setHeight(size);
+        else
+            setWidth(size);
+    }
+    void setLogicalLocation(int left, int top)
+    {
+        if (style()->isVerticalBlockFlow())
+            setLocation(left, top);
+        else
+            setLocation(top, left);
+    }
+
     IntPoint location() const { return m_frameRect.location(); }
     IntSize locationOffset() const { return IntSize(x(), y()); }
     IntSize size() const { return m_frameRect.size(); }

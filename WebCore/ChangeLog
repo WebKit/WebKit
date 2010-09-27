@@ -1,5 +1,25 @@
 2010-09-27  David Hyatt  <hyatt@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46647, add getters/setters for the logical position of a box.
+
+        Also made all of the logicalWidth/Height getters/setters inline for performance.
+
+        * rendering/RenderBox.cpp:
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::logicalLeft):
+        (WebCore::RenderBox::logicalTop):
+        (WebCore::RenderBox::logicalWidth):
+        (WebCore::RenderBox::logicalHeight):
+        (WebCore::RenderBox::setLogicalLeft):
+        (WebCore::RenderBox::setLogicalTop):
+        (WebCore::RenderBox::setLogicalWidth):
+        (WebCore::RenderBox::setLogicalHeight):
+        (WebCore::RenderBox::setLogicalLocation):
+
+2010-09-27  David Hyatt  <hyatt@apple.com>
+
         Reviewed by Sam Weinig.
 
         https://bugs.webkit.org/show_bug.cgi?id=46639, make computeLogicalHeight block-flow-aware.
