@@ -1,5 +1,11 @@
 2010-09-26  Sam Weinig  <sam@webkit.org>
 
+        Attempt to fix windows build.
+
+        * win/WebKit2Common.vsprops:
+
+2010-09-26  Sam Weinig  <sam@webkit.org>
+
         Attempt to fix Qt build.
 
         * WebKit2.pro:
