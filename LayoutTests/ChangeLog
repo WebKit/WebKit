@@ -1,3 +1,15 @@
+2010-09-27  Alexey Marinichev  <amarinichev@chromium.org>
+
+        Reviewed by David Levin.
+
+        Test that scrolls a checkerboard pattern.  If the hardware compositor
+        miscalculates texture coordinates, corruption is very likely to occur.
+
+        * compositing/checkerboard.html: Added.
+        * compositing/checkerboard-expected.checksum: Added.
+        * compositing/checkerboard-expected.png: Added.
+        * compositing/checkerboard-expected.txt: Added.
+
 2010-09-27  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Darin Adler.
