@@ -198,6 +198,11 @@ JSValueRef LayoutTestController::computedStyleIncludingVisitedInfo(JSContextRef 
     return [[mainFrame webView] _computedStyleIncludingVisitedInfo:context forElement:value];
 }
 
+JSValueRef LayoutTestController::nodesFromRect(JSContextRef context, JSValueRef value, int x, int y, unsigned hPadding, unsigned vPadding, bool ignoreClipping)
+{
+    return [[mainFrame webView] _nodesFromRect:context forDocument:value x:x y:y hPadding:hPadding vPadding:vPadding ignoreClipping:ignoreClipping];
+}
+
 JSRetainPtr<JSStringRef> LayoutTestController::layerTreeAsText() const
 {
     JSRetainPtr<JSStringRef> string(Adopt, JSStringCreateWithCFString((CFStringRef)[mainFrame _layerTreeAsText]));

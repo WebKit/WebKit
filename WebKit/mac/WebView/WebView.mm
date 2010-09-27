@@ -133,9 +133,12 @@
 #import <WebCore/HistoryItem.h>
 #import <WebCore/IconDatabase.h>
 #import <WebCore/JSCSSStyleDeclaration.h>
+#import <WebCore/JSDocument.h>
 #import <WebCore/JSElement.h>
+#import <WebCore/JSNodeList.h>
 #import <WebCore/Logging.h>
 #import <WebCore/MIMETypeRegistry.h>
+#import <WebCore/NodeList.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageCache.h>
 #import <WebCore/PageGroup.h>
@@ -6048,6 +6051,25 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
     Element* element = jsElement->impl();
     RefPtr<CSSComputedStyleDeclaration> style = computedStyle(element, true);
     return toRef(exec, toJS(exec, jsElement->globalObject(), style.get()));
+}
+
+@end
+
+@implementation WebView (WebViewPrivateNodesFromRect)
+
+- (JSValueRef)_nodesFromRect:(JSContextRef)context forDocument:(JSValueRef)value x:(int)x  y:(int)y hPadding:(unsigned)hPadding vPadding:(unsigned)vPadding ignoreClipping:(BOOL)ignoreClipping
+{
+    JSLock lock(SilenceAssertionsOnly);
+    ExecState* exec = toJS(context);
+    if (!value)
+        return JSValueMakeUndefined(context);
+    JSValue jsValue = toJS(exec, value);
+    if (!jsValue.inherits(&JSDocument::s_info))
+        return JSValueMakeUndefined(context);
+    JSDocument* jsDocument = static_cast<JSDocument*>(asObject(jsValue));
+    Document* document = jsDocument->impl();
+    RefPtr<NodeList> nodes = document->nodesFromRect(x, y, hPadding, vPadding, ignoreClipping);
+    return toRef(exec, toJS(exec, jsDocument->globalObject(), nodes.get()));
 }
 
 @end

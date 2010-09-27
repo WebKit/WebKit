@@ -137,6 +137,12 @@ JSValueRef LayoutTestController::computedStyleIncludingVisitedInfo(JSContextRef 
     return JSValueMakeUndefined(context);
 }
 
+JSValueRef LayoutTestController::nodesFromRect(JSContextRef context, JSValueRef value, int , int, unsigned, unsigned, bool)
+{
+    // FIXME: Implement this.
+    return JSValueMakeUndefined(context);
+}
+
 JSRetainPtr<JSStringRef> LayoutTestController::layerTreeAsText() const
 {
     // FIXME: implement

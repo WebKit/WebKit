@@ -1,3 +1,24 @@
+2010-09-26  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        DRT/Mac nodesFromRect support
+
+        [Mac][DRT] Implement LayoutTestController::nodesFromRect
+        https://bugs.webkit.org/show_bug.cgi?id=46580
+
+        Implement nodesFromRect as a private method to access non-exposed Document
+        methods, similarly to computedStyleIncludingVisitedInfo.
+
+        * WebView/WebView.mm: Added JSDocument.h and JSNodeList.h to the include list.
+        These headers makes it possible to:
+        1) Get a Document off of a JSDocument;
+        2) Call toJS function, defined in JSNodeList.cpp|h so we can convert RefPtr<NodeList>
+        gotten from Document::nodesFromRect to JS bindings.
+        (-[WebView _nodesFromRect:forDocument:x:y:hPadding:vPadding:ignoreClipping:]):
+        * WebView/WebViewPrivate.h: Added nodesFromRect method to access methods of the
+        Document class not exposed to JavaScript. It works similarly to computedStyleIncludingVisitedInfo.
+
 2010-09-24  Jia Pu  <jpu@apple.com>
 
         Reviewed by Dan Bernstein.

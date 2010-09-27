@@ -1327,7 +1327,7 @@
 		6596F2C10B87325C001326BD /* DOMHTMLTextAreaElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85E7117F0AC5D5350053270F /* DOMHTMLTextAreaElementInternal.h */; };
 		659A7D130B6DB4D9001155B3 /* SubstituteData.h in Headers */ = {isa = PBXBuildFile; fileRef = 659A7D120B6DB4D9001155B3 /* SubstituteData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		659DDC8209E198BA001BF3C6 /* JSDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 659DDC8009E198BA001BF3C6 /* JSDocument.cpp */; };
-		659DDC8309E198BA001BF3C6 /* JSDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 659DDC8109E198BA001BF3C6 /* JSDocument.h */; };
+		659DDC8309E198BA001BF3C6 /* JSDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 659DDC8109E198BA001BF3C6 /* JSDocument.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65A21468097A329100B9050A /* Page.h in Headers */ = {isa = PBXBuildFile; fileRef = 65A21467097A329100B9050A /* Page.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65A21484097A3F5300B9050A /* FrameTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65A21482097A3F5300B9050A /* FrameTree.cpp */; };
 		65A21485097A3F5300B9050A /* FrameTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 65A21483097A3F5300B9050A /* FrameTree.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4963,7 +4963,7 @@
 		BCD9C2C00C17B69E005C90A2 /* JSNamedNodeMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD9C2BC0C17B69E005C90A2 /* JSNamedNodeMap.cpp */; };
 		BCD9C2C10C17B69E005C90A2 /* JSNamedNodeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD9C2BD0C17B69E005C90A2 /* JSNamedNodeMap.h */; };
 		BCD9C2C20C17B69E005C90A2 /* JSNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD9C2BE0C17B69E005C90A2 /* JSNodeList.cpp */; };
-		BCD9C2C30C17B69E005C90A2 /* JSNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD9C2BF0C17B69E005C90A2 /* JSNodeList.h */; };
+		BCD9C2C30C17B69E005C90A2 /* JSNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD9C2BF0C17B69E005C90A2 /* JSNodeList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCDD454E1236C95C009A7985 /* ColumnInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDD454D1236C95C009A7985 /* ColumnInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCDF317B11F8D683003C5BF8 /* UserTypingGestureIndicator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCDF317911F8D683003C5BF8 /* UserTypingGestureIndicator.cpp */; };
 		BCDF317C11F8D683003C5BF8 /* UserTypingGestureIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDF317A11F8D683003C5BF8 /* UserTypingGestureIndicator.h */; settings = {ATTRIBUTES = (Private, ); }; };

@@ -1,3 +1,19 @@
+2010-09-26  Antonio Gomes  <agomes@rim.comg>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        DRT/Mac nodesFromRect support
+
+        [Mac][DRT] Implement LayoutTestController::nodesFromRect
+        https://bugs.webkit.org/show_bug.cgi?id=46580
+
+        Symbol files updated.
+
+        * WebCore.exp.in: Added symbols to Document::nodesFromRect and bits of JSDocument now
+        needed in WebKit/mac.
+        * WebCore.xcodeproj/project.pbxproj: Set both JSDocument.h and JSNodeList as private headers
+        now that they are referred in WebKit/mac.
+
 2010-09-26  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

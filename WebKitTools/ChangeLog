@@ -1,3 +1,23 @@
+2010-09-26  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        DRT/Mac nodesFromRect support
+
+        [Mac][DRT] Implement LayoutTestController::nodesFromRect
+        https://bugs.webkit.org/show_bug.cgi?id=46580
+
+        Implements LayoutTestController::nodesFromRect for Mac DRT, and
+        adding stubs for GTK+ and Windows.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (nodesFromRectCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController::LayoutTestController::nodesFromRect):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::nodesFromRect):
+
 2010-09-25  Nicolas Weber  <thakis@chromium.org>
 
         Reviewed by Adam Barth.

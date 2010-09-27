@@ -5,14 +5,12 @@
 
 function check(x, y, hPadding, vPadding, list)
 {
-  /*
-    NodeList nodesFromRect(in long x,
-                           in long y,
-                           in long hPadding,
-                           in long vPadding,
-                           in boolean ignoreClipping);
-  */
-  var nodes = document.nodesFromRect(x, y, hPadding, vPadding, true /* ignoreClipping */);
+  if (!window.layoutTestController)
+    return;
+
+  var nodes = layoutTestController.nodesFromRect(document, x, y, hPadding, vPadding, true /* ignoreClipping */);
+  if (!nodes)
+    return;
 
   if (nodes.length != list.length) {
     testFailed("Different number of nodes for rect" +
