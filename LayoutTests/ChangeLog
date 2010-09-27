@@ -1,3 +1,9 @@
+2010-09-27  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, unskip fixed test. See also r68126
+
+        * platform/gtk/Skipped: Unskip media/video-controls-with-mutation-event-handler.html
+
 2010-09-27  James Kozianski  <koz@chromium.org>
 
         Reviewed by Adam Barth.
