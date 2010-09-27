@@ -1,3 +1,13 @@
+2010-09-25  Holger Hans Peter Freyther  <holger@moiji-mobile.com>
+
+        Reviewed by Adam Barth.
+
+        jsc: Document the strcat opcode.
+        https://bugs.webkit.org/show_bug.cgi?id=46571
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+
 2010-09-21  Holger Hans Peter Freyther  <holger@moiji-mobile.com>
 
         Reviewed by Adam Barth.

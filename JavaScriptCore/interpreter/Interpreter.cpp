@@ -4289,6 +4289,14 @@ skip_id_custom_self:
         goto vm_throw;
     }
     DEFINE_OPCODE(op_strcat) {
+        /* strcat dst(r) src(r) count(n)
+
+           Construct a new String instance using the original
+           constructor, and puts the result in register dst.
+           The string will be the result of concatenating count
+           strings with values taken from registers starting at
+           register src.
+        */
         int dst = vPC[1].u.operand;
         int src = vPC[2].u.operand;
         int count = vPC[3].u.operand;
