@@ -54,6 +54,8 @@ public:
     // The same as the FrameView's layoutHeight/layoutWidth but with null check guards.
     int viewHeight() const;
     int viewWidth() const;
+    int viewLogicalWidth() const { return style()->isVerticalBlockFlow() ? viewWidth() : viewHeight(); }
+    int viewLogicalHeight() const { return style()->isVerticalBlockFlow() ? viewHeight() : viewWidth(); }
 
     float zoomFactor() const;
 

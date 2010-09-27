@@ -1,3 +1,21 @@
+2010-09-27  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46665
+
+        Patch RenderView's layout and computeLogicalWidth/Height methods to be block-flow-aware.
+
+        Added fast/root-lr-basic.html
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::computeLogicalHeight):
+        (WebCore::RenderView::computeLogicalWidth):
+        (WebCore::RenderView::layout):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::viewLogicalWidth):
+        (WebCore::RenderView::viewLogicalHeight):
+
 2010-09-24  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

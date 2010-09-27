@@ -1,3 +1,19 @@
+2010-09-27  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46665
+
+        Patch RenderView's layout and computeLogicalWidth/Height methods to be block-flow-aware.
+
+        Added fast/root-lr-basic.html
+
+        * fast/blockflow/root-lr-basic.html: Added.
+        * platform/mac/fast/blockflow: Added.
+        * platform/mac/fast/blockflow/root-lr-basic-expected.checksum: Added.
+        * platform/mac/fast/blockflow/root-lr-basic-expected.png: Added.
+        * platform/mac/fast/blockflow/root-lr-basic-expected.txt: Added.
+
 2010-09-27  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, add fast/canvas/webgl/object-deletion-behaviour.html to test_expectations.txt (failing on Win/Linux).

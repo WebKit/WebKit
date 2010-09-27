@@ -75,15 +75,13 @@ RenderView::~RenderView()
 void RenderView::computeLogicalHeight()
 {
     if (!printing() && m_frameView)
-        setHeight(viewHeight());
+        setLogicalHeight(viewLogicalHeight());
 }
 
 void RenderView::computeLogicalWidth()
 {
     if (!printing() && m_frameView)
-        setWidth(viewWidth());
-    m_marginLeft = 0;
-    m_marginRight = 0;
+        setLogicalWidth(viewLogicalWidth());
 }
 
 void RenderView::computePreferredLogicalWidths()
@@ -108,7 +106,7 @@ void RenderView::layout()
     if (relayoutChildren) {
         setChildNeedsLayout(true, false);
         for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-            if (child->style()->height().isPercent() || child->style()->minHeight().isPercent() || child->style()->maxHeight().isPercent())
+            if (child->style()->logicalHeight().isPercent() || child->style()->logicalMinHeight().isPercent() || child->style()->logicalMaxHeight().isPercent())
                 child->setChildNeedsLayout(true, false);
         }
     }
