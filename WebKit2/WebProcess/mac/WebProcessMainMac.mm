@@ -60,15 +60,19 @@ int WebProcessMain(const CommandLine& commandLine)
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
 #if ENABLE(WEB_PROCESS_SANDBOX)
-    char* errorBuf;
-    const char* frameworkPath = [[[[NSBundle bundleForClass:[WKView class]] bundlePath] stringByDeletingLastPathComponent] UTF8String];
-    const char* profilePath = [[[NSBundle mainBundle] pathForResource:@"com.apple.WebProcess" ofType:@"sb"] UTF8String];
-    const char* const sandboxParam[] = { "webkit2_framework_path", frameworkPath, NULL };
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"DisableSandbox"]) {
+        char* errorBuf;
+        const char* frameworkPath = [[[[NSBundle bundleForClass:[WKView class]] bundlePath] stringByDeletingLastPathComponent] UTF8String];
+        const char* profilePath = [[[NSBundle mainBundle] pathForResource:@"com.apple.WebProcess" ofType:@"sb"] UTF8String];
+        const char* const sandboxParam[] = { "webkit2_framework_path", frameworkPath, NULL };
 
-    if (sandbox_init_with_parameters(profilePath, SANDBOX_NAMED_EXTERNAL, sandboxParam, &errorBuf)) {
-        fprintf(stderr, "WebProcess: couldn't initialize sandbox profile [%s] with framework path [%s]: %s\n", profilePath, frameworkPath, errorBuf);
-        exit(EX_NOPERM);
-    }
+        if (sandbox_init_with_parameters(profilePath, SANDBOX_NAMED_EXTERNAL, sandboxParam, &errorBuf)) {
+            fprintf(stderr, "WebProcess: couldn't initialize sandbox profile [%s] with framework path [%s]: %s\n", profilePath, frameworkPath, errorBuf);
+            exit(EX_NOPERM);
+        }
+    } else
+        fprintf(stderr, "Bypassing sandbox due to DisableSandbox user default.\n");
+
 #endif
 
     String serviceName = commandLine["servicename"];

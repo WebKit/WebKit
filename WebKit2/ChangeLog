@@ -1,3 +1,16 @@
+2010-09-27  Ivan Krstić  <ike@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/8348990> / <http://webkit.org/b/46633> Make it possible to disable sandboxing of
+        web process via runtime flag.
+
+        Enable sandboxing of the web process only if the DisableSandbox user default is not set for the
+        web process.
+
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMain):
+
 2010-09-27  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.
