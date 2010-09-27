@@ -26,6 +26,7 @@
 #include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "RenderObject.h"
 #include "WMLErrorHandling.h"
 #include "WMLNames.h"
@@ -73,7 +74,7 @@ void WMLElement::parseMappedAttribute(Attribute* attr)
     } else if (attr->name() == HTMLNames::tabindexAttr) {
         String indexstring = attr->value();
         int tabindex = 0;
-        if (parseHTMLInteger(tabindex)) {
+        if (parseHTMLInteger(indexstring, tabindex)) {
             // Clamp tabindex to the range of 'short' to match Firefox's behavior.
             setTabIndexExplicitly(max(static_cast<int>(std::numeric_limits<short>::min()), min(tabindex, static_cast<int>(std::numeric_limits<short>::max()))));
         }
