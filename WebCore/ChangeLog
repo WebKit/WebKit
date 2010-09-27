@@ -1,3 +1,18 @@
+2010-09-27  Andreas Kling  <andreas.kling@nokia.com>
+
+        Rubber-stamped by Kenneth Rohde Christiansen.
+
+        [Qt] 32-bit Flash crashes on repeated SetWindow calls
+        https://bugs.webkit.org/show_bug.cgi?id=46616
+
+        Re-enable PluginQuirkDontCallSetWindowMoreThanOnce for Qt on x86 Unix.
+
+        We incorrectly thought this was fixed in Flash 10, but it turns out it
+        was just never broken on 64-bit.
+
+        * plugins/PluginPackage.cpp:
+        (WebCore::PluginPackage::determineQuirks):
+
 2010-09-27  İsmail Dönmez  <ismail@namtrac.org>
 
         Reviewed by Andreas Kling.
