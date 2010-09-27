@@ -219,7 +219,7 @@ String RenderThemeQt::extraDefaultStyleSheet()
     result += String(themeQtNoListboxesUserAgentStyleSheet, sizeof(themeQtNoListboxesUserAgentStyleSheet));
 #endif
 #if USE(QT_MOBILE_THEME)
-    result += String(themeQtMaemo5UserAgentStyleSheet, sizeof(themeQtMaemo5UserAgentStyleSheet));
+    result += String(themeQtMobileUserAgentStyleSheet, sizeof(themeQtMobileUserAgentStyleSheet));
 #endif
     return result;
 }

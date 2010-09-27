@@ -67,38 +67,45 @@ input:not([type]),
 input[type="text"],
 input[type="password"],
 input[type="email"],
+input[type="tel"],
 input[type="color"],
 input[type="search"],
 input[type="date"],
 input[type="number"],
 input[type="url"],
 textarea {
-    border: 1px solid black;
+    border: 1px solid gray;
+    background: -webkit-gradient(linear, left top, left 30, color-stop(0.0, #bfbfbf), color-stop(0.2, #ffffff));
+    color: #3e3e3e;
+    -webkit-border-radius:5px;
 }
 
 input:not([type]):disabled,
 input[type="text"]:disabled,
 input[type="password"]:disabled,
 input[type="email"]:disabled,
+input[type="tel"]:disabled,
 input[type="color"]:disabled,
 input[type="search"]:disabled,
 input[type="date"]:disabled,
 input[type="number"]:disabled,
 input[type="url"]:disabled,
 textarea:disabled {
-    border: 1px solid grey;
-    background-color:ButtonHighlight;
+    border: 1px solid gray;
+    background: -webkit-gradient(linear, left top, left 30, color-stop(0.0, #e5e5e5), color-stop(0.2, #ffffff));
+    color: #e5e5e5;
 }
 
 input:not([type]):active,
 input[type="text"]:active,
 input[type="password"]:active,
 input[type="email"]:active,
+input[type="tel"]:active,
 input[type="color"]:active,
 input[type="search"]:active,
 input[type="date"]:active,
 input[type="number"]:active,
 input[type="url"]:active,
 textarea:active {
-    background-color:ButtonShadow;
+    background: ButtonShadow;
 }

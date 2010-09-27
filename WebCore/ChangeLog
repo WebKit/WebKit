@@ -1,3 +1,25 @@
+2010-09-27  Ragner Magalhaes  <ragner.magalhaes@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] New input style for Qt Mobile theme
+        https://bugs.webkit.org/show_bug.cgi?id=46461
+
+        Rename themeQtMaemo5.css to themeQtMobile.css since it is the theme for all Qt mobile platform.
+        Adjust new input style.
+
+        * WebCore.pri:
+        * css/themeQtMobile.css: Renamed from css/themeQtMaemo5.css
+        (select):
+        (select:disabled):
+        (select:active):
+        (select:active:disabled):
+        (textarea):
+        (textarea:disabled):
+        (textarea:active):
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::extraDefaultStyleSheet): Renamed themeQtMaemo5UserAgentStyleSheet to themeQtMobileUserAgentStyleSheet to match renamed file.
+
 2010-09-27  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Antonio Gomes.

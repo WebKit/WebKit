@@ -61,7 +61,7 @@ STYLESHEETS_EMBED = \
     $$PWD/css/mediaControls.css \
     $$PWD/css/mediaControlsQt.css \
     $$PWD/css/themeQtNoListboxes.css \
-    $$PWD/css/themeQtMaemo5.css
+    $$PWD/css/themeQtMobile.css
 
 v8 {
     IDL_BINDINGS += \
