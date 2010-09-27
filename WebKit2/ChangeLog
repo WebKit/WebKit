@@ -1,3 +1,12 @@
+2010-09-27  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Make generate-forwarding-headers.pl aware of moved headers
+        https://bugs.webkit.org/show_bug.cgi?id=46621
+
+        * generate-forwarding-headers.pl:
+
 2010-09-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

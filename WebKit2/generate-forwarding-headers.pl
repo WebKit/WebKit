@@ -81,12 +81,17 @@ sub collectFameworkHeaderPaths {
 sub createForwardingHeadersForFramework {
     foreach my $header (@frameworkHeaders) {
         my $forwardingHeaderPath = File::Spec->catfile($outputDirectory, $framework, basename($header));
-        if (! -e $forwardingHeaderPath) {
-            print "[Create forwarding header for $framework/$header]\n";
-            open(FORWARDING_HEADER, ">$forwardingHeaderPath") or die "Could not open $forwardingHeaderPath.\n";
-            print FORWARDING_HEADER "#include \"$header\"\n";
+        my $expectedIncludeStatement = "#include \"$header\"";
+        my $foundIncludeStatement = 0;
+        $foundIncludeStatement = <EXISTING_HEADER> if open(EXISTING_HEADER, "<$forwardingHeaderPath");
+        chomp($foundIncludeStatement);
+        if (! $foundIncludeStatement || $foundIncludeStatement ne $expectedIncludeStatement) {
+            print "[Creating forwarding header for $framework/$header]\n";
+            open(FORWARDING_HEADER, ">$forwardingHeaderPath") or die "Could not open $forwardingHeaderPath.";
+            print FORWARDING_HEADER "$expectedIncludeStatement\n";
             close(FORWARDING_HEADER);
         }
+        close(EXISTING_HEADER);
     }
 }
 
