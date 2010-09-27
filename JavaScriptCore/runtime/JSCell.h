@@ -49,8 +49,8 @@ namespace JSC {
     class JSCell : MSVCBugWorkaround {
 #else
     class JSCell {
-#endif
         WTF_MAKE_NONCOPYABLE(JSCell);
+#endif
 
         friend class GetterSetter;
         friend class Heap;

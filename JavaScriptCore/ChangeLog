@@ -1,5 +1,11 @@
 2010-09-27  Anders Carlsson  <andersca@apple.com>
 
+        Fix thinko.
+
+        * runtime/JSCell.h:
+
+2010-09-27  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam Roben.
 
         Try to fix Windows build.
