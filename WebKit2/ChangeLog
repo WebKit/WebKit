@@ -2,6 +2,12 @@
 
         Another windows build fix windows attempt.
 
+        * win/WebKit2Common.vsprops:
+
+2010-09-26  Sam Weinig  <sam@webkit.org>
+
+        Another windows build fix windows attempt.
+
         * win/WebKit2Generated.make:
 
 2010-09-26  Sam Weinig  <sam@webkit.org>
