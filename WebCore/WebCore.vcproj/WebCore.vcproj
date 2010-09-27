@@ -52696,6 +52696,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\GoToLineDialog.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\goToLineDialog.css"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\HAREntry.js"
 					>
 				</File>

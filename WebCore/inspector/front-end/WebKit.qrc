@@ -41,6 +41,7 @@
     <file>ExtensionRegistryStub.js</file>
     <file>ExtensionServer.js</file>
     <file>FontView.js</file>
+    <file>GoToLineDialog.js</file>
     <file>HAREntry.js</file>
     <file>HeapSnapshotView.js</file>
     <file>HelpScreen.js</file>
@@ -105,6 +106,7 @@
     <file>WelcomeView.js</file>
     <file>WorkersSidebarPane.js</file>
     <file>audits.css</file>
+    <file>goToLineDialog.css</file>
     <file>heapProfiler.css</file>
     <file>helpScreen.css</file>
     <file>inspector.css</file>

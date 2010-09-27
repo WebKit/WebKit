@@ -1002,6 +1002,9 @@ WebInspector.ScriptsPanel.prototype = {
         this._shortcuts[shortcut2.key] = handler;
         section.addAlternateKeys([ shortcut1.name, shortcut2.name ], WebInspector.UIString("Step out"));
 
+        shortcut1 = WebInspector.KeyboardShortcut.makeDescriptor("g", platformSpecificModifier);
+        this._shortcuts[shortcut1.key] = this.showGoToLineDialog.bind(this);
+        section.addAlternateKeys([ shortcut1.name ], WebInspector.UIString("Go to Line"));
         this.sidebarPanes.callstack.registerShortcuts(section);
     },
 
@@ -1071,6 +1074,13 @@ WebInspector.ScriptsPanel.prototype = {
             this._searchView.jumpToLastSearchResult();
         else
             this._searchView.jumpToPreviousSearchResult();
+    },
+
+    showGoToLineDialog: function(e)
+    {
+         var view = this.visibleView;
+         if (view)
+             WebInspector.GoToLineDialog.show(view);
     }
 }
 

@@ -1,3 +1,25 @@
+2010-09-17  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: implement go-to-line feature
+        https://bugs.webkit.org/show_bug.cgi?id=45166
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/GoToLineDialog.js: Added.
+        (WebInspector.GoToLineDialog):
+        (WebInspector.GoToLineDialog.show):
+        (WebInspector.GoToLineDialog.prototype._hide):
+        (WebInspector.GoToLineDialog.prototype._onKeyDown):
+        (WebInspector.GoToLineDialog.prototype._onBlur):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._registerShortcuts):
+        (WebInspector.ScriptsPanel.prototype.jumpToPreviousSearchResult):
+        (WebInspector.ScriptsPanel.prototype.showGoToLineDialog):
+        * inspector/front-end/goToLineDialog.css: Added.
+        (.go-to-line-dialog):
+        * inspector/front-end/inspector.html:
+
 2010-09-24  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
