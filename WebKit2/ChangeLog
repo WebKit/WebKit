@@ -1,3 +1,22 @@
+2010-09-27  Adam Roben  <aroben@apple.com>
+
+        Don't double-free CERT_CONTEXTs when copying PlatformCertificateInfos
+        on Windows
+
+        Fixes <http://webkit.org/b/46536> <rdar://problem/8477292> REGRESSION
+        (r68260): Crash in PlatformCertificateInfo::~PlatformCertificateInfo
+        when navigating away from Gmail
+
+        Reviewed by Sam Weinig.
+
+        * Shared/win/PlatformCertificateInfo.cpp:
+        (WebKit::PlatformCertificateInfo::PlatformCertificateInfo):
+        (WebKit::PlatformCertificateInfo::operator=):
+        * Shared/win/PlatformCertificateInfo.h:
+        Added a copy constructor and assigment operator to handle correctly
+        reffing/dereffing the CERT_CONTEXTs when copying a
+        PlatformCertificateInfo.
+
 2010-09-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Simon Fraser.

@@ -43,6 +43,9 @@ public:
     explicit PlatformCertificateInfo(const WebCore::ResourceResponse&);    
     ~PlatformCertificateInfo();
 
+    PlatformCertificateInfo(const PlatformCertificateInfo&);
+    PlatformCertificateInfo& operator=(const PlatformCertificateInfo&);
+
     PCCERT_CONTEXT certificateContext() const { return m_certificateContext; }
 
     void encode(CoreIPC::ArgumentEncoder* encoder) const;

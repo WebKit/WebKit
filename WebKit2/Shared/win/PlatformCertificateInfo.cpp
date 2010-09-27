@@ -63,6 +63,20 @@ PlatformCertificateInfo::~PlatformCertificateInfo()
         ::CertFreeCertificateContext(m_certificateContext);
 }
 
+PlatformCertificateInfo::PlatformCertificateInfo(const PlatformCertificateInfo& other)
+    : m_certificateContext(::CertDuplicateCertificateContext(other.m_certificateContext))
+{
+}
+
+PlatformCertificateInfo& PlatformCertificateInfo::operator=(const PlatformCertificateInfo& other)
+{
+    ::CertDuplicateCertificateContext(other.m_certificateContext);
+    if (m_certificateContext)
+        ::CertFreeCertificateContext(m_certificateContext);
+    m_certificateContext = other.m_certificateContext;
+    return *this;
+}
+
 void PlatformCertificateInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     // FIXME: We should encode the no certificate context case in the
