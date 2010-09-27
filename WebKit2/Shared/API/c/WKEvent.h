@@ -23,39 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedBundlePageUIClient_h
-#define InjectedBundlePageUIClient_h
+#ifndef WKEvent_h
+#define WKEvent_h
 
-#include "WKBundlePage.h"
-#include "WebEvent.h"
-#include <wtf/Forward.h>
+#include <WebKit2/WKBase.h>
 
-namespace WebCore {
-    class HitTestResult;
-}
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-namespace WebKit {
-
-class APIObject;
-class WebFrame;
-class WebPage;
-
-class InjectedBundlePageUIClient {
-public:
-    InjectedBundlePageUIClient();
-    void initialize(WKBundlePageUIClient*);
-
-    void willAddMessageToConsole(WebPage*, const String& message, int32_t lineNumber);
-    void willSetStatusbarText(WebPage*, const String&);
-    void willRunJavaScriptAlert(WebPage*, const String&, WebFrame*);
-    void willRunJavaScriptConfirm(WebPage*, const String&, WebFrame*);
-    void willRunJavaScriptPrompt(WebPage*, const String&, const String&, WebFrame*);
-    void mouseDidMoveOverElement(WebPage*, const WebCore::HitTestResult&, WebEvent::Modifiers, RefPtr<APIObject>& userData);
-
-private:
-    WKBundlePageUIClient m_client;
+enum {
+    kWKEventModifiersShiftKey = 1 << 0,
+    kWKEventModifiersControlKey = 1 << 1,
+    kWKEventModifiersAltKey = 1 << 2,
+    kWKEventModifiersMetaKey = 1 << 3
 };
+typedef uint32_t WKEventModifiers;
 
-} // namespace WebKit
+enum {
+    kWKEventMouseButtonNoButton = -1,
+    kWKEventMouseButtonLeftButton = 0,
+    kWKEventMouseButtonMiddleButton = 1,
+    kWKEventMouseButtonRightButton = 2,
+};
+typedef int32_t WKEventMouseButton;
 
-#endif // InjectedBundlePageUIClient_h
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* WKEvent_h */

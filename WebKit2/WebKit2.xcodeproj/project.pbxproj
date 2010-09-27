@@ -249,6 +249,7 @@
 		BC40762A124FF0400068F20A /* WKURLRequestNS.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC407624124FF0400068F20A /* WKURLRequestNS.mm */; };
 		BC40762B124FF0400068F20A /* WKURLResponseNS.h in Headers */ = {isa = PBXBuildFile; fileRef = BC407625124FF0400068F20A /* WKURLResponseNS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC40762C124FF0400068F20A /* WKURLResponseNS.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC407626124FF0400068F20A /* WKURLResponseNS.mm */; };
+		BC40783D1250FADD0068F20A /* WKEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = BC40783C1250FADD0068F20A /* WKEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC498618124D10E200D834E1 /* InjectedBundleHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = BC498616124D10E200D834E1 /* InjectedBundleHitTestResult.h */; };
 		BC498619124D10E200D834E1 /* InjectedBundleHitTestResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC498617124D10E200D834E1 /* InjectedBundleHitTestResult.cpp */; };
 		BC49862F124D18C100D834E1 /* WKBundleHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = BC49862D124D18C100D834E1 /* WKBundleHitTestResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -677,6 +678,7 @@
 		BC407624124FF0400068F20A /* WKURLRequestNS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKURLRequestNS.mm; sourceTree = "<group>"; };
 		BC407625124FF0400068F20A /* WKURLResponseNS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKURLResponseNS.h; sourceTree = "<group>"; };
 		BC407626124FF0400068F20A /* WKURLResponseNS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKURLResponseNS.mm; sourceTree = "<group>"; };
+		BC40783C1250FADD0068F20A /* WKEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKEvent.h; sourceTree = "<group>"; };
 		BC498616124D10E200D834E1 /* InjectedBundleHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleHitTestResult.h; sourceTree = "<group>"; };
 		BC498617124D10E200D834E1 /* InjectedBundleHitTestResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleHitTestResult.cpp; sourceTree = "<group>"; };
 		BC49862D124D18C100D834E1 /* WKBundleHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleHitTestResult.h; sourceTree = "<group>"; };
@@ -1598,6 +1600,7 @@
 				BC4075DE124FF0270068F20A /* WKDictionary.h */,
 				BC4075DF124FF0270068F20A /* WKError.cpp */,
 				BC4075E0124FF0270068F20A /* WKError.h */,
+				BC40783C1250FADD0068F20A /* WKEvent.h */,
 				BC4075E1124FF0270068F20A /* WKMutableArray.cpp */,
 				BC4075E2124FF0270068F20A /* WKMutableArray.h */,
 				BC4075E3124FF0270068F20A /* WKMutableDictionary.cpp */,
@@ -1850,6 +1853,7 @@
 				BC407629124FF0400068F20A /* WKURLRequestNS.h in Headers */,
 				BC40762B124FF0400068F20A /* WKURLResponseNS.h in Headers */,
 				1A043D7A124FEFC100FFBFB5 /* BackingStore.h in Headers */,
+				BC40783D1250FADD0068F20A /* WKEvent.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

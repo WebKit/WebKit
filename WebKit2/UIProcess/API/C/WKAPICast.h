@@ -28,7 +28,6 @@
 
 #include "WKSharedAPICast.h"
 #include "WKPage.h"
-#include "WebEvent.h"
 #include <WebCore/FrameLoaderTypes.h>
 
 namespace WebKit {
@@ -83,42 +82,6 @@ inline WKFrameNavigationType toRef(WebCore::NavigationType type)
     }
     
     return wkType;
-}
-
-inline WKEventModifiers toRef(WebEvent::Modifiers modifiers)
-{
-    WKEventModifiers wkModifiers = 0;
-    if (modifiers & WebEvent::ShiftKey)
-        wkModifiers |= kWKEventModifiersShiftKey;
-    if (modifiers & WebEvent::ControlKey)
-        wkModifiers |= kWKEventModifiersControlKey;
-    if (modifiers & WebEvent::AltKey)
-        wkModifiers |= kWKEventModifiersAltKey;
-    if (modifiers & WebEvent::MetaKey)
-        wkModifiers |= kWKEventModifiersMetaKey;
-    return wkModifiers;
-}
-
-inline WKEventMouseButton toRef(WebMouseEvent::Button mouseButton)
-{
-    WKEventMouseButton wkMouseButton = kWKEventMouseButtonNoButton;
-
-    switch (mouseButton) {
-    case WebMouseEvent::NoButton:
-        wkMouseButton = kWKEventMouseButtonNoButton;
-        break;
-    case WebMouseEvent::LeftButton:
-        wkMouseButton = kWKEventMouseButtonLeftButton;
-        break;
-    case WebMouseEvent::MiddleButton:
-        wkMouseButton = kWKEventMouseButtonMiddleButton;
-        break;
-    case WebMouseEvent::RightButton:
-        wkMouseButton = kWKEventMouseButtonRightButton;
-        break;
-    }
-
-    return wkMouseButton;
 }
 
 } // namespace WebKit

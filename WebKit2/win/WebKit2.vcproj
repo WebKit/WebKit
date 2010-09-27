@@ -580,6 +580,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Shared\API\c\WKEvent.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Shared\API\c\WKMutableArray.cpp"
 					>
 				</File>

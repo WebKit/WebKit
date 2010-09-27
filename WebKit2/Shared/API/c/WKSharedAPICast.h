@@ -27,6 +27,8 @@
 #define WKSharedAPICast_h
 
 #include "WKBase.h"
+#include "WKEvent.h"
+#include "WebEvent.h"
 #include "WebNumber.h"
 #include "WebString.h"
 #include "WebURL.h"
@@ -150,6 +152,42 @@ inline String toWTFString(WKURLRef urlRef)
 inline WKTypeID toRef(APIObject::Type type)
 {
     return static_cast<WKTypeID>(type);
+}
+
+inline WKEventModifiers toRef(WebEvent::Modifiers modifiers)
+{
+    WKEventModifiers wkModifiers = 0;
+    if (modifiers & WebEvent::ShiftKey)
+        wkModifiers |= kWKEventModifiersShiftKey;
+    if (modifiers & WebEvent::ControlKey)
+        wkModifiers |= kWKEventModifiersControlKey;
+    if (modifiers & WebEvent::AltKey)
+        wkModifiers |= kWKEventModifiersAltKey;
+    if (modifiers & WebEvent::MetaKey)
+        wkModifiers |= kWKEventModifiersMetaKey;
+    return wkModifiers;
+}
+
+inline WKEventMouseButton toRef(WebMouseEvent::Button mouseButton)
+{
+    WKEventMouseButton wkMouseButton = kWKEventMouseButtonNoButton;
+
+    switch (mouseButton) {
+    case WebMouseEvent::NoButton:
+        wkMouseButton = kWKEventMouseButtonNoButton;
+        break;
+    case WebMouseEvent::LeftButton:
+        wkMouseButton = kWKEventMouseButtonLeftButton;
+        break;
+    case WebMouseEvent::MiddleButton:
+        wkMouseButton = kWKEventMouseButtonMiddleButton;
+        break;
+    case WebMouseEvent::RightButton:
+        wkMouseButton = kWKEventMouseButtonRightButton;
+        break;
+    }
+
+    return wkMouseButton;
 }
 
 } // namespace WebKit

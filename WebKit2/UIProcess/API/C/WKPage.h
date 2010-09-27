@@ -27,12 +27,11 @@
 #define WKPage_h
 
 #include <WebKit2/WKBase.h>
+#include <WebKit2/WKEvent.h>
 
 #ifndef __cplusplus
 #include <stdbool.h>
 #endif
-
-#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -47,22 +46,6 @@ enum {
     kWKFrameNavigationTypeOther = 5
 };
 typedef uint32_t WKFrameNavigationType;
-
-enum {
-    kWKEventModifiersShiftKey = 1 << 0,
-    kWKEventModifiersControlKey = 1 << 1,
-    kWKEventModifiersAltKey = 1 << 2,
-    kWKEventModifiersMetaKey = 1 << 3
-};
-typedef uint32_t WKEventModifiers;
-
-enum {
-    kWKEventMouseButtonNoButton = -1,
-    kWKEventMouseButtonLeftButton = 0,
-    kWKEventMouseButtonMiddleButton = 1,
-    kWKEventMouseButtonRightButton = 2,
-};
-typedef int32_t WKEventMouseButton;
 
 // FrameLoad Client
 typedef void (*WKPageDidStartProvisionalLoadForFrameCallback)(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo);

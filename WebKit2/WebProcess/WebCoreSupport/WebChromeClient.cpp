@@ -362,7 +362,7 @@ void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& hitTestResult
     RefPtr<APIObject> userData;
 
     // Notify the bundle client.
-    m_page->injectedBundleUIClient().mouseDidMoveOverElement(m_page, hitTestResult, userData);
+    m_page->injectedBundleUIClient().mouseDidMoveOverElement(m_page, hitTestResult, static_cast<WebEvent::Modifiers>(modifierFlags), userData);
 
     // Notify the UIProcess.
     WebProcess::shared().connection()->send(WebPageProxyMessage::MouseDidMoveOverElement, m_page->pageID(), CoreIPC::In(modifierFlags, InjectedBundleUserMessageEncoder(userData.get())));
