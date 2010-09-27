@@ -1,5 +1,13 @@
 2010-09-27  Andrey Kosyakov  <caseq@chromium.org>
 
+        Unreviewed. Updated chromium expectations for ifast/block/basic/016.html (mac expectations changed in r68362)
+
+        * platform/chromium-linux/fast/block/basic/016-expected.txt: Added.
+        * platform/chromium-mac/fast/block/basic/016-expected.checksum: Added.
+        * platform/chromium-win/fast/block/basic/016-expected.txt:
+
+2010-09-27  Andrey Kosyakov  <caseq@chromium.org>
+
         Unreviewed. Added chromium expectations for SVGFEBlendElement* tests.
 
         * platform/chromium-linux/svg/dynamic-updates/SVGFEBlendElement-dom-in-attr-expected.checksum: Added.
