@@ -1,3 +1,39 @@
+2010-09-27  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Add AudioNode files
+        https://bugs.webkit.org/show_bug.cgi?id=45571
+
+        No new tests since audio API is not yet implemented.
+
+        * webaudio/AudioNode.cpp: Added.
+        (WebCore::AudioNode::AudioNode):
+        (WebCore::AudioNode::~AudioNode):
+        (WebCore::AudioNode::setType):
+        (WebCore::AudioNode::lazyInitialize):
+        (WebCore::AudioNode::addInput):
+        (WebCore::AudioNode::addOutput):
+        (WebCore::AudioNode::input):
+        (WebCore::AudioNode::output):
+        (WebCore::AudioNode::connect):
+        (WebCore::AudioNode::disconnect):
+        (WebCore::AudioNode::processIfNecessary):
+        (WebCore::AudioNode::pullInputs):
+        (WebCore::AudioNode::ref):
+        (WebCore::AudioNode::deref):
+        (WebCore::AudioNode::finishDeref):
+        (WebCore::AudioNode::printNodeCounts):
+        * webaudio/AudioNode.h: Added.
+        (WebCore::AudioNode::context):
+        (WebCore::AudioNode::type):
+        (WebCore::AudioNode::isInitialized):
+        (WebCore::AudioNode::numberOfInputs):
+        (WebCore::AudioNode::numberOfOutputs):
+        (WebCore::AudioNode::sampleRate):
+        (WebCore::AudioNode::checkNumberOfChannelsForInput):
+        * webaudio/AudioNode.idl: Added.
+
 2010-09-27  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
