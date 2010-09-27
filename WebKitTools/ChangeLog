@@ -1,3 +1,21 @@
+2010-09-26  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        new-run-webkit-httpd fails if Perl is not installed
+        https://bugs.webkit.org/show_bug.cgi?id=46602
+        
+        Make Port._read_configuration catch all exceptions, since trying to run
+        perl (because of _webkit_build_directory) when it's not installed throws
+        a WindowsError or OSError, not an IOError (this became an issue after 
+        r68268, since ChromiumPort ends up calling Port.default_configuration in
+        its constructor, which means that we're ending up on this codepath in
+        non-NRWT cases too, e.g. for the Chromium NaCl tests, which use
+        new-run-webkit-httpd).
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+
 2010-09-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Antonio Gomes.

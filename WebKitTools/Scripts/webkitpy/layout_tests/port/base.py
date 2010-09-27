@@ -683,7 +683,7 @@ class Port(object):
         try:
             with self._open_configuration_file() as file:
                 return file.readline().rstrip()
-        except IOError, e:
+        except:
             return None
 
     # FIXME: This list may be incomplete as Apple has some sekret configs.

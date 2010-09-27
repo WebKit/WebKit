@@ -57,16 +57,17 @@ class MockExecutive():
 
 class UnitTestPort(base.Port):
     """Subclass of base.Port used for unit testing."""
-    def __init__(self, configuration_contents=None, executive_exception=None):
+    def __init__(self, configuration_contents=None, configuration_exception=IOError, executive_exception=None):
         base.Port.__init__(self)
         self._configuration_contents = configuration_contents
+        self._configuration_exception = configuration_exception
         if executive_exception:
             self._executive = MockExecutive(executive_exception)
 
     def _open_configuration_file(self):
         if self._configuration_contents:
             return NewStringIO(self._configuration_contents)
-        raise IOError
+        raise self._configuration_exception
 
 
 class PortTest(unittest.TestCase):
@@ -191,7 +192,12 @@ class PortTest(unittest.TestCase):
         self.assertFalse('nosuchthing' in diff)
 
     def test_default_configuration_notfound(self):
+        # Regular IOError thrown while trying to get the configuration.
         port = UnitTestPort()
+        self.assertEqual(port.default_configuration(), "Release")
+
+        # More exotic OSError thrown.
+        port = UnitTestPort(configuration_exception=OSError)
         self.assertEqual(port.default_configuration(), "Release")
 
     def test_layout_tests_skipping(self):
