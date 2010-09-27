@@ -1,3 +1,59 @@
+2010-09-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r68389.
+        http://trac.webkit.org/changeset/68389
+        https://bugs.webkit.org/show_bug.cgi?id=46637
+
+        test_shell is crashing on chromium Win (Requested by loislo on
+        #webkit).
+
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+        (WebCore::InspectorTimelineAgent::pushGCEventRecords):
+        (WebCore::InspectorTimelineAgent::didGC):
+        (WebCore::InspectorTimelineAgent::~InspectorTimelineAgent):
+        (WebCore::InspectorTimelineAgent::willCallFunction):
+        (WebCore::InspectorTimelineAgent::didCallFunction):
+        (WebCore::InspectorTimelineAgent::willDispatchEvent):
+        (WebCore::InspectorTimelineAgent::didDispatchEvent):
+        (WebCore::InspectorTimelineAgent::willLayout):
+        (WebCore::InspectorTimelineAgent::didLayout):
+        (WebCore::InspectorTimelineAgent::willRecalculateStyle):
+        (WebCore::InspectorTimelineAgent::didRecalculateStyle):
+        (WebCore::InspectorTimelineAgent::willPaint):
+        (WebCore::InspectorTimelineAgent::didPaint):
+        (WebCore::InspectorTimelineAgent::willWriteHTML):
+        (WebCore::InspectorTimelineAgent::didWriteHTML):
+        (WebCore::InspectorTimelineAgent::didInstallTimer):
+        (WebCore::InspectorTimelineAgent::didRemoveTimer):
+        (WebCore::InspectorTimelineAgent::willFireTimer):
+        (WebCore::InspectorTimelineAgent::didFireTimer):
+        (WebCore::InspectorTimelineAgent::willChangeXHRReadyState):
+        (WebCore::InspectorTimelineAgent::didChangeXHRReadyState):
+        (WebCore::InspectorTimelineAgent::willLoadXHR):
+        (WebCore::InspectorTimelineAgent::didLoadXHR):
+        (WebCore::InspectorTimelineAgent::willEvaluateScript):
+        (WebCore::InspectorTimelineAgent::didEvaluateScript):
+        (WebCore::InspectorTimelineAgent::didScheduleResourceRequest):
+        (WebCore::InspectorTimelineAgent::willSendResourceRequest):
+        (WebCore::InspectorTimelineAgent::willReceiveResourceData):
+        (WebCore::InspectorTimelineAgent::didReceiveResourceData):
+        (WebCore::InspectorTimelineAgent::willReceiveResourceResponse):
+        (WebCore::InspectorTimelineAgent::didReceiveResourceResponse):
+        (WebCore::InspectorTimelineAgent::didFinishLoadingResource):
+        (WebCore::InspectorTimelineAgent::didMarkTimeline):
+        (WebCore::InspectorTimelineAgent::didMarkDOMContentEvent):
+        (WebCore::InspectorTimelineAgent::didMarkLoadEvent):
+        (WebCore::InspectorTimelineAgent::reset):
+        (WebCore::InspectorTimelineAgent::resetFrontendProxyObject):
+        (WebCore::InspectorTimelineAgent::addRecordToTimeline):
+        (WebCore::InspectorTimelineAgent::setHeapSizeStatistic):
+        (WebCore::InspectorTimelineAgent::didCompleteCurrentRecord):
+        (WebCore::InspectorTimelineAgent::pushCurrentRecord):
+        * inspector/InspectorTimelineAgent.h:
+        (WebCore::InspectorTimelineAgent::TimelineRecordEntry::TimelineRecordEntry):
+        (WebCore::InspectorTimelineAgent::GCEvent::GCEvent):
+
 2010-09-27  Kinuko Yasuda  <kinuko@google.com>
 
         Reviewed by Adam Barth.
