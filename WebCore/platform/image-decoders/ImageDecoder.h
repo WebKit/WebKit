@@ -84,8 +84,8 @@ namespace WebCore {
         void zeroFill();
 
         // Creates a new copy of the image data in |other|, so the two images
-        // can be modified independently.
-        void copyBitmapData(const RGBA32Buffer& other);
+        // can be modified independently.  Returns whether the copy succeeded.
+        bool copyBitmapData(const RGBA32Buffer& other);
 
         // Copies the pixel data at [(startX, startY), (endX, startY)) to the
         // same X-coordinates on each subsequent row up to but not including

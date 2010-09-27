@@ -69,14 +69,14 @@ void RGBA32Buffer::zeroFill()
     m_bitmap.eraseARGB(0, 0, 0, 0);
 }
 
-void RGBA32Buffer::copyBitmapData(const RGBA32Buffer& other)
+bool RGBA32Buffer::copyBitmapData(const RGBA32Buffer& other)
 {
     if (this == &other)
-        return;
+        return true;
 
     m_bitmap.reset();
     const NativeImageSkia& otherBitmap = other.m_bitmap;
-    otherBitmap.copyTo(&m_bitmap, otherBitmap.config());
+    return otherBitmap.copyTo(&m_bitmap, otherBitmap.config());
 }
 
 bool RGBA32Buffer::setSize(int newWidth, int newHeight)

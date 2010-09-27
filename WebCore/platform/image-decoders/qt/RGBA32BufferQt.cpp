@@ -75,15 +75,16 @@ void RGBA32Buffer::zeroFill()
     m_pixmap.fill(QColor(0, 0, 0, 0));
 }
 
-void RGBA32Buffer::copyBitmapData(const RGBA32Buffer& other)
+bool RGBA32Buffer::copyBitmapData(const RGBA32Buffer& other)
 {
     if (this == &other)
-        return;
+        return true;
 
     m_image = other.m_image;
     m_pixmap = other.m_pixmap;
     m_size = other.m_size;
     m_hasAlpha = other.m_hasAlpha;
+    return true;
 }
 
 bool RGBA32Buffer::setSize(int newWidth, int newHeight)

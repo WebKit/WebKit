@@ -128,14 +128,15 @@ void RGBA32Buffer::zeroFill()
     m_hasAlpha = true;
 }
 
-void RGBA32Buffer::copyBitmapData(const RGBA32Buffer& other)
+bool RGBA32Buffer::copyBitmapData(const RGBA32Buffer& other)
 {
     if (this == &other)
-        return;
+        return true;
 
     m_bytes = other.m_bytes;
     m_size = other.m_size;
     setHasAlpha(other.m_hasAlpha);
+    return true;
 }
 
 bool RGBA32Buffer::setSize(int newWidth, int newHeight)

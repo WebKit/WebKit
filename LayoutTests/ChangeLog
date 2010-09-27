@@ -1,3 +1,12 @@
+2010-09-27  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by James Robinson.
+
+        This resource should have been in r62399; without it the test no-ops.
+        https://bugs.webkit.org/show_bug.cgi?id=41487
+
+        * fast/images/resources/large-size-image-crash.jpeg: Added.
+
 2010-09-27  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Simon Fraser.

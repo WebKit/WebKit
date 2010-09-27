@@ -356,7 +356,8 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
 
         if ((prevMethod == RGBA32Buffer::DisposeNotSpecified) || (prevMethod == RGBA32Buffer::DisposeKeep)) {
             // Preserve the last frame as the starting state for this frame.
-            buffer->copyBitmapData(*prevBuffer);
+            if (!buffer->copyBitmapData(*prevBuffer))
+                return setFailed();
         } else {
             // We want to clear the previous frame to transparent, without
             // affecting pixels in the image outside of the frame.
@@ -369,7 +370,8 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
                     return setFailed();
             } else {
               // Copy the whole previous buffer, then clear just its frame.
-              buffer->copyBitmapData(*prevBuffer);
+              if (!buffer->copyBitmapData(*prevBuffer))
+                  return setFailed();
               for (int y = prevRect.y(); y < prevRect.bottom(); ++y) {
                   for (int x = prevRect.x(); x < prevRect.right(); ++x)
                       buffer->setRGBA(x, y, 0, 0, 0, 0);
