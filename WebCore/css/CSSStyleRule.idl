@@ -23,8 +23,7 @@ module css {
     // Introduced in DOM Level 2:
     interface CSSStyleRule : CSSRule {
 
-                 attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString selectorText
-                     setter raises(DOMException);
+                 attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString selectorText;
 
         readonly attribute CSSStyleDeclaration style;
 

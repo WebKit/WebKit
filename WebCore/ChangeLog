@@ -1,3 +1,21 @@
+2010-09-27  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Sam Weinig.
+
+        Implement CSSStyleRule::setSelectorText()
+
+        This involves removing the "selectorText" "setter raises(DOMException)" clause from the IDL files,
+        since the setter no longer raises the exception, as per http://dev.w3.org/csswg/cssom/#dom-cssstylerule-selectortext
+        https://bugs.webkit.org/show_bug.cgi?id=46487
+
+        Test: fast/css/css-set-selector-text.html
+
+        * css/CSSPageRule.idl:
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::setSelectorText):
+        * css/CSSStyleRule.h:
+        * css/CSSStyleRule.idl:
+
 2010-09-27  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Dirk Schulze.

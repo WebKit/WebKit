@@ -1,0 +1,159 @@
+<html>
+<head id="head">
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("This tests setting and re-serialization of some CSS selectors.");
+
+var bogusSelector = "_foo";
+
+function setThenReadSelectorText(selector)
+{
+    var styleElement = document.getElementById("style");
+    var head = document.getElementById("head");
+    if (styleElement)
+        head.removeChild(styleElement);
+
+    styleElement = document.createElement("style");
+    styleElement.id = "style";
+    var head = document.getElementById("head");
+    head.appendChild(styleElement);
+
+    // First, create a rule with a bogus selector.
+    styleElement.appendChild(document.createTextNode(bogusSelector + " { }"));
+    // Now, set the desired selector text.
+    styleElement.sheet.cssRules[0].selectorText = selector;
+    return styleElement.sheet.cssRules[0].selectorText;
+}
+
+function testSelectorRoundTrip(selector, expectFailure)
+{
+    shouldBe("setThenReadSelectorText('" + selector + "')", "'" + (expectFailure ? bogusSelector : selector) + "'");
+}
+
+testSelectorRoundTrip('', true);
+testSelectorRoundTrip('123', true);
+testSelectorRoundTrip('-', true);
+testSelectorRoundTrip('$', true);
+testSelectorRoundTrip(':', true);
+testSelectorRoundTrip('.', true);
+testSelectorRoundTrip('#', true);
+testSelectorRoundTrip('[]', true);
+testSelectorRoundTrip('()', true);
+
+debug('');
+
+testSelectorRoundTrip('*');
+testSelectorRoundTrip('a');
+testSelectorRoundTrip('#a');
+testSelectorRoundTrip('.a');
+testSelectorRoundTrip(':active');
+testSelectorRoundTrip('[a]');
+testSelectorRoundTrip('[a="b"]');
+testSelectorRoundTrip('[a~="b"]');
+testSelectorRoundTrip('[a|="b"]');
+testSelectorRoundTrip('[a^="b"]');
+testSelectorRoundTrip('[a$="b"]');
+testSelectorRoundTrip('[a*="b"]');
+
+debug('');
+
+testSelectorRoundTrip('*|a');
+testSelectorRoundTrip('n|a');
+testSelectorRoundTrip('*|*');
+testSelectorRoundTrip('n|*');
+testSelectorRoundTrip('[*|a]');
+testSelectorRoundTrip('[n|a]');
+
+debug('');
+
+testSelectorRoundTrip('a:active');
+testSelectorRoundTrip('a b');
+testSelectorRoundTrip('a + b');
+testSelectorRoundTrip('a ~ b');
+testSelectorRoundTrip('a > b');
+
+debug('');
+
+testSelectorRoundTrip(":active");
+testSelectorRoundTrip(":checked");
+testSelectorRoundTrip(":disabled");
+testSelectorRoundTrip(":empty");
+testSelectorRoundTrip(":enabled");
+testSelectorRoundTrip(":first-child");
+testSelectorRoundTrip(":first-of-type");
+testSelectorRoundTrip(":focus");
+testSelectorRoundTrip(":hover");
+testSelectorRoundTrip(":indeterminate");
+testSelectorRoundTrip(":link");
+testSelectorRoundTrip(":root");
+testSelectorRoundTrip(":target");
+testSelectorRoundTrip(":visited");
+
+debug('');
+
+testSelectorRoundTrip(":lang(a)");
+testSelectorRoundTrip(":not(a)");
+
+debug('');
+
+testSelectorRoundTrip("::after");
+testSelectorRoundTrip("::before");
+testSelectorRoundTrip("::first-letter");
+testSelectorRoundTrip("::first-line");
+testSelectorRoundTrip("::selection");
+
+debug('');
+
+testSelectorRoundTrip(":-webkit-any-link");
+testSelectorRoundTrip(":-webkit-autofill");
+testSelectorRoundTrip(":-webkit-drag");
+
+debug('');
+
+testSelectorRoundTrip("::-webkit-file-upload-button");
+testSelectorRoundTrip("::-webkit-search-cancel-button");
+testSelectorRoundTrip("::-webkit-search-decoration");
+testSelectorRoundTrip("::-webkit-search-results-button");
+testSelectorRoundTrip("::-webkit-search-results-decoration");
+testSelectorRoundTrip("::-webkit-slider-thumb");
+
+debug('');
+
+testSelectorRoundTrip('input:not([type="file"]):focus');
+
+debug('');
+
+shouldBe("setThenReadSelectorText('*:active')", "':active'");
+shouldBe("setThenReadSelectorText('|a')", "'a'");
+
+debug('');
+
+shouldBe("setThenReadSelectorText('input[type=file]:focus')", "'input[type=\"file\"]:focus'");
+
+debug('');
+
+shouldBe("setThenReadSelectorText('a+b')", "'a + b'");
+shouldBe("setThenReadSelectorText('a~b')", "'a ~ b'");
+shouldBe("setThenReadSelectorText('a>b')", "'a > b'");
+
+debug('');
+
+shouldBe("setThenReadSelectorText(':after')", "'::after'");
+shouldBe("setThenReadSelectorText(':before')", "'::before'");
+shouldBe("setThenReadSelectorText(':first-letter')", "'::first-letter'");
+shouldBe("setThenReadSelectorText(':first-line')", "'::first-line'");
+
+debug('');
+
+successfullyParsed = true;
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

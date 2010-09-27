@@ -23,7 +23,11 @@
 #include "CSSStyleRule.h"
 
 #include "CSSMutableStyleDeclaration.h"
+#include "CSSParser.h"
 #include "CSSSelector.h"
+#include "CSSStyleSheet.h"
+#include "Document.h"
+#include "StyleSheet.h"
 
 namespace WebCore {
 
@@ -50,9 +54,34 @@ String CSSStyleRule::selectorText() const
     return str;
 }
 
-void CSSStyleRule::setSelectorText(const String& /*selectorText*/, ExceptionCode& /*ec*/)
+void CSSStyleRule::setSelectorText(const String& selectorText)
 {
-    // FIXME: Implement!
+    Document* doc = 0;
+    StyleSheet* ownerStyleSheet = m_style->stylesheet();
+    if (ownerStyleSheet) {
+        if (ownerStyleSheet->isCSSStyleSheet())
+            doc = static_cast<CSSStyleSheet*>(ownerStyleSheet)->document();
+        if (!doc)
+            doc = ownerStyleSheet->ownerNode() ? ownerStyleSheet->ownerNode()->document() : 0;
+    }
+    if (!doc)
+        doc = m_style->node() ? m_style->node()->document() : 0;
+
+    if (!doc)
+        return;
+
+    CSSParser p;
+    CSSSelectorList selectorList;
+    p.parseSelector(selectorText, doc, selectorList);
+    if (!selectorList.first())
+        return;
+
+    String oldSelectorText = this->selectorText();
+    m_selectorList.adopt(selectorList);
+    if (this->selectorText() == oldSelectorText)
+        return;
+
+    doc->styleSelectorChanged(DeferRecalcStyle);
 }
 
 String CSSStyleRule::cssText() const

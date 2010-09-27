@@ -1,0 +1,96 @@
+This tests setting and re-serialization of some CSS selectors.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS setThenReadSelectorText('') is '_foo'
+PASS setThenReadSelectorText('123') is '_foo'
+PASS setThenReadSelectorText('-') is '_foo'
+PASS setThenReadSelectorText('$') is '_foo'
+PASS setThenReadSelectorText(':') is '_foo'
+PASS setThenReadSelectorText('.') is '_foo'
+PASS setThenReadSelectorText('#') is '_foo'
+PASS setThenReadSelectorText('[]') is '_foo'
+PASS setThenReadSelectorText('()') is '_foo'
+
+PASS setThenReadSelectorText('*') is '*'
+PASS setThenReadSelectorText('a') is 'a'
+PASS setThenReadSelectorText('#a') is '#a'
+PASS setThenReadSelectorText('.a') is '.a'
+PASS setThenReadSelectorText(':active') is ':active'
+PASS setThenReadSelectorText('[a]') is '[a]'
+PASS setThenReadSelectorText('[a="b"]') is '[a="b"]'
+PASS setThenReadSelectorText('[a~="b"]') is '[a~="b"]'
+PASS setThenReadSelectorText('[a|="b"]') is '[a|="b"]'
+PASS setThenReadSelectorText('[a^="b"]') is '[a^="b"]'
+PASS setThenReadSelectorText('[a$="b"]') is '[a$="b"]'
+PASS setThenReadSelectorText('[a*="b"]') is '[a*="b"]'
+
+PASS setThenReadSelectorText('*|a') is '*|a'
+PASS setThenReadSelectorText('n|a') is 'n|a'
+PASS setThenReadSelectorText('*|*') is '*|*'
+PASS setThenReadSelectorText('n|*') is 'n|*'
+PASS setThenReadSelectorText('[*|a]') is '[*|a]'
+PASS setThenReadSelectorText('[n|a]') is '[n|a]'
+
+PASS setThenReadSelectorText('a:active') is 'a:active'
+PASS setThenReadSelectorText('a b') is 'a b'
+PASS setThenReadSelectorText('a + b') is 'a + b'
+PASS setThenReadSelectorText('a ~ b') is 'a ~ b'
+PASS setThenReadSelectorText('a > b') is 'a > b'
+
+PASS setThenReadSelectorText(':active') is ':active'
+PASS setThenReadSelectorText(':checked') is ':checked'
+PASS setThenReadSelectorText(':disabled') is ':disabled'
+PASS setThenReadSelectorText(':empty') is ':empty'
+PASS setThenReadSelectorText(':enabled') is ':enabled'
+PASS setThenReadSelectorText(':first-child') is ':first-child'
+PASS setThenReadSelectorText(':first-of-type') is ':first-of-type'
+PASS setThenReadSelectorText(':focus') is ':focus'
+PASS setThenReadSelectorText(':hover') is ':hover'
+PASS setThenReadSelectorText(':indeterminate') is ':indeterminate'
+PASS setThenReadSelectorText(':link') is ':link'
+PASS setThenReadSelectorText(':root') is ':root'
+PASS setThenReadSelectorText(':target') is ':target'
+PASS setThenReadSelectorText(':visited') is ':visited'
+
+PASS setThenReadSelectorText(':lang(a)') is ':lang(a)'
+PASS setThenReadSelectorText(':not(a)') is ':not(a)'
+
+PASS setThenReadSelectorText('::after') is '::after'
+PASS setThenReadSelectorText('::before') is '::before'
+PASS setThenReadSelectorText('::first-letter') is '::first-letter'
+PASS setThenReadSelectorText('::first-line') is '::first-line'
+PASS setThenReadSelectorText('::selection') is '::selection'
+
+PASS setThenReadSelectorText(':-webkit-any-link') is ':-webkit-any-link'
+PASS setThenReadSelectorText(':-webkit-autofill') is ':-webkit-autofill'
+PASS setThenReadSelectorText(':-webkit-drag') is ':-webkit-drag'
+
+PASS setThenReadSelectorText('::-webkit-file-upload-button') is '::-webkit-file-upload-button'
+PASS setThenReadSelectorText('::-webkit-search-cancel-button') is '::-webkit-search-cancel-button'
+PASS setThenReadSelectorText('::-webkit-search-decoration') is '::-webkit-search-decoration'
+PASS setThenReadSelectorText('::-webkit-search-results-button') is '::-webkit-search-results-button'
+PASS setThenReadSelectorText('::-webkit-search-results-decoration') is '::-webkit-search-results-decoration'
+PASS setThenReadSelectorText('::-webkit-slider-thumb') is '::-webkit-slider-thumb'
+
+PASS setThenReadSelectorText('input:not([type="file"]):focus') is 'input:not([type="file"]):focus'
+
+PASS setThenReadSelectorText('*:active') is ':active'
+PASS setThenReadSelectorText('|a') is 'a'
+
+PASS setThenReadSelectorText('input[type=file]:focus') is 'input[type="file"]:focus'
+
+PASS setThenReadSelectorText('a+b') is 'a + b'
+PASS setThenReadSelectorText('a~b') is 'a ~ b'
+PASS setThenReadSelectorText('a>b') is 'a > b'
+
+PASS setThenReadSelectorText(':after') is '::after'
+PASS setThenReadSelectorText(':before') is '::before'
+PASS setThenReadSelectorText(':first-letter') is '::first-letter'
+PASS setThenReadSelectorText(':first-line') is '::first-line'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

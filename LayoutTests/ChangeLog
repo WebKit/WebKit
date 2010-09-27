@@ -1,3 +1,13 @@
+2010-09-27  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Sam Weinig.
+
+        Implement CSSStyleRule::setSelectorText()
+        https://bugs.webkit.org/show_bug.cgi?id=46487
+
+        * fast/css/css-set-selector-text-expected.txt: Added.
+        * fast/css/css-set-selector-text.html: Added.
+
 2010-09-27  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Updated chromium expectations for ifast/block/basic/016.html (mac expectations changed in r68362)
