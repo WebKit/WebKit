@@ -175,7 +175,7 @@ void FullscreenVideoController::showHud(bool autoHide)
 
     // Show the cursor.
     GdkWindow* window = gtk_widget_get_window(m_window);
-    gdk_window_set_cursor(window, m_cursor.get());
+    gdk_window_set_cursor(window, 0);
 
     // Update the progress bar immediately before showing the window.
     updateHudProgressBar();
@@ -210,7 +210,7 @@ void FullscreenVideoController::hideHud()
     }
 
     GdkWindow* window = gtk_widget_get_window(m_window);
-    GdkCursor* cursor = gdk_cursor_new(GDK_BLANK_CURSOR);
+    GdkCursor* cursor = blankCursor();
     gdk_window_set_cursor(window, cursor);
 
     gtk_widget_hide_all(m_hudWindow);
@@ -283,8 +283,7 @@ void FullscreenVideoController::enterFullscreen()
     gtk_widget_show_all(m_window);
 
     GdkWindow* window = gtk_widget_get_window(m_window);
-    GdkCursor* cursor = gdk_cursor_new(GDK_BLANK_CURSOR);
-    m_cursor = gdk_window_get_cursor(window);
+    GdkCursor* cursor = blankCursor();
     gdk_window_set_cursor(window, cursor);
     gdk_cursor_unref(cursor);
 

@@ -60,10 +60,41 @@ GdkDevice *getDefaultGDKPointerDevice(GdkWindow* window)
 }
 
 #if !GTK_CHECK_VERSION(2, 17, 3)
-static void gdk_window_get_root_coords(GdkWindow* window, gint x, gint y, gint* rootX, gint* rootY)
+void gdk_window_get_root_coords(GdkWindow* window, gint x, gint y, gint* rootX, gint* rootY)
 {
     gdk_window_get_root_origin(window, rootX, rootY);
     *rootX = *rootX + x;
     *rootY = *rootY + y;
 }
 #endif
+
+GdkCursor * blankCursor()
+{
+#if GTK_CHECK_VERSION(2, 16, 0)
+    return gdk_cursor_new(GDK_BLANK_CURSOR);
+#else
+    GdkCursor * cursor;
+    GdkPixmap * source;
+    GdkPixmap * mask;
+    GdkColor foreground = { 0, 65535, 0, 0 }; // Red.
+    GdkColor background = { 0, 0, 0, 65535 }; // Blue.
+    static gchar cursorBits[] = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
+
+    source = gdk_bitmap_create_from_data(0, cursorBits, 8, 8);
+    mask = gdk_bitmap_create_from_data(0, cursorBits, 8, 8);
+    cursor = gdk_cursor_new_from_pixmap(source, mask, &foreground, &background, 8, 8);
+    gdk_pixmap_unref(source);
+    gdk_pixmap_unref(mask);
+    return cursor;
+#endif // GTK_CHECK_VERSION(2, 16, 0)
+}
+
+#if !GTK_CHECK_VERSION(2, 16, 0)
+const gchar* gtk_menu_item_get_label(GtkMenuItem* menuItem)
+{
+    GtkWidget * label = gtk_bin_get_child(GTK_BIN(menuItem));
+    if (GTK_IS_LABEL(label))
+        return gtk_label_get_text(GTK_LABEL(label));
+    return 0;
+}
+#endif // GTK_CHECK_VERSION(2, 16, 0)

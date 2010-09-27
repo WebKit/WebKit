@@ -1,3 +1,22 @@
+2010-09-27  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Doesn't build with gtk+ 2.14
+        https://bugs.webkit.org/show_bug.cgi?id=46565
+
+        Fixed the build for GTK+ 2.14 by adding backward compatible
+        a backward-compatible function for gtk_menu_item_get_label and a
+        utility function to create a blank mouse cursor. Those functions
+        are used in the fullscreen video controller and in the DRT
+        EventSender.
+
+        * platform/gtk/GtkVersioning.c:
+        (gdk_window_get_root_coords):
+        (blankCursor):
+        (gtk_menu_item_get_label):
+        * platform/gtk/GtkVersioning.h:
+
 2010-09-23  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by James Robinson.

@@ -1,3 +1,19 @@
+2010-09-27  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Doesn't build with gtk+ 2.14
+        https://bugs.webkit.org/show_bug.cgi?id=46565
+
+        Fixed the build for GTK+ 2.14. Don't use gdk_window_get_cursor()
+        for that GTK+ version as I found no acceptable way to work-around
+        its absence.
+
+        * WebCoreSupport/FullscreenVideoController.cpp:
+        (FullscreenVideoController::showHud):
+        (FullscreenVideoController::hideHud):
+        (FullscreenVideoController::enterFullscreen):
+
 2010-09-26  Jenn Braithwaite  <jennb@chromium.org>
 
         Reviewed by Adam Barth.
