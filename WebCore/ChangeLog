@@ -1,3 +1,18 @@
+2010-09-24  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        gl-teximage fails on chrome mac bot
+        https://bugs.webkit.org/show_bug.cgi?id=45332
+
+        Add support for alpha first pixel formats.
+
+        * platform/graphics/GraphicsContext3D.cpp:
+        (WebCore::doPacking):
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/cg/GraphicsContext3DCG.cpp:
+        (WebCore::GraphicsContext3D::getImageData):
+
 2010-09-17  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

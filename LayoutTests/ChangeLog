@@ -1,3 +1,12 @@
+2010-09-24  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        gl-teximage fails on chrome mac bot
+        https://bugs.webkit.org/show_bug.cgi?id=45332
+
+        * platform/chromium/test_expectations.txt: Re-enabling gl-textimage.html with the fix.
+
 2010-09-27  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Sam Weinig.

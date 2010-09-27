@@ -71,9 +71,54 @@ bool GraphicsContext3D::getImageData(Image* image,
     AlphaOp neededAlphaOp = kAlphaDoNothing;
     switch (CGImageGetAlphaInfo(cgImage)) {
     case kCGImageAlphaPremultipliedFirst:
+        // This path is only accessible for MacOS earlier than 10.6.4.
+        // This is a special case for texImage2D with HTMLCanvasElement input,
+        // in which case image->data() should be null.
+        ASSERT(!image->data());
+        if (!premultiplyAlpha)
+            neededAlphaOp = kAlphaDoUnmultiply;
+        switch (componentsPerPixel) {
+        case 2:
+            srcDataFormat = kSourceFormatAR8;
+            break;
+        case 4:
+            srcDataFormat = kSourceFormatARGB8;
+            break;
+        default:
+            return false;
+        }
+        break;
     case kCGImageAlphaFirst:
+        // This path is only accessible for MacOS earlier than 10.6.4.
+        if (premultiplyAlpha)
+            neededAlphaOp = kAlphaDoPremultiply;
+        switch (componentsPerPixel) {
+        case 1:
+            srcDataFormat = kSourceFormatA8;
+            break;
+        case 2:
+            srcDataFormat = kSourceFormatAR8;
+            break;
+        case 4:
+            srcDataFormat = kSourceFormatARGB8;
+            break;
+        default:
+            return false;
+        }
+        break;
     case kCGImageAlphaNoneSkipFirst:
-        return false;
+        // This path is only accessible for MacOS earlier than 10.6.4.
+        switch (componentsPerPixel) {
+        case 2:
+            srcDataFormat = kSourceFormatAR8;
+            break;
+        case 4:
+            srcDataFormat = kSourceFormatARGB8;
+            break;
+        default:
+            return false;
+        }
+        break;
     case kCGImageAlphaPremultipliedLast:
         // This is a special case for texImage2D with HTMLCanvasElement input,
         // in which case image->data() should be null.
