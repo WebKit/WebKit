@@ -27,15 +27,16 @@
 #include "SourceAlpha.h"
 #include "SourceGraphic.h"
 
-#include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
 SVGFilterBuilder::SVGFilterBuilder()
+    : m_lastEffect(0)
 {
     m_builtinEffects.add(SourceGraphic::effectName(), SourceGraphic::create());
     m_builtinEffects.add(SourceAlpha::effectName(), SourceAlpha::create());
+    addBuiltinEffects();
 }
 
 void SVGFilterBuilder::add(const AtomicString& id, RefPtr<FilterEffect> effect)
@@ -67,10 +68,26 @@ FilterEffect* SVGFilterBuilder::getEffectById(const AtomicString& id) const
     return m_namedEffects.get(id).get();
 }
 
+void SVGFilterBuilder::appendEffectToEffectReferences(RefPtr<FilterEffect> effectReference)
+{
+    // The effect must be a newly created filter effect.
+    ASSERT(!m_effectReferences.contains(effectReference));
+    m_effectReferences.add(effectReference, FilterEffectSet());
+
+    FilterEffect* effect = effectReference.get();
+    unsigned numberOfInputEffects = effect->inputEffects().size();
+
+    // It is not possible to add the same value to a set twice.
+    for (unsigned i = 0; i < numberOfInputEffects; ++i)
+        getEffectReferences(effect->inputEffect(i)).add(effect);
+}
+
 void SVGFilterBuilder::clearEffects()
 {
     m_lastEffect = 0;
     m_namedEffects.clear();
+    m_effectReferences.clear();
+    addBuiltinEffects();
 }
 
 } // namespace WebCore

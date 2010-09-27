@@ -36,10 +36,11 @@ namespace WebCore {
 
 class RenderSVGResourceFilterPrimitive : public RenderSVGHiddenContainer {
 public:
-     RenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes* filterPrimitiveElement);
+    RenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes* filterPrimitiveElement);
 
 private:
-     virtual bool isSVGResourceFilterPrimitive() const { return true; }
+    virtual const char* renderName() const { return "RenderSVGResourceFilterPrimitive"; }
+    virtual bool isSVGResourceFilterPrimitive() const { return true; }
 };
 
 } // namespace WebCore

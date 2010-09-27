@@ -1,3 +1,30 @@
+2010-09-27  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Dirk Schulze.
+
+        Filter builder should be able to follow the filter object dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=45812
+
+        To propagate the changes of a primitive object, a data structure
+        is needed which stores the dependent primitive objects. (Those
+        who use the resulting image.) This data structure is implemented
+        as a hash map, which contains primitive object and set of primitive
+        objects <key,value> pairs. The hash map is able to follow the
+        dynamic topology changes.
+
+        * rendering/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::buildPrimitives):
+        * rendering/RenderSVGResourceFilterPrimitive.h:
+        (WebCore::RenderSVGResourceFilterPrimitive::renderName):
+        (WebCore::RenderSVGResourceFilterPrimitive::isSVGResourceFilterPrimitive):
+        * svg/graphics/filters/SVGFilterBuilder.cpp:
+        (WebCore::SVGFilterBuilder::SVGFilterBuilder):
+        (WebCore::SVGFilterBuilder::appendEffectToEffectReferences):
+        (WebCore::SVGFilterBuilder::clearEffects):
+        * svg/graphics/filters/SVGFilterBuilder.h:
+        (WebCore::SVGFilterBuilder::getEffectReferences):
+        (WebCore::SVGFilterBuilder::addBuiltinEffects):
+
 2010-09-27  Andreas Kling  <andreas.kling@nokia.com>
 
         Rubber-stamped by Kenneth Rohde Christiansen.

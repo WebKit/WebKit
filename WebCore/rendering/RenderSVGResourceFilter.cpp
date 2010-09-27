@@ -93,7 +93,6 @@ PassRefPtr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives()
 
     // Add effects to the builder
     RefPtr<SVGFilterBuilder> builder = SVGFilterBuilder::create();
-    builder->clearEffects();
     for (Node* node = filterElement->firstChild(); node; node = node->nextSibling()) {
         if (!node->isSVGElement())
             continue;
@@ -108,6 +107,7 @@ PassRefPtr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives()
             builder->clearEffects();
             return 0;
         }
+        builder->appendEffectToEffectReferences(effect);
         effectElement->setStandardAttributes(primitiveBoundingBoxMode, effect.get());
         builder->add(effectElement->result(), effect);
     }

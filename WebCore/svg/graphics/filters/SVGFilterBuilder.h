@@ -27,6 +27,7 @@
 #include "PlatformString.h"
 
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/AtomicStringHash.h>
 
@@ -34,6 +35,8 @@ namespace WebCore {
     
     class SVGFilterBuilder : public RefCounted<SVGFilterBuilder> {
     public:
+        typedef HashSet<FilterEffect*> FilterEffectSet;
+
         static PassRefPtr<SVGFilterBuilder> create() { return adoptRef(new SVGFilterBuilder); }
 
         void add(const AtomicString& id, RefPtr<FilterEffect> effect);
@@ -41,15 +44,32 @@ namespace WebCore {
         FilterEffect* getEffectById(const AtomicString& id) const;
         FilterEffect* lastEffect() const { return m_lastEffect.get(); }
 
-        const HashMap<AtomicString, RefPtr<FilterEffect> >& namedEffects() { return m_namedEffects; }
+        void appendEffectToEffectReferences(RefPtr<FilterEffect>);
+
+        inline FilterEffectSet& getEffectReferences(FilterEffect* effect)
+        {
+            // Only allowed for effects belongs to this builder.
+            ASSERT(m_effectReferences.contains(effect));
+            return m_effectReferences.find(effect)->second;
+        }
 
         void clearEffects();
 
     private:
         SVGFilterBuilder();
 
+        inline void addBuiltinEffects()
+        {
+            HashMap<AtomicString, RefPtr<FilterEffect> >::iterator end = m_builtinEffects.end();
+            for (HashMap<AtomicString, RefPtr<FilterEffect> >::iterator iterator = m_builtinEffects.begin(); iterator != end; ++iterator)
+                 m_effectReferences.add(iterator->second, FilterEffectSet());
+        }
+
         HashMap<AtomicString, RefPtr<FilterEffect> > m_builtinEffects;
         HashMap<AtomicString, RefPtr<FilterEffect> > m_namedEffects;
+        // The value is a list, which contains those filter effects,
+        // which depends on the key filter effect.
+        HashMap<RefPtr<FilterEffect>, FilterEffectSet> m_effectReferences;
 
         RefPtr<FilterEffect> m_lastEffect;
     };
