@@ -135,6 +135,12 @@ public:
         return createHash<T, defaultCoverter>(data);
     }
 
+    template<size_t length> static inline unsigned createBlobHash(const void* data)
+    {
+        COMPILE_ASSERT(!(length % 4), length_must_be_a_multible_of_four);
+        return createHash<UChar>(static_cast<const UChar*>(data), length / sizeof(UChar));
+    }
+
 private:
     static inline UChar defaultCoverter(UChar ch)
     {

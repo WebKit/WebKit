@@ -1,3 +1,18 @@
+2010-09-26  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add WTF::StringHasher::createBlobHash
+        https://bugs.webkit.org/show_bug.cgi?id=46514
+
+        Add this function for hashing FormElementKey and QualifiedNameComponents.
+
+        * dom/Document.cpp:
+        (WebCore::FormElementKeyHash::hash):
+        * dom/QualifiedName.h:
+        (WebCore::hashComponents):
+        (WebCore::QualifiedNameHash::hash):
+
 2010-09-26  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.

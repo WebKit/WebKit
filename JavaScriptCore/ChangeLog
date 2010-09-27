@@ -2,6 +2,18 @@
 
         Reviewed by Adam Barth.
 
+        Add WTF::StringHasher::createBlobHash
+        https://bugs.webkit.org/show_bug.cgi?id=46514
+
+        Add this function for hashing FormElementKey and QualifiedNameComponents.
+
+        * wtf/StringHashFunctions.h:
+        (WTF::StringHasher::createBlobHash):
+
+2010-09-26  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Barth.
+
         REGRESSION (r68289): Assertion failure in StringHasher::addCharacter() (ch != invalidCharacterValue)
         running websocket/tests/bad-sub-protocol-non-ascii.html
         https://bugs.webkit.org/show_bug.cgi?id=46553
