@@ -1,3 +1,24 @@
+2010-09-27  Adam Roben  <aroben@apple.com>
+
+        Give mouse wheel events the right coordinates on Windows
+
+        Fixes <http://webkit.org/b/46625> <rdar://problem/8481161> Placing
+        mouse cursor inside a scrollable area and scrolling the mouse wheel
+        generally doesn't scroll the area
+
+        Reviewed by Sam Weinig.
+
+        * Shared/win/WebEventFactory.cpp:
+        (WebKit::point): Renamed from positionForEvent. The old name implied
+        that all events used the same relative origin, which is untrue.
+        (WebKit::WebEventFactory::createWebMouseEvent): Changed to use point
+        and ::ClientToScreen explicitly rather than relying on
+        positionForEvent/globalPositionForEvent.
+        (WebKit::WebEventFactory::createWebWheelEvent): Changed to use point
+        and ::ScreenToClient. The old code was assuming that wheel event
+        points are relative to the client area, but they are in fact relative
+        to the screen.
+
 2010-09-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.
