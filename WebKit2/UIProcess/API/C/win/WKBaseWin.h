@@ -23,22 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKBundleScriptWorld_h
-#define WKBundleScriptWorld_h
+#ifndef WKBaseWin_h
+#define WKBaseWin_h
 
-#include <WebKit2/WKBase.h>
-
-#ifdef __cplusplus
-extern "C" {
+#ifndef WKBase_h
+#error "Please #include \"WKBase.h\" instead of this file directly."
 #endif
 
-WK_EXPORT WKTypeID WKBundleScriptWorldGetTypeID();
+typedef const struct OpaqueWKView* WKViewRef;
 
-WK_EXPORT WKBundleScriptWorldRef WKBundleScriptWorldCreateWorld();
-WK_EXPORT WKBundleScriptWorldRef WKBundleScriptWorldNormalWorld();
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* WKBundleScriptWorld_h */
+#endif /* WKBaseWin_h */

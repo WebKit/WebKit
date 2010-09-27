@@ -26,7 +26,7 @@
 #ifndef WKBundleAPICast_h
 #define WKBundleAPICast_h
 
-#include "WKBundleBase.h"
+#include "WKSharedAPICast.h"
 #include "WKBundlePage.h"
 #include "WKBundlePagePrivate.h"
 #include "WKBundlePrivate.h"
@@ -49,42 +49,14 @@ class InjectedBundleScriptWorld;
 class WebFrame;
 class WebPage;
 
-template<typename APIType> struct BundleAPITypeInfo { };
-template<> struct BundleAPITypeInfo<WKBundleCSSStyleDeclarationRef>     { typedef WebCore::CSSStyleDeclaration* ImplType; };
-template<> struct BundleAPITypeInfo<WKBundleFrameRef>                   { typedef WebFrame* ImplType; };
-template<> struct BundleAPITypeInfo<WKBundleHitTestResultRef>           { typedef InjectedBundleHitTestResult* ImplType; };
-template<> struct BundleAPITypeInfo<WKBundleNodeHandleRef>              { typedef InjectedBundleNodeHandle* ImplType; };
-template<> struct BundleAPITypeInfo<WKBundlePageRef>                    { typedef WebPage* ImplType; };
-template<> struct BundleAPITypeInfo<WKBundleRangeHandleRef>             { typedef InjectedBundleRangeHandle* ImplType; };
-template<> struct BundleAPITypeInfo<WKBundleRef>                        { typedef InjectedBundle* ImplType; };
-template<> struct BundleAPITypeInfo<WKBundleScriptWorldRef>             { typedef InjectedBundleScriptWorld* ImplType; };
-
-template<typename ImplType> struct BundleImplTypeInfo { };
-template<> struct BundleImplTypeInfo<InjectedBundle*>                   { typedef WKBundleRef APIType; };
-template<> struct BundleImplTypeInfo<InjectedBundleHitTestResult*>      { typedef WKBundleHitTestResultRef APIType; };
-template<> struct BundleImplTypeInfo<InjectedBundleNodeHandle*>         { typedef WKBundleNodeHandleRef APIType; };
-template<> struct BundleImplTypeInfo<InjectedBundleRangeHandle*>        { typedef WKBundleRangeHandleRef APIType; };
-template<> struct BundleImplTypeInfo<InjectedBundleScriptWorld*>        { typedef WKBundleScriptWorldRef APIType; };
-template<> struct BundleImplTypeInfo<WebCore::CSSStyleDeclaration*>     { typedef WKBundleCSSStyleDeclarationRef APIType; };
-template<> struct BundleImplTypeInfo<WebFrame*>                         { typedef WKBundleFrameRef APIType; };
-template<> struct BundleImplTypeInfo<WebPage*>                          { typedef WKBundlePageRef APIType; };
-
-/* Opaque typing convenience methods */
-
-template<typename T>
-inline typename BundleAPITypeInfo<T>::ImplType toWK(T t)
-{
-    typedef typename WTF::RemovePointer<T>::Type PotentiallyConstValueType;
-    typedef typename WTF::RemoveConst<PotentiallyConstValueType>::Type NonConstValueType;
-
-    return reinterpret_cast<typename BundleAPITypeInfo<T>::ImplType>(const_cast<NonConstValueType*>(t));
-}
-
-template<typename T>
-inline typename BundleImplTypeInfo<T>::APIType toRef(T t)
-{
-    return reinterpret_cast<typename BundleImplTypeInfo<T>::APIType>(t);
-}
+WK_ADD_API_MAPPING(WKBundleCSSStyleDeclarationRef, WebCore::CSSStyleDeclaration)
+WK_ADD_API_MAPPING(WKBundleFrameRef, WebFrame)
+WK_ADD_API_MAPPING(WKBundleHitTestResultRef, InjectedBundleHitTestResult)
+WK_ADD_API_MAPPING(WKBundleNodeHandleRef, InjectedBundleNodeHandle)
+WK_ADD_API_MAPPING(WKBundlePageRef, WebPage)
+WK_ADD_API_MAPPING(WKBundleRangeHandleRef, InjectedBundleRangeHandle)
+WK_ADD_API_MAPPING(WKBundleRef, InjectedBundle)
+WK_ADD_API_MAPPING(WKBundleScriptWorldRef, InjectedBundleScriptWorld)
 
 inline WKInsertActionType toWK(WebCore::EditorInsertAction action)
 {

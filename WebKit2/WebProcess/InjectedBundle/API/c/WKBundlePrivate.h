@@ -27,7 +27,6 @@
 #define WKBundlePrivate_h
 
 #include <WebKit2/WKBase.h>
-#include <WebKit2/WKBundleBase.h>
 
 #ifndef __cplusplus
 #include <stdbool.h>

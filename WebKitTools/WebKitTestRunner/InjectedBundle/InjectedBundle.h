@@ -30,7 +30,6 @@
 #include "GCController.h"
 #include "LayoutTestController.h"
 #include <WebKit2/WKBase.h>
-#include <WebKit2/WKBundleBase.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>

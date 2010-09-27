@@ -1,3 +1,131 @@
+2010-09-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Move shared WebKit2 API (used by both bundle and main API) to WebKit2/Shared/API
+        https://bugs.webkit.org/show_bug.cgi?id=46587
+
+        - Moves shared types (WKArrayRef, WKDictionaryRef, etc) to Shared/API/c.
+        - Removes WKBundleBase.h and moves all opaque type declarations to WKBase.h (which
+          moves to Shared/API/c).
+        - Adds WKSharedAPICast.h which includes shared API casting logic and is included
+          by both WKAPICast.h and WKBundleAPICast.h now. Moved to using macros for API 
+          mappings to reduce verbosity.
+        - Move windows c API files from UIProcess/API/win to UIProcess/API/C/win.
+
+        * Shared/API: Added.
+        * Shared/API/c: Added.
+        * Shared/API/c/WKArray.cpp: Copied from UIProcess/API/C/WKArray.cpp.
+        * Shared/API/c/WKArray.h: Copied from UIProcess/API/C/WKArray.h.
+        * Shared/API/c/WKBase.h: Copied from UIProcess/API/C/WKBase.h.
+        * Shared/API/c/WKCertificateInfo.cpp: Copied from UIProcess/API/C/WKCertificateInfo.cpp.
+        * Shared/API/c/WKCertificateInfo.h: Copied from UIProcess/API/C/WKCertificateInfo.h.
+        * Shared/API/c/WKData.cpp: Copied from UIProcess/API/C/WKData.cpp.
+        * Shared/API/c/WKData.h: Copied from UIProcess/API/C/WKData.h.
+        * Shared/API/c/WKDictionary.cpp: Copied from UIProcess/API/C/WKDictionary.cpp.
+        * Shared/API/c/WKDictionary.h: Copied from UIProcess/API/C/WKDictionary.h.
+        * Shared/API/c/WKError.cpp: Copied from UIProcess/API/C/WKError.cpp.
+        * Shared/API/c/WKError.h: Copied from UIProcess/API/C/WKError.h.
+        * Shared/API/c/WKMutableArray.cpp: Copied from UIProcess/API/C/WKMutableArray.cpp.
+        * Shared/API/c/WKMutableArray.h: Copied from UIProcess/API/C/WKMutableArray.h.
+        * Shared/API/c/WKMutableDictionary.cpp: Copied from UIProcess/API/C/WKMutableDictionary.cpp.
+        * Shared/API/c/WKMutableDictionary.h: Copied from UIProcess/API/C/WKMutableDictionary.h.
+        * Shared/API/c/WKNumber.cpp: Copied from UIProcess/API/C/WKNumber.cpp.
+        * Shared/API/c/WKNumber.h: Copied from UIProcess/API/C/WKNumber.h.
+        * Shared/API/c/WKSerializedScriptValue.cpp: Copied from UIProcess/API/C/WKSerializedScriptValue.cpp.
+        * Shared/API/c/WKSerializedScriptValue.h: Copied from UIProcess/API/C/WKSerializedScriptValue.h.
+        * Shared/API/c/WKSharedAPICast.h: Copied from UIProcess/API/C/WKAPICast.h.
+        * Shared/API/c/WKString.cpp: Copied from UIProcess/API/C/WKString.cpp.
+        * Shared/API/c/WKString.h: Copied from UIProcess/API/C/WKString.h.
+        * Shared/API/c/WKType.cpp: Copied from UIProcess/API/C/WKType.cpp.
+        * Shared/API/c/WKType.h: Copied from UIProcess/API/C/WKType.h.
+        * Shared/API/c/WKURL.cpp: Copied from UIProcess/API/C/WKURL.cpp.
+        * Shared/API/c/WKURL.h: Copied from UIProcess/API/C/WKURL.h.
+        * Shared/API/c/WKURLRequest.cpp: Copied from UIProcess/API/C/WKURLRequest.cpp.
+        * Shared/API/c/WKURLRequest.h: Copied from UIProcess/API/C/WKURLRequest.h.
+        * Shared/API/c/WKURLResponse.cpp: Copied from UIProcess/API/C/WKURLResponse.cpp.
+        * Shared/API/c/WKURLResponse.h: Copied from UIProcess/API/C/WKURLResponse.h.
+        * Shared/API/c/cf: Copied from UIProcess/API/C/cf.
+        * Shared/API/c/mac: Copied from UIProcess/API/C/mac.
+        * Shared/API/c/win: Added.
+        * Shared/API/c/win/WKBaseWin.h: Copied from UIProcess/API/win/WKBaseWin.h.
+        * Shared/API/c/win/WKCertificateInfoWin.cpp: Copied from UIProcess/API/C/win/WKCertificateInfoWin.cpp.
+        * Shared/API/c/win/WKCertificateInfoWin.h: Copied from UIProcess/API/C/win/WKCertificateInfoWin.h.
+        * UIProcess/API/C/WKAPICast.h: Replaced.
+        * UIProcess/API/C/WKArray.cpp: Removed.
+        * UIProcess/API/C/WKArray.h: Removed.
+        * UIProcess/API/C/WKBase.h: Removed.
+        * UIProcess/API/C/WKCertificateInfo.cpp: Removed.
+        * UIProcess/API/C/WKCertificateInfo.h: Removed.
+        * UIProcess/API/C/WKData.cpp: Removed.
+        * UIProcess/API/C/WKData.h: Removed.
+        * UIProcess/API/C/WKDictionary.cpp: Removed.
+        * UIProcess/API/C/WKDictionary.h: Removed.
+        * UIProcess/API/C/WKError.cpp: Removed.
+        * UIProcess/API/C/WKError.h: Removed.
+        * UIProcess/API/C/WKMutableArray.cpp: Removed.
+        * UIProcess/API/C/WKMutableArray.h: Removed.
+        * UIProcess/API/C/WKMutableDictionary.cpp: Removed.
+        * UIProcess/API/C/WKMutableDictionary.h: Removed.
+        * UIProcess/API/C/WKNumber.cpp: Removed.
+        * UIProcess/API/C/WKNumber.h: Removed.
+        * UIProcess/API/C/WKSerializedScriptValue.cpp: Removed.
+        * UIProcess/API/C/WKSerializedScriptValue.h: Removed.
+        * UIProcess/API/C/WKString.cpp: Removed.
+        * UIProcess/API/C/WKString.h: Removed.
+        * UIProcess/API/C/WKType.cpp: Removed.
+        * UIProcess/API/C/WKType.h: Removed.
+        * UIProcess/API/C/WKURL.cpp: Removed.
+        * UIProcess/API/C/WKURL.h: Removed.
+        * UIProcess/API/C/WKURLRequest.cpp: Removed.
+        * UIProcess/API/C/WKURLRequest.h: Removed.
+        * UIProcess/API/C/WKURLResponse.cpp: Removed.
+        * UIProcess/API/C/WKURLResponse.h: Removed.
+        * UIProcess/API/C/cf: Removed.
+        * UIProcess/API/C/cf/WKStringCF.cpp: Removed.
+        * UIProcess/API/C/cf/WKStringCF.h: Removed.
+        * UIProcess/API/C/cf/WKURLCF.cpp: Removed.
+        * UIProcess/API/C/cf/WKURLCF.h: Removed.
+        * UIProcess/API/C/cf/WKURLRequestCF.cpp: Removed.
+        * UIProcess/API/C/cf/WKURLRequestCF.h: Removed.
+        * UIProcess/API/C/cf/WKURLResponseCF.cpp: Removed.
+        * UIProcess/API/C/cf/WKURLResponseCF.h: Removed.
+        * UIProcess/API/C/mac: Removed.
+        * UIProcess/API/C/mac/WKCertificateInfoMac.h: Removed.
+        * UIProcess/API/C/mac/WKCertificateInfoMac.mm: Removed.
+        * UIProcess/API/C/mac/WKURLRequestNS.h: Removed.
+        * UIProcess/API/C/mac/WKURLRequestNS.mm: Removed.
+        * UIProcess/API/C/mac/WKURLResponseNS.h: Removed.
+        * UIProcess/API/C/mac/WKURLResponseNS.mm: Removed.
+        * UIProcess/API/C/win/WKAPICastWin.h: Copied from UIProcess/API/win/WKAPICastWin.h.
+        * UIProcess/API/C/win/WKBaseWin.h: Copied from UIProcess/API/win/WKBaseWin.h.
+        * UIProcess/API/C/win/WKCertificateInfoWin.cpp: Removed.
+        * UIProcess/API/C/win/WKCertificateInfoWin.h: Removed.
+        * UIProcess/API/C/win/WKView.cpp: Copied from UIProcess/API/win/WKView.cpp.
+        * UIProcess/API/C/win/WKView.h: Copied from UIProcess/API/win/WKView.h.
+        * UIProcess/API/win: Removed.
+        * UIProcess/API/win/WKAPICastWin.h: Removed.
+        * UIProcess/API/win/WKBaseWin.h: Removed.
+        * UIProcess/API/win/WKView.cpp: Removed.
+        * UIProcess/API/win/WKView.h: Removed.
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundle.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleBase.h: Removed.
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleFramePrivate.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleInitialize.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleRangeHandle.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.h:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.make:
+
 2010-09-26  Anders Carlsson  <andersca@apple.com>
 
         Fix non-Mac builds.

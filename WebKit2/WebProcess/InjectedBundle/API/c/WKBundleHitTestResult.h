@@ -27,7 +27,6 @@
 #define WKBundleHitTestResult_h
 
 #include <WebKit2/WKBase.h>
-#include <WebKit2/WKBundleBase.h>
 
 #ifdef __cplusplus
 extern "C" {

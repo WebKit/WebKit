@@ -31,17 +31,11 @@
 #endif
 
 namespace WebKit {
-    class WebView;
-}
 
-inline WebKit::WebView* toWK(WKViewRef v)
-{
-    return reinterpret_cast<WebKit::WebView*>(const_cast<OpaqueWKView*>(v));
-}
+class WebView;
 
-inline WKViewRef toRef(WebKit::WebView* v)
-{
-    return reinterpret_cast<WKViewRef>(v);
+WK_ADD_API_MAPPING(WKViewRef, WebView)
+
 }
 
 #endif // WKAPICastWin_h

@@ -525,6 +525,206 @@
 				>
 			</File>
 			<Filter
+				Name="API"
+				>
+				<File
+					RelativePath="..\Shared\API\c\WKArray.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKArray.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKBase.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKCertificateInfo.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKCertificateInfo.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\win\WKCertificateInfoWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\win\WKCertificateInfoWin.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKData.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKData.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKDictionary.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKDictionary.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKError.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKError.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKMutableArray.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKMutableArray.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKMutableDictionary.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKMutableDictionary.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKNumber.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKNumber.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKSerializedScriptValue.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKSerializedScriptValue.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKSharedAPICast.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKString.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKString.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKType.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKType.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKURL.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKURL.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKURLRequest.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKURLRequest.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKURLResponse.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKURLResponse.h"
+					>
+				</File>
+				<Filter
+					Name="cf"
+					>
+					<File
+						RelativePath="..\Shared\API\c\cf\WKStringCF.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\Shared\API\c\cf\WKStringCF.h"
+						>
+					</File>
+					<File
+						RelativePath="..\Shared\API\c\cf\WKURLCF.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\Shared\API\c\cf\WKURLCF.h"
+						>
+					</File>
+					<File
+						RelativePath="..\Shared\API\c\cf\WKURLRequestCF.cpp"
+						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\Shared\API\c\cf\WKURLRequestCF.h"
+						>
+					</File>
+					<File
+						RelativePath="..\Shared\API\c\cf\WKURLResponseCF.cpp"
+						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\Shared\API\c\cf\WKURLResponseCF.h"
+						>
+					</File>
+				</Filter>
+			</Filter>
+			<Filter
 				Name="CoreIPCSupport"
 				>
 				<File
@@ -1339,14 +1539,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\UIProcess\API\C\WKArray.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\WKArray.h"
-						>
-					</File>
-					<File
 						RelativePath="..\UIProcess\API\C\WKBackForwardList.cpp"
 						>
 					</File>
@@ -1360,26 +1552,6 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKBackForwardListItem.h"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\WKBase.h"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\WKCertificateInfo.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\WKCertificateInfo.h"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\win\WKCertificateInfoWin.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\win\WKCertificateInfoWin.h"
 						>
 					</File>
 					<File
@@ -1400,30 +1572,6 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\win\WKContextWin.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\WKData.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\WKData.h"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\WKDictionary.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\WKDictionary.h"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\WKError.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\WKError.h"
 						>
 					</File>
 					<File
@@ -1451,35 +1599,11 @@
 						>
 					</File>
 					<File
-						RelativePath="..\UIProcess\API\C\WKMutableArray.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\WKMutableArray.h"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\WKMutableDictionary.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\WKMutableDictionary.h"
-						>
-					</File>
-					<File
 						RelativePath="..\UIProcess\API\C\WKNavigationData.cpp"
 						>
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKNavigationData.h"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\WKNumber.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\WKNumber.h"
 						>
 					</File>
 					<File
@@ -1518,142 +1642,26 @@
 						RelativePath="..\UIProcess\API\C\WKPreferencesPrivate.h"
 						>
 					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\WKSerializedScriptValue.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\WKSerializedScriptValue.h"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\WKString.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\WKString.h"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\WKType.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\WKType.h"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\WKURL.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\WKURL.h"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\WKURLRequest.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\WKURLRequest.h"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\WKURLResponse.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\WKURLResponse.h"
-						>
-					</File>
 					<Filter
-						Name="cf"
+						Name="win"
 						>
 						<File
-							RelativePath="..\UIProcess\API\C\cf\WKStringCF.cpp"
+							RelativePath="..\UIProcess\API\C\win\WKAPICastWin.h"
 							>
 						</File>
 						<File
-							RelativePath="..\UIProcess\API\C\cf\WKStringCF.h"
+							RelativePath="..\UIProcess\API\C\win\WKBaseWin.h"
 							>
 						</File>
 						<File
-							RelativePath="..\UIProcess\API\C\cf\WKURLCF.cpp"
+							RelativePath="..\UIProcess\API\C\win\WKView.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\UIProcess\API\C\cf\WKURLCF.h"
-							>
-						</File>
-						<File
-							RelativePath="..\UIProcess\API\C\cf\WKURLRequestCF.cpp"
-							>
-							<FileConfiguration
-								Name="Debug_Cairo|Win32"
-								ExcludedFromBuild="true"
-								>
-								<Tool
-									Name="VCCLCompilerTool"
-								/>
-							</FileConfiguration>
-							<FileConfiguration
-								Name="Release_Cairo|Win32"
-								ExcludedFromBuild="true"
-								>
-								<Tool
-									Name="VCCLCompilerTool"
-								/>
-							</FileConfiguration>
-						</File>
-						<File
-							RelativePath="..\UIProcess\API\C\cf\WKURLRequestCF.h"
-							>
-						</File>
-						<File
-							RelativePath="..\UIProcess\API\C\cf\WKURLResponseCF.cpp"
-							>
-							<FileConfiguration
-								Name="Debug_Cairo|Win32"
-								ExcludedFromBuild="true"
-								>
-								<Tool
-									Name="VCCLCompilerTool"
-								/>
-							</FileConfiguration>
-							<FileConfiguration
-								Name="Release_Cairo|Win32"
-								ExcludedFromBuild="true"
-								>
-								<Tool
-									Name="VCCLCompilerTool"
-								/>
-							</FileConfiguration>
-						</File>
-						<File
-							RelativePath="..\UIProcess\API\C\cf\WKURLResponseCF.h"
+							RelativePath="..\UIProcess\API\C\win\WKView.h"
 							>
 						</File>
 					</Filter>
-				</Filter>
-				<Filter
-					Name="win"
-					>
-					<File
-						RelativePath="..\UIProcess\API\win\WKAPICastWin.h"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\win\WKBaseWin.h"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\win\WKView.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\win\WKView.h"
-						>
-					</File>
 				</Filter>
 				<Filter
 					Name="cpp"

@@ -1,3 +1,12 @@
+2010-09-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Move shared WebKit2 API (used by both bundle and main API) to WebKit2/Shared/API
+        https://bugs.webkit.org/show_bug.cgi?id=46587
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+
 2010-09-26  Antonio Gomes  <agomes@rim.com>
 
         Reviewed by Kenneth Rohde Christiansen.

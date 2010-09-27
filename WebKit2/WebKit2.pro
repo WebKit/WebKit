@@ -159,6 +159,16 @@ HEADERS += \
     Platform/SharedMemory.h \
     Platform/WorkItem.h \
     Platform/WorkQueue.h \
+    Shared/API/c/WKBase.h \
+    Shared/API/c/WKCertificateInfo.h \
+    Shared/API/c/WKNumber.h \
+    Shared/API/c/WKSerializedScriptValue.h \
+    Shared/API/c/WKSharedAPICast.h \
+    Shared/API/c/WKString.h \
+    Shared/API/c/WKType.h \
+    Shared/API/c/WKURL.h \
+    Shared/API/c/WKURLRequest.h \
+    Shared/API/c/WKURLResponse.h \
     Shared/CoreIPCSupport/DrawingAreaMessageKinds.h \
     Shared/CoreIPCSupport/DrawingAreaProxyMessageKinds.h \
     Shared/CoreIPCSupport/WebPageProxyMessageKinds.h \
@@ -176,37 +186,28 @@ HEADERS += \
     Shared/UserMessageCoders.h \
     Shared/VisitedLinkTable.h \
     Shared/WebCertificateInfo.h \
-    Shared/WebEventConversion.h \
     Shared/WebEvent.h \
-    Shared/WebNumber.h \
+    Shared/WebEventConversion.h \
     Shared/WebNavigationDataStore.h \
+    Shared/WebNumber.h \
     Shared/WebPageCreationParameters.h \
     Shared/WebPreferencesStore.h \
     Shared/WebURLRequest.h \
     Shared/WebURLResponse.h \
-    UIProcess/API/cpp/WKRetainPtr.h \
-    UIProcess/API/cpp/qt/WKStringQt.h \
-    UIProcess/API/cpp/qt/WKURLQt.h \
     UIProcess/API/C/WebKit2.h \
     UIProcess/API/C/WKAPICast.h \
-    UIProcess/API/C/WKBase.h \
-    UIProcess/API/C/WKCertificateInfo.h \
     UIProcess/API/C/WKContext.h \
     UIProcess/API/C/WKContextPrivate.h \
     UIProcess/API/C/WKFrame.h \
     UIProcess/API/C/WKFramePolicyListener.h \
     UIProcess/API/C/WKNavigationData.h \
-    UIProcess/API/C/WKNumber.h \
     UIProcess/API/C/WKPage.h \
     UIProcess/API/C/WKPageNamespace.h \
     UIProcess/API/C/WKPagePrivate.h \
     UIProcess/API/C/WKPreferences.h \
-    UIProcess/API/C/WKString.h \
-    UIProcess/API/C/WKType.h \
-    UIProcess/API/C/WKURL.h \
-    UIProcess/API/C/WKURLRequest.h \
-    UIProcess/API/C/WKURLResponse.h \
-    UIProcess/API/C/WKSerializedScriptValue.h \
+    UIProcess/API/cpp/qt/WKStringQt.h \
+    UIProcess/API/cpp/qt/WKURLQt.h \
+    UIProcess/API/cpp/WKRetainPtr.h \
     UIProcess/API/qt/qgraphicswkview.h \
     UIProcess/API/qt/qwkpage.h \
     UIProcess/API/qt/qwkpage_p.h \
@@ -241,7 +242,6 @@ HEADERS += \
     UIProcess/WebProcessManager.h \
     UIProcess/WebProcessProxy.h \
     UIProcess/WebUIClient.h \
-    WebProcess/InjectedBundle/API/c/WKBundleBase.h \
     WebProcess/InjectedBundle/API/c/WKBundlePage.h \
     WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h \
     WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h \
@@ -296,37 +296,37 @@ SOURCES += \
     Platform/qt/RunLoopQt.cpp \
     Platform/qt/SharedMemoryQt.cpp \
     Platform/qt/WorkQueueQt.cpp \
+    Shared/API/c/WKCertificateInfo.cpp \
+    Shared/API/c/WKNumber.cpp \
+    Shared/API/c/WKSerializedScriptValue.cpp \
+    Shared/API/c/WKString.cpp \
+    Shared/API/c/WKType.cpp \
+    Shared/API/c/WKURL.cpp \
+    Shared/API/c/WKURLRequest.cpp \
+    Shared/API/c/WKURLResponse.cpp \
     Shared/ImmutableArray.cpp \
     Shared/ImmutableDictionary.cpp \
     Shared/MutableArray.cpp \
     Shared/MutableDictionary.cpp \
+    Shared/qt/MappedMemoryPool.cpp \
+    Shared/qt/UpdateChunk.cpp \
+    Shared/qt/WebCoreArgumentCodersQt.cpp \
+    Shared/qt/WebEventFactoryQt.cpp \
+    Shared/qt/WebURLRequestQt.cpp \
+    Shared/qt/WebURLResponseQt.cpp \
     Shared/VisitedLinkTable.cpp \
     Shared/WebEventConversion.cpp \
     Shared/WebPageCreationParameters.cpp \
     Shared/WebPreferencesStore.cpp \
     Shared/WebURLRequest.cpp \
     Shared/WebURLResponse.cpp \
-    Shared/qt/MappedMemoryPool.cpp \
-    Shared/qt/UpdateChunk.cpp \
-    Shared/qt/WebEventFactoryQt.cpp \
-    Shared/qt/WebCoreArgumentCodersQt.cpp \
-    Shared/qt/WebURLRequestQt.cpp \
-    Shared/qt/WebURLResponseQt.cpp \
-    UIProcess/API/C/WKCertificateInfo.cpp \
     UIProcess/API/C/WKContext.cpp \
     UIProcess/API/C/WKFrame.cpp \
     UIProcess/API/C/WKFramePolicyListener.cpp \
     UIProcess/API/C/WKNavigationData.cpp \
-    UIProcess/API/C/WKNumber.cpp \
     UIProcess/API/C/WKPage.cpp \
     UIProcess/API/C/WKPageNamespace.cpp \
     UIProcess/API/C/WKPreferences.cpp \
-    UIProcess/API/C/WKSerializedScriptValue.cpp \
-    UIProcess/API/C/WKString.cpp \
-    UIProcess/API/C/WKType.cpp \
-    UIProcess/API/C/WKURL.cpp \
-    UIProcess/API/C/WKURLRequest.cpp \
-    UIProcess/API/C/WKURLResponse.cpp \
     UIProcess/API/qt/ClientImpl.cpp \
     UIProcess/API/qt/qgraphicswkview.cpp \
     UIProcess/API/qt/qwkpage.cpp \

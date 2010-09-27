@@ -26,9 +26,7 @@
 #ifndef WKBundleNodeHandle_h
 #define WKBundleNodeHandle_h
 
-#include <JavaScriptCore/JavaScript.h>
 #include <WebKit2/WKBase.h>
-#include <WebKit2/WKBundleBase.h>
 
 #ifdef __cplusplus
 extern "C" {

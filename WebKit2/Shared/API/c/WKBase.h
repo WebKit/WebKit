@@ -23,8 +23,52 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKBundleBase_h
-#define WKBundleBase_h
+#ifndef WKBase_h
+#define WKBase_h
+
+#include <stdint.h>
+
+#if defined(WIN32) || defined(_WIN32)
+#include <WebKit2/WKBaseWin.h>
+#endif
+
+/* WebKit2 shared types */
+
+typedef uint32_t WKTypeID;
+typedef const void* WKTypeRef;
+
+typedef const struct OpaqueWKArray* WKArrayRef;
+typedef struct OpaqueWKArray* WKMutableArrayRef;
+
+typedef const struct OpaqueWKDictionary* WKDictionaryRef;
+typedef struct OpaqueWKDictionary* WKMutableDictionaryRef;
+
+typedef const struct OpaqueWKBoolean* WKBooleanRef;
+typedef const struct OpaqueWKData* WKDataRef;
+typedef const struct OpaqueWKDouble* WKDoubleRef;
+typedef const struct OpaqueWKError* WKErrorRef;
+typedef const struct OpaqueWKCertificateInfo* WKCertificateInfoRef;
+typedef const struct OpaqueWKSerializedScriptValue* WKSerializedScriptValueRef;
+typedef const struct OpaqueWKString* WKStringRef;
+typedef const struct OpaqueWKUInt64* WKUInt64Ref;
+typedef const struct OpaqueWKURL* WKURLRef;
+typedef const struct OpaqueWKURLRequest* WKURLRequestRef;
+typedef const struct OpaqueWKURLResponse* WKURLResponseRef;
+
+/* WebKit2 main API types */
+
+typedef const struct OpaqueWKBackForwardList* WKBackForwardListRef;
+typedef const struct OpaqueWKBackForwardListItem* WKBackForwardListItemRef;
+typedef const struct OpaqueWKContext* WKContextRef;
+typedef const struct OpaqueWKFormSubmissionListener* WKFormSubmissionListenerRef;
+typedef const struct OpaqueWKFrame* WKFrameRef;
+typedef const struct OpaqueWKFramePolicyListener* WKFramePolicyListenerRef;
+typedef const struct OpaqueWKNavigationData* WKNavigationDataRef;
+typedef const struct OpaqueWKPage* WKPageRef;
+typedef const struct OpaqueWKPageNamespace* WKPageNamespaceRef;
+typedef const struct OpaqueWKPreferences* WKPreferencesRef;
+
+/* WebKit2 Bundle types */
 
 typedef const struct OpaqueWKBundle* WKBundleRef;
 typedef const struct OpaqueWKBundleFrame* WKBundleFrameRef;
@@ -33,7 +77,6 @@ typedef const struct OpaqueWKBundleNodeHandle* WKBundleNodeHandleRef;
 typedef const struct OpaqueWKBundlePage* WKBundlePageRef;
 typedef const struct OpaqueWKBundleRangeHandle* WKBundleRangeHandleRef;
 typedef const struct OpaqueWKBundleScriptWorld* WKBundleScriptWorldRef;
-
 typedef const struct OpaqueWKBundleDOMCSSStyleDeclaration* WKBundleCSSStyleDeclarationRef;
 
 #undef WK_EXPORT
@@ -51,4 +94,4 @@ typedef const struct OpaqueWKBundleDOMCSSStyleDeclaration* WKBundleCSSStyleDecla
 #define WK_EXPORT
 #endif
 
-#endif /* WKBundleBase_h */
+#endif /* WKBase_h */
