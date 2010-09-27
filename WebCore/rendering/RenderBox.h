@@ -235,7 +235,10 @@ public:
 
     // Resolve auto margins in the inline direction of the containing block so that objects can be pushed to the start, middle or end
     // of the containing block.
-    void computeMarginsInContainingBlockInlineDirection(RenderBlock* containingBlock, int containerWidth, int childWidth);
+    void computeInlineDirectionMargins(RenderBlock* containingBlock, int containerWidth, int childWidth);
+
+    // Used to resolve margins in the containing block's block-flow direction.
+    void computeBlockDirectionMargins(RenderBlock* containingBlock);
 
     void positionLineBox(InlineBox*);
 
@@ -295,8 +298,6 @@ public:
     // Relative positioning is one of those cases, since left/top offsets are physical.
     int availableWidth() const { return style()->isVerticalBlockFlow() ? availableLogicalWidth() : availableLogicalHeight(); }
     int availableHeight() const { return style()->isVerticalBlockFlow() ? availableLogicalHeight() : availableLogicalWidth(); }
-
-    void computeBlockDirectionMargins();
 
     virtual int verticalScrollbarWidth() const;
     int horizontalScrollbarHeight() const;

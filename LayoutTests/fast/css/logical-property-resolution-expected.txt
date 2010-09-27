@@ -6,7 +6,7 @@ Borders: 1px solid rgb(0, 0, 0), 2px dotted rgb(0, 128, 0), 3px dashed rgb(255, 
 Width: 100px
 Height: 50px
 Block #2:
-Margins: 1px 2px 3px 4px
+Margins: 3px 2px 1px 4px
 Padding: 2px 3px 4px 1px
 Borders: 3px dashed rgb(255, 255, 0), 2px dotted rgb(0, 128, 0), 1px solid rgb(0, 0, 0), 4px double rgb(128, 0, 128)
 Width: 100px
@@ -24,7 +24,7 @@ Borders: 4px double rgb(128, 0, 128), 1px solid rgb(0, 0, 0), 2px dotted rgb(0, 
 Width: 50px
 Height: 100px
 Block #5:
-Margins: 3px 4px 1px 2px
+Margins: 1px 4px 3px 2px
 Padding: 4px 1px 2px 3px
 Borders: 1px solid rgb(0, 0, 0), 4px double rgb(128, 0, 128), 3px dashed rgb(255, 255, 0), 2px dotted rgb(0, 128, 0)
 Width: 100px

@@ -201,31 +201,37 @@ void RenderBox::setMarginAfter(int margin)
 
 void RenderBox::setMarginBeforeUsing(const RenderStyle* s, int margin)
 {
-    if (s->isVerticalBlockFlow()) {
-        if (s->direction() == LTR)
-            m_marginTop = margin;
-        else
-            m_marginBottom = margin;
-    } else {
-        if (s->direction() == LTR)
-            m_marginBottom = margin;
-        else
-            m_marginTop = margin;
+    switch (s->blockFlow()) {
+    case TopToBottomBlockFlow:
+        m_marginTop = margin;
+        break;
+    case BottomToTopBlockFlow:
+        m_marginBottom = margin;
+        break;
+    case LeftToRightBlockFlow:
+        m_marginLeft = margin;
+        break;
+    case RightToLeftBlockFlow:
+        m_marginRight = margin;
+        break;
     }
 }
 
 void RenderBox::setMarginAfterUsing(const RenderStyle* s, int margin)
 {
-    if (s->isVerticalBlockFlow()) {
-        if (s->direction() == LTR)
-            m_marginBottom = margin;
-        else
-            m_marginTop = margin;
-    } else {
-        if (s->direction() == LTR)
-            m_marginTop = margin;
-        else
-            m_marginBottom = margin;
+    switch (s->blockFlow()) {
+    case TopToBottomBlockFlow:
+        m_marginBottom = margin;
+        break;
+    case BottomToTopBlockFlow:
+        m_marginTop = margin;
+        break;
+    case LeftToRightBlockFlow:
+        m_marginRight = margin;
+        break;
+    case RightToLeftBlockFlow:
+        m_marginLeft = margin;
+        break;
     }
 }
 
@@ -1521,7 +1527,7 @@ void RenderBox::computeLogicalWidth()
         setMarginStart(style()->marginStart().calcMinValue(containerLogicalWidth));
         setMarginEnd(style()->marginEnd().calcMinValue(containerLogicalWidth));
     } else
-        computeMarginsInContainingBlockInlineDirection(cb, containerLogicalWidth, logicalWidth());
+        computeInlineDirectionMargins(cb, containerLogicalWidth, logicalWidth());
 
     if (!hasPerpendicularContainingBlock && containerLogicalWidth && containerLogicalWidth != (logicalWidth() + marginStart() + marginEnd())
             && !isFloating() && !isInline() && !cb->isFlexibleBox())
@@ -1598,12 +1604,12 @@ bool RenderBox::sizesToIntrinsicLogicalWidth(LogicalWidthType widthType) const
     return false;
 }
 
-void RenderBox::computeMarginsInContainingBlockInlineDirection(RenderBlock* containingBlock, int containerWidth, int childWidth)
+void RenderBox::computeInlineDirectionMargins(RenderBlock* containingBlock, int containerWidth, int childWidth)
 {
-    Length marginStartLength = style()->marginStartUsing(containingBlock->style());
-    Length marginEndLength = style()->marginEndUsing(containingBlock->style());
     const RenderStyle* containingBlockStyle = containingBlock->style();
-
+    Length marginStartLength = style()->marginStartUsing(containingBlockStyle);
+    Length marginEndLength = style()->marginEndUsing(containingBlockStyle);
+    
     // Case One: The object is being centered in the containing block's available logical width.
     if ((marginStartLength.isAuto() && marginEndLength.isAuto() && childWidth < containerWidth)
         || (!marginStartLength.isAuto() && !marginEndLength.isAuto() && containingBlock->style()->textAlign() == WEBKIT_CENTER)) {
@@ -1650,12 +1656,12 @@ void RenderBox::computeLogicalHeight()
         bool hasPerpendicularContainingBlock = cb->style()->isVerticalBlockFlow() != style()->isVerticalBlockFlow();
     
         if (!hasPerpendicularContainingBlock)
-            computeBlockDirectionMargins();
+            computeBlockDirectionMargins(cb);
 
         // For tables, calculate margins only.
         if (isTable()) {
             if (hasPerpendicularContainingBlock)
-                computeMarginsInContainingBlockInlineDirection(cb, containingBlockLogicalWidthForContent(), logicalHeight());
+                computeInlineDirectionMargins(cb, containingBlockLogicalWidthForContent(), logicalHeight());
             return;
         }
 
@@ -1710,7 +1716,7 @@ void RenderBox::computeLogicalHeight()
         setLogicalHeight(heightResult);
         
         if (hasPerpendicularContainingBlock)
-            computeMarginsInContainingBlockInlineDirection(cb, containingBlockLogicalWidthForContent(), heightResult);
+            computeInlineDirectionMargins(cb, containingBlockLogicalWidthForContent(), heightResult);
     }
 
     // WinIE quirk: The <html> block always fills the entire canvas in quirks mode.  The <body> always fills the
@@ -1954,7 +1960,7 @@ int RenderBox::availableLogicalHeightUsing(const Length& h) const
     return containingBlock()->availableLogicalHeight();
 }
 
-void RenderBox::computeBlockDirectionMargins()
+void RenderBox::computeBlockDirectionMargins(RenderBlock* containingBlock)
 {
     if (isTableCell()) {
         // FIXME: Not right if we allow cells to have different directionality than the table.  If we do allow this, though,
@@ -1968,8 +1974,9 @@ void RenderBox::computeBlockDirectionMargins()
     // the containing block (8.3)
     int cw = containingBlockLogicalWidthForContent();
 
-    setMarginBefore(style()->marginBefore().calcMinValue(cw));
-    setMarginAfter(style()->marginAfter().calcMinValue(cw));
+    RenderStyle* containingBlockStyle = containingBlock->style();
+    setMarginBeforeUsing(containingBlockStyle, style()->marginBeforeUsing(containingBlockStyle).calcMinValue(cw));
+    setMarginAfterUsing(containingBlockStyle, style()->marginAfterUsing(containingBlockStyle).calcMinValue(cw));
 }
 
 int RenderBox::containingBlockWidthForPositioned(const RenderBoxModelObject* containingBlock) const

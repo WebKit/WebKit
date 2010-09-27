@@ -1,3 +1,44 @@
+2010-09-27  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46649, fix failing layout tests.
+
+        The implementation of setting the before/after margins was wrong and poking the wrong margin values.
+        
+        Once I made them set the correct values, it revealed that one of the new block flow tests wasn't
+        actually working.  In order to fix it, I had to make the block direction margin computation actually
+        use the containing block's block-flow in order to return the right answer.  This involved cleaning
+        up computeBlockDirectionMargins to be more like computeInlineDirectionMargins.
+        
+        fast/css/logical-property-resolution.html also caught the bug.  Its results are now correct.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::adjustPositionedBlock):
+        (WebCore::RenderBlock::determineHorizontalPosition):
+        (WebCore::RenderBlock::layoutBlockChild):
+        (WebCore::RenderBlock::insertFloatingObject):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::setMarginBeforeUsing):
+        (WebCore::RenderBox::setMarginAfterUsing):
+        (WebCore::RenderBox::computeLogicalWidth):
+        (WebCore::RenderBox::computeInlineDirectionMargins):
+        (WebCore::RenderBox::computeLogicalHeight):
+        (WebCore::RenderBox::computeBlockDirectionMargins):
+        * rendering/RenderBox.h:
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderFlexibleBox::layoutVerticalBox):
+        * rendering/RenderObject.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::computeLogicalWidth):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::layout):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::marginBeforeUsing):
+        (WebCore::RenderStyle::marginAfterUsing):
+        * rendering/style/RenderStyle.h:
+
 2010-09-14  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

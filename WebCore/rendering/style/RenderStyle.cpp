@@ -1184,6 +1184,38 @@ Length RenderStyle::marginAfter() const
     return marginBottom();
 }
 
+Length RenderStyle::marginBeforeUsing(const RenderStyle* otherStyle) const
+{
+    switch (otherStyle->blockFlow()) {
+    case TopToBottomBlockFlow:
+        return marginTop();
+    case BottomToTopBlockFlow:
+        return marginBottom();
+    case LeftToRightBlockFlow:
+        return marginLeft();
+    case RightToLeftBlockFlow:
+        return marginRight();
+    }
+    ASSERT_NOT_REACHED();
+    return marginTop();
+}
+
+Length RenderStyle::marginAfterUsing(const RenderStyle* otherStyle) const
+{
+    switch (otherStyle->blockFlow()) {
+    case TopToBottomBlockFlow:
+        return marginBottom();
+    case BottomToTopBlockFlow:
+        return marginTop();
+    case LeftToRightBlockFlow:
+        return marginRight();
+    case RightToLeftBlockFlow:
+        return marginLeft();
+    }
+    ASSERT_NOT_REACHED();
+    return marginBottom();
+}
+
 Length RenderStyle::marginStart() const
 {
     if (isVerticalBlockFlow())

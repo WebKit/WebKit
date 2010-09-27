@@ -1,3 +1,20 @@
+2010-09-27  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46649, fix failing layout tests.
+
+        The implementation of setting the before/after margins was wrong and poking the wrong margin values.
+        
+        Once I made them set the correct values, it revealed that one of the new block flow tests wasn't
+        actually working.  In order to fix it, I had to make the block direction margin computation actually
+        use the containing block's block-flow in order to return the right answer.  This involved cleaning
+        up computeBlockDirectionMargins to be more like computeInlineDirectionMargins.
+        
+        fast/css/logical-property-resolution.html also caught the bug.  Its results are now correct.
+
+        * fast/css/logical-property-resolution-expected.txt:
+
 2010-09-14  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

@@ -364,7 +364,7 @@ void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
             }
     
             // Compute the child's vertical margins.
-            child->computeBlockDirectionMargins();
+            child->computeBlockDirectionMargins(this);
     
             if (!child->needsLayout() && paginated && view()->layoutState()->m_pageHeight) {
                 RenderBlock* childRenderBlock = child->isRenderBlock() ? toRenderBlock(child) : 0;
@@ -705,7 +705,7 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
             } 
     
             // Compute the child's vertical margins.
-            child->computeBlockDirectionMargins();
+            child->computeBlockDirectionMargins(this);
     
             // Add in the child's marginTop to our height.
             setHeight(height() + child->marginTop());

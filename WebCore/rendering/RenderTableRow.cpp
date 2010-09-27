@@ -126,7 +126,7 @@ void RenderTableRow::layout()
                 cell->setChildNeedsLayout(true, false);
 
             if (child->needsLayout()) {
-                cell->computeBlockDirectionMargins();
+                cell->computeBlockDirectionMargins(table());
                 cell->layout();
             }
         }
