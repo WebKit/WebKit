@@ -775,30 +775,31 @@ bool WebGLRenderingContext::validateIndexArrayConservative(unsigned long type, l
     // index, skips the expensive per-draw-call iteration in
     // validateIndexArrayPrecise.
 
+    if (!m_boundElementArrayBuffer)
+        return false;
+
+    unsigned numElements = m_boundElementArrayBuffer->byteLength();
+    // The case count==0 is already dealt with in drawElements before validateIndexArrayConservative.
+    if (!numElements)
+        return false;
+    const ArrayBuffer* buffer = m_boundElementArrayBuffer->elementArrayBuffer();
+    ASSERT(buffer);
+
     long maxIndex = m_boundElementArrayBuffer->getCachedMaxIndex(type);
     if (maxIndex < 0) {
         // Compute the maximum index in the entire buffer for the given type of index.
         switch (type) {
         case GraphicsContext3D::UNSIGNED_BYTE: {
-            unsigned numElements = m_boundElementArrayBuffer->byteLength();
-            if (!numElements)
-                maxIndex = 0;
-            else {
-                const unsigned char* p = static_cast<const unsigned char*>(m_boundElementArrayBuffer->elementArrayBuffer()->data());
-                for (unsigned i = 0; i < numElements; i++)
-                    maxIndex = max(maxIndex, static_cast<long>(p[i]));
-            }
+            const unsigned char* p = static_cast<const unsigned char*>(buffer->data());
+            for (unsigned i = 0; i < numElements; i++)
+                maxIndex = max(maxIndex, static_cast<long>(p[i]));
             break;
         }
         case GraphicsContext3D::UNSIGNED_SHORT: {
-            unsigned numElements = m_boundElementArrayBuffer->byteLength() / sizeof(unsigned short);
-            if (!numElements)
-                maxIndex = 0;
-            else {
-                const unsigned short* p = static_cast<const unsigned short*>(m_boundElementArrayBuffer->elementArrayBuffer()->data());
-                for (unsigned i = 0; i < numElements; i++)
-                    maxIndex = max(maxIndex, static_cast<long>(p[i]));
-            }
+            numElements /= sizeof(unsigned short);
+            const unsigned short* p = static_cast<const unsigned short*>(buffer->data());
+            for (unsigned i = 0; i < numElements; i++)
+                maxIndex = max(maxIndex, static_cast<long>(p[i]));
             break;
         }
         default:
@@ -822,6 +823,14 @@ bool WebGLRenderingContext::validateIndexArrayPrecise(unsigned long count, unsig
     long lastIndex = -1;
 
     if (!m_boundElementArrayBuffer)
+        return false;
+
+    if (!count) {
+        numElementsRequired = 0;
+        return true;
+    }
+
+    if (!m_boundElementArrayBuffer->elementArrayBuffer())
         return false;
 
     unsigned long uoffset = static_cast<unsigned long>(offset);
@@ -968,6 +977,8 @@ void WebGLRenderingContext::drawElements(unsigned long mode, long count, unsigne
             m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
             return;
         }
+        if (!count)
+            return;
         if (!validateIndexArrayConservative(type, numElements) || !validateRenderingState(numElements)) {
             if (!validateIndexArrayPrecise(count, type, offset, numElements) || !validateRenderingState(numElements)) {
                 m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);

@@ -34,6 +34,7 @@ PASS context.bufferSubData(context.ELEMENT_ARRAY_BUFFER, 0, new Uint8Array([ 3, 
 PASS context.drawElements(context.TRIANGLES, 3, context.UNSIGNED_BYTE, 0) generated expected GL error: INVALID_OPERATION.
 PASS context.bufferSubData(context.ELEMENT_ARRAY_BUFFER, 0, (new Uint8Array([ 3, 0, 1, 2 ])).slice(1)) generated expected GL error: NO_ERROR.
 PASS context.drawElements(context.TRIANGLES, 3, context.UNSIGNED_BYTE, 0) generated expected GL error: NO_ERROR.
+PASS context.drawElements(context.TRIANGLES, 0, context.UNSIGNED_BYTE, 0) generated expected GL error: NO_ERROR.
 
 Test buffer with interleaved (3+2) float vectors
 PASS context.drawElements(context.TRIANGLES, 9, context.UNSIGNED_SHORT, 0) generated expected GL error: NO_ERROR.
@@ -47,6 +48,7 @@ PASS context.drawElements(context.TRIANGLES, 18, context.UNSIGNED_SHORT, 0) gene
 PASS context.drawElements(context.TRIANGLES, 3, context.UNSIGNED_SHORT, 2*15) generated expected GL error: INVALID_OPERATION.
 PASS context.drawElements(context.TRIANGLES, 0xffffffff, context.UNSIGNED_SHORT, 0) generated expected GL error: INVALID_VALUE.
 PASS context.drawElements(context.TRIANGLES, 0x7fffffff, context.UNSIGNED_SHORT, 0) generated expected GL error: INVALID_OPERATION.
+PASS context.drawElements(context.TRIANGLES, 0, context.UNSIGNED_SHORT, 0) generated expected GL error: NO_ERROR.
 
 PASS successfullyParsed is true
 

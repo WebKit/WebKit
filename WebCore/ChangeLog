@@ -1,3 +1,15 @@
+2010-09-14  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        drawElements with count=0 and offset = 0 should not generate GL error or crash
+        https://bugs.webkit.org/show_bug.cgi?id=45769
+
+        * html/canvas/WebGLRenderingContext.cpp: Deal with count=0 case.
+        (WebCore::WebGLRenderingContext::validateIndexArrayConservative):
+        (WebCore::WebGLRenderingContext::validateIndexArrayPrecise):
+        (WebCore::WebGLRenderingContext::drawElements):
+
 2010-09-16  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
