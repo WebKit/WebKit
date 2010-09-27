@@ -1,5 +1,17 @@
 2010-09-26  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Simon Fraser.
+
+        MiniBrowser crashes when opening main menu item
+        https://bugs.webkit.org/show_bug.cgi?id=46588
+
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::setEditCommandState): Don't allow default
+        String -> NSString conversion to take place, and use the increasingly
+        misnamed nsStringFromWebCoreString instead.
+
+2010-09-26  Sam Weinig  <sam@webkit.org>
+
         Another windows build fix windows attempt.
 
         * win/WebKit2Common.vsprops:

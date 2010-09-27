@@ -203,7 +203,7 @@ void PageClientImpl::clearAllEditCommands()
 
 void PageClientImpl::setEditCommandState(const String& commandName, bool isEnabled, int newState)
 {
-    [m_wkView _setUserInterfaceItemState:commandName enabled:isEnabled state:newState];
+    [m_wkView _setUserInterfaceItemState:nsStringFromWebCoreString(commandName) enabled:isEnabled state:newState];
 }
 
 #if USE(ACCELERATED_COMPOSITING)
