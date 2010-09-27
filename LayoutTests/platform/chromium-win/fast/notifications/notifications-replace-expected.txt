@@ -1,5 +1,0 @@
-DESKTOP NOTIFICATION: icon file:///C:/email.png, title New E-mail, text Meet me tonight at 8!
-DESKTOP NOTIFICATION: icon file:///C:/alarm.png, title Alarm, text It's time to wake up!
-REPLACING NOTIFICATION New E-mail
-DESKTOP NOTIFICATION: icon file:///C:/email.png, title New reply, text Correction, 8:15
-Showing notifications with replace ID...

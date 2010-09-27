@@ -18,12 +18,12 @@
                 log("FAIL: No webkitNotifications interface!");
             }
             
-            var M = window.webkitNotifications.createNotification("/email.png", "New E-mail", "Meet me tonight at 8!");
+            var M = window.webkitNotifications.createNotification("", "New E-mail", "Meet me tonight at 8!");
             M.replaceId = "NewMail";
             M.show();
-            var other = window.webkitNotifications.createNotification("/alarm.png", "Alarm", "It's time to wake up!");
+            var other = window.webkitNotifications.createNotification("", "Alarm", "It's time to wake up!");
             other.show();
-            var N = window.webkitNotifications.createNotification("/email.png", "New reply", "Correction, 8:15");
+            var N = window.webkitNotifications.createNotification("", "New reply", "Correction, 8:15");
             N.replaceId = "NewMail";
             N.show();          
         }

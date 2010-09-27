@@ -1,3 +1,23 @@
+2010-09-26  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Update layout test notification-replace.html to be platform independent.
+
+        This layout test fails on windows if it is not running from C drive.
+        This is caused by local icon urls used by the test and this makes the
+        test becomes platform dependent. Change the icon urls so that the test
+        results are same for all platforms.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45824
+
+        * fast/notifications/notifications-replace-expected.txt:
+        * fast/notifications/notifications-replace.html:
+        * platform/chromium-linux/fast/notifications: Removed.
+        * platform/chromium-linux/fast/notifications/notifications-replace-expected.txt: Removed.
+        * platform/chromium-win/fast/notifications: Removed.
+        * platform/chromium-win/fast/notifications/notifications-replace-expected.txt: Removed.
+
 2010-09-26  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Adam Barth.
