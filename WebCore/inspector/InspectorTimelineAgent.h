@@ -46,6 +46,7 @@ class InspectorFrontend;
 class IntRect;
 class ResourceRequest;
 class ResourceResponse;
+class InspectorTimelineAgent2;
 
 // Must be kept in sync with TimelineAgent.js
 enum TimelineRecordType {
@@ -73,7 +74,7 @@ enum TimelineRecordType {
     XHRSendRecordType = 21
 };
 
-class InspectorTimelineAgent : ScriptGCEventListener, public Noncopyable {
+class InspectorTimelineAgent : public Noncopyable {
 public:
     InspectorTimelineAgent(InspectorFrontend* frontend);
     ~InspectorTimelineAgent();
@@ -126,48 +127,15 @@ public:
     void didFinishLoadingResource(unsigned long, bool didFail);
     void willReceiveResourceData(unsigned long identifier);
     void didReceiveResourceData();
-        
-    virtual void didGC(double, double, size_t);
 
     static int instanceCount() { return s_instanceCount; }
     static InspectorTimelineAgent* retrieve(ScriptExecutionContext*);
 
 private:
-    struct TimelineRecordEntry {
-        TimelineRecordEntry(PassRefPtr<InspectorObject> record, PassRefPtr<InspectorObject> data, PassRefPtr<InspectorArray> children, TimelineRecordType type)
-            : record(record), data(data), children(children), type(type)
-        {
-        }
-        RefPtr<InspectorObject> record;
-        RefPtr<InspectorObject> data;
-        RefPtr<InspectorArray> children;
-        TimelineRecordType type;
-    };
-        
-    void pushCurrentRecord(PassRefPtr<InspectorObject>, TimelineRecordType);
-    void setHeapSizeStatistic(InspectorObject* record);
-        
-    void didCompleteCurrentRecord(TimelineRecordType);
 
-    void addRecordToTimeline(PassRefPtr<InspectorObject>, TimelineRecordType);
-
-    void pushGCEventRecords();
-
-    InspectorFrontend* m_frontend;
-
-    Vector<TimelineRecordEntry> m_recordStack;
     static int s_instanceCount;
-    struct GCEvent {
-        GCEvent(double startTime, double endTime, size_t collectedBytes)
-            : startTime(startTime), endTime(endTime), collectedBytes(collectedBytes)
-        {
-        }
-        double startTime;
-        double endTime;
-        size_t collectedBytes;
-    };
-    typedef Vector<GCEvent> GCEvents;
-    GCEvents m_gcEvents;
+
+    OwnPtr<InspectorTimelineAgent2> m_timelineAgent;
 };
 
 inline InspectorTimelineAgent* InspectorTimelineAgent::retrieve(ScriptExecutionContext* context)

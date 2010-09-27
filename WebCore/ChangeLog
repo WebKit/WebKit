@@ -1,3 +1,69 @@
+2010-09-27  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: divide InspectorTimelineAgent into two parts.
+
+        We have an idea to split InspectorTimelineAgent into two parts.
+        The first part is an instrumentation API which can be used for DOM breakpoints too.
+        The other is the real Timeline agent which do a transformation of raw data into timeline data.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46611
+
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent2::TimelineRecordEntry::TimelineRecordEntry):
+        (WebCore::InspectorTimelineAgent2::GCEvent::GCEvent):
+        (WebCore::InspectorTimelineAgent2::InspectorTimelineAgent2):
+        (WebCore::InspectorTimelineAgent2::~InspectorTimelineAgent2):
+        (WebCore::InspectorTimelineAgent2::didGC):
+        (WebCore::InspectorTimelineAgent2::addRecordToTimeline):
+        (WebCore::InspectorTimelineAgent2::setHeapSizeStatistic):
+        (WebCore::InspectorTimelineAgent2::startNewRecord):
+        (WebCore::InspectorTimelineAgent2::completeCurrentRecord):
+        (WebCore::InspectorTimelineAgent2::asyncRecord):
+        (WebCore::InspectorTimelineAgent2::atomicRecord):
+        (WebCore::InspectorTimelineAgent2::getTopRecordData):
+        (WebCore::InspectorTimelineAgent2::reset):
+        (WebCore::InspectorTimelineAgent2::resetFrontendProxyObject):
+        (WebCore::InspectorTimelineAgent2::pushGCEventRecords):
+        (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+        (WebCore::InspectorTimelineAgent::~InspectorTimelineAgent):
+        (WebCore::InspectorTimelineAgent::reset):
+        (WebCore::InspectorTimelineAgent::willCallFunction):
+        (WebCore::InspectorTimelineAgent::didCallFunction):
+        (WebCore::InspectorTimelineAgent::willDispatchEvent):
+        (WebCore::InspectorTimelineAgent::didDispatchEvent):
+        (WebCore::InspectorTimelineAgent::willLayout):
+        (WebCore::InspectorTimelineAgent::didLayout):
+        (WebCore::InspectorTimelineAgent::willRecalculateStyle):
+        (WebCore::InspectorTimelineAgent::didRecalculateStyle):
+        (WebCore::InspectorTimelineAgent::willPaint):
+        (WebCore::InspectorTimelineAgent::didPaint):
+        (WebCore::InspectorTimelineAgent::willWriteHTML):
+        (WebCore::InspectorTimelineAgent::didWriteHTML):
+        (WebCore::InspectorTimelineAgent::didInstallTimer):
+        (WebCore::InspectorTimelineAgent::didRemoveTimer):
+        (WebCore::InspectorTimelineAgent::willFireTimer):
+        (WebCore::InspectorTimelineAgent::didFireTimer):
+        (WebCore::InspectorTimelineAgent::willChangeXHRReadyState):
+        (WebCore::InspectorTimelineAgent::didChangeXHRReadyState):
+        (WebCore::InspectorTimelineAgent::willLoadXHR):
+        (WebCore::InspectorTimelineAgent::didLoadXHR):
+        (WebCore::InspectorTimelineAgent::willEvaluateScript):
+        (WebCore::InspectorTimelineAgent::didEvaluateScript):
+        (WebCore::InspectorTimelineAgent::didScheduleResourceRequest):
+        (WebCore::InspectorTimelineAgent::willSendResourceRequest):
+        (WebCore::InspectorTimelineAgent::willReceiveResourceData):
+        (WebCore::InspectorTimelineAgent::didReceiveResourceData):
+        (WebCore::InspectorTimelineAgent::willReceiveResourceResponse):
+        (WebCore::InspectorTimelineAgent::didReceiveResourceResponse):
+        (WebCore::InspectorTimelineAgent::didFinishLoadingResource):
+        (WebCore::InspectorTimelineAgent::didMarkTimeline):
+        (WebCore::InspectorTimelineAgent::didMarkDOMContentEvent):
+        (WebCore::InspectorTimelineAgent::didMarkLoadEvent):
+        (WebCore::InspectorTimelineAgent::resetFrontendProxyObject):
+        * inspector/InspectorTimelineAgent.h:
+
 2010-09-27  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Sam Weinig.
