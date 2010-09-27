@@ -730,7 +730,7 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
             int32_t mouseButton;
             String url;
             uint64_t listenerID;
-            if (!arguments->decode(CoreIPC::Out(frameID, navigationType, modifiers, url, mouseButton, listenerID)))
+            if (!arguments->decode(CoreIPC::Out(frameID, navigationType, modifiers, mouseButton, url, listenerID)))
                 return;
             decidePolicyForNewWindowAction(process()->webFrame(frameID), static_cast<NavigationType>(navigationType), static_cast<WebEvent::Modifiers>(modifiers), static_cast<WebMouseEvent::Button>(mouseButton), url, listenerID);
             break;

@@ -1,3 +1,15 @@
+2010-09-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Opening links in a new window asserts while decoding decidePolicyForNewWindowAction.
+        <rdar://problem/8479445>
+        https://bugs.webkit.org/show_bug.cgi?id=46623
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessage): Fix the order of decoding to
+        match the order of encoding. (Swapping url and mouseButton).
+
 2010-09-27  Adam Roben  <aroben@apple.com>
 
         Stop leaking the web process's process handle on Windows
