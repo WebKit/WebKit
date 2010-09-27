@@ -49,6 +49,8 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkit/WebKitDOMDOMStringListPrivate.h \
 	DerivedSources/webkit/WebKitDOMDOMStringMap.cpp \
 	DerivedSources/webkit/WebKitDOMDOMStringMapPrivate.h \
+	DerivedSources/webkit/WebKitDOMDOMTokenList.cpp \
+	DerivedSources/webkit/WebKitDOMDOMTokenListPrivate.h \
 	DerivedSources/webkit/WebKitDOMDOMWindow.cpp \
 	DerivedSources/webkit/WebKitDOMDOMWindowPrivate.h \
 	DerivedSources/webkit/WebKitDOMElement.cpp \
@@ -263,6 +265,7 @@ webkitgtk_built_h_api += \
 	DerivedSources/webkit/WebKitDOMDOMImplementation.h \
 	DerivedSources/webkit/WebKitDOMDOMStringList.h \
 	DerivedSources/webkit/WebKitDOMDOMStringMap.h \
+	DerivedSources/webkit/WebKitDOMDOMTokenList.h \
 	DerivedSources/webkit/WebKitDOMElement.h \
 	DerivedSources/webkit/WebKitDOMEntityReference.h \
 	DerivedSources/webkit/WebKitDOMEvent.h \

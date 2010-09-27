@@ -1,3 +1,28 @@
+2010-09-27  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Implement HTML 5's HTMLElement.classList property
+        https://bugs.webkit.org/show_bug.cgi?id=20709
+
+        * fast/dom/HTMLElement/class-list-expected.txt: Added.
+        * fast/dom/HTMLElement/class-list-gc-expected.txt: Added.
+        * fast/dom/HTMLElement/class-list-gc.html: Added.
+        * fast/dom/HTMLElement/class-list-quirks-expected.txt: Added.
+        * fast/dom/HTMLElement/class-list-quirks.html: Added.
+        * fast/dom/HTMLElement/class-list.html: Added.
+        * fast/dom/HTMLElement/script-tests/class-list-gc.js: Added.
+        (gc):
+        * fast/dom/HTMLElement/script-tests/class-list.js: Added.
+        (createElement):
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/Window/window-property-descriptors-expected.txt:
+        * fast/dom/prototype-inheritance-2-expected.txt:
+        * fast/dom/prototype-inheritance-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+        * perf/class-list-remove-expected.txt: Added.
+        * perf/class-list-remove.html: Added.
+
 2010-09-27  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.

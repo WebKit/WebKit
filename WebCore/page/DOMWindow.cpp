@@ -40,6 +40,7 @@
 #include "DOMSelection.h"
 #include "DOMStringList.h"
 #include "DOMTimer.h"
+#include "DOMTokenList.h"
 #include "Database.h"
 #include "DatabaseCallback.h"
 #include "DeviceMotionController.h"

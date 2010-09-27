@@ -2510,6 +2510,7 @@ sub HasCustomToV8Implementation {
     return 1 if $interfaceName eq "CanvasPixelArray";
     return 1 if $interfaceName eq "DOMStringMap";
     return 1 if $interfaceName eq "DOMWindow";
+    return 1 if $interfaceName eq "DOMTokenList";
     return 1 if $interfaceName eq "Element";
     return 1 if $interfaceName eq "HTMLDocument";
     return 1 if $interfaceName eq "HTMLElement";

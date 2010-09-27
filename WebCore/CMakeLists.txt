@@ -205,6 +205,7 @@ SET(WebCore_IDL_FILES
     html/DataGridColumn.idl
     html/DataGridColumnList.idl
     html/DOMFormData.idl
+    html/DOMTokenList.idl
     html/HTMLAllCollection.idl
     html/HTMLAnchorElement.idl
     html/HTMLAppletElement.idl
@@ -942,6 +943,7 @@ SET(WebCore_SOURCES
     html/CollectionCache.cpp
     html/DOMDataGridDataSource.cpp
     html/DOMFormData.cpp
+    html/DOMTokenList.cpp
     html/DataGridColumn.cpp
     html/DataGridColumnList.cpp
     html/DateComponents.cpp

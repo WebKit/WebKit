@@ -4033,6 +4033,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMTokenList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMTokenList.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMWindow.cpp"
 				>
 				<FileConfiguration
@@ -37842,6 +37850,18 @@
 			</File>
 			<File
 				RelativePath="..\html\FTPDirectoryDocument.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DOMTokenList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DOMTokenList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\FormDataList.cpp"
 				>
 			</File>
 			<File

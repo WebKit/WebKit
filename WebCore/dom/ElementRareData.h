@@ -22,6 +22,7 @@
 #ifndef ElementRareData_h
 #define ElementRareData_h
 
+#include "DOMTokenList.h"
 #include "DatasetDOMStringMap.h"
 #include "Element.h"
 #include "NodeRareData.h"
@@ -42,6 +43,7 @@ public:
     RefPtr<RenderStyle> m_computedStyle;
 
     OwnPtr<DatasetDOMStringMap> m_datasetDOMStringMap;
+    OwnPtr<DOMTokenList> m_classList;
 };
 
 inline IntSize defaultMinimumSizeForResizing()

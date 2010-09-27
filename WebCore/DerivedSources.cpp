@@ -91,6 +91,7 @@
 #include "JSDOMSelection.cpp"
 #include "JSDOMStringList.cpp"
 #include "JSDOMStringMap.cpp"
+#include "JSDOMTokenList.cpp"
 #include "JSDOMWindow.cpp"
 #include "JSElement.cpp"
 #include "JSEntity.cpp"

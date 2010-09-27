@@ -124,6 +124,7 @@ DOM_CLASSES = \
     DOMSelection \
     DOMStringList \
     DOMStringMap \
+    DOMTokenList \
     DOMWindow \
     Database \
     DatabaseCallback \

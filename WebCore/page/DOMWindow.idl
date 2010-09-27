@@ -379,6 +379,7 @@ module window {
 //        attribute DOMImplementationListConstructor DOMImplementationList;
 //        attribute DOMImplementationSourceConstructor DOMImplementationSource;
         attribute DOMImplementationConstructor DOMImplementation;
+        attribute DOMTokenListConstructor DOMTokenList;
         attribute DocumentFragmentConstructor DocumentFragment;
         attribute DocumentConstructor Document;
         attribute NodeConstructor Node;

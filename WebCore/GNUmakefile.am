@@ -216,6 +216,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSDOMStringList.h \
 	DerivedSources/WebCore/JSDOMStringMap.cpp \
 	DerivedSources/WebCore/JSDOMStringMap.h \
+	DerivedSources/WebCore/JSDOMTokenList.cpp \
+	DerivedSources/WebCore/JSDOMTokenList.h \
 	DerivedSources/WebCore/JSDOMWindow.cpp \
 	DerivedSources/WebCore/JSDOMWindow.h \
 	DerivedSources/WebCore/JSElement.cpp \
@@ -1433,6 +1435,8 @@ webcore_sources += \
 	WebCore/html/canvas/CanvasRenderingContext.h \
 	WebCore/html/canvas/CanvasStyle.cpp \
 	WebCore/html/canvas/CanvasStyle.h \
+	WebCore/html/DOMTokenList.cpp \
+	WebCore/html/DOMTokenList.h \
 	WebCore/html/CollectionCache.cpp \
 	WebCore/html/CollectionCache.h \
 	WebCore/html/CollectionType.h \

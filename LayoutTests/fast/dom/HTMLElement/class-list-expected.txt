@@ -1,0 +1,68 @@
+Tests the classList attribute and its properties.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Tests from http://simon.html5.org/test/html/dom/reflecting/DOMTokenList/
+PASS String(element.classList) is "x"
+PASS element.classList.length is 0
+PASS element.classList.length is 1
+PASS element.classList.length is 2
+PASS element.classList.length is 2
+PASS element.className is "x"
+PASS element.className is "x"
+PASS element.className is "x  x"
+PASS element.className is "y x"
+PASS element.className is ""
+PASS element.className is ""
+PASS element.className is " y y "
+PASS element.className is "y"
+Testing add in presence of trailing white spaces.
+PASS element.className is "x y"
+PASS element.className is "x	 y"
+PASS element.className is " y"
+Test invalid tokens
+PASS element.classList.contains('') threw expected DOMException with code 12
+PASS element.classList.contains('x y') threw expected DOMException with code 5
+PASS element.classList.add('') threw expected DOMException with code 12
+PASS element.classList.add('x y') threw expected DOMException with code 5
+PASS element.classList.remove('') threw expected DOMException with code 12
+PASS element.classList.remove('x y') threw expected DOMException with code 5
+PASS element.classList.toggle('') threw expected DOMException with code 12
+PASS element.classList.toggle('x y') threw expected DOMException with code 5
+Indexing
+PASS element.classList[0] is "x"
+PASS element.classList.item(0) is "x"
+PASS element.classList[1] is "x"
+PASS element.classList.item(1) is "x"
+PASS element.classList[1] is "y"
+PASS element.classList.item(1) is "y"
+PASS element.classList[0] is null
+PASS element.classList.item(0) is null
+PASS element.classList[4] is null
+PASS element.classList.item(4) is null
+PASS element.classList[-1] is undefined.
+PASS element.classList.item(-1) is null
+Test case since DOMTokenList is case sensitive
+PASS element.classList.contains('x') is true
+PASS element.classList.contains('X') is false
+PASS element.classList[0] is "x"
+PASS element.classList.contains('X') is true
+PASS element.classList.contains('x') is false
+PASS element.classList[0] is "X"
+Testing whitespace
+PASS element.classList.length is 2
+PASS element.classList.length is 2
+PASS element.classList.length is 2
+PASS element.classList.length is 2
+PASS element.classList.length is 2
+DOMTokenList presence and type
+PASS 'undefined' != typeof DOMTokenList is true
+PASS typeof DOMTokenList.prototype is "object"
+PASS typeof element.classList is "object"
+PASS element.classList.constructor is DOMTokenList
+PASS element.classList === element.classList is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

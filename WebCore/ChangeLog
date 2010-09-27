@@ -1,3 +1,73 @@
+2010-09-27  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Implement HTML 5's HTMLElement.classList property
+        https://bugs.webkit.org/show_bug.cgi?id=20709
+
+        This adds a DOMTokenList class that is used for the classList property. DOMTokenList uses a SpaceSplitString for fast
+        contains check. In standards mode the existing classNames is used but in quirks mode we use an internal SpaceSplitString
+        because classList is always case sensitive.
+
+        Tests: fast/dom/HTMLElement/class-list-gc.html
+               fast/dom/HTMLElement/class-list-quirks.html
+               fast/dom/HTMLElement/class-list.html
+               perf/class-list-remove.html
+
+        * Android.derived.jscbindings.mk:
+        * Android.derived.v8bindings.mk:
+        * Android.jscbindings.mk:
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/gobject/GNUmakefile.am:
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::JSElement::markChildren): Make sure that we keep the wrapper while the element is alive.
+        * bindings/scripts/CodeGeneratorJS.pm: DOMTokenList has a string indexed getter.
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/custom/V8DOMTokenListCustom.cpp: Added.
+        (WebCore::toV8):
+        * dom/Element.cpp:
+        (WebCore::Element::classList):
+        (WebCore::Element::optionalClassList):
+        * dom/Element.h:
+        * dom/ElementRareData.h: This now has an OwnPtr to a ClassList if the Element::classList is ever called.
+        * dom/SpaceSplitString.h:
+        (WebCore::SpaceSplitString::isNull):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::classAttributeChanged): Update the classList if it exists.
+        * dom/StyledElement.h:
+        * html/DOMTokenList.cpp: Added.
+        (WebCore::validateToken):
+        (WebCore::DOMTokenList::DOMTokenList):
+        (WebCore::DOMTokenList::ref):
+        (WebCore::DOMTokenList::deref):
+        (WebCore::DOMTokenList::length):
+        (WebCore::DOMTokenList::item):
+        (WebCore::DOMTokenList::contains):
+        (WebCore::DOMTokenList::containsInternal): The internal methods do no validation of the token.
+        (WebCore::DOMTokenList::add):
+        (WebCore::DOMTokenList::addInternal):
+        (WebCore::DOMTokenList::remove):
+        (WebCore::DOMTokenList::removeInternal):
+        (WebCore::DOMTokenList::toggle):
+        (WebCore::DOMTokenList::toString):
+        (WebCore::DOMTokenList::reset):
+        (WebCore::DOMTokenList::classNames):
+        * html/DOMTokenList.h: Added.
+        (WebCore::DOMTokenList::create):
+        (WebCore::DOMTokenList::element):
+        * html/DOMTokenList.idl: Added.
+        * html/HTMLElement.idl:
+        * page/DOMWindow.cpp:
+        * page/DOMWindow.idl:
+
 2010-09-27  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.

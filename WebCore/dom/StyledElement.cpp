@@ -28,6 +28,7 @@
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
+#include "DOMTokenList.h"
 #include "Document.h"
 #include "HTMLNames.h"
 #include <wtf/HashFunctions.h>
@@ -217,12 +218,12 @@ void StyledElement::classAttributeChanged(const AtomicString& newClassString)
     }
     bool hasClass = i < length;
     setHasClass(hasClass);
-    if (hasClass)
+    if (hasClass) {
         attributes()->setClass(newClassString);
-    else {
-        if (attributeMap())    
-            attributeMap()->clearClass();
-    }
+        if (DOMTokenList* classList = optionalClassList())
+            classList->reset(newClassString);
+    } else if (attributeMap())
+        attributeMap()->clearClass();
     setNeedsStyleRecalc();
     dispatchSubtreeModifiedEvent();
 }

@@ -403,7 +403,8 @@ v8 {
         bindings/v8/custom/V8InjectedScriptHostCustom.cpp \
         bindings/v8/custom/V8InspectorFrontendHostCustom.cpp \
         bindings/v8/custom/V8CustomEventListener.cpp \
-        bindings/v8/custom/V8DOMStringMapCustom.cpp
+        bindings/v8/custom/V8DOMStringMapCustom.cpp \
+        bindings/v8/custom/V8DOMTokenListCustom.cpp
 
     SOURCES += \
         bindings/v8/custom/V8CustomSQLStatementErrorCallback.cpp \
@@ -838,6 +839,7 @@ SOURCES += \
     html/CollectionCache.cpp \
     html/DOMDataGridDataSource.cpp \
     html/DOMFormData.cpp \
+    html/DOMTokenList.cpp \
     html/DataGridColumn.cpp \
     html/DataGridColumnList.cpp \
     html/DateComponents.cpp \
@@ -1716,6 +1718,7 @@ HEADERS += \
     html/DateComponents.h \
     html/DOMDataGridDataSource.h \
     html/DOMFormData.h \
+    html/DOMTokenList.h \
     html/FormDataList.h \
     html/FTPDirectoryDocument.h \
     html/HTMLAllCollection.h \
