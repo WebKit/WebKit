@@ -30,7 +30,9 @@
 #include "InjectedBundle.h"
 #include "MessageID.h"
 #include "NetscapePlugin.h"
+#include "PluginProcessConnection.h"
 #include "PluginProcessConnectionManager.h"
+#include "PluginProxy.h"
 #include "PluginView.h"
 #include "WebBackForwardControllerClient.h"
 #include "WebBackForwardListProxy.h"
@@ -198,8 +200,7 @@ PassRefPtr<Plugin> WebPage::createPlugin(const Plugin::Parameters& parameters)
     if (!pluginProcessConnection)
         return 0;
 
-    // FIXME: Create a wrapper plug-in.
-    return 0;
+    return PluginProxy::create(pluginProcessConnection);
 #else
     RefPtr<NetscapePluginModule> pluginModule = NetscapePluginModule::getOrCreate(pluginPath);
     if (!pluginModule)

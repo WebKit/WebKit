@@ -283,6 +283,23 @@
 
         Reviewed by Sam Weinig.
 
+        Add PluginProxy class
+        https://bugs.webkit.org/show_bug.cgi?id=46586
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add files.
+
+        * WebProcess/Plugins/PluginProxy.cpp: Added.
+        * WebProcess/Plugins/PluginProxy.h: Added.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+        Create a PluginProxy wrapper.
+
+2010-09-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Make it possible to encode null SharedMemory::Handle objects
         https://bugs.webkit.org/show_bug.cgi?id=46585
 
