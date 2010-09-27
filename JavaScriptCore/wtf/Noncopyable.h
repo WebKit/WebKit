@@ -38,7 +38,7 @@
     #define WTF_MAKE_NONCOPYABLE(ClassName) \
         private: \
             ClassName(const ClassName&); \
-            ClassName& operator=(const ClassName&);
+            ClassName& operator=(const ClassName&)
 #endif
 
 // We don't want argument-dependent lookup to pull in everything from the WTF
