@@ -76,6 +76,7 @@
                 '<(chromium_src_dir)/app/app.gyp:app_base', # For GLContext
                 '<(chromium_src_dir)/skia/skia.gyp:skia',
                 '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
+                '<(chromium_src_dir)/third_party/angle/src/build_angle.gyp:translator_glsl',
             ],
             'export_dependent_settings': [
                 '<(chromium_src_dir)/skia/skia.gyp:skia',
@@ -84,6 +85,7 @@
             'include_dirs': [
                 'public',
                 'src',
+                '<(chromium_src_dir)/third_party/angle/include',
             ],
             'defines': [
                 'WEBKIT_IMPLEMENTATION=1',

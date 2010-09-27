@@ -1,3 +1,12 @@
+2010-09-24  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Hook up ANGLE with chromium --in-process-webgl port
+        https://bugs.webkit.org/show_bug.cgi?id=44309
+
+        * platform/graphics/GraphicsContext3D.h: Move Angle stuff inside MAC only section.
+
 2010-09-27  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.

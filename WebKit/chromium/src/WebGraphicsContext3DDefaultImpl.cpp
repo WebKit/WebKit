@@ -38,11 +38,20 @@
 #include "app/gfx/gl/gl_context.h"
 #include "NotImplemented.h"
 #include <wtf/PassOwnPtr.h>
+#include <wtf/text/CString.h>
 
 #include <stdio.h>
 #include <string.h>
 
 namespace WebKit {
+
+enum {
+    IMPLEMENTATION_COLOR_READ_FORMAT = 0x8B9B,
+    IMPLEMENTATION_COLOR_READ_TYPE =  0x8B9A,
+    MAX_VERTEX_UNIFORM_VECTORS = 0x8DFB,
+    MAX_VARYING_VECTORS = 0x8DFC,
+    MAX_FRAGMENT_UNIFORM_VECTORS = 0x8DFD
+};
 
 WebGraphicsContext3DDefaultImpl::VertexAttribPointerState::VertexAttribPointerState()
     : enabled(false)
@@ -69,6 +78,8 @@ WebGraphicsContext3DDefaultImpl::WebGraphicsContext3DDefaultImpl()
     , m_scanline(0)
 #endif
     , m_boundArrayBuffer(0)
+    , m_fragmentCompiler(0)
+    , m_vertexCompiler(0)
 {
 }
 
@@ -94,6 +105,8 @@ WebGraphicsContext3DDefaultImpl::~WebGraphicsContext3DDefaultImpl()
         glDeleteFramebuffersEXT(1, &m_fbo);
 
         m_glContext->Destroy();
+
+        angleDestroyCompilers();
     }
 }
 
@@ -115,6 +128,12 @@ bool WebGraphicsContext3DDefaultImpl::initialize(WebGraphicsContext3D::Attribute
     validateAttributes();
 
     glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+
+    if (!angleCreateCompilers()) {
+        angleDestroyCompilers();
+        return false;
+    }
+
     m_initialized = true;
     return true;
 }
@@ -652,7 +671,33 @@ DELEGATE_TO_GL_1(clearStencil, ClearStencil, long)
 
 DELEGATE_TO_GL_4(colorMask, ColorMask, bool, bool, bool, bool)
 
-DELEGATE_TO_GL_1(compileShader, CompileShader, WebGLId)
+void WebGraphicsContext3DDefaultImpl::compileShader(WebGLId shader)
+{
+    makeContextCurrent();
+
+    ShaderSourceMap::iterator result = m_shaderSourceMap.find(shader);
+    if (result == m_shaderSourceMap.end()) {
+        // Passing down to gl driver to generate the correct error; or the case
+        // where the shader deletion is delayed when it's attached to a program.
+        glCompileShader(shader);
+        return;
+    }
+    ShaderSourceEntry& entry = result->second;
+
+    if (!angleValidateShaderSource(entry))
+        return; // Shader didn't validate, don't move forward with compiling translated source
+
+    int shaderLength = entry.translatedSource ? strlen(entry.translatedSource) : 0;
+    glShaderSource(shader, 1, const_cast<const char**>(&entry.translatedSource), &shaderLength);
+    glCompileShader(shader);
+
+#ifndef NDEBUG
+    int compileStatus;
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &compileStatus);
+    // ASSERT that ANGLE generated GLSL will be accepted by OpenGL
+    ASSERT(compileStatus == GL_TRUE);
+#endif
+}
 
 void WebGraphicsContext3DDefaultImpl::copyTexImage2D(unsigned long target, long level, unsigned long internalformat,
                                                      long x, long y, unsigned long width, unsigned long height, long border)
@@ -866,21 +911,21 @@ void WebGraphicsContext3DDefaultImpl::getIntegerv(unsigned long pname, int* valu
     // Therefore, the value returned by desktop GL needs to be divided by 4.
     makeContextCurrent();
     switch (pname) {
-    case 0x8B9B: // IMPLEMENTATION_COLOR_READ_FORMAT
+    case IMPLEMENTATION_COLOR_READ_FORMAT:
         *value = GL_RGB;
         break;
-    case 0x8B9A: // IMPLEMENTATION_COLOR_READ_TYPE
+    case IMPLEMENTATION_COLOR_READ_TYPE:
         *value = GL_UNSIGNED_BYTE;
         break;
-    case 0x8DFD: // MAX_FRAGMENT_UNIFORM_VECTORS
+    case MAX_FRAGMENT_UNIFORM_VECTORS:
         glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, value);
         *value /= 4;
         break;
-    case 0x8DFB: // MAX_VERTEX_UNIFORM_VECTORS
+    case MAX_VERTEX_UNIFORM_VECTORS:
         glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, value);
         *value /= 4;
         break;
-    case 0x8DFC: // MAX_VARYING_VECTORS
+    case MAX_VARYING_VECTORS:
         glGetIntegerv(GL_MAX_VARYING_FLOATS, value);
         *value /= 4;
         break;
@@ -911,14 +956,57 @@ WebString WebGraphicsContext3DDefaultImpl::getProgramInfoLog(WebGLId program)
 
 DELEGATE_TO_GL_3(getRenderbufferParameteriv, GetRenderbufferParameterivEXT, unsigned long, unsigned long, int*)
 
-DELEGATE_TO_GL_3(getShaderiv, GetShaderiv, WebGLId, unsigned long, int*)
+void WebGraphicsContext3DDefaultImpl::getShaderiv(WebGLId shader, unsigned long pname, int* value)
+{
+    makeContextCurrent();
+
+    ShaderSourceMap::iterator result = m_shaderSourceMap.find(shader);
+    if (result != m_shaderSourceMap.end()) {
+        ShaderSourceEntry& entry = result->second;
+        switch (pname) {
+        case GL_COMPILE_STATUS:
+            if (!entry.isValid) {
+                *value = 0;
+                return;
+            }
+            break;
+        case GL_INFO_LOG_LENGTH:
+            if (!entry.isValid) {
+                *value = entry.log ? strlen(entry.log) : 0;
+                if (*value)
+                    (*value)++;
+                return;
+            }
+            break;
+        case GL_SHADER_SOURCE_LENGTH:
+            *value = entry.source ? strlen(entry.source) : 0;
+            if (*value)
+                (*value)++;
+            return;
+        }
+    }
+
+    glGetShaderiv(shader, pname, value);
+}
 
 WebString WebGraphicsContext3DDefaultImpl::getShaderInfoLog(WebGLId shader)
 {
     makeContextCurrent();
-    GLint logLength;
+
+    ShaderSourceMap::iterator result = m_shaderSourceMap.find(shader);
+    if (result != m_shaderSourceMap.end()) {
+        ShaderSourceEntry& entry = result->second;
+        if (!entry.isValid) {
+            if (!entry.log)
+                return WebString();
+            WebString res = WebString::fromUTF8(entry.log, strlen(entry.log));
+            return res;
+        }
+    }
+
+    GLint logLength = 0;
     glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
-    if (!logLength)
+    if (logLength <= 1)
         return WebString();
     GLchar* log = 0;
     if (!tryFastMalloc(logLength * sizeof(GLchar)).getValue(log))
@@ -934,9 +1022,19 @@ WebString WebGraphicsContext3DDefaultImpl::getShaderInfoLog(WebGLId shader)
 WebString WebGraphicsContext3DDefaultImpl::getShaderSource(WebGLId shader)
 {
     makeContextCurrent();
-    GLint logLength;
+
+    ShaderSourceMap::iterator result = m_shaderSourceMap.find(shader);
+    if (result != m_shaderSourceMap.end()) {
+        ShaderSourceEntry& entry = result->second;
+        if (!entry.source)
+            return WebString();
+        WebString res = WebString::fromUTF8(entry.source, strlen(entry.source));
+        return res;
+    }
+
+    GLint logLength = 0;
     glGetShaderiv(shader, GL_SHADER_SOURCE_LENGTH, &logLength);
-    if (!logLength)
+    if (logLength <= 1)
         return WebString();
     GLchar* log = 0;
     if (!tryFastMalloc(logLength * sizeof(GLchar)).getValue(log))
@@ -1056,8 +1154,19 @@ DELEGATE_TO_GL_4(scissor, Scissor, long, long, unsigned long, unsigned long)
 void WebGraphicsContext3DDefaultImpl::shaderSource(WebGLId shader, const char* string)
 {
     makeContextCurrent();
-    GLint length = strlen(string);
-    glShaderSource(shader, 1, &string, &length);
+    GLint length = string ? strlen(string) : 0;
+    ShaderSourceMap::iterator result = m_shaderSourceMap.find(shader);
+    if (result != m_shaderSourceMap.end()) {
+        ShaderSourceEntry& entry = result->second;
+        if (entry.source) {
+            fastFree(entry.source);
+            entry.source = 0;
+        }
+        if (!tryFastMalloc((length + 1) * sizeof(char)).getValue(entry.source))
+            return; // FIXME: generate an error?
+        memcpy(entry.source, string, (length + 1) * sizeof(char));
+    } else
+        glShaderSource(shader, 1, &string, &length);
 }
 
 DELEGATE_TO_GL_3(stencilFunc, StencilFunc, unsigned long, long, unsigned long)
@@ -1196,7 +1305,18 @@ unsigned WebGraphicsContext3DDefaultImpl::createRenderbuffer()
     return o;
 }
 
-DELEGATE_TO_GL_1R(createShader, CreateShader, unsigned long, unsigned);
+unsigned WebGraphicsContext3DDefaultImpl::createShader(unsigned long shaderType)
+{
+    makeContextCurrent();
+    ASSERT(shaderType == GL_VERTEX_SHADER || shaderType == GL_FRAGMENT_SHADER);
+    unsigned shader = glCreateShader(shaderType);
+    if (shader) {
+        ShaderSourceEntry entry;
+        entry.type = shaderType;
+        m_shaderSourceMap.set(shader, entry);
+    }
+    return shader;
+}
 
 unsigned WebGraphicsContext3DDefaultImpl::createTexture()
 {
@@ -1234,12 +1354,99 @@ void WebGraphicsContext3DDefaultImpl::deleteShader(unsigned shader)
 {
     makeContextCurrent();
     glDeleteShader(shader);
+    m_shaderSourceMap.remove(shader);
 }
 
 void WebGraphicsContext3DDefaultImpl::deleteTexture(unsigned texture)
 {
     makeContextCurrent();
     glDeleteTextures(1, &texture);
+}
+
+bool WebGraphicsContext3DDefaultImpl::angleCreateCompilers()
+{
+    if (!ShInitialize())
+        return false;
+
+    TBuiltInResource resource;
+    resource.MaxVertexAttribs = 0;
+    getIntegerv(GL_MAX_VERTEX_ATTRIBS, &resource.MaxVertexAttribs);
+    resource.MaxVertexUniformVectors = 0;
+    getIntegerv(MAX_VERTEX_UNIFORM_VECTORS,
+                &resource.MaxVertexUniformVectors);
+    resource.MaxVaryingVectors = 0;
+    getIntegerv(MAX_VARYING_VECTORS,
+                &resource.MaxVaryingVectors);
+    resource.MaxVertexTextureImageUnits = 0;
+    getIntegerv(GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, &resource.MaxVertexTextureImageUnits);
+    resource.MaxCombinedTextureImageUnits = 0;
+    getIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &resource.MaxCombinedTextureImageUnits);
+    resource.MaxTextureImageUnits = 0;
+    getIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &resource.MaxTextureImageUnits);
+    resource.MaxFragmentUniformVectors = 0;
+    getIntegerv(MAX_FRAGMENT_UNIFORM_VECTORS,
+                &resource.MaxFragmentUniformVectors);
+    // Always set to 1 for OpenGL ES.
+    resource.MaxDrawBuffers = 1;
+
+    m_fragmentCompiler = ShConstructCompiler(EShLangFragment, EShSpecWebGL, &resource);
+    m_vertexCompiler = ShConstructCompiler(EShLangVertex, EShSpecWebGL, &resource);
+    return (m_fragmentCompiler && m_vertexCompiler);
+}
+
+void WebGraphicsContext3DDefaultImpl::angleDestroyCompilers()
+{
+    if (m_fragmentCompiler) {
+        ShDestruct(m_fragmentCompiler);
+        m_fragmentCompiler = 0;
+    }
+    if (m_vertexCompiler) {
+        ShDestruct(m_vertexCompiler);
+        m_vertexCompiler = 0;
+    }
+}
+
+bool WebGraphicsContext3DDefaultImpl::angleValidateShaderSource(ShaderSourceEntry& entry)
+{
+    entry.isValid = false;
+    if (entry.translatedSource) {
+        fastFree(entry.translatedSource);
+        entry.translatedSource = 0;
+    }
+    if (entry.log) {
+        fastFree(entry.log);
+        entry.log = 0;
+    }
+
+    ShHandle compiler = 0;
+    switch (entry.type) {
+    case GL_FRAGMENT_SHADER:
+        compiler = m_fragmentCompiler;
+        break;
+    case GL_VERTEX_SHADER:
+        compiler = m_vertexCompiler;
+        break;
+    }
+    if (!compiler)
+        return false;
+
+    if (!ShCompile(compiler, &entry.source, 1, EShOptObjectCode)) {
+        int logSize = 0;
+        ShGetInfo(compiler, SH_INFO_LOG_LENGTH, &logSize);
+        if (logSize > 1 && tryFastMalloc(logSize * sizeof(char)).getValue(entry.log))
+            ShGetInfoLog(compiler, entry.log);
+        return false;
+    }
+
+    int length = 0;
+    ShGetInfo(compiler, SH_OBJECT_CODE_LENGTH, &length);
+    if (length > 1) {
+        if (!tryFastMalloc(length * sizeof(char)).getValue(entry.translatedSource))
+            return false;
+        ShGetObjectCode(compiler, entry.translatedSource);
+    }
+    entry.isValid = true;
+    return true;
 }
 
 } // namespace WebKit

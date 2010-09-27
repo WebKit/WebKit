@@ -836,14 +836,14 @@ public:
 
     int m_currentWidth, m_currentHeight;
 
-    typedef struct { 
-        String source; 
-        String log; 
+#if PLATFORM(MAC)
+    typedef struct {
+        String source;
+        String log;
         bool isValid;
     } ShaderSourceEntry;
     HashMap<Platform3DObject, ShaderSourceEntry> m_shaderSourceMap;
 
-#if PLATFORM(MAC)
     ANGLEWebKitBridge m_compiler;
 
     Attributes m_attrs;

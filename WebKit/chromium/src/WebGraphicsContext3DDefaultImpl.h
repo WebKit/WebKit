@@ -33,8 +33,10 @@
 
 #if ENABLE(3D_CANVAS)
 
+#include "GLSLANG/ShaderLang.h"
 #include "WebGraphicsContext3D.h"
 
+#include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/OwnPtr.h>
 
@@ -300,8 +302,7 @@ private:
     // need to in order to verify that all enabled vertex arrays have
     // a valid buffer bound -- to avoid crashes on certain cards.
     unsigned int m_boundArrayBuffer;
-    class VertexAttribPointerState {
-    public:
+    struct VertexAttribPointerState {
         VertexAttribPointerState();
 
         bool enabled;
@@ -323,6 +324,44 @@ private:
     ListHashSet<unsigned long> m_syntheticErrors;
 
     OwnPtr<gfx::GLContext> m_glContext;
+
+    // ANGLE related.
+    struct ShaderSourceEntry {
+        ShaderSourceEntry()
+                : type(0)
+                , source(0)
+                , log(0)
+                , translatedSource(0)
+                , isValid(false)
+        {
+        }
+
+        ~ShaderSourceEntry()
+        {
+            if (source)
+                fastFree(source);
+            if (log)
+                fastFree(log);
+            if (translatedSource)
+                fastFree(translatedSource);
+        }
+
+        unsigned long type;
+        char* source;
+        char* log;
+        char* translatedSource;
+        bool isValid;
+    };
+
+    bool angleCreateCompilers();
+    void angleDestroyCompilers();
+    bool angleValidateShaderSource(ShaderSourceEntry& entry);
+
+    typedef HashMap<WebGLId, ShaderSourceEntry> ShaderSourceMap;
+    ShaderSourceMap m_shaderSourceMap;
+
+    ShHandle m_fragmentCompiler;
+    ShHandle m_vertexCompiler;
 };
 
 } // namespace WebKit

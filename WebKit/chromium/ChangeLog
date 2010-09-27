@@ -1,3 +1,30 @@
+2010-09-24  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Hook up ANGLE with chromium --in-process-webgl port
+        https://bugs.webkit.org/show_bug.cgi?id=44309
+
+        * WebKit.gyp: Add angle dependency.
+        * src/WebGraphicsContext3DDefaultImpl.cpp: Using angle for shader validation and translation.
+        (WebKit::WebGraphicsContext3DDefaultImpl::WebGraphicsContext3DDefaultImpl):
+        (WebKit::WebGraphicsContext3DDefaultImpl::~WebGraphicsContext3DDefaultImpl):
+        (WebKit::WebGraphicsContext3DDefaultImpl::initialize):
+        (WebKit::WebGraphicsContext3DDefaultImpl::compileShader):
+        (WebKit::WebGraphicsContext3DDefaultImpl::getIntegerv): Using defined const instead.
+        (WebKit::WebGraphicsContext3DDefaultImpl::getShaderiv):
+        (WebKit::WebGraphicsContext3DDefaultImpl::getShaderInfoLog):
+        (WebKit::WebGraphicsContext3DDefaultImpl::getShaderSource):
+        (WebKit::WebGraphicsContext3DDefaultImpl::shaderSource):
+        (WebKit::WebGraphicsContext3DDefaultImpl::createShader):
+        (WebKit::WebGraphicsContext3DDefaultImpl::deleteShader):
+        (WebKit::WebGraphicsContext3DDefaultImpl::angleCreateCompilers):
+        (WebKit::WebGraphicsContext3DDefaultImpl::angleDestroyCompilers):
+        (WebKit::WebGraphicsContext3DDefaultImpl::angleValidateShaderSource):
+        * src/WebGraphicsContext3DDefaultImpl.h: Add necessary data and functions for angle stuff.
+        (WebKit::WebGraphicsContext3DDefaultImpl::ShaderSourceEntry::ShaderSourceEntry):
+        (WebKit::WebGraphicsContext3DDefaultImpl::ShaderSourceEntry::~ShaderSourceEntry):
+
 2010-09-27  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Adam Barth.
