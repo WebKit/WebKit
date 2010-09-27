@@ -57,18 +57,18 @@ LocalFileSystem& LocalFileSystem::localFileSystem()
     return *localFileSystem;
 }
 
-void LocalFileSystem::requestFileSystem(ScriptExecutionContext* context, AsyncFileSystem::Type type, long long size, PassRefPtr<FileSystemCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+void LocalFileSystem::requestFileSystem(ScriptExecutionContext* context, AsyncFileSystem::Type type, long long size, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     ASSERT(context);
     if (context->isDocument()) {
         Document* document = static_cast<Document*>(context);
         WebFrameImpl* webFrame = WebFrameImpl::fromFrame(document->frame());
-        webFrame->client()->openFileSystem(webFrame, static_cast<WebFileSystem::Type>(type), size, new WebFileSystemCallbacksImpl(new FileSystemCallbacks(successCallback, errorCallback, context)));
+        webFrame->client()->openFileSystem(webFrame, static_cast<WebFileSystem::Type>(type), size, new WebFileSystemCallbacksImpl(callbacks));
     } else {
         WorkerContext* workerContext = static_cast<WorkerContext*>(context);
         WorkerLoaderProxy* workerLoaderProxy = &workerContext->thread()->workerLoaderProxy();
         WebWorkerBase* webWorker = static_cast<WebWorkerBase*>(workerLoaderProxy);
-        webWorker->openFileSystem(static_cast<WebFileSystem::Type>(type), size, new WebFileSystemCallbacksImpl(new FileSystemCallbacks(successCallback, errorCallback, context)));
+        webWorker->openFileSystem(static_cast<WebFileSystem::Type>(type), size, new WebFileSystemCallbacksImpl(callbacks));
     }
 }
 

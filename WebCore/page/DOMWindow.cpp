@@ -93,6 +93,7 @@
 #include "ErrorCallback.h"
 #include "FileError.h"
 #include "FileSystemCallback.h"
+#include "FileSystemCallbacks.h"
 #include "LocalFileSystem.h"
 #endif
 
@@ -732,7 +733,13 @@ void DOMWindow::requestFileSystem(int type, long long size, PassRefPtr<FileSyste
         return;
     }
 
-    LocalFileSystem::localFileSystem().requestFileSystem(document, static_cast<AsyncFileSystem::Type>(type), size, successCallback, errorCallback);
+    AsyncFileSystem::Type fileSystemType = static_cast<AsyncFileSystem::Type>(type);
+    if (fileSystemType != AsyncFileSystem::Temporary && fileSystemType != AsyncFileSystem::Persistent) {
+        DOMFileSystem::scheduleCallback(document, errorCallback, FileError::create(INVALID_MODIFICATION_ERR));
+        return;
+    }
+
+    LocalFileSystem::localFileSystem().requestFileSystem(document, fileSystemType, size, FileSystemCallbacks::create(successCallback, errorCallback, document));
 }
 
 COMPILE_ASSERT(static_cast<int>(DOMWindow::TEMPORARY) == static_cast<int>(AsyncFileSystem::Temporary), enum_mismatch);

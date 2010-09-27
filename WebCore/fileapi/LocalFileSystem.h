@@ -52,7 +52,7 @@ public:
     // calling this one.
     static LocalFileSystem& localFileSystem();
 
-    void requestFileSystem(ScriptExecutionContext*, AsyncFileSystem::Type, long long size, PassRefPtr<FileSystemCallback>, PassRefPtr<ErrorCallback>);
+    void requestFileSystem(ScriptExecutionContext*, AsyncFileSystem::Type, long long size, PassOwnPtr<AsyncFileSystemCallbacks>);
 
 #if !PLATFORM(CHROMIUM)
     // This call is not thread-safe; must be called before any worker threads are created.

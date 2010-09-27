@@ -76,20 +76,15 @@ String LocalFileSystem::fileSystemBasePath() const
     return m_basePath;
 }
 
-static void openFileSystem(ScriptExecutionContext*, const String& basePath, const String& identifier, AsyncFileSystem::Type type, PassOwnPtr<FileSystemCallbacks> callbacks)
+static void openFileSystem(ScriptExecutionContext*, const String& basePath, const String& identifier, AsyncFileSystem::Type type, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     AsyncFileSystem::openFileSystem(basePath, identifier, type, callbacks);
 }
 
-void LocalFileSystem::requestFileSystem(ScriptExecutionContext* context, AsyncFileSystem::Type type, long long, PassRefPtr<FileSystemCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+void LocalFileSystem::requestFileSystem(ScriptExecutionContext* context, AsyncFileSystem::Type type, long long, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    if (type != AsyncFileSystem::Temporary && type != AsyncFileSystem::Persistent) {
-        DOMFileSystem::scheduleCallback(context, errorCallback, FileError::create(INVALID_MODIFICATION_ERR));
-        return;
-    }
-
     // AsyncFileSystem::openFileSystem calls callbacks synchronously, so the method needs to be called asynchronously.
-    context->postTask(createCallbackTask(&openFileSystem, fileSystemBasePath(), context->securityOrigin()->databaseIdentifier(), type, new FileSystemCallbacks(successCallback, errorCallback, context)));
+    context->postTask(createCallbackTask(&openFileSystem, fileSystemBasePath(), context->securityOrigin()->databaseIdentifier(), type, callbacks));
 }
 
 } // namespace

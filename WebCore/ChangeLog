@@ -1,3 +1,48 @@
+2010-09-27  Kinuko Yasuda  <kinuko@google.com>
+
+        Reviewed by Adam Barth.
+
+        [Cleanup] Add create method to FileSystemCallbacks to get rid of naked new's
+        https://bugs.webkit.org/show_bug.cgi?id=46561
+
+        Also cleanup the callbacks layering to pass AsyncFileSystemCallbacks
+        object to LocalFileSystem::requestFileSystem (rather than
+        FileSystemCallback and ErrorCallback) so that all the callbacks class
+        we pass from WebCore to WebKit/chromium/src will be
+        AsyncFileSystemCallbacks.
+
+        No new tests; this patch is only for cleanup and there should be no functionality changes.
+
+        * fileapi/DOMFileSystem.cpp:
+        (WebCore::DOMFileSystem::getMetadata):
+        (WebCore::DOMFileSystem::move):
+        (WebCore::DOMFileSystem::copy):
+        (WebCore::DOMFileSystem::remove):
+        (WebCore::DOMFileSystem::getParent):
+        (WebCore::DOMFileSystem::getFile):
+        (WebCore::DOMFileSystem::getDirectory):
+        (WebCore::DOMFileSystem::createWriter):
+        (WebCore::DOMFileSystem::readDirectory):
+        * fileapi/FileSystemCallbacks.cpp:
+        (WebCore::EntryCallbacks::create): Added.
+        (WebCore::EntriesCallbacks::create): Added.
+        (WebCore::FileSystemCallbacks::create): Added.
+        (WebCore::MetadataCallbacks::create): Added.
+        (WebCore::FileWriterCallbacks::create): Added.
+        (WebCore::VoidCallbacks::create): Added.
+        * fileapi/FileSystemCallbacks.h:
+        * fileapi/LocalFileSystem.cpp:
+        (WebCore::openFileSystem):
+        (WebCore::LocalFileSystem::requestFileSystem): Changed to take
+        AsyncFileSystemCallbacks as (a) callback argument(s).
+        * fileapi/LocalFileSystem.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::requestFileSystem): Made a corresponding change
+        to LocalFileSystem::requestFileSystem.
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::requestFileSystem): Made a corresponding change
+        to LocalFileSystem::requestFileSystem.
+
 2010-09-27  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dave Hyatt.
