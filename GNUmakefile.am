@@ -91,7 +91,8 @@ global_cppflags += \
 	-Wformat -Wformat-security -Wno-format-y2k -Wundef \
 	-Wmissing-format-attribute -Wpointer-arith -Wwrite-strings \
 	-Wno-unused-parameter -Wno-parentheses \
-	-fno-exceptions
+	-fno-exceptions -DENABLE_GLIB_SUPPORT=1
+
 
 global_cxxflags += \
 	$(SYMBOL_VISIBILITY_INLINES) \

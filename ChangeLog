@@ -1,3 +1,15 @@
+2010-09-27  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] use ENABLE(GLIB_SUPPORT)
+        https://bugs.webkit.org/show_bug.cgi?id=46630
+
+        Enabling GLIB_SUPPORT on all ports that use GLib to simplify
+        checks.
+
+        * GNUmakefile.am: Enabled the GLIB_SUPPORT define.
+
 2010-09-24  Romain Pokrzywka  <romain@kdab.com>
 
         Reviewed by Simon Hausmann.

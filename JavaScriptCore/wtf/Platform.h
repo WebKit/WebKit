@@ -1127,7 +1127,7 @@
 #define ENABLE_BRANCH_COMPACTION 1
 #endif
 
-#if PLATFORM(GTK) || (PLATFORM(EFL) && ENABLE(GLIB_SUPPORT))
+#if ENABLE(GLIB_SUPPORT)
 #include "GTypedefs.h"
 #endif
 
