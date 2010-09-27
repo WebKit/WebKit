@@ -180,6 +180,7 @@ public:
     bool hasImageResamplingHint() const;
 
     bool canAccelerate() const;
+    bool canvasClipApplied() const;
     bool useGPU() { return m_useGPU; }
     void setSharedGraphicsContext3D(SharedGraphicsContext3D*, DrawingBuffer*, const IntSize&);
     GLES2Canvas* gpuCanvas() const { return m_gpuCanvas.get(); }

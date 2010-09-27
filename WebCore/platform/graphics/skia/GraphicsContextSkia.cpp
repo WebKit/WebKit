@@ -338,13 +338,15 @@ void GraphicsContext::clearRect(const FloatRect& rect)
     if (paintingDisabled())
         return;
 
-    if (platformContext()->useGPU()) {
+    if (platformContext()->useGPU() && !platformContext()->canvasClipApplied()) {
         platformContext()->prepareForHardwareDraw();
         platformContext()->gpuCanvas()->clearRect(rect);
         return;
     }
 
-    platformContext()->prepareForSoftwareDraw();
+    // Force a readback here (if we're using the GPU), since clearRect() is
+    // incompatible with mixed-mode rendering.
+    platformContext()->syncSoftwareCanvas();
 
     SkRect r = rect;
     if (!isRectSkiaSafe(getCTM(), r))

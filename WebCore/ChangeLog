@@ -1,3 +1,23 @@
+2010-09-23  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [CHROMIUM] Fix for canvas clearRect() with clipping active, when
+        --enable-accelerated-2d-canvas is on.
+        https://bugs.webkit.org/show_bug.cgi?id=46412
+
+        Covered by layout test http://philip.html5.org/tests/canvas/suite/tests/2d.clearRect.clip.html.
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::clearRect):
+        Check if a clip is active during clipRect(), and force to software
+        if so.  Force a readback in this case, since clearRect() is not
+        compatible with mixed-mode rendering.
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::canvasClipApplied):
+        * platform/graphics/skia/PlatformContextSkia.h:
+        Implement accessor to check if a clip is active.
+
 2010-09-14  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

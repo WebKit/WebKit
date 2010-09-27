@@ -677,6 +677,11 @@ bool PlatformContextSkia::canAccelerate() const
         && !m_state->m_canvasClipApplied; // Can't accelerate with a clip to path applied.
 }
 
+bool PlatformContextSkia::canvasClipApplied() const
+{
+    return m_state->m_canvasClipApplied;
+}
+
 class WillPublishCallbackImpl : public DrawingBuffer::WillPublishCallback {
 public:
     static PassOwnPtr<WillPublishCallback> create(PlatformContextSkia* pcs)
