@@ -1,3 +1,17 @@
+2010-09-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Add setting API to set a local storage database path.
+        https://bugs.webkit.org/show_bug.cgi?id=45446
+
+        Add a setting API to set local storage database path.
+
+        * EWebLauncher/main.c:
+        (on_key_down):
+        (browserCreate):
+        (main):
+
 2010-09-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

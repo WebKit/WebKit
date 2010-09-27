@@ -147,7 +147,7 @@ typedef struct _ELauncher {
 
 static void browserDestroy(Ecore_Evas *ee);
 static void closeWindow(Ecore_Evas *ee);
-static int browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Rectangle geometry, const char *engine, unsigned char isFullscreen);
+static int browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Rectangle geometry, const char *engine, unsigned char isFullscreen, const char *databasePath);
 
 static void
 print_history(Eina_List *list)
@@ -562,7 +562,7 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
         info("Create new window (F9) was pressed.\n");
         Eina_Rectangle geometry = {0, 0, 0, 0};
         browserCreate("http://www.google.com",
-                       app->theme, app->userAgent, geometry, NULL, 0);
+                       app->theme, app->userAgent, geometry, NULL, 0, NULL);
     } else if (!strcmp(ev->key, "F10")) {
         Evas_Coord x, y, w, h;
         Evas_Object *frame = ewk_view_frame_main_get(obj);
@@ -617,7 +617,7 @@ quit(Eina_Bool success, const char *msg)
 }
 
 static int
-browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Rectangle geometry, const char *engine, unsigned char isFullscreen)
+browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Rectangle geometry, const char *engine, unsigned char isFullscreen, const char *databasePath)
 {
     if ((geometry.w <= 0) && (geometry.h <= 0)) {
         geometry.w = DEFAULT_WIDTH;
@@ -660,6 +660,8 @@ browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Re
     ewk_view_theme_set(app->browser, theme);
     if (userAgent)
         ewk_view_setting_user_agent_set(app->browser, userAgent);
+    ewk_view_setting_local_storage_database_path_set(app->browser, databasePath);
+    
     evas_object_name_set(app->browser, "browser");
 
     evas_object_smart_callback_add(app->browser, "title,changed", on_title_changed, app);
@@ -840,7 +842,7 @@ main(int argc, char *argv[])
     if (proxyUri)
         ewk_settings_proxy_uri_set(proxyUri);
 
-    browserCreate(url, themePath, userAgent, geometry, engine, isFullscreen);
+    browserCreate(url, themePath, userAgent, geometry, engine, isFullscreen, path);
     ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, main_signal_exit, &windows);
 
     ecore_main_loop_begin();

@@ -1,3 +1,19 @@
+2010-09-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Add setting API to set a local storage database path.
+        https://bugs.webkit.org/show_bug.cgi?id=45446
+
+        Add a setting API to set local storage database path.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+        (_ewk_view_priv_del):
+        (ewk_view_setting_local_storage_database_path_get): Added.
+        (ewk_view_setting_local_storage_database_path_set): Added.
+        * ewk/ewk_view.h:
+
 2010-09-23  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Csaba Osztrogonác.

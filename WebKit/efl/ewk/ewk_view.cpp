@@ -91,6 +91,7 @@ struct _Ewk_View_Private_Data {
         const char* encoding_custom;
         const char* cache_directory;
         const char* theme;
+        const char* local_storage_database_path;
         int font_minimum_size;
         int font_minimum_logical_size;
         int font_default_size;
@@ -579,6 +580,9 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* sd)
     priv->settings.cache_directory = eina_stringshare_add
         (WebCore::cacheStorage().cacheDirectory().utf8().data());
 
+    s = priv->page_settings->localStorageDatabasePath();
+    priv->settings.local_storage_database_path = eina_stringshare_add(s.string().utf8().data());
+
     priv->settings.font_minimum_size = priv->page_settings->minimumFontSize();
     priv->settings.font_minimum_logical_size = priv->page_settings->minimumLogicalFontSize();
     priv->settings.font_default_size = priv->page_settings->defaultFontSize();
@@ -662,6 +666,7 @@ static void _ewk_view_priv_del(Ewk_View_Private_Data* priv)
     eina_stringshare_del(priv->settings.font_fantasy);
     eina_stringshare_del(priv->settings.font_serif);
     eina_stringshare_del(priv->settings.font_sans_serif);
+    eina_stringshare_del(priv->settings.local_storage_database_path);
 
     if (priv->animated_zoom.animator)
         ecore_animator_del(priv->animated_zoom.animator);
@@ -2780,6 +2785,36 @@ Eina_Bool ewk_view_setting_page_cache_set(Evas_Object* o, Eina_Bool enable)
     if (priv->settings.page_cache != enable) {
         priv->page_settings->setUsesPageCache(enable);
         priv->settings.page_cache = enable;
+    }
+    return EINA_TRUE;
+}
+
+/*
+ * Gets the local storage database path.
+ *
+ * @param o view object to get the local storage database path.
+ * @return the local storage database path.
+ */
+const char* ewk_view_setting_local_storage_database_path_get(const Evas_Object* o)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
+    return priv->settings.local_storage_database_path;
+}
+
+/**
+ * Sets the local storage database path.
+ *
+ * @param o view object to set the local storage database path.
+ * @return @c EINA_TRUE on success and @c EINA_FALSE on failure
+ */
+Eina_Bool ewk_view_setting_local_storage_database_path_set(Evas_Object* o, const char* path)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
+    if (eina_stringshare_replace(&priv->settings.local_storage_database_path, path)) {
+        WTF::AtomicString s = WTF::String::fromUTF8(path);
+        priv->page_settings->setLocalStorageDatabasePath(s);
     }
     return EINA_TRUE;
 }
