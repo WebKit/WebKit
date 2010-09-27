@@ -165,23 +165,6 @@ private:
     UChar m_pendingCharacter;
 };
 
-
-
-inline unsigned stringHash(const UChar* data, unsigned length)
-{
-    return StringHasher::createHash<UChar>(data, length);
-}
-
-inline unsigned stringHash(const char* data, unsigned length)
-{
-    return StringHasher::createHash<char>(data, length);
-}
-
-inline unsigned stringHash(const char* data)
-{
-    return StringHasher::createHash<char>(data);
-}
-
 } // namespace WTF
 
 #endif // WTF_StringHashFunctions_h

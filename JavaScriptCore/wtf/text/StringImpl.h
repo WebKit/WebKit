@@ -233,9 +233,9 @@ public:
 
     unsigned hash() const { if (!m_hash) m_hash = computeHash(m_data, m_length); return m_hash; }
     unsigned existingHash() const { ASSERT(m_hash); return m_hash; }
-    static unsigned computeHash(const UChar* data, unsigned length) { return WTF::stringHash(data, length); }
-    static unsigned computeHash(const char* data, unsigned length) { return WTF::stringHash(data, length); }
-    static unsigned computeHash(const char* data) { return WTF::stringHash(data); }
+    static unsigned computeHash(const UChar* data, unsigned length) { return WTF::StringHasher::createHash<UChar>(data, length); }
+    static unsigned computeHash(const char* data, unsigned length) { return WTF::StringHasher::createHash<char>(data, length); }
+    static unsigned computeHash(const char* data) { return WTF::StringHasher::createHash<char>(data); }
 
     ALWAYS_INLINE void deref() { m_refCountAndFlags -= s_refCountIncrement; if (!(m_refCountAndFlags & (s_refCountMask | s_refCountFlagStatic))) delete this; }
     ALWAYS_INLINE bool hasOneRef() const { return (m_refCountAndFlags & (s_refCountMask | s_refCountFlagStatic)) == s_refCountIncrement; }
