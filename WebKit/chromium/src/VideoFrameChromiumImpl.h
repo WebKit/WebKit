@@ -56,6 +56,7 @@ public:
     virtual unsigned planes() const;
     virtual int stride(unsigned plane) const;
     virtual const void* data(unsigned plane) const;
+    virtual const IntSize requiredTextureSize(unsigned plane) const;
 
 private:
     WebVideoFrame* m_webVideoFrame;

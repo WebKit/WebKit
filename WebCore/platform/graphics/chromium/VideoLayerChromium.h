@@ -34,31 +34,76 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "ContentLayerChromium.h"
+#include "LayerChromium.h"
 #include "VideoFrameProvider.h"
 
 namespace WebCore {
 
 // A Layer that contains a Video element.
-class VideoLayerChromium : public ContentLayerChromium {
+class VideoLayerChromium : public LayerChromium {
 public:
     static PassRefPtr<VideoLayerChromium> create(GraphicsLayerChromium* owner = 0,
                                                  VideoFrameProvider* = 0);
-    virtual bool drawsContent() { return true; }
+    virtual ~VideoLayerChromium();
     virtual void updateContents();
+    virtual bool drawsContent() { return true; }
+    virtual void draw();
+
+    class SharedValues {
+    public:
+        explicit SharedValues(GraphicsContext3D*);
+        ~SharedValues();
+        unsigned yuvShaderProgram() const { return m_yuvShaderProgram; }
+        unsigned rgbaShaderProgram() const { return m_rgbaShaderProgram; }
+        int yuvShaderMatrixLocation() const { return m_yuvShaderMatrixLocation; }
+        int rgbaShaderMatrixLocation() const { return m_rgbaShaderMatrixLocation; }
+        int yuvWidthScaleFactorLocation() const { return m_yuvWidthScaleFactorLocation; }
+        int rgbaWidthScaleFactorLocation() const { return m_rgbaWidthScaleFactorLocation; }
+        int yTextureLocation() const { return m_yTextureLocation; }
+        int uTextureLocation() const { return m_uTextureLocation; }
+        int vTextureLocation() const { return m_vTextureLocation; }
+        int yuvAlphaLocation() const { return m_yuvAlphaLocation; }
+        int rgbaAlphaLocation() const { return m_rgbaAlphaLocation; }
+        int rgbaTextureLocation() const { return m_rgbaTextureLocation; }
+        int ccMatrixLocation() const { return m_ccMatrixLocation; }
+        bool initialized() const { return m_initialized; };
+    private:
+        GraphicsContext3D* m_context;
+        unsigned m_yuvShaderProgram;
+        unsigned m_rgbaShaderProgram;
+        int m_yuvShaderMatrixLocation;
+        int m_rgbaShaderMatrixLocation;
+        int m_yuvWidthScaleFactorLocation;
+        int m_rgbaWidthScaleFactorLocation;
+        int m_yTextureLocation;
+        int m_uTextureLocation;
+        int m_vTextureLocation;
+        int m_rgbaTextureLocation;
+        int m_ccMatrixLocation;
+        int m_yuvAlphaLocation;
+        int m_rgbaAlphaLocation;
+        bool m_initialized;
+    };
 
 private:
     VideoLayerChromium(GraphicsLayerChromium* owner, VideoFrameProvider*);
-    void createTextureRect(const IntSize& requiredTextureSize, const IntRect& updateRect, unsigned textureId);
-    void updateTextureRect(const IntRect& updateRect, unsigned textureId);
-    void updateCompleted();
+    static unsigned determineTextureFormat(VideoFrameChromium*);
+    bool allocateTexturesIfNeeded(GraphicsContext3D*, VideoFrameChromium*, unsigned textureFormat);
+    void updateYUVContents(GraphicsContext3D*, const VideoFrameChromium*);
+    void updateRGBAContents(GraphicsContext3D*, const VideoFrameChromium*);
+    void allocateTexture(GraphicsContext3D*, unsigned textureId, const IntSize& dimensions, unsigned textureFormat);
+    void updateTexture(GraphicsContext3D*, unsigned textureId, const IntSize& dimensions, unsigned textureFormat, const void* data);
+    void drawYUV(const SharedValues*);
+    void drawRGBA(const SharedValues*);
 
-#if PLATFORM(SKIA)
-    OwnPtr<skia::PlatformCanvas> m_canvas;
-    OwnPtr<PlatformContextSkia> m_skiaContext;
-#endif
-    OwnPtr<GraphicsContext> m_graphicsContext;
+    static const float yuv2RGB[9];
+
+    VideoFrameChromium::Format m_frameFormat;
     OwnPtr<VideoFrameProvider> m_provider;
+    bool m_skipsDraw;
+    unsigned m_textures[3];
+    IntSize m_textureSizes[3];
+    IntSize m_frameSizes[3];
 };
 
 }

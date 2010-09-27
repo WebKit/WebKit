@@ -31,18 +31,20 @@
 #ifndef VideoFrameChromium_h
 #define VideoFrameChromium_h
 
+#include "IntSize.h"
+
 namespace WebCore {
 
 // A class that represents a video frame in chromium.
 class VideoFrameChromium {
 public:
-    static const unsigned cMaxPlanes;
-    static const unsigned cNumRGBPlanes;
-    static const unsigned cRGBPlane;
-    static const unsigned cNumYUVPlanes;
-    static const unsigned cYPlane;
-    static const unsigned cUPlane;
-    static const unsigned cVPlane;
+    static const unsigned maxPlanes;
+    static const unsigned numRGBPlanes;
+    static const unsigned rgbPlane;
+    static const unsigned numYUVPlanes;
+    static const unsigned yPlane;
+    static const unsigned uPlane;
+    static const unsigned vPlane;
 
     // These enums must be kept in sync with WebKit::WebVideoFrame.
     enum Format {
@@ -74,6 +76,7 @@ public:
     virtual unsigned planes() const = 0;
     virtual int stride(unsigned plane) const = 0;
     virtual const void* data(unsigned plane) const = 0;
+    virtual const IntSize requiredTextureSize(unsigned plane) const = 0;
 };
 
 } // namespace WebCore

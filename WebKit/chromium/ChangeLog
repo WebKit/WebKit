@@ -1,3 +1,15 @@
+2010-09-27  Victoria Kirst  <vrk@google.com>
+
+        Reviewed by James Robinson.
+
+        Fixing constants in VideoFrameChromiumImpl so that it overloads the
+        VideoFrameChromium const declarations. Also adding logic such that a
+        VideoFrameChromium understands what size its texture should be based
+        on frame format.
+        https://bugs.webkit.org/show_bug.cgi?id=45069
+
+        * src/VideoFrameChromiumImpl.cpp:
+
 2010-09-27  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by James Robinson.

@@ -1,3 +1,50 @@
+2010-09-27  Victoria Kirst  <vrk@google.com>
+
+        Reviewed by James Robinson.
+
+        Modifies VideoLayerChromium to do YUV to RGB color conversion in the
+        GPU. Also adds support for RGBA video frame formats, though this code
+        path is currently never run because the video frames are in YV12
+        format.
+        https://bugs.webkit.org/show_bug.cgi?id=45069
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        (WebCore::LayerRendererChromium::cleanupSharedObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore::LayerRendererChromium::videoLayerSharedValues):
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::SharedValues::SharedValues):
+        (WebCore::VideoLayerChromium::SharedValues::~SharedValues):
+        (WebCore::VideoLayerChromium::VideoLayerChromium):
+        (WebCore::VideoLayerChromium::~VideoLayerChromium):
+        (WebCore::VideoLayerChromium::updateContents):
+        (WebCore::VideoLayerChromium::updateYUVContents):
+        (WebCore::VideoLayerChromium::allocateYUVTextures):
+        (WebCore::VideoLayerChromium::updateYUVTextures):
+        (WebCore::VideoLayerChromium::updateRGBAContents):
+        (WebCore::VideoLayerChromium::allocateTexture):
+        (WebCore::VideoLayerChromium::updateTexture):
+        (WebCore::VideoLayerChromium::updateContentsCompleted):
+        (WebCore::VideoLayerChromium::draw):
+        (WebCore::VideoLayerChromium::drawYUV):
+        (WebCore::VideoLayerChromium::drawRGBA):
+        * platform/graphics/chromium/VideoLayerChromium.h:
+        (WebCore::VideoLayerChromium::drawsContent):
+        (WebCore::VideoLayerChromium::SharedValues::yuvShaderProgram):
+        (WebCore::VideoLayerChromium::SharedValues::rgbaShaderProgram):
+        (WebCore::VideoLayerChromium::SharedValues::yuvShaderMatrixLocation):
+        (WebCore::VideoLayerChromium::SharedValues::rgbaShaderMatrixLocation):
+        (WebCore::VideoLayerChromium::SharedValues::yuvWidthScaleFactorLocation):
+        (WebCore::VideoLayerChromium::SharedValues::rgbaWidthScaleFactorLocation):
+        (WebCore::VideoLayerChromium::SharedValues::yTextureLocation):
+        (WebCore::VideoLayerChromium::SharedValues::uTextureLocation):
+        (WebCore::VideoLayerChromium::SharedValues::vTextureLocation):
+        (WebCore::VideoLayerChromium::SharedValues::yuvAlphaLocation):
+        (WebCore::VideoLayerChromium::SharedValues::rgbaTextureLocation):
+        (WebCore::VideoLayerChromium::SharedValues::ccMatrixLocation):
+        (WebCore::VideoLayerChromium::SharedValues::initialized):
+
 2010-09-27  Peter Kasting  <pkasting@google.com>
 
         Reviewed by James Robinson.
