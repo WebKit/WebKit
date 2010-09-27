@@ -1,3 +1,18 @@
+2010-09-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by James Robinson.
+
+        start-commit-queue should abort any rebases in progress
+        https://bugs.webkit.org/show_bug.cgi?id=46640
+
+        webkit-patch commit-queue would do this itself, but this just
+        helps ensure that the commit-queue script is properly updated
+        before we run it (in the case where a previous rebase is in
+        progress the git svn rebase would not work before we run the
+        commit-queue).
+
+        * EWSTools/start-commit-queue.sh:
+
 2010-09-18  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

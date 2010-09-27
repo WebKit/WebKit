@@ -30,8 +30,9 @@
 cd "$HOME/Projects/CommitQueue"
 while :
 do
-  git reset --hard
+  git reset --hard trunk
   git clean -f
+  git rebase --abort
   git svn rebase
   ./WebKitTools/Scripts/webkit-patch commit-queue --no-confirm --exit-after-iteration 10
 done
