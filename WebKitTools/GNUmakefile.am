@@ -147,7 +147,7 @@ noinst_LTLIBRARIES += \
 
 dumprendertree_cppflags += \
 	-DTEST_PLUGIN_DIR=\"${shell pwd}/${top_builddir}/TestNetscapePlugin/.libs\" \
-	-DFONTS_CONF_FILE=\"${shell pwd}/${srcdir}/WebKitTools/DumpRenderTree/gtk/fonts.conf\"
+	-DFONTS_CONF_DIR=\"${shell pwd}/${srcdir}/WebKitTools/DumpRenderTree/gtk/fonts\"
 
 TestNetscapePlugin_libtestnetscapeplugin_la_CPPFLAGS = \
 	-I$(srcdir)/WebKitTools/DumpRenderTree \

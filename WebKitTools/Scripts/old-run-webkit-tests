@@ -236,7 +236,7 @@ if (isAppleMacWebKit()) {
     }
 }
 
-if (isQt() || isGtk() || isCygwin()) {
+if (isQt() || isCygwin()) {
     my $testfontPath = $ENV{"WEBKIT_TESTFONTS"};
     if (!$testfontPath || !-d "$testfontPath") {
         print "The WEBKIT_TESTFONTS environment variable is not defined or not set properly\n";

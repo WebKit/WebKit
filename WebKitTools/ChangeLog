@@ -1,3 +1,26 @@
+2010-09-18  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Clean up the DRT fonts.conf and switch to Liberation
+        https://bugs.webkit.org/show_bug.cgi?id=46038
+
+        Switch to Liberation fonts for GTK+ layout tests. This will make our
+        test results metric-compatible with many Windows/Chromium results. It
+        also simplifies the fonts.conf that we load and prepares the way for
+        fixing many font bugs.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (initializeFonts): Initialize a known list of fonts instead of loading
+        every font in the WEBKIT_TESTFONTS directory.
+        * DumpRenderTree/gtk/fonts.conf: Removed.
+        * DumpRenderTree/gtk/fonts/AHEM____.TTF: Copied from WebKitTools/DumpRenderTree/qt/fonts/AHEM____.TTF.
+        * DumpRenderTree/gtk/fonts/fonts.conf: Added.
+        * GNUmakefile.am: Modify FONTS_CONF_FILE to be FONTS_CONF_DIR, so that
+        we can load both fonts.conf and AHEM____.TTF from this location.
+        * Scripts/old-run-webkit-tests: Remove the check for WEBKIT_TESTFONTS, since
+        it is no longer used.
+
 2010-09-26  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Ojan Vafai.
