@@ -92,17 +92,13 @@ namespace WebCore {
 #endif
 #if USE(WININET)
             , m_fileLoadTimer(loader, &ResourceHandle::fileLoadTimer)
-            , m_resourceHandle(0)
-            , m_secondaryHandle(0)
-            , m_jobId(0)
-            , m_threadId(0)
             , m_internetHandle(0)
             , m_connectHandle(0)
             , m_requestHandle(0)
             , m_sentEndRequest(false)
             , m_bytesRemainingToWrite(0)
+            , m_loadSynchronously(false)
             , m_hasReceivedResponse(false)
-            , m_resend(false)
 #endif
 #if USE(CURL)
             , m_handle(0)
@@ -168,19 +164,14 @@ namespace WebCore {
 #endif
 #if USE(WININET)
         Timer<ResourceHandle> m_fileLoadTimer;
-        HINTERNET m_resourceHandle;
-        HINTERNET m_secondaryHandle;
-        unsigned m_jobId;
-        DWORD m_threadId;
         HINTERNET m_internetHandle;
         HINTERNET m_connectHandle;
         HINTERNET m_requestHandle;
         bool m_sentEndRequest;
         Vector<char> m_formData;
-        int m_bytesRemainingToWrite;
-        String m_postReferrer;
+        size_t m_bytesRemainingToWrite;
+        bool m_loadSynchronously;
         bool m_hasReceivedResponse;
-        bool m_resend;
         String m_redirectUrl;
 #endif
 #if USE(CURL)
