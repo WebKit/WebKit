@@ -1,3 +1,52 @@
+2010-09-27  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        Add local triangulation of cubic curve control points
+        https://bugs.webkit.org/show_bug.cgi?id=45252
+
+        (Re-landing; I neglected to actually add the new files in
+        http://trac.webkit.org/changeset/68045 .)
+
+        Adding a localized triangulation algorithm which takes as input
+        the four control points of a cubic curve segment and provides both
+        triangles as well as the ability to walk the interior edges. The
+        latter will be used later to fill the interior of shapes bounded
+        by these cubic curves, quadratic curves and line segments.
+
+        * platform/graphics/gpu/LoopBlinnLocalTriangulator.cpp: Added.
+        (WebCore::LoopBlinnLocalTriangulator::Triangle::contains):
+        (WebCore::LoopBlinnLocalTriangulator::Triangle::nextVertex):
+        (WebCore::LoopBlinnLocalTriangulator::Triangle::indexForVertex):
+        (WebCore::LoopBlinnLocalTriangulator::Triangle::makeCounterClockwise):
+        (WebCore::LoopBlinnLocalTriangulator::LoopBlinnLocalTriangulator):
+        (WebCore::LoopBlinnLocalTriangulator::reset):
+        (WebCore::LoopBlinnLocalTriangulator::triangulate):
+        (WebCore::LoopBlinnLocalTriangulator::triangulateHelper):
+        (WebCore::LoopBlinnLocalTriangulator::addTriangle):
+        (WebCore::LoopBlinnLocalTriangulator::addInteriorVertex):
+        (WebCore::LoopBlinnLocalTriangulator::isSharedEdge):
+        * platform/graphics/gpu/LoopBlinnLocalTriangulator.h: Added.
+        (WebCore::LoopBlinnLocalTriangulator::Vertex::Vertex):
+        (WebCore::LoopBlinnLocalTriangulator::Vertex::xyCoordinates):
+        (WebCore::LoopBlinnLocalTriangulator::Vertex::klmCoordinates):
+        (WebCore::LoopBlinnLocalTriangulator::Vertex::set):
+        (WebCore::LoopBlinnLocalTriangulator::Vertex::end):
+        (WebCore::LoopBlinnLocalTriangulator::Vertex::setEnd):
+        (WebCore::LoopBlinnLocalTriangulator::Vertex::marked):
+        (WebCore::LoopBlinnLocalTriangulator::Vertex::setMarked):
+        (WebCore::LoopBlinnLocalTriangulator::Vertex::interior):
+        (WebCore::LoopBlinnLocalTriangulator::Vertex::setInterior):
+        (WebCore::LoopBlinnLocalTriangulator::Vertex::resetFlags):
+        (WebCore::LoopBlinnLocalTriangulator::Triangle::Triangle):
+        (WebCore::LoopBlinnLocalTriangulator::Triangle::getVertex):
+        (WebCore::LoopBlinnLocalTriangulator::Triangle::setVertices):
+        (WebCore::LoopBlinnLocalTriangulator::getVertex):
+        (WebCore::LoopBlinnLocalTriangulator::numberOfTriangles):
+        (WebCore::LoopBlinnLocalTriangulator::getTriangle):
+        (WebCore::LoopBlinnLocalTriangulator::numberOfInteriorVertices):
+        (WebCore::LoopBlinnLocalTriangulator::getInteriorVertex):
+
 2010-09-27  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.
