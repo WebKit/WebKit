@@ -156,6 +156,11 @@ static inline bool equal(StringImpl* string, const UChar* characters, unsigned l
 #endif
 }
 
+bool operator==(const AtomicString& string, const Vector<UChar>& vector)
+{
+    return string.impl() && equal(string.impl(), vector.data(), vector.size());
+}
+
 struct UCharBufferTranslator {
     static unsigned hash(const UCharBuffer& buf)
     {
