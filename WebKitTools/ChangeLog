@@ -1,3 +1,15 @@
+2010-09-27  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        webkitpy.common.system.user_unittest.UserTest.test_prompt_with_list spams the console
+        https://bugs.webkit.org/show_bug.cgi?id=46634
+        
+        Use OutputCapture to prevent console spam (and also check for expected
+        output).
+
+        * Scripts/webkitpy/common/system/user_unittest.py:
+
 2010-09-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by James Robinson.
