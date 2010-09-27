@@ -5929,8 +5929,5 @@ fast/filesystem
 # LayoutTestController::nodesFromRect is not supported.
 fast/dom/nodesFromRect-basic.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=42052
-editing/selection/extend-selection.html
-
 #  https://bugs.webkit.org/show_bug.cgi?id=46644
 fast/text/large-text-composed-char-dos.html

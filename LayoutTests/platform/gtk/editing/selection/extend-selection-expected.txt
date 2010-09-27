@@ -1,0 +1,528 @@
+abc אבג xyz דהו def
+אבג xyz דהו def זחט
+אבג דהו אבג
+abc efd dabeb
+Lorem ipsum dolor sit amet
+Lorem ipsum dolor sit amet
+Lorem ipsum dolor sit amet
+Lorem ipsum dolor sit amet
+Lorem
+ipsum dolor sit
+amett
+Lorem ipsum dolor sit amet
+Lorem ipsum dolor
+just a test
+sit amet
+Lorem ipsum dolor sit amet
+Lorem
+ipsum dolor sit
+amet
+Just testing רק בודק
+Just testing what ever
+car means אבג.
+car דהו אבג.
+he said " car דהו אבג ."
+זחט יךכ לםמ ' he said " car דהו אבג " '?
+אבג abc דהו
+edf זחט abrebg
+abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg 
+abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg 
+
+
+
+Extending by character
+Test 1, LTR:
+  Extending right: "\nabc ABC xyz DEF def\n"[(1,1), (1,2), (1,3), (1,4), (1,5), (1,6), (1,7), (1,8), (1,9), (1,10), (1,11), (1,12), (1,13), (1,14), (1,15), (1,16), (1,17), (1,18), (1,19), (1,20)]
+  Extending left:  "\nabc ABC xyz DEF def\n"[(1,20), (1,19), (1,18), (1,17), (1,16), (1,15), (1,14), (1,13), (1,12), (1,11), (1,10), (1,9), (1,8), (1,7), (1,6), (1,5), (1,4), (1,3), (1,2), (1,1)]
+  Extending forward: "\nabc ABC xyz DEF def\n"[(1,1), (1,2), (1,3), (1,4), (1,5), (1,6), (1,7), (1,8), (1,9), (1,10), (1,11), (1,12), (1,13), (1,14), (1,15), (1,16), (1,17), (1,18), (1,19), (1,20)]
+  Extending backward:  "\nabc ABC xyz DEF def\n"[(1,20), (1,19), (1,18), (1,17), (1,16), (1,15), (1,14), (1,13), (1,12), (1,11), (1,10), (1,9), (1,8), (1,7), (1,6), (1,5), (1,4), (1,3), (1,2), (1,1)]
+Test 1, RTL:
+  Extending left: "\nabc ABC xyz DEF def\n"[(1,1), (1,2), (1,3), (1,4), (1,5), (1,6), (1,7), (1,8), (1,9), (1,10), (1,11), (1,12), (1,13), (1,14), (1,15), (1,16), (1,17), (1,18), (1,19), (1,20)]
+  Extending right:  "\nabc ABC xyz DEF def\n"[(1,20), (1,19), (1,18), (1,17), (1,16), (1,15), (1,14), (1,13), (1,12), (1,11), (1,10), (1,9), (1,8), (1,7), (1,6), (1,5), (1,4), (1,3), (1,2), (1,1)]
+  Extending forward: "\nabc ABC xyz DEF def\n"[(1,1), (1,2), (1,3), (1,4), (1,5), (1,6), (1,7), (1,8), (1,9), (1,10), (1,11), (1,12), (1,13), (1,14), (1,15), (1,16), (1,17), (1,18), (1,19), (1,20)]
+  Extending backward: "\nabc ABC xyz DEF def\n"[(1,20), (1,19), (1,18), (1,17), (1,16), (1,15), (1,14), (1,13), (1,12), (1,11), (1,10), (1,9), (1,8), (1,7), (1,6), (1,5), (1,4), (1,3), (1,2), (1,1)]
+
+
+  validating ltrRight and ltrLeft
+  validating ltrRight and ltrForward
+  validating ltrForward and rtlForward
+  validating ltrLeft and ltrBackward
+  validating ltrBackward and rtlBackward
+  validating ltrRight and rtlLeft
+  validating ltrLeft and rtlRight
+
+
+Test 2, LTR:
+  Extending right: "\nABC xyz DEF def GHI\n"[(1,1), (1,2), (1,3), (1,4), (1,5), (1,6), (1,7), (1,8), (1,9), (1,10), (1,11), (1,12), (1,13), (1,14), (1,15), (1,16), (1,17), (1,18), (1,19), (1,20)]
+  Extending left:  "\nABC xyz DEF def GHI\n"[(1,20), (1,19), (1,18), (1,17), (1,16), (1,15), (1,14), (1,13), (1,12), (1,11), (1,10), (1,9), (1,8), (1,7), (1,6), (1,5), (1,4), (1,3), (1,2), (1,1)]
+  Extending forward: "\nABC xyz DEF def GHI\n"[(1,1), (1,2), (1,3), (1,4), (1,5), (1,6), (1,7), (1,8), (1,9), (1,10), (1,11), (1,12), (1,13), (1,14), (1,15), (1,16), (1,17), (1,18), (1,19), (1,20)]
+  Extending backward:  "\nABC xyz DEF def GHI\n"[(1,20), (1,19), (1,18), (1,17), (1,16), (1,15), (1,14), (1,13), (1,12), (1,11), (1,10), (1,9), (1,8), (1,7), (1,6), (1,5), (1,4), (1,3), (1,2), (1,1)]
+Test 2, RTL:
+  Extending left: "\nABC xyz DEF def GHI\n"[(1,1), (1,2), (1,3), (1,4), (1,5), (1,6), (1,7), (1,8), (1,9), (1,10), (1,11), (1,12), (1,13), (1,14), (1,15), (1,16), (1,17), (1,18), (1,19), (1,20)]
+  Extending right:  "\nABC xyz DEF def GHI\n"[(1,20), (1,19), (1,18), (1,17), (1,16), (1,15), (1,14), (1,13), (1,12), (1,11), (1,10), (1,9), (1,8), (1,7), (1,6), (1,5), (1,4), (1,3), (1,2), (1,1)]
+  Extending forward: "\nABC xyz DEF def GHI\n"[(1,1), (1,2), (1,3), (1,4), (1,5), (1,6), (1,7), (1,8), (1,9), (1,10), (1,11), (1,12), (1,13), (1,14), (1,15), (1,16), (1,17), (1,18), (1,19), (1,20)]
+  Extending backward: "\nABC xyz DEF def GHI\n"[(1,20), (1,19), (1,18), (1,17), (1,16), (1,15), (1,14), (1,13), (1,12), (1,11), (1,10), (1,9), (1,8), (1,7), (1,6), (1,5), (1,4), (1,3), (1,2), (1,1)]
+
+
+  validating ltrRight and ltrLeft
+  validating ltrRight and ltrForward
+  validating ltrForward and rtlForward
+  validating ltrLeft and ltrBackward
+  validating ltrBackward and rtlBackward
+  validating ltrRight and rtlLeft
+  validating ltrLeft and rtlRight
+
+
+Test 3, LTR:
+  Extending right: "\nABC DEF ABC\n"[(1,1), (1,2), (1,3), (1,4), (1,5), (1,6), (1,7), (1,8), (1,9), (1,10), (1,11), (1,12)]
+  Extending left:  "\nABC DEF ABC\n"[(1,12), (1,11), (1,10), (1,9), (1,8), (1,7), (1,6), (1,5), (1,4), (1,3), (1,2), (1,1)]
+  Extending forward: "\nABC DEF ABC\n"[(1,1), (1,2), (1,3), (1,4), (1,5), (1,6), (1,7), (1,8), (1,9), (1,10), (1,11), (1,12)]
+  Extending backward:  "\nABC DEF ABC\n"[(1,12), (1,11), (1,10), (1,9), (1,8), (1,7), (1,6), (1,5), (1,4), (1,3), (1,2), (1,1)]
+Test 3, RTL:
+  Extending left: "\nABC DEF ABC\n"[(1,1), (1,2), (1,3), (1,4), (1,5), (1,6), (1,7), (1,8), (1,9), (1,10), (1,11), (1,12)]
+  Extending right:  "\nABC DEF ABC\n"[(1,12), (1,11), (1,10), (1,9), (1,8), (1,7), (1,6), (1,5), (1,4), (1,3), (1,2), (1,1)]
+  Extending forward: "\nABC DEF ABC\n"[(1,1), (1,2), (1,3), (1,4), (1,5), (1,6), (1,7), (1,8), (1,9), (1,10), (1,11), (1,12)]
+  Extending backward: "\nABC DEF ABC\n"[(1,12), (1,11), (1,10), (1,9), (1,8), (1,7), (1,6), (1,5), (1,4), (1,3), (1,2), (1,1)]
+
+
+  validating ltrRight and ltrLeft
+  validating ltrRight and ltrForward
+  validating ltrForward and rtlForward
+  validating ltrLeft and ltrBackward
+  validating ltrBackward and rtlBackward
+  validating ltrRight and rtlLeft
+  validating ltrLeft and rtlRight
+
+
+Test 4, LTR:
+  Extending right: "\nabc efd dabeb\n"[(1,1), (1,2), (1,3), (1,4), (1,5), (1,6), (1,7), (1,8), (1,9), (1,10), (1,11), (1,12), (1,13), (1,14)]
+  Extending left:  "\nabc efd dabeb\n"[(1,14), (1,13), (1,12), (1,11), (1,10), (1,9), (1,8), (1,7), (1,6), (1,5), (1,4), (1,3), (1,2), (1,1)]
+  Extending forward: "\nabc efd dabeb\n"[(1,1), (1,2), (1,3), (1,4), (1,5), (1,6), (1,7), (1,8), (1,9), (1,10), (1,11), (1,12), (1,13), (1,14)]
+  Extending backward:  "\nabc efd dabeb\n"[(1,14), (1,13), (1,12), (1,11), (1,10), (1,9), (1,8), (1,7), (1,6), (1,5), (1,4), (1,3), (1,2), (1,1)]
+Test 4, RTL:
+  Extending left: "\nabc efd dabeb\n"[(1,1), (1,2), (1,3), (1,4), (1,5), (1,6), (1,7), (1,8), (1,9), (1,10), (1,11), (1,12), (1,13), (1,14)]
+  Extending right:  "\nabc efd dabeb\n"[(1,14), (1,13), (1,12), (1,11), (1,10), (1,9), (1,8), (1,7), (1,6), (1,5), (1,4), (1,3), (1,2), (1,1)]
+  Extending forward: "\nabc efd dabeb\n"[(1,1), (1,2), (1,3), (1,4), (1,5), (1,6), (1,7), (1,8), (1,9), (1,10), (1,11), (1,12), (1,13), (1,14)]
+  Extending backward: "\nabc efd dabeb\n"[(1,14), (1,13), (1,12), (1,11), (1,10), (1,9), (1,8), (1,7), (1,6), (1,5), (1,4), (1,3), (1,2), (1,1)]
+
+
+  validating ltrRight and ltrLeft
+  validating ltrRight and ltrForward
+  validating ltrForward and rtlForward
+  validating ltrLeft and ltrBackward
+  validating ltrBackward and rtlBackward
+  validating ltrRight and rtlLeft
+  validating ltrLeft and rtlRight
+
+
+Test 5, LTR:
+  Extending right: "Lorem "[(0,0), (0,1), (0,2), (0,3), (0,4), (0,5), (0,6)], "ipsum dolor sit"[(0,1), (0,2), (0,3), (0,4), (0,5), (0,6), (0,7), (0,8), (0,9), (0,10), (0,11), (0,12), (0,13), (0,14), (0,15)], " amet"[(0,1), (0,2), (0,3), (0,4), (0,5)]
+  Extending left:  " amet"[(0,5), (0,4), (0,3), (0,2), (0,1)], "ipsum dolor sit"[(0,15), (0,14), (0,13), (0,12), (0,11), (0,10), (0,9), (0,8), (0,7), (0,6), (0,5), (0,4), (0,3), (0,2), (0,1)], "Lorem "[(0,6), (0,5), (0,4), (0,3), (0,2), (0,1), (0,0)]
+  Extending forward: "Lorem "[(0,0), (0,1), (0,2), (0,3), (0,4), (0,5), (0,6)], "ipsum dolor sit"[(0,1), (0,2), (0,3), (0,4), (0,5), (0,6), (0,7), (0,8), (0,9), (0,10), (0,11), (0,12), (0,13), (0,14), (0,15)], " amet"[(0,1), (0,2), (0,3), (0,4), (0,5)]
+  Extending backward:  " amet"[(0,5), (0,4), (0,3), (0,2), (0,1)], "ipsum dolor sit"[(0,15), (0,14), (0,13), (0,12), (0,11), (0,10), (0,9), (0,8), (0,7), (0,6), (0,5), (0,4), (0,3), (0,2), (0,1)], "Lorem "[(0,6), (0,5), (0,4), (0,3), (0,2), (0,1), (0,0)]
+Test 5, RTL:
+  Extending left: "Lorem "[(0,0), (0,1), (0,2), (0,3), (0,4), (0,5), (0,6)], "ipsum dolor sit"[(0,1), (0,2), (0,3), (0,4), (0,5), (0,6), (0,7), (0,8), (0,9), (0,10), (0,11), (0,12), (0,13), (0,14), (0,15)], " amet"[(0,1), (0,2), (0,3), (0,4), (0,5)]
+  Extending right:  " amet"[(0,5), (0,4), (0,3), (0,2), (0,1)], "ipsum dolor sit"[(0,15), (0,14), (0,13), (0,12), (0,11), (0,10), (0,9), (0,8), (0,7), (0,6), (0,5), (0,4), (0,3), (0,2), (0,1)], "Lorem "[(0,6), (0,5), (0,4), (0,3), (0,2), (0,1), (0,0)]
+  Extending forward: "Lorem "[(0,0), (0,1), (0,2), (0,3), (0,4), (0,5), (0,6)], "ipsum dolor sit"[(0,1), (0,2), (0,3), (0,4), (0,5), (0,6), (0,7), (0,8), (0,9), (0,10), (0,11), (0,12), (0,13), (0,14), (0,15)], " amet"[(0,1), (0,2), (0,3), (0,4), (0,5)]
+  Extending backward: " amet"[(0,5), (0,4), (0,3), (0,2), (0,1)], "ipsum dolor sit"[(0,15), (0,14), (0,13), (0,12), (0,11), (0,10), (0,9), (0,8), (0,7), (0,6), (0,5), (0,4), (0,3), (0,2), (0,1)], "Lorem "[(0,6), (0,5), (0,4), (0,3), (0,2), (0,1), (0,0)]
+
+
+  validating ltrRight and ltrLeft
+  validating ltrRight and ltrForward
+  validating ltrForward and rtlForward
+  validating ltrLeft and ltrBackward
+  validating ltrBackward and rtlBackward
+  validating ltrRight and rtlLeft
+  validating ltrLeft and rtlRight
+
+
+Test 6, LTR:
+  Extending right: "Lorem "[(0,0), (0,1), (0,2), (0,3), (0,4), (0,5), (0,6)], "ipsum dolor sit"[(0,1), (0,2), (0,3), (0,4), (0,5), (0,6), (0,7), (0,8), (0,9), (0,10), (0,11), (0,12), (0,13), (0,14), (0,15)], " amet"[(0,1), (0,2), (0,3), (0,4), (0,5)]
+  Extending left:  " amet"[(0,5), (0,4), (0,3), (0,2), (0,1)], "ipsum dolor sit"[(0,15), (0,14), (0,13), (0,12), (0,11), (0,10), (0,9), (0,8), (0,7), (0,6), (0,5), (0,4), (0,3), (0,2), (0,1)], "Lorem "[(0,6), (0,5), (0,4), (0,3), (0,2), (0,1), (0,0)]
+  Extending forward: "Lorem "[(0,0), (0,1), (0,2), (0,3), (0,4), (0,5), (0,6)], "ipsum dolor sit"[(0,1), (0,2), (0,3), (0,4), (0,5), (0,6), (0,7), (0,8), (0,9), (0,10), (0,11), (0,12), (0,13), (0,14), (0,15)], " amet"[(0,1), (0,2), (0,3), (0,4), (0,5)]
+  Extending backward:  " amet"[(0,5), (0,4), (0,3), (0,2), (0,1)], "ipsum dolor sit"[(0,15), (0,14), (0,13), (0,12), (0,11), (0,10), (0,9), (0,8), (0,7), (0,6), (0,5), (0,4), (0,3), (0,2), (0,1)], "Lorem "[(0,6), (0,5), (0,4), (0,3), (0,2), (0,1), (0,0)]
+Test 6, RTL:
+  Extending left: "Lorem "[(0,0), (0,1), (0,2), (0,3), (0,4), (0,5), (0,6)], "ipsum dolor sit"[(0,1), (0,2), (0,3), (0,4), (0,5), (0,6), (0,7), (0,8), (0,9), (0,10), (0,11), (0,12), (0,13), (0,14), (0,15)], " amet"[(0,1), (0,2), (0,3), (0,4), (0,5)]
+  Extending right:  " amet"[(0,5), (0,4), (0,3), (0,2), (0,1)], "ipsum dolor sit"[(0,15), (0,14), (0,13), (0,12), (0,11), (0,10), (0,9), (0,8), (0,7), (0,6), (0,5), (0,4), (0,3), (0,2), (0,1)], "Lorem "[(0,6), (0,5), (0,4), (0,3), (0,2), (0,1), (0,0)]
+  Extending forward: "Lorem "[(0,0), (0,1), (0,2), (0,3), (0,4), (0,5), (0,6)], "ipsum dolor sit"[(0,1), (0,2), (0,3), (0,4), (0,5), (0,6), (0,7), (0,8), (0,9), (0,10), (0,11), (0,12), (0,13), (0,14), (0,15)], " amet"[(0,1), (0,2), (0,3), (0,4), (0,5)]
+  Extending backward: " amet"[(0,5), (0,4), (0,3), (0,2), (0,1)], "ipsum dolor sit"[(0,15), (0,14), (0,13), (0,12), (0,11), (0,10), (0,9), (0,8), (0,7), (0,6), (0,5), (0,4), (0,3), (0,2), (0,1)], "Lorem "[(0,6), (0,5), (0,4), (0,3), (0,2), (0,1), (0,0)]
+
+
+  validating ltrRight and ltrLeft
+  validating ltrRight and ltrForward
+  validating ltrForward and rtlForward
+  validating ltrLeft and ltrBackward
+  validating ltrBackward and rtlBackward
+  validating ltrRight and rtlLeft
+  validating ltrLeft and rtlRight
+
+
+Test 7, LTR:
+  Extending right: "Lorem "[(0,0), (0,1), (0,2), (0,3), (0,4), (0,5), (0,6)], "ipsum dolor sit"[(0,1), (0,2), (0,3), (0,4), (0,5), (0,6), (0,7), (0,8), (0,9), (0,10), (0,11), (0,12), (0,13), (0,14), (0,15)], " amet"[(0,1), (0,2), (0,3), (0,4), (0,5)]
+  Extending left:  " amet"[(0,5), (0,4), (0,3), (0,2), (0,1)], "ipsum dolor sit"[(0,15), (0,14), (0,13), (0,12), (0,11), (0,10), (0,9), (0,8), (0,7), (0,6), (0,5), (0,4), (0,3), (0,2), (0,1)], "Lorem "[(0,6), (0,5), (0,4), (0,3), (0,2), (0,1), (0,0)]
+  Extending forward: "Lorem "[(0,0), (0,1), (0,2), (0,3), (0,4), (0,5), (0,6)], "ipsum dolor sit"[(0,1), (0,2), (0,3), (0,4), (0,5), (0,6), (0,7), (0,8), (0,9), (0,10), (0,11), (0,12), (0,13), (0,14), (0,15)], " amet"[(0,1), (0,2), (0,3), (0,4), (0,5)]
+  Extending backward:  " amet"[(0,5), (0,4), (0,3), (0,2), (0,1)], "ipsum dolor sit"[(0,15), (0,14), (0,13), (0,12), (0,11), (0,10), (0,9), (0,8), (0,7), (0,6), (0,5), (0,4), (0,3), (0,2), (0,1)], "Lorem "[(0,6), (0,5), (0,4), (0,3), (0,2), (0,1), (0,0)]
+Test 7, RTL:
+  Extending left: "Lorem "[(0,0), (0,1), (0,2), (0,3), (0,4), (0,5), (0,6)], "ipsum dolor sit"[(0,1), (0,2), (0,3), (0,4), (0,5), (0,6), (0,7), (0,8), (0,9), (0,10), (0,11), (0,12), (0,13), (0,14), (0,15)], " amet"[(0,1), (0,2), (0,3), (0,4), (0,5)]
+  Extending right:  " amet"[(0,5), (0,4), (0,3), (0,2), (0,1)], "ipsum dolor sit"[(0,15), (0,14), (0,13), (0,12), (0,11), (0,10), (0,9), (0,8), (0,7), (0,6), (0,5), (0,4), (0,3), (0,2), (0,1)], "Lorem "[(0,6), (0,5), (0,4), (0,3), (0,2), (0,1), (0,0)]
+  Extending forward: "Lorem "[(0,0), (0,1), (0,2), (0,3), (0,4), (0,5), (0,6)], "ipsum dolor sit"[(0,1), (0,2), (0,3), (0,4), (0,5), (0,6), (0,7), (0,8), (0,9), (0,10), (0,11), (0,12), (0,13), (0,14), (0,15)], " amet"[(0,1), (0,2), (0,3), (0,4), (0,5)]
+  Extending backward: " amet"[(0,5), (0,4), (0,3), (0,2), (0,1)], "ipsum dolor sit"[(0,15), (0,14), (0,13), (0,12), (0,11), (0,10), (0,9), (0,8), (0,7), (0,6), (0,5), (0,4), (0,3), (0,2), (0,1)], "Lorem "[(0,6), (0,5), (0,4), (0,3), (0,2), (0,1), (0,0)]
+
+
+  validating ltrRight and ltrLeft
+  validating ltrRight and ltrForward
+  validating ltrForward and rtlForward
+  validating ltrLeft and ltrBackward
+  validating ltrBackward and rtlBackward
+  validating ltrRight and rtlLeft
+  validating ltrLeft and rtlRight
+
+
+Test 8, LTR:
+  Extending right: "Lorem "[(0,0), (0,1), (0,2), (0,3), (0,4), (0,5), (0,6)], "ipsum dolor sit"[(0,1), (0,2), (0,3), (0,4), (0,5), (0,6), (0,7), (0,8), (0,9), (0,10), (0,11), (0,12), (0,13), (0,14), (0,15)], " amet"[(0,1), (0,2), (0,3), (0,4), (0,5)]
+  Extending left:  " amet"[(0,5), (0,4), (0,3), (0,2), (0,1)], "ipsum dolor sit"[(0,15), (0,14), (0,13), (0,12), (0,11), (0,10), (0,9), (0,8), (0,7), (0,6), (0,5), (0,4), (0,3), (0,2), (0,1)], "Lorem "[(0,6), (0,5), (0,4), (0,3), (0,2), (0,1), (0,0)]
+  Extending forward: "Lorem "[(0,0), (0,1), (0,2), (0,3), (0,4), (0,5), (0,6)], "ipsum dolor sit"[(0,1), (0,2), (0,3), (0,4), (0,5), (0,6), (0,7), (0,8), (0,9), (0,10), (0,11), (0,12), (0,13), (0,14), (0,15)], " amet"[(0,1), (0,2), (0,3), (0,4), (0,5)]
+  Extending backward:  " amet"[(0,5), (0,4), (0,3), (0,2), (0,1)], "ipsum dolor sit"[(0,15), (0,14), (0,13), (0,12), (0,11), (0,10), (0,9), (0,8), (0,7), (0,6), (0,5), (0,4), (0,3), (0,2), (0,1)], "Lorem "[(0,6), (0,5), (0,4), (0,3), (0,2), (0,1), (0,0)]
+Test 8, RTL:
+  Extending left: "Lorem "[(0,0), (0,1), (0,2), (0,3), (0,4), (0,5), (0,6)], "ipsum dolor sit"[(0,1), (0,2), (0,3), (0,4), (0,5), (0,6), (0,7), (0,8), (0,9), (0,10), (0,11), (0,12), (0,13), (0,14), (0,15)], " amet"[(0,1), (0,2), (0,3), (0,4), (0,5)]
+  Extending right:  " amet"[(0,5), (0,4), (0,3), (0,2), (0,1)], "ipsum dolor sit"[(0,15), (0,14), (0,13), (0,12), (0,11), (0,10), (0,9), (0,8), (0,7), (0,6), (0,5), (0,4), (0,3), (0,2), (0,1)], "Lorem "[(0,6), (0,5), (0,4), (0,3), (0,2), (0,1), (0,0)]
+  Extending forward: "Lorem "[(0,0), (0,1), (0,2), (0,3), (0,4), (0,5), (0,6)], "ipsum dolor sit"[(0,1), (0,2), (0,3), (0,4), (0,5), (0,6), (0,7), (0,8), (0,9), (0,10), (0,11), (0,12), (0,13), (0,14), (0,15)], " amet"[(0,1), (0,2), (0,3), (0,4), (0,5)]
+  Extending backward: " amet"[(0,5), (0,4), (0,3), (0,2), (0,1)], "ipsum dolor sit"[(0,15), (0,14), (0,13), (0,12), (0,11), (0,10), (0,9), (0,8), (0,7), (0,6), (0,5), (0,4), (0,3), (0,2), (0,1)], "Lorem "[(0,6), (0,5), (0,4), (0,3), (0,2), (0,1), (0,0)]
+
+
+  validating ltrRight and ltrLeft
+  validating ltrRight and ltrForward
+  validating ltrForward and rtlForward
+  validating ltrLeft and ltrBackward
+  validating ltrBackward and rtlBackward
+  validating ltrRight and rtlLeft
+  validating ltrLeft and rtlRight
+
+
+
+
+
+
+
+Extending by word
+Test 1, LTR:
+  Extending right: "\nabc ABC xyz DEF def\n"[(1,1), (1,4), (1,8), (1,12), (1,16), (1,20)]
+  Extending left:  "\nabc ABC xyz DEF def\n"[(1,20), (1,17), (1,13), (1,9), (1,5), (1,1)]
+  Extending forward: "\nabc ABC xyz DEF def\n"[(1,1), (1,4), (1,8), (1,12), (1,16), (1,20)]
+  Extending backward:  "\nabc ABC xyz DEF def\n"[(1,20), (1,17), (1,13), (1,9), (1,5), (1,1)]
+Test 1, RTL:
+  Extending left: "\nabc ABC xyz DEF def\n"[(1,1), (1,4), (1,8), (1,12), (1,16), (1,20)]
+  Extending right:  "\nabc ABC xyz DEF def\n"[(1,20), (1,17), (1,13), (1,9), (1,5), (1,1)]
+  Extending forward: "\nabc ABC xyz DEF def\n"[(1,1), (1,4), (1,8), (1,12), (1,16), (1,20)]
+  Extending backward: "\nabc ABC xyz DEF def\n"[(1,20), (1,17), (1,13), (1,9), (1,5), (1,1)]
+
+
+  validating ltrRight and ltrLeft
+  validating ltrRight and ltrForward
+  validating ltrForward and rtlForward
+  validating ltrLeft and ltrBackward
+  validating ltrBackward and rtlBackward
+  validating ltrRight and rtlLeft
+  validating ltrLeft and rtlRight
+
+
+Test 2, LTR:
+  Extending right: "\nABC xyz DEF def GHI\n"[(1,1), (1,4), (1,8), (1,12), (1,16), (1,20)]
+  Extending left:  "\nABC xyz DEF def GHI\n"[(1,20), (1,17), (1,13), (1,9), (1,5), (1,1)]
+  Extending forward: "\nABC xyz DEF def GHI\n"[(1,1), (1,4), (1,8), (1,12), (1,16), (1,20)]
+  Extending backward:  "\nABC xyz DEF def GHI\n"[(1,20), (1,17), (1,13), (1,9), (1,5), (1,1)]
+Test 2, RTL:
+  Extending left: "\nABC xyz DEF def GHI\n"[(1,1), (1,4), (1,8), (1,12), (1,16), (1,20)]
+  Extending right:  "\nABC xyz DEF def GHI\n"[(1,20), (1,17), (1,13), (1,9), (1,5), (1,1)]
+  Extending forward: "\nABC xyz DEF def GHI\n"[(1,1), (1,4), (1,8), (1,12), (1,16), (1,20)]
+  Extending backward: "\nABC xyz DEF def GHI\n"[(1,20), (1,17), (1,13), (1,9), (1,5), (1,1)]
+
+
+  validating ltrRight and ltrLeft
+  validating ltrRight and ltrForward
+  validating ltrForward and rtlForward
+  validating ltrLeft and ltrBackward
+  validating ltrBackward and rtlBackward
+  validating ltrRight and rtlLeft
+  validating ltrLeft and rtlRight
+
+
+Test 3, LTR:
+  Extending right: "\nABC DEF ABC\n"[(1,1), (1,4), (1,8), (1,12)]
+  Extending left:  "\nABC DEF ABC\n"[(1,12), (1,9), (1,5), (1,1)]
+  Extending forward: "\nABC DEF ABC\n"[(1,1), (1,4), (1,8), (1,12)]
+  Extending backward:  "\nABC DEF ABC\n"[(1,12), (1,9), (1,5), (1,1)]
+Test 3, RTL:
+  Extending left: "\nABC DEF ABC\n"[(1,1), (1,4), (1,8), (1,12)]
+  Extending right:  "\nABC DEF ABC\n"[(1,12), (1,9), (1,5), (1,1)]
+  Extending forward: "\nABC DEF ABC\n"[(1,1), (1,4), (1,8), (1,12)]
+  Extending backward: "\nABC DEF ABC\n"[(1,12), (1,9), (1,5), (1,1)]
+
+
+  validating ltrRight and ltrLeft
+  validating ltrRight and ltrForward
+  validating ltrForward and rtlForward
+  validating ltrLeft and ltrBackward
+  validating ltrBackward and rtlBackward
+  validating ltrRight and rtlLeft
+  validating ltrLeft and rtlRight
+
+
+Test 4, LTR:
+  Extending right: "\nabc efd dabeb\n"[(1,1), (1,4), (1,8), (1,14)]
+  Extending left:  "\nabc efd dabeb\n"[(1,14), (1,9), (1,5), (1,1)]
+  Extending forward: "\nabc efd dabeb\n"[(1,1), (1,4), (1,8), (1,14)]
+  Extending backward:  "\nabc efd dabeb\n"[(1,14), (1,9), (1,5), (1,1)]
+Test 4, RTL:
+  Extending left: "\nabc efd dabeb\n"[(1,1), (1,4), (1,8), (1,14)]
+  Extending right:  "\nabc efd dabeb\n"[(1,14), (1,9), (1,5), (1,1)]
+  Extending forward: "\nabc efd dabeb\n"[(1,1), (1,4), (1,8), (1,14)]
+  Extending backward: "\nabc efd dabeb\n"[(1,14), (1,9), (1,5), (1,1)]
+
+
+  validating ltrRight and ltrLeft
+  validating ltrRight and ltrForward
+  validating ltrForward and rtlForward
+  validating ltrLeft and ltrBackward
+  validating ltrBackward and rtlBackward
+  validating ltrRight and rtlLeft
+  validating ltrLeft and rtlRight
+
+
+Test 5, LTR:
+  Extending right: "Lorem "[(0,0), (0,5)], "ipsum dolor sit"[(0,5), (0,11), (0,15)], " amet"[(0,5)]
+  Extending left:  " amet"[(0,5), (0,1)], "ipsum dolor sit"[(0,12), (0,6)], "Lorem "[(0,6), (0,0)]
+  Extending forward: "Lorem "[(0,0), (0,5)], "ipsum dolor sit"[(0,5), (0,11), (0,15)], " amet"[(0,5)]
+  Extending backward:  " amet"[(0,5), (0,1)], "ipsum dolor sit"[(0,12), (0,6)], "Lorem "[(0,6), (0,0)]
+Test 5, RTL:
+  Extending left: "Lorem "[(0,0), (0,5)], "ipsum dolor sit"[(0,5), (0,11), (0,15)], " amet"[(0,5)]
+  Extending right:  " amet"[(0,5), (0,1)], "ipsum dolor sit"[(0,12), (0,6)], "Lorem "[(0,6), (0,0)]
+  Extending forward: "Lorem "[(0,0), (0,5)], "ipsum dolor sit"[(0,5), (0,11), (0,15)], " amet"[(0,5)]
+  Extending backward: " amet"[(0,5), (0,1)], "ipsum dolor sit"[(0,12), (0,6)], "Lorem "[(0,6), (0,0)]
+
+
+  validating ltrRight and ltrLeft
+  validating ltrRight and ltrForward
+  validating ltrForward and rtlForward
+  validating ltrLeft and ltrBackward
+  validating ltrBackward and rtlBackward
+  validating ltrRight and rtlLeft
+  validating ltrLeft and rtlRight
+
+
+Test 6, LTR:
+  Extending right: "Lorem "[(0,0), (0,5)], "ipsum dolor sit"[(0,5), (0,11), (0,15)], " amet"[(0,5)]
+  Extending left:  " amet"[(0,5), (0,1)], "ipsum dolor sit"[(0,12), (0,6)], "Lorem "[(0,6), (0,0)]
+  Extending forward: "Lorem "[(0,0), (0,5)], "ipsum dolor sit"[(0,5), (0,11), (0,15)], " amet"[(0,5)]
+  Extending backward:  " amet"[(0,5), (0,1)], "ipsum dolor sit"[(0,12), (0,6)], "Lorem "[(0,6), (0,0)]
+Test 6, RTL:
+  Extending left: "Lorem "[(0,0), (0,5)], "ipsum dolor sit"[(0,5), (0,11), (0,15)], " amet"[(0,5)]
+  Extending right:  " amet"[(0,5), (0,1)], "ipsum dolor sit"[(0,12), (0,6)], "Lorem "[(0,6), (0,0)]
+  Extending forward: "Lorem "[(0,0), (0,5)], "ipsum dolor sit"[(0,5), (0,11), (0,15)], " amet"[(0,5)]
+  Extending backward: " amet"[(0,5), (0,1)], "ipsum dolor sit"[(0,12), (0,6)], "Lorem "[(0,6), (0,0)]
+
+
+  validating ltrRight and ltrLeft
+  validating ltrRight and ltrForward
+  validating ltrForward and rtlForward
+  validating ltrLeft and ltrBackward
+  validating ltrBackward and rtlBackward
+  validating ltrRight and rtlLeft
+  validating ltrLeft and rtlRight
+
+
+Test 7, LTR:
+  Extending right: "Lorem "[(0,0), (0,5)], "ipsum dolor sit"[(0,5), (0,11), (0,15)], " amet"[(0,5)]
+  Extending left:  " amet"[(0,5), (0,1)], "ipsum dolor sit"[(0,12), (0,6)], "Lorem "[(0,6), (0,0)]
+  Extending forward: "Lorem "[(0,0), (0,5)], "ipsum dolor sit"[(0,5), (0,11), (0,15)], " amet"[(0,5)]
+  Extending backward:  " amet"[(0,5), (0,1)], "ipsum dolor sit"[(0,12), (0,6)], "Lorem "[(0,6), (0,0)]
+Test 7, RTL:
+  Extending left: "Lorem "[(0,0), (0,5)], "ipsum dolor sit"[(0,5), (0,11), (0,15)], " amet"[(0,5)]
+  Extending right:  " amet"[(0,5), (0,1)], "ipsum dolor sit"[(0,12), (0,6)], "Lorem "[(0,6), (0,0)]
+  Extending forward: "Lorem "[(0,0), (0,5)], "ipsum dolor sit"[(0,5), (0,11), (0,15)], " amet"[(0,5)]
+  Extending backward: " amet"[(0,5), (0,1)], "ipsum dolor sit"[(0,12), (0,6)], "Lorem "[(0,6), (0,0)]
+
+
+  validating ltrRight and ltrLeft
+  validating ltrRight and ltrForward
+  validating ltrForward and rtlForward
+  validating ltrLeft and ltrBackward
+  validating ltrBackward and rtlBackward
+  validating ltrRight and rtlLeft
+  validating ltrLeft and rtlRight
+
+
+Test 8, LTR:
+  Extending right: "Lorem "[(0,0), (0,5)], "ipsum dolor sit"[(0,5), (0,11), (0,15)], " amet"[(0,5)]
+  Extending left:  " amet"[(0,5), (0,1)], "ipsum dolor sit"[(0,12), (0,6)], "Lorem "[(0,6), (0,0)]
+  Extending forward: "Lorem "[(0,0), (0,5)], "ipsum dolor sit"[(0,5), (0,11), (0,15)], " amet"[(0,5)]
+  Extending backward:  " amet"[(0,5), (0,1)], "ipsum dolor sit"[(0,12), (0,6)], "Lorem "[(0,6), (0,0)]
+Test 8, RTL:
+  Extending left: "Lorem "[(0,0), (0,5)], "ipsum dolor sit"[(0,5), (0,11), (0,15)], " amet"[(0,5)]
+  Extending right:  " amet"[(0,5), (0,1)], "ipsum dolor sit"[(0,12), (0,6)], "Lorem "[(0,6), (0,0)]
+  Extending forward: "Lorem "[(0,0), (0,5)], "ipsum dolor sit"[(0,5), (0,11), (0,15)], " amet"[(0,5)]
+  Extending backward: " amet"[(0,5), (0,1)], "ipsum dolor sit"[(0,12), (0,6)], "Lorem "[(0,6), (0,0)]
+
+
+  validating ltrRight and ltrLeft
+  validating ltrRight and ltrForward
+  validating ltrForward and rtlForward
+  validating ltrLeft and ltrBackward
+  validating ltrBackward and rtlBackward
+  validating ltrRight and rtlLeft
+  validating ltrLeft and rtlRight
+
+
+
+
+
+Extending by character
+Test 1, LTR:
+  Extending right: "Lorem "[(0,0), (0,1), (0,2), (0,3), (0,4), (0,5)], "ipsum dolor sit"[(0,0), (0,1), (0,2), (0,3), (0,4), (0,5), (0,6), (0,7), (0,8), (0,9), (0,10), (0,11), (0,12), (0,13), (0,14), (0,15)], " amett"[(0,1), (0,2), (0,3), (0,4), (0,5)]
+  Extending left:  " amett"[(0,6), (0,5), (0,4), (0,3), (0,2), (0,1)], "ipsum dolor sit"[(0,15), (0,14), (0,13), (0,12), (0,11), (0,10), (0,9), (0,8), (0,7), (0,6), (0,5), (0,4), (0,3), (0,2), (0,1), (0,0)], "Lorem "[(0,5), (0,4), (0,3), (0,2), (0,1)]
+
+
+
+
+
+Extending by word
+Test 1, LTR:
+  Extending right: "Lorem "[(0,0), (0,5)], "ipsum dolor sit"[(0,5), (0,11), (0,15)], " amett"[(0,6), (0,1)]
+  Extending left:  " amett"[(0,6), (0,1)], "ipsum dolor sit"[(0,12), (0,6), (0,0)], "Lorem "[(0,0), (0,5)]
+
+
+
+Extending by lineBoundary
+Test 1, LTR:
+  Extending forward: "\nabc ABC xyz DEF def\n"[(1,1), (1,20)]
+  Extending backward:  "\nabc ABC xyz DEF def\n"[(1,20)]
+Test 1, RTL:
+  Extending forward: "\nabc ABC xyz DEF def\n"[(1,1), (1,20)]
+  Extending backward:  "\nabc ABC xyz DEF def\n"[(1,20)]
+Test 2, LTR:
+  Extending forward: "\nABC xyz DEF def GHI\n"[(1,1), (1,20)]
+  Extending backward:  "\nABC xyz DEF def GHI\n"[(1,20)]
+Test 2, RTL:
+  Extending forward: "\nABC xyz DEF def GHI\n"[(1,1), (1,20)]
+  Extending backward:  "\nABC xyz DEF def GHI\n"[(1,20)]
+Test 3, LTR:
+  Extending forward: "\nABC DEF ABC\n"[(1,1), (1,12)]
+  Extending backward:  "\nABC DEF ABC\n"[(1,12)]
+Test 3, RTL:
+  Extending forward: "\nABC DEF ABC\n"[(1,1), (1,12)]
+  Extending backward:  "\nABC DEF ABC\n"[(1,12)]
+Test 4, LTR:
+  Extending forward: "\nabc efd dabeb\n"[(1,1), (1,14)]
+  Extending backward:  "\nabc efd dabeb\n"[(1,14)]
+Test 4, RTL:
+  Extending forward: "\nabc efd dabeb\n"[(1,1), (1,14)]
+  Extending backward:  "\nabc efd dabeb\n"[(1,14)]
+Test 5, LTR:
+  Extending forward: "Lorem "[(0,0)], " amet"[(0,5)]
+  Extending backward:  " amet"[(0,5)]
+Test 5, RTL:
+  Extending forward: "Lorem "[(0,0)], " amet"[(0,5)]
+  Extending backward:  " amet"[(0,5)]
+Test 6, LTR:
+  Extending forward: "Lorem "[(0,0)], " amet"[(0,5)]
+  Extending backward:  " amet"[(0,5)]
+Test 6, RTL:
+  Extending forward: "Lorem "[(0,0)], " amet"[(0,5)]
+  Extending backward:  " amet"[(0,5)]
+Test 7, LTR:
+  Extending forward: "Lorem "[(0,0)], " amet"[(0,5)]
+  Extending backward:  " amet"[(0,5)]
+Test 7, RTL:
+  Extending forward: "Lorem "[(0,0)], " amet"[(0,5)]
+  Extending backward:  " amet"[(0,5)]
+Test 8, LTR:
+  Extending forward: "Lorem "[(0,0)], " amet"[(0,5)]
+  Extending backward:  " amet"[(0,5)]
+Test 8, RTL:
+  Extending forward: "Lorem "[(0,0)], " amet"[(0,5)]
+  Extending backward:  " amet"[(0,5)]
+Test 9, LTR:
+  Extending forward: "Lorem "[(0,0), (0,5)]
+  Extending backward:  "Lorem "[(0,5)]
+Test 9, RTL:
+  Extending forward: "Lorem "[(0,0), (0,5)]
+  Extending backward:  "Lorem "[(0,5)]
+Test 10, LTR:
+  Extending forward: "Lorem "[(0,0)], " amet"[(0,5)]
+  Extending backward:  " amet"[(0,5)]
+Test 10, RTL:
+  Extending forward: "Lorem "[(0,0)], " amet"[(0,5)]
+  Extending backward:  " amet"[(0,5)]
+Test 11, LTR:
+  Extending forward: "Lorem "[(0,0)], "ipsum dolor"[(0,11)]
+  Extending backward:  "ipsum dolor"[(0,11)]
+Test 11, RTL:
+  Extending forward: "Lorem "[(0,0)], "ipsum dolor"[(0,11)]
+  Extending backward:  "ipsum dolor"[(0,11)]
+Test 12, LTR:
+  Extending forward: "Lorem "[(0,0)], " amet"[(0,5)]
+  Extending backward:  " amet"[(0,5)]
+Test 12, RTL:
+  Extending forward: "Lorem "[(0,0)], " amet"[(0,5)]
+  Extending backward:  " amet"[(0,5)]
+Test 13, LTR:
+  Extending forward: "Lorem "[(0,0), (0,5)]
+  Extending backward:  "Lorem "[(0,5)]
+Test 13, RTL:
+  Extending forward: "Lorem "[(0,0), (0,5)]
+  Extending backward:  "Lorem "[(0,5)]
+Test 14, LTR:
+  Extending forward: "\n Just\n "[(2,2)], "\n BFDX\n"[(2,6)]
+  Extending backward:  "\n BFDX\n"[(2,6)]
+Test 14, RTL:
+  Extending forward: "\n Just\n "[(2,2)], "\n BFDX\n"[(2,6)]
+  Extending backward:  "\n BFDX\n"[(2,6)]
+Test 15, LTR:
+  Extending forward: "\n Just\n "[(2,2)], "\n ever\n"[(2,6)]
+  Extending backward:  "\n ever\n"[(2,6)]
+Test 15, RTL:
+  Extending forward: "\n Just\n "[(2,2)], "\n ever\n"[(2,6)]
+  Extending backward:  "\n ever\n"[(2,6)]
+Test 16, LTR:
+  Extending forward: "car means ABC."[(0,0), (0,14)]
+  Extending backward:  "car means ABC."[(0,14)]
+Test 16, RTL:
+  Extending forward: "car means ABC."[(0,0), (0,14)]
+  Extending backward:  "car means ABC."[(0,14)]
+Test 17, LTR:
+  Extending forward: "᪜car DEF ABC.᪝"[(1,1), (1,13)]
+  Extending backward:  "᪜car DEF ABC.᪝"[(1,13)]
+Test 17, RTL:
+  Extending forward: "᪜car DEF ABC.᪝"[(1,1), (1,13)]
+  Extending backward:  "᪜car DEF ABC.᪝"[(1,13)]
+Test 18, LTR:
+  Extending forward: "he said "᪜car DEF ABC᪝.""[(0,0), (0,24)]
+  Extending backward:  "he said "᪜car DEF ABC᪝.""[(0,24)]
+Test 18, RTL:
+  Extending forward: "he said "᪜car DEF ABC᪝.""[(0,0), (0,24)]
+  Extending backward:  "he said "᪜car DEF ABC᪝.""[(0,24)]
+Test 19, LTR:
+  Extending forward: "GHI JKL MNO '᪛he said "᪜car DEF ABC᪝"᪝'?"[(0,0), (0,40)]
+  Extending backward:  "GHI JKL MNO '᪛he said "᪜car DEF ABC᪝"᪝'?"[(0,40)]
+Test 19, RTL:
+  Extending forward: "GHI JKL MNO '᪛he said "᪜car DEF ABC᪝"᪝'?"[(0,0), (0,40)]
+  Extending backward:  "GHI JKL MNO '᪛he said "᪜car DEF ABC᪝"᪝'?"[(0,40)]
+Test 20, LTR:
+  Extending forward: "ABC abc DEF"[(0,0), (0,11)]
+  Extending backward:  "ABC abc DEF"[(0,11)]
+Test 20, RTL:
+  Extending forward: "ABC abc DEF"[(0,0), (0,11)]
+  Extending backward:  "ABC abc DEF"[(0,11)]
+Test 21, LTR:
+  Extending forward: "abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg "[(0,0), (0,16)]
+  Extending backward:  "abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg "[(0,16)]
+Test 21, RTL:
+  Extending forward: "abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg "[(0,0), (0,15)]
+  Extending backward:  "abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg "[(0,15)]
+Test 22, LTR:
+  Extending forward: "abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg "[(0,0), (0,16)]
+  Extending backward:  "abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg "[(0,16)]
+Test 22, RTL:
+  Extending forward: "abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg "[(0,0), (0,15)]
+  Extending backward:  "abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg "[(0,15)]
+
