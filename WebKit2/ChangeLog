@@ -54,6 +54,38 @@
 
         Reviewed by Adam Roben.
 
+        Add WebProcessConnection CreatePlugin message
+        https://bugs.webkit.org/show_bug.cgi?id=46668
+
+        * DerivedSources.make:
+        Add WebProcessConnection.
+
+        * Platform/CoreIPC/HandleMessage.h:
+        Add handleMessage overload for a sync message with two input parameters
+        and one output parameter.
+
+        (CoreIPC::handleMessage):
+        * Platform/CoreIPC/MessageID.h:
+        Add MessageClassWebProcessConnection.
+
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::createPlugin):
+        Add stub.
+
+        * PluginProcess/WebProcessConnection.messages.in: Added.
+        * Scripts/webkit2/messages.py:
+        Include headers directly for types that we believe are nested structs.
+
+        * Scripts/webkit2/messages_unittest.py:
+        Update expected results.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+2010-09-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
         Add support for autogenerating synchronous message handlers
         https://bugs.webkit.org/show_bug.cgi?id=46654
 

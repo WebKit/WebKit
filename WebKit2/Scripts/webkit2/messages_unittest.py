@@ -60,6 +60,7 @@ messages -> WebPage {
     SendDoubleAndFloat(double d, float f)
     SendInts(Vector<uint64_t> ints)
 
+    CreatePlugin(uint64_t pluginInstanceID, WebKit::Plugin::Parameters parameters) -> (bool result)
     RunJavaScriptAlert(uint64_t frameID, WTF::String message) -> ()
     GetPlugins(bool refresh) -> (Vector<WebCore::PluginInfo> plugins)
     GetPluginProcessConnection(WTF::String pluginPath) -> (CoreIPC::Connection::Handle connectionHandle) delayed
@@ -122,6 +123,19 @@ _expected_results = {
             ),
             'condition': None,
             'base_class': 'CoreIPC::Arguments1<const Vector<uint64_t>&>',
+        },
+        {
+            'name': 'CreatePlugin',
+            'parameters': (
+                ('uint64_t', 'pluginInstanceID'),
+                ('WebKit::Plugin::Parameters', 'parameters')
+            ),
+            'reply_parameters': (
+                ('bool', 'result'),
+            ),
+            'condition': None,
+            'base_class': 'CoreIPC::Arguments2<uint64_t, const WebKit::Plugin::Parameters&>',
+            'reply_base_class': 'CoreIPC::Arguments1<bool>',
         },
         {
             'name': 'RunJavaScriptAlert',
@@ -230,6 +244,7 @@ _expected_header = """/*
 
 #include "Arguments.h"
 #include "MessageID.h"
+#include "Plugin.h"
 
 namespace CoreIPC {
     class MachPort;
@@ -256,6 +271,7 @@ enum Kind {
     CloseID,
     SendDoubleAndFloatID,
     SendIntsID,
+    CreatePluginID,
     RunJavaScriptAlertID,
     GetPluginsID,
     GetPluginProcessConnectionID,
@@ -304,6 +320,15 @@ struct SendInts : CoreIPC::Arguments1<const Vector<uint64_t>&> {
     static const Kind messageID = SendIntsID;
     explicit SendInts(const Vector<uint64_t>& ints)
         : CoreIPC::Arguments1<const Vector<uint64_t>&>(ints)
+    {
+    }
+};
+
+struct CreatePlugin : CoreIPC::Arguments2<uint64_t, const WebKit::Plugin::Parameters&> {
+    static const Kind messageID = CreatePluginID;
+    typedef CoreIPC::Arguments1<bool&> Reply;
+    CreatePlugin(uint64_t pluginInstanceID, const WebKit::Plugin::Parameters& parameters)
+        : CoreIPC::Arguments2<uint64_t, const WebKit::Plugin::Parameters&>(pluginInstanceID, parameters)
     {
     }
 };
@@ -391,6 +416,7 @@ _expected_receiver_implementation = """/*
 #include "ArgumentDecoder.h"
 #include "HandleMessage.h"
 #include "MachPort.h"
+#include "Plugin.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebEvent.h"
 #include "WebPageMessages.h"
@@ -433,6 +459,9 @@ void WebPage::didReceiveWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageID 
 CoreIPC::SyncReplyMode WebPage::didReceiveSyncWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
 {
     switch (messageID.get<Messages::WebPage::Kind>()) {
+    case Messages::WebPage::CreatePluginID:
+        CoreIPC::handleMessage<Messages::WebPage::CreatePlugin>(arguments, reply, this, &WebPage::createPlugin);
+        return CoreIPC::AutomaticReply;
     case Messages::WebPage::RunJavaScriptAlertID:
         CoreIPC::handleMessage<Messages::WebPage::RunJavaScriptAlert>(arguments, reply, this, &WebPage::runJavaScriptAlert);
         return CoreIPC::AutomaticReply;

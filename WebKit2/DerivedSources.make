@@ -8,6 +8,7 @@ MESSAGE_RECEIVERS = \
     PluginProcess \
     PluginProcessProxy \
     WebPage \
+    WebProcessConnection \
 #
 
 SCRIPTS = \

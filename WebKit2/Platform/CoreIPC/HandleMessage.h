@@ -48,6 +48,22 @@ void handleMessage(ArgumentDecoder* arguments, C* object, void (C::*function)(P1
     (object->*function)(firstArgument, secondArgument, thirdArgument);
 }
 
+template<typename T, typename C, typename P1, typename P2, typename R1>
+void handleMessage(ArgumentDecoder* arguments, ArgumentEncoder* reply, C* object, void (C::*function)(P1, P2, R1&))
+{
+    typename RemoveReference<typename T::FirstArgumentType>::Type firstArgument;
+    if (!arguments->decode(firstArgument))
+        return;
+
+    typename RemoveReference<typename T::SecondArgumentType>::Type secondArgument;
+    if (!arguments->decode(secondArgument))
+        return;
+    
+    typename RemoveReference<typename T::Reply::FirstArgumentType>::Type firstReplyArgument;
+    (object->*function)(firstArgument, secondArgument, firstReplyArgument);
+    reply->encode(firstReplyArgument);
+}
+
 } // namespace CoreIPC
 
 #endif // HandleMessage_h

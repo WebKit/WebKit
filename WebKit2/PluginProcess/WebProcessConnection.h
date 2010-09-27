@@ -29,6 +29,7 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 #include "Connection.h"
+#include "Plugin.h"
 #include <wtf/RefCounted.h>
 
 namespace WebKit {
@@ -50,6 +51,10 @@ private:
     virtual CoreIPC::SyncReplyMode didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
     virtual void didClose(CoreIPC::Connection*);
     virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID);
+
+    // Message handlers.
+    CoreIPC::SyncReplyMode didReceiveSyncWebProcessConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
+    void createPlugin(uint64_t pluginInstanceID, const Plugin::Parameters&, bool& result);
 
     RefPtr<CoreIPC::Connection> m_connection;
 };

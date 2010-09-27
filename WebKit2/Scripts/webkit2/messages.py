@@ -206,27 +206,35 @@ def forward_declarations_for_namespace(namespace, types):
     return ''.join(result)
 
 
-def forward_declarations(receiver):
+def forward_declarations_and_headers(receiver):
     types_by_namespace = collections.defaultdict(set)
-    for parameter in receiver.iterparameters():
-        type = parameter.type
-        split = type.split('::')
-        if len(split) != 2:
-            continue
-        namespace = split[0]
-        inner_type = split[1]
-        types_by_namespace[namespace].add(inner_type)
-    return '\n'.join([forward_declarations_for_namespace(namespace, types) for (namespace, types) in sorted(types_by_namespace.iteritems())])
-
-
-def generate_messages_header(file):
-    receiver = MessageReceiver.parse(file)
-    header_guard = messages_header_filename(receiver).replace('.', '_')
 
     headers = set([
         '"Arguments.h"',
         '"MessageID.h"',
     ])
+
+    for parameter in receiver.iterparameters():
+        type = parameter.type
+        split = type.split('::')
+
+        if len(split) == 2:
+            namespace = split[0]
+            inner_type = split[1]
+            types_by_namespace[namespace].add(inner_type)
+        elif len(split) > 2:
+            # We probably have a nested struct, which means we can't forward declare it.
+            # Include its header instead.
+            headers.update(headers_for_type(type))
+
+    forward_declarations = '\n'.join([forward_declarations_for_namespace(namespace, types) for (namespace, types) in sorted(types_by_namespace.iteritems())])
+    headers = ['#include %s\n' % header for header in sorted(headers)]
+
+    return (forward_declarations, headers)
+
+def generate_messages_header(file):
+    receiver = MessageReceiver.parse(file)
+    header_guard = messages_header_filename(receiver).replace('.', '_')
 
     result = []
 
@@ -239,10 +247,12 @@ def generate_messages_header(file):
     if receiver.condition:
         result.append('#if %s\n\n' % receiver.condition)
 
-    result += ['#include %s\n' % header for header in sorted(headers)]
+    forward_declarations, headers = forward_declarations_and_headers(receiver)
+
+    result += headers
     result.append('\n')
 
-    result.append(forward_declarations(receiver))
+    result.append(forward_declarations)
     result.append('\n')
 
     result.append('namespace Messages {\n\nnamespace %s {\n\n' % receiver.name)
@@ -299,7 +309,6 @@ def argument_coder_headers_for_type(type):
 
 def headers_for_type(type):
     special_cases = {
-        'CoreIPC::MachPort': '"MachPort.h"',
         'WTF::String': '<wtf/text/WTFString.h>',
         'WebKit::WebKeyboardEvent': '"WebEvent.h"',
         'WebKit::WebMouseEvent': '"WebEvent.h"',
@@ -312,9 +321,9 @@ def headers_for_type(type):
     # We assume that we must include a header for a type iff it has a scope
     # resolution operator (::).
     split = type.split('::')
-    if len(split) != 2:
+    if len(split) < 2:
         return []
-    if split[0] == 'WebKit':
+    if split[0] == 'WebKit' or split[0] == 'CoreIPC':
         return ['"%s.h"' % split[1]]
     return ['<%s/%s.h>' % tuple(split)]
 
