@@ -1,3 +1,21 @@
+2010-09-26  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION (r68289): Assertion failure in StringHasher::addCharacter() (ch != invalidCharacterValue)
+        running websocket/tests/bad-sub-protocol-non-ascii.html
+        https://bugs.webkit.org/show_bug.cgi?id=46553
+
+        Because we use StringHasher for binary data too, so the check for invalid unicode input is wrong.
+        Add an additional member variable to indicate if we have an pending character
+        instead of only using an invalid character for this purpose.
+
+        * wtf/StringHashFunctions.h:
+        (WTF::StringHasher::StringHasher):
+        (WTF::StringHasher::addCharacters):
+        (WTF::StringHasher::addCharacter):
+        (WTF::StringHasher::hash):
+
 2010-09-26  Mark Hahnenberg  <mhahnenb@gmail.com>
 
         Reviewed by Oliver Hunt.

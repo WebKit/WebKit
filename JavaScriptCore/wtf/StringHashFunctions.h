@@ -35,26 +35,27 @@ class StringHasher {
 public:
     inline StringHasher()
         : m_hash(stringHashingStartValue)
-        , m_cachedCharacter(invalidCharacterValue)
+        , m_hasPendingCharacter(false)
+        , m_pendingCharacter(0)
     {
     }
 
     inline void addCharacters(UChar a, UChar b)
     {
-        ASSERT(m_cachedCharacter == invalidCharacterValue);
+        ASSERT(!m_hasPendingCharacter);
         addCharactersToHash(a, b);
     }
 
     inline void addCharacter(UChar ch)
     {
-        ASSERT(ch != invalidCharacterValue);
-        if (m_cachedCharacter != invalidCharacterValue) {
-            addCharactersToHash(m_cachedCharacter, ch);
-            m_cachedCharacter = invalidCharacterValue;
+        if (m_hasPendingCharacter) {
+            addCharactersToHash(m_pendingCharacter, ch);
+            m_hasPendingCharacter = false;
             return;
         }
 
-        m_cachedCharacter = ch;
+        m_pendingCharacter = ch;
+        m_hasPendingCharacter = true;
     }
 
     inline unsigned hash() const
@@ -62,8 +63,8 @@ public:
         unsigned result = m_hash;
 
         // Handle end case.
-        if (m_cachedCharacter != invalidCharacterValue) {
-            result += m_cachedCharacter;
+        if (m_hasPendingCharacter) {
+            result += m_pendingCharacter;
             result ^= result << 11;
             result += result >> 17;
         }
@@ -154,9 +155,8 @@ private:
     }
 
     unsigned m_hash;
-    UChar m_cachedCharacter;
-
-    static const UChar invalidCharacterValue = 0xfffe;
+    bool m_hasPendingCharacter;
+    UChar m_pendingCharacter;
 };
 
 
