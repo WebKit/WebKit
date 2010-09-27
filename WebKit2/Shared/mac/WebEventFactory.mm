@@ -1013,7 +1013,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windo
     return WebWheelEvent(WebEvent::Wheel, positionX, positionY, globalPositionX, globalPositionY, deltaX, deltaY, wheelTicksX, wheelTicksY, granularity, modifiers, timestamp);
 }
 
-WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event)
+WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event, NSView *)
 {
     WebEvent::Type type             = isKeyUpEvent(event) ? WebEvent::KeyUp : WebEvent::KeyDown;
     String text                     = textFromEvent(event);

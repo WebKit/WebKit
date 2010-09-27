@@ -251,53 +251,31 @@ WEBCORE_COMMAND(selectAll)
     return YES;
 }
 
-- (void)mouseDown:(NSEvent *)theEvent
-{
-    WebMouseEvent mouseEvent = WebEventFactory::createWebMouseEvent(theEvent, self);
-    _data->_page->mouseEvent(mouseEvent);    
-}
 
-- (void)mouseUp:(NSEvent *)theEvent
-{
-    if (!_data->_page->isValid()) {
-        _data->_page->revive();
-        _data->_page->loadURL(_data->_page->urlAtProcessExit());
-        return;
+#define EVENT_HANDLER(Selector, Type) \
+    - (void)Selector:(NSEvent *)theEvent \
+    { \
+        Web##Type##Event webEvent = WebEventFactory::createWeb##Type##Event(theEvent, self); \
+        _data->_page->handle##Type##Event(webEvent); \
     }
 
-    WebMouseEvent mouseEvent = WebEventFactory::createWebMouseEvent(theEvent, self);
-    _data->_page->mouseEvent(mouseEvent);
-}
+EVENT_HANDLER(mouseDown, Mouse)
+EVENT_HANDLER(mouseUp, Mouse)
+EVENT_HANDLER(mouseMoved, Mouse)
+EVENT_HANDLER(mouseDragged, Mouse)
+EVENT_HANDLER(rightMouseDown, Mouse)
+EVENT_HANDLER(rightMouseUp, Mouse)
+EVENT_HANDLER(rightMouseMoved, Mouse)
+EVENT_HANDLER(rightMouseDragged, Mouse)
+EVENT_HANDLER(otherMouseDown, Mouse)
+EVENT_HANDLER(otherMouseUp, Mouse)
+EVENT_HANDLER(otherMouseMoved, Mouse)
+EVENT_HANDLER(otherMouseDragged, Mouse)
+EVENT_HANDLER(scrollWheel, Wheel)
+EVENT_HANDLER(keyUp, Keyboard)
+EVENT_HANDLER(keyDown, Keyboard)
 
-- (void)mouseMoved:(NSEvent *)theEvent
-{
-    WebMouseEvent mouseEvent = WebEventFactory::createWebMouseEvent(theEvent, self);
-    _data->_page->mouseEvent(mouseEvent);
-}
-
-- (void)mouseDragged:(NSEvent *)theEvent
-{
-    WebMouseEvent mouseEvent = WebEventFactory::createWebMouseEvent(theEvent, self);
-    _data->_page->mouseEvent(mouseEvent);
-}
-
-- (void)scrollWheel:(NSEvent *)theEvent
-{
-    WebWheelEvent wheelEvent = WebEventFactory::createWebWheelEvent(theEvent, self);
-    _data->_page->wheelEvent(wheelEvent);
-}
-
-- (void)keyUp:(NSEvent *)theEvent
-{
-    WebKeyboardEvent keyboardEvent = WebEventFactory::createWebKeyboardEvent(theEvent);
-    _data->_page->keyEvent(keyboardEvent);
-}
-
-- (void)keyDown:(NSEvent *)theEvent
-{
-    WebKeyboardEvent keyboardEvent = WebEventFactory::createWebKeyboardEvent(theEvent);
-    _data->_page->keyEvent(keyboardEvent);
-}
+#undef EVENT_HANDLER
 
 - (void)_updateActiveState
 {

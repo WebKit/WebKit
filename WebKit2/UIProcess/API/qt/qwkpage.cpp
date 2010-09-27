@@ -108,13 +108,13 @@ void QWKPagePrivate::paint(QPainter* painter, QRect area)
 void QWKPagePrivate::keyPressEvent(QKeyEvent* ev)
 {
     WebKeyboardEvent keyboardEvent = WebEventFactory::createWebKeyboardEvent(ev);
-    page->keyEvent(keyboardEvent);
+    page->handleKeyboardEvent(keyboardEvent);
 }
 
 void QWKPagePrivate::keyReleaseEvent(QKeyEvent* ev)
 {
     WebKeyboardEvent keyboardEvent = WebEventFactory::createWebKeyboardEvent(ev);
-    page->keyEvent(keyboardEvent);
+    page->handleKeyboardEvent(keyboardEvent);
 }
 
 void QWKPagePrivate::mouseMoveEvent(QGraphicsSceneMouseEvent* ev)
@@ -130,31 +130,31 @@ void QWKPagePrivate::mouseMoveEvent(QGraphicsSceneMouseEvent* ev)
     lastPos = ev->pos();
 
     WebMouseEvent mouseEvent = WebEventFactory::createWebMouseEvent(ev, 0);
-    page->mouseEvent(mouseEvent);
+    page->handleMouseEvent(mouseEvent);
 }
 
 void QWKPagePrivate::mousePressEvent(QGraphicsSceneMouseEvent* ev)
 {
     if (tripleClickTimer.isActive() && (ev->pos() - tripleClick).manhattanLength() < QApplication::startDragDistance()) {
         WebMouseEvent mouseEvent = WebEventFactory::createWebMouseEvent(ev, 3);
-        page->mouseEvent(mouseEvent);
+        page->handleMouseEvent(mouseEvent);
         return;
     }
 
     WebMouseEvent mouseEvent = WebEventFactory::createWebMouseEvent(ev, 1);
-    page->mouseEvent(mouseEvent);
+    page->handleMouseEvent(mouseEvent);
 }
 
 void QWKPagePrivate::mouseReleaseEvent(QGraphicsSceneMouseEvent* ev)
 {
     WebMouseEvent mouseEvent = WebEventFactory::createWebMouseEvent(ev, 0);
-    page->mouseEvent(mouseEvent);
+    page->handleMouseEvent(mouseEvent);
 }
 
 void QWKPagePrivate::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* ev)
 {
     WebMouseEvent mouseEvent = WebEventFactory::createWebMouseEvent(ev, 2);
-    page->mouseEvent(mouseEvent);
+    page->handleMouseEvent(mouseEvent);
 
     tripleClickTimer.start(QApplication::doubleClickInterval(), q);
     tripleClick = ev->pos().toPoint();
@@ -163,7 +163,7 @@ void QWKPagePrivate::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* ev)
 void QWKPagePrivate::wheelEvent(QGraphicsSceneWheelEvent* ev)
 {
     WebWheelEvent wheelEvent = WebEventFactory::createWebWheelEvent(ev);
-    page->wheelEvent(wheelEvent);
+    page->handleWheelEvent(wheelEvent);
 }
 
 void QWKPagePrivate::setEditCommandState(const WTF::String&, bool, int)
@@ -234,7 +234,7 @@ void QWKPagePrivate::_q_webActionTriggered(bool checked)
 void QWKPagePrivate::touchEvent(QTouchEvent* event)
 {
     WebTouchEvent touchEvent = WebEventFactory::createWebTouchEvent(event);
-    page->touchEvent(touchEvent);
+    page->handleTouchEvent(touchEvent);
 }
 
 #endif

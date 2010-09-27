@@ -142,11 +142,11 @@ public:
     void setWindowFrame(const WebCore::IntRect&);
 #endif
 
-    void mouseEvent(const WebMouseEvent&);
-    void wheelEvent(const WebWheelEvent&);
-    void keyEvent(const WebKeyboardEvent&);
+    void handleMouseEvent(const WebMouseEvent&);
+    void handleWheelEvent(const WebWheelEvent&);
+    void handleKeyboardEvent(const WebKeyboardEvent&);
 #if ENABLE(TOUCH_EVENTS)
-    void touchEvent(const WebTouchEvent&);
+    void handleTouchEvent(const WebTouchEvent&);
 #endif
 
     const String& pageTitle() const { return m_pageTitle; }

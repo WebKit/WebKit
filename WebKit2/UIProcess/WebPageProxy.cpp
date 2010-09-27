@@ -376,7 +376,7 @@ void WebPageProxy::setWindowFrame(const IntRect& windowFrame)
 
 #endif
 
-void WebPageProxy::mouseEvent(const WebMouseEvent& event)
+void WebPageProxy::handleMouseEvent(const WebMouseEvent& event)
 {
     if (!isValid())
         return;
@@ -387,7 +387,7 @@ void WebPageProxy::mouseEvent(const WebMouseEvent& event)
     process()->send(Messages::WebPage::MouseEvent(event), m_pageID);
 }
 
-void WebPageProxy::wheelEvent(const WebWheelEvent& event)
+void WebPageProxy::handleWheelEvent(const WebWheelEvent& event)
 {
     if (!isValid())
         return;
@@ -396,7 +396,7 @@ void WebPageProxy::wheelEvent(const WebWheelEvent& event)
     process()->send(Messages::WebPage::WheelEvent(event), m_pageID);
 }
 
-void WebPageProxy::keyEvent(const WebKeyboardEvent& event)
+void WebPageProxy::handleKeyboardEvent(const WebKeyboardEvent& event)
 {
     if (!isValid())
         return;
@@ -406,7 +406,7 @@ void WebPageProxy::keyEvent(const WebKeyboardEvent& event)
 }
 
 #if ENABLE(TOUCH_EVENTS)
-void WebPageProxy::touchEvent(const WebTouchEvent& event)
+void WebPageProxy::handleTouchEvent(const WebTouchEvent& event)
 {
     if (!isValid())
         return;

@@ -1,3 +1,42 @@
+2010-09-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add remaining event handlers to WKView.
+
+        Also fixes <rdar://problem/8467058>
+        Does not get decidePolicyForNavigationAction callback when middle clicking a link
+
+        - Adds otherButton and rightButton NSResponder event handlers to WKView.
+        - Renames WebPageProxy event handlers to use the handle prefix.
+        - Uses a macro to reduce duplicate code for WKView event handlers.
+        - Add view parameter to WebEventFactory::createWebKeyboardEvent on the mac
+          for uniformity.
+
+        * Shared/mac/WebEventFactory.h:
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+        * UIProcess/API/mac/WKView.mm:
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::keyPressEvent):
+        (QWKPagePrivate::keyReleaseEvent):
+        (QWKPagePrivate::mouseMoveEvent):
+        (QWKPagePrivate::mousePressEvent):
+        (QWKPagePrivate::mouseReleaseEvent):
+        (QWKPagePrivate::mouseDoubleClickEvent):
+        (QWKPagePrivate::wheelEvent):
+        (QWKPagePrivate::touchEvent):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleMouseEvent):
+        (WebKit::WebPageProxy::handleWheelEvent):
+        (WebKit::WebPageProxy::handleKeyboardEvent):
+        (WebKit::WebPageProxy::handleTouchEvent):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::onMouseEvent):
+        (WebKit::WebView::onWheelEvent):
+        (WebKit::WebView::onKeyEvent):
+
 2010-09-27  Ivan Krstić  <ike@apple.com>
 
         Reviewed by Mark Rowe.
