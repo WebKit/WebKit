@@ -1,3 +1,9 @@
+2010-09-28  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, removed some expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-27  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

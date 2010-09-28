@@ -2342,9 +2342,6 @@ BUG35238 MAC : svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-2
 BUG35238 MAC : svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-3.svg = IMAGE
 BUG35238 MAC : svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults.xhtml = IMAGE
 
-// WebKit roll 54559 to 54585
-BUG35237 : fast/events/multiline-link-arrow-navigation.html = TEXT
-
 // Due to not building TestNetscapePlugin.cpp.
 BUG35387 : platform/win/plugins/plugin-delayed-destroy.html = TIMEOUT
 BUG35387 : plugins/reentrant-update-widget-positions.html = TIMEOUT
@@ -2473,7 +2470,6 @@ BUG42875 SKIP DEFER : fast/js/sputnik = TEXT
 BUGWK38360 WIN LINUX : fast/images/svg-background-partial-redraw.html = FAIL
 BUGWK38360 WIN LINUX : svg/carto.net/tabgroup.svg = FAIL
 
-BUG42895 : media/audio-only-video-intrinsic-size.html = TIMEOUT
 BUG42895 : media/media-document-audio-size.html = TIMEOUT
 BUGYAAR MAC : svg/custom/dominant-baseline-hanging.svg = MISSING
 
@@ -2940,9 +2936,6 @@ BUG50787 : plugins/npruntime/plugin-scriptable-object-invoke-default.html = TEXT
 // New plugin test added in r64444
 BUG50910 : plugins/npruntime/remove-property.html = TEXT
 
-// New test added in r64409 fails in Chromium.
-BUG50832 : printing/stretch-to-view-height.html = TEXT
-
 // Application Cache Quotas
 BUGWK43459 : http/tests/appcache/origin-quota.html = TEXT MISSING
 
@@ -3121,8 +3114,6 @@ BUG56246 : printing/css2.1/page-break-before-000.html = TEXT
 // This test needs enhanced eventSender.contextMenu() return value.
 // See https://bugs.webkit.org/show_bug.cgi?id=45021 for more info.
 BUGWK45021 : media/context-menu-actions.html = TIMEOUT
-
-BUGWK46163 : media/video-controls-with-mutation-event-handler.html = CRASH
 
 BUG_AUTO LINUX WIN DEBUG : animations/suspend-resume-animation.html = PASS TEXT
 BUG_AUTO LINUX RELEASE : animations/3d/transform-origin-vs-functions.html = PASS TEXT
