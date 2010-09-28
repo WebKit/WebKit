@@ -1299,6 +1299,21 @@ static TriState stateUnorderedList(Frame* frame, Event*)
     return frame->editor()->selectionUnorderedListState();
 }
 
+static TriState stateJustifyCenter(Frame* frame, Event*)
+{
+    return stateStyle(frame, CSSPropertyTextAlign, "center");
+}
+
+static TriState stateJustifyLeft(Frame* frame, Event*)
+{
+    return stateStyle(frame, CSSPropertyTextAlign, "left");
+}
+
+static TriState stateJustifyRight(Frame* frame, Event*)
+{
+    return stateStyle(frame, CSSPropertyTextAlign, "right");
+}
+
 // Value functions
 
 static String valueNull(Frame*, Event*)
@@ -1385,11 +1400,11 @@ static const CommandMap& createCommandMap()
         { "InsertText", { executeInsertText, supported, enabledInEditableText, stateNone, valueNull, isTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "InsertUnorderedList", { executeInsertUnorderedList, supported, enabledInRichlyEditableText, stateUnorderedList, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "Italic", { executeToggleItalic, supported, enabledInRichlyEditableText, stateItalic, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
-        { "JustifyCenter", { executeJustifyCenter, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+        { "JustifyCenter", { executeJustifyCenter, supported, enabledInRichlyEditableText, stateJustifyCenter, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "JustifyFull", { executeJustifyFull, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
-        { "JustifyLeft", { executeJustifyLeft, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+        { "JustifyLeft", { executeJustifyLeft, supported, enabledInRichlyEditableText, stateJustifyLeft, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "JustifyNone", { executeJustifyLeft, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
-        { "JustifyRight", { executeJustifyRight, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+        { "JustifyRight", { executeJustifyRight, supported, enabledInRichlyEditableText, stateJustifyRight, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "MakeTextWritingDirectionLeftToRight", { executeMakeTextWritingDirectionLeftToRight, supportedFromMenuOrKeyBinding, enabledInRichlyEditableText, stateTextWritingDirectionLeftToRight, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "MakeTextWritingDirectionNatural", { executeMakeTextWritingDirectionNatural, supportedFromMenuOrKeyBinding, enabledInRichlyEditableText, stateTextWritingDirectionNatural, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "MakeTextWritingDirectionRightToLeft", { executeMakeTextWritingDirectionRightToLeft, supportedFromMenuOrKeyBinding, enabledInRichlyEditableText, stateTextWritingDirectionRightToLeft, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },

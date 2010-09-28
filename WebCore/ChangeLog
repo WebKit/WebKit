@@ -1,3 +1,25 @@
+2010-09-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        queryCommandState with justifyCenter, justifyLeft, and justifyRight always return false
+        https://bugs.webkit.org/show_bug.cgi?id=45910
+
+        Implemented queryCommandState for justifyCenter, justifyLeft, and justifyRight commands.
+        Added getTextAlignment to convert -webkit-center, -webkit-left, and -webkit-right to
+        center, left, and right respectively because they can be treated equally for editing purposes.
+
+        Test: editing/execCommand/query-text-alignment.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::getTextAlignment): Added.
+        (WebCore::getPropertiesNotIn): Uses getTextAlignment.
+        * editing/EditorCommand.cpp:
+        (WebCore::stateJustifyCenter): Added.
+        (WebCore::stateJustifyLeft): Added.
+        (WebCore::stateJustifyRight): Added.
+        (WebCore::createCommandMap): Refers to stateJustifyCenter, stateJustifyLeft, and stateJustifyRight.
+
 2010-09-27  Alpha Lam  <hclam@chromium.org>
 
         Unreviewed. Build fix.
