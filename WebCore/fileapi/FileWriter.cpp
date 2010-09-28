@@ -96,7 +96,6 @@ void FileWriter::write(Blob* data, ExceptionCode& ec)
     m_readyState = WRITING;
     m_bytesWritten = 0;
     m_bytesToWrite = data->size();
-    fireEvent(eventNames().writestartEvent);
     m_writer->write(m_position, data);
 }
 
@@ -132,7 +131,6 @@ void FileWriter::truncate(long long position, ExceptionCode& ec)
     m_bytesWritten = 0;
     m_bytesToWrite = 0;
     m_truncateLength = position;
-    fireEvent(eventNames().writestartEvent);
     m_writer->truncate(position);
 }
 
@@ -144,11 +142,8 @@ void FileWriter::abort(ExceptionCode& ec)
         m_error = FileError::create(ec);
         return;
     }
+    
     m_error = FileError::create(ABORT_ERR);
-    m_readyState = DONE;
-    fireEvent(eventNames().errorEvent);
-    fireEvent(eventNames().abortEvent);
-    fireEvent(eventNames().writeendEvent);
     m_writer->abort();
 }
 
@@ -157,35 +152,41 @@ void FileWriter::didWrite(long long bytes, bool complete)
     ASSERT(bytes > 0);
     ASSERT(bytes + m_bytesWritten > 0);
     ASSERT(bytes + m_bytesWritten <= m_bytesToWrite);
+    if (!m_bytesWritten)
+        fireEvent(eventNames().writestartEvent);
     m_bytesWritten += bytes;
     ASSERT((m_bytesWritten == m_bytesToWrite) == complete);
     m_position += bytes;
     if (m_position > m_length)
         m_length = m_position;
-    if (complete)
-        m_readyState = DONE;
     fireEvent(eventNames().writeEvent);
-    if (complete)
+    if (complete) {
+        m_readyState = DONE;
         fireEvent(eventNames().writeendEvent);
+    }
 }
 
 void FileWriter::didTruncate()
 {
     ASSERT(m_truncateLength >= 0);
+    fireEvent(eventNames().writestartEvent);
     m_length = m_truncateLength;
     if (m_position > m_length)
         m_position = m_length;
-    m_readyState = DONE;
     m_truncateLength = -1;
     fireEvent(eventNames().writeEvent);
+    m_readyState = DONE;
     fireEvent(eventNames().writeendEvent);
 }
 
 void FileWriter::didFail(ExceptionCode ec)
 {
     m_error = FileError::create(ec);
-    m_readyState = DONE;
     fireEvent(eventNames().errorEvent);
+    if (ABORT_ERR == ec)
+        fireEvent(eventNames().abortEvent);
+    fireEvent(eventNames().errorEvent);
+    m_readyState = DONE;
     fireEvent(eventNames().writeendEvent);
 }
 

@@ -1,3 +1,25 @@
+2010-09-27  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by David Levin.
+
+        Fix event sequencing in FileWriter
+        https://bugs.webkit.org/show_bug.cgi?id=46544
+
+        Only set readyState to DONE when we're about to send the last progress
+        event associated with an operation.  Make sure all progress events come
+        from backend calls, and aren't ever fired synchronously in response to
+        user JS method calls.
+
+        No new tests, as none of this is fully implemented yet.
+
+        * fileapi/FileWriter.cpp:
+        (WebCore::FileWriter::write):
+        (WebCore::FileWriter::truncate):
+        (WebCore::FileWriter::abort):
+        (WebCore::FileWriter::didWrite):
+        (WebCore::FileWriter::didTruncate):
+        (WebCore::FileWriter::didFail):
+
 2010-09-27  Chris Rogers  <crogers@google.com>
 
         Reviewed by James Robinson.
