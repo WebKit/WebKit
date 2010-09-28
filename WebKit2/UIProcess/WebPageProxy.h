@@ -133,6 +133,7 @@ public:
     void setFocused(bool isFocused);
     void setActive(bool active);
     void setIsInWindow(bool isInWindow);
+    void setWindowResizerSize(const WebCore::IntSize&);
 
     void executeEditCommand(const String& commandName);
     void validateMenuItem(const String& commandName);

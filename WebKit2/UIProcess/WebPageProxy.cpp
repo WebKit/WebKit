@@ -334,6 +334,13 @@ void WebPageProxy::setActive(bool active)
     process()->send(Messages::WebPage::SetActive(active), m_pageID);
 }
 
+void WebPageProxy::setWindowResizerSize(const IntSize& windowResizerSize)
+{
+    if (!isValid())
+        return;
+    process()->send(Messages::WebPage::SetWindowResizerSize(windowResizerSize), m_pageID);
+}
+
 void WebPageProxy::validateMenuItem(const String& commandName)
 {
     if (!isValid())

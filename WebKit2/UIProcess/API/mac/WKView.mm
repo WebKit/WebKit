@@ -56,6 +56,11 @@ struct EditCommandState {
     int m_state;
 };
 
+@interface NSWindow (Details)
+- (NSRect)_growBoxRect;
+- (BOOL)_updateGrowBoxForWindowFrameChange;
+@end
+
 @interface WKViewData : NSObject {
 @public
     OwnPtr<PageClientImpl> _pageClient;
@@ -294,6 +299,48 @@ EVENT_HANDLER(scrollWheel, Wheel)
 - (void)_updateWindowVisibility
 {
     _data->_page->setWindowIsVisible(![[self window] isMiniaturized]);
+}
+
+- (BOOL)_ownsWindowGrowBox
+{
+    NSWindow* window = [self window];
+    if (!window)
+        return NO;
+
+    NSView *superview = [self superview];
+    if (!superview)
+        return NO;
+
+    NSRect growBoxRect = [window _growBoxRect];
+    if (NSIsEmptyRect(growBoxRect))
+        return NO;
+
+    NSRect visibleRect = [self visibleRect];
+    if (NSIsEmptyRect(visibleRect))
+        return NO;
+
+    NSRect visibleRectInWindowCoords = [self convertRect:visibleRect toView:nil];
+    if (!NSIntersectsRect(growBoxRect, visibleRectInWindowCoords))
+        return NO;
+
+    return YES;
+}
+
+- (BOOL)_updateGrowBoxForWindowFrameChange
+{
+    // Temporarily enable the resize indicator to make a the _ownsWindowGrowBox calculation work.
+    BOOL wasShowingIndicator = [[self window] showsResizeIndicator];
+    [[self window] setShowsResizeIndicator:YES];
+
+    BOOL ownsGrowBox = [self _ownsWindowGrowBox];
+    _data->_page->setWindowResizerSize(ownsGrowBox ? enclosingIntRect([[self window] _growBoxRect]).size() : IntSize());
+    
+    // Once WebCore can draw the window resizer, this should read:
+    // if (wasShowingIndicator)
+    //     [[self window] setShowsResizeIndicator:!ownsGrowBox];
+    [[self window] setShowsResizeIndicator:wasShowingIndicator];
+
+    return ownsGrowBox;
 }
 
 - (void)addWindowObserversForWindow:(NSWindow *)window

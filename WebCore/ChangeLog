@@ -1,3 +1,19 @@
+2010-09-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler and Dave Hyatt.
+
+        Vertical scroll bar on apple.com is too short with WebKit2
+        <rdar://problem/8379230>
+        https://bugs.webkit.org/show_bug.cgi?id=46739
+
+        Adds a function to recalculate the scrollbars to take advantage of
+        a changed window re-sizer rect.
+
+        * WebCore.exp.in:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::windowResizerRectChanged):
+        * platform/ScrollView.h:
+
 2010-09-28  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.

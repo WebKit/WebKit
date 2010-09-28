@@ -574,6 +574,20 @@ void WebPage::setFocused(bool isFocused)
     m_page->focusController()->setFocused(isFocused);
 }
 
+void WebPage::setWindowResizerSize(const IntSize& windowResizerSize)
+{
+    if (m_windowResizerSize == windowResizerSize)
+        return;
+
+    m_windowResizerSize = windowResizerSize;
+
+    for (Frame* coreFrame = m_mainFrame->coreFrame(); coreFrame; coreFrame = coreFrame->tree()->traverseNext()) {
+        FrameView* view = coreFrame->view();
+        if (view)
+            view->windowResizerRectChanged();
+    }
+}
+
 void WebPage::setIsInWindow(bool isInWindow)
 {
     if (!isInWindow) {
@@ -614,12 +628,8 @@ String WebPage::userAgent() const
 
 IntRect WebPage::windowResizerRect() const
 {
-    // FIXME: This function should conditionally return a null IntRect for circumstances when
-    // you don't always want to show a resizer rect (i.e. you never want to show one on windows
-    // and you don't want to show one in Safari when the status bar is visible).
-
-    // FIXME: This should be either platform specific or based off the width of the scrollbar. 
-    static const int windowResizerSize = 15;
+    if (m_windowResizerSize.isEmpty())
+        return IntRect();
 
     IntSize frameViewSize;
     if (Frame* coreFrame = m_mainFrame->coreFrame()) {
@@ -627,8 +637,8 @@ IntRect WebPage::windowResizerRect() const
             frameViewSize = view->size();
     }
 
-    return IntRect(frameViewSize.width() - windowResizerSize, frameViewSize.height() - windowResizerSize, 
-                   windowResizerSize, windowResizerSize);
+    return IntRect(frameViewSize.width() - m_windowResizerSize.width(), frameViewSize.height() - m_windowResizerSize.height(), 
+                   m_windowResizerSize.width(), m_windowResizerSize.height());
 }
 
 void WebPage::runJavaScriptInMainFrame(const String& script, uint64_t callbackID)

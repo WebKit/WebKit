@@ -186,6 +186,7 @@ private:
     void goToBackForwardItem(uint64_t);
     void setActive(bool);
     void setFocused(bool);
+    void setWindowResizerSize(const WebCore::IntSize&);
     void setIsInWindow(bool);
     void mouseEvent(const WebMouseEvent&);
     void wheelEvent(const WebWheelEvent&);
@@ -237,6 +238,8 @@ private:
 #endif
     
     HashMap<uint64_t, RefPtr<WebEditCommand> > m_editCommandMap;
+
+    WebCore::IntSize m_windowResizerSize;
 
     InjectedBundlePageEditorClient m_editorClient;
     InjectedBundlePageFormClient m_formClient;

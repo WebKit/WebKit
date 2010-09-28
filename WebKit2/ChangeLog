@@ -1,3 +1,29 @@
+2010-09-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler and Dave Hyatt.
+
+        Vertical scroll bar on apple.com is too short with WebKit2
+        <rdar://problem/8379230>
+        https://bugs.webkit.org/show_bug.cgi?id=46739
+
+        This gets us most of the way to having correct scroll corner behavior. We should
+        follow this up by moving to painting the window re-sizer in WebCore.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _ownsWindowGrowBox]):
+        (-[WKView _updateGrowBoxForWindowFrameChange]): Calculate whether we should
+        be taking the scroll corner into account when laying out scrollbars.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setWindowResizerSize):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setWindowResizerSize):
+        (WebKit::WebPage::windowResizerRect): This now returns IntRect() for
+        non-mac platforms (or any platform that never sends a setWindowResizerSize
+        message).
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2010-09-28  Adam Roben  <aroben@apple.com>
 
         Tell the UI client when a key event is not handled

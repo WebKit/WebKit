@@ -27,10 +27,10 @@ messages -> WebPage {
 
     KeyEvent(WebKit::WebKeyboardEvent event)
     MouseEvent(WebKit::WebMouseEvent event)
+    WheelEvent(WebKit::WebWheelEvent event)
 #if ENABLE(TOUCH_EVENTS)
     TouchEvent(WebKit::WebTouchEvent event)
 #endif
-    WheelEvent(WebKit::WebWheelEvent event)
 
     GoBack(uint64_t backForwardItemID)
     GoForward(uint64_t backForwardItemID)
@@ -67,6 +67,8 @@ messages -> WebPage {
     SetPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor)
     SetPageZoomFactor(double zoomFactor)
     SetTextZoomFactor(double zoomFactor)
+
+    SetWindowResizerSize(WebCore::IntSize intersectsView)
 
 #if PLATFORM(MAC)
     SetWindowIsVisible(bool windowIsVisible)
