@@ -1245,7 +1245,7 @@ PassRefPtr<Frame> FrameLoaderClientQt::createFrame(const KURL& url, const String
     return frameData.frame.release();
 }
 
-void FrameLoaderClientQt::didTransferChildFrameToNewDocument()
+void FrameLoaderClientQt::didTransferChildFrameToNewDocument(Page*)
 {
     ASSERT(m_frame->ownerElement());
 

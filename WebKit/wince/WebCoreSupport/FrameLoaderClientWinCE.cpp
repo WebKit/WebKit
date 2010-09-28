@@ -32,6 +32,7 @@
 #include "HTMLFormElement.h"
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
+#include "Page.h"
 #include "PluginDatabase.h"
 #include "RenderPart.h"
 #include "WebView.h"
@@ -160,7 +161,7 @@ PassRefPtr<Frame> FrameLoaderClientWinCE::createFrame(const KURL& url, const Str
     return m_webView->createFrame(url, name, ownerElement, referrer, allowsScrolling, marginWidth, marginHeight);
 }
 
-void FrameLoaderClientWinCE::didTransferChildFrameToNewDocument()
+void FrameLoaderClientWinCE::didTransferChildFrameToNewDocument(Page*)
 {
 }
 

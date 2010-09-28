@@ -175,7 +175,7 @@ private:
     
     virtual PassRefPtr<WebCore::Frame> createFrame(const WebCore::KURL& url, const String& name, WebCore::HTMLFrameOwnerElement* ownerElement,
                                           const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight);
-    virtual void didTransferChildFrameToNewDocument();
+    virtual void didTransferChildFrameToNewDocument(WebCore::Page*);
     
     virtual PassRefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement*, const WebCore::KURL&, const Vector<String>&, const Vector<String>&, const String&, bool loadManually);
     virtual void redirectDataToPlugin(WebCore::Widget* pluginWidget);

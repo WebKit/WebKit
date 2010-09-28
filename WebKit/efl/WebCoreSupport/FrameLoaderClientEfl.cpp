@@ -46,6 +46,7 @@
 #include "Language.h"
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
+#include "Page.h"
 #include "PluginDatabase.h"
 #include "ProgressTracker.h"
 #include "RenderPart.h"
@@ -379,7 +380,7 @@ PassRefPtr<Frame> FrameLoaderClientEfl::createFrame(const KURL& url, const Strin
     return ewk_view_frame_create(m_view, m_frame, name, ownerElement, url, referrer);
 }
 
-void FrameLoaderClientEfl::didTransferChildFrameToNewDocument()
+void FrameLoaderClientEfl::didTransferChildFrameToNewDocument(Page*)
 {
 }
 

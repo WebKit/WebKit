@@ -860,7 +860,7 @@ PassRefPtr<Frame> FrameLoaderClientWx::createFrame(const KURL& url, const String
     return childFrame.release();
 }
 
-void FrameLoaderClientWx::didTransferChildFrameToNewDocument()
+void FrameLoaderClientWx::didTransferChildFrameToNewDocument(Page*)
 {
 }
 

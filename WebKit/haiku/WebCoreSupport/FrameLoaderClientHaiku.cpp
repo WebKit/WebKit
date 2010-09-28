@@ -741,7 +741,7 @@ PassRefPtr<Frame> FrameLoaderClientHaiku::createFrame(const KURL& url, const Str
     return 0;
 }
 
-void FrameLoaderClientHaiku::didTransferChildFrameToNewDocument()
+void FrameLoaderClientHaiku::didTransferChildFrameToNewDocument(Page*)
 {
 }
 
@@ -854,4 +854,3 @@ void FrameLoaderClientHaiku::transitionToCommittedForNewPage()
 }
 
 } // namespace WebCore
-

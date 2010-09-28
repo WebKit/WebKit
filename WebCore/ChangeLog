@@ -1,3 +1,19 @@
+2010-09-28  Jenn Braithwaite  <jennb@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Added oldPage param to FrameLoaderClient::didTransferChildFrameToNewDocument.
+        https://bugs.webkit.org/show_bug.cgi?id=46663
+
+        No new tests. API addition only. Will be used in separate patch.
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::didTransferChildFrameToNewDocument):
+        * loader/FrameLoaderClient.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::transferChildFrameToNewDocument):
+        Pass former page to didTransferChildFrameToNewDocument.
+
 2010-09-28  W. James MacLean  <wjmaclean@chromium.org>
 
         Reviewed by James Robinson.

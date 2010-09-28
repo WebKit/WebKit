@@ -1382,8 +1382,13 @@ PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& url, const Strin
     return 0;
 }
 
-void WebFrameLoaderClient::didTransferChildFrameToNewDocument()
+void WebFrameLoaderClient::didTransferChildFrameToNewDocument(Page* oldPage)
 {
+    if (oldPage == core(m_webFrame.get())->page())
+        return;
+
+    // Update resource tracking now that frame is in a different page.
+    // TODO(jennb): update resource tracking [bug 44713]
 }
 
 ObjectContentType WebFrameLoaderClient::objectContentType(const KURL& url, const String& mimeType)
