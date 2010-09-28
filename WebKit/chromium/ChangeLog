@@ -2,6 +2,15 @@
 
         Build fix. Not reviewed.
 
+        Use if instead of switch to avoid compilation error.
+
+        * src/VideoFrameChromiumImpl.cpp:
+        (WebKit::VideoFrameChromiumImpl::requiredTextureSize):
+
+2010-09-27  Alpha Lam  <hclam@chromium.org>
+
+        Build fix. Not reviewed.
+
         Remove constant definitions from this file.
 
         * src/VideoFrameChromiumImpl.cpp:
