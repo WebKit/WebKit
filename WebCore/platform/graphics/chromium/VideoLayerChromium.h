@@ -72,14 +72,14 @@ public:
         unsigned m_yuvShaderProgram;
         unsigned m_rgbaShaderProgram;
         int m_yuvShaderMatrixLocation;
-        int m_rgbaShaderMatrixLocation;
         int m_yuvWidthScaleFactorLocation;
+        int m_rgbaShaderMatrixLocation;
         int m_rgbaWidthScaleFactorLocation;
+        int m_ccMatrixLocation;
         int m_yTextureLocation;
         int m_uTextureLocation;
         int m_vTextureLocation;
         int m_rgbaTextureLocation;
-        int m_ccMatrixLocation;
         int m_yuvAlphaLocation;
         int m_rgbaAlphaLocation;
         bool m_initialized;
@@ -98,9 +98,9 @@ private:
 
     static const float yuv2RGB[9];
 
+    bool m_skipsDraw;
     VideoFrameChromium::Format m_frameFormat;
     OwnPtr<VideoFrameProvider> m_provider;
-    bool m_skipsDraw;
     unsigned m_textures[3];
     IntSize m_textureSizes[3];
     IntSize m_frameSizes[3];

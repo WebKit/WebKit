@@ -1,3 +1,17 @@
+2010-09-27  Alpha Lam  <hclam@chromium.org>
+
+        Unreviewed. Build fix.
+
+        Reorder member declarations and fix other warnings.
+
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::VideoLayerChromium):
+        (WebCore::VideoLayerChromium::~VideoLayerChromium):
+        (WebCore::VideoLayerChromium::updateContents):
+        (WebCore::VideoLayerChromium::determineTextureFormat):
+        (WebCore::VideoLayerChromium::allocateTexturesIfNeeded):
+        * platform/graphics/chromium/VideoLayerChromium.h:
+
 2010-09-27  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, Qt build fix. Stub out CanvasRenderingContext::checkOrigin(const HTMLVideoElement*)
