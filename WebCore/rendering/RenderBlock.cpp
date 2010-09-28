@@ -1454,7 +1454,8 @@ bool RenderBlock::handleRunInChild(RenderBox* child)
     if (runInNode)
         runInNode->setRenderer(inlineRunIn);
 
-    // Destroy the block run-in.
+    // Destroy the block run-in, which includes deleting its line box tree.
+    blockRunIn->deleteLineBoxTree();
     blockRunIn->destroy();
 
     // The block acts like an inline, so just null out its

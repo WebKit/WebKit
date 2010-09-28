@@ -1,3 +1,14 @@
+2010-09-27  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Tests we do not crash on ASSERT(!m_hasBadParent) when dirtying 
+        the inline textboxes.
+        https://bugs.webkit.org/show_bug.cgi?id=46376
+
+        * fast/text/dirty-inline-textbox-crash-expected.txt: Added.
+        * fast/text/dirty-inline-textbox-crash.html: Added.
+
 2010-09-27 MORITA Hajime  <morrita@google.com>
 
         Unreviewed, added an expectation.

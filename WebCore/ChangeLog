@@ -1,3 +1,18 @@
+2010-09-27  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        When the block RunIn is destroyed, its line box tree is not deleted. As a result, it
+        gets later used during dirtying of inline text boxes step where this deleted parent is
+        accessed. The fix is to delete the line box tree before destroying the runin block.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46376
+
+        Test: fast/text/dirty-inline-textbox-crash.html
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::dirtyLineBoxes):
+
 2010-09-27  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by David Levin.
