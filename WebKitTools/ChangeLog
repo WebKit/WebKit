@@ -1,3 +1,13 @@
+2010-09-27  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        add webkit unit tests to the chromium testers
+        https://bugs.webkit.org/show_bug.cgi?id=46669
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        * Scripts/run-chromium-webkit-unit-tests: Fix a bug where we weren't using the right configuration.
+
 2010-09-27  Kwang Yul Seo  <skyul@company100.net>
 
         Unreviewed.

@@ -37,6 +37,8 @@ use webkitdirs;
 my $sourceRootDir = File::Spec->catfile($FindBin::Bin, "../..");
 chdir($sourceRootDir);
 
+setConfiguration();
+
 my $pathToBinary;
 if (isDarwin()) {
     $pathToBinary = "WebKit/chromium/xcodebuild/" . configuration() . "/webkit_unit_tests";
