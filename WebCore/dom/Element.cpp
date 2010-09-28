@@ -639,8 +639,10 @@ void Element::updateAfterAttributeChanged(Attribute* attr)
         document()->axObjectCache()->contentChanged(renderer());
     } else if (attrName == aria_selectedAttr)
         document()->axObjectCache()->selectedChildrenChanged(renderer());
+    else if (attrName == aria_hiddenAttr)
+        document()->axObjectCache()->childrenChanged(renderer());
 }
-    
+
 void Element::recalcStyleIfNeededAfterAttributeChanged(Attribute* attr)
 {
     if (document()->attached() && document()->styleSelector()->hasSelectorForAttribute(attr->name().localName()))
