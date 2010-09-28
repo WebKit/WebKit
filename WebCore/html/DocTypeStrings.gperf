@@ -9,7 +9,6 @@ struct PubIDInfo;
 %define initializer-suffix ,PubIDInfo::eAlmostStandards,PubIDInfo::eAlmostStandards
 %define lookup-function-name findDoctypeEntryImpl
 %define hash-function-name doctype_hash_function
-%includes
 %enum
 %%
 "+//silmaril//dtd html pro v0r11 19970101//en", PubIDInfo::eQuirks3, PubIDInfo::eQuirks3

@@ -8,7 +8,6 @@ struct NamedColor;
 %define class-name ColorDataHash
 %define lookup-function-name findColorImpl
 %define hash-function-name colordata_hash_function
-%includes
 %enum
 %%
 aliceblue, 0xf0f8ff

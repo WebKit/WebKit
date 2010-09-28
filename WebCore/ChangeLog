@@ -1,3 +1,16 @@
+2010-09-28  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Fix for r68521 to build on VS2008/Release.
+
+        * html/DocTypeStrings.gperf:
+        Don't emit "#include <string.h>" here, since we're inside a namespace.
+        * make-hash-tools.pl:
+        Emit #include <string.h> manually where required.
+        * platform/ColorData.gperf:
+        Don't emit "#include <string.h>" here, since we're inside a namespace.
+
 2010-09-28  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
