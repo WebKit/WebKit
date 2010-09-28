@@ -57,6 +57,7 @@ public:
     // NPP functions.
     virtual NPError NPP_DestroyStream(NPStream* stream, NPReason reason);
     virtual NPError NPP_GetValue(NPPVariable, void* value);
+    virtual NPError NPP_SetWindow(NPP, NPWindow*);
 
     // NPN functions.
     NPIdentifier NPN_GetStringIdentifier(const NPUTF8* name);

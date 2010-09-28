@@ -1,3 +1,32 @@
+2010-09-28  Adam Roben  <aroben@apple.com>
+
+        Test that a plugin's HWND is sized/positioned before NPP_SetWindow is
+        called
+
+        Reviewed by Anders Carlsson.
+
+        Test for <http://webkit.org/b/46716> <rdar://problem/8482014>
+        Full-page Adobe Reader does not paint until window is resized
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp:
+        (PluginTest::NPP_SetWindow): Added. Just returns NPERR_NO_ERROR at
+        this level.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.h: Declared
+        NPP_SetWindow.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/win/WindowGeometryInitializedBeforeSetWindow.cpp: Added.
+        (WindowGeometryInitializedBeforeSetWindow::NPP_SetWindow): Checks that
+        the plugin's HWND has a non-zero size and that its size/position
+        matches that specified in the NPWindow.
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NPP_SetWindow): Call through to the PluginTest.
+
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        Added WindowGeometryInitializedBeforeSetWindow.cpp, and let VS reorder
+        the files as it saw fit.
+
 2010-09-28  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Andreas Kling.

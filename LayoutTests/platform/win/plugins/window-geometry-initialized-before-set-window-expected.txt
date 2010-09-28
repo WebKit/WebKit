@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 0: PLUGIN: Plugin's HWND has been sized and positioned before NPP_SetWindow was called
+
+This tests that a plugin's HWND is already sized and positioned before NPP_SetWindow is called.

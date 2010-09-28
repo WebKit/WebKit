@@ -1,5 +1,18 @@
 2010-09-28  Adam Roben  <aroben@apple.com>
 
+        Test that a plugin's HWND is sized/positioned before NPP_SetWindow is
+        called
+
+        Reviewed by Anders Carlsson.
+
+        Test for <http://webkit.org/b/46716> <rdar://problem/8482014>
+        Full-page Adobe Reader does not paint until window is resized
+
+        * platform/win/plugins/window-geometry-initialized-before-set-window-expected.txt: Added.
+        * platform/win/plugins/window-geometry-initialized-before-set-window.html: Added.
+
+2010-09-28  Adam Roben  <aroben@apple.com>
+
         Start running plugins tests in WebKit2 on Windows
 
         Fixes <http://webkit.org/b/46675> <rdar://problem/8484269>

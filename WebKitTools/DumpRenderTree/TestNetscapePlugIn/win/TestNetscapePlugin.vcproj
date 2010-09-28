@@ -367,6 +367,34 @@
 	<References>
 	</References>
 	<Files>
+		<Filter
+			Name="Tests"
+			>
+			<File
+				RelativePath="..\Tests\DocumentOpenInDestroyStream.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Tests\NPRuntimeObjectFromDestroyedPlugin.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Tests\NPRuntimeRemoveProperty.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Tests\PluginScriptableNPObjectInvokeDefault.cpp"
+				>
+			</File>
+			<Filter
+				Name="win"
+				>
+				<File
+					RelativePath="..\Tests\win\WindowGeometryInitializedBeforeSetWindow.cpp"
+					>
+				</File>
+			</Filter>
+		</Filter>
 		<File
 			RelativePath="..\main.cpp"
 			>
@@ -456,26 +484,6 @@
 			RelativePath="..\TestObject.h"
 			>
 		</File>
-		<Filter
-			Name="Tests"
-			>
-		  <File
-    		  RelativePath="..\Tests\DocumentOpenInDestroyStream.cpp"
-    		>
-    	  </File>
-    	  <File
-    		  RelativePath="..\Tests\NPRuntimeObjectFromDestroyedPlugin.cpp"
-    		>
-    	  </File>
-		  <File
-    		  RelativePath="..\Tests\NPRuntimeRemoveProperty.cpp"
-    		>
-    	  </File>
-		  <File
-    		  RelativePath="..\Tests\PluginScriptableNPObjectInvokeDefault.cpp"
-    		>
-    	  </File>
-		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

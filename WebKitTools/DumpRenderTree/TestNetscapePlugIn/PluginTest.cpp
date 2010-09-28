@@ -60,6 +60,11 @@ NPError PluginTest::NPP_GetValue(NPPVariable variable, void *value)
     return NPERR_GENERIC_ERROR;
 }
 
+NPError PluginTest::NPP_SetWindow(NPP, NPWindow*)
+{
+    return NPERR_NO_ERROR;
+}
+
 NPIdentifier PluginTest::NPN_GetStringIdentifier(const NPUTF8 *name)
 {
     return browser->getstringidentifier(name);
