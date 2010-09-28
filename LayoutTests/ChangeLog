@@ -1,3 +1,17 @@
+2010-09-28  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Text drawing taints GraphicsContext's QPainter::pen()
+        https://bugs.webkit.org/show_bug.cgi?id=46744
+
+        Add test to check that strokeText() doesn't break the fillStyle
+        and fillText() doesn't break the strokeStyle.
+
+        * fast/canvas/canvas-style-intact-after-text-expected.txt: Added.
+        * fast/canvas/canvas-style-intact-after-text.html: Added.
+        * fast/canvas/script-tests/canvas-style-intact-after-text.js: Added.
+
 2010-09-28  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Jeremy Orlow.
