@@ -2534,6 +2534,9 @@ void AccessibilityRenderObject::setSelectedVisiblePositionRange(const VisiblePos
 
 VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoint& point) const
 {
+    if (!m_renderer)
+        return VisiblePosition();
+    
     // convert absolute point to view coordinates
     FrameView* frameView = m_renderer->document()->topDocument()->renderer()->view()->frameView();
     RenderView* renderView = topRenderer();
@@ -2553,13 +2556,16 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
         HitTestResult result(ourpoint);
         renderView->layer()->hitTest(request, result);
         innerNode = result.innerNode();
-        if (!innerNode || !innerNode->renderer())
+        if (!innerNode)
+            return VisiblePosition();
+        
+        RenderObject* renderer = innerNode->renderer();
+        if (!renderer)
             return VisiblePosition();
         
         pointResult = result.localPoint();
         
         // done if hit something other than a widget
-        RenderObject* renderer = innerNode->renderer();
         if (!renderer->isWidget())
             break;
         
