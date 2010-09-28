@@ -680,12 +680,13 @@ void ContainerNode::childrenChanged(bool changedByParser, Node* beforeChange, No
 void ContainerNode::cloneChildNodes(ContainerNode *clone)
 {
     // disable the delete button so it's elements are not serialized into the markup
-    if (document()->frame())
+    bool isEditorEnabled = document()->frame() && document()->frame()->editor()->canEdit();
+    if (isEditorEnabled)
         document()->frame()->editor()->deleteButtonController()->disable();
     ExceptionCode ec = 0;
     for (Node* n = firstChild(); n && !ec; n = n->nextSibling())
         clone->appendChild(n->cloneNode(true), ec);
-    if (document()->frame())
+    if (isEditorEnabled && document()->frame())
         document()->frame()->editor()->deleteButtonController()->enable();
 }
 

@@ -1,5 +1,21 @@
 2010-09-28  Mark Rowe  <mrowe@apple.com>
 
+        Merge r63865.
+
+    2010-07-21  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Oliver Hunt.
+
+        Prevent DeleteButtonController enable state from changing when not editing
+        https://bugs.webkit.org/show_bug.cgi?id=42659
+
+        Test: svg/custom/use-invalid-html.xhtml
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::cloneChildNodes):
+
+2010-09-28  Mark Rowe  <mrowe@apple.com>
+
         Merge r65329.
 
     2010-08-13  Steve Block  <steveblock@google.com>
