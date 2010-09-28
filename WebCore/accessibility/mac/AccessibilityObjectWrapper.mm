@@ -2350,8 +2350,12 @@ static RenderObject* rendererForView(NSView* view)
     PlainTextRange plainTextRange = PlainTextRange(range.location, range.length);
 
     // dispatch
-    if ([attribute isEqualToString: @"AXUIElementForTextMarker"])
-        return m_object->accessibilityObjectForPosition(visiblePos)->wrapper();
+    if ([attribute isEqualToString:@"AXUIElementForTextMarker"]) {
+        AccessibilityObject* axObject = m_object->accessibilityObjectForPosition(visiblePos);
+        if (!axObject)
+            return nil;
+        return axObject->wrapper();
+    }
 
     if ([attribute isEqualToString: @"AXTextMarkerRangeForUIElement"]) {
         VisiblePositionRange vpRange = uiElement.get()->visiblePositionRange();
