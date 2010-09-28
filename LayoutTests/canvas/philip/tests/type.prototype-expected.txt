@@ -4,6 +4,4 @@ window.HTMLCanvasElement has prototype, which is { ReadOnly, DontDelete }. proto
 References: canvas.type
 Defined in "Language Bindings for DOM Specifications" (draft)
 Actual output:
-Passed
-
-
+Failed assertion window.HTMLCanvasElement.prototype.getContext === undefined (got 1[number], expected [undefined])

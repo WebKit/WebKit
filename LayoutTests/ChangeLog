@@ -1,3 +1,10 @@
+2010-09-28  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Unskip remaining canvas layout tests so that they can track progressions/regressions
+        https://bugs.webkit.org/show_bug.cgi?id=46439
+
 2010-09-28  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; new test baselines.

@@ -2,4 +2,4 @@
 2d.text.font.parse.complex
 References: 2d.text.font.parse 2d.text.font.get 2d.text.font.lineheight
 Actual output:
-Passed
+Failed assertion ctx.font === 'italic small-caps 12px "Unknown Font", sans-serif' (got small-caps italic 400 12px/2 Unknown Font, sans-serif[string], expected italic small-caps 12px "Unknown Font", sans-serif[string])

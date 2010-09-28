@@ -3,5 +3,5 @@
 createImageData(imgdata) returns an ImageData object containing a CanvasPixelArray object
 References: 2d.imageData.create1.object Bugzilla
 Actual output:
-Passed
-
+Failed assertion window.CanvasPixelArray !== undefined (got [undefined], expected not [undefined])
+Aborted with exception: Result of expression 'window.CanvasPixelArray' [undefined] is not an object.

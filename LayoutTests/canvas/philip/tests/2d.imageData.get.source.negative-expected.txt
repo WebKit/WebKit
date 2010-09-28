@@ -3,7 +3,7 @@
 getImageData() works with negative width and height, and returns top-to-bottom left-to-right
 References: 2d.imageData.get.basic 2d.pixelarray.order
 Actual output:
-Passed
-
-
-
+Failed assertion imgdata1.data["0"] === 255 (got 0[number], expected 255[number])
+Failed assertion imgdata1.data["1"] === 255 (got 0[number], expected 255[number])
+Failed assertion imgdata1.data["2"] === 255 (got 0[number], expected 255[number])
+Failed assertion imgdata2.data["3"] === 0 (got 255[number], expected 0[number])

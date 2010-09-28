@@ -2,4 +2,4 @@
 2d.drawImage.null
 References: 2d.drawImage.type
 Actual output:
-Passed
+Failed assertion: expected exception of type TYPE_MISMATCH_ERR, got: Type error

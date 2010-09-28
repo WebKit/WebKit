@@ -2,5 +2,5 @@
 2d.text.font.parse.size.percentage
 References: 2d.text.font.parse 2d.text.font.get 2d.text.font.fontsize 2d.text.font.size
 Actual output:
-Passed
-
+Failed assertion ctx.font === '72px serif' (got 50% serif[string], expected 72px serif[string])
+Failed assertion ctx.font === '72px serif' (got 50% serif[string], expected 72px serif[string])

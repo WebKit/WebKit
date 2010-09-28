@@ -5,4 +5,4 @@ References: 2d.text.draw.spaces
 Actual output:
 Expected output:
 
-Passed
+Failed assertion: got pixel [255,0,0,255] at (75,25), expected [0,255,0,255] +/- 2

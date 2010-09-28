@@ -2,4 +2,4 @@
 2d.text.font.parse.basic
 References: 2d.text.font.parse 2d.text.font.get
 Actual output:
-Passed
+Failed assertion ctx.font === '20px serif' (got 20PX SERIF[string], expected 20px serif[string])

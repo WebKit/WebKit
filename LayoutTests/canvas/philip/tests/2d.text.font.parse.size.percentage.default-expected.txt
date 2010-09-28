@@ -2,4 +2,4 @@
 2d.text.font.parse.size.percentage.default
 References: 2d.text.font.undefined
 Actual output:
-Passed
+Failed assertion ctx.font === '100px serif' (got 1000% serif[string], expected 100px serif[string])

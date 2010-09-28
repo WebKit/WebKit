@@ -2,4 +2,4 @@
 2d.composite.operation.highlight
 References: 2d.composite.operation.unrecognised Bugzilla
 Actual output:
-Passed
+Failed assertion ctx.globalCompositeOperation == 'xor' (got highlight[string], expected xor[string])
