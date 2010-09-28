@@ -36,14 +36,6 @@
 
 using namespace WebCore;
 
-const unsigned VideoFrameChromium::maxPlanes = 3;
-const unsigned VideoFrameChromium::numRGBPlanes = 1;
-const unsigned VideoFrameChromium::rgbPlane = 0;
-const unsigned VideoFrameChromium::numYUVPlanes = 3;
-const unsigned VideoFrameChromium::yPlane = 0;
-const unsigned VideoFrameChromium::uPlane = 1;
-const unsigned VideoFrameChromium::vPlane = 2;
-
 namespace WebKit {
 
 WebVideoFrame* VideoFrameChromiumImpl::toWebVideoFrame(VideoFrameChromium* videoFrame)

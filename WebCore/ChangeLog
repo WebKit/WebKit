@@ -1,3 +1,12 @@
+2010-09-27  Alpha Lam  <hclam@chromium.org>
+
+        Build fix. Not reviewed.
+
+        Move constant definitions to VideoLayerChromium.cpp.
+        A proper fix should come later.
+
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+
 2010-09-23  Antonio Gomes  <agomes@rim.com>
 
         Reviewed by Kenneth Rohde Christiansen.

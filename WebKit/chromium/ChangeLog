@@ -2,6 +2,14 @@
 
         Build fix. Not reviewed.
 
+        Remove constant definitions from this file.
+
+        * src/VideoFrameChromiumImpl.cpp:
+
+2010-09-27  Alpha Lam  <hclam@chromium.org>
+
+        Build fix. Not reviewed.
+
         Fix warnings again.
 
         * src/VideoFrameChromiumImpl.cpp:
