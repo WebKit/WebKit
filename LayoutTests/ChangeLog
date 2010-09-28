@@ -1,3 +1,26 @@
+2010-09-28  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; new Chromium/Win test baselines.
+
+        [CHROMIUM] These are tests we were passing on Chrome, but are now listed as failing due to r68568.  Adding platform-specific baselines should make us pass them again.
+
+        * platform/chromium-win/canvas: Added.
+        * platform/chromium-win/canvas/philip: Added.
+        * platform/chromium-win/canvas/philip/tests: Added.
+        * platform/chromium-win/canvas/philip/tests/2d.drawImage.null-expected.txt: Added.
+        * platform/chromium-win/canvas/philip/tests/2d.gradient.radial.cone.front-expected.txt: Added.
+        * platform/chromium-win/canvas/philip/tests/2d.gradient.radial.inside2-expected.txt: Added.
+        * platform/chromium-win/canvas/philip/tests/2d.gradient.radial.inside3-expected.txt: Added.
+        * platform/chromium-win/canvas/philip/tests/2d.gradient.radial.outside1-expected.txt: Added.
+        * platform/chromium-win/canvas/philip/tests/2d.line.cap.closed-expected.txt: Added.
+        * platform/chromium-win/canvas/philip/tests/2d.line.join.parallel-expected.txt: Added.
+        * platform/chromium-win/canvas/philip/tests/2d.line.miter.lineedge-expected.txt: Added.
+        * platform/chromium-win/canvas/philip/tests/2d.pattern.image.null-expected.txt: Added.
+        * platform/chromium-win/canvas/philip/tests/2d.shadow.enable.x-expected.txt: Added.
+        * platform/chromium-win/canvas/philip/tests/2d.shadow.enable.y-expected.txt: Added.
+        * platform/chromium-win/canvas/philip/tests/2d.strokeRect.zero.4-expected.txt: Added.
+        * platform/chromium-win/canvas/philip/tests/toDataURL.jpeg.alpha-expected.txt: Added.
+
 2010-09-28  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Ojan Vafai.
