@@ -1,3 +1,11 @@
+2010-09-28  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix, don't try to get the svn revision from the git repo when packaging,
+        it causes the process to hang on the gitorious repo.
+
+        * wx/packaging/build-mac-installer.py:
+        * wx/packaging/build-win-installer.py:
+
 2010-09-28  Adam Roben  <aroben@apple.com>
 
         Test that a plugin's HWND is sized/positioned before NPP_SetWindow is

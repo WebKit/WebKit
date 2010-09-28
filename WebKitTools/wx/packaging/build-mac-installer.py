@@ -26,6 +26,7 @@
 # Script for building Mac .pkg installer
 
 import commands
+import datetime
 import distutils.sysconfig
 import glob
 import optparse
@@ -48,11 +49,11 @@ wxwebkit_dir = os.path.abspath(os.path.join(wxwk_root, "WebKitBuild", get_config
 wx_version = wx.__version__[:5]
 py_version = sys.version[:3]
 
-wxwk_version = svn_revision()
+date = str(datetime.date.today())
 
 platform = "osx"
     
-pkgname = "wxWebKit-%s-wx%s-py%s" % (platform, wx_version[:3], py_version)
+pkgname = "wxWebKit-%s-wx%s-py%s-%s" % (platform, wx_version[:3], py_version, date)
 
 tempdir = "/tmp/%s" % (pkgname)
 
@@ -141,7 +142,7 @@ try:
     
         pkg_args = ['--title ' + pkgname,
                     '--out %s.pkg' % pkgname,
-                    '--version ' + wxwk_version.strip(),
+                    '--version ' + date.strip(),
                     '--id org.wxwebkit.wxwebkit',
                     '--domain system',
                     '--root-volume-only',
