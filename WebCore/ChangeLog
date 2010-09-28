@@ -1,3 +1,25 @@
+2010-09-27  Chris Rogers  <crogers@google.com>
+
+        Reviewed by James Robinson.
+
+        Add HRTFDatabaseLoader files
+        https://bugs.webkit.org/show_bug.cgi?id=46234
+
+        No new tests since audio API is not yet implemented.
+
+        * platform/audio/HRTFDatabaseLoader.cpp: Added.
+        (WebCore::HRTFDatabaseLoader::createAndLoadAsynchronouslyIfNecessary):
+        (WebCore::HRTFDatabaseLoader::HRTFDatabaseLoader):
+        (WebCore::HRTFDatabaseLoader::~HRTFDatabaseLoader):
+        (WebCore::databaseLoaderEntry):
+        (WebCore::HRTFDatabaseLoader::load):
+        (WebCore::HRTFDatabaseLoader::loadAsynchronously):
+        (WebCore::HRTFDatabaseLoader::isLoaded):
+        (WebCore::HRTFDatabaseLoader::defaultHRTFDatabase):
+        * platform/audio/HRTFDatabaseLoader.h: Added.
+        (WebCore::HRTFDatabaseLoader::database):
+        (WebCore::HRTFDatabaseLoader::databaseSampleRate):
+
 2010-09-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
