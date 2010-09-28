@@ -1,3 +1,19 @@
+2010-09-28  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        No back/forward list entry added when submitting a form via an onclick handler inside a frame
+        https://bugs.webkit.org/show_bug.cgi?id=44140
+        
+        Lock the back/forward list for JavaScript form submissions inside frames
+        only if they're not in response to user gestures.
+
+        Tests: fast/history/form-submit-in-frame-via-onclick.html
+               fast/history/form-submit-in-frame.html
+
+        * loader/RedirectScheduler.cpp:
+        (WebCore::RedirectScheduler::scheduleFormSubmission):
+
 2010-09-28  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
