@@ -3105,7 +3105,7 @@ BUGWEBGL WIN LINUX : fast/canvas/webgl/gl-uniform-arrays.html = TEXT
 BUGWEBGL WIN LINUX : fast/canvas/webgl/object-deletion-behaviour.html = TEXT
 BUGWEBGL WIN LINUX : fast/canvas/webgl/point-size.html = TEXT
 BUGWEBGL WIN MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html = TEXT PASS
-BUGWEBGL WIN LINUX : fast/canvas/webgl/fast/canvas/webgl/tex-image-and-uniform-binding-bugs.html = TIMEOUT
+BUGWEBGL WIN LINUX : fast/canvas/webgl/tex-image-and-uniform-binding-bugs.html = TIMEOUT
 BUGWEBGL MAC : fast/canvas/webgl/texture-npot.html = TEXT
 BUGWEBGL WIN LINUX : fast/canvas/webgl/uniform-location.html = TEXT TIMEOUT
 

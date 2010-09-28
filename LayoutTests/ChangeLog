@@ -1,5 +1,11 @@
 2010-09-27  Zhenyao Mo  <zmo@google.com>
 
+        Unreviewed, fix a typo.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-09-27  Zhenyao Mo  <zmo@google.com>
+
         Unreviewed.  Three webgl tests TIMEOUT after hooking up ANGLE with in-process-webgl port.
 
         * platform/chromium/test_expectations.txt:
