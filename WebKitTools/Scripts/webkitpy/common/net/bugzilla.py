@@ -45,39 +45,6 @@ from webkitpy.thirdparty.autoinstalled.mechanize import Browser
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup, SoupStrainer
 
 
-class BugzillaError(Exception):
-
-    def __init__(self, bug_id, error_message=None):
-        Exception.__init__(self, error_message)
-        self.bug_id = bug_id
-        self.error_message = error_message
-
-    def bug_id(self):
-        return self.bug_id
-
-    def error_message(self):
-        return self.error_message
-
-    # The following error messages were extracted from <https://bugs.webkit.org/bugzilla.dtd> as of 09/12/2010.
-
-    def is_invalid_bug_id(self):
-        return self.error_message == "InvalidBugId"
-
-    def is_not_found(self):
-        return self.error_message == "NotFound"
-
-    def is_not_permitted_to_view_bug(self):
-        return self.error_message == "NotPermitted"
-
-    def __str__(self):
-        if self.is_invalid_bug_id():
-            return "Bug %s is invalid" % self.bug_id
-        if self.is_not_found():
-            return "Bug %s does not exist" % self.bug_id
-        if self.is_not_permitted_to_view_bug():
-            return "Not permitted to view bug %s" % self.bug_id
-        return "Bugzilla encountered an error when processing bug %s: '%s'" % (self.bug_id, self.error_message)
-
 def parse_bug_id(message):
     if not message:
         return None
@@ -543,12 +510,8 @@ class Bugzilla(object):
 
     def _parse_bug_page(self, page):
         soup = BeautifulSoup(page)
-        bug_element = soup.find("bug")
-        bug_id = soup.find("bug_id").string
-        if bug_element.has_key("error"):
-            raise BugzillaError(bug_id, bug_element["error"])
         bug = {}
-        bug["id"] = int(bug_id)
+        bug["id"] = int(soup.find("bug_id").string)
         bug["title"] = self._string_contents(soup.find("short_desc"))
         bug["bug_status"] = self._string_contents(soup.find("bug_status"))
         bug["reporter_email"] = self._string_contents(soup.find("reporter"))

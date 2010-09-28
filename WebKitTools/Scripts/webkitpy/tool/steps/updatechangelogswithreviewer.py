@@ -32,7 +32,6 @@ from webkitpy.common.checkout.changelog import ChangeLog
 from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
-from webkitpy.common.net.bugzilla import BugzillaError
 from webkitpy.common.system.deprecated_logging import log, error
 
 class UpdateChangeLogsWithReviewer(AbstractStep):
@@ -44,11 +43,7 @@ class UpdateChangeLogsWithReviewer(AbstractStep):
         ]
 
     def _guess_reviewer_from_bug(self, bug_id):
-        try:
-            patches = self._tool.bugs.fetch_bug(bug_id).reviewed_patches()
-        except BugzillaError, e:
-            log(e)
-            return None
+        patches = self._tool.bugs.fetch_bug(bug_id).reviewed_patches()
         if len(patches) != 1:
             log("%s on bug %s, cannot infer reviewer." % (pluralize("reviewed patch", len(patches)), bug_id))
             return None

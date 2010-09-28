@@ -31,7 +31,7 @@ import unittest
 import datetime
 
 from webkitpy.common.config.committers import CommitterList, Reviewer, Committer
-from webkitpy.common.net.bugzilla import Bugzilla, BugzillaError, BugzillaQueries, parse_bug_id, CommitterValidator, Bug
+from webkitpy.common.net.bugzilla import Bugzilla, BugzillaQueries, parse_bug_id, CommitterValidator, Bug
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
@@ -70,14 +70,6 @@ class CommitterValidatorTest(unittest.TestCase):
 
 - If you have review rights please correct the error in WebKitTools/Scripts/webkitpy/common/config/committers.py by adding yourself to the file (no review needed).  The commit-queue restarts itself every 2 hours.  After restart the commit-queue will correctly respect your review rights."""
         self.assertEqual(validator._flag_permission_rejection_message("foo@foo.com", "review"), expected_messsage)
-
-
-class BugzillaErrorTest(unittest.TestCase):
-    def test_str(self):
-        self.assertEqual(BugzillaError(bug_id=12345, error_message="InvalidBugId").__str__(), "Bug 12345 is invalid")
-        self.assertEqual(BugzillaError(bug_id=12345, error_message="NotFound").__str__(), "Bug 12345 does not exist")
-        self.assertEqual(BugzillaError(bug_id=12345, error_message="NotPermitted").__str__(), "Not permitted to view bug 12345")
-        self.assertEqual(BugzillaError(bug_id=12345, error_message="Thingamajig broke").__str__(), "Bugzilla encountered an error when processing bug 12345: 'Thingamajig broke'")
 
 
 class BugzillaTest(unittest.TestCase):
@@ -148,57 +140,6 @@ class BugzillaTest(unittest.TestCase):
         # Our bug parser is super-fragile, but at least we're testing it.
         self.assertEquals(None, parse_bug_id("http://www.webkit.org/b/12345"))
         self.assertEquals(None, parse_bug_id("http://bugs.webkit.org/show_bug.cgi?ctype=xml&id=12345"))
-
-    _example_unauthorized_bug = """
-    <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-    <!DOCTYPE bugzilla SYSTEM "https://bugs.webkit.org/bugzilla.dtd">
-
-    <bugzilla version="3.2.3"
-              urlbase="https://bugs.webkit.org/"
-              maintainer="admin@webkit.org"
-              exporter="unauthorized_person@example.com"
-    >
-
-        <bug error="NotPermitted">
-          <bug_id>12345</bug_id>
-        </bug>
-
-    </bugzilla>
-    """
-
-    _example_not_found_bug = """
-    <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-    <!DOCTYPE bugzilla SYSTEM "https://bugs.webkit.org/bugzilla.dtd">
-
-    <bugzilla version="3.2.3"
-              urlbase="https://bugs.webkit.org/"
-              maintainer="admin@webkit.org"
-              exporter="unauthorized_person@example.com"
-    >
-
-        <bug error="NotFound">
-          <bug_id>12345</bug_id>
-        </bug>
-
-    </bugzilla>
-    """
-
-    _example_invalid_bug_id_bug = """
-    <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-    <!DOCTYPE bugzilla SYSTEM "https://bugs.webkit.org/bugzilla.dtd">
-
-    <bugzilla version="3.2.3"
-              urlbase="https://bugs.webkit.org/"
-              maintainer="admin@webkit.org"
-              exporter="unauthorized_person@example.com"
-    >
-
-        <bug error="InvalidBugId">
-          <bug_id>A</bug_id>
-        </bug>
-
-    </bugzilla>
-    """
 
     _example_bug = """
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
@@ -286,33 +227,6 @@ ZEZpbmlzaExvYWRXaXRoUmVhc29uOnJlYXNvbl07Cit9CisKIEBlbmQKIAogI2VuZGlmCg==
             'id': 45548
         }],
     }
-
-    def test_bug_parsing_for_bugzilla_not_permitted_error(self):
-        didPassTest = False
-        try:
-            Bugzilla()._parse_bug_page(self._example_unauthorized_bug)
-        except BugzillaError, e:
-            self.assertTrue(e.is_not_permitted_to_view_bug())
-            didPassTest = True
-        self.assertTrue(didPassTest, "Failed to raise exception.")
-
-    def test_bug_parsing_for_bugzilla_not_found_error(self):
-        didPassTest = False
-        try:
-            Bugzilla()._parse_bug_page(self._example_not_found_bug)
-        except BugzillaError, e:
-            self.assertTrue(e.is_not_found())
-            didPassTest = True
-        self.assertTrue(didPassTest, "Failed to raise exception.")
-
-    def test_bug_parsing_for_bugzilla_invalid_bug_id_error(self):
-        didPassTest = False
-        try:
-            Bugzilla()._parse_bug_page(self._example_invalid_bug_id_bug)
-        except BugzillaError, e:
-            self.assertTrue(e.is_invalid_bug_id())
-            didPassTest = True
-        self.assertTrue(didPassTest, "Failed to raise exception.")
 
     # FIXME: This should move to a central location and be shared by more unit tests.
     def _assert_dictionaries_equal(self, actual, expected):

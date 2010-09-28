@@ -28,7 +28,6 @@
 
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
-from webkitpy.common.net.bugzilla import BugzillaError
 from webkitpy.common.system.deprecated_logging import log
 
 
@@ -44,11 +43,7 @@ class CloseBug(AbstractStep):
             return
         # Check to make sure there are no r? or r+ patches on the bug before closing.
         # Assume that r- patches are just previous patches someone forgot to obsolete.
-        try:
-            patches = self._tool.bugs.fetch_bug(state["patch"].bug_id()).patches()
-        except BugzillaError, e:
-            log(e)
-            return
+        patches = self._tool.bugs.fetch_bug(state["patch"].bug_id()).patches()
         for patch in patches:
             if patch.review() == "?" or patch.review() == "+":
                 log("Not closing bug %s as attachment %s has review=%s.  Assuming there are more patches to land from this bug." % (patch.bug_id(), patch.id(), patch.review()))

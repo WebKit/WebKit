@@ -1,3 +1,24 @@
+2010-09-28  Daniel Bates  <dbates@rim.com>
+
+        Rollout changeset 68493 <http://trac.webkit.org/changeset/68493>
+        <https://bugs.webkit.org/show_bug.cgi?id=39136>
+
+        Rollout changeset 68493 because it broke Sheriffbot's rollout feature.
+        In particular, this change caused Sheriffbot to raise an exception when
+        trying to parse the bug id on a bug page. We need to look into this
+        some more.
+
+        * Scripts/webkitpy/common/net/bugzilla.py:
+        * Scripts/webkitpy/common/net/bugzilla_unittest.py:
+        * Scripts/webkitpy/tool/bot/sheriff.py:
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/upload.py:
+        * Scripts/webkitpy/tool/steps/closebug.py:
+        * Scripts/webkitpy/tool/steps/obsoletepatches.py:
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+        * Scripts/webkitpy/tool/steps/updatechangelogswithreviewer.py:
+
 2010-09-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

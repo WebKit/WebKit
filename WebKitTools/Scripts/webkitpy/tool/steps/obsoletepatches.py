@@ -29,7 +29,6 @@
 from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
-from webkitpy.common.net.bugzilla import BugzillaError
 from webkitpy.common.system.deprecated_logging import log
 
 
@@ -44,11 +43,7 @@ class ObsoletePatches(AbstractStep):
         if not self._options.obsolete_patches:
             return
         bug_id = state["bug_id"]
-        try:
-            patches = self._tool.bugs.fetch_bug(bug_id).patches()
-        except BugzillaError, e:
-            log(e)
-            return
+        patches = self._tool.bugs.fetch_bug(bug_id).patches()
         if not patches:
             return
         log("Obsoleting %s on bug %s" % (pluralize("old patch", len(patches)), bug_id))

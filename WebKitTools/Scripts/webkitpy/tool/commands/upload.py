@@ -37,7 +37,7 @@ from optparse import make_option
 import webkitpy.tool.steps as steps
 
 from webkitpy.common.config.committers import CommitterList
-from webkitpy.common.net.bugzilla import BugzillaError, parse_bug_id
+from webkitpy.common.net.bugzilla import parse_bug_id
 from webkitpy.common.system.user import User
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCommand
@@ -82,14 +82,7 @@ class CleanPendingCommit(AbstractDeclarativeCommand):
     def execute(self, options, args, tool):
         committers = CommitterList()
         for bug_id in tool.bugs.queries.fetch_bug_ids_from_pending_commit_list():
-            try:
-                bug = self._tool.bugs.fetch_bug(bug_id)
-            except BugzillaError, e:
-                # This may occur if the bug becomes a security bug between the time
-                # we fetched its ID from the pending commit list and now. We ignore
-                # this bug.
-                log(e)
-                continue
+            bug = self._tool.bugs.fetch_bug(bug_id)
             patches = bug.patches(include_obsolete=True)
             for patch in patches:
                 flags_to_clear = self._flags_to_clear_on_patch(patch)
@@ -111,11 +104,7 @@ class AssignToCommitter(AbstractDeclarativeCommand):
 
     def _assign_bug_to_last_patch_attacher(self, bug_id):
         committers = CommitterList()
-        try:
-            bug = self._tool.bugs.fetch_bug(bug_id)
-        except BugzillaError, e:
-            log(e)
-            return
+        bug = self._tool.bugs.fetch_bug(bug_id)
         if not bug.is_unassigned():
             assigned_to_email = bug.assigned_to_email()
             log("Bug %s is already assigned to %s (%s)." % (bug_id, assigned_to_email, committers.committer_by_email(assigned_to_email)))
