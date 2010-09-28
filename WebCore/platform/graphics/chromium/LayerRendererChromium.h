@@ -84,8 +84,6 @@ public:
     void setRootLayer(PassRefPtr<LayerChromium> layer) { m_rootLayer = layer; }
     LayerChromium* rootLayer() { return m_rootLayer.get(); }
 
-    void setNeedsDisplay() { m_needsDisplay = true; }
-
     bool hardwareCompositing() const { return m_hardwareCompositing; }
 
     void setRootLayerCanvasSize(const IntSize&);
@@ -144,7 +142,6 @@ private:
 
     RefPtr<LayerChromium> m_rootLayer;
 
-    bool m_needsDisplay;
     IntPoint m_scrollPosition;
     bool m_hardwareCompositing;
 

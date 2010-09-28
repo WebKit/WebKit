@@ -91,7 +91,6 @@ LayerRendererChromium::LayerRendererChromium(PassOwnPtr<GraphicsContext3D> conte
     , m_rootLayerTextureHeight(0)
     , m_scrollShaderProgram(0)
     , m_rootLayer(0)
-    , m_needsDisplay(false)
     , m_scrollPosition(IntPoint(-1, -1))
     , m_currentShader(0)
     , m_context(context)
@@ -346,7 +345,6 @@ void LayerRendererChromium::present()
     // Note that currently this has the same effect as swapBuffers; we should
     // consider exposing a different entry point on GraphicsContext3D.
     m_context->prepareTexture();
-    m_needsDisplay = false;
 }
 
 void LayerRendererChromium::getFramebufferPixels(void *pixels, const IntRect& rect)

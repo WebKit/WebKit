@@ -221,9 +221,10 @@ unsigned LayerChromium::createShaderProgram(GraphicsContext3D* context, const ch
 
 void LayerChromium::setNeedsCommit()
 {
-    // Call notifySyncRequired(), which in this implementation plumbs through to
+    // Call notifySyncRequired(), which for non-root layers plumbs through to
     // call setRootLayerNeedsDisplay() on the WebView, which will cause LayerRendererChromium
     // to render a frame.
+    // This function has no effect on root layers.
     if (m_owner)
         m_owner->notifySyncRequired();
 }
@@ -349,8 +350,9 @@ LayerChromium* LayerChromium::superlayer() const
 
 void LayerChromium::setNeedsDisplay(const FloatRect& dirtyRect)
 {
-    // Simply mark the contents as dirty. The actual redraw will
-    // happen when it's time to do the compositing.
+    // Simply mark the contents as dirty. For non-root layers, the call to
+    // setNeedsCommit will schedule a fresh compositing pass.
+    // For the root layer, setNeedsCommit has no effect.
     m_contentsDirty = true;
 
     m_dirtyRect.unite(dirtyRect);

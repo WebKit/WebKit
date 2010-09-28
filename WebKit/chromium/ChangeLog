@@ -1,3 +1,21 @@
+2010-09-28  Nat Duca  <nduca@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] invalidateRootLayerRect needs to schedule compositor
+        https://bugs.webkit.org/show_bug.cgi?id=46219
+
+        Make sure setRootLayerNedsDisplay is called by root invalidation.
+        To avoid confusion about root-layer versus non-root-layer
+        behavior, move the root layer damage state to the WebView.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setRootLayerNeedsDisplay):
+        (WebKit::WebViewImpl::scrollRootLayerRect):
+        (WebKit::WebViewImpl::invalidateRootLayerRect):
+        (WebKit::WebViewImpl::doComposite):
+        * src/WebViewImpl.h:
+
 2010-09-28  Jenn Braithwaite  <jennb@chromium.org>
 
         Reviewed by Dmitry Titov.

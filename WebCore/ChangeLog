@@ -1,3 +1,22 @@
+2010-09-28  Nat Duca  <nduca@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] invalidateRootLayerRect needs to schedule compositor
+        https://bugs.webkit.org/show_bug.cgi?id=46219
+
+        Update comments on LayerChromium commit/display functions to clarify
+        their limitations. Remove unused dirtying logic from 
+        LayerRendererChromium.
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::setNeedsCommit):
+        (WebCore::LayerChromium::setNeedsDisplay):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::present):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+
 2010-09-28  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by David Levin.

@@ -522,7 +522,8 @@ private:
     RefPtr<WebCore::Node> m_mouseCaptureNode;
 
 #if USE(ACCELERATED_COMPOSITING)
-    WebCore::IntRect m_scrollDamage;
+    WebCore::IntRect m_rootLayerDirtyRect;
+    WebCore::IntRect m_rootLayerScrollDamage;
     RefPtr<WebCore::LayerRendererChromium> m_layerRenderer;
     bool m_isAcceleratedCompositingActive;
     bool m_compositorCreationFailed;
