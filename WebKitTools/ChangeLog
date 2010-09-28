@@ -1,5 +1,18 @@
 2010-09-28  Martin Robinson  <mrobinson@igalia.com>
 
+        Reviewed by Gustavo Noronha Silva.
+
+        [gtk] Fedora has a different path for the liberation fonts
+        https://bugs.webkit.org/show_bug.cgi?id=46709
+
+        When searching for DRT fonts, also look in the path where those fonts
+        are commonly found on Fedora systems.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (initializeFonts): Include logic for looking for Fedora-style font paths.
+
+2010-09-28  Martin Robinson  <mrobinson@igalia.com>
+
         Reviewed by Andreas Kling.
 
         run-webkit-tests needs an updated list of directories with webgl tests

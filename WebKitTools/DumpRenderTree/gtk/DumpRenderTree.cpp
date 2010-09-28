@@ -150,31 +150,54 @@ static void initializeFonts()
     if (!FcConfigParseAndLoad(config, reinterpret_cast<FcChar8*>(fontConfigFilename.get()), true))
         g_error("Couldn't load font configuration file from: %s", fontConfigFilename.get());
 
-    static const char *const fontPaths[] = {
-        "/usr/share/fonts/truetype/ttf-liberation/LiberationMono-BoldItalic.ttf",
-        "/usr/share/fonts/truetype/ttf-liberation/LiberationMono-Bold.ttf",
-        "/usr/share/fonts/truetype/ttf-liberation/LiberationMono-Italic.ttf",
-        "/usr/share/fonts/truetype/ttf-liberation/LiberationMono-Regular.ttf",
-        "/usr/share/fonts/truetype/ttf-liberation/LiberationSans-BoldItalic.ttf",
-        "/usr/share/fonts/truetype/ttf-liberation/LiberationSans-Bold.ttf",
-        "/usr/share/fonts/truetype/ttf-liberation/LiberationSans-Italic.ttf",
-        "/usr/share/fonts/truetype/ttf-liberation/LiberationSans-Regular.ttf",
-        "/usr/share/fonts/truetype/ttf-liberation/LiberationSerif-BoldItalic.ttf",
-        "/usr/share/fonts/truetype/ttf-liberation/LiberationSerif-Bold.ttf",
-        "/usr/share/fonts/truetype/ttf-liberation/LiberationSerif-Italic.ttf",
-        "/usr/share/fonts/truetype/ttf-liberation/LiberationSerif-Regular.ttf",
-        "/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf",
+    static const char *const fontPaths[][2] = {
+        { "/usr/share/fonts/truetype/ttf-liberation/LiberationMono-BoldItalic.ttf",
+          "/usr/share/fonts/liberation/LiberationMono-BoldItalic.ttf", },
+        { "/usr/share/fonts/truetype/ttf-liberation/LiberationMono-Bold.ttf",
+          "/usr/share/fonts/liberation/LiberationMono-Bold.ttf", },
+        { "/usr/share/fonts/truetype/ttf-liberation/LiberationMono-Italic.ttf",
+          "/usr/share/fonts/liberation/LiberationMono-Italic.ttf", },
+        { "/usr/share/fonts/truetype/ttf-liberation/LiberationMono-Regular.ttf",
+          "/usr/share/fonts/liberation/LiberationMono-Regular.ttf", },
+        { "/usr/share/fonts/truetype/ttf-liberation/LiberationSans-BoldItalic.ttf",
+          "/usr/share/fonts/liberation/LiberationSans-BoldItalic.ttf", },
+        { "/usr/share/fonts/truetype/ttf-liberation/LiberationSans-Bold.ttf",
+          "/usr/share/fonts/liberation/LiberationSans-Bold.ttf", },
+        { "/usr/share/fonts/truetype/ttf-liberation/LiberationSans-Italic.ttf",
+          "/usr/share/fonts/liberation/LiberationSans-Italic.ttf", },
+        { "/usr/share/fonts/truetype/ttf-liberation/LiberationSans-Regular.ttf",
+          "/usr/share/fonts/liberation/LiberationSans-Regular.ttf", },
+        { "/usr/share/fonts/truetype/ttf-liberation/LiberationSerif-BoldItalic.ttf",
+          "/usr/share/fonts/liberation/LiberationSerif-BoldItalic.ttf", },
+        { "/usr/share/fonts/truetype/ttf-liberation/LiberationSerif-Bold.ttf",
+          "/usr/share/fonts/liberation/LiberationSerif-Bold.ttf", },
+        { "/usr/share/fonts/truetype/ttf-liberation/LiberationSerif-Italic.ttf",
+          "/usr/share/fonts/liberation/LiberationSerif-Italic.ttf", },
+        { "/usr/share/fonts/truetype/ttf-liberation/LiberationSerif-Regular.ttf",
+          "/usr/share/fonts/liberation/LiberationSerif-Regular.ttf", },
+        { "/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf",
+          "/usr/share/fonts/dejavu/DejaVuSans.ttf", },
     };
 
     // TODO: Some tests use Lucida. We should load these as well, once it becomes
     // clear how to install these fonts easily on Fedora.
-    for (size_t i = 0; i < G_N_ELEMENTS(fontPaths); i++) {
-        if (!g_file_test(fontPaths[i], G_FILE_TEST_EXISTS))
-            g_error("Could not find font at %s. Either install this font or file "
-                    "a bug at http://bugs.webkit.org if it is installed in another location.",
-                    fontPaths[i]);
-        if (!FcConfigAppFontAddFile(config, reinterpret_cast<const FcChar8*>(fontPaths[i])))
-            g_error("Could not load font at %s!", fontPaths[i]);
+    for (size_t font = 0; font < G_N_ELEMENTS(fontPaths); font++) {
+        bool found = false;
+        for (size_t path = 0; path < 2; path++) {
+
+            if (g_file_test(fontPaths[font][path], G_FILE_TEST_EXISTS)) {
+                found = true;
+                if (!FcConfigAppFontAddFile(config, reinterpret_cast<const FcChar8*>(fontPaths[font][path])))
+                    g_error("Could not load font at %s!", fontPaths[font][path]);
+                else
+                    break;
+            }
+        }
+
+        if (!found)
+            g_error("Could not find font at %s. Either install this font or file a bug "
+                    "at http://bugs.webkit.org if it is installed in another location.",
+                    fontPaths[font][0]);
     }
 
     // Ahem is used by many layout tests.
