@@ -75,7 +75,6 @@ public:
     QGraphicsWebView* q;
     QWebPage* page;
     bool resizesToContents;
-    QSize deviceSize;
 
     // Just a convenience to avoid using page->client->overlay always
     QSharedPointer<QGraphicsItemOverlay> overlay;
@@ -552,24 +551,6 @@ QIcon QGraphicsWebView::icon() const
         return d->page->mainFrame()->icon();
 
     return QIcon();
-}
-
-/*!
-    \property QGraphicsWebView::deviceSize
-    \brief the size of the device using the web view
-
-    The device size is used by the DOM window object methods
-    otherHeight(), otherWidth() as well as a page for the viewport
-    meta tag attributes device-width and device-height.
-*/
-void QGraphicsWebView::setDeviceSize(const QSize& size)
-{
-    d->deviceSize = size;
-}
-
-QSize QGraphicsWebView::deviceSize() const
-{
-    return d->deviceSize;
 }
 
 /*!

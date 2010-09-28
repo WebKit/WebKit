@@ -21,6 +21,7 @@
 
 #include "config.h"
 #include "qwebpage.h"
+
 #include "qwebview.h"
 #include "qwebframe.h"
 #include "qwebpage_p.h"
@@ -94,6 +95,7 @@
 #include <QBasicTimer>
 #include <QBitArray>
 #include <QDebug>
+#include <QDesktopWidget>
 #include <QDragEnterEvent>
 #include <QDragLeaveEvent>
 #include <QDragMoveEvent>
@@ -2338,19 +2340,67 @@ void QWebPage::setViewportSize(const QSize &size) const
     }
 }
 
+static int getintenv(const char* variable)
+{
+    bool ok;
+    int value = qgetenv(variable).toInt(&ok);
+    return (ok) ? value : -1;
+}
+
+static QSize queryDeviceSizeForScreenContainingWidget(const QWidget* widget)
+{
+    QDesktopWidget* desktop = QApplication::desktop();
+    if (!desktop)
+        return QSize();
+
+    QSize size;
+
+    if (widget) {
+        // Returns the available geometry of the screen which contains widget.
+        // NOTE: this must be the the full screen size including any fixed status areas etc.
+        size = desktop->availableGeometry(widget).size();
+    } else
+        size = desktop->availableGeometry().size();
+
+    // This must be in portrait mode, adjust if not.
+    if (size.width() > size.height()) {
+        int width = size.width();
+        size.setWidth(size.height());
+        size.setHeight(width);
+    }
+
+    return size;
+}
+
+/*!
+    Computes the optimal viewport configuration given the \a availableSize, when
+    user interface components are disregarded.
+
+    The configuration is also dependent on the device screen size which is obtained
+    automatically. For testing purposes the size can be overridden by setting two
+    environment variables QTWEBKIT_DEVICE_WIDTH and QTWEBKIT_DEVICE_HEIGHT, which
+    both needs to be set.
+*/
+
 QWebPage::ViewportConfiguration QWebPage::viewportConfigurationForSize(QSize availableSize) const
 {
     static int desktopWidth = 980;
     static int deviceDPI = 160;
 
-    FloatRect rect = d->page->chrome()->windowRect();
-
-    int deviceWidth = rect.width();
-    int deviceHeight = rect.height();
-
-    WebCore::ViewportConfiguration conf = WebCore::findConfigurationForViewportData(mainFrame()->d->viewportArguments(), desktopWidth, deviceWidth, deviceHeight, deviceDPI, availableSize);
-
     ViewportConfiguration result;
+
+    int deviceWidth = getintenv("QTWEBKIT_DEVICE_WIDTH");
+    int deviceHeight = getintenv("QTWEBKIT_DEVICE_HEIGHT");
+
+    // Both environment variables need to be set - or they will be ignored.
+    if (deviceWidth < 0 && deviceHeight < 0) {
+        QSize size = queryDeviceSizeForScreenContainingWidget((d->client) ? d->client->ownerWidget() : 0);
+        deviceWidth = size.width();
+        deviceHeight = size.height();
+    }
+
+    WebCore::ViewportConfiguration conf = WebCore::findConfigurationForViewportData(mainFrame()->d->viewportArguments(),
+            desktopWidth, deviceWidth, deviceHeight, deviceDPI, availableSize);
 
     result.m_isValid = true;
     result.m_size = conf.layoutViewport;

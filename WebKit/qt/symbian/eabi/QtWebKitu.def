@@ -799,7 +799,6 @@ EXPORTS
 	_ZN8QWebPage23allowGeolocationRequestEP9QWebFrame @ 798 NONAME
 	_ZN8QWebPage23viewportChangeRequestedERKNS_13ViewportHintsE @ 799 NONAME ABSENT
 	_ZNK15QWebScriptWorld5worldEv @ 800 NONAME
-	_ZN16QGraphicsWebView13setDeviceSizeERK5QSize @ 801 NONAME
 	_ZN23DumpRenderTreeSupportQt12pagePropertyEP9QWebFrameRK7QStringi @ 802 NONAME
 	_ZN23DumpRenderTreeSupportQt16isPageBoxVisibleEP9QWebFramei @ 803 NONAME
 	_ZN23DumpRenderTreeSupportQt16resumeAnimationsEP9QWebFrame @ 804 NONAME
@@ -811,7 +810,6 @@ EXPORTS
 	_ZN8QWebPage23checkPermissionFromUserEP9QWebFrameNS_16PermissionDomainERNS_16PermissionPolicyE @ 810 NONAME
 	_ZN8QWebPage25requestPermissionFromUserEP9QWebFrameNS_16PermissionDomainE @ 811 NONAME
 	_ZN8QWebPage27cancelRequestsForPermissionEP9QWebFrameNS_16PermissionDomainE @ 812 NONAME
-	_ZNK16QGraphicsWebView10deviceSizeEv @ 813 NONAME
 	_ZN23DumpRenderTreeSupportQt14viewportAsTextEP8QWebPageRK5QSize @ 814 NONAME
 	_ZN23DumpRenderTreeSupportQt32simulateDesktopNotificationClickERK7QString @ 815 NONAME
 	_ZN8QWebPage23viewportChangeRequestedEv @ 816 NONAME

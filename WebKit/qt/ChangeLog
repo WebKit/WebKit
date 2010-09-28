@@ -1,3 +1,24 @@
+2010-09-27  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Remove setDeviceSize methods
+        https://bugs.webkit.org/show_bug.cgi?id=46347
+
+        Remove our setDeviceHeight() API and obtain it automatically from the
+        system. Also for testing purposes, make it possible to override the
+        values via two newly introduced environment variables.
+
+        * Api/qgraphicswebview.cpp:
+        * Api/qgraphicswebview.h:
+        * Api/qwebpage.cpp:
+        (getintenv):
+        (queryDeviceSizeForScreenContainingWidget):
+        (QWebPage::viewportConfigurationForSize):
+        * WebCoreSupport/PageClientQt.cpp:
+        (WebCore::PageClientQGraphicsWidget::windowRect):
+        * symbian/eabi/QtWebKitu.def:
+
 2010-09-27  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Antonio Gomes.
