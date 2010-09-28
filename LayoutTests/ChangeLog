@@ -1,3 +1,11 @@
+2010-09-28  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; expectations update.
+
+        [CHROMIUM] Mark window-geometry-initialized-before-set-window as failing.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-28  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

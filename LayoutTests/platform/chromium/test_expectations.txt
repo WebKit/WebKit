@@ -3144,3 +3144,6 @@ BUGWK46705 : svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr.html = IMAGE
 BUGWK46705 : svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop.html = IMAGE
 BUGWK46705 : svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop.html = IMAGE
 BUGWK46705 : svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop.html = IMAGE
+
+// New test; was added in http://trac.webkit.org/changeset/68520
+BUGWK46735 WIN : platform/win/plugins/window-geometry-initialized-before-set-window.html = TEXT
