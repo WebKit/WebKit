@@ -1,5 +1,11 @@
 2010-09-28  Kevin Ollivier  <kevino@theolliviers.com>
 
+        [wx] One more build fix for Win.
+
+        * wscript:
+
+2010-09-28  Kevin Ollivier  <kevino@theolliviers.com>
+
         [wx] Build fix, ignore Qt-specific (for now?) source in platform/graphics.
 
         * wscript:

@@ -317,10 +317,10 @@ def build(bld):
             for wxlib in bld.env['LIB_WX']:
                 wxlibname = os.path.join(bld.env['LIBPATH_WX'][0], wxlib + '_vc.dll')
                 if os.path.exists(wxlibname):
-                    bld.install_files(obj.install_path, [wxlibname])
+                    bld.install_files(webcore.install_path, [wxlibname])
         
             for dep in windows_deps:
-                bld.install_files(obj.install_path, [os.path.join(msvclibs_dir, dep)])
+                bld.install_files(webcore.install_path, [os.path.join(msvclibs_dir, dep)])
 
     webcore.find_sources_in_dirs(full_dirs, excludes = excludes, exts=['.c', '.cpp'])
 
