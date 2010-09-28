@@ -1,3 +1,12 @@
+2010-09-28  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix typo in previous checkin.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::MarginInfo::MarginInfo):
+
 2010-09-28  Nat Duca  <nduca@chromium.org>
 
         Reviewed by James Robinson.

@@ -105,7 +105,7 @@ RenderBlock::MarginInfo::MarginInfo(RenderBlock* block, int beforeBorderPadding,
         block->style()->marginAfterCollapse() == MDISCARD;
 
     m_posMargin = m_canCollapseMarginBeforeWithChildren ? block->maxTopMargin(true) : 0;
-    m_negMargin = m_canCollapseMarginAfterWithChildren ? block->maxTopMargin(false) : 0;
+    m_negMargin = m_canCollapseMarginBeforeWithChildren ? block->maxTopMargin(false) : 0;
 }
 
 // -------------------------------------------------------------------------------------------------------
