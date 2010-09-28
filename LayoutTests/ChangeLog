@@ -1,3 +1,10 @@
+2010-09-27  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, added an expectation.
+
+        * platform/chromium/fast/dom/prototype-inheritance-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-09-27  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dan Bernstein.

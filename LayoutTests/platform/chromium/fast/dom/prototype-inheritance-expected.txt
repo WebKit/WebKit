@@ -77,6 +77,8 @@ PASS inner.DOMStringList.isInner is true
 PASS inner.DOMStringList.constructor.isInner is true
 PASS inner.DOMStringMap.isInner is true
 PASS inner.DOMStringMap.constructor.isInner is true
+PASS inner.DOMTokenList.isInner is true
+PASS inner.DOMTokenList.constructor.isInner is true
 PASS inner.Date.isInner is true
 PASS inner.Date.constructor.isInner is true
 PASS inner.Document.isInner is true
