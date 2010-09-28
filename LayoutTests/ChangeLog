@@ -1,5 +1,12 @@
 2010-09-28  Dan Bernstein  <mitz@apple.com>
 
+        Added Qt-specific results for the test added in the previous change. Qt doesn’t use ICU so
+        it fails the test.
+
+        * platform/qt/fast/text/find-soft-hyphen-expected.txt: Added.
+
+2010-09-28  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Darin Adler.
 
         Improved the handling of soft hyphens in copy and find operations, addressing the following
