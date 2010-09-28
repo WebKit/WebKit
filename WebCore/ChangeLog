@@ -2182,7 +2182,6 @@
         very least, the method should had been originally added with the "webkit"
         prefix, which was not the case.
 
-<<<<<<< HEAD
         * dom/Document.idl:
 
 2010-09-26  Renata Hodovan  <reni@inf.u-szeged.hu>
@@ -2481,8 +2480,6 @@
         (WebCore::stringToLengthType):
         (WebCore::SVGLength::setValueAsString):
 
-=======
->>>>>>> Performance improvement for FontLinux.
 2010-09-24  Luiz Agostini  <luiz.agostini@openbossa.org>
         Reviewed by Kenneth Rohde Christiansen.
 
