@@ -248,9 +248,10 @@
         # FIXME: Also enable this for Windows after verifying no warnings
         'chromium_code': 1,
       }],
-      ['OS=="linux"', {
-        'chromium_code': 1,
-      }],
+# FIXME: disabled for now due to failures on different gcc versions
+#     ['OS=="linux"', {
+#        'chromium_code': 1,
+#      }],
       ['OS=="win"', {
         'webcore_include_dirs': [
           '../page/win',

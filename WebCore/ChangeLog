@@ -1,3 +1,9 @@
+2010-09-28  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Decrease warning level on chromium linux temporarily. This is causing failures on some bots
+
+        * WebCore.gyp/WebCore.gyp:
+
 2010-09-27  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Tony Chang.
