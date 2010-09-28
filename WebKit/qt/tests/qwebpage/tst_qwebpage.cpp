@@ -2189,23 +2189,23 @@ void tst_QWebPage::testStopScheduledPageRefresh()
     QWebPage page1;
     page1.setNetworkAccessManager(new TestNetworkManager(&page1));
     page1.mainFrame()->setHtml("<html><head>"
-                                "<meta http-equiv=\"refresh\"content=\"0;URL=http://qt.nokia.com/favicon.ico\">"
+                                "<meta http-equiv=\"refresh\"content=\"0;URL=qrc:///resources/index.html\">"
                                 "</head><body><h1>Page redirects immediately...</h1>"
                                 "</body></html>");
     QVERIFY(::waitForSignal(&page1, SIGNAL(loadFinished(bool))));
     QTest::qWait(500);
-    QCOMPARE(page1.mainFrame()->url().toString(), QString("http://qt.nokia.com/favicon.ico"));
+    QCOMPARE(page1.mainFrame()->url(), QUrl(QLatin1String("qrc:///resources/index.html")));
     
     // With QWebPage::StopScheduledPageRefresh
     QWebPage page2;
     page2.setNetworkAccessManager(new TestNetworkManager(&page2));
     page2.mainFrame()->setHtml("<html><head>"
-                               "<meta http-equiv=\"refresh\"content=\"1;URL=http://qt.nokia.com/favicon.ico\">"
+                               "<meta http-equiv=\"refresh\"content=\"1;URL=qrc:///resources/index.html\">"
                                "</head><body><h1>Page redirect test with 1 sec timeout...</h1>"
                                "</body></html>");
     page2.triggerAction(QWebPage::StopScheduledPageRefresh);
     QTest::qWait(1500);
-    QCOMPARE(page2.mainFrame()->url().toString(), QString("about:blank"));
+    QCOMPARE(page2.mainFrame()->url().toString(), QLatin1String("about:blank"));
 }
 
 void tst_QWebPage::findText()
