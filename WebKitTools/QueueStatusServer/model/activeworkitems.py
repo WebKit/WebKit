@@ -43,15 +43,20 @@ class ActiveWorkItems(db.Model):
         return zip(self.item_ids, self.item_dates)
 
     def _set_item_time_pairs(self, pairs):
-        if not pairs:
-            self.item_ids = []
-            self.item_dates = []
-            return
-        self.item_ids, self.item_dates = zip(*pairs)
+        if pairs:
+            # The * operator raises on an empty list.
+            # db.Model does not tuples, we have to make lists.
+            self.item_ids, self.item_dates = map(list, zip(*pairs))
+        else:
+            self.item_ids = self.item_dates = []
 
     def _append_item_time_pair(self, pair):
         self.item_ids.append(pair[0])
         self.item_dates.append(pair[1])
+
+    def expire_item(self, item_id):
+        nonexpired_pairs = [pair for pair in self._item_time_pairs() if pair[0] != item_id]
+        self._set_item_time_pairs(nonexpired_pairs)
 
     def deactivate_expired(self, now):
         one_hour_ago = time.mktime((now - timedelta(minutes=60)).timetuple())

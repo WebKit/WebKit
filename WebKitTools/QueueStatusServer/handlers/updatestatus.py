@@ -31,6 +31,7 @@ from google.appengine.ext import webapp, db
 from google.appengine.ext.webapp import template
 
 from handlers.updatebase import UpdateBase
+from model.activeworkitems import ActiveWorkItems
 from model.attachment import Attachment
 from model.queuestatus import QueueStatus
 
@@ -56,8 +57,24 @@ class UpdateStatus(UpdateBase):
         queue_status.results_file = db.Blob(str(results_file))
         return queue_status
 
+    @staticmethod
+    def _expire_item(key, item_id):
+        active_work_items = db.get(key)
+        active_work_items.expire_item(item_id)
+        active_work_items.put()
+
+    # FIXME: An explicit lock_release request would be cleaner than this magical "Retry" status.
+    def _update_active_work_items(self, queue_status):
+        if queue_status.message != "Retry":  # From AbstractQueue._retry_status
+            return
+        active_items = ActiveWorkItems.all().filter("queue_name =", queue_status.queue_name).get()
+        if not active_items:
+            return
+        return db.run_in_transaction(self._expire_item, active_items.key(), queue_status.active_patch_id)
+
     def post(self):
         queue_status = self._queue_status_from_request()
         queue_status.put()
+        self._update_active_work_items(queue_status)
         Attachment.dirty(queue_status.active_patch_id)
         self.response.out.write(queue_status.key().id())

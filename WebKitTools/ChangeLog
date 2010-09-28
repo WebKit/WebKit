@@ -1,3 +1,26 @@
+2010-09-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Patch locks should expire if a patch is marked for retry
+        https://bugs.webkit.org/show_bug.cgi?id=46682
+
+        This was part Adam's original CommitQueueTask design,
+        but support for it was missing from the server.
+        I added the support, but triggering lock-release based on this
+        special "retry" status feels a bit strange so I added a FIXME.
+
+        I also changed the text in queuestatus.html to say "Lock Acquired"
+        since "Last Activity" isn't really true.  We only update the lock
+        date when the patch is started, not on every status update.
+
+        I also noticed an exception in next-patch, which I fixed by re-writing
+        the unzip logic in activeworkitems.py again.
+
+        * QueueStatusServer/handlers/updatestatus.py:
+        * QueueStatusServer/model/activeworkitems.py:
+        * QueueStatusServer/templates/queuestatus.html:
+
 2010-09-27  Tony Chang  <tony@chromium.org>
 
         Reviewed by David Levin.
