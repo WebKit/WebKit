@@ -171,6 +171,12 @@ static Vector<MediaPlayerFactory*>& installedMediaEngines()
 
 #if PLATFORM(WIN)
         MediaPlayerPrivateQuickTimeVisualContext::registerMediaEngine(addMediaEngine);
+#elif PLATFORM(QT)
+#if USE(QT_MULTIMEDIA)
+        MediaPlayerPrivateQt::registerMediaEngine(addMediaEngine);
+#else
+        MediaPlayerPrivatePhonon::registerMediaEngine(addMediaEngine);
+#endif
 #elif !PLATFORM(GTK) && !PLATFORM(EFL)
         // FIXME: currently all the MediaEngines are named
         // MediaPlayerPrivate. This code will need an update when bug

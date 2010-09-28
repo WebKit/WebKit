@@ -1,3 +1,17 @@
+2010-09-28  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Rename MediaPlayerPrivate to MediaPlayerPrivateQt/Phonon
+
+        https://bugs.webkit.org/show_bug.cgi?id=36663
+
+        * platform/graphics/MediaPlayer.cpp:
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        * platform/graphics/qt/MediaPlayerPrivateQt.h:
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.cpp:
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.h:
+
 2010-09-28  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

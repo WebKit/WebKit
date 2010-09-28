@@ -40,13 +40,13 @@ QT_END_NAMESPACE
 
 namespace WebCore {
 
-    class MediaPlayerPrivate : public QObject, public MediaPlayerPrivateInterface {
+    class MediaPlayerPrivatePhonon : public QObject, public MediaPlayerPrivateInterface {
 
         Q_OBJECT
 
     public:
         static void registerMediaEngine(MediaEngineRegistrar);
-        ~MediaPlayerPrivate();
+        ~MediaPlayerPrivatePhonon();
 
         // These enums are used for debugging
         Q_ENUMS(ReadyState NetworkState PhononState)
@@ -127,7 +127,7 @@ namespace WebCore {
         void totalTimeChanged(qint64);
 
     private:
-        MediaPlayerPrivate(MediaPlayer*);
+        MediaPlayerPrivatePhonon(MediaPlayer*);
         static MediaPlayerPrivateInterface* create(MediaPlayer* player);
 
         static void getSupportedTypes(HashSet<String>&);
