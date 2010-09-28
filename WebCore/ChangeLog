@@ -2,6 +2,30 @@
 
         Reviewed by Kenneth Russell.
 
+        Add AudioDestinationNode files
+        https://bugs.webkit.org/show_bug.cgi?id=45009
+
+        No new tests since audio API is not yet implemented.
+
+        * webaudio/AudioDestinationNode.cpp: Added.
+        (WebCore::AudioDestinationNode::AudioDestinationNode):
+        (WebCore::AudioDestinationNode::~AudioDestinationNode):
+        (WebCore::AudioDestinationNode::initialize):
+        (WebCore::AudioDestinationNode::uninitialize):
+        (WebCore::AudioDestinationNode::provideInput):
+        * webaudio/AudioDestinationNode.h: Added.
+        (WebCore::AudioDestinationNode::create):
+        (WebCore::AudioDestinationNode::process):
+        (WebCore::AudioDestinationNode::reset):
+        (WebCore::AudioDestinationNode::currentTime):
+        (WebCore::AudioDestinationNode::sampleRate):
+        (WebCore::AudioDestinationNode::numberOfChannels):
+        * webaudio/AudioDestinationNode.idl: Added.
+
+2010-09-28  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
         audio engine: audio output classes
         https://bugs.webkit.org/show_bug.cgi?id=34716
 
