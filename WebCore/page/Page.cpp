@@ -192,6 +192,9 @@ Page::~Page()
         frame->pageDestroyed();
 
     m_editorClient->pageDestroyed();
+    if (m_pluginData)
+        m_pluginData->disconnectPage();
+    
 #if ENABLE(INSPECTOR)
     m_inspectorController->inspectedPageDestroyed();
 #endif
