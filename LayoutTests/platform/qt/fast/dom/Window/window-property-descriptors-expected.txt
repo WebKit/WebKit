@@ -39,6 +39,7 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'DOMImplementation') is 'obj
 PASS typeof Object.getOwnPropertyDescriptor(window, 'DOMParser') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'DOMStringList') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'DOMStringMap') is 'object'
+PASS typeof Object.getOwnPropertyDescriptor(window, 'DOMTokenList') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'Date') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'Document') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'DocumentFragment') is 'object'

@@ -1,3 +1,12 @@
+2010-09-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed fix after r68440. Update Qt specific expected files.
+
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/qt/fast/dom/prototype-inheritance-expected.txt:
+        * platform/qt/fast/js/global-constructors-expected.txt:
+
 2010-09-27  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, added an expectation.
