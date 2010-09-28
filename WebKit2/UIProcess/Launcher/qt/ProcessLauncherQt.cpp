@@ -54,6 +54,7 @@ namespace WebKit {
 class ProcessLauncherHelper : public QObject {
     Q_OBJECT
 public:
+    ~ProcessLauncherHelper();
     void launch(WebKit::ProcessLauncher*);
     QLocalSocket* takePendingConnection();
     static ProcessLauncherHelper* instance();
@@ -98,6 +99,11 @@ QLocalSocket* ProcessLauncherHelper::takePendingConnection()
     return m_server.nextPendingConnection();
 }
 
+ProcessLauncherHelper::~ProcessLauncherHelper()
+{
+    m_server.close();
+}
+
 ProcessLauncherHelper::ProcessLauncherHelper()
 {
     srandom(time(0));
@@ -106,6 +112,7 @@ ProcessLauncherHelper::ProcessLauncherHelper()
         ASSERT_NOT_REACHED();
     }
     connect(&m_server, SIGNAL(newConnection()), this, SLOT(newConnection()));
+    connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), SLOT(deleteLater()), Qt::QueuedConnection);
 }
 
 ProcessLauncherHelper* ProcessLauncherHelper::instance()
