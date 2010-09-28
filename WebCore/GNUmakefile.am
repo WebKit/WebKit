@@ -82,7 +82,7 @@ webcoregtk_cppflags += \
 	-I$(srcdir)/WebCore/platform/network/soup
 
 webcore_built_nosources += \
-	DerivedSources/WebCore/tokenizer.cpp \
+	DerivedSources/WebCore/tokenizer.cpp
 
 webcore_built_sources += \
 	DerivedSources/WebCore/CSSGrammar.cpp \

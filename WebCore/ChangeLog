@@ -1,5 +1,11 @@
 2010-09-28  Andras Becsi  <abecsi@webkit.org>
 
+        [Gtk] Build fix. Remove leftover trailing backslash.
+
+        * GNUmakefile.am:
+
+2010-09-28  Andras Becsi  <abecsi@webkit.org>
+
         Unreviewed.
 
         [Gtk] Build fix after r68521
