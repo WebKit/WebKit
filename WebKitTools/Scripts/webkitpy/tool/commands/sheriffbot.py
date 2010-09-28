@@ -86,7 +86,7 @@ class SheriffBot(AbstractQueue, StepSequenceErrorHandler):
         self._update()
 
         # We do one read from buildbot to ensure a consistent view.
-        revisions_causing_failures = self._tool.buildbot.revisions_causing_failures()
+        revisions_causing_failures = self._tool.buildbot.failure_map().revisions_causing_failures()
 
         # Similarly, we read once from our the status_server.
         old_failing_svn_revisions = []

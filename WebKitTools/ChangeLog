@@ -1,3 +1,18 @@
+2010-09-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Introduce FailureMap to summaries the failures status of all the bots
+        https://bugs.webkit.org/show_bug.cgi?id=46700
+
+        This patch gives the SheriffBot a handle on the list of failing tests.
+
+        * Scripts/webkitpy/common/net/buildbot.py:
+        * Scripts/webkitpy/common/net/failuremap.py: Added.
+        * Scripts/webkitpy/tool/commands/queries.py:
+        * Scripts/webkitpy/tool/commands/sheriffbot.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
 2010-09-28  Adam Roben  <aroben@apple.com>
 
         Update for the addition of WKPageUIClient::didNotHandleKeyEvent

@@ -167,7 +167,7 @@ class WhoBrokeIt(AbstractDeclarativeCommand):
     help_text = "Print a list of revisions causing failures on %s" % BuildBot.default_host
 
     def execute(self, options, args, tool):
-        for revision, builders in self._tool.buildbot.revisions_causing_failures(False).items():
+        for revision, builders in self._tool.buildbot.failure_map(False).revisions_causing_failures().items():
             print "r%s appears to have broken %s" % (revision, [builder.name() for builder in builders])
 
 

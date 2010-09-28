@@ -34,6 +34,7 @@ import urllib
 import urllib2
 import xmlrpclib
 
+from webkitpy.common.net.failuremap import FailureMap
 from webkitpy.common.net.regressionwindow import RegressionWindow
 from webkitpy.common.system.logutils import get_logger
 from webkitpy.thirdparty.autoinstalled.mechanize import Browser
@@ -451,20 +452,17 @@ class BuildBot(object):
             self._builder_by_name[name] = builder
         return builder
 
-    def revisions_causing_failures(self, only_core_builders=True):
+    def failure_map(self, only_core_builders=True):
         builder_statuses = self.core_builder_statuses() if only_core_builders else self.builder_statuses()
+        failure_map = FailureMap()
         revision_to_failing_bots = {}
         for builder_status in builder_statuses:
             if builder_status["is_green"]:
                 continue
             builder = self.builder_with_name(builder_status["name"])
             regression_window = builder.find_blameworthy_regression_window(builder_status["build_number"])
-            revisions = regression_window.revisions() if regression_window else []
-            for revision in revisions:
-                failing_bots = revision_to_failing_bots.get(revision, [])
-                failing_bots.append(builder)
-                revision_to_failing_bots[revision] = failing_bots
-        return revision_to_failing_bots
+            failure_map.add_regression_window(builder, regression_window)
+        return failure_map
 
     # This makes fewer requests than calling Builder.latest_build would.  It grabs all builder
     # statuses in one request using self.builder_statuses (fetching /one_box_per_builder instead of builder pages).
