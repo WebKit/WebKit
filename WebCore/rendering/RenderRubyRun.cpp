@@ -143,14 +143,15 @@ void RenderRubyRun::addChild(RenderObject* child, RenderObject* beforeChild)
             RenderBlock::removeChild(beforeChild);
             newRun->addChild(beforeChild);
         } else {
-            ASSERT(hasRubyBase()); // Otherwise beforeChild would be borked.
-            // Insertion before a ruby base object.
-            // In this case we need insert a new run before the current one and split the base.
-            RenderObject* ruby = parent();
-            RenderRubyRun* newRun = staticCreateRubyRun(ruby);
-            ruby->addChild(newRun, this);
-            newRun->addChild(child);
-            rubyBaseSafe()->moveChildren(newRun->rubyBaseSafe(), beforeChild);
+            if (hasRubyBase()) {
+                // Insertion before a ruby base object.
+                // In this case we need insert a new run before the current one and split the base.
+                RenderObject* ruby = parent();
+                RenderRubyRun* newRun = staticCreateRubyRun(ruby);
+                ruby->addChild(newRun, this);
+                newRun->addChild(child);
+                rubyBaseSafe()->moveChildren(newRun->rubyBaseSafe(), beforeChild);
+            }
         }
     } else {
         // child is not a text -> insert it into the base
@@ -171,13 +172,14 @@ void RenderRubyRun::removeChild(RenderObject* child)
         if (base && rightNeighbour && rightNeighbour->isRubyRun()) {
             // Ruby run without a base can happen only at the first run.
             RenderRubyRun* rightRun = static_cast<RenderRubyRun*>(rightNeighbour);
-            ASSERT(rightRun->hasRubyBase());
-            RenderRubyBase* rightBase = rightRun->rubyBaseSafe();
-            // Collect all children in a single base, then swap the bases.
-            rightBase->moveChildren(base);
-            moveChildTo(rightRun, rightRun->children(), base);
-            rightRun->moveChildTo(this, children(), rightBase);
-            // The now empty ruby base will be removed below.
+            if (rightRun->hasRubyBase()) {
+                RenderRubyBase* rightBase = rightRun->rubyBaseSafe();
+                // Collect all children in a single base, then swap the bases.
+                rightBase->moveChildren(base);
+                moveChildTo(rightRun, rightRun->children(), base);
+                rightRun->moveChildTo(this, children(), rightBase);
+                // The now empty ruby base will be removed below.
+            }
         }
     }
 

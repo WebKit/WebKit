@@ -1,5 +1,22 @@
 2010-09-28  Mark Rowe  <mrowe@apple.com>
 
+        Merge r65090.
+
+    2010-08-10  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Take checks for ruby base existence out of the ASSERTs.
+        https://bugs.webkit.org/show_bug.cgi?id=43795
+
+        Test: fast/ruby/ruby-remove-no-base.html
+
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::addChild):
+        (WebCore::RenderRubyRun::removeChild):
+
+2010-09-28  Mark Rowe  <mrowe@apple.com>
+
         Merge r65280.
 
     2010-08-12  Justin Schuh  <jschuh@chromium.org>

@@ -1,5 +1,20 @@
 2010-09-28  Mark Rowe  <mrowe@apple.com>
 
+        Merge r65090.
+
+    2010-08-10  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Tests that removing a ruby child which causes merging of ruby base withe
+        a non existant base of the right sibling run does not result in crash.
+        https://bugs.webkit.org/show_bug.cgi?id=43795
+
+        * fast/ruby/ruby-remove-no-base-expected.txt: Added.
+        * fast/ruby/ruby-remove-no-base.html: Added.
+
+2010-09-28  Mark Rowe  <mrowe@apple.com>
+
         Merge r65280.
 
     2010-08-12  Justin Schuh  <jschuh@chromium.org>
