@@ -68,10 +68,7 @@ contains(DEFINES, ENABLE_SINGLE_THREADED=1) {
 !contains(DEFINES, ENABLE_NOTIFICATIONS=.): DEFINES += ENABLE_NOTIFICATIONS=1
 !contains(DEFINES, ENABLE_IMAGE_RESIZER=.): DEFINES += ENABLE_IMAGE_RESIZER=0
 !contains(DEFINES, ENABLE_INPUT_SPEECH=.): DEFINES += ENABLE_INPUT_SPEECH=0
-
-greaterThan(QT_MINOR_VERSION, 5) {
-    !contains(DEFINES, ENABLE_3D_RENDERING=.): DEFINES += ENABLE_3D_RENDERING=1
-}
+!contains(DEFINES, ENABLE_3D_RENDERING=.): DEFINES += ENABLE_3D_RENDERING=1
 
 # SVG support
 !contains(DEFINES, ENABLE_SVG=0) {
@@ -89,9 +86,7 @@ greaterThan(QT_MINOR_VERSION, 5) {
 !contains(DEFINES, ENABLE_DATALIST=.): DEFINES += ENABLE_DATALIST=1
 
 # Tiled Backing Store support
-greaterThan(QT_MINOR_VERSION, 5) {
-    !contains(DEFINES, ENABLE_TILED_BACKING_STORE=.): DEFINES += ENABLE_TILED_BACKING_STORE=1
-}
+!contains(DEFINES, ENABLE_TILED_BACKING_STORE=.): DEFINES += ENABLE_TILED_BACKING_STORE=1
 
 # Nescape plugins support (NPAPI)
 !contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=.) {
@@ -133,8 +128,7 @@ greaterThan(QT_MINOR_VERSION, 5) {
     }
 }
 
-# Enable touch event support with Qt 4.6
-!lessThan(QT_MINOR_VERSION, 6): DEFINES += ENABLE_TOUCH_EVENTS=1
+DEFINES += ENABLE_TOUCH_EVENTS=1
 
 # HTML5 Media Support
 # We require QtMultimedia or Phonon
@@ -142,7 +136,7 @@ greaterThan(QT_MINOR_VERSION, 5) {
     DEFINES -= ENABLE_VIDEO=1
     DEFINES += ENABLE_VIDEO=0
 
-    !lessThan(QT_MINOR_VERSION, 6):contains(MOBILITY_CONFIG, multimedia) {
+    contains(MOBILITY_CONFIG, multimedia) {
         DEFINES -= ENABLE_VIDEO=0
         DEFINES += ENABLE_VIDEO=1
     } else:contains(QT_CONFIG, phonon) {

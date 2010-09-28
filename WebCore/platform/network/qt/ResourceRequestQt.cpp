@@ -47,9 +47,7 @@ QNetworkRequest ResourceRequest::toNetworkRequest(QObject* originatingFrame) con
 {
     QNetworkRequest request;
     request.setUrl(url());
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     request.setOriginatingObject(originatingFrame);
-#endif
 
     const HTTPHeaderMap &headers = httpHeaderFields();
     for (HTTPHeaderMap::const_iterator it = headers.begin(), end = headers.end();

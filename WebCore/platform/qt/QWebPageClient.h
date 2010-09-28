@@ -58,9 +58,7 @@ public:
     virtual bool allowsAcceleratedCompositing() const { return false; }
 #endif
 
-#if QT_VERSION >= 0x040600
     virtual void setInputMethodHints(Qt::InputMethodHints hint) = 0;
-#endif
 
 #ifndef QT_NO_CURSOR
     inline void resetCursor()
