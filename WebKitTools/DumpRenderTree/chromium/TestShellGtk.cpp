@@ -134,22 +134,23 @@ static void setupFontconfig()
     // few layout tests.
     static const char* const optionalFonts[] = {
         "/usr/share/fonts/truetype/ttf-lucida/LucidaSansRegular.ttf",
-
-        // This font changed paths across Ubuntu releases.
         "/usr/share/fonts/truetype/ttf-indic-fonts-core/lohit_pa.ttf",
-        "/usr/share/fonts/truetype/ttf-punjabi-fonts/lohit_pa.ttf",
     };
     for (size_t i = 0; i < arraysize(optionalFonts); ++i) {
         const char* font = optionalFonts[i];
+
+        // This font changed paths across Ubuntu releases, so try checking in both locations.
+        if (!strcmp(font, "/usr/share/fonts/truetype/ttf-indic-fonts-core/lohit_pa.ttf")
+            && access(font, R_OK) < 0)
+            font = "/usr/share/fonts/truetype/ttf-punjabi-fonts/lohit_pa.ttf";
+
         if (access(font, R_OK) < 0) {
             fprintf(stderr, "You are missing %s. Without this, some layout tests may fail. "
                             "See http://code.google.com/p/chromium/wiki/LinuxBuildInstructionsPrerequisites "
                             "for more.\n", font);
-        } else {
-            if (!FcConfigAppFontAddFile(fontcfg, (FcChar8 *) font)) {
-                fprintf(stderr, "Failed to load font %s\n", font);
-                exit(1);
-            }
+        } else if (!FcConfigAppFontAddFile(fontcfg, (FcChar8 *) font)) {
+            fprintf(stderr, "Failed to load font %s\n", font);
+            exit(1);
         }
     }
 
