@@ -151,7 +151,6 @@ void WebViewGraphicsBased::updateFrameRate()
 
 void WebViewGraphicsBased::animatedFlip()
 {
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     QSizeF center = graphicsWebView()->boundingRect().size() / 2;
     QPointF centerPoint = QPointF(center.width(), center.height());
     graphicsWebView()->setTransformOriginPoint(centerPoint);
@@ -165,12 +164,10 @@ void WebViewGraphicsBased::animatedFlip()
     animation->setEndValue(rotation + 180 - (rotation % 180));
 
     animation->start(QAbstractAnimation::DeleteWhenStopped);
-#endif
 }
 
 void WebViewGraphicsBased::animatedYFlip()
 {
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     if (!m_machine) {
         m_machine = new QStateMachine(this);
 
@@ -202,7 +199,6 @@ void WebViewGraphicsBased::animatedYFlip()
     }
 
     m_machine->start();
-#endif
 }
 
 void WebViewGraphicsBased::paintEvent(QPaintEvent* event)

@@ -82,11 +82,7 @@ QUrl urlFromUserInput(const QString& string)
     if (fi.exists() && fi.isRelative())
         input = fi.absoluteFilePath();
 
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     return QUrl::fromUserInput(input);
-#else
-    return QUrl(input);
-#endif
 }
 
 

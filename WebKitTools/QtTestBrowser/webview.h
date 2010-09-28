@@ -117,13 +117,11 @@ private:
 
 inline void WebViewGraphicsBased::setYRotation(qreal angle)
 {
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     QRectF r = graphicsWebView()->boundingRect();
     graphicsWebView()->setTransform(QTransform()
         .translate(r.width() / 2, r.height() / 2)
         .rotate(angle, Qt::YAxis)
         .translate(-r.width() / 2, -r.height() / 2));
-#endif
     m_yRotation = angle;
 }
 

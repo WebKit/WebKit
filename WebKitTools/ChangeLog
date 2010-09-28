@@ -1,3 +1,42 @@
+2010-09-28  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Remove support for Qt 4.5
+        https://bugs.webkit.org/show_bug.cgi?id=46718
+
+        Remove the code for versions of Qt prior to 4.6.
+
+        * DumpRenderTree/qt/EventSenderQt.cpp:
+        (EventSender::addTouchPoint):
+        (EventSender::updateTouchPoint):
+        (EventSender::setTouchModifier):
+        (EventSender::touchStart):
+        (EventSender::touchMove):
+        (EventSender::touchEnd):
+        (EventSender::clearTouchPoints):
+        (EventSender::releaseTouchPoint):
+        (EventSender::sendTouchEvent):
+        * DumpRenderTree/qt/EventSenderQt.h:
+        * DumpRenderTree/qt/TextInputControllerQt.cpp:
+        (TextInputController::setMarkedText):
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::LauncherWindow):
+        (LauncherWindow::initializeView):
+        (LauncherWindow::createChrome):
+        (LauncherWindow::sendTouchEvent):
+        (LauncherWindow::eventFilter):
+        (LauncherWindow::applyZoom):
+        (LauncherWindow::setTouchMocking):
+        * QtTestBrowser/launcherwindow.h:
+        * QtTestBrowser/utils.cpp:
+        (urlFromUserInput):
+        * QtTestBrowser/webview.cpp:
+        (WebViewGraphicsBased::animatedFlip):
+        (WebViewGraphicsBased::animatedYFlip):
+        * QtTestBrowser/webview.h:
+        (WebViewGraphicsBased::setYRotation):
+
 2010-09-28  İsmail Dönmez  <ismail@namtrac.org>
 
         Reviewed by Andreas Kling.

@@ -123,9 +123,7 @@ public:
     virtual void keyPressEvent(QKeyEvent* event);
     void grabZoomKeys(bool grab);
 
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     void sendTouchEvent();
-#endif
 
     bool eventFilter(QObject* obj, QEvent* event);
 
@@ -200,11 +198,9 @@ private:
 
     QAction* m_formatMenuAction;
 
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     QPropertyAnimation* m_zoomAnimation;
     QList<QTouchEvent::TouchPoint> m_touchPoints;
     bool m_touchMocking;
-#endif
 };
 
 #endif
