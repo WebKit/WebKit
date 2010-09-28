@@ -3,19 +3,21 @@
  *     * Antonio Gomes <tonikitoo@webkit.org>
  **/
 
-function check(x, y, hPadding, vPadding, list)
+function check(x, y, topPadding, rightPadding, bottomPadding, leftPadding, list)
 {
   if (!window.layoutTestController)
     return;
 
-  var nodes = layoutTestController.nodesFromRect(document, x, y, hPadding, vPadding, true /* ignoreClipping */);
+  var nodes = layoutTestController.nodesFromRect(document, x, y, topPadding, rightPadding, bottomPadding, leftPadding, true /* ignoreClipping */);
   if (!nodes)
     return;
 
   if (nodes.length != list.length) {
     testFailed("Different number of nodes for rect" +
               "[" + x + "," + y + "], " +
-              "[" + hPadding + "," + vPadding + "]: '" + list.length + "' vs '" + nodes.length + "'");
+              "[" + topPadding + "," + rightPadding +
+              "," + bottomPadding + "," + leftPadding +
+              "]: '" + list.length + "' vs '" + nodes.length + "'");
     return;
   }
 
@@ -23,14 +25,16 @@ function check(x, y, hPadding, vPadding, list)
     if (nodes[i] != list[i]) {
       testFailed("Unexpected node #" + i + " for rect " +
                 "[" + x + "," + y + "], " +
-                "[" + hPadding + "," + vPadding + "]" + " - " + nodes[i]);
+                "[" + topPadding + "," + rightPadding +
+                "," + bottomPadding + "," + leftPadding + "]" + " - " + nodes[i]);
       return;
     }
   }
 
   testPassed("All correct nodes found for rect "  +
-           "[" + x + "," + y + "], " +
-           "[" + hPadding + "," + vPadding + "]");
+             "[" + x + "," + y + "], " +
+             "[" + topPadding + "," + rightPadding +
+             "," + bottomPadding + "," + leftPadding + "]");
 }
 
 function getCenterFor(element)

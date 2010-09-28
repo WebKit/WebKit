@@ -22,37 +22,37 @@
 
       window.scrollTo(0, 0);
 
-      check(53, 71, 0, 0, [e.body]);
-      check(53, 71, 10, 0, [e.p3, e.body]);
-      check(53, 71, 0, 10, [e.d1, e.h1, e.body]);
-      check(53, 71, 10, 10, [e.p3, e.d1, e.h1, e.body]);
+      check(53, 71, 0, 0, 0, 0, [e.body]);
+      check(53, 71, 0, 10, 0, 10, [e.p3, e.body]);
+      check(53, 71, 10, 0, 10, 0, [e.d1, e.h1, e.body]);
+      check(53, 71, 10, 10, 10, 10, [e.p3, e.d1, e.h1, e.body]);
 
-      check(152, 105, 0, 10, [e.p3, e.body]);
-      check(152, 105, 10, 0, [e.p4, e.d1, e.body]);
-      check(152, 105, 10, 10, [e.p4, e.p3, e.d1, e.body]);
+      check(152, 105, 10, 0, 10, 0, [e.p3, e.body]);
+      check(152, 105, 0, 10, 0, 10, [e.p4, e.d1, e.body]);
+      check(152, 105, 10, 10, 10, 10, [e.p4, e.p3, e.d1, e.body]);
 
       // e.p1 is invisible and shouldn't appear:
-      check(153,193,0,0,[e.p5]);
+      check(153, 193, 0, 0, 0, 0, [e.p5]);
       // NOTE: [e.p5, e.d2]) should be returned if we did not stop
       // at e.p5, which fully encloses the target rect.
-      check(153,193,20,0, [e.p5]);
-      check(153,193,0,20, [e.p5, e.body]);
+      check(153,193,0, 20, 0, 20, [e.p5]);
+      check(153,193,20, 0, 20, 0, [e.p5, e.body]);
 
       // Precise pixel checks:
-      check(144, 183, 0, 0, [e.body]);
-      check(144, 183, 0, 1, [e.p5, e.body]);
-      check(144, 183, 1, 0, [e.d2, e.body]);
-      check(144, 183, 1, 1, [e.p5, e.d2, e.body]);
-      check(77, 240, 0, 0, [e.p2]);
-      check(77, 240, 10, 0, [e.p2]);
-      check(77, 240, 0, 10, [e.p5, e.span, e.p2]);
-      check(77, 240, 10, 10, [e.p5, e.span, e.p2]);
+      check(144, 183, 0, 0, 0, 0, [e.body]);
+      check(144, 183, 1, 0, 1, 0, [e.p5, e.body]);
+      check(144, 183, 0, 1, 0, 1, [e.d2, e.body]);
+      check(144, 183, 1, 1, 1, 1, [e.p5, e.d2, e.body]);
+      check(77, 240, 0, 0, 0, 0, [e.p2]);
+      check(77, 240, 0, 10, 0, 10, [e.p2]);
+      check(77, 240, 10, 0, 10, 0, [e.p5, e.span, e.p2]);
+      check(77, 240, 10, 10, 10, 10, [e.p5, e.span, e.p2]);
 
       // Expanding area checks:
-      check(39, 212, 0,  0, [e.body]);
-      check(39, 212, 0, 10, [e.d2, e.p2, e.body]);
-      check(39, 212, 10, 0, [e.p5, e.body]);
-      check(39, 212, 10, 10, [e.p5, e.d2, e.p2, e.body]);
+      check(39, 212, 0,  0, 0, 0, [e.body]);
+      check(39, 212, 10, 0, 10, 0, [e.d2, e.p2, e.body]);
+      check(39, 212, 0, 10, 0, 10, [e.p5, e.body]);
+      check(39, 212, 10, 10, 10, 10, [e.p5, e.d2, e.p2, e.body]);
 
       if (window.layoutTestController)
         layoutTestController.notifyDone();

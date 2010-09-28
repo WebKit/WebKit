@@ -631,7 +631,7 @@ Could be worth adding to the API.
 @end
 
 @interface WebView (WebViewPrivateNodesFromRect)
-- (JSValueRef)_nodesFromRect:(JSContextRef)context forDocument:(JSValueRef)value x:(int)x  y:(int)y hPadding:(unsigned)hPadding vPadding:(unsigned)vPadding ignoreClipping:(BOOL)ignoreClipping;
+- (JSValueRef)_nodesFromRect:(JSContextRef)context forDocument:(JSValueRef)value x:(int)x  y:(int)y top:(unsigned)top right:(unsigned)right bottom:(unsigned)bottom left:(unsigned)left ignoreClipping:(BOOL)ignoreClipping;
 @end
 
 @interface NSObject (WebFrameLoadDelegatePrivate)

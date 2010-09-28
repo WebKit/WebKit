@@ -1048,7 +1048,7 @@ KURL Document::baseURI() const
 // * making it receive a rect as parameter, i.e. nodesFromRect(x, y, w, h);
 // * making it receive the expading size of each direction separately,
 //   i.e. nodesFromRect(x, y, topSize, rightSize, bottomSize, leftSize);
-PassRefPtr<NodeList> Document::nodesFromRect(int centerX, int centerY, unsigned hPadding, unsigned vPadding, bool ignoreClipping) const
+PassRefPtr<NodeList> Document::nodesFromRect(int centerX, int centerY, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding, bool ignoreClipping) const
 {
     // FIXME: Share code between this, elementFromPoint and caretRangeFromPoint.
     if (!renderer())
@@ -1062,26 +1062,25 @@ PassRefPtr<NodeList> Document::nodesFromRect(int centerX, int centerY, unsigned 
 
     float zoomFactor = frame->pageZoomFactor();
     IntPoint point = roundedIntPoint(FloatPoint(centerX * zoomFactor + view()->scrollX(), centerY * zoomFactor + view()->scrollY()));
-    IntSize padding(hPadding, vPadding);
 
     int type = HitTestRequest::ReadOnly | HitTestRequest::Active;
 
     // When ignoreClipping is false, this method returns null for coordinates outside of the viewport.
     if (ignoreClipping)
         type |= HitTestRequest::IgnoreClipping;
-    else if (!frameView->visibleContentRect().intersects(IntRect(point, padding)))
+    else if (!frameView->visibleContentRect().intersects(HitTestResult::rectFromPoint(point, topPadding, rightPadding, bottomPadding, leftPadding)))
         return 0;
 
     HitTestRequest request(type);
 
     // Passing a zero padding will trigger a rect hit test, however for the purposes of nodesFromRect,
     // we special handle this case in order to return a valid NodeList.
-    if (padding.isZero()) {
+    if (!topPadding && !rightPadding && !bottomPadding && !leftPadding) {
         HitTestResult result(point);
         return handleZeroPadding(request, result);
     }
 
-    HitTestResult result(point, padding);
+    HitTestResult result(point, topPadding, rightPadding, bottomPadding, leftPadding);
     renderView()->layer()->hitTest(request, result);
 
     return StaticHashSetNodeList::adopt(result.rectBasedTestResult());

@@ -1,3 +1,64 @@
+2010-09-23  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make Document::nodesFromRect more flexible
+        https://bugs.webkit.org/show_bug.cgi?id=46336
+
+        The patch changes the API for the Document::nodesFromRect() method as follows:
+        
+        from
+        - RefPtf<NodeList> nodesFromRect(int x, int y, unsigned horizontalPadding, unsigned verticalPadding, bool ignoreClipping)
+        to
+        - RefPtf<NodeList> nodesFromRect(int x, int y, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding,
+                                         unsigned leftPadding, bool ignoreClipping)
+
+        Previously the method was receiving as parameter horizontal and vertical padding values.
+        In practice, the horizontal padding was being used to expand a given center point in both
+        right and left directions, while vertical padding was expanding it to the top and bottom directions.
+
+        Although this design makes it possible to improve the touch experience on mobile devices
+        (Document::nodesFromRect exposes the rect based hit testing system), empirical experiments
+        showed that, specially in capacitive touch screens, users tend to tap below elements. So
+        for even more accurate results (which means here the possibility of pleasant tapping experience),
+        it makes sense to use a region that is offset more above the touch point, favoring elements
+        above the touch point.
+
+        The patch basically implements that, increasing the API flexible and power by making it possible
+        to specify different padding values for each direction in a given orientation.
+
+        Changes were made accordingly to the HitTestResult, RenderLayer, RenderImage and RenderLineBoxList
+        classes.
+
+        WebCore:
+
+        * WebCore.exp.in:
+        * dom/Document.h: API adjustment.
+        * dom/Document.idl: Ditto.
+        * dom/Document.cpp: API adjustment and method body implementation accordingly.
+        (WebCore::Document::nodesFromRect):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::hitTestResultAtPoint): For simplicity, I did not change the signature
+            but the way the padding value passed in as parameter is being used to construct a HitTestResult.
+        * rendering/HitTestResult.cpp: Changed the rect-based bits from using IntSize (padding) to separated paddings for each direction.
+        (WebCore::HitTestResult::HitTestResult): Ditto.
+        (WebCore::HitTestResult::operator=): Ditto.
+        (WebCore::HitTestResult::rectFromPoint): Ditto.
+        * rendering/HitTestResult.h:
+        (WebCore::HitTestResult::topPadding): getter for the top padding.
+        (WebCore::HitTestResult::rightPadding): getter for the right padding.
+        (WebCore::HitTestResult::bottomPadding): getter for the bottom padding.
+        (WebCore::HitTestResult::leftPadding): getter for the left padding.
+        (WebCore::HitTestResult::rectFromPoint): Added a static method that given a center point and padding values for each direction,
+            returns the rect that is going to be used in WebCore's hit testing processing.
+        * rendering/RenderImage.cpp: Changed the rect-based bits from using IntSize (padding) to separated paddings for each direction.
+        (WebCore::RenderImage::nodeAtPoint): Ditto.
+        * rendering/RenderLayer.cpp: Ditto.
+        (WebCore::RenderLayer::hitTestLayer): Ditto.
+        (WebCore::RenderLayer::hitTestList): Ditto.
+        * rendering/RenderLineBoxList.cpp: Ditto.
+        (WebCore::RenderLineBoxList::hitTest): Ditto.
+
 2010-09-27  Chris Rogers  <crogers@google.com>
 
         Reviewed by James Robinson.

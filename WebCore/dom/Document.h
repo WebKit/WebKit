@@ -308,7 +308,7 @@ public:
 
     /**
      * Retrieve all nodes that intersect a rect in the window's document, until it is fully enclosed by
-     * the boundaries of node.
+     * the boundaries of a node.
      *
      * @param centerX x reference for the rectangle in CSS pixels
      * @param centerY y reference for the rectangle in CSS pixels
@@ -317,7 +317,8 @@ public:
      * @param ignoreClipping whether or not to ignore the root scroll frame when retrieving the element.
      *        If false, this method returns null for coordinates outside of the viewport.
      */
-    PassRefPtr<NodeList> nodesFromRect(int centerX, int centerY, unsigned hPadding, unsigned vPadding, bool ignoreClipping) const;
+    PassRefPtr<NodeList> nodesFromRect(int centerX, int centerY, unsigned topPadding, unsigned rightPadding,
+                                       unsigned bottomPadding, unsigned leftPadding, bool ignoreClipping) const;
     Element* elementFromPoint(int x, int y) const;
     PassRefPtr<Range> caretRangeFromPoint(int x, int y);
 

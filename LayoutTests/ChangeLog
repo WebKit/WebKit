@@ -1,3 +1,17 @@
+2010-09-23  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make Document::nodesFromRect more flexible
+        https://bugs.webkit.org/show_bug.cgi?id=46336
+
+        Tests basically adjusted to the new API.
+
+        * fast/dom/nodesFromRect-basic-expected.txt:
+        * fast/dom/nodesFromRect-basic.html:
+        * fast/dom/resources/nodesFromRect.js:
+        (check):
+
 2010-09-27  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, added missing expectations.

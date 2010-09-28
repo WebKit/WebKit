@@ -60,7 +60,7 @@ public:
     bool isCommandEnabled(JSStringRef name);
     void keepWebHistory();
     JSValueRef computedStyleIncludingVisitedInfo(JSContextRef, JSValueRef);
-    JSValueRef nodesFromRect(JSContextRef, JSValueRef, int x, int y, unsigned hPadding, unsigned vPadding, bool ignoreClipping);
+    JSValueRef nodesFromRect(JSContextRef, JSValueRef, int x, int y, unsigned top, unsigned right, unsigned bottom, unsigned left, bool ignoreClipping);
     void notifyDone();
     int numberOfPages(float pageWidthInPixels, float pageHeightInPixels);
     void overridePreference(JSStringRef key, JSStringRef value);

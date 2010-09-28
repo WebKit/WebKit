@@ -6057,7 +6057,7 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
 
 @implementation WebView (WebViewPrivateNodesFromRect)
 
-- (JSValueRef)_nodesFromRect:(JSContextRef)context forDocument:(JSValueRef)value x:(int)x  y:(int)y hPadding:(unsigned)hPadding vPadding:(unsigned)vPadding ignoreClipping:(BOOL)ignoreClipping
+- (JSValueRef)_nodesFromRect:(JSContextRef)context forDocument:(JSValueRef)value x:(int)x  y:(int)y top:(unsigned)top right:(unsigned)right bottom:(unsigned)bottom left:(unsigned)left ignoreClipping:(BOOL)ignoreClipping
 {
     JSLock lock(SilenceAssertionsOnly);
     ExecState* exec = toJS(context);
@@ -6068,7 +6068,7 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
         return JSValueMakeUndefined(context);
     JSDocument* jsDocument = static_cast<JSDocument*>(asObject(jsValue));
     Document* document = jsDocument->impl();
-    RefPtr<NodeList> nodes = document->nodesFromRect(x, y, hPadding, vPadding, ignoreClipping);
+    RefPtr<NodeList> nodes = document->nodesFromRect(x, y, top, right, bottom, left, ignoreClipping);
     return toRef(exec, toJS(exec, jsDocument->globalObject(), nodes.get()));
 }
 

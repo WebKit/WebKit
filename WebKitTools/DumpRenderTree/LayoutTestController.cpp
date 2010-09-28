@@ -515,18 +515,20 @@ static JSValueRef computedStyleIncludingVisitedInfoCallback(JSContextRef context
 
 static JSValueRef nodesFromRectCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    if (argumentCount != 6)
+    if (argumentCount != 8)
         return JSValueMakeUndefined(context);
 
     int x = JSValueToNumber(context, arguments[1], NULL);
     int y = JSValueToNumber(context, arguments[2], NULL);
-    int hPadding = static_cast<unsigned>(JSValueToNumber(context, arguments[3], NULL));
-    int vPadding = static_cast<unsigned>(JSValueToNumber(context, arguments[4], NULL));
-    bool ignoreClipping = JSValueToBoolean(context, arguments[5]);
+    int top = static_cast<unsigned>(JSValueToNumber(context, arguments[3], NULL));
+    int right = static_cast<unsigned>(JSValueToNumber(context, arguments[4], NULL));
+    int bottom = static_cast<unsigned>(JSValueToNumber(context, arguments[5], NULL));
+    int left = static_cast<unsigned>(JSValueToNumber(context, arguments[6], NULL));
+    bool ignoreClipping = JSValueToBoolean(context, arguments[7]);
 
     // Has mac implementation.
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    return controller->nodesFromRect(context, arguments[0], x, y, hPadding, vPadding, ignoreClipping);
+    return controller->nodesFromRect(context, arguments[0], x, y, top, right, bottom, left, ignoreClipping);
 }
 
 static JSValueRef layerTreeAsTextCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
