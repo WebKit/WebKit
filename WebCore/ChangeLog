@@ -1,3 +1,37 @@
+2010-09-28  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46750
+        
+        Rename the MarginInfo members and functions to be block-flow independent.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::MarginInfo::MarginInfo):
+        (WebCore::RenderBlock::adjustPositionedBlock):
+        (WebCore::RenderBlock::adjustFloatingBlock):
+        (WebCore::RenderBlock::collapseMargins):
+        (WebCore::RenderBlock::clearFloatsIfNeeded):
+        (WebCore::RenderBlock::estimateVerticalPosition):
+        (WebCore::RenderBlock::setCollapsedBottomMargin):
+        (WebCore::RenderBlock::handleBottomOfBlock):
+        (WebCore::RenderBlock::layoutBlockChild):
+        (WebCore::RenderBlock::applyAfterBreak):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::MarginInfo::setAtBeforeSideOfBlock):
+        (WebCore::RenderBlock::MarginInfo::setAtAfterSideOfBlock):
+        (WebCore::RenderBlock::MarginInfo::setMarginBeforeQuirk):
+        (WebCore::RenderBlock::MarginInfo::setMarginAfterQuirk):
+        (WebCore::RenderBlock::MarginInfo::setDeterminedMarginBeforeQuirk):
+        (WebCore::RenderBlock::MarginInfo::atBeforeSideOfBlock):
+        (WebCore::RenderBlock::MarginInfo::canCollapseWithMarginBefore):
+        (WebCore::RenderBlock::MarginInfo::canCollapseWithMarginAfter):
+        (WebCore::RenderBlock::MarginInfo::canCollapseMarginBeforeWithChildren):
+        (WebCore::RenderBlock::MarginInfo::canCollapseMarginAfterWithChildren):
+        (WebCore::RenderBlock::MarginInfo::determinedMarginBeforeQuirk):
+        (WebCore::RenderBlock::MarginInfo::marginBeforeQuirk):
+        (WebCore::RenderBlock::MarginInfo::marginAfterQuirk):
+
 2010-09-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

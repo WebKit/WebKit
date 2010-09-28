@@ -494,8 +494,8 @@ private:
     class MarginInfo {
         // Collapsing flags for whether we can collapse our margins with our children's margins.
         bool m_canCollapseWithChildren : 1;
-        bool m_canCollapseTopWithChildren : 1;
-        bool m_canCollapseBottomWithChildren : 1;
+        bool m_canCollapseMarginBeforeWithChildren : 1;
+        bool m_canCollapseMarginAfterWithChildren : 1;
 
         // Whether or not we are a quirky container, i.e., do we collapse away top and bottom
         // margins in our container.  Table cells and the body are the common examples. We
@@ -506,30 +506,30 @@ private:
         // They may or may not collapse with the top margin of the block (|m_canCollapseTopWithChildren| tells us that), but they will
         // always be collapsing with one another.  This variable can remain set to true through multiple iterations 
         // as long as we keep encountering self-collapsing blocks.
-        bool m_atTopOfBlock : 1;
+        bool m_atBeforeSideOfBlock : 1;
 
         // This flag is set when we know we're examining bottom margins and we know we're at the bottom of the block.
-        bool m_atBottomOfBlock : 1;
+        bool m_atAfterSideOfBlock : 1;
 
         // These variables are used to detect quirky margins that we need to collapse away (in table cells
         // and in the body element).
-        bool m_topQuirk : 1;
-        bool m_bottomQuirk : 1;
-        bool m_determinedTopQuirk : 1;
+        bool m_marginBeforeQuirk : 1;
+        bool m_marginAfterQuirk : 1;
+        bool m_determinedMarginBeforeQuirk : 1;
 
         // These flags track the previous maximal positive and negative margins.
         int m_posMargin;
         int m_negMargin;
 
     public:
-        MarginInfo(RenderBlock* b, int top, int bottom);
+        MarginInfo(RenderBlock* b, int beforeBorderPadding, int afterBorderPadding);
 
-        void setAtTopOfBlock(bool b) { m_atTopOfBlock = b; }
-        void setAtBottomOfBlock(bool b) { m_atBottomOfBlock = b; }
+        void setAtBeforeSideOfBlock(bool b) { m_atBeforeSideOfBlock = b; }
+        void setAtAfterSideOfBlock(bool b) { m_atAfterSideOfBlock = b; }
         void clearMargin() { m_posMargin = m_negMargin = 0; }
-        void setTopQuirk(bool b) { m_topQuirk = b; }
-        void setBottomQuirk(bool b) { m_bottomQuirk = b; }
-        void setDeterminedTopQuirk(bool b) { m_determinedTopQuirk = b; }
+        void setMarginBeforeQuirk(bool b) { m_marginBeforeQuirk = b; }
+        void setMarginAfterQuirk(bool b) { m_marginAfterQuirk = b; }
+        void setDeterminedMarginBeforeQuirk(bool b) { m_determinedMarginBeforeQuirk = b; }
         void setPosMargin(int p) { m_posMargin = p; }
         void setNegMargin(int n) { m_negMargin = n; }
         void setPosMarginIfLarger(int p) { if (p > m_posMargin) m_posMargin = p; }
@@ -537,15 +537,15 @@ private:
 
         void setMargin(int p, int n) { m_posMargin = p; m_negMargin = n; }
 
-        bool atTopOfBlock() const { return m_atTopOfBlock; }
-        bool canCollapseWithTop() const { return m_atTopOfBlock && m_canCollapseTopWithChildren; }
-        bool canCollapseWithBottom() const { return m_atBottomOfBlock && m_canCollapseBottomWithChildren; }
-        bool canCollapseTopWithChildren() const { return m_canCollapseTopWithChildren; }
-        bool canCollapseBottomWithChildren() const { return m_canCollapseBottomWithChildren; }
+        bool atBeforeSideOfBlock() const { return m_atBeforeSideOfBlock; }
+        bool canCollapseWithMarginBefore() const { return m_atBeforeSideOfBlock && m_canCollapseMarginBeforeWithChildren; }
+        bool canCollapseWithMarginAfter() const { return m_atAfterSideOfBlock && m_canCollapseMarginAfterWithChildren; }
+        bool canCollapseMarginBeforeWithChildren() const { return m_canCollapseMarginBeforeWithChildren; }
+        bool canCollapseMarginAfterWithChildren() const { return m_canCollapseMarginAfterWithChildren; }
         bool quirkContainer() const { return m_quirkContainer; }
-        bool determinedTopQuirk() const { return m_determinedTopQuirk; }
-        bool topQuirk() const { return m_topQuirk; }
-        bool bottomQuirk() const { return m_bottomQuirk; }
+        bool determinedMarginBeforeQuirk() const { return m_determinedMarginBeforeQuirk; }
+        bool marginBeforeQuirk() const { return m_marginBeforeQuirk; }
+        bool marginAfterQuirk() const { return m_marginAfterQuirk; }
         int posMargin() const { return m_posMargin; }
         int negMargin() const { return m_negMargin; }
         int margin() const { return m_posMargin - m_negMargin; }
