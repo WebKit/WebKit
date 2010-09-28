@@ -1,3 +1,12 @@
+2010-09-28  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Fix generation of WebPageMessages.h and WebPageMessageReceiver.cpp
+        to avoid rebuilding them every time.
+
+        * DerivedSources.pro: add target to extra compilers.
+
 2010-09-27  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
