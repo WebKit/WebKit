@@ -1,3 +1,38 @@
+2010-09-27  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        CrashTracer: 1,803 crashes in Safari at com.apple.WebCore: -[AccessibilityObjectWrapper accessibilityIsIgnored] + 56
+        https://bugs.webkit.org/show_bug.cgi?id=46662
+
+        Before calling updateBackingStore(), the wrapper object needs to be retained, lest it be invalidated during
+        the updateBackingStore call. This consolidates all calls to updateBackingStore().
+
+        Test: platform/mac/accessibility/removing-textarea-after-edit-crash.html
+
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::postPlatformNotification):
+            Use an ASSERT here to catch the crash because DRT won't cause AppKit to post notifications.
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper prepareAccessibilityMethod]):
+        (-[AccessibilityObjectWrapper accessibilityActionNames]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeNames]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[AccessibilityObjectWrapper accessibilityFocusedUIElement]):
+        (-[AccessibilityObjectWrapper accessibilityHitTest:]):
+        (-[AccessibilityObjectWrapper accessibilityIsAttributeSettable:]):
+        (-[AccessibilityObjectWrapper accessibilityIsIgnored]):
+        (-[AccessibilityObjectWrapper accessibilityParameterizedAttributeNames]):
+        (-[AccessibilityObjectWrapper accessibilityPerformPressAction]):
+        (-[AccessibilityObjectWrapper accessibilityPerformIncrementAction]):
+        (-[AccessibilityObjectWrapper accessibilityPerformDecrementAction]):
+        (-[AccessibilityObjectWrapper accessibilityPerformAction:]):
+        (-[AccessibilityObjectWrapper accessibilitySetValue:forAttribute:]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+        (-[AccessibilityObjectWrapper accessibilityIndexOfChild:]):
+        (-[AccessibilityObjectWrapper accessibilityArrayAttributeCount:]):
+        (-[AccessibilityObjectWrapper accessibilityArrayAttributeValues:index:maxCount:]):
+
 2010-09-27  Adrienne Walker  <enne@google.com>
 
         Reviewed by Adam Barth.

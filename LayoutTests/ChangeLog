@@ -1,3 +1,13 @@
+2010-09-27  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        CrashTracer: 1,803 crashes in Safari at com.apple.WebCore: -[AccessibilityObjectWrapper accessibilityIsIgnored] + 56
+        https://bugs.webkit.org/show_bug.cgi?id=46662
+
+        * platform/mac/accessibility/removing-textarea-after-edit-crash-expected.txt: Added.
+        * platform/mac/accessibility/removing-textarea-after-edit-crash.html: Added.
+
 2010-09-27  Adrienne Walker  <enne@google.com>
 
         Reviewed by Adam Barth.

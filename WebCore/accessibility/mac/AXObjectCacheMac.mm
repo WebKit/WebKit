@@ -108,6 +108,10 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
             return;
     }
     
+    // NSAccessibilityPostNotification will call this method, (but not when running DRT), so ASSERT here to make sure it does not crash.
+    // https://bugs.webkit.org/show_bug.cgi?id=46662
+    ASSERT([obj->wrapper() accessibilityIsIgnored] || true);
+    
     NSAccessibilityPostNotification(obj->wrapper(), macNotification);
     
     // Used by DRT to know when notifications are posted.

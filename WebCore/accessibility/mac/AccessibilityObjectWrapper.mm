@@ -200,6 +200,22 @@ typedef unsigned NSUInteger;
     m_object = 0;
 }
 
+- (BOOL)updateObjectBackingStore
+{
+    // Calling updateBackingStore() can invalidate this element so self must be retained.
+    // If it does become invalidated, m_object will be nil.
+    [[self retain] autorelease];
+    
+    if (!m_object)
+        return NO;
+    
+    m_object->updateBackingStore();
+    if (!m_object)
+        return NO;
+    
+    return YES;
+}
+
 - (AccessibilityObject*)accessibilityObject
 {
     return m_object;
@@ -571,11 +587,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
 
 - (NSArray*)accessibilityActionNames
 {
-    if (!m_object)
-        return nil;
-
-    m_object->updateBackingStore();
-    if (!m_object)
+    if (![self updateObjectBackingStore])
         return nil;
 
     static NSArray* actionElementActions = [[NSArray alloc] initWithObjects: NSAccessibilityPressAction, NSAccessibilityShowMenuAction, nil];
@@ -638,11 +650,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
 
 - (NSArray*)accessibilityAttributeNames
 {
-    if (!m_object)
-        return nil;
-    
-    m_object->updateBackingStore();
-    if (!m_object)
+    if (![self updateObjectBackingStore])
         return nil;
     
     if (m_object->isAttachment())
@@ -1354,11 +1362,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 // or maybe pointers to member functions
 - (id)accessibilityAttributeValue:(NSString*)attributeName
 {
-    if (!m_object)
-        return nil;
-
-    m_object->updateBackingStore();
-    if (!m_object)
+    if (![self updateObjectBackingStore])
         return nil;
     
     if ([attributeName isEqualToString: NSAccessibilityRoleAttribute])
@@ -1889,11 +1893,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
 - (id)accessibilityFocusedUIElement
 {
-    if (!m_object)
-        return nil;
-
-    m_object->updateBackingStore();
-    if (!m_object)
+    if (![self updateObjectBackingStore])
         return nil;
 
     RefPtr<AccessibilityObject> focusedObj = m_object->focusedUIElement();
@@ -1906,11 +1906,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
 - (id)accessibilityHitTest:(NSPoint)point
 {
-    if (!m_object)
-        return nil;
-
-    m_object->updateBackingStore();
-    if (!m_object)
+    if (![self updateObjectBackingStore])
         return nil;
 
     RefPtr<AccessibilityObject> axObject = m_object->doAccessibilityHitTest(IntPoint(point));
@@ -1921,11 +1917,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
 - (BOOL)accessibilityIsAttributeSettable:(NSString*)attributeName
 {
-    if (!m_object)
-        return nil;
-
-    m_object->updateBackingStore();
-    if (!m_object)
+    if (![self updateObjectBackingStore])
         return nil;
 
     if ([attributeName isEqualToString: @"AXSelectedTextMarkerRange"])
@@ -1971,11 +1963,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 // Registering an object is also required for observing notifications. Only registered objects can be observed.
 - (BOOL)accessibilityIsIgnored
 {
-    if (!m_object)
-        return YES;
-
-    m_object->updateBackingStore();
-    if (!m_object)
+    if (![self updateObjectBackingStore])
         return YES;
 
     if (m_object->isAttachment())
@@ -1985,11 +1973,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
 - (NSArray* )accessibilityParameterizedAttributeNames
 {
-    if (!m_object)
-        return nil;
-
-    m_object->updateBackingStore();
-    if (!m_object)
+    if (![self updateObjectBackingStore])
         return nil;
 
     if (m_object->isAttachment()) 
@@ -2073,11 +2057,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
 - (void)accessibilityPerformPressAction
 {
-    if (!m_object)
-        return;
-
-    m_object->updateBackingStore();
-    if (!m_object)
+    if (![self updateObjectBackingStore])
         return;
 
     if (m_object->isAttachment())
@@ -2088,11 +2068,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
 - (void)accessibilityPerformIncrementAction
 {
-    if (!m_object)
-        return;
-
-    m_object->updateBackingStore();
-    if (!m_object)
+    if (![self updateObjectBackingStore])
         return;
 
     if (m_object->isAttachment())
@@ -2103,11 +2079,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
 - (void)accessibilityPerformDecrementAction
 {
-    if (!m_object)
-        return;
-
-    m_object->updateBackingStore();
-    if (!m_object)
+    if (![self updateObjectBackingStore])
         return;
 
     if (m_object->isAttachment())
@@ -2158,11 +2130,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
 - (void)accessibilityPerformAction:(NSString*)action
 {
-    if (!m_object)
-        return;
-
-    m_object->updateBackingStore();
-    if (!m_object)
+    if (![self updateObjectBackingStore])
         return;
 
     if ([action isEqualToString:NSAccessibilityPressAction])
@@ -2180,11 +2148,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
 - (void)accessibilitySetValue:(id)value forAttribute:(NSString*)attributeName
 {
-    if (!m_object)
-        return;
-
-    m_object->updateBackingStore();
-    if (!m_object)
+    if (![self updateObjectBackingStore])
         return;
 
     WebCoreTextMarkerRange* textMarkerRange = nil;
@@ -2317,8 +2281,7 @@ static RenderObject* rendererForView(NSView* view)
     if (!m_object || !attribute || !parameter)
         return nil;
 
-    m_object->updateBackingStore();
-    if (!m_object)
+    if (![self updateObjectBackingStore])
         return nil;
     
     // common parameter type check/casting.  Nil checks in handlers catch wrong type case.
@@ -2614,11 +2577,7 @@ static RenderObject* rendererForView(NSView* view)
 // API that AppKit uses for faster access
 - (NSUInteger)accessibilityIndexOfChild:(id)child
 {
-    if (!m_object)
-        return NSNotFound;
-
-    m_object->updateBackingStore();
-    if (!m_object)
+    if (![self updateObjectBackingStore])
         return NSNotFound;
     
     // Tree objects return their rows as their children. We can use the original method
@@ -2643,11 +2602,7 @@ static RenderObject* rendererForView(NSView* view)
 
 - (NSUInteger)accessibilityArrayAttributeCount:(NSString *)attribute
 {
-    if (!m_object)
-        return 0;
-
-    m_object->updateBackingStore();
-    if (!m_object)
+    if (![self updateObjectBackingStore])
         return 0;
     
     if ([attribute isEqualToString:NSAccessibilityChildrenAttribute]) {
@@ -2668,11 +2623,7 @@ static RenderObject* rendererForView(NSView* view)
 
 - (NSArray *)accessibilityArrayAttributeValues:(NSString *)attribute index:(NSUInteger)index maxCount:(NSUInteger)maxCount 
 {
-    if (!m_object)
-        return nil;
-
-    m_object->updateBackingStore();
-    if (!m_object)
+    if (![self updateObjectBackingStore])
         return nil;
     
     if ([attribute isEqualToString:NSAccessibilityChildrenAttribute]) {
