@@ -1,3 +1,17 @@
+2010-09-28  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Clean up QWebPage::ViewportConfiguration API
+        https://bugs.webkit.org/show_bug.cgi?id=46730
+
+        - Pass QSize parameter as const-reference
+        - Style fixes
+
+        * Api/qwebpage.cpp:
+        (QWebPage::viewportConfigurationForSize):
+        * Api/qwebpage.h:
+
 2010-09-28  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

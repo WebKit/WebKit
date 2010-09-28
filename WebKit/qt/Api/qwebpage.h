@@ -217,13 +217,13 @@ public:
 
         QWebPage::ViewportConfiguration& operator=(const QWebPage::ViewportConfiguration& other);
 
-        inline qreal initialScaleFactor() const { return m_initialScaleFactor; };
-        inline qreal minimumScaleFactor() const { return m_minimumScaleFactor; };
-        inline qreal maximumScaleFactor() const { return m_maximumScaleFactor; };
-        inline qreal devicePixelRatio() const { return m_devicePixelRatio; };
-        inline bool isUserScalable() const { return m_isUserScalable; };
-        inline bool isValid() const { return m_isValid; };
-        inline QSize size() const { return m_size; };
+        inline qreal initialScaleFactor() const { return m_initialScaleFactor; }
+        inline qreal minimumScaleFactor() const { return m_minimumScaleFactor; }
+        inline qreal maximumScaleFactor() const { return m_maximumScaleFactor; }
+        inline qreal devicePixelRatio() const { return m_devicePixelRatio; }
+        inline bool isUserScalable() const { return m_isUserScalable; }
+        inline bool isValid() const { return m_isValid; }
+        inline QSize size() const { return m_size; }
 
     private:
         QSharedDataPointer<QtViewportConfigurationPrivate> d;
@@ -276,7 +276,7 @@ public:
 
     QSize viewportSize() const;
     void setViewportSize(const QSize &size) const;
-    ViewportConfiguration viewportConfigurationForSize(QSize availableSize) const;
+    ViewportConfiguration viewportConfigurationForSize(const QSize& availableSize) const;
 
     QSize preferredContentsSize() const;
     void setPreferredContentsSize(const QSize &size) const;
