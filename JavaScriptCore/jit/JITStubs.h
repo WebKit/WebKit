@@ -270,7 +270,7 @@ namespace JSC {
         ~JITThunks();
 
         static void tryCacheGetByID(CallFrame*, CodeBlock*, ReturnAddressPtr returnAddress, JSValue baseValue, const Identifier& propertyName, const PropertySlot&, StructureStubInfo* stubInfo);
-        static void tryCachePutByID(CallFrame*, CodeBlock*, ReturnAddressPtr returnAddress, JSValue baseValue, const PutPropertySlot&, StructureStubInfo* stubInfo);
+        static void tryCachePutByID(CallFrame*, CodeBlock*, ReturnAddressPtr returnAddress, JSValue baseValue, const PutPropertySlot&, StructureStubInfo* stubInfo, bool direct);
 
         MacroAssemblerCodePtr ctiStringLengthTrampoline() { return m_trampolineStructure.ctiStringLengthTrampoline; }
         MacroAssemblerCodePtr ctiVirtualCallLink() { return m_trampolineStructure.ctiVirtualCallLink; }
@@ -384,6 +384,9 @@ extern "C" {
     void JIT_STUB cti_op_put_by_id(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_put_by_id_fail(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_put_by_id_generic(STUB_ARGS_DECLARATION);
+    void JIT_STUB cti_op_put_by_id_direct(STUB_ARGS_DECLARATION);
+    void JIT_STUB cti_op_put_by_id_direct_fail(STUB_ARGS_DECLARATION);
+    void JIT_STUB cti_op_put_by_id_direct_generic(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_put_by_index(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_put_by_val(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_put_by_val_byte_array(STUB_ARGS_DECLARATION);

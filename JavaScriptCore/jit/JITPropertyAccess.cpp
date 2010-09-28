@@ -314,10 +314,11 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     unsigned baseVReg = currentInstruction[1].u.operand;
     Identifier* ident = &(m_codeBlock->identifier(currentInstruction[2].u.operand));
     unsigned valueVReg = currentInstruction[3].u.operand;
+    unsigned direct = currentInstruction[8].u.operand;
 
     emitGetVirtualRegisters(baseVReg, regT0, valueVReg, regT1);
 
-    JITStubCall stubCall(this, cti_op_put_by_id_generic);
+    JITStubCall stubCall(this, direct ? cti_op_put_by_id_direct_generic, cti_op_put_by_id_generic);
     stubCall.addArgument(regT0);
     stubCall.addArgument(ImmPtr(ident));
     stubCall.addArgument(regT1);
@@ -537,13 +538,14 @@ void JIT::emitSlow_op_put_by_id(Instruction* currentInstruction, Vector<SlowCase
 {
     unsigned baseVReg = currentInstruction[1].u.operand;
     Identifier* ident = &(m_codeBlock->identifier(currentInstruction[2].u.operand));
+    unsigned direct = currentInstruction[8].u.operand;
 
     unsigned propertyAccessInstructionIndex = m_propertyAccessInstructionIndex++;
 
     linkSlowCaseIfNotJSCell(iter, baseVReg);
     linkSlowCase(iter);
 
-    JITStubCall stubCall(this, cti_op_put_by_id);
+    JITStubCall stubCall(this, direct ? cti_op_put_by_id_direct : cti_op_put_by_id);
     stubCall.addArgument(regT0);
     stubCall.addArgument(ImmPtr(ident));
     stubCall.addArgument(regT1);
@@ -597,7 +599,7 @@ void JIT::testPrototype(Structure* structure, JumpList& failureCases)
     failureCases.append(branchPtr(NotEqual, Address(regT2), regT3));
 }
 
-void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure* oldStructure, Structure* newStructure, size_t cachedOffset, StructureChain* chain, ReturnAddressPtr returnAddress)
+void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure* oldStructure, Structure* newStructure, size_t cachedOffset, StructureChain* chain, ReturnAddressPtr returnAddress, bool direct)
 {
     JumpList failureCases;
     // Check eax is an object of the right Structure.
@@ -606,8 +608,10 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
     testPrototype(oldStructure, failureCases);
 
     // ecx = baseObject->m_structure
-    for (RefPtr<Structure>* it = chain->head(); *it; ++it)
-        testPrototype(it->get(), failureCases);
+    if (!direct) {
+        for (RefPtr<Structure>* it = chain->head(); *it; ++it)
+            testPrototype(it->get(), failureCases);
+    }
 
     Call callTarget;
 
@@ -648,7 +652,7 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
 
     LinkBuffer patchBuffer(this, m_codeBlock->executablePool());
 
-    patchBuffer.link(failureCall, FunctionPtr(cti_op_put_by_id_fail));
+    patchBuffer.link(failureCall, FunctionPtr(direct ? cti_op_put_by_id_direct_fail : cti_op_put_by_id_fail));
 
     if (willNeedStorageRealloc) {
         ASSERT(m_calls.size() == 1);
@@ -701,13 +705,13 @@ void JIT::patchMethodCallProto(CodeBlock* codeBlock, MethodCallLinkInfo& methodC
     repatchBuffer.relinkCallerToFunction(returnAddress, FunctionPtr(cti_op_get_by_id));
 }
 
-void JIT::patchPutByIdReplace(CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* structure, size_t cachedOffset, ReturnAddressPtr returnAddress)
+void JIT::patchPutByIdReplace(CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* structure, size_t cachedOffset, ReturnAddressPtr returnAddress, bool direct)
 {
     RepatchBuffer repatchBuffer(codeBlock);
 
     // We don't want to patch more than once - in future go to cti_op_put_by_id_generic.
     // Should probably go to cti_op_put_by_id_fail, but that doesn't do anything interesting right now.
-    repatchBuffer.relinkCallerToFunction(returnAddress, FunctionPtr(cti_op_put_by_id_generic));
+    repatchBuffer.relinkCallerToFunction(returnAddress, FunctionPtr(direct ? cti_op_put_by_id_direct_generic : cti_op_put_by_id_generic));
 
     int offset = sizeof(JSValue) * cachedOffset;
 

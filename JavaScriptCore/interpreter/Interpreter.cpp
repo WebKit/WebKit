@@ -2715,24 +2715,32 @@ skip_id_custom_self:
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_put_by_id) {
-        /* put_by_id base(r) property(id) value(r) nop(n) nop(n) nop(n) nop(n)
+        /* put_by_id base(r) property(id) value(r) nop(n) nop(n) nop(n) nop(n) direct(b)
 
            Generic property access: Sets the property named by identifier
            property, belonging to register base, to register value.
 
            Unlike many opcodes, this one does not write any output to
            the register file.
+
+           The "direct" flag should only be set this put_by_id is to initialize
+           an object literal.
         */
 
         int base = vPC[1].u.operand;
         int property = vPC[2].u.operand;
         int value = vPC[3].u.operand;
+        int direct = vPC[8].u.operand;
 
         CodeBlock* codeBlock = callFrame->codeBlock();
         JSValue baseValue = callFrame->r(base).jsValue();
         Identifier& ident = codeBlock->identifier(property);
         PutPropertySlot slot;
-        baseValue.put(callFrame, ident, callFrame->r(value).jsValue(), slot);
+        if (direct) {
+            baseValue.putDirect(callFrame, ident, callFrame->r(value).jsValue(), slot);
+            ASSERT(slot.base() == baseValue);
+        } else
+            baseValue.put(callFrame, ident, callFrame->r(value).jsValue(), slot);
         CHECK_FOR_EXCEPTION();
 
         tryCachePutByID(callFrame, codeBlock, vPC, baseValue, slot);
@@ -2741,7 +2749,7 @@ skip_id_custom_self:
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_put_by_id_transition) {
-        /* op_put_by_id_transition base(r) property(id) value(r) oldStructure(sID) newStructure(sID) structureChain(chain) offset(n)
+        /* op_put_by_id_transition base(r) property(id) value(r) oldStructure(sID) newStructure(sID) structureChain(chain) offset(n) direct(b)
          
            Cached property access: Attempts to set a new property with a cached transition
            property named by identifier property, belonging to register base,
@@ -2758,23 +2766,25 @@ skip_id_custom_self:
             JSCell* baseCell = asCell(baseValue);
             Structure* oldStructure = vPC[4].u.structure;
             Structure* newStructure = vPC[5].u.structure;
-            
+
             if (LIKELY(baseCell->structure() == oldStructure)) {
                 ASSERT(baseCell->isObject());
                 JSObject* baseObject = asObject(baseCell);
+                int direct = vPC[8].u.operand;
 
-                RefPtr<Structure>* it = vPC[6].u.structureChain->head();
+                if (direct) {
+                    RefPtr<Structure>* it = vPC[6].u.structureChain->head();
 
-                JSValue proto = baseObject->structure()->prototypeForLookup(callFrame);
-                while (!proto.isNull()) {
-                    if (UNLIKELY(asObject(proto)->structure() != (*it).get())) {
-                        uncachePutByID(callFrame->codeBlock(), vPC);
-                        NEXT_INSTRUCTION();
+                    JSValue proto = baseObject->structure()->prototypeForLookup(callFrame);
+                    while (!proto.isNull()) {
+                        if (UNLIKELY(asObject(proto)->structure() != (*it).get())) {
+                            uncachePutByID(callFrame->codeBlock(), vPC);
+                            NEXT_INSTRUCTION();
+                        }
+                        ++it;
+                        proto = asObject(proto)->structure()->prototypeForLookup(callFrame);
                     }
-                    ++it;
-                    proto = asObject(proto)->structure()->prototypeForLookup(callFrame);
                 }
-
                 baseObject->transitionTo(newStructure);
 
                 int value = vPC[3].u.operand;
@@ -2791,7 +2801,7 @@ skip_id_custom_self:
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_put_by_id_replace) {
-        /* op_put_by_id_replace base(r) property(id) value(r) structure(sID) offset(n) nop(n) nop(n)
+        /* op_put_by_id_replace base(r) property(id) value(r) structure(sID) offset(n) nop(n) nop(n) direct(b)
 
            Cached property access: Attempts to set a pre-existing, cached
            property named by identifier property, belonging to register base,
@@ -2826,7 +2836,7 @@ skip_id_custom_self:
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_put_by_id_generic) {
-        /* op_put_by_id_generic base(r) property(id) value(r) nop(n) nop(n) nop(n) nop(n)
+        /* op_put_by_id_generic base(r) property(id) value(r) nop(n) nop(n) nop(n) nop(n) direct(b)
 
            Generic property access: Sets the property named by identifier
            property, belonging to register base, to register value.
@@ -2837,11 +2847,16 @@ skip_id_custom_self:
         int base = vPC[1].u.operand;
         int property = vPC[2].u.operand;
         int value = vPC[3].u.operand;
+        int direct = vPC[8].u.operand;
 
         JSValue baseValue = callFrame->r(base).jsValue();
         Identifier& ident = callFrame->codeBlock()->identifier(property);
         PutPropertySlot slot;
-        baseValue.put(callFrame, ident, callFrame->r(value).jsValue(), slot);
+        if (direct) {
+            baseValue.putDirect(callFrame, ident, callFrame->r(value).jsValue(), slot);
+            ASSERT(slot.base() == baseValue);
+        } else
+            baseValue.put(callFrame, ident, callFrame->r(value).jsValue(), slot);
         CHECK_FOR_EXCEPTION();
 
         vPC += OPCODE_LENGTH(op_put_by_id_generic);

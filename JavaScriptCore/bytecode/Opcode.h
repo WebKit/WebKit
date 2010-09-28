@@ -118,10 +118,10 @@ namespace JSC {
         macro(op_get_by_id_generic, 8) \
         macro(op_get_array_length, 8) \
         macro(op_get_string_length, 8) \
-        macro(op_put_by_id, 8) \
-        macro(op_put_by_id_transition, 8) \
-        macro(op_put_by_id_replace, 8) \
-        macro(op_put_by_id_generic, 8) \
+        macro(op_put_by_id, 9) \
+        macro(op_put_by_id_transition, 9) \
+        macro(op_put_by_id_replace, 9) \
+        macro(op_put_by_id_generic, 9) \
         macro(op_del_by_id, 4) \
         macro(op_get_by_val, 4) \
         macro(op_get_by_pname, 7) \

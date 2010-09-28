@@ -1263,6 +1263,27 @@ RegisterID* BytecodeGenerator::emitPutById(RegisterID* base, const Identifier& p
     instructions().append(0);
     instructions().append(0);
     instructions().append(0);
+    instructions().append(0);
+    return value;
+}
+
+RegisterID* BytecodeGenerator::emitDirectPutById(RegisterID* base, const Identifier& property, RegisterID* value)
+{
+#if ENABLE(JIT)
+    m_codeBlock->addStructureStubInfo(StructureStubInfo(access_put_by_id));
+#else
+    m_codeBlock->addPropertyAccessInstruction(instructions().size());
+#endif
+    
+    emitOpcode(op_put_by_id);
+    instructions().append(base->index());
+    instructions().append(addConstant(property));
+    instructions().append(value->index());
+    instructions().append(0);
+    instructions().append(0);
+    instructions().append(0);
+    instructions().append(0);
+    instructions().append(property != m_globalData->propertyNames->underscoreProto);
     return value;
 }
 
