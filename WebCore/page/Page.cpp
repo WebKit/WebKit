@@ -373,10 +373,16 @@ void Page::refreshPlugins(bool reload)
 
     HashSet<Page*>::iterator end = allPages->end();
     for (HashSet<Page*>::iterator it = allPages->begin(); it != end; ++it) {
-        (*it)->m_pluginData = 0;
+        Page* page = *it;
+
+        // Clear out the page's plug-in data.
+        if (page->m_pluginData) {
+            page->m_pluginData->disconnectPage();
+            page->m_pluginData = 0;
+        }
 
         if (reload) {
-            for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+            for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
                 if (frame->loader()->containsPlugins())
                     framesNeedingReload.append(frame);
             }
