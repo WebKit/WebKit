@@ -2,6 +2,15 @@
 
         Build fix. Not reviewed.
 
+        Fix warnings again.
+
+        * src/VideoFrameChromiumImpl.cpp:
+        (WebKit::VideoFrameChromiumImpl::requiredTextureSize):
+
+2010-09-27  Alpha Lam  <hclam@chromium.org>
+
+        Build fix. Not reviewed.
+
         Add a default for unhandled cases for switch statement.
 
         * src/VideoFrameChromiumImpl.cpp:

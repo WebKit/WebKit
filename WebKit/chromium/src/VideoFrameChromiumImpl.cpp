@@ -124,6 +124,8 @@ const IntSize VideoFrameChromiumImpl::requiredTextureSize(unsigned plane) const
         default:
             break;
         }
+    default:
+        break;
     }
     return IntSize();
 }
