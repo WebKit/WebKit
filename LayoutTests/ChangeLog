@@ -1,3 +1,11 @@
+2010-09-28  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed, GTK+ rebaselines.
+
+        * platform/gtk/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/gtk/fast/dom/prototype-inheritance-expected.txt:
+        * platform/gtk/fast/js/global-constructors-expected.txt:
+
 2010-09-28  Huahui Wu  <mediadependent@gmail.com>
 
         Reviewed by Steve Block.
