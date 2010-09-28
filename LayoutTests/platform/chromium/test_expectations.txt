@@ -847,6 +847,8 @@ BUG10292 MAC LINUX : editing/selection/5354455-1.html = FAIL
 
 BUG10295 MAC : fast/dom/prototype-chain.html = FAIL
 
+BUGWK46684 : fast/dom/prototype-inheritance.html = TEXT
+
 // Font differences, requiring overriden metrics, not a real bug, not fixing for Beta
 BUG10296 MAC : fast/text/international/bidi-menulist.html = FAIL
 BUG10296 LINUX : fast/transforms/transform-on-inline.html = FAIL
