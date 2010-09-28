@@ -22,6 +22,8 @@
 #ifndef GOwnPtr_h
 #define GOwnPtr_h
 
+#if ENABLE(GLIB_SUPPORT)
+
 #include <algorithm>
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
@@ -135,4 +137,7 @@ template <typename T> inline void freeOwnedGPtr(T* ptr)
 
 using WTF::GOwnPtr;
 
+#endif // ENABLE(GLIB_SUPPORT)
+
 #endif // GOwnPtr_h
+

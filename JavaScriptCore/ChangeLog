@@ -1,3 +1,18 @@
+2010-09-28  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        Guard GRefPtr/GOwnPtr files with ENABLE(GLIB_SUPPORT)
+        https://bugs.webkit.org/show_bug.cgi?id=46721
+
+        Enable GOwnPtr/GRefPtr build only if glib support has been
+        explicitly enabled using the WTF_ENABLE_GLIB_SUPPORT macro.
+
+        * wtf/gobject/GOwnPtr.cpp:
+        * wtf/gobject/GOwnPtr.h:
+        * wtf/gobject/GRefPtr.cpp:
+        * wtf/gobject/GRefPtr.h:
+
 2010-09-28  İsmail Dönmez  <ismail@namtrac.org>
 
         Reviewed by Andreas Kling.
