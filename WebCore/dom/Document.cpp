@@ -1782,6 +1782,18 @@ void Document::clearAXObjectCache()
         doc->clearAXObjectCache();
 }
 
+bool Document::axObjectCacheExists() const
+{
+    if (m_axObjectCache)
+        return true;
+    
+    Document* doc = topDocument();
+    if (doc != this)
+        return doc->axObjectCacheExists();
+    
+    return false;
+}
+    
 AXObjectCache* Document::axObjectCache() const
 {
     // The only document that actually has a AXObjectCache is the top-level

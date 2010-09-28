@@ -1,3 +1,51 @@
+2010-09-28  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        CrashTracer: 1,382 crashes in Safari at com.apple.WebCore: WebCore::VisiblePosition::canonicalPosition + 78
+        https://bugs.webkit.org/show_bug.cgi?id=45927
+
+        AXTextMarkers store pointers to Nodes without any retain or reference. If a Node is deallocated and then
+        a client tries to use a text marker that references that node, it leads to this crash.
+
+        The AXObjectCache instance now keeps a HashSet of Node's being used. When a node becomes deallocated, it removes itself
+        from the HashSet. When creating a VisiblePosition from an AXTextMarker, the cache can then check if the node is valid
+        before proceeding.
+
+        Test: platform/mac/accessibility/crash-invalid-text-marker-node.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::visiblePositionForTextMarkerData):
+        (WebCore::AXObjectCache::textMarkerDataForVisiblePosition):
+            Modify to check whether a node is valid before proceeeding.
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::setNodeInUse):
+        (WebCore::AXObjectCache::removeNodeForUse):
+        (WebCore::AXObjectCache::isNodeInUse):
+            Methods for managing whether a node is in use by text markers.
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (textMarkerForVisiblePosition):
+        (-[AccessibilityObjectWrapper textMarkerForVisiblePosition:]):
+        (visiblePositionForTextMarker):
+        (-[AccessibilityObjectWrapper visiblePositionForTextMarker:]):
+        (visiblePositionForStartOfTextMarkerRange):
+        (visiblePositionForEndOfTextMarkerRange):
+        (-[AccessibilityObjectWrapper doAXAttributedStringForTextMarkerRange:]):
+        (textMarkerRangeFromVisiblePositions):
+        (-[AccessibilityObjectWrapper textMarkerRangeFromVisiblePositions:endPosition:]):
+        (-[AccessibilityObjectWrapper visiblePositionRangeForTextMarkerRange:]):
+        (-[AccessibilityObjectWrapper textMarkerRangeForSelection]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[AccessibilityObjectWrapper doAXAttributedStringForRange:]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+             Change these calls so that the axObjectCache() can be passed in to create the visible position.
+        * dom/Document.cpp:
+        (WebCore::Document::axObjectCacheExists):
+        * dom/Document.h:
+        * dom/Node.cpp:
+        (WebCore::Node::~Node):
+             If accessibility is enabled, inform the axObjectCache() that this node is disappearing.
+
 2010-09-28  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.

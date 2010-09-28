@@ -526,6 +526,7 @@ public:
 
     void clearAXObjectCache();
     AXObjectCache* axObjectCache() const;
+    bool axObjectCacheExists() const;
     
     // to get visually ordered hebrew and arabic pages right
     void setVisuallyOrdered();

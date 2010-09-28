@@ -1,3 +1,13 @@
+2010-09-28  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        CrashTracer: 1,382 crashes in Safari at com.apple.WebCore: WebCore::VisiblePosition::canonicalPosition + 78
+        https://bugs.webkit.org/show_bug.cgi?id=45927
+
+        * platform/mac/accessibility/crash-invalid-text-marker-node-expected.txt: Added.
+        * platform/mac/accessibility/crash-invalid-text-marker-node.html: Added.
+
 2010-09-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Kent Tamura.
