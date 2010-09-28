@@ -1,5 +1,11 @@
 2010-09-28  Dan Bernstein  <mitz@apple.com>
 
+        Updated expected result to include the soft hyphen character in the plain text output.
+
+        * fast/encoding/charset-xuser-defined-expected.txt:
+
+2010-09-28  Dan Bernstein  <mitz@apple.com>
+
         Added Qt-specific results for the test added in the previous change. Qt doesn’t use ICU so
         it fails the test.
 
