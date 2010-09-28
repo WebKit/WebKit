@@ -1,3 +1,17 @@
+2010-09-28  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Andreas Kling.
+
+        run-webkit-tests needs an updated list of directories with webgl tests
+        https://bugs.webkit.org/show_bug.cgi?id=46747
+
+        Update the list of directories containing WebGL tests and a unit test
+        which depends on this list.
+
+        * Scripts/old-run-webkit-tests: Update the list of directories.
+        * Scripts/webkitpy/layout_tests/port/webkit.py: Ditto.
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py: Update the expected result.
+
 2010-09-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

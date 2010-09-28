@@ -528,6 +528,7 @@ if (!$has3DRendering) {
 if (!checkWebCoreFeatureSupport("3D Canvas", 0)) {
     $ignoredDirectories{'fast/canvas/webgl'} = 1;
     $ignoredDirectories{'compositing/webgl'} = 1;
+    $ignoredDirectories{'http/tests/canvas/webgl'} = 1;
 }
 
 if (checkWebCoreFeatureSupport("WML", 0)) {

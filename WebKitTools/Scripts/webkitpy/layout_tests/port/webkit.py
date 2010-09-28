@@ -247,7 +247,7 @@ class WebKitPort(base.Port):
             "MathMLElement": ["mathml"],
             "GraphicsLayer": ["compositing"],
             "WebCoreHas3DRendering": ["animations/3d", "transforms/3d"],
-            "WebGLShader": ["fast/canvas/webgl"],
+            "WebGLShader": ["fast/canvas/webgl", "compositing/webgl", "http/tests/canvas/webgl"],
             "WMLElement": ["http/tests/wml", "fast/wml", "wml"],
             "parseWCSSInputProperty": ["fast/wcss"],
             "isXHTMLMPDocument": ["fast/xhtmlmp"],
