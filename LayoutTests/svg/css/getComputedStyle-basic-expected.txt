@@ -276,10 +276,10 @@ rect: style.getPropertyValue(-webkit-line-break) : normal
 rect: style.getPropertyCSSValue(-webkit-line-break) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-line-clamp) : none
 rect: style.getPropertyCSSValue(-webkit-line-clamp) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-margin-bottom-collapse) : collapse
-rect: style.getPropertyCSSValue(-webkit-margin-bottom-collapse) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-margin-top-collapse) : collapse
-rect: style.getPropertyCSSValue(-webkit-margin-top-collapse) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-margin-before-collapse) : collapse
+rect: style.getPropertyCSSValue(-webkit-margin-before-collapse) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-margin-after-collapse) : collapse
+rect: style.getPropertyCSSValue(-webkit-margin-after-collapse) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-marquee-direction) : auto
 rect: style.getPropertyCSSValue(-webkit-marquee-direction) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-marquee-increment) : 6px
@@ -698,10 +698,10 @@ g: style.getPropertyValue(-webkit-line-break) : normal
 g: style.getPropertyCSSValue(-webkit-line-break) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-line-clamp) : none
 g: style.getPropertyCSSValue(-webkit-line-clamp) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-margin-bottom-collapse) : collapse
-g: style.getPropertyCSSValue(-webkit-margin-bottom-collapse) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-margin-top-collapse) : collapse
-g: style.getPropertyCSSValue(-webkit-margin-top-collapse) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-margin-before-collapse) : collapse
+g: style.getPropertyCSSValue(-webkit-margin-before-collapse) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-margin-after-collapse) : collapse
+g: style.getPropertyCSSValue(-webkit-margin-after-collapse) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-marquee-direction) : auto
 g: style.getPropertyCSSValue(-webkit-marquee-direction) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-marquee-increment) : 6px

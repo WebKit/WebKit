@@ -19,7 +19,7 @@ Removing -webkit-columns removes -webkit-column-width, -webkit-column-count.
 Removing -webkit-column-rule removes -webkit-column-rule-width, -webkit-column-rule-style, -webkit-column-rule-color.
 Removing list-style removes list-style-type, list-style-position, list-style-image.
 Removing margin removes margin-top, margin-right, margin-bottom, margin-left.
-Removing -webkit-margin-collapse removes -webkit-margin-top-collapse, -webkit-margin-bottom-collapse.
+Removing -webkit-margin-collapse removes -webkit-margin-before-collapse, -webkit-margin-after-collapse.
 Removing -webkit-marquee removes -webkit-marquee-direction, -webkit-marquee-increment, -webkit-marquee-repetition, -webkit-marquee-style, -webkit-marquee-speed.
 Removing -webkit-mask removes -webkit-mask-image, -webkit-mask-repeat-x, -webkit-mask-repeat-y, -webkit-mask-attachment, -webkit-mask-position-x, -webkit-mask-position-y, -webkit-mask-origin, -webkit-mask-clip.
 Removing -webkit-mask-position removes -webkit-mask-position-x, -webkit-mask-position-y.

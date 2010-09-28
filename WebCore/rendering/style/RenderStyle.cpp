@@ -323,8 +323,8 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
 
     if (rareNonInheritedData.get() != other->rareNonInheritedData.get()) {
         if (rareNonInheritedData->m_appearance != other->rareNonInheritedData->m_appearance ||
-            rareNonInheritedData->marginTopCollapse != other->rareNonInheritedData->marginTopCollapse ||
-            rareNonInheritedData->marginBottomCollapse != other->rareNonInheritedData->marginBottomCollapse ||
+            rareNonInheritedData->marginBeforeCollapse != other->rareNonInheritedData->marginBeforeCollapse ||
+            rareNonInheritedData->marginAfterCollapse != other->rareNonInheritedData->marginAfterCollapse ||
             rareNonInheritedData->lineClamp != other->rareNonInheritedData->lineClamp ||
             rareNonInheritedData->textOverflow != other->rareNonInheritedData->textOverflow)
             return StyleDifferenceLayout;

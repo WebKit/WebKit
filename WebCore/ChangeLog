@@ -1,3 +1,46 @@
+2010-09-28  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Right now we have two properties named margin-top-collapse and margin-after-collapse.  They are proprietary and only used by Safari RSS.
+
+        I am adding margin-before-collapse and margin-after-collapse and just aliasing the old properties to the new ones.
+        This way we have some names that are directionally independent.
+
+        Note that these properties aren't like other directional properties.  They are about what to do with the before side and after side of
+        your block's margins when collapsing with adjacent blocks.  The meaning of before/after depend on the block-flow directionality
+        of the containing block.
+
+        Computed style tests all changed and the remove-shorthand.html test covers manipulation of the shorthand.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPropertyLonghand.cpp:
+        (WebCore::initShorthandMap):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::MarginInfo::MarginInfo):
+        (WebCore::RenderBlock::isSelfCollapsingBlock):
+        (WebCore::RenderBlock::collapseMargins):
+        (WebCore::RenderBlock::layoutBlockChild):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::marginBeforeCollapse):
+        (WebCore::InheritedFlags::marginAfterCollapse):
+        (WebCore::InheritedFlags::setMarginBeforeCollapse):
+        (WebCore::InheritedFlags::setMarginAfterCollapse):
+        (WebCore::InheritedFlags::initialMarginBeforeCollapse):
+        (WebCore::InheritedFlags::initialMarginAfterCollapse):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2010-09-28  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

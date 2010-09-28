@@ -1431,8 +1431,8 @@ bool CSSParser::parseValue(int propId, bool important)
         return false;
     }
     case CSSPropertyWebkitMarginCollapse: {
-        const int properties[2] = { CSSPropertyWebkitMarginTopCollapse,
-            CSSPropertyWebkitMarginBottomCollapse };
+        const int properties[2] = { CSSPropertyWebkitMarginBeforeCollapse,
+            CSSPropertyWebkitMarginAfterCollapse };
         if (num == 1) {
             ShorthandScope scope(this, CSSPropertyWebkitMarginCollapse);
             if (!parseValue(properties[0], important))
@@ -1449,6 +1449,8 @@ bool CSSParser::parseValue(int propId, bool important)
         }
         return false;
     }
+    case CSSPropertyWebkitMarginBeforeCollapse:
+    case CSSPropertyWebkitMarginAfterCollapse:
     case CSSPropertyWebkitMarginTopCollapse:
     case CSSPropertyWebkitMarginBottomCollapse:
         if (id == CSSValueCollapse || id == CSSValueSeparate || id == CSSValueDiscard)

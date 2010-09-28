@@ -232,13 +232,15 @@ z-index
 -webkit-line-clamp
 -webkit-logical-width
 -webkit-logical-height
+-webkit-margin-after-collapse
+-webkit-margin-before-collapse
 -webkit-margin-bottom-collapse
+-webkit-margin-top-collapse
 -webkit-margin-collapse
 -webkit-margin-after
 -webkit-margin-before
 -webkit-margin-end
 -webkit-margin-start
--webkit-margin-top-collapse
 -webkit-marquee
 -webkit-marquee-direction
 -webkit-marquee-increment

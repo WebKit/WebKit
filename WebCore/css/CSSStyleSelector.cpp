@@ -5158,21 +5158,23 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     }
     case CSSPropertyWebkitMarginCollapse: {
         if (isInherit) {
-            m_style->setMarginTopCollapse(m_parentStyle->marginTopCollapse());
-            m_style->setMarginBottomCollapse(m_parentStyle->marginBottomCollapse());
+            m_style->setMarginBeforeCollapse(m_parentStyle->marginBeforeCollapse());
+            m_style->setMarginAfterCollapse(m_parentStyle->marginAfterCollapse());
         }
         else if (isInitial) {
-            m_style->setMarginTopCollapse(MCOLLAPSE);
-            m_style->setMarginBottomCollapse(MCOLLAPSE);
+            m_style->setMarginBeforeCollapse(MCOLLAPSE);
+            m_style->setMarginAfterCollapse(MCOLLAPSE);
         }
         return;
     }
 
+    case CSSPropertyWebkitMarginBeforeCollapse:
     case CSSPropertyWebkitMarginTopCollapse:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(marginTopCollapse, MarginTopCollapse)
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(marginBeforeCollapse, MarginBeforeCollapse)
         return;
+    case CSSPropertyWebkitMarginAfterCollapse:
     case CSSPropertyWebkitMarginBottomCollapse:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(marginBottomCollapse, MarginBottomCollapse)
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(marginAfterCollapse, MarginAfterCollapse)
         return;
     case CSSPropertyWebkitLineClamp: {
         HANDLE_INHERIT_AND_INITIAL(lineClamp, LineClamp)

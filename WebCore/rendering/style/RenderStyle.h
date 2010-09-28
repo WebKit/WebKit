@@ -665,8 +665,8 @@ public:
     EUserDrag userDrag() const { return static_cast<EUserDrag>(rareNonInheritedData->userDrag); }
     EUserSelect userSelect() const { return static_cast<EUserSelect>(rareInheritedData->userSelect); }
     bool textOverflow() const { return rareNonInheritedData->textOverflow; }
-    EMarginCollapse marginTopCollapse() const { return static_cast<EMarginCollapse>(rareNonInheritedData->marginTopCollapse); }
-    EMarginCollapse marginBottomCollapse() const { return static_cast<EMarginCollapse>(rareNonInheritedData->marginBottomCollapse); }
+    EMarginCollapse marginBeforeCollapse() const { return static_cast<EMarginCollapse>(rareNonInheritedData->marginBeforeCollapse); }
+    EMarginCollapse marginAfterCollapse() const { return static_cast<EMarginCollapse>(rareNonInheritedData->marginAfterCollapse); }
     EWordBreak wordBreak() const { return static_cast<EWordBreak>(rareInheritedData->wordBreak); }
     EWordWrap wordWrap() const { return static_cast<EWordWrap>(rareInheritedData->wordWrap); }
     ENBSPMode nbspMode() const { return static_cast<ENBSPMode>(rareInheritedData->nbspMode); }
@@ -1005,8 +1005,8 @@ public:
     void setUserDrag(EUserDrag d) { SET_VAR(rareNonInheritedData, userDrag, d); }
     void setUserSelect(EUserSelect s) { SET_VAR(rareInheritedData, userSelect, s); }
     void setTextOverflow(bool b) { SET_VAR(rareNonInheritedData, textOverflow, b); }
-    void setMarginTopCollapse(EMarginCollapse c) { SET_VAR(rareNonInheritedData, marginTopCollapse, c); }
-    void setMarginBottomCollapse(EMarginCollapse c) { SET_VAR(rareNonInheritedData, marginBottomCollapse, c); }
+    void setMarginBeforeCollapse(EMarginCollapse c) { SET_VAR(rareNonInheritedData, marginBeforeCollapse, c); }
+    void setMarginAfterCollapse(EMarginCollapse c) { SET_VAR(rareNonInheritedData, marginAfterCollapse, c); }
     void setWordBreak(EWordBreak b) { SET_VAR(rareInheritedData, wordBreak, b); }
     void setWordWrap(EWordWrap b) { SET_VAR(rareInheritedData, wordWrap, b); }
     void setNBSPMode(ENBSPMode b) { SET_VAR(rareInheritedData, nbspMode, b); }
@@ -1218,8 +1218,8 @@ public:
     static EUserDrag initialUserDrag() { return DRAG_AUTO; }
     static EUserSelect initialUserSelect() { return SELECT_TEXT; }
     static bool initialTextOverflow() { return false; }
-    static EMarginCollapse initialMarginTopCollapse() { return MCOLLAPSE; }
-    static EMarginCollapse initialMarginBottomCollapse() { return MCOLLAPSE; }
+    static EMarginCollapse initialMarginBeforeCollapse() { return MCOLLAPSE; }
+    static EMarginCollapse initialMarginAfterCollapse() { return MCOLLAPSE; }
     static EWordBreak initialWordBreak() { return NormalWordBreak; }
     static EWordWrap initialWordWrap() { return NormalWordWrap; }
     static ENBSPMode initialNBSPMode() { return NBNORMAL; }

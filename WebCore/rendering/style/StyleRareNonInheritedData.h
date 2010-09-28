@@ -98,8 +98,8 @@ public:
 
     unsigned userDrag : 2; // EUserDrag
     bool textOverflow : 1; // Whether or not lines that spill out should be truncated with "..."
-    unsigned marginTopCollapse : 2; // EMarginCollapse
-    unsigned marginBottomCollapse : 2; // EMarginCollapse
+    unsigned marginBeforeCollapse : 2; // EMarginCollapse
+    unsigned marginAfterCollapse : 2; // EMarginCollapse
     unsigned matchNearestMailBlockquoteColor : 1; // EMatchNearestMailBlockquoteColor, FIXME: This property needs to be eliminated. It should never have been added.
     unsigned m_appearance : 6; // EAppearance
     unsigned m_borderFit : 1; // EBorderFit

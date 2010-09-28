@@ -92,17 +92,17 @@ RenderBlock::MarginInfo::MarginInfo(RenderBlock* block, int beforeBorderPadding,
         && !block->isFloating() && !block->isTableCell() && !block->hasOverflowClip() && !block->isInlineBlockOrInlineTable()
         && !block->isBlockFlowRoot();
 
-    m_canCollapseMarginBeforeWithChildren = m_canCollapseWithChildren && (beforeBorderPadding == 0) && block->style()->marginTopCollapse() != MSEPARATE;
+    m_canCollapseMarginBeforeWithChildren = m_canCollapseWithChildren && (beforeBorderPadding == 0) && block->style()->marginBeforeCollapse() != MSEPARATE;
 
     // If any height other than auto is specified in CSS, then we don't collapse our bottom
     // margins with our children's margins.  To do otherwise would be to risk odd visual
     // effects when the children overflow out of the parent block and yet still collapse
     // with it.  We also don't collapse if we have any bottom border/padding.
     m_canCollapseMarginAfterWithChildren = m_canCollapseWithChildren && (afterBorderPadding == 0) &&
-        (block->style()->logicalHeight().isAuto() && block->style()->logicalHeight().value() == 0) && block->style()->marginBottomCollapse() != MSEPARATE;
+        (block->style()->logicalHeight().isAuto() && block->style()->logicalHeight().value() == 0) && block->style()->marginAfterCollapse() != MSEPARATE;
     
-    m_quirkContainer = block->isTableCell() || block->isBody() || block->style()->marginTopCollapse() == MDISCARD || 
-        block->style()->marginBottomCollapse() == MDISCARD;
+    m_quirkContainer = block->isTableCell() || block->isBody() || block->style()->marginBeforeCollapse() == MDISCARD || 
+        block->style()->marginAfterCollapse() == MDISCARD;
 
     m_posMargin = m_canCollapseMarginBeforeWithChildren ? block->maxTopMargin(true) : 0;
     m_negMargin = m_canCollapseMarginAfterWithChildren ? block->maxTopMargin(false) : 0;
@@ -1022,7 +1022,7 @@ bool RenderBlock::isSelfCollapsingBlock() const
     if (height() > 0
         || isTable() || borderAndPaddingHeight()
         || style()->minHeight().isPositive()
-        || style()->marginTopCollapse() == MSEPARATE || style()->marginBottomCollapse() == MSEPARATE)
+        || style()->marginBeforeCollapse() == MSEPARATE || style()->marginAfterCollapse() == MSEPARATE)
         return false;
 
     bool hasAutoHeight = style()->height().isAuto();
@@ -1479,7 +1479,7 @@ int RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo)
     
     // See if the top margin is quirky. We only care if this child has
     // margins that will collapse with us.
-    bool topQuirk = child->isTopMarginQuirk() || style()->marginTopCollapse() == MDISCARD;
+    bool topQuirk = child->isTopMarginQuirk() || style()->marginBeforeCollapse() == MDISCARD;
 
     if (marginInfo.canCollapseWithMarginBefore()) {
         // This child is collapsing with the top of the
@@ -1532,7 +1532,7 @@ int RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo)
             ypos = height() + collapsedTopPos - collapsedTopNeg;
     }
     else {
-        if (child->style()->marginTopCollapse() == MSEPARATE) {
+        if (child->style()->marginBeforeCollapse() == MSEPARATE) {
             setLogicalHeight(height() + marginInfo.margin() + child->marginTop());
             ypos = height();
         }
@@ -1549,7 +1549,7 @@ int RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo)
         marginInfo.setNegMargin(child->maxBottomMargin(false));
 
         if (marginInfo.margin())
-            marginInfo.setMarginAfterQuirk(child->isBottomMarginQuirk() || style()->marginBottomCollapse() == MDISCARD);
+            marginInfo.setMarginAfterQuirk(child->isBottomMarginQuirk() || style()->marginAfterCollapse() == MDISCARD);
     }
     
     // If margins would pull us past the top of the next page, then we need to pull back and pretend like the margins
@@ -1810,7 +1810,7 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, int
     child->computeBlockDirectionMargins(this);
 
     // Do not allow a collapse if the margin top collapse style is set to SEPARATE.
-    if (child->style()->marginTopCollapse() == MSEPARATE) {
+    if (child->style()->marginBeforeCollapse() == MSEPARATE) {
         marginInfo.setAtBeforeSideOfBlock(false);
         marginInfo.clearMargin();
     }
@@ -1934,7 +1934,7 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, int
 
     // Update our height now that the child has been placed in the correct position.
     setLogicalHeight(height() + child->height());
-    if (child->style()->marginBottomCollapse() == MSEPARATE) {
+    if (child->style()->marginAfterCollapse() == MSEPARATE) {
         setLogicalHeight(height() + child->marginBottom());
         marginInfo.clearMargin();
     }
