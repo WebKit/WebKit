@@ -1,3 +1,23 @@
+2010-09-28  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        IDBRequest should not have a method called abort.
+        https://bugs.webkit.org/show_bug.cgi?id=46720
+
+        * storage/indexeddb/basics-expected.txt:
+        * storage/indexeddb/database-basics-expected.txt:
+        * storage/indexeddb/index-basics-expected.txt:
+        * storage/indexeddb/index-cursor-expected.txt:
+        * storage/indexeddb/objectstore-basics-expected.txt:
+        * storage/indexeddb/objectstore-cursor-expected.txt:
+        * storage/indexeddb/objectstore-removeobjectstore-expected.txt:
+        * storage/indexeddb/open-cursor-expected.txt:
+        * storage/indexeddb/resources/shared.js:
+        (verifyEventCommon):
+        (verifyResult):
+        * storage/indexeddb/transaction-basics-expected.txt:
+
 2010-09-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed.

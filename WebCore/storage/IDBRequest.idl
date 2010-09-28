@@ -32,7 +32,6 @@ module storage {
         Conditional=INDEXED_DATABASE,
         EventTarget
     ] IDBRequest {
-        void abort();
 
         // States
         const unsigned short LOADING = 1;

@@ -8,7 +8,6 @@ PASS indexedDB == null is false
 indexedDB.open('name', 'description')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
-PASS 'abort' in result is true
 PASS 'readyState' in result is true
 An event should fire shortly...
 
@@ -21,7 +20,6 @@ PASS 'source' in event is true
 PASS event.source != null is true
 PASS 'onsuccess' in event.target is true
 PASS 'onerror' in event.target is true
-PASS 'abort' in event.target is true
 PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
@@ -29,7 +27,6 @@ db = event.result
 db.createObjectStore('storeName', null)
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
-PASS 'abort' in result is true
 PASS 'readyState' in result is true
 An event should fire shortly...
 
@@ -41,7 +38,6 @@ PASS 'source' in event is true
 PASS event.source != null is true
 PASS 'onsuccess' in event.target is true
 PASS 'onerror' in event.target is true
-PASS 'abort' in event.target is true
 PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
@@ -53,3 +49,4 @@ PASS event.type is "abort"
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

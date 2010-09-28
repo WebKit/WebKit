@@ -6,7 +6,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 indexedDB.open('name', 'description')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
-PASS 'abort' in result is true
 PASS 'readyState' in result is true
 An event should fire shortly...
 
@@ -18,7 +17,6 @@ PASS 'source' in event is true
 PASS event.source != null is true
 PASS 'onsuccess' in event.target is true
 PASS 'onerror' in event.target is true
-PASS 'abort' in event.target is true
 PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
@@ -26,7 +24,6 @@ db = event.result
 db.createObjectStore('storeName', null)
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
-PASS 'abort' in result is true
 PASS 'readyState' in result is true
 An event should fire shortly...
 
@@ -38,7 +35,6 @@ PASS 'source' in event is true
 PASS event.source != null is true
 PASS 'onsuccess' in event.target is true
 PASS 'onerror' in event.target is true
-PASS 'abort' in event.target is true
 PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
@@ -46,7 +42,6 @@ store = event.result
 event.result.createIndex('indexName', 'x')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
-PASS 'abort' in result is true
 PASS 'readyState' in result is true
 An event should fire shortly...
 
@@ -58,7 +53,6 @@ PASS 'source' in event is true
 PASS event.source != null is true
 PASS 'onsuccess' in event.target is true
 PASS 'onerror' in event.target is true
-PASS 'abort' in event.target is true
 PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
@@ -79,7 +73,6 @@ PASS 'get' in indexObject is true
 event.source.add({x: 'value', y: 'zzz'}, 'key')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
-PASS 'abort' in result is true
 PASS 'readyState' in result is true
 An event should fire shortly...
 
@@ -91,14 +84,12 @@ PASS 'source' in event is true
 PASS event.source != null is true
 PASS 'onsuccess' in event.target is true
 PASS 'onerror' in event.target is true
-PASS 'abort' in event.target is true
 PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
 event.source.add({x: 'value2', y: 'zzz2'}, 'key2')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
-PASS 'abort' in result is true
 PASS 'readyState' in result is true
 An event should fire shortly...
 
@@ -110,14 +101,12 @@ PASS 'source' in event is true
 PASS event.source != null is true
 PASS 'onsuccess' in event.target is true
 PASS 'onerror' in event.target is true
-PASS 'abort' in event.target is true
 PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
 indexObject.get('value')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
-PASS 'abort' in result is true
 PASS 'readyState' in result is true
 An event should fire shortly...
 
@@ -129,7 +118,6 @@ PASS 'source' in event is true
 PASS event.source != null is true
 PASS 'onsuccess' in event.target is true
 PASS 'onerror' in event.target is true
-PASS 'abort' in event.target is true
 PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
@@ -137,7 +125,6 @@ PASS event.result is "key"
 indexObject.getObject('value')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
-PASS 'abort' in result is true
 PASS 'readyState' in result is true
 An event should fire shortly...
 
@@ -149,7 +136,6 @@ PASS 'source' in event is true
 PASS event.source != null is true
 PASS 'onsuccess' in event.target is true
 PASS 'onerror' in event.target is true
-PASS 'abort' in event.target is true
 PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
@@ -158,7 +144,6 @@ PASS event.result.y is "zzz"
 indexObject.get('does not exist')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
-PASS 'abort' in result is true
 PASS 'readyState' in result is true
 An event should fire shortly...
 
@@ -170,7 +155,6 @@ PASS 'source' in event is true
 PASS event.source != null is true
 PASS 'onsuccess' in event.target is true
 PASS 'onerror' in event.target is true
-PASS 'abort' in event.target is true
 PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
@@ -178,7 +162,6 @@ PASS event.code is IDBDatabaseException.NOT_FOUND_ERR
 indexObject.getObject('does not exist')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
-PASS 'abort' in result is true
 PASS 'readyState' in result is true
 An event should fire shortly...
 
@@ -190,7 +173,6 @@ PASS 'source' in event is true
 PASS event.source != null is true
 PASS 'onsuccess' in event.target is true
 PASS 'onerror' in event.target is true
-PASS 'abort' in event.target is true
 PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
@@ -198,7 +180,6 @@ PASS event.code is IDBDatabaseException.NOT_FOUND_ERR
 indexObject.openCursor()
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
-PASS 'abort' in result is true
 PASS 'readyState' in result is true
 An event should fire shortly...
 
@@ -210,7 +191,6 @@ PASS 'source' in event is true
 PASS event.source != null is true
 PASS 'onsuccess' in event.target is true
 PASS 'onerror' in event.target is true
-PASS 'abort' in event.target is true
 PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
@@ -220,7 +200,6 @@ PASS event.result.value is "key"
 event.result.continue()
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
-PASS 'abort' in result is true
 PASS 'readyState' in result is true
 An event should fire shortly...
 
@@ -232,7 +211,6 @@ PASS 'source' in event is true
 PASS event.source != null is true
 PASS 'onsuccess' in event.target is true
 PASS 'onerror' in event.target is true
-PASS 'abort' in event.target is true
 PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
@@ -242,7 +220,6 @@ PASS event.result.value is "key2"
 event.result.continue()
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
-PASS 'abort' in result is true
 PASS 'readyState' in result is true
 An event should fire shortly...
 
@@ -254,7 +231,6 @@ PASS 'source' in event is true
 PASS event.source != null is true
 PASS 'onsuccess' in event.target is true
 PASS 'onerror' in event.target is true
-PASS 'abort' in event.target is true
 PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
@@ -262,7 +238,6 @@ PASS event.result === null is true
 indexObject.openObjectCursor()
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
-PASS 'abort' in result is true
 PASS 'readyState' in result is true
 An event should fire shortly...
 
@@ -274,7 +249,6 @@ PASS 'source' in event is true
 PASS event.source != null is true
 PASS 'onsuccess' in event.target is true
 PASS 'onerror' in event.target is true
-PASS 'abort' in event.target is true
 PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
@@ -285,7 +259,6 @@ PASS event.result.value.y is "zzz"
 event.result.continue()
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
-PASS 'abort' in result is true
 PASS 'readyState' in result is true
 An event should fire shortly...
 
@@ -297,7 +270,6 @@ PASS 'source' in event is true
 PASS event.source != null is true
 PASS 'onsuccess' in event.target is true
 PASS 'onerror' in event.target is true
-PASS 'abort' in event.target is true
 PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
@@ -308,7 +280,6 @@ PASS event.result.value.y is "zzz2"
 event.result.continue()
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
-PASS 'abort' in result is true
 PASS 'readyState' in result is true
 An event should fire shortly...
 
@@ -320,7 +291,6 @@ PASS 'source' in event is true
 PASS event.source != null is true
 PASS 'onsuccess' in event.target is true
 PASS 'onerror' in event.target is true
-PASS 'abort' in event.target is true
 PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 

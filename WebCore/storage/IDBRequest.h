@@ -50,7 +50,6 @@ public:
     virtual ~IDBRequest();
 
     // Defined in the IDL
-    void abort();
     enum ReadyState {
         LOADING = 1,
         DONE = 2
@@ -106,7 +105,6 @@ private:
     Timer<IDBRequest> m_timer;
     RefPtr<IDBRequest> m_selfRef; // This is set to us iff there's an event pending.
 
-    bool m_aborted;
     ReadyState m_readyState;
     EventTargetData m_eventTargetData;
 };

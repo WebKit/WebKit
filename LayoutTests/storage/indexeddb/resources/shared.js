@@ -11,7 +11,6 @@ function verifyEventCommon(event)
     shouldBeTrue("event.source != null");
     shouldBeTrue("'onsuccess' in event.target");
     shouldBeTrue("'onerror' in event.target");
-    shouldBeTrue("'abort' in event.target");
     shouldBeTrue("'readyState' in event.target");
     shouldBe("event.target.readyState", "event.target.DONE");
     debug("");
@@ -45,7 +44,6 @@ function verifyResult(result)
 {
     shouldBeTrue("'onsuccess' in result");
     shouldBeTrue("'onerror' in result");
-    shouldBeTrue("'abort' in result");
     shouldBeTrue("'readyState' in result");
     debug("An event should fire shortly...");
     debug("");
