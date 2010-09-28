@@ -1,3 +1,16 @@
+2010-09-27  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Changed the initialization of JSArray objects to have space for 
+        3 elements for the constructor that takes a ArgList argument.
+        This improves v8-deltablue performance by about 2.8% by reducing 
+        the number of realloc() calls.
+        https://bugs.webkit.org/show_bug.cgi?id=46664
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::JSArray):
+
 2010-09-27  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Darin Adler.

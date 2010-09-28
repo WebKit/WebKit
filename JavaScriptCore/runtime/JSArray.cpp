@@ -202,12 +202,20 @@ JSArray::JSArray(NonNullPassRefPtr<Structure> structure, const ArgList& list)
     : JSObject(structure)
 {
     unsigned initialCapacity = list.size();
-
-    m_storage = static_cast<ArrayStorage*>(fastMalloc(storageSize(initialCapacity)));
+    unsigned initialStorage;
+    
+    // If the ArgList is empty, allocate space for 3 entries.  This value empirically
+    // works well for benchmarks.
+    if (!initialCapacity)
+        initialStorage = 3;
+    else
+        initialStorage = initialCapacity;
+    
+    m_storage = static_cast<ArrayStorage*>(fastMalloc(storageSize(initialStorage)));
     m_storage->m_allocBase = m_storage;
     m_indexBias = 0;
     m_storage->m_length = initialCapacity;
-    m_vectorLength = initialCapacity;
+    m_vectorLength = initialStorage;
     m_storage->m_numValuesInVector = initialCapacity;
     m_storage->m_sparseValueMap = 0;
     m_storage->subclassData = 0;
@@ -221,10 +229,12 @@ JSArray::JSArray(NonNullPassRefPtr<Structure> structure, const ArgList& list)
     ArgList::const_iterator end = list.end();
     for (ArgList::const_iterator it = list.begin(); it != end; ++it, ++i)
         vector[i] = *it;
+    for (; i < initialStorage; i++)
+        vector[i] = JSValue();
 
     checkConsistency();
 
-    Heap::heap(this)->reportExtraMemoryCost(storageSize(initialCapacity));
+    Heap::heap(this)->reportExtraMemoryCost(storageSize(initialStorage));
 }
 
 JSArray::~JSArray()
