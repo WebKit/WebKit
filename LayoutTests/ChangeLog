@@ -1,3 +1,32 @@
+2010-09-28  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; new test baselines.
+
+        [CHROMIUM] New chromium baselines post-r68334.
+
+        * platform/chromium-linux/fast/text/basic/014-expected.checksum:
+        * platform/chromium-linux/fast/text/basic/014-expected.png:
+        * platform/chromium-linux/fast/text/basic/014-expected.txt: Added.
+        * platform/chromium-linux/fast/text/capitalize-boundaries-expected.checksum:
+        * platform/chromium-linux/fast/text/capitalize-boundaries-expected.png:
+        * platform/chromium-linux/fast/text/capitalize-boundaries-expected.txt:
+        * platform/chromium-linux/fast/text/midword-break-after-breakable-char-expected.checksum:
+        * platform/chromium-linux/fast/text/midword-break-after-breakable-char-expected.png:
+        * platform/chromium-linux/fast/text/softHyphen-expected.txt: Added.
+        * platform/chromium-linux/fast/text/word-break-soft-hyphen-expected.txt: Added.
+        * platform/chromium-mac/fast/text/basic/014-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/midword-break-after-breakable-char-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/midword-break-after-breakable-char-expected.png: Added.
+        * platform/chromium-mac/fast/text/word-break-soft-hyphen-expected.checksum: Added.
+        * platform/chromium-win/fast/text/basic/014-expected.checksum:
+        * platform/chromium-win/fast/text/basic/014-expected.png:
+        * platform/chromium-win/fast/text/basic/014-expected.txt:
+        * platform/chromium-win/fast/text/midword-break-after-breakable-char-expected.checksum:
+        * platform/chromium-win/fast/text/midword-break-after-breakable-char-expected.png:
+        * platform/chromium-win/fast/text/midword-break-after-breakable-char-expected.txt:
+        * platform/chromium-win/fast/text/softHyphen-expected.txt:
+        * platform/chromium-win/fast/text/word-break-soft-hyphen-expected.txt:
+
 2010-09-28  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
