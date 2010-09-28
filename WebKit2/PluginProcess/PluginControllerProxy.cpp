@@ -27,9 +27,11 @@
 
 #include "PluginControllerProxy.h"
 
+#include "BackingStore.h"
 #include "NetscapePlugin.h"
 #include "NotImplemented.h"
 #include "PluginProcess.h"
+#include <WebCore/GraphicsContext.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
@@ -44,6 +46,7 @@ PassOwnPtr<PluginControllerProxy> PluginControllerProxy::create(WebProcessConnec
 PluginControllerProxy::PluginControllerProxy(WebProcessConnection* connection, uint64_t pluginInstanceID)
     : m_connection(connection)
     , m_pluginInstanceID(pluginInstanceID)
+    , m_paintTimer(RunLoop::main(), this, &PluginControllerProxy::paint)
 {
 }
 
@@ -73,9 +76,49 @@ void PluginControllerProxy::destroy()
     m_plugin = 0;
 }
 
-void PluginControllerProxy::invalidate(const IntRect&)
+void PluginControllerProxy::paint()
 {
-    notImplemented();
+    ASSERT(!m_dirtyRect.isEmpty());
+
+    if (!m_backingStore)
+        return;
+
+    IntRect dirtyRect = m_dirtyRect;
+    m_dirtyRect = IntRect();
+
+    // Create a graphics context.
+    OwnPtr<GraphicsContext> graphicsContext = m_backingStore->createGraphicsContext();
+    graphicsContext->translate(-m_frameRect.x(), -m_frameRect.y());
+
+    ASSERT(m_plugin);
+    m_plugin->paint(graphicsContext.get(), dirtyRect);
+
+    // FIXME: Let the web process know that we've painted.
+}
+
+void PluginControllerProxy::invalidate(const IntRect& rect)
+{
+    // Convert the dirty rect to window coordinates.
+    IntRect dirtyRect = rect;
+    dirtyRect.move(m_frameRect.x(), m_frameRect.y());
+
+    // Make sure that the dirty rect is not greater than the plug-in itself.
+    dirtyRect.intersect(m_frameRect);
+
+    m_dirtyRect.unite(dirtyRect);
+
+    // Check if we should start the timer.
+    
+    if (m_dirtyRect.isEmpty())
+        return;
+    
+    // FIXME: Check clip rect.
+    
+    if (m_paintTimer.isActive())
+        return;
+
+    // Start the timer.
+    m_paintTimer.startOneShot(0);
 }
 
 String PluginControllerProxy::userAgent(const WebCore::KURL&)
@@ -131,6 +174,21 @@ bool PluginControllerProxy::isAcceleratedCompositingEnabled()
 void PluginControllerProxy::pluginProcessCrashed()
 {
     notImplemented();
+}
+
+void PluginControllerProxy::geometryDidChange(const IntRect& frameRect, const IntRect& clipRect, const SharedMemory::Handle& backingStoreHandle)
+{
+    m_frameRect = frameRect;
+    m_clipRect = clipRect;
+
+    ASSERT(m_plugin);
+
+    if (!backingStoreHandle.isNull()) {
+        // Create a new backing store.
+        m_backingStore = BackingStore::create(frameRect.size(), backingStoreHandle);
+    }
+
+    m_plugin->geometryDidChange(frameRect, clipRect);
 }
 
 } // namespace WebKit

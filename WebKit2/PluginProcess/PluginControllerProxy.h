@@ -31,10 +31,13 @@
 #include "Connection.h"
 #include "Plugin.h"
 #include "PluginController.h"
+#include "RunLoop.h"
+#include "SharedMemory.h"
 #include <wtf/Noncopyable.h>
 
 namespace WebKit {
 
+class BackingStore;
 class WebProcessConnection;
 
 class PluginControllerProxy : PluginController {
@@ -49,8 +52,12 @@ public:
     bool initialize(const Plugin::Parameters&);
     void destroy();
 
+    void didReceivePluginControllerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+
 private:
     PluginControllerProxy(WebProcessConnection* connection, uint64_t pluginInstanceID);
+
+    void paint();
 
     // PluginController
     virtual void invalidate(const WebCore::IntRect&);
@@ -65,10 +72,26 @@ private:
     virtual bool isAcceleratedCompositingEnabled();
     virtual void pluginProcessCrashed();
 
+    // Message handlers.
+    void geometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, const SharedMemory::Handle& backingStoreHandle);
+
     WebProcessConnection* m_connection;
     uint64_t m_pluginInstanceID;
 
     RefPtr<Plugin> m_plugin;
+
+    // The plug-in rect and clip rect in window coordinates.
+    WebCore::IntRect m_frameRect;
+    WebCore::IntRect m_clipRect;
+
+    // The dirty rect in plug-in coordinates.
+    WebCore::IntRect m_dirtyRect;
+
+    // The paint timer, used for coalescing painting.
+    RunLoop::Timer<PluginControllerProxy> m_paintTimer;
+
+    // The backing store that this plug-in draws into.
+    RefPtr<BackingStore> m_backingStore;
 };
 
 } // namespace WebKit

@@ -1,3 +1,13 @@
+2010-09-28  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Begin hooking up painting in the plug-in process
+        https://bugs.webkit.org/show_bug.cgi?id=46766
+
+        * JavaScriptCore.exp:
+        Add tryFastRealloc, used by WebKit2.
+
 2010-09-28  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.

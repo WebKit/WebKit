@@ -27,9 +27,12 @@
 
 #include "PluginProxy.h"
 
+#include "BackingStore.h"
 #include "NotImplemented.h"
 #include "PluginController.h"
+#include "PluginControllerProxyMessages.h"
 #include "PluginProcessConnection.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebProcessConnectionMessages.h"
 
 using namespace WebCore;
@@ -117,7 +120,38 @@ PlatformLayer* PluginProxy::pluginLayer()
 
 void PluginProxy::geometryDidChange(const IntRect& frameRect, const IntRect& clipRect)
 {
-    notImplemented();
+    ASSERT(m_isStarted);
+
+    m_frameRect = frameRect;
+
+    bool didUpdateBackingStore = false;
+    if (!m_backingStore) {
+        m_backingStore = BackingStore::create(frameRect.size());
+        didUpdateBackingStore = true;
+    } else if (frameRect.size() != m_backingStore->size()) {
+        // The backing store already exists, just resize it.
+        if (!m_backingStore->resize(frameRect.size()))
+            return;
+
+        didUpdateBackingStore = true;
+    }
+
+    SharedMemory::Handle pluginBackingStoreHandle;
+
+    if (didUpdateBackingStore) {
+        // Create a new plug-in backing store.
+        m_pluginBackingStore = BackingStore::createSharable(frameRect.size());
+        if (!m_pluginBackingStore)
+            return;
+
+        // Create a handle to the plug-in backing store so we can send it over.
+        if (!m_pluginBackingStore->createHandle(pluginBackingStoreHandle)) {
+            m_pluginBackingStore.clear();
+            return;
+        }
+    }
+
+    m_connection->connection()->send(Messages::PluginControllerProxy::GeometryDidChange(frameRect, clipRect, pluginBackingStoreHandle), m_pluginInstanceID);
 }
 
 void PluginProxy::frameDidFinishLoading(uint64_t requestID)

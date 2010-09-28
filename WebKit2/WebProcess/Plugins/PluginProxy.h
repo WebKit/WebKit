@@ -33,6 +33,7 @@
 
 namespace WebKit {
 
+class BackingStore;
 class PluginProcessConnection;
 
 class PluginProxy : public Plugin, public CoreIPC::Connection::MessageReceiver {
@@ -87,6 +88,16 @@ private:
     uint64_t m_pluginInstanceID;
 
     PluginController* m_pluginController;
+
+    // The plug-in rect in window coordinates.
+    WebCore::IntRect m_frameRect;
+
+    // This is the backing store that we paint when we're told to paint.
+    RefPtr<BackingStore> m_backingStore;
+
+    // This is the shared memory backing store that the plug-in paints into. When the plug-in tells us
+    // that it's painted something in it, we'll blit from it to our own backing store.
+    RefPtr<BackingStore> m_pluginBackingStore;
 
     bool m_isStarted;
 };

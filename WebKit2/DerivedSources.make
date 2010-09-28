@@ -5,6 +5,7 @@ VPATH = \
 #
 
 MESSAGE_RECEIVERS = \
+    PluginControllerProxy \
     PluginProcess \
     PluginProcessProxy \
     WebPage \
