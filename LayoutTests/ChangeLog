@@ -1,3 +1,18 @@
+2010-09-28  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [Cairo] FreeType fonts should obey FontConfig hinting/anti-aliasing settings
+        https://bugs.webkit.org/show_bug.cgi?id=46740
+
+        Added a test adapted from platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle.html
+        which verifies that when rendering text the GTK+ port follows FontConfig settings.
+
+        * platform/gtk/fonts/fontconfig-aliasing-settings-expected.checksum: Added.
+        * platform/gtk/fonts/fontconfig-aliasing-settings-expected.png: Added.
+        * platform/gtk/fonts/fontconfig-aliasing-settings-expected.txt: Added.
+        * platform/gtk/fonts/fontconfig-aliasing-settings.html: Added.
+
 2010-09-28  Dan Bernstein  <mitz@apple.com>
 
         Updated expected result to include the soft hyphen character in the plain text output.

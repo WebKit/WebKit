@@ -37,6 +37,61 @@
 
 namespace WebCore {
 
+cairo_subpixel_order_t convertFontConfigSubpixelOrder(int fontConfigOrder)
+{
+    switch (fontConfigOrder) {
+    case FC_RGBA_RGB:
+        return CAIRO_SUBPIXEL_ORDER_RGB;
+    case FC_RGBA_BGR:
+        return CAIRO_SUBPIXEL_ORDER_BGR;
+    case FC_RGBA_VRGB:
+        return CAIRO_SUBPIXEL_ORDER_VRGB;
+    case FC_RGBA_VBGR:
+        return CAIRO_SUBPIXEL_ORDER_VBGR;
+    case FC_RGBA_NONE:
+    case FC_RGBA_UNKNOWN:
+        return CAIRO_SUBPIXEL_ORDER_DEFAULT;
+    }
+    return CAIRO_SUBPIXEL_ORDER_DEFAULT;
+}
+
+cairo_hint_style_t convertFontConfigHintStyle(int fontConfigStyle)
+{
+    switch (fontConfigStyle) {
+    case FC_HINT_NONE:
+        return CAIRO_HINT_STYLE_NONE;
+    case FC_HINT_SLIGHT:
+        return CAIRO_HINT_STYLE_SLIGHT;
+    case FC_HINT_MEDIUM:
+        return CAIRO_HINT_STYLE_MEDIUM;
+    case FC_HINT_FULL:
+        return CAIRO_HINT_STYLE_FULL;
+    }
+    return CAIRO_HINT_STYLE_NONE;
+}
+
+void setCairoFontOptionsFromFontConfigPattern(cairo_font_options_t* options, FcPattern* pattern)
+{
+    FcBool booleanResult;
+    int integerResult;
+
+    // We will determine if subpixel anti-aliasing is enabled via the FC_RGBA setting.
+    if (FcPatternGetBool(pattern, FC_ANTIALIAS, 0, &booleanResult) == FcResultMatch && booleanResult)
+        cairo_font_options_set_antialias(options, CAIRO_ANTIALIAS_GRAY);
+
+    if (FcPatternGetInteger(pattern, FC_RGBA, 0, &integerResult) == FcResultMatch) {
+        if (integerResult != FC_RGBA_NONE)
+            cairo_font_options_set_antialias(options, CAIRO_ANTIALIAS_SUBPIXEL);
+        cairo_font_options_set_subpixel_order(options, convertFontConfigSubpixelOrder(integerResult));
+    }
+
+    if (FcPatternGetInteger(pattern, FC_HINT_STYLE, 0, &integerResult) == FcResultMatch)
+        cairo_font_options_set_hint_style(options, convertFontConfigHintStyle(integerResult));
+
+    if (FcPatternGetBool(pattern, FC_HINTING, 0, &booleanResult) == FcResultMatch && !booleanResult)
+        cairo_font_options_set_hint_style(options, CAIRO_HINT_STYLE_NONE);
+}
+
 FontPlatformData::FontPlatformData(FcPattern* pattern, const FontDescription& fontDescription)
     : m_pattern(pattern)
     , m_fallbacks(0)
@@ -44,17 +99,8 @@ FontPlatformData::FontPlatformData(FcPattern* pattern, const FontDescription& fo
     , m_syntheticBold(false)
     , m_syntheticOblique(false)
 {
-    // FIXME: We should be getting these options from FontConfig.
-    static const cairo_font_options_t* defaultOptions = cairo_font_options_create();
-    const cairo_font_options_t* options = 0;
-#if !PLATFORM(EFL) || ENABLE(GLIB_SUPPORT)
-    if (GdkScreen* screen = gdk_screen_get_default())
-        options = gdk_screen_get_font_options(screen);
-#endif
-    // gdk_screen_get_font_options() returns null if no default options are
-    // set, so we always have to check.
-    if (!options)
-        options = defaultOptions;
+    cairo_font_options_t* options = cairo_font_options_create();
+    setCairoFontOptionsFromFontConfigPattern(options, pattern);
 
     cairo_matrix_t fontMatrix;
     cairo_matrix_init_scale(&fontMatrix, m_size, m_size);

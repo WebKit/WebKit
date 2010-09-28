@@ -2,6 +2,16 @@
 
         Reviewed by Gustavo Noronha Silva.
 
+        [Cairo] FreeType fonts should obey FontConfig hinting/anti-aliasing settings
+        https://bugs.webkit.org/show_bug.cgi?id=46740
+
+        * DumpRenderTree/gtk/fonts/fonts.conf: Add specialized variants of common
+        fonts which can be used to fully test FontConfig rendering settings.
+
+2010-09-28  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
         [gtk] Fedora has a different path for the liberation fonts
         https://bugs.webkit.org/show_bug.cgi?id=46709
 
