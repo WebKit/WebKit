@@ -191,4 +191,4 @@ command_passed: success_message='Passed tests' patch='197'
 run_webkit_patch: ['land-attachment', '--force-clean', '--ignore-builders', '--quiet', '--non-interactive', '--parent-command=commit-queue', 197]
 command_failed: failure_message='Unable to land patch' script_error='MOCK land failure' patch='197'
 """
-        self._run_through_task(commit_queue, expected_stderr)
+        self._run_through_task(commit_queue, expected_stderr, ScriptError)
