@@ -82,6 +82,11 @@ static int depth(CodeBlock* codeBlock, ScopeChain& sc)
 }
 
 #if ENABLE(INTERPRETER) 
+static NEVER_INLINE JSValue concatenateStrings(ExecState* exec, Register* strings, unsigned count)
+{
+    return jsString(exec, strings, count);
+}
+
 NEVER_INLINE bool Interpreter::resolve(CallFrame* callFrame, Instruction* vPC, JSValue& exceptionValue)
 {
     int dst = vPC[1].u.operand;
@@ -4301,7 +4306,7 @@ skip_id_custom_self:
         int src = vPC[2].u.operand;
         int count = vPC[3].u.operand;
 
-        callFrame->r(dst) = jsString(callFrame, &callFrame->registers()[src], count);
+        callFrame->r(dst) = concatenateStrings(callFrame, &callFrame->registers()[src], count);
         CHECK_FOR_EXCEPTION();
         vPC += OPCODE_LENGTH(op_strcat);
 

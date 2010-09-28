@@ -1,3 +1,15 @@
+2010-09-27  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 46680 - Inlining string concatenation can regress interpreter performance
+        <rdar://problem/8362752> REGRESSION: ~6.4% sunspider regression in interpreter
+        Do not inline calls to string concatenation in the interpret loop.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::concatenateStrings):
+        (JSC::Interpreter::privateExecute):
+
 2010-09-27  Anders Carlsson  <andersca@apple.com>
 
         Fix thinko.
