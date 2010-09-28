@@ -27,6 +27,8 @@
 
 #include "WebProcessConnection.h"
 
+#include "PluginControllerProxy.h"
+#include "PluginProcess.h"
 #include "RunLoop.h"
 
 namespace WebKit {
@@ -38,12 +40,35 @@ PassRefPtr<WebProcessConnection> WebProcessConnection::create(CoreIPC::Connectio
 
 WebProcessConnection::~WebProcessConnection()
 {
+    ASSERT(m_pluginControllers.isEmpty());
 }
     
 WebProcessConnection::WebProcessConnection(CoreIPC::Connection::Identifier connectionIdentifier)
 {
     m_connection = CoreIPC::Connection::createServerConnection(connectionIdentifier, this, RunLoop::main());
     m_connection->open();
+}
+
+void WebProcessConnection::addPluginControllerProxy(PluginControllerProxy* pluginController)
+{
+    ASSERT(!m_pluginControllers.contains(pluginController->pluginInstanceID()));
+    m_pluginControllers.set(pluginController->pluginInstanceID(), pluginController);
+}
+
+void WebProcessConnection::removePluginControllerProxy(PluginControllerProxy* pluginController)
+{
+    ASSERT(m_pluginControllers.contains(pluginController->pluginInstanceID()));
+    m_pluginControllers.remove(pluginController->pluginInstanceID());
+
+    if (!m_pluginControllers.isEmpty())
+        return;
+
+    // The last plug-in went away, close this connection.
+    m_connection->invalidate();
+    m_connection = 0;
+
+    // This will cause us to be deleted.    
+    PluginProcess::shared().removeWebProcessConnection(this);
 }
 
 void WebProcessConnection::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)

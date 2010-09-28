@@ -108,6 +108,8 @@
 		1A6FBA2B11E6862700DB1371 /* NetscapeBrowserFuncs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FBA2911E6862700DB1371 /* NetscapeBrowserFuncs.cpp */; };
 		1A6FBD2811E69BC200DB1371 /* NetscapePlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6FBD2611E69BC200DB1371 /* NetscapePlugin.h */; };
 		1A6FBD2911E69BC200DB1371 /* NetscapePlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FBD2711E69BC200DB1371 /* NetscapePlugin.cpp */; };
+		1A8EF4CB1252403700F7067F /* PluginControllerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8EF4C91252403700F7067F /* PluginControllerProxy.h */; };
+		1A8EF4CC1252403700F7067F /* PluginControllerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8EF4CA1252403700F7067F /* PluginControllerProxy.cpp */; };
 		1AA1CC5D100FA1A10078DEBC /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */; };
 		1AA1CD07100FA1BA0078DEBC /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CD06100FA1BA0078DEBC /* Carbon.framework */; };
 		1AA56F2911E92BC80061B882 /* PluginController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA56F2811E92BC80061B882 /* PluginController.h */; };
@@ -535,6 +537,8 @@
 		1A6FBA2911E6862700DB1371 /* NetscapeBrowserFuncs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetscapeBrowserFuncs.cpp; sourceTree = "<group>"; };
 		1A6FBD2611E69BC200DB1371 /* NetscapePlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetscapePlugin.h; sourceTree = "<group>"; };
 		1A6FBD2711E69BC200DB1371 /* NetscapePlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetscapePlugin.cpp; sourceTree = "<group>"; };
+		1A8EF4C91252403700F7067F /* PluginControllerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginControllerProxy.h; sourceTree = "<group>"; };
+		1A8EF4CA1252403700F7067F /* PluginControllerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginControllerProxy.cpp; sourceTree = "<group>"; };
 		1AA1C79A100E7FC50078DEBC /* WebCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
@@ -952,6 +956,8 @@
 			isa = PBXGroup;
 			children = (
 				1A0EC7FD124BD402007EF4A5 /* mac */,
+				1A8EF4CA1252403700F7067F /* PluginControllerProxy.cpp */,
+				1A8EF4C91252403700F7067F /* PluginControllerProxy.h */,
 				1A043975124D034800FFBFB5 /* PluginProcess.cpp */,
 				1A043974124D034800FFBFB5 /* PluginProcess.h */,
 				1A0EC6B1124BBD36007EF4A5 /* PluginProcess.messages.in */,
@@ -1871,6 +1877,7 @@
 				BC40783D1250FADD0068F20A /* WKEvent.h in Headers */,
 				1A043DC1124FF87500FFBFB5 /* PluginProxy.h in Headers */,
 				1A043F6A12514D8B00FFBFB5 /* WebProcessConnectionMessages.h in Headers */,
+				1A8EF4CB1252403700F7067F /* PluginControllerProxy.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2159,6 +2166,7 @@
 				1A043D92124FF02B00FFBFB5 /* BackingStoreMac.mm in Sources */,
 				1A043DC2124FF87500FFBFB5 /* PluginProxy.cpp in Sources */,
 				1A043F6912514D8B00FFBFB5 /* WebProcessConnectionMessageReceiver.cpp in Sources */,
+				1A8EF4CC1252403700F7067F /* PluginControllerProxy.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
