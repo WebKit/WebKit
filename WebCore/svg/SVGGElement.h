@@ -44,7 +44,7 @@ namespace WebCore {
         virtual void svgAttributeChanged(const QualifiedName&);
         virtual void synchronizeProperty(const QualifiedName&);
 
-        virtual bool rendererIsNeeded(RenderStyle*) { return true; }
+        virtual bool rendererIsNeeded(RenderStyle*);
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
     private:
