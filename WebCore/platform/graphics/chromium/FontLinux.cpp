@@ -485,12 +485,13 @@ private:
         m_xPositions = new SkScalar[size];
 
         m_item.num_glyphs = size;
-        m_glyphsArraySize = size; // Save the GlyphArrays size.
-        resetGlyphArrays(m_glyphsArraySize);
+        m_glyphsArrayCapacity = size;  // Save the GlyphArrays size.
+        resetGlyphArrays();
     }
 
-    void resetGlyphArrays(int size)
+    void resetGlyphArrays()
     {
+        int size = m_item.num_glyphs;
         // All the types here don't have pointers. It is safe to reset to
         // zero unless Harfbuzz breaks the compatibility in the future.
         memset(m_item.glyphs, 0, size * sizeof(HB_Glyph));
@@ -503,10 +504,12 @@ private:
 
     void shapeGlyphs()
     {
-        // Reset the array limit becuase HB_ShapeItem() overrides the
-        // m_item.num_glyphs.
-        m_item.num_glyphs = m_glyphsArraySize;
-        resetGlyphArrays(m_glyphsArraySize);
+        // HB_ShapeItem() resets m_item.num_glyphs. If the previous call to
+        // HB_ShapeItem() used less space than was available, the capacity of
+        // the array may be larger than the current value of m_item.num_glyphs. 
+        // So, we need to reset the num_glyphs to the capacity of the array.
+        m_item.num_glyphs = m_glyphsArrayCapacity;
+        resetGlyphArrays();
         while (!HB_ShapeItem(&m_item)) {
             // We overflowed our arrays. Resize and retry.
             // HB_ShapeItem fills in m_item.num_glyphs with the needed size.
@@ -608,7 +611,7 @@ private:
     unsigned m_offsetX; // Offset in pixels to the start of the next script run.
     unsigned m_pixelWidth; // Width (in px) of the current script run.
     unsigned m_numCodePoints; // Code points in current script run.
-    unsigned m_glyphsArraySize; // Current size of all the Harfbuzz arrays.
+    unsigned m_glyphsArrayCapacity; // Current size of all the Harfbuzz arrays.
 
     OwnPtr<TextRun> m_normalizedRun;
     OwnArrayPtr<UChar> m_normalizedBuffer; // A buffer for normalized run.
