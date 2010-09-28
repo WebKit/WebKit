@@ -1,5 +1,28 @@
 2010-09-28  Mark Rowe  <mrowe@apple.com>
 
+        Merge r63622.
+
+    2010-07-17  TJ Lee  <tjlee0909@gmail.com>
+
+        Reviewed by Timothy Hatcher.
+
+        HTMLLinkElement ignores dnsPrefetchingEnabled setting
+        https://bugs.webkit.org/show_bug.cgi?id=42500
+
+        Changed the HTML Link tag to check that the browser
+        has DNS-prefetching enabled before calling ResourceHandle::prepareForURL.
+
+        There are no test cases for this patch because it was unclear how to test
+        this using a layout test. A possible test case would be to
+        clear the DNS cache on the client's machine before loading a page with
+        <link rel="dns-prefetch" href="SomeSiteThatsNotTheCurrentOne.com"> and
+        then check the number of DNS cache entries.
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+
+2010-09-28  Mark Rowe  <mrowe@apple.com>
+
         Merge r64077.
 
     2010-07-26  Justin Schuh  <jschuh@chromium.org>

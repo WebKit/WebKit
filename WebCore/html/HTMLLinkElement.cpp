@@ -183,7 +183,7 @@ void HTMLLinkElement::process()
     if (m_isIcon && m_url.isValid() && !m_url.isEmpty())
         document()->setIconURL(m_url.string(), type);
 
-    if (m_isDNSPrefetch && m_url.isValid() && !m_url.isEmpty())
+    if (m_isDNSPrefetch && document()->isDNSPrefetchEnabled() && m_url.isValid() && !m_url.isEmpty())
         ResourceHandle::prepareForURL(m_url);
 
     bool acceptIfTypeContainsTextCSS = document()->page() && document()->page()->settings() && document()->page()->settings()->treatsAnyTextCSSLinkAsStylesheet();
