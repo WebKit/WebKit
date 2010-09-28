@@ -25,6 +25,7 @@
 
 #include "WebUIClient.h"
 
+#include "NativeWebKeyboardEvent.h"
 #include "WKAPICast.h"
 #include "WebPageProxy.h"
 #include <WebCore/IntSize.h>
@@ -126,6 +127,13 @@ void WebUIClient::contentsSizeChanged(WebPageProxy* page, const IntSize& size, W
         return;
 
     m_pageUIClient.contentsSizeChanged(toRef(page), size.width(), size.height(), toRef(frame), m_pageUIClient.clientInfo);
+}
+
+void WebUIClient::didNotHandleKeyEvent(WebPageProxy* page, const NativeWebKeyboardEvent& event)
+{
+    if (!m_pageUIClient.didNotHandleKeyEvent)
+        return;
+    m_pageUIClient.didNotHandleKeyEvent(toRef(page), event.nativeEvent(), m_pageUIClient.clientInfo);
 }
 
 } // namespace WebKit

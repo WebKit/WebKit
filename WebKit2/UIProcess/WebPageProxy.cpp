@@ -27,6 +27,7 @@
 
 #include "DrawingAreaProxy.h"
 #include "MessageID.h"
+#include "NativeWebKeyboardEvent.h"
 #include "PageClient.h"
 #include "WebBackForwardList.h"
 #include "WebBackForwardListItem.h"
@@ -396,10 +397,12 @@ void WebPageProxy::handleWheelEvent(const WebWheelEvent& event)
     process()->send(Messages::WebPage::WheelEvent(event), m_pageID);
 }
 
-void WebPageProxy::handleKeyboardEvent(const WebKeyboardEvent& event)
+void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
 {
     if (!isValid())
         return;
+
+    m_keyEventQueue.append(event);
 
     process()->responsivenessTimer()->start();
     process()->send(Messages::WebPage::KeyEvent(event), m_pageID);
@@ -698,9 +701,10 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
             break;
         case WebPageProxyMessage::DidReceiveEvent: {
             uint32_t type;
-            if (!arguments->decode(type))
+            bool handled;
+            if (!arguments->decode(CoreIPC::Out(type, handled)))
                 return;
-            didReceiveEvent((WebEvent::Type)type);
+            didReceiveEvent((WebEvent::Type)type, handled);
             break;
         }
         case WebPageProxyMessage::TakeFocus: {
@@ -1230,7 +1234,7 @@ void WebPageProxy::setCursor(const WebCore::Cursor& cursor)
     m_pageClient->setCursor(cursor);
 }
 
-void WebPageProxy::didReceiveEvent(WebEvent::Type type)
+void WebPageProxy::didReceiveEvent(WebEvent::Type type, bool handled)
 {
     switch (type) {
         case WebEvent::MouseMove:
@@ -1246,6 +1250,18 @@ void WebPageProxy::didReceiveEvent(WebEvent::Type type)
             process()->responsivenessTimer()->stop();
             break;
     }
+
+    if (!WebKeyboardEvent::isKeyboardEventType(type))
+        return;
+
+    NativeWebKeyboardEvent event = m_keyEventQueue.first();
+    ASSERT(type == event.type());
+    m_keyEventQueue.removeFirst();
+
+    if (handled)
+        return;
+
+    m_uiClient.didNotHandleKeyEvent(this, event);
 }
 
 void WebPageProxy::didRunJavaScriptInMainFrame(const String& resultString, uint64_t callbackID)

@@ -23,45 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebUIClient_h
-#define WebUIClient_h
+#import "NativeWebKeyboardEvent.h"
 
-#include "WKPage.h"
-#include "WebEvent.h"
-#include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
-
-namespace WebCore {
-class IntSize;
-}
+#import "WebEventFactory.h"
 
 namespace WebKit {
 
-class APIObject;
-class NativeWebKeyboardEvent;
-class WebFrameProxy;
-class WebPageProxy;
-
-class WebUIClient {
-public:
-    WebUIClient();
-    void initialize(const WKPageUIClient*);
-
-    PassRefPtr<WebPageProxy> createNewPage(WebPageProxy*);
-    void showPage(WebPageProxy*);
-    void close(WebPageProxy*);
-    void runJavaScriptAlert(WebPageProxy*, const String&, WebFrameProxy*);
-    bool runJavaScriptConfirm(WebPageProxy*, const String&, WebFrameProxy*);
-    String runJavaScriptPrompt(WebPageProxy*, const String&, const String&, WebFrameProxy*);
-    void setStatusText(WebPageProxy*, const String&);
-    void mouseDidMoveOverElement(WebPageProxy*, WebEvent::Modifiers, APIObject*);
-    void contentsSizeChanged(WebPageProxy*, const WebCore::IntSize&, WebFrameProxy*);
-    void didNotHandleKeyEvent(WebPageProxy*, const NativeWebKeyboardEvent&);
-
-private:
-    WKPageUIClient m_pageUIClient;
-};
+NativeWebKeyboardEvent::NativeWebKeyboardEvent(NSEvent *event, NSView *view)
+    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, view))
+    , m_nativeEvent(event)
+{
+}
 
 } // namespace WebKit
-
-#endif // WebUIClient_h

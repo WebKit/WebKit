@@ -63,6 +63,7 @@ struct WKContextStatistics;
 namespace WebKit {
 
 class DrawingAreaProxy;
+class NativeWebKeyboardEvent;
 class PageClient;
 class PlatformCertificateInfo;
 class WebBackForwardList;
@@ -144,7 +145,7 @@ public:
 
     void handleMouseEvent(const WebMouseEvent&);
     void handleWheelEvent(const WebWheelEvent&);
-    void handleKeyboardEvent(const WebKeyboardEvent&);
+    void handleKeyboardEvent(const NativeWebKeyboardEvent&);
 #if ENABLE(TOUCH_EVENTS)
     void handleTouchEvent(const WebTouchEvent&);
 #endif
@@ -254,7 +255,7 @@ private:
     void setToolTip(const String&);
     void setCursor(const WebCore::Cursor&);
 
-    void didReceiveEvent(WebEvent::Type);
+    void didReceiveEvent(WebEvent::Type, bool handled);
 
     void didRunJavaScriptInMainFrame(const String&, uint64_t);
     void didGetRenderTreeExternalRepresentation(const String&, uint64_t);
@@ -304,6 +305,8 @@ private:
     bool m_closed;
 
     uint64_t m_pageID;
+
+    Deque<NativeWebKeyboardEvent> m_keyEventQueue;
 };
 
 } // namespace WebKit

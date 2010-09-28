@@ -318,12 +318,12 @@ public:
         return true;
     }
 
-private:
     static bool isKeyboardEventType(Type type)
     {
         return type == RawKeyDown || type == KeyDown || type == KeyUp || type == Char;
     }
 
+private:
     String m_text;
     String m_unmodifiedText;
     String m_keyIdentifier;

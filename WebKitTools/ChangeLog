@@ -1,3 +1,20 @@
+2010-09-28  Adam Roben  <aroben@apple.com>
+
+        Update for the addition of WKPageUIClient::didNotHandleKeyEvent
+
+        Fixes <http://webkit.org/b/46660> <rdar://problem/8483465> Need API to
+        tell a WebKit2 client application that a key event was not handled
+
+        Reviewed by Kenneth Rohde Christiansen and Sam Weinig.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController awakeFromNib]):
+        * MiniBrowser/win/BrowserView.cpp:
+        (BrowserView::create):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::createOtherPage):
+        (WTR::TestController::initialize):
+
 2010-09-28  Simon Fraser  <simon.fraser@apple.com>
 
         Unreviewed.

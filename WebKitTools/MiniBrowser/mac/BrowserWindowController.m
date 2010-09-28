@@ -537,7 +537,8 @@ static void contentsSizeChanged(WKPageRef page, int width, int height, WKFrameRe
         runJavaScriptPrompt,
         setStatusText,
         mouseDidMoveOverElement,
-        contentsSizeChanged
+        contentsSizeChanged,
+        0           /* didNotHandleKeyEvent */
     };
     WKPageSetPageUIClient(_webView.pageRef, &uiClient);
 }

@@ -31,6 +31,7 @@
 // Implementation
 #import "ChunkedUpdateDrawingAreaProxy.h"
 #import "LayerBackedDrawingAreaProxy.h"
+#import "NativeWebKeyboardEvent.h"
 #import "PageClientImpl.h"
 #import "RunLoop.h"
 #import "WebContext.h"
@@ -272,10 +273,18 @@ EVENT_HANDLER(otherMouseUp, Mouse)
 EVENT_HANDLER(otherMouseMoved, Mouse)
 EVENT_HANDLER(otherMouseDragged, Mouse)
 EVENT_HANDLER(scrollWheel, Wheel)
-EVENT_HANDLER(keyUp, Keyboard)
-EVENT_HANDLER(keyDown, Keyboard)
 
 #undef EVENT_HANDLER
+
+- (void)keyUp:(NSEvent *)theEvent
+{
+    _data->_page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent, self));
+}
+
+- (void)keyDown:(NSEvent *)theEvent
+{
+    _data->_page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent, self));
+}
 
 - (void)_updateActiveState
 {

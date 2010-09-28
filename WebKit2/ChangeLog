@@ -1,3 +1,92 @@
+2010-09-28  Adam Roben  <aroben@apple.com>
+
+        Tell the UI client when a key event is not handled
+
+        When the web process receives an event, it sends a
+        WebPageProxyMessage::DidReceiveEvent message back to the UI process.
+        That message is now sent after handling the event, and includes a
+        boolean signifying whether or not the event was actually handled.
+
+        Every time WebPageProxy receives a key event, it adds it to a queue.
+        When it receives a WebPageProxyMessage::DidReceiveEvent for a key
+        event, the event is removed from the queue. If the event was not
+        handled, we tell the UI client.
+
+        Fixes <http://webkit.org/b/46660> <rdar://problem/8483465> Need API to
+        tell a WebKit2 client application that a key event was not handled
+
+        Reviewed by Kenneth Rohde Christiansen and Sam Weinig.
+
+        * Shared/NativeWebKeyboardEvent.h: Added. This class wraps a
+        WebKeyboardEvent and the native event that was used to construct it.
+        (WebKit::NativeWebKeyboardEvent::nativeEvent): Simple getter.
+
+        * Shared/WebEvent.h: Made isKeyboardEventType public for
+        WebPageProxy's benefit.
+
+        * Shared/mac/NativeWebKeyboardEventMac.mm: Added.
+        (WebKit::NativeWebKeyboardEvent::NativeWebKeyboardEvent):
+        * Shared/qt/NativeWebKeyboardEventQt.cpp: Added.
+        (WebKit::NativeWebKeyboardEvent::NativeWebKeyboardEvent):
+        * Shared/win/NativeWebKeyboardEventWin.cpp: Added.
+        (WebKit::NativeWebKeyboardEvent::NativeWebKeyboardEvent):
+        The constructor creates a WebKeyboardEvent and stores the native
+        event.
+
+        * UIProcess/API/C/WKNativeEvent.h: Added.
+
+        * UIProcess/API/C/WKPage.h: Added WKPageDidNotHandleKeyEventCallback
+        and WKPageUIClient::didNotHandleKeyEvent.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView keyUp:]):
+        (-[WKView keyDown:]):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::onKeyEvent):
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::keyPressEvent):
+        (QWKPagePrivate::keyReleaseEvent):
+        Changed to use NativeWebKeyboardEvent.
+
+        (QWKPage::QWKPage): Updated for addition of didNotHandleKeyEvent.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleKeyboardEvent): Changed to take a
+        NativeWebKeyboardEvent and to add it to m_keyEventQueue.
+        (WebKit::WebPageProxy::didReceiveMessage): Changed to expect a boolean
+        parameter in WebPageProxyMessage::DidReceiveEvent.
+        (WebKit::WebPageProxy::didReceiveEvent): Added a boolean "handled"
+        parameter. If the event was a keyboard event, we remove it from
+        m_keyEventQueue, and if it wasn't handled by WebCore, we tell the UI
+        client.
+
+        * UIProcess/WebPageProxy.h: Added m_keyEventQueue.
+
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::didNotHandleKeyEvent):
+        * UIProcess/WebUIClient.h:
+        Added. Just calls through to the WKPageUIClient.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::handleMouseEvent):
+        (WebKit::WebPage::mouseEvent):
+        (WebKit::handleWheelEvent):
+        (WebKit::WebPage::wheelEvent):
+        (WebKit::handleKeyEvent):
+        (WebKit::WebPage::keyEvent):
+        (WebKit::handleTouchEvent):
+        (WebKit::WebPage::touchEvent):
+        Moved code from the *Event functions into new helper handle*Event
+        functions, and changed to pass a boolean to
+        WebPageProxyMessage::DidReceiveEvent signaling whether the event was
+        handled or not.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.make:
+        Added WKNativeEvent.h and NativeWebKeyboardEvent.
+
 2010-09-28  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

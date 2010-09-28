@@ -437,6 +437,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\NativeWebKeyboardEvent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\NotImplemented.h"
 				>
 			</File>
@@ -761,6 +765,10 @@
 				>
 				<File
 					RelativePath="..\Shared\win\CommandLineWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\win\NativeWebKeyboardEventWin.cpp"
 					>
 				</File>
 				<File
@@ -1600,6 +1608,10 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKFramePolicyListener.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKNativeEvent.h"
 						>
 					</File>
 					<File

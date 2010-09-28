@@ -109,7 +109,8 @@ void BrowserView::create(RECT webViewRect, BrowserWindow* parentWindow)
         runJavaScriptPrompt,
         setStatusText,
         mouseDidMoveOverElement,
-        contentsSizeChanged
+        contentsSizeChanged,
+        0               /* didNotHandleKeyEvent */
     };
 
     WKPageSetPageUIClient(WKViewGetPage(m_webView), &uiClient);

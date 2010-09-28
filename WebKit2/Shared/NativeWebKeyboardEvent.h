@@ -23,45 +23,51 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebUIClient_h
-#define WebUIClient_h
+#ifndef NativeWebKeyboardEvent_h
+#define NativeWebKeyboardEvent_h
 
-#include "WKPage.h"
 #include "WebEvent.h"
-#include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
 
-namespace WebCore {
-class IntSize;
-}
+#if PLATFORM(MAC)
+#ifdef __OBJC__
+@class NSView;
+#else
+class NSView;
+#endif
+#elif PLATFORM(QT)
+#include <QKeyEvent>
+#endif
 
 namespace WebKit {
 
-class APIObject;
-class NativeWebKeyboardEvent;
-class WebFrameProxy;
-class WebPageProxy;
-
-class WebUIClient {
+class NativeWebKeyboardEvent : public WebKeyboardEvent {
 public:
-    WebUIClient();
-    void initialize(const WKPageUIClient*);
+#if PLATFORM(MAC)
+    NativeWebKeyboardEvent(NSEvent *, NSView *);
+#elif PLATFORM(WIN)
+    NativeWebKeyboardEvent(HWND, UINT message, WPARAM, LPARAM);
+#elif PLATFORM(QT)
+    explicit NativeWebKeyboardEvent(QKeyEvent*);
+#endif
 
-    PassRefPtr<WebPageProxy> createNewPage(WebPageProxy*);
-    void showPage(WebPageProxy*);
-    void close(WebPageProxy*);
-    void runJavaScriptAlert(WebPageProxy*, const String&, WebFrameProxy*);
-    bool runJavaScriptConfirm(WebPageProxy*, const String&, WebFrameProxy*);
-    String runJavaScriptPrompt(WebPageProxy*, const String&, const String&, WebFrameProxy*);
-    void setStatusText(WebPageProxy*, const String&);
-    void mouseDidMoveOverElement(WebPageProxy*, WebEvent::Modifiers, APIObject*);
-    void contentsSizeChanged(WebPageProxy*, const WebCore::IntSize&, WebFrameProxy*);
-    void didNotHandleKeyEvent(WebPageProxy*, const NativeWebKeyboardEvent&);
+#if PLATFORM(MAC)
+    NSEvent *nativeEvent() const { return m_nativeEvent.get(); }
+#elif PLATFORM(WIN)
+    const MSG* nativeEvent() const { return &m_nativeEvent; }
+#elif PLATFORM(QT)
+    const QKeyEvent* nativeEvent() const { return &m_nativeEvent; }
+#endif
 
 private:
-    WKPageUIClient m_pageUIClient;
+#if PLATFORM(MAC)
+    RetainPtr<NSEvent> m_nativeEvent;
+#elif PLATFORM(WIN)
+    MSG m_nativeEvent;
+#elif PLATFORM(QT)
+    QKeyEvent m_nativeEvent;
+#endif
 };
 
 } // namespace WebKit
 
-#endif // WebUIClient_h
+#endif // NativeWebKeyboardEvent_h

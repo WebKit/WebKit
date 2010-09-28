@@ -179,6 +179,7 @@ HEADERS += \
     Shared/ImmutableDictionary.h \
     Shared/MutableArray.h \
     Shared/MutableDictionary.h \
+    Shared/NativeWebKeyboardEvent.h \
     Shared/NotImplemented.h \
     Shared/qt/MappedMemory.h \
     Shared/qt/PlatformCertificateInfo.h \
@@ -201,6 +202,7 @@ HEADERS += \
     UIProcess/API/C/WKContextPrivate.h \
     UIProcess/API/C/WKFrame.h \
     UIProcess/API/C/WKFramePolicyListener.h \
+    UIProcess/API/C/WKNativeEvent.h \
     UIProcess/API/C/WKNavigationData.h \
     UIProcess/API/C/WKPage.h \
     UIProcess/API/C/WKPageNamespace.h \
@@ -310,6 +312,7 @@ SOURCES += \
     Shared/MutableArray.cpp \
     Shared/MutableDictionary.cpp \
     Shared/qt/MappedMemoryPool.cpp \
+    Shared/qt/NativeWebKeyboardEventQt.cpp \
     Shared/qt/UpdateChunk.cpp \
     Shared/qt/WebCoreArgumentCodersQt.cpp \
     Shared/qt/WebEventFactoryQt.cpp \

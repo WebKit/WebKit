@@ -23,45 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebUIClient_h
-#define WebUIClient_h
+#ifndef WKNativeEvent_h
+#define WKNativeEvent_h
 
-#include "WKPage.h"
-#include "WebEvent.h"
-#include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-namespace WebCore {
-class IntSize;
+#ifdef __APPLE__
+#ifdef __OBJC__
+@class NSEvent;
+#else
+struct NSEvent;
+#endif
+typedef NSEvent *WKNativeEventPtr;
+#elif defined(WIN32) || defined(_WIN32)
+typedef const struct tagMSG* WKNativeEventPtr;
+#else
+typedef const void* WKNativeEventPtr;
+#endif
+
+#ifdef __cplusplus
 }
+#endif
 
-namespace WebKit {
-
-class APIObject;
-class NativeWebKeyboardEvent;
-class WebFrameProxy;
-class WebPageProxy;
-
-class WebUIClient {
-public:
-    WebUIClient();
-    void initialize(const WKPageUIClient*);
-
-    PassRefPtr<WebPageProxy> createNewPage(WebPageProxy*);
-    void showPage(WebPageProxy*);
-    void close(WebPageProxy*);
-    void runJavaScriptAlert(WebPageProxy*, const String&, WebFrameProxy*);
-    bool runJavaScriptConfirm(WebPageProxy*, const String&, WebFrameProxy*);
-    String runJavaScriptPrompt(WebPageProxy*, const String&, const String&, WebFrameProxy*);
-    void setStatusText(WebPageProxy*, const String&);
-    void mouseDidMoveOverElement(WebPageProxy*, WebEvent::Modifiers, APIObject*);
-    void contentsSizeChanged(WebPageProxy*, const WebCore::IntSize&, WebFrameProxy*);
-    void didNotHandleKeyEvent(WebPageProxy*, const NativeWebKeyboardEvent&);
-
-private:
-    WKPageUIClient m_pageUIClient;
-};
-
-} // namespace WebKit
-
-#endif // WebUIClient_h
+#endif /* WKNativeEvent_h */

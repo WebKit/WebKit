@@ -25,6 +25,7 @@
 
 #include "ClientImpl.h"
 #include "LocalizedStrings.h"
+#include "NativeWebKeyboardEvent.h"
 #include "WebContext.h"
 #include "WebEventFactoryQt.h"
 #include "WebPlatformStrategies.h"
@@ -105,14 +106,12 @@ void QWKPagePrivate::paint(QPainter* painter, QRect area)
 
 void QWKPagePrivate::keyPressEvent(QKeyEvent* ev)
 {
-    WebKeyboardEvent keyboardEvent = WebEventFactory::createWebKeyboardEvent(ev);
-    page->handleKeyboardEvent(keyboardEvent);
+    page->handleKeyboardEvent(NativeWebKeyboardEvent(ev));
 }
 
 void QWKPagePrivate::keyReleaseEvent(QKeyEvent* ev)
 {
-    WebKeyboardEvent keyboardEvent = WebEventFactory::createWebKeyboardEvent(ev);
-    page->handleKeyboardEvent(keyboardEvent);
+    page->handleKeyboardEvent(NativeWebKeyboardEvent(ev));
 }
 
 void QWKPagePrivate::mouseMoveEvent(QGraphicsSceneMouseEvent* ev)
@@ -271,7 +270,8 @@ QWKPage::QWKPage(WKPageNamespaceRef namespaceRef)
         0,  /* runJavaScriptPrompt */
         0,  /* setStatusText */
         0,  /* mouseDidMoveOverElement */
-        0   /* contentsSizeChanged */
+        0,  /* contentsSizeChanged */
+        0   /* didNotHandleKeyEvent */
     };
     WKPageSetPageUIClient(pageRef(), &uiClient);
 }

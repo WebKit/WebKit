@@ -452,61 +452,71 @@ private:
     const WebEvent* m_previousCurrentEvent;
 };
 
+static bool handleMouseEvent(const WebMouseEvent& mouseEvent, Page* page)
+{
+    Frame* frame = page->mainFrame();
+    if (!frame->view())
+        return false;
+
+    PlatformMouseEvent platformMouseEvent = platform(mouseEvent);
+
+    switch (platformMouseEvent.eventType()) {
+        case WebCore::MouseEventPressed:
+            return frame->eventHandler()->handleMousePressEvent(platformMouseEvent);
+        case WebCore::MouseEventReleased:
+            return frame->eventHandler()->handleMouseReleaseEvent(platformMouseEvent);
+        case WebCore::MouseEventMoved:
+            return frame->eventHandler()->mouseMoved(platformMouseEvent);
+        default:
+            ASSERT_NOT_REACHED();
+            return false;
+    }
+}
+
 void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
 {
     CurrentEvent currentEvent(mouseEvent);
 
-    WebProcess::shared().connection()->send(WebPageProxyMessage::DidReceiveEvent, m_pageID, CoreIPC::In(static_cast<uint32_t>(mouseEvent.type())));
+    bool handled = handleMouseEvent(mouseEvent, m_page.get());
 
-    if (!m_mainFrame->coreFrame()->view())
-        return;
+    WebProcess::shared().connection()->send(WebPageProxyMessage::DidReceiveEvent, m_pageID, CoreIPC::In(static_cast<uint32_t>(mouseEvent.type()), handled));
+}
 
-    PlatformMouseEvent platformMouseEvent = platform(mouseEvent);
-    
-    switch (platformMouseEvent.eventType()) {
-        case WebCore::MouseEventPressed:
-            m_mainFrame->coreFrame()->eventHandler()->handleMousePressEvent(platformMouseEvent);
-            break;
-        case WebCore::MouseEventReleased:
-            m_mainFrame->coreFrame()->eventHandler()->handleMouseReleaseEvent(platformMouseEvent);
-            break;
-        case WebCore::MouseEventMoved:
-            m_mainFrame->coreFrame()->eventHandler()->mouseMoved(platformMouseEvent);
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            break;
-    }
+static bool handleWheelEvent(const WebWheelEvent& wheelEvent, Page* page)
+{
+    Frame* frame = page->mainFrame();
+    if (!frame->view())
+        return false;
+
+    PlatformWheelEvent platformWheelEvent = platform(wheelEvent);
+    return frame->eventHandler()->handleWheelEvent(platformWheelEvent);
 }
 
 void WebPage::wheelEvent(const WebWheelEvent& wheelEvent)
 {
     CurrentEvent currentEvent(wheelEvent);
 
-    WebProcess::shared().connection()->send(WebPageProxyMessage::DidReceiveEvent, m_pageID, CoreIPC::In(static_cast<uint32_t>(wheelEvent.type())));
-    if (!m_mainFrame->coreFrame()->view())
-        return;
+    bool handled = handleWheelEvent(wheelEvent, m_page.get());
+    WebProcess::shared().connection()->send(WebPageProxyMessage::DidReceiveEvent, m_pageID, CoreIPC::In(static_cast<uint32_t>(wheelEvent.type()), handled));
+}
 
-    PlatformWheelEvent platformWheelEvent = platform(wheelEvent);
-    m_mainFrame->coreFrame()->eventHandler()->handleWheelEvent(platformWheelEvent);
+static bool handleKeyEvent(const WebKeyboardEvent& keyboardEvent, Page* page)
+{
+    if (!page->mainFrame()->view())
+        return false;
+
+    return page->focusController()->focusedOrMainFrame()->eventHandler()->keyEvent(platform(keyboardEvent));
 }
 
 void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
 {
     CurrentEvent currentEvent(keyboardEvent);
 
-    WebProcess::shared().connection()->send(WebPageProxyMessage::DidReceiveEvent, m_pageID, CoreIPC::In(static_cast<uint32_t>(keyboardEvent.type())));
+    bool handled = handleKeyEvent(keyboardEvent, m_page.get());
+    if (!handled)
+        handled = performDefaultBehaviorForKeyEvent(keyboardEvent);
 
-    if (!m_mainFrame->coreFrame()->view())
-        return;
-
-    PlatformKeyboardEvent platformKeyboardEvent = platform(keyboardEvent);
-    if (m_page->focusController()->focusedOrMainFrame()->eventHandler()->keyEvent(platformKeyboardEvent))
-        return;
-
-    bool handled = performDefaultBehaviorForKeyEvent(keyboardEvent);
-    // FIXME: Communicate back to the UI process that the event was handled.
-    (void)handled;
+    WebProcess::shared().connection()->send(WebPageProxyMessage::DidReceiveEvent, m_pageID, CoreIPC::In(static_cast<uint32_t>(keyboardEvent.type()), handled));
 }
 
 void WebPage::validateMenuItem(const String& commandName)
@@ -529,16 +539,22 @@ void WebPage::executeEditCommand(const String& commandName)
 }
 
 #if ENABLE(TOUCH_EVENTS)
+static bool handleTouchEvent(const WebTouchEvent& touchEvent, Page* page)
+{
+    Frame* frame = page->mainFrame();
+    if (!frame->view())
+        return false;
+
+    return frame->eventHandler()->handleTouchEvent(platform(touchEvent));
+}
+
 void WebPage::touchEvent(const WebTouchEvent& touchEvent)
 {
     CurrentEvent currentEvent(touchEvent);
-    WebProcess::shared().connection()->send(WebPageProxyMessage::DidReceiveEvent, m_pageID, CoreIPC::In(static_cast<uint32_t>(touchEvent.type())));
-            
-    if (!m_mainFrame->coreFrame()->view())
-        return;
 
-    PlatformTouchEvent platformTouchEvent = platform(touchEvent);
-    m_mainFrame->coreFrame()->eventHandler()->handleTouchEvent(platformTouchEvent);
+    bool handled = handleTouchEvent(touchEvent, m_page.get());
+
+    WebProcess::shared().connection()->send(WebPageProxyMessage::DidReceiveEvent, m_pageID, CoreIPC::In(static_cast<uint32_t>(touchEvent.type()), handled));
 }
 #endif
 
