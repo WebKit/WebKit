@@ -1,5 +1,11 @@
 2010-09-27  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Unreviewed fix after r68460.
+
+        * platform/qt/Skipped: Add http/tests/canvas/webgl/origin-clean-conformance.html, because 3D canvas is disabled by default.
+
+2010-09-27  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed fix after r68444. Add Qt specific expected files.
 
         * platform/qt/fast/repaint/repaint-svg-after-style-change-expected.txt: Copied from LayoutTests/fast/repaint/repaint-svg-after-style-change-expected.txt.
