@@ -1,5 +1,34 @@
 2010-09-28  Mark Rowe  <mrowe@apple.com>
 
+        Merge r60608.
+
+    2010-06-02  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Brady Eidson.
+
+        location.href and outgoing referrer not updated properly by
+        pushState/replaceState
+        https://bugs.webkit.org/show_bug.cgi?id=40027
+
+        Tests: fast/loader/stateobjects/pushstate-updates-location.html
+               fast/loader/stateobjects/replacestate-updates-location.html
+               http/tests/navigation/pushstate-updates-referrer.html
+               http/tests/navigation/replacestate-updates-referrer.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateURLForPushOrReplaceState):
+        Update the FrameLoader's notion of the current URL as well!
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadInSameDocument):
+        Use the 'url' parameter instead of m_URL since m_URL might have
+        changed during the handling of the PopState event.  Eventually,
+        this will become irrelevant since the PopState event should be
+        dispatched asynchronously, but just in case we patch HashChange
+        to be asynchronous before PopState, this change would be needed.
+
+2010-09-28  Mark Rowe  <mrowe@apple.com>
+
         Merge r66911.
 
     2010-09-07  Abhishek Arya  <inferno@chromium.org>

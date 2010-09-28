@@ -4652,7 +4652,9 @@ void Document::updateURLForPushOrReplaceState(const KURL& url)
     if (!f)
         return;
 
+    // FIXME: Eliminate this redundancy.
     setURL(url);
+    f->loader()->setURL(url);
     f->loader()->documentLoader()->replaceRequestURLForSameDocumentNavigation(url);
 }
 

@@ -1674,7 +1674,7 @@ void FrameLoader::loadInSameDocument(const KURL& url, SerializedScriptValue* sta
     }
     
     if (hashChange) {
-        m_frame->document()->enqueueHashchangeEvent(oldURL, m_URL);
+        m_frame->document()->enqueueHashchangeEvent(oldURL, url);
         m_client->dispatchDidChangeLocationWithinPage();
     }
     
