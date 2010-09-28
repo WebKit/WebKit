@@ -1,3 +1,16 @@
+2010-09-28  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; new test baselines.
+
+        [CHROMIUM] Update test baselines after r68561.
+
+        * platform/chromium-linux/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/chromium-linux/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/chromium-mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/chromium-mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+
 2010-09-28  W. James MacLean  <wjmaclean@chromium.org>
 
         Reviewed by James Robinson.
