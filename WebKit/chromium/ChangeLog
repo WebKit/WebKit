@@ -1,3 +1,15 @@
+2010-09-28  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        [Chromium] Linking error due to wrong guard in WebIDBTransaction.h
+        https://bugs.webkit.org/show_bug.cgi?id=46710
+
+        Remove the wrong guard.
+
+        * public/WebIDBTransaction.h:
+        (WebKit::WebIDBTransaction::getIDBTransactionBackendInterface):
+
 2010-09-27  Alpha Lam  <hclam@chromium.org>
 
         Build fix. Not reviewed.

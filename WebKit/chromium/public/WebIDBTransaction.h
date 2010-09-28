@@ -60,13 +60,12 @@ public:
     }
     virtual void setCallbacks(WebIDBTransactionCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
 
-#if WEBKIT_IMPLEMENTATION
+    // FIXME: this is never called from WebCore. Find a cleaner solution.
     virtual WebCore::IDBTransactionBackendInterface* getIDBTransactionBackendInterface() const
     {
         WEBKIT_ASSERT_NOT_REACHED();
         return 0;
     }
-#endif
 
 };
 
