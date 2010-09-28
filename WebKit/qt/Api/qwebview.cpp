@@ -307,9 +307,7 @@ QWebView::QWebView(QWidget *parent)
     setAttribute(Qt::WA_InputMethodEnabled);
 #endif
 
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     setAttribute(Qt::WA_AcceptTouchEvents);
-#endif
 #if defined(Q_WS_MAEMO_5)
     QAbstractKineticScroller* scroller = new QWebViewKineticScroller();
     static_cast<QWebViewKineticScroller*>(scroller)->setWidget(this);
@@ -348,13 +346,7 @@ void QWebViewPrivate::detachCurrentPage()
     if (!page)
         return;
 
-    if (page) {
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
-        page->d->view.clear();
-#else
-        page->d->view = 0;
-#endif
-    }
+    page->d->view.clear();
 
     // if the page client is the special client constructed for
     // delegating the responsibilities to a QWidget, we need
@@ -828,7 +820,6 @@ bool QWebView::event(QEvent *e)
             if (cursor().shape() == Qt::ArrowCursor)
                 d->page->d->client->resetCursor();
 #endif
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
         } else if (e->type() == QEvent::TouchBegin 
                    || e->type() == QEvent::TouchEnd 
                    || e->type() == QEvent::TouchUpdate) {
@@ -836,7 +827,6 @@ bool QWebView::event(QEvent *e)
 
             // Always return true so that we'll receive also TouchUpdate and TouchEnd events
             return true;
-#endif
         } else if (e->type() == QEvent::Leave)
             d->page->event(e);
     }

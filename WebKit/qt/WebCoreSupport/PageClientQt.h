@@ -58,9 +58,7 @@ public:
     virtual void update(const QRect& dirtyRect);
     virtual void setInputMethodEnabled(bool enable);
     virtual bool inputMethodEnabled() const;
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     virtual void setInputMethodHints(Qt::InputMethodHints hints);
-#endif
 
 #ifndef QT_NO_CURSOR
     virtual QCursor cursor() const;
@@ -93,9 +91,7 @@ class QGraphicsItemOverlay : public QGraphicsItem {
             , page(p)
     {
         setPos(0, 0);
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
         setFlag(QGraphicsItem::ItemUsesExtendedStyleOption, true);
-#endif
         setCacheMode(QGraphicsItem::DeviceCoordinateCache);
     }
 
@@ -146,9 +142,7 @@ public:
     virtual void update(const QRect& dirtyRect);
     virtual void setInputMethodEnabled(bool enable);
     virtual bool inputMethodEnabled() const;
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     virtual void setInputMethodHints(Qt::InputMethodHints hints);
-#endif
 
 #ifndef QT_NO_CURSOR
     virtual QCursor cursor() const;

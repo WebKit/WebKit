@@ -789,11 +789,9 @@ void QWebFrame::load(const QNetworkRequest &req,
         case QNetworkAccessManager::PostOperation:
             request.setHTTPMethod("POST");
             break;
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
         case QNetworkAccessManager::DeleteOperation:
             request.setHTTPMethod("DELETE");
             break;
-#endif
         case QNetworkAccessManager::UnknownOperation:
             // eh?
             break;

@@ -48,12 +48,10 @@ bool PageClientQWidget::inputMethodEnabled() const
     return view->testAttribute(Qt::WA_InputMethodEnabled);
 }
 
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
 void PageClientQWidget::setInputMethodHints(Qt::InputMethodHints hints)
 {
     view->setInputMethodHints(hints);
 }
-#endif
 
 #ifndef QT_NO_CURSOR
 QCursor PageClientQWidget::cursor() const
@@ -215,26 +213,18 @@ void PageClientQGraphicsWidget::updateTiledBackingStoreScale()
 
 void PageClientQGraphicsWidget::setInputMethodEnabled(bool enable)
 {
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     view->setFlag(QGraphicsItem::ItemAcceptsInputMethod, enable);
-#endif
 }
 
 bool PageClientQGraphicsWidget::inputMethodEnabled() const
 {
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     return view->flags() & QGraphicsItem::ItemAcceptsInputMethod;
-#else
-    return false;
-#endif
 }
 
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
 void PageClientQGraphicsWidget::setInputMethodHints(Qt::InputMethodHints hints)
 {
     view->setInputMethodHints(hints);
 }
-#endif
 
 #ifndef QT_NO_CURSOR
 QCursor PageClientQGraphicsWidget::cursor() const

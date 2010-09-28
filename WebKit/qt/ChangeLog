@@ -1,3 +1,53 @@
+2010-09-28  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Remove support for Qt 4.5
+        https://bugs.webkit.org/show_bug.cgi?id=46718
+
+        Remove the code for versions of Qt prior to 4.6.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::updateResizesToContentsForPage):
+        (QGraphicsWebView::QGraphicsWebView):
+        (QGraphicsWebView::sceneEvent):
+        (QGraphicsWebViewPrivate::detachCurrentPage):
+        * Api/qwebframe.cpp:
+        (QWebFrame::load):
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPagePrivate::handleSoftwareInputPanel):
+        (QWebPagePrivate::inputMethodEvent):
+        (QWebPagePrivate::touchEvent):
+        (QWebPage::inputMethodQuery):
+        (QWebPage::view):
+        (QWebPage::event):
+        * Api/qwebpage_p.h:
+        * Api/qwebview.cpp:
+        (QWebView::QWebView):
+        (QWebViewPrivate::detachCurrentPage):
+        (QWebView::event):
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::setInputMethodState):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createPlugin):
+        * WebCoreSupport/PageClientQt.cpp:
+        (WebCore::PageClientQWidget::setInputMethodHints):
+        (WebCore::PageClientQGraphicsWidget::setInputMethodEnabled):
+        (WebCore::PageClientQGraphicsWidget::inputMethodEnabled):
+        (WebCore::PageClientQGraphicsWidget::setInputMethodHints):
+        * WebCoreSupport/PageClientQt.h:
+        (WebCore::QGraphicsItemOverlay::page):
+        * tests/qwebframe/tst_qwebframe.cpp:
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::inputMethods_data):
+        (inputMethodHints):
+        (inputMethodEnabled):
+        (tst_QWebPage::inputMethods):
+        (tst_QWebPage::originatingObjectInNetworkRequests):
+        * tests/qwebview/tst_qwebview.cpp:
+        (tst_QWebView::reusePage):
+
 2010-09-28  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.

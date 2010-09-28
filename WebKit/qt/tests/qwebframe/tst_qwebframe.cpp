@@ -2947,12 +2947,7 @@ void tst_QWebFrame::evaluateWillCauseRepaint()
     view.setHtml(html);
     view.show();
 
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     QTest::qWaitForWindowShown(&view);
-#else
-    QTest::qWait(2000);
-#endif
-
     view.page()->mainFrame()->evaluateJavaScript(
         "document.getElementById('junk').style.display = 'none';");
 

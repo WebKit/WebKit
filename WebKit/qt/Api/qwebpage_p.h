@@ -131,10 +131,8 @@ public:
     void handleSoftwareInputPanel(Qt::MouseButton);
     bool handleScrolling(QKeyEvent*, WebCore::Frame*);
 
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     // Returns whether the default action was cancelled in the JS event handler
     bool touchEvent(QTouchEvent*);
-#endif
 
     void setInspector(QWebInspector*);
     QWebInspector* getOrCreateInspector();
@@ -155,11 +153,7 @@ public:
     QUndoStack *undoStack;
 #endif
 
-#if QT_VERSION >= 0x040600
     QWeakPointer<QWidget> view;
-#else
-    QWidget* view;
-#endif
 
     bool insideOpenCall;
     quint64 m_totalBytes;
