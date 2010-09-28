@@ -1,3 +1,29 @@
+2010-09-28  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Differentiate waitForSyncReply from waitForReply
+        https://bugs.webkit.org/show_bug.cgi?id=46752
+
+        Since waitForSyncReply is going to need to dispatch incoming sync messages while
+        waiting for the correct reply, we need to add a new waitForSyncReply function that
+        can do this.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::sendSyncMessage):
+        Push the pending sync reply information on the m_pendingSyncReplies stack,
+        send the message, wait for a reply and pop the information off the stack.
+
+        (CoreIPC::Connection::waitForSyncReply):
+        Block while waiting for a reply to the sync message with the given ID.
+        
+        (CoreIPC::Connection::processIncomingMessage):
+        If the incoming message is a sync reply, set the didReceiveReply flag and the replyDecoder
+        members in the pending sync reply and signal the client thread to wakeup.
+
+        * Platform/CoreIPC/Connection.h:
+        Add a stack of PendingSyncReply structs.
+
 2010-09-28  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler and Dave Hyatt.

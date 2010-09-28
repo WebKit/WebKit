@@ -157,17 +157,78 @@ PassOwnPtr<ArgumentDecoder> Connection::waitForMessage(MessageID messageID, uint
 
 PassOwnPtr<ArgumentDecoder> Connection::sendSyncMessage(MessageID messageID, uint64_t syncRequestID, PassOwnPtr<ArgumentEncoder> encoder, double timeout)
 {
-    // First send the message.
-    if (!sendMessage(messageID, encoder))
-        return PassOwnPtr<ArgumentDecoder>();
+    // We only allow sending sync messages from the client run loop.
+    ASSERT(RunLoop::current() == m_clientRunLoop);
 
-    // Now wait for a reply and return it.
-    return waitForMessage(MessageID(CoreIPCMessage::SyncMessageReply), syncRequestID, timeout);
+    if (!isValid())
+        return 0;
+    
+    // Push the pending sync reply information on our stack.
+    {
+        MutexLocker locker(m_waitForSyncReplyMutex);
+        m_pendingSyncReplies.append(PendingSyncReply(syncRequestID));
+    }
+    
+    // First send the message.
+    sendMessage(messageID, encoder);
+    
+    // Then wait for a reply.
+    OwnPtr<ArgumentDecoder> reply = waitForSyncReply(syncRequestID, timeout);
+
+    // Finally, pop the pending sync reply information.
+    {
+        MutexLocker locker(m_waitForSyncReplyMutex);
+        ASSERT(m_pendingSyncReplies.last().syncRequestID == syncRequestID);
+        m_pendingSyncReplies.removeLast();
+    }
+    
+    return reply.release();
+}
+
+PassOwnPtr<ArgumentDecoder> Connection::waitForSyncReply(uint64_t syncRequestID, double timeout)
+{
+    double absoluteTime = currentTime() + timeout;
+
+    bool timedOut = false;
+    while (!timedOut) {
+        MutexLocker locker(m_waitForSyncReplyMutex);
+
+        // First, check if there is a sync reply at the top of the stack.
+        ASSERT(!m_pendingSyncReplies.isEmpty());
+            
+        PendingSyncReply& pendingSyncReply = m_pendingSyncReplies.last();
+        ASSERT(pendingSyncReply.syncRequestID == syncRequestID);
+            
+        // We found the sync reply, return it.
+        if (pendingSyncReply.didReceiveReply)
+            return pendingSyncReply.releaseReplyDecoder();
+
+        // We didn't find a sync reply yet, keep waiting.
+        timedOut = !m_waitForSyncReplyCondition.timedWait(m_waitForSyncReplyMutex, absoluteTime);
+    }
+
+    // We timed out.
+    return 0;
 }
 
 void Connection::processIncomingMessage(MessageID messageID, PassOwnPtr<ArgumentDecoder> arguments)
 {
-    // First, check if we're waiting for this message.
+    // Check if this is a sync reply.
+    if (messageID == MessageID(CoreIPCMessage::SyncMessageReply)) {
+        MutexLocker locker(m_waitForSyncReplyMutex);
+        ASSERT(!m_pendingSyncReplies.isEmpty());
+
+        PendingSyncReply& pendingSyncReply = m_pendingSyncReplies.last();
+        ASSERT(pendingSyncReply.syncRequestID == arguments->destinationID());
+
+        pendingSyncReply.replyDecoder = arguments.leakPtr();
+        pendingSyncReply.didReceiveReply = true;
+
+        m_waitForSyncReplyCondition.signal();
+        return;
+    }
+    
+    // Check if we're waiting for this message.
     {
         MutexLocker locker(m_waitForMessageMutex);
         

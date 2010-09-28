@@ -151,9 +151,11 @@ private:
     
     bool isValid() const { return m_client; }
     
-    PassOwnPtr<ArgumentDecoder> sendSyncMessage(MessageID, uint64_t syncRequestID, PassOwnPtr<ArgumentEncoder>, double timeout);
     PassOwnPtr<ArgumentDecoder> waitForMessage(MessageID, uint64_t destinationID, double timeout);
     
+    PassOwnPtr<ArgumentDecoder> sendSyncMessage(MessageID, uint64_t syncRequestID, PassOwnPtr<ArgumentEncoder>, double timeout);
+    PassOwnPtr<ArgumentDecoder> waitForSyncReply(uint64_t syncRequestID, double timeout);
+
     // Called on the connection work queue.
     void processIncomingMessage(MessageID, PassOwnPtr<ArgumentDecoder>);
     bool canSendOutgoingMessages() const;
@@ -187,7 +189,49 @@ private:
     ThreadCondition m_waitForMessageCondition;
     Mutex m_waitForMessageMutex;
     HashMap<std::pair<unsigned, uint64_t>, ArgumentDecoder*> m_waitForMessageMap;
+
+    // Represents a sync request for which we're waiting on a reply.
+    struct PendingSyncReply {
+        // The request ID.
+        uint64_t syncRequestID;
+
+        // The reply decoder, will be null if there was an error processing the sync
+        // message on the other side.
+        ArgumentDecoder* replyDecoder;
+
+        // Will be set to true once a reply has been received or an error occurred.
+        bool didReceiveReply;
     
+        PendingSyncReply()
+            : syncRequestID(0)
+            , replyDecoder(0)
+            , didReceiveReply(false)
+        {
+        }
+
+        explicit PendingSyncReply(uint64_t syncRequestID)
+            : syncRequestID(syncRequestID)
+            , replyDecoder(0)
+            , didReceiveReply(0)
+        {
+        }
+
+        PassOwnPtr<ArgumentDecoder> releaseReplyDecoder()
+        {
+            OwnPtr<ArgumentDecoder> reply = adoptPtr(replyDecoder);
+            replyDecoder = 0;
+            
+            return reply.release();
+        }
+    };
+
+
+    Mutex m_waitForSyncReplyMutex;
+    ThreadCondition m_waitForSyncReplyCondition;
+
+    // This is protected by the m_waitForSyncReply mutex.    
+    Vector<PendingSyncReply> m_pendingSyncReplies;
+
 #if PLATFORM(MAC)
     // Called on the connection queue.
     void receiveSourceEventHandler();
