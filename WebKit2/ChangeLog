@@ -1,3 +1,7 @@
+2010-09-27  Darin Adler  <darin@apple.com>
+
+        * Scripts/webkit2: Added property svn:ignore.
+
 2010-09-27  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
