@@ -251,10 +251,7 @@ def build(bld):
         excludes = get_excludes(webcore_dir, exclude_patterns)
         excludes.extend(['UserStyleSheetLoader.cpp', 'RenderMediaControls.cpp'])
 
-        # intermediate sources
-        excludes.append('ColorData.cpp')
-        excludes.append('CSSValueKeywords.cpp')
-        excludes.append('CSSPropertyNames.cpp')
+        # intermediate sourceså
         excludes.append('DocTypeStrings.cpp')
         excludes.append('HTMLEntityNames.cpp')
         excludes.append('tokenizer.cpp')
