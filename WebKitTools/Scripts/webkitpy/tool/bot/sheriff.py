@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from webkitpy.common.checkout.changelog import view_source_url
-from webkitpy.common.net.bugzilla import parse_bug_id
+from webkitpy.common.net.bugzilla import Bugzilla, BugzillaError, parse_bug_id
 from webkitpy.common.system.deprecated_logging import log
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.grammar import join_with_separators
@@ -63,6 +63,13 @@ class Sheriff(object):
         if rollout_reason.startswith("-"):
             raise ScriptError(message="The rollout reason may not begin "
                               "with - (\"%s\")." % rollout_reason)
+
+        try:
+            self._tool.bugs.fetch_bug(self._tool.checkout().commit_info_for_revision(svn_revision))
+        except BugzillaError, e:
+            if (e.is_not_permitted_to_view_bug()):
+                raise ScriptError(message="SheriffBot is not authorized to view %s." % self._tool.bugs.bug_url_for_bug_id(e.bug_id()))
+            raise ScriptError(message="Could not determine the corresponding bug for r%s." % svn_revision)
 
         output = self._sheriffbot.run_webkit_patch([
             "create-rollout",

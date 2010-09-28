@@ -29,6 +29,7 @@
 import os
 
 from webkitpy.common.checkout.changelog import ChangeLog
+from webkitpy.common.net.bugzilla import BugzillaError
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
@@ -54,7 +55,7 @@ class PrepareChangeLog(AbstractStep):
             changelog = ChangeLog(changelog_path)
             if not changelog.latest_entry().bug_id():
                 changelog.set_short_description_and_bug_url(
-                    self.cached_lookup(state, "bug_title"),
+                    self.cached_lookup(state, "bug_title"),  # Will raise an exception if not authorized to retrieve the bug title.
                     self._tool.bugs.bug_url_for_bug_id(bug_id))
 
     def run(self, state):

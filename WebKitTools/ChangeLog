@@ -1,3 +1,43 @@
+2010-09-27  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Adam Barth.
+
+        sheriffbot can't roll out security patches
+        https://bugs.webkit.org/show_bug.cgi?id=39136
+
+        Make SheriffBot determine if it's authorized to view a bug
+        whose change it wants to rollout before it tries to rollout
+        the change.
+
+        Moreover, make both webkit-patch and Sheriffbot provide human-
+        readable error messages when they are not authorized to view
+        a bug and when a bug number is invalid.
+
+        Currently, Sheriffbot does not parse Bugzilla bugs for
+        <bug error="...">, which indicates an error when retrieving
+        a bug. In particular, error="NotPermitted" if a person (or bot)
+        is not authorized to view a bug. For such error="NotPermitted" bugs,
+        Sheriffbot raises an exception when parsing the bug report and
+        this exception does not explicitly indicate Sheriffbot's lack
+        of authorization. Instead, Sheriffbot should explicitly check
+        for the presence <bug error="..."> before operating on a bug
+        and error with a human-readable message if it's not permitted
+        to view it.
+
+        * Scripts/webkitpy/common/net/bugzilla.py: Added BugzillaError class.
+        * Scripts/webkitpy/common/net/bugzilla_unittest.py:
+          - Added unit test test_bug_parsing_for_bugzilla_not_permitted_error().
+          - Added unit test test_bug_parsing_for_bugzilla_not_found_error().
+          - Added unit test test_bug_parsing_for_bugzilla_invalid_bug_id_error().
+        * Scripts/webkitpy/tool/bot/sheriff.py: Modified to catch BugzillaError.
+        * Scripts/webkitpy/tool/commands/download.py: Ditto.
+        * Scripts/webkitpy/tool/commands/queues.py: Ditto.
+        * Scripts/webkitpy/tool/commands/upload.py: Ditto.
+        * Scripts/webkitpy/tool/steps/closebug.py: Ditto.
+        * Scripts/webkitpy/tool/steps/obsoletepatches.py: Ditto.
+        * Scripts/webkitpy/tool/steps/preparechangelog.py: Ditto.
+        * Scripts/webkitpy/tool/steps/updatechangelogswithreviewer.py: Ditto.
+
 2010-09-27  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

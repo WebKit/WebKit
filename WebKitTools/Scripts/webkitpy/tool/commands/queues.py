@@ -35,7 +35,7 @@ from datetime import datetime
 from optparse import make_option
 from StringIO import StringIO
 
-from webkitpy.common.net.bugzilla import CommitterValidator
+from webkitpy.common.net.bugzilla import BugzillaError, CommitterValidator
 from webkitpy.common.net.statusserver import StatusServer
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.deprecated_logging import error, log
@@ -353,7 +353,14 @@ class AbstractReviewQueue(AbstractPatchQueue, PersistentPatchCollectionDelegate,
     def next_work_item(self):
         patch_id = self._patches.next()
         if patch_id:
-            return self._tool.bugs.fetch_attachment(patch_id)
+            try:
+                return self._tool.bugs.fetch_attachment(patch_id)
+            except BugzillaError, e:
+                # This may occur if the bug with attachment ID patch_id becomes a security
+                # bug between the time we fetched all attachment IDs from the review queue
+                # and now. So, we ignore this attachment.
+                log("'%s'; ignoring." % e)
+                pass
 
     def should_proceed_with_work_item(self, patch):
         raise NotImplementedError, "subclasses must implement"

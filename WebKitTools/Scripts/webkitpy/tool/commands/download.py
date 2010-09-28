@@ -34,6 +34,7 @@ from optparse import make_option
 import webkitpy.tool.steps as steps
 
 from webkitpy.common.checkout.changelog import ChangeLog, view_source_url
+from webkitpy.common.net.bugzilla import BugzillaError
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCommand
 from webkitpy.tool.commands.stepsequence import StepSequence
@@ -157,16 +158,31 @@ class AbstractPatchSequencingCommand(AbstractPatchProcessingCommand):
 
 class ProcessAttachmentsMixin(object):
     def _fetch_list_of_patches_to_process(self, options, args, tool):
-        return map(lambda patch_id: tool.bugs.fetch_attachment(patch_id), args)
+        all_patches = []
+        for patch_id in args:
+            try:
+                all_patches.append(tool.bugs.fetch_attachment(patch_id))
+            except BugzillaError, e:
+                if options.non_interactive:
+                    raise
+                log("Failed to fetch attachment %s: '%s'; ignoring." % (patch_id, e))
+                continue
+        return all_patches
 
 
 class ProcessBugsMixin(object):
     def _fetch_list_of_patches_to_process(self, options, args, tool):
         all_patches = []
         for bug_id in args:
-            patches = tool.bugs.fetch_bug(bug_id).reviewed_patches()
-            log("%s found on bug %s." % (pluralize("reviewed patch", len(patches)), bug_id))
-            all_patches += patches
+            try:
+                patches = tool.bugs.fetch_bug(bug_id).reviewed_patches()
+                log("%s found on bug %s." % (pluralize("reviewed patch", len(patches)), bug_id))
+                all_patches += patches
+            except BugzillaError, e:
+                if options.non_interactive:
+                    raise
+                log("'%s'; ignoring." % e)
+                continue
         return all_patches
 
 
