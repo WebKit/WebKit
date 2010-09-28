@@ -1,3 +1,20 @@
+2010-09-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION (r68054): Buttons no longer render at correct sizes
+        https://bugs.webkit.org/show_bug.cgi?id=46513
+
+        Test: fast/forms/input-button-sizes.html
+
+        The setUpButtonCell function was running only once, but needed to run every time
+        through the button function.
+
+        * platform/mac/ThemeMac.mm:
+        (WebCore::leakButtonCell): Added. Separate one-time initialization code.
+        (WebCore::setUpButtonCell): Removed the first-time initialization part of this function.
+        (WebCore::button): Merged the three functions back into one.
+
 2010-09-27  Victoria Kirst  <vrk@google.com>
 
         Reviewed by James Robinson.

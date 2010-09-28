@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2010 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -375,54 +375,53 @@ static const int* buttonMargins(NSControlSize controlSize)
     return margins[controlSize];
 }
 
-static NSButtonCell *setUpButtonCell(NSButtonCell *buttonCell, ControlPart part, ControlStates states, const IntRect& zoomedRect, float zoomFactor)
-{
-    if (!buttonCell) {
-        buttonCell = [[NSButtonCell alloc] init];
-        [buttonCell setTitle:nil];
-        [buttonCell setButtonType:NSMomentaryPushInButton];
-        if (states & DefaultState)
-            [buttonCell setKeyEquivalent:@"\r"];
-    }
+enum ButtonCellType { NormalButtonCell, DefaultButtonCell };
 
+static NSButtonCell *leakButtonCell(ButtonCellType type)
+{
+    NSButtonCell *cell = [[NSButtonCell alloc] init];
+    [cell setTitle:nil];
+    [cell setButtonType:NSMomentaryPushInButton];
+    if (type == DefaultButtonCell)
+        [cell setKeyEquivalent:@"\r"];
+    return cell;
+}
+
+static void setUpButtonCell(NSButtonCell *cell, ControlPart part, ControlStates states, const IntRect& zoomedRect, float zoomFactor)
+{
     // Set the control size based off the rectangle we're painting into.
     const IntSize* sizes = buttonSizes();
 #if ENABLE(DATALIST)
     if (part == ListButtonPart) {
-        [buttonCell setBezelStyle:NSRoundedDisclosureBezelStyle];
+        [cell setBezelStyle:NSRoundedDisclosureBezelStyle];
         sizes = listButtonSizes();
     } else
 #endif
     if (part == SquareButtonPart || zoomedRect.height() > buttonSizes()[NSRegularControlSize].height() * zoomFactor) {
         // Use the square button
-        if ([buttonCell bezelStyle] != NSShadowlessSquareBezelStyle)
-            [buttonCell setBezelStyle:NSShadowlessSquareBezelStyle];
-    } else if ([buttonCell bezelStyle] != NSRoundedBezelStyle)
-        [buttonCell setBezelStyle:NSRoundedBezelStyle];
+        if ([cell bezelStyle] != NSShadowlessSquareBezelStyle)
+            [cell setBezelStyle:NSShadowlessSquareBezelStyle];
+    } else if ([cell bezelStyle] != NSRoundedBezelStyle)
+        [cell setBezelStyle:NSRoundedBezelStyle];
 
-    setControlSize(buttonCell, sizes, zoomedRect.size(), zoomFactor);
+    setControlSize(cell, sizes, zoomedRect.size(), zoomFactor);
 
     // Update the various states we respond to.
-    updateStates(buttonCell, states);
-
-    return buttonCell;
-}
-    
-static NSButtonCell *nonDefaultButton(ControlPart part, ControlStates states, const IntRect& zoomedRect, float zoomFactor)
-{
-    static NSButtonCell *cell = setUpButtonCell(cell, part, states, zoomedRect, zoomFactor);    
-    return cell;
-}
-
-static NSButtonCell *defaultButton(ControlPart part, ControlStates states, const IntRect& zoomedRect, float zoomFactor)
-{
-    static NSButtonCell *cell = setUpButtonCell(cell, part, states, zoomedRect, zoomFactor);    
-    return cell;
+    updateStates(cell, states);
 }
 
 static NSButtonCell *button(ControlPart part, ControlStates states, const IntRect& zoomedRect, float zoomFactor)
 {
-    return ((states & DefaultState) ? nonDefaultButton : defaultButton)(part, states, zoomedRect, zoomFactor);
+    NSButtonCell *cell;
+    if (states & DefaultState) {
+        static NSButtonCell *defaultCell = leakButtonCell(DefaultButtonCell);
+        cell = defaultCell;
+    } else {
+        static NSButtonCell *normalCell = leakButtonCell(NormalButtonCell);
+        cell = normalCell;
+    }
+    setUpButtonCell(cell, part, states, zoomedRect, zoomFactor);    
+    return cell;
 }
 
 static void paintButton(ControlPart part, ControlStates states, GraphicsContext* context, const IntRect& zoomedRect, float zoomFactor, ScrollView* scrollView)

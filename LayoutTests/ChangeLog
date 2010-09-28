@@ -1,3 +1,22 @@
+2010-09-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION (r68054): Buttons no longer render at correct sizes
+        https://bugs.webkit.org/show_bug.cgi?id=46513
+
+        * fast/forms/input-button-sizes.html: Copied from LayoutTests/fast/forms/button-sizes.html.
+        Turned into a distinct test of <input type=button>; old test was for <button>.
+
+        * platform/mac/fast/forms/input-button-sizes-expected.checksum: Added.
+        * platform/mac/fast/forms/input-button-sizes-expected.png: Added.
+        * platform/mac/fast/forms/input-button-sizes-expected.txt: Added.
+
+        * platform/mac/fast/forms/disabled-select-change-index-expected.checksum: Added.
+        * platform/mac/fast/forms/disabled-select-change-index-expected.png: Added.
+        * platform/mac/fast/forms/file-input-disabled-expected.checksum: Added.
+        * platform/mac/fast/forms/file-input-disabled-expected.png: Added.
+
 2010-09-27  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, fix a typo.
