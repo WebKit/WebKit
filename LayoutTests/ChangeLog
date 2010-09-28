@@ -1,3 +1,12 @@
+2010-09-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed.
+
+        Added editing/pasteboard/paste-table-001.html to the skipped list of gtk platforms
+        because the test requires editing delegates dump and gtk does not implement it yet.
+
+        * platform/gtk/Skipped:
+
 2010-09-28  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; expectations update.
