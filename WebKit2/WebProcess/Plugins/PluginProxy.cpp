@@ -28,6 +28,7 @@
 #include "PluginProxy.h"
 
 #include "NotImplemented.h"
+#include "PluginController.h"
 #include "PluginProcessConnection.h"
 #include "WebProcessConnectionMessages.h"
 
@@ -61,6 +62,12 @@ PluginProxy::~PluginProxy()
     m_connection->removePluginProxy(this);
 }
 
+void PluginProxy::pluginProcessCrashed()
+{
+    if (m_pluginController)
+        m_pluginController->pluginProcessCrashed();
+}
+
 bool PluginProxy::initialize(PluginController* pluginController, const Parameters& parameters)
 {
     ASSERT(!m_pluginController);
@@ -85,6 +92,8 @@ bool PluginProxy::initialize(PluginController* pluginController, const Parameter
 
 void PluginProxy::destroy()
 {
+    m_pluginController = 0;
+
     notImplemented();
 }
 

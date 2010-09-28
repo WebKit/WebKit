@@ -41,6 +41,7 @@ public:
     ~PluginProxy();
 
     uint64_t pluginInstanceID() const { return m_pluginInstanceID; }
+    void pluginProcessCrashed();
 
 private:
     explicit PluginProxy(PassRefPtr<PluginProcessConnection>);

@@ -2,6 +2,40 @@
 
         Reviewed by Adam Roben.
 
+        Improve plug-in process lifecycle handling
+        https://bugs.webkit.org/show_bug.cgi?id=46734
+
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::destroyPlugin):
+        Destroy and delete the plug-in.
+
+        (WebKit::WebProcessConnection::didClose):
+        Our web process crashed, go through and delete all plug-in instances.
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::didClose):
+        The plug-in process crashed. Go through all pending replies and send them so the
+        web processes won't be blocked waiting for a reply.
+
+        (WebKit::PluginProcessProxy::didCreateWebProcessConnection):
+        We need to remove the pending reply connection once we've sent the reply.
+
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        (WebKit::PluginProcessConnection::didClose):
+        The plug-in process crashed. Iterate over all proxies and let them know that the plug-in
+        process has crashed.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::pluginProcessCrashed):
+        Tell our controller that the plug-in process crashed.
+
+        (WebKit::PluginProxy::destroy):
+        Null out the controller.
+
+2010-09-28  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
         Implement PluginControllerProxy::initialize and have it create a plug-in
         https://bugs.webkit.org/show_bug.cgi?id=46731
 

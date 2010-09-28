@@ -51,6 +51,8 @@ private:
     void addPluginControllerProxy(PassOwnPtr<PluginControllerProxy>);
     void removePluginControllerProxy(PluginControllerProxy*);
 
+    void destroyPlugin(PluginControllerProxy*);
+
     // CoreIPC::Connection::Client
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     virtual CoreIPC::SyncReplyMode didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
