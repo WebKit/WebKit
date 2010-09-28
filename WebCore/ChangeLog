@@ -2460,7 +2460,6 @@
         (WebCore::SVGLength::setValueAsString):
 
 2010-09-24  Luiz Agostini  <luiz.agostini@openbossa.org>
-
         Reviewed by Kenneth Rohde Christiansen.
 
         Keep viewport information in Document
