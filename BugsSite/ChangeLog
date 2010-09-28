@@ -1,3 +1,11 @@
+2010-09-28  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Convert verbatim unicode values in comitter names to characters
+
+        * committers-autocomplete.js:
+
 2010-09-24  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Csaba Osztrogonác.
