@@ -244,8 +244,11 @@
           '../platform/mac',
           '../platform/text/mac',
         ],
-        # enable -Wall and -Werror, just in Mac build for now
-        # FIXME: Also enable this for Linux/Windows after verifying no warnings
+        # enable -Wall and -Werror, just for Mac and Linux builds for now
+        # FIXME: Also enable this for Windows after verifying no warnings
+        'chromium_code': 1,
+      }],
+      ['OS=="linux"', {
         'chromium_code': 1,
       }],
       ['OS=="win"', {

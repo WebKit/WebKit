@@ -115,7 +115,7 @@ void ScrollbarThemeChromiumLinux::paintButton(GraphicsContext* gc, Scrollbar* sc
     ControlStates states = 0;
     // Determine if the button can be pressed.
     if (((direction == PlatformThemeChromiumGtk::West || direction == PlatformThemeChromiumGtk::North) && scrollbar->currentPos())
-        || (direction == PlatformThemeChromiumGtk::East || direction == PlatformThemeChromiumGtk::South) && scrollbar->currentPos() != scrollbar->maximum())
+        || ((direction == PlatformThemeChromiumGtk::East || direction == PlatformThemeChromiumGtk::South) && scrollbar->currentPos() != scrollbar->maximum()))
         states |= EnabledState;
 
     if (states & EnabledState) {

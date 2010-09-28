@@ -845,7 +845,7 @@ void PlatformContextSkia::readbackHardwareToSoftware() const
             for (int i = 0; i < width; ++i) {
                 uint32_t pixel = pixels[i];
                 // Swizzles from RGBA -> BGRA.
-                pixels[i] = pixel & 0xFF00FF00 | ((pixel & 0x00FF0000) >> 16) | ((pixel & 0x000000FF) << 16);
+                pixels[i] = (pixel & 0xFF00FF00) | ((pixel & 0x00FF0000) >> 16) | ((pixel & 0x000000FF) << 16);
             }
         }
     }

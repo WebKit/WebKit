@@ -129,7 +129,7 @@ static uint32_t* copySubRect(uint32_t* src, int srcX, int srcY, uint32_t* dst, i
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width ; ++x) {
                 uint32_t pixel = srcOffset[x + y * srcStride];
-                *dstPixel = pixel & 0xFF00FF00 | ((pixel & 0x00FF0000) >> 16) | ((pixel & 0x000000FF) << 16);
+                *dstPixel = (pixel & 0xFF00FF00) | ((pixel & 0x00FF0000) >> 16) | ((pixel & 0x000000FF) << 16);
                 dstPixel++;
             }
         }
