@@ -1,5 +1,11 @@
 2010-09-27  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Unreviewed fix after r68444. Add Qt specific expected files.
+
+        * platform/qt/fast/repaint/repaint-svg-after-style-change-expected.txt: Copied from LayoutTests/fast/repaint/repaint-svg-after-style-change-expected.txt.
+
+2010-09-27  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed fix after r68440. Update Qt specific expected files.
 
         * platform/qt/fast/dom/Window/window-properties-expected.txt:
