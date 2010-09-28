@@ -1,3 +1,11 @@
+2010-09-27  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, Qt build fix. Stub out CanvasRenderingContext::checkOrigin(const HTMLVideoElement*)
+        on platforms that don't support video after r68460.
+
+        * html/canvas/CanvasRenderingContext.cpp:
+        (WebCore::CanvasRenderingContext::checkOrigin):
+
 2010-09-27  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

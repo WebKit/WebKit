@@ -77,9 +77,11 @@ void CanvasRenderingContext::checkOrigin(const HTMLImageElement* image)
 
 void CanvasRenderingContext::checkOrigin(const HTMLVideoElement* video)
 {
+#if ENABLE(VIDEO)
     checkOrigin(KURL(KURL(), video->currentSrc()));
     if (canvas()->originClean() && video && !video->hasSingleSecurityOrigin())
         canvas()->setOriginTainted();
+#endif
 }
 
 void CanvasRenderingContext::checkOrigin(const KURL& url)
