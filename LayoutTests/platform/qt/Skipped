@@ -5483,3 +5483,9 @@ fast/dom/nodesFromRect-basic.html
 
 # It fails, because 3D canvas is disabled by default.
 http/tests/canvas/webgl/origin-clean-conformance.html
+
+# 3 media tests fail with Qt version 4.6.3 and 4.7.0
+# https://bugs.webkit.org/show_bug.cgi?id=46249
+media/restore-from-page-cache.html
+media/video-can-play-type.html
+media/video-delay-load-event.html

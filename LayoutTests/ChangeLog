@@ -1,3 +1,12 @@
+2010-09-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] 3 media tests fail with Qt version 4.6.3 and 4.7.0
+        https://bugs.webkit.org/show_bug.cgi?id=46249
+
+        * platform/qt/Skipped: 3 failing media tests added until fix.
+
 2010-09-28  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, added an expectation.
