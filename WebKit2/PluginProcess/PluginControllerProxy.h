@@ -46,6 +46,9 @@ public:
 
     uint64_t pluginInstanceID() const { return m_pluginInstanceID; }
 
+    bool initialize(const Plugin::Parameters&);
+    void destroy();
+
 private:
     PluginControllerProxy(WebProcessConnection* connection, uint64_t pluginInstanceID);
 

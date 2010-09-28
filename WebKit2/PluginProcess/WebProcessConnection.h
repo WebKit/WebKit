@@ -45,11 +45,11 @@ public:
 
     CoreIPC::Connection* connection() const { return m_connection.get(); }
 
-    void addPluginControllerProxy(PluginControllerProxy*);
-    void removePluginControllerProxy(PluginControllerProxy*);
-
 private:
     WebProcessConnection(CoreIPC::Connection::Identifier);
+
+    void addPluginControllerProxy(PassOwnPtr<PluginControllerProxy>);
+    void removePluginControllerProxy(PluginControllerProxy*);
 
     // CoreIPC::Connection::Client
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);

@@ -2,6 +2,30 @@
 
         Reviewed by Adam Roben.
 
+        Implement PluginControllerProxy::initialize and have it create a plug-in
+        https://bugs.webkit.org/show_bug.cgi?id=46731
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::initialize):
+        Create the plug-in and try to initialize it.
+
+        (WebKit::PluginControllerProxy::destroy):
+        Destroy the plug-in.
+
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::addPluginControllerProxy):
+        Add the given plug-in controller proxy to the map and assume ownership of it.
+
+        (WebKit::WebProcessConnection::removePluginControllerProxy):
+        Remove the given plug-in controller proxy from the map and delete it.
+
+        (WebKit::WebProcessConnection::createPlugin):
+        Create a plug-in controller proxy and try to initialize it.
+
+2010-09-28  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
         Add PluginControllerProxy class
         https://bugs.webkit.org/show_bug.cgi?id=46728
 

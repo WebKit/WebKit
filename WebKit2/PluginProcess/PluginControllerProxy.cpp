@@ -27,7 +27,9 @@
 
 #include "PluginControllerProxy.h"
 
+#include "NetscapePlugin.h"
 #include "NotImplemented.h"
+#include "PluginProcess.h"
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
@@ -48,6 +50,27 @@ PluginControllerProxy::PluginControllerProxy(WebProcessConnection* connection, u
 PluginControllerProxy::~PluginControllerProxy()
 {
     ASSERT(!m_plugin);
+}
+
+bool PluginControllerProxy::initialize(const Plugin::Parameters& parameters)
+{
+    ASSERT(!m_plugin);
+
+    m_plugin = NetscapePlugin::create(PluginProcess::shared().netscapePluginModule());
+    if (!m_plugin->initialize(this, parameters)) {
+        m_plugin = 0;
+        return false;
+    }
+
+    return true;
+}
+
+void PluginControllerProxy::destroy()
+{
+    ASSERT(m_plugin);
+
+    m_plugin->destroy();
+    m_plugin = 0;
 }
 
 void PluginControllerProxy::invalidate(const IntRect&)
