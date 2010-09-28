@@ -1,3 +1,16 @@
+2010-09-28  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Autocorrection panel is shown at incorrect location when WebView is scrolled.
+        https://bugs.webkit.org/show_bug.cgi?id=46531
+        <rdar://problem/8455376>
+
+        * dom/Range.h: Make getBorderAndTextQuads() public so that it can be used by Editor.
+        * editing/Editor.cpp:
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges): Replaced call to textQuads()
+          with getBorderAndTextQuads().
+
 2010-09-28  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Jeremy Orlow.
