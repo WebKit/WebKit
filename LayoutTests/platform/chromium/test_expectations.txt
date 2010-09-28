@@ -2450,7 +2450,7 @@ BUG42696 : http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.ht
 
 // Started failing at r57969
 // Becoming flaky on linux around r68501
-BUG8729 MAC LINUX : http/tests/multipart/invalid-image-data.html = IMAGE
+BUG8729 MAC : http/tests/multipart/invalid-image-data.html = IMAGE
 BUG8729 LINUX RELEASE : http/tests/multipart/invalid-image-data.html = IMAGE
 
 // Started failing at r58152
