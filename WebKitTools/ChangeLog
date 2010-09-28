@@ -1,3 +1,13 @@
+2010-09-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Unreviewed.
+
+        Update the CSSTestSuiteHarness to not scrape the XHTML chapter files
+        for the test order, but instead use information from testinfo.data.
+        
+        * CSSTestSuiteHarness/harness/harness.html:
+        * CSSTestSuiteHarness/harness/harness.js:
+
 2010-09-28  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, don't try to get the svn revision from the git repo when packaging,

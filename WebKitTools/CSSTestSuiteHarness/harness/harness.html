@@ -77,7 +77,10 @@
     function testSelected()
     {
       var list = document.getElementById('test-list')
-      gTestSuite.loadTestByName(list.options[list.selectedIndex]._testName);
+      if (list.selectedIndex >= 0)
+        gTestSuite.goToTestIndex(list.selectedIndex);
+      else
+        gTestSuite.clearTest();
     }
 
     function resultsPopupChanged(popup)

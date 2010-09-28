@@ -29,34 +29,113 @@ const kTestSuiteVersion = '20100917';
 const kTestSuiteHome = '../' + kTestSuiteVersion + '/';
 const kTestInfoDataFile = 'testinfo.data';
 
-const kChapterFiles = [
-  "chapter-1",
-  "chapter-2",
-  "chapter-3",
-  "chapter-4",
-  "chapter-5",
-  "chapter-6",
-  "chapter-7",
-  "chapter-8",
-  "chapter-9",
-  "chapter-10",
-  "chapter-11",
-  "chapter-12",
-  "chapter-13",
-  "chapter-14",
-  "chapter-15",
-  "chapter-16",
-  "chapter-17",
-  "chapter-18",
-  "chapter-A",
-  "chapter-B",
-  "chapter-C",
-  "chapter-D",
-  "chapter-E",
-  "chapter-F",
-  "chapter-G",
-  "chapter-I"
+const kChapterData = [
+  {
+    'file' : 'about.html',
+    'title' : 'About the CSS 2.1 Specification',
+  },
+  {
+    'file' : 'intro.html',
+    'title' : 'Introduction to CSS 2.1',
+  },
+  {
+    'file' : 'conform.html',
+    'title' : 'Conformance: Requirements and Recommendations',
+  },
+  {
+    'file' : "syndata.html",
+    'title' : 'Syntax and basic data types',
+  },
+  {
+    'file' : 'selector.html' ,
+    'title' : 'Selectors',
+  },
+  {
+    'file' : 'cascade.html',
+    'title' : 'Assigning property values, Cascading, and Inheritance',
+  },
+  {
+    'file' : 'media.html',
+    'title' : 'Media types',
+  },
+  {
+    'file' : 'box.html' ,
+    'title' : 'Box model',
+  },
+  {
+    'file' : 'visuren.html',
+    'title' : 'Visual formatting model',
+  },
+  {
+    'file' :'visudet.html',
+    'title' : 'Visual formatting model details',
+  },
+  {
+    'file' : 'visufx.html',
+    'title' : 'Visual effects',
+  },
+  {
+    'file' : 'generate.html',
+    'title' : 'Generated content, automatic numbering, and lists',
+  },
+  {
+    'file' : 'page.html',
+    'title' : 'Paged media',
+  },
+  {
+    'file' : 'colors.html',
+    'title' : 'Colors and Backgrounds',
+  },
+  {
+    'file' : 'fonts.html',
+    'title' : 'Fonts',
+  },
+  {
+    'file' : 'text.html',
+    'title' : 'Text',
+  },
+  {
+    'file' : 'tables.html',
+    'title' : 'Tables',
+  },
+  {
+    'file' : 'ui.html',
+    'title' : 'User interface',
+  },
+  {
+    'file' : 'aural.html',
+    'title' : 'Appendix A. Aural style sheets',
+  },
+  {
+    'file' : 'refs.html',
+    'title' : 'Appendix B. Bibliography',
+  },
+  {
+    'file' : 'changes.html',
+    'title' : 'Appendix C. Changes',
+  },
+  {
+    'file' : 'sample.html',
+    'title' : 'Appendix D. Default style sheet for HTML 4',
+  },
+  {
+    'file' : 'zindex.html',
+    'title' : 'Appendix E. Elaborate description of Stacking Contexts',
+  },
+  {
+    'file' : 'propidx.html',
+    'title' : 'Appendix F. Full property table',
+  },
+  {
+    'file' : 'grammar.html',
+    'title' : 'Appendix G. Grammar of CSS',
+  },
+  {
+    'file' : 'other.html',
+    'title' : 'Other',
+  },
 ];
+
 
 const kHTML4Data = {
   'path' : 'html4',
@@ -67,24 +146,6 @@ const kXHTML1Data = {
   'path' : 'xhtml1',
   'suffix' : '.xht'
 };
-
-/*
-  chapter = {
-    'name': ,
-    'title': ,
-    'testcount': 
-    'testNames': [] // array of test name
-  }
-  
-  test = {
-    'name': ,
-    'title': ,
-    'ref': ,
-    'compare': ,
-    'flags': ,
-    'assert': ,
-  }
-*/
 
 // Results popup
 const kResultsSelector = [
@@ -121,203 +182,266 @@ const kResultsSelector = [
     'name': 'Tests Not Run',
     'handler' : function(self) { self.showResultsForTestsNotRun(); }
   }
-]; 
+];
+
+function Test(testInfoLine)
+{
+  var fields = testInfoLine.split('\t');
+  
+  this.id = fields[0];
+  this.reference = fields[1];
+  this.title = fields[2];
+  this.flags = fields[3];
+  this.links = fields[4];
+  this.assertion = fields[5];
+  
+  if (!this.links)
+    this.links = "other.html"
+}
+
+function ChapterSection(link)
+{
+  var result= link.match(/^([.\w]+)(#.+)?$/);
+  if (result != null) {
+    this.file = result[1];
+    this.anchor = result[2];
+  }
+  
+  this.tests = [];
+}
+
+function Chapter(chapterInfo)
+{
+  this.file = chapterInfo.file;
+  this.title = chapterInfo.title;
+  this.testCount = 0;
+  this.sections = []; // array of ChapterSection
+}
+
+Chapter.prototype.description = function()
+{
+  return this.title + ' (' + this.testCount + ' tests)';
+}
 
 // Utils
 String.prototype.trim = function() { return this.replace(/^\s+|\s+$/g, ''); }
 
 function TestSuite()
 {
-  this.chapterInfoMap = {}; // map of chapter name to chapter info
+  this.chapterSections = {}; // map of links to ChapterSections
+  this.tests = {}; // map of test id to test info
   
-  this.testInfoMap = {}; // map of test name to test info
-  this.tests = []; // array of test names
+  this.chapters = {}; // map of file name to chapter
+  this.currentChapter = null;
   
-  this.currChapterName = '';
-  this.currChapterTestIndex = 0; // index of test in the current chapter
-  
-  this.collectTests();
+  this.currentChapterTests = []; // array of tests for the current chapter.
+  this.currChapterTestIndex = -1; // index of test in the current chapter
   
   this.format = '';
   this.formatChanged('html4');
   
+  this.testInfoLoaded = false;
+  
+  var testInfoPath = kTestSuiteHome + kTestInfoDataFile;
+  this.loadTestInfo(testInfoPath);
+}
+
+TestSuite.prototype.loadTestInfo = function(testInfoPath)
+{
+  var _self = this;
+  this.asyncLoad(testInfoPath, 'data', function(data, status) {
+    _self.testInfoDataLoaded(data, status);
+  });
+}
+
+TestSuite.prototype.testInfoDataLoaded = function(data, status)
+{
+  if (status != 'success') {
+    alert("Failed to load testinfo.data. Database of tests will not be initialized.");
+    return;
+  }
+
+  this.parseTests(data);
+  this.buildChapters();
+
+  this.testInfoLoaded = true;
+  
+  this.fillChapterPopup(document.getElementById('chapters'));
+
+  this.initializeControls();
+
   this.openDatabase();
 }
 
-// testinfo.data just gives flat data, so we'll scrap the toc files to break tests into categories.
-
-TestSuite.prototype.collectTests = function()
+TestSuite.prototype.parseTests = function(data)
 {
-  this.findData(kXHTML1Data);
-}
-
-TestSuite.prototype.findData = function(data)
-{
-  var _self = this;
-  for (var i = 0; i < kChapterFiles.length; ++i) {
-    var chapterFileName = kChapterFiles[i];
-    var curChapter = kTestSuiteHome + data.path + '/' + chapterFileName + data.suffix;
-    
-    var loadFunction = function(url, chapterName) {
-      _self.asyncLoad(curChapter, 'xml', function(data) {
-        _self.chapterLoaded(chapterName, data);
-      });
-    }
-    
-    loadFunction(curChapter, chapterFileName);
+  var lines = data.split('\n');
+  
+  // First line is column labels
+  for (var i = 1; i < lines.length; ++i) {
+    var test = new Test(lines[i]);
+    if (test.id.length > 0)
+      this.tests[test.id] = test;
   }
 }
 
-TestSuite.prototype.chapterLoaded = function(chapterFileName, data)
+TestSuite.prototype.buildChapters = function()
 {
-  var title = data.querySelectorAll('h2')[0];
+  for (var testID in this.tests) {
+    var currTest = this.tests[testID];
 
-  this.chapterInfoMap[chapterFileName] = {};
-  this.chapterInfoMap[chapterFileName].name = chapterFileName;
-  this.chapterInfoMap[chapterFileName].title = title.innerText;
-  this.chapterInfoMap[chapterFileName].testNames = [];
-  
-  var tbodies = data.querySelectorAll('tbody');
-
-  for (var i = 0; i < tbodies.length; ++i) {
-    var currTbody = tbodies[i];
-    
-    var testRows = currTbody.getElementsByTagName('tr');
-
-    // first row contains the title
-    var title = testRows[0].querySelectorAll('th a + a')[0].innerText;
-    
-    for (var row = 1; row < testRows.length; ++row) {
-      var currRow = testRows[row];
-      
-      var cells = currRow.getElementsByTagName('td');
-      
-      var test = {};
-      test.name = cells[0].innerText.trim();
-      test.ref = cells[1].innerText;
-      
-      var compareHref = '';
-      if (cells[1].firstChild) {
-        compareHref = cells[1].firstChild.getAttribute('href');
-        compareHref = compareHref.replace(/\.\w+$/, '');  // strip file extension
-      }
-      test.compare = compareHref;
-      test.flags = cells[2].innerText;
-
-      var titleText = "";
-      var detailsNode = cells[3].firstChild;
-      while (detailsNode && detailsNode.nodeType == Node.TEXT_NODE) {
-        titleText += detailsNode.textContent;
-        detailsNode = detailsNode.nextSibling;
-      }
-
-      test.title = titleText;
-      test.assert = '';
-      
-      var assertions = cells[3].querySelectorAll('.assert > li');
-      for (var n = 0; n < assertions.length; ++n) {
-        test.assert += assertions[n].innerText + ' ';
+    // FIXME: tests with more than one link will be presented to the user
+    // twice. Be smarter about avoiding this.
+    var testLinks = currTest.links.split(',');
+    for (var i = 0; i < testLinks.length; ++i) {
+      var link = testLinks[i];
+      var section = this.chapterSections[link];
+      if (!section) {
+        section = new ChapterSection(link);
+        this.chapterSections[link] = section;
       }
       
-      this.addTest(chapterFileName, test);
+      section.tests.push(currTest);
     }
   }
+  
+  for (var i = 0; i < kChapterData.length; ++i) {
+    var chapter = new Chapter(kChapterData[i]);
+    chapter.index = i;
+    this.chapters[chapter.file] = chapter;
+  }
+  
+  for (var sectionName in this.chapterSections) {
+    var section = this.chapterSections[sectionName];
 
-  this.checkAllChaptersLoaded();
+    var file = section.file;
+    var chapter = this.chapters[file];
+    if (!chapter)
+      window.console.log('failed to find chapter ' + file + ' in chapter data.');
+    chapter.sections.push(section);
+  }
+  
+  for (var chapterName in this.chapters) {
+    var currChapter = this.chapters[chapterName];
+    currChapter.sections.sort();
+    
+    var testCount = 0;
+    for (var s = 0; s < currChapter.sections.length; ++s)
+      testCount += currChapter.sections[s].tests.length;
+      
+    currChapter.testCount = testCount;
+  }
 }
 
-TestSuite.prototype.addTest = function(chapterFileName, test)
+TestSuite.prototype.indexOfChapter = function(chapter)
 {
-  // Some tests are replicated in the chapter files, so only push the test if it's new.
-  if (this.testInfoMap[test.name])
-    return;
+  for (var i = 0; i < kChapterData.length; ++i) {
+    if (kChapterData[i].file == chapter.file)
+      return i;
+  }
   
-  this.tests.push(test.name); // note, chapters may not load in order.
-  this.testInfoMap[test.name] = test;
-
-  this.chapterInfoMap[chapterFileName].testNames.push(test.name);
+  window.console.log('indexOfChapter for ' + chapter.file + ' failed');
+  return -1;
 }
 
-TestSuite.prototype.checkAllChaptersLoaded = function()
+TestSuite.prototype.chapterAtIndex = function(index)
 {
-  var chaptersLoaded = 0;
-  for (var key in this.chapterInfoMap)
-    ++chaptersLoaded;
+  if (index < 0 || index >= kChapterData.length)
+    return null;
 
-  if (chaptersLoaded < kChapterFiles.length)
-    return;
+  return this.chapters[kChapterData[index].file];
+}
+
+TestSuite.prototype.fillChapterPopup = function(select)
+{
+  select.innerHTML = ''; // Remove all children.
   
-  this.initializeControls();
+  for (var i = 0; i < kChapterData.length; ++i) {
+    var chapterData = kChapterData[i];
+    var chapter = this.chapters[chapterData.file];
+    
+    var option = document.createElement('option');
+    option.innerText = chapter.description();
+    option._chapter = chapter;
+    
+    select.appendChild(option);
+  }
+}
+
+TestSuite.prototype.buildTestListForChapter = function(chapter)
+{
+  this.currentChapterTests = [];
+  
+  for (var i in chapter.sections) {
+    var currSection = chapter.sections[i];
+    // FIXME: why do I need the assignment?
+    this.currentChapterTests = this.currentChapterTests.concat(currSection.tests);
+  }
+  
+  // FIXME: test may occur more than once.
+  this.currentChapterTests.sort(function(a, b) {
+    return a.id.localeCompare(b.id);
+  });
 }
 
 TestSuite.prototype.initializeControls = function()
 {
-  var chapters = $('#chapters'); // returns an array, oddly.
-  chapters.empty();
-  
-  for (var i = 0; i < kChapterFiles.length; ++i) {
-    var currChapterName = kChapterFiles[i];
-    
-    var option = document.createElement('option');
-    option.innerText =  this.chapterInfoMap[currChapterName].title;
-    option._chapterName = currChapterName;
-    
-    chapters[0].appendChild(option);
-  }
-  
+  var chaptersPopup = document.getElementById('chapters');
+
   var _self = this;
-  chapters[0].addEventListener('change', function() {
+  chaptersPopup.addEventListener('change', function() {
     _self.chapterPopupChanged();
   }, false);
 
   this.chapterPopupChanged();
   
   // Results popup
-  var resultsPopup = $('#results-popup'); // returns an array, oddly.
-  resultsPopup.empty();
+  var resultsPopup = document.getElementById('results-popup');
+  resultsPopup.innerHTML = '';
   
   for (var i = 0; i < kResultsSelector.length; ++i) {
     var option = document.createElement('option');
     option.innerText =  kResultsSelector[i].name;
     
-    resultsPopup[0].appendChild(option);
+    resultsPopup.appendChild(option);
   }
 }
 
 TestSuite.prototype.chapterPopupChanged = function()
 {
   var chaptersPopup = document.getElementById('chapters');
-  var chapterName = chaptersPopup.options[chaptersPopup.selectedIndex]._chapterName;
+  var selectedChapter = chaptersPopup.options[chaptersPopup.selectedIndex]._chapter;
 
-  this.setSelectedChapter(chapterName);
+  this.setSelectedChapter(selectedChapter);
 }
 
 TestSuite.prototype.fillTestList = function()
 {
-  $('#test-list').empty();
-
   var testList = document.getElementById('test-list');
+  testList.innerHTML = '';
   
-  var currChapterInfo = this.chapterInfoMap[this.currChapterName];
-  for (var i = 0; i < currChapterInfo.testNames.length; ++i) {
-    var testName = currChapterInfo.testNames[i];
+  for (var i = 0; i < this.currentChapterTests.length; ++i) {
+    var currTest = this.currentChapterTests[i];
+
     var option = document.createElement('option');
-    option.innerText = testName;
-    option._testName = testName;
+    option.innerText = currTest.id;
+    option._test = currTest;
     testList.appendChild(option);
   }
 }
 
-TestSuite.prototype.setSelectedChapter = function(chapterName)
+TestSuite.prototype.setSelectedChapter = function(chapter)
 {
-  this.currChapterName = chapterName;
+  this.currentChapter = chapter;
+  this.buildTestListForChapter(this.currentChapter);
   this.currChapterTestIndex = -1;
   
   this.fillTestList();
   this.goToTestIndex(0);
+return;
   
   var chaptersPopup = document.getElementById('chapters');
-  chaptersPopup.selectedIndex = kChapterFiles.indexOf(chapterName)
+  chaptersPopup.selectedIndex = kChapterData.indexOf(chapterName)// FIXME:
 }
 
 /* ------------------------------------------------------- */
@@ -348,10 +472,10 @@ TestSuite.prototype.skipTest = function(reason)
 
 TestSuite.prototype.nextTest = function()
 {
-  if (this.currChapterTestIndex < this.numTestsInCurrentChapter() - 1)
+  if (this.currChapterTestIndex < this.currentChapterTests.length - 1)
     this.goToTestIndex(this.currChapterTestIndex + 1);
   else {
-    var currChapterIndex = kChapterFiles.indexOf(this.currChapterName);
+    var currChapterIndex = this.indexOfChapter(this.currentChapter);
     this.goToChapterIndex(currChapterIndex + 1);
   }
 }
@@ -361,7 +485,7 @@ TestSuite.prototype.previousTest = function()
   if (this.currChapterTestIndex > 0)
     this.goToTestIndex(this.currChapterTestIndex - 1);
   else {
-    var currChapterIndex = kChapterFiles.indexOf(this.currChapterName);
+    var currChapterIndex = this.indexOfChapter(this.currentChapter);
     if (currChapterIndex > 0)
       this.goToChapterIndex(currChapterIndex - 1);
   }
@@ -371,8 +495,7 @@ TestSuite.prototype.previousTest = function()
 
 TestSuite.prototype.goToTestIndex = function(index)
 {
-  var currChapterInfo = this.chapterInfoMap[this.currChapterName];
-  if (index >= 0 && index < currChapterInfo.testNames.length) {
+  if (index >= 0 && index < this.currentChapterTests.length) {
     this.currChapterTestIndex = index;
     this.loadCurrentTest();
   }
@@ -380,46 +503,40 @@ TestSuite.prototype.goToTestIndex = function(index)
 
 TestSuite.prototype.goToChapterIndex = function(chapterIndex)
 {
-  if (chapterIndex >= 0 && chapterIndex < kChapterFiles.length)
-    this.setSelectedChapter(kChapterFiles[chapterIndex]);
-}
-
-TestSuite.prototype.numTestsInCurrentChapter = function()
-{
-  var currChapterInfo = this.chapterInfoMap[this.currChapterName];
-  return currChapterInfo.testNames.length;
+  if (chapterIndex >= 0 && chapterIndex < kChapterData.length) {
+    var chapterFile = kChapterData[chapterIndex].file;
+    this.setSelectedChapter(this.chapters[chapterFile]);
+  }
 }
 
 TestSuite.prototype.currentTestName = function()
 {
-  var currChapterInfo = this.chapterInfoMap[this.currChapterName];
-  if (!currChapterInfo || this.currChapterTestIndex >= currChapterInfo.testNames.length)
+  if (this.currChapterTestIndex < 0 || this.currChapterTestIndex >= this.currentChapterTests.length)
     return undefined;
 
-  return currChapterInfo.testNames[this.currChapterTestIndex];
+  return this.currentChapterTests[this.currChapterTestIndex].id;
 }
 
 TestSuite.prototype.loadCurrentTest = function()
 {
-  var currTestName = this.currentTestName();
-  if (!currTestName)
+  var theTest = this.currentChapterTests[this.currChapterTestIndex];
+  if (!theTest) {
+    this.configureForManualTest();
+    this.clearTest();
     return;
+  }
 
-  var testInfo = this.testInfoMap[currTestName];
-  if (testInfo.ref) {
-    window.console.log('got ref')
+  if (theTest.reference) {
     this.configureForRefTest();
-    this.loadRef(testInfo);
+    this.loadRef(theTest);
   } else {
     this.configureForManualTest();
   }
 
-  this.loadTest(testInfo);
+  this.loadTest(theTest);
 
   document.getElementById('test-index').innerText = this.currChapterTestIndex + 1;
-
-  var currChapterInfo = this.chapterInfoMap[this.currChapterName];
-  document.getElementById('chapter-test-count').innerText = currChapterInfo.testNames.length;
+  document.getElementById('chapter-test-count').innerText = this.currentChapterTests.length;
   
   document.getElementById('test-list').selectedIndex = this.currChapterTestIndex;
 }
@@ -434,21 +551,32 @@ TestSuite.prototype.configureForManualTest = function()
   $('#test-content').removeClass('with-ref');
 }
 
-TestSuite.prototype.loadTest = function(testInfo)
+TestSuite.prototype.loadTest = function(test)
 {
   var iframe = document.getElementById('test-frame');
-  iframe.src = this.urlForTest(testInfo.name);
+  iframe.src = this.urlForTest(test.id);
   
-  document.getElementById('test-title').innerText = testInfo.title;
-  document.getElementById('test-url').innerText = this.pathForTest(testInfo.name);
-  document.getElementById('test-assertion').innerText = testInfo.assert;
-  document.getElementById('test-flags').innerText = testInfo.flags;
+  document.getElementById('test-title').innerText = test.title;
+  document.getElementById('test-url').innerText = this.pathForTest(test.id);
+  document.getElementById('test-assertion').innerText = test.assertion;
+  document.getElementById('test-flags').innerText = test.flags;
 }
 
-TestSuite.prototype.loadRef = function(testInfo)
+TestSuite.prototype.clearTest = function()
+{
+  var iframe = document.getElementById('test-frame');
+  iframe.src = 'about:blank';
+  
+  document.getElementById('test-title').innerText = '';
+  document.getElementById('test-url').innerText = '';
+  document.getElementById('test-assertion').innerText = '';
+  document.getElementById('test-flags').innerText = '';
+}
+
+TestSuite.prototype.loadRef = function(test)
 {
   var iframe = document.getElementById('ref-frame');
-  iframe.src = this.urlForTest(testInfo.compare);
+  iframe.src = this.urlForTest(testInfo.reference);
 }
 
 TestSuite.prototype.loadTestByName = function(testName)
@@ -534,7 +662,7 @@ TestSuite.prototype.formatChanged = function(formatString)
   else
     this.formatInfo = kXHTML1Data;
 
-  this.loadCurrentTest();
+    this.loadCurrentTest();
 }
 
 /* ------------------------------------------------------- */
@@ -745,13 +873,20 @@ TestSuite.prototype.updateSummaryData = function()
 
 function errorHandler(transaction, error)
 {
-  alert('database error: ' + error.message);
+  alert('Database error: ' + error.message);
+  window.console.log('Database error: ' + error.message);
 }
 
 TestSuite.prototype.openDatabase = function()
 {
+  if (!'openDatabase' in window) {
+    alert('Your browser does not support client-side SQL databases, so results will not be stored.');
+    return;
+  }
+  
+  window.console.log('opening database')
   var _self = this;
-  this.db = window.openDatabase('css21testsuite', '1.0', 'CSS 2.1 test suite results', 4 * 1024 * 1024, function() {
+  this.db = window.openDatabase('css21testsuite', '1.0', 'CSS 2.1 test suite results', 10 * 1024 * 1024, function() {
     _self.databaseCreated();
   }, errorHandler);
 
@@ -760,17 +895,24 @@ TestSuite.prototype.openDatabase = function()
 
 TestSuite.prototype.databaseCreated = function(db)
 {
+  window.console.log('databaseCreated')
+  var _self = this;
   this.db.transaction(function (tx) {
     // hstatus: HTML4 result
     // xstatus: XHTML1 result
-    tx.executeSql('CREATE TABLE tests (test PRIMARY KEY UNIQUE, ref, title, flags, links, assertion, hstatus, hcomment, xstatus, xcomment)', null, null, errorHandler);
+    tx.executeSql('CREATE TABLE tests (test PRIMARY KEY UNIQUE, ref, title, flags, links, assertion, hstatus, hcomment, xstatus, xcomment)', null,
+      function(tx, results) {
+        window.console.log('populating')
+        _self.populateDatabaseFromTestInfoData();
+      }, errorHandler);
   });
-  
-  this.populateDatabaseFromTestInfoData();
 }
 
 TestSuite.prototype.storeTestResult = function(test, format, result, comment, useragent)
 {
+  if (!this.db)
+    return;
+
   this.db.transaction(function (tx) {
     window.console.log('storing result ' + result + ' for ' + format);
     if (format == 'html4')
@@ -782,11 +924,17 @@ TestSuite.prototype.storeTestResult = function(test, format, result, comment, us
 
 TestSuite.prototype.populateDatabaseFromTestInfoData = function(testInfoURL)
 {
-  var testInfoPath = kTestSuiteHome + kTestInfoDataFile;
+  if (!this.testInfoLoaded) {
+    window.console.log('Tring to populate database before testinfo.data has been loaded');
+    return;
+  }
   
   var _self = this;
-  this.asyncLoad(testInfoPath, 'data', function(data, status) {
-    _self.testInfoDataLoaded(data, status);
+  this.db.transaction(function (tx) {
+    for (var testID in _self.tests) {
+      var currTest = _self.tests[testID];
+      tx.executeSql('INSERT INTO tests (test, ref, title, flags, links, assertion) VALUES (?, ?, ?, ?, ?, ?)', [currTest.id, currTest.reference, currTest.title, currTest.flags, currTest.links, currTest.assertion], null, errorHandler);
+    }
   });
 
 }
@@ -797,7 +945,7 @@ TestSuite.prototype.queryDatabaseForAllTests = function(sortKey, perRowHandler, 
     var query;
     var args = [];
     if (sortKey != '') {
-      query = 'SELECT * FROM tests ORDER BY ? ASC';  // ORDERY BY doesn't seem to work
+      query = 'SELECT * FROM tests ORDER BY ? ASC';  // ORDER BY doesn't seem to work
       args.push(sortKey);
     }
     else
@@ -912,6 +1060,9 @@ TestSuite.prototype.countTestsWithColumnValue = function(tx, completionHandler, 
 
 TestSuite.prototype.queryDatabaseForSummary = function(completionHandler)
 {
+  if (!this.db)
+    return;
+
   var _self = this;
   this.db.transaction(function (tx) {
 
@@ -944,44 +1095,6 @@ TestSuite.prototype.queryDatabaseForSummary = function(completionHandler)
 
     _self.countTestsWithColumnValue(tx, completionHandler, 'hstatus', 'invalid', 'h-invalid');
     _self.countTestsWithColumnValue(tx, completionHandler, 'xstatus', 'invalid', 'x-invalid');
-
   });
 }
-
-TestSuite.prototype.testInfoDataLoaded = function(data, status)
-{
-  if (status != 'success') {
-    alert("Failed to load testinfo.data. Database of tests will not be initialized.");
-    return;
-  }
-    
-  var lines = data.split('\n');
-  
-  var tests = [];
-
-  // First line is column labels
-  for (var i = 1; i < lines.length; ++i) {
-    var fields = lines[i].split('\t');
-    
-    var test = {};
-    test.name = fields[0];
-    test.ref = fields[1];
-    test.title = fields[2];
-    test.flags = fields[3];
-    test.links = fields[4];
-    test.assertion = fields[5];
-    
-    if (test.name.length > 0)
-      tests.push(test);
-  }
-
-  this.db.transaction(function (tx) {
-    for (var i = 0; i < tests.length ; ++i) {
-      var currTest = tests[i];
-      tx.executeSql('INSERT INTO tests (test, ref, title, flags, links, assertion) VALUES (?, ?, ?, ?, ?, ?)', [currTest.name, currTest.ref, currTest.title, currTest.flags, currTest.links, currTest.assertion], null, errorHandler);
-    }
-  });  
-  
-}
-
 
