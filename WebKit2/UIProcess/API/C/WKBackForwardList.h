@@ -37,6 +37,7 @@ WK_EXPORT WKTypeID WKBackForwardListGetTypeID();
 WK_EXPORT WKBackForwardListItemRef WKBackForwardListGetCurrentItem(WKBackForwardListRef list);
 WK_EXPORT WKBackForwardListItemRef WKBackForwardListGetBackItem(WKBackForwardListRef list);
 WK_EXPORT WKBackForwardListItemRef WKBackForwardListGetForwardItem(WKBackForwardListRef list);
+WK_EXPORT WKBackForwardListItemRef WKBackForwardListGetItemAtIndex(WKBackForwardListRef list, int index);
 
 WK_EXPORT unsigned WKBackForwardListGetBackListCount(WKBackForwardListRef list);
 WK_EXPORT unsigned WKBackForwardListGetForwardListCount(WKBackForwardListRef list);
