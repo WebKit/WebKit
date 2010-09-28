@@ -1,3 +1,21 @@
+2010-09-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Rubber-stamped by Adele Peterson.
+
+        Add a harness for running the CSS 2.1 test suite.
+        
+        This harness assumes that you've got a local a copy of the suite
+        adjacent to the 'harness' directory.
+        
+        The harness lets you go through the tests in chapter order,
+        denoting pass/fail/skipped for each test.
+        
+        It uses a client-side database to store the results of testing.
+
+        * CSSTestSuiteHarness/harness/harness.css: Added.
+        * CSSTestSuiteHarness/harness/harness.html: Added.
+        * CSSTestSuiteHarness/harness/harness.js: Added.
+
 2010-09-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

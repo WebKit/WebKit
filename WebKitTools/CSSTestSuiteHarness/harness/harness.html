@@ -1,0 +1,203 @@
+<!--
+/*
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+-->
+
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <title>CSS 2.1 Test Harness</title>
+  <link rel="stylesheet" href="harness.css" type="text/css" media="screen" charset="utf-8">
+
+  <script src="http://code.jquery.com/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
+  <script src="harness.js" type="text/javascript" charset="utf-8"></script>
+  
+  <script type="text/javascript" charset="utf-8">
+    var gTestSuite;
+    function setupTests()
+    {
+      gTestSuite = new TestSuite();
+    }
+    
+    window.addEventListener('load', setupTests, false);
+    
+    function skipTest()
+    {
+      gTestSuite.skipTest(document.getElementById('skip-reason').value);
+    }
+    
+    function invalidTest()
+    {
+      gTestSuite.invalidTest();
+    }
+
+    function failTest()
+    {
+      gTestSuite.failTest();
+    }
+
+    function passTest()
+    {
+      gTestSuite.passTest();
+    }
+
+    function formatChanged()
+    {
+      var newFormat;
+      if (document.harness.format.html4.checked)
+        newFormat = 'html4';
+      else
+        newFormat = 'xhtml1';
+      gTestSuite.formatChanged(newFormat);
+    }
+    
+    function testSelected()
+    {
+      var list = document.getElementById('test-list')
+      gTestSuite.loadTestByName(list.options[list.selectedIndex]._testName);
+    }
+
+    function resultsPopupChanged(popup)
+    {
+      gTestSuite.resultsPopupChanged(popup.selectedIndex);
+    }
+    
+    function doExport()
+    {
+      gTestSuite.exportResults(document.getElementById('results-popup').selectedIndex);
+    }
+
+    /*
+    This conflicts badly with key handling in selects.
+    function keyHandler(event)
+    {
+      var charCode = String.fromCharCode(event.keyCode);
+      window.console.log('keyHandler')
+      switch (charCode) {
+        case 'P':
+          passTest();
+          break;
+
+        case 'F':
+          failTest();
+          break;
+
+        case 'I':
+          invalidTest();
+          break;
+          
+        case 'S':
+          skipTest();
+          break;
+      }
+      
+      event.stopPropagation();
+      event.preventDefault();
+    }
+    
+    document.addEventListener('keyup', keyHandler, false);
+    */
+  </script>
+
+</head>
+<body>
+
+  <div class="controls">
+    <form name="harness" onsubmit="return false;">
+    <select id="chapters">
+      <option>Test category</option>
+    </select>
+    <div class="progress">
+      <div><span id="test-index">1</span> of <span id="chapter-test-count">200</span> unique tests</div>
+    </div>
+    <div class="details">
+      <div class="name">        
+        <div class="test-type">
+          <input type="radio" name="format" id="html4" onchange="formatChanged()" checked><label for="html4">HTML4</label><br>
+          <input type="radio" name="format" id="xhtml1" onchange="formatChanged()"><label for="xhtml1">XHTML1</label>
+        </div>
+      </div>
+    </div>
+    
+    <div>
+      <select id="test-list" size="40" onchange="testSelected()"></select>
+    </div>
+    </form>
+  </div>
+  
+  <div class="actions">
+    <span>Skip reason:</span> <input type="text" id="skip-reason" size="50">
+    <button onclick="skipTest()" accesskey="s">Skip</button>
+    <span class="note">Use <i>Control-Option-letter</i> to trigger buttons via the keyboard.</span>
+    <div class="action-buttons">
+      <button onclick="invalidTest()" accesskey="i">Invalid</button>
+      <button onclick="failTest()" accesskey="f">Fail</button>
+      <button onclick="passTest()" accesskey="p">Pass</button>
+    </div>
+  </div>
+  <div id="test-content">
+    <div class="info">
+      <div class="title">Title: <span id="test-title"></span></div>
+      <div class="url">URL: <span id="test-url"></span></div>
+      <div class="assertion">Assertion: <span id="test-assertion"></span></div>
+      <div class="flags">Flags: <span id="test-flags"></span></div>
+    </div>
+    
+    <div id="test-wrapper" class="frame-wrapper">
+      <h2>Test</h2>
+      <iframe id="test-frame"></iframe>
+    </div>
+    <div id="ref-wrapper" class="frame-wrapper">
+      <h2>Reference</h2>
+      <iframe id="ref-frame"></iframe>
+    </div>
+  </div>
+
+  <div class="results">
+    <div class="output-options">
+      <p>Show results for:</p>
+      <select id="results-popup" onchange="resultsPopupChanged(this)">
+      </select>
+      <button id="export-button" onclick="doExport()">Export...</button>
+    </div>
+    <div id="output"></div>
+    <div class="summary">
+      <table>
+        <tr>
+          <th></th><th>Passed</th><th>Failed</th><th>Skipped</th><th>Invalid</th><th>Tested</th><th>Total</th><th>% done</th>
+        </tr>
+        <tr>
+          <td class="label">HTML4:</td><td id="h-passed"></td><td id="h-failed"></td><td id="h-skipped"></td><td id="h-invalid"></td><td id="h-tested"></td><td id="h-total"></td><td id="h-percent"></td>
+        </tr>
+        <tr>
+          <td class="label">XHTML1:</td><td id="x-passed"></td><td id="x-failed"></td><td id="x-skipped"></td><td id="x-invalid"></td><td id="x-tested"></td><td id="x-total"></td><td id="x-percent"></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+</body>
+</html>
