@@ -1,3 +1,9 @@
+2010-09-28  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, added an expectation.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-28  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed, GTK+ rebaselines.

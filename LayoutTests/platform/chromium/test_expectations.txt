@@ -2449,7 +2449,8 @@ BUGJAMESR BUG30048 BUG29737 WIN LINUX : svg/filters/shadow-on-rect-with-filter.s
 BUG42696 : http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html = TIMEOUT
 
 // Started failing at r57969
-BUG8729 MAC : http/tests/multipart/invalid-image-data.html = IMAGE
+// Becoming flaky on linux around r68501
+BUG8729 MAC LINUX : http/tests/multipart/invalid-image-data.html = IMAGE
 
 // Started failing at r58152
 BUGWK38038 WIN LINUX MAC : fast/url/file-http-base.html = TEXT
