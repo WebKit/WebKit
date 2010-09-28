@@ -2,6 +2,12 @@
 
         Unreviewed, added an expectation.
 
+        * platform/chromium-mac/fast/forms/input-button-sizes-expected.checksum: Added.
+
+2010-09-27 MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, added an expectation.
+
         * platform/chromium/test_expectations.txt:
 
 2010-09-27 MORITA Hajime  <morrita@google.com>
