@@ -3138,3 +3138,11 @@ BUGWK46689 : fast/dom/HTMLElement/class-list.html = TEXT PASS
 
 // Flaky since r68438:r68445 or before that.
 BUGWK46693 MAC : fast/repaint/repaint-svg-after-style-change.html = TEXT
+
+// Started to broken since r68482 - r68496
+BUGWK46705 : svg/dynamic-updates/SVGFEBlendElement-dom-in-attr.html = IMAGE
+BUGWK46705 : svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr.html = IMAGE
+BUGWK46705 : svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr.html = IMAGE
+BUGWK46705 : svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop.html = IMAGE
+BUGWK46705 : svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop.html = IMAGE
+BUGWK46705 : svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop.html = IMAGE
