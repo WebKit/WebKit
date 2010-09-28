@@ -52,6 +52,9 @@ except ImportError:
 
 
 class User(object):
+    DEFAULT_NO = 'n'
+    DEFAULT_YES = 'y'
+
     # FIXME: These are @classmethods because bugzilla.py doesn't have a Tool object (thus no User instance).
     @classmethod
     def prompt(cls, message, repeat=1, raw_input=raw_input):
@@ -115,11 +118,14 @@ class User(object):
         except IOError, e:
             pass
 
-    def confirm(self, message=None):
+    def confirm(self, message=None, default=DEFAULT_YES, raw_input=raw_input):
         if not message:
             message = "Continue?"
-        response = raw_input("%s [Y/n]: " % message)
-        return not response or response.lower() == "y"
+        choice = {'y': 'Y/n', 'n': 'y/N'}[default]
+        response = raw_input("%s [%s]: " % (message, choice))
+        if not response:
+            response = default
+        return response.lower() == 'y'
 
     def can_open_url(self):
         try:

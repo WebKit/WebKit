@@ -75,5 +75,27 @@ class UserTest(unittest.TestCase):
         run_prompt_test(["  "], ["foo", "bar"], can_choose_multiple=True)
         run_prompt_test(["badinput", "all"], ["foo", "bar"], can_choose_multiple=True)
 
+    def test_confirm(self):
+        test_cases = (
+            (("Continue? [Y/n]: ", True), (User.DEFAULT_YES, 'y')),
+            (("Continue? [Y/n]: ", False), (User.DEFAULT_YES, 'n')),
+            (("Continue? [Y/n]: ", True), (User.DEFAULT_YES, '')),
+            (("Continue? [Y/n]: ", False), (User.DEFAULT_YES, 'q')),
+            (("Continue? [y/N]: ", True), (User.DEFAULT_NO, 'y')),
+            (("Continue? [y/N]: ", False), (User.DEFAULT_NO, 'n')),
+            (("Continue? [y/N]: ", False), (User.DEFAULT_NO, '')),
+            (("Continue? [y/N]: ", False), (User.DEFAULT_NO, 'q')),
+        )
+        for test_case in test_cases:
+            expected, inputs = test_case
+
+            def mock_raw_input(message):
+                self.assertEquals(expected[0], message)
+                return inputs[1]
+
+            result = User().confirm(default=inputs[0],
+                                    raw_input=mock_raw_input)
+            self.assertEquals(expected[1], result)
+
 if __name__ == '__main__':
     unittest.main()

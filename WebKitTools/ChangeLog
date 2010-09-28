@@ -1,3 +1,17 @@
+2010-09-28  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        add python keyring support to webkit-patch
+        https://bugs.webkit.org/show_bug.cgi?id=41269
+
+        * Scripts/webkitpy/common/net/credentials.py: Add the ability to read passwords using
+            the python keyring module
+        * Scripts/webkitpy/common/net/credentials_unittest.py:
+        * Scripts/webkitpy/common/system/user.py: Allow confirm() to default to no and add testing params.
+        * Scripts/webkitpy/common/system/user_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
 2010-09-28  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

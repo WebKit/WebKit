@@ -39,14 +39,23 @@ from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.user import User
 from webkitpy.common.system.deprecated_logging import log
 
+try:
+    # Use keyring, a cross platform keyring interface, as a fallback:
+    # http://pypi.python.org/pypi/keyring
+    import keyring
+except ImportError:
+    keyring = None
+
 
 class Credentials(object):
 
-    def __init__(self, host, git_prefix=None, executive=None, cwd=os.getcwd()):
+    def __init__(self, host, git_prefix=None, executive=None, cwd=os.getcwd(),
+                 keyring=keyring):
         self.host = host
         self.git_prefix = "%s." % git_prefix if git_prefix else ""
         self.executive = executive or Executive()
         self.cwd = cwd
+        self._keyring = keyring
 
     def _credentials_from_git(self):
         return [Git.read_git_config(self.git_prefix + "username"),
@@ -117,10 +126,19 @@ class Credentials(object):
         if not username or not password:
             (username, password) = self._credentials_from_keychain(username)
 
+        if username and not password and self._keyring:
+            password = self._keyring.get_password(self.host, username)
+
         if not username:
             username = User.prompt("%s login: " % self.host)
         if not password:
             password = getpass.getpass("%s password for %s: " % (self.host,
                                                                  username))
+
+            if self._keyring:
+                store_password = User().confirm(
+                    "Store password in system keyring?", User.DEFAULT_NO)
+                if store_password:
+                    self._keyring.set_password(self.host, username, password)
 
         return [username, password]

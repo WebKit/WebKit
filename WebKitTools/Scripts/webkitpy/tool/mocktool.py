@@ -491,8 +491,8 @@ class MockUser(object):
     def page(self, message):
         pass
 
-    def confirm(self, message=None):
-        return True
+    def confirm(self, message=None, default='y'):
+        return default == 'y'
 
     def can_open_url(self):
         return True

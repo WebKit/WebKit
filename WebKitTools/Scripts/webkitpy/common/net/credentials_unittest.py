@@ -113,5 +113,28 @@ password: "SECRETSAUCE"
         self.assertEqual(credentials.read_credentials(), ["test@webkit.org", "SECRETSAUCE"])
         os.rmdir(temp_dir_path)
 
+    def test_keyring_without_git_repo(self):
+        class MockKeyring(object):
+            def get_password(self, host, username):
+                return "NOMNOMNOM"
+
+        class FakeCredentials(Credentials):
+            def __init__(self, cwd):
+                Credentials.__init__(self, "fake.hostname", cwd=cwd,
+                                     keyring=MockKeyring())
+
+            def _is_mac_os_x(self):
+                return True
+
+            def _credentials_from_keychain(self, username):
+                return ("test@webkit.org", None)
+
+        temp_dir_path = tempfile.mkdtemp(suffix="not_a_git_repo")
+        credentials = FakeCredentials(temp_dir_path)
+        try:
+            self.assertEqual(credentials.read_credentials(), ["test@webkit.org", "NOMNOMNOM"])
+        finally:
+            os.rmdir(temp_dir_path)
+
 if __name__ == '__main__':
     unittest.main()
