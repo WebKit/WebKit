@@ -33,6 +33,7 @@ from optparse import make_option
 from webkitpy.common.checkout.commitinfo import CommitInfo
 from webkitpy.common.config.committers import CommitterList
 from webkitpy.common.net.buildbot import BuildBot
+from webkitpy.common.net.regressionwindow import RegressionWindow
 from webkitpy.common.system.user import User
 from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
@@ -127,18 +128,17 @@ class WhatBroke(AbstractDeclarativeCommand):
     def _print_blame_information_for_builder(self, builder_status, name_width, avoid_flakey_tests=True):
         builder = self._tool.buildbot.builder_with_name(builder_status["name"])
         red_build = builder.build(builder_status["build_number"])
-        (last_green_build, first_red_build) = builder.find_failure_transition(red_build)
-        if not first_red_build:
+        regression_window = builder.find_regression_window(red_build)
+        if not regression_window.failing_build():
             self._print_builder_line(builder.name(), name_width, "FAIL (error loading build information)")
             return
-        if not last_green_build:
-            self._print_builder_line(builder.name(), name_width, "FAIL (blame-list: sometime before %s?)" % first_red_build.revision())
+        if not regression_window.build_before_failure():
+            self._print_builder_line(builder.name(), name_width, "FAIL (blame-list: sometime before %s?)" % regression_window.failing_build().revision())
             return
 
-        suspect_revisions = range(first_red_build.revision(), last_green_build.revision(), -1)
-        suspect_revisions.reverse()
+        suspect_revisions = regression_window.suspect_revisions()
         first_failure_message = ""
-        if (first_red_build == builder.build(builder_status["build_number"])):
+        if (regression_window.failing_build() == builder.build(builder_status["build_number"])):
             first_failure_message = " FIRST FAILURE, possibly a flaky test"
         self._print_builder_line(builder.name(), name_width, "FAIL (blame-list: %s%s)" % (suspect_revisions, first_failure_message))
         for revision in suspect_revisions:
@@ -200,7 +200,8 @@ class FailureReason(AbstractDeclarativeCommand):
     help_text = "Lists revisions where individual test failures started at %s" % BuildBot.default_host
 
     def _print_blame_information_for_transition(self, green_build, red_build, failing_tests):
-        suspect_revisions = green_build.builder().suspect_revisions_for_transition(green_build, red_build)
+        regression_window = RegressionWindow(green_build, red_build)
+        suspect_revisions = regression_window.suspect_revisions()
         print "SUCCESS: Build %s (r%s) was the first to show failures: %s" % (red_build._number, red_build.revision(), failing_tests)
         print "Suspect revisions:"
         for revision in suspect_revisions:

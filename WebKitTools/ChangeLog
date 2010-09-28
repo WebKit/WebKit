@@ -1,3 +1,21 @@
+2010-09-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Expose more more failure information from Buildbot to SheriffBot
+        https://bugs.webkit.org/show_bug.cgi?id=46697
+
+        This patch moves the information about what tests failured closer to
+        SheriffBot.  There are still a couple more patches to go before
+        SheriffBot can post this information to bugs, but this is a step in
+        that direction.  Yay for unit tests, which caught some bugs in earlier
+        versions of this patch.
+
+        * Scripts/webkitpy/common/net/buildbot.py:
+        * Scripts/webkitpy/common/net/buildbot_unittest.py:
+        * Scripts/webkitpy/common/net/regressionwindow.py: Added.
+        * Scripts/webkitpy/tool/commands/queries.py:
+
 2010-09-27  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.  Fixing 500 error seen in the status server.

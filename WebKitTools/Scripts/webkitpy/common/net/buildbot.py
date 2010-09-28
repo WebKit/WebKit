@@ -34,6 +34,7 @@ import urllib
 import urllib2
 import xmlrpclib
 
+from webkitpy.common.net.regressionwindow import RegressionWindow
 from webkitpy.common.system.logutils import get_logger
 from webkitpy.thirdparty.autoinstalled.mechanize import Browser
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
@@ -145,9 +146,9 @@ class Builder(object):
             )
         return build
 
-    def find_failure_transition(self, red_build, look_back_limit=30):
+    def find_regression_window(self, red_build, look_back_limit=30):
         if not red_build or red_build.is_green():
-            return (None, None)
+            return RegressionWindow(None, None)
         common_failures = None
         current_build = red_build
         build_after_current_build = None
@@ -172,34 +173,25 @@ class Builder(object):
                     break
             look_back_count += 1
             if look_back_count > look_back_limit:
-                return (None, current_build)
+                return RegressionWindow(None, current_build, common_failures=common_failures)
             build_after_current_build = current_build
             current_build = current_build.previous_build()
         # We must iterate at least once because red_build is red.
         assert(build_after_current_build)
         # Current build must either be green or have no failures in common
         # with red build, so we've found our failure transition.
-        return (current_build, build_after_current_build)
-
-    # FIXME: This likely does not belong on Builder
-    def suspect_revisions_for_transition(self, last_good_build, first_bad_build):
-        suspect_revisions = range(first_bad_build.revision(),
-                                  last_good_build.revision(),
-                                  -1)
-        suspect_revisions.reverse()
-        return suspect_revisions
+        return RegressionWindow(current_build, build_after_current_build, common_failures=common_failures)
 
     def blameworthy_revisions(self, red_build_number, look_back_limit=30, avoid_flakey_tests=True):
         red_build = self.build(red_build_number)
-        (last_good_build, first_bad_build) = \
-            self.find_failure_transition(red_build, look_back_limit)
-        if not last_good_build:
+        regression_window = self.find_regression_window(red_build, look_back_limit)
+        if not regression_window.build_before_failure():
             return [] # We ran off the limit of our search
         # If avoid_flakey_tests, require at least 2 bad builds before we
         # suspect a real failure transition.
-        if avoid_flakey_tests and first_bad_build == red_build:
+        if avoid_flakey_tests and regression_window.failing_build() == red_build:
             return []
-        return self.suspect_revisions_for_transition(last_good_build, first_bad_build)
+        return regression_window.suspect_revisions()
 
 
 # FIXME: This should be unified with all the layout test results code in the layout_tests package
