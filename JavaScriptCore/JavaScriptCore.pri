@@ -56,9 +56,6 @@ DEFINES += BUILDING_QT__ BUILDING_JavaScriptCore BUILDING_WTF
 
 wince* {
     INCLUDEPATH += $$QT_SOURCE_TREE/src/3rdparty/ce-compat
-    DEFINES += WINCEBASIC
-
-    INCLUDEPATH += $$PWD/../JavaScriptCore/os-wince
     INCLUDEPATH += $$PWD/../JavaScriptCore/os-win32
 }
 

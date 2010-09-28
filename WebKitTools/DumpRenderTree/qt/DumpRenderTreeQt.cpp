@@ -564,7 +564,10 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting()
     DumpRenderTreeSupportQt::setEditingBehavior(m_page, "win");
 
     QLocale::setDefault(QLocale::c());
+
+#ifndef Q_OS_WINCE
     setlocale(LC_ALL, "");
+#endif
 }
 
 static bool isGlobalHistoryTest(const QUrl& url)

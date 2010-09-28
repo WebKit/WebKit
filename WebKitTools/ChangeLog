@@ -1,3 +1,15 @@
+2010-09-28  İsmail Dönmez  <ismail@namtrac.org>
+
+        Reviewed by Andreas Kling.
+
+        Fix DRT compilation on WinCE. Introduce a WCECOMPAT variable
+        which should point to wcecompat installation. Needs wcecompat
+        library from http://github.com/mauricek/wcecompat .
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::resetToConsistentStateBeforeTesting):
+
 2010-09-28  Daniel Bates  <dbates@rim.com>
 
         Rollout changeset 68493 <http://trac.webkit.org/changeset/68493>

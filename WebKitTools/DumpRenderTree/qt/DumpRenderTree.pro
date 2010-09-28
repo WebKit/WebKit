@@ -43,4 +43,9 @@ unix:!mac {
     QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR
 }
 
+wince*: {
+    INCLUDEPATH += $$QT_SOURCE_TREE/src/3rdparty/ce-compat $$WCECOMPAT/include
+    LIBS += $$WCECOMPAT/lib/wcecompat.lib
+}
+
 DEFINES+=USE_SYSTEM_MALLOC
