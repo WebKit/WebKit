@@ -1,3 +1,10 @@
+2010-09-27  James Robinson  <jamesr@chromium.org>
+
+        Update baselines for fast/repaint/repaint-svg-after-style-change.html
+
+        * fast/repaint/repaint-svg-after-style-change-expected.txt:
+        * platform/chromium/fast/repaint/repaint-svg-after-style-change-expected.txt: Added.
+
 2010-09-27  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
