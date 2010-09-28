@@ -1,3 +1,9 @@
+2010-09-28  Satish Sampath  <satish@chromium.org>
+
+        Unreviewed, enable a couple of speech input layout tests in chromium as they run successfully now.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
