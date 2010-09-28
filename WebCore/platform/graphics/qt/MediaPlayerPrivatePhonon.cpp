@@ -51,7 +51,7 @@ using namespace Phonon;
 #define LOG_MEDIAOBJECT() (LOG(Media, "%s", debugMediaObject(this, *m_mediaObject).constData()))
 
 #if !LOG_DISABLED
-static QByteArray debugMediaObject(WebCore::MediaPlayerPrivate* mediaPlayer, const MediaObject& mediaObject)
+static QByteArray debugMediaObject(WebCore::MediaPlayerPrivatePhonon* mediaPlayer, const MediaObject& mediaObject)
 {
     QByteArray byteArray;
     QTextStream stream(&byteArray);
