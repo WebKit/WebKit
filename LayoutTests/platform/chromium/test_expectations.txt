@@ -3143,3 +3143,6 @@ BUGWK46596 : fast/dom/nodesFromRect-basic.html = TIMEOUT
 // Possibly regressed within 68216:68246 (flakiness rate increased)
 BUG57056 LINUX : svg/custom/clip-path-referencing-use2.svg = PASS FAIL
 BUG57056 LINUX : svg/custom/circular-marker-reference-4.svg = PASS FAIL
+
+// Flaky since http://trac.webkit.org/changeset/68440 (where this test added at).
+BUGWK46689 : fast/dom/HTMLElement/class-list.html = TEXT PASS

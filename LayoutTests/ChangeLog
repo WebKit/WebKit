@@ -1,3 +1,9 @@
+2010-09-27 MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, added an expectation.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-23  Antonio Gomes  <agomes@rim.com>
 
         Reviewed by Kenneth Rohde Christiansen.
