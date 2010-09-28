@@ -1,3 +1,12 @@
+2010-09-27  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Fixing 500 error seen in the status server.
+
+        It turns out that a = b = []; b.append(1); then a[0] will be 1!
+        This should have been obvious to me, I guess, but it was not what I was expecting.
+
+        * QueueStatusServer/model/activeworkitems.py:
+
 2010-09-27  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

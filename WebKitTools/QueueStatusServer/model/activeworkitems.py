@@ -48,7 +48,8 @@ class ActiveWorkItems(db.Model):
             # db.Model does not tuples, we have to make lists.
             self.item_ids, self.item_dates = map(list, zip(*pairs))
         else:
-            self.item_ids = self.item_dates = []
+            self.item_ids = []
+            self.item_dates = []
 
     def _append_item_time_pair(self, pair):
         self.item_ids.append(pair[0])
