@@ -130,13 +130,23 @@ void ProcessLauncher::launchProcess()
 
     pid_t processIdentifier;
     int result = posix_spawn(&processIdentifier, path, 0, &attr, (char *const*)args, *_NSGetEnviron());
-    ASSERT_UNUSED(result, !result);
 
     posix_spawnattr_destroy(&attr);
 
-    // Set up the termination notification handler and then ask the child process to continue.
-    setUpTerminationNotificationHandler(processIdentifier);
-    kill(processIdentifier, SIGCONT);
+    if (!result) {
+        // Set up the termination notification handler and then ask the child process to continue.
+        setUpTerminationNotificationHandler(processIdentifier);
+        kill(processIdentifier, SIGCONT);
+    } else {
+        // We failed to launch. Release the send right.
+        mach_port_deallocate(mach_task_self(), listeningPort);
+
+        // And the receive right.
+        mach_port_mod_refs(mach_task_self(), listeningPort, MACH_PORT_RIGHT_RECEIVE, -1);
+        
+        listeningPort = MACH_PORT_NULL;
+        processIdentifier = 0;
+    }
     
     // We've finished launching the process, message back to the main run loop.
     RunLoop::main()->scheduleWork(WorkItem::create(this, &ProcessLauncher::didFinishLaunchingProcess, processIdentifier, listeningPort));

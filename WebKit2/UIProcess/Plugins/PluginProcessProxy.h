@@ -57,6 +57,8 @@ public:
 private:
     PluginProcessProxy(PluginProcessManager*, const PluginInfoStore::Plugin&);
 
+    void pluginProcessCrashedOrFailedToLaunch();
+
     // CoreIPC::Connection::Client
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     virtual void didClose(CoreIPC::Connection*);
