@@ -1,3 +1,12 @@
+2010-09-28  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Clean up QWebPage initialization
+
+        * Api/qwebpage.cpp:
+        * Api/qwebpage_p.h:
+
 2010-09-28  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

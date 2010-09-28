@@ -146,15 +146,11 @@ public:
 #endif
     static const char* editorCommandForWebActions(QWebPage::WebAction action);
 
-    WebCore::ChromeClientQt *chromeClient;
-    WebCore::ContextMenuClientQt *contextMenuClient;
-    WebCore::EditorClientQt *editorClient;
+    QWebPage *q;
     WebCore::Page *page;
-
+    QWebPageClient* client;
     QPointer<QWebFrame> mainFrame;
 
-    QWebPage *q;
-    QWebPageClient* client;
 #ifndef QT_NO_UNDOSTACK
     QUndoStack *undoStack;
 #endif

@@ -257,12 +257,32 @@ static inline Qt::DropAction dragOpToDropAction(unsigned actions)
 
 QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     : q(qq)
+    , page(0)
     , client(0)
+    , mainFrame(0)
+#ifndef QT_NO_UNDOSTACK
+    , undoStack(0)
+#endif
 #if QT_VERSION < QT_VERSION_CHECK(4, 6, 0)
     , view(0)
 #endif
+    , insideOpenCall(false)
+    , m_totalBytes(0)
+    , m_bytesReceived()
     , clickCausedFocus(false)
+    , networkManager(0)
+    , forwardUnsupportedContent(false)
+    , smartInsertDeleteEnabled(true)
+    , selectTrailingWhitespaceEnabled(false)
+    , linkPolicy(QWebPage::DontDelegateLinks)
     , viewportSize(QSize(0, 0))
+#ifndef QT_NO_CONTEXTMENU
+    , currentContextMenu(0)
+#endif
+    , settings(0)
+    , editable(false)
+    , useFixedLayout(false)
+    , pluginFactory(0)
     , inspectorFrontend(0)
     , inspector(0)
     , inspectorIsInternalOnly(false)
@@ -286,23 +306,6 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     page = new Page(pageClients);
 
     settings = new QWebSettings(page->settings());
-
-#ifndef QT_NO_UNDOSTACK
-    undoStack = 0;
-#endif
-    mainFrame = 0;
-    networkManager = 0;
-    pluginFactory = 0;
-    insideOpenCall = false;
-    forwardUnsupportedContent = false;
-    editable = false;
-    useFixedLayout = false;
-    linkPolicy = QWebPage::DontDelegateLinks;
-#ifndef QT_NO_CONTEXTMENU
-    currentContextMenu = 0;
-#endif
-    smartInsertDeleteEnabled = true;
-    selectTrailingWhitespaceEnabled = false;
 
     history.d = new QWebHistoryPrivate(page->backForwardList());
     memset(actions, 0, sizeof(actions));
