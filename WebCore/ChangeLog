@@ -1,5 +1,22 @@
 2010-09-28  Mark Rowe  <mrowe@apple.com>
 
+        Merge r65826.
+
+    2010-08-23  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix security origin calculation in createPattern. Need to use
+        cachedImage->response().url() instead of cachedImage->url().
+        https://bugs.webkit.org/show_bug.cgi?id=44399.
+
+        Test: http/tests/security/canvas-remote-read-remote-image-redirect.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::createPattern):
+
+2010-09-28  Mark Rowe  <mrowe@apple.com>
+
         Merge r67390.
 
     2010-09-13  Chris Fleizach  <cfleizach@apple.com>
