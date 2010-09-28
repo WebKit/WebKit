@@ -1,3 +1,30 @@
+2010-09-28  Huahui Wu  <mediadependent@gmail.com>
+
+        Reviewed by Steve Block.
+
+        Add two multi-touch tests for Android.
+        https://bugs.webkit.org/show_bug.cgi?id=45221
+
+        The original tests (touch-target.html and basic-multi-touch-events.html)
+        requires the system being able to release one point while maintain another point.
+        Current Android system can not provide this to browser, hence these tests are
+        slightly modified for Android. Since these are limited version of the original ones,
+        other platforms should pass these tests if they can pass the original ones.
+
+        * fast/events/touch/basic-multi-touch-events-limited-expected.txt: Added.
+        * fast/events/touch/basic-multi-touch-events-limited.html: Added.
+        * fast/events/touch/script-tests/basic-multi-touch-events-limited.js: Added.
+        (touchEventCallback):
+        (verifyTouchEvent):
+        (verifyTouchPoint):
+        (verifyTouch):
+        (multiTouchSequence):
+        * fast/events/touch/script-tests/touch-target-limited.js: Added.
+        (touchStartHandler):
+        (touchMoveHandler):
+        * fast/events/touch/touch-target-limited-expected.txt: Added.
+        * fast/events/touch/touch-target-limited.html: Added.
+
 2010-09-28 MORITA Hajime  <morrita@google.com>
 
         Unreviewed, added an expectation.

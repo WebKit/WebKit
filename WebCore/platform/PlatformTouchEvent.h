@@ -62,7 +62,7 @@ public:
 #if PLATFORM(QT)
     PlatformTouchEvent(QTouchEvent*);
 #elif PLATFORM(ANDROID)
-    PlatformTouchEvent(const IntPoint& windowPos, TouchEventType, PlatformTouchPoint::State, int metaState);
+    PlatformTouchEvent(const Vector<IntPoint>&, TouchEventType, PlatformTouchPoint::State, int metaState);
 #elif PLATFORM(BREWMP)
     PlatformTouchEvent(AEEEvent, uint16 wParam, uint32 dwParam);
 #endif

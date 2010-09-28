@@ -1,3 +1,23 @@
+2010-09-28  Huahui Wu  <mediadependent@gmail.com>
+
+        Reviewed by Steve Block.
+
+        Add multi-touch for Android.
+        https://bugs.webkit.org/show_bug.cgi?id=45221
+
+        The Android touch event used to take one point as the touch point,
+        it's now changed to a vector of points to support multi-touch.
+
+        Tests: fast/events/touch/basic-multi-touch-events-limited.html
+               fast/events/touch/touch-target-limited.html
+
+        * platform/PlatformTouchEvent.h:
+        * platform/PlatformTouchPoint.h:
+        * platform/android/PlatformTouchEventAndroid.cpp:
+        (WebCore::PlatformTouchEvent::PlatformTouchEvent):
+        * platform/android/PlatformTouchPointAndroid.cpp:
+        (WebCore::PlatformTouchPoint::PlatformTouchPoint):
+
 2010-09-27  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
