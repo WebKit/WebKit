@@ -1,3 +1,15 @@
+2010-09-28  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Keep the accelerated compositor around even after a page is
+        done using it to avoid startup costs in pages that frequently switch
+        the compositor on and off.
+        https://bugs.webkit.org/show_bug.cgi?id=45845
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+
 2010-09-28  Nat Duca  <nduca@chromium.org>
 
         Reviewed by James Robinson.

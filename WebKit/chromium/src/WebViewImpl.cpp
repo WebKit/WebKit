@@ -2296,25 +2296,29 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
     if (m_isAcceleratedCompositingActive == active)
         return;
 
-    if (active) {
-        OwnPtr<GraphicsContext3D> context = m_temporaryOnscreenGraphicsContext3D.release();
-        if (!context) {
-            context = GraphicsContext3D::create(GraphicsContext3D::Attributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
-            if (context)
-                context->reshape(std::max(1, m_size.width), std::max(1, m_size.height));
-        }
-        m_layerRenderer = LayerRendererChromium::create(context.release());
-        if (m_layerRenderer) {
-            m_isAcceleratedCompositingActive = true;
-        } else {
-            m_isAcceleratedCompositingActive = false;
-            m_compositorCreationFailed = true;
-        }
-    } else {
-        if (m_layerRenderer)
-            m_layerRenderer->setRootLayer(0);
-        m_layerRenderer = 0;
+    if (!active) {
         m_isAcceleratedCompositingActive = false;
+        return;
+    }
+
+    if (m_layerRenderer) {
+        m_isAcceleratedCompositingActive = true;
+        return;
+    }
+
+    OwnPtr<GraphicsContext3D> context = m_temporaryOnscreenGraphicsContext3D.release();
+    if (!context) {
+        context = GraphicsContext3D::create(GraphicsContext3D::Attributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
+        if (context)
+            context->reshape(std::max(1, m_size.width), std::max(1, m_size.height));
+    }
+    m_layerRenderer = LayerRendererChromium::create(context.release());
+    if (m_layerRenderer) {
+        m_isAcceleratedCompositingActive = true;
+        m_compositorCreationFailed = false;
+    } else {
+        m_isAcceleratedCompositingActive = false;
+        m_compositorCreationFailed = true;
     }
 }
 
