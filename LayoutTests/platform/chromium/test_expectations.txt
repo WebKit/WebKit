@@ -836,6 +836,9 @@ BUGWK44514 LINUX WIN : svg/custom/missing-xlink.svg = TEXT
 BUGWK44514 MAC : fast/backgrounds/svg-as-background-6.html = IMAGE
 BUGWK44514 MAC : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
 
+// Will require rebaseline.
+BUGWK42370 WIN MAC : svg/custom/image-rescale.svg = FAIL
+
 // -----------------------------------------------------------------
 // End SVG Regressions
 // -----------------------------------------------------------------

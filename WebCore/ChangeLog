@@ -1,3 +1,19 @@
+2010-09-28  W. James MacLean  <wjmaclean@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Scaled Resized images are blurred when sent to Skia
+        https://bugs.webkit.org/show_bug.cgi?id=42370
+
+        This patch modifies ImageSkia.cpp to fix the calculation of resampled
+        bitmap sizes so as to include the transform matrix of the canvas.
+
+        Test: svg/custom/image-rescale.svg
+
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::computeResamplingMode):
+        (WebCore::drawResampledBitmap):
+
 2010-09-28  James Robinson  <jamesr@chromium.org>
 
         [chromium] Decrease warning level on chromium linux temporarily. This is causing failures on some bots
