@@ -25,6 +25,9 @@
 messages -> WebProcessConnection {
     # Creates a plug-in instance with the given instance ID.
     CreatePlugin(uint64_t pluginInstanceID, WebKit::Plugin::Parameters parameters) -> (bool result)
+
+    # Destroys the plug-in instance with the given instance ID.
+    DestroyPlugin(uint64_t pluginInstanceID) -> ()
 }
 
 #endif

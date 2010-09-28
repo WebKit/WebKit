@@ -91,6 +91,41 @@
 
         Reviewed by Adam Roben.
 
+        Implement PluginProxy::destroy
+        https://bugs.webkit.org/show_bug.cgi?id=46737
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::handleMessage):
+        Add overload for a sync message with one in parameter and no out parameters.
+
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::destroyPluginControllerProxy):
+        Rename this to avoid conflicts with the destroyPlugin message handler.
+
+        (WebKit::WebProcessConnection::destroyPlugin):
+        Call destroyPluginControllerProxy.
+
+        * PluginProcess/WebProcessConnection.messages.in:
+        Add DestroyPlugin message.
+
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        (WebKit::PluginProcessConnection::didClose):
+        
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::PluginProxy):
+        (WebKit::PluginProxy::~PluginProxy):
+        Don't add and/the plug-in proxy from the map in the constructor/destructor. Instead,
+        do it in initialize/destroy, since otherwise we could be calling pluginProcessCrashed on a
+        PluginController that had already been freed.
+
+        (WebKit::PluginProxy::initialize):
+        (WebKit::PluginProxy::destroy):
+        send the DestroyPlugin message.
+
+2010-09-28  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
         Improve plug-in process lifecycle handling
         https://bugs.webkit.org/show_bug.cgi?id=46734
 

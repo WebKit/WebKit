@@ -51,7 +51,7 @@ private:
     void addPluginControllerProxy(PassOwnPtr<PluginControllerProxy>);
     void removePluginControllerProxy(PluginControllerProxy*);
 
-    void destroyPlugin(PluginControllerProxy*);
+    void destroyPluginControllerProxy(PluginControllerProxy*);
 
     // CoreIPC::Connection::Client
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
@@ -62,6 +62,7 @@ private:
     // Message handlers.
     CoreIPC::SyncReplyMode didReceiveSyncWebProcessConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
     void createPlugin(uint64_t pluginInstanceID, const Plugin::Parameters&, bool& result);
+    void destroyPlugin(uint64_t pluginInstanceID);
 
     RefPtr<CoreIPC::Connection> m_connection;
 

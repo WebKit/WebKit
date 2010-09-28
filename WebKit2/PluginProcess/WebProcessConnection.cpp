@@ -57,7 +57,7 @@ void WebProcessConnection::addPluginControllerProxy(PassOwnPtr<PluginControllerP
     m_pluginControllers.set(pluginInstanceID, pluginController.leakPtr());
 }
 
-void WebProcessConnection::destroyPlugin(PluginControllerProxy* pluginController)
+void WebProcessConnection::destroyPluginControllerProxy(PluginControllerProxy* pluginController)
 {
     pluginController->destroy();
     
@@ -103,7 +103,15 @@ void WebProcessConnection::didClose(CoreIPC::Connection*)
     copyValuesToVector(m_pluginControllers, pluginControllers);
 
     for (size_t i = 0; i < pluginControllers.size(); ++i)
-        destroyPlugin(pluginControllers[i]);
+        destroyPluginControllerProxy(pluginControllers[i]);
+}
+
+void WebProcessConnection::destroyPlugin(uint64_t pluginInstanceID)
+{
+    PluginControllerProxy* pluginControllerProxy = m_pluginControllers.get(pluginInstanceID);
+    ASSERT(pluginControllerProxy);
+
+    destroyPluginControllerProxy(pluginControllerProxy);
 }
 
 void WebProcessConnection::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID)
