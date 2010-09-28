@@ -1,6 +1,5 @@
 <html> 
 <head>
-
 <style>
 .editing { 
     border: 2px solid red; 
@@ -17,43 +16,21 @@
 .expected-results:first-line { font-weight: bold }
 </style>
 <script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
-
-<script>
-
-function editingTest() {
-    for (i = 0; i < 3; i++)
-        extendSelectionForwardByLineCommand();
-    copyCommand();
-    pasteCommand();
-}
-
-</script>
-
+<script src="../../resources/dump-as-markup.js"></script>
 <title>Editing Test</title> 
 </head> 
 <body>
 
-<div class="explanation">
-<div class="scenario">
-Tests: 
-<br>
-Bug fix for <a href="rdar://problem/4039777">&lt;rdar://problem/4039777&gt;</a> Pasting particular snippet of HTML containing list items and a link creates too many list items
-</div>
-<div class="expected-results">
-Expected Results:
-<br>
-Should match:
-<BR>
+<div id="expected" class="expected-results">
 <ul style="text-align:right;"><li>A</li></ul>
 <div>
-	<ul>
-		<li>
-			<a href="">B</a>
-			<br>
-			C 
-		</li>
-	</ul>
-</div>
+    <ul>
+        <li>
+            <a href="">B</a>
+            <br>
+            C 
+        </li>
+    </ul>
 </div>
 </div>
 
@@ -61,19 +38,30 @@ Should match:
 <div id="test" class="editing">
 <ul style="text-align:right;"><li>A</li></ul>
 <div>
-	<ul>
-		<li>
-			<a href="">B</a>
-			<br>
-			C 
-		</li>
-	</ul>
+    <ul>
+        <li>
+            <a href="">B</a>
+            <br>
+            C 
+        </li>
+    </ul>
 </div>
 </div>
 </div>
-
 <script>
-runEditingTest();
+
+function editingTest() {
+    for (i = 0; i < 3; i++)
+        extendSelectionForwardByLineCommand();
+    copyCommand();
+    pasteCommand();
+    Markup.description('Bug fix for <a href="rdar://problem/4039777">&lt;rdar://problem/4039777&gt;</a> Pasting particular snippet of HTML containing list items and a link creates too many list items');
+    Markup.dump('expected', 'Expected result');
+    Markup.dump('test', 'Actual result');
+}
+
+runDumpAsTextEditingTest(true);
+
 </script>
 
 </body>

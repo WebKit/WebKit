@@ -1,6 +1,5 @@
 <html> 
 <head>
-
 <style>
 .editing { 
     border: 2px solid red; 
@@ -9,20 +8,7 @@
 }
 </style>
 <script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
-
-<script>
-
-function editingTest() {
-	moveSelectionForwardByLineCommand()
-    for (i = 0; i < 3; i++)
-        extendSelectionForwardByLineCommand();
-    copyCommand();
-    moveSelectionForwardByLineCommand();
-    pasteCommand();
-}
-
-</script>
-
+<script src="../../resources/dump-as-markup.js"></script>
 <title>Editing Test</title> 
 </head> 
 <body>
@@ -35,10 +21,20 @@ function editingTest() {
     <li>I should be number 3.</li>
 </ol>
 </div>
-
 <script>
-runEditingTest();
-</script>
 
+function editingTest() {
+    moveSelectionForwardByLineCommand()
+    for (i = 0; i < 3; i++)
+        extendSelectionForwardByLineCommand();
+    copyCommand();
+    moveSelectionForwardByLineCommand();
+    pasteCommand();
+    Markup.dump('root');
+}
+
+runDumpAsTextEditingTest(true);
+
+</script>
 </body>
 </html>

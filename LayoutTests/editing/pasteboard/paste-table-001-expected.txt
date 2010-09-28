@@ -42,46 +42,59 @@ EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range fr
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of P > DIV > BODY > HTML > #document to 2 of P > DIV > BODY > HTML > #document toDOMRange:range from 32 of #text > TD > TR > TBODY > TABLE > P > DIV > BODY > HTML > #document to 32 of #text > TD > TR > TBODY > TABLE > P > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x212 [border: (2px solid #FF0000)]
-        RenderBlock (anonymous) at (14,14) size 756x28
-          RenderInline {SPAN} at (0,0) size 161x28
-            RenderText {#text} at (0,0) size 161x28
-              text run at (0,0) width 161: "Empty table cell"
-          RenderText {#text} at (0,0) size 0x0
-        RenderBlock {P} at (14,66) size 756x108
-          RenderTable {TABLE} at (0,0) size 292x54 [border: (2px outset #808080)]
-            RenderTableSection {TBODY} at (2,2) size 288x50
-              RenderTableRow {TR} at (0,2) size 288x22
-                RenderTableCell {TD} at (2,2) size 81x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                  RenderText {#text} at (2,2) size 77x18
-                    text run at (2,2) width 77: "Left column"
-                RenderTableCell {TD} at (85,2) size 201x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                  RenderText {#text} at (2,2) size 86x18
-                    text run at (2,2) width 86: "Right column"
-              RenderTableRow {TR} at (0,26) size 288x22
-                RenderTableCell {TD} at (2,35) size 81x4 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                RenderTableCell {TD} at (85,26) size 201x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-                  RenderText {#text} at (2,2) size 197x18
-                    text run at (2,2) width 197: "I should be in the right column."
-          RenderTable {TABLE} at (0,54) size 292x54 [border: (2px outset #808080)]
-            RenderTableSection {TBODY} at (2,2) size 288x50
-              RenderTableRow {TR} at (0,2) size 288x22
-                RenderTableCell {TD} at (2,2) size 81x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                  RenderText {#text} at (2,2) size 77x18
-                    text run at (2,2) width 77: "Left column"
-                RenderTableCell {TD} at (85,2) size 201x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                  RenderText {#text} at (2,2) size 86x18
-                    text run at (2,2) width 86: "Right column"
-              RenderTableRow {TR} at (0,26) size 288x22
-                RenderTableCell {TD} at (2,35) size 81x4 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                RenderTableCell {TD} at (85,26) size 201x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-                  RenderText {#text} at (2,2) size 197x18
-                    text run at (2,2) width 197: "I should be in the right column."
-          RenderBlock (anonymous) at (0,108) size 756x0
-            RenderText {#text} at (0,0) size 0x0
-caret: position 32 of child 0 {#text} of child 1 {TD} of child 1 {TR} of child 0 {TBODY} of child 2 {TABLE} of child 3 {P} of child 1 {DIV} of body
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+| "
+"
+| <span>
+|   id="test"
+|   "Empty table cell"
+| "
+"
+| <p>
+|   "
+"
+|   <table>
+|     border="2"
+|     "
+"
+|     <tbody>
+|       <tr>
+|         "
+    "
+|         <td>
+|           "Left column"
+|         "
+    "
+|         <td>
+|           "Right column"
+|         "
+"
+|       "
+"
+|       <tr>
+|         "
+    "
+|         <td>
+|         "
+    "
+|         <td>
+|           "I should be in the right column."
+|         "
+"
+|       "
+"
+|   <table>
+|     border="2"
+|     <tbody>
+|       <tr>
+|         <td>
+|           "Left column"
+|         <td>
+|           "Right column"
+|       <tr>
+|         <td>
+|         <td>
+|           "I should be in the right column.<#selection-caret>"
+|   "
+"

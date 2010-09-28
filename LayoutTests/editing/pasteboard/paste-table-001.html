@@ -1,6 +1,5 @@
 <html> 
 <head>
-
 <style>
 .editing { 
     border: 2px solid red; 
@@ -9,22 +8,7 @@
 }
 </style>
 <script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
-
-<script>
-
-function editingTest() {
-    moveSelectionForwardByLineCommand();
-    for (i = 0; i < 3; i++)
-        extendSelectionForwardByLineCommand();
-    for (i = 0; i < 32; i++)
-        extendSelectionForwardByCharacterCommand();
-    copyCommand();
-    moveSelectionForwardByLineCommand();
-    pasteCommand();
-}
-
-</script>
-
+<script src="../../resources/dump-as-markup.js"></script>
 <title>Editing Test</title> 
 </head> 
 <body>
@@ -42,10 +26,22 @@ function editingTest() {
 </tr>
 </table>
 </div>
-
 <script>
-runEditingTest();
-</script>
 
+function editingTest() {
+    moveSelectionForwardByLineCommand();
+    for (i = 0; i < 3; i++)
+        extendSelectionForwardByLineCommand();
+    for (i = 0; i < 32; i++)
+        extendSelectionForwardByCharacterCommand();
+    copyCommand();
+    moveSelectionForwardByLineCommand();
+    pasteCommand();
+    Markup.dump('root');
+}
+
+runDumpAsTextEditingTest(true);
+
+</script>
 </body>
 </html>

@@ -1,3 +1,52 @@
+2010-09-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        dump-as-markup conversion: editing/pasteboard/paste-4039777-fix.html, paste-list-001.html, and paste-table-001.html
+        https://bugs.webkit.org/show_bug.cgi?id=46545
+
+        Converted the following tests to dump-as-markup tests:
+        editing/pasteboard/paste-4039777-fix.html
+        editing/pasteboard/paste-list-001.html
+        editing/pasteboard/paste-table-001.html
+
+        * editing/pasteboard/paste-4039777-fix-expected.txt: Added.
+        * editing/pasteboard/paste-4039777-fix.html:
+        * editing/pasteboard/paste-list-001-expected.txt: Added.
+        * editing/pasteboard/paste-list-001.html:
+        * editing/pasteboard/paste-table-001-expected.txt: Added.
+        * editing/pasteboard/paste-table-001.html:
+        * platform/chromium-linux/editing/pasteboard/paste-4039777-fix-expected.checksum: Removed.
+        * platform/chromium-linux/editing/pasteboard/paste-4039777-fix-expected.png: Removed.
+        * platform/chromium-linux/editing/pasteboard/paste-list-001-expected.checksum: Removed.
+        * platform/chromium-linux/editing/pasteboard/paste-list-001-expected.png: Removed.
+        * platform/chromium-linux/editing/pasteboard/paste-table-001-expected.checksum: Removed.
+        * platform/chromium-linux/editing/pasteboard/paste-table-001-expected.png: Removed.
+        * platform/chromium-mac/editing/pasteboard/paste-4039777-fix-expected.checksum: Removed.
+        * platform/chromium-mac/editing/pasteboard/paste-table-001-expected.checksum: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-4039777-fix-expected.checksum: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-4039777-fix-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-4039777-fix-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-list-001-expected.checksum: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-list-001-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-list-001-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-table-001-expected.checksum: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-table-001-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-table-001-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/paste-table-001-expected.txt: Removed.
+        * platform/mac/editing/pasteboard/paste-4039777-fix-expected.checksum: Removed.
+        * platform/mac/editing/pasteboard/paste-4039777-fix-expected.png: Removed.
+        * platform/mac/editing/pasteboard/paste-4039777-fix-expected.txt: Removed.
+        * platform/mac/editing/pasteboard/paste-list-001-expected.checksum: Removed.
+        * platform/mac/editing/pasteboard/paste-list-001-expected.png: Removed.
+        * platform/mac/editing/pasteboard/paste-list-001-expected.txt: Removed.
+        * platform/mac/editing/pasteboard/paste-table-001-expected.checksum: Removed.
+        * platform/mac/editing/pasteboard/paste-table-001-expected.png: Removed.
+        * platform/mac/editing/pasteboard/paste-table-001-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/paste-4039777-fix-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/paste-list-001-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/paste-table-001-expected.txt: Removed.
+
 2010-09-28  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; expectations fix.
