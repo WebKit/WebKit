@@ -36,7 +36,6 @@
 #include "PlatformString.h"
 
 #include <wtf/Vector.h>
-#include <wtf/text/StringHash.h>
 
 #if PLATFORM(CG)
 #include <ApplicationServices/ApplicationServices.h>
@@ -57,7 +56,6 @@ class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;
 class ImageData;
-class KURL;
 class TextMetrics;
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
@@ -288,11 +286,6 @@ private:
 #endif
 
     void prepareGradientForDashboard(CanvasGradient* gradient) const;
-
-    HashSet<String> m_cleanOrigins;
-
-    void checkOrigin(const KURL&);
-    void checkOrigin(const String&);
 
     Vector<State, 1> m_stateStack;
     bool m_usesCSSCompatibilityParseMode;

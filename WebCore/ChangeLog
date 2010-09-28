@@ -1,3 +1,39 @@
+2010-09-27  Adrienne Walker  <enne@google.com>
+
+        Reviewed by Adam Barth.
+
+        WebGL's readPixels doesn't respect origin-clean flag
+
+        Push CanvasRenderingContext2D checkOrigin logic into base class so it can be shared between different kinds of canvas contexts.
+        https://bugs.webkit.org/show_bug.cgi?id=45718
+
+        Test: LayoutTests/http/tests/canvas/webgl/origin-clean-conformance.html
+
+        * html/canvas/CanvasRenderingContext.cpp:
+        (WebCore::CanvasRenderingContext::checkOrigin):
+        * html/canvas/CanvasRenderingContext.h:
+        (WebCore::CanvasRenderingContext::~CanvasRenderingContext):
+        (WebCore::CanvasRenderingContext::canvas):
+        (WebCore::CanvasRenderingContext::is2d):
+        (WebCore::CanvasRenderingContext::is3d):
+        (WebCore::CanvasRenderingContext::isAccelerated):
+        (WebCore::CanvasRenderingContext::paintRenderingResultsToCanvas):
+        (WebCore::CanvasRenderingContext::paintsIntoCanvasBuffer):
+        (WebCore::CanvasRenderingContext::platformLayer):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setStrokeStyle):
+        (WebCore::CanvasRenderingContext2D::setFillStyle):
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        (WebCore::CanvasRenderingContext2D::drawImageFromRect):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::readPixels):
+        (WebCore::WebGLRenderingContext::texImage2D):
+        (WebCore::WebGLRenderingContext::videoFrameToImage):
+        (WebCore::WebGLRenderingContext::texSubImage2D):
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLRenderingContext.idl:
+
 2010-09-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

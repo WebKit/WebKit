@@ -590,7 +590,7 @@ module html {
         [StrictTypeChecking] void         pixelStorei(in unsigned long pname, in long param);
         [StrictTypeChecking] void         polygonOffset(in double factor, in double units);
 
-        [StrictTypeChecking] void         readPixels(in long x, in long y, in long width, in long height, in unsigned long format, in unsigned long type, in ArrayBufferView pixels);
+        [StrictTypeChecking] void         readPixels(in long x, in long y, in long width, in long height, in unsigned long format, in unsigned long type, in ArrayBufferView pixels) raises(DOMException);
         
         [StrictTypeChecking] void         releaseShaderCompiler();
         [StrictTypeChecking] void         renderbufferStorage(in unsigned long target, in unsigned long internalformat, in unsigned long width, in unsigned long height);

@@ -1,0 +1,31 @@
+This test ensures WebGL implementations follow proper origin restrictions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS Playable video format found
+PASS img was loaded
+
+check that copying an img from another origin clears the origin-clean flag.
+PASS should not throw exception by readPixels for origin clean canvas.
+PASS should not throw exception by toDataURL for origin clean canvas.
+PASS should throw exception by readPixels for NON origin clean canvas.
+PASS should throw exception by toDataURL for NON origin clean canvas.
+
+check that copying from 1 unclean 3d canvas to another clears the origin-clean flag on the second canvas.
+PASS should not throw exception by readPixels for origin clean canvas.
+PASS should not throw exception by toDataURL for origin clean canvas.
+PASS should throw exception by readPixels for NON origin clean canvas.
+PASS should throw exception by toDataURL for NON origin clean canvas.
+
+check that copying from 1 unclean 3d canvas to a 2d canvas clears the origin-clean flag on the 2d canvas.
+PASS should not throw exception by toDataURL for origin clean canvas.
+PASS should throw exception by toDataURL for NON origin clean canvas.
+
+check that copying a video from another origin clears the origin-clean flag.
+PASS should not throw exception by readPixels for origin clean canvas.
+PASS should not throw exception by toDataURL for origin clean canvas.
+PASS should throw exception by readPixels for NON origin clean canvas.
+PASS should throw exception by toDataURL for NON origin clean canvas.
+
+TEST COMPLETE
+   

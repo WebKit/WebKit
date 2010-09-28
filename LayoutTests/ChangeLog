@@ -1,3 +1,15 @@
+2010-09-27  Adrienne Walker  <enne@google.com>
+
+        Reviewed by Adam Barth.
+
+        WebGL's readPixels doesn't respect origin-clean flag
+
+        Add new test by converting Khronos conformance test to be able to run within LayoutTests/http.
+        https://bugs.webkit.org/show_bug.cgi?id=45718
+
+        * http/tests/canvas/webgl/origin-clean-conformance-expected.txt: Added.
+        * http/tests/canvas/webgl/origin-clean-conformance.html: Added.
+
 2010-09-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
