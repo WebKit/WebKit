@@ -1,3 +1,9 @@
+2010-09-28  Anders Carlsson  <andersca@apple.com>
+
+        Out of process plug-ins shouldn't be turned on just yet...
+
+        * WebKit2Prefix.h:
+
 2010-09-28  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
