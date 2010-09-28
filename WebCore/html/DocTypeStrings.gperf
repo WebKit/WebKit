@@ -1,21 +1,13 @@
 %struct-type
-struct PubIDInfo {
-    enum eMode { 
-        eQuirks,         
-        eQuirks3,       
-        eAlmostStandards
-    };
-
-    const char* name;
-    eMode mode_if_no_sysid;
-    eMode mode_if_sysid;
-}
-%language=ANSI-C
+struct PubIDInfo;
+%omit-struct-type
+%language=C++
 %readonly-tables
 %global-table
 %compare-strncmp
+%define class-name DocTypeStringsHash
 %define initializer-suffix ,PubIDInfo::eAlmostStandards,PubIDInfo::eAlmostStandards
-%define lookup-function-name findDoctypeEntry
+%define lookup-function-name findDoctypeEntryImpl
 %define hash-function-name doctype_hash_function
 %includes
 %enum

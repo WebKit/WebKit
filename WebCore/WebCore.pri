@@ -547,7 +547,7 @@ cssprops.wkScript = $$PWD/css/makeprop.pl
 cssprops.output = $${WC_GENERATED_SOURCES_DIR}/CSSPropertyNames.cpp
 cssprops.input = WALDOCSSPROPS
 cssprops.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $${DASHBOARDSUPPORTCSSPROPERTIES} $${EXTRACSSPROPERTIES} > $${WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}.in && cd $$WC_GENERATED_SOURCES_DIR && perl $$cssprops.wkScript && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
-cssprops.depends = ${QMAKE_FILE_NAME} $${DASHBOARDSUPPORTCSSPROPERTIES} $${EXTRACSSPROPERTIES}
+cssprops.depends = ${QMAKE_FILE_NAME} $${DASHBOARDSUPPORTCSSPROPERTIES} $${EXTRACSSPROPERTIES} $$cssprops.wkScript
 addExtraCompiler(cssprops)
 
 # GENERATOR 6-B:
@@ -555,7 +555,7 @@ cssvalues.wkScript = $$PWD/css/makevalues.pl
 cssvalues.output = $${WC_GENERATED_SOURCES_DIR}/CSSValueKeywords.cpp
 cssvalues.input = WALDOCSSVALUES
 cssvalues.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $$EXTRACSSVALUES > $${WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}.in && cd $$WC_GENERATED_SOURCES_DIR && perl $$cssvalues.wkScript && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
-cssvalues.depends = ${QMAKE_FILE_NAME} $${EXTRACSSVALUES}
+cssvalues.depends = ${QMAKE_FILE_NAME} $${EXTRACSSVALUES} $$cssvalues.wkScript
 cssvalues.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}.h
 addExtraCompiler(cssvalues)
 

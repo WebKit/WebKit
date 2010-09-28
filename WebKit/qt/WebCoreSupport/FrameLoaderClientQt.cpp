@@ -1451,7 +1451,7 @@ PassRefPtr<Widget> FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, 
             for (unsigned i = 0; i < numqStyleSheetProperties; ++i) {
                 CSSPropertyID property = qstyleSheetProperties[i];
 
-                styleSheet += QString::fromLatin1(::getPropertyName(property));
+                styleSheet += QString::fromLatin1(getPropertyName(property));
                 styleSheet += QLatin1Char(':');
                 styleSheet += computedStyle(element)->getPropertyValue(property);
                 styleSheet += QLatin1Char(';');

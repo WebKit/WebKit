@@ -495,6 +495,10 @@
 		1AB7FC860A8B92EC00D9D37B /* XPathValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7FC650A8B92EC00D9D37B /* XPathValue.h */; };
 		1AB7FC870A8B92EC00D9D37B /* XPathVariableReference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7FC660A8B92EC00D9D37B /* XPathVariableReference.cpp */; };
 		1AB7FC880A8B92EC00D9D37B /* XPathVariableReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7FC670A8B92EC00D9D37B /* XPathVariableReference.h */; };
+		1ABA76C911D20E47004C201C /* ColorData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E406F3FB1198307D009D59D6 /* ColorData.cpp */; };
+		1ABA76CA11D20E50004C201C /* CSSPropertyNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E41EA038119836DB00710BC5 /* CSSPropertyNames.cpp */; };
+		1ABA76CB11D20E57004C201C /* CSSValueKeywords.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E41EA0391198374900710BC5 /* CSSValueKeywords.cpp */; };
+		1ABA76CC11D20E5B004C201C /* DocTypeStrings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E406F3FA1198304D009D59D6 /* DocTypeStrings.cpp */; };
 		1ABFE7530CD968D000FE4834 /* SQLTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ABFE7520CD968D000FE4834 /* SQLTransaction.cpp */; };
 		1AC2260C0DB69F190089B669 /* JSDOMApplicationCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC2260A0DB69F190089B669 /* JSDOMApplicationCache.cpp */; };
 		1AC2260D0DB69F190089B669 /* JSDOMApplicationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC2260B0DB69F190089B669 /* JSDOMApplicationCache.h */; };
@@ -20902,6 +20906,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1ABA76C911D20E47004C201C /* ColorData.cpp in Sources */,
+				1ABA76CA11D20E50004C201C /* CSSPropertyNames.cpp in Sources */,
+				1ABA76CB11D20E57004C201C /* CSSValueKeywords.cpp in Sources */,
+				1ABA76CC11D20E5B004C201C /* DocTypeStrings.cpp in Sources */,
 				B5B5DC69119BB3D5002A8790 /* AbstractDatabase.cpp in Sources */,
 				41E1B1D00FF5986900576B3B /* AbstractWorker.cpp in Sources */,
 				29A812280FBB9C1D00510293 /* AccessibilityARIAGrid.cpp in Sources */,

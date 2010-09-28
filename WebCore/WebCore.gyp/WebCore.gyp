@@ -646,7 +646,6 @@
             '<(SHARED_INTERMEDIATE_DIR)/webkit',
             '<(RULE_INPUT_PATH)',
           ],
-          'process_outputs_as_sources': 0,
         },
         # Rule to build generated JavaScript (V8) bindings from .idl source.
         {
@@ -742,6 +741,12 @@
         # These files include all the .cpp files generated from the .idl files
         # in webcore_files.
         '<@(derived_sources_aggregate_files)',
+
+        # Additional .cpp files for HashTools.h
+        '<(SHARED_INTERMEDIATE_DIR)/webkit/DocTypeStrings.cpp',
+        '<(SHARED_INTERMEDIATE_DIR)/webkit/ColorData.cpp',
+        '<(SHARED_INTERMEDIATE_DIR)/webkit/CSSPropertyNames.cpp',
+        '<(SHARED_INTERMEDIATE_DIR)/webkit/CSSValueKeywords.cpp',
 
         # Additional .cpp files from webcore_bindings_sources actions.
         '<(SHARED_INTERMEDIATE_DIR)/webkit/HTMLElementFactory.cpp',

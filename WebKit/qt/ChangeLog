@@ -1,3 +1,24 @@
+2010-09-28  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Undefined reference errors when linking due to gperf and inlining.
+        webkit.org/b/29244
+
+        EFL CMake changes by Leandro Pereira <leandro@profusion.mobi>
+
+        Refactor gperf code generation and usage to fix the debug build with gcc>4.4.
+        Hitherto gperf generated C code, these files were included in multiple C++ files across WebCore
+        to access the functionality provided. This resulted in debug build failure with newer gcc versions
+        because of a behaviour change of gcc, which disables C style inlining in debug mode.
+        The make-hash-tools.pl script lets gperf generate C++ code for all gperf files now, which are compiled
+        in their own compilation unit.
+        The functionality provided by the generated code is wrapped behind HashTools.h, so there is no need
+        for multiple inclusions of generated C files to access these functions.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createPlugin):
+
 2010-09-28  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Andreas Kling.

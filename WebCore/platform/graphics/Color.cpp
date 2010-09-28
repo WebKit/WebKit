@@ -26,12 +26,11 @@
 #include "config.h"
 #include "Color.h"
 
+#include "HashTools.h"
 #include "PlatformString.h"
 #include <math.h>
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
-
-#include "ColorData.cpp"
 
 using namespace std;
 using namespace WTF;

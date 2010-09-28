@@ -536,6 +536,10 @@ IF (ENABLE_SVG)
 ENDIF()
 
 SET(WebCore_SOURCES
+    ${DERIVED_SOURCES_DIR}/DocTypeStrings.cpp
+    ${DERIVED_SOURCES_DIR}/CSSValueKeywords.cpp
+    ${DERIVED_SOURCES_DIR}/CSSPropertyNames.cpp
+    ${DERIVED_SOURCES_DIR}/ColorData.cpp
     ${DERIVED_SOURCES_DIR}/HTMLEntityTable.cpp
     ${DERIVED_SOURCES_DIR}/UserAgentStyleSheetsData.cpp
     ${DERIVED_SOURCES_DIR}/InspectorBackendDispatcher.cpp
@@ -1909,12 +1913,10 @@ LIST(APPEND WebCore_SOURCES ${JS_IDL_FILES} ${Inspector_IDL_FILES})
 
 GENERATE_ENTITIES(${WEBCORE_DIR}/html/parser/HTMLEntityNames.in ${DERIVED_SOURCES_DIR}/HTMLEntityTable.cpp ${WEBCORE_DIR}/html/parser/create-html-entity-table)
 
-
-GENERATE_GPERF(${WEBCORE_DIR}/platform/ColorData.gperf ${DERIVED_SOURCES_DIR}/ColorData.cpp findColor "")
+MAKE_HASH_TOOLS(${WEBCORE_DIR}/platform/ColorData)
 ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/platform/graphics/Color.cpp ColorData.cpp)
 
-
-GENERATE_GPERF(${WEBCORE_DIR}/html/DocTypeStrings.gperf ${DERIVED_SOURCES_DIR}/DocTypeStrings.cpp findDoctypeEntry "-F,PubIDInfo::eAlmostStandards,PubIDInfo::eAlmostStandards")
+MAKE_HASH_TOOLS(${WEBCORE_DIR}/html/DocTypeStrings)
 ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/HTMLDocument.cpp DocTypeStrings.cpp)
 
 
@@ -1934,6 +1936,7 @@ GENERATE_CSS_PROPERTY_NAMES()
 GENERATE_CSS_VALUE_KEYWORDS()
 
 
+ADD_SOURCE_DERIVED_DEPENDENCIES(${DERIVED_SOURCES_DIR}/HashTools.h DocTypeStrings.cpp CSSValueKeywords.cpp CSSPropertyNames.cpp ColorData.cpp)
 ADD_SOURCE_DERIVED_DEPENDENCIES(${DERIVED_SOURCES_DIR}/CSSGrammar.cpp CSSValueKeywords.h)
 ADD_SOURCE_DERIVED_DEPENDENCIES(${DERIVED_SOURCES_DIR}/CSSGrammar.cpp CSSPropertyNames.h)
 ADD_SOURCE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSPrimitiveValueMappings.h CSSValueKeywords.h)

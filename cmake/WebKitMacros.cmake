@@ -84,15 +84,24 @@ MACRO (GENERATE_GRAMMAR _prefix _input _output_header _output_source)
         VERBATIM)
 ENDMACRO ()
 
+MACRO(MAKE_HASH_TOOLS _source)
+    GET_FILENAME_COMPONENT(_name ${_source} NAME_WE)
 
-MACRO (GENERATE_GPERF _input _output _func _opts)
+    IF (${_source} STREQUAL "DocTypeStrings")
+        SET(_hash_tools_h "${DERIVED_SOURCES_DIR}/HashTools.h")
+    ELSE ()
+        SET(_hash_tools_h "")
+    ENDIF ()
+
     ADD_CUSTOM_COMMAND(
-        OUTPUT ${_output}
-        MAIN_DEPENDENCY ${_input}
-        COMMAND ${GPERF_EXECUTABLE} -CDEGIot -L ANSI-C --key-positions=* -s 2 -N ${_func} ${_opts} < ${_input} > ${_output}
+        OUTPUT ${DERIVED_SOURCES_DIR}/${_name}.cpp ${_hash_tools_h}
+        MAIN_DEPENDENCY ${_source}.gperf 
+        COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/make-hash-tools.pl ${DERIVED_SOURCES_DIR} ${_source}.gperf
         VERBATIM)
-ENDMACRO ()
 
+    UNSET(_name)
+    UNSET(_hash_tools_h)
+ENDMACRO()
 
 MACRO (WEBKIT_WRAP_SOURCELIST _input)
     IF (WTF_PLATFORM_QT)

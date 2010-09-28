@@ -1,13 +1,12 @@
 %struct-type
-struct NamedColor {
-    const char *name;
-    int RGBValue;
-};
-%language=ANSI-C
+struct NamedColor;
+%omit-struct-type
+%language=C++
 %readonly-tables
 %global-table
 %compare-strncmp
-%define lookup-function-name findColor
+%define class-name ColorDataHash
+%define lookup-function-name findColorImpl
 %define hash-function-name colordata_hash_function
 %includes
 %enum

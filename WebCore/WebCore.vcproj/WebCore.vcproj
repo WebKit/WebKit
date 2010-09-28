@@ -545,6 +545,26 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\HashTools.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\DocTypeStrings.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\CSSValueKeywords.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\CSSPropertyNames.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\ColorData.cpp"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\InspectorBackendDispatcher.cpp"
 				>
 			</File>
