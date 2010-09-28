@@ -60,7 +60,14 @@ public:
     }
 
     float value() const { return static_cast<float>(m_value); }
-    void setValue(float value) { m_value = value; }
+    
+    void setValue(float value)
+    {
+        // Check against JavaScript giving us bogus floating-point values.
+        // Don't ASSERT, since this can happen if somebody writes bad JS.
+        if (!isnan(value) && !isinf(value))
+            m_value = value;
+    }
 
     String name() const { return m_name; }
 
