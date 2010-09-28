@@ -71,11 +71,30 @@ platform/win/fast/events/panScroll-preventDefault.html
 fast/workers/storage
 storage
 
-# WebKit2 needs plugins support
-# <https://bugs.webkit.org/show_bug.cgi?id=42196>
-plugins
-platform/win/plugins
-dom/html/level2/html/AppletsCollection.html
+# Assertion failure in Node::document
+# http://webkit.org/b/46672
+plugins/embed-attributes-style.html
+
+# Assertion failure in NetscapePlugin::platformDestroy
+# http://webkit.org/b/46673
+plugins/mouse-events.html
+
+# http://webkit.org/b/46711
+platform/win/plugins/plugin-delayed-destroy.html
+
+# http://webkit.org/b/46712
+plugins/document-open.html
+
+# http://webkit.org/b/46715
+plugins/npruntime/invoke-failure.html
+
+# WebKitTestRunner needs layoutTestController.setCallCloseOnWebViews
+# http://webkit.org/b/46714
+plugins/geturlnotify-during-document-teardown.html
+
+# WebKitTestRunner needs an implementation of eventSender
+# <https://bugs.webkit.org/show_bug.cgi?id=42194>
+plugins/mouse-events-fixedpos.html
 
 # Pasteboard doesn't work in WebKit2
 # <https://bugs.webkit.org/show_bug.cgi?id=42317>

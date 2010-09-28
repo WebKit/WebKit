@@ -1,3 +1,18 @@
+2010-09-28  Adam Roben  <aroben@apple.com>
+
+        Start running plugins tests in WebKit2 on Windows
+
+        Fixes <http://webkit.org/b/46675> <rdar://problem/8484269>
+
+        Reviewed by John Sullivan.
+
+        * platform/win-wk2/Skipped: Removed the plugins and
+        platform/win/plugins directories and added individual failing tests.
+        plugins/geturlnotify-during-document-teardown.html and
+        plugins/mouse-events-fixedpos.html will also fail on SnowLeopard, but
+        they're already skipped there on both WebKit1 and WebKit2 thanks to
+        platform/mac-snowleopard/Skipped.
+
 2010-09-28  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
