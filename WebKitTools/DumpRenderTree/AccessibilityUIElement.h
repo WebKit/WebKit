@@ -179,8 +179,6 @@ public:
     // Table-specific
     AccessibilityUIElement cellForColumnAndRow(unsigned column, unsigned row);
 
-    AccessibilityTextMarker textMarkerForPoint(int x, int y);
-
     // Notifications
     // Function callback should take one argument, the name of the notification.
     bool addNotificationListener(JSObjectRef functionCallback);
