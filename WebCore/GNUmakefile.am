@@ -4340,25 +4340,25 @@ FEATURE_DEFINES += ENABLE_BLOB=1
 webcore_cppflags += -DENABLE_BLOB=1
 endif  # END ENABLE_BLOB
 
-DerivedSources/WebCore/CSSPropertyNames.h: $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/makeprop.pl
+DerivedSources/WebCore/CSSPropertyNames.h DerivedSources/WebCore/CSSPropertyNames.cpp: $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/makeprop.pl
 	if sort $(WEBCORE_CSS_PROPERTY_NAMES) | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
 	cat $(WEBCORE_CSS_PROPERTY_NAMES) > CSSPropertyNames.in
 	$(PERL) "$(WebCore)/css/makeprop.pl"
 	mv CSSPropertyNames.* $(GENSOURCES_WEBCORE)
 
 # Lower case all the values, as CSS values are case-insensitive
-DerivedSources/WebCore/CSSValueKeywords.h : $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCore)/css/makevalues.pl
+DerivedSources/WebCore/CSSValueKeywords.h DerivedSources/WebCore/CSSValueKeywords.cpp: $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCore)/css/makevalues.pl
 	$(PERL) -ne 'print lc' $(WEBCORE_CSS_VALUE_KEYWORDS) > CSSValueKeywords.in
 	if sort CSSValueKeywords.in | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
 	$(PERL) "$(WebCore)/css/makevalues.pl"
 	mv CSSValueKeywords.* $(GENSOURCES_WEBCORE)
 
 # DOCTYPE strings
-DerivedSources/WebCore/DocTypeStrings.cpp : $(WebCore)/html/DocTypeStrings.gperf $(WebCore)/make-hash-tools.pl
+DerivedSources/WebCore/DocTypeStrings.cpp DerivedSources/WebCore/HashTools.h: $(WebCore)/html/DocTypeStrings.gperf $(WebCore)/make-hash-tools.pl
 	$(PERL) $(WebCore)/make-hash-tools.pl $(GENSOURCES_WEBCORE) $(WebCore)/html/DocTypeStrings.gperf
 
 # HTML entity names
-DerivedSources/WebCore/HTMLEntityTable.cpp : $(WebCore)/html/parser/HTMLEntityNames.in $(WebCore)/html/parser/create-html-entity-table
+DerivedSources/WebCore/HTMLEntityTable.cpp: $(WebCore)/html/parser/HTMLEntityNames.in $(WebCore)/html/parser/create-html-entity-table
 	$(PYTHON) $(WebCore)/html/parser/create-html-entity-table -o $(GENSOURCES_WEBCORE)/HTMLEntityTable.cpp $(WebCore)/html/parser/HTMLEntityNames.in
 
 # color names
