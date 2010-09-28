@@ -1,3 +1,17 @@
+2010-09-28  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Remove support for Qt 4.5
+        https://bugs.webkit.org/show_bug.cgi?id=46718
+
+        Remove the code for versions of Qt prior to 4.6.
+
+        * UIProcess/API/qt/qgraphicswkview.cpp:
+        (QGraphicsWKView::event):
+        * UIProcess/API/qt/qwkpage.cpp:
+        * UIProcess/API/qt/qwkpage_p.h:
+
 2010-09-28  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Csaba Osztrogonác.
