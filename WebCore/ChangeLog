@@ -1,3 +1,9 @@
+2010-09-28  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, run sort-Xcode-project-file
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2010-09-28  Huahui Wu  <mediadependent@gmail.com>
 
         Reviewed by Steve Block.
