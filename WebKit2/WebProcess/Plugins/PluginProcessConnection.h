@@ -38,8 +38,8 @@
 
 namespace WebKit {
 
-class PluginInstanceProxy;
 class PluginProcessConnectionManager;
+class PluginProxy;
     
 class PluginProcessConnection : public RefCounted<PluginProcessConnection>, CoreIPC::Connection::Client {
 public:
@@ -52,6 +52,9 @@ public:
     const String& pluginPath() const { return m_pluginPath; }
 
     CoreIPC::Connection* connection() const { return m_connection.get(); }
+
+    void addPluginProxy(PluginProxy*);
+    void removePluginProxy(PluginProxy*);
 
 private:
     PluginProcessConnection(PluginProcessConnectionManager* pluginProcessConnectionManager, const String& pluginPath, CoreIPC::Connection::Identifier connectionIdentifier);
@@ -66,6 +69,10 @@ private:
 
     // The connection from the web process to the plug-in process.
     RefPtr<CoreIPC::Connection> m_connection;
+
+    // The plug-ins. We use a weak reference to the plug-in proxies because the plug-in view holds the strong reference.
+    HashMap<uint64_t, PluginProxy*> m_plugins;
+
 };
 
 } // namespace WebKit

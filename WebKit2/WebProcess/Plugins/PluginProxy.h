@@ -40,6 +40,8 @@ public:
     static PassRefPtr<PluginProxy> create(PassRefPtr<PluginProcessConnection>);
     ~PluginProxy();
 
+    uint64_t pluginInstanceID() const { return m_pluginInstanceID; }
+
 private:
     explicit PluginProxy(PassRefPtr<PluginProcessConnection>);
 
@@ -80,7 +82,12 @@ private:
     // CoreIPC::Connection::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
-    PassRefPtr<PluginProcessConnection> m_connection;
+    RefPtr<PluginProcessConnection> m_connection;
+    uint64_t m_pluginInstanceID;
+
+    PluginController* m_pluginController;
+
+    bool m_isStarted;
 };
 
 } // namespace WebKit

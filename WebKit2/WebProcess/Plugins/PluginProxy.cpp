@@ -29,10 +29,17 @@
 
 #include "NotImplemented.h"
 #include "PluginProcessConnection.h"
+#include "WebProcessConnectionMessages.h"
 
 using namespace WebCore;
 
 namespace WebKit {
+
+static uint64_t generatePluginInstanceID()
+{
+    static uint64_t uniquePluginInstanceID;
+    return ++uniquePluginInstanceID;
+}
 
 PassRefPtr<PluginProxy> PluginProxy::create(PassRefPtr<PluginProcessConnection> connection)
 {
@@ -41,17 +48,39 @@ PassRefPtr<PluginProxy> PluginProxy::create(PassRefPtr<PluginProcessConnection> 
 
 PluginProxy::PluginProxy(PassRefPtr<PluginProcessConnection> connection)
     : m_connection(connection)
+    , m_pluginInstanceID(generatePluginInstanceID())
+    , m_pluginController(0)
+    , m_isStarted(false)
+
 {
+    m_connection->addPluginProxy(this);
 }
 
 PluginProxy::~PluginProxy()
 {
+    m_connection->removePluginProxy(this);
 }
 
-bool PluginProxy::initialize(PluginController*, const Parameters&)
+bool PluginProxy::initialize(PluginController* pluginController, const Parameters& parameters)
 {
-    notImplemented();
-    return false;
+    ASSERT(!m_pluginController);
+    ASSERT(pluginController);
+
+    m_pluginController = pluginController;
+
+    // Ask the plug-in process to create a plug-in.
+    bool result = false;
+
+    if (!m_connection->connection()->sendSync(Messages::WebProcessConnection::CreatePlugin(m_pluginInstanceID, parameters),
+                                              Messages::WebProcessConnection::CreatePlugin::Reply(result),
+                                              0, CoreIPC::Connection::NoTimeout))
+        return false;
+
+    if (!result)
+        return false;
+
+    m_isStarted = true;
+    return true;
 }
 
 void PluginProxy::destroy()

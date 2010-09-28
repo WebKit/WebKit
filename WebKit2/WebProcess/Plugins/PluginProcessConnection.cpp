@@ -27,6 +27,8 @@
 
 #include "PluginProcessConnection.h"
 
+#include "PluginProcessConnectionManager.h"
+#include "PluginProxy.h"
 #include "WebProcess.h"
 
 namespace WebKit {
@@ -41,6 +43,29 @@ PluginProcessConnection::PluginProcessConnection(PluginProcessConnectionManager*
 
 PluginProcessConnection::~PluginProcessConnection()
 {
+}
+
+void PluginProcessConnection::addPluginProxy(PluginProxy* plugin)
+{
+    ASSERT(!m_plugins.contains(plugin->pluginInstanceID()));
+    m_plugins.set(plugin->pluginInstanceID(), plugin);
+}
+
+void PluginProcessConnection::removePluginProxy(PluginProxy* plugin)
+{
+    ASSERT(m_plugins.contains(plugin->pluginInstanceID()));
+    m_plugins.remove(plugin->pluginInstanceID());
+
+    if (!m_plugins.isEmpty())
+        return;
+
+    // We have no more plug-ins, invalidate the connection to the plug-in process.
+    ASSERT(m_connection);
+    m_connection->invalidate();
+    m_connection = 0;
+
+    // This will cause us to be deleted.
+    m_pluginProcessConnectionManager->removePluginProcessConnection(this);
 }
 
 void PluginProcessConnection::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)

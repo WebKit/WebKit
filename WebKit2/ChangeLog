@@ -1,3 +1,36 @@
+2010-09-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC::Connection::sendSync):
+        Add new sendSync overload that takes a message struct.
+
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::didReceiveSyncMessage):
+        Call didReceiveSyncWebProcessConnectionMessage.
+        
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        (WebKit::PluginProcessConnection::addPluginProxy):
+        Add the plug-in proxy to the map.
+
+        (WebKit::PluginProcessConnection::removePluginProxy):
+        Remove the plug-in proxy from the map. If the map is empty, disconnect from the
+        plug-in process.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::generatePluginInstanceID):
+        Generate a unique plug-in instance ID.
+
+        (WebKit::PluginProxy::PluginProxy):
+        Add the plug-in proxy to the map.
+        
+        (WebKit::PluginProxy::~PluginProxy):
+        Remove the plug-in proxy from the map.
+
+        (WebKit::PluginProxy::initialize):
+        Ask the plug-in process to create a plug-in.
+
 2010-09-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

@@ -44,7 +44,7 @@
 #endif
 
 // FIXME: Enable once this works well enough.
-#define ENABLE_PLUGIN_PROCESS 0
+#define ENABLE_PLUGIN_PROCESS 1
 
 #import <CoreGraphics/CoreGraphics.h>
 
