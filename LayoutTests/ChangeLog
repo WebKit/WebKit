@@ -1,3 +1,14 @@
+2010-09-28  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Canvas: Crash when setting a font with size in 'ex' units
+        https://bugs.webkit.org/show_bug.cgi?id=46538
+
+        * fast/canvas/canvas-font-ex-units-crash-expected.txt: Added.
+        * fast/canvas/canvas-font-ex-units-crash.html: Added.
+        * fast/canvas/script-tests/canvas-font-ex-units-crash.js: Added.
+
 2010-09-28  Satish Sampath  <satish@chromium.org>
 
         Unreviewed, enable a couple of speech input layout tests in chromium as they run successfully now.

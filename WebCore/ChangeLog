@@ -1,3 +1,19 @@
+2010-09-28  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Canvas: Crash when setting a font with size in 'ex' units
+        https://bugs.webkit.org/show_bug.cgi?id=46538
+
+        update() the style's font after setting the style's font description.
+        Needed because CSSPrimitiveValue::computeLengthDouble() later assumes
+        that the style's font is properly initialized (for xHeight().)
+
+        Fixes crash on IE test center's canvas-text-font-002 test.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setFont):
+
 2010-09-28  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -1650,6 +1650,7 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
     RefPtr<RenderStyle> newStyle = RenderStyle::create();
     if (RenderStyle* computedStyle = canvas()->computedStyle())
         newStyle->setFontDescription(computedStyle->fontDescription());
+    newStyle->font().update(newStyle->font().fontSelector());
 
     // Now map the font property into the style.
     CSSStyleSelector* styleSelector = canvas()->styleSelector();
