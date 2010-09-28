@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description">Bug 45681: Assertion failure about dirty flag changes of textarea elements.</p>
+<div id="console"></div>
+<script>
+var ta = document.createElement('textarea');
+ta.setAttribute('maxlength', '1');
+ta.value = 'abc'; // Make it dirty && invalid.
+ta.checkValidity(); // This made an assertion failure.
+testPassed('Not crashed.');
+
+ta.value = 'a'; // Make it dirty && valid.
+ta.defaultValue = 'abc'; // Make it non-dirty && invalid.
+ta.checkValidity(); // This made an assertion fail.
+testPassed('Not crashed.');
+
+var successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

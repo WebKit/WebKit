@@ -287,11 +287,19 @@ String HTMLTextAreaElement::value() const
 
 void HTMLTextAreaElement::setValue(const String& value)
 {
-    setNonDirtyValue(value);
+    setValueCommon(value);
     m_isDirty = true;
+    setNeedsValidityCheck();
 }
 
 void HTMLTextAreaElement::setNonDirtyValue(const String& value)
+{
+    setValueCommon(value);
+    m_isDirty = false;
+    setNeedsValidityCheck();
+}
+
+void HTMLTextAreaElement::setValueCommon(const String& value)
 {
     // Code elsewhere normalizes line endings added by the user via the keyboard or pasting.
     // We normalize line endings coming from JavaScript here.
@@ -307,8 +315,6 @@ void HTMLTextAreaElement::setNonDirtyValue(const String& value)
     m_value = normalizedValue;
     updatePlaceholderVisibility(false);
     setNeedsStyleRecalc();
-    setNeedsValidityCheck();
-    m_isDirty = false;
     setFormControlValueMatchesRenderer(true);
 
     // Set the caret to the end of the text value.
