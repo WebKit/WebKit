@@ -485,7 +485,7 @@ private:
         m_xPositions = new SkScalar[size];
 
         m_item.num_glyphs = size;
-        m_glyphsArraySize = size;  // Save the GlyphArrays size.
+        m_glyphsArraySize = size; // Save the GlyphArrays size.
         resetGlyphArrays(m_glyphsArraySize);
     }
 
