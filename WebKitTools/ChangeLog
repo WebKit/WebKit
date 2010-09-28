@@ -1,3 +1,13 @@
+2010-09-27  Tony Chang  <tony@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] fix a warning when compiling DRT on 32-bit linux
+        https://bugs.webkit.org/show_bug.cgi?id=46641
+
+        * DumpRenderTree/chromium/TestEventPrinter.cpp:
+        (DRTPrinter::handleImage):
+
 2010-09-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

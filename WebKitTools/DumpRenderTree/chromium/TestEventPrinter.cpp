@@ -99,7 +99,8 @@ void DRTPrinter::handleImage(const char* actualHash, const char* expectedHash, c
         printf("\nExpectedHash: %s\n", expectedHash);
     if (imageData && imageSize) {
         printf("Content-Type: image/png\n");
-        printf("Content-Length: %lu\n", imageSize);
+        // Printf formatting for size_t on 32-bit, 64-bit, and on Windows is hard so just cast to an int.
+        printf("Content-Length: %d\n", static_cast<int>(imageSize));
         if (fwrite(imageData, 1, imageSize, stdout) != imageSize) {
             fprintf(stderr, "Short write to stdout.\n");
             exit(1);
