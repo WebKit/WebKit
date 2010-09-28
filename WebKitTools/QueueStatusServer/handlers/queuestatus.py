@@ -31,24 +31,27 @@ from google.appengine.ext.webapp import template
 
 from model.queues import queues, display_name_for_queue
 from model.workitems import WorkItems
+from model.activeworkitems import ActiveWorkItems
 
 from model import queuestatus
 
 
 class QueueStatus(webapp.RequestHandler):
-    def _rows_for_work_items(self, work_items):
-        if not work_items:
+    def _rows_for_work_items(self, queued_items, active_items):
+        if not queued_items:
             return []
         rows = []
-        for item_id in work_items.item_ids:
+        for item_id in queued_items.item_ids:
             rows.append({
                 "attachment_id": item_id,
                 "bug_id": 1,
+                "lock_time": active_items and active_items.time_for_item(item_id),
             })
         return rows
 
     def get(self, queue_name):
-        work_items = WorkItems.all().filter("queue_name =", queue_name).get()
+        queued_items = WorkItems.all().filter("queue_name =", queue_name).get()
+        active_items = ActiveWorkItems.all().filter("queue_name =", queue_name).get()
         statuses = queuestatus.QueueStatus.all().filter("queue_name =", queue_name).order("-date").fetch(15)
 
         status_groups = []
@@ -67,7 +70,7 @@ class QueueStatus(webapp.RequestHandler):
 
         template_values = {
             "display_queue_name": display_name_for_queue(queue_name),
-            "work_item_rows": self._rows_for_work_items(work_items),
+            "work_item_rows": self._rows_for_work_items(queued_items, active_items),
             "status_groups": status_groups,
         }
         self.response.out.write(template.render("templates/queuestatus.html", template_values))

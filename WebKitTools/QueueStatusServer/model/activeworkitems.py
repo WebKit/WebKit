@@ -28,7 +28,7 @@
 
 from google.appengine.ext import db
 
-from datetime import timedelta
+from datetime import timedelta, datetime
 import time
 
 
@@ -38,21 +38,35 @@ class ActiveWorkItems(db.Model):
     item_dates = db.ListProperty(float)
     date = db.DateTimeProperty(auto_now_add=True)
 
+    # The id/date pairs should probably just be their own class.
+    def _item_time_pairs(self):
+        return zip(self.item_ids, self.item_dates)
+
+    def _set_item_time_pairs(self, pairs):
+        if not pairs:
+            self.item_ids = []
+            self.item_dates = []
+            return
+        self.item_ids, self.item_dates = zip(*pairs)
+
+    def _append_item_time_pair(self, pair):
+        self.item_ids.append(pair[0])
+        self.item_dates.append(pair[1])
+
     def deactivate_expired(self, now):
         one_hour_ago = time.mktime((now - timedelta(minutes=60)).timetuple())
-        nonexpired_item_ids = []
-        nonexpired_item_dates = []
-        for i in range(len(self.item_ids)):
-            if self.item_dates[i] > one_hour_ago:
-                nonexpired_item_ids.append(self.item_ids[i])
-                nonexpired_item_dates.append(self.item_dates[i])
-        self.item_ids = nonexpired_item_ids
-        self.item_dates = nonexpired_item_dates
+        nonexpired_pairs = [pair for pair in self._item_time_pairs() if pair[1] > one_hour_ago]
+        self._set_item_time_pairs(nonexpired_pairs)
 
     def next_item(self, work_item_ids, now):
         for item_id in work_item_ids:
             if item_id not in self.item_ids:
-                self.item_ids.append(item_id)
-                self.item_dates.append(time.mktime(now.timetuple()))
+                self._append_item_time_pair([item_id, time.mktime(now.timetuple())])
                 return item_id
+        return None
+
+    def time_for_item(self, item_id):
+        for active_item_id, time in self._item_time_pairs():
+            if active_item_id == item_id:
+                return datetime.fromtimestamp(time)
         return None

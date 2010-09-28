@@ -42,12 +42,17 @@
 
 <h3>Patches in queue</h3>
 <table>
-    <tr><th>Position</th><th>Patch</th></tr>
+    <tr><th>Position</th><th>Patch</th><th>Last Activity</th></tr>
     {% for row in work_item_rows %}
     <tr>
         <td>#{{ forloop.counter }}</td>
         <td>
           {{ row.attachment_id|force_escape|webkit_attachment_id|safe }}
+        </td>
+        <td>
+            {% if row.lock_time %}
+                {{ row.lock_time|timesince }} ago
+            {% endif %}
         </td>
     </tr>
     {% endfor %}

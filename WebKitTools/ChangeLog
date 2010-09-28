@@ -1,3 +1,23 @@
+2010-09-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        queue-status should report when the patch was last locked to a queue
+        https://bugs.webkit.org/show_bug.cgi?id=46674
+
+        This isn't necessarily the best way to expose this information
+        but having this accessible via the web interface is very
+        useful until we come up with a nicer way to display this.
+
+        I also cleaned up the code in activeworkitems.py a little
+        to use list comprehensions and to have the code work with
+        pairs instead of two lists at once.  Eventually I think those
+        item/time pairs need to be their own little helper class.
+
+        * QueueStatusServer/handlers/queuestatus.py:
+        * QueueStatusServer/model/activeworkitems.py:
+        * QueueStatusServer/templates/queuestatus.html:
+
 2010-09-27  Tony Chang  <tony@chromium.org>
 
         Reviewed by David Levin.
