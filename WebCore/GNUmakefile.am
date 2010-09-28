@@ -82,15 +82,18 @@ webcoregtk_cppflags += \
 	-I$(srcdir)/WebCore/platform/network/soup
 
 webcore_built_nosources += \
-	DerivedSources/WebCore/DocTypeStrings.cpp \
 	DerivedSources/WebCore/tokenizer.cpp \
-	DerivedSources/WebCore/ColorData.cpp
 
 webcore_built_sources += \
 	DerivedSources/WebCore/CSSGrammar.cpp \
 	DerivedSources/WebCore/CSSGrammar.h \
 	DerivedSources/WebCore/CSSPropertyNames.h \
+	DerivedSources/WebCore/CSSPropertyNames.cpp \
 	DerivedSources/WebCore/CSSValueKeywords.h \
+	DerivedSources/WebCore/CSSValueKeywords.cpp \
+	DerivedSources/WebCore/ColorData.cpp \
+	DerivedSources/WebCore/DocTypeStrings.cpp \
+	DerivedSources/WebCore/HashTools.h \
 	DerivedSources/WebCore/HTMLElementFactory.cpp \
 	DerivedSources/WebCore/HTMLElementFactory.h \
 	DerivedSources/WebCore/HTMLEntityTable.cpp \

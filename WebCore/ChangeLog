@@ -1,3 +1,13 @@
+2010-09-28  Andras Becsi  <abecsi@webkit.org>
+
+        Unreviewed.
+
+        [Gtk] Build fix after r68521
+
+        No new tests needed.
+
+        * GNUmakefile.am:
+
 2010-09-28  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Andreas Kling.
