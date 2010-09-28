@@ -185,24 +185,13 @@ void ComplexTextController::collectComplexTextRuns()
 
     // We break up glyph run generation for the string by FontData and (if needed) the use of small caps.
     const UChar* cp = m_run.characters();
-    bool hasTrailingSoftHyphen = m_run[m_end - 1] == softHyphen;
 
-    if (m_font.isSmallCaps() || hasTrailingSoftHyphen)
+    if (m_font.isSmallCaps())
         m_smallCapsBuffer.resize(m_end);
 
     unsigned indexOfFontTransition = m_run.rtl() ? m_end - 1 : 0;
     const UChar* curr = m_run.rtl() ? cp + m_end  - 1 : cp;
     const UChar* end = m_run.rtl() ? cp - 1 : cp + m_end;
-
-    // FIXME: Using HYPHEN-MINUS rather than HYPHEN because Times has a HYPHEN-MINUS glyph that looks like its
-    // SOFT-HYPHEN glyph, and has no HYPHEN glyph.
-    static const UChar hyphen = '-';
-
-    if (hasTrailingSoftHyphen && m_run.rtl()) {
-        collectComplexTextRunsForCharacters(&hyphen, 1, m_end - 1, m_font.glyphDataForCharacter(hyphen, false).fontData);
-        indexOfFontTransition--;
-        curr--;
-    }
 
     GlyphData glyphData;
     GlyphData nextGlyphData;
@@ -267,14 +256,11 @@ void ComplexTextController::collectComplexTextRuns()
         }
     }
 
-    int itemLength = m_run.rtl() ? indexOfFontTransition + 1 : m_end - indexOfFontTransition - (hasTrailingSoftHyphen ? 1 : 0);
+    int itemLength = m_run.rtl() ? indexOfFontTransition + 1 : m_end - indexOfFontTransition;
     if (itemLength) {
         int itemStart = m_run.rtl() ? 0 : indexOfFontTransition;
         collectComplexTextRunsForCharacters((nextIsSmallCaps ? m_smallCapsBuffer.data() : cp) + itemStart, itemLength, itemStart, nextGlyphData.glyph ? nextGlyphData.fontData : 0);
     }
-
-    if (hasTrailingSoftHyphen && m_run.ltr())
-        collectComplexTextRunsForCharacters(&hyphen, 1, m_end - 1, m_font.glyphDataForCharacter(hyphen, false).fontData);
 }
 
 #if USE(CORE_TEXT) && USE(ATSUI)

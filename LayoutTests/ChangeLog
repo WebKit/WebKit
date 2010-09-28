@@ -1,3 +1,46 @@
+2010-09-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Improved the handling of soft hyphens in copy and find operations, addressing the following
+        bugs:
+
+        <rdar://problem/7938878> Soft hyphenation and the clipboard
+        https://bugs.webkit.org/show_bug.cgi?id=11154
+
+        window.getSelection().toString() breaks soft hyphen &shy;
+        https://bugs.webkit.org/show_bug.cgi?id=26774
+
+        <rdar://problem/5640505> soft hyphen breaks search function
+        https://bugs.webkit.org/show_bug.cgi?id=16675
+
+        * fast/text/find-soft-hyphen-expected.txt: Added.
+        * fast/text/find-soft-hyphen.html: Added.
+        * fast/text/script-tests/find-soft-hyphen.js: Added.
+        (canFind):
+        * platform/mac/fast/text/basic/014-expected.checksum:
+        * platform/mac/fast/text/basic/014-expected.png:
+        * platform/mac/fast/text/basic/014-expected.txt:
+        * platform/mac/fast/text/capitalize-boundaries-expected.checksum:
+        * platform/mac/fast/text/capitalize-boundaries-expected.png:
+        * platform/mac/fast/text/capitalize-boundaries-expected.txt:
+        * platform/mac/fast/text/hyphens-expected.checksum:
+        * platform/mac/fast/text/hyphens-expected.png:
+        * platform/mac/fast/text/hyphens-expected.txt:
+        * platform/mac/fast/text/midword-break-after-breakable-char-expected.checksum:
+        * platform/mac/fast/text/midword-break-after-breakable-char-expected.png:
+        * platform/mac/fast/text/midword-break-after-breakable-char-expected.txt:
+        * platform/mac/fast/text/soft-hyphen-2-expected.png:
+        * platform/mac/fast/text/soft-hyphen-2-expected.txt:
+        * platform/mac/fast/text/soft-hyphen-3-expected.png:
+        * platform/mac/fast/text/soft-hyphen-3-expected.txt:
+        * platform/mac/fast/text/softHyphen-expected.checksum:
+        * platform/mac/fast/text/softHyphen-expected.png:
+        * platform/mac/fast/text/softHyphen-expected.txt:
+        * platform/mac/fast/text/word-break-soft-hyphen-expected.checksum:
+        * platform/mac/fast/text/word-break-soft-hyphen-expected.png:
+        * platform/mac/fast/text/word-break-soft-hyphen-expected.txt:
+
 2010-09-28  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

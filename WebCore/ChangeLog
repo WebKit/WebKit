@@ -1,3 +1,62 @@
+2010-09-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Improved the handling of soft hyphens in Copy and Find operations, addressing the following
+        bugs:
+
+        <rdar://problem/7938878> Soft hyphenation and the clipboard
+        https://bugs.webkit.org/show_bug.cgi?id=11154
+
+        window.getSelection().toString() breaks soft hyphen &shy;
+        https://bugs.webkit.org/show_bug.cgi?id=26774
+
+        <rdar://problem/5640505> soft hyphen breaks search function
+        https://bugs.webkit.org/show_bug.cgi?id=16675
+
+        Test: fast/text/find-soft-hyphen.html
+
+        Changed line layout code to not skip over soft hyphens but rather include them in the text
+        boxes. Changed font code to render the soft hyphen character as a zero width space, so that
+        the former change will not affect rendering of soft hyphens in the middle of the line. Also
+        changed line layout code to mark text boxes where hyphenation occurred due to a soft hyphen
+        as hyphenated, so that the hyphen string specified in CSS will be appended to them.
+
+        Not omitting the soft hyphens from the text boxes makes the text iterator emit them, which
+        solves the Copy and plain-text conversion issues. Previously, the iterator would emit a space
+        to account for non-rendered characters between adjacent boxes, which was wrong in this case.
+
+        To make Find work, soft hyphens are folded into 0, which is ignorable in the collation used
+        for Find.
+
+        * editing/TextIterator.cpp:
+        (WebCore::foldQuoteMarkOrSoftHyphen): Renamed foldQuoteMark() to this and added folding of
+        soft hyphen to 0.
+        (WebCore::foldQuoteMarksAndSoftHyphens): Renamed foldQuoteMarks() to thid and added folding
+        of soft hyphen to 0.
+        (WebCore::SearchBuffer::SearchBuffer): Updated for renames.
+        (WebCore::SearchBuffer::append): Ditto.
+        * platform/graphics/Font.h:
+        (WebCore::Font::treatAsSpace): Replaced number literal with name.
+        (WebCore::Font::treatAsZeroWidthSpace): Added softHyphen.
+        * platform/graphics/GlyphPageTreeNode.cpp:
+        (WebCore::GlyphPageTreeNode::initializePage): Get the zero width space glyph for soft hyphen.
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::collectComplexTextRuns): Removed special handling that made
+        a trailing soft hyphen render as hyphen-minus. All soft hyphens are now rendered as zero width
+        spaces, and where a line break actually occurs at a soft hyphen, rendering code appends the
+        CSS-specified hyphenate character to the text run that is passed to us here.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::chopMidpointsAt): Removed this function, which was only used for skipping over soft
+        hyphens.
+        (WebCore::checkMidpoints): Removed code related to skipping over soft hyphens.
+        (WebCore::RenderBlock::findNextLineBreak): Removed code to skip over soft hyphens. Ignore
+        a line break opportunity at a soft hyphen if the style specifies 'hyphens: none'. Set
+        'hyphenated' to true if a line break occurs at a soft hyphen.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::hyphenString): Changed the assertion to allow querying for the hyphen
+        string for 'hyphens: manual'.
+
 2010-09-28  Martin Robinson  <mrobinson@igalia.com>
 
         More GTK+ build fixes after r68521.

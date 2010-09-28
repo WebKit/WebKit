@@ -13,7 +13,7 @@ layer at (0,0) size 785x992
           RenderText {#text} at (1,1) size 12x18
             text run at (1,1) width 12: "X"
         RenderText {#text} at (20,0) size 78x18
-          text run at (20,0) width 78: "lorem ipsum"
+          text run at (20,0) width 78: "\x{AD}lorem ipsum"
       RenderBlock {P} at (0,68) size 769x18
         RenderBlock (floating) {SPAN} at (755,0) size 14x20 [border: (1px solid #FF0000)]
           RenderText {#text} at (1,1) size 12x18
@@ -24,12 +24,12 @@ layer at (0,0) size 785x992
         RenderText {#text} at (0,1) size 20x18
           text run at (0,1) width 20: "Do"
         RenderText {#text} at (34,1) size 78x18
-          text run at (34,1) width 78: "lorem ipsum"
+          text run at (34,1) width 78: "\x{AD}lorem ipsum"
       RenderBlock {P} at (0,138) size 769x18
         RenderText {#text} at (0,0) size 20x18
           text run at (0,0) width 20: "Do"
         RenderText {#text} at (20,0) size 78x18
-          text run at (20,0) width 78: "lorem ipsum"
+          text run at (20,0) width 78: "\x{AD}lorem ipsum"
       RenderBlock (anonymous) at (0,172) size 769x18
         RenderText {#text} at (0,0) size 20x18
           text run at (0,0) width 20: "Do"
@@ -47,7 +47,7 @@ layer at (0,0) size 785x992
           text run at (0,0) width 20: "Do"
         RenderInline {SPAN} at (0,0) size 36x18
           RenderText {#text} at (20,0) size 36x18
-            text run at (20,0) width 36: "lorem"
+            text run at (20,0) width 36: "\x{AD}lorem"
         RenderText {#text} at (56,0) size 42x18
           text run at (56,0) width 42: " ipsum"
       RenderBlock {P} at (0,326) size 769x18
@@ -57,13 +57,13 @@ layer at (0,0) size 785x992
           RenderText {#text} at (12,0) size 8x18
             text run at (12,0) width 8: "o"
         RenderText {#text} at (20,0) size 78x18
-          text run at (20,0) width 78: "lorem ipsum"
+          text run at (20,0) width 78: "\x{AD}lorem ipsum"
       RenderBlock {P} at (0,360) size 769x18
         RenderText {#text} at (0,0) size 24x18
           text run at (0,0) width 24: "Do "
         RenderInline {SPAN} at (0,0) size 36x18
           RenderText {#text} at (24,0) size 36x18
-            text run at (24,0) width 36: "lorem"
+            text run at (24,0) width 36: "\x{AD}lorem"
         RenderText {#text} at (60,0) size 42x18
           text run at (60,0) width 42: " ipsum"
       RenderBlock {P} at (0,394) size 769x18
@@ -73,13 +73,13 @@ layer at (0,0) size 785x992
           RenderText {#text} at (12,0) size 12x18
             text run at (12,0) width 12: "o "
         RenderText {#text} at (24,0) size 78x18
-          text run at (24,0) width 78: "lorem ipsum"
+          text run at (24,0) width 78: "\x{AD}lorem ipsum"
       RenderBlock {P} at (0,428) size 769x18
         RenderText {#text} at (0,0) size 24x18
           text run at (0,0) width 24: "Do "
         RenderInline {SPAN} at (0,0) size 36x18
           RenderText {#text} at (24,0) size 36x18
-            text run at (24,0) width 36: "lorem"
+            text run at (24,0) width 36: "\x{AD}lorem"
         RenderText {#text} at (60,0) size 42x18
           text run at (60,0) width 42: " ipsum"
       RenderBlock {P} at (0,462) size 769x18
@@ -89,60 +89,54 @@ layer at (0,0) size 785x992
           RenderText {#text} at (12,0) size 12x18
             text run at (12,0) width 12: "o "
         RenderText {#text} at (24,0) size 78x18
-          text run at (24,0) width 78: "lorem ipsum"
+          text run at (24,0) width 78: "\x{AD}lorem ipsum"
       RenderBlock {P} at (0,496) size 769x18
         RenderText {#text} at (0,0) size 64x18
-          text run at (0,0) width 24: "Do "
-          text run at (24,0) width 40: " lorem"
+          text run at (0,0) width 64: "Do \x{AD} lorem"
       RenderBlock {P} at (0,530) size 769x18
         RenderText {#text} at (0,0) size 60x18
-          text run at (0,0) width 20: "Do"
-          text run at (20,0) width 4: " "
-          text run at (24,0) width 36: "lorem"
+          text run at (0,0) width 60: "Do\x{AD} \x{AD}lorem"
       RenderBlock {P} at (0,564) size 769x18
         RenderText {#text} at (0,0) size 60x18
           text run at (0,0) width 24: "Do "
-          text run at (24,0) width 36: "lorem"
+          text run at (24,0) width 36: "\x{AD}lorem"
       RenderBlock {P} at (0,598) size 769x18
         RenderText {#text} at (0,0) size 60x18
-          text run at (0,0) width 20: "Do"
-          text run at (20,0) width 4: " "
+          text run at (0,0) width 24: "Do\x{AD} "
           text run at (24,0) width 36: "lorem"
       RenderBlock {P} at (0,632) size 769x18
         RenderText {#text} at (0,0) size 64x18
-          text run at (0,0) width 24: "Do "
-          text run at (24,0) width 4: " "
+          text run at (0,0) width 28: "Do \x{AD} "
           text run at (28,0) width 36: "lorem"
       RenderBlock {P} at (0,666) size 769x18
-        RenderText {#text} at (0,0) size 60x18
+        RenderText {#text} at (0,0) size 64x18
           text run at (0,0) width 24: "Do "
-          text run at (24,0) width 36: "lorem"
+          text run at (24,0) width 40: "\x{AD} lorem"
       RenderBlock {P} at (0,700) size 769x18
         RenderText {#text} at (0,0) size 20x18
           text run at (0,0) width 20: "Do"
         RenderInline {SPAN} at (0,0) size 0x18
         RenderText {#text} at (20,0) size 78x18
-          text run at (20,0) width 78: "lorem ipsum"
+          text run at (20,0) width 78: "\x{AD}lorem ipsum"
       RenderBlock {P} at (0,734) size 769x18
         RenderText {#text} at (0,0) size 98x18
-          text run at (0,0) width 20: "Do"
-          text run at (20,0) width 78: "lorem ipsum"
+          text run at (0,0) width 98: "Do\x{AD}\x{AD}lorem ipsum"
       RenderBlock {P} at (0,768) size 769x18
         RenderInline {SPAN} at (0,0) size 20x18
           RenderText {#text} at (0,0) size 20x18
-            text run at (0,0) width 20: "Do"
+            text run at (0,0) width 20: "Do\x{AD}"
         RenderText {#text} at (20,0) size 78x18
-          text run at (20,0) width 78: "lorem ipsum"
+          text run at (20,0) width 78: "\x{AD}lorem ipsum"
       RenderBlock {P} at (0,802) size 769x18
         RenderText {#text} at (0,0) size 20x18
-          text run at (0,0) width 20: "Do"
+          text run at (0,0) width 20: "Do\x{AD}"
         RenderInline {SPAN} at (0,0) size 78x18
           RenderText {#text} at (20,0) size 78x18
-            text run at (20,0) width 78: "lorem ipsum"
+            text run at (20,0) width 78: "\x{AD}lorem ipsum"
       RenderBlock {P} at (0,836) size 769x18
         RenderInline {SPAN} at (0,0) size 20x18
           RenderText {#text} at (0,0) size 20x18
-            text run at (0,0) width 20: "Do"
+            text run at (0,0) width 20: "Do\x{AD}\x{AD}"
         RenderText {#text} at (20,0) size 78x18
           text run at (20,0) width 78: "lorem ipsum"
       RenderBlock {P} at (0,870) size 769x18

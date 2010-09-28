@@ -79,20 +79,6 @@ static int inlineWidth(RenderObject* child, bool start = true, bool end = true)
     return extraWidth;
 }
 
-static void chopMidpointsAt(LineMidpointState& lineMidpointState, RenderObject* obj, unsigned pos)
-{
-    if (!lineMidpointState.numMidpoints)
-        return;
-    InlineIterator* midpoints = lineMidpointState.midpoints.data();
-    for (int i = lineMidpointState.numMidpoints - 1; i >= 0; i--) {
-        const InlineIterator& point = midpoints[i];
-        if (point.obj == obj && point.pos == pos) {
-            lineMidpointState.numMidpoints = i;
-            break;
-        }
-    }
-}
-
 static void checkMidpoints(LineMidpointState& lineMidpointState, InlineIterator& lBreak)
 {
     // Check to see if our last midpoint is a start point beyond the line break.  If so,
@@ -108,21 +94,8 @@ static void checkMidpoints(LineMidpointState& lineMidpointState, InlineIterator&
         if (currpoint == lBreak) {
             // We hit the line break before the start point.  Shave off the start point.
             lineMidpointState.numMidpoints--;
-            if (endpoint.obj->style()->collapseWhiteSpace()) {
-                if (endpoint.obj->isText()) {
-                    // Don't shave a character off the endpoint if it was from a soft hyphen.
-                    RenderText* textObj = toRenderText(endpoint.obj);
-                    if (endpoint.pos + 1 < textObj->textLength()) {
-                        if (textObj->characters()[endpoint.pos+1] == softHyphen)
-                            return;
-                    } else if (startpoint.obj->isText()) {
-                        RenderText *startText = toRenderText(startpoint.obj);
-                        if (startText->textLength() && startText->characters()[0] == softHyphen)
-                            return;
-                    }
-                }
+            if (endpoint.obj->style()->collapseWhiteSpace())
                 endpoint.pos--;
-            }
         }
     }    
 }
@@ -1655,6 +1628,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
             bool breakWords = o->style()->breakWords() && ((autoWrap && !w) || currWS == PRE);
             bool midWordBreak = false;
             bool breakAll = o->style()->wordBreak() == BreakAllWordBreak && autoWrap;
+            int hyphenWidth = 0;
 
             if (t->isWordBreak()) {
                 w += tmpW;
@@ -1673,48 +1647,13 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
 
                 if (!collapseWhiteSpace || !currentCharacterIsSpace)
                     isLineEmpty = false;
-                
-                // Check for soft hyphens.  Go ahead and ignore them.
-                if (c == softHyphen) {
-                    if (!ignoringSpaces) {
-                        // Ignore soft hyphens
-                        InlineIterator beforeSoftHyphen;
-                        if (pos)
-                            beforeSoftHyphen = InlineIterator(0, o, pos - 1);
-                        else
-                            beforeSoftHyphen = InlineIterator(0, last, last->isText() ? toRenderText(last)->textLength() - 1 : 0);
-                        // Two consecutive soft hyphens. Avoid overlapping midpoints.
-                        if (lineMidpointState.numMidpoints && lineMidpointState.midpoints[lineMidpointState.numMidpoints - 1].obj == o && 
-                            lineMidpointState.midpoints[lineMidpointState.numMidpoints - 1].pos == pos)
-                            lineMidpointState.numMidpoints--;
-                        else
-                            addMidpoint(lineMidpointState, beforeSoftHyphen);
 
-                        // Add the width up to but not including the hyphen.
-                        tmpW += textWidth(t, lastSpace, pos - lastSpace, f, w + tmpW, isFixedPitch, collapseWhiteSpace) + lastSpaceWordSpacing;
-
-                        // For wrapping text only, include the hyphen.  We need to ensure it will fit
-                        // on the line if it shows when we break.
-                        if (autoWrap)
-                            tmpW += textWidth(t, pos, 1, f, w + tmpW, isFixedPitch, collapseWhiteSpace);
-
-                        InlineIterator afterSoftHyphen(0, o, pos);
-                        afterSoftHyphen.increment();
-                        addMidpoint(lineMidpointState, afterSoftHyphen);
-                    }
-
-                    pos++;
-                    len--;
-                    lastSpaceWordSpacing = 0;
-                    lastSpace = pos; // Cheesy hack to prevent adding in widths of the run twice.
-                    if (style->hyphens() == HyphensNone) {
-                        // Prevent a line break at the soft hyphen by ensuring that betweenWords is false
-                        // in the next iteration.
-                        atStart = true;
-                    }
-                    continue;
+                if (c == softHyphen && autoWrap && !hyphenWidth && style->hyphens() != HyphensNone) {
+                    const AtomicString& hyphenString = style->hyphenString();
+                    hyphenWidth = f.width(TextRun(hyphenString.characters(), hyphenString.length()));
+                    tmpW += hyphenWidth;
                 }
- 
+
 #if ENABLE(SVG)
                 if (isSVGText) {
                     RenderSVGInlineText* svgInlineText = static_cast<RenderSVGInlineText*>(t);
@@ -1737,8 +1676,8 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                     midWordBreak = w + wrapW + charWidth > width;
                 }
 
-                bool betweenWords = c == '\n' || (currWS != PRE && !atStart && isBreakable(str, pos, strlen, nextBreakable, breakNBSP));
-    
+                bool betweenWords = c == '\n' || (currWS != PRE && !atStart && isBreakable(str, pos, strlen, nextBreakable, breakNBSP) && (style->hyphens() != HyphensNone || (pos && str[pos - 1] != softHyphen)));
+
                 if (betweenWords || midWordBreak) {
                     bool stoppedIgnoringSpaces = false;
                     if (ignoringSpaces) {
@@ -1808,13 +1747,17 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                                 lBreak.increment();
                                 previousLineBrokeCleanly = true;
                             }
+                            if (lBreak.obj && lBreak.pos && lBreak.obj->isText() && toRenderText(lBreak.obj)->textLength() && toRenderText(lBreak.obj)->characters()[lBreak.pos - 1] == softHyphen && style->hyphens() != HyphensNone)
+                                hyphenated = true;
                             goto end; // Didn't fit. Jump to the end.
                         } else {
                             if (!betweenWords || (midWordBreak && !autoWrap))
                                 tmpW -= additionalTmpW;
-                            if (pos > 0 && str[pos-1] == softHyphen)
+                            if (hyphenWidth) {
                                 // Subtract the width of the soft hyphen out since we fit on a line.
-                                tmpW -= textWidth(t, pos - 1, 1, f, w + tmpW, isFixedPitch, collapseWhiteSpace);
+                                tmpW -= hyphenWidth;
+                                hyphenWidth = 0;
+                            }
                         }
                     }
 
@@ -2059,14 +2002,6 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
         lBreak.increment();
     }
 
-    if (lBreak.obj && lBreak.pos >= 2 && lBreak.obj->isText()) {
-        // For soft hyphens on line breaks, we have to chop out the midpoints that made us
-        // ignore the hyphen so that it will render at the end of the line.
-        UChar c = toRenderText(lBreak.obj)->characters()[lBreak.pos - 1];
-        if (c == softHyphen)
-            chopMidpointsAt(lineMidpointState, lBreak.obj, lBreak.pos - 2);
-    }
-    
     return lBreak;
 }
 

@@ -171,6 +171,7 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
                         buffer[i] = zeroWidthSpace;
                     for (i = 0x7F; i < 0xA0; i++)
                         buffer[i] = zeroWidthSpace;
+                    buffer[softHyphen] = zeroWidthSpace;
 
                     // \n, \t, and nonbreaking space must render as a space.
                     buffer[(int)'\n'] = ' ';
