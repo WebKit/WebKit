@@ -93,14 +93,14 @@ class BuilderTest(unittest.TestCase):
         self.assertEqual(regression_window.build_before_failure().revision(), 1006)
         self.assertEqual(regression_window.failing_build().revision(), 1007)
 
-    def test_blameworthy_revisions(self):
-        self.assertEqual(self.builder.blameworthy_revisions(10), [1004])
-        self.assertEqual(self.builder.blameworthy_revisions(10, look_back_limit=2), [])
+    def test_find_blameworthy_regression_window(self):
+        self.assertEqual(self.builder.find_blameworthy_regression_window(10).revisions(), [1004])
+        self.assertEqual(self.builder.find_blameworthy_regression_window(10, look_back_limit=2), None)
         # Flakey test avoidance requires at least 2 red builds:
-        self.assertEqual(self.builder.blameworthy_revisions(4), [])
-        self.assertEqual(self.builder.blameworthy_revisions(4, avoid_flakey_tests=False), [1004])
+        self.assertEqual(self.builder.find_blameworthy_regression_window(4), None)
+        self.assertEqual(self.builder.find_blameworthy_regression_window(4, avoid_flakey_tests=False).revisions(), [1004])
         # Green builder:
-        self.assertEqual(self.builder.blameworthy_revisions(3), [])
+        self.assertEqual(self.builder.find_blameworthy_regression_window(3), None)
 
     def test_build_caching(self):
         self.assertEqual(self.builder.build(10), self.builder.build(10))

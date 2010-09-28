@@ -182,16 +182,16 @@ class Builder(object):
         # with red build, so we've found our failure transition.
         return RegressionWindow(current_build, build_after_current_build, common_failures=common_failures)
 
-    def blameworthy_revisions(self, red_build_number, look_back_limit=30, avoid_flakey_tests=True):
+    def find_blameworthy_regression_window(self, red_build_number, look_back_limit=30, avoid_flakey_tests=True):
         red_build = self.build(red_build_number)
         regression_window = self.find_regression_window(red_build, look_back_limit)
         if not regression_window.build_before_failure():
-            return [] # We ran off the limit of our search
+            return None  # We ran off the limit of our search
         # If avoid_flakey_tests, require at least 2 bad builds before we
         # suspect a real failure transition.
         if avoid_flakey_tests and regression_window.failing_build() == red_build:
-            return []
-        return regression_window.suspect_revisions()
+            return None
+        return regression_window
 
 
 # FIXME: This should be unified with all the layout test results code in the layout_tests package
@@ -458,7 +458,8 @@ class BuildBot(object):
             if builder_status["is_green"]:
                 continue
             builder = self.builder_with_name(builder_status["name"])
-            revisions = builder.blameworthy_revisions(builder_status["build_number"])
+            regression_window = builder.find_blameworthy_regression_window(builder_status["build_number"])
+            revisions = regression_window.revisions() if regression_window else []
             for revision in revisions:
                 failing_bots = revision_to_failing_bots.get(revision, [])
                 failing_bots.append(builder)

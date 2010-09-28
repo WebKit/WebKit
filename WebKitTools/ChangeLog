@@ -1,3 +1,17 @@
+2010-09-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move RegressionWindow further up the dependency chain
+        https://bugs.webkit.org/show_bug.cgi?id=46698
+
+        Baby steps towards pushing this information into bug posts.
+
+        * Scripts/webkitpy/common/net/buildbot.py:
+        * Scripts/webkitpy/common/net/buildbot_unittest.py:
+        * Scripts/webkitpy/common/net/regressionwindow.py:
+        * Scripts/webkitpy/tool/commands/queries.py:
+
 2010-09-27  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Adam Barth.

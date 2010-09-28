@@ -42,7 +42,7 @@ class RegressionWindow(object):
     def common_failures(self):
         return self._common_failures
 
-    def suspect_revisions(self):
+    def revisions(self):
         revisions = range(self._failing_build.revision(), self._build_before_failure.revision(), -1)
         revisions.reverse()
         return revisions

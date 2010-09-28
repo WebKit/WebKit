@@ -123,8 +123,6 @@ class WhatBroke(AbstractDeclarativeCommand):
     def _print_builder_line(self, builder_name, max_name_width, status_message):
         print "%s : %s" % (builder_name.ljust(max_name_width), status_message)
 
-    # FIXME: This is slightly different from Builder.suspect_revisions_for_green_to_red_transition
-    # due to needing to detect the "hit the limit" case an print a special message.
     def _print_blame_information_for_builder(self, builder_status, name_width, avoid_flakey_tests=True):
         builder = self._tool.buildbot.builder_with_name(builder_status["name"])
         red_build = builder.build(builder_status["build_number"])
@@ -136,12 +134,12 @@ class WhatBroke(AbstractDeclarativeCommand):
             self._print_builder_line(builder.name(), name_width, "FAIL (blame-list: sometime before %s?)" % regression_window.failing_build().revision())
             return
 
-        suspect_revisions = regression_window.suspect_revisions()
+        revisions = regression_window.revisions()
         first_failure_message = ""
         if (regression_window.failing_build() == builder.build(builder_status["build_number"])):
             first_failure_message = " FIRST FAILURE, possibly a flaky test"
-        self._print_builder_line(builder.name(), name_width, "FAIL (blame-list: %s%s)" % (suspect_revisions, first_failure_message))
-        for revision in suspect_revisions:
+        self._print_builder_line(builder.name(), name_width, "FAIL (blame-list: %s%s)" % (revisions, first_failure_message))
+        for revision in revisions:
             commit_info = self._tool.checkout().commit_info_for_revision(revision)
             if commit_info:
                 print commit_info.blame_string(self._tool.bugs)
@@ -201,10 +199,10 @@ class FailureReason(AbstractDeclarativeCommand):
 
     def _print_blame_information_for_transition(self, green_build, red_build, failing_tests):
         regression_window = RegressionWindow(green_build, red_build)
-        suspect_revisions = regression_window.suspect_revisions()
+        revisions = regression_window.revisions()
         print "SUCCESS: Build %s (r%s) was the first to show failures: %s" % (red_build._number, red_build.revision(), failing_tests)
         print "Suspect revisions:"
-        for revision in suspect_revisions:
+        for revision in revisions:
             commit_info = self._tool.checkout().commit_info_for_revision(revision)
             if commit_info:
                 print commit_info.blame_string(self._tool.bugs)
