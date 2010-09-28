@@ -2,6 +2,20 @@
 
         Reviewed by Kenneth Russell.
 
+        Add AudioGain files
+        https://bugs.webkit.org/show_bug.cgi?id=46285
+
+        No new tests since audio API is not yet implemented.
+
+        * webaudio/AudioGain.h: Added.
+        (WebCore::AudioGain::create):
+        (WebCore::AudioGain::AudioGain):
+        * webaudio/AudioGain.idl: Added.
+
+2010-09-28  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
         Fix possible illegal float values in AudioParam
         https://bugs.webkit.org/show_bug.cgi?id=46681
 
