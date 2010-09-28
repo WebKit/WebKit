@@ -48,7 +48,7 @@ void SplitTextNodeContainingElementCommand::doApply()
     splitTextNode(m_text.get(), m_offset);
 
     Element* parent = m_text->parentElement();
-    if (!parent)
+    if (!parent || !parent->parentElement() || !parent->parentElement()->isContentEditable())
         return;
 
     RenderObject* parentRenderer = parent->renderer();

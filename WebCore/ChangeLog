@@ -1,5 +1,32 @@
 2010-09-28  Mark Rowe  <mrowe@apple.com>
 
+        Merge r64083.
+
+    2010-07-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Applying inline style to a text node whose parent is an inline editable root causes crash
+        https://bugs.webkit.org/show_bug.cgi?id=39989
+
+        The crash was caused by splitTextElementAtStart and splitTextElementAtEnd assuming that the parent
+        and the grandparent of the specified text node is editable.
+
+        Modified splitTextElementAtStart and splitTextElementAtEnd so that they call splitTextAtStart
+        and splitTextAtEnd respectively when the grandparent is not editable.
+
+        Also modified SplitTextNodeContainingElement to exit early if the grandparent of m_text is not editable.
+
+        Test: editing/style/style-text-node-without-editable-parent.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::splitTextElementAtStart):
+        (WebCore::ApplyStyleCommand::splitTextElementAtEnd):
+        * editing/SplitTextNodeContainingElementCommand.cpp:
+        (WebCore::SplitTextNodeContainingElementCommand::doApply):
+
+2010-09-28  Mark Rowe  <mrowe@apple.com>
+
         Merge r64028.
 
     2010-07-25  Ryosuke Niwa  <rniwa@webkit.org>
