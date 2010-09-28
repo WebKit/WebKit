@@ -1,3 +1,12 @@
+2010-09-27  Alpha Lam  <hclam@chromium.org>
+
+        Build fix. Not reviewed.
+
+        Add a default for unhandled cases for switch statement.
+
+        * src/VideoFrameChromiumImpl.cpp:
+        (WebKit::VideoFrameChromiumImpl::requiredTextureSize):
+
 2010-09-27  Victoria Kirst  <vrk@google.com>
 
         Reviewed by James Robinson.
