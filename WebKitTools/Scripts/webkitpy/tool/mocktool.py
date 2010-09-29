@@ -515,8 +515,9 @@ class MockIRC(object):
 
 class MockStatusServer(object):
 
-    def __init__(self, work_items=None):
+    def __init__(self, bot_id=None, work_items=None):
         self.host = "example.com"
+        self.bot_id = bot_id
         self._work_items = work_items or []
 
     def patch_status(self, queue_name, patch_id):
@@ -630,3 +631,19 @@ class MockTool():
 
     def path(self):
         return "echo"
+
+
+class MockBrowser(object):
+    params = {}
+
+    def open(self, url):
+        pass
+
+    def select_form(self, name):
+        pass
+
+    def __setitem__(self, key, value):
+        self.params[key] = value
+
+    def submit(self):
+        return Mock(file)

@@ -29,6 +29,7 @@
 # Class for unittest support.  Used for capturing stderr/stdout.
 
 import sys
+import unittest
 from StringIO import StringIO
 
 class OutputCapture(object):
@@ -37,7 +38,9 @@ class OutputCapture(object):
 
     def _capture_output_with_name(self, output_name):
         self.saved_outputs[output_name] = getattr(sys, output_name)
-        setattr(sys, output_name, StringIO())
+        captured_output = StringIO()
+        setattr(sys, output_name, captured_output)
+        return captured_output
 
     def _restore_output_with_name(self, output_name):
         captured_output = getattr(sys, output_name).getvalue()
@@ -46,8 +49,7 @@ class OutputCapture(object):
         return captured_output
 
     def capture_output(self):
-        self._capture_output_with_name("stdout")
-        self._capture_output_with_name("stderr")
+        return (self._capture_output_with_name("stdout"), self._capture_output_with_name("stderr"))
 
     def restore_output(self):
         return (self._restore_output_with_name("stdout"), self._restore_output_with_name("stderr"))
@@ -63,3 +65,22 @@ class OutputCapture(object):
         testcase.assertEqual(stderr_string, expected_stderr)
         # This is a little strange, but I don't know where else to return this information.
         return return_value
+
+
+class OutputCaptureTestCaseBase(unittest.TestCase):
+    def setUp(self):
+        unittest.TestCase.setUp(self)
+        self.output_capture = OutputCapture()
+        (self.__captured_stdout, self.__captured_stderr) = self.output_capture.capture_output()
+
+    def tearDown(self):
+        del self.__captured_stdout
+        del self.__captured_stderr
+        self.output_capture.restore_output()
+        unittest.TestCase.tearDown(self)
+
+    def assertStdout(self, expected_stdout):
+        self.assertEquals(expected_stdout, self.__captured_stdout.getvalue())
+
+    def assertStderr(self, expected_stderr):
+        self.assertEquals(expected_stderr, self.__captured_stderr.getvalue())

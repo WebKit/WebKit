@@ -78,6 +78,8 @@ class AbstractQueue(Command, QueueEngineDelegate):
         # because our global option code looks for the first argument which does
         # not begin with "-" and assumes that is the command name.
         webkit_patch_args += ["--status-host=%s" % self._tool.status_server.host]
+        if self._tool.status_server.bot_id:
+            webkit_patch_args += ["--bot-id=%s" % self._tool.status_server.bot_id]
         webkit_patch_args.extend(args)
         return self._tool.executive.run_and_throw_if_fail(webkit_patch_args)
 

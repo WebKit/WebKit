@@ -1,9 +1,9 @@
-# Copyright (C) 2009 Google Inc. All rights reserved.
+# Copyright (c) 2010 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above
@@ -13,7 +13,7 @@
 #     * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -26,14 +26,18 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from google.appengine.ext import db
+import unittest
 
-class QueueStatus(db.Model):
-    author = db.UserProperty()
-    queue_name = db.StringProperty()
-    bot_id = db.StringProperty()
-    active_bug_id = db.IntegerProperty()
-    active_patch_id = db.IntegerProperty()
-    message = db.StringProperty(multiline=True)
-    date = db.DateTimeProperty(auto_now_add=True)
-    results_file = db.BlobProperty()
+from webkitpy.common.net.statusserver import StatusServer
+from webkitpy.common.system.outputcapture import OutputCaptureTestCaseBase
+from webkitpy.tool.mocktool import MockBrowser
+
+
+class StatusServerTest(OutputCaptureTestCaseBase):
+    def test_url_for_issue(self):
+        mock_browser = MockBrowser()
+        status_server = StatusServer(browser=mock_browser, bot_id='123')
+        status_server.update_status('queue name', 'the status')
+        self.assertEqual('queue name', mock_browser.params['queue_name'])
+        self.assertEqual('the status', mock_browser.params['status'])
+        self.assertEqual('123', mock_browser.params['bot_id'])

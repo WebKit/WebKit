@@ -1,3 +1,23 @@
+2010-09-29  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Record bot ID when updating queue status
+        https://bugs.webkit.org/show_bug.cgi?id=46764
+        
+        Since we now have multiple bots handling patches from the commit queue,
+        we need to differentiate status updates from them, so that we can group
+        the queue status page in a less confusing way.
+
+        * QueueStatusServer/handlers/updatestatus.py: Accept bot_id as input
+        * QueueStatusServer/model/queuestatus.py: Add bot_id property
+        * QueueStatusServer/templates/updatestatus.html: Add bot_id input
+        * Scripts/webkitpy/common/net/bugzilla_unittest.py: Extract MockBrowser
+        * Scripts/webkitpy/common/net/statusserver.py: Add bot_id
+        * Scripts/webkitpy/common/net/statusserver_unittest.py: Added.
+        * Scripts/webkitpy/tool/main.py: Add --bot-id
+        * Scripts/webkitpy/tool/mocktool.py: Add MockBrowser
+
 2010-09-29  Simon Fraser  <simon.fraser@apple.com>
 
         No review.

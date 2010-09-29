@@ -63,11 +63,12 @@ class AbstractQueueTest(CommandsTest):
     def _assert_run_webkit_patch(self, run_args):
         queue = TestQueue()
         tool = MockTool()
+        tool.status_server.bot_id = "gort"
         tool.executive = Mock()
         queue.bind_to_tool(tool)
 
         queue.run_webkit_patch(run_args)
-        expected_run_args = ["echo", "--status-host=example.com"] + run_args
+        expected_run_args = ["echo", "--status-host=example.com", "--bot-id=gort"] + run_args
         tool.executive.run_and_throw_if_fail.assert_called_with(expected_run_args)
 
     def test_run_webkit_patch(self):

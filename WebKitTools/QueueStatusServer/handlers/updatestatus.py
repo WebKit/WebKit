@@ -49,7 +49,9 @@ class UpdateStatus(UpdateBase):
         bug_id = self._int_from_request("bug_id")
         patch_id = self._int_from_request("patch_id")
         queue_name = self.request.get("queue_name")
+        bot_id = self.request.get("bot_id")
         queue_status.queue_name = queue_name
+        queue_status.bot_id = bot_id
         queue_status.active_bug_id = bug_id
         queue_status.active_patch_id = patch_id
         queue_status.message = self.request.get("status")

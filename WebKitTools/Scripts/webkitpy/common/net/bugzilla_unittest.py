@@ -33,22 +33,9 @@ import datetime
 from webkitpy.common.config.committers import CommitterList, Reviewer, Committer
 from webkitpy.common.net.bugzilla import Bugzilla, BugzillaQueries, parse_bug_id, CommitterValidator, Bug
 from webkitpy.common.system.outputcapture import OutputCapture
+from webkitpy.tool.mocktool import MockBrowser
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
-
-
-class MockBrowser(object):
-    def open(self, url):
-        pass
-
-    def select_form(self, name):
-        pass
-
-    def __setitem__(self, key, value):
-        pass
-
-    def submit(self):
-        pass
 
 
 class BugTest(unittest.TestCase):
