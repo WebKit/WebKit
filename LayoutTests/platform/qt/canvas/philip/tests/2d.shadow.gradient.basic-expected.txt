@@ -1,0 +1,8 @@
+< [index] >
+2d.shadow.gradient.basic
+Shadows are drawn for gradient fills
+References: 2d.shadow.render
+Actual output:
+Expected output:
+
+Passed

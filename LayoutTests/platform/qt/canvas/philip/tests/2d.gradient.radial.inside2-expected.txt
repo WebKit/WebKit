@@ -1,0 +1,7 @@
+< [index] >
+2d.gradient.radial.inside2
+References: 2d.gradient.radial.rendering
+Actual output:
+Expected output:
+
+Passed

@@ -1,0 +1,8 @@
+< [index] >
+2d.shadow.enable.blur
+Shadows are drawn if shadowBlur is set
+References: 2d.shadow.enable 2d.shadow.render
+Actual output:
+Expected output:
+
+Passed

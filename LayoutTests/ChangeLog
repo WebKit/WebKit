@@ -1,3 +1,28 @@
+2010-09-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed fix after r68568. Add Qt specific expected files for passing tests.
+
+        Unskip remaining canvas layout tests so that they can track progressions/regressions
+        https://bugs.webkit.org/show_bug.cgi?id=46439
+
+        * platform/qt/canvas: Added.
+        * platform/qt/canvas/philip: Added.
+        * platform/qt/canvas/philip/tests: Added.
+        * platform/qt/canvas/philip/tests/2d.gradient.radial.cone.front-expected.txt: Added.
+        * platform/qt/canvas/philip/tests/2d.gradient.radial.inside2-expected.txt: Added.
+        * platform/qt/canvas/philip/tests/2d.gradient.radial.inside3-expected.txt: Added.
+        * platform/qt/canvas/philip/tests/2d.gradient.radial.outside1-expected.txt: Added.
+        * platform/qt/canvas/philip/tests/2d.line.cap.closed-expected.txt: Added.
+        * platform/qt/canvas/philip/tests/2d.line.join.parallel-expected.txt: Added.
+        * platform/qt/canvas/philip/tests/2d.shadow.enable.blur-expected.txt: Added.
+        * platform/qt/canvas/philip/tests/2d.shadow.enable.x-expected.txt: Added.
+        * platform/qt/canvas/philip/tests/2d.shadow.enable.y-expected.txt: Added.
+        * platform/qt/canvas/philip/tests/2d.shadow.gradient.alpha-expected.txt: Added.
+        * platform/qt/canvas/philip/tests/2d.shadow.gradient.basic-expected.txt: Added.
+        * platform/qt/canvas/philip/tests/2d.shadow.gradient.transparent.2-expected.txt: Added.
+        * platform/qt/canvas/philip/tests/2d.strokeRect.zero.4-expected.txt: Added.
+        * platform/qt/canvas/philip/tests/toDataURL.jpeg.alpha-expected.txt: Added.
+
 2010-09-28  Johnny Ding  <jnd@chromium.org>
 
         Reviewed by Adam Barth.
