@@ -1,6 +1,6 @@
 2010-09-29  Ryosuke Niwa  <rniwa@webkit.org>
 
-        Reviewed by Darin Adler.
+        Reviewed by Antonio Gomes.
 
         queryCommandValue "formatBlock" always returns false
         https://bugs.webkit.org/show_bug.cgi?id=21305
