@@ -1,3 +1,15 @@
+2010-09-28  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] wxMSW build fix. Don't use multiple inheritance in PopupMenuWx to avoid debug build
+        compiler error about ambiguity over which new override (wx's or FastAllocBase's) to use.
+
+        * platform/wx/PopupMenuWx.cpp:
+        (WebCore::PopupMenuEventHandler::PopupMenuEventHandler):
+        (WebCore::PopupMenuEventHandler::OnMenuItemSelected):
+        (WebCore::PopupMenuWx::PopupMenuWx):
+        (WebCore::PopupMenuWx::show):
+        * platform/wx/PopupMenuWx.h:
+
 2010-09-28  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by NOBODY (revert unsquashed git commits)

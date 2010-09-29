@@ -37,9 +37,10 @@ class wxMenu;
 namespace WebCore {
 
 class FrameView;
+class PopupMenuEventHandler;
 class Scrollbar;
 
-class PopupMenuWx : public PopupMenu, public wxEvtHandler {
+class PopupMenuWx : public PopupMenu {
 public:
     PopupMenuWx(PopupMenuClient*);
     ~PopupMenuWx();
@@ -55,6 +56,7 @@ private:
 
     PopupMenuClient* m_popupClient;
     wxMenu* m_menu;
+    PopupMenuEventHandler* m_popupHandler;
 };
 
 }

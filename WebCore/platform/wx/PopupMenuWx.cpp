@@ -38,14 +38,34 @@
 
 static int s_menuStartId = wxNewId();
 
-
-
 namespace WebCore {
+
+class PopupMenuEventHandler : public wxEvtHandler
+{
+public:
+    PopupMenuEventHandler(PopupMenuClient* client) :
+        m_client(client)
+    {}
+
+    void OnMenuItemSelected(wxCommandEvent& event)
+    {
+        if (m_client) {
+            m_client->valueChanged(event.GetId() - s_menuStartId);
+            m_client->popupDidHide();
+        }
+        // TODO: Do we need to call Disconnect here? Do we have a ref to the native window still?
+    }
+
+private:
+    PopupMenuClient* m_client;
+
+};
 
 PopupMenuWx::PopupMenuWx(PopupMenuClient* client)
     : m_popupClient(client)
-    , m_menu(NULL)
+    , m_menu(0)
 {
+    PopupMenuEventHandler m_popupHandler(client);
 }
 
 PopupMenuWx::~PopupMenuWx()
@@ -69,6 +89,7 @@ void PopupMenuWx::show(const IntRect& r, FrameView* v, int index)
     if (nativeWin) {
         // construct the menu
         m_menu = new wxMenu();
+
         int size = client()->listSize();
         for (int i = 0; i < size; i++) {
             int id = s_menuStartId + i;
@@ -84,19 +105,10 @@ void PopupMenuWx::show(const IntRect& r, FrameView* v, int index)
                     m_menu->Append(s_menuStartId + i, client()->itemText(i));
             }
         }
-        nativeWin->Connect(s_menuStartId, s_menuStartId + (size-1), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(PopupMenuWx::OnMenuItemSelected), 0, this);
+        nativeWin->Connect(s_menuStartId, s_menuStartId + (size-1), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(PopupMenuEventHandler::OnMenuItemSelected), 0, m_popupHandler);
         nativeWin->PopupMenu(m_menu, r.x() - v->scrollX(), r.y() - v->scrollY());
-        nativeWin->Disconnect(s_menuStartId, s_menuStartId + (size-1), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(PopupMenuWx::OnMenuItemSelected), 0, this);
+        nativeWin->Disconnect(s_menuStartId, s_menuStartId + (size-1), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(PopupMenuEventHandler::OnMenuItemSelected), 0, m_popupHandler);
     }
-}
-
-void PopupMenuWx::OnMenuItemSelected(wxCommandEvent& event)
-{
-    if (client()) {
-        client()->valueChanged(event.GetId() - s_menuStartId);
-        client()->popupDidHide();
-    }
-    // TODO: Do we need to call Disconnect here? Do we have a ref to the native window still?
 }
 
 void PopupMenuWx::hide()
