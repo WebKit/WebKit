@@ -1,5 +1,27 @@
 2010-09-28  David Hyatt  <hyatt@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46782, rename the top and bottom margin quirk getters/setters.
+
+        Also do a bit of cleanup for block flow roots.  Make sure they don't try to propagate overhanging floats out
+        to ancestors.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::collapseMargins):
+        (WebCore::RenderBlock::setCollapsedBottomMargin):
+        (WebCore::RenderBlock::addOverhangingFloats):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::RenderObject):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isMarginBeforeQuirk):
+        (WebCore::RenderObject::isMarginAfterQuirk):
+        (WebCore::RenderObject::setMarginBeforeQuirk):
+        (WebCore::RenderObject::setMarginAfterQuirk):
+
+2010-09-28  David Hyatt  <hyatt@apple.com>
+
         Reviewed by Sam Weinig.
 
         https://bugs.webkit.org/show_bug.cgi?id=46780

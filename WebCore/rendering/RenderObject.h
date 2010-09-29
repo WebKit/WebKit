@@ -688,10 +688,10 @@ public:
      */
     virtual IntRect localCaretRect(InlineBox*, int caretOffset, int* extraWidthToEndOfLine = 0);
 
-    bool isTopMarginQuirk() const { return m_topMarginQuirk; }
-    bool isBottomMarginQuirk() const { return m_bottomMarginQuirk; }
-    void setTopMarginQuirk(bool b = true) { m_topMarginQuirk = b; }
-    void setBottomMarginQuirk(bool b = true) { m_bottomMarginQuirk = b; }
+    bool isMarginBeforeQuirk() const { return m_marginBeforeQuirk; }
+    bool isMarginAfterQuirk() const { return m_marginAfterQuirk; }
+    void setMarginBeforeQuirk(bool b = true) { m_marginBeforeQuirk = b; }
+    void setMarginAfterQuirk(bool b = true) { m_marginAfterQuirk = b; }
 
     // When performing a global document tear-down, the renderer of the document is cleared.  We use this
     // as a hook to detect the case of document destruction and don't waste time doing unnecessary work.
@@ -841,8 +841,8 @@ private:
     // These bitfields are moved here from subclasses to pack them together
     // from RenderBlock
     bool m_childrenInline : 1;
-    bool m_topMarginQuirk : 1;
-    bool m_bottomMarginQuirk : 1;
+    bool m_marginBeforeQuirk : 1;
+    bool m_marginAfterQuirk : 1;
     bool m_hasMarkupTruncation : 1;
     unsigned m_selectionState : 3; // SelectionState
     bool m_hasColumns : 1;
