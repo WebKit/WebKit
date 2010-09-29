@@ -1,3 +1,12 @@
+2010-09-29  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; test expectations fix.
+
+        [CHROMIUM] Update test_expectations to better reflect the state of the
+        build.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Antonio Gomes.

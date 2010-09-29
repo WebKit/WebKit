@@ -1245,7 +1245,6 @@ BUG23498 MAC : editing/selection/unrendered-004.html = IMAGE
 BUG23498 MAC : editing/selection/unrendered-005.html = IMAGE
 BUG23498 MAC : fast/backgrounds/background-inherit-color-bug.html = IMAGE
 BUG23498 MAC : fast/backgrounds/repeat/negative-offset-repeat-transformed.html = IMAGE
-BUG23498 MAC : fast/block/basic/016.html = IMAGE
 BUG23498 MAC : fast/block/basic/fieldset-stretch-to-legend.html = IMAGE
 BUG23498 MAC : fast/block/float/008.html = IMAGE
 BUG23498 MAC : fast/block/float/013.html = IMAGE
@@ -1334,7 +1333,6 @@ BUG23498 MAC : fast/lists/008.html = IMAGE
 BUG23498 MAC : fast/lists/li-br.html = IMAGE
 BUG23498 MAC : fast/lists/olstart.html = IMAGE
 BUG23498 MAC : fast/multicol/columns-shorthand-parsing.html = IMAGE
-BUG23498 MAC : fast/multicol/float-multicol.html = IMAGE
 BUG23498 MAC : fast/overflow/006.html = IMAGE
 BUG23498 MAC : fast/overflow/clip-rects-fixed-ancestor.html = IMAGE
 BUG23498 MAC : fast/overflow/overflow-auto-table.html = IMAGE
@@ -1596,8 +1594,6 @@ BUG23473 MAC : fast/repaint/4774354.html = IMAGE
 BUG23473 MAC : fast/repaint/4776765.html = IMAGE
 BUG23473 MAC : fast/repaint/background-generated.html = IMAGE
 BUG23473 MAC : fast/repaint/backgroundSizeRepaint.html = IMAGE
-BUG23473 MAC : fast/repaint/block-layout-inline-children-float-positioned.html = IMAGE
-BUG23473 MAC : fast/repaint/block-layout-inline-children-replaced.html = IMAGE
 BUG23473 MAC : fast/repaint/block-selection-gap-in-composited-layer.html = IMAGE
 BUG23473 MAC : fast/repaint/block-selection-gap-in-table-cell.html = IMAGE
 BUG23473 MAC : fast/repaint/body-background-image.html = IMAGE
@@ -1646,7 +1642,6 @@ BUG23473 MAC : fast/repaint/line-overflow.html = IMAGE
 BUG23473 MAC : fast/repaint/lines-with-layout-delta.html = IMAGE
 BUG23473 MAC : fast/repaint/list-marker-2.html = IMAGE
 BUG23473 MAC : fast/repaint/make-children-non-inline.html = IMAGE
-BUG23473 MAC : fast/repaint/no-caret-repaint-in-non-content-editable-element.html = IMAGE
 BUG23473 MAC : fast/repaint/outline-child-repaint.html = IMAGE
 BUG23473 MAC : fast/repaint/outline-inset.html = IMAGE
 BUG23473 MAC : fast/repaint/outline-repaint-glitch.html = IMAGE
@@ -2453,7 +2448,7 @@ BUG42696 : http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.ht
 // Started failing at r57969
 // Becoming flaky on linux around r68501
 BUG8729 MAC : http/tests/multipart/invalid-image-data.html = IMAGE
-BUG8729 LINUX RELEASE : http/tests/multipart/invalid-image-data.html = IMAGE
+BUG8729 LINUX RELEASE : http/tests/multipart/invalid-image-data.html = IMAGE PASS
 
 // Started failing at r58152
 BUGWK38038 WIN LINUX MAC : fast/url/file-http-base.html = TEXT
@@ -2945,7 +2940,6 @@ BUG53073 LINUX : svg/custom/clip-path-units-changes.svg = TEXT PASS
 // pass them because they rely on QuickTime being installed. We wontfix these
 // tests and let the Mac/Win coverage ensure that the (cross-platform)
 // special-document machinery still works. 
-BUG53546 WONTFIX LINUX : userscripts/user-script-audio-document.html = TEXT
 BUG53546 WONTFIX LINUX : userscripts/user-script-video-document.html = TEXT
 
 // These tests are flaky on Mac and Linux.
@@ -2963,10 +2957,6 @@ WONTFIX SKIP : media/video-does-not-loop.html = TIMEOUT
 
 // Passes in Chromium DRT.
 BUGWK44961 : fast/notifications/notifications-click-event.html = TIMEOUT
-
-// These might just need a new baseline.
-BUGWK44967 MAC : fast/multicol/paginate-block-replaced.html = IMAGE
-BUGWK44967 MAC : fast/multicol/float-paginate.html = IMAGE
 
 // Not focusing an anchor when tab is pressed.
 BUGWK45061 : fast/forms/focus2.html = FAIL
@@ -3078,14 +3068,6 @@ BUGWK46689 : fast/dom/HTMLElement/class-list.html = TEXT PASS
 // Flaky since r68438:r68445 or before that.
 BUGWK46693 MAC : fast/repaint/repaint-svg-after-style-change.html = TEXT
 
-// Started to broken since r68482 - r68496
-BUGWK46705 : svg/dynamic-updates/SVGFEBlendElement-dom-in-attr.html = IMAGE
-BUGWK46705 : svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr.html = IMAGE
-BUGWK46705 : svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr.html = IMAGE
-BUGWK46705 : svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop.html = IMAGE
-BUGWK46705 : svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop.html = IMAGE
-BUGWK46705 : svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop.html = IMAGE
-
 // New test; was added in http://trac.webkit.org/changeset/68520
 BUGWK46735 WIN : platform/win/plugins/window-geometry-initialized-before-set-window.html = TEXT
 
@@ -3097,7 +3079,7 @@ BUG_SENORBLANCO LINUX : fast/text/international/thai-baht-space.html = IMAGE
 BUG_SENORBLANCO LINUX : fast/text/midword-break-after-breakable-char.html = TEXT
 
 // Flaky since 68620
-BUGWK46779 : fast/filesystem/flags-passing.html = TEXT
+BUGWK46779 WIN LINUX : fast/filesystem/flags-passing.html = TEXT PASS
 
 // NPP_HandleEvent doesn't be implemented/work on mac/linux.
 BUG48033 LINUX MAC SKIP : plugins/plugin-initiate-popup-window.html = PASS TIMEOUT
