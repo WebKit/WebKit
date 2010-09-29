@@ -55,6 +55,9 @@ enum MessageClass {
     // Messages sent by the web process to the plug-in process.
     MessageClassWebProcessConnection,
     MessageClassPluginControllerProxy,
+
+    // Messages sent by the plug-in process to the web process.
+    MessageClassPluginProxy,
 };
 
 template<typename> struct MessageKindTraits { };

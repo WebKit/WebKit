@@ -70,7 +70,8 @@ void PluginProcessConnection::removePluginProxy(PluginProxy* plugin)
 
 void PluginProcessConnection::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
-    // FIXME: Implement.
+    PluginProxy* pluginProxy = m_plugins.get(arguments->destinationID());
+    pluginProxy->didReceivePluginProxyMessage(connection, messageID, arguments);
 }
 
 void PluginProcessConnection::didClose(CoreIPC::Connection*)

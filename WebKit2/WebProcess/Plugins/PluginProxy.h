@@ -36,13 +36,15 @@ namespace WebKit {
 class BackingStore;
 class PluginProcessConnection;
 
-class PluginProxy : public Plugin, public CoreIPC::Connection::MessageReceiver {
+class PluginProxy : public Plugin {
 public:
     static PassRefPtr<PluginProxy> create(PassRefPtr<PluginProcessConnection>);
     ~PluginProxy();
 
     uint64_t pluginInstanceID() const { return m_pluginInstanceID; }
     void pluginProcessCrashed();
+
+    void didReceivePluginProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments);
 
 private:
     explicit PluginProxy(PassRefPtr<PluginProcessConnection>);
@@ -81,8 +83,8 @@ private:
 
     virtual PluginController* controller();
 
-    // CoreIPC::Connection::MessageReceiver
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    // Message handlers.
+    void update(const WebCore::IntRect& paintedRect);
 
     RefPtr<PluginProcessConnection> m_connection;
     uint64_t m_pluginInstanceID;

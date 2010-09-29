@@ -31,6 +31,9 @@
 #include "NetscapePlugin.h"
 #include "NotImplemented.h"
 #include "PluginProcess.h"
+#include "PluginProxyMessages.h"
+#include "WebCoreArgumentCoders.h"
+#include "WebProcessConnection.h"
 #include <WebCore/GraphicsContext.h>
 #include <wtf/text/WTFString.h>
 
@@ -93,7 +96,7 @@ void PluginControllerProxy::paint()
     ASSERT(m_plugin);
     m_plugin->paint(graphicsContext.get(), dirtyRect);
 
-    // FIXME: Let the web process know that we've painted.
+    m_connection->connection()->send(Messages::PluginProxy::Update(dirtyRect), m_pluginInstanceID);
 }
 
 void PluginControllerProxy::invalidate(const IntRect& rect)

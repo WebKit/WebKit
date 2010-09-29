@@ -34,6 +34,7 @@
 #include "PluginProcessConnection.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcessConnectionMessages.h"
+#include <WebCore/GraphicsContext.h>
 
 using namespace WebCore;
 
@@ -105,9 +106,20 @@ void PluginProxy::destroy()
     m_connection->removePluginProxy(this);
 }
 
-void PluginProxy::paint(GraphicsContext*, const IntRect& dirtyRect)
+void PluginProxy::paint(GraphicsContext* graphicsContext, const IntRect& dirtyRect)
 {
-    notImplemented();
+    if (!m_backingStore)
+        return;
+
+    IntRect dirtyRectInPluginCoordinates = dirtyRect;
+    dirtyRectInPluginCoordinates.move(-m_frameRect.x(), -m_frameRect.y());
+
+    graphicsContext->save();
+
+    graphicsContext->translate(m_frameRect.x(), m_frameRect.y());
+    m_backingStore->paint(graphicsContext, dirtyRectInPluginCoordinates);
+
+    graphicsContext->restore();
 }
 
 #if PLATFORM(MAC)
@@ -264,12 +276,24 @@ void PluginProxy::windowVisibilityChanged(bool)
 
 PluginController* PluginProxy::controller()
 {
+    notImplemented();
     return 0;
 }
 
-void PluginProxy::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*)
+void PluginProxy::update(const IntRect& paintedRect)
 {
-    notImplemented();
+    IntRect paintedRectPluginCoordinates = paintedRect;
+    paintedRectPluginCoordinates.move(-m_frameRect.x(), -m_frameRect.y());
+
+    if (m_backingStore) {
+        // Blit the plug-in backing store into our own backing store.
+        OwnPtr<WebCore::GraphicsContext> graphicsContext = m_backingStore->createGraphicsContext();
+
+        m_pluginBackingStore->paint(graphicsContext.get(), paintedRectPluginCoordinates);
+    }
+
+    // Ask the controller to invalidate the rect for us.        
+    m_pluginController->invalidate(paintedRectPluginCoordinates);
 }
 
 } // namespace WebKit

@@ -113,6 +113,9 @@
 		1A8EF9421252AE8400F7067F /* PluginControllerProxy.messages.in in Resources */ = {isa = PBXBuildFile; fileRef = 1A8EF9411252AE8400F7067F /* PluginControllerProxy.messages.in */; };
 		1A8EF96E1252AF6B00F7067F /* PluginControllerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8EF96C1252AF6B00F7067F /* PluginControllerProxyMessageReceiver.cpp */; };
 		1A8EF96F1252AF6B00F7067F /* PluginControllerProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8EF96D1252AF6B00F7067F /* PluginControllerProxyMessages.h */; };
+		1A8EFA5C1252B7CE00F7067F /* PluginProxy.messages.in in Resources */ = {isa = PBXBuildFile; fileRef = 1A8EFA5B1252B7CE00F7067F /* PluginProxy.messages.in */; };
+		1A8EFA701252B84100F7067F /* PluginProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8EFA6E1252B84100F7067F /* PluginProxyMessageReceiver.cpp */; };
+		1A8EFA711252B84100F7067F /* PluginProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8EFA6F1252B84100F7067F /* PluginProxyMessages.h */; };
 		1AA1CC5D100FA1A10078DEBC /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */; };
 		1AA1CD07100FA1BA0078DEBC /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CD06100FA1BA0078DEBC /* Carbon.framework */; };
 		1AA56F2911E92BC80061B882 /* PluginController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA56F2811E92BC80061B882 /* PluginController.h */; };
@@ -547,6 +550,9 @@
 		1A8EF9411252AE8400F7067F /* PluginControllerProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PluginControllerProxy.messages.in; sourceTree = "<group>"; };
 		1A8EF96C1252AF6B00F7067F /* PluginControllerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PluginControllerProxyMessageReceiver.cpp; path = ../../../Debug/DerivedSources/WebKit2/PluginControllerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		1A8EF96D1252AF6B00F7067F /* PluginControllerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PluginControllerProxyMessages.h; path = ../../../Debug/DerivedSources/WebKit2/PluginControllerProxyMessages.h; sourceTree = "<group>"; };
+		1A8EFA5B1252B7CE00F7067F /* PluginProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PluginProxy.messages.in; sourceTree = "<group>"; };
+		1A8EFA6E1252B84100F7067F /* PluginProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginProxyMessageReceiver.cpp; sourceTree = "<group>"; };
+		1A8EFA6F1252B84100F7067F /* PluginProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginProxyMessages.h; sourceTree = "<group>"; };
 		1AA1C79A100E7FC50078DEBC /* WebCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
@@ -1034,6 +1040,7 @@
 				1A0EC90D124C0AF5007EF4A5 /* PluginProcessConnectionManager.h */,
 				1A043DC0124FF87500FFBFB5 /* PluginProxy.cpp */,
 				1A043DBF124FF87500FFBFB5 /* PluginProxy.h */,
+				1A8EFA5B1252B7CE00F7067F /* PluginProxy.messages.in */,
 				1A6FB7AC11E64B6800DB1371 /* PluginView.cpp */,
 				1A6FB7AD11E64B6800DB1371 /* PluginView.h */,
 			);
@@ -1667,6 +1674,8 @@
 				1A0EC6BE124BBD9B007EF4A5 /* PluginProcessMessages.h */,
 				1A043B5B124D5E9D00FFBFB5 /* PluginProcessProxyMessageReceiver.cpp */,
 				1A043B5C124D5E9D00FFBFB5 /* PluginProcessProxyMessages.h */,
+				1A8EFA6E1252B84100F7067F /* PluginProxyMessageReceiver.cpp */,
+				1A8EFA6F1252B84100F7067F /* PluginProxyMessages.h */,
 				C0CE729E1247E71D00BC0EC4 /* WebPageMessageReceiver.cpp */,
 				C0CE729F1247E71D00BC0EC4 /* WebPageMessages.h */,
 				1A043F6712514D8B00FFBFB5 /* WebProcessConnectionMessageReceiver.cpp */,
@@ -1897,6 +1906,7 @@
 				1A8EF4CB1252403700F7067F /* PluginControllerProxy.h in Headers */,
 				C09AE5E9125257C20025825D /* WKNativeEvent.h in Headers */,
 				1A8EF96F1252AF6B00F7067F /* PluginControllerProxyMessages.h in Headers */,
+				1A8EFA711252B84100F7067F /* PluginProxyMessages.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1984,6 +1994,7 @@
 				1A043B4D124D5E3600FFBFB5 /* PluginProcessProxy.messages.in in Resources */,
 				1A043F5A12514CF300FFBFB5 /* WebProcessConnection.messages.in in Resources */,
 				1A8EF9421252AE8400F7067F /* PluginControllerProxy.messages.in in Resources */,
+				1A8EFA5C1252B7CE00F7067F /* PluginProxy.messages.in in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2189,6 +2200,7 @@
 				1A8EF4CC1252403700F7067F /* PluginControllerProxy.cpp in Sources */,
 				C02BFF1E1251502E009CCBEA /* NativeWebKeyboardEventMac.mm in Sources */,
 				1A8EF96E1252AF6B00F7067F /* PluginControllerProxyMessageReceiver.cpp in Sources */,
+				1A8EFA701252B84100F7067F /* PluginProxyMessageReceiver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
