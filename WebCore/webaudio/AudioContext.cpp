@@ -348,10 +348,9 @@ void AudioContext::lock(bool& mustReleaseLock)
     } else {
         // Acquire the lock.
         m_contextGraphMutex.lock();
+        m_graphOwnerThread = thisThread;
         mustReleaseLock = true;
     }
-
-    m_graphOwnerThread = thisThread;
 }
 
 bool AudioContext::tryLock(bool& mustReleaseLock)
@@ -436,7 +435,7 @@ void AudioContext::handlePostRenderTasks()
 
 void AudioContext::handleDeferredFinishDerefs()
 {
-    ASSERT(isAudioThread());
+    ASSERT(isAudioThread() && isGraphOwner());
     for (unsigned i = 0; i < m_deferredFinishDerefList.size(); ++i) {
         AudioNode* node = m_deferredFinishDerefList[i].m_node;
         AudioNode::RefType refType = m_deferredFinishDerefList[i].m_refType;

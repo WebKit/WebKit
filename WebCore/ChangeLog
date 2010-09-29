@@ -1,3 +1,16 @@
+2010-09-29  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Minor cleanup to AudioContext
+        https://bugs.webkit.org/show_bug.cgi?id=46843
+
+        No new tests since audio API is not yet implemented
+
+        * webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::lock):
+        (WebCore::AudioContext::handleDeferredFinishDerefs):
+
 2010-09-29  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Eric Seidel.
