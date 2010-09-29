@@ -348,13 +348,13 @@ int RenderBoxModelObject::relativePositionOffsetY() const
     if (!style()->top().isAuto()
         && (!containingBlock->style()->height().isAuto()
             || !style()->top().isPercent()
-            || containingBlock->stretchesToViewHeight()))
+            || containingBlock->stretchesToViewport()))
         return style()->top().calcValue(containingBlock->availableHeight());
 
     if (!style()->bottom().isAuto()
         && (!containingBlock->style()->height().isAuto()
             || !style()->bottom().isPercent()
-            || containingBlock->stretchesToViewHeight()))
+            || containingBlock->stretchesToViewport()))
         return -style()->bottom().calcValue(containingBlock->availableHeight());
 
     return 0;

@@ -287,9 +287,9 @@ public:
     virtual void computeLogicalWidth();
     virtual void computeLogicalHeight();
 
-    bool stretchesToViewHeight() const
+    bool stretchesToViewport() const
     {
-        return document()->inQuirksMode() && style()->height().isAuto() && !isFloatingOrPositioned() && (isRoot() || isBody()) && !isBlockFlowRoot();
+        return document()->inQuirksMode() && style()->logicalHeight().isAuto() && !isFloatingOrPositioned() && (isRoot() || isBody()) && !isBlockFlowRoot();
     }
 
     virtual IntSize intrinsicSize() const { return IntSize(); }

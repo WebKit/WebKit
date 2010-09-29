@@ -1726,7 +1726,7 @@ void RenderBox::computeLogicalHeight()
     // height has nothing to be a percentage of, and it ends up being 0. That is bad.
     bool paginatedContentNeedsBaseHeight = document()->printing() && h.isPercent()
         && (isRoot() || (isBody() && document()->documentElement()->renderer()->style()->logicalHeight().isPercent()));
-    if (stretchesToViewHeight() || paginatedContentNeedsBaseHeight) {
+    if (stretchesToViewport() || paginatedContentNeedsBaseHeight) {
         // FIXME: Finish accounting for block flow here.
         // https://bugs.webkit.org/show_bug.cgi?id=46603
         int margins = collapsedMarginBefore() + collapsedMarginAfter();

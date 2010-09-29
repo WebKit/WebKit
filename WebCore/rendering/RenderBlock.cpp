@@ -1121,7 +1121,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, int pageHeight)
 
     LayoutRepainter repainter(*this, m_everHadLayout && checkForRepaintDuringLayout());
 
-    int oldWidth = width();
+    int oldWidth = logicalWidth();
     int oldColumnWidth = desiredColumnWidth();
 
     computeLogicalWidth();

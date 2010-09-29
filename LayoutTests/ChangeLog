@@ -1,3 +1,11 @@
+2010-09-29  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46835, patch a few more height/logicalHeights.
+
+        * platform/mac/fast/blockflow/root-lr-basic-expected.txt:
+
 2010-09-29  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
