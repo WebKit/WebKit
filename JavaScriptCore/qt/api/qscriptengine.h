@@ -23,11 +23,12 @@
 #include "qscriptprogram.h"
 #include "qscriptstring.h"
 #include "qscriptsyntaxcheckresult.h"
+#include "qscriptvalue.h"
 #include <QtCore/qobject.h>
 #include <QtCore/qshareddata.h>
 #include <QtCore/qstring.h>
 
-class QScriptValue;
+class QDateTime;
 class QScriptEnginePrivate;
 
 // FIXME: Remove this once QScriptContext is properly defined.
@@ -69,6 +70,8 @@ public:
 
     QScriptValue newObject();
     QScriptValue newArray(uint length = 0);
+    QScriptValue newDate(qsreal value);
+    QScriptValue newDate(const QDateTime& value);
     QScriptValue globalObject() const;
 private:
     friend class QScriptEnginePrivate;

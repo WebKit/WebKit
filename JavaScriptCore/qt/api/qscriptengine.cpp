@@ -25,6 +25,8 @@
 #include "qscriptprogram_p.h"
 #include "qscriptsyntaxcheckresult_p.h"
 #include "qscriptvalue_p.h"
+#include <QtCore/qdatetime.h>
+#include <QtCore/qnumeric.h>
 
 /*!
     Constructs a QScriptEngine object.
@@ -365,6 +367,27 @@ QScriptValue QScriptEngine::newObject()
 QScriptValue QScriptEngine::newArray(uint length)
 {
     return QScriptValuePrivate::get(d_ptr->newArray(length));
+}
+
+/*!
+    Creates a QtScript object of class Date with the given \a value
+    (the number of milliseconds since 01 January 1970, UTC).
+*/
+QScriptValue QScriptEngine::newDate(qsreal value)
+{
+    return QScriptValuePrivate::get(d_ptr->newDate(value));
+}
+
+/*!
+    Creates a QtScript object of class Date from the given \a value.
+
+    \sa QScriptValue::toDateTime()
+*/
+QScriptValue QScriptEngine::newDate(const QDateTime& value)
+{
+    if (value.isValid())
+        return QScriptValuePrivate::get(d_ptr->newDate(qsreal(value.toMSecsSinceEpoch())));
+    return QScriptValuePrivate::get(d_ptr->newDate(qSNaN()));
 }
 
 /*!

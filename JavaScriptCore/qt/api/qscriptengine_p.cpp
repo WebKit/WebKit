@@ -146,6 +146,20 @@ QScriptValuePrivate* QScriptEnginePrivate::newArray(uint length)
     return new QScriptValuePrivate(this, array);
 }
 
+QScriptValuePrivate* QScriptEnginePrivate::newDate(qsreal value)
+{
+    JSValueRef exception = 0;
+    JSValueRef argument = JSValueMakeNumber(m_context, value);
+    JSObjectRef result = JSObjectMakeDate(m_context, /* argumentCount */ 1, &argument, &exception);
+
+    if (exception) {
+        setException(exception, NotNullException);
+        return new QScriptValuePrivate();
+    }
+
+    return new QScriptValuePrivate(this, result);
+}
+
 QScriptValuePrivate* QScriptEnginePrivate::globalObject() const
 {
     JSObjectRef globalObject = JSContextGetGlobalObject(m_context);

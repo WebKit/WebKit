@@ -21,6 +21,7 @@
 #include "qscriptprogram.h"
 #include "qscriptsyntaxcheckresult.h"
 #include "qscriptvalue.h"
+#include <QtCore/qnumeric.h>
 #include <QtTest/qtest.h>
 
 class tst_QScriptEngine : public QObject {
@@ -50,6 +51,7 @@ private slots:
     void toObjectTwoEngines();
     void newArray();
     void uncaughtException();
+    void newDate();
 };
 
 /* Evaluating a script that throw an unhandled exception should return an invalid value. */
@@ -678,6 +680,53 @@ void tst_QScriptEngine::uncaughtException()
         QVERIFY(!eng.hasUncaughtException());
         eng.evaluate("1 + 2");
         QVERIFY(!eng.hasUncaughtException());
+    }
+}
+
+void tst_QScriptEngine::newDate()
+{
+    QScriptEngine eng;
+    {
+        QScriptValue date = eng.newDate(0);
+        QCOMPARE(date.isValid(), true);
+        QCOMPARE(date.isDate(), true);
+        QCOMPARE(date.isObject(), true);
+        QVERIFY(!date.isFunction());
+        // prototype should be Date.prototype
+        QCOMPARE(date.prototype().isValid(), true);
+        QCOMPARE(date.prototype().isDate(), true);
+        QCOMPARE(date.prototype().strictlyEquals(eng.evaluate("Date.prototype")), true);
+    }
+    {
+        QDateTime dt = QDateTime(QDate(1, 2, 3), QTime(4, 5, 6, 7), Qt::LocalTime);
+        QScriptValue date = eng.newDate(dt);
+        QCOMPARE(date.isValid(), true);
+        QCOMPARE(date.isDate(), true);
+        QCOMPARE(date.isObject(), true);
+        // prototype should be Date.prototype
+        QCOMPARE(date.prototype().isValid(), true);
+        QCOMPARE(date.prototype().isDate(), true);
+        QCOMPARE(date.prototype().strictlyEquals(eng.evaluate("Date.prototype")), true);
+
+        QCOMPARE(date.toDateTime(), dt);
+    }
+    {
+        QDateTime dt = QDateTime(QDate(1, 2, 3), QTime(4, 5, 6, 7), Qt::UTC);
+        QScriptValue date = eng.newDate(dt);
+        // toDateTime() result should be in local time
+        QCOMPARE(date.toDateTime(), dt.toLocalTime());
+    }
+    // Date.parse() should return NaN when it fails
+    {
+        QScriptValue ret = eng.evaluate("Date.parse()");
+        QVERIFY(ret.isNumber());
+        QVERIFY(qIsNaN(ret.toNumber()));
+    }
+    // Date.parse() should be able to parse the output of Date().toString()
+    {
+        QScriptValue ret = eng.evaluate("var x = new Date(); var s = x.toString(); s == new Date(Date.parse(s)).toString()");
+        QVERIFY(ret.isBoolean());
+        QCOMPARE(ret.toBoolean(), true);
     }
 }
 

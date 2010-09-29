@@ -77,16 +77,19 @@ public:
 
     QScriptValuePrivate* newObject() const;
     QScriptValuePrivate* newArray(uint length);
+    QScriptValuePrivate* newDate(qsreal value);
     QScriptValuePrivate* globalObject() const;
 
     inline QScriptStringPrivate* toStringHandle(const QString& str) const;
 
     inline operator JSGlobalContextRef() const;
 
+    inline bool isDate(JSValueRef value) const;
     inline bool isArray(JSValueRef value) const;
     inline bool isError(JSValueRef value) const;
     inline bool objectHasOwnProperty(JSObjectRef object, JSStringRef property) const;
     inline QVector<JSStringRef> objectGetOwnPropertyNames(JSObjectRef object) const;
+
 private:
     QScriptEngine* q_ptr;
     JSGlobalContextRef m_context;
@@ -224,6 +227,11 @@ QScriptEnginePrivate::operator JSGlobalContextRef() const
 {
     Q_ASSERT(this);
     return m_context;
+}
+
+bool QScriptEnginePrivate::isDate(JSValueRef value) const
+{
+    return m_originalGlobalObject.isDate(value);
 }
 
 bool QScriptEnginePrivate::isArray(JSValueRef value) const

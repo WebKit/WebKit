@@ -1,3 +1,39 @@
+2010-09-29  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] QScriptEngine should have an API for creating Date objects
+        https://bugs.webkit.org/show_bug.cgi?id=41667
+
+        Implement newDate(), isDate() and toDateTime() functions. Use the
+        QDateTime::{to,set}MSecsSinceEpoch() functions to do the
+        calculations.
+
+        * api/qscriptengine.cpp:
+        (QScriptEngine::newDate):
+        * api/qscriptengine.h:
+        * api/qscriptengine_p.cpp:
+        (QScriptEnginePrivate::newDate):
+        * api/qscriptengine_p.h:
+        (QScriptEnginePrivate::isDate):
+
+        * api/qscriptoriginalglobalobject_p.h:
+        (QScriptOriginalGlobalObject::QScriptOriginalGlobalObject): need
+        to keep track of Date Constructor and Prototype.
+        (QScriptOriginalGlobalObject::~QScriptOriginalGlobalObject): ditto.
+        (QScriptOriginalGlobalObject::isDate): use the Date Constructor
+        and Prototype to identify Date values.
+
+        * api/qscriptvalue.cpp:
+        (QScriptValue::isDate):
+        (QScriptValue::toDateTime):
+        * api/qscriptvalue.h:
+        * api/qscriptvalue_p.h:
+        (QScriptValuePrivate::isDate):
+        (QScriptValuePrivate::toDateTime):
+        * tests/qscriptengine/tst_qscriptengine.cpp:
+        (tst_QScriptEngine::newDate):
+
 2010-07-27  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
