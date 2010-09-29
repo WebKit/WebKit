@@ -1,3 +1,29 @@
+2010-09-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        queryCommandValue "formatBlock" always returns false
+        https://bugs.webkit.org/show_bug.cgi?id=21305
+
+        Implemented queryCommandValue('formatBlock'). We match the Firefox's behavior exactly
+        because Firefox and Internet Explorer support the same set of elements
+        (address, h1, h2, h3, h4, h5, h6, and p) and Firefox's behavior is more compatible with Opera.
+        See the bug for the detailed discussion.
+
+        WebKit's implementation returns the local name of the lowest common ancestor
+        of the selection with the tag name address, h1, h2, h3, h4, h5, h6, or p.
+        It returns "" when there is no such an ancestor or there is no selection.
+
+        Test: editing/execCommand/query-format-block.html
+
+        * editing/Editor.cpp:
+        (WebCore::isElementForFormatBlockCommand):
+        (WebCore::Editor::elementForFormatBlockCommand):
+        * editing/Editor.h:
+        * editing/EditorCommand.cpp:
+        (WebCore::valueFormatBlock):
+        (WebCore::createCommandMap):
+
 2010-09-29  Matt Perry  <mpcomplete@chromium.org>
 
         Reviewed by Darin Fisher.

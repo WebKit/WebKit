@@ -1,3 +1,19 @@
+2010-09-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        queryCommandValue "formatBlock" always returns false
+        https://bugs.webkit.org/show_bug.cgi?id=21305
+
+        Added a test for queryCommandValue('formatBlock').
+
+        * editing/execCommand/query-format-block-expected.txt: Added.
+        * editing/execCommand/query-format-block.html: Added.
+        * editing/execCommand/script-tests/query-format-block.js: Added.
+        (queryFormatBlock):
+        (selectFirstPosition):
+        (selectMiddleOfHelloWorld):
+
 2010-09-29  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Chris Fleizach.

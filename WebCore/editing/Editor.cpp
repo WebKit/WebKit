@@ -966,6 +966,37 @@ String Editor::selectionStartCSSPropertyValue(int propertyID)
     return value;
 }
 
+static bool isElementForFormatBlockCommand(const Node* node)
+{
+    return node->hasTagName(addressTag)
+        || node->hasTagName(h1Tag)
+        || node->hasTagName(h2Tag)
+        || node->hasTagName(h3Tag)
+        || node->hasTagName(h4Tag)
+        || node->hasTagName(h5Tag)
+        || node->hasTagName(h6Tag)
+        || node->hasTagName(pTag)
+        || node->hasTagName(preTag);
+}
+
+Element* Editor::elementForFormatBlockCommand() const
+{
+    const VisibleSelection& selection = m_frame->selection()->selection();
+    if (!selection.isNonOrphanedCaretOrRange() || !selection.isContentEditable())
+        return 0;
+
+    ExceptionCode ec;
+    Node* commonAncestor = selection.firstRange()->commonAncestorContainer(ec);
+    while (commonAncestor && !isElementForFormatBlockCommand(commonAncestor))
+        commonAncestor = commonAncestor->parentNode();
+
+    if (!commonAncestor)
+        return 0;
+
+    ASSERT(commonAncestor->isElementNode());
+    return static_cast<Element*>(commonAncestor);
+}
+
 void Editor::indent()
 {
     applyCommand(IndentOutdentCommand::create(m_frame->document(), IndentOutdentCommand::Indent));

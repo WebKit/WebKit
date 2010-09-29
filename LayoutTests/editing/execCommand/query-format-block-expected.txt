@@ -1,0 +1,29 @@
+Tests queryCommandValue('formatBlock')
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Basic cases
+PASS queryCommand('format') returned ""
+PASS queryCommand('format') returned ""
+PASS queryCommand('format') returned "address"
+PASS queryCommand('format') returned "h1"
+PASS queryCommand('format') returned "h2"
+PASS queryCommand('format') returned "h3"
+PASS queryCommand('format') returned "h4"
+PASS queryCommand('format') returned "h5"
+PASS queryCommand('format') returned "h6"
+PASS queryCommand('format') returned "p"
+PASS queryCommand('format') returned "pre"
+
+Nested cases
+PASS queryCommand('format') returned "h2"
+PASS queryCommand('format') returned "address"
+PASS queryCommand('format') returned "pre"
+PASS queryCommand('format') returned "pre"
+PASS queryCommand('format') returned "address"
+PASS queryCommand('format') returned ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

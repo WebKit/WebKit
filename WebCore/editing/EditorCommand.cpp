@@ -1346,6 +1346,14 @@ static String valueForeColor(Frame* frame, Event*)
     return valueStyle(frame, CSSPropertyColor);
 }
 
+static String valueFormatBlock(Frame* frame, Event*)
+{
+    Element* formatBlockElement = frame->editor()->elementForFormatBlockCommand();
+    if (!formatBlockElement)
+        return "";
+    return formatBlockElement->localName();
+}
+
 // Map of functions
 
 struct CommandEntry {
@@ -1382,7 +1390,7 @@ static const CommandMap& createCommandMap()
         { "FontSize", { executeFontSize, supported, enabledInEditableText, stateNone, valueFontSize, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "FontSizeDelta", { executeFontSizeDelta, supported, enabledInEditableText, stateNone, valueFontSizeDelta, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "ForeColor", { executeForeColor, supported, enabledInRichlyEditableText, stateNone, valueForeColor, notTextInsertion, doNotAllowExecutionWhenDisabled } },
-        { "FormatBlock", { executeFormatBlock, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+        { "FormatBlock", { executeFormatBlock, supported, enabledInRichlyEditableText, stateNone, valueFormatBlock, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "ForwardDelete", { executeForwardDelete, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "HiliteColor", { executeBackColor, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "IgnoreSpelling", { executeIgnoreSpelling, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
