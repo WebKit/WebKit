@@ -1,3 +1,14 @@
+2010-09-29  Chris Fleizach  <cfleizach@apple.com>
+
+        Unreviewed. Update test results.
+
+        AX: implement CSS3 Speech "speak"
+        https://bugs.webkit.org/show_bug.cgi?id=46827
+
+        Rebaseline GTK test after CSS change.
+
+        * platform/gtk/svg/css/getComputedStyle-basic-expected.txt:
+
 2010-09-29  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Brady Eidson.
