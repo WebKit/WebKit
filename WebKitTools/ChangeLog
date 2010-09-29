@@ -6,6 +6,29 @@
 
 2010-09-28  Simon Fraser  <simon.fraser@apple.com>
 
+        No review
+        
+        Show which tests have been run by dimming them out in the test list.
+        
+        Adjust some element sizes.
+        
+        * CSSTestSuiteHarness/harness/harness.css:
+        (#test-list > option.untested):
+        (#test-list > option.completed):
+        (#output):
+        (.output-options):
+        * CSSTestSuiteHarness/harness/harness.js:
+        (Test):
+        (TestSuite.prototype.fillTestList):
+        (TestSuite.prototype.updateTestList):
+        (TestSuite.prototype.setSelectedChapter):
+        (TestSuite.prototype.recordResult):
+        (TestSuite.prototype.markTestCompleted):
+        (TestSuite.prototype.testCompletionStateChanged):
+        (TestSuite.prototype.loadTestStatus):
+
+2010-09-28  Simon Fraser  <simon.fraser@apple.com>
+
         No review.
         
         Implement export of various queries on the test database, sharing

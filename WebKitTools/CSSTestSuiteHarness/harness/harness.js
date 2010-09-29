@@ -202,6 +202,8 @@ function Test(testInfoLine)
   this.links = fields[4];
   this.assertion = fields[5];
   
+  this.completed = false; // true if this test has a result (pass, fail or skip)
+  
   if (!this.links)
     this.links = "other.html"
 }
@@ -434,8 +436,20 @@ TestSuite.prototype.fillTestList = function()
 
     var option = document.createElement('option');
     option.innerText = currTest.id;
+    option.className = currTest.completed ? 'completed' : 'untested';
     option._test = currTest;
     testList.appendChild(option);
+  }
+}
+
+TestSuite.prototype.updateTestList = function()
+{
+  var testList = document.getElementById('test-list');
+  
+  var options = testList.getElementsByTagName('option');
+  for (var i = 0; i < options.length; ++i) {
+    var currOption = options[i];
+    currOption.className = currOption._test.completed ? 'completed' : 'untested';
   }
 }
 
@@ -447,10 +461,9 @@ TestSuite.prototype.setSelectedChapter = function(chapter)
   
   this.fillTestList();
   this.goToTestIndex(0);
-return;
   
   var chaptersPopup = document.getElementById('chapters');
-  chaptersPopup.selectedIndex = kChapterData.indexOf(chapterName)// FIXME:
+  chaptersPopup.selectedIndex = this.indexOfChapter(chapter);
 }
 
 /* ------------------------------------------------------- */
@@ -625,6 +638,9 @@ TestSuite.prototype.recordResult = function(testName, resolution, comment)
     comment = '';
   
   this.storeTestResult(testName, this.format, resolution, comment, navigator.userAgent);
+  this.markTestCompleted(testName);
+  this.updateTestList();
+
   this.updateSummaryData();
 }
 
@@ -967,6 +983,38 @@ TestSuite.prototype.exportResultsForTestsWithMismatchedResults = function()
 
 /* -------------------------------------------------------- */
 
+TestSuite.prototype.markTestCompleted = function(testID)
+{
+  var test = this.tests[testID];
+  if (!test) {
+    window.console.log('markTestCompleted to find test ' + testID);
+    return;
+  }
+  
+  test.completed = true;
+}
+
+TestSuite.prototype.testCompletionStateChanged = function()
+{
+  // update the test list
+  this.updateTestList();
+}
+
+TestSuite.prototype.loadTestStatus = function()
+{
+  var _self = this;
+  this.queryDatabaseForCompletedTests(
+      function(item) {
+        _self.markTestCompleted(item.test);
+      },
+      function() {
+        _self.testCompletionStateChanged();
+      }
+    );
+}
+
+/* -------------------------------------------------------- */
+
 TestSuite.prototype.updateSummaryData = function()
 {
   this.queryDatabaseForSummary(
@@ -1019,6 +1067,7 @@ TestSuite.prototype.openDatabase = function()
   }, errorHandler);
 
   this.updateSummaryData();
+  this.loadTestStatus();
 }
 
 TestSuite.prototype.databaseCreated = function(db)

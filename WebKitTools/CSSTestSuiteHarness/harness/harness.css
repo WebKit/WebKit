@@ -107,6 +107,14 @@ body {
   color: darkgray;
 }
 
+#test-list > option.untested {
+  
+}
+
+#test-list > option.completed {
+  color: gray;
+}
+
 #test-content.with-ref {
 }
 
@@ -148,7 +156,7 @@ body {
 #output {
   border: 1px solid black;
   font-size: smaller;
-  height: 250px;
+  height: 220px;
   margin: 4px;
   padding: 4px;
   overflow-y: auto;
@@ -178,7 +186,7 @@ body {
   float: right;
   border: 1px solid black;
   width: 200px;
-  height: 250px;
+  height: 220px;
   margin: 4px;
   padding: 4px;
   font-size: smaller;
