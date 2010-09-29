@@ -1,3 +1,12 @@
+2010-09-29  Reinout van Schouwen  <reinouts@gnome.org>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Updated Dutch translation
+        https://bugs.webkit.org/show_bug.cgi?id=46050
+
+        * nl.po:
+
 2010-08-31  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r66519.
