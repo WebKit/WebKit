@@ -53,6 +53,7 @@
     <file>InspectorFrontendHostStub.js</file>
     <file>KeyboardShortcut.js</file>
     <file>MetricsSidebarPane.js</file>
+    <file>NetworkPanel.js</file>
     <file>Object.js</file>
     <file>ObjectPropertiesSection.js</file>
     <file>Panel.js</file>
@@ -111,6 +112,7 @@
     <file>helpScreen.css</file>
     <file>inspector.css</file>
     <file>inspectorSyntaxHighlight.css</file>
+    <file>networkPanel.css</file>
     <file>popover.css</file>
     <file>textViewer.css</file>
     <file>Images/applicationCache.png</file>
@@ -165,6 +167,7 @@
     <file>Images/grayConnectorPoint.png</file>
     <file>Images/largerResourcesButtonGlyph.png</file>
     <file>Images/localStorage.png</file>
+    <file>Images/networkIcon.png</file>
     <file>Images/nodeSearchButtonGlyph.png</file>
     <file>Images/paneAddButtons.png</file>
     <file>Images/paneBottomGrow.png</file>

@@ -207,6 +207,10 @@ body.attached #search-results-matches {
     background-image: url(Images/resourcesIcon.png);
 }
 
+.toolbar-item.network .toolbar-icon {
+    background-image: url(Images/networkIcon.png);
+}
+
 .toolbar-item.scripts .toolbar-icon {
     background-image: url(Images/scriptsIcon.png);
 }
@@ -1981,8 +1985,6 @@ body.inactive .sidebar {
     padding-right: 14px;
     overflow-x: hidden;
     overflow-y: overlay;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(white), color-stop(0.5, white), color-stop(0.5, rgb(234, 243, 255)), to(rgb(234, 243, 255)));
-    -webkit-background-size: 1px 32px;
 }
 
 .data-grid.inline .data-container {

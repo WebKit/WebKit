@@ -53016,6 +53016,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\NetworkPanel.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\networkPanel.css"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\Object.js"
 					>
 				</File>

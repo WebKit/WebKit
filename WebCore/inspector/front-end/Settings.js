@@ -42,10 +42,10 @@ var Preferences = {
     showColorNicknames: true,
     debuggerAlwaysEnabled: false,
     profilerAlwaysEnabled: false,
-    auditsPanelEnabled: true,
     onlineDetectionEnabled: true,
     nativeInstrumentationEnabled: false,
-    resourceExportEnabled: false
+    resourceExportEnabled: false,
+    networkPanelEnabled: false
 }
 
 WebInspector.Settings = function(sessionScope)

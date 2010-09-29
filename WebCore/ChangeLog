@@ -1,3 +1,34 @@
+2010-09-28  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: [Resources panel] Need more visible "at a glance".
+        https://bugs.webkit.org/show_bug.cgi?id=45657
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/DataGrid.js:
+        (WebInspector.DataGrid):
+        (WebInspector.DataGrid.prototype.updateWidths):
+        (WebInspector.DataGrid.prototype.sortNodes):
+        (WebInspector.DataGrid.prototype._resizerDragging):
+        (WebInspector.DataGrid.prototype._endResizerDragging):
+        (WebInspector.DataGridNode.prototype.selectable.true.get element):
+        (WebInspector.DataGridNode.prototype.createCells):
+        (WebInspector.DataGridNode.prototype.refresh):
+        * inspector/front-end/Images/networkIcon.png: Copied from WebCore/inspector/front-end/Images/resourcesIcon.png.
+        * inspector/front-end/NetworkPanel.js: Added.
+        * inspector/front-end/Settings.js:
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        (.toolbar-item.network .toolbar-icon):
+        (.data-grid .data-container):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector._createPanels):
+        (WebInspector.updateResource):
+        * inspector/front-end/networkPanel.css: Added.
+
 2010-09-28  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

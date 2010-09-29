@@ -92,10 +92,8 @@ WebInspector.DataGrid = function(columns, editCallback, deleteCallback)
             cell.addStyleClass("sortable");
         }
 
-        if (column.aligned) {
-            cell.addStyleClass(column.aligned);
+        if (column.aligned)
             this.aligned[columnIdentifier] = column.aligned;
-        }
 
         headerRow.appendChild(cell);
 
@@ -412,6 +410,7 @@ WebInspector.DataGrid.prototype = {
             
             resizer.style.left = left + "px";
         }
+        this.dispatchEventToListeners("width changed");
     },
 
     addCreationNode: function(hasChildren)
@@ -535,6 +534,35 @@ WebInspector.DataGrid.prototype = {
         this.children = [];
     },
 
+    sortNodes: function(comparator, descending)
+    {
+        function comparatorWrapper(a, b)
+        {
+            var aDataGirdNode = a._dataGridNode;
+            var bDataGirdNode = b._dataGridNode;
+            if (!aDataGirdNode)
+                return 1; // Filler row.
+            if (!bDataGirdNode)
+                return -1; // Filler row.
+            return descending ? comparator(bDataGirdNode, aDataGirdNode) : comparator(aDataGirdNode, bDataGirdNode);
+        }
+
+        var tbody = this.dataTableBody;
+        var tbodyParent = tbody.parentElement;
+        tbodyParent.removeChild(tbody);
+
+        var childNodes = tbody.childNodes;
+        var sortedNodes = Array.prototype.slice.call(childNodes);
+        sortedNodes.sort(comparatorWrapper.bind(this));
+
+        var sortedNodesLength = sortedNodes.length;
+        tbody.removeChildren();
+        for (var i = 0; i < sortedNodesLength; ++i) {
+            var node = sortedNodes[i];
+            tbody.appendChild(node);
+        }
+        tbodyParent.appendChild(tbody);
+    },
 
     _keyDown: function(event)
     {
@@ -772,12 +800,14 @@ WebInspector.DataGrid.prototype = {
         this._dataTableColumnGroup.children[resizer.rightNeighboringColumnID].style.width = percentRightColumn;
         
         event.preventDefault();
+        this.dispatchEventToListeners("width changed");
     },
     
     _endResizerDragging: function(event)
     {
         WebInspector.elementDragEnd(event);
         this.currentResizer = null;
+        this.dispatchEventToListeners("width changed");
     },
     
     ColumnResizePadding: 10,
@@ -825,12 +855,16 @@ WebInspector.DataGridNode.prototype = {
         if (this.revealed)
             this._element.addStyleClass("revealed");
 
+        this.createCells();
+        return this._element;
+    },
+
+    createCells: function()
+    {
         for (var columnIdentifier in this.dataGrid.columns) {
             var cell = this.createCell(columnIdentifier);
             this._element.appendChild(cell);
         }
-
-        return this._element;
     },
 
     get data()
@@ -964,11 +998,7 @@ WebInspector.DataGridNode.prototype = {
             return;
 
         this._element.removeChildren();
-
-        for (var columnIdentifier in this.dataGrid.columns) {
-            var cell = this.createCell(columnIdentifier);
-            this._element.appendChild(cell);
-        }
+        this.createCells();
     },
 
     createCell: function(columnIdentifier)
