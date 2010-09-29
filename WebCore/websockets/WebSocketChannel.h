@@ -79,8 +79,8 @@ namespace WebCore {
     private:
         WebSocketChannel(ScriptExecutionContext*, WebSocketChannelClient*, const KURL&, const String& protocol);
 
-        bool appendToBuffer(const char* data, int len);
-        void skipBuffer(int len);
+        bool appendToBuffer(const char* data, size_t len);
+        void skipBuffer(size_t len);
         bool processBuffer();
 
         ScriptExecutionContext* m_context;
@@ -88,7 +88,7 @@ namespace WebCore {
         WebSocketHandshake m_handshake;
         RefPtr<SocketStreamHandle> m_handle;
         char* m_buffer;
-        int m_bufferSize;
+        size_t m_bufferSize;
 
         bool m_suspended;
         bool m_closed;
