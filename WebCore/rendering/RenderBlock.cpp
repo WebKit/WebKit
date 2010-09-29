@@ -1614,33 +1614,33 @@ int RenderBlock::estimateLogicalTopPosition(RenderBox* child, const MarginInfo& 
 {
     // FIXME: We need to eliminate the estimation of vertical position, because when it's wrong we sometimes trigger a pathological
     // relayout if there are intruding floats.
-    int yPosEstimate = height();
+    int logicalTopEstimate = logicalHeight();
     if (!marginInfo.canCollapseWithMarginBefore()) {
-        int childMarginTop = child->selfNeedsLayout() ? child->marginTop() : child->collapsedMarginBefore();
-        yPosEstimate += max(marginInfo.margin(), childMarginTop);
+        int childMarginBefore = child->selfNeedsLayout() ? marginBeforeForChild(child) : collapsedMarginBeforeForChild(child);
+        logicalTopEstimate += max(marginInfo.margin(), childMarginBefore);
     }
     
     bool paginated = view()->layoutState()->isPaginated();
 
-    // Adjust yPosEstimate down to the next page if the margins are so large that we don't fit on the current
+    // Adjust logicalTopEstimate down to the next page if the margins are so large that we don't fit on the current
     // page.
-    if (paginated && yPosEstimate > height())
-        yPosEstimate = min(yPosEstimate, nextPageTop(height()));
+    if (paginated && logicalTopEstimate > logicalHeight())
+        logicalTopEstimate = min(logicalTopEstimate, nextPageTop(logicalHeight()));
 
-    yPosEstimate += getClearDelta(child, yPosEstimate);
+    logicalTopEstimate += getClearDelta(child, logicalTopEstimate);
     
     if (paginated) {
         // If the object has a page or column break value of "before", then we should shift to the top of the next page.
-        yPosEstimate = applyBeforeBreak(child, yPosEstimate);
+        logicalTopEstimate = applyBeforeBreak(child, logicalTopEstimate);
     
         // For replaced elements and scrolled elements, we want to shift them to the next page if they don't fit on the current one.
-        yPosEstimate = adjustForUnsplittableChild(child, yPosEstimate);
+        logicalTopEstimate = adjustForUnsplittableChild(child, logicalTopEstimate);
         
         if (!child->selfNeedsLayout() && child->isRenderBlock())
-            yPosEstimate += toRenderBlock(child)->paginationStrut();
+            logicalTopEstimate += toRenderBlock(child)->paginationStrut();
     }
 
-    return yPosEstimate;
+    return logicalTopEstimate;
 }
 
 void RenderBlock::determineLogicalLeftPositionForChild(RenderBox* child)
@@ -6018,6 +6018,40 @@ void RenderBlock::adjustLinePositionForPagination(RootInlineBox* lineBox, int& d
             lineBox->setPaginationStrut(remainingHeight);
         }
     }  
+}
+
+int RenderBlock::collapsedMarginBeforeForChild(RenderBox* child) const
+{
+    // If the child has the same directionality as we do, then we can just return its
+    // collapsed margin.
+    if (!child->isBlockFlowRoot())
+        return child->collapsedMarginBefore();
+    
+    // The child has a different directionality.  If the child is parallel, then it's just
+    // flipped relative to us.  We can use the collapsed margin for the opposite edge.
+    if (child->style()->isVerticalBlockFlow() == style()->isVerticalBlockFlow())
+        return child->collapsedMarginAfter();
+    
+    // The child is perpendicular to us, which means its margins don't collapse but are on the
+    // "logical left/right" sides of the child box.  We can just return the raw margin in this case.  
+    return marginBeforeForChild(child);
+}
+
+int RenderBlock::collapsedMarginAfterForChild(RenderBox* child) const
+{
+    // If the child has the same directionality as we do, then we can just return its
+    // collapsed margin.
+    if (!child->isBlockFlowRoot())
+        return child->collapsedMarginAfter();
+    
+    // The child has a different directionality.  If the child is parallel, then it's just
+    // flipped relative to us.  We can use the collapsed margin for the opposite edge.
+    if (child->style()->isVerticalBlockFlow() == style()->isVerticalBlockFlow())
+        return child->collapsedMarginBefore();
+    
+    // The child is perpendicular to us, which means its margins don't collapse but are on the
+    // "logical left/right" side of the child box.  We can just return the raw margin in this case.  
+    return marginAfterForChild(child);
 }
 
 int RenderBlock::marginBeforeForChild(RenderBoxModelObject* child) const

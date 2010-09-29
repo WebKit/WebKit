@@ -1,3 +1,16 @@
+2010-09-29  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46844, make estimateLogicalTopPosition
+        block-flow-aware.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::estimateLogicalTopPosition):
+        (WebCore::RenderBlock::collapsedMarginBeforeForChild):
+        (WebCore::RenderBlock::collapsedMarginAfterForChild):
+        * rendering/RenderBlock.h:
+
 2010-09-29  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.
