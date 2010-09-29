@@ -1,3 +1,41 @@
+2010-09-29  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        REGRESSION (r66129): Loading full-frame .swf file crashes with flash blocker extension enabled
+        <https://bugs.webkit.org/show_bug.cgi?id=46773>
+        <rdar://problem/8390975>
+        
+        After r66129, start scripts were run on plugin documents, and cancelling the load of a plugin
+        document could cause Safari to crash.
+        
+        If a plugin load on an initial document is cancelled, we cancel the main resource load (where the
+        main resource is the plugin), and if the load is restarted and allowed, we don't go through the manual
+        loading path like we do on the initial load of a plugin in a plugin document.
+
+        Tests: plugins/plugin-document-load-prevented-userscript.html
+               plugins/plugin-document-willSendRequest-null.html
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::updateWidget): If the plugin load was cancelled, and this is in a
+            plugin document, call a function on PluginDocument that cancels the main resource load, and
+            sets a plugin document flag.
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::appendBytes): Null check the widget's renderer, because it could be
+            null if the load was cancelled.
+        (WebCore::PluginDocument::PluginDocument): Initialize the new variable.
+        (WebCore::PluginDocument::cancelManualPluginLoad): Cancel the main resource load of the plugin document
+            (which is a plugin in the case of a plugin document).
+        * html/PluginDocument.h:
+        (WebCore::PluginDocument::shouldLoadPluginManually): Returns whether or not we should load the plugin
+            manually.
+        (WebCore::PluginDocument::setShouldLoadPluginManually): Set whether or not we should load the plugin
+            manually.
+        (WebCore::toPluginDocument):
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::loadPlugin): Check if we should load the plugin manually according to the plugin
+            document.
+
 2010-09-29  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.

@@ -125,8 +125,13 @@ void PluginDocumentParser::appendBytes(DocumentWriter*, const char*, int, bool)
     document()->updateLayout();
 
     if (RenderPart* renderer = m_embedElement->renderPart()) {
-        frame->loader()->client()->redirectDataToPlugin(renderer->widget());
-        frame->loader()->activeDocumentLoader()->mainResourceLoader()->setShouldBufferData(false);
+        if (Widget* widget = renderer->widget()) {
+            frame->loader()->client()->redirectDataToPlugin(widget);
+            // In a plugin document, the main resource is the plugin. If we have a null widget, that means
+            // the loading of the plugin was cancelled, which gives us a null mainResourceLoader(), so we
+            // need to have this call in a null check of the widget or of mainResourceLoader().
+            frame->loader()->activeDocumentLoader()->mainResourceLoader()->setShouldBufferData(false);
+        }
     }
 
     finish();
@@ -134,11 +139,12 @@ void PluginDocumentParser::appendBytes(DocumentWriter*, const char*, int, bool)
 
 PluginDocument::PluginDocument(Frame* frame, const KURL& url)
     : HTMLDocument(frame, url)
+    , m_shouldLoadPluginManually(true)
 {
     setCompatibilityMode(QuirksMode);
     lockCompatibilityMode();
 }
-    
+
 PassRefPtr<DocumentParser> PluginDocument::createParser()
 {
     return PluginDocumentParser::create(this);
@@ -156,6 +162,17 @@ Node* PluginDocument::pluginNode()
         return body_element->firstChild();
 
     return 0;
+}
+
+void PluginDocument::cancelManualPluginLoad()
+{
+    // PluginDocument::cancelManualPluginLoad should only be called once, but there are issues
+    // with how many times we call beforeload on object elements. <rdar://problem/8441094>.
+    if (!shouldLoadPluginManually())
+        return;
+
+    frame()->loader()->activeDocumentLoader()->mainResourceLoader()->cancel();
+    setShouldLoadPluginManually(false);
 }
 
 }

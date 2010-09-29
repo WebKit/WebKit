@@ -42,6 +42,7 @@
 #include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "PluginData.h"
+#include "PluginDocument.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderView.h"
 #include "Settings.h"
@@ -354,7 +355,7 @@ bool SubframeLoader::loadPlugin(HTMLPlugInImageElement* pluginElement, const KUR
     frameLoader->checkIfRunInsecureContent(document()->securityOrigin(), url);
 
     IntSize contentSize(renderer->contentWidth(), renderer->contentHeight());
-    bool loadManually = document()->isPluginDocument() && !m_containsPlugins;
+    bool loadManually = document()->isPluginDocument() && !m_containsPlugins && toPluginDocument(document())->shouldLoadPluginManually();
     RefPtr<Widget> widget = frameLoader->client()->createPlugin(contentSize,
         pluginElement, url, paramNames, paramValues, mimeType, loadManually);
 

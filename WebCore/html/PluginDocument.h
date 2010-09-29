@@ -43,11 +43,34 @@ public:
 
     virtual bool isPluginDocument() const { return true; }
 
+    void cancelManualPluginLoad();
+
+    bool shouldLoadPluginManually() { return m_shouldLoadPluginManually; }
+
 private:
     PluginDocument(Frame*, const KURL&);
 
     virtual PassRefPtr<DocumentParser> createParser();
+        
+    void setShouldLoadPluginManually(bool loadManually) { m_shouldLoadPluginManually = loadManually; }
+
+    bool m_shouldLoadPluginManually;
 };
+
+inline PluginDocument* toPluginDocument(Document* document)
+{
+    ASSERT(!document || document->isPluginDocument());
+    return static_cast<PluginDocument*>(document);
+}
+
+inline const PluginDocument* toPluginDocument(const Document* document)
+{
+    ASSERT(!document || document->isPluginDocument());
+    return static_cast<const PluginDocument*>(document);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toPluginDocument(const PluginDocument*);
     
 }
 

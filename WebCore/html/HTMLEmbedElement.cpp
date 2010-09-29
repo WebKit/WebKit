@@ -27,11 +27,14 @@
 #include "Attribute.h"
 #include "CSSHelper.h"
 #include "CSSPropertyNames.h"
+#include "DocumentLoader.h"
 #include "Frame.h"
 #include "HTMLDocument.h"
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
+#include "MainResourceLoader.h"
+#include "PluginDocument.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderImage.h"
 #include "RenderWidget.h"
@@ -158,8 +161,15 @@ void HTMLEmbedElement::updateWidget(bool onlyCreateNonNetscapePlugins)
     Vector<String> paramValues;
     parametersForPlugin(paramNames, paramValues);
 
-    if (!dispatchBeforeLoadEvent(m_url))
+    if (!dispatchBeforeLoadEvent(m_url)) {
+        if (document()->isPluginDocument()) {
+            // Plugins inside plugin documents load differently than other plugins. By the time
+            // we are here in a plugin document, the load of the plugin (which is the plugin document's
+            // main resource) has already started. We need to explicitly cancel the main resource load here.
+            toPluginDocument(document())->cancelManualPluginLoad();
+        }
         return;
+    }
 
     SubframeLoader* loader = document()->frame()->loader()->subframeLoader();
     // FIXME: beforeLoad could have detached the renderer!  Just like in the <object> case above.
