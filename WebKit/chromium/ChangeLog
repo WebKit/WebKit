@@ -1,5 +1,14 @@
 2010-09-29  Kinuko Yasuda  <kinuko@chromium.org>
 
+        Unreviewed, adding the new files that were supposed to be added
+        but I missed to include in my previous patch.
+        https://bugs.webkit.org/show_bug.cgi?id=46524
+
+        * src/WorkerAsyncFileSystemChromium.cpp: Added.
+        * src/WorkerAsyncFileSystemChromium.h: Added.
+
+2010-09-29  Kinuko Yasuda  <kinuko@chromium.org>
+
         Reviewed by David Levin.
 
         Bridge all FileSystem operations on Workers to the MainThread
