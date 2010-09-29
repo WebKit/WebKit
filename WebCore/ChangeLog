@@ -1,3 +1,10 @@
+2010-09-28  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by NOBODY (revert unsquashed git commits)
+
+        Revert change sets 68583 to 68590, which are un-squashed git-commits: Performance improvement for FontLinux regarding issue 46374.
+        https://bugs.webkit.org/show_bug.cgi?id=46374
+
 2010-09-28  Marc-Antoine Ruel  <maruel@chromium.org>
 
         Reviewed by Tony Chang.
@@ -68,27 +75,6 @@
         (WebCore::LayerRendererChromium::present):
         * platform/graphics/chromium/LayerRendererChromium.h:
 
-2010-09-28  Xiaomei Ji  <xji@chromium.org>
-
-        Reviewed by David Levin.
-
-        Performance improvement for FontLinux.
-        https://bugs.webkit.org/show_bug.cgi?id=46374
-
-        Reduce new/delete operations by storing the maximum capacity of the glyph
-        array and use that value in subsequent HB_ShapeItem calls. (Note that a
-        call to HB_ShapeItem may reduce the value of m_item.num_glyphs below the
-        capacity.)
-
-        Also be consistent with zero'ing the glyph arrays before calling 
-        HB_ShapeItem.
-
-        There is no functionality changes so no new tests are added.
- 
-        * platform/graphics/chromium/FontLinux.cpp:
-        (WebCore::TextRunWalker::createGlyphArrays):
-        (WebCore::TextRunWalker::resetGlyphArrays):
-        (WebCore::TextRunWalker::shapeGlyphs):
 2010-09-28  Jenn Braithwaite  <jennb@chromium.org>
 
         Reviewed by Dmitry Titov.
