@@ -130,7 +130,7 @@ module core {
         [handler=Debug] void stepIntoStatement();
         [handler=Debug] void stepOutOfFunction();
 
-        [handler=Debug] void setPauseOnExceptionsState(in long pauseOnExceptionsState);
+        [handler=Debug] void setPauseOnExceptionsState(in long pauseOnExceptionsState, out long newState);
 
         [handler=Debug] void editScriptSource(in String sourceID, in String newContent, out boolean success, out String result, out Value newCallFrames);
         [handler=Debug] void getScriptSource(in String sourceID, out String scriptSource);

@@ -111,10 +111,6 @@
 #include "StorageArea.h"
 #endif
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-#include "ScriptDebugServer.h"
-#endif
-
 using namespace std;
 
 namespace WebCore {
@@ -131,6 +127,7 @@ static const char* const monitoringXHRStateName = "monitoringXHREnabled";
 static const char* const resourceTrackingEnabledStateName = "resourceTrackingEnabled";
 static const char* const searchingForNodeEnabledStateName = "searchingForNodeEnabled";
 static const char* const timelineProfilerEnabledStateName = "timelineProfilerEnabled";
+static const char* const pauseOnExceptionsStateStateName = "pauseOnExceptionsState";
 
 static const char* const inspectorAttachedHeightName = "inspectorAttachedHeight";
 
@@ -258,6 +255,10 @@ void InspectorController::getInspectorState(RefPtr<InspectorObject>* state)
 {
     (*state)->setBoolean(monitoringXHRStateName, m_monitoringXHR);
     (*state)->setBoolean(resourceTrackingEnabledStateName, m_resourceTrackingEnabled);
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    if (m_debuggerAgent)
+        (*state)->setNumber(pauseOnExceptionsStateStateName, m_debuggerAgent->pauseOnExceptionsState());
+#endif
 }
 
 void InspectorController::updateInspectorStateCookie()
@@ -675,10 +676,6 @@ void InspectorController::populateScriptObjects()
     for (unsigned i = 0; i < messageCount; ++i)
         m_consoleMessages[i]->addToFrontend(m_frontend.get(), m_injectedScriptHost.get());
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (debuggerEnabled())
-        m_frontend->updatePauseOnExceptionsState(ScriptDebugServer::shared().pauseOnExceptionsState());
-#endif
 #if ENABLE(DATABASE)
     DatabaseResourcesMap::iterator databasesEnd = m_databaseResources.end();
     for (DatabaseResourcesMap::iterator it = m_databaseResources.begin(); it != databasesEnd; ++it)

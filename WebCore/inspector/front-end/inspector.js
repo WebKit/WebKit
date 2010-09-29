@@ -592,6 +592,8 @@ WebInspector.doLoadedDone = function()
     function populateInspectorState(inspectorState)
     {
         WebInspector.monitoringXHREnabled = inspectorState.monitoringXHREnabled;
+        if ("pauseOnExceptionsState" in inspectorState)
+            WebInspector.panels.scripts.updatePauseOnExceptionsState(inspectorState.pauseOnExceptionsState);
         if (inspectorState.resourceTrackingEnabled)
             WebInspector.panels.resources.resourceTrackingWasEnabled();
         else
@@ -684,8 +686,8 @@ WebInspector.dispatchMessageFromBackend = function(messageObject)
 WebInspector.reportProtocolError = function(messageObject)
 {
     console.error("Protocol Error: InspectorBackend request with seq = %d failed.", messageObject.seq);
-    for (var error in messageObject.errors)
-        console.error("    " + error);
+    for (var i = 0; i < messageObject.errors.length; ++i)
+        console.error("    " + messageObject.errors[i]);
     WebInspector.removeResponseCallbackEntry(messageObject.seq);
 }
 
@@ -1407,11 +1409,6 @@ WebInspector.attachDebuggerWhenShown = function()
 WebInspector.debuggerWasEnabled = function()
 {
     this.panels.scripts.debuggerWasEnabled();
-}
-
-WebInspector.updatePauseOnExceptionsState = function(pauseOnExceptionsState)
-{
-    this.panels.scripts.updatePauseOnExceptionsState(pauseOnExceptionsState);
 }
 
 WebInspector.debuggerWasDisabled = function()

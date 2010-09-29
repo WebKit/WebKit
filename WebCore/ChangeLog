@@ -1,3 +1,29 @@
+2010-09-28  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: move pauseOnExceptionState under control of InspectorState
+        It is Inspector Protocol cleanup activity.
+        The actual state of this flag can be obtained as a return value of setPauseOnExceptionState command
+        or as a value in InspectorState object.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46724
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::getInspectorState):
+        (WebCore::InspectorController::populateScriptObjects):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::setPauseOnExceptionsState):
+        (WebCore::InspectorDebuggerAgent::pauseOnExceptionsState):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._togglePauseOnExceptions):
+        * inspector/front-end/inspector.js:
+        (WebInspector.doLoadedDone.populateInspectorState):
+        (WebInspector.doLoadedDone):
+        (WebInspector.reportProtocolError):
+
 2010-09-28  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.

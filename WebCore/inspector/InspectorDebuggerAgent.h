@@ -73,7 +73,8 @@ public:
     void stepIntoStatement();
     void stepOutOfFunction();
 
-    void setPauseOnExceptionsState(long pauseState);
+    void setPauseOnExceptionsState(long pauseState, long* newState);
+    long pauseOnExceptionsState();
 
     void clearForPageNavigation();
 

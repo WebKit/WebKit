@@ -172,10 +172,15 @@ void InspectorDebuggerAgent::stepOutOfFunction()
     ScriptDebugServer::shared().stepOutOfFunction();
 }
 
-void InspectorDebuggerAgent::setPauseOnExceptionsState(long pauseState)
+void InspectorDebuggerAgent::setPauseOnExceptionsState(long pauseState, long* newState)
 {
     ScriptDebugServer::shared().setPauseOnExceptionsState(static_cast<ScriptDebugServer::PauseOnExceptionsState>(pauseState));
-    m_frontend->updatePauseOnExceptionsState(ScriptDebugServer::shared().pauseOnExceptionsState());
+    *newState = ScriptDebugServer::shared().pauseOnExceptionsState();
+}
+
+long InspectorDebuggerAgent::pauseOnExceptionsState()
+{
+    return ScriptDebugServer::shared().pauseOnExceptionsState();
 }
 
 void InspectorDebuggerAgent::clearForPageNavigation()
