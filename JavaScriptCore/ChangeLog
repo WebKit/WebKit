@@ -2,6 +2,14 @@
 
         Unreviewed.
 
+        Next try to fix cygwin build.
+
+        * wtf/Assertions.cpp:
+
+2010-09-29  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed.
+
         Build fix for cygwin #2. It's OS(WINDOWS), not OS(WIN).
 
         * wtf/Assertions.cpp:
