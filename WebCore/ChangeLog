@@ -1,3 +1,15 @@
+2010-09-29  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [v8] Use generic mechanism to report exceptions in V8CustomVoidCallback
+        https://bugs.webkit.org/show_bug.cgi?id=46803
+
+        No new tests. It's covered by existing tests under LayoutTests/storage
+
+        * bindings/v8/custom/V8CustomVoidCallback.cpp:
+        (WebCore::invokeCallback):
+
 2010-09-29  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Jeremy Orlow.
