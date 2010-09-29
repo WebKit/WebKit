@@ -57,6 +57,7 @@ typedef struct {
     NPBool testGetURLOnDestroy;
     NPBool testWindowOpen;
     NPBool testKeyboardFocusForPlugins;
+    NPBool mouseDownForEvaluateScript;
     char* onStreamLoad;
     char* onStreamDestroy;
     char* onDestroy;
@@ -66,6 +67,7 @@ typedef struct {
     char* firstHeaders;
     char* lastUrl;
     char* lastHeaders;
+    char* evaluateScriptOnMouseDownOrKeyDown;
 #ifdef XP_MACOSX
     NPEventModel eventModel;
 #endif

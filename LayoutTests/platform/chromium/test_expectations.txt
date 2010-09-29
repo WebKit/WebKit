@@ -3157,3 +3157,6 @@ BUG_SENORBLANCO LINUX : fast/text/midword-break-after-breakable-char.html = TEXT
 
 // Flaky since 68620
 BUGWK46779 : fast/filesystem/flags-passing.html = TEXT
+
+// NPP_HandleEvent doesn't be implemented/work on mac/linux.
+BUG48033 LINUX MAC SKIP : plugins/plugin-initiate-popup-window.html = PASS TIMEOUT

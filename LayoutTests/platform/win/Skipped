@@ -798,6 +798,7 @@ fast/loader/api-test-new-window-data-load-base-url.html
 # Needs to implement NPP_HandleEvent() in TestNetscapePlugin
 plugins/keyboard-events.html
 http/tests/plugins/plugin-document-has-focus.html
+plugins/plugin-initiate-popup-window.html
 
 # DumpRenderTree code to enable Java is currently a no-op. Windows doesn't come with Java by default.
 java

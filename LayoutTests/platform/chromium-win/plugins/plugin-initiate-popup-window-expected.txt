@@ -1,0 +1,19 @@
+CONSOLE MESSAGE: line 0: PLUGIN: event 71
+CONSOLE MESSAGE: line 0: PLUGIN: event 71
+CONSOLE MESSAGE: line 17: window count: 1
+CONSOLE MESSAGE: line 21: PLUGIN: getFocusEvent
+CONSOLE MESSAGE: line 21: PLUGIN: mouseDown at (20, 20)
+CONSOLE MESSAGE: line 30: window count: 2
+CONSOLE MESSAGE: line 22: PLUGIN: mouseUp at (20, 20)
+CONSOLE MESSAGE: line 42: PLUGIN: loseFocusEvent
+CONSOLE MESSAGE: line 42: PLUGIN: getFocusEvent
+CONSOLE MESSAGE: line 42: PLUGIN: mouseDown at (60, 60)
+CONSOLE MESSAGE: line 43: PLUGIN: mouseUp at (60, 60)
+CONSOLE MESSAGE: line 44: PLUGIN: keyDown 'P'
+CONSOLE MESSAGE: line 52: window count: 3
+CONSOLE MESSAGE: line 44: PLUGIN: keyUp 'P'
+
+
+Specify a script and a mouse/keyboard event to the plugin. The specified script will be evaluated in the browser when the specified event is received by the plugin. The test is for bug https://bugs.webkit.org/show_bug.cgi?id=41292.
+Opening window by mouse down is PASSED
+Opening window by key down is PASSED

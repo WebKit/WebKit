@@ -34,6 +34,7 @@
 #include "OwnArrayPtr.h"
 #include "PlatformString.h"
 #include "ScriptController.h"
+#include "UserGestureIndicator.h"
 #include "V8GCController.h"
 #include "V8Helpers.h"
 #include "V8NPUtils.h"
@@ -278,8 +279,17 @@ bool _NPN_EvaluateHelper(NPP npp, bool popupsAllowed, NPObject* npObject, NPStri
     if (!popupsAllowed)
         filename = "npscript";
 
+    // Set popupsAllowed flag to the current execution frame, so WebKit can get
+    // right gesture status for popups initiated from plugins.
+    Frame* frame = proxy->frame();
+    ASSERT(frame);
+    bool oldAllowPopups = frame->script()->allowPopupsFromPlugin();
+    frame->script()->setAllowPopupsFromPlugin(popupsAllowed);
+
     String script = String::fromUTF8(npScript->UTF8Characters, npScript->UTF8Length);
     v8::Local<v8::Value> v8result = proxy->evaluate(ScriptSourceCode(script, KURL(ParsedURLString, filename)), 0);
+    // Restore the old flag.
+    frame->script()->setAllowPopupsFromPlugin(oldAllowPopups);
 
     if (v8result.IsEmpty())
         return false;

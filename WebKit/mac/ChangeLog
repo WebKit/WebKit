@@ -1,3 +1,20 @@
+2010-09-28  Johnny Ding  <jnd@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41292
+        Some windowed plugins did not handle events through EventHandler, so we
+        never set right gesture state for those events.
+        This change is to set right allowPopupsFromPlugin flag to current
+        execution frame, so WeKit can always get right gesture state on Mac.
+        From Mac Snow Leopard, the plugin is run under "WebKitPluginHost,app"
+        process, that process passes the allowPopupsFromPlugin flag to
+        WKPCEvaluate(in NetscapePluginHostProxy.mm), then flag is set in
+        NetscapePluginInstanceProxy::evaluate.
+
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView sendEvent:isDrawRect:]):
+
 2010-09-28  Jenn Braithwaite  <jennb@chromium.org>
 
         Reviewed by Dmitry Titov.

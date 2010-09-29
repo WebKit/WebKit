@@ -1,3 +1,25 @@
+2010-09-28  Johnny Ding  <jnd@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41292
+        Pass the right popupAllowed flag to current execution frame,
+        so WebKit can get right gesture status for popups initiated
+        from plugins.
+        This also makes v8 binding's ScriptController::processingUserGesture
+        match what jsc version.
+
+        Test: plugins/plugin-initiate-popup-window.html
+
+        * bindings/v8/NPV8Object.cpp:
+        (_NPN_EvaluateHelper):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::ScriptController):
+        (WebCore::ScriptController::processingUserGesture):
+        * bindings/v8/ScriptController.h:
+        (WebCore::ScriptController::setAllowPopupsFromPlugin):
+        (WebCore::ScriptController::allowPopupsFromPlugin):
+
 2010-09-28  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

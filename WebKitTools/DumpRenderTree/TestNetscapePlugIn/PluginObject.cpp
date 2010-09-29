@@ -971,14 +971,17 @@ static NPObject *pluginAllocate(NPP npp, NPClass *theClass)
     newInstance->returnNegativeOneFromWrite = FALSE;
     newInstance->stream = 0;
 
-    newInstance->firstUrl = NULL;
-    newInstance->firstHeaders = NULL;
-    newInstance->lastUrl = NULL;
-    newInstance->lastHeaders = NULL;
+    newInstance->firstUrl = 0;
+    newInstance->firstHeaders = 0;
+    newInstance->lastUrl = 0;
+    newInstance->lastHeaders = 0;
 
     newInstance->testGetURLOnDestroy = FALSE;
     newInstance->testWindowOpen = FALSE;
     newInstance->testKeyboardFocusForPlugins = FALSE;
+
+    newInstance->mouseDownForEvaluateScript = FALSE;
+    newInstance->evaluateScriptOnMouseDownOrKeyDown = 0;
 
     return (NPObject*)newInstance;
 }

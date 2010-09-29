@@ -121,6 +121,7 @@ ScriptController::ScriptController(Frame* frame)
     , m_inExecuteScript(false)
     , m_processingTimerCallback(false)
     , m_paused(false)
+    , m_allowPopupsFromPlugin(false)
     , m_proxy(new V8Proxy(frame))
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , m_windowScriptNPObject(0)
@@ -203,7 +204,8 @@ bool ScriptController::processingUserGesture()
         // This is the <a href="javascript:window.open('...')> case -> we let it through.
         return true;
     }
-
+    if (activeFrame->script()->allowPopupsFromPlugin())
+        return true;
     // This is the <script>window.open(...)</script> case or a timer callback -> block it.
     // Based on JSC version, use returned value of UserGestureIndicator::processingUserGesture for all other situations. 
     return UserGestureIndicator::processingUserGesture();

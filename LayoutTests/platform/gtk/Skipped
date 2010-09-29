@@ -3171,9 +3171,10 @@ media/video-poster-scale.html
 media/video-does-not-loop.html
 
 # Tests in plugins/ directory
-#   Tests failing
+#   Tests failing, need to implement NPP_HandleEvent() in TestNetscapePlugin
 plugins/embed-attributes-setting.html
 plugins/get-url-with-blank-target.html
+plugins/plugin-initiate-popup-window.html
 
 # This test is for clients that choose to make the missing plugin indicator a button
 plugins/clicking-missing-plugin-fires-delegate.html

@@ -1,3 +1,21 @@
+2010-09-28  Johnny Ding  <jnd@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41292.
+        Add a test to initiate popup windows from plugin during plugin is
+        handling mouse/keyboard event.
+        Disable this test on gtk/qt/win since the test plugin in those platforms
+        didn't implement NPP_HandleEvent.
+
+        * platform/chromium-win/plugins/plugin-initiate-popup-window-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * plugins/plugin-initiate-popup-window-expected.txt: Added.
+        * plugins/plugin-initiate-popup-window.html: Added.
+
 2010-09-28 MORITA Hajime  <morrita@google.com>
 
         Unreviewed; update test expectations.

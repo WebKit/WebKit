@@ -661,13 +661,19 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     
     // Temporarily retain self in case the plug-in view is released while sending an event. 
     [[self retain] autorelease];
-    
+
     BOOL acceptedEvent;
     [self willCallPlugInFunction];
+    // Set the pluginAllowPopup flag.
+    ASSERT(_eventHandler);
+    bool oldAllowPopups = frame->script()->allowPopupsFromPlugin();
+    frame->script()->setAllowPopupsFromPlugin(_eventHandler->currentEventIsUserGesture());    
     {
         JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
         acceptedEvent = [_pluginPackage.get() pluginFuncs]->event(plugin, event);
     }
+    // Restore the old pluginAllowPopup flag.
+    frame->script()->setAllowPopupsFromPlugin(oldAllowPopups);     
     [self didCallPlugInFunction];
         
     if (portState) {

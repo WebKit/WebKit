@@ -406,6 +406,7 @@ plugins/embed-attributes-style.html
 # ---- depends on QuickTime support
 plugins/embed-attributes-setting.html
 fast/dom/object-embed-plugin-scripting.html
+plugins/plugin-initiate-popup-window.html
 # ---- to be reviewed
 http/tests/plugins/plugin-document-has-focus.html
 
