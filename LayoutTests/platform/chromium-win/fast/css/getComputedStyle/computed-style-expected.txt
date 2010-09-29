@@ -73,6 +73,7 @@ pointer-events: auto;
 position: static;
 resize: none;
 right: auto;
+speak: normal;
 table-layout: auto;
 text-align: -webkit-auto;
 text-decoration: none;
