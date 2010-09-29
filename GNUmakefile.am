@@ -273,6 +273,11 @@ global_cppflags += \
 	-DUSE_SYSTEM_MALLOC
 endif
 
+if USE_GSTREAMER
+global_cppflags += \
+	-DWTF_USE_GSTREAMER=1
+endif
+
 # ----
 # GTK+ 2.x/3.x support
 # ----

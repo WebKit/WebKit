@@ -1,3 +1,16 @@
+2010-09-28  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        check USE(GSTREAMER) instead of ENABLE(VIDEO) in gstreamer/ files
+        https://bugs.webkit.org/show_bug.cgi?id=46717
+
+        Define WTF_USE_GSTREAMER if configure found the gstreamer
+        development files and add the macro in the gcc command-line if needed.
+
+        * GNUmakefile.am:
+        * configure.ac:
+
 2010-09-28  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, build sources that used to be built as part of other sources.

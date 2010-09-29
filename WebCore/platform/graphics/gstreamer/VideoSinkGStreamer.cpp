@@ -28,7 +28,7 @@
 
 #include "config.h"
 #include "VideoSinkGStreamer.h"
-#if ENABLE(VIDEO)
+#if USE(GSTREAMER)
 
 #include <glib.h>
 #include <gst/gst.h>
@@ -371,4 +371,4 @@ webkit_video_sink_new(void)
     return (GstElement*)g_object_new(WEBKIT_TYPE_VIDEO_SINK, 0);
 }
 
-#endif // ENABLE(VIDEO)
+#endif // USE(GSTREAMER)

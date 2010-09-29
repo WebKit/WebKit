@@ -19,7 +19,7 @@
 
 #ifndef GOwnPtrGStreamer_h
 #define GOwnPtrGStreamer_h
-#if ENABLE(VIDEO)
+#if USE(GSTREAMER)
 
 #include "GOwnPtr.h"
 
@@ -31,5 +31,5 @@ template<> void freeOwnedGPtr<GstElement>(GstElement* ptr);
 
 }
 
-#endif // ENABLE(VIDEO)
+#endif // USE(GSTREAMER)
 #endif

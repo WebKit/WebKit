@@ -20,7 +20,7 @@
 #ifndef ImageGStreamer_h
 #define ImageGStreamer_h
 
-#if ENABLE(VIDEO)
+#if USE(GSTREAMER)
 
 #include "BitmapImage.h"
 #include <gst/gst.h>
@@ -59,5 +59,5 @@ class ImageGStreamer : public RefCounted<ImageGStreamer> {
     };
 }
 
-#endif // ENABLE(VIDEO)
+#endif // USE(GSTREAMER)
 #endif

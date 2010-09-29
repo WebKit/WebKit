@@ -71,7 +71,6 @@ webcore_cppflags += \
 webcoregtk_cppflags += \
 	-DWEBKITGTK_API_VERSION_STRING=\"@WEBKITGTK_API_VERSION@\" \
 	-DWTF_USE_SOUP=1 \
-	-DWTF_USE_GSTREAMER=1 \
 	-I$(srcdir)/WebCore/accessibility/gtk \
 	-I$(srcdir)/WebCore/loader/gtk \
 	-I$(srcdir)/WebCore/page/gtk \
@@ -3875,6 +3874,7 @@ FEATURE_DEFINES += ENABLE_VIDEO=1
 HTML_FEATURES += ENABLE_VIDEO=1
 webcore_cppflags += -DENABLE_VIDEO=1
 
+if USE_GSTREAMER
 if ENABLE_DEBUG
 webcore_cppflags += -DGST_DISABLE_DEPRECATED
 endif # END ENABLE_DEBUG
@@ -3883,6 +3883,7 @@ webcore_libadd += \
 	-lgstvideo-0.10 \
 	-lgstpbutils-0.10 \
 	-lgstapp-0.10
+endif # END USE_GSTREAMER
 endif # END ENABLE_VIDEO
 
 # ----

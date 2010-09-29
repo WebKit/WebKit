@@ -19,7 +19,7 @@
 
 #include "config.h"
 #include "PlatformVideoWindow.h"
-#if ENABLE(VIDEO)
+#if USE(GSTREAMER)
 
 #include "NotImplemented.h"
 
@@ -35,4 +35,4 @@ PlatformVideoWindow::~PlatformVideoWindow()
     notImplemented();
 }
 
-#endif // ENABLE(VIDEO)
+#endif // USE(GSTREAMER)

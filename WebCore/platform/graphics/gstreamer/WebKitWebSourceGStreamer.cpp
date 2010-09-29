@@ -18,7 +18,7 @@
 
 #include "config.h"
 #include "WebKitWebSourceGStreamer.h"
-#if ENABLE(VIDEO)
+#if USE(GSTREAMER)
 
 #include "Document.h"
 #include "GOwnPtr.h"
@@ -795,5 +795,5 @@ void StreamingClient::cannotShowURL(ResourceHandle*)
     GST_ELEMENT_ERROR(m_src, RESOURCE, OPEN_READ, ("Can't show \"%s\"", m_src->priv->uri), (0));
 }
 
-#endif // ENABLE(VIDEO)
+#endif // USE(GSTREAMER)
 

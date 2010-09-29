@@ -24,7 +24,7 @@
 #include "config.h"
 #include "MediaPlayerPrivateGStreamer.h"
 
-#if ENABLE(VIDEO)
+#if USE(GSTREAMER)
 
 #include "ColorSpace.h"
 #include "DataSourceGStreamer.h"
@@ -1459,4 +1459,4 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
 
 }
 
-#endif // ENABLE(VIDEO)
+#endif // USE(GSTREAMER)

@@ -20,7 +20,7 @@
 
 #ifndef GStreamerGWorld_h
 #define GStreamerGWorld_h
-#if ENABLE(VIDEO)
+#if USE(GSTREAMER)
 
 #include "PlatformVideoWindow.h"
 #include "RefCounted.h"
@@ -62,5 +62,5 @@ private:
 };
 
 }
-#endif // ENABLE(VIDEO)
+#endif // USE(GSTREAMER)
 #endif

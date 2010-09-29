@@ -19,7 +19,7 @@
 
 #include "config.h"
 #include "PlatformVideoWindow.h"
-#if ENABLE(VIDEO)
+#if USE(GSTREAMER)
 
 #include <gtk/gtk.h>
 
@@ -61,4 +61,4 @@ PlatformVideoWindow::~PlatformVideoWindow()
 
     m_videoWindowId = 0;
 }
-#endif // ENABLE(VIDEO)
+#endif // USE(GSTREAMER)

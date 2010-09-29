@@ -19,7 +19,7 @@
 
 #include "config.h"
 #include "GStreamerGWorld.h"
-#if ENABLE(VIDEO)
+#if USE(GSTREAMER)
 
 #include "GOwnPtrGStreamer.h"
 #include <gst/gst.h>
@@ -203,4 +203,4 @@ void GStreamerGWorld::setWindowOverlay(GstMessage* message)
 }
 
 }
-#endif // ENABLE(VIDEO)
+#endif // USE(GSTREAMER)

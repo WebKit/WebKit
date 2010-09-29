@@ -20,7 +20,7 @@
 #include "config.h"
 #include "GOwnPtrGStreamer.h"
 
-#if ENABLE(VIDEO)
+#if USE(GSTREAMER)
 #include <gst/gstelement.h>
 
 namespace WTF {
@@ -32,4 +32,4 @@ template <> void freeOwnedGPtr<GstElement>(GstElement* ptr)
 }
 
 }
-#endif // ENABLE(VIDEO)
+#endif // USE(GSTREAMER)
