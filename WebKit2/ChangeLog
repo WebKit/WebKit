@@ -1,5 +1,11 @@
 2010-09-29  Anders Carlsson  <andersca@apple.com>
 
+        Update expected results.
+
+        * Scripts/webkit2/messages_unittest.py:
+
+2010-09-29  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Implement LoadURL

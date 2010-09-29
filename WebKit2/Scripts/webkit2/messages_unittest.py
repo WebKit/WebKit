@@ -419,7 +419,6 @@ _expected_receiver_implementation = """/*
 #include "HandleMessage.h"
 #include "MachPort.h"
 #include "Plugin.h"
-#include "WebCoreArgumentCoders.h"
 #include "WebEvent.h"
 #include "WebPageMessages.h"
 
