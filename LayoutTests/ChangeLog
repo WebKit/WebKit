@@ -1,3 +1,9 @@
+2010-09-28 MORITA Hajime  <morrita@google.com>
+
+        Unreviewed; update test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-28  MORITA Hajime  <morrita@google.com>
 
         Unreviewed; new test baselines.

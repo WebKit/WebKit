@@ -3154,3 +3154,6 @@ BUG_SENORBLANCO WIN LINUX : svg/custom/image-small-width-height.svg = CRASH IMAG
 BUG_SENORBLANCO WIN LINUX : svg/carto.net/selectionlist.svg = IMAGE
 BUG_SENORBLANCO LINUX : fast/text/international/thai-baht-space.html = IMAGE
 BUG_SENORBLANCO LINUX : fast/text/midword-break-after-breakable-char.html = TEXT
+
+// Flaky since 68620
+BUGWK46779 : fast/filesystem/flags-passing.html = TEXT
