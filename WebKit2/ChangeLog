@@ -1,3 +1,47 @@
+2010-09-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implement more PluginProxy member functions
+        https://bugs.webkit.org/show_bug.cgi?id=46815
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::handleMessage):
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::handleMouseEvent):
+        (WebKit::PluginControllerProxy::handleWheelEvent):
+        (WebKit::PluginControllerProxy::handleMouseEnterEvent):
+        (WebKit::PluginControllerProxy::handleMouseLeaveEvent):
+        (WebKit::PluginControllerProxy::setFocus):
+        (WebKit::PluginControllerProxy::windowFocusChanged):
+        (WebKit::PluginControllerProxy::windowFrameChanged):
+        (WebKit::PluginControllerProxy::windowVisibilityChanged):
+        Call the appropriate Plugin member functions.
+
+        * PluginProcess/PluginControllerProxy.messages.in:
+        Add new messages.
+
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::didReceiveMessage):
+        It's OK to get a message for a plug-in controller proxy that has gone away.
+
+        (WebKit::WebProcessConnection::didReceiveSyncMessage):
+        Forward the message to the PluginControllerProxy handler.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::handleMouseEvent):
+        (WebKit::PluginProxy::handleWheelEvent):
+        (WebKit::PluginProxy::handleMouseEnterEvent):
+        (WebKit::PluginProxy::handleMouseLeaveEvent):
+        (WebKit::PluginProxy::setFocus):
+        (WebKit::PluginProxy::windowFocusChanged):
+        (WebKit::PluginProxy::windowFrameChanged):
+        (WebKit::PluginProxy::windowVisibilityChanged):
+        Send messages to the plug-in process.
+        
+        (WebKit::PluginProxy::controller):
+        Return the plug-in controller.
+
 2010-09-29  Adam Roben  <aroben@apple.com>
 
         Look for WebKit.dll (not WebKit_debug.dll) when launching the web

@@ -194,6 +194,48 @@ void PluginControllerProxy::geometryDidChange(const IntRect& frameRect, const In
     m_plugin->geometryDidChange(frameRect, clipRect);
 }
 
+void PluginControllerProxy::handleMouseEvent(const WebMouseEvent& mouseEvent, bool& handled)
+{
+    handled = m_plugin->handleMouseEvent(mouseEvent);
+}
+
+void PluginControllerProxy::handleWheelEvent(const WebWheelEvent& wheelEvent, bool& handled)
+{
+    handled = m_plugin->handleWheelEvent(wheelEvent);
+}
+
+void PluginControllerProxy::handleMouseEnterEvent(const WebMouseEvent& mouseEnterEvent, bool& handled)
+{
+    handled = m_plugin->handleMouseEnterEvent(mouseEnterEvent);
+}
+
+void PluginControllerProxy::handleMouseLeaveEvent(const WebMouseEvent& mouseLeaveEvent, bool& handled)
+{
+    handled = m_plugin->handleMouseLeaveEvent(mouseLeaveEvent);
+}
+    
+void PluginControllerProxy::setFocus(bool hasFocus)
+{
+    m_plugin->setFocus(hasFocus);
+}
+
+#if PLATFORM(MAC)
+void PluginControllerProxy::windowFocusChanged(bool hasFocus)
+{
+    m_plugin->windowFocusChanged(hasFocus);
+}
+
+void PluginControllerProxy::windowFrameChanged(const IntRect& windowFrame)
+{
+    m_plugin->windowFrameChanged(windowFrame);
+}
+
+void PluginControllerProxy::windowVisibilityChanged(bool isVisible)
+{
+    m_plugin->windowVisibilityChanged(isVisible);
+}
+#endif
+
 } // namespace WebKit
 
 #endif // ENABLE(PLUGIN_PROCESS)

@@ -87,13 +87,24 @@ void WebProcessConnection::removePluginControllerProxy(PluginControllerProxy* pl
 
 void WebProcessConnection::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
-    PluginControllerProxy* pluginControllerProxy = m_pluginControllers.get(arguments->destinationID());
-    pluginControllerProxy->didReceivePluginControllerProxyMessage(connection, messageID, arguments);
+    if (!arguments->destinationID()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    
+    if (PluginControllerProxy* pluginControllerProxy = m_pluginControllers.get(arguments->destinationID()))
+        pluginControllerProxy->didReceivePluginControllerProxyMessage(connection, messageID, arguments);
 }
 
 CoreIPC::SyncReplyMode WebProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
 {
-    return didReceiveSyncWebProcessConnectionMessage(connection, messageID, arguments, reply);
+    if (!arguments->destinationID())
+        return didReceiveSyncWebProcessConnectionMessage(connection, messageID, arguments, reply);
+    
+    if (PluginControllerProxy* pluginControllerProxy = m_pluginControllers.get(arguments->destinationID()))
+        return pluginControllerProxy->didReceiveSyncPluginControllerProxyMessage(connection, messageID, arguments, reply);
+
+    return CoreIPC::AutomaticReply;
 }
 
 void WebProcessConnection::didClose(CoreIPC::Connection*)

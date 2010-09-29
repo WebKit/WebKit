@@ -53,6 +53,7 @@ public:
     void destroy();
 
     void didReceivePluginControllerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    CoreIPC::SyncReplyMode didReceiveSyncPluginControllerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
 
 private:
     PluginControllerProxy(WebProcessConnection* connection, uint64_t pluginInstanceID);
@@ -74,6 +75,16 @@ private:
 
     // Message handlers.
     void geometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, const SharedMemory::Handle& backingStoreHandle);
+    void handleMouseEvent(const WebMouseEvent&, bool& handled);
+    void handleWheelEvent(const WebWheelEvent&, bool& handled);
+    void handleMouseEnterEvent(const WebMouseEvent&, bool& handled);
+    void handleMouseLeaveEvent(const WebMouseEvent&, bool& handled);
+    void setFocus(bool);
+#if PLATFORM(MAC)
+    void windowFocusChanged(bool);
+    void windowFrameChanged(const WebCore::IntRect&);
+    void windowVisibilityChanged(bool);
+#endif
 
     WebProcessConnection* m_connection;
     uint64_t m_pluginInstanceID;

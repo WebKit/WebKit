@@ -23,8 +23,34 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 messages -> PluginControllerProxy {
-    # Called when the plug-in geometry changes.
+    # Sent when the plug-in geometry changes.
     GeometryDidChange(WebCore::IntRect frameRect, WebCore::IntRect clipRect, WebKit::SharedMemory::Handle backingStoreHandle)
+
+    # Sent when a mouse event (that isn't a mouse enter/leave event or a wheel event) should be processed.
+    HandleMouseEvent(WebKit::WebMouseEvent mouseEvent) -> (bool handled)
+    
+    # Sent when a mouse wheel event should be processed.
+    HandleWheelEvent(WebKit::WebWheelEvent wheelEvent) -> (bool handled)
+
+    # Sent when a mouse enter event should be processed.
+    HandleMouseEnterEvent(WebKit::WebMouseEvent mouseEvent) -> (bool handled)
+    
+    # Sent when a mouse leave event should be processed.
+    HandleMouseLeaveEvent(WebKit::WebMouseEvent mouseEvent) -> (bool handled)
+
+    # Sent when the plug-in focus changes.
+    SetFocus(bool isFocused)
+
+#if PLATFORM(MAC)
+    # Sent when the containing NSWindow's focus changes
+    WindowFocusChanged(bool hasFocus)
+
+    # Sent when the containing NSWindow's frame changes
+    WindowFrameChanged(WebCore::IntRect windowFrame)
+
+    # Sent when the containing NSWindow's visibility changes
+    WindowVisibilityChanged(bool isVisible)
+#endif
 }
 
 #endif
