@@ -1,3 +1,23 @@
+2010-09-28  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        [Chromium] animations/opacity-transform-animation.html fails on Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=46557
+        
+        Make transition from .7 opacity to 1.0 (instead of .8 to .9). The
+        mid-point (where the pixel dump is done) is the same, but the overall
+        change is more obvious, so failures are more noticeable.
+        
+        Update Chromium baselines (it has a slightly different intermediate
+        color; (38, 109, 0) vs. (32, 110, 0) for the Mac port, albeit one which
+        agrees with the expected interpolated value better).
+
+        * animations/opacity-transform-animation.html:
+        * platform/chromium/animations/opacity-transform-animation-expected.checksum: Added.
+        * platform/chromium/animations/opacity-transform-animation-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-09-28  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; update test expectations.
