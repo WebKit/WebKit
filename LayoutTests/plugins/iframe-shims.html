@@ -20,6 +20,14 @@
         return f;
     }
 
+    function makePluginElementWithHigherZIndex()
+    {
+        var f = makePluginElement();
+        f.style.zIndex = 1000;
+        f.style.position = 'relative';
+        return f;
+    }
+
     function makeIframeDiv()
     {
         var i = document.createElement('iframe');
@@ -109,11 +117,22 @@
             pluginDivZ = 100;
             overlayDivZIframe = 100;
             overlayDivZOverlay = 100;
+        } else if (tags.pluginExplicitHigherZIndex) {
+            // For this test case we set the z-index for the iframe and the overlay
+            // to be lower than the plugin.
+            overlayDivZIframe = 100;
+            overlayDivZOverlay = 0;
         }
 
         var appendPlugin = function()
         {
-            var pd = makePluginElement();
+            var pd;
+            if (tags.pluginExplicitHigherZIndex) {
+                pd = makePluginElementWithHigherZIndex();
+            } else {
+                pd = makePluginElement();
+            }
+
             if (tags.pluginInsideDiv || pluginDivZ) {
                 var parentdiv = document.createElement('div');
                 parentdiv.appendChild(pd)
@@ -127,7 +146,6 @@
             } else {
                 if (!tags.pluginNorelative)
                     pd.style.position = 'relative';
-
                 root.appendChild(pd);
             }
         };
@@ -184,7 +202,7 @@
         addCase(1, 3, {'overlayEarlier':1, 'pluginNorelative':1, 'pluginInsideDiv':1, expect:'overlay OVER'});
         addCase(2, 3, {'pluginNorelative':1, 'pluginInsideDiv':1, expect:'overlay OVER'});
         addCase(3, 3, {'pluginLowerz':1, 'overlayOnTimeout':1, expect:'overlay OVER'});
-
+        addCase(4, 0, {'pluginExplicitHigherZIndex': 1, 'pluginNorelative': 1, 'pluginInsideDiv': 1, 'overlayInsideDiv': 1, expect: 'overlay UNDER' });
         runTest();
     }
 

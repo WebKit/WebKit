@@ -1,3 +1,23 @@
+2010-09-29  Anantanarayanan G Iyengar  <ananta@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Honor z-index specified by a plugin
+        https://bugs.webkit.org/show_bug.cgi?id=46223
+        
+        The Chromium plugin code which implements the iframe shim technique
+        for overlaying a windowed plugin with content on the page should
+        honor the z-index specified on the plugin widget. If the z-index
+        here is greater than the enclosing iframe shim then the plugin
+        should be displayed over the iframe. Updated the layout test to test
+        for this case. Skipped the plugins/iframe-shims.html layout test on
+        platforms which don't support it.
+
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * plugins/iframe-shims.html:
+
 2010-09-29  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, updated baselines of
