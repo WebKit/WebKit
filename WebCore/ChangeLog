@@ -1,3 +1,20 @@
+2010-09-29  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        build still broken since r68521
+        https://bugs.webkit.org/show_bug.cgi?id=46795
+
+        Call make-values.pl once only. It seems calling it multiple times
+        in the same build produces a wrong CSSValueKeywordsHash.h which
+        has a duplicate declaration of its valueList variable. The double
+        call is triggered by the double targets in the Makefile rules and
+        makevalues.pl generates one of them, which screws up the build. A
+        more proper fix should be done with the advices on
+        http://www.cmcrossroads.com/cm-basics/12905-rules-with-multiple-outputs-in-gnu-make
+
+        * GNUmakefile.am:
+
 2010-09-29  João Paulo Rechi Vita  <jprvita@profusion.mobi>
 
         Unreviewed build fix.
