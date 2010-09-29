@@ -1,3 +1,14 @@
+2010-09-29  João Paulo Rechi Vita  <jprvita@profusion.mobi>
+
+        Unreviewed build fix.
+
+        Fix CMake build for ENABLE_PROGRESS_TAG.
+        https://bugs.webkit.org/show_bug.cgi?id=46808
+
+        No new tests since it's a build fix.
+
+        * CMakeLists.txt:
+
 2010-09-29  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

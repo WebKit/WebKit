@@ -1920,6 +1920,12 @@ IF (ENABLE_WML)
     )
 ENDIF()
 
+IF (ENABLE_PROGRESS_TAG)
+    LIST(APPEND WebCore_SOURCES
+        accessibility/AccessibilityProgressIndicator.cpp
+    )
+ENDIF ()
+
 SET(IDL_INCLUDES "")
 FOREACH (_include ${WebCore_IDL_INCLUDES})
     LIST(APPEND IDL_INCLUDES --include=${WEBCORE_DIR}/${_include})
