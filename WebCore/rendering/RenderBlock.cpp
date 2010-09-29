@@ -1207,7 +1207,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, int pageHeight)
         layoutBlockChildren(relayoutChildren, maxFloatBottom);
 
     // Expand our intrinsic height to encompass floats.
-    int toAdd = borderAfter() + paddingAfter() + horizontalScrollbarHeight(); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=46645, overflow and block-flow.
+    int toAdd = borderAfter() + paddingAfter() + scrollbarLogicalHeight();
     if (floatBottom() > (logicalHeight() - toAdd) && expandsToEncloseOverhangingFloats())
         setLogicalHeight(floatBottom() + toAdd);
     
@@ -1713,7 +1713,7 @@ void RenderBlock::setCollapsedBottomMargin(const MarginInfo& marginInfo)
     }
 }
 
-void RenderBlock::handleBottomOfBlock(int top, int bottom, MarginInfo& marginInfo)
+void RenderBlock::handleAfterSideOfBlock(int top, int bottom, MarginInfo& marginInfo)
 {
     marginInfo.setAtAfterSideOfBlock(true);
 
@@ -1753,16 +1753,18 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatBottom
         }
     }
 
-    int top = borderTop() + paddingTop();
-    int bottom = borderBottom() + paddingBottom() + horizontalScrollbarHeight();
+    int beforeEdge = borderBefore() + paddingBefore();
+    int afterEdge = borderAfter() + paddingAfter() + scrollbarLogicalHeight();
 
-    setLogicalHeight(top);
+    setLogicalHeight(beforeEdge);
 
     // The margin struct caches all our current margin collapsing state.  The compact struct caches state when we encounter compacts,
-    MarginInfo marginInfo(this, top, bottom);
+    MarginInfo marginInfo(this, beforeEdge, afterEdge);
 
     // Fieldsets need to find their legend and position it inside the border of the object.
     // The legend then gets skipped during normal layout.
+    // FIXME: Make fieldsets work with block-flow.
+    // https://bugs.webkit.org/show_bug.cgi?id=46785
     RenderObject* legend = layoutLegend(relayoutChildren);
 
     int previousFloatBottom = 0;
@@ -1780,11 +1782,11 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatBottom
         // Make sure we layout children if they need it.
         // FIXME: Technically percentage height objects only need a relayout if their percentage isn't going to be turned into
         // an auto value.  Add a method to determine this, so that we can avoid the relayout.
-        if (relayoutChildren || ((child->style()->height().isPercent() || child->style()->minHeight().isPercent() || child->style()->maxHeight().isPercent()) && !isRenderView()))
+        if (relayoutChildren || ((child->style()->logicalHeight().isPercent() || child->style()->logicalMinHeight().isPercent() || child->style()->logicalMaxHeight().isPercent()) && !isRenderView()))
             child->setChildNeedsLayout(true, false);
 
-        // If relayoutChildren is set and we have percentage padding, we also need to invalidate the child's pref widths.
-        if (relayoutChildren && (child->style()->paddingLeft().isPercent() || child->style()->paddingRight().isPercent()))
+        // If relayoutChildren is set and the child has percentage padding, we also need to invalidate the child's pref widths.
+        if (relayoutChildren && (child->style()->paddingStart().isPercent() || child->style()->paddingEnd().isPercent()))
             child->setPreferredLogicalWidthsDirty(true, false);
 
         // Handle the four types of special elements first.  These include positioned content, floating content, compacts and
@@ -1798,7 +1800,7 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatBottom
     
     // Now do the handling of the bottom of the block, adding in our bottom border/padding and
     // determining the correct collapsed bottom margin information.
-    handleBottomOfBlock(top, bottom, marginInfo);
+    handleAfterSideOfBlock(beforeEdge, afterEdge, marginInfo);
 }
 
 void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, int& previousFloatBottom, int& maxFloatBottom)

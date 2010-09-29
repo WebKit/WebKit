@@ -568,7 +568,7 @@ private:
     int clearFloatsIfNeeded(RenderBox* child, MarginInfo&, int oldTopPosMargin, int oldTopNegMargin, int yPos);
     int estimateVerticalPosition(RenderBox* child, const MarginInfo&);
     void determineHorizontalPosition(RenderBox* child);
-    void handleBottomOfBlock(int top, int bottom, MarginInfo&);
+    void handleAfterSideOfBlock(int top, int bottom, MarginInfo&);
     void setCollapsedBottomMargin(const MarginInfo&);
     // End helper functions and structs used by layoutBlockChildren.
 
