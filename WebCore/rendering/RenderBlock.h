@@ -194,21 +194,21 @@ protected:
     }
     void moveChildrenTo(RenderBlock* to, RenderObject* startChild, RenderObject* endChild, RenderObject* beforeChild, bool fullRemoveInsert = false);
     
-    int maxTopPosMargin() const { return m_rareData ? m_rareData->m_topPos : RenderBlockRareData::topPosDefault(this); }
-    int maxTopNegMargin() const { return m_rareData ? m_rareData->m_topNeg : RenderBlockRareData::topNegDefault(this); }
-    int maxBottomPosMargin() const { return m_rareData ? m_rareData->m_bottomPos : RenderBlockRareData::bottomPosDefault(this); }
-    int maxBottomNegMargin() const { return m_rareData ? m_rareData->m_bottomNeg : RenderBlockRareData::bottomNegDefault(this); }
+    int maxPosMarginBefore() const { return m_rareData ? m_rareData->m_beforePos : RenderBlockRareData::beforePosDefault(this); }
+    int maxNegMarginBefore() const { return m_rareData ? m_rareData->m_beforeNeg : RenderBlockRareData::beforeNegDefault(this); }
+    int maxPosMarginAfter() const { return m_rareData ? m_rareData->m_afterPos : RenderBlockRareData::afterPosDefault(this); }
+    int maxNegMarginAfter() const { return m_rareData ? m_rareData->m_afterNeg : RenderBlockRareData::afterNegDefault(this); }
     
-    void setMaxTopMargins(int pos, int neg);
-    void setMaxBottomMargins(int pos, int neg);
+    void setMaxMarginBeforeValues(int pos, int neg);
+    void setMaxMarginAfterValues(int pos, int neg);
 
     void initMaxMarginValues()
     {
         if (m_rareData) {
-            m_rareData->m_topPos = RenderBlockRareData::topPosDefault(this);
-            m_rareData->m_topNeg = RenderBlockRareData::topNegDefault(this);
-            m_rareData->m_bottomPos = RenderBlockRareData::bottomPosDefault(this);
-            m_rareData->m_bottomNeg = RenderBlockRareData::bottomNegDefault(this);
+            m_rareData->m_beforePos = RenderBlockRareData::beforePosDefault(this);
+            m_rareData->m_beforeNeg = RenderBlockRareData::beforeNegDefault(this);
+            m_rareData->m_afterPos = RenderBlockRareData::afterPosDefault(this);
+            m_rareData->m_afterNeg = RenderBlockRareData::afterNegDefault(this);
             m_rareData->m_paginationStrut = 0;
         }
     }
@@ -284,8 +284,14 @@ private:
     
     virtual bool isSelfCollapsingBlock() const;
 
-    virtual int maxTopMargin(bool positive) const { return positive ? maxTopPosMargin() : maxTopNegMargin(); }
-    virtual int maxBottomMargin(bool positive) const { return positive ? maxBottomPosMargin() : maxBottomNegMargin(); }
+    virtual int maxMarginBefore(MarginSign sign) const
+    { 
+        return (sign == PositiveMargin) ? maxPosMarginBefore() : maxNegMarginBefore();
+    }
+    virtual int maxMarginAfter(MarginSign sign) const
+    {
+        return (sign == PositiveMargin) ? maxPosMarginAfter() : maxNegMarginAfter();
+    }
 
     virtual void repaintOverhangingFloats(bool paintAllDescendants);
 
@@ -586,25 +592,38 @@ private:
 
     // Allocated only when some of these fields have non-default values
     struct RenderBlockRareData : Noncopyable {
-        RenderBlockRareData(const RenderBlock* o) 
-            : m_topPos(topPosDefault(o))
-            , m_topNeg(topNegDefault(o))
-            , m_bottomPos(bottomPosDefault(o))
-            , m_bottomNeg(bottomNegDefault(o))
+        RenderBlockRareData(const RenderBlock* block) 
+            : m_beforePos(beforePosDefault(block))
+            , m_beforeNeg(beforeNegDefault(block))
+            , m_afterPos(afterPosDefault(block))
+            , m_afterNeg(afterNegDefault(block))
             , m_paginationStrut(0)
             , m_pageY(0)
         { 
         }
 
-        static int topPosDefault(const RenderBlock* o) { return o->marginTop() > 0 ? o->marginTop() : 0; }
-        static int topNegDefault(const RenderBlock* o) { return o->marginTop() < 0 ? -o->marginTop() : 0; }
-        static int bottomPosDefault(const RenderBlock* o) { return o->marginBottom() > 0 ? o->marginBottom() : 0; }
-        static int bottomNegDefault(const RenderBlock* o) { return o->marginBottom() < 0 ? -o->marginBottom() : 0; }
+        static int beforePosDefault(const RenderBlock* block)
+        { 
+            return std::max(block->marginBefore(), 0);
+        }
         
-        int m_topPos;
-        int m_topNeg;
-        int m_bottomPos;
-        int m_bottomNeg;
+        static int beforeNegDefault(const RenderBlock* block)
+        { 
+            return std::max(-block->marginBefore(), 0);
+        }
+        static int afterPosDefault(const RenderBlock* block)
+        {
+            return std::max(block->marginAfter(), 0);
+        }
+        static int afterNegDefault(const RenderBlock* block)
+        {
+            return std::max(-block->marginAfter(), 0);
+        }
+        
+        int m_beforePos;
+        int m_beforeNeg;
+        int m_afterPos;
+        int m_afterNeg;
         int m_paginationStrut;
         int m_pageY;
      };

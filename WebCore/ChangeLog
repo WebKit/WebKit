@@ -1,3 +1,53 @@
+2010-09-28  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46780
+        
+        Rename the pos/neg/collapsed margin methods.  Rename all the members of the RenderBlockRareData struct.
+        No logical changes.  Just renames.
+
+        * editing/TextIterator.cpp:
+        (WebCore::shouldEmitExtraNewlineForNode):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::MarginInfo::MarginInfo):
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::collapseMargins):
+        (WebCore::RenderBlock::clearFloatsIfNeeded):
+        (WebCore::RenderBlock::estimateVerticalPosition):
+        (WebCore::RenderBlock::setCollapsedBottomMargin):
+        (WebCore::RenderBlock::layoutBlockChild):
+        (WebCore::RenderBlock::paintChildren):
+        (WebCore::RenderBlock::lowestPosition):
+        (WebCore::RenderBlock::setMaxMarginBeforeValues):
+        (WebCore::RenderBlock::setMaxMarginAfterValues):
+        (WebCore::RenderBlock::absoluteRects):
+        (WebCore::RenderBlock::absoluteQuads):
+        (WebCore::RenderBlock::rectWithOutlineForRepaint):
+        (WebCore::RenderBlock::addFocusRingRects):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::maxPosMarginBefore):
+        (WebCore::RenderBlock::maxNegMarginBefore):
+        (WebCore::RenderBlock::maxPosMarginAfter):
+        (WebCore::RenderBlock::maxNegMarginAfter):
+        (WebCore::RenderBlock::initMaxMarginValues):
+        (WebCore::RenderBlock::maxMarginBefore):
+        (WebCore::RenderBlock::maxMarginAfter):
+        (WebCore::RenderBlock::RenderBlockRareData::RenderBlockRareData):
+        (WebCore::RenderBlock::RenderBlockRareData::beforePosDefault):
+        (WebCore::RenderBlock::RenderBlockRareData::beforeNegDefault):
+        (WebCore::RenderBlock::RenderBlockRareData::afterPosDefault):
+        (WebCore::RenderBlock::RenderBlockRareData::afterNegDefault):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeLogicalHeight):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::collapsedMarginBefore):
+        (WebCore::RenderBox::collapsedMarginAfter):
+        (WebCore::RenderBox::maxMarginBefore):
+        (WebCore::RenderBox::maxMarginAfter):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+
 2010-09-28  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] wxMSW build fix. Don't use multiple inheritance in PopupMenuWx to avoid debug build

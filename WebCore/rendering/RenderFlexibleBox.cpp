@@ -258,14 +258,14 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int /*pageHeight FIXM
         // bottom margin max values to 0.  This way we don't factor in the values
         // twice when we collapse with our previous vertically adjacent and
         // following vertically adjacent blocks.
-        int pos = maxTopPosMargin();
-        int neg = maxTopNegMargin();
-        if (maxBottomPosMargin() > pos)
-            pos = maxBottomPosMargin();
-        if (maxBottomNegMargin() > neg)
-            neg = maxBottomNegMargin();
-        setMaxTopMargins(pos, neg);
-        setMaxBottomMargins(0, 0);
+        int pos = maxPosMarginBefore();
+        int neg = maxNegMarginBefore();
+        if (maxPosMarginAfter() > pos)
+            pos = maxPosMarginAfter();
+        if (maxNegMarginAfter() > neg)
+            neg = maxNegMarginAfter();
+        setMaxMarginBeforeValues(pos, neg);
+        setMaxMarginAfterValues(0, 0);
     }
     
     // Add in the overflow from children.

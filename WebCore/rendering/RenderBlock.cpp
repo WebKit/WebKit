@@ -104,8 +104,8 @@ RenderBlock::MarginInfo::MarginInfo(RenderBlock* block, int beforeBorderPadding,
     m_quirkContainer = block->isTableCell() || block->isBody() || block->style()->marginBeforeCollapse() == MDISCARD || 
         block->style()->marginAfterCollapse() == MDISCARD;
 
-    m_posMargin = m_canCollapseMarginBeforeWithChildren ? block->maxTopMargin(true) : 0;
-    m_negMargin = m_canCollapseMarginBeforeWithChildren ? block->maxTopMargin(false) : 0;
+    m_posMargin = m_canCollapseMarginBeforeWithChildren ? block->maxMarginBefore(RenderBox::PositiveMargin) : 0;
+    m_negMargin = m_canCollapseMarginBeforeWithChildren ? block->maxMarginBefore(RenderBox::NegativeMargin) : 0;
 }
 
 // -------------------------------------------------------------------------------------------------------
@@ -1182,7 +1182,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, int pageHeight)
         if (n && n->hasTagName(formTag) && static_cast<HTMLFormElement*>(n)->isMalformed()) {
             // See if this form is malformed (i.e., unclosed). If so, don't give the form
             // a bottom margin.
-            setMaxBottomMargins(0, 0);
+            setMaxMarginAfterValues(0, 0);
         }
         
         setPaginationStrut(0);
@@ -1467,14 +1467,14 @@ bool RenderBlock::handleRunInChild(RenderBox* child)
 int RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo)
 {
     // Get our max pos and neg top margins.
-    int posTop = child->maxTopMargin(true);
-    int negTop = child->maxTopMargin(false);
+    int posTop = child->maxMarginBefore(PositiveMargin);
+    int negTop = child->maxMarginBefore(NegativeMargin);
 
     // For self-collapsing blocks, collapse our bottom margins into our
     // top to get new posTop and negTop values.
     if (child->isSelfCollapsingBlock()) {
-        posTop = max(posTop, child->maxBottomMargin(true));
-        negTop = max(negTop, child->maxBottomMargin(false));
+        posTop = max(posTop, child->maxMarginAfter(PositiveMargin));
+        negTop = max(negTop, child->maxMarginAfter(NegativeMargin));
     }
     
     // See if the top margin is quirky. We only care if this child has
@@ -1486,7 +1486,7 @@ int RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo)
         // block.  If it has larger margin values, then we need to update
         // our own maximal values.
         if (!document()->inQuirksMode() || !marginInfo.quirkContainer() || !topQuirk)
-            setMaxTopMargins(max(posTop, maxTopPosMargin()), max(negTop, maxTopNegMargin()));
+            setMaxMarginBeforeValues(max(posTop, maxPosMarginBefore()), max(negTop, maxNegMarginBefore()));
 
         // The minute any of the margins involved isn't a quirk, don't
         // collapse it away, even if the margin is smaller (www.webreference.com
@@ -1515,14 +1515,14 @@ int RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo)
         // This child has no height.  We need to compute our
         // position before we collapse the child's margins together,
         // so that we can get an accurate position for the zero-height block.
-        int collapsedTopPos = max(marginInfo.posMargin(), child->maxTopMargin(true));
-        int collapsedTopNeg = max(marginInfo.negMargin(), child->maxTopMargin(false));
+        int collapsedTopPos = max(marginInfo.posMargin(), child->maxMarginBefore(PositiveMargin));
+        int collapsedTopNeg = max(marginInfo.negMargin(), child->maxMarginBefore(NegativeMargin));
         marginInfo.setMargin(collapsedTopPos, collapsedTopNeg);
         
         // Now collapse the child's margins together, which means examining our
         // bottom margin values as well. 
-        marginInfo.setPosMarginIfLarger(child->maxBottomMargin(true));
-        marginInfo.setNegMarginIfLarger(child->maxBottomMargin(false));
+        marginInfo.setPosMarginIfLarger(child->maxMarginAfter(PositiveMargin));
+        marginInfo.setNegMarginIfLarger(child->maxMarginAfter(NegativeMargin));
 
         if (!marginInfo.canCollapseWithMarginBefore())
             // We need to make sure that the position of the self-collapsing block
@@ -1545,8 +1545,8 @@ int RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo)
             ypos = height();
         }
 
-        marginInfo.setPosMargin(child->maxBottomMargin(true));
-        marginInfo.setNegMargin(child->maxBottomMargin(false));
+        marginInfo.setPosMargin(child->maxMarginAfter(PositiveMargin));
+        marginInfo.setNegMargin(child->maxMarginAfter(NegativeMargin));
 
         if (marginInfo.margin())
             marginInfo.setMarginAfterQuirk(child->isBottomMarginQuirk() || style()->marginAfterCollapse() == MDISCARD);
@@ -1583,11 +1583,11 @@ int RenderBlock::clearFloatsIfNeeded(RenderBox* child, MarginInfo& marginInfo, i
                 atBottomOfBlock = false;
         }
         if (atBottomOfBlock) {
-            marginInfo.setPosMargin(child->maxBottomMargin(true));
-            marginInfo.setNegMargin(child->maxBottomMargin(false));
+            marginInfo.setPosMargin(child->maxMarginAfter(PositiveMargin));
+            marginInfo.setNegMargin(child->maxMarginAfter(NegativeMargin));
         } else {
-            marginInfo.setPosMargin(max(child->maxTopMargin(true), child->maxBottomMargin(true)));
-            marginInfo.setNegMargin(max(child->maxTopMargin(false), child->maxBottomMargin(false)));
+            marginInfo.setPosMargin(max(child->maxMarginBefore(PositiveMargin), child->maxMarginAfter(PositiveMargin)));
+            marginInfo.setNegMargin(max(child->maxMarginBefore(NegativeMargin), child->maxMarginAfter(NegativeMargin)));
         }
         
         // Adjust our height such that we are ready to be collapsed with subsequent siblings (or the bottom
@@ -1603,7 +1603,7 @@ int RenderBlock::clearFloatsIfNeeded(RenderBox* child, MarginInfo& marginInfo, i
         // FIXME: This isn't quite correct.  Need clarification for what to do
         // if the height the cleared block is offset by is smaller than the
         // margins involved.
-        setMaxTopMargins(oldTopPosMargin, oldTopNegMargin);
+        setMaxMarginBeforeValues(oldTopPosMargin, oldTopNegMargin);
         marginInfo.setAtBeforeSideOfBlock(false);
     }
     
@@ -1616,7 +1616,7 @@ int RenderBlock::estimateVerticalPosition(RenderBox* child, const MarginInfo& ma
     // relayout if there are intruding floats.
     int yPosEstimate = height();
     if (!marginInfo.canCollapseWithMarginBefore()) {
-        int childMarginTop = child->selfNeedsLayout() ? child->marginTop() : child->collapsedMarginTop();
+        int childMarginTop = child->selfNeedsLayout() ? child->marginTop() : child->collapsedMarginBefore();
         yPosEstimate += max(marginInfo.margin(), childMarginTop);
     }
     
@@ -1700,7 +1700,7 @@ void RenderBlock::setCollapsedBottomMargin(const MarginInfo& marginInfo)
     if (marginInfo.canCollapseWithMarginAfter() && !marginInfo.canCollapseWithMarginBefore()) {
         // Update our max pos/neg bottom margins, since we collapsed our bottom margins
         // with our children.
-        setMaxBottomMargins(max(maxBottomPosMargin(), marginInfo.posMargin()), max(maxBottomNegMargin(), marginInfo.negMargin()));
+        setMaxMarginAfterValues(max(maxPosMarginAfter(), marginInfo.posMargin()), max(maxNegMarginAfter(), marginInfo.negMargin()));
 
         if (!marginInfo.marginAfterQuirk())
             setBottomMarginQuirk(false);
@@ -1803,8 +1803,8 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatBottom
 
 void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, int& previousFloatBottom, int& maxFloatBottom)
 {
-    int oldTopPosMargin = maxTopPosMargin();
-    int oldTopNegMargin = maxTopNegMargin();
+    int oldTopPosMargin = maxPosMarginBefore();
+    int oldTopNegMargin = maxNegMarginBefore();
 
     // The child is a normal flow object.  Compute its vertical margins now.
     child->computeBlockDirectionMargins(this);
@@ -2252,7 +2252,7 @@ void RenderBlock::paintChildren(PaintInfo& paintInfo, int tx, int ty)
         if (checkAfterAlways
             && (ty + child->y() + child->height()) > paintInfo.rect.y()
             && (ty + child->y() + child->height()) < paintInfo.rect.bottom()) {
-            view()->setBestTruncatedAt(ty + child->y() + child->height() + max(0, child->collapsedMarginBottom()), this, true);
+            view()->setBestTruncatedAt(ty + child->y() + child->height() + max(0, child->collapsedMarginAfter()), this, true);
             return;
         }
     }
@@ -3393,7 +3393,7 @@ int RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) 
             while (currBox && currBox->isFloatingOrPositioned())
                 currBox = currBox->previousSiblingBox();
             if (currBox) {
-                int childBottomEdge = currBox->y() + currBox->height() + currBox->collapsedMarginBottom();
+                int childBottomEdge = currBox->y() + currBox->height() + currBox->collapsedMarginAfter(); // FIXME: "after" is wrong here for lowestPosition.
                 bottom = max(bottom, childBottomEdge + paddingBottom() + relativeOffset);
             }
         }
@@ -5587,26 +5587,26 @@ void RenderBlock::clearTruncation()
     }
 }
 
-void RenderBlock::setMaxTopMargins(int pos, int neg)
+void RenderBlock::setMaxMarginBeforeValues(int pos, int neg)
 {
     if (!m_rareData) {
-        if (pos == RenderBlockRareData::topPosDefault(this) && neg == RenderBlockRareData::topNegDefault(this))
+        if (pos == RenderBlockRareData::beforePosDefault(this) && neg == RenderBlockRareData::beforeNegDefault(this))
             return;
         m_rareData = new RenderBlockRareData(this);
     }
-    m_rareData->m_topPos = pos;
-    m_rareData->m_topNeg = neg;
+    m_rareData->m_beforePos = pos;
+    m_rareData->m_beforeNeg = neg;
 }
 
-void RenderBlock::setMaxBottomMargins(int pos, int neg)
+void RenderBlock::setMaxMarginAfterValues(int pos, int neg)
 {
     if (!m_rareData) {
-        if (pos == RenderBlockRareData::bottomPosDefault(this) && neg == RenderBlockRareData::bottomNegDefault(this))
+        if (pos == RenderBlockRareData::afterPosDefault(this) && neg == RenderBlockRareData::afterNegDefault(this))
             return;
         m_rareData = new RenderBlockRareData(this);
     }
-    m_rareData->m_bottomPos = pos;
-    m_rareData->m_bottomNeg = neg;
+    m_rareData->m_afterPos = pos;
+    m_rareData->m_afterNeg = neg;
 }
 
 void RenderBlock::setPaginationStrut(int strut)
@@ -5635,8 +5635,10 @@ void RenderBlock::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
     // inline boxes above and below us (thus getting merged with them to form a single irregular
     // shape).
     if (isAnonymousBlockContinuation()) {
-        rects.append(IntRect(tx, ty - collapsedMarginTop(),
-                             width(), height() + collapsedMarginTop() + collapsedMarginBottom()));
+        // FIXME: This is wrong for block-flows that are horizontal.
+        // https://bugs.webkit.org/show_bug.cgi?id=46781
+        rects.append(IntRect(tx, ty - collapsedMarginBefore(),
+                             width(), height() + collapsedMarginBefore() + collapsedMarginAfter()));
         continuation()->absoluteRects(rects,
                                       tx - x() + inlineElementContinuation()->containingBlock()->x(),
                                       ty - y() + inlineElementContinuation()->containingBlock()->y());
@@ -5650,8 +5652,10 @@ void RenderBlock::absoluteQuads(Vector<FloatQuad>& quads)
     // inline boxes above and below us (thus getting merged with them to form a single irregular
     // shape).
     if (isAnonymousBlockContinuation()) {
-        FloatRect localRect(0, -collapsedMarginTop(),
-                            width(), height() + collapsedMarginTop() + collapsedMarginBottom());
+        // FIXME: This is wrong for block-flows that are horizontal.
+        // https://bugs.webkit.org/show_bug.cgi?id=46781
+        FloatRect localRect(0, -collapsedMarginBefore(),
+                            width(), height() + collapsedMarginBefore() + collapsedMarginAfter());
         quads.append(localToAbsoluteQuad(localRect));
         continuation()->absoluteQuads(quads);
     } else
@@ -5662,7 +5666,7 @@ IntRect RenderBlock::rectWithOutlineForRepaint(RenderBoxModelObject* repaintCont
 {
     IntRect r(RenderBox::rectWithOutlineForRepaint(repaintContainer, outlineWidth));
     if (isAnonymousBlockContinuation())
-        r.inflateY(collapsedMarginTop());
+        r.inflateY(collapsedMarginBefore()); // FIXME: This is wrong for block-flows that are horizontal.
     return r;
 }
 
@@ -5798,9 +5802,11 @@ void RenderBlock::addFocusRingRects(Vector<IntRect>& rects, int tx, int ty)
         // FIXME: This check really isn't accurate. 
         bool nextInlineHasLineBox = inlineElementContinuation()->firstLineBox();
         // FIXME: This is wrong. The principal renderer may not be the continuation preceding this block.
+        // FIXME: This is wrong for block-flows that are horizontal.
+        // https://bugs.webkit.org/show_bug.cgi?id=46781
         bool prevInlineHasLineBox = toRenderInline(inlineElementContinuation()->node()->renderer())->firstLineBox(); 
-        int topMargin = prevInlineHasLineBox ? collapsedMarginTop() : 0;
-        int bottomMargin = nextInlineHasLineBox ? collapsedMarginBottom() : 0;
+        int topMargin = prevInlineHasLineBox ? collapsedMarginBefore() : 0;
+        int bottomMargin = nextInlineHasLineBox ? collapsedMarginAfter() : 0;
         IntRect rect(tx, ty - topMargin, width(), height() + topMargin + bottomMargin);
         if (!rect.isEmpty())
             rects.append(rect);

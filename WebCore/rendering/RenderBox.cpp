@@ -1729,7 +1729,7 @@ void RenderBox::computeLogicalHeight()
     if (stretchesToViewHeight() || paginatedContentNeedsBaseHeight) {
         // FIXME: Finish accounting for block flow here.
         // https://bugs.webkit.org/show_bug.cgi?id=46603
-        int margins = collapsedMarginTop() + collapsedMarginBottom();
+        int margins = collapsedMarginBefore() + collapsedMarginAfter();
         int visHeight;
         if (document()->printing())
             visHeight = static_cast<int>(view()->pageHeight());
