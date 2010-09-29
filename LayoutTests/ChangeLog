@@ -1,3 +1,15 @@
+2010-09-29  James Kozianski  <koz@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Update test_expectations.txt from the flakiness dashboard.
+        https://bugs.webkit.org/show_bug.cgi?id=46787
+
+        Updates some canvas/philip tests in test_expectations.txt that have
+        started passing on the flakiness dashboard.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed fix after r68568. Add Qt specific expected files for passing tests.
