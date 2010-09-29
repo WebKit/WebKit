@@ -58,7 +58,9 @@
 
 // FIXME: check the proper way to reference an undefined thread ID
 const int UndefinedThreadIdentifier = 0xffffffff;
- 
+
+const unsigned MaxNodesToDeletePerQuantum = 10;
+
 namespace WebCore {
 
 PassRefPtr<CachedAudio> AudioContext::createAudioRequest(const String &url, bool mixToMono)
@@ -412,7 +414,7 @@ void AudioContext::addDeferredFinishDeref(AudioNode* node, AudioNode::RefType re
 void AudioContext::handlePostRenderTasks()
 {
     ASSERT(isAudioThread());
-    
+ 
     // Must use a tryLock() here too.  Don't worry, the lock will very rarely be contended and this method is called frequently.
     // The worst that can happen is that there will be some nodes which will take slightly longer than usual to be deleted or removed
     // from the render graph (in which case they'll render silence).
@@ -455,10 +457,15 @@ void AudioContext::deleteMarkedNodes()
     ASSERT(isGraphOwner() || isAudioThreadFinished());
 
     // Note: deleting an AudioNode can cause m_nodesToDelete to grow.
+    size_t nodesDeleted = 0;
     while (size_t n = m_nodesToDelete.size()) {
         AudioNode* node = m_nodesToDelete[n - 1];
         m_nodesToDelete.removeLast();
         delete node;
+
+        // Don't delete too many nodes per render quantum since we don't want to do too much work in the realtime audio thread.
+        if (++nodesDeleted > MaxNodesToDeletePerQuantum)
+            break;
     }
 }
 

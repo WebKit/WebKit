@@ -1,3 +1,16 @@
+2010-09-29  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Limit number of AudioNode deletions per render quantum in AudioContext
+        https://bugs.webkit.org/show_bug.cgi?id=46834
+
+        No new tests since audio API is not yet implemented.
+
+        * webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::handlePostRenderTasks):
+        (WebCore::AudioContext::deleteMarkedNodes):
+
 2010-09-29  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.
