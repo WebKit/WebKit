@@ -106,6 +106,11 @@ Credential CredentialStorage::get(const ProtectionSpace& protectionSpace)
     return protectionSpaceToCredentialMap().get(protectionSpace);
 }
 
+void CredentialStorage::remove(const ProtectionSpace& protectionSpace)
+{
+    protectionSpaceToCredentialMap().remove(protectionSpace);
+}
+
 static PathToDefaultProtectionSpaceMap::iterator findDefaultProtectionSpaceForURL(const KURL& url)
 {
     ASSERT(url.protocolInHTTPFamily());

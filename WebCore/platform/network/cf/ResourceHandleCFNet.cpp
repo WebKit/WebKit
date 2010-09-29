@@ -510,17 +510,25 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
         return;
     }
 
-    if (!challenge.previousFailureCount() && (!client() || client()->shouldUseCredentialStorage(this))) {
-        Credential credential = CredentialStorage::get(challenge.protectionSpace());
-        if (!credential.isEmpty() && credential != d->m_initialCredential) {
-            ASSERT(credential.persistence() == CredentialPersistenceNone);
-            if (challenge.failureResponse().httpStatusCode() == 401) {
-                // Store the credential back, possibly adding it as a default for this directory.
-                CredentialStorage::set(credential, challenge.protectionSpace(), d->m_request.url());
+    if (!client() || client()->shouldUseCredentialStorage(this)) {
+        if (!d->m_initialCredential.isEmpty() || challenge.previousFailureCount()) {
+            // The stored credential wasn't accepted, stop using it.
+            // There is a race condition here, since a different credential might have already been stored by another ResourceHandle,
+            // but the observable effect should be very minor, if any.
+            CredentialStorage::remove(challenge.protectionSpace());
+        }
+
+        if (!challenge.previousFailureCount()) {
+            Credential credential = CredentialStorage::get(challenge.protectionSpace());
+            if (!credential.isEmpty() && credential != d->m_initialCredential) {
+                ASSERT(credential.persistence() == CredentialPersistenceNone);
+                if (challenge.failureResponse().httpStatusCode() == 401) {
+                    // Store the credential back, possibly adding it as a default for this directory.
+                    CredentialStorage::set(credential, challenge.protectionSpace(), d->m_request.url());
+                }
+                [challenge.sender() useCredential:mac(credential) forAuthenticationChallenge:mac(challenge)];
+                return;
             }
-            RetainPtr<CFURLCredentialRef> cfCredential(AdoptCF, createCF(credential));
-            CFURLConnectionUseCredential(d->m_connection.get(), cfCredential.get(), challenge.cfURLAuthChallengeRef());
-            return;
         }
     }
 

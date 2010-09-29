@@ -1,5 +1,28 @@
 2010-09-29  Mark Rowe  <mrowe@apple.com>
 
+        Merge r63834.
+
+    2010-07-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42717
+        <rdar://problem/7062824> A wrong password entered for site or proxy auth remains in WebCore
+        credential storage, and is sent with subsequent requests
+
+        Tests: http/tests/security/401-logout/401-logout.php
+               http/tests/xmlhttprequest/remember-bad-password.html
+
+        * platform/network/CredentialStorage.cpp: (WebCore::CredentialStorage::remove):
+        * platform/network/CredentialStorage.h:
+        Added a way to remove stored credentials for a given protection space.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp: (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        * platform/network/mac/ResourceHandleMac.mm: (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        Remove stored credentials if they didn't work the first time.
+
+2010-09-29  Mark Rowe  <mrowe@apple.com>
+
         Merge r59185.
 
     2010-05-11  Alexey Proskuryakov  <ap@apple.com>
