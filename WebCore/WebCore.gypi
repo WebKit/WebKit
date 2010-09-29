@@ -2403,6 +2403,8 @@
             'platform/graphics/chromium/UniscribeHelper.h',
             'platform/graphics/chromium/UniscribeHelperTextRun.cpp',
             'platform/graphics/chromium/UniscribeHelperTextRun.h',
+            'platform/graphics/chromium/VideoFrameChromium.cpp',
+            'platform/graphics/chromium/VideoFrameChromium.h',
             'platform/graphics/chromium/VideoLayerChromium.cpp',
             'platform/graphics/chromium/VideoLayerChromium.h',
             'platform/graphics/chromium/VDMXParser.cpp',

@@ -49,15 +49,6 @@ const float VideoLayerChromium::yuv2RGB[9] = {
     1.403f, -.714f, 0.f,
 };
 
-// FIXME: These constants should be defined in a different file.
-const unsigned VideoFrameChromium::maxPlanes = 3;
-const unsigned VideoFrameChromium::numRGBPlanes = 1;
-const unsigned VideoFrameChromium::rgbPlane = 0;
-const unsigned VideoFrameChromium::numYUVPlanes = 3;
-const unsigned VideoFrameChromium::yPlane = 0;
-const unsigned VideoFrameChromium::uPlane = 1;
-const unsigned VideoFrameChromium::vPlane = 2;
-
 VideoLayerChromium::SharedValues::SharedValues(GraphicsContext3D* context)
     : m_context(context)
     , m_yuvShaderProgram(0)
