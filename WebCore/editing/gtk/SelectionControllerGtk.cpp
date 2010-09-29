@@ -41,6 +41,9 @@ void SelectionController::notifyAccessibilityForSelectionChange()
         int offset;
         // Always report the events w.r.t. the non-linked unignored parent. (i.e. ignoreLinks == true)
         AccessibilityObject* object = objectAndOffsetUnignored(accessibilityObject, offset, true);
+        if (!object)
+            return;
+
         AtkObject* wrapper = object->wrapper();
         if (ATK_IS_TEXT(wrapper)) {
             g_signal_emit_by_name(wrapper, "text-caret-moved", offset);

@@ -1032,7 +1032,8 @@ static gint webkit_accessible_text_get_caret_offset(AtkText* text)
 
     int offset;
     // Don't ignore links if the offset is being requested for a link.
-    objectAndOffsetUnignored(focusedObject, offset, !coreObject->isLink());
+    if (!objectAndOffsetUnignored(focusedObject, offset, !coreObject->isLink()))
+        return 0;
 
     // TODO: Verify this for RTL text.
     return offset;
@@ -2179,9 +2180,13 @@ AccessibilityObject* objectAndOffsetUnignored(AccessibilityObject* coreObject, i
     AccessibilityObject* realObject = coreObject;
     if (realObject->accessibilityIsIgnored())
         realObject = realObject->parentObjectUnignored();
+    if (!realObject)
+        return 0;
 
     if (ignoreLinks && realObject->isLink())
         realObject = realObject->parentObjectUnignored();
+    if (!realObject)
+        return 0;
 
     Node* node = static_cast<AccessibilityRenderObject*>(realObject)->renderer()->node();
     if (node) {

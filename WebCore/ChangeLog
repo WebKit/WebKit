@@ -1,3 +1,21 @@
+2010-09-29  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Chris Fleizach.
+
+        [GTK] editing/selection/selection-modify-crash.html crashes when run in Xvfb
+        https://bugs.webkit.org/show_bug.cgi?id=46822
+
+        When parentObjectUnignored returns null in objectAndOffsetUnignored consider that
+        a failure case. Handle this failure appropriately at all call sites.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_text_get_caret_offset): Handle the failure of objectAndOffsetUnignored.
+        (objectAndOffsetUnignored): Always check the return value of parentObjectUnignored and
+        return 0 to indicate failure when that happens.
+        * editing/gtk/SelectionControllerGtk.cpp:
+        (WebCore::SelectionController::notifyAccessibilityForSelectionChange): Handle the failure
+        case of objectAndOffsetUnignored.
+
 2010-09-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r68657.
