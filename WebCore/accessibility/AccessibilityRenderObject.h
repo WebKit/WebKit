@@ -199,7 +199,7 @@ public:
 
     virtual const AccessibilityChildrenVector& children();
     virtual void clearChildren();
-    void updateChildrenIfNecessary();
+    virtual void updateChildrenIfNecessary();
     
     virtual void setFocused(bool);
     virtual void setSelectedTextRange(const PlainTextRange&);
