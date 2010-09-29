@@ -3,21 +3,22 @@
 # 
 # This file is distributed under the same license as the webkit package.
 # 
-# Милош Поповић <gpopac@gmail.com>
 # Review by Бранко Кокановић <branko.kokanovic@gmail.com> (27.6.2009.)
+# Милош Поповић <gpopac@gmail.com>, 2010.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: webkit 1.1.10\n"
 "Report-Msgid-Bugs-To: http://bugs.webkit.org/\n"
 "POT-Creation-Date: 2010-02-25 15:53-0300\n"
-"PO-Revision-Date: 2009-06-19 02:35+100\n"
+"PO-Revision-Date: 2010-08-31 04:14+0200\n"
 "Last-Translator: Милош Поповић <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnom@prevod.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
-"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=4;    plural=n==1? 3 : n%10==1 && n%100!=11 ? 0 :    n"
+"%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
 #: WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp:535
 msgid "Upload File"
@@ -54,9 +55,8 @@ msgstr "П_репис с десна на лево"
 
 # Ух, ух, ух... ~Милош :(
 #: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:84
-#, fuzzy
 msgid "PDF _Pop directional formatting"
-msgstr "Искачуће _дирекционо форматирање"
+msgstr "Искачуће ПДФ _дирекционо форматирање"
 
 #: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:85
 msgid "ZWS _Zero width space"
@@ -84,14 +84,12 @@ msgid "The network request for the URI that should be downloaded"
 msgstr "Захтевана адресе датотеке коју желите да преузмете"
 
 #: WebKit/gtk/webkit/webkitdownload.cpp:281
-#, fuzzy
 msgid "Network Response"
-msgstr "Захтев на мрежи"
+msgstr "Мрежни одговор"
 
 #: WebKit/gtk/webkit/webkitdownload.cpp:282
-#, fuzzy
 msgid "The network response for the URI that should be downloaded"
-msgstr "Захтевана адресе датотеке коју желите да преузмете"
+msgstr "Одговор на захтевану адресу датотеке коју желите да преузмете"
 
 #: WebKit/gtk/webkit/webkitdownload.cpp:296
 msgid "Destination URI"
@@ -152,7 +150,7 @@ msgstr "Страница %s захтева корисничко име и лоз
 
 #: WebKit/gtk/webkit/webkitsoupauthdialog.c:278
 msgid "Server message:"
-msgstr ""
+msgstr "Порука са сервера:"
 
 #: WebKit/gtk/webkit/webkitsoupauthdialog.c:291
 msgid "Username:"
@@ -163,9 +161,8 @@ msgid "Password:"
 msgstr "Лозинка:"
 
 #: WebKit/gtk/webkit/webkitsoupauthdialog.c:302
-#, fuzzy
 msgid "_Remember password"
-msgstr "Упамти лозинку"
+msgstr "_Упамти лозинку"
 
 #: WebKit/gtk/webkit/webkitwebframe.cpp:298
 msgid "Name"
@@ -197,34 +194,30 @@ msgstr "Адреса садржаја који је приказан унута�
 
 #: WebKit/gtk/webkit/webkitwebframe.cpp:344
 msgid "Horizontal Scrollbar Policy"
-msgstr ""
+msgstr "Хоризонтални клизач"
 
 #: WebKit/gtk/webkit/webkitwebframe.cpp:345
-#, fuzzy
 msgid ""
 "Determines the current policy for the horizontal scrollbar of the frame."
-msgstr "Показује тренутни напредак преузимања"
+msgstr "Одређује смер хоризонталног клизача унутар оквира."
 
 #: WebKit/gtk/webkit/webkitwebframe.cpp:362
 msgid "Vertical Scrollbar Policy"
-msgstr ""
+msgstr "Вертикални клизач"
 
 #: WebKit/gtk/webkit/webkitwebframe.cpp:363
-#, fuzzy
 msgid "Determines the current policy for the vertical scrollbar of the frame."
-msgstr "Показује тренутни напредак преузимања"
+msgstr "Одређује смер вертикалног клизача унутар оквира."
 
 #: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:147
 msgid "The title of the history item"
 msgstr "Наслов за ставке у историјату"
 
 #: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:162
-#, fuzzy
 msgid "Alternate Title"
 msgstr "Променљив наслов"
 
 #: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:163
-#, fuzzy
 msgid "The alternate title of the history item"
 msgstr "Променљив наслов ставке у историјату"
 
@@ -258,12 +251,10 @@ msgid "The Web View that renders the Web Inspector itself"
 msgstr "Веб приказ кога исцртава „Веб инспектор“"
 
 #: WebKit/gtk/webkit/webkitwebinspector.cpp:282
-#, fuzzy
 msgid "Inspected URI"
 msgstr "Инспекција адресе"
 
 #: WebKit/gtk/webkit/webkitwebinspector.cpp:283
-#, fuzzy
 msgid "The URI that is currently being inspected"
 msgstr "Адреса коју тренутно обрађује инспектор"
 
@@ -276,13 +267,12 @@ msgid "Profile the executed JavaScript."
 msgstr "Прави профил покренуте Јава скрипте."
 
 #: WebKit/gtk/webkit/webkitwebinspector.cpp:315
-#, fuzzy
 msgid "Enable Timeline profiling"
-msgstr "Омогући учење Јава скрипте"
+msgstr "Омогући временски профил"
 
 #: WebKit/gtk/webkit/webkitwebinspector.cpp:316
 msgid "Profile the WebCore instrumentation."
-msgstr ""
+msgstr "Прави профил WebCore алаки."
 
 #: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:158
 msgid "Reason"
@@ -313,14 +303,12 @@ msgid "A bitmask representing the state of the modifier keys"
 msgstr "Ознака која одређује да ли је укључен тастер за измену функције"
 
 #: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:220
-#, fuzzy
 msgid "Target frame"
-msgstr "Име оквира"
+msgstr "Циљни оквир"
 
 #: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:221
-#, fuzzy
 msgid "The target frame for the navigation"
-msgstr "Циљна адреса коју захтева навигација"
+msgstr "Циљни оквир за навигацију"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:237
 msgid "Default Encoding"
@@ -501,155 +489,149 @@ msgstr "Укључује режим разгледања уз чување ва�
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:481
 msgid "Enable Spell Checking"
-msgstr ""
+msgstr "Омогући проверу писања"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:482
-#, fuzzy
 msgid "Enables spell checking while typing"
-msgstr "Провери писање _док куцам"
+msgstr "Укључује проверу писања док куцате"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:505
 msgid "Languages to use for spell checking"
-msgstr ""
+msgstr "Језик за проверу писања"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:506
 msgid "Comma separated list of languages to use for spell checking"
-msgstr ""
+msgstr "Списак језика раздвојених тачком који се користе за проверу писања"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:520
-#, fuzzy
 msgid "Enable Caret Browsing"
-msgstr "Приватни режим"
+msgstr "Преглед са показивачем"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:521
 msgid "Whether to enable accesibility enhanced keyboard navigation"
-msgstr ""
+msgstr "Одређује да ли да се користи приступачнија тастатура за навигацију"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:536
 msgid "Enable HTML5 Database"
-msgstr ""
+msgstr "Укључи ХТМЛ5 базу података"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:537
 msgid "Whether to enable HTML5 database support"
-msgstr ""
+msgstr "Одређује да ли је подржана ХТМЛ5 база података"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:552
 msgid "Enable HTML5 Local Storage"
-msgstr ""
+msgstr "Укључи ХТМЛ5 складиште"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:553
 msgid "Whether to enable HTML5 Local Storage support"
-msgstr ""
+msgstr "Одређује да ли је подржано локално ХТМЛ5 складиште"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:567
-#, fuzzy
 msgid "Enable XSS Auditor"
-msgstr "Омогући скрипте"
+msgstr "Омогући ИксСС ревизију"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:568
 msgid "Whether to enable teh XSS auditor"
-msgstr ""
+msgstr "Одређује да ли је укључена ИксСС ревизија"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:586
 msgid "User Agent"
-msgstr ""
+msgstr "Представљање прегледника"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:587
 msgid "The User-Agent string used by WebKitGtk"
-msgstr ""
+msgstr "Ниска за представљање WebKitGtk прегледника (кориснички агент)"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:602
 msgid "JavaScript can open windows automatically"
-msgstr ""
+msgstr "Дозволи Јава скриптама да отворе прозор"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:603
 msgid "Whether JavaScript can open windows automatically"
-msgstr ""
+msgstr "Одређује да ли Јава скрипте могу да отворе нове прозоре"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:618
 msgid "Enable offline web application cache"
-msgstr ""
+msgstr "Омогући оставу за рад ван мређе"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:619
 msgid "Whether to enable offline web application cache"
-msgstr ""
+msgstr "Одређује да ли се користи остава за рад програма ван мреже"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:646
 msgid "Editing behavior"
-msgstr ""
+msgstr "Понашање уређивача"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:647
 msgid "The behavior mode to use in editing mode"
-msgstr ""
+msgstr "Понашање када се користи режим за уређивање"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:663
 msgid "Enable universal access from file URIs"
-msgstr ""
+msgstr "Универзални приступ из адреса датотеке"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:664
 msgid "Whether to allow universal access from file URIs"
-msgstr ""
+msgstr "Одређује да ли је укључен универзални приступ из адреса датотеке"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:679
-#, fuzzy
 msgid "Enable DOM paste"
-msgstr "Омогући скрипте"
+msgstr "Укључи ДОМ убацивање"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:680
 msgid "Whether to enable DOM paste"
-msgstr ""
+msgstr "Одређује да ли је омогућено ДОМ убацивање"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:698
 msgid "Tab key cycles through elements"
-msgstr ""
+msgstr "Tab тастер листа делове странице"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:699
 msgid "Whether the tab key cycles through elements on the page."
-msgstr ""
+msgstr "Одређује да ли да Tab тастер листа елементе странице."
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:719
 msgid "Enable Default Context Menu"
-msgstr ""
+msgstr "Подразумевани приручни мени"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:720
 msgid ""
 "Enables the handling of right-clicks for the creation of the default context "
 "menu"
-msgstr ""
+msgstr "Приказује подразумевани приручни мени при клику десног тастера миша"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:740
 msgid "Enable Site Specific Quirks"
-msgstr ""
+msgstr "Прихвати распоред са странице"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:741
 msgid "Enables the site-specific compatibility workarounds"
-msgstr ""
+msgstr "Омогућава разне досетке сајтова за приказ странице"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:763
 msgid "Enable page cache"
-msgstr ""
+msgstr "Укључи оставу за странице"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:764
-#, fuzzy
 msgid "Whether the page cache should be used"
-msgstr "Одређује да ли да се приказују позадинске слике."
+msgstr "Одређује да ли да се чувају странице у оставу"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:784
 msgid "Auto Resize Window"
-msgstr ""
+msgstr "Сам промени величину прозора"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:785
 msgid "Automatically resize the toplevel window when a page requests it"
-msgstr ""
+msgstr "Сам повећава величину основног прозора када странице то захтевају"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:817
-#, fuzzy
 msgid "Enable Java Applet"
-msgstr "Омогући учење Јава скрипте"
+msgstr "Омогући Јава програмчиће"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:818
 msgid "Whether Java Applet support through <applet> should be enabled"
-msgstr ""
+msgstr "Да ли да укључим подршку за Јава програмчиће кроз <applet>"
 
 #: WebKit/gtk/webkit/webkitwebview.cpp:2319
 msgid "Returns the @web_view's document title"
@@ -741,11 +723,11 @@ msgstr "Произвољно кодирање веб странице"
 
 #: WebKit/gtk/webkit/webkitwebview.cpp:2520
 msgid "Icon URI"
-msgstr ""
+msgstr "Адреса иконице"
 
 #: WebKit/gtk/webkit/webkitwebview.cpp:2521
 msgid "The URI for the favicon for the #WebKitWebView."
-msgstr ""
+msgstr "Адреса иконице за #WebKitWebView."
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:55
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:60
@@ -758,7 +740,7 @@ msgstr "Поништи"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:70
 msgid "This is a searchable index. Enter search keywords: "
-msgstr ""
+msgstr "Можете претражити индекс. Унесите речи за претрагу:"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:75
 msgid "Choose File"
@@ -861,7 +843,6 @@ msgid "_Outline"
 msgstr "_Оквир"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:271
-#, fuzzy
 msgid "Inspect _Element"
 msgstr "Инспекција _елемента"
 
@@ -919,189 +900,187 @@ msgstr "Непознато"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:364
 msgid "Loading..."
-msgstr ""
+msgstr "Учитавам..."
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:369
 msgid "Live Broadcast"
-msgstr ""
+msgstr "Пренос уживо"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:375
 msgid "audio element controller"
-msgstr ""
+msgstr "контрола звучног елемента"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:377
 msgid "video element controller"
-msgstr ""
+msgstr "контрола видео елемента"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:379
 msgid "mute"
-msgstr ""
+msgstr "утишај"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:381
 msgid "unmute"
-msgstr ""
+msgstr "појачај"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:383
 msgid "play"
-msgstr ""
+msgstr "пусти"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:385
 msgid "pause"
-msgstr ""
+msgstr "паузирај"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:387
 msgid "movie time"
-msgstr ""
+msgstr "трајање филма"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:389
 msgid "timeline slider thumb"
-msgstr ""
+msgstr "линија са временом"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:391
 msgid "back 30 seconds"
-msgstr ""
+msgstr "назад за 30 s"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:393
 msgid "return to realtime"
-msgstr ""
+msgstr "врати у реално време"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:395
 msgid "elapsed time"
-msgstr ""
+msgstr "прегледано"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:397
 msgid "remaining time"
-msgstr ""
+msgstr "преостало"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:399
-#, fuzzy
 msgid "status"
-msgstr "Стање"
+msgstr "стање"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:401
 msgid "fullscreen"
-msgstr ""
+msgstr "цео екран"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:403
 msgid "fast forward"
-msgstr ""
+msgstr "премотај унапред"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:405
 msgid "fast reverse"
-msgstr ""
+msgstr "премотај уназад"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:407
 msgid "show closed captions"
-msgstr ""
+msgstr "прикажи затворене наslove"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:409
 msgid "hide closed captions"
-msgstr ""
+msgstr "сакриј затворене наslove"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:418
 msgid "audio element playback controls and status display"
-msgstr ""
+msgstr "стање и контрола пуштања звучних елемената"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:420
 msgid "video element playback controls and status display"
-msgstr ""
+msgstr "стање и контрола пуштања видео елемената"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:422
 msgid "mute audio tracks"
-msgstr ""
+msgstr "утишај звук"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:424
 msgid "unmute audio tracks"
-msgstr ""
+msgstr "појачај звук"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:426
 msgid "begin playback"
-msgstr ""
+msgstr "пусти"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:428
 msgid "pause playback"
-msgstr ""
+msgstr "паузирај"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:430
 msgid "movie time scrubber"
-msgstr ""
+msgstr "исписано време филма"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:432
 msgid "movie time scrubber thumb"
-msgstr ""
+msgstr "клик за исписано време филма"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:434
 msgid "seek movie back 30 seconds"
-msgstr ""
+msgstr "премотај филм уназад за 30 s"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:436
 msgid "return streaming movie to real time"
-msgstr ""
+msgstr "настави приказ филма у реалном времену"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:438
 msgid "current movie time in seconds"
-msgstr ""
+msgstr "протекло трајање филма у секундама"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:440
 msgid "number of seconds of movie remaining"
-msgstr ""
+msgstr "преостало трајање филма у секундама"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:442
 msgid "current movie status"
-msgstr ""
+msgstr "стање филма"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:444
 msgid "seek quickly back"
-msgstr ""
+msgstr "брзо премотај уназад"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:446
 msgid "seek quickly forward"
-msgstr ""
+msgstr "брзо премотај унапред"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:448
 msgid "Play movie in fullscreen mode"
-msgstr ""
+msgstr "Пушта филм преко целог екрана"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:450
 msgid "start displaying closed captions"
-msgstr ""
+msgstr "приказуј затворене опције"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:452
 msgid "stop displaying closed captions"
-msgstr ""
+msgstr "не приказуј затворене опције"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:461
-#, fuzzy
 msgid "indefinite time"
-msgstr "дефиниција"
+msgstr "бесконачно трајање"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:491
 msgid "value missing"
-msgstr ""
+msgstr "недостаје вредност"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:497
 msgid "type mismatch"
-msgstr ""
+msgstr "не поклапа се врста"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:502
 msgid "pattern mismatch"
-msgstr ""
+msgstr "не поклапа се шаблон"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:507
 msgid "too long"
-msgstr ""
+msgstr "предугачко"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:512
 msgid "range underflow"
-msgstr ""
+msgstr "опсег подкорачен"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:517
 msgid "range overflow"
-msgstr ""
+msgstr "опсег прекорачен"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:522
 msgid "step mismatch"
-msgstr ""
+msgstr "не поклапа се корак"
 
 #~ msgid "_Searchable Index"
 #~ msgstr "_Претражив индекс"
