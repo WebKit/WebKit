@@ -119,7 +119,7 @@ class Parameter(object):
 
 
 def parse_parameter_string(parameter_string):
-    return [Parameter(*type_and_name.split(' ')) for type_and_name in parameter_string.split(', ')]
+    return [Parameter(*type_and_name.rsplit(' ', 1)) for type_and_name in parameter_string.split(', ')]
 
 
 def messages_header_filename(receiver):
@@ -297,8 +297,14 @@ def sync_case_statement(receiver, message):
 
 
 def argument_coder_headers_for_type(type):
+    # Check for Vector.
+    match = re.search(r'Vector<(.+)>', type)
+    if match:
+        element_type = match.groups()[0].strip()
+        return ['"ArgumentCoders.h"'] + argument_coder_headers_for_type(element_type)
+
     special_cases = {
-        'WTF::String': '"WebCoreArgumentCoders.h"',
+        'WTF::String': '"ArgumentCoders.h"',
     }
 
     if type in special_cases:

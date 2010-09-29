@@ -58,7 +58,7 @@ messages -> WebPage {
     Close()
 
     SendDoubleAndFloat(double d, float f)
-    SendInts(Vector<uint64_t> ints)
+    SendInts(Vector<uint64_t> ints, Vector<Vector<uint64_t> > intVectors)
 
     CreatePlugin(uint64_t pluginInstanceID, WebKit::Plugin::Parameters parameters) -> (bool result)
     RunJavaScriptAlert(uint64_t frameID, WTF::String message) -> ()
@@ -120,6 +120,7 @@ _expected_results = {
             'name': 'SendInts',
             'parameters': (
                 ('Vector<uint64_t>', 'ints'),
+                ('Vector<Vector<uint64_t> >', 'intVectors')
             ),
             'condition': None,
             'base_class': 'CoreIPC::Arguments1<const Vector<uint64_t>&>',
@@ -316,10 +317,10 @@ struct SendDoubleAndFloat : CoreIPC::Arguments2<double, float> {
     }
 };
 
-struct SendInts : CoreIPC::Arguments1<const Vector<uint64_t>&> {
+struct SendInts : CoreIPC::Arguments2<const Vector<uint64_t>&, const Vector<Vector<uint64_t> >&> {
     static const Kind messageID = SendIntsID;
-    explicit SendInts(const Vector<uint64_t>& ints)
-        : CoreIPC::Arguments1<const Vector<uint64_t>&>(ints)
+    SendInts(const Vector<uint64_t>& ints, const Vector<Vector<uint64_t> >& intVectors)
+        : CoreIPC::Arguments2<const Vector<uint64_t>&, const Vector<Vector<uint64_t> >&>(ints, intVectors)
     {
     }
 };
@@ -413,6 +414,7 @@ _expected_receiver_implementation = """/*
 
 #include "WebPage.h"
 
+#include "ArgumentCoders.h"
 #include "ArgumentDecoder.h"
 #include "HandleMessage.h"
 #include "MachPort.h"

@@ -2,6 +2,45 @@
 
         Reviewed by Sam Weinig.
 
+        Implement LoadURL
+        https://bugs.webkit.org/show_bug.cgi?id=46826
+
+        * Platform/CoreIPC/ArgumentCoders.h:
+        Move String argument coder here from WebCoreArgumentCoders.h. Add
+        argument coder for AtomicString.
+
+        * Platform/CoreIPC/Arguments.h:
+        Add typedefs for Arguments7.
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::handleMessage):
+        Add handleMessage overload that takes 7 parameters.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::loadURL):
+        Send the LoadURL message.
+
+        * Scripts/webkit2/messages.py:
+        (parse_parameter_string): Use rsplit in case the type name contains spaces.
+        (argument_coder_headers_for_type): Special case Vector.
+        
+        * Scripts/webkit2/messages_unittest.py:
+        Update results.
+
+        * Shared/WebCoreArgumentCoders.h:
+        Add argument coder for HTTPHeaderMap.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::loadURL):
+        Ask the plug-in controller to load the URL.
+
+        * WebProcess/Plugins/PluginProxy.messages.in:
+        Add LoadURL message.
+
+2010-09-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Handle getting the user agent in the plug-in process
         https://bugs.webkit.org/show_bug.cgi?id=46819
 

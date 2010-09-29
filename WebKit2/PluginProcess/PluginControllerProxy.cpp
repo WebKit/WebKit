@@ -132,7 +132,7 @@ String PluginControllerProxy::userAgent()
 
 void PluginControllerProxy::loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, const HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups)
 {
-    notImplemented();
+    m_connection->connection()->send(Messages::PluginProxy::LoadURL(requestID, method, urlString, target, headerFields, httpBody, allowPopups), m_pluginInstanceID);
 }
 
 void PluginControllerProxy::cancelStreamLoad(uint64_t streamID)

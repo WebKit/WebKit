@@ -36,55 +36,12 @@
 #include <WebCore/PluginData.h>
 #include <WebCore/ResourceRequest.h>
 #include <limits>
-#include <wtf/text/WTFString.h>
 
 namespace CoreIPC {
 
 template<> struct ArgumentCoder<WebCore::IntPoint> : SimpleArgumentCoder<WebCore::IntPoint> { };
 template<> struct ArgumentCoder<WebCore::IntSize> : SimpleArgumentCoder<WebCore::IntSize> { };
 template<> struct ArgumentCoder<WebCore::IntRect> : SimpleArgumentCoder<WebCore::IntRect> { };
-
-template<> struct ArgumentCoder<String> {
-    static void encode(ArgumentEncoder* encoder, const String& string)
-    {
-        // Special case the null string.
-        if (string.isNull()) {
-            encoder->encodeUInt32(std::numeric_limits<uint32_t>::max());
-            return;
-        }
-
-        uint32_t length = string.length();
-        encoder->encode(length);
-        encoder->encodeBytes(reinterpret_cast<const uint8_t*>(string.characters()), length * sizeof(UChar));
-    }
-    
-    static bool decode(ArgumentDecoder* decoder, String& s)
-    {
-        uint32_t length;
-        if (!decoder->decode(length))
-            return false;
-
-        if (length == std::numeric_limits<uint32_t>::max()) {
-            // This is the null string.
-            s = String();
-            return true;
-        }
-
-        // Before allocating the string, make sure that the decoder buffer is big enough.
-        if (!decoder->bufferIsLargeEnoughToContain<UChar>(length)) {
-            decoder->markInvalid();
-            return false;
-        }
-        
-        UChar* buffer;
-        String string = String::createUninitialized(length, buffer);
-        if (!decoder->decodeBytes(reinterpret_cast<uint8_t*>(buffer), length * sizeof(UChar)))
-            return false;
-        
-        s = string;
-        return true;
-    }
-};
 
 template<> struct ArgumentCoder<WebCore::MimeClassInfo> {
     static void encode(ArgumentEncoder* encoder, const WebCore::MimeClassInfo& mimeClassInfo)
@@ -128,6 +85,18 @@ template<> struct ArgumentCoder<WebCore::PluginInfo> {
             return false;
 
         return true;
+    }
+};
+
+template<> struct ArgumentCoder<WebCore::HTTPHeaderMap> {
+    static void encode(ArgumentEncoder* encoder, const WebCore::HTTPHeaderMap& headerMap)
+    {
+        encoder->encode(static_cast<const HashMap<AtomicString, String, CaseFoldingHash>&>(headerMap));
+    }
+
+    static bool decode(ArgumentDecoder* decoder, WebCore::HTTPHeaderMap& headerMap)
+    {
+        return decoder->decode(static_cast<HashMap<AtomicString, String, CaseFoldingHash>&>(headerMap));
     }
 };
 

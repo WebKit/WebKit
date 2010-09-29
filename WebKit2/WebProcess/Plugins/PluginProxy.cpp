@@ -300,6 +300,11 @@ PluginController* PluginProxy::controller()
     return m_pluginController;
 }
 
+void PluginProxy::loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, const HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups)
+{
+    m_pluginController->loadURL(requestID, method, urlString, target, headerFields, httpBody, allowPopups);
+}
+
 void PluginProxy::update(const IntRect& paintedRect)
 {
     IntRect paintedRectPluginCoordinates = paintedRect;

@@ -31,6 +31,10 @@
 #include "Connection.h"
 #include "Plugin.h"
 
+namespace WebCore {
+    class HTTPHeaderMap;
+}
+
 namespace WebKit {
 
 class BackingStore;
@@ -84,6 +88,7 @@ private:
     virtual PluginController* controller();
 
     // Message handlers.
+    void loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, const WebCore::HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups);
     void update(const WebCore::IntRect& paintedRect);
 
     RefPtr<PluginProcessConnection> m_connection;

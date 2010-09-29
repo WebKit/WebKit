@@ -23,6 +23,9 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 messages -> PluginProxy {
+    # Asks the web process to load a URL.
+    LoadURL(uint64_t requestID, WTF::String method, WTF::String urlString, WTF::String target, WebCore::HTTPHeaderMap headerFields, Vector<uint8_t> httpBody, bool allowPopups);
+
     # Called when the plug-in has painted into its backing store.
     Update(WebCore::IntRect paintedRect)
 }
