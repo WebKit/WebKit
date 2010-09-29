@@ -76,8 +76,12 @@ public:
     QWebPage* page;
     bool resizesToContents;
 
-    // Just a convenience to avoid using page->client->overlay always
-    QSharedPointer<QGraphicsItemOverlay> overlay;
+    QGraphicsItemOverlay* overlay() const
+    {
+        if (!page || !page->d->client)
+            return 0;
+        return static_cast<PageClientQGraphicsWidget*>(page->d->client)->overlay.data();
+    }
 };
 
 QGraphicsWebViewPrivate::~QGraphicsWebViewPrivate()
@@ -294,7 +298,7 @@ void QGraphicsWebView::paint(QPainter* painter, const QStyleOptionGraphicsItem* 
     } 
 #endif
 #if USE(ACCELERATED_COMPOSITING)
-    page()->mainFrame()->render(painter, d->overlay ? QWebFrame::ContentsLayer : QWebFrame::AllLayers, option->exposedRect.toAlignedRect());
+    page()->mainFrame()->render(painter, d->overlay() ? QWebFrame::ContentsLayer : QWebFrame::AllLayers, option->exposedRect.toAlignedRect());
 #else
     page()->mainFrame()->render(painter, QWebFrame::AllLayers, option->exposedRect.toRect());
 #endif
@@ -445,10 +449,9 @@ void QGraphicsWebView::setPage(QWebPage* page)
         return;
 
     d->page->d->client = new PageClientQGraphicsWidget(this, page); // set the page client
-    d->overlay = static_cast<PageClientQGraphicsWidget*>(d->page->d->client)->overlay;
 
-    if (d->overlay)
-        d->overlay->prepareGraphicsItemGeometryChange();
+    if (d->overlay())
+        d->overlay()->prepareGraphicsItemGeometryChange();
 
     QSize size = geometry().size().toSize();
     page->setViewportSize(size);
@@ -560,8 +563,8 @@ qreal QGraphicsWebView::zoomFactor() const
 */
 void QGraphicsWebView::updateGeometry()
 {
-    if (d->overlay)
-        d->overlay->prepareGraphicsItemGeometryChange();
+    if (d->overlay())
+        d->overlay()->prepareGraphicsItemGeometryChange();
 
     QGraphicsWidget::updateGeometry();
 
@@ -578,8 +581,8 @@ void QGraphicsWebView::setGeometry(const QRectF& rect)
 {
     QGraphicsWidget::setGeometry(rect);
 
-    if (d->overlay)
-        d->overlay->prepareGraphicsItemGeometryChange();
+    if (d->overlay())
+        d->overlay()->prepareGraphicsItemGeometryChange();
 
     if (!d->page)
         return;

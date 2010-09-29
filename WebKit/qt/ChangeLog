@@ -1,3 +1,22 @@
+2010-09-29  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Don't keep local reference to QGraphicsItemOverlay in QGWVPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=46812
+
+        Get the QGraphicsItemOverlay* via the QWebPageClient (d->page->d->client)
+        instead of keeping a local pointer to it.
+
+        This is cleanup for a follow-up patch.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::overlay):
+        (QGraphicsWebView::paint):
+        (QGraphicsWebView::setPage):
+        (QGraphicsWebView::updateGeometry):
+        (QGraphicsWebView::setGeometry):
+
 2010-09-28  Jenn Braithwaite  <jennb@chromium.org>
 
         Reviewed by Dmitry Titov.
