@@ -1,3 +1,18 @@
+2010-09-29  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        CRASH at WebCore::HTMLSourceElement::scheduleErrorEvent
+        https://bugs.webkit.org/show_bug.cgi?id=46777
+
+        It should not be possible to get to be in the LoadingFromSourceElement
+        state with a null current source node. This was a possible scenario
+        where the current source node was cleared but the load state was not
+        cleared as well. Tried and could not create a test case for this.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::userCancelledLoad): clear the load state because we also clear the current source node.
+
 2010-09-29  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
