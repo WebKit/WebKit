@@ -597,8 +597,11 @@ TestSuite.prototype.clearTest = function()
 
 TestSuite.prototype.loadRef = function(test)
 {
+  // Refs are always .xht files
+  var refURL = kTestSuiteHome + kXHTML1Data.path + '/' + test.reference;
+  
   var iframe = document.getElementById('ref-frame');
-  iframe.src = this.urlForTest(testInfo.reference);
+  iframe.src = refURL;
 }
 
 TestSuite.prototype.loadTestByName = function(testName)
@@ -748,7 +751,6 @@ TestSuite.prototype.resultsPopupChanged = function(index)
 
 TestSuite.prototype.exportResultsCompletion = function(exportTests)
 {
-  window.console.log('exportResultsCompletion')
   // Lame workaround for ORDER BY not working
   exportTests.sort(function(a, b) {
       return a.test.localeCompare(b.test);

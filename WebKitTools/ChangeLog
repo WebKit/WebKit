@@ -1,3 +1,13 @@
+2010-09-29  Simon Fraser  <simon.fraser@apple.com>
+
+        No review.
+        
+        References always refert to a file in .xht format, even
+        for HTML tests, so fix their loading.
+
+        * CSSTestSuiteHarness/harness/harness.js:
+        (TestSuite.prototype.loadRef):
+
 2010-09-28  Johnny Ding  <jnd@chromium.org>
 
         Reviewed by Adam Barth.
