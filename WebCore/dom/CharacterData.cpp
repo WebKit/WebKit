@@ -24,7 +24,7 @@
 
 #include "EventNames.h"
 #include "ExceptionCode.h"
-#include "InspectorInstrumentation.h"
+#include "InspectorController.h"
 #include "MutationEvent.h"
 #include "RenderText.h"
 
@@ -199,7 +199,7 @@ void CharacterData::dispatchModifiedEvent(StringImpl* prevValue)
         dispatchEvent(MutationEvent::create(eventNames().DOMCharacterDataModifiedEvent, true, 0, prevValue, m_data));
     dispatchSubtreeModifiedEvent();
 #if ENABLE(INSPECTOR)
-    InspectorInstrumentation::characterDataModified(document(), this);
+    InspectorController::characterDataModified(this);
 #endif
 }
 

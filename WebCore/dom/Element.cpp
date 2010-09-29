@@ -44,7 +44,7 @@
 #include "FrameView.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
-#include "InspectorInstrumentation.h"
+#include "InspectorController.h"
 #include "NodeList.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
@@ -558,7 +558,7 @@ void Element::setAttribute(const AtomicString& name, const AtomicString& value, 
 
 #if ENABLE(INSPECTOR)
     if (!isSynchronizingStyleAttribute())
-        InspectorInstrumentation::willModifyDOMAttr(document(), this);
+        InspectorController::willModifyDOMAttr(this);
 #endif
 
     const AtomicString& localName = shouldIgnoreAttributeCase(this) ? name.lower() : name;
@@ -588,7 +588,7 @@ void Element::setAttribute(const AtomicString& name, const AtomicString& value, 
 
 #if ENABLE(INSPECTOR)
     if (!isSynchronizingStyleAttribute())
-        InspectorInstrumentation::didModifyDOMAttr(document(), this);
+        InspectorController::didModifyDOMAttr(this);
 #endif
 }
 
@@ -596,7 +596,7 @@ void Element::setAttribute(const QualifiedName& name, const AtomicString& value,
 {
 #if ENABLE(INSPECTOR)
     if (!isSynchronizingStyleAttribute())
-        InspectorInstrumentation::willModifyDOMAttr(document(), this);
+        InspectorController::willModifyDOMAttr(this);
 #endif
 
     document()->incDOMTreeVersion();
@@ -621,7 +621,7 @@ void Element::setAttribute(const QualifiedName& name, const AtomicString& value,
 
 #if ENABLE(INSPECTOR)
     if (!isSynchronizingStyleAttribute())
-        InspectorInstrumentation::didModifyDOMAttr(document(), this);
+        InspectorController::didModifyDOMAttr(this);
 #endif
 }
 
@@ -1257,7 +1257,7 @@ void Element::setAttributeNS(const AtomicString& namespaceURI, const AtomicStrin
 
 void Element::removeAttribute(const String& name, ExceptionCode& ec)
 {
-    InspectorInstrumentation::willModifyDOMAttr(document(), this);
+    InspectorController::willModifyDOMAttr(this);
 
     String localName = shouldIgnoreAttributeCase(this) ? name.lower() : name;
 
@@ -1267,7 +1267,7 @@ void Element::removeAttribute(const String& name, ExceptionCode& ec)
             ec = 0;
     }
     
-    InspectorInstrumentation::didModifyDOMAttr(document(), this);
+    InspectorController::didModifyDOMAttr(this);
 }
 
 void Element::removeAttributeNS(const String& namespaceURI, const String& localName, ExceptionCode& ec)

@@ -1,3 +1,62 @@
+2010-09-29  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r68657.
+        http://trac.webkit.org/changeset/68657
+        https://bugs.webkit.org/show_bug.cgi?id=46820
+
+        reason "Breaks win debug build" (Requested by podivilov on
+        #webkit).
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::send):
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+        (WebCore::V8XMLHttpRequest::sendCallback):
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::dispatchModifiedEvent):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertBefore):
+        (WebCore::ContainerNode::parserInsertBefore):
+        (WebCore::ContainerNode::replaceChild):
+        (WebCore::ContainerNode::appendChild):
+        (WebCore::ContainerNode::parserAddChild):
+        (WebCore::notifyChildInserted):
+        (WebCore::dispatchChildRemovalEvents):
+        * dom/Element.cpp:
+        (WebCore::Element::setAttribute):
+        (WebCore::Element::removeAttribute):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::~InspectorController):
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::disconnectFrontend):
+        (WebCore::InspectorController::willInsertDOMNodeImpl):
+        (WebCore::InspectorController::didInsertDOMNodeImpl):
+        (WebCore::InspectorController::willRemoveDOMNodeImpl):
+        (WebCore::InspectorController::didRemoveDOMNodeImpl):
+        (WebCore::InspectorController::willModifyDOMAttrImpl):
+        (WebCore::InspectorController::didModifyDOMAttrImpl):
+        (WebCore::InspectorController::characterDataModifiedImpl):
+        (WebCore::InspectorController::instrumentWillSendXMLHttpRequestImpl):
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::willInsertDOMNode):
+        (WebCore::InspectorController::didInsertDOMNode):
+        (WebCore::InspectorController::willRemoveDOMNode):
+        (WebCore::InspectorController::willModifyDOMAttr):
+        (WebCore::InspectorController::didModifyDOMAttr):
+        (WebCore::InspectorController::characterDataModified):
+        (WebCore::InspectorController::instrumentWillSendXMLHttpRequest):
+        (WebCore::InspectorController::inspectorControllerForScriptExecutionContext):
+        (WebCore::InspectorController::inspectorControllerForNode):
+        (WebCore::InspectorController::inspectorControllerForDocument):
+        * inspector/InspectorInstrumentation.cpp: Removed.
+        * inspector/InspectorInstrumentation.h: Removed.
+        * workers/SharedWorker.cpp:
+
 2010-09-29  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by David Levin.

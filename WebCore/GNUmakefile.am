@@ -1799,8 +1799,6 @@ webcore_sources += \
 	WebCore/inspector/InspectorFrontendClientLocal.h \
 	WebCore/inspector/InspectorFrontendHost.cpp \
 	WebCore/inspector/InspectorFrontendHost.h \
-	WebCore/inspector/InspectorInstrumentation.cpp \
-	WebCore/inspector/InspectorInstrumentation.h \
 	WebCore/inspector/InspectorProfilerAgent.cpp \
 	WebCore/inspector/InspectorProfilerAgent.h \
 	WebCore/inspector/InspectorResource.cpp \

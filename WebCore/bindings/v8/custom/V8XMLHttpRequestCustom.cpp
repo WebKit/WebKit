@@ -32,7 +32,7 @@
 #include "V8XMLHttpRequest.h"
 
 #include "Frame.h"
-#include "InspectorInstrumentation.h"
+#include "InspectorController.h"
 #include "V8Binding.h"
 #include "V8Blob.h"
 #include "V8DOMFormData.h"
@@ -114,7 +114,7 @@ v8::Handle<v8::Value> V8XMLHttpRequest::sendCallback(const v8::Arguments& args)
     INC_STATS("DOM.XMLHttpRequest.send()");
     XMLHttpRequest* xmlHttpRequest = V8XMLHttpRequest::toNative(args.Holder());
 
-    InspectorInstrumentation::instrumentWillSendXMLHttpRequest(xmlHttpRequest->scriptExecutionContext(), xmlHttpRequest->url());
+    InspectorController::instrumentWillSendXMLHttpRequest(xmlHttpRequest->scriptExecutionContext(), xmlHttpRequest->url());
 
     ExceptionCode ec = 0;
     if (args.Length() < 1)

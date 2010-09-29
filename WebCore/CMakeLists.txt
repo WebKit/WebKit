@@ -1106,7 +1106,6 @@ SET(WebCore_SOURCES
     inspector/InspectorDebuggerAgent.cpp
     inspector/InspectorFrontendClientLocal.cpp
     inspector/InspectorFrontendHost.cpp
-    inspector/InspectorInstrumentation.cpp
     inspector/InspectorProfilerAgent.cpp
     inspector/InspectorResource.cpp
     inspector/InspectorValues.cpp

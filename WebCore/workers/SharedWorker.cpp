@@ -39,7 +39,6 @@
 #include "KURL.h"
 #include "MessageChannel.h"
 #include "MessagePort.h"
-#include "ScriptExecutionContext.h"
 #include "SharedWorkerRepository.h"
 
 namespace WebCore {
