@@ -604,11 +604,6 @@
                     'sources/': [
                         ['exclude', 'Skia\\.cpp$'],
                     ],
-                    'variables': {
-                        # FIXME: Turn on warnings on other platforms and for
-                        # other targets.
-                        'chromium_code': 1,
-                    }
                 }, { # else: OS!="mac"
                     'sources/': [
                         ['exclude', '/mac/'],
@@ -621,6 +616,10 @@
                     ],
                 }, { # else: OS!="win"
                     'sources/': [['exclude', '/win/']],
+                    'variables': {
+                        # FIXME: Turn on warnings on Windows.
+                        'chromium_code': 1,
+                    }
                 }],
                 ['"ENABLE_3D_CANVAS=1" in feature_defines', {
                     'conditions': [
