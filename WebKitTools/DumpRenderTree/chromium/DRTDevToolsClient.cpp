@@ -45,8 +45,8 @@
 using namespace WebKit;
 
 DRTDevToolsClient::DRTDevToolsClient(DRTDevToolsAgent* agent, WebView* webView)
-    : m_drtDevToolsAgent(agent)
-    , m_webView(webView)
+    : m_webView(webView)
+    , m_drtDevToolsAgent(agent)
 {
     m_webDevToolsFrontend.set(WebDevToolsFrontend::create(m_webView,
                                                           this,

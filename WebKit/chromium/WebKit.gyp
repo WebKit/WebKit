@@ -776,6 +776,10 @@
                             'include_dirs': [
                                 'public/gtk',
                             ],
+                            'variables': {
+                              # FIXME: Enable warnings on other platforms.
+                              'chromium_code': 1,
+                            },
                         }],
                     ],
                 }],
@@ -925,6 +929,10 @@
                             '<(INTERMEDIATE_DIR)/repack/DumpRenderTree.pak',
                         ]
                     }],
+                    'variables': {
+                      # FIXME: Enable warnings on other platforms.
+                      'chromium_code': 1,
+                    },
                 },{ # OS!="linux" and OS!="freebsd" and OS!="openbsd" and OS!="solaris"
                     'sources/': [
                         ['exclude', '(Gtk|Linux)\\.cpp$']

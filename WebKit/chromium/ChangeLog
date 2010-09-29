@@ -2,6 +2,19 @@
 
         Reviewed by James Robinson.
 
+        [chromium] enable -Werror for DRT and webkit_unit_tests on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=46829
+
+        * WebKit.gyp:
+        * tests/ArenaTestHelpers.h:
+        (WebCore::ArenaTestHelpers::TrackedAllocator::free):
+        * tests/IDBKeyPathTest.cpp:
+        (WebCore::checkKeyPath):
+
+2010-09-29  Tony Chang  <tony@chromium.org>
+
+        Reviewed by James Robinson.
+
         [chromium] enable -Werror on chromium linux webkit
         https://bugs.webkit.org/show_bug.cgi?id=46821
 

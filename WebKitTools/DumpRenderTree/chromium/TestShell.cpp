@@ -82,9 +82,9 @@ TestShell::TestShell(bool testShellMode)
     , m_testIsPreparing(false)
     , m_focusedWidget(0)
     , m_testShellMode(testShellMode)
+    , m_devTools(0)
     , m_allowExternalPages(false)
     , m_accelerated2dCanvasEnabled(false)
-    , m_devTools(0)
 {
     WebRuntimeFeatures::enableGeolocation(true);
     WebRuntimeFeatures::enableIndexedDatabase(true);

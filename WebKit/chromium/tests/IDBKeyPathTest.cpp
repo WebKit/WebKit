@@ -58,7 +58,7 @@ void checkKeyPath(const String& keyPath, const Vector<IDBKeyPathElement>& expect
     if (error != IDBKeyPathParseErrorNone)
         return;
     ASSERT_EQ(expected.size(), idbKeyPathElements.size());
-    for (int i = 0; i < expected.size(); ++i) {
+    for (size_t i = 0; i < expected.size(); ++i) {
         ASSERT_TRUE(expected[i].type == idbKeyPathElements[i].type) << i;
         if (expected[i].type == IDBKeyPathElement::IsIndexed)
             ASSERT_EQ(expected[i].index, idbKeyPathElements[i].index) << i;

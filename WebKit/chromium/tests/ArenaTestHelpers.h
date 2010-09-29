@@ -28,6 +28,7 @@
 
 #include "PODArena.h"
 #include <gtest/gtest.h>
+#include <wtf/NotFound.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -52,7 +53,7 @@ public:
     virtual void free(void* ptr)
     {
         size_t slot = m_allocatedRegions.find(ptr);
-        ASSERT_GE(slot, 0);
+        ASSERT_NE(slot, notFound);
         m_allocatedRegions.remove(slot);
         PODArena::FastMallocAllocator::free(ptr);
     }
