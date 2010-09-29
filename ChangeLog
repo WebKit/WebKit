@@ -1,3 +1,17 @@
+2010-09-29  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Fix the build on non-x86 platforms with gcc
+
+        Don't disable -Werror on arm, that doesn't work when QT_ARCH is
+        for example armv6. Instead change the condition as the comment says,
+        enable -Werror on x86/gcc where we know it passes. On other platforms
+        gcc produces difference warnings, and when they're fixed we can add
+        them to the whitelist of -Werror-supported architectures.
+
+        * WebKit.pri:
+
 2010-09-28  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.
