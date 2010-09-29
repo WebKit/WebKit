@@ -46,7 +46,7 @@
 #include <crtdbg.h>
 #endif
 
-#if OS(WINCE)
+#if OS(WIN)
 #include <winbase.h>
 #endif
 

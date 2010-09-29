@@ -1,5 +1,13 @@
 2010-09-29  Patrick Gansterer  <paroga@webkit.org>
 
+        Unreviewed.
+
+        Build fix for cygwin.
+
+        * wtf/Assertions.cpp:
+
+2010-09-29  Patrick Gansterer  <paroga@webkit.org>
+
         Reviewed by Andreas Kling.
 
         [WINCE] Buildfix for Assertions.cpp after r68511.
