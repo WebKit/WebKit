@@ -1,5 +1,26 @@
 2010-09-29  Mark Rowe  <mrowe@apple.com>
 
+        Merge r62873.
+
+    2010-07-02  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Crash in RenderObject::containingBlock when clearing selection in a display:none node.
+        https://bugs.webkit.org/show_bug.cgi?id=41523
+
+        updateStyleIfNeeded before clearing the selection in the RenderView. Otherwise,
+        m_selectionStart and m_selectionEnd in RenderView point to garbage object.
+        This fixes the crash because updateStyleIfNeeded clears the selection before
+        clobbering nodes that contain the selection.
+
+        Test: editing/selection/crash-on-clear-selection.html
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::updateAppearance):
+
+2010-09-29  Mark Rowe  <mrowe@apple.com>
+
         Merge r67967.
 
     2010-09-21  Abhishek Arya  <inferno@chromium.org>
