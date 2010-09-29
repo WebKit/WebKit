@@ -1,3 +1,10 @@
+2010-09-28  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed; new test baselines.
+        
+        * platform/chromium-win/animations/opacity-transform-animation-expected.checksum: Added.
+        * platform/chromium-win/animations/opacity-transform-animation-expected.png: Added.
+
 2010-09-28  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Simon Fraser.
