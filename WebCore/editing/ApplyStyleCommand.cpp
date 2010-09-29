@@ -182,8 +182,8 @@ void StyleChange::extractTextStyles(CSSMutableStyleDeclaration* style)
 
     // Assuming reconcileTextDecorationProperties has been called, there should not be -webkit-text-decorations-in-effect
     // Furthermore, text-decoration: none has been trimmed so that text-decoration property is always a CSSValueList.
-    if (RefPtr<CSSValue> textDecoration = style->getPropertyCSSValue(CSSPropertyTextDecoration)) {
-        ASSERT(textDecoration->isValueList());
+    RefPtr<CSSValue> textDecoration = style->getPropertyCSSValue(CSSPropertyTextDecoration);
+    if (textDecoration && textDecoration->isValueList()) {
         DEFINE_STATIC_LOCAL(RefPtr<CSSPrimitiveValue>, underline, (CSSPrimitiveValue::createIdentifier(CSSValueUnderline)));
         DEFINE_STATIC_LOCAL(RefPtr<CSSPrimitiveValue>, lineThrough, (CSSPrimitiveValue::createIdentifier(CSSValueLineThrough)));
 
