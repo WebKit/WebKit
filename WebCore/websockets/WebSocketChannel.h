@@ -92,6 +92,7 @@ namespace WebCore {
 
         bool m_suspended;
         bool m_closed;
+        bool m_shouldDiscardReceivedData;
         unsigned long m_unhandledBufferedAmount;
     };
 

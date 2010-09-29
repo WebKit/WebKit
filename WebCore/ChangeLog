@@ -1,5 +1,29 @@
 2010-09-29  Mark Rowe  <mrowe@apple.com>
 
+        Merge r65313.
+
+    2010-08-13  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        flaky websocket/tests/frame-length-overflow.html
+        https://bugs.webkit.org/show_bug.cgi?id=43902
+
+        Add m_shouldDiscardReceivedData flag to indicate it will no longer
+        receive data from network.
+
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::WebSocketChannel):
+        (WebCore::WebSocketChannel::didReceiveData):
+        (WebCore::WebSocketChannel::didFail):
+        (WebCore::WebSocketChannel::processBuffer):
+        - when frame length overflows, we couldn't process data any more.
+          clear buffer and mark m_shouldDiscardReceivedData true to make sure
+          it doesn't process the same buffer again.
+        * websockets/WebSocketChannel.h:
+
+2010-09-29  Mark Rowe  <mrowe@apple.com>
+
         Merge r65135.
 
     2010-08-11  Fumitoshi Ukai  <ukai@chromium.org>
