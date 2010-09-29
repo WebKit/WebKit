@@ -83,14 +83,6 @@ void WebCoreSynchronousLoader::didFail(ResourceHandle*, const ResourceError& err
     m_error = error;
 }
 
-
-static HashSet<String>& allowsAnyHTTPSCertificateHosts()
-{
-    static HashSet<String> hosts;
-
-    return hosts;
-}
-
 ResourceHandleInternal::~ResourceHandleInternal()
 {
     fastFree(m_url);
@@ -133,6 +125,13 @@ bool ResourceHandle::supportsBufferedData()
 }
 
 #if PLATFORM(WIN) && PLATFORM(CF)
+static HashSet<String>& allowsAnyHTTPSCertificateHosts()
+{
+    static HashSet<String> hosts;
+
+    return hosts;
+}
+
 void ResourceHandle::setHostAllowsAnyHTTPSCertificate(const String& host)
 {
     allowsAnyHTTPSCertificateHosts().add(host.lower());

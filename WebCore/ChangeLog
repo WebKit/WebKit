@@ -1,3 +1,20 @@
+2010-09-29  João Paulo Rechi Vita  <jprvita@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [Curl] Fix unused and unitialized warnings.
+        https://bugs.webkit.org/show_bug.cgi?id=46831
+
+        No new tests since no new funcionality has been added.
+
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::allowsAnyHTTPSCertificateHosts):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::ResourceHandleManager):
+        (WebCore::handleLocalReceiveResponse):
+        (WebCore::ResourceHandleManager::downloadTimerCallback):
+        (WebCore::ResourceHandleManager::initializeHandle):
+
 2010-09-29  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
