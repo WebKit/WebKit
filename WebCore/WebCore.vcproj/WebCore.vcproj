@@ -42517,6 +42517,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\TimeInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\TimeInputType.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\TimeRanges.cpp"
 				>
 			</File>

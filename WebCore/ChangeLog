@@ -1,3 +1,9 @@
+2010-09-28  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, windows build fix for r68629.
+
+        * WebCore.vcproj/WebCore.vcproj: Add TimeInputType.{cpp,h}
+
 2010-09-28  Johnny Ding  <jnd@chromium.org>
 
         Reviewed by Adam Barth.
