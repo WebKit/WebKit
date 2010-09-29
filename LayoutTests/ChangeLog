@@ -1,3 +1,13 @@
+2010-09-29  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: implement CSS3 Speech "speak"
+        https://bugs.webkit.org/show_bug.cgi?id=46827
+
+        * platform/mac/accessibility/css-speech-speak-expected.txt: Added.
+        * platform/mac/accessibility/css-speech-speak.html: Added.
+
 2010-09-29  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.

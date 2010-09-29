@@ -714,6 +714,14 @@ stroke
 #none
 
 #
+# CSS_PROP_SPEECH
+#
+spell-out
+digits
+literal-punctuation
+no-punctuation
+
+#
 # -webkit-font-smoothing
 #
 # auto

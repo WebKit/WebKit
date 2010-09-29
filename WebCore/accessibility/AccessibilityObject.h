@@ -536,6 +536,9 @@ public:
     
     bool supportsARIAAttributes() const;
     
+    // CSS3 Speech properties.
+    virtual ESpeak speakProperty() const { return SpeakNormal; }
+    
 #if HAVE(ACCESSIBILITY)
 #if PLATFORM(GTK)
     AccessibilityObjectWrapper* wrapper() const;

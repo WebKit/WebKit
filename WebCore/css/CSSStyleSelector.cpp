@@ -5483,6 +5483,12 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertySize:
         applyPageSizeProperty(value);
         return;
+    
+    case CSSPropertySpeak:
+        HANDLE_INHERIT_AND_INITIAL(speak, Speak);
+        m_style->setSpeak(*primitiveValue);
+        return;
+            
     case CSSPropertyInvalid:
         return;
 

@@ -1,0 +1,25 @@
+Initial
+No speech
+Normal
+Spellout
+Digits
+Literal
+No punctuation
+test
+This tests that using the CSS3-speech property 'speak' works as from a WebCore level (not a platform level, that is up to the platforms)
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS accessibilityController.focusedElement.childAtIndex(0).speak is 'normal'
+PASS accessibilityController.focusedElement.childAtIndex(0).speak is 'none'
+PASS accessibilityController.focusedElement.childAtIndex(0).speak is 'normal'
+PASS accessibilityController.focusedElement.childAtIndex(0).speak is 'spell-out'
+PASS accessibilityController.focusedElement.childAtIndex(0).speak is 'digits'
+PASS accessibilityController.focusedElement.childAtIndex(0).speak is 'literal-punctuation'
+PASS accessibilityController.focusedElement.childAtIndex(0).speak is 'no-punctuation'
+PASS accessibilityController.focusedElement.childAtIndex(0).speak is 'digits'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

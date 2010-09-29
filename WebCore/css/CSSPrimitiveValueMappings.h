@@ -2730,6 +2730,53 @@ template<> inline CSSPrimitiveValue::operator EVectorEffect() const
     }
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ESpeak e)
+    : m_type(CSS_IDENT)
+    , m_hasCachedCSSText(false)
+{
+    switch (e) {
+    case SpeakNone:
+        m_value.ident = CSSValueNone;
+        break;
+    case SpeakNormal:
+        m_value.ident = CSSValueNormal;
+        break;
+    case SpeakSpellOut:
+        m_value.ident = CSSValueSpellOut;
+        break;
+    case SpeakDigits:
+        m_value.ident = CSSValueDigits;
+        break;
+    case SpeakLiteralPunctuation:
+        m_value.ident = CSSValueLiteralPunctuation;
+        break;
+    case SpeakNoPunctuation:
+        m_value.ident = CSSValueNoPunctuation;
+        break;
+    }
+}
+    
+template<> inline CSSPrimitiveValue::operator ESpeak() const
+{
+    switch (m_value.ident) {
+    case CSSValueNone:
+        return SpeakNone;
+    case CSSValueNormal:
+        return SpeakNormal;
+    case CSSValueSpellOut:
+        return SpeakSpellOut;
+    case CSSValueDigits:
+        return SpeakDigits;
+    case CSSValueLiteralPunctuation:
+        return SpeakLiteralPunctuation;
+    case CSSValueNoPunctuation:
+        return SpeakNoPunctuation;
+    default:
+        ASSERT_NOT_REACHED();
+        return SpeakNormal;
+    }
+}
+    
 #endif
 
 }

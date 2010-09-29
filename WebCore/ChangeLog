@@ -1,3 +1,43 @@
+2010-09-29  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: implement CSS3 Speech "speak"
+        https://bugs.webkit.org/show_bug.cgi?id=46827
+
+        Support the "speak" style as defined in
+        http://www.w3.org/TR/css3-speech/#speak
+
+        This puts all the pieces in place for a platform to support this ability, but there's no platform implementation yet.
+
+        Test: platform/mac/accessibility/css-speech-speak.html
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::speakProperty):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::speakProperty):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator ESpeak):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSValueKeywords.in:
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::speak):
+        (WebCore::InheritedFlags::setSpeak):
+        (WebCore::InheritedFlags::initialSpeak):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        * rendering/style/StyleRareInheritedData.h:
+
 2010-09-29  João Paulo Rechi Vita  <jprvita@profusion.mobi>
 
         Reviewed by Antonio Gomes.

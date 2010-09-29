@@ -1,3 +1,18 @@
+2010-09-29  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: implement CSS3 Speech "speak"
+        https://bugs.webkit.org/show_bug.cgi?id=46827
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (speakCallback):
+        (AccessibilityUIElement::speak):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::speak):
+
 2010-09-29  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.

@@ -679,6 +679,12 @@ static JSValueRef isIgnoredCallback(JSContextRef context, JSObjectRef thisObject
     return JSValueMakeBoolean(context, toAXElement(thisObject)->isIgnored());
 }
 
+static JSValueRef speakCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef*)
+{
+    JSRetainPtr<JSStringRef> speakString(Adopt, toAXElement(thisObject)->speak());
+    return JSValueMakeString(context, speakString.get());
+}
+
 static JSValueRef getHasPopupCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef*)
 {
     return JSValueMakeBoolean(context, toAXElement(thisObject)->hasPopup());
@@ -736,6 +742,11 @@ static JSValueRef removeNotificationListenerCallback(JSContextRef context, JSObj
 }
 
 // Implementation
+
+// Unsupported methods on various platforms.
+#if !PLATFORM(MAC)
+JSStringRef AccessibilityUIElement::speak() { return 0; }
+#endif
 
 #if !SUPPORTS_AX_TEXTMARKERS
 
@@ -837,6 +848,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "ariaIsGrabbed", getARIAIsGrabbedCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "ariaDropEffects", getARIADropEffectsCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isIgnored", isIgnoredCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "speak", speakCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0, 0 }
     };
 

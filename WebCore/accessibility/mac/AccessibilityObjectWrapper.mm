@@ -1908,6 +1908,26 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if ([attributeName isEqualToString:@"AXClickPoint"])
         return [NSValue valueWithPoint:m_object->clickPoint()];
     
+    // This is used by DRT to verify CSS3 speech works.
+    if ([attributeName isEqualToString:@"AXDRTSpeechAttribute"]) {
+        ESpeak speakProperty = m_object->speakProperty();
+        switch (speakProperty) {
+        case SpeakNone:
+            return @"none";
+        case SpeakSpellOut:
+            return @"spell-out";
+        case SpeakDigits:
+            return @"digits";
+        case SpeakLiteralPunctuation:
+            return @"literal-punctuation";
+        case SpeakNoPunctuation:
+            return @"no-punctuation";
+        default:
+        case SpeakNormal:
+            return @"normal";
+        }
+    }
+    
     return nil;
 }
 

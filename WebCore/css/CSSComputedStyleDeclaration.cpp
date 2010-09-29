@@ -123,6 +123,7 @@ static const int computedProperties[] = {
     CSSPropertyPosition,
     CSSPropertyResize,
     CSSPropertyRight,
+    CSSPropertySpeak,
     CSSPropertyTableLayout,
     CSSPropertyTextAlign,
     CSSPropertyTextDecoration,
@@ -1409,6 +1410,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             rect->setLeft(zoomAdjustedPixelValue(style->clip().left().value(), style.get()));
             return CSSPrimitiveValue::create(rect.release());
         }
+        case CSSPropertySpeak:
+            return CSSPrimitiveValue::create(style->speak());
         case CSSPropertyWebkitTransform:
             return computedTransform(renderer, style.get());
         case CSSPropertyWebkitTransformOrigin: {
