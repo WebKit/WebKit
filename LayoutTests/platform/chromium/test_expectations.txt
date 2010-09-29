@@ -3153,6 +3153,6 @@ BUGWK46735 WIN : platform/win/plugins/window-geometry-initialized-before-set-win
 // Broken somewhere in the range 68574:68591.
 BUG_SENORBLANCO WIN LINUX : svg/W3C-SVG-1.1/animate-elem-30-t.svg = IMAGE
 BUG_SENORBLANCO WIN LINUX : svg/custom/image-small-width-height.svg = CRASH IMAGE
-BUG_SENORBLANCO WIN : svg/carto.net/selectionlist.svg = IMAGE
+BUG_SENORBLANCO WIN LINUX : svg/carto.net/selectionlist.svg = IMAGE
 BUG_SENORBLANCO LINUX : fast/text/international/thai-baht-space.html = IMAGE
 BUG_SENORBLANCO LINUX : fast/text/midword-break-after-breakable-char.html = TEXT
