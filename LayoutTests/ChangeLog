@@ -1,3 +1,15 @@
+2010-09-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        plugins/npruntime/invoke-failure.html fails in WebKit2 due to slightly different exception being thrown
+        https://bugs.webkit.org/show_bug.cgi?id=46715
+        <rdar://problem/8485909>
+
+        Remove exclamation point.
+
+        * plugins/npruntime/invoke-failure-expected.txt:
+
 2010-09-29  Chris Fleizach  <cfleizach@apple.com>
 
         Unreviewed. Update test results.

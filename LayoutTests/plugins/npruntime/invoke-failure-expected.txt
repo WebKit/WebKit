@@ -1,2 +1,2 @@
 
-SUCCESS: Exception caught: Error: Error calling method on NPObject!
+SUCCESS: Exception caught: Error: Error calling method on NPObject.

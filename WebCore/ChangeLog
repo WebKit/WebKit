@@ -20,6 +20,23 @@
 
         Reviewed by Darin Adler.
 
+        plugins/npruntime/invoke-failure.html fails in WebKit2 due to slightly different exception being thrown
+        https://bugs.webkit.org/show_bug.cgi?id=46715
+        <rdar://problem/8485909>
+
+        Remove exclamation points from exceptions.
+
+        * bindings/v8/V8NPObject.cpp:
+        (WebCore::npObjectInvokeImpl):
+        * bridge/c/c_instance.cpp:
+        (JSC::Bindings::CInstance::invokeMethod):
+        (JSC::Bindings::CInstance::invokeDefaultMethod):
+        (JSC::Bindings::CInstance::invokeConstruct):
+
+2010-09-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
         Add additional check to Text::wholeText.
         <rdar://problem/8304795>
 

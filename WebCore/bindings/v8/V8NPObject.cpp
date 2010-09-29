@@ -131,7 +131,7 @@ static v8::Handle<v8::Value> npObjectInvokeImpl(const v8::Arguments& args, Invok
     }
 
     if (!retval)
-        throwError("Error calling method on NPObject!", V8Proxy::GeneralError);
+        throwError("Error calling method on NPObject.", V8Proxy::GeneralError);
 
     for (int i = 0; i < numArgs; i++)
         _NPN_ReleaseVariantValue(&npArgs[i]);
