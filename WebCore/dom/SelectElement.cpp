@@ -342,8 +342,13 @@ void SelectElement::setSelectedIndex(SelectElementData& data, Element* element, 
         data.setUserDrivenChange(userDrivenChange);
         if (fireOnChangeNow)
             menuListOnChange(data, element);
-        if (RenderMenuList* menuList = toRenderMenuList(element->renderer()))
-            menuList->didSetSelectedIndex();
+        RenderObject* renderer = element->renderer();
+        if (renderer) {
+            if (data.usesMenuList())
+                toRenderMenuList(renderer)->didSetSelectedIndex();
+            else if (renderer->isListBox())
+                toRenderListBox(renderer)->selectionChanged();
+        }
     }
 
     if (Frame* frame = element->document()->frame())

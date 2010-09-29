@@ -1,5 +1,19 @@
 2010-09-29  Mark Rowe  <mrowe@apple.com>
 
+        Merge r61709.
+
+    2010-06-23  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Tests that we do not crash when onchange handler changes the select from a menu list to a list box.
+        https://bugs.webkit.org/show_bug.cgi?id=40828
+
+        * fast/events/select-onchange-crash-expected.txt: Added.
+        * fast/events/select-onchange-crash.html: Added.
+
+2010-09-29  Mark Rowe  <mrowe@apple.com>
+
         Merge r62873.
 
     2010-07-02  Ojan Vafai  <ojan@chromium.org>
