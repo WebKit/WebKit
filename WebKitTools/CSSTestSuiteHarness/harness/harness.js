@@ -241,6 +241,8 @@ function TestSuite()
   this.formatChanged('html4');
   
   this.testInfoLoaded = false;
+
+  this.populatingDatabase = false;
   
   var testInfoPath = kTestSuiteHome + kTestInfoDataFile;
   this.loadTestInfo(testInfoPath);
@@ -884,9 +886,8 @@ TestSuite.prototype.openDatabase = function()
     return;
   }
   
-  window.console.log('opening database')
   var _self = this;
-  this.db = window.openDatabase('css21testsuite', '1.0', 'CSS 2.1 test suite results', 10 * 1024 * 1024, function() {
+  this.db = window.openDatabase('css21testsuite12', '1.0', 'CSS 2.1 test suite results', 10 * 1024 * 1024, function() {
     _self.databaseCreated();
   }, errorHandler);
 
@@ -895,14 +896,14 @@ TestSuite.prototype.openDatabase = function()
 
 TestSuite.prototype.databaseCreated = function(db)
 {
-  window.console.log('databaseCreated')
+  this.populatingDatabase = true;
+
   var _self = this;
   this.db.transaction(function (tx) {
     // hstatus: HTML4 result
     // xstatus: XHTML1 result
     tx.executeSql('CREATE TABLE tests (test PRIMARY KEY UNIQUE, ref, title, flags, links, assertion, hstatus, hcomment, xstatus, xcomment)', null,
       function(tx, results) {
-        window.console.log('populating')
         _self.populateDatabaseFromTestInfoData();
       }, errorHandler);
   });
@@ -914,7 +915,6 @@ TestSuite.prototype.storeTestResult = function(test, format, result, comment, us
     return;
 
   this.db.transaction(function (tx) {
-    window.console.log('storing result ' + result + ' for ' + format);
     if (format == 'html4')
       tx.executeSql('UPDATE tests SET hstatus=?, hcomment=? WHERE test=?\n', [result, comment, test], null, errorHandler);
     else if (format == 'xhtml1')
@@ -935,13 +935,21 @@ TestSuite.prototype.populateDatabaseFromTestInfoData = function(testInfoURL)
       var currTest = _self.tests[testID];
       tx.executeSql('INSERT INTO tests (test, ref, title, flags, links, assertion) VALUES (?, ?, ?, ?, ?, ?)', [currTest.id, currTest.reference, currTest.title, currTest.flags, currTest.links, currTest.assertion], null, errorHandler);
     }
+
+    _self.populatingDatabase = false;
   });
 
 }
 
 TestSuite.prototype.queryDatabaseForAllTests = function(sortKey, perRowHandler, completionHandler)
 {
+  if (this.populatingDatabase)
+    return;
+
+  var _self = this;
   this.db.transaction(function (tx) {
+    if (_self.populatingDatabase)
+      return;
     var query;
     var args = [];
     if (sortKey != '') {
@@ -964,7 +972,13 @@ TestSuite.prototype.queryDatabaseForAllTests = function(sortKey, perRowHandler, 
 
 TestSuite.prototype.queryDatabaseForTestsWithStatus = function(status, perRowHandler, completionHandler)
 {
+  if (this.populatingDatabase)
+    return;
+
+  var _self = this;
   this.db.transaction(function (tx) {
+    if (_self.populatingDatabase)
+      return;
     tx.executeSql('SELECT * FROM tests WHERE hstatus=? OR xstatus=?', [status, status], function(tx, results) {
 
       var len = results.rows.length;
@@ -978,7 +992,13 @@ TestSuite.prototype.queryDatabaseForTestsWithStatus = function(status, perRowHan
 
 TestSuite.prototype.queryDatabaseForTestsWithMixedStatus = function(perRowHandler, completionHandler)
 {
+  if (this.populatingDatabase)
+    return;
+
+  var _self = this;
   this.db.transaction(function (tx) {
+    if (_self.populatingDatabase)
+      return;
     tx.executeSql('SELECT * FROM tests WHERE hstatus IS NOT NULL AND xstatus IS NOT NULL AND hstatus <> xstatus', [], function(tx, results) {
 
       var len = results.rows.length;
@@ -992,9 +1012,16 @@ TestSuite.prototype.queryDatabaseForTestsWithMixedStatus = function(perRowHandle
 
 TestSuite.prototype.queryDatabaseForCompletedTests = function(perRowHandler, completionHandler)
 {
-  this.db.transaction(function (tx) {
-    tx.executeSql('SELECT * FROM tests WHERE hstatus IS NOT NULL AND xstatus IS NOT NULL', [], function(tx, results) {
+  if (this.populatingDatabase)
+    return;
 
+  var _self = this;
+  this.db.transaction(function (tx) {
+    
+    if (_self.populatingDatabase)
+      return;
+
+    tx.executeSql('SELECT * FROM tests WHERE hstatus IS NOT NULL OR xstatus IS NOT NULL', [], function(tx, results) {
       var len = results.rows.length;
       for (var i = 0; i < len; ++i)
         perRowHandler(results.rows.item(i));
@@ -1006,7 +1033,14 @@ TestSuite.prototype.queryDatabaseForCompletedTests = function(perRowHandler, com
 
 TestSuite.prototype.queryDatabaseForTestsNotRun = function(perRowHandler, completionHandler)
 {
+  if (this.populatingDatabase)
+    return;
+
+  var _self = this;
   this.db.transaction(function (tx) {
+    if (_self.populatingDatabase)
+      return;
+
     tx.executeSql('SELECT * FROM tests WHERE hstatus IS NULL OR xstatus IS NULL', [], function(tx, results) {
 
       var len = results.rows.length;
@@ -1060,11 +1094,14 @@ TestSuite.prototype.countTestsWithColumnValue = function(tx, completionHandler, 
 
 TestSuite.prototype.queryDatabaseForSummary = function(completionHandler)
 {
-  if (!this.db)
+  if (!this.db || this.populatingDatabase)
     return;
 
   var _self = this;
   this.db.transaction(function (tx) {
+
+    if (_self.populatingDatabase)
+      return;
 
     var allRowsCount = 'COUNT(*)';
     var html4RowsCount = 'COUNT(hstatus)';

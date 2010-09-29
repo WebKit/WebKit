@@ -1,3 +1,21 @@
+2010-09-28  Simon Fraser  <simon.fraser@apple.com>
+
+        No review.
+
+        Work around uncertainty about the order of database
+        transactions when creating the database, so that we don't
+        try to query the table before it has been created.
+
+        * CSSTestSuiteHarness/harness/harness.js:
+        (TestSuite):
+        (TestSuite.prototype.databaseCreated):
+        (TestSuite.prototype.storeTestResult):
+        (TestSuite.prototype.populateDatabaseFromTestInfoData):
+        (TestSuite.prototype.queryDatabaseForTestsWithStatus):
+        (TestSuite.prototype.queryDatabaseForTestsWithMixedStatus):
+        (TestSuite.prototype.queryDatabaseForCompletedTests):
+        (TestSuite.prototype.queryDatabaseForTestsNotRun):
+
 2010-09-28  Tony Chang  <tony@chromium.org>
 
         Reviewed by Eric Seidel.
