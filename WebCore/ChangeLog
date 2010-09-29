@@ -1,3 +1,14 @@
+2010-09-28  Marc-Antoine Ruel  <maruel@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Split webcore_html off webcore_remaining.
+
+        webcore_remaining is still too large for certain 32 bits toolsets.
+        https://bugs.webkit.org/show_bug.cgi?id=46445
+
+        * WebCore.gyp/WebCore.gyp:
+
 2010-09-28  Jia Pu  <jpu@apple.com>
 
         Reviewed by Dan Bernstein.

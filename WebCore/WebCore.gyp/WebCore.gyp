@@ -982,6 +982,21 @@
       ],
     },
     {
+      'target_name': 'webcore_html',
+      'type': '<(library)',
+      'dependencies': [
+        'webcore_prerequisites',
+      ],
+      'sources': [
+        '<@(webcore_files)',
+      ],
+      'sources/': [
+        # Start by excluding everything then include html files only.
+        ['exclude', '.*'],
+        ['include', 'html/'],
+      ],
+    },
+    {
       'target_name': 'webcore_svg',
       'type': '<(library)',
       'dependencies': [
@@ -1210,7 +1225,7 @@
         # Exclude things that don't apply to the Chromium platform on the basis
         # of their enclosing directories and tags at the ends of their
         # filenames.
-        ['exclude', '(android|cairo|cf|cg|curl|gtk|haiku|linux|mac|opentype|platform|posix|qt|soup|svg|symbian|win|wx)/'],
+        ['exclude', '(android|cairo|cf|cg|curl|gtk|haiku|html|linux|mac|opentype|platform|posix|qt|soup|svg|symbian|win|wx)/'],
         ['exclude', '(?<!Chromium)(Android|Cairo|CF|CG|Curl|Gtk|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|Wx)\\.(cpp|mm?)$'],
 
         # Exclude most of SVG except css and javascript bindings.
@@ -1340,6 +1355,7 @@
       'target_name': 'webcore',
       'type': 'none',
       'dependencies': [
+        'webcore_html',
         'webcore_platform',
         'webcore_remaining',
         # Exported.
