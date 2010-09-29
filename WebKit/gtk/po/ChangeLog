@@ -1,3 +1,13 @@
+2010-09-29  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Martin Robinson.
+
+        Avoid touching the po files automatically during the build
+        process. The maintainers still have the option of forcing an
+        update with make update-po.
+
+        * GNUmakefile.am:
+
 2010-09-29  Miloš Popović  <gpopac@gmail.com>
 
         Reviewed by Gustavo Noronha Silva.

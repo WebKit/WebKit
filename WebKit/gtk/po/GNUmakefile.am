@@ -95,19 +95,22 @@ $(srcdir)/WebKit/gtk/po/$(DOMAIN).pot:
 
 # This target rebuilds a PO file if $(DOMAIN).pot has changed.
 # Note that a PO file is not touched if it doesn't need to be changed.
-$(POFILES): $(srcdir)/WebKit/gtk/po/$(DOMAIN).pot
-	@lang=`echo $@ | sed -e 's,.*/,,' -e 's/\.po$$//'`; \
-	if test -f "$(srcdir)/WebKit/gtk/po/$${lang}.po"; then \
-	  test "$(srcdir)" = . && cdcmd="" || cdcmd="cd $(srcdir)/WebKit/gtk/po && "; \
-	  echo "$${cdcmd}$(MSGMERGE_UPDATE) $${lang}.po $(DOMAIN).pot"; \
-	  cd $(srcdir)/WebKit/gtk/po && $(MSGMERGE_UPDATE) $${lang}.po $(DOMAIN).pot; \
-	else \
-	  $(MAKE) $${lang}.po-create; \
-	fi
+update-po-files: $(srcdir)/WebKit/gtk/po/$(DOMAIN).pot
+	@for pofile in $(POFILES); do \
+	  lang=`echo $$pofile | sed -e 's,.*/,,' -e 's/\.po$$//'`; \
+	  if test -f "$(srcdir)/WebKit/gtk/po/$${lang}.po"; then \
+	    test "$(srcdir)" = . && cdcmd="" || cdcmd="cd $(srcdir)/WebKit/gtk/po && "; \
+	    echo "$${cdcmd}$(MSGMERGE_UPDATE) $${lang}.po $(DOMAIN).pot"; \
+	    pushd $(srcdir)/WebKit/gtk/po && $(MSGMERGE_UPDATE) $${lang}.po $(DOMAIN).pot; \
+	    popd; \
+	  else \
+	    $(MAKE) $${lang}.po-create; \
+	  fi; \
+	done
 
 update-po: GNUmakefile
 	$(MAKE) $(DOMAIN).pot-update
-	$(MAKE) $(POFILES)
+	$(MAKE) update-po-files
 	$(MAKE) $(MOFILES)
 
 .nop.po-create:
