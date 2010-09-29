@@ -330,30 +330,19 @@ v8::Persistent<v8::Context> V8DOMWindowShell::createNewContext(v8::Handle<v8::Ob
 
     // Used to avoid sleep calls in unload handlers.
     if (!V8Proxy::registeredExtensionWithV8(DateExtension::get()))
-        V8Proxy::registerExtension(DateExtension::get(), String());
+        V8Proxy::registerExtension(DateExtension::get());
 
     // Dynamically tell v8 about our extensions now.
     const V8Extensions& extensions = V8Proxy::extensions();
     OwnArrayPtr<const char*> extensionNames(new const char*[extensions.size()]);
     int index = 0;
     for (size_t i = 0; i < extensions.size(); ++i) {
-        if (extensions[i].group && extensions[i].group != extensionGroup)
+        // Ensure our date extension is always allowed.
+        if (extensions[i] != DateExtension::get()
+            && !m_frame->loader()->client()->allowScriptExtension(extensions[i]->name(), extensionGroup))
             continue;
 
-        if (extensions[i].useCallback) {
-            // Ensure our date extension is always allowed.
-            if (extensions[i].extension != DateExtension::get()
-                && !m_frame->loader()->client()->allowScriptExtension(extensions[i].extension->name(), extensionGroup))
-                continue;
-        } else {
-            // Note: we check the loader URL here instead of the document URL
-            // because we might be currently loading an URL into a blank page.
-            // See http://code.google.com/p/chromium/issues/detail?id=10924
-            if (extensions[i].scheme.length() > 0 && (extensions[i].scheme != m_frame->loader()->activeDocumentLoader()->url().protocol()))
-                continue;
-        }
-
-        extensionNames[index++] = extensions[i].extension->name();
+        extensionNames[index++] = extensions[i]->name();
     }
     v8::ExtensionConfiguration extensionConfiguration(index, extensionNames.get());
     result = v8::Context::New(&extensionConfiguration, globalTemplate, global);

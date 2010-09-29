@@ -119,18 +119,8 @@ namespace WebCore {
 
     const int kMaxRecursionDepth = 20;
 
-    // Information about an extension that is registered for use with V8. If
-    // scheme is non-empty, it contains the URL scheme the extension should be
-    // used with. If group is non-zero, the extension will only be loaded into
-    // script contexts that belong to that group. Otherwise, the extension is
-    // used with all schemes and contexts.
-    struct V8ExtensionInfo {
-        String scheme;
-        int group;
-        v8::Extension* extension;
-        bool useCallback; // FIXME: remove
-    };
-    typedef WTF::Vector<V8ExtensionInfo> V8Extensions;
+    // The list of extensions that are registered for use with V8.
+    typedef WTF::Vector<v8::Extension*> V8Extensions;
 
     class V8Proxy {
     public:
@@ -320,19 +310,9 @@ namespace WebCore {
         bool setContextDebugId(int id);
         static int contextDebugId(v8::Handle<v8::Context>);
 
-        // Registers a v8 extension to be available on webpages. The two forms
-        // offer various restrictions on what types of contexts the extension is
-        // loaded into. If a scheme is provided, only pages whose URL has the given
-        // scheme will match. If extensionGroup is provided, the extension will
-        // only be loaded into scripts run via evaluateInNewWorld with the
-        // matching group.  Will only affect v8 contexts initialized after this
-        // call. Takes ownership of the v8::Extension object passed.
-        static void registerExtension(v8::Extension*, const String& schemeRestriction);
-        static void registerExtension(v8::Extension*, int extensionGroup);
-
-        // Same as above, but new version.
-        // FIXME: remove the other 2 versions in phase 3 of multipart checkin:
-        // https://bugs.webkit.org/show_bug.cgi?id=45721
+        // Registers a v8 extension to be available on webpages. Will only
+        // affect v8 contexts initialized after this call. Takes ownership of
+        // the v8::Extension object passed.
         static void registerExtension(v8::Extension*);
 
         static void registerExtensionWithV8(v8::Extension*);

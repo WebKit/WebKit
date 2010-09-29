@@ -1,3 +1,17 @@
+2010-09-29  Matt Perry  <mpcomplete@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Remove obsolete registerExtension variants from chromium port.
+        https://bugs.webkit.org/show_bug.cgi?id=46683
+
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::createNewContext):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::registeredExtensionWithV8):
+        (WebCore::V8Proxy::registerExtension):
+        * bindings/v8/V8Proxy.h:
+
 2010-09-29  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Chris Fleizach.

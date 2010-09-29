@@ -828,32 +828,17 @@ void V8Proxy::registerExtensionWithV8(v8::Extension* extension)
 bool V8Proxy::registeredExtensionWithV8(v8::Extension* extension)
 {
     for (size_t i = 0; i < m_extensions.size(); ++i) {
-        if (m_extensions[i].extension == extension)
+        if (m_extensions[i] == extension)
             return true;
     }
 
     return false;
 }
 
-void V8Proxy::registerExtension(v8::Extension* extension, const String& schemeRestriction)
-{
-    registerExtensionWithV8(extension);
-    V8ExtensionInfo info = {schemeRestriction, 0, extension, false};
-    m_extensions.append(info);
-}
-
-void V8Proxy::registerExtension(v8::Extension* extension, int extensionGroup)
-{
-    registerExtensionWithV8(extension);
-    V8ExtensionInfo info = {String(), extensionGroup, extension, false};
-    m_extensions.append(info);
-}
-
 void V8Proxy::registerExtension(v8::Extension* extension)
 {
     registerExtensionWithV8(extension);
-    V8ExtensionInfo info = {String(), 0, extension, true};
-    m_extensions.append(info);
+    m_extensions.append(extension);
 }
 
 bool V8Proxy::setContextDebugId(int debugId)

@@ -1,3 +1,13 @@
+2010-09-29  Matt Perry  <mpcomplete@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Remove obsolete registerExtension variants from chromium port.
+        https://bugs.webkit.org/show_bug.cgi?id=46683
+
+        * public/WebScriptController.h:
+        * src/WebScriptController.cpp:
+
 2010-09-29  Chris Guillory  <chris.guillory@google.com>
 
         Reviewed by Dimitri Glazkov.

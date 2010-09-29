@@ -51,12 +51,7 @@ public:
     // matching group.
     // Will only affect v8 contexts initialized after this call. Takes ownership
     // of the v8::Extension object passed.
-    // FIXME: remove the latter 2 versions in phase 3 of multipart checkin:
-    // https://bugs.webkit.org/show_bug.cgi?id=45721
     WEBKIT_API static void registerExtension(v8::Extension*);
-    WEBKIT_API static void registerExtension(v8::Extension*,
-                                             const WebString& schemeRestriction);
-    WEBKIT_API static void registerExtension(v8::Extension*, int extensionGroup);
 
     // Enables special settings which are only applicable if V8 is executed
     // in the single thread which must be the main thread.
