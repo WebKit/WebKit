@@ -1,5 +1,22 @@
 2010-09-29  Mark Rowe  <mrowe@apple.com>
 
+        Merge r68158.
+
+    2010-09-23  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Fix the memory safety issue by checking containerObject is a RenderBox
+        before doing the transforms.
+        https://bugs.webkit.org/show_bug.cgi?id=46365
+
+        Test: compositing/overflow/get-transform-from-non-box-container.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::getTransformFromContainer):
+
+2010-09-29  Mark Rowe  <mrowe@apple.com>
+
         Merge r68485.
 
     2010-09-27  Abhishek Arya  <inferno@chromium.org>
