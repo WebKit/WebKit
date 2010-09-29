@@ -1,3 +1,16 @@
+2010-09-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Removed input type site-specific quirk for mail.google.com
+        https://bugs.webkit.org/show_bug.cgi?id=46836
+
+        * bindings/js/JSHTMLInputElementCustom.cpp:
+        (WebCore::needsGmailQuirk): Removed.
+        (WebCore::JSHTMLInputElement::type): Removed this custom getter. 
+        * html/HTMLInputElement.idl: Removed the JSCCustomGetter custom attribute
+        from the type attribute.
+
 2010-09-29  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Simon Fraser.

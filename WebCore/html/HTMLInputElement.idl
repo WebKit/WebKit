@@ -56,7 +56,7 @@ module html {
 #endif
         attribute [Reflect, URL] DOMString src;
         attribute [Reflect] DOMString step;
-        attribute [ConvertNullToNullString, JSCCustomGetter] DOMString type; // readonly dropped as part of DOM level 2
+        attribute [ConvertNullToNullString] DOMString type; // readonly dropped as part of DOM level 2
         attribute [Reflect] DOMString useMap;
         attribute [ConvertNullToNullString] DOMString value;
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
