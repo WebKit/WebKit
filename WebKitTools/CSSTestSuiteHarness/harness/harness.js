@@ -748,6 +748,7 @@ TestSuite.prototype.resultsPopupChanged = function(index)
 
 TestSuite.prototype.exportResultsCompletion = function(exportTests)
 {
+  window.console.log('exportResultsCompletion')
   // Lame workaround for ORDER BY not working
   exportTests.sort(function(a, b) {
       return a.test.localeCompare(b.test);
@@ -821,7 +822,7 @@ TestSuite.prototype.showResultsForAllTests = function()
   this.beginAppendingOutput();
 
   var _self = this;
-  this.queryDatabaseForAllTests(
+  this.queryDatabaseForAllTests('test',
     function(item) {
       _self.appendResultToOutput(kHTML4Data, item.test, item.hstatus, item.hcomment);
       _self.appendResultToOutput(kXHTML1Data, item.test, item.xstatus, item.xcomment);
@@ -836,7 +837,7 @@ TestSuite.prototype.exportResultsForAllTests = function()
   var exportTests = [];
 
   var _self = this;
-  this.queryDatabaseForAllTests(
+  this.queryDatabaseForAllTests('test',
       function(item) {
         var htmlLine= _self.createExportLine(kHTML4Data, item.test, item.hstatus, item.hcomment);
         var xhtmlLine = _self.createExportLine(kXHTML1Data, item.test, item.xstatus, item.xcomment);

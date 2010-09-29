@@ -1,3 +1,10 @@
+2010-09-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix export by adding missing argument.
+
+        * CSSTestSuiteHarness/harness/harness.js:
+        (TestSuite.prototype.showResultsForAllTests):
+
 2010-09-28  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, add missing import.
