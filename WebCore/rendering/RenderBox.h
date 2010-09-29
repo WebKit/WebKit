@@ -189,7 +189,12 @@ public:
     void setMarginEnd(int);
     void setMarginBefore(int);
     void setMarginAfter(int);
-    
+
+    int marginStartUsing(const RenderStyle*) const;
+    int marginEndUsing(const RenderStyle*) const;
+    int marginBeforeUsing(const RenderStyle*) const;
+    int marginAfterUsing(const RenderStyle*) const;
+
     // The following five functions are used to implement collapsing margins.
     // All objects know their maximal positive and negative margins.  The
     // formula for computing a collapsed margin is |maxPosMargin| - |maxNegmargin|.
@@ -427,11 +432,6 @@ private:
     void setMarginEndUsing(const RenderStyle*, int);
     void setMarginBeforeUsing(const RenderStyle*, int);
     void setMarginAfterUsing(const RenderStyle*, int);
-
-    int marginStartUsing(const RenderStyle*) const;
-    int marginEndUsing(const RenderStyle*) const;
-    int marginBeforeUsing(const RenderStyle*) const;
-    int marginAfterUsing(const RenderStyle*) const;
 
 private:
     // The width/height of the contents + borders + padding.  The x/y location is relative to our container (which is not always our parent).

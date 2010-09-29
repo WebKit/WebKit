@@ -1,3 +1,23 @@
+2010-09-29  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46824
+        
+        Convert layoutBlockChild (but not the functions it calls) to be block-flow-aware.
+
+        fast/blockflow/root-lr.html progresses as a result of this change.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::estimateLogicalTopPosition):
+        (WebCore::RenderBlock::determineLogicalLeftPositionForChild):
+        (WebCore::RenderBlock::setLogicalTopForChild):
+        (WebCore::RenderBlock::layoutBlockChild):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::logicalHeightForChild):
+        (WebCore::RenderBlock::logicalTopForChild):
+        * rendering/RenderBox.h:
+
 2010-09-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Antonio Gomes.

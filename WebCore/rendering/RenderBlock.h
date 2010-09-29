@@ -566,10 +566,13 @@ private:
     bool handleRunInChild(RenderBox* child);
     int collapseMargins(RenderBox* child, MarginInfo&);
     int clearFloatsIfNeeded(RenderBox* child, MarginInfo&, int oldTopPosMargin, int oldTopNegMargin, int yPos);
-    int estimateVerticalPosition(RenderBox* child, const MarginInfo&);
-    void determineHorizontalPosition(RenderBox* child);
+    int estimateLogicalTopPosition(RenderBox* child, const MarginInfo&);
+    void determineLogicalLeftPositionForChild(RenderBox* child);
     void handleAfterSideOfBlock(int top, int bottom, MarginInfo&);
     void setCollapsedBottomMargin(const MarginInfo&);
+    void setLogicalTopForChild(RenderBox* child, int logicalTop);
+    int logicalHeightForChild(RenderBox* child) { return style()->isVerticalBlockFlow() ? child->height() : child->width(); }
+    int logicalTopForChild(RenderBox* child) { return style()->isVerticalBlockFlow() ? child->y() : child->x(); }
     // End helper functions and structs used by layoutBlockChildren.
 
     // Pagination routines.
