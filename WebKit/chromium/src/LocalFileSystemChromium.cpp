@@ -68,7 +68,7 @@ void LocalFileSystem::requestFileSystem(ScriptExecutionContext* context, AsyncFi
         WorkerContext* workerContext = static_cast<WorkerContext*>(context);
         WorkerLoaderProxy* workerLoaderProxy = &workerContext->thread()->workerLoaderProxy();
         WebWorkerBase* webWorker = static_cast<WebWorkerBase*>(workerLoaderProxy);
-        webWorker->openFileSystem(static_cast<WebFileSystem::Type>(type), size, new WebFileSystemCallbacksImpl(callbacks));
+        webWorker->openFileSystem(static_cast<WebFileSystem::Type>(type), size, new WebFileSystemCallbacksImpl(callbacks, context));
     }
 }
 

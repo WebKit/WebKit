@@ -38,6 +38,7 @@
 
 namespace WebCore {
 class AsyncFileSystemCallbacks;
+class ScriptExecutionContext;
 }
 
 namespace WebKit {
@@ -48,7 +49,7 @@ class WebString;
 
 class WebFileSystemCallbacksImpl : public WebFileSystemCallbacks {
 public:
-    WebFileSystemCallbacksImpl(PassOwnPtr<WebCore::AsyncFileSystemCallbacks>);
+    WebFileSystemCallbacksImpl(PassOwnPtr<WebCore::AsyncFileSystemCallbacks>, WebCore::ScriptExecutionContext* = 0);
     virtual ~WebFileSystemCallbacksImpl();
 
     virtual void didSucceed();
@@ -59,6 +60,9 @@ public:
 
 private:
     OwnPtr<WebCore::AsyncFileSystemCallbacks> m_callbacks;
+
+    // Used for worker's openFileSystem callbacks.
+    WebCore::ScriptExecutionContext* m_context;
 };
 
 } // namespace WebKit

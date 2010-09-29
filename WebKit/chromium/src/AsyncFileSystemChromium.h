@@ -34,7 +34,7 @@
 #if ENABLE(FILE_SYSTEM)
 
 #include "AsyncFileSystem.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebKit {
 class WebFileSystem;
@@ -46,11 +46,15 @@ class AsyncFileSystemCallbacks;
 
 class AsyncFileSystemChromium : public AsyncFileSystem {
 public:
-    AsyncFileSystemChromium(const String& rootPath);
+    static PassOwnPtr<AsyncFileSystem> create(const String& rootPath)
+    {
+        return adoptPtr(new AsyncFileSystemChromium(rootPath));
+    }
+
     virtual ~AsyncFileSystemChromium();
 
-    virtual void move(const String& srcPath, const String& destPath, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void copy(const String& srcPath, const String& destPath, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void move(const String& sourcePath, const String& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void copy(const String& sourcePath, const String& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks>);
     virtual void remove(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
     virtual void readMetadata(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
     virtual void createFile(const String& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks>);
@@ -61,6 +65,7 @@ public:
     virtual void createWriter(AsyncFileWriterClient* client, const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
 
 private:
+    explicit AsyncFileSystemChromium(const String& rootPath);
     WebKit::WebFileSystem* m_webFileSystem;
 };
 

@@ -1,3 +1,57 @@
+2010-09-29  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by David Levin.
+
+        Bridge all FileSystem operations on Workers to the MainThread
+        https://bugs.webkit.org/show_bug.cgi?id=46524
+
+        * src/LocalFileSystemChromium.cpp:
+        (WebCore::LocalFileSystem::requestFileSystem): Changed the worker case
+        code to create WebFileSystemCallbacksImpl with the current
+        ScriptExecutionContext (WorkerContext).
+        * src/WebFileSystemCallbacksImpl.cpp:
+        (WebKit::WebFileSystemCallbacksImpl::WebFileSystemCallbacksImpl): Added
+        a new constructor that takes ScriptExecutionContext (WorkerContext)
+        for workers.
+        (WebKit::WebFileSystemCallbacksImpl::didOpenFileSystem): Added the
+        code for workers that creates WorkerAsyncFileSystemChromium.
+        * src/WebFileSystemCallbacksImpl.h:
+        * src/WorkerAsyncFileSystemChromium.cpp: Added.
+        * src/WorkerAsyncFileSystemChromium.h: Added.
+        * src/WorkerFileSystemCallbacksBridge.cpp: Added methods for regular
+        file system operations to proxy them to the main thread.
+        (WebKit::WorkerFileSystemCallbacksBridge::createForOpenFileSystem):
+        (WebKit::WorkerFileSystemCallbacksBridge::createForMove):
+        (WebKit::WorkerFileSystemCallbacksBridge::createForCopy):
+        (WebKit::WorkerFileSystemCallbacksBridge::createForRemove):
+        (WebKit::WorkerFileSystemCallbacksBridge::createForReadMetadata):
+        (WebKit::WorkerFileSystemCallbacksBridge::createForCreateFile):
+        (WebKit::WorkerFileSystemCallbacksBridge::createForCreateDirectory):
+        (WebKit::WorkerFileSystemCallbacksBridge::createForFileExists):
+        (WebKit::WorkerFileSystemCallbacksBridge::createForDirectoryExists):
+        (WebKit::WorkerFileSystemCallbacksBridge::createForReadDirectory):
+        (WebKit::MainThreadFileSystemCallbacks::didSucceed):
+        (WebKit::MainThreadFileSystemCallbacks::didReadMetadata):
+        (WebKit::MainThreadFileSystemCallbacks::didReadDirectory):
+        (WebKit::WorkerFileSystemCallbacksBridge::openFileSystemOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::moveOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::copyOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::removeOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::readMetadataOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::createFileOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::createDirectoryOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::fileExistsOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::directoryExistsOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::readDirectoryOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::didSucceedOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::didReadMetadataOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::didReadDirectoryOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::didSucceedOnWorkerThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::didReadMetadataOnWorkerThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::didReadDirectoryOnWorkerThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::derefIfWorkerIsStopped):
+        * src/WorkerFileSystemCallbacksBridge.h:
+
 2010-09-29  Matt Perry  <mpcomplete@chromium.org>
 
         Reviewed by Darin Fisher.

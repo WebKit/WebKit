@@ -240,9 +240,7 @@ bool WebWorkerBase::allowDatabase(WebFrame*, const WebString& name, const WebStr
 void WebWorkerBase::openFileSystem(WebFileSystem::Type type, long long size, WebFileSystemCallbacks* callbacks)
 {
     WorkerScriptController* controller = WorkerScriptController::controllerForContext();
-    WorkerContext* workerContext = controller->workerContext();
-
-    RefPtr<WorkerFileSystemCallbacksBridge> bridge = WorkerFileSystemCallbacksBridge::create(this, workerContext, callbacks);
+    RefPtr<WorkerFileSystemCallbacksBridge> bridge = WorkerFileSystemCallbacksBridge::create(this, controller->workerContext(), callbacks);
     bridge->postOpenFileSystemToMainThread(commonClient(), type, size, openFileSystemMode);
 }
 #endif
