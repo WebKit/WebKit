@@ -1897,6 +1897,8 @@
             'inspector/InspectorFrontendClient.h',
             'inspector/InspectorFrontendHost.cpp',
             'inspector/InspectorFrontendHost.h',
+            'inspector/InspectorInstrumentation.cpp',
+            'inspector/InspectorInstrumentation.h',
             'inspector/InspectorProfilerAgent.cpp',
             'inspector/InspectorProfilerAgent.h',
             'inspector/InspectorResource.cpp',
