@@ -568,7 +568,7 @@ button
 button-bevel
 default-button
 inner-spin-button
-input-speech-button
+-webkit-input-speech-button
 list-button
 listbox
 listitem

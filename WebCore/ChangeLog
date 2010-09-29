@@ -1,3 +1,23 @@
+2010-09-29  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Rename the input element's @speech attribute to @webkitspeech since it is still experimental.
+        https://bugs.webkit.org/show_bug.cgi?id=46799
+
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::webkitspeechEnabled): Rename the runtime feature flag getter.
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSValueKeywords.in: Rename the css style name.
+        * css/html.css: Rename the css style name.
+        (input::-webkit-input-speech-button):
+        * html/HTMLAttributeNames.in: Rename the @speech attribute.
+        * html/HTMLInputElement.cpp: Update code using the attribute.
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        (WebCore::HTMLInputElement::isSpeechEnabled):
+        * html/HTMLInputElement.idl: Rename the @speech attribute.
+
 2010-09-29  MORITA Hajime  <morrita@google.com>
 
         [Chromium] failed to build without ACCELERATED_COMPOSITING

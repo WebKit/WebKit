@@ -1,3 +1,16 @@
+2010-09-29  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Rename the input element's @speech attribute to @webkitspeech since it is still experimental.
+        https://bugs.webkit.org/show_bug.cgi?id=46799
+
+        * fast/speech/input-appearance-numberandspeech.html:
+        * fast/speech/input-appearance-searchandspeech.html:
+        * fast/speech/input-appearance-speechbutton.html:
+        * fast/speech/input-text-speechbutton.html:
+        * fast/speech/speech-button-ignore-generated-events.html:
+
 2010-09-29  James Kozianski  <koz@chromium.org>
 
         Reviewed by James Robinson.

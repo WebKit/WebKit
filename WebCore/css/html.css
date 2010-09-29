@@ -378,7 +378,7 @@ input::-webkit-outer-spin-button {
 }
 
 input::-webkit-input-speech-button {
-    -webkit-appearance: input-speech-button;
+    -webkit-appearance: -webkit-input-speech-button;
     display: inline-block;
 }
 

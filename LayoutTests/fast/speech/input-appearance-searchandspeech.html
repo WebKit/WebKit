@@ -18,9 +18,9 @@ var maxCellCount = [7, 5, 5];
 var cellCount = 0;
 var index = 0;
 for (var size = 8; size < 24; size++) {
-    cells[index] += '<input type="search" style="font-size:' + size + 'px" speech><br>'
+    cells[index] += '<input type="search" style="font-size:' + size + 'px" webkitspeech><br>'
         + '<input type="search" style="font-size:' + size + 'px" value="012345678901234567890123456789"><br>'
-        + '<input type="search" style="font-size:' + size + 'px" value="012345678901234567890123456789" speech><br>';
+        + '<input type="search" style="font-size:' + size + 'px" value="012345678901234567890123456789" webkitspeech><br>';
     if (++cellCount >= maxCellCount[index]) {
         ++index;
         cellCount = 0;

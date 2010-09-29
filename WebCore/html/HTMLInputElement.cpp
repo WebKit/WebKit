@@ -1208,7 +1208,7 @@ void HTMLInputElement::parseMappedAttribute(Attribute* attr)
         // FIXME: we need to tell this change to a renderer if the attribute affects the appearance.
 #endif
 #if ENABLE(INPUT_SPEECH)
-    else if (attr->name() == speechAttr) {
+    else if (attr->name() == webkitspeechAttr) {
       if (renderer())
           renderer()->updateFromElement();
       setNeedsStyleRecalc();
@@ -2947,7 +2947,7 @@ bool HTMLInputElement::isSpeechEnabled() const
     case SEARCH:
     case TELEPHONE:
     case TEXT:
-        return hasAttribute(speechAttr);
+        return hasAttribute(webkitspeechAttr);
     case BUTTON:
     case CHECKBOX:
     case COLOR:

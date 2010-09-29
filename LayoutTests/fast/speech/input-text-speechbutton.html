@@ -31,16 +31,11 @@ function onChange() {
 }
 
 function run() {
-    var input = document.createElement('input');
-    input.id = 'speechInput';
-    input.speech = 'speech';
-    input.onchange = onChange;
-    document.body.appendChild(input);
-
     if (window.layoutTestController && window.eventSender) {
         layoutTestController.setMockSpeechInputResult('Pictures of the moon');
 
         // Clicking the speech button should fill in mock speech-recognized text.
+        var input = document.getElementById('speechInput');
         var x = input.offsetLeft + input.offsetWidth - 4;
         var y = input.offsetTop + input.offsetHeight / 2;
         eventSender.mouseMoveTo(x, y);
@@ -54,5 +49,6 @@ window.jsTestIsAsync = true;
 window.successfullyParsed = true;
 </script>
 <script src="../js/resources/js-test-post.js"></script>
+<input id='speechInput' webkitspeech onchange="onChange()">
 </body>
 </html>
