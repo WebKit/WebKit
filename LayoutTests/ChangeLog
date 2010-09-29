@@ -1,3 +1,14 @@
+2010-09-29  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Assertion failed when accessing -webkit-margin-top-collapse via computed style.
+        https://bugs.webkit.org/show_bug.cgi?id=46798
+
+        * fast/css/getComputedStyle/margin-top-bottom-collapse-alias-expected.txt: Added.
+        * fast/css/getComputedStyle/margin-top-bottom-collapse-alias.html: Added.
+        * fast/css/getComputedStyle/script-tests/margin-top-bottom-collapse-alias.js: Added.
+
 2010-09-29  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; updated test results.

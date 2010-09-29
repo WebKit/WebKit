@@ -1,3 +1,19 @@
+2010-09-29  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Assertion failed when accessing -webkit-margin-top-collapse via computed style.
+        https://bugs.webkit.org/show_bug.cgi?id=46798
+        
+        There was a switch statement which missed enum entries in getPropertyCSSValue().
+        This change added these entries to prevent the leak.
+        It also added extra case statements to encourage the compiler's help.
+
+        Test: fast/css/getComputedStyle/margin-top-bottom-collapse-alias.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+
 2010-09-29  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.
