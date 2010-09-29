@@ -32,9 +32,13 @@
 
 #if !defined(NDEBUG) && (!defined(DEBUG_INTERNAL) || defined(DEBUG_ALL))
 const LPCWSTR webProcessName = L"WebKit2WebProcess_debug.exe";
-const LPCWSTR webKitDLLName = L"WebKit_debug.dll";
 #else
 const LPCWSTR webProcessName = L"WebKit2WebProcess.exe";
+#endif
+
+#ifdef DEBUG_ALL
+const LPCWSTR webKitDLLName = L"WebKit_debug.dll";
+#else
 const LPCWSTR webKitDLLName = L"WebKit.dll";
 #endif
 

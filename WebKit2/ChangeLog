@@ -1,3 +1,17 @@
+2010-09-29  Adam Roben  <aroben@apple.com>
+
+        Look for WebKit.dll (not WebKit_debug.dll) when launching the web
+        process in Debug builds
+
+        Fixes <http://webkit.org/b/46809> <rdar://problem/8491809> REGRESSION
+        (r67979): All tests crashing on Windows WebKit2 test bot
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/Launcher/win/ProcessLauncherWin.cpp: WebKit_debug.dll is
+        only used in Debug_All builds (but WebKit2WebProcess_debug.exe is used
+        in all non-Debug_Internal debug-style builds).
+
 2010-09-28  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
