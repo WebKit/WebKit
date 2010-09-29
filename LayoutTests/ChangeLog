@@ -1,3 +1,11 @@
+2010-09-29  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, updated baselines of
+        svg/css/getComputedStyle-basic.xhtml after the css properties
+        were renamed in r68561.
+
+        * platform/gtk/svg/css/getComputedStyle-basic-expected.txt:
+
 2010-09-29  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Jeremy Orlow.
