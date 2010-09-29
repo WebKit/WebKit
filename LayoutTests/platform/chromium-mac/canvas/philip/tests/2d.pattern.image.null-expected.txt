@@ -1,0 +1,5 @@
+< [index] >
+2d.pattern.image.null
+References: 2d.pattern.wrongtype
+Actual output:
+Passed

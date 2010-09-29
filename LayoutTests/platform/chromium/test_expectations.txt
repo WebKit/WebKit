@@ -2195,7 +2195,6 @@ BUG33287 WIN LINUX : fast/canvas/set-colors.html = TEXT
 
 // Failures from WebKit merge 51711:51724
 BUG32003 : fast/js/string-property-deletion.html = TEXT
-BUG31998 LINUX : svg/carto.net/selectionlist.svg = IMAGE PASS
 BUG31997 DEBUG WIN : fast/body-propagation/overflow/004-xhtml.xhtml = IMAGE+TEXT PASS
 
 // Regression from Webkit merge 51772 -> 51784
@@ -3150,3 +3149,10 @@ BUGWK46705 : svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop.html = IMAGE
 
 // New test; was added in http://trac.webkit.org/changeset/68520
 BUGWK46735 WIN : platform/win/plugins/window-geometry-initialized-before-set-window.html = TEXT
+
+// Broken somewhere in the range 68574:68591.
+BUG_SENORBLANCO WIN LINUX : svg/W3C-SVG-1.1/animate-elem-30-t.svg = IMAGE
+BUG_SENORBLANCO WIN LINUX : svg/custom/image-small-width-height.svg = CRASH IMAGE
+BUG_SENORBLANCO WIN : svg/carto.net/selectionlist.svg = IMAGE
+BUG_SENORBLANCO LINUX : fast/text/international/thai-baht-space.html = IMAGE
+BUG_SENORBLANCO LINUX : fast/text/midword-break-after-breakable-char.html = TEXT
