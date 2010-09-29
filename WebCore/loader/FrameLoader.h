@@ -440,6 +440,7 @@ private:
     void detachChildren();
     void closeAndRemoveChild(Frame*);
 
+    Frame* loadOrRedirectSubframe(HTMLFrameOwnerElement*, const KURL&, const AtomicString& frameName, bool lockHistory, bool lockBackForwardList);
     Frame* loadSubframe(HTMLFrameOwnerElement*, const KURL&, const String& name, const String& referrer);
 
     void loadInSameDocument(const KURL&, SerializedScriptValue* stateObject, bool isNewNavigation);

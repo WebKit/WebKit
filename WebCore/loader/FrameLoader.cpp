@@ -375,12 +375,7 @@ bool FrameLoader::requestFrame(HTMLFrameOwnerElement* ownerElement, const String
     } else
         url = completeURL(urlString);
 
-    Frame* frame = ownerElement->contentFrame();
-    if (frame)
-        frame->redirectScheduler()->scheduleLocationChange(url.string(), m_outgoingReferrer, lockHistory, lockBackForwardList, isProcessingUserGesture());
-    else
-        frame = loadSubframe(ownerElement, url, frameName, m_outgoingReferrer);
-    
+    Frame* frame = loadOrRedirectSubframe(ownerElement, url, frameName, lockHistory, lockBackForwardList);
     if (!frame)
         return false;
 
@@ -388,6 +383,16 @@ bool FrameLoader::requestFrame(HTMLFrameOwnerElement* ownerElement, const String
         frame->script()->executeIfJavaScriptURL(scriptURL);
 
     return true;
+}
+
+Frame* FrameLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement* ownerElement, const KURL& url, const AtomicString& frameName, bool lockHistory, bool lockBackForwardList)
+{
+    Frame* frame = ownerElement->contentFrame();
+    if (frame)
+        frame->redirectScheduler()->scheduleLocationChange(url.string(), m_outgoingReferrer, lockHistory, lockBackForwardList, isProcessingUserGesture());
+    else
+        frame = loadSubframe(ownerElement, url, frameName, m_outgoingReferrer);
+    return frame;
 }
 
 Frame* FrameLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const KURL& url, const String& name, const String& referrer)
@@ -1139,10 +1144,10 @@ bool FrameLoader::requestObject(RenderEmbeddedObject* renderer, const String& ur
     ASSERT(renderer->node()->hasTagName(objectTag) || renderer->node()->hasTagName(embedTag));
     HTMLPlugInElement* element = static_cast<HTMLPlugInElement*>(renderer->node());
 
-    // If the plug-in element already contains a subframe, requestFrame will re-use it. Otherwise,
+    // If the plug-in element already contains a subframe, loadOrRedirectSubframe will re-use it. Otherwise,
     // it will create a new frame and set it as the RenderPart's widget, causing what was previously 
     // in the widget to be torn down.
-    return requestFrame(element, completedURL, frameName);
+    return loadOrRedirectSubframe(element, completedURL, frameName, true, true);
 }
 
 bool FrameLoader::shouldUsePlugin(const KURL& url, const String& mimeType, bool hasFallback, bool& useFallback)

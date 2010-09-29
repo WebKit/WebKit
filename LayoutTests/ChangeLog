@@ -1,5 +1,22 @@
 2010-09-29  Mark Rowe  <mrowe@apple.com>
 
+        Merge r65900.
+
+    2010-08-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Fix for <rdar://problem/8153271> and <rdar://problem/8153288> 
+        Change behavior of javascript: urls in <embed> and <object> back to 
+        how they behaved before r50698.
+
+        * fast/loader/javascript-url-in-embed-expected.txt: Added.
+        * fast/loader/javascript-url-in-embed.html: Added.
+        * fast/loader/javascript-url-in-object-expected.txt: Added.
+        * fast/loader/javascript-url-in-object.html: Added.
+
+2010-09-29  Mark Rowe  <mrowe@apple.com>
+
         Merge r68096.
 
     2010-09-22  Alexey Proskuryakov  <ap@apple.com>
