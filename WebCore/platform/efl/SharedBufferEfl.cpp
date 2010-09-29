@@ -56,7 +56,7 @@ PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& fi
 
     result = SharedBuffer::create();
     result->m_buffer.resize(fileStat.st_size);
-    if (result->m_buffer.size() != fileStat.st_size) {
+    if (result->m_buffer.size() != static_cast<unsigned>(fileStat.st_size)) {
         fclose(file);
         return 0;
     }

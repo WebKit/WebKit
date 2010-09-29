@@ -1,3 +1,16 @@
+2010-09-29  João Paulo Rechi Vita  <jprvita@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] General small fixes.
+        https://bugs.webkit.org/show_bug.cgi?id=46813
+
+        This commit spots a comparison between signed and unsigned integer
+        expressions, a missing return and a never-called function.
+
+        * WebCoreSupport/FullscreenVideoControllerEfl.cpp:
+        (FullscreenVideoController::canPlay):
+
 2010-09-28  Jenn Braithwaite  <jennb@chromium.org>
 
         Reviewed by Dmitry Titov.
