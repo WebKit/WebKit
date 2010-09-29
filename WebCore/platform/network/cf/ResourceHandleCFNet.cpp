@@ -526,7 +526,8 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
                     // Store the credential back, possibly adding it as a default for this directory.
                     CredentialStorage::set(credential, challenge.protectionSpace(), d->m_request.url());
                 }
-                [challenge.sender() useCredential:mac(credential) forAuthenticationChallenge:mac(challenge)];
+                RetainPtr<CFURLCredentialRef> cfCredential(AdoptCF, createCF(credential));
+                CFURLConnectionUseCredential(d->m_connection.get(), cfCredential.get(), challenge.cfURLAuthChallengeRef());
                 return;
             }
         }

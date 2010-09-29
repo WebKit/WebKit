@@ -1,5 +1,21 @@
 2010-09-29  Mark Rowe  <mrowe@apple.com>
 
+        Merge r63836.
+
+    2010-07-21  Alexey Proskuryakov  <ap@apple.com>
+
+        Unreviewed Windows build fix.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42717
+        <rdar://problem/7062824> A wrong password entered for site or proxy auth remains in WebCore
+        credential storage, and is sent with subsequent requests
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge): Don't use that direct a
+        copy/paste, oops!
+
+2010-09-29  Mark Rowe  <mrowe@apple.com>
+
         Merge r63834.
 
     2010-07-20  Alexey Proskuryakov  <ap@apple.com>
