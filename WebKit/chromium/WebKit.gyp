@@ -533,6 +533,8 @@
                 'src/WebWorkerClientImpl.h',
                 'src/WebWorkerImpl.cpp',
                 'src/WebWorkerImpl.h',
+                'src/WorkerAsyncFileSystemChromium.cpp',
+                'src/WorkerAsyncFileSystemChromium.h',
                 'src/WorkerFileSystemCallbacksBridge.cpp',
                 'src/WorkerFileSystemCallbacksBridge.h',
                 'src/WrappedResourceRequest.h',

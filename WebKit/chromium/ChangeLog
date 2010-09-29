@@ -1,5 +1,12 @@
 2010-09-29  Kinuko Yasuda  <kinuko@chromium.org>
 
+        Unreviewed, adding one more missing change from the last patch.
+        https://bugs.webkit.org/show_bug.cgi?id=46524
+
+        * WebKit.gyp:
+
+2010-09-29  Kinuko Yasuda  <kinuko@chromium.org>
+
         Unreviewed, adding the new files that were supposed to be added
         but I missed to include in my previous patch.
         https://bugs.webkit.org/show_bug.cgi?id=46524
