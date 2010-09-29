@@ -283,7 +283,7 @@ EditAction TypingCommand::editingAction() const
     return EditActionTyping;
 }
 
-void TypingCommand::markMisspellingsAfterTyping()
+void TypingCommand::markMisspellingsAfterTyping(ETypingCommand commandType)
 {
 #if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
     if (!document()->frame()->editor()->isContinuousSpellCheckingEnabled()
@@ -308,8 +308,10 @@ void TypingCommand::markMisspellingsAfterTyping()
         if (p1 != p2)
             document()->frame()->editor()->markMisspellingsAfterTypingToPosition(p1);
 #if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-        else
+        else if (commandType == TypingCommand::InsertText)
             document()->frame()->editor()->startCorrectionPanelTimer();
+#else
+    UNUSED_PARAM(commandType);
 #endif
     }
 }
@@ -317,14 +319,14 @@ void TypingCommand::markMisspellingsAfterTyping()
 void TypingCommand::typingAddedToOpenCommand(ETypingCommand commandTypeForAddedTyping)
 {
     updatePreservesTypingStyle(commandTypeForAddedTyping);
-    
+
 #if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
     document()->frame()->editor()->appliedEditing(this);
     // Since the spellchecking code may also perform corrections and other replacements, it should happen after the typing changes.
-    markMisspellingsAfterTyping();
+    markMisspellingsAfterTyping(commandTypeForAddedTyping);
 #else
     // The old spellchecking code requires that checking be done first, to prevent issues like that in 6864072, where <doesn't> is marked as misspelled.
-    markMisspellingsAfterTyping();
+    markMisspellingsAfterTyping(commandTypeForAddedTyping);
     document()->frame()->editor()->appliedEditing(this);
 #endif
 }

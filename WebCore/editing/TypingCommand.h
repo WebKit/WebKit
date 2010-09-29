@@ -82,10 +82,10 @@ private:
     virtual bool preservesTypingStyle() const { return m_preservesTypingStyle; }
 
     void updatePreservesTypingStyle(ETypingCommand);
-    void markMisspellingsAfterTyping();
+    void markMisspellingsAfterTyping(ETypingCommand);
     void typingAddedToOpenCommand(ETypingCommand);
     bool makeEditableRootEmpty();
-    
+
     ETypingCommand m_commandType;
     String m_textToInsert;
     bool m_openForMoreTyping;

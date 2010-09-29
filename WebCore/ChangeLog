@@ -1,3 +1,18 @@
+2010-09-28  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Delete and forward delete shouldn't start autocorrection panel timer.
+        https://bugs.webkit.org/show_bug.cgi?id=46679
+        <rdar://problem/8463917>
+
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::markMisspellingsAfterTyping): Only start correction panel timer
+          when the editing command is InsertText.
+        (WebCore::TypingCommand::typingAddedToOpenCommand): Add an argument to pass in command type.
+
+        * editing/TypingCommand.h: Add an argument to typingAddedToOpenCommand().
+
 2010-09-28  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Dimitri Glazkov.
