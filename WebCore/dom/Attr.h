@@ -48,6 +48,7 @@ public:
 
     const AtomicString& value() const { return m_attribute->value(); }
     void setValue(const AtomicString&, ExceptionCode&);
+    void setValue(const AtomicString&);
 
     Attribute* attr() const { return m_attribute.get(); }
     const QualifiedName& qualifiedName() const { return m_attribute->name(); }
