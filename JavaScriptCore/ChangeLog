@@ -1,3 +1,17 @@
+2010-09-29  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [WINCE] Buildfix for Assertions.cpp after r68511.
+        https://bugs.webkit.org/show_bug.cgi?id=46807
+
+        Some, but not all WinCE environments have support for IsDebuggerPresent().
+        Add HAVE(ISDEBUGGERPRESENT) to make this a build option.
+        HAVE(ISDEBUGGERPRESENT) will be 1 for all OS(WIN) by default.
+
+        * wtf/Assertions.cpp:
+        * wtf/Platform.h:
+
 2010-09-29  Peter Varga  <pvarga@inf.u-szeged.hu>
 
         Reviewed by Csaba Osztrogonác.

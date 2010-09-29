@@ -113,7 +113,7 @@ static void vprintf_stderr_common(const char* format, va_list args)
         printLog(buffer);
     }
 
-#elif COMPILER(MSVC) && !defined(WINCE)
+#elif HAVE(ISDEBUGGERPRESENT)
     if (IsDebuggerPresent()) {
         size_t size = 1024;
 

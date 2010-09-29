@@ -745,6 +745,7 @@
 #else
 #define HAVE_SYS_TIMEB_H 1
 #define HAVE_ALIGNED_MALLOC 1
+#define HAVE_ISDEBUGGERPRESENT 1
 #endif
 #define HAVE_VIRTUALALLOC 1
 
