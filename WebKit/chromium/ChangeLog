@@ -1,3 +1,11 @@
+2010-09-29  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed removal of unused #define from WebHistory.h.
+        Chromium usage of WEBKIT_BUG_40451_IS_FIXED was removed with
+        http://crrev.com/50642.
+
+        * public/WebHistoryItem.h:
+
 2010-09-29  Kinuko Yasuda  <kinuko@chromium.org>
 
         Unreviewed, adding one more missing change from the last patch.

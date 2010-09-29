@@ -34,9 +34,6 @@
 #include "WebCommon.h"
 #include "WebPrivatePtr.h"
 
-// FIXME: Remove this once Chromium starts using itemSequenceNumber.
-#define WEBKIT_BUG_40451_IS_FIXED
-
 namespace WebCore { class HistoryItem; }
 
 namespace WebKit {
