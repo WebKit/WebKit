@@ -1,6 +1,25 @@
 2010-09-28  Simon Fraser  <simon.fraser@apple.com>
 
         No review.
+        
+        Implement export of various queries on the test database, sharing
+        code with that which displays results inline.
+
+        * CSSTestSuiteHarness/harness/harness.js:
+        ():
+        (TestSuite.prototype.exportResultsCompletion.var):
+        (TestSuite.prototype.exportResultsCompletion):
+        (TestSuite.prototype.showResultsForCompletedTests):
+        (TestSuite.prototype.exportResultsForCompletedTests):
+        (TestSuite.prototype.showResultsForAllTests):
+        (TestSuite.prototype.exportResultsForAllTests):
+        (TestSuite.prototype.exportResultsForTestsNotRun):
+        (TestSuite.prototype.exportResultsForTestsWithStatus):
+        (TestSuite.prototype.exportResultsForTestsWithMismatchedResults):
+
+2010-09-28  Simon Fraser  <simon.fraser@apple.com>
+
+        No review.
 
         Work around uncertainty about the order of database
         transactions when creating the database, so that we don't

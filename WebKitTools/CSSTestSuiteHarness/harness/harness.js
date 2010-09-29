@@ -156,31 +156,38 @@ const kResultsSelector = [
   },
   {
     'name': 'Completed Tests',
-    'handler' : function(self) { self.showResultsForCompletedTests(); }
+    'handler' : function(self) { self.showResultsForCompletedTests(); },
+    'exporter' : function(self) { self.exportResultsForCompletedTests(); }
   },
   {
     'name': 'Passing Tests',
-    'handler' : function(self) { self.showResultsForTestsWithStatus('pass'); }
+    'handler' : function(self) { self.showResultsForTestsWithStatus('pass'); },
+    'exporter' : function(self) { self.exportResultsForTestsWithStatus('pass'); }
   },
   {
     'name': 'Failing Tests',
-    'handler' : function(self) { self.showResultsForTestsWithStatus('fail'); }
+    'handler' : function(self) { self.showResultsForTestsWithStatus('fail'); },
+    'exporter' : function(self) { self.exportResultsForTestsWithStatus('fail'); }
   },
   {
     'name': 'Skipped Tests',
-    'handler' : function(self) { self.showResultsForTestsWithStatus('skipped'); }
+    'handler' : function(self) { self.showResultsForTestsWithStatus('skipped'); },
+    'exporter' : function(self) { self.exportResultsForTestsWithStatus('skipped'); }
   },
   {
     'name': 'Invalid Tests',
-    'handler' : function(self) { self.showResultsForTestsWithStatus('invalid'); }
+    'handler' : function(self) { self.showResultsForTestsWithStatus('invalid'); },
+    'exporter' : function(self) { self.exportResultsForTestsWithStatus('invalid'); }
   },
   {
     'name': 'Tests where HTML4 and XHTML1 results differ',
-    'handler' : function(self) { self.showResultsForTestsWithMismatchedResults('invalid'); }
+    'handler' : function(self) { self.showResultsForTestsWithMismatchedResults(); },
+    'exporter' : function(self) { self.exportResultsForTestsWithMismatchedResults(); }
   },
   {
     'name': 'Tests Not Run',
-    'handler' : function(self) { self.showResultsForTestsNotRun(); }
+    'handler' : function(self) { self.showResultsForTestsNotRun(); },
+    'exporter' : function(self) { self.exportResultsForTestsNotRun(); }
   }
 ];
 
@@ -721,6 +728,30 @@ TestSuite.prototype.resultsPopupChanged = function(index)
   document.getElementById('export-button').disabled = !enableExport;
 }
 
+/* -------------------------------------------------------- */
+
+TestSuite.prototype.exportResultsCompletion = function(exportTests)
+{
+  // Lame workaround for ORDER BY not working
+  exportTests.sort(function(a, b) {
+      return a.test.localeCompare(b.test);
+  });
+  
+  var exportLines = [];
+  for (var i = 0; i < exportTests.length; ++i) {
+    var currTest = exportTests[i];
+    if (currTest.html4 != '')
+      exportLines.push(currTest.html4);
+    if (currTest.xhtml1 != '')
+      exportLines.push(currTest.xhtml1);
+  }
+  
+  var exportString = this.exportHeader() + exportLines.join('\n');
+  this.exportQueryComplete(exportString);
+}
+
+/* -------------------------------------------------------- */
+
 TestSuite.prototype.showResultsForCompletedTests = function()
 {
   this.beginAppendingOutput();
@@ -730,6 +761,7 @@ TestSuite.prototype.showResultsForCompletedTests = function()
       function(item) {
         if (item.hstatus)
           _self.appendResultToOutput(kHTML4Data, item.test, item.hstatus, item.hcomment);
+
         if (item.xstatus)
           _self.appendResultToOutput(kXHTML1Data, item.test, item.xstatus, item.xcomment);
       },
@@ -739,54 +771,71 @@ TestSuite.prototype.showResultsForCompletedTests = function()
     );
 }
 
+TestSuite.prototype.exportResultsForCompletedTests = function()
+{
+  var exportTests = []; // each test will have html and xhtml items on it
+
+  var _self = this;
+  this.queryDatabaseForCompletedTests(
+      function(item) {
+        var htmlLine = '';
+        if (item.hstatus)
+          htmlLine= _self.createExportLine(kHTML4Data, item.test, item.hstatus, item.hcomment);
+
+        var xhtmlLine = '';
+        if (item.xstatus)
+          xhtmlLine = _self.createExportLine(kXHTML1Data, item.test, item.xstatus, item.xcomment);
+
+        exportTests.push({
+          'test' : item.test,
+          'html4' : htmlLine,
+          'xhtml1' : xhtmlLine });
+      },
+      function() {
+        _self.exportResultsCompletion(exportTests);
+      }
+    );
+}
+
+
+/* -------------------------------------------------------- */
+
 TestSuite.prototype.showResultsForAllTests = function()
 {
   this.beginAppendingOutput();
 
   var _self = this;
-  this.queryDatabaseForAllTests('test',
-      function(item) {
-        _self.appendResultToOutput(kHTML4Data, item.test, item.hstatus ? item.hstatus : '?', item.hcomment);
-        _self.appendResultToOutput(kXHTML1Data, item.test, item.xstatus ? item.xstatus : '?', item.xcomment);
-      },
-      function() {
-        _self.endAppendingOutput();
-      }
-    );
+  this.queryDatabaseForAllTests(
+    function(item) {
+      _self.appendResultToOutput(kHTML4Data, item.test, item.hstatus, item.hcomment);
+      _self.appendResultToOutput(kXHTML1Data, item.test, item.xstatus, item.xcomment);
+    },
+    function() {
+      _self.endAppendingOutput();
+    });
 }
 
 TestSuite.prototype.exportResultsForAllTests = function()
 {
-  var exportTests = []; // each test will have html and xhtml items on it
+  var exportTests = [];
 
   var _self = this;
-  this.queryDatabaseForAllTests('test',
+  this.queryDatabaseForAllTests(
       function(item) {
-        var htmlLine = _self.createExportLine(kHTML4Data, item.test, item.hstatus ? item.hstatus : '?', item.hcomment);
-        var xhtmlLine = _self.createExportLine(kXHTML1Data, item.test, item.xstatus ? item.xstatus : '?', item.xcomment);
+        var htmlLine= _self.createExportLine(kHTML4Data, item.test, item.hstatus, item.hcomment);
+        var xhtmlLine = _self.createExportLine(kXHTML1Data, item.test, item.xstatus, item.xcomment);
         exportTests.push({
           'test' : item.test,
           'html4' : htmlLine,
-          'xhtml1' : xhtmlLine })
+          'xhtml1' : xhtmlLine });
       },
       function() {
-        // Lame workaround for ORDER BY not working
-        exportTests.sort(function(a, b) {
-            return a.test.localeCompare(b.test);
-        });
-        
-        var exportLines = [];
-        for (var i = 0; i < exportTests.length; ++i) {
-          var currTest = exportTests[i];
-          exportLines.push(currTest.html4);
-          exportLines.push(currTest.xhtml1);
-        }
-        
-        var exportString = _self.exportHeader() + exportLines.join('\n');
-        _self.exportQueryComplete(exportString);
+        _self.exportResultsCompletion(exportTests);
       }
     );
 }
+
+/* -------------------------------------------------------- */
 
 TestSuite.prototype.showResultsForTestsNotRun = function()
 {
@@ -806,6 +855,34 @@ TestSuite.prototype.showResultsForTestsNotRun = function()
     );
 }
 
+TestSuite.prototype.exportResultsForTestsNotRun = function()
+{
+  var exportTests = [];
+
+  var _self = this;
+  this.queryDatabaseForTestsNotRun(
+      function(item) {
+        var htmlLine = '';
+        if (!item.hstatus)
+          htmlLine= _self.createExportLine(kHTML4Data, item.test, '?', item.hcomment);
+
+        var xhtmlLine = '';
+        if (!item.xstatus)
+          xhtmlLine = _self.createExportLine(kXHTML1Data, item.test, '?', item.xcomment);
+
+        exportTests.push({
+          'test' : item.test,
+          'html4' : htmlLine,
+          'xhtml1' : xhtmlLine });
+      },
+      function() {
+        _self.exportResultsCompletion(exportTests);
+      }
+    );
+}
+
+/* -------------------------------------------------------- */
+
 TestSuite.prototype.showResultsForTestsWithStatus = function(status)
 {
   this.beginAppendingOutput();
@@ -824,6 +901,34 @@ TestSuite.prototype.showResultsForTestsWithStatus = function(status)
     );
 }
 
+TestSuite.prototype.exportResultsForTestsWithStatus = function(status)
+{
+  var exportTests = [];
+
+  var _self = this;
+  this.queryDatabaseForTestsWithStatus(status,
+      function(item) {
+        var htmlLine = '';
+        if (item.hstatus == status)
+          htmlLine= _self.createExportLine(kHTML4Data, item.test, item.hstatus, item.hcomment);
+
+        var xhtmlLine = '';
+        if (item.xstatus == status)
+          xhtmlLine = _self.createExportLine(kXHTML1Data, item.test, item.xstatus, item.xcomment);
+
+        exportTests.push({
+          'test' : item.test,
+          'html4' : htmlLine,
+          'xhtml1' : xhtmlLine });
+      },
+      function() {
+        _self.exportResultsCompletion(exportTests);
+      }
+    );
+}
+
+/* -------------------------------------------------------- */
+
 TestSuite.prototype.showResultsForTestsWithMismatchedResults = function()
 {
   this.beginAppendingOutput();
@@ -839,6 +944,28 @@ TestSuite.prototype.showResultsForTestsWithMismatchedResults = function()
       }
     );
 }
+
+TestSuite.prototype.exportResultsForTestsWithMismatchedResults = function()
+{
+  var exportTests = [];
+
+  var _self = this;
+  this.queryDatabaseForTestsWithMixedStatus(
+      function(item) {
+        var htmlLine= _self.createExportLine(kHTML4Data, item.test, item.hstatus, item.hcomment);
+        var xhtmlLine = _self.createExportLine(kXHTML1Data, item.test, item.xstatus, item.xcomment);
+        exportTests.push({
+          'test' : item.test,
+          'html4' : htmlLine,
+          'xhtml1' : xhtmlLine });
+      },
+      function() {
+        _self.exportResultsCompletion(exportTests);
+      }
+    );
+}
+
+/* -------------------------------------------------------- */
 
 TestSuite.prototype.updateSummaryData = function()
 {
@@ -887,7 +1014,7 @@ TestSuite.prototype.openDatabase = function()
   }
   
   var _self = this;
-  this.db = window.openDatabase('css21testsuite12', '1.0', 'CSS 2.1 test suite results', 10 * 1024 * 1024, function() {
+  this.db = window.openDatabase('css21testsuite', '1.0', 'CSS 2.1 test suite results', 10 * 1024 * 1024, function() {
     _self.databaseCreated();
   }, errorHandler);
 
