@@ -93,7 +93,8 @@ AccessibilityObject* AccessibilityTableRow::parentTable() const
     if (!m_renderer || !m_renderer->isTableRow())
         return 0;
     
-    return axObjectCache()->getOrCreate(toRenderTableRow(m_renderer)->table());
+    // Do not use getOrCreate. parentTable() can be called while the render tree is being modified.
+    return axObjectCache()->get(toRenderTableRow(m_renderer)->table());
 }
     
 AccessibilityObject* AccessibilityTableRow::headerObject()
