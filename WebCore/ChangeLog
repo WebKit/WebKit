@@ -1,3 +1,13 @@
+2010-09-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add additional check to Text::wholeText.
+        <rdar://problem/8304795>
+
+        * dom/Text.cpp:
+        (WebCore::Text::wholeText):
+
 2010-09-29  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Brady Eidson.
