@@ -699,13 +699,13 @@ void PluginView::invalidate(const IntRect& dirtyRect)
     invalidateRect(dirtyRect);
 }
 
-String PluginView::userAgent(const KURL& url)
+String PluginView::userAgent()
 {
     Frame* frame = m_pluginElement->document()->frame();
     if (!frame)
         return String();
     
-    return frame->loader()->client()->userAgent(url);
+    return frame->loader()->client()->userAgent(KURL());
 }
 
 void PluginView::loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, 

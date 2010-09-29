@@ -44,8 +44,8 @@ public:
     // Tells the controller that the plug-in wants the given rect to be repainted. The rect is in the plug-in's coordinate system.
     virtual void invalidate(const WebCore::IntRect&) = 0;
 
-    // Returns the user agent string for the given URL.
-    virtual String userAgent(const WebCore::KURL&) = 0;
+    // Returns the user agent string.
+    virtual String userAgent() = 0;
 
     // Loads the given URL and associates it with the request ID.
     // 

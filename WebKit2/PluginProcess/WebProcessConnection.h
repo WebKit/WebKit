@@ -61,7 +61,7 @@ private:
 
     // Message handlers.
     CoreIPC::SyncReplyMode didReceiveSyncWebProcessConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
-    void createPlugin(uint64_t pluginInstanceID, const Plugin::Parameters&, bool& result);
+    void createPlugin(uint64_t pluginInstanceID, const Plugin::Parameters&, const String& userAgent, bool& result);
     void destroyPlugin(uint64_t pluginInstanceID);
 
     RefPtr<CoreIPC::Connection> m_connection;

@@ -101,11 +101,9 @@ void NetscapePlugin::invalidate(const NPRect* invalidRect)
 const char* NetscapePlugin::userAgent()
 {
     if (m_userAgent.isNull()) {
-        // FIXME: Pass the src URL.
-        m_userAgent = m_pluginController->userAgent(KURL()).utf8();
+        m_userAgent = m_pluginController->userAgent().utf8();
         ASSERT(!m_userAgent.isNull());
     }
-    
     return m_userAgent.data();
 }
 

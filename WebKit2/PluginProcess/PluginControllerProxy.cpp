@@ -41,14 +41,15 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassOwnPtr<PluginControllerProxy> PluginControllerProxy::create(WebProcessConnection* connection, uint64_t pluginInstanceID)
+PassOwnPtr<PluginControllerProxy> PluginControllerProxy::create(WebProcessConnection* connection, uint64_t pluginInstanceID, const String& userAgent)
 {
-    return adoptPtr(new PluginControllerProxy(connection, pluginInstanceID));
+    return adoptPtr(new PluginControllerProxy(connection, pluginInstanceID, userAgent));
 }
 
-PluginControllerProxy::PluginControllerProxy(WebProcessConnection* connection, uint64_t pluginInstanceID)
+PluginControllerProxy::PluginControllerProxy(WebProcessConnection* connection, uint64_t pluginInstanceID, const String& userAgent)
     : m_connection(connection)
     , m_pluginInstanceID(pluginInstanceID)
+    , m_userAgent(userAgent)
     , m_paintTimer(RunLoop::main(), this, &PluginControllerProxy::paint)
 {
 }
@@ -124,10 +125,9 @@ void PluginControllerProxy::invalidate(const IntRect& rect)
     m_paintTimer.startOneShot(0);
 }
 
-String PluginControllerProxy::userAgent(const WebCore::KURL&)
+String PluginControllerProxy::userAgent()
 {
-    notImplemented();
-    return String();
+    return m_userAgent;
 }
 
 void PluginControllerProxy::loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, const HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups)

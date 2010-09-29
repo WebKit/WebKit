@@ -2,6 +2,45 @@
 
         Reviewed by Sam Weinig.
 
+        Handle getting the user agent in the plug-in process
+        https://bugs.webkit.org/show_bug.cgi?id=46819
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::handleMessage):
+        Add new handleMessage overload.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::create):
+        (WebKit::PluginControllerProxy::PluginControllerProxy):
+        Pass the user agent to the plug-in controller proxy.
+
+        (WebKit::PluginControllerProxy::userAgent):
+        Return the user agent.
+
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::createPlugin):
+        Pass the user agent when creating the plug-in controller proxy.
+
+        * PluginProcess/WebProcessConnection.messages.in:
+        Add userAgent.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::userAgent):
+        * WebProcess/Plugins/PluginController.h:
+        Remove the URL parameter to userAgent.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::initialize):
+        Pass the user agent to WebProcessConnection::CreatePlugin.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::userAgent):
+        Remove url parameter.
+
+2010-09-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Implement more PluginProxy member functions
         https://bugs.webkit.org/show_bug.cgi?id=46815
 

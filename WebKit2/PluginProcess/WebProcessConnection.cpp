@@ -131,9 +131,9 @@ void WebProcessConnection::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIP
     // FIXME: Implement.
 }
 
-void WebProcessConnection::createPlugin(uint64_t pluginInstanceID, const Plugin::Parameters& parameters, bool& result)
+void WebProcessConnection::createPlugin(uint64_t pluginInstanceID, const Plugin::Parameters& parameters, const String& userAgent, bool& result)
 {
-    OwnPtr<PluginControllerProxy> pluginControllerProxy = PluginControllerProxy::create(this, pluginInstanceID);
+    OwnPtr<PluginControllerProxy> pluginControllerProxy = PluginControllerProxy::create(this, pluginInstanceID, userAgent);
 
     PluginControllerProxy* pluginControllerProxyPtr = pluginControllerProxy.get();
 
