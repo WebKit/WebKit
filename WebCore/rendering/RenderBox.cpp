@@ -85,12 +85,7 @@ RenderBox::~RenderBox()
 
 int RenderBox::marginBefore() const
 {
-    return marginBeforeUsing(style());
-}
-
-int RenderBox::marginBeforeUsing(const RenderStyle* s) const
-{
-    switch (s->blockFlow()) {
+    switch (style()->blockFlow()) {
     case TopToBottomBlockFlow:
         return m_marginTop;
     case BottomToTopBlockFlow:
@@ -106,12 +101,7 @@ int RenderBox::marginBeforeUsing(const RenderStyle* s) const
 
 int RenderBox::marginAfter() const
 {
-    return marginAfterUsing(style());
-}
-
-int RenderBox::marginAfterUsing(const RenderStyle* s) const
-{
-    switch (s->blockFlow()) {
+    switch (style()->blockFlow()) {
     case TopToBottomBlockFlow:
         return m_marginBottom;
     case BottomToTopBlockFlow:
@@ -127,62 +117,42 @@ int RenderBox::marginAfterUsing(const RenderStyle* s) const
 
 int RenderBox::marginStart() const
 {
-    return marginStartUsing(style());
-}
-
-int RenderBox::marginStartUsing(const RenderStyle* s) const
-{
-    if (s->isVerticalBlockFlow())
-        return s->direction() == LTR ? m_marginLeft : m_marginRight;
-    return s->direction() == LTR ? m_marginTop : m_marginBottom;
+    if (style()->isVerticalBlockFlow())
+        return style()->direction() == LTR ? m_marginLeft : m_marginRight;
+    return style()->direction() == LTR ? m_marginTop : m_marginBottom;
 }
 
 int RenderBox::marginEnd() const
 {
-    return marginEndUsing(style());
-}
-
-int RenderBox::marginEndUsing(const RenderStyle* s) const
-{
-    if (s->isVerticalBlockFlow())
-        return s->direction() == LTR ? m_marginRight : m_marginLeft;
-    return s->direction() == LTR ? m_marginBottom : m_marginTop;
+    if (style()->isVerticalBlockFlow())
+        return style()->direction() == LTR ? m_marginRight : m_marginLeft;
+    return style()->direction() == LTR ? m_marginBottom : m_marginTop;
 }
 
 void RenderBox::setMarginStart(int margin)
 {
-    setMarginStartUsing(style(), margin);
-}
-
-void RenderBox::setMarginEnd(int margin)
-{
-    setMarginEndUsing(style(), margin);
-}
-
-void RenderBox::setMarginStartUsing(const RenderStyle* s, int margin)
-{
-    if (s->isVerticalBlockFlow()) {
-        if (s->direction() == LTR)
+    if (style()->isVerticalBlockFlow()) {
+        if (style()->direction() == LTR)
             m_marginLeft = margin;
         else
             m_marginRight = margin;
     } else {
-        if (s->direction() == LTR)
+        if (style()->direction() == LTR)
             m_marginTop = margin;
         else
             m_marginBottom = margin;
     }
 }
 
-void RenderBox::setMarginEndUsing(const RenderStyle* s, int margin)
+void RenderBox::setMarginEnd(int margin)
 {
-    if (s->isVerticalBlockFlow()) {
-        if (s->direction() == LTR)
+    if (style()->isVerticalBlockFlow()) {
+        if (style()->direction() == LTR)
             m_marginRight = margin;
         else
             m_marginLeft = margin;
     } else {
-        if (s->direction() == LTR)
+        if (style()->direction() == LTR)
             m_marginBottom = margin;
         else
             m_marginTop = margin;
@@ -191,17 +161,7 @@ void RenderBox::setMarginEndUsing(const RenderStyle* s, int margin)
 
 void RenderBox::setMarginBefore(int margin)
 {
-    setMarginBeforeUsing(style(), margin);
-}
-
-void RenderBox::setMarginAfter(int margin)
-{
-    setMarginAfterUsing(style(), margin);
-}
-
-void RenderBox::setMarginBeforeUsing(const RenderStyle* s, int margin)
-{
-    switch (s->blockFlow()) {
+    switch (style()->blockFlow()) {
     case TopToBottomBlockFlow:
         m_marginTop = margin;
         break;
@@ -217,9 +177,9 @@ void RenderBox::setMarginBeforeUsing(const RenderStyle* s, int margin)
     }
 }
 
-void RenderBox::setMarginAfterUsing(const RenderStyle* s, int margin)
+void RenderBox::setMarginAfter(int margin)
 {
-    switch (s->blockFlow()) {
+    switch (style()->blockFlow()) {
     case TopToBottomBlockFlow:
         m_marginBottom = margin;
         break;
@@ -1531,7 +1491,7 @@ void RenderBox::computeLogicalWidth()
 
     if (!hasPerpendicularContainingBlock && containerLogicalWidth && containerLogicalWidth != (logicalWidth() + marginStart() + marginEnd())
             && !isFloating() && !isInline() && !cb->isFlexibleBox())
-        setMarginEndUsing(cb->style(), containerLogicalWidth - logicalWidth() - marginStartUsing(cb->style()));
+        cb->setMarginEndForChild(this, containerLogicalWidth - logicalWidth() - cb->marginStartForChild(this));
 }
 
 int RenderBox::computeLogicalWidthUsing(LogicalWidthType widthType, int availableLogicalWidth)
@@ -1613,15 +1573,15 @@ void RenderBox::computeInlineDirectionMargins(RenderBlock* containingBlock, int 
     // Case One: The object is being centered in the containing block's available logical width.
     if ((marginStartLength.isAuto() && marginEndLength.isAuto() && childWidth < containerWidth)
         || (!marginStartLength.isAuto() && !marginEndLength.isAuto() && containingBlock->style()->textAlign() == WEBKIT_CENTER)) {
-        setMarginStartUsing(containingBlockStyle, max(0, (containerWidth - childWidth) / 2));
-        setMarginEndUsing(containingBlockStyle, containerWidth - childWidth - marginStartUsing(containingBlockStyle));
+        containingBlock->setMarginStartForChild(this, max(0, (containerWidth - childWidth) / 2));
+        containingBlock->setMarginEndForChild(this, containerWidth - childWidth - containingBlock->marginStartForChild(this));
         return;
     } 
     
     // Case Two: The object is being pushed to the start of the containing block's available logical width.
     if (marginEndLength.isAuto() && childWidth < containerWidth) {
-        setMarginStartUsing(containingBlockStyle, marginStartLength.calcValue(containerWidth));
-        setMarginEndUsing(containingBlockStyle, containerWidth - childWidth - marginStartUsing(containingBlockStyle));
+        containingBlock->setMarginStartForChild(this, marginStartLength.calcValue(containerWidth));
+        containingBlock->setMarginEndForChild(this, containerWidth - childWidth - containingBlock->marginStartForChild(this));
         return;
     } 
     
@@ -1629,15 +1589,15 @@ void RenderBox::computeInlineDirectionMargins(RenderBlock* containingBlock, int 
     bool pushToEndFromTextAlign = !marginEndLength.isAuto() && ((containingBlockStyle->direction() == RTL && containingBlockStyle->textAlign() == WEBKIT_LEFT)
         || (containingBlockStyle->direction() == LTR && containingBlockStyle->textAlign() == WEBKIT_RIGHT));
     if ((marginStartLength.isAuto() && childWidth < containerWidth) || pushToEndFromTextAlign) {
-        setMarginEndUsing(containingBlockStyle, marginEndLength.calcValue(containerWidth));
-        setMarginStartUsing(containingBlockStyle, containerWidth - childWidth - marginEndUsing(containingBlockStyle));
+        containingBlock->setMarginEndForChild(this, marginEndLength.calcValue(containerWidth));
+        containingBlock->setMarginStartForChild(this, containerWidth - childWidth - containingBlock->marginEndForChild(this));
         return;
     } 
     
     // Case Four: Either no auto margins, or our width is >= the container width (css2.1, 10.3.3).  In that case
     // auto margins will just turn into 0.
-    setMarginStartUsing(containingBlockStyle, marginStartLength.calcMinValue(containerWidth));
-    setMarginEndUsing(containingBlockStyle, marginEndLength.calcMinValue(containerWidth));
+    containingBlock->setMarginStartForChild(this, marginStartLength.calcMinValue(containerWidth));
+    containingBlock->setMarginEndForChild(this, marginEndLength.calcMinValue(containerWidth));
 }
 
 void RenderBox::computeLogicalHeight()
@@ -1975,8 +1935,8 @@ void RenderBox::computeBlockDirectionMargins(RenderBlock* containingBlock)
     int cw = containingBlockLogicalWidthForContent();
 
     RenderStyle* containingBlockStyle = containingBlock->style();
-    setMarginBeforeUsing(containingBlockStyle, style()->marginBeforeUsing(containingBlockStyle).calcMinValue(cw));
-    setMarginAfterUsing(containingBlockStyle, style()->marginAfterUsing(containingBlockStyle).calcMinValue(cw));
+    containingBlock->setMarginBeforeForChild(this, style()->marginBeforeUsing(containingBlockStyle).calcMinValue(cw));
+    containingBlock->setMarginAfterForChild(this, style()->marginAfterUsing(containingBlockStyle).calcMinValue(cw));
 }
 
 int RenderBox::containingBlockWidthForPositioned(const RenderBoxModelObject* containingBlock) const

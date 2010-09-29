@@ -169,6 +169,18 @@ public:
     void setPaginationStrut(int strut);
     void setPageY(int y);
 
+    // Accessors for logical width/height and margins in the containing block's block-flow direction.
+    int logicalHeightForChild(RenderBox* child) { return style()->isVerticalBlockFlow() ? child->height() : child->width(); }
+    int logicalTopForChild(RenderBox* child) { return style()->isVerticalBlockFlow() ? child->y() : child->x(); }
+    int marginBeforeForChild(RenderBoxModelObject* child) const;
+    int marginAfterForChild(RenderBoxModelObject* child) const;
+    int marginStartForChild(RenderBoxModelObject* child) const;
+    int marginEndForChild(RenderBoxModelObject* child) const;
+    void setMarginStartForChild(RenderBox* child, int);
+    void setMarginEndForChild(RenderBox* child, int);
+    void setMarginBeforeForChild(RenderBox* child, int);
+    void setMarginAfterForChild(RenderBox* child, int);
+
 protected:
     // These functions are only used internally to manipulate the render tree structure via remove/insert/appendChildNode.
     // Since they are typically called only to move objects around within anonymous blocks (which only have layers in
@@ -571,8 +583,6 @@ private:
     void handleAfterSideOfBlock(int top, int bottom, MarginInfo&);
     void setCollapsedBottomMargin(const MarginInfo&);
     void setLogicalTopForChild(RenderBox* child, int logicalTop);
-    int logicalHeightForChild(RenderBox* child) { return style()->isVerticalBlockFlow() ? child->height() : child->width(); }
-    int logicalTopForChild(RenderBox* child) { return style()->isVerticalBlockFlow() ? child->y() : child->x(); }
     // End helper functions and structs used by layoutBlockChildren.
 
     // Pagination routines.

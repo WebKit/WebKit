@@ -1,3 +1,44 @@
+2010-09-29  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46838
+        
+        Get rid of the marginXXXUsing/setMarginXXXUsing methods on RenderBox.  I'm inverting the way these are called
+        and putting the methods on RenderBlock instead.  The methods can be named better this way and the getters
+        can operate on RenderBoxModelObjects instead of just RenderBoxes.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlockChild):
+        (WebCore::RenderBlock::marginBeforeForChild):
+        (WebCore::RenderBlock::marginAfterForChild):
+        (WebCore::RenderBlock::marginStartForChild):
+        (WebCore::RenderBlock::marginEndForChild):
+        (WebCore::RenderBlock::setMarginStartForChild):
+        (WebCore::RenderBlock::setMarginEndForChild):
+        (WebCore::RenderBlock::setMarginBeforeForChild):
+        (WebCore::RenderBlock::setMarginAfterForChild):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::logicalHeightForChild):
+        (WebCore::RenderBlock::logicalTopForChild):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::marginBefore):
+        (WebCore::RenderBox::marginAfter):
+        (WebCore::RenderBox::marginStart):
+        (WebCore::RenderBox::marginEnd):
+        (WebCore::RenderBox::setMarginStart):
+        (WebCore::RenderBox::setMarginEnd):
+        (WebCore::RenderBox::setMarginBefore):
+        (WebCore::RenderBox::setMarginAfter):
+        (WebCore::RenderBox::computeLogicalWidth):
+        (WebCore::RenderBox::computeInlineDirectionMargins):
+        (WebCore::RenderBox::computeBlockDirectionMargins):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::setMarginTop):
+        (WebCore::RenderBox::setMarginBottom):
+        (WebCore::RenderBox::setMarginLeft):
+        (WebCore::RenderBox::setMarginRight):
+
 2010-09-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

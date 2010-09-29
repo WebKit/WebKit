@@ -1949,7 +1949,7 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, int
     // Update our height now that the child has been placed in the correct position.
     setLogicalHeight(logicalHeight() + logicalHeightForChild(child));
     if (child->style()->marginAfterCollapse() == MSEPARATE) {
-        setLogicalHeight(logicalHeight() + child->marginAfterUsing(style()));
+        setLogicalHeight(logicalHeight() + marginAfterForChild(child));
         marginInfo.clearMargin();
     }
     // If the child has overhanging floats that intrude into following siblings (or possibly out
@@ -6019,7 +6019,119 @@ void RenderBlock::adjustLinePositionForPagination(RootInlineBox* lineBox, int& d
         }
     }  
 }
- 
+
+int RenderBlock::marginBeforeForChild(RenderBoxModelObject* child) const
+{
+    switch (style()->blockFlow()) {
+    case TopToBottomBlockFlow:
+        return child->marginTop();
+    case BottomToTopBlockFlow:
+        return child->marginBottom();
+    case LeftToRightBlockFlow:
+        return child->marginLeft();
+    case RightToLeftBlockFlow:
+        return child->marginRight();
+    }
+    ASSERT_NOT_REACHED();
+    return child->marginTop();
+}
+
+int RenderBlock::marginAfterForChild(RenderBoxModelObject* child) const
+{
+    switch (style()->blockFlow()) {
+    case TopToBottomBlockFlow:
+        return child->marginBottom();
+    case BottomToTopBlockFlow:
+        return child->marginTop();
+    case LeftToRightBlockFlow:
+        return child->marginRight();
+    case RightToLeftBlockFlow:
+        return child->marginLeft();
+    }
+    ASSERT_NOT_REACHED();
+    return child->marginBottom();
+}
+    
+int RenderBlock::marginStartForChild(RenderBoxModelObject* child) const
+{
+    if (style()->isVerticalBlockFlow())
+        return style()->direction() == LTR ? child->marginLeft() : child->marginRight();
+    return style()->direction() == LTR ? child->marginTop() : child->marginBottom();
+}
+
+int RenderBlock::marginEndForChild(RenderBoxModelObject* child) const
+{
+    if (style()->isVerticalBlockFlow())
+        return style()->direction() == LTR ? child->marginRight() : child->marginLeft();
+    return style()->direction() == LTR ? child->marginBottom() : child->marginTop();
+}
+
+void RenderBlock::setMarginStartForChild(RenderBox* child, int margin)
+{
+    if (style()->isVerticalBlockFlow()) {
+        if (style()->direction() == LTR)
+            child->setMarginLeft(margin);
+        else
+            child->setMarginRight(margin);
+    } else {
+        if (style()->direction() == LTR)
+            child->setMarginTop(margin);
+        else
+            child->setMarginBottom(margin);
+    }
+}
+
+void RenderBlock::setMarginEndForChild(RenderBox* child, int margin)
+{
+    if (style()->isVerticalBlockFlow()) {
+        if (style()->direction() == LTR)
+            child->setMarginRight(margin);
+        else
+            child->setMarginLeft(margin);
+    } else {
+        if (style()->direction() == LTR)
+            child->setMarginBottom(margin);
+        else
+            child->setMarginTop(margin);
+    }
+}
+
+void RenderBlock::setMarginBeforeForChild(RenderBox* child, int margin)
+{
+    switch (style()->blockFlow()) {
+    case TopToBottomBlockFlow:
+        child->setMarginTop(margin);
+        break;
+    case BottomToTopBlockFlow:
+        child->setMarginBottom(margin);
+        break;
+    case LeftToRightBlockFlow:
+        child->setMarginLeft(margin);
+        break;
+    case RightToLeftBlockFlow:
+        child->setMarginRight(margin);
+        break;
+    }
+}
+
+void RenderBlock::setMarginAfterForChild(RenderBox* child, int margin)
+{
+    switch (style()->blockFlow()) {
+    case TopToBottomBlockFlow:
+        child->setMarginBottom(margin);
+        break;
+    case BottomToTopBlockFlow:
+        child->setMarginTop(margin);
+        break;
+    case LeftToRightBlockFlow:
+        child->setMarginRight(margin);
+        break;
+    case RightToLeftBlockFlow:
+        child->setMarginLeft(margin);
+        break;
+    }
+}
+
 const char* RenderBlock::renderName() const
 {
     if (isBody())
