@@ -1,3 +1,15 @@
+2010-09-29  Peter Varga  <pvarga@inf.u-szeged.hu>
+
+        Reviewed by Csaba Osztrogonác.
+
+        JSC compile fails on 32bit platform when Regexp Tracing is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=46713
+
+        Fix the cast of pointer in regexp tracing to avoid the warning.
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::match):
+
 2010-09-28  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

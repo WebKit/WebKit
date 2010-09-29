@@ -254,7 +254,7 @@ int RegExp::match(const UString& s, int startOffset, Vector<int, 32>* ovector)
         if (codeBlock.getFallback())
             sprintf(jitAddr, "fallback");
         else
-            sprintf(jitAddr, "0x%014lx", (uintptr_t)codeBlock.getAddr());
+            sprintf(jitAddr, "0x%014lx", reinterpret_cast<unsigned long int>(codeBlock.getAddr()));
 #else
         const char* jitAddr = "JIT Off";
 #endif
