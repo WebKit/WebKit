@@ -1,3 +1,27 @@
+2010-09-29  Mark Rowe  <mrowe@apple.com>
+
+        Merge r59185.
+
+    2010-05-11  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37989
+        Safari (still) doesn't always send basic credentials preemptively
+
+        Test: http/tests/xmlhttprequest/basic-auth-default.html
+
+        After fetching credentials from WebCore storage, put them back right away. This will add
+        default credentials for the directory, since this may be the first time we learn about its
+        associated protection space.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::WebCoreSynchronousLoader::didReceiveChallenge):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (-[WebCoreSynchronousLoader connection:didReceiveAuthenticationChallenge:]):
+
 2010-09-28  Mark Rowe  <mrowe@apple.com>
 
         Merge r67236.
