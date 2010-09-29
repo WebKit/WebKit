@@ -47,6 +47,7 @@ public:
     virtual WebAccessibilityObject getObjectById(int);
     virtual bool isValidId(int) const;
     virtual int addOrGetId(const WebKit::WebAccessibilityObject&);
+    virtual bool isCached(const WebAccessibilityObject&);
 
     virtual void remove(int);
     virtual void clear();

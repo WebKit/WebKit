@@ -166,4 +166,17 @@ int WebAccessibilityCacheImpl::addOrGetId(const WebAccessibilityObject& object)
     return m_nextNewId++;
 }
 
+bool WebAccessibilityCacheImpl::isCached(const WebAccessibilityObject& object)
+{
+    if (!object.isValid())
+        return false;
+
+    RefPtr<AccessibilityObject> o = toAccessibilityObject(object);
+    IdMap::iterator it = m_idMap.find(o.get());
+    if (it == m_idMap.end())
+        return false;
+        
+    return true;
+}
+
 }

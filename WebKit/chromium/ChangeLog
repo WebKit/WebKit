@@ -1,3 +1,15 @@
+2010-09-29  Chris Guillory  <chris.guillory@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add method which checks if a WebAccessibilityObject is in the cache.
+        https://bugs.webkit.org/show_bug.cgi?id=46605
+
+        * public/WebAccessibilityCache.h:
+        * src/WebAccessibilityCacheImpl.cpp:
+        (WebKit::WebAccessibilityCacheImpl::isCached):
+        * src/WebAccessibilityCacheImpl.h:
+
 2010-09-29  Anantanarayanan G Iyengar  <ananta@chromium.org>
 
         Reviewed by Darin Fisher.
