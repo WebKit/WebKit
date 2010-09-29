@@ -206,8 +206,6 @@ namespace JSC {
         
         UString cachedDateString;
         double cachedDateStringValue;
-        
-        WeakRandom weakRandom;
 
         int maxReentryDepth;
 

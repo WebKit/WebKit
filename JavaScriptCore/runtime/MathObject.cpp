@@ -211,7 +211,7 @@ JSValue JSC_HOST_CALL mathProtoFuncPow(ExecState* exec, JSObject*, JSValue, cons
 
 JSValue JSC_HOST_CALL mathProtoFuncRandom(ExecState* exec, JSObject*, JSValue, const ArgList&)
 {
-    return jsDoubleNumber(exec, exec->globalData().weakRandom.get());
+    return jsDoubleNumber(exec, exec->lexicalGlobalObject()->weakRandomNumber());
 }
 
 JSValue JSC_HOST_CALL mathProtoFuncRound(ExecState* exec, JSObject*, JSValue, const ArgList& args)

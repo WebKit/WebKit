@@ -1,3 +1,19 @@
+2010-09-29  Mark Rowe  <mrowe@apple.com>
+
+        Merge r65947.
+
+    2010-08-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Don't seed the JS random number generator from time()
+        https://bugs.webkit.org/show_bug.cgi?id=41868
+        <rdar://problem/8171025>
+
+        Add forwarding header for RandomNumber in JavaScriptGlue
+
+        * ForwardingHeaders/wtf/RandomNumber.h: Added.
+
 2010-04-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by David Levin.

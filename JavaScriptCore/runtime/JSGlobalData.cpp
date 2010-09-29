@@ -146,7 +146,6 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , firstStringifierToMark(0)
     , markStack(jsArrayVPtr)
     , cachedUTCOffset(NaN)
-    , weakRandom(static_cast<int>(currentTime()))
     , maxReentryDepth(threadStackType == ThreadStackTypeSmall ? MaxSmallThreadReentryDepth : MaxLargeThreadReentryDepth)
     , m_regExpCache(new RegExpCache(this))
 #ifndef NDEBUG
