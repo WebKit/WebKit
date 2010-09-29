@@ -1425,6 +1425,10 @@ webcore_sources += \
 	WebCore/history/PageCache.h \
 	WebCore/html/AsyncImageResizer.cpp \
 	WebCore/html/AsyncImageResizer.h \
+	WebCore/html/BaseTextInputType.cpp \
+	WebCore/html/BaseTextInputType.h \
+	WebCore/html/ButtonInputType.cpp \
+	WebCore/html/ButtonInputType.h \
 	WebCore/html/canvas/CanvasContextAttributes.h \
 	WebCore/html/canvas/CanvasGradient.cpp \
 	WebCore/html/canvas/CanvasGradient.h \
@@ -1440,9 +1444,13 @@ webcore_sources += \
 	WebCore/html/canvas/CanvasStyle.h \
 	WebCore/html/DOMTokenList.cpp \
 	WebCore/html/DOMTokenList.h \
+	WebCore/html/CheckboxInputType.cpp \
+	WebCore/html/CheckboxInputType.h \
 	WebCore/html/CollectionCache.cpp \
 	WebCore/html/CollectionCache.h \
 	WebCore/html/CollectionType.h \
+	WebCore/html/ColorInputType.cpp \
+	WebCore/html/ColorInputType.h \
 	WebCore/html/DataGridColumn.cpp \
 	WebCore/html/DataGridColumn.h \
 	WebCore/html/DataGridColumnList.cpp \
@@ -1450,10 +1458,20 @@ webcore_sources += \
 	WebCore/html/DataGridDataSource.h \
 	WebCore/html/DateComponents.cpp \
 	WebCore/html/DateComponents.h \
+	WebCore/html/DateInputType.cpp \
+	WebCore/html/DateInputType.h \
+	WebCore/html/DateTimeInputType.cpp \
+	WebCore/html/DateTimeInputType.h \
+	WebCore/html/DateTimeLocalInputType.cpp \
+	WebCore/html/DateTimeLocalInputType.h \
 	WebCore/html/DOMDataGridDataSource.cpp \
 	WebCore/html/DOMDataGridDataSource.h \
 	WebCore/html/DOMFormData.cpp \
 	WebCore/html/DOMFormData.h \
+	WebCore/html/EmailInputType.cpp \
+	WebCore/html/EmailInputType.h \
+	WebCore/html/FileInputType.cpp \
+	WebCore/html/FileInputType.h \
 	WebCore/html/FormDataList.cpp \
 	WebCore/html/FormDataList.h \
 	WebCore/html/FTPDirectoryDocument.cpp \
@@ -1631,17 +1649,29 @@ webcore_sources += \
 	WebCore/html/HTMLVideoElement.h \
 	WebCore/html/HTMLViewSourceDocument.cpp \
 	WebCore/html/HTMLViewSourceDocument.h \
+	WebCore/html/HiddenInputType.cpp \
+	WebCore/html/HiddenInputType.h \
 	WebCore/html/ImageData.cpp \
 	WebCore/html/ImageData.h \
 	WebCore/html/ImageDocument.cpp \
 	WebCore/html/ImageDocument.h \
+	WebCore/html/ImageInputType.cpp \
+	WebCore/html/ImageInputType.h \
 	WebCore/html/ImageResizerThread.cpp \
 	WebCore/html/ImageResizerThread.h \
+	WebCore/html/InputType.cpp \
+	WebCore/html/InputType.h \
+	WebCore/html/IsIndexInputType.cpp \
+	WebCore/html/IsIndexInputType.h \
 	WebCore/html/LabelsNodeList.cpp \
 	WebCore/html/LabelsNodeList.h \
 	WebCore/html/MediaDocument.cpp \
 	WebCore/html/MediaDocument.h \
 	WebCore/html/MediaError.h \
+	WebCore/html/MonthInputType.cpp \
+	WebCore/html/MonthInputType.h \
+	WebCore/html/NumberInputType.cpp \
+	WebCore/html/NumberInputType.h \
 	WebCore/html/parser/CSSPreloadScanner.cpp \
 	WebCore/html/parser/CSSPreloadScanner.h \
 	WebCore/html/parser/HTMLConstructionSite.cpp \
@@ -1679,18 +1709,42 @@ webcore_sources += \
 	WebCore/html/parser/TextDocumentParser.h \
 	WebCore/html/parser/TextViewSourceParser.cpp \
 	WebCore/html/parser/TextViewSourceParser.h \
+	WebCore/html/PasswordInputType.cpp \
+	WebCore/html/PasswordInputType.h \
 	WebCore/html/PluginDocument.cpp \
 	WebCore/html/PluginDocument.h \
+	WebCore/html/RadioInputType.cpp \
+	WebCore/html/RadioInputType.h \
+	WebCore/html/RangeInputType.cpp \
+	WebCore/html/RangeInputType.h \
+	WebCore/html/ResetInputType.cpp \
+	WebCore/html/ResetInputType.h \
+	WebCore/html/SearchInputType.cpp \
+	WebCore/html/SearchInputType.h \
 	WebCore/html/StepRange.cpp \
 	WebCore/html/StepRange.h \
+	WebCore/html/SubmitInputType.cpp \
+	WebCore/html/SubmitInputType.h \
+	WebCore/html/TelephoneInputType.cpp \
+	WebCore/html/TelephoneInputType.h \
 	WebCore/html/TextDocument.cpp \
 	WebCore/html/TextDocument.h \
+	WebCore/html/TextFieldInputType.cpp \
+	WebCore/html/TextFieldInputType.h \
+	WebCore/html/TextInputType.cpp \
+	WebCore/html/TextInputType.h \
 	WebCore/html/TextMetrics.h \
+	WebCore/html/TimeInputType.cpp \
+	WebCore/html/TimeInputType.h \
 	WebCore/html/TimeRanges.cpp \
 	WebCore/html/TimeRanges.h \
+	WebCore/html/URLInputType.cpp \
+	WebCore/html/URLInputType.h \
 	WebCore/html/ValidityState.cpp \
 	WebCore/html/ValidityState.h \
 	WebCore/html/VoidCallback.h \
+	WebCore/html/WeekInputType.cpp \
+	WebCore/html/WeekInputType.h \
 	WebCore/icu/unicode/parseerr.h \
 	WebCore/icu/unicode/platform.h \
 	WebCore/icu/unicode/putil.h \

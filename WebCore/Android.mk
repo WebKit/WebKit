@@ -261,9 +261,18 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	history/android/HistoryItemAndroid.cpp \
 	\
 	html/AsyncImageResizer.cpp \
+	html/BaseTextInputType.cpp \
+	html/ButtonInputType.cpp \
+	html/CheckboxInputType.cpp \
 	html/CollectionCache.cpp \
 	html/parser/CSSPreloadScanner.cpp \
+	html/ColorInputType.cpp \
 	html/DOMFormData.cpp \
+	html/DateInputType.cpp \
+	html/DateTimeInputType.cpp \
+	html/DateTimeLocalInputType.cpp \
+	html/EmailInputType.cpp \
+	html/FileInputType.cpp \
 	html/FormDataList.cpp \
 	html/HTMLAllCollection.cpp \
 	html/HTMLCollection.cpp \
@@ -277,14 +286,32 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/HTMLParserErrorCodes.cpp \
 	html/HTMLTableRowsCollection.cpp \
 	html/HTMLViewSourceDocument.cpp \
+	html/HiddenInputType.cpp \
 	html/ImageData.cpp \
 	html/ImageDocument.cpp \
-  html/MediaDocument.cpp \
+	html/ImageInputType.cpp \
 	html/ImageResizerThread.cpp \
+	html/InputType.cpp \
+	html/IsIndexInputType.cpp \
+	html/MediaDocument.cpp \
+	html/MonthInputType.cpp \
+	html/NumberInputType.cpp \
+	html/PasswordInputType.cpp \
 	html/PluginDocument.cpp \
+	html/RadioInputType.cpp \
+	html/RangeInputType.cpp \
+	html/ResetInputType.cpp \
+	html/SearchInputType.cpp \
+	html/SubmitInputType.cpp \
+	html/TelephoneInputType.cpp \
 	html/TextDocument.cpp \
+	html/TextFieldInputType.cpp \
+	html/TextInputType.cpp \
+	html/TimeInputType.cpp \
 	html/TimeRanges.cpp \
+	html/URLInputType.cpp \
 	html/ValidityState.cpp \
+	html/WeekInputType.cpp \
 	\
 	html/canvas/CanvasGradient.cpp \
 	html/canvas/WebGLObject.cpp \

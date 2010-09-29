@@ -1,3 +1,193 @@
+2010-09-28  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Refactor HTMLInputElement: Introducing InputType class and classes
+        for each input element types.
+        https://bugs.webkit.org/show_bug.cgi?id=45872
+
+        No new tests because this doesn't change any behavior.
+
+        * Android.mk: Add new files.
+        * CMakeLists.txt: ditto.
+        * GNUmakefile.am: ditto.
+        * WebCore.gypi: ditto.
+        * WebCore.pro: ditto.
+        * WebCore.vcproj/WebCore.vcproj: ditto.
+        * WebCore.xcodeproj/project.pbxproj: ditto.
+        * html/BaseTextInputType.cpp: Added.
+        (WebCore::BaseTextInputType::isTextType):
+        (WebCore::BaseTextInputType::patternMismatch):
+        * html/BaseTextInputType.h: Added.
+        (WebCore::BaseTextInputType::BaseTextInputType):
+        * html/ButtonInputType.cpp: Added.
+        (WebCore::ButtonInputType::create):
+        (WebCore::ButtonInputType::formControlType):
+        * html/ButtonInputType.h: Added.
+        (WebCore::ButtonInputType::ButtonInputType):
+        * html/CheckboxInputType.cpp: Added.
+        (WebCore::CheckboxInputType::create):
+        (WebCore::CheckboxInputType::formControlType):
+        * html/CheckboxInputType.h: Added.
+        (WebCore::CheckboxInputType::CheckboxInputType):
+        * html/ColorInputType.cpp: Added.
+        (WebCore::ColorInputType::create):
+        (WebCore::ColorInputType::formControlType):
+        * html/ColorInputType.h: Added.
+        (WebCore::ColorInputType::ColorInputType):
+        * html/DateInputType.cpp: Added.
+        (WebCore::DateInputType::create):
+        (WebCore::DateInputType::formControlType):
+        * html/DateInputType.h: Added.
+        (WebCore::DateInputType::DateInputType):
+        * html/DateTimeInputType.cpp: Added.
+        (WebCore::DateTimeInputType::create):
+        (WebCore::DateTimeInputType::formControlType):
+        * html/DateTimeInputType.h: Added.
+        (WebCore::DateTimeInputType::DateTimeInputType):
+        * html/DateTimeLocalInputType.cpp: Added.
+        (WebCore::DateTimeLocalInputType::create):
+        (WebCore::DateTimeLocalInputType::formControlType):
+        * html/DateTimeLocalInputType.h: Added.
+        (WebCore::DateTimeLocalInputType::DateTimeLocalInputType):
+        * html/EmailInputType.cpp: Added.
+        (WebCore::EmailInputType::create):
+        (WebCore::EmailInputType::formControlType):
+        * html/EmailInputType.h: Added.
+        (WebCore::EmailInputType::EmailInputType):
+        * html/FileInputType.cpp: Added.
+        (WebCore::FileInputType::create):
+        (WebCore::FileInputType::formControlType):
+        * html/FileInputType.h: Added.
+        (WebCore::FileInputType::FileInputType):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::HTMLInputElement): Initialize m_inputType.
+        (WebCore::HTMLInputElement::patternMismatch): Delegate to InputType.
+        (WebCore::HTMLInputElement::updateType): Update m_inputType with new type.
+        (WebCore::HTMLInputElement::formControlType): Delegate to InputType.
+        (WebCore::HTMLInputElement::isTextField): ditto.
+        (WebCore::HTMLInputElement::isTextType): ditto.
+        * html/HTMLInputElement.h:
+        * html/HiddenInputType.cpp: Added.
+        (WebCore::HiddenInputType::create):
+        (WebCore::HiddenInputType::formControlType):
+        * html/HiddenInputType.h: Added.
+        (WebCore::HiddenInputType::HiddenInputType):
+        * html/ImageInputType.cpp: Added.
+        (WebCore::ImageInputType::create):
+        (WebCore::ImageInputType::formControlType):
+        * html/ImageInputType.h: Added.
+        (WebCore::ImageInputType::ImageInputType):
+        * html/InputType.cpp: Added.
+        (WebCore::createInputTypeFactoryMap):
+        (WebCore::InputType::create):
+        (WebCore::InputType::createText):
+        (WebCore::InputType::~InputType):
+        (WebCore::InputType::isTextField):
+        (WebCore::InputType::isTextType):
+        (WebCore::InputType::patternMismatch):
+        (WebCore::InputTypeNames::button):
+        (WebCore::InputTypeNames::checkbox):
+        (WebCore::InputTypeNames::color):
+        (WebCore::InputTypeNames::date):
+        (WebCore::InputTypeNames::datetime):
+        (WebCore::InputTypeNames::datetimelocal):
+        (WebCore::InputTypeNames::email):
+        (WebCore::InputTypeNames::file):
+        (WebCore::InputTypeNames::hidden):
+        (WebCore::InputTypeNames::image):
+        (WebCore::InputTypeNames::isindex):
+        (WebCore::InputTypeNames::month):
+        (WebCore::InputTypeNames::number):
+        (WebCore::InputTypeNames::password):
+        (WebCore::InputTypeNames::radio):
+        (WebCore::InputTypeNames::range):
+        (WebCore::InputTypeNames::reset):
+        (WebCore::InputTypeNames::search):
+        (WebCore::InputTypeNames::submit):
+        (WebCore::InputTypeNames::telephone):
+        (WebCore::InputTypeNames::text):
+        (WebCore::InputTypeNames::time):
+        (WebCore::InputTypeNames::url):
+        (WebCore::InputTypeNames::week):
+        * html/InputType.h: Added.
+        (WebCore::InputType::InputType):
+        (WebCore::InputType::element):
+        * html/IsIndexInputType.cpp: Added.
+        (WebCore::IsIndexInputType::create):
+        (WebCore::IsIndexInputType::formControlType):
+        * html/IsIndexInputType.h: Added.
+        (WebCore::IsIndexInputType::IsIndexInputType):
+        * html/MonthInputType.cpp: Added.
+        (WebCore::MonthInputType::create):
+        (WebCore::MonthInputType::formControlType):
+        * html/MonthInputType.h: Added.
+        (WebCore::MonthInputType::MonthInputType):
+        * html/NumberInputType.cpp: Added.
+        (WebCore::NumberInputType::create):
+        (WebCore::NumberInputType::formControlType):
+        * html/NumberInputType.h: Added.
+        (WebCore::NumberInputType::NumberInputType):
+        * html/PasswordInputType.cpp: Added.
+        (WebCore::PasswordInputType::create):
+        (WebCore::PasswordInputType::formControlType):
+        * html/PasswordInputType.h: Added.
+        (WebCore::PasswordInputType::PasswordInputType):
+        * html/RadioInputType.cpp: Added.
+        (WebCore::RadioInputType::create):
+        (WebCore::RadioInputType::formControlType):
+        * html/RadioInputType.h: Added.
+        (WebCore::RadioInputType::RadioInputType):
+        * html/RangeInputType.cpp: Added.
+        (WebCore::RangeInputType::create):
+        (WebCore::RangeInputType::formControlType):
+        * html/RangeInputType.h: Added.
+        (WebCore::RangeInputType::RangeInputType):
+        * html/ResetInputType.cpp: Added.
+        (WebCore::ResetInputType::create):
+        (WebCore::ResetInputType::formControlType):
+        * html/ResetInputType.h: Added.
+        (WebCore::ResetInputType::ResetInputType):
+        * html/SearchInputType.cpp: Added.
+        (WebCore::SearchInputType::create):
+        (WebCore::SearchInputType::formControlType):
+        * html/SearchInputType.h: Added.
+        (WebCore::SearchInputType::SearchInputType):
+        * html/SubmitInputType.cpp: Added.
+        (WebCore::SubmitInputType::create):
+        (WebCore::SubmitInputType::formControlType):
+        * html/SubmitInputType.h: Added.
+        (WebCore::SubmitInputType::SubmitInputType):
+        * html/TelephoneInputType.cpp: Added.
+        (WebCore::TelephoneInputType::create):
+        (WebCore::TelephoneInputType::formControlType):
+        * html/TelephoneInputType.h: Added.
+        (WebCore::TelephoneInputType::TelephoneInputType):
+        * html/TextFieldInputType.cpp: Added.
+        (WebCore::TextFieldInputType::isTextField):
+        * html/TextFieldInputType.h: Added.
+        (WebCore::TextFieldInputType::TextFieldInputType):
+        * html/TextInputType.cpp: Added.
+        (WebCore::TextInputType::create):
+        (WebCore::TextInputType::formControlType):
+        * html/TextInputType.h: Added.
+        (WebCore::TextInputType::TextInputType):
+        * html/TimeInputType.cpp: Added.
+        (WebCore::TimeInputType::create):
+        (WebCore::TimeInputType::formControlType):
+        * html/TimeInputType.h: Added.
+        (WebCore::TimeInputType::TimeInputType):
+        * html/URLInputType.cpp: Added.
+        (WebCore::URLInputType::create):
+        (WebCore::URLInputType::formControlType):
+        * html/URLInputType.h: Added.
+        (WebCore::URLInputType::URLInputType):
+        * html/WeekInputType.cpp: Added.
+        (WebCore::WeekInputType::create):
+        (WebCore::WeekInputType::formControlType):
+        * html/WeekInputType.h: Added.
+        (WebCore::WeekInputType::WeekInputType):
+
 2010-09-28  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Maciej Stachowiak.

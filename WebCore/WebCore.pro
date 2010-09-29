@@ -836,14 +836,23 @@ SOURCES += \
     history/qt/HistoryItemQt.cpp \
     history/PageCache.cpp \
     html/AsyncImageResizer.cpp \
+    html/BaseTextInputType.cpp \
+    html/ButtonInputType.cpp \
+    html/CheckboxInputType.cpp \
     html/CollectionCache.cpp \
+    html/ColorInputType.cpp \
     html/DOMDataGridDataSource.cpp \
     html/DOMFormData.cpp \
     html/DOMTokenList.cpp \
     html/DataGridColumn.cpp \
     html/DataGridColumnList.cpp \
     html/DateComponents.cpp \
+    html/DateInputType.cpp \
+    html/DateTimeInputType.cpp \
+    html/DateTimeLocalInputType.cpp \
+    html/EmailInputType.cpp \
     html/FTPDirectoryDocument.cpp \
+    html/FileInputType.cpp \
     html/FormDataList.cpp \
     html/HTMLAllCollection.cpp \
     html/HTMLAnchorElement.cpp \
@@ -926,15 +935,33 @@ SOURCES += \
     html/HTMLTitleElement.cpp \
     html/HTMLUListElement.cpp \
     html/HTMLViewSourceDocument.cpp \
+    html/HiddenInputType.cpp \
     html/ImageData.cpp \
     html/ImageDocument.cpp \
+    html/ImageInputType.cpp \
     html/ImageResizerThread.cpp \
+    html/InputType.cpp \
+    html/IsIndexInputType.cpp \
     html/LabelsNodeList.cpp \
     html/MediaDocument.cpp \
+    html/MonthInputType.cpp \
+    html/NumberInputType.cpp \
+    html/PasswordInputType.cpp \
     html/PluginDocument.cpp \
+    html/RadioInputType.cpp \
+    html/RangeInputType.cpp \
+    html/ResetInputType.cpp \
+    html/SearchInputType.cpp \
     html/StepRange.cpp \
+    html/SubmitInputType.cpp \
+    html/TelephoneInputType.cpp \
     html/TextDocument.cpp \
+    html/TextFieldInputType.cpp \
+    html/TextInputType.cpp \
+    html/TimeInputType.cpp \
+    html/URLInputType.cpp \
     html/ValidityState.cpp \
+    html/WeekInputType.cpp \
     html/canvas/CanvasGradient.cpp \
     html/canvas/CanvasPattern.cpp \
     html/canvas/CanvasPixelArray.cpp \

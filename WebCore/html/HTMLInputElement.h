@@ -35,6 +35,7 @@ class FileList;
 class HTMLDataListElement;
 class HTMLImageLoader;
 class HTMLOptionElement;
+class InputType;
 class KURL;
 class VisibleSelection;
 
@@ -65,9 +66,7 @@ public:
         MONTH,
         TIME,
         WEEK,
-        // If you add new types or change the order of enum values, update deprecatedNumberOfTypes below.
     };
-    static const int deprecatedNumberOfTypes = WEEK + 1;
 
     static PassRefPtr<HTMLInputElement> create(const QualifiedName&, Document*, HTMLFormElement*);
     virtual ~HTMLInputElement();
@@ -375,6 +374,7 @@ private:
 #if ENABLE(DATALIST)
     bool m_hasNonEmptyList : 1;
 #endif
+    OwnPtr<InputType> m_inputType;
 };
 
 } //namespace

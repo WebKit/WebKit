@@ -37561,6 +37561,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\BaseTextInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\BaseTextInputType.h"
+				>
+			</File>
+			<File
 				RelativePath="..\fileapi\Blob.cpp"
 				>
 			</File>
@@ -37582,6 +37590,14 @@
 			</File>
 			<File
 				RelativePath="..\fileapi\BlobURL.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\ButtonInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\ButtonInputType.h"
 				>
 			</File>
 			<File
@@ -37633,6 +37649,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\CheckboxInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\CheckboxInputType.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\CollectionCache.cpp"
 				>
 				<FileConfiguration
@@ -37650,6 +37674,14 @@
 			</File>
 			<File
 				RelativePath="..\html\CollectionType.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\ColorInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\ColorInputType.h"
 				>
 			</File>
 			<File
@@ -37678,6 +37710,30 @@
 			</File>
 			<File
 				RelativePath="..\html\DateComponents.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DateInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DateInputType.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DateTimeInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DateTimeInputType.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DateTimeLocalInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DateTimeLocalInputType.h"
 				>
 			</File>
 			<File
@@ -37726,6 +37782,14 @@
 			</File>
 			<File
 				RelativePath="..\html\DOMFormData.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\EmailInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\EmailInputType.h"
 				>
 			</File>
 			<File
@@ -37786,6 +37850,14 @@
 			</File>
 			<File
 				RelativePath="..\fileapi\FileException.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\FileInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\FileInputType.h"
 				>
 			</File>
 			<File
@@ -42237,6 +42309,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\HiddenInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\HiddenInputType.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\ImageData.cpp"
 				>
 			</File>
@@ -42253,11 +42333,35 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\ImageInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\ImageInputType.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\ImageResizerThread.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\html\ImageResizerThread.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\InputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\InputType.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\IsIndexInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\IsIndexInputType.h"
 				>
 			</File>
 			<File
@@ -42297,11 +42401,67 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\MonthInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\MonthInputType.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\NumberInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\NumberInputType.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\PasswordInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\PasswordInputType.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\PluginDocument.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\html\PluginDocument.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\RadioInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\RadioInputType.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\RangeInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\RangeInputType.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\ResetInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\ResetInputType.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\SearchInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\SearchInputType.h"
 				>
 			</File>
 			<File
@@ -42313,7 +42473,39 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\SubmitInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\SubmitInputType.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\TelephoneInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\TelephoneInputType.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\TextDocument.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\TextFieldInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\TextFieldInputType.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\TextInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\TextInputType.h"
 				>
 			</File>
 			<File
@@ -42333,6 +42525,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\URLInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\URLInputType.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\ValidityState.cpp"
 				>
 			</File>
@@ -42342,6 +42542,14 @@
 			</File>
 			<File
 				RelativePath="..\html\VoidCallback.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\WeekInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\WeekInputType.h"
 				>
 			</File>
 			<Filter
