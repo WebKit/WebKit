@@ -25,6 +25,7 @@
 
 #include "ArgumentDecoder.h"
 
+#include "DataReference.h"
 #include <stdio.h>
 
 namespace CoreIPC {
@@ -95,6 +96,22 @@ bool ArgumentDecoder::decodeBytes(Vector<uint8_t>& buffer)
     if (size > 0)
         memcpy(&buffer[0], m_bufferPos, size);
     m_bufferPos += size;
+    return true;
+}
+
+bool ArgumentDecoder::decodeBytes(DataReference& dataReference)
+{
+    uint64_t size;
+    if (!decodeUInt64(size))
+        return false;
+    
+    if (!alignBufferPosition(1, size))
+        return false;
+
+    uint8_t* data = m_bufferPos;
+    m_bufferPos += size;
+
+    dataReference = DataReference(data, size);
     return true;
 }
 
@@ -196,11 +213,13 @@ bool ArgumentDecoder::removeAttachment(Attachment& attachment)
     return true;
 }
 
+#ifndef NDEBUG
 void ArgumentDecoder::debug()
 {
     printf("ArgumentDecoder::debug()\n");
     printf("Number of Attachments: %d\n", (int)m_attachments.size());
     printf("Size of buffer: %d\n", (int)(m_bufferEnd - m_buffer));
 }
+#endif
 
 } // namespace CoreIPC

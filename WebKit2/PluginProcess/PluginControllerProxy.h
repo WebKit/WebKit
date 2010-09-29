@@ -35,6 +35,10 @@
 #include "SharedMemory.h"
 #include <wtf/Noncopyable.h>
 
+namespace CoreIPC {
+    class DataReference;
+}
+
 namespace WebKit {
 
 class BackingStore;
@@ -75,6 +79,11 @@ private:
 
     // Message handlers.
     void geometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, const SharedMemory::Handle& backingStoreHandle);
+    void didEvaluateJavaScript(uint64_t requestID, const String& requestURLString, const String& result);
+    void streamDidReceiveResponse(uint64_t streamID, const String& responseURLString, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers);
+    void streamDidReceiveData(uint64_t streamID, const CoreIPC::DataReference& data);
+    void streamDidFinishLoading(uint64_t streamID);
+    void streamDidFail(uint64_t streamID, bool wasCancelled);
     void handleMouseEvent(const WebMouseEvent&, bool& handled);
     void handleWheelEvent(const WebWheelEvent&, bool& handled);
     void handleMouseEnterEvent(const WebMouseEvent&, bool& handled);

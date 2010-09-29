@@ -152,6 +152,7 @@ HEADERS += \
     Platform/CoreIPC/Attachment.h \
     Platform/CoreIPC/Connection.h \
     Platform/CoreIPC/CoreIPCMessageKinds.h \
+    Platform/CoreIPC/DataReference.h \
     Platform/CoreIPC/HandleMessage.h \
     Platform/CoreIPC/MessageID.h \
     Platform/Module.h \
@@ -291,6 +292,7 @@ SOURCES += \
     Platform/CoreIPC/ArgumentEncoder.cpp \
     Platform/CoreIPC/Attachment.cpp \
     Platform/CoreIPC/Connection.cpp \
+    Platform/CoreIPC/DataReference.cpp \
     Platform/CoreIPC/qt/ConnectionQt.cpp \
     Platform/Module.cpp \
     Platform/RunLoop.cpp \

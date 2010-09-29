@@ -62,7 +62,9 @@ public:
     void addAttachment(const Attachment&);
     Vector<Attachment> releaseAttachments();
 
+#ifndef NDEBUG
     void debug();
+#endif
 
 private:
     uint8_t* grow(unsigned alignment, size_t size);

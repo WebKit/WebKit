@@ -28,6 +28,7 @@
 #include "PluginControllerProxy.h"
 
 #include "BackingStore.h"
+#include "DataReference.h"
 #include "NetscapePlugin.h"
 #include "NotImplemented.h"
 #include "PluginProcess.h"
@@ -194,6 +195,31 @@ void PluginControllerProxy::geometryDidChange(const IntRect& frameRect, const In
     m_plugin->geometryDidChange(frameRect, clipRect);
 }
 
+void PluginControllerProxy::didEvaluateJavaScript(uint64_t requestID, const String& requestURLString, const String& result)
+{
+    m_plugin->didEvaluateJavaScript(requestID, requestURLString, result);
+}
+
+void PluginControllerProxy::streamDidReceiveResponse(uint64_t streamID, const String& responseURLString, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers)
+{
+    m_plugin->streamDidReceiveResponse(streamID, KURL(ParsedURLString, responseURLString), streamLength, lastModifiedTime, mimeType, headers);
+}
+
+void PluginControllerProxy::streamDidReceiveData(uint64_t streamID, const CoreIPC::DataReference& data)
+{
+    m_plugin->streamDidReceiveData(streamID, reinterpret_cast<const char*>(data.data()), data.size());
+}
+
+void PluginControllerProxy::streamDidFinishLoading(uint64_t streamID)
+{
+    m_plugin->streamDidFinishLoading(streamID);
+}
+
+void PluginControllerProxy::streamDidFail(uint64_t streamID, bool wasCancelled)
+{
+    m_plugin->streamDidFail(streamID, wasCancelled);
+}
+    
 void PluginControllerProxy::handleMouseEvent(const WebMouseEvent& mouseEvent, bool& handled)
 {
     handled = m_plugin->handleMouseEvent(mouseEvent);

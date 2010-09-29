@@ -48,6 +48,30 @@ void handleMessage(ArgumentDecoder* arguments, C* object, void (C::*function)(P1
     (object->*function)(firstArgument, secondArgument, thirdArgument);
 }
 
+template<typename T, typename C, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6>
+void handleMessage(ArgumentDecoder* arguments, C* object, void (C::*function)(P1, P2, P3, P4, P5, P6))
+{
+    typename RemoveReference<typename T::FirstArgumentType>::Type firstArgument;
+    if (!arguments->decode(firstArgument))
+        return;
+    typename RemoveReference<typename T::SecondArgumentType>::Type secondArgument;
+    if (!arguments->decode(secondArgument))
+        return;
+    typename RemoveReference<typename T::ThirdArgumentType>::Type thirdArgument;
+    if (!arguments->decode(thirdArgument))
+        return;
+    typename RemoveReference<typename T::FourthArgumentType>::Type fourthArgument;
+    if (!arguments->decode(fourthArgument))
+        return;
+    typename RemoveReference<typename T::FifthArgumentType>::Type fifthArgument;
+    if (!arguments->decode(fifthArgument))
+        return;
+    typename RemoveReference<typename T::SixthArgumentType>::Type sixthArgument;
+    if (!arguments->decode(sixthArgument))
+        return;
+    (object->*function)(firstArgument, secondArgument, thirdArgument, fourthArgument, fifthArgument, sixthArgument);
+}
+
 template<typename T, typename C, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7>
 void handleMessage(ArgumentDecoder* arguments, C* object, void (C::*function)(P1, P2, P3, P4, P5, P6, P7))
 {

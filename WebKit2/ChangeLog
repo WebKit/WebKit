@@ -1,5 +1,55 @@
 2010-09-29  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Implement more of PluginProxy and PLuginControllerProxy.
+
+        * Platform/CoreIPC/ArgumentDecoder.cpp:
+        (CoreIPC::ArgumentDecoder::decodeBytes):
+        * Platform/CoreIPC/ArgumentDecoder.h:
+        Add new overload that takes a DataReference. Wrap the debug function in #ifndef NDEBUG.
+
+        * Platform/CoreIPC/ArgumentEncoder.cpp:
+        * Platform/CoreIPC/ArgumentEncoder.h:
+        Wrap the debug function in #ifndef NDEBUG.
+
+        * Platform/CoreIPC/Arguments.h:
+        Add new typedefs.
+        
+        * Platform/CoreIPC/DataReference.cpp:
+        * Platform/CoreIPC/DataReference.h:
+        Add a DataReference class.
+    
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::handleMessage):
+        Add new overload.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::didEvaluateJavaScript):
+        (WebKit::PluginControllerProxy::streamDidReceiveResponse):
+        (WebKit::PluginControllerProxy::streamDidReceiveData):
+        (WebKit::PluginControllerProxy::streamDidFinishLoading):
+        (WebKit::PluginControllerProxy::streamDidFail):
+        call Plugin member functions.
+
+        * PluginProcess/PluginControllerProxy.messages.in:
+        Add new messages.
+        
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        Add DataReference.cpp and DataReference.h
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::didEvaluateJavaScript):
+        (WebKit::PluginProxy::streamDidReceiveResponse):
+        (WebKit::PluginProxy::streamDidReceiveData):
+        (WebKit::PluginProxy::streamDidFinishLoading):
+        (WebKit::PluginProxy::streamDidFail):
+        Send messages.
+
+2010-09-29  Anders Carlsson  <andersca@apple.com>
+
         Update expected results.
 
         * Scripts/webkit2/messages_unittest.py:

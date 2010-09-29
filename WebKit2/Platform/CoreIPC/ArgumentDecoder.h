@@ -34,6 +34,8 @@
 
 namespace CoreIPC {
 
+class DataReference;
+    
 class ArgumentDecoder {
 public:
     ArgumentDecoder(const uint8_t* buffer, size_t bufferSize);
@@ -47,6 +49,9 @@ public:
 
     bool decodeBytes(Vector<uint8_t>&);
     bool decodeBytes(uint8_t*, size_t);
+
+    // The data in the data reference here will only be valid for the lifetime of the ArgumentDecoder object.
+    bool decodeBytes(DataReference&);
 
     bool decodeBool(bool&);
     bool decodeUInt32(uint32_t&);
@@ -82,7 +87,9 @@ public:
 
     bool removeAttachment(Attachment&);
 
+#ifndef NDEBUG
     void debug();
+#endif
 
 private:
     ArgumentDecoder(const ArgumentDecoder*);

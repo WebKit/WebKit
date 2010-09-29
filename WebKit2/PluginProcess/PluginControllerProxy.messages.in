@@ -26,6 +26,21 @@ messages -> PluginControllerProxy {
     # Sent when the plug-in geometry changes.
     GeometryDidChange(WebCore::IntRect frameRect, WebCore::IntRect clipRect, WebKit::SharedMemory::Handle backingStoreHandle)
 
+    # Sent when JavaScript that the plug-in asked to be evaluated has been evaluated.
+    DidEvaluateJavaScript(uint64_t requestID, WTF::String requestURLString, WTF::String result)
+
+    # Sent when the plug-in receives a response for a stream.
+    StreamDidReceiveResponse(uint64_t streamID, WTF::String responseURLString, uint32_t streamLength, uint32_t lastModifiedTime, WTF::String mimeType, WTF::String headers)
+
+    # Sent when the plug-in receives data for a stream.
+    StreamDidReceiveData(uint64_t streamID, CoreIPC::DataReference data)
+
+    # Sent when a plug-in stream has finishes loading.
+    StreamDidFinishLoading(uint64_t streamID)
+
+    # Sent when a plug-in stream has failed to load.
+    StreamDidFail(uint64_t streamID, bool wasCancelled)
+
     # Sent when a mouse event (that isn't a mouse enter/leave event or a wheel event) should be processed.
     HandleMouseEvent(WebKit::WebMouseEvent mouseEvent) -> (bool handled)
     

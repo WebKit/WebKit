@@ -145,11 +145,13 @@ Vector<Attachment> ArgumentEncoder::releaseAttachments()
     return newList;
 }
 
+#ifndef NDEBUG
 void ArgumentEncoder::debug()
 {
     printf("ArgumentEncoder::debug()\n");
     printf("Number of Attachments: %d\n", (int)m_attachments.size());
     printf("Size of buffer: %d\n", (int)m_bufferSize);
 }
+#endif
 
 } // namespace CoreIPC

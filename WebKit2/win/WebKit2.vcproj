@@ -1860,6 +1860,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Platform\CoreIPC\DataReference.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Platform\CoreIPC\DataReference.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Platform\CoreIPC\CoreIPCMessageKinds.h"
 					>
 				</File>
