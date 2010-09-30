@@ -1,5 +1,14 @@
 2010-09-30  Adam Roben  <aroben@apple.com>
 
+        Rebaseline fast/layers/video-layer.html on Windows
+
+        Fixes <http://webkit.org/b/46903> <rdar://problem/8496933> REGRESSION
+        (r67251): fast/layers/video-layer.html failing on Windows
+
+        * platform/win/fast/layers/video-layer-expected.txt:
+
+2010-09-30  Adam Roben  <aroben@apple.com>
+
         Rebaseline Windows results for recent-ish changes
 
         * platform/win/fast/css/getComputedStyle/computed-style-expected.txt:
