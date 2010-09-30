@@ -1,3 +1,14 @@
+2010-09-29  Chris Fleizach  <cfleizach@apple.com>
+
+        No review. Update layout tests after new CSS property.
+
+        AX: implement CSS3 Speech "speak"
+        https://bugs.webkit.org/show_bug.cgi?id=46827
+
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2010-09-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.
