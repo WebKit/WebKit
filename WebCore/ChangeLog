@@ -1,3 +1,14 @@
+2010-09-30  Jarred Nicholls  <jarred@sencha.com>
+
+        Reviewed by Darin Adler.
+
+        Removed unnecessary calls to ceil() on an int
+        Removing the call fixes MSVC build errors
+        https://bugs.webkit.org/show_bug.cgi?id=46931
+
+        * platform/graphics/ContextShadow.cpp:
+        (WebCore::ContextShadow::calculateLayerBoundingRect):
+
 2010-09-30  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Beth Dakin.

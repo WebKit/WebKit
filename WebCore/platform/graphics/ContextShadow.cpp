@@ -154,7 +154,7 @@ void ContextShadow::calculateLayerBoundingRect(const FloatRect& layerArea, const
     m_layerRect = enclosingIntRect(destinationRect);
 
     // We expand the area by the blur radius * 2 to give extra space for the blur transition.
-    m_layerRect.inflate((m_type == BlurShadow) ? ceil(m_blurRadius * 2) : 0);
+    m_layerRect.inflate((m_type == BlurShadow) ? m_blurRadius * 2 : 0);
 
     if (!clipRect.contains(m_layerRect)) {
         // No need to have the buffer larger than the clip.
@@ -167,7 +167,7 @@ void ContextShadow::calculateLayerBoundingRect(const FloatRect& layerArea, const
         // We adjust again because the pixels at the borders are still
         // potentially affected by the pixels outside the buffer.
         if (m_type == BlurShadow)
-            m_layerRect.inflate((m_type == BlurShadow) ? ceil(m_blurRadius * 2) : 0);
+            m_layerRect.inflate((m_type == BlurShadow) ? m_blurRadius * 2 : 0);
     }
 }
 
