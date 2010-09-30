@@ -39,6 +39,7 @@ extern "C" {
 WK_EXPORT WKTypeID WKStringGetTypeID();
 
 WK_EXPORT bool WKStringIsEmpty(WKStringRef string);
+WK_EXPORT bool WKStringIsEqual(WKStringRef firstString, WKStringRef secondString);
 
 #ifdef __cplusplus
 }

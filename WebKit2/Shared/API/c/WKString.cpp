@@ -38,3 +38,13 @@ bool WKStringIsEmpty(WKStringRef stringRef)
 {
     return toWK(stringRef)->isEmpty();
 }
+
+bool WKStringIsEqual(WKStringRef firstString, WKStringRef secondString)
+{
+    if (firstString == secondString)
+        return true;
+    if (!firstString || !secondString)
+        return false;
+        
+    return toWK(firstString)->string() == toWK(secondString)->string();
+}

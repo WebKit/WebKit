@@ -1,3 +1,13 @@
+2010-09-30  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46774 - Add WKStringIsEqual API
+
+        * Shared/API/c/WKString.cpp:
+        (WKStringIsEqual):
+        * Shared/API/c/WKString.h:
+
 2010-09-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.
