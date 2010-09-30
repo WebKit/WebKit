@@ -1,3 +1,10 @@
+2010-09-29  Adam Barth  <abarth@webkit.org>
+
+        This test result seems to be platform specific.
+
+        * platform/mac-leopard/plugins/plugin-initiate-popup-window-expected.txt: Renamed from LayoutTests/plugins/plugin-initiate-popup-window-expected.txt.
+        * platform/mac/plugins/plugin-initiate-popup-window-expected.txt: Added.
+
 2010-09-29  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, rolling out r68568.
