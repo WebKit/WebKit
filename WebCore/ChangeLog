@@ -1,3 +1,15 @@
+2010-09-30  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Minor cleanup of MediaPlayerPrivateQt
+
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        (WebCore::MediaPlayerPrivateQt::MediaPlayerPrivateQt):
+        (WebCore::MediaPlayerPrivateQt::currentTime):
+        (WebCore::MediaPlayerPrivateQt::positionChanged):
+        (WebCore::MediaPlayerPrivateQt::paint):
+
 2010-09-30  Jochen Eisinger  <jochen@chromium.org>
 
         Reviewed by Jeremy Orlow.

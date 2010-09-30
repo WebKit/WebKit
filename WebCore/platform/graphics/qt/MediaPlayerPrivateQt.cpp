@@ -125,8 +125,7 @@ MediaPlayerPrivateQt::MediaPlayerPrivateQt(MediaPlayer* player)
            this, SLOT(nativeSizeChanged(QSizeF)));
 
     // Grab the player control
-    QMediaService* service = m_mediaPlayer->service();
-    if (service) {
+    if (QMediaService* service = m_mediaPlayer->service()) {
         m_mediaPlayerControl = qobject_cast<QMediaPlayerControl *>(
                 service->requestControl(QMediaPlayerControl_iid));
     }
@@ -330,8 +329,7 @@ float MediaPlayerPrivateQt::duration() const
 
 float MediaPlayerPrivateQt::currentTime() const
 {
-    float currentTime = m_mediaPlayer->position() / 1000.0f;
-    return currentTime;
+    return m_mediaPlayer->position() / 1000.0f;
 }
 
 PassRefPtr<TimeRanges> MediaPlayerPrivateQt::buffered() const
@@ -466,7 +464,7 @@ void MediaPlayerPrivateQt::seekTimeout()
 
 void MediaPlayerPrivateQt::positionChanged(qint64)
 {
-    // Only propogate this event if we are seeking
+    // Only propagate this event if we are seeking
     if (m_isSeeking && m_queuedSeek == -1) {
         m_webCorePlayer->timeChanged();
         m_isSeeking = false;
@@ -573,10 +571,7 @@ void MediaPlayerPrivateQt::paint(GraphicsContext* context, const IntRect& rect)
     if (!m_isVisible)
         return;
 
-    // Grab the painter and widget
     QPainter* painter = context->platformContext();
-
-    // Render the video
     m_videoScene->render(painter, QRectF(QRect(rect)), m_videoItem->sceneBoundingRect());
 }
 
