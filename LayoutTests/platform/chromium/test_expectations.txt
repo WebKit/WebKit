@@ -3146,3 +3146,9 @@ BUGWK46779 WIN LINUX : fast/filesystem/flags-passing.html = TEXT PASS
 
 // NPP_HandleEvent doesn't be implemented/work on mac/linux.
 BUG48033 LINUX MAC SKIP : plugins/plugin-initiate-popup-window.html = PASS TIMEOUT
+
+// New test added in 68808.
+BUGWK46940 WIN : fast/dom/Window/window-screen-properties.html = TEXT
+
+// New test added in 68809
+BUGWK46941 WIN : fast/media/color-does-not-include-alpha.html = TEXT

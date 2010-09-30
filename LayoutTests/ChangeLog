@@ -75,6 +75,14 @@
 
         Build fix. Not reviewed.
 
+        Update test expectations for chromium.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-09-30  Alpha Lam  <hclam@chromium.org>
+
+        Build fix. Not reviewed.
+
         Rename test expectations last submitted.
 
         * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-in-attr-expected.checksum: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-in-attr-actual.checksum.
