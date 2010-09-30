@@ -1,3 +1,66 @@
+2010-09-30  Alpha Lam  <hclam@chromium.org>
+
+        Build fix. Not reviewed.
+
+        Rename test expectations last submitted.
+
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-in-attr-expected.checksum: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-in-attr-actual.checksum.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-in-attr-expected.png: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-in-attr-actual.png.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr-expected.checksum: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr-actual.checksum.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr-expected.png: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr-actual.png.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr-expected.checksum: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr-actual.checksum.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr-expected.png: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr-actual.png.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k2-attr-expected.checksum: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k2-attr-actual.checksum.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k2-attr-expected.png: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k2-attr-actual.png.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k3-attr-expected.checksum: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k3-attr-actual.checksum.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k3-attr-expected.png: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k3-attr-actual.png.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k4-attr-expected.checksum: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k4-attr-actual.checksum.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k4-attr-expected.png: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k4-attr-actual.png.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-operator-attr-expected.checksum: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-operator-attr-actual.checksum.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-operator-attr-expected.png: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-operator-attr-actual.png.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-in-prop-expected.checksum: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-in-prop-actual.checksum.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-in-prop-expected.png: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-in-prop-actual.png.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-in2-prop-expected.checksum: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-in2-prop-actual.checksum.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-in2-prop-expected.png: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-in2-prop-actual.png.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k1-prop-expected.checksum: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k1-prop-actual.checksum.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k1-prop-expected.png: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k1-prop-actual.png.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k2-prop-expected.checksum: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k2-prop-actual.checksum.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k2-prop-expected.png: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k2-prop-actual.png.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k3-prop-expected.checksum: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k3-prop-actual.checksum.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k3-prop-expected.png: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k3-prop-actual.png.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k4-prop-expected.checksum: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k4-prop-actual.checksum.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k4-prop-expected.png: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k4-prop-actual.png.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-operator-prop-expected.checksum: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-operator-prop-actual.checksum.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-operator-prop-expected.png: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-operator-prop-actual.png.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-in-attr-expected.checksum: Renamed from LayoutTests/platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-in-attr-actual.checksum.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-in-attr-expected.png: Copied from LayoutTests/platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-in-attr-actual.png.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr-expected.checksum: Renamed from LayoutTests/platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr-actual.checksum.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr-expected.png: Copied from LayoutTests/platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr-actual.png.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr-expected.checksum: Renamed from LayoutTests/platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr-actual.checksum.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr-expected.png: Copied from LayoutTests/platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr-actual.png.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k2-attr-expected.checksum: Renamed from LayoutTests/platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k2-attr-actual.checksum.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k2-attr-expected.png: Copied from LayoutTests/platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k2-attr-actual.png.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k3-attr-expected.checksum: Renamed from LayoutTests/platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k3-attr-actual.checksum.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k3-attr-expected.png: Copied from LayoutTests/platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k3-attr-actual.png.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k4-attr-expected.checksum: Renamed from LayoutTests/platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k4-attr-actual.checksum.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k4-attr-expected.png: Copied from LayoutTests/platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k4-attr-actual.png.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-operator-attr-expected.checksum: Renamed from LayoutTests/platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-operator-attr-actual.checksum.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-operator-attr-expected.png: Copied from LayoutTests/platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-operator-attr-actual.png.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-in-prop-expected.checksum: Renamed from LayoutTests/platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-in-prop-actual.checksum.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-in-prop-expected.png: Copied from LayoutTests/platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-in-prop-actual.png.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-in2-prop-expected.checksum: Renamed from LayoutTests/platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-in2-prop-actual.checksum.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-in2-prop-expected.png: Copied from LayoutTests/platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-in2-prop-actual.png.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k1-prop-expected.checksum: Renamed from LayoutTests/platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k1-prop-actual.checksum.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k1-prop-expected.png: Copied from LayoutTests/platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k1-prop-actual.png.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k2-prop-expected.checksum: Renamed from LayoutTests/platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k2-prop-actual.checksum.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k2-prop-expected.png: Copied from LayoutTests/platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k2-prop-actual.png.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k3-prop-expected.checksum: Renamed from LayoutTests/platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k3-prop-actual.checksum.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k3-prop-expected.png: Copied from LayoutTests/platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k3-prop-actual.png.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k4-prop-expected.checksum: Renamed from LayoutTests/platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k4-prop-actual.checksum.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k4-prop-expected.png: Copied from LayoutTests/platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k4-prop-actual.png.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-operator-prop-expected.checksum: Renamed from LayoutTests/platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-operator-prop-actual.checksum.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-operator-prop-expected.png: Copied from LayoutTests/platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-operator-prop-actual.png.
+
 2010-09-30  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Andreas Kling.
