@@ -201,7 +201,7 @@
                       "name": "WinCairo Debug (Build)", "type": "Build", "builddir": "win-cairo-debug",
                       "platform": "wincairo", "configuration": "debug", "architectures": ["i386"],
                       "slavenames": ["wincairo-1"]
-                    },
+                    }
                   ],
 
     "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "change_filter": "trunk_filter", "treeStableTimer": 45.0,
