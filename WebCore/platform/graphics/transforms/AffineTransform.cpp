@@ -41,8 +41,8 @@ static void affineTransformDecompose(const AffineTransform& matrix, double sr[9]
     AffineTransform m(matrix);
 
     // Compute scaling factors
-    double sx = sqrt(m.a() * m.a() + m.b() * m.b());
-    double sy = sqrt(m.c() * m.c() + m.d() * m.d());
+    double sx = matrix.xScale();
+    double sy = matrix.yScale();
 
     // Compute cross product of transformed unit vectors. If negative,
     // one axis was flipped.
@@ -117,6 +117,16 @@ bool AffineTransform::isIdentity() const
     return (m_transform[0] == 1 && m_transform[1] == 0
          && m_transform[2] == 0 && m_transform[3] == 1
          && m_transform[4] == 0 && m_transform[5] == 0);
+}
+
+double AffineTransform::xScale() const
+{
+    return sqrt(m_transform[0] * m_transform[0] + m_transform[1] * m_transform[1]);
+}
+
+double AffineTransform::yScale() const
+{
+    return sqrt(m_transform[2] * m_transform[2] + m_transform[3] * m_transform[3]);
 }
 
 double AffineTransform::det() const

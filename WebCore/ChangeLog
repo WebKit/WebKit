@@ -1,3 +1,18 @@
+2010-09-30  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        AffineTransform should expose methods calculating the x/y scale factors
+        https://bugs.webkit.org/show_bug.cgi?id=46887
+
+        Expose methods calculating the x/y scale factors for an AffineTransform. 
+
+        * platform/graphics/transforms/AffineTransform.cpp:
+        (WebCore::affineTransformDecompose): Move xScale / yScale calculations in their own functions.
+        (WebCore::AffineTransform::xScale):
+        (WebCore::AffineTransform::yScale):
+        * platform/graphics/transforms/AffineTransform.h:
+
 2010-09-30  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.

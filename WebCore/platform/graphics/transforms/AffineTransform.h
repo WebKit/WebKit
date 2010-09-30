@@ -110,7 +110,10 @@ public:
     AffineTransform& skew(double angleX, double angleY);
     AffineTransform& skewX(double angle);
     AffineTransform& skewY(double angle);
- 
+
+    double xScale() const;
+    double yScale() const;
+
     double det() const;
     bool isInvertible() const;
     AffineTransform inverse() const;
