@@ -2,6 +2,27 @@
 
         Reviewed by Andreas Kling.
 
+        [Qt] Crash if an scene with accelerated compositing layout during the paint event
+        https://bugs.webkit.org/show_bug.cgi?id=46812
+
+        Delay the deletion of the overlay after the current event is processed.
+
+        Removing the overlay can sometimes be done inside the rendering code of
+        the overlay itself. When the rendering code is using the reference after
+        the deletion of the overlay, WebKit crashes.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::overlay):
+        * WebCoreSupport/PageClientQt.cpp:
+        (WebCore::PageClientQGraphicsWidget::~PageClientQGraphicsWidget):
+        (WebCore::PageClientQGraphicsWidget::createOrDeleteOverlay):
+        * WebCoreSupport/PageClientQt.h:
+        (WebCore::PageClientQGraphicsWidget::PageClientQGraphicsWidget):
+
+2010-09-30  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Andreas Kling.
+
         [Qt] Fix tst_QWebPage::geolocationRequestJS()
         https://bugs.webkit.org/show_bug.cgi?id=46814
 

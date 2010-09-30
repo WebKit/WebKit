@@ -80,7 +80,7 @@ public:
     {
         if (!page || !page->d->client)
             return 0;
-        return static_cast<PageClientQGraphicsWidget*>(page->d->client)->overlay.data();
+        return static_cast<PageClientQGraphicsWidget*>(page->d->client)->overlay;
     }
 };
 

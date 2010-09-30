@@ -32,7 +32,6 @@
 #include "qwebpage.h"
 #include "qwebpage_p.h"
 #include <QtCore/qmetaobject.h>
-#include <QtCore/qsharedpointer.h>
 #include <QtGui/qgraphicsscene.h>
 #include <QtGui/qgraphicsview.h>
 #include <QtGui/qgraphicswidget.h>
@@ -83,10 +82,10 @@ public:
 
 // the overlay is here for one reason only: to have the scroll-bars and other
 // extra UI elements appear on top of any QGraphicsItems created by CSS compositing layers
-class QGraphicsItemOverlay : public QGraphicsItem {
+class QGraphicsItemOverlay : public QGraphicsObject {
     public:
     QGraphicsItemOverlay(QGraphicsWidget* view, QWebPage* p)
-            :QGraphicsItem(view)
+            :QGraphicsObject(view)
             , q(view)
             , page(p)
     {
@@ -124,6 +123,7 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
         , shouldSync(false)
 #endif
+        , overlay(0)
     {
        Q_ASSERT(view);
 #if USE(ACCELERATED_COMPOSITING)
@@ -194,7 +194,7 @@ public:
     bool shouldSync;
 #endif
     // the overlay gets instantiated when the root layer is attached, and get deleted when it's detached
-    QSharedPointer<QGraphicsItemOverlay> overlay;
+    QGraphicsItemOverlay* overlay;
 
     // we need to put the root graphics layer behind the overlay (which contains the scrollbar)
     enum { RootGraphicsLayerZValue, OverlayZValue };

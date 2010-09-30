@@ -105,6 +105,7 @@ QRectF PageClientQWidget::windowRect() const
 
 PageClientQGraphicsWidget::~PageClientQGraphicsWidget()
 {
+    delete overlay;
 #if USE(ACCELERATED_COMPOSITING)
     if (!rootGraphicsLayer)
         return;
@@ -150,11 +151,15 @@ void PageClientQGraphicsWidget::createOrDeleteOverlay()
     }
     if (useOverlay == !!overlay)
         return;
+
     if (useOverlay) {
-        overlay = QSharedPointer<QGraphicsItemOverlay>(new QGraphicsItemOverlay(view, page));
+        overlay = new QGraphicsItemOverlay(view, page);
         overlay->setZValue(OverlayZValue);
-    } else
-        overlay.clear();
+    } else {
+        // Changing the overlay might be done inside paint events.
+        overlay->deleteLater();
+        overlay = 0;
+    }
 }
 
 #if USE(ACCELERATED_COMPOSITING)
