@@ -70,8 +70,8 @@ v8::Handle<v8::Value> V8DirectoryEntry::getDirectoryCallback(const v8::Arguments
             flags->setExclusive(isExclusive);
         }
     } else {
-       EXCEPTION_BLOCK(Flags*, tmp_flags, V8Flags::HasInstance(args[1]) ? V8Flags::toNative(v8::Handle<v8::Object>::Cast(args[1])) : 0);
-       flags = tmp_flags;
+        EXCEPTION_BLOCK(Flags*, tmp_flags, V8Flags::HasInstance(args[1]) ? V8Flags::toNative(v8::Handle<v8::Object>::Cast(args[1])) : 0);
+        flags = tmp_flags;
     }
     RefPtr<EntryCallback> successCallback;
     if (args.Length() > 2 && !args[2]->IsNull() && !args[2]->IsUndefined()) {

@@ -73,8 +73,7 @@ void WebFileSystemCallbacksImpl::didReadDirectory(const WebVector<WebFileSystemE
     for (size_t i = 0; i < entries.size(); ++i)
         m_callbacks->didReadDirectoryEntry(entries[i].name, entries[i].isDirectory);
     m_callbacks->didReadDirectoryEntries(hasMore);
-    if (!hasMore)
-        delete this;
+    delete this;
 }
 
 void WebFileSystemCallbacksImpl::didOpenFileSystem(const WebString& name, const WebString& path)

@@ -41,6 +41,7 @@
 namespace WebCore {
 
 class EntriesCallback;
+class EntriesCallbacks;
 class ErrorCallback;
 
 class DirectoryReader : public RefCounted<DirectoryReader> {
@@ -50,13 +51,16 @@ public:
         return adoptRef(new DirectoryReader(fileSystem, path));
     }
 
-    void readEntries(PassRefPtr<EntriesCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback = 0);
+    DOMFileSystem* filesystem() const { return m_fileSystem.get(); }
+    void readEntries(PassRefPtr<EntriesCallback>, PassRefPtr<ErrorCallback> = 0);
+    void setHasMore(bool hasMore) { m_hasMore = hasMore; }
 
 private:
     DirectoryReader(PassRefPtr<DOMFileSystem> fileSystem, const String& path);
 
     RefPtr<DOMFileSystem> m_fileSystem;
     String m_fullPath;
+    bool m_hasMore;
 };
 
 } // namespace

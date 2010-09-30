@@ -3,9 +3,6 @@ Passing Flags parameter tests. This test checks if passing Flags parameters (in 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS successfullyParsed is true
-
-TEST COMPLETE
 * Passing a Flags object.
 * Recycling the same Flags object.
 * Passing a Flags object (with exclusive=true).
@@ -14,4 +11,7 @@ TEST COMPLETE
 Finished running tests.
 PASS expectedCallbacksCount is 3
 PASS unexpectedCallbacksCount is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

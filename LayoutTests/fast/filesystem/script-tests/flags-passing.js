@@ -16,26 +16,19 @@ var testsList = [
 ];
 var testCounter = 0;
 
-function endTest() {
-    debug("Finished running tests.");
-    shouldBe('expectedCallbacksCount', '3');
-    shouldBe('unexpectedCallbacksCount', '0');
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
-}
-
 function runNextTest(v) {
-    if (testCounter == testsList.length)
-        endTest();
-    else
+    if (testCounter == testsList.length) {
+        debug("Finished running tests.");
+        shouldBe('expectedCallbacksCount', '3');
+        shouldBe('unexpectedCallbacksCount', '0');
+        finishJSTest();
+    } else
         this[testsList[testCounter++]]();
 }
 
 function errorCallback(error) {
     debug("Error occured during requesting Temporary FileSystem:" + error.code);
-
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    finishJSTest();
 }
 
 // Test body functions ----------------------------------------------------
@@ -93,11 +86,9 @@ function fileSystemCallback(fs) {
 }
 
 if (window.requestFileSystem) {
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
-
     requestFileSystem(window.TEMPORARY, 100, fileSystemCallback, errorCallback);
+    window.jsTestIsAsync = true;
 } else
     debug("This test requires FileSystem API support.");
 
-var successfullyParsed = true;
+window.successfullyParsed = true;

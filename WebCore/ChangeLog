@@ -1,3 +1,35 @@
+2010-09-29  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by David Levin.
+
+        Fix DirectoryReader's behavior to trigger only one EntriesCallback per readEntries
+        https://bugs.webkit.org/show_bug.cgi?id=46563
+
+        Test: fast/filesystem/read-directory.html
+
+        * fileapi/DOMFileSystem.cpp:
+        (WebCore::DOMFileSystem::readDirectory): Changed to take DirectoryReader
+        as a parameter.
+        * fileapi/DOMFileSystem.h:
+        (WebCore::DOMFileSystem::scheduleCallback): Added.
+        * fileapi/DirectoryReader.cpp:
+        (WebCore::DirectoryReader::DirectoryReader): Added initializer for
+        m_hasMore flag.
+        (WebCore::DirectoryReader::readEntries): Changed to schedule
+        EntriesCallback with an empty array if m_hasMore flag is set false.
+        * fileapi/DirectoryReader.h:
+        (WebCore::DirectoryReader::filesystem): Added.
+        (WebCore::DirectoryReader::setHasMore): Added.
+        * fileapi/FileSystemCallbacks.cpp:
+        (WebCore::EntriesCallbacks::create):
+        (WebCore::EntriesCallbacks::EntriesCallbacks): Changed to take
+        DirectoryReader as a parameter.
+        (WebCore::EntriesCallbacks::didReadDirectoryEntry):
+        (WebCore::EntriesCallbacks::didReadDirectoryEntries): Changed 1) not to
+        trigger the second callback when hasMore is false, and 2) to update
+        the DirectoryReader's m_hasMore flag.
+        * fileapi/FileSystemCallbacks.h:
+
 2010-09-29  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.

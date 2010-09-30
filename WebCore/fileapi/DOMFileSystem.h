@@ -44,6 +44,7 @@
 namespace WebCore {
 
 class DirectoryEntry;
+class DirectoryReader;
 class Entry;
 class EntryCallback;
 class EntriesCallback;
@@ -78,12 +79,19 @@ public:
     void getParent(const Entry* entry, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);
     void getFile(const Entry* base, const String& path, PassRefPtr<Flags>, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);
     void getDirectory(const Entry* base, const String& path, PassRefPtr<Flags>, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);
-    void readDirectory(const String& path, PassRefPtr<EntriesCallback>, PassRefPtr<ErrorCallback>);
+    void readDirectory(DirectoryReader* reader, const String& path, PassRefPtr<EntriesCallback>, PassRefPtr<ErrorCallback>);
     void createWriter(const FileEntry* file, PassRefPtr<FileWriterCallback>, PassRefPtr<ErrorCallback>);
 
     // Schedule a callback. This should not cross threads (should be called on the same context thread).
+    // FIXME: move this to a more generic place.
     template <typename CB, typename CBArg>
     static void scheduleCallback(ScriptExecutionContext*, PassRefPtr<CB>, PassRefPtr<CBArg>);
+
+    template <typename CB, typename CBArg>
+    void scheduleCallback(PassRefPtr<CB> callback, PassRefPtr<CBArg> callbackArg)
+    {
+        scheduleCallback(scriptExecutionContext(), callback, callbackArg);
+    }
 
 private:
     DOMFileSystem(ScriptExecutionContext*, const String& name, PassOwnPtr<AsyncFileSystem>);

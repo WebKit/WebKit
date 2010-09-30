@@ -214,11 +214,11 @@ void DOMFileSystem::createWriter(const FileEntry* file, PassRefPtr<FileWriterCal
     m_asyncFileSystem->createWriter(fileWriter.get(), platformPath, callbacks.release());
 }
 
-void DOMFileSystem::readDirectory(const String& path, PassRefPtr<EntriesCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+void DOMFileSystem::readDirectory(DirectoryReader* reader, const String& path, PassRefPtr<EntriesCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
     ASSERT(DOMFilePath::isAbsolute(path));
     String platformPath = m_asyncFileSystem->virtualToPlatformPath(path);
-    m_asyncFileSystem->readDirectory(platformPath, EntriesCallbacks::create(successCallback, errorCallback, this, path));
+    m_asyncFileSystem->readDirectory(platformPath, EntriesCallbacks::create(successCallback, errorCallback, reader, path));
 }
 
 } // namespace

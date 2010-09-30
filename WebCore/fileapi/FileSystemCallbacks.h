@@ -42,6 +42,7 @@ namespace WebCore {
 
 class AsyncFileWriter;
 class DOMFileSystem;
+class DirectoryReader;
 class ErrorCallback;
 class EntriesCallback;
 class EntryArray;
@@ -98,14 +99,14 @@ private:
 
 class EntriesCallbacks : public FileSystemCallbacksBase {
 public:
-    static PassOwnPtr<EntriesCallbacks> create(PassRefPtr<EntriesCallback>, PassRefPtr<ErrorCallback>, DOMFileSystem*, const String& basePath);
+    static PassOwnPtr<EntriesCallbacks> create(PassRefPtr<EntriesCallback>, PassRefPtr<ErrorCallback>, DirectoryReader*, const String& basePath);
     virtual void didReadDirectoryEntry(const String& name, bool isDirectory);
     virtual void didReadDirectoryEntries(bool hasMore);
 
 private:
-    EntriesCallbacks(PassRefPtr<EntriesCallback>, PassRefPtr<ErrorCallback>, DOMFileSystem*, const String& basePath);
+    EntriesCallbacks(PassRefPtr<EntriesCallback>, PassRefPtr<ErrorCallback>, DirectoryReader*, const String& basePath);
     RefPtr<EntriesCallback> m_successCallback;
-    DOMFileSystem* m_fileSystem;
+    DirectoryReader* m_directoryReader;
     String m_basePath;
     RefPtr<EntryArray> m_entries;
 };

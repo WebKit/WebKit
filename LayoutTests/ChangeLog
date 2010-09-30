@@ -1,3 +1,23 @@
+2010-09-29  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by David Levin.
+
+        Fix DirectoryReader's behavior to trigger only one EntriesCallback per readEntries
+        https://bugs.webkit.org/show_bug.cgi?id=46563
+
+        * fast/filesystem/flags-passing.html: Updated to make it match
+        with the updated TEMPLATE.html.
+        * fast/filesystem/flags-passing-expected.txt: Updated.
+        * fast/filesystem/read-directory.html: Added.
+        * fast/filesystem/read-directory-expected.txt: Added.
+        * fast/filesystem/resources/fs-test-util.js: Added for common test
+        utilities.
+        * fast/filesystem/script-tests/TEMPLATE.html: Updated to include
+        fs-test-util.js.
+        * fast/filesystem/script-tests/flags-passing.js: Updated to use
+        jsTestIsAsync and finishJSTest (so that all the tests look alike).
+        * fast/filesystem/script-tests/read-directory.js: Added.
+
 2010-09-29  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, updated expectations.
