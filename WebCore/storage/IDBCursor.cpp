@@ -33,15 +33,20 @@
 #include "IDBCursorBackendInterface.h"
 #include "IDBKey.h"
 #include "IDBRequest.h"
+#include "IDBTransactionBackendInterface.h"
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
 
 namespace WebCore {
 
-IDBCursor::IDBCursor(PassRefPtr<IDBCursorBackendInterface> backend, IDBRequest* request)
+IDBCursor::IDBCursor(PassRefPtr<IDBCursorBackendInterface> backend, IDBRequest* request, IDBTransactionBackendInterface* transaction)
     : m_backend(backend)
     , m_request(request)
+    , m_transaction(transaction)
 {
+    ASSERT(m_backend);
+    ASSERT(m_request);
+    ASSERT(m_transaction);
 }
 
 IDBCursor::~IDBCursor()
@@ -65,7 +70,7 @@ PassRefPtr<IDBAny> IDBCursor::value() const
 
 PassRefPtr<IDBRequest> IDBCursor::update(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value)
 {
-    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this));
+    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     m_backend->update(value, request);
     return request.release();
 }
@@ -74,14 +79,14 @@ void IDBCursor::continueFunction(PassRefPtr<IDBKey> key)
 {
     // FIXME: We're not using the context from when continue was called, which means the callback
     //        will be on the original context openCursor was called on. Is this right?
-    if (m_request->resetReadyState())
+    if (m_request->resetReadyState(m_transaction.get()))
         m_backend->continueFunction(key, m_request);
     // FIXME: Else throw?
 }
 
 PassRefPtr<IDBRequest> IDBCursor::remove(ScriptExecutionContext* context)
 {
-    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this));
+    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     m_backend->remove(request);
     return request.release();
 }

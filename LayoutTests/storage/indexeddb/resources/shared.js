@@ -65,9 +65,23 @@ function unexpectedErrorCallback()
     done();
 }
 
-function deleteAllObjectStores(db)
+function unexpectedAbortCallback()
+{
+    testFailed("Abort function called unexpectedly!");
+    debug("");
+    verifyAbortEvent(event);
+    done();
+}
+
+function deleteAllObjectStores(db, onfinished)
 {
     objectStores = db.objectStores;
-    for (var i = 0; i < objectStores.length; ++i)
-        db.removeObjectStore(objectStores[i]);
+    if (!objectStores.length) {
+        onfinished();
+        return;
+    }
+
+    var request = db.removeObjectStore(objectStores[0]);
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = function() { deleteAllObjectStores(db, onfinished); };
 }

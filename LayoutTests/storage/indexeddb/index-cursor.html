@@ -31,17 +31,33 @@ function openDatabase()
 {
     result = evalAndLog("indexedDB.open('someDB', 'some description')");
     verifyResult(result);
-    result.onsuccess = openObjectStore;
+    result.onsuccess = setVersion;
     result.onerror = unexpectedErrorCallback;
 }
  
-function openObjectStore()
+function setVersion()
 {
     verifySuccessEvent(event);
     window.db = evalAndLog("db = event.result");
 
-    deleteAllObjectStores(db);
+    result = evalAndLog("db.setVersion('new version')");
+    verifyResult(result);
+    result.onsuccess = deleteExisting;
+    result.onerror = unexpectedErrorCallback;
+}
 
+function deleteExisting()
+{
+    verifySuccessEvent(event);
+    window.trans = evalAndLog("trans = event.result");
+    shouldBeTrue("trans !== null");
+    trans.onabort = unexpectedAbortCallback;
+
+    deleteAllObjectStores(db, createObjectStores);
+}
+
+function createObjectStores()
+{
     result = evalAndLog("db.createObjectStore('someObjectStore')");
     verifyResult(result);
     result.onsuccess = openIndex;
@@ -105,7 +121,7 @@ function scheduleTests()
     }
  
     debug("Running tests...");
-    setTimeout(runNextTest, 0);
+    runNextTest();
 }
  
 function runNextTest()
@@ -213,12 +229,12 @@ function cursorIteration()
 {
     if (expectedIndex === null) {
         shouldBeNull("event.result");
-        setTimeout(runNextTest, 0);
+        runNextTest();
         return;
     }
     if (event.result === null) {
-        testFailed("Event.result should not be null.")
-        setTimeout(runNextTest, 0);
+        testFailed("Event.result should not be null.");
+        runNextTest();
         return;
     }
  

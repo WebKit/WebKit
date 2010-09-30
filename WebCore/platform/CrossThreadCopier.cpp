@@ -37,6 +37,7 @@
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "SerializedScriptValue.h"
 
 namespace WebCore {
 

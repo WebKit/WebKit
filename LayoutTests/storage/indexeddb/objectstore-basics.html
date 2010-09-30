@@ -26,10 +26,27 @@ function openSuccess()
 {
     debug("openSuccess():");
     verifySuccessEvent(event);
-    db = evalAndLog("db = event.result");
+    window.db = evalAndLog("db = event.result");
 
-    deleteAllObjectStores(db);
+    result = evalAndLog("db.setVersion('new version')");
+    verifyResult(result);
+    result.onsuccess = setVersionSuccess;
+    result.onerror = unexpectedErrorCallback;
+}
 
+function setVersionSuccess()
+{
+    debug("setVersionSuccess():");
+    verifySuccessEvent(event);
+    window.trans = evalAndLog("trans = event.result");
+    shouldBeTrue("trans !== null");
+    trans.onabort = unexpectedAbortCallback;
+
+    deleteAllObjectStores(db, deleteSuccess);
+}
+
+function deleteSuccess()
+{
     result = evalAndLog("db.createObjectStore('storeName', null)");
     verifyResult(result);
     result.onsuccess = createSuccess;

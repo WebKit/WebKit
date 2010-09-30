@@ -58,9 +58,28 @@ bool getValueFrom(T indexOrName, v8::Handle<v8::Value>& v8Value)
     return true;
 }
 
+class LocalContext {
+public:
+    LocalContext()
+        : m_context(v8::Context::New())
+    {
+        m_context->Enter();
+    }
+
+    ~LocalContext()
+    {
+        m_context->Exit();
+        m_context.Dispose();
+    }
+
+private:
+    v8::HandleScope m_scope;
+    v8::Persistent<v8::Context> m_context;
+};
+
 PassRefPtr<IDBKey> createIDBKeyFromSerializedValueAndKeyPath(PassRefPtr<SerializedScriptValue> value, const Vector<IDBKeyPathElement>& keyPath)
 {
-    v8::HandleScope scope;
+    LocalContext localContext;
     v8::Handle<v8::Value> v8Value(value->deserialize());
     for (size_t i = 0; i < keyPath.size(); ++i) {
         switch (keyPath[i].type) {

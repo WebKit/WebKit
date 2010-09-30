@@ -50,22 +50,25 @@ public:
     }
     ~IDBDatabase();
 
+    void setSetVersionTransaction(IDBTransactionBackendInterface*);
+
     // Implement the IDL
     String name() const { return m_backend->name(); }
     String version() const { return m_backend->version(); }
     PassRefPtr<DOMStringList> objectStores() const { return m_backend->objectStores(); }
 
     PassRefPtr<IDBRequest> createObjectStore(ScriptExecutionContext*, const String& name, const String& keyPath = String(), bool autoIncrement = false);
-    PassRefPtr<IDBObjectStore> objectStore(const String& name, unsigned short mode = IDBTransaction::READ_ONLY);
     PassRefPtr<IDBRequest> removeObjectStore(ScriptExecutionContext*, const String& name);
     PassRefPtr<IDBRequest> setVersion(ScriptExecutionContext*, const String& version);
     PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext*, DOMStringList* storeNames = 0, unsigned short mode = IDBTransaction::READ_ONLY,
                                            unsigned long timeout = 0); // FIXME: what should the default timeout be?
+    void close();
 
 private:
     IDBDatabase(PassRefPtr<IDBDatabaseBackendInterface>);
 
     RefPtr<IDBDatabaseBackendInterface> m_backend;
+    RefPtr<IDBTransactionBackendInterface> m_setVersionTransaction;
 };
 
 } // namespace WebCore

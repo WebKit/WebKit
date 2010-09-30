@@ -50,17 +50,17 @@ public:
     void setDescription(const String& description);
     SQLiteDatabase& sqliteDatabase() const { return *m_sqliteDatabase.get(); }
 
-    // Implements IDBDatabase
     virtual String name() const { return m_name; }
     virtual String description() const { return m_description; }
     virtual String version() const { return m_version; }
     virtual PassRefPtr<DOMStringList> objectStores() const;
 
-    virtual void createObjectStore(const String& name, const String& keyPath, bool autoIncrement, PassRefPtr<IDBCallbacks>);
+    virtual void createObjectStore(const String& name, const String& keyPath, bool autoIncrement, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
     virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name, unsigned short mode);
-    virtual void removeObjectStore(const String& name, PassRefPtr<IDBCallbacks>);
+    virtual void removeObjectStore(const String& name, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
     virtual void setVersion(const String& version, PassRefPtr<IDBCallbacks>);
     virtual PassRefPtr<IDBTransactionBackendInterface> transaction(DOMStringList* storeNames, unsigned short mode, unsigned long timeout);
+    virtual void close();
 
     IDBTransactionCoordinator* transactionCoordinator() const { return m_transactionCoordinator.get(); }
 
@@ -68,6 +68,10 @@ private:
     IDBDatabaseBackendImpl(const String& name, const String& description, PassOwnPtr<SQLiteDatabase> database, IDBTransactionCoordinator*);
 
     void loadObjectStores();
+
+    static void createObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, const String& name, const String& keyPath, bool autoIncrement, PassRefPtr<IDBCallbacks>);
+    static void removeObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, const String& name, PassRefPtr<IDBCallbacks>);
+    static void setVersionInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, const String& version, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendInterface>);
 
     OwnPtr<SQLiteDatabase> m_sqliteDatabase;
     String m_name;

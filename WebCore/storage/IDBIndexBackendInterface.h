@@ -36,6 +36,7 @@ namespace WebCore {
 class IDBCallbacks;
 class IDBKey;
 class IDBKeyRange;
+class IDBTransactionBackendInterface;
 
 class IDBIndexBackendInterface : public ThreadSafeShared<IDBIndexBackendInterface> {
 public:
@@ -46,10 +47,10 @@ public:
     virtual String keyPath() = 0;
     virtual bool unique() = 0;
 
-    virtual void openObjectCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>) = 0;
-    virtual void openCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>) = 0;
-    virtual void getObject(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>) = 0;
-    virtual void get(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>) = 0;
+    virtual void openObjectCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*) = 0;
+    virtual void openCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*) = 0;
+    virtual void getObject(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*) = 0;
+    virtual void get(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*) = 0;
 };
 
 } // namespace WebCore

@@ -76,9 +76,12 @@ PassRefPtr<DOMStringList> IDBDatabaseProxy::objectStores() const
     return m_webIDBDatabase->objectStores();
 }
 
-void IDBDatabaseProxy::createObjectStore(const String& name, const String& keyPath, bool autoIncrement, PassRefPtr<IDBCallbacks> callbacks)
+void IDBDatabaseProxy::createObjectStore(const String& name, const String& keyPath, bool autoIncrement, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction)
 {
-    m_webIDBDatabase->createObjectStore(name, keyPath, autoIncrement, new WebIDBCallbacksImpl(callbacks));
+    // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,
+    // all implementations of IDB interfaces are proxy objects.
+    IDBTransactionBackendProxy* transactionProxy = static_cast<IDBTransactionBackendProxy*>(transaction);
+    m_webIDBDatabase->createObjectStore(name, keyPath, autoIncrement, new WebIDBCallbacksImpl(callbacks), *transactionProxy->getWebIDBTransaction());
 }
 
 PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseProxy::objectStore(const String& name, unsigned short mode)
@@ -89,9 +92,12 @@ PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseProxy::objectStore(const S
     return IDBObjectStoreProxy::create(objectStore);
 }
 
-void IDBDatabaseProxy::removeObjectStore(const String& name, PassRefPtr<IDBCallbacks> callbacks)
+void IDBDatabaseProxy::removeObjectStore(const String& name, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction)
 {
-    m_webIDBDatabase->removeObjectStore(name, new WebIDBCallbacksImpl(callbacks));
+    // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,
+    // all implementations of IDB interfaces are proxy objects.
+    IDBTransactionBackendProxy* transactionProxy = static_cast<IDBTransactionBackendProxy*>(transaction);
+    m_webIDBDatabase->removeObjectStore(name, new WebIDBCallbacksImpl(callbacks), *transactionProxy->getWebIDBTransaction());
 }
 
 void IDBDatabaseProxy::setVersion(const String& version, PassRefPtr<IDBCallbacks> callbacks)
@@ -104,6 +110,11 @@ PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseProxy::transaction(DOMStri
     WebKit::WebDOMStringList names(storeNames);
     WebKit::WebIDBTransaction* transaction = m_webIDBDatabase->transaction(names, mode, timeout);
     return IDBTransactionBackendProxy::create(transaction);
+}
+
+void IDBDatabaseProxy::close()
+{
+    m_webIDBDatabase->close();
 }
 
 } // namespace WebCore

@@ -18,17 +18,34 @@ function test()
 {
     result = evalAndLog("indexedDB.open('name', 'description')");
     verifyResult(result);
-    result.onsuccess = createObjectStore;
+    result.onsuccess = setVersion;
     result.onerror = unexpectedErrorCallback;
 }
 
-function createObjectStore()
+function setVersion()
 {
     verifySuccessEvent(event);
     db = evalAndLog("db = event.result");
 
-    deleteAllObjectStores(db);
+    result = evalAndLog("db.setVersion('new version')");
+    verifyResult(result);
+    result.onsuccess = deleteExisting;
+    result.onerror = unexpectedErrorCallback;
+}
 
+function deleteExisting()
+{
+    debug("setVersionSuccess():");
+    verifySuccessEvent(event);
+    window.trans = evalAndLog("trans = event.result");
+    shouldBeTrue("trans !== null");
+    trans.onabort = unexpectedAbortCallback;
+
+    deleteAllObjectStores(db, createObjectStore);
+}
+
+function createObjectStore()
+{
     result = evalAndLog("db.createObjectStore('storeName', null)");
     verifyResult(result);
     result.onsuccess = createIndex;

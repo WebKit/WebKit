@@ -60,9 +60,10 @@ private:
     IDBTransactionBackendImpl(DOMStringList* objectStores, unsigned short mode, unsigned long timeout, int id, IDBDatabaseBackendImpl*);
 
     enum State {
-        NotStarted,
-        Started,
-        Finished,
+        Unused, // Created, but no tasks yet.
+        StartPending, // Enqueued tasks, but SQLite transaction not yet started.
+        Running, // SQLite transaction started but not yet finished.
+        Finished, // Either aborted or committed.
     };
 
     void start();

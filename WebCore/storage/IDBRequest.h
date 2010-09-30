@@ -46,7 +46,7 @@ class IDBTransactionBackendInterface;
 
 class IDBRequest : public IDBCallbacks, public EventTarget, public ActiveDOMObject {
 public:
-    static PassRefPtr<IDBRequest> create(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, IDBTransactionBackendInterface* transaction = 0) { return adoptRef(new IDBRequest(context, source, transaction)); }
+    static PassRefPtr<IDBRequest> create(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, IDBTransactionBackendInterface* transaction) { return adoptRef(new IDBRequest(context, source, transaction)); }
     virtual ~IDBRequest();
 
     // Defined in the IDL
@@ -58,7 +58,7 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(success);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
 
-    bool resetReadyState();
+    bool resetReadyState(IDBTransactionBackendInterface*);
 
     // IDBCallbacks
     virtual void onError(PassRefPtr<IDBDatabaseError>);
@@ -68,6 +68,7 @@ public:
     virtual void onSuccess(PassRefPtr<IDBIndexBackendInterface>);
     virtual void onSuccess(PassRefPtr<IDBKey>);
     virtual void onSuccess(PassRefPtr<IDBObjectStoreBackendInterface>);
+    virtual void onSuccess(PassRefPtr<IDBTransactionBackendInterface>);
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>);
 
     // EventTarget
@@ -77,8 +78,8 @@ public:
     virtual ScriptExecutionContext* scriptExecutionContext() const;
     virtual bool canSuspend() const;
 
-    using RefCounted<IDBCallbacks>::ref;
-    using RefCounted<IDBCallbacks>::deref;
+    using ThreadSafeShared<IDBCallbacks>::ref;
+    using ThreadSafeShared<IDBCallbacks>::deref;
 
 private:
     IDBRequest(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBTransactionBackendInterface* transaction);

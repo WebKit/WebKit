@@ -1105,7 +1105,7 @@ SerializedScriptValue* SerializedScriptValue::nullValue()
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::release()
 {
     RefPtr<SerializedScriptValue> result = adoptRef(new SerializedScriptValue(m_data, WireData));
-    m_data = String();
+    m_data = String().crossThreadString();
     return result.release();
 }
 
@@ -1123,18 +1123,18 @@ SerializedScriptValue::SerializedScriptValue(v8::Handle<v8::Value> value, bool& 
         didThrow = true;
         return;
     }
-    m_data = StringImpl::adopt(writer.data());
+    m_data = String(StringImpl::adopt(writer.data())).crossThreadString();
 }
 
 SerializedScriptValue::SerializedScriptValue(String data, StringDataMode mode)
 {
     if (mode == WireData)
-        m_data = data;
+        m_data = data.crossThreadString();
     else {
         ASSERT(mode == StringValue);
         Writer writer;
         writer.writeWebCoreString(data);
-        m_data = StringImpl::adopt(writer.data());
+        m_data = String(StringImpl::adopt(writer.data())).crossThreadString();
     }
 }
 

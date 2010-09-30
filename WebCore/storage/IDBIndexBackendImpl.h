@@ -35,6 +35,7 @@ namespace WebCore {
 class IDBKey;
 class IDBObjectStoreBackendImpl;
 class SQLiteDatabase;
+class ScriptExecutionContext;
 
 class IDBIndexBackendImpl : public IDBIndexBackendInterface {
 public:
@@ -53,10 +54,10 @@ public:
     virtual String keyPath() { return m_keyPath; }
     virtual bool unique() { return m_unique; }
 
-    virtual void openObjectCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>);
-    virtual void openCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>);
-    virtual void getObject(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>);
-    virtual void get(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>);
+    virtual void openObjectCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
+    virtual void openCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
+    virtual void getObject(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
+    virtual void get(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
 
     IDBObjectStoreBackendImpl* objectStore() const { return m_objectStore.get(); }
 
@@ -64,6 +65,9 @@ private:
     IDBIndexBackendImpl(IDBObjectStoreBackendImpl*, int64_t id, const String& name, const String& keyPath, bool unique);
 
     SQLiteDatabase& sqliteDatabase() const;
+
+    static void openCursorInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBKeyRange>, unsigned short direction, bool objectCursor, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendInterface>);
+    static void getInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBKey>, bool getObject, PassRefPtr<IDBCallbacks>);
 
     RefPtr<IDBObjectStoreBackendImpl> m_objectStore;
 

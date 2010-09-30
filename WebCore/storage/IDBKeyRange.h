@@ -30,11 +30,11 @@
 
 #include "IDBKey.h"
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+#include <wtf/Threading.h>
 
 namespace WebCore {
 
-class IDBKeyRange : public RefCounted<IDBKeyRange> {
+class IDBKeyRange : public ThreadSafeShared<IDBKeyRange> {
 public:
     // Keep in sync with what's in the .idl file.
     enum Flags {

@@ -49,11 +49,12 @@ public:
     virtual WebString version() const;
     virtual WebDOMStringList objectStores() const;
 
-    virtual void createObjectStore(const WebString& name, const WebString& keyPath, bool autoIncrement, WebIDBCallbacks* callbacks);
+    virtual void createObjectStore(const WebString& name, const WebString& keyPath, bool autoIncrement, WebIDBCallbacks* callbacks, const WebIDBTransaction&);
     virtual WebIDBObjectStore* objectStore(const WebString& name, unsigned short mode);
-    virtual void removeObjectStore(const WebString& name, WebIDBCallbacks* callbacks);
+    virtual void removeObjectStore(const WebString& name, WebIDBCallbacks* callbacks, const WebIDBTransaction&);
     virtual void setVersion(const WebString& version, WebIDBCallbacks* callbacks);
     virtual WebIDBTransaction* transaction(const WebDOMStringList& names, unsigned short mode, unsigned long timeout);
+    virtual void close();
 
 private:
     WTF::RefPtr<WebCore::IDBDatabaseBackendInterface> m_databaseBackend;

@@ -71,19 +71,19 @@ void WebIDBObjectStoreImpl::get(const WebIDBKey& key, WebIDBCallbacks* callbacks
     m_objectStore->get(key, IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface());
 }
 
-void WebIDBObjectStoreImpl::put(const WebSerializedScriptValue& value, const WebIDBKey& key, bool addOnly, WebIDBCallbacks* callbacks)
+void WebIDBObjectStoreImpl::put(const WebSerializedScriptValue& value, const WebIDBKey& key, bool addOnly, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction)
 {
-    m_objectStore->put(value, key, addOnly, IDBCallbacksProxy::create(callbacks));
+    m_objectStore->put(value, key, addOnly, IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface());
 }
 
-void WebIDBObjectStoreImpl::remove(const WebIDBKey& key, WebIDBCallbacks* callbacks)
+void WebIDBObjectStoreImpl::remove(const WebIDBKey& key, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction)
 {
-    m_objectStore->remove(key, IDBCallbacksProxy::create(callbacks));
+    m_objectStore->remove(key, IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface());
 }
 
-void WebIDBObjectStoreImpl::createIndex(const WebString& name, const WebString& keyPath, bool unique, WebIDBCallbacks* callbacks)
+void WebIDBObjectStoreImpl::createIndex(const WebString& name, const WebString& keyPath, bool unique, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction)
 {
-    m_objectStore->createIndex(name, keyPath, unique, IDBCallbacksProxy::create(callbacks));
+    m_objectStore->createIndex(name, keyPath, unique, IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface());
 }
 
 WebIDBIndex* WebIDBObjectStoreImpl::index(const WebString& name)
@@ -94,14 +94,14 @@ WebIDBIndex* WebIDBObjectStoreImpl::index(const WebString& name)
     return new WebIDBIndexImpl(index);
 }
 
-void WebIDBObjectStoreImpl::removeIndex(const WebString& name, WebIDBCallbacks* callbacks)
+void WebIDBObjectStoreImpl::removeIndex(const WebString& name, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction)
 {
-    m_objectStore->removeIndex(name, IDBCallbacksProxy::create(callbacks));
+    m_objectStore->removeIndex(name, IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface());
 }
 
-void WebIDBObjectStoreImpl::openCursor(const WebIDBKeyRange& keyRange, unsigned short direction, WebIDBCallbacks* callbacks)
+void WebIDBObjectStoreImpl::openCursor(const WebIDBKeyRange& keyRange, unsigned short direction, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction)
 {
-    m_objectStore->openCursor(IDBKeyRange::create(keyRange.left(), keyRange.right(), keyRange.flags()), direction, IDBCallbacksProxy::create(callbacks));
+    m_objectStore->openCursor(IDBKeyRange::create(keyRange.left(), keyRange.right(), keyRange.flags()), direction, IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface());
 }
 
 } // namespace WebCore

@@ -46,7 +46,7 @@ IDBKey::IDBKey(int32_t number)
 
 IDBKey::IDBKey(const String& string)
     : m_type(StringType)
-    , m_string(string)
+    , m_string(string.crossThreadString())
 {
 }
 

@@ -69,16 +69,33 @@ function createObjectStoreSuccess()
     populateObjectStore(objectStore);
 }
 
+function deleteSuccess()
+{
+    result = evalAndLog("db.createObjectStore('test')");
+    verifyResult(result);
+    result.onsuccess = createObjectStoreSuccess;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function setVersionSuccess()
+{
+    debug("setVersionSuccess():");
+    verifySuccessEvent(event);
+    window.trans = evalAndLog("trans = event.result");
+    shouldBeTrue("trans !== null");
+    trans.onabort = unexpectedAbortCallback;
+
+    deleteAllObjectStores(db, deleteSuccess);
+}
+
 function openSuccess()
 {
     verifySuccessEvent(event);
     var db = evalAndLog("db = event.result");
 
-    deleteAllObjectStores(db);
-
-    result = evalAndLog("db.createObjectStore('test')");
+    result = evalAndLog("db.setVersion('new version')");
     verifyResult(result);
-    result.onsuccess = createObjectStoreSuccess;
+    result.onsuccess = setVersionSuccess;
     result.onerror = unexpectedErrorCallback;
 }
 

@@ -14,18 +14,38 @@ description("Test the basics of IndexedDB's IDBDatabase.");
 if (window.layoutTestController) 
     layoutTestController.waitUntilDone();
 
+function test()
+{
+    result = evalAndLog("indexedDB.open('name', 'description')");
+    verifyResult(result);
+    result.onsuccess = openSuccess;
+    result.onerror = unexpectedErrorCallback;
+}
+
 function openSuccess()
 {
     verifySuccessEvent(event);
+    window.db = evalAndLog("db = event.result");
 
-    var db = evalAndLog("db = event.result");
-    deleteAllObjectStores(db);
+    result = evalAndLog("db.setVersion('new version')");
+    verifyResult(result);
+    result.onsuccess = setVersionSuccess;
+    result.onerror = unexpectedErrorCallback;
+}
 
-    // We must do something asynchronous before anything synchronous since
-    // deleteAllObjectStores only schedules the object stores to be removed.
-    // We don't know for sure whether it's happened until an IDBRequest object
-    // that was created after the removes fires.
+function setVersionSuccess()
+{
+    debug("setVersionSuccess():");
+    verifySuccessEvent(event);
+    window.trans = evalAndLog("trans = event.result");
+    shouldBeTrue("trans !== null");
+    trans.onabort = unexpectedAbortCallback;
 
+    deleteAllObjectStores(db, testSetVersion);
+}
+
+function testSetVersion()
+{
     debug("Testing setVersion.");
     result = evalAndLog('db.setVersion("version a")');
     verifyResult(result);
@@ -68,14 +88,6 @@ function checkObjectStore()
     shouldBe("db.objectStores.contains('test123')", "true");
 
     done();
-}
-
-function test()
-{
-    result = evalAndLog("indexedDB.open('name', 'description')");
-    verifyResult(result);
-    result.onsuccess = openSuccess;
-    result.onerror = unexpectedErrorCallback;
 }
 
 test();

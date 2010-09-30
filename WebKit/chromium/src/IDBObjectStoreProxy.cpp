@@ -80,19 +80,28 @@ void IDBObjectStoreProxy::get(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> c
     m_webIDBObjectStore->get(key, new WebIDBCallbacksImpl(callbacks), *transactionProxy->getWebIDBTransaction());
 }
 
-void IDBObjectStoreProxy::put(PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key, bool addOnly, PassRefPtr<IDBCallbacks> callbacks)
+void IDBObjectStoreProxy::put(PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key, bool addOnly, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction)
 {
-    m_webIDBObjectStore->put(value, key, addOnly, new WebIDBCallbacksImpl(callbacks));
+    // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,
+    // all implementations of IDB interfaces are proxy objects.
+    IDBTransactionBackendProxy* transactionProxy = static_cast<IDBTransactionBackendProxy*>(transaction);
+    m_webIDBObjectStore->put(value, key, addOnly, new WebIDBCallbacksImpl(callbacks), *transactionProxy->getWebIDBTransaction());
 }
 
-void IDBObjectStoreProxy::remove(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
+void IDBObjectStoreProxy::remove(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction)
 {
-    m_webIDBObjectStore->remove(key, new WebIDBCallbacksImpl(callbacks));
+    // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,
+    // all implementations of IDB interfaces are proxy objects.
+    IDBTransactionBackendProxy* transactionProxy = static_cast<IDBTransactionBackendProxy*>(transaction);
+    m_webIDBObjectStore->remove(key, new WebIDBCallbacksImpl(callbacks), *transactionProxy->getWebIDBTransaction());
 }
 
-void IDBObjectStoreProxy::createIndex(const String& name, const String& keyPath, bool unique, PassRefPtr<IDBCallbacks> callbacks)
+void IDBObjectStoreProxy::createIndex(const String& name, const String& keyPath, bool unique, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction)
 {
-    m_webIDBObjectStore->createIndex(name, keyPath, unique, new WebIDBCallbacksImpl(callbacks));
+    // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,
+    // all implementations of IDB interfaces are proxy objects.
+    IDBTransactionBackendProxy* transactionProxy = static_cast<IDBTransactionBackendProxy*>(transaction);
+    m_webIDBObjectStore->createIndex(name, keyPath, unique, new WebIDBCallbacksImpl(callbacks), *transactionProxy->getWebIDBTransaction());
 }
 
 PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreProxy::index(const String& name)
@@ -103,14 +112,20 @@ PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreProxy::index(const String& na
     return IDBIndexBackendProxy::create(index);
 }
 
-void IDBObjectStoreProxy::removeIndex(const String& name, PassRefPtr<IDBCallbacks> callbacks)
+void IDBObjectStoreProxy::removeIndex(const String& name, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction)
 {
-    m_webIDBObjectStore->removeIndex(name, new WebIDBCallbacksImpl(callbacks));
+    // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,
+    // all implementations of IDB interfaces are proxy objects.
+    IDBTransactionBackendProxy* transactionProxy = static_cast<IDBTransactionBackendProxy*>(transaction);
+    m_webIDBObjectStore->removeIndex(name, new WebIDBCallbacksImpl(callbacks), *transactionProxy->getWebIDBTransaction());
 }
 
-void IDBObjectStoreProxy::openCursor(PassRefPtr<IDBKeyRange> range, unsigned short direction, PassRefPtr<IDBCallbacks> callbacks)
+void IDBObjectStoreProxy::openCursor(PassRefPtr<IDBKeyRange> range, unsigned short direction, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction)
 {
-    m_webIDBObjectStore->openCursor(range, direction, new WebIDBCallbacksImpl(callbacks));
+    // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,
+    // all implementations of IDB interfaces are proxy objects.
+    IDBTransactionBackendProxy* transactionProxy = static_cast<IDBTransactionBackendProxy*>(transaction);
+    m_webIDBObjectStore->openCursor(range, direction, new WebIDBCallbacksImpl(callbacks), *transactionProxy->getWebIDBTransaction());
 }
 
 } // namespace WebCore

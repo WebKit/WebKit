@@ -54,12 +54,12 @@ public:
     virtual String version() const = 0;
     virtual PassRefPtr<DOMStringList> objectStores() const = 0;
 
-    virtual void createObjectStore(const String& name, const String& keyPath, bool autoIncrement, PassRefPtr<IDBCallbacks>) = 0;
+    virtual void createObjectStore(const String& name, const String& keyPath, bool autoIncrement, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*) = 0;
     virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name, unsigned short mode) = 0;
-    virtual void removeObjectStore(const String& name, PassRefPtr<IDBCallbacks>) = 0;
+    virtual void removeObjectStore(const String& name, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*) = 0;
     virtual void setVersion(const String& version, PassRefPtr<IDBCallbacks>) = 0;
     virtual PassRefPtr<IDBTransactionBackendInterface> transaction(DOMStringList* storeNames, unsigned short mode, unsigned long timeout) = 0;
-    // FIXME: Add close.
+    virtual void close() = 0;
 };
 
 } // namespace WebCore

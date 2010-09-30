@@ -27,6 +27,8 @@
 #include "IDBDatabase.h"
 
 #include "IDBAny.h"
+#include "IDBDatabaseError.h"
+#include "IDBDatabaseException.h"
 #include "IDBFactoryBackendInterface.h"
 #include "IDBObjectStore.h"
 #include "IDBRequest.h"
@@ -48,31 +50,36 @@ IDBDatabase::~IDBDatabase()
 {
 }
 
+void IDBDatabase::setSetVersionTransaction(IDBTransactionBackendInterface* transaction)
+{
+    m_setVersionTransaction = transaction;
+}
+
+// FIXME: Should be synchronous.
 PassRefPtr<IDBRequest> IDBDatabase::createObjectStore(ScriptExecutionContext* context, const String& name, const String& keyPath, bool autoIncrement)
 {
-    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this));
-    m_backend->createObjectStore(name, keyPath, autoIncrement, request);
+    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_setVersionTransaction.get());
+    if (!m_setVersionTransaction)
+        request->onError(IDBDatabaseError::create(IDBDatabaseException::NOT_ALLOWED_ERR, "createObjectStore must be called from within a setVersion transaction."));
+    else
+        m_backend->createObjectStore(name, keyPath, autoIncrement, request, m_setVersionTransaction.get());
     return request;
 }
 
-// FIXME: remove this method.
-PassRefPtr<IDBObjectStore> IDBDatabase::objectStore(const String& name, unsigned short mode)
-{
-    RefPtr<IDBObjectStoreBackendInterface> objectStore = m_backend->objectStore(name, mode);
-    ASSERT(objectStore); // FIXME: If this is null, we should raise a NOT_FOUND_ERR.
-    return IDBObjectStore::create(objectStore.release(), 0);
-}
-
+// FIXME: Should be synchronous.
 PassRefPtr<IDBRequest> IDBDatabase::removeObjectStore(ScriptExecutionContext* context, const String& name)
 {
-    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this));
-    m_backend->removeObjectStore(name, request);
+    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_setVersionTransaction.get());
+    if (!m_setVersionTransaction)
+        request->onError(IDBDatabaseError::create(IDBDatabaseException::NOT_ALLOWED_ERR, "removeObjectStore must be called from within a setVersion transaction."));
+    else
+        m_backend->removeObjectStore(name, request, m_setVersionTransaction.get());
     return request;
 }
 
 PassRefPtr<IDBRequest> IDBDatabase::setVersion(ScriptExecutionContext* context, const String& version)
 {
-    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this));
+    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), 0);
     m_backend->setVersion(version, request);
     return request;
 }
@@ -87,6 +94,11 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
     RefPtr<IDBTransaction> transaction = IDBTransaction::create(context, transactionBackend, this);
     transactionBackend->setCallbacks(transaction.get());
     return transaction.release();
+}
+
+void IDBDatabase::close()
+{
+    m_backend->close();
 }
 
 } // namespace WebCore

@@ -47,13 +47,12 @@ public:
     virtual String version() const;
     virtual PassRefPtr<DOMStringList> objectStores() const;
 
-    // FIXME: Add setVersion.
-
-    virtual void createObjectStore(const String& name, const String& keyPath, bool autoIncrement, PassRefPtr<IDBCallbacks>);
+    virtual void createObjectStore(const String& name, const String& keyPath, bool autoIncrement, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
     virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name, unsigned short mode);
-    virtual void removeObjectStore(const String& name, PassRefPtr<IDBCallbacks>);
+    virtual void removeObjectStore(const String& name, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
     virtual void setVersion(const String& version, PassRefPtr<IDBCallbacks>);
     virtual PassRefPtr<IDBTransactionBackendInterface> transaction(DOMStringList* storeNames, unsigned short mode, unsigned long timeout);
+    virtual void close();
 
 private:
     IDBDatabaseProxy(PassOwnPtr<WebKit::WebIDBDatabase>);

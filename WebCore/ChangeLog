@@ -1,3 +1,139 @@
+2010-09-29  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Finished IDBTransaction for IndexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=46823
+
+        Switch the rest of IndexedDB to use transactions.
+        Implement most of setVersion.
+        Add IDBTransactions to IDBAny, IDBCursor, IDBRequest, etc.
+        Switch to using the standard cross thread task stuff.
+        Make everything threadsafe so it works with cross thread copy
+            (will be useful in the future).
+        Fix some subtle bugs in transactions.
+        
+        Various bits of clean up (when I couldn't resist).
+
+        * bindings/js/JSIDBAnyCustom.cpp:
+        (WebCore::toJS):
+        * bindings/v8/IDBBindingUtilities.cpp:
+        (WebCore::LocalContext::LocalContext):
+        (WebCore::LocalContext::~LocalContext):
+        (WebCore::createIDBKeyFromSerializedValueAndKeyPath):
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::release):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        * bindings/v8/SerializedScriptValue.h:
+        * bindings/v8/custom/V8IDBAnyCustom.cpp:
+        (WebCore::toV8):
+        * platform/CrossThreadCopier.cpp:
+        * storage/IDBAny.cpp:
+        (WebCore::IDBAny::idbFactory):
+        (WebCore::IDBAny::idbTransaction):
+        (WebCore::IDBAny::set):
+        * storage/IDBAny.h:
+        * storage/IDBCallbacks.h:
+        * storage/IDBCursor.cpp:
+        (WebCore::IDBCursor::IDBCursor):
+        (WebCore::IDBCursor::update):
+        (WebCore::IDBCursor::continueFunction):
+        (WebCore::IDBCursor::remove):
+        * storage/IDBCursor.h:
+        (WebCore::IDBCursor::create):
+        * storage/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::IDBCursorBackendImpl):
+        (WebCore::IDBCursorBackendImpl::update):
+        (WebCore::IDBCursorBackendImpl::updateInternal):
+        (WebCore::IDBCursorBackendImpl::continueFunction):
+        (WebCore::IDBCursorBackendImpl::continueFunctionInternal):
+        (WebCore::IDBCursorBackendImpl::remove):
+        (WebCore::IDBCursorBackendImpl::removeInternal):
+        * storage/IDBCursorBackendImpl.h:
+        (WebCore::IDBCursorBackendImpl::create):
+        * storage/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::setSetVersionTransaction):
+        (WebCore::IDBDatabase::createObjectStore):
+        (WebCore::IDBDatabase::removeObjectStore):
+        (WebCore::IDBDatabase::setVersion):
+        (WebCore::IDBDatabase::close):
+        * storage/IDBDatabase.h:
+        * storage/IDBDatabase.idl:
+        * storage/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::createObjectStore):
+        (WebCore::IDBDatabaseBackendImpl::createObjectStoreInternal):
+        (WebCore::IDBDatabaseBackendImpl::removeObjectStore):
+        (WebCore::IDBDatabaseBackendImpl::removeObjectStoreInternal):
+        (WebCore::IDBDatabaseBackendImpl::setVersion):
+        (WebCore::IDBDatabaseBackendImpl::setVersionInternal):
+        (WebCore::IDBDatabaseBackendImpl::close):
+        * storage/IDBDatabaseBackendImpl.h:
+        * storage/IDBDatabaseBackendInterface.h:
+        * storage/IDBFactory.cpp:
+        (WebCore::IDBFactory::open):
+        * storage/IDBIndex.cpp:
+        (WebCore::IDBIndex::IDBIndex):
+        (WebCore::IDBIndex::openObjectCursor):
+        (WebCore::IDBIndex::openCursor):
+        (WebCore::IDBIndex::getObject):
+        (WebCore::IDBIndex::get):
+        * storage/IDBIndex.h:
+        (WebCore::IDBIndex::create):
+        * storage/IDBIndexBackendImpl.cpp:
+        (WebCore::IDBIndexBackendImpl::openCursorInternal):
+        (WebCore::IDBIndexBackendImpl::openObjectCursor):
+        (WebCore::IDBIndexBackendImpl::openCursor):
+        (WebCore::IDBIndexBackendImpl::getInternal):
+        (WebCore::IDBIndexBackendImpl::getObject):
+        (WebCore::IDBIndexBackendImpl::get):
+        * storage/IDBIndexBackendImpl.h:
+        * storage/IDBIndexBackendInterface.h:
+        * storage/IDBKey.cpp:
+        (WebCore::IDBKey::IDBKey):
+        * storage/IDBKey.h:
+        * storage/IDBKeyRange.h:
+        * storage/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::IDBObjectStore):
+        (WebCore::IDBObjectStore::add):
+        (WebCore::IDBObjectStore::put):
+        (WebCore::IDBObjectStore::remove):
+        (WebCore::IDBObjectStore::createIndex):
+        (WebCore::IDBObjectStore::index):
+        (WebCore::IDBObjectStore::removeIndex):
+        (WebCore::IDBObjectStore::openCursor):
+        * storage/IDBObjectStore.idl:
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::get):
+        (WebCore::IDBObjectStoreBackendImpl::getInternal):
+        (WebCore::IDBObjectStoreBackendImpl::put):
+        (WebCore::IDBObjectStoreBackendImpl::putInternal):
+        (WebCore::IDBObjectStoreBackendImpl::remove):
+        (WebCore::IDBObjectStoreBackendImpl::removeInternal):
+        (WebCore::IDBObjectStoreBackendImpl::createIndex):
+        (WebCore::IDBObjectStoreBackendImpl::createIndexInternal):
+        (WebCore::IDBObjectStoreBackendImpl::removeIndex):
+        (WebCore::IDBObjectStoreBackendImpl::removeIndexInternal):
+        (WebCore::IDBObjectStoreBackendImpl::openCursor):
+        (WebCore::IDBObjectStoreBackendImpl::openCursorInternal):
+        * storage/IDBObjectStoreBackendImpl.h:
+        * storage/IDBObjectStoreBackendInterface.h:
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::IDBRequest):
+        (WebCore::IDBRequest::resetReadyState):
+        (WebCore::IDBRequest::onSuccess):
+        (WebCore::IDBRequest::timerFired):
+        * storage/IDBRequest.h:
+        (WebCore::IDBRequest::create):
+        * storage/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::IDBTransactionBackendImpl):
+        (WebCore::IDBTransactionBackendImpl::scheduleTask):
+        (WebCore::IDBTransactionBackendImpl::didCompleteTaskEvents):
+        (WebCore::IDBTransactionBackendImpl::run):
+        (WebCore::IDBTransactionBackendImpl::start):
+        (WebCore::IDBTransactionBackendImpl::commit):
+        (WebCore::IDBTransactionBackendImpl::timerFired):
+        * storage/IDBTransactionBackendImpl.h:
+
 2010-09-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Martin Robinson.

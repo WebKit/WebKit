@@ -45,6 +45,8 @@ PassRefPtr<IDBTransactionBackendInterface> IDBTransactionBackendProxy::create(Pa
 IDBTransactionBackendProxy::IDBTransactionBackendProxy(PassOwnPtr<WebKit::WebIDBTransaction> transaction)
     : m_webIDBTransaction(transaction)
 {
+    if (!m_webIDBTransaction)
+        m_webIDBTransaction = adoptPtr(new WebKit::WebIDBTransaction());
 }
 
 IDBTransactionBackendProxy::~IDBTransactionBackendProxy()

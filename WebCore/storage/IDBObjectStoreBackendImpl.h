@@ -38,6 +38,7 @@ class IDBDatabaseBackendImpl;
 class IDBIndexBackendImpl;
 class IDBTransactionBackendInterface;
 class SQLiteDatabase;
+class ScriptExecutionContext;
 
 class IDBObjectStoreBackendImpl : public IDBObjectStoreBackendInterface {
 public:
@@ -52,15 +53,15 @@ public:
     String keyPath() const { return m_keyPath; }
     PassRefPtr<DOMStringList> indexNames() const;
 
-    void get(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface* transaction);
-    void put(PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key, bool addOnly, PassRefPtr<IDBCallbacks>);
-    void remove(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>);
+    void get(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
+    void put(PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key, bool addOnly, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
+    void remove(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
 
-    void createIndex(const String& name, const String& keyPath, bool unique, PassRefPtr<IDBCallbacks>);
+    void createIndex(const String& name, const String& keyPath, bool unique, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
     PassRefPtr<IDBIndexBackendInterface> index(const String& name);
-    void removeIndex(const String& name, PassRefPtr<IDBCallbacks>);
+    void removeIndex(const String& name, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
 
-    void openCursor(PassRefPtr<IDBKeyRange> range, unsigned short direction, PassRefPtr<IDBCallbacks>);
+    void openCursor(PassRefPtr<IDBKeyRange> range, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
 
     IDBDatabaseBackendImpl* database() const { return m_database.get(); }
 
@@ -70,7 +71,12 @@ private:
     void loadIndexes();
     SQLiteDatabase& sqliteDatabase() const;
 
-    void getInternal(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>);
+    static void getInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>);
+    static void putInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key, bool addOnly, PassRefPtr<IDBCallbacks>);
+    static void removeInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>);
+    static void createIndexInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, const String& name, const String& keyPath, bool unique, PassRefPtr<IDBCallbacks>);
+    static void removeIndexInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, const String& name, PassRefPtr<IDBCallbacks>);
+    static void openCursorInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBKeyRange> range, unsigned short direction, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendInterface>);
 
     RefPtr<IDBDatabaseBackendImpl> m_database;
 

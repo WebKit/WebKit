@@ -18,17 +18,32 @@ function test()
 {
     result = evalAndLog("indexedDB.open('name', 'description')");
     verifyResult(result);
-    result.onsuccess = createObjectStore;
+    result.onsuccess = startSetVersion;
     result.onerror = unexpectedErrorCallback;
 }
 
-function createObjectStore()
+function startSetVersion()
 {
     verifySuccessEvent(event);
     db = evalAndLog("db = event.result");
 
-    deleteAllObjectStores(db);
+    result = evalAndLog("db.setVersion('new version')");
+    verifyResult(result);
+    result.onsuccess = deleteExisting;
+    result.onerror = unexpectedErrorCallback;
+}
 
+function deleteExisting()
+{
+    verifySuccessEvent(event);
+    window.trans = evalAndLog("trans = event.result");
+    shouldBeTrue("trans !== null");
+
+    deleteAllObjectStores(db, createObjectStore);
+}
+
+function createObjectStore()
+{
     result = evalAndLog("db.createObjectStore('storeName', null)");
     verifyResult(result);
     result.onsuccess = addValue;
@@ -75,11 +90,24 @@ function commitTransaction()
     verifySuccessEvent(event);
     shouldBeTrue("event.source.indexNames.contains('indexName')");
     // Let the transaction commit.
-    window.setTimeout('removeObjectStore()', 0);
+    window.setTimeout('secondSetVersion()', 0);
+}
+
+function secondSetVersion()
+{
+    result = evalAndLog("db.setVersion('new version')");
+    verifyResult(result);
+    result.onsuccess = removeObjectStore;
+    result.onerror = unexpectedErrorCallback;
 }
 
 function removeObjectStore()
 {
+    verifySuccessEvent(event);
+    window.trans = evalAndLog("trans = event.result");
+    shouldBeTrue("trans !== null");
+    trans.onabort = unexpectedAbortCallback;
+
     result = evalAndLog("db.removeObjectStore('storeName')");
     verifyResult(result);
     result.onsuccess = createObjectStoreAgain;

@@ -35,14 +35,16 @@
 #include "IDBIndexBackendInterface.h"
 #include "IDBKey.h"
 #include "IDBObjectStoreBackendInterface.h"
+#include "IDBTransactionBackendInterface.h"
 #include "SerializedScriptValue.h"
-#include <wtf/RefCounted.h>
+#include <wtf/Threading.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-class IDBCallbacks : public RefCounted<IDBCallbacks> {
+// FIXME: All child classes need to be made threadsafe.
+class IDBCallbacks : public ThreadSafeShared<IDBCallbacks> {
 public:
     virtual ~IDBCallbacks() { }
 
@@ -53,6 +55,7 @@ public:
     virtual void onSuccess(PassRefPtr<IDBIndexBackendInterface>) = 0;
     virtual void onSuccess(PassRefPtr<IDBKey>) = 0;
     virtual void onSuccess(PassRefPtr<IDBObjectStoreBackendInterface>) = 0;
+    virtual void onSuccess(PassRefPtr<IDBTransactionBackendInterface>) = 0;
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>) = 0;
 };
 

@@ -61,14 +61,14 @@ public:
         WEBKIT_ASSERT_NOT_REACHED();
         return WebDOMStringList();
     }
-    virtual void createObjectStore(const WebString& name, const WebString& keyPath, bool autoIncrement, WebIDBCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void createObjectStore(const WebString& name, const WebString& keyPath, bool autoIncrement, WebIDBCallbacks*, const WebIDBTransaction&) { WEBKIT_ASSERT_NOT_REACHED(); }
     // Transfers ownership of the WebIDBObjectStore to the caller.
     virtual WebIDBObjectStore* objectStore(const WebString& name, unsigned short mode)
     {
         WEBKIT_ASSERT_NOT_REACHED();
         return 0;
     }
-    virtual void removeObjectStore(const WebString& name, WebIDBCallbacks* callbacks) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void removeObjectStore(const WebString& name, WebIDBCallbacks* callbacks, const WebIDBTransaction&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void setVersion(const WebString& version, WebIDBCallbacks* callbacks) { WEBKIT_ASSERT_NOT_REACHED(); }
     // Transfers ownership of the WebIDBTransaction to the caller.
     virtual WebIDBTransaction* transaction(const WebDOMStringList& names, unsigned short mode, unsigned long timeout)
@@ -76,7 +76,7 @@ public:
         WEBKIT_ASSERT_NOT_REACHED();
         return 0;
     }
-
+    virtual void close() { WEBKIT_ASSERT_NOT_REACHED(); }
 };
 
 } // namespace WebKit

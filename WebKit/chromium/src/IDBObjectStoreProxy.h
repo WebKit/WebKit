@@ -40,21 +40,21 @@ namespace WebCore {
 class IDBObjectStoreProxy : public IDBObjectStoreBackendInterface {
 public:
     static PassRefPtr<IDBObjectStoreBackendInterface> create(PassOwnPtr<WebKit::WebIDBObjectStore>);
-    ~IDBObjectStoreProxy();
+    virtual ~IDBObjectStoreProxy();
 
-    String name() const;
-    String keyPath() const;
-    PassRefPtr<DOMStringList> indexNames() const;
+    virtual String name() const;
+    virtual String keyPath() const;
+    virtual PassRefPtr<DOMStringList> indexNames() const;
 
-    void get(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
-    void put(PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key, bool addOnly, PassRefPtr<IDBCallbacks>);
-    void remove(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>);
+    virtual void get(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
+    virtual void put(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, bool addOnly, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
+    virtual void remove(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
 
-    void createIndex(const String& name, const String& keyPath, bool unique, PassRefPtr<IDBCallbacks>);
-    PassRefPtr<IDBIndexBackendInterface> index(const String& name);
-    void removeIndex(const String& name, PassRefPtr<IDBCallbacks>);
+    virtual void createIndex(const String& name, const String& keyPath, bool unique, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
+    virtual PassRefPtr<IDBIndexBackendInterface> index(const String& name);
+    virtual void removeIndex(const String& name, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
 
-    virtual void openCursor(PassRefPtr<IDBKeyRange> range, unsigned short direction, PassRefPtr<IDBCallbacks>);
+    virtual void openCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
 
 private:
     IDBObjectStoreProxy(PassOwnPtr<WebKit::WebIDBObjectStore>);

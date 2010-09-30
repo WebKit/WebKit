@@ -33,11 +33,11 @@
 
 #include "ScriptValue.h"
 #include <v8.h>
-#include <wtf/RefCounted.h>
+#include <wtf/Threading.h>
 
 namespace WebCore {
 
-class SerializedScriptValue : public RefCounted<SerializedScriptValue> {
+class SerializedScriptValue : public ThreadSafeShared<SerializedScriptValue> {
 public:
     static void deserializeAndSetProperty(v8::Handle<v8::Object> object, const char* propertyName,
                                           v8::PropertyAttribute, SerializedScriptValue*);
