@@ -242,10 +242,11 @@ void InspectorTimelineAgent::didReceiveResourceResponse()
     didCompleteCurrentRecord(ResourceReceiveResponseTimelineRecordType);
 }
 
-void InspectorTimelineAgent::didFinishLoadingResource(unsigned long identifier, bool didFail)
+void InspectorTimelineAgent::didFinishLoadingResource(unsigned long identifier, bool didFail, double finishTime)
 {
     pushGCEventRecords();
-    RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(WTF::currentTimeMS());
+    // Sometimes network stack can provide for us exact finish loading time. In the other case we will use currentTime.
+    RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(finishTime ? finishTime * 1000 : WTF::currentTimeMS());
     record->setObject("data", TimelineRecordFactory::createResourceFinishData(identifier, didFail));
     record->setNumber("type", ResourceFinishTimelineRecordType);
     setHeapSizeStatistic(record.get());

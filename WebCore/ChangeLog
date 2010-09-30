@@ -1,3 +1,20 @@
+2010-09-29  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: assign the resource loading finish time which was obtained from the network stack
+        as the end time for the corresponding event in Timeline.
+        See related change for Resources panel https://bugs.webkit.org/show_bug.cgi?id=45664
+
+        https://bugs.webkit.org/show_bug.cgi?id=46789
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::didFinishLoading):
+        (WebCore::InspectorController::didFailLoading):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::didFinishLoadingResource):
+        * inspector/InspectorTimelineAgent.h:
+
 2010-09-29  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
