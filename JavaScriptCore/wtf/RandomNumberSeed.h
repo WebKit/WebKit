@@ -64,6 +64,8 @@ inline void initializeRandomNumberGenerator()
     init_by_array(initializationBuffer, 4);
 #elif COMPILER(MSVC) && defined(_CRT_RAND_S)
     // On Windows we use rand_s which initialises itself
+#elif PLATFORM(BREWMP)
+    // On Brew MP we use AEECLSID_RANDOM which initialises itself
 #elif OS(UNIX)
     // srandomdev is not guaranteed to exist on linux so we use this poor seed, this should be improved
     timeval time;
