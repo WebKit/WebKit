@@ -5020,13 +5020,9 @@ svg/filters/subRegion-in-userSpace.svg
 # Height not honored for <input> and <button> elements.
 # See Bug #33936 - https://bugs.webkit.org/show_bug.cgi?id=33936
 fast/css/button-height.html
-
-# See Bug #27638 - https://bugs.webkit.org/show_bug.cgi?id=27638
-fast/dom/Window/window-screen-properties.html
+# I think this is related. Essentially we aren't honoring style
+# information for widgets.
 fast/forms/textarea-metrics.html
-# These two tests seem to fail on and off, skip them for now
-transitions/change-values-during-transition.html
-transitions/zero-duration-with-non-zero-delay-end.html
 
 # See Bug #27905 - http://bugs.webkit.org/show_bug.cgi?id=27905
 # Missing resource load callback ability in DRT
@@ -5036,7 +5032,8 @@ http/tests/misc/favicon-loads-with-images-disabled.html
 # See Bug #28668 - https://bugs.webkit.org/show_bug.cgi?id=28668
 http/tests/appcache/auth.html
 
-# This port doesn't support isolated worlds yet.
+# New test infrastructure required -- need isolated worlds
+# See https://bugs.webkit.org/show_bug.cgi?id=31508
 http/tests/security/isolatedWorld
 
 # Missing DRT ability return a null request for willSendRequest redirect calls
@@ -5050,20 +5047,8 @@ http/tests/xmlhttprequest/logout.html
 http/tests/xmlhttprequest/re-login-async.html
 http/tests/xmlhttprequest/re-login.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=28088 -- document.activeElement does not work
-editing/selection/find-in-text-control.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=30577
 editing/selection/move-left-right.html
-
-# Missing DRT ability to override 'standard' preferences.
-editing/selection/doubleclick-beside-cr-span.html
-fast/dom/Window/timer-resume-on-navigation-back.html
-fast/loader/input-element-page-cache-crash.html
-loader/go-back-to-different-window-size.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=30583
-fast/forms/textarea-appearance-wrap.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=30584
 svg/custom/font-face-not-in-document.svg
@@ -5159,7 +5144,6 @@ accessibility/aria-list-and-listitem.html
 accessibility/aria-presentational-role.html
 accessibility/aria-checkbox-checked.html
 accessibility/dimensions-include-descendants.html
-fast/overflow/line-clamp.html
 fast/overflow/scrollbar-restored.html
 fast/css/color-correction-on-box-shadow.html
 fast/css/color-correction-on-text-shadow.html
@@ -5174,10 +5158,6 @@ plugins/document-open.html
 # Tests failing once in a while
 fast/events/overflow-events.html
 http/tests/xmlhttprequest/interactive-state.html
-
-# New test infrastructure required
-# See https://bugs.webkit.org/show_bug.cgi?id=31508
-http/tests/security/isolatedWorld/didClearWindowObject.html
 
 # Need to add functionality to DumpRenderTree to handle error pages
 fast/history/back-forward-reset-after-error-handling.html
@@ -5258,9 +5238,6 @@ fast/events/spatial-navigation/snav-iframe-flattening-simple.html
 
 # Implement LayoutTestController::callShouldCloseOnWebView()
 fast/events/onbeforeunload-focused-iframe.html
-
-# Crashes on release/debug bots, see https://bugs.webkit.org/show_bug.cgi?id=35080
-fast/css/font-face-opentype.html
 
 # Crashes on debug bots, see https://bugs.webkit.org/show_bug.cgi?id=35085
 plugins/iframe-shims.html
@@ -5813,6 +5790,7 @@ http/tests/security/dataTransfer-set-data-file-url.html
 fast/events/ondragenter.html
 editing/pasteboard/smart-drag-drop.html
 editing/selection/drag-start-event-client-x-y.html
+editing/selection/doubleclick-beside-cr-span.html
 
 # Tests that require editing delegate dumps.
 editing/pasteboard/drop-link.html
@@ -5931,3 +5909,7 @@ fast/text/large-text-composed-char-dos.html
 
 # LayoutTestController::addUserScript not implemented for gtk
 plugins/plugin-document-load-prevented-userscript.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=46942
+websocket/tests/bad-sub-protocol-control-chars.html
+

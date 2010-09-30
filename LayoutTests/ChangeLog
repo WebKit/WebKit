@@ -1,3 +1,11 @@
+2010-09-30  Martin Robinson  <mrobinson@igalia.com>
+
+        Unskip some tests that are passing and rebaseline a couple others.
+
+        * platform/gtk/Skipped: Unskip tests and do a little reorganization.
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt: Rebaselined.
+        * platform/gtk/fast/overflow/line-clamp-expected.txt: Added.
+
 2010-09-30  Alpha Lam  <hclam@chromium.org>
 
         Build fix. Not reviewed.

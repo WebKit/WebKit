@@ -1,0 +1,153 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 253x19
+        text run at (0,0) width 253: "This tests the -webkit-line-clamp property"
+      RenderBR {BR} at (253,15) size 0x0
+      RenderBR {BR} at (0,19) size 0x19
+      RenderText {#text} at (102,101) size 4x19
+        text run at (102,101) width 4: " "
+      RenderText {#text} at (208,101) size 4x19
+        text run at (208,101) width 4: " "
+      RenderText {#text} at (314,101) size 4x19
+        text run at (314,101) width 4: " "
+      RenderText {#text} at (420,101) size 4x19
+        text run at (420,101) width 4: " "
+      RenderText {#text} at (526,101) size 4x19
+        text run at (526,101) width 4: " "
+      RenderText {#text} at (632,101) size 4x19
+        text run at (632,101) width 4: " "
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (102,236) size 4x19
+        text run at (102,236) width 4: " "
+      RenderText {#text} at (208,236) size 4x19
+        text run at (208,236) width 4: " "
+      RenderText {#text} at (0,0) size 0x0
+layer at (8,46) size 102x78 clip at (9,47) size 100x76 scrollHeight 133
+  RenderFlexibleBox {DIV} at (0,38) size 102x78 [border: (1px solid #808080)]
+    RenderBlock (anonymous) at (1,1) size 100x76
+      RenderText {#text} at (0,0) size 96x133
+        text run at (0,0) width 96: "50% truncation."
+        text run at (0,19) width 56: "This is an"
+        text run at (0,38) width 66: "example of"
+        text run at (0,57) width 45: "ellipsis-"
+        text run at (0,76) width 75: "truncation of"
+        text run at (0,95) width 54: "multi-line"
+        text run at (0,114) width 26: "text."
+      RenderInline {A} at (0,0) size 34x19 [color=#0000EE]
+        RenderText {#text} at (26,114) size 34x19
+          text run at (26,114) width 34: "More"
+      RenderText {#text} at (0,0) size 0x0
+layer at (114,103) size 102x21 clip at (115,104) size 100x19 scrollHeight 114
+  RenderFlexibleBox {DIV} at (106,95) size 102x21 [border: (1px solid #808080)]
+    RenderBlock (anonymous) at (1,1) size 100x19
+      RenderText {#text} at (0,0) size 92x114
+        text run at (0,0) width 88: "0% truncation."
+        text run at (0,19) width 80: "This does the"
+        text run at (0,38) width 92: "most truncation"
+        text run at (0,57) width 53: "possible,"
+        text run at (0,76) width 86: "truncating to 1"
+        text run at (0,95) width 24: "line."
+      RenderInline {A} at (0,0) size 34x19 [color=#0000EE]
+        RenderText {#text} at (24,95) size 34x19
+          text run at (24,95) width 34: "More"
+      RenderText {#text} at (0,0) size 0x0
+layer at (220,84) size 102x40 clip at (221,85) size 100x38 scrollHeight 114
+  RenderFlexibleBox {DIV} at (212,76) size 102x40 [border: (1px solid #808080)]
+    RenderBlock (anonymous) at (1,1) size 100x38
+      RenderText {#text} at (0,0) size 84x114
+        text run at (0,0) width 46: "2 lines. "
+        text run at (46,0) width 38: "This is"
+        text run at (0,19) width 84: "an example of"
+        text run at (0,38) width 45: "ellipsis-"
+        text run at (0,57) width 75: "truncation of"
+        text run at (0,76) width 54: "multi-line"
+        text run at (0,95) width 26: "text."
+      RenderInline {A} at (0,0) size 34x19 [color=#0000EE]
+        RenderText {#text} at (26,95) size 34x19
+          text run at (26,95) width 34: "More"
+      RenderText {#text} at (0,0) size 0x0
+layer at (326,65) size 102x59 clip at (327,66) size 100x57 scrollHeight 171
+  RenderFlexibleBox {DIV} at (318,57) size 102x59 [border: (1px solid #808080)]
+    RenderBlock (anonymous) at (1,1) size 100x57
+      RenderText {#text} at (0,0) size 94x171
+        text run at (0,0) width 69: "Backwards"
+        text run at (0,19) width 66: "compatible"
+        text run at (0,38) width 67: "truncation. "
+        text run at (67,38) width 8: "3"
+        text run at (0,57) width 67: "lines on the"
+        text run at (0,76) width 94: "latest version of"
+        text run at (0,95) width 57: "WebKit. "
+        text run at (57,95) width 32: "1 line"
+        text run at (0,114) width 50: "on older"
+        text run at (0,133) width 65: "versions of"
+        text run at (0,152) width 53: "WebKit."
+      RenderInline {A} at (0,0) size 34x19 [color=#0000EE]
+        RenderText {#text} at (53,152) size 34x19
+          text run at (53,152) width 34: "More"
+      RenderText {#text} at (0,0) size 0x0
+layer at (432,84) size 102x40 clip at (433,85) size 100x38 scrollHeight 133
+  RenderFlexibleBox {DIV} at (424,76) size 102x40 [border: (1px solid #808080)]
+    RenderBlock (anonymous) at (1,1) size 100x38
+      RenderText {#text} at (0,0) size 96x133
+        text run at (0,0) width 96: "30% truncation."
+        text run at (0,19) width 82: "No link at the"
+        text run at (0,38) width 30: "end. "
+        text run at (30,38) width 56: "This is an"
+        text run at (0,57) width 66: "example of"
+        text run at (0,76) width 45: "ellipsis-"
+        text run at (0,95) width 75: "truncation of"
+        text run at (0,114) width 84: "multi-line text."
+layer at (538,65) size 102x59 clip at (539,66) size 100x57 scrollHeight 114
+  RenderFlexibleBox {DIV} at (530,57) size 102x59 [border: (1px solid #808080)]
+    RenderBlock (anonymous) at (1,1) size 100x57
+      RenderText {#text} at (0,0) size 97x114
+        text run at (0,0) width 46: "3 lines. "
+        text run at (46,0) width 45: "No link"
+        text run at (0,19) width 67: "at the end. "
+        text run at (67,19) width 25: "This"
+        text run at (0,38) width 97: "is an example of"
+        text run at (0,57) width 45: "ellipsis-"
+        text run at (0,76) width 75: "truncation of"
+        text run at (0,95) width 84: "multi-line text."
+layer at (644,51) size 102x78 clip at (645,52) size 100x76
+  RenderFlexibleBox {DIV} at (636,43) size 102x78 [border: (1px solid #808080)]
+    RenderBlock (anonymous) at (1,1) size 100x76
+      RenderText {#text} at (0,0) size 100x76
+        text run at (0,0) width 46: "0 lines. "
+        text run at (46,0) width 38: "This is"
+        text run at (0,19) width 91: "an invalid value"
+        text run at (0,38) width 100: "for -webkit-line-"
+        text run at (0,57) width 40: "clamp."
+layer at (8,186) size 102x78 clip at (9,187) size 100x76
+  RenderFlexibleBox {DIV} at (0,178) size 102x78 [border: (1px solid #808080)]
+    RenderBlock (anonymous) at (1,1) size 100x76
+      RenderText {#text} at (0,0) size 100x76
+        text run at (0,0) width 52: "-1 lines. "
+        text run at (52,0) width 38: "This is"
+        text run at (0,19) width 91: "an invalid value"
+        text run at (0,38) width 100: "for -webkit-line-"
+        text run at (0,57) width 40: "clamp."
+layer at (114,186) size 102x78 clip at (115,187) size 100x76
+  RenderFlexibleBox {DIV} at (106,178) size 102x78 [border: (1px solid #808080)]
+    RenderBlock (anonymous) at (1,1) size 100x76
+      RenderText {#text} at (0,0) size 94x76
+        text run at (0,0) width 35: "-1%. "
+        text run at (35,0) width 56: "This is an"
+        text run at (0,19) width 94: "invalid value for"
+        text run at (0,38) width 79: "-webkit-line-"
+        text run at (0,57) width 40: "clamp."
+layer at (220,129) size 102x135 clip at (221,130) size 100x133
+  RenderFlexibleBox {DIV} at (212,121) size 102x135 [border: (1px solid #808080)]
+    RenderBlock (anonymous) at (1,1) size 100x133
+      RenderText {#text} at (0,0) size 92x133
+        text run at (0,0) width 37: "150%"
+        text run at (0,19) width 67: "truncation. "
+        text run at (67,19) width 25: "This"
+        text run at (0,38) width 82: "does the least"
+        text run at (0,57) width 59: "truncation"
+        text run at (0,76) width 53: "possible,"
+        text run at (0,95) width 58: "truncating"
+        text run at (0,114) width 47: "nothing."
