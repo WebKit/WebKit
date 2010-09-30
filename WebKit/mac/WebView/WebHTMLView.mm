@@ -2232,6 +2232,22 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     return _private->printing;
 }
 
+- (BOOL)_beginPrintModeWithMinimumPageWidth:(CGFloat)minimumPageWidth height:(CGFloat)minimumPageHeight maximumPageWidth:(CGFloat)maximumPageWidth
+{
+    Frame* frame = core([self _frame]);
+    if (!frame)
+        return NO;
+
+    if (frame->document() && frame->document()->isFrameSet()) {
+        minimumPageWidth = 0;
+        minimumPageHeight = 0;
+        maximumPageWidth = 0;
+    }
+
+    [self _setPrinting:YES minimumPageWidth:minimumPageWidth height:minimumPageHeight maximumPageWidth:maximumPageWidth adjustViewSize:YES paginateScreenContent:[self _isInScreenPaginationMode]];
+    return YES;
+}
+
 - (BOOL)_beginPrintModeWithPageWidth:(float)pageWidth height:(float)pageHeight shrinkToFit:(BOOL)shrinkToFit
 {
     Frame* frame = core([self _frame]);

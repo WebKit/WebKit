@@ -136,6 +136,9 @@ extern const float _WebHTMLViewPrintingMaximumShrinkFactor;
 - (WebCGFloat)_adjustedBottomOfPageWithTop:(WebCGFloat)top bottom:(WebCGFloat)bottom limit:(WebCGFloat)bottomLimit;
 - (BOOL)_isInPrintMode;
 - (BOOL)_beginPrintModeWithPageWidth:(float)pageWidth height:(float)pageHeight shrinkToFit:(BOOL)shrinkToFit;
+// Lays out to pages of the given minimum width and height or more (increasing both dimensions proportionally)
+// as needed for the content to fit, but no more than the given maximum width.
+- (BOOL)_beginPrintModeWithMinimumPageWidth:(WebCGFloat)minimumPageWidth height:(WebCGFloat)minimumPageHeight maximumPageWidth:(WebCGFloat)maximumPageWidth;
 - (void)_endPrintMode;
 
 - (BOOL)_isInScreenPaginationMode;

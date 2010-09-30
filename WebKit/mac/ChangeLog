@@ -1,3 +1,14 @@
+2010-09-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Add printing SPI allowing full control over shrink-to-fit
+        https://bugs.webkit.org/show_bug.cgi?id=46877
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _beginPrintModeWithMinimumPageWidth:height:maximumPageWidth:]): Added.
+        * WebView/WebHTMLViewPrivate.h:
+
 2010-09-28  Johnny Ding  <jnd@chromium.org>
 
         Reviewed by Adam Barth.
