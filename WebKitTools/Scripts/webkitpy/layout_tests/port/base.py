@@ -311,7 +311,7 @@ class Port(object):
                 protocol = "http"
             return "%s://127.0.0.1:%u/%s" % (protocol, port, relative_path)
 
-        if sys.platform in ('cygwin', 'win32'):
+        if sys.platform is 'win32':
             return "file:///" + self.get_absolute_path(filename)
         return "file://" + self.get_absolute_path(filename)
 

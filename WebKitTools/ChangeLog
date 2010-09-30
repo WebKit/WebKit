@@ -1,5 +1,18 @@
 2010-09-30  Adam Roben  <aroben@apple.com>
 
+        Fix path -> URL conversion on Cygwin
+
+        Reviewed by Adam Barth.
+
+        Fixes <http://webkit.org/b/46890> <rdar://problem/8496637> Many tests
+        in webkitpy.layout_tests.run_webkit_tests_unittest assert on Windows
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.filename_to_uri): Treat Cygwin like other UNIX-y platforms by
+        assuming paths already have a leading slash.
+
+2010-09-30  Adam Roben  <aroben@apple.com>
+
         Teach WindowGeometryInitializedBeforeSetWindow that NPP_SetWindow can
         be called more than once
 
