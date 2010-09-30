@@ -1,3 +1,16 @@
+2010-09-30  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        webkit-patch find-flaky-tests should print results URLs
+        https://bugs.webkit.org/show_bug.cgi?id=46917
+
+        Printing out the results URL makes find-flaky-tests more actionable
+        because you can see what happens when a test fails.  The output from
+        the script is still pretty noisy, but it seems useful.
+
+        * Scripts/webkitpy/tool/commands/queries.py:
+
 2010-09-30  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

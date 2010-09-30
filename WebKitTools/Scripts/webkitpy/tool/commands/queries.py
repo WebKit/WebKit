@@ -278,18 +278,18 @@ class FindFlakyTests(AbstractDeclarativeCommand):
         build = builder.build_for_revision(revision, allow_failed_lookups=True)
         if not build:
             print "No build for %s" % revision
-            return None
+            return (None, None)
         results = build.layout_test_results()
         if not results:
             print "No results build %s (r%s)" % (build._number, build.revision())
-            return None
+            return (None, None)
         failures = set(results.failing_tests())
         if len(failures) >= 20:
             # FIXME: We may need to move this logic into the LayoutTestResults class.
             # The buildbot stops runs after 20 failures so we don't have full results to work with here.
             print "Too many failures in build %s (r%s), ignoring." % (build._number, build.revision())
-            return None
-        return failures
+            return (None, None)
+        return (build, failures)
 
     def _increment_statistics(self, flaky_tests, flaky_test_statistics):
         for test in flaky_tests:
@@ -306,20 +306,23 @@ class FindFlakyTests(AbstractDeclarativeCommand):
         flaky_test_statistics = {}
         all_previous_failures = set([])
         one_time_previous_failures = set([])
+        previous_build = None
         for i in range(limit):
             revision = start_revision - i
             print "Analyzing %s ... " % revision,
-            failures = self._find_failures(builder, revision)
+            (build, failures) = self._find_failures(builder, revision)
             if failures == None:
                 # Notice that we don't loop on the empty set!
                 continue
             print "has %s failures" % len(failures)
             flaky_tests = one_time_previous_failures - failures
             if flaky_tests:
-                print "Flaky tests: %s" % sorted(flaky_tests)
+                print "Flaky tests: %s %s" % (sorted(flaky_tests),
+                                              previous_build.results_url())
             self._increment_statistics(flaky_tests, flaky_test_statistics)
             one_time_previous_failures = failures - all_previous_failures
             all_previous_failures = failures
+            previous_build = build
         self._print_statistics(flaky_test_statistics)
 
     def _builder_to_analyze(self):
