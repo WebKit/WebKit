@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/unicode/Unicode.h>
+#include <limits>
 
 namespace WTF {
 
@@ -39,9 +40,12 @@ class StringBuffer : public Noncopyable {
 public:
     explicit StringBuffer(unsigned length)
         : m_length(length)
-        , m_data(static_cast<UChar*>(fastMalloc(length * sizeof(UChar))))
     {
+        if (m_length > std::numeric_limits<unsigned>::max() / sizeof(UChar))
+            CRASH();
+        m_data = static_cast<UChar*>(fastMalloc(m_length * sizeof(UChar)));
     }
+
     ~StringBuffer()
     {
         fastFree(m_data);
@@ -55,8 +59,11 @@ public:
 
     void resize(unsigned newLength)
     {
-        if (newLength > m_length)
+        if (newLength > m_length) {
+            if (newLength > std::numeric_limits<unsigned>::max() / sizeof(UChar))
+                CRASH();
             m_data = static_cast<UChar*>(fastRealloc(m_data, newLength * sizeof(UChar)));
+        }
         m_length = newLength;
     }
 
@@ -72,8 +79,8 @@ private:
     UChar* m_data;
 };
 
-}
+} // namespace WTF
 
 using WTF::StringBuffer;
 
-#endif
+#endif // StringBuffer_h

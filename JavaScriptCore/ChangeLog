@@ -1,3 +1,14 @@
+2010-09-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Add additional checks to StringBuffer.
+        <rdar://problem/7756381>
+
+        * wtf/text/StringBuffer.h:
+        (WTF::StringBuffer::StringBuffer):
+        (WTF::StringBuffer::resize):
+
 2010-09-30  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.
