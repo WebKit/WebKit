@@ -1,3 +1,66 @@
+2010-09-30  Alpha Lam  <hclam@chromium.org>
+
+        Unreviewed. Build fix.
+
+        Add test expectations for Chromium for new tests introduced in r68797.
+
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-in-attr-actual.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-in-attr-actual.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr-actual.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr-actual.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr-actual.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr-actual.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k2-attr-actual.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k2-attr-actual.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k3-attr-actual.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k3-attr-actual.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k4-attr-actual.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-k4-attr-actual.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-operator-attr-actual.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-operator-attr-actual.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-in-prop-actual.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-in-prop-actual.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-in2-prop-actual.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-in2-prop-actual.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k1-prop-actual.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k1-prop-actual.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k2-prop-actual.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k2-prop-actual.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k3-prop-actual.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k3-prop-actual.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k4-prop-actual.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-k4-prop-actual.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-operator-prop-actual.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-svgdom-operator-prop-actual.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-in-attr-actual.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-in-attr-actual.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr-actual.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr-actual.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr-actual.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr-actual.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k2-attr-actual.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k2-attr-actual.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k3-attr-actual.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k3-attr-actual.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k4-attr-actual.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k4-attr-actual.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-operator-attr-actual.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-operator-attr-actual.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-in-prop-actual.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-in-prop-actual.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-in2-prop-actual.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-in2-prop-actual.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k1-prop-actual.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k1-prop-actual.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k2-prop-actual.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k2-prop-actual.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k3-prop-actual.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k3-prop-actual.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k4-prop-actual.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k4-prop-actual.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-operator-prop-actual.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-operator-prop-actual.png: Added.
+
 2010-09-30  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.
