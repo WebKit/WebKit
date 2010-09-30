@@ -88,8 +88,10 @@ webcore_built_sources += \
 	DerivedSources/WebCore/CSSGrammar.h \
 	DerivedSources/WebCore/CSSPropertyNames.h \
 	DerivedSources/WebCore/CSSPropertyNames.cpp \
+	DerivedSources/WebCore/CSSPropertyNamesHash.h \
 	DerivedSources/WebCore/CSSValueKeywords.h \
 	DerivedSources/WebCore/CSSValueKeywords.cpp \
+	DerivedSources/WebCore/CSSValueKeywordsHash.h \
 	DerivedSources/WebCore/ColorData.cpp \
 	DerivedSources/WebCore/DocTypeStrings.cpp \
 	DerivedSources/WebCore/HashTools.h \
@@ -4398,7 +4400,8 @@ FEATURE_DEFINES += ENABLE_BLOB=1
 webcore_cppflags += -DENABLE_BLOB=1
 endif  # END ENABLE_BLOB
 
-DerivedSources/WebCore/CSSPropertyNames.cpp:
+DerivedSources/WebCore/CSSPropertyNamesHash.h: DerivedSources/WebCore/CSSPropertyNames.cpp
+DerivedSources/WebCore/CSSPropertyNames.cpp: DerivedSources/WebCore/CSSPropertyNames.h
 DerivedSources/WebCore/CSSPropertyNames.h: $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/makeprop.pl
 	if sort $(WEBCORE_CSS_PROPERTY_NAMES) | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
 	cat $(WEBCORE_CSS_PROPERTY_NAMES) > CSSPropertyNames.in
@@ -4406,7 +4409,8 @@ DerivedSources/WebCore/CSSPropertyNames.h: $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCo
 	mv CSSPropertyNames.* $(GENSOURCES_WEBCORE)
 
 # Lower case all the values, as CSS values are case-insensitive
-DerivedSources/WebCore/CSSValueKeywords.cpp:
+DerivedSources/WebCore/CSSValueKeywordsHash.h: DerivedSources/WebCore/CSSValueKeywords.cpp
+DerivedSources/WebCore/CSSValueKeywords.cpp: DerivedSources/WebCore/CSSValueKeywords.h
 DerivedSources/WebCore/CSSValueKeywords.h: $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCore)/css/makevalues.pl
 	$(PERL) -ne 'print lc' $(WEBCORE_CSS_VALUE_KEYWORDS) > CSSValueKeywords.in
 	if sort CSSValueKeywords.in | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
