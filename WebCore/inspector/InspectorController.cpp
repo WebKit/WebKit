@@ -66,6 +66,7 @@
 #include "InspectorDebuggerAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorFrontendClient.h"
+#include "InspectorInstrumentation.h"
 #include "InspectorProfilerAgent.h"
 #include "InspectorResource.h"
 #include "InspectorStorageAgent.h"
@@ -137,8 +138,6 @@ const char* const InspectorController::ScriptsPanel = "scripts";
 const char* const InspectorController::ProfilesPanel = "profiles";
 
 
-static int connectedFrontendCount = 0;
-
 const String& InspectorController::inspectorStartsAttachedSettingName()
 {
     DEFINE_STATIC_LOCAL(String, settingName, ("inspectorStartsAttached"));
@@ -150,8 +149,6 @@ static const float minimumAttachedHeight = 250.0f;
 static const float maximumAttachedHeightRatio = 0.75f;
 static const unsigned maximumConsoleMessages = 1000;
 static const unsigned expireConsoleMessagesStep = 100;
-
-unsigned InspectorController::s_inspectorControllerCount = 0;
 
 InspectorController::InspectorController(Page* page, InspectorClient* client)
     : m_inspectedPage(page)
@@ -178,7 +175,6 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
 {
     ASSERT_ARG(page, page);
     ASSERT_ARG(client, client);
-    ++s_inspectorControllerCount;
 }
 
 InspectorController::~InspectorController()
@@ -189,9 +185,6 @@ InspectorController::~InspectorController()
     ASSERT(!m_highlightedNode);
 
     deleteAllValues(m_frameResources);
-
-    ASSERT(s_inspectorControllerCount);
-    --s_inspectorControllerCount;
 
     releaseFrontendLifetimeAgents();
 
@@ -537,9 +530,9 @@ void InspectorController::connectFrontend()
     m_applicationCacheAgent = new InspectorApplicationCacheAgent(this, m_frontend.get());
 #endif
 
-    if (!connectedFrontendCount)
+    if (!InspectorInstrumentation::hasFrontends())
         ScriptController::setCaptureCallStackForUncaughtExceptions(true);
-    connectedFrontendCount++;
+    InspectorInstrumentation::frontendCreated();
 }
 
 void InspectorController::reuseFrontend()
@@ -597,8 +590,8 @@ void InspectorController::disconnectFrontend()
         return;
     m_frontend.clear();
 
-    connectedFrontendCount--;
-    if (!connectedFrontendCount)
+    InspectorInstrumentation::frontendDeleted();
+    if (!InspectorInstrumentation::hasFrontends())
         ScriptController::setCaptureCallStackForUncaughtExceptions(false);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -2103,64 +2096,7 @@ void InspectorController::reloadPage()
     m_inspectedPage->mainFrame()->redirectScheduler()->scheduleRefresh(true);
 }
 
-void InspectorController::willInsertDOMNodeImpl(Node* node, Node* parent)
-{
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (!m_debuggerAgent || !m_domAgent)
-        return;
-    PassRefPtr<InspectorValue> eventData;
-    if (m_domAgent->shouldBreakOnNodeInsertion(node, parent, &eventData))
-        m_debuggerAgent->breakProgram(DOMBreakpointDebuggerEventType, eventData);
-#endif
-}
-
-void InspectorController::didInsertDOMNodeImpl(Node* node)
-{
-    if (m_domAgent)
-        m_domAgent->didInsertDOMNode(node);
-}
-
-void InspectorController::willRemoveDOMNodeImpl(Node* node)
-{
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (!m_debuggerAgent || !m_domAgent)
-        return;
-    PassRefPtr<InspectorValue> eventData;
-    if (m_domAgent->shouldBreakOnNodeRemoval(node, &eventData))
-        m_debuggerAgent->breakProgram(DOMBreakpointDebuggerEventType, eventData);
-#endif
-}
-
-void InspectorController::didRemoveDOMNodeImpl(Node* node)
-{
-    if (m_domAgent)
-        m_domAgent->didRemoveDOMNode(node);
-}
-
-void InspectorController::willModifyDOMAttrImpl(Element* element)
-{
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (!m_debuggerAgent || !m_domAgent)
-        return;
-    PassRefPtr<InspectorValue> eventData;
-    if (m_domAgent->shouldBreakOnAttributeModification(element, &eventData))
-        m_debuggerAgent->breakProgram(DOMBreakpointDebuggerEventType, eventData);
-#endif
-}
-
-void InspectorController::didModifyDOMAttrImpl(Element* element)
-{
-    if (m_domAgent)
-        m_domAgent->didModifyDOMAttr(element);
-}
-
-void InspectorController::characterDataModifiedImpl(CharacterData* characterData)
-{
-    if (m_domAgent)
-        m_domAgent->characterDataModified(characterData);
-}
-
-void InspectorController::instrumentWillSendXMLHttpRequestImpl(const KURL& url)
+void InspectorController::instrumentWillSendXMLHttpRequest(const KURL& url)
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     if (m_debuggerAgent) {

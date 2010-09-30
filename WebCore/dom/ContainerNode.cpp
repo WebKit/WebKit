@@ -33,7 +33,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "InlineTextBox.h"
-#include "InspectorController.h"
+#include "InspectorInstrumentation.h"
 #include "MutationEvent.h"
 #include "Page.h"
 #include "RenderBox.h"
@@ -155,7 +155,7 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
             break;
 
 #if ENABLE(INSPECTOR)
-        InspectorController::willInsertDOMNode(child, this);
+        InspectorInstrumentation::willInsertDOMNode(document(), child, this);
 #endif
 
         insertBeforeCommon(next.get(), child);
@@ -226,7 +226,7 @@ void ContainerNode::parserInsertBefore(PassRefPtr<Node> newChild, Node* nextChil
         Node* child = it->get();
 
 #if ENABLE(INSPECTOR)
-        InspectorController::willInsertDOMNode(child, this);
+        InspectorInstrumentation::willInsertDOMNode(document(), child, this);
 #endif
 
         insertBeforeCommon(next.get(), child);
@@ -303,7 +303,7 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
         ASSERT(!child->previousSibling());
 
 #if ENABLE(INSPECTOR)
-        InspectorController::willInsertDOMNode(child.get(), this);
+        InspectorInstrumentation::willInsertDOMNode(document(), child.get(), this);
 #endif
 
         // Add child after "prev".
@@ -584,7 +584,7 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bo
         }
 
 #if ENABLE(INSPECTOR)
-        InspectorController::willInsertDOMNode(child, this);
+        InspectorInstrumentation::willInsertDOMNode(document(), child, this);
 #endif
 
         // Append child to the end of the list
@@ -626,7 +626,7 @@ void ContainerNode::parserAddChild(PassRefPtr<Node> newChild)
     ASSERT(!newChild->parent()); // Use appendChild if you need to handle reparenting (and want DOM mutation events).
 
 #if ENABLE(INSPECTOR)
-    InspectorController::willInsertDOMNode(newChild.get(), this);
+    InspectorInstrumentation::willInsertDOMNode(document(), newChild.get(), this);
 #endif
 
     forbidEventDispatch();
@@ -1001,7 +1001,7 @@ static void notifyChildInserted(Node* child)
     ASSERT(!eventDispatchForbidden());
 
 #if ENABLE(INSPECTOR)
-    InspectorController::didInsertDOMNode(child);
+    InspectorInstrumentation::didInsertDOMNode(child->document(), child);
 #endif
 
     RefPtr<Node> c = child;
@@ -1037,7 +1037,7 @@ static void dispatchChildRemovalEvents(Node* child)
     ASSERT(!eventDispatchForbidden());
 
 #if ENABLE(INSPECTOR)
-    InspectorController::willRemoveDOMNode(child);
+    InspectorInstrumentation::willRemoveDOMNode(child->document(), child);
 #endif
 
     RefPtr<Node> c = child;

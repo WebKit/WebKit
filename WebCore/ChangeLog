@@ -1,3 +1,65 @@
+2010-09-29  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: extract Inspector Instrumentation API as a class.
+        https://bugs.webkit.org/show_bug.cgi?id=46614
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::send):
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+        (WebCore::V8XMLHttpRequest::sendCallback):
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::dispatchModifiedEvent):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertBefore):
+        (WebCore::ContainerNode::parserInsertBefore):
+        (WebCore::ContainerNode::replaceChild):
+        (WebCore::ContainerNode::appendChild):
+        (WebCore::ContainerNode::parserAddChild):
+        (WebCore::notifyChildInserted):
+        (WebCore::dispatchChildRemovalEvents):
+        * dom/Element.cpp:
+        (WebCore::Element::setAttribute):
+        (WebCore::Element::removeAttribute):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::~InspectorController):
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::disconnectFrontend):
+        (WebCore::InspectorController::instrumentWillSendXMLHttpRequest):
+        * inspector/InspectorController.h:
+        * inspector/InspectorInstrumentation.cpp: Added.
+        (WebCore::InspectorInstrumentation::willInsertDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::didInsertDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::willRemoveDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::didRemoveDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::willModifyDOMAttrImpl):
+        (WebCore::InspectorInstrumentation::didModifyDOMAttrImpl):
+        (WebCore::InspectorInstrumentation::characterDataModifiedImpl):
+        (WebCore::InspectorInstrumentation::instrumentWillSendXMLHttpRequestImpl):
+        * inspector/InspectorInstrumentation.h: Added.
+        (WebCore::InspectorInstrumentation::frontendCreated):
+        (WebCore::InspectorInstrumentation::frontendDeleted):
+        (WebCore::InspectorInstrumentation::hasFrontends):
+        (WebCore::InspectorInstrumentation::willInsertDOMNode):
+        (WebCore::InspectorInstrumentation::didInsertDOMNode):
+        (WebCore::InspectorInstrumentation::willRemoveDOMNode):
+        (WebCore::InspectorInstrumentation::willModifyDOMAttr):
+        (WebCore::InspectorInstrumentation::didModifyDOMAttr):
+        (WebCore::InspectorInstrumentation::characterDataModified):
+        (WebCore::InspectorInstrumentation::instrumentWillSendXMLHttpRequest):
+        (WebCore::InspectorInstrumentation::inspectorControllerForScriptExecutionContext):
+        (WebCore::InspectorInstrumentation::inspectorControllerForDocument):
+        (WebCore::InspectorInstrumentation::inspectorControllerForPage):
+        * workers/SharedWorker.cpp:
+
 2010-09-30  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Darin Adler.

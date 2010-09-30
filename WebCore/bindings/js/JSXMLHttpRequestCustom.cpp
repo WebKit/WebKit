@@ -37,6 +37,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLDocument.h"
+#include "InspectorInstrumentation.h"
 #include "JSBlob.h"
 #include "JSDOMFormData.h"
 #include "JSDOMWindowCustom.h"
@@ -93,6 +94,8 @@ JSValue JSXMLHttpRequest::open(ExecState* exec)
 
 JSValue JSXMLHttpRequest::send(ExecState* exec)
 {
+    InspectorInstrumentation::instrumentWillSendXMLHttpRequest(impl()->scriptExecutionContext(), impl()->url());
+
     ExceptionCode ec = 0;
     if (!exec->argumentCount())
         impl()->send(ec);
