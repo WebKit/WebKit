@@ -1,3 +1,10 @@
+2010-09-29  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed, LayoutTestController::addUserScript not supported in
+        GTK+, skip plugin-document-load-prevented-userscript.html.
+
+        * platform/gtk/Skipped:
+
 2010-09-29 MORITA Hajime  <morrita@google.com>
 
         Unreviewed, updated test_expectations.txt

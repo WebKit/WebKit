@@ -5932,3 +5932,6 @@ fast/dom/nodesFromRect-basic.html
 
 #  https://bugs.webkit.org/show_bug.cgi?id=46644
 fast/text/large-text-composed-char-dos.html
+
+# LayoutTestController::addUserScript not implemented for gtk
+plugins/plugin-document-load-prevented-userscript.html
