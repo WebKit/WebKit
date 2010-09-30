@@ -1,5 +1,13 @@
 2010-09-30  Adam Roben  <aroben@apple.com>
 
+        Add some tests to the Windows Skipped list
+
+        These all have bugs filed about them.
+
+        * platform/win/Skipped:
+
+2010-09-30  Adam Roben  <aroben@apple.com>
+
         Make Windows match the Mac fallback font for the hyphen character in
         two tests
 

@@ -109,7 +109,6 @@ editing/execCommand/copy-without-selection.html
 # Drag & Drop doesn't work correctly in DRT <rdar://5621244>
 editing/pasteboard/drag-image-in-about-blank-frame.html
 editing/pasteboard/get-data-text-plain-drop.html
-editing/selection/drag-in-iframe.html
 fast/events/drag-in-frames.html
 fast/events/standalone-image-drag-to-editable.html
 
@@ -301,6 +300,26 @@ media/context-menu-actions.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=44713
 fast/frames/iframe-reparenting-adopt-node.html
+
+# Assertion failure in replaySavedEvents http://webkit.org/b/21796
+editing/pasteboard/drop-text-events.html
+editing/selection/drag-in-iframe.html
+fast/events/dragging-mouse-moves.html
+
+# Crash beneath SocketStream::readStreamCallback http://webkit.org/b/44138
+websocket/tests/workers/worker-handshake-challenge-randomness.html
+
+# http://webkit.org/b/46911
+accessibility/aria-hidden-update.html
+
+# Crash in AccessibilityUIElement::addSelection http://webkit.org/b/46913
+platform/win/accessibility/selection-and-focus.html
+
+# http://webkit.org/b/46914
+platform/win/accessibility/img-alt-attribute.html
+
+# http://webkit.org/b/46919
+svg/custom/clip-path-referencing-use2.svg
 
 ################################################################################
 ####################### No bugs filed about the below yet#######################
