@@ -27,12 +27,14 @@ HEADERS = $$BASEDIR/WorkQueue.h \
     WorkQueueItemQt.h \
     LayoutTestControllerQt.h \
     GCControllerQt.h \
+    PlainTextControllerQt.h \
     testplugin.h
 SOURCES = ../../../JavaScriptCore/wtf/Assertions.cpp \
     $$BASEDIR/WorkQueue.cpp \
     DumpRenderTreeQt.cpp \
     EventSenderQt.cpp \
     TextInputControllerQt.cpp \
+    PlainTextControllerQt.cpp \
     WorkQueueItemQt.cpp \
     LayoutTestControllerQt.cpp \
     GCControllerQt.cpp \

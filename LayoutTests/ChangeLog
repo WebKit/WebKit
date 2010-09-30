@@ -1,3 +1,15 @@
+2010-09-30  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Support for PlainTextController
+
+        Unskip editing/text-iterator/basic-iteration.html
+
+        https://bugs.webkit.org/show_bug.cgi?id=38805
+
+        * platform/qt/Skipped:
+
 2010-09-30  Martin Robinson  <mrobinson@igalia.com>
 
         Unskip websocket tests for GTK+, as the bots should be running

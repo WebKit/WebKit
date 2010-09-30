@@ -60,6 +60,7 @@ class DumpRenderTreeSupportQt;
 class EventSender;
 class TextInputController;
 class GCController;
+class PlainTextController;
 
 namespace WebCore {
 
@@ -148,6 +149,7 @@ private:
     EventSender *m_eventSender;
     TextInputController *m_textInputController;
     GCController* m_gcController;
+    PlainTextController* m_plainTextController;
     NetworkAccessManager* m_networkAccessManager;
 
     QFile *m_stdin;
