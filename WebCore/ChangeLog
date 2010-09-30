@@ -1,3 +1,13 @@
+2010-09-29  Chris Fleizach  <cfleizach@apple.com>
+
+        No review. Missed file for patch.
+
+        AX: implement CSS3 Speech "speak"
+        https://bugs.webkit.org/show_bug.cgi?id=46827
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+
 2010-09-29  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.
