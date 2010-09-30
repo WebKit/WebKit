@@ -2,6 +2,19 @@
 
         Reviewed by Kent Tamura.
 
+        [BREWMP] Add a factory function which returns an instance wrapped in PlatformRefPtr.
+        https://bugs.webkit.org/show_bug.cgi?id=46373
+
+        A Brew MP instance has reference count 1 when it is created, so call adoptPlatformRef
+        to wrap the instance in PlatformRefPtr.
+
+        * wtf/brew/ShellBrew.h:
+        (WTF::createRefPtrInstance):
+
+2010-09-30  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Kent Tamura.
+
         [BREWMP] Port PlatformRefPtr
         https://bugs.webkit.org/show_bug.cgi?id=46370
 

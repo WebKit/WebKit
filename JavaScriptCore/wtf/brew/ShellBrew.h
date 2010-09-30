@@ -34,6 +34,7 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/PlatformRefPtr.h>
 
 namespace WTF {
 
@@ -49,8 +50,21 @@ static inline PassOwnPtr<T> createInstance(AEECLSID cls)
     return instance;
 }
 
+template <typename T>
+static inline PlatformRefPtr<T> createRefPtrInstance(AEECLSID cls)
+{
+    T* instance = 0;
+
+    IShell* shell = reinterpret_cast<AEEApplet*>(GETAPPINSTANCE())->m_pIShell;
+    ISHELL_CreateInstance(shell, cls, reinterpret_cast<void**>(&instance));
+    ASSERT(instance);
+
+    return adoptPlatformRef(instance);
+}
+
 } // namespace WTF
 
 using WTF::createInstance;
+using WTF::createRefPtrInstance;
 
 #endif // ShellBrew_h
