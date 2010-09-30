@@ -1,3 +1,17 @@
+2010-09-29  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed build fix.
+        
+        WebCore::ESpeak causes missing symbol with no ENABLE_SVG
+        https://bugs.webkit.org/show_bug.cgi?id=46865
+
+        Moves ESpeak related function definitions outside ENABLE_SVG block.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator ESpeak):
+        (WebCore::CSSPrimitiveValue::operator EVectorEffect):
+
 2010-09-29  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.
