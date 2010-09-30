@@ -2,6 +2,27 @@
 
         Build fix. Not reviewed.
 
+        Remove expectation files in wrong place.
+
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-in-attr-actual.png: Removed.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr-actual.png: Removed.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr-actual.png: Removed.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k2-attr-actual.png: Removed.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k3-attr-actual.png: Removed.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-k4-attr-actual.png: Removed.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-dom-operator-attr-actual.png: Removed.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-in-prop-actual.png: Removed.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-in2-prop-actual.png: Removed.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k1-prop-actual.png: Removed.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k2-prop-actual.png: Removed.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k3-prop-actual.png: Removed.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-k4-prop-actual.png: Removed.
+        * platform/chromium-win/svg/dynamic-updates/SVGFECompositeElement-svgdom-operator-prop-actual.png: Removed.
+
+2010-09-30  Alpha Lam  <hclam@chromium.org>
+
+        Build fix. Not reviewed.
+
         Rename test expectations last submitted.
 
         * platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-in-attr-expected.checksum: Renamed from LayoutTests/platform/chromium-linux/svg/dynamic-updates/SVGFECompositeElement-dom-in-attr-actual.checksum.
