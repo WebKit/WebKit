@@ -1,6 +1,6 @@
 2010-09-30  Nikolas Zimmermann  <nzimmermann@rim.com>
 
-        Reviewed by Dirk Schulze.
+        Reviewed by Andreas Kling.
 
         RenderSVGTextPath lacks isSVGTextPath() method
         https://bugs.webkit.org/show_bug.cgi?id=46888
