@@ -1,5 +1,21 @@
 2010-09-29  Adam Roben  <aroben@apple.com>
 
+        Fix color media queries on Windows
+
+        Fixes <http://webkit.org/b/42973> <rdar://problem/8234072> (color:8)
+        media query does not evaluate to true for 32bpp displays on Windows
+
+        Test: fast/media/color-does-not-include-alpha.html
+
+        Reviewed by Darin Adler.
+
+        * platform/win/PlatformScreenWin.cpp:
+        (WebCore::screenDepthPerComponent): Use screenDepth instead of trying
+        to interpret DEVMODE directly, since screenDepth knows how to correct
+        for video drivers that return 32 instead of 24.
+
+2010-09-29  Adam Roben  <aroben@apple.com>
+
         Make sure screen.colorDepth/screen.pixelDepth don't include the bits
         used for alpha
 

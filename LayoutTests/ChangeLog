@@ -1,5 +1,18 @@
 2010-09-29  Adam Roben  <aroben@apple.com>
 
+        Add test for color:8 media queries
+
+        Test for <http://webkit.org/b/42973> <rdar://problem/8234072>
+        (color:8) media query does not evaluate to true for 32bpp displays on
+        Windows
+
+        Reviewed by Darin Adler.
+
+        * fast/media/color-does-not-include-alpha-expected.txt: Added.
+        * fast/media/color-does-not-include-alpha.html: Added.
+
+2010-09-29  Adam Roben  <aroben@apple.com>
+
         Update screen.colorDepth/screen.pixelDepth test to not allow values
         that contain bits for alpha
 

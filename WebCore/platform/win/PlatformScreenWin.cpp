@@ -79,8 +79,7 @@ int screenDepth(Widget* widget)
 int screenDepthPerComponent(Widget* widget)
 {
     // FIXME: Assumes RGB -- not sure if this is right.
-    DEVMODE deviceInfo = deviceInfoForWidget(widget);
-    return deviceInfo.dmBitsPerPel / 3;
+    return screenDepth(widget) / 3;
 }
 
 bool screenIsMonochrome(Widget* widget)
