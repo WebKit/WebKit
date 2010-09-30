@@ -1,3 +1,10 @@
+2010-09-30  Adam Barth  <abarth@webkit.org>
+
+        Third attempt.  We need a better integration test environment.
+
+        * Scripts/webkitpy/common/net/failuremap.py:
+        * Scripts/webkitpy/common/net/failuremap_unittest.py:
+
 2010-09-30  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Andreas Kling.
