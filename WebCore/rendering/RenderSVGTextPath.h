@@ -29,34 +29,36 @@
 
 namespace WebCore {
 
-    class RenderSVGTextPath : public RenderSVGInline {
-    public:
-        RenderSVGTextPath(Node*);
+class RenderSVGTextPath : public RenderSVGInline {
+public:
+    RenderSVGTextPath(Node*);
 
-        Path layoutPath() const;
-        float startOffset() const;
-        bool exactAlignment() const;
-        bool stretchMethod() const;
+    Path layoutPath() const;
+    float startOffset() const;
+    bool exactAlignment() const;
+    bool stretchMethod() const;
 
-    private:
-        virtual const char* renderName() const { return "RenderSVGTextPath"; }
+    virtual bool isSVGTextPath() const { return true; }
 
-        float m_startOffset;
+private:
+    virtual const char* renderName() const { return "RenderSVGTextPath"; }
 
-        bool m_exactAlignment : 1;
-        bool m_stretchMethod : 1;
+    float m_startOffset;
 
-        Path m_layoutPath;
-    };
+    bool m_exactAlignment : 1;
+    bool m_stretchMethod : 1;
 
-    inline RenderSVGTextPath* toRenderSVGTextPath(RenderObject* object)
-    { 
-        ASSERT(!object || !strcmp(object->renderName(), "RenderSVGTextPath"));
-        return static_cast<RenderSVGTextPath*>(object);
-    }
+    Path m_layoutPath;
+};
 
-    // This will catch anyone doing an unnecessary cast.
-    void toRenderSVGTextPath(const RenderSVGTextPath*);
+inline RenderSVGTextPath* toRenderSVGTextPath(RenderObject* object)
+{ 
+    ASSERT(!object || !strcmp(object->renderName(), "RenderSVGTextPath"));
+    return static_cast<RenderSVGTextPath*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderSVGTextPath(const RenderSVGTextPath*);
 
 }
 
