@@ -262,10 +262,14 @@ void Connection::dispatchConnectionDidClose()
     if (!m_client)
         return;
 
-    m_client->didClose(this);
-    
-    // Reset the client.
+
+    // Because we define a connection as being "valid" based on wheter it has a null client, we null out
+    // the client before calling didClose here. Otherwise, sendSync will try to send a message to the connection and
+    // will then wait indefinitely for a reply.
+    Client* client = m_client;
     m_client = 0;
+    
+    client->didClose(this);
 }
 
 bool Connection::canSendOutgoingMessages() const

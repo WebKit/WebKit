@@ -1,3 +1,14 @@
+2010-09-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Calling Connection::send/sendSync from Connection::Client::didClose should always fail
+        https://bugs.webkit.org/show_bug.cgi?id=46859
+        <rdar://problem/8212583>
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::dispatchConnectionDidClose):
+
 2010-09-29  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Anders Carlsson.
