@@ -1,3 +1,97 @@
+2010-09-30  Renata Hodovan  <reni@inf.u-szeged.hu>
+
+        Reviewed by Dirk Schulze.
+
+        SVGFECompositeElement doesn't support dynamic invalidation, when attributes change.
+        https://bugs.webkit.org/show_bug.cgi?id=46902
+
+        Adding layout tests for feComposite dynamic changes.
+
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-dom-in-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-dom-in-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-dom-k2-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-dom-k2-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-dom-k3-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-dom-k3-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-dom-k4-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-dom-k4-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-dom-operator-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-dom-operator-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-in-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-in-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-in2-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-in2-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-k1-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-k1-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-k2-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-k2-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-k3-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-k3-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-k4-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-k4-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-operator-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-operator-prop-expected.png: Added.
+        * svg/dynamic-updates/SVGFECompositeElement-dom-in-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFECompositeElement-dom-in-attr.html: Added.
+        * svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr.html: Added.
+        * svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr.html: Added.
+        * svg/dynamic-updates/SVGFECompositeElement-dom-k2-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFECompositeElement-dom-k2-attr.html: Added.
+        * svg/dynamic-updates/SVGFECompositeElement-dom-k3-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFECompositeElement-dom-k3-attr.html: Added.
+        * svg/dynamic-updates/SVGFECompositeElement-dom-k4-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFECompositeElement-dom-k4-attr.html: Added.
+        * svg/dynamic-updates/SVGFECompositeElement-dom-operator-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFECompositeElement-dom-operator-attr.html: Added.
+        * svg/dynamic-updates/SVGFECompositeElement-svgdom-in-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFECompositeElement-svgdom-in-prop.html: Added.
+        * svg/dynamic-updates/SVGFECompositeElement-svgdom-in2-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFECompositeElement-svgdom-in2-prop.html: Added.
+        * svg/dynamic-updates/SVGFECompositeElement-svgdom-k1-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFECompositeElement-svgdom-k1-prop.html: Added.
+        * svg/dynamic-updates/SVGFECompositeElement-svgdom-k2-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFECompositeElement-svgdom-k2-prop.html: Added.
+        * svg/dynamic-updates/SVGFECompositeElement-svgdom-k3-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFECompositeElement-svgdom-k3-prop.html: Added.
+        * svg/dynamic-updates/SVGFECompositeElement-svgdom-k4-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFECompositeElement-svgdom-k4-prop.html: Added.
+        * svg/dynamic-updates/SVGFECompositeElement-svgdom-operator-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFECompositeElement-svgdom-operator-prop.html: Added.
+        * svg/dynamic-updates/script-tests/SVGFECompositeElement-dom-in-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFECompositeElement-dom-in2-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFECompositeElement-dom-k1-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFECompositeElement-dom-k2-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFECompositeElement-dom-k3-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFECompositeElement-dom-k4-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFECompositeElement-dom-operator-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFECompositeElement-svgdom-in-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFECompositeElement-svgdom-in2-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFECompositeElement-svgdom-k1-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFECompositeElement-svgdom-k2-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFECompositeElement-svgdom-k3-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFECompositeElement-svgdom-k4-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFECompositeElement-svgdom-operator-prop.js: Added.
+        (executeTest):
+
 2010-09-29  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.

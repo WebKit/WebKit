@@ -71,6 +71,20 @@ void SVGFECompositeElement::parseMappedAttribute(Attribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
+void SVGFECompositeElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+
+    if (attrName == SVGNames::inAttr
+        || attrName == SVGNames::in2Attr
+        || attrName == SVGNames::operatorAttr
+        || attrName == SVGNames::k1Attr
+        || attrName == SVGNames::k2Attr
+        || attrName == SVGNames::k3Attr
+        || attrName == SVGNames::k4Attr)
+        invalidate();
+}
+
 void SVGFECompositeElement::synchronizeProperty(const QualifiedName& attrName)
 {
     SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
