@@ -1,3 +1,19 @@
+2010-09-29  Adam Roben  <aroben@apple.com>
+
+        Update screen.colorDepth/screen.pixelDepth test to not allow values
+        that contain bits for alpha
+
+        Fixes <http://webkit.org/b/42972> <rdar://problem/8234071>
+        screen.colorDepth and screen.pixelDepth return 32 on Windows, but
+        should return 24 (according to CSSOM View and Firefox)
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/Window/window-screen-properties-expected.txt: Updated
+        results.
+        * fast/dom/Window/window-screen-properties.html: Changed only to
+        expect 24.
+
 2010-09-29  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
