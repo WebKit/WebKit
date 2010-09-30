@@ -137,7 +137,3 @@ storage/indexeddb
 # Philip's canvas tests that fail on SnowLeopard only
 canvas/philip/tests/2d.gradient.interpolate.overlap.html
 canvas/philip/tests/2d.gradient.interpolate.overlap2.html
-
-# Crashing due to interaction with earlier tests
-# https://bugs.webkit.org/show_bug.cgi?id=46870
-fast/canvas/webgl/draw-elements-out-of-bounds.html
