@@ -1,3 +1,16 @@
+2010-09-29  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        WebKit2 on Windows should use Windows fonts for the various standard
+        font families
+        https://bugs.webkit.org/show_bug.cgi?id=43499
+        <rdar://problem/8272758>
+
+        Reviewed by Adam Roben.
+
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::WebPreferencesStore::WebPreferencesStore):
+        Use Windows fonts on Windows.
+
 2010-09-30  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

@@ -208,6 +208,20 @@ void TestController::resetStateToConsistentValues()
     WKPreferencesSetFontSmoothingLevel(preferences, kWKFontSmoothingLevelNoSubpixelAntiAliasing);
     WKPreferencesSetXSSAuditorEnabled(preferences, false);
 
+    static WKStringRef standardFontFamily = WKStringCreateWithCFString(CFSTR("Times"));
+    static WKStringRef cursiveFontFamily = WKStringCreateWithCFString(CFSTR("Apple Chancery"));
+    static WKStringRef fantasyFontFamily = WKStringCreateWithCFString(CFSTR("Papyrus"));
+    static WKStringRef fixedFontFamily = WKStringCreateWithCFString(CFSTR("Courier"));
+    static WKStringRef sansSerifFontFamily = WKStringCreateWithCFString(CFSTR("Helvetica"));
+    static WKStringRef serifFontFamily = WKStringCreateWithCFString(CFSTR("Times"));
+
+    WKPreferencesSetStandardFontFamily(preferences, standardFontFamily);
+    WKPreferencesSetCursiveFontFamily(preferences, cursiveFontFamily);
+    WKPreferencesSetFantasyFontFamily(preferences, fantasyFontFamily);
+    WKPreferencesSetFixedFontFamily(preferences, fixedFontFamily);
+    WKPreferencesSetSansSerifFontFamily(preferences, sansSerifFontFamily);
+    WKPreferencesSetSerifFontFamily(preferences, serifFontFamily);
+
     m_mainWebView->focus();
 
     // Reset main page back to about:blank
