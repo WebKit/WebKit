@@ -1,3 +1,39 @@
+2010-09-30  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] Refactor ChromiumDataObject to use getters/setters.
+        https://bugs.webkit.org/show_bug.cgi?id=46559
+
+        This is an intermediate step to converting ChromiumDataObject to use
+        callbacks to the browser to retrieve data.
+
+        * public/WebDragData.h:
+        * src/WebDragData.cpp:
+        (WebKit::WebDragData::initialize):
+        (WebKit::WebDragData::url):
+        (WebKit::WebDragData::setURL):
+        (WebKit::WebDragData::urlTitle):
+        (WebKit::WebDragData::setURLTitle):
+        (WebKit::WebDragData::downloadMetadata):
+        (WebKit::WebDragData::setDownloadMetadata):
+        (WebKit::WebDragData::fileExtension):
+        (WebKit::WebDragData::setFileExtension):
+        (WebKit::WebDragData::hasFileNames):
+        (WebKit::WebDragData::fileNames):
+        (WebKit::WebDragData::setFileNames):
+        (WebKit::WebDragData::appendToFileNames):
+        (WebKit::WebDragData::plainText):
+        (WebKit::WebDragData::setPlainText):
+        (WebKit::WebDragData::htmlText):
+        (WebKit::WebDragData::setHTMLText):
+        (WebKit::WebDragData::htmlBaseURL):
+        (WebKit::WebDragData::setHTMLBaseURL):
+        (WebKit::WebDragData::fileContentFileName):
+        (WebKit::WebDragData::setFileContentFileName):
+        (WebKit::WebDragData::fileContent):
+        (WebKit::WebDragData::setFileContent):
+
 2010-09-29  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

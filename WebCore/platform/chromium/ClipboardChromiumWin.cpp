@@ -44,11 +44,11 @@ String ClipboardChromium::validateFileName(const String& title, ChromiumDataObje
 {
     // Remove any invalid file system characters.
     String result = title.removeCharacters(&isInvalidFileCharacter);
-    if (result.length() + dataObject->fileExtension.length() + 1 >= MAX_PATH) {
-        if (dataObject->fileExtension.length() + 1 >= MAX_PATH)
-            dataObject->fileExtension = "";
-        if (result.length() + dataObject->fileExtension.length() + 1 >= MAX_PATH)
-            result = result.substring(0, MAX_PATH - dataObject->fileExtension.length() - 1);
+    if (result.length() + dataObject->fileExtension().length() + 1 >= MAX_PATH) {
+        if (dataObject->fileExtension().length() + 1 >= MAX_PATH)
+            dataObject->setFileExtension("");
+        if (result.length() + dataObject->fileExtension().length() + 1 >= MAX_PATH)
+            result = result.substring(0, MAX_PATH - dataObject->fileExtension().length() - 1);
     }
     return result;
 }

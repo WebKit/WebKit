@@ -1,3 +1,79 @@
+2010-09-30  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] Refactor ChromiumDataObject to use getters/setters.
+        https://bugs.webkit.org/show_bug.cgi?id=46559
+
+        This is an intermediate step to converting ChromiumDataObject to use
+        callbacks to the browser to retrieve data.
+
+        This is covered by existing tests.
+
+        * editing/chromium/EditorChromium.cpp:
+        (WebCore::Editor::newGeneralClipboard):
+        * page/chromium/EventHandlerChromium.cpp:
+        (WebCore::EventHandler::createDraggingClipboard):
+        * platform/chromium/ChromiumDataObject.cpp:
+        (WebCore::ChromiumDataObject::clearData):
+        (WebCore::ChromiumDataObject::clearAll):
+        (WebCore::ChromiumDataObject::clearAllExceptFiles):
+        (WebCore::ChromiumDataObject::hasData):
+        (WebCore::ChromiumDataObject::types):
+        (WebCore::ChromiumDataObject::getData):
+        (WebCore::ChromiumDataObject::setData):
+        (WebCore::ChromiumDataObject::ChromiumDataObject):
+        * platform/chromium/ChromiumDataObject.h:
+        (WebCore::ChromiumDataObject::create):
+        (WebCore::ChromiumDataObject::urlTitle):
+        (WebCore::ChromiumDataObject::setUrlTitle):
+        (WebCore::ChromiumDataObject::htmlBaseUrl):
+        (WebCore::ChromiumDataObject::setHtmlBaseUrl):
+        (WebCore::ChromiumDataObject::containsFilenames):
+        (WebCore::ChromiumDataObject::filenames):
+        (WebCore::ChromiumDataObject::setFilenames):
+        (WebCore::ChromiumDataObject::fileExtension):
+        (WebCore::ChromiumDataObject::setFileExtension):
+        (WebCore::ChromiumDataObject::fileContentFilename):
+        (WebCore::ChromiumDataObject::setFileContentFilename):
+        (WebCore::ChromiumDataObject::fileContent):
+        (WebCore::ChromiumDataObject::setFileContent):
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::normalizeType):
+        (WebCore::ClipboardChromium::clearData):
+        (WebCore::ClipboardChromium::clearAllData):
+        (WebCore::ClipboardChromium::getData):
+        (WebCore::ClipboardChromium::setData):
+        (WebCore::ClipboardChromium::types):
+        (WebCore::ClipboardChromium::files):
+        (WebCore::writeImageToDataObject):
+        (WebCore::ClipboardChromium::declareAndWriteDragImage):
+        (WebCore::ClipboardChromium::writeURL):
+        (WebCore::ClipboardChromium::writeRange):
+        (WebCore::ClipboardChromium::writePlainText):
+        * platform/chromium/ClipboardChromiumWin.cpp:
+        (WebCore::ClipboardChromium::validateFileName):
+        * platform/chromium/ClipboardMimeTypes.cpp:
+        * platform/chromium/ClipboardMimeTypes.h:
+        * platform/chromium/DragDataChromium.cpp:
+        (WebCore::containsHTML):
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+        (WebCore::DragData::containsFiles):
+        (WebCore::DragData::asFilenames):
+        (WebCore::DragData::containsPlainText):
+        (WebCore::DragData::asPlainText):
+        (WebCore::DragData::canSmartReplace):
+        (WebCore::DragData::asFragment):
+        * platform/chromium/ReadableDataObject.cpp:
+        (WebCore::ReadableDataObject::getURL):
+        (WebCore::ReadableDataObject::getHTML):
+        * platform/chromium/WritableDataObject.cpp:
+        (WebCore::WritableDataObject::clearData):
+        (WebCore::WritableDataObject::setData):
+        (WebCore::WritableDataObject::setURL):
+        (WebCore::WritableDataObject::setHTML):
+
 2010-09-30  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

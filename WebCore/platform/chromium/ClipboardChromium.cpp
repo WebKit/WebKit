@@ -28,8 +28,8 @@
 #include "ClipboardChromium.h"
 
 #include "CachedImage.h"
-#include "ChromiumBridge.h"
 #include "ChromiumDataObject.h"
+#include "ClipboardMimeTypes.h"
 #include "ClipboardUtilitiesChromium.h"
 #include "Document.h"
 #include "DragData.h"
@@ -40,7 +40,6 @@
 #include "Image.h"
 #include "MIMETypeRegistry.h"
 #include "NamedNodeMap.h"
-#include "Pasteboard.h"
 #include "PlatformString.h"
 #include "Range.h"
 #include "RenderImage.h"
@@ -55,40 +54,12 @@ using namespace HTMLNames;
 // We provide the IE clipboard types (URL and Text), and the clipboard types specified in the WHATWG Web Applications 1.0 draft
 // see http://www.whatwg.org/specs/web-apps/current-work/ Section 6.3.5.3
 
-enum ClipboardDataType {
-    ClipboardDataTypeNone,
-
-    ClipboardDataTypeURL,
-    ClipboardDataTypeURIList,
-    ClipboardDataTypeDownloadURL,
-    ClipboardDataTypePlainText,
-    ClipboardDataTypeHTML,
-
-    ClipboardDataTypeOther,
-};
-
-// Per RFC 2483, the line separator for "text/..." MIME types is CR-LF.
-static char const* const textMIMETypeLineSeparator = "\r\n";
-
-static ClipboardDataType clipboardTypeFromMIMEType(const String& type)
+static String normalizeType(const String& type)
 {
     String cleanType = type.stripWhiteSpace().lower();
-    if (cleanType.isEmpty())
-        return ClipboardDataTypeNone;
-
-    // Includes two special cases for IE compatibility.
-    if (cleanType == "text" || cleanType == "text/plain" || cleanType.startsWith("text/plain;"))
-        return ClipboardDataTypePlainText;
-    if (cleanType == "url")
-        return ClipboardDataTypeURL;
-    if (cleanType == "text/uri-list")
-        return ClipboardDataTypeURIList;
-    if (cleanType == "downloadurl")
-        return ClipboardDataTypeDownloadURL;
-    if (cleanType == "text/html")
-        return ClipboardDataTypeHTML;
-
-    return ClipboardDataTypeOther;
+    if (cleanType == mimeTypeText || cleanType.startsWith(mimeTypeTextPlainEtc))
+        return mimeTypeTextPlain;
+    return cleanType;
 }
 
 PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy policy, DragData* dragData, Frame* frame)
@@ -117,36 +88,7 @@ void ClipboardChromium::clearData(const String& type)
     if (policy() != ClipboardWritable || !m_dataObject)
         return;
 
-    ClipboardDataType dataType = clipboardTypeFromMIMEType(type);
-    switch (dataType) {
-    case ClipboardDataTypeNone:
-        // If called with no arguments, everything except the file list must be cleared.
-        // (See HTML5 spec, "The DragEvent and DataTransfer interfaces")
-        m_dataObject->clearAllExceptFiles();
-        return;
-
-    case ClipboardDataTypeURL:
-    case ClipboardDataTypeURIList:
-        m_dataObject->clearURL();
-        return;
-
-    case ClipboardDataTypeDownloadURL:
-        m_dataObject->downloadMetadata = "";
-        return;
-        
-    case ClipboardDataTypePlainText:
-        m_dataObject->plainText = "";
-        return;
-
-    case ClipboardDataTypeHTML:
-        m_dataObject->textHtml = "";
-        m_dataObject->htmlBaseUrl = KURL();
-        return;
-
-    case ClipboardDataTypeOther:
-        // Not yet implemented, see https://bugs.webkit.org/show_bug.cgi?id=34410
-        return;
-    }
+    m_dataObject->clearData(normalizeType(type));
 
     ASSERT_NOT_REACHED();
 }
@@ -156,7 +98,7 @@ void ClipboardChromium::clearAllData()
     if (policy() != ClipboardWritable)
         return;
 
-    m_dataObject->clear();
+    m_dataObject->clearAll();
 }
 
 String ClipboardChromium::getData(const String& type, bool& success) const
@@ -165,80 +107,7 @@ String ClipboardChromium::getData(const String& type, bool& success) const
     if (policy() != ClipboardReadable || !m_dataObject)
         return String();
 
-    ClipboardDataType dataType = clipboardTypeFromMIMEType(type);
-    switch (dataType) {
-    case ClipboardDataTypeNone:
-        return String();
-
-    // Hack for URLs. file URLs are used internally for drop's default action, but we don't want
-    // to expose them to the page, so we filter them out here.
-    case ClipboardDataTypeURIList:
-        {
-            String text;
-            for (size_t i = 0; i < m_dataObject->uriList.size(); ++i) {
-                const String& uri = m_dataObject->uriList[i];
-                if (protocolIs(uri, "file"))
-                    continue;
-                ASSERT(!uri.isEmpty());
-                if (!text.isEmpty())
-                    text.append(textMIMETypeLineSeparator);
-                // URIs have already been canonicalized, so copy everything verbatim.
-                text.append(uri);
-            }
-            success = !text.isEmpty();
-            return text;
-        }
-
-    case ClipboardDataTypeURL:
-        // In case of a previous setData('text/uri-list'), setData() has already
-        // prepared the 'url' member, so we can just retrieve it here.
-        if (!m_dataObject->url.isEmpty() && !m_dataObject->url.isLocalFile()) {
-            success = true;
-            return m_dataObject->url.string();
-        }
-        return String();
-
-    case ClipboardDataTypeDownloadURL:
-        success = !m_dataObject->downloadMetadata.isEmpty();
-        return m_dataObject->downloadMetadata;
-    
-    case ClipboardDataTypePlainText:
-        if (isForCopyAndPaste()) {
-            PasteboardPrivate::ClipboardBuffer buffer = 
-                Pasteboard::generalPasteboard()->isSelectionMode() ?
-                PasteboardPrivate::SelectionBuffer : 
-                PasteboardPrivate::StandardBuffer;
-            String text = ChromiumBridge::clipboardReadPlainText(buffer);
-            success = !text.isEmpty();
-            return text;
-        }
-        // Otherwise return whatever is stored in plainText.
-        success = !m_dataObject->plainText.isEmpty();
-        return m_dataObject->plainText;
-
-    case ClipboardDataTypeHTML:
-        if (isForCopyAndPaste()) {
-            PasteboardPrivate::ClipboardBuffer buffer = 
-                Pasteboard::generalPasteboard()->isSelectionMode() ?
-                PasteboardPrivate::SelectionBuffer : 
-                PasteboardPrivate::StandardBuffer;
-            String htmlText;
-            KURL sourceURL;
-            ChromiumBridge::clipboardReadHTML(buffer, &htmlText, &sourceURL);
-            success = !htmlText.isEmpty();
-            return htmlText;
-        }
-        // Otherwise return whatever is stored in textHtml.
-        success = !m_dataObject->textHtml.isEmpty();
-        return m_dataObject->textHtml;
-
-    case ClipboardDataTypeOther:
-        // not yet implemented, see https://bugs.webkit.org/show_bug.cgi?id=34410
-        return String();
-    }
-
-    ASSERT_NOT_REACHED();
-    return String();
+    return m_dataObject->getData(normalizeType(type), success);
 }
 
 bool ClipboardChromium::setData(const String& type, const String& data)
@@ -246,69 +115,7 @@ bool ClipboardChromium::setData(const String& type, const String& data)
     if (policy() != ClipboardWritable)
         return false;
 
-    ClipboardDataType dataType = clipboardTypeFromMIMEType(type);
-    switch (dataType) {
-    case ClipboardDataTypeNone:
-        return false;
-
-    case ClipboardDataTypeURL:
-        // For setData(), "URL" must be treated as "text/uri-list".
-        // (See HTML5 spec, "The DragEvent and DataTransfer interfaces")
-    case ClipboardDataTypeURIList:
-        m_dataObject->url = KURL();
-        // Line separator is \r\n per RFC 2483 - however, for compatibility reasons
-        // we also allow just \n here. 
-        data.split('\n', m_dataObject->uriList);
-        // Strip white space on all lines, including trailing \r from above split.
-        // If this leaves a line empty, remove it completely.
-        //
-        // Also, copy the first valid URL into the 'url' member as well.
-        // In case no entry is a valid URL (i.e., remarks only), then we leave 'url' empty.
-        // I.e., in that case subsequent calls to getData("URL") will get an empty string.
-        // This is in line with the HTML5 spec (see "The DragEvent and DataTransfer interfaces").
-        for (size_t i = 0; i < m_dataObject->uriList.size(); /**/) {
-            String& line = m_dataObject->uriList[i];
-            line = line.stripWhiteSpace();
-            if (line.isEmpty()) {
-                m_dataObject->uriList.remove(i);
-                continue;
-            }
-            ++i;
-            // Only copy the first valid URL.
-            if (m_dataObject->url.isValid())
-                continue;
-            // Skip remarks.
-            if (line[0] == '#')
-                continue;
-            KURL url = KURL(ParsedURLString, line);
-            if (url.isValid())
-                m_dataObject->url = url;
-        }
-        if (m_dataObject->uriList.isEmpty()) {
-            ASSERT(m_dataObject->url.isEmpty());
-            return data.isEmpty();
-        }
-        return true;
-
-    case ClipboardDataTypeDownloadURL:
-        m_dataObject->downloadMetadata = data;
-        return true;
-
-    case ClipboardDataTypePlainText:
-        m_dataObject->plainText = data;
-        return true;
-
-    case ClipboardDataTypeHTML:
-        m_dataObject->textHtml = data;
-        return true;
-
-    case ClipboardDataTypeOther:
-        // Not yet implemented, see https://bugs.webkit.org/show_bug.cgi?id=34410
-        return false;
-    }
-    
-    ASSERT_NOT_REACHED();
-    return false;
+    return m_dataObject->setData(normalizeType(type), data);
 }
 
 // extensions beyond IE's API
@@ -321,33 +128,7 @@ HashSet<String> ClipboardChromium::types() const
     if (!m_dataObject)
         return results;
 
-    if (!m_dataObject->filenames.isEmpty())
-        results.add("Files");
-
-    // Hack for URLs. file URLs are used internally for drop's default action, but we don't want
-    // to expose them to the page, so we filter them out here.
-    if (m_dataObject->url.isValid() && !m_dataObject->url.isLocalFile()) {
-        ASSERT(!m_dataObject->uriList.isEmpty());
-        results.add("URL");
-    }
-
-    if (!m_dataObject->uriList.isEmpty()) {
-        // Verify that the URI list contains at least one non-file URL.
-        for (Vector<String>::const_iterator it = m_dataObject->uriList.begin();
-             it != m_dataObject->uriList.end(); ++it) {
-            if (!protocolIs(*it, "file")) {
-                // Note that even if the URI list is not empty, it may not actually
-                // contain a valid URL, so we can't return "URL" here.
-                results.add("text/uri-list");
-                break;
-            }
-        }
-    }
-
-    if (!m_dataObject->plainText.isEmpty()) {
-        results.add("Text");
-        results.add("text/plain");
-    }
+    results = m_dataObject->types();
 
     return results;
 }
@@ -357,12 +138,13 @@ PassRefPtr<FileList> ClipboardChromium::files() const
     if (policy() != ClipboardReadable)
         return FileList::create();
 
-    if (!m_dataObject || m_dataObject->filenames.isEmpty())
+    if (!m_dataObject)
         return FileList::create();
 
+    const Vector<String>& filenames = m_dataObject->filenames();
     RefPtr<FileList> fileList = FileList::create();
-    for (size_t i = 0; i < m_dataObject->filenames.size(); ++i)
-        fileList->append(File::create(m_dataObject->filenames.at(i)));
+    for (size_t i = 0; i < filenames.size(); ++i)
+        fileList->append(File::create(filenames.at(i)));
 
     return fileList.release();
 }
@@ -461,7 +243,7 @@ static void writeImageToDataObject(ChromiumDataObject* dataObject, Element* elem
     if (!imageBuffer || !imageBuffer->size())
         return;
 
-    dataObject->fileContent = imageBuffer;
+    dataObject->setFileContent(imageBuffer);
 
     // Determine the filename for the file contents of the image.  We try to
     // use the alt tag if one exists, otherwise we fall back on the suggested
@@ -469,13 +251,13 @@ static void writeImageToDataObject(ChromiumDataObject* dataObject, Element* elem
     // in the URL.
     String extension = MIMETypeRegistry::getPreferredExtensionForMIMEType(
         cachedImage->response().mimeType());
-    dataObject->fileExtension = extension.isEmpty() ? "" : "." + extension;
+    dataObject->setFileExtension(extension.isEmpty() ? "" : "." + extension);
     String title = element->getAttribute(altAttr);
     if (title.isEmpty())
         title = cachedImage->response().suggestedFilename();
 
     title = ClipboardChromium::validateFileName(title, dataObject);
-    dataObject->fileContentFilename = title + dataObject->fileExtension;
+    dataObject->setFileContentFilename(title + dataObject->fileExtension());
 }
 
 void ClipboardChromium::declareAndWriteDragImage(Element* element, const KURL& url, const String& title, Frame* frame)
@@ -483,8 +265,8 @@ void ClipboardChromium::declareAndWriteDragImage(Element* element, const KURL& u
     if (!m_dataObject)
         return;
 
-    m_dataObject->url = url;
-    m_dataObject->urlTitle = title;
+    m_dataObject->setData(mimeTypeURL, url);
+    m_dataObject->setUrlTitle(title);
 
     // Write the bytes in the image to the file format.
     writeImageToDataObject(m_dataObject.get(), element, url);
@@ -498,7 +280,7 @@ void ClipboardChromium::declareAndWriteDragImage(Element* element, const KURL& u
         return;
 
     // Put img tag on the clipboard referencing the image
-    m_dataObject->textHtml = imageToMarkup(fullURL, element);
+    m_dataObject->setData(mimeTypeTextHTML, imageToMarkup(fullURL, element));
 }
 
 void ClipboardChromium::writeURL(const KURL& url, const String& title, Frame*)
@@ -506,17 +288,15 @@ void ClipboardChromium::writeURL(const KURL& url, const String& title, Frame*)
     if (!m_dataObject)
         return;
     ASSERT(!url.isEmpty());
-    m_dataObject->url = url;
-    m_dataObject->urlTitle = title;
-    m_dataObject->uriList.clear();
-    m_dataObject->uriList.append(url);
+    m_dataObject->setData(mimeTypeURL, url);
+    m_dataObject->setUrlTitle(title);
 
     // The URL can also be used as plain text.
-    m_dataObject->plainText = url.string();
+    m_dataObject->setData(mimeTypeTextPlain, url.string());
 
     // The URL can also be used as an HTML fragment.
-    m_dataObject->textHtml = urlToMarkup(url, title);
-    m_dataObject->htmlBaseUrl = url;
+    m_dataObject->setData(mimeTypeTextHTML, urlToMarkup(url, title));
+    m_dataObject->setHtmlBaseUrl(url);
 }
 
 void ClipboardChromium::writeRange(Range* selectedRange, Frame* frame)
@@ -525,15 +305,15 @@ void ClipboardChromium::writeRange(Range* selectedRange, Frame* frame)
     if (!m_dataObject)
          return;
 
-    m_dataObject->textHtml = createMarkup(selectedRange, 0, AnnotateForInterchange, false, AbsoluteURLs);
-    m_dataObject->htmlBaseUrl = frame->document()->url();
+    m_dataObject->setData(mimeTypeTextHTML, createMarkup(selectedRange, 0, AnnotateForInterchange, false, AbsoluteURLs));
+    m_dataObject->setHtmlBaseUrl(frame->document()->url());
 
     String str = frame->editor()->selectedText();
 #if OS(WINDOWS)
     replaceNewlinesWithWindowsStyleNewlines(str);
 #endif
     replaceNBSPWithSpace(str);
-    m_dataObject->plainText = str;
+    m_dataObject->setData(mimeTypeTextPlain, str);
 }
 
 void ClipboardChromium::writePlainText(const String& text)
@@ -546,7 +326,7 @@ void ClipboardChromium::writePlainText(const String& text)
     replaceNewlinesWithWindowsStyleNewlines(str);
 #endif
     replaceNBSPWithSpace(str);
-    m_dataObject->plainText = str;
+    m_dataObject->setData(mimeTypeTextPlain, str);
 }
 
 bool ClipboardChromium::hasData()

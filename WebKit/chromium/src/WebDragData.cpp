@@ -32,6 +32,7 @@
 #include "WebDragData.h"
 
 #include "ChromiumDataObject.h"
+#include "ClipboardMimeTypes.h"
 #include "WebData.h"
 #include "WebString.h"
 #include "WebURL.h"
@@ -48,7 +49,7 @@ class WebDragDataPrivate : public ChromiumDataObject {
 
 void WebDragData::initialize()
 {
-    assign(static_cast<WebDragDataPrivate*>(ChromiumDataObject::create().releaseRef()));
+    assign(static_cast<WebDragDataPrivate*>(ChromiumDataObject::create(Clipboard::DragAndDrop).releaseRef()));
 }
 
 void WebDragData::reset()
@@ -64,137 +65,144 @@ void WebDragData::assign(const WebDragData& other)
     assign(p);
 }
 
-WebURL WebDragData::url() const
+WebString WebDragData::url() const
 {
     ASSERT(!isNull());
-    return m_private->getURL();
+    bool ignoredSuccess;
+    return m_private->getData(mimeTypeURL, ignoredSuccess);
 }
 
 void WebDragData::setURL(const WebURL& url)
 {
     ensureMutable();
-    m_private->setURL(url);
+    m_private->setData(mimeTypeURL, KURL(url).string());
 }
 
 WebString WebDragData::urlTitle() const
 {
     ASSERT(!isNull());
-    return m_private->urlTitle;
+    return m_private->urlTitle();
 }
 
 void WebDragData::setURLTitle(const WebString& urlTitle)
 {
     ensureMutable();
-    m_private->urlTitle = urlTitle;
+    m_private->setUrlTitle(urlTitle);
 }
 
 WebString WebDragData::downloadMetadata() const
 {
     ASSERT(!isNull());
-    return m_private->downloadMetadata;
+    bool ignoredSuccess;
+    return m_private->getData(mimeTypeDownloadURL, ignoredSuccess);
 }
 
 void WebDragData::setDownloadMetadata(const WebString& downloadMetadata)
 {
     ensureMutable();
-    m_private->downloadMetadata = downloadMetadata;
+    m_private->setData(mimeTypeDownloadURL, downloadMetadata);
 }
 
 WebString WebDragData::fileExtension() const
 {
     ASSERT(!isNull());
-    return m_private->fileExtension;
+    return m_private->fileExtension();
 }
 
 void WebDragData::setFileExtension(const WebString& fileExtension)
 {
     ensureMutable();
-    m_private->fileExtension = fileExtension;
+    m_private->setFileExtension(fileExtension);
 }
 
 bool WebDragData::hasFileNames() const
 {
     ASSERT(!isNull());
-    return !m_private->filenames.isEmpty();
+    return m_private->containsFilenames();
 }
 
 void WebDragData::fileNames(WebVector<WebString>& fileNames) const
 {
     ASSERT(!isNull());
-    fileNames = m_private->filenames;
+    fileNames = m_private->filenames();
 }
 
 void WebDragData::setFileNames(const WebVector<WebString>& fileNames)
 {
     ensureMutable();
-    m_private->filenames.clear();
-    m_private->filenames.append(fileNames.data(), fileNames.size());
+    Vector<String> fileNamesCopy;
+    fileNamesCopy.append(fileNames.data(), fileNames.size());
+    m_private->setFilenames(fileNamesCopy);
 }
 
 void WebDragData::appendToFileNames(const WebString& fileName)
 {
     ensureMutable();
-    m_private->filenames.append(fileName);
+    Vector<String> fileNames = m_private->filenames();
+    fileNames.append(fileName);
+    m_private->setFilenames(fileNames);
 }
 
 WebString WebDragData::plainText() const
 {
     ASSERT(!isNull());
-    return m_private->plainText;
+    bool ignoredSuccess;
+    return m_private->getData(mimeTypeTextPlain, ignoredSuccess);
 }
 
 void WebDragData::setPlainText(const WebString& plainText)
 {
     ensureMutable();
-    m_private->plainText = plainText;
+    m_private->setData(mimeTypeTextPlain, plainText);
 }
 
 WebString WebDragData::htmlText() const
 {
     ASSERT(!isNull());
-    return m_private->textHtml;
+    bool ignoredSuccess;
+    return m_private->getData(mimeTypeTextHTML, ignoredSuccess);
 }
 
 void WebDragData::setHTMLText(const WebString& htmlText)
 {
     ensureMutable();
-    m_private->textHtml = htmlText;
+    m_private->setData(mimeTypeTextHTML, htmlText);
 }
 
 WebURL WebDragData::htmlBaseURL() const
 {
     ASSERT(!isNull());
-    return m_private->htmlBaseUrl;
+    return m_private->htmlBaseUrl();
 }
 
 void WebDragData::setHTMLBaseURL(const WebURL& htmlBaseURL)
 {
     ensureMutable();
-    m_private->htmlBaseUrl = htmlBaseURL;
+    m_private->setHtmlBaseUrl(htmlBaseURL);
 }
 
 WebString WebDragData::fileContentFileName() const
 {
     ASSERT(!isNull());
-    return m_private->fileContentFilename;
+    return m_private->fileContentFilename();
 }
 
 void WebDragData::setFileContentFileName(const WebString& fileName)
 {
     ensureMutable();
-    m_private->fileContentFilename = fileName;
+    m_private->setFileContentFilename(fileName);
 }
 
 WebData WebDragData::fileContent() const
 {
     ASSERT(!isNull());
-    return WebData(m_private->fileContent);
+    return WebData(m_private->fileContent());
 }
 
 void WebDragData::setFileContent(const WebData& fileContent)
 {
     ensureMutable();
-    m_private->fileContent = fileContent;
+    m_private->setFileContent(fileContent);
 }
 
 WebDragData::WebDragData(const WTF::PassRefPtr<WebCore::ChromiumDataObject>& data)

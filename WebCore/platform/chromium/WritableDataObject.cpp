@@ -49,9 +49,9 @@ WritableDataObject::WritableDataObject(bool isForDragging)
 void WritableDataObject::clearData(const String& type)
 {
     m_dataMap.remove(type);
-    if (type == textUriListType)
+    if (type == mimeTypeTextURIList)
         m_urlTitle = "";
-    else if (type == textHtmlType)
+    else if (type == mimeTypeTextHTML)
         m_htmlBaseURL = KURL();
 }
 
@@ -81,22 +81,22 @@ bool WritableDataObject::setData(const String& type, const String& data)
         return true;
     }
     m_dataMap.set(type, data);
-    if (type == textUriListType)
+    if (type == mimeTypeTextURIList)
         m_urlTitle = "";
-    else if (type == textHtmlType)
+    else if (type == mimeTypeTextHTML)
         m_htmlBaseURL = KURL();
     return true;
 }
 
 void WritableDataObject::setURL(const String& url, const String& title)
 {
-    setData(textUriListType, url);
+    setData(mimeTypeTextURIList, url);
     m_urlTitle = title;
 }
 
 void WritableDataObject::setHTML(const String& html, const KURL& baseURL)
 {
-    setData(textHtmlType, html);
+    setData(mimeTypeTextHTML, html);
     m_htmlBaseURL = baseURL;
 }
 

@@ -81,7 +81,7 @@ String ReadableDataObject::getURL(String* title) const
     if (!title)
         title = &ignoredTitle;
     ChromiumBridge::clipboardReadData(
-        clipboardBuffer(m_isForDragging), textUriListType, url, *title);
+        clipboardBuffer(m_isForDragging), mimeTypeTextURIList, url, *title);
     return url;
 }
 
@@ -92,7 +92,7 @@ String ReadableDataObject::getHTML(String* baseURL) const
     if (!baseURL)
         baseURL = &ignoredBaseURL;
     ChromiumBridge::clipboardReadData(
-        clipboardBuffer(m_isForDragging), textHtmlType, html, *baseURL);
+        clipboardBuffer(m_isForDragging), mimeTypeTextHTML, html, *baseURL);
     return html;
 }
 

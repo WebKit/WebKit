@@ -33,9 +33,13 @@
 
 namespace WebCore {
 
-extern const char textPlainType[];
-extern const char textHtmlType[];
-extern const char textUriListType[];
+extern const char mimeTypeText[];
+extern const char mimeTypeTextPlain[];
+extern const char mimeTypeTextPlainEtc[];
+extern const char mimeTypeTextHTML[];
+extern const char mimeTypeURL[];
+extern const char mimeTypeTextURIList[];
+extern const char mimeTypeDownloadURL[];
 
 } // namespace WebCore
 
