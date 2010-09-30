@@ -43,6 +43,7 @@ class LoggingDelegate(QueueEngineDelegate):
         self._test = test
         self._callbacks = []
         self._run_before = False
+        self.stop_message = None
 
     expected_callbacks = [
         'queue_log_path',
@@ -52,7 +53,8 @@ class LoggingDelegate(QueueEngineDelegate):
         'should_proceed_with_work_item',
         'work_item_log_path',
         'process_work_item',
-        'should_continue_work_queue'
+        'should_continue_work_queue',
+        'stop_work_queue',
     ]
 
     def record(self, method_name):
@@ -95,20 +97,19 @@ class LoggingDelegate(QueueEngineDelegate):
         self.record("handle_unexpected_error")
         self._test.assertEquals(work_item, "work_item")
 
+    def stop_work_queue(self, message):
+        self.record("stop_work_queue")
+        self.stop_message = message
+
 
 class RaisingDelegate(LoggingDelegate):
     def __init__(self, test, exception):
         LoggingDelegate.__init__(self, test)
         self._exception = exception
-        self.stop_message = None
 
     def process_work_item(self, work_item):
         self.record("process_work_item")
         raise self._exception
-
-    def stop_work_queue(self, message):
-        self.record("stop_work_queue")
-        self.stop_message = message
 
 
 class NotSafeToProceedDelegate(LoggingDelegate):
@@ -134,6 +135,7 @@ class QueueEngineTest(unittest.TestCase):
         delegate = LoggingDelegate(self)
         work_queue = QueueEngine("trivial-queue", delegate, threading.Event())
         work_queue.run()
+        self.assertEquals(delegate.stop_message, "Delegate terminated queue.")
         self.assertEquals(delegate._callbacks, LoggingDelegate.expected_callbacks)
         self.assertTrue(os.path.exists(os.path.join(self.temp_dir, "queue_log_path")))
         self.assertTrue(os.path.exists(os.path.join(self.temp_dir, "work_log_path", "work_item.log")))
@@ -181,12 +183,8 @@ class QueueEngineTest(unittest.TestCase):
         work_queue = FastQueueEngine(delegate)
         work_queue.run()
         expected_callbacks = LoggingDelegate.expected_callbacks[:]
-        next_work_item_index = expected_callbacks.index('next_work_item')
-        # We slice out the common part of the expected callbacks.
-        # We add 2 here to include should_proceed_with_work_item, which is
-        # a pain to search for directly because it occurs twice.
-        expected_callbacks = expected_callbacks[:next_work_item_index + 2]
-        expected_callbacks.append('should_continue_work_queue')
+        expected_callbacks.remove('work_item_log_path')
+        expected_callbacks.remove('process_work_item')
         self.assertEquals(delegate._callbacks, expected_callbacks)
 
     def test_now(self):

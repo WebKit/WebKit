@@ -125,8 +125,8 @@ class QueueEngine:
                 traceback.print_exc()
                 # Don't try tell the status bot, in case telling it causes an exception.
                 self._sleep("Exception while preparing queue")
-        # Never reached.
-        self._ensure_work_log_closed()
+        self._stopping("Delegate terminated queue.")
+        return 0
 
     def _stopping(self, message):
         log("\n%s" % message)

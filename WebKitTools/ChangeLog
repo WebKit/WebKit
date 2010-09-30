@@ -1,5 +1,35 @@
 2010-09-30  Adam Roben  <aroben@apple.com>
 
+        Ensure that QueueEngine cleans up its log files when its delegate
+        tells it to stop processing work
+
+        Reviewed by Adam Barth.
+
+        Fixes <http://webkit.org/b/46891> <rdar://problem/8496638> Many tests
+        in webkitpy.tool.bot.queueengine_unittest.QueueEngineTest crash on
+        Windows
+
+        * Scripts/webkitpy/tool/bot/queueengine.py:
+        (QueueEngine.run): Stop ourselves normally (including cleaning up log
+        files) when the delegate tells us to stop processing work.
+
+        * Scripts/webkitpy/tool/bot/queueengine_unittest.py:
+        (LoggingDelegate.__init__): Moved code here from
+        RaisingDelegate.__init__.
+        (LoggingDelegate.expeced_callbacks): Added the stop_work_queue
+        callback.
+        (LoggingDelegate.stop_work_queue): Moved here from RaisingDelegate.
+        (RaisingDelegate.__init__): Removed code that LoggingDelegate takes
+        care of for us now.
+        (QueueEngineTest.test_trivial): Make sure we got the expected stop
+        message.
+        (QueueEngineTest.test_not_safe_to_proceed): Changed to explicitly
+        remove the callbacks that are related to processing a single work
+        item, rather than removing all callbacks after a certain point, as
+        there are now more callbacks we expect to receive at the end.
+
+2010-09-30  Adam Roben  <aroben@apple.com>
+
         Fix path -> URL conversion on Cygwin
 
         Reviewed by Adam Barth.
