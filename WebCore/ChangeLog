@@ -4,6 +4,7 @@
 
         WebCore uses the main thread to process sleep notifications
         https://bugs.webkit.org/show_bug.cgi?id=46935
+        <rdar://problem/8495374>
 
         Rewrite the old WebCorePowerNotifier to use IOKit directly. 
         
