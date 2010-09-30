@@ -1,3 +1,13 @@
+2010-09-30  Alexey Marinichev  <amarinichev@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Rename chromium's GraphicsContext3D.cpp to match others.
+        https://bugs.webkit.org/show_bug.cgi?id=46771
+
+        * WebKit.gyp:
+        * src/GraphicsContext3DChromium.cpp: Renamed from WebKit/chromium/src/GraphicsContext3D.cpp.
+
 2010-09-29  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

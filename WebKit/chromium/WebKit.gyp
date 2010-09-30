@@ -324,7 +324,7 @@
                 'src/FrameLoaderClientImpl.cpp',
                 'src/FrameLoaderClientImpl.h',
                 'src/FrameNetworkingContextImpl.h',
-                'src/GraphicsContext3D.cpp',
+                'src/GraphicsContext3DChromium.cpp',
                 'src/GraphicsContext3DInternal.h',
                 'src/gtk/WebFontInfo.cpp',
                 'src/gtk/WebFontInfo.h',
