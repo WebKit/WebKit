@@ -1,3 +1,12 @@
+2010-09-29  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Adam Barth.
+        
+        Skip plugins/plugin-document-load-prevented-userscript.html on Qt, because it doesn't
+        support window.layoutTestController.addUserScript yet.
+
+        * platform/qt/Skipped:
+
 2010-09-29  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed, LayoutTestController::addUserScript not supported in
