@@ -17,6 +17,15 @@
 
         Reviewed by Simon Hausmann.
 
+        [Qt] Ensure that the media player backend does not leave any resources around
+
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        (WebCore::MediaPlayerPrivateQt::~MediaPlayerPrivateQt):
+
+2010-09-30  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         Minor cleanup of MediaPlayerPrivateQt
 
         * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
