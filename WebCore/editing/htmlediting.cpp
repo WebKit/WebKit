@@ -1069,6 +1069,9 @@ bool lineBreakExistsAtPosition(const Position& position)
     if (position.anchorNode()->hasTagName(brTag) && position.atFirstEditingPositionForNode())
         return true;
     
+    if (!position.anchorNode()->renderer())
+        return false;
+    
     if (!position.anchorNode()->isTextNode() || !position.anchorNode()->renderer()->style()->preserveNewline())
         return false;
     
